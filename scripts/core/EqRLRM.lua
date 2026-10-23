@@ -29,6 +29,7 @@ EqRLRM.REQUIRED = {
 -- Functions that only one feature needs. A missing one switches that feature off.
 EqRLRM.OPTIONAL = {
     infoDisplay = { { "AnimalHorse", "addHorseInfos" }, { "AnimalHorse", "showHorseHudInfo" } },
+    menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
 }
 
 EqRLRM.env = nil

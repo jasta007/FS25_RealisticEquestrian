@@ -33,6 +33,14 @@ Each of Stamina, Speed, Agility and Temperament has a gene on RLRM's 0.25-1.75 s
 ceiling from 40 to 100, and a trained level that works up to that ceiling. A hidden talent budget
 caps the four ceilings' total, so the best horses can max one or two stats, never all four.
 
+In RLRM's menu (Shift+O, or R in the animals tab) the four stats sit together near the top of a
+horse's details as "trained / ceiling", for example `Stamina 54 / 77`. They also show in the box
+you get when looking at a horse.
+
+RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
+box. Other animals are not affected and nothing is changed in RLRM. `eqMeatQuality show` brings it
+back; the choice is saved for your machine in `modSettings`.
+
 ## Breeding
 
 A foal born on a farm inherits its four stat genes, and the hidden talent budget, from its dam and

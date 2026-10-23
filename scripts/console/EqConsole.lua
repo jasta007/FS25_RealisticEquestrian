@@ -252,6 +252,18 @@ function EqConsole:consoleSettings(name, value)
 end
 
 
+--- eqMeatQuality [show|hide]: a display preference for this machine, so it works for clients too.
+function EqConsole:consoleMeatQuality(value)
+    if value == "show" or value == "hide" then
+        EqInfoDisplay.hideMeatQuality = value == "hide"
+        EqInfoDisplay.savePreferences()
+    elseif value ~= nil then
+        return "Usage: eqMeatQuality [show|hide]"
+    end
+    return string.format("Meat Quality is %s for horses", EqInfoDisplay.hideMeatQuality and "hidden" or "shown")
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -262,6 +274,7 @@ function EqConsole.register()
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off]", "consoleSettings", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
+    addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
 
@@ -270,5 +283,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality" }) do removeConsoleCommand(name) end
 end

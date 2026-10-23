@@ -75,6 +75,10 @@ function EqMain.activate()
         guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.menuLayout then
+        guarded("menu layout hooks", function() EqInfoDisplay.installMenu(guarded) end)
+    end
+
     if EqMain.isActive then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
         guarded("competition setup", function()
