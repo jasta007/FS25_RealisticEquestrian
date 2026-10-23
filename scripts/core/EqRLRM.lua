@@ -27,7 +27,6 @@ EqRLRM.REQUIRED = {
 
 -- Functions that only one feature needs. A missing one switches that feature off.
 EqRLRM.OPTIONAL = {
-    workerTraining = { { "Animal", "applyExercise" } },
     infoDisplay = { { "AnimalHorse", "addHorseInfos" }, { "AnimalHorse", "showHorseHudInfo" } },
 }
 

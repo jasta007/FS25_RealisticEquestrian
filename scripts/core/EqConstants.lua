@@ -52,3 +52,33 @@ EqConstants.AGE_DECLINE = 192
 -- Save file written beside RLRM's in the savegame folder.
 EqConstants.SAVE_FILENAME = "rlEquestrian.xml"
 EqConstants.SAVE_VERSION = 1
+
+-- TRAINING (milestone 3)
+
+-- Share of the gap between trained level and cap that a month of full effort closes, in
+-- percent. Stamina comes quickest, speed slowest: a horse in full work from 24 months gets
+-- most of the way to its ceilings in two to three years.
+EqConstants.TRAIN_MONTHLY = { stamina = 12, speed = 8, agility = 10, temperament = 10 }
+
+-- Points a month a stat loses once a horse has stood idle past the grace period, down to
+-- FADE_FLOOR of its ceiling. Fitness goes first; manners and speed stay.
+EqConstants.FADE_MONTHLY = { stamina = 4, speed = 1, agility = 2, temperament = 1 }
+EqConstants.FADE_FLOOR = 0.5
+EqConstants.FADE_GRACE_DAYS = 2
+EqConstants.FADE_GRACE_MONTHS = 0.5
+
+-- Past AGE_DECLINE every stat loses this many points a month, down to OLD_FLOOR of its ceiling.
+EqConstants.OLD_DECLINE_MONTHLY = 2
+EqConstants.OLD_FLOOR = 0.3
+
+-- The base game's daily riding target (Rideable / AnimalHorse.getDailyRidingTime): this many
+-- gait-weighted milliseconds fill riding from 0 to 100.
+EqConstants.RIDING_FULL_MS = 300000
+
+-- Agility effort per jump taken at canter or gallop.
+EqConstants.JUMP_AGILITY = 0.04
+
+-- A horse whose dirt is at or below this at the day's end counts as groomed, which adds
+-- temperament effort (groundwork, so it counts at staff level).
+EqConstants.GROOMED_DIRT = 10
+EqConstants.GROOMED_TEMPERAMENT = 0.2

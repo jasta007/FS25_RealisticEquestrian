@@ -21,6 +21,8 @@ source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 
@@ -71,6 +73,10 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
+        guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
+    end
+
+    if EqMain.isActive then
         Log:info("Realistic Equestrian active")
     else
         Log:error("Realistic Equestrian is switched off for this session; see the lines above.")
@@ -78,7 +84,12 @@ function EqMain.activate()
 end
 
 
--- SECTION 2: Lifecycle hooks on base-game functions
+-- SECTION 2: Hooks on base-game functions
+
+-- Rideable's functions are copied into vehicle types when types are validated, so they are
+-- patched now, at source time. The hook bodies do nothing until EqMain is active.
+EqTrainingHooks.installRideable(guarded)
+
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
     EqMain.activate()
@@ -114,6 +125,7 @@ local function onMissionDelete()
     guarded("mission cleanup", function()
         EqConsole.unregister()
         EqRegistry.reset()
+        EqTrainingHooks.reset()
     end)
 end
 
