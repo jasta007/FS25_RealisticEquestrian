@@ -171,6 +171,8 @@ function EqRegistry.saveToDirectory(directory)
         EqRegistry.records[id]:saveToXMLFile(xmlFile, string.format("rlEquestrian.horses.horse(%d)", i - 1))
     end
 
+    EqCompetitionManager.saveToXMLFile(xmlFile, "rlEquestrian.competition")
+
     xmlFile:save()
     xmlFile:delete()
     Log:info("EqRegistry: saved %d horse record(s)", #ids)
@@ -180,11 +182,15 @@ end
 --- @param directory string|nil Savegame directory; nil for a new game
 function EqRegistry.loadFromDirectory(directory)
     EqRegistry.reset()
-    if directory == nil then return end
+    if directory == nil then
+        EqCompetitionManager.loadFromXMLFile(nil, "rlEquestrian.competition")
+        return
+    end
 
     local xmlFile = XMLFile.loadIfExists("rlEquestrian", directory .. "/" .. EqConstants.SAVE_FILENAME)
     if xmlFile == nil then
         Log:info("EqRegistry: no %s yet, horses will be rolled on first sight", EqConstants.SAVE_FILENAME)
+        EqCompetitionManager.loadFromXMLFile(nil, "rlEquestrian.competition")
         return
     end
 
@@ -197,6 +203,8 @@ function EqRegistry.loadFromDirectory(directory)
         if record ~= nil then EqRegistry.records[record.id] = record end
         index = index + 1
     end
+
+    EqCompetitionManager.loadFromXMLFile(xmlFile, "rlEquestrian.competition")
 
     xmlFile:delete()
     Log:info("EqRegistry: loaded %d horse record(s)", EqRegistry.count())

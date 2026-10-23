@@ -14,6 +14,9 @@ dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/core/EqRLRM.lua")
+dofile("scripts/competition/EqEventConfig.lua")
+dofile("scripts/competition/EqCompetition.lua")
+local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
 
@@ -217,6 +220,93 @@ check("fading never raises a horse to the floor", green.trained.stamina == 20)
 local veteran = horse("balanced", 60)
 for _ = 1, 12 do EqTraining.applyDay(veteran, cap70, { riding = 100, dirt = 50, ageMonths = 200, timeAdjustment = 1 }) end
 check("a veteran in work still declines", veteran.trained.speed < 60, string.format("got %.2f", veteran.trained.speed))
+
+-- COMPETITIONS
+
+local config = EqEventConfig.read(TestXML.load("data/events.xml"))
+check("events.xml has the seven disciplines", #config.disciplines == 7)
+check("events.xml has five tiers with training first", #config.tiers == 5 and config.tiers[1].name == "training")
+check("events.xml has three goings", #config.goings == 3)
+
+local jumping = config.disciplineByName.showJumping
+local eventing = config.disciplineByName.eventing
+local specialist = { stamina = 40, speed = 50, agility = 95, temperament = 85 }
+local allRounder = { stamina = 72, speed = 72, agility = 72, temperament = 72 }
+check("a specialist beats an all-rounder at its discipline",
+    EqCompetition.rating(specialist, jumping) > EqCompetition.rating(allRounder, jumping))
+check("an all-rounder beats a specialist at eventing",
+    EqCompetition.rating(allRounder, eventing) > EqCompetition.rating(specialist, eventing),
+    string.format("all-rounder %.1f specialist %.1f", EqCompetition.rating(allRounder, eventing), EqCompetition.rating(specialist, eventing)))
+check("dressage ignores speed", EqCompetition.rating({ stamina = 0, speed = 0, agility = 60, temperament = 60 }, config.disciplineByName.dressage) == 60)
+
+local sprinter = { stamina = 50, speed = 90, agility = 30, temperament = 30 }
+local race = config.disciplineByName.raceShort
+local firm, soft = config.goings[1], config.goings[3]
+check("firm going suits a fast horse", EqCompetition.rating(sprinter, race, firm) > EqCompetition.rating(sprinter, race, soft))
+check("going does not change arena events", EqCompetition.rating(specialist, jumping, firm) == EqCompetition.rating(specialist, jumping, soft))
+
+check("condition is 1 for a fit, healthy horse", EqCompetition.condition(100, 100) == 1)
+check("an unfit horse is held back", EqCompetition.condition(0, 100) == 0.75)
+
+local training, novice = config.tierByName.training, config.tierByName.novice
+check("two-year-olds can enter Training Events", EqCompetition.canEnter(training, 26, 20))
+check("three-year-olds cannot", not EqCompetition.canEnter(training, 40, 20))
+local okYoung, whyYoung = EqCompetition.canEnter(novice, 30, 20)
+check("two-year-olds cannot enter Novice", not okYoung and whyYoung == "tooYoung")
+local okHigh, whyHigh = EqCompetition.canEnter(novice, 60, 70)
+check("strong horses cannot farm Novice", not okHigh and whyHigh == "ratingHigh")
+
+local rounds, monthly, empty, racing, monthlyInRound = 0, 0, 0, 0, 0
+local disciplinesSeen = {}
+for round = 1, 200 do
+    local events = EqCompetition.drawSchedule(config, EqRandom.new("round " .. round), EqCompetition.KIND_ROUND, false)
+    rounds = rounds + #events
+    local perDiscipline = {}
+    for _, event in ipairs(events) do
+        perDiscipline[event.discipline] = (perDiscipline[event.discipline] or 0) + 1
+        if config.disciplineByName[event.discipline].racing then racing = racing + 1 end
+        if config.tierByName[event.tier].monthly then monthlyInRound = monthlyInRound + 1 end
+    end
+    if (perDiscipline.dressage or 0) == 0 then empty = empty + 1 end
+    for name in pairs(perDiscipline) do disciplinesSeen[name] = true end
+    monthly = monthly + #EqCompetition.drawSchedule(config, EqRandom.new("month " .. round), EqCompetition.KIND_MONTH, true)
+end
+check("racing off means no races", racing == 0)
+check("round draws hold no monthly tiers", monthlyInRound == 0)
+check("a round usually has several events", rounds / 200 > 5, string.format("%.1f per round", rounds / 200))
+check("some rounds have no dressage at all", empty > 0 and empty < 100, empty .. " of 200")
+print(string.format("info: %.1f round events and %.1f monthly events per draw; dressage missing in %d of 200 rounds",
+    rounds / 200, monthly / 200, empty))
+
+local sameDraw = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
+local sameAgain = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
+check("a round draws the same events from the same seed", #sameDraw == #sameAgain and sameDraw[1].fee == sameAgain[1].fee)
+
+-- Running a field: a strong horse in its band places well most of the time.
+local event = { discipline = "showJumping", tier = "novice", prize = 2000 }
+local wins, podiums, paid, fullField = 0, 0, 0, true
+for i = 1, 500 do
+    local results = EqCompetition.run(event, config, { { key = "me", rating = 45, condition = 1 } }, EqRandom.new("race " .. i))
+    if #results ~= config.tierByName.novice.field then fullField = false end
+    for _, runner in ipairs(results) do
+        if runner.key == "me" then
+            if runner.place == 1 then wins = wins + 1 end
+            if runner.place <= 3 then podiums = podiums + 1 end
+            paid = paid + runner.prize
+        end
+    end
+end
+check("the field is always full", fullField)
+check("a top-of-band horse often wins, but not always", wins > 60 and wins < 250, wins .. " wins of 500")
+print(string.format("info: rating 45 in Novice: %d wins, %d podiums of 500, average prize %.0f vs fee 250",
+    wins, podiums, paid / 500))
+
+local weak = 0
+for i = 1, 500 do
+    local results = EqCompetition.run(event, config, { { key = "me", rating = 20, condition = 0.8 } }, EqRandom.new("weak " .. i))
+    for _, runner in ipairs(results) do if runner.key == "me" and runner.place <= 3 then weak = weak + 1 end end
+end
+check("an unready horse rarely places", weak < 25, weak .. " podiums of 500")
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

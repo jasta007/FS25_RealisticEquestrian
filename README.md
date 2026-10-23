@@ -10,9 +10,10 @@ horse data) and hooks its functions; it never copies or patches RLRM files.
 
 ## Status
 
-Milestone 4 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
-box, improve with training, and are inherited when horses breed. Competitions and the in-game
-screen are still to come.
+Milestone 5 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
+box, improve with training, are inherited when horses breed, and win prize money in competitions
+(entered from the console for now). Risk (scratches, injuries), the in-game screen and
+multiplayer sync are still to come.
 
 ## Trying it
 
@@ -59,6 +60,30 @@ Every horse trains once a day, at RLRM's daily horse tick.
 
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
 sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
+
+## Competitions
+
+Events come from `data/events.xml`, so disciplines, tiers, fees and prizes can be changed without
+code. Each round draws a fresh set: usually several events per discipline at different fees and
+prizes, and sometimes none in a discipline.
+
+- **Round events** (Training, Novice, Intermediate) open every round and give results at the start
+  of the next. A round is a day or a month: `eqSettings cadence day|month`.
+- **Monthly events** (Advanced, Championship) open each month and give results the next month.
+- **Training Events** are for two-year-olds only: a fee, no prize money, a training boost, and you
+  still see where the horse placed. Every other event is open from three years.
+- Each tier has a rating band, so a strong horse can't farm easy wins in Novice.
+- A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
+  dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
+  half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
+  have a going: firm favours speed, soft favours stamina. On the day, RLRM's fitness and health
+  scale the performance, plus a little luck.
+- The top three share the prize pool 50/30/20. Horses from different farms can enter the same
+  event.
+- Racing can be switched off: `eqSettings racing off`.
+
+Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
+`eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
 
 ## Tests
 

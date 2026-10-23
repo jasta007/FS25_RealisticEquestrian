@@ -10,5 +10,33 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_discipline_showJumping" text="Show Jumping"/>
+        <text name="eq_discipline_dressage" text="Dressage"/>
+        <text name="eq_discipline_crossCountry" text="Cross Country"/>
+        <text name="eq_discipline_eventing" text="3 Day Eventing"/>
+        <text name="eq_discipline_raceShort" text="Sprint Race"/>
+        <text name="eq_discipline_raceLong" text="Distance Race"/>
+        <text name="eq_discipline_steeplechase" text="Steeplechase"/>
+        <text name="eq_tier_training" text="Training Event"/>
+        <text name="eq_tier_novice" text="Novice"/>
+        <text name="eq_tier_intermediate" text="Intermediate"/>
+        <text name="eq_tier_advanced" text="Advanced"/>
+        <text name="eq_tier_championship" text="Championship"/>
+        <text name="eq_going_firm" text="Firm"/>
+        <text name="eq_going_good" text="Good"/>
+        <text name="eq_going_soft" text="Soft"/>
+        <text name="eq_money_entryFees" text="Competition Entry Fees"/>
+        <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
+        <text name="eq_enter_noEvent" text="That event is not open for entries."/>
+        <text name="eq_enter_retired" text="That horse has retired from competition."/>
+        <text name="eq_enter_already" text="That horse is already entered in %s."/>
+        <text name="eq_enter_tooYoung" text="Too young for this event (rating %.0f)."/>
+        <text name="eq_enter_tooOld" text="Too old for this event: Training Events are for two-year-olds (rating %.0f)."/>
+        <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
+        <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
+        <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>
+        <text name="eq_enter_done" text="%s entered in %s (rating %.0f)."/>
+        <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
+        <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
     </texts>
 </l10n>

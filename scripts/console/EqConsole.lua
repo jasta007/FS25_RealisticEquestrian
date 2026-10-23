@@ -97,8 +97,145 @@ function EqConsole:consoleSetFocus(...)
 end
 
 
+--- @param query string horse name or identifier
+--- @return table|nil animal one of the player's horses
+local function findOwnHorse(query)
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil and matchesHorse(animal, record, query) then return animal end
+    end
+    return nil
+end
+
+
+--- @return boolean ok
+--- @return string|nil message when competitions cannot be used here
+local function competitionsReady()
+    if g_currentMission == nil then return false, "No mission loaded" end
+    if EqCompetitionManager.config == nil then return false, "Competitions are off: data/events.xml did not load" end
+    if not g_currentMission:getIsServer() then return false, "Only the host can use competitions for now" end
+    return true
+end
+
+
+--- eqEvents: every open event, cheapest first within each kind.
+function EqConsole:consoleEvents()
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local list = {}
+    for _, event in pairs(EqCompetitionManager.events) do table.insert(list, event) end
+    table.sort(list, function(a, b)
+        if a.kind ~= b.kind then return a.kind > b.kind end
+        if a.discipline ~= b.discipline then return a.discipline < b.discipline end
+        return a.fee < b.fee
+    end)
+
+    for _, event in ipairs(list) do
+        local tier = EqCompetitionManager.config.tierByName[event.tier]
+        print(string.format("#%-4d %-7s %-28s %-6s fee %7s  prize %9s  rating %d-%d  entries %d", event.id,
+            event.kind == EqCompetition.KIND_MONTH and "monthly" or "round",
+            EqCompetitionManager.tierTitle(event.tier) .. " " .. EqCompetitionManager.disciplineTitle(event.discipline),
+            event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "",
+            g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
+            tier.minRating, tier.maxRating, #event.entries))
+    end
+
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). Enter with eqEnter <event number> <horse>.",
+        #list, EqCompetitionManager.settings.cadence)
+end
+
+
+--- eqRatings [horse]: each horse's rating per discipline on good going.
+function EqConsole:consoleRatings(...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local query = table.concat({ ... }, " ")
+    local config = EqCompetitionManager.config
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil and (query == "" or matchesHorse(animal, record, query)) then
+            local parts = {}
+            for _, discipline in ipairs(config.disciplines) do
+                table.insert(parts, string.format("%s %.0f", EqCompetitionManager.disciplineTitle(discipline.name),
+                    EqCompetition.rating(record.trained, discipline, nil)))
+            end
+            local career = record.career
+            print(string.format("'%s' age %dm  starts %d wins %d places %d earned %s", animal:getName() or record.id,
+                animal.age or 0, career.starts, career.wins, career.places, g_i18n:formatMoney(career.earnings, 0, true, true)))
+            print("    " .. table.concat(parts, "  "))
+        end
+    end
+
+    return "Ratings on good going. Firm going favours speed, soft favours stamina, on outdoor courses."
+end
+
+
+--- eqEnter <event number> <horse name or id>
+function EqConsole:consoleEnter(eventId, ...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local id = tonumber(eventId)
+    local query = table.concat({ ... }, " ")
+    if id == nil or query == "" then return "Usage: eqEnter <event number> <horse name or id>" end
+
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+
+    local _, text = EqCompetitionManager.enter(id, animal, g_currentMission:getFarmId())
+    return text
+end
+
+
+--- eqResults: the latest results your horses took part in.
+function EqConsole:consoleResults()
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local farmId, shown = g_currentMission:getFarmId(), 0
+    for _, summary in ipairs(EqCompetitionManager.results) do
+        for _, placing in ipairs(summary.placings) do
+            if placing.farmId == farmId then
+                shown = shown + 1
+                print(string.format("day %d  %s %s #%d  '%s' %d of %d  %s", summary.day,
+                    EqCompetitionManager.tierTitle(summary.tier), EqCompetitionManager.disciplineTitle(summary.discipline),
+                    summary.eventId, placing.name, placing.place, summary.field, g_i18n:formatMoney(placing.prize, 0, true, true)))
+            end
+        end
+    end
+
+    return string.format("%d result(s)", shown)
+end
+
+
+--- eqSettings [cadence day|month] [racing on|off]
+function EqConsole:consoleSettings(name, value)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local settings = EqCompetitionManager.settings
+    if name == "cadence" and (value == EqCompetitionManager.CADENCE_DAY or value == EqCompetitionManager.CADENCE_MONTH) then
+        settings.cadence = value
+    elseif name == "racing" and (value == "on" or value == "off") then
+        settings.racing = value == "on"
+    elseif name ~= nil then
+        return "Usage: eqSettings [cadence day|month] [racing on|off]"
+    end
+
+    return string.format("cadence=%s (round events run every %s)  racing=%s. Changes apply from the next round.",
+        settings.cadence, settings.cadence, settings.racing and "on" or "off")
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
+    addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
+    addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id>", "consoleEnter", EqConsole)
+    addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
+    addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off]", "consoleSettings", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
     Log:debug("EqConsole: commands registered")
@@ -109,4 +246,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings" }) do removeConsoleCommand(name) end
 end

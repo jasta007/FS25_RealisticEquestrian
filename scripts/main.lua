@@ -23,6 +23,9 @@ source(modDirectory .. "scripts/core/EqHorseRecord.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/competition/EqEventConfig.lua")
+source(modDirectory .. "scripts/competition/EqCompetition.lua")
+source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 
@@ -74,6 +77,13 @@ function EqMain.activate()
 
     if EqMain.isActive then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
+        guarded("competition setup", function()
+            MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            EqCompetitionManager.loadConfig(modDirectory)
+        end)
     end
 
     if EqMain.isActive then
@@ -106,6 +116,17 @@ local function onMissionLoaded(mission)
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
         end
     end)
+
+    guarded("competition start", function()
+        if not mission:getIsServer() or EqCompetitionManager.config == nil then return end
+        EqCompetitionManager.ensureOpen()
+        g_messageCenter:subscribe(MessageType.DAY_CHANGED, function()
+            guarded("daily events", EqCompetitionManager.onDayChanged)
+        end, EqCompetitionManager)
+        g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
+            guarded("monthly events", EqCompetitionManager.onPeriodChanged)
+        end, EqCompetitionManager)
+    end)
 end
 
 --- Save beside RLRM's rm_RlAnimalSystem.xml whenever the game saves.
@@ -126,6 +147,10 @@ local function onMissionDelete()
         EqConsole.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()
+        g_messageCenter:unsubscribeAll(EqCompetitionManager)
+        local config = EqCompetitionManager.config
+        EqCompetitionManager.reset()
+        EqCompetitionManager.config = config
     end)
 end
 

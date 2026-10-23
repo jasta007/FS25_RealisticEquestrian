@@ -180,3 +180,30 @@ function EqTraining.applyDay(record, ceilings, day)
 
     return deltas
 end
+
+
+--- A Training Event's boost: a share of a full day's work spread over the discipline's stats,
+--- counted at staff level (it is not the player's own riding).
+--- @param record table EqHorseRecord
+--- @param ceilings table stat -> ceiling
+--- @param weights table stat -> discipline weight
+--- @param boost number share of a full day
+--- @param ageMonths number
+--- @param timeAdjustment number
+--- @return table deltas stat -> change
+function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, timeAdjustment)
+    local maxWeight = 0
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do maxWeight = math.max(maxWeight, weights[stat] or 0) end
+
+    local ageFactor = EqStats.ageTrainingFactor(ageMonths)
+    local deltas = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local effort = maxWeight > 0 and boost * (weights[stat] or 0) / maxWeight or 0
+        local before = record.trained[stat] or 0
+        local gained = EqTraining.gain(before, ceilings[stat] * EqConstants.STAFF_CAP, EqConstants.TRAIN_MONTHLY[stat],
+            effort, ageFactor, timeAdjustment)
+        record.trained[stat] = EqStats.clamp(before + gained, 0, ceilings[stat])
+        deltas[stat] = record.trained[stat] - before
+    end
+    return deltas
+end
