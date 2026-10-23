@@ -11,7 +11,7 @@ local Log = RmLogging.getLogger("RLEQ")
 
 --- Format one stat as "trained/ceiling (RLRM band of the gene)".
 local function formatStat(record, ceilings, stat)
-    return string.format("%s %3.0f/%3.0f %-14s", stat, record.trained[stat] or 0, ceilings[stat],
+    return string.format("%-12s %3.0f/%3.0f %-16s  ", stat, record.trained[stat] or 0, ceilings[stat],
         "(" .. EqRLRM.geneBandText(record.genes[stat]) .. ")")
 end
 
