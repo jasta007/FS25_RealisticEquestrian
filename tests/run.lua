@@ -13,6 +13,7 @@ dofile("scripts/core/EqConstants.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/core/EqRLRM.lua")
 
 local passed, failed = 0, 0
 
@@ -124,6 +125,27 @@ check("an untracked yearling starts at foal level",
 local adult = EqStats.initialTrained(average, 120, EqRandom.new(1))
 check("an untracked adult is part-trained, below its ceiling", adult.speed > 30 and adult.speed < 70,
     string.format("got %.1f", adult.speed))
+
+-- SEEDED BREEDING through RLRM's own BreedingMath
+
+local mare = { genes = genesOf(1.5, 0.8, 1.4, 1.2), budgetGene = 1.3 }
+local stallion = { genes = genesOf(1.3, 1.1, 1.6, 0.9), budgetGene = 1.2 }
+local function foalGenes(id)
+    local genes = EqStats.breedGenes(mare, stallion, EqRLRM.makeSeededBreeder(BreedingMath, EqRandom.new(id)), BreedingMath.SD_CONST)
+    return genes
+end
+local f1, f1again, f2 = foalGenes("UK 1 500"), foalGenes("UK 1 500"), foalGenes("UK 1 501")
+check("a foal breeds the same genes everywhere", f1.agility == f1again.agility and f1.speed == f1again.speed)
+check("siblings differ", f1.agility ~= f2.agility)
+local realRandn = BreedingMath.randn
+pcall(EqRLRM.makeSeededBreeder(BreedingMath, EqRandom.new(1)), 1, 1, { sd = "bad" })
+check("RLRM's randn is put back even after an error", BreedingMath.randn == realRandn)
+
+local agilitySum = 0
+for i = 1, 2000 do agilitySum = agilitySum + foalGenes("UK 1 " .. (1000 + i)).agility end
+local expected = (EqStats.regress(1.4) + EqStats.regress(1.6)) / 2
+check("seeded foals centre on the regressed mid-parent", math.abs(agilitySum / 2000 - expected) < 0.02,
+    string.format("mean %.3f expected %.3f", agilitySum / 2000, expected))
 
 -- TRAINING
 

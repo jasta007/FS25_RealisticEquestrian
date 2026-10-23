@@ -21,6 +21,7 @@ EqRLRM.REQUIRED = {
     { "Animal", "isHorse" },
     { "AnimalHorse", "processRidingUpdate" },
     { "BreedingMath", "breedOffspring" },
+    { "BreedingMath", "randn" },
     { "RLGenetics", "perTrait" },
     { "RLAnimalQuery", "listHusbandriesForFarm" },
 }
@@ -100,6 +101,25 @@ end
 function EqRLRM.getBreeding()
     local breedingMath = EqRLRM.get("BreedingMath")
     return breedingMath.breedOffspring, breedingMath.SD_CONST
+end
+
+
+--- RLRM's breedOffspring, drawing its random spread from our seeded generator instead of
+--- math.random. BreedingMath samples through BreedingMath.randn, so that one function is swapped
+--- for the length of the call and always put back, even on error. With the foal's identifier as
+--- the seed, every machine breeds the same genes from the same parents.
+--- @param breedingMath table RLRM's BreedingMath
+--- @param rng table EqRandom generator
+--- @return function breedOffspring(p1, p2, opts)
+function EqRLRM.makeSeededBreeder(breedingMath, rng)
+    return function(parent1, parent2, opts)
+        local randn = breedingMath.randn
+        breedingMath.randn = function() return rng:normal(0, 1) end
+        local ok, child = pcall(breedingMath.breedOffspring, parent1, parent2, opts)
+        breedingMath.randn = randn
+        if not ok then error(child, 0) end
+        return child
+    end
 end
 
 

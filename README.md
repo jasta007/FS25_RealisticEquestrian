@@ -10,9 +10,9 @@ horse data) and hooks its functions; it never copies or patches RLRM files.
 
 ## Status
 
-Milestone 3 of 7: stats exist, are rolled for every horse, are saved, show in RLRM's horse
-info panels and the look-at info box, and improve with training. Breeding, competitions and the
-in-game screen are still to come.
+Milestone 4 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
+box, improve with training, and are inherited when horses breed. Competitions and the in-game
+screen are still to come.
 
 ## Trying it
 
@@ -31,6 +31,15 @@ and stays switched off.
 Each of Stamina, Speed, Agility and Temperament has a gene on RLRM's 0.25-1.75 scale, which sets a
 ceiling from 40 to 100, and a trained level that works up to that ceiling. A hidden talent budget
 caps the four ceilings' total, so the best horses can max one or two stats, never all four.
+
+## Breeding
+
+A foal born on a farm inherits its four stat genes, and the hidden talent budget, from its dam and
+sire through RLRM's own breeding maths (`BreedingMath.breedOffspring`). Each parent's gene is first
+pulled 40% of the way back toward average, so two elite parents give a strong foal, not a
+guaranteed better one; selective breeding over generations is how the best horses are made. A
+sire bought as a straw breeds true to the stats its identifier rolls. Foals start every stat at
+10 and train up from there. `eqHorses` shows each horse as `bred` or `rolled`.
 
 ## Training
 

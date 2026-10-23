@@ -31,8 +31,8 @@ function EqConsole:consoleListHorses()
             local total = 0
             for _, stat in ipairs(EqConstants.STAT_KEYS) do total = total + ceilings[stat] end
 
-            print(string.format("%s '%s' age %dm  budget %.0f/%.0f", record.id, animal:getName() or "",
-                animal.age or 0, total, EqStats.budgetFromGene(record.budgetGene)))
+            print(string.format("%s '%s' age %dm %s  budget %.0f/%.0f", record.id, animal:getName() or "",
+                animal.age or 0, record.origin, total, EqStats.budgetFromGene(record.budgetGene)))
             print("    " .. formatStat(record, ceilings, "stamina") .. formatStat(record, ceilings, "speed"))
             print("    " .. formatStat(record, ceilings, "agility") .. formatStat(record, ceilings, "temperament"))
         end
