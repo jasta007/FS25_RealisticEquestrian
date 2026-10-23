@@ -10,7 +10,8 @@ horse data) and hooks its functions; it never copies or patches RLRM files.
 
 ## Status
 
-Milestone 1 of 7: stats exist, are rolled for every horse, and are saved. Training, breeding,
+Milestone 2 of 7: stats exist, are rolled for every horse, are saved, and show in RLRM's horse
+info panels and the look-at info box. Training, breeding,
 competitions and the in-game screen are still to come.
 
 ## Trying it
