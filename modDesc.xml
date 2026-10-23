@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="114">
+    <author>James</author>
+    <version>0.1.0.0-dev.1</version>
+    <title>
+        <en>Realistic Equestrian</en>
+    </title>
+    <description>
+        <en>
+            <![CDATA[Gives your horses something to do besides being sold.
+
+Every horse gets four competition stats - Stamina, Speed, Agility and Temperament. Each has an inherited ceiling and a trained level: breeding raises what a horse could become, riding and hired staff make it happen. Enter your horses in daily shows and monthly championships for a fee and see the results the next day or month.
+
+Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
+
+Work in progress: this build only adds the stats and saves them. Training, breeding and competitions follow.]]>
+        </en>
+    </description>
+    <iconFilename>icon_RealisticEquestrian.dds</iconFilename>
+    <multiplayer supported="true"/>
+    <dependencies>
+        <dependency>FS25_RealisticLivestockRM</dependency>
+    </dependencies>
+    <extraSourceFiles>
+        <sourceFile filename="scripts/main.lua"/>
+    </extraSourceFiles>
+    <l10n filenamePrefix="translations/translation"/>
+</modDesc>

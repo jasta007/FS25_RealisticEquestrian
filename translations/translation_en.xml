@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Stamina"/>
+        <text name="eq_stat_speed" text="Speed"/>
+        <text name="eq_stat_agility" text="Agility"/>
+        <text name="eq_stat_temperament" text="Temperament"/>
+    </texts>
+</l10n>
