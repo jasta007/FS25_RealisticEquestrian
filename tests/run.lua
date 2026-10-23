@@ -12,6 +12,7 @@ dofile(rlrmPath .. "/scripts/animal/BreedingMath.lua")
 dofile("scripts/core/EqConstants.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
+dofile("scripts/training/EqTraining.lua")
 
 local passed, failed = 0, 0
 
@@ -123,6 +124,75 @@ check("an untracked yearling starts at foal level",
 local adult = EqStats.initialTrained(average, 120, EqRandom.new(1))
 check("an untracked adult is part-trained, below its ceiling", adult.speed > 30 and adult.speed < 70,
     string.format("got %.1f", adult.speed))
+
+-- TRAINING
+
+local function horse(focus, level)
+    return { trained = { stamina = level, speed = level, agility = level, temperament = level }, focus = focus, idleDays = 0 }
+end
+
+local function ridden(gait, ms, jumps)
+    local sheet = EqTraining.newSheet()
+    EqTraining.addRiding(sheet, gait, ms)
+    for _ = 1, jumps or 0 do EqTraining.addJump(sheet) end
+    return sheet
+end
+
+local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
+
+local canterDay = EqTraining.playerEffort(ridden("canter", 150000))
+check("a full canter day trains stamina and agility", math.abs(canterDay.stamina - 0.8) < 1e-9 and canterDay.speed == 0)
+check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
+check("jumps add agility", EqTraining.playerEffort(ridden("canter", 0, 10)).agility > 0.39)
+check("effort is capped at a full day", EqTraining.playerEffort(ridden("gallop", 900000)).speed == 1)
+
+local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
+check("staff train to the focus", racingStaff.speed == 1.0 and racingStaff.agility < 0.2)
+check("riding the player did is not credited to staff", EqTraining.staffEffort(100, 100, "racing", false).speed == 0)
+check("grooming adds temperament", EqTraining.staffEffort(0, 0, "balanced", true).temperament > 0)
+
+-- Staff alone stop at 95% of the ceiling; the player's riding takes it the rest of the way.
+local staffHorse = horse("racing", 10)
+for _ = 1, 400 do
+    EqTraining.applyDay(staffHorse, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+end
+check("staff stop at 95% of the ceiling", staffHorse.trained.speed <= 70 * 0.95 + 1e-6 and staffHorse.trained.speed > 66,
+    string.format("got %.2f", staffHorse.trained.speed))
+for _ = 1, 400 do
+    EqTraining.applyDay(staffHorse, cap70, { sheet = ridden("gallop", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+end
+check("the player's riding reaches the ceiling", staffHorse.trained.speed > 69.5, string.format("got %.2f", staffHorse.trained.speed))
+
+-- Pace: two years of full work takes a prime horse most of the way.
+local paced = horse("crossCountry", 10)
+for _ = 1, 24 do
+    EqTraining.applyDay(paced, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+end
+check("two years of staff work gets stamina most of the way", paced.trained.stamina > 0.8 * 66.5,
+    string.format("got %.1f", paced.trained.stamina))
+print(string.format("info: 24 months of cross-country staff work from 10 -> sta %.1f spd %.1f agi %.1f tem %.1f (ceilings 70)",
+    paced.trained.stamina, paced.trained.speed, paced.trained.agility, paced.trained.temperament))
+
+-- The same months give the same result whatever the days per month.
+local short, long = horse("balanced", 10), horse("balanced", 10)
+for _ = 1, 12 do EqTraining.applyDay(short, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 }) end
+for _ = 1, 12 * 28 do EqTraining.applyDay(long, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 / 28 }) end
+check("days per month does not change the yearly gain", math.abs(short.trained.stamina - long.trained.stamina) < 2.5,
+    string.format("1 day/month %.1f, 28 days/month %.1f", short.trained.stamina, long.trained.stamina))
+
+-- Fading.
+local idle = horse("balanced", 60)
+EqTraining.applyDay(idle, cap70, { riding = 0, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+check("one idle day is forgiven", idle.trained.stamina == 60)
+for _ = 1, 40 do EqTraining.applyDay(idle, cap70, { riding = 0, dirt = 50, ageMonths = 60, timeAdjustment = 1 }) end
+check("an idle horse fades to half its ceiling", math.abs(idle.trained.stamina - 35) < 1e-6, string.format("got %.2f", idle.trained.stamina))
+local green = horse("balanced", 20)
+for _ = 1, 10 do EqTraining.applyDay(green, cap70, { riding = 0, dirt = 50, ageMonths = 60, timeAdjustment = 1 }) end
+check("fading never raises a horse to the floor", green.trained.stamina == 20)
+
+local veteran = horse("balanced", 60)
+for _ = 1, 12 do EqTraining.applyDay(veteran, cap70, { riding = 100, dirt = 50, ageMonths = 200, timeAdjustment = 1 }) end
+check("a veteran in work still declines", veteran.trained.speed < 60, string.format("got %.2f", veteran.trained.speed))
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

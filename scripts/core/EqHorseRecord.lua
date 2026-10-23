@@ -27,6 +27,7 @@ function EqHorseRecord.new(id)
     self.retired = false
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0 }
     self.lastSeenDay = 0
+    self.idleDays = 0
     return self
 end
 
@@ -45,6 +46,7 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. "#focus", self.focus)
     xmlFile:setBool(key .. "#retired", self.retired)
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
+    xmlFile:setInt(key .. "#idleDays", self.idleDays)
     xmlFile:setFloat(key .. ".genes#budget", self.budgetGene)
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
@@ -71,6 +73,7 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.focus = xmlFile:getString(key .. "#focus", EqHorseRecord.FOCUS_BALANCED)
     self.retired = xmlFile:getBool(key .. "#retired", false)
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
+    self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
     self.budgetGene = EqStats.clampGene(xmlFile:getFloat(key .. ".genes#budget", EqConstants.GENE_MEAN))
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
