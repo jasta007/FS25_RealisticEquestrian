@@ -262,6 +262,24 @@ function EqCompetitionManager.findEntry(horseId, kind)
 end
 
 
+--- How many of a farm's horses could enter an event now.
+--- @param event table
+--- @param horses table RLRM Animals
+--- @return number count
+function EqCompetitionManager.countEligible(event, horses)
+    local tier = EqCompetitionManager.config.tierByName[event.tier]
+    local count = 0
+    for _, animal in ipairs(horses) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil and not record.retired
+            and EqCompetition.canEnter(tier, animal.age or 0, EqCompetitionManager.ratingFor(record, event)) then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+
 --- Enter a horse. One round entry and one monthly entry per horse at a time.
 --- @param eventId number
 --- @param animal table RLRM Animal
@@ -285,7 +303,10 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
     local rating = EqCompetitionManager.ratingFor(record, event)
     local ok, reason = EqCompetition.canEnter(tier, animal.age or 0, rating)
     if not ok then
-        return false, string.format(g_i18n:getText("eq_enter_" .. reason), rating, tier.minRating, tier.maxRating)
+        local text = g_i18n:getText("eq_enter_" .. reason)
+        if reason == "tooYoung" then return false, string.format(text, tier.minAge, animal.age or 0) end
+        if reason == "tooOld" then return false, string.format(text, tier.maxAge, animal.age or 0) end
+        return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
     local farm = g_farmManager:getFarmById(farmId)

@@ -34,7 +34,7 @@
     </disciplines>
 
     <tiers>
-        <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.35"  trainingBoost="1"/>
+        <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1"/>
         <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="45"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0"/>
         <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="65"  fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0"/>
         <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="85"  fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0"/>

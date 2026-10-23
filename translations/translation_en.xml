@@ -30,8 +30,8 @@
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
-        <text name="eq_enter_tooYoung" text="Too young for this event (rating %.0f)."/>
-        <text name="eq_enter_tooOld" text="Too old for this event: Training Events are for two-year-olds (rating %.0f)."/>
+        <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
+        <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
         <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>

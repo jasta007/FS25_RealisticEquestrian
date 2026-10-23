@@ -131,18 +131,41 @@ function EqConsole:consoleEvents()
         return a.fee < b.fee
     end)
 
+    local horses = EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())
+    local anyEligible = false
     for _, event in ipairs(list) do
         local tier = EqCompetitionManager.config.tierByName[event.tier]
-        print(string.format("#%-4d %-7s %-28s %-6s fee %7s  prize %9s  rating %d-%d  entries %d", event.id,
+        local eligible = EqCompetitionManager.countEligible(event, horses)
+        if eligible > 0 then anyEligible = true end
+        local ages = tier.maxAge > 0 and string.format("%d-%dm", tier.minAge, tier.maxAge) or string.format("%dm+", tier.minAge)
+        print(string.format("%s #%-4d %-7s %-28s %-6s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
+            eligible > 0 and string.format("[%d can enter]", eligible) or "              ", event.id,
             event.kind == EqCompetition.KIND_MONTH and "monthly" or "round",
             EqCompetitionManager.tierTitle(event.tier) .. " " .. EqCompetitionManager.disciplineTitle(event.discipline),
             event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "",
-            g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
+            ages, g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
             tier.minRating, tier.maxRating, #event.entries))
+    end
+
+    if not anyEligible then
+        print("None of your horses can enter anything open right now (age or rating). New events are drawn next round.")
     end
 
     return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). Enter with eqEnter <event number> <horse>.",
         #list, EqCompetitionManager.settings.cadence)
+end
+
+
+--- eqRedraw: for testing, close the open round events without results and draw a new set.
+function EqConsole:consoleRedraw()
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    for id, event in pairs(EqCompetitionManager.events) do
+        if event.kind == EqCompetition.KIND_ROUND and #event.entries == 0 then EqCompetitionManager.events[id] = nil end
+    end
+    EqCompetitionManager.openRound(EqCompetition.KIND_ROUND)
+    return "Drew a new set of round events (events with entries were kept). Run eqEvents."
 end
 
 
@@ -235,6 +258,7 @@ function EqConsole.register()
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id>", "consoleEnter", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
+    addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off]", "consoleSettings", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
@@ -246,5 +270,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw" }) do removeConsoleCommand(name) end
 end
