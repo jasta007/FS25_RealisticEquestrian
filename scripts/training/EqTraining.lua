@@ -87,6 +87,7 @@ function EqTraining.playerEffort(sheet)
         end
     end
     effort.agility = effort.agility + sheet.jumps * EqConstants.JUMP_AGILITY
+    effort.temperament = effort.temperament + sheet.jumps * EqConstants.JUMP_TEMPERAMENT
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = EqStats.clamp(effort[stat], 0, 1) end
     return effort

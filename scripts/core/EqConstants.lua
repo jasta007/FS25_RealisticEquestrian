@@ -75,8 +75,10 @@ EqConstants.OLD_FLOOR = 0.3
 -- gait-weighted milliseconds fill riding from 0 to 100.
 EqConstants.RIDING_FULL_MS = 300000
 
--- Agility effort per jump taken at canter or gallop.
+-- Effort per jump taken at canter or gallop: mostly agility, and some temperament, since
+-- keeping a horse calm and listening over a jump is manners work too (and walking is dull).
 EqConstants.JUMP_AGILITY = 0.04
+EqConstants.JUMP_TEMPERAMENT = 0.03
 
 -- A horse whose dirt is at or below this at the day's end counts as groomed, which adds
 -- temperament effort (groundwork, so it counts at staff level).
