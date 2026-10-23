@@ -165,7 +165,9 @@ local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 local canterDay = EqTraining.playerEffort(ridden("canter", 150000))
 check("a full canter day trains stamina and agility", math.abs(canterDay.stamina - 0.8) < 1e-9 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
-check("jumps add agility", EqTraining.playerEffort(ridden("canter", 0, 10)).agility > 0.39)
+local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
+check("jumps add agility", jumpDay.agility > 0.39)
+check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
 check("effort is capped at a full day", EqTraining.playerEffort(ridden("gallop", 900000)).speed == 1)
 
 local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)

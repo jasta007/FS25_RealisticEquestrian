@@ -46,7 +46,7 @@ sire bought as a straw breeds true to the stats its identifier rolls. Foals star
 Every horse trains once a day, at RLRM's daily horse tick.
 
 - **Your riding** trains by gait: walking builds temperament, trotting a mix, cantering stamina
-  and agility, galloping speed and stamina. Jumps at canter or gallop add agility. A day's full
+  and agility, galloping speed and stamina. Jumps at canter or gallop add agility and some temperament. A day's full
   riding (the base game's riding bar reaching 100%) is a full day of effort. While riding, a
   "Training today" line shows the effort so far.
 - **Staff** (the base game's animal worker, or RLRM's herdsman horse-care rule) count for whatever
