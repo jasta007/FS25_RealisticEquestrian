@@ -5,6 +5,10 @@
         <text name="eq_stat_speed" text="Speed"/>
         <text name="eq_stat_agility" text="Agility"/>
         <text name="eq_stat_temperament" text="Temperament"/>
-        <text name="eq_training_today" text="Training today"/>
+        <text name="eq_stat_short_stamina" text="Sta"/>
+        <text name="eq_stat_short_speed" text="Spd"/>
+        <text name="eq_stat_short_agility" text="Agi"/>
+        <text name="eq_stat_short_temperament" text="Tem"/>
+        <text name="eq_training_today" text="Training"/>
     </texts>
 </l10n>

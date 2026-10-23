@@ -101,7 +101,8 @@ function EqTrainingHooks.onJump(vehicle)
 end
 
 
---- Appended to Rideable:onDraw: "Training today: Stamina 34% ...", from the server's sheet.
+--- Appended to Rideable:onDraw: "Training: Sta 34% Spd 10% ...", from the server's sheet. Short
+--- names keep the line inside the help panel, which cuts long lines off.
 function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
@@ -114,9 +115,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local effort = EqTraining.playerEffort(sheet)
     local parts = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
+        table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
     end
-    g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, "  "))
+    g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, " "))
 end
 
 
