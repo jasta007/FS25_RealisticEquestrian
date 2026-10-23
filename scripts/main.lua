@@ -21,6 +21,7 @@ source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 
 local Log = EqLog
@@ -30,9 +31,12 @@ EqMain.activated = false
 EqMain.isActive = false
 
 
---- Every hook body runs under xpcall: these hooks sit inside the game's own load and save
---- chain, next to RLRM's, so an error here must be logged and swallowed, never allowed to abort
---- the chain and take RLRM down with it.
+local failureCounts = {}
+
+--- Every hook body runs under xpcall: these hooks sit inside the game's own load, save and
+--- display code, next to RLRM's, so an error here must be logged and swallowed, never allowed
+--- to abort the chain and take RLRM down with it. Display hooks run every frame, so each
+--- context logs its first failure in full and then only every 1000th.
 --- @param context string Name for the log line
 --- @param fn function
 local function guarded(context, fn)
@@ -41,7 +45,15 @@ local function guarded(context, fn)
         local trace = (debug ~= nil and debug.traceback ~= nil) and ("\n" .. debug.traceback()) or ""
         return tostring(e) .. trace
     end)
-    if not ok then Log:error("%s failed: %s", context, err) end
+    if ok then return end
+
+    local count = (failureCounts[context] or 0) + 1
+    failureCounts[context] = count
+    if count == 1 then
+        Log:error("%s failed: %s", context, err)
+    elseif count % 1000 == 0 then
+        Log:error("%s has failed %d times", context, count)
+    end
 end
 
 
@@ -53,6 +65,10 @@ function EqMain.activate()
     guarded("activation", function()
         EqMain.isActive = EqRLRM.init()
     end)
+
+    if EqMain.isActive and EqRLRM.features.infoDisplay then
+        guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)
+    end
 
     if EqMain.isActive then
         Log:info("Realistic Equestrian active")
