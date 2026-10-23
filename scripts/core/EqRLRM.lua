@@ -13,7 +13,7 @@ EqRLRM = {}
 
 EqRLRM.MOD_NAME = "FS25_RealisticLivestockRM"
 
-local Log = RmLogging.getLogger("RLEQ")
+local Log = EqLog
 
 -- Functions the mod cannot run without. A missing one disables the whole mod.
 EqRLRM.REQUIRED = {

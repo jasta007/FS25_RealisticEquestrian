@@ -11,7 +11,7 @@
 EqRegistry = {}
 EqRegistry.records = {}
 
-local Log = RmLogging.getLogger("RLEQ")
+local Log = EqLog
 
 
 --- Drop every record. Called when a mission loads so nothing leaks between savegames.

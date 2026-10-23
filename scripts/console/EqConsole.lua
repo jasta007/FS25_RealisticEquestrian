@@ -6,7 +6,7 @@
 
 EqConsole = {}
 
-local Log = RmLogging.getLogger("RLEQ")
+local Log = EqLog
 
 
 --- Format one stat as "trained/ceiling (RLRM band of the gene)".
