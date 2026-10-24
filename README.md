@@ -96,6 +96,12 @@ prizes, and sometimes none in a discipline.
   event.
 - Racing can be switched off: `eqSettings racing off`.
 
+**Events tab:** RLRM's menu (Shift+O) gets a Competitions tab with a rosette icon. The left table
+lists the open events (fee, prize pool, going, when results come, and how many of your horses can
+enter). Select one, and the right table shows your horses with their rating and whether they can
+enter; pick a horse and press Enter. The Results button switches the left table to your results.
+For now the tab works in single player and for the host; multiplayer clients get a note.
+
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
 `eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
 

@@ -28,6 +28,8 @@ source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
+source(modDirectory .. "scripts/gui/EqEventsView.lua")
+source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 
 local Log = EqLog
@@ -74,6 +76,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.infoDisplay then
         guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.eventsTab then
+        guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then

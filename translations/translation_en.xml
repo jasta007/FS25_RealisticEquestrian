@@ -53,6 +53,48 @@
         <text name="eq_status_title" text="Competition"/>
         <text name="eq_status_injured" text="Injured, %d month(s)"/>
         <text name="eq_status_retired" text="Retired"/>
+        <text name="eq_ui_title" text="Competitions"/>
+        <text name="eq_ui_col_event" text="Event"/>
+        <text name="eq_ui_col_going" text="Going"/>
+        <text name="eq_ui_col_when" text="Results"/>
+        <text name="eq_ui_col_fee" text="Entry fee"/>
+        <text name="eq_ui_col_prize" text="Prize pool"/>
+        <text name="eq_ui_col_yours" text="Your horses"/>
+        <text name="eq_ui_col_day" text="Day"/>
+        <text name="eq_ui_col_horse" text="Horse"/>
+        <text name="eq_ui_col_result" text="Result"/>
+        <text name="eq_ui_col_age" text="Age"/>
+        <text name="eq_ui_col_rating" text="Rating"/>
+        <text name="eq_ui_col_status" text="Status"/>
+        <text name="eq_ui_when_tomorrow" text="Tomorrow"/>
+        <text name="eq_ui_when_nextMonth" text="Next month"/>
+        <text name="eq_ui_trainingOnly" text="Training only"/>
+        <text name="eq_ui_entered" text="Entered: %s"/>
+        <text name="eq_ui_canEnter" text="%d can enter"/>
+        <text name="eq_ui_noneEligible" text="None eligible"/>
+        <text name="eq_ui_ageMonths" text="%dm"/>
+        <text name="eq_ui_day" text="Day %d"/>
+        <text name="eq_ui_status_ok" text="Can enter"/>
+        <text name="eq_ui_status_tooYoung" text="Too young"/>
+        <text name="eq_ui_status_tooOld" text="Too old"/>
+        <text name="eq_ui_status_ratingLow" text="Rating too low"/>
+        <text name="eq_ui_status_ratingHigh" text="Too good for this tier"/>
+        <text name="eq_ui_status_enteredHere" text="Entered"/>
+        <text name="eq_ui_status_enteredElsewhere" text="In another event"/>
+        <text name="eq_ui_result_place" text="%d of %d"/>
+        <text name="eq_ui_result_eliminated" text="Eliminated"/>
+        <text name="eq_ui_result_scratched" text="Scratched"/>
+        <text name="eq_ui_button_enter" text="Enter %s (%s)"/>
+        <text name="eq_ui_button_results" text="Results"/>
+        <text name="eq_ui_button_events" text="Events"/>
+        <text name="eq_ui_noEvents" text="No events are open right now. New ones are drawn each round."/>
+        <text name="eq_ui_noResults" text="Your horses have no results yet."/>
+        <text name="eq_ui_noHorses" text="You have no horses."/>
+        <text name="eq_ui_clientNote" text="Competitions are run by the host. Entering from a multiplayer client comes in a later version."/>
+        <text name="eq_ui_noConfig" text="The event list could not be loaded; see the log."/>
+        <text name="eq_ui_ages_range" text="ages %d-%d months"/>
+        <text name="eq_ui_ages_from" text="from %d months"/>
+        <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, field of %d. Select a horse and press Enter."/>
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
