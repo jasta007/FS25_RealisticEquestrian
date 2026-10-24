@@ -112,9 +112,19 @@
         <text name="eq_ui_col_day" text="Day"/>
         <text name="eq_ui_col_horse" text="Horse"/>
         <text name="eq_ui_col_result" text="Result"/>
-        <text name="eq_ui_col_age" text="Age"/>
-        <text name="eq_ui_col_rating" text="Rating"/>
         <text name="eq_ui_col_status" text="Status"/>
+        <text name="eq_ui_col_success" text="Success"/>
+        <text name="eq_ui_col_training" text="Training"/>
+        <text name="eq_ui_trainingBenefit" text="Training benefit"/>
+        <text name="eq_ui_ageLong" text="%d months"/>
+        <text name="eq_success_favourite" text="Favourite"/>
+        <text name="eq_success_contender" text="Contender"/>
+        <text name="eq_success_outsider" text="Outsider"/>
+        <text name="eq_success_longShot" text="Long shot"/>
+        <text name="eq_benefit_high" text="High"/>
+        <text name="eq_benefit_medium" text="Medium"/>
+        <text name="eq_benefit_low" text="Low"/>
+        <text name="eq_benefit_none" text="None"/>
         <text name="eq_ui_when_tomorrow" text="Tomorrow"/>
         <text name="eq_ui_when_nextMonth" text="Next month"/>
         <text name="eq_ui_trainingOnly" text="Training only"/>

@@ -84,7 +84,8 @@ end
 --- The player's horses for one event: rating, and whether and why not they can enter.
 --- @param event table
 --- @param farmId number
---- @return table rows { animal, record, name, age, rating, status, canEnter, transport }
+--- @return table rows { animal, record, name, age, status, canEnter, transport, success, successBand,
+---     training, trainingBand (nil when the event gives no training) }
 function EqEventsView.horseRows(event, farmId)
     local manager = EqCompetitionManager
     local tier = manager.config.tierByName[event.tier]
@@ -116,13 +117,18 @@ function EqEventsView.horseRows(event, farmId)
                 end
             end
 
+            local prospects = manager.prospects(record, animal, event)
             table.insert(rows, {
                 animal = animal,
                 record = record,
                 name = horseName(animal, record),
                 age = string.format(g_i18n:getText("eq_ui_ageMonths"), age),
-                rating = string.format("%d", math.floor(rating + 0.5)),
                 ratingValue = rating,
+                success = g_i18n:getText("eq_success_" .. prospects.success),
+                successBand = prospects.success,
+                chance = prospects.chance,
+                training = prospects.benefit ~= nil and g_i18n:getText("eq_benefit_" .. prospects.benefit) or "-",
+                trainingBand = prospects.benefit,
                 status = status,
                 canEnter = canEnter == true,
                 transport = manager.transportCost(animal),
@@ -130,9 +136,10 @@ function EqEventsView.horseRows(event, farmId)
         end
     end
 
-    -- Horses that can enter first, best rating first.
+    -- Horses that can enter first, best chance first.
     table.sort(rows, function(a, b)
         if a.canEnter ~= b.canEnter then return a.canEnter end
+        if a.chance ~= b.chance then return a.chance > b.chance end
         return a.ratingValue > b.ratingValue
     end)
     return rows

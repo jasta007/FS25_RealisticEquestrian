@@ -115,8 +115,11 @@ prizes, and sometimes none in a discipline.
 
 **Events tab:** RLRM's menu (Shift+O) gets a Competitions tab with a rosette icon. The left table
 lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
-enter). Select one, and the right table shows your horses with their rating and whether they can
-enter; pick a horse and press Enter. The Results button switches the left table to your results.
+enter). Select one, and the right table shows your horses with their **Success** (Favourite,
+Contender, Outsider or Long shot: their chance of a top-three place, counting the rivals, their
+fitness and the risk of elimination), **Training** (for young horse classes, how much the outing
+would teach them: High down to None) and whether they can enter. Under it, a panel shows the
+selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,

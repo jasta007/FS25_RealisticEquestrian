@@ -244,6 +244,37 @@ do
     check("steeplechases are far rarer than show jumping", (counts.steeplechase or 0) * 4 < (counts.showJumping or 1))
 end
 
+-- Success and training words on the Events tab
+do
+    local event = { discipline = "dressage", tier = "novice", prize = 2000 }
+    local line = {}
+    local last = -1
+    local rising = true
+    for _, rating in ipairs({ 25, 35, 42, 48, 55 }) do
+        local chance = EqCompetition.podiumChance(event, config, rating, 1, 0, EqRandom.new("odds " .. rating))
+        if chance < last then rising = false end
+        last = chance
+        table.insert(line, string.format("%d: %.2f %s", rating, chance, EqCompetition.successBand(chance)))
+    end
+    print("info: Novice podium chance by rating -> " .. table.concat(line, ", "))
+    check("podium chance rises with rating", rising)
+    check("a weak horse is a long shot", EqCompetition.successBand(
+        EqCompetition.podiumChance(event, config, 25, 1, 0, EqRandom.new("odds weak"))) == "longShot")
+    check("a strong horse is the favourite", EqCompetition.successBand(
+        EqCompetition.podiumChance(event, config, 58, 1, 0, EqRandom.new("odds strong"))) == "favourite")
+    check("elimination risk lowers the chance", EqCompetition.podiumChance(event, config, 48, 1, 0.5, EqRandom.new("x"))
+        < EqCompetition.podiumChance(event, config, 48, 1, 0, EqRandom.new("x")))
+
+    local ceilings = { stamina = 60, speed = 60, agility = 60, temperament = 60 }
+    local weights = config.disciplineByName.dressage.weights
+    local green = { stamina = 10, speed = 10, agility = 10, temperament = 10 }
+    local schooled = { stamina = 56, speed = 56, agility = 56, temperament = 56 }
+    local _, greenBand = EqTraining.boostBenefit(green, ceilings, weights, 24)
+    local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
+    check("a green two-year-old gets a medium training benefit", greenBand == "medium")
+    check("a horse at staff level gets none", schooledBand == "none")
+end
+
 local jumping = config.disciplineByName.showJumping
 local eventing = config.disciplineByName.eventing
 local specialist = { stamina = 40, speed = 50, agility = 95, temperament = 85 }

@@ -172,6 +172,32 @@ function EqCompetitionManager.ratingFor(record, event)
 end
 
 
+--- What a horse could expect from an event, for the Events tab.
+--- @param record table
+--- @param animal table RLRM Animal
+--- @param event table
+--- @return table prospects { chance, success (a SUCCESS_BANDS name), benefit (a BENEFIT_BANDS
+---     name, nil when the event gives no training) }
+function EqCompetitionManager.prospects(record, animal, event)
+    local config = EqCompetitionManager.config
+    local discipline = config.disciplineByName[event.discipline]
+    local tier = config.tierByName[event.tier]
+    local rating = EqCompetitionManager.ratingFor(record, event)
+    local elimination = EqRisk.eliminationChance(discipline, tier, rating, record.trained.temperament or 0)
+    -- Seeded by event and horse, so the word doesn't flicker each time the tab opens.
+    local rng = EqRandom.new(string.format("odds %s %s", tostring(event.id), record.id))
+    local chance = EqCompetition.podiumChance(event, config, rating,
+        EqCompetition.condition(animal.fitness, animal.health), elimination, rng)
+
+    local benefit = nil
+    if tier.trainingBoost > 0 then
+        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0)
+        benefit = band
+    end
+    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit }
+end
+
+
 --- @param name string injury name from events.xml
 --- @return string text such as "a tendon injury"
 function EqCompetitionManager.injuryTitle(name)

@@ -86,6 +86,50 @@ function EqCompetition.canEnter(tier, ageMonths, rating)
 end
 
 
+--- A horse's chance of a top-three place, for the Events tab: the event run many times
+--- against fresh rivals, with the chance of being eliminated taken off.
+--- @param event table { discipline, tier, prize }
+--- @param config table EqEventConfig
+--- @param rating number
+--- @param condition number from EqCompetition.condition
+--- @param eliminationChance number 0..1
+--- @param rng table EqRandom
+--- @param runs number|nil default 200
+--- @return number chance 0..1
+function EqCompetition.podiumChance(event, config, rating, condition, eliminationChance, rng, runs)
+    runs = runs or 200
+    local podiums = 0
+    local entrants = { { key = "horse", rating = rating, condition = condition } }
+    for _ = 1, runs do
+        for _, runner in ipairs(EqCompetition.run(event, config, entrants, rng)) do
+            if runner.key ~= nil then
+                if runner.place <= #EqCompetition.PRIZE_SHARES then podiums = podiums + 1 end
+                break
+            end
+        end
+    end
+    return podiums / runs * (1 - (eliminationChance or 0))
+end
+
+
+-- Words for a podium chance, best first.
+EqCompetition.SUCCESS_BANDS = {
+    { from = 0.6, name = "favourite" },
+    { from = 0.35, name = "contender" },
+    { from = 0.12, name = "outsider" },
+    { from = -math.huge, name = "longShot" },
+}
+
+
+--- @param chance number from podiumChance
+--- @return string name a SUCCESS_BANDS name
+function EqCompetition.successBand(chance)
+    for _, band in ipairs(EqCompetition.SUCCESS_BANDS) do
+        if chance >= band.from then return band.name end
+    end
+end
+
+
 --- @param items table list with a .chance each
 --- @param rng table EqRandom
 --- @return table item

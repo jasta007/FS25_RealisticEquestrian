@@ -223,12 +223,17 @@ end
 function EqInfoDisplay.geneticsValue(trained)
     local bandKey = EqInfoDisplay.statBandKey(trained)
     local text = string.format("%d - %s", math.floor(trained + 0.5), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
+    return text, EqInfoDisplay.bandColor(bandKey)
+end
 
+
+--- @param bandKey string RLRM's l10n key for a genetics band, such as "rl_ui_genetics_high"
+--- @return table|nil color { r, g, b, a } from RLRM's genetics palette
+function EqInfoDisplay.bandColor(bandKey)
     local formatter = EqRLRM.get("RLGeneticsFormatter")
     local helper = EqRLRM.get("RLDetailPaneHelper")
     local colorKey = formatter ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY[bandKey] or nil
-    local color = colorKey ~= nil and helper.GENETICS_COLOR ~= nil and helper.GENETICS_COLOR[colorKey] or nil
-    return text, color
+    return colorKey ~= nil and helper ~= nil and helper.GENETICS_COLOR ~= nil and helper.GENETICS_COLOR[colorKey] or nil
 end
 
 
