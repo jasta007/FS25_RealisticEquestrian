@@ -8,5 +8,5 @@ The painting is John Frederick Herring Senior, *The Interior of a Stable with a 
 Harness, with Ducks, Goats, and a Cockerel by a Manger* (1843). Herring died in 1856, so the work is
 in the public domain. `source/herring_stable_1843.png` is the square crop used, lightly retouched to
 remove one duck. `source/compose_icon.py` darkens the top and sets the logotype above the horse's
-head. The lettering uses Cormorant Garamond Italic and Cormorant SC (SIL Open Font License); the
+head. The lettering uses Playfair Display SC (SIL Open Font License); the
 fonts are not included, only the rendered images.
