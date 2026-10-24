@@ -3,8 +3,8 @@
     Shows the four stats wherever RLRM already shows a horse's fitness and riding.
 
     A player sees each stat's trained level as a number, and its potential (the ceiling) only
-    as RLRM's genetics word (Average, High, Very high...), banded the same way as RLRM's own
-    genes. The exact ceiling stays hidden, as a real owner could only judge it.
+    as RLRM's genetics word (Average, High, Very high...), on our own ladder that follows the
+    event tiers (STAT_BANDS). The exact ceiling stays hidden, as a real owner could only judge it.
 
     - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
       a bar of the trained level with "54 (High)" as its text.
@@ -49,14 +49,41 @@ local function statTitle(stat)
 end
 
 
---- A ceiling as RLRM's genetics word ("Average", "Very high"), with the same ladder RLRM uses
---- for its own genes: the ceiling is read back to the gene that gives it (after the talent
---- budget's squeeze) and banded by RLGenetics.perTrait.
+-- Our own ladder for a 0-100 stat, in RLRM's words and colours. It follows the event tiers
+-- rather than RLRM's gene scale: Average is a Novice horse, High an Intermediate one, Very high
+-- Advanced and Extremely high Championship class. Used for both potential (the ceiling) and
+-- trained level, so a horse trained to its potential shows the same word for both.
+EqInfoDisplay.STAT_BANDS = {
+    { from = 85, key = "rl_ui_genetics_extremelyHigh" },
+    { from = 70, key = "rl_ui_genetics_veryHigh" },
+    { from = 55, key = "rl_ui_genetics_high" },
+    { from = 40, key = "rl_ui_genetics_average" },
+    { from = 30, key = "rl_ui_genetics_low" },
+    { from = 20, key = "rl_ui_genetics_veryLow" },
+    { from = -math.huge, key = "rl_ui_genetics_extremelyLow" },
+}
+
+
+--- @param value number a stat level or ceiling, 0-100
+--- @return string key RLRM's l10n key for the band
+function EqInfoDisplay.statBandKey(value)
+    for _, band in ipairs(EqInfoDisplay.STAT_BANDS) do
+        if value >= band.from then return band.key end
+    end
+end
+
+
+--- @param value number
+--- @return string word such as "High"
+local function bandText(value)
+    return g_i18n:getText(EqInfoDisplay.statBandKey(value), EqRLRM.MOD_NAME)
+end
+
+
 --- @param ceiling number
---- @return string word
+--- @return string word for the horse's potential in a stat
 function EqInfoDisplay.potentialText(ceiling)
-    local gene = (ceiling - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE
-    return EqRLRM.geneBandText(gene)
+    return bandText(ceiling)
 end
 
 
@@ -155,16 +182,13 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
 end
 
 
--- Trained level read onto RLRM's gene scale for banding and colour with the same ladder as the
--- potential: the gene that would give a ceiling equal to this level.
 
 
 --- @param trained number
 --- @return string valueText "54 - High", in RLRM's genetics style
 --- @return table|nil color { r, g, b, a } from RLRM's genetics palette
 function EqInfoDisplay.geneticsValue(trained)
-    local gene = (trained - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE
-    local bandKey = EqRLRM.get("RLGenetics").perTrait(gene)
+    local bandKey = EqInfoDisplay.statBandKey(trained)
     local text = string.format("%d - %s", math.floor(trained + 0.5), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
 
     local formatter = EqRLRM.get("RLGeneticsFormatter")

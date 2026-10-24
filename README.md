@@ -33,12 +33,14 @@ Each of Stamina, Speed, Agility and Temperament has a gene on RLRM's 0.25-1.75 s
 ceiling from 40 to 100, and a trained level that works up to that ceiling. A hidden talent budget
 caps the four ceilings' total, so the best horses can max one or two stats, never all four.
 
-Players never see a ceiling as a number, only as RLRM's genetics word for it (Average, High, Very
-high...), worked out the same way RLRM bands its own genes. In RLRM's menu (Shift+O, or R in the
-animals tab) the stat grid shows each stat's potential, such as `Speed potential  High`, and the
-Genetics column shows the trained level, such as `Speed 54 - Low`, coloured on RLRM's red-to-green
+Players never see a ceiling as a number, only as a word in RLRM's genetics style (Average, High,
+Very high...). The words follow the event tiers: 40-54 is Average (Novice), 55-69 High
+(Intermediate), 70-84 Very high (Advanced), 85 and up Extremely high (Championship); below 40 is
+Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in the
+animals tab) the stat grid shows each stat's potential, such as `Speed potential  Very high`, and the
+Genetics column shows the trained level, such as `Speed 60 - High`, coloured on RLRM's red-to-green
 scale with the same ladder, so a horse trained to its full potential shows the same word in both.
-The box you get when looking at a horse shows `Speed 54 (High)`. The console's `eqHorses` still
+The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
 RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
