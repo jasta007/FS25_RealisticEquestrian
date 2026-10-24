@@ -1,23 +1,23 @@
 --[[
     EqInfoDisplay.lua
-    Shows the four stats wherever RLRM already shows a horse's fitness and riding:
+    Shows the four stats wherever RLRM already shows a horse's fitness and riding.
 
-    - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu (Info, Sell and Buy tabs)
-      and the pen's animal screen. Each stat becomes a bar of trained level out of 100, with
-      "trained / ceiling" as its text.
-    - AnimalHorse.showHorseHudInfo feeds the info box you get when looking at a horse.
+    A player sees each stat's trained level as a number, and its potential (the ceiling) only
+    as RLRM's genetics word (Average, High, Very high...), banded the same way as RLRM's own
+    genes. The exact ceiling stays hidden, as a real owner could only judge it.
 
-    Both are RLRM functions that run for horses only, so appending to them adds our rows in
-    the right place without touching any other animal or any RLRM file.
+    - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
+      a bar of the trained level with "54 (High)" as its text.
+    - AnimalHorse.showHorseHudInfo feeds the info box you get when looking at a horse, the same
+      "54 (High)".
 
-    In RLRM's menu the four stats go in the Genetics column instead, styled like RLRM's own
-    rows: "54 / 77 - High", label and value coloured by the band of the horse's potential
-    (its ceiling, read back as a gene on RLRM's scale). The column has six rows in RLRM's XML,
-    so the first time a frame shows a horse we clone the last row for the extra slots we
-    need. RLRM's own loop only ever touches rows 1-6, and ours are hidden for other animals.
-    A wrap on RLAnimalInfoService.getAnimalDisplay takes our rows out of the stat grid there,
-    so they are not shown twice. If the column hook is unavailable they stay in the grid,
-    moved up to its second and third lines.
+    In RLRM's menu the two halves are split, as James asked:
+    - The stat grid shows potential: our rows become "Stamina potential  High" and move up to
+      its second and third lines, where the grid's ten slots never push them off.
+    - The Genetics column shows the trained level like RLRM's own rows, "54 - High", label and
+      value coloured on RLRM's red-to-green scale. The column has six rows in RLRM's XML, so the
+      first time a frame shows a horse we clone its last row for the extra slots. RLRM's loop
+      only touches rows 1-6, and ours are hidden for other animals.
 
     Meat quality: for horses only, RLRM's Meat Quality row is taken out of the menu's genetics
     column and the look-at genetics box. It is a display preference, saved per machine in
@@ -31,8 +31,8 @@ EqInfoDisplay = {}
 -- in the Genetics column.
 EqInfoDisplay.MENU_FIRST_ROW = 3
 
--- True once RLDetailPaneHelper.updateAnimalDisplay is hooked: the stats then live in the
--- Genetics column, not the stat grid.
+-- True once RLDetailPaneHelper.updateAnimalDisplay is hooked: trained levels then live in the
+-- Genetics column and the stat grid shows potential only.
 EqInfoDisplay.statsInGenetics = false
 
 EqInfoDisplay.MEAT_LABEL_KEY = "rl_ui_meat"
@@ -49,11 +49,22 @@ local function statTitle(stat)
 end
 
 
+--- A ceiling as RLRM's genetics word ("Average", "Very high"), with the same ladder RLRM uses
+--- for its own genes: the ceiling is read back to the gene that gives it (after the talent
+--- budget's squeeze) and banded by RLGenetics.perTrait.
+--- @param ceiling number
+--- @return string word
+function EqInfoDisplay.potentialText(ceiling)
+    local gene = (ceiling - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE
+    return EqRLRM.geneBandText(gene)
+end
+
+
 --- @param trained number
 --- @param ceiling number
---- @return string text such as "54 / 77"
+--- @return string text such as "54 (High)"
 local function statText(trained, ceiling)
-    return string.format("%d / %d", math.floor(trained + 0.5), math.floor(ceiling + 0.5))
+    return string.format("%d (%s)", math.floor(trained + 0.5), EqInfoDisplay.potentialText(ceiling))
 end
 
 
@@ -75,6 +86,7 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
             ratio = ratio,
             valueText = statText(trained, ceilings[stat]),
             eqStat = stat,
+            eqCeiling = ceilings[stat],
         })
     end
 end
@@ -109,10 +121,15 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
 
     local rows = display.statRows
     if rows ~= nil and EqInfoDisplay.statsInGenetics then
-        for i = #rows, 1, -1 do
-            if rows[i].eqStat ~= nil then table.remove(rows, i) end
+        -- Trained levels are in the Genetics column, so the grid shows potential only.
+        for _, row in ipairs(rows) do
+            if row.eqStat ~= nil then
+                row.title = g_i18n:getText("eq_potential_" .. row.eqStat)
+                row.valueText = EqInfoDisplay.potentialText(row.eqCeiling)
+            end
         end
-    elseif rows ~= nil then
+    end
+    if rows ~= nil then
         local ours, others = {}, {}
         for _, row in ipairs(rows) do
             table.insert(row.eqStat ~= nil and ours or others, row)
@@ -138,14 +155,17 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
 end
 
 
+-- Trained level read onto RLRM's gene scale for banding and colour with the same ladder as the
+-- potential: the gene that would give a ceiling equal to this level.
+
+
 --- @param trained number
---- @param ceiling number
---- @return string valueText "54 / 77 - High"
+--- @return string valueText "54 - High", in RLRM's genetics style
 --- @return table|nil color { r, g, b, a } from RLRM's genetics palette
-function EqInfoDisplay.geneticsValue(trained, ceiling)
-    local gene = EqStats.clampGene((ceiling - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE)
+function EqInfoDisplay.geneticsValue(trained)
+    local gene = (trained - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE
     local bandKey = EqRLRM.get("RLGenetics").perTrait(gene)
-    local text = string.format("%s - %s", statText(trained, ceiling), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
+    local text = string.format("%d - %s", math.floor(trained + 0.5), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
 
     local formatter = EqRLRM.get("RLGeneticsFormatter")
     local helper = EqRLRM.get("RLDetailPaneHelper")
@@ -199,11 +219,10 @@ function EqInfoDisplay.renderGenetics(frame, animal)
     end
 
     if record ~= nil then
-        local ceilings = record:getCeilings()
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
             local index = first + i - 1
             local label, value = frame.geneticsLabel[index], frame.geneticsValue[index]
-            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0, ceilings[stat])
+            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0)
             rows[index]:setVisible(true)
             label:setText(statTitle(stat))
             value:setText(text)

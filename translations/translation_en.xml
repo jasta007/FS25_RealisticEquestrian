@@ -5,6 +5,10 @@
         <text name="eq_stat_speed" text="Speed"/>
         <text name="eq_stat_agility" text="Agility"/>
         <text name="eq_stat_temperament" text="Temperament"/>
+        <text name="eq_potential_stamina" text="Stamina potential"/>
+        <text name="eq_potential_speed" text="Speed potential"/>
+        <text name="eq_potential_agility" text="Agility potential"/>
+        <text name="eq_potential_temperament" text="Temperament potential"/>
         <text name="eq_stat_short_stamina" text="Sta"/>
         <text name="eq_stat_short_speed" text="Spd"/>
         <text name="eq_stat_short_agility" text="Agi"/>
