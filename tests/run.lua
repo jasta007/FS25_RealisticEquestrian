@@ -475,7 +475,7 @@ local function expected(d, tier, rating)
                 if r.key == "me" then total = total + r.prize end
             end
         end
-        evCache[key] = total / 150 - tier.fee
+        evCache[key] = total / 150 - tier.fee - 150   -- transport
     end
     return evCache[key]
 end

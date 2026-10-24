@@ -101,6 +101,8 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_VET_BILLS = MoneyType.register("eqVetBills", "eq_money_vetBills")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_TRANSPORT = MoneyType.register("eqTransport", "eq_money_transport")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
         end)
     end

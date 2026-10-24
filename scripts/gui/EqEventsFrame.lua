@@ -168,6 +168,11 @@ function EqEventsFrame:updateSummary()
                 or string.format(g_i18n:getText("eq_ui_ages_from"), tier.minAge)
             text = string.format(g_i18n:getText("eq_ui_summary_event"), EqCompetitionManager.eventTitle(event), ages,
                 tier.minRating, tier.maxRating, tier.field)
+            local left = EqCompetitionManager.entriesLeft(farmId())
+            if left ~= nil then
+                text = text .. " " .. string.format(g_i18n:getText("eq_ui_entriesLeft"), left,
+                    EqCompetitionManager.settings.entriesPerMonth)
+            end
         end
     end
     self.summaryText:setText(text)
@@ -182,7 +187,7 @@ function EqEventsFrame:updateButtons()
     if self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter then
         local event = EqCompetitionManager.events[self.selectedEventId]
         self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enter"), horse.name,
-            g_i18n:formatMoney(event ~= nil and event.fee or 0, 0, true, true))
+            g_i18n:formatMoney((event ~= nil and event.fee or 0) + horse.transport, 0, true, true))
         table.insert(self.menuButtonInfo, self.enterButtonInfo)
     end
     self:setMenuButtonInfoDirty()

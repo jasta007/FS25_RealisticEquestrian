@@ -58,6 +58,8 @@ function EqEventsView.eventRows(farmId)
         local yours
         if #entered > 0 then
             yours = string.format(g_i18n:getText("eq_ui_entered"), table.concat(entered, ", "))
+        elseif manager.entriesLeft(farmId) == 0 then
+            yours = g_i18n:getText("eq_ui_farmLimit")
         else
             local count = manager.countEligible(event, horses)
             yours = count > 0 and string.format(g_i18n:getText("eq_ui_canEnter"), count) or g_i18n:getText("eq_ui_noneEligible")
@@ -81,10 +83,11 @@ end
 --- The player's horses for one event: rating, and whether and why not they can enter.
 --- @param event table
 --- @param farmId number
---- @return table rows { animal, record, name, age, rating, status, canEnter }
+--- @return table rows { animal, record, name, age, rating, status, canEnter, transport }
 function EqEventsView.horseRows(event, farmId)
     local manager = EqCompetitionManager
     local tier = manager.config.tierByName[event.tier]
+    local outOfEntries = manager.entriesLeft(farmId) == 0
     local rows = {}
 
     for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
@@ -104,8 +107,12 @@ function EqEventsView.horseRows(event, farmId)
                 status = g_i18n:getText("eq_status_" .. unavailable)
             else
                 local ok, reason = EqCompetition.canEnter(tier, age, rating)
-                canEnter = ok
-                status = g_i18n:getText(ok and "eq_ui_status_ok" or ("eq_ui_status_" .. reason))
+                canEnter = ok and not outOfEntries
+                if ok and outOfEntries then
+                    status = g_i18n:getText("eq_ui_farmLimit")
+                else
+                    status = g_i18n:getText(ok and "eq_ui_status_ok" or ("eq_ui_status_" .. reason))
+                end
             end
 
             table.insert(rows, {
@@ -117,6 +124,7 @@ function EqEventsView.horseRows(event, farmId)
                 ratingValue = rating,
                 status = status,
                 canEnter = canEnter == true,
+                transport = manager.transportCost(animal),
             })
         end
     end

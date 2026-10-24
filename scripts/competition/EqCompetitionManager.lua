@@ -9,7 +9,8 @@
     - Monthly events (Advanced, Championship) open at the start of each month and resolve at the
       start of the next.
 
-    Players enter from the Events tab or with eqEnter and pay the fee at once. A horse starts at
+    Players enter from the Events tab or with eqEnter and pay the fee and the horse's transport at
+    once. A farm makes at most entriesPerMonth entries a month (a setting, 3 by default). A horse starts at
     most MAX_ROUND_STARTS round events a month, so a good horse is not a daily money tap, and a
     horse bought from the dealer settles in for a month before it can compete. Results, prize
     money and the career record follow when the event resolves. EqRisk decides scratches,
@@ -28,6 +29,15 @@ EqCompetitionManager.CADENCE_DAY = "day"
 EqCompetitionManager.CADENCE_MONTH = "month"
 EqCompetitionManager.RESULTS_KEPT = 40
 
+-- Entries a farm may make a month, whatever the event kind; 0 means no limit. A setting.
+EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH = 3
+
+-- Getting a horse to an event costs a share of its transport price (the base game's, by age:
+-- $600 for an adult), paid with the entry fee. A quarter keeps Novice worth entering.
+EqCompetitionManager.TRANSPORT_SHARE = 0.25
+-- Used when the horse's subtype has no transport price.
+EqCompetitionManager.TRANSPORT_FALLBACK = 150
+
 -- A Training Event under the monthly cadence counts as this share of a month's work.
 EqCompetitionManager.MONTHLY_BOOST_MONTHS = 0.25
 
@@ -38,7 +48,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.results = {}
     EqCompetitionManager.nextEventId = 1
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
-        injuries = true, forcedRetirement = false }
+        injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH }
+    EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
 end
 
 EqCompetitionManager.reset()
@@ -396,6 +407,7 @@ end
 
 
 function EqCompetitionManager.onPeriodChanged()
+    EqCompetitionManager.farmEntries = {}
     EqCompetitionManager.monthlyCare(indexHorses())
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_MONTH then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
@@ -448,7 +460,30 @@ function EqCompetitionManager.countEligible(event, horses)
 end
 
 
---- Enter a horse. One round entry and one monthly entry per horse at a time.
+--- @param farmId number
+--- @return number|nil left entries the farm can still make this month, nil when there is no limit
+function EqCompetitionManager.entriesLeft(farmId)
+    local limit = EqCompetitionManager.settings.entriesPerMonth or 0
+    if limit <= 0 then return nil end
+    return math.max(limit - (EqCompetitionManager.farmEntries[farmId] or 0), 0)
+end
+
+
+--- What it costs to take a horse to an event: a share of the base game's transport price for its age.
+--- @param animal table RLRM Animal
+--- @return number cost
+function EqCompetitionManager.transportCost(animal)
+    local subType = animal.getSubType ~= nil and animal:getSubType() or nil
+    if subType ~= nil and subType.transportPrice ~= nil then
+        local price = subType.transportPrice:get(math.max(animal.age or 0, 0))
+        return math.floor(price * EqCompetitionManager.TRANSPORT_SHARE / 10 + 0.5) * 10
+    end
+    return EqCompetitionManager.TRANSPORT_FALLBACK
+end
+
+
+--- Enter a horse. One round entry and one monthly entry per horse at a time, and at most
+--- entriesPerMonth entries a month per farm. The entry fee and the transport are paid at once.
 --- @param eventId number
 --- @param animal table RLRM Animal
 --- @param farmId number
@@ -460,6 +495,11 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
 
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return false, g_i18n:getText("eq_enter_noEvent") end
+    local left = EqCompetitionManager.entriesLeft(farmId)
+    if left ~= nil and left <= 0 then
+        return false, string.format(g_i18n:getText("eq_enter_farmLimit"), EqCompetitionManager.settings.entriesPerMonth)
+    end
+
     local unavailable = EqCompetitionManager.unavailableReason(record, event.kind)
     if unavailable == "injured" then
         return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
@@ -484,14 +524,20 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
+    local transport = EqCompetitionManager.transportCost(animal)
     local farm = g_farmManager:getFarmById(farmId)
-    if farm ~= nil and farm:getBalance() < event.fee then return false, g_i18n:getText("eq_enter_noMoney") end
+    if farm ~= nil and farm:getBalance() < event.fee + transport then return false, g_i18n:getText("eq_enter_noMoney") end
 
     g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
+    if transport > 0 then
+        g_currentMission:addMoney(-transport, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
+    end
+    EqCompetitionManager.farmEntries[farmId] = (EqCompetitionManager.farmEntries[farmId] or 0) + 1
     local name = animal.getName ~= nil and animal:getName() or record.id
     table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name })
 
-    return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating)
+    return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
+        g_i18n:formatMoney(transport, 0, true, true))
 end
 
 
@@ -504,7 +550,17 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setBool(key .. ".settings#racing", EqCompetitionManager.settings.racing)
     xmlFile:setBool(key .. ".settings#injuries", EqCompetitionManager.settings.injuries)
     xmlFile:setBool(key .. ".settings#forcedRetirement", EqCompetitionManager.settings.forcedRetirement)
+    xmlFile:setInt(key .. ".settings#entriesPerMonth", EqCompetitionManager.settings.entriesPerMonth)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
+
+    local farmIds = {}
+    for farmId in pairs(EqCompetitionManager.farmEntries) do table.insert(farmIds, farmId) end
+    table.sort(farmIds)
+    for i, farmId in ipairs(farmIds) do
+        local farmKey = string.format("%s.farmEntries.farm(%d)", key, i - 1)
+        xmlFile:setInt(farmKey .. "#farmId", farmId)
+        xmlFile:setInt(farmKey .. "#entries", EqCompetitionManager.farmEntries[farmId])
+    end
 
     local ids = {}
     for id in pairs(EqCompetitionManager.events) do table.insert(ids, id) end
@@ -561,7 +617,17 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.racing = xmlFile:getBool(key .. ".settings#racing", settings.racing)
     settings.injuries = xmlFile:getBool(key .. ".settings#injuries", settings.injuries)
     settings.forcedRetirement = xmlFile:getBool(key .. ".settings#forcedRetirement", settings.forcedRetirement)
+    settings.entriesPerMonth = xmlFile:getInt(key .. ".settings#entriesPerMonth", settings.entriesPerMonth)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
+
+    local f = 0
+    while true do
+        local farmKey = string.format("%s.farmEntries.farm(%d)", key, f)
+        if not xmlFile:hasProperty(farmKey) then break end
+        local farmId = xmlFile:getInt(farmKey .. "#farmId")
+        if farmId ~= nil then EqCompetitionManager.farmEntries[farmId] = xmlFile:getInt(farmKey .. "#entries", 0) end
+        f = f + 1
+    end
 
     local i = 0
     while true do

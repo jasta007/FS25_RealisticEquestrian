@@ -92,7 +92,7 @@
         <text name="eq_ui_result_place" text="%d of %d"/>
         <text name="eq_ui_result_eliminated" text="Eliminated"/>
         <text name="eq_ui_result_scratched" text="Scratched"/>
-        <text name="eq_ui_button_enter" text="Enter %s (%s)"/>
+        <text name="eq_ui_button_enter" text="Enter %s (%s with transport)"/>
         <text name="eq_ui_button_results" text="Results"/>
         <text name="eq_ui_button_events" text="Events"/>
         <text name="eq_ui_noEvents" text="No events are open right now. New ones are drawn each round."/>
@@ -111,7 +111,11 @@
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
         <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>
-        <text name="eq_enter_done" text="%s entered in %s (rating %.0f)."/>
+        <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Transport: %s."/>
+        <text name="eq_enter_farmLimit" text="You have used all %d of this month's entries. More open next month."/>
+        <text name="eq_ui_farmLimit" text="No entries left this month"/>
+        <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>
+        <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
     </texts>

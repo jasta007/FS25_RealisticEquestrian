@@ -191,8 +191,10 @@ function EqConsole:consoleEvents()
         print("None of your horses can enter anything open right now (age or rating). New events are drawn next round.")
     end
 
-    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). Enter with eqEnter <event number> <horse>.",
-        #list, EqCompetitionManager.settings.cadence)
+    local left = EqCompetitionManager.entriesLeft(g_currentMission:getFarmId())
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse>; transport is paid on top of the fee.",
+        #list, EqCompetitionManager.settings.cadence,
+        left ~= nil and string.format("You have %d of %d entries left this month.", left, EqCompetitionManager.settings.entriesPerMonth) or "No monthly entry limit.")
 end
 
 
@@ -311,13 +313,16 @@ function EqConsole:consoleSettings(name, value)
         settings.injuries = value == "on"
     elseif name == "forcedRetirement" and (value == "on" or value == "off") then
         settings.forcedRetirement = value == "on"
+    elseif name == "entriesPerMonth" and tonumber(value) ~= nil and tonumber(value) >= 0 then
+        settings.entriesPerMonth = math.floor(tonumber(value))
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s. Changes apply from the next round.",
-        settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement))
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s. Changes apply from the next round.",
+        settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
+        settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit")
 end
 
 
@@ -340,7 +345,7 @@ function EqConsole.register()
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)

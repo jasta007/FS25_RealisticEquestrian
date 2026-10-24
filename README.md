@@ -91,6 +91,11 @@ prizes, and sometimes none in a discipline.
   enter something it can win.
 - A horse can start at most **two round events a month** (monthly events are on top), so a good
   horse is not a daily money tap however many days your months have.
+- A farm can make **three entries a month** in all, so you pick your best horses rather than
+  sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
+- Every entry pays **transport** on top of the fee: a quarter of the game's transport price for
+  the horse ($150 for an adult). Hauling the horse there yourself instead is a stretch goal.
+- A horse can only be in one round event and one monthly event at a time.
 - A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
   dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
   half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
