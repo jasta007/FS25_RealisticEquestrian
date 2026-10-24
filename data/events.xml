@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    Realistic Equestrian event pool. Every round the schedule draws events from here, so a new
+    discipline or tier needs no code.
+
+    discipline
+        name            key used in saves and console commands
+        stamina/speed/agility/temperament   weight of each stat (+ = 1, ++ = 2, +++ = 3)
+        weakestShare    0..1, share of the rating taken from the horse's weakest weighted stat
+                        (all-round tests punish a hole in the horse)
+        outdoor         true: the going (firm, good, soft) changes the weights
+        racing          true: a race; switched off by the racing setting
+        elimination     base chance a horse is eliminated (refusals, falls) or pulled up
+        injury          base chance a horse is injured in a run
+    tier
+        name            key used in saves
+        minAge/maxAge   months; maxAge 0 means no limit
+        minRating/maxRating   discipline rating a horse needs to enter. Only Novice has a real
+                        cap, so it stays a class for novices; above it a horse can always enter
+                        something it can win, and the limit on starts a month (EqConstants
+                        MAX_ROUND_STARTS) stops a strong horse farming easy wins.
+        fee/prize       entry fee and total prize pool, before the schedule's spread
+        field           runners including simulated rivals
+        rivalMin/rivalMax     discipline rating range of the simulated rivals
+        monthly         true: runs once a month; false: every round (day or month, by setting)
+        chance          chance the tier runs in a given round, per discipline
+        trainingBoost   share of a full day's training the run gives (Training Events)
+        risk            multiplies elimination and injury chances (easier courses below 1)
+
+    going: injury multiplies the injury chance on that ground.
+    risk: injuries a horse can come back from, by how often each happens, the months of box rest
+        and the vet bill each month. careerEnding: chance a serious injury ends the horse's
+        career instead, only with the forced retirement setting on (the default is off).
+-->
+<events>
+    <disciplines>
+        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01"/>
+        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003"/>
+        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025"/>
+        <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02"/>
+        <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015"/>
+        <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02"/>
+        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03"/>
+    </disciplines>
+
+    <tiers>
+        <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
+        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
+        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1"/>
+        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2"/>
+    </tiers>
+
+    <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its
+         own fee and prize. priceSpread: fee and prize vary by up to this share either way. -->
+    <schedule copiesMax="3" priceSpread="0.35"/>
+
+    <!-- How the going moves weight between stats on outdoor courses. -->
+    <goings>
+        <going name="firm" chance="0.3" stamina="0.85" speed="1.2"  agility="1.0" temperament="1.0" injury="1.4"/>
+        <going name="good" chance="0.45" stamina="1.0" speed="1.0"  agility="1.0" temperament="1.0" injury="1.0"/>
+        <going name="soft" chance="0.25" stamina="1.3" speed="0.8"  agility="1.0" temperament="1.0" injury="1.1"/>
+    </goings>
+
+    <risk>
+        <injury name="minor"    chance="0.6" months="1" monthlyCost="1000"/>
+        <injury name="moderate" chance="0.3" months="3" monthlyCost="3500"/>
+        <injury name="serious"  chance="0.1" months="6" monthlyCost="10000" careerEnding="0.1"/>
+    </risk>
+</events>

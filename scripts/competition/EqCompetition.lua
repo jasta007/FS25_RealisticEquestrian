@@ -1,0 +1,179 @@
+--[[
+    EqCompetition.lua
+    The competition maths: pure functions with no game or RLRM calls, so they run headless.
+
+    - A horse's discipline rating (0-100) is the weighted average of its trained stats, with the
+      going moving weight between stats on outdoor courses. All-round tests (cross country,
+      eventing, steeplechase) take part of the rating from the weakest weighted stat, so a hole
+      in a horse costs it there; specialists shine in the one-discipline events.
+    - On the day, the rating is scaled by condition (RLRM's fitness and health) and a little luck.
+    - Simulated rivals fill the rest of the field with ratings drawn from the tier's range.
+    - The top three share the prize pool 50/30/20.
+]]
+
+EqCompetition = {}
+
+EqCompetition.PRIZE_SHARES = { 0.5, 0.3, 0.2 }
+
+-- Spread of the day's luck around a horse's rating; racing is a little less predictable.
+EqCompetition.LUCK_SD = 0.06
+EqCompetition.RACING_LUCK_SD = 0.09
+
+EqCompetition.KIND_ROUND = "round"
+EqCompetition.KIND_MONTH = "month"
+
+
+--- @param discipline table
+--- @param going table|nil { modifiers }, ignored indoors
+--- @return table weights stat -> weight after the going
+function EqCompetition.effectiveWeights(discipline, going)
+    local weights = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local modifier = (discipline.outdoor and going ~= nil) and going.modifiers[stat] or 1
+        weights[stat] = discipline.weights[stat] * modifier
+    end
+    return weights
+end
+
+
+--- @param trained table stat -> trained level
+--- @param discipline table
+--- @param going table|nil
+--- @return number rating 0..100
+function EqCompetition.rating(trained, discipline, going)
+    local weights = EqCompetition.effectiveWeights(discipline, going)
+    local total, weightSum, weakest = 0, 0, math.huge
+
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local weight = weights[stat]
+        if weight > 0 then
+            local level = trained[stat] or 0
+            total = total + weight * level
+            weightSum = weightSum + weight
+            weakest = math.min(weakest, level)
+        end
+    end
+
+    if weightSum == 0 then return 0 end
+    local average = total / weightSum
+    return average * (1 - discipline.weakestShare) + weakest * discipline.weakestShare
+end
+
+
+--- How RLRM's day-to-day condition scales performance.
+--- @param fitness number 0..100 (RLRM's horse fitness)
+--- @param health number 0..100
+--- @return number factor about 0.6..1
+function EqCompetition.condition(fitness, health)
+    local fitnessFactor = 0.75 + 0.25 * EqStats.clamp((fitness or 0) / 100, 0, 1)
+    local healthFactor = 1
+    if (health or 100) < 75 then healthFactor = 0.8 + 0.2 * EqStats.clamp((health or 0) / 75, 0, 1) end
+    return fitnessFactor * healthFactor
+end
+
+
+--- @param tier table
+--- @param ageMonths number
+--- @param rating number the horse's rating for this event
+--- @return boolean ok
+--- @return string|nil reason "tooYoung", "tooOld", "ratingLow" or "ratingHigh"
+function EqCompetition.canEnter(tier, ageMonths, rating)
+    if ageMonths < tier.minAge then return false, "tooYoung" end
+    if tier.maxAge > 0 and ageMonths > tier.maxAge then return false, "tooOld" end
+    if rating < tier.minRating then return false, "ratingLow" end
+    if rating > tier.maxRating then return false, "ratingHigh" end
+    return true
+end
+
+
+--- @param items table list with a .chance each
+--- @param rng table EqRandom
+--- @return table item
+local function pickWeighted(items, rng)
+    local total = 0
+    for _, item in ipairs(items) do total = total + item.chance end
+    local roll = rng:uniform(0, total)
+    for _, item in ipairs(items) do
+        roll = roll - item.chance
+        if roll <= 0 then return item end
+    end
+    return items[#items]
+end
+
+
+--- Draw the events for one round.
+--- @param config table EqEventConfig
+--- @param rng table EqRandom
+--- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
+--- @param racingEnabled boolean
+--- @return table events list of { discipline, tier, going, fee, prize, kind }
+function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
+    local events = {}
+    local wantMonthly = kind == EqCompetition.KIND_MONTH
+
+    for _, discipline in ipairs(config.disciplines) do
+        if racingEnabled or not discipline.racing then
+            for _, tier in ipairs(config.tiers) do
+                if tier.monthly == wantMonthly then
+                    local copies = 0
+                    while copies < config.copiesMax and rng:next() < tier.chance * (copies == 0 and 1 or 0.4) do
+                        copies = copies + 1
+                        local spread = config.priceSpread
+                        local priceFactor = 1 + rng:uniform(-spread, spread)
+                        local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
+                        table.insert(events, {
+                            discipline = discipline.name,
+                            tier = tier.name,
+                            going = going ~= nil and going.name or nil,
+                            fee = math.floor(tier.fee * priceFactor / 10 + 0.5) * 10,
+                            -- A richer purse costs more to enter, but not in proportion.
+                            prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
+                            kind = kind,
+                        })
+                    end
+                end
+            end
+        end
+    end
+
+    return events
+end
+
+
+--- Run one event.
+--- @param event table { discipline, tier, going, prize }
+--- @param config table EqEventConfig
+--- @param entrants table list of { key, rating, condition }
+--- @param rng table EqRandom
+--- @param field number|nil runners in total, default the tier's field (fewer when some of the
+---     field was eliminated before the scoring)
+--- @return table results list sorted by place: { key or nil for a rival, place, score, prize }
+function EqCompetition.run(event, config, entrants, rng, field)
+    local discipline = config.disciplineByName[event.discipline]
+    local tier = config.tierByName[event.tier]
+    local luck = discipline.racing and EqCompetition.RACING_LUCK_SD or EqCompetition.LUCK_SD
+
+    local runners = {}
+    for _, entrant in ipairs(entrants) do
+        table.insert(runners, {
+            key = entrant.key,
+            score = entrant.rating * entrant.condition * (1 + rng:normal(0, luck)),
+        })
+    end
+
+    for _ = #entrants + 1, field or tier.field do
+        local rating = rng:uniform(tier.rivalMin, tier.rivalMax)
+        local condition = rng:uniform(0.85, 1)
+        table.insert(runners, { score = rating * condition * (1 + rng:normal(0, luck)) })
+    end
+
+    table.sort(runners, function(a, b) return a.score > b.score end)
+
+    for place, runner in ipairs(runners) do
+        runner.place = place
+        local share = EqCompetition.PRIZE_SHARES[place]
+        runner.prize = share ~= nil and math.floor(event.prize * share + 0.5) or 0
+    end
+
+    return runners
+end

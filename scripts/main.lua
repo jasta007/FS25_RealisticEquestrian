@@ -20,7 +20,18 @@ source(modDirectory .. "scripts/core/EqConstants.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
+source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/competition/EqEventConfig.lua")
+source(modDirectory .. "scripts/competition/EqCompetition.lua")
+source(modDirectory .. "scripts/competition/EqRisk.lua")
+source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
+source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
+source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
+source(modDirectory .. "scripts/gui/EqEventsView.lua")
+source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 
 local Log = EqLog
@@ -30,9 +41,12 @@ EqMain.activated = false
 EqMain.isActive = false
 
 
---- Every hook body runs under xpcall: these hooks sit inside the game's own load and save
---- chain, next to RLRM's, so an error here must be logged and swallowed, never allowed to abort
---- the chain and take RLRM down with it.
+local failureCounts = {}
+
+--- Every hook body runs under xpcall: these hooks sit inside the game's own load, save and
+--- display code, next to RLRM's, so an error here must be logged and swallowed, never allowed
+--- to abort the chain and take RLRM down with it. Display hooks run every frame, so each
+--- context logs its first failure in full and then only every 1000th.
 --- @param context string Name for the log line
 --- @param fn function
 local function guarded(context, fn)
@@ -41,7 +55,15 @@ local function guarded(context, fn)
         local trace = (debug ~= nil and debug.traceback ~= nil) and ("\n" .. debug.traceback()) or ""
         return tostring(e) .. trace
     end)
-    if not ok then Log:error("%s failed: %s", context, err) end
+    if ok then return end
+
+    local count = (failureCounts[context] or 0) + 1
+    failureCounts[context] = count
+    if count == 1 then
+        Log:error("%s failed: %s", context, err)
+    elseif count % 1000 == 0 then
+        Log:error("%s has failed %d times", context, count)
+    end
 end
 
 
@@ -54,6 +76,37 @@ function EqMain.activate()
         EqMain.isActive = EqRLRM.init()
     end)
 
+    if EqMain.isActive and EqRLRM.features.infoDisplay then
+        guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.eventsTab then
+        guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.horsePricing then
+        guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.menuLayout then
+        guarded("menu layout hooks", function() EqInfoDisplay.installMenu(guarded) end)
+    end
+
+    if EqMain.isActive then
+        guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
+        guarded("competition setup", function()
+            MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_VET_BILLS = MoneyType.register("eqVetBills", "eq_money_vetBills")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_TRANSPORT = MoneyType.register("eqTransport", "eq_money_transport")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            EqCompetitionManager.loadConfig(modDirectory)
+        end)
+    end
+
     if EqMain.isActive then
         Log:info("Realistic Equestrian active")
     else
@@ -62,7 +115,12 @@ function EqMain.activate()
 end
 
 
--- SECTION 2: Lifecycle hooks on base-game functions
+-- SECTION 2: Hooks on base-game functions
+
+-- Rideable's functions are copied into vehicle types when types are validated, so they are
+-- patched now, at source time. The hook bodies do nothing until EqMain is active.
+EqTrainingHooks.installRideable(guarded)
+
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
     EqMain.activate()
@@ -78,6 +136,17 @@ local function onMissionLoaded(mission)
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
         end
+    end)
+
+    guarded("competition start", function()
+        if not mission:getIsServer() or EqCompetitionManager.config == nil then return end
+        EqCompetitionManager.ensureOpen()
+        g_messageCenter:subscribe(MessageType.DAY_CHANGED, function()
+            guarded("daily events", EqCompetitionManager.onDayChanged)
+        end, EqCompetitionManager)
+        g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
+            guarded("monthly events", EqCompetitionManager.onPeriodChanged)
+        end, EqCompetitionManager)
     end)
 end
 
@@ -98,6 +167,11 @@ local function onMissionDelete()
     guarded("mission cleanup", function()
         EqConsole.unregister()
         EqRegistry.reset()
+        EqTrainingHooks.reset()
+        g_messageCenter:unsubscribeAll(EqCompetitionManager)
+        local config = EqCompetitionManager.config
+        EqCompetitionManager.reset()
+        EqCompetitionManager.config = config
     end)
 end
 

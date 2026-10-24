@@ -13,15 +13,29 @@ EqRandom.__index = EqRandom
 local MODULUS = 2147483647 -- 2^31 - 1, the Park-Miller prime
 local MULTIPLIER = 48271
 
+EqRandom.WARM_UP = 4
+
+
+--- a * b mod MODULUS without going past the 2^53 a double holds exactly.
+local function mulMod(a, b)
+    local high, low = math.floor(b / 65536), b % 65536
+    return ((a * high) % MODULUS * 65536 + a * low) % MODULUS
+end
+
 
 --- Hash a string to a seed in [1, MODULUS - 1]. Plain arithmetic, no bit library, so it gives
---- the same value on every Lua build the game might run.
+--- the same value on every Lua build the game might run. A djb2 pass, then a few non-linear
+--- rounds: without them "result 11" and "result 12" hash a fixed step apart, and a linear
+--- generator keeps that step in every draw, so near-identical seeds gave near-identical luck.
 --- @param text string
 --- @return number seed
 function EqRandom.hashString(text)
     local h = 5381
     for i = 1, #text do
         h = (h * 33 + string.byte(text, i)) % MODULUS
+    end
+    for round = 1, 3 do
+        h = (mulMod(h, h) + mulMod(h, 40692) + 1013904223 * round) % MODULUS
     end
     if h == 0 then h = 1 end
     return h
@@ -37,6 +51,9 @@ function EqRandom.new(seed)
 
     local self = setmetatable({}, EqRandom)
     self.state = seed
+    -- Seeds from similar strings ("result 11", "result 12") sit close together, and the first
+    -- draws of a Park-Miller generator stay close with them. A few discarded steps spread them.
+    for _ = 1, EqRandom.WARM_UP do self:next() end
     return self
 end
 
