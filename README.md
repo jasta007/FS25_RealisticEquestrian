@@ -5,8 +5,7 @@ competition stats, training through riding and hired staff, breeding that matter
 daily and monthly events to enter for prize money.
 
 Requires [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
-(`FS25_RealisticLivestockRM`). This mod calls RLRM's own code (breeding maths, genetics bands,
-horse data) and hooks its functions; it never copies or patches RLRM files.
+(`FS25_RealisticLivestockRM`) and works with RL's genetic and breeding maths.
 
 ## Status
 
