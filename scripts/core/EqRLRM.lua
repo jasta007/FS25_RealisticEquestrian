@@ -30,6 +30,7 @@ EqRLRM.REQUIRED = {
 EqRLRM.OPTIONAL = {
     infoDisplay = { { "AnimalHorse", "addHorseInfos" }, { "AnimalHorse", "showHorseHudInfo" } },
     menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
+    menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
 }
 
 EqRLRM.env = nil

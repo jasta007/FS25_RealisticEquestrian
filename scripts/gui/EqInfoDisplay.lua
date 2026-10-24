@@ -10,9 +10,14 @@
     Both are RLRM functions that run for horses only, so appending to them adds our rows in
     the right place without touching any other animal or any RLRM file.
 
-    In RLRM's menu the stat rows sit in a 2 x 5 grid that drops whatever does not fit, so a
-    wrap on RLAnimalInfoService.getAnimalDisplay moves our four rows up to the second and third
-    lines, where they always show and read as one block.
+    In RLRM's menu the four stats go in the Genetics column instead, styled like RLRM's own
+    rows: "54 / 77 - High", label and value coloured by the band of the horse's potential
+    (its ceiling, read back as a gene on RLRM's scale). The column has six rows in RLRM's XML,
+    so the first time a frame shows a horse we clone the last row for the extra slots we
+    need. RLRM's own loop only ever touches rows 1-6, and ours are hidden for other animals.
+    A wrap on RLAnimalInfoService.getAnimalDisplay takes our rows out of the stat grid there,
+    so they are not shown twice. If the column hook is unavailable they stay in the grid,
+    moved up to its second and third lines.
 
     Meat quality: for horses only, RLRM's Meat Quality row is taken out of the menu's genetics
     column and the look-at genetics box. It is a display preference, saved per machine in
@@ -22,8 +27,13 @@
 EqInfoDisplay = {}
 
 -- Index our stat block starts at in the menu's grid: after Age and one RLRM row, so it fills
--- two whole lines (Stamina | Speed, Agility | Temperament).
+-- two whole lines (Stamina | Speed, Agility | Temperament). Only used when the stats cannot go
+-- in the Genetics column.
 EqInfoDisplay.MENU_FIRST_ROW = 3
+
+-- True once RLDetailPaneHelper.updateAnimalDisplay is hooked: the stats then live in the
+-- Genetics column, not the stat grid.
+EqInfoDisplay.statsInGenetics = false
 
 EqInfoDisplay.MEAT_LABEL_KEY = "rl_ui_meat"
 EqInfoDisplay.hideMeatQuality = true
@@ -98,7 +108,11 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
     if display == nil or not isHorse(animal) then return end
 
     local rows = display.statRows
-    if rows ~= nil then
+    if rows ~= nil and EqInfoDisplay.statsInGenetics then
+        for i = #rows, 1, -1 do
+            if rows[i].eqStat ~= nil then table.remove(rows, i) end
+        end
+    elseif rows ~= nil then
         local ours, others = {}, {}
         for _, row in ipairs(rows) do
             table.insert(row.eqStat ~= nil and ours or others, row)
@@ -121,6 +135,94 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
             end
         end
     end
+end
+
+
+--- @param trained number
+--- @param ceiling number
+--- @return string valueText "54 / 77 - High"
+--- @return table|nil color { r, g, b, a } from RLRM's genetics palette
+function EqInfoDisplay.geneticsValue(trained, ceiling)
+    local gene = EqStats.clampGene((ceiling - EqConstants.CEILING_BASE) / EqConstants.CEILING_PER_GENE)
+    local bandKey = EqRLRM.get("RLGenetics").perTrait(gene)
+    local text = string.format("%s - %s", statText(trained, ceiling), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
+
+    local formatter = EqRLRM.get("RLGeneticsFormatter")
+    local helper = EqRLRM.get("RLDetailPaneHelper")
+    local colorKey = formatter ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY[bandKey] or nil
+    local color = colorKey ~= nil and helper.GENETICS_COLOR ~= nil and helper.GENETICS_COLOR[colorKey] or nil
+    return text, color
+end
+
+
+--- Make sure a frame's Genetics column has at least `count` rows, cloning its last one.
+--- @param frame table RLRM menu frame
+--- @param count number
+--- @return boolean ok
+local function ensureGeneticsRows(frame, count)
+    local rows, labels, values = frame.geneticsRow, frame.geneticsLabel, frame.geneticsValue
+    if rows == nil or labels == nil or values == nil or #rows == 0 then return false end
+
+    while #rows < count do
+        local template = rows[#rows]
+        if template.parent == nil or template.clone == nil then return false end
+        local row = template:clone(template.parent, false, true)
+        local label, value = row.elements[1], row.elements[2]
+        if label == nil or value == nil then
+            row:setVisible(false)
+            return false
+        end
+        table.insert(rows, row)
+        labels[#rows] = label
+        values[#rows] = value
+    end
+    return true
+end
+
+
+--- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Genetics column rows after
+--- RLRM's own with the four stats, or hide our extra rows for any other animal.
+--- @param frame table RLRM menu frame
+--- @param animal table|nil
+function EqInfoDisplay.renderGenetics(frame, animal)
+    local rows = frame.geneticsRow
+    if rows == nil then return end
+    local rlrmRows = EqRLRM.get("RLDetailPaneHelper").NUM_GENETICS_ROWS or 6
+
+    local record = isHorse(animal) and EqRegistry.getOrCreate(animal) or nil
+    local first = nil
+    if record ~= nil then
+        -- RLRM shows its rows from the top and hides the rest; ours follow the last shown one.
+        first = 1
+        while first <= rlrmRows and rows[first] ~= nil and rows[first].visible do first = first + 1 end
+        if not ensureGeneticsRows(frame, first + #EqConstants.STAT_KEYS - 1) then record = nil end
+    end
+
+    if record ~= nil then
+        local ceilings = record:getCeilings()
+        for i, stat in ipairs(EqConstants.STAT_KEYS) do
+            local index = first + i - 1
+            local label, value = frame.geneticsLabel[index], frame.geneticsValue[index]
+            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0, ceilings[stat])
+            rows[index]:setVisible(true)
+            label:setText(statTitle(stat))
+            value:setText(text)
+            if color ~= nil then
+                if label.setTextColor ~= nil then label:setTextColor(unpack(color)) end
+                if value.setTextColor ~= nil then value:setTextColor(unpack(color)) end
+            end
+        end
+        first = first + #EqConstants.STAT_KEYS
+    else
+        first = rlrmRows + 1
+    end
+
+    for index = first, #rows do
+        if index > rlrmRows then rows[index]:setVisible(false) end
+    end
+
+    local column = rows[1].parent
+    if column ~= nil and column.invalidateLayout ~= nil then column:invalidateLayout() end
 end
 
 
@@ -183,6 +285,14 @@ function EqInfoDisplay.installMenu(guarded)
         local display = getAnimalDisplay(animal, husbandry, ...)
         guarded("menu layout", function() EqInfoDisplay.arrangeMenuDisplay(animal, display) end)
         return display
+    end
+
+    if EqRLRM.features.menuGenetics then
+        local helper = EqRLRM.get("RLDetailPaneHelper")
+        helper.updateAnimalDisplay = Utils.appendedFunction(helper.updateAnimalDisplay, function(frame, animal)
+            guarded("genetics column", function() EqInfoDisplay.renderGenetics(frame, animal) end)
+        end)
+        EqInfoDisplay.statsInGenetics = true
     end
 
     local animalClass = EqRLRM.get("Animal")
