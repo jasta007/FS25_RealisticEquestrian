@@ -9,7 +9,9 @@
     - Monthly events (Advanced, Championship) open at the start of each month and resolve at the
       start of the next.
 
-    Players enter with eqEnter (a screen comes later) and pay the fee at once. Results, prize
+    Players enter from the Events tab or with eqEnter and pay the fee at once. A horse starts at
+    most MAX_ROUND_STARTS round events a month, so a good horse is not a daily money tap, and a
+    horse bought from the dealer settles in for a month before it can compete. Results, prize
     money and the career record follow when the event resolves. EqRisk decides scratches,
     eliminations and injuries first; injured horses rest for some months, and their vet bills
     are charged at the start of each month until they recover. Horses from every farm can be
@@ -210,6 +212,7 @@ function EqCompetitionManager.resolve(event, horses)
                     fitness = horse.animal.fitness or 0,
                 })
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
+                if event.kind == EqCompetition.KIND_ROUND then record.monthStarts = (record.monthStarts or 0) + 1 end
             end
         end
     end
@@ -283,7 +286,9 @@ function EqCompetitionManager.resolve(event, horses)
 end
 
 
---- Start of a month: charge each injured horse's vet bill to its farm and count down its rest.
+--- Start of a month: charge each injured horse's vet bill to its farm and count down its rest,
+--- reset the month's starts, and count a bought horse's months on the farm (its real potential
+--- shows after REVEAL_MONTHS).
 --- @param horses table from indexHorses
 function EqCompetitionManager.monthlyCare(horses)
     local ids = {}
@@ -291,11 +296,16 @@ function EqCompetitionManager.monthlyCare(horses)
     table.sort(ids)
 
     for _, id in ipairs(ids) do
-        local record = EqRegistry.getById(id)
+        local record = EqRegistry.getOrCreate(horses[id].animal)
+        local horse = horses[id]
+        local name = horse.animal.getName ~= nil and horse.animal:getName() or id
+        if record ~= nil then
+            record.monthStarts = 0
+            EqCompetitionManager.countOwnedMonth(record, horse.farmId, name)
+        end
+
         local injury = record ~= nil and record.injury or nil
         if injury ~= nil then
-            local horse = horses[id]
-            local name = horse.animal.getName ~= nil and horse.animal:getName() or id
             if injury.monthlyCost > 0 then
                 g_currentMission:addMoney(-injury.monthlyCost, horse.farmId, MoneyType.EQ_VET_BILLS or MoneyType.OTHER, true, true)
             end
@@ -306,6 +316,37 @@ function EqCompetitionManager.monthlyCare(horses)
             end
         end
     end
+end
+
+
+--- One more month on the farm for a horse bought from the dealer; at REVEAL_MONTHS its real
+--- potential shows, and the owner hears how it compares with what the dealer said.
+--- @param record table
+--- @param farmId number
+--- @param name string
+function EqCompetitionManager.countOwnedMonth(record, farmId, name)
+    if record.ownedMonths == nil then return end
+    record.ownedMonths = record.ownedMonths + 1
+    if record.advertised ~= nil and not record.revealed and record.ownedMonths >= EqConstants.REVEAL_MONTHS then
+        record.revealed = true
+        local verdict = EqDealer.verdict(record.advertised, record:getCeilings())
+        notify(farmId, string.format(g_i18n:getText("eq_reveal_" .. verdict), name))
+    end
+end
+
+
+--- Why a horse cannot be entered in anything right now, whatever the event.
+--- @param record table
+--- @param kind string the event's kind
+--- @return string|nil reason "retired", "injured", "settling" or "rested", nil when it can go
+function EqCompetitionManager.unavailableReason(record, kind)
+    if record.retired then return "retired" end
+    if record.injury ~= nil then return "injured" end
+    if record:isSettling() then return "settling" end
+    if kind == EqCompetition.KIND_ROUND and (record.monthStarts or 0) >= EqConstants.MAX_ROUND_STARTS then
+        return "rested"
+    end
+    return nil
 end
 
 
@@ -398,7 +439,7 @@ function EqCompetitionManager.countEligible(event, horses)
     local count = 0
     for _, animal in ipairs(horses) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil and not record.retired and record.injury == nil
+        if record ~= nil and EqCompetitionManager.unavailableReason(record, event.kind) == nil
             and EqCompetition.canEnter(tier, animal.age or 0, EqCompetitionManager.ratingFor(record, event)) then
             count = count + 1
         end
@@ -419,9 +460,13 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
 
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return false, g_i18n:getText("eq_enter_noEvent") end
-    if record.retired then return false, g_i18n:getText("eq_enter_retired") end
-    if record.injury ~= nil then
+    local unavailable = EqCompetitionManager.unavailableReason(record, event.kind)
+    if unavailable == "injured" then
         return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
+    elseif unavailable == "rested" then
+        return false, string.format(g_i18n:getText("eq_enter_rested"), EqConstants.MAX_ROUND_STARTS)
+    elseif unavailable ~= nil then
+        return false, g_i18n:getText("eq_enter_" .. unavailable)
     end
 
     local already = EqCompetitionManager.findEntry(record.id, event.kind)

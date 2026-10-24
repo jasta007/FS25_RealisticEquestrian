@@ -6,12 +6,17 @@
     knows (a foal born on a farm) is bred from its parents' genes; any other - one from the
     dealer, or from a save made before this mod - is rolled from a seed of its identifier. Both
     are seeded by the identifier, so they give the same genes on every machine with no
-    migration step. Training is server authoritative: clients will get trained levels through a
+    migration step.
+
+    A horse still at the dealer gets a dealer record (green, with the dealer's view of its
+    potential) that is kept aside, not saved, since most dealer horses are never bought. When the
+    horse turns up on a farm its dealer record becomes its real one. Training is server authoritative: clients will get trained levels through a
     sync event (milestone 7).
 ]]
 
 EqRegistry = {}
 EqRegistry.records = {}
+EqRegistry.dealer = {}           -- id -> { record, animal } for horses still at the dealer
 
 local Log = EqLog
 
@@ -19,6 +24,7 @@ local Log = EqLog
 --- Drop every record. Called when a mission loads so nothing leaks between savegames.
 function EqRegistry.reset()
     EqRegistry.records = {}
+    EqRegistry.dealer = {}
 end
 
 
@@ -63,13 +69,24 @@ function EqRegistry.getOrCreate(animal)
     if id == nil then return nil end
 
     local record = EqRegistry.records[id]
-    if record == nil then
+    if record == nil and EqRegistry.isAtDealer(animal) then
+        local held = EqRegistry.dealer[id]
+        if held == nil then
+            held = { record = EqRegistry.rollRecord(id, animal.age or 0, EqRegistry.rlrmQuality(animal), true), animal = animal }
+            EqRegistry.dealer[id] = held
+        end
+        return held.record
+    end
+
+    if record == nil and EqRegistry.dealer[id] ~= nil then
+        record = EqRegistry.promote(id)
+    elseif record == nil then
         if EqRegistry.hasKnownParent(animal.motherId) then
             record = EqRegistry.breedRecord(id, animal.age or 0, animal.motherId, animal.fatherId)
             Log:debug("EqRegistry: bred record for %s from dam %s and sire %s", id,
                 tostring(animal.motherId), tostring(animal.fatherId))
         else
-            record = EqRegistry.rollRecord(id, animal.age or 0)
+            record = EqRegistry.rollRecord(id, animal.age or 0, EqRegistry.rlrmQuality(animal), false)
             Log:debug("EqRegistry: rolled record for %s (age %s)", id, tostring(animal.age))
         end
         EqRegistry.records[id] = record
@@ -80,19 +97,86 @@ function EqRegistry.getOrCreate(animal)
 end
 
 
---- Build a record from a seed of the identifier. Same id and age -> same record, everywhere.
+--- @param animal table An RLRM Animal
+--- @return boolean true while the horse is in the dealer's stock (RLRM clears `sale` when it
+---     joins a pen or trailer)
+function EqRegistry.isAtDealer(animal)
+    return animal.sale ~= nil and animal.clusterSystem == nil
+end
+
+
+--- @param animal table An RLRM Animal
+--- @return number|nil quality the average of its RLRM genetics, nil when it has none
+function EqRegistry.rlrmQuality(animal)
+    local genetics = animal.genetics
+    if type(genetics) ~= "table" then return nil end
+    local sum, count = 0, 0
+    for _, trait in ipairs({ "metabolism", "quality", "fertility", "health" }) do
+        if type(genetics[trait]) == "number" then
+            sum, count = sum + genetics[trait], count + 1
+        end
+    end
+    if count == 0 then return nil end
+    return sum / count
+end
+
+
+--- Build a record from a seed of the identifier. Same id, age and RLRM genetics -> same record,
+--- everywhere.
 --- @param id string
 --- @param ageMonths number
+--- @param rlrmQuality number|nil from rlrmQuality
+--- @param atDealer boolean a dealer horse: green, with the dealer's view of its potential
 --- @return table record
-function EqRegistry.rollRecord(id, ageMonths)
+function EqRegistry.rollRecord(id, ageMonths, rlrmQuality, atDealer)
     local rng = EqRandom.new(id)
     local record = EqHorseRecord.new(id)
 
     record.genes, record.budgetGene = EqStats.rollGenes(rng)
-    record.trained = EqStats.initialTrained(record:getCeilings(), ageMonths, rng)
-    record.origin = EqHorseRecord.ORIGIN_ROLLED
+    record.budgetGene = EqDealer.leanOnRlrm(record.genes, record.budgetGene, rlrmQuality)
+    record.budgetGene = EqDealer.maybeProspect(record.genes, record.budgetGene, rng)
+
+    local ceilings = record:getCeilings()
+    if atDealer then
+        record.trained = EqDealer.greenTrained(ceilings, ageMonths, rng)
+        record.advertised = EqDealer.advertise(ceilings, rng)
+        record.revealed = false
+        record.origin = EqHorseRecord.ORIGIN_DEALER
+    else
+        record.trained = EqStats.initialTrained(ceilings, ageMonths, rng)
+        record.origin = EqHorseRecord.ORIGIN_ROLLED
+    end
 
     return record
+end
+
+
+--- A dealer horse has been bought: its dealer record becomes its real one, and its months on
+--- the farm start counting.
+--- @param id string
+--- @return table record
+function EqRegistry.promote(id)
+    local record = EqRegistry.dealer[id].record
+    EqRegistry.dealer[id] = nil
+    record.ownedMonths = 0
+    EqRegistry.records[id] = record
+    Log:debug("EqRegistry: %s bought from the dealer", id)
+    return record
+end
+
+
+--- Promote every held dealer horse that has left the dealer's stock since it was last looked at.
+--- Called before a save, so a horse bought and saved before anything looked at it again keeps
+--- its dealer record.
+function EqRegistry.promoteBought()
+    local bought = {}
+    for id, held in pairs(EqRegistry.dealer) do
+        if not EqRegistry.isAtDealer(held.animal) and held.animal.clusterSystem ~= nil then
+            table.insert(bought, id)
+        end
+    end
+    table.sort(bought)
+    for _, id in ipairs(bought) do EqRegistry.promote(id) end
 end
 
 
@@ -114,7 +198,8 @@ function EqRegistry.getParentGenes(parentId)
         for _, stat in ipairs(EqConstants.STAT_KEYS) do average[stat] = EqConstants.GENE_MEAN end
         return { genes = average, budgetGene = EqConstants.GENE_MEAN }
     end
-    return EqRegistry.records[parentId] or EqRegistry.rollRecord(parentId, 0)
+    return EqRegistry.records[parentId] or (EqRegistry.dealer[parentId] ~= nil and EqRegistry.dealer[parentId].record)
+        or EqRegistry.rollRecord(parentId, 0, nil, false)
 end
 
 
@@ -154,6 +239,8 @@ end
 --- @param directory string Savegame directory
 function EqRegistry.saveToDirectory(directory)
     local path = directory .. "/" .. EqConstants.SAVE_FILENAME
+    EqRegistry.promoteBought()
+
     local xmlFile = XMLFile.create("rlEquestrian", path, "rlEquestrian")
     if xmlFile == nil then
         Log:error("EqRegistry: could not create %s", path)

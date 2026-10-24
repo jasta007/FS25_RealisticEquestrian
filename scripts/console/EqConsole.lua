@@ -37,7 +37,14 @@ function EqConsole:consoleListHorses()
                     g_i18n:formatMoney(record.injury.monthlyCost, 0, true, true))
             elseif record.retired then
                 status = record.careerEnded and "  RETIRED (career-ending injury)" or "  RETIRED"
+            elseif record:isSettling() then
+                status = "  SETTLING IN"
             end
+            if record.ownedMonths ~= nil then
+                status = status .. string.format("  from the dealer, %d month(s) here, %s", record.ownedMonths,
+                    record.revealed and "potential known" or "potential still the dealer's view")
+            end
+            status = status .. string.format("  starts this month %d/%d", record.monthStarts or 0, EqConstants.MAX_ROUND_STARTS)
             print(string.format("%s '%s' age %dm %s  budget %.0f/%.0f%s", record.id, animal:getName() or "",
                 animal.age or 0, record.origin, total, EqStats.budgetFromGene(record.budgetGene), status))
             print("    " .. formatStat(record, ceilings, "stamina") .. formatStat(record, ceilings, "speed"))
@@ -46,6 +53,32 @@ function EqConsole:consoleListHorses()
     end
 
     return string.format("%d horse(s), %d record(s) in the registry", #horses, EqRegistry.count())
+end
+
+
+--- eqDealer: testing aid. The dealer's horses with their real potential, the dealer's view of
+--- it, and the price.
+function EqConsole:consoleDealer()
+    if g_currentMission == nil or g_currentMission.animalSystem == nil then return "No mission loaded" end
+
+    local count = 0
+    for _, animal in ipairs(g_currentMission.animalSystem:getSaleAnimalsByTypeIndex(AnimalType.HORSE) or {}) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil then
+            count = count + 1
+            local ceilings, advertised = record:getCeilings(), record.advertised or record:getCeilings()
+            local parts = {}
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do
+                table.insert(parts, string.format("%s %.0f/%.0f (says %.0f)", string.sub(stat, 1, 3),
+                    record.trained[stat] or 0, ceilings[stat], advertised[stat]))
+            end
+            print(string.format("%s '%s' age %dm  talent %.0f (says %.0f)  %s  value %s", record.id,
+                animal.getName ~= nil and animal:getName() or "", animal.age or 0, EqDealer.talentScore(ceilings),
+                EqDealer.talentScore(advertised), table.concat(parts, "  "),
+                g_i18n:formatMoney(animal:getSellPrice(), 0, true, true)))
+        end
+    end
+    return string.format("%d horse(s) at the dealer. Value is before the dealer's markup.", count)
 end
 
 
@@ -309,6 +342,7 @@ function EqConsole.register()
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
+    addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -318,6 +352,7 @@ end
 
 function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
+    removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end

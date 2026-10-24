@@ -20,6 +20,7 @@ source(modDirectory .. "scripts/core/EqConstants.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
+source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
@@ -27,6 +28,7 @@ source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
+source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
@@ -80,6 +82,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab then
         guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.horsePricing then
+        guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then

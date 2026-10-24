@@ -17,6 +17,10 @@ dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqRisk.lua")
+EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
+dofile("scripts/core/EqHorseRecord.lua")
+dofile("scripts/dealer/EqDealer.lua")
+dofile("scripts/core/EqRegistry.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -368,6 +372,152 @@ local off = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temper
 local on = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 80, stamina = 60 } },
     EqRandom.new("season 1"), settingsOn)
 check("injuries off changes nothing else", off.me.eliminated == on.me.eliminated and off.me.injury == nil)
+
+
+-- DEALER HORSES
+
+-- Talent leans on RLRM genetics, and only when the horse has them.
+local leanGenes = genesOf(1, 1, 1, 1)
+local leanBudget = EqDealer.leanOnRlrm(leanGenes, 1, 1.4)
+check("good RLRM genetics lift talent", math.abs(leanGenes.speed - (1 + 0.4 * EqConstants.RLRM_GENE_LEAN)) < 1e-9 and leanBudget > 1)
+local plainGenes = genesOf(1, 1, 1, 1)
+check("no RLRM genetics, no lean", EqDealer.leanOnRlrm(plainGenes, 1, nil) == 1 and plainGenes.speed == 1)
+
+-- Dealer stock: mostly ordinary, a few really good horses.
+local good, great, prospects, n = 0, 0, 0, 4000
+local qualities = { 0.7, 0.9, 1.0, 1.0, 1.1, 1.3 }
+for i = 1, n do
+    local record = EqRegistry.rollRecord("dealer " .. i, 60, qualities[i % #qualities + 1], true)
+    local talent = EqDealer.talentScore(record:getCeilings())
+    if talent >= 85 then good = good + 1 end
+    if talent >= 90 then great = great + 1 end
+    local _, isProspect = EqDealer.maybeProspect(genesOf(1, 1, 1, 1), 1, EqRandom.new("p " .. i))
+    if isProspect then prospects = prospects + 1 end
+end
+check("prospects are about 8% of rolled horses", prospects > 0.06 * n and prospects < 0.1 * n, prospects .. " of " .. n)
+check("the dealer has some really good horses", good > 0.03 * n and good < 0.15 * n, good .. " of " .. n)
+check("championship prospects are rare but there", great > 0 and great < 0.05 * n, great .. " of " .. n)
+print(string.format("info: dealer stock: %.1f%% talent 85+, %.1f%% talent 90+", good / n * 100, great / n * 100))
+
+-- Dealer horses arrive green; the same horse is the same at the dealer on every machine.
+local greenSum, homeSum = 0, 0
+for i = 1, 500 do
+    local dealer = EqRegistry.rollRecord("horse " .. i, 72, 1, true)
+    local home = EqRegistry.rollRecord("horse " .. i, 72, 1, false)
+    local dc, hc = dealer:getCeilings(), home:getCeilings()
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        greenSum = greenSum + dealer.trained[stat] / dc[stat]
+        homeSum = homeSum + home.trained[stat] / hc[stat]
+    end
+end
+check("dealer horses are greener than home-produced ones", greenSum < 0.7 * homeSum,
+    string.format("%.2f vs %.2f", greenSum / 2000, homeSum / 2000))
+local d1, d2 = EqRegistry.rollRecord("DE 3 77", 60, 1.2, true), EqRegistry.rollRecord("DE 3 77", 60, 1.2, true)
+check("a dealer horse rolls the same everywhere", d1.trained.speed == d2.trained.speed and d1.advertised.agility == d2.advertised.agility
+    and d1.origin == "dealer" and d1.revealed == false)
+check("shown potential is the dealer's view until revealed", d1:getShownCeilings() == d1.advertised)
+d1.revealed = true
+check("then the real one", d1:getShownCeilings().speed == d1:getCeilings().speed)
+
+-- The dealer's view: usually right, sometimes generous, now and then modest.
+local exact, generous, modest = 0, 0, 0
+for i = 1, 2000 do
+    local ceilings = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
+    local view = EqDealer.advertise(ceilings, EqRandom.new("advert " .. i))
+    local d = view.speed - 70
+    if d == 0 then exact = exact + 1 elseif d > 0 then generous = generous + 1 else modest = modest + 1 end
+end
+check("the dealer is usually right", exact > 1000 and exact < 1300, exact .. " of 2000")
+check("generous more often than modest", generous > modest and modest > 200, generous .. " vs " .. modest)
+check("verdict better", EqDealer.verdict({ stamina = 70, speed = 70, agility = 70, temperament = 70 },
+    { stamina = 75, speed = 70, agility = 70, temperament = 70 }) == "better")
+check("verdict worse", EqDealer.verdict({ stamina = 75, speed = 70, agility = 70, temperament = 70 },
+    { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "worse")
+check("verdict fair", EqDealer.verdict({ stamina = 71, speed = 70, agility = 70, temperament = 70 },
+    { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "fair")
+
+-- Price: talent doubles every VALUE_DOUBLING points, schooling adds to it, age takes it away.
+check("talent 75 is worth the base price", math.abs(EqDealer.talentFactor(75) - 1) < 1e-9)
+check("talent 82.5 is worth double", math.abs(EqDealer.talentFactor(82.5) - 2) < 1e-9)
+check("talent factor is capped", EqDealer.talentFactor(200) == EqConstants.VALUE_MAX_FACTOR and EqDealer.talentFactor(0) == EqConstants.VALUE_MIN_FACTOR)
+local c85 = { stamina = 88, speed = 82, agility = 60, temperament = 60 }
+local green = { stamina = 25, speed = 25, agility = 20, temperament = 20 }
+local schooled = { stamina = 84, speed = 78, agility = 57, temperament = 57 }
+local greenPrice = EqDealer.price(4000, 5000, c85, green, 60)
+local schooledPrice = EqDealer.price(4000, 5000, c85, schooled, 60)
+check("a green talent-85 horse costs about $9-15k", greenPrice > 9000 and greenPrice < 15000, string.format("%.0f", greenPrice))
+check("schooling adds value, but not a fortune", schooledPrice > greenPrice and schooledPrice < 1.7 * greenPrice,
+    string.format("%.0f -> %.0f", greenPrice, schooledPrice))
+check("an old horse's talent is worth less", EqDealer.price(4000, 5000, c85, schooled, 200) < 0.6 * schooledPrice)
+local poorPrice = EqDealer.price(4000, 5000, { stamina = 50, speed = 50, agility = 50, temperament = 50 }, green, 60)
+check("a poor horse is cheaper, but never nothing", poorPrice < 0.4 * 4000 and poorPrice >= 4000 * EqConstants.VALUE_FLOOR,
+    string.format("%.0f", poorPrice))
+
+-- The investment: a green talent-85 dealer horse in full work, two round starts a month plus a
+-- monthly event when it can, entering whatever pays best. Not a quick flip, but it pays back.
+local tiers = config.tierByName
+local function bestDiscipline(trained)
+    local bestD, bestR
+    for _, d in ipairs(config.disciplines) do
+        local r = EqCompetition.rating(trained, d, nil)
+        if bestR == nil or r > bestR then bestD, bestR = d, r end
+    end
+    return bestD, bestR
+end
+local evCache = {}
+local function expected(d, tier, rating)
+    local key = d.name .. tier.name .. math.floor(rating)
+    if evCache[key] == nil then
+        local total, rng = 0, EqRandom.new(key)
+        local event = { discipline = d.name, tier = tier.name, prize = tier.prize }
+        for _ = 1, 150 do
+            for _, r in ipairs(EqCompetition.run(event, config, { { key = "me", rating = rating, condition = 0.95 } }, rng)) do
+                if r.key == "me" then total = total + r.prize end
+            end
+        end
+        evCache[key] = total / 150 - tier.fee
+    end
+    return evCache[key]
+end
+local function bestEarning(d, monthly, age, rating)
+    local best = 0
+    for _, tier in ipairs(config.tiers) do
+        if tier.monthly == monthly and tier.prize > 0 and EqCompetition.canEnter(tier, age, rating) then
+            best = math.max(best, expected(d, tier, rating))
+        end
+    end
+    return best
+end
+local prospectCeilings = { stamina = 90, speed = 80, agility = 66, temperament = 72 }
+local trained = EqDealer.greenTrained(prospectCeilings, 48, EqRandom.new("investment"))
+local price = EqDealer.price(5000, 5000, prospectCeilings, trained, 48) * 1.075
+local cash, worth = -price, {}
+for month = 1, 36 do
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        trained[stat] = trained[stat] + EqTraining.gain(trained[stat], prospectCeilings[stat] * 0.97,
+            EqConstants.TRAIN_MONTHLY[stat], 0.8, EqStats.ageTrainingFactor(48 + month), 1)
+    end
+    local d, rating = bestDiscipline(trained)
+    if month > EqConstants.SETTLE_MONTHS then
+        cash = cash + EqConstants.MAX_ROUND_STARTS * bestEarning(d, false, 48 + month, rating) + 0.5 * bestEarning(d, true, 48 + month, rating)
+    end
+    worth[month] = cash + EqDealer.price(5000, 5000, prospectCeilings, trained, 48 + month)
+end
+check("no quick flip: after 3 months you are about where you started", worth[3] < 0.15 * price,
+    string.format("price %.0f, up %.0f", price, worth[3]))
+check("after two years it has paid for itself", worth[24] > 0, string.format("%.0f", worth[24]))
+check("but it takes a while to make a lot", worth[12] < 1.0 * price, string.format("%.0f", worth[12]))
+print(string.format("info: talent-%.0f dealer horse at $%.0f: up $%.0f after 3 months, $%.0f after 12, $%.0f after 24, $%.0f after 36",
+    EqDealer.talentScore(prospectCeilings), price, worth[3], worth[12], worth[24], worth[36]))
+
+-- No dead zones: from rating 50 up, some tier pays.
+local zones = {}
+for rating = 50, 100, 5 do
+    local d = config.disciplineByName.showJumping
+    local best = math.max(bestEarning(d, false, 60, rating), bestEarning(d, true, 60, rating))
+    if best <= 0 then table.insert(zones, rating) end
+end
+check("every rating from 50 has an event worth entering", #zones == 0, table.concat(zones, ","))
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

@@ -10,6 +10,7 @@ EqHorseRecord.__index = EqHorseRecord
 
 EqHorseRecord.ORIGIN_ROLLED = "rolled"
 EqHorseRecord.ORIGIN_BRED = "bred"
+EqHorseRecord.ORIGIN_DEALER = "dealer"
 
 EqHorseRecord.FOCUS_BALANCED = "balanced"
 
@@ -30,7 +31,25 @@ function EqHorseRecord.new(id)
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
+    self.monthStarts = 0         -- round events started this month
+    self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
+    self.revealed = true         -- false until a dealer horse's real potential has shown
+    self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
     return self
+end
+
+
+--- The potential the player can see: the dealer's view until the real one has shown.
+--- @return table ceilings stat key -> ceiling
+function EqHorseRecord:getShownCeilings()
+    if self.advertised ~= nil and not self.revealed then return self.advertised end
+    return self:getCeilings()
+end
+
+
+--- @return boolean true for a horse bought from the dealer that is still settling in
+function EqHorseRecord:isSettling()
+    return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
 end
 
 
@@ -55,6 +74,14 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     end
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
     xmlFile:setInt(key .. "#idleDays", self.idleDays)
+    xmlFile:setInt(key .. "#monthStarts", self.monthStarts)
+    if self.ownedMonths ~= nil then xmlFile:setInt(key .. "#ownedMonths", self.ownedMonths) end
+    if self.advertised ~= nil then
+        xmlFile:setBool(key .. ".advertised#revealed", self.revealed)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do
+            xmlFile:setFloat(key .. ".advertised#" .. stat, self.advertised[stat])
+        end
+    end
     xmlFile:setFloat(key .. ".genes#budget", self.budgetGene)
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
@@ -92,6 +119,16 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     end
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
     self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
+    self.monthStarts = xmlFile:getInt(key .. "#monthStarts", 0)
+    self.ownedMonths = xmlFile:getInt(key .. "#ownedMonths")
+    if xmlFile:hasProperty(key .. ".advertised") then
+        self.advertised = {}
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do
+            self.advertised[stat] = EqStats.clamp(xmlFile:getFloat(key .. ".advertised#" .. stat, 70),
+                EqConstants.CEILING_FLOOR, 100)
+        end
+        self.revealed = xmlFile:getBool(key .. ".advertised#revealed", false)
+    end
     self.budgetGene = EqStats.clampGene(xmlFile:getFloat(key .. ".genes#budget", EqConstants.GENE_MEAN))
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do

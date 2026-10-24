@@ -81,25 +81,37 @@ end
 
 
 --- @param ceiling number
---- @return string word for the horse's potential in a stat
-function EqInfoDisplay.potentialText(ceiling)
-    return bandText(ceiling)
+--- @param unvetted boolean|nil true while the word is still the dealer's view
+--- @return string word for the horse's potential in a stat, "High?" while unvetted
+function EqInfoDisplay.potentialText(ceiling, unvetted)
+    local word = bandText(ceiling)
+    if unvetted then return string.format(g_i18n:getText("eq_potential_unvetted"), word) end
+    return word
+end
+
+
+--- @param record table
+--- @return boolean true while the shown potential is the dealer's view
+local function isUnvetted(record)
+    return record.advertised ~= nil and not record.revealed
 end
 
 
 --- @param trained number
 --- @param ceiling number
+--- @param unvetted boolean
 --- @return string text such as "54 (High)"
-local function statText(trained, ceiling)
-    return string.format("%d (%s)", math.floor(trained + 0.5), EqInfoDisplay.potentialText(ceiling))
+local function statText(trained, ceiling, unvetted)
+    return string.format("%d (%s)", math.floor(trained + 0.5), EqInfoDisplay.potentialText(ceiling, unvetted))
 end
 
 
 --- @param record table
---- @return string|nil text "Injured, 3 month(s)" or "Retired", nil for a horse in work
+--- @return string|nil text "Injured, 3 month(s)", "Retired" or "Settling in", nil for a horse in work
 local function statusText(record)
     if record.injury ~= nil then return string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft) end
     if record.retired then return g_i18n:getText("eq_status_retired") end
+    if record:isSettling() then return g_i18n:getText("eq_status_settling") end
     return nil
 end
 
@@ -111,7 +123,7 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return end
 
-    local ceilings = record:getCeilings()
+    local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local trained = record.trained[stat] or 0
         local ratio = EqStats.clamp(trained / 100, 0, 1)
@@ -120,9 +132,10 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
             text = "",
             value = ratio,
             ratio = ratio,
-            valueText = statText(trained, ceilings[stat]),
+            valueText = statText(trained, ceilings[stat], unvetted),
             eqStat = stat,
             eqCeiling = ceilings[stat],
+            eqUnvetted = unvetted,
             eqBlock = true,
         })
     end
@@ -142,9 +155,9 @@ function EqInfoDisplay.showHorseHudInfo(animal, box)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return end
 
-    local ceilings = record:getCeilings()
+    local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat]))
+        box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
     local status = statusText(record)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
@@ -170,7 +183,7 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
         for _, row in ipairs(rows) do
             if row.eqStat ~= nil then
                 row.title = g_i18n:getText("eq_potential_" .. row.eqStat)
-                row.valueText = EqInfoDisplay.potentialText(row.eqCeiling)
+                row.valueText = EqInfoDisplay.potentialText(row.eqCeiling, row.eqUnvetted)
             end
         end
     end

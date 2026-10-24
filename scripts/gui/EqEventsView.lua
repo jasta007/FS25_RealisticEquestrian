@@ -95,12 +95,13 @@ function EqEventsView.horseRows(event, farmId)
             local status, canEnter
 
             local entered = manager.findEntry(record.id, event.kind)
-            if record.retired then
-                status = g_i18n:getText("eq_status_retired")
-            elseif record.injury ~= nil then
-                status = string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft)
-            elseif entered ~= nil then
+            local unavailable = manager.unavailableReason(record, event.kind)
+            if entered ~= nil then
                 status = entered == event and g_i18n:getText("eq_ui_status_enteredHere") or g_i18n:getText("eq_ui_status_enteredElsewhere")
+            elseif unavailable == "injured" then
+                status = string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft)
+            elseif unavailable ~= nil then
+                status = g_i18n:getText("eq_status_" .. unavailable)
             else
                 local ok, reason = EqCompetition.canEnter(tier, age, rating)
                 canEnter = ok

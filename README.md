@@ -10,10 +10,11 @@ horse data) and hooks its functions; it never copies or patches RLRM files.
 
 ## Status
 
-Milestone 6 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
-box, improve with training, are inherited when horses breed, and win prize money in competitions
-(entered from the console for now). Competitions carry risk: scratches, eliminations and
-injuries with vet bills. The in-game screen and multiplayer sync are still to come.
+Milestone 6 of 7, plus the Events tab and dealer horses: stats exist, are saved, show in RLRM's
+horse info panels and the look-at info box, improve with training, are inherited when horses
+breed, and win prize money in competitions entered from RLRM's menu. Competitions carry risk:
+scratches, eliminations and injuries with vet bills. Good horses from the dealer cost real money
+and take a year or more to pay back. Multiplayer sync is still to come.
 
 ## Trying it
 
@@ -86,7 +87,10 @@ prizes, and sometimes none in a discipline.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
 - **Training Events** are for two-year-olds only: a fee, no prize money, a training boost, and you
   still see where the horse placed. Every other event is open from three years.
-- Each tier has a rating band, so a strong horse can't farm easy wins in Novice.
+- Novice has a rating cap (60), so it stays a class for novices. Above it, a horse can always
+  enter something it can win.
+- A horse can start at most **two round events a month** (monthly events are on top), so a good
+  horse is not a daily money tap however many days your months have.
 - A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
   dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
   half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
@@ -104,6 +108,30 @@ For now the tab works in single player and for the host; multiplayer clients get
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
 `eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
+
+## Buying horses
+
+The dealer sells horses of every quality, priced by their talent: an ordinary horse costs about
+what it does without this mod ($3,000-6,000), a good prospect $9,000-20,000, and now and then a
+championship prospect $25,000-45,000. A good horse is an investment, not a quick flip:
+
+- **Talent:** a horse's potential leans on its RLRM genetics, so RLRM's dealer quality setting
+  also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
+- **Green:** dealer horses arrive with little training, so a good one needs a year or more of
+  work before it wins much above Novice.
+- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
+  They are the dealer's view: usually right, sometimes generous, now and then modest. After three
+  months on your farm you find out, with a message saying whether the horse is better, worse or
+  about what the dealer said, and its price moves to match.
+- **Settling in:** a bought horse can't compete in its first month.
+- **Price:** RLRM's price plus a premium for talent (it doubles every 7.5 points of the two best
+  potentials) and schooling, shrinking once the horse is past its peak. Selling goes through the
+  same price, and RLRM's dealer markup means buying and selling straight back always loses.
+
+In the test model, a talent-85 horse bought for about $12,500 is worth about the same three months
+later, has paid for itself within the second year, and makes good money after that, before vet
+bills. `eqDealer` (testing) lists the dealer's horses with their real potential and the
+dealer's view of it.
 
 ## Risk and retirement
 

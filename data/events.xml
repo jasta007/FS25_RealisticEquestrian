@@ -15,8 +15,10 @@
     tier
         name            key used in saves
         minAge/maxAge   months; maxAge 0 means no limit
-        minRating/maxRating   discipline rating a horse needs to enter (stops strong horses
-                        farming easy wins)
+        minRating/maxRating   discipline rating a horse needs to enter. Only Novice has a real
+                        cap, so it stays a class for novices; above it a horse can always enter
+                        something it can win, and the limit on starts a month (EqConstants
+                        MAX_ROUND_STARTS) stops a strong horse farming easy wins.
         fee/prize       entry fee and total prize pool, before the schedule's spread
         field           runners including simulated rivals
         rivalMin/rivalMax     discipline rating range of the simulated rivals
@@ -43,9 +45,9 @@
 
     <tiers>
         <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
-        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="45"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
-        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="65"  fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
-        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="85"  fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1"/>
+        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
+        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1"/>
         <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2"/>
     </tiers>
 
