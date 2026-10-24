@@ -10,10 +10,10 @@ horse data) and hooks its functions; it never copies or patches RLRM files.
 
 ## Status
 
-Milestone 5 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
+Milestone 6 of 7: stats exist, are saved, show in RLRM's horse info panels and the look-at info
 box, improve with training, are inherited when horses breed, and win prize money in competitions
-(entered from the console for now). Risk (scratches, injuries), the in-game screen and
-multiplayer sync are still to come.
+(entered from the console for now). Competitions carry risk: scratches, eliminations and
+injuries with vet bills. The in-game screen and multiplayer sync are still to come.
 
 ## Trying it
 
@@ -98,6 +98,23 @@ prizes, and sometimes none in a discipline.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
 `eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
+
+## Risk and retirement
+
+- **Scratches:** a horse that is injured, retired or unsound on the day (RLRM health under 50)
+  doesn't start, and half the entry fee comes back. Now and then a horse loses a shoe.
+- **Eliminations:** refusals and falls over fences, pulled up in races. Cross country and
+  steeplechase are the riskiest, dressage the safest. A horse out of its depth for the tier, or
+  with low temperament, goes out more often. Eliminated horses win nothing.
+- **Injuries:** rare, more likely on firm going, for unfit horses, with low stamina and after a
+  fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
+  injury (3 months, $3,500 a month), and a few serious (6 months, $10,000 a month). Bills are
+  charged at the start of each month. A resting horse can't compete and doesn't train, so its
+  stats fade a little.
+- **Retirement is your choice:** `eqRetire <horse>` retires a horse, and `eqRetire <horse> undo`
+  brings it back. Retiring an injured horse stops the treatment and the bills.
+- **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, about 1 in 10
+  serious injuries ends a horse's career. `eqSettings injuries off` turns injuries off entirely.
 
 ## Tests
 

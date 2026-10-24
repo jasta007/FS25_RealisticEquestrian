@@ -95,6 +95,15 @@ local function statText(trained, ceiling)
 end
 
 
+--- @param record table
+--- @return string|nil text "Injured, 3 month(s)" or "Retired", nil for a horse in work
+local function statusText(record)
+    if record.injury ~= nil then return string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft) end
+    if record.retired then return g_i18n:getText("eq_status_retired") end
+    return nil
+end
+
+
 --- Append one row per stat to an RLRM info list.
 --- @param animal table RLRM Animal (a horse)
 --- @param infos table Rows shaped { title, value, ratio, valueText }
@@ -114,7 +123,14 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
             valueText = statText(trained, ceilings[stat]),
             eqStat = stat,
             eqCeiling = ceilings[stat],
+            eqBlock = true,
         })
+    end
+
+    local status = statusText(record)
+    if status ~= nil then
+        table.insert(infos, { title = g_i18n:getText("eq_status_title"), text = "", value = 0, ratio = 0,
+            valueText = status, eqBlock = true })
     end
 end
 
@@ -130,6 +146,8 @@ function EqInfoDisplay.showHorseHudInfo(animal, box)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat]))
     end
+    local status = statusText(record)
+    if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
 
 
@@ -159,7 +177,7 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
     if rows ~= nil then
         local ours, others = {}, {}
         for _, row in ipairs(rows) do
-            table.insert(row.eqStat ~= nil and ours or others, row)
+            table.insert(row.eqBlock and ours or others, row)
         end
         if #ours > 0 then
             local at = math.min(EqInfoDisplay.MENU_FIRST_ROW, #others + 1)

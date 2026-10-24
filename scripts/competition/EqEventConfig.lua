@@ -1,6 +1,6 @@
 --[[
     EqEventConfig.lua
-    Reads data/events.xml: disciplines, tiers, the schedule's spread and the goings.
+    Reads data/events.xml: disciplines, tiers, the schedule's spread, the goings and the injuries.
     See the comment at the top of that file for what each attribute means.
 ]]
 
@@ -22,7 +22,7 @@ end
 
 
 --- @param xmlFile table An open XMLFile on events.xml
---- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread }
+--- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, injuries }
 function EqEventConfig.read(xmlFile)
     local config = { disciplines = {}, disciplineByName = {}, tiers = {}, tierByName = {}, goings = {} }
 
@@ -36,6 +36,8 @@ function EqEventConfig.read(xmlFile)
             weakestShare = xmlFile:getFloat(key .. "#weakestShare", 0),
             outdoor = xmlFile:getBool(key .. "#outdoor", false),
             racing = xmlFile:getBool(key .. "#racing", false),
+            elimination = xmlFile:getFloat(key .. "#elimination", 0),
+            injury = xmlFile:getFloat(key .. "#injury", 0),
         }
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
@@ -60,6 +62,7 @@ function EqEventConfig.read(xmlFile)
             monthly = xmlFile:getBool(key .. "#monthly", false),
             chance = xmlFile:getFloat(key .. "#chance", 1),
             trainingBoost = xmlFile:getFloat(key .. "#trainingBoost", 0),
+            risk = xmlFile:getFloat(key .. "#risk", 1),
         }
         table.insert(config.tiers, tier)
         config.tierByName[tier.name] = tier
@@ -77,6 +80,22 @@ function EqEventConfig.read(xmlFile)
             name = xmlFile:getString(key .. "#name"),
             chance = xmlFile:getFloat(key .. "#chance", 1),
             modifiers = readStats(xmlFile, key, 1),
+            injury = xmlFile:getFloat(key .. "#injury", 1),
+        })
+        i = i + 1
+    end
+
+    config.injuries = {}
+    i = 0
+    while true do
+        local key = string.format("events.risk.injury(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        table.insert(config.injuries, {
+            name = xmlFile:getString(key .. "#name"),
+            chance = xmlFile:getFloat(key .. "#chance", 1),
+            months = xmlFile:getInt(key .. "#months", 1),
+            monthlyCost = xmlFile:getFloat(key .. "#monthlyCost", 0),
+            careerEnding = xmlFile:getFloat(key .. "#careerEnding", 0),
         })
         i = i + 1
     end

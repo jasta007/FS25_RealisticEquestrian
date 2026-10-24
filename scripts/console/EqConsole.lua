@@ -31,8 +31,15 @@ function EqConsole:consoleListHorses()
             local total = 0
             for _, stat in ipairs(EqConstants.STAT_KEYS) do total = total + ceilings[stat] end
 
-            print(string.format("%s '%s' age %dm %s  budget %.0f/%.0f", record.id, animal:getName() or "",
-                animal.age or 0, record.origin, total, EqStats.budgetFromGene(record.budgetGene)))
+            local status = ""
+            if record.injury ~= nil then
+                status = string.format("  INJURED (%s, %d month(s), %s/month)", record.injury.name, record.injury.monthsLeft,
+                    g_i18n:formatMoney(record.injury.monthlyCost, 0, true, true))
+            elseif record.retired then
+                status = record.careerEnded and "  RETIRED (career-ending injury)" or "  RETIRED"
+            end
+            print(string.format("%s '%s' age %dm %s  budget %.0f/%.0f%s", record.id, animal:getName() or "",
+                animal.age or 0, record.origin, total, EqStats.budgetFromGene(record.budgetGene), status))
             print("    " .. formatStat(record, ceilings, "stamina") .. formatStat(record, ceilings, "speed"))
             print("    " .. formatStat(record, ceilings, "agility") .. formatStat(record, ceilings, "temperament"))
         end
@@ -185,8 +192,9 @@ function EqConsole:consoleRatings(...)
                     EqCompetition.rating(record.trained, discipline, nil)))
             end
             local career = record.career
-            print(string.format("'%s' age %dm  starts %d wins %d places %d earned %s", animal:getName() or record.id,
-                animal.age or 0, career.starts, career.wins, career.places, g_i18n:formatMoney(career.earnings, 0, true, true)))
+            print(string.format("'%s' age %dm  starts %d wins %d places %d eliminated %d injuries %d earned %s",
+                animal:getName() or record.id, animal.age or 0, career.starts, career.wins, career.places,
+                career.eliminations, career.injuries, g_i18n:formatMoney(career.earnings, 0, true, true)))
             print("    " .. table.concat(parts, "  "))
         end
     end
@@ -222,9 +230,11 @@ function EqConsole:consoleResults()
         for _, placing in ipairs(summary.placings) do
             if placing.farmId == farmId then
                 shown = shown + 1
-                print(string.format("day %d  %s %s #%d  '%s' %d of %d  %s", summary.day,
+                local outcome = placing.status ~= nil and string.upper(placing.status)
+                    or string.format("%d of %d", placing.place, summary.field)
+                print(string.format("day %d  %s %s #%d  '%s' %s  %s", summary.day,
                     EqCompetitionManager.tierTitle(summary.tier), EqCompetitionManager.disciplineTitle(summary.discipline),
-                    summary.eventId, placing.name, placing.place, summary.field, g_i18n:formatMoney(placing.prize, 0, true, true)))
+                    summary.eventId, placing.name, outcome, g_i18n:formatMoney(placing.prize, 0, true, true)))
             end
         end
     end
@@ -233,7 +243,28 @@ function EqConsole:consoleResults()
 end
 
 
---- eqSettings [cadence day|month] [racing on|off]
+--- eqRetire <horse> [undo]: retire a horse from competition, or bring it back.
+function EqConsole:consoleRetire(...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local args = { ... }
+    local undo = args[#args] ~= nil and string.lower(args[#args]) == "undo"
+    if undo then table.remove(args) end
+    local query = table.concat(args, " ")
+    if query == "" then return "Usage: eqRetire <horse name or id> [undo]" end
+
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+    local record = EqRegistry.getOrCreate(animal)
+    if record == nil then return string.format("No record for '%s'", query) end
+
+    local _, text = EqCompetitionManager.setRetired(record, not undo)
+    return text
+end
+
+
+--- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -243,12 +274,17 @@ function EqConsole:consoleSettings(name, value)
         settings.cadence = value
     elseif name == "racing" and (value == "on" or value == "off") then
         settings.racing = value == "on"
+    elseif name == "injuries" and (value == "on" or value == "off") then
+        settings.injuries = value == "on"
+    elseif name == "forcedRetirement" and (value == "on" or value == "off") then
+        settings.forcedRetirement = value == "on"
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]"
     end
 
-    return string.format("cadence=%s (round events run every %s)  racing=%s. Changes apply from the next round.",
-        settings.cadence, settings.cadence, settings.racing and "on" or "off")
+    local onOff = function(flag) return flag and "on" or "off" end
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s. Changes apply from the next round.",
+        settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement))
 end
 
 
@@ -271,7 +307,8 @@ function EqConsole.register()
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -283,5 +320,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
 end

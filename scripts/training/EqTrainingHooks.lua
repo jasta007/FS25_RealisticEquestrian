@@ -132,9 +132,11 @@ function EqTrainingHooks.onHorseDay(animal)
     local sheet = EqTrainingHooks.sheets[record.id]
     EqTrainingHooks.sheets[record.id] = nil
 
+    -- On box rest nothing trains: the day counts as idle, so the stats fade as they would.
+    local resting = record.injury ~= nil
     local deltas = EqTraining.applyDay(record, record:getCeilings(), {
-        sheet = sheet,
-        riding = animal.riding,
+        sheet = not resting and sheet or nil,
+        riding = not resting and animal.riding or 0,
         dirt = animal.dirt,
         ageMonths = animal.age or 0,
         timeAdjustment = g_currentMission.environment.timeAdjustment or 1,

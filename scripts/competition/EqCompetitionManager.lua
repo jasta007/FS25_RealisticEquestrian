@@ -10,7 +10,9 @@
       start of the next.
 
     Players enter with eqEnter (a screen comes later) and pay the fee at once. Results, prize
-    money and the career record follow when the event resolves. Horses from every farm can be
+    money and the career record follow when the event resolves. EqRisk decides scratches,
+    eliminations and injuries first; injured horses rest for some months, and their vet bills
+    are charged at the start of each month until they recover. Horses from every farm can be
     entered into the same event; each farm pays its own fee and gets its own prize.
 
     Server only for now: entering from a multiplayer client needs a network event (milestone 7).
@@ -33,7 +35,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.events = {}
     EqCompetitionManager.results = {}
     EqCompetitionManager.nextEventId = 1
-    EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true }
+    EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
+        injuries = true, forcedRetirement = false }
 end
 
 EqCompetitionManager.reset()
@@ -137,13 +140,48 @@ function EqCompetitionManager.ratingFor(record, event)
 end
 
 
---- Resolve one closed event: score the field, pay prizes, update careers, tell the owners.
+--- @param name string injury name from events.xml
+--- @return string text such as "a tendon injury"
+function EqCompetitionManager.injuryTitle(name)
+    return g_i18n:getText("eq_injury_" .. name)
+end
+
+
+--- Put a horse on box rest, or end its career, after an injury at an event.
+--- @param record table
+--- @param entry table { name, farmId }
+--- @param injury table EqRisk.rollInjury outcome
+--- @param event table
+function EqCompetitionManager.applyInjury(record, entry, injury, event)
+    record.career.injuries = record.career.injuries + 1
+    if injury.careerEnding then
+        record.retired = true
+        record.careerEnded = true
+        record.injury = nil
+        notify(entry.farmId, string.format(g_i18n:getText("eq_injury_careerEnding"), entry.name,
+            EqCompetitionManager.eventTitle(event)))
+        return
+    end
+
+    record.injury = { name = injury.name, monthsLeft = injury.months, monthlyCost = injury.monthlyCost }
+    notify(entry.farmId, string.format(g_i18n:getText("eq_injury_new"), entry.name, EqCompetitionManager.eventTitle(event),
+        EqCompetitionManager.injuryTitle(injury.name), injury.months,
+        g_i18n:formatMoney(injury.monthlyCost, 0, true, true)))
+end
+
+
+--- Resolve one closed event: scratches, eliminations and injuries, then score the field, pay
+--- prizes, update careers and tell the owners.
 --- @param event table
 --- @param horses table from indexHorses
 function EqCompetitionManager.resolve(event, horses)
     local config = EqCompetitionManager.config
     local tier = config.tierByName[event.tier]
-    local entrants, byKey = {}, {}
+    local discipline = config.disciplineByName[event.discipline]
+    local riskRng = EqRandom.new("risk " .. event.id)
+    local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
+        field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
+    local starters, byKey = {}, {}
 
     for _, entry in ipairs(event.entries) do
         local horse = horses[entry.horseId]
@@ -151,20 +189,44 @@ function EqCompetitionManager.resolve(event, horses)
         if horse == nil or record == nil then
             notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)))
         else
-            table.insert(entrants, {
-                key = entry.horseId,
-                rating = EqCompetitionManager.ratingFor(record, event),
-                condition = EqCompetition.condition(horse.animal.fitness, horse.animal.health),
-            })
-            byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
+            local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
+            if reason ~= nil then
+                local refund = math.floor((event.fee or 0) * EqRisk.SCRATCH_REFUND + 0.5)
+                if refund > 0 then
+                    g_currentMission:addMoney(refund, entry.farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
+                end
+                table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
+                    place = 0, prize = 0, status = "scratched" })
+                notify(entry.farmId, string.format(g_i18n:getText("eq_result_scratched"), entry.name,
+                    EqCompetitionManager.eventTitle(event), g_i18n:getText("eq_scratch_" .. reason),
+                    g_i18n:formatMoney(refund, 0, true, true)))
+            else
+                table.insert(starters, {
+                    key = entry.horseId,
+                    rating = EqCompetitionManager.ratingFor(record, event),
+                    condition = EqCompetition.condition(horse.animal.fitness, horse.animal.health),
+                    temperament = record.trained.temperament or 0,
+                    stamina = record.trained.stamina or 0,
+                    fitness = horse.animal.fitness or 0,
+                })
+                byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
+            end
         end
     end
 
-    if #entrants == 0 then return end
+    local outcomes = EqRisk.rollEvent(event, config, starters, riskRng, EqCompetitionManager.settings)
+    local finishers, eliminated = {}, {}
+    for _, starter in ipairs(starters) do
+        table.insert(outcomes[starter.key].eliminated and eliminated or finishers, starter)
+    end
 
-    local results = EqCompetition.run(event, config, entrants, EqRandom.new("result " .. event.id))
-    local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
-        field = #results, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
+    -- Simulated rivals fill the field around the finishers; an eliminated horse takes its place
+    -- in the field but not in the placings.
+    local results = {}
+    if #starters > 0 then
+        results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), tier.field - #eliminated)
+    end
+    summary.field = #results + #eliminated
 
     for _, runner in ipairs(results) do
         local mine = runner.key ~= nil and byKey[runner.key] or nil
@@ -184,20 +246,84 @@ function EqCompetitionManager.resolve(event, horses)
                 local cadenceDay = EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY
                 local timeAdjustment = cadenceDay and (g_currentMission.environment.timeAdjustment or 1)
                     or EqCompetitionManager.MONTHLY_BOOST_MONTHS
-                EqTraining.applyBoost(record, record:getCeilings(), config.disciplineByName[event.discipline].weights,
+                EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
                     tier.trainingBoost, mine.animal.age or 0, timeAdjustment)
             end
 
             table.insert(summary.placings, { horseId = runner.key, name = entry.name, farmId = entry.farmId,
                 place = runner.place, prize = runner.prize })
 
-            notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, #results,
+            notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
                 EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)))
         end
     end
 
+    for _, starter in ipairs(eliminated) do
+        local mine = byKey[starter.key]
+        local career = mine.record.career
+        career.starts = career.starts + 1
+        career.eliminations = career.eliminations + 1
+        table.insert(summary.placings, { horseId = starter.key, name = mine.entry.name, farmId = mine.entry.farmId,
+            place = 0, prize = 0, status = "eliminated" })
+        notify(mine.entry.farmId, string.format(g_i18n:getText(discipline.racing and "eq_result_pulledUp" or "eq_result_eliminated"),
+            mine.entry.name, EqCompetitionManager.eventTitle(event)))
+    end
+
+    for _, starter in ipairs(starters) do
+        local injury = outcomes[starter.key].injury
+        if injury ~= nil then
+            local mine = byKey[starter.key]
+            EqCompetitionManager.applyInjury(mine.record, mine.entry, injury, event)
+        end
+    end
+
+    if #summary.placings == 0 then return end
     table.insert(EqCompetitionManager.results, 1, summary)
     while #EqCompetitionManager.results > EqCompetitionManager.RESULTS_KEPT do table.remove(EqCompetitionManager.results) end
+end
+
+
+--- Start of a month: charge each injured horse's vet bill to its farm and count down its rest.
+--- @param horses table from indexHorses
+function EqCompetitionManager.monthlyCare(horses)
+    local ids = {}
+    for id in pairs(horses) do table.insert(ids, id) end
+    table.sort(ids)
+
+    for _, id in ipairs(ids) do
+        local record = EqRegistry.getById(id)
+        local injury = record ~= nil and record.injury or nil
+        if injury ~= nil then
+            local horse = horses[id]
+            local name = horse.animal.getName ~= nil and horse.animal:getName() or id
+            if injury.monthlyCost > 0 then
+                g_currentMission:addMoney(-injury.monthlyCost, horse.farmId, MoneyType.EQ_VET_BILLS or MoneyType.OTHER, true, true)
+            end
+            injury.monthsLeft = injury.monthsLeft - 1
+            if injury.monthsLeft <= 0 then
+                record.injury = nil
+                notify(horse.farmId, string.format(g_i18n:getText("eq_injury_recovered"), name))
+            end
+        end
+    end
+end
+
+
+--- Retire a horse from competition, or bring it back. Retiring an injured horse stops its
+--- treatment and the vet bills with it.
+--- @param record table
+--- @param retired boolean
+--- @return boolean ok
+--- @return string message
+function EqCompetitionManager.setRetired(record, retired)
+    if not retired and record.careerEnded then return false, g_i18n:getText("eq_retire_careerEnded") end
+    record.retired = retired
+    if retired then
+        local wasInjured = record.injury ~= nil
+        record.injury = nil
+        return true, g_i18n:getText(wasInjured and "eq_retire_doneInjured" or "eq_retire_done")
+    end
+    return true, g_i18n:getText("eq_retire_undone")
 end
 
 
@@ -229,6 +355,7 @@ end
 
 
 function EqCompetitionManager.onPeriodChanged()
+    EqCompetitionManager.monthlyCare(indexHorses())
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_MONTH then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
     end
@@ -271,7 +398,7 @@ function EqCompetitionManager.countEligible(event, horses)
     local count = 0
     for _, animal in ipairs(horses) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil and not record.retired
+        if record ~= nil and not record.retired and record.injury == nil
             and EqCompetition.canEnter(tier, animal.age or 0, EqCompetitionManager.ratingFor(record, event)) then
             count = count + 1
         end
@@ -293,6 +420,9 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return false, g_i18n:getText("eq_enter_noEvent") end
     if record.retired then return false, g_i18n:getText("eq_enter_retired") end
+    if record.injury ~= nil then
+        return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
+    end
 
     local already = EqCompetitionManager.findEntry(record.id, event.kind)
     if already ~= nil then
@@ -327,6 +457,8 @@ end
 function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. ".settings#cadence", EqCompetitionManager.settings.cadence)
     xmlFile:setBool(key .. ".settings#racing", EqCompetitionManager.settings.racing)
+    xmlFile:setBool(key .. ".settings#injuries", EqCompetitionManager.settings.injuries)
+    xmlFile:setBool(key .. ".settings#forcedRetirement", EqCompetitionManager.settings.forcedRetirement)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
 
     local ids = {}
@@ -365,6 +497,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
             xmlFile:setInt(placingKey .. "#farmId", placing.farmId)
             xmlFile:setInt(placingKey .. "#place", placing.place)
             xmlFile:setFloat(placingKey .. "#prize", placing.prize)
+            if placing.status ~= nil then xmlFile:setString(placingKey .. "#status", placing.status) end
         end
     end
 end
@@ -381,6 +514,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     local settings = EqCompetitionManager.settings
     settings.cadence = xmlFile:getString(key .. ".settings#cadence", settings.cadence)
     settings.racing = xmlFile:getBool(key .. ".settings#racing", settings.racing)
+    settings.injuries = xmlFile:getBool(key .. ".settings#injuries", settings.injuries)
+    settings.forcedRetirement = xmlFile:getBool(key .. ".settings#forcedRetirement", settings.forcedRetirement)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
 
     local i = 0
@@ -438,6 +573,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
                 farmId = xmlFile:getInt(placingKey .. "#farmId", 0),
                 place = xmlFile:getInt(placingKey .. "#place", 0),
                 prize = xmlFile:getFloat(placingKey .. "#prize", 0),
+                status = xmlFile:getString(placingKey .. "#status"),
             })
             j = j + 1
         end

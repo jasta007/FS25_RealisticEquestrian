@@ -25,7 +25,9 @@ function EqHorseRecord.new(id)
     self.focus = EqHorseRecord.FOCUS_BALANCED
     self.origin = EqHorseRecord.ORIGIN_ROLLED
     self.retired = false
-    self.career = { starts = 0, wins = 0, places = 0, earnings = 0 }
+    self.careerEnded = false     -- retired by a career-ending injury; cannot be undone
+    self.injury = nil            -- { name, monthsLeft, monthlyCost } while on box rest
+    self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
     return self
@@ -45,6 +47,12 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. "#origin", self.origin)
     xmlFile:setString(key .. "#focus", self.focus)
     xmlFile:setBool(key .. "#retired", self.retired)
+    xmlFile:setBool(key .. "#careerEnded", self.careerEnded)
+    if self.injury ~= nil then
+        xmlFile:setString(key .. ".injury#name", self.injury.name)
+        xmlFile:setInt(key .. ".injury#monthsLeft", self.injury.monthsLeft)
+        xmlFile:setFloat(key .. ".injury#monthlyCost", self.injury.monthlyCost)
+    end
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
     xmlFile:setInt(key .. "#idleDays", self.idleDays)
     xmlFile:setFloat(key .. ".genes#budget", self.budgetGene)
@@ -58,6 +66,8 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. ".career#wins", self.career.wins)
     xmlFile:setInt(key .. ".career#places", self.career.places)
     xmlFile:setFloat(key .. ".career#earnings", self.career.earnings)
+    xmlFile:setInt(key .. ".career#eliminations", self.career.eliminations)
+    xmlFile:setInt(key .. ".career#injuries", self.career.injuries)
 end
 
 
@@ -72,6 +82,14 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.origin = xmlFile:getString(key .. "#origin", EqHorseRecord.ORIGIN_ROLLED)
     self.focus = xmlFile:getString(key .. "#focus", EqHorseRecord.FOCUS_BALANCED)
     self.retired = xmlFile:getBool(key .. "#retired", false)
+    self.careerEnded = xmlFile:getBool(key .. "#careerEnded", false)
+    if xmlFile:hasProperty(key .. ".injury") then
+        self.injury = {
+            name = xmlFile:getString(key .. ".injury#name", "minor"),
+            monthsLeft = xmlFile:getInt(key .. ".injury#monthsLeft", 1),
+            monthlyCost = xmlFile:getFloat(key .. ".injury#monthlyCost", 0),
+        }
+    end
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
     self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
     self.budgetGene = EqStats.clampGene(xmlFile:getFloat(key .. ".genes#budget", EqConstants.GENE_MEAN))
@@ -91,6 +109,8 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.career.wins = xmlFile:getInt(key .. ".career#wins", 0)
     self.career.places = xmlFile:getInt(key .. ".career#places", 0)
     self.career.earnings = xmlFile:getFloat(key .. ".career#earnings", 0)
+    self.career.eliminations = xmlFile:getInt(key .. ".career#eliminations", 0)
+    self.career.injuries = xmlFile:getInt(key .. ".career#injuries", 0)
 
     return self
 end

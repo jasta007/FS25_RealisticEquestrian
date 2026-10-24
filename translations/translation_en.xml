@@ -31,6 +31,28 @@
         <text name="eq_going_soft" text="Soft"/>
         <text name="eq_money_entryFees" text="Competition Entry Fees"/>
         <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
+        <text name="eq_money_vetBills" text="Vet Bills"/>
+        <text name="eq_enter_injured" text="That horse is injured: %d month(s) of box rest left."/>
+        <text name="eq_result_eliminated" text="%s was eliminated in %s."/>
+        <text name="eq_result_pulledUp" text="%s was pulled up in %s."/>
+        <text name="eq_result_scratched" text="%s was scratched from %s (%s). %s of the entry fee was refunded."/>
+        <text name="eq_scratch_injured" text="injured"/>
+        <text name="eq_scratch_unsound" text="unsound on the day"/>
+        <text name="eq_scratch_shoe" text="lost a shoe"/>
+        <text name="eq_scratch_retired" text="retired"/>
+        <text name="eq_injury_minor" text="a minor strain"/>
+        <text name="eq_injury_moderate" text="a tendon injury"/>
+        <text name="eq_injury_serious" text="a serious leg injury"/>
+        <text name="eq_injury_new" text="%s was injured in %s: %s. %d month(s) of box rest, with vet bills of %s a month."/>
+        <text name="eq_injury_careerEnding" text="%s suffered a career-ending injury in %s and has retired from competition."/>
+        <text name="eq_injury_recovered" text="%s has recovered and can compete again."/>
+        <text name="eq_retire_done" text="Retired from competition."/>
+        <text name="eq_retire_doneInjured" text="Retired from competition. Treatment stops, and so do the vet bills."/>
+        <text name="eq_retire_undone" text="Back in competition."/>
+        <text name="eq_retire_careerEnded" text="That horse's career ended with an injury; it cannot compete again."/>
+        <text name="eq_status_title" text="Competition"/>
+        <text name="eq_status_injured" text="Injured, %d month(s)"/>
+        <text name="eq_status_retired" text="Retired"/>
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>

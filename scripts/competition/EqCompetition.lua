@@ -145,8 +145,10 @@ end
 --- @param config table EqEventConfig
 --- @param entrants table list of { key, rating, condition }
 --- @param rng table EqRandom
+--- @param field number|nil runners in total, default the tier's field (fewer when some of the
+---     field was eliminated before the scoring)
 --- @return table results list sorted by place: { key or nil for a rival, place, score, prize }
-function EqCompetition.run(event, config, entrants, rng)
+function EqCompetition.run(event, config, entrants, rng, field)
     local discipline = config.disciplineByName[event.discipline]
     local tier = config.tierByName[event.tier]
     local luck = discipline.racing and EqCompetition.RACING_LUCK_SD or EqCompetition.LUCK_SD
@@ -159,7 +161,7 @@ function EqCompetition.run(event, config, entrants, rng)
         })
     end
 
-    for _ = #entrants + 1, tier.field do
+    for _ = #entrants + 1, field or tier.field do
         local rating = rng:uniform(tier.rivalMin, tier.rivalMax)
         local condition = rng:uniform(0.85, 1)
         table.insert(runners, { score = rating * condition * (1 + rng:normal(0, luck)) })

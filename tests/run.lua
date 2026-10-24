@@ -16,6 +16,7 @@ dofile("scripts/training/EqTraining.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
+dofile("scripts/competition/EqRisk.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -307,6 +308,66 @@ for i = 1, 500 do
     for _, runner in ipairs(results) do if runner.key == "me" and runner.place <= 3 then weak = weak + 1 end end
 end
 check("an unready horse rarely places", weak < 25, weak .. " podiums of 500")
+
+-- Risk: config, scratches, eliminations, injuries.
+check("risk config: three injury kinds", #config.injuries == 3)
+check("risk config: cross country riskier than dressage",
+    config.disciplineByName.crossCountry.elimination > config.disciplineByName.dressage.elimination
+    and config.disciplineByName.crossCountry.injury > config.disciplineByName.dressage.injury)
+check("risk config: Training Events are gentler", config.tierByName.training.risk < config.tierByName.intermediate.risk)
+
+local rng = EqRandom.new("scratch")
+check("an injured horse is scratched", EqRisk.scratchReason({ injury = { monthsLeft = 2 } }, 100, rng) == EqRisk.SCRATCH_INJURED)
+check("an unsound horse is scratched", EqRisk.scratchReason({}, 40, rng) == EqRisk.SCRATCH_UNSOUND)
+local shoes = 0
+for i = 1, 5000 do if EqRisk.scratchReason({}, 100, EqRandom.new("shoe " .. i)) ~= nil then shoes = shoes + 1 end end
+check("a sound horse is rarely scratched", shoes > 10 and shoes < 120, shoes .. " of 5000")
+
+local xc, intermediate = config.disciplineByName.crossCountry, config.tierByName.intermediate
+local outclassed = EqRisk.eliminationChance(xc, intermediate, 40, 20)
+local outclassing = EqRisk.eliminationChance(xc, intermediate, 75, 80)
+check("a horse out of its depth is eliminated more", outclassed > 2.5 * outclassing,
+    string.format("%.3f vs %.3f", outclassed, outclassing))
+local firm, good = config.goings[1], config.goings[2]
+check("firm going injures more than good", EqRisk.injuryChance(xc, intermediate, firm, 80, 50, false)
+    > EqRisk.injuryChance(xc, intermediate, good, 80, 50, false))
+check("an unfit horse is injured more", EqRisk.injuryChance(xc, intermediate, good, 20, 50, false)
+    > 1.5 * EqRisk.injuryChance(xc, intermediate, good, 100, 50, false))
+check("falls over fences injure more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, true)
+    == 2 * EqRisk.injuryChance(xc, intermediate, good, 80, 50, false))
+
+local counts, endings, endingsOff = {}, 0, 0
+for i = 1, 20000 do
+    local injury = EqRisk.rollInjury(config.injuries, EqRandom.new("injury " .. i), true)
+    counts[injury.name] = (counts[injury.name] or 0) + 1
+    if injury.careerEnding then endings = endings + 1 end
+    if EqRisk.rollInjury(config.injuries, EqRandom.new("injury " .. i), false).careerEnding then endingsOff = endingsOff + 1 end
+end
+check("most injuries are minor", counts.minor > counts.moderate and counts.moderate > counts.serious)
+check("forced retirement is rare", endings > 100 and endings < 320, endings .. " of 20000")
+check("forced retirement off means never", endingsOff == 0)
+print(string.format("info: injuries minor %d moderate %d serious %d, career-ending %d of 20000",
+    counts.minor, counts.moderate, counts.serious, endings))
+
+-- Over a season of Intermediate cross country: how often a fit, matched horse comes to grief.
+local event2 = { discipline = "crossCountry", tier = "intermediate", going = "good" }
+local elim, hurt = 0, 0
+local settingsOn = { injuries = true, forcedRetirement = false }
+for i = 1, 5000 do
+    local out = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 80, stamina = 60 } },
+        EqRandom.new("season " .. i), settingsOn)
+    if out.me.eliminated then elim = elim + 1 end
+    if out.me.injury ~= nil then hurt = hurt + 1 end
+end
+check("a matched horse is eliminated now and then", elim > 150 and elim < 700, elim .. " of 5000")
+check("a matched horse is injured rarely", hurt > 20 and hurt < 200, hurt .. " of 5000")
+print(string.format("info: Intermediate cross country, matched fit horse: %.1f%% eliminated, %.1f%% injured per run",
+    elim / 50, hurt / 50))
+local off = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 80, stamina = 60 } },
+    EqRandom.new("season 1"), { injuries = false })
+local on = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 80, stamina = 60 } },
+    EqRandom.new("season 1"), settingsOn)
+check("injuries off changes nothing else", off.me.eliminated == on.me.eliminated and off.me.injury == nil)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

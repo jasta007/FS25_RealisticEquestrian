@@ -25,6 +25,7 @@ source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
+source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
@@ -85,6 +86,8 @@ function EqMain.activate()
             MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_VET_BILLS = MoneyType.register("eqVetBills", "eq_money_vetBills")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
         end)
