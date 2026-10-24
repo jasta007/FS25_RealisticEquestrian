@@ -20,24 +20,26 @@
 
         <!-- Events table -->
         <Bitmap profile="rlMenu_tableList" id="eventsHeader" position="20px -120px" size="1000px 40px">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="310px 40px" text="$l10n_eq_ui_col_event"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="330px 0px" size="100px 40px" text="$l10n_eq_ui_col_going"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="440px 0px" size="130px 40px" text="$l10n_eq_ui_col_when"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="580px 0px" size="100px 40px" text="$l10n_eq_ui_col_fee"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="690px 0px" size="120px 40px" text="$l10n_eq_ui_col_prize"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="830px 0px" size="170px 40px" text="$l10n_eq_ui_col_yours"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="250px 40px" text="$l10n_eq_ui_col_event"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="270px 0px" size="120px 40px" text="$l10n_eq_ui_col_level"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="400px 0px" size="110px 40px" text="$l10n_eq_ui_col_going"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="520px 0px" size="100px 40px" text="$l10n_eq_ui_col_when"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="620px 0px" size="90px 40px"  text="$l10n_eq_ui_col_fee"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="720px 0px" size="110px 40px" text="$l10n_eq_ui_col_prize"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="845px 0px" size="155px 40px" text="$l10n_eq_ui_col_yours"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </Bitmap>
 
         <GuiElement profile="rlMenu_container" id="eventsBox" position="20px -165px" size="1020px 700px">
             <SmoothList profile="rlMenu_tableList" id="eventsList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="eventRowTemplate" size="1000px 48px">
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="310px 48px" name="title" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="330px 0px" size="100px 48px" name="going"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="440px 0px" size="130px 48px" name="when"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="580px 0px" size="100px 48px" name="fee"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="690px 0px" size="120px 48px" name="prize"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="830px 0px" size="170px 48px" name="yours" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="250px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="270px 0px" size="120px 48px" name="level" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="400px 0px" size="110px 48px" name="going"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="520px 0px" size="100px 48px" name="when"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="620px 0px" size="90px 48px"  name="fee"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="720px 0px" size="110px 48px" name="prize"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="845px 0px" size="155px 48px" name="yours" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">

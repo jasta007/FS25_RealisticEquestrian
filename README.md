@@ -87,8 +87,14 @@ prizes, and sometimes none in a discipline.
 - **Round events** (Training, Novice, Intermediate) open every round and give results at the start
   of the next. A round is a day or a month: `eqSettings cadence day|month`.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
-- **Training Events** are for two-year-olds only: a fee, no prize money, a training boost, and you
-  still see where the horse placed. Every other event is open from three years.
+- **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
+  you still see where the horse placed. Every other event is open from three years.
+- Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
+  by test level (Intro up to Grand Prix), eventing by FEI star level (One-Day Event up to CCI5*),
+  flat racing as Maiden, Handicap, Listed and Group 1, and so on. The names live in the
+  translation file, so they are easy to change. A Level column shows the tier.
+- Steeplechases are rare, as they are today: the discipline's `chance` in `data/events.xml`
+  (0.08) scales how often one is drawn.
 - Novice has a rating cap (60), so it stays a class for novices. Above it, a horse can always
   enter something it can win.
 - A horse can start at most **two round events a month** (monthly events are on top), so a good
@@ -101,14 +107,15 @@ prizes, and sometimes none in a discipline.
 - A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
   dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
   half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
-  have a going: firm favours speed, soft favours stamina. On the day, RLRM's fitness and health
+  have conditions: firm favours speed, soft and heavy favour stamina, hot weather tests stamina
+  and temperament and raises the injury risk. On the day, RLRM's fitness and health
   scale the performance, plus a little luck.
 - The top three share the prize pool 50/30/20. Horses from different farms can enter the same
   event.
 - Racing can be switched off: `eqSettings racing off`.
 
 **Events tab:** RLRM's menu (Shift+O) gets a Competitions tab with a rosette icon. The left table
-lists the open events (fee, prize pool, going, when results come, and how many of your horses can
+lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
 enter). Select one, and the right table shows your horses with their rating and whether they can
 enter; pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.

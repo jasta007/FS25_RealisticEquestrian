@@ -124,11 +124,30 @@ function EqCompetitionManager.tierTitle(name)
 end
 
 
+--- The event's own name, such as "1.20m Jumping" or "Prix St Georges": eq_event_<discipline>_<tier>,
+--- or the tier and discipline when there is no such text.
+--- @param discipline string
+--- @param tier string
+--- @return string name
+function EqCompetitionManager.eventName(discipline, tier)
+    local key = string.format("eq_event_%s_%s", discipline, tier)
+    if g_i18n.hasText == nil or g_i18n:hasText(key) then return g_i18n:getText(key) end
+    return string.format("%s %s", EqCompetitionManager.tierTitle(tier), EqCompetitionManager.disciplineTitle(discipline))
+end
+
+
+--- @param going string|nil the event's conditions, nil indoors
+--- @return string text such as "Firm", or "Indoor"
+function EqCompetitionManager.conditionsText(going)
+    return g_i18n:getText(going ~= nil and ("eq_going_" .. going) or "eq_going_indoor")
+end
+
+
 --- @param event table
---- @return string title such as "Novice Show Jumping #12"
+--- @return string title such as "1.20m Jumping (Intermediate) #12"
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s %s #%d", EqCompetitionManager.tierTitle(event.tier),
-        EqCompetitionManager.disciplineTitle(event.discipline), event.id)
+    return string.format("%s (%s) #%d", EqCompetitionManager.eventName(event.discipline, event.tier),
+        EqCompetitionManager.tierTitle(event.tier), event.id)
 end
 
 

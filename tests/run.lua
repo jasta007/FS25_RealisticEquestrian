@@ -231,7 +231,18 @@ check("a veteran in work still declines", veteran.trained.speed < 60, string.for
 local config = EqEventConfig.read(TestXML.load("data/events.xml"))
 check("events.xml has the seven disciplines", #config.disciplines == 7)
 check("events.xml has five tiers with training first", #config.tiers == 5 and config.tiers[1].name == "training")
-check("events.xml has three goings", #config.goings == 3)
+check("events.xml has five conditions", #config.goings == 5)
+check("steeplechase is drawn rarely", config.disciplineByName.steeplechase.chance < 0.3
+    and config.disciplineByName.showJumping.chance == 1)
+do
+    local counts = {}
+    for seed = 1, 200 do
+        local schedule = EqCompetition.drawSchedule(config, EqRandom.new("rare " .. seed), EqCompetition.KIND_ROUND, true)
+        for _, event in ipairs(schedule) do counts[event.discipline] = (counts[event.discipline] or 0) + 1 end
+    end
+    print(string.format("info: 200 round draws: %d steeplechases vs %d show jumping", counts.steeplechase or 0, counts.showJumping or 0))
+    check("steeplechases are far rarer than show jumping", (counts.steeplechase or 0) * 4 < (counts.showJumping or 1))
+end
 
 local jumping = config.disciplineByName.showJumping
 local eventing = config.disciplineByName.eventing

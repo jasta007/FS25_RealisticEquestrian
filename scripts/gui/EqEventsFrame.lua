@@ -218,6 +218,7 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         local row = self.eventRows[index]
         if row == nil then return end
         setCell(cell, "title", row.title)
+        setCell(cell, "level", row.level)
         setCell(cell, "going", row.going)
         setCell(cell, "when", row.when)
         setCell(cell, "fee", row.fee)

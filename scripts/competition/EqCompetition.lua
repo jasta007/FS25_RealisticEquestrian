@@ -116,7 +116,8 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
             for _, tier in ipairs(config.tiers) do
                 if tier.monthly == wantMonthly then
                     local copies = 0
-                    while copies < config.copiesMax and rng:next() < tier.chance * (copies == 0 and 1 or 0.4) do
+                    local chance = tier.chance * (discipline.chance or 1)
+                    while copies < config.copiesMax and rng:next() < chance * (copies == 0 and 1 or 0.4) do
                         copies = copies + 1
                         local spread = config.priceSpread
                         local priceFactor = 1 + rng:uniform(-spread, spread)

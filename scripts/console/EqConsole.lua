@@ -178,11 +178,11 @@ function EqConsole:consoleEvents()
         local eligible = EqCompetitionManager.countEligible(event, horses)
         if eligible > 0 then anyEligible = true end
         local ages = tier.maxAge > 0 and string.format("%d-%dm", tier.minAge, tier.maxAge) or string.format("%dm+", tier.minAge)
-        print(string.format("%s #%-4d %-7s %-28s %-6s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
+        print(string.format("%s #%-4d %-7s %-44s %-8s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
             eligible > 0 and string.format("[%d can enter]", eligible) or "              ", event.id,
             event.kind == EqCompetition.KIND_MONTH and "monthly" or "round",
-            EqCompetitionManager.tierTitle(event.tier) .. " " .. EqCompetitionManager.disciplineTitle(event.discipline),
-            event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "",
+            EqCompetitionManager.eventName(event.discipline, event.tier) .. " (" .. EqCompetitionManager.tierTitle(event.tier) .. ")",
+            EqCompetitionManager.conditionsText(event.going),
             ages, g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
             tier.minRating, tier.maxRating, #event.entries))
     end
@@ -267,8 +267,8 @@ function EqConsole:consoleResults()
                 shown = shown + 1
                 local outcome = placing.status ~= nil and string.upper(placing.status)
                     or string.format("%d of %d", placing.place, summary.field)
-                print(string.format("day %d  %s %s #%d  '%s' %s  %s", summary.day,
-                    EqCompetitionManager.tierTitle(summary.tier), EqCompetitionManager.disciplineTitle(summary.discipline),
+                print(string.format("day %d  %s (%s) #%d  '%s' %s  %s", summary.day,
+                    EqCompetitionManager.eventName(summary.discipline, summary.tier), EqCompetitionManager.tierTitle(summary.tier),
                     summary.eventId, placing.name, outcome, g_i18n:formatMoney(placing.prize, 0, true, true)))
             end
         end

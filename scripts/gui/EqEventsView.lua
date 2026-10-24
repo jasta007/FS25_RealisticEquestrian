@@ -28,7 +28,7 @@ end
 
 --- Open events, round events first, then by tier, discipline and fee.
 --- @param farmId number
---- @return table rows { event, title, going, when, fee, prize, yours }
+--- @return table rows { event, title, level, going, when, fee, prize, yours }
 function EqEventsView.eventRows(farmId)
     local manager = EqCompetitionManager
     local horses = EqRLRM.listHorsesForFarm(farmId)
@@ -67,8 +67,9 @@ function EqEventsView.eventRows(farmId)
 
         table.insert(rows, {
             event = event,
-            title = string.format("%s %s", manager.tierTitle(event.tier), manager.disciplineTitle(event.discipline)),
-            going = event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "-",
+            title = manager.eventName(event.discipline, event.tier),
+            level = manager.tierTitle(event.tier),
+            going = manager.conditionsText(event.going),
             when = g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_when_nextMonth" or cadence),
             fee = money(event.fee),
             prize = event.prize > 0 and money(event.prize) or g_i18n:getText("eq_ui_trainingOnly"),
@@ -155,7 +156,7 @@ function EqEventsView.resultRows(farmId)
                 end
                 table.insert(rows, {
                     day = string.format(g_i18n:getText("eq_ui_day"), summary.day),
-                    title = string.format("%s %s", manager.tierTitle(summary.tier), manager.disciplineTitle(summary.discipline)),
+                    title = manager.eventName(summary.discipline, summary.tier),
                     horse = placing.name,
                     result = result,
                     prize = placing.prize > 0 and money(placing.prize) or "-",

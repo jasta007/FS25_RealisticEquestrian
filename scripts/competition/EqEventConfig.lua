@@ -38,6 +38,7 @@ function EqEventConfig.read(xmlFile)
             racing = xmlFile:getBool(key .. "#racing", false),
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
             injury = xmlFile:getFloat(key .. "#injury", 0),
+            chance = xmlFile:getFloat(key .. "#chance", 1),
         }
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
