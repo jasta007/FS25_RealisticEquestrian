@@ -11,13 +11,13 @@
     - AnimalHorse.showHorseHudInfo feeds the info box you get when looking at a horse, the same
       "54 (High)".
 
-    In RLRM's menu the two halves are split, as James asked:
-    - The stat grid shows potential: our rows become "Stamina potential  High" and move up to
-      its second and third lines, where the grid's ten slots never push them off.
-    - The Genetics column shows the trained level like RLRM's own rows, "54 - High", label and
-      value coloured on RLRM's red-to-green scale. The column has six rows in RLRM's XML, so the
-      first time a frame shows a horse we clone its last row for the extra slots. RLRM's loop
-      only touches rows 1-6, and ours are hidden for other animals.
+    In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
+    like it: SKILL POTENTIAL on the left (the word only, "High"), SKILLS on the right (the
+    trained level, "54 - High"), the four stats in the same order in both, coloured on RLRM's
+    red-to-green genetics scale. The section is a clone of RLRM's Pedigree/Genetics row, made
+    the first time a frame shows a horse and hidden for other animals. For a horse the stat grid
+    then has only RLRM's rows (and our status line), so the grid and the Pedigree/Genetics row
+    are shrunk to what they show, which keeps the pane short enough not to scroll.
 
     Meat quality: for horses only, RLRM's Meat Quality row is taken out of the menu's genetics
     column and the look-at genetics box. It is a display preference, saved per machine in
@@ -31,9 +31,15 @@ EqInfoDisplay = {}
 -- in the Genetics column.
 EqInfoDisplay.MENU_FIRST_ROW = 3
 
--- True once RLDetailPaneHelper.updateAnimalDisplay is hooked: trained levels then live in the
--- Genetics column and the stat grid shows potential only.
-EqInfoDisplay.statsInGenetics = false
+-- True once RLDetailPaneHelper.updateAnimalDisplay is hooked: the stats then live in their own
+-- section and the stat grid leaves them out.
+EqInfoDisplay.statsInSection = false
+
+-- RLRM's stat grid: 10px top padding, then 35px a line (rlMenu_animalStatsSection, 185px for
+-- five lines).
+EqInfoDisplay.GRID_PADDING = 10
+EqInfoDisplay.GRID_LINE = 35
+EqInfoDisplay.GRID_LINES = 5
 
 EqInfoDisplay.MEAT_LABEL_KEY = "rl_ui_meat"
 EqInfoDisplay.hideMeatQuality = true
@@ -178,16 +184,12 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
     if display == nil or not isHorse(animal) then return end
 
     local rows = display.statRows
-    if rows ~= nil and EqInfoDisplay.statsInGenetics then
-        -- Trained levels are in the Genetics column, so the grid shows potential only.
-        for _, row in ipairs(rows) do
-            if row.eqStat ~= nil then
-                row.title = g_i18n:getText("eq_potential_" .. row.eqStat)
-                row.valueText = EqInfoDisplay.potentialText(row.eqCeiling, row.eqUnvetted)
-            end
+    if rows ~= nil and EqInfoDisplay.statsInSection then
+        -- The stats have their own section, so the grid keeps only the status line.
+        for i = #rows, 1, -1 do
+            if rows[i].eqStat ~= nil then table.remove(rows, i) end
         end
-    end
-    if rows ~= nil then
+    elseif rows ~= nil then
         local ours, others = {}, {}
         for _, row in ipairs(rows) do
             table.insert(row.eqBlock and ours or others, row)
@@ -230,73 +232,172 @@ function EqInfoDisplay.geneticsValue(trained)
 end
 
 
---- Make sure a frame's Genetics column has at least `count` rows, cloning its last one.
---- @param frame table RLRM menu frame
---- @param count number
---- @return boolean ok
-local function ensureGeneticsRows(frame, count)
-    local rows, labels, values = frame.geneticsRow, frame.geneticsLabel, frame.geneticsValue
-    if rows == nil or labels == nil or values == nil or #rows == 0 then return false end
-
-    while #rows < count do
-        local template = rows[#rows]
-        if template.parent == nil or template.clone == nil then return false end
-        local row = template:clone(template.parent, false, true)
-        local label, value = row.elements[1], row.elements[2]
-        if label == nil or value == nil then
-            row:setVisible(false)
-            return false
-        end
-        table.insert(rows, row)
-        labels[#rows] = label
-        values[#rows] = value
-    end
-    return true
+--- @param element table
+--- @return number height the element's height plus its top and bottom margins
+local function outerHeight(element)
+    local margin = element.margin or { 0, 0, 0, 0 }
+    return element.size[2] + (margin[2] or 0) + (margin[4] or 0)
 end
 
 
---- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Genetics column rows after
---- RLRM's own with the four stats, or hide our extra rows for any other animal.
+--- @param column table a vertical BoxLayout
+--- @return number height of its visible children stacked
+local function contentHeight(column)
+    local height = 0
+    for _, child in ipairs(column.elements) do
+        if child.visible then height = height + outerHeight(child) end
+    end
+    return height
+end
+
+
+--- Set an element's height, remembering RLRM's own so it can be put back.
+--- @param element table
+--- @param height number|nil nil restores RLRM's height
+local function setHeight(element, height)
+    if element.eqHeight == nil then element.eqHeight = element.size[2] end
+    height = height or element.eqHeight
+    if element.size[2] ~= height then element:setSize(element.size[1], height) end
+end
+
+
+--- Fit a row of columns (RLRM's Pedigree/Genetics row, or ours) to its tallest column, with
+--- half a line to spare.
+--- @param row table horizontal BoxLayout of vertical BoxLayouts
+--- @param line number one info row's height
+local function fitRow(row, line)
+    local tallest = 0
+    for _, column in ipairs(row.elements) do
+        if column.visible and column.elements ~= nil then
+            local height = contentHeight(column)
+            setHeight(column, height)
+            tallest = math.max(tallest, height)
+        end
+    end
+    if tallest > 0 then setHeight(row, tallest + line / 2) end
+end
+
+
+--- Build the Skill potential / Skills section once per frame: a clone of RLRM's
+--- Pedigree/Genetics row, placed right after it, with two copies of the Genetics column.
+--- @param frame table RLRM menu frame
+--- @return table|nil section { row, potential = column, skills = column }
+local function ensureSection(frame)
+    if frame.eqSkills ~= nil then return frame.eqSkills end
+    local source, genetics = frame.animalColumnsRow, frame.geneticsColumn
+    if source == nil or genetics == nil or source.parent == nil or source.clone == nil then return nil end
+
+    local scroll = source.parent
+    local row = source:clone(scroll, false, true)
+    -- Move it from the end of the pane to just after Pedigree/Genetics.
+    for i, element in ipairs(scroll.elements) do
+        if element == row then table.remove(scroll.elements, i) break end
+    end
+    for i, element in ipairs(scroll.elements) do
+        if element == source then table.insert(scroll.elements, i + 1, row) break end
+    end
+
+    -- Keep only the Genetics column's clone, then copy it for the right-hand column.
+    local potential
+    for i = #row.elements, 1, -1 do
+        local column = row.elements[i]
+        if i == #row.elements then potential = column else column:delete() end
+    end
+    if potential == nil then return nil end
+    local skills = potential:clone(row, false, true)
+
+    local section = { row = row, potential = potential, skills = skills }
+    potential.elements[1]:setText(g_i18n:getText("eq_ui_skillPotential"))
+    skills.elements[1]:setText(g_i18n:getText("eq_ui_skills"))
+    for i, column in ipairs({ potential, skills }) do
+        for index = 2, #column.elements do
+            column.elements[index]:setVisible(index - 1 <= #EqConstants.STAT_KEYS)
+        end
+    end
+    frame.eqSkills = section
+    return section
+end
+
+
+--- @param cell table an info row: label, value
+--- @param title string
+--- @param text string
+--- @param color table|nil
+local function fillCell(cell, title, text, color)
+    local label, value = cell.elements[1], cell.elements[2]
+    label:setText(title)
+    value:setText(text)
+    if color ~= nil then
+        if label.setTextColor ~= nil then label:setTextColor(unpack(color)) end
+        if value.setTextColor ~= nil then value:setTextColor(unpack(color)) end
+    end
+end
+
+
+--- Shrink RLRM's stat grid to the lines it shows (or give it back its height).
+--- @param frame table
+--- @param shrink boolean
+local function fitGrid(frame, shrink)
+    local first = frame.statRow ~= nil and frame.statRow[1] or nil
+    local grid = first ~= nil and first.parent or nil
+    if grid == nil or grid.setSize == nil then return end
+    if not shrink then setHeight(grid, nil) return end
+
+    local shown = 0
+    for _, cell in ipairs(frame.statRow) do
+        if cell.visible then shown = shown + 1 end
+    end
+    local lines = math.ceil(shown / 2)
+    local full = EqInfoDisplay.GRID_PADDING + EqInfoDisplay.GRID_LINES * EqInfoDisplay.GRID_LINE
+    if grid.eqHeight == nil then grid.eqHeight = grid.size[2] end
+    setHeight(grid, grid.eqHeight * (EqInfoDisplay.GRID_PADDING + lines * EqInfoDisplay.GRID_LINE) / full)
+end
+
+
+--- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Skill potential / Skills section
+--- for a horse, or hide it and put RLRM's layout back for any other animal.
 --- @param frame table RLRM menu frame
 --- @param animal table|nil
-function EqInfoDisplay.renderGenetics(frame, animal)
-    local rows = frame.geneticsRow
-    if rows == nil then return end
-    local rlrmRows = EqRLRM.get("RLDetailPaneHelper").NUM_GENETICS_ROWS or 6
-
+function EqInfoDisplay.renderSkills(frame, animal)
     local record = isHorse(animal) and EqRegistry.getOrCreate(animal) or nil
-    local first = nil
-    if record ~= nil then
-        -- RLRM shows its rows from the top and hides the rest; ours follow the last shown one.
-        first = 1
-        while first <= rlrmRows and rows[first] ~= nil and rows[first].visible do first = first + 1 end
-        if not ensureGeneticsRows(frame, first + #EqConstants.STAT_KEYS - 1) then record = nil end
-    end
+    local section = record ~= nil and ensureSection(frame) or frame.eqSkills
 
-    if record ~= nil then
-        for i, stat in ipairs(EqConstants.STAT_KEYS) do
-            local index = first + i - 1
-            local label, value = frame.geneticsLabel[index], frame.geneticsValue[index]
-            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0)
-            rows[index]:setVisible(true)
-            label:setText(statTitle(stat))
-            value:setText(text)
-            if color ~= nil then
-                if label.setTextColor ~= nil then label:setTextColor(unpack(color)) end
-                if value.setTextColor ~= nil then value:setTextColor(unpack(color)) end
+    if section ~= nil then section.row:setVisible(record ~= nil) end
+    fitGrid(frame, record ~= nil and section ~= nil)
+
+    local columnsRow = frame.animalColumnsRow
+    if record == nil or section == nil then
+        if columnsRow ~= nil and columnsRow.eqHeight ~= nil then
+            for _, column in ipairs(columnsRow.elements) do
+                if column.eqHeight ~= nil then setHeight(column, nil) end
             end
+            setHeight(columnsRow, nil)
         end
-        first = first + #EqConstants.STAT_KEYS
     else
-        first = rlrmRows + 1
+        local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
+        for i, stat in ipairs(EqConstants.STAT_KEYS) do
+            local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
+            fillCell(section.potential.elements[i + 1], statTitle(stat),
+                EqInfoDisplay.potentialText(ceilings[stat], unvetted), potentialColor)
+            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0)
+            fillCell(section.skills.elements[i + 1], statTitle(stat), text, color)
+        end
+
+        local line = section.potential.elements[2].size[2]
+        if columnsRow ~= nil then
+            for _, column in ipairs(columnsRow.elements) do
+                if column.invalidateLayout ~= nil then column:invalidateLayout() end
+            end
+            fitRow(columnsRow, line)
+        end
+        section.potential:invalidateLayout()
+        section.skills:invalidateLayout()
+        fitRow(section.row, line)
+        section.row:invalidateLayout()
     end
 
-    for index = first, #rows do
-        if index > rlrmRows then rows[index]:setVisible(false) end
-    end
-
-    local column = rows[1].parent
-    if column ~= nil and column.invalidateLayout ~= nil then column:invalidateLayout() end
+    local scroll = columnsRow ~= nil and columnsRow.parent or nil
+    if scroll ~= nil and scroll.invalidateLayout ~= nil then scroll:invalidateLayout() end
 end
 
 
@@ -364,9 +465,9 @@ function EqInfoDisplay.installMenu(guarded)
     if EqRLRM.features.menuGenetics then
         local helper = EqRLRM.get("RLDetailPaneHelper")
         helper.updateAnimalDisplay = Utils.appendedFunction(helper.updateAnimalDisplay, function(frame, animal)
-            guarded("genetics column", function() EqInfoDisplay.renderGenetics(frame, animal) end)
+            guarded("skills section", function() EqInfoDisplay.renderSkills(frame, animal) end)
         end)
-        EqInfoDisplay.statsInGenetics = true
+        EqInfoDisplay.statsInSection = true
     end
 
     local animalClass = EqRLRM.get("Animal")

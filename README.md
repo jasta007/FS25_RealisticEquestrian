@@ -38,9 +38,11 @@ Players never see a ceiling as a number, only as a word in RLRM's genetics style
 Very high...). The words follow the event tiers: 40-54 is Average (Novice), 55-69 High
 (Intermediate), 70-84 Very high (Advanced), 85 and up Extremely high (Championship); below 40 is
 Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in the
-animals tab) the stat grid shows each stat's potential, such as `Speed potential  Very high`, and the
-Genetics column shows the trained level, such as `Speed 60 - High`, coloured on RLRM's red-to-green
-scale with the same ladder, so a horse trained to its full potential shows the same word in both.
+animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL on the left
+(`Speed  Very high`) and SKILLS on the right (`Speed  60 - High`), the four stats in the same order
+in both, coloured on RLRM's red-to-green scale with the same ladder, so a horse trained to its full
+potential shows the same word in both. The stat grid above keeps only RLRM's rows and shrinks to
+fit, so the pane doesn't need to scroll.
 The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
