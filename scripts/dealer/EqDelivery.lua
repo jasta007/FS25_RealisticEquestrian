@@ -170,6 +170,12 @@ function EqDelivery.complete(trailer, horses, pasture)
     end
     if pasture ~= nil and pasture.updateVisualAnimals ~= nil then pasture:updateVisualAnimals() end
 
+    local farmId = g_currentMission:getFarmId()
+    for _, animal in ipairs(delivered) do
+        local name = animal.getName ~= nil and animal:getName() or ""
+        EqMessages.post(farmId, "EQ_DELIVERED", string.format(g_i18n:getText("eq_deliver_done"), name), animal)
+    end
+
     if #delivered == 1 then
         local name = delivered[1].getName ~= nil and delivered[1]:getName() or ""
         notify(FSBaseMission.INGAME_NOTIFICATION_OK, string.format(g_i18n:getText("eq_deliver_done"), name))

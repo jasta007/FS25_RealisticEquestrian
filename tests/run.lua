@@ -942,5 +942,70 @@ check("other grain shows while it is fed", rowNames(withWheat) == "eq_feedRow_oa
 local hayRows = EqFeed.splitRows(geistal[2].names, {}, feeds)
 check("a group without rows stays one row", #hayRows == 1 and hayRows[1].row == nil)
 
+-- RLRM's message log: our ids go into RLRM's real RLMessage, and lines land in the horse's husbandry.
+-- In its own function: the main chunk is close to Lua's 200-local limit.
+local function messageLogTests()
+    local rlrmEnv = { RLConstants = { SEVERITY = { INFO = "info", SUCCESS = "success", NOTICE = "notice", WARNING = "warning" } } }
+    RLConstants = rlrmEnv.RLConstants
+    dofile(rlrmPath .. "/scripts/messaging/RLMessage.lua")
+    rlrmEnv.RLMessage = RLMessage
+
+    local texts = { rl_message_eqText = "%s", rl_messageTitle_eqCompetition = "Competition" }
+    local savedI18n, savedMission, savedEnv = g_i18n, g_currentMission, EqRLRM.env
+    g_i18n = { texts = {}, hasText = function(_, key) return texts[key] ~= nil end, getText = function(_, key) return texts[key] end }
+    _G.g_i18n = g_i18n
+    EqRLRM.env = rlrmEnv
+    dofile("scripts/core/EqMessages.lua")
+
+    local function husbandry(animals)
+        local logged = {}
+        return { logged = logged, spec_husbandryAnimals = { getClusters = function() return animals end },
+            addRLMessage = function(_, id, animal, args) table.insert(logged, { id = id, animal = animal, args = args }) end }
+    end
+    local horse = { isHorse = function() return true end, getIdentifiers = function() return "GB 1 42" end }
+    local cow = { isHorse = function() return false end }
+    local cows, stable = husbandry({ cow }), husbandry({ horse })
+    rlrmEnv.RLAnimalQuery = { listHusbandriesForFarm = function() return { cows, stable } end }
+
+    g_currentMission = { getIsServer = function() return true end }
+    EqMessages.post(1, "EQ_PLACED", "Not yet installed", horse)
+    check("nothing is logged before install", #stable.logged == 0)
+
+    check("message ids install", EqMessages.install())
+    local placed = RLMessage.EQ_PLACED
+    check("a placing is a success line in the Competition group",
+        placed ~= nil and placed.severity == "success" and placed.title == "eqCompetition" and placed.text == "eqText")
+    check("RLRM's own ids are untouched", RLMessage.DEATH ~= nil and RLMessage.DEATH.text == "death")
+    check("every id has a real severity", (function()
+        for id in pairs(EqMessages.TYPES) do
+            if RLMessage[id] == nil or RLMessage[id].severity == nil then return false end
+        end
+        return true
+    end)())
+    check("our texts reach the global table", g_i18n.texts.rl_message_eqText == "%s")
+
+    EqMessages.post(1, "EQ_PLACED", "Star finished 1 of 8 in Dressage, winning $500.", horse)
+    check("an unhoused horse's line goes in the farm's pen with horses", #stable.logged == 1 and #cows.logged == 0)
+    check("the line carries the sentence and the horse",
+        stable.logged[1] ~= nil and stable.logged[1].args[1] == "Star finished 1 of 8 in Dressage, winning $500."
+            and stable.logged[1].animal == "GB 1 42")
+
+    local home = husbandry({})
+    horse.clusterSystem = { owner = home }
+    EqMessages.post(1, "EQ_INJURED", "Star was injured.", horse)
+    check("a horse's line goes in its own husbandry", #home.logged == 1 and home.logged[1].id == "EQ_INJURED")
+
+    EqMessages.post(1, "NOT_OURS", "x", horse)
+    check("unknown ids are not logged", #home.logged == 1)
+
+    g_currentMission = { getIsServer = function() return false end }
+    EqMessages.post(1, "EQ_INJURED", "Star was injured.", horse)
+    check("clients don't log; the server's line syncs to them", #home.logged == 1)
+
+    g_i18n, g_currentMission, EqRLRM.env = savedI18n, savedMission, savedEnv
+    _G.g_i18n = savedI18n
+end
+messageLogTests()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
