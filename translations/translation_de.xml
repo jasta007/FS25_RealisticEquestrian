@@ -22,7 +22,7 @@
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_temperament_2" text="Sie verlieren den Multiplikator, wenn Sie in Galopp oder Renngalopp beschleunigen, gegen ein Hindernis stoßen oder die nächste Bewegung verpassen. Leckerlis wie Karotten im Futter sind ebenfalls eine gute Möglichkeit, das Temperament zu verbessern."/>
-        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt Ihr Pferd Gehorsam. Beginnen Sie eine Lektion, indem Sie in den Schritt wechseln und das Tempo einige Sekunden halten. Das Trainingsprogramm verlangt dann eine neue Bewegung. Führen Sie sie innerhalb weniger Sekunden aus, damit die Kombo weiterläuft."/>
+        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt Ihr Pferd Gehorsam. Beginnen Sie eine Lektion, indem Sie in den Schritt wechseln und das Tempo kurz halten. Das Trainingsprogramm verlangt dann eine neue Bewegung, die Sie halten sollen. Führen Sie sie innerhalb weniger Sekunden aus, damit die Kombo weiterläuft."/>
         <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern, ganz anhalten oder in den Schritt zurückfallen. Ein Sprung ohne Hindernis trainiert ein wenig, erhöht aber den Multiplikator nicht."/>
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Wendigkeits-Multiplikator aufzubauen."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
@@ -44,7 +44,7 @@
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
         <text name="eq_help_speed_2" text="Reiten Sie Schritt oder halten Sie an, um sich vor dem nächsten Sprint zu erholen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken. Energiereicher Mais im Futter ist eine gute Möglichkeit, das Schnelligkeitstraining zu verbessern."/>
-        <text name="eq_help_speed_1" text="Schnelligkeit entsteht bei Sprints. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 % ganz."/>
+        <text name="eq_help_speed_1" text="Das Schnelligkeitstraining lebt von Sprints. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 % ganz."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_stamina_2" text="Über 85 % ist das Pferd außer Atem und lernt langsamer: Traben Sie, um zu entlasten und den Gewinn zu halten, und versuchen Sie, lange im Galopp zu bleiben. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
         <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Der Gewinn wächst, solange Sie ein gleichmäßiges Tempo halten, und ist am größten, wenn die Anstrengung im Zielbereich zwischen 65 und 85 % bleibt. Renngalopp ermüdet Ihr Pferd schnell und verringert ohne Pausen den Gewinn."/>

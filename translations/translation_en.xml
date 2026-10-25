@@ -19,7 +19,7 @@
         <text name="eq_train_view_stamina" text="Stamina"/>
         <text name="eq_train_view_speed" text="Speed"/>
         <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a few seconds. The training program will then ask you for a new manoeuvre. Achieve it within a few seconds to keep the combo going."/>
+        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a short interval. The training program will then ask you for a new manoeuvre to hold. Achieve it within a few seconds to keep the combo going."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don't clear a new obstacle in time, or if you come to a complete halt or drop back to a walk. Jumping without an obstacle gives some training benefit but doesn't raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles successfully to build an Agility training multiplier."/>
@@ -42,7 +42,7 @@
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
         <text name="eq_help_speed_2" text="Walk or rest to recover before the next sprint. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
-        <text name="eq_help_speed_1" text="Speed comes from sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%."/>
+        <text name="eq_help_speed_1" text="Speed training improves with sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="Above 85% the horse is blowing hard and learns more slowly: trot to ease off and keep the gains going, and try to hold a long canter. Stamina also increases how long your horse can train each day."/>
         <text name="eq_help_stamina_1" text="Stamina comes from runs at a canter or gallop. Gains build as you hold a steady pace, and are best while you keep exertion in the zone, between 65 and 85%. Galloping tires your horse quickly and reduces your gains without rest."/>
