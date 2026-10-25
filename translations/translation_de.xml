@@ -36,8 +36,8 @@
         <text name="eq_train_quality_full" text="für heute ausgeschöpft"/>
         <text name="eq_train_others" text="Andere"/>
         <text name="eq_train_tip_stamina_1" text="Lange Galopps bauen Ausdauer auf."/>
-        <text name="eq_train_tip_stamina_2" text="Der Gewinn wächst in der ersten Minute."/>
-        <text name="eq_train_tip_stamina_3" text="Müdigkeit bei 60-85 % halten: traben entlastet."/>
+        <text name="eq_train_tip_stamina_2" text="Volle Wirkung nach 15 s im Galopp."/>
+        <text name="eq_train_tip_stamina_3" text="Müdigkeit bei 65-85 % halten: traben entlastet."/>
         <text name="eq_train_tip_speed_1" text="Im Renngalopp sprinten, solange frisch (unter 25 %)."/>
         <text name="eq_train_tip_speed_2" text="Dann stehen bleiben und vor dem nächsten Sprint ausruhen."/>
         <text name="eq_train_tip_speed_3" text="Schritt reiten erholt auch, aber langsamer."/>

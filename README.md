@@ -58,8 +58,9 @@ uses its genetics, health and fitness.
 - **Ride your horses, and pick what to work on.** Stamina and speed train best from focused work,
   watched by a **Tiredness** meter while you ride (it rises in canter and gallop and falls at
   slower gaits and at a halt):
-  - **Stamina** comes from long runs: canter or gallop for a minute or more and hold tiredness in
-    the zone, 60-85%. Trot to ease off without ending the run.
+  - **Stamina** comes from runs: gains peak after 15 seconds at canter or gallop, while tiredness
+    is in the zone, 65-85%. Trot to ease off without losing the run; a stop or a walk only wears
+    the run down slowly.
   - **Speed** comes from sprints: gallop while the horse is fresh (tiredness under 25%), then
     stand still to rest before the next one.
   - A good session can give up to double what a full day of riding used to. Just riding round

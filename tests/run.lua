@@ -300,8 +300,15 @@ local flatOut = session(function() return "gallop" end)
 check("long runs in the zone train stamina at up to double the old full day", staminaRun.stamina >= 1.5,
     string.format("got %.2f", staminaRun.stamina))
 check("sprints with rests train speed at up to double the old full day", sprints.speed >= 1.5, string.format("got %.2f", sprints.speed))
-check("cycling the gaits trains stamina at about a quarter of the old day", cycled.stamina > 0.15 and cycled.stamina < 0.45,
+check("cycling the gaits trains stamina at well under half a focused day", cycled.stamina > 0.15 and cycled.stamina < 0.8,
     string.format("got %.2f", cycled.stamina))
+local knocked = session(function(sheet, t, state)
+    if t > 5000 and t % 20000 < 3000 then return "halt" end
+    if sheet.tiredness >= 84 then state.ease = true elseif sheet.tiredness <= 72 then state.ease = false end
+    return state.ease and "trot" or "canter"
+end)
+check("being knocked to a halt now and then does not spoil a stamina session", knocked.stamina >= 1.5,
+    string.format("got %.2f", knocked.stamina))
 check("cycling the gaits trains speed at about a quarter of the old day", cycled.speed > 0.05 and cycled.speed < 0.3,
     string.format("got %.2f", cycled.speed))
 check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
@@ -319,7 +326,7 @@ do
     check("tiredness bands", EqTraining.tirednessBand(10) == "fresh" and EqTraining.tirednessBand(70) == "zone"
         and EqTraining.tirednessBand(95) == "blown" and EqTraining.sprintBand(60) == "stale")
     EqTraining.rest(sheet, 5000)
-    check("time out of the saddle rests the horse", near(sheet.tiredness, 30) and sheet.run == 0)
+    check("time out of the saddle rests the horse", near(sheet.tiredness, 45) and near(sheet.run, 5))
     local worn = EqTraining.newSheet()
     for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
     check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0

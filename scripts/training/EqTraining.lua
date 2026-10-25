@@ -12,7 +12,7 @@
     Stamina and speed are focused work. Most of what they learn comes from how the horse is
     worked, not how long: a tiredness meter (a short-term one, separate from the riding bar, which
     is the day's energy) rises in canter and gallop and falls at slower gaits and at a halt.
-    Stamina comes from long runs that hold the meter high but not too high; speed comes from
+    Stamina comes from runs (full after RUN_FULL seconds) that hold the meter high but not too high; speed comes from
     galloping while the meter is low, so the best speed work is sprints with rests between. Just
     riding the gaits trains them at UNFOCUSED_SHARE of the gait weights below.
 
@@ -42,19 +42,20 @@ EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1 }
 EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
 
 -- Tiredness meter (0-100) change per second, by gait. "halt" is standing still.
-EqTraining.TIREDNESS_RATE = { halt = -6, walk = -1.5, reverse = -1, trot = -0.8, canter = 1.2, gallop = 3 }
+EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -0.8, canter = 1.2, gallop = 3 }
 
--- A run is time spent at canter or gallop. Trotting holds it, slower gaits end it.
-EqTraining.RUN_RATE = { halt = -5, walk = -5, reverse = -5, trot = 0, canter = 1, gallop = 1 }
-EqTraining.RUN_START = 15
-EqTraining.RUN_FULL = 60
+-- A run is time spent at canter or gallop. Trotting holds it; walking, backing up or being
+-- knocked to a halt wear it down slowly rather than ending it, since FS horses stop easily.
+EqTraining.RUN_RATE = { halt = -3, walk = -3, reverse = -3, trot = 0, canter = 1, gallop = 1 }
+EqTraining.RUN_START = 0
+EqTraining.RUN_FULL = 15
 
 -- Stamina effort per second in each gait at the best tiredness and a long run.
 EqTraining.STAMINA_RATE = { trot = 0.008, canter = 0.02, gallop = 0.025 }
 -- Stamina zone: no stamina work below ZONE_FROM, building to full at ZONE_LOW, full up to
 -- ZONE_HIGH, then falling to ZONE_BLOWN_SHARE at 100.
-EqTraining.ZONE_FROM = 25
-EqTraining.ZONE_LOW = 60
+EqTraining.ZONE_FROM = 45
+EqTraining.ZONE_LOW = 65
 EqTraining.ZONE_HIGH = 85
 EqTraining.ZONE_BLOWN_SHARE = 0.2
 

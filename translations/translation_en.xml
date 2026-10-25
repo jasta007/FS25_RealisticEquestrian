@@ -34,8 +34,8 @@
         <text name="eq_train_quality_full" text="full for today"/>
         <text name="eq_train_others" text="Others"/>
         <text name="eq_train_tip_stamina_1" text="Long canters and gallops build stamina."/>
-        <text name="eq_train_tip_stamina_2" text="Gains grow over the first minute of a run."/>
-        <text name="eq_train_tip_stamina_3" text="Hold tiredness at 60-85%: trot to ease off."/>
+        <text name="eq_train_tip_stamina_2" text="Gains peak after 15 s at canter or gallop."/>
+        <text name="eq_train_tip_stamina_3" text="Hold tiredness at 65-85%: trot to ease off."/>
         <text name="eq_train_tip_speed_1" text="Gallop while fresh: tiredness under 25%."/>
         <text name="eq_train_tip_speed_2" text="Then stand still to rest before the next sprint."/>
         <text name="eq_train_tip_speed_3" text="Walking rests too, but slower."/>
