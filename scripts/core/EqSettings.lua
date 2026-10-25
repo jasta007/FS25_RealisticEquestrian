@@ -15,6 +15,9 @@ EqSettings.TRAINING_RATES = { 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3 }
 -- Entry limit choices; 0 means no limit.
 EqSettings.ENTRY_LIMITS = { 0, 1, 2, 3, 4, 5, 6, 8, 10 }
 
+-- Choices for the fewest and most events on the calendar at once.
+EqSettings.EVENT_COUNTS = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15 }
+
 local function onOffTexts()
     return { { key = "eq_settings_off" }, { key = "eq_settings_on" } }
 end
@@ -35,6 +38,12 @@ local function limitTexts()
     return texts
 end
 
+local function countTexts()
+    local texts = {}
+    for i, count in ipairs(EqSettings.EVENT_COUNTS) do texts[i] = { text = tostring(count) } end
+    return texts
+end
+
 -- Rows in page order. Each has the settings field it edits, the values its states stand for,
 -- and the texts shown for them: { key = l10n key } or { text = literal }. Titles and tooltips
 -- are eq_settings_<id> and eq_settings_<id>_tooltip.
@@ -42,6 +51,8 @@ EqSettings.ROWS = {
     { id = "trainingRate", values = EqSettings.TRAINING_RATES, texts = rateTexts(), default = 1 },
     { id = "cadence", values = { "day", "month" },
         texts = { { key = "eq_settings_cadence_day" }, { key = "eq_settings_cadence_month" } }, default = "day" },
+    { id = "eventsMin", values = EqSettings.EVENT_COUNTS, texts = countTexts(), default = 3 },
+    { id = "eventsMax", values = EqSettings.EVENT_COUNTS, texts = countTexts(), default = 8 },
     { id = "racing", values = { false, true }, texts = onOffTexts(), default = true },
     { id = "injuries", values = { false, true }, texts = onOffTexts(), default = true },
     { id = "forcedRetirement", values = { false, true }, texts = onOffTexts(), default = false },

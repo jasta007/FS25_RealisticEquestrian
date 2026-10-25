@@ -469,10 +469,37 @@ for round = 1, 200 do
 end
 check("racing off means no races", racing == 0)
 check("round draws hold no monthly tiers", monthlyInRound == 0)
-check("a round usually has several events", rounds / 200 > 5, string.format("%.1f per round", rounds / 200))
+check("a round draws 3 to 8 events by default", rounds / 200 >= 3 and rounds / 200 <= 8, string.format("%.1f per round", rounds / 200))
 check("some rounds have no dressage at all", empty > 0 and empty < 100, empty .. " of 200")
 print(string.format("info: %.1f round events and %.1f monthly events per draw; dressage missing in %d of 200 rounds",
     rounds / 200, monthly / 200, empty))
+
+do
+    local sizes, outside, enterableShort, monthlyCounts = {}, 0, 0, {}
+    local onlyNovice = function(_, tierName) return tierName == "novice" end
+    for round = 1, 300 do
+        local count = EqCompetition.drawCount(EqRandom.new("count " .. round), 3, 8)
+        sizes[count] = (sizes[count] or 0) + 1
+        if count < 3 or count > 8 then outside = outside + 1 end
+        local events = EqCompetition.drawSchedule(config, EqRandom.new("enter " .. round), EqCompetition.KIND_ROUND, true, nil,
+            { count = count, enterable = onlyNovice })
+        local novices = 0
+        for _, event in ipairs(events) do if event.tier == "novice" then novices = novices + 1 end end
+        if novices < math.ceil(#events / 2) then enterableShort = enterableShort + 1 end
+        local monthly = #EqCompetition.drawSchedule(config, EqRandom.new("monthly " .. round), EqCompetition.KIND_MONTH, true)
+        monthlyCounts[monthly] = (monthlyCounts[monthly] or 0) + 1
+    end
+    local spread = 0
+    for _ in pairs(sizes) do spread = spread + 1 end
+    check("event counts stay in the range", outside == 0)
+    check("event counts vary across the whole range", spread == 6, spread .. " sizes")
+    check("at least half of a draw is enterable", enterableShort == 0, enterableShort .. " short draws")
+    check("monthly draws hold 1 or 2 events", (monthlyCounts[1] or 0) > 0 and (monthlyCounts[2] or 0) > 0
+        and (monthlyCounts[1] or 0) + (monthlyCounts[2] or 0) == 300)
+    local none = EqCompetition.drawSchedule(config, EqRandom.new("nobody"), EqCompetition.KIND_ROUND, true, nil,
+        { count = 5, enterable = function() return false end })
+    check("a draw still fills when no horse can enter anything", #none == 5)
+end
 
 local sameDraw = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
 local sameAgain = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
@@ -1484,6 +1511,9 @@ end)()
     local limits = EqSettings.BY_ID.entriesPerMonth
     check("entries default is 3", limits.values[EqSettings.stateOf(limits, nil)] == 3)
     check("no limit is the first entry choice", limits.values[1] == 0 and limits.texts[1].key == "eq_settings_noLimit")
+    local fewest, most = EqSettings.BY_ID.eventsMin, EqSettings.BY_ID.eventsMax
+    check("events shown default to 3 to 8", fewest.values[EqSettings.stateOf(fewest, nil)] == 3
+        and most.values[EqSettings.stateOf(most, nil)] == 8)
     local cadence = EqSettings.BY_ID.cadence
     check("cadence state", EqSettings.stateOf(cadence, "month") == 2)
     local onOff = EqSettings.BY_ID.racing

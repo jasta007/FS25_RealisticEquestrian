@@ -27,7 +27,7 @@
         field           runners including simulated rivals
         rivalMin/rivalMax     discipline rating range of the simulated rivals
         monthly         true: runs once a month; false: every round (day or month, by setting)
-        chance          chance the tier runs in a given round, per discipline
+        chance          how often the tier is drawn, per discipline, against the other tiers of its kind
         trainingBoost   share of a full day's training the run gives (full for young horse classes, less higher up)
         risk            multiplies elimination and injury chances (easier courses below 1)
         venue           true: the event is held at a named venue from <venues>, which goes in
@@ -59,8 +59,12 @@
     </tiers>
 
     <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its
-         own fee and prize. priceSpread: fee and prize vary by up to this share either way. -->
-    <schedule copiesMax="3" priceSpread="0.35"/>
+         own fee and prize. priceSpread: fee and prize vary by up to this share either way.
+         eventsMin/eventsMax: default range for the events on the calendar at once, Advanced and
+         Championship included (the "Events shown" settings change it). monthlyMin/monthlyMax:
+         how many of those are monthly (Advanced, Championship) events. extraFarmShare: each
+         further farm with horses in multiplayer adds this share of the range. -->
+    <schedule copiesMax="2" priceSpread="0.35" eventsMin="3" eventsMax="8" monthlyMin="1" monthlyMax="2" extraFarmShare="0.5"/>
 
     <!--
         venues: where the named (venue="true") events are held. Each event draws a region, then a

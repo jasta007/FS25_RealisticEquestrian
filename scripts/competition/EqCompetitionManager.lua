@@ -9,6 +9,10 @@
     - Monthly events (Advanced, Championship) open at the start of each month and resolve at the
       start of the next.
 
+    The calendar holds a few events at a time, a number drawn afresh each round from the "Events
+    shown" settings (3 to 8 by default, more in multiplayer for each farm with horses), and at
+    least half of each draw is events some farm's horse could enter.
+
     Players enter from the Events tab or with eqEnter and pay the fee and the horse's transport at
     once. A farm makes at most entriesPerMonth entries a month (a setting, 3 by default). A horse starts at
     most MAX_ROUND_STARTS round events a month, so a good horse is not a daily money tap, and a
@@ -31,6 +35,9 @@ EqCompetitionManager.RESULTS_KEPT = 40
 
 -- Entries a farm may make a month, whatever the event kind; 0 means no limit. A setting.
 EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH = 3
+-- Events on the calendar at once, Advanced and Championship included. Settings.
+EqCompetitionManager.DEFAULT_EVENTS_MIN = 3
+EqCompetitionManager.DEFAULT_EVENTS_MAX = 8
 
 -- Getting a horse to an event costs a share of its transport price (the base game's, by age:
 -- $600 for an adult), paid with the entry fee. A quarter keeps Novice worth entering.
@@ -59,7 +66,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.nextEventId = 1
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
-        trainingRate = 1 }
+        trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
+        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
 end
 
@@ -79,13 +87,100 @@ local function roundRng(salt)
 end
 
 
+--- Every farm's horses, for the schedule: farms with no horses are left out.
+--- @return table list of lists of RLRM Animals
+local function horsesByFarm()
+    local farms = {}
+    for _, farm in pairs(g_farmManager:getFarms()) do
+        local farmId = farm.farmId
+        if farmId ~= nil and farmId ~= FarmManager.SPECTATOR_FARM_ID then
+            local horses = EqRLRM.listHorsesForFarm(farmId)
+            if #horses > 0 then table.insert(farms, horses) end
+        end
+    end
+    return farms
+end
+
+
+--- The range of events on the calendar at once, from the settings, widened for each further
+--- farm with horses in multiplayer.
+--- @param farmCount number farms with horses
+--- @return number lo, number hi, number scale the multiplayer widening
+function EqCompetitionManager.eventRange(farmCount)
+    local settings, config = EqCompetitionManager.settings, EqCompetitionManager.config
+    local lo = settings.eventsMin or EqCompetitionManager.DEFAULT_EVENTS_MIN
+    local hi = math.max(lo, settings.eventsMax or EqCompetitionManager.DEFAULT_EVENTS_MAX)
+    local scale = 1 + (config ~= nil and config.extraFarmShare or 0.5) * math.max(0, farmCount - 1)
+    return math.floor(lo * scale + 0.5), math.floor(hi * scale + 0.5), scale
+end
+
+
+--- How many events of a kind to open: monthly events take a small share of the range, and the
+--- round events fill the rest of it next to the monthly events already open.
+--- @param kind string
+--- @param rng table EqRandom
+--- @param farmCount number farms with horses
+--- @return number count
+function EqCompetitionManager.eventCount(kind, rng, farmCount)
+    local config = EqCompetitionManager.config
+    local lo, hi, scale = EqCompetitionManager.eventRange(farmCount)
+    if kind == EqCompetition.KIND_MONTH then
+        local count = EqCompetition.drawCount(rng, math.floor((config.monthlyMin or 1) * scale + 0.5),
+            math.floor((config.monthlyMax or 2) * scale + 0.5))
+        -- Leave room for at least one round event.
+        return math.max(0, math.min(count, hi - 1))
+    end
+    local monthly = 0
+    for _, event in pairs(EqCompetitionManager.events) do
+        if event.kind == EqCompetition.KIND_MONTH then monthly = monthly + 1 end
+    end
+    return math.max(1, EqCompetition.drawCount(rng, lo, hi) - monthly)
+end
+
+
+--- @param farms table from horsesByFarm
+--- @param kind string
+--- @return function enterable(disciplineName, tierName) true when some farm's horse could enter
+local function enterableBy(farms, kind)
+    local config = EqCompetitionManager.config
+    local ready = {}
+    for _, horses in ipairs(farms) do
+        for _, animal in ipairs(horses) do
+            local record = EqRegistry.getOrCreate(animal)
+            if record ~= nil and EqCompetitionManager.unavailableReason(record, kind, animal) == nil then
+                table.insert(ready, { record = record, age = animal.age or 0 })
+            end
+        end
+    end
+    local known = {}
+    return function(disciplineName, tierName)
+        local key = disciplineName .. " " .. tierName
+        if known[key] == nil then
+            known[key] = false
+            local tier = config.tierByName[tierName]
+            for _, horse in ipairs(ready) do
+                local rating = EqCompetitionManager.ratingFor(horse.record, { discipline = disciplineName, tier = tierName })
+                if EqCompetition.canEnter(tier, horse.age, rating) then
+                    known[key] = true
+                    break
+                end
+            end
+        end
+        return known[key]
+    end
+end
+
+
 --- @param kind string EqCompetition.KIND_ROUND or KIND_MONTH
 function EqCompetitionManager.openRound(kind)
     local config = EqCompetitionManager.config
     if config == nil then return end
 
-    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing,
-        EqCompetitionManager.homeRegion())
+    local farms = horsesByFarm()
+    local rng = roundRng(kind)
+    local options = { count = EqCompetitionManager.eventCount(kind, rng, #farms), enterable = enterableBy(farms, kind) }
+    local drawn = EqCompetition.drawSchedule(config, rng, kind, EqCompetitionManager.settings.racing,
+        EqCompetitionManager.homeRegion(), options)
     for _, event in ipairs(drawn) do
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
@@ -642,10 +737,11 @@ end
 function EqCompetitionManager.onPeriodChanged()
     EqCompetitionManager.farmEntries = {}
     EqCompetitionManager.monthlyCare(indexHorses())
+    -- Monthly events first, so the round's draw knows how many are already on the calendar.
+    EqCompetitionManager.turnOver(EqCompetition.KIND_MONTH)
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_MONTH then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
     end
-    EqCompetitionManager.turnOver(EqCompetition.KIND_MONTH)
 end
 
 
@@ -655,8 +751,8 @@ function EqCompetitionManager.ensureOpen()
     for _, event in pairs(EqCompetitionManager.events) do
         if event.kind == EqCompetition.KIND_ROUND then hasRound = true else hasMonth = true end
     end
-    if not hasRound then EqCompetitionManager.openRound(EqCompetition.KIND_ROUND) end
     if not hasMonth then EqCompetitionManager.openRound(EqCompetition.KIND_MONTH) end
+    if not hasRound then EqCompetitionManager.openRound(EqCompetition.KIND_ROUND) end
 end
 
 
@@ -952,6 +1048,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setBool(key .. ".settings#forcedRetirement", EqCompetitionManager.settings.forcedRetirement)
     xmlFile:setInt(key .. ".settings#entriesPerMonth", EqCompetitionManager.settings.entriesPerMonth)
     xmlFile:setFloat(key .. ".settings#trainingRate", EqCompetitionManager.settings.trainingRate)
+    xmlFile:setInt(key .. ".settings#eventsMin", EqCompetitionManager.settings.eventsMin)
+    xmlFile:setInt(key .. ".settings#eventsMax", EqCompetitionManager.settings.eventsMax)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
 
     local farmIds = {}
@@ -1026,6 +1124,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.forcedRetirement = xmlFile:getBool(key .. ".settings#forcedRetirement", settings.forcedRetirement)
     settings.entriesPerMonth = xmlFile:getInt(key .. ".settings#entriesPerMonth", settings.entriesPerMonth)
     settings.trainingRate = xmlFile:getFloat(key .. ".settings#trainingRate", settings.trainingRate)
+    settings.eventsMin = xmlFile:getInt(key .. ".settings#eventsMin", settings.eventsMin)
+    settings.eventsMax = xmlFile:getInt(key .. ".settings#eventsMax", settings.eventsMax)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
 
     local f = 0

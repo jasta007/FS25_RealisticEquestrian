@@ -75,6 +75,11 @@ function EqEventConfig.read(xmlFile)
 
     config.copiesMax = xmlFile:getInt("events.schedule#copiesMax", 3)
     config.priceSpread = xmlFile:getFloat("events.schedule#priceSpread", 0.3)
+    config.eventsMin = xmlFile:getInt("events.schedule#eventsMin", 3)
+    config.eventsMax = xmlFile:getInt("events.schedule#eventsMax", 8)
+    config.monthlyMin = xmlFile:getInt("events.schedule#monthlyMin", 1)
+    config.monthlyMax = xmlFile:getInt("events.schedule#monthlyMax", 2)
+    config.extraFarmShare = xmlFile:getFloat("events.schedule#extraFarmShare", 0.5)
 
     i = 0
     while true do
