@@ -138,6 +138,17 @@ local function describeFields(frame)
 end
 
 
+--- @param buttons table
+--- @return string list the buttons' texts in order, for the log
+local function describeButtons(buttons)
+    local texts = {}
+    for _, info in ipairs(buttons) do
+        table.insert(texts, tostring(type(info) == "table" and (info.text or info.inputAction) or info))
+    end
+    return string.format("%d [%s]", #buttons, table.concat(texts, ", "))
+end
+
+
 -- The last outcome logged, so the log gets one line per change rather than one per call.
 local lastOutcome = nil
 local reportedFields = false
@@ -174,7 +185,10 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
         return false
     end
 
-    table.insert(buttons, {
+    -- Second, just after Back: the menu's button bar has a fixed number of slots and drops
+    -- whatever is past the end, and a horse stable already fills them (rename, map, workers
+    -- and the page buttons), so a button added last never shows.
+    table.insert(buttons, math.min(2, #buttons + 1), {
         inputAction = action,
         text = g_i18n:getText("eq_ui_button_manageAnimals"),
         callback = function()
@@ -183,7 +197,8 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
             openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
         end
     })
-    report(string.format("added Manage Animals for '%s' (found via %s)", penName(husbandry), source), frame)
+    report(string.format("added Manage Animals for '%s' (found via %s); buttons now: %s",
+        penName(husbandry), source, describeButtons(buttons)), frame)
     return true
 end
 
