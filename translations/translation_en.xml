@@ -355,7 +355,7 @@
         <text name="eq_story_crossCountry_agilityMany" text="Ran out more than once."/>
         <text name="eq_story_crossCountry_hardest" text="Going well until a run-out at the hardest fence."/>
         <text name="eq_story_crossCountry_temperament" text="Refused at the water."/>
-        <text name="eq_story_crossCountry_speed" text="Picked up time penalties."/>
+        <text name="eq_story_crossCountry_speed" text="Was off the pace between fences and lost time."/>
         <text name="eq_story_crossCountry_stamina" text="Tired over the last few fences."/>
         <text name="eq_story_crossCountry_staminaMany" text="Ran out of energy well before the finish."/>
         <text name="eq_story_race_clean" text="Ran a great race from start to finish."/>
