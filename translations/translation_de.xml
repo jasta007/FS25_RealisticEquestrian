@@ -348,6 +348,7 @@
         <text name="eq_story_dressage_hardest" text="Eine ordentliche Aufgabe, bis die schwerste Lektion Punkte kostete."/>
         <text name="eq_story_dressage_temperament" text="Wurde im Viereck angespannt und verlor Punkte."/>
         <text name="eq_story_dressage_temperamentMany" text="War den Großteil der Aufgabe angespannt und abgelenkt."/>
+        <text name="eq_story_dressage_elimRefusal" text="Widersetzte sich, ging nicht weiter und wurde aus der Prüfung genommen."/>
         <text name="eq_story_crossCountry_clean" text="Fehlerfrei in der erlaubten Zeit."/>
         <text name="eq_story_crossCountry_struggled" text="Die Strecke war zu schwer, es war ein Kampf von Anfang bis Ende."/>
         <text name="eq_story_crossCountry_eliminated" text="Schied nach einem Sturz aus."/>

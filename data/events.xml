@@ -11,6 +11,8 @@
         outdoor         true: the conditions (firm, good, soft, heavy, hot) change the weights
         racing          true: a race; switched off by the racing setting
         elimination     base chance a horse is eliminated (refusals, falls) or pulled up
+        refusalsOnly    true: an elimination is always the horse refusing to go on (dressage
+                        has no falls and no pulling up)
         injury          base chance a horse is injured in a run
         chance          multiplies every tier's chance of running in this discipline (default 1;
                         steeplechase is kept rare)
@@ -56,7 +58,7 @@
             <check stat="agility" difficulty="0.75" weight="2"/>
             <check stat="agility" difficulty="1" weight="2.5" tag="hardest"/>
         </discipline>
-        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0" injury="0.003" related="eventing" story="dressage">
+        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" refusalsOnly="true" injury="0.003" related="eventing" story="dressage">
             <check stat="temperament" difficulty="0.1" weight="1"/>
             <check stat="agility" difficulty="0.3" weight="1"/>
             <check stat="temperament" difficulty="0.5" weight="1.5"/>

@@ -559,8 +559,8 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
 ;(function()
     local sj = config.disciplineByName.showJumping
     check("show jumping has its checks", #sj.checks == 6 and sj.story == "jumping" and sj.checks[6].tag == "hardest")
-    check("dressage can't end in a fall or pulling up", config.disciplineByName.dressage.elimination == 0
-        and EqRisk.eliminationChance(config.disciplineByName.dressage, config.tierByName.championship, 10, 0) == 0)
+    check("dressage only ends early with a refusal", config.disciplineByName.dressage.refusalsOnly
+        and EqPerformance.storyKey(config.disciplineByName.dressage, { checks = {} }, true, config) == "eq_story_dressage_elimRefusal")
     check("eventing runs three phases", #config.disciplineByName.eventing.phases == 3
         and config.disciplineByName.eventing.phases[1] == "dressage")
     for _, d in ipairs(config.disciplines) do
@@ -661,7 +661,7 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
         local d = config.disciplines[(i % #config.disciplines) + 1]
         local r = EqPerformance.run(d, config, config.tierByName.intermediate, { rating = 30 + i % 50, condition = 0.9 },
             EqCompetition.LUCK_SD, EqRandom.new("keys " .. i))
-        for _, eliminated in ipairs(d.elimination > 0 and { false, true } or { false }) do
+        for _, eliminated in ipairs({ false, true }) do
             local key = EqPerformance.storyKey(d, r, eliminated, config)
             if not seen[key] then
                 seen[key] = true

@@ -346,6 +346,7 @@
         <text name="eq_story_dressage_hardest" text="A tidy test until the hardest movement cost marks."/>
         <text name="eq_story_dressage_temperament" text="Grew tense in the arena and lost marks."/>
         <text name="eq_story_dressage_temperamentMany" text="Tense and distracted for most of the test."/>
+        <text name="eq_story_dressage_elimRefusal" text="Refused to go on and retired from the test."/>
         <text name="eq_story_crossCountry_clean" text="Clear inside the time."/>
         <text name="eq_story_crossCountry_struggled" text="Found the course too big and struggled throughout."/>
         <text name="eq_story_crossCountry_eliminated" text="Went out after a fall."/>

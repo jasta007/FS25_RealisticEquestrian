@@ -229,7 +229,12 @@ function EqPerformance.storyKey(discipline, run, eliminated, config)
     if discipline.phases ~= nil and #discipline.phases > 0 then
         return EqPerformance.phasedStoryKey(discipline, run, eliminated, config)
     end
-    local issue = eliminated and EqPerformance.eliminationIssue(run.checks) or EqPerformance.issue(run.checks)
+    local issue
+    if eliminated then
+        issue = discipline.refusalsOnly and "elimRefusal" or EqPerformance.eliminationIssue(run.checks)
+    else
+        issue = EqPerformance.issue(run.checks)
+    end
     return string.format("eq_story_%s_%s", discipline.story or discipline.name, issue)
 end
 
@@ -269,9 +274,9 @@ function EqPerformance.storyKeys(discipline, config)
         string.format("eq_story_%s_clean", story),
         string.format("eq_story_%s_struggled", story),
     }
-    -- Some tests can't end early (dressage: no falls, no pulling up).
+    -- Dressage only ends early when the horse refuses to go on: no falls, no pulling up.
     local canEliminate = (discipline.elimination or 0) > 0
-    if canEliminate then table.insert(keys, string.format("eq_story_%s_eliminated", story)) end
+    if canEliminate and not discipline.refusalsOnly then table.insert(keys, string.format("eq_story_%s_eliminated", story)) end
     if discipline.phases ~= nil and #discipline.phases > 0 then
         table.insert(keys, string.format("eq_story_%s_elimRefusal", story))
         for _, name in ipairs(discipline.phases) do

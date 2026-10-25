@@ -37,6 +37,7 @@ function EqEventConfig.read(xmlFile)
             outdoor = xmlFile:getBool(key .. "#outdoor", false),
             racing = xmlFile:getBool(key .. "#racing", false),
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
+            refusalsOnly = xmlFile:getBool(key .. "#refusalsOnly", false),
             injury = xmlFile:getFloat(key .. "#injury", 0),
             chance = xmlFile:getFloat(key .. "#chance", 1),
             related = {},
