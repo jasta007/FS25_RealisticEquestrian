@@ -1224,6 +1224,12 @@ fresh.pagingElement.currentPageIndex = 2
 EqMenuPaging.beforeUpdatePages(fresh)
 check("first open leaves paging alone", fresh.pagingElement.currentPageIndex == 2 and fresh.eqLastPagingMode == "trailer")
 check("reset refuses a missing paging element", EqMenuPaging.reset({}) == false)
+-- Transfer's single tab was centred; the full tab list must not keep that offset.
+local tabbed = { pagingElement = newPaging(3), openMode = "full", eqLastPagingMode = "full",
+    pagingTabList = { listItemAlignmentOffset = 0.35 } }
+EqMenuPaging.beforeUpdatePages(tabbed)
+check("tab list centring offset cleared before updatePages", tabbed.pagingTabList.listItemAlignmentOffset == 0)
+check("clearing the tab offset copes with no tab list", EqMenuPaging.clearTabOffset({}) == false)
 
 
 -- Injuries as RLRM conditions: data/injuries.xml in RLRM's own format, run through RLRM's parser

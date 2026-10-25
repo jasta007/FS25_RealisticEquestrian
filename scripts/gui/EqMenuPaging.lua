@@ -11,6 +11,13 @@
 
     So whenever the open mode differs from the last open, we put the paging back to that
     fresh-load state just before updatePages applies the new mode's tabs.
+
+    The tab bar has a second leftover. The base game's list centres its tabs when they don't
+    fill it, and only works that offset out again when they still don't fill it. With our
+    Events tab the full menu has more tabs than fit, so after Transfer's single centred tab the
+    full tab list kept Transfer's offset: drawn three tabs down, with Messages, Herdsman,
+    Settings and Events pushed off the bottom. So before every updatePages we clear that offset;
+    the list sets it again whenever the tabs do fit.
 ]]
 
 EqMenuPaging = {}
@@ -47,9 +54,26 @@ function EqMenuPaging.reset(menu)
 end
 
 
+--- Clear the tab list's centring offset, left over from a mode with fewer tabs.
+--- @param menu table the RLMenu instance
+--- @return boolean cleared true when there was an offset to clear
+function EqMenuPaging.clearTabOffset(menu)
+    local list = menu.pagingTabList
+    if type(list) ~= "table" or type(list.listItemAlignmentOffset) ~= "number" or list.listItemAlignmentOffset == 0 then
+        return false
+    end
+    list.listItemAlignmentOffset = 0
+    return true
+end
+
+
 --- Reset the paging when the open mode changed since the last open; called before updatePages.
 --- @param menu table the RLMenu instance
 function EqMenuPaging.beforeUpdatePages(menu)
+    if EqMenuPaging.clearTabOffset(menu) then
+        Log:debug("EqMenuPaging: cleared the tab list's centring offset")
+    end
+
     local mode = menu.openMode
     local lastMode = menu.eqLastPagingMode
     menu.eqLastPagingMode = mode
