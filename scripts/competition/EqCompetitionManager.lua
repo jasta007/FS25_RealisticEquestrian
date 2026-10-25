@@ -519,7 +519,7 @@ function EqCompetitionManager.resolve(event, horses)
             local placing = { horseId = runner.key, name = entry.name, farmId = entry.farmId, place = runner.place, prize = runner.prize }
             table.insert(summary.placings, placing)
 
-            local performance = g_i18n:getText(EqPerformance.storyKey(discipline, runner.run, false, config))
+            local performance = g_i18n:getText(EqPerformance.storyKey(discipline, runner.run, false, config, runner.place))
             local text
             if runner.prize > 0 then
                 text = string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,

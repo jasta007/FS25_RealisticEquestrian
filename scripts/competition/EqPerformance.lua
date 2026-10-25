@@ -43,6 +43,8 @@ EqPerformance.START_TARGET = 8
 EqPerformance.START_FAIL_TEXTS = 3
 -- A run that fails at least this share of its check weight "struggled" with the whole course.
 EqPerformance.STRUGGLED_SHARE = 0.6
+-- A comeback (failed early, passed the "finish" check) only gets its line on the podium.
+EqPerformance.COMEBACK_PLACE = 3
 
 
 --- @param tier table
@@ -219,19 +221,38 @@ function EqPerformance.eliminationIssue(checks)
 end
 
 
+--- A horse that fell behind early but won the sprint for the line: it placed, passed its
+--- "finish" check and failed at least one check before it.
+--- @param checks table results from roll
+--- @param place number|nil
+--- @return boolean
+function EqPerformance.isComeback(checks, place)
+    if place == nil or place > EqPerformance.COMEBACK_PLACE then return false end
+    local failedEarly = false
+    for _, result in ipairs(checks) do
+        if result.check.tag == "finish" then return result.passed and failedEarly end
+        if not result.passed then failedEarly = true end
+    end
+    return false
+end
+
+
 --- The text key for a run's line.
 --- @param discipline table
 --- @param run table from EqPerformance.run
 --- @param eliminated boolean
 --- @param config table EqEventConfig, for eventing's phases
+--- @param place number|nil where the horse finished, for the comeback line
 --- @return string key eq_story_<story>_<issue>
-function EqPerformance.storyKey(discipline, run, eliminated, config)
+function EqPerformance.storyKey(discipline, run, eliminated, config, place)
     if discipline.phases ~= nil and #discipline.phases > 0 then
         return EqPerformance.phasedStoryKey(discipline, run, eliminated, config)
     end
     local issue
     if eliminated then
         issue = discipline.refusalsOnly and "elimRefusal" or EqPerformance.eliminationIssue(run.checks)
+    elseif EqPerformance.isComeback(run.checks, place) then
+        issue = "comeback"
     else
         issue = EqPerformance.issue(run.checks)
     end
@@ -285,6 +306,7 @@ function EqPerformance.storyKeys(discipline, config)
     local ofStat = {}
     for _, check in ipairs(discipline.checks or {}) do
         ofStat[check.stat] = (ofStat[check.stat] or 0) + 1
+        if check.tag == "finish" then table.insert(keys, string.format("eq_story_%s_comeback", story)) end
         table.insert(keys, string.format("eq_story_%s_%s", story, check.tag or check.stat))
     end
     for stat, count in pairs(ofStat) do

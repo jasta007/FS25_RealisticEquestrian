@@ -368,6 +368,7 @@
         <text name="eq_story_race_stamina" text="Faded in the closing stages."/>
         <text name="eq_story_race_staminaMany" text="Ran out of steam well before the finish."/>
         <text name="eq_story_race_finish" text="Ran well throughout the race but was outsprinted at the finish."/>
+        <text name="eq_story_race_comeback" text="Fell behind early but had a thrilling sprint for the finish."/>
         <text name="eq_story_steeplechase_clean" text="Jumped and travelled well throughout."/>
         <text name="eq_story_steeplechase_struggled" text="Struggled with both the fences and the pace."/>
         <text name="eq_story_steeplechase_eliminated" text="Had a bad fall at a hedge and couldn't continue."/>

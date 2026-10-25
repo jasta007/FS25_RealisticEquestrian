@@ -564,6 +564,18 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("eventing is only ended by a fall, never a refusal",
         EqPerformance.storyKey(config.disciplineByName.eventing, { phases = { { checks = { { check = { stat = "temperament", weight = 1, difficulty = 0 }, passed = false } } } } },
             true, config) == "eq_story_eventing_eliminated")
+    local race = config.disciplineByName.raceShort
+    local function raceRun(passes)
+        local checks = {}
+        for i, c in ipairs(race.checks) do checks[i] = { check = c, passed = passes[i] } end
+        return { checks = checks }
+    end
+    local behind = raceRun({ true, false, false, true })
+    check("a placed horse that fell behind and won the sprint gets the comeback line",
+        EqPerformance.storyKey(race, behind, false, config, 2) == "eq_story_race_comeback")
+    check("no comeback off the podium", EqPerformance.storyKey(race, behind, false, config, 4) ~= "eq_story_race_comeback")
+    check("no comeback without an early miss", EqPerformance.storyKey(race, raceRun({ true, true, true, true }), false, config, 1) == "eq_story_race_clean")
+    check("no comeback when the sprint was lost", EqPerformance.storyKey(race, raceRun({ true, false, true, false }), false, config, 3) == "eq_story_race_finish")
     check("eventing runs three phases", #config.disciplineByName.eventing.phases == 3
         and config.disciplineByName.eventing.phases[1] == "dressage")
     for _, d in ipairs(config.disciplines) do
