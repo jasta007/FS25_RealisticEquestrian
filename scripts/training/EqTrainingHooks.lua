@@ -80,6 +80,19 @@ local function getRiddenId(spec)
 end
 
 
+--- Backing up tires a horse faster than the base game counts: add the difference to its riding bar.
+--- @param spec table spec_rideable
+--- @param dt number milliseconds
+local function addReverseTiredness(spec, dt)
+    local cluster = spec.cluster
+    if cluster.changeRiding == nil then return end
+    local fullMs = cluster.getDailyRidingTime ~= nil and cluster:getDailyRidingTime() or EqConstants.RIDING_FULL_MS
+    local points
+    points, spec.eqReverseTimer = EqTraining.reverseExtraRiding(spec.eqReverseTimer, dt, fullMs)
+    if points > 0 then cluster:changeRiding(points) end
+end
+
+
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
@@ -93,6 +106,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local sheet = EqTrainingHooks.getSheet(id)
     EqTraining.addRiding(sheet, gait, dt)
+    if gait == "reverse" then addReverseTiredness(spec, dt) end
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt) end
 end
 

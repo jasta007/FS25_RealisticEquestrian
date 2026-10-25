@@ -221,6 +221,16 @@ check("a full canter day trains stamina and agility", math.abs(canterDay.stamina
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
 check("walking trains its stats as fast as galloping trains its own",
     math.abs(EqTraining.playerEffort(ridden("walk", 60000)).temperament - EqTraining.playerEffort(ridden("gallop", 60000)).speed) < 1e-9)
+check("backing up fills riding four times as fast as walking", EqTraining.playerRidingPoints(ridden("reverse", 75000)) == 100)
+do
+    local reversePoints, reverseTimer, reverseTotal = 0, 0, 0
+    for _ = 1, 4500 do
+        reversePoints, reverseTimer = EqTraining.reverseExtraRiding(reverseTimer, 1000 / 60, EqConstants.RIDING_FULL_MS)
+        reverseTotal = reverseTotal + reversePoints
+    end
+    check("backing up adds 75 riding points a minute and a quarter on top of the base game's 25", reverseTotal == 75,
+        string.format("got %d", reverseTotal))
+end
 local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
 check("jumps add agility", jumpDay.agility > 0.39)
 check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
