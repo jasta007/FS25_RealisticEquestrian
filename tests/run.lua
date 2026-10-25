@@ -145,7 +145,7 @@ do
     end
     local typical = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
     local mean, sd = spread(typical, 120, 2000)
-    check("adult starting stats centre around 40", mean > 37 and mean < 43, string.format("%.1f", mean))
+    check("adult starting stats centre around 50", mean > 46 and mean < 53, string.format("%.1f", mean))
     check("adult starting stats spread widely", sd > 11 and sd < 16, string.format("%.1f", sd))
     -- Across real rolled horses (each with its own ceilings), a start above 80 is very rare.
     local over80, values, horses80 = 0, 0, 0
@@ -160,9 +160,9 @@ do
     end
     print(string.format("info: adult starting stats: mean %.1f, sd %.1f; %.2f%% of stats and %.1f%% of horses above 80",
         mean, sd, 100 * over80 / values, 100 * horses80 / 3000))
-    check("starting above 80 is very rare", over80 > 0 and over80 / values < 0.005, string.format("%d of %d", over80, values))
+    check("starting above 80 is very rare", over80 > 0 and over80 / values < 0.01, string.format("%d of %d", over80, values))
     local young = spread(typical, 12, 500)
-    check("a yearling starts low", young > 12 and young < 25, string.format("%.1f", young))
+    check("a yearling starts low", young > 15 and young < 30, string.format("%.1f", young))
     local foal = EqStats.initialTrained(typical, 0, EqRandom.new(1))
     check("a newborn starts near foal level", math.abs(foal.speed - EqConstants.START_FOAL_MEAN) < 15)
     local talented = spread({ stamina = 95, speed = 95, agility = 95, temperament = 95 }, 120, 500)
@@ -580,7 +580,7 @@ local schooled = { stamina = 84, speed = 78, agility = 57, temperament = 57 }
 local greenPrice = EqDealer.price(4000, 5000, c85, green, 60)
 local schooledPrice = EqDealer.price(4000, 5000, c85, schooled, 60)
 check("a green talent-85 horse costs about $6-12k", greenPrice > 6000 and greenPrice < 12000, string.format("%.0f", greenPrice))
-check("skill drives the price: a schooled horse is worth far more", schooledPrice > 2 * greenPrice,
+check("skill drives the price: a schooled horse is worth far more", schooledPrice > 1.8 * greenPrice,
     string.format("%.0f -> %.0f", greenPrice, schooledPrice))
 local youngTalent = EqDealer.price(4000, 5000, c85, green, 20)
 local youngPlain = EqDealer.price(4000, 5000, { stamina = 60, speed = 60, agility = 60, temperament = 60 }, green, 20)

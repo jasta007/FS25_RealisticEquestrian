@@ -38,9 +38,12 @@ Very high...). The words follow the event tiers: 40-54 is Average (Novice), 55-6
 (Intermediate), 70-84 Very high (Advanced), 85 and up Extremely high (Championship); below 40 is
 Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in the
 animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL on the left
-(`Speed  Very high`) and SKILLS on the right (`Speed  60 - High`), the four stats in the same order
-in both, coloured on RLRM's red-to-green scale with the same ladder, so a horse trained to its full
-potential shows the same word in both. The stat grid above keeps only RLRM's rows and shrinks to
+(`Speed  Very high`) and SKILLS on the right (`Speed  60 - Promising`), the four stats in the same
+order in both. Potential is genetic, so it uses RLRM's red-to-green scale. Skill is what training
+has done so far, so it runs from white (untrained) to green, with its own words: Untrained (0),
+Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Contender (80), Champion
+(90) and Legend (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
+not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
 The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still
 prints exact ceilings, for testing.
@@ -58,9 +61,9 @@ guaranteed better one; selective breeding over generations is how the best horse
 sire bought as a straw breeds true to the stats its identifier rolls.
 
 **Starting stats.** The first time the mod sees a horse, each stat is drawn from a bell curve.
-Foals start low (around 12), and the centre rises with age to about 40 for a horse of four or
+Foals start low (around 15), and the centre rises with age to about 50 for a horse of four or
 more, with a wide spread. A talented horse's stats lean a little higher, and a stat never starts
-above its potential. Starting above 80 is very rare: about one horse in 500. Dealer horses start a
+above its potential. Starting above 80 is rare: about one horse in 125. Dealer horses start a
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
@@ -172,7 +175,7 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   about what the dealer said, and its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
-  most of it: the premium doubles every 10 points above 50, so a horse with stats in the 80s is
+  most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is
   very expensive. Potential (the two best potentials, doubling every 7.5 points) is most of a
   young horse's value and a small part of a made horse's. A quarter of the premium is stud value,
   which a gelding loses. The rest scales with RLRM's health, drops while the horse is injured, and
