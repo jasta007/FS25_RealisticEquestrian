@@ -161,25 +161,52 @@ function EqFeed.groupKind(names, config)
 end
 
 
+--- The best boost any of these feeds gives each stat, on its own.
+--- @param names table fill type names
+--- @param config table from EqFeed.read
+--- @return table boost stat -> share
+function EqFeed.bestBoost(names, config)
+    local best = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do best[stat] = 0 end
+    for _, name in ipairs(names) do
+        local feed = config.feedByFillType[name]
+        if feed ~= nil then
+            for stat, value in pairs(feed.boost) do best[stat] = math.max(best[stat] or 0, value) end
+        end
+    end
+    return best
+end
+
+
 --- The stats any of these feeds can boost, in STAT_KEYS order.
 --- @param names table fill type names
 --- @param config table from EqFeed.read
 --- @return table stats
 function EqFeed.boostedStats(names, config)
-    local boosted = {}
-    for _, name in ipairs(names) do
-        local feed = config.feedByFillType[name]
-        if feed ~= nil then
-            for stat, value in pairs(feed.boost) do
-                if value > 0 then boosted[stat] = true end
-            end
-        end
-    end
+    local best = EqFeed.bestBoost(names, config)
     local stats = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        if boosted[stat] then table.insert(stats, stat) end
+        if best[stat] > 0 then table.insert(stats, stat) end
     end
     return stats
+end
+
+
+--- Upper bounds (exclusive) of the "+" and "++" bands; anything stronger is "+++".
+--- feeds.xml uses 0.10 (small), 0.20 (moderate) and 0.30 (strong).
+EqFeed.STRENGTH_BANDS = { 0.15, 0.25 }
+
+
+--- How strong a boost is, as "+", "++" or "+++" ("" for none).
+--- @param share number 0.1 = 10% faster training
+--- @return string
+function EqFeed.strengthMarks(share)
+    if share == nil or share <= 0 then return "" end
+    local marks = 1
+    for _, bound in ipairs(EqFeed.STRENGTH_BANDS) do
+        if share >= bound - 1e-9 then marks = marks + 1 end
+    end
+    return string.rep("+", marks)
 end
 
 
