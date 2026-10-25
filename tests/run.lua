@@ -588,6 +588,26 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
         EqPerformance.eliminationIssue(results({ true, true, true, false, true })) == "elimRefusal"
         and EqPerformance.eliminationIssue(results({ true, true, true, true, false })) == "eliminated")
 
+    -- The start check: a layup unless the horse is very fractious.
+    local function startRate(temperament)
+        local started = 0
+        for i = 1, 2000 do
+            if EqPerformance.startCheck({ temperament = temperament }, 0.9, EqRandom.new("start " .. i)) then started = started + 1 end
+        end
+        return started / 2000
+    end
+    local calm, green, wild = startRate(45), startRate(20), startRate(5)
+    print(string.format("info: start check pass rate at temperament 45: %.3f, 20: %.3f, 5: %.3f", calm, green, wild))
+    check("an ordinary horse almost always starts", calm > 0.998)
+    check("a green horse usually starts", green > 0.85 and green < 0.99)
+    check("a very fractious horse often doesn't", wild < 0.5)
+    local en0 = io.open("translations/translation_en.xml"):read("*a")
+    local de0 = io.open("translations/translation_de.xml"):read("*a")
+    for n = 1, EqPerformance.START_FAIL_TEXTS do
+        local key = 'name="eq_scratch_fractious_' .. n .. '"'
+        check("start scratch text " .. n, en0:find(key, 1, true) ~= nil and de0:find(key, 1, true) ~= nil)
+    end
+
     -- How often each line comes up for a horse in its band, and that the checks match the placing.
     local event = { discipline = "showJumping", tier = "novice", prize = 2000 }
     local stats = { stamina = 45, speed = 45, agility = 45, temperament = 45 }

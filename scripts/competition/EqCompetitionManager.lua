@@ -437,6 +437,13 @@ function EqCompetitionManager.resolve(event, horses)
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
             if reason == nil and EqCompetitionManager.isTooFarInFoal(horse.animal) then reason = "inFoal" end
             if reason == nil and EqInjury.isSick(horse.animal) then reason = "sick" end
+            local reasonKey = reason ~= nil and ("eq_scratch_" .. reason) or nil
+            if reason == nil then
+                -- Off the lorry, tacked up and to the start: only a very fractious horse fails.
+                local started, variant = EqPerformance.startCheck(record.trained,
+                    EqCompetition.condition(horse.animal.fitness, horse.animal.health), EqRandom.new("start " .. event.id .. " " .. entry.horseId))
+                if not started then reason, reasonKey = "fractious", "eq_scratch_fractious_" .. variant end
+            end
             if reason ~= nil then
                 local refund = math.floor((event.fee or 0) * EqRisk.SCRATCH_REFUND + 0.5)
                 if refund > 0 then
@@ -446,7 +453,7 @@ function EqCompetitionManager.resolve(event, horses)
                     place = 0, prize = 0, status = "scratched" }
                 table.insert(summary.placings, placing)
                 local text = string.format(g_i18n:getText("eq_result_scratched"), entry.name, title,
-                    g_i18n:getText("eq_scratch_" .. reason), g_i18n:formatMoney(refund, 0, true, true))
+                    g_i18n:getText(reasonKey), g_i18n:formatMoney(refund, 0, true, true))
                 notify(entry.farmId, text, "EQ_SCRATCHED", horse.animal, entry.horseId)
                 keepResult(record, summary, placing, { text })
             else

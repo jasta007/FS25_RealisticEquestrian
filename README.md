@@ -202,7 +202,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
 5. **Get your result** at the start of the next day or month, with prize money for the top three.
-   Each run is a handful of stat checks (a show jumping round asks for agility at fences that
+   Every event starts with an easy temperament check to get the horse to the start (only a very
+   fractious horse fails it and is scratched). Each run is then a handful of stat checks (a show jumping round asks for agility at fences that
    get harder, a little speed and a calm horse), and the result says how it went: a clear round,
    a pole at the hardest fence, a refusal, or a course that was too big. The Competitions tab's
    **Results** page shows each horse's last five events, with who filled the top three, what it

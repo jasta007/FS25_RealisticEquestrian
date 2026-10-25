@@ -109,6 +109,9 @@
         <text name="eq_scratch_shoe" text="Eisen verloren"/>
         <text name="eq_scratch_retired" text="aus dem Sport genommen"/>
         <text name="eq_scratch_inFoal" text="zu weit tragend für einen Start"/>
+        <text name="eq_scratch_fractious_1" text="ließ sich nicht verladen"/>
+        <text name="eq_scratch_fractious_2" text="zu aufgedreht zum Satteln"/>
+        <text name="eq_scratch_fractious_3" text="verweigerte den Weg zum Start"/>
         <text name="eq_injury_bruisedSole" text="eine Sohlenprellung"/>
         <text name="eq_injury_abscess" text="ein Hufabszess"/>
         <text name="eq_injury_overreach" text="eine Greifverletzung"/>
@@ -336,7 +339,7 @@
         <text name="eq_story_jumping_agility" text="Riss eine Stange in einer kniffligen Kombination."/>
         <text name="eq_story_jumping_agilityMany" text="Riss mehrere Stangen."/>
         <text name="eq_story_jumping_hardest" text="Lief gut, bis am schwersten Sprung eine Stange fiel."/>
-        <text name="eq_story_jumping_speed" text="Konnte das Tempo nicht halten und bekam Zeitfehler."/>
+        <text name="eq_story_jumping_speed" text="War zwischen den Sprüngen zu langsam und verlor Zeit."/>
         <text name="eq_story_jumping_temperament" text="Verweigerte an einem Sprung."/>
         <text name="eq_story_dressage_clean" text="Eine saubere Aufgabe, die die Richter überzeugte."/>
         <text name="eq_story_dressage_struggled" text="Hatte von Anfang bis Ende Mühe mit der Aufgabe."/>

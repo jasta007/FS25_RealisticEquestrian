@@ -107,6 +107,9 @@
         <text name="eq_scratch_shoe" text="lost a shoe"/>
         <text name="eq_scratch_retired" text="retired"/>
         <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
+        <text name="eq_scratch_fractious_1" text="wouldn't load into the lorry"/>
+        <text name="eq_scratch_fractious_2" text="too wound up to be tacked up"/>
+        <text name="eq_scratch_fractious_3" text="refused to go to the start"/>
         <text name="eq_injury_bruisedSole" text="a bruised sole"/>
         <text name="eq_injury_abscess" text="a hoof abscess"/>
         <text name="eq_injury_overreach" text="an overreach cut"/>
@@ -334,7 +337,7 @@
         <text name="eq_story_jumping_agility" text="Had a pole down at a tricky combination."/>
         <text name="eq_story_jumping_agilityMany" text="Had several poles down."/>
         <text name="eq_story_jumping_hardest" text="Going well until a pole fell at the hardest fence."/>
-        <text name="eq_story_jumping_speed" text="Struggled to keep the pace and picked up time faults."/>
+        <text name="eq_story_jumping_speed" text="Was slow between fences and lost time."/>
         <text name="eq_story_jumping_temperament" text="Refused a fence."/>
         <text name="eq_story_dressage_clean" text="A polished test that impressed the judges."/>
         <text name="eq_story_dressage_struggled" text="Struggled with the test from start to finish."/>

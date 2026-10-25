@@ -15,6 +15,9 @@
     to nothing, so a horse's rating still decides what it can expect; the checks decide how this
     run went and give the story behind the placing.
 
+    Before any of that, every event starts with an easy temperament check: getting the horse off
+    the lorry, ready and to the start. Only a very fractious horse fails it, and is scratched.
+
     Eventing has no checks of its own: it runs the dressage, show jumping and cross country checks
     as three phases, each placed on its own, and the total decides the result.
 ]]
@@ -32,6 +35,12 @@ EqPerformance.TARGET_HARDEST = 0.6
 -- plain luck. The two shares' squares add to 1, so the spread of results stays as it was.
 EqPerformance.CHECK_LUCK = 0.8
 EqPerformance.PLAIN_LUCK = 0.6
+-- Before any event: can the horse be got off the lorry, tacked up and to the start? An easy
+-- temperament check against a fixed level, whatever the tier; failing it scratches the horse.
+EqPerformance.START_STAT = "temperament"
+EqPerformance.START_TARGET = 8
+-- Ways a fractious horse fails to start (eq_scratch_fractious_<n>), one picked at random.
+EqPerformance.START_FAIL_TEXTS = 3
 -- A run that fails at least this share of its check weight "struggled" with the whole course.
 EqPerformance.STRUGGLED_SHARE = 0.6
 
@@ -50,6 +59,20 @@ end
 --- @return number chance 0..1
 function EqPerformance.passChance(level, target)
     return 1 / (1 + math.exp(-(level - target) / EqPerformance.CHECK_SPREAD))
+end
+
+
+--- The check every event starts with (START_STAT against START_TARGET).
+--- @param stats table stat -> level
+--- @param condition number from EqCompetition.condition
+--- @param rng table EqRandom
+--- @return boolean started false when the horse could not be got to the start
+--- @return number variant which eq_scratch_fractious_<n> text tells it, 1..START_FAIL_TEXTS
+function EqPerformance.startCheck(stats, condition, rng)
+    local chance = EqPerformance.passChance((stats[EqPerformance.START_STAT] or 0) * condition, EqPerformance.START_TARGET)
+    local started = rng:next() < chance
+    local variant = math.min(EqPerformance.START_FAIL_TEXTS, math.floor(rng:next() * EqPerformance.START_FAIL_TEXTS) + 1)
+    return started, variant
 end
 
 
