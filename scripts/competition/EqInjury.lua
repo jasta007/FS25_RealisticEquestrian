@@ -264,6 +264,8 @@ local function contract(animal, name, monthsLeft)
     m:contractDisease(animal, model)
     local disease = EqInjury.findRecord(animal, name)
     if disease == nil then return false end
+    -- Not ticked on the day it happened (see the Disease.onDayChanged hook).
+    disease.eqStartDay = today()
     if monthsLeft ~= nil and model.durationMonths ~= nil then
         disease.monthsElapsed = math.max(model.durationMonths - monthsLeft, 0)
     end
@@ -590,11 +592,27 @@ function EqInjury.install(guarded)
     end)
     if e.g_diseaseManager ~= nil then EqInjury.register(e.g_diseaseManager) end
 
-    -- Billing: RLRM charges each served day model.treatment.cost / daysPerPeriod.
+    -- RLRM's daily tick of one record. For our injuries:
+    -- - none on the day it happened: an event can run before or after the pen's tick that day,
+    --   and at one day a month that tick alone would heal a one-month injury before the player
+    --   ever saw it;
+    -- - a day course is cut to its days, and a retired horse pays less (RLRM bills each served
+    --   day model.treatment.cost / daysPerPeriod);
+    -- - a healed injury is removed at once, rather than sitting on the page as "Immune".
     local onDayChanged = e.Disease.onDayChanged
+    local INSTRUCTION = e.RLDiseaseProgression ~= nil and e.RLDiseaseProgression.INSTRUCTION or nil
+    local NO_TREATMENT = e.RLDiseaseRecord ~= nil and e.RLDiseaseRecord.TREATMENT_RESULT.NONE or nil
     e.Disease.onDayChanged = function(disease, animal, ...)
+        local ours = EqInjury.nameFor(disease.title) ~= nil
+        if ours and INSTRUCTION ~= nil and disease.eqStartDay == today() then
+            return INSTRUCTION.KEEP, 0, NO_TREATMENT
+        end
         shortenDayCourse(disease)
-        return withHorseTerms(disease.model, animal, true, onDayChanged, disease, animal, ...)
+        local instruction, cost, result = withHorseTerms(disease.model, animal, true, onDayChanged, disease, animal, ...)
+        if ours and INSTRUCTION ~= nil and instruction == INSTRUCTION.KEEP and disease.state == "RECOVERED" then
+            instruction = INSTRUCTION.REMOVE
+        end
+        return instruction, cost, result
     end
 
     local dialog = e.DiseaseDialog

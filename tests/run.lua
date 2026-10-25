@@ -1229,6 +1229,33 @@ local function injuryTests()
         local abscess = heal("eqInjuryAbscess", dpp, false)
         check("an untreated abscess takes its month and a half at " .. dpp, abscess == math.ceil(1.5 * dpp - 1e-9), tostring(abscess))
     end
+
+    -- The hook on RLRM's Disease.onDayChanged, at one day a month: no tick on the day it
+    -- happened, healed the next day, and removed rather than left showing as immune.
+    local fakeDisease = {}
+    function fakeDisease.onDayChanged(disease, animal, deathEnabled, dpp)
+        local instruction, detail = RLDiseaseProgression.advance(disease, disease.model,
+            { daysPerPeriod = dpp, vulnerability = 1, treatmentRunning = disease.treatmentRunning, rng = function() return 0.5 end })
+        return instruction, detail.served and disease.model.treatment.cost / dpp or 0, detail.treatment
+    end
+    Utils = Utils or { appendedFunction = function(a, b) return function(...) a(...) b(...) end end }
+    local savedEnv, savedInstalled = EqRLRM.env, EqInjury.installed
+    EqRLRM.env = { Disease = fakeDisease, DiseaseManager = { loadDiseases = function() end },
+        RLDiseaseProgression = RLDiseaseProgression, RLDiseaseRecord = RLDiseaseRecord }
+    EqInjury.installed = false
+    EqInjury.install(function(_, fn) fn() end)
+    g_currentMission = { environment = { currentMonotonicDay = 10, daysPerPeriod = 1 } }
+    local sole = RLDiseaseRecord.new(registry.eqInjuryBruisedSole, "eqInjuryBruisedSole")
+    sole.model = registry.eqInjuryBruisedSole
+    sole.state = RLDiseaseRecord.STATE.INFECTIOUS
+    sole.eqStartDay = 10
+    local first = fakeDisease.onDayChanged(sole, {}, true, 1)
+    check("an injury isn't ticked on the day it happened", first == "KEEP" and sole.state == "INFECTIOUS" and sole.monthsElapsed == 0)
+    g_currentMission.environment.currentMonotonicDay = 11
+    local second = fakeDisease.onDayChanged(sole, {}, true, 1)
+    check("a healed injury is removed, not left immune", second == "REMOVE" and sole.state == "RECOVERED", tostring(second))
+    g_currentMission = nil
+    EqRLRM.env, EqInjury.installed = savedEnv, savedInstalled
 end
 injuryTests()
 -- Animals page: RLRM's Manage Animals button for horse pens.
