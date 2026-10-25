@@ -106,11 +106,9 @@ local function farmId()
 end
 
 
---- Point the header icon at our atlas for every overlay state. The fs25_menuHeaderIcon profile
---- brings the base UI atlas as the image file, and when anything re-applies it (or the icon draws
---- in a state the profile has its own image for) the icon shows the whole base atlas squashed
---- into the square. setImageSlice only fixes the normal state and skips work when the filename
---- already matches, so set the overlay ourselves.
+--- Point the header icon at our texture for every overlay state, without a slice id. Loaded from
+--- the XML's imageSliceId, the icon showed the whole base UI atlas squashed into the square,
+--- so set the overlay ourselves: our file, our UVs, no per-state overrides.
 --- @return boolean changed true when the icon was not showing our slice
 function EqEventsFrame:applyHeaderIcon()
     local icon = self.headerIcon
@@ -125,7 +123,7 @@ function EqEventsFrame:applyHeaderIcon()
         Log:info("EqEventsFrame: header icon file '%s' uvs (%s) state %s",
             tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
     end
-    local clean = overlay.filename == slice.filename and overlay.overlay ~= nil
+    local clean = overlay.filename == slice.filename and overlay.overlay ~= nil and overlay.sliceId == nil
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL
             and (overlay["filename" .. suffix] ~= nil or overlay["uvs" .. suffix] ~= nil) then
@@ -150,7 +148,10 @@ function EqEventsFrame:applyHeaderIcon()
     end
     overlay.filename = slice.filename
     overlay.uvs = table.clone(slice.uvs)
-    overlay.sliceId = EqEventsFrame.ICON_SLICE
+    -- No sliceId: GuiOverlay hands it to the engine's createImageOverlay, and with our id the
+    -- engine drew the base UI atlas even though filename and UVs were ours (log, 25 Oct). The
+    -- tab button never passes one.
+    overlay.sliceId = nil
     overlay.overlay = nil
     GuiOverlay.createOverlay(overlay)
     return true
