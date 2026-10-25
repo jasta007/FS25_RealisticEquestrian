@@ -344,7 +344,7 @@
         <text name="eq_story_dressage_agility" text="Lost marks in the lateral work."/>
         <text name="eq_story_dressage_agilityMany" text="Lost marks in several movements."/>
         <text name="eq_story_dressage_hardest" text="An elegant routine but struggled with the hardest movements."/>
-        <text name="eq_story_dressage_temperament" text="Grew tense in the arena and lost marks."/>
+        <text name="eq_story_dressage_temperament" text="Was noticeably tense and struggled to focus."/>
         <text name="eq_story_dressage_temperamentMany" text="Tense and distracted for most of the test."/>
         <text name="eq_story_dressage_elimRefusal" text="Refused to go on and retired from the test."/>
         <text name="eq_story_crossCountry_clean" text="Clear inside the time."/>

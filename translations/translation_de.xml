@@ -346,7 +346,7 @@
         <text name="eq_story_dressage_agility" text="Verlor Punkte in den Seitengängen."/>
         <text name="eq_story_dressage_agilityMany" text="Verlor in mehreren Lektionen Punkte."/>
         <text name="eq_story_dressage_hardest" text="Eine elegante Vorstellung, aber Mühe mit den schwersten Lektionen."/>
-        <text name="eq_story_dressage_temperament" text="Wurde im Viereck angespannt und verlor Punkte."/>
+        <text name="eq_story_dressage_temperament" text="War merklich angespannt und konnte sich schwer konzentrieren."/>
         <text name="eq_story_dressage_temperamentMany" text="War den Großteil der Aufgabe angespannt und abgelenkt."/>
         <text name="eq_story_dressage_elimRefusal" text="Widersetzte sich, ging nicht weiter und wurde aus der Prüfung genommen."/>
         <text name="eq_story_crossCountry_clean" text="Fehlerfrei in der erlaubten Zeit."/>
