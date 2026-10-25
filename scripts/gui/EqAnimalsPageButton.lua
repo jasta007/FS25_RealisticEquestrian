@@ -12,7 +12,8 @@
 
     The button is checked at the last step, when the menu puts a list into its button bar,
     because the base game builds a horse stable's buttons in more than one place. The bar has
-    a fixed number of slots and a horse stable fills them, so the button goes just after Back.
+    a fixed number of slots and a horse stable fills them, so the button takes the place of the
+    Previous/Next page buttons (Q and E still switch tabs).
 ]]
 
 EqAnimalsPageButton = {}
@@ -173,8 +174,9 @@ end
 --- @param openMenu function RLRM's RLMenu.openFromBridge
 --- @param listPens function|nil passed to findHusbandry
 --- @param slots integer|nil how many buttons the bar can show; nil when unknown
+--- @param pageActions table|nil set of the page buttons' input actions, dropped first when full
 --- @return boolean changed true when the list was changed
-function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens, slots)
+function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens, slots, pageActions)
     if type(buttons) ~= "table" then return false end
 
     local index = findButton(buttons, action)
@@ -202,10 +204,21 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
     end
 
     -- The bar shows only its first few buttons, and a horse stable fills them (rename, map tag,
-    -- workers and the page buttons). Move the button up to just after Back so it is one of them.
+    -- workers and the page buttons). Make room by taking out the Previous/Next page buttons,
+    -- whose Q and E keys switch tabs without them, and put Manage Animals where they were;
+    -- failing that, move it to just after Back.
     local moved = false
-    if slots ~= nil and index > slots and index > 2 then
-        table.insert(buttons, 2, table.remove(buttons, index))
+    if slots ~= nil and index > slots then
+        local info = table.remove(buttons, index)
+        local at = nil
+        for i = #buttons, 1, -1 do
+            local entry = buttons[i]
+            if type(entry) == "table" and pageActions ~= nil and pageActions[entry.inputAction] then
+                table.remove(buttons, i)
+                at = i
+            end
+        end
+        table.insert(buttons, math.min(at or 2, #buttons + 1), info)
         moved = true
     end
 
@@ -245,6 +258,9 @@ function EqAnimalsPageButton.install(guarded)
     end
 
     local openMenu = EqRLRM.get("RLMenu").openFromBridge
+    local pageActions = {}
+    if InputAction.MENU_PAGE_PREV ~= nil then pageActions[InputAction.MENU_PAGE_PREV] = true end
+    if InputAction.MENU_PAGE_NEXT ~= nil then pageActions[InputAction.MENU_PAGE_NEXT] = true end
 
     InGameMenuAnimalsFrame.updateMenuButtons = Utils.appendedFunction(InGameMenuAnimalsFrame.updateMenuButtons,
         function(frame)
@@ -260,7 +276,7 @@ function EqAnimalsPageButton.install(guarded)
             guarded("animals page button", function()
                 if showsAnimalsPage(menu) then
                     local slots = type(menu.menuButton) == "table" and #menu.menuButton or nil
-                    EqAnimalsPageButton.ensureButton(menu.currentPage, buttons, action, openMenu, nil, slots)
+                    EqAnimalsPageButton.ensureButton(menu.currentPage, buttons, action, openMenu, nil, slots, pageActions)
                 end
             end)
             return superFunc(menu, buttons, ...)

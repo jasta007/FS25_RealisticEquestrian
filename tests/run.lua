@@ -1087,6 +1087,11 @@ check("adding the button redraws the bar", dirtyFrame.dirty == true)
 local fullBar = { { inputAction = 1 }, { inputAction = 2 }, { inputAction = 3 } }
 EqAnimalsPageButton.ensureButton(horseFrame, fullBar, RL_ACTION, openMenu, nil, 3)
 check("full bar: button moves just after Back", fullBar[2].inputAction == RL_ACTION and #fullBar == 4)
+local horseBar = { { inputAction = "BACK" }, { inputAction = "NEXT" }, { inputAction = "PREV" },
+    { inputAction = "TAG" }, { inputAction = "RENAME" }, { inputAction = "WORKERS" } }
+EqAnimalsPageButton.ensureButton(horseFrame, horseBar, RL_ACTION, openMenu, nil, 6, { NEXT = true, PREV = true })
+check("full horse bar: page buttons make room, Workers kept", #horseBar == 5 and horseBar[2].inputAction == RL_ACTION
+    and horseBar[5].inputAction == "WORKERS")
 local roomyBar = { { inputAction = 1 }, { inputAction = 2 } }
 EqAnimalsPageButton.ensureButton(horseFrame, roomyBar, RL_ACTION, openMenu, nil, 6)
 check("bar with room: button goes last", roomyBar[3].inputAction == RL_ACTION)
