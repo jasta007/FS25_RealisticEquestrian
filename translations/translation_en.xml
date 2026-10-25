@@ -94,28 +94,49 @@
         <text name="eq_money_entryFees" text="Competition Entry Fees"/>
         <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
         <text name="eq_money_vetBills" text="Vet Bills"/>
-        <text name="eq_enter_injured" text="That horse is injured: %d month(s) of box rest left."/>
+        <text name="eq_enter_injured" text="That horse is injured: %d month(s) until it heals."/>
+        <text name="eq_enter_sick" text="That horse is ill. Treat it on its Diseases page first."/>
+        <text name="eq_enter_unwell" text="That horse's health is too low to compete (25 or under). Feed it well and it will recover."/>
+        <text name="eq_enter_lowHealth" text="Its health is %d: a %d%% chance it's scratched as unsound on the day. Under 50 health, every 5 points lower adds 10%%, and at %d or under it can't compete."/>
         <text name="eq_result_eliminated" text="%s was eliminated in %s."/>
         <text name="eq_result_pulledUp" text="%s was pulled up in %s."/>
         <text name="eq_result_scratched" text="%s was scratched from %s (%s). %s of the entry fee was refunded."/>
         <text name="eq_scratch_injured" text="injured"/>
+        <text name="eq_scratch_sick" text="ill"/>
         <text name="eq_scratch_unsound" text="unsound on the day"/>
         <text name="eq_scratch_shoe" text="lost a shoe"/>
         <text name="eq_scratch_retired" text="retired"/>
         <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
-        <text name="eq_injury_minor" text="a minor strain"/>
-        <text name="eq_injury_moderate" text="a tendon injury"/>
-        <text name="eq_injury_serious" text="a serious leg injury"/>
-        <text name="eq_injury_new" text="%s was injured in %s: %s. %d month(s) of box rest, with vet bills of %s a month."/>
+        <text name="eq_injury_bruisedSole" text="a bruised sole"/>
+        <text name="eq_injury_abscess" text="a hoof abscess"/>
+        <text name="eq_injury_overreach" text="an overreach cut"/>
+        <text name="eq_injury_soreBack" text="a sore back"/>
+        <text name="eq_injury_splints" text="splints"/>
+        <text name="eq_injury_tendon" text="a tendon strain"/>
+        <text name="eq_injury_chipFracture" text="a chip fracture"/>
+        <text name="eq_injury_suspensory" text="a torn suspensory ligament"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Bruised sole"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Hoof abscess"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Overreach cut"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Sore back"/>
+        <text name="rl_disease_eqInjurySplints" text="Splints"/>
+        <text name="rl_disease_eqInjuryTendon" text="Tendon strain"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Chip fracture"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Torn suspensory"/>
+        <text name="eq_injury_newTreatable" text="%s was injured in %s: %s. Treat it from the horse's Diseases page (%s, %s), or leave it to heal on its own in %d month(s)."/>
+        <text name="eq_injury_newRest" text="%s was injured in %s: %s. %d month(s) of box rest."/>
+        <text name="eq_illness_new" text="%s picked up %s at %s. See its Diseases page."/>
         <text name="eq_injury_careerEnding" text="%s suffered a career-ending injury in %s and has retired from competition."/>
         <text name="eq_injury_recovered" text="%s has recovered and can compete again."/>
         <text name="eq_retire_done" text="Retired from competition."/>
-        <text name="eq_retire_doneInjured" text="Retired from competition. Treatment stops, and so do the vet bills."/>
+        <text name="eq_retire_doneInjured" text="Retired from competition. Its injury still has to heal, but treatment now costs %d%% less."/>
         <text name="eq_retire_undone" text="Back in competition."/>
         <text name="eq_retire_careerEnded" text="That horse's career ended with an injury; it cannot compete again."/>
         <text name="eq_status_title" text="Competition"/>
         <text name="eq_status_injured" text="Injured, %d month(s)"/>
         <text name="eq_status_retired" text="Retired"/>
+        <text name="eq_status_sick" text="Ill"/>
+        <text name="eq_status_unwell" text="Health too low"/>
         <text name="eq_status_settling" text="Settling in"/>
         <text name="eq_status_rested" text="Rested for the month"/>
         <text name="eq_status_inFoal" text="In foal"/>
@@ -142,6 +163,16 @@
         <text name="eq_ui_col_going" text="Conditions"/>
         <text name="eq_ui_col_risk" text="Risk"/>
         <text name="eq_ui_injuryRisk" text="Injury risk"/>
+        <text name="eq_ui_day" text="%d day"/>
+        <text name="eq_ui_days" text="%d days"/>
+        <text name="eq_ui_months" text="%d month(s)"/>
+        <text name="eq_ui_perMonth" text="%s a month"/>
+        <text name="eq_ui_retire" text="Retire"/>
+        <text name="eq_ui_unretire" text="Back to competition"/>
+        <text name="eq_ui_retireConfirm" text="Retire %s from competition? It won't be able to enter events. You can bring it back later."/>
+        <text name="eq_ui_retireConfirmInjured" text="Retire %s from competition? Its injury treatment will cost %d%% less, but it won't be able to enter events. You can bring it back later, at the full fee."/>
+        <text name="eq_ui_unretireConfirm" text="Bring %s back into competition? Any injury treatment goes back to the full fee."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="Treat %s for %s? It takes %s and costs %s."/>
         <text name="eq_risk_low" text="Low"/>
         <text name="eq_risk_minor" text="Minor"/>
         <text name="eq_risk_moderate" text="Moderate"/>
@@ -188,6 +219,7 @@
         <text name="eq_ui_ageMonths" text="%dm"/>
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
+        <text name="eq_ui_status_lowHealth" text="Low health: %d%% scratch"/>
         <text name="eq_ui_status_eventFull" text="Two of your horses already entered"/>
         <text name="eq_ui_status_tooYoung" text="Too young"/>
         <text name="eq_ui_status_tooOld" text="Too old"/>

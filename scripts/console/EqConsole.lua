@@ -33,8 +33,8 @@ function EqConsole:consoleListHorses()
 
             local status = ""
             if record.injury ~= nil then
-                status = string.format("  INJURED (%s, %d month(s), %s/month)", record.injury.name, record.injury.monthsLeft,
-                    g_i18n:formatMoney(record.injury.monthlyCost, 0, true, true))
+                status = string.format("  INJURED (%s, %d month(s)%s)", record.injury.name, EqInjury.monthsLeft(record, animal) or 1,
+                    record.injury.rlrm and ", on the Diseases page" or ", resting")
             elseif record.retired then
                 status = record.careerEnded and "  RETIRED (career-ending injury)" or "  RETIRED"
             elseif record:isSettling() then

@@ -247,7 +247,7 @@ function EqCompetitionManager.prospects(record, animal, event)
     if EqCompetitionManager.settings.injuries then
         local going = EqCompetitionManager.goingByName(event.going)
         risk = EqRisk.riskBand(EqRisk.runInjuryChance(discipline, tier, going, animal.fitness or 0,
-            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event)))
+            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event), animal.health))
     end
     return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk }
 end
@@ -288,17 +288,18 @@ function EqCompetitionManager.injuryTitle(name)
 end
 
 
---- Put a horse on box rest, or end its career, after an injury at an event.
+--- Give a horse its injury after an event, or end its career.
 --- @param record table
 --- @param entry table { name, farmId }
 --- @param injury table EqRisk.rollInjury outcome
 --- @param event table
---- @param animal table|nil RLRM Animal, for the message log
+--- @param animal table|nil RLRM Animal, for the message log and the Diseases page
 function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     record.career.injuries = record.career.injuries + 1
+    local info = EqInjury.info[injury.name]
     EqStatLog.add(record.id, g_currentMission.environment.currentMonotonicDay or 0, "injury", nil,
-        { string.format("Injured at %s: %s, %d month(s) of box rest%s. No training until it heals.", EqCompetitionManager.eventTitle(event),
-            injury.name, injury.months, injury.careerEnding and ", career-ending" or "") }, record.trained)
+        { string.format("Injured at %s: %s%s. No training until it heals.", EqCompetitionManager.eventTitle(event),
+            injury.name, injury.careerEnding and ", career-ending" or "") }, record.trained)
     if injury.careerEnding then
         record.retired = true
         record.careerEnded = true
@@ -308,10 +309,22 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
         return
     end
 
-    record.injury = { name = injury.name, monthsLeft = injury.months, monthlyCost = injury.monthlyCost }
-    notify(entry.farmId, string.format(g_i18n:getText("eq_injury_new"), entry.name, EqCompetitionManager.eventTitle(event),
-        EqCompetitionManager.injuryTitle(injury.name), injury.months,
-        g_i18n:formatMoney(injury.monthlyCost, 0, true, true)), "EQ_INJURED", animal)
+    local onRLRM = EqInjury.start(record, animal, injury.name)
+    local rest = EqInjury.wholeMonths(EqInjury.restMonths(injury.name))
+    local text
+    if onRLRM and info ~= nil then
+        local course = info.treatDays ~= nil
+            and string.format(g_i18n:getText(info.treatDays == 1 and "eq_ui_day" or "eq_ui_days"), info.treatDays)
+            or string.format(g_i18n:getText("eq_ui_months"), EqInjury.wholeMonths(info.treatMonths))
+        local fee = g_i18n:formatMoney(EqInjury.fee(info.cost, record.retired), 0, true, true)
+        if info.treatDays == nil then fee = string.format(g_i18n:getText("eq_ui_perMonth"), fee) end
+        text = string.format(g_i18n:getText("eq_injury_newTreatable"), entry.name, EqCompetitionManager.eventTitle(event),
+            EqCompetitionManager.injuryTitle(injury.name), course, fee, rest)
+    else
+        text = string.format(g_i18n:getText("eq_injury_newRest"), entry.name, EqCompetitionManager.eventTitle(event),
+            EqCompetitionManager.injuryTitle(injury.name), rest)
+    end
+    notify(entry.farmId, text, "EQ_INJURED", animal)
 end
 
 
@@ -343,6 +356,7 @@ function EqCompetitionManager.resolve(event, horses)
             -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
             if reason == nil and EqCompetitionManager.isTooFarInFoal(horse.animal) then reason = "inFoal" end
+            if reason == nil and EqInjury.isSick(horse.animal) then reason = "sick" end
             if reason ~= nil then
                 local refund = math.floor((event.fee or 0) * EqRisk.SCRATCH_REFUND + 0.5)
                 if refund > 0 then
@@ -363,6 +377,7 @@ function EqCompetitionManager.resolve(event, horses)
                     stamina = record.trained.stamina or 0,
                     fitness = horse.animal.fitness or 0,
                     travel = EqCompetitionManager.travelInjury(event),
+                    health = horse.animal.health,
                 })
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
@@ -433,11 +448,17 @@ function EqCompetitionManager.resolve(event, horses)
             mine.entry.name, EqCompetitionManager.eventTitle(event)), "EQ_ELIMINATED", mine.animal)
     end
 
+    -- A show is a crowd, a lorry ride and a hard day: every starter rolls RLRM's horse diseases too.
+    local illnessRng = EqRandom.new("illness " .. event.id)
     for _, starter in ipairs(starters) do
+        local mine = byKey[starter.key]
         local injury = outcomes[starter.key].injury
         if injury ~= nil then
-            local mine = byKey[starter.key]
             EqCompetitionManager.applyInjury(mine.record, mine.entry, injury, event, mine.animal)
+        end
+        for _, illness in ipairs(EqInjury.rollIllness(mine.animal, starter.travel, illnessRng)) do
+            notify(mine.entry.farmId, string.format(g_i18n:getText("eq_illness_new"), mine.entry.name, illness,
+                EqCompetitionManager.eventTitle(event)), "EQ_ILL", mine.animal)
         end
     end
 
@@ -447,8 +468,7 @@ function EqCompetitionManager.resolve(event, horses)
 end
 
 
---- Start of a month: charge each injured horse's vet bill to its farm and count down its rest,
---- reset the month's starts, fade event experience not kept up, and count a bought horse's months on the farm (its real potential
+--- Start of a month: reset the month's starts, fade event experience not kept up, and count a bought horse's months on the farm (its real potential
 --- shows after REVEAL_MONTHS).
 --- @param horses table from indexHorses
 function EqCompetitionManager.monthlyCare(horses)
@@ -466,16 +486,24 @@ function EqCompetitionManager.monthlyCare(horses)
             EqCompetitionManager.countOwnedMonth(record, horse.farmId, name, horse.animal)
         end
 
-        local injury = record ~= nil and record.injury or nil
-        if injury ~= nil then
-            if injury.monthlyCost > 0 then
-                g_currentMission:addMoney(-injury.monthlyCost, horse.farmId, MoneyType.EQ_VET_BILLS or MoneyType.OTHER, true, true)
-            end
-            injury.monthsLeft = injury.monthsLeft - 1
-            if injury.monthsLeft <= 0 then
-                record.injury = nil
-                notify(horse.farmId, string.format(g_i18n:getText("eq_injury_recovered"), name), "EQ_RECOVERED", horse.animal)
-            end
+    end
+end
+
+
+--- Every day: move each injured horse's rest along (see EqInjury.daily), and say when one has
+--- healed. Treatment is the player's choice on RLRM's Diseases page, and RLRM bills it.
+--- @param horses table from indexHorses
+function EqCompetitionManager.dailyCare(horses)
+    local ids = {}
+    for id in pairs(horses) do table.insert(ids, id) end
+    table.sort(ids)
+
+    for _, id in ipairs(ids) do
+        local horse = horses[id]
+        local record = EqRegistry.getById(id)
+        if record ~= nil and record.injury ~= nil and EqInjury.daily(record, horse.animal) then
+            local name = horse.animal.getName ~= nil and horse.animal:getName() or id
+            notify(horse.farmId, string.format(g_i18n:getText("eq_injury_recovered"), name), "EQ_RECOVERED", horse.animal)
         end
     end
 end
@@ -502,10 +530,12 @@ end
 --- @param record table
 --- @param kind string the event's kind
 --- @param animal table|nil RLRM Animal, for the in-foal check
---- @return string|nil reason "retired", "injured", "settling", "inFoal", "foaled" or "rested", nil when it can go
+--- @return string|nil reason "retired", "injured", "sick", "unwell", "settling", "inFoal", "foaled" or "rested", nil when it can go
 function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
+    if EqInjury.isSick(animal) then return "sick" end
+    if animal ~= nil and (animal.health or 100) <= EqRisk.ENTRY_HEALTH_MIN then return "unwell" end
     if record:isSettling() then return "settling" end
     if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
     if EqCompetitionManager.isRecoveringFromFoaling(animal) then return "foaled" end
@@ -531,8 +561,8 @@ function EqCompetitionManager.isRecoveringFromFoaling(animal)
 end
 
 
---- Retire a horse from competition, or bring it back. Retiring an injured horse stops its
---- treatment and the vet bills with it.
+--- Retire a horse from competition, or bring it back. An injured horse still has to heal, but
+--- its treatment fee drops to EqInjury.RETIRED_FEE_SHARE (back up if it returns).
 --- @param record table
 --- @param retired boolean
 --- @return boolean ok
@@ -541,9 +571,11 @@ function EqCompetitionManager.setRetired(record, retired)
     if not retired and record.careerEnded then return false, g_i18n:getText("eq_retire_careerEnded") end
     record.retired = retired
     if retired then
-        local wasInjured = record.injury ~= nil
-        record.injury = nil
-        return true, g_i18n:getText(wasInjured and "eq_retire_doneInjured" or "eq_retire_done")
+        if record.injury ~= nil then
+            return true, string.format(g_i18n:getText("eq_retire_doneInjured"),
+                math.floor((1 - EqInjury.RETIRED_FEE_SHARE) * 100 + 0.5))
+        end
+        return true, g_i18n:getText("eq_retire_done")
     end
     return true, g_i18n:getText("eq_retire_undone")
 end
@@ -598,6 +630,7 @@ end
 
 
 function EqCompetitionManager.onDayChanged()
+    EqCompetitionManager.dailyCare(indexHorses())
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
     end
@@ -841,7 +874,7 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
 
     local unavailable = EqCompetitionManager.unavailableReason(record, event.kind, animal)
     if unavailable == "injured" then
-        return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
+        return false, string.format(g_i18n:getText("eq_enter_injured"), EqInjury.monthsLeft(record, animal) or 1)
     elseif unavailable == "rested" then
         return false, string.format(g_i18n:getText("eq_enter_rested"), EqConstants.MAX_ROUND_STARTS)
     elseif unavailable ~= nil then
@@ -882,12 +915,27 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
         delivered = not manual })
     if not manual then EqCompetitionManager.refreshAway({ animal }) end
 
+    local text
     if manual then
-        return true, string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
+        text = string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
             g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_deadline_month" or "eq_ui_deadline_round"))
+    else
+        text = string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
+            g_i18n:formatMoney(cost, 0, true, true))
     end
-    return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
-        g_i18n:formatMoney(cost, 0, true, true))
+    local warning = EqCompetitionManager.healthWarning(animal)
+    if warning ~= nil then text = text .. " " .. warning end
+    return true, text
+end
+
+
+--- @param animal table RLRM Animal
+--- @return string|nil text the chance it is scratched on the day for poor health, nil when healthy
+function EqCompetitionManager.healthWarning(animal)
+    local unsound = EqRisk.unsoundChance(animal.health)
+    if unsound <= 0 or unsound >= 1 then return nil end
+    return string.format(g_i18n:getText("eq_enter_lowHealth"), math.floor(animal.health or 0),
+        math.floor(unsound * 100 + 0.5), EqRisk.ENTRY_HEALTH_MIN)
 end
 
 

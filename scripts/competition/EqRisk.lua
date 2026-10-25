@@ -3,15 +3,17 @@
     What can go wrong at a competition: pure functions with no game or RLRM calls, so they run
     headless.
 
-    - Scratch: a horse that has retired or is injured since it was entered, or unsound on the day (RLRM health under 50), does not
-      start, and the owner gets half the entry fee back. Now and then a sound horse is scratched
-      too (a lost shoe).
+    - Scratch: a horse that has retired or is injured since it was entered does not start, and
+      the owner gets half the entry fee back. Below 50 RLRM health a horse may be unsound on the
+      day: a 10% chance for every 5 points (or part of 5) under 50. At ENTRY_HEALTH_MIN (25) or
+      below it can't be entered at all, and one that drops that low after entering is scratched.
+      Now and then a sound horse is scratched too (a lost shoe).
     - Elimination: refusals and falls in the jumping tests, pulled up in a race. The chance is
       the discipline's base, scaled by the tier, how the horse's rating sits in the field and its
       temperament. An eliminated horse wins nothing.
     - Injury: the discipline's base chance, scaled by the tier, the going, the trip (a horse
-      hauled abroad arrives tired), fitness and stamina, and doubled for a horse eliminated over
-      fences (that is where falls happen). Most injuries
+      hauled abroad arrives tired), fitness, stamina and health, and doubled for a horse
+      eliminated over fences (that is where falls happen). Most injuries
       mean months of box rest and vet bills; a forced retirement is rare, and only with that
       setting on.
 ]]
@@ -19,6 +21,9 @@
 EqRisk = {}
 
 EqRisk.SCRATCH_HEALTH = 50
+EqRisk.UNSOUND_STEP = 5
+EqRisk.UNSOUND_STEP_CHANCE = 0.1
+EqRisk.ENTRY_HEALTH_MIN = 25
 EqRisk.LOST_SHOE_CHANCE = 0.01
 EqRisk.SCRATCH_REFUND = 0.5
 
@@ -35,7 +40,9 @@ EqRisk.SCRATCH_RETIRED = "retired"
 function EqRisk.scratchReason(record, health, rng)
     if record.retired then return EqRisk.SCRATCH_RETIRED end
     if record.injury ~= nil then return EqRisk.SCRATCH_INJURED end
-    if (health or 100) < EqRisk.SCRATCH_HEALTH then return EqRisk.SCRATCH_UNSOUND end
+    -- Drawn only below SCRATCH_HEALTH, so a healthy horse's rolls are as before.
+    local unsound = EqRisk.unsoundChance(health)
+    if unsound >= 1 or (unsound > 0 and rng:next() < unsound) then return EqRisk.SCRATCH_UNSOUND end
     if rng:next() < EqRisk.LOST_SHOE_CHANCE then return EqRisk.SCRATCH_SHOE end
     return nil
 end
@@ -67,13 +74,35 @@ end
 --- @param stamina number trained stamina 0..100
 --- @param eliminated boolean
 --- @param travel number|nil the trip's injury factor (events.xml routes); 1 when nil
+--- @param health number|nil RLRM health 0..100; 100 when nil
 --- @return number chance 0..1
-function EqRisk.injuryChance(discipline, tier, going, fitness, stamina, eliminated, travel)
+function EqRisk.injuryChance(discipline, tier, going, fitness, stamina, eliminated, travel, health)
     local ground = (discipline.outdoor and going ~= nil) and (going.injury or 1) or 1
     local fit = 1.5 - EqStats.clamp((fitness or 0) / 100, 0, 1)
     local hardy = 1.3 - 0.6 * EqStats.clamp((stamina or 0) / 100, 0, 1)
     local fall = (eliminated and not discipline.racing and discipline.elimination >= 0.05) and 2 or 1
-    return EqStats.clamp(discipline.injury * (tier.risk or 1) * ground * (travel or 1) * fit * hardy * fall, 0, 0.5)
+    return EqStats.clamp(discipline.injury * (tier.risk or 1) * ground * (travel or 1) * fit * hardy * fall
+        * EqRisk.healthInjuryFactor(health), 0, 0.5)
+end
+
+
+--- How much poor health raises the injury chance: 1 at full health, 1.5 at 50, 2 at 0.
+--- @param health number|nil RLRM health 0..100; 100 when nil
+--- @return number factor
+function EqRisk.healthInjuryFactor(health)
+    return 1 + EqStats.clamp((100 - (health or 100)) / 100, 0, 1)
+end
+
+
+--- The chance a horse is unsound on the day: 10% for every 5 points (or part of 5) of health
+--- under 50, and certain at ENTRY_HEALTH_MIN or below.
+--- @param health number|nil RLRM health 0..100; 100 when nil
+--- @return number chance 0..1
+function EqRisk.unsoundChance(health)
+    health = health or 100
+    if health <= EqRisk.ENTRY_HEALTH_MIN then return 1 end
+    if health >= EqRisk.SCRATCH_HEALTH then return 0 end
+    return math.min(math.ceil((EqRisk.SCRATCH_HEALTH - health) / EqRisk.UNSOUND_STEP - 1e-9) * EqRisk.UNSOUND_STEP_CHANCE, 1)
 end
 
 
@@ -81,9 +110,9 @@ end
 --- shows as the injury risk.
 --- @param elimination number from eliminationChance
 --- @return number chance 0..1
-function EqRisk.runInjuryChance(discipline, tier, going, fitness, stamina, elimination, travel)
-    local clean = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, false, travel)
-    local fallen = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, true, travel)
+function EqRisk.runInjuryChance(discipline, tier, going, fitness, stamina, elimination, travel, health)
+    local clean = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, false, travel, health)
+    local fallen = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, true, travel, health)
     return (1 - elimination) * clean + elimination * fallen
 end
 
@@ -125,7 +154,7 @@ end
 --- @param injuries table config.injuries
 --- @param rng table EqRandom
 --- @param forcedRetirement boolean the setting
---- @return table outcome { name, months, monthlyCost, careerEnding }
+--- @return table outcome { name, careerEnding }
 function EqRisk.rollInjury(injuries, rng, forcedRetirement)
     local total = 0
     for _, injury in ipairs(injuries) do total = total + injury.chance end
@@ -141,8 +170,6 @@ function EqRisk.rollInjury(injuries, rng, forcedRetirement)
     local ending = rng:next() < (picked.careerEnding or 0)
     return {
         name = picked.name,
-        months = picked.months,
-        monthlyCost = picked.monthlyCost,
         careerEnding = ending and forcedRetirement,
     }
 end
@@ -151,7 +178,7 @@ end
 --- Roll elimination and injury for every entrant before the event is scored.
 --- @param event table
 --- @param config table EqEventConfig
---- @param entrants table list of { key, rating, temperament, fitness, stamina, travel }
+--- @param entrants table list of { key, rating, temperament, fitness, stamina, travel, health }
 --- @param rng table EqRandom
 --- @param settings table { injuries, forcedRetirement, forceInjuries }
 --- @return table outcomes key -> { eliminated, injury }
@@ -171,7 +198,8 @@ function EqRisk.rollEvent(event, config, entrants, rng, settings)
         local injury = nil
         -- forceInjuries is the eqForceInjury testing switch: every starter is hurt.
         local hurt = settings.forceInjuries
-            or (settings.injuries and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated, entrant.travel))
+            or (settings.injuries and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated,
+                entrant.travel, entrant.health))
         if hurt and #config.injuries > 0 then
             injury = EqRisk.rollInjury(config.injuries, rng, settings.forcedRetirement)
         end

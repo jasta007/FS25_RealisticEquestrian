@@ -162,8 +162,6 @@ function EqEventConfig.read(xmlFile)
         table.insert(config.injuries, {
             name = xmlFile:getString(key .. "#name"),
             chance = xmlFile:getFloat(key .. "#chance", 1),
-            months = xmlFile:getInt(key .. "#months", 1),
-            monthlyCost = xmlFile:getFloat(key .. "#monthlyCost", 0),
             careerEnding = xmlFile:getFloat(key .. "#careerEnding", 0),
         })
         i = i + 1

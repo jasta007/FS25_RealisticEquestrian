@@ -26,6 +26,7 @@ EqMessages.TYPES = {
     EQ_GONE = { title = "eqCompetition", severity = "NOTICE" },
     EQ_INJURED = { title = "eqInjury", severity = "WARNING" },
     EQ_RECOVERED = { title = "eqInjury", severity = "SUCCESS" },
+    EQ_ILL = { title = "eqInjury", severity = "WARNING" },
     EQ_CAREER_ENDED = { title = "eqRetirement", severity = "NOTICE" },
     EQ_REVEAL_BETTER = { title = "eqDealer", severity = "SUCCESS" },
     EQ_REVEAL_FAIR = { title = "eqDealer", severity = "INFO" },

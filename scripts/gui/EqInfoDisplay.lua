@@ -188,9 +188,10 @@ end
 
 
 --- @param record table
+--- @param animal table|nil RLRM Animal
 --- @return string|nil text "Injured, 3 month(s)", "Retired" or "Settling in", nil for a horse in work
-local function statusText(record)
-    if record.injury ~= nil then return string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft) end
+local function statusText(record, animal)
+    if record.injury ~= nil then return string.format(g_i18n:getText("eq_status_injured"), EqInjury.monthsLeft(record, animal) or 1) end
     if record.retired then return g_i18n:getText("eq_status_retired") end
     if record:isSettling() then return g_i18n:getText("eq_status_settling") end
     return nil
@@ -206,7 +207,7 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return end
 
-    local status = statusText(record)
+    local status = statusText(record, animal)
     if status ~= nil then
         table.insert(infos, { title = g_i18n:getText("eq_status_title"), text = "", value = 0, ratio = 0,
             valueText = status, eqBlock = true })
@@ -217,14 +218,15 @@ end
 --- Fill the look-at Skills box: one line per stat, the dealer's-view note and the status.
 --- @param record table EqHorseRecord
 --- @param box table HUD key-value box
-local function fillSkillsBox(record, box)
+--- @param animal table RLRM Animal
+local function fillSkillsBox(record, box, animal)
     local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
     box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
     if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
-    local status = statusText(record)
+    local status = statusText(record, animal)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
 
@@ -251,7 +253,7 @@ function EqInfoDisplay.showSkillsBox(hudUpdater, animal)
     local box = hudUpdater.eqSkillsBox
     box:clear()
     box:setTitle(g_i18n:getText("eq_ui_skills"))
-    fillSkillsBox(record, box)
+    fillSkillsBox(record, box, animal)
     box:showNextFrame()
 end
 

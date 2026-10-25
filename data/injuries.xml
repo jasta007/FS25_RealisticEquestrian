@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    Competition injuries, written in Realistic Livestock's own disease format (its xml/diseases.xml)
+    and added to its disease registry, so an injured horse shows the injury on its Diseases page,
+    where the player can start treatment, leave it to heal, or cull. EqInjury.lua loads this file.
+
+    What every injury has in common, and why:
+        archetype="management" r0="0"   not an infection: nothing spreads to other horses
+        <infection> perMonth="0"         RLRM never hands one out on its own; only an event does
+        caseFatality="0"                 an injury never kills
+        incubationTicks="0"              it shows the day it happens
+        recoveryChancePerMonth="1"       untreated, it heals exactly when durationMonths is up
+        immunityMonths="0"               the healed record is cleared the next day
+        <treatment outcome="cure">       a course heals it after `months`, billed `cost` a month
+                                         (Retiring the horse cuts that fee: EqInjury.RETIRED_FEE_SHARE)
+
+    The per-injury numbers:
+        durationMonths      months of rest it takes to heal untreated
+        treatment months    months a course takes: RLRM wants a whole number, at least 1
+        treatment cost      the vet's fee per month while a course runs
+        treatment days      ours, not RLRM's: a one-day course instead (whatever the days per
+                            month), and cost is then the flat fee for it. months stays 1 so
+                            RLRM accepts the block; EqInjury shortens the course when it runs.
+        salePrice           what the horse is worth while injured (RLRM won't sell it anyway)
+
+    How often each one happens, and whether it can end a career, is in data/events.xml <risk>;
+    every name there needs a disease here titled "eqInjury" + the name with a capital first letter.
+    The display names are the rl_disease_<title> texts in our translations.
+-->
+<diseases>
+
+	<disease title="eqInjuryBruisedSole" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="1" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.9">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="1" days="1" cost="400" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjuryAbscess" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="1.5" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.9">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="1" days="1" cost="800" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjuryOverreach" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="2" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.85">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="1" days="1" cost="1500" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjurySoreBack" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="3" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.85">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="1" cost="2500" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjurySplints" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="4" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.8">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="2" cost="1200" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjuryTendon" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="9" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.6">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="4" cost="4000" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjuryChipFracture" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="12" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.5">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="2" cost="12000" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+	<disease title="eqInjurySuspensory" animals="HORSE">
+		<model archetype="management" endpoint="recovers" cullRequired="false"
+			incubationTicks="0" r0="0" durationMonths="12" recoveryChancePerMonth="1"
+			caseFatality="0" immunityMonths="0" salePrice="0.5">
+			<infection><key ageMonths="0" perMonth="0"/></infection>
+			<treatment months="6" cost="6000" efficacy="1" outcome="cure"/>
+			<effects weightGain="1" fertility="1"/>
+		</model>
+	</disease>
+
+</diseases>

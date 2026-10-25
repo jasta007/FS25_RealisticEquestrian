@@ -37,6 +37,7 @@ source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqExperience.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
+source(modDirectory .. "scripts/competition/EqInjury.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
@@ -183,7 +184,11 @@ function EqMain.activate()
             MoneyType.EQ_TRANSPORT = MoneyType.register("eqTransport", "eq_money_transport")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
+            EqInjury.loadConfig(modDirectory)
         end)
+        if EqRLRM.features.injuries then
+            guarded("injury hooks", function() EqInjury.install(guarded) end)
+        end
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
     end
 
