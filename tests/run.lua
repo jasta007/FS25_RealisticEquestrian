@@ -209,7 +209,7 @@ end
 
 local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 
-local canterDay = EqTraining.playerEffort(ridden("canter", 150000))
+local canterDay = EqTraining.playerEffort(ridden("canter", 100000))
 check("a full canter day trains stamina and agility", math.abs(canterDay.stamina - 0.8) < 1e-9 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
 check("walking trains its stats as fast as galloping trains its own",
@@ -744,8 +744,8 @@ EqTraining.applyDay(faster, cap70, { riding = 100, dirt = 50, ageMonths = 60, ti
 check("an owned facility speeds staff training", faster.trained.agility > plain.trained.agility
     and faster.trained.speed == plain.trained.speed)
 local riddenPlain, riddenInside = horse("balanced", 10), horse("balanced", 10)
-EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
-EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
+EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
     facilityOwned = hallOwned, facilityRidden = hallRidden })
 check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
 

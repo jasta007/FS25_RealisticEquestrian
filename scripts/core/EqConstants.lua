@@ -95,7 +95,10 @@ EqConstants.RIDING_FULL_MS = 300000
 
 -- Milliseconds of riding, in any gait, that make a full day of training. Unlike the base game's
 -- riding bar this is not weighted by speed: each gait trains its own stats at the same rate.
-EqConstants.TRAINING_FULL_MS = 150000
+-- The riding bar is the horse's energy for the day: training stops when it reaches 100%. A
+-- gallop empties it in this long, so galloping until the horse tires is a full day of speed;
+-- walking tires it a third as fast.
+EqConstants.TRAINING_FULL_MS = 100000
 
 -- Effort per jump taken at canter or gallop: mostly agility, and some temperament, since
 -- keeping a horse calm and listening over a jump is manners work too (and walking is dull).

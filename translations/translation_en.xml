@@ -14,6 +14,7 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_training_tired" text="Training (tired)"/>
         <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_feedGroup_hay" text="Hay"/>
         <text name="eq_feedGroup_grain" text="Hard feed"/>

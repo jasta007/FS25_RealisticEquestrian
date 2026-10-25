@@ -25,6 +25,13 @@ local Log = EqLog
 local gaitNames = nil
 
 
+--- @param cluster table|nil RLRM Animal being ridden
+--- @return boolean true once its riding bar is full: the horse is tired and trains no more today
+local function isTired(cluster)
+    return cluster ~= nil and (cluster.riding or 0) >= 100
+end
+
+
 --- Map Rideable.GAITTYPES values to EqTraining's gait names. Built on first use.
 --- @return table
 local function getGaitNames()
@@ -76,7 +83,7 @@ end
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
-    if spec == nil or spec.currentSpeed == 0 then return end
+    if spec == nil or spec.currentSpeed == 0 or isTired(spec.cluster) then return end
 
     local gait = getGaitNames()[spec.inputValues.currentGait]
     if gait == nil then return end
@@ -94,7 +101,7 @@ end
 --- on the server).
 function EqTrainingHooks.onJump(vehicle)
     local spec = vehicle.spec_rideable
-    if spec == nil then return end
+    if spec == nil or isTired(spec.cluster) then return end
 
     local gait = getGaitNames()[spec.inputValues.currentGait]
     if gait ~= "canter" and gait ~= "gallop" then return end
@@ -122,7 +129,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
     end
-    g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, " "))
+    local title = g_i18n:getText(isTired(spec.cluster) and "eq_training_tired" or "eq_training_today")
+    g_currentMission:addExtraPrintText(title .. ": " .. table.concat(parts, " "))
 
     local inside = {}
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.kindTitle(kind)) end

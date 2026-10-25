@@ -73,8 +73,10 @@ Every horse trains once a day, at RLRM's daily horse tick.
 
 - **Your riding** trains by gait: walking builds temperament, trotting a mix, cantering stamina
   and agility, galloping speed and stamina, and backing up builds agility and temperament fast. Jumps at canter or gallop add agility and some temperament. Every gait trains
-  at the same rate, only different stats: about two and a half minutes of riding, in any gait, is a
-  full day of effort. While riding, a
+  at the same rate, only different stats. The base game's riding bar is the horse's energy for
+  the day: once it reaches 100% the horse is tired, the line reads "Training (tired)", and it
+  trains no more until tomorrow. Galloping tires a horse three times as fast as walking, and
+  galloping until it tires is a full day of speed work, so choose what to work on first. While riding, a
   "Training today" line shows the effort so far.
 - **Staff** (the base game's animal worker, or RLRM's herdsman horse-care rule) count for whatever
   share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
