@@ -602,6 +602,13 @@ function EqCompetitionManager.transportCost(animal)
 end
 
 
+--- @param text string
+--- @return string text lower case, letters and digits only (accented letters dropped)
+local function simplify(text)
+    return (text:lower():gsub("[^%w]", ""))
+end
+
+
 --- The player's home region: a map listed in events.xml by its title, else RLRM's map country
 --- (which RLRM's own "map country" setting can change), else the default. Every client reads
 --- the same map, so the schedule draws the same events everywhere.
@@ -611,9 +618,15 @@ function EqCompetitionManager.homeRegion()
     if config == nil or config.home == nil then return nil end
     local home = config.home
 
-    local mission = g_currentMission
-    local title = mission ~= nil and mission.missionInfo ~= nil and mission.missionInfo.mapTitle or nil
-    if title ~= nil and home.maps[title] ~= nil then return home.maps[title] end
+    local info = g_currentMission ~= nil and g_currentMission.missionInfo or nil
+    if info ~= nil then
+        -- Match loosely: the title may be translated or spelt without its accents (Catuai).
+        local names = simplify(tostring(info.mapTitle or "")) .. " " .. simplify(tostring(info.mapId or ""))
+        for title, region in pairs(home.maps) do
+            local key = simplify(title)
+            if key ~= "" and names:find(key, 1, true) then return region end
+        end
+    end
 
     local rl = EqRLRM.get("RealisticLivestock")
     if rl ~= nil and rl.getMapCountryCode ~= nil then

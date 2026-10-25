@@ -350,9 +350,10 @@ function EqConsole:consoleSettings(name, value)
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  homeRegion=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
-        settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit")
+        settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
+        tostring(EqCompetitionManager.homeRegion()))
 end
 
 
