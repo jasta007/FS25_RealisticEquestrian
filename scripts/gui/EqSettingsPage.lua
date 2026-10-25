@@ -1,6 +1,6 @@
 --[[
     EqSettingsPage.lua
-    Adds a "Horses" tab to RLRM's Settings page (next to General and Filters), one row per
+    Adds an "Equestrian" tab to RLRM's Settings page (next to General and Filters), one row per
     EqSettings row. The rows are built from the base game's settings profiles, the same ones
     RLRM's General tab uses, the first time the page opens, and refreshed from the savegame
     settings each time it opens. If RLRM's settings frame is not found, the rows go in a
@@ -109,7 +109,32 @@ local function buildOnGeneralPage(page)
 end
 
 
---- Add a "Horses" tab after General and Filters on RLRM's Settings page, once per frame.
+--- Widen a copied tab button so its label fits: the copy keeps the width of the tab it came from.
+--- The padding around the label is taken from that tab.
+--- @param tab table the new tab button
+--- @param model table the tab it was copied from
+local function fitTabToText(tab, model)
+    if getTextWidth == nil or tab.textSize == nil or model.size == nil then return end
+    local function labelWidth(button)
+        local text = button.text or ""
+        if button.textUpperCase and utf8ToUpper ~= nil then text = utf8ToUpper(text) end
+        return getTextWidth(button.textSize, text)
+    end
+    local padding = model.size[1] - labelWidth(model)
+    local width = math.max(model.size[1], labelWidth(tab) + math.max(padding, 0))
+    Log:info("EqSettingsPage: tab width %.4f, label needs %.4f (padding %.4f)", tab.size[1], width, padding)
+    if width <= tab.size[1] then return end
+
+    tab:setSize(width, nil)
+    for _, child in ipairs(tab.elements) do
+        if child.setSize ~= nil and child.size ~= nil and child.size[1] == model.size[1] then
+            child:setSize(width, nil)
+        end
+    end
+end
+
+
+--- Add an "Equestrian" tab after General and Filters on RLRM's Settings page, once per frame.
 --- RLRM's own tab code then treats it like its others: initializeSubCategoryPages numbers
 --- every button in subCategoryTabs, and updateSubCategoryPages shows the matching entry of
 --- subCategoryPages and hides the rest.
@@ -119,7 +144,7 @@ local function buildRLRMTab(frame)
     local tabs, pages = frame.subCategoryTabs, frame.subCategoryPages
     if type(tabs) ~= "table" or type(pages) ~= "table" or tabs[#tabs] == nil or pages[1] == nil
         or frame.subCategoryBox == nil or frame.subCategoryPaging == nil then
-        Log:warning("EqSettingsPage: RLRM's settings frame has no tab bar; Horses tab not added")
+        Log:warning("EqSettingsPage: RLRM's settings frame has no tab bar; Equestrian tab not added")
         return
     end
 
@@ -127,6 +152,7 @@ local function buildRLRMTab(frame)
     local tab = tabs[#tabs]:clone(frame.subCategoryBox)
     tab.id = "eqSettingsTab"
     tab:setText(g_i18n:getText("eq_settings_tab"))
+    fitTabToText(tab, tabs[#tabs])
     tab.onClickCallback = function()
         frame.subCategoryPaging:setState(index, true)
     end
@@ -144,7 +170,7 @@ local function buildRLRMTab(frame)
         page:delete()
         tab:delete()
         table.remove(tabs)
-        Log:warning("EqSettingsPage: RLRM's General page has no layout to copy; Horses tab not added")
+        Log:warning("EqSettingsPage: RLRM's General page has no layout to copy; Equestrian tab not added")
         return
     end
     layout.id = nil
@@ -165,7 +191,7 @@ local function buildRLRMTab(frame)
     end
     layout:invalidateLayout()
     if frame.updateAlternatingElements ~= nil then frame:updateAlternatingElements(layout) end
-    Log:info("EqSettingsPage: added the Horses tab to RLRM's settings with %d settings", #EqSettings.ROWS)
+    Log:info("EqSettingsPage: added the Equestrian tab to RLRM's settings with %d settings", #EqSettings.ROWS)
 end
 
 
