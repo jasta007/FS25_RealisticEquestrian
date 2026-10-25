@@ -120,8 +120,10 @@ function EqExperience.specialty(record, disciplines)
     end
     table.sort(close, function(a, b) return EqExperience.get(record, a) > EqExperience.get(record, b) end)
 
-    local eventer = countIn(EqExperience.EVENTER, close)
-    if eventer == 3 and eventer + countIn(EqExperience.EVENTER_EXTRA, close) == #close then return "eventer", close end
+    -- An eventer: the three phases all close, or eventing itself with nothing but phases beside it
+    -- ("Favourite event: Eventing" read as a tautology).
+    local phases, eventing = countIn(EqExperience.EVENTER, close), countIn(EqExperience.EVENTER_EXTRA, close)
+    if phases + eventing == #close and (phases == 3 or eventing > 0) then return "eventer", close end
     if #close == 1 then return "one", close end
     if countIn(EqExperience.RACING, close) == #close then return "racehorse", close end
     if #close == 2 then return "pair", close end
