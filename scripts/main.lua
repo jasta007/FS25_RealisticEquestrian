@@ -36,6 +36,7 @@ source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
+source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
@@ -93,6 +94,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.listBadge then
+        guarded("list badge hook", function() EqListBadge.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.metabolismFitness then
