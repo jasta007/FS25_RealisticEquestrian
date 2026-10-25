@@ -10,9 +10,9 @@
     way (the selected horse's own pen, then the pen named in the page's selector) and add the
     same button for it.
 
-    The base-game source for this page is not public, so the button is checked both when the
-    page rebuilds its buttons and when the menu reads them, in case the base game sets a horse
-    stable's buttons somewhere else.
+    The button is checked at the last step, when the menu puts a list into its button bar,
+    because the base game builds a horse stable's buttons in more than one place. The bar has
+    a fixed number of slots and a horse stable fills them, so the button goes just after Back.
 ]]
 
 EqAnimalsPageButton = {}
@@ -114,18 +114,6 @@ function EqAnimalsPageButton.findHusbandry(frame, listPens)
 end
 
 
---- @param buttons table|nil the page's menuButtonInfo
---- @param action any the input action to look for
---- @return boolean present
-function EqAnimalsPageButton.hasButton(buttons, action)
-    if type(buttons) ~= "table" then return false end
-    for _, info in ipairs(buttons) do
-        if type(info) == "table" and info.inputAction == action then return true end
-    end
-    return false
-end
-
-
 --- @param frame table
 --- @return string names the frame's table fields, sorted
 local function describeFields(frame)
@@ -166,42 +154,82 @@ local function report(outcome, frame)
 end
 
 
---- Add RLRM's Manage Animals button to a button list when RLRM left it out.
+--- @param buttons table
+--- @param action any
+--- @return integer|nil index where the action's button sits
+local function findButton(buttons, action)
+    for i, info in ipairs(buttons) do
+        if type(info) == "table" and info.inputAction == action then return i end
+    end
+    return nil
+end
+
+
+--- Add RLRM's Manage Animals button to a button list when RLRM left it out, and keep it inside
+--- the bar's slots.
 --- @param frame table the Animals page
---- @param buttons table|nil the button list to fill (the page's menuButtonInfo)
+--- @param buttons table|nil the button list to fill
 --- @param action any InputAction.RL_OPEN_ANIMAL_SCREEN
 --- @param openMenu function RLRM's RLMenu.openFromBridge
 --- @param listPens function|nil passed to findHusbandry
---- @return boolean added
-function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens)
-    if type(buttons) ~= "table" or EqAnimalsPageButton.hasButton(buttons, action) then
-        return false
-    end
+--- @param slots integer|nil how many buttons the bar can show; nil when unknown
+--- @return boolean changed true when the list was changed
+function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens, slots)
+    if type(buttons) ~= "table" then return false end
 
-    local husbandry, source = EqAnimalsPageButton.findHusbandry(frame, listPens)
-    if husbandry == nil then
-        report(string.format("no pen found for Manage Animals (selector text '%s', selectedHusbandry %s)",
-            tostring(getSelectorText(frame.subCategorySelector)), tostring(frame.selectedHusbandry)), frame)
-        return false
-    end
+    local index = findButton(buttons, action)
+    local added = false
+    local husbandry, source
 
-    table.insert(buttons, {
-        inputAction = action,
-        text = g_i18n:getText("eq_ui_button_manageAnimals"),
-        callback = function()
-            -- Page 4 is RLRM's Manage tab, and fromInGameMenu makes Back return here, as RLRM's
-            -- own button does.
-            openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
+    if index == nil then
+        husbandry, source = EqAnimalsPageButton.findHusbandry(frame, listPens)
+        if husbandry == nil then
+            report(string.format("no pen found for Manage Animals (selector text '%s', selectedHusbandry %s)",
+                tostring(getSelectorText(frame.subCategorySelector)), tostring(frame.selectedHusbandry)), frame)
+            return false
         end
-    })
-    -- The menu only redraws the bar when the page says its buttons changed. The page opens
+        table.insert(buttons, {
+            inputAction = action,
+            text = g_i18n:getText("eq_ui_button_manageAnimals"),
+            callback = function()
+                -- Page 4 is RLRM's Manage tab, and fromInGameMenu makes Back return here, as
+                -- RLRM's own button does.
+                openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
+            end
+        })
+        index = #buttons
+        added = true
+    end
+
+    -- The bar shows only its first few buttons, and a horse stable fills them (rename, map tag,
+    -- workers and the page buttons). Move the button up to just after Back so it is one of them.
+    local moved = false
+    if slots ~= nil and index > slots and index > 2 then
+        table.insert(buttons, 2, table.remove(buttons, index))
+        moved = true
+    end
+
+    if not added and not moved then return false end
+
+    -- The menu only redraws the bar when the page says its buttons changed, and the page opens
     -- with its list still empty, so the pen is often found only after the bar was drawn.
     if frame.setMenuButtonInfoDirty ~= nil then
         frame:setMenuButtonInfoDirty()
     end
-    report(string.format("added Manage Animals for '%s' (found via %s); buttons now: %s",
-        penName(husbandry), source, describeButtons(buttons)), frame)
+    report(string.format("%s Manage Animals%s; bar slots %s, buttons now: %s",
+        added and "added" or "moved", added and string.format(" for '%s' (found via %s)", penName(husbandry), source) or "",
+        tostring(slots), describeButtons(buttons)), frame)
     return true
+end
+
+
+--- @param menu table the in-game menu
+--- @return boolean isAnimalsPage true when its current page is the Animals page
+local function showsAnimalsPage(menu)
+    local page = menu.currentPage
+    if type(page) ~= "table" then return false end
+    local mt = getmetatable(page)
+    return (mt ~= nil and mt.__index == InGameMenuAnimalsFrame) or (menu.pageAnimals ~= nil and menu.pageAnimals == page)
 end
 
 
@@ -211,27 +239,31 @@ end
 function EqAnimalsPageButton.install(guarded)
     local action = InputAction ~= nil and InputAction.RL_OPEN_ANIMAL_SCREEN or nil
     if InGameMenuAnimalsFrame == nil or InGameMenuAnimalsFrame.updateMenuButtons == nil
-        or InGameMenuAnimalsFrame.getMenuButtonInfo == nil or action == nil then
+        or InGameMenu == nil or InGameMenu.assignMenuButtonInfo == nil or action == nil then
         Log:warning("EqAnimalsPageButton: Animals page or RLRM's R action not found; horse pens keep no Manage Animals button")
         return
     end
 
     local openMenu = EqRLRM.get("RLMenu").openFromBridge
-    local function ensure(frame, buttons)
-        guarded("animals page button", function()
-            EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu)
-        end)
-    end
 
     InGameMenuAnimalsFrame.updateMenuButtons = Utils.appendedFunction(InGameMenuAnimalsFrame.updateMenuButtons,
-        function(frame) ensure(frame, frame.menuButtonInfo) end)
+        function(frame)
+            guarded("animals page button", function()
+                EqAnimalsPageButton.ensureButton(frame, frame.menuButtonInfo, action, openMenu)
+            end)
+        end)
 
-    -- The menu reads the buttons through getMenuButtonInfo, so this catches a list set anywhere.
-    InGameMenuAnimalsFrame.getMenuButtonInfo = Utils.overwrittenFunction(InGameMenuAnimalsFrame.getMenuButtonInfo,
-        function(frame, superFunc)
-            local buttons = superFunc(frame)
-            ensure(frame, buttons)
-            return buttons
+    -- Every list the bar shows passes through here, whoever built it, and here the number of
+    -- slots is known.
+    InGameMenu.assignMenuButtonInfo = Utils.overwrittenFunction(InGameMenu.assignMenuButtonInfo,
+        function(menu, superFunc, buttons, ...)
+            guarded("animals page button", function()
+                if showsAnimalsPage(menu) then
+                    local slots = type(menu.menuButton) == "table" and #menu.menuButton or nil
+                    EqAnimalsPageButton.ensureButton(menu.currentPage, buttons, action, openMenu, nil, slots)
+                end
+            end)
+            return superFunc(menu, buttons, ...)
         end)
 
     Log:info("EqAnimalsPageButton: hooked the Animals page buttons")
