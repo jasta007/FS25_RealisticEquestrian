@@ -87,6 +87,29 @@ Every horse trains once a day, at RLRM's daily horse tick.
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
 sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
 
+## Horse facilities
+
+Horse buildings on your farm make your horses train faster, and a little better on the day of
+some events. Owning one speeds up all training (staff and your own riding); riding inside one
+yourself speeds your riding up a lot more, by the share of the day's riding you did in there.
+
+| Facility | Training it speeds up | Events it helps |
+| --- | --- | --- |
+| Riding hall (Equestrian Pack, Riding Hall 2k26) | Agility, Temperament; Stamina while riding in it | Dressage, Show Jumping |
+| Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
+| Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
+| Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
+| Round pen | Stamina, Temperament | Dressage |
+| Horse stable mods (Horse Stable, Equestrian Pack L barn) | Temperament, a little | Dressage, a little |
+
+Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
+bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say
+"Improves ... training" in the shop.
+
+Map scenery counts for the farm that owns the farmland under it. Other mods and maps are added
+in `data/facilities.xml` without code. `eqFacilities` lists your facilities and what they give;
+`eqFacilities near` lists the map nodes and placeables around you, to find a building's name.
+
 ## Competitions
 
 Events come from `data/events.xml`, so disciplines, tiers, fees and prizes can be changed without

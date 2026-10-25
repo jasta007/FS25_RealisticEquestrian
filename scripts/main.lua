@@ -25,6 +25,8 @@ source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
+source(modDirectory .. "scripts/facilities/EqFacility.lua")
+source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -116,6 +118,7 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
         end)
+        guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then
@@ -145,6 +148,8 @@ local function onMissionLoaded(mission)
     if not EqMain.isActive then return end
 
     guarded("console registration", EqConsole.register)
+    guarded("facility scan", EqFacilityHooks.scanMap)
+    guarded("facility shop text", EqFacilityHooks.addStoreText)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -186,6 +191,7 @@ local function onMissionDelete()
         EqConsole.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()
+        EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
         local config = EqCompetitionManager.config
         EqCompetitionManager.reset()

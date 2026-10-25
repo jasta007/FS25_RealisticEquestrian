@@ -195,5 +195,14 @@
         <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
+        <text name="eq_and" text="and"/>
+        <text name="eq_facility_improves" text="Improves %s training (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Training in: %s"/>
+        <text name="eq_facility_stable" text="Horse stable"/>
+        <text name="eq_facility_indoorArena" text="Riding hall"/>
+        <text name="eq_facility_ridingCentre" text="Riding centre"/>
+        <text name="eq_facility_outdoorArena" text="Outdoor arena"/>
+        <text name="eq_facility_roundPen" text="Round pen"/>
+        <text name="eq_facility_jumps" text="Jump course"/>
     </texts>
 </l10n>

@@ -19,6 +19,7 @@ dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
+dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
@@ -673,6 +674,72 @@ check("slow metabolism gains fitness slower", EqMetabolism.scaleFitness({ geneti
 check("metabolism factor is bounded", EqMetabolism.fitnessFactor(0.25) == EqConstants.METABOLISM_FITNESS_MIN
     and EqMetabolism.fitnessFactor(1.75) == EqConstants.METABOLISM_FITNESS_MAX)
 check("fitness lost is not scaled", EqMetabolism.scaleFitness({ genetics = { metabolism = 1.5 } }, -5) == -5)
+
+-- Facilities: data/facilities.xml matches the supported mods and caps the bonuses.
+local facilities = EqFacility.read(TestXML.load("data/facilities.xml"))
+local modsDir = "C:/Users/User/Documents/My Games/FarmingSimulator2025/mods/"
+check("horsePack riding hall is an indoor arena",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/ridingHall.xml", false) == "indoorArena")
+check("horsePack outdoor area is an outdoor arena",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/outdoorRidingArea.xml", false) == "outdoorArena")
+check("Riding Hall 2k26 hall matches, backslashes and case aside",
+    EqFacility.kindForXml(facilities, "C:\\mods\\fs25_ridinghall\\reithalle.xml", false) == "indoorArena")
+check("Riding Hall 2k26 jumps match by prefix",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/props07.xml", false) == "jumps")
+check("Riding Hall 2k26 letters are not jumps",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/objekt.xml", false) == nil)
+check("Riding Stable is a riding centre",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingStable/XML/horseBarnBig.xml", true) == "ridingCentre")
+check("Horse Stable is a stable", EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == "stable")
+check("keywords catch an unknown riding hall",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", false) == "indoorArena")
+check("keywords skip husbandries",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", true) == nil)
+check("base game stables are not facilities",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
+check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
+    and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
+
+local points = EqFacility.dedupe({
+    { kind = "jumps", x = 0, z = 0 }, { kind = "jumps", x = 0.5, z = 0 }, { kind = "jumps", x = 0, z = 12 },
+}, 2)
+check("a prefab and its model count as one fence", #points == 2)
+
+local noneOwned, noneRidden = EqFacility.boosts(facilities, {}, nil)
+check("no facilities, no boost", noneOwned.agility == 0 and noneRidden.agility == 0)
+local hallOwned, hallRidden = EqFacility.boosts(facilities, { indoorArena = 1 }, { indoorArena = 0.5 })
+check("an owned hall speeds staff up", math.abs(hallOwned.agility - 0.10) < 1e-9 and hallOwned.speed == 0)
+check("riding half the day in it adds half its ridden share", math.abs(hallRidden.agility - 0.175) < 1e-9)
+local threeJumps = EqFacility.boosts(facilities, { jumps = 3 }, nil)
+check("half a jump course gives half the bonus", math.abs(threeJumps.agility - 0.05) < 1e-9)
+local everything = EqFacility.boosts(facilities, { stable = 2, indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
+    { indoorArena = 1, ridingCentre = 1, jumps = 1 })
+check("owned shares are capped", everything.agility <= facilities.ownedCap + 1e-9 and everything.temperament <= facilities.ownedCap + 1e-9)
+local _, everythingRidden = EqFacility.boosts(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, { indoorArena = 1, ridingCentre = 1, jumps = 1 })
+check("ridden shares are capped", everythingRidden.agility <= facilities.riddenCap + 1e-9)
+check("a jump course helps show jumping", EqFacility.eventBonus(facilities, { jumps = 6 }, "showJumping") > 0
+    and EqFacility.eventBonus(facilities, { jumps = 6 }, "raceShort") == 0)
+check("event bonus is capped", EqFacility.eventBonus(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, "showJumping") <= facilities.eventCap + 1e-9)
+local hall = facilities.kindByName.indoorArena
+local improved = EqFacility.improvedStats(hall)
+check("a hall improves agility and temperament first", (improved[1] == "agility" or improved[1] == "temperament") and #improved == 3)
+
+local insideSheet = ridden("canter", 100000)
+EqTraining.addInside(insideSheet, "indoorArena", 25000)
+check("inside share is time inside over time ridden", math.abs(EqFacility.insideShares(insideSheet).indoorArena - 0.25) < 1e-9)
+
+-- A facility speeds training up; riding inside speeds the player's riding up more.
+local plain, faster, inside = horse("balanced", 10), horse("balanced", 10), horse("balanced", 10)
+local day = { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 }
+EqTraining.applyDay(plain, cap70, day)
+EqTraining.applyDay(faster, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+check("an owned facility speeds staff training", faster.trained.agility > plain.trained.agility
+    and faster.trained.speed == plain.trained.speed)
+local riddenPlain, riddenInside = horse("balanced", 10), horse("balanced", 10)
+EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
+    facilityOwned = hallOwned, facilityRidden = hallRidden })
+check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

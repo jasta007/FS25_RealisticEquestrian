@@ -369,6 +369,97 @@ function EqConsole:consoleMeatQuality(value)
 end
 
 
+--- @return number|nil x, number|nil y, number|nil z the local player's position, or the
+---     ridden horse's
+local function localPosition()
+    local ok, x, y, z = pcall(function()
+        if g_localPlayer ~= nil and g_localPlayer.getPosition ~= nil then return g_localPlayer:getPosition() end
+        return nil
+    end)
+    if ok then return x, y, z end
+    return nil
+end
+
+
+--- eqFacilities [near]: the farm's horse facilities and what they give. "near" lists the map
+--- nodes and placeables around you, to find the names of buildings data/facilities.xml should
+--- match.
+function EqConsole:consoleFacilities(mode)
+    if g_currentMission == nil then return "No mission loaded" end
+    local config = EqFacilityHooks.config
+    if config == nil then return "data/facilities.xml did not load; see log.txt" end
+    local farmId = g_currentMission:getFarmId()
+
+    if mode == "near" then
+        local x, y, z = localPosition()
+        if x == nil then return "Could not find your position" end
+        local radius = 30
+        local names = {}
+        local terrain = g_currentMission.terrainRootNode
+        local stack = { (terrain ~= nil and terrain ~= 0) and getParent(terrain) or getRootNode() }
+        while #stack > 0 do
+            local node = table.remove(stack)
+            local nx, _, nz = getWorldTranslation(node)
+            local name = getName(node)
+            if (nx - x) ^ 2 + (nz - z) ^ 2 <= radius * radius and getNumOfChildren(node) > 0 and names[name] == nil then
+                names[name] = math.sqrt((nx - x) ^ 2 + (nz - z) ^ 2)
+            end
+            for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+        end
+        local sorted = {}
+        for name, distance in pairs(names) do table.insert(sorted, { name = name, distance = distance }) end
+        table.sort(sorted, function(a, b) return a.distance < b.distance end)
+        for i = 1, math.min(#sorted, 60) do print(string.format("  node %5.1fm  %s", sorted[i].distance, sorted[i].name)) end
+
+        for _, placeable in ipairs(g_currentMission.placeableSystem.placeables) do
+            if placeable.rootNode ~= nil then
+                local px, _, pz = getWorldTranslation(placeable.rootNode)
+                local distance = math.sqrt((px - x) ^ 2 + (pz - z) ^ 2)
+                if distance <= 80 then
+                    print(string.format("  placeable %5.1fm  '%s' farm %s kind %s  %s", distance, placeable:getName() or "",
+                        tostring(placeable:getOwnerFarmId()), tostring(EqFacilityHooks.kindOfPlaceable(placeable)),
+                        tostring(placeable.configFileName)))
+                end
+            end
+        end
+        local inside = {}
+        for kind in pairs(EqFacilityHooks.kindsAt(farmId, x, y, z)) do table.insert(inside, kind) end
+        return string.format("%d node names within %dm (first 60 shown). Inside your facilities: %s", #sorted, radius,
+            #inside > 0 and table.concat(inside, ", ") or "none")
+    end
+
+    for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
+        local placeable = entry.placeable
+        if placeable:getOwnerFarmId() == farmId then
+            print(string.format("  %s: '%s'  %s", entry.kind, placeable:getName() or "", tostring(placeable.configFileName)))
+        end
+    end
+    for _, point in ipairs(EqFacilityHooks.mapPoints) do
+        local owner = EqFacilityHooks.farmlandOwnerAt(point.x, point.z)
+        print(string.format("  %s: map %s at %.0f, %.0f (%s)", point.kind, point.name, point.x, point.z,
+            owner == farmId and "yours" or string.format("farmland owner %s", tostring(owner))))
+    end
+
+    local counts = EqFacilityHooks.countsForFarm(farmId)
+    local owned = EqFacility.boosts(config, counts, nil)
+    local lines = {}
+    for _, kind in ipairs(config.kinds) do
+        if (counts[kind.name] or 0) > 0 then
+            table.insert(lines, string.format("%s x%d (%.0f%%)", kind.name, counts[kind.name], EqFacility.scale(kind, counts[kind.name]) * 100))
+        end
+    end
+    print(string.format("Training rate from owned facilities: sta +%.0f%% spd +%.0f%% agi +%.0f%% tem +%.0f%%",
+        owned.stamina * 100, owned.speed * 100, owned.agility * 100, owned.temperament * 100))
+    local events = {}
+    for _, discipline in ipairs(EqCompetitionManager.config ~= nil and EqCompetitionManager.config.disciplines or {}) do
+        local bonus = EqFacility.eventBonus(config, counts, discipline.name)
+        if bonus > 0 then table.insert(events, string.format("%s +%.1f%%", discipline.name, bonus * 100)) end
+    end
+    print("Event day bonus: " .. (#events > 0 and table.concat(events, ", ") or "none"))
+    return "Facilities: " .. (#lines > 0 and table.concat(lines, ", ") or "none") .. ". Use 'eqFacilities near' to list what is around you."
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -383,6 +474,7 @@ function EqConsole.register()
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
+    addConsoleCommand("eqFacilities", "Shows your farm's horse facilities and their bonuses: eqFacilities [near]", "consoleFacilities", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
@@ -393,5 +485,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities" }) do removeConsoleCommand(name) end
 end
