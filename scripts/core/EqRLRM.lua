@@ -28,7 +28,7 @@ EqRLRM.REQUIRED = {
 
 -- Functions that only one feature needs. A missing one switches that feature off.
 EqRLRM.OPTIONAL = {
-    infoDisplay = { { "AnimalHorse", "addHorseInfos" }, { "AnimalHorse", "showHorseHudInfo" } },
+    infoDisplay = { { "AnimalHorse", "addHorseInfos" } },
     menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
     eventsTab = { { "RLMenu", "setupMenuPages" } },
     menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
