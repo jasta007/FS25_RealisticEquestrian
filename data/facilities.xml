@@ -69,6 +69,9 @@
     <!-- Horse Stable (FS25_horseStable) -->
     <match kind="stable" xml="FS25_horseStable/horseStable.xml"/>
 
+    <!-- Base game: the round roofed pen at Elmcreek 25's horse ranch is the mapUS barn02 -->
+    <match kind="roundPen" xml="data/placeables/mapUS/barn02/barn02.xml"/>
+
     <keyword kind="indoorArena" pattern="ridinghall"/>
     <keyword kind="indoorArena" pattern="reithalle"/>
     <keyword kind="indoorArena" pattern="indoorarena"/>
