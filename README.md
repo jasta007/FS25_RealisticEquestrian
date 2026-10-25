@@ -244,7 +244,7 @@ James
 
 - **Author:** James ([jasta007](https://github.com/jasta007))
 - Code written with [Claude Code](https://claude.com/claude-code), Anthropic's AI coding
-  assistant, to James's design and in-game testing (see [A note on AI](#a-note-on-ai)).
+  assistant, to my design and in-game testing (see [A note on AI](#a-note-on-ai)).
 - Built on [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
   by Ritter, itself based on Arrow-kb's Realistic Livestock. No RLRM files are changed.
 - Icon: John Frederick Herring Senior, *The Interior of a Stable with a Dapple Grey Horse in
