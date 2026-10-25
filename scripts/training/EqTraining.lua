@@ -18,7 +18,7 @@
 
 EqTraining = {}
 
--- Effort each gait gives per full riding day, by stat.
+-- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
     walk = { temperament = 1.0, stamina = 0.3 },
     trot = { temperament = 0.6, stamina = 0.6, agility = 0.3 },
@@ -95,7 +95,7 @@ function EqTraining.playerEffort(sheet)
     if sheet == nil then return effort end
 
     for gait, ms in pairs(sheet.ms) do
-        local share = ms * EqTraining.GAIT_SPEED_FACTOR[gait] / EqConstants.RIDING_FULL_MS
+        local share = ms / EqConstants.TRAINING_FULL_MS
         for stat, weight in pairs(EqTraining.GAIT_WEIGHTS[gait]) do
             effort[stat] = effort[stat] + share * weight
         end

@@ -93,6 +93,10 @@ EqConstants.OLD_FLOOR = 0.3
 -- gait-weighted milliseconds fill riding from 0 to 100.
 EqConstants.RIDING_FULL_MS = 300000
 
+-- Milliseconds of riding, in any gait, that make a full day of training. Unlike the base game's
+-- riding bar this is not weighted by speed: each gait trains its own stats at the same rate.
+EqConstants.TRAINING_FULL_MS = 150000
+
 -- Effort per jump taken at canter or gallop: mostly agility, and some temperament, since
 -- keeping a horse calm and listening over a jump is manners work too (and walking is dull).
 EqConstants.JUMP_AGILITY = 0.04
