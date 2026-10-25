@@ -43,7 +43,27 @@ source(modDirectory .. "scripts/console/EqProbe.lua")
 
 local Log = EqLog
 
+-- Our money types' Finances rows. Like RLRM, they must be in FinanceStats.statNames before any
+-- farm is created. The money popup and the Finances page look their titles up without a mod
+-- name, so they only find texts in the global table: copy ours there. One key each for the
+-- MoneyType title and the "finance_" key the Finances page asks for.
 EqMain = {}
+EqMain.MONEY_STATS = {
+    { name = "eqEntryFees", title = "eq_money_entryFees" },
+    { name = "eqPrizeMoney", title = "eq_money_prizeMoney" },
+    { name = "eqVetBills", title = "eq_money_vetBills" },
+    { name = "eqTransport", title = "eq_money_transport" },
+}
+for _, stat in ipairs(EqMain.MONEY_STATS) do
+    if FinanceStats.statNameToIndex[stat.name] == nil then
+        table.insert(FinanceStats.statNames, stat.name)
+        FinanceStats.statNameToIndex[stat.name] = #FinanceStats.statNames
+    end
+    local text = g_i18n:getText(stat.title)
+    _G.g_i18n.texts[stat.title] = text
+    _G.g_i18n.texts["finance_" .. stat.name] = text
+end
+
 EqMain.activated = false
 EqMain.isActive = false
 
