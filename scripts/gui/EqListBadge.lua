@@ -31,10 +31,10 @@ end
 EqListBadge.FRAMES = { "RLMenuBuyFrame", "RLMenuInfoFrame", "RLMenuMoveFrame", "RLMenuSellFrame", "RLMenuTransferFrame" }
 
 -- How far the badge moves up: the card's height less this much. RLRM places it 17px up from
--- the bottom; card height - 36px puts the text just inside the top edge, above the checkbox
--- (checked in game: 22px left it in the header row above the card).
-EqListBadge.TOP_OFFSET_PX = 36
-EqListBadge.TEXT_SCALE = 0.8
+-- the bottom; card height - 42px puts the text just inside the top edge, above the checkbox
+-- (checked in game: 22px left it in the header row above the card, 36px poked over the edge).
+EqListBadge.TOP_OFFSET_PX = 42
+EqListBadge.TEXT_SCALE = 0.72
 
 
 --- Move a card's badge from the bottom right to the top right corner. Done once per card;
