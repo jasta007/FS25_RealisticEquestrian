@@ -18,10 +18,11 @@
                         APPLE_GT is Geistal's)
         group           which group the feed belongs to
         stamina/speed/agility/temperament   training boost while the horse's trough holds
-                        this feed: 0.10 = 10% faster training of that stat. Within one group
-                        the boost follows each feed's share of what is in the trough, so half
-                        oats and half corn gives half of each. Hay, grain and treats add up.
-                        Small = 0.10, moderate = 0.20, strong = 0.30.
+                        this feed: 0.10 = 10% faster training of that stat. Every feed in the
+                        trough gives its full boost and they add up, so oats, barley and corn
+                        together give all three. Small = 0.10, moderate = 0.20, strong = 0.30.
+        stack           feeds with the same stack name do not add up: they count once, as the
+                        best of them (carrots and apples)
 -->
 <feeds>
     <banned fillTypes="SORGHUM"/>
@@ -41,7 +42,7 @@
     <feed fillTypes="WHEAT WINTERWHEAT SPELT TRITICALE RYE" group="grain"/>
 
     <!-- Treats. -->
-    <feed fillTypes="CARROT" group="treat" temperament="0.30"/>
-    <feed fillTypes="APPLE APPLE_GT" group="treat" temperament="0.30"/>
+    <feed fillTypes="CARROT" group="treat" temperament="0.30" stack="sweetTreat"/>
+    <feed fillTypes="APPLE APPLE_GT" group="treat" temperament="0.30" stack="sweetTreat"/>
     <feed fillTypes="PARSNIP BEETROOT" group="treat"/>
 </feeds>

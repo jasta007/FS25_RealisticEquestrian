@@ -5,8 +5,8 @@
 
     - planGroups rewrites the map's HORSE food groups: banned feeds out, every known feed in,
       each joining the map group that already holds most of its kind.
-    - dietBoost reads a trough: within each group (hay, grain, treat) a feed's boost counts by
-      its share of that group's fill level, and the groups add up.
+    - dietBoost reads a trough: every feed in it gives its full boost and the boosts add up,
+      except that feeds sharing a stack name (carrots and apples) count once, the best of them.
 ]]
 
 EqFeed = {}
@@ -61,7 +61,7 @@ function EqFeed.read(xmlFile)
             group = "hay"
         end
         for _, name in ipairs(splitNames(xmlFile:getString(key .. "#fillTypes"))) do
-            local feed = { fillType = name, group = group, boost = boost }
+            local feed = { fillType = name, group = group, boost = boost, stack = xmlFile:getString(key .. "#stack") }
             table.insert(config.feeds, feed)
             config.feedByFillType[name] = feed
         end
@@ -151,20 +151,25 @@ function EqFeed.dietBoost(levels, config)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do boost[stat] = 0 end
     if config == nil or levels == nil then return boost end
 
-    local totals = {}
-    for name, level in pairs(levels) do
-        local feed = config.feedByFillType[name]
-        if feed ~= nil and level > 0 then totals[feed.group] = (totals[feed.group] or 0) + level end
-    end
-
+    -- Feeds without a stack name each count on their own; feeds sharing one count as their best.
+    local stacks = {}
     for name, level in pairs(levels) do
         local feed = config.feedByFillType[name]
         if feed ~= nil and level > 0 then
-            local share = level / totals[feed.group]
+            local key = feed.stack or name
+            local best = stacks[key]
+            if best == nil then
+                best = {}
+                stacks[key] = best
+            end
             for _, stat in ipairs(EqConstants.STAT_KEYS) do
-                boost[stat] = boost[stat] + share * feed.boost[stat]
+                best[stat] = math.max(best[stat] or 0, feed.boost[stat])
             end
         end
+    end
+
+    for _, best in pairs(stacks) do
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do boost[stat] = boost[stat] + best[stat] end
     end
 
     return boost

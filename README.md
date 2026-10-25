@@ -93,8 +93,8 @@ and weights:
 | Parsnips, beetroot | treat | none |
 
 Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
-skipped. Within a group a feed counts by its share of that group in the trough, so half oats and
-half corn gives half of each; hay, grain and treat boosts add up. While riding, a "Feed" line
+skipped. Every feed in the trough gives its full boost and the boosts add up, so oats, barley and
+corn together give all three; carrots and apples are the exception and count once between them. While riding, a "Feed" line
 shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
 
 ## Competitions

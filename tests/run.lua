@@ -559,7 +559,7 @@ check("a map without the kind gets a new group", oatGroup ~= nil and oatGroup.is
 check("the emptied sorghum group is dropped", #sparse == 3, tostring(#sparse))
 check("Orchards and Greenhouses apples are a treat", appleGroup ~= nil and appleGroup == groupWith(sparse, "CARROT"))
 
--- Boosts: hay gives nothing, each feed its own, shares within a group, groups add up.
+-- Boosts: hay gives nothing, every feed in the trough adds its full boost, carrots and apples count once.
 local function near(a, b) return math.abs(a - b) < 1e-9 end
 local hayOnly = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000 }, feeds)
 check("hay gives no boost", hayOnly.stamina == 0 and hayOnly.speed == 0 and hayOnly.agility == 0 and hayOnly.temperament == 0)
@@ -570,9 +570,11 @@ check("barley: moderate agility and stamina", near(barley.agility, 0.20) and nea
 check("corn: strong speed", near(EqFeed.dietBoost({ MAIZE = 1 }, feeds).speed, 0.30))
 check("carrots: strong temperament", near(EqFeed.dietBoost({ CARROT = 1 }, feeds).temperament, 0.30))
 check("apples match carrots", near(EqFeed.dietBoost({ APPLE_GT = 1 }, feeds).temperament, 0.30))
-local mixed = EqFeed.dietBoost({ OAT = 50, MAIZE = 50, CARROT = 10 }, feeds)
-check("half oats half corn gives half of each", near(mixed.speed, 0.15) and near(mixed.stamina, 0.05))
-check("grain and treats add up", near(mixed.temperament, 0.05 + 0.30))
+local mixed = EqFeed.dietBoost({ OAT = 50, BARLEY = 10, MAIZE = 50, CARROT = 10 }, feeds)
+check("oats, barley and corn stack", near(mixed.speed, 0.30) and near(mixed.stamina, 0.30) and near(mixed.agility, 0.20))
+check("grain and treats add up", near(mixed.temperament, 0.10 + 0.30))
+local sweet = EqFeed.dietBoost({ CARROT = 10, APPLE = 10, APPLE_GT = 10 }, feeds)
+check("carrots and apples do not stack", near(sweet.temperament, 0.30), string.format("%.2f", sweet.temperament))
 check("an empty trough gives nothing", EqFeed.dietBoost({ MAIZE = 0 }, feeds).speed == 0)
 
 -- The boost speeds training up, and gives nothing on a day without work.
