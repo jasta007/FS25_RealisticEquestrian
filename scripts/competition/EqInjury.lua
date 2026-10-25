@@ -532,7 +532,7 @@ end
 --- @param days number
 --- @return string text "1 day", "3 days"
 local function daysText(days)
-    return string.format(g_i18n:getText(days == 1 and "eq_ui_day" or "eq_ui_days"), days)
+    return string.format(g_i18n:getText(days == 1 and "eq_ui_dayCount" or "eq_ui_days"), days)
 end
 
 

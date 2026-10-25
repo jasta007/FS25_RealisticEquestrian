@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- German texts. Machine-assisted first draft: please have a native speaker check it. Keys and
+     their %s/%d/%.0f placeholders must stay in the same order as translation_en.xml. -->
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Ausdauer"/>
+        <text name="eq_stat_speed" text="Schnelligkeit"/>
+        <text name="eq_stat_agility" text="Wendigkeit"/>
+        <text name="eq_stat_temperament" text="Temperament"/>
+        <text name="eq_potential_stamina" text="Ausdauer-Potenzial"/>
+        <text name="eq_potential_speed" text="Schnelligkeits-Potenzial"/>
+        <text name="eq_potential_agility" text="Wendigkeits-Potenzial"/>
+        <text name="eq_potential_temperament" text="Temperament-Potenzial"/>
+        <text name="eq_stat_short_stamina" text="Aus"/>
+        <text name="eq_stat_short_speed" text="Sch"/>
+        <text name="eq_stat_short_agility" text="Wen"/>
+        <text name="eq_stat_short_temperament" text="Tem"/>
+        <text name="eq_training_today" text="Training"/>
+        <text name="eq_training_tired" text="Training (müde)"/>
+        <text name="eq_feed_boost" text="Futter"/>
+        <text name="eq_feedGroup_hay" text="Heu"/>
+        <text name="eq_feedGroup_grain" text="Kraftfutter"/>
+        <text name="eq_feedGroup_treat" text="Leckerlis"/>
+        <text name="eq_feedGroup_otherGrain" text="Anderes Getreide"/>
+        <text name="eq_feedRow_oats" text="Hafer"/>
+        <text name="eq_feedRow_barley" text="Gerste"/>
+        <text name="eq_feedRow_corn" text="Mais"/>
+        <text name="eq_feed_noBoost" text="kein Bonus"/>
+        <text name="eq_discipline_showJumping" text="Springreiten"/>
+        <text name="eq_discipline_dressage" text="Dressur"/>
+        <text name="eq_discipline_crossCountry" text="Geländeritt"/>
+        <text name="eq_discipline_eventing" text="Vielseitigkeit"/>
+        <text name="eq_discipline_raceShort" text="Flachrennen (Sprint)"/>
+        <text name="eq_discipline_raceLong" text="Flachrennen (Steher)"/>
+        <text name="eq_discipline_steeplechase" text="Hindernisrennen"/>
+        <text name="eq_type_showJumping" text="Springen"/>
+        <text name="eq_type_dressage" text="Dressur"/>
+        <text name="eq_type_crossCountry" text="Gelände"/>
+        <text name="eq_type_eventing" text="Vielseitigkeit"/>
+        <text name="eq_type_raceShort" text="Flachrennen"/>
+        <text name="eq_type_raceLong" text="Flachrennen"/>
+        <text name="eq_type_steeplechase" text="Hindernisrennen"/>
+        <text name="eq_tier_training" text="Jungpferde"/>
+        <text name="eq_tier_novice" text="Einsteiger"/>
+        <text name="eq_tier_intermediate" text="Mittelstufe"/>
+        <text name="eq_tier_advanced" text="Fortgeschrittene"/>
+        <text name="eq_tier_championship" text="Meisterschaft"/>
+        <text name="eq_going_firm" text="Fest"/>
+        <text name="eq_going_good" text="Gut"/>
+        <text name="eq_going_soft" text="Weich"/>
+        <text name="eq_going_heavy" text="Schwer"/>
+        <text name="eq_going_hot" text="Heiß"/>
+        <text name="eq_going_indoor" text="Halle"/>
+        <text name="eq_event_showJumping_training" text="Nullrunden-Springen"/>
+        <text name="eq_event_showJumping_novice" text="Springen 1,00 m"/>
+        <text name="eq_event_showJumping_intermediate" text="Springen 1,20 m"/>
+        <text name="eq_event_showJumping_advanced" text="Springen 1,40 m in %s"/>
+        <text name="eq_event_showJumping_championship" text="Großer Preis von %s"/>
+        <text name="eq_event_dressage_training" text="Dressur-Einsteigerprüfung"/>
+        <text name="eq_event_dressage_novice" text="Vorbereitende Dressur"/>
+        <text name="eq_event_dressage_intermediate" text="Mittlere Dressur"/>
+        <text name="eq_event_dressage_advanced" text="Prix St. Georges in %s"/>
+        <text name="eq_event_dressage_championship" text="Dressur-Grand-Prix von %s"/>
+        <text name="eq_event_crossCountry_training" text="Jungpferde-Geländeprüfung"/>
+        <text name="eq_event_crossCountry_novice" text="Geländeprüfung"/>
+        <text name="eq_event_crossCountry_intermediate" text="Offene Geländeprüfung"/>
+        <text name="eq_event_crossCountry_advanced" text="Mannschafts-Geländeritt in %s"/>
+        <text name="eq_event_crossCountry_championship" text="Mannschafts-Geländemeisterschaft von %s"/>
+        <text name="eq_event_eventing_training" text="Einführungs-Vielseitigkeit"/>
+        <text name="eq_event_eventing_novice" text="Eintägige Vielseitigkeit"/>
+        <text name="eq_event_eventing_intermediate" text="Zwei-Sterne-Vielseitigkeit"/>
+        <text name="eq_event_eventing_advanced" text="Vier-Sterne-Vielseitigkeit in %s"/>
+        <text name="eq_event_eventing_championship" text="Dreitägige Vielseitigkeit von %s"/>
+        <text name="eq_event_raceShort_training" text="Rennbahn-Galopp (1200 m)"/>
+        <text name="eq_event_raceShort_novice" text="Maiden-Sprint (1200 m)"/>
+        <text name="eq_event_raceShort_intermediate" text="Sprint-Ausgleich (1200 m)"/>
+        <text name="eq_event_raceShort_advanced" text="Listen-Sprint in %s (1200 m)"/>
+        <text name="eq_event_raceShort_championship" text="Sprint-Pokal von %s (1200 m)"/>
+        <text name="eq_event_raceLong_training" text="Rennbahn-Galopp (1600 m)"/>
+        <text name="eq_event_raceLong_novice" text="Maidenrennen (2400 m)"/>
+        <text name="eq_event_raceLong_intermediate" text="Ausgleich (2400 m)"/>
+        <text name="eq_event_raceLong_advanced" text="Listenrennen in %s (2400 m)"/>
+        <text name="eq_event_raceLong_championship" text="Goldpokal von %s (3200 m)"/>
+        <text name="eq_event_steeplechase_training" text="Übungs-Hürdenrennen"/>
+        <text name="eq_event_steeplechase_novice" text="Hürdenrennen für Einsteiger"/>
+        <text name="eq_event_steeplechase_intermediate" text="Jagdrennen-Ausgleich"/>
+        <text name="eq_event_steeplechase_advanced" text="Großes Jagdrennen in %s"/>
+        <text name="eq_event_steeplechase_championship" text="Jagdrennen-Pokal von %s"/>
+        <!-- RLRM's Messages tab: the one body template (the whole sentence is its argument) and our titles -->
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Turnier"/>
+        <text name="rl_messageTitle_eqInjury" text="Verletzung"/>
+        <text name="rl_messageTitle_eqRetirement" text="Ruhestand"/>
+        <text name="rl_messageTitle_eqDealer" text="Händler"/>
+        <text name="rl_messageTitle_eqTransport" text="Transport"/>
+        <text name="eq_money_entryFees" text="Turnier-Startgebühren"/>
+        <text name="eq_money_prizeMoney" text="Turnier-Preisgelder"/>
+        <text name="eq_money_vetBills" text="Tierarztkosten"/>
+        <text name="eq_enter_injured" text="Dieses Pferd ist verletzt: noch %d Monat(e) bis zur Heilung."/>
+        <text name="eq_enter_sick" text="Dieses Pferd ist krank. Behandeln Sie es zuerst auf seiner Seite Krankheiten."/>
+        <text name="eq_enter_unwell" text="Die Gesundheit dieses Pferdes ist zu niedrig für einen Start (25 oder weniger). Füttern Sie es gut, dann erholt es sich."/>
+        <text name="eq_enter_lowHealth" text="Gesundheit %d: Mit %d%% Wahrscheinlichkeit wird es am Turniertag als nicht einsatzfähig gestrichen. Unter 50 Gesundheit erhöht jeder 5 Punkte weniger das Risiko um 10%%, und bei %d oder weniger kann es nicht starten."/>
+        <text name="eq_result_eliminated" text="%s ist bei %s ausgeschieden."/>
+        <text name="eq_result_pulledUp" text="%s wurde bei %s angehalten."/>
+        <text name="eq_result_scratched" text="%s wurde bei %s gestrichen (%s). %s der Startgebühr wurden erstattet."/>
+        <text name="eq_scratch_injured" text="verletzt"/>
+        <text name="eq_scratch_sick" text="krank"/>
+        <text name="eq_scratch_unsound" text="am Turniertag nicht einsatzfähig"/>
+        <text name="eq_scratch_shoe" text="Eisen verloren"/>
+        <text name="eq_scratch_retired" text="aus dem Sport genommen"/>
+        <text name="eq_scratch_inFoal" text="zu weit tragend für einen Start"/>
+        <text name="eq_injury_bruisedSole" text="eine Sohlenprellung"/>
+        <text name="eq_injury_abscess" text="ein Hufabszess"/>
+        <text name="eq_injury_overreach" text="eine Greifverletzung"/>
+        <text name="eq_injury_soreBack" text="Rückenschmerzen"/>
+        <text name="eq_injury_splints" text="Überbeine"/>
+        <text name="eq_injury_tendon" text="eine Sehnenzerrung"/>
+        <text name="eq_injury_chipFracture" text="eine Chipfraktur"/>
+        <text name="eq_injury_suspensory" text="ein Fesselträgerriss"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Sohlenprellung"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Hufabszess"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Greifverletzung"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Rückenschmerzen"/>
+        <text name="rl_disease_eqInjurySplints" text="Überbeine"/>
+        <text name="rl_disease_eqInjuryTendon" text="Sehnenzerrung"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Chipfraktur"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Fesselträgerriss"/>
+        <text name="eq_injury_newTreatable" text="%s hat sich bei %s verletzt: %s. Behandeln Sie die Verletzung auf der Seite Krankheiten des Pferdes (%s, %s) oder lassen Sie sie in %d Monat(en) von selbst heilen."/>
+        <text name="eq_injury_newRest" text="%s hat sich bei %s verletzt: %s. %d Monat(e) Boxenruhe."/>
+        <text name="eq_illness_new" text="%s hat sich %s eingefangen (bei %s). Siehe die Seite Krankheiten."/>
+        <text name="eq_injury_careerEnding" text="%s hat sich bei %s eine karrierebeendende Verletzung zugezogen und wurde aus dem Turniersport genommen."/>
+        <text name="eq_injury_recovered" text="%s hat sich erholt und kann wieder starten."/>
+        <text name="eq_retire_done" text="Aus dem Turniersport genommen."/>
+        <text name="eq_retire_doneInjured" text="Aus dem Turniersport genommen. Die Verletzung muss noch heilen, aber die Behandlung kostet jetzt %d%% weniger."/>
+        <text name="eq_retire_undone" text="Zurück im Turniersport."/>
+        <text name="eq_retire_careerEnded" text="Die Karriere dieses Pferdes endete mit einer Verletzung; es kann nicht mehr starten."/>
+        <text name="eq_status_title" text="Turniere"/>
+        <text name="eq_status_injured" text="Verletzt, %d Monat(e)"/>
+        <text name="eq_status_retired" text="Im Ruhestand"/>
+        <text name="eq_status_sick" text="Krank"/>
+        <text name="eq_status_unwell" text="Gesundheit zu niedrig"/>
+        <text name="eq_status_settling" text="Gewöhnt sich ein"/>
+        <text name="eq_status_rested" text="Pause bis nächsten Monat"/>
+        <text name="eq_status_inFoal" text="Tragend"/>
+        <text name="eq_status_foaled" text="Erholt sich vom Abfohlen"/>
+        <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Leistungspotenzial"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potenzial (laut Händler)"/>
+        <text name="eq_ui_potentialTitle" text="Potenzial"/>
+        <text name="eq_ui_potentialDealer" text="Händlerangabe, evtl. falsch"/>
+        <text name="eq_ui_skills" text="Fähigkeiten"/>
+        <text name="eq_specialty_title" text="Lieblingsdisziplin"/>
+        <text name="eq_specialty_none" text="Noch keine"/>
+        <text name="eq_specialty_pair" text="%s &amp; %s"/>
+        <text name="eq_specialty_eventer" text="Vielseitigkeitspferd"/>
+        <text name="eq_specialty_racehorse" text="Rennpferd"/>
+        <text name="eq_specialty_allRounder" text="Allrounder"/>
+        <text name="eq_enter_settling" text="Dieses Pferd gewöhnt sich nach dem Umzug noch ein. Es kann ab nächsten Monat starten."/>
+        <text name="eq_enter_rested" text="Dieses Pferd hatte diesen Monat schon %d Starts und braucht eine Pause. Nächsten Monat kann es wieder starten."/>
+        <text name="eq_reveal_better" text="Sie haben %s besser kennengelernt, und das Pferd wirkt sogar noch besser, als der Händler behauptet hat."/>
+        <text name="eq_reveal_worse" text="Sie haben %s besser kennengelernt und haben das Gefühl, dass Sie getäuscht wurden."/>
+        <text name="eq_reveal_fair" text="Sie haben %s besser kennengelernt und können das Potenzial jetzt sicherer einschätzen."/>
+        <text name="eq_ui_title" text="Turniere"/>
+        <text name="eq_ui_col_event" text="Veranstaltung"/>
+        <text name="eq_ui_col_going" text="Bedingungen"/>
+        <text name="eq_ui_col_risk" text="Risiko"/>
+        <text name="eq_ui_injuryRisk" text="Verletzungsrisiko"/>
+        <text name="eq_ui_dayCount" text="%d Tag"/>
+        <text name="eq_ui_days" text="%d Tage"/>
+        <text name="eq_ui_months" text="%d Monat(e)"/>
+        <text name="eq_ui_perMonth" text="%s pro Monat"/>
+        <text name="eq_ui_retire" text="Ruhestand"/>
+        <text name="eq_ui_unretire" text="Zurück zum Turniersport"/>
+        <text name="eq_ui_retireConfirm" text="%s aus dem Turniersport nehmen? Das Pferd kann dann an keinen Veranstaltungen mehr teilnehmen. Sie können es später zurückholen."/>
+        <text name="eq_ui_retireConfirmInjured" text="%s aus dem Turniersport nehmen? Die Behandlung der Verletzung kostet dann %d%% weniger, aber das Pferd kann an keinen Veranstaltungen teilnehmen. Sie können es später zurückholen, dann zum vollen Preis."/>
+        <text name="eq_ui_unretireConfirm" text="%s zurück in den Turniersport holen? Die Behandlung einer Verletzung kostet dann wieder den vollen Preis."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="%s gegen %s behandeln? Das dauert %s und kostet %s."/>
+        <text name="eq_risk_low" text="Gering"/>
+        <text name="eq_risk_minor" text="Leicht"/>
+        <text name="eq_risk_moderate" text="Mäßig"/>
+        <text name="eq_risk_risky" text="Riskant"/>
+        <text name="eq_risk_off" text="Aus"/>
+        <text name="eq_ui_col_level" text="Stufe"/>
+        <text name="eq_ui_col_type" text="Art"/>
+        <text name="eq_skill_untrained" text="Unausgebildet"/>
+        <text name="eq_skill_novice" text="Anfänger"/>
+        <text name="eq_skill_trainee" text="In Ausbildung"/>
+        <text name="eq_skill_amateur" text="Amateur"/>
+        <text name="eq_skill_promising" text="Vielversprechend"/>
+        <text name="eq_skill_competitor" text="Turnierreif"/>
+        <text name="eq_skill_contender" text="Anwärter"/>
+        <text name="eq_skill_champion" text="Champion"/>
+        <text name="eq_skill_legend" text="Legendär"/>
+        <text name="eq_ui_col_when" text="Ergebnisse"/>
+        <text name="eq_ui_col_fee" text="Startgebühr"/>
+        <text name="eq_ui_col_prize" text="Preisgeld"/>
+        <text name="eq_ui_col_yours" text="Ihre Pferde"/>
+        <text name="eq_ui_col_day" text="Tag"/>
+        <text name="eq_ui_col_horse" text="Pferd"/>
+        <text name="eq_ui_col_result" text="Ergebnis"/>
+        <text name="eq_ui_col_status" text="Status"/>
+        <text name="eq_ui_horseDescription" text="Pferde fressen Heu, Getreide und Leckerlis und brauchen Wasser. Gesunde Stuten über 22 Monate können sich fortpflanzen."/>
+        <text name="eq_ui_col_success" text="Erfolg"/>
+        <text name="eq_ui_col_training" text="Training"/>
+        <text name="eq_ui_trainingBenefit" text="Trainingseffekt"/>
+        <text name="eq_ui_ageLong" text="%d Monate"/>
+        <text name="eq_success_favourite" text="Favorit"/>
+        <text name="eq_success_contender" text="Anwärter"/>
+        <text name="eq_success_outsider" text="Außenseiter"/>
+        <text name="eq_success_longShot" text="Chancenlos"/>
+        <text name="eq_benefit_high" text="Hoch"/>
+        <text name="eq_benefit_medium" text="Mittel"/>
+        <text name="eq_benefit_low" text="Gering"/>
+        <text name="eq_benefit_none" text="Keiner"/>
+        <text name="eq_ui_when_tomorrow" text="Morgen"/>
+        <text name="eq_ui_when_nextMonth" text="Nächsten Monat"/>
+        <text name="eq_ui_trainingOnly" text="Nur Training"/>
+        <text name="eq_ui_entered" text="Gemeldet: %s"/>
+        <text name="eq_ui_canEnter" text="%d startberechtigt"/>
+        <text name="eq_ui_noneEligible" text="Keines startberechtigt"/>
+        <text name="eq_ui_ageMonths" text="%d M."/>
+        <text name="eq_ui_day" text="Tag %d"/>
+        <text name="eq_ui_status_ok" text="Startberechtigt"/>
+        <text name="eq_ui_status_lowHealth" text="Geringe Gesundheit: %d%% Streichung"/>
+        <text name="eq_ui_status_eventFull" text="Schon zwei Ihrer Pferde gemeldet"/>
+        <text name="eq_ui_status_tooYoung" text="Zu jung"/>
+        <text name="eq_ui_status_tooOld" text="Zu alt"/>
+        <text name="eq_ui_status_ratingLow" text="Wertung zu niedrig"/>
+        <text name="eq_ui_status_ratingHigh" text="Zu gut für diese Stufe"/>
+        <text name="eq_ui_status_enteredHere" text="Gemeldet"/>
+        <text name="eq_ui_status_enteredElsewhere" text="In anderer Veranstaltung"/>
+        <text name="eq_ui_result_place" text="%d. von %d"/>
+        <text name="eq_ui_result_eliminated" text="Ausgeschieden"/>
+        <text name="eq_ui_result_scratched" text="Gestrichen"/>
+        <text name="eq_ui_button_enterAuto" text="Melden, Auto-Transport (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Melden, manueller Transport (%s)"/>
+        <text name="eq_ui_transportLabel" text="Gesamtkosten"/>
+        <text name="eq_ui_transportLine" text="Auto %s · Manuell %s"/>
+        <text name="eq_ui_transportLabel_near" text="Kosten, Übersee"/>
+        <text name="eq_ui_transportLabel_far" text="Kosten, Fernreise"/>
+        <text name="eq_ui_awaiting" text="%s (wartet auf Abgabe)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Wartet auf Abgabe"/>
+        <text name="input_EQ_DELIVER" text="Pferd zur Veranstaltung abgeben"/>
+        <text name="eq_deliver_prompt" text="%s zur Veranstaltung abgeben"/>
+        <text name="eq_deliver_promptMany" text="%d Pferde zu ihren Veranstaltungen abgeben"/>
+        <text name="eq_deliver_done" text="%s abgegeben. Es reist zur Veranstaltung ab."/>
+        <text name="eq_deliver_doneMany" text="%d Pferde abgegeben. Sie reisen zu ihren Veranstaltungen ab."/>
+        <text name="eq_deliver_noRoom" text="Abgabe nicht möglich: Ihre Pferde brauchen einen freien Platz auf einer Ihrer Weiden, um zurückzukommen."/>
+        <text name="eq_deliver_failed" text="Abgabe fehlgeschlagen: %s"/>
+        <text name="eq_deliver_title" text="Zur Veranstaltung abgeben"/>
+        <text name="eq_deliver_ask" text="%s wartet darauf, zu einer Veranstaltung zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_askMany" text="%d Pferde in diesem Anhänger warten darauf, zu ihren Veranstaltungen zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_yes" text="Abgeben"/>
+        <text name="eq_deliver_no" text="Händler öffnen"/>
+        <text name="eq_loose_broughtHome" text="Ihre Angestellten haben %s zurück in %s gebracht."/>
+        <text name="eq_loose_broughtHomeUnnamed" text="Ihre Angestellten haben ein freilaufendes Pferd zurück in %s gebracht."/>
+        <text name="eq_ui_result_notDelivered" text="Nicht abgegeben"/>
+        <text name="eq_ui_deadline_round" text="vor den Ergebnissen von morgen"/>
+        <text name="eq_ui_deadline_month" text="vor Monatsende"/>
+        <text name="eq_ui_button_results" text="Ergebnisse"/>
+        <text name="eq_ui_button_manageAnimals" text="Tiere verwalten"/>
+        <text name="eq_ui_button_events" text="Veranstaltungen"/>
+        <text name="eq_ui_noEvents" text="Derzeit sind keine Veranstaltungen offen. Jede Runde werden neue ausgelost."/>
+        <text name="eq_ui_noResults" text="Ihre Pferde haben noch keine Ergebnisse."/>
+        <text name="eq_ui_noHorses" text="Sie haben keine Pferde."/>
+        <text name="eq_ui_clientNote" text="Turniere werden vom Host ausgerichtet. Nennungen als Mehrspieler-Client folgen in einer späteren Version."/>
+        <text name="eq_ui_noConfig" text="Die Veranstaltungsliste konnte nicht geladen werden; siehe Log."/>
+        <text name="eq_ui_ages_range" text="Alter %d-%d Monate"/>
+        <text name="eq_ui_ages_from" text="ab %d Monaten"/>
+        <text name="eq_ui_summary_event" text="%s: %s, Wertung %.0f-%.0f, Starterfeld %d. Wählen Sie ein Pferd und drücken Sie Enter."/>
+        <text name="eq_enter_noEvent" text="Für diese Veranstaltung sind keine Nennungen offen."/>
+        <text name="eq_enter_retired" text="Dieses Pferd wurde aus dem Turniersport genommen."/>
+        <text name="eq_enter_inFoal" text="Diese Stute ist zu weit tragend für einen Start. Nach dem Abfohlen kann sie wieder starten."/>
+        <text name="eq_enter_foaled" text="Diese Stute erholt sich noch vom Abfohlen. Sie kann drei Monate nach der Geburt wieder starten."/>
+        <text name="eq_enter_already" text="Dieses Pferd ist bereits für %s gemeldet."/>
+        <text name="eq_enter_eventFull" text="Sie können höchstens %d Pferde für eine Veranstaltung melden."/>
+        <text name="eq_enter_tooYoung" text="Zu jung: Diese Veranstaltung ist für Pferde ab %d Monaten, Ihres ist %d Monate alt."/>
+        <text name="eq_enter_tooOld" text="Zu alt: Diese Veranstaltung ist für Pferde bis %d Monate, Ihres ist %d Monate alt."/>
+        <text name="eq_enter_ratingLow" text="Wertung %.0f liegt unter dem Bereich %.0f-%.0f dieser Veranstaltung."/>
+        <text name="eq_enter_ratingHigh" text="Wertung %.0f liegt über dem Bereich %.0f-%.0f dieser Veranstaltung: Melden Sie es in einer höheren Stufe."/>
+        <text name="eq_enter_noMoney" text="Nicht genug Geld für die Startgebühr."/>
+        <text name="eq_enter_done" text="%s für %s gemeldet (Wertung %.0f). Auto-Transport: %s."/>
+        <text name="eq_enter_doneManual" text="%s für %s gemeldet (Wertung %.0f). Manueller Transport: Bringen Sie das Pferd %s zum Tierhändler, sonst startet es nicht."/>
+        <text name="eq_result_notDelivered" text="%s wurde nie zu %s gebracht und ist daher nicht gestartet. Die Startgebühr ist verloren."/>
+        <text name="eq_enter_farmLimit" text="Sie haben alle %d Nennungen dieses Monats verbraucht. Nächsten Monat gibt es neue."/>
+        <text name="eq_ui_farmLimit" text="Keine Nennungen mehr diesen Monat"/>
+        <text name="eq_ui_entriesLeft" text="Verbleibende Nennungen diesen Monat: %d von %d."/>
+        <text name="eq_money_transport" text="Pferdetransport"/>
+        <text name="eq_result_placed" text="%s belegte Platz %d von %d bei %s und gewann %s."/>
+        <text name="eq_result_placedNoPrize" text="%s belegte Platz %d von %d bei %s."/>
+        <text name="eq_result_gone" text="%s konnte bei %s nicht starten: Das Pferd ist auf keinem Hof mehr."/>
+        <text name="eq_and" text="und"/>
+        <text name="eq_facility_improves" text="Verbessert das Training von %s (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Training in: %s"/>
+        <text name="eq_facility_stable" text="Pferdestall"/>
+        <text name="eq_facility_indoorArena" text="Reithalle"/>
+        <text name="eq_facility_ridingCentre" text="Reitzentrum"/>
+        <text name="eq_facility_outdoorArena" text="Außenreitplatz"/>
+        <text name="eq_facility_roundPen" text="Longierzirkel"/>
+        <text name="eq_facility_jumps" text="Springparcours"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_tab" text="Pferdesport"/>
+        <text name="eq_settings_off" text="Aus"/>
+        <text name="eq_settings_on" text="An"/>
+        <text name="eq_settings_noLimit" text="Unbegrenzt"/>
+        <text name="eq_settings_trainingRate" text="Trainingstempo"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Wie schnell Reiten, Angestellte und Veranstaltungen die Werte eines Pferdes steigern. 1x ist das normale Tempo."/>
+        <text name="eq_settings_cadence" text="Turniere"/>
+        <text name="eq_settings_cadence_tooltip" text="Wie oft eine Turnierrunde stattfindet. Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_settings_cadence_day" text="Jeden Tag"/>
+        <text name="eq_settings_cadence_month" text="Jeden Monat"/>
+        <text name="eq_settings_racing" text="Rennen und Hindernisrennen"/>
+        <text name="eq_settings_racing_tooltip" text="Ob Flachrennen und Hindernisrennen im Veranstaltungskalender stehen. Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_settings_injuries" text="Verletzungen bei Veranstaltungen"/>
+        <text name="eq_settings_injuries_tooltip" text="Ob sich Pferde bei Veranstaltungen verletzen können."/>
+        <text name="eq_settings_forcedRetirement" text="Karrierebeendende Verletzungen"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Ob die schwersten Verletzungen bei Veranstaltungen die Turnierkarriere eines Pferdes endgültig beenden können."/>
+        <text name="eq_settings_entriesPerMonth" text="Nennungen pro Monat"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Wie viele Nennungen jeder Hof pro Monat abgeben kann."/>
+    </texts>
+</l10n>
