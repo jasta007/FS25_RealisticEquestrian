@@ -16,6 +16,7 @@ local modDirectory = g_currentModDirectory
 -- SECTION 1: Our own modules. None of them reads RLRM at file scope.
 source(modDirectory .. "scripts/core/EqLog.lua")
 source(modDirectory .. "scripts/core/EqRLRM.lua")
+source(modDirectory .. "scripts/core/EqMessages.lua")
 source(modDirectory .. "scripts/core/EqConstants.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
@@ -143,6 +144,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.awayVisuals then
         guarded("away horses hook", function() EqAway.install(guarded) end)
+    end
+
+    if EqMain.isActive then
+        guarded("message log", EqMessages.install)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then

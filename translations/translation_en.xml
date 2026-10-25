@@ -84,6 +84,13 @@
         <text name="eq_event_steeplechase_intermediate" text="Handicap Chase"/>
         <text name="eq_event_steeplechase_advanced" text="%s Graded Chase"/>
         <text name="eq_event_steeplechase_championship" text="%s Steeplechase Cup"/>
+        <!-- RLRM's Messages tab: the one body template (the whole sentence is its argument) and our titles -->
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Competition"/>
+        <text name="rl_messageTitle_eqInjury" text="Injury"/>
+        <text name="rl_messageTitle_eqRetirement" text="Retirement"/>
+        <text name="rl_messageTitle_eqDealer" text="Dealer"/>
+        <text name="rl_messageTitle_eqTransport" text="Transport"/>
         <text name="eq_money_entryFees" text="Competition Entry Fees"/>
         <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
         <text name="eq_money_vetBills" text="Vet Bills"/>
