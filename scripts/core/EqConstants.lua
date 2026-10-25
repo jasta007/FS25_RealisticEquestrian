@@ -62,6 +62,12 @@ EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192
 
+-- RLRM's metabolism gene (1.0 average) also sets how fast riding builds fitness: each 0.1 above
+-- or below average changes fitness gains by METABOLISM_FITNESS_LEAN x 10%, within MIN..MAX.
+EqConstants.METABOLISM_FITNESS_LEAN = 0.6
+EqConstants.METABOLISM_FITNESS_MIN = 0.6
+EqConstants.METABOLISM_FITNESS_MAX = 1.45
+
 -- Save file written beside RLRM's in the savegame folder.
 EqConstants.SAVE_FILENAME = "rlEquestrian.xml"
 EqConstants.SAVE_VERSION = 2

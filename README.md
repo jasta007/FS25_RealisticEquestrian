@@ -76,6 +76,10 @@ Every horse trains once a day, at RLRM's daily horse tick.
   share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
   95% of each ceiling; only your own riding takes a stat the last 5%.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
+- **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
+  builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
+  and a slow one is cheap to keep but slow to bring back into condition (down to 60%). Fitness
+  lost is not changed.
 - Gains slow as a stat nears its ceiling. Horses under 24 months train at 30%, 24-36 months at
   60%. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.

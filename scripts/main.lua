@@ -24,6 +24,7 @@ source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -88,6 +89,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.metabolismFitness then
+        guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.awayVisuals then

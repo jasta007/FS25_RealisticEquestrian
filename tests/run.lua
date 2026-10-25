@@ -13,6 +13,7 @@ dofile("scripts/core/EqConstants.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
@@ -664,6 +665,14 @@ for rating = 50, 100, 5 do
     if best <= 0 then table.insert(zones, rating) end
 end
 check("every rating from 50 has an event worth entering", #zones == 0, table.concat(zones, ","))
+
+-- Metabolism: faster gets fit faster, slower slower; losses unchanged.
+check("average metabolism changes nothing", EqMetabolism.fitnessFactor(1.0) == 1 and EqMetabolism.fitnessFactor(nil) == 1)
+check("fast metabolism gains fitness faster", EqMetabolism.scaleFitness({ genetics = { metabolism = 1.5 } }, 10) == 13)
+check("slow metabolism gains fitness slower", EqMetabolism.scaleFitness({ genetics = { metabolism = 0.5 } }, 10) == 7)
+check("metabolism factor is bounded", EqMetabolism.fitnessFactor(0.25) == EqConstants.METABOLISM_FITNESS_MIN
+    and EqMetabolism.fitnessFactor(1.75) == EqConstants.METABOLISM_FITNESS_MAX)
+check("fitness lost is not scaled", EqMetabolism.scaleFitness({ genetics = { metabolism = 1.5 } }, -5) == -5)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
