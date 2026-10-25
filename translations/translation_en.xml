@@ -25,7 +25,6 @@
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles successfully to build an Agility training multiplier."/>
         <text name="eq_help_agility_title" text="Training: Agility"/>
         <text name="eq_pop_routineStart" text="Routine started"/>
-        <text name="eq_pop_crash" text="Ouch! Combo lost"/>
         <text name="eq_pop_routineLost" text="Routine broken"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_clear" text="Clear!"/>

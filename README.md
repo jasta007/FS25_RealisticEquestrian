@@ -73,8 +73,9 @@ uses its genetics, health and fitness.
     stopping, walking or backing up runs the clock down ten times as fast.
   - **Temperament** comes from a routine: walk to start one, then do each movement asked for
     (walk, trot, stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A
-    canter, gallop, jump or a missed request breaks it. Requests show in the Freestyle and
-    Temperament views.
+    canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs
+    the left or right key held for a moment, at any pace from backing up to a trot, and the
+    other requests ignore steering. Requests show in the Freestyle and Temperament views.
 - **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a
   line for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours show how each is going.
   Help pops up at the bottom of the screen the first time you open each view; press **H**

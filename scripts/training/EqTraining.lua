@@ -56,8 +56,11 @@ EqTraining.COMBO_SLOW_DRAIN = 10
 -- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
 -- to start it. Each one done raises the multiplier, up to COMBO_MAX; a miss, a canter, a gallop
 -- or a jump ends the routine. Temperament builds at TEMPERAMENT_RATE per second for each step
--- of multiplier above x1.
+-- of multiplier above x1. Gaits and turns are judged apart: a rider must steer round things
+-- whatever the routine asks, so a gait request ignores steering and a turn request (holding
+-- the left or right key for ROUTINE_STEER_MS) takes any gait short of a canter.
 EqTraining.ROUTINE_START_MS = 2000
+EqTraining.ROUTINE_STEER_MS = 300
 EqTraining.ROUTINE_GAP_MS = { 5000, 8000 }
 EqTraining.ROUTINE_TURN_GAP_MS = { 3000, 4000 }
 EqTraining.ROUTINE_REACT_MS = 3000
@@ -329,20 +332,24 @@ function EqTraining.breakRoutine(sheet)
     local routine = sheet.routine
     local was = routine.active
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
+    routine.steerMs = 0
     return was
 end
 
 
 --- One frame of the temperament routine.
 --- @param sheet table
---- @param move string walk, trot, halt, reverse, left, right, or fast (canter or gallop)
+--- @param move string walk, trot, halt, reverse, or fast (canter or gallop)
+--- @param steer string|nil left or right while the rider holds that steering key
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
 --- @param rng function (n) -> 1..n
 --- @return string|nil event "start", "request", "done", "lost", or nil
-function EqTraining.routineStep(sheet, move, dt, worn, rng)
+function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
     local routine = sheet.routine
     routine.clock = routine.clock + dt
+    routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
+    routine.steerSide = steer
     sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.COMBO_MAX - 1) or 0
     if move == "fast" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
@@ -358,9 +365,11 @@ function EqTraining.routineStep(sheet, move, dt, worn, rng)
 
     local event = nil
     if routine.request ~= nil then
-        if move == routine.request then
+        local turned = routine.request == "left" or routine.request == "right"
+        local done = move == routine.request
+        if turned then done = steer == routine.request and routine.steerMs >= EqTraining.ROUTINE_STEER_MS end
+        if done then
             routine.mult = math.min(routine.mult + 1, EqTraining.COMBO_MAX)
-            local turned = move == "left" or move == "right"
             if not turned then routine.current = move end
             routine.request = nil
             routine.nextAt = routine.clock + randomGap(turned and EqTraining.ROUTINE_TURN_GAP_MS or EqTraining.ROUTINE_GAP_MS, rng)
@@ -373,6 +382,8 @@ function EqTraining.routineStep(sheet, move, dt, worn, rng)
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
         routine.deadline = routine.clock + EqTraining.ROUTINE_REACT_MS
+        -- A turn counts once its key has been held this long after the request shows.
+        routine.steerMs = 0
         event = "request"
     end
 

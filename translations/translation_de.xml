@@ -27,7 +27,6 @@
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Wendigkeits-Multiplikator aufzubauen."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
-        <text name="eq_pop_crash" text="Autsch! Kombo verloren"/>
         <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
         <text name="eq_pop_comboLost" text="Kombo verloren"/>
         <text name="eq_pop_clear" text="Geschafft!"/>

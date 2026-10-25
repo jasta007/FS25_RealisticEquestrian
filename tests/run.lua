@@ -289,7 +289,9 @@ do
     local events = {}
     local function ride(move, ms)
         for _ = 1, ms / 100 do
-            local event = EqTraining.routineStep(routine, move, 100, false, first)
+            local gait, steer = move, nil
+            if move == "left" or move == "right" then gait, steer = "walk", move end
+            local event = EqTraining.routineStep(routine, gait, steer, 100, false, first)
             if event ~= nil then table.insert(events, event) end
         end
     end
@@ -311,6 +313,29 @@ do
     ride("walk", 2000)
     ride("fast", 100)
     check("a canter ends the routine", not routine.routine.active and events[#events] == "lost")
+
+    -- Turns come from the steering key, whatever the gait; gaits ignore steering.
+    local turning = EqTraining.newSheet()
+    local function rideSteer(gait, steer, ms)
+        local last
+        for _ = 1, ms / 100 do last = EqTraining.routineStep(turning, gait, steer, 100, false, first) or last end
+        return last
+    end
+    rideSteer("walk", "left", 2000)
+    check("walking while steering starts a routine", turning.routine.active)
+    turning.routine.request, turning.routine.deadline = "right", turning.routine.clock + 3000
+    rideSteer("reverse", "left", 500)
+    check("steering the wrong way does not count as the turn", turning.routine.request == "right")
+    check("backing up while turning counts as the asked-for turn",
+        rideSteer("reverse", "right", 500) == "done" and turning.routine.mult == 2)
+    turning.routine.request, turning.routine.deadline = "halt", turning.routine.clock + 3000
+    check("a stop counts while the rider steers", rideSteer("halt", "left", 200) == "done")
+    rideSteer("halt", nil, 100)
+    turning.routine.request, turning.routine.deadline = "left", turning.routine.clock + 3000
+    rideSteer("halt", "left", 200)
+    check("a turn needs its key held for a moment", turning.routine.request == "left")
+    rideSteer("halt", "left", 200)
+    check("held, it counts at a standstill too", turning.routine.request == nil)
 end
 do
     -- One riding bar of jumping or a routine, ridden frame by frame.
@@ -322,7 +347,8 @@ do
             EqTraining.step(sheet, gait, 50, false)
             if jumped then EqTraining.clearJump(sheet, false) end
             EqTraining.comboTick(sheet, gait, 50)
-            EqTraining.routineStep(sheet, move or gait, 50, false, rng)
+            local steer = (move == "left" or move == "right") and move or nil
+            EqTraining.routineStep(sheet, steer == nil and (move or gait) or gait, steer, 50, false, rng)
             if gait ~= "halt" then EqTraining.addRiding(sheet, gait, 50) end
             t = t + 50
         end

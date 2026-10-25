@@ -159,10 +159,8 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
-    elseif kind == "crash" then
-        text, color, big = g_i18n:getText("eq_pop_crash"), EqTrainingHud.COLOR.red, 2
     else
-        text, color, big = g_i18n:getText(kind == "jumpLost" and "eq_pop_comboLost" or "eq_pop_routineLost"), EqTrainingHud.COLOR.grey, 1
+        text, color, big = g_i18n:getText(kind == "routineLost" and "eq_pop_routineLost" or "eq_pop_comboLost"), EqTrainingHud.COLOR.grey, 1
     end
     EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
 end

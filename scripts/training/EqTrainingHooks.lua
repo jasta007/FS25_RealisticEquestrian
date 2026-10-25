@@ -110,10 +110,9 @@ EqTrainingHooks.JUMP_TIMEOUT_MS = 3000
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 
--- A walk or trot counts as a turn while the horse's heading changes faster than TURN_RATE
--- radians a second for TURN_HOLD_MS.
-EqTrainingHooks.TURN_RATE = 0.35
-EqTrainingHooks.TURN_HOLD_MS = 400
+-- Turns for the routine come from the rider's steering key, not the horse's heading (which
+-- is unclear when backing up). The base game's steering axis is negative for left.
+EqTrainingHooks.STEER_MIN = 0.3
 
 local probe = { vehicle = nil, height = nil, name = nil }
 
@@ -198,29 +197,18 @@ end
 --- The routine's name for what the horse is doing: a gait, a halt, or a turn at a walk or trot.
 --- @param vehicle table
 --- @param spec table
---- @param gait string
---- @param dt number
---- @return string move
-local function routineMove(vehicle, spec, gait, dt)
-    if gait == "canter" or gait == "gallop" then return "fast" end
-    local dx, _, dz = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
-    local heading = math.atan2(dx, dz)
-    local turn = 0
-    if spec.eqHeading ~= nil and dt > 0 then
-        local change = heading - spec.eqHeading
-        if change > math.pi then change = change - 2 * math.pi elseif change < -math.pi then change = change + 2 * math.pi end
-        turn = change / (dt / 1000)
+--- @return string|nil steer left or right while the rider holds a steering key
+local function steerInput(spec)
+    -- axisSteer is the local rider's key; on a server the remote rider's comes as axisSteerSend.
+    local axis = spec.inputValues.axisSteer or 0
+    if axis == 0 then axis = spec.inputValues.axisSteerSend or 0 end
+    local steer = nil
+    if axis <= -EqTrainingHooks.STEER_MIN then steer = "left" elseif axis >= EqTrainingHooks.STEER_MIN then steer = "right" end
+    if steer ~= spec.eqSteer and steer ~= nil then
+        Log:info("Steer: %s (axisSteer %s, axisSteerSend %s)", steer, tostring(spec.inputValues.axisSteer), tostring(spec.inputValues.axisSteerSend))
     end
-    spec.eqHeading = heading
-    if (gait == "walk" or gait == "trot") and math.abs(turn) > EqTrainingHooks.TURN_RATE then
-        local side = turn > 0 and "left" or "right"
-        spec.eqTurnMs = spec.eqTurnSide == side and (spec.eqTurnMs or 0) + dt or dt
-        spec.eqTurnSide = side
-        if spec.eqTurnMs >= EqTrainingHooks.TURN_HOLD_MS then return side end
-    else
-        spec.eqTurnMs, spec.eqTurnSide = 0, nil
-    end
-    return gait
+    spec.eqSteer = steer
+    return steer
 end
 
 
@@ -293,7 +281,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     spec.eqHalted = halted
     if EqTraining.comboTick(sheet, pace, dt) then EqTrainingHud.pop("jumpLost") end
     if routineShown() then
-        local event = EqTraining.routineStep(sheet, routineMove(vehicle, spec, gait, dt), dt, worn, math.random)
+        local event = EqTraining.routineStep(sheet, (gait == "canter" or gait == "gallop") and "fast" or gait,
+            steerInput(spec), dt, worn, math.random)
         if event == "done" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "lost" then EqTrainingHud.pop("routineLost")
         elseif event == "start" then EqTrainingHud.pop("routineStart") end
