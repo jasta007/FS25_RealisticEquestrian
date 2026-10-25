@@ -110,6 +110,9 @@
         <text name="eq_status_foaled" text="Recovering from foaling"/>
         <text name="eq_potential_unvetted" text="%s?"/>
         <text name="eq_ui_skillPotential" text="Skill potential"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potential (dealer's view)"/>
+        <text name="eq_ui_potentialTitle" text="Potential"/>
+        <text name="eq_ui_potentialDealer" text="Dealer's view, may be wrong"/>
         <text name="eq_ui_skills" text="Skills"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>

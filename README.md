@@ -216,8 +216,10 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
 - **Green:** dealer horses start a few points lower than a home-produced horse of the same age,
   so a good one needs a year or more of work before it wins much above Novice.
-- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
-  They are the dealer's view: usually right, sometimes generous, now and then modest. After three
+- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?),
+  under a "Potential (dealer's view)" heading. They are the dealer's view: usually right, about
+  a quarter of the time generous by 6-14 points, and now and then modest by 5-12, so a word is
+  sometimes a band too high or too low. After three
   months on your farm you find out, with a message saying whether the horse is better, worse or
   about what the dealer said, and its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.

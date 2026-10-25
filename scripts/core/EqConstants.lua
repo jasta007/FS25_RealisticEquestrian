@@ -119,13 +119,14 @@ EqConstants.PROSPECT_BOOST = 0.4
 EqConstants.DEALER_START_SHIFT = -5
 
 -- The dealer's view of a stat's potential: usually right, sometimes generous, now and then
--- modest. Chances and ranges in ceiling points.
+-- modest. Chances and ranges in ceiling points. A potential word spans 15 points, so errors
+-- this size change the word often enough to matter.
 EqConstants.ADVERT_GENEROUS_CHANCE = 0.25
-EqConstants.ADVERT_GENEROUS_MIN = 3
-EqConstants.ADVERT_GENEROUS_MAX = 7
+EqConstants.ADVERT_GENEROUS_MIN = 6
+EqConstants.ADVERT_GENEROUS_MAX = 14
 EqConstants.ADVERT_MODEST_CHANCE = 0.15
-EqConstants.ADVERT_MODEST_MIN = 2
-EqConstants.ADVERT_MODEST_MAX = 5
+EqConstants.ADVERT_MODEST_MIN = 5
+EqConstants.ADVERT_MODEST_MAX = 12
 
 -- Months a bought horse is with you before its real potential shows, and before it can compete.
 EqConstants.REVEAL_MONTHS = 3

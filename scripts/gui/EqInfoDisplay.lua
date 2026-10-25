@@ -224,6 +224,7 @@ function EqInfoDisplay.showHorseHudInfo(animal, box)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
+    if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
     local status = statusText(record)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
@@ -445,6 +446,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
         end
     else
         local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
+        section.potential.elements[1]:setText(g_i18n:getText(unvetted and "eq_ui_skillPotentialDealer" or "eq_ui_skillPotential"))
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
             local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
             fillCell(section.potential.elements[i + 1], statTitle(stat),
