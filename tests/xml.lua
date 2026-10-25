@@ -59,4 +59,13 @@ function TestXML:getInt(path, default) local v = self:getFloat(path); if v == ni
 function TestXML:getBool(path, default) local v = self:getString(path); if v == nil then return default end return v == "true" end
 function TestXML:delete() end
 
+--- Calls fn(index, key) for each "path(i)" that exists, like the game's XMLFile:iterate.
+function TestXML:iterate(path, fn)
+    local i = 0
+    while self:hasProperty(string.format("%s(%d)", path, i)) do
+        if fn(i + 1, string.format("%s(%d)", path, i)) == false then break end
+        i = i + 1
+    end
+end
+
 return TestXML

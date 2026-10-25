@@ -121,7 +121,7 @@ function EqEventsView.horseRows(event, farmId)
                     status = g_i18n:getText("eq_ui_status_awaitingDelivery")
                 end
             elseif unavailable == "injured" then
-                status = string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft)
+                status = string.format(g_i18n:getText("eq_status_injured"), EqInjury.monthsLeft(record, animal) or 1)
             elseif unavailable ~= nil then
                 status = g_i18n:getText("eq_status_" .. unavailable)
             else

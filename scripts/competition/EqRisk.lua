@@ -125,7 +125,7 @@ end
 --- @param injuries table config.injuries
 --- @param rng table EqRandom
 --- @param forcedRetirement boolean the setting
---- @return table outcome { name, months, monthlyCost, careerEnding }
+--- @return table outcome { name, careerEnding }
 function EqRisk.rollInjury(injuries, rng, forcedRetirement)
     local total = 0
     for _, injury in ipairs(injuries) do total = total + injury.chance end
@@ -141,8 +141,6 @@ function EqRisk.rollInjury(injuries, rng, forcedRetirement)
     local ending = rng:next() < (picked.careerEnding or 0)
     return {
         name = picked.name,
-        months = picked.months,
-        monthlyCost = picked.monthlyCost,
         careerEnding = ending and forcedRetirement,
     }
 end

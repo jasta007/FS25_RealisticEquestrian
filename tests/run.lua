@@ -20,6 +20,7 @@ dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqExperience.lua")
 dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
+dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -530,7 +531,7 @@ end
 check("an unready horse rarely places", weak < 25, weak .. " podiums of 500")
 
 -- Risk: config, scratches, eliminations, injuries.
-check("risk config: three injury kinds", #config.injuries == 3)
+check("risk config: eight injury kinds", #config.injuries == 8)
 check("risk config: cross country riskier than dressage",
     config.disciplineByName.crossCountry.elimination > config.disciplineByName.dressage.elimination
     and config.disciplineByName.crossCountry.injury > config.disciplineByName.dressage.injury)
@@ -578,11 +579,13 @@ for i = 1, 20000 do
     if injury.careerEnding then endings = endings + 1 end
     if EqRisk.rollInjury(config.injuries, EqRandom.new("injury " .. i), false).careerEnding then endingsOff = endingsOff + 1 end
 end
-check("most injuries are minor", counts.minor > counts.moderate and counts.moderate > counts.serious)
-check("forced retirement is rare", endings > 100 and endings < 320, endings .. " of 20000")
+check("most injuries are the small ones", counts.bruisedSole > counts.tendon and counts.tendon > counts.suspensory
+    and counts.abscess > counts.chipFracture)
+check("forced retirement is rare", endings > 150 and endings < 320, endings .. " of 20000")
 check("forced retirement off means never", endingsOff == 0)
-print(string.format("info: injuries minor %d moderate %d serious %d, career-ending %d of 20000",
-    counts.minor, counts.moderate, counts.serious, endings))
+print(string.format("info: injuries sole %d abscess %d overreach %d back %d splints %d tendon %d chip %d suspensory %d, career-ending %d of 20000",
+    counts.bruisedSole, counts.abscess, counts.overreach, counts.soreBack, counts.splints, counts.tendon,
+    counts.chipFracture, counts.suspensory, endings))
 
 -- Over a season of Intermediate cross country: how often a fit, matched horse comes to grief.
 local event2 = { discipline = "crossCountry", tier = "intermediate", going = "good" }
@@ -1095,6 +1098,125 @@ fresh.pagingElement.currentPageIndex = 2
 EqMenuPaging.beforeUpdatePages(fresh)
 check("first open leaves paging alone", fresh.pagingElement.currentPageIndex == 2 and fresh.eqLastPagingMode == "trailer")
 check("reset refuses a missing paging element", EqMenuPaging.reset({}) == false)
+
+
+-- Injuries as RLRM conditions: data/injuries.xml in RLRM's own format, run through RLRM's parser
+-- and its progression driver from the checkout, with only its logger and string.split stubbed.
+local function injuryTests()
+    local injuryXML = TestXML.load("data/injuries.xml")
+    local info = EqInjury.readInfo(injuryXML)
+    local translations = io.open("translations/translation_en.xml"):read("*a")
+    for _, injury in ipairs(config.injuries) do
+        local title = EqInjury.titleFor(injury.name)
+        check("injury " .. injury.name .. " has healing times", info[injury.name] ~= nil and info[injury.name].title == title)
+        check("injury " .. injury.name .. " has its texts", translations:find('name="eq_injury_' .. injury.name .. '"', 1, true) ~= nil
+            and translations:find('name="rl_disease_' .. title .. '"', 1, true) ~= nil)
+        check("injury title round trip " .. injury.name, EqInjury.nameFor(title) == injury.name)
+        local i = info[injury.name]
+        if i ~= nil then
+            check("treating " .. injury.name .. " is quicker than resting", (i.treatDays ~= nil and 1 or i.treatMonths) < i.restMonths
+                or (i.treatDays ~= nil and i.restMonths >= 1))
+        end
+    end
+    check("RLRM's own diseases are not injuries", EqInjury.nameFor("colic") == nil and EqInjury.nameFor("eqInjury") == nil)
+    check("the day courses", info.bruisedSole.treatDays == 1 and info.abscess.treatDays == 1 and info.overreach.treatDays == 1
+        and info.tendon.treatDays == nil)
+
+    -- Clock maths.
+    check("an injury on our clock lasts its months in days", EqInjury.clockFor(2, 100, 28) == 156 and EqInjury.clockFor(1.5, 10, 1) == 12)
+    check("months left on our clock", EqInjury.monthsLeftOnClock(156, 128, 28) == 1 and EqInjury.monthsLeftOnClock(10, 20, 28) == 0)
+    check("whole months shown", EqInjury.wholeMonths(0.2) == 1 and EqInjury.wholeMonths(2) == 2 and EqInjury.wholeMonths(2.01) == 3)
+    check("a retired horse pays 40%", EqInjury.fee(4000, true) == 1600 and EqInjury.fee(4000, false) == 4000)
+    check("the event colic chance follows RLRM's age bands",
+        EqInjury.monthlyChance({ { ageMonths = 11, perMonth = 0.003 }, { ageMonths = 12, perMonth = 0.006 } }, 6) == 0.003
+        and EqInjury.monthlyChance({ { ageMonths = 11, perMonth = 0.003 }, { ageMonths = 12, perMonth = 0.006 } }, 60) == 0.006)
+
+    -- Our own clock, with RLRM's diseases off: the injury heals on its day, whatever the date it began.
+    local day = 40
+    g_currentMission = { environment = { currentMonotonicDay = day, daysPerPeriod = 3 } }
+    local record = { injury = { name = "soreBack", untilDay = 49 } }
+    local healedOn
+    for d = 40, 60 do
+        g_currentMission.environment.currentMonotonicDay = d
+        if EqInjury.daily(record, {}) then healedOn = d break end
+    end
+    check("a rest on our clock heals on its day", healedOn == 49 and record.injury == nil, tostring(healedOn))
+    local old = { injury = { name = "tendon", monthsLeft = 2 } }
+    g_currentMission.environment.currentMonotonicDay = 100
+    EqInjury.daily(old, {})
+    check("an old save's months turn into days", old.injury.untilDay == 106 and old.injury.monthsLeft == nil)
+    check("months left while resting", EqInjury.monthsLeft(old, {}) == 2)
+    g_currentMission = nil
+
+    -- RLRM's parser and progression, from the checkout.
+    RmLogging = { LOG_LEVEL = { TRACE = 5 }, getLogger = function()
+        local quiet = function() end
+        return { trace = quiet, debug = quiet, info = quiet, warning = quiet, error = quiet, level = 0 }
+    end }
+    string.split = string.split or function(text, sep)
+        local parts = {}
+        for part in (text .. sep):gmatch("(.-)" .. sep:gsub("%p", "%%%0")) do table.insert(parts, part) end
+        return parts
+    end
+    for _, file in ipairs({ "RLDiseaseRecord", "RLDiseaseEffects", "RLDiseaseRates", "RLDiseaseFatality",
+        "RLDiseaseProgression", "RLDiseaseDefinition", "RLDiseaseTransmission" }) do
+        dofile(rlrmPath .. "/scripts/disease/" .. file .. ".lua")
+    end
+    local registry, warnings = RLDiseaseDefinition.parse(TestXML.load("data/injuries.xml"),
+        { animalTypes = { HORSE = 7 }, i18n = { getText = function(_, key) return key end } })
+    local list = {}
+    for _, w in ipairs(warnings) do table.insert(list, tostring(w.title) .. ":" .. tostring(w.rule)) end
+    check("RLRM's parser takes every injury without a warning", #warnings == 0, table.concat(list, " "))
+    local count = 0
+    for title, model in pairs(registry) do
+        count = count + 1
+        check(title .. " cannot spread", RLDiseaseTransmission.betaMonthly(model, 360, 0, 1) == 0
+            and RLDiseaseTransmission.betaMonthly(model, 360, 0, 28) == 0)
+        check(title .. " never kills", model.caseFatality == 0)
+        check(title .. " never starts on its own", EqInjury.monthlyChance(model.infection, 60) == 0)
+        check(title .. " is treatable", model.treatment ~= nil and model.treatment.outcome == "cure")
+    end
+    check("RLRM builds all eight injuries", count == 8, tostring(count))
+
+    -- Tick a record through RLRM's driver: untreated it heals when its months are up; treated
+    -- it heals when the course ends; a day course ends the next day. Every day count.
+    local function heal(title, dpp, treat, dayCourse)
+        local model = registry[title]
+        local disease = RLDiseaseRecord.new(model, title)
+        disease.state = RLDiseaseRecord.STATE.INFECTIOUS
+        local running = false
+        if treat then
+            RLDiseaseRecord.enrolTreatment(disease, model.treatment)
+            running = true
+            if dayCourse then disease.treatmentMonthsRemaining = 1 / dpp end
+        end
+        local billed = 0
+        for tick = 1, 400 do
+            local _, detail = RLDiseaseProgression.advance(disease, model,
+                { daysPerPeriod = dpp, vulnerability = 1, treatmentRunning = running, rng = function() return 0.5 end })
+            if detail.served then
+                local cost = model.treatment.cost
+                if dayCourse then cost = cost * dpp end
+                billed = billed + cost / dpp
+            end
+            if disease.state == RLDiseaseRecord.STATE.RECOVERED then return tick, billed end
+        end
+        return nil, billed
+    end
+    for _, dpp in ipairs({ 1, 3, 28 }) do
+        local ticks = heal("eqInjuryTendon", dpp, false)
+        check("an untreated tendon strain heals in 9 months at " .. dpp .. " day(s) a month", ticks == 9 * dpp, tostring(ticks))
+        local treated, bill = heal("eqInjuryTendon", dpp, true)
+        check("a treated tendon strain heals in 4 months at " .. dpp, treated == 4 * dpp, tostring(treated))
+        check("and costs 4 x $4,000 at " .. dpp, math.abs(bill - 16000) < 1, tostring(bill))
+        local dayTicks, dayBill = heal("eqInjuryBruisedSole", dpp, true, true)
+        check("a bruised sole's day course takes one day at " .. dpp, dayTicks == 1, tostring(dayTicks))
+        check("and costs a flat $400 at " .. dpp, math.abs(dayBill - 400) < 1e-6, tostring(dayBill))
+        local abscess = heal("eqInjuryAbscess", dpp, false)
+        check("an untreated abscess takes its month and a half at " .. dpp, abscess == math.ceil(1.5 * dpp - 1e-9), tostring(abscess))
+    end
+end
+injuryTests()
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

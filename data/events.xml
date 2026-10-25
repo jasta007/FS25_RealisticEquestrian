@@ -34,9 +34,10 @@
                         its name ("Pallegney Grand Prix")
 
     goings (shown as Conditions): injury multiplies the injury chance in those conditions.
-    risk: injuries a horse can come back from, by how often each happens, the months of box rest
-        and the vet bill each month. careerEnding: chance a serious injury ends the horse's
-        career instead, only with the forced retirement setting on (the default is off).
+    risk: the injuries a horse can pick up, by how often each happens. How long each takes to heal,
+        treated or rested, and what treatment costs are in data/injuries.xml. careerEnding: chance
+        the injury ends the horse's career instead, only with the forced retirement setting on (the
+        default is off).
 -->
 <events>
     <disciplines>
@@ -161,8 +162,13 @@
     </goings>
 
     <risk>
-        <injury name="minor"    chance="0.6" months="1" monthlyCost="1000"/>
-        <injury name="moderate" chance="0.3" months="3" monthlyCost="3500"/>
-        <injury name="serious"  chance="0.1" months="6" monthlyCost="10000" careerEnding="0.1"/>
+        <injury name="bruisedSole"  chance="0.25"/>
+        <injury name="abscess"      chance="0.18"/>
+        <injury name="overreach"    chance="0.17"/>
+        <injury name="soreBack"     chance="0.15"/>
+        <injury name="splints"      chance="0.10"/>
+        <injury name="tendon"       chance="0.08"/>
+        <injury name="chipFracture" chance="0.04" careerEnding="0.1"/>
+        <injury name="suspensory"   chance="0.03" careerEnding="0.25"/>
     </risk>
 </events>

@@ -37,6 +37,8 @@ EqRLRM.OPTIONAL = {
     awayVisuals = { { "RealisticLivestock_AnimalClusterHusbandry", "updateVisuals" } },
     metabolismFitness = { { "AnimalHorse", "changeFitness" } },
     listBadge = { { "RLAnimalQuery", "formatAnimalRow" } },
+    injuries = { { "DiseaseManager", "loadDiseases" }, { "DiseaseManager", "contractDisease" }, { "Disease", "onDayChanged" },
+        { "RLDiseaseDefinition", "parse" } },
     dealerDelivery = { { "RLAnimalMoveService", "moveAnimals" }, { "RLAnimalMoveService", "getValidDestinations" },
         { "RLAnimalMoveService", "getErrorText" } },
 }

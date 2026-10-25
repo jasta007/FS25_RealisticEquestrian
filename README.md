@@ -119,8 +119,16 @@ uses its genetics, health and fitness.
 ### Risk, injuries and retirement
 - Horses can be scratched, refuse, fall or be pulled up. Cross country and steeplechase are the
   riskiest, dressage the safest.
-- Injuries are rare but cost months of rest and real vet bills. The Events tab shows the risk for
-  each event and for your chosen horse.
+- Injuries are rare. The Events tab shows the risk for each event and for your chosen horse.
+- An injury shows on the horse's **Diseases** page in Realistic Livestock, like any condition.
+  Start treatment there to heal it sooner (the vet bills it as medicine), leave it untreated to
+  heal for free but slowly, or cull. Each injury has its own trade-off: a bruised sole is a
+  one-day $400 fix or a month of rest; a chip fracture is two months of surgery at $12,000 a
+  month or a year off. Injuries never spread, and an injured horse can't be sold until it heals.
+- **Retire** on that page (or `eqRetire`) cuts an injured horse's treatment fee by 60%.
+- Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
+  (colic), more after a long trip. A sick horse can't be entered until it is better.
+- With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
 - Pregnant mares stop competing, and you decide when a horse retires. Forced retirement after a
   serious injury is optional.
 

@@ -13,6 +13,8 @@ EqHorseRecord.ORIGIN_BRED = "bred"
 EqHorseRecord.ORIGIN_DEALER = "dealer"
 
 EqHorseRecord.FOCUS_BALANCED = "balanced"
+--- The three injuries of 0.1.0.0, and the injury each becomes in a save made by that version.
+EqHorseRecord.OLD_INJURIES = { minor = "soreBack", moderate = "tendon", serious = "suspensory" }
 
 
 --- @param id string RLRM identifier
@@ -27,7 +29,7 @@ function EqHorseRecord.new(id)
     self.origin = EqHorseRecord.ORIGIN_ROLLED
     self.retired = false
     self.careerEnded = false     -- retired by a career-ending injury; cannot be undone
-    self.injury = nil            -- { name, monthsLeft, monthlyCost } while on box rest
+    self.injury = nil            -- while hurt: { name, rlrm = true } or { name, untilDay } (see EqInjury)
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
@@ -71,8 +73,9 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setBool(key .. "#careerEnded", self.careerEnded)
     if self.injury ~= nil then
         xmlFile:setString(key .. ".injury#name", self.injury.name)
-        xmlFile:setInt(key .. ".injury#monthsLeft", self.injury.monthsLeft)
-        xmlFile:setFloat(key .. ".injury#monthlyCost", self.injury.monthlyCost)
+        if self.injury.rlrm then xmlFile:setBool(key .. ".injury#rlrm", true) end
+        if self.injury.untilDay ~= nil then xmlFile:setInt(key .. ".injury#untilDay", self.injury.untilDay) end
+        if self.injury.monthsLeft ~= nil then xmlFile:setInt(key .. ".injury#monthsLeft", self.injury.monthsLeft) end
     end
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
     xmlFile:setInt(key .. "#idleDays", self.idleDays)
@@ -115,11 +118,16 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.retired = xmlFile:getBool(key .. "#retired", false)
     self.careerEnded = xmlFile:getBool(key .. "#careerEnded", false)
     if xmlFile:hasProperty(key .. ".injury") then
+        local name = xmlFile:getString(key .. ".injury#name", "soreBack")
         self.injury = {
-            name = xmlFile:getString(key .. ".injury#name", "minor"),
-            monthsLeft = xmlFile:getInt(key .. ".injury#monthsLeft", 1),
-            monthlyCost = xmlFile:getFloat(key .. ".injury#monthlyCost", 0),
+            name = EqHorseRecord.OLD_INJURIES[name] or name,
+            rlrm = xmlFile:getBool(key .. ".injury#rlrm", false) or nil,
+            untilDay = xmlFile:getInt(key .. ".injury#untilDay"),
         }
+        -- Saves from before the day clock kept whole months left; EqInjury.daily turns them into days.
+        if not self.injury.rlrm and self.injury.untilDay == nil then
+            self.injury.monthsLeft = xmlFile:getInt(key .. ".injury#monthsLeft", 1)
+        end
     end
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
     self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
