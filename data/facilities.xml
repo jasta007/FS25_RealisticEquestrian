@@ -49,9 +49,9 @@
           riddenStamina="0.35" riddenSpeed="0.15" riddenAgility="0.25"
           events="crossCountry:0.03 eventing:0.03"/>
     <kind name="roundPen" radius="15" fullAt="1"
-          ownedStamina="0.10" ownedTemperament="0.10"
-          riddenStamina="0.30" riddenTemperament="0.30"
-          events="dressage:0.01"/>
+          ownedAgility="0.05" ownedTemperament="0.15"
+          riddenAgility="0.15" riddenTemperament="0.40"
+          events="dressage:0.03"/>
     <kind name="jumps" radius="20" fullAt="6"
           ownedAgility="0.10"
           riddenAgility="0.40" riddenTemperament="0.10"
