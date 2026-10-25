@@ -248,7 +248,7 @@ dealer's view of it.
   injury (3 months, $3,500 a month), and a few serious (6 months, $10,000 a month). Bills are
   charged at the start of each month. A resting horse can't compete and doesn't train, so its
   stats fade a little.
-- **Injury risk** shows on the Events tab as Low, Moderate, High or Very high: the Risk column
+- **Injury risk** shows on the Events tab as Low, Minor, Moderate or Risky (from about 0.75%, 2% and 3% injury chance a run): the Risk column
   is for a typical horse (discipline, level, conditions and how far the venue is), and the
   selected horse's panel shows that horse's own risk (its fitness, stamina and how likely it is
   to fall). It reads Off with injuries turned off.

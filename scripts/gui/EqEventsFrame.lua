@@ -40,9 +40,9 @@ EqEventsFrame.TRAINING_COLORS = {
 }
 EqEventsFrame.RISK_COLORS = {
     low = "rl_ui_genetics_veryHigh",
-    moderate = "rl_ui_genetics_average",
-    high = "rl_ui_genetics_low",
-    veryHigh = "rl_ui_genetics_extremelyLow",
+    minor = "rl_ui_genetics_average",
+    moderate = "rl_ui_genetics_low",
+    risky = "rl_ui_genetics_extremelyLow",
 }
 
 

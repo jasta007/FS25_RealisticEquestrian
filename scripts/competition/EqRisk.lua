@@ -95,9 +95,9 @@ EqRisk.TYPICAL_TEMPERAMENT = 50
 
 --- Injury risk words, by the chance of an injury in one run.
 EqRisk.RISK_BANDS = {
-    { from = 0.03, name = "veryHigh" },
-    { from = 0.02, name = "high" },
-    { from = 0.0075, name = "moderate" },
+    { from = 0.03, name = "risky" },
+    { from = 0.02, name = "moderate" },
+    { from = 0.0075, name = "minor" },
     { from = -math.huge, name = "low" },
 }
 

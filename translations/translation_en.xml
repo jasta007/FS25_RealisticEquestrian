@@ -143,9 +143,9 @@
         <text name="eq_ui_col_risk" text="Risk"/>
         <text name="eq_ui_injuryRisk" text="Injury risk"/>
         <text name="eq_risk_low" text="Low"/>
+        <text name="eq_risk_minor" text="Minor"/>
         <text name="eq_risk_moderate" text="Moderate"/>
-        <text name="eq_risk_high" text="High"/>
-        <text name="eq_risk_veryHigh" text="Very high"/>
+        <text name="eq_risk_risky" text="Risky"/>
         <text name="eq_risk_off" text="Off"/>
         <text name="eq_ui_col_level" text="Level"/>
         <text name="eq_ui_col_type" text="Type"/>
