@@ -73,19 +73,13 @@ function EqDealer.statIndex(stat)
 end
 
 
---- Trained levels for a green horse at the dealer.
+--- Trained levels for a horse at the dealer: the usual starting curve, a little lower.
 --- @param ceilings table
 --- @param ageMonths number
 --- @param rng table EqRandom
 --- @return table trained
 function EqDealer.greenTrained(ceilings, ageMonths, rng)
-    local trained = {}
-    local maturity = EqStats.maturity(ageMonths or 0)
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        local share = maturity * rng:uniform(EqConstants.DEALER_TRAINED_MIN, EqConstants.DEALER_TRAINED_MAX)
-        trained[stat] = EqStats.clamp(math.max(EqConstants.FOAL_TRAINED, ceilings[stat] * share), 0, ceilings[stat])
-    end
-    return trained
+    return EqStats.initialTrained(ceilings, ageMonths, rng, EqConstants.DEALER_START_SHIFT)
 end
 
 
@@ -144,15 +138,32 @@ function EqDealer.talentFactor(score)
 end
 
 
+--- What the horse can do now: the mean of its two best trained stats.
 --- @param trained table
---- @param ceilings table
---- @return number factor SCHOOL_BASE (green) .. SCHOOL_BASE + SCHOOL_RANGE (fully schooled)
-function EqDealer.schoolFactor(trained, ceilings)
-    local share = 0
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        share = share + EqStats.clamp((trained[stat] or 0) / math.max(ceilings[stat], 1), 0, 1)
-    end
-    return EqConstants.SCHOOL_BASE + EqConstants.SCHOOL_RANGE * share / #EqConstants.STAT_KEYS
+--- @return number score
+function EqDealer.skillScore(trained)
+    local values = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do table.insert(values, trained[stat] or 0) end
+    table.sort(values, function(a, b) return a > b end)
+    return (values[1] + values[2]) / 2
+end
+
+
+--- @param score number from skillScore
+--- @return number factor times the base price
+function EqDealer.skillFactor(score)
+    local factor = 2 ^ ((score - EqConstants.SKILL_PIVOT) / EqConstants.SKILL_DOUBLING)
+    return EqStats.clamp(factor, EqConstants.VALUE_MIN_FACTOR, EqConstants.VALUE_MAX_FACTOR)
+end
+
+
+--- Talent's share of a horse's value at this age.
+--- @param ageMonths number
+--- @return number weight POTENTIAL_WEIGHT_YOUNG .. POTENTIAL_WEIGHT_ADULT
+function EqDealer.potentialWeight(ageMonths)
+    local from, to = EqConstants.AGE_GROUNDWORK, EqConstants.POTENTIAL_ADULT_MONTHS
+    local t = EqStats.clamp(((ageMonths or 0) - from) / (to - from), 0, 1)
+    return EqConstants.POTENTIAL_WEIGHT_YOUNG + (EqConstants.POTENTIAL_WEIGHT_ADULT - EqConstants.POTENTIAL_WEIGHT_YOUNG) * t
 end
 
 
@@ -166,16 +177,43 @@ function EqDealer.ageFactor(ageMonths)
 end
 
 
---- A horse's price with our premium.
+--- What the horse is worth beyond its talent and skill: soundness and whether it can breed.
+--- @param animal table|nil RLRM Animal; nil reads as healthy and entire
+--- @param record table|nil our record (injury, careerEnded)
+--- @return table condition { soundness 0..1 (performance value kept), intact boolean }
+function EqDealer.condition(animal, record)
+    local health = 1
+    if animal ~= nil and animal.getHealthFactor ~= nil then
+        local ok, value = pcall(animal.getHealthFactor, animal)
+        if ok and type(value) == "number" then health = EqStats.clamp(value, 0, 1) end
+    end
+    local soundness = health
+    if record ~= nil and record.careerEnded then
+        soundness = 0
+    elseif record ~= nil and record.injury ~= nil then
+        soundness = soundness * EqConstants.VALUE_INJURED_FACTOR
+    end
+    local gelding = animal ~= nil and animal.gender == "male" and animal.isCastrated == true
+    return { health = health, soundness = soundness, intact = not gelding }
+end
+
+
+--- A horse's price with our premium: skill now and talent to come, blended by age, as a riding
+--- horse (kept as far as it is sound) and as breeding stock (only while entire).
 --- @param rlrmPrice number RLRM's price for the horse
 --- @param basePrice number the subtype's base price at this age
 --- @param shownCeilings table the potential the player can see
 --- @param trained table
 --- @param ageMonths number
+--- @param condition table|nil from EqDealer.condition; nil for a sound, entire horse
 --- @return number price
-function EqDealer.price(rlrmPrice, basePrice, shownCeilings, trained, ageMonths)
-    local factor = EqDealer.talentFactor(EqDealer.talentScore(shownCeilings))
-        * EqDealer.schoolFactor(trained, shownCeilings)
+function EqDealer.price(rlrmPrice, basePrice, shownCeilings, trained, ageMonths, condition)
+    condition = condition or { health = 1, soundness = 1, intact = true }
+    local weight = EqDealer.potentialWeight(ageMonths)
+    local talent = EqDealer.talentFactor(EqDealer.talentScore(shownCeilings))
+    local performance = weight * talent + (1 - weight) * EqDealer.skillFactor(EqDealer.skillScore(trained))
+    local stud = condition.intact and talent * condition.health or 0
+    local factor = (1 - EqConstants.STUD_SHARE) * performance * condition.soundness + EqConstants.STUD_SHARE * stud
     local premium = basePrice * (factor - 1) * EqDealer.ageFactor(ageMonths or 0)
     return math.max(rlrmPrice + premium, rlrmPrice * EqConstants.VALUE_FLOOR)
 end

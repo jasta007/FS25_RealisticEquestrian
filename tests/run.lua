@@ -128,11 +128,47 @@ check("elite x elite averages below the parents", total / 2000 < 1.5, string.for
 -- Age curve.
 check("foals do groundwork only", EqStats.ageTrainingFactor(12) == 0.3)
 check("prime age trains fully", EqStats.ageTrainingFactor(100) == 1.0)
-check("an untracked yearling starts at foal level",
-    EqStats.initialTrained(average, 12, EqRandom.new(1)).speed == EqConstants.FOAL_TRAINED)
-local adult = EqStats.initialTrained(average, 120, EqRandom.new(1))
-check("an untracked adult is part-trained, below its ceiling", adult.speed > 30 and adult.speed < 70,
-    string.format("got %.1f", adult.speed))
+do
+    -- Starting stats: a bell curve, low for the young, around START_MEAN for adults.
+    local function spread(ceilings, age, n)
+        local sum, sq, over80, values = 0, 0, 0, 0
+        for i = 1, n do
+            local t = EqStats.initialTrained(ceilings, age, EqRandom.new("start " .. i))
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do
+                sum, sq, values = sum + t[stat], sq + t[stat] ^ 2, values + 1
+                if t[stat] > 80 then over80 = over80 + 1 end
+            end
+        end
+        local mean = sum / values
+        return mean, math.sqrt(sq / values - mean ^ 2), over80 / values
+    end
+    local typical = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
+    local mean, sd = spread(typical, 120, 2000)
+    check("adult starting stats centre around 40", mean > 37 and mean < 43, string.format("%.1f", mean))
+    check("adult starting stats spread widely", sd > 11 and sd < 16, string.format("%.1f", sd))
+    -- Across real rolled horses (each with its own ceilings), a start above 80 is very rare.
+    local over80, values, horses80 = 0, 0, 0
+    for i = 1, 3000 do
+        local record = EqRegistry.rollRecord("adult " .. i, 120, 1, false)
+        local any = false
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do
+            values = values + 1
+            if record.trained[stat] > 80 then over80, any = over80 + 1, true end
+        end
+        if any then horses80 = horses80 + 1 end
+    end
+    print(string.format("info: adult starting stats: mean %.1f, sd %.1f; %.2f%% of stats and %.1f%% of horses above 80",
+        mean, sd, 100 * over80 / values, 100 * horses80 / 3000))
+    check("starting above 80 is very rare", over80 > 0 and over80 / values < 0.005, string.format("%d of %d", over80, values))
+    local young = spread(typical, 12, 500)
+    check("a yearling starts low", young > 12 and young < 25, string.format("%.1f", young))
+    local foal = EqStats.initialTrained(typical, 0, EqRandom.new(1))
+    check("a newborn starts near foal level", math.abs(foal.speed - EqConstants.START_FOAL_MEAN) < 15)
+    local talented = spread({ stamina = 95, speed = 95, agility = 95, temperament = 95 }, 120, 500)
+    check("talent leans the start upward", talented > mean + 4, string.format("%.1f vs %.1f", talented, mean))
+    local capped = EqStats.initialTrained({ stamina = 42, speed = 42, agility = 42, temperament = 42 }, 120, EqRandom.new(3))
+    check("a start never passes the ceiling", capped.speed <= 42)
+end
 
 -- SEEDED BREEDING through RLRM's own BreedingMath
 
@@ -507,7 +543,7 @@ for i = 1, 500 do
         homeSum = homeSum + home.trained[stat] / hc[stat]
     end
 end
-check("dealer horses are greener than home-produced ones", greenSum < 0.7 * homeSum,
+check("dealer horses are greener than home-produced ones", greenSum < 0.95 * homeSum,
     string.format("%.2f vs %.2f", greenSum / 2000, homeSum / 2000))
 local d1, d2 = EqRegistry.rollRecord("DE 3 77", 60, 1.2, true), EqRegistry.rollRecord("DE 3 77", 60, 1.2, true)
 check("a dealer horse rolls the same everywhere", d1.trained.speed == d2.trained.speed and d1.advertised.agility == d2.advertised.agility
@@ -542,9 +578,22 @@ local green = { stamina = 25, speed = 25, agility = 20, temperament = 20 }
 local schooled = { stamina = 84, speed = 78, agility = 57, temperament = 57 }
 local greenPrice = EqDealer.price(4000, 5000, c85, green, 60)
 local schooledPrice = EqDealer.price(4000, 5000, c85, schooled, 60)
-check("a green talent-85 horse costs about $9-15k", greenPrice > 9000 and greenPrice < 15000, string.format("%.0f", greenPrice))
-check("schooling adds value, but not a fortune", schooledPrice > greenPrice and schooledPrice < 1.7 * greenPrice,
+check("a green talent-85 horse costs about $6-12k", greenPrice > 6000 and greenPrice < 12000, string.format("%.0f", greenPrice))
+check("skill drives the price: a schooled horse is worth far more", schooledPrice > 2 * greenPrice,
     string.format("%.0f -> %.0f", greenPrice, schooledPrice))
+local youngTalent = EqDealer.price(4000, 5000, c85, green, 20)
+local youngPlain = EqDealer.price(4000, 5000, { stamina = 60, speed = 60, agility = 60, temperament = 60 }, green, 20)
+check("in a young horse, potential is worth a lot", youngTalent > 1.8 * youngPlain,
+    string.format("%.0f vs %.0f", youngTalent, youngPlain))
+local sick = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 0.05, soundness = 0.05, intact = true })
+check("a sick horse loses most of its premium", sick < 0.4 * schooledPrice, string.format("%.0f", sick))
+local gelded = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 1, soundness = 1, intact = false })
+check("gelding takes away the stud value", gelded < schooledPrice and gelded > 0.6 * schooledPrice,
+    string.format("%.0f vs %.0f", gelded, schooledPrice))
+local ended = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 1, soundness = 0, intact = true })
+check("a career-ended horse keeps only its stud value", ended < 0.5 * schooledPrice, string.format("%.0f", ended))
+check("a gelding with no stud value reads as not intact", not EqDealer.condition({ gender = "male", isCastrated = true }, nil).intact
+    and EqDealer.condition({ gender = "female" }, nil).intact)
 check("an old horse's talent is worth less", EqDealer.price(4000, 5000, c85, schooled, 200) < 0.6 * schooledPrice)
 local poorPrice = EqDealer.price(4000, 5000, { stamina = 50, speed = 50, agility = 50, temperament = 50 }, green, 60)
 check("a poor horse is cheaper, but never nothing", poorPrice < 0.4 * 4000 and poorPrice >= 4000 * EqConstants.VALUE_FLOOR,

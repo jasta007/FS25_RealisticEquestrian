@@ -55,8 +55,14 @@ A foal born on a farm inherits its four stat genes, and the hidden talent budget
 sire through RLRM's own breeding maths (`BreedingMath.breedOffspring`). Each parent's gene is first
 pulled 40% of the way back toward average, so two elite parents give a strong foal, not a
 guaranteed better one; selective breeding over generations is how the best horses are made. A
-sire bought as a straw breeds true to the stats its identifier rolls. Foals start every stat at
-10 and train up from there. `eqHorses` shows each horse as `bred` or `rolled`.
+sire bought as a straw breeds true to the stats its identifier rolls.
+
+**Starting stats.** The first time the mod sees a horse, each stat is drawn from a bell curve.
+Foals start low (around 12), and the centre rises with age to about 40 for a horse of four or
+more, with a wide spread. A talented horse's stats lean a little higher, and a stat never starts
+above its potential. Starting above 80 is very rare: about one horse in 500. Dealer horses start a
+few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
+new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
 ## Training
 
@@ -154,18 +160,22 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
 
 - **Talent:** a horse's potential leans on its RLRM genetics, so RLRM's dealer quality setting
   also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
-- **Green:** dealer horses arrive with little training, so a good one needs a year or more of
-  work before it wins much above Novice.
+- **Green:** dealer horses start a few points lower than a home-produced horse of the same age,
+  so a good one needs a year or more of work before it wins much above Novice.
 - **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
   They are the dealer's view: usually right, sometimes generous, now and then modest. After three
   months on your farm you find out, with a message saying whether the horse is better, worse or
   about what the dealer said, and its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
-- **Price:** RLRM's price plus a premium for talent (it doubles every 7.5 points of the two best
-  potentials) and schooling, shrinking once the horse is past its peak. Selling goes through the
+- **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
+  most of it: the premium doubles every 10 points above 50, so a horse with stats in the 80s is
+  very expensive. Potential (the two best potentials, doubling every 7.5 points) is most of a
+  young horse's value and a small part of a made horse's. A quarter of the premium is stud value,
+  which a gelding loses. The rest scales with RLRM's health, drops while the horse is injured, and
+  is gone once an injury has ended its career. The premium shrinks once the horse is past its peak. Selling goes through the
   same price, and RLRM's dealer markup means buying and selling straight back always loses.
 
-In the test model, a talent-85 horse bought for about $12,500 is worth about the same three months
+In the test model, a talent-85 horse bought for about $10,500 is worth about the same three months
 later, has paid for itself within the second year, and makes good money after that, before vet
 bills. `eqDealer` (testing) lists the dealer's horses with their real potential and the
 dealer's view of it.

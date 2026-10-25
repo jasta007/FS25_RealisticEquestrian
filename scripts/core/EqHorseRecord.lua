@@ -64,6 +64,7 @@ end
 function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. "#id", self.id)
     xmlFile:setString(key .. "#origin", self.origin)
+    if self.redrawStart then xmlFile:setBool(key .. "#redrawStart", true) end
     xmlFile:setString(key .. "#focus", self.focus)
     xmlFile:setBool(key .. "#retired", self.retired)
     xmlFile:setBool(key .. "#careerEnded", self.careerEnded)
@@ -107,6 +108,7 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
 
     local self = EqHorseRecord.new(id)
     self.origin = xmlFile:getString(key .. "#origin", EqHorseRecord.ORIGIN_ROLLED)
+    self.redrawStart = xmlFile:getBool(key .. "#redrawStart", false) or nil
     self.focus = xmlFile:getString(key .. "#focus", EqHorseRecord.FOCUS_BALANCED)
     self.retired = xmlFile:getBool(key .. "#retired", false)
     self.careerEnded = xmlFile:getBool(key .. "#careerEnded", false)
