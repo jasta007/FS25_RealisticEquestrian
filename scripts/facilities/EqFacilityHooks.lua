@@ -310,18 +310,19 @@ function EqFacilityHooks.kindTitle(kind)
 end
 
 
---- "Riding hall (Agility +35%, Temperament +35%, Stamina +15%)": what riding inside a kind adds
---- to the player's own training, biggest first, scaled by how much of it the farm has (a jump
---- course needs six fences for the full bonus). Before the ridden cap, which only bites when
---- several kinds add up.
+--- "Riding hall" and {"Agility +35%", "Temperament +35%", "Stamina +15%"}: what riding inside a
+--- kind adds to the player's own training, biggest first, scaled by how much of it the farm has (a
+--- jump course needs six fences for the full bonus). Before the ridden cap, which only bites when
+--- several kinds add up. Separate lines because the help panel cuts long lines off.
 --- @param kindName string
 --- @param farmId number|nil
---- @return string text
+--- @return string title
+--- @return table bonuses one "Stat +N%" string per stat, maybe empty
 function EqFacilityHooks.insideText(kindName, farmId)
     local title = EqFacilityHooks.kindTitle(kindName)
     local config = EqFacilityHooks.config
     local kind = config ~= nil and config.kindByName[kindName] or nil
-    if kind == nil then return title end
+    if kind == nil then return title, {} end
 
     local scale = EqFacility.scale(kind, EqFacilityHooks.countsForFarm(farmId)[kindName])
     local stats = {}
@@ -335,6 +336,5 @@ function EqFacilityHooks.insideText(kindName, farmId)
         table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_" .. stat),
             math.floor(kind.ridden[stat] * scale * 100 + 0.5)))
     end
-    if #parts == 0 then return title end
-    return string.format("%s (%s)", title, table.concat(parts, ", "))
+    return title, parts
 end
