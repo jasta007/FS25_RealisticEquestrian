@@ -245,6 +245,11 @@
         <text name="eq_deliver_doneMany" text="%d horses delivered. They leave for their events."/>
         <text name="eq_deliver_noRoom" text="Can't deliver: your horses need a free place in one of your pastures to come home to."/>
         <text name="eq_deliver_failed" text="Delivery failed: %s"/>
+        <text name="eq_deliver_title" text="Deliver to event"/>
+        <text name="eq_deliver_ask" text="%s is waiting to go to an event. Deliver now, or open the dealer as usual?"/>
+        <text name="eq_deliver_askMany" text="%d horses in this trailer are waiting to go to their events. Deliver them now, or open the dealer as usual?"/>
+        <text name="eq_deliver_yes" text="Deliver"/>
+        <text name="eq_deliver_no" text="Open dealer"/>
         <text name="eq_loose_broughtHome" text="Your staff brought %s back to %s."/>
         <text name="eq_loose_broughtHomeUnnamed" text="Your staff brought a loose horse back to %s."/>
         <text name="eq_ui_result_notDelivered" text="Not delivered"/>

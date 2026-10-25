@@ -144,7 +144,15 @@ end
 --- The action: move the horses home and mark them delivered.
 function EqDelivery.onAction()
     if EqDelivery.pending or EqDelivery.trailer == nil or #EqDelivery.horses == 0 then return end
-    local trailer, horses = EqDelivery.trailer, EqDelivery.horses
+    EqDelivery.deliver(EqDelivery.trailer, EqDelivery.horses)
+end
+
+
+--- Move the horses home and mark them delivered.
+--- @param trailer table vehicle at the dealer
+--- @param horses table RLRM Animals in it waiting for delivery
+function EqDelivery.deliver(trailer, horses)
+    if EqDelivery.pending then return end
     local farmId = g_currentMission:getFarmId()
 
     local destination = EqDelivery.destinationFor(farmId, horses)
@@ -255,13 +263,65 @@ local function registerAction(_, controlling)
 end
 
 
+--- @param horses table
+--- @return string question for the dealer dialog
+local function askText(horses)
+    if #horses == 1 then
+        local name = horses[1].getName ~= nil and horses[1]:getName() or ""
+        if name ~= "" then return string.format(g_i18n:getText("eq_deliver_ask"), name) end
+    end
+    return string.format(g_i18n:getText("eq_deliver_askMany"), #horses)
+end
+
+
+--- The dealer's own key at a trailer: when the trailer holds horses waiting for delivery, ask
+--- first. Yes delivers them and the dealer screen stays shut, so they can't be sold by mistake;
+--- No opens the dealer as usual. In game the extra delivery key was taken by the dealer's key
+--- and by overlay hotkeys, so this is the main way to deliver.
+--- @param show function the AnimalScreen.show we wrap
+local function wrapDealerScreen(show)
+    return function(husbandry, vehicle, isDealer, ...)
+        local horses = {}
+        local mission = g_currentMission
+        EqDelivery.guarded("dealer delivery check", function()
+            if husbandry == nil and isDealer == true and vehicle ~= nil and mission ~= nil and mission:getIsServer()
+                and not EqDelivery.pending and vehicle.getOwnerFarmId ~= nil
+                and vehicle:getOwnerFarmId() == mission:getFarmId() then
+                horses = EqDelivery.awaitingIn(vehicle)
+            end
+        end)
+        if #horses == 0 or YesNoDialog == nil or YesNoDialog.show == nil then
+            return show(husbandry, vehicle, isDealer, ...)
+        end
+
+        local args = { n = select("#", ...), ... }
+        Log:info("EqDelivery: dealer opened with %d horse(s) awaiting delivery; asking", #horses)
+        YesNoDialog.show(function(yes)
+            if yes then
+                EqDelivery.guarded("delivery", function() EqDelivery.deliver(vehicle, horses) end)
+            else
+                show(husbandry, vehicle, isDealer, unpack(args, 1, args.n))
+            end
+        end, nil, askText(horses), g_i18n:getText("eq_deliver_title"),
+            g_i18n:getText("eq_deliver_yes"), g_i18n:getText("eq_deliver_no"))
+    end
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqDelivery.install(guarded)
+    EqDelivery.guarded = guarded
+    if AnimalScreen ~= nil and type(AnimalScreen.show) == "function" then
+        AnimalScreen.show = wrapDealerScreen(AnimalScreen.show)
+        Log:debug("EqDelivery: wrapped AnimalScreen.show for delivery at the dealer")
+    else
+        Log:warning("EqDelivery: AnimalScreen.show not found; delivery only by its own key")
+    end
+
     if InputAction.EQ_DELIVER == nil then
-        Log:warning("EqDelivery: input action EQ_DELIVER missing from modDesc; no delivery at the dealer")
+        Log:warning("EqDelivery: input action EQ_DELIVER missing from modDesc; no delivery key")
         return
     end
-    EqDelivery.guarded = guarded
     PlayerInputComponent.registerGlobalPlayerActionEvents = Utils.appendedFunction(
         PlayerInputComponent.registerGlobalPlayerActionEvents, function(component, controlling)
             guarded("delivery action registration", function() registerAction(component, controlling) end)
