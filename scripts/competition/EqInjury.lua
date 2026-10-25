@@ -43,6 +43,8 @@ EqInjury.info = {}
 EqInjury.models = {}
 EqInjury.xmlPath = nil
 EqInjury.installed = false
+--- True while an event hands out an illness (see rollIllness)
+EqInjury.catching = false
 
 
 --- @param name string injury name from events.xml, e.g. "soreBack"
@@ -234,6 +236,17 @@ function EqInjury.register(m)
     end
     m.diseases = registry
     Log:info("EqInjury: %d injuries added to Realistic Livestock's diseases", count)
+end
+
+
+--- @param text any a disease's display name, as RLRM's messages carry it
+--- @return boolean true for one of our injuries
+function EqInjury.isInjuryName(text)
+    if type(text) ~= "string" then return false end
+    for _, model in pairs(EqInjury.models) do
+        if model.name == text then return true end
+    end
+    return false
 end
 
 
@@ -440,7 +453,10 @@ function EqInjury.rollIllness(animal, travel, rng)
         local chance = math.min(EqInjury.monthlyChance(model.infection, animal.age or 0) * scale
             * EqInjury.EVENT_ILLNESS_MONTHS * (travel or 1), 1)
         if enabled and eligible and roll < chance then
-            m:contractDisease(animal, model)
+            EqInjury.catching = true
+            local ok, err = pcall(m.contractDisease, m, animal, model)
+            EqInjury.catching = false
+            if not ok then error(err, 0) end
             table.insert(caught, model.name or title)
             Log:debug("EqInjury: %s caught %s at an event (chance %.4f)", tostring(animal.uniqueId), title, chance)
         end
@@ -640,6 +656,20 @@ function EqInjury.install(guarded)
             instruction = INSTRUCTION.REMOVE
         end
         return instruction, cost, result
+    end
+
+    -- RLRM logs "Contracted" and "Cured" for every disease; ours already log the injury (with
+    -- what treatment costs) and the recovery, and where an illness was caught, so RLRM's
+    -- matching lines are dropped. Its "Cured" line for an illness stays: we don't post one.
+    if e.Animal ~= nil and e.Animal.addMessage ~= nil then
+        local addMessage = e.Animal.addMessage
+        local quiet = { DISEASE_CONTRACTED = true, DISEASE_CURED = true }
+        e.Animal.addMessage = function(animal, id, args, ...)
+            if quiet[id] and type(args) == "table" and EqInjury.isInjuryName(args[1]) then return end
+            -- An illness from an event: our own line says where it was caught.
+            if id == "DISEASE_CONTRACTED" and EqInjury.catching then return end
+            return addMessage(animal, id, args, ...)
+        end
     end
 
     local dialog = e.DiseaseDialog

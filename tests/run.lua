@@ -1262,6 +1262,23 @@ local function injuryTests()
     g_currentMission.environment.currentMonotonicDay = 12
     local third = fakeDisease.onDayChanged(sole, {}, true, 1)
     check("a healed injury is removed, not left immune", third == "REMOVE" and sole.state == "RECOVERED", tostring(third))
+    -- RLRM's own Contracted and Cured lines are dropped for injuries, kept for its diseases.
+    local posted = {}
+    local fakeAnimal = { addMessage = function(_, id, args) table.insert(posted, id .. " " .. args[1]) end }
+    EqRLRM.env.Animal = fakeAnimal
+    local savedModels = EqInjury.models
+    EqInjury.models = { bruisedSole = { name = "Bruised sole" } }
+    EqInjury.installed = false
+    EqInjury.install(function(_, fn) fn() end)
+    fakeAnimal.addMessage({}, "DISEASE_CONTRACTED", { "Bruised sole" })
+    fakeAnimal.addMessage({}, "DISEASE_CURED", { "Bruised sole" })
+    fakeAnimal.addMessage({}, "DISEASE_CONTRACTED", { "Colic" })
+    EqInjury.catching = true
+    fakeAnimal.addMessage({}, "DISEASE_CONTRACTED", { "Colic" })
+    EqInjury.catching = false
+    check("RLRM's injury lines are dropped, its disease lines kept", #posted == 1 and posted[1] == "DISEASE_CONTRACTED Colic",
+        table.concat(posted, ", "))
+    EqInjury.models = savedModels
     g_currentMission = nil
     EqRLRM.env, EqInjury.installed = savedEnv, savedInstalled
 end
