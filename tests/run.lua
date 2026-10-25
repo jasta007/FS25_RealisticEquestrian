@@ -700,6 +700,11 @@ check("base game stables are not facilities",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
 check("the base game round barn is a round pen",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
+check("a map's own copy of the round barn is a round pen too",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/maps/map/placeables/barn02/barn02.xml", false) == "roundPen")
+check("other barns are not round pens",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn01/barn01.xml", false) == nil
+    and EqFacility.kindForXml(facilities, "data/placeables/mapUS/oldbarn02/barn02.xml", false) == nil)
 check("a round pen is a temperament and dressage place",
     EqFacility.improvedStats(facilities.kindByName.roundPen)[1] == "temperament"
     and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
