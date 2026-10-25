@@ -123,6 +123,36 @@ for _ = 1, 40 do
     herd = foals
 end
 check("selective breeding never gets three stats to 95+", worstViolation <= 2, "max maxed " .. worstViolation)
+-- Translations: no key twice in English, and every other language has each English key with the
+-- same placeholders in the same order (string.format can't reorder them).
+;(function()
+    local function texts(path)
+        local list, byName = {}, {}
+        for _, node in ipairs(TestXML.load(path).root.children[1].children[1].children) do
+            table.insert(list, node.attrs.name)
+            byName[node.attrs.name] = (byName[node.attrs.name] or 0) > 0 and false or node.attrs.text
+        end
+        return list, byName
+    end
+    local function placeholders(text)
+        local found = {}
+        for spec in text:gmatch("%%[-+]?%d*%.?%d*[sdf%%]") do table.insert(found, spec) end
+        return table.concat(found, " ")
+    end
+    local enList, en = texts("translations/translation_en.xml")
+    for _, name in ipairs(enList) do check("English text " .. name .. " appears once", en[name] ~= false) end
+    for _, language in ipairs({ "de" }) do
+        local _, other = texts("translations/translation_" .. language .. ".xml")
+        for _, name in ipairs(enList) do
+            check(language .. " has " .. name, type(other[name]) == "string")
+            if type(other[name]) == "string" and en[name] then
+                check(language .. " " .. name .. " keeps the placeholders", placeholders(other[name]) == placeholders(en[name]),
+                    placeholders(en[name]) .. " / " .. placeholders(other[name]))
+            end
+        end
+    end
+end)()
+
 print(string.format("info: 40 generations of show-jumping selection -> best agility ceiling %.1f, foals with two stats at 99+: %d of 800",
     bestAgility, maxedTwo))
 

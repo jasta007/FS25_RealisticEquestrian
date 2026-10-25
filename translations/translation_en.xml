@@ -163,7 +163,7 @@
         <text name="eq_ui_col_going" text="Conditions"/>
         <text name="eq_ui_col_risk" text="Risk"/>
         <text name="eq_ui_injuryRisk" text="Injury risk"/>
-        <text name="eq_ui_day" text="%d day"/>
+        <text name="eq_ui_dayCount" text="%d day"/>
         <text name="eq_ui_days" text="%d days"/>
         <text name="eq_ui_months" text="%d month(s)"/>
         <text name="eq_ui_perMonth" text="%s a month"/>

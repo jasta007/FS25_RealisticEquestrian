@@ -314,7 +314,7 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     local text
     if onRLRM and info ~= nil then
         local course = info.treatDays ~= nil
-            and string.format(g_i18n:getText(info.treatDays == 1 and "eq_ui_day" or "eq_ui_days"), info.treatDays)
+            and string.format(g_i18n:getText(info.treatDays == 1 and "eq_ui_dayCount" or "eq_ui_days"), info.treatDays)
             or string.format(g_i18n:getText("eq_ui_months"), EqInjury.wholeMonths(info.treatMonths))
         local fee = g_i18n:formatMoney(EqInjury.fee(info.cost, record.retired), 0, true, true)
         if info.treatDays == nil then fee = string.format(g_i18n:getText("eq_ui_perMonth"), fee) end
