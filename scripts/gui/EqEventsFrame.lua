@@ -102,6 +102,11 @@ end
 
 function EqEventsFrame:onFrameOpen()
     EqEventsFrame:superClass().onFrameOpen(self)
+    -- Set the header icon here as well as in the XML: when the XML is read before our atlas is
+    -- known, the icon falls back to the whole base UI atlas.
+    if self.headerIcon ~= nil and self.headerIcon.setImageSlice ~= nil then
+        self.headerIcon:setImageSlice(GuiOverlay.STATE_NORMAL, EqEventsFrame.ICON_SLICE)
+    end
     self:refresh()
     if self.eventsList ~= nil and self.mode == EqEventsFrame.MODE_EVENTS then
         FocusManager:setFocus(self.eventsList)
@@ -307,9 +312,9 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         local row = self.eventRows[index]
         if row == nil then return end
         setCell(cell, "title", row.title)
+        setCell(cell, "type", row.type)
         setCell(cell, "level", row.level)
         setCell(cell, "going", row.going)
-        setCell(cell, "when", row.when)
         setCell(cell, "fee", row.fee)
         setCell(cell, "prize", row.prize)
         setCell(cell, "yours", row.yours)

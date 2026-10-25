@@ -21,6 +21,13 @@
         <text name="eq_discipline_raceShort" text="Flat Racing (sprint)"/>
         <text name="eq_discipline_raceLong" text="Flat Racing (staying)"/>
         <text name="eq_discipline_steeplechase" text="Steeplechase"/>
+        <text name="eq_type_showJumping" text="Show Jumping"/>
+        <text name="eq_type_dressage" text="Dressage"/>
+        <text name="eq_type_crossCountry" text="Cross Country"/>
+        <text name="eq_type_eventing" text="Eventing"/>
+        <text name="eq_type_raceShort" text="Flat Race"/>
+        <text name="eq_type_raceLong" text="Flat Race"/>
+        <text name="eq_type_steeplechase" text="Steeplechase"/>
         <text name="eq_tier_training" text="Young horse"/>
         <text name="eq_tier_novice" text="Novice"/>
         <text name="eq_tier_intermediate" text="Intermediate"/>
@@ -108,6 +115,7 @@
         <text name="eq_ui_col_event" text="Event"/>
         <text name="eq_ui_col_going" text="Conditions"/>
         <text name="eq_ui_col_level" text="Level"/>
+        <text name="eq_ui_col_type" text="Type"/>
         <text name="eq_ui_col_when" text="Results"/>
         <text name="eq_ui_col_fee" text="Entry fee"/>
         <text name="eq_ui_col_prize" text="Prize pool"/>
