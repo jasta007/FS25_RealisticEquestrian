@@ -166,7 +166,7 @@
         <text name="eq_ui_col_horse" text="Horse"/>
         <text name="eq_ui_col_result" text="Result"/>
         <text name="eq_ui_col_status" text="Status"/>
-        <text name="eq_ui_horseDescription" text="Horses eat hay, grain and treats and need water. Healthy mares over 22 months can breed."/>
+        <text name="eq_ui_horseDescription" text="Horses eat hay, oats, barley, corn and treats, and need water. The + marks show which skills a feed builds. Healthy mares over 22 months can breed."/>
         <text name="eq_ui_col_success" text="Success"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Training benefit"/>

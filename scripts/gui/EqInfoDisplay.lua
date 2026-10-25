@@ -609,6 +609,19 @@ function EqInfoDisplay.install(guarded)
     PlayerHUDUpdater.showAnimalInfo = Utils.appendedFunction(PlayerHUDUpdater.showAnimalInfo, function(hudUpdater, animal)
         guarded("horse skills box", function() EqInfoDisplay.showSkillsBox(hudUpdater, animal) end)
     end)
+    -- The base Animals page (husbandry selected in the menu) shows the base game's blurb, which
+    -- still lists sorghum and talks about numbers in brackets; give horses our text there too.
+    if InGameMenuAnimalsFrame ~= nil and InGameMenuAnimalsFrame.displayCluster ~= nil then
+        InGameMenuAnimalsFrame.displayCluster = Utils.appendedFunction(InGameMenuAnimalsFrame.displayCluster,
+            function(frame, animal)
+                guarded("animals page description", function()
+                    if isHorse(animal) and frame.detailDescriptionText ~= nil then
+                        frame.detailDescriptionText:setText(g_i18n:getText("eq_ui_horseDescription"))
+                    end
+                end)
+            end)
+    end
+
     PlayerHUDUpdater.delete = Utils.prependedFunction(PlayerHUDUpdater.delete, function(hudUpdater)
         if hudUpdater.eqSkillsBox ~= nil then
             g_currentMission.hud.infoDisplay:destroyBox(hudUpdater.eqSkillsBox)
@@ -616,5 +629,5 @@ function EqInfoDisplay.install(guarded)
         end
     end)
 
-    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and PlayerHUDUpdater.showAnimalInfo")
+    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos, PlayerHUDUpdater.showAnimalInfo and the Animals page description")
 end
