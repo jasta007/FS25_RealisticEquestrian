@@ -25,6 +25,7 @@ uses its genetics, health and fitness.
 - [Known issues](#known-issues)
 - [Planned features](#planned-features)
 - [Console commands](#console-commands)
+- [A note on AI](#a-note-on-ai)
 - [Credits and licence](#credits-and-licence)
 
 ## Features
@@ -51,16 +52,22 @@ uses its genetics, health and fitness.
   trains no more until tomorrow, and galloping tires it fastest, so choose what to work on.
 - **Animal workers and RLRM's herdsman** keep your horses ticking over for the riding you don't do
   yourself, towards a focus you choose. Only your own riding takes a stat the last few points.
-- Young horses train slower, idle horses lose condition, and old horses slowly decline.
-- RLRM's metabolism gene now matters: a fast-metabolism horse eats more but gets fit sooner.
+- Horses under two can only do light groundwork, so they train at 30% of the full rate, and
+  two-year-olds at 60%. From three to twelve they train at full speed, then slow down again.
+  Idle horses lose condition, and old horses slowly decline.
+- RLRM's metabolism gene now matters: a fast-metabolism horse eats more, but riding builds its
+  RLRM fitness (its condition on event day) up to 45% faster. A slow one is cheaper to keep but
+  takes longer to get fit. It doesn't change how fast stats train.
 
 ### Feed
 - What's in the trough speeds up training: oats, barley and corn boost different stats, and
   carrots and apples boost temperament. Boosts from different feeds add up.
 - The pen's food list shows a row each for Oats, Barley, Corn, Hay and Treats, with the stats
   each boosts.
-- Works with crops from other mods and maps, such as apples, winter barley, winter wheat,
-  alfalfa and clover. Feeds your map doesn't have are simply skipped.
+- Works with crops from other mods and maps: apples from
+  [Orchards And Greenhouses](https://www.farming-simulator.com/mod.php?mod_id=346995&title=fs2025)
+  and the [Geistal](https://www.farming-simulator.com/mod.php?mod_id=337082&title=fs2025) map,
+  plus winter barley, winter wheat, alfalfa and clover. Feeds your map doesn't have are simply skipped.
 - Sorghum is off the menu: it's toxic to horses.
 
 ### Horse buildings
@@ -125,10 +132,14 @@ For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.m
 
 These add horse buildings that speed up training. The mod works fine without them.
 
-- Equestrian Pack (`FS25_horsePack`): riding hall, outdoor training area and L barn
-- Riding Hall 2k26 (`FS25_RidingHall`): riding hall and sellable show jumps
-- Riding Stable (`FS25_RidingStable`): a full riding centre
-- Horse Stable (`FS25_horseStable`)
+- [Rudolf Hoermann Equestrian Pack](https://www.farming-simulator.com/mod.php?mod_id=309997&title=fs2025)
+  (`FS25_horsePack`): riding hall, outdoor training area and L barn
+- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
+  (`FS25_RidingHall`): riding hall and sellable show jumps
+- [Riding Stable](https://www.farming-simulator.com/mod.php?mod_id=320241&title=fs2025)
+  (`FS25_RidingStable`): a full riding centre
+- [Horse Stable](https://www.farming-simulator.com/mod.php?mod_id=312981&title=fs2025)
+  (`FS25_horseStable`)
 
 ## Installation
 
@@ -159,8 +170,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 - **Maps:** any map with horses. Event venues are named after FS25 maps, but none of them need
   to be installed.
-- **Crop mods:** extra feeds such as apples from Orchards and Greenhouses or Geistal's apples work
-  automatically. Other crops can be added in `data/feeds.xml`.
+- **Crop mods:** apples from Orchards And Greenhouses (`APPLE`) and the Geistal map (`APPLE_GT`)
+  work automatically. Other crops can be added in `data/feeds.xml`.
 - **Building mods and maps:** the recommended mods above are recognised, plus some map scenery.
   Other riding halls and arenas may be picked up by name. More can be added in
   `data/facilities.xml`.
@@ -215,11 +226,25 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
 
+## A note on AI
+
+Generative AI is a hot topic right now. I should know: I've been a game designer for 20 years
+and I just got laid off, mostly because AI development is the biggest thing to happen in coding
+since the compiler was invented, and the industry is getting turned upside down by it.
+
+I could be bitter about it and try to fight the inevitable, or I could use it to make awesome
+stuff that I want to play. I chose the latter. I will only use AI where I think it's valuable,
+gives good results and doesn't rip anyone off directly. If you are completely anti-AI, that's
+fair, and this isn't the mod for you. If not, maybe give it a try. I'm happy to take any
+suggestions where you feel I might not be giving anyone their fair dues for their hard work.
+
+James
+
 ## Credits and licence
 
 - **Author:** James ([jasta007](https://github.com/jasta007))
-- Much of the code was written with [Claude Code](https://claude.com/claude-code), Anthropic's AI
-  coding assistant, working to James's design and in-game testing.
+- Code written with [Claude Code](https://claude.com/claude-code), Anthropic's AI coding
+  assistant, to James's design and in-game testing (see [A note on AI](#a-note-on-ai)).
 - Built on [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
   by Ritter, itself based on Arrow-kb's Realistic Livestock. No RLRM files are changed.
 - Icon: John Frederick Herring Senior, *The Interior of a Stable with a Dapple Grey Horse in
