@@ -28,8 +28,13 @@ EqTraining.GAIT_WEIGHTS = {
     reverse = { agility = 2.0, temperament = 2.0 },
 }
 
--- The base game's riding speed factor per gait (Rideable:updateRiding).
-EqTraining.GAIT_SPEED_FACTOR = { reverse = 1, walk = 1, trot = 1, canter = 2, gallop = 3 }
+-- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
+-- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
+-- this, because it is hard mental work: it tires a horse nearly as fast as a gallop.
+EqTraining.GAIT_SPEED_FACTOR = { reverse = 2.5, walk = 1, trot = 1, canter = 2, gallop = 3 }
+
+-- What the base game already credits for backing up; the rest of reverse's factor is ours.
+EqTraining.BASE_REVERSE_FACTOR = 1
 
 -- What staff work on, per focus. Set with the eqFocus console command for now.
 EqTraining.FOCUS = {
@@ -64,6 +69,20 @@ end
 function EqTraining.addRiding(sheet, gait, dt)
     if sheet.ms[gait] == nil or dt <= 0 then return end
     sheet.ms[gait] = sheet.ms[gait] + dt
+end
+
+
+--- Extra riding points for backing up, on top of what the base game credits.
+--- @param timer number weighted milliseconds carried over from earlier frames
+--- @param dt number milliseconds spent backing up this frame
+--- @param fullMs number weighted milliseconds that fill riding from 0 to 100
+--- @return number points whole points to add, number timer what is carried to the next frame
+function EqTraining.reverseExtraRiding(timer, dt, fullMs)
+    local extra = EqTraining.GAIT_SPEED_FACTOR.reverse - EqTraining.BASE_REVERSE_FACTOR
+    timer = (timer or 0) + math.max(dt, 0) * extra
+    local perPoint = fullMs / 100
+    local points = math.floor(timer / perPoint)
+    return points, timer - points * perPoint
 end
 
 
