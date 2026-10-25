@@ -37,6 +37,8 @@ EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH = 3
 EqCompetitionManager.TRANSPORT_SHARE = 0.25
 -- Used when the horse's subtype has no transport price.
 EqCompetitionManager.TRANSPORT_FALLBACK = 150
+-- Horses a farm may enter in one event; more would make one event too lucrative.
+EqCompetitionManager.MAX_HORSES_PER_EVENT = 2
 -- An extra horse on the same Auto Transport trip (the farm already has one going to the event)
 -- shares the truck: it pays this share of the haul. Quarantine abroad is still per horse.
 EqCompetitionManager.TRANSPORT_EXTRA_HORSE_SHARE = 0.25
@@ -652,6 +654,18 @@ end
 
 
 --- @param event table
+--- @param farmId number
+--- @return boolean true when the farm has entered MAX_HORSES_PER_EVENT horses in the event
+function EqCompetitionManager.eventFull(event, farmId)
+    local count = 0
+    for _, entry in ipairs(event.entries or {}) do
+        if entry.farmId == farmId then count = count + 1 end
+    end
+    return count >= EqCompetitionManager.MAX_HORSES_PER_EVENT
+end
+
+
+--- @param event table
 --- @param farmId number|nil
 --- @return boolean true when the farm already sends a horse to the event by Auto Transport
 function EqCompetitionManager.sharesTruck(event, farmId)
@@ -755,6 +769,9 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
     local already = EqCompetitionManager.findEntry(record.id, event.kind)
     if already ~= nil then
         return false, string.format(g_i18n:getText("eq_enter_already"), EqCompetitionManager.eventTitle(already))
+    end
+    if EqCompetitionManager.eventFull(event, farmId) then
+        return false, string.format(g_i18n:getText("eq_enter_eventFull"), EqCompetitionManager.MAX_HORSES_PER_EVENT)
     end
 
     local tier = EqCompetitionManager.config.tierByName[event.tier]
