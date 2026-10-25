@@ -38,6 +38,12 @@ EqEventsFrame.TRAINING_COLORS = {
     low = "rl_ui_genetics_low",
     none = "rl_ui_genetics_extremelyLow",
 }
+EqEventsFrame.RISK_COLORS = {
+    low = "rl_ui_genetics_veryHigh",
+    moderate = "rl_ui_genetics_average",
+    high = "rl_ui_genetics_low",
+    veryHigh = "rl_ui_genetics_extremelyLow",
+}
 
 
 --- @return table self
@@ -285,6 +291,8 @@ function EqEventsFrame:updateHorsePanel()
     setText(self.panelTransport, string.format(g_i18n:getText("eq_ui_transportLine"),
         g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
     setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
+    keepDefaultColor(self.panelRisk)
+    setText(self.panelRisk, row.risk, wordColor(EqEventsFrame.RISK_COLORS, row.riskBand))
 end
 
 
@@ -315,6 +323,9 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         setCell(cell, "type", row.type)
         setCell(cell, "level", row.level)
         setCell(cell, "going", row.going)
+        local risk = cell:getAttribute("risk")
+        keepDefaultColor(risk)
+        setText(risk, row.risk, wordColor(EqEventsFrame.RISK_COLORS, row.riskBand))
         setCell(cell, "fee", row.fee)
         setCell(cell, "prize", row.prize)
         setCell(cell, "yours", row.yours)

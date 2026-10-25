@@ -475,6 +475,21 @@ check("an unfit horse is injured more", EqRisk.injuryChance(xc, intermediate, go
     > 1.5 * EqRisk.injuryChance(xc, intermediate, good, 100, 50, false))
 check("falls over fences injure more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, true)
     == 2 * EqRisk.injuryChance(xc, intermediate, good, 80, 50, false))
+check("a far trip injures more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances.far.injury)
+    > EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances["local"].injury))
+
+-- Risk words on the Events tab.
+local heavy = config.goings[4]
+local function eventBand(discipline, tier, going, distance)
+    return EqRisk.riskBand(EqRisk.eventInjuryChance(config.disciplineByName[discipline], config.tierByName[tier],
+        going, config.distances[distance].injury))
+end
+check("dressage is low risk", eventBand("dressage", "championship", nil, "far") == "low")
+check("training show jumping is low risk", eventBand("showJumping", "training", nil, "local") == "low")
+check("a heavy steeplechase abroad is very high risk", eventBand("steeplechase", "advanced", heavy, "far") == "veryHigh")
+check("a good-going steeplechase at home is high, not very high", eventBand("steeplechase", "advanced", good, "local") == "high")
+check("an unfit horse carries more risk than the event's typical horse",
+    EqRisk.runInjuryChance(xc, intermediate, good, 20, 10, 0.1, 1) > EqRisk.eventInjuryChance(xc, intermediate, good, 1))
 
 local counts, endings, endingsOff = {}, 0, 0
 for i = 1, 20000 do
