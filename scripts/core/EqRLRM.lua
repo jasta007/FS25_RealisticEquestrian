@@ -138,7 +138,7 @@ function EqRLRM.geneBandText(gene)
 end
 
 
---- Every horse on a farm's husbandries, using RLRM's own query helpers.
+--- Every horse on a farm's husbandries, using RLRM's own query helpers, and any being ridden.
 --- @param farmId number
 --- @return table animals RLRM Animal objects
 function EqRLRM.listHorsesForFarm(farmId)
@@ -151,6 +151,19 @@ function EqRLRM.listHorsesForFarm(farmId)
             for _, animal in pairs(spec:getClusters() or {}) do
                 if animal.isHorse ~= nil and animal:isHorse() then table.insert(horses, animal) end
             end
+        end
+    end
+
+    -- A horse being ridden has left its pen until it is put back: it lives on the rideable.
+    local vehicleSystem = g_currentMission ~= nil and g_currentMission.vehicleSystem or nil
+    for _, vehicle in ipairs(vehicleSystem ~= nil and vehicleSystem.vehicles or {}) do
+        local animal = vehicle.spec_rideable ~= nil and vehicle.spec_rideable.cluster or nil
+        if animal ~= nil and animal.isHorse ~= nil and animal:isHorse() and vehicle:getOwnerFarmId() == farmId then
+            local listed = false
+            for _, horse in ipairs(horses) do
+                if horse == animal then listed = true end
+            end
+            if not listed then table.insert(horses, animal) end
         end
     end
 
