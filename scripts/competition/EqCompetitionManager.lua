@@ -37,6 +37,11 @@ EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH = 3
 EqCompetitionManager.TRANSPORT_SHARE = 0.25
 -- Used when the horse's subtype has no transport price.
 EqCompetitionManager.TRANSPORT_FALLBACK = 150
+-- Horses a farm may enter in one event; more would make one event too lucrative.
+EqCompetitionManager.MAX_HORSES_PER_EVENT = 2
+-- An extra horse on the same Auto Transport trip (the farm already has one going to the event)
+-- shares the truck: it pays this share of the haul. Quarantine abroad is still per horse.
+EqCompetitionManager.TRANSPORT_EXTRA_HORSE_SHARE = 0.25
 
 -- How an entry gets to the event: Auto pays transport and leaves at once; Manual is hauled to
 -- the dealer by the player and must be delivered before the event runs.
@@ -654,18 +659,47 @@ function EqCompetitionManager.eventDistance(event)
 end
 
 
+--- @param event table
+--- @param farmId number
+--- @return boolean true when the farm has entered MAX_HORSES_PER_EVENT horses in the event
+function EqCompetitionManager.eventFull(event, farmId)
+    local count = 0
+    for _, entry in ipairs(event.entries or {}) do
+        if entry.farmId == farmId then count = count + 1 end
+    end
+    return count >= EqCompetitionManager.MAX_HORSES_PER_EVENT
+end
+
+
+--- @param event table
+--- @param farmId number|nil
+--- @return boolean true when the farm already sends a horse to the event by Auto Transport
+function EqCompetitionManager.sharesTruck(event, farmId)
+    if farmId == nil or event.entries == nil then return false end
+    for _, entry in ipairs(event.entries) do
+        if entry.farmId == farmId and entry.transport ~= EqCompetitionManager.TRANSPORT_MANUAL then return true end
+    end
+    return false
+end
+
+
 --- What getting a horse to an event costs, on top of the entry fee.
 --- @param animal table RLRM Animal
 --- @param event table
+--- @param farmId number|nil the entering farm; a second Auto Transport horse shares the truck
 --- @return number auto Auto Transport (long-haul and quarantine included for a trip abroad)
 --- @return number manual Manual Transport (nothing locally; the dealer's quarantine yard abroad)
-function EqCompetitionManager.transportCosts(animal, event)
-    local local_ = EqCompetitionManager.transportCost(animal)
+function EqCompetitionManager.transportCosts(animal, event, farmId)
+    local haul = EqCompetitionManager.transportCost(animal)
     local config = EqCompetitionManager.config
     local distance = config ~= nil and config.distances ~= nil and config.distances[EqCompetitionManager.eventDistance(event)] or nil
-    if distance == nil then return local_, 0 end
-    local auto = math.floor(local_ * distance.factor / 10 + 0.5) * 10 + distance.quarantine
-    return auto, distance.quarantineYard
+    local quarantine, quarantineYard = 0, 0
+    if distance ~= nil then
+        haul = haul * distance.factor
+        quarantine, quarantineYard = distance.quarantine, distance.quarantineYard
+    end
+    if EqCompetitionManager.sharesTruck(event, farmId) then haul = haul * EqCompetitionManager.TRANSPORT_EXTRA_HORSE_SHARE end
+    return math.floor(haul / 10 + 0.5) * 10 + quarantine, quarantineYard
 end
 
 
@@ -742,6 +776,9 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
     if already ~= nil then
         return false, string.format(g_i18n:getText("eq_enter_already"), EqCompetitionManager.eventTitle(already))
     end
+    if EqCompetitionManager.eventFull(event, farmId) then
+        return false, string.format(g_i18n:getText("eq_enter_eventFull"), EqCompetitionManager.MAX_HORSES_PER_EVENT)
+    end
 
     local tier = EqCompetitionManager.config.tierByName[event.tier]
     local rating = EqCompetitionManager.ratingFor(record, event)
@@ -753,7 +790,7 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
-    local autoCost, manualCost = EqCompetitionManager.transportCosts(animal, event)
+    local autoCost, manualCost = EqCompetitionManager.transportCosts(animal, event, farmId)
     local cost = manual and manualCost or autoCost
     local farm = g_farmManager:getFarmById(farmId)
     if farm ~= nil and farm:getBalance() < event.fee + cost then return false, g_i18n:getText("eq_enter_noMoney") end

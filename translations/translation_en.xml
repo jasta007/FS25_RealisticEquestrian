@@ -14,6 +14,7 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_training_tired" text="Training (tired)"/>
         <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_feedGroup_hay" text="Hay"/>
         <text name="eq_feedGroup_grain" text="Hard feed"/>
@@ -114,12 +115,15 @@
         <text name="eq_status_foaled" text="Recovering from foaling"/>
         <text name="eq_potential_unvetted" text="%s?"/>
         <text name="eq_ui_skillPotential" text="Skill potential"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potential (dealer's view)"/>
+        <text name="eq_ui_potentialTitle" text="Potential"/>
+        <text name="eq_ui_potentialDealer" text="Dealer's view, may be wrong"/>
         <text name="eq_ui_skills" text="Skills"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
-        <text name="eq_reveal_better" text="%s has been with you a few months now, and is better than the dealer said."/>
-        <text name="eq_reveal_worse" text="%s has been with you a few months now, and is not quite what the dealer said."/>
-        <text name="eq_reveal_fair" text="%s has been with you a few months now, and is about what the dealer said."/>
+        <text name="eq_reveal_better" text="You've gotten to know %s better, and they look even better than the dealer let on."/>
+        <text name="eq_reveal_worse" text="You've gotten to know %s better, and you have a feeling you might have been misled."/>
+        <text name="eq_reveal_fair" text="You've gotten to know %s better and have a firmer idea of their potential."/>
         <text name="eq_ui_title" text="Competitions"/>
         <text name="eq_ui_col_event" text="Event"/>
         <text name="eq_ui_col_going" text="Conditions"/>
@@ -164,6 +168,7 @@
         <text name="eq_ui_ageMonths" text="%dm"/>
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
+        <text name="eq_ui_status_eventFull" text="Two of your horses already entered"/>
         <text name="eq_ui_status_tooYoung" text="Too young"/>
         <text name="eq_ui_status_tooOld" text="Too old"/>
         <text name="eq_ui_status_ratingLow" text="Rating too low"/>
@@ -199,6 +204,7 @@
         <text name="eq_enter_inFoal" text="That mare is too far in foal to compete. She can compete again after foaling."/>
         <text name="eq_enter_foaled" text="That mare is still recovering from foaling. She can compete three months after the birth."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
+        <text name="eq_enter_eventFull" text="You can enter at most %d horses in one event."/>
         <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
         <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>

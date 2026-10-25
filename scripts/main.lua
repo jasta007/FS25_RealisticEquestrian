@@ -43,7 +43,38 @@ source(modDirectory .. "scripts/console/EqProbe.lua")
 
 local Log = EqLog
 
+-- Our money types' Finances rows. Like RLRM, they must be in FinanceStats.statNames before any
+-- farm is created. The money popup and the Finances page look their titles up without a mod
+-- name, so they only find texts in the global table: copy ours there. One key each for the
+-- MoneyType title and the "finance_" key the Finances page asks for.
 EqMain = {}
+EqMain.MONEY_STATS = {
+    { name = "eqEntryFees", title = "eq_money_entryFees" },
+    { name = "eqPrizeMoney", title = "eq_money_prizeMoney" },
+    { name = "eqVetBills", title = "eq_money_vetBills" },
+    { name = "eqTransport", title = "eq_money_transport" },
+}
+for _, stat in ipairs(EqMain.MONEY_STATS) do
+    if FinanceStats.statNameToIndex[stat.name] == nil then
+        table.insert(FinanceStats.statNames, stat.name)
+        FinanceStats.statNameToIndex[stat.name] = #FinanceStats.statNames
+    end
+end
+
+--- Copy the money titles into the global texts. Run at source time and again when the money
+--- types are registered, in case our texts were not loaded yet the first time; a text we
+--- don't have is never copied, so a "Missing" placeholder can't stick.
+function EqMain.copyMoneyTexts()
+    for _, stat in ipairs(EqMain.MONEY_STATS) do
+        if g_i18n:hasText(stat.title) then
+            local text = g_i18n:getText(stat.title)
+            _G.g_i18n.texts[stat.title] = text
+            _G.g_i18n.texts["finance_" .. stat.name] = text
+        end
+    end
+end
+EqMain.copyMoneyTexts()
+
 EqMain.activated = false
 EqMain.isActive = false
 
@@ -110,6 +141,7 @@ function EqMain.activate()
     if EqMain.isActive then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
         guarded("competition setup", function()
+            EqMain.copyMoneyTexts()
             MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")

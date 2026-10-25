@@ -98,11 +98,13 @@ function EqEventsView.horseRows(event, farmId)
     local manager = EqCompetitionManager
     local tier = manager.config.tierByName[event.tier]
     local outOfEntries = manager.entriesLeft(farmId) == 0
+    local eventFull = manager.eventFull(event, farmId)
     local rows = {}
 
     for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil then
+        -- Retired horses are left off: they will never enter, so they only crowd the list.
+        if record ~= nil and not record.retired then
             local age = animal.age or 0
             local rating = manager.ratingFor(record, event)
             local status, canEnter
@@ -120,9 +122,11 @@ function EqEventsView.horseRows(event, farmId)
                 status = g_i18n:getText("eq_status_" .. unavailable)
             else
                 local ok, reason = EqCompetition.canEnter(tier, age, rating)
-                canEnter = ok and not outOfEntries
+                canEnter = ok and not outOfEntries and not eventFull
                 if ok and outOfEntries then
                     status = g_i18n:getText("eq_ui_farmLimit")
+                elseif ok and eventFull then
+                    status = g_i18n:getText("eq_ui_status_eventFull")
                 else
                     status = g_i18n:getText(ok and "eq_ui_status_ok" or ("eq_ui_status_" .. reason))
                 end
@@ -131,7 +135,7 @@ function EqEventsView.horseRows(event, farmId)
             -- Odds and training only mean something for a horse that is or could be in this event.
             local relevant = canEnter or entered == event
             local prospects = manager.prospects(record, animal, event)
-            local autoCost, manualCost = manager.transportCosts(animal, event)
+            local autoCost, manualCost = manager.transportCosts(animal, event, farmId)
             table.insert(rows, {
                 animal = animal,
                 record = record,

@@ -45,7 +45,7 @@ Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Conten
 (90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
 not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
-The box you get when looking at a horse shows `Speed  60 - Promising (Very high)`: the skill in our words, then the potential (that box has no colours). The game's own Animals screen has room for only five rows and RLRM's horse rows take three, so our stats are not shown there. The console's `eqHorses` still
+Looking at a horse shows a Skills box of its own under RLRM's Genetics box, with `Speed  60 - Promising (Very high)` for each stat: the skill in our words, then the potential (that box has no colours). The game's own Animals screen has room for only five rows and RLRM's horse rows take three, so our stats are not shown there. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
 RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
@@ -72,8 +72,11 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 Every horse trains once a day, at RLRM's daily horse tick.
 
 - **Your riding** trains by gait: walking builds temperament, trotting a mix, cantering stamina
-  and agility, galloping speed and stamina. Jumps at canter or gallop add agility and some temperament. A day's full
-  riding (the base game's riding bar reaching 100%) is a full day of effort. While riding, a
+  and agility, galloping speed and stamina, and backing up builds agility and temperament fast. Jumps at canter or gallop add agility and some temperament. Every gait trains
+  at the same rate, only different stats. The base game's riding bar is the horse's energy for
+  the day: once it reaches 100% the horse is tired, the line reads "Training (tired)", and it
+  trains no more until tomorrow. Galloping tires a horse three times as fast as walking, and
+  galloping until it tires is a full day of speed work, so choose what to work on first. While riding, a
   "Training today" line shows the effort so far.
 - **Staff** (the base game's animal worker, or RLRM's herdsman horse-care rule) count for whatever
   share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
@@ -168,7 +171,9 @@ prizes, and sometimes none in a discipline.
   sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
 - Every entry picks how the horse gets there. **Auto Transport** pays transport on top of the fee
   (a quarter of the game's transport price for the horse, $150 for an adult) and the horse leaves
-  at once. **Manual Transport** pays no transport, but you take the horse to the animal dealer
+  at once. A farm can enter at most two horses in one event; the second on the same Auto
+  Transport trip shares the truck and pays a quarter of that haul (quarantine abroad is still
+  per horse). **Manual Transport** pays no transport, but you take the horse to the animal dealer
   yourself before the event runs (before the next round's results, or by month end for monthly
   events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
   totals, and has an Enter button for each. Delivering at the dealer is still being built; for
@@ -201,6 +206,8 @@ prizes, and sometimes none in a discipline.
 lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
 enter). Select one, and the right table shows your horses with their **Success** (Favourite,
 Contender, Outsider or Long shot: their chance of a top-three place, counting the rivals, their
+fitness and the risk of elimination), **Training** (for young horse classes, how much the outing
+would teach them: High down to None) and whether they can enter. Retired horses are left off. Under it, a panel shows the
 fitness and the risk of elimination), **Training** (how much the outing would teach them: High
 down to None) and whether they can enter. Success and Training stay blank for a horse that can't enter. Under it, a panel shows the
 selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
@@ -219,10 +226,13 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
 - **Green:** dealer horses start a few points lower than a home-produced horse of the same age,
   so a good one needs a year or more of work before it wins much above Novice.
-- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
-  They are the dealer's view: usually right, sometimes generous, now and then modest. After three
-  months on your farm you find out, with a message saying whether the horse is better, worse or
-  about what the dealer said, and its price moves to match.
+- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?),
+  under a "Potential (dealer's view)" heading. They are the dealer's view: usually right, about
+  a quarter of the time generous by 6-14 points, and now and then modest by 5-12, so a word is
+  sometimes a band too high or too low. After three
+  months on your farm you find out. Usually you just "have a firmer idea of their potential";
+  after a big overstatement you "might have been misled"; now and then the horse is better than
+  the dealer let on. Its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
   most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is

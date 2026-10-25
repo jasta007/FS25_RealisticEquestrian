@@ -8,8 +8,9 @@
 
     - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
       a bar of the trained level with "54 (High)" as its text.
-    - AnimalHorse.showHorseHudInfo feeds the info box you get when looking at a horse, the same
-      "54 (High)".
+    - When you look at a horse, a Skills box of our own sits below RLRM's Genetics box:
+      "54 - Amateur (High)" for each stat, then whether the potential is still the dealer's view
+      and the horse's competition status.
 
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
     like it: SKILL POTENTIAL on the left (the word only, "High"), SKILLS on the right (the
@@ -213,17 +214,15 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
 end
 
 
---- Append one line per stat to the look-at info box.
---- @param animal table RLRM Animal (a horse)
---- @param box table HUD info box
-function EqInfoDisplay.showHorseHudInfo(animal, box)
-    local record = EqRegistry.getOrCreate(animal)
-    if record == nil then return end
-
+--- Fill the look-at Skills box: one line per stat, the dealer's-view note and the status.
+--- @param record table EqHorseRecord
+--- @param box table HUD key-value box
+local function fillSkillsBox(record, box)
     local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
+    if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
     local status = statusText(record)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
@@ -233,6 +232,26 @@ end
 --- @return boolean
 local function isHorse(animal)
     return animal ~= nil and animal.isHorse ~= nil and animal:isHorse()
+end
+
+
+--- Appended to PlayerHUDUpdater:showAnimalInfo after RLRM's, so the Skills box is made after
+--- RLRM's Genetics box and shows below it. Runs every frame while looking at an animal.
+--- @param hudUpdater table PlayerHUDUpdater
+--- @param animal table|nil RLRM Animal under the crosshair
+function EqInfoDisplay.showSkillsBox(hudUpdater, animal)
+    if not isHorse(animal) then return end
+    local record = EqRegistry.getOrCreate(animal)
+    if record == nil then return end
+
+    if hudUpdater.eqSkillsBox == nil then
+        hudUpdater.eqSkillsBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox)
+    end
+    local box = hudUpdater.eqSkillsBox
+    box:clear()
+    box:setTitle(g_i18n:getText("eq_ui_skills"))
+    fillSkillsBox(record, box)
+    box:showNextFrame()
 end
 
 
@@ -461,6 +480,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
         fitDescription(frame, false)
     else
         local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
+        section.potential.elements[1]:setText(g_i18n:getText(unvetted and "eq_ui_skillPotentialDealer" or "eq_ui_skillPotential"))
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
             local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
             fillCell(section.potential.elements[i + 1], statTitle(stat),
@@ -579,9 +599,15 @@ function EqInfoDisplay.install(guarded)
         guarded("horse info rows", function() EqInfoDisplay.addHorseInfos(animal, infos) end)
     end)
 
-    animalHorse.showHorseHudInfo = Utils.appendedFunction(animalHorse.showHorseHudInfo, function(animal, box)
-        guarded("horse info box", function() EqInfoDisplay.showHorseHudInfo(animal, box) end)
+    PlayerHUDUpdater.showAnimalInfo = Utils.appendedFunction(PlayerHUDUpdater.showAnimalInfo, function(hudUpdater, animal)
+        guarded("horse skills box", function() EqInfoDisplay.showSkillsBox(hudUpdater, animal) end)
+    end)
+    PlayerHUDUpdater.delete = Utils.prependedFunction(PlayerHUDUpdater.delete, function(hudUpdater)
+        if hudUpdater.eqSkillsBox ~= nil then
+            g_currentMission.hud.infoDisplay:destroyBox(hudUpdater.eqSkillsBox)
+            hudUpdater.eqSkillsBox = nil
+        end
     end)
 
-    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and showHorseHudInfo")
+    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and PlayerHUDUpdater.showAnimalInfo")
 end
