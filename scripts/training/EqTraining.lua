@@ -30,8 +30,8 @@ EqTraining.GAIT_WEIGHTS = {
 
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
--- this, because it is hard mental work and tires a horse sooner than even a gallop.
-EqTraining.GAIT_SPEED_FACTOR = { reverse = 4, walk = 1, trot = 1, canter = 2, gallop = 3 }
+-- this, because it is hard mental work: it tires a horse nearly as fast as a gallop.
+EqTraining.GAIT_SPEED_FACTOR = { reverse = 2.5, walk = 1, trot = 1, canter = 2, gallop = 3 }
 
 -- What the base game already credits for backing up; the rest of reverse's factor is ours.
 EqTraining.BASE_REVERSE_FACTOR = 1
