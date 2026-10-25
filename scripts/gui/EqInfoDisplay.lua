@@ -424,6 +424,21 @@ local function fitGrid(frame, shrink)
 end
 
 
+--- Fit RLRM's Information box to its text (or give it back its height). RLRM sizes it for four
+--- lines; the horse blurb is one, so the rest was empty space pushing the skills off the pane.
+--- @param frame table
+--- @param fit boolean
+--- @param line number one info row's height
+local function fitDescription(frame, fit, line)
+    local section = frame.descriptionSection
+    if section == nil or section.setSize == nil or section.elements == nil then return end
+    if not fit then setHeight(section, nil) return end
+    if section.invalidateLayout ~= nil then section:invalidateLayout() end
+    local height = contentHeight(section)
+    if height > 0 then setHeight(section, math.min(height + line / 2, section.eqHeight or section.size[2])) end
+end
+
+
 --- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Skill potential / Skills section
 --- for a horse, or hide it and put RLRM's layout back for any other animal.
 --- @param frame table RLRM menu frame
@@ -443,6 +458,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
             end
             setHeight(columnsRow, nil)
         end
+        fitDescription(frame, false)
     else
         local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
@@ -454,6 +470,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
         end
 
         local line = section.potential.elements[2].size[2]
+        fitDescription(frame, true, line)
         if columnsRow ~= nil then
             for _, column in ipairs(columnsRow.elements) do
                 if column.invalidateLayout ~= nil then column:invalidateLayout() end
