@@ -99,7 +99,7 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
-| Round pen | Stamina, Temperament | Dressage |
+| Round pen (Elmcreek 25's round roofed arena, the base game barn02) | Temperament; a little Agility | Dressage |
 | Horse stable mods (Horse Stable, Equestrian Pack L barn) | Temperament, a little | Dressage, a little |
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
