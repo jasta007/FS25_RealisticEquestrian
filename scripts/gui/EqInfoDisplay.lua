@@ -352,10 +352,11 @@ end
 
 
 --- Fit a row of columns (RLRM's Pedigree/Genetics row, or ours) to its tallest column, with
---- half a line to spare.
+--- some space to spare (half a line unless told otherwise).
 --- @param row table horizontal BoxLayout of vertical BoxLayouts
 --- @param line number one info row's height
-local function fitRow(row, line)
+--- @param spare number|nil
+local function fitRow(row, line, spare)
     local tallest = 0
     for _, column in ipairs(row.elements) do
         if column.visible and column.elements ~= nil then
@@ -364,7 +365,7 @@ local function fitRow(row, line)
             tallest = math.max(tallest, height)
         end
     end
-    if tallest > 0 then setHeight(row, tallest + line / 2) end
+    if tallest > 0 then setHeight(row, tallest + (spare or line / 2)) end
 end
 
 
@@ -448,13 +449,26 @@ end
 
 --- Fit RLRM's Information box to its text (or give it back its height). RLRM sizes it for four
 --- lines; the horse blurb is one, so the rest was empty space pushing the skills off the pane.
+--- The text element itself keeps RLRM's 100px whatever it shows, so it is cut to its lines too:
+--- without that a pregnant mare's three extra rows pushed the Skills box off the bottom.
 --- @param frame table
 --- @param fit boolean
 --- @param line number one info row's height
 local function fitDescription(frame, fit, line)
     local section = frame.descriptionSection
     if section == nil or section.setSize == nil or section.elements == nil then return end
-    if not fit then setHeight(section, nil) return end
+    local text = frame.animalDescriptionText
+    local canFitText = text ~= nil and text.setSize ~= nil and text.getTextHeight ~= nil
+    if not fit then
+        if canFitText then setHeight(text, nil) end
+        setHeight(section, nil)
+        return
+    end
+    if canFitText then
+        if text.eqHeight == nil then text.eqHeight = text.size[2] end
+        local height = text:getTextHeight()
+        if height ~= nil and height > 0 then setHeight(text, math.min(height, text.eqHeight)) end
+    end
     if section.invalidateLayout ~= nil then section:invalidateLayout() end
     local height = contentHeight(section)
     if height > 0 then setHeight(section, math.min(height + line / 2, section.eqHeight or section.size[2])) end
@@ -506,7 +520,8 @@ function EqInfoDisplay.renderSkills(frame, animal)
         end
         section.potential:invalidateLayout()
         section.skills:invalidateLayout()
-        fitRow(section.row, line)
+        -- Last on the pane, so it only needs a little room below it.
+        fitRow(section.row, line, line / 4)
         section.row:invalidateLayout()
     end
 
