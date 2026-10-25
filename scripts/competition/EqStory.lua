@@ -9,6 +9,40 @@ EqStory = {}
 
 -- A gain smaller than this is not worth a mention.
 EqStory.MIN_GAIN = 0.05
+-- Text between two of these is shown bold on the Results tab (horse names, gains).
+EqStory.BOLD = "**"
+
+
+--- @param text string
+--- @return string text marked to show bold
+function EqStory.bold(text)
+    return EqStory.BOLD .. text .. EqStory.BOLD
+end
+
+
+--- Split a line into its plain and bold runs.
+--- @param text string
+--- @return table runs list of { text, bold }, empty runs left out
+function EqStory.runs(text)
+    local runs, bold, start = {}, false, 1
+    while true do
+        local at = text:find(EqStory.BOLD, start, true)
+        local piece = text:sub(start, (at or 0) - 1)
+        if at == nil then piece = text:sub(start) end
+        if piece ~= "" then table.insert(runs, { text = piece, bold = bold }) end
+        if at == nil then return runs end
+        bold, start = not bold, at + #EqStory.BOLD
+    end
+end
+
+
+--- @param text string
+--- @return string text without the bold marks
+function EqStory.plain(text)
+    local parts = {}
+    for _, run in ipairs(EqStory.runs(text)) do table.insert(parts, run.text) end
+    return table.concat(parts)
+end
 
 
 --- @param place number
@@ -24,11 +58,11 @@ end
 
 
 --- @param names table up to three names, first place first
---- @return string|nil line "Winner: A, 2nd: B, 3rd: C."
+--- @return string|nil line "Winner: A, 2nd: B, 3rd: C.", the names bold
 function EqStory.podiumLine(names)
     if names[1] == nil then return nil end
-    if names[2] == nil or names[3] == nil then return string.format(g_i18n:getText("eq_story_winner"), names[1]) end
-    return string.format(g_i18n:getText("eq_story_podium"), names[1], names[2], names[3])
+    if names[2] == nil or names[3] == nil then return string.format(g_i18n:getText("eq_story_winner"), EqStory.bold(names[1])) end
+    return string.format(g_i18n:getText("eq_story_podium"), EqStory.bold(names[1]), EqStory.bold(names[2]), EqStory.bold(names[3]))
 end
 
 
@@ -50,14 +84,14 @@ end
 
 
 --- @param deltas table|nil stat -> gain from the event's training boost
---- @return string|nil line "Gained Agility +0.4, Temperament +0.2."
+--- @return string|nil line "Gained Agility +0.4, Temperament +0.2.", the gains bold
 function EqStory.gainsLine(deltas)
     if deltas == nil then return nil end
     local parts = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local gain = deltas[stat] or 0
         if gain >= EqStory.MIN_GAIN then
-            table.insert(parts, string.format("%s +%.1f", g_i18n:getText("eq_stat_" .. stat), gain))
+            table.insert(parts, string.format("%s %s", g_i18n:getText("eq_stat_" .. stat), EqStory.bold(string.format("+%.1f", gain))))
         end
     end
     if #parts == 0 then return nil end

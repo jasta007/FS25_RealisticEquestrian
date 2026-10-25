@@ -78,7 +78,17 @@
             <SmoothList profile="rlMenu_tableList" id="resultsList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="resultRowTemplate" size="1000px 40px">
                     <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 40px" name="title" textBold="true" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line" textLayoutMode="scrolling"/>
+                    <!-- A story line in runs, plain and bold, laid end to end by EqEventsFrame.setRuns -->
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line1"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line2"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line3"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line4"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line5"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line6"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line7"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line8"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line9"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="40px 0px" size="950px 40px" name="line10"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">

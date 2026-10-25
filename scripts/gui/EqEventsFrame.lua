@@ -540,6 +540,50 @@ local function setCell(cell, name, text)
 end
 
 
+-- Text cells a results line has for its plain and bold runs (line1..line<n> in the template).
+EqEventsFrame.LINE_RUNS = 10
+
+
+--- Width of a run as drawn. Measured between two bars, so leading and trailing spaces count.
+--- @param element table TextElement
+--- @param text string
+--- @param bold boolean
+--- @return number width in screen units
+local function runWidth(element, text, bold)
+    setTextBold(bold)
+    local width = getTextWidth(element.textSize, "|" .. text .. "|") - getTextWidth(element.textSize, "||")
+    setTextBold(false)
+    return width
+end
+
+
+--- Show a story line in a results row, its bold runs (horse names, gains) bold.
+--- @param cell table the row
+--- @param text string line with EqStory bold marks
+function EqEventsFrame.setRuns(cell, text)
+    local runs = EqStory.runs(text or "")
+    -- More runs than cells: the last cell takes the rest, plain.
+    if #runs > EqEventsFrame.LINE_RUNS then
+        local rest = {}
+        for i = EqEventsFrame.LINE_RUNS, #runs do table.insert(rest, runs[i].text) end
+        runs[EqEventsFrame.LINE_RUNS] = { text = table.concat(rest), bold = false }
+    end
+    local x
+    for i = 1, EqEventsFrame.LINE_RUNS do
+        local element = cell:getAttribute("line" .. i)
+        if element ~= nil then
+            element.eqStartX = element.eqStartX or element.position[1]
+            x = x or element.eqStartX
+            local run = runs[i]
+            element.textBold = run ~= nil and run.bold or false
+            element:setText(run ~= nil and run.text or "")
+            element:setPosition(x, element.position[2])
+            if run ~= nil then x = x + runWidth(element, run.text, run.bold) end
+        end
+    end
+end
+
+
 function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
     if list == self.eventsList then
         -- The events list reloads on the Results tab too, hidden; it must not take the horse list.
@@ -580,7 +624,7 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         local row = self.resultRows[index]
         if row == nil then return end
         setCell(cell, "title", row.title and row.text or "")
-        setCell(cell, "line", row.title and "" or row.text)
+        EqEventsFrame.setRuns(cell, row.title and "" or row.text)
     end
 end
 

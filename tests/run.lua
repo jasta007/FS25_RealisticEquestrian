@@ -732,11 +732,17 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("ordinals", EqStory.ordinal(1) == "1st" and EqStory.ordinal(2) == "2nd" and EqStory.ordinal(3) == "3rd"
         and EqStory.ordinal(4) == "4th" and EqStory.ordinal(11) == "11th" and EqStory.ordinal(12) == "12th"
         and EqStory.ordinal(22) == "22nd")
-    check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: Applejack, 2nd: Torben, 3rd: Winter.")
+    check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: **Applejack**, 2nd: **Torben**, 3rd: **Winter**.")
     check("phases line", EqStory.phasesLine({ "dressage", "showJumping", "crossCountry" },
         { dressage = 4, showJumping = 2, crossCountry = 6 }) == "Dressage 4th, Show Jumping 2nd, Cross Country 6th.")
     check("gains line skips tiny gains", EqStory.gainsLine({ agility = 0.42, temperament = 0.2, speed = 0.01 })
-        == "Gained Agility +0.4, Temperament +0.2.")
+        == "Gained Agility **+0.4**, Temperament **+0.2**.")
+    local runs = EqStory.runs("Winner: **Applejack**, 2nd: **Torben**.")
+    check("a line splits into plain and bold runs", #runs == 5 and runs[1].text == "Winner: " and not runs[1].bold
+        and runs[2].text == "Applejack" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
+    check("an old line with no marks is one plain run", #EqStory.runs("Clear inside the time.") == 1
+        and not EqStory.runs("Clear inside the time.")[1].bold)
+    check("plain text drops the marks", EqStory.plain("Gained Agility **+0.4**.") == "Gained Agility +0.4.")
     check("no gains, no line", EqStory.gainsLine({ agility = 0.01 }) == nil and EqStory.gainsLine(nil) == nil)
     check("injury line", EqStory.injuryLine({ name = "tendon" }) == "Came home with a tendon strain.")
     local lines = EqStory.lines({ performance = "Jumped clear.", podium = "Winner: X.", gains = "Gained.", injury = "Hurt." })
