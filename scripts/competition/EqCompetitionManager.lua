@@ -114,10 +114,16 @@ end
 
 --- @param farmId number
 --- @param text string
-local function notify(farmId, text)
+--- Tell the farm's player, and write the same line in the farm's RLRM message log.
+--- @param farmId number
+--- @param text string
+--- @param messageId string|nil one of EqMessages.TYPES, nil for no log line
+--- @param animal table|nil RLRM Animal the line is about
+local function notify(farmId, text, messageId, animal)
     if g_currentMission:getFarmId() == farmId then
         g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, text)
     end
+    if messageId ~= nil then EqMessages.post(farmId, messageId, text, animal) end
 end
 
 
@@ -287,21 +293,22 @@ end
 --- @param entry table { name, farmId }
 --- @param injury table EqRisk.rollInjury outcome
 --- @param event table
-function EqCompetitionManager.applyInjury(record, entry, injury, event)
+--- @param animal table|nil RLRM Animal, for the message log
+function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     record.career.injuries = record.career.injuries + 1
     if injury.careerEnding then
         record.retired = true
         record.careerEnded = true
         record.injury = nil
         notify(entry.farmId, string.format(g_i18n:getText("eq_injury_careerEnding"), entry.name,
-            EqCompetitionManager.eventTitle(event)))
+            EqCompetitionManager.eventTitle(event)), "EQ_CAREER_ENDED", animal)
         return
     end
 
     record.injury = { name = injury.name, monthsLeft = injury.months, monthlyCost = injury.monthlyCost }
     notify(entry.farmId, string.format(g_i18n:getText("eq_injury_new"), entry.name, EqCompetitionManager.eventTitle(event),
         EqCompetitionManager.injuryTitle(injury.name), injury.months,
-        g_i18n:formatMoney(injury.monthlyCost, 0, true, true)))
+        g_i18n:formatMoney(injury.monthlyCost, 0, true, true)), "EQ_INJURED", animal)
 end
 
 
@@ -322,13 +329,13 @@ function EqCompetitionManager.resolve(event, horses)
         local horse = horses[entry.horseId]
         local record = EqRegistry.getById(entry.horseId)
         if horse == nil or record == nil then
-            notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)))
+            notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)), "EQ_GONE")
         elseif not EqCompetitionManager.isDelivered(entry) then
             -- Manual Transport, never delivered: a non-starter, and the fee is gone.
             table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
                 place = 0, prize = 0, status = "notDelivered" })
             notify(entry.farmId, string.format(g_i18n:getText("eq_result_notDelivered"), entry.name,
-                EqCompetitionManager.eventTitle(event)))
+                EqCompetitionManager.eventTitle(event)), "EQ_NOT_DELIVERED", horse.animal)
         else
             -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
@@ -342,7 +349,7 @@ function EqCompetitionManager.resolve(event, horses)
                     place = 0, prize = 0, status = "scratched" })
                 notify(entry.farmId, string.format(g_i18n:getText("eq_result_scratched"), entry.name,
                     EqCompetitionManager.eventTitle(event), g_i18n:getText("eq_scratch_" .. reason),
-                    g_i18n:formatMoney(refund, 0, true, true)))
+                    g_i18n:formatMoney(refund, 0, true, true)), "EQ_SCRATCHED", horse.animal)
             else
                 table.insert(starters, {
                     key = entry.horseId,
@@ -402,10 +409,10 @@ function EqCompetitionManager.resolve(event, horses)
 
             if runner.prize > 0 then
                 notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
-                    EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)))
+                    EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)), "EQ_PLACED", mine.animal)
             else
                 notify(entry.farmId, string.format(g_i18n:getText("eq_result_placedNoPrize"), entry.name, runner.place,
-                    summary.field, EqCompetitionManager.eventTitle(event)))
+                    summary.field, EqCompetitionManager.eventTitle(event)), "EQ_FINISHED", mine.animal)
             end
         end
     end
@@ -418,14 +425,14 @@ function EqCompetitionManager.resolve(event, horses)
         table.insert(summary.placings, { horseId = starter.key, name = mine.entry.name, farmId = mine.entry.farmId,
             place = 0, prize = 0, status = "eliminated" })
         notify(mine.entry.farmId, string.format(g_i18n:getText(discipline.racing and "eq_result_pulledUp" or "eq_result_eliminated"),
-            mine.entry.name, EqCompetitionManager.eventTitle(event)))
+            mine.entry.name, EqCompetitionManager.eventTitle(event)), "EQ_ELIMINATED", mine.animal)
     end
 
     for _, starter in ipairs(starters) do
         local injury = outcomes[starter.key].injury
         if injury ~= nil then
             local mine = byKey[starter.key]
-            EqCompetitionManager.applyInjury(mine.record, mine.entry, injury, event)
+            EqCompetitionManager.applyInjury(mine.record, mine.entry, injury, event, mine.animal)
         end
     end
 
@@ -451,7 +458,7 @@ function EqCompetitionManager.monthlyCare(horses)
         if record ~= nil then
             record.monthStarts = 0
             EqExperience.monthlyFade(record)
-            EqCompetitionManager.countOwnedMonth(record, horse.farmId, name)
+            EqCompetitionManager.countOwnedMonth(record, horse.farmId, name, horse.animal)
         end
 
         local injury = record ~= nil and record.injury or nil
@@ -462,7 +469,7 @@ function EqCompetitionManager.monthlyCare(horses)
             injury.monthsLeft = injury.monthsLeft - 1
             if injury.monthsLeft <= 0 then
                 record.injury = nil
-                notify(horse.farmId, string.format(g_i18n:getText("eq_injury_recovered"), name))
+                notify(horse.farmId, string.format(g_i18n:getText("eq_injury_recovered"), name), "EQ_RECOVERED", horse.animal)
             end
         end
     end
@@ -474,13 +481,14 @@ end
 --- @param record table
 --- @param farmId number
 --- @param name string
-function EqCompetitionManager.countOwnedMonth(record, farmId, name)
+--- @param animal table|nil RLRM Animal, for the message log
+function EqCompetitionManager.countOwnedMonth(record, farmId, name, animal)
     if record.ownedMonths == nil then return end
     record.ownedMonths = record.ownedMonths + 1
     if record.advertised ~= nil and not record.revealed and record.ownedMonths >= EqConstants.REVEAL_MONTHS then
         record.revealed = true
         local verdict = EqDealer.verdict(record.advertised, record:getCeilings())
-        notify(farmId, string.format(g_i18n:getText("eq_reveal_" .. verdict), name))
+        notify(farmId, string.format(g_i18n:getText("eq_reveal_" .. verdict), name), "EQ_REVEAL_" .. string.upper(verdict), animal)
     end
 end
 

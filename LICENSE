@@ -1,0 +1,16 @@
+Realistic Equestrian for Farming Simulator 25
+Copyright (c) 2026 James (jasta007)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+International License (CC BY-NC-SA 4.0).
+
+In short, you may share and adapt the mod, as long as you:
+- give credit and link back to the original,
+- do not use it, or any version of it, for commercial purposes (no selling it, no paywalls),
+- release any changed version under this same licence.
+
+This summary is not the licence. The full legal text is at:
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+The mod runs alongside Realistic Livestock - Ritter version (GPL-3.0) and calls its functions
+at runtime, but contains none of its code.
