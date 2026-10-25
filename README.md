@@ -75,6 +75,28 @@ Every horse trains once a day, at RLRM's daily horse tick.
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
 sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
 
+### Feed
+
+What is in a horse's trough speeds its training up (it never trains a horse that is not worked).
+The mod rewrites every map's horse food list from `data/feeds.xml`, keeping the map's own groups
+and weights:
+
+| Feed | Group | Training boost |
+| --- | --- | --- |
+| Hay, grass, alfalfa, clover (and Geistal's chaff) | hay | none |
+| Oats | grain | +10% stamina and temperament |
+| Barley, winter barley | grain | +20% stamina and agility |
+| Corn (maize) | grain | +35% speed |
+| Wheat, winter wheat, spelt, triticale, rye | grain | none |
+| Carrots | treat | +35% temperament |
+| Apples (Orchards and Greenhouses' `APPLE`, Geistal's `APPLE_GT`) | treat | +20% temperament |
+| Parsnips, beetroot | treat | none |
+
+Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
+skipped. Within a group a feed counts by its share of that group in the trough, so half oats and
+half corn gives half of each; hay, grain and treat boosts add up. While riding, a "Feed" line
+shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
+
 ## Competitions
 
 Events come from `data/events.xml`, so disciplines, tiers, fees and prizes can be changed without

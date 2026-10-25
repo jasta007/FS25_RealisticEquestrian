@@ -6,7 +6,8 @@
       per horse. Vehicle functions are copied into each vehicle type when types are registered,
       so these two are patched at source time, before that happens; the hook bodies stay idle
       until EqMain is active. Both run on the server only, which is where riding is counted.
-    - Rideable.onDraw adds a line showing today's training effort while riding.
+    - Rideable.onDraw adds a line showing today's training effort while riding, and one for the
+      boost the horse's feed gives (EqFeedHooks).
     - RLRM's AnimalHorse.processRidingUpdate is the daily horse tick. A prepend runs our day
       just before RLRM grades fitness and zeroes riding, so the day's riding value is still there
       to read.
@@ -118,6 +119,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
     end
     g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, " "))
+
+    local feedLine = EqFeedHooks.formatBoost(EqFeedHooks.getBoost(spec.cluster))
+    if feedLine ~= nil then g_currentMission:addExtraPrintText(feedLine) end
 end
 
 
@@ -140,6 +144,7 @@ function EqTrainingHooks.onHorseDay(animal)
         dirt = animal.dirt,
         ageMonths = animal.age or 0,
         timeAdjustment = g_currentMission.environment.timeAdjustment or 1,
+        feedBoost = EqFeedHooks.getBoost(animal),
     })
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",

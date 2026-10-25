@@ -24,6 +24,8 @@ source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/training/EqFeed.lua")
+source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -121,6 +123,10 @@ end
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
 
+-- The horse feed list has to be in place before the map's placeables (and their troughs) load,
+-- and needs nothing from RLRM, so it is hooked now too.
+guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
+
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
     EqMain.activate()
@@ -132,6 +138,7 @@ local function onMissionLoaded(mission)
     if not EqMain.isActive then return end
 
     guarded("console registration", EqConsole.register)
+    guarded("feed console registration", EqFeedHooks.register)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -166,6 +173,7 @@ local function onMissionDelete()
 
     guarded("mission cleanup", function()
         EqConsole.unregister()
+        EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)

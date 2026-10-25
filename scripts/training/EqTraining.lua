@@ -11,6 +11,7 @@
 
     Each stat closes a share of the gap to its cap every month (scaled to the day with the
     game's timeAdjustment), so gains slow as a horse nears its ceiling. Idle horses fade.
+    What the horse is fed (EqFeed.dietBoost) speeds that up per stat; it never adds work.
 ]]
 
 EqTraining = {}
@@ -137,7 +138,8 @@ end
 --- Apply one day of training to a record.
 --- @param record table EqHorseRecord (uses trained, focus, idleDays)
 --- @param ceilings table stat -> ceiling
---- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment }
+--- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, feedBoost }; feedBoost is
+---     stat -> share from EqFeed.dietBoost, or nil for none
 --- @return table deltas stat -> change, for logging
 function EqTraining.applyDay(record, ceilings, day)
     local timeAdjustment = day.timeAdjustment or 1
@@ -161,7 +163,7 @@ function EqTraining.applyDay(record, ceilings, day)
         local ceiling = ceilings[stat]
         local before = record.trained[stat] or 0
         local level = before
-        local monthly = EqConstants.TRAIN_MONTHLY[stat]
+        local monthly = EqConstants.TRAIN_MONTHLY[stat] * (1 + (day.feedBoost ~= nil and day.feedBoost[stat] or 0))
 
         local fromPlayer = EqTraining.gain(level, ceiling, monthly, player[stat], ageFactor, timeAdjustment)
         local fromStaff = EqTraining.gain(level, ceiling * EqConstants.STAFF_CAP, monthly, staff[stat], ageFactor, timeAdjustment)
