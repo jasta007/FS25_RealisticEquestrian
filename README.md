@@ -42,7 +42,7 @@ animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL
 order in both. Potential is genetic, so it uses RLRM's red-to-green scale. Skill is what training
 has done so far, so it runs from white (untrained) to green, with its own words: Untrained (0),
 Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Contender (80), Champion
-(90) and Legend (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
+(90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
 not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
 The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still

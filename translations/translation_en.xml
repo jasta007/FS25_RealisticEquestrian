@@ -124,7 +124,7 @@
         <text name="eq_skill_competitor" text="Competitor"/>
         <text name="eq_skill_contender" text="Contender"/>
         <text name="eq_skill_champion" text="Champion"/>
-        <text name="eq_skill_legend" text="Legend"/>
+        <text name="eq_skill_legend" text="Legendary"/>
         <text name="eq_ui_col_when" text="Results"/>
         <text name="eq_ui_col_fee" text="Entry fee"/>
         <text name="eq_ui_col_prize" text="Prize pool"/>
