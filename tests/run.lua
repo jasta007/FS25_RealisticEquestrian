@@ -26,6 +26,7 @@ dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
+dofile("scripts/gui/EqAnimalsPageButton.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -1056,6 +1057,41 @@ fresh.pagingElement.currentPageIndex = 2
 EqMenuPaging.beforeUpdatePages(fresh)
 check("first open leaves paging alone", fresh.pagingElement.currentPageIndex == 2 and fresh.eqLastPagingMode == "trailer")
 check("reset refuses a missing paging element", EqMenuPaging.reset({}) == false)
+
+-- Animals page: RLRM's Manage Animals button for horse pens.
+local function testAnimalsPageButton()
+g_i18n = g_i18n or { getText = function(_, key) return key end }
+local savedGet = EqRLRM.get
+EqRLRM.get = function(name) if name == "RLMenu" then return { MODE_FULL = "full" } end return savedGet(name) end
+local RL_ACTION = 77
+local horsePen = { spec_husbandryAnimals = {}, getName = function() return "Horse Barn" end }
+local cowPen = { spec_husbandryAnimals = {} }
+local opened
+local function openMenu(page, mode, context) opened = { page = page, mode = mode, context = context } end
+-- RLRM already added it: left alone.
+local cowFrame = { selectedHusbandry = cowPen, menuButtonInfo = { { inputAction = 1 }, { inputAction = RL_ACTION } } }
+check("button kept when RLRM added it", EqAnimalsPageButton.afterUpdateMenuButtons(cowFrame, RL_ACTION, openMenu) == false
+    and #cowFrame.menuButtonInfo == 2)
+-- Horse selected, no selectedHusbandry: found through the horse's pen.
+local horseFrame = {
+    menuButtonInfo = { { inputAction = 1 } },
+    list = { selectedSectionIndex = 1, selectedIndex = 2 },
+    husbandrySubTypes = { 5 },
+    subTypeIndexToClusters = { [5] = { {}, { clusterSystem = { owner = horsePen } } } },
+}
+check("button added for a horse pen", EqAnimalsPageButton.afterUpdateMenuButtons(horseFrame, RL_ACTION, openMenu) == true
+    and #horseFrame.menuButtonInfo == 2 and horseFrame.menuButtonInfo[2].inputAction == RL_ACTION)
+horseFrame.menuButtonInfo[2].callback()
+check("button opens the Manage tab on that pen", opened.page == 4 and opened.mode == "full"
+    and opened.context.husbandry == horsePen and opened.context.fromInGameMenu == true)
+-- Empty stable: found through the page selector.
+local emptyFrame = { menuButtonInfo = {}, husbandries = { cowPen, horsePen },
+    subCategorySelector = { getState = function() return 2 end } }
+check("selector finds the pen", EqAnimalsPageButton.findHusbandry(emptyFrame) == horsePen)
+check("no pen, no button", EqAnimalsPageButton.afterUpdateMenuButtons({ menuButtonInfo = {} }, RL_ACTION, openMenu) == false)
+EqRLRM.get = savedGet
+end
+testAnimalsPageButton()
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

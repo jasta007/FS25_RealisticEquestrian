@@ -217,6 +217,7 @@
         <text name="eq_ui_deadline_round" text="before tomorrow's results"/>
         <text name="eq_ui_deadline_month" text="before the end of the month"/>
         <text name="eq_ui_button_results" text="Results"/>
+        <text name="eq_ui_button_manageAnimals" text="Manage Animals"/>
         <text name="eq_ui_button_events" text="Events"/>
         <text name="eq_ui_noEvents" text="No events are open right now. New ones are drawn each round."/>
         <text name="eq_ui_noResults" text="Your horses have no results yet."/>
