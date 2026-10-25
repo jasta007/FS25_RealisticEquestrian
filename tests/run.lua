@@ -567,11 +567,12 @@ local oats = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000, OAT = 100 }, feeds)
 check("oats: small stamina and temperament", near(oats.stamina, 0.10) and near(oats.temperament, 0.10) and oats.speed == 0)
 local barley = EqFeed.dietBoost({ BARLEY = 100 }, feeds)
 check("barley: moderate agility and stamina", near(barley.agility, 0.20) and near(barley.stamina, 0.20))
-check("corn: strong speed", near(EqFeed.dietBoost({ MAIZE = 1 }, feeds).speed, 0.35))
-check("carrots: strong temperament", near(EqFeed.dietBoost({ CARROT = 1 }, feeds).temperament, 0.35))
+check("corn: strong speed", near(EqFeed.dietBoost({ MAIZE = 1 }, feeds).speed, 0.30))
+check("carrots: strong temperament", near(EqFeed.dietBoost({ CARROT = 1 }, feeds).temperament, 0.30))
+check("apples match carrots", near(EqFeed.dietBoost({ APPLE_GT = 1 }, feeds).temperament, 0.30))
 local mixed = EqFeed.dietBoost({ OAT = 50, MAIZE = 50, CARROT = 10 }, feeds)
-check("half oats half corn gives half of each", near(mixed.speed, 0.175) and near(mixed.stamina, 0.05))
-check("grain and treats add up", near(mixed.temperament, 0.05 + 0.35))
+check("half oats half corn gives half of each", near(mixed.speed, 0.15) and near(mixed.stamina, 0.05))
+check("grain and treats add up", near(mixed.temperament, 0.05 + 0.30))
 check("an empty trough gives nothing", EqFeed.dietBoost({ MAIZE = 0 }, feeds).speed == 0)
 
 -- The boost speeds training up, and gives nothing on a day without work.
@@ -583,7 +584,7 @@ local function trainedSpeed(feedBoost, sheet)
 end
 local gallop = ridden("gallop", 100000)
 local plain, corn = trainedSpeed(nil, gallop), trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), ridden("gallop", 100000))
-check("corn makes galloping train speed faster", corn > plain and near((corn - 30) / (plain - 30), 1.35),
+check("corn makes galloping train speed faster", corn > plain and near((corn - 30) / (plain - 30), 1.30),
     string.format("%.4f vs %.4f", corn, plain))
 check("feed alone trains nothing", trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), nil) == 30)
 

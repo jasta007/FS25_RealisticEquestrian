@@ -86,10 +86,10 @@ and weights:
 | Hay, grass, alfalfa, clover (and Geistal's chaff) | hay | none |
 | Oats | grain | +10% stamina and temperament |
 | Barley, winter barley | grain | +20% stamina and agility |
-| Corn (maize) | grain | +35% speed |
+| Corn (maize) | grain | +30% speed |
 | Wheat, winter wheat, spelt, triticale, rye | grain | none |
-| Carrots | treat | +35% temperament |
-| Apples (Orchards and Greenhouses' `APPLE`, Geistal's `APPLE_GT`) | treat | +20% temperament |
+| Carrots | treat | +30% temperament |
+| Apples (Orchards and Greenhouses' `APPLE`, Geistal's `APPLE_GT`) | treat | +30% temperament |
 | Parsnips, beetroot | treat | none |
 
 Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are

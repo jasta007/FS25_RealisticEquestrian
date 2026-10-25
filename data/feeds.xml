@@ -21,7 +21,7 @@
                         this feed: 0.10 = 10% faster training of that stat. Within one group
                         the boost follows each feed's share of what is in the trough, so half
                         oats and half corn gives half of each. Hay, grain and treats add up.
-                        Small = 0.10, moderate = 0.20, strong = 0.35.
+                        Small = 0.10, moderate = 0.20, strong = 0.30.
 -->
 <feeds>
     <banned fillTypes="SORGHUM"/>
@@ -37,11 +37,11 @@
     <!-- Hard feed. -->
     <feed fillTypes="OAT" group="grain" stamina="0.10" temperament="0.10"/>
     <feed fillTypes="BARLEY WINTERBARLEY" group="grain" stamina="0.20" agility="0.20"/>
-    <feed fillTypes="MAIZE" group="grain" speed="0.35"/>
+    <feed fillTypes="MAIZE" group="grain" speed="0.30"/>
     <feed fillTypes="WHEAT WINTERWHEAT SPELT TRITICALE RYE" group="grain"/>
 
     <!-- Treats. -->
-    <feed fillTypes="CARROT" group="treat" temperament="0.35"/>
-    <feed fillTypes="APPLE APPLE_GT" group="treat" temperament="0.20"/>
+    <feed fillTypes="CARROT" group="treat" temperament="0.30"/>
+    <feed fillTypes="APPLE APPLE_GT" group="treat" temperament="0.30"/>
     <feed fillTypes="PARSNIP BEETROOT" group="treat"/>
 </feeds>
