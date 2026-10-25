@@ -45,6 +45,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
+source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
 
@@ -131,6 +132,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.menuPaging then
         guarded("menu paging hook", function() EqMenuPaging.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.animalsPageButton then
+        guarded("animals page button hook", function() EqAnimalsPageButton.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.horsePricing then

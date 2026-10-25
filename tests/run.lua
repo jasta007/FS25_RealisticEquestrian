@@ -28,6 +28,7 @@ dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
+dofile("scripts/gui/EqAnimalsPageButton.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -1217,6 +1218,62 @@ local function injuryTests()
     end
 end
 injuryTests()
+-- Animals page: RLRM's Manage Animals button for horse pens.
+local function testAnimalsPageButton()
+g_i18n = g_i18n or { getText = function(_, key) return key end }
+local savedGet = EqRLRM.get
+EqRLRM.get = function(name) if name == "RLMenu" then return { MODE_FULL = "full" } end return savedGet(name) end
+local RL_ACTION = 77
+local horsePen = { spec_husbandryAnimals = {}, getName = function() return "Horse Barn" end }
+local cowPen = { spec_husbandryAnimals = {} }
+local opened
+local function openMenu(page, mode, context) opened = { page = page, mode = mode, context = context } end
+-- RLRM already added it: left alone.
+local cowFrame = { selectedHusbandry = cowPen, menuButtonInfo = { { inputAction = 1 }, { inputAction = RL_ACTION } } }
+check("button kept when RLRM added it", EqAnimalsPageButton.ensureButton(cowFrame, cowFrame.menuButtonInfo, RL_ACTION, openMenu) == false
+    and #cowFrame.menuButtonInfo == 2)
+-- Horse selected, no selectedHusbandry: found through the horse's pen.
+local horseFrame = {
+    menuButtonInfo = { { inputAction = 1 } },
+    list = { selectedSectionIndex = 1, selectedIndex = 2 },
+    husbandrySubTypes = { 5 },
+    subTypeIndexToClusters = { [5] = { {}, { clusterSystem = { owner = horsePen } } } },
+}
+check("button added for a horse pen", EqAnimalsPageButton.ensureButton(horseFrame, horseFrame.menuButtonInfo, RL_ACTION, openMenu) == true
+    and #horseFrame.menuButtonInfo == 2 and horseFrame.menuButtonInfo[2].inputAction == RL_ACTION)
+local dirtyFrame = { selectedHusbandry = horsePen, setMenuButtonInfoDirty = function(f) f.dirty = true end }
+EqAnimalsPageButton.ensureButton(dirtyFrame, {}, RL_ACTION, openMenu)
+check("adding the button redraws the bar", dirtyFrame.dirty == true)
+local fullBar = { { inputAction = 1 }, { inputAction = 2 }, { inputAction = 3 } }
+EqAnimalsPageButton.ensureButton(horseFrame, fullBar, RL_ACTION, openMenu, nil, 3)
+check("full bar: button moves just after Back", fullBar[2].inputAction == RL_ACTION and #fullBar == 4)
+local horseBar = { { inputAction = "BACK" }, { inputAction = "NEXT" }, { inputAction = "PREV" },
+    { inputAction = "TAG" }, { inputAction = "RENAME" }, { inputAction = "WORKERS" } }
+EqAnimalsPageButton.ensureButton(horseFrame, horseBar, RL_ACTION, openMenu, nil, 6, { NEXT = true, PREV = true })
+check("full horse bar: page buttons make room, Workers kept", #horseBar == 5 and horseBar[2].inputAction == RL_ACTION
+    and horseBar[5].inputAction == "WORKERS")
+local roomyBar = { { inputAction = 1 }, { inputAction = 2 } }
+EqAnimalsPageButton.ensureButton(horseFrame, roomyBar, RL_ACTION, openMenu, nil, 6)
+check("bar with room: button goes last", roomyBar[3].inputAction == RL_ACTION)
+local lateBar = { { inputAction = 1 }, { inputAction = 2 }, { inputAction = 3 }, { inputAction = RL_ACTION } }
+check("button past the slots is moved", EqAnimalsPageButton.ensureButton(horseFrame, lateBar, RL_ACTION, openMenu, nil, 3) == true
+    and lateBar[2].inputAction == RL_ACTION)
+horseFrame.menuButtonInfo[2].callback()
+check("button opens the Manage tab on that pen", opened.page == 4 and opened.mode == "full"
+    and opened.context.husbandry == horsePen and opened.context.fromInGameMenu == true)
+-- Empty stable: found through the page selector.
+local emptyFrame = { menuButtonInfo = {}, husbandries = { cowPen, horsePen },
+    subCategorySelector = { getState = function() return 2 end } }
+check("selector finds the pen", EqAnimalsPageButton.findHusbandry(emptyFrame) == horsePen)
+local noPens = function() return {} end
+check("no pen, no button", EqAnimalsPageButton.ensureButton({}, {}, RL_ACTION, openMenu, noPens) == false)
+-- Only the selector's text to go on: matched against the farm's pens by name.
+local namedFrame = { subCategorySelector = { texts = { "Cow Barn", "Horse Barn" }, getState = function() return 2 end } }
+local pens = function() return { { spec_husbandryAnimals = {}, getName = function() return "Cow Barn" end }, horsePen } end
+check("selector name finds the pen", EqAnimalsPageButton.findHusbandry(namedFrame, pens) == horsePen)
+EqRLRM.get = savedGet
+end
+testAnimalsPageButton()
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
