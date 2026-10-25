@@ -26,6 +26,7 @@ source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
+source(modDirectory .. "scripts/training/EqLooseHorses.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
@@ -152,6 +153,10 @@ function EqMain.activate()
         guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.looseHorses then
+        guarded("loose horses hook", function() EqLooseHorses.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.awayVisuals then
         guarded("away horses hook", function() EqAway.install(guarded) end)
     end
@@ -216,6 +221,9 @@ local function onMissionLoaded(mission)
     guarded("facility shop text", EqFacilityHooks.addStoreText)
     guarded("feed console registration", EqFeedHooks.register)
     guarded("dealer delivery start", function() EqDelivery.start(mission) end)
+    guarded("loose horses start", function()
+        if mission:getIsServer() then EqLooseHorses.start(mission) end
+    end)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -256,6 +264,7 @@ local function onMissionDelete()
     guarded("mission cleanup", function()
         EqConsole.unregister()
         EqDelivery.stop(g_currentMission)
+        EqLooseHorses.stop(g_currentMission)
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

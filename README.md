@@ -65,6 +65,10 @@ uses its genetics, health and fitness.
   your horses ticking over towards a focus you choose, but only your own riding takes a stat the
   last few points. A proper staff system of our own is planned (see
   [Planned features](#planned-features)).
+- **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
+  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when
+  they do their round, they fetch your loose horses back to their own pen (or the nearest staffed
+  pen with room) and look after them with the rest.
 - Horses under two can only do light groundwork, so they train at 30% of the full rate, and
   two-year-olds at 60%. From three to twelve they train at full speed, then slow down again.
   Idle horses lose condition, and old horses slowly decline.

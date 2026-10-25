@@ -26,6 +26,7 @@ dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
+dofile("scripts/training/EqLooseHorses.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
 local TestXML = dofile("tests/xml.lua")
 
@@ -1120,6 +1121,24 @@ check("selector name finds the pen", EqAnimalsPageButton.findHusbandry(namedFram
 EqRLRM.get = savedGet
 end
 testAnimalsPageButton()
+
+-- Loose horses go home to their own staffed pen, else the nearest staffed pen with room.
+do
+    local p = {
+        home = { farmId = 1, hasRoom = true, x = 500, z = 0 },
+        near = { farmId = 1, hasRoom = true, x = 10, z = 0 },
+        full = { farmId = 1, hasRoom = false, x = 0, z = 0 },
+        other = { farmId = 2, hasRoom = true, x = 1, z = 0 },
+    }
+    p.all = { p.home, p.near, p.full, p.other }
+    check("loose horse goes to its own pen", EqLooseHorses.choosePen(p.home, p.all, 1, 0, 0) == p.home)
+    check("loose horse from an unstaffed pen goes to the nearest staffed one",
+        EqLooseHorses.choosePen(nil, p.all, 1, 0, 0) == p.near)
+    p.home.hasRoom = false
+    check("full home pen sends the horse to the nearest with room", EqLooseHorses.choosePen(p.home, p.all, 1, 0, 0) == p.near)
+    check("no staffed pen on the farm leaves the horse out", EqLooseHorses.choosePen(nil, { p.other, p.full }, 1, 0, 0) == nil)
+    check("loose horse with no position still finds a pen", EqLooseHorses.choosePen(nil, { p.other, p.near }, 1, nil, nil) == p.near)
+end
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
