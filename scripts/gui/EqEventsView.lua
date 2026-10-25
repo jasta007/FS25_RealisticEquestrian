@@ -126,7 +126,7 @@ function EqEventsView.horseRows(event, farmId)
             end
 
             local prospects = manager.prospects(record, animal, event)
-            local autoCost, manualCost = manager.transportCosts(animal, event)
+            local autoCost, manualCost = manager.transportCosts(animal, event, farmId)
             table.insert(rows, {
                 animal = animal,
                 record = record,

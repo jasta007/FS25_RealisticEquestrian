@@ -168,7 +168,8 @@ prizes, and sometimes none in a discipline.
   sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
 - Every entry picks how the horse gets there. **Auto Transport** pays transport on top of the fee
   (a quarter of the game's transport price for the horse, $150 for an adult) and the horse leaves
-  at once. **Manual Transport** pays no transport, but you take the horse to the animal dealer
+  at once. Further horses on the same Auto Transport trip share the truck and pay a quarter of
+  that haul (quarantine abroad is still per horse). **Manual Transport** pays no transport, but you take the horse to the animal dealer
   yourself before the event runs (before the next round's results, or by month end for monthly
   events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
   totals, and has an Enter button for each. Delivering at the dealer is still being built; for
