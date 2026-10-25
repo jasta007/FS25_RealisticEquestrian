@@ -110,24 +110,40 @@ end
 
 
 --- Widen a copied tab button so its label fits: the copy keeps the width of the tab it came from.
---- The padding around the label is taken from that tab.
+--- Two estimates, the larger wins: the measured label plus the model tab's padding, and the
+--- model's width scaled by label length (in game the measured widths came out too small).
 --- @param tab table the new tab button
+--- @param label string the new tab's label
 --- @param model table the tab it was copied from
-local function fitTabToText(tab, model)
-    if getTextWidth == nil or tab.textSize == nil or model.size == nil then return end
-    local function labelWidth(button)
-        local text = button.text or ""
-        if button.textUpperCase and utf8ToUpper ~= nil then text = utf8ToUpper(text) end
-        return getTextWidth(button.textSize, text)
+local function fitTabToText(tab, label, model)
+    if model.size == nil or tab.size == nil then return end
+    local modelText = tostring(model.text or "")
+    local function upper(text)
+        if model.textUpperCase and utf8ToUpper ~= nil then return utf8ToUpper(text) end
+        return text
     end
-    local padding = model.size[1] - labelWidth(model)
-    local width = math.max(model.size[1], labelWidth(tab) + math.max(padding, 0))
-    Log:info("EqSettingsPage: tab width %.4f, label needs %.4f (padding %.4f)", tab.size[1], width, padding)
+    local function length(text)
+        return utf8Strlen ~= nil and utf8Strlen(text) or #text
+    end
+    local function measure(text)
+        if getTextWidth == nil or model.textSize == nil then return 0 end
+        if setTextBold ~= nil then setTextBold(model.textBold == true) end
+        local width = getTextWidth(model.textSize, upper(text))
+        if setTextBold ~= nil then setTextBold(false) end
+        return width
+    end
+
+    local modelWidth = model.size[1]
+    local measured = measure(label) + math.max(modelWidth - measure(modelText), 0)
+    local byLength = length(modelText) > 0 and modelWidth * length(label) / length(modelText) or modelWidth
+    local width = math.max(modelWidth, measured, byLength)
+    Log:info("EqSettingsPage: tab '%s' from '%s' (%.4f): measured %.4f, by length %.4f -> %.4f",
+        label, modelText, modelWidth, measured, byLength, width)
     if width <= tab.size[1] then return end
 
     tab:setSize(width, nil)
     for _, child in ipairs(tab.elements) do
-        if child.setSize ~= nil and child.size ~= nil and child.size[1] == model.size[1] then
+        if child.setSize ~= nil and child.size ~= nil and child.size[1] >= modelWidth * 0.9 then
             child:setSize(width, nil)
         end
     end
@@ -151,8 +167,9 @@ local function buildRLRMTab(frame)
     local index = #tabs + 1
     local tab = tabs[#tabs]:clone(frame.subCategoryBox)
     tab.id = "eqSettingsTab"
-    tab:setText(g_i18n:getText("eq_settings_tab"))
-    fitTabToText(tab, tabs[#tabs])
+    local label = g_i18n:getText("eq_settings_tab")
+    tab:setText(label)
+    fitTabToText(tab, label, tabs[#tabs])
     tab.onClickCallback = function()
         frame.subCategoryPaging:setState(index, true)
     end
