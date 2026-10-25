@@ -15,6 +15,10 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
         <text name="eq_feed_boost" text="Feed"/>
+        <text name="eq_feedGroup_hay" text="Hay"/>
+        <text name="eq_feedGroup_grain" text="Hard feed"/>
+        <text name="eq_feedGroup_treat" text="Treats"/>
+        <text name="eq_feed_noBoost" text="no boost"/>
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
         <text name="eq_discipline_crossCountry" text="Cross Country"/>

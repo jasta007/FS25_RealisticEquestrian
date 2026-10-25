@@ -6,6 +6,10 @@
       the HORSE food groups are rewritten from data/feeds.xml. That is before any placeable
       loads, so every horse pen's trough is built with the new list (and stops taking sorghum).
       It runs on server and clients alike, so both agree on what a trough accepts.
+    - PlaceableHusbandryFood.getFoodInfos gives a horse pen's food rows our group names, and in
+      place of the base game's production share ("Root crops (5%)") the stats that group's feed
+      boosts: "Treats (Tem +30%)" while it holds apples or carrots, "Hard feed (Sta Spd Agi Tem)"
+      while it is empty, "Hay (no boost)".
     - getBoost reads the trough of the pen a horse lives in. EqTrainingHooks passes it to the
       day's training and shows it while riding. A horse in a trailer, away at an event or in a
       pen without a trough gets no boost.
@@ -88,12 +92,15 @@ function EqFeedHooks.applyToFoodSystem(foodSystem)
         local foodGroup = entry.foodGroup
         if entry.isNew then
             foodGroup = {
-                title = groupTitle(entry.group.title),
                 productionWeight = entry.group.productionWeight,
                 eatWeight = entry.group.eatWeight,
             }
         end
         foodGroup.fillTypes = writeFillTypes(entry.names, isSet)
+        foodGroup.eqNames = entry.names
+        foodGroup.eqKind = EqFeed.groupKind(entry.names, config)
+        local kind = config.groupByName[foodGroup.eqKind]
+        if kind ~= nil then foodGroup.title = groupTitle(kind.title) end
         table.insert(groups, foodGroup)
         Log:info("EqFeed: horse food group '%s' (production %.2f, eat %.2f): %s", tostring(foodGroup.title),
             foodGroup.productionWeight or 0, foodGroup.eatWeight or 0, table.concat(entry.names, " "))
@@ -125,6 +132,59 @@ end
 --- @return table boost stat -> share
 function EqFeedHooks.getBoost(animal)
     return EqFeed.dietBoost(EqFeedHooks.getTroughLevels(animal), EqFeedHooks.config)
+end
+
+
+--- @param stats table stat keys
+--- @return string "Sta Spd"
+local function shortStats(stats)
+    local parts = {}
+    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_short_" .. stat)) end
+    return table.concat(parts, " ")
+end
+
+
+--- A horse pen's food row title: the group's name and what its feed does.
+--- @param foodGroup table a horse food group rewritten by applyToFoodSystem
+--- @param fillLevels table fill type index -> litres, the pen's spec_husbandryFood.fillLevels
+--- @return string
+function EqFeedHooks.foodGroupTitle(foodGroup, fillLevels)
+    local config = EqFeedHooks.config
+    local levels = {}
+    for _, name in ipairs(foodGroup.eqNames) do
+        local index = g_fillTypeManager:getFillTypeIndexByName(name)
+        levels[name] = index ~= nil and fillLevels[index] or 0
+    end
+
+    local boost = EqFeed.dietBoost(levels, config)
+    local parts = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local percent = math.floor(boost[stat] * 100 + 0.5)
+        if percent > 0 then table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_short_" .. stat), percent)) end
+    end
+    local detail = table.concat(parts, " ")
+    if detail == "" then
+        local stats = EqFeed.boostedStats(foodGroup.eqNames, config)
+        detail = #stats > 0 and shortStats(stats) or g_i18n:getText("eq_feed_noBoost")
+    end
+    local kind = config.groupByName[foodGroup.eqKind]
+    local title = kind ~= nil and groupTitle(kind.title) or tostring(foodGroup.title)
+    return string.format("%s (%s)", title, detail)
+end
+
+
+--- Overwrites PlaceableHusbandryFood:getFoodInfos: horse pens get foodGroupTitle on each row.
+--- The base game makes one row per food group, in group order.
+function EqFeedHooks.relabelFoodInfos(placeable, infos)
+    local spec = placeable.spec_husbandryFood
+    if type(infos) ~= "table" or spec == nil or spec.fillLevels == nil or spec.animalTypeIndex ~= AnimalType.HORSE then return end
+    local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(AnimalType.HORSE)
+    if animalFood == nil or animalFood.groups == nil or #animalFood.groups ~= #infos then return end
+
+    for i, info in ipairs(infos) do
+        local foodGroup = animalFood.groups[i]
+        if foodGroup.eqNames ~= nil then info.title = EqFeedHooks.foodGroupTitle(foodGroup, spec.fillLevels) end
+    end
 end
 
 
@@ -187,5 +247,15 @@ function EqFeedHooks.install(guarded, modDirectory)
         local result = superFunc(self, ...)
         guarded("horse feeds", function() EqFeedHooks.applyToFoodSystem(self) end)
         return result
+    end)
+
+    -- A placeable specialization's functions are copied into placeable types when types are
+    -- validated, so this is patched now, at source time.
+    PlaceableHusbandryFood.getFoodInfos = Utils.overwrittenFunction(PlaceableHusbandryFood.getFoodInfos, function(self, superFunc, ...)
+        local infos = superFunc(self, ...)
+        if EqFeedHooks.applied then
+            guarded("horse food rows", function() EqFeedHooks.relabelFoodInfos(self, infos) end)
+        end
+        return infos
     end)
 end

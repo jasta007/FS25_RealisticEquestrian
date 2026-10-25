@@ -94,8 +94,10 @@ and weights:
 
 Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
 skipped. Every feed in the trough gives its full boost and the boosts add up, so oats, barley and
-corn together give all three; carrots and apples are the exception and count once between them. While riding, a "Feed" line
-shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
+corn together give all three; carrots and apples are the exception and count once between them. A horse pen's food list
+names the groups Hay, Hard feed and Treats and shows what each does in place of the base game's
+percentage: the boost while it holds feed ("Treats (Tem +30%)"), the stats it can boost while it is
+empty ("Hard feed (Sta Spd Agi Tem)"). While riding, a "Feed" line shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
 
 ## Competitions
 
