@@ -18,6 +18,7 @@ EqDelivery.horses = {}
 EqDelivery.trailer = nil
 EqDelivery.timer = 0
 EqDelivery.guarded = nil
+EqDelivery.lastReason = nil
 
 -- How often the trailer is checked, and how close the player must be to the trigger.
 EqDelivery.CHECK_INTERVAL_MS = 250
@@ -37,9 +38,19 @@ local function triggerPosition(trigger)
 end
 
 
---- @return number|nil x, number|nil z the local player's position
+--- The local player's position, or their vehicle's while they sit in one: the player's own node
+--- is left behind where they got in, so driving the trailer to the dealer never brought them near.
+--- @return number|nil x, number|nil z
 local function playerPosition()
-    if g_localPlayer == nil or g_localPlayer.getPosition == nil then return nil end
+    if g_localPlayer == nil then return nil end
+    local okVehicle, vehicle = pcall(function()
+        return g_localPlayer.getCurrentVehicle ~= nil and g_localPlayer:getCurrentVehicle() or nil
+    end)
+    if okVehicle and type(vehicle) == "table" and type(vehicle.rootNode) == "number" and vehicle.rootNode ~= 0 then
+        local ok, x, _, z = pcall(getWorldTranslation, vehicle.rootNode)
+        if ok then return x, z end
+    end
+    if g_localPlayer.getPosition == nil then return nil end
     local ok, x, _, z = pcall(g_localPlayer.getPosition, g_localPlayer)
     if ok then return x, z end
     return nil
@@ -66,21 +77,30 @@ end
 --- @param farmId number
 --- @return table|nil trailer
 --- @return table horses
+--- @return string why the action is hidden, or "ready", for the log
 function EqDelivery.find(farmId)
     local px, pz = playerPosition()
-    if px == nil then return nil, {} end
+    if px == nil then return nil, {}, "no player position" end
 
+    local reason = "no trailer of yours in a dealer's loading area"
     for trigger in pairs(EqProbe.triggers) do
         local trailer = trigger.isDealer == true and trigger.loadingVehicle or nil
         if trailer ~= nil and trailer.getOwnerFarmId ~= nil and trailer:getOwnerFarmId() == farmId then
+            local horses = EqDelivery.awaitingIn(trailer)
             local x, z = triggerPosition(trigger)
-            if x ~= nil and math.sqrt((x - px) ^ 2 + (z - pz) ^ 2) <= EqDelivery.MAX_PLAYER_DISTANCE then
-                local horses = EqDelivery.awaitingIn(trailer)
-                if #horses > 0 then return trailer, horses end
+            local distance = x ~= nil and math.sqrt((x - px) ^ 2 + (z - pz) ^ 2) or nil
+            if #horses == 0 then
+                reason = "trailer at the dealer holds no horse awaiting delivery"
+            elseif distance == nil then
+                reason = "dealer loading area has no position"
+            elseif distance > EqDelivery.MAX_PLAYER_DISTANCE then
+                reason = string.format("you are %.0fm from the dealer's loading area", distance)
+            else
+                return trailer, horses, "ready"
             end
         end
     end
-    return nil, {}
+    return nil, {}, reason
 end
 
 
@@ -124,7 +144,15 @@ end
 --- The action: move the horses home and mark them delivered.
 function EqDelivery.onAction()
     if EqDelivery.pending or EqDelivery.trailer == nil or #EqDelivery.horses == 0 then return end
-    local trailer, horses = EqDelivery.trailer, EqDelivery.horses
+    EqDelivery.deliver(EqDelivery.trailer, EqDelivery.horses)
+end
+
+
+--- Move the horses home and mark them delivered.
+--- @param trailer table vehicle at the dealer
+--- @param horses table RLRM Animals in it waiting for delivery
+function EqDelivery.deliver(trailer, horses)
+    if EqDelivery.pending then return end
     local farmId = g_currentMission:getFarmId()
 
     local destination = EqDelivery.destinationFor(farmId, horses)
@@ -193,12 +221,18 @@ function EqDelivery.check(dt)
     if EqDelivery.timer > 0 then return end
     EqDelivery.timer = EqDelivery.CHECK_INTERVAL_MS
 
-    local trailer, horses = nil, {}
+    local trailer, horses, reason = nil, {}, "busy"
     local mission = g_currentMission
     if mission ~= nil and mission:getIsServer() and not EqDelivery.pending then
-        trailer, horses = EqDelivery.find(mission:getFarmId())
+        trailer, horses, reason = EqDelivery.find(mission:getFarmId())
     end
     EqDelivery.trailer, EqDelivery.horses = trailer, horses
+
+    -- One line each time the situation changes, so a log shows why the prompt did or didn't appear.
+    if reason ~= EqDelivery.lastReason then
+        EqDelivery.lastReason = reason
+        Log:info("EqDelivery: %s (%d horse(s), action %s)", reason, #horses, tostring(EqDelivery.actionEventId))
+    end
 
     local id = EqDelivery.actionEventId
     if id == nil then return end
@@ -210,12 +244,18 @@ end
 
 
 --- Register the action in every player context (on foot and in a vehicle), as RLRM does for
---- its menu key. It starts hidden; update switches it on at the dealer.
-local function registerAction()
+--- its menu key. It starts hidden; update switches it on at the dealer. In a vehicle the game
+--- can report failure while still handing back a working id (RLRM sees the same with its menu
+--- key), so the id decides: keeping the on-foot id there left the action dead from the cab.
+--- @param controlling string|nil input context
+local function registerAction(_, controlling)
     local ok, id = g_inputBinding:registerActionEvent(InputAction.EQ_DELIVER, EqDelivery, function()
         EqDelivery.guarded("delivery action", EqDelivery.onAction)
     end, false, true, false, false, nil, true)
-    if not ok or id == nil or id == "" then return end
+    if id == nil or id == "" then
+        Log:info("EqDelivery: delivery key not registered (context %s, ok=%s)", tostring(controlling), tostring(ok))
+        return
+    end
     EqDelivery.actionEventId = id
     g_inputBinding:setActionEventTextPriority(id, GS_PRIO_VERY_HIGH)
     g_inputBinding:setActionEventTextVisibility(id, false)
@@ -223,16 +263,68 @@ local function registerAction()
 end
 
 
+--- @param horses table
+--- @return string question for the dealer dialog
+local function askText(horses)
+    if #horses == 1 then
+        local name = horses[1].getName ~= nil and horses[1]:getName() or ""
+        if name ~= "" then return string.format(g_i18n:getText("eq_deliver_ask"), name) end
+    end
+    return string.format(g_i18n:getText("eq_deliver_askMany"), #horses)
+end
+
+
+--- The dealer's own key at a trailer: when the trailer holds horses waiting for delivery, ask
+--- first. Yes delivers them and the dealer screen stays shut, so they can't be sold by mistake;
+--- No opens the dealer as usual. In game the extra delivery key was taken by the dealer's key
+--- and by overlay hotkeys, so this is the main way to deliver.
+--- @param show function the AnimalScreen.show we wrap
+local function wrapDealerScreen(show)
+    return function(husbandry, vehicle, isDealer, ...)
+        local horses = {}
+        local mission = g_currentMission
+        EqDelivery.guarded("dealer delivery check", function()
+            if husbandry == nil and isDealer == true and vehicle ~= nil and mission ~= nil and mission:getIsServer()
+                and not EqDelivery.pending and vehicle.getOwnerFarmId ~= nil
+                and vehicle:getOwnerFarmId() == mission:getFarmId() then
+                horses = EqDelivery.awaitingIn(vehicle)
+            end
+        end)
+        if #horses == 0 or YesNoDialog == nil or YesNoDialog.show == nil then
+            return show(husbandry, vehicle, isDealer, ...)
+        end
+
+        local args = { n = select("#", ...), ... }
+        Log:info("EqDelivery: dealer opened with %d horse(s) awaiting delivery; asking", #horses)
+        YesNoDialog.show(function(yes)
+            if yes then
+                EqDelivery.guarded("delivery", function() EqDelivery.deliver(vehicle, horses) end)
+            else
+                show(husbandry, vehicle, isDealer, unpack(args, 1, args.n))
+            end
+        end, nil, askText(horses), g_i18n:getText("eq_deliver_title"),
+            g_i18n:getText("eq_deliver_yes"), g_i18n:getText("eq_deliver_no"))
+    end
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqDelivery.install(guarded)
+    EqDelivery.guarded = guarded
+    if AnimalScreen ~= nil and type(AnimalScreen.show) == "function" then
+        AnimalScreen.show = wrapDealerScreen(AnimalScreen.show)
+        Log:debug("EqDelivery: wrapped AnimalScreen.show for delivery at the dealer")
+    else
+        Log:warning("EqDelivery: AnimalScreen.show not found; delivery only by its own key")
+    end
+
     if InputAction.EQ_DELIVER == nil then
-        Log:warning("EqDelivery: input action EQ_DELIVER missing from modDesc; no delivery at the dealer")
+        Log:warning("EqDelivery: input action EQ_DELIVER missing from modDesc; no delivery key")
         return
     end
-    EqDelivery.guarded = guarded
     PlayerInputComponent.registerGlobalPlayerActionEvents = Utils.appendedFunction(
-        PlayerInputComponent.registerGlobalPlayerActionEvents, function()
-            guarded("delivery action registration", registerAction)
+        PlayerInputComponent.registerGlobalPlayerActionEvents, function(component, controlling)
+            guarded("delivery action registration", function() registerAction(component, controlling) end)
         end)
     Log:debug("EqDelivery: hooked PlayerInputComponent.registerGlobalPlayerActionEvents")
 end
@@ -243,6 +335,13 @@ end
 function EqDelivery.start(mission)
     if EqDelivery.guarded == nil then return end
     EqDelivery.pending = false
+    EqDelivery.lastReason = nil
+    local all, dealers = 0, 0
+    for trigger in pairs(EqProbe.triggers) do
+        all = all + 1
+        if trigger.isDealer == true then dealers = dealers + 1 end
+    end
+    Log:info("EqDelivery: %d animal loading area(s), %d at a dealer", all, dealers)
     mission:addUpdateable(EqDelivery)
 end
 

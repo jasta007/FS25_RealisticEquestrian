@@ -36,7 +36,7 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_r" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_e" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>
