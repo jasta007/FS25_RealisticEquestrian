@@ -370,7 +370,7 @@
         <text name="eq_story_race_finish" text="Ran well throughout the race but was outsprinted at the finish."/>
         <text name="eq_story_steeplechase_clean" text="Jumped and travelled well throughout."/>
         <text name="eq_story_steeplechase_struggled" text="Struggled with both the fences and the pace."/>
-        <text name="eq_story_steeplechase_eliminated" text="Pulled up before the finish."/>
+        <text name="eq_story_steeplechase_eliminated" text="Had a bad fall at a hedge and couldn't continue."/>
         <text name="eq_story_steeplechase_elimRefusal" text="Refused a fence and was pulled up."/>
         <text name="eq_story_steeplechase_agility" text="Hit a fence hard and lost ground."/>
         <text name="eq_story_steeplechase_agilityMany" text="Jumped poorly and lost ground at several fences."/>
