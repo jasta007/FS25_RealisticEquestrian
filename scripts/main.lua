@@ -28,11 +28,13 @@ source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
+source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
+source(modDirectory .. "scripts/console/EqProbe.lua")
 
 local Log = EqLog
 
@@ -88,6 +90,10 @@ function EqMain.activate()
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.awayVisuals then
+        guarded("away horses hook", function() EqAway.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.menuLayout then
         guarded("menu layout hooks", function() EqInfoDisplay.installMenu(guarded) end)
     end
@@ -120,6 +126,8 @@ end
 -- Rideable's functions are copied into vehicle types when types are validated, so they are
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
+-- Loading triggers are created as the map loads, so the probe starts listening now.
+guarded("probe hook", EqProbe.install)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
@@ -147,6 +155,11 @@ local function onMissionLoaded(mission)
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
             guarded("monthly events", EqCompetitionManager.onPeriodChanged)
         end, EqCompetitionManager)
+    end)
+
+    -- Pastures may have drawn their horses before the saved entries loaded.
+    guarded("away horses at load", function()
+        if mission:getIsServer() then EqCompetitionManager.refreshAway(EqCompetitionManager.enteredAnimals()) end
     end)
 end
 

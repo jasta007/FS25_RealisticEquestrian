@@ -4,7 +4,8 @@
     Realistic Equestrian's Events tab inside RLRM's menu.
 
     Left: open events (or, toggled, your results). Right: your horses for the selected event,
-    with their rating and whether they can enter. Profiles are RLRM's (rlMenu_*) and the base
+    with their chance of success, what the event would teach them and whether they can enter,
+    and under that a panel for the selected horse. Profiles are RLRM's (rlMenu_*) and the base
     game's (fs25_*), so the tab looks like the rest of the menu; this file defines none.
     Content width follows RLRM's frames: 1540px inside fs25_menuContainer.
 -->
@@ -20,24 +21,26 @@
 
         <!-- Events table -->
         <Bitmap profile="rlMenu_tableList" id="eventsHeader" position="20px -120px" size="1000px 40px">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="310px 40px" text="$l10n_eq_ui_col_event"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="330px 0px" size="100px 40px" text="$l10n_eq_ui_col_going"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="440px 0px" size="130px 40px" text="$l10n_eq_ui_col_when"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="580px 0px" size="100px 40px" text="$l10n_eq_ui_col_fee"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="690px 0px" size="120px 40px" text="$l10n_eq_ui_col_prize"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="830px 0px" size="170px 40px" text="$l10n_eq_ui_col_yours"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="250px 40px" text="$l10n_eq_ui_col_event"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="270px 0px" size="120px 40px" text="$l10n_eq_ui_col_level"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="400px 0px" size="110px 40px" text="$l10n_eq_ui_col_going"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="520px 0px" size="100px 40px" text="$l10n_eq_ui_col_when"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="620px 0px" size="90px 40px"  text="$l10n_eq_ui_col_fee"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="720px 0px" size="110px 40px" text="$l10n_eq_ui_col_prize"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="845px 0px" size="155px 40px" text="$l10n_eq_ui_col_yours"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </Bitmap>
 
         <GuiElement profile="rlMenu_container" id="eventsBox" position="20px -165px" size="1020px 700px">
             <SmoothList profile="rlMenu_tableList" id="eventsList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="eventRowTemplate" size="1000px 48px">
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="310px 48px" name="title" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="330px 0px" size="100px 48px" name="going"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="440px 0px" size="130px 48px" name="when"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="580px 0px" size="100px 48px" name="fee"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="690px 0px" size="120px 48px" name="prize"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="830px 0px" size="170px 48px" name="yours" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="250px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="270px 0px" size="120px 48px" name="level" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="400px 0px" size="110px 48px" name="going"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="520px 0px" size="100px 48px" name="when"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="620px 0px" size="90px 48px"  name="fee"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="720px 0px" size="110px 48px" name="prize"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="845px 0px" size="155px 48px" name="yours" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">
@@ -72,32 +75,74 @@
 
         <!-- Your horses for the selected event -->
         <Bitmap profile="rlMenu_tableList" id="horsesHeader" position="1060px -120px" size="500px 40px">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="170px 40px" text="$l10n_eq_ui_col_horse"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="190px 0px" size="70px 40px"  text="$l10n_eq_ui_col_age"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="270px 0px" size="70px 40px"  text="$l10n_eq_ui_col_rating"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="360px 0px" size="140px 40px" text="$l10n_eq_ui_col_status"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="140px 40px" text="$l10n_eq_ui_col_horse"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="155px 0px" size="105px 40px" text="$l10n_eq_ui_col_success"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="265px 0px" size="85px 40px"  text="$l10n_eq_ui_col_training"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="355px 0px" size="140px 40px" text="$l10n_eq_ui_col_status"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </Bitmap>
 
-        <GuiElement profile="rlMenu_container" id="horsesBox" position="1060px -165px" size="520px 700px">
-            <SmoothList profile="rlMenu_tableList" id="horsesList" position="0px 0px" size="500px 700px">
+        <GuiElement profile="rlMenu_container" id="horsesBox" position="1060px -165px" size="520px 384px">
+            <SmoothList profile="rlMenu_tableList" id="horsesList" position="0px 0px" size="500px 384px">
                 <ListItem profile="rlMenu_tableListItem" name="horseRowTemplate" size="500px 48px">
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="170px 48px" name="name" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="190px 0px" size="70px 48px"  name="age"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="270px 0px" size="70px 48px"  name="rating"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="360px 0px" size="140px 48px" name="status" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="140px 48px" name="name" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="155px 0px" size="105px 48px" name="success"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="265px 0px" size="85px 48px"  name="training"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="355px 0px" size="140px 48px" name="status" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
-            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">
-                <Slider profile="fs25_listSlider" size="6px 692px" dataElementId="horsesList"/>
+            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 384px" with="anchorTopRight">
+                <Slider profile="fs25_listSlider" size="6px 376px" dataElementId="horsesList"/>
             </ThreePartBitmap>
         </GuiElement>
+
+        <!-- The selected horse: RLRM's info-row style, label left and value at 250px -->
+        <BoxLayout profile="rlMenu_animalColumnLayout" id="horsePanel" position="1070px -560px" size="490px 318px">
+            <GuiElement profile="rlMenu_infoRow" height="40px">
+                <Text profile="rlMenu_animalStatLabel" id="panelName" textSize="22px" textMaxWidth="240px"/>
+                <Text profile="rlMenu_animalStatValue" id="panelAge" position="250px 0px" textSize="18px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_col_status"/>
+                <Text profile="rlMenu_animalStatValue" id="panelStatus" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow" height="10px"/>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" id="panelStatLabel[1]"/>
+                <Text profile="rlMenu_animalStatValue" id="panelStatValue[1]" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" id="panelStatLabel[2]"/>
+                <Text profile="rlMenu_animalStatValue" id="panelStatValue[2]" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" id="panelStatLabel[3]"/>
+                <Text profile="rlMenu_animalStatValue" id="panelStatValue[3]" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" id="panelStatLabel[4]"/>
+                <Text profile="rlMenu_animalStatValue" id="panelStatValue[4]" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow" height="10px"/>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_trainingBenefit"/>
+                <Text profile="rlMenu_animalStatValue" id="panelTraining" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_col_success"/>
+                <Text profile="rlMenu_animalStatValue" id="panelSuccess" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" id="panelTransportLabel" text="$l10n_eq_ui_transportLabel"/>
+                <Text profile="rlMenu_animalStatValue" id="panelTransport" position="250px 0px"/>
+            </GuiElement>
+        </BoxLayout>
 
         <Text profile="fs25_settingsMultiTextOptionTitle" id="emptyState"
               position="20px -450px" size="1000px 40px" textAlignment="center" visible="false"/>
 
         <Text profile="fs25_settingsMultiTextOptionTitle" id="horsesEmptyState"
-              position="1060px -450px" size="500px 40px" textAlignment="center" visible="false"/>
+              position="1060px -330px" size="500px 40px" textAlignment="center" visible="false"/>
 
         <Bitmap profile="rlMenu_tableSummary" id="summaryRow" position="20px -880px" size="1540px 40px">
             <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="1540px 40px" id="summaryText"/>

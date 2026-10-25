@@ -37,9 +37,11 @@ Players never see a ceiling as a number, only as a word in RLRM's genetics style
 Very high...). The words follow the event tiers: 40-54 is Average (Novice), 55-69 High
 (Intermediate), 70-84 Very high (Advanced), 85 and up Extremely high (Championship); below 40 is
 Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in the
-animals tab) the stat grid shows each stat's potential, such as `Speed potential  Very high`, and the
-Genetics column shows the trained level, such as `Speed 60 - High`, coloured on RLRM's red-to-green
-scale with the same ladder, so a horse trained to its full potential shows the same word in both.
+animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL on the left
+(`Speed  Very high`) and SKILLS on the right (`Speed  60 - High`), the four stats in the same order
+in both, coloured on RLRM's red-to-green scale with the same ladder, so a horse trained to its full
+potential shows the same word in both. The stat grid above keeps only RLRM's rows and shrinks to
+fit, so the pane doesn't need to scroll.
 The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
@@ -84,34 +86,65 @@ prizes, and sometimes none in a discipline.
 - **Round events** (Training, Novice, Intermediate) open every round and give results at the start
   of the next. A round is a day or a month: `eqSettings cadence day|month`.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
-- **Training Events** are for two-year-olds only: a fee, no prize money, a training boost, and you
-  still see where the horse placed. Every other event is open from three years.
+- **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
+  you still see where the horse placed. Every other event is open from three years.
+- Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
+  by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
+  flat racing as Maiden, Handicap, Listed and Group 1, and so on. Advanced and Championship events are held at a venue named after a map: the
+  base game's maps and popular ModHub maps in four regions (North America, South America,
+  Europe, Asia and Oceania), such as "Pallegney Grand Prix" or "Gage, Kentucky Gold Cup (2m)". The
+  horses go there in spirit only, so none of those maps needs to be installed. Event names live
+  in the translation file and venues in `data/events.xml`, so both are easy to change. A Level column shows the tier.
+- Steeplechases are rare, as they are today: the discipline's `chance` in `data/events.xml`
+  (0.08) scales how often one is drawn.
 - Novice has a rating cap (60), so it stays a class for novices. Above it, a horse can always
   enter something it can win.
 - A horse can start at most **two round events a month** (monthly events are on top), so a good
   horse is not a daily money tap however many days your months have.
 - A farm can make **three entries a month** in all, so you pick your best horses rather than
   sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
-- Every entry pays **transport** on top of the fee: a quarter of the game's transport price for
-  the horse ($150 for an adult). Hauling the horse there yourself instead is a stretch goal.
+- Every entry picks how the horse gets there. **Auto Transport** pays transport on top of the fee
+  (a quarter of the game's transport price for the horse, $150 for an adult) and the horse leaves
+  at once. **Manual Transport** pays no transport, but you take the horse to the animal dealer
+  yourself before the event runs (before the next round's results, or by month end for monthly
+  events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
+  totals, and has an Enter button for each. Delivering at the dealer is still being built; for
+  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`, `<routes>`).
+- Venues abroad cost more to reach. Your home region comes from the map: a map named in
+  `<home>` in `data/events.xml` (Catuaí is South America), else RLRM's map country (RLRM's
+  "map country" setting can change it). `eqSettings` shows it. North America to Europe or South America is
+  an **overseas** trip: Auto Transport costs 4x plus $1,000 quarantine, Manual pays the dealer's
+  $300 quarantine yard. Europe to South America, and Asia and Oceania to anywhere, is a
+  **long-haul** trip: 8x plus $2,500, or $500 Manual. The dearer the trip, the rarer it is: about
+  60% of named events are in your home region, 30% overseas and 10% long-haul.
 - A horse can only be in one round event and one monthly event at a time.
+- A horse entered in an event **leaves your pasture** until its result is in: the next round
+  for round events, the next month for monthly ones. It still eats, ages and trains with staff in
+  RLRM's books; it just isn't there to see or ride. (Single player and host for now.)
+- A mare more than 30% through her pregnancy (RLRM's reproduction value) can't be entered, and
+  one entered earlier is scratched if she passes 30% before the event, with half the fee back.
+  She can compete again three months after foaling.
 - A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
   dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
   half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
-  have a going: firm favours speed, soft favours stamina. On the day, RLRM's fitness and health
+  have conditions: firm favours speed, soft and heavy favour stamina, hot weather tests stamina
+  and temperament and raises the injury risk. On the day, RLRM's fitness and health
   scale the performance, plus a little luck.
 - The top three share the prize pool 50/30/20. Horses from different farms can enter the same
   event.
 - Racing can be switched off: `eqSettings racing off`.
 
 **Events tab:** RLRM's menu (Shift+O) gets a Competitions tab with a rosette icon. The left table
-lists the open events (fee, prize pool, going, when results come, and how many of your horses can
-enter). Select one, and the right table shows your horses with their rating and whether they can
-enter; pick a horse and press Enter. The Results button switches the left table to your results.
+lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
+enter). Select one, and the right table shows your horses with their **Success** (Favourite,
+Contender, Outsider or Long shot: their chance of a top-three place, counting the rivals, their
+fitness and the risk of elimination), **Training** (for young horse classes, how much the outing
+would teach them: High down to None) and whether they can enter. Under it, a panel shows the
+selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
-`eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
+`eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ## Buying horses
 

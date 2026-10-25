@@ -8,10 +8,12 @@
         stamina/speed/agility/temperament   weight of each stat (+ = 1, ++ = 2, +++ = 3)
         weakestShare    0..1, share of the rating taken from the horse's weakest weighted stat
                         (all-round tests punish a hole in the horse)
-        outdoor         true: the going (firm, good, soft) changes the weights
+        outdoor         true: the conditions (firm, good, soft, heavy, hot) change the weights
         racing          true: a race; switched off by the racing setting
         elimination     base chance a horse is eliminated (refusals, falls) or pulled up
         injury          base chance a horse is injured in a run
+        chance          multiplies every tier's chance of running in this discipline (default 1;
+                        steeplechase is kept rare)
     tier
         name            key used in saves
         minAge/maxAge   months; maxAge 0 means no limit
@@ -26,8 +28,10 @@
         chance          chance the tier runs in a given round, per discipline
         trainingBoost   share of a full day's training the run gives (Training Events)
         risk            multiplies elimination and injury chances (easier courses below 1)
+        venue           true: the event is held at a named venue from <venues>, which goes in
+                        its name ("Pallegney Grand Prix")
 
-    going: injury multiplies the injury chance on that ground.
+    goings (shown as Conditions): injury multiplies the injury chance in those conditions.
     risk: injuries a horse can come back from, by how often each happens, the months of box rest
         and the vet bill each month. careerEnding: chance a serious injury ends the horse's
         career instead, only with the forced retirement setting on (the default is off).
@@ -40,26 +44,117 @@
         <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02"/>
         <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015"/>
         <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02"/>
-        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03"/>
+        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03" chance="0.08"/>
     </disciplines>
 
     <tiers>
         <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
         <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
         <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
-        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1"/>
-        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1" venue="true"/>
+        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2" venue="true"/>
     </tiers>
 
     <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its
          own fee and prize. priceSpread: fee and prize vary by up to this share either way. -->
     <schedule copiesMax="3" priceSpread="0.35"/>
 
-    <!-- How the going moves weight between stats on outdoor courses. -->
+    <!--
+        venues: where the named (venue="true") events are held. Each event draws a region, then a
+        venue in it, so a region with few venues still gets its share. Venues are the base
+        game's maps and popular mod maps; the horses go there in spirit only, so the player
+        needs none of these maps installed. Names are shown as written (not translated).
+    -->
+    <venues>
+        <region name="northAmerica">
+            <venue name="Riverbend Springs"/>
+            <venue name="Silverrun Forest"/>
+            <venue name="Alma, Missouri"/>
+            <venue name="Frankenmuth"/>
+            <venue name="Gnadenthal"/>
+            <venue name="Owendale"/>
+            <venue name="Redstone County"/>
+            <venue name="Gage, Kentucky"/>
+            <venue name="Judith Plains, Montana"/>
+        </region>
+        <region name="southAmerica">
+            <venue name="Catuaí"/>
+            <venue name="Rancho Fundo"/>
+            <venue name="Matopiba"/>
+            <venue name="São Carlos"/>
+            <venue name="Horizonte Argentino"/>
+            <venue name="Recanto da Alvorada"/>
+        </region>
+        <region name="europe">
+            <venue name="Zielonka"/>
+            <venue name="Pallegney"/>
+            <venue name="Geistal"/>
+            <venue name="Monteriggioni"/>
+            <venue name="Riverview"/>
+            <venue name="Steinfurt"/>
+            <venue name="Bartelshagen"/>
+            <venue name="Castlereagh"/>
+            <venue name="Le Mechet"/>
+            <venue name="Saxlingham"/>
+            <venue name="Pichonnière Valley"/>
+            <venue name="Hof Bergmann"/>
+            <venue name="Oberthal"/>
+        </region>
+        <region name="asiaOceania">
+            <venue name="Hutan Pantai"/>
+            <venue name="Western Australia"/>
+            <venue name="Winchester, New Zealand"/>
+            <venue name="Yurihonjō"/>
+            <venue name="Willow River"/>
+            <venue name="Nulla Creek"/>
+        </region>
+    </venues>
+
+    <!--
+        transport: what an entry pays to get the horse there and back.
+        Auto Transport pays share x the game's transport price for the horse (fallback when the
+        subtype has none). Manual Transport (the player hauls the horse to the dealer) pays
+        nothing locally.
+    -->
+    <transport share="0.25" fallback="150"/>
+
+    <!--
+        routes: how far a venue's region is from the player's home region.
+        distance        local (the home region), near or far. Each pair not listed under <route>
+                        is far; a region to itself is local.
+            chance      share of named events drawn at this distance (split evenly between the
+                        regions at it), so the dearer trips are rarer
+            factor      multiplies the Auto Transport price
+            quarantine  added to Auto Transport: the horse's quarantine abroad
+            quarantineYard  what a Manual Transport horse pays instead: the dealer's quarantine yard
+        home: the player's home region. A map listed under <map> (by its title) wins; otherwise
+            RLRM's map country (RLRM's "map country" setting can change it) picks the region;
+            otherwise the default.
+    -->
+    <routes>
+        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"/>
+        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300"/>
+        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500"/>
+        <route from="northAmerica" to="europe"       distance="near"/>
+        <route from="northAmerica" to="southAmerica" distance="near"/>
+    </routes>
+
+    <home default="europe">
+        <map title="Catuaí" region="southAmerica"/>
+        <country code="US" region="northAmerica"/>
+        <country code="CA" region="northAmerica"/>
+        <country code="CH" region="asiaOceania"/>
+        <country code="JP" region="asiaOceania"/>
+    </home>
+
+    <!-- Conditions on outdoor courses: the ground, or the weather when it matters more. Each
+         moves weight between stats and changes the injury risk. Indoor events have none. -->
     <goings>
-        <going name="firm" chance="0.3" stamina="0.85" speed="1.2"  agility="1.0" temperament="1.0" injury="1.4"/>
-        <going name="good" chance="0.45" stamina="1.0" speed="1.0"  agility="1.0" temperament="1.0" injury="1.0"/>
-        <going name="soft" chance="0.25" stamina="1.3" speed="0.8"  agility="1.0" temperament="1.0" injury="1.1"/>
+        <going name="firm"  chance="0.25" stamina="0.85" speed="1.2"  agility="1.0" temperament="1.0" injury="1.4"/>
+        <going name="good"  chance="0.4"  stamina="1.0"  speed="1.0"  agility="1.0" temperament="1.0" injury="1.0"/>
+        <going name="soft"  chance="0.2"  stamina="1.3"  speed="0.8"  agility="1.0" temperament="1.0" injury="1.1"/>
+        <going name="heavy" chance="0.07" stamina="1.5"  speed="0.7"  agility="0.9" temperament="1.0" injury="1.25"/>
+        <going name="hot"   chance="0.08" stamina="1.3"  speed="1.0"  agility="1.0" temperament="1.1" injury="1.2"/>
     </goings>
 
     <risk>

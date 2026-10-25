@@ -86,6 +86,50 @@ function EqCompetition.canEnter(tier, ageMonths, rating)
 end
 
 
+--- A horse's chance of a top-three place, for the Events tab: the event run many times
+--- against fresh rivals, with the chance of being eliminated taken off.
+--- @param event table { discipline, tier, prize }
+--- @param config table EqEventConfig
+--- @param rating number
+--- @param condition number from EqCompetition.condition
+--- @param eliminationChance number 0..1
+--- @param rng table EqRandom
+--- @param runs number|nil default 200
+--- @return number chance 0..1
+function EqCompetition.podiumChance(event, config, rating, condition, eliminationChance, rng, runs)
+    runs = runs or 200
+    local podiums = 0
+    local entrants = { { key = "horse", rating = rating, condition = condition } }
+    for _ = 1, runs do
+        for _, runner in ipairs(EqCompetition.run(event, config, entrants, rng)) do
+            if runner.key ~= nil then
+                if runner.place <= #EqCompetition.PRIZE_SHARES then podiums = podiums + 1 end
+                break
+            end
+        end
+    end
+    return podiums / runs * (1 - (eliminationChance or 0))
+end
+
+
+-- Words for a podium chance, best first.
+EqCompetition.SUCCESS_BANDS = {
+    { from = 0.6, name = "favourite" },
+    { from = 0.35, name = "contender" },
+    { from = 0.12, name = "outsider" },
+    { from = -math.huge, name = "longShot" },
+}
+
+
+--- @param chance number from podiumChance
+--- @return string name a SUCCESS_BANDS name
+function EqCompetition.successBand(chance)
+    for _, band in ipairs(EqCompetition.SUCCESS_BANDS) do
+        if chance >= band.from then return band.name end
+    end
+end
+
+
 --- @param items table list with a .chance each
 --- @param rng table EqRandom
 --- @return table item
@@ -101,26 +145,74 @@ local function pickWeighted(items, rng)
 end
 
 
+--- @param items table non-empty list
+--- @param rng table EqRandom
+--- @return any item one item, each as likely as the others
+local function pickAny(items, rng)
+    return items[math.min(#items, math.floor(rng:next() * #items) + 1)]
+end
+
+
+--- @param config table EqEventConfig
+--- @param from string|nil region
+--- @param to string|nil region
+--- @return string distance "local", "near" or "far" (local when either is unknown)
+function EqCompetition.distanceBetween(config, from, to)
+    if from == nil or to == nil or from == to then return "local" end
+    return config.routes ~= nil and config.routes[from .. ">" .. to] or "far"
+end
+
+
+--- How likely each region is to host a named event: each distance's chance, split evenly
+--- between the regions at that distance from home.
+--- @param config table EqEventConfig
+--- @param home string|nil the player's home region; nil weighs every region the same
+--- @return table list of { region, chance }
+function EqCompetition.regionWeights(config, home)
+    local atDistance = {}
+    for _, region in ipairs(config.regions or {}) do
+        local distance = EqCompetition.distanceBetween(config, home, region.name)
+        atDistance[distance] = (atDistance[distance] or 0) + 1
+    end
+    local weights = {}
+    for _, region in ipairs(config.regions or {}) do
+        local distance = EqCompetition.distanceBetween(config, home, region.name)
+        local entry = home ~= nil and config.distances ~= nil and config.distances[distance] or nil
+        local chance = entry ~= nil and entry.chance / atDistance[distance] or 1
+        if chance > 0 then table.insert(weights, { region = region, chance = chance }) end
+    end
+    return weights
+end
+
+
 --- Draw the events for one round.
 --- @param config table EqEventConfig
 --- @param rng table EqRandom
 --- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
 --- @param racingEnabled boolean
---- @return table events list of { discipline, tier, going, fee, prize, kind }
-function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
+--- @param home string|nil the player's home region: nearer venues are drawn more often
+--- @return table events list of { discipline, tier, going, fee, prize, kind, venue, region }
+function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
     local events = {}
     local wantMonthly = kind == EqCompetition.KIND_MONTH
+    local regionWeights = EqCompetition.regionWeights(config, home)
 
     for _, discipline in ipairs(config.disciplines) do
         if racingEnabled or not discipline.racing then
             for _, tier in ipairs(config.tiers) do
                 if tier.monthly == wantMonthly then
                     local copies = 0
-                    while copies < config.copiesMax and rng:next() < tier.chance * (copies == 0 and 1 or 0.4) do
+                    local chance = tier.chance * (discipline.chance or 1)
+                    while copies < config.copiesMax and rng:next() < chance * (copies == 0 and 1 or 0.4) do
                         copies = copies + 1
                         local spread = config.priceSpread
                         local priceFactor = 1 + rng:uniform(-spread, spread)
                         local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
+                        local venue, region = nil, nil
+                        if tier.venue and #regionWeights > 0 then
+                            local pick = pickWeighted(regionWeights, rng).region
+                            venue, region = pickAny(pick.venues, rng), pick.name
+                        end
                         table.insert(events, {
                             discipline = discipline.name,
                             tier = tier.name,
@@ -129,6 +221,8 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
                             -- A richer purse costs more to enter, but not in proportion.
                             prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
                             kind = kind,
+                            venue = venue,
+                            region = region,
                         })
                     end
                 end

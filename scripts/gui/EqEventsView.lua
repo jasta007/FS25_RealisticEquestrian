@@ -28,7 +28,7 @@ end
 
 --- Open events, round events first, then by tier, discipline and fee.
 --- @param farmId number
---- @return table rows { event, title, going, when, fee, prize, yours }
+--- @return table rows { event, title, level, going, when, fee, prize, yours }
 function EqEventsView.eventRows(farmId)
     local manager = EqCompetitionManager
     local horses = EqRLRM.listHorsesForFarm(farmId)
@@ -52,7 +52,10 @@ function EqEventsView.eventRows(farmId)
     for _, event in ipairs(list) do
         local entered = {}
         for _, entry in ipairs(event.entries) do
-            if entry.farmId == farmId then table.insert(entered, entry.name) end
+            if entry.farmId == farmId then
+                table.insert(entered, manager.isDelivered(entry) and entry.name
+                    or string.format(g_i18n:getText("eq_ui_awaiting"), entry.name))
+            end
         end
 
         local yours
@@ -67,8 +70,9 @@ function EqEventsView.eventRows(farmId)
 
         table.insert(rows, {
             event = event,
-            title = string.format("%s %s", manager.tierTitle(event.tier), manager.disciplineTitle(event.discipline)),
-            going = event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "-",
+            title = manager.eventName(event.discipline, event.tier, event.venue),
+            level = manager.tierTitle(event.tier),
+            going = manager.conditionsText(event.going),
             when = g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_when_nextMonth" or cadence),
             fee = money(event.fee),
             prize = event.prize > 0 and money(event.prize) or g_i18n:getText("eq_ui_trainingOnly"),
@@ -83,7 +87,8 @@ end
 --- The player's horses for one event: rating, and whether and why not they can enter.
 --- @param event table
 --- @param farmId number
---- @return table rows { animal, record, name, age, rating, status, canEnter, transport }
+--- @return table rows { animal, record, name, age, status, canEnter, transport (= autoCost), autoCost,
+---     manualCost, success, successBand, training, trainingBand (nil when the event gives no training) }
 function EqEventsView.horseRows(event, farmId)
     local manager = EqCompetitionManager
     local tier = manager.config.tierByName[event.tier]
@@ -98,9 +103,12 @@ function EqEventsView.horseRows(event, farmId)
             local status, canEnter
 
             local entered = manager.findEntry(record.id, event.kind)
-            local unavailable = manager.unavailableReason(record, event.kind)
+            local unavailable = manager.unavailableReason(record, event.kind, animal)
             if entered ~= nil then
                 status = entered == event and g_i18n:getText("eq_ui_status_enteredHere") or g_i18n:getText("eq_ui_status_enteredElsewhere")
+                if entered == event and manager.awaitingDelivery(animal) then
+                    status = g_i18n:getText("eq_ui_status_awaitingDelivery")
+                end
             elseif unavailable == "injured" then
                 status = string.format(g_i18n:getText("eq_status_injured"), record.injury.monthsLeft)
             elseif unavailable ~= nil then
@@ -115,23 +123,32 @@ function EqEventsView.horseRows(event, farmId)
                 end
             end
 
+            local prospects = manager.prospects(record, animal, event)
+            local autoCost, manualCost = manager.transportCosts(animal, event)
             table.insert(rows, {
                 animal = animal,
                 record = record,
                 name = horseName(animal, record),
                 age = string.format(g_i18n:getText("eq_ui_ageMonths"), age),
-                rating = string.format("%d", math.floor(rating + 0.5)),
                 ratingValue = rating,
+                success = g_i18n:getText("eq_success_" .. prospects.success),
+                successBand = prospects.success,
+                chance = prospects.chance,
+                training = prospects.benefit ~= nil and g_i18n:getText("eq_benefit_" .. prospects.benefit) or "-",
+                trainingBand = prospects.benefit,
                 status = status,
                 canEnter = canEnter == true,
-                transport = manager.transportCost(animal),
+                transport = autoCost,
+                autoCost = autoCost,
+                manualCost = manualCost,
             })
         end
     end
 
-    -- Horses that can enter first, best rating first.
+    -- Horses that can enter first, best chance first.
     table.sort(rows, function(a, b)
         if a.canEnter ~= b.canEnter then return a.canEnter end
+        if a.chance ~= b.chance then return a.chance > b.chance end
         return a.ratingValue > b.ratingValue
     end)
     return rows
@@ -155,7 +172,7 @@ function EqEventsView.resultRows(farmId)
                 end
                 table.insert(rows, {
                     day = string.format(g_i18n:getText("eq_ui_day"), summary.day),
-                    title = string.format("%s %s", manager.tierTitle(summary.tier), manager.disciplineTitle(summary.discipline)),
+                    title = manager.eventName(summary.discipline, summary.tier, summary.venue),
                     horse = placing.name,
                     result = result,
                     prize = placing.prize > 0 and money(placing.prize) or "-",

@@ -178,11 +178,11 @@ function EqConsole:consoleEvents()
         local eligible = EqCompetitionManager.countEligible(event, horses)
         if eligible > 0 then anyEligible = true end
         local ages = tier.maxAge > 0 and string.format("%d-%dm", tier.minAge, tier.maxAge) or string.format("%dm+", tier.minAge)
-        print(string.format("%s #%-4d %-7s %-28s %-6s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
+        print(string.format("%s #%-4d %-7s %-44s %-8s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
             eligible > 0 and string.format("[%d can enter]", eligible) or "              ", event.id,
             event.kind == EqCompetition.KIND_MONTH and "monthly" or "round",
-            EqCompetitionManager.tierTitle(event.tier) .. " " .. EqCompetitionManager.disciplineTitle(event.discipline),
-            event.going ~= nil and g_i18n:getText("eq_going_" .. event.going) or "",
+            EqCompetitionManager.eventName(event.discipline, event.tier, event.venue) .. " (" .. EqCompetitionManager.tierTitle(event.tier) .. ")",
+            EqCompetitionManager.conditionsText(event.going),
             ages, g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
             tier.minRating, tier.maxRating, #event.entries))
     end
@@ -192,7 +192,7 @@ function EqConsole:consoleEvents()
     end
 
     local left = EqCompetitionManager.entriesLeft(g_currentMission:getFarmId())
-    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse>; transport is paid on top of the fee.",
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> [auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
         #list, EqCompetitionManager.settings.cadence,
         left ~= nil and string.format("You have %d of %d entries left this month.", left, EqCompetitionManager.settings.entriesPerMonth) or "No monthly entry limit.")
 end
@@ -238,20 +238,50 @@ function EqConsole:consoleRatings(...)
 end
 
 
---- eqEnter <event number> <horse name or id>
+--- eqEnter <event number> <horse name or id> [auto|manual]
 function EqConsole:consoleEnter(eventId, ...)
     local ok, message = competitionsReady()
     if not ok then return message end
 
+    local words = { ... }
+    local transport = EqCompetitionManager.TRANSPORT_AUTO
+    local last = words[#words] ~= nil and string.lower(words[#words]) or nil
+    if last == EqCompetitionManager.TRANSPORT_MANUAL or last == EqCompetitionManager.TRANSPORT_AUTO then
+        transport = last
+        table.remove(words)
+    end
+
     local id = tonumber(eventId)
-    local query = table.concat({ ... }, " ")
-    if id == nil or query == "" then return "Usage: eqEnter <event number> <horse name or id>" end
+    local query = table.concat(words, " ")
+    if id == nil or query == "" then return "Usage: eqEnter <event number> <horse name or id> [auto|manual]" end
 
     local animal = findOwnHorse(query)
     if animal == nil then return string.format("No horse called '%s' on your farm", query) end
 
-    local _, text = EqCompetitionManager.enter(id, animal, g_currentMission:getFarmId())
+    local _, text = EqCompetitionManager.enter(id, animal, g_currentMission:getFarmId(), transport)
     return text
+end
+
+
+--- eqProbe: testing, writes the loading triggers to the log.
+function EqConsole:consoleProbe()
+    return EqProbe.run()
+end
+
+
+--- eqDeliver <horse name or id>: testing, until delivery at the dealer is built.
+function EqConsole:consoleDeliver(...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local query = table.concat({ ... }, " ")
+    if query == "" then return "Usage: eqDeliver <horse name or id>" end
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+
+    local count = EqCompetitionManager.deliver(animal)
+    if count == 0 then return string.format("%s has no Manual Transport entry waiting for delivery", query) end
+    return string.format("%s delivered: it leaves for %d event(s)", query, count)
 end
 
 
@@ -267,8 +297,8 @@ function EqConsole:consoleResults()
                 shown = shown + 1
                 local outcome = placing.status ~= nil and string.upper(placing.status)
                     or string.format("%d of %d", placing.place, summary.field)
-                print(string.format("day %d  %s %s #%d  '%s' %s  %s", summary.day,
-                    EqCompetitionManager.tierTitle(summary.tier), EqCompetitionManager.disciplineTitle(summary.discipline),
+                print(string.format("day %d  %s (%s) #%d  '%s' %s  %s", summary.day,
+                    EqCompetitionManager.eventName(summary.discipline, summary.tier, summary.venue), EqCompetitionManager.tierTitle(summary.tier),
                     summary.eventId, placing.name, outcome, g_i18n:formatMoney(placing.prize, 0, true, true)))
             end
         end
@@ -320,9 +350,10 @@ function EqConsole:consoleSettings(name, value)
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  homeRegion=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
-        settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit")
+        settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
+        tostring(EqCompetitionManager.homeRegion()))
 end
 
 
@@ -341,7 +372,9 @@ end
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
-    addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id>", "consoleEnter", EqConsole)
+    addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
+    addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
+    addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
@@ -360,5 +393,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
 end

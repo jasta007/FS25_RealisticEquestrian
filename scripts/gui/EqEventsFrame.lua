@@ -1,7 +1,8 @@
 --[[
     EqEventsFrame.lua
     The Events tab in RLRM's menu: open events on the left (or your results, toggled), your
-    horses for the selected event on the right, and an Enter button for the selected horse.
+    horses for the selected event on the right with a panel for the selected horse, and an Enter
+    button for the selected horse.
 
     The tab is added from our side: EqEventsFrame.install appends to RLMenu:setupMenuPages, so
     once RLRM has registered its own pages we load our frame and register it as one more page,
@@ -24,6 +25,20 @@ EqEventsFrame.ICON_SLICE = "eqMenu.events"
 EqEventsFrame.MODE_EVENTS = "events"
 EqEventsFrame.MODE_RESULTS = "results"
 
+-- RLRM genetics bands whose colours the Success and Training words borrow.
+EqEventsFrame.SUCCESS_COLORS = {
+    favourite = "rl_ui_genetics_extremelyHigh",
+    contender = "rl_ui_genetics_high",
+    outsider = "rl_ui_genetics_low",
+    longShot = "rl_ui_genetics_extremelyLow",
+}
+EqEventsFrame.TRAINING_COLORS = {
+    high = "rl_ui_genetics_veryHigh",
+    medium = "rl_ui_genetics_average",
+    low = "rl_ui_genetics_low",
+    none = "rl_ui_genetics_extremelyLow",
+}
+
 
 --- @return table self
 function EqEventsFrame.new()
@@ -40,8 +55,13 @@ function EqEventsFrame.new()
     self.backButtonInfo = { inputAction = InputAction.MENU_BACK }
     self.enterButtonInfo = {
         inputAction = InputAction.MENU_ACCEPT,
-        text = g_i18n:getText("eq_ui_button_enter"),
-        callback = function() self:onClickEnter() end,
+        text = g_i18n:getText("eq_ui_button_enterAuto"),
+        callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_AUTO) end,
+    }
+    self.enterManualButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_ui_button_enterManual"),
+        callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_MANUAL) end,
     }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
@@ -146,6 +166,7 @@ function EqEventsFrame:selectEvent(row)
     else
         self.selectedHorseIndex = nil
     end
+    self:updateHorsePanel()
 
     local showHorses = self.mode == EqEventsFrame.MODE_EVENTS and row ~= nil
     local noHorses = showHorses and #self.horseRows == 0
@@ -186,11 +207,79 @@ function EqEventsFrame:updateButtons()
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
     if self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter then
         local event = EqCompetitionManager.events[self.selectedEventId]
-        self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enter"), horse.name,
-            g_i18n:formatMoney((event ~= nil and event.fee or 0) + horse.transport, 0, true, true))
+        local fee = event ~= nil and event.fee or 0
+        self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enterAuto"),
+            g_i18n:formatMoney(fee + horse.autoCost, 0, true, true))
+        self.enterManualButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enterManual"),
+            g_i18n:formatMoney(fee + horse.manualCost, 0, true, true))
         table.insert(self.menuButtonInfo, self.enterButtonInfo)
+        table.insert(self.menuButtonInfo, self.enterManualButtonInfo)
     end
     self:setMenuButtonInfoDirty()
+end
+
+
+--- @param element table|nil Text
+--- @param text string|nil
+--- @param color table|nil { r, g, b, a }, nil for the profile's colour
+local function setText(element, text, color)
+    if element == nil then return end
+    element:setText(text or "")
+    if color ~= nil then
+        element:setTextColor(unpack(color))
+    elseif element.eqDefaultColor ~= nil then
+        element:setTextColor(unpack(element.eqDefaultColor))
+    end
+end
+
+
+--- Remember a text's profile colour before we first colour it, so uncoloured text goes back to it.
+--- @param element table|nil Text
+local function keepDefaultColor(element)
+    if element ~= nil and element.eqDefaultColor == nil and element.textColor ~= nil then
+        element.eqDefaultColor = { unpack(element.textColor) }
+    end
+end
+
+
+--- @param colors table band name -> RLRM genetics band key
+--- @param band string|nil
+--- @return table|nil color
+local function wordColor(colors, band)
+    return band ~= nil and colors[band] ~= nil and EqInfoDisplay.bandColor(colors[band]) or nil
+end
+
+
+--- Fill the panel under the horses table for the selected horse, or hide it.
+function EqEventsFrame:updateHorsePanel()
+    if self.horsePanel == nil then return end
+    local row = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
+    local show = row ~= nil and self.mode == EqEventsFrame.MODE_EVENTS
+    self.horsePanel:setVisible(show)
+    if not show then return end
+
+    setText(self.panelName, row.name)
+    setText(self.panelAge, string.format(g_i18n:getText("eq_ui_ageLong"), row.animal.age or 0))
+    setText(self.panelStatus, row.status)
+    for i, stat in ipairs(EqConstants.STAT_KEYS) do
+        local label, value = self.panelStatLabel[i], self.panelStatValue[i]
+        keepDefaultColor(label)
+        keepDefaultColor(value)
+        local text, color = EqInfoDisplay.geneticsValue(row.record.trained[stat] or 0)
+        setText(label, g_i18n:getText("eq_stat_" .. stat), color)
+        setText(value, text, color)
+    end
+    keepDefaultColor(self.panelTraining)
+    keepDefaultColor(self.panelSuccess)
+    setText(self.panelTraining, row.training, wordColor(EqEventsFrame.TRAINING_COLORS, row.trainingBand))
+    local event = EqCompetitionManager.events[self.selectedEventId]
+    local fee = event ~= nil and event.fee or 0
+    -- The label names a trip abroad, so the dearer price explains itself.
+    local distance = EqCompetitionManager.eventDistance(event)
+    setText(self.panelTransportLabel, g_i18n:getText(distance == "local" and "eq_ui_transportLabel" or ("eq_ui_transportLabel_" .. distance)))
+    setText(self.panelTransport, string.format(g_i18n:getText("eq_ui_transportLine"),
+        g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
+    setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
 end
 
 
@@ -218,6 +307,7 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         local row = self.eventRows[index]
         if row == nil then return end
         setCell(cell, "title", row.title)
+        setCell(cell, "level", row.level)
         setCell(cell, "going", row.going)
         setCell(cell, "when", row.when)
         setCell(cell, "fee", row.fee)
@@ -227,9 +317,12 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         local row = self.horseRows[index]
         if row == nil then return end
         setCell(cell, "name", row.name)
-        setCell(cell, "age", row.age)
-        setCell(cell, "rating", row.rating)
         setCell(cell, "status", row.status)
+        local success, training = cell:getAttribute("success"), cell:getAttribute("training")
+        keepDefaultColor(success)
+        keepDefaultColor(training)
+        setText(success, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
+        setText(training, row.training, wordColor(EqEventsFrame.TRAINING_COLORS, row.trainingBand))
     elseif list == self.resultsList then
         local row = self.resultRows[index]
         if row == nil then return end
@@ -252,6 +345,7 @@ function EqEventsFrame:onListSelectionChanged(list, _section, index)
         self:updateButtons()
     elseif list == self.horsesList then
         self.selectedHorseIndex = index
+        self:updateHorsePanel()
         self:updateButtons()
     end
 end
@@ -259,11 +353,12 @@ end
 
 -- BUTTONS
 
-function EqEventsFrame:onClickEnter()
+--- @param transport string EqCompetitionManager.TRANSPORT_AUTO or TRANSPORT_MANUAL
+function EqEventsFrame:onClickEnter(transport)
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
     if horse == nil or self.selectedEventId == nil then return end
 
-    local _, text = EqCompetitionManager.enter(self.selectedEventId, horse.animal, farmId())
+    local _, text = EqCompetitionManager.enter(self.selectedEventId, horse.animal, farmId(), transport)
     self.message = text
     self:refresh()
 end

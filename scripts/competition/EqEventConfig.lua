@@ -22,7 +22,7 @@ end
 
 
 --- @param xmlFile table An open XMLFile on events.xml
---- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, injuries }
+--- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
 function EqEventConfig.read(xmlFile)
     local config = { disciplines = {}, disciplineByName = {}, tiers = {}, tierByName = {}, goings = {} }
 
@@ -38,6 +38,7 @@ function EqEventConfig.read(xmlFile)
             racing = xmlFile:getBool(key .. "#racing", false),
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
             injury = xmlFile:getFloat(key .. "#injury", 0),
+            chance = xmlFile:getFloat(key .. "#chance", 1),
         }
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
@@ -63,6 +64,7 @@ function EqEventConfig.read(xmlFile)
             chance = xmlFile:getFloat(key .. "#chance", 1),
             trainingBoost = xmlFile:getFloat(key .. "#trainingBoost", 0),
             risk = xmlFile:getFloat(key .. "#risk", 1),
+            venue = xmlFile:getBool(key .. "#venue", false),
         }
         table.insert(config.tiers, tier)
         config.tierByName[tier.name] = tier
@@ -82,6 +84,70 @@ function EqEventConfig.read(xmlFile)
             modifiers = readStats(xmlFile, key, 1),
             injury = xmlFile:getFloat(key .. "#injury", 1),
         })
+        i = i + 1
+    end
+
+    config.regions = {}
+    i = 0
+    while true do
+        local key = string.format("events.venues.region(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local region = { name = xmlFile:getString(key .. "#name"), venues = {} }
+        local j = 0
+        while true do
+            local venueKey = string.format("%s.venue(%d)", key, j)
+            if not xmlFile:hasProperty(venueKey) then break end
+            table.insert(region.venues, xmlFile:getString(venueKey .. "#name"))
+            j = j + 1
+        end
+        if #region.venues > 0 then table.insert(config.regions, region) end
+        i = i + 1
+    end
+
+    config.transport = {
+        share = xmlFile:getFloat("events.transport#share", 0.25),
+        fallback = xmlFile:getFloat("events.transport#fallback", 150),
+    }
+
+    config.distances, config.routes = {}, {}
+    i = 0
+    while true do
+        local key = string.format("events.routes.distance(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local distance = {
+            name = xmlFile:getString(key .. "#name"),
+            chance = xmlFile:getFloat(key .. "#chance", 0),
+            factor = xmlFile:getFloat(key .. "#factor", 1),
+            quarantine = xmlFile:getFloat(key .. "#quarantine", 0),
+            quarantineYard = xmlFile:getFloat(key .. "#quarantineYard", 0),
+        }
+        config.distances[distance.name] = distance
+        i = i + 1
+    end
+    i = 0
+    while true do
+        local key = string.format("events.routes.route(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local from, to = xmlFile:getString(key .. "#from"), xmlFile:getString(key .. "#to")
+        local distance = xmlFile:getString(key .. "#distance", "far")
+        config.routes[from .. ">" .. to] = distance
+        config.routes[to .. ">" .. from] = distance
+        i = i + 1
+    end
+
+    config.home = { default = xmlFile:getString("events.home#default", "europe"), maps = {}, countries = {} }
+    i = 0
+    while true do
+        local key = string.format("events.home.map(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        config.home.maps[xmlFile:getString(key .. "#title")] = xmlFile:getString(key .. "#region")
+        i = i + 1
+    end
+    i = 0
+    while true do
+        local key = string.format("events.home.country(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        config.home.countries[xmlFile:getString(key .. "#code")] = xmlFile:getString(key .. "#region")
         i = i + 1
     end
 

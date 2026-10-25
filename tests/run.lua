@@ -231,7 +231,104 @@ check("a veteran in work still declines", veteran.trained.speed < 60, string.for
 local config = EqEventConfig.read(TestXML.load("data/events.xml"))
 check("events.xml has the seven disciplines", #config.disciplines == 7)
 check("events.xml has five tiers with training first", #config.tiers == 5 and config.tiers[1].name == "training")
-check("events.xml has three goings", #config.goings == 3)
+check("events.xml has five conditions", #config.goings == 5)
+check("steeplechase is drawn rarely", config.disciplineByName.steeplechase.chance < 0.3
+    and config.disciplineByName.showJumping.chance == 1)
+do
+    local counts = {}
+    for seed = 1, 200 do
+        local schedule = EqCompetition.drawSchedule(config, EqRandom.new("rare " .. seed), EqCompetition.KIND_ROUND, true)
+        for _, event in ipairs(schedule) do counts[event.discipline] = (counts[event.discipline] or 0) + 1 end
+    end
+    print(string.format("info: 200 round draws: %d steeplechases vs %d show jumping", counts.steeplechase or 0, counts.showJumping or 0))
+    check("steeplechases are far rarer than show jumping", (counts.steeplechase or 0) * 4 < (counts.showJumping or 1))
+
+do
+    check("events.xml has four venue regions", #config.regions == 4)
+    local regions, venues, unnamed, named = {}, {}, 0, 0
+    for seed = 1, 300 do
+        for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("venue " .. seed), EqCompetition.KIND_MONTH, true)) do
+            if event.venue ~= nil then
+                named = named + 1
+                regions[event.region] = (regions[event.region] or 0) + 1
+                venues[event.venue] = true
+            else
+                unnamed = unnamed + 1
+            end
+        end
+    end
+    local regionCount, venueCount = 0, 0
+    for _ in pairs(regions) do regionCount = regionCount + 1 end
+    for _ in pairs(venues) do venueCount = venueCount + 1 end
+    print(string.format("info: %d named monthly events across %d regions and %d venues", named, regionCount, venueCount))
+    check("every monthly event has a venue", named > 0 and unnamed == 0)
+    check("every region hosts events", regionCount == 4)
+    local listed = 0
+    for _, region in ipairs(config.regions) do listed = listed + #region.venues end
+    check("every venue is used", venueCount == listed, string.format("%d of %d", venueCount, listed))
+    for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("round 3"), EqCompetition.KIND_ROUND, true)) do
+        check("everyday events have no venue", event.venue == nil)
+    end
+end
+
+do
+    local d = function(a, b) return EqCompetition.distanceBetween(config, a, b) end
+    check("same region is local", d("europe", "europe") == "local")
+    check("North America to Europe is near, both ways", d("northAmerica", "europe") == "near" and d("europe", "northAmerica") == "near")
+    check("North America to South America is near", d("southAmerica", "northAmerica") == "near")
+    check("Europe to South America is far", d("europe", "southAmerica") == "far")
+    check("Asia and Oceania is far from everywhere", d("asiaOceania", "europe") == "far" and d("northAmerica", "asiaOceania") == "far")
+    check("far costs more than near", config.distances.far.factor > config.distances.near.factor
+        and config.distances.far.quarantine > config.distances.near.quarantine)
+
+    for _, home in ipairs({ "northAmerica", "southAmerica", "europe", "asiaOceania" }) do
+        local byDistance, total = {}, 0
+        for seed = 1, 300 do
+            for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("trip " .. seed), EqCompetition.KIND_MONTH, true, home)) do
+                local distance = d(home, event.region)
+                byDistance[distance] = (byDistance[distance] or 0) + 1
+                total = total + 1
+            end
+        end
+        local l, n, f = byDistance["local"] or 0, byDistance.near or 0, byDistance.far or 0
+        print(string.format("info: home %s: %d named events, local %.0f%%, near %.0f%%, far %.0f%%", home, total,
+            100 * l / total, 100 * n / total, 100 * f / total))
+        check("home " .. home .. ": local events most common", l > n and l > f)
+        check("home " .. home .. ": far trips rarest", f < l and (n == 0 or f < n))
+    end
+end
+end
+
+-- Success and training words on the Events tab
+do
+    local event = { discipline = "dressage", tier = "novice", prize = 2000 }
+    local line = {}
+    local last = -1
+    local rising = true
+    for _, rating in ipairs({ 25, 35, 42, 48, 55 }) do
+        local chance = EqCompetition.podiumChance(event, config, rating, 1, 0, EqRandom.new("odds " .. rating))
+        if chance < last then rising = false end
+        last = chance
+        table.insert(line, string.format("%d: %.2f %s", rating, chance, EqCompetition.successBand(chance)))
+    end
+    print("info: Novice podium chance by rating -> " .. table.concat(line, ", "))
+    check("podium chance rises with rating", rising)
+    check("a weak horse is a long shot", EqCompetition.successBand(
+        EqCompetition.podiumChance(event, config, 25, 1, 0, EqRandom.new("odds weak"))) == "longShot")
+    check("a strong horse is the favourite", EqCompetition.successBand(
+        EqCompetition.podiumChance(event, config, 58, 1, 0, EqRandom.new("odds strong"))) == "favourite")
+    check("elimination risk lowers the chance", EqCompetition.podiumChance(event, config, 48, 1, 0.5, EqRandom.new("x"))
+        < EqCompetition.podiumChance(event, config, 48, 1, 0, EqRandom.new("x")))
+
+    local ceilings = { stamina = 60, speed = 60, agility = 60, temperament = 60 }
+    local weights = config.disciplineByName.dressage.weights
+    local green = { stamina = 10, speed = 10, agility = 10, temperament = 10 }
+    local schooled = { stamina = 56, speed = 56, agility = 56, temperament = 56 }
+    local _, greenBand = EqTraining.boostBenefit(green, ceilings, weights, 24)
+    local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
+    check("a green two-year-old gets a medium training benefit", greenBand == "medium")
+    check("a horse at staff level gets none", schooledBand == "none")
+end
 
 local jumping = config.disciplineByName.showJumping
 local eventing = config.disciplineByName.eventing

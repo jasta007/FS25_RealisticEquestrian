@@ -38,6 +38,11 @@ EqCompetitionManager.TRANSPORT_SHARE = 0.25
 -- Used when the horse's subtype has no transport price.
 EqCompetitionManager.TRANSPORT_FALLBACK = 150
 
+-- How an entry gets to the event: Auto pays transport and leaves at once; Manual is hauled to
+-- the dealer by the player and must be delivered before the event runs.
+EqCompetitionManager.TRANSPORT_AUTO = "auto"
+EqCompetitionManager.TRANSPORT_MANUAL = "manual"
+
 -- A Training Event under the monthly cadence counts as this share of a month's work.
 EqCompetitionManager.MONTHLY_BOOST_MONTHS = 0.25
 
@@ -73,7 +78,8 @@ function EqCompetitionManager.openRound(kind)
     local config = EqCompetitionManager.config
     if config == nil then return end
 
-    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing)
+    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing,
+        EqCompetitionManager.homeRegion())
     for _, event in ipairs(drawn) do
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
@@ -124,11 +130,43 @@ function EqCompetitionManager.tierTitle(name)
 end
 
 
+--- The event's own name, such as "1.20m Jumping" or "Pallegney Grand Prix": eq_event_<discipline>_<tier>,
+--- or the tier and discipline when there is no such text. A named event's text holds %s for its venue.
+--- @param discipline string
+--- @param tier string
+--- @param venue string|nil the event's venue; nil (a save from before venues) uses the first one
+--- @return string name
+function EqCompetitionManager.eventName(discipline, tier, venue)
+    local key = string.format("eq_event_%s_%s", discipline, tier)
+    if g_i18n.hasText ~= nil and not g_i18n:hasText(key) then
+        return string.format("%s %s", EqCompetitionManager.tierTitle(tier), EqCompetitionManager.disciplineTitle(discipline))
+    end
+    local text = g_i18n:getText(key)
+    if not text:find("%%s") then return text end
+    return string.format(text, venue or EqCompetitionManager.defaultVenue())
+end
+
+
+--- @return string venue the first venue in events.xml, for named events saved without one
+function EqCompetitionManager.defaultVenue()
+    local regions = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.regions or nil
+    local first = regions ~= nil and regions[1] ~= nil and regions[1].venues[1] or nil
+    return first or "Riverbend Springs"
+end
+
+
+--- @param going string|nil the event's conditions, nil indoors
+--- @return string text such as "Firm", or "Indoor"
+function EqCompetitionManager.conditionsText(going)
+    return g_i18n:getText(going ~= nil and ("eq_going_" .. going) or "eq_going_indoor")
+end
+
+
 --- @param event table
---- @return string title such as "Novice Show Jumping #12"
+--- @return string title such as "1.20m Jumping (Intermediate) #12"
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s %s #%d", EqCompetitionManager.tierTitle(event.tier),
-        EqCompetitionManager.disciplineTitle(event.discipline), event.id)
+    return string.format("%s (%s) #%d", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue),
+        EqCompetitionManager.tierTitle(event.tier), event.id)
 end
 
 
@@ -150,6 +188,32 @@ end
 function EqCompetitionManager.ratingFor(record, event)
     local discipline = EqCompetitionManager.config.disciplineByName[event.discipline]
     return EqCompetition.rating(record.trained, discipline, getGoing(event))
+end
+
+
+--- What a horse could expect from an event, for the Events tab.
+--- @param record table
+--- @param animal table RLRM Animal
+--- @param event table
+--- @return table prospects { chance, success (a SUCCESS_BANDS name), benefit (a BENEFIT_BANDS
+---     name, nil when the event gives no training) }
+function EqCompetitionManager.prospects(record, animal, event)
+    local config = EqCompetitionManager.config
+    local discipline = config.disciplineByName[event.discipline]
+    local tier = config.tierByName[event.tier]
+    local rating = EqCompetitionManager.ratingFor(record, event)
+    local elimination = EqRisk.eliminationChance(discipline, tier, rating, record.trained.temperament or 0)
+    -- Seeded by event and horse, so the word doesn't flicker each time the tab opens.
+    local rng = EqRandom.new(string.format("odds %s %s", tostring(event.id), record.id))
+    local chance = EqCompetition.podiumChance(event, config, rating,
+        EqCompetition.condition(animal.fitness, animal.health), elimination, rng)
+
+    local benefit = nil
+    if tier.trainingBoost > 0 then
+        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0)
+        benefit = band
+    end
+    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit }
 end
 
 
@@ -193,7 +257,7 @@ function EqCompetitionManager.resolve(event, horses)
     local discipline = config.disciplineByName[event.discipline]
     local riskRng = EqRandom.new("risk " .. event.id)
     local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
-        field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
+        venue = event.venue, region = event.region, field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
     local starters, byKey = {}, {}
 
     for _, entry in ipairs(event.entries) do
@@ -201,8 +265,16 @@ function EqCompetitionManager.resolve(event, horses)
         local record = EqRegistry.getById(entry.horseId)
         if horse == nil or record == nil then
             notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)))
+        elseif not EqCompetitionManager.isDelivered(entry) then
+            -- Manual Transport, never delivered: a non-starter, and the fee is gone.
+            table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
+                place = 0, prize = 0, status = "notDelivered" })
+            notify(entry.farmId, string.format(g_i18n:getText("eq_result_notDelivered"), entry.name,
+                EqCompetitionManager.eventTitle(event)))
         else
+            -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
+            if reason == nil and EqCompetitionManager.isTooFarInFoal(horse.animal) then reason = "inFoal" end
             if reason ~= nil then
                 local refund = math.floor((event.fee or 0) * EqRisk.SCRATCH_REFUND + 0.5)
                 if refund > 0 then
@@ -349,15 +421,33 @@ end
 --- Why a horse cannot be entered in anything right now, whatever the event.
 --- @param record table
 --- @param kind string the event's kind
---- @return string|nil reason "retired", "injured", "settling" or "rested", nil when it can go
-function EqCompetitionManager.unavailableReason(record, kind)
+--- @param animal table|nil RLRM Animal, for the in-foal check
+--- @return string|nil reason "retired", "injured", "settling", "inFoal", "foaled" or "rested", nil when it can go
+function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
     if record:isSettling() then return "settling" end
+    if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
+    if EqCompetitionManager.isRecoveringFromFoaling(animal) then return "foaled" end
     if kind == EqCompetition.KIND_ROUND and (record.monthStarts or 0) >= EqConstants.MAX_ROUND_STARTS then
         return "rested"
     end
     return nil
+end
+
+
+--- @param animal table|nil RLRM Animal
+--- @return boolean true for a mare past IN_FOAL_LIMIT of her pregnancy
+function EqCompetitionManager.isTooFarInFoal(animal)
+    return animal ~= nil and animal.isPregnant == true and (animal.reproduction or 0) > EqConstants.IN_FOAL_LIMIT
+end
+
+
+--- @param animal table|nil RLRM Animal
+--- @return boolean true for a mare that foaled less than FOALING_REST_MONTHS ago
+function EqCompetitionManager.isRecoveringFromFoaling(animal)
+    return animal ~= nil and animal.isParent == true and animal.gender == "female"
+        and (animal.monthsSinceLastBirth or EqConstants.FOALING_REST_MONTHS) < EqConstants.FOALING_REST_MONTHS
 end
 
 
@@ -379,10 +469,37 @@ function EqCompetitionManager.setRetired(record, retired)
 end
 
 
+--- @param kind string|nil only events of this kind, nil for all
+--- @param horses table|nil from indexHorses, built when nil
+--- @return table animals RLRM Animals entered in open events
+function EqCompetitionManager.enteredAnimals(kind, horses)
+    horses = horses or indexHorses()
+    local animals = {}
+    for _, event in pairs(EqCompetitionManager.events) do
+        if kind == nil or event.kind == kind then
+            for _, entry in ipairs(event.entries) do
+                local horse = horses[entry.horseId]
+                if horse ~= nil then table.insert(animals, horse.animal) end
+            end
+        end
+    end
+    return animals
+end
+
+
+--- Redraw the pastures of horses leaving for, or back from, events. Does nothing when the
+--- away-horses hook is off (it needs RLRM's visual update).
+--- @param animals table RLRM Animals
+function EqCompetitionManager.refreshAway(animals)
+    if EqAway ~= nil and EqRLRM.features.awayVisuals and #animals > 0 then EqAway.refreshAll(animals) end
+end
+
+
 --- Close and resolve every open event of a kind, then open the next round of that kind.
 --- @param kind string
 function EqCompetitionManager.turnOver(kind)
     local horses = indexHorses()
+    local returning = EqCompetitionManager.enteredAnimals(kind, horses)
     local ids = {}
     for id, event in pairs(EqCompetitionManager.events) do
         if event.kind == kind then table.insert(ids, id) end
@@ -396,6 +513,7 @@ function EqCompetitionManager.turnOver(kind)
     end
 
     EqCompetitionManager.openRound(kind)
+    EqCompetitionManager.refreshAway(returning)
 end
 
 
@@ -451,7 +569,7 @@ function EqCompetitionManager.countEligible(event, horses)
     local count = 0
     for _, animal in ipairs(horses) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil and EqCompetitionManager.unavailableReason(record, event.kind) == nil
+        if record ~= nil and EqCompetitionManager.unavailableReason(record, event.kind, animal) == nil
             and EqCompetition.canEnter(tier, animal.age or 0, EqCompetitionManager.ratingFor(record, event)) then
             count = count + 1
         end
@@ -473,12 +591,113 @@ end
 --- @param animal table RLRM Animal
 --- @return number cost
 function EqCompetitionManager.transportCost(animal)
+    local transport = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.transport or nil
+    local share = transport ~= nil and transport.share or EqCompetitionManager.TRANSPORT_SHARE
     local subType = animal.getSubType ~= nil and animal:getSubType() or nil
     if subType ~= nil and subType.transportPrice ~= nil then
         local price = subType.transportPrice:get(math.max(animal.age or 0, 0))
-        return math.floor(price * EqCompetitionManager.TRANSPORT_SHARE / 10 + 0.5) * 10
+        return math.floor(price * share / 10 + 0.5) * 10
     end
-    return EqCompetitionManager.TRANSPORT_FALLBACK
+    return transport ~= nil and transport.fallback or EqCompetitionManager.TRANSPORT_FALLBACK
+end
+
+
+--- @param text string
+--- @return string text lower case, letters and digits only (accented letters dropped)
+local function simplify(text)
+    return (text:lower():gsub("[^%w]", ""))
+end
+
+
+--- The player's home region: a map listed in events.xml by its title, else RLRM's map country
+--- (which RLRM's own "map country" setting can change), else the default. Every client reads
+--- the same map, so the schedule draws the same events everywhere.
+--- @return string|nil region nil before the config is loaded
+function EqCompetitionManager.homeRegion()
+    local config = EqCompetitionManager.config
+    if config == nil or config.home == nil then return nil end
+    local home = config.home
+
+    local info = g_currentMission ~= nil and g_currentMission.missionInfo or nil
+    if info ~= nil then
+        -- Match loosely: the title may be translated or spelt without its accents (Catuai).
+        local names = simplify(tostring(info.mapTitle or "")) .. " " .. simplify(tostring(info.mapId or ""))
+        for title, region in pairs(home.maps) do
+            local key = simplify(title)
+            if key ~= "" and names:find(key, 1, true) then return region end
+        end
+    end
+
+    local rl = EqRLRM.get("RealisticLivestock")
+    if rl ~= nil and rl.getMapCountryCode ~= nil then
+        local ok, code = pcall(rl.getMapCountryCode)
+        if ok and code ~= nil and home.countries[code] ~= nil then return home.countries[code] end
+    end
+    return home.default
+end
+
+
+--- @param event table|nil
+--- @return string distance "local", "near" or "far" from the player's home region
+function EqCompetitionManager.eventDistance(event)
+    local config = EqCompetitionManager.config
+    if event == nil or event.region == nil or config == nil then return "local" end
+    return EqCompetition.distanceBetween(config, EqCompetitionManager.homeRegion(), event.region)
+end
+
+
+--- What getting a horse to an event costs, on top of the entry fee.
+--- @param animal table RLRM Animal
+--- @param event table
+--- @return number auto Auto Transport (long-haul and quarantine included for a trip abroad)
+--- @return number manual Manual Transport (nothing locally; the dealer's quarantine yard abroad)
+function EqCompetitionManager.transportCosts(animal, event)
+    local local_ = EqCompetitionManager.transportCost(animal)
+    local config = EqCompetitionManager.config
+    local distance = config ~= nil and config.distances ~= nil and config.distances[EqCompetitionManager.eventDistance(event)] or nil
+    if distance == nil then return local_, 0 end
+    local auto = math.floor(local_ * distance.factor / 10 + 0.5) * 10 + distance.quarantine
+    return auto, distance.quarantineYard
+end
+
+
+--- @param entry table
+--- @return boolean true when the horse is at (or on its way to) the event
+function EqCompetitionManager.isDelivered(entry)
+    return entry.transport ~= EqCompetitionManager.TRANSPORT_MANUAL or entry.delivered == true
+end
+
+
+--- Mark a horse's Manual entries as delivered: the horse leaves its pasture for the event.
+--- Step 3 calls this from the dealer; until then the eqDeliver console command does.
+--- @param animal table RLRM Animal
+--- @return number count entries delivered
+function EqCompetitionManager.deliver(animal)
+    local id = EqRegistry.getId(animal)
+    local count = 0
+    for _, event in pairs(EqCompetitionManager.events) do
+        for _, entry in ipairs(event.entries) do
+            if entry.horseId == id and not EqCompetitionManager.isDelivered(entry) then
+                entry.delivered = true
+                count = count + 1
+            end
+        end
+    end
+    if count > 0 then EqCompetitionManager.refreshAway({ animal }) end
+    return count
+end
+
+
+--- @param animal table RLRM Animal
+--- @return boolean true when the horse has a Manual entry still waiting for delivery
+function EqCompetitionManager.awaitingDelivery(animal)
+    local id = EqRegistry.getId(animal)
+    for _, event in pairs(EqCompetitionManager.events) do
+        for _, entry in ipairs(event.entries) do
+            if entry.horseId == id and not EqCompetitionManager.isDelivered(entry) then return true end
+        end
+    end
+    return false
 end
 
 
@@ -487,9 +706,11 @@ end
 --- @param eventId number
 --- @param animal table RLRM Animal
 --- @param farmId number
+--- @param transport string|nil TRANSPORT_AUTO (default) or TRANSPORT_MANUAL
 --- @return boolean ok
 --- @return string message translated text for the player
-function EqCompetitionManager.enter(eventId, animal, farmId)
+function EqCompetitionManager.enter(eventId, animal, farmId, transport)
+    local manual = transport == EqCompetitionManager.TRANSPORT_MANUAL
     local event = EqCompetitionManager.events[eventId]
     if event == nil then return false, g_i18n:getText("eq_enter_noEvent") end
 
@@ -500,7 +721,7 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
         return false, string.format(g_i18n:getText("eq_enter_farmLimit"), EqCompetitionManager.settings.entriesPerMonth)
     end
 
-    local unavailable = EqCompetitionManager.unavailableReason(record, event.kind)
+    local unavailable = EqCompetitionManager.unavailableReason(record, event.kind, animal)
     if unavailable == "injured" then
         return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
     elseif unavailable == "rested" then
@@ -524,20 +745,28 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
-    local transport = EqCompetitionManager.transportCost(animal)
+    local autoCost, manualCost = EqCompetitionManager.transportCosts(animal, event)
+    local cost = manual and manualCost or autoCost
     local farm = g_farmManager:getFarmById(farmId)
-    if farm ~= nil and farm:getBalance() < event.fee + transport then return false, g_i18n:getText("eq_enter_noMoney") end
+    if farm ~= nil and farm:getBalance() < event.fee + cost then return false, g_i18n:getText("eq_enter_noMoney") end
 
     g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
-    if transport > 0 then
-        g_currentMission:addMoney(-transport, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
+    if cost > 0 then
+        g_currentMission:addMoney(-cost, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
     end
     EqCompetitionManager.farmEntries[farmId] = (EqCompetitionManager.farmEntries[farmId] or 0) + 1
     local name = animal.getName ~= nil and animal:getName() or record.id
-    table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name })
+    table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name,
+        transport = manual and EqCompetitionManager.TRANSPORT_MANUAL or EqCompetitionManager.TRANSPORT_AUTO,
+        delivered = not manual })
+    if not manual then EqCompetitionManager.refreshAway({ animal }) end
 
+    if manual then
+        return true, string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
+            g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_deadline_month" or "eq_ui_deadline_round"))
+    end
     return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
-        g_i18n:formatMoney(transport, 0, true, true))
+        g_i18n:formatMoney(cost, 0, true, true))
 end
 
 
@@ -573,6 +802,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         xmlFile:setString(eventKey .. "#discipline", event.discipline)
         xmlFile:setString(eventKey .. "#tier", event.tier)
         if event.going ~= nil then xmlFile:setString(eventKey .. "#going", event.going) end
+        if event.venue ~= nil then xmlFile:setString(eventKey .. "#venue", event.venue) end
+        if event.region ~= nil then xmlFile:setString(eventKey .. "#region", event.region) end
         xmlFile:setFloat(eventKey .. "#fee", event.fee)
         xmlFile:setFloat(eventKey .. "#prize", event.prize)
         for j, entry in ipairs(event.entries) do
@@ -580,6 +811,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
             xmlFile:setString(entryKey .. "#horseId", entry.horseId)
             xmlFile:setInt(entryKey .. "#farmId", entry.farmId)
             xmlFile:setString(entryKey .. "#name", entry.name)
+            xmlFile:setString(entryKey .. "#transport", entry.transport or EqCompetitionManager.TRANSPORT_AUTO)
+            xmlFile:setBool(entryKey .. "#delivered", EqCompetitionManager.isDelivered(entry))
         end
     end
 
@@ -589,6 +822,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         xmlFile:setString(resultKey .. "#discipline", summary.discipline)
         xmlFile:setString(resultKey .. "#tier", summary.tier)
         if summary.going ~= nil then xmlFile:setString(resultKey .. "#going", summary.going) end
+        if summary.venue ~= nil then xmlFile:setString(resultKey .. "#venue", summary.venue) end
+        if summary.region ~= nil then xmlFile:setString(resultKey .. "#region", summary.region) end
         xmlFile:setInt(resultKey .. "#field", summary.field)
         xmlFile:setInt(resultKey .. "#day", summary.day)
         for j, placing in ipairs(summary.placings) do
@@ -639,6 +874,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             discipline = xmlFile:getString(eventKey .. "#discipline"),
             tier = xmlFile:getString(eventKey .. "#tier"),
             going = xmlFile:getString(eventKey .. "#going"),
+            venue = xmlFile:getString(eventKey .. "#venue"),
+            region = xmlFile:getString(eventKey .. "#region"),
             fee = xmlFile:getFloat(eventKey .. "#fee", 0),
             prize = xmlFile:getFloat(eventKey .. "#prize", 0),
             entries = {},
@@ -651,6 +888,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
                 horseId = xmlFile:getString(entryKey .. "#horseId"),
                 farmId = xmlFile:getInt(entryKey .. "#farmId"),
                 name = xmlFile:getString(entryKey .. "#name", ""),
+                transport = xmlFile:getString(entryKey .. "#transport", EqCompetitionManager.TRANSPORT_AUTO),
+                delivered = xmlFile:getBool(entryKey .. "#delivered", true),
             })
             j = j + 1
         end
@@ -670,6 +909,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             discipline = xmlFile:getString(resultKey .. "#discipline"),
             tier = xmlFile:getString(resultKey .. "#tier"),
             going = xmlFile:getString(resultKey .. "#going"),
+            venue = xmlFile:getString(resultKey .. "#venue"),
+            region = xmlFile:getString(resultKey .. "#region"),
             field = xmlFile:getInt(resultKey .. "#field", 0),
             day = xmlFile:getInt(resultKey .. "#day", 0),
             placings = {},

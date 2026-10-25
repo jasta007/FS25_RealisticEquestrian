@@ -17,11 +17,11 @@
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
         <text name="eq_discipline_crossCountry" text="Cross Country"/>
-        <text name="eq_discipline_eventing" text="3 Day Eventing"/>
-        <text name="eq_discipline_raceShort" text="Sprint Race"/>
-        <text name="eq_discipline_raceLong" text="Distance Race"/>
+        <text name="eq_discipline_eventing" text="Eventing"/>
+        <text name="eq_discipline_raceShort" text="Flat Racing (sprint)"/>
+        <text name="eq_discipline_raceLong" text="Flat Racing (staying)"/>
         <text name="eq_discipline_steeplechase" text="Steeplechase"/>
-        <text name="eq_tier_training" text="Training Event"/>
+        <text name="eq_tier_training" text="Young horse"/>
         <text name="eq_tier_novice" text="Novice"/>
         <text name="eq_tier_intermediate" text="Intermediate"/>
         <text name="eq_tier_advanced" text="Advanced"/>
@@ -29,6 +29,44 @@
         <text name="eq_going_firm" text="Firm"/>
         <text name="eq_going_good" text="Good"/>
         <text name="eq_going_soft" text="Soft"/>
+        <text name="eq_going_heavy" text="Heavy"/>
+        <text name="eq_going_hot" text="Hot"/>
+        <text name="eq_going_indoor" text="Indoor"/>
+        <text name="eq_event_showJumping_training" text="Clear Round Jumping"/>
+        <text name="eq_event_showJumping_novice" text="1.00m Jumping"/>
+        <text name="eq_event_showJumping_intermediate" text="1.20m Jumping"/>
+        <text name="eq_event_showJumping_advanced" text="%s 1.40m Classic"/>
+        <text name="eq_event_showJumping_championship" text="%s Grand Prix"/>
+        <text name="eq_event_dressage_training" text="Intro Dressage Test"/>
+        <text name="eq_event_dressage_novice" text="Preliminary Dressage"/>
+        <text name="eq_event_dressage_intermediate" text="Medium Dressage"/>
+        <text name="eq_event_dressage_advanced" text="%s Prix St Georges"/>
+        <text name="eq_event_dressage_championship" text="%s Grand Prix Dressage"/>
+        <text name="eq_event_crossCountry_training" text="Young Horse Hunter Trial"/>
+        <text name="eq_event_crossCountry_novice" text="Hunter Trial"/>
+        <text name="eq_event_crossCountry_intermediate" text="Open Hunter Trial"/>
+        <text name="eq_event_crossCountry_advanced" text="%s Team Chase"/>
+        <text name="eq_event_crossCountry_championship" text="%s Team Chase Championship"/>
+        <text name="eq_event_eventing_training" text="Introductory Horse Trial"/>
+        <text name="eq_event_eventing_novice" text="One-Day Event"/>
+        <text name="eq_event_eventing_intermediate" text="Two-Star Event"/>
+        <text name="eq_event_eventing_advanced" text="%s Four-Star Event"/>
+        <text name="eq_event_eventing_championship" text="%s Three-Day Event"/>
+        <text name="eq_event_raceShort_training" text="Racecourse Gallop (6f)"/>
+        <text name="eq_event_raceShort_novice" text="Maiden Sprint (6f)"/>
+        <text name="eq_event_raceShort_intermediate" text="Sprint Handicap (6f)"/>
+        <text name="eq_event_raceShort_advanced" text="%s Listed Sprint (6f)"/>
+        <text name="eq_event_raceShort_championship" text="%s Sprint Cup (6f)"/>
+        <text name="eq_event_raceLong_training" text="Racecourse Gallop (1m)"/>
+        <text name="eq_event_raceLong_novice" text="Maiden Stakes (1½m)"/>
+        <text name="eq_event_raceLong_intermediate" text="Handicap (1½m)"/>
+        <text name="eq_event_raceLong_advanced" text="%s Listed Stakes (1½m)"/>
+        <text name="eq_event_raceLong_championship" text="%s Gold Cup (2m)"/>
+        <text name="eq_event_steeplechase_training" text="Schooling Hurdle"/>
+        <text name="eq_event_steeplechase_novice" text="Novice Hurdle"/>
+        <text name="eq_event_steeplechase_intermediate" text="Handicap Chase"/>
+        <text name="eq_event_steeplechase_advanced" text="%s Graded Chase"/>
+        <text name="eq_event_steeplechase_championship" text="%s Steeplechase Cup"/>
         <text name="eq_money_entryFees" text="Competition Entry Fees"/>
         <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
         <text name="eq_money_vetBills" text="Vet Bills"/>
@@ -40,6 +78,7 @@
         <text name="eq_scratch_unsound" text="unsound on the day"/>
         <text name="eq_scratch_shoe" text="lost a shoe"/>
         <text name="eq_scratch_retired" text="retired"/>
+        <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
         <text name="eq_injury_minor" text="a minor strain"/>
         <text name="eq_injury_moderate" text="a tendon injury"/>
         <text name="eq_injury_serious" text="a serious leg injury"/>
@@ -55,7 +94,11 @@
         <text name="eq_status_retired" text="Retired"/>
         <text name="eq_status_settling" text="Settling in"/>
         <text name="eq_status_rested" text="Rested for the month"/>
+        <text name="eq_status_inFoal" text="In foal"/>
+        <text name="eq_status_foaled" text="Recovering from foaling"/>
         <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Skill potential"/>
+        <text name="eq_ui_skills" text="Skills"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
         <text name="eq_reveal_better" text="%s has been with you a few months now, and is better than the dealer said."/>
@@ -63,7 +106,8 @@
         <text name="eq_reveal_fair" text="%s has been with you a few months now, and is about what the dealer said."/>
         <text name="eq_ui_title" text="Competitions"/>
         <text name="eq_ui_col_event" text="Event"/>
-        <text name="eq_ui_col_going" text="Going"/>
+        <text name="eq_ui_col_going" text="Conditions"/>
+        <text name="eq_ui_col_level" text="Level"/>
         <text name="eq_ui_col_when" text="Results"/>
         <text name="eq_ui_col_fee" text="Entry fee"/>
         <text name="eq_ui_col_prize" text="Prize pool"/>
@@ -71,9 +115,20 @@
         <text name="eq_ui_col_day" text="Day"/>
         <text name="eq_ui_col_horse" text="Horse"/>
         <text name="eq_ui_col_result" text="Result"/>
-        <text name="eq_ui_col_age" text="Age"/>
-        <text name="eq_ui_col_rating" text="Rating"/>
         <text name="eq_ui_col_status" text="Status"/>
+        <text name="eq_ui_horseDescription" text="Horses eat hay, oats and sorghum and need water. Healthy mares over 22 months can breed."/>
+        <text name="eq_ui_col_success" text="Success"/>
+        <text name="eq_ui_col_training" text="Training"/>
+        <text name="eq_ui_trainingBenefit" text="Training benefit"/>
+        <text name="eq_ui_ageLong" text="%d months"/>
+        <text name="eq_success_favourite" text="Favourite"/>
+        <text name="eq_success_contender" text="Contender"/>
+        <text name="eq_success_outsider" text="Outsider"/>
+        <text name="eq_success_longShot" text="Long shot"/>
+        <text name="eq_benefit_high" text="High"/>
+        <text name="eq_benefit_medium" text="Medium"/>
+        <text name="eq_benefit_low" text="Low"/>
+        <text name="eq_benefit_none" text="None"/>
         <text name="eq_ui_when_tomorrow" text="Tomorrow"/>
         <text name="eq_ui_when_nextMonth" text="Next month"/>
         <text name="eq_ui_trainingOnly" text="Training only"/>
@@ -92,7 +147,17 @@
         <text name="eq_ui_result_place" text="%d of %d"/>
         <text name="eq_ui_result_eliminated" text="Eliminated"/>
         <text name="eq_ui_result_scratched" text="Scratched"/>
-        <text name="eq_ui_button_enter" text="Enter %s (%s with transport)"/>
+        <text name="eq_ui_button_enterAuto" text="Enter, Auto Transport (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Enter, Manual Transport (%s)"/>
+        <text name="eq_ui_transportLabel" text="Total cost"/>
+        <text name="eq_ui_transportLine" text="Auto %s · Manual %s"/>
+        <text name="eq_ui_transportLabel_near" text="Cost, overseas"/>
+        <text name="eq_ui_transportLabel_far" text="Cost, long-haul"/>
+        <text name="eq_ui_awaiting" text="%s (awaiting delivery)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Awaiting delivery"/>
+        <text name="eq_ui_result_notDelivered" text="Not delivered"/>
+        <text name="eq_ui_deadline_round" text="before tomorrow's results"/>
+        <text name="eq_ui_deadline_month" text="before the end of the month"/>
         <text name="eq_ui_button_results" text="Results"/>
         <text name="eq_ui_button_events" text="Events"/>
         <text name="eq_ui_noEvents" text="No events are open right now. New ones are drawn each round."/>
@@ -105,13 +170,17 @@
         <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, field of %d. Select a horse and press Enter."/>
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
+        <text name="eq_enter_inFoal" text="That mare is too far in foal to compete. She can compete again after foaling."/>
+        <text name="eq_enter_foaled" text="That mare is still recovering from foaling. She can compete three months after the birth."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
         <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
         <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
         <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>
-        <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Transport: %s."/>
+        <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Auto Transport: %s."/>
+        <text name="eq_enter_doneManual" text="%s entered in %s (rating %.0f). Manual Transport: take the horse to the animal dealer %s, or it won't start."/>
+        <text name="eq_result_notDelivered" text="%s was never delivered to %s, so didn't start. The entry fee is lost."/>
         <text name="eq_enter_farmLimit" text="You have used all %d of this month's entries. More open next month."/>
         <text name="eq_ui_farmLimit" text="No entries left this month"/>
         <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>
