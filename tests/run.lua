@@ -15,6 +15,7 @@ dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
+dofile("scripts/core/EqI18N.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqExperience.lua")
@@ -1051,6 +1052,69 @@ local function messageLogTests()
     _G.g_i18n = savedI18n
 end
 messageLogTests()
+
+-- Texts looked up without a mod name: the money popup and Finances page ask the game's I18N
+-- for "eq_money_*" and "finance_eq*" with no mod name, while our texts live under our mod name.
+-- A stand-in for the game's I18N, a mod proxy, and a mod environment whose _G is its own table.
+EqTestI18N = function()
+    local savedI18N, savedI18n, savedMod = I18N, g_i18n, EqI18N.MOD_NAME
+    I18N = {}
+    I18N.__index = I18N
+    function I18N:getText(text, modEnv)
+        local env = modEnv ~= nil and self.modEnvironments[modEnv] or nil
+        if env ~= nil and env.texts[text] ~= nil then return env.texts[text] end
+        return self.texts[text] or string.format("Missing '%s' in l10n_en.xml", text)
+    end
+    function I18N:hasText(text, modEnv)
+        local env = modEnv ~= nil and self.modEnvironments[modEnv] or nil
+        return (env ~= nil and env.texts[text] ~= nil) or self.texts[text] ~= nil
+    end
+    local hadUtils = Utils
+    Utils = Utils or {}
+    local hadOverwritten = Utils.overwrittenFunction
+    Utils.overwrittenFunction = hadOverwritten or function(old, new)
+        return function(self, ...) return new(self, old, ...) end
+    end
+
+    local game = setmetatable({ texts = { ok = "OK" }, modEnvironments = {} }, I18N)
+    local proxy = { texts = { eq_money_entryFees = "Competition Entry Fees", eq_money_transport = "Horse Transport" } }
+    game.modEnvironments.FS25_RealisticEquestrian = proxy
+    proxy.hasText = function(_, key) return game:hasText(key, "FS25_RealisticEquestrian") end
+    proxy.getText = function(_, key) return game:getText(key, "FS25_RealisticEquestrian") end
+
+    check("without the fix, a modless lookup is missing", game:getText("eq_money_entryFees"):find("Missing") ~= nil)
+
+    -- The mod sees its proxy as g_i18n and as _G.g_i18n; the real global sits behind __index.
+    local modEnv = setmetatable({ g_i18n = proxy }, { __index = setmetatable({ g_i18n = game }, { __index = _G }) })
+    modEnv._G = modEnv
+    setfenv(EqI18N.globalI18N, modEnv)
+    check("the real global I18N is found past the mod proxy", EqI18N.globalI18N() == game)
+
+    g_i18n = proxy
+    EqI18N.MOD_NAME = "FS25_RealisticEquestrian"
+    EqI18N.isInstalled = false
+    check("the I18N hook installs", EqI18N.install())
+    EqI18N.share({ "eq_money_entryFees", "eq_money_transport" }, { finance_eqEntryFees = "eq_money_entryFees" })
+    check("the popup finds the entry fee title", game:getText("eq_money_entryFees") == "Competition Entry Fees")
+    check("the popup finds the transport title", game:getText("eq_money_transport") == "Horse Transport")
+    check("the Finances row finds its title", game:getText("finance_eqEntryFees") == "Competition Entry Fees")
+    check("the text is in the real global table", game.texts.eq_money_transport == "Horse Transport")
+
+    -- The hook alone, as when our texts load after the copy: clear the copy and look again.
+    game.texts.eq_money_entryFees, game.texts.finance_eqEntryFees = nil, nil
+    check("the hook alone finds the title", game:getText("eq_money_entryFees") == "Competition Entry Fees")
+    check("the hook alone finds the Finances key", game:getText("finance_eqEntryFees") == "Competition Entry Fees")
+    check("hasText sees routed keys", game:hasText("finance_eqEntryFees"))
+    check("other keys are untouched", game:getText("ok") == "OK" and game:getText("nope"):find("Missing") ~= nil)
+
+    setfenv(EqI18N.globalI18N, _G)
+    I18N, g_i18n, EqI18N.MOD_NAME = savedI18N, savedI18n, savedMod
+    Utils.overwrittenFunction = hadOverwritten
+    Utils = hadUtils
+    EqI18N.routed, EqI18N.isInstalled = {}, false
+end
+EqTestI18N()
+EqTestI18N = nil
 
 -- Menu paging reset. A minimal paging element with the base game's updatePageMapping logic.
 local function newPaging(n)
