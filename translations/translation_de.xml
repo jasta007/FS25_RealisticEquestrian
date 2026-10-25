@@ -20,14 +20,36 @@
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_train_view_stamina" text="Ausdauer"/>
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
+        <text name="eq_help_temperament_title" text="Training: Temperament"/>
+        <text name="eq_help_temperament_2" text="Eine verpasste Bewegung, Galopp, Renngalopp oder ein Sprung brechen die Lektion ab; reiten Sie wieder Schritt für eine neue. Aus dem Trab geht es nicht direkt rückwärts, halten Sie zuerst an oder reiten Sie Schritt. Die Bewegungen erscheinen in den Ansichten Frei und Temperament."/>
+        <text name="eq_help_temperament_1" text="Temperament entsteht in einer Lektion. Reiten Sie Schritt, um eine zu beginnen; dann wird alle paar Sekunden eine neue Bewegung verlangt: Schritt, Trab, Halt, Rückwärts, links oder rechts wenden. Beginnen Sie sie innerhalb von 3 Sekunden, um die Lektion von x2 bis x5 zu steigern."/>
+        <text name="eq_help_agility_2" text="Sie haben 10 Sekunden für den nächsten Sprung, sonst ist die Kombo verloren. Für einen engen Sprung in den Trab zu wechseln ist in Ordnung, aber Stehen, Schritt oder Rückwärtsgehen lassen die Zeit zehnmal so schnell ablaufen."/>
+        <text name="eq_help_agility_1" text="Wendigkeit entsteht, wenn Sie Sprünge nacheinander meistern: Zäune, Stangen, Baumstämme, alles Feste, über das man springen kann. Jeder Sprung in Folge erhöht die Kombo von x2 bis x5, und eine höhere Kombo trainiert mehr."/>
+        <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
+        <text name="eq_pop_routineStart" text="Lektion begonnen"/>
+        <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
+        <text name="eq_pop_comboLost" text="Kombo verloren"/>
+        <text name="eq_pop_clear" text="Geschafft!"/>
+        <text name="eq_move_right" text="Rechts wenden!"/>
+        <text name="eq_move_left" text="Links wenden!"/>
+        <text name="eq_move_reverse" text="Rückwärts!"/>
+        <text name="eq_move_halt" text="Halt!"/>
+        <text name="eq_move_trot" text="Trab!"/>
+        <text name="eq_move_walk" text="Schritt!"/>
+        <text name="eq_train_routine_none" text="Schritt reiten, um eine Lektion zu beginnen"/>
+        <text name="eq_train_routine" text="Lektion x%d"/>
+        <text name="eq_train_combo_none" text="Für eine Kombo einen Sprung meistern"/>
+        <text name="eq_train_combo" text="Sprung-Kombo x%d"/>
+        <text name="eq_train_view_temperament" text="Temperament"/>
+        <text name="eq_train_view_agility" text="Wendigkeit"/>
         <text name="eq_help_speed_2" text="Bleiben Sie dann stehen und lassen Sie das Pferd vor dem nächsten Sprint verschnaufen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken."/>
         <text name="eq_help_speed_1" text="Schnelligkeit entsteht bei Sprints. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 %."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_stamina_2" text="Über 85 % ist das Pferd außer Atem und lernt weniger: Traben Sie, um zu entlasten. Im Trab läuft der Lauf weiter; Schritt oder Stehen bauen ihn nur langsam ab, ein unfreiwilliger Halt kostet ihn also nicht."/>
         <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Der Gewinn wächst in den ersten 15 Sekunden eines Laufs und ist am größten, solange die Anstrengung im Zielbereich liegt, bei 65-85 %. Ein langer Galopp steigt langsam aus dem Zielbereich bis außer Atem, bei einem fitteren Pferd viel langsamer."/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_freestyle_2" text="Mit Y wechseln Sie zur Ansicht Ausdauer oder Schnelligkeit, die zeigt, was dieser Wert braucht. Jede Wertzeile zeigt das heutige Training als Anteil am bestmöglichen Tag. Mit H sehen Sie diese Tipps jederzeit wieder."/>
-        <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes. Ausdauer und Schnelligkeit lernen am meisten durch gezielte Arbeit, gemessen an der Anstrengung: Sie steigt im Galopp und Renngalopp und sinkt im Trab, im Schritt und im Stand. Der Reitbalken ist die Tagesenergie des Pferdes: Ist er voll, endet das Training bis morgen. Bei einem fitten Pferd füllt er sich langsamer."/>
+        <text name="eq_help_freestyle_2" text="Mit Y wechseln Sie zur Ansicht Ausdauer, Schnelligkeit, Wendigkeit oder Temperament, die zeigt, was dieser Wert braucht. Sprung-Kombos und Lektionen erscheinen auch hier. Jede Wertzeile zeigt das heutige Training als Anteil am bestmöglichen Tag. Mit H sehen Sie diese Tipps jederzeit wieder."/>
+        <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes. Jeder Wert lernt am meisten durch gezielte Arbeit. Für Ausdauer und Schnelligkeit zählt die Anstrengung: Sie steigt im Galopp und Renngalopp und sinkt im Trab, im Schritt und im Stand. Der Reitbalken ist die Tagesenergie des Pferdes: Ist er voll, endet das Training bis morgen. Bei einem fitten Pferd füllt er sich langsamer."/>
         <text name="eq_help_freestyle_title" text="Training: Frei"/>
         <text name="eq_help_close" text="Klicken zum Schließen"/>
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>

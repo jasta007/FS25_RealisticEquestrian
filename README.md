@@ -66,10 +66,15 @@ uses its genetics, health and fitness.
     stand still to rest before the next one.
   - A good session can give up to double what a full day of riding used to. Just riding round
     the gaits trains them at about a quarter of that.
-  - Walking still builds temperament, trotting and cantering agility, and backing up agility and
-    temperament. Jumps add agility. (Focused agility and temperament work is coming.)
+  - **Agility** comes from jump combos: clear jumps one after another (fences, poles, anything
+    solid) for x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but
+    stopping, walking or backing up runs the clock down ten times as fast.
+  - **Temperament** comes from a routine: walk to start one, then do each movement asked for
+    (walk, trot, stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A
+    canter, gallop, jump or a missed request breaks it. Requests show in the Freestyle and
+    Temperament views.
 - **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a
-  line for each stat) and the **Stamina** and **Speed** views. Colours show how each is going.
+  line for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours show how each is going.
   Help pops up at the bottom of the screen the first time you open each view; press **H**
   to see it again, and click anywhere to move on.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired and

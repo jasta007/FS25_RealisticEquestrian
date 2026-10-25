@@ -100,6 +100,135 @@ local function adjustRiding(spec, gait, factor, dt)
 end
 
 
+-- Jumps: while the horse is in the air we look straight down from it for anything with a
+-- collision that is not the ground. A jump counts as cleared when something at least
+-- JUMP_MIN_HEIGHT tall was under it in the air and it did not land on top of it.
+EqTrainingHooks.JUMP_MIN_HEIGHT = 0.25
+EqTrainingHooks.JUMP_RAY_UP = 0.3
+EqTrainingHooks.JUMP_RAY_LENGTH = 4
+EqTrainingHooks.JUMP_TIMEOUT_MS = 3000
+-- Without a ground flag a jump is judged this long after take-off.
+EqTrainingHooks.JUMP_FALLBACK_MS = 1500
+
+-- A walk or trot counts as a turn while the horse's heading changes faster than TURN_RATE
+-- radians a second for TURN_HOLD_MS.
+EqTrainingHooks.TURN_RATE = 0.35
+EqTrainingHooks.TURN_HOLD_MS = 400
+
+local probe = { vehicle = nil, height = nil, name = nil }
+
+
+--- raycastAll callback: skip the horse itself, keep the first thing below it.
+function EqTrainingHooks:jumpRaycastCallback(hitObjectId, x, y, z, distance)
+    if hitObjectId == nil or hitObjectId == 0 then return true end
+    if g_currentMission.terrainRootNode ~= nil and hitObjectId == g_currentMission.terrainRootNode then return true end
+    local object = g_currentMission.getNodeObject ~= nil and g_currentMission:getNodeObject(hitObjectId) or nil
+    if object ~= nil and object == probe.vehicle then return true end
+    probe.height = y
+    probe.name = getName ~= nil and getName(hitObjectId) or tostring(hitObjectId)
+    return false
+end
+
+
+--- @return number collision mask for things a horse can jump: anything but the ground
+local function jumpMask()
+    local mask = 0
+    for _, name in ipairs({ "DEFAULT", "STATIC_OBJECT", "BUILDING", "DYNAMIC_OBJECT", "TREE", "PLACEMENT_BLOCKING" }) do
+        if CollisionFlag ~= nil and CollisionFlag[name] ~= nil then mask = mask + CollisionFlag[name] end
+    end
+    return mask
+end
+
+
+--- How tall the thing straight under the horse is, if there is one.
+--- @param vehicle table
+--- @return number|nil height above the ground in metres
+local function obstacleBelow(vehicle)
+    if raycastAll == nil or vehicle.rootNode == nil then return nil end
+    local x, y, z = getWorldTranslation(vehicle.rootNode)
+    local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
+    probe.vehicle, probe.height, probe.name = vehicle, nil, nil
+    raycastAll(x, y + EqTrainingHooks.JUMP_RAY_UP, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH,
+        "jumpRaycastCallback", EqTrainingHooks, jumpMask())
+    probe.vehicle = nil
+    if probe.height == nil then return nil end
+    return probe.height - ground
+end
+
+
+--- Follow a jump through the air and judge it on landing.
+--- @param vehicle table
+--- @param spec table spec_rideable
+--- @param sheet table
+--- @param worn boolean
+local function trackJump(vehicle, spec, sheet, worn)
+    local jump = spec.eqJump
+    if jump == nil then return end
+    local age = (g_time or 0) - jump.startedAt
+    local inAir
+    if spec.isOnGround ~= nil then
+        inAir = not spec.isOnGround
+    else
+        inAir = age < EqTrainingHooks.JUMP_FALLBACK_MS
+    end
+
+    local height = obstacleBelow(vehicle)
+    if inAir then
+        jump.airborne = true
+        if height ~= nil and height > jump.best then jump.best, jump.over = height, probe.name end
+        if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
+    elseif not jump.airborne and age < 500 then
+        return
+    end
+
+    spec.eqJump = nil
+    local landedOnTop = height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT
+    local cleared = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT and not landedOnTop
+    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s, %d ms, ground flag %s)",
+        cleared and "cleared" or "nothing cleared", jump.best, tostring(jump.over), landedOnTop and ", landed on top of it" or "",
+        age, tostring(spec.isOnGround ~= nil))
+    if cleared then
+        EqTrainingHud.pop("jump", EqTraining.clearJump(sheet, worn))
+    end
+end
+
+
+--- The routine's name for what the horse is doing: a gait, a halt, or a turn at a walk or trot.
+--- @param vehicle table
+--- @param spec table
+--- @param gait string
+--- @param dt number
+--- @return string move
+local function routineMove(vehicle, spec, gait, dt)
+    if gait == "canter" or gait == "gallop" then return "fast" end
+    local dx, _, dz = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
+    local heading = math.atan2(dx, dz)
+    local turn = 0
+    if spec.eqHeading ~= nil and dt > 0 then
+        local change = heading - spec.eqHeading
+        if change > math.pi then change = change - 2 * math.pi elseif change < -math.pi then change = change + 2 * math.pi end
+        turn = change / (dt / 1000)
+    end
+    spec.eqHeading = heading
+    if (gait == "walk" or gait == "trot") and math.abs(turn) > EqTrainingHooks.TURN_RATE then
+        local side = turn > 0 and "left" or "right"
+        spec.eqTurnMs = spec.eqTurnSide == side and (spec.eqTurnMs or 0) + dt or dt
+        spec.eqTurnSide = side
+        if spec.eqTurnMs >= EqTrainingHooks.TURN_HOLD_MS then return side end
+    else
+        spec.eqTurnMs, spec.eqTurnSide = 0, nil
+    end
+    return gait
+end
+
+
+--- @return boolean true when the routine runs: it only asks for moves where the rider sees them
+local function routineShown()
+    local view = EqTrainingHooks.getView()
+    return view == "freestyle" or view == "temperament"
+end
+
+
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
@@ -120,6 +249,18 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local record = EqRegistry.getById(id)
     local stamina = record ~= nil and record.trained.stamina or nil
     EqTraining.step(sheet, gait, dt, worn, stamina)
+
+    trackJump(vehicle, spec, sheet, worn)
+    if EqTraining.comboTick(sheet, gait, dt) then EqTrainingHud.pop("jumpLost") end
+    if routineShown() then
+        local event = EqTraining.routineStep(sheet, routineMove(vehicle, spec, gait, dt), dt, worn, math.random)
+        if event == "done" then EqTrainingHud.pop("routine", sheet.routine.mult)
+        elseif event == "lost" then EqTrainingHud.pop("routineLost")
+        elseif event == "start" then EqTrainingHud.pop("routineStart") end
+    elseif EqTraining.breakRoutine(sheet) then
+        EqTrainingHud.pop("routineLost")
+    end
+
     if worn or gait == "halt" then return end
 
     sheet.barFactor = EqTraining.ridingBarFactor(stamina)
@@ -130,26 +271,26 @@ end
 
 
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
---- on the server).
+--- on the server). The jump is judged in the air by trackJump; any jump ends a routine.
 function EqTrainingHooks.onJump(vehicle)
     local spec = vehicle.spec_rideable
-    if spec == nil or isTired(spec.cluster) then return end
-
-    local gait = getGaitNames()[spec.inputValues.currentGait]
-    if gait ~= "canter" and gait ~= "gallop" then return end
+    if spec == nil then return end
 
     local id = getRiddenId(spec)
     if id == nil then return end
 
-    EqTraining.addJump(EqTrainingHooks.getSheet(id))
+    local sheet = EqTrainingHooks.getSheet(id)
+    EqTraining.addJump(sheet)
+    if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
+    spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false }
 end
 
 
 -- Riding HUD views, switched with the training view key (Y). Freestyle shows every stat; a
 -- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
-EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 2, speed = 2 }
+EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
+EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 2, speed = 2, agility = 2, temperament = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -262,17 +403,51 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local effort = EqTraining.playerEffort(sheet)
     local rows = {}
-    local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
-        or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
-    local bandColor = BAND_COLOR[band]
-    table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
-        right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
-    table.insert(rows, { bar = sheet.tiredness / 100, color = bandColor })
-    if view ~= "speed" then
+    if view == "freestyle" or view == "stamina" or view == "speed" then
+        local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
+            or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
+        local bandColor = BAND_COLOR[band]
+        table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
+            right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
+        table.insert(rows, { bar = sheet.tiredness / 100, color = bandColor })
+    end
+    if view == "freestyle" or view == "stamina" then
         local full = sheet.run >= EqTraining.RUN_FULL
         table.insert(rows, { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
             leftColor = full and COLOR.green or COLOR.white })
     end
+
+    local combo = sheet.combo
+    if combo.count > 0 and (view == "freestyle" or view == "agility") then
+        local mult = math.min(combo.count, EqTraining.COMBO_MAX)
+        local color = EqTrainingHud.multColor(mult)
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_combo"), mult), leftColor = color,
+            right = string.format("%d s", math.ceil(combo.timer)) })
+        table.insert(rows, { bar = combo.timer / EqTraining.COMBO_SECONDS, color = color })
+    elseif view == "agility" then
+        table.insert(rows, { left = g_i18n:getText("eq_train_combo_none"), leftColor = COLOR.grey })
+    end
+
+    local routine = sheet.routine
+    if routineShown() then
+        if routine.active then
+            local color = EqTrainingHud.multColor(routine.mult)
+            local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
+            if routine.request ~= nil then
+                local left = math.max(0, routine.deadline - routine.clock)
+                row.right = g_i18n:getText("eq_move_" .. routine.request)
+                row.rightColor = COLOR.yellow
+                table.insert(rows, row)
+                table.insert(rows, { bar = left / EqTraining.ROUTINE_REACT_MS, color = COLOR.yellow })
+                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / EqTraining.ROUTINE_REACT_MS)
+            else
+                table.insert(rows, row)
+            end
+        elseif view == "temperament" then
+            table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
+        end
+    end
+    EqTrainingHud.drawPops()
 
     if view == "freestyle" then
         for _, stat in ipairs(EqConstants.STAT_KEYS) do table.insert(rows, statRow(stat, effort, sheet)) end

@@ -7,7 +7,8 @@
     The base game's help panel (addExtraPrintText) has no colours and cuts long lines off, so
     the panel is drawn here with plain text and a one-pixel texture. Popups never take the mouse:
     a click anywhere moves on to the next page or closes the last one, and each page closes by
-    itself after HELP_TIMEOUT_MS. Which views' help the player has already seen is kept in
+    itself after HELP_TIMEOUT_MS. Combo bursts ("x3!") pop up in the middle of the screen, and a
+    temperament routine's request shows there with its countdown. Which views' help the player has already seen is kept in
     modSettings, so it only pops up by itself the first time.
 ]]
 
@@ -121,6 +122,80 @@ function EqTrainingHud.drawPanel(title, rows)
             end
         end
     end
+    resetText()
+end
+
+
+-- Combo multiplier colours, hotter as it climbs.
+EqTrainingHud.MULT_COLORS = {
+    { 1, 1, 1, 1 },
+    { 0.529, 0.706, 0, 1 },
+    { 1, 0.82, 0.25, 1 },
+    { 1, 0.55, 0.15, 1 },
+    { 1, 0.25, 0.3, 1 },
+}
+EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.03, sizePerMult = 0.006, growMs = 150, holdMs = 700, fadeMs = 500 }
+EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.026, barWidth = 0.12, barHeight = 0.006 }
+EqTrainingHud.popState = nil
+
+
+--- @param mult number 1..COMBO_MAX
+--- @return table color
+function EqTrainingHud.multColor(mult)
+    local colors = EqTrainingHud.MULT_COLORS
+    return colors[math.max(1, math.min(#colors, mult or 1))]
+end
+
+
+--- Show a short burst of text in the middle of the screen.
+--- @param kind string jump, jumpLost, routine, routineLost or routineStart
+--- @param mult number|nil the combo multiplier for jump and routine
+function EqTrainingHud.pop(kind, mult)
+    local text, color, big
+    if kind == "jump" then
+        text = mult > 1 and string.format("x%d!", mult) or g_i18n:getText("eq_pop_clear")
+        color, big = EqTrainingHud.multColor(mult), mult
+    elseif kind == "routine" then
+        text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "routineStart" then
+        text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
+    else
+        text, color, big = g_i18n:getText(kind == "jumpLost" and "eq_pop_comboLost" or "eq_pop_routineLost"), EqTrainingHud.COLOR.grey, 1
+    end
+    EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
+end
+
+
+--- Draw the current burst, growing in, holding and fading out.
+function EqTrainingHud.drawPops()
+    local state = EqTrainingHud.popState
+    if state == nil then return end
+    local p = EqTrainingHud.POP
+    local age = (g_time or 0) - state.at
+    if age > p.growMs + p.holdMs + p.fadeMs then
+        EqTrainingHud.popState = nil
+        return
+    end
+    local grow = math.min(1, age / p.growMs)
+    -- Overshoot a little as it grows in, for some bounce.
+    local scale = grow < 1 and grow * 1.25 or 1 + 0.25 * math.max(0, 1 - (age - p.growMs) / 120)
+    local alpha = age < p.growMs + p.holdMs and 1 or 1 - (age - p.growMs - p.holdMs) / p.fadeMs
+    local size = (p.size + p.sizePerMult * (state.big - 1)) * scale
+    local c = state.color
+    text(state.text, p.x, p.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    resetText()
+end
+
+
+--- Draw a routine request in the middle of the screen with the time left to start it.
+--- @param value string
+--- @param share number 0..1 of the time left
+function EqTrainingHud.drawPrompt(value, share)
+    local p = EqTrainingHud.PROMPT
+    text(value, p.x, p.y, p.size, EqTrainingHud.COLOR.yellow, RenderText.ALIGN_CENTER, true)
+    local left = p.x - p.barWidth / 2
+    fill(left, p.y - p.barHeight * 2, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
+    fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, EqTrainingHud.COLOR.yellow)
     resetText()
 end
 
@@ -268,6 +343,7 @@ end
 
 function EqTrainingHud.reset()
     EqTrainingHud.closeHelp()
+    EqTrainingHud.popState = nil
     if EqTrainingHud.overlay ~= nil then
         EqTrainingHud.overlay:delete()
         EqTrainingHud.overlay = nil

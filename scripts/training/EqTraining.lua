@@ -36,10 +36,31 @@ EqTraining.GAIT_WEIGHTS = {
 }
 
 -- Stats trained by focused work (see step); their gait weights count at UNFOCUSED_SHARE.
-EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1 }
+EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1, agility = 0.15, temperament = 0.08 }
 
 -- The most effort a day can give each stat. Good focused work goes past the old full day (1).
-EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
+EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 2, temperament = 2 }
+
+-- AGILITY: jumps that clear something (EqTrainingHooks checks under the horse in the air).
+-- Each clear in a row raises the combo, worth up to COMBO_MAX times AGILITY_PER_JUMP. The
+-- combo is lost COMBO_SECONDS after the last clear, a clock that runs COMBO_SLOW_DRAIN times as
+-- fast at a halt, a walk or backing up, so slowing to a trot for a tight fence is fine.
+EqTraining.AGILITY_PER_JUMP = 0.015
+EqTraining.COMBO_MAX = 5
+EqTraining.COMBO_SECONDS = 10
+EqTraining.COMBO_SLOW_DRAIN = 10
+
+-- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
+-- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
+-- to start it. Each one done raises the multiplier, up to COMBO_MAX; a miss, a canter, a gallop
+-- or a jump ends the routine. Temperament builds at TEMPERAMENT_RATE per second for each step
+-- of multiplier above x1.
+EqTraining.ROUTINE_START_MS = 2000
+EqTraining.ROUTINE_GAP_MS = { 5000, 8000 }
+EqTraining.ROUTINE_TURN_GAP_MS = { 3000, 4000 }
+EqTraining.ROUTINE_REACT_MS = 3000
+EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
+EqTraining.TEMPERAMENT_RATE = 0.0022
 
 -- Exertion meter (0-100) change per second, by gait. "halt" is standing still. Canter is
 -- worked out in exertionRate: it levels off rather than climbing for ever.
@@ -118,7 +139,10 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, focused = { stamina = 0, speed = 0 }, quality = { stamina = 0, speed = 0 } }
+        tiredness = 0, run = 0, focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        combo = { count = 0, timer = 0, best = 0 },
+        routine = { active = false, mult = 0, clock = 0, walkMs = 0, current = nil, request = nil, deadline = 0, nextAt = 0 } }
 end
 
 
@@ -230,6 +254,121 @@ function EqTraining.qualityBand(quality)
 end
 
 
+--- A jump that cleared something: raise the combo and train agility.
+--- @param sheet table
+--- @param worn boolean true when the riding bar is full: the combo counts, nothing trains
+--- @return number multiplier this jump was worth
+function EqTraining.clearJump(sheet, worn)
+    local combo = sheet.combo
+    combo.count = combo.count + 1
+    combo.timer = EqTraining.COMBO_SECONDS
+    combo.best = math.max(combo.best, combo.count)
+    local mult = math.min(combo.count, EqTraining.COMBO_MAX)
+    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult end
+    return mult
+end
+
+
+--- Run the jump combo's clock.
+--- @param sheet table
+--- @param gait string
+--- @param dt number milliseconds
+--- @return boolean true when the combo was lost this frame
+function EqTraining.comboTick(sheet, gait, dt)
+    local combo = sheet.combo
+    sheet.quality.agility = combo.count > 0 and math.min(combo.count, EqTraining.COMBO_MAX) / EqTraining.COMBO_MAX or 0
+    if combo.count == 0 then return false end
+    local slow = gait == "halt" or gait == "walk" or gait == "reverse"
+    combo.timer = combo.timer - dt / 1000 * (slow and EqTraining.COMBO_SLOW_DRAIN or 1)
+    if combo.timer > 0 then return false end
+    combo.count, combo.timer = 0, 0
+    return true
+end
+
+
+--- @param range table { min, max } milliseconds
+--- @param rng function (n) -> 1..n
+local function randomGap(range, rng)
+    local steps = math.floor((range[2] - range[1]) / 500)
+    return range[1] + (rng(steps + 1) - 1) * 500
+end
+
+
+--- Movements the routine may ask for next: never the one being done, and never straight from
+--- a trot to backing up or back (the horse has to stop or walk in between).
+--- @param current string|nil
+--- @return table moves
+function EqTraining.routineChoices(current)
+    local moves = {}
+    for _, move in ipairs(EqTraining.ROUTINE_MOVES) do
+        local blocked = move == current or (current == "trot" and move == "reverse") or (current == "reverse" and move == "trot")
+        if not blocked then table.insert(moves, move) end
+    end
+    return moves
+end
+
+
+--- End the temperament routine.
+--- @param sheet table
+--- @return boolean true when one was running
+function EqTraining.breakRoutine(sheet)
+    local routine = sheet.routine
+    local was = routine.active
+    routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
+    return was
+end
+
+
+--- One frame of the temperament routine.
+--- @param sheet table
+--- @param move string walk, trot, halt, reverse, left, right, or fast (canter or gallop)
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
+--- @param rng function (n) -> 1..n
+--- @return string|nil event "start", "request", "done", "lost", or nil
+function EqTraining.routineStep(sheet, move, dt, worn, rng)
+    local routine = sheet.routine
+    routine.clock = routine.clock + dt
+    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.COMBO_MAX - 1) or 0
+    if move == "fast" then
+        return EqTraining.breakRoutine(sheet) and "lost" or nil
+    end
+
+    if not routine.active then
+        routine.walkMs = move == "walk" and routine.walkMs + dt or 0
+        if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
+        routine.active, routine.mult, routine.current = true, 1, "walk"
+        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        return "start"
+    end
+
+    local event = nil
+    if routine.request ~= nil then
+        if move == routine.request then
+            routine.mult = math.min(routine.mult + 1, EqTraining.COMBO_MAX)
+            local turned = move == "left" or move == "right"
+            if not turned then routine.current = move end
+            routine.request = nil
+            routine.nextAt = routine.clock + randomGap(turned and EqTraining.ROUTINE_TURN_GAP_MS or EqTraining.ROUTINE_GAP_MS, rng)
+            event = "done"
+        elseif routine.clock > routine.deadline then
+            EqTraining.breakRoutine(sheet)
+            return "lost"
+        end
+    elseif routine.clock >= routine.nextAt then
+        local choices = EqTraining.routineChoices(routine.current)
+        routine.request = choices[rng(#choices)]
+        routine.deadline = routine.clock + EqTraining.ROUTINE_REACT_MS
+        event = "request"
+    end
+
+    if not worn and routine.mult > 1 then
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
+    end
+    return event
+end
+
+
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
@@ -238,7 +377,9 @@ function EqTraining.rest(sheet, ms)
     local seconds = ms / 1000
     sheet.tiredness = EqStats.clamp(sheet.tiredness + EqTraining.TIREDNESS_RATE.halt * seconds, 0, 100)
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE.halt * seconds)
-    sheet.quality.stamina, sheet.quality.speed = 0, 0
+    sheet.quality.stamina, sheet.quality.speed, sheet.quality.agility, sheet.quality.temperament = 0, 0, 0, 0
+    sheet.combo.count, sheet.combo.timer = 0, 0
+    EqTraining.breakRoutine(sheet)
 end
 
 
@@ -331,8 +472,6 @@ function EqTraining.playerEffort(sheet)
         end
     end
     for stat, value in pairs(sheet.focused or {}) do effort[stat] = effort[stat] + value end
-    effort.agility = effort.agility + sheet.jumps * EqConstants.JUMP_AGILITY
-    effort.temperament = effort.temperament + sheet.jumps * EqConstants.JUMP_TEMPERAMENT
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = EqStats.clamp(effort[stat], 0, EqTraining.EFFORT_CAP[stat]) end
     return effort

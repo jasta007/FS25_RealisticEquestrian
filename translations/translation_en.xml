@@ -18,14 +18,36 @@
         <text name="eq_train_view_freestyle" text="Freestyle"/>
         <text name="eq_train_view_stamina" text="Stamina"/>
         <text name="eq_train_view_speed" text="Speed"/>
+        <text name="eq_help_temperament_2" text="Miss a request, canter, gallop or jump and the routine is broken; walk again to start a new one. A horse can't go straight from a trot to backing up, so stop or walk first. Requests show in the Freestyle and Temperament views."/>
+        <text name="eq_help_temperament_1" text="Temperament comes from a routine. Walk to start one, then every few seconds you are asked for a new movement: walk, trot, stop, back up, turn left or turn right. Start it within 3 seconds to raise the routine, from x2 up to x5."/>
+        <text name="eq_help_temperament_title" text="Training: Temperament"/>
+        <text name="eq_help_agility_2" text="You have 10 seconds to clear the next jump before the combo is lost. Slowing to a trot for a tight fence is fine, but stopping, walking or backing up runs the clock down ten times as fast."/>
+        <text name="eq_help_agility_1" text="Agility comes from clearing jumps one after another: fences, poles, logs, anything solid you can jump over. Each clear in a row raises the combo, from x2 up to x5, and a higher combo trains more."/>
+        <text name="eq_help_agility_title" text="Training: Agility"/>
+        <text name="eq_pop_routineStart" text="Routine started"/>
+        <text name="eq_pop_routineLost" text="Routine broken"/>
+        <text name="eq_pop_comboLost" text="Combo lost"/>
+        <text name="eq_pop_clear" text="Clear!"/>
+        <text name="eq_move_right" text="Turn right!"/>
+        <text name="eq_move_left" text="Turn left!"/>
+        <text name="eq_move_reverse" text="Back up!"/>
+        <text name="eq_move_halt" text="Stop!"/>
+        <text name="eq_move_trot" text="Trot!"/>
+        <text name="eq_move_walk" text="Walk!"/>
+        <text name="eq_train_routine_none" text="Walk to start a routine"/>
+        <text name="eq_train_routine" text="Routine x%d"/>
+        <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
+        <text name="eq_train_combo" text="Jump combo x%d"/>
+        <text name="eq_train_view_temperament" text="Temperament"/>
+        <text name="eq_train_view_agility" text="Agility"/>
         <text name="eq_help_speed_2" text="Then stop and stand still to recover before the next sprint. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar."/>
         <text name="eq_help_speed_1" text="Speed comes from sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop at 55%."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="Above 85% the horse is blowing hard and learns less: trot to ease off. Trotting keeps the run going; a walk or a stop only wears it down slowly, so getting knocked to a halt does not lose it."/>
         <text name="eq_help_stamina_1" text="Stamina comes from runs at canter or gallop. Gains build over the first 15 seconds of a run and are best while exertion is in the zone, 65-85%. A long canter climbs slowly from the zone into blowing hard, much more slowly for a fitter horse."/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_freestyle_2" text="Press Y to switch to the Stamina or Speed view, which shows what that stat needs. Each stat line is today's training as a share of the best possible day. Press H any time to see these tips again."/>
-        <text name="eq_help_freestyle_1" text="Riding trains your horse's stats. Stamina and speed learn most from focused work, measured by the Exertion meter: it rises in canter and gallop, and falls at a trot, a walk or a halt. The riding bar is the horse's energy for the day: once it is full, training stops until tomorrow. A fit horse's bar fills more slowly."/>
+        <text name="eq_help_freestyle_2" text="Press Y to switch to the Stamina, Speed, Agility or Temperament view, which shows what that stat needs. Jump combos and temperament routines show here too. Each stat line is today's training as a share of the best possible day. Press H any time to see these tips again."/>
+        <text name="eq_help_freestyle_1" text="Riding trains your horse's stats. Each stat learns most from focused work. For stamina and speed that is the Exertion meter: it rises in canter and gallop, and falls at a trot, a walk or a halt. The riding bar is the horse's energy for the day: once it is full, training stops until tomorrow. A fit horse's bar fills more slowly."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
         <text name="eq_help_close" text="Click to close"/>
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>

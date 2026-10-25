@@ -249,7 +249,7 @@ local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 
 local canterDay = EqTraining.playerEffort(ridden("canter", 100000))
 check("a full canter day trains agility; stamina only a little without focused work",
-    math.abs(canterDay.stamina - 0.08) < 1e-9 and canterDay.agility == 0.8 and canterDay.speed == 0)
+    math.abs(canterDay.stamina - 0.08) < 1e-9 and math.abs(canterDay.agility - 0.12) < 1e-9 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
 check("galloping alone trains speed at a tenth of its gait weight",
     math.abs(EqTraining.playerEffort(ridden("gallop", 60000)).speed - 0.06) < 1e-9)
@@ -263,10 +263,95 @@ do
     check("two minutes of backing up add 60 riding points on top of the base game's 40", reverseTotal == 60,
         string.format("got %d", reverseTotal))
 end
-local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
-check("jumps add agility", jumpDay.agility > 0.39)
-check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
-check("agility effort is capped at a full day", EqTraining.playerEffort(ridden("canter", 900000)).agility == 1)
+do
+    -- Jump combos: each clear in a row is worth more, up to x5; the clock runs ten times as fast
+    -- at a walk or a halt, but not at a trot.
+    local jumping = EqTraining.newSheet()
+    local mults = {}
+    for _ = 1, 7 do table.insert(mults, EqTraining.clearJump(jumping, false)) end
+    check("a jump combo climbs to x5", table.concat(mults, ",") == "1,2,3,4,5,5,5")
+    check("cleared jumps train agility", math.abs(jumping.focused.agility - EqTraining.AGILITY_PER_JUMP * 25) < 1e-9)
+    for _ = 1, 90 do EqTraining.comboTick(jumping, "trot", 100) end
+    check("trotting keeps the combo for ten seconds", jumping.combo.count == 7)
+    local lost = false
+    for _ = 1, 15 do lost = EqTraining.comboTick(jumping, "trot", 100) or lost end
+    check("the combo is lost after ten seconds without a clear", lost and jumping.combo.count == 0)
+    EqTraining.clearJump(jumping, false)
+    for _ = 1, 10 do lost = EqTraining.comboTick(jumping, "walk", 100) end
+    check("walking drains the combo clock ten times as fast", lost and jumping.combo.count == 0)
+    local wornJump = EqTraining.newSheet()
+    EqTraining.clearJump(wornJump, true)
+    check("a worn-out horse's jumps count for the combo but train nothing", wornJump.combo.count == 1 and wornJump.focused.agility == 0)
+
+    -- Temperament routine.
+    local first = function() return 1 end
+    local routine = EqTraining.newSheet()
+    local events = {}
+    local function ride(move, ms)
+        for _ = 1, ms / 100 do
+            local event = EqTraining.routineStep(routine, move, 100, false, first)
+            if event ~= nil then table.insert(events, event) end
+        end
+    end
+    ride("trot", 3000)
+    check("trotting does not start a routine", not routine.routine.active)
+    ride("walk", 2000)
+    check("walking starts a routine", routine.routine.active and routine.routine.mult == 1 and events[1] == "start")
+    ride("walk", 5000)
+    check("the routine asks for a new movement", routine.routine.request == "trot" and events[2] == "request")
+    ride("trot", 500)
+    check("doing it raises the multiplier", routine.routine.mult == 2 and events[3] == "done" and routine.routine.current == "trot")
+    check("from a trot it never asks to back up", not table.concat(EqTraining.routineChoices("trot"), ","):find("reverse")
+        and not table.concat(EqTraining.routineChoices("reverse"), ","):find("trot"))
+    local before = routine.focused.temperament
+    ride("trot", 4000)
+    check("a routine above x1 trains temperament", routine.focused.temperament > before)
+    ride("trot", 5000)
+    check("missing a request ends the routine", not routine.routine.active and events[#events] == "lost")
+    ride("walk", 2000)
+    ride("fast", 100)
+    check("a canter ends the routine", not routine.routine.active and events[#events] == "lost")
+end
+do
+    -- One riding bar of jumping or a routine, ridden frame by frame.
+    local function bar(policy)
+        local sheet, t, state = EqTraining.newSheet(), 0, {}
+        local rng = function() return 1 end
+        while EqTraining.playerRidingPoints(sheet) < 100 and t < 3600000 do
+            local gait, move, jumped = policy(sheet, t, state)
+            EqTraining.step(sheet, gait, 50, false)
+            if jumped then EqTraining.clearJump(sheet, false) end
+            EqTraining.comboTick(sheet, gait, 50)
+            EqTraining.routineStep(sheet, move or gait, 50, false, rng)
+            if gait ~= "halt" then EqTraining.addRiding(sheet, gait, 50) end
+            t = t + 50
+        end
+        return EqTraining.playerEffort(sheet)
+    end
+    local course = bar(function(_, t) return "canter", "fast", t > 0 and t % 5000 == 0 end)
+    local spaced = bar(function(_, t) return "canter", "fast", t > 0 and t % 12000 == 0 end)
+    local walked = bar(function() return "walk" end)
+    local danced = bar(function(sheet, _, state)
+        if sheet.routine.request ~= nil then state.move = sheet.routine.request end
+        local move = state.move or "walk"
+        if move == "walk" or move == "trot" then state.base = move end
+        local gait = (move == "left" or move == "right") and (state.base or "walk") or move
+        return gait, move
+    end)
+    check("a jump course with a clear every 5 s trains agility up to double the old full day", course.agility >= 1.8,
+        string.format("got %.2f", course.agility))
+    check("jumps too far apart for a combo train agility far less", spaced.agility < course.agility / 3,
+        string.format("got %.2f", spaced.agility))
+    check("a routine done well trains temperament up to double the old full day", danced.temperament >= 1.8,
+        string.format("got %.2f", danced.temperament))
+    check("just walking trains temperament at about a quarter of the old day", walked.temperament < 0.3,
+        string.format("got %.2f", walked.temperament))
+end
+do
+    local big = ridden("canter", 900000)
+    big.focused.agility = 5
+    check("agility effort is capped at two full days", EqTraining.playerEffort(big).agility == 2)
+end
 do
     local big = ridden("gallop", 0)
     big.focused.stamina, big.focused.speed = 5, 5
@@ -1041,8 +1126,13 @@ EqTraining.applyDay(faster, cap70, { riding = 100, dirt = 50, ageMonths = 60, ti
 check("an owned facility speeds staff training", faster.trained.agility > plain.trained.agility
     and faster.trained.speed == plain.trained.speed)
 local riddenPlain, riddenInside = horse("balanced", 10), horse("balanced", 10)
-EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
-EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
+local function jumpedDay()
+    local sheet = ridden("canter", 100000)
+    sheet.focused.agility = 1.5
+    return sheet
+end
+EqTraining.applyDay(riddenPlain, cap70, { sheet = jumpedDay(), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+EqTraining.applyDay(riddenInside, cap70, { sheet = jumpedDay(), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
     facilityOwned = hallOwned, facilityRidden = hallRidden })
 check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
 
