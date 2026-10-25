@@ -45,12 +45,16 @@ EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
 -- worked out in exertionRate: it levels off rather than climbing for ever.
 EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -0.8, canter = 0, gallop = 3 }
 
--- A canter pulls exertion toward a level set by the horse's trained stamina, at CANTER_PULL per
--- second from zero: 70 for an unfit horse, 85 at stamina 50 (the top of the zone), 100 at 100.
--- So a fit horse can canter in the zone for as long as it likes.
-EqTraining.CANTER_PULL = 3
-EqTraining.CANTER_LEVEL_BASE = 70
-EqTraining.CANTER_LEVEL_PER_STAMINA = 0.3
+-- A canter raises exertion at CANTER_RISE per second up to a level inside the zone (72, plus
+-- CANTER_LEVEL_PER_STAMINA per stamina point), then keeps creeping up for as long as it goes on,
+-- at CANTER_CREEP_MIN + CANTER_CREEP_UNFIT x (1 - stamina/100)^1.5 per second. So every horse
+-- blows in the end, a fit one only after a long canter (an unfit horse after about a minute,
+-- an average one after a minute and a half, a stamina-80 one after more than two).
+EqTraining.CANTER_RISE = 2
+EqTraining.CANTER_LEVEL_BASE = 72
+EqTraining.CANTER_LEVEL_PER_STAMINA = 0.08
+EqTraining.CANTER_CREEP_MIN = 0.03
+EqTraining.CANTER_CREEP_UNFIT = 0.45
 
 -- A gallop tires a fit horse more slowly: GALLOP_FIT_SHARE of the rate at stamina 100,
 -- GALLOP_UNFIT_SHARE at 0.
@@ -146,7 +150,8 @@ function EqTraining.exertionRate(gait, tiredness, stamina)
     local fitness = EqStats.clamp((stamina or 50) / 100, 0, 1)
     if gait == "canter" then
         local level = EqTraining.CANTER_LEVEL_BASE + EqTraining.CANTER_LEVEL_PER_STAMINA * fitness * 100
-        return EqTraining.CANTER_PULL * (1 - tiredness / level)
+        local creep = EqTraining.CANTER_CREEP_MIN + EqTraining.CANTER_CREEP_UNFIT * (1 - fitness) ^ 1.5
+        return tiredness < level and EqTraining.CANTER_RISE or creep
     elseif gait == "gallop" then
         return rate * (EqTraining.GALLOP_UNFIT_SHARE + (EqTraining.GALLOP_FIT_SHARE - EqTraining.GALLOP_UNFIT_SHARE) * fitness)
     end

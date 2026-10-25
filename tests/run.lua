@@ -329,8 +329,19 @@ do
     check("time out of the saddle rests the horse", near(sheet.tiredness, 45) and near(sheet.run, 5))
     local steady = EqTraining.newSheet()
     for _ = 1, 3000 do EqTraining.step(steady, "canter", 100, false, 50) end
-    check("a long canter levels off at the top of the zone for an average horse", math.abs(steady.tiredness - 85) < 0.5,
-        string.format("got %.1f", steady.tiredness))
+    local function cantersUntilBlown(stamina)
+        local canter, seconds = EqTraining.newSheet(), 0
+        while canter.tiredness <= EqTraining.ZONE_HIGH and seconds < 3600 do
+            EqTraining.step(canter, "canter", 100, false, stamina)
+            seconds = seconds + 0.1
+        end
+        return seconds
+    end
+    local unfitBlown, averageBlown, fitBlown = cantersUntilBlown(20), cantersUntilBlown(52), cantersUntilBlown(85)
+    check("every horse blows in a long canter, a fit one only after a long time",
+        unfitBlown < 80 and averageBlown > 80 and averageBlown < 100 and fitBlown > 130 and fitBlown < 600,
+        string.format("stamina 20 %.0f s, 52 %.0f s, 85 %.0f s", unfitBlown, averageBlown, fitBlown))
+    check("a canter reaches the zone in about half a minute", steady.tiredness > 85)
     check("a fitter horse tires more slowly at a gallop",
         EqTraining.exertionRate("gallop", 0, 90) < EqTraining.exertionRate("gallop", 0, 30))
     local worn = EqTraining.newSheet()

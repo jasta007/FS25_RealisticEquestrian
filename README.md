@@ -59,7 +59,7 @@ uses its genetics, health and fitness.
   watched by an **Exertion** meter while you ride (it rises in canter and gallop and falls at
   slower gaits and at a halt):
   - **Stamina** comes from runs: gains peak after 15 seconds at canter or gallop, while exertion
-    is in the zone, 65-85%. A long canter levels off near the zone, and a fitter horse tires more
+    is in the zone, 65-85%. A long canter climbs slowly from the zone into blowing hard, more slowly for a fitter
     slowly. Trot to ease off without losing the run; a stop or a walk only wears
     the run down slowly.
   - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
