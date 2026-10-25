@@ -358,7 +358,7 @@
         <text name="eq_story_crossCountry_hardest" text="Lief gut bis zum Vorbeilaufen am schwersten Hindernis."/>
         <text name="eq_story_crossCountry_temperament" text="Verweigerte am Wasser."/>
         <text name="eq_story_crossCountry_speed" text="War zwischen den Hindernissen zu langsam und verlor Zeit."/>
-        <text name="eq_story_crossCountry_stamina" text="Wurde über die letzten Hindernisse müde."/>
+        <text name="eq_story_crossCountry_stamina" text="Wurde auf den längeren Abschnitten müde und fiel im Tempo zurück."/>
         <text name="eq_story_crossCountry_staminaMany" text="Ging lange vor dem Ziel die Kraft aus."/>
         <text name="eq_story_race_clean" text="Lief ein starkes Rennen vom Start bis ins Ziel."/>
         <text name="eq_story_race_struggled" text="Kam nie ins Rennen."/>
