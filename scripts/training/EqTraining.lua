@@ -11,8 +11,9 @@
 
     Each stat closes a share of the gap to its cap every month (scaled to the day with the
     game's timeAdjustment), so gains slow as a horse nears its ceiling. Idle horses fade.
-    The farm's horse facilities (EqFacility.boosts) speed that up per stat; riding inside one
-    speeds the player's own work up more. They never add work.
+    The farm's horse facilities (EqFacility.boosts) and what the horse is fed (EqFeed.dietBoost)
+    speed that up per stat, adding together; riding inside a facility speeds the player's own work
+    up more. They never add work.
 ]]
 
 EqTraining = {}
@@ -148,8 +149,8 @@ end
 --- Apply one day of training to a record.
 --- @param record table EqHorseRecord (uses trained, focus, idleDays)
 --- @param ceilings table stat -> ceiling
---- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden };
----     the facility tables are stat -> share from EqFacility.boosts, or nil for none
+--- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden,
+---     feedBoost }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil
 --- @return table deltas stat -> change, for logging
 function EqTraining.applyDay(record, ceilings, day)
     local timeAdjustment = day.timeAdjustment or 1
@@ -175,8 +176,9 @@ function EqTraining.applyDay(record, ceilings, day)
         local level = before
         local owned = day.facilityOwned ~= nil and day.facilityOwned[stat] or 0
         local ridden = day.facilityRidden ~= nil and day.facilityRidden[stat] or 0
-        local monthly = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned)
-        local monthlyRidden = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + ridden)
+        local fed = day.feedBoost ~= nil and day.feedBoost[stat] or 0
+        local monthly = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed)
+        local monthlyRidden = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed + ridden)
 
         local fromPlayer = EqTraining.gain(level, ceiling, monthlyRidden, player[stat], ageFactor, timeAdjustment)
         local fromStaff = EqTraining.gain(level, ceiling * EqConstants.STAFF_CAP, monthly, staff[stat], ageFactor, timeAdjustment)

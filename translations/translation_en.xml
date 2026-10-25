@@ -14,6 +14,7 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
         <text name="eq_discipline_crossCountry" text="Cross Country"/>

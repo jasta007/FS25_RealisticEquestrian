@@ -21,6 +21,7 @@ dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
+dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
 local TestXML = dofile("tests/xml.lua")
@@ -740,6 +741,76 @@ EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 150000), ridi
 EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
     facilityOwned = hallOwned, facilityRidden = hallRidden })
 check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
+
+
+-- Feeds: the map's horse groups are rewritten from data/feeds.xml.
+local feeds = EqFeed.read(TestXML.load("data/feeds.xml"))
+local function namesOf(group)
+    local set = {}
+    for _, name in ipairs(group.names) do set[name] = true end
+    return set
+end
+local function groupWith(groups, name)
+    for _, group in ipairs(groups) do if namesOf(group)[name] then return group end end
+end
+
+-- Geistal's horse groups. Geistal calls its apples APPLE_GT; there is no plain APPLE.
+local geistalKnown = {}
+for name in ("OAT SORGHUM BARLEY WINTERBARLEY MAIZE WHEAT WINTERWHEAT SPELT TRITICALE RYE CARROT PARSNIP BEETROOT APPLE_GT "
+    .. "DRYGRASS_WINDROW GRASS_WINDROW ALFALFA_WINDROW DRYALFALFA_WINDROW CLOVER_WINDROW DRYCLOVER_WINDROW ALFALFA_CHAFF CLOVER_CHAFF"):gmatch("%S+") do
+    geistalKnown[name] = true
+end
+local geistal = EqFeed.planGroups({
+    { names = { "OAT", "SORGHUM" } },
+    { names = { "DRYGRASS_WINDROW", "GRASS_WINDROW", "ALFALFA_WINDROW", "DRYALFALFA_WINDROW", "CLOVER_WINDROW", "DRYCLOVER_WINDROW" } },
+    { names = { "CARROT", "PARSNIP", "BEETROOT" } },
+}, feeds, function(name) return geistalKnown[name] == true end)
+check("sorghum is no longer a horse feed", groupWith(geistal, "SORGHUM") == nil)
+check("barley joins the oats", groupWith(geistal, "BARLEY") == geistal[1] and groupWith(geistal, "MAIZE") == geistal[1])
+check("winter crops join too", groupWith(geistal, "WINTERBARLEY") == geistal[1] and groupWith(geistal, "WINTERWHEAT") == geistal[1])
+check("Geistal's apples are a treat", groupWith(geistal, "APPLE_GT") == geistal[3])
+check("an unknown fill type is not added", groupWith(geistal, "APPLE") == nil)
+check("chaff goes with the hay", groupWith(geistal, "ALFALFA_CHAFF") == geistal[2])
+check("no group is invented when the map has all three", #geistal == 3)
+
+-- A map whose horses only eat sorghum and hay: the emptied group goes, a treat group is made.
+local sparse = EqFeed.planGroups({ { names = { "SORGHUM" } }, { names = { "DRYGRASS_WINDROW" } } }, feeds,
+    function(name) return name == "OAT" or name == "CARROT" or name == "APPLE" or name == "DRYGRASS_WINDROW" end)
+local oatGroup, appleGroup = groupWith(sparse, "OAT"), groupWith(sparse, "APPLE")
+check("a map without the kind gets a new group", oatGroup ~= nil and oatGroup.isNew and oatGroup.group.name == "grain")
+check("the emptied sorghum group is dropped", #sparse == 3, tostring(#sparse))
+check("Orchards and Greenhouses apples are a treat", appleGroup ~= nil and appleGroup == groupWith(sparse, "CARROT"))
+
+-- Boosts: hay gives nothing, every feed in the trough adds its full boost, carrots and apples count once.
+local function near(a, b) return math.abs(a - b) < 1e-9 end
+local hayOnly = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000 }, feeds)
+check("hay gives no boost", hayOnly.stamina == 0 and hayOnly.speed == 0 and hayOnly.agility == 0 and hayOnly.temperament == 0)
+local oats = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000, OAT = 100 }, feeds)
+check("oats: small stamina and temperament", near(oats.stamina, 0.10) and near(oats.temperament, 0.10) and oats.speed == 0)
+local barley = EqFeed.dietBoost({ BARLEY = 100 }, feeds)
+check("barley: moderate agility and stamina", near(barley.agility, 0.20) and near(barley.stamina, 0.20))
+check("corn: strong speed", near(EqFeed.dietBoost({ MAIZE = 1 }, feeds).speed, 0.30))
+check("carrots: strong temperament", near(EqFeed.dietBoost({ CARROT = 1 }, feeds).temperament, 0.30))
+check("apples match carrots", near(EqFeed.dietBoost({ APPLE_GT = 1 }, feeds).temperament, 0.30))
+local mixed = EqFeed.dietBoost({ OAT = 50, BARLEY = 10, MAIZE = 50, CARROT = 10 }, feeds)
+check("oats, barley and corn stack", near(mixed.speed, 0.30) and near(mixed.stamina, 0.30) and near(mixed.agility, 0.20))
+check("grain and treats add up", near(mixed.temperament, 0.10 + 0.30))
+local sweet = EqFeed.dietBoost({ CARROT = 10, APPLE = 10, APPLE_GT = 10 }, feeds)
+check("carrots and apples do not stack", near(sweet.temperament, 0.30), string.format("%.2f", sweet.temperament))
+check("an empty trough gives nothing", EqFeed.dietBoost({ MAIZE = 0 }, feeds).speed == 0)
+
+-- The boost speeds training up, and gives nothing on a day without work.
+local function trainedSpeed(feedBoost, sheet)
+    local record = { trained = { stamina = 30, speed = 30, agility = 30, temperament = 30 }, focus = "balanced", idleDays = 0 }
+    local ceilings = { stamina = 80, speed = 80, agility = 80, temperament = 80 }
+    EqTraining.applyDay(record, ceilings, { sheet = sheet, riding = 0, ageMonths = 60, timeAdjustment = 1 / 30, feedBoost = feedBoost })
+    return record.trained.speed
+end
+local gallop = ridden("gallop", 100000)
+local plain, corn = trainedSpeed(nil, gallop), trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), ridden("gallop", 100000))
+check("corn makes galloping train speed faster", corn > plain and near((corn - 30) / (plain - 30), 1.30),
+    string.format("%.4f vs %.4f", corn, plain))
+check("feed alone trains nothing", trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), nil) == 30)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
