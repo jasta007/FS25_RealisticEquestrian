@@ -116,6 +116,15 @@
         <text name="eq_ui_col_going" text="Conditions"/>
         <text name="eq_ui_col_level" text="Level"/>
         <text name="eq_ui_col_type" text="Type"/>
+        <text name="eq_skill_untrained" text="Untrained"/>
+        <text name="eq_skill_novice" text="Novice"/>
+        <text name="eq_skill_trainee" text="Trainee"/>
+        <text name="eq_skill_amateur" text="Amateur"/>
+        <text name="eq_skill_promising" text="Promising"/>
+        <text name="eq_skill_competitor" text="Competitor"/>
+        <text name="eq_skill_contender" text="Contender"/>
+        <text name="eq_skill_champion" text="Champion"/>
+        <text name="eq_skill_legend" text="Legendary"/>
         <text name="eq_ui_col_when" text="Results"/>
         <text name="eq_ui_col_fee" text="Entry fee"/>
         <text name="eq_ui_col_prize" text="Prize pool"/>

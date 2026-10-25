@@ -39,12 +39,11 @@ EqConstants.BUDGET_PER_GENE = 40
 -- Starting stats: what a horse can already do the first time we see it. Each stat is drawn
 -- from a bell curve: around START_FOAL_MEAN for a newborn, widening to START_MEAN with spread
 -- START_SD by START_ADULT_MONTHS. A stat leans START_CEILING_LEAN points toward the horse's
--- talent for every ceiling point above or below START_CEILING_PIVOT. At these values about one
--- adult stat in 400 starts above 80.
-EqConstants.START_FOAL_MEAN = 12
+-- talent for every ceiling point above or below START_CEILING_PIVOT.
+EqConstants.START_FOAL_MEAN = 15
 EqConstants.START_FOAL_SD = 4
-EqConstants.START_MEAN = 40
-EqConstants.START_SD = 14
+EqConstants.START_MEAN = 50
+EqConstants.START_SD = 13
 EqConstants.START_ADULT_MONTHS = 48
 EqConstants.START_CEILING_PIVOT = 70
 EqConstants.START_CEILING_LEAN = 0.3
@@ -137,7 +136,7 @@ EqConstants.SETTLE_MONTHS = 1
 -- what it could do (talent: the mean of its two best ceilings). Skill SKILL_PIVOT is worth the
 -- base price and every SKILL_DOUBLING points more doubles it; likewise talent from VALUE_PIVOT
 -- by VALUE_DOUBLING.
-EqConstants.SKILL_PIVOT = 50
+EqConstants.SKILL_PIVOT = 60
 EqConstants.SKILL_DOUBLING = 10
 EqConstants.VALUE_PIVOT = 75
 EqConstants.VALUE_DOUBLING = 7.5
