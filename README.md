@@ -117,8 +117,7 @@ uses its genetics, health and fitness.
 - **Manual Transport:** save the transport fee and drive the horse to the animal dealer yourself.
   Horses waiting to go are marked **Awaiting delivery** in RLRM's lists. Drive the trailer into
   the dealer's loading area and open the dealer as usual: you're asked whether to deliver the
-  waiting horses or open the dealer. (**Left Alt + R** delivers too, rebindable in Controls; some
-  overlay tools take Alt + R for themselves.)
+  waiting horses or open the dealer. **Left Shift + E** delivers too (rebindable in Controls).
 - A horse away at an event leaves your pasture until its result comes in. RLRM still feeds and
   ages it.
 

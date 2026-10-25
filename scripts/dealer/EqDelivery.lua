@@ -253,7 +253,7 @@ local function registerAction(_, controlling)
         EqDelivery.guarded("delivery action", EqDelivery.onAction)
     end, false, true, false, false, nil, true)
     if id == nil or id == "" then
-        Log:info("EqDelivery: Alt+R not registered (context %s, ok=%s)", tostring(controlling), tostring(ok))
+        Log:info("EqDelivery: delivery key not registered (context %s, ok=%s)", tostring(controlling), tostring(ok))
         return
     end
     EqDelivery.actionEventId = id

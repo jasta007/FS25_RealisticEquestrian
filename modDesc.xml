@@ -30,7 +30,7 @@ Work in progress: this build only adds the stats and saves them. Training, breed
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_r" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_e" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>
