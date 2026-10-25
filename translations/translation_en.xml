@@ -343,7 +343,7 @@
         <text name="eq_story_dressage_struggled" text="Struggled with the test from start to finish."/>
         <text name="eq_story_dressage_agility" text="Lost marks in the lateral work."/>
         <text name="eq_story_dressage_agilityMany" text="Lost marks in several movements."/>
-        <text name="eq_story_dressage_hardest" text="A tidy test until the hardest movement cost marks."/>
+        <text name="eq_story_dressage_hardest" text="An elegant routine but struggled with the hardest movements."/>
         <text name="eq_story_dressage_temperament" text="Grew tense in the arena and lost marks."/>
         <text name="eq_story_dressage_temperamentMany" text="Tense and distracted for most of the test."/>
         <text name="eq_story_dressage_elimRefusal" text="Refused to go on and retired from the test."/>
