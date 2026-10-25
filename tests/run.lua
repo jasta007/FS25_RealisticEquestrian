@@ -1427,5 +1427,50 @@ testAnimalsPageButton()
     check("loose horse with no position still finds a pen", EqLooseHorses.choosePen(nil, { p.other, p.near }, 1, nil, nil) == p.near)
 end)()
 
+-- The look-at Skills box draws the skill and the potential in their own colours.
+;(function()
+    local overlay = function() return { x = 0, y = 0, width = 0, height = 0.01,
+        setDimension = function() end, setPosition = function(o, x, y) o.x, o.y = x, y end, render = function() end } end
+    local Base = {}
+    function Base.new() return { lines = {}, title = "", currentLineIndex = 0, bgScale = overlay(), bgTop = overlay(), bgBottom = overlay() } end
+    function Base:storeScaledValues() end
+    function Base:clear() for _, l in ipairs(self.lines) do l.isActive = false end self.currentLineIndex = 0 end
+    local savedEnv = EqRLRM.env
+    EqRLRM.env = { RL_InfoDisplayKeyValueBox = Base }
+    dofile("scripts/gui/EqSkillsHudBox.lua")
+    check("skills box available with RLRM's box", EqSkillsHudBox.isAvailable())
+
+    local rendered = {}
+    local current
+    _G.setTextColor = function(r, g, b, a) current = { r, g, b, a } end
+    _G.setTextAlignment = function() end
+    _G.setTextBold = function() end
+    _G.renderText = function(_, _, _, text) rendered[text] = current end
+    _G.getTextWidth = function(_, text) return #text * 0.01 end
+    _G.drawDashedLine = function() end
+    _G.g_pixelSizeX = 0.001
+    _G.RenderText = { ALIGN_LEFT = 0, ALIGN_RIGHT = 2 }
+    _G.HUD = { COLOR = { INACTIVE = { 0.5, 0.5, 0.5, 1 } } }
+
+    local box = EqSkillsHudBox.new({}, 1)
+    for k, v in pairs({ boxWidth = 0.2, titleAndBoxHeight = 0.05, lineHeight = 0.02, titleOffsetX = 0, titleOffsetY = 0,
+        titleTextSize = 0.01, titleToLineOffsetY = -0.02, keyOffsetX = 0, valueOffsetX = 0, keyTextSize = 0.01,
+        valueTextSize = 0.01, lineToLineOffsetY = -0.02, dashedLineHeight = 0.001, dashWidth = 0.005, dashGapWidth = 0.002 }) do
+        box[k] = v
+    end
+    box:clear()
+    box:addLine("Stamina", "72 - Competitor", { 0, 1, 0, 1 }, "(Very high)", { 0.2, 1, 0, 1 })
+    box:addLine("Favourite event", "None yet")
+    box:draw(0.9, 0.1)
+    check("skill value in skill colour", rendered["72 - Competitor"] ~= nil and rendered["72 - Competitor"][1] == 0)
+    check("stat title in skill colour", rendered["Stamina"] ~= nil and rendered["Stamina"][2] == 1 and rendered["Stamina"][1] == 0)
+    check("potential in potential colour", rendered[" (Very high)"] ~= nil and rendered[" (Very high)"][1] == 0.2)
+    check("uncoloured line is white", rendered["None yet"] ~= nil and rendered["None yet"][1] == 1 and rendered["None yet"][3] == 1)
+
+    EqRLRM.env = {}
+    check("skills box unavailable without RLRM's box", not EqSkillsHudBox.isAvailable())
+    EqRLRM.env = savedEnv
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
