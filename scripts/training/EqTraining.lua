@@ -24,10 +24,12 @@ EqTraining.GAIT_WEIGHTS = {
     trot = { temperament = 0.6, stamina = 0.6, agility = 0.3 },
     canter = { stamina = 0.8, agility = 0.8, temperament = 0.3 },
     gallop = { speed = 1.0, stamina = 0.8 },
+    -- Backing up is slow, fiddly schooling: a little of it does a lot for balance and manners.
+    reverse = { agility = 2.0, temperament = 2.0 },
 }
 
 -- The base game's riding speed factor per gait (Rideable:updateRiding).
-EqTraining.GAIT_SPEED_FACTOR = { walk = 1, trot = 1, canter = 2, gallop = 3 }
+EqTraining.GAIT_SPEED_FACTOR = { reverse = 1, walk = 1, trot = 1, canter = 2, gallop = 3 }
 
 -- What staff work on, per focus. Set with the eqFocus console command for now.
 EqTraining.FOCUS = {
@@ -43,7 +45,7 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
-    return { ms = { walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {} }
+    return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {} }
 end
 
 
@@ -57,7 +59,7 @@ end
 
 
 --- @param sheet table
---- @param gait string walk, trot, canter or gallop; anything else is ignored
+--- @param gait string reverse, walk, trot, canter or gallop; anything else is ignored
 --- @param dt number milliseconds
 function EqTraining.addRiding(sheet, gait, dt)
     if sheet.ms[gait] == nil or dt <= 0 then return end

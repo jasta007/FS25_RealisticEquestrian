@@ -36,6 +36,7 @@ local function getGaitNames()
             [types.CANTER] = "canter",
             [types.GALLOP] = "gallop",
         }
+        if types.BACKWARDS ~= nil then gaitNames[types.BACKWARDS] = "reverse" end
     end
     return gaitNames
 end
