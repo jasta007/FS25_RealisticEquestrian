@@ -1,9 +1,10 @@
 --[[
     EqSettingsPage.lua
-    Adds a "Realistic Equestrian" section to the Esc menu's Settings > General page, one row per
-    EqSettings row. The rows are built from the base game's own profiles (the way other mods
-    add settings there) the first time the page opens, and refreshed from the savegame settings
-    each time it opens.
+    Adds an "Equestrian" tab to RLRM's Settings page (next to General and Filters), one row per
+    EqSettings row. The rows are built from the base game's settings profiles, the same ones
+    RLRM's General tab uses, the first time the page opens, and refreshed from the savegame
+    settings each time it opens. If RLRM's settings frame is not found, the rows go in a
+    section of the base game's Esc > Settings > General page instead.
 
     The settings belong to the savegame and the server: they are saved in rlEquestrian.xml with
     the rest of our data. There is no multiplayer sync yet, so on a client the rows are shown
@@ -36,10 +37,10 @@ local function canChange()
 end
 
 
---- @param page table InGameMenuSettingsFrame
+--- @param layout table the layout the row goes into
 --- @param row table an EqSettings.ROWS entry
 --- @return table option
-local function addRow(page, row)
+local function addRow(layout, row)
     local box = BitmapElement.new()
     box:loadProfile(g_gui:getProfile("fs25_multiTextOptionContainer"), true)
 
@@ -66,20 +67,30 @@ local function addRow(page, row)
     title:onGuiSetupFinished()
     tooltip:onGuiSetupFinished()
     option:setTexts(optionTexts(row))
-    page.gameSettingsLayout:addElement(box)
+    layout:addElement(box)
     box:onGuiSetupFinished()
     return option
 end
 
 
---- Build our section once per settings layout.
+--- Add every row to a layout and remember the options.
+--- @param layout table
+local function addRows(layout)
+    EqSettingsPage.controls = {}
+    for _, row in ipairs(EqSettings.ROWS) do
+        EqSettingsPage.controls[row.id] = addRow(layout, row)
+    end
+end
+
+
+--- Fallback when RLRM's settings frame has changed: a section on the base game's
+--- Settings > General page, built once per settings layout.
 --- @param page table InGameMenuSettingsFrame
-local function build(page)
+local function buildOnGeneralPage(page)
     local layout = page.gameSettingsLayout
     if layout == nil or EqSettingsPage.layout == layout then return end
 
     EqSettingsPage.layout = layout
-    EqSettingsPage.controls = {}
     EqSettingsPage.name = page.name
 
     local header = TextElement.new()
@@ -89,14 +100,59 @@ local function build(page)
     layout:addElement(header)
     header:onGuiSetupFinished()
 
-    for _, row in ipairs(EqSettings.ROWS) do
-        EqSettingsPage.controls[row.id] = addRow(page, row)
-    end
+    addRows(layout)
 
     layout:invalidateLayout()
     if page.updateAlternatingElements ~= nil then page:updateAlternatingElements(layout) end
     if page.updateGeneralSettings ~= nil then page:updateGeneralSettings(layout) end
     Log:info("EqSettingsPage: added %d settings to the General settings page", #EqSettings.ROWS)
+end
+
+
+--- Add an "Equestrian" tab after General and Filters on RLRM's Settings page, once per frame.
+--- RLRM's own tab code then treats it like its others: initializeSubCategoryPages numbers
+--- every button in subCategoryTabs, and updateSubCategoryPages shows the matching entry of
+--- subCategoryPages and hides the rest.
+--- @param frame table RLRM's RLMenuSettingsFrame
+local function buildRLRMTab(frame)
+    if frame.eqSettingsTab ~= nil then return end
+    local tabs, pages = frame.subCategoryTabs, frame.subCategoryPages
+    if type(tabs) ~= "table" or type(pages) ~= "table" or tabs[#tabs] == nil or pages[1] == nil
+        or frame.subCategoryBox == nil or frame.subCategoryPaging == nil then
+        Log:warning("EqSettingsPage: RLRM's settings frame has no tab bar; Equestrian tab not added")
+        return
+    end
+
+    local index = #tabs + 1
+    local tab = tabs[#tabs]:clone(frame.subCategoryBox)
+    tab.id = "eqSettingsTab"
+    tab:setText(g_i18n:getText("eq_settings_tab"))
+    tab.onClickCallback = function()
+        frame.subCategoryPaging:setState(index, true)
+    end
+    table.insert(tabs, tab)
+
+    local page = GuiElement.new()
+    page:loadProfile(g_gui:getProfile("fs25_subCategorySelectorTabbedContainer"), true)
+    pages[1].parent:addElement(page)
+    local layout = ScrollingLayoutElement.new()
+    layout:loadProfile(g_gui:getProfile("fs25_settingsLayout"), true)
+    page:addElement(layout)
+
+    addRows(layout)
+
+    page:onGuiSetupFinished()
+    layout:onGuiSetupFinished()
+    page:setVisible(false)
+    table.insert(pages, page)
+    frame.eqSettingsTab = tab
+
+    for _, option in pairs(EqSettingsPage.controls) do
+        FocusManager:loadElementFromCustomValues(option, nil, {}, false, false)
+    end
+    layout:invalidateLayout()
+    if frame.updateAlternatingElements ~= nil then frame:updateAlternatingElements(layout) end
+    Log:info("EqSettingsPage: added the Equestrian tab to RLRM's settings with %d settings", #EqSettings.ROWS)
 end
 
 
@@ -114,11 +170,21 @@ function EqSettingsPage.refresh()
 end
 
 
---- Appended to InGameMenuSettingsFrame.onFrameOpen.
+--- Appended to InGameMenuSettingsFrame.onFrameOpen (the fallback).
 --- @param page table InGameMenuSettingsFrame
-function EqSettingsPage.onFrameOpen(page)
+function EqSettingsPage.onGeneralPageOpen(page)
     if not EqMain.isActive then return end
-    build(page)
+    buildOnGeneralPage(page)
+    EqSettingsPage.refresh()
+end
+
+
+--- Prepended to RLMenuSettingsFrame:onFrameOpen, so the tab is in place before RLRM numbers
+--- its tabs.
+--- @param frame table RLMenuSettingsFrame
+function EqSettingsPage.onRLRMSettingsOpen(frame)
+    if not EqMain.isActive then return end
+    buildRLRMTab(frame)
     EqSettingsPage.refresh()
 end
 
@@ -143,10 +209,22 @@ function EqSettingsPage:onOptionChanged(state, option)
 end
 
 
+--- Put the settings on their own tab of RLRM's Settings page, or, if RLRM's frame has changed,
+--- on the base game's Settings > General page.
 --- @param guarded function main.lua's error guard
-function EqSettingsPage.install(guarded)
+--- @param useRLRMTab boolean EqRLRM.features.settingsTab
+function EqSettingsPage.install(guarded, useRLRMTab)
     EqSettingsPage.guarded = guarded
-    InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsFrame.onFrameOpen, function(page)
-        guarded("settings page", function() EqSettingsPage.onFrameOpen(page) end)
-    end)
+    if useRLRMTab then
+        local frameClass = EqRLRM.get("RLMenuSettingsFrame")
+        frameClass.onFrameOpen = Utils.prependedFunction(frameClass.onFrameOpen, function(frame)
+            guarded("settings tab", function() EqSettingsPage.onRLRMSettingsOpen(frame) end)
+        end)
+        Log:debug("EqSettingsPage: hooked RLMenuSettingsFrame:onFrameOpen")
+    else
+        InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsFrame.onFrameOpen, function(page)
+            guarded("settings page", function() EqSettingsPage.onGeneralPageOpen(page) end)
+        end)
+        Log:info("EqSettingsPage: RLRM's settings frame not found; using the General settings page instead")
+    end
 end

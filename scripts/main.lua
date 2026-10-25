@@ -167,7 +167,7 @@ function EqMain.activate()
 
     if EqMain.isActive then
         guarded("message log", EqMessages.install)
-        guarded("settings page hook", function() EqSettingsPage.install(guarded) end)
+        guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then
