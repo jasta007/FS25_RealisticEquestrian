@@ -700,8 +700,11 @@ check("base game stables are not facilities",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
 check("the base game round barn is a round pen",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
-check("a map's own copy of the round barn is a round pen too",
-    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/maps/map/placeables/barn02/barn02.xml", false) == "roundPen")
+check("the game's round barn matches however the path is resolved",
+    EqFacility.kindForXml(facilities, "$data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
+check("a map's or mod's own barn02 is not a round pen",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/maps/map/placeables/barn02/barn02.xml", false) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/data/placeables/mapUS/barn02/barn02.xml", false) == nil)
 check("other barns are not round pens",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn01/barn01.xml", false) == nil
     and EqFacility.kindForXml(facilities, "data/placeables/mapUS/oldbarn02/barn02.xml", false) == nil)
