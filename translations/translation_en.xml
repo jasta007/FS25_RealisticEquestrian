@@ -147,7 +147,15 @@
         <text name="eq_ui_result_place" text="%d of %d"/>
         <text name="eq_ui_result_eliminated" text="Eliminated"/>
         <text name="eq_ui_result_scratched" text="Scratched"/>
-        <text name="eq_ui_button_enter" text="Enter %s (%s with transport)"/>
+        <text name="eq_ui_button_enterAuto" text="Enter, Auto Transport (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Enter, Manual Transport (%s)"/>
+        <text name="eq_ui_transportLabel" text="Total cost"/>
+        <text name="eq_ui_transportLine" text="Auto %s · Manual %s"/>
+        <text name="eq_ui_awaiting" text="%s (awaiting delivery)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Awaiting delivery"/>
+        <text name="eq_ui_result_notDelivered" text="Not delivered"/>
+        <text name="eq_ui_deadline_round" text="before tomorrow's results"/>
+        <text name="eq_ui_deadline_month" text="before the end of the month"/>
         <text name="eq_ui_button_results" text="Results"/>
         <text name="eq_ui_button_events" text="Events"/>
         <text name="eq_ui_noEvents" text="No events are open right now. New ones are drawn each round."/>
@@ -168,7 +176,9 @@
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
         <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>
-        <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Transport: %s."/>
+        <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Auto Transport: %s."/>
+        <text name="eq_enter_doneManual" text="%s entered in %s (rating %.0f). Manual Transport: take the horse to the animal dealer %s, or it won't start."/>
+        <text name="eq_result_notDelivered" text="%s was never delivered to %s, so didn't start. The entry fee is lost."/>
         <text name="eq_enter_farmLimit" text="You have used all %d of this month's entries. More open next month."/>
         <text name="eq_ui_farmLimit" text="No entries left this month"/>
         <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>

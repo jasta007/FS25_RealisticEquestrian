@@ -55,8 +55,13 @@ function EqEventsFrame.new()
     self.backButtonInfo = { inputAction = InputAction.MENU_BACK }
     self.enterButtonInfo = {
         inputAction = InputAction.MENU_ACCEPT,
-        text = g_i18n:getText("eq_ui_button_enter"),
-        callback = function() self:onClickEnter() end,
+        text = g_i18n:getText("eq_ui_button_enterAuto"),
+        callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_AUTO) end,
+    }
+    self.enterManualButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_ui_button_enterManual"),
+        callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_MANUAL) end,
     }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
@@ -202,9 +207,13 @@ function EqEventsFrame:updateButtons()
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
     if self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter then
         local event = EqCompetitionManager.events[self.selectedEventId]
-        self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enter"), horse.name,
-            g_i18n:formatMoney((event ~= nil and event.fee or 0) + horse.transport, 0, true, true))
+        local fee = event ~= nil and event.fee or 0
+        self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enterAuto"),
+            g_i18n:formatMoney(fee + horse.autoCost, 0, true, true))
+        self.enterManualButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enterManual"),
+            g_i18n:formatMoney(fee + horse.manualCost, 0, true, true))
         table.insert(self.menuButtonInfo, self.enterButtonInfo)
+        table.insert(self.menuButtonInfo, self.enterManualButtonInfo)
     end
     self:setMenuButtonInfoDirty()
 end
@@ -263,6 +272,10 @@ function EqEventsFrame:updateHorsePanel()
     keepDefaultColor(self.panelTraining)
     keepDefaultColor(self.panelSuccess)
     setText(self.panelTraining, row.training, wordColor(EqEventsFrame.TRAINING_COLORS, row.trainingBand))
+    local event = EqCompetitionManager.events[self.selectedEventId]
+    local fee = event ~= nil and event.fee or 0
+    setText(self.panelTransport, string.format(g_i18n:getText("eq_ui_transportLine"),
+        g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
     setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
 end
 
@@ -337,11 +350,12 @@ end
 
 -- BUTTONS
 
-function EqEventsFrame:onClickEnter()
+--- @param transport string EqCompetitionManager.TRANSPORT_AUTO or TRANSPORT_MANUAL
+function EqEventsFrame:onClickEnter(transport)
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
     if horse == nil or self.selectedEventId == nil then return end
 
-    local _, text = EqCompetitionManager.enter(self.selectedEventId, horse.animal, farmId())
+    local _, text = EqCompetitionManager.enter(self.selectedEventId, horse.animal, farmId(), transport)
     self.message = text
     self:refresh()
 end

@@ -97,7 +97,7 @@
         </GuiElement>
 
         <!-- The selected horse: RLRM's info-row style, label left and value at 250px -->
-        <BoxLayout profile="rlMenu_animalColumnLayout" id="horsePanel" position="1070px -575px" size="490px 290px">
+        <BoxLayout profile="rlMenu_animalColumnLayout" id="horsePanel" position="1070px -560px" size="490px 318px">
             <GuiElement profile="rlMenu_infoRow" height="40px">
                 <Text profile="rlMenu_animalStatLabel" id="panelName" textSize="22px" textMaxWidth="240px"/>
                 <Text profile="rlMenu_animalStatValue" id="panelAge" position="250px 0px" textSize="18px"/>
@@ -131,6 +131,10 @@
             <GuiElement profile="rlMenu_infoRow">
                 <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_col_success"/>
                 <Text profile="rlMenu_animalStatValue" id="panelSuccess" position="250px 0px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_infoRow">
+                <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_transportLabel"/>
+                <Text profile="rlMenu_animalStatValue" id="panelTransport" position="250px 0px"/>
             </GuiElement>
         </BoxLayout>
 

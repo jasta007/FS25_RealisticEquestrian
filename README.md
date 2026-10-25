@@ -100,8 +100,13 @@ prizes, and sometimes none in a discipline.
   horse is not a daily money tap however many days your months have.
 - A farm can make **three entries a month** in all, so you pick your best horses rather than
   sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
-- Every entry pays **transport** on top of the fee: a quarter of the game's transport price for
-  the horse ($150 for an adult). Hauling the horse there yourself instead is a stretch goal.
+- Every entry picks how the horse gets there. **Auto Transport** pays transport on top of the fee
+  (a quarter of the game's transport price for the horse, $150 for an adult) and the horse leaves
+  at once. **Manual Transport** pays no transport, but you take the horse to the animal dealer
+  yourself before the event runs (before the next round's results, or by month end for monthly
+  events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
+  totals, and has an Enter button for each. Delivering at the dealer is still being built; for
+  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`).
 - A horse can only be in one round event and one monthly event at a time.
 - A horse entered in an event **leaves your pasture** until its result is in: the next round
   for round events, the next month for monthly ones. It still eats, ages and trains with staff in
@@ -129,7 +134,7 @@ selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. 
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
-`eqEnter <event number> <horse>` enters (the fee is paid at once), `eqResults` shows results.
+`eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ## Buying horses
 

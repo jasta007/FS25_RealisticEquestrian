@@ -38,6 +38,11 @@ EqCompetitionManager.TRANSPORT_SHARE = 0.25
 -- Used when the horse's subtype has no transport price.
 EqCompetitionManager.TRANSPORT_FALLBACK = 150
 
+-- How an entry gets to the event: Auto pays transport and leaves at once; Manual is hauled to
+-- the dealer by the player and must be delivered before the event runs.
+EqCompetitionManager.TRANSPORT_AUTO = "auto"
+EqCompetitionManager.TRANSPORT_MANUAL = "manual"
+
 -- A Training Event under the monthly cadence counts as this share of a month's work.
 EqCompetitionManager.MONTHLY_BOOST_MONTHS = 0.25
 
@@ -246,6 +251,12 @@ function EqCompetitionManager.resolve(event, horses)
         local record = EqRegistry.getById(entry.horseId)
         if horse == nil or record == nil then
             notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)))
+        elseif not EqCompetitionManager.isDelivered(entry) then
+            -- Manual Transport, never delivered: a non-starter, and the fee is gone.
+            table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
+                place = 0, prize = 0, status = "notDelivered" })
+            notify(entry.farmId, string.format(g_i18n:getText("eq_result_notDelivered"), entry.name,
+                EqCompetitionManager.eventTitle(event)))
         else
             -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
@@ -566,12 +577,68 @@ end
 --- @param animal table RLRM Animal
 --- @return number cost
 function EqCompetitionManager.transportCost(animal)
+    local transport = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.transport or nil
+    local share = transport ~= nil and transport.share or EqCompetitionManager.TRANSPORT_SHARE
     local subType = animal.getSubType ~= nil and animal:getSubType() or nil
     if subType ~= nil and subType.transportPrice ~= nil then
         local price = subType.transportPrice:get(math.max(animal.age or 0, 0))
-        return math.floor(price * EqCompetitionManager.TRANSPORT_SHARE / 10 + 0.5) * 10
+        return math.floor(price * share / 10 + 0.5) * 10
     end
-    return EqCompetitionManager.TRANSPORT_FALLBACK
+    return transport ~= nil and transport.fallback or EqCompetitionManager.TRANSPORT_FALLBACK
+end
+
+
+--- What getting a horse to an event costs each way, on top of the entry fee.
+--- @param animal table RLRM Animal
+--- @param event table
+--- @return number auto Auto Transport (long-haul and quarantine included for an international event)
+--- @return number manual Manual Transport (nothing locally; the quarantine yard internationally)
+function EqCompetitionManager.transportCosts(animal, event)
+    local local_ = EqCompetitionManager.transportCost(animal)
+    local transport = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.transport or nil
+    if event == nil or not event.international or transport == nil then return local_, 0 end
+    local auto = math.floor(local_ * transport.internationalFactor / 10 + 0.5) * 10 + transport.quarantine
+    return auto, transport.quarantineYard
+end
+
+
+--- @param entry table
+--- @return boolean true when the horse is at (or on its way to) the event
+function EqCompetitionManager.isDelivered(entry)
+    return entry.transport ~= EqCompetitionManager.TRANSPORT_MANUAL or entry.delivered == true
+end
+
+
+--- Mark a horse's Manual entries as delivered: the horse leaves its pasture for the event.
+--- Step 3 calls this from the dealer; until then the eqDeliver console command does.
+--- @param animal table RLRM Animal
+--- @return number count entries delivered
+function EqCompetitionManager.deliver(animal)
+    local id = EqRegistry.getId(animal)
+    local count = 0
+    for _, event in pairs(EqCompetitionManager.events) do
+        for _, entry in ipairs(event.entries) do
+            if entry.horseId == id and not EqCompetitionManager.isDelivered(entry) then
+                entry.delivered = true
+                count = count + 1
+            end
+        end
+    end
+    if count > 0 then EqCompetitionManager.refreshAway({ animal }) end
+    return count
+end
+
+
+--- @param animal table RLRM Animal
+--- @return boolean true when the horse has a Manual entry still waiting for delivery
+function EqCompetitionManager.awaitingDelivery(animal)
+    local id = EqRegistry.getId(animal)
+    for _, event in pairs(EqCompetitionManager.events) do
+        for _, entry in ipairs(event.entries) do
+            if entry.horseId == id and not EqCompetitionManager.isDelivered(entry) then return true end
+        end
+    end
+    return false
 end
 
 
@@ -580,9 +647,11 @@ end
 --- @param eventId number
 --- @param animal table RLRM Animal
 --- @param farmId number
+--- @param transport string|nil TRANSPORT_AUTO (default) or TRANSPORT_MANUAL
 --- @return boolean ok
 --- @return string message translated text for the player
-function EqCompetitionManager.enter(eventId, animal, farmId)
+function EqCompetitionManager.enter(eventId, animal, farmId, transport)
+    local manual = transport == EqCompetitionManager.TRANSPORT_MANUAL
     local event = EqCompetitionManager.events[eventId]
     if event == nil then return false, g_i18n:getText("eq_enter_noEvent") end
 
@@ -617,21 +686,28 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
-    local transport = EqCompetitionManager.transportCost(animal)
+    local autoCost, manualCost = EqCompetitionManager.transportCosts(animal, event)
+    local cost = manual and manualCost or autoCost
     local farm = g_farmManager:getFarmById(farmId)
-    if farm ~= nil and farm:getBalance() < event.fee + transport then return false, g_i18n:getText("eq_enter_noMoney") end
+    if farm ~= nil and farm:getBalance() < event.fee + cost then return false, g_i18n:getText("eq_enter_noMoney") end
 
     g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
-    if transport > 0 then
-        g_currentMission:addMoney(-transport, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
+    if cost > 0 then
+        g_currentMission:addMoney(-cost, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
     end
     EqCompetitionManager.farmEntries[farmId] = (EqCompetitionManager.farmEntries[farmId] or 0) + 1
     local name = animal.getName ~= nil and animal:getName() or record.id
-    table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name })
-    EqCompetitionManager.refreshAway({ animal })
+    table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name,
+        transport = manual and EqCompetitionManager.TRANSPORT_MANUAL or EqCompetitionManager.TRANSPORT_AUTO,
+        delivered = not manual })
+    if not manual then EqCompetitionManager.refreshAway({ animal }) end
 
+    if manual then
+        return true, string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
+            g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_deadline_month" or "eq_ui_deadline_round"))
+    end
     return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
-        g_i18n:formatMoney(transport, 0, true, true))
+        g_i18n:formatMoney(cost, 0, true, true))
 end
 
 
@@ -674,6 +750,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
             xmlFile:setString(entryKey .. "#horseId", entry.horseId)
             xmlFile:setInt(entryKey .. "#farmId", entry.farmId)
             xmlFile:setString(entryKey .. "#name", entry.name)
+            xmlFile:setString(entryKey .. "#transport", entry.transport or EqCompetitionManager.TRANSPORT_AUTO)
+            xmlFile:setBool(entryKey .. "#delivered", EqCompetitionManager.isDelivered(entry))
         end
     end
 
@@ -745,6 +823,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
                 horseId = xmlFile:getString(entryKey .. "#horseId"),
                 farmId = xmlFile:getInt(entryKey .. "#farmId"),
                 name = xmlFile:getString(entryKey .. "#name", ""),
+                transport = xmlFile:getString(entryKey .. "#transport", EqCompetitionManager.TRANSPORT_AUTO),
+                delivered = xmlFile:getBool(entryKey .. "#delivered", true),
             })
             j = j + 1
         end

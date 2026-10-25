@@ -57,6 +57,15 @@
          own fee and prize. priceSpread: fee and prize vary by up to this share either way. -->
     <schedule copiesMax="3" priceSpread="0.35"/>
 
+    <!--
+        transport: what an entry pays to get the horse there.
+        Auto Transport pays share x the game's transport price for the horse (fallback when the
+        subtype has none). Manual Transport (the player hauls the horse to the dealer) pays no
+        transport. International events (not drawn yet) multiply Auto by internationalFactor
+        and add quarantine; a Manual horse pays only the dealer's quarantineYard fee.
+    -->
+    <transport share="0.25" fallback="150" internationalFactor="6" quarantine="1500" quarantineYard="400"/>
+
     <!-- Conditions on outdoor courses: the ground, or the weather when it matters more. Each
          moves weight between stats and changes the injury risk. Indoor events have none. -->
     <goings>

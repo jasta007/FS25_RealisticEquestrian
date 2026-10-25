@@ -192,7 +192,7 @@ function EqConsole:consoleEvents()
     end
 
     local left = EqCompetitionManager.entriesLeft(g_currentMission:getFarmId())
-    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse>; transport is paid on top of the fee.",
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> [auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
         #list, EqCompetitionManager.settings.cadence,
         left ~= nil and string.format("You have %d of %d entries left this month.", left, EqCompetitionManager.settings.entriesPerMonth) or "No monthly entry limit.")
 end
@@ -238,20 +238,44 @@ function EqConsole:consoleRatings(...)
 end
 
 
---- eqEnter <event number> <horse name or id>
+--- eqEnter <event number> <horse name or id> [auto|manual]
 function EqConsole:consoleEnter(eventId, ...)
     local ok, message = competitionsReady()
     if not ok then return message end
 
+    local words = { ... }
+    local transport = EqCompetitionManager.TRANSPORT_AUTO
+    local last = words[#words] ~= nil and string.lower(words[#words]) or nil
+    if last == EqCompetitionManager.TRANSPORT_MANUAL or last == EqCompetitionManager.TRANSPORT_AUTO then
+        transport = last
+        table.remove(words)
+    end
+
     local id = tonumber(eventId)
-    local query = table.concat({ ... }, " ")
-    if id == nil or query == "" then return "Usage: eqEnter <event number> <horse name or id>" end
+    local query = table.concat(words, " ")
+    if id == nil or query == "" then return "Usage: eqEnter <event number> <horse name or id> [auto|manual]" end
 
     local animal = findOwnHorse(query)
     if animal == nil then return string.format("No horse called '%s' on your farm", query) end
 
-    local _, text = EqCompetitionManager.enter(id, animal, g_currentMission:getFarmId())
+    local _, text = EqCompetitionManager.enter(id, animal, g_currentMission:getFarmId(), transport)
     return text
+end
+
+
+--- eqDeliver <horse name or id>: testing, until delivery at the dealer is built.
+function EqConsole:consoleDeliver(...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local query = table.concat({ ... }, " ")
+    if query == "" then return "Usage: eqDeliver <horse name or id>" end
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+
+    local count = EqCompetitionManager.deliver(animal)
+    if count == 0 then return string.format("%s has no Manual Transport entry waiting for delivery", query) end
+    return string.format("%s delivered: it leaves for %d event(s)", query, count)
 end
 
 
@@ -341,7 +365,8 @@ end
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
-    addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id>", "consoleEnter", EqConsole)
+    addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
+    addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
@@ -360,5 +385,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
 end

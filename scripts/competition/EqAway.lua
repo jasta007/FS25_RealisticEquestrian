@@ -1,7 +1,7 @@
 --[[
     EqAway.lua
-    Horses away at events leave the game world: a horse entered in an open event has no visual
-    in its pasture until the event has run and its result is in.
+    Horses away at events leave the game world: a horse entered in an open event (and, for
+    Manual Transport, delivered) has no visual in its pasture until its result is in.
 
     The horse stays in its husbandry the whole time (RLRM still feeds, ages and saves it); only
     its visual goes. We wrap AnimalClusterHusbandry:updateVisuals, which RLRM replaces with its
@@ -19,7 +19,10 @@ local Log = EqLog
 function EqAway.awayIds()
     local ids = {}
     for _, event in pairs(EqCompetitionManager.events or {}) do
-        for _, entry in ipairs(event.entries or {}) do ids[entry.horseId] = true end
+        for _, entry in ipairs(event.entries or {}) do
+            -- A Manual Transport horse stays home, to be loaded, until it is delivered.
+            if EqCompetitionManager.isDelivered(entry) then ids[entry.horseId] = true end
+        end
     end
     return ids
 end

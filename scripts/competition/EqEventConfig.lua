@@ -22,7 +22,7 @@ end
 
 
 --- @param xmlFile table An open XMLFile on events.xml
---- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, injuries }
+--- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
 function EqEventConfig.read(xmlFile)
     local config = { disciplines = {}, disciplineByName = {}, tiers = {}, tierByName = {}, goings = {} }
 
@@ -85,6 +85,14 @@ function EqEventConfig.read(xmlFile)
         })
         i = i + 1
     end
+
+    config.transport = {
+        share = xmlFile:getFloat("events.transport#share", 0.25),
+        fallback = xmlFile:getFloat("events.transport#fallback", 150),
+        internationalFactor = xmlFile:getFloat("events.transport#internationalFactor", 6),
+        quarantine = xmlFile:getFloat("events.transport#quarantine", 1500),
+        quarantineYard = xmlFile:getFloat("events.transport#quarantineYard", 400),
+    }
 
     config.injuries = {}
     i = 0
