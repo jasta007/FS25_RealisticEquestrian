@@ -269,7 +269,7 @@ function EqConsole:consoleProbe()
 end
 
 
---- eqDeliver <horse name or id>: testing, until delivery at the dealer is built.
+--- eqDeliver <horse name or id>: testing, delivers without driving to the dealer.
 function EqConsole:consoleDeliver(...)
     local ok, message = competitionsReady()
     if not ok then return message end

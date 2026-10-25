@@ -35,6 +35,7 @@ source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
+source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
@@ -94,6 +95,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.dealerDelivery then
+        guarded("dealer delivery hook", function() EqDelivery.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.listBadge then
@@ -162,6 +167,7 @@ local function onMissionLoaded(mission)
     guarded("facility scan", EqFacilityHooks.scanMap)
     guarded("facility shop text", EqFacilityHooks.addStoreText)
     guarded("feed console registration", EqFeedHooks.register)
+    guarded("dealer delivery start", function() EqDelivery.start(mission) end)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -201,6 +207,7 @@ local function onMissionDelete()
 
     guarded("mission cleanup", function()
         EqConsole.unregister()
+        EqDelivery.stop(g_currentMission)
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

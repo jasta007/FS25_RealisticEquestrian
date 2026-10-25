@@ -36,6 +36,8 @@ EqRLRM.OPTIONAL = {
     awayVisuals = { { "RealisticLivestock_AnimalClusterHusbandry", "updateVisuals" } },
     metabolismFitness = { { "AnimalHorse", "changeFitness" } },
     listBadge = { { "RLAnimalQuery", "formatAnimalRow" } },
+    dealerDelivery = { { "RLAnimalMoveService", "moveAnimals" }, { "RLAnimalMoveService", "getValidDestinations" },
+        { "RLAnimalMoveService", "getErrorText" } },
 }
 
 EqRLRM.env = nil

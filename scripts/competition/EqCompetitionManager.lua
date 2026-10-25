@@ -671,7 +671,7 @@ end
 
 
 --- Mark a horse's Manual entries as delivered: the horse leaves its pasture for the event.
---- Step 3 calls this from the dealer; until then the eqDeliver console command does.
+--- EqDelivery calls this at the dealer; the eqDeliver console command does too, for testing.
 --- @param animal table RLRM Animal
 --- @return number count entries delivered
 function EqCompetitionManager.deliver(animal)

@@ -169,8 +169,11 @@ prizes, and sometimes none in a discipline.
   yourself before the event runs (before the next round's results, or by month end for monthly
   events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
   totals, and has an Enter button for each. A horse waiting to be delivered shows "Awaiting
-  delivery" on its card in RLRM's animal lists, so you can see which one to load. Delivering at the dealer is still being built; for
-  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`, `<routes>`).
+  delivery" on its card in RLRM's animal lists, so you can see which one to load. To deliver,
+  drive the trailer into the dealer's loading area and press **Left Alt + R** ("Deliver to
+  event", beside the dealer's own prompt; rebindable in Controls). The horse goes home, hidden
+  until its event is over, so it needs a free place in one of your pastures. Costs are in
+  `data/events.xml` (`<transport>`, `<routes>`).
 - Venues abroad cost more to reach. Your home region comes from the map: a map named in
   `<home>` in `data/events.xml` (Catuaí is South America), else RLRM's map country (RLRM's
   "map country" setting can change it). `eqSettings` shows it. North America to Europe or South America is

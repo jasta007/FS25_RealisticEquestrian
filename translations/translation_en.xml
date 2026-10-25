@@ -177,6 +177,13 @@
         <text name="eq_ui_transportLabel_far" text="Cost, long-haul"/>
         <text name="eq_ui_awaiting" text="%s (awaiting delivery)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Awaiting delivery"/>
+        <text name="input_EQ_DELIVER" text="Deliver horse to event"/>
+        <text name="eq_deliver_prompt" text="Deliver %s to event"/>
+        <text name="eq_deliver_promptMany" text="Deliver %d horses to their events"/>
+        <text name="eq_deliver_done" text="%s delivered. It leaves for its event."/>
+        <text name="eq_deliver_doneMany" text="%d horses delivered. They leave for their events."/>
+        <text name="eq_deliver_noRoom" text="Can't deliver: your horses need a free place in one of your pastures to come home to."/>
+        <text name="eq_deliver_failed" text="Delivery failed: %s"/>
         <text name="eq_ui_result_notDelivered" text="Not delivered"/>
         <text name="eq_ui_deadline_round" text="before tomorrow's results"/>
         <text name="eq_ui_deadline_month" text="before the end of the month"/>
