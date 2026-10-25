@@ -247,6 +247,11 @@
         <text name="eq_deliver_doneMany" text="%d Pferde abgegeben. Sie reisen zu ihren Veranstaltungen ab."/>
         <text name="eq_deliver_noRoom" text="Abgabe nicht möglich: Ihre Pferde brauchen einen freien Platz auf einer Ihrer Weiden, um zurückzukommen."/>
         <text name="eq_deliver_failed" text="Abgabe fehlgeschlagen: %s"/>
+        <text name="eq_deliver_title" text="Zur Veranstaltung abgeben"/>
+        <text name="eq_deliver_ask" text="%s wartet darauf, zu einer Veranstaltung zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_askMany" text="%d Pferde in diesem Anhänger warten darauf, zu ihren Veranstaltungen zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_yes" text="Abgeben"/>
+        <text name="eq_deliver_no" text="Händler öffnen"/>
         <text name="eq_loose_broughtHome" text="Ihre Angestellten haben %s zurück in %s gebracht."/>
         <text name="eq_loose_broughtHomeUnnamed" text="Ihre Angestellten haben ein freilaufendes Pferd zurück in %s gebracht."/>
         <text name="eq_ui_result_notDelivered" text="Nicht abgegeben"/>
