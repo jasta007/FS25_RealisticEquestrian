@@ -85,12 +85,44 @@ function EqMenuPaging.beforeUpdatePages(menu)
 end
 
 
+--- One log line with the tab list's layout state, to find where the tabs are drawn.
+--- @param menu table the RLMenu instance
+--- @param when string
+function EqMenuPaging.logTabList(menu, when)
+    local list = menu.pagingTabList
+    if type(list) ~= "table" then return end
+    local function n(v) return type(v) == "number" and string.format("%.4f", v) or tostring(v) end
+    local function pair(v) return type(v) == "table" and (n(v[1]) .. "," .. n(v[2])) or tostring(v) end
+    local cells = {}
+    local section = type(list.sections) == "table" and list.sections[1] or nil
+    if section ~= nil and type(section.cells) == "table" then
+        for i = 1, 12 do
+            local cell = section.cells[i]
+            if cell ~= nil then
+                cells[#cells + 1] = string.format("%d@%s/%s", i, n(cell.position and cell.position[2]), n(cell.absPosition and cell.absPosition[2]))
+            end
+        end
+    end
+    Log:info("EqMenuPaging %s: mode=%s enabled=%s align=%s alignOffset=%s view=%s target=%s content=%s pos=%s abs=%s size=%s abssize=%s elements=%d cells=[%s]",
+        when, tostring(menu.openMode), tostring(type(menu.enabledPages) == "table" and #menu.enabledPages or nil),
+        n(list.listItemAlignment), n(list.listItemAlignmentOffset), n(list.viewOffset), n(list.targetViewOffset),
+        n(list.contentSize), pair(list.position), pair(list.absPosition), pair(list.size), pair(list.absSize),
+        type(list.elements) == "table" and #list.elements or -1, table.concat(cells, " "))
+end
+
+
 --- Hook RLMenu's updatePages (inherited from TabbedMenu). Call once, after EqRLRM.init succeeded.
 --- @param guarded function main.lua's error guard
 function EqMenuPaging.install(guarded)
     local rlMenu = EqRLRM.get("RLMenu")
     rlMenu.updatePages = Utils.prependedFunction(rlMenu.updatePages, function(menu)
-        guarded("menu paging reset", function() EqMenuPaging.beforeUpdatePages(menu) end)
+        guarded("menu paging reset", function()
+            EqMenuPaging.logTabList(menu, "before updatePages")
+            EqMenuPaging.beforeUpdatePages(menu)
+        end)
+    end)
+    rlMenu.onOpen = Utils.appendedFunction(rlMenu.onOpen, function(menu)
+        guarded("menu tab log", function() EqMenuPaging.logTabList(menu, "after open") end)
     end)
     Log:debug("EqMenuPaging: hooked RLMenu:updatePages")
 end
