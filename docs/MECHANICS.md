@@ -269,7 +269,8 @@ dealer's view of it.
   | Chip fracture | 4% | 2 months, $12,000 a month | 12 months |
   | Torn suspensory | 3% | 6 months, $6,000 a month | 12 months |
 
-  Injuries never spread and never kill. With RLRM's diseases switched off they are plain box
+  Resting always takes at least 2 days, so at 1 day a month the 1-month rests take 2 (treatment
+  still takes 1). Injuries never spread and never kill. With RLRM's diseases switched off they are plain box
   rest for the untreated time, with no bills.
 - **Illness:** every start carries 3 times RLRM's own monthly chance of its horse diseases
   (colic), times the trip's injury factor. A sick horse can't be entered until it is better.

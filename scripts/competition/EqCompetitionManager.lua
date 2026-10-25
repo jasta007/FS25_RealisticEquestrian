@@ -310,7 +310,7 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     end
 
     local onRLRM = EqInjury.start(record, animal, injury.name)
-    local rest = EqInjury.wholeMonths(info ~= nil and info.restMonths or 1)
+    local rest = EqInjury.wholeMonths(EqInjury.restMonths(injury.name))
     local text
     if onRLRM and info ~= nil then
         local course = info.treatDays ~= nil

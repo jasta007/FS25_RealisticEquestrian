@@ -32,6 +32,9 @@ EqInjury.RETIRED_FEE_SHARE = 0.4
 --- A start at an event carries this many months' worth of an RLRM horse disease's own
 --- monthly chance (colic, in RLRM 1.4.2), times the trip's injury factor.
 EqInjury.EVENT_ILLNESS_MONTHS = 3
+--- Resting an injury always takes at least this many days, so at one day a month treatment
+--- (a day) still beats resting a one-month injury.
+EqInjury.MIN_REST_DAYS = 2
 
 --- name -> { title, restMonths, treatMonths, cost, treatDays }, read from data/injuries.xml.
 --- treatDays (nil for most) makes the course that many days at a flat fee of cost.
@@ -120,6 +123,14 @@ function EqInjury.monthsLeftOnRecord(disease, restMonths)
 end
 
 
+--- @param months number untreated healing time from data/injuries.xml
+--- @param daysPerPeriod number
+--- @return number months the rest, at least MIN_REST_DAYS long
+function EqInjury.restFor(months, daysPerPeriod)
+    return math.max(months, EqInjury.MIN_REST_DAYS / math.max(daysPerPeriod, 1))
+end
+
+
 --- @param untilDay number
 --- @param today number
 --- @param daysPerPeriod number
@@ -167,6 +178,14 @@ end
 local function daysPerPeriod()
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
     return environment ~= nil and (environment.daysPerPeriod or 1) or 1
+end
+
+
+--- @param name string injury name
+--- @return number months its untreated rest at the current days per month
+function EqInjury.restMonths(name)
+    local info = EqInjury.info[name]
+    return EqInjury.restFor(info ~= nil and info.restMonths or 1, daysPerPeriod())
 end
 
 
@@ -266,8 +285,8 @@ local function contract(animal, name, monthsLeft)
     if disease == nil then return false end
     -- Not ticked on the day it happened (see the Disease.onDayChanged hook).
     disease.eqStartDay = today()
-    if monthsLeft ~= nil and model.durationMonths ~= nil then
-        disease.monthsElapsed = math.max(model.durationMonths - monthsLeft, 0)
+    if monthsLeft ~= nil then
+        disease.monthsElapsed = math.max(EqInjury.restMonths(name) - monthsLeft, 0)
     end
     return true
 end
@@ -283,8 +302,7 @@ function EqInjury.start(record, animal, name)
         record.injury = { name = name, rlrm = true }
         return true
     end
-    local info = EqInjury.info[name]
-    record.injury = { name = name, untilDay = EqInjury.clockFor(info ~= nil and info.restMonths or 1, today(), daysPerPeriod()) }
+    record.injury = { name = name, untilDay = EqInjury.clockFor(EqInjury.restMonths(name), today(), daysPerPeriod()) }
     return false
 end
 
@@ -295,13 +313,10 @@ end
 function EqInjury.monthsLeft(record, animal)
     local injury = record.injury
     if injury == nil then return nil end
-    local info = EqInjury.info[injury.name]
     if injury.rlrm then
         local disease = EqInjury.findRecord(animal, injury.name)
-        local model = EqInjury.models[injury.name]
-        local rest = (model ~= nil and model.durationMonths) or (info ~= nil and info.restMonths) or 1
         if disease == nil then return 1 end
-        return EqInjury.wholeMonths(EqInjury.monthsLeftOnRecord(disease, rest))
+        return EqInjury.wholeMonths(EqInjury.monthsLeftOnRecord(disease, EqInjury.restMonths(injury.name)))
     end
     if injury.untilDay == nil then return EqInjury.wholeMonths(injury.monthsLeft or 1) end
     return EqInjury.wholeMonths(EqInjury.monthsLeftOnClock(injury.untilDay, today(), daysPerPeriod()))
@@ -326,8 +341,7 @@ function EqInjury.daily(record, animal)
         end
         if not ready then
             -- RLRM's diseases were switched off: its records stop ticking, so carry on resting.
-            local model = EqInjury.models[injury.name]
-            local months = EqInjury.monthsLeftOnRecord(disease, model ~= nil and model.durationMonths or 1)
+            local months = EqInjury.monthsLeftOnRecord(disease, EqInjury.restMonths(injury.name))
             removeRecord(animal, disease)
             record.injury = { name = injury.name, untilDay = EqInjury.clockFor(months, day, dpp) }
         end
@@ -598,8 +612,21 @@ function EqInjury.install(guarded)
     --   ever saw it;
     -- - a day course is cut to its days, and a retired horse pays less (RLRM bills each served
     --   day model.treatment.cost / daysPerPeriod);
-    -- - a healed injury is removed at once, rather than sitting on the page as "Immune".
-    local onDayChanged = e.Disease.onDayChanged
+    -- - a healed injury is removed at once, rather than sitting on the page as "Immune";
+    -- - resting takes at least MIN_REST_DAYS.
+    local original = e.Disease.onDayChanged
+    -- The rest's minimum days go on the shared model for the call only, like withHorseTerms.
+    local function onDayChanged(disease, ...)
+        local name = EqInjury.nameFor(disease.title)
+        local model = disease.model
+        if name == nil or model == nil or model.durationMonths == nil then return original(disease, ...) end
+        local authored = model.durationMonths
+        model.durationMonths = EqInjury.restMonths(name)
+        local results = { pcall(original, disease, ...) }
+        model.durationMonths = authored
+        if not results[1] then error(results[2], 0) end
+        return unpack(results, 2, table.maxn(results))
+    end
     local INSTRUCTION = e.RLDiseaseProgression ~= nil and e.RLDiseaseProgression.INSTRUCTION or nil
     local NO_TREATMENT = e.RLDiseaseRecord ~= nil and e.RLDiseaseRecord.TREATMENT_RESULT.NONE or nil
     e.Disease.onDayChanged = function(disease, animal, ...)

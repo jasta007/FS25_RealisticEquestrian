@@ -1139,6 +1139,8 @@ local function injuryTests()
     -- Clock maths.
     check("an injury on our clock lasts its months in days", EqInjury.clockFor(2, 100, 28) == 156 and EqInjury.clockFor(1.5, 10, 1) == 12)
     check("months left on our clock", EqInjury.monthsLeftOnClock(156, 128, 28) == 1 and EqInjury.monthsLeftOnClock(10, 20, 28) == 0)
+    check("resting takes at least two days", EqInjury.restFor(1, 1) == 2 and EqInjury.restFor(1.5, 1) == 2
+        and EqInjury.restFor(1, 2) == 1 and EqInjury.restFor(9, 1) == 9 and EqInjury.restFor(1, 28) == 1)
     check("whole months shown", EqInjury.wholeMonths(0.2) == 1 and EqInjury.wholeMonths(2) == 2 and EqInjury.wholeMonths(2.01) == 3)
     check("a retired horse pays 40%", EqInjury.fee(4000, true) == 1600 and EqInjury.fee(4000, false) == 4000)
     check("the event colic chance follows RLRM's age bands",
@@ -1253,7 +1255,11 @@ local function injuryTests()
     check("an injury isn't ticked on the day it happened", first == "KEEP" and sole.state == "INFECTIOUS" and sole.monthsElapsed == 0)
     g_currentMission.environment.currentMonotonicDay = 11
     local second = fakeDisease.onDayChanged(sole, {}, true, 1)
-    check("a healed injury is removed, not left immune", second == "REMOVE" and sole.state == "RECOVERED", tostring(second))
+    check("at one day a month a one-month rest still takes two days", second == "KEEP" and sole.state == "INFECTIOUS", tostring(second))
+    check("the model keeps its authored month", registry.eqInjuryBruisedSole.durationMonths == 1)
+    g_currentMission.environment.currentMonotonicDay = 12
+    local third = fakeDisease.onDayChanged(sole, {}, true, 1)
+    check("a healed injury is removed, not left immune", third == "REMOVE" and sole.state == "RECOVERED", tostring(third))
     g_currentMission = nil
     EqRLRM.env, EqInjury.installed = savedEnv, savedInstalled
 end
