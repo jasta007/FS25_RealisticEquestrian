@@ -155,9 +155,10 @@ end
 --- @param trained number
 --- @param ceiling number
 --- @param unvetted boolean
---- @return string text such as "54 (High)"
+--- @return string text such as "54 - Amateur (High)": the skill in our words, then the potential
 local function statText(trained, ceiling, unvetted)
-    return string.format("%d (%s)", math.floor(trained + 0.5), EqInfoDisplay.potentialText(ceiling, unvetted))
+    local skill = EqInfoDisplay.skillValue(trained)
+    return string.format("%s (%s)", skill, EqInfoDisplay.potentialText(ceiling, unvetted))
 end
 
 
