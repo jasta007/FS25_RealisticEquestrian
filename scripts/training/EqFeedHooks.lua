@@ -8,8 +8,8 @@
       It runs on server and clients alike, so both agree on what a trough accepts.
     - PlaceableHusbandryFood.getFoodInfos gives a horse pen's food rows our group names, and in
       place of the base game's production share ("Root crops (5%)") the stats that group's feed
-      boosts: "Treats (Tem +30%)" while it holds apples or carrots, "Hard feed (Sta Spd Agi Tem)"
-      while it is empty, "Hay (no boost)".
+      boosts, in full words: "Hard feed (Stamina, Temperament)" while it holds oats, every stat
+      the group could boost while it is empty, "Hay (no boost)".
     - getBoost reads the trough of the pen a horse lives in. EqTrainingHooks passes it to the
       day's training and shows it while riding. A horse in a trailer, away at an event or in a
       pen without a trough gets no boost.
@@ -136,11 +136,11 @@ end
 
 
 --- @param stats table stat keys
---- @return string "Sta Spd"
-local function shortStats(stats)
+--- @return string "Stamina, Temperament"
+local function fullStats(stats)
     local parts = {}
-    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_short_" .. stat)) end
-    return table.concat(parts, " ")
+    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_" .. stat)) end
+    return table.concat(parts, ", ")
 end
 
 
@@ -156,17 +156,15 @@ function EqFeedHooks.foodGroupTitle(foodGroup, fillLevels)
         levels[name] = index ~= nil and fillLevels[index] or 0
     end
 
+    -- Full stat names, no percentages: what the feed in the group boosts now, or, while the
+    -- group is empty, what it could.
     local boost = EqFeed.dietBoost(levels, config)
-    local parts = {}
+    local stats = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        local percent = math.floor(boost[stat] * 100 + 0.5)
-        if percent > 0 then table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_short_" .. stat), percent)) end
+        if boost[stat] > 0 then table.insert(stats, stat) end
     end
-    local detail = table.concat(parts, " ")
-    if detail == "" then
-        local stats = EqFeed.boostedStats(foodGroup.eqNames, config)
-        detail = #stats > 0 and shortStats(stats) or g_i18n:getText("eq_feed_noBoost")
-    end
+    if #stats == 0 then stats = EqFeed.boostedStats(foodGroup.eqNames, config) end
+    local detail = #stats > 0 and fullStats(stats) or g_i18n:getText("eq_feed_noBoost")
     local kind = config.groupByName[foodGroup.eqKind]
     local title = kind ~= nil and groupTitle(kind.title) or tostring(foodGroup.title)
     return string.format("%s (%s)", title, detail)
