@@ -108,7 +108,7 @@
         <text name="eq_scratch_retired" text="retired"/>
         <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
         <text name="eq_scratch_fractious_1" text="wouldn't load into the lorry"/>
-        <text name="eq_scratch_fractious_2" text="too wound up to be tacked up"/>
+        <text name="eq_scratch_fractious_2" text="was fractious and refused to be mounted"/>
         <text name="eq_scratch_fractious_3" text="refused to go to the start"/>
         <text name="eq_injury_bruisedSole" text="a bruised sole"/>
         <text name="eq_injury_abscess" text="a hoof abscess"/>

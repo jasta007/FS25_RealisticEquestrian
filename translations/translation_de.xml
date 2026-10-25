@@ -110,7 +110,7 @@
         <text name="eq_scratch_retired" text="aus dem Sport genommen"/>
         <text name="eq_scratch_inFoal" text="zu weit tragend für einen Start"/>
         <text name="eq_scratch_fractious_1" text="ließ sich nicht verladen"/>
-        <text name="eq_scratch_fractious_2" text="zu aufgedreht zum Satteln"/>
+        <text name="eq_scratch_fractious_2" text="war widersetzlich und ließ sich nicht aufsitzen"/>
         <text name="eq_scratch_fractious_3" text="verweigerte den Weg zum Start"/>
         <text name="eq_injury_bruisedSole" text="eine Sohlenprellung"/>
         <text name="eq_injury_abscess" text="ein Hufabszess"/>
