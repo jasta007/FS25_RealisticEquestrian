@@ -25,4 +25,12 @@ Work in progress: this build only adds the stats and saves them. Training, breed
         <sourceFile filename="scripts/main.lua"/>
     </extraSourceFiles>
     <l10n filenamePrefix="translations/translation"/>
+    <actions>
+        <action name="EQ_DELIVER"/>
+    </actions>
+    <inputBinding>
+        <actionBinding action="EQ_DELIVER">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_r" index="1"/>
+        </actionBinding>
+    </inputBinding>
 </modDesc>
