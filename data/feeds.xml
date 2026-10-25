@@ -8,8 +8,9 @@
         fillTypes       taken out of every horse food group (sorghum is toxic to horses)
     group
         name            hay, grain or treat
-        title           l10n key used only when the map has no group for these feeds yet
-        productionWeight/eatWeight   the same, for a group the mod has to create
+        title           l10n key of the group's name in a pen's food list (the map's own
+                        name, such as "Root crops", is replaced)
+        productionWeight/eatWeight   used only when the map has no group for these feeds yet
         The map keeps its own groups and weights: a feed joins the map group that already
         holds most of its kind (oats find the "bulk" group, dry grass the "hay" group).
     feed
@@ -27,9 +28,9 @@
 <feeds>
     <banned fillTypes="SORGHUM"/>
 
-    <group name="hay" title="fillTypeGroup_hay" productionWeight="0.40" eatWeight="0.75"/>
-    <group name="grain" title="fillTypeGroup_grain" productionWeight="0.60" eatWeight="0.25"/>
-    <group name="treat" title="fillTypeGroup_earth" productionWeight="0.05" eatWeight="0.05"/>
+    <group name="hay" title="eq_feedGroup_hay" productionWeight="0.40" eatWeight="0.75"/>
+    <group name="grain" title="eq_feedGroup_grain" productionWeight="0.60" eatWeight="0.25"/>
+    <group name="treat" title="eq_feedGroup_treat" productionWeight="0.05" eatWeight="0.05"/>
 
     <!-- Forage: the basic diet, no boost. -->
     <feed fillTypes="DRYGRASS_WINDROW GRASS_WINDROW" group="hay"/>

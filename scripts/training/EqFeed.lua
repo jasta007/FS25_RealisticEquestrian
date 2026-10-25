@@ -142,6 +142,45 @@ function EqFeed.planGroups(groups, config, exists)
 end
 
 
+--- Which of our groups (hay, grain, treat) a food group mostly holds.
+--- @param names table fill type names
+--- @param config table from EqFeed.read
+--- @return string|nil group name, nil when it holds none of our feeds
+function EqFeed.groupKind(names, config)
+    local counts, best, bestCount = {}, nil, 0
+    for _, name in ipairs(names) do
+        local feed = config.feedByFillType[name]
+        if feed ~= nil then
+            counts[feed.group] = (counts[feed.group] or 0) + 1
+            if counts[feed.group] > bestCount then best, bestCount = feed.group, counts[feed.group] end
+        end
+    end
+    return best
+end
+
+
+--- The stats any of these feeds can boost, in STAT_KEYS order.
+--- @param names table fill type names
+--- @param config table from EqFeed.read
+--- @return table stats
+function EqFeed.boostedStats(names, config)
+    local boosted = {}
+    for _, name in ipairs(names) do
+        local feed = config.feedByFillType[name]
+        if feed ~= nil then
+            for stat, value in pairs(feed.boost) do
+                if value > 0 then boosted[stat] = true end
+            end
+        end
+    end
+    local stats = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if boosted[stat] then table.insert(stats, stat) end
+    end
+    return stats
+end
+
+
 --- The training boost a trough gives.
 --- @param levels table fill type name -> litres in the trough
 --- @param config table from EqFeed.read

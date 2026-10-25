@@ -45,7 +45,7 @@ Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Conten
 (90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
 not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
-The box you get when looking at a horse, and the game's own animal screens, show `Speed  60 - Promising (Very high)`: the skill in our words, then the potential (that box has no colours). The console's `eqHorses` still
+The box you get when looking at a horse shows `Speed  60 - Promising (Very high)`: the skill in our words, then the potential (that box has no colours). The game's own Animals screen shows only five rows and RLRM's horse rows take three, so there the stats come two to a row: `Stamina / Speed  51 Amateur / 29 Trainee`. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
 RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
@@ -109,8 +109,10 @@ and weights:
 
 Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
 skipped. Every feed in the trough gives its full boost and the boosts add up, so oats, barley and
-corn together give all three; carrots and apples are the exception and count once between them. While riding, a "Feed" line
-shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
+corn together give all three; carrots and apples are the exception and count once between them. A horse pen's food list
+names the groups Hay, Hard feed and Treats and shows what each does in place of the base game's
+percentage: the boost while it holds feed ("Treats (Tem +30%)"), the stats it can boost while it is
+empty ("Hard feed (Sta Spd Agi Tem)"). While riding, a "Feed" line shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
 
 ## Horse facilities
 

@@ -817,5 +817,14 @@ check("corn makes galloping train speed faster", corn > plain and near((corn - 3
     string.format("%.4f vs %.4f", corn, plain))
 check("feed alone trains nothing", trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), nil) == 30)
 
+-- Pen food rows: each group is named for what it mostly holds, and lists the stats it can boost.
+check("Geistal's groups are hard feed, hay and treats", EqFeed.groupKind(geistal[1].names, feeds) == "grain"
+    and EqFeed.groupKind(geistal[2].names, feeds) == "hay" and EqFeed.groupKind(geistal[3].names, feeds) == "treat")
+check("a map's own extra feed does not decide the group", EqFeed.groupKind({ "MINERAL_FEED", "OAT" }, feeds) == "grain")
+check("hard feed can boost every stat", #EqFeed.boostedStats(geistal[1].names, feeds) == 4)
+check("hay boosts nothing", #EqFeed.boostedStats(geistal[2].names, feeds) == 0)
+local treatStats = EqFeed.boostedStats(geistal[3].names, feeds)
+check("treats boost temperament", #treatStats == 1 and treatStats[1] == "temperament")
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
