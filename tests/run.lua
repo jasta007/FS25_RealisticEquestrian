@@ -565,8 +565,8 @@ local function eventBand(discipline, tier, going, distance)
 end
 check("dressage is low risk", eventBand("dressage", "championship", nil, "far") == "low")
 check("training show jumping is low risk", eventBand("showJumping", "training", nil, "local") == "low")
-check("a heavy steeplechase abroad is very high risk", eventBand("steeplechase", "advanced", heavy, "far") == "veryHigh")
-check("a good-going steeplechase at home is high, not very high", eventBand("steeplechase", "advanced", good, "local") == "high")
+check("a heavy steeplechase abroad is risky", eventBand("steeplechase", "advanced", heavy, "far") == "risky")
+check("a good-going steeplechase at home is moderate, not risky", eventBand("steeplechase", "advanced", good, "local") == "moderate")
 check("an unfit horse carries more risk than the event's typical horse",
     EqRisk.runInjuryChance(xc, intermediate, good, 20, 10, 0.1, 1) > EqRisk.eventInjuryChance(xc, intermediate, good, 1))
 
