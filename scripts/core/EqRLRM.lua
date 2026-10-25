@@ -40,6 +40,7 @@ EqRLRM.OPTIONAL = {
     listBadge = { { "RLAnimalQuery", "formatAnimalRow" } },
     dealerDelivery = { { "RLAnimalMoveService", "moveAnimals" }, { "RLAnimalMoveService", "getValidDestinations" },
         { "RLAnimalMoveService", "getErrorText" } },
+    looseHorses = { { "Animal", "applyExercise" }, { "Animal", "applyGrooming" } },
 }
 
 EqRLRM.env = nil
