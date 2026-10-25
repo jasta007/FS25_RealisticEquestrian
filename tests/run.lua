@@ -697,6 +697,8 @@ check("keywords skip husbandries",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", true) == nil)
 check("base game stables are not facilities",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
+check("the base game round barn is a round pen",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
 check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
     and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
 
