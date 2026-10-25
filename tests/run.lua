@@ -834,5 +834,20 @@ check("hay boosts nothing", #EqFeed.boostedStats(geistal[2].names, feeds) == 0)
 local treatStats = EqFeed.boostedStats(geistal[3].names, feeds)
 check("treats boost temperament", #treatStats == 1 and treatStats[1] == "temperament")
 
+-- Pen food rows: oats, barley and corn get a row each; the rest of the grain only while it is fed.
+local function rowNames(rows)
+    local out = {}
+    for _, row in ipairs(rows) do table.insert(out, (row.row or "rest") .. "=" .. row.value) end
+    return table.concat(out, " ")
+end
+local grainRows = EqFeed.splitRows(geistal[1].names, { OAT = 100, MAIZE = 50, WINTERBARLEY = 5 }, feeds)
+check("oats, barley and corn get a row each", rowNames(grainRows) == "eq_feedRow_oats=100 eq_feedRow_barley=5 eq_feedRow_corn=50",
+    rowNames(grainRows))
+local withWheat = EqFeed.splitRows(geistal[1].names, { WHEAT = 20 }, feeds)
+check("other grain shows while it is fed", rowNames(withWheat) == "eq_feedRow_oats=0 eq_feedRow_barley=0 eq_feedRow_corn=0 rest=20",
+    rowNames(withWheat))
+local hayRows = EqFeed.splitRows(geistal[2].names, {}, feeds)
+check("a group without rows stays one row", #hayRows == 1 and hayRows[1].row == nil)
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

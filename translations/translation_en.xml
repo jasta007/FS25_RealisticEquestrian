@@ -18,6 +18,10 @@
         <text name="eq_feedGroup_hay" text="Hay"/>
         <text name="eq_feedGroup_grain" text="Hard feed"/>
         <text name="eq_feedGroup_treat" text="Treats"/>
+        <text name="eq_feedGroup_otherGrain" text="Other grain"/>
+        <text name="eq_feedRow_oats" text="Oats"/>
+        <text name="eq_feedRow_barley" text="Barley"/>
+        <text name="eq_feedRow_corn" text="Corn"/>
         <text name="eq_feed_noBoost" text="no boost"/>
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
