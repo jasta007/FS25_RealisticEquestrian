@@ -100,7 +100,7 @@ function EqEventsView.horseRows(event, farmId)
             local status, canEnter
 
             local entered = manager.findEntry(record.id, event.kind)
-            local unavailable = manager.unavailableReason(record, event.kind)
+            local unavailable = manager.unavailableReason(record, event.kind, animal)
             if entered ~= nil then
                 status = entered == event and g_i18n:getText("eq_ui_status_enteredHere") or g_i18n:getText("eq_ui_status_enteredElsewhere")
             elseif unavailable == "injured" then

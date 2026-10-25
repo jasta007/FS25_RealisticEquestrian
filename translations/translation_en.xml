@@ -78,6 +78,7 @@
         <text name="eq_scratch_unsound" text="unsound on the day"/>
         <text name="eq_scratch_shoe" text="lost a shoe"/>
         <text name="eq_scratch_retired" text="retired"/>
+        <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
         <text name="eq_injury_minor" text="a minor strain"/>
         <text name="eq_injury_moderate" text="a tendon injury"/>
         <text name="eq_injury_serious" text="a serious leg injury"/>
@@ -93,6 +94,7 @@
         <text name="eq_status_retired" text="Retired"/>
         <text name="eq_status_settling" text="Settling in"/>
         <text name="eq_status_rested" text="Rested for the month"/>
+        <text name="eq_status_inFoal" text="In foal"/>
         <text name="eq_potential_unvetted" text="%s?"/>
         <text name="eq_ui_skillPotential" text="Skill potential"/>
         <text name="eq_ui_skills" text="Skills"/>
@@ -156,6 +158,7 @@
         <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, field of %d. Select a horse and press Enter."/>
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
+        <text name="eq_enter_inFoal" text="That mare is too far in foal to compete. She can compete again after foaling."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
         <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
         <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>

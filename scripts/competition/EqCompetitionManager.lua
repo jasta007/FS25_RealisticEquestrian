@@ -247,7 +247,9 @@ function EqCompetitionManager.resolve(event, horses)
         if horse == nil or record == nil then
             notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)))
         else
+            -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
+            if reason == nil and EqCompetitionManager.isTooFarInFoal(horse.animal) then reason = "inFoal" end
             if reason ~= nil then
                 local refund = math.floor((event.fee or 0) * EqRisk.SCRATCH_REFUND + 0.5)
                 if refund > 0 then
@@ -394,15 +396,24 @@ end
 --- Why a horse cannot be entered in anything right now, whatever the event.
 --- @param record table
 --- @param kind string the event's kind
---- @return string|nil reason "retired", "injured", "settling" or "rested", nil when it can go
-function EqCompetitionManager.unavailableReason(record, kind)
+--- @param animal table|nil RLRM Animal, for the in-foal check
+--- @return string|nil reason "retired", "injured", "settling", "inFoal" or "rested", nil when it can go
+function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
     if record:isSettling() then return "settling" end
+    if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
     if kind == EqCompetition.KIND_ROUND and (record.monthStarts or 0) >= EqConstants.MAX_ROUND_STARTS then
         return "rested"
     end
     return nil
+end
+
+
+--- @param animal table|nil RLRM Animal
+--- @return boolean true for a mare past IN_FOAL_LIMIT of her pregnancy
+function EqCompetitionManager.isTooFarInFoal(animal)
+    return animal ~= nil and animal.isPregnant == true and (animal.reproduction or 0) > EqConstants.IN_FOAL_LIMIT
 end
 
 
@@ -496,7 +507,7 @@ function EqCompetitionManager.countEligible(event, horses)
     local count = 0
     for _, animal in ipairs(horses) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil and EqCompetitionManager.unavailableReason(record, event.kind) == nil
+        if record ~= nil and EqCompetitionManager.unavailableReason(record, event.kind, animal) == nil
             and EqCompetition.canEnter(tier, animal.age or 0, EqCompetitionManager.ratingFor(record, event)) then
             count = count + 1
         end
@@ -545,7 +556,7 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
         return false, string.format(g_i18n:getText("eq_enter_farmLimit"), EqCompetitionManager.settings.entriesPerMonth)
     end
 
-    local unavailable = EqCompetitionManager.unavailableReason(record, event.kind)
+    local unavailable = EqCompetitionManager.unavailableReason(record, event.kind, animal)
     if unavailable == "injured" then
         return false, string.format(g_i18n:getText("eq_enter_injured"), record.injury.monthsLeft)
     elseif unavailable == "rested" then
