@@ -367,6 +367,11 @@ do
     local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
     check("a green two-year-old gets a medium training benefit", greenBand == "medium")
     check("a horse at staff level gets none", schooledBand == "none")
+    local full = EqTraining.boostBenefit(green, ceilings, weights, 60, 1)
+    local novice = EqTraining.boostBenefit(green, ceilings, weights, 60, config.tierByName.novice.trainingBoost)
+    local older = EqTraining.boostBenefit(green, ceilings, weights, 160, config.tierByName.novice.trainingBoost)
+    check("a Novice event teaches less than a young horse class, but something", novice > 0 and novice < full)
+    check("a Novice event teaches an older horse less", older < novice)
 end
 
 local jumping = config.disciplineByName.showJumping

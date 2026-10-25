@@ -128,6 +128,8 @@ function EqEventsView.horseRows(event, farmId)
                 end
             end
 
+            -- Odds and training only mean something for a horse that is or could be in this event.
+            local relevant = canEnter or entered == event
             local prospects = manager.prospects(record, animal, event)
             local autoCost, manualCost = manager.transportCosts(animal, event)
             table.insert(rows, {
@@ -136,11 +138,11 @@ function EqEventsView.horseRows(event, farmId)
                 name = horseName(animal, record),
                 age = string.format(g_i18n:getText("eq_ui_ageMonths"), age),
                 ratingValue = rating,
-                success = g_i18n:getText("eq_success_" .. prospects.success),
-                successBand = prospects.success,
+                success = relevant and g_i18n:getText("eq_success_" .. prospects.success) or "",
+                successBand = relevant and prospects.success or nil,
                 chance = prospects.chance,
-                training = prospects.benefit ~= nil and g_i18n:getText("eq_benefit_" .. prospects.benefit) or "-",
-                trainingBand = prospects.benefit,
+                training = (relevant and prospects.benefit ~= nil) and g_i18n:getText("eq_benefit_" .. prospects.benefit) or "-",
+                trainingBand = relevant and prospects.benefit or nil,
                 status = status,
                 canEnter = canEnter == true,
                 transport = autoCost,

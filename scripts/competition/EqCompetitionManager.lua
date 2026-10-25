@@ -211,7 +211,8 @@ function EqCompetitionManager.prospects(record, animal, event)
 
     local benefit = nil
     if tier.trainingBoost > 0 then
-        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0)
+        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0,
+            tier.trainingBoost)
         benefit = band
     end
     return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit }

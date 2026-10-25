@@ -148,6 +148,8 @@ prizes, and sometimes none in a discipline.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
 - **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
   you still see where the horse placed. Every other event is open from three years.
+- Every other event teaches a little too, less the higher the level (half a young horse class at
+  Novice, down to a fifth at Championship), and less again for horses past their peak (12 years).
 - Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
   by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
   flat racing as Maiden, Handicap, Listed and Group 1, and so on. Advanced and Championship events are held at a venue named after a map: the
@@ -198,8 +200,8 @@ prizes, and sometimes none in a discipline.
 lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
 enter). Select one, and the right table shows your horses with their **Success** (Favourite,
 Contender, Outsider or Long shot: their chance of a top-three place, counting the rivals, their
-fitness and the risk of elimination), **Training** (for young horse classes, how much the outing
-would teach them: High down to None) and whether they can enter. Under it, a panel shows the
+fitness and the risk of elimination), **Training** (how much the outing would teach them: High
+down to None) and whether they can enter. Success and Training stay blank for a horse that can't enter. Under it, a panel shows the
 selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.
 

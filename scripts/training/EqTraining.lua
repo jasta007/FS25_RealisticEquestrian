@@ -199,7 +199,7 @@ function EqTraining.applyDay(record, ceilings, day)
 end
 
 
--- Words for how much a young horse class would teach a horse, best first.
+-- Words for how much an event would teach a horse, best first.
 EqTraining.BENEFIT_BANDS = {
     { from = 0.5, name = "high" },
     { from = 0.25, name = "medium" },
@@ -208,15 +208,16 @@ EqTraining.BENEFIT_BANDS = {
 }
 
 
---- How much a young horse class would teach a horse, for the Events tab: the room left below
---- staff level in the discipline's stats, weighted like the boost, times the age factor.
+--- How much an event would teach a horse, for the Events tab: the room left below staff level in
+--- the discipline's stats, weighted like the boost, times the age factor and the tier's boost.
 --- @param trained table
 --- @param ceilings table stat -> ceiling (the shown ones, so this tells nothing the words don't)
 --- @param weights table stat -> discipline weight
 --- @param ageMonths number
+--- @param boost number|nil the tier's share of a full day (1 for a young horse class)
 --- @return number benefit 0..1
 --- @return string band a BENEFIT_BANDS name
-function EqTraining.boostBenefit(trained, ceilings, weights, ageMonths)
+function EqTraining.boostBenefit(trained, ceilings, weights, ageMonths, boost)
     local room, total = 0, 0
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local weight = weights[stat] or 0
@@ -226,14 +227,14 @@ function EqTraining.boostBenefit(trained, ceilings, weights, ageMonths)
             total = total + weight
         end
     end
-    local benefit = total > 0 and room / total * EqStats.ageTrainingFactor(ageMonths) or 0
+    local benefit = total > 0 and room / total * EqStats.ageTrainingFactor(ageMonths) * (boost or 1) or 0
     for _, band in ipairs(EqTraining.BENEFIT_BANDS) do
         if benefit >= band.from then return benefit, band.name end
     end
 end
 
 
---- A Training Event's boost: a share of a full day's work spread over the discipline's stats,
+--- An event's training boost: a share of a full day's work spread over the discipline's stats,
 --- counted at staff level (it is not the player's own riding).
 --- @param record table EqHorseRecord
 --- @param ceilings table stat -> ceiling
