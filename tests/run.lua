@@ -242,6 +242,32 @@ do
     end
     print(string.format("info: 200 round draws: %d steeplechases vs %d show jumping", counts.steeplechase or 0, counts.showJumping or 0))
     check("steeplechases are far rarer than show jumping", (counts.steeplechase or 0) * 4 < (counts.showJumping or 1))
+
+do
+    check("events.xml has four venue regions", #config.regions == 4)
+    local regions, venues, unnamed, named = {}, {}, 0, 0
+    for seed = 1, 300 do
+        for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("venue " .. seed), EqCompetition.KIND_MONTH, true)) do
+            if event.venue ~= nil then
+                named = named + 1
+                regions[event.region] = (regions[event.region] or 0) + 1
+                venues[event.venue] = true
+            else
+                unnamed = unnamed + 1
+            end
+        end
+    end
+    local regionCount, venueCount = 0, 0
+    for _ in pairs(regions) do regionCount = regionCount + 1 end
+    for _ in pairs(venues) do venueCount = venueCount + 1 end
+    print(string.format("info: %d named monthly events across %d regions and %d venues", named, regionCount, venueCount))
+    check("every monthly event has a venue", named > 0 and unnamed == 0)
+    check("every region hosts events", regionCount == 4)
+    check("every venue is used", venueCount >= 29, tostring(venueCount))
+    for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("round 3"), EqCompetition.KIND_ROUND, true)) do
+        check("everyday events have no venue", event.venue == nil)
+    end
+end
 end
 
 -- Success and training words on the Events tab

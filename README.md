@@ -90,8 +90,11 @@ prizes, and sometimes none in a discipline.
   you still see where the horse placed. Every other event is open from three years.
 - Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
   by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
-  flat racing as Maiden, Handicap, Listed and Group 1, and so on. Championships are named after the game's own maps (Riverbend Springs, Zielonka, Hutan Pantai); no real venues, organisations or companies. The names live in the
-  translation file, so they are easy to change. A Level column shows the tier.
+  flat racing as Maiden, Handicap, Listed and Group 1, and so on. Advanced and Championship events are held at a venue named after a map: the
+  base game's maps and popular ModHub maps in four regions (North America, South America,
+  Europe, Asia and Oceania), such as "Pallegney Grand Prix" or "Catuaí Gold Cup (2m)". The
+  horses go there in spirit only, so none of those maps needs to be installed. Event names live
+  in the translation file and venues in `data/events.xml`, so both are easy to change. A Level column shows the tier.
 - Steeplechases are rare, as they are today: the discipline's `chance` in `data/events.xml`
   (0.08) scales how often one is drawn.
 - Novice has a rating cap (60), so it stays a class for novices. Above it, a horse can always

@@ -129,15 +129,28 @@ function EqCompetitionManager.tierTitle(name)
 end
 
 
---- The event's own name, such as "1.20m Jumping" or "Prix St Georges": eq_event_<discipline>_<tier>,
---- or the tier and discipline when there is no such text.
+--- The event's own name, such as "1.20m Jumping" or "Pallegney Grand Prix": eq_event_<discipline>_<tier>,
+--- or the tier and discipline when there is no such text. A named event's text holds %s for its venue.
 --- @param discipline string
 --- @param tier string
+--- @param venue string|nil the event's venue; nil (a save from before venues) uses the first one
 --- @return string name
-function EqCompetitionManager.eventName(discipline, tier)
+function EqCompetitionManager.eventName(discipline, tier, venue)
     local key = string.format("eq_event_%s_%s", discipline, tier)
-    if g_i18n.hasText == nil or g_i18n:hasText(key) then return g_i18n:getText(key) end
-    return string.format("%s %s", EqCompetitionManager.tierTitle(tier), EqCompetitionManager.disciplineTitle(discipline))
+    if g_i18n.hasText ~= nil and not g_i18n:hasText(key) then
+        return string.format("%s %s", EqCompetitionManager.tierTitle(tier), EqCompetitionManager.disciplineTitle(discipline))
+    end
+    local text = g_i18n:getText(key)
+    if not text:find("%%s") then return text end
+    return string.format(text, venue or EqCompetitionManager.defaultVenue())
+end
+
+
+--- @return string venue the first venue in events.xml, for named events saved without one
+function EqCompetitionManager.defaultVenue()
+    local regions = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.regions or nil
+    local first = regions ~= nil and regions[1] ~= nil and regions[1].venues[1] or nil
+    return first or "Riverbend Springs"
 end
 
 
@@ -151,7 +164,7 @@ end
 --- @param event table
 --- @return string title such as "1.20m Jumping (Intermediate) #12"
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s (%s) #%d", EqCompetitionManager.eventName(event.discipline, event.tier),
+    return string.format("%s (%s) #%d", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue),
         EqCompetitionManager.tierTitle(event.tier), event.id)
 end
 
@@ -243,7 +256,7 @@ function EqCompetitionManager.resolve(event, horses)
     local discipline = config.disciplineByName[event.discipline]
     local riskRng = EqRandom.new("risk " .. event.id)
     local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
-        field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
+        venue = event.venue, region = event.region, field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
     local starters, byKey = {}, {}
 
     for _, entry in ipairs(event.entries) do
@@ -743,6 +756,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         xmlFile:setString(eventKey .. "#discipline", event.discipline)
         xmlFile:setString(eventKey .. "#tier", event.tier)
         if event.going ~= nil then xmlFile:setString(eventKey .. "#going", event.going) end
+        if event.venue ~= nil then xmlFile:setString(eventKey .. "#venue", event.venue) end
+        if event.region ~= nil then xmlFile:setString(eventKey .. "#region", event.region) end
         xmlFile:setFloat(eventKey .. "#fee", event.fee)
         xmlFile:setFloat(eventKey .. "#prize", event.prize)
         for j, entry in ipairs(event.entries) do
@@ -761,6 +776,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         xmlFile:setString(resultKey .. "#discipline", summary.discipline)
         xmlFile:setString(resultKey .. "#tier", summary.tier)
         if summary.going ~= nil then xmlFile:setString(resultKey .. "#going", summary.going) end
+        if summary.venue ~= nil then xmlFile:setString(resultKey .. "#venue", summary.venue) end
+        if summary.region ~= nil then xmlFile:setString(resultKey .. "#region", summary.region) end
         xmlFile:setInt(resultKey .. "#field", summary.field)
         xmlFile:setInt(resultKey .. "#day", summary.day)
         for j, placing in ipairs(summary.placings) do
@@ -811,6 +828,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             discipline = xmlFile:getString(eventKey .. "#discipline"),
             tier = xmlFile:getString(eventKey .. "#tier"),
             going = xmlFile:getString(eventKey .. "#going"),
+            venue = xmlFile:getString(eventKey .. "#venue"),
+            region = xmlFile:getString(eventKey .. "#region"),
             fee = xmlFile:getFloat(eventKey .. "#fee", 0),
             prize = xmlFile:getFloat(eventKey .. "#prize", 0),
             entries = {},
@@ -844,6 +863,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             discipline = xmlFile:getString(resultKey .. "#discipline"),
             tier = xmlFile:getString(resultKey .. "#tier"),
             going = xmlFile:getString(resultKey .. "#going"),
+            venue = xmlFile:getString(resultKey .. "#venue"),
+            region = xmlFile:getString(resultKey .. "#region"),
             field = xmlFile:getInt(resultKey .. "#field", 0),
             day = xmlFile:getInt(resultKey .. "#day", 0),
             placings = {},

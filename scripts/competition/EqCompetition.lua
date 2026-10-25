@@ -145,12 +145,20 @@ local function pickWeighted(items, rng)
 end
 
 
+--- @param items table non-empty list
+--- @param rng table EqRandom
+--- @return any item one item, each as likely as the others
+local function pickAny(items, rng)
+    return items[math.min(#items, math.floor(rng:next() * #items) + 1)]
+end
+
+
 --- Draw the events for one round.
 --- @param config table EqEventConfig
 --- @param rng table EqRandom
 --- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
 --- @param racingEnabled boolean
---- @return table events list of { discipline, tier, going, fee, prize, kind }
+--- @return table events list of { discipline, tier, going, fee, prize, kind, venue, region }
 function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
     local events = {}
     local wantMonthly = kind == EqCompetition.KIND_MONTH
@@ -166,6 +174,11 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
                         local spread = config.priceSpread
                         local priceFactor = 1 + rng:uniform(-spread, spread)
                         local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
+                        local venue, region = nil, nil
+                        if tier.venue and #(config.regions or {}) > 0 then
+                            local pick = pickAny(config.regions, rng)
+                            venue, region = pickAny(pick.venues, rng), pick.name
+                        end
                         table.insert(events, {
                             discipline = discipline.name,
                             tier = tier.name,
@@ -174,6 +187,8 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
                             -- A richer purse costs more to enter, but not in proportion.
                             prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
                             kind = kind,
+                            venue = venue,
+                            region = region,
                         })
                     end
                 end

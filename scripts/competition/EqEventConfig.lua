@@ -64,6 +64,7 @@ function EqEventConfig.read(xmlFile)
             chance = xmlFile:getFloat(key .. "#chance", 1),
             trainingBoost = xmlFile:getFloat(key .. "#trainingBoost", 0),
             risk = xmlFile:getFloat(key .. "#risk", 1),
+            venue = xmlFile:getBool(key .. "#venue", false),
         }
         table.insert(config.tiers, tier)
         config.tierByName[tier.name] = tier
@@ -83,6 +84,23 @@ function EqEventConfig.read(xmlFile)
             modifiers = readStats(xmlFile, key, 1),
             injury = xmlFile:getFloat(key .. "#injury", 1),
         })
+        i = i + 1
+    end
+
+    config.regions = {}
+    i = 0
+    while true do
+        local key = string.format("events.venues.region(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local region = { name = xmlFile:getString(key .. "#name"), venues = {} }
+        local j = 0
+        while true do
+            local venueKey = string.format("%s.venue(%d)", key, j)
+            if not xmlFile:hasProperty(venueKey) then break end
+            table.insert(region.venues, xmlFile:getString(venueKey .. "#name"))
+            j = j + 1
+        end
+        if #region.venues > 0 then table.insert(config.regions, region) end
         i = i + 1
     end
 

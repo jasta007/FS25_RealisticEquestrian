@@ -70,7 +70,7 @@ function EqEventsView.eventRows(farmId)
 
         table.insert(rows, {
             event = event,
-            title = manager.eventName(event.discipline, event.tier),
+            title = manager.eventName(event.discipline, event.tier, event.venue),
             level = manager.tierTitle(event.tier),
             going = manager.conditionsText(event.going),
             when = g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_when_nextMonth" or cadence),
@@ -172,7 +172,7 @@ function EqEventsView.resultRows(farmId)
                 end
                 table.insert(rows, {
                     day = string.format(g_i18n:getText("eq_ui_day"), summary.day),
-                    title = manager.eventName(summary.discipline, summary.tier),
+                    title = manager.eventName(summary.discipline, summary.tier, summary.venue),
                     horse = placing.name,
                     result = result,
                     prize = placing.prize > 0 and money(placing.prize) or "-",

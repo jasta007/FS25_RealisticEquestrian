@@ -28,6 +28,8 @@
         chance          chance the tier runs in a given round, per discipline
         trainingBoost   share of a full day's training the run gives (Training Events)
         risk            multiplies elimination and injury chances (easier courses below 1)
+        venue           true: the event is held at a named venue from <venues>, which goes in
+                        its name ("Pallegney Grand Prix")
 
     goings (shown as Conditions): injury multiplies the injury chance in those conditions.
     risk: injuries a horse can come back from, by how often each happens, the months of box rest
@@ -49,13 +51,59 @@
         <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
         <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
         <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
-        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1"/>
-        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1" venue="true"/>
+        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2" venue="true"/>
     </tiers>
 
     <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its
          own fee and prize. priceSpread: fee and prize vary by up to this share either way. -->
     <schedule copiesMax="3" priceSpread="0.35"/>
+
+    <!--
+        venues: where the named (venue="true") events are held. Each event draws a region, then a
+        venue in it, so a region with few venues still gets its share. Venues are the base
+        game's maps and popular mod maps; the horses go there in spirit only, so the player
+        needs none of these maps installed. Names are shown as written (not translated).
+    -->
+    <venues>
+        <region name="northAmerica">
+            <venue name="Riverbend Springs"/>
+            <venue name="Silverrun Forest"/>
+            <venue name="Alma"/>
+            <venue name="Frankenmuth"/>
+            <venue name="Gnadenthal"/>
+            <venue name="Owendale"/>
+            <venue name="Starbuck"/>
+            <venue name="Forest Hills"/>
+            <venue name="Redstone County"/>
+            <venue name="Somewhere, Montana"/>
+        </region>
+        <region name="southAmerica">
+            <venue name="Catuaí"/>
+            <venue name="Rancho Fundo"/>
+            <venue name="Matopiba"/>
+            <venue name="São Carlos"/>
+            <venue name="Horizonte Argentino"/>
+            <venue name="Recanto da Alvorada"/>
+        </region>
+        <region name="europe">
+            <venue name="Zielonka"/>
+            <venue name="Pallegney"/>
+            <venue name="Geistal"/>
+            <venue name="Carpathian"/>
+            <venue name="Monteriggioni"/>
+            <venue name="Riverview"/>
+            <venue name="Steinfurt"/>
+            <venue name="Maypole Farm"/>
+            <venue name="Bartelshagen"/>
+            <venue name="Castlereagh"/>
+        </region>
+        <region name="asiaOceania">
+            <venue name="Hutan Pantai"/>
+            <venue name="Western Australia"/>
+            <venue name="Winchester"/>
+        </region>
+    </venues>
 
     <!--
         transport: what an entry pays to get the horse there.
