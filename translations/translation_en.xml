@@ -352,7 +352,7 @@
         <text name="eq_story_crossCountry_eliminated" text="Went out after a fall."/>
         <text name="eq_story_crossCountry_elimRefusal" text="Went out after three refusals."/>
         <text name="eq_story_crossCountry_agility" text="Ran out at a narrow fence."/>
-        <text name="eq_story_crossCountry_agilityMany" text="Ran out more than once."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Stumbled on some landings and lost their rhythm."/>
         <text name="eq_story_crossCountry_hardest" text="Going well until a run-out at the hardest fence."/>
         <text name="eq_story_crossCountry_temperament" text="Refused at the water."/>
         <text name="eq_story_crossCountry_speed" text="Was off the pace between fences and lost time."/>

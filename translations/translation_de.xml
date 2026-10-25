@@ -354,7 +354,7 @@
         <text name="eq_story_crossCountry_eliminated" text="Schied nach einem Sturz aus."/>
         <text name="eq_story_crossCountry_elimRefusal" text="Schied nach drei Verweigerungen aus."/>
         <text name="eq_story_crossCountry_agility" text="Lief an einem schmalen Hindernis vorbei."/>
-        <text name="eq_story_crossCountry_agilityMany" text="Lief mehrmals an Hindernissen vorbei."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Stolperte bei einigen Landungen und verlor den Rhythmus."/>
         <text name="eq_story_crossCountry_hardest" text="Lief gut bis zum Vorbeilaufen am schwersten Hindernis."/>
         <text name="eq_story_crossCountry_temperament" text="Verweigerte am Wasser."/>
         <text name="eq_story_crossCountry_speed" text="War zwischen den Hindernissen zu langsam und verlor Zeit."/>
