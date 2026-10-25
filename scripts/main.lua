@@ -15,6 +15,7 @@ local modDirectory = g_currentModDirectory
 
 -- SECTION 1: Our own modules. None of them reads RLRM at file scope.
 source(modDirectory .. "scripts/core/EqLog.lua")
+source(modDirectory .. "scripts/core/EqI18N.lua")
 source(modDirectory .. "scripts/core/EqRLRM.lua")
 source(modDirectory .. "scripts/core/EqMessages.lua")
 source(modDirectory .. "scripts/core/EqConstants.lua")
@@ -27,6 +28,7 @@ source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
+source(modDirectory .. "scripts/training/EqLooseHorses.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
@@ -53,8 +55,8 @@ local Log = EqLog
 
 -- Our money types' Finances rows. Like RLRM, they must be in FinanceStats.statNames before any
 -- farm is created. The money popup and the Finances page look their titles up without a mod
--- name, so they only find texts in the global table: copy ours there. One key each for the
--- MoneyType title and the "finance_" key the Finances page asks for.
+-- name (see EqI18N): one key each for the MoneyType title and the "finance_" key the Finances
+-- page asks for.
 EqMain = {}
 EqMain.MONEY_STATS = {
     { name = "eqEntryFees", title = "eq_money_entryFees" },
@@ -69,18 +71,17 @@ for _, stat in ipairs(EqMain.MONEY_STATS) do
     end
 end
 
---- Copy the money titles into the global texts. Run at source time and again when the money
---- types are registered, in case our texts were not loaded yet the first time; a text we
---- don't have is never copied, so a "Missing" placeholder can't stick.
+--- Share the money titles with lookups that carry no mod name. Run at source time and again
+--- when the money types are registered, in case our texts were not loaded yet the first time.
 function EqMain.copyMoneyTexts()
+    local keys, aliases = {}, {}
     for _, stat in ipairs(EqMain.MONEY_STATS) do
-        if g_i18n:hasText(stat.title) then
-            local text = g_i18n:getText(stat.title)
-            _G.g_i18n.texts[stat.title] = text
-            _G.g_i18n.texts["finance_" .. stat.name] = text
-        end
+        table.insert(keys, stat.title)
+        aliases["finance_" .. stat.name] = stat.title
     end
+    EqI18N.share(keys, aliases)
 end
+EqI18N.install()
 EqMain.copyMoneyTexts()
 
 EqMain.activated = false
@@ -154,6 +155,10 @@ function EqMain.activate()
         guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.looseHorses then
+        guarded("loose horses hook", function() EqLooseHorses.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.awayVisuals then
         guarded("away horses hook", function() EqAway.install(guarded) end)
     end
@@ -222,6 +227,9 @@ local function onMissionLoaded(mission)
     guarded("facility shop text", EqFacilityHooks.addStoreText)
     guarded("feed console registration", EqFeedHooks.register)
     guarded("dealer delivery start", function() EqDelivery.start(mission) end)
+    guarded("loose horses start", function()
+        if mission:getIsServer() then EqLooseHorses.start(mission) end
+    end)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -262,6 +270,7 @@ local function onMissionDelete()
     guarded("mission cleanup", function()
         EqConsole.unregister()
         EqDelivery.stop(g_currentMission)
+        EqLooseHorses.stop(g_currentMission)
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

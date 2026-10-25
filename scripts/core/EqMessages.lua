@@ -69,13 +69,9 @@ function EqMessages.install()
 end
 
 
---- Copy our message texts into the global texts, as EqMain does for the money titles.
+--- Share our message texts with RLRM, which looks them up without a mod name (see EqI18N).
 function EqMessages.copyTexts()
-    local global = _G.g_i18n
-    if global == nil or global.texts == nil then return end
-    for _, key in ipairs(EqMessages.TEXT_KEYS) do
-        if g_i18n:hasText(key) then global.texts[key] = g_i18n:getText(key) end
-    end
+    EqI18N.share(EqMessages.TEXT_KEYS)
 end
 
 
