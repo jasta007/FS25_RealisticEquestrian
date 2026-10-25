@@ -59,10 +59,21 @@ for _, stat in ipairs(EqMain.MONEY_STATS) do
         table.insert(FinanceStats.statNames, stat.name)
         FinanceStats.statNameToIndex[stat.name] = #FinanceStats.statNames
     end
-    local text = g_i18n:getText(stat.title)
-    _G.g_i18n.texts[stat.title] = text
-    _G.g_i18n.texts["finance_" .. stat.name] = text
 end
+
+--- Copy the money titles into the global texts. Run at source time and again when the money
+--- types are registered, in case our texts were not loaded yet the first time; a text we
+--- don't have is never copied, so a "Missing" placeholder can't stick.
+function EqMain.copyMoneyTexts()
+    for _, stat in ipairs(EqMain.MONEY_STATS) do
+        if g_i18n:hasText(stat.title) then
+            local text = g_i18n:getText(stat.title)
+            _G.g_i18n.texts[stat.title] = text
+            _G.g_i18n.texts["finance_" .. stat.name] = text
+        end
+    end
+end
+EqMain.copyMoneyTexts()
 
 EqMain.activated = false
 EqMain.isActive = false
@@ -130,6 +141,7 @@ function EqMain.activate()
     if EqMain.isActive then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
         guarded("competition setup", function()
+            EqMain.copyMoneyTexts()
             MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")
