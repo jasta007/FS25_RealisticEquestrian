@@ -6,17 +6,20 @@
     Shift+O instead.
 
     RLRM only adds the button when the page has a selectedHusbandry, which the base game does
-    not seem to set for horse stables. So after RLRM has had its turn, if the button is still
-    missing we look for the pen another way (the selected horse's own pen, then the pen picked
-    in the page's selector) and add the same button for it.
+    not seem to set for horse stables. So if the button is missing we look for the pen another
+    way (the selected horse's own pen, then the pen named in the page's selector) and add the
+    same button for it.
+
+    The base-game source for this page is not public, so the button is checked both when the
+    page rebuilds its buttons and when the menu reads them, in case the base game sets a horse
+    stable's buttons somewhere else.
 ]]
 
 EqAnimalsPageButton = {}
 
 local Log = EqLog
 
--- Frame fields the page might keep its pen list in, tried in order. Unverified guesses:
--- the base-game source for this page is not public.
+-- Frame fields the page might keep its pen list in, tried in order. Unverified guesses.
 EqAnimalsPageButton.HUSBANDRY_LIST_FIELDS = { "husbandries", "sortedHusbandries", "husbandryList" }
 
 
@@ -24,6 +27,13 @@ EqAnimalsPageButton.HUSBANDRY_LIST_FIELDS = { "husbandries", "sortedHusbandries"
 --- @return boolean isPen true for an animal pen placeable
 local function isAnimalPen(husbandry)
     return type(husbandry) == "table" and husbandry.spec_husbandryAnimals ~= nil
+end
+
+
+--- @param husbandry table
+--- @return string name
+local function penName(husbandry)
+    return husbandry.getName ~= nil and tostring(husbandry:getName()) or "?"
 end
 
 
@@ -41,11 +51,34 @@ local function getSelectedAnimal(frame)
 end
 
 
+--- @param selector table|nil the page's pen selector
+--- @return string|nil text the selector's current text
+local function getSelectorText(selector)
+    if type(selector) ~= "table" or selector.getState == nil then return nil end
+    local state = selector:getState()
+    if type(selector.texts) == "table" and state ~= nil then
+        return selector.texts[state]
+    end
+    return nil
+end
+
+
+--- The player's farm's pens, through RLRM's own lookup.
+--- @return table pens
+function EqAnimalsPageButton.listFarmPens()
+    local query = EqRLRM.get("RLAnimalQuery")
+    local mission = g_currentMission
+    if query == nil or mission == nil or mission.getFarmId == nil then return {} end
+    return query.listHusbandriesForFarm(mission:getFarmId()) or {}
+end
+
+
 --- Find the pen the Animals page is showing.
 --- @param frame table the Animals page
+--- @param listPens function|nil returns the farm's pens; defaults to listFarmPens
 --- @return table|nil husbandry the pen placeable
 --- @return string source which lookup found it, for the log
-function EqAnimalsPageButton.findHusbandry(frame)
+function EqAnimalsPageButton.findHusbandry(frame, listPens)
     if isAnimalPen(frame.selectedHusbandry) then
         return frame.selectedHusbandry, "selectedHusbandry"
     end
@@ -67,6 +100,16 @@ function EqAnimalsPageButton.findHusbandry(frame)
         end
     end
 
+    -- Last resort: the selector shows the pen's name, so match it against the farm's pens.
+    local text = getSelectorText(selector)
+    if text ~= nil then
+        for _, pen in ipairs((listPens or EqAnimalsPageButton.listFarmPens)()) do
+            if isAnimalPen(pen) and penName(pen) == text then
+                return pen, "selector name"
+            end
+        end
+    end
+
     return nil, "none"
 end
 
@@ -83,9 +126,6 @@ function EqAnimalsPageButton.hasButton(buttons, action)
 end
 
 
--- Logged once per session when no pen is found, so a log shows which fields the page has.
-local reportedMissing = false
-
 --- @param frame table
 --- @return string names the frame's table fields, sorted
 local function describeFields(frame)
@@ -98,27 +138,43 @@ local function describeFields(frame)
 end
 
 
---- Add RLRM's Manage Animals button when RLRM left it out; runs after RLRM's own hook.
+-- The last outcome logged, so the log gets one line per change rather than one per call.
+local lastOutcome = nil
+local reportedFields = false
+
+--- @param outcome string
+--- @param frame table
+local function report(outcome, frame)
+    if outcome == lastOutcome then return end
+    lastOutcome = outcome
+    Log:info("EqAnimalsPageButton: %s", outcome)
+    if outcome:find("no pen found", 1, true) and not reportedFields then
+        reportedFields = true
+        Log:info("EqAnimalsPageButton: page fields: %s", describeFields(frame))
+    end
+end
+
+
+--- Add RLRM's Manage Animals button to a button list when RLRM left it out.
 --- @param frame table the Animals page
+--- @param buttons table|nil the button list to fill (the page's menuButtonInfo)
 --- @param action any InputAction.RL_OPEN_ANIMAL_SCREEN
 --- @param openMenu function RLRM's RLMenu.openFromBridge
+--- @param listPens function|nil passed to findHusbandry
 --- @return boolean added
-function EqAnimalsPageButton.afterUpdateMenuButtons(frame, action, openMenu)
-    if type(frame.menuButtonInfo) ~= "table" or EqAnimalsPageButton.hasButton(frame.menuButtonInfo, action) then
+function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens)
+    if type(buttons) ~= "table" or EqAnimalsPageButton.hasButton(buttons, action) then
         return false
     end
 
-    local husbandry, source = EqAnimalsPageButton.findHusbandry(frame)
+    local husbandry, source = EqAnimalsPageButton.findHusbandry(frame, listPens)
     if husbandry == nil then
-        if not reportedMissing then
-            reportedMissing = true
-            Log:info("EqAnimalsPageButton: no pen found for the Manage Animals button; page fields: %s",
-                describeFields(frame))
-        end
+        report(string.format("no pen found for Manage Animals (selector text '%s', selectedHusbandry %s)",
+            tostring(getSelectorText(frame.subCategorySelector)), tostring(frame.selectedHusbandry)), frame)
         return false
     end
 
-    table.insert(frame.menuButtonInfo, {
+    table.insert(buttons, {
         inputAction = action,
         text = g_i18n:getText("eq_ui_button_manageAnimals"),
         callback = function()
@@ -127,28 +183,39 @@ function EqAnimalsPageButton.afterUpdateMenuButtons(frame, action, openMenu)
             openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
         end
     })
-    Log:debug("EqAnimalsPageButton: added Manage Animals for %s (found via %s)",
-        tostring(husbandry.getName ~= nil and husbandry:getName() or "?"), source)
+    report(string.format("added Manage Animals for '%s' (found via %s)", penName(husbandry), source), frame)
     return true
 end
 
 
---- Hook the Animals page's updateMenuButtons. Call once, after every mod has been sourced, so
---- the hook runs after RLRM's.
+--- Hook the Animals page's button list. Call once, after every mod has been sourced, so the
+--- hooks run after RLRM's.
 --- @param guarded function main.lua's error guard
 function EqAnimalsPageButton.install(guarded)
     local action = InputAction ~= nil and InputAction.RL_OPEN_ANIMAL_SCREEN or nil
-    if InGameMenuAnimalsFrame == nil or InGameMenuAnimalsFrame.updateMenuButtons == nil or action == nil then
+    if InGameMenuAnimalsFrame == nil or InGameMenuAnimalsFrame.updateMenuButtons == nil
+        or InGameMenuAnimalsFrame.getMenuButtonInfo == nil or action == nil then
         Log:warning("EqAnimalsPageButton: Animals page or RLRM's R action not found; horse pens keep no Manage Animals button")
         return
     end
 
-    local rlMenu = EqRLRM.get("RLMenu")
-    InGameMenuAnimalsFrame.updateMenuButtons = Utils.appendedFunction(InGameMenuAnimalsFrame.updateMenuButtons,
-        function(frame)
-            guarded("animals page button", function()
-                EqAnimalsPageButton.afterUpdateMenuButtons(frame, action, rlMenu.openFromBridge)
-            end)
+    local openMenu = EqRLRM.get("RLMenu").openFromBridge
+    local function ensure(frame, buttons)
+        guarded("animals page button", function()
+            EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu)
         end)
-    Log:debug("EqAnimalsPageButton: hooked InGameMenuAnimalsFrame:updateMenuButtons")
+    end
+
+    InGameMenuAnimalsFrame.updateMenuButtons = Utils.appendedFunction(InGameMenuAnimalsFrame.updateMenuButtons,
+        function(frame) ensure(frame, frame.menuButtonInfo) end)
+
+    -- The menu reads the buttons through getMenuButtonInfo, so this catches a list set anywhere.
+    InGameMenuAnimalsFrame.getMenuButtonInfo = Utils.overwrittenFunction(InGameMenuAnimalsFrame.getMenuButtonInfo,
+        function(frame, superFunc)
+            local buttons = superFunc(frame)
+            ensure(frame, buttons)
+            return buttons
+        end)
+
+    Log:info("EqAnimalsPageButton: hooked the Animals page buttons")
 end
