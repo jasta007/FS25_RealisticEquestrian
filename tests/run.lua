@@ -22,6 +22,7 @@ dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
+dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
@@ -602,6 +603,38 @@ local off = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temper
 local on = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 80, stamina = 60 } },
     EqRandom.new("season 1"), settingsOn)
 check("injuries off changes nothing else", off.me.eliminated == on.me.eliminated and off.me.injury == nil)
+
+local forced = EqRisk.rollEvent(event2, config, { { key = "me", rating = 60, temperament = 50, fitness = 100, stamina = 100 } },
+    EqRandom.new("season 1"), { injuries = false, forceInjuries = true })
+check("forced injuries hurt every starter, even with injuries off", forced.me.injury ~= nil)
+check("forced injuries change nothing else", forced.me.eliminated == on.me.eliminated)
+
+-- Stat change log: the day's breakdown and the kept window.
+do
+    EqStatLog.reset()
+    local logged = { trained = { stamina = 20, speed = 20, agility = 20, temperament = 20 }, focus = "balanced", idleDays = 0 }
+    local logDay = { sheet = ridden("canter", 100000), riding = 100, dirt = 5, ageMonths = 60, timeAdjustment = 1, feedBoost = { stamina = 0.1 } }
+    local logDeltas, logDetail = EqTraining.applyDay(logged, cap70, logDay)
+    check("applyDay explains each stat", logDetail.stats.agility ~= nil and logDetail.stats.agility.fromPlayer > 0)
+    check("applyDay detail matches the delta", math.abs(math.max(logDetail.stats.agility.fromPlayer, logDetail.stats.agility.fromStaff)
+        + logDetail.stats.agility.faded + logDetail.stats.agility.aged - logDeltas.agility) < 1e-9)
+    local logNotes = EqStatLog.explainDay(logDetail, logDay, { focus = "balanced", sheet = logDay.sheet,
+        playerPoints = EqTraining.playerRidingPoints(logDay.sheet) })
+    local joined = table.concat(logNotes, "\n")
+    check("explain names the riding", joined:find("canter", 1, true) ~= nil, joined)
+    check("explain names the feed boost", joined:find("feed sta +10%", 1, true) ~= nil, joined)
+    check("explain says groomed", joined:find("groomed", 1, true) ~= nil, joined)
+    for d = 1, 10 do EqStatLog.add("DE 1 1", d, "daily training", logDeltas, logNotes, logged.trained) end
+    check("log keeps a week", #EqStatLog.entries["DE 1 1"] == EqStatLog.KEEP_DAYS)
+    check("log since yesterday", #EqStatLog.since("DE 1 1", 9) == 2)
+    local snapshot = EqStatLog.entries["DE 1 1"][1].after
+    logged.trained.speed = 99
+    check("log copies the levels", snapshot.speed ~= 99)
+    local idleHorse = { trained = { stamina = 40, speed = 40, agility = 40, temperament = 40 }, focus = "balanced", idleDays = 5 }
+    local _, idleDetail = EqTraining.applyDay(idleHorse, cap70, { riding = 0, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+    local idleNotes = table.concat(EqStatLog.explainDay(idleDetail, { riding = 0, dirt = 50, ageMonths = 60 }, { focus = "balanced", playerPoints = 0 }), "\n")
+    check("explain says fading", idleNotes:find("Fading: idle 6", 1, true) ~= nil, idleNotes)
+end
 
 
 -- DEALER HORSES

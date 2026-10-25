@@ -241,6 +241,14 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
 
+Testing commands, for checking the mod works rather than for play:
+
+| Command | What it does |
+| --- | --- |
+| `eqForceInjury on\|off` | Every horse that starts an event is injured, even with injuries off. Not saved |
+| `eqDirt <horse> <0-100>` | Sets a horse's dirt (0 = spotless; Cleanliness is 100 minus dirt). 10 or less at the day's end counts as groomed |
+| `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload |
+
 ## A note on AI
 
 Generative AI is a hot topic right now. I should know: I've been a game designer for 20 years
