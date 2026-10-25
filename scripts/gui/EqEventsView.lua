@@ -98,7 +98,8 @@ function EqEventsView.horseRows(event, farmId)
 
     for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil then
+        -- Retired horses are left off: they will never enter, so they only crowd the list.
+        if record ~= nil and not record.retired then
             local age = animal.age or 0
             local rating = manager.ratingFor(record, event)
             local status, canEnter
