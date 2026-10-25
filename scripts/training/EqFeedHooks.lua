@@ -8,7 +8,8 @@
       It runs on server and clients alike, so both agree on what a trough accepts.
     - PlaceableHusbandryFood.getFoodInfos gives a horse pen's food rows our names, a row each for
       oats, barley and corn, and in place of the base game's production share ("Root crops (5%)")
-      the stats each row's feed boosts, in full words: "Corn (Speed)", "Hay (no boost)".
+      the stats each row's feed boosts, in full words with its strength: "Corn (Speed+++)",
+      "Oats (Stamina+, Temperament+)", "Hay (no boost)".
     - getBoost reads the trough of the pen a horse lives in. EqTrainingHooks passes it to the
       day's training and shows it while riding. A horse in a trailer, away at an event or in a
       pen without a trough gets no boost.
@@ -134,17 +135,21 @@ function EqFeedHooks.getBoost(animal)
 end
 
 
---- @param stats table stat keys
---- @return string "Stamina, Temperament"
-local function fullStats(stats)
+--- @param boost table stat -> share
+--- @return string "Stamina+, Temperament+", "" when nothing is boosted
+local function fullStats(boost)
     local parts = {}
-    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_" .. stat)) end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if boost[stat] > 0 then
+            table.insert(parts, g_i18n:getText("eq_stat_" .. stat) .. EqFeed.strengthMarks(boost[stat]))
+        end
+    end
     return table.concat(parts, ", ")
 end
 
 
---- A pen food row's title: its name and, in full words, the stats its feed boosts now, or,
---- while the row is empty, the stats it could.
+--- A pen food row's title: its name and, in full words with their strength, the stats its feed
+--- boosts now, or, while the row is empty, the stats it could.
 --- @param name string
 --- @param names table the row's fill type names
 --- @param levels table fill type name -> litres
@@ -154,13 +159,9 @@ local function rowTitle(name, names, levels)
     local rowLevels = {}
     for _, fillType in ipairs(names) do rowLevels[fillType] = levels[fillType] or 0 end
 
-    local boost = EqFeed.dietBoost(rowLevels, config)
-    local stats = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        if boost[stat] > 0 then table.insert(stats, stat) end
-    end
-    if #stats == 0 then stats = EqFeed.boostedStats(names, config) end
-    local detail = #stats > 0 and fullStats(stats) or g_i18n:getText("eq_feed_noBoost")
+    local detail = fullStats(EqFeed.dietBoost(rowLevels, config))
+    if detail == "" then detail = fullStats(EqFeed.bestBoost(names, config)) end
+    if detail == "" then detail = g_i18n:getText("eq_feed_noBoost") end
     return string.format("%s (%s)", name, detail)
 end
 

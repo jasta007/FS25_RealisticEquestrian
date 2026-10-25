@@ -927,6 +927,12 @@ check("hard feed can boost every stat", #EqFeed.boostedStats(geistal[1].names, f
 check("hay boosts nothing", #EqFeed.boostedStats(geistal[2].names, feeds) == 0)
 local treatStats = EqFeed.boostedStats(geistal[3].names, feeds)
 check("treats boost temperament", #treatStats == 1 and treatStats[1] == "temperament")
+check("strength marks: small, moderate, strong", EqFeed.strengthMarks(0.10) == "+" and EqFeed.strengthMarks(0.20) == "++"
+    and EqFeed.strengthMarks(0.30) == "+++" and EqFeed.strengthMarks(0.40) == "+++")
+check("no boost, no marks", EqFeed.strengthMarks(0) == "" and EqFeed.strengthMarks(nil) == "")
+local grainBest = EqFeed.bestBoost(geistal[1].names, feeds)
+check("hard feed's best: corn's speed, barley's stamina and agility, oats' temperament", near(grainBest.speed, 0.30)
+    and near(grainBest.stamina, 0.20) and near(grainBest.agility, 0.20) and near(grainBest.temperament, 0.10))
 
 -- Pen food rows: oats, barley and corn get a row each; the rest of the grain only while it is fed.
 local function rowNames(rows)
