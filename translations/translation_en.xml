@@ -341,8 +341,6 @@
         <text name="eq_story_jumping_temperament" text="Refused a fence."/>
         <text name="eq_story_dressage_clean" text="A polished test that impressed the judges."/>
         <text name="eq_story_dressage_struggled" text="Struggled with the test from start to finish."/>
-        <text name="eq_story_dressage_eliminated" text="Left the arena mid-test and was eliminated."/>
-        <text name="eq_story_dressage_elimRefusal" text="Refused to go on and was eliminated."/>
         <text name="eq_story_dressage_agility" text="Lost marks in the lateral work."/>
         <text name="eq_story_dressage_agilityMany" text="Lost marks in several movements."/>
         <text name="eq_story_dressage_hardest" text="A tidy test until the hardest movement cost marks."/>

@@ -268,8 +268,10 @@ function EqPerformance.storyKeys(discipline, config)
     local keys = {
         string.format("eq_story_%s_clean", story),
         string.format("eq_story_%s_struggled", story),
-        string.format("eq_story_%s_eliminated", story),
     }
+    -- Some tests can't end early (dressage: no falls, no pulling up).
+    local canEliminate = (discipline.elimination or 0) > 0
+    if canEliminate then table.insert(keys, string.format("eq_story_%s_eliminated", story)) end
     if discipline.phases ~= nil and #discipline.phases > 0 then
         table.insert(keys, string.format("eq_story_%s_elimRefusal", story))
         for _, name in ipairs(discipline.phases) do
@@ -285,7 +287,7 @@ function EqPerformance.storyKeys(discipline, config)
     end
     for stat, count in pairs(ofStat) do
         if count > 1 then table.insert(keys, string.format("eq_story_%s_%sMany", story, stat)) end
-        if stat == "temperament" then table.insert(keys, string.format("eq_story_%s_elimRefusal", story)) end
+        if stat == "temperament" and canEliminate then table.insert(keys, string.format("eq_story_%s_elimRefusal", story)) end
     end
     return keys
 end

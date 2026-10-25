@@ -343,8 +343,6 @@
         <text name="eq_story_jumping_temperament" text="Verweigerte an einem Sprung."/>
         <text name="eq_story_dressage_clean" text="Eine saubere Aufgabe, die die Richter überzeugte."/>
         <text name="eq_story_dressage_struggled" text="Hatte von Anfang bis Ende Mühe mit der Aufgabe."/>
-        <text name="eq_story_dressage_eliminated" text="Verließ mitten in der Aufgabe das Viereck und schied aus."/>
-        <text name="eq_story_dressage_elimRefusal" text="Widersetzte sich, ging nicht weiter und schied aus."/>
         <text name="eq_story_dressage_agility" text="Verlor Punkte in den Seitengängen."/>
         <text name="eq_story_dressage_agilityMany" text="Verlor in mehreren Lektionen Punkte."/>
         <text name="eq_story_dressage_hardest" text="Eine ordentliche Aufgabe, bis die schwerste Lektion Punkte kostete."/>

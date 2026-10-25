@@ -56,7 +56,7 @@
             <check stat="agility" difficulty="0.75" weight="2"/>
             <check stat="agility" difficulty="1" weight="2.5" tag="hardest"/>
         </discipline>
-        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003" related="eventing" story="dressage">
+        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0" injury="0.003" related="eventing" story="dressage">
             <check stat="temperament" difficulty="0.1" weight="1"/>
             <check stat="agility" difficulty="0.3" weight="1"/>
             <check stat="temperament" difficulty="0.5" weight="1.5"/>
