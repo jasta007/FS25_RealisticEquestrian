@@ -210,7 +210,6 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 ## Planned features
 
-- Competition results in RLRM's in-game event log
 - Rival horses with names that turn up in the same events, and sometimes come up for sale
 - Stats that change how a horse rides: faster horses run faster and agile ones turn quicker
 - Better staff, building on the game's Animal Workers: several hires and different kinds of staff
