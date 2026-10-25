@@ -119,6 +119,12 @@ function EqEventsFrame:applyHeaderIcon()
     if slice == nil then return false end
 
     local overlay = icon.overlay
+    if not self.loggedIconState then
+        self.loggedIconState = true
+        local uvs = overlay.uvs or {}
+        Log:info("EqEventsFrame: header icon file '%s' uvs (%s) state %s",
+            tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
+    end
     local clean = overlay.filename == slice.filename and overlay.overlay ~= nil
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL
