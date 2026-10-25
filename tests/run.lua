@@ -25,6 +25,7 @@ dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
+dofile("scripts/gui/EqMenuPaging.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -1006,6 +1007,55 @@ local function messageLogTests()
     _G.g_i18n = savedI18n
 end
 messageLogTests()
+
+-- Menu paging reset. A minimal paging element with the base game's updatePageMapping logic.
+local function newPaging(n)
+    local paging = { pages = {}, idPageHash = {}, currentPageIndex = 1, currentPageMappingIndex = 1 }
+    for i = 1, n do
+        local page = { id = "P" .. i, disabled = false, mappingIndex = i }
+        paging.pages[i] = page
+        paging.idPageHash[page.id] = page
+    end
+    function paging:updatePageMapping()
+        self.pageMapping = {}
+        for i, page in ipairs(self.pages) do
+            if not page.disabled then
+                table.insert(self.pageMapping, i)
+                page.mappingIndex = #self.pageMapping
+            else
+                page.mappingIndex = 1
+            end
+        end
+    end
+    function paging:setPageIdDisabled(id, disabled)
+        self.idPageHash[id].disabled = disabled
+        self:updatePageMapping()
+    end
+    return paging
+end
+-- The Transfer view left only page 9 enabled and current.
+local stale = newPaging(10)
+for i = 1, 10 do stale.pages[i].disabled = (i ~= 9) end
+stale.currentPageIndex = 9
+stale:updatePageMapping()
+local menu = { pagingElement = stale, openMode = "full", eqLastPagingMode = "trailer", restorePageScrollOffset = 3 }
+EqMenuPaging.beforeUpdatePages(menu)
+check("paging reset enables every page", #stale.pageMapping == 10)
+check("paging reset moves to page 1", stale.currentPageIndex == 1 and stale.currentPageMappingIndex == 1)
+check("paging reset unmutes updates", stale.neuterPageUpdates == false)
+check("paging reset clears the tab scroll", menu.restorePageScrollOffset == 0)
+check("paging remembers the mode", menu.eqLastPagingMode == "full")
+-- Same mode again: left alone.
+stale.pages[3].disabled = true
+stale.currentPageIndex = 4
+EqMenuPaging.beforeUpdatePages(menu)
+check("same mode leaves paging alone", stale.pages[3].disabled and stale.currentPageIndex == 4)
+-- First open after load: nothing to reset.
+local fresh = { pagingElement = newPaging(3), openMode = "trailer" }
+fresh.pagingElement.currentPageIndex = 2
+EqMenuPaging.beforeUpdatePages(fresh)
+check("first open leaves paging alone", fresh.pagingElement.currentPageIndex == 2 and fresh.eqLastPagingMode == "trailer")
+check("reset refuses a missing paging element", EqMenuPaging.reset({}) == false)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
