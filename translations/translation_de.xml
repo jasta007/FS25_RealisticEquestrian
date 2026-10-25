@@ -383,7 +383,6 @@
         <text name="eq_story_eventing_clean" text="In allen drei Teilprüfungen fehlerfrei."/>
         <text name="eq_story_eventing_struggled" text="Hatte in allen drei Teilprüfungen Mühe."/>
         <text name="eq_story_eventing_eliminated" text="Schied nach einem Sturz im Gelände aus."/>
-        <text name="eq_story_eventing_elimRefusal" text="Schied nach Verweigerungen im Gelände aus."/>
         <text name="eq_ui_tab_upcoming" text="Kommende Veranstaltungen"/>
         <text name="eq_ui_tab_results" text="Ergebnisse"/>
         <text name="eq_ui_col_starts" text="Starts"/>

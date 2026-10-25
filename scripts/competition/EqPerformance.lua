@@ -239,8 +239,9 @@ function EqPerformance.storyKey(discipline, run, eliminated, config)
 end
 
 
---- Eventing: clean or struggled across the phases, else the worst phase's own line. An
---- elimination happens on the last phase (the cross country).
+--- Eventing: clean or struggled across the phases, else the worst phase's own line. Over three
+--- phases a refusal costs marks but doesn't end the event; only a fall on the cross country
+--- (the last phase) does.
 --- @return string key
 function EqPerformance.phasedStoryKey(discipline, run, eliminated, config)
     local all = {}
@@ -248,10 +249,7 @@ function EqPerformance.phasedStoryKey(discipline, run, eliminated, config)
         for _, result in ipairs(phase.checks) do table.insert(all, result) end
     end
     local story = discipline.story or discipline.name
-    if eliminated then
-        local last = run.phases ~= nil and run.phases[#run.phases] or nil
-        return string.format("eq_story_%s_%s", story, EqPerformance.eliminationIssue(last ~= nil and last.checks or all))
-    end
+    if eliminated then return string.format("eq_story_%s_eliminated", story) end
     local overall = EqPerformance.issue(all)
     if overall == "clean" or overall == "struggled" then return string.format("eq_story_%s_%s", story, overall) end
 
@@ -278,7 +276,6 @@ function EqPerformance.storyKeys(discipline, config)
     local canEliminate = (discipline.elimination or 0) > 0
     if canEliminate and not discipline.refusalsOnly then table.insert(keys, string.format("eq_story_%s_eliminated", story)) end
     if discipline.phases ~= nil and #discipline.phases > 0 then
-        table.insert(keys, string.format("eq_story_%s_elimRefusal", story))
         for _, name in ipairs(discipline.phases) do
             for _, key in ipairs(EqPerformance.storyKeys(config.disciplineByName[name], config)) do table.insert(keys, key) end
         end

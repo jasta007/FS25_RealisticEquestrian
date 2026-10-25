@@ -561,6 +561,9 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("show jumping has its checks", #sj.checks == 6 and sj.story == "jumping" and sj.checks[6].tag == "hardest")
     check("dressage only ends early with a refusal", config.disciplineByName.dressage.refusalsOnly
         and EqPerformance.storyKey(config.disciplineByName.dressage, { checks = {} }, true, config) == "eq_story_dressage_elimRefusal")
+    check("eventing is only ended by a fall, never a refusal",
+        EqPerformance.storyKey(config.disciplineByName.eventing, { phases = { { checks = { { check = { stat = "temperament", weight = 1, difficulty = 0 }, passed = false } } } } },
+            true, config) == "eq_story_eventing_eliminated")
     check("eventing runs three phases", #config.disciplineByName.eventing.phases == 3
         and config.disciplineByName.eventing.phases[1] == "dressage")
     for _, d in ipairs(config.disciplines) do

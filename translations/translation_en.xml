@@ -381,7 +381,6 @@
         <text name="eq_story_eventing_clean" text="Clear in every phase."/>
         <text name="eq_story_eventing_struggled" text="Found all three phases a struggle."/>
         <text name="eq_story_eventing_eliminated" text="Went out after a fall on the cross country."/>
-        <text name="eq_story_eventing_elimRefusal" text="Went out after refusals on the cross country."/>
         <text name="eq_ui_tab_upcoming" text="Upcoming events"/>
         <text name="eq_ui_tab_results" text="Results"/>
         <text name="eq_ui_col_starts" text="Starts"/>
