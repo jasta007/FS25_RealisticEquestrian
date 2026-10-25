@@ -247,6 +247,11 @@
         <text name="eq_deliver_doneMany" text="%d Pferde abgegeben. Sie reisen zu ihren Veranstaltungen ab."/>
         <text name="eq_deliver_noRoom" text="Abgabe nicht möglich: Ihre Pferde brauchen einen freien Platz auf einer Ihrer Weiden, um zurückzukommen."/>
         <text name="eq_deliver_failed" text="Abgabe fehlgeschlagen: %s"/>
+        <text name="eq_deliver_title" text="Zur Veranstaltung abgeben"/>
+        <text name="eq_deliver_ask" text="%s wartet darauf, zu einer Veranstaltung zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_askMany" text="%d Pferde in diesem Anhänger warten darauf, zu ihren Veranstaltungen zu reisen. Jetzt abgeben oder wie gewohnt den Händler öffnen?"/>
+        <text name="eq_deliver_yes" text="Abgeben"/>
+        <text name="eq_deliver_no" text="Händler öffnen"/>
         <text name="eq_loose_broughtHome" text="Ihre Angestellten haben %s zurück in %s gebracht."/>
         <text name="eq_loose_broughtHomeUnnamed" text="Ihre Angestellten haben ein freilaufendes Pferd zurück in %s gebracht."/>
         <text name="eq_ui_result_notDelivered" text="Nicht abgegeben"/>
@@ -298,19 +303,19 @@
         <text name="eq_settings_off" text="Aus"/>
         <text name="eq_settings_on" text="An"/>
         <text name="eq_settings_noLimit" text="Unbegrenzt"/>
-        <text name="eq_settings_trainingRate" text="Trainingsrate"/>
-        <text name="eq_settings_trainingRate_tooltip" text="Wie schnell Reiten, Personal und Turniere die Werte eines Pferdes steigern. 1x ist die normale Rate."/>
+        <text name="eq_settings_trainingRate" text="Trainingstempo"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Wie schnell Reiten, Angestellte und Veranstaltungen die Werte eines Pferdes steigern. 1x ist das normale Tempo."/>
         <text name="eq_settings_cadence" text="Turniere"/>
-        <text name="eq_settings_cadence_tooltip" text="Wie oft die Runde der Turniere stattfindet. Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_settings_cadence_tooltip" text="Wie oft eine Turnierrunde stattfindet. Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_cadence_day" text="Jeden Tag"/>
         <text name="eq_settings_cadence_month" text="Jeden Monat"/>
         <text name="eq_settings_racing" text="Rennen und Hindernisrennen"/>
-        <text name="eq_settings_racing_tooltip" text="Ob Flach- und Hindernisrennen im Turnierkalender stehen. Änderungen gelten ab der nächsten Runde."/>
-        <text name="eq_settings_injuries" text="Verletzungen bei Turnieren"/>
-        <text name="eq_settings_injuries_tooltip" text="Ob sich Pferde bei Turnieren verletzen können."/>
-        <text name="eq_settings_forcedRetirement" text="Karriereende durch Verletzung"/>
-        <text name="eq_settings_forcedRetirement_tooltip" text="Ob die schwersten Turnierverletzungen die Sportkarriere eines Pferdes endgültig beenden können."/>
+        <text name="eq_settings_racing_tooltip" text="Ob Flachrennen und Hindernisrennen im Veranstaltungskalender stehen. Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_settings_injuries" text="Verletzungen bei Veranstaltungen"/>
+        <text name="eq_settings_injuries_tooltip" text="Ob sich Pferde bei Veranstaltungen verletzen können."/>
+        <text name="eq_settings_forcedRetirement" text="Karrierebeendende Verletzungen"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Ob die schwersten Verletzungen bei Veranstaltungen die Turnierkarriere eines Pferdes endgültig beenden können."/>
         <text name="eq_settings_entriesPerMonth" text="Nennungen pro Monat"/>
-        <text name="eq_settings_entriesPerMonth_tooltip" text="Wie viele Turniernennungen jeder Hof pro Monat abgeben kann."/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Wie viele Nennungen jeder Hof pro Monat abgeben kann."/>
     </texts>
 </l10n>
