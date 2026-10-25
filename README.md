@@ -8,12 +8,21 @@
 riding, feeding and breeding. Then enter them in shows, races and championships for prize money,
 from local novice classes to a Grand Prix on the other side of the world.
 
+**You're the breeder, owner and trainer, not the jockey.** You don't ride in the events yourself.
+Your job is to breed, buy, train and feed champion horses at home, then send them off to compete.
+The events run while you get on with the farm, and the results and prize money come back to you.
+
 Realistic Equestrian is an add-on for
 [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM) and
 uses its genetics, health and fitness.
 
 > **Version 0.1: early release.** Back up your savegame before trying it. Multiplayer is not
 > fully supported yet (see [Known issues](#known-issues)).
+
+> [!TIP]
+> **Open horses with Shift+O.** The game's Animals page (Esc > Animals) doesn't show RLRM's
+> **Manage Animals** button (R) for horse stables, so use **Shift+O** to open RLRM's menu, where
+> you'll find your horses' stats and the Competitions tab.
 
 ## Contents
 
@@ -50,8 +59,11 @@ uses its genetics, health and fitness.
   temperament. Jumps add agility.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired and
   trains no more until tomorrow, and galloping tires it fastest, so choose what to work on.
-- **Animal workers and RLRM's herdsman** keep your horses ticking over for the riding you don't do
-  yourself, towards a focus you choose. Only your own riding takes a stat the last few points.
+- **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
+  in patch 1.25) and the workers' daily ride counts as training, as does RLRM's herdsman. They keep
+  your horses ticking over towards a focus you choose, but only your own riding takes a stat the
+  last few points. A proper staff system of our own is planned (see
+  [Planned features](#planned-features)).
 - Horses under two can only do light groundwork, so they train at 30% of the full rate, and
   two-year-olds at 60%. From three to twelve they train at full speed, then slow down again.
   Idle horses lose condition, and old horses slowly decline.
@@ -156,7 +168,7 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 ## Getting started
 
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
-2. **Have a look at it.** Press Shift+O (or R at the stable) to open RLRM's menu. Under Genetics
+2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
 3. **Ride it.** Watch the "Training today" line while you ride, and stop when it reads "tired".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
@@ -184,6 +196,9 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 > Transfer screen** (R at the stable with a trailer). Save and reload your game to bring them
 > back. This looks like an RLRM bug rather than this mod's, and is being looked into.
 
+- **No Manage Animals button for horses on the Animals page.** On the game's Animals page
+  (Esc > Animals), RLRM's Manage Animals button (R) doesn't appear for horse stables. Press
+  **Shift+O** to open RLRM's menu instead. A fix is being worked on.
 - **Multiplayer is limited.** Competitions, entries and delivery work in single player and for
   the host of a multiplayer game. Other players see a note on the Competitions tab instead.
   Full multiplayer support is planned.
@@ -201,8 +216,9 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 - Competition results in RLRM's in-game event log
 - Rival horses with names that turn up in the same events, and sometimes come up for sale
 - Stats that change how a horse rides: faster horses run faster and agile ones turn quicker
-- Better staff: several hires and different kinds of staff, including an expert who can tell you
-  whether the dealer is overselling a horse
+- Better staff, building on the game's Animal Workers: several hires and different kinds of staff
+  (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the
+  dealer is overselling a horse
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support
