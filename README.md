@@ -138,8 +138,6 @@ These add horse buildings that speed up training. The mod works fine without the
   (`FS25_RidingHall`): riding hall and sellable show jumps
 - [Riding Stable](https://www.farming-simulator.com/mod.php?mod_id=320241&title=fs2025)
   (`FS25_RidingStable`): a full riding centre
-- [Horse Stable](https://www.farming-simulator.com/mod.php?mod_id=312981&title=fs2025)
-  (`FS25_horseStable`)
 
 ## Installation
 
