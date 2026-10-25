@@ -92,7 +92,7 @@ prizes, and sometimes none in a discipline.
   by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
   flat racing as Maiden, Handicap, Listed and Group 1, and so on. Advanced and Championship events are held at a venue named after a map: the
   base game's maps and popular ModHub maps in four regions (North America, South America,
-  Europe, Asia and Oceania), such as "Pallegney Grand Prix" or "Catuaí Gold Cup (2m)". The
+  Europe, Asia and Oceania), such as "Pallegney Grand Prix" or "Gage, Kentucky Gold Cup (2m)". The
   horses go there in spirit only, so none of those maps needs to be installed. Event names live
   in the translation file and venues in `data/events.xml`, so both are easy to change. A Level column shows the tier.
 - Steeplechases are rare, as they are today: the discipline's `chance` in `data/events.xml`

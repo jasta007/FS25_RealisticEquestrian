@@ -69,14 +69,13 @@
         <region name="northAmerica">
             <venue name="Riverbend Springs"/>
             <venue name="Silverrun Forest"/>
-            <venue name="Alma"/>
+            <venue name="Alma, Missouri"/>
             <venue name="Frankenmuth"/>
             <venue name="Gnadenthal"/>
             <venue name="Owendale"/>
-            <venue name="Starbuck"/>
-            <venue name="Forest Hills"/>
             <venue name="Redstone County"/>
-            <venue name="Somewhere, Montana"/>
+            <venue name="Gage, Kentucky"/>
+            <venue name="Judith Plains, Montana"/>
         </region>
         <region name="southAmerica">
             <venue name="Catuaí"/>
@@ -90,18 +89,24 @@
             <venue name="Zielonka"/>
             <venue name="Pallegney"/>
             <venue name="Geistal"/>
-            <venue name="Carpathian"/>
             <venue name="Monteriggioni"/>
             <venue name="Riverview"/>
             <venue name="Steinfurt"/>
-            <venue name="Maypole Farm"/>
             <venue name="Bartelshagen"/>
             <venue name="Castlereagh"/>
+            <venue name="Le Mechet"/>
+            <venue name="Saxlingham"/>
+            <venue name="Pichonnière Valley"/>
+            <venue name="Hof Bergmann"/>
+            <venue name="Oberthal"/>
         </region>
         <region name="asiaOceania">
             <venue name="Hutan Pantai"/>
             <venue name="Western Australia"/>
-            <venue name="Winchester"/>
+            <venue name="Winchester, New Zealand"/>
+            <venue name="Yurihonjō"/>
+            <venue name="Willow River"/>
+            <venue name="Nulla Creek"/>
         </region>
     </venues>
 

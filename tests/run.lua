@@ -263,7 +263,9 @@ do
     print(string.format("info: %d named monthly events across %d regions and %d venues", named, regionCount, venueCount))
     check("every monthly event has a venue", named > 0 and unnamed == 0)
     check("every region hosts events", regionCount == 4)
-    check("every venue is used", venueCount >= 29, tostring(venueCount))
+    local listed = 0
+    for _, region in ipairs(config.regions) do listed = listed + #region.venues end
+    check("every venue is used", venueCount == listed, string.format("%d of %d", venueCount, listed))
     for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("round 3"), EqCompetition.KIND_ROUND, true)) do
         check("everyday events have no venue", event.venue == nil)
     end
