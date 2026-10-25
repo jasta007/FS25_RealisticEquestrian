@@ -106,17 +106,72 @@ local function farmId()
 end
 
 
+--- Point the header icon at our texture for every overlay state, without a slice id. Loaded from
+--- the XML's imageSliceId, the icon showed the whole base UI atlas squashed into the square,
+--- so set the overlay ourselves: our file, our UVs, no per-state overrides.
+--- @return boolean changed true when the icon was not showing our slice
+function EqEventsFrame:applyHeaderIcon()
+    local icon = self.headerIcon
+    if icon == nil or icon.overlay == nil then return false end
+    local slice = g_overlayManager:getSliceInfoById(EqEventsFrame.ICON_SLICE)
+    if slice == nil then return false end
+
+    local overlay = icon.overlay
+    if not self.loggedIconState then
+        self.loggedIconState = true
+        local uvs = overlay.uvs or {}
+        Log:info("EqEventsFrame: header icon file '%s' uvs (%s) state %s",
+            tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
+    end
+    local clean = overlay.filename == slice.filename and overlay.overlay ~= nil and overlay.sliceId == nil
+    for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
+        if state ~= GuiOverlay.STATE_NORMAL
+            and (overlay["filename" .. suffix] ~= nil or overlay["uvs" .. suffix] ~= nil) then
+            clean = false
+        end
+    end
+    if clean then return false end
+
+    if not self.loggedHeaderIcon then
+        self.loggedHeaderIcon = true
+        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
+            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
+    end
+
+    GuiOverlay.deleteOverlay(overlay)
+    for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
+        if state ~= GuiOverlay.STATE_NORMAL then
+            overlay["filename" .. suffix] = nil
+            overlay["uvs" .. suffix] = nil
+            overlay["sliceId" .. suffix] = nil
+        end
+    end
+    overlay.filename = slice.filename
+    overlay.uvs = table.clone(slice.uvs)
+    -- No sliceId: GuiOverlay hands it to the engine's createImageOverlay, and with our id the
+    -- engine drew the base UI atlas even though filename and UVs were ours (log, 25 Oct). The
+    -- tab button never passes one.
+    overlay.sliceId = nil
+    overlay.overlay = nil
+    GuiOverlay.createOverlay(overlay)
+    return true
+end
+
+
 function EqEventsFrame:onFrameOpen()
     EqEventsFrame:superClass().onFrameOpen(self)
-    -- Set the header icon here as well as in the XML: when the XML is read before our atlas is
-    -- known, the icon falls back to the whole base UI atlas.
-    if self.headerIcon ~= nil and self.headerIcon.setImageSlice ~= nil then
-        self.headerIcon:setImageSlice(GuiOverlay.STATE_NORMAL, EqEventsFrame.ICON_SLICE)
-    end
+    self:applyHeaderIcon()
     self:refresh()
     if self.eventsList ~= nil and self.mode == EqEventsFrame.MODE_EVENTS then
         FocusManager:setFocus(self.eventsList)
     end
+end
+
+
+function EqEventsFrame:update(dt)
+    EqEventsFrame:superClass().update(self, dt)
+    -- Cheap check each frame: the profile can come back after onFrameOpen.
+    self:applyHeaderIcon()
 end
 
 
