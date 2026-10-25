@@ -30,33 +30,35 @@ end
 -- RLRM's list frames that show the badge, each with a populateCellForItemInSection.
 EqListBadge.FRAMES = { "RLMenuBuyFrame", "RLMenuInfoFrame", "RLMenuMoveFrame", "RLMenuSellFrame", "RLMenuTransferFrame" }
 
--- Gap from the card's top edge to the badge, and the badge's text scale.
-EqListBadge.TOP_GAP_PX = 5
+-- How far the badge moves up: the card's height less this much. RLRM places it 17px up from
+-- the bottom with its text just under that, so card height - 22px puts the text 5px under the top.
+EqListBadge.TOP_OFFSET_PX = 22
 EqListBadge.TEXT_SCALE = 0.85
 
 
 --- Move a card's badge from the bottom right to the top right corner. Done once per card;
 --- the list reuses its cards, so the badge stays there for every row (RLRM's marks too).
+--- Works in the card's own sizes, as laid out by its profile, since a card's screen position
+--- isn't settled while the list fills it.
 --- @param cell table the list card
 function EqListBadge.moveToTop(cell)
     local badge = cell.getAttribute ~= nil and cell:getAttribute("herdsmanPurchase") or nil
-    if badge == nil or badge.eqTopRight or badge.position == nil or badge.absPosition == nil
-        or cell.absPosition == nil or cell.absSize == nil then
+    if badge == nil or badge.eqTopRight or badge.position == nil or cell.size == nil or g_pixelSizeScaledY == nil then
         return
     end
+    local height = cell.size[2]
+    if type(height) ~= "number" or height <= EqListBadge.TOP_OFFSET_PX * g_pixelSizeScaledY then return end
     badge.eqTopRight = true
 
     if badge.setTextSize ~= nil and badge.textSize ~= nil then
         badge:setTextSize(badge.textSize * EqListBadge.TEXT_SCALE)
     end
-    local height = badge.textSize or 0
-    local gap = EqListBadge.TOP_GAP_PX / (g_screenHeight or 1080)
-    if g_pixelSizeScaledY ~= nil then gap = EqListBadge.TOP_GAP_PX * g_pixelSizeScaledY end
-
-    -- Offsets inside the card, so it doesn't matter where the list has put the card yet.
-    local currentY = badge.absPosition[2] - cell.absPosition[2]
-    local targetY = cell.absSize[2] - gap - height
-    badge:setPosition(badge.position[1], badge.position[2] + targetY - currentY)
+    local y = badge.position[2] + height - EqListBadge.TOP_OFFSET_PX * g_pixelSizeScaledY
+    if not EqListBadge.logged then
+        EqListBadge.logged = true
+        Log:info("EqListBadge: badge moved up (card height %.4f, y %.4f -> %.4f)", height, badge.position[2], y)
+    end
+    badge:setPosition(badge.position[1], y)
 end
 
 
