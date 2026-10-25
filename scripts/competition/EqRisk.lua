@@ -153,7 +153,7 @@ end
 --- @param config table EqEventConfig
 --- @param entrants table list of { key, rating, temperament, fitness, stamina, travel }
 --- @param rng table EqRandom
---- @param settings table { injuries, forcedRetirement }
+--- @param settings table { injuries, forcedRetirement, forceInjuries }
 --- @return table outcomes key -> { eliminated, injury }
 function EqRisk.rollEvent(event, config, entrants, rng, settings)
     local discipline = config.disciplineByName[event.discipline]
@@ -169,8 +169,10 @@ function EqRisk.rollEvent(event, config, entrants, rng, settings)
         local eliminationRoll, injuryRoll = rng:next(), rng:next()
         local eliminated = eliminationRoll < EqRisk.eliminationChance(discipline, tier, entrant.rating, entrant.temperament)
         local injury = nil
-        if settings.injuries and #config.injuries > 0
-            and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated, entrant.travel) then
+        -- forceInjuries is the eqForceInjury testing switch: every starter is hurt.
+        local hurt = settings.forceInjuries
+            or (settings.injuries and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated, entrant.travel))
+        if hurt and #config.injuries > 0 then
             injury = EqRisk.rollInjury(config.injuries, rng, settings.forcedRetirement)
         end
         outcomes[entrant.key] = { eliminated = eliminated, injury = injury }

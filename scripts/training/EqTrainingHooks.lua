@@ -159,7 +159,7 @@ function EqTrainingHooks.onHorseDay(animal)
     -- On box rest nothing trains: the day counts as idle, so the stats fade as they would.
     local resting = record.injury ~= nil
     local owned, ridden = EqFacilityHooks.boostsFor(EqFacilityHooks.farmOfAnimal(animal), sheet)
-    local deltas = EqTraining.applyDay(record, record:getCeilings(), {
+    local day = {
         sheet = not resting and sheet or nil,
         riding = not resting and animal.riding or 0,
         dirt = animal.dirt,
@@ -168,7 +168,14 @@ function EqTrainingHooks.onHorseDay(animal)
         facilityOwned = owned,
         facilityRidden = ridden,
         feedBoost = EqFeedHooks.getBoost(animal),
-    })
+    }
+    local deltas, detail = EqTraining.applyDay(record, record:getCeilings(), day)
+
+    local notes = EqStatLog.explainDay(detail, day, { resting = resting, focus = record.focus, sheet = day.sheet,
+        playerPoints = EqTraining.playerRidingPoints(day.sheet) })
+    table.insert(notes, string.format("RLRM before its daily update: fitness %s health %s dirt %s riding %s",
+        tostring(animal.fitness), tostring(animal.health), tostring(animal.dirt), tostring(animal.riding)))
+    EqStatLog.add(record.id, g_currentMission.environment.currentMonotonicDay or 0, "daily training", deltas, notes, record.trained)
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",
         record.id, tostring(animal.riding), tostring(animal.dirt), record.idleDays,

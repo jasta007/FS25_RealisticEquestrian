@@ -296,6 +296,9 @@ end
 --- @param animal table|nil RLRM Animal, for the message log
 function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     record.career.injuries = record.career.injuries + 1
+    EqStatLog.add(record.id, g_currentMission.environment.currentMonotonicDay or 0, "injury", nil,
+        { string.format("Injured at %s: %s, %d month(s) of box rest%s. No training until it heals.", EqCompetitionManager.eventTitle(event),
+            injury.name, injury.months, injury.careerEnding and ", career-ending" or "") }, record.trained)
     if injury.careerEnding then
         record.retired = true
         record.careerEnded = true
@@ -400,8 +403,10 @@ function EqCompetitionManager.resolve(event, horses)
                 local cadenceDay = EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY
                 local timeAdjustment = cadenceDay and (g_currentMission.environment.timeAdjustment or 1)
                     or EqCompetitionManager.MONTHLY_BOOST_MONTHS
-                EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
+                local deltas = EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
                     tier.trainingBoost, mine.animal.age or 0, timeAdjustment)
+                EqStatLog.add(record.id, summary.day, "event", deltas, { string.format("Training boost from %s (%s), placed %d of %d: %.0f%% of a day's work at staff level",
+                    EqCompetitionManager.eventTitle(event), event.tier, runner.place, summary.field, tier.trainingBoost * 100) }, record.trained)
             end
 
             table.insert(summary.placings, { horseId = runner.key, name = entry.name, farmId = entry.farmId,

@@ -154,6 +154,8 @@ end
 --- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden,
 ---     feedBoost }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil
 --- @return table deltas stat -> change, for logging
+--- @return table detail why: { player, staff (effort stat -> 0..1), groomed, ageFactor, idleDays,
+---     fading, old, stats = stat -> { fromPlayer, fromStaff, faded, aged } } for EqStatLog
 function EqTraining.applyDay(record, ceilings, day)
     local timeAdjustment = day.timeAdjustment or 1
     local ageFactor = EqStats.ageTrainingFactor(day.ageMonths or 0)
@@ -172,6 +174,8 @@ function EqTraining.applyDay(record, ceilings, day)
     local old = (day.ageMonths or 0) > EqConstants.AGE_DECLINE
 
     local deltas = {}
+    local detail = { player = player, staff = staff, groomed = groomed, ageFactor = ageFactor,
+        idleDays = record.idleDays, fading = fading, old = old, stats = {} }
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local ceiling = ceilings[stat]
         local before = record.trained[stat] or 0
@@ -186,18 +190,22 @@ function EqTraining.applyDay(record, ceilings, day)
         local fromStaff = EqTraining.gain(level, ceiling * EqConstants.STAFF_CAP, monthly, staff[stat], ageFactor, timeAdjustment)
         level = level + math.max(fromPlayer, fromStaff)
 
+        local trainedTo = level
         if fading then
             level = fadeToward(level, EqConstants.FADE_MONTHLY[stat] * timeAdjustment, ceiling * EqConstants.FADE_FLOOR)
         end
+        local fadedTo = level
         if old then
             level = fadeToward(level, EqConstants.OLD_DECLINE_MONTHLY * timeAdjustment, ceiling * EqConstants.OLD_FLOOR)
         end
 
         record.trained[stat] = EqStats.clamp(level, 0, ceiling)
         deltas[stat] = record.trained[stat] - before
+        detail.stats[stat] = { fromPlayer = fromPlayer, fromStaff = fromStaff, faded = fadedTo - trainedTo,
+            aged = level - fadedTo }
     end
 
-    return deltas
+    return deltas, detail
 end
 
 
