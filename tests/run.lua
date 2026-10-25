@@ -472,6 +472,10 @@ check("the specialty names the best", names[1] == "showJumping")
 check("two close make a pair", specialtyOf({ dressage = 60, showJumping = 55 }) == "pair")
 check("jumping, dressage and cross country close make an eventer",
     specialtyOf({ dressage = 60, showJumping = 55, crossCountry = 58, eventing = 50 }) == "eventer")
+check("eventing alone makes an eventer", specialtyOf({ eventing = 60, raceShort = 20 }) == "eventer")
+check("eventing with a phase makes an eventer", specialtyOf({ eventing = 60, dressage = 55 }) == "eventer")
+check("cross country alone stays itself", specialtyOf({ crossCountry = 60 }) == "one")
+check("eventing beside a race is a pair", specialtyOf({ eventing = 60, raceLong = 55 }) == "pair")
 check("close races make a racehorse", specialtyOf({ raceShort = 60, raceLong = 55, steeplechase = 50 }) == "racehorse")
 check("three unrelated close make an all-rounder", specialtyOf({ dressage = 60, raceShort = 55, crossCountry = 58 }) == "allRounder")
 
