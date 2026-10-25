@@ -139,3 +139,5 @@ EqConstants.MAX_ROUND_STARTS = 2
 -- A mare further than this through her pregnancy (RLRM's reproduction, 0-100) stops competing
 -- until she has foaled.
 EqConstants.IN_FOAL_LIMIT = 30
+-- Months after foaling before a mare competes again (RLRM's own recovery is 3 months).
+EqConstants.FOALING_REST_MONTHS = 3

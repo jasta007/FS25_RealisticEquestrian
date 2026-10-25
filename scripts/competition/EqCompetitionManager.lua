@@ -397,12 +397,13 @@ end
 --- @param record table
 --- @param kind string the event's kind
 --- @param animal table|nil RLRM Animal, for the in-foal check
---- @return string|nil reason "retired", "injured", "settling", "inFoal" or "rested", nil when it can go
+--- @return string|nil reason "retired", "injured", "settling", "inFoal", "foaled" or "rested", nil when it can go
 function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
     if record:isSettling() then return "settling" end
     if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
+    if EqCompetitionManager.isRecoveringFromFoaling(animal) then return "foaled" end
     if kind == EqCompetition.KIND_ROUND and (record.monthStarts or 0) >= EqConstants.MAX_ROUND_STARTS then
         return "rested"
     end
@@ -414,6 +415,14 @@ end
 --- @return boolean true for a mare past IN_FOAL_LIMIT of her pregnancy
 function EqCompetitionManager.isTooFarInFoal(animal)
     return animal ~= nil and animal.isPregnant == true and (animal.reproduction or 0) > EqConstants.IN_FOAL_LIMIT
+end
+
+
+--- @param animal table|nil RLRM Animal
+--- @return boolean true for a mare that foaled less than FOALING_REST_MONTHS ago
+function EqCompetitionManager.isRecoveringFromFoaling(animal)
+    return animal ~= nil and animal.isParent == true and animal.gender == "female"
+        and (animal.monthsSinceLastBirth or EqConstants.FOALING_REST_MONTHS) < EqConstants.FOALING_REST_MONTHS
 end
 
 

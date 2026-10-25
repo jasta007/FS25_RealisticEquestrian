@@ -105,7 +105,7 @@ prizes, and sometimes none in a discipline.
 - A horse can only be in one round event and one monthly event at a time.
 - A mare more than 30% through her pregnancy (RLRM's reproduction value) can't be entered, and
   one entered earlier is scratched if she passes 30% before the event, with half the fee back.
-  She can compete again after foaling.
+  She can compete again three months after foaling.
 - A horse's rating in a discipline weighs its trained stats (show jumping: agility first;
   dressage: temperament; racing: speed and stamina). Cross country, eventing and steeplechase take
   half their rating from the horse's weakest stat, so all-rounders shine there. Outdoor events
