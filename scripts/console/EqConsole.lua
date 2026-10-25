@@ -263,6 +263,12 @@ function EqConsole:consoleEnter(eventId, ...)
 end
 
 
+--- eqProbe: testing, writes the loading triggers to the log.
+function EqConsole:consoleProbe()
+    return EqProbe.run()
+end
+
+
 --- eqDeliver <horse name or id>: testing, until delivery at the dealer is built.
 function EqConsole:consoleDeliver(...)
     local ok, message = competitionsReady()
@@ -366,6 +372,7 @@ function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
+    addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
@@ -385,5 +392,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire" }) do removeConsoleCommand(name) end
 end

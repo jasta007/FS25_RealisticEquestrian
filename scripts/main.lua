@@ -34,6 +34,7 @@ source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
+source(modDirectory .. "scripts/console/EqProbe.lua")
 
 local Log = EqLog
 
@@ -125,6 +126,8 @@ end
 -- Rideable's functions are copied into vehicle types when types are validated, so they are
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
+-- Loading triggers are created as the map loads, so the probe starts listening now.
+guarded("probe hook", EqProbe.install)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
