@@ -33,6 +33,7 @@ EqRLRM.OPTIONAL = {
     eventsTab = { { "RLMenu", "setupMenuPages" } },
     menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
     horsePricing = { { "AnimalHorse", "getHorseSellPrice" } },
+    awayVisuals = { { "RealisticLivestock_AnimalClusterHusbandry", "updateVisuals" } },
 }
 
 EqRLRM.env = nil

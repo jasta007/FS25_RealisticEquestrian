@@ -103,6 +103,9 @@ prizes, and sometimes none in a discipline.
 - Every entry pays **transport** on top of the fee: a quarter of the game's transport price for
   the horse ($150 for an adult). Hauling the horse there yourself instead is a stretch goal.
 - A horse can only be in one round event and one monthly event at a time.
+- A horse entered in an event **leaves your pasture** until its result is in: the next round
+  for round events, the next month for monthly ones. It still eats, ages and trains with staff in
+  RLRM's books; it just isn't there to see or ride. (Single player and host for now.)
 - A mare more than 30% through her pregnancy (RLRM's reproduction value) can't be entered, and
   one entered earlier is scratched if she passes 30% before the event, with half the fee back.
   She can compete again three months after foaling.

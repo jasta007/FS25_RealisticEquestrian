@@ -28,6 +28,7 @@ source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
+source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
@@ -86,6 +87,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.awayVisuals then
+        guarded("away horses hook", function() EqAway.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then
@@ -147,6 +152,11 @@ local function onMissionLoaded(mission)
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
             guarded("monthly events", EqCompetitionManager.onPeriodChanged)
         end, EqCompetitionManager)
+    end)
+
+    -- Pastures may have drawn their horses before the saved entries loaded.
+    guarded("away horses at load", function()
+        if mission:getIsServer() then EqCompetitionManager.refreshAway(EqCompetitionManager.enteredAnimals()) end
     end)
 end
 

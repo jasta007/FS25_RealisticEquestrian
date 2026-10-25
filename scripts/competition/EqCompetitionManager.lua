@@ -444,10 +444,37 @@ function EqCompetitionManager.setRetired(record, retired)
 end
 
 
+--- @param kind string|nil only events of this kind, nil for all
+--- @param horses table|nil from indexHorses, built when nil
+--- @return table animals RLRM Animals entered in open events
+function EqCompetitionManager.enteredAnimals(kind, horses)
+    horses = horses or indexHorses()
+    local animals = {}
+    for _, event in pairs(EqCompetitionManager.events) do
+        if kind == nil or event.kind == kind then
+            for _, entry in ipairs(event.entries) do
+                local horse = horses[entry.horseId]
+                if horse ~= nil then table.insert(animals, horse.animal) end
+            end
+        end
+    end
+    return animals
+end
+
+
+--- Redraw the pastures of horses leaving for, or back from, events. Does nothing when the
+--- away-horses hook is off (it needs RLRM's visual update).
+--- @param animals table RLRM Animals
+function EqCompetitionManager.refreshAway(animals)
+    if EqAway ~= nil and EqRLRM.features.awayVisuals and #animals > 0 then EqAway.refreshAll(animals) end
+end
+
+
 --- Close and resolve every open event of a kind, then open the next round of that kind.
 --- @param kind string
 function EqCompetitionManager.turnOver(kind)
     local horses = indexHorses()
+    local returning = EqCompetitionManager.enteredAnimals(kind, horses)
     local ids = {}
     for id, event in pairs(EqCompetitionManager.events) do
         if event.kind == kind then table.insert(ids, id) end
@@ -461,6 +488,7 @@ function EqCompetitionManager.turnOver(kind)
     end
 
     EqCompetitionManager.openRound(kind)
+    EqCompetitionManager.refreshAway(returning)
 end
 
 
@@ -600,6 +628,7 @@ function EqCompetitionManager.enter(eventId, animal, farmId)
     EqCompetitionManager.farmEntries[farmId] = (EqCompetitionManager.farmEntries[farmId] or 0) + 1
     local name = animal.getName ~= nil and animal:getName() or record.id
     table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name })
+    EqCompetitionManager.refreshAway({ animal })
 
     return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
         g_i18n:formatMoney(transport, 0, true, true))
