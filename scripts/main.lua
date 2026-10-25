@@ -35,6 +35,9 @@ source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
+source(modDirectory .. "scripts/competition/EqPerformance.lua")
+source(modDirectory .. "scripts/competition/EqRivals.lua")
+source(modDirectory .. "scripts/competition/EqStory.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqExperience.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -49,6 +52,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
+source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
@@ -132,6 +136,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab then
         guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then
+        guarded("message link hooks", function() EqMessagesLink.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuPaging then

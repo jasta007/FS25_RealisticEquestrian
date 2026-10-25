@@ -22,7 +22,7 @@ end
 
 
 --- @param xmlFile table An open XMLFile on events.xml
---- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
+--- @return table config { disciplines (with their checks, story and phases), disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
 function EqEventConfig.read(xmlFile)
     local config = { disciplines = {}, disciplineByName = {}, tiers = {}, tierByName = {}, goings = {} }
 
@@ -40,8 +40,27 @@ function EqEventConfig.read(xmlFile)
             injury = xmlFile:getFloat(key .. "#injury", 0),
             chance = xmlFile:getFloat(key .. "#chance", 1),
             related = {},
+            story = xmlFile:getString(key .. "#story"),
+            checks = {},
+            phases = nil,
         }
         for name in (xmlFile:getString(key .. "#related", "")):gmatch("%S+") do table.insert(discipline.related, name) end
+        for name in (xmlFile:getString(key .. "#phases", "")):gmatch("%S+") do
+            discipline.phases = discipline.phases or {}
+            table.insert(discipline.phases, name)
+        end
+        local j = 0
+        while true do
+            local checkKey = string.format("%s.check(%d)", key, j)
+            if not xmlFile:hasProperty(checkKey) then break end
+            table.insert(discipline.checks, {
+                stat = xmlFile:getString(checkKey .. "#stat", "agility"),
+                difficulty = xmlFile:getFloat(checkKey .. "#difficulty", 0.5),
+                weight = xmlFile:getFloat(checkKey .. "#weight", 1),
+                tag = xmlFile:getString(checkKey .. "#tag"),
+            })
+            j = j + 1
+        end
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
         i = i + 1

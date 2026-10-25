@@ -317,5 +317,83 @@
         <text name="eq_settings_forcedRetirement_tooltip" text="Ob die schwersten Verletzungen bei Veranstaltungen die Turnierkarriere eines Pferdes endgültig beenden können."/>
         <text name="eq_settings_entriesPerMonth" text="Nennungen pro Monat"/>
         <text name="eq_settings_entriesPerMonth_tooltip" text="Wie viele Nennungen jeder Hof pro Monat abgeben kann."/>
+        <!-- Event results: how a run went (EqPerformance, EqStory) and the Results tab -->
+        <text name="eq_ord_1" text="%d."/>
+        <text name="eq_ord_2" text="%d."/>
+        <text name="eq_ord_3" text="%d."/>
+        <text name="eq_ord_n" text="%d."/>
+        <text name="eq_story_podium" text="Sieger: %s, Zweiter: %s, Dritter: %s."/>
+        <text name="eq_story_winner" text="Sieger: %s."/>
+        <text name="eq_story_phase" text="%s %s"/>
+        <text name="eq_story_phases" text="%s."/>
+        <text name="eq_story_gains" text="Verbessert: %s."/>
+        <text name="eq_story_injury" text="Kam verletzt zurück, Diagnose: %s."/>
+        <text name="eq_story_careerEnded" text="Erlitt eine Verletzung, die die Karriere beendet."/>
+        <text name="eq_story_jumping_clean" text="Ging eine fehlerfreie Runde."/>
+        <text name="eq_story_jumping_struggled" text="Hatte große Mühe mit dem schweren Parcours."/>
+        <text name="eq_story_jumping_eliminated" text="Schied nach einem Sturz aus."/>
+        <text name="eq_story_jumping_elimRefusal" text="Schied nach drei Verweigerungen aus."/>
+        <text name="eq_story_jumping_agility" text="Riss eine Stange in einer kniffligen Kombination."/>
+        <text name="eq_story_jumping_agilityMany" text="Riss mehrere Stangen."/>
+        <text name="eq_story_jumping_hardest" text="Lief gut, bis am schwersten Sprung eine Stange fiel."/>
+        <text name="eq_story_jumping_speed" text="Konnte das Tempo nicht halten und bekam Zeitfehler."/>
+        <text name="eq_story_jumping_temperament" text="Verweigerte an einem Sprung."/>
+        <text name="eq_story_dressage_clean" text="Eine saubere Aufgabe, die die Richter überzeugte."/>
+        <text name="eq_story_dressage_struggled" text="Hatte von Anfang bis Ende Mühe mit der Aufgabe."/>
+        <text name="eq_story_dressage_eliminated" text="Verließ mitten in der Aufgabe das Viereck und schied aus."/>
+        <text name="eq_story_dressage_elimRefusal" text="Widersetzte sich, ging nicht weiter und schied aus."/>
+        <text name="eq_story_dressage_agility" text="Verlor Punkte in den Seitengängen."/>
+        <text name="eq_story_dressage_agilityMany" text="Verlor in mehreren Lektionen Punkte."/>
+        <text name="eq_story_dressage_hardest" text="Eine ordentliche Aufgabe, bis die schwerste Lektion Punkte kostete."/>
+        <text name="eq_story_dressage_temperament" text="Wurde im Viereck angespannt und verlor Punkte."/>
+        <text name="eq_story_dressage_temperamentMany" text="War den Großteil der Aufgabe angespannt und abgelenkt."/>
+        <text name="eq_story_crossCountry_clean" text="Fehlerfrei in der erlaubten Zeit."/>
+        <text name="eq_story_crossCountry_struggled" text="Die Strecke war zu schwer, es war ein Kampf von Anfang bis Ende."/>
+        <text name="eq_story_crossCountry_eliminated" text="Schied nach einem Sturz aus."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="Schied nach drei Verweigerungen aus."/>
+        <text name="eq_story_crossCountry_agility" text="Lief an einem schmalen Hindernis vorbei."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Lief mehrmals an Hindernissen vorbei."/>
+        <text name="eq_story_crossCountry_hardest" text="Lief gut bis zum Vorbeilaufen am schwersten Hindernis."/>
+        <text name="eq_story_crossCountry_temperament" text="Verweigerte am Wasser."/>
+        <text name="eq_story_crossCountry_speed" text="Bekam Zeitfehler."/>
+        <text name="eq_story_crossCountry_stamina" text="Wurde über die letzten Hindernisse müde."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Ging lange vor dem Ziel die Kraft aus."/>
+        <text name="eq_story_race_clean" text="Lief ein starkes Rennen vom Start bis ins Ziel."/>
+        <text name="eq_story_race_struggled" text="Kam nie ins Rennen."/>
+        <text name="eq_story_race_eliminated" text="Wurde vor dem Ziel angehalten."/>
+        <text name="eq_story_race_elimRefusal" text="Machte am Start Theater und wurde angehalten."/>
+        <text name="eq_story_race_temperament" text="Verpasste den Start."/>
+        <text name="eq_story_race_speed" text="Konnte das Anfangstempo nicht mitgehen."/>
+        <text name="eq_story_race_speedMany" text="Fehlte das Tempo, um bei der Spitze zu bleiben."/>
+        <text name="eq_story_race_stamina" text="Ließ auf den letzten Metern nach."/>
+        <text name="eq_story_race_staminaMany" text="Ging lange vor dem Ziel die Puste aus."/>
+        <text name="eq_story_race_finish" text="Bis zum Schluss dabei, dann zogen die Führenden davon."/>
+        <text name="eq_story_steeplechase_clean" text="Sprang gut und lief stark über die ganze Strecke."/>
+        <text name="eq_story_steeplechase_struggled" text="Hatte Mühe mit den Hindernissen und dem Tempo."/>
+        <text name="eq_story_steeplechase_eliminated" text="Wurde vor dem Ziel angehalten."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Verweigerte ein Hindernis und wurde angehalten."/>
+        <text name="eq_story_steeplechase_agility" text="Touchierte ein Hindernis hart und verlor Boden."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Sprang schwach und verlor an mehreren Hindernissen Boden."/>
+        <text name="eq_story_steeplechase_hardest" text="Lief gut bis zu einem Fehler am größten Hindernis."/>
+        <text name="eq_story_steeplechase_speed" text="Konnte das Anfangstempo nicht mitgehen."/>
+        <text name="eq_story_steeplechase_temperament" text="Sprang zögerlich und verlor Boden."/>
+        <text name="eq_story_steeplechase_stamina" text="Wurde müde und ließ über die letzten Hindernisse nach."/>
+        <text name="eq_story_eventing_clean" text="In allen drei Teilprüfungen fehlerfrei."/>
+        <text name="eq_story_eventing_struggled" text="Hatte in allen drei Teilprüfungen Mühe."/>
+        <text name="eq_story_eventing_eliminated" text="Schied nach einem Sturz im Gelände aus."/>
+        <text name="eq_story_eventing_elimRefusal" text="Schied nach Verweigerungen im Gelände aus."/>
+        <text name="eq_ui_tab_upcoming" text="Kommende Veranstaltungen"/>
+        <text name="eq_ui_tab_results" text="Ergebnisse"/>
+        <text name="eq_ui_col_starts" text="Starts"/>
+        <text name="eq_ui_col_wins" text="Siege"/>
+        <text name="eq_ui_col_lastResult" text="Letztes Ergebnis"/>
+        <text name="eq_ui_result_placeOrd" text="%s von %d"/>
+        <text name="eq_ui_noHorseResults" text="%s hat noch keine Ergebnisse."/>
+        <text name="eq_ui_summary_results" text="Die letzten %d Veranstaltungen eines Pferdes. Wählen Sie rechts ein Pferd."/>
+        <text name="eq_ui_career_starts" text="Starts"/>
+        <text name="eq_ui_career_record" text="Siege / Platzierungen"/>
+        <text name="eq_ui_career_earnings" text="Preisgeld"/>
+        <text name="eq_ui_career_eliminations" text="Ausgeschieden"/>
+        <text name="eq_ui_button_viewResults" text="Ergebnisse ansehen"/>
     </texts>
 </l10n>

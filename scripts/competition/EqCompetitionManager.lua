@@ -61,6 +61,8 @@ function EqCompetitionManager.reset()
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1 }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
+    EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
+    EqCompetitionManager.rivals = nil
 end
 
 EqCompetitionManager.reset()
@@ -113,18 +115,29 @@ local function indexHorses()
 end
 
 
---- @param farmId number
---- @param text string
 --- Tell the farm's player, and write the same line in the farm's RLRM message log.
 --- @param farmId number
 --- @param text string
 --- @param messageId string|nil one of EqMessages.TYPES, nil for no log line
 --- @param animal table|nil RLRM Animal the line is about
-local function notify(farmId, text, messageId, animal)
+--- @param horseId string|nil the horse whose results the log line opens
+local function notify(farmId, text, messageId, animal, horseId)
     if g_currentMission:getFarmId() == farmId then
         g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, text)
     end
-    if messageId ~= nil then EqMessages.post(farmId, messageId, text, animal) end
+    if messageId ~= nil then EqMessages.post(farmId, messageId, text, animal, horseId) end
+end
+
+
+--- @return table rivals the save's named rivals, drawn the first time they are needed
+function EqCompetitionManager.getRivals()
+    local config = EqCompetitionManager.config
+    if config == nil then return {} end
+    if EqCompetitionManager.rivals == nil then
+        if EqCompetitionManager.rivalSeed == nil then EqCompetitionManager.rivalSeed = math.random(1, 999999999) end
+        EqCompetitionManager.rivals = EqRivals.generate(EqCompetitionManager.rivalSeed, config.disciplines)
+    end
+    return EqCompetitionManager.rivals
 end
 
 
@@ -205,6 +218,38 @@ function EqCompetitionManager.ratingFor(record, event)
 end
 
 
+--- A horse as it starts an event: its rating, condition on the day, stats for its checks, and
+--- for eventing its phase ratings.
+--- @param record table
+--- @param animal table RLRM Animal
+--- @param event table
+--- @param farmId number|nil the horse's farm, for its facilities
+--- @return table entrant for EqCompetition.run
+function EqCompetitionManager.entrantFor(record, animal, event, farmId)
+    local config = EqCompetitionManager.config
+    local discipline = config.disciplineByName[event.discipline]
+    local rating = EqCompetitionManager.ratingFor(record, event)
+    local phaseRatings = nil
+    if discipline.phases ~= nil then
+        local ratings = {}
+        for _, name in ipairs(discipline.phases) do
+            if config.disciplineByName[name] ~= nil then
+                ratings[name] = EqCompetitionManager.ratingFor(record, { discipline = name, going = event.going })
+            end
+        end
+        phaseRatings = EqPerformance.scalePhases(ratings, rating)
+    end
+    return {
+        key = record.id,
+        rating = rating,
+        condition = EqCompetition.condition(animal.fitness, animal.health)
+            * EqFacilityHooks.conditionFactor(farmId, event.discipline),
+        stats = record.trained,
+        phaseRatings = phaseRatings,
+    }
+end
+
+
 --- @param record table
 --- @return string text the horse's specialty, such as "Dressage", "3 Day Eventer" or "All Rounder"
 function EqCompetitionManager.specialtyText(record)
@@ -229,13 +274,12 @@ function EqCompetitionManager.prospects(record, animal, event)
     local config = EqCompetitionManager.config
     local discipline = config.disciplineByName[event.discipline]
     local tier = config.tierByName[event.tier]
-    local rating = EqCompetitionManager.ratingFor(record, event)
+    local entrant = EqCompetitionManager.entrantFor(record, animal, event, EqFacilityHooks.farmOfAnimal(animal))
+    local rating = entrant.rating
     local elimination = EqRisk.eliminationChance(discipline, tier, rating, record.trained.temperament or 0)
     -- Seeded by event and horse, so the word doesn't flicker each time the tab opens.
     local rng = EqRandom.new(string.format("odds %s %s", tostring(event.id), record.id))
-    local condition = EqCompetition.condition(animal.fitness, animal.health)
-        * EqFacilityHooks.conditionFactor(EqFacilityHooks.farmOfAnimal(animal), event.discipline)
-    local chance = EqCompetition.podiumChance(event, config, rating, condition, elimination, rng)
+    local chance = EqCompetition.podiumChance(event, config, rating, entrant.condition, elimination, rng, nil, entrant)
 
     local benefit = nil
     if tier.trainingBoost > 0 then
@@ -306,7 +350,7 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
         record.careerEnded = true
         record.injury = nil
         notify(entry.farmId, string.format(g_i18n:getText("eq_injury_careerEnding"), entry.name,
-            EqCompetitionManager.eventTitle(event)), "EQ_CAREER_ENDED", animal)
+            EqCompetitionManager.eventTitle(event)), "EQ_CAREER_ENDED", animal, record.id)
         return
     end
 
@@ -325,12 +369,44 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
         text = string.format(g_i18n:getText("eq_injury_newRest"), entry.name, EqCompetitionManager.eventTitle(event),
             EqCompetitionManager.injuryTitle(injury.name), rest)
     end
-    notify(entry.farmId, text, "EQ_INJURED", animal)
+    notify(entry.farmId, text, "EQ_INJURED", animal, record.id)
+end
+
+
+--- The names of the top three: our horses (any farm's) by their names, simulated rivals by one
+--- of the save's named rivals at their level (EqRivals.pick).
+--- @param results table from EqCompetition.run
+--- @param byKey table horse id -> { entry }
+--- @param discipline string
+--- @param rng table EqRandom
+--- @return table names first place first, up to three
+function EqCompetitionManager.podiumNames(results, byKey, discipline, rng)
+    local rivals, used, names = EqCompetitionManager.getRivals(), {}, {}
+    for _, runner in ipairs(results) do
+        if runner.place > #EqCompetition.PRIZE_SHARES then break end
+        local mine = runner.key ~= nil and byKey[runner.key] or nil
+        local name = mine ~= nil and mine.entry.name or EqRivals.pick(rivals, discipline, runner.rating or 0, used, rng)
+        table.insert(names, name or "?")
+    end
+    return names
+end
+
+
+--- Keep a result on the horse's record, for the Events tab's Results page.
+--- @param record table
+--- @param summary table the event's summary
+--- @param placing table { place, prize, status }
+--- @param lines table the story lines
+local function keepResult(record, summary, placing, lines)
+    if record == nil then return end
+    record:addResult({ day = summary.day, discipline = summary.discipline, tier = summary.tier, venue = summary.venue,
+        place = placing.place, field = summary.field, prize = placing.prize, status = placing.status, lines = lines })
 end
 
 
 --- Resolve one closed event: scratches, eliminations and injuries, then score the field, pay
---- prizes, update careers and tell the owners.
+--- prizes, update careers, and tell the owners how their horses got on: one line now (with how
+--- the run went), and a few lines kept on the horse for the Results page.
 --- @param event table
 --- @param horses table from indexHorses
 function EqCompetitionManager.resolve(event, horses)
@@ -341,18 +417,21 @@ function EqCompetitionManager.resolve(event, horses)
     local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
         venue = event.venue, region = event.region, field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
     local starters, byKey = {}, {}
+    local title = EqCompetitionManager.eventTitle(event)
 
     for _, entry in ipairs(event.entries) do
         local horse = horses[entry.horseId]
         local record = EqRegistry.getById(entry.horseId)
         if horse == nil or record == nil then
-            notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, EqCompetitionManager.eventTitle(event)), "EQ_GONE")
+            notify(entry.farmId, string.format(g_i18n:getText("eq_result_gone"), entry.name, title), "EQ_GONE")
         elseif not EqCompetitionManager.isDelivered(entry) then
             -- Manual Transport, never delivered: a non-starter, and the fee is gone.
-            table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
-                place = 0, prize = 0, status = "notDelivered" })
-            notify(entry.farmId, string.format(g_i18n:getText("eq_result_notDelivered"), entry.name,
-                EqCompetitionManager.eventTitle(event)), "EQ_NOT_DELIVERED", horse.animal)
+            local placing = { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
+                place = 0, prize = 0, status = "notDelivered" }
+            table.insert(summary.placings, placing)
+            local text = string.format(g_i18n:getText("eq_result_notDelivered"), entry.name, title)
+            notify(entry.farmId, text, "EQ_NOT_DELIVERED", horse.animal, entry.horseId)
+            keepResult(record, summary, placing, { text })
         else
             -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
@@ -363,23 +442,21 @@ function EqCompetitionManager.resolve(event, horses)
                 if refund > 0 then
                     g_currentMission:addMoney(refund, entry.farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
                 end
-                table.insert(summary.placings, { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
-                    place = 0, prize = 0, status = "scratched" })
-                notify(entry.farmId, string.format(g_i18n:getText("eq_result_scratched"), entry.name,
-                    EqCompetitionManager.eventTitle(event), g_i18n:getText("eq_scratch_" .. reason),
-                    g_i18n:formatMoney(refund, 0, true, true)), "EQ_SCRATCHED", horse.animal)
+                local placing = { horseId = entry.horseId, name = entry.name, farmId = entry.farmId,
+                    place = 0, prize = 0, status = "scratched" }
+                table.insert(summary.placings, placing)
+                local text = string.format(g_i18n:getText("eq_result_scratched"), entry.name, title,
+                    g_i18n:getText("eq_scratch_" .. reason), g_i18n:formatMoney(refund, 0, true, true))
+                notify(entry.farmId, text, "EQ_SCRATCHED", horse.animal, entry.horseId)
+                keepResult(record, summary, placing, { text })
             else
-                table.insert(starters, {
-                    key = entry.horseId,
-                    rating = EqCompetitionManager.ratingFor(record, event),
-                    condition = EqCompetition.condition(horse.animal.fitness, horse.animal.health)
-                        * EqFacilityHooks.conditionFactor(entry.farmId, event.discipline),
-                    temperament = record.trained.temperament or 0,
-                    stamina = record.trained.stamina or 0,
-                    fitness = horse.animal.fitness or 0,
-                    travel = EqCompetitionManager.travelInjury(event),
-                    health = horse.animal.health,
-                })
+                local starter = EqCompetitionManager.entrantFor(record, horse.animal, event, entry.farmId)
+                starter.temperament = record.trained.temperament or 0
+                starter.stamina = record.trained.stamina or 0
+                starter.fitness = horse.animal.fitness or 0
+                starter.travel = EqCompetitionManager.travelInjury(event)
+                starter.health = horse.animal.health
+                table.insert(starters, starter)
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
                 if event.kind == EqCompetition.KIND_ROUND then record.monthStarts = (record.monthStarts or 0) + 1 end
@@ -400,6 +477,11 @@ function EqCompetitionManager.resolve(event, horses)
         results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), tier.field - #eliminated)
     end
     summary.field = #results + #eliminated
+    local podium = EqStory.podiumLine(EqCompetitionManager.podiumNames(results, byKey, event.discipline,
+        EqRandom.new("podium " .. event.id)))
+
+    -- Each starter's story, finished once its injuries are known.
+    local stories = {}
 
     for _, runner in ipairs(results) do
         local mine = runner.key ~= nil and byKey[runner.key] or nil
@@ -415,39 +497,51 @@ function EqCompetitionManager.resolve(event, horses)
                 g_currentMission:addMoney(runner.prize, entry.farmId, MoneyType.EQ_PRIZE_MONEY or MoneyType.OTHER, true, true)
             end
 
+            local deltas = nil
             if tier.trainingBoost > 0 then
                 local cadenceDay = EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY
                 local timeAdjustment = cadenceDay and (g_currentMission.environment.timeAdjustment or 1)
                     or EqCompetitionManager.MONTHLY_BOOST_MONTHS
-                local deltas = EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
+                deltas = EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
                     tier.trainingBoost, mine.animal.age or 0, timeAdjustment,
                     EqSettings.trainingRate(EqCompetitionManager.settings))
                 EqStatLog.add(record.id, summary.day, "event", deltas, { string.format("Training boost from %s (%s), placed %d of %d: %.0f%% of a day's work at staff level",
-                    EqCompetitionManager.eventTitle(event), event.tier, runner.place, summary.field, tier.trainingBoost * 100) }, record.trained)
+                    title, event.tier, runner.place, summary.field, tier.trainingBoost * 100) }, record.trained)
             end
 
-            table.insert(summary.placings, { horseId = runner.key, name = entry.name, farmId = entry.farmId,
-                place = runner.place, prize = runner.prize })
+            local placing = { horseId = runner.key, name = entry.name, farmId = entry.farmId, place = runner.place, prize = runner.prize }
+            table.insert(summary.placings, placing)
 
+            local performance = g_i18n:getText(EqPerformance.storyKey(discipline, runner.run, false, config))
+            local text
             if runner.prize > 0 then
-                notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
-                    EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)), "EQ_PLACED", mine.animal)
+                text = string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
+                    title, g_i18n:formatMoney(runner.prize, 0, true, true))
             else
-                notify(entry.farmId, string.format(g_i18n:getText("eq_result_placedNoPrize"), entry.name, runner.place,
-                    summary.field, EqCompetitionManager.eventTitle(event)), "EQ_FINISHED", mine.animal)
+                text = string.format(g_i18n:getText("eq_result_placedNoPrize"), entry.name, runner.place, summary.field, title)
             end
+            notify(entry.farmId, text .. " " .. performance, runner.prize > 0 and "EQ_PLACED" or "EQ_FINISHED", mine.animal, runner.key)
+            stories[runner.key] = { placing = placing, performance = performance, podium = podium,
+                phases = EqStory.phasesLine(discipline.phases, runner.phasePlaces), gains = EqStory.gainsLine(deltas) }
         end
     end
 
+    -- How an eliminated horse went out: its checks, run for the story alone.
+    local storyRng = EqRandom.new("story " .. event.id)
+    local luck = discipline.racing and EqCompetition.RACING_LUCK_SD or EqCompetition.LUCK_SD
     for _, starter in ipairs(eliminated) do
         local mine = byKey[starter.key]
         local career = mine.record.career
         career.starts = career.starts + 1
         career.eliminations = career.eliminations + 1
-        table.insert(summary.placings, { horseId = starter.key, name = mine.entry.name, farmId = mine.entry.farmId,
-            place = 0, prize = 0, status = "eliminated" })
+        local placing = { horseId = starter.key, name = mine.entry.name, farmId = mine.entry.farmId,
+            place = 0, prize = 0, status = "eliminated" }
+        table.insert(summary.placings, placing)
+        local run = EqPerformance.run(discipline, config, tier, starter, luck, storyRng)
+        local performance = g_i18n:getText(EqPerformance.storyKey(discipline, run, true, config))
         notify(mine.entry.farmId, string.format(g_i18n:getText(discipline.racing and "eq_result_pulledUp" or "eq_result_eliminated"),
-            mine.entry.name, EqCompetitionManager.eventTitle(event)), "EQ_ELIMINATED", mine.animal)
+            mine.entry.name, title) .. " " .. performance, "EQ_ELIMINATED", mine.animal, starter.key)
+        stories[starter.key] = { placing = placing, performance = performance, podium = podium }
     end
 
     -- A show is a crowd, a lorry ride and a hard day: every starter rolls RLRM's horse diseases too.
@@ -459,8 +553,13 @@ function EqCompetitionManager.resolve(event, horses)
             EqCompetitionManager.applyInjury(mine.record, mine.entry, injury, event, mine.animal)
         end
         for _, illness in ipairs(EqInjury.rollIllness(mine.animal, starter.travel, illnessRng)) do
-            notify(mine.entry.farmId, string.format(g_i18n:getText("eq_illness_new"), mine.entry.name, illness,
-                EqCompetitionManager.eventTitle(event)), "EQ_ILL", mine.animal)
+            notify(mine.entry.farmId, string.format(g_i18n:getText("eq_illness_new"), mine.entry.name, illness, title),
+                "EQ_ILL", mine.animal, starter.key)
+        end
+        local story = stories[starter.key]
+        if story ~= nil then
+            story.injury = EqStory.injuryLine(injury)
+            keepResult(mine.record, summary, story.placing, EqStory.lines(story))
         end
     end
 
@@ -953,6 +1052,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. ".settings#entriesPerMonth", EqCompetitionManager.settings.entriesPerMonth)
     xmlFile:setFloat(key .. ".settings#trainingRate", EqCompetitionManager.settings.trainingRate)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
+    if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
 
     local farmIds = {}
     for farmId in pairs(EqCompetitionManager.farmEntries) do table.insert(farmIds, farmId) end
@@ -1027,6 +1127,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.entriesPerMonth = xmlFile:getInt(key .. ".settings#entriesPerMonth", settings.entriesPerMonth)
     settings.trainingRate = xmlFile:getFloat(key .. ".settings#trainingRate", settings.trainingRate)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
+    EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
 
     local f = 0
     while true do

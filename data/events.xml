@@ -16,6 +16,13 @@
                         steeplechase is kept rare)
         related         disciplines a start here also teaches a little (EqExperience.RELATED_SHARE
                         of a start's event experience)
+        story           which result lines (eq_story_<story>_*) describe a run
+        phases          eventing: the disciplines run as its phases, each placed on its own; the
+                        total decides the result
+        check           the checks a run makes (see EqPerformance): stat, difficulty (0 = easy
+                        for the whole field at the tier, 1 = hard even for the better rivals), weight (how much
+                        it counts and how big a problem failing it is) and tag (its own result
+                        line, such as the hardest fence alone)
     tier
         name            key used in saves
         minAge/maxAge   months; maxAge 0 means no limit
@@ -41,13 +48,52 @@
 -->
 <events>
     <disciplines>
-        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01" related="eventing"/>
-        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003" related="eventing"/>
-        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025" related="eventing steeplechase"/>
-        <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02" related="showJumping dressage crossCountry"/>
-        <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015" related="raceLong"/>
-        <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02" related="raceShort steeplechase"/>
-        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03" chance="0.08" related="crossCountry raceLong"/>
+        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01" related="eventing" story="jumping">
+            <check stat="agility" difficulty="0.15" weight="1"/>
+            <check stat="speed" difficulty="0" weight="1"/>
+            <check stat="agility" difficulty="0.45" weight="1.5"/>
+            <check stat="temperament" difficulty="0.35" weight="3"/>
+            <check stat="agility" difficulty="0.75" weight="2"/>
+            <check stat="agility" difficulty="1" weight="2.5" tag="hardest"/>
+        </discipline>
+        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003" related="eventing" story="dressage">
+            <check stat="temperament" difficulty="0.1" weight="1"/>
+            <check stat="agility" difficulty="0.3" weight="1"/>
+            <check stat="temperament" difficulty="0.5" weight="1.5"/>
+            <check stat="agility" difficulty="0.6" weight="1.5"/>
+            <check stat="agility" difficulty="0.9" weight="2" tag="hardest"/>
+        </discipline>
+        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025" related="eventing steeplechase" story="crossCountry">
+            <check stat="stamina" difficulty="0.1" weight="1"/>
+            <check stat="agility" difficulty="0.3" weight="1"/>
+            <check stat="temperament" difficulty="0.4" weight="3"/>
+            <check stat="speed" difficulty="0.3" weight="1"/>
+            <check stat="agility" difficulty="0.7" weight="1.5"/>
+            <check stat="stamina" difficulty="0.7" weight="2"/>
+            <check stat="agility" difficulty="1" weight="2.5" tag="hardest"/>
+        </discipline>
+        <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02" related="showJumping dressage crossCountry" story="eventing" phases="dressage showJumping crossCountry"/>
+        <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015" related="raceLong" story="race">
+            <check stat="temperament" difficulty="0.1" weight="1"/>
+            <check stat="stamina" difficulty="0.3" weight="1"/>
+            <check stat="speed" difficulty="0.4" weight="1.5"/>
+            <check stat="speed" difficulty="0.9" weight="2.5" tag="finish"/>
+        </discipline>
+        <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02" related="raceShort steeplechase" story="race">
+            <check stat="temperament" difficulty="0.1" weight="1"/>
+            <check stat="speed" difficulty="0.4" weight="1"/>
+            <check stat="stamina" difficulty="0.4" weight="1.5"/>
+            <check stat="stamina" difficulty="0.85" weight="2"/>
+            <check stat="speed" difficulty="0.9" weight="2" tag="finish"/>
+        </discipline>
+        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03" chance="0.08" related="crossCountry raceLong" story="steeplechase">
+            <check stat="agility" difficulty="0.2" weight="1"/>
+            <check stat="speed" difficulty="0.3" weight="1"/>
+            <check stat="temperament" difficulty="0.4" weight="1.5"/>
+            <check stat="agility" difficulty="0.6" weight="1.5"/>
+            <check stat="stamina" difficulty="0.7" weight="2"/>
+            <check stat="agility" difficulty="1" weight="2" tag="hardest"/>
+        </discipline>
     </disciplines>
 
     <tiers>

@@ -177,29 +177,58 @@ function EqEventsView.horseRows(event, farmId)
 end
 
 
---- The player's latest results, newest first.
+--- @param result table a result kept on a horse's record
+--- @return string text such as "3rd of 12", "Eliminated" or "Scratched"
+function EqEventsView.resultText(result)
+    if result.status ~= nil then return g_i18n:getText("eq_ui_result_" .. result.status) end
+    return string.format(g_i18n:getText("eq_ui_result_placeOrd"), EqStory.ordinal(result.place), result.field)
+end
+
+
+--- The player's horses for the Results tab, retired ones too: latest result first, then by name.
 --- @param farmId number
---- @return table rows { day, title, horse, result, prize }
-function EqEventsView.resultRows(farmId)
+--- @return table rows { animal, record, name, starts, wins, last }
+function EqEventsView.resultHorseRows(farmId)
+    local rows = {}
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil then
+            local latest = record.results[1]
+            table.insert(rows, {
+                animal = animal,
+                record = record,
+                name = horseName(animal, record),
+                starts = tostring(record.career.starts),
+                wins = tostring(record.career.wins),
+                last = latest ~= nil and EqEventsView.resultText(latest) or "-",
+                lastDay = latest ~= nil and latest.day or -1,
+            })
+        end
+    end
+    table.sort(rows, function(a, b)
+        if a.lastDay ~= b.lastDay then return a.lastDay > b.lastDay end
+        return a.name < b.name
+    end)
+    return rows
+end
+
+
+--- One horse's last results for the big list: a title row per event, then its story lines.
+--- @param record table
+--- @return table rows { title = true|nil, text }
+function EqEventsView.horseResultRows(record)
     local manager = EqCompetitionManager
     local rows = {}
-    for _, summary in ipairs(manager.results) do
-        for _, placing in ipairs(summary.placings) do
-            if placing.farmId == farmId then
-                local result
-                if placing.status ~= nil then
-                    result = g_i18n:getText("eq_ui_result_" .. placing.status)
-                else
-                    result = string.format(g_i18n:getText("eq_ui_result_place"), placing.place, summary.field)
-                end
-                table.insert(rows, {
-                    day = string.format(g_i18n:getText("eq_ui_day"), summary.day),
-                    title = manager.eventName(summary.discipline, summary.tier, summary.venue),
-                    horse = placing.name,
-                    result = result,
-                    prize = placing.prize > 0 and money(placing.prize) or "-",
-                })
-            end
+    for _, result in ipairs(record.results) do
+        local parts = {
+            string.format(g_i18n:getText("eq_ui_day"), result.day),
+            string.format("%s (%s)", manager.eventName(result.discipline, result.tier, result.venue), manager.tierTitle(result.tier)),
+            EqEventsView.resultText(result),
+        }
+        if (result.prize or 0) > 0 then table.insert(parts, money(result.prize)) end
+        table.insert(rows, { title = true, text = table.concat(parts, "  |  ") })
+        for _, line in ipairs(result.lines or {}) do
+            table.insert(rows, { text = line })
         end
     end
     return rows
