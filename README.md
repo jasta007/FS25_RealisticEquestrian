@@ -230,7 +230,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 
 Generative AI is a hot topic right now. I should know: I've been a game designer for 20 years
 and I just got laid off, mostly because AI development is the biggest thing to happen in coding
-since the compiler was invented, and the industry is getting turned upside down by it.
+since the compiler was invented, and it is turning the industry completely upside down.
 
 I could be bitter about it and try to fight the inevitable, or I could use it to make awesome
 stuff that I want to play. I chose the latter. I will only use AI where I think it's valuable,
