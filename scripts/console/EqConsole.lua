@@ -158,18 +158,14 @@ local function competitionsReady()
 end
 
 
---- eqEvents: every open event, cheapest first within each kind.
+--- eqEvents: every open event, grouped by type then level, in the same order as the Events tab.
 function EqConsole:consoleEvents()
     local ok, message = competitionsReady()
     if not ok then return message end
 
     local list = {}
     for _, event in pairs(EqCompetitionManager.events) do table.insert(list, event) end
-    table.sort(list, function(a, b)
-        if a.kind ~= b.kind then return a.kind > b.kind end
-        if a.discipline ~= b.discipline then return a.discipline < b.discipline end
-        return a.fee < b.fee
-    end)
+    table.sort(list, EqEventsView.compareEvents)
 
     local horses = EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())
     local anyEligible = false
@@ -223,14 +219,21 @@ function EqConsole:consoleRatings(...)
         if record ~= nil and (query == "" or matchesHorse(animal, record, query)) then
             local parts = {}
             for _, discipline in ipairs(config.disciplines) do
-                table.insert(parts, string.format("%s %.0f", EqCompetitionManager.disciplineTitle(discipline.name),
-                    EqCompetition.rating(record.trained, discipline, nil)))
+                local experience = EqExperience.get(record, discipline.name)
+                local rating = EqCompetitionManager.ratingFor(record, { discipline = discipline.name })
+                if experience >= 0.5 then
+                    table.insert(parts, string.format("%s %.0f (experience %.0f, +%.1f)", EqCompetitionManager.disciplineTitle(discipline.name),
+                        rating, experience, EqExperience.ratingBonus(record, discipline.name)))
+                else
+                    table.insert(parts, string.format("%s %.0f", EqCompetitionManager.disciplineTitle(discipline.name), rating))
+                end
             end
             local career = record.career
             print(string.format("'%s' age %dm  starts %d wins %d places %d eliminated %d injuries %d earned %s",
                 animal:getName() or record.id, animal.age or 0, career.starts, career.wins, career.places,
                 career.eliminations, career.injuries, g_i18n:formatMoney(career.earnings, 0, true, true)))
             print("    " .. table.concat(parts, "  "))
+            print("    Favourite event: " .. EqCompetitionManager.specialtyText(record))
         end
     end
 
@@ -269,7 +272,7 @@ function EqConsole:consoleProbe()
 end
 
 
---- eqDeliver <horse name or id>: testing, until delivery at the dealer is built.
+--- eqDeliver <horse name or id>: testing, delivers without driving to the dealer.
 function EqConsole:consoleDeliver(...)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -326,6 +329,32 @@ function EqConsole:consoleRetire(...)
 
     local _, text = EqCompetitionManager.setRetired(record, not undo)
     return text
+end
+
+
+--- eqExperience <horse> <discipline> <0-100>: testing, sets a horse's event experience.
+function EqConsole:consoleExperience(...)
+    local ok, message = competitionsReady()
+    if not ok then return message end
+
+    local args = { ... }
+    local value, name = tonumber(args[#args]), args[#args - 1]
+    local usage = "Usage: eqExperience <horse name or id> <discipline> <0-100>"
+    if value == nil or name == nil or EqCompetitionManager.config.disciplineByName[name] == nil then
+        local names = {}
+        for _, discipline in ipairs(EqCompetitionManager.config.disciplines) do table.insert(names, discipline.name) end
+        return usage .. "\nDisciplines: " .. table.concat(names, " ")
+    end
+    local query = table.concat(args, " ", 1, #args - 2)
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+    local record = EqRegistry.getOrCreate(animal)
+    if record == nil then return string.format("No record for '%s'", query) end
+
+    record.experience = record.experience or {}
+    record.experience[name] = { value = EqStats.clamp(value, 0, EqExperience.MAX), idle = 0 }
+    return string.format("'%s': %s experience %.0f, favourite event %s", animal:getName() or record.id, name,
+        record.experience[name].value, EqCompetitionManager.specialtyText(record))
 end
 
 
@@ -467,6 +496,7 @@ function EqConsole.register()
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
+    addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n]", "consoleSettings", EqConsole)
@@ -482,6 +512,7 @@ end
 
 function EqConsole.unregister()
     removeConsoleCommand("eqHorses")
+    removeConsoleCommand("eqExperience")
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")

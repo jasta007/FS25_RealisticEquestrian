@@ -3,7 +3,8 @@
     Testing aid for Manual Transport (step 3): finds the base game's animal loading triggers
     and writes what they hold to the log, so delivery at the dealer can be built against the
     real fields. eqProbe dumps every trigger, nearest first, with any trailer inside it and the
-    animals in that trailer. Read-only: it changes nothing in the game.
+    animals in that trailer. Read-only: it changes nothing in the game. EqDelivery uses the
+    triggers it remembers to find a trailer at the dealer.
 ]]
 
 EqProbe = {}

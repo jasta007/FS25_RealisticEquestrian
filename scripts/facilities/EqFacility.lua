@@ -122,10 +122,15 @@ end
 function EqFacility.kindForXml(config, xmlFilename, isHusbandry)
     if xmlFilename == nil then return nil end
     local path = normalise(xmlFilename)
+    -- The game reports its own files as "data/placeables/...", with or without the "$".
+    local gamePath = string.gsub(path, "^%$", "")
 
     for _, match in ipairs(config.matches) do
         local value = match.value
-        if string.sub(value, -4) == ".xml" then
+        if string.sub(value, 1, 6) == "$data/" then
+            -- A base game file: the whole path must be the game's, not a mod folder that ends alike.
+            if gamePath == string.sub(value, 2) then return match.kind end
+        elseif string.sub(value, -4) == ".xml" then
             if string.sub(path, -#value) == value then return match.kind end
         else
             -- A prefix: ".../FS25_RidingHall/props" matches props01.xml, props11.xml.

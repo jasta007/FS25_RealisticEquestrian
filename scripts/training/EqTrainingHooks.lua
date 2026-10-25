@@ -25,6 +25,13 @@ local Log = EqLog
 local gaitNames = nil
 
 
+--- @param cluster table|nil RLRM Animal being ridden
+--- @return boolean true once its riding bar is full: the horse is tired and trains no more today
+local function isTired(cluster)
+    return cluster ~= nil and (cluster.riding or 0) >= 100
+end
+
+
 --- Map Rideable.GAITTYPES values to EqTraining's gait names. Built on first use.
 --- @return table
 local function getGaitNames()
@@ -36,6 +43,7 @@ local function getGaitNames()
             [types.CANTER] = "canter",
             [types.GALLOP] = "gallop",
         }
+        if types.BACKWARDS ~= nil then gaitNames[types.BACKWARDS] = "reverse" end
     end
     return gaitNames
 end
@@ -75,7 +83,7 @@ end
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
-    if spec == nil or spec.currentSpeed == 0 then return end
+    if spec == nil or spec.currentSpeed == 0 or isTired(spec.cluster) then return end
 
     local gait = getGaitNames()[spec.inputValues.currentGait]
     if gait == nil then return end
@@ -93,7 +101,7 @@ end
 --- on the server).
 function EqTrainingHooks.onJump(vehicle)
     local spec = vehicle.spec_rideable
-    if spec == nil then return end
+    if spec == nil or isTired(spec.cluster) then return end
 
     local gait = getGaitNames()[spec.inputValues.currentGait]
     if gait ~= "canter" and gait ~= "gallop" then return end
@@ -121,13 +129,16 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
     end
-    g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, " "))
+    local title = g_i18n:getText(isTired(spec.cluster) and "eq_training_tired" or "eq_training_today")
+    g_currentMission:addExtraPrintText(title .. ": " .. table.concat(parts, " "))
 
+    -- One line per facility, with what riding in it adds: the help panel cuts long lines off.
     local inside = {}
-    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.kindTitle(kind)) end
-    if #inside > 0 then
-        table.sort(inside)
-        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), table.concat(inside, ", ")))
+    local farmId = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
+    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.insideText(kind, farmId)) end
+    table.sort(inside)
+    for _, text in ipairs(inside) do
+        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), text))
     end
     local feedLine = EqFeedHooks.formatBoost(EqFeedHooks.getBoost(spec.cluster))
     if feedLine ~= nil then g_currentMission:addExtraPrintText(feedLine) end

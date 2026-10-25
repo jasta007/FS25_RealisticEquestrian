@@ -8,13 +8,14 @@
 
     - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
       a bar of the trained level with "54 (High)" as its text.
-    - AnimalHorse.showHorseHudInfo feeds the info box you get when looking at a horse, the same
-      "54 (High)".
+    - When you look at a horse, a Skills box of our own sits below RLRM's Genetics box:
+      "54 - Amateur (High)" for each stat, then whether the potential is still the dealer's view
+      and the horse's competition status.
 
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
     like it: SKILL POTENTIAL on the left (the word only, "High"), SKILLS on the right (the
     trained level, "54 - High"), the four stats in the same order in both, coloured on RLRM's
-    red-to-green genetics scale. The section is a clone of RLRM's Pedigree/Genetics row, made
+    red-to-green genetics scale. SKILLS ends with the horse's favourite event (EqExperience). The section is a clone of RLRM's Pedigree/Genetics row, made
     the first time a frame shows a horse and hidden for other animals. For a horse the stat grid
     then has only RLRM's rows (and our status line), so the grid and the Pedigree/Genetics row
     are shrunk to what they show, which keeps the pane short enough not to scroll.
@@ -213,17 +214,16 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
 end
 
 
---- Append one line per stat to the look-at info box.
---- @param animal table RLRM Animal (a horse)
---- @param box table HUD info box
-function EqInfoDisplay.showHorseHudInfo(animal, box)
-    local record = EqRegistry.getOrCreate(animal)
-    if record == nil then return end
-
+--- Fill the look-at Skills box: one line per stat, the dealer's-view note and the status.
+--- @param record table EqHorseRecord
+--- @param box table HUD key-value box
+local function fillSkillsBox(record, box)
     local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
+    box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
+    if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
     local status = statusText(record)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
@@ -233,6 +233,26 @@ end
 --- @return boolean
 local function isHorse(animal)
     return animal ~= nil and animal.isHorse ~= nil and animal:isHorse()
+end
+
+
+--- Appended to PlayerHUDUpdater:showAnimalInfo after RLRM's, so the Skills box is made after
+--- RLRM's Genetics box and shows below it. Runs every frame while looking at an animal.
+--- @param hudUpdater table PlayerHUDUpdater
+--- @param animal table|nil RLRM Animal under the crosshair
+function EqInfoDisplay.showSkillsBox(hudUpdater, animal)
+    if not isHorse(animal) then return end
+    local record = EqRegistry.getOrCreate(animal)
+    if record == nil then return end
+
+    if hudUpdater.eqSkillsBox == nil then
+        hudUpdater.eqSkillsBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox)
+    end
+    local box = hudUpdater.eqSkillsBox
+    box:clear()
+    box:setTitle(g_i18n:getText("eq_ui_skills"))
+    fillSkillsBox(record, box)
+    box:showNextFrame()
 end
 
 
@@ -379,9 +399,11 @@ local function ensureSection(frame)
     local section = { row = row, potential = potential, skills = skills }
     potential.elements[1]:setText(g_i18n:getText("eq_ui_skillPotential"))
     skills.elements[1]:setText(g_i18n:getText("eq_ui_skills"))
+    -- Skills has one more line than the stats: the horse's favourite event.
     for i, column in ipairs({ potential, skills }) do
+        local lines = #EqConstants.STAT_KEYS + (column == skills and 1 or 0)
         for index = 2, #column.elements do
-            column.elements[index]:setVisible(index - 1 <= #EqConstants.STAT_KEYS)
+            column.elements[index]:setVisible(index - 1 <= lines)
         end
     end
     frame.eqSkills = section
@@ -424,6 +446,21 @@ local function fitGrid(frame, shrink)
 end
 
 
+--- Fit RLRM's Information box to its text (or give it back its height). RLRM sizes it for four
+--- lines; the horse blurb is one, so the rest was empty space pushing the skills off the pane.
+--- @param frame table
+--- @param fit boolean
+--- @param line number one info row's height
+local function fitDescription(frame, fit, line)
+    local section = frame.descriptionSection
+    if section == nil or section.setSize == nil or section.elements == nil then return end
+    if not fit then setHeight(section, nil) return end
+    if section.invalidateLayout ~= nil then section:invalidateLayout() end
+    local height = contentHeight(section)
+    if height > 0 then setHeight(section, math.min(height + line / 2, section.eqHeight or section.size[2])) end
+end
+
+
 --- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Skill potential / Skills section
 --- for a horse, or hide it and put RLRM's layout back for any other animal.
 --- @param frame table RLRM menu frame
@@ -443,8 +480,10 @@ function EqInfoDisplay.renderSkills(frame, animal)
             end
             setHeight(columnsRow, nil)
         end
+        fitDescription(frame, false)
     else
         local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
+        section.potential.elements[1]:setText(g_i18n:getText(unvetted and "eq_ui_skillPotentialDealer" or "eq_ui_skillPotential"))
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
             local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
             fillCell(section.potential.elements[i + 1], statTitle(stat),
@@ -452,8 +491,13 @@ function EqInfoDisplay.renderSkills(frame, animal)
             local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0)
             fillCell(section.skills.elements[i + 1], statTitle(stat), text, color)
         end
+        local specialtyCell = section.skills.elements[#EqConstants.STAT_KEYS + 2]
+        if specialtyCell ~= nil then
+            fillCell(specialtyCell, g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
+        end
 
         local line = section.potential.elements[2].size[2]
+        fitDescription(frame, true, line)
         if columnsRow ~= nil then
             for _, column in ipairs(columnsRow.elements) do
                 if column.invalidateLayout ~= nil then column:invalidateLayout() end
@@ -562,9 +606,15 @@ function EqInfoDisplay.install(guarded)
         guarded("horse info rows", function() EqInfoDisplay.addHorseInfos(animal, infos) end)
     end)
 
-    animalHorse.showHorseHudInfo = Utils.appendedFunction(animalHorse.showHorseHudInfo, function(animal, box)
-        guarded("horse info box", function() EqInfoDisplay.showHorseHudInfo(animal, box) end)
+    PlayerHUDUpdater.showAnimalInfo = Utils.appendedFunction(PlayerHUDUpdater.showAnimalInfo, function(hudUpdater, animal)
+        guarded("horse skills box", function() EqInfoDisplay.showSkillsBox(hudUpdater, animal) end)
+    end)
+    PlayerHUDUpdater.delete = Utils.prependedFunction(PlayerHUDUpdater.delete, function(hudUpdater)
+        if hudUpdater.eqSkillsBox ~= nil then
+            g_currentMission.hud.infoDisplay:destroyBox(hudUpdater.eqSkillsBox)
+            hudUpdater.eqSkillsBox = nil
+        end
     end)
 
-    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and showHorseHudInfo")
+    Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and PlayerHUDUpdater.showAnimalInfo")
 end

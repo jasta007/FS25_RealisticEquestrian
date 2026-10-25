@@ -14,10 +14,15 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_training_tired" text="Training (tired)"/>
         <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_feedGroup_hay" text="Hay"/>
         <text name="eq_feedGroup_grain" text="Hard feed"/>
         <text name="eq_feedGroup_treat" text="Treats"/>
+        <text name="eq_feedGroup_otherGrain" text="Other grain"/>
+        <text name="eq_feedRow_oats" text="Oats"/>
+        <text name="eq_feedRow_barley" text="Barley"/>
+        <text name="eq_feedRow_corn" text="Corn"/>
         <text name="eq_feed_noBoost" text="no boost"/>
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
@@ -110,15 +115,31 @@
         <text name="eq_status_foaled" text="Recovering from foaling"/>
         <text name="eq_potential_unvetted" text="%s?"/>
         <text name="eq_ui_skillPotential" text="Skill potential"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potential (dealer's view)"/>
+        <text name="eq_ui_potentialTitle" text="Potential"/>
+        <text name="eq_ui_potentialDealer" text="Dealer's view, may be wrong"/>
         <text name="eq_ui_skills" text="Skills"/>
+        <text name="eq_specialty_title" text="Favourite event"/>
+        <text name="eq_specialty_none" text="None yet"/>
+        <text name="eq_specialty_pair" text="%s &amp; %s"/>
+        <text name="eq_specialty_eventer" text="3 Day Eventer"/>
+        <text name="eq_specialty_racehorse" text="Racehorse"/>
+        <text name="eq_specialty_allRounder" text="All Rounder"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
-        <text name="eq_reveal_better" text="%s has been with you a few months now, and is better than the dealer said."/>
-        <text name="eq_reveal_worse" text="%s has been with you a few months now, and is not quite what the dealer said."/>
-        <text name="eq_reveal_fair" text="%s has been with you a few months now, and is about what the dealer said."/>
+        <text name="eq_reveal_better" text="You've gotten to know %s better, and they look even better than the dealer let on."/>
+        <text name="eq_reveal_worse" text="You've gotten to know %s better, and you have a feeling you might have been misled."/>
+        <text name="eq_reveal_fair" text="You've gotten to know %s better and have a firmer idea of their potential."/>
         <text name="eq_ui_title" text="Competitions"/>
         <text name="eq_ui_col_event" text="Event"/>
         <text name="eq_ui_col_going" text="Conditions"/>
+        <text name="eq_ui_col_risk" text="Risk"/>
+        <text name="eq_ui_injuryRisk" text="Injury risk"/>
+        <text name="eq_risk_low" text="Low"/>
+        <text name="eq_risk_moderate" text="Moderate"/>
+        <text name="eq_risk_high" text="High"/>
+        <text name="eq_risk_veryHigh" text="Very high"/>
+        <text name="eq_risk_off" text="Off"/>
         <text name="eq_ui_col_level" text="Level"/>
         <text name="eq_ui_col_type" text="Type"/>
         <text name="eq_skill_untrained" text="Untrained"/>
@@ -138,7 +159,7 @@
         <text name="eq_ui_col_horse" text="Horse"/>
         <text name="eq_ui_col_result" text="Result"/>
         <text name="eq_ui_col_status" text="Status"/>
-        <text name="eq_ui_horseDescription" text="Horses eat hay, oats and sorghum and need water. Healthy mares over 22 months can breed."/>
+        <text name="eq_ui_horseDescription" text="Horses eat hay, grain and treats and need water. Healthy mares over 22 months can breed."/>
         <text name="eq_ui_col_success" text="Success"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Training benefit"/>
@@ -160,6 +181,7 @@
         <text name="eq_ui_ageMonths" text="%dm"/>
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
+        <text name="eq_ui_status_eventFull" text="Two of your horses already entered"/>
         <text name="eq_ui_status_tooYoung" text="Too young"/>
         <text name="eq_ui_status_tooOld" text="Too old"/>
         <text name="eq_ui_status_ratingLow" text="Rating too low"/>
@@ -177,6 +199,13 @@
         <text name="eq_ui_transportLabel_far" text="Cost, long-haul"/>
         <text name="eq_ui_awaiting" text="%s (awaiting delivery)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Awaiting delivery"/>
+        <text name="input_EQ_DELIVER" text="Deliver horse to event"/>
+        <text name="eq_deliver_prompt" text="Deliver %s to event"/>
+        <text name="eq_deliver_promptMany" text="Deliver %d horses to their events"/>
+        <text name="eq_deliver_done" text="%s delivered. It leaves for its event."/>
+        <text name="eq_deliver_doneMany" text="%d horses delivered. They leave for their events."/>
+        <text name="eq_deliver_noRoom" text="Can't deliver: your horses need a free place in one of your pastures to come home to."/>
+        <text name="eq_deliver_failed" text="Delivery failed: %s"/>
         <text name="eq_ui_result_notDelivered" text="Not delivered"/>
         <text name="eq_ui_deadline_round" text="before tomorrow's results"/>
         <text name="eq_ui_deadline_month" text="before the end of the month"/>
@@ -195,6 +224,7 @@
         <text name="eq_enter_inFoal" text="That mare is too far in foal to compete. She can compete again after foaling."/>
         <text name="eq_enter_foaled" text="That mare is still recovering from foaling. She can compete three months after the birth."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
+        <text name="eq_enter_eventFull" text="You can enter at most %d horses in one event."/>
         <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
         <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
@@ -208,6 +238,7 @@
         <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>
         <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
+        <text name="eq_result_placedNoPrize" text="%s finished %d of %d in %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
         <text name="eq_and" text="and"/>
         <text name="eq_facility_improves" text="Improves %s training (Realistic Equestrian)"/>

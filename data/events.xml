@@ -14,6 +14,8 @@
         injury          base chance a horse is injured in a run
         chance          multiplies every tier's chance of running in this discipline (default 1;
                         steeplechase is kept rare)
+        related         disciplines a start here also teaches a little (EqExperience.RELATED_SHARE
+                        of a start's event experience)
     tier
         name            key used in saves
         minAge/maxAge   months; maxAge 0 means no limit
@@ -26,7 +28,7 @@
         rivalMin/rivalMax     discipline rating range of the simulated rivals
         monthly         true: runs once a month; false: every round (day or month, by setting)
         chance          chance the tier runs in a given round, per discipline
-        trainingBoost   share of a full day's training the run gives (Training Events)
+        trainingBoost   share of a full day's training the run gives (full for young horse classes, less higher up)
         risk            multiplies elimination and injury chances (easier courses below 1)
         venue           true: the event is held at a named venue from <venues>, which goes in
                         its name ("Pallegney Grand Prix")
@@ -38,21 +40,21 @@
 -->
 <events>
     <disciplines>
-        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01"/>
-        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003"/>
-        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025"/>
-        <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02"/>
-        <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015"/>
-        <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02"/>
-        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03" chance="0.08"/>
+        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01" related="eventing"/>
+        <discipline name="dressage"      stamina="0" speed="0" agility="2" temperament="3" weakestShare="0"   outdoor="false" racing="false" elimination="0.02" injury="0.003" related="eventing"/>
+        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025" related="eventing steeplechase"/>
+        <discipline name="eventing"      stamina="2" speed="2" agility="2" temperament="2" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.08" injury="0.02" related="showJumping dressage crossCountry"/>
+        <discipline name="raceShort"     stamina="2" speed="3" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.01" injury="0.015" related="raceLong"/>
+        <discipline name="raceLong"      stamina="3" speed="2" agility="0" temperament="0" weakestShare="0"   outdoor="true"  racing="true" elimination="0.02" injury="0.02" related="raceShort steeplechase"/>
+        <discipline name="steeplechase"  stamina="2" speed="2" agility="2" temperament="1" weakestShare="0.5" outdoor="true"  racing="true" elimination="0.1" injury="0.03" chance="0.08" related="crossCountry raceLong"/>
     </disciplines>
 
     <tiers>
         <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
-        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
-        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
-        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1" venue="true"/>
-        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2" venue="true"/>
+        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0.5" risk="0.8"/>
+        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0.35" risk="1.0"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0.25" risk="1.1" venue="true"/>
+        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0.2" risk="1.2" venue="true"/>
     </tiers>
 
     <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its
@@ -127,14 +129,15 @@
             factor      multiplies the Auto Transport price
             quarantine  added to Auto Transport: the horse's quarantine abroad
             quarantineYard  what a Manual Transport horse pays instead: the dealer's quarantine yard
+            injury      multiplies the injury chance: a horse off a long trip arrives tired
         home: the player's home region. A map listed under <map> (by its title) wins; otherwise
             RLRM's map country (RLRM's "map country" setting can change it) picks the region;
             otherwise the default.
     -->
     <routes>
-        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"/>
-        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300"/>
-        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500"/>
+        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"   injury="1"/>
+        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300" injury="1.15"/>
+        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500" injury="1.3"/>
         <route from="northAmerica" to="europe"       distance="near"/>
         <route from="northAmerica" to="southAmerica" distance="near"/>
     </routes>

@@ -9,8 +9,9 @@
     - Elimination: refusals and falls in the jumping tests, pulled up in a race. The chance is
       the discipline's base, scaled by the tier, how the horse's rating sits in the field and its
       temperament. An eliminated horse wins nothing.
-    - Injury: the discipline's base chance, scaled by the tier, the going, fitness and stamina,
-      and doubled for a horse eliminated over fences (that is where falls happen). Most injuries
+    - Injury: the discipline's base chance, scaled by the tier, the going, the trip (a horse
+      hauled abroad arrives tired), fitness and stamina, and doubled for a horse eliminated over
+      fences (that is where falls happen). Most injuries
       mean months of box rest and vet bills; a forced retirement is rare, and only with that
       setting on.
 ]]
@@ -65,13 +66,58 @@ end
 --- @param fitness number RLRM fitness 0..100
 --- @param stamina number trained stamina 0..100
 --- @param eliminated boolean
+--- @param travel number|nil the trip's injury factor (events.xml routes); 1 when nil
 --- @return number chance 0..1
-function EqRisk.injuryChance(discipline, tier, going, fitness, stamina, eliminated)
+function EqRisk.injuryChance(discipline, tier, going, fitness, stamina, eliminated, travel)
     local ground = (discipline.outdoor and going ~= nil) and (going.injury or 1) or 1
     local fit = 1.5 - EqStats.clamp((fitness or 0) / 100, 0, 1)
     local hardy = 1.3 - 0.6 * EqStats.clamp((stamina or 0) / 100, 0, 1)
     local fall = (eliminated and not discipline.racing and discipline.elimination >= 0.05) and 2 or 1
-    return EqStats.clamp(discipline.injury * (tier.risk or 1) * ground * fit * hardy * fall, 0, 0.5)
+    return EqStats.clamp(discipline.injury * (tier.risk or 1) * ground * (travel or 1) * fit * hardy * fall, 0, 0.5)
+end
+
+
+--- The chance a horse is hurt in a run, whether or not it is eliminated: what the Events tab
+--- shows as the injury risk.
+--- @param elimination number from eliminationChance
+--- @return number chance 0..1
+function EqRisk.runInjuryChance(discipline, tier, going, fitness, stamina, elimination, travel)
+    local clean = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, false, travel)
+    local fallen = EqRisk.injuryChance(discipline, tier, going, fitness, stamina, true, travel)
+    return (1 - elimination) * clean + elimination * fallen
+end
+
+
+-- A horse that is neither unfit nor hardened, for an event's own risk before a horse is picked.
+EqRisk.TYPICAL_FITNESS = 75
+EqRisk.TYPICAL_STAMINA = 50
+EqRisk.TYPICAL_TEMPERAMENT = 50
+
+--- Injury risk words, by the chance of an injury in one run.
+EqRisk.RISK_BANDS = {
+    { from = 0.03, name = "veryHigh" },
+    { from = 0.02, name = "high" },
+    { from = 0.0075, name = "moderate" },
+    { from = -math.huge, name = "low" },
+}
+
+
+--- @param chance number
+--- @return string name a RISK_BANDS name
+function EqRisk.riskBand(chance)
+    for _, band in ipairs(EqRisk.RISK_BANDS) do
+        if chance >= band.from then return band.name end
+    end
+end
+
+
+--- An event's injury risk for a typical horse rated mid-field.
+--- @param travel number|nil
+--- @return number chance 0..1
+function EqRisk.eventInjuryChance(discipline, tier, going, travel)
+    local rating = (tier.rivalMin + tier.rivalMax) / 2
+    local elimination = EqRisk.eliminationChance(discipline, tier, rating, EqRisk.TYPICAL_TEMPERAMENT)
+    return EqRisk.runInjuryChance(discipline, tier, going, EqRisk.TYPICAL_FITNESS, EqRisk.TYPICAL_STAMINA, elimination, travel)
 end
 
 
@@ -105,7 +151,7 @@ end
 --- Roll elimination and injury for every entrant before the event is scored.
 --- @param event table
 --- @param config table EqEventConfig
---- @param entrants table list of { key, rating, temperament, fitness, stamina }
+--- @param entrants table list of { key, rating, temperament, fitness, stamina, travel }
 --- @param rng table EqRandom
 --- @param settings table { injuries, forcedRetirement }
 --- @return table outcomes key -> { eliminated, injury }
@@ -124,7 +170,7 @@ function EqRisk.rollEvent(event, config, entrants, rng, settings)
         local eliminated = eliminationRoll < EqRisk.eliminationChance(discipline, tier, entrant.rating, entrant.temperament)
         local injury = nil
         if settings.injuries and #config.injuries > 0
-            and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated) then
+            and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated, entrant.travel) then
             injury = EqRisk.rollInjury(config.injuries, rng, settings.forcedRetirement)
         end
         outcomes[entrant.key] = { eliminated = eliminated, injury = injury }

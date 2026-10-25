@@ -41,6 +41,7 @@ function EqFeed.read(xmlFile)
         local group = {
             name = xmlFile:getString(key .. "#name"),
             title = xmlFile:getString(key .. "#title"),
+            otherTitle = xmlFile:getString(key .. "#otherTitle"),
             productionWeight = xmlFile:getFloat(key .. "#productionWeight", 0.1),
             eatWeight = xmlFile:getFloat(key .. "#eatWeight", 0.1),
         }
@@ -61,7 +62,8 @@ function EqFeed.read(xmlFile)
             group = "hay"
         end
         for _, name in ipairs(splitNames(xmlFile:getString(key .. "#fillTypes"))) do
-            local feed = { fillType = name, group = group, boost = boost, stack = xmlFile:getString(key .. "#stack") }
+            local feed = { fillType = name, group = group, boost = boost, stack = xmlFile:getString(key .. "#stack"),
+                row = xmlFile:getString(key .. "#row") }
             table.insert(config.feeds, feed)
             config.feedByFillType[name] = feed
         end
@@ -178,6 +180,45 @@ function EqFeed.boostedStats(names, config)
         if boosted[stat] then table.insert(stats, stat) end
     end
     return stats
+end
+
+
+--- A food group's rows in a pen's food list. Feeds with a row name get a row each (feeds sharing
+--- a name share it), in feeds.xml order; the rest of the group stays one row, which is left out
+--- when the group has rows of its own and nothing else in it is in the trough.
+--- @param names table the group's fill type names
+--- @param levels table fill type name -> litres in the trough
+--- @param config table from EqFeed.read
+--- @return table rows list of { row = row name or nil for the rest, names, value }
+function EqFeed.splitRows(names, levels, config)
+    local inGroup = {}
+    for _, name in ipairs(names) do inGroup[name] = true end
+
+    local rows, rowByName = {}, {}
+    local rest = { names = {}, value = 0 }
+    local placed = {}
+    for _, feed in ipairs(config.feeds) do
+        if inGroup[feed.fillType] and feed.row ~= nil then
+            local row = rowByName[feed.row]
+            if row == nil then
+                row = { row = feed.row, names = {}, value = 0 }
+                rowByName[feed.row] = row
+                table.insert(rows, row)
+            end
+            table.insert(row.names, feed.fillType)
+            row.value = row.value + (levels[feed.fillType] or 0)
+            placed[feed.fillType] = true
+        end
+    end
+    for _, name in ipairs(names) do
+        if not placed[name] then
+            table.insert(rest.names, name)
+            rest.value = rest.value + (levels[name] or 0)
+        end
+    end
+
+    if #rest.names > 0 and (#rows == 0 or rest.value > 0) then table.insert(rows, rest) end
+    return rows
 end
 
 

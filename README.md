@@ -45,7 +45,7 @@ Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Conten
 (90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
 not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
-The box you get when looking at a horse shows `Speed  60 - Promising (Very high)`: the skill in our words, then the potential (that box has no colours). The game's own Animals screen has room for only five rows and RLRM's horse rows take three, so our stats are not shown there. The console's `eqHorses` still
+Looking at a horse shows a Skills box of its own under RLRM's Genetics box, with `Speed  60 - Promising (Very high)` for each stat: the skill in our words, then the potential (that box has no colours). The game's own Animals screen has room for only five rows and RLRM's horse rows take three, so our stats are not shown there. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
 RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
@@ -72,8 +72,11 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 Every horse trains once a day, at RLRM's daily horse tick.
 
 - **Your riding** trains by gait: walking builds temperament, trotting a mix, cantering stamina
-  and agility, galloping speed and stamina. Jumps at canter or gallop add agility and some temperament. A day's full
-  riding (the base game's riding bar reaching 100%) is a full day of effort. While riding, a
+  and agility, galloping speed and stamina, and backing up builds agility and temperament fast. Jumps at canter or gallop add agility and some temperament. Every gait trains
+  at the same rate, only different stats. The base game's riding bar is the horse's energy for
+  the day: once it reaches 100% the horse is tired, the line reads "Training (tired)", and it
+  trains no more until tomorrow. Galloping tires a horse three times as fast as walking, and
+  galloping until it tires is a full day of speed work, so choose what to work on first. While riding, a
   "Training today" line shows the effort so far.
 - **Staff** (the base game's animal worker, or RLRM's herdsman horse-care rule) count for whatever
   share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
@@ -110,9 +113,10 @@ and weights:
 Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
 skipped. Every feed in the trough gives its full boost and the boosts add up, so oats, barley and
 corn together give all three; carrots and apples are the exception and count once between them. A horse pen's food list
-names the groups Hay, Hard feed and Treats and shows what each does in place of the base game's
-percentage: the boost while it holds feed ("Treats (Tem +30%)"), the stats it can boost while it is
-empty ("Hard feed (Sta Spd Agi Tem)"). While riding, a "Feed" line shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
+has a row each for Oats, Barley and Corn, plus Hay, Treats and (while it holds any) Other grain.
+In place of the base game's percentage each row names the stats its feed boosts, e.g. "Corn
+(Speed)", "Hay (no boost)". The grain rows are display only: oats, barley and corn still feed as
+one hard-feed group, so a horse on oats alone is as well fed as one on all three. While riding, a "Feed" line shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
 
 ## Horse facilities
 
@@ -126,7 +130,7 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
-| Round pen (Elmcreek 25's round roofed arena, the base game barn02) | Temperament; a little Agility | Dressage |
+| Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
 | Horse stable mods (Horse Stable, Equestrian Pack L barn) | Temperament, a little | Dressage, a little |
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
@@ -148,6 +152,8 @@ prizes, and sometimes none in a discipline.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
 - **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
   you still see where the horse placed. Every other event is open from three years.
+- Every other event teaches a little too, less the higher the level (half a young horse class at
+  Novice, down to a fifth at Championship), and less again for horses past their peak (12 years).
 - Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
   by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
   flat racing as Maiden, Handicap, Listed and Group 1, and so on. Advanced and Championship events are held at a venue named after a map: the
@@ -165,11 +171,17 @@ prizes, and sometimes none in a discipline.
   sending the whole barn: `eqSettings entriesPerMonth <n>` (0 = no limit).
 - Every entry picks how the horse gets there. **Auto Transport** pays transport on top of the fee
   (a quarter of the game's transport price for the horse, $150 for an adult) and the horse leaves
-  at once. **Manual Transport** pays no transport, but you take the horse to the animal dealer
+  at once. A farm can enter at most two horses in one event; the second on the same Auto
+  Transport trip shares the truck and pays a quarter of that haul (quarantine abroad is still
+  per horse). **Manual Transport** pays no transport, but you take the horse to the animal dealer
   yourself before the event runs (before the next round's results, or by month end for monthly
   events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
-  totals, and has an Enter button for each. Delivering at the dealer is still being built; for
-  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`, `<routes>`).
+  totals, and has an Enter button for each. A horse waiting to be delivered shows "Awaiting
+  delivery" on its card in RLRM's animal lists, so you can see which one to load. To deliver,
+  drive the trailer into the dealer's loading area and press **Left Alt + R** ("Deliver to
+  event", beside the dealer's own prompt; rebindable in Controls). The horse goes home, hidden
+  until its event is over, so it needs a free place in one of your pastures. Costs are in
+  `data/events.xml` (`<transport>`, `<routes>`).
 - Venues abroad cost more to reach. Your home region comes from the map: a map named in
   `<home>` in `data/events.xml` (Catuaí is South America), else RLRM's map country (RLRM's
   "map country" setting can change it). `eqSettings` shows it. North America to Europe or South America is
@@ -190,6 +202,16 @@ prizes, and sometimes none in a discipline.
   have conditions: firm favours speed, soft and heavy favour stamina, hot weather tests stamina
   and temperament and raises the injury risk. On the day, RLRM's fitness and health
   scale the performance, plus a little luck.
+- **Event experience:** every start (a finish or an elimination) teaches the horse that
+  discipline, quickly at first and slower as it fills up: about 10 starts to half way, 30 to
+  nearly full. Full experience adds 8 points to the horse's rating there, on top of its stats.
+  Related disciplines pick up a little: eventing teaches some show jumping, dressage and cross
+  country, and the reverse; the races and steeplechase teach each other. Experience holds for
+  three months without a start in that discipline, then fades by 5% a month. The horse's
+  **Favourite event** shows its best discipline, two close ones ("Show Jumping & Dressage"),
+  **3 Day Eventer** when show jumping, dressage and cross country are close, **Racehorse** for
+  close races, or **All Rounder** for three or more others. It shows in the Events tab's horse
+  panel, RLRM's Skills section and the look-at box.
 - The top three share the prize pool 50/30/20. Horses from different farms can enter the same
   event.
 - Racing can be switched off: `eqSettings racing off`.
@@ -198,12 +220,13 @@ prizes, and sometimes none in a discipline.
 lists the open events (fee, prize pool, level, conditions, when results come, and how many of your horses can
 enter). Select one, and the right table shows your horses with their **Success** (Favourite,
 Contender, Outsider or Long shot: their chance of a top-three place, counting the rivals, their
-fitness and the risk of elimination), **Training** (for young horse classes, how much the outing
-would teach them: High down to None) and whether they can enter. Under it, a panel shows the
+fitness and the risk of elimination), **Training** (how much the outing would teach them: High
+down to None) and whether they can enter. Success and Training stay blank for a horse that can't enter, and retired horses are left off. Under it, a panel shows the
 selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
-Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
+Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with experience),
+favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ## Buying horses
@@ -216,10 +239,13 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
 - **Green:** dealer horses start a few points lower than a home-produced horse of the same age,
   so a good one needs a year or more of work before it wins much above Novice.
-- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
-  They are the dealer's view: usually right, sometimes generous, now and then modest. After three
-  months on your farm you find out, with a message saying whether the horse is better, worse or
-  about what the dealer said, and its price moves to match.
+- **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?),
+  under a "Potential (dealer's view)" heading. They are the dealer's view: usually right, about
+  a quarter of the time generous by 6-14 points, and now and then modest by 5-12, so a word is
+  sometimes a band too high or too low. After three
+  months on your farm you find out. Usually you just "have a firmer idea of their potential";
+  after a big overstatement you "might have been misled"; now and then the horse is better than
+  the dealer let on. Its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
   most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is
@@ -241,11 +267,15 @@ dealer's view of it.
 - **Eliminations:** refusals and falls over fences, pulled up in races. Cross country and
   steeplechase are the riskiest, dressage the safest. A horse out of its depth for the tier, or
   with low temperament, goes out more often. Eliminated horses win nothing.
-- **Injuries:** rare, more likely on firm going, for unfit horses, with low stamina and after a
-  fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
+- **Injuries:** rare, more likely on firm going, after a long trip abroad, for unfit horses,
+  with low stamina and after a fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
   injury (3 months, $3,500 a month), and a few serious (6 months, $10,000 a month). Bills are
   charged at the start of each month. A resting horse can't compete and doesn't train, so its
   stats fade a little.
+- **Injury risk** shows on the Events tab as Low, Moderate, High or Very high: the Risk column
+  is for a typical horse (discipline, level, conditions and how far the venue is), and the
+  selected horse's panel shows that horse's own risk (its fitness, stamina and how likely it is
+  to fall). It reads Off with injuries turned off.
 - **Retirement is your choice:** `eqRetire <horse>` retires a horse, and `eqRetire <horse> undo`
   brings it back. Retiring an injured horse stops the treatment and the bills.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, about 1 in 10

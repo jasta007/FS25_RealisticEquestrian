@@ -39,7 +39,9 @@ function EqEventConfig.read(xmlFile)
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
             injury = xmlFile:getFloat(key .. "#injury", 0),
             chance = xmlFile:getFloat(key .. "#chance", 1),
+            related = {},
         }
+        for name in (xmlFile:getString(key .. "#related", "")):gmatch("%S+") do table.insert(discipline.related, name) end
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
         i = i + 1
@@ -120,6 +122,7 @@ function EqEventConfig.read(xmlFile)
             factor = xmlFile:getFloat(key .. "#factor", 1),
             quarantine = xmlFile:getFloat(key .. "#quarantine", 0),
             quarantineYard = xmlFile:getFloat(key .. "#quarantineYard", 0),
+            injury = xmlFile:getFloat(key .. "#injury", 1),
         }
         config.distances[distance.name] = distance
         i = i + 1

@@ -31,11 +31,14 @@ source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
+source(modDirectory .. "scripts/competition/EqExperience.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
+source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
+source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
@@ -43,7 +46,38 @@ source(modDirectory .. "scripts/console/EqProbe.lua")
 
 local Log = EqLog
 
+-- Our money types' Finances rows. Like RLRM, they must be in FinanceStats.statNames before any
+-- farm is created. The money popup and the Finances page look their titles up without a mod
+-- name, so they only find texts in the global table: copy ours there. One key each for the
+-- MoneyType title and the "finance_" key the Finances page asks for.
 EqMain = {}
+EqMain.MONEY_STATS = {
+    { name = "eqEntryFees", title = "eq_money_entryFees" },
+    { name = "eqPrizeMoney", title = "eq_money_prizeMoney" },
+    { name = "eqVetBills", title = "eq_money_vetBills" },
+    { name = "eqTransport", title = "eq_money_transport" },
+}
+for _, stat in ipairs(EqMain.MONEY_STATS) do
+    if FinanceStats.statNameToIndex[stat.name] == nil then
+        table.insert(FinanceStats.statNames, stat.name)
+        FinanceStats.statNameToIndex[stat.name] = #FinanceStats.statNames
+    end
+end
+
+--- Copy the money titles into the global texts. Run at source time and again when the money
+--- types are registered, in case our texts were not loaded yet the first time; a text we
+--- don't have is never copied, so a "Missing" placeholder can't stick.
+function EqMain.copyMoneyTexts()
+    for _, stat in ipairs(EqMain.MONEY_STATS) do
+        if g_i18n:hasText(stat.title) then
+            local text = g_i18n:getText(stat.title)
+            _G.g_i18n.texts[stat.title] = text
+            _G.g_i18n.texts["finance_" .. stat.name] = text
+        end
+    end
+end
+EqMain.copyMoneyTexts()
+
 EqMain.activated = false
 EqMain.isActive = false
 
@@ -95,6 +129,14 @@ function EqMain.activate()
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.dealerDelivery then
+        guarded("dealer delivery hook", function() EqDelivery.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.listBadge then
+        guarded("list badge hook", function() EqListBadge.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.metabolismFitness then
         guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
     end
@@ -110,6 +152,7 @@ function EqMain.activate()
     if EqMain.isActive then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
         guarded("competition setup", function()
+            EqMain.copyMoneyTexts()
             MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_PRIZE_MONEY = MoneyType.register("eqPrizeMoney", "eq_money_prizeMoney")
@@ -157,6 +200,7 @@ local function onMissionLoaded(mission)
     guarded("facility scan", EqFacilityHooks.scanMap)
     guarded("facility shop text", EqFacilityHooks.addStoreText)
     guarded("feed console registration", EqFeedHooks.register)
+    guarded("dealer delivery start", function() EqDelivery.start(mission) end)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -196,6 +240,7 @@ local function onMissionDelete()
 
     guarded("mission cleanup", function()
         EqConsole.unregister()
+        EqDelivery.stop(g_currentMission)
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

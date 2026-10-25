@@ -6,10 +6,9 @@
       the HORSE food groups are rewritten from data/feeds.xml. That is before any placeable
       loads, so every horse pen's trough is built with the new list (and stops taking sorghum).
       It runs on server and clients alike, so both agree on what a trough accepts.
-    - PlaceableHusbandryFood.getFoodInfos gives a horse pen's food rows our group names, and in
-      place of the base game's production share ("Root crops (5%)") the stats that group's feed
-      boosts: "Treats (Tem +30%)" while it holds apples or carrots, "Hard feed (Sta Spd Agi Tem)"
-      while it is empty, "Hay (no boost)".
+    - PlaceableHusbandryFood.getFoodInfos gives a horse pen's food rows our names, a row each for
+      oats, barley and corn, and in place of the base game's production share ("Root crops (5%)")
+      the stats each row's feed boosts, in full words: "Corn (Speed)", "Hay (no boost)".
     - getBoost reads the trough of the pen a horse lives in. EqTrainingHooks passes it to the
       day's training and shows it while riding. A horse in a trailer, away at an event or in a
       pen without a trough gets no boost.
@@ -136,55 +135,85 @@ end
 
 
 --- @param stats table stat keys
---- @return string "Sta Spd"
-local function shortStats(stats)
+--- @return string "Stamina, Temperament"
+local function fullStats(stats)
     local parts = {}
-    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_short_" .. stat)) end
-    return table.concat(parts, " ")
+    for _, stat in ipairs(stats) do table.insert(parts, g_i18n:getText("eq_stat_" .. stat)) end
+    return table.concat(parts, ", ")
 end
 
 
---- A horse pen's food row title: the group's name and what its feed does.
---- @param foodGroup table a horse food group rewritten by applyToFoodSystem
---- @param fillLevels table fill type index -> litres, the pen's spec_husbandryFood.fillLevels
+--- A pen food row's title: its name and, in full words, the stats its feed boosts now, or,
+--- while the row is empty, the stats it could.
+--- @param name string
+--- @param names table the row's fill type names
+--- @param levels table fill type name -> litres
 --- @return string
-function EqFeedHooks.foodGroupTitle(foodGroup, fillLevels)
+local function rowTitle(name, names, levels)
+    local config = EqFeedHooks.config
+    local rowLevels = {}
+    for _, fillType in ipairs(names) do rowLevels[fillType] = levels[fillType] or 0 end
+
+    local boost = EqFeed.dietBoost(rowLevels, config)
+    local stats = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if boost[stat] > 0 then table.insert(stats, stat) end
+    end
+    if #stats == 0 then stats = EqFeed.boostedStats(names, config) end
+    local detail = #stats > 0 and fullStats(stats) or g_i18n:getText("eq_feed_noBoost")
+    return string.format("%s (%s)", name, detail)
+end
+
+
+--- A horse pen's food rows, built from the base game's one row per food group (in group
+--- order): our group names, the stats each boosts in place of the production share, and
+--- separate rows for feeds with a row of their own (oats, barley, corn). Display only; the
+--- groups still feed as before. A group's leftover row ("Other grain") goes to the end, so the
+--- rows that are always there come first in RLRM's five-row pane.
+--- @return table|nil rows a new list, nil to keep the base game's
+function EqFeedHooks.buildFoodRows(placeable, infos)
+    local spec = placeable.spec_husbandryFood
+    if type(infos) ~= "table" or spec == nil or spec.fillLevels == nil or spec.animalTypeIndex ~= AnimalType.HORSE then return nil end
+    local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(AnimalType.HORSE)
+    if animalFood == nil or animalFood.groups == nil or #animalFood.groups ~= #infos then return nil end
+
     local config = EqFeedHooks.config
     local levels = {}
-    for _, name in ipairs(foodGroup.eqNames) do
-        local index = g_fillTypeManager:getFillTypeIndexByName(name)
-        levels[name] = index ~= nil and fillLevels[index] or 0
+    for index, level in pairs(spec.fillLevels) do
+        local name = g_fillTypeManager:getFillTypeNameByIndex(index)
+        if name ~= nil and type(level) == "number" then levels[name] = level end
     end
 
-    local boost = EqFeed.dietBoost(levels, config)
-    local parts = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        local percent = math.floor(boost[stat] * 100 + 0.5)
-        if percent > 0 then table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_short_" .. stat), percent)) end
-    end
-    local detail = table.concat(parts, " ")
-    if detail == "" then
-        local stats = EqFeed.boostedStats(foodGroup.eqNames, config)
-        detail = #stats > 0 and shortStats(stats) or g_i18n:getText("eq_feed_noBoost")
-    end
-    local kind = config.groupByName[foodGroup.eqKind]
-    local title = kind ~= nil and groupTitle(kind.title) or tostring(foodGroup.title)
-    return string.format("%s (%s)", title, detail)
-end
-
-
---- Overwrites PlaceableHusbandryFood:getFoodInfos: horse pens get foodGroupTitle on each row.
---- The base game makes one row per food group, in group order.
-function EqFeedHooks.relabelFoodInfos(placeable, infos)
-    local spec = placeable.spec_husbandryFood
-    if type(infos) ~= "table" or spec == nil or spec.fillLevels == nil or spec.animalTypeIndex ~= AnimalType.HORSE then return end
-    local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(AnimalType.HORSE)
-    if animalFood == nil or animalFood.groups == nil or #animalFood.groups ~= #infos then return end
-
+    local rows, tail = {}, {}
     for i, info in ipairs(infos) do
         local foodGroup = animalFood.groups[i]
-        if foodGroup.eqNames ~= nil then info.title = EqFeedHooks.foodGroupTitle(foodGroup, spec.fillLevels) end
+        if foodGroup.eqNames == nil then
+            table.insert(rows, info)
+        else
+            local kind = config.groupByName[foodGroup.eqKind]
+            local groupName = kind ~= nil and groupTitle(kind.title) or tostring(foodGroup.title)
+            local split = EqFeed.splitRows(foodGroup.eqNames, levels, config)
+            for _, part in ipairs(split) do
+                local row = {}
+                for key, value in pairs(info) do row[key] = value end
+                local name = groupName
+                if part.row ~= nil then
+                    name = groupTitle(part.row)
+                elseif #split > 1 and kind ~= nil and kind.otherTitle ~= nil then
+                    name = groupTitle(kind.otherTitle)
+                end
+                row.title = rowTitle(name, part.names, levels)
+                if #split > 1 then
+                    row.value = part.value
+                    local capacity = info.capacity or 0
+                    row.ratio = capacity > 0 and part.value / capacity or 0
+                end
+                table.insert((part.row == nil and #split > 1) and tail or rows, row)
+            end
+        end
     end
+    for _, row in ipairs(tail) do table.insert(rows, row) end
+    return rows
 end
 
 
@@ -253,9 +282,10 @@ function EqFeedHooks.install(guarded, modDirectory)
     -- validated, so this is patched now, at source time.
     PlaceableHusbandryFood.getFoodInfos = Utils.overwrittenFunction(PlaceableHusbandryFood.getFoodInfos, function(self, superFunc, ...)
         local infos = superFunc(self, ...)
+        local rows = nil
         if EqFeedHooks.applied then
-            guarded("horse food rows", function() EqFeedHooks.relabelFoodInfos(self, infos) end)
+            guarded("horse food rows", function() rows = EqFeedHooks.buildFoodRows(self, infos) end)
         end
-        return infos
+        return rows or infos
     end)
 end

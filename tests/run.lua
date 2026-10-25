@@ -17,6 +17,7 @@ dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
+dofile("scripts/competition/EqExperience.lua")
 dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
 dofile("scripts/facilities/EqFacility.lua")
@@ -209,9 +210,11 @@ end
 
 local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 
-local canterDay = EqTraining.playerEffort(ridden("canter", 150000))
+local canterDay = EqTraining.playerEffort(ridden("canter", 100000))
 check("a full canter day trains stamina and agility", math.abs(canterDay.stamina - 0.8) < 1e-9 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
+check("walking trains its stats as fast as galloping trains its own",
+    math.abs(EqTraining.playerEffort(ridden("walk", 60000)).temperament - EqTraining.playerEffort(ridden("gallop", 60000)).speed) < 1e-9)
 local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
 check("jumps add agility", jumpDay.agility > 0.39)
 check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
@@ -367,6 +370,11 @@ do
     local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
     check("a green two-year-old gets a medium training benefit", greenBand == "medium")
     check("a horse at staff level gets none", schooledBand == "none")
+    local full = EqTraining.boostBenefit(green, ceilings, weights, 60, 1)
+    local novice = EqTraining.boostBenefit(green, ceilings, weights, 60, config.tierByName.novice.trainingBoost)
+    local older = EqTraining.boostBenefit(green, ceilings, weights, 160, config.tierByName.novice.trainingBoost)
+    check("a Novice event teaches less than a young horse class, but something", novice > 0 and novice < full)
+    check("a Novice event teaches an older horse less", older < novice)
 end
 
 local jumping = config.disciplineByName.showJumping
@@ -423,6 +431,76 @@ local sameDraw = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqC
 local sameAgain = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
 check("a round draws the same events from the same seed", #sameDraw == #sameAgain and sameDraw[1].fee == sameAgain[1].fee)
 
+-- Event experience: grows with starts, adds to the rating, fades when not kept up.
+local function experienceOf(values)
+    local record = { experience = {} }
+    for name, value in pairs(values) do record.experience[name] = { value = value, idle = 0 } end
+    return record
+end
+local dressageHorse = { experience = nil }
+for _ = 1, 10 do EqExperience.addStart(dressageHorse, config.disciplineByName.dressage) end
+local xp10 = EqExperience.get(dressageHorse, "dressage")
+check("ten starts take experience about half way", xp10 > 40 and xp10 < 60, string.format("%.1f", xp10))
+for _ = 1, 200 do EqExperience.addStart(dressageHorse, config.disciplineByName.dressage) end
+check("experience never passes the maximum", EqExperience.get(dressageHorse, "dressage") <= EqExperience.MAX)
+check("dressage teaches a little eventing", EqExperience.get(dressageHorse, "eventing") > 0
+    and EqExperience.get(dressageHorse, "eventing") < EqExperience.get(dressageHorse, "dressage"))
+check("full experience adds the whole bonus", math.abs(EqExperience.ratingBonus(experienceOf({ dressage = 100 }), "dressage")
+    - EqExperience.RATING_BONUS) < 1e-9)
+check("no experience adds nothing", EqExperience.ratingBonus({}, "dressage") == 0)
+
+local fading = experienceOf({ dressage = 80 })
+for _ = 1, EqExperience.FADE_GRACE_MONTHS do EqExperience.monthlyFade(fading) end
+check("experience holds through the grace months", EqExperience.get(fading, "dressage") == 80)
+for _ = 1, 9 do EqExperience.monthlyFade(fading) end
+local afterYear = EqExperience.get(fading, "dressage")
+check("a year without dressage fades it slowly", afterYear > 40 and afterYear < 60, string.format("%.1f", afterYear))
+EqExperience.addStart(fading, config.disciplineByName.dressage)
+EqExperience.monthlyFade(fading)
+check("a start restarts the grace months", EqExperience.get(fading, "dressage") > afterYear)
+
+local function specialtyOf(values)
+    return (EqExperience.specialty(experienceOf(values), config.disciplines))
+end
+check("no experience, no specialty", specialtyOf({}) == "none")
+check("a little experience is not a specialty", specialtyOf({ dressage = 5 }) == "none")
+check("one clear best is the specialty", specialtyOf({ dressage = 60, showJumping = 30 }) == "one")
+local _, names = EqExperience.specialty(experienceOf({ dressage = 30, showJumping = 60 }), config.disciplines)
+check("the specialty names the best", names[1] == "showJumping")
+check("two close make a pair", specialtyOf({ dressage = 60, showJumping = 55 }) == "pair")
+check("jumping, dressage and cross country close make an eventer",
+    specialtyOf({ dressage = 60, showJumping = 55, crossCountry = 58, eventing = 50 }) == "eventer")
+check("close races make a racehorse", specialtyOf({ raceShort = 60, raceLong = 55, steeplechase = 50 }) == "racehorse")
+check("three unrelated close make an all-rounder", specialtyOf({ dressage = 60, raceShort = 55, crossCountry = 58 }) == "allRounder")
+
+-- Experience is saved with the horse.
+local function memoryXML()
+    local values = {}
+    local store = {}
+    function store:setString(path, v) values[path] = v end
+    store.setFloat, store.setInt, store.setBool = store.setString, store.setString, store.setString
+    function store:getString(path, default) local v = values[path]; if v == nil then return default end return v end
+    function store:getFloat(path, default) local v = values[path]; if v == nil then return default end return tonumber(v) end
+    store.getInt = store.getFloat
+    function store:getBool(path, default) local v = values[path]; if v == nil then return default end return v == true end
+    function store:hasProperty(path)
+        for key in pairs(values) do
+            if key == path or key:sub(1, #path + 1) == path .. "#" or key:sub(1, #path + 1) == path .. "." then return true end
+        end
+        return false
+    end
+    return store
+end
+local saved = EqHorseRecord.new("DE 1 7")
+EqExperience.addStart(saved, config.disciplineByName.eventing)
+local xml = memoryXML()
+saved:saveToXMLFile(xml, "horse")
+local loaded = EqHorseRecord.loadFromXMLFile(xml, "horse")
+check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing") - EqExperience.get(saved, "eventing")) < 1e-9
+    and math.abs(EqExperience.get(loaded, "dressage") - EqExperience.get(saved, "dressage")) < 1e-9)
+check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
+    local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
+
 -- Running a field: a strong horse in its band places well most of the time.
 local event = { discipline = "showJumping", tier = "novice", prize = 2000 }
 local wins, podiums, paid, fullField = 0, 0, 0, true
@@ -475,6 +553,21 @@ check("an unfit horse is injured more", EqRisk.injuryChance(xc, intermediate, go
     > 1.5 * EqRisk.injuryChance(xc, intermediate, good, 100, 50, false))
 check("falls over fences injure more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, true)
     == 2 * EqRisk.injuryChance(xc, intermediate, good, 80, 50, false))
+check("a far trip injures more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances.far.injury)
+    > EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances["local"].injury))
+
+-- Risk words on the Events tab.
+local heavy = config.goings[4]
+local function eventBand(discipline, tier, going, distance)
+    return EqRisk.riskBand(EqRisk.eventInjuryChance(config.disciplineByName[discipline], config.tierByName[tier],
+        going, config.distances[distance].injury))
+end
+check("dressage is low risk", eventBand("dressage", "championship", nil, "far") == "low")
+check("training show jumping is low risk", eventBand("showJumping", "training", nil, "local") == "low")
+check("a heavy steeplechase abroad is very high risk", eventBand("steeplechase", "advanced", heavy, "far") == "veryHigh")
+check("a good-going steeplechase at home is high, not very high", eventBand("steeplechase", "advanced", good, "local") == "high")
+check("an unfit horse carries more risk than the event's typical horse",
+    EqRisk.runInjuryChance(xc, intermediate, good, 20, 10, 0.1, 1) > EqRisk.eventInjuryChance(xc, intermediate, good, 1))
 
 local counts, endings, endingsOff = {}, 0, 0
 for i = 1, 20000 do
@@ -566,10 +659,10 @@ end
 check("the dealer is usually right", exact > 1000 and exact < 1300, exact .. " of 2000")
 check("generous more often than modest", generous > modest and modest > 200, generous .. " vs " .. modest)
 check("verdict better", EqDealer.verdict({ stamina = 70, speed = 70, agility = 70, temperament = 70 },
-    { stamina = 75, speed = 70, agility = 70, temperament = 70 }) == "better")
-check("verdict worse", EqDealer.verdict({ stamina = 75, speed = 70, agility = 70, temperament = 70 },
+    { stamina = 82, speed = 70, agility = 70, temperament = 70 }) == "better")
+check("verdict worse", EqDealer.verdict({ stamina = 84, speed = 70, agility = 70, temperament = 70 },
     { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "worse")
-check("verdict fair", EqDealer.verdict({ stamina = 71, speed = 70, agility = 70, temperament = 70 },
+check("verdict fair", EqDealer.verdict({ stamina = 78, speed = 70, agility = 70, temperament = 70 },
     { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "fair")
 
 -- Price: talent doubles every VALUE_DOUBLING points, schooling adds to it, age takes it away.
@@ -700,6 +793,14 @@ check("base game stables are not facilities",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
 check("the base game round barn is a round pen",
     EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
+check("the game's round barn matches however the path is resolved",
+    EqFacility.kindForXml(facilities, "$data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
+check("a map's or mod's own barn02 is not a round pen",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/maps/map/placeables/barn02/barn02.xml", false) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeMap/data/placeables/mapUS/barn02/barn02.xml", false) == nil)
+check("other barns are not round pens",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn01/barn01.xml", false) == nil
+    and EqFacility.kindForXml(facilities, "data/placeables/mapUS/oldbarn02/barn02.xml", false) == nil)
 check("a round pen is a temperament and dressage place",
     EqFacility.improvedStats(facilities.kindByName.roundPen)[1] == "temperament"
     and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
@@ -742,8 +843,8 @@ EqTraining.applyDay(faster, cap70, { riding = 100, dirt = 50, ageMonths = 60, ti
 check("an owned facility speeds staff training", faster.trained.agility > plain.trained.agility
     and faster.trained.speed == plain.trained.speed)
 local riddenPlain, riddenInside = horse("balanced", 10), horse("balanced", 10)
-EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
-EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
+EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
     facilityOwned = hallOwned, facilityRidden = hallRidden })
 check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
 
@@ -825,6 +926,21 @@ check("hard feed can boost every stat", #EqFeed.boostedStats(geistal[1].names, f
 check("hay boosts nothing", #EqFeed.boostedStats(geistal[2].names, feeds) == 0)
 local treatStats = EqFeed.boostedStats(geistal[3].names, feeds)
 check("treats boost temperament", #treatStats == 1 and treatStats[1] == "temperament")
+
+-- Pen food rows: oats, barley and corn get a row each; the rest of the grain only while it is fed.
+local function rowNames(rows)
+    local out = {}
+    for _, row in ipairs(rows) do table.insert(out, (row.row or "rest") .. "=" .. row.value) end
+    return table.concat(out, " ")
+end
+local grainRows = EqFeed.splitRows(geistal[1].names, { OAT = 100, MAIZE = 50, WINTERBARLEY = 5 }, feeds)
+check("oats, barley and corn get a row each", rowNames(grainRows) == "eq_feedRow_oats=100 eq_feedRow_barley=5 eq_feedRow_corn=50",
+    rowNames(grainRows))
+local withWheat = EqFeed.splitRows(geistal[1].names, { WHEAT = 20 }, feeds)
+check("other grain shows while it is fed", rowNames(withWheat) == "eq_feedRow_oats=0 eq_feedRow_barley=0 eq_feedRow_corn=0 rest=20",
+    rowNames(withWheat))
+local hayRows = EqFeed.splitRows(geistal[2].names, {}, feeds)
+check("a group without rows stays one row", #hayRows == 1 and hayRows[1].row == nil)
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
