@@ -568,10 +568,10 @@ end
 check("the dealer is usually right", exact > 1000 and exact < 1300, exact .. " of 2000")
 check("generous more often than modest", generous > modest and modest > 200, generous .. " vs " .. modest)
 check("verdict better", EqDealer.verdict({ stamina = 70, speed = 70, agility = 70, temperament = 70 },
-    { stamina = 75, speed = 70, agility = 70, temperament = 70 }) == "better")
-check("verdict worse", EqDealer.verdict({ stamina = 75, speed = 70, agility = 70, temperament = 70 },
+    { stamina = 82, speed = 70, agility = 70, temperament = 70 }) == "better")
+check("verdict worse", EqDealer.verdict({ stamina = 84, speed = 70, agility = 70, temperament = 70 },
     { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "worse")
-check("verdict fair", EqDealer.verdict({ stamina = 71, speed = 70, agility = 70, temperament = 70 },
+check("verdict fair", EqDealer.verdict({ stamina = 78, speed = 70, agility = 70, temperament = 70 },
     { stamina = 70, speed = 70, agility = 70, temperament = 70 }) == "fair")
 
 -- Price: talent doubles every VALUE_DOUBLING points, schooling adds to it, age takes it away.

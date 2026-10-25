@@ -117,9 +117,9 @@
         <text name="eq_ui_skills" text="Skills"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
-        <text name="eq_reveal_better" text="%s has been with you a few months now, and is better than the dealer said."/>
-        <text name="eq_reveal_worse" text="%s has been with you a few months now, and is not quite what the dealer said."/>
-        <text name="eq_reveal_fair" text="%s has been with you a few months now, and is about what the dealer said."/>
+        <text name="eq_reveal_better" text="You've gotten to know %s better, and they look even better than the dealer let on."/>
+        <text name="eq_reveal_worse" text="You've gotten to know %s better, and you have a feeling you might have been misled."/>
+        <text name="eq_reveal_fair" text="You've gotten to know %s better and have a firmer idea of their potential."/>
         <text name="eq_ui_title" text="Competitions"/>
         <text name="eq_ui_col_event" text="Event"/>
         <text name="eq_ui_col_going" text="Conditions"/>

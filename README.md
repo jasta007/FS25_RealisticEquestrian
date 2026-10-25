@@ -223,8 +223,9 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   under a "Potential (dealer's view)" heading. They are the dealer's view: usually right, about
   a quarter of the time generous by 6-14 points, and now and then modest by 5-12, so a word is
   sometimes a band too high or too low. After three
-  months on your farm you find out, with a message saying whether the horse is better, worse or
-  about what the dealer said, and its price moves to match.
+  months on your farm you find out. Usually you just "have a firmer idea of their potential";
+  after a big overstatement you "might have been misled"; now and then the horse is better than
+  the dealer let on. Its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
   most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is

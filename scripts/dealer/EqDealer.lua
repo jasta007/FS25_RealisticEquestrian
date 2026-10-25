@@ -21,8 +21,9 @@ EqDealer.VERDICT_WORSE = "worse"
 EqDealer.VERDICT_FAIR = "fair"
 
 -- Points the shown potential must move, summed over the four stats, for the reveal to say
--- better or worse rather than about right.
-EqDealer.VERDICT_MARGIN = 3
+-- better or worse rather than "a firmer idea". Set so one small slip reads as fair: fair is the
+-- usual message, worse needs a big or doubled overstatement, and better is rare.
+EqDealer.VERDICT_MARGIN = 12
 
 
 --- Lean rolled genes toward the horse's RLRM genetics.
