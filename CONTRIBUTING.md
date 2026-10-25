@@ -55,6 +55,21 @@ luajit tests/run.lua <path to an FS25_RealisticLivestockRM checkout>
 
 Run them before every push. New pure logic should come with tests in `tests/run.lua`.
 
+## Releasing to itch.io
+
+`.github/workflows/release.yml` runs the headless tests, builds the zip and pushes it to the
+`fs25-mod` channel of jasta007/realistic-equestrian with butler. Pushes to `main` do not publish.
+To release, set `<version>` in `modDesc.xml` (for example `0.1.0.0`), merge it to `main`, then push
+a matching tag:
+
+```
+git tag v0.1.0.0 && git push origin v0.1.0.0
+```
+
+The run fails if the tag and `modDesc.xml` disagree. It can also be run by hand from the Actions tab
+(Release to itch.io, Run workflow), which uploads whatever version `modDesc.xml` holds. It needs the
+`BUTLER_API_KEY` repository secret (an itch.io API key).
+
 ## Conventions
 
 - Never change RLRM's files. Hook or wrap its functions, and check they exist first.
