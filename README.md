@@ -83,8 +83,9 @@ uses its genetics, health and fitness.
   horse standing or walking recovers quickly, a fit one faster still.
 - **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
   in patch 1.25) and the workers' daily ride counts as training, as does RLRM's herdsman. They keep
-  your horses ticking over towards a focus you choose, but only your own riding takes a stat the
-  last few points. A proper staff system of our own is planned (see
+  your horses ticking over towards a focus you choose, at half the rate of a full day of plain
+  riding. Your own focused riding trains a stat up to four times as fast as staff, and only it
+  takes a stat the last few points. A proper staff system of our own is planned (see
   [Planned features](#planned-features)).
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
   overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when

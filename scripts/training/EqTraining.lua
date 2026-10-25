@@ -46,6 +46,8 @@ EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 2, temperament = 2 }
 -- combo is lost COMBO_SECONDS after the last clear, a clock that runs COMBO_SLOW_DRAIN times as
 -- fast at a halt, a walk or backing up, so slowing to a trot for a tight fence is fine.
 EqTraining.AGILITY_PER_JUMP = 0.015
+-- A jump over nothing still trains a little, without touching the combo.
+EqTraining.AGILITY_PER_EMPTY_JUMP = 0.004
 EqTraining.COMBO_MAX = 5
 EqTraining.COMBO_SECONDS = 10
 EqTraining.COMBO_SLOW_DRAIN = 10
@@ -132,6 +134,10 @@ EqTraining.FOCUS = {
     crossCountry = { stamina = 1.0, speed = 0.6, agility = 0.6, temperament = 0.5 },
     racing = { stamina = 0.9, speed = 1.0, agility = 0.1, temperament = 0.1 },
 }
+
+-- Staff ride at this share of their focus profile, so a rider's own focused work (up to
+-- EFFORT_CAP) is well ahead of what staff give: staff keep horses ticking over.
+EqTraining.STAFF_EFFORT_SHARE = 0.5
 
 EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry", "racing" }
 
@@ -266,6 +272,14 @@ function EqTraining.clearJump(sheet, worn)
     local mult = math.min(combo.count, EqTraining.COMBO_MAX)
     if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult end
     return mult
+end
+
+
+--- A jump that cleared nothing: a little agility, no combo.
+--- @param sheet table
+--- @param worn boolean
+function EqTraining.emptyJump(sheet, worn)
+    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_EMPTY_JUMP end
 end
 
 
@@ -488,7 +502,7 @@ function EqTraining.staffEffort(riding, playerPoints, focus, groomed)
     local profile = EqTraining.FOCUS[focus] or EqTraining.FOCUS.balanced
 
     local effort = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = share * profile[stat] end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = share * profile[stat] * EqTraining.STAFF_EFFORT_SHARE end
     if groomed then
         effort.temperament = math.min(1, effort.temperament + EqConstants.GROOMED_TEMPERAMENT)
     end

@@ -148,7 +148,7 @@ end
 
 
 --- Show a short burst of text in the middle of the screen.
---- @param kind string jump, jumpLost, routine, routineLost or routineStart
+--- @param kind string jump, jumpLost, routine, routineLost, routineStart or crash
 --- @param mult number|nil the combo multiplier for jump and routine
 function EqTrainingHud.pop(kind, mult)
     local text, color, big
@@ -159,6 +159,8 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
+    elseif kind == "crash" then
+        text, color, big = g_i18n:getText("eq_pop_crash"), EqTrainingHud.COLOR.red, 2
     else
         text, color, big = g_i18n:getText(kind == "jumpLost" and "eq_pop_comboLost" or "eq_pop_routineLost"), EqTrainingHud.COLOR.grey, 1
     end

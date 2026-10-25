@@ -451,7 +451,7 @@ do
 end
 
 local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
-check("staff train to the focus", racingStaff.speed == 1.0 and racingStaff.agility < 0.2)
+check("staff train to the focus, at half its profile", racingStaff.speed == 0.5 and racingStaff.agility < 0.1)
 check("riding the player did is not credited to staff", EqTraining.staffEffort(100, 100, "racing", false).speed == 0)
 check("grooming adds temperament", EqTraining.staffEffort(0, 0, "balanced", true).temperament > 0)
 

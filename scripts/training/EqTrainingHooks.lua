@@ -189,6 +189,8 @@ local function trackJump(vehicle, spec, sheet, worn)
         age, tostring(spec.isOnGround ~= nil))
     if cleared then
         EqTrainingHud.pop("jump", EqTraining.clearJump(sheet, worn))
+    else
+        EqTraining.emptyJump(sheet, worn)
     end
 end
 
@@ -251,6 +253,17 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     EqTraining.step(sheet, gait, dt, worn, stamina)
 
     trackJump(vehicle, spec, sheet, worn)
+
+    -- The base game stops a horse that runs into something and counts its haltTimer down. A
+    -- crash ends a jump combo (a refusal) and breaks a routine, but not a stamina run.
+    local halted = (spec.haltTimer or 0) > 0
+    if halted and not spec.eqHalted then
+        local hadCombo, hadRoutine = sheet.combo.count > 0, EqTraining.breakRoutine(sheet)
+        sheet.combo.count, sheet.combo.timer = 0, 0
+        Log:info("Crash: the horse ran into something at a %s (haltTimer %s)", gait, tostring(spec.haltTimer))
+        if hadCombo or hadRoutine then EqTrainingHud.pop("crash") end
+    end
+    spec.eqHalted = halted
     if EqTraining.comboTick(sheet, gait, dt) then EqTrainingHud.pop("jumpLost") end
     if routineShown() then
         local event = EqTraining.routineStep(sheet, routineMove(vehicle, spec, gait, dt), dt, worn, math.random)
