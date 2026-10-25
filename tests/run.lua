@@ -1081,9 +1081,9 @@ local horseFrame = {
 }
 check("button added for a horse pen", EqAnimalsPageButton.ensureButton(horseFrame, horseFrame.menuButtonInfo, RL_ACTION, openMenu) == true
     and #horseFrame.menuButtonInfo == 2 and horseFrame.menuButtonInfo[2].inputAction == RL_ACTION)
-local fullBar = { { inputAction = 1 }, { inputAction = 2 }, { inputAction = 3 } }
-EqAnimalsPageButton.ensureButton(horseFrame, fullBar, RL_ACTION, openMenu)
-check("button goes just after Back", fullBar[1].inputAction == 1 and fullBar[2].inputAction == RL_ACTION and #fullBar == 4)
+local dirtyFrame = { selectedHusbandry = horsePen, setMenuButtonInfoDirty = function(f) f.dirty = true end }
+EqAnimalsPageButton.ensureButton(dirtyFrame, {}, RL_ACTION, openMenu)
+check("adding the button redraws the bar", dirtyFrame.dirty == true)
 horseFrame.menuButtonInfo[2].callback()
 check("button opens the Manage tab on that pen", opened.page == 4 and opened.mode == "full"
     and opened.context.husbandry == horsePen and opened.context.fromInGameMenu == true)

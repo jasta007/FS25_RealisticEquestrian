@@ -185,10 +185,7 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
         return false
     end
 
-    -- Second, just after Back: the menu's button bar has a fixed number of slots and drops
-    -- whatever is past the end, and a horse stable already fills them (rename, map, workers
-    -- and the page buttons), so a button added last never shows.
-    table.insert(buttons, math.min(2, #buttons + 1), {
+    table.insert(buttons, {
         inputAction = action,
         text = g_i18n:getText("eq_ui_button_manageAnimals"),
         callback = function()
@@ -197,6 +194,11 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
             openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
         end
     })
+    -- The menu only redraws the bar when the page says its buttons changed. The page opens
+    -- with its list still empty, so the pen is often found only after the bar was drawn.
+    if frame.setMenuButtonInfoDirty ~= nil then
+        frame:setMenuButtonInfoDirty()
+    end
     report(string.format("added Manage Animals for '%s' (found via %s); buttons now: %s",
         penName(husbandry), source, describeButtons(buttons)), frame)
     return true
