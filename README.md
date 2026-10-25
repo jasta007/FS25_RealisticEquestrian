@@ -64,6 +64,8 @@ uses its genetics, health and fitness.
     the run down slowly.
   - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
     stand still to rest before the next one.
+  - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until
+    shortly after landing, so you can jump an obstacle in the way.
   - A good session can give up to double what a full day of riding used to. Just riding round
     the gaits trains them at about a quarter of that.
   - **Agility** comes from jump combos: clear jumps one after another (fences, poles, anything

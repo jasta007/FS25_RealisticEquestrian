@@ -231,6 +231,29 @@ local function routineShown()
 end
 
 
+-- A jump (and the stumble after landing) can knock the gait or speed down for a moment. A
+-- rider sometimes has to jump to keep the pace, so stamina and speed training (and the jump
+-- combo clock) carry on at the
+-- gait from before take-off until this long after landing.
+EqTrainingHooks.JUMP_PACE_HOLD_MS = 1500
+
+local PACE_GAITS = { trot = true, canter = true, gallop = true }
+
+--- @param spec table
+--- @param gait string the gait this frame
+--- @param now number g_time
+--- @return string gait for stamina and speed training
+local function paceGait(spec, gait, now)
+    local held = spec.eqJumpGait
+    if held == nil or not PACE_GAITS[held] then return gait end
+    if spec.eqJump == nil and now > (spec.eqJumpHoldUntil or 0) then
+        spec.eqJumpGait = nil
+        return gait
+    end
+    return held
+end
+
+
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
@@ -250,9 +273,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local worn = isTired(spec.cluster)
     local record = EqRegistry.getById(id)
     local stamina = record ~= nil and record.trained.stamina or nil
-    EqTraining.step(sheet, gait, dt, worn, stamina)
+    local pace = paceGait(spec, gait, now)
+    EqTraining.step(sheet, pace, dt, worn, stamina)
+    spec.eqLastGait = gait
 
+    local wasJumping = spec.eqJump ~= nil
     trackJump(vehicle, spec, sheet, worn)
+    if wasJumping and spec.eqJump == nil then spec.eqJumpHoldUntil = now + EqTrainingHooks.JUMP_PACE_HOLD_MS end
 
     -- The base game stops a horse that runs into something and counts its haltTimer down. A
     -- crash ends a jump combo (a refusal) and breaks a routine, but not a stamina run.
@@ -264,7 +291,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if hadCombo or hadRoutine then EqTrainingHud.pop("crash") end
     end
     spec.eqHalted = halted
-    if EqTraining.comboTick(sheet, gait, dt) then EqTrainingHud.pop("jumpLost") end
+    if EqTraining.comboTick(sheet, pace, dt) then EqTrainingHud.pop("jumpLost") end
     if routineShown() then
         local event = EqTraining.routineStep(sheet, routineMove(vehicle, spec, gait, dt), dt, worn, math.random)
         if event == "done" then EqTrainingHud.pop("routine", sheet.routine.mult)
@@ -284,7 +311,8 @@ end
 
 
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
---- on the server). The jump is judged in the air by trackJump; any jump ends a routine.
+--- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but a
+--- stamina run or sprint keeps its pace through it (paceGait).
 function EqTrainingHooks.onJump(vehicle)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
@@ -296,6 +324,7 @@ function EqTrainingHooks.onJump(vehicle)
     EqTraining.addJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false }
+    spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
 end
 
 
