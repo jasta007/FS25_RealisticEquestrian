@@ -36,37 +36,37 @@
         <text name="eq_event_showJumping_novice" text="1.00m Jumping"/>
         <text name="eq_event_showJumping_intermediate" text="1.20m Jumping"/>
         <text name="eq_event_showJumping_advanced" text="1.40m Jumping"/>
-        <text name="eq_event_showJumping_championship" text="Grand Prix Jumping"/>
+        <text name="eq_event_showJumping_championship" text="Riverbend Springs Grand Prix"/>
         <text name="eq_event_dressage_training" text="Intro Dressage Test"/>
         <text name="eq_event_dressage_novice" text="Preliminary Dressage"/>
         <text name="eq_event_dressage_intermediate" text="Medium Dressage"/>
         <text name="eq_event_dressage_advanced" text="Prix St Georges"/>
-        <text name="eq_event_dressage_championship" text="Grand Prix Dressage"/>
+        <text name="eq_event_dressage_championship" text="Zielonka Grand Prix Dressage"/>
         <text name="eq_event_crossCountry_training" text="Young Horse Hunter Trial"/>
         <text name="eq_event_crossCountry_novice" text="Hunter Trial"/>
         <text name="eq_event_crossCountry_intermediate" text="Open Hunter Trial"/>
         <text name="eq_event_crossCountry_advanced" text="Team Chase"/>
-        <text name="eq_event_crossCountry_championship" text="Championship Team Chase"/>
+        <text name="eq_event_crossCountry_championship" text="Hutan Pantai Team Chase"/>
         <text name="eq_event_eventing_training" text="Introductory Horse Trial"/>
         <text name="eq_event_eventing_novice" text="One-Day Event"/>
-        <text name="eq_event_eventing_intermediate" text="CCI2* Event"/>
-        <text name="eq_event_eventing_advanced" text="CCI4* Event"/>
-        <text name="eq_event_eventing_championship" text="CCI5* Three-Day Event"/>
+        <text name="eq_event_eventing_intermediate" text="Two-Star Event"/>
+        <text name="eq_event_eventing_advanced" text="Four-Star Event"/>
+        <text name="eq_event_eventing_championship" text="Zielonka Three-Day Event"/>
         <text name="eq_event_raceShort_training" text="Racecourse Gallop (6f)"/>
         <text name="eq_event_raceShort_novice" text="Maiden Sprint (6f)"/>
         <text name="eq_event_raceShort_intermediate" text="Sprint Handicap (6f)"/>
         <text name="eq_event_raceShort_advanced" text="Listed Sprint (6f)"/>
-        <text name="eq_event_raceShort_championship" text="Group 1 Sprint (6f)"/>
+        <text name="eq_event_raceShort_championship" text="Riverbend Springs Sprint Cup (6f)"/>
         <text name="eq_event_raceLong_training" text="Racecourse Gallop (1m)"/>
         <text name="eq_event_raceLong_novice" text="Maiden Stakes (1½m)"/>
         <text name="eq_event_raceLong_intermediate" text="Handicap (1½m)"/>
         <text name="eq_event_raceLong_advanced" text="Listed Stakes (1½m)"/>
-        <text name="eq_event_raceLong_championship" text="Group 1 Cup (2m)"/>
+        <text name="eq_event_raceLong_championship" text="Hutan Pantai Gold Cup (2m)"/>
         <text name="eq_event_steeplechase_training" text="Schooling Hurdle"/>
         <text name="eq_event_steeplechase_novice" text="Novice Hurdle"/>
         <text name="eq_event_steeplechase_intermediate" text="Handicap Chase"/>
         <text name="eq_event_steeplechase_advanced" text="Graded Chase"/>
-        <text name="eq_event_steeplechase_championship" text="National Chase"/>
+        <text name="eq_event_steeplechase_championship" text="Riverbend Springs Chase"/>
         <text name="eq_money_entryFees" text="Competition Entry Fees"/>
         <text name="eq_money_prizeMoney" text="Competition Prize Money"/>
         <text name="eq_money_vetBills" text="Vet Bills"/>

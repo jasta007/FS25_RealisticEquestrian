@@ -89,8 +89,8 @@ prizes, and sometimes none in a discipline.
 - **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
   you still see where the horse placed. Every other event is open from three years.
 - Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage
-  by test level (Intro up to Grand Prix), eventing by FEI star level (One-Day Event up to CCI5*),
-  flat racing as Maiden, Handicap, Listed and Group 1, and so on. The names live in the
+  by test level (Intro up to Grand Prix), eventing by star level (One-Day Event up to Four-Star),
+  flat racing as Maiden, Handicap, Listed and Group 1, and so on. Championships are named after the game's own maps (Riverbend Springs, Zielonka, Hutan Pantai); no real venues, organisations or companies. The names live in the
   translation file, so they are easy to change. A Level column shows the tier.
 - Steeplechases are rare, as they are today: the discipline's `chance` in `data/events.xml`
   (0.08) scales how often one is drawn.
