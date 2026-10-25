@@ -83,8 +83,17 @@ EqInfoDisplay.SKILL_BANDS = {
     { from = 10, key = "eq_skill_novice" },
     { from = -math.huge, key = "eq_skill_untrained" },
 }
-EqInfoDisplay.SKILL_COLOR_LOW = { 1, 1, 1, 1 }
-EqInfoDisplay.SKILL_COLOR_HIGH = { 0, 1, 0, 1 }
+-- Skill colours by level: white for an untrained horse, through yellow, to RLRM's own genetics
+-- greens at the top. RLRM's palette (RLDetailPaneHelper.GENETICS_COLOR) is used where it has the
+-- colour; the values here are the same, as a fallback.
+EqInfoDisplay.SKILL_COLOR_STOPS = {
+    { at = 0, color = { 1, 1, 1, 1 } },
+    { at = 25, color = { 1, 1, 0.6, 1 } },
+    { at = 50, key = "average", color = { 1, 1, 0, 1 } },
+    { at = 65, key = "high", color = { 0.52, 1, 0, 1 } },
+    { at = 80, key = "veryHigh", color = { 0.2, 1, 0, 1 } },
+    { at = 95, key = "extremelyHigh", color = { 0, 1, 0, 1 } },
+}
 
 
 --- @param value number a trained level, 0-100
@@ -96,17 +105,32 @@ function EqInfoDisplay.skillBandKey(value)
 end
 
 
---- @param value number a trained level, 0-100
---- @return table color { r, g, b, a } from white at 0 to green at 100 (RLRM's neutral and top colours)
-function EqInfoDisplay.skillColor(value)
+--- @param stop table from SKILL_COLOR_STOPS
+--- @return table color
+local function stopColor(stop)
     local helper = EqRLRM.get("RLDetailPaneHelper")
-    local low = helper ~= nil and helper.GENETICS_COLOR_NEUTRAL or EqInfoDisplay.SKILL_COLOR_LOW
-    local high = helper ~= nil and helper.GENETICS_COLOR ~= nil and helper.GENETICS_COLOR.extremelyHigh
-        or EqInfoDisplay.SKILL_COLOR_HIGH
-    local t = EqStats.clamp((value or 0) / 100, 0, 1)
-    local color = {}
-    for i = 1, 4 do color[i] = low[i] + (high[i] - low[i]) * t end
-    return color
+    local palette = helper ~= nil and helper.GENETICS_COLOR or nil
+    return stop.key ~= nil and palette ~= nil and palette[stop.key] or stop.color
+end
+
+
+--- @param value number a trained level, 0-100
+--- @return table color { r, g, b, a }: white at 0, yellow by 50, RLRM's brightest green from 95
+function EqInfoDisplay.skillColor(value)
+    local stops = EqInfoDisplay.SKILL_COLOR_STOPS
+    value = EqStats.clamp(value or 0, 0, 100)
+    for i = 2, #stops do
+        if value <= stops[i].at then
+            local from, to = stops[i - 1], stops[i]
+            local t = (value - from.at) / (to.at - from.at)
+            local a, b = stopColor(from), stopColor(to)
+            local color = {}
+            for c = 1, 4 do color[c] = a[c] + (b[c] - a[c]) * t end
+            return color
+        end
+    end
+    local top = stopColor(stops[#stops])
+    return { top[1], top[2], top[3], top[4] }
 end
 
 
