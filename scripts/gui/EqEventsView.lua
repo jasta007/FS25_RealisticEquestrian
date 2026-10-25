@@ -134,6 +134,11 @@ function EqEventsView.horseRows(event, farmId)
                 else
                     status = g_i18n:getText(ok and "eq_ui_status_ok" or ("eq_ui_status_" .. reason))
                 end
+                -- Poor health: it can go, but may be scratched on the day.
+                local unsound = EqRisk.unsoundChance(animal.health)
+                if ok and unsound > 0 and unsound < 1 then
+                    status = string.format(g_i18n:getText("eq_ui_status_lowHealth"), math.floor(unsound * 100 + 0.5))
+                end
             end
 
             -- Odds and training only mean something for a horse that is or could be in this event.

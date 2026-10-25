@@ -129,6 +129,9 @@ uses its genetics, health and fitness.
 - Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
   (colic), more after a long trip. A sick horse can't be entered until it is better.
 - With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
+- Keep horses well fed: under 50 health a horse may be scratched on the day (10% for every 5
+  points under 50), at 25 or under it can't be entered, and poor health raises the injury risk.
+  The Events tab shows the scratch chance.
 - Pregnant mares stop competing, and you decide when a horse retires. Forced retirement after a
   serious injury is optional.
 

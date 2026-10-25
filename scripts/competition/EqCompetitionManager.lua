@@ -247,7 +247,7 @@ function EqCompetitionManager.prospects(record, animal, event)
     if EqCompetitionManager.settings.injuries then
         local going = EqCompetitionManager.goingByName(event.going)
         risk = EqRisk.riskBand(EqRisk.runInjuryChance(discipline, tier, going, animal.fitness or 0,
-            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event)))
+            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event), animal.health))
     end
     return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk }
 end
@@ -377,6 +377,7 @@ function EqCompetitionManager.resolve(event, horses)
                     stamina = record.trained.stamina or 0,
                     fitness = horse.animal.fitness or 0,
                     travel = EqCompetitionManager.travelInjury(event),
+                    health = horse.animal.health,
                 })
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
@@ -529,11 +530,12 @@ end
 --- @param record table
 --- @param kind string the event's kind
 --- @param animal table|nil RLRM Animal, for the in-foal check
---- @return string|nil reason "retired", "injured", "sick", "settling", "inFoal", "foaled" or "rested", nil when it can go
+--- @return string|nil reason "retired", "injured", "sick", "unwell", "settling", "inFoal", "foaled" or "rested", nil when it can go
 function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
     if EqInjury.isSick(animal) then return "sick" end
+    if animal ~= nil and (animal.health or 100) <= EqRisk.ENTRY_HEALTH_MIN then return "unwell" end
     if record:isSettling() then return "settling" end
     if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
     if EqCompetitionManager.isRecoveringFromFoaling(animal) then return "foaled" end
@@ -913,12 +915,27 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
         delivered = not manual })
     if not manual then EqCompetitionManager.refreshAway({ animal }) end
 
+    local text
     if manual then
-        return true, string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
+        text = string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
             g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_deadline_month" or "eq_ui_deadline_round"))
+    else
+        text = string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
+            g_i18n:formatMoney(cost, 0, true, true))
     end
-    return true, string.format(g_i18n:getText("eq_enter_done"), name, EqCompetitionManager.eventTitle(event), rating,
-        g_i18n:formatMoney(cost, 0, true, true))
+    local warning = EqCompetitionManager.healthWarning(animal)
+    if warning ~= nil then text = text .. " " .. warning end
+    return true, text
+end
+
+
+--- @param animal table RLRM Animal
+--- @return string|nil text the chance it is scratched on the day for poor health, nil when healthy
+function EqCompetitionManager.healthWarning(animal)
+    local unsound = EqRisk.unsoundChance(animal.health)
+    if unsound <= 0 or unsound >= 1 then return nil end
+    return string.format(g_i18n:getText("eq_enter_lowHealth"), math.floor(animal.health or 0),
+        math.floor(unsound * 100 + 0.5), EqRisk.ENTRY_HEALTH_MIN)
 end
 
 

@@ -540,7 +540,17 @@ check("risk config: Training Events are gentler", config.tierByName.training.ris
 
 local rng = EqRandom.new("scratch")
 check("an injured horse is scratched", EqRisk.scratchReason({ injury = { monthsLeft = 2 } }, 100, rng) == EqRisk.SCRATCH_INJURED)
-check("an unsound horse is scratched", EqRisk.scratchReason({}, 40, rng) == EqRisk.SCRATCH_UNSOUND)
+check("a horse at 25 health or under is always scratched", EqRisk.scratchReason({}, 25, rng) == EqRisk.SCRATCH_UNSOUND)
+check("unsound chance: 10% per 5 points under 50", EqRisk.unsoundChance(50) == 0 and EqRisk.unsoundChance(49) == 0.1
+    and EqRisk.unsoundChance(45) == 0.1 and math.abs(EqRisk.unsoundChance(44) - 0.2) < 1e-9
+    and math.abs(EqRisk.unsoundChance(26) - 0.5) < 1e-9 and EqRisk.unsoundChance(25) == 1 and EqRisk.unsoundChance(nil) == 0)
+local unsound40 = 0
+for i = 1, 5000 do
+    if EqRisk.scratchReason({}, 40, EqRandom.new("unsound " .. i)) == EqRisk.SCRATCH_UNSOUND then unsound40 = unsound40 + 1 end
+end
+check("a horse at 40 health is scratched about 20% of the time", unsound40 > 900 and unsound40 < 1100, unsound40 .. " of 5000")
+check("poor health raises the injury chance", EqRisk.healthInjuryFactor(100) == 1 and EqRisk.healthInjuryFactor(50) == 1.5
+    and EqRisk.healthInjuryFactor(nil) == 1)
 local shoes = 0
 for i = 1, 5000 do if EqRisk.scratchReason({}, 100, EqRandom.new("shoe " .. i)) ~= nil then shoes = shoes + 1 end end
 check("a sound horse is rarely scratched", shoes > 10 and shoes < 120, shoes .. " of 5000")
@@ -557,6 +567,9 @@ check("an unfit horse is injured more", EqRisk.injuryChance(xc, intermediate, go
     > 1.5 * EqRisk.injuryChance(xc, intermediate, good, 100, 50, false))
 check("falls over fences injure more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, true)
     == 2 * EqRisk.injuryChance(xc, intermediate, good, 80, 50, false))
+check("an unhealthy horse is injured more", EqRisk.injuryChance(config.disciplineByName.crossCountry, config.tierByName.intermediate,
+    config.goings[2], 80, 50, false, 1, 50) == 1.5 * EqRisk.injuryChance(config.disciplineByName.crossCountry,
+    config.tierByName.intermediate, config.goings[2], 80, 50, false, 1))
 check("a far trip injures more", EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances.far.injury)
     > EqRisk.injuryChance(xc, intermediate, good, 80, 50, false, config.distances["local"].injury))
 

@@ -239,22 +239,47 @@ dealer's view of it.
 
 ## Risk and retirement
 
-- **Scratches:** a horse that is injured, retired or unsound on the day (RLRM health under 50)
-  doesn't start, and half the entry fee comes back. Now and then a horse loses a shoe.
+- **Scratches:** a horse that is injured, ill, retired or unsound on the day doesn't start, and
+  half the entry fee comes back. Now and then a horse loses a shoe.
+- **Health:** RLRM's health follows feeding: a well-fed horse sits at 100, and it falls hour by
+  hour while the pen's food is short, then climbs back once fed. Under 50 health a horse may be
+  unsound on the day: a 10% chance for every 5 points (or part of 5) under 50, so 45 to 49 is
+  10%, 40 to 44 is 20%, and 26 to 29 is 50%. At 25 or under it can't be entered, and one that
+  drops that low after entering is scratched. The Events tab shows the chance in the horse's
+  status ("Low health: 20% scratch") and the entry message repeats it. Poor health also raises
+  the injury chance: 1.5x at 50 health, 2x at 0.
 - **Eliminations:** refusals and falls over fences, pulled up in races. Cross country and
   steeplechase are the riskiest, dressage the safest. A horse out of its depth for the tier, or
   with low temperament, goes out more often. Eliminated horses win nothing.
-- **Injuries:** rare, more likely on firm going, after a long trip abroad, for unfit horses,
-  with low stamina and after a fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
-  injury (3 months, $3,500 a month), and a few serious (6 months, $10,000 a month). Bills are
-  charged at the start of each month. A resting horse can't compete and doesn't train, so its
-  stats fade a little.
+- **Injuries:** rare, more likely on firm going, after a long trip abroad, for unfit or
+  unhealthy horses, with low stamina and after a fall. An injury shows on the horse's Diseases
+  page in Realistic Livestock. Treat it there (the vet bills RLRM's medicine line daily while the
+  course runs) or leave it to heal for free, more slowly; or cull. Nothing is charged unless you
+  start treatment, and the time counts in days, so an injury lasts its full time whatever day it
+  happened. A hurt horse can't compete, doesn't train (its stats fade a little) and can't be sold.
+
+  | Injury | How often | Treatment | Untreated |
+  |---|---|---|---|
+  | Bruised sole | 25% | 1 day, $400 | 1 month |
+  | Hoof abscess | 18% | 1 day, $800 | 1.5 months |
+  | Overreach cut | 17% | 1 day, $1,500 | 2 months |
+  | Sore back | 15% | 1 month, $2,500 | 3 months |
+  | Splints | 10% | 2 months, $1,200 a month | 4 months |
+  | Tendon strain | 8% | 4 months, $4,000 a month | 9 months |
+  | Chip fracture | 4% | 2 months, $12,000 a month | 12 months |
+  | Torn suspensory | 3% | 6 months, $6,000 a month | 12 months |
+
+  Injuries never spread and never kill. With RLRM's diseases switched off they are plain box
+  rest for the untreated time, with no bills.
+- **Illness:** every start carries 3 times RLRM's own monthly chance of its horse diseases
+  (colic), times the trip's injury factor. A sick horse can't be entered until it is better.
 - **Injury risk** shows on the Events tab as Low, Minor, Moderate or Risky (from about 0.75%, 2% and 3% injury chance a run): the Risk column
   is for a typical horse (discipline, level, conditions and how far the venue is), and the
-  selected horse's panel shows that horse's own risk (its fitness, stamina and how likely it is
-  to fall). It reads Off with injuries turned off.
-- **Retirement is your choice:** `eqRetire <horse>` retires a horse, and `eqRetire <horse> undo`
-  brings it back. Retiring an injured horse stops the treatment and the bills.
-- **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, about 1 in 10
-  serious injuries ends a horse's career. `eqSettings injuries off` turns injuries off entirely.
+  selected horse's panel shows that horse's own risk (its fitness, stamina, health and how likely
+  it is to fall). It reads Off with injuries turned off.
+- **Retirement is your choice:** the Retire button on the horse's Diseases page (or `eqRetire
+  <horse>`) retires a horse, and the same button (or `eqRetire <horse> undo`) brings it back.
+  An injured horse still has to heal, but retired, its treatment costs 60% less, even mid-course.
+- **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
+  fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.
 

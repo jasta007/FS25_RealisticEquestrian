@@ -96,6 +96,8 @@
         <text name="eq_money_vetBills" text="Vet Bills"/>
         <text name="eq_enter_injured" text="That horse is injured: %d month(s) until it heals."/>
         <text name="eq_enter_sick" text="That horse is ill. Treat it on its Diseases page first."/>
+        <text name="eq_enter_unwell" text="That horse's health is too low to compete (25 or under). Feed it well and it will recover."/>
+        <text name="eq_enter_lowHealth" text="Its health is %d: a %d%% chance it's scratched as unsound on the day. Under 50 health, every 5 points lower adds 10%%, and at %d or under it can't compete."/>
         <text name="eq_result_eliminated" text="%s was eliminated in %s."/>
         <text name="eq_result_pulledUp" text="%s was pulled up in %s."/>
         <text name="eq_result_scratched" text="%s was scratched from %s (%s). %s of the entry fee was refunded."/>
@@ -134,6 +136,7 @@
         <text name="eq_status_injured" text="Injured, %d month(s)"/>
         <text name="eq_status_retired" text="Retired"/>
         <text name="eq_status_sick" text="Ill"/>
+        <text name="eq_status_unwell" text="Health too low"/>
         <text name="eq_status_settling" text="Settling in"/>
         <text name="eq_status_rested" text="Rested for the month"/>
         <text name="eq_status_inFoal" text="In foal"/>
@@ -216,6 +219,7 @@
         <text name="eq_ui_ageMonths" text="%dm"/>
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
+        <text name="eq_ui_status_lowHealth" text="Low health: %d%% scratch"/>
         <text name="eq_ui_status_eventFull" text="Two of your horses already entered"/>
         <text name="eq_ui_status_tooYoung" text="Too young"/>
         <text name="eq_ui_status_tooOld" text="Too old"/>
