@@ -132,11 +132,13 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local title = g_i18n:getText(isTired(spec.cluster) and "eq_training_tired" or "eq_training_today")
     g_currentMission:addExtraPrintText(title .. ": " .. table.concat(parts, " "))
 
+    -- One line per facility, with what riding in it adds: the help panel cuts long lines off.
     local inside = {}
-    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.kindTitle(kind)) end
-    if #inside > 0 then
-        table.sort(inside)
-        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), table.concat(inside, ", ")))
+    local farmId = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
+    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.insideText(kind, farmId)) end
+    table.sort(inside)
+    for _, text in ipairs(inside) do
+        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), text))
     end
     local feedLine = EqFeedHooks.formatBoost(EqFeedHooks.getBoost(spec.cluster))
     if feedLine ~= nil then g_currentMission:addExtraPrintText(feedLine) end
