@@ -10,6 +10,8 @@
         name            hay, grain or treat
         title           l10n key of the group's name in a pen's food list (the map's own
                         name, such as "Root crops", is replaced)
+        otherTitle      l10n key of the row holding the group's feeds that have no row of their
+                        own (shown only while it holds something)
         productionWeight/eatWeight   used only when the map has no group for these feeds yet
         The map keeps its own groups and weights: a feed joins the map group that already
         holds most of its kind (oats find the "bulk" group, dry grass the "hay" group).
@@ -22,6 +24,10 @@
                         this feed: 0.10 = 10% faster training of that stat. Every feed in the
                         trough gives its full boost and they add up, so oats, barley and corn
                         together give all three. Small = 0.10, moderate = 0.20, strong = 0.30.
+        row             l10n key of the feed's own row in a pen's food list. Display only: the
+                        feed still eats as part of its group, so a horse on oats alone is as
+                        well fed as one on oats, barley and corn. Feeds with the same row
+                        share it (barley and winter barley).
         stack           feeds with the same stack name do not add up: they count once, as the
                         best of them (carrots and apples)
 -->
@@ -29,7 +35,7 @@
     <banned fillTypes="SORGHUM"/>
 
     <group name="hay" title="eq_feedGroup_hay" productionWeight="0.40" eatWeight="0.75"/>
-    <group name="grain" title="eq_feedGroup_grain" productionWeight="0.60" eatWeight="0.25"/>
+    <group name="grain" title="eq_feedGroup_grain" otherTitle="eq_feedGroup_otherGrain" productionWeight="0.60" eatWeight="0.25"/>
     <group name="treat" title="eq_feedGroup_treat" productionWeight="0.05" eatWeight="0.05"/>
 
     <!-- Forage: the basic diet, no boost. -->
@@ -37,9 +43,9 @@
     <feed fillTypes="DRYALFALFA_WINDROW ALFALFA_WINDROW DRYCLOVER_WINDROW CLOVER_WINDROW ALFALFA_CHAFF CLOVER_CHAFF" group="hay"/>
 
     <!-- Hard feed. -->
-    <feed fillTypes="OAT" group="grain" stamina="0.10" temperament="0.10"/>
-    <feed fillTypes="BARLEY WINTERBARLEY" group="grain" stamina="0.20" agility="0.20"/>
-    <feed fillTypes="MAIZE" group="grain" speed="0.30"/>
+    <feed fillTypes="OAT" group="grain" row="eq_feedRow_oats" stamina="0.10" temperament="0.10"/>
+    <feed fillTypes="BARLEY WINTERBARLEY" group="grain" row="eq_feedRow_barley" stamina="0.20" agility="0.20"/>
+    <feed fillTypes="MAIZE" group="grain" row="eq_feedRow_corn" speed="0.30"/>
     <feed fillTypes="WHEAT WINTERWHEAT SPELT TRITICALE RYE" group="grain"/>
 
     <!-- Treats. -->
