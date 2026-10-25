@@ -135,6 +135,10 @@
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="panelTransportLabel" text="$l10n_eq_ui_transportLabel" textLayoutMode="scrolling"/>
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="panelTransport" textLayoutMode="scrolling"/>
             </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -280px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" text="$l10n_eq_specialty_title" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="panelSpecialty" textLayoutMode="scrolling"/>
+            </GuiElement>
         </GuiElement>
 
         <Text profile="fs25_settingsMultiTextOptionTitle" id="emptyState"

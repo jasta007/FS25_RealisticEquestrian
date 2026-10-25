@@ -202,6 +202,16 @@ prizes, and sometimes none in a discipline.
   have conditions: firm favours speed, soft and heavy favour stamina, hot weather tests stamina
   and temperament and raises the injury risk. On the day, RLRM's fitness and health
   scale the performance, plus a little luck.
+- **Event experience:** every start (a finish or an elimination) teaches the horse that
+  discipline, quickly at first and slower as it fills up: about 10 starts to half way, 30 to
+  nearly full. Full experience adds 8 points to the horse's rating there, on top of its stats.
+  Related disciplines pick up a little: eventing teaches some show jumping, dressage and cross
+  country, and the reverse; the races and steeplechase teach each other. Experience holds for
+  three months without a start in that discipline, then fades by 5% a month. The horse's
+  **Favourite event** shows its best discipline, two close ones ("Show Jumping & Dressage"),
+  **3 Day Eventer** when show jumping, dressage and cross country are close, **Racehorse** for
+  close races, or **All Rounder** for three or more others. It shows in the Events tab's horse
+  panel, RLRM's Skills section and the look-at box.
 - The top three share the prize pool 50/30/20. Horses from different farms can enter the same
   event.
 - Racing can be switched off: `eqSettings racing off`.
@@ -217,7 +227,8 @@ down to None) and whether they can enter. Success and Training stay blank for a 
 selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. The Results button switches the left table to your results.
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
-Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings and career,
+Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with experience),
+favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ## Buying horses

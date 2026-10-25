@@ -35,6 +35,7 @@ function EqHorseRecord.new(id)
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
+    self.experience = nil        -- discipline -> { value, idle }, see EqExperience
     return self
 end
 
@@ -96,6 +97,7 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setFloat(key .. ".career#earnings", self.career.earnings)
     xmlFile:setInt(key .. ".career#eliminations", self.career.eliminations)
     xmlFile:setInt(key .. ".career#injuries", self.career.injuries)
+    EqExperience.save(xmlFile, key, self)
 end
 
 
@@ -150,6 +152,7 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.career.earnings = xmlFile:getFloat(key .. ".career#earnings", 0)
     self.career.eliminations = xmlFile:getInt(key .. ".career#eliminations", 0)
     self.career.injuries = xmlFile:getInt(key .. ".career#injuries", 0)
+    EqExperience.load(xmlFile, key, self)
 
     return self
 end
