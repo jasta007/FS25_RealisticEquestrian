@@ -19,6 +19,7 @@ source(modDirectory .. "scripts/core/EqI18N.lua")
 source(modDirectory .. "scripts/core/EqRLRM.lua")
 source(modDirectory .. "scripts/core/EqMessages.lua")
 source(modDirectory .. "scripts/core/EqConstants.lua")
+source(modDirectory .. "scripts/core/EqSettings.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
@@ -48,6 +49,7 @@ source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
+source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
 
@@ -165,6 +167,7 @@ function EqMain.activate()
 
     if EqMain.isActive then
         guarded("message log", EqMessages.install)
+        guarded("settings page hook", function() EqSettingsPage.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then

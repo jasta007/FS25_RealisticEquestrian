@@ -152,12 +152,14 @@ end
 --- @param record table EqHorseRecord (uses trained, focus, idleDays)
 --- @param ceilings table stat -> ceiling
 --- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden,
----     feedBoost }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil
+---     feedBoost, rate }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil;
+---     rate is the Training rate setting (1 when nil)
 --- @return table deltas stat -> change, for logging
 --- @return table detail why: { player, staff (effort stat -> 0..1), groomed, ageFactor, idleDays,
 ---     fading, old, stats = stat -> { fromPlayer, fromStaff, faded, aged } } for EqStatLog
 function EqTraining.applyDay(record, ceilings, day)
     local timeAdjustment = day.timeAdjustment or 1
+    local rate = day.rate or 1
     local ageFactor = EqStats.ageTrainingFactor(day.ageMonths or 0)
     local groomed = day.dirt ~= nil and day.dirt <= EqConstants.GROOMED_DIRT
 
@@ -183,8 +185,8 @@ function EqTraining.applyDay(record, ceilings, day)
         local owned = day.facilityOwned ~= nil and day.facilityOwned[stat] or 0
         local ridden = day.facilityRidden ~= nil and day.facilityRidden[stat] or 0
         local fed = day.feedBoost ~= nil and day.feedBoost[stat] or 0
-        local monthly = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed)
-        local monthlyRidden = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed + ridden)
+        local monthly = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed) * rate
+        local monthlyRidden = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed + ridden) * rate
 
         local fromPlayer = EqTraining.gain(level, ceiling, monthlyRidden, player[stat], ageFactor, timeAdjustment)
         local fromStaff = EqTraining.gain(level, ceiling * EqConstants.STAFF_CAP, monthly, staff[stat], ageFactor, timeAdjustment)
@@ -252,8 +254,9 @@ end
 --- @param boost number share of a full day
 --- @param ageMonths number
 --- @param timeAdjustment number
+--- @param rate number|nil the Training rate setting (1 when nil)
 --- @return table deltas stat -> change
-function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, timeAdjustment)
+function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, timeAdjustment, rate)
     local maxWeight = 0
     for _, stat in ipairs(EqConstants.STAT_KEYS) do maxWeight = math.max(maxWeight, weights[stat] or 0) end
 
@@ -262,7 +265,7 @@ function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, time
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local effort = maxWeight > 0 and boost * (weights[stat] or 0) / maxWeight or 0
         local before = record.trained[stat] or 0
-        local gained = EqTraining.gain(before, ceilings[stat] * EqConstants.STAFF_CAP, EqConstants.TRAIN_MONTHLY[stat],
+        local gained = EqTraining.gain(before, ceilings[stat] * EqConstants.STAFF_CAP, EqConstants.TRAIN_MONTHLY[stat] * (rate or 1),
             effort, ageFactor, timeAdjustment)
         record.trained[stat] = EqStats.clamp(before + gained, 0, ceilings[stat])
         deltas[stat] = record.trained[stat] - before

@@ -10,6 +10,7 @@ assert(rlrmPath, "usage: luajit tests/run.lua <path to FS25_RealisticLivestockRM
 
 dofile(rlrmPath .. "/scripts/animal/BreedingMath.lua")
 dofile("scripts/core/EqConstants.lua")
+dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
@@ -1455,6 +1456,63 @@ testAnimalsPageButton()
     check("full home pen sends the horse to the nearest with room", EqLooseHorses.choosePen(p.home, p.all, 1, 0, 0) == p.near)
     check("no staffed pen on the farm leaves the horse out", EqLooseHorses.choosePen(nil, { p.other, p.full }, 1, 0, 0) == nil)
     check("loose horse with no position still finds a pen", EqLooseHorses.choosePen(nil, { p.other, p.near }, 1, nil, nil) == p.near)
+end)()
+
+-- Settings page rows and the training rate.
+;(function()
+    local rate = EqSettings.BY_ID.trainingRate
+    check("training rate texts", rate.texts[1].text == "0.25x" and rate.texts[2].text == "0.5x" and rate.texts[4].text == "1x")
+    check("training rate state of 1", rate.values[EqSettings.stateOf(rate, 1)] == 1)
+    check("console rate shows as nearest choice", rate.values[EqSettings.stateOf(rate, 1.1)] == 1)
+    check("unset rate shows the default", rate.values[EqSettings.stateOf(rate, nil)] == 1)
+    local limits = EqSettings.BY_ID.entriesPerMonth
+    check("entries default is 3", limits.values[EqSettings.stateOf(limits, nil)] == 3)
+    check("no limit is the first entry choice", limits.values[1] == 0 and limits.texts[1].key == "eq_settings_noLimit")
+    local cadence = EqSettings.BY_ID.cadence
+    check("cadence state", EqSettings.stateOf(cadence, "month") == 2)
+    local onOff = EqSettings.BY_ID.racing
+    check("racing off state", EqSettings.stateOf(onOff, false) == 1 and EqSettings.stateOf(onOff, true) == 2)
+
+    local settings = { trainingRate = 1, racing = true }
+    check("apply changes a value", EqSettings.apply(settings, "trainingRate", 7) and settings.trainingRate == 2)
+    check("apply of the same value reports no change", not EqSettings.apply(settings, "trainingRate", 7))
+    check("apply turns racing off", EqSettings.apply(settings, "racing", 1) and settings.racing == false)
+    check("apply ignores unknown rows and states", not EqSettings.apply(settings, "nope", 1)
+        and not EqSettings.apply(settings, "racing", 9))
+    check("trainingRate falls back to 1", EqSettings.trainingRate(nil) == 1 and EqSettings.trainingRate({ trainingRate = 0 }) == 1)
+
+    local translations = {}
+    for _, lang in ipairs({ "en", "de" }) do
+        local file = io.open("translations/translation_" .. lang .. ".xml")
+        translations[lang] = file:read("*a")
+        file:close()
+    end
+    for _, row in ipairs(EqSettings.ROWS) do
+        for _, key in ipairs({ "eq_settings_" .. row.id, "eq_settings_" .. row.id .. "_tooltip" }) do
+            check("settings text " .. key, translations.en:find('name="' .. key .. '"', 1, true) ~= nil)
+        end
+        for _, entry in ipairs(row.texts) do
+            if entry.key ~= nil then
+                check("settings text " .. entry.key, translations.en:find('name="' .. entry.key .. '"', 1, true) ~= nil)
+            end
+        end
+    end
+
+    local ceilings = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    local function trainedWith(r)
+        local horse = { trained = { stamina = 40, speed = 40, agility = 40, temperament = 40 }, focus = "balanced", idleDays = 0 }
+        local deltas = EqTraining.applyDay(horse, ceilings, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 / 30, rate = r })
+        return deltas.stamina
+    end
+    local normal, double, quarter = trainedWith(nil), trainedWith(2), trainedWith(0.25)
+    check("training rate 2 doubles a day's gain", normal > 0 and math.abs(double - 2 * normal) < 1e-9, string.format("%.4f vs %.4f", double, normal))
+    check("training rate 0.25 quarters a day's gain", math.abs(quarter - normal / 4) < 1e-9)
+
+    local function boostedWith(r)
+        local horse = { trained = { stamina = 40, speed = 40, agility = 40, temperament = 40 } }
+        return EqTraining.applyBoost(horse, ceilings, { stamina = 1, speed = 1 }, 0.5, 60, 1 / 30, r).speed
+    end
+    check("training rate scales event boosts", math.abs(boostedWith(3) - 3 * boostedWith(nil)) < 1e-9)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

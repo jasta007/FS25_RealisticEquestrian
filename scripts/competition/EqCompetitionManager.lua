@@ -58,7 +58,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.results = {}
     EqCompetitionManager.nextEventId = 1
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
-        injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH }
+        injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
+        trainingRate = 1 }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
 end
 
@@ -419,7 +420,8 @@ function EqCompetitionManager.resolve(event, horses)
                 local timeAdjustment = cadenceDay and (g_currentMission.environment.timeAdjustment or 1)
                     or EqCompetitionManager.MONTHLY_BOOST_MONTHS
                 local deltas = EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
-                    tier.trainingBoost, mine.animal.age or 0, timeAdjustment)
+                    tier.trainingBoost, mine.animal.age or 0, timeAdjustment,
+                    EqSettings.trainingRate(EqCompetitionManager.settings))
                 EqStatLog.add(record.id, summary.day, "event", deltas, { string.format("Training boost from %s (%s), placed %d of %d: %.0f%% of a day's work at staff level",
                     EqCompetitionManager.eventTitle(event), event.tier, runner.place, summary.field, tier.trainingBoost * 100) }, record.trained)
             end
@@ -949,6 +951,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setBool(key .. ".settings#injuries", EqCompetitionManager.settings.injuries)
     xmlFile:setBool(key .. ".settings#forcedRetirement", EqCompetitionManager.settings.forcedRetirement)
     xmlFile:setInt(key .. ".settings#entriesPerMonth", EqCompetitionManager.settings.entriesPerMonth)
+    xmlFile:setFloat(key .. ".settings#trainingRate", EqCompetitionManager.settings.trainingRate)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
 
     local farmIds = {}
@@ -1022,6 +1025,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.injuries = xmlFile:getBool(key .. ".settings#injuries", settings.injuries)
     settings.forcedRetirement = xmlFile:getBool(key .. ".settings#forcedRetirement", settings.forcedRetirement)
     settings.entriesPerMonth = xmlFile:getInt(key .. ".settings#entriesPerMonth", settings.entriesPerMonth)
+    settings.trainingRate = xmlFile:getFloat(key .. ".settings#trainingRate", settings.trainingRate)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
 
     local f = 0

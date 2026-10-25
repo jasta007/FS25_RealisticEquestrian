@@ -172,6 +172,7 @@ function EqTrainingHooks.onHorseDay(animal)
         facilityOwned = owned,
         facilityRidden = ridden,
         feedBoost = EqFeedHooks.getBoost(animal),
+        rate = EqSettings.trainingRate(EqCompetitionManager.settings),
     }
     local deltas, detail = EqTraining.applyDay(record, record:getCeilings(), day)
 

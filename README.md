@@ -146,6 +146,16 @@ uses its genetics, health and fitness.
   on your farm you find out whether you got a bargain or were misled.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
+### Settings
+Esc menu > Settings > General has a **Realistic Equestrian** section, saved with each savegame:
+- **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
+- **Show events**: round events every day or every month.
+- **Races and steeplechases**: on or off.
+- **Event injuries** and **Career-ending injuries**: on or off.
+- **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
+
+In multiplayer only the host can change them for now.
+
 For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.md).
 
 ## Requirements
@@ -241,7 +251,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 
 | Command | What it does |
 | --- | --- |
-| `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off` and `entriesPerMonth <n>` (0 = no limit) |
+| `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off`, `entriesPerMonth <n>` (0 = no limit) and `trainingRate <x>` (1 = normal). The same settings are on the Settings page |
 | `eqTraining` | Each horse's training focus and today's riding |
 | `eqFocus <horse> <focus>` | Sets what staff train: `balanced`, `showJumping`, `dressage`, `crossCountry` or `racing` |
 | `eqFeed` | Horse food groups and each horse's feed boost |

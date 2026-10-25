@@ -291,5 +291,23 @@
         <text name="eq_facility_outdoorArena" text="Outdoor arena"/>
         <text name="eq_facility_roundPen" text="Round pen"/>
         <text name="eq_facility_jumps" text="Jump course"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_off" text="Off"/>
+        <text name="eq_settings_on" text="On"/>
+        <text name="eq_settings_noLimit" text="No limit"/>
+        <text name="eq_settings_trainingRate" text="Training rate"/>
+        <text name="eq_settings_trainingRate_tooltip" text="How fast riding, staff and events raise a horse's stats. 1x is the normal rate."/>
+        <text name="eq_settings_cadence" text="Show events"/>
+        <text name="eq_settings_cadence_tooltip" text="How often the round of show events runs. Changes apply from the next round."/>
+        <text name="eq_settings_cadence_day" text="Every day"/>
+        <text name="eq_settings_cadence_month" text="Every month"/>
+        <text name="eq_settings_racing" text="Races and steeplechases"/>
+        <text name="eq_settings_racing_tooltip" text="Whether flat races and steeplechases are on the event calendar. Changes apply from the next round."/>
+        <text name="eq_settings_injuries" text="Event injuries"/>
+        <text name="eq_settings_injuries_tooltip" text="Whether horses can be injured at events."/>
+        <text name="eq_settings_forcedRetirement" text="Career-ending injuries"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Whether the worst event injuries can end a horse's competition career for good."/>
+        <text name="eq_settings_entriesPerMonth" text="Entries per month"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="How many event entries each farm can make a month."/>
     </texts>
 </l10n>
