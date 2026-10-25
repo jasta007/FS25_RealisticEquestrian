@@ -7,11 +7,12 @@
       so these two are patched at source time, before that happens; the hook bodies stay idle
       until EqMain is active. Both run on the server only, which is where riding is counted.
     - Rideable.updateRiding also steps the tiredness meter and the focused stamina and speed work
-      (EqTraining.step), at a halt too.
-    - Rideable.onDraw shows the training view while riding: the tiredness meter, a line per stat
-      for today's training, and in Freestyle the farm's facility the horse is inside
-      (EqFacilityHooks) and the boost its feed gives (EqFeedHooks). The training view key (Y,
-      Rideable.onRegisterActionEvents) switches to a focused view with tips for one stat.
+      (EqTraining.step), at a halt too; a fitter horse tires more slowly.
+    - Rideable.onDraw shows the training panel while riding (EqTrainingHud): the exertion meter
+      and a line per stat for today's training, and in Freestyle the farm's facility the horse is
+      inside (EqFacilityHooks) and the boost its feed gives (EqFeedHooks) in the help panel. The
+      training view key (Y, Rideable.onRegisterActionEvents) switches to a focused view for one
+      stat; Shift+Y, and the first time each view opens, shows its help popups.
     - RLRM's AnimalHorse.processRidingUpdate is the daily horse tick. A prepend runs our day
       just before RLRM grades fitness and zeroes riding, so the day's riding value is still there
       to read.
@@ -113,7 +114,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     sheet.clock = now
 
     local worn = isTired(spec.cluster)
-    EqTraining.step(sheet, gait, dt, worn)
+    local record = EqRegistry.getById(id)
+    EqTraining.step(sheet, gait, dt, worn, record ~= nil and record.trained.stamina or nil)
     if worn or gait == "halt" then return end
 
     EqTraining.addRiding(sheet, gait, dt)
@@ -138,10 +140,11 @@ function EqTrainingHooks.onJump(vehicle)
 end
 
 
--- Riding HUD views, switched with the training view key (Y). Freestyle shows every meter and
--- stat; a focused view shows what that stat needs, with tips.
+-- Riding HUD views, switched with the training view key (Y). Freestyle shows every stat; a
+-- focused view shows the one stat it trains. Help popups (Shift+Y, and the first time a view
+-- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed" }
-EqTrainingHooks.TIPS = { stamina = 3, speed = 3 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 2, speed = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -157,21 +160,37 @@ local function viewActionText()
 end
 
 
+--- Show a view's help popups.
+--- @param view string
+function EqTrainingHooks.showHelp(view)
+    local pages = {}
+    local title = g_i18n:getText("eq_help_" .. view .. "_title")
+    for i = 1, EqTrainingHooks.HELP_PAGES[view] or 0 do
+        table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)) })
+    end
+    EqTrainingHud.showHelp(pages)
+end
+
+
 --- The training view key was pressed.
 function EqTrainingHooks.onViewAction(vehicle)
     EqTrainingHooks.viewIndex = EqTrainingHooks.viewIndex % #EqTrainingHooks.VIEWS + 1
     local spec = vehicle.spec_rideable
     local event = spec ~= nil and spec.eqViewEventId or nil
     if event ~= nil then g_inputBinding:setActionEventText(event, viewActionText()) end
+    EqTrainingHud.closeHelp()
 end
 
 
---- Appended to Rideable:onRegisterActionEvents: the training view key while riding.
+--- Appended to Rideable:onRegisterActionEvents: the training view and help keys while riding.
 function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreSelection)
     local spec = vehicle.spec_rideable
     if spec == nil or spec.actionEvents == nil or InputAction.EQ_TRAINING_VIEW == nil then return end
     spec.eqViewEventId = nil
-    if not isActiveForInputIgnoreSelection then return end
+    if not isActiveForInputIgnoreSelection then
+        EqTrainingHud.closeHelp()
+        return
+    end
     local _, id = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_VIEW, vehicle,
         function() EqTrainingHooks.onViewAction(vehicle) end, false, true, false, true, nil)
     if id ~= nil then
@@ -179,70 +198,81 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
     end
+    if InputAction.EQ_TRAINING_HELP ~= nil then
+        local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
+            function() EqTrainingHooks.showHelp(EqTrainingHooks.getView()) end, false, true, false, true, nil)
+        if helpId ~= nil then
+            g_inputBinding:setActionEventText(helpId, g_i18n:getText("input_EQ_TRAINING_HELP"))
+            g_inputBinding:setActionEventTextPriority(helpId, GS_PRIO_LOW)
+        end
+    end
 end
 
 
---- "[======----]" for a 0-100 meter.
---- @param value number
---- @return string
-function EqTrainingHooks.bar(value)
-    local filled = math.floor(EqStats.clamp(value, 0, 100) / 10 + 0.5)
-    return "[" .. string.rep("=", filled) .. string.rep("-", 10 - filled) .. "]"
-end
+local COLOR = EqTrainingHud.COLOR
+local BAND_COLOR = {
+    tired_fresh = COLOR.blue, tired_warm = COLOR.yellow, tired_zone = COLOR.green, tired_blown = COLOR.red,
+    sprint_fresh = COLOR.green, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
+}
+local QUALITY_COLOR = { fast = COLOR.green, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.green }
 
 
---- "Stamina: 45% - training fast": a stat's share of its best day so far, and how it is training now.
+--- A panel row for a stat: "Stamina 45%" and how it is training now, in that state's colour.
 --- @param stat string
 --- @param effort table from EqTraining.playerEffort
 --- @param sheet table
---- @return string
-local function statLine(stat, effort, sheet)
+--- @return table row
+local function statRow(stat, effort, sheet)
     local cap = EqTraining.EFFORT_CAP[stat]
-    local percent = math.floor(effort[stat] / cap * 100 + 0.5)
-    local line = string.format("%s: %d%%", g_i18n:getText("eq_stat_" .. stat), percent)
     local band
     if effort[stat] >= cap then
         band = "full"
     elseif sheet.quality[stat] ~= nil then
         band = EqTraining.qualityBand(sheet.quality[stat])
     end
-    if band ~= nil then line = line .. " - " .. g_i18n:getText("eq_train_quality_" .. band) end
-    return line
+    return {
+        left = string.format("%s %d%%", g_i18n:getText("eq_stat_" .. stat), math.floor(effort[stat] / cap * 100 + 0.5)),
+        right = band ~= nil and g_i18n:getText("eq_train_quality_" .. band) or nil,
+        rightColor = band ~= nil and QUALITY_COLOR[band] or nil,
+    }
 end
 
 
---- Appended to Rideable:onDraw: the training view, from the server's sheet. Every line stays
---- short, because the help panel cuts long lines off.
+--- Appended to Rideable:onDraw: the training panel, from the server's sheet, and the help popups.
 function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
     if spec == nil then return end
 
+    local view = EqTrainingHooks.getView()
+    if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen(view) then
+        EqTrainingHud.markSeen(view)
+        EqTrainingHooks.showHelp(view)
+    end
+    EqTrainingHud.drawHelp()
+
     local id = getRiddenId(spec)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
     if sheet == nil then return end
 
-    local show = function(text) g_currentMission:addExtraPrintText(text) end
-    local view = EqTrainingHooks.getView()
     local effort = EqTraining.playerEffort(sheet)
-
-    local title = string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view))
-    if isTired(spec.cluster) then title = title .. " - " .. g_i18n:getText("eq_train_worn") end
-    show(title)
-
+    local rows = {}
     local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
         or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
-    show(string.format("%s: %s %d%% - %s", g_i18n:getText("eq_train_tiredness"), EqTrainingHooks.bar(sheet.tiredness),
-        math.floor(sheet.tiredness + 0.5), g_i18n:getText("eq_train_" .. band)))
-    if view ~= "speed" and sheet.run >= 1 then
-        show(string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)))
+    local bandColor = BAND_COLOR[band]
+    table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
+        right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
+    table.insert(rows, { bar = sheet.tiredness / 100, color = bandColor })
+    if view ~= "speed" then
+        local full = sheet.run >= EqTraining.RUN_FULL
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
+            leftColor = full and COLOR.green or COLOR.white })
     end
 
     if view == "freestyle" then
-        for _, stat in ipairs(EqConstants.STAT_KEYS) do show(statLine(stat, effort, sheet)) end
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do table.insert(rows, statRow(stat, effort, sheet)) end
     else
-        for i = 1, EqTrainingHooks.TIPS[view] do show(g_i18n:getText(string.format("eq_train_tip_%s_%d", view, i))) end
-        show(statLine(view, effort, sheet))
+        table.insert(rows, statRow(view, effort, sheet))
         local others = {}
         for _, stat in ipairs(EqConstants.STAT_KEYS) do
             if stat ~= view then
@@ -250,12 +280,15 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                     math.floor(effort[stat] / EqTraining.EFFORT_CAP[stat] * 100 + 0.5)))
             end
         end
-        show(g_i18n:getText("eq_train_others") .. ": " .. table.concat(others, " "))
-        return
+        table.insert(rows, { left = table.concat(others, "  "), leftColor = COLOR.grey })
     end
+    if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.orange }) end
 
-    -- "Training in: Outdoor arena", then one line per bonus. Freestyle only, to keep the focused
-    -- views short.
+    EqTrainingHud.drawPanel(string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view)), rows)
+
+    -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
+    -- Freestyle only, to keep the focused views short.
+    if view ~= "freestyle" then return end
     local inside = {}
     local farmId = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do
@@ -264,11 +297,11 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     table.sort(inside, function(x, y) return x.title < y.title end)
     for _, facility in ipairs(inside) do
-        show(string.format(g_i18n:getText("eq_facility_inside"), facility.title))
-        for _, bonus in ipairs(facility.bonuses) do show(bonus) end
+        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), facility.title))
+        for _, bonus in ipairs(facility.bonuses) do g_currentMission:addExtraPrintText(bonus) end
     end
     local feedLine = EqFeedHooks.formatBoost(EqFeedHooks.getBoost(spec.cluster))
-    if feedLine ~= nil then show(feedLine) end
+    if feedLine ~= nil then g_currentMission:addExtraPrintText(feedLine) end
 end
 
 

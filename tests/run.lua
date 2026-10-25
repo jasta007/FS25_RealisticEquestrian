@@ -327,6 +327,12 @@ do
         and EqTraining.tirednessBand(95) == "blown" and EqTraining.sprintBand(60) == "stale")
     EqTraining.rest(sheet, 5000)
     check("time out of the saddle rests the horse", near(sheet.tiredness, 45) and near(sheet.run, 5))
+    local steady = EqTraining.newSheet()
+    for _ = 1, 3000 do EqTraining.step(steady, "canter", 100, false, 50) end
+    check("a long canter levels off at the top of the zone for an average horse", math.abs(steady.tiredness - 85) < 0.5,
+        string.format("got %.1f", steady.tiredness))
+    check("a fitter horse tires more slowly at a gallop",
+        EqTraining.exertionRate("gallop", 0, 90) < EqTraining.exertionRate("gallop", 0, 30))
     local worn = EqTraining.newSheet()
     for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
     check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0

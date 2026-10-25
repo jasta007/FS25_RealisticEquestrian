@@ -10,7 +10,7 @@
       Staff train to the horse's focus profile and stop at STAFF_CAP of each ceiling.
 
     Stamina and speed are focused work. Most of what they learn comes from how the horse is
-    worked, not how long: a tiredness meter (a short-term one, separate from the riding bar, which
+    worked, not how long: an exertion meter (a short-term one, separate from the riding bar, which
     is the day's energy) rises in canter and gallop and falls at slower gaits and at a halt.
     Stamina comes from runs (full after RUN_FULL seconds) that hold the meter high but not too high; speed comes from
     galloping while the meter is low, so the best speed work is sprints with rests between. Just
@@ -41,8 +41,21 @@ EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1 }
 -- The most effort a day can give each stat. Good focused work goes past the old full day (1).
 EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
 
--- Tiredness meter (0-100) change per second, by gait. "halt" is standing still.
-EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -0.8, canter = 1.2, gallop = 3 }
+-- Exertion meter (0-100) change per second, by gait. "halt" is standing still. Canter is
+-- worked out in exertionRate: it levels off rather than climbing for ever.
+EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -0.8, canter = 0, gallop = 3 }
+
+-- A canter pulls exertion toward a level set by the horse's trained stamina, at CANTER_PULL per
+-- second from zero: 70 for an unfit horse, 85 at stamina 50 (the top of the zone), 100 at 100.
+-- So a fit horse can canter in the zone for as long as it likes.
+EqTraining.CANTER_PULL = 3
+EqTraining.CANTER_LEVEL_BASE = 70
+EqTraining.CANTER_LEVEL_PER_STAMINA = 0.3
+
+-- A gallop tires a fit horse more slowly: GALLOP_FIT_SHARE of the rate at stamina 100,
+-- GALLOP_UNFIT_SHARE at 0.
+EqTraining.GALLOP_UNFIT_SHARE = 1.25
+EqTraining.GALLOP_FIT_SHARE = 0.75
 
 -- A run is time spent at canter or gallop. Trotting holds it; walking, backing up or being
 -- knocked to a halt wear it down slowly rather than ending it, since FS horses stop easily.
@@ -51,11 +64,11 @@ EqTraining.RUN_START = 0
 EqTraining.RUN_FULL = 15
 
 -- Stamina effort per second in each gait at the best tiredness and a long run.
-EqTraining.STAMINA_RATE = { trot = 0.008, canter = 0.02, gallop = 0.025 }
+EqTraining.STAMINA_RATE = { trot = 0.0065, canter = 0.0165, gallop = 0.021 }
 -- Stamina zone: no stamina work below ZONE_FROM, building to full at ZONE_LOW, full up to
 -- ZONE_HIGH, then falling to ZONE_BLOWN_SHARE at 100.
-EqTraining.ZONE_FROM = 45
-EqTraining.ZONE_LOW = 65
+EqTraining.ZONE_FROM = 55
+EqTraining.ZONE_LOW = 68
 EqTraining.ZONE_HIGH = 85
 EqTraining.ZONE_BLOWN_SHARE = 0.2
 
@@ -122,13 +135,33 @@ function EqTraining.speedQuality(tiredness)
 end
 
 
+--- How fast exertion changes in a gait.
+--- @param gait string
+--- @param tiredness number 0-100
+--- @param stamina number|nil the horse's trained stamina (50 when nil)
+--- @return number|nil per second; nil for an unknown gait
+function EqTraining.exertionRate(gait, tiredness, stamina)
+    local rate = EqTraining.TIREDNESS_RATE[gait]
+    if rate == nil then return nil end
+    local fitness = EqStats.clamp((stamina or 50) / 100, 0, 1)
+    if gait == "canter" then
+        local level = EqTraining.CANTER_LEVEL_BASE + EqTraining.CANTER_LEVEL_PER_STAMINA * fitness * 100
+        return EqTraining.CANTER_PULL * (1 - tiredness / level)
+    elseif gait == "gallop" then
+        return rate * (EqTraining.GALLOP_UNFIT_SHARE + (EqTraining.GALLOP_FIT_SHARE - EqTraining.GALLOP_UNFIT_SHARE) * fitness)
+    end
+    return rate
+end
+
+
 --- One frame of riding for the meters and focused work.
 --- @param sheet table
 --- @param gait string halt, reverse, walk, trot, canter or gallop
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the meters move, nothing trains
-function EqTraining.step(sheet, gait, dt, worn)
-    local rate = EqTraining.TIREDNESS_RATE[gait]
+--- @param stamina number|nil the horse's trained stamina, which slows how fast it tires
+function EqTraining.step(sheet, gait, dt, worn, stamina)
+    local rate = EqTraining.exertionRate(gait, sheet.tiredness, stamina)
     if rate == nil or dt <= 0 then return end
     local seconds = dt / 1000
     sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)

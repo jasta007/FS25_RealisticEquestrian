@@ -18,8 +18,20 @@
         <text name="eq_train_view_freestyle" text="Freestyle"/>
         <text name="eq_train_view_stamina" text="Stamina"/>
         <text name="eq_train_view_speed" text="Speed"/>
-        <text name="eq_train_worn" text="worn out for today"/>
-        <text name="eq_train_tiredness" text="Tiredness"/>
+        <text name="eq_help_speed_2" text="Then stop and stand still to recover before the next sprint. Walking recovers just as fast, but it uses up the riding bar."/>
+        <text name="eq_help_speed_1" text="Speed comes from sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop at 55%."/>
+        <text name="eq_help_speed_title" text="Training: Speed"/>
+        <text name="eq_help_stamina_2" text="Above 85% the horse is blowing hard and learns less: trot to ease off. Trotting keeps the run going; a walk or a stop only wears it down slowly, so getting knocked to a halt does not lose it."/>
+        <text name="eq_help_stamina_1" text="Stamina comes from runs at canter or gallop. Gains build over the first 15 seconds of a run and are best while exertion is in the zone, 65-85%. A long canter levels off near the zone, and a fitter horse tires more slowly."/>
+        <text name="eq_help_stamina_title" text="Training: Stamina"/>
+        <text name="eq_help_freestyle_2" text="Press Y to switch to the Stamina or Speed view, which shows what that stat needs. Each stat line is today's training as a share of the best possible day. Press Shift+Y any time to see these tips again."/>
+        <text name="eq_help_freestyle_1" text="Riding trains your horse's stats. Stamina and speed learn most from focused work, measured by the Exertion meter: it rises in canter and gallop, and falls at a trot, a walk or a halt. The riding bar is the horse's energy for the day: once it is full, training stops until tomorrow."/>
+        <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
+        <text name="eq_help_close" text="Click to close"/>
+        <text name="eq_help_next" text="Click to continue (%d/%d)"/>
+        <text name="input_EQ_TRAINING_HELP" text="Training help"/>
+        <text name="eq_train_worn" text="Riding bar full: no more training today"/>
+        <text name="eq_train_tiredness" text="Exertion"/>
         <text name="eq_train_tired_fresh" text="Fresh"/>
         <text name="eq_train_tired_warm" text="Warming up"/>
         <text name="eq_train_tired_zone" text="In the zone"/>
@@ -27,18 +39,11 @@
         <text name="eq_train_sprint_fresh" text="Fresh: sprint now"/>
         <text name="eq_train_sprint_tiring" text="Tiring: rest soon"/>
         <text name="eq_train_sprint_stale" text="Too tired to sprint: rest"/>
-        <text name="eq_train_run" text="Long run: %d s"/>
+        <text name="eq_train_run" text="Run: %d s"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
         <text name="eq_train_quality_slow" text="training slowly"/>
         <text name="eq_train_quality_full" text="full for today"/>
-        <text name="eq_train_others" text="Others"/>
-        <text name="eq_train_tip_stamina_1" text="Long canters and gallops build stamina."/>
-        <text name="eq_train_tip_stamina_2" text="Gains peak after 15 s at canter or gallop."/>
-        <text name="eq_train_tip_stamina_3" text="Hold tiredness at 65-85%: trot to ease off."/>
-        <text name="eq_train_tip_speed_1" text="Gallop while fresh: tiredness under 25%."/>
-        <text name="eq_train_tip_speed_2" text="Then stand still to rest before the next sprint."/>
-        <text name="eq_train_tip_speed_3" text="Walking rests too, but slower."/>
         <text name="input_EQ_TRAINING_VIEW" text="Change training view"/>
         <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_feedGroup_hay" text="Hay"/>

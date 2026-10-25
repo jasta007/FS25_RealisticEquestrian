@@ -34,6 +34,7 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
     <actions>
         <action name="EQ_DELIVER"/>
         <action name="EQ_TRAINING_VIEW"/>
+        <action name="EQ_TRAINING_HELP"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -41,6 +42,9 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
         </actionBinding>
         <actionBinding action="EQ_TRAINING_VIEW">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_y" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_TRAINING_HELP">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_y" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>
