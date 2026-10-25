@@ -38,11 +38,14 @@ Very high...). The words follow the event tiers: 40-54 is Average (Novice), 55-6
 (Intermediate), 70-84 Very high (Advanced), 85 and up Extremely high (Championship); below 40 is
 Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in the
 animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL on the left
-(`Speed  Very high`) and SKILLS on the right (`Speed  60 - High`), the four stats in the same order
-in both, coloured on RLRM's red-to-green scale with the same ladder, so a horse trained to its full
-potential shows the same word in both. The stat grid above keeps only RLRM's rows and shrinks to
+(`Speed  Very high`) and SKILLS on the right (`Speed  60 - Promising`), the four stats in the same
+order in both. Potential is genetic, so it uses RLRM's red-to-green scale. Skill is what training
+has done so far, so it runs from white (untrained) through yellow to RLRM's greens, with its own words: Untrained (0),
+Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Contender (80), Champion
+(90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
+not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
 fit, so the pane doesn't need to scroll.
-The box you get when looking at a horse shows `Speed 60 (Very high)`. The console's `eqHorses` still
+The box you get when looking at a horse shows `Speed  60 - Promising (Very high)`: the skill in our words, then the potential (that box has no colours). The game's own Animals screen has room for only five rows and RLRM's horse rows take three, so our stats are not shown there. The console's `eqHorses` still
 prints exact ceilings, for testing.
 
 RLRM's Meat Quality is hidden for horses, in the menu's genetics column and the look-at genetics
@@ -55,8 +58,14 @@ A foal born on a farm inherits its four stat genes, and the hidden talent budget
 sire through RLRM's own breeding maths (`BreedingMath.breedOffspring`). Each parent's gene is first
 pulled 40% of the way back toward average, so two elite parents give a strong foal, not a
 guaranteed better one; selective breeding over generations is how the best horses are made. A
-sire bought as a straw breeds true to the stats its identifier rolls. Foals start every stat at
-10 and train up from there. `eqHorses` shows each horse as `bred` or `rolled`.
+sire bought as a straw breeds true to the stats its identifier rolls.
+
+**Starting stats.** The first time the mod sees a horse, each stat is drawn from a bell curve.
+Foals start low (around 15), and the centre rises with age to about 50 for a horse of four or
+more, with a wide spread. A talented horse's stats lean a little higher, and a stat never starts
+above its potential. Starting above 80 is rare: about one horse in 125. Dealer horses start a
+few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
+new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
 ## Training
 
@@ -70,12 +79,63 @@ Every horse trains once a day, at RLRM's daily horse tick.
   share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
   95% of each ceiling; only your own riding takes a stat the last 5%.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
+- **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
+  builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
+  and a slow one is cheap to keep but slow to bring back into condition (down to 60%). Fitness
+  lost is not changed.
 - Gains slow as a stat nears its ceiling. Horses under 24 months train at 30%, 24-36 months at
   60%. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.
 
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
 sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
+
+### Feed
+
+What is in a horse's trough speeds its training up (it never trains a horse that is not worked).
+The mod rewrites every map's horse food list from `data/feeds.xml`, keeping the map's own groups
+and weights:
+
+| Feed | Group | Training boost |
+| --- | --- | --- |
+| Hay, grass, alfalfa, clover (and Geistal's chaff) | hay | none |
+| Oats | grain | +10% stamina and temperament |
+| Barley, winter barley | grain | +20% stamina and agility |
+| Corn (maize) | grain | +30% speed |
+| Wheat, winter wheat, spelt, triticale, rye | grain | none |
+| Carrots | treat | +30% temperament |
+| Apples (Orchards and Greenhouses' `APPLE`, Geistal's `APPLE_GT`) | treat | +30% temperament |
+| Parsnips, beetroot | treat | none |
+
+Sorghum is no longer accepted: it is toxic to horses. Feeds a map or mod does not have are
+skipped. Every feed in the trough gives its full boost and the boosts add up, so oats, barley and
+corn together give all three; carrots and apples are the exception and count once between them. A horse pen's food list
+names the groups Hay, Hard feed and Treats and shows what each does in place of the base game's
+percentage: the boost while it holds feed ("Treats (Tem +30%)"), the stats it can boost while it is
+empty ("Hard feed (Sta Spd Agi Tem)"). While riding, a "Feed" line shows the boost, and `eqFeed` lists the horse food groups and each horse's boost.
+
+## Horse facilities
+
+Horse buildings on your farm make your horses train faster, and a little better on the day of
+some events. Owning one speeds up all training (staff and your own riding); riding inside one
+yourself speeds your riding up a lot more, by the share of the day's riding you did in there.
+
+| Facility | Training it speeds up | Events it helps |
+| --- | --- | --- |
+| Riding hall (Equestrian Pack, Riding Hall 2k26) | Agility, Temperament; Stamina while riding in it | Dressage, Show Jumping |
+| Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
+| Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
+| Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
+| Round pen (Elmcreek 25's round roofed arena, the base game barn02) | Temperament; a little Agility | Dressage |
+| Horse stable mods (Horse Stable, Equestrian Pack L barn) | Temperament, a little | Dressage, a little |
+
+Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
+bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say
+"Improves ... training" in the shop.
+
+Map scenery counts for the farm that owns the farmland under it. Other mods and maps are added
+in `data/facilities.xml` without code. `eqFacilities` lists your facilities and what they give;
+`eqFacilities near` lists the map nodes and placeables around you, to find a building's name.
 
 ## Competitions
 
@@ -154,18 +214,22 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
 
 - **Talent:** a horse's potential leans on its RLRM genetics, so RLRM's dealer quality setting
   also sets how talented the dealer's horses are. About 1 in 15 is a really good prospect.
-- **Green:** dealer horses arrive with little training, so a good one needs a year or more of
-  work before it wins much above Novice.
+- **Green:** dealer horses start a few points lower than a home-produced horse of the same age,
+  so a good one needs a year or more of work before it wins much above Novice.
 - **The dealer's word:** the potential words for a dealer horse end in "?" (High?, Very high?).
   They are the dealer's view: usually right, sometimes generous, now and then modest. After three
   months on your farm you find out, with a message saying whether the horse is better, worse or
   about what the dealer said, and its price moves to match.
 - **Settling in:** a bought horse can't compete in its first month.
-- **Price:** RLRM's price plus a premium for talent (it doubles every 7.5 points of the two best
-  potentials) and schooling, shrinking once the horse is past its peak. Selling goes through the
+- **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
+  most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is
+  very expensive. Potential (the two best potentials, doubling every 7.5 points) is most of a
+  young horse's value and a small part of a made horse's. A quarter of the premium is stud value,
+  which a gelding loses. The rest scales with RLRM's health, drops while the horse is injured, and
+  is gone once an injury has ended its career. The premium shrinks once the horse is past its peak. Selling goes through the
   same price, and RLRM's dealer markup means buying and selling straight back always loses.
 
-In the test model, a talent-85 horse bought for about $12,500 is worth about the same three months
+In the test model, a talent-85 horse bought for about $10,500 is worth about the same three months
 later, has paid for itself within the second year, and makes good money after that, before vet
 bills. `eqDealer` (testing) lists the dealer's horses with their real potential and the
 dealer's view of it.

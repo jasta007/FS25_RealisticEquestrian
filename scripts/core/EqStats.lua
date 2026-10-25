@@ -128,29 +128,29 @@ function EqStats.ageTrainingFactor(ageMonths)
 end
 
 
---- How far along a horse of this age typically is, used to place an untracked adult.
 --- @param ageMonths number
---- @return number maturity 0..1
-function EqStats.maturity(ageMonths)
-    if ageMonths < EqConstants.AGE_GROUNDWORK then return 0 end
-    if ageMonths >= 96 then return 1 end
-    return (ageMonths - EqConstants.AGE_GROUNDWORK) / (96 - EqConstants.AGE_GROUNDWORK)
+--- @return number 0 for a newborn, 1 from START_ADULT_MONTHS
+function EqStats.startMaturity(ageMonths)
+    return clamp((ageMonths or 0) / EqConstants.START_ADULT_MONTHS, 0, 1)
 end
 
 
---- Trained levels for a horse first seen at this age with no history.
+--- Trained levels for a horse first seen at this age with no history: a bell curve per stat,
+--- leaning toward the horse's talent, and never above its ceiling.
 --- @param ceilings table stat key -> ceiling
 --- @param ageMonths number
 --- @param rng table An EqRandom
+--- @param shift number|nil points added to the curve's centre (a green dealer horse is lower)
 --- @return table trained stat key -> trained level
-function EqStats.initialTrained(ceilings, ageMonths, rng)
+function EqStats.initialTrained(ceilings, ageMonths, rng, shift)
     local trained = {}
-    local maturity = EqStats.maturity(ageMonths or 0)
+    local m = EqStats.startMaturity(ageMonths)
+    local mean = EqConstants.START_FOAL_MEAN + (EqConstants.START_MEAN - EqConstants.START_FOAL_MEAN) * m + (shift or 0)
+    local sd = EqConstants.START_FOAL_SD + (EqConstants.START_SD - EqConstants.START_FOAL_SD) * m
 
     for _, key in ipairs(EqConstants.STAT_KEYS) do
-        local share = maturity * rng:uniform(0.45, 0.8)
-        trained[key] = clamp(math.max(EqConstants.FOAL_TRAINED, ceilings[key] * share),
-            0, ceilings[key])
+        local lean = EqConstants.START_CEILING_LEAN * m * (ceilings[key] - EqConstants.START_CEILING_PIVOT)
+        trained[key] = clamp(rng:normal(mean + lean, sd), math.min(EqConstants.START_MIN, ceilings[key]), ceilings[key])
     end
 
     return trained

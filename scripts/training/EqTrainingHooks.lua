@@ -6,7 +6,9 @@
       per horse. Vehicle functions are copied into each vehicle type when types are registered,
       so these two are patched at source time, before that happens; the hook bodies stay idle
       until EqMain is active. Both run on the server only, which is where riding is counted.
-    - Rideable.onDraw adds a line showing today's training effort while riding.
+    - Rideable.onDraw adds a line showing today's training effort while riding, one naming the
+      farm's facility the horse is inside (EqFacilityHooks), if any, and one for the boost the
+      horse's feed gives (EqFeedHooks).
     - RLRM's AnimalHorse.processRidingUpdate is the daily horse tick. A prepend runs our day
       just before RLRM grades fitness and zeroes riding, so the day's riding value is still there
       to read.
@@ -81,7 +83,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local id = getRiddenId(spec)
     if id == nil then return end
 
-    EqTraining.addRiding(EqTrainingHooks.getSheet(id), gait, dt)
+    local sheet = EqTrainingHooks.getSheet(id)
+    EqTraining.addRiding(sheet, gait, dt)
+    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt) end
 end
 
 
@@ -118,6 +122,15 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(parts, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat), math.floor(effort[stat] * 100 + 0.5)))
     end
     g_currentMission:addExtraPrintText(g_i18n:getText("eq_training_today") .. ": " .. table.concat(parts, " "))
+
+    local inside = {}
+    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do table.insert(inside, EqFacilityHooks.kindTitle(kind)) end
+    if #inside > 0 then
+        table.sort(inside)
+        g_currentMission:addExtraPrintText(string.format(g_i18n:getText("eq_facility_inside"), table.concat(inside, ", ")))
+    end
+    local feedLine = EqFeedHooks.formatBoost(EqFeedHooks.getBoost(spec.cluster))
+    if feedLine ~= nil then g_currentMission:addExtraPrintText(feedLine) end
 end
 
 
@@ -134,12 +147,16 @@ function EqTrainingHooks.onHorseDay(animal)
 
     -- On box rest nothing trains: the day counts as idle, so the stats fade as they would.
     local resting = record.injury ~= nil
+    local owned, ridden = EqFacilityHooks.boostsFor(EqFacilityHooks.farmOfAnimal(animal), sheet)
     local deltas = EqTraining.applyDay(record, record:getCeilings(), {
         sheet = not resting and sheet or nil,
         riding = not resting and animal.riding or 0,
         dirt = animal.dirt,
         ageMonths = animal.age or 0,
         timeAdjustment = g_currentMission.environment.timeAdjustment or 1,
+        facilityOwned = owned,
+        facilityRidden = ridden,
+        feedBoost = EqFeedHooks.getBoost(animal),
     })
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",

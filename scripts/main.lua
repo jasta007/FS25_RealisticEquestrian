@@ -24,6 +24,11 @@ source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/training/EqMetabolism.lua")
+source(modDirectory .. "scripts/facilities/EqFacility.lua")
+source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
+source(modDirectory .. "scripts/training/EqFeed.lua")
+source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -90,6 +95,10 @@ function EqMain.activate()
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.metabolismFitness then
+        guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.awayVisuals then
         guarded("away horses hook", function() EqAway.install(guarded) end)
     end
@@ -111,6 +120,7 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
         end)
+        guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then
@@ -129,6 +139,10 @@ EqTrainingHooks.installRideable(guarded)
 -- Loading triggers are created as the map loads, so the probe starts listening now.
 guarded("probe hook", EqProbe.install)
 
+-- The horse feed list has to be in place before the map's placeables (and their troughs) load,
+-- and needs nothing from RLRM, so it is hooked now too.
+guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
+
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
     EqMain.activate()
@@ -140,6 +154,9 @@ local function onMissionLoaded(mission)
     if not EqMain.isActive then return end
 
     guarded("console registration", EqConsole.register)
+    guarded("facility scan", EqFacilityHooks.scanMap)
+    guarded("facility shop text", EqFacilityHooks.addStoreText)
+    guarded("feed console registration", EqFeedHooks.register)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -179,8 +196,10 @@ local function onMissionDelete()
 
     guarded("mission cleanup", function()
         EqConsole.unregister()
+        EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()
+        EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
         local config = EqCompetitionManager.config
         EqCompetitionManager.reset()

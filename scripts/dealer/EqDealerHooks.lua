@@ -1,6 +1,6 @@
 --[[
     EqDealerHooks.lua
-    Prices a horse by its talent and schooling, on top of RLRM's own price. Wraps RLRM's
+    Prices a horse by its skill, talent, soundness and breeding value, on top of RLRM's own price. Wraps RLRM's
     AnimalHorse.getHorseSellPrice, which both the dealer's asking price (times RLRM's dealer
     markup) and a horse's sale value go through, so buying and selling stay consistent and the
     markup still stops buy-and-sell-back loops. No RLRM file changes.
@@ -27,7 +27,8 @@ function EqDealerHooks.priceFor(animal, rlrmPrice)
     local record = EqRegistry.getOrCreate(animal)
     local base = basePrice(animal)
     if record == nil or base == nil then return rlrmPrice end
-    return EqDealer.price(rlrmPrice, base, record:getShownCeilings(), record.trained, animal.age or 0)
+    return EqDealer.price(rlrmPrice, base, record:getShownCeilings(), record.trained, animal.age or 0,
+        EqDealer.condition(animal, record))
 end
 
 

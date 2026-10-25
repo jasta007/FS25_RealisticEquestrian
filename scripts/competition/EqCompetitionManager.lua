@@ -205,8 +205,9 @@ function EqCompetitionManager.prospects(record, animal, event)
     local elimination = EqRisk.eliminationChance(discipline, tier, rating, record.trained.temperament or 0)
     -- Seeded by event and horse, so the word doesn't flicker each time the tab opens.
     local rng = EqRandom.new(string.format("odds %s %s", tostring(event.id), record.id))
-    local chance = EqCompetition.podiumChance(event, config, rating,
-        EqCompetition.condition(animal.fitness, animal.health), elimination, rng)
+    local condition = EqCompetition.condition(animal.fitness, animal.health)
+        * EqFacilityHooks.conditionFactor(EqFacilityHooks.farmOfAnimal(animal), event.discipline)
+    local chance = EqCompetition.podiumChance(event, config, rating, condition, elimination, rng)
 
     local benefit = nil
     if tier.trainingBoost > 0 then
@@ -289,7 +290,8 @@ function EqCompetitionManager.resolve(event, horses)
                 table.insert(starters, {
                     key = entry.horseId,
                     rating = EqCompetitionManager.ratingFor(record, event),
-                    condition = EqCompetition.condition(horse.animal.fitness, horse.animal.health),
+                    condition = EqCompetition.condition(horse.animal.fitness, horse.animal.health)
+                        * EqFacilityHooks.conditionFactor(entry.farmId, event.discipline),
                     temperament = record.trained.temperament or 0,
                     stamina = record.trained.stamina or 0,
                     fitness = horse.animal.fitness or 0,

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    Horse facilities: buildings and courses on a farm that make its horses train faster and give
+    a small edge in some events. Adding support for another mod or map needs no code: add a
+    <match> or <node> line pointing at an existing kind.
+
+    facilities          caps on the sum over every kind a farm has
+        ownedCap        most an owned-facility share can add to a stat's training rate
+        riddenCap       most the riding-inside share can add on top
+        eventCap        most the event bonus can add to a horse's condition on the day
+
+    kind
+        name            key used in code and translations (eq_facility_<name>)
+        radius          metres around the building's origin that count as riding inside it, used
+                        only when the placeable has no test areas to measure
+        fullAt          how many of this kind give the full bonus (jumps: a course, not one
+                        fence); fewer give their share of it
+        owned*          shares added to the monthly training rate of every horse on the farm,
+                        for staff and the player alike (0.10 = 10% faster)
+        ridden*         shares added on top while the player rides inside, weighted by the share
+                        of the day's riding done inside
+        events          discipline:bonus pairs; the bonus scales a horse's condition on the day
+
+    match               a placeable whose xml filename ends with xml (case does not matter; a
+                        filename that ends in a prefix like "props" matches props01.xml and on)
+    keyword             fallback for placeables no <match> names: a Lua pattern tried against
+                        the lowercased xml filename (not its folder). Horse husbandries never
+                        match keywords.
+    node                map scenery: a Lua pattern tried against node names in the loaded map.
+                        A node counts for the farm that owns the farmland it stands on. Matches
+                        within 2 m of each other count once.
+
+    Training rates stack with feed boosts by adding: rate x (1 + feed + facilities).
+-->
+<facilities ownedCap="0.25" riddenCap="0.6" eventCap="0.05">
+    <kind name="stable" radius="20" fullAt="1"
+          ownedTemperament="0.05"
+          events="dressage:0.005"/>
+    <kind name="indoorArena" radius="35" fullAt="1"
+          ownedAgility="0.10" ownedTemperament="0.10"
+          riddenStamina="0.15" riddenAgility="0.35" riddenTemperament="0.35"
+          events="dressage:0.03 showJumping:0.02"/>
+    <kind name="ridingCentre" radius="40" fullAt="1"
+          ownedStamina="0.05" ownedAgility="0.10" ownedTemperament="0.10"
+          riddenStamina="0.15" riddenAgility="0.30" riddenTemperament="0.30"
+          events="dressage:0.02 showJumping:0.02"/>
+    <kind name="outdoorArena" radius="35" fullAt="1"
+          ownedStamina="0.10" ownedAgility="0.10"
+          riddenStamina="0.35" riddenSpeed="0.15" riddenAgility="0.25"
+          events="crossCountry:0.03 eventing:0.03"/>
+    <kind name="roundPen" radius="15" fullAt="1"
+          ownedAgility="0.05" ownedTemperament="0.15"
+          riddenAgility="0.15" riddenTemperament="0.40"
+          events="dressage:0.03"/>
+    <kind name="jumps" radius="20" fullAt="6"
+          ownedAgility="0.10"
+          riddenAgility="0.40" riddenTemperament="0.10"
+          events="showJumping:0.03 eventing:0.01"/>
+
+    <!-- Rudolf Hoermann Equestrian Pack (FS25_horsePack) -->
+    <match kind="indoorArena" xml="FS25_horsePack/xml/ridingHall.xml"/>
+    <match kind="outdoorArena" xml="FS25_horsePack/xml/outdoorRidingArea.xml"/>
+    <match kind="stable" xml="FS25_horsePack/xml/horseStable.xml"/>
+    <!-- Riding Hall 2k26 (FS25_RidingHall): the hall, and its jumps sold one by one -->
+    <match kind="indoorArena" xml="FS25_RidingHall/ReitHalle.xml"/>
+    <match kind="jumps" xml="FS25_RidingHall/props"/>
+    <!-- Riding Stable (FS25_RidingStable): stable with an indoor school and obstacles -->
+    <match kind="ridingCentre" xml="FS25_RidingStable/XML/horseBarnBig.xml"/>
+    <!-- Horse Stable (FS25_horseStable) -->
+    <match kind="stable" xml="FS25_horseStable/horseStable.xml"/>
+
+    <!-- Base game: the round roofed pen at Elmcreek 25's horse ranch is the mapUS barn02 -->
+    <match kind="roundPen" xml="data/placeables/mapUS/barn02/barn02.xml"/>
+
+    <keyword kind="indoorArena" pattern="ridinghall"/>
+    <keyword kind="indoorArena" pattern="reithalle"/>
+    <keyword kind="indoorArena" pattern="indoorarena"/>
+    <keyword kind="outdoorArena" pattern="ridingarena"/>
+    <keyword kind="outdoorArena" pattern="outdoorriding"/>
+    <keyword kind="roundPen" pattern="roundpen"/>
+    <keyword kind="roundPen" pattern="lunging"/>
+    <keyword kind="roundPen" pattern="longier"/>
+    <keyword kind="jumps" pattern="horsejump"/>
+    <keyword kind="jumps" pattern="showjump"/>
+
+    <!-- Map scenery, such as the show jumping course at Elmcreek 25's horse ranch -->
+    <node kind="jumps" pattern="^horseObstacle"/>
+    <node kind="roundPen" pattern="^roundPen"/>
+    <node kind="roundPen" pattern="^lungingRing"/>
+</facilities>

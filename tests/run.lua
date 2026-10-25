@@ -13,12 +13,15 @@ dofile("scripts/core/EqConstants.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
+dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
+dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
 local TestXML = dofile("tests/xml.lua")
@@ -128,11 +131,47 @@ check("elite x elite averages below the parents", total / 2000 < 1.5, string.for
 -- Age curve.
 check("foals do groundwork only", EqStats.ageTrainingFactor(12) == 0.3)
 check("prime age trains fully", EqStats.ageTrainingFactor(100) == 1.0)
-check("an untracked yearling starts at foal level",
-    EqStats.initialTrained(average, 12, EqRandom.new(1)).speed == EqConstants.FOAL_TRAINED)
-local adult = EqStats.initialTrained(average, 120, EqRandom.new(1))
-check("an untracked adult is part-trained, below its ceiling", adult.speed > 30 and adult.speed < 70,
-    string.format("got %.1f", adult.speed))
+do
+    -- Starting stats: a bell curve, low for the young, around START_MEAN for adults.
+    local function spread(ceilings, age, n)
+        local sum, sq, over80, values = 0, 0, 0, 0
+        for i = 1, n do
+            local t = EqStats.initialTrained(ceilings, age, EqRandom.new("start " .. i))
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do
+                sum, sq, values = sum + t[stat], sq + t[stat] ^ 2, values + 1
+                if t[stat] > 80 then over80 = over80 + 1 end
+            end
+        end
+        local mean = sum / values
+        return mean, math.sqrt(sq / values - mean ^ 2), over80 / values
+    end
+    local typical = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
+    local mean, sd = spread(typical, 120, 2000)
+    check("adult starting stats centre around 50", mean > 46 and mean < 53, string.format("%.1f", mean))
+    check("adult starting stats spread widely", sd > 11 and sd < 16, string.format("%.1f", sd))
+    -- Across real rolled horses (each with its own ceilings), a start above 80 is very rare.
+    local over80, values, horses80 = 0, 0, 0
+    for i = 1, 3000 do
+        local record = EqRegistry.rollRecord("adult " .. i, 120, 1, false)
+        local any = false
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do
+            values = values + 1
+            if record.trained[stat] > 80 then over80, any = over80 + 1, true end
+        end
+        if any then horses80 = horses80 + 1 end
+    end
+    print(string.format("info: adult starting stats: mean %.1f, sd %.1f; %.2f%% of stats and %.1f%% of horses above 80",
+        mean, sd, 100 * over80 / values, 100 * horses80 / 3000))
+    check("starting above 80 is very rare", over80 > 0 and over80 / values < 0.01, string.format("%d of %d", over80, values))
+    local young = spread(typical, 12, 500)
+    check("a yearling starts low", young > 15 and young < 30, string.format("%.1f", young))
+    local foal = EqStats.initialTrained(typical, 0, EqRandom.new(1))
+    check("a newborn starts near foal level", math.abs(foal.speed - EqConstants.START_FOAL_MEAN) < 15)
+    local talented = spread({ stamina = 95, speed = 95, agility = 95, temperament = 95 }, 120, 500)
+    check("talent leans the start upward", talented > mean + 4, string.format("%.1f vs %.1f", talented, mean))
+    local capped = EqStats.initialTrained({ stamina = 42, speed = 42, agility = 42, temperament = 42 }, 120, EqRandom.new(3))
+    check("a start never passes the ceiling", capped.speed <= 42)
+end
 
 -- SEEDED BREEDING through RLRM's own BreedingMath
 
@@ -507,7 +546,7 @@ for i = 1, 500 do
         homeSum = homeSum + home.trained[stat] / hc[stat]
     end
 end
-check("dealer horses are greener than home-produced ones", greenSum < 0.7 * homeSum,
+check("dealer horses are greener than home-produced ones", greenSum < 0.95 * homeSum,
     string.format("%.2f vs %.2f", greenSum / 2000, homeSum / 2000))
 local d1, d2 = EqRegistry.rollRecord("DE 3 77", 60, 1.2, true), EqRegistry.rollRecord("DE 3 77", 60, 1.2, true)
 check("a dealer horse rolls the same everywhere", d1.trained.speed == d2.trained.speed and d1.advertised.agility == d2.advertised.agility
@@ -542,9 +581,22 @@ local green = { stamina = 25, speed = 25, agility = 20, temperament = 20 }
 local schooled = { stamina = 84, speed = 78, agility = 57, temperament = 57 }
 local greenPrice = EqDealer.price(4000, 5000, c85, green, 60)
 local schooledPrice = EqDealer.price(4000, 5000, c85, schooled, 60)
-check("a green talent-85 horse costs about $9-15k", greenPrice > 9000 and greenPrice < 15000, string.format("%.0f", greenPrice))
-check("schooling adds value, but not a fortune", schooledPrice > greenPrice and schooledPrice < 1.7 * greenPrice,
+check("a green talent-85 horse costs about $6-12k", greenPrice > 6000 and greenPrice < 12000, string.format("%.0f", greenPrice))
+check("skill drives the price: a schooled horse is worth far more", schooledPrice > 1.8 * greenPrice,
     string.format("%.0f -> %.0f", greenPrice, schooledPrice))
+local youngTalent = EqDealer.price(4000, 5000, c85, green, 20)
+local youngPlain = EqDealer.price(4000, 5000, { stamina = 60, speed = 60, agility = 60, temperament = 60 }, green, 20)
+check("in a young horse, potential is worth a lot", youngTalent > 1.8 * youngPlain,
+    string.format("%.0f vs %.0f", youngTalent, youngPlain))
+local sick = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 0.05, soundness = 0.05, intact = true })
+check("a sick horse loses most of its premium", sick < 0.4 * schooledPrice, string.format("%.0f", sick))
+local gelded = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 1, soundness = 1, intact = false })
+check("gelding takes away the stud value", gelded < schooledPrice and gelded > 0.6 * schooledPrice,
+    string.format("%.0f vs %.0f", gelded, schooledPrice))
+local ended = EqDealer.price(4000, 5000, c85, schooled, 60, { health = 1, soundness = 0, intact = true })
+check("a career-ended horse keeps only its stud value", ended < 0.5 * schooledPrice, string.format("%.0f", ended))
+check("a gelding with no stud value reads as not intact", not EqDealer.condition({ gender = "male", isCastrated = true }, nil).intact
+    and EqDealer.condition({ gender = "female" }, nil).intact)
 check("an old horse's talent is worth less", EqDealer.price(4000, 5000, c85, schooled, 200) < 0.6 * schooledPrice)
 local poorPrice = EqDealer.price(4000, 5000, { stamina = 50, speed = 50, agility = 50, temperament = 50 }, green, 60)
 check("a poor horse is cheaper, but never nothing", poorPrice < 0.4 * 4000 and poorPrice >= 4000 * EqConstants.VALUE_FLOOR,
@@ -615,6 +667,164 @@ for rating = 50, 100, 5 do
     if best <= 0 then table.insert(zones, rating) end
 end
 check("every rating from 50 has an event worth entering", #zones == 0, table.concat(zones, ","))
+
+-- Metabolism: faster gets fit faster, slower slower; losses unchanged.
+check("average metabolism changes nothing", EqMetabolism.fitnessFactor(1.0) == 1 and EqMetabolism.fitnessFactor(nil) == 1)
+check("fast metabolism gains fitness faster", EqMetabolism.scaleFitness({ genetics = { metabolism = 1.5 } }, 10) == 13)
+check("slow metabolism gains fitness slower", EqMetabolism.scaleFitness({ genetics = { metabolism = 0.5 } }, 10) == 7)
+check("metabolism factor is bounded", EqMetabolism.fitnessFactor(0.25) == EqConstants.METABOLISM_FITNESS_MIN
+    and EqMetabolism.fitnessFactor(1.75) == EqConstants.METABOLISM_FITNESS_MAX)
+check("fitness lost is not scaled", EqMetabolism.scaleFitness({ genetics = { metabolism = 1.5 } }, -5) == -5)
+
+-- Facilities: data/facilities.xml matches the supported mods and caps the bonuses.
+local facilities = EqFacility.read(TestXML.load("data/facilities.xml"))
+local modsDir = "C:/Users/User/Documents/My Games/FarmingSimulator2025/mods/"
+check("horsePack riding hall is an indoor arena",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/ridingHall.xml", false) == "indoorArena")
+check("horsePack outdoor area is an outdoor arena",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/outdoorRidingArea.xml", false) == "outdoorArena")
+check("Riding Hall 2k26 hall matches, backslashes and case aside",
+    EqFacility.kindForXml(facilities, "C:\\mods\\fs25_ridinghall\\reithalle.xml", false) == "indoorArena")
+check("Riding Hall 2k26 jumps match by prefix",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/props07.xml", false) == "jumps")
+check("Riding Hall 2k26 letters are not jumps",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/objekt.xml", false) == nil)
+check("Riding Stable is a riding centre",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingStable/XML/horseBarnBig.xml", true) == "ridingCentre")
+check("Horse Stable is a stable", EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == "stable")
+check("keywords catch an unknown riding hall",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", false) == "indoorArena")
+check("keywords skip husbandries",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", true) == nil)
+check("base game stables are not facilities",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/stable02/stable02.xml", true) == nil)
+check("the base game round barn is a round pen",
+    EqFacility.kindForXml(facilities, "data/placeables/mapUS/barn02/barn02.xml", false) == "roundPen")
+check("a round pen is a temperament and dressage place",
+    EqFacility.improvedStats(facilities.kindByName.roundPen)[1] == "temperament"
+    and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
+check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
+    and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
+
+local points = EqFacility.dedupe({
+    { kind = "jumps", x = 0, z = 0 }, { kind = "jumps", x = 0.5, z = 0 }, { kind = "jumps", x = 0, z = 12 },
+}, 2)
+check("a prefab and its model count as one fence", #points == 2)
+
+local noneOwned, noneRidden = EqFacility.boosts(facilities, {}, nil)
+check("no facilities, no boost", noneOwned.agility == 0 and noneRidden.agility == 0)
+local hallOwned, hallRidden = EqFacility.boosts(facilities, { indoorArena = 1 }, { indoorArena = 0.5 })
+check("an owned hall speeds staff up", math.abs(hallOwned.agility - 0.10) < 1e-9 and hallOwned.speed == 0)
+check("riding half the day in it adds half its ridden share", math.abs(hallRidden.agility - 0.175) < 1e-9)
+local threeJumps = EqFacility.boosts(facilities, { jumps = 3 }, nil)
+check("half a jump course gives half the bonus", math.abs(threeJumps.agility - 0.05) < 1e-9)
+local everything = EqFacility.boosts(facilities, { stable = 2, indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
+    { indoorArena = 1, ridingCentre = 1, jumps = 1 })
+check("owned shares are capped", everything.agility <= facilities.ownedCap + 1e-9 and everything.temperament <= facilities.ownedCap + 1e-9)
+local _, everythingRidden = EqFacility.boosts(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, { indoorArena = 1, ridingCentre = 1, jumps = 1 })
+check("ridden shares are capped", everythingRidden.agility <= facilities.riddenCap + 1e-9)
+check("a jump course helps show jumping", EqFacility.eventBonus(facilities, { jumps = 6 }, "showJumping") > 0
+    and EqFacility.eventBonus(facilities, { jumps = 6 }, "raceShort") == 0)
+check("event bonus is capped", EqFacility.eventBonus(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, "showJumping") <= facilities.eventCap + 1e-9)
+local hall = facilities.kindByName.indoorArena
+local improved = EqFacility.improvedStats(hall)
+check("a hall improves agility and temperament first", (improved[1] == "agility" or improved[1] == "temperament") and #improved == 3)
+
+local insideSheet = ridden("canter", 100000)
+EqTraining.addInside(insideSheet, "indoorArena", 25000)
+check("inside share is time inside over time ridden", math.abs(EqFacility.insideShares(insideSheet).indoorArena - 0.25) < 1e-9)
+
+-- A facility speeds training up; riding inside speeds the player's riding up more.
+local plain, faster, inside = horse("balanced", 10), horse("balanced", 10), horse("balanced", 10)
+local day = { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 }
+EqTraining.applyDay(plain, cap70, day)
+EqTraining.applyDay(faster, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+check("an owned facility speeds staff training", faster.trained.agility > plain.trained.agility
+    and faster.trained.speed == plain.trained.speed)
+local riddenPlain, riddenInside = horse("balanced", 10), horse("balanced", 10)
+EqTraining.applyDay(riddenPlain, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1, facilityOwned = hallOwned })
+EqTraining.applyDay(riddenInside, cap70, { sheet = ridden("canter", 150000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1,
+    facilityOwned = hallOwned, facilityRidden = hallRidden })
+check("riding inside trains faster still", riddenInside.trained.agility > riddenPlain.trained.agility)
+
+
+-- Feeds: the map's horse groups are rewritten from data/feeds.xml.
+local feeds = EqFeed.read(TestXML.load("data/feeds.xml"))
+local function namesOf(group)
+    local set = {}
+    for _, name in ipairs(group.names) do set[name] = true end
+    return set
+end
+local function groupWith(groups, name)
+    for _, group in ipairs(groups) do if namesOf(group)[name] then return group end end
+end
+
+-- Geistal's horse groups. Geistal calls its apples APPLE_GT; there is no plain APPLE.
+local geistalKnown = {}
+for name in ("OAT SORGHUM BARLEY WINTERBARLEY MAIZE WHEAT WINTERWHEAT SPELT TRITICALE RYE CARROT PARSNIP BEETROOT APPLE_GT "
+    .. "DRYGRASS_WINDROW GRASS_WINDROW ALFALFA_WINDROW DRYALFALFA_WINDROW CLOVER_WINDROW DRYCLOVER_WINDROW ALFALFA_CHAFF CLOVER_CHAFF"):gmatch("%S+") do
+    geistalKnown[name] = true
+end
+local geistal = EqFeed.planGroups({
+    { names = { "OAT", "SORGHUM" } },
+    { names = { "DRYGRASS_WINDROW", "GRASS_WINDROW", "ALFALFA_WINDROW", "DRYALFALFA_WINDROW", "CLOVER_WINDROW", "DRYCLOVER_WINDROW" } },
+    { names = { "CARROT", "PARSNIP", "BEETROOT" } },
+}, feeds, function(name) return geistalKnown[name] == true end)
+check("sorghum is no longer a horse feed", groupWith(geistal, "SORGHUM") == nil)
+check("barley joins the oats", groupWith(geistal, "BARLEY") == geistal[1] and groupWith(geistal, "MAIZE") == geistal[1])
+check("winter crops join too", groupWith(geistal, "WINTERBARLEY") == geistal[1] and groupWith(geistal, "WINTERWHEAT") == geistal[1])
+check("Geistal's apples are a treat", groupWith(geistal, "APPLE_GT") == geistal[3])
+check("an unknown fill type is not added", groupWith(geistal, "APPLE") == nil)
+check("chaff goes with the hay", groupWith(geistal, "ALFALFA_CHAFF") == geistal[2])
+check("no group is invented when the map has all three", #geistal == 3)
+
+-- A map whose horses only eat sorghum and hay: the emptied group goes, a treat group is made.
+local sparse = EqFeed.planGroups({ { names = { "SORGHUM" } }, { names = { "DRYGRASS_WINDROW" } } }, feeds,
+    function(name) return name == "OAT" or name == "CARROT" or name == "APPLE" or name == "DRYGRASS_WINDROW" end)
+local oatGroup, appleGroup = groupWith(sparse, "OAT"), groupWith(sparse, "APPLE")
+check("a map without the kind gets a new group", oatGroup ~= nil and oatGroup.isNew and oatGroup.group.name == "grain")
+check("the emptied sorghum group is dropped", #sparse == 3, tostring(#sparse))
+check("Orchards and Greenhouses apples are a treat", appleGroup ~= nil and appleGroup == groupWith(sparse, "CARROT"))
+
+-- Boosts: hay gives nothing, every feed in the trough adds its full boost, carrots and apples count once.
+local function near(a, b) return math.abs(a - b) < 1e-9 end
+local hayOnly = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000 }, feeds)
+check("hay gives no boost", hayOnly.stamina == 0 and hayOnly.speed == 0 and hayOnly.agility == 0 and hayOnly.temperament == 0)
+local oats = EqFeed.dietBoost({ DRYGRASS_WINDROW = 5000, OAT = 100 }, feeds)
+check("oats: small stamina and temperament", near(oats.stamina, 0.10) and near(oats.temperament, 0.10) and oats.speed == 0)
+local barley = EqFeed.dietBoost({ BARLEY = 100 }, feeds)
+check("barley: moderate agility and stamina", near(barley.agility, 0.20) and near(barley.stamina, 0.20))
+check("corn: strong speed", near(EqFeed.dietBoost({ MAIZE = 1 }, feeds).speed, 0.30))
+check("carrots: strong temperament", near(EqFeed.dietBoost({ CARROT = 1 }, feeds).temperament, 0.30))
+check("apples match carrots", near(EqFeed.dietBoost({ APPLE_GT = 1 }, feeds).temperament, 0.30))
+local mixed = EqFeed.dietBoost({ OAT = 50, BARLEY = 10, MAIZE = 50, CARROT = 10 }, feeds)
+check("oats, barley and corn stack", near(mixed.speed, 0.30) and near(mixed.stamina, 0.30) and near(mixed.agility, 0.20))
+check("grain and treats add up", near(mixed.temperament, 0.10 + 0.30))
+local sweet = EqFeed.dietBoost({ CARROT = 10, APPLE = 10, APPLE_GT = 10 }, feeds)
+check("carrots and apples do not stack", near(sweet.temperament, 0.30), string.format("%.2f", sweet.temperament))
+check("an empty trough gives nothing", EqFeed.dietBoost({ MAIZE = 0 }, feeds).speed == 0)
+
+-- The boost speeds training up, and gives nothing on a day without work.
+local function trainedSpeed(feedBoost, sheet)
+    local record = { trained = { stamina = 30, speed = 30, agility = 30, temperament = 30 }, focus = "balanced", idleDays = 0 }
+    local ceilings = { stamina = 80, speed = 80, agility = 80, temperament = 80 }
+    EqTraining.applyDay(record, ceilings, { sheet = sheet, riding = 0, ageMonths = 60, timeAdjustment = 1 / 30, feedBoost = feedBoost })
+    return record.trained.speed
+end
+local gallop = ridden("gallop", 100000)
+local plain, corn = trainedSpeed(nil, gallop), trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), ridden("gallop", 100000))
+check("corn makes galloping train speed faster", corn > plain and near((corn - 30) / (plain - 30), 1.30),
+    string.format("%.4f vs %.4f", corn, plain))
+check("feed alone trains nothing", trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), nil) == 30)
+
+-- Pen food rows: each group is named for what it mostly holds, and lists the stats it can boost.
+check("Geistal's groups are hard feed, hay and treats", EqFeed.groupKind(geistal[1].names, feeds) == "grain"
+    and EqFeed.groupKind(geistal[2].names, feeds) == "hay" and EqFeed.groupKind(geistal[3].names, feeds) == "treat")
+check("a map's own extra feed does not decide the group", EqFeed.groupKind({ "MINERAL_FEED", "OAT" }, feeds) == "grain")
+check("hard feed can boost every stat", #EqFeed.boostedStats(geistal[1].names, feeds) == 4)
+check("hay boosts nothing", #EqFeed.boostedStats(geistal[2].names, feeds) == 0)
+local treatStats = EqFeed.boostedStats(geistal[3].names, feeds)
+check("treats boost temperament", #treatStats == 1 and treatStats[1] == "temperament")
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

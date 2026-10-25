@@ -14,6 +14,11 @@
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_training_today" text="Training"/>
+        <text name="eq_feed_boost" text="Feed"/>
+        <text name="eq_feedGroup_hay" text="Hay"/>
+        <text name="eq_feedGroup_grain" text="Hard feed"/>
+        <text name="eq_feedGroup_treat" text="Treats"/>
+        <text name="eq_feed_noBoost" text="no boost"/>
         <text name="eq_discipline_showJumping" text="Show Jumping"/>
         <text name="eq_discipline_dressage" text="Dressage"/>
         <text name="eq_discipline_crossCountry" text="Cross Country"/>
@@ -21,6 +26,13 @@
         <text name="eq_discipline_raceShort" text="Flat Racing (sprint)"/>
         <text name="eq_discipline_raceLong" text="Flat Racing (staying)"/>
         <text name="eq_discipline_steeplechase" text="Steeplechase"/>
+        <text name="eq_type_showJumping" text="Show Jumping"/>
+        <text name="eq_type_dressage" text="Dressage"/>
+        <text name="eq_type_crossCountry" text="Cross Country"/>
+        <text name="eq_type_eventing" text="Eventing"/>
+        <text name="eq_type_raceShort" text="Flat Race"/>
+        <text name="eq_type_raceLong" text="Flat Race"/>
+        <text name="eq_type_steeplechase" text="Steeplechase"/>
         <text name="eq_tier_training" text="Young horse"/>
         <text name="eq_tier_novice" text="Novice"/>
         <text name="eq_tier_intermediate" text="Intermediate"/>
@@ -108,6 +120,16 @@
         <text name="eq_ui_col_event" text="Event"/>
         <text name="eq_ui_col_going" text="Conditions"/>
         <text name="eq_ui_col_level" text="Level"/>
+        <text name="eq_ui_col_type" text="Type"/>
+        <text name="eq_skill_untrained" text="Untrained"/>
+        <text name="eq_skill_novice" text="Novice"/>
+        <text name="eq_skill_trainee" text="Trainee"/>
+        <text name="eq_skill_amateur" text="Amateur"/>
+        <text name="eq_skill_promising" text="Promising"/>
+        <text name="eq_skill_competitor" text="Competitor"/>
+        <text name="eq_skill_contender" text="Contender"/>
+        <text name="eq_skill_champion" text="Champion"/>
+        <text name="eq_skill_legend" text="Legendary"/>
         <text name="eq_ui_col_when" text="Results"/>
         <text name="eq_ui_col_fee" text="Entry fee"/>
         <text name="eq_ui_col_prize" text="Prize pool"/>
@@ -187,5 +209,14 @@
         <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
+        <text name="eq_and" text="and"/>
+        <text name="eq_facility_improves" text="Improves %s training (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Training in: %s"/>
+        <text name="eq_facility_stable" text="Horse stable"/>
+        <text name="eq_facility_indoorArena" text="Riding hall"/>
+        <text name="eq_facility_ridingCentre" text="Riding centre"/>
+        <text name="eq_facility_outdoorArena" text="Outdoor arena"/>
+        <text name="eq_facility_roundPen" text="Round pen"/>
+        <text name="eq_facility_jumps" text="Jump course"/>
     </texts>
 </l10n>

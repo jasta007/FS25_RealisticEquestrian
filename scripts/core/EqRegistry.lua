@@ -92,8 +92,26 @@ function EqRegistry.getOrCreate(animal)
         EqRegistry.records[id] = record
     end
 
+    if record.redrawStart then
+        record.trained = EqStats.initialTrained(record:getCeilings(), animal.age or 0, EqRandom.new("start " .. id))
+        record.redrawStart = nil
+    end
+
     record.lastSeenDay = currentDay()
     return record
+end
+
+
+--- Saves before starting stats were drawn put every stat at OLD_START_LEVEL. A horse still
+--- there in every stat, with no starts, has never been worked, so it can draw its stats now.
+--- @param record table
+--- @return boolean
+function EqRegistry.hasOldStart(record)
+    if record.career.starts > 0 then return false end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if math.abs((record.trained[stat] or 0) - EqConstants.OLD_START_LEVEL) > 0.01 then return false end
+    end
+    return true
 end
 
 
@@ -281,15 +299,23 @@ function EqRegistry.loadFromDirectory(directory)
         return
     end
 
-    local index = 0
+    local version = xmlFile:getInt("rlEquestrian#version", 1)
+    local index, redraw = 0, 0
     while true do
         local key = string.format("rlEquestrian.horses.horse(%d)", index)
         if not xmlFile:hasProperty(key) then break end
 
         local record = EqHorseRecord.loadFromXMLFile(xmlFile, key)
-        if record ~= nil then EqRegistry.records[record.id] = record end
+        if record ~= nil then
+            EqRegistry.records[record.id] = record
+            if version < 2 and EqRegistry.hasOldStart(record) then
+                record.redrawStart = true
+                redraw = redraw + 1
+            end
+        end
         index = index + 1
     end
+    if redraw > 0 then Log:info("EqRegistry: %d horse(s) from an older save get new starting stats", redraw) end
 
     EqCompetitionManager.loadFromXMLFile(xmlFile, "rlEquestrian.competition")
 

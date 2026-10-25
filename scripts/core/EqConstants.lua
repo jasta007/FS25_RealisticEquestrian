@@ -36,8 +36,20 @@ EqConstants.CEILING_FLOOR = EqConstants.CEILING_BASE + EqConstants.CEILING_PER_G
 EqConstants.BUDGET_BASE = 250
 EqConstants.BUDGET_PER_GENE = 40
 
--- Trained level a newborn foal starts every stat at.
-EqConstants.FOAL_TRAINED = 10
+-- Starting stats: what a horse can already do the first time we see it. Each stat is drawn
+-- from a bell curve: around START_FOAL_MEAN for a newborn, widening to START_MEAN with spread
+-- START_SD by START_ADULT_MONTHS. A stat leans START_CEILING_LEAN points toward the horse's
+-- talent for every ceiling point above or below START_CEILING_PIVOT.
+EqConstants.START_FOAL_MEAN = 15
+EqConstants.START_FOAL_SD = 4
+EqConstants.START_MEAN = 50
+EqConstants.START_SD = 13
+EqConstants.START_ADULT_MONTHS = 48
+EqConstants.START_CEILING_PIVOT = 70
+EqConstants.START_CEILING_LEAN = 0.3
+EqConstants.START_MIN = 5
+-- Every stat of a horse saved before starting stats were drawn sat at this level.
+EqConstants.OLD_START_LEVEL = 10
 
 -- Hired staff (the animal worker, RLRM's herdsman) can train a stat up to this share of its
 -- ceiling; only the player's own riding reaches the rest.
@@ -49,9 +61,15 @@ EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192
 
+-- RLRM's metabolism gene (1.0 average) also sets how fast riding builds fitness: each 0.1 above
+-- or below average changes fitness gains by METABOLISM_FITNESS_LEAN x 10%, within MIN..MAX.
+EqConstants.METABOLISM_FITNESS_LEAN = 0.6
+EqConstants.METABOLISM_FITNESS_MIN = 0.6
+EqConstants.METABOLISM_FITNESS_MAX = 1.45
+
 -- Save file written beside RLRM's in the savegame folder.
 EqConstants.SAVE_FILENAME = "rlEquestrian.xml"
-EqConstants.SAVE_VERSION = 1
+EqConstants.SAVE_VERSION = 2
 
 -- TRAINING (milestone 3)
 
@@ -97,10 +115,8 @@ EqConstants.RLRM_GENE_LEAN = 0.35
 EqConstants.PROSPECT_CHANCE = 0.08
 EqConstants.PROSPECT_BOOST = 0.4
 
--- A dealer horse arrives green: each stat starts at this share of its ceiling (times how
--- mature the horse is), well below a home-produced horse of the same age.
-EqConstants.DEALER_TRAINED_MIN = 0.25
-EqConstants.DEALER_TRAINED_MAX = 0.5
+-- A dealer horse arrives a little green: its starting stats' curve sits this many points lower.
+EqConstants.DEALER_START_SHIFT = -5
 
 -- The dealer's view of a stat's potential: usually right, sometimes generous, now and then
 -- modest. Chances and ranges in ceiling points.
@@ -115,18 +131,30 @@ EqConstants.ADVERT_MODEST_MAX = 5
 EqConstants.REVEAL_MONTHS = 3
 EqConstants.SETTLE_MONTHS = 1
 
--- Value. A horse's price is RLRM's, plus a premium for talent and schooling on top of the
--- subtype's base price for its age. Talent is the mean of the two best ceilings: 75 is worth the
--- base price, and every VALUE_DOUBLING points more doubles it.
+-- Value. A horse's price is RLRM's, plus a premium on top of the subtype's base price for its
+-- age. The premium blends what the horse can do now (skill: the mean of its two best stats) with
+-- what it could do (talent: the mean of its two best ceilings). Skill SKILL_PIVOT is worth the
+-- base price and every SKILL_DOUBLING points more doubles it; likewise talent from VALUE_PIVOT
+-- by VALUE_DOUBLING.
+EqConstants.SKILL_PIVOT = 60
+EqConstants.SKILL_DOUBLING = 10
 EqConstants.VALUE_PIVOT = 75
 EqConstants.VALUE_DOUBLING = 7.5
 EqConstants.VALUE_MIN_FACTOR = 0.4
 EqConstants.VALUE_MAX_FACTOR = 12
--- Schooling: an untrained horse is worth SCHOOL_BASE of its talent value, a fully schooled one
--- SCHOOL_BASE + SCHOOL_RANGE. A green dealer horse of talent 75 comes out near RLRM's own price.
-EqConstants.SCHOOL_BASE = 0.85
-EqConstants.SCHOOL_RANGE = 0.6
--- Past its peak a horse's talent premium shrinks, to this share by AGE_DECLINE.
+-- Talent's share of the blend: most of a young horse's value, a small part of a made one's.
+-- POTENTIAL_WEIGHT_YOUNG up to AGE_GROUNDWORK, falling to POTENTIAL_WEIGHT_ADULT by
+-- POTENTIAL_ADULT_MONTHS.
+EqConstants.POTENTIAL_WEIGHT_YOUNG = 0.8
+EqConstants.POTENTIAL_WEIGHT_ADULT = 0.2
+EqConstants.POTENTIAL_ADULT_MONTHS = 96
+-- Of that blend, STUD_SHARE is breeding value: an entire horse's talent, gone once he is gelded.
+-- The rest is performance value: skill and talent as a riding horse, scaled by how sound the
+-- horse is (RLRM's health, our injuries).
+EqConstants.STUD_SHARE = 0.25
+-- Performance value kept while on box rest; none once an injury has ended the career.
+EqConstants.VALUE_INJURED_FACTOR = 0.6
+-- Past its peak a horse's premium shrinks, to this share by AGE_DECLINE.
 EqConstants.VALUE_OLD_FACTOR = 0.3
 -- The total never falls below this share of RLRM's own price.
 EqConstants.VALUE_FLOOR = 0.3

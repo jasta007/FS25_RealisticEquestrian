@@ -55,10 +55,10 @@ local function statTitle(stat)
 end
 
 
--- Our own ladder for a 0-100 stat, in RLRM's words and colours. It follows the event tiers
--- rather than RLRM's gene scale: Average is a Novice horse, High an Intermediate one, Very high
--- Advanced and Extremely high Championship class. Used for both potential (the ceiling) and
--- trained level, so a horse trained to its potential shows the same word for both.
+-- Our ladder for a stat's potential (its ceiling), in RLRM's words and colours, since potential
+-- is genetic like RLRM's own traits. It follows the event tiers rather than RLRM's gene scale:
+-- Average is a Novice horse, High an Intermediate one, Very high Advanced and Extremely high
+-- Championship class.
 EqInfoDisplay.STAT_BANDS = {
     { from = 85, key = "rl_ui_genetics_extremelyHigh" },
     { from = 70, key = "rl_ui_genetics_veryHigh" },
@@ -68,6 +68,79 @@ EqInfoDisplay.STAT_BANDS = {
     { from = 20, key = "rl_ui_genetics_veryLow" },
     { from = -math.huge, key = "rl_ui_genetics_extremelyLow" },
 }
+
+
+-- Words for a trained level. Training changes it, so it reads as progress, not as a verdict:
+-- white for an untrained horse, greener as it learns.
+EqInfoDisplay.SKILL_BANDS = {
+    { from = 98, key = "eq_skill_legend" },
+    { from = 90, key = "eq_skill_champion" },
+    { from = 80, key = "eq_skill_contender" },
+    { from = 70, key = "eq_skill_competitor" },
+    { from = 60, key = "eq_skill_promising" },
+    { from = 50, key = "eq_skill_amateur" },
+    { from = 25, key = "eq_skill_trainee" },
+    { from = 10, key = "eq_skill_novice" },
+    { from = -math.huge, key = "eq_skill_untrained" },
+}
+-- Skill colours by level: white for an untrained horse, through yellow, to RLRM's own genetics
+-- greens at the top. RLRM's palette (RLDetailPaneHelper.GENETICS_COLOR) is used where it has the
+-- colour; the values here are the same, as a fallback.
+EqInfoDisplay.SKILL_COLOR_STOPS = {
+    { at = 0, color = { 1, 1, 1, 1 } },
+    { at = 25, color = { 1, 1, 0.6, 1 } },
+    { at = 50, key = "average", color = { 1, 1, 0, 1 } },
+    { at = 65, key = "high", color = { 0.52, 1, 0, 1 } },
+    { at = 80, key = "veryHigh", color = { 0.2, 1, 0, 1 } },
+    { at = 95, key = "extremelyHigh", color = { 0, 1, 0, 1 } },
+}
+
+
+--- @param value number a trained level, 0-100
+--- @return string key l10n key for its word
+function EqInfoDisplay.skillBandKey(value)
+    for _, band in ipairs(EqInfoDisplay.SKILL_BANDS) do
+        if value >= band.from then return band.key end
+    end
+end
+
+
+--- @param stop table from SKILL_COLOR_STOPS
+--- @return table color
+local function stopColor(stop)
+    local helper = EqRLRM.get("RLDetailPaneHelper")
+    local palette = helper ~= nil and helper.GENETICS_COLOR or nil
+    return stop.key ~= nil and palette ~= nil and palette[stop.key] or stop.color
+end
+
+
+--- @param value number a trained level, 0-100
+--- @return table color { r, g, b, a }: white at 0, yellow by 50, RLRM's brightest green from 95
+function EqInfoDisplay.skillColor(value)
+    local stops = EqInfoDisplay.SKILL_COLOR_STOPS
+    value = EqStats.clamp(value or 0, 0, 100)
+    for i = 2, #stops do
+        if value <= stops[i].at then
+            local from, to = stops[i - 1], stops[i]
+            local t = (value - from.at) / (to.at - from.at)
+            local a, b = stopColor(from), stopColor(to)
+            local color = {}
+            for c = 1, 4 do color[c] = a[c] + (b[c] - a[c]) * t end
+            return color
+        end
+    end
+    local top = stopColor(stops[#stops])
+    return { top[1], top[2], top[3], top[4] }
+end
+
+
+--- @param trained number
+--- @return string valueText "54 - Amateur"
+--- @return table color
+function EqInfoDisplay.skillValue(trained)
+    local shown = math.floor(trained + 0.5)
+    return string.format("%d - %s", shown, g_i18n:getText(EqInfoDisplay.skillBandKey(shown))), EqInfoDisplay.skillColor(trained)
+end
 
 
 --- @param value number a stat level or ceiling, 0-100
@@ -106,9 +179,10 @@ end
 --- @param trained number
 --- @param ceiling number
 --- @param unvetted boolean
---- @return string text such as "54 (High)"
+--- @return string text such as "54 - Amateur (High)": the skill in our words, then the potential
 local function statText(trained, ceiling, unvetted)
-    return string.format("%d (%s)", math.floor(trained + 0.5), EqInfoDisplay.potentialText(ceiling, unvetted))
+    local skill = EqInfoDisplay.skillValue(trained)
+    return string.format("%s (%s)", skill, EqInfoDisplay.potentialText(ceiling, unvetted))
 end
 
 
@@ -122,29 +196,14 @@ local function statusText(record)
 end
 
 
---- Append one row per stat to an RLRM info list.
+--- Append the horse's status (injured, retired, settling in) to an RLRM info list. Our stats
+--- are not added: the game's Animals screen shows only five rows and RLRM's horse rows take
+--- three, so they would not all fit; RLRM's menu and the look-at box show them.
 --- @param animal table RLRM Animal (a horse)
 --- @param infos table Rows shaped { title, value, ratio, valueText }
 function EqInfoDisplay.addHorseInfos(animal, infos)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return end
-
-    local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        local trained = record.trained[stat] or 0
-        local ratio = EqStats.clamp(trained / 100, 0, 1)
-        table.insert(infos, {
-            title = statTitle(stat),
-            text = "",
-            value = ratio,
-            ratio = ratio,
-            valueText = statText(trained, ceilings[stat], unvetted),
-            eqStat = stat,
-            eqCeiling = ceilings[stat],
-            eqUnvetted = unvetted,
-            eqBlock = true,
-        })
-    end
 
     local status = statusText(record)
     if status ~= nil then
@@ -390,7 +449,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
             local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
             fillCell(section.potential.elements[i + 1], statTitle(stat),
                 EqInfoDisplay.potentialText(ceilings[stat], unvetted), potentialColor)
-            local text, color = EqInfoDisplay.geneticsValue(record.trained[stat] or 0)
+            local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0)
             fillCell(section.skills.elements[i + 1], statTitle(stat), text, color)
         end
 
