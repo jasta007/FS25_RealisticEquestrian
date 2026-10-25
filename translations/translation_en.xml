@@ -292,7 +292,7 @@
         <text name="eq_facility_roundPen" text="Round pen"/>
         <text name="eq_facility_jumps" text="Jump course"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
-        <text name="eq_settings_tab" text="Equestrian"/>
+        <text name="eq_settings_tab" text="Horses"/>
         <text name="eq_settings_off" text="Off"/>
         <text name="eq_settings_on" text="On"/>
         <text name="eq_settings_noLimit" text="No limit"/>

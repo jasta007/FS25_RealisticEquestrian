@@ -147,7 +147,7 @@ uses its genetics, health and fitness.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
 ### Settings
-Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
+Realistic Livestock's Settings page (Shift+O, Settings) has a **Horses** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
 - **Show events**: round events every day or every month.
 - **Races and steeplechases**: on or off.

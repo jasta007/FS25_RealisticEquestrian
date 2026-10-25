@@ -1,6 +1,6 @@
 --[[
     EqSettingsPage.lua
-    Adds an "Equestrian" tab to RLRM's Settings page (next to General and Filters), one row per
+    Adds a "Horses" tab to RLRM's Settings page (next to General and Filters), one row per
     EqSettings row. The rows are built from the base game's settings profiles, the same ones
     RLRM's General tab uses, the first time the page opens, and refreshed from the savegame
     settings each time it opens. If RLRM's settings frame is not found, the rows go in a
@@ -109,7 +109,7 @@ local function buildOnGeneralPage(page)
 end
 
 
---- Add an "Equestrian" tab after General and Filters on RLRM's Settings page, once per frame.
+--- Add a "Horses" tab after General and Filters on RLRM's Settings page, once per frame.
 --- RLRM's own tab code then treats it like its others: initializeSubCategoryPages numbers
 --- every button in subCategoryTabs, and updateSubCategoryPages shows the matching entry of
 --- subCategoryPages and hides the rest.
@@ -119,7 +119,7 @@ local function buildRLRMTab(frame)
     local tabs, pages = frame.subCategoryTabs, frame.subCategoryPages
     if type(tabs) ~= "table" or type(pages) ~= "table" or tabs[#tabs] == nil or pages[1] == nil
         or frame.subCategoryBox == nil or frame.subCategoryPaging == nil then
-        Log:warning("EqSettingsPage: RLRM's settings frame has no tab bar; Equestrian tab not added")
+        Log:warning("EqSettingsPage: RLRM's settings frame has no tab bar; Horses tab not added")
         return
     end
 
@@ -132,17 +132,30 @@ local function buildRLRMTab(frame)
     end
     table.insert(tabs, tab)
 
-    local page = GuiElement.new()
-    page:loadProfile(g_gui:getProfile("fs25_subCategorySelectorTabbedContainer"), true)
-    pages[1].parent:addElement(page)
-    local layout = ScrollingLayoutElement.new()
-    layout:loadProfile(g_gui:getProfile("fs25_settingsLayout"), true)
-    page:addElement(layout)
+    -- The page is a copy of RLRM's General page, so it keeps that page's place and size under
+    -- the tab bar, with RLRM's rows taken out of the copied layout and ours put in.
+    local page = pages[1]:clone(pages[1].parent)
+    page.id = nil
+    local layout
+    for _, child in ipairs(page.elements) do
+        if child.invalidateLayout ~= nil then layout = child break end
+    end
+    if layout == nil then
+        page:delete()
+        tab:delete()
+        table.remove(tabs)
+        Log:warning("EqSettingsPage: RLRM's General page has no layout to copy; Horses tab not added")
+        return
+    end
+    layout.id = nil
+    for i = #layout.elements, 1, -1 do
+        local child = layout.elements[i]
+        layout:removeElement(child)
+        child:delete()
+    end
 
     addRows(layout)
 
-    page:onGuiSetupFinished()
-    layout:onGuiSetupFinished()
     page:setVisible(false)
     table.insert(pages, page)
     frame.eqSettingsTab = tab
@@ -152,7 +165,7 @@ local function buildRLRMTab(frame)
     end
     layout:invalidateLayout()
     if frame.updateAlternatingElements ~= nil then frame:updateAlternatingElements(layout) end
-    Log:info("EqSettingsPage: added the Equestrian tab to RLRM's settings with %d settings", #EqSettings.ROWS)
+    Log:info("EqSettingsPage: added the Horses tab to RLRM's settings with %d settings", #EqSettings.ROWS)
 end
 
 
