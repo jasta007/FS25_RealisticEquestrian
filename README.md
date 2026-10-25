@@ -40,7 +40,7 @@ Low, below 30 Very low, below 20 Extremely low. In RLRM's menu (Shift+O, or R in
 animals tab) a horse gets a section under Pedigree and Genetics: SKILL POTENTIAL on the left
 (`Speed  Very high`) and SKILLS on the right (`Speed  60 - Promising`), the four stats in the same
 order in both. Potential is genetic, so it uses RLRM's red-to-green scale. Skill is what training
-has done so far, so it runs from white (untrained) to green, with its own words: Untrained (0),
+has done so far, so it runs from white (untrained) through yellow to RLRM's greens, with its own words: Untrained (0),
 Novice (10), Trainee (25), Amateur (50), Promising (60), Competitor (70), Contender (80), Champion
 (90) and Legendary (98 and up). A horse with Speed 20 and Excellent potential is a good young horse,
 not a bad one. The stat grid above keeps only RLRM's rows and shrinks to
