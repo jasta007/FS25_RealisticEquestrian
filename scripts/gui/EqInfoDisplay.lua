@@ -196,39 +196,14 @@ local function statusText(record)
 end
 
 
---- @param trained number
---- @return string text such as "51 Amateur"
-local function shortSkill(trained)
-    local shown = math.floor(trained + 0.5)
-    return string.format("%d %s", shown, g_i18n:getText(EqInfoDisplay.skillBandKey(shown)))
-end
-
-
---- Append our stats to an RLRM info list, two stats to a row. The base game's Animals screen
---- shows only five rows and RLRM's horse rows take three, so four rows of ours would lose two
---- stats; two rows fit. The bar shows the better of the pair. Potential is in RLRM's menu and
---- the look-at box.
+--- Append the horse's status (injured, retired, settling in) to an RLRM info list. Our stats
+--- are not added: the game's Animals screen shows only five rows and RLRM's horse rows take
+--- three, so they would not all fit; RLRM's menu and the look-at box show them.
 --- @param animal table RLRM Animal (a horse)
 --- @param infos table Rows shaped { title, value, ratio, valueText }
 function EqInfoDisplay.addHorseInfos(animal, infos)
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return end
-
-    local stats = EqConstants.STAT_KEYS
-    for i = 1, #stats, 2 do
-        local first, second = stats[i], stats[i + 1]
-        local a, b = record.trained[first] or 0, second ~= nil and (record.trained[second] or 0) or nil
-        local ratio = EqStats.clamp(math.max(a, b or 0) / 100, 0, 1)
-        table.insert(infos, {
-            title = second ~= nil and string.format("%s / %s", statTitle(first), statTitle(second)) or statTitle(first),
-            text = "",
-            value = ratio,
-            ratio = ratio,
-            valueText = b ~= nil and string.format("%s / %s", shortSkill(a), shortSkill(b)) or shortSkill(a),
-            eqStat = first,
-            eqBlock = true,
-        })
-    end
 
     local status = statusText(record)
     if status ~= nil then
