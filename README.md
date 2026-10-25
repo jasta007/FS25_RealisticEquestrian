@@ -4,6 +4,12 @@
 
 # Realistic Equestrian for Farming Simulator 25
 
+> [!IMPORTANT]
+> ## Press Shift+O to open your horses
+> Everything this mod adds (your horses' stats, training and the **Competitions** tab) is in
+> RLRM's menu, which opens with **Shift+O**. The game's Animals page (Esc > Animals) has no
+> **Manage Animals** button (R) for horse stables, so **Esc > Animals won't get you there.**
+
 **Give your horses a career.** Every horse gets four competition stats that you build up by
 riding, feeding and breeding. Then enter them in shows, races and championships for prize money,
 from local novice classes to a Grand Prix on the other side of the world.
@@ -18,11 +24,6 @@ uses its genetics, health and fitness.
 
 > **Version 0.1: early release.** Back up your savegame before trying it. Multiplayer is not
 > fully supported yet (see [Known issues](#known-issues)).
-
-> [!TIP]
-> **Open horses with Shift+O.** The game's Animals page (Esc > Animals) doesn't show RLRM's
-> **Manage Animals** button (R) for horse stables, so use **Shift+O** to open RLRM's menu, where
-> you'll find your horses' stats and the Competitions tab.
 
 ## Contents
 
