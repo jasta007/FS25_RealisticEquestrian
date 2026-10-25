@@ -362,7 +362,7 @@
         <text name="eq_story_crossCountry_staminaMany" text="Ging lange vor dem Ziel die Kraft aus."/>
         <text name="eq_story_race_clean" text="Lief ein starkes Rennen vom Start bis ins Ziel."/>
         <text name="eq_story_race_struggled" text="Kam nie ins Rennen."/>
-        <text name="eq_story_race_eliminated" text="Wurde vor dem Ziel angehalten."/>
+        <text name="eq_story_race_eliminated" text="Stürzte nach einem Zusammenstoß und konnte nicht weiterlaufen."/>
         <text name="eq_story_race_elimRefusal" text="Machte am Start Theater und wurde angehalten."/>
         <text name="eq_story_race_temperament" text="Verpasste den Start."/>
         <text name="eq_story_race_speed" text="Konnte das Anfangstempo nicht mitgehen."/>

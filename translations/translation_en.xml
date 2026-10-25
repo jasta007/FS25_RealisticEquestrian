@@ -360,7 +360,7 @@
         <text name="eq_story_crossCountry_staminaMany" text="Ran out of energy well before the finish."/>
         <text name="eq_story_race_clean" text="Ran a great race from start to finish."/>
         <text name="eq_story_race_struggled" text="Never got into the race."/>
-        <text name="eq_story_race_eliminated" text="Pulled up before the finish."/>
+        <text name="eq_story_race_eliminated" text="Had a fall after a collision and couldn't continue."/>
         <text name="eq_story_race_elimRefusal" text="Played up at the start and was pulled up."/>
         <text name="eq_story_race_temperament" text="Missed the break at the start."/>
         <text name="eq_story_race_speed" text="Couldn't go the early pace."/>
