@@ -106,17 +106,65 @@ local function farmId()
 end
 
 
+--- Point the header icon at our atlas for every overlay state. The fs25_menuHeaderIcon profile
+--- brings the base UI atlas as the image file, and when anything re-applies it (or the icon draws
+--- in a state the profile has its own image for) the icon shows the whole base atlas squashed
+--- into the square. setImageSlice only fixes the normal state and skips work when the filename
+--- already matches, so set the overlay ourselves.
+--- @return boolean changed true when the icon was not showing our slice
+function EqEventsFrame:applyHeaderIcon()
+    local icon = self.headerIcon
+    if icon == nil or icon.overlay == nil then return false end
+    local slice = g_overlayManager:getSliceInfoById(EqEventsFrame.ICON_SLICE)
+    if slice == nil then return false end
+
+    local overlay = icon.overlay
+    local clean = overlay.filename == slice.filename and overlay.overlay ~= nil
+    for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
+        if state ~= GuiOverlay.STATE_NORMAL
+            and (overlay["filename" .. suffix] ~= nil or overlay["uvs" .. suffix] ~= nil) then
+            clean = false
+        end
+    end
+    if clean then return false end
+
+    if not self.loggedHeaderIcon then
+        self.loggedHeaderIcon = true
+        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
+            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
+    end
+
+    GuiOverlay.deleteOverlay(overlay)
+    for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
+        if state ~= GuiOverlay.STATE_NORMAL then
+            overlay["filename" .. suffix] = nil
+            overlay["uvs" .. suffix] = nil
+            overlay["sliceId" .. suffix] = nil
+        end
+    end
+    overlay.filename = slice.filename
+    overlay.uvs = table.clone(slice.uvs)
+    overlay.sliceId = EqEventsFrame.ICON_SLICE
+    overlay.overlay = nil
+    GuiOverlay.createOverlay(overlay)
+    return true
+end
+
+
 function EqEventsFrame:onFrameOpen()
     EqEventsFrame:superClass().onFrameOpen(self)
-    -- Set the header icon here as well as in the XML: when the XML is read before our atlas is
-    -- known, the icon falls back to the whole base UI atlas.
-    if self.headerIcon ~= nil and self.headerIcon.setImageSlice ~= nil then
-        self.headerIcon:setImageSlice(GuiOverlay.STATE_NORMAL, EqEventsFrame.ICON_SLICE)
-    end
+    self:applyHeaderIcon()
     self:refresh()
     if self.eventsList ~= nil and self.mode == EqEventsFrame.MODE_EVENTS then
         FocusManager:setFocus(self.eventsList)
     end
+end
+
+
+function EqEventsFrame:update(dt)
+    EqEventsFrame:superClass().update(self, dt)
+    -- Cheap check each frame: the profile can come back after onFrameOpen.
+    self:applyHeaderIcon()
 end
 
 
