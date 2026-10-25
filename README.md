@@ -7,8 +7,8 @@
 > [!IMPORTANT]
 > ## Press Shift+O to open your horses
 > Everything this mod adds (your horses' stats, training and the **Competitions** tab) is in
-> RLRM's menu, which opens with **Shift+O**. The game's Animals page (Esc > Animals) has no
-> **Manage Animals** button (R) for horse stables, so **Esc > Animals won't get you there.**
+> RLRM's menu, which opens with **Shift+O**. You can also get there from the game's Animals page
+> (Esc > Animals): pick your horse stable and press **R** (Manage Animals).
 
 **Give your horses a career.** Every horse gets four competition stats that you build up by
 riding, feeding and breeding. Then enter them in shows, races and championships for prize money,
@@ -197,9 +197,6 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 > Transfer screen** (R at the stable with a trailer). Save and reload your game to bring them
 > back. This looks like an RLRM bug rather than this mod's, and is being looked into.
 
-- **No Manage Animals button for horses on the Animals page.** On the game's Animals page
-  (Esc > Animals), RLRM's Manage Animals button (R) doesn't appear for horse stables. Press
-  **Shift+O** to open RLRM's menu instead. A fix is being worked on.
 - **Multiplayer is limited.** Competitions, entries and delivery work in single player and for
   the host of a multiplayer game. Other players see a note on the Competitions tab instead.
   Full multiplayer support is planned.

@@ -616,5 +616,17 @@ function EqInfoDisplay.install(guarded)
         end
     end)
 
+    -- The Esc > Animals page shows the base game's stallion text, which still lists sorghum.
+    if InGameMenuAnimalsFrame ~= nil and InGameMenuAnimalsFrame.displayCluster ~= nil then
+        InGameMenuAnimalsFrame.displayCluster = Utils.appendedFunction(InGameMenuAnimalsFrame.displayCluster,
+            function(frame, animal)
+                guarded("animals page description", function()
+                    if isHorse(animal) and frame.detailDescriptionText ~= nil then
+                        frame.detailDescriptionText:setText(g_i18n:getText("eq_ui_horseDescription"))
+                    end
+                end)
+            end)
+    end
+
     Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and PlayerHUDUpdater.showAnimalInfo")
 end
