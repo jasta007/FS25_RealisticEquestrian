@@ -369,7 +369,7 @@
         <text name="eq_story_race_speedMany" text="Fehlte das Tempo, um bei der Spitze zu bleiben."/>
         <text name="eq_story_race_stamina" text="Ließ auf den letzten Metern nach."/>
         <text name="eq_story_race_staminaMany" text="Ging lange vor dem Ziel die Puste aus."/>
-        <text name="eq_story_race_finish" text="Bis zum Schluss dabei, dann zogen die Führenden davon."/>
+        <text name="eq_story_race_finish" text="Lief das ganze Rennen gut, wurde aber im Endspurt geschlagen."/>
         <text name="eq_story_steeplechase_clean" text="Sprang gut und lief stark über die ganze Strecke."/>
         <text name="eq_story_steeplechase_struggled" text="Hatte Mühe mit den Hindernissen und dem Tempo."/>
         <text name="eq_story_steeplechase_eliminated" text="Wurde vor dem Ziel angehalten."/>
