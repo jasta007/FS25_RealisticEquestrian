@@ -223,7 +223,8 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 - Icon: John Frederick Herring Senior, *The Interior of a Stable with a Dapple Grey Horse in
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
 
-You're welcome to play the mod and read its code. Please don't re-upload or redistribute it
-without asking first.
+Licensed under the [GNU General Public License v3.0](LICENSE), like RLRM. You can use, change
+and share the mod, including your own versions, as long as you keep it under the same licence,
+credit the original and share your source code.
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).
