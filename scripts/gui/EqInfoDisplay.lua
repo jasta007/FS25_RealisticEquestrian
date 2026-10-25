@@ -177,7 +177,9 @@ local function isHorse(animal)
 end
 
 
---- Move our stat rows together, to MENU_FIRST_ROW, and drop Meat Quality from the genetics rows.
+--- Move our stat rows together, to MENU_FIRST_ROW, drop Meat Quality from the genetics rows, and
+--- swap the base game's horse blurb (sold for profit, ride daily to raise value) for a one-line
+--- version that is true with this mod and leaves room for a pregnant mare's extra rows.
 --- @param animal table RLRM Animal
 --- @param display table|nil RLAnimalInfoService.getAnimalDisplay's result, changed in place
 function EqInfoDisplay.arrangeMenuDisplay(animal, display)
@@ -203,6 +205,10 @@ function EqInfoDisplay.arrangeMenuDisplay(animal, display)
             end
             if at > #others then for _, own in ipairs(ours) do table.insert(rows, own) end end
         end
+    end
+
+    if display.description ~= nil and display.description ~= "" then
+        display.description = g_i18n:getText("eq_ui_horseDescription")
     end
 
     if EqInfoDisplay.hideMeatQuality and display.geneticsRows ~= nil then
