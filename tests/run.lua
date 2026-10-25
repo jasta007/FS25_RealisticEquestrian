@@ -1123,7 +1123,7 @@ end
 testAnimalsPageButton()
 
 -- Loose horses go home to their own staffed pen, else the nearest staffed pen with room.
-do
+;(function()
     local p = {
         home = { farmId = 1, hasRoom = true, x = 500, z = 0 },
         near = { farmId = 1, hasRoom = true, x = 10, z = 0 },
@@ -1138,7 +1138,7 @@ do
     check("full home pen sends the horse to the nearest with room", EqLooseHorses.choosePen(p.home, p.all, 1, 0, 0) == p.near)
     check("no staffed pen on the farm leaves the horse out", EqLooseHorses.choosePen(nil, { p.other, p.full }, 1, 0, 0) == nil)
     check("loose horse with no position still finds a pen", EqLooseHorses.choosePen(nil, { p.other, p.near }, 1, nil, nil) == p.near)
-end
+end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
