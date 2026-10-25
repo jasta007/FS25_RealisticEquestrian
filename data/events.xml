@@ -111,13 +111,41 @@
     </venues>
 
     <!--
-        transport: what an entry pays to get the horse there.
+        transport: what an entry pays to get the horse there and back.
         Auto Transport pays share x the game's transport price for the horse (fallback when the
-        subtype has none). Manual Transport (the player hauls the horse to the dealer) pays no
-        transport. International events (not drawn yet) multiply Auto by internationalFactor
-        and add quarantine; a Manual horse pays only the dealer's quarantineYard fee.
+        subtype has none). Manual Transport (the player hauls the horse to the dealer) pays
+        nothing locally.
     -->
-    <transport share="0.25" fallback="150" internationalFactor="6" quarantine="1500" quarantineYard="400"/>
+    <transport share="0.25" fallback="150"/>
+
+    <!--
+        routes: how far a venue's region is from the player's home region.
+        distance        local (the home region), near or far. Each pair not listed under <route>
+                        is far; a region to itself is local.
+            chance      share of named events drawn at this distance (split evenly between the
+                        regions at it), so the dearer trips are rarer
+            factor      multiplies the Auto Transport price
+            quarantine  added to Auto Transport: the horse's quarantine abroad
+            quarantineYard  what a Manual Transport horse pays instead: the dealer's quarantine yard
+        home: the player's home region. A map listed under <map> (by its title) wins; otherwise
+            RLRM's map country (RLRM's "map country" setting can change it) picks the region;
+            otherwise the default.
+    -->
+    <routes>
+        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"/>
+        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300"/>
+        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500"/>
+        <route from="northAmerica" to="europe"       distance="near"/>
+        <route from="northAmerica" to="southAmerica" distance="near"/>
+    </routes>
+
+    <home default="europe">
+        <map title="Catuaí" region="southAmerica"/>
+        <country code="US" region="northAmerica"/>
+        <country code="CA" region="northAmerica"/>
+        <country code="CH" region="asiaOceania"/>
+        <country code="JP" region="asiaOceania"/>
+    </home>
 
     <!-- Conditions on outdoor courses: the ground, or the weather when it matters more. Each
          moves weight between stats and changes the injury risk. Indoor events have none. -->

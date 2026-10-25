@@ -151,6 +151,8 @@
         <text name="eq_ui_button_enterManual" text="Enter, Manual Transport (%s)"/>
         <text name="eq_ui_transportLabel" text="Total cost"/>
         <text name="eq_ui_transportLine" text="Auto %s · Manual %s"/>
+        <text name="eq_ui_transportLabel_near" text="Cost, overseas"/>
+        <text name="eq_ui_transportLabel_far" text="Cost, long-haul"/>
         <text name="eq_ui_awaiting" text="%s (awaiting delivery)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Awaiting delivery"/>
         <text name="eq_ui_result_notDelivered" text="Not delivered"/>

@@ -107,10 +107,49 @@ function EqEventConfig.read(xmlFile)
     config.transport = {
         share = xmlFile:getFloat("events.transport#share", 0.25),
         fallback = xmlFile:getFloat("events.transport#fallback", 150),
-        internationalFactor = xmlFile:getFloat("events.transport#internationalFactor", 6),
-        quarantine = xmlFile:getFloat("events.transport#quarantine", 1500),
-        quarantineYard = xmlFile:getFloat("events.transport#quarantineYard", 400),
     }
+
+    config.distances, config.routes = {}, {}
+    i = 0
+    while true do
+        local key = string.format("events.routes.distance(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local distance = {
+            name = xmlFile:getString(key .. "#name"),
+            chance = xmlFile:getFloat(key .. "#chance", 0),
+            factor = xmlFile:getFloat(key .. "#factor", 1),
+            quarantine = xmlFile:getFloat(key .. "#quarantine", 0),
+            quarantineYard = xmlFile:getFloat(key .. "#quarantineYard", 0),
+        }
+        config.distances[distance.name] = distance
+        i = i + 1
+    end
+    i = 0
+    while true do
+        local key = string.format("events.routes.route(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        local from, to = xmlFile:getString(key .. "#from"), xmlFile:getString(key .. "#to")
+        local distance = xmlFile:getString(key .. "#distance", "far")
+        config.routes[from .. ">" .. to] = distance
+        config.routes[to .. ">" .. from] = distance
+        i = i + 1
+    end
+
+    config.home = { default = xmlFile:getString("events.home#default", "europe"), maps = {}, countries = {} }
+    i = 0
+    while true do
+        local key = string.format("events.home.map(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        config.home.maps[xmlFile:getString(key .. "#title")] = xmlFile:getString(key .. "#region")
+        i = i + 1
+    end
+    i = 0
+    while true do
+        local key = string.format("events.home.country(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        config.home.countries[xmlFile:getString(key .. "#code")] = xmlFile:getString(key .. "#region")
+        i = i + 1
+    end
 
     config.injuries = {}
     i = 0

@@ -274,6 +274,9 @@ function EqEventsFrame:updateHorsePanel()
     setText(self.panelTraining, row.training, wordColor(EqEventsFrame.TRAINING_COLORS, row.trainingBand))
     local event = EqCompetitionManager.events[self.selectedEventId]
     local fee = event ~= nil and event.fee or 0
+    -- The label names a trip abroad, so the dearer price explains itself.
+    local distance = EqCompetitionManager.eventDistance(event)
+    setText(self.panelTransportLabel, g_i18n:getText(distance == "local" and "eq_ui_transportLabel" or ("eq_ui_transportLabel_" .. distance)))
     setText(self.panelTransport, string.format(g_i18n:getText("eq_ui_transportLine"),
         g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
     setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))

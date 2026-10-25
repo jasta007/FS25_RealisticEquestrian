@@ -78,7 +78,8 @@ function EqCompetitionManager.openRound(kind)
     local config = EqCompetitionManager.config
     if config == nil then return end
 
-    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing)
+    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing,
+        EqCompetitionManager.homeRegion())
     for _, event in ipairs(drawn) do
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
@@ -601,17 +602,49 @@ function EqCompetitionManager.transportCost(animal)
 end
 
 
---- What getting a horse to an event costs each way, on top of the entry fee.
+--- The player's home region: a map listed in events.xml by its title, else RLRM's map country
+--- (which RLRM's own "map country" setting can change), else the default. Every client reads
+--- the same map, so the schedule draws the same events everywhere.
+--- @return string|nil region nil before the config is loaded
+function EqCompetitionManager.homeRegion()
+    local config = EqCompetitionManager.config
+    if config == nil or config.home == nil then return nil end
+    local home = config.home
+
+    local mission = g_currentMission
+    local title = mission ~= nil and mission.missionInfo ~= nil and mission.missionInfo.mapTitle or nil
+    if title ~= nil and home.maps[title] ~= nil then return home.maps[title] end
+
+    local rl = EqRLRM.get("RealisticLivestock")
+    if rl ~= nil and rl.getMapCountryCode ~= nil then
+        local ok, code = pcall(rl.getMapCountryCode)
+        if ok and code ~= nil and home.countries[code] ~= nil then return home.countries[code] end
+    end
+    return home.default
+end
+
+
+--- @param event table|nil
+--- @return string distance "local", "near" or "far" from the player's home region
+function EqCompetitionManager.eventDistance(event)
+    local config = EqCompetitionManager.config
+    if event == nil or event.region == nil or config == nil then return "local" end
+    return EqCompetition.distanceBetween(config, EqCompetitionManager.homeRegion(), event.region)
+end
+
+
+--- What getting a horse to an event costs, on top of the entry fee.
 --- @param animal table RLRM Animal
 --- @param event table
---- @return number auto Auto Transport (long-haul and quarantine included for an international event)
---- @return number manual Manual Transport (nothing locally; the quarantine yard internationally)
+--- @return number auto Auto Transport (long-haul and quarantine included for a trip abroad)
+--- @return number manual Manual Transport (nothing locally; the dealer's quarantine yard abroad)
 function EqCompetitionManager.transportCosts(animal, event)
     local local_ = EqCompetitionManager.transportCost(animal)
-    local transport = EqCompetitionManager.config ~= nil and EqCompetitionManager.config.transport or nil
-    if event == nil or not event.international or transport == nil then return local_, 0 end
-    local auto = math.floor(local_ * transport.internationalFactor / 10 + 0.5) * 10 + transport.quarantine
-    return auto, transport.quarantineYard
+    local config = EqCompetitionManager.config
+    local distance = config ~= nil and config.distances ~= nil and config.distances[EqCompetitionManager.eventDistance(event)] or nil
+    if distance == nil then return local_, 0 end
+    local auto = math.floor(local_ * distance.factor / 10 + 0.5) * 10 + distance.quarantine
+    return auto, distance.quarantineYard
 end
 
 

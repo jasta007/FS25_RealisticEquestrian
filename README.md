@@ -109,7 +109,13 @@ prizes, and sometimes none in a discipline.
   yourself before the event runs (before the next round's results, or by month end for monthly
   events); a horse never delivered doesn't start and the fee is lost. The Events tab shows both
   totals, and has an Enter button for each. Delivering at the dealer is still being built; for
-  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`).
+  now `eqDeliver <horse>` stands in for it. Costs are in `data/events.xml` (`<transport>`, `<routes>`).
+- Venues abroad cost more to reach. Your home region comes from the map (RLRM's map country,
+  which RLRM's "map country" setting can change). North America to Europe or South America is
+  an **overseas** trip: Auto Transport costs 4x plus $1,000 quarantine, Manual pays the dealer's
+  $300 quarantine yard. Europe to South America, and Asia and Oceania to anywhere, is a
+  **long-haul** trip: 8x plus $2,500, or $500 Manual. The dearer the trip, the rarer it is: about
+  60% of named events are in your home region, 30% overseas and 10% long-haul.
 - A horse can only be in one round event and one monthly event at a time.
 - A horse entered in an event **leaves your pasture** until its result is in: the next round
   for round events, the next month for monthly ones. It still eats, ages and trains with staff in

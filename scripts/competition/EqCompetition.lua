@@ -153,15 +153,49 @@ local function pickAny(items, rng)
 end
 
 
+--- @param config table EqEventConfig
+--- @param from string|nil region
+--- @param to string|nil region
+--- @return string distance "local", "near" or "far" (local when either is unknown)
+function EqCompetition.distanceBetween(config, from, to)
+    if from == nil or to == nil or from == to then return "local" end
+    return config.routes ~= nil and config.routes[from .. ">" .. to] or "far"
+end
+
+
+--- How likely each region is to host a named event: each distance's chance, split evenly
+--- between the regions at that distance from home.
+--- @param config table EqEventConfig
+--- @param home string|nil the player's home region; nil weighs every region the same
+--- @return table list of { region, chance }
+function EqCompetition.regionWeights(config, home)
+    local atDistance = {}
+    for _, region in ipairs(config.regions or {}) do
+        local distance = EqCompetition.distanceBetween(config, home, region.name)
+        atDistance[distance] = (atDistance[distance] or 0) + 1
+    end
+    local weights = {}
+    for _, region in ipairs(config.regions or {}) do
+        local distance = EqCompetition.distanceBetween(config, home, region.name)
+        local entry = home ~= nil and config.distances ~= nil and config.distances[distance] or nil
+        local chance = entry ~= nil and entry.chance / atDistance[distance] or 1
+        if chance > 0 then table.insert(weights, { region = region, chance = chance }) end
+    end
+    return weights
+end
+
+
 --- Draw the events for one round.
 --- @param config table EqEventConfig
 --- @param rng table EqRandom
 --- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
 --- @param racingEnabled boolean
+--- @param home string|nil the player's home region: nearer venues are drawn more often
 --- @return table events list of { discipline, tier, going, fee, prize, kind, venue, region }
-function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
+function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
     local events = {}
     local wantMonthly = kind == EqCompetition.KIND_MONTH
+    local regionWeights = EqCompetition.regionWeights(config, home)
 
     for _, discipline in ipairs(config.disciplines) do
         if racingEnabled or not discipline.racing then
@@ -175,8 +209,8 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled)
                         local priceFactor = 1 + rng:uniform(-spread, spread)
                         local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
                         local venue, region = nil, nil
-                        if tier.venue and #(config.regions or {}) > 0 then
-                            local pick = pickAny(config.regions, rng)
+                        if tier.venue and #regionWeights > 0 then
+                            local pick = pickWeighted(regionWeights, rng).region
                             venue, region = pickAny(pick.venues, rng), pick.name
                         end
                         table.insert(events, {

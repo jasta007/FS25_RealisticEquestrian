@@ -133,7 +133,7 @@
                 <Text profile="rlMenu_animalStatValue" id="panelSuccess" position="250px 0px"/>
             </GuiElement>
             <GuiElement profile="rlMenu_infoRow">
-                <Text profile="rlMenu_animalStatLabel" text="$l10n_eq_ui_transportLabel"/>
+                <Text profile="rlMenu_animalStatLabel" id="panelTransportLabel" text="$l10n_eq_ui_transportLabel"/>
                 <Text profile="rlMenu_animalStatValue" id="panelTransport" position="250px 0px"/>
             </GuiElement>
         </BoxLayout>

@@ -270,6 +270,33 @@ do
         check("everyday events have no venue", event.venue == nil)
     end
 end
+
+do
+    local d = function(a, b) return EqCompetition.distanceBetween(config, a, b) end
+    check("same region is local", d("europe", "europe") == "local")
+    check("North America to Europe is near, both ways", d("northAmerica", "europe") == "near" and d("europe", "northAmerica") == "near")
+    check("North America to South America is near", d("southAmerica", "northAmerica") == "near")
+    check("Europe to South America is far", d("europe", "southAmerica") == "far")
+    check("Asia and Oceania is far from everywhere", d("asiaOceania", "europe") == "far" and d("northAmerica", "asiaOceania") == "far")
+    check("far costs more than near", config.distances.far.factor > config.distances.near.factor
+        and config.distances.far.quarantine > config.distances.near.quarantine)
+
+    for _, home in ipairs({ "northAmerica", "southAmerica", "europe", "asiaOceania" }) do
+        local byDistance, total = {}, 0
+        for seed = 1, 300 do
+            for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("trip " .. seed), EqCompetition.KIND_MONTH, true, home)) do
+                local distance = d(home, event.region)
+                byDistance[distance] = (byDistance[distance] or 0) + 1
+                total = total + 1
+            end
+        end
+        local l, n, f = byDistance["local"] or 0, byDistance.near or 0, byDistance.far or 0
+        print(string.format("info: home %s: %d named events, local %.0f%%, near %.0f%%, far %.0f%%", home, total,
+            100 * l / total, 100 * n / total, 100 * f / total))
+        check("home " .. home .. ": local events most common", l > n and l > f)
+        check("home " .. home .. ": far trips rarest", f < l and (n == 0 or f < n))
+    end
+end
 end
 
 -- Success and training words on the Events tab
