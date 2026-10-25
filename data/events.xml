@@ -26,7 +26,7 @@
         rivalMin/rivalMax     discipline rating range of the simulated rivals
         monthly         true: runs once a month; false: every round (day or month, by setting)
         chance          chance the tier runs in a given round, per discipline
-        trainingBoost   share of a full day's training the run gives (Training Events)
+        trainingBoost   share of a full day's training the run gives (full for young horse classes, less higher up)
         risk            multiplies elimination and injury chances (easier courses below 1)
         venue           true: the event is held at a named venue from <venues>, which goes in
                         its name ("Pallegney Grand Prix")
@@ -49,10 +49,10 @@
 
     <tiers>
         <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
-        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0" risk="0.8"/>
-        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0" risk="1.0"/>
-        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0" risk="1.1" venue="true"/>
-        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0" risk="1.2" venue="true"/>
+        <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0.5" risk="0.8"/>
+        <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0.35" risk="1.0"/>
+        <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0.25" risk="1.1" venue="true"/>
+        <tier name="championship" minAge="36" maxAge="0"  minRating="75" maxRating="100" fee="4000" prize="50000" field="12" rivalMin="80" rivalMax="97" monthly="true"  chance="0.15" trainingBoost="0.2" risk="1.2" venue="true"/>
     </tiers>
 
     <!-- copiesMax: at most this many runs of one tier in one discipline per round, each with its

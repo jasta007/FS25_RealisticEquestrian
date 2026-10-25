@@ -163,10 +163,10 @@ end
 
 
 --- @param event table
---- @return string title such as "1.20m Jumping (Intermediate) #12"
+--- @return string title such as "1.20m Jumping (Intermediate)", without the event number players never need
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s (%s) #%d", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue),
-        EqCompetitionManager.tierTitle(event.tier), event.id)
+    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue),
+        EqCompetitionManager.tierTitle(event.tier))
 end
 
 
@@ -211,7 +211,8 @@ function EqCompetitionManager.prospects(record, animal, event)
 
     local benefit = nil
     if tier.trainingBoost > 0 then
-        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0)
+        local _, band = EqTraining.boostBenefit(record.trained, record:getShownCeilings(), discipline.weights, animal.age or 0,
+            tier.trainingBoost)
         benefit = band
     end
     return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit }
@@ -341,8 +342,13 @@ function EqCompetitionManager.resolve(event, horses)
             table.insert(summary.placings, { horseId = runner.key, name = entry.name, farmId = entry.farmId,
                 place = runner.place, prize = runner.prize })
 
-            notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
-                EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)))
+            if runner.prize > 0 then
+                notify(entry.farmId, string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
+                    EqCompetitionManager.eventTitle(event), g_i18n:formatMoney(runner.prize, 0, true, true)))
+            else
+                notify(entry.farmId, string.format(g_i18n:getText("eq_result_placedNoPrize"), entry.name, runner.place,
+                    summary.field, EqCompetitionManager.eventTitle(event)))
+            end
         end
     end
 

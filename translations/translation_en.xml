@@ -212,6 +212,7 @@
         <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>
         <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
+        <text name="eq_result_placedNoPrize" text="%s finished %d of %d in %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>
         <text name="eq_and" text="and"/>
         <text name="eq_facility_improves" text="Improves %s training (Realistic Equestrian)"/>
