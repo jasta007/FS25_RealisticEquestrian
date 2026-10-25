@@ -39,7 +39,9 @@ function EqEventConfig.read(xmlFile)
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
             injury = xmlFile:getFloat(key .. "#injury", 0),
             chance = xmlFile:getFloat(key .. "#chance", 1),
+            related = {},
         }
+        for name in (xmlFile:getString(key .. "#related", "")):gmatch("%S+") do table.insert(discipline.related, name) end
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
         i = i + 1

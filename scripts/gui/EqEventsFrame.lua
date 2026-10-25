@@ -285,6 +285,7 @@ function EqEventsFrame:updateHorsePanel()
     setText(self.panelTransport, string.format(g_i18n:getText("eq_ui_transportLine"),
         g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
     setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
+    setText(self.panelSpecialty, EqCompetitionManager.specialtyText(row.record))
 end
 
 

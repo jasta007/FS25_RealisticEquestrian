@@ -111,6 +111,12 @@
         <text name="eq_potential_unvetted" text="%s?"/>
         <text name="eq_ui_skillPotential" text="Skill potential"/>
         <text name="eq_ui_skills" text="Skills"/>
+        <text name="eq_specialty_title" text="Favourite event"/>
+        <text name="eq_specialty_none" text="None yet"/>
+        <text name="eq_specialty_pair" text="%s &amp; %s"/>
+        <text name="eq_specialty_eventer" text="3 Day Eventer"/>
+        <text name="eq_specialty_racehorse" text="Racehorse"/>
+        <text name="eq_specialty_allRounder" text="All Rounder"/>
         <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
         <text name="eq_reveal_better" text="%s has been with you a few months now, and is better than the dealer said."/>

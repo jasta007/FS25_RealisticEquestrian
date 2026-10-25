@@ -181,13 +181,28 @@ local function getGoing(event)
 end
 
 
---- A horse's rating for an event, from its record.
+--- A horse's rating for an event, from its record: its stats, plus its experience in the
+--- discipline.
 --- @param record table
 --- @param event table
---- @return number rating
+--- @return number rating 0..100
 function EqCompetitionManager.ratingFor(record, event)
     local discipline = EqCompetitionManager.config.disciplineByName[event.discipline]
-    return EqCompetition.rating(record.trained, discipline, getGoing(event))
+    local rating = EqCompetition.rating(record.trained, discipline, getGoing(event))
+    return math.min(100, rating + EqExperience.ratingBonus(record, event.discipline))
+end
+
+
+--- @param record table
+--- @return string text the horse's specialty, such as "Dressage", "3 Day Eventer" or "All Rounder"
+function EqCompetitionManager.specialtyText(record)
+    local kind, names = EqExperience.specialty(record, EqCompetitionManager.config.disciplines)
+    if kind == "one" then return EqCompetitionManager.disciplineTitle(names[1]) end
+    if kind == "pair" then
+        return string.format(g_i18n:getText("eq_specialty_pair"), EqCompetitionManager.disciplineTitle(names[1]),
+            EqCompetitionManager.disciplineTitle(names[2]))
+    end
+    return g_i18n:getText("eq_specialty_" .. kind)
 end
 
 
@@ -297,6 +312,7 @@ function EqCompetitionManager.resolve(event, horses)
                     fitness = horse.animal.fitness or 0,
                 })
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
+                EqExperience.addStart(record, discipline)
                 if event.kind == EqCompetition.KIND_ROUND then record.monthStarts = (record.monthStarts or 0) + 1 end
             end
         end
@@ -372,7 +388,7 @@ end
 
 
 --- Start of a month: charge each injured horse's vet bill to its farm and count down its rest,
---- reset the month's starts, and count a bought horse's months on the farm (its real potential
+--- reset the month's starts, fade event experience not kept up, and count a bought horse's months on the farm (its real potential
 --- shows after REVEAL_MONTHS).
 --- @param horses table from indexHorses
 function EqCompetitionManager.monthlyCare(horses)
@@ -386,6 +402,7 @@ function EqCompetitionManager.monthlyCare(horses)
         local name = horse.animal.getName ~= nil and horse.animal:getName() or id
         if record ~= nil then
             record.monthStarts = 0
+            EqExperience.monthlyFade(record)
             EqCompetitionManager.countOwnedMonth(record, horse.farmId, name)
         end
 

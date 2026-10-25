@@ -17,6 +17,7 @@ dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqCompetition.lua")
+dofile("scripts/competition/EqExperience.lua")
 dofile("scripts/competition/EqRisk.lua")
 EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
 dofile("scripts/facilities/EqFacility.lua")
@@ -422,6 +423,76 @@ print(string.format("info: %.1f round events and %.1f monthly events per draw; d
 local sameDraw = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
 local sameAgain = EqCompetition.drawSchedule(config, EqRandom.new("round 7"), EqCompetition.KIND_ROUND, true)
 check("a round draws the same events from the same seed", #sameDraw == #sameAgain and sameDraw[1].fee == sameAgain[1].fee)
+
+-- Event experience: grows with starts, adds to the rating, fades when not kept up.
+local function experienceOf(values)
+    local record = { experience = {} }
+    for name, value in pairs(values) do record.experience[name] = { value = value, idle = 0 } end
+    return record
+end
+local dressageHorse = { experience = nil }
+for _ = 1, 10 do EqExperience.addStart(dressageHorse, config.disciplineByName.dressage) end
+local xp10 = EqExperience.get(dressageHorse, "dressage")
+check("ten starts take experience about half way", xp10 > 40 and xp10 < 60, string.format("%.1f", xp10))
+for _ = 1, 200 do EqExperience.addStart(dressageHorse, config.disciplineByName.dressage) end
+check("experience never passes the maximum", EqExperience.get(dressageHorse, "dressage") <= EqExperience.MAX)
+check("dressage teaches a little eventing", EqExperience.get(dressageHorse, "eventing") > 0
+    and EqExperience.get(dressageHorse, "eventing") < EqExperience.get(dressageHorse, "dressage"))
+check("full experience adds the whole bonus", math.abs(EqExperience.ratingBonus(experienceOf({ dressage = 100 }), "dressage")
+    - EqExperience.RATING_BONUS) < 1e-9)
+check("no experience adds nothing", EqExperience.ratingBonus({}, "dressage") == 0)
+
+local fading = experienceOf({ dressage = 80 })
+for _ = 1, EqExperience.FADE_GRACE_MONTHS do EqExperience.monthlyFade(fading) end
+check("experience holds through the grace months", EqExperience.get(fading, "dressage") == 80)
+for _ = 1, 9 do EqExperience.monthlyFade(fading) end
+local afterYear = EqExperience.get(fading, "dressage")
+check("a year without dressage fades it slowly", afterYear > 40 and afterYear < 60, string.format("%.1f", afterYear))
+EqExperience.addStart(fading, config.disciplineByName.dressage)
+EqExperience.monthlyFade(fading)
+check("a start restarts the grace months", EqExperience.get(fading, "dressage") > afterYear)
+
+local function specialtyOf(values)
+    return (EqExperience.specialty(experienceOf(values), config.disciplines))
+end
+check("no experience, no specialty", specialtyOf({}) == "none")
+check("a little experience is not a specialty", specialtyOf({ dressage = 5 }) == "none")
+check("one clear best is the specialty", specialtyOf({ dressage = 60, showJumping = 30 }) == "one")
+local _, names = EqExperience.specialty(experienceOf({ dressage = 30, showJumping = 60 }), config.disciplines)
+check("the specialty names the best", names[1] == "showJumping")
+check("two close make a pair", specialtyOf({ dressage = 60, showJumping = 55 }) == "pair")
+check("jumping, dressage and cross country close make an eventer",
+    specialtyOf({ dressage = 60, showJumping = 55, crossCountry = 58, eventing = 50 }) == "eventer")
+check("close races make a racehorse", specialtyOf({ raceShort = 60, raceLong = 55, steeplechase = 50 }) == "racehorse")
+check("three unrelated close make an all-rounder", specialtyOf({ dressage = 60, raceShort = 55, crossCountry = 58 }) == "allRounder")
+
+-- Experience is saved with the horse.
+local function memoryXML()
+    local values = {}
+    local store = {}
+    function store:setString(path, v) values[path] = v end
+    store.setFloat, store.setInt, store.setBool = store.setString, store.setString, store.setString
+    function store:getString(path, default) local v = values[path]; if v == nil then return default end return v end
+    function store:getFloat(path, default) local v = values[path]; if v == nil then return default end return tonumber(v) end
+    store.getInt = store.getFloat
+    function store:getBool(path, default) local v = values[path]; if v == nil then return default end return v == true end
+    function store:hasProperty(path)
+        for key in pairs(values) do
+            if key == path or key:sub(1, #path + 1) == path .. "#" or key:sub(1, #path + 1) == path .. "." then return true end
+        end
+        return false
+    end
+    return store
+end
+local saved = EqHorseRecord.new("DE 1 7")
+EqExperience.addStart(saved, config.disciplineByName.eventing)
+local xml = memoryXML()
+saved:saveToXMLFile(xml, "horse")
+local loaded = EqHorseRecord.loadFromXMLFile(xml, "horse")
+check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing") - EqExperience.get(saved, "eventing")) < 1e-9
+    and math.abs(EqExperience.get(loaded, "dressage") - EqExperience.get(saved, "dressage")) < 1e-9)
+check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
+    local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
 
 -- Running a field: a strong horse in its band places well most of the time.
 local event = { discipline = "showJumping", tier = "novice", prize = 2000 }

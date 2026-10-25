@@ -14,7 +14,7 @@
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
     like it: SKILL POTENTIAL on the left (the word only, "High"), SKILLS on the right (the
     trained level, "54 - High"), the four stats in the same order in both, coloured on RLRM's
-    red-to-green genetics scale. The section is a clone of RLRM's Pedigree/Genetics row, made
+    red-to-green genetics scale. SKILLS ends with the horse's favourite event (EqExperience). The section is a clone of RLRM's Pedigree/Genetics row, made
     the first time a frame shows a horse and hidden for other animals. For a horse the stat grid
     then has only RLRM's rows (and our status line), so the grid and the Pedigree/Genetics row
     are shrunk to what they show, which keeps the pane short enough not to scroll.
@@ -224,6 +224,7 @@ function EqInfoDisplay.showHorseHudInfo(animal, box)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
     end
+    box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
     local status = statusText(record)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
 end
@@ -379,9 +380,11 @@ local function ensureSection(frame)
     local section = { row = row, potential = potential, skills = skills }
     potential.elements[1]:setText(g_i18n:getText("eq_ui_skillPotential"))
     skills.elements[1]:setText(g_i18n:getText("eq_ui_skills"))
+    -- Skills has one more line than the stats: the horse's favourite event.
     for i, column in ipairs({ potential, skills }) do
+        local lines = #EqConstants.STAT_KEYS + (column == skills and 1 or 0)
         for index = 2, #column.elements do
-            column.elements[index]:setVisible(index - 1 <= #EqConstants.STAT_KEYS)
+            column.elements[index]:setVisible(index - 1 <= lines)
         end
     end
     frame.eqSkills = section
@@ -451,6 +454,10 @@ function EqInfoDisplay.renderSkills(frame, animal)
                 EqInfoDisplay.potentialText(ceilings[stat], unvetted), potentialColor)
             local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0)
             fillCell(section.skills.elements[i + 1], statTitle(stat), text, color)
+        end
+        local specialtyCell = section.skills.elements[#EqConstants.STAT_KEYS + 2]
+        if specialtyCell ~= nil then
+            fillCell(specialtyCell, g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
         end
 
         local line = section.potential.elements[2].size[2]
