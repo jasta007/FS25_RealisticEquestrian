@@ -193,9 +193,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 ## Known issues
 
 > [!WARNING]
-> **The Competitions tab (and RLRM's other Shift+O tabs) can disappear after you use RLRM's
-> Transfer screen** (R at the stable with a trailer). Save and reload your game to bring them
-> back. This looks like an RLRM bug rather than this mod's, and is being looked into.
+> **RealisticLivestockRM​ is in a pretty fluid state right now dealing with the changes from Animal Staff.**
+> Will probably need the latest Dev version and things might change quickly.
 
 - **Multiplayer is limited.** Competitions, entries and delivery work in single player and for
   the host of a multiplayer game. Other players see a note on the Competitions tab instead.
