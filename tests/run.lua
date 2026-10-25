@@ -10,6 +10,7 @@ assert(rlrmPath, "usage: luajit tests/run.lua <path to FS25_RealisticLivestockRM
 
 dofile(rlrmPath .. "/scripts/animal/BreedingMath.lua")
 dofile("scripts/core/EqConstants.lua")
+dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqTraining.lua")
@@ -123,6 +124,36 @@ for _ = 1, 40 do
     herd = foals
 end
 check("selective breeding never gets three stats to 95+", worstViolation <= 2, "max maxed " .. worstViolation)
+-- Translations: no key twice in English, and every other language has each English key with the
+-- same placeholders in the same order (string.format can't reorder them).
+;(function()
+    local function texts(path)
+        local list, byName = {}, {}
+        for _, node in ipairs(TestXML.load(path).root.children[1].children[1].children) do
+            table.insert(list, node.attrs.name)
+            byName[node.attrs.name] = (byName[node.attrs.name] or 0) > 0 and false or node.attrs.text
+        end
+        return list, byName
+    end
+    local function placeholders(text)
+        local found = {}
+        for spec in text:gmatch("%%[-+]?%d*%.?%d*[sdf%%]") do table.insert(found, spec) end
+        return table.concat(found, " ")
+    end
+    local enList, en = texts("translations/translation_en.xml")
+    for _, name in ipairs(enList) do check("English text " .. name .. " appears once", en[name] ~= false) end
+    for _, language in ipairs({ "de" }) do
+        local _, other = texts("translations/translation_" .. language .. ".xml")
+        for _, name in ipairs(enList) do
+            check(language .. " has " .. name, type(other[name]) == "string")
+            if type(other[name]) == "string" and en[name] then
+                check(language .. " " .. name .. " keeps the placeholders", placeholders(other[name]) == placeholders(en[name]),
+                    placeholders(en[name]) .. " / " .. placeholders(other[name]))
+            end
+        end
+    end
+end)()
+
 print(string.format("info: 40 generations of show-jumping selection -> best agility ceiling %.1f, foals with two stats at 99+: %d of 800",
     bestAgility, maxedTwo))
 
@@ -221,6 +252,16 @@ check("a full canter day trains stamina and agility", math.abs(canterDay.stamina
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
 check("walking trains its stats as fast as galloping trains its own",
     math.abs(EqTraining.playerEffort(ridden("walk", 60000)).temperament - EqTraining.playerEffort(ridden("gallop", 60000)).speed) < 1e-9)
+check("backing up fills riding 2.5 times as fast as walking", EqTraining.playerRidingPoints(ridden("reverse", 120000)) == 100)
+do
+    local reversePoints, reverseTimer, reverseTotal = 0, 0, 0
+    for _ = 1, 6000 do
+        reversePoints, reverseTimer = EqTraining.reverseExtraRiding(reverseTimer, 20, EqConstants.RIDING_FULL_MS)
+        reverseTotal = reverseTotal + reversePoints
+    end
+    check("two minutes of backing up add 60 riding points on top of the base game's 40", reverseTotal == 60,
+        string.format("got %d", reverseTotal))
+end
 local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
 check("jumps add agility", jumpDay.agility > 0.39)
 check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
@@ -1183,6 +1224,12 @@ fresh.pagingElement.currentPageIndex = 2
 EqMenuPaging.beforeUpdatePages(fresh)
 check("first open leaves paging alone", fresh.pagingElement.currentPageIndex == 2 and fresh.eqLastPagingMode == "trailer")
 check("reset refuses a missing paging element", EqMenuPaging.reset({}) == false)
+-- Transfer's single tab was centred; the full tab list must not keep that offset.
+local tabbed = { pagingElement = newPaging(3), openMode = "full", eqLastPagingMode = "full",
+    pagingTabList = { listItemAlignmentOffset = 0.35 } }
+EqMenuPaging.beforeUpdatePages(tabbed)
+check("tab list centring offset cleared before updatePages", tabbed.pagingTabList.listItemAlignmentOffset == 0)
+check("clearing the tab offset copes with no tab list", EqMenuPaging.clearTabOffset({}) == false)
 
 
 -- Injuries as RLRM conditions: data/injuries.xml in RLRM's own format, run through RLRM's parser
@@ -1425,6 +1472,108 @@ testAnimalsPageButton()
     check("full home pen sends the horse to the nearest with room", EqLooseHorses.choosePen(p.home, p.all, 1, 0, 0) == p.near)
     check("no staffed pen on the farm leaves the horse out", EqLooseHorses.choosePen(nil, { p.other, p.full }, 1, 0, 0) == nil)
     check("loose horse with no position still finds a pen", EqLooseHorses.choosePen(nil, { p.other, p.near }, 1, nil, nil) == p.near)
+end)()
+
+-- Settings page rows and the training rate.
+;(function()
+    local rate = EqSettings.BY_ID.trainingRate
+    check("training rate texts", rate.texts[1].text == "0.25x" and rate.texts[2].text == "0.5x" and rate.texts[4].text == "1x")
+    check("training rate state of 1", rate.values[EqSettings.stateOf(rate, 1)] == 1)
+    check("console rate shows as nearest choice", rate.values[EqSettings.stateOf(rate, 1.1)] == 1)
+    check("unset rate shows the default", rate.values[EqSettings.stateOf(rate, nil)] == 1)
+    local limits = EqSettings.BY_ID.entriesPerMonth
+    check("entries default is 3", limits.values[EqSettings.stateOf(limits, nil)] == 3)
+    check("no limit is the first entry choice", limits.values[1] == 0 and limits.texts[1].key == "eq_settings_noLimit")
+    local cadence = EqSettings.BY_ID.cadence
+    check("cadence state", EqSettings.stateOf(cadence, "month") == 2)
+    local onOff = EqSettings.BY_ID.racing
+    check("racing off state", EqSettings.stateOf(onOff, false) == 1 and EqSettings.stateOf(onOff, true) == 2)
+
+    local settings = { trainingRate = 1, racing = true }
+    check("apply changes a value", EqSettings.apply(settings, "trainingRate", 7) and settings.trainingRate == 2)
+    check("apply of the same value reports no change", not EqSettings.apply(settings, "trainingRate", 7))
+    check("apply turns racing off", EqSettings.apply(settings, "racing", 1) and settings.racing == false)
+    check("apply ignores unknown rows and states", not EqSettings.apply(settings, "nope", 1)
+        and not EqSettings.apply(settings, "racing", 9))
+    check("trainingRate falls back to 1", EqSettings.trainingRate(nil) == 1 and EqSettings.trainingRate({ trainingRate = 0 }) == 1)
+
+    local translations = {}
+    for _, lang in ipairs({ "en", "de" }) do
+        local file = io.open("translations/translation_" .. lang .. ".xml")
+        translations[lang] = file:read("*a")
+        file:close()
+    end
+    for _, row in ipairs(EqSettings.ROWS) do
+        for _, key in ipairs({ "eq_settings_" .. row.id, "eq_settings_" .. row.id .. "_tooltip" }) do
+            check("settings text " .. key, translations.en:find('name="' .. key .. '"', 1, true) ~= nil)
+        end
+        for _, entry in ipairs(row.texts) do
+            if entry.key ~= nil then
+                check("settings text " .. entry.key, translations.en:find('name="' .. entry.key .. '"', 1, true) ~= nil)
+            end
+        end
+    end
+
+    local ceilings = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    local function trainedWith(r)
+        local horse = { trained = { stamina = 40, speed = 40, agility = 40, temperament = 40 }, focus = "balanced", idleDays = 0 }
+        local deltas = EqTraining.applyDay(horse, ceilings, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 / 30, rate = r })
+        return deltas.stamina
+    end
+    local normal, double, quarter = trainedWith(nil), trainedWith(2), trainedWith(0.25)
+    check("training rate 2 doubles a day's gain", normal > 0 and math.abs(double - 2 * normal) < 1e-9, string.format("%.4f vs %.4f", double, normal))
+    check("training rate 0.25 quarters a day's gain", math.abs(quarter - normal / 4) < 1e-9)
+
+    local function boostedWith(r)
+        local horse = { trained = { stamina = 40, speed = 40, agility = 40, temperament = 40 } }
+        return EqTraining.applyBoost(horse, ceilings, { stamina = 1, speed = 1 }, 0.5, 60, 1 / 30, r).speed
+    end
+    check("training rate scales event boosts", math.abs(boostedWith(3) - 3 * boostedWith(nil)) < 1e-9)
+end)()
+
+-- The look-at Skills box draws the skill and the potential in their own colours.
+;(function()
+    local overlay = function() return { x = 0, y = 0, width = 0, height = 0.01,
+        setDimension = function() end, setPosition = function(o, x, y) o.x, o.y = x, y end, render = function() end } end
+    local Base = {}
+    function Base.new() return { lines = {}, title = "", currentLineIndex = 0, bgScale = overlay(), bgTop = overlay(), bgBottom = overlay() } end
+    function Base:storeScaledValues() end
+    function Base:clear() for _, l in ipairs(self.lines) do l.isActive = false end self.currentLineIndex = 0 end
+    local savedEnv = EqRLRM.env
+    EqRLRM.env = { RL_InfoDisplayKeyValueBox = Base }
+    dofile("scripts/gui/EqSkillsHudBox.lua")
+    check("skills box available with RLRM's box", EqSkillsHudBox.isAvailable())
+
+    local rendered = {}
+    local current
+    _G.setTextColor = function(r, g, b, a) current = { r, g, b, a } end
+    _G.setTextAlignment = function() end
+    _G.setTextBold = function() end
+    _G.renderText = function(_, _, _, text) rendered[text] = current end
+    _G.getTextWidth = function(_, text) return #text * 0.01 end
+    _G.drawDashedLine = function() end
+    _G.g_pixelSizeX = 0.001
+    _G.RenderText = { ALIGN_LEFT = 0, ALIGN_RIGHT = 2 }
+    _G.HUD = { COLOR = { INACTIVE = { 0.5, 0.5, 0.5, 1 } } }
+
+    local box = EqSkillsHudBox.new({}, 1)
+    for k, v in pairs({ boxWidth = 0.2, titleAndBoxHeight = 0.05, lineHeight = 0.02, titleOffsetX = 0, titleOffsetY = 0,
+        titleTextSize = 0.01, titleToLineOffsetY = -0.02, keyOffsetX = 0, valueOffsetX = 0, keyTextSize = 0.01,
+        valueTextSize = 0.01, lineToLineOffsetY = -0.02, dashedLineHeight = 0.001, dashWidth = 0.005, dashGapWidth = 0.002 }) do
+        box[k] = v
+    end
+    box:clear()
+    box:addLine("Stamina", "72 - Competitor", { 0, 1, 0, 1 }, "(Very high)", { 0.2, 1, 0, 1 })
+    box:addLine("Favourite event", "None yet")
+    box:draw(0.9, 0.1)
+    check("skill value in skill colour", rendered["72 - Competitor"] ~= nil and rendered["72 - Competitor"][1] == 0)
+    check("stat title in skill colour", rendered["Stamina"] ~= nil and rendered["Stamina"][2] == 1 and rendered["Stamina"][1] == 0)
+    check("potential in potential colour", rendered[" (Very high)"] ~= nil and rendered[" (Very high)"][1] == 0.2)
+    check("uncoloured line is white", rendered["None yet"] ~= nil and rendered["None yet"][1] == 1 and rendered["None yet"][3] == 1)
+
+    EqRLRM.env = {}
+    check("skills box unavailable without RLRM's box", not EqSkillsHudBox.isAvailable())
+    EqRLRM.env = savedEnv
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

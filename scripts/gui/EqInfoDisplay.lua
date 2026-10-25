@@ -9,7 +9,8 @@
     - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
       a bar of the trained level with "54 (High)" as its text.
     - When you look at a horse, a Skills box of our own sits below RLRM's Genetics box:
-      "54 - Amateur (High)" for each stat, then whether the potential is still the dealer's view
+      "54 - Amateur (High)" for each stat, the skill in its skill colour and the potential in
+      RLRM's genetics colour (EqSkillsHudBox), then whether the potential is still the dealer's view
       and the horse's competition status.
 
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
@@ -222,7 +223,15 @@ end
 local function fillSkillsBox(record, box, animal)
     local ceilings, unvetted = record:getShownCeilings(), isUnvetted(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        box:addLine(statTitle(stat), statText(record.trained[stat] or 0, ceilings[stat], unvetted))
+        local trained = record.trained[stat] or 0
+        if box.eqColored then
+            local skill, skillColor = EqInfoDisplay.skillValue(trained)
+            local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
+            box:addLine(statTitle(stat), skill, skillColor,
+                string.format("(%s)", EqInfoDisplay.potentialText(ceilings[stat], unvetted)), potentialColor)
+        else
+            box:addLine(statTitle(stat), statText(trained, ceilings[stat], unvetted))
+        end
     end
     box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
     if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
@@ -248,7 +257,11 @@ function EqInfoDisplay.showSkillsBox(hudUpdater, animal)
     if record == nil then return end
 
     if hudUpdater.eqSkillsBox == nil then
-        hudUpdater.eqSkillsBox = g_currentMission.hud.infoDisplay:createBox(InfoDisplayKeyValueBox)
+        -- Our coloured box when RLRM's box class is there to draw it like Genetics, else the
+        -- game's plain one.
+        local colored = EqSkillsHudBox.isAvailable()
+        hudUpdater.eqSkillsBox = g_currentMission.hud.infoDisplay:createBox(colored and EqSkillsHudBox or InfoDisplayKeyValueBox)
+        hudUpdater.eqSkillsBox.eqColored = colored
     end
     local box = hudUpdater.eqSkillsBox
     box:clear()

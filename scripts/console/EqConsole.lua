@@ -359,6 +359,7 @@ end
 
 
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
+---     [entriesPerMonth n] [trainingRate x]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -374,15 +375,17 @@ function EqConsole:consoleSettings(name, value)
         settings.forcedRetirement = value == "on"
     elseif name == "entriesPerMonth" and tonumber(value) ~= nil and tonumber(value) >= 0 then
         settings.entriesPerMonth = math.floor(tonumber(value))
+    elseif name == "trainingRate" and tonumber(value) ~= nil and tonumber(value) > 0 then
+        settings.trainingRate = tonumber(value)
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [trainingRate <x, 1 = normal>]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  homeRegion=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  trainingRate=%sx  homeRegion=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
-        tostring(EqCompetitionManager.homeRegion()))
+        tostring(EqSettings.trainingRate(settings)), tostring(EqCompetitionManager.homeRegion()))
 end
 
 
@@ -571,7 +574,7 @@ function EqConsole.register()
     addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [trainingRate x]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)

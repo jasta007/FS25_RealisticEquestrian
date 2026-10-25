@@ -32,6 +32,8 @@ EqRLRM.OPTIONAL = {
     menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
     eventsTab = { { "RLMenu", "setupMenuPages" } },
     menuPaging = { { "RLMenu", "updatePages" } },
+    settingsTab = { { "RLMenuSettingsFrame", "onFrameOpen" }, { "RLMenuSettingsFrame", "initializeSubCategoryPages" },
+        { "RLMenuSettingsFrame", "updateSubCategoryPages" } },
     animalsPageButton = { { "RLMenu", "openFromBridge" } },
     menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
     horsePricing = { { "AnimalHorse", "getHorseSellPrice" } },
