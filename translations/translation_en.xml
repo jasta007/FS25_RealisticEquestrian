@@ -374,7 +374,7 @@
         <text name="eq_story_steeplechase_elimRefusal" text="Refused a fence and was pulled up."/>
         <text name="eq_story_steeplechase_agility" text="Hit a fence hard and lost ground."/>
         <text name="eq_story_steeplechase_agilityMany" text="Jumped poorly and lost ground at several fences."/>
-        <text name="eq_story_steeplechase_hardest" text="Travelling well until a blunder at the biggest fence."/>
+        <text name="eq_story_steeplechase_hardest" text="Travelling well until a blunder at the hardest obstacle."/>
         <text name="eq_story_steeplechase_speed" text="Couldn't go the early pace."/>
         <text name="eq_story_steeplechase_temperament" text="Jumped hesitantly and lost ground."/>
         <text name="eq_story_steeplechase_stamina" text="Tired and faded over the last fences."/>

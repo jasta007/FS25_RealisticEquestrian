@@ -376,7 +376,7 @@
         <text name="eq_story_steeplechase_elimRefusal" text="Verweigerte ein Hindernis und wurde angehalten."/>
         <text name="eq_story_steeplechase_agility" text="Touchierte ein Hindernis hart und verlor Boden."/>
         <text name="eq_story_steeplechase_agilityMany" text="Sprang schwach und verlor an mehreren Hindernissen Boden."/>
-        <text name="eq_story_steeplechase_hardest" text="Lief gut bis zu einem Fehler am größten Hindernis."/>
+        <text name="eq_story_steeplechase_hardest" text="Lief gut bis zu einem Fehler am schwersten Hindernis."/>
         <text name="eq_story_steeplechase_speed" text="Konnte das Anfangstempo nicht mitgehen."/>
         <text name="eq_story_steeplechase_temperament" text="Sprang zögerlich und verlor Boden."/>
         <text name="eq_story_steeplechase_stamina" text="Wurde müde und ließ über die letzten Hindernisse nach."/>
