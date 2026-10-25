@@ -13,8 +13,33 @@
         <text name="eq_stat_short_speed" text="Spd"/>
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
-        <text name="eq_training_today" text="Training"/>
-        <text name="eq_training_tired" text="Training (tired)"/>
+        <text name="eq_train_title" text="Training: %s view"/>
+        <text name="eq_train_viewAction" text="Training view: %s"/>
+        <text name="eq_train_view_freestyle" text="Freestyle"/>
+        <text name="eq_train_view_stamina" text="Stamina"/>
+        <text name="eq_train_view_speed" text="Speed"/>
+        <text name="eq_train_worn" text="worn out for today"/>
+        <text name="eq_train_tiredness" text="Tiredness"/>
+        <text name="eq_train_tired_fresh" text="Fresh"/>
+        <text name="eq_train_tired_warm" text="Warming up"/>
+        <text name="eq_train_tired_zone" text="In the zone"/>
+        <text name="eq_train_tired_blown" text="Blowing hard"/>
+        <text name="eq_train_sprint_fresh" text="Fresh: sprint now"/>
+        <text name="eq_train_sprint_tiring" text="Tiring: rest soon"/>
+        <text name="eq_train_sprint_stale" text="Too tired to sprint: rest"/>
+        <text name="eq_train_run" text="Long run: %d s"/>
+        <text name="eq_train_quality_fast" text="training fast"/>
+        <text name="eq_train_quality_steady" text="training"/>
+        <text name="eq_train_quality_slow" text="training slowly"/>
+        <text name="eq_train_quality_full" text="full for today"/>
+        <text name="eq_train_others" text="Others"/>
+        <text name="eq_train_tip_stamina_1" text="Long canters and gallops build stamina."/>
+        <text name="eq_train_tip_stamina_2" text="Gains grow over the first minute of a run."/>
+        <text name="eq_train_tip_stamina_3" text="Hold tiredness at 60-85%: trot to ease off."/>
+        <text name="eq_train_tip_speed_1" text="Gallop while fresh: tiredness under 25%."/>
+        <text name="eq_train_tip_speed_2" text="Then stand still to rest before the next sprint."/>
+        <text name="eq_train_tip_speed_3" text="Walking rests too, but slower."/>
+        <text name="input_EQ_TRAINING_VIEW" text="Change training view"/>
         <text name="eq_feed_boost" text="Feed"/>
         <text name="eq_feedGroup_hay" text="Hay"/>
         <text name="eq_feedGroup_grain" text="Hard feed"/>

@@ -9,6 +9,13 @@
       there by someone else: the base game's animal worker, or RLRM's herdsman horse-care rule.
       Staff train to the horse's focus profile and stop at STAFF_CAP of each ceiling.
 
+    Stamina and speed are focused work. Most of what they learn comes from how the horse is
+    worked, not how long: a tiredness meter (a short-term one, separate from the riding bar, which
+    is the day's energy) rises in canter and gallop and falls at slower gaits and at a halt.
+    Stamina comes from long runs that hold the meter high but not too high; speed comes from
+    galloping while the meter is low, so the best speed work is sprints with rests between. Just
+    riding the gaits trains them at UNFOCUSED_SHARE of the gait weights below.
+
     Each stat closes a share of the gap to its cap every month (scaled to the day with the
     game's timeAdjustment), so gains slow as a horse nears its ceiling. Idle horses fade.
     The farm's horse facilities (EqFacility.boosts) and what the horse is fed (EqFeed.dietBoost)
@@ -27,6 +34,36 @@ EqTraining.GAIT_WEIGHTS = {
     -- Backing up is slow, fiddly schooling: a little of it does a lot for balance and manners.
     reverse = { agility = 2.0, temperament = 2.0 },
 }
+
+-- Stats trained by focused work (see step); their gait weights count at UNFOCUSED_SHARE.
+EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1 }
+
+-- The most effort a day can give each stat. Good focused work goes past the old full day (1).
+EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
+
+-- Tiredness meter (0-100) change per second, by gait. "halt" is standing still.
+EqTraining.TIREDNESS_RATE = { halt = -6, walk = -1.5, reverse = -1, trot = -0.8, canter = 1.2, gallop = 3 }
+
+-- A run is time spent at canter or gallop. Trotting holds it, slower gaits end it.
+EqTraining.RUN_RATE = { halt = -5, walk = -5, reverse = -5, trot = 0, canter = 1, gallop = 1 }
+EqTraining.RUN_START = 15
+EqTraining.RUN_FULL = 60
+
+-- Stamina effort per second in each gait at the best tiredness and a long run.
+EqTraining.STAMINA_RATE = { trot = 0.008, canter = 0.02, gallop = 0.025 }
+-- Stamina zone: no stamina work below ZONE_FROM, building to full at ZONE_LOW, full up to
+-- ZONE_HIGH, then falling to ZONE_BLOWN_SHARE at 100.
+EqTraining.ZONE_FROM = 25
+EqTraining.ZONE_LOW = 60
+EqTraining.ZONE_HIGH = 85
+EqTraining.ZONE_BLOWN_SHARE = 0.2
+
+-- Speed effort per second at a gallop while fresh: full up to FRESH_UNTIL, falling to
+-- STALE_SHARE at STALE_FROM and above.
+EqTraining.SPEED_RATE = 0.02
+EqTraining.FRESH_UNTIL = 25
+EqTraining.STALE_FROM = 55
+EqTraining.STALE_SHARE = 0
 
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
@@ -50,7 +87,105 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
-    return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {} }
+    return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
+        tiredness = 0, run = 0, focused = { stamina = 0, speed = 0 }, quality = { stamina = 0, speed = 0 } }
+end
+
+
+--- How well stamina is training at this tiredness and run length.
+--- @param tiredness number 0-100
+--- @param run number seconds
+--- @return number share 0..1 of STAMINA_RATE
+function EqTraining.staminaQuality(tiredness, run)
+    local zone
+    if tiredness < EqTraining.ZONE_LOW then
+        zone = EqStats.clamp((tiredness - EqTraining.ZONE_FROM) / (EqTraining.ZONE_LOW - EqTraining.ZONE_FROM), 0, 1)
+    elseif tiredness <= EqTraining.ZONE_HIGH then
+        zone = 1
+    else
+        local over = (tiredness - EqTraining.ZONE_HIGH) / (100 - EqTraining.ZONE_HIGH)
+        zone = 1 - over * (1 - EqTraining.ZONE_BLOWN_SHARE)
+    end
+    local length = EqStats.clamp((run - EqTraining.RUN_START) / (EqTraining.RUN_FULL - EqTraining.RUN_START), 0, 1)
+    return zone * length
+end
+
+
+--- How well a gallop trains speed at this tiredness.
+--- @param tiredness number 0-100
+--- @return number share 0..1 of SPEED_RATE
+function EqTraining.speedQuality(tiredness)
+    if tiredness <= EqTraining.FRESH_UNTIL then return 1 end
+    local stale = EqStats.clamp((tiredness - EqTraining.FRESH_UNTIL) / (EqTraining.STALE_FROM - EqTraining.FRESH_UNTIL), 0, 1)
+    return 1 - stale * (1 - EqTraining.STALE_SHARE)
+end
+
+
+--- One frame of riding for the meters and focused work.
+--- @param sheet table
+--- @param gait string halt, reverse, walk, trot, canter or gallop
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: the meters move, nothing trains
+function EqTraining.step(sheet, gait, dt, worn)
+    local rate = EqTraining.TIREDNESS_RATE[gait]
+    if rate == nil or dt <= 0 then return end
+    local seconds = dt / 1000
+    sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)
+    sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
+
+    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil and EqTraining.staminaQuality(sheet.tiredness, sheet.run) or 0
+    local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) or 0
+    sheet.quality.stamina, sheet.quality.speed = stamina, speed
+    if worn then
+        sheet.quality.stamina, sheet.quality.speed = 0, 0
+        return
+    end
+    sheet.focused.stamina = sheet.focused.stamina + (EqTraining.STAMINA_RATE[gait] or 0) * stamina * seconds
+    sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * speed * seconds
+end
+
+
+--- Word for the tiredness meter, for the riding HUD.
+--- @param tiredness number 0-100
+--- @return string band fresh, warm, zone or blown
+function EqTraining.tirednessBand(tiredness)
+    if tiredness < EqTraining.ZONE_FROM then return "fresh" end
+    if tiredness < EqTraining.ZONE_LOW then return "warm" end
+    if tiredness <= EqTraining.ZONE_HIGH then return "zone" end
+    return "blown"
+end
+
+
+--- Word for the tiredness meter in the Speed view.
+--- @param tiredness number 0-100
+--- @return string band fresh, tiring or stale
+function EqTraining.sprintBand(tiredness)
+    if tiredness <= EqTraining.FRESH_UNTIL then return "fresh" end
+    if tiredness < EqTraining.STALE_FROM then return "tiring" end
+    return "stale"
+end
+
+
+--- Word for how fast a stat is training this moment.
+--- @param quality number 0..1
+--- @return string|nil band fast, steady or slow; nil when it is not training
+function EqTraining.qualityBand(quality)
+    if quality >= 0.75 then return "fast" end
+    if quality >= 0.35 then return "steady" end
+    if quality > 0 then return "slow" end
+    return nil
+end
+
+
+--- Time out of the saddle rests the horse like standing still.
+--- @param sheet table
+--- @param ms number milliseconds since the sheet was last ridden
+function EqTraining.rest(sheet, ms)
+    if ms <= 0 then return end
+    local seconds = ms / 1000
+    sheet.tiredness = EqStats.clamp(sheet.tiredness + EqTraining.TIREDNESS_RATE.halt * seconds, 0, 100)
+    sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE.halt * seconds)
+    sheet.quality.stamina, sheet.quality.speed = 0, 0
 end
 
 
@@ -107,7 +242,7 @@ end
 
 
 --- @param sheet table|nil
---- @return table effort stat -> 0..1
+--- @return table effort stat -> 0..EFFORT_CAP
 function EqTraining.playerEffort(sheet)
     local effort = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = 0 end
@@ -116,13 +251,14 @@ function EqTraining.playerEffort(sheet)
     for gait, ms in pairs(sheet.ms) do
         local share = ms / EqConstants.TRAINING_FULL_MS
         for stat, weight in pairs(EqTraining.GAIT_WEIGHTS[gait]) do
-            effort[stat] = effort[stat] + share * weight
+            effort[stat] = effort[stat] + share * weight * (EqTraining.UNFOCUSED_SHARE[stat] or 1)
         end
     end
+    for stat, value in pairs(sheet.focused or {}) do effort[stat] = effort[stat] + value end
     effort.agility = effort.agility + sheet.jumps * EqConstants.JUMP_AGILITY
     effort.temperament = effort.temperament + sheet.jumps * EqConstants.JUMP_TEMPERAMENT
 
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = EqStats.clamp(effort[stat], 0, 1) end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = EqStats.clamp(effort[stat], 0, EqTraining.EFFORT_CAP[stat]) end
     return effort
 end
 

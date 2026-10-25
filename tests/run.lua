@@ -248,10 +248,11 @@ end
 local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 
 local canterDay = EqTraining.playerEffort(ridden("canter", 100000))
-check("a full canter day trains stamina and agility", math.abs(canterDay.stamina - 0.8) < 1e-9 and canterDay.speed == 0)
+check("a full canter day trains agility; stamina only a little without focused work",
+    math.abs(canterDay.stamina - 0.08) < 1e-9 and canterDay.agility == 0.8 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
-check("walking trains its stats as fast as galloping trains its own",
-    math.abs(EqTraining.playerEffort(ridden("walk", 60000)).temperament - EqTraining.playerEffort(ridden("gallop", 60000)).speed) < 1e-9)
+check("galloping alone trains speed at a tenth of its gait weight",
+    math.abs(EqTraining.playerEffort(ridden("gallop", 60000)).speed - 0.06) < 1e-9)
 check("backing up fills riding 2.5 times as fast as walking", EqTraining.playerRidingPoints(ridden("reverse", 120000)) == 100)
 do
     local reversePoints, reverseTimer, reverseTotal = 0, 0, 0
@@ -265,7 +266,65 @@ end
 local jumpDay = EqTraining.playerEffort(ridden("canter", 0, 10))
 check("jumps add agility", jumpDay.agility > 0.39)
 check("jumps add some temperament", jumpDay.temperament > 0.29 and jumpDay.temperament < jumpDay.agility)
-check("effort is capped at a full day", EqTraining.playerEffort(ridden("gallop", 900000)).speed == 1)
+check("agility effort is capped at a full day", EqTraining.playerEffort(ridden("canter", 900000)).agility == 1)
+do
+    local big = ridden("gallop", 0)
+    big.focused.stamina, big.focused.speed = 5, 5
+    local capped = EqTraining.playerEffort(big)
+    check("focused effort is capped at two full days", capped.stamina == 2 and capped.speed == 2)
+end
+
+-- Focused stamina and speed: a session ridden frame by frame until the riding bar is full.
+do
+local function session(policy)
+    local sheet, state, t = EqTraining.newSheet(), {}, 0
+    while EqTraining.playerRidingPoints(sheet) < 100 and t < 3600000 do
+        local gait = policy(sheet, t, state)
+        EqTraining.step(sheet, gait, 50, false)
+        if gait ~= "halt" then EqTraining.addRiding(sheet, gait, 50) end
+        t = t + 50
+    end
+    return EqTraining.playerEffort(sheet), sheet
+end
+local gaitCycle = { "walk", "trot", "canter", "gallop" }
+local cycled = session(function(_, t) return gaitCycle[math.floor(t / 20000) % 4 + 1] end)
+local staminaRun = session(function(sheet, _, state)
+    if sheet.tiredness >= 84 then state.ease = true elseif sheet.tiredness <= 72 then state.ease = false end
+    return state.ease and "trot" or "canter"
+end)
+local sprints = session(function(sheet, _, state)
+    if sheet.tiredness >= 25 then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
+    return state.rest and "halt" or "gallop"
+end)
+local flatOut = session(function() return "gallop" end)
+check("long runs in the zone train stamina at up to double the old full day", staminaRun.stamina >= 1.5,
+    string.format("got %.2f", staminaRun.stamina))
+check("sprints with rests train speed at up to double the old full day", sprints.speed >= 1.5, string.format("got %.2f", sprints.speed))
+check("cycling the gaits trains stamina at about a quarter of the old day", cycled.stamina > 0.15 and cycled.stamina < 0.45,
+    string.format("got %.2f", cycled.stamina))
+check("cycling the gaits trains speed at about a quarter of the old day", cycled.speed > 0.05 and cycled.speed < 0.3,
+    string.format("got %.2f", cycled.speed))
+check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
+    string.format("flat out %.2f, sprints %.2f", flatOut.speed, sprints.speed))
+check("sprints train little stamina, long runs no speed", sprints.stamina < 0.2 and staminaRun.speed == 0)
+print(string.format("info: one riding bar -> cycling sta %.2f spd %.2f, long runs sta %.2f, sprints spd %.2f, flat out spd %.2f",
+    cycled.stamina, cycled.speed, staminaRun.stamina, sprints.speed, flatOut.speed))
+end
+
+do
+    local sheet = EqTraining.newSheet()
+    for _ = 1, 200 do EqTraining.step(sheet, "gallop", 100, false) end
+    local function near(a, b) return math.abs(a - b) < 1e-6 end
+    check("galloping raises tiredness", near(sheet.tiredness, 60) and near(sheet.run, 20))
+    check("tiredness bands", EqTraining.tirednessBand(10) == "fresh" and EqTraining.tirednessBand(70) == "zone"
+        and EqTraining.tirednessBand(95) == "blown" and EqTraining.sprintBand(60) == "stale")
+    EqTraining.rest(sheet, 5000)
+    check("time out of the saddle rests the horse", near(sheet.tiredness, 30) and sheet.run == 0)
+    local worn = EqTraining.newSheet()
+    for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
+    check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0
+        and worn.quality.speed == 0)
+end
 
 local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
 check("staff train to the focus", racingStaff.speed == 1.0 and racingStaff.agility < 0.2)

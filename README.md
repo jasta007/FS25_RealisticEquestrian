@@ -55,9 +55,19 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Ride your horses.** Each gait trains different stats: walking builds temperament, trotting a
-  mix, cantering stamina and agility, galloping speed and stamina, and backing up agility and
-  temperament. Jumps add agility.
+- **Ride your horses, and pick what to work on.** Stamina and speed train best from focused work,
+  watched by a **Tiredness** meter while you ride (it rises in canter and gallop and falls at
+  slower gaits and at a halt):
+  - **Stamina** comes from long runs: canter or gallop for a minute or more and hold tiredness in
+    the zone, 60-85%. Trot to ease off without ending the run.
+  - **Speed** comes from sprints: gallop while the horse is fresh (tiredness under 25%), then
+    stand still to rest before the next one.
+  - A good session can give up to double what a full day of riding used to. Just riding round
+    the gaits trains them at about a quarter of that.
+  - Walking still builds temperament, trotting and cantering agility, and backing up agility and
+    temperament. Jumps add agility. (Focused agility and temperament work is coming.)
+- **Press Y while riding** to switch the training view: **Freestyle** shows the meter and a line
+  for each stat, and the **Stamina** and **Speed** views show what that stat needs, with tips.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired and
   trains no more until tomorrow, and galloping tires it fastest, so choose what to work on.
 - **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
@@ -197,7 +207,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
-3. **Ride it.** Watch the "Training today" line while you ride, and stop when it reads "tired".
+3. **Ride it.** Press **Y** for the Stamina or Speed view and follow the tips. The horse is done
+   for the day when the training lines read "worn out for today".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.

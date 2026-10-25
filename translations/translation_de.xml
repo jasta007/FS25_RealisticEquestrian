@@ -15,8 +15,33 @@
         <text name="eq_stat_short_speed" text="Sch"/>
         <text name="eq_stat_short_agility" text="Wen"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
-        <text name="eq_training_today" text="Training"/>
-        <text name="eq_training_tired" text="Training (müde)"/>
+        <text name="eq_train_title" text="Training: Ansicht %s"/>
+        <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
+        <text name="eq_train_view_freestyle" text="Frei"/>
+        <text name="eq_train_view_stamina" text="Ausdauer"/>
+        <text name="eq_train_view_speed" text="Schnelligkeit"/>
+        <text name="eq_train_worn" text="für heute erschöpft"/>
+        <text name="eq_train_tiredness" text="Müdigkeit"/>
+        <text name="eq_train_tired_fresh" text="Frisch"/>
+        <text name="eq_train_tired_warm" text="Warm geritten"/>
+        <text name="eq_train_tired_zone" text="Im Zielbereich"/>
+        <text name="eq_train_tired_blown" text="Außer Atem"/>
+        <text name="eq_train_sprint_fresh" text="Frisch: jetzt sprinten"/>
+        <text name="eq_train_sprint_tiring" text="Ermüdet: bald ausruhen"/>
+        <text name="eq_train_sprint_stale" text="Zu müde zum Sprinten: ausruhen"/>
+        <text name="eq_train_run" text="Langer Ritt: %d s"/>
+        <text name="eq_train_quality_fast" text="trainiert schnell"/>
+        <text name="eq_train_quality_steady" text="trainiert"/>
+        <text name="eq_train_quality_slow" text="trainiert langsam"/>
+        <text name="eq_train_quality_full" text="für heute ausgeschöpft"/>
+        <text name="eq_train_others" text="Andere"/>
+        <text name="eq_train_tip_stamina_1" text="Lange Galopps bauen Ausdauer auf."/>
+        <text name="eq_train_tip_stamina_2" text="Der Gewinn wächst in der ersten Minute."/>
+        <text name="eq_train_tip_stamina_3" text="Müdigkeit bei 60-85 % halten: traben entlastet."/>
+        <text name="eq_train_tip_speed_1" text="Im Renngalopp sprinten, solange frisch (unter 25 %)."/>
+        <text name="eq_train_tip_speed_2" text="Dann stehen bleiben und vor dem nächsten Sprint ausruhen."/>
+        <text name="eq_train_tip_speed_3" text="Schritt reiten erholt auch, aber langsamer."/>
+        <text name="input_EQ_TRAINING_VIEW" text="Trainingsansicht wechseln"/>
         <text name="eq_feed_boost" text="Futter"/>
         <text name="eq_feedGroup_hay" text="Heu"/>
         <text name="eq_feedGroup_grain" text="Kraftfutter"/>

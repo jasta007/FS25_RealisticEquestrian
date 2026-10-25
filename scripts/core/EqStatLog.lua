@@ -106,6 +106,11 @@ function EqStatLog.explainDay(detail, day, info)
                 if (sheet.ms[gait] or 0) > 0 then table.insert(gaits, string.format("%s %.1f min", gait, sheet.ms[gait] / 60000)) end
             end
             if (sheet.jumps or 0) > 0 then table.insert(gaits, string.format("%d jump(s)", sheet.jumps)) end
+            local focused = sheet.focused or {}
+            if (focused.stamina or 0) > 0 or (focused.speed or 0) > 0 then
+                table.insert(gaits, string.format("focused stamina %.0f%% speed %.0f%%", (focused.stamina or 0) * 100,
+                    (focused.speed or 0) * 100))
+            end
         end
         local percent = {}
         for _, stat in ipairs(EqConstants.STAT_KEYS) do percent[stat] = (detail.player[stat] or 0) * 100 end
