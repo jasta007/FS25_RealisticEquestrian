@@ -43,7 +43,7 @@ end
 
 --- Open events, grouped by type then level (see compareEvents).
 --- @param farmId number
---- @return table rows { event, title, type, level, going, when, fee, prize, yours }
+--- @return table rows { event, title, type, level, going, risk, riskBand, when, fee, prize, yours }
 function EqEventsView.eventRows(farmId)
     local manager = EqCompetitionManager
     local horses = EqRLRM.listHorsesForFarm(farmId)
@@ -72,12 +72,15 @@ function EqEventsView.eventRows(farmId)
             yours = count > 0 and string.format(g_i18n:getText("eq_ui_canEnter"), count) or g_i18n:getText("eq_ui_noneEligible")
         end
 
+        local riskBand = manager.eventRisk(event)
         table.insert(rows, {
             event = event,
             title = manager.eventName(event.discipline, event.tier, event.venue),
             type = g_i18n:getText("eq_type_" .. event.discipline),
             level = manager.tierTitle(event.tier),
             going = manager.conditionsText(event.going),
+            risk = manager.riskText(riskBand),
+            riskBand = riskBand,
             when = g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_when_nextMonth" or cadence),
             fee = money(event.fee),
             prize = event.prize > 0 and money(event.prize) or g_i18n:getText("eq_ui_trainingOnly"),
@@ -93,7 +96,8 @@ end
 --- @param event table
 --- @param farmId number
 --- @return table rows { animal, record, name, age, status, canEnter, transport (= autoCost), autoCost,
----     manualCost, success, successBand, training, trainingBand (nil when the event gives no training) }
+---     manualCost, success, successBand, training, trainingBand (nil when the event gives no training),
+---     risk, riskBand (this horse's injury risk) }
 function EqEventsView.horseRows(event, farmId)
     local manager = EqCompetitionManager
     local tier = manager.config.tierByName[event.tier]
@@ -152,6 +156,8 @@ function EqEventsView.horseRows(event, farmId)
                 transport = autoCost,
                 autoCost = autoCost,
                 manualCost = manualCost,
+                risk = manager.riskText(prospects.risk),
+                riskBand = prospects.risk,
             })
         end
     end

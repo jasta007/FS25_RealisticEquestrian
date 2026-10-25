@@ -216,7 +216,8 @@ end
 --- @param animal table RLRM Animal
 --- @param event table
 --- @return table prospects { chance, success (a SUCCESS_BANDS name), benefit (a BENEFIT_BANDS
----     name, nil when the event gives no training) }
+---     name, nil when the event gives no training), risk (an EqRisk.RISK_BANDS name, nil with
+---     injuries off) }
 function EqCompetitionManager.prospects(record, animal, event)
     local config = EqCompetitionManager.config
     local discipline = config.disciplineByName[event.discipline]
@@ -235,7 +236,42 @@ function EqCompetitionManager.prospects(record, animal, event)
             tier.trainingBoost)
         benefit = band
     end
-    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit }
+
+    local risk = nil
+    if EqCompetitionManager.settings.injuries then
+        local going = EqCompetitionManager.goingByName(event.going)
+        risk = EqRisk.riskBand(EqRisk.runInjuryChance(discipline, tier, going, animal.fitness or 0,
+            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event)))
+    end
+    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk }
+end
+
+
+--- @param name string|nil
+--- @return table|nil going from events.xml
+function EqCompetitionManager.goingByName(name)
+    for _, going in ipairs(EqCompetitionManager.config.goings) do
+        if going.name == name then return going end
+    end
+    return nil
+end
+
+
+--- An event's injury risk for a typical horse: discipline, level, conditions and the trip.
+--- @param event table
+--- @return string|nil band an EqRisk.RISK_BANDS name, nil with injuries off
+function EqCompetitionManager.eventRisk(event)
+    if not EqCompetitionManager.settings.injuries then return nil end
+    local config = EqCompetitionManager.config
+    return EqRisk.riskBand(EqRisk.eventInjuryChance(config.disciplineByName[event.discipline],
+        config.tierByName[event.tier], EqCompetitionManager.goingByName(event.going), EqCompetitionManager.travelInjury(event)))
+end
+
+
+--- @param band string|nil from eventRisk or prospects
+--- @return string text
+function EqCompetitionManager.riskText(band)
+    return g_i18n:getText("eq_risk_" .. (band or "off"))
 end
 
 
@@ -316,6 +352,7 @@ function EqCompetitionManager.resolve(event, horses)
                     temperament = record.trained.temperament or 0,
                     stamina = record.trained.stamina or 0,
                     fitness = horse.animal.fitness or 0,
+                    travel = EqCompetitionManager.travelInjury(event),
                 })
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
@@ -697,6 +734,15 @@ function EqCompetitionManager.sharesTruck(event, farmId)
         if entry.farmId == farmId and entry.transport ~= EqCompetitionManager.TRANSPORT_MANUAL then return true end
     end
     return false
+end
+
+
+--- @param event table|nil
+--- @return number factor how much the trip raises the injury chance (1 at home)
+function EqCompetitionManager.travelInjury(event)
+    local config = EqCompetitionManager.config
+    local distance = config ~= nil and config.distances ~= nil and config.distances[EqCompetitionManager.eventDistance(event)] or nil
+    return distance ~= nil and distance.injury or 1
 end
 
 

@@ -129,14 +129,15 @@
             factor      multiplies the Auto Transport price
             quarantine  added to Auto Transport: the horse's quarantine abroad
             quarantineYard  what a Manual Transport horse pays instead: the dealer's quarantine yard
+            injury      multiplies the injury chance: a horse off a long trip arrives tired
         home: the player's home region. A map listed under <map> (by its title) wins; otherwise
             RLRM's map country (RLRM's "map country" setting can change it) picks the region;
             otherwise the default.
     -->
     <routes>
-        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"/>
-        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300"/>
-        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500"/>
+        <distance name="local" chance="0.6" factor="1" quarantine="0"    quarantineYard="0"   injury="1"/>
+        <distance name="near"  chance="0.3" factor="4" quarantine="1000" quarantineYard="300" injury="1.15"/>
+        <distance name="far"   chance="0.1" factor="8" quarantine="2500" quarantineYard="500" injury="1.3"/>
         <route from="northAmerica" to="europe"       distance="near"/>
         <route from="northAmerica" to="southAmerica" distance="near"/>
     </routes>

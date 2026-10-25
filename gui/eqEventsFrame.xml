@@ -21,26 +21,28 @@
 
         <!-- Events table -->
         <GuiElement profile="rlMenu_container" id="eventsHeader" position="20px -120px" size="1000px 40px">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="270px 40px" text="$l10n_eq_ui_col_event"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="290px 0px" size="130px 40px" text="$l10n_eq_ui_col_type"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="430px 0px" size="110px 40px" text="$l10n_eq_ui_col_level"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="545px 0px" size="105px 40px" text="$l10n_eq_ui_col_going"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="650px 0px" size="80px 40px"  text="$l10n_eq_ui_col_fee"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="735px 0px" size="100px 40px" text="$l10n_eq_ui_col_prize"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="850px 0px" size="150px 40px" text="$l10n_eq_ui_col_yours"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="215px 40px" text="$l10n_eq_ui_col_event"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="235px 0px" size="125px 40px" text="$l10n_eq_ui_col_type"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="370px 0px" size="110px 40px" text="$l10n_eq_ui_col_level"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="485px 0px" size="100px 40px" text="$l10n_eq_ui_col_going"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="590px 0px" size="80px 40px"  text="$l10n_eq_ui_col_risk"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="670px 0px" size="80px 40px"  text="$l10n_eq_ui_col_fee"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="755px 0px" size="95px 40px"  text="$l10n_eq_ui_col_prize"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="860px 0px" size="140px 40px" text="$l10n_eq_ui_col_yours"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </GuiElement>
 
         <GuiElement profile="rlMenu_container" id="eventsBox" position="20px -165px" size="1020px 700px">
             <SmoothList profile="rlMenu_tableList" id="eventsList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="eventRowTemplate" size="1000px 48px">
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="270px 48px" name="title" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="290px 0px" size="130px 48px" name="type" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="430px 0px" size="110px 48px" name="level" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="545px 0px" size="105px 48px" name="going"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="650px 0px" size="80px 48px"  name="fee"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="735px 0px" size="100px 48px" name="prize"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="850px 0px" size="150px 48px" name="yours" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="215px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="235px 0px" size="125px 48px" name="type" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="370px 0px" size="110px 48px" name="level" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="485px 0px" size="100px 48px" name="going"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="590px 0px" size="80px 48px"  name="risk" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="670px 0px" size="80px 48px"  name="fee"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="755px 0px" size="95px 48px"  name="prize"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="860px 0px" size="140px 48px" name="yours" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">
@@ -82,8 +84,8 @@
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </GuiElement>
 
-        <GuiElement profile="rlMenu_container" id="horsesBox" position="1060px -165px" size="520px 384px">
-            <SmoothList profile="rlMenu_tableList" id="horsesList" position="0px 0px" size="500px 384px">
+        <GuiElement profile="rlMenu_container" id="horsesBox" position="1060px -165px" size="520px 336px">
+            <SmoothList profile="rlMenu_tableList" id="horsesList" position="0px 0px" size="500px 336px">
                 <ListItem profile="rlMenu_tableListItem" name="horseRowTemplate" size="500px 48px">
                     <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="140px 48px" name="name" textLayoutMode="scrolling"/>
                     <Text profile="rlMenu_tableRowCellLeftAligned"  position="155px 0px" size="105px 48px" name="success"/>
@@ -91,14 +93,14 @@
                     <Text profile="rlMenu_tableRowCellLeftAligned"  position="355px 0px" size="140px 48px" name="status" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
-            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 384px" with="anchorTopRight">
-                <Slider profile="fs25_listSlider" size="6px 376px" dataElementId="horsesList"/>
+            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 336px" with="anchorTopRight">
+                <Slider profile="fs25_listSlider" size="6px 328px" dataElementId="horsesList"/>
             </ThreePartBitmap>
         </GuiElement>
 
         <!-- The selected horse, under its table: label left, value at 200px. Fixed rows of plain
              text (the table's own cell profiles), so nothing depends on a layout pass. -->
-        <GuiElement profile="rlMenu_container" id="horsePanel" position="1070px -565px" size="490px 310px">
+        <GuiElement profile="rlMenu_container" id="horsePanel" position="1070px -517px" size="490px 340px">
             <GuiElement profile="rlMenu_container" position="0px 0px" size="490px 36px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 36px" id="panelName" textSize="22px" textBold="true" textLayoutMode="scrolling"/>
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 36px" id="panelAge" textLayoutMode="scrolling"/>
@@ -122,6 +124,11 @@
             <GuiElement profile="rlMenu_container" position="0px -158px" size="490px 28px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="panelStatLabel[4]" textLayoutMode="scrolling"/>
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="panelStatValue[4]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <!-- Last row (under Specialty when that row is there), so it sits apart from the rest. -->
+            <GuiElement profile="rlMenu_container" position="0px -308px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" text="$l10n_eq_ui_injuryRisk" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="panelRisk" textLayoutMode="scrolling"/>
             </GuiElement>
             <GuiElement profile="rlMenu_container" position="0px -196px" size="490px 28px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" text="$l10n_eq_ui_trainingBenefit" textLayoutMode="scrolling"/>

@@ -269,11 +269,15 @@ dealer's view of it.
 - **Eliminations:** refusals and falls over fences, pulled up in races. Cross country and
   steeplechase are the riskiest, dressage the safest. A horse out of its depth for the tier, or
   with low temperament, goes out more often. Eliminated horses win nothing.
-- **Injuries:** rare, more likely on firm going, for unfit horses, with low stamina and after a
-  fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
+- **Injuries:** rare, more likely on firm going, after a long trip abroad, for unfit horses,
+  with low stamina and after a fall. Most are a strain (1 month of box rest, $1,000 a month in vet bills), some a tendon
   injury (3 months, $3,500 a month), and a few serious (6 months, $10,000 a month). Bills are
   charged at the start of each month. A resting horse can't compete and doesn't train, so its
   stats fade a little.
+- **Injury risk** shows on the Events tab as Low, Moderate, High or Very high: the Risk column
+  is for a typical horse (discipline, level, conditions and how far the venue is), and the
+  selected horse's panel shows that horse's own risk (its fitness, stamina and how likely it is
+  to fall). It reads Off with injuries turned off.
 - **Retirement is your choice:** `eqRetire <horse>` retires a horse, and `eqRetire <horse> undo`
   brings it back. Retiring an injured horse stops the treatment and the bills.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, about 1 in 10
