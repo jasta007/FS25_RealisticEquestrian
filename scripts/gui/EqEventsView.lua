@@ -26,7 +26,22 @@ local function horseName(animal, record)
 end
 
 
---- Open events, round events first, then by tier, discipline and fee.
+--- Sort order for open events: by type (alphabetical, as the table shows it), then level from
+--- lowest to highest, then fee, so similar events sit together. The console listing uses it too.
+--- @param a table event
+--- @param b table event
+--- @return boolean
+function EqEventsView.compareEvents(a, b)
+    local typeA, typeB = g_i18n:getText("eq_type_" .. a.discipline), g_i18n:getText("eq_type_" .. b.discipline)
+    if typeA ~= typeB then return typeA < typeB end
+    local ta, tb = EqEventsView.TIER_ORDER[a.tier] or 9, EqEventsView.TIER_ORDER[b.tier] or 9
+    if ta ~= tb then return ta < tb end
+    if a.fee ~= b.fee then return a.fee < b.fee end
+    return a.id < b.id
+end
+
+
+--- Open events, grouped by type then level (see compareEvents).
 --- @param farmId number
 --- @return table rows { event, title, type, level, going, when, fee, prize, yours }
 function EqEventsView.eventRows(farmId)
@@ -34,18 +49,7 @@ function EqEventsView.eventRows(farmId)
     local horses = EqRLRM.listHorsesForFarm(farmId)
     local list = {}
     for _, event in pairs(manager.events) do table.insert(list, event) end
-
-    local disciplineOrder = {}
-    for i, discipline in ipairs(manager.config.disciplines) do disciplineOrder[discipline.name] = i end
-    table.sort(list, function(a, b)
-        if a.kind ~= b.kind then return a.kind == EqCompetition.KIND_ROUND end
-        local ta, tb = EqEventsView.TIER_ORDER[a.tier] or 9, EqEventsView.TIER_ORDER[b.tier] or 9
-        if ta ~= tb then return ta < tb end
-        local da, db = disciplineOrder[a.discipline] or 99, disciplineOrder[b.discipline] or 99
-        if da ~= db then return da < db end
-        if a.fee ~= b.fee then return a.fee < b.fee end
-        return a.id < b.id
-    end)
+    table.sort(list, EqEventsView.compareEvents)
 
     local cadence = manager.settings.cadence == manager.CADENCE_DAY and "eq_ui_when_tomorrow" or "eq_ui_when_nextMonth"
     local rows = {}

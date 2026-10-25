@@ -158,18 +158,14 @@ local function competitionsReady()
 end
 
 
---- eqEvents: every open event, cheapest first within each kind.
+--- eqEvents: every open event, grouped by type then level, in the same order as the Events tab.
 function EqConsole:consoleEvents()
     local ok, message = competitionsReady()
     if not ok then return message end
 
     local list = {}
     for _, event in pairs(EqCompetitionManager.events) do table.insert(list, event) end
-    table.sort(list, function(a, b)
-        if a.kind ~= b.kind then return a.kind > b.kind end
-        if a.discipline ~= b.discipline then return a.discipline < b.discipline end
-        return a.fee < b.fee
-    end)
+    table.sort(list, EqEventsView.compareEvents)
 
     local horses = EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())
     local anyEligible = false
