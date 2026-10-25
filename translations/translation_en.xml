@@ -18,19 +18,19 @@
         <text name="eq_train_view_freestyle" text="Freestyle"/>
         <text name="eq_train_view_stamina" text="Stamina"/>
         <text name="eq_train_view_speed" text="Speed"/>
-        <text name="eq_help_speed_2" text="Then stop and stand still to recover before the next sprint. Walking recovers just as fast, but it uses up the riding bar."/>
+        <text name="eq_help_speed_2" text="Then stop and stand still to recover before the next sprint. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar."/>
         <text name="eq_help_speed_1" text="Speed comes from sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop at 55%."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="Above 85% the horse is blowing hard and learns less: trot to ease off. Trotting keeps the run going; a walk or a stop only wears it down slowly, so getting knocked to a halt does not lose it."/>
         <text name="eq_help_stamina_1" text="Stamina comes from runs at canter or gallop. Gains build over the first 15 seconds of a run and are best while exertion is in the zone, 65-85%. A long canter climbs slowly from the zone into blowing hard, much more slowly for a fitter horse."/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_freestyle_2" text="Press Y to switch to the Stamina or Speed view, which shows what that stat needs. Each stat line is today's training as a share of the best possible day. Press Shift+Y any time to see these tips again."/>
-        <text name="eq_help_freestyle_1" text="Riding trains your horse's stats. Stamina and speed learn most from focused work, measured by the Exertion meter: it rises in canter and gallop, and falls at a trot, a walk or a halt. The riding bar is the horse's energy for the day: once it is full, training stops until tomorrow."/>
+        <text name="eq_help_freestyle_2" text="Press Y to switch to the Stamina or Speed view, which shows what that stat needs. Each stat line is today's training as a share of the best possible day. Press H any time to see these tips again."/>
+        <text name="eq_help_freestyle_1" text="Riding trains your horse's stats. Stamina and speed learn most from focused work, measured by the Exertion meter: it rises in canter and gallop, and falls at a trot, a walk or a halt. The riding bar is the horse's energy for the day: once it is full, training stops until tomorrow. A fit horse's bar fills more slowly."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
         <text name="eq_help_close" text="Click to close"/>
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Training help"/>
-        <text name="eq_train_worn" text="Riding bar full: no more training today"/>
+        <text name="eq_train_worn" text="Riding bar full: this horse cannot train any more today"/>
         <text name="eq_train_tiredness" text="Exertion"/>
         <text name="eq_train_tired_fresh" text="Fresh"/>
         <text name="eq_train_tired_warm" text="Warming up"/>

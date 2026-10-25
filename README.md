@@ -70,10 +70,12 @@ uses its genetics, health and fitness.
     temperament. Jumps add agility. (Focused agility and temperament work is coming.)
 - **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a
   line for each stat) and the **Stamina** and **Speed** views. Colours show how each is going.
-  Help pops up at the bottom of the screen the first time you open each view; press **Shift+Y**
+  Help pops up at the bottom of the screen the first time you open each view; press **H**
   to see it again, and click anywhere to move on.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired and
-  trains no more until tomorrow, and galloping tires it fastest, so choose what to work on.
+  trains no more until tomorrow, and galloping tires it fastest, so choose what to work on. A fit
+  horse's bar fills more slowly (up to 1.4 times as long at stamina 100). Below 30% exertion a
+  horse standing or walking recovers quickly, a fit one faster still.
 - **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
   in patch 1.25) and the workers' daily ride counts as training, as does RLRM's herdsman. They keep
   your horses ticking over towards a focus you choose, but only your own riding takes a stat the

@@ -9,10 +9,10 @@
     - Rideable.updateRiding also steps the tiredness meter and the focused stamina and speed work
       (EqTraining.step), at a halt too; a fitter horse tires more slowly.
     - Rideable.onDraw shows the training panel while riding (EqTrainingHud): the exertion meter
-      and a line per stat for today's training, and in Freestyle the farm's facility the horse is
+      and a line per stat for today's training; the farm's facility the horse is
       inside (EqFacilityHooks) and the boost its feed gives (EqFeedHooks) in the help panel. The
       training view key (Y, Rideable.onRegisterActionEvents) switches to a focused view for one
-      stat; Shift+Y, and the first time each view opens, shows its help popups.
+      stat; H, and the first time each view opens, shows its help popups.
     - RLRM's AnimalHorse.processRidingUpdate is the daily horse tick. A prepend runs our day
       just before RLRM grades fitness and zeroes riding, so the day's riding value is still there
       to read.
@@ -84,16 +84,19 @@ local function getRiddenId(spec)
 end
 
 
---- Backing up tires a horse faster than the base game counts: add the difference to its riding bar.
+--- Backing up tires a horse faster than the base game counts, and a fit horse's bar fills more
+--- slowly: add the difference to (or take it off) its riding bar.
 --- @param spec table spec_rideable
+--- @param gait string
+--- @param factor number EqTraining.ridingBarFactor
 --- @param dt number milliseconds
-local function addReverseTiredness(spec, dt)
+local function adjustRiding(spec, gait, factor, dt)
     local cluster = spec.cluster
     if cluster.changeRiding == nil then return end
     local fullMs = cluster.getDailyRidingTime ~= nil and cluster:getDailyRidingTime() or EqConstants.RIDING_FULL_MS
     local points
-    points, spec.eqReverseTimer = EqTraining.reverseExtraRiding(spec.eqReverseTimer, dt, fullMs)
-    if points > 0 then cluster:changeRiding(points) end
+    points, spec.eqReverseTimer = EqTraining.ridingAdjust(spec.eqReverseTimer, dt, gait, factor, fullMs)
+    if points ~= 0 then cluster:changeRiding(points) end
 end
 
 
@@ -115,11 +118,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local worn = isTired(spec.cluster)
     local record = EqRegistry.getById(id)
-    EqTraining.step(sheet, gait, dt, worn, record ~= nil and record.trained.stamina or nil)
+    local stamina = record ~= nil and record.trained.stamina or nil
+    EqTraining.step(sheet, gait, dt, worn, stamina)
     if worn or gait == "halt" then return end
 
+    sheet.barFactor = EqTraining.ridingBarFactor(stamina)
     EqTraining.addRiding(sheet, gait, dt)
-    if gait == "reverse" then addReverseTiredness(spec, dt) end
+    adjustRiding(spec, gait, sheet.barFactor, dt)
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt) end
 end
 
@@ -141,7 +146,7 @@ end
 
 
 -- Riding HUD views, switched with the training view key (Y). Freestyle shows every stat; a
--- focused view shows the one stat it trains. Help popups (Shift+Y, and the first time a view
+-- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed" }
 EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 2, speed = 2 }
@@ -287,8 +292,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.drawPanel(string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view)), rows)
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
-    -- Freestyle only, to keep the focused views short.
-    if view ~= "freestyle" then return end
     local inside = {}
     local farmId = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do

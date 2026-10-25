@@ -20,19 +20,19 @@
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_train_view_stamina" text="Ausdauer"/>
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
-        <text name="eq_help_speed_2" text="Bleiben Sie dann stehen und lassen Sie das Pferd vor dem nächsten Sprint verschnaufen. Schritt erholt genauso schnell, verbraucht aber den Reitbalken."/>
+        <text name="eq_help_speed_2" text="Bleiben Sie dann stehen und lassen Sie das Pferd vor dem nächsten Sprint verschnaufen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken."/>
         <text name="eq_help_speed_1" text="Schnelligkeit entsteht bei Sprints. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 %."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_stamina_2" text="Über 85 % ist das Pferd außer Atem und lernt weniger: Traben Sie, um zu entlasten. Im Trab läuft der Lauf weiter; Schritt oder Stehen bauen ihn nur langsam ab, ein unfreiwilliger Halt kostet ihn also nicht."/>
         <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Der Gewinn wächst in den ersten 15 Sekunden eines Laufs und ist am größten, solange die Anstrengung im Zielbereich liegt, bei 65-85 %. Ein langer Galopp steigt langsam aus dem Zielbereich bis außer Atem, bei einem fitteren Pferd viel langsamer."/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_freestyle_2" text="Mit Y wechseln Sie zur Ansicht Ausdauer oder Schnelligkeit, die zeigt, was dieser Wert braucht. Jede Wertzeile zeigt das heutige Training als Anteil am bestmöglichen Tag. Mit Umschalt+Y sehen Sie diese Tipps jederzeit wieder."/>
-        <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes. Ausdauer und Schnelligkeit lernen am meisten durch gezielte Arbeit, gemessen an der Anstrengung: Sie steigt im Galopp und Renngalopp und sinkt im Trab, im Schritt und im Stand. Der Reitbalken ist die Tagesenergie des Pferdes: Ist er voll, endet das Training bis morgen."/>
+        <text name="eq_help_freestyle_2" text="Mit Y wechseln Sie zur Ansicht Ausdauer oder Schnelligkeit, die zeigt, was dieser Wert braucht. Jede Wertzeile zeigt das heutige Training als Anteil am bestmöglichen Tag. Mit H sehen Sie diese Tipps jederzeit wieder."/>
+        <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes. Ausdauer und Schnelligkeit lernen am meisten durch gezielte Arbeit, gemessen an der Anstrengung: Sie steigt im Galopp und Renngalopp und sinkt im Trab, im Schritt und im Stand. Der Reitbalken ist die Tagesenergie des Pferdes: Ist er voll, endet das Training bis morgen. Bei einem fitten Pferd füllt er sich langsamer."/>
         <text name="eq_help_freestyle_title" text="Training: Frei"/>
         <text name="eq_help_close" text="Klicken zum Schließen"/>
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshilfe"/>
-        <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
+        <text name="eq_train_worn" text="Reitbalken voll: Dieses Pferd kann heute nicht mehr trainieren"/>
         <text name="eq_train_tiredness" text="Anstrengung"/>
         <text name="eq_train_tired_fresh" text="Frisch"/>
         <text name="eq_train_tired_warm" text="Warm geritten"/>

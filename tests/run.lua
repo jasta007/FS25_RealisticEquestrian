@@ -344,6 +344,21 @@ do
     check("a canter reaches the zone in about half a minute", steady.tiredness > 85)
     check("a fitter horse tires more slowly at a gallop",
         EqTraining.exertionRate("gallop", 0, 90) < EqTraining.exertionRate("gallop", 0, 30))
+    check("a horse recovers faster below 30%, a fit one faster still",
+        EqTraining.exertionRate("halt", 20, 50) < EqTraining.exertionRate("halt", 50, 50)
+        and EqTraining.exertionRate("halt", 20, 90) < EqTraining.exertionRate("halt", 20, 30))
+    check("a fit horse's riding bar fills more slowly", EqTraining.ridingBarFactor(40) == 1
+        and math.abs(EqTraining.ridingBarFactor(100) - 1.4) < 1e-9)
+    do
+        local timer, total = 0, 0
+        for _ = 1, 1000 do
+            local points
+            points, timer = EqTraining.ridingAdjust(timer, 100, "gallop", 1.5, EqConstants.RIDING_FULL_MS)
+            total = total + points
+        end
+        -- 100 s of gallop is 100 points to the base game; at 1.5x it should be 67.
+        check("a fit horse's gallop takes riding points back off", total == -33, string.format("got %d", total))
+    end
     local worn = EqTraining.newSheet()
     for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
     check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0

@@ -45,6 +45,18 @@ EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 1, temperament = 1 }
 -- worked out in exertionRate: it levels off rather than climbing for ever.
 EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -0.8, canter = 0, gallop = 3 }
 
+-- Below RECOVER_BELOW exertion, standing or walking recovers faster: RECOVER_UNFIT_SHARE times
+-- as fast for an unfit horse, up to RECOVER_FIT_SHARE for a fit one, so the wait between sprints
+-- stays short.
+EqTraining.RECOVER_BELOW = 30
+EqTraining.RECOVER_UNFIT_SHARE = 2
+EqTraining.RECOVER_FIT_SHARE = 4
+
+-- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
+-- from no change at BAR_FROM_STAMINA and below.
+EqTraining.BAR_FROM_STAMINA = 50
+EqTraining.BAR_FIT_SHARE = 1.4
+
 -- A canter raises exertion at CANTER_RISE per second up to a level inside the zone (72, plus
 -- CANTER_LEVEL_PER_STAMINA per stamina point), then keeps creeping up for as long as it goes on,
 -- at CANTER_CREEP_MIN + CANTER_CREEP_UNFIT x (1 - stamina/100)^1.5 per second. So every horse
@@ -152,6 +164,8 @@ function EqTraining.exertionRate(gait, tiredness, stamina)
         local level = EqTraining.CANTER_LEVEL_BASE + EqTraining.CANTER_LEVEL_PER_STAMINA * fitness * 100
         local creep = EqTraining.CANTER_CREEP_MIN + EqTraining.CANTER_CREEP_UNFIT * (1 - fitness) ^ 1.5
         return tiredness < level and EqTraining.CANTER_RISE or creep
+    elseif (gait == "halt" or gait == "walk") and tiredness < EqTraining.RECOVER_BELOW then
+        return rate * (EqTraining.RECOVER_UNFIT_SHARE + (EqTraining.RECOVER_FIT_SHARE - EqTraining.RECOVER_UNFIT_SHARE) * fitness)
     elseif gait == "gallop" then
         return rate * (EqTraining.GALLOP_UNFIT_SHARE + (EqTraining.GALLOP_FIT_SHARE - EqTraining.GALLOP_UNFIT_SHARE) * fitness)
     end
@@ -246,17 +260,40 @@ function EqTraining.addRiding(sheet, gait, dt)
 end
 
 
+--- How many times longer than the base game a horse's riding bar takes to fill.
+--- @param stamina number|nil trained stamina
+--- @return number factor 1 or more
+function EqTraining.ridingBarFactor(stamina)
+    local above = EqStats.clamp(((stamina or 0) - EqTraining.BAR_FROM_STAMINA) / (100 - EqTraining.BAR_FROM_STAMINA), 0, 1)
+    return 1 + (EqTraining.BAR_FIT_SHARE - 1) * above
+end
+
+
+--- Riding points to add to (or, when negative, take off) what the base game credits this frame:
+--- backing up counts extra, and a fit horse's bar fills more slowly.
+--- @param timer number weighted milliseconds carried over from earlier frames
+--- @param dt number milliseconds ridden this frame
+--- @param gait string
+--- @param factor number from ridingBarFactor
+--- @param fullMs number weighted milliseconds that fill riding from 0 to 100
+--- @return number points whole points, number timer what is carried to the next frame
+function EqTraining.ridingAdjust(timer, dt, gait, factor, fullMs)
+    local base = gait == "reverse" and EqTraining.BASE_REVERSE_FACTOR or (EqTraining.GAIT_SPEED_FACTOR[gait] or 0)
+    local wanted = (EqTraining.GAIT_SPEED_FACTOR[gait] or 0) / (factor or 1)
+    timer = (timer or 0) + math.max(dt, 0) * (wanted - base)
+    local perPoint = fullMs / 100
+    local points = timer >= 0 and math.floor(timer / perPoint) or -math.floor(-timer / perPoint)
+    return points, timer - points * perPoint
+end
+
+
 --- Extra riding points for backing up, on top of what the base game credits.
 --- @param timer number weighted milliseconds carried over from earlier frames
 --- @param dt number milliseconds spent backing up this frame
 --- @param fullMs number weighted milliseconds that fill riding from 0 to 100
 --- @return number points whole points to add, number timer what is carried to the next frame
 function EqTraining.reverseExtraRiding(timer, dt, fullMs)
-    local extra = EqTraining.GAIT_SPEED_FACTOR.reverse - EqTraining.BASE_REVERSE_FACTOR
-    timer = (timer or 0) + math.max(dt, 0) * extra
-    local perPoint = fullMs / 100
-    local points = math.floor(timer / perPoint)
-    return points, timer - points * perPoint
+    return EqTraining.ridingAdjust(timer, dt, "reverse", 1, fullMs)
 end
 
 
@@ -276,7 +313,7 @@ function EqTraining.playerRidingPoints(sheet)
     for gait, ms in pairs(sheet.ms) do
         weighted = weighted + ms * EqTraining.GAIT_SPEED_FACTOR[gait]
     end
-    return math.min(100, weighted / EqConstants.RIDING_FULL_MS * 100)
+    return math.min(100, weighted / (sheet.barFactor or 1) / EqConstants.RIDING_FULL_MS * 100)
 end
 
 
