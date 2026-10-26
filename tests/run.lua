@@ -36,6 +36,7 @@ dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
 dofile("scripts/training/EqLooseHorses.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
+dofile("scripts/gui/EqRideButton.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -2503,6 +2504,43 @@ end)()
     local author = file ~= nil and file:read("*a"):match("<author>(.-)</author>") or ""
     if file ~= nil then file:close() end
     check("modDesc names the maker", string.find(author, EqRandom.mark(), 1, true) ~= nil)
+end)()
+
+-- Ride horse on RLRM's Info tab
+;(function()
+    g_i18n = g_i18n or { getText = function(_, key) return key end }
+    InputAction = InputAction or {}
+    local savedAway = EqAway
+    local away = false
+    EqAway = { isAway = function() return away end }
+    local horse = { getRidableFilename = function() return "horse.xml" end }
+    local cow = { getRidableFilename = function() return nil end }
+    check("horse is rideable", EqRideButton.isRideable(horse))
+    check("cow is not rideable", not EqRideButton.isRideable(cow) and not EqRideButton.isRideable(nil))
+
+    local function frameWith(animal, buttons)
+        local frame = { menuButtonInfo = buttons, selectedHusbandry = {}, dirty = 0 }
+        frame.getSelectedAnimal = function() return animal end
+        frame.setMenuButtonInfoDirty = function(self) self.dirty = self.dirty + 1 end
+        return frame
+    end
+    local back = { name = "back" }
+    local frame = frameWith(horse, { back, {}, {}, {}, {}, {}, {}, {} })
+    EqRideButton.updateButtons(frame)
+    check("ride button right after Back", frame.menuButtonInfo[1] == back and frame.menuButtonInfo[2] == frame.eqRideButtonInfo
+        and #frame.menuButtonInfo == 9 and frame.dirty == 1)
+    check("ride button enabled", frame.eqRideButtonInfo.disabled == false)
+    away = true
+    frame.menuButtonInfo = { back }
+    EqRideButton.updateButtons(frame)
+    check("ride button greyed out while away", frame.menuButtonInfo[2] == frame.eqRideButtonInfo and frame.eqRideButtonInfo.disabled == true)
+    local cowFrame = frameWith(cow, { back })
+    EqRideButton.updateButtons(cowFrame)
+    check("no ride button for a cow", #cowFrame.menuButtonInfo == 1 and cowFrame.dirty == 0)
+    local empty = frameWith(nil, { back })
+    EqRideButton.updateButtons(empty)
+    check("no ride button without a selection", #empty.menuButtonInfo == 1)
+    EqAway = savedAway
 end)()
 
 -- Starved map horses get a fresh start; real horses are never touched

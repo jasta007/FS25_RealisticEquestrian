@@ -57,6 +57,7 @@ source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
+source(modDirectory .. "scripts/gui/EqRideButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
@@ -143,6 +144,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then
         guarded("message link hooks", function() EqMessagesLink.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.rideButton then
+        guarded("ride button hook", function() EqRideButton.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuPaging then
