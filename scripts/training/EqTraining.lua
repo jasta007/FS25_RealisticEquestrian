@@ -304,6 +304,13 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
     local beat = sheet.beat
     beat.clock = beat.clock + dt
     local fast = gait == "canter" or gait == "gallop"
+    -- Sprint owns W and the middle of the screen: no beats while it's ready or running.
+    if sheet.sprint.ready or EqTraining.isSprinting(sheet) then
+        beat.lastGait = gait
+        beat.pos = nil
+        beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_GAP_MS[1])
+        return nil
+    end
     local switched = fast and beat.lastGait ~= nil and beat.lastGait ~= gait
         and (beat.lastGait == "canter" or beat.lastGait == "gallop")
     beat.lastGait = gait
