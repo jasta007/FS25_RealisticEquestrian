@@ -141,6 +141,15 @@ EqTrainingHud.MULT_COLORS = {
 EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.03, sizePerMult = 0.006, growMs = 150, holdMs = 700, fadeMs = 500 }
 EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.026, barWidth = 0.12, barHeight = 0.006 }
 EqTrainingHud.popState = nil
+EqTrainingHud.sideState = nil
+-- The training view being shown (set by EqTrainingHooks while drawing), and the stat each
+-- kind of pop is about.
+EqTrainingHud.view = nil
+EqTrainingHud.POP_STAT = {
+    jump = "agility", knock = "agility", jumpLost = "agility",
+    routine = "temperament", routineStart = "temperament", routineLost = "temperament",
+    sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
+}
 
 
 --- @param mult number 1..COMBO_MAX
@@ -174,12 +183,40 @@ function EqTrainingHud.pop(kind, mult)
     else
         text, color, big = g_i18n:getText(kind == "routineLost" and "eq_pop_routineLost" or "eq_pop_comboLost"), EqTrainingHud.COLOR.grey, 1
     end
+    -- In a focused view, news about another stat goes in a small line above the panel instead.
+    local stat = EqTrainingHud.POP_STAT[kind]
+    local view = EqTrainingHud.view
+    if stat ~= nil and view ~= nil and view ~= "freestyle" and view ~= stat then
+        text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text)
+        EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
+        return
+    end
     EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
+end
+
+
+--- Draw the small line above the panel for news from another stat's training.
+local function drawSidePop()
+    local state = EqTrainingHud.sideState
+    if state == nil then return end
+    local p = EqTrainingHud.POP
+    local age = (g_time or 0) - state.at
+    local life = p.growMs + p.holdMs * 2 + p.fadeMs
+    if age > life then
+        EqTrainingHud.sideState = nil
+        return
+    end
+    local alpha = age < life - p.fadeMs and 1 or 1 - (age - life + p.fadeMs) / p.fadeMs
+    local c = state.color
+    local panel = EqTrainingHud.PANEL
+    text(state.text, panel.right, panel.top + panel.padding, panel.titleSize, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_RIGHT, true)
+    resetText()
 end
 
 
 --- Draw the current burst, growing in, holding and fading out.
 function EqTrainingHud.drawPops()
+    drawSidePop()
     local state = EqTrainingHud.popState
     if state == nil then return end
     local p = EqTrainingHud.POP

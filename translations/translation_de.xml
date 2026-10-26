@@ -76,7 +76,9 @@
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint vorbei"/>
         <text name="eq_help_speed_3" text="Zwei gute Sprints wärmen Ihr Pferd auf. Bleiben Sie im Renngalopp und drücken Sie W, wenn Sprint! erscheint: 12 Sekunden lang läuft Ihr Pferd 25 % schneller, ignoriert die Anstrengung und trainiert Schnelligkeit dreimal so schnell. Fallen Sie aus dem Renngalopp, endet er. Danach unter 10 % Anstrengung erholen, bevor Sie wieder aufwärmen."/>
-        <text name="eq_help_stamina_3" text="Je länger Sie im Zielbereich bleiben, desto schmaler wird er (die weißen Marken auf dem Anstrengungsbalken) und desto mehr gewinnt Ihr Pferd, bis zum 2,5-Fachen. Geraten Sie außerhalb der Marken, wird der Bereich wieder breiter: Wechseln Sie zwischen Galopp, Renngalopp und Trab, um drinnen zu bleiben."/>
+        <text name="eq_help_stamina_3" text="Der Zielbereich bewegt sich, wie beim Angeln: Die weißen Marken auf dem Anstrengungsbalken zeigen, wo er ist. Halten Sie ihn, wird er schmaler, wandert schneller und Ihr Gewinn steigt bis zum 2,5-Fachen. Renngalopp zum Steigen, Galopp zum Halten und kurz Trab, um schnell zu fallen. Fallen Sie heraus, schwindet der Bonus."/>
+        <text name="eq_train_tired_under" text="Unter dem Zielbereich: schneller"/>
+        <text name="eq_train_tired_over" text="Über dem Zielbereich: langsamer"/>
         <text name="eq_train_run" text="Lauf: %d s"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>

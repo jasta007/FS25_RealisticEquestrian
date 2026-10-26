@@ -450,7 +450,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
     if sprintEvent == "counted" then EqTrainingHud.pop("sprintCount", sheet.sprint.count)
     elseif sprintEvent ~= nil then EqTrainingHud.pop("sprint_" .. sprintEvent) end
-    if sprintEvent == "ready" then spec.eqSprintKeyFresh = not spec.eqAccelHeld end
+    if sprintEvent ~= nil then Log:info("Sprint: %s (exertion %.0f%%)", sprintEvent, sheet.tiredness) end
     -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
     if sheet.sprint.ready and not EqTrainingHooks.sprintKeyHooked
         and sheet.sprint.readyMs >= EqTraining.SPRINT_READY_MS + EqTrainingHooks.SPRINT_AUTO_MS then
@@ -541,17 +541,17 @@ function EqTrainingHooks.startSprint(sheet)
 end
 
 
---- Appended to the base game's forward key (accelerate) action: a fresh press of W while
---- Sprint is ready starts it. Holding W from before Sprint was ready needs a release first.
+--- Appended to the base game's forward key (accelerate) action: W while Sprint is ready starts it.
 --- @param vehicle table
 --- @param inputValue number
 function EqTrainingHooks.onForwardInput(vehicle, inputValue)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
-    local held = (inputValue or 0) > 0
-    if not held then spec.eqSprintKeyFresh = true end
-    spec.eqAccelHeld = held
-    if not held or not spec.eqSprintKeyFresh then return end
+    if not EqTrainingHooks.loggedForward then
+        EqTrainingHooks.loggedForward = true
+        Log:info("Sprint key: forward input %s", tostring(inputValue))
+    end
+    if (inputValue or 0) <= 0 then return end
     local id = getRiddenId(spec)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
     if sheet ~= nil and sheet.sprint.ready then EqTrainingHooks.startSprint(sheet) end
@@ -655,6 +655,7 @@ end
 local COLOR = EqTrainingHud.COLOR
 local BAND_COLOR = {
     tired_fresh = COLOR.blue, tired_warm = COLOR.yellow, tired_zone = COLOR.green, tired_blown = COLOR.red,
+    tired_under = COLOR.yellow, tired_over = COLOR.orange,
     sprint_fresh = COLOR.green, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
 }
 local QUALITY_COLOR = { fast = COLOR.green, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.green }
@@ -700,15 +701,16 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local effort = EqTraining.playerEffort(sheet)
     local rows = {}
+    EqTrainingHud.view = view
     if view == "freestyle" or view == "stamina" or view == "speed" then
         local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
-            or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
+            or ("tired_" .. EqTraining.zoneBand(sheet.tiredness, sheet.zone))
         local bandColor = BAND_COLOR[band]
         table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
             right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
         local bar = { bar = sheet.tiredness / 100, color = bandColor }
         if view ~= "speed" then
-            local low, high = EqTraining.zoneBounds(sheet.zoneHold)
+            local low, high = EqTraining.zoneBounds(sheet.zone)
             bar.marks = { low / 100, high / 100 }
         end
         table.insert(rows, bar)
@@ -717,9 +719,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local full = sheet.run >= EqTraining.RUN_FULL
         local row = { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
             leftColor = full and COLOR.green or COLOR.white }
-        if (sheet.zoneHold or 0) > 0 then
-            local _, _, t = EqTraining.zoneBounds(sheet.zoneHold)
-            row.right = string.format(g_i18n:getText("eq_train_zoneHold"), 1 + EqTraining.ZONE_HOLD_BONUS * t)
+        if sheet.zone.hold > 0 then
+            row.right = string.format(g_i18n:getText("eq_train_zoneHold"), EqTraining.zoneBonus(sheet.zone))
             row.rightColor = COLOR.green
         end
         table.insert(rows, row)

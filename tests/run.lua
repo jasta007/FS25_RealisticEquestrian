@@ -340,15 +340,23 @@ do
         check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
     end
     do
-        -- Holding the stamina zone narrows it and raises the gains.
-        local low, high = EqTraining.zoneBounds(0)
-        local nLow, nHigh = EqTraining.zoneBounds(EqTraining.ZONE_HOLD_FULL)
-        check("the zone starts full and narrows as it is held", low == EqTraining.ZONE_LOW and high == EqTraining.ZONE_HIGH
-            and nHigh - nLow == EqTraining.ZONE_MIN_HALF * 2)
+        -- The stamina zone: held, it narrows, pays more and wanders; let go, it drifts home.
+        local saved = EqTraining.random
+        EqTraining.random = function(n) return n end
+        local zone = EqTraining.newZone()
+        local low, high = EqTraining.zoneBounds(zone)
+        check("the zone starts at home", low == EqTraining.ZONE_LOW and high == EqTraining.ZONE_HIGH)
         local mid = (low + high) / 2
-        check("a held zone trains faster", EqTraining.staminaQuality(mid, 30, EqTraining.ZONE_HOLD_FULL) > 2
-            and EqTraining.staminaQuality(mid, 30, 0) == 1)
-        check("outside a narrowed zone, inside the full one, trains less", EqTraining.staminaQuality(high - 1, 30, EqTraining.ZONE_HOLD_FULL) < 1)
+        for _ = 1, 100 do EqTraining.moveZone(zone, mid, true, 0.1) end
+        local nLow, nHigh = EqTraining.zoneBounds(zone)
+        check("a held zone narrows and moves", nHigh - nLow < high - low and zone.center > mid)
+        check("a held zone trains faster", EqTraining.staminaQuality(zone.center, 30, zone) > 1
+            and EqTraining.staminaQuality(mid, 30, nil) == 1)
+        check("near the zone trains less, far from it not at all", EqTraining.staminaQuality(nLow - 2, 30, zone) == EqTraining.ZONE_NEAR_SHARE
+            and EqTraining.staminaQuality(nLow - 20, 30, zone) == 0)
+        for _ = 1, 600 do EqTraining.moveZone(zone, 10, true, 0.1) end
+        check("let go, the zone drifts home", zone.hold == 0 and math.abs(zone.center - mid) < 0.01)
+        EqTraining.random = saved
     end
     -- Temperament routine.
     local first = function() return 1 end
