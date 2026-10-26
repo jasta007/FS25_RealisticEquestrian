@@ -12,10 +12,10 @@
       "54 - Amateur (High)" for each stat, the skill and the potential in their stat colour
       (EqSkillsHudBox), then whether the potential is still the dealer's view
       and the horse's competition status.
-    - Stat names take the stat's own colour (STAT_COLOR, as on the training panel), skills shade
-      from white at 0 to that colour at 100 (potentials too, by their ceiling), and a skill shows its
-      net change over the last
-      seven days to one decimal, "54 - Amateur (+2.8)", left out when it rounds to 0.0.
+    - Stat names take a soft version of the stat's colour (STAT_COLOR); skills, and potentials by
+      their ceiling, shade from white at 0 to a saturated one at 100 (STAT_FULL_COLOR). A skill
+      shows its net change over the last seven days to one decimal, "54 - Amateur (+2.8)", left
+      out when it rounds to 0.0.
 
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
     like it: SKILL POTENTIAL on the left (the word only, "High"), SKILLS on the right (the
@@ -61,13 +61,22 @@ local function statTitle(stat)
 end
 
 
--- Each stat's own colour, the same as the training panel's, for the stat names only: the values
--- keep their skill and potential colours.
+-- Each stat's colour for its name: the training panel's colour, softened toward grey so the
+-- names don't glare.
 EqInfoDisplay.STAT_COLOR = {
-    stamina = { 0.4, 0.7, 1, 1 },
-    speed = { 1, 0.55, 0.15, 1 },
-    agility = { 0.529, 0.706, 0, 1 },
-    temperament = { 0.8, 0.55, 1, 1 },
+    stamina = { 0.58, 0.76, 0.94, 1 },
+    speed = { 0.94, 0.67, 0.43, 1 },
+    agility = { 0.66, 0.76, 0.34, 1 },
+    temperament = { 0.82, 0.67, 0.94, 1 },
+}
+
+-- Where a stat's values end up at 100: the same hues, more saturated than the names, so a
+-- strong horse stands out. Values shade from white to these.
+EqInfoDisplay.STAT_FULL_COLOR = {
+    stamina = { 0.15, 0.55, 1, 1 },
+    speed = { 1, 0.45, 0, 1 },
+    agility = { 0.7, 1, 0, 1 },
+    temperament = { 0.65, 0.3, 1, 1 },
 }
 
 
@@ -148,10 +157,10 @@ end
 
 
 --- @param value number a trained level, 0-100
---- @param stat string|nil with a stat, white at 0 shading to that stat's colour at 100
+--- @param stat string|nil with a stat, white at 0 shading to its STAT_FULL_COLOR at 100
 --- @return table color { r, g, b, a }: without a stat, white at 0, yellow by 50, RLRM's brightest green from 95
 function EqInfoDisplay.skillColor(value, stat)
-    local full = stat ~= nil and EqInfoDisplay.STAT_COLOR[stat] or nil
+    local full = stat ~= nil and EqInfoDisplay.STAT_FULL_COLOR[stat] or nil
     if full ~= nil then
         -- White for an untrained horse, shading to the stat's own colour at 100.
         local t = EqStats.clamp(value or 0, 0, 100) / 100
