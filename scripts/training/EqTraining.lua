@@ -51,6 +51,8 @@ EqTraining.AGILITY_PER_EMPTY_JUMP = 0.004
 EqTraining.COMBO_MAX = 5
 EqTraining.COMBO_SECONDS = 10
 EqTraining.COMBO_SLOW_DRAIN = 10
+-- After a combo is lost, jumps start no new one for this long (so a late 'Clear!' can't follow).
+EqTraining.COMBO_LOCK_MS = 2500
 
 -- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
 -- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
@@ -266,9 +268,13 @@ end
 --- A jump that cleared something: raise the combo and train agility.
 --- @param sheet table
 --- @param worn boolean true when the riding bar is full: the combo counts, nothing trains
---- @return number multiplier this jump was worth
+--- @return number|nil multiplier this jump was worth, nil just after a combo was lost
 function EqTraining.clearJump(sheet, worn)
     local combo = sheet.combo
+    if (combo.lock or 0) > 0 then
+        EqTraining.emptyJump(sheet, worn)
+        return nil
+    end
     combo.count = combo.count + 1
     combo.timer = EqTraining.COMBO_SECONDS
     combo.best = math.max(combo.best, combo.count)
@@ -286,6 +292,18 @@ function EqTraining.emptyJump(sheet, worn)
 end
 
 
+--- End the jump combo, and start no new one for COMBO_LOCK_MS.
+--- @param sheet table
+--- @return boolean true when there was a combo to lose
+function EqTraining.loseCombo(sheet)
+    local combo = sheet.combo
+    local had = combo.count > 0
+    combo.count, combo.timer = 0, 0
+    if had then combo.lock = EqTraining.COMBO_LOCK_MS end
+    return had
+end
+
+
 --- Run the jump combo's clock.
 --- @param sheet table
 --- @param gait string
@@ -293,13 +311,13 @@ end
 --- @return boolean true when the combo was lost this frame
 function EqTraining.comboTick(sheet, gait, dt)
     local combo = sheet.combo
+    combo.lock = math.max(0, (combo.lock or 0) - dt)
     sheet.quality.agility = combo.count > 0 and math.min(combo.count, EqTraining.COMBO_MAX) / EqTraining.COMBO_MAX or 0
     if combo.count == 0 then return false end
     local slow = gait == "halt" or gait == "walk" or gait == "reverse"
     combo.timer = combo.timer - dt / 1000 * (slow and EqTraining.COMBO_SLOW_DRAIN or 1)
     if combo.timer > 0 then return false end
-    combo.count, combo.timer = 0, 0
-    return true
+    return EqTraining.loseCombo(sheet)
 end
 
 

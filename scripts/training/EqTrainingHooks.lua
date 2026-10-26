@@ -225,12 +225,11 @@ local function trackJump(vehicle, spec, sheet, worn)
         cleared and "cleared" or "nothing cleared", jump.best, tostring(jump.over), why,
         age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
     if cleared then
-        EqTrainingHud.pop("jump", EqTraining.clearJump(sheet, worn))
+        local mult = EqTraining.clearJump(sheet, worn)
+        if mult ~= nil then EqTrainingHud.pop("jump", mult) end
     elseif high then
         -- Hitting or landing on the obstacle is a refusal: the combo goes.
-        local hadCombo = sheet.combo.count > 0
-        sheet.combo.count, sheet.combo.timer = 0, 0
-        if hadCombo then EqTrainingHud.pop("jumpLost") end
+        if EqTraining.loseCombo(sheet) then EqTrainingHud.pop("jumpLost") end
     else
         EqTraining.emptyJump(sheet, worn)
     end
@@ -316,8 +315,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- crash ends a jump combo (a refusal) and breaks a routine, but not a stamina run.
     local halted = (spec.haltTimer or 0) > 0
     if halted and not spec.eqHalted then
-        local hadCombo, hadRoutine = sheet.combo.count > 0, EqTraining.breakRoutine(sheet)
-        sheet.combo.count, sheet.combo.timer = 0, 0
+        local hadCombo, hadRoutine = EqTraining.loseCombo(sheet), EqTraining.breakRoutine(sheet)
+        -- A jump still in the air or settling when the horse crashes did not clear.
+        if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s)", gait, tostring(spec.haltTimer))
         if hadCombo or hadRoutine then EqTrainingHud.pop("crash") end
     end

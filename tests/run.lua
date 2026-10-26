@@ -276,9 +276,16 @@ do
     local lost = false
     for _ = 1, 15 do lost = EqTraining.comboTick(jumping, "trot", 100) or lost end
     check("the combo is lost after ten seconds without a clear", lost and jumping.combo.count == 0)
+    for _ = 1, 25 do EqTraining.comboTick(jumping, "canter", 100) end
     EqTraining.clearJump(jumping, false)
     for _ = 1, 10 do lost = EqTraining.comboTick(jumping, "walk", 100) end
+    for _ = 1, 25 do EqTraining.comboTick(jumping, "canter", 100) end
     check("walking drains the combo clock ten times as fast", lost and jumping.combo.count == 0)
+    EqTraining.clearJump(jumping, false)
+    check("losing a combo reports it", EqTraining.loseCombo(jumping) and not EqTraining.loseCombo(jumping))
+    check("a clear just after losing a combo starts no new one", EqTraining.clearJump(jumping, false) == nil and jumping.combo.count == 0)
+    for _ = 1, 25 do EqTraining.comboTick(jumping, "canter", 100) end
+    check("a new combo can start 2.5 s after losing one", EqTraining.clearJump(jumping, false) == 1)
     local wornJump = EqTraining.newSheet()
     EqTraining.clearJump(wornJump, true)
     check("a worn-out horse's jumps count for the combo but train nothing", wornJump.combo.count == 1 and wornJump.focused.agility == 0)
