@@ -444,6 +444,9 @@ do
         sheet.tiredness = 82
         until_(function() return false end, "canter", 50)
         check("nor a canter while it's still too tired to gallop", sheet.beat.pos == nil and sheet.beat.settle)
+        sheet.tiredness = 77
+        until_(function() return false end, "canter", 50)
+        check("nor a canter from 75% exertion (rest first)", sheet.beat.pos == nil and sheet.beat.settle)
         sheet.tiredness = 74
         until_(function() return sheet.beat.pos ~= nil end, "canter", 100)
         check("a settled canter brings the beats back, asking for a gallop", sheet.beat.pos ~= nil and not sheet.beat.settle

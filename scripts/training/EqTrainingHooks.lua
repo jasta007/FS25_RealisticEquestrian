@@ -816,7 +816,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             elseif beat.settle and sheet.mode == "stamina" and sheet.routine.request == nil and not sheet.sprint.ready then
                 -- After a miss: back to a steady canter before the beats start again.
                 -- Too tired to settle at a canter: the Stamina view says rest, Freestyle says nothing.
-                if sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX then
+                if sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
                     if view == "stamina" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_train_stamina_rest"), 1, COLOR.yellow) end
                 elseif spec.eqLastGait == "gallop" then
                     EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_canter"), 1, STAT_COLOR.stamina)
