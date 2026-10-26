@@ -35,6 +35,7 @@ EqRLRM.OPTIONAL = {
     messageLink = { { "RLMessageService", "formatMessage" }, { "RLMenuMessagesFrame", "updateButtonVisibility" } },
     settingsTab = { { "RLMenuSettingsFrame", "onFrameOpen" }, { "RLMenuSettingsFrame", "initializeSubCategoryPages" },
         { "RLMenuSettingsFrame", "updateSubCategoryPages" } },
+    rideButton = { { "RLMenuInfoFrame", "updateButtonVisibility" }, { "RLMenuInfoFrame", "getSelectedAnimal" } },
     animalsPageButton = { { "RLMenu", "openFromBridge" } },
     menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
     horsePricing = { { "AnimalHorse", "getHorseSellPrice" } },

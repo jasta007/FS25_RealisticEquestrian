@@ -33,9 +33,11 @@ dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
+dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
 dofile("scripts/training/EqLooseHorses.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
+dofile("scripts/gui/EqRideButton.lua")
 local TestXML = dofile("tests/xml.lua")
 
 local passed, failed = 0, 0
@@ -171,7 +173,10 @@ end
 check("elite x elite averages below the parents", total / 2000 < 1.5, string.format("mean %.3f", total / 2000))
 
 -- Age curve.
-check("foals do groundwork only", EqStats.ageTrainingFactor(12) == 0.3)
+check("young horses train at full speed", EqStats.ageTrainingFactor(12) == 1.0 and EqStats.ageTrainingFactor(30) == 1.0)
+check("a stat at 0 trains three times as fast", EqTraining.lowSkillFactor(0) == EqTraining.LOW_SKILL_MAX)
+check("a stat at 20 trains twice as fast", math.abs(EqTraining.lowSkillFactor(20) - 2) < 1e-9)
+check("from 40 a stat trains at the normal rate", EqTraining.lowSkillFactor(40) == 1 and EqTraining.lowSkillFactor(70) == 1)
 check("prime age trains fully", EqStats.ageTrainingFactor(100) == 1.0)
 do
     -- Starting stats: a bell curve, low for the young, around START_MEAN for adults.
@@ -341,6 +346,37 @@ do
         r.clock = r.nextAt
         EqTraining.routineStep(sheet, "halt", nil, 0, false, function() return 1 end)
         check("a high routine multiplier gives less time to react", r.request ~= nil and r.deadline - r.clock < EqTraining.ROUTINE_REACT_MS)
+    end
+    do
+        -- The routine goes past the jump combo's x5, and from x4 the pace must be held.
+        local one = function() return 1 end
+        local sheet = EqTraining.newSheet()
+        local r = sheet.routine
+        r.active, r.mult, r.current, r.clock, r.request, r.deadline = true, EqTraining.ROUTINE_MAX - 1, "walk", 0, "trot", 10000
+        EqTraining.routineStep(sheet, "trot", nil, 100, false, one)
+        check("the routine climbs to x8", EqTraining.ROUTINE_MAX == 8 and r.mult == 8)
+        r.request, r.deadline, r.nextAt = "halt", r.clock + 3000, r.clock + 100000
+        r.current = "trot"
+        for _ = 1, 10 do EqTraining.routineStep(sheet, "walk", nil, 100, false, one) end
+        check("passing through a walk on the way to a stop is fine", r.active)
+        EqTraining.routineStep(sheet, "halt", nil, 100, false, one)
+        local event
+        for _ = 1, 10 do event = EqTraining.routineStep(sheet, "walk", nil, 100, false, one) or event end
+        check("at a high multiplier, walking off unasked breaks the routine", not r.active and event == "lost")
+
+        local low = EqTraining.newSheet()
+        local lr = low.routine
+        lr.active, lr.mult, lr.current, lr.clock, lr.nextAt = true, 2, "walk", 0, 100000
+        for _ = 1, 20 do EqTraining.routineStep(low, "trot", nil, 100, false, one) end
+        check("at a low multiplier the pace may drift", lr.active)
+
+        local turn = EqTraining.newSheet()
+        local tr = turn.routine
+        tr.active, tr.mult, tr.current, tr.clock, tr.nextAt = true, 5, "walk", 0, 100000
+        tr.request, tr.deadline = "left", 3000
+        for _ = 1, 5 do EqTraining.routineStep(turn, "trot", "left", 100, false, one) end
+        for _ = 1, 10 do EqTraining.routineStep(turn, "trot", nil, 100, false, one) end
+        check("a turn takes any pace, and the pace it ends at is the one to hold", tr.active and tr.current == "trot" and tr.mult == 6)
     end
     do
         -- Sprint: two warm-up sprints, then a ready Sprint started with W.
@@ -974,7 +1010,7 @@ do
     local schooled = { stamina = 56, speed = 56, agility = 56, temperament = 56 }
     local _, greenBand = EqTraining.boostBenefit(green, ceilings, weights, 24)
     local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
-    check("a green two-year-old gets a medium training benefit", greenBand == "medium")
+    check("a green two-year-old gets a high training benefit", greenBand == "high")
     check("a horse at staff level gets none", schooledBand == "none")
     local full = EqTraining.boostBenefit(green, ceilings, weights, 60, 1)
     local novice = EqTraining.boostBenefit(green, ceilings, weights, 60, config.tierByName.novice.trainingBoost)
@@ -1055,6 +1091,20 @@ do
     check("at least half of a draw is enterable", enterableShort == 0, enterableShort .. " short draws")
     check("monthly draws hold 1 or 2 events", (monthlyCounts[1] or 0) > 0 and (monthlyCounts[2] or 0) > 0
         and (monthlyCounts[1] or 0) + (monthlyCounts[2] or 0) == 300)
+    local noTraining, trainingShort = 0, 0
+    for round = 1, 300 do
+        local count = EqCompetition.drawCount(EqRandom.new("count " .. round), 1, 8)
+        local enterable = round % 2 == 0 and onlyNovice or nil
+        local trainings = 0
+        for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("training " .. round), EqCompetition.KIND_ROUND,
+            round % 3 ~= 0, nil, { count = count, enterable = enterable })) do
+            if event.tier == "training" then trainings = trainings + 1 end
+        end
+        if trainings == 0 then noTraining = noTraining + 1 end
+        if enterable ~= nil and count >= 3 and trainings == 0 then trainingShort = trainingShort + 1 end
+    end
+    check("every round draw holds a Training Event", noTraining == 0, noTraining .. " draws without one")
+    check("the Training Event fits beside the enterable half", trainingShort == 0)
     local none = EqCompetition.drawSchedule(config, EqRandom.new("nobody"), EqCompetition.KIND_ROUND, true, nil,
         { count = 5, enterable = function() return false end })
     check("a draw still fills when no horse can enter anything", #none == 5)
@@ -1651,7 +1701,8 @@ end
 check("no quick flip: after 3 months you are about where you started", worth[3] < 0.15 * price,
     string.format("price %.0f, up %.0f", price, worth[3]))
 check("after two years it has paid for itself", worth[24] > 0, string.format("%.0f", worth[24]))
-check("but it takes a while to make a lot", worth[12] < 1.0 * price, string.format("%.0f", worth[12]))
+-- Green stats train fast (lowSkillFactor), so a year's work can a little more than double the outlay.
+check("but it takes a while to make a lot", worth[12] < 1.15 * price, string.format("%.0f", worth[12]))
 print(string.format("info: talent-%.0f dealer horse at $%.0f: up $%.0f after 3 months, $%.0f after 12, $%.0f after 24, $%.0f after 36",
     EqDealer.talentScore(prospectCeilings), price, worth[3], worth[12], worth[24], worth[36]))
 
@@ -1687,7 +1738,9 @@ check("Riding Hall 2k26 letters are not jumps",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/objekt.xml", false) == nil)
 check("Riding Stable is a riding centre",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingStable/XML/horseBarnBig.xml", true) == "ridingCentre")
-check("Horse Stable is a stable", EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == "stable")
+check("plain stables give no bonus",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/horseStable.xml", true) == nil)
 check("keywords catch an unknown riding hall",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", false) == "indoorArena")
 check("keywords skip husbandries",
@@ -1722,7 +1775,7 @@ check("an owned hall speeds staff up", math.abs(hallOwned.agility - 0.10) < 1e-9
 check("riding half the day in it adds half its ridden share", math.abs(hallRidden.agility - 0.175) < 1e-9)
 local threeJumps = EqFacility.boosts(facilities, { jumps = 3 }, nil)
 check("half a jump course gives half the bonus", math.abs(threeJumps.agility - 0.05) < 1e-9)
-local everything = EqFacility.boosts(facilities, { stable = 2, indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
+local everything = EqFacility.boosts(facilities, { indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
     { indoorArena = 1, ridingCentre = 1, jumps = 1 })
 check("owned shares are capped", everything.agility <= facilities.ownedCap + 1e-9 and everything.temperament <= facilities.ownedCap + 1e-9)
 local _, everythingRidden = EqFacility.boosts(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, { indoorArena = 1, ridingCentre = 1, jumps = 1 })
@@ -2506,6 +2559,75 @@ end)()
     check("the Role button never gives Retired", cycled == EqRole.NONE)
     check("diseased horses stay first", o4[1] == "__diseased__" and k4.__diseased__[1] == c and k4.eqRole_dressage == nil
         and o4[2] == "eqRole_racing", table.concat(o4, ","))
+end)()
+
+-- Ride horse on RLRM's Info tab
+;(function()
+    g_i18n = g_i18n or { getText = function(_, key) return key end }
+    InputAction = InputAction or {}
+    local savedAway = EqAway
+    local away = false
+    EqAway = { isAway = function() return away end }
+    local horse = { getRidableFilename = function() return "horse.xml" end }
+    local cow = { getRidableFilename = function() return nil end }
+    check("horse is rideable", EqRideButton.isRideable(horse))
+    check("cow is not rideable", not EqRideButton.isRideable(cow) and not EqRideButton.isRideable(nil))
+
+    local function frameWith(animal, buttons)
+        local frame = { menuButtonInfo = buttons, selectedHusbandry = {}, dirty = 0 }
+        frame.getSelectedAnimal = function() return animal end
+        frame.setMenuButtonInfoDirty = function(self) self.dirty = self.dirty + 1 end
+        return frame
+    end
+    local back = { name = "back" }
+    local frame = frameWith(horse, { back, {}, {}, {}, {}, {}, {}, {} })
+    EqRideButton.updateButtons(frame)
+    check("ride button right after Back", frame.menuButtonInfo[1] == back and frame.menuButtonInfo[2] == frame.eqRideButtonInfo
+        and #frame.menuButtonInfo == 9 and frame.dirty == 1)
+    check("ride button enabled", frame.eqRideButtonInfo.disabled == false)
+    away = true
+    frame.menuButtonInfo = { back }
+    EqRideButton.updateButtons(frame)
+    check("ride button greyed out while away", frame.menuButtonInfo[2] == frame.eqRideButtonInfo and frame.eqRideButtonInfo.disabled == true)
+    local cowFrame = frameWith(cow, { back })
+    EqRideButton.updateButtons(cowFrame)
+    check("no ride button for a cow", #cowFrame.menuButtonInfo == 1 and cowFrame.dirty == 0)
+    local empty = frameWith(nil, { back })
+    EqRideButton.updateButtons(empty)
+    check("no ride button without a selection", #empty.menuButtonInfo == 1)
+    EqAway = savedAway
+end)()
+
+-- Starved map horses get a fresh start; real horses are never touched
+;(function()
+    local function horse(fields)
+        local animal = { isHorse = function() return true end, birthday = { day = 1, month = 1, year = 1, country = 1 },
+            age = 0, health = 0, motherId = "-1", fitness = 0, riding = 0, weight = 0.001, targetWeight = 500 }
+        for k, v in pairs(fields or {}) do animal[k] = v end
+        animal.getIdentifiers = function() return animal.id or "UK 1 1" end
+        return animal
+    end
+    check("a map placeholder is spotted", EqFreshStart.isMapPlaceholder(horse()))
+    check("a foal with a mother is not", not EqFreshStart.isMapPlaceholder(horse({ motherId = "UK 4 7" })))
+    check("a healthy newborn is not", not EqFreshStart.isMapPlaceholder(horse({ health = 80 })))
+    check("a sick adult is not", not EqFreshStart.isMapPlaceholder(horse({ age = 60 })))
+    check("a ridden horse is not", not EqFreshStart.isMapPlaceholder(horse({ fitness = 15 })))
+    check("a dead horse is not", not EqFreshStart.isMapPlaceholder(horse({ isDead = true })))
+    check("a cow is not", not EqFreshStart.isMapPlaceholder({ isHorse = function() return false end, age = 0, health = 0 }))
+
+    EqRegistry.reset()
+    local placeholder = horse({ id = "UK 9 9" })
+    local before = EqRegistry.getOrCreate(placeholder)
+    local foalStats = before.trained.speed + before.trained.agility + before.trained.stamina + before.trained.temperament
+    EqFreshStart.repair(placeholder, EqRandom.new("fresh start test"))
+    local after = EqRegistry.getById("UK 9 9")
+    local adultStats = after.trained.speed + after.trained.agility + after.trained.stamina + after.trained.temperament
+    check("repaired horse is an adult", placeholder.age >= EqFreshStart.MIN_AGE_MONTHS and placeholder.age <= EqFreshStart.MAX_AGE_MONTHS)
+    check("repaired horse is healthy and a normal weight", placeholder.health == 100 and placeholder.weight >= 460)
+    check("repaired horse keeps its record, redrawn for its age", after == before and adultStats > foalStats,
+        string.format("foal %.1f adult %.1f", foalStats, adultStats))
+    check("a repaired horse no longer matches", not EqFreshStart.isMapPlaceholder(placeholder))
+    EqRegistry.reset()
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

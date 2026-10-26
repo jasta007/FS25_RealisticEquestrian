@@ -22,7 +22,7 @@
         <text name="eq_train_view_stamina" text="Ausdauer"/>
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_temperament_2" text="Sie verlieren den Multiplikator, wenn Sie in Galopp oder Renngalopp beschleunigen, gegen ein Hindernis stoßen oder die nächste Bewegung verpassen. Leckerlis wie Karotten im Futter sind ebenfalls eine gute Möglichkeit, das Temperament zu verbessern."/>
+        <text name="eq_help_temperament_2" text="Sie verlieren den Multiplikator, wenn Sie in Galopp oder Renngalopp beschleunigen, gegen ein Hindernis stoßen oder die nächste Bewegung verpassen. Ab x4 müssen Sie außerdem Ihr Tempo zwischen den Anweisungen halten. Leckerlis wie Karotten im Futter sind ebenfalls eine gute Möglichkeit, das Temperament zu verbessern."/>
         <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt Ihr Pferd Gehorsam. Beginnen Sie eine Lektion, indem Sie in den Schritt wechseln und das Tempo kurz halten. Das Trainingsprogramm verlangt dann eine neue Bewegung, die Sie halten sollen. Führen Sie sie innerhalb weniger Sekunden aus, damit die Kombo weiterläuft."/>
         <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern oder zu viel Tempo verlieren. Ein Sprung ohne Hindernis bringt etwas Training, erhöht den Multiplikator aber nicht."/>
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
@@ -393,7 +393,6 @@
         <text name="eq_and" text="und"/>
         <text name="eq_facility_improves" text="Verbessert das Training von %s (Realistic Equestrian)"/>
         <text name="eq_facility_inside" text="Training in: %s"/>
-        <text name="eq_facility_stable" text="Pferdestall"/>
         <text name="eq_facility_indoorArena" text="Reithalle"/>
         <text name="eq_facility_ridingCentre" text="Reitzentrum"/>
         <text name="eq_facility_outdoorArena" text="Außenreitplatz"/>
@@ -500,6 +499,8 @@
         <text name="eq_ui_career_earnings" text="Preisgeld"/>
         <text name="eq_ui_career_eliminations" text="Ausgeschieden"/>
         <text name="eq_ui_button_viewResults" text="Ergebnisse ansehen"/>
+        <text name="eq_ui_button_rideHorse" text="Pferd reiten"/>
+        <text name="eq_ui_rideNotInPen" text="%s ist gerade nicht draußen im Gehege. Geh zu einem Pferd dort, um es zu reiten."/>
         <text name="eq_settings_entryFeeScale" text="Startgebühren"/>
         <text name="eq_settings_entryFeeScale_tooltip" text="Skaliert die Startgebühr aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihre Startgebühr; Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_prizeScale" text="Preisgeld"/>

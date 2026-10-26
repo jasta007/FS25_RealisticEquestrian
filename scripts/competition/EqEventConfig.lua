@@ -87,6 +87,7 @@ function EqEventConfig.read(xmlFile)
             trainingBoost = xmlFile:getFloat(key .. "#trainingBoost", 0),
             risk = xmlFile:getFloat(key .. "#risk", 1),
             venue = xmlFile:getBool(key .. "#venue", false),
+            always = xmlFile:getBool(key .. "#always", false),
         }
         table.insert(config.tiers, tier)
         config.tierByName[tier.name] = tier

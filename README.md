@@ -54,9 +54,11 @@ uses its genetics, health and fitness.
   - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
   - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo.
+  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
 - An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
+- **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
+  it is in the pen.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
   home. Young horses train slower, idle ones lose condition.
 - **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
@@ -79,7 +81,7 @@ uses its genetics, health and fitness.
 - Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
-- Supports the Equestrian Pack, Riding Hall 2k26, Riding Stable and Horse Stable mods, and map
+- Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.
 
@@ -139,7 +141,7 @@ uses its genetics, health and fitness.
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
 - **Show events**: round events every day or every month.
-- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter, and multiplayer adds more for each farm with horses.
+- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter and always one Training Event, and multiplayer adds more for each farm with horses.
 - **Races and steeplechases**: on or off.
 - **Event injuries** and **Career-ending injuries**: on or off.
 - **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
@@ -186,8 +188,9 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
-3. **Ride it.** Press **Y** for the Stamina or Speed view and follow the tips. The horse is done
-   for the day when the panel says "Riding bar full".
+3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
+   for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel
+   says "Riding bar full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.

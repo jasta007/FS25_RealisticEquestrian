@@ -28,6 +28,7 @@ source(modDirectory .. "scripts/core/EqRole.lua")
 source(modDirectory .. "scripts/core/EqStatLog.lua")
 source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
@@ -58,6 +59,7 @@ source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
+source(modDirectory .. "scripts/gui/EqRideButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
@@ -144,6 +146,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then
         guarded("message link hooks", function() EqMessagesLink.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.rideButton then
+        guarded("ride button hook", function() EqRideButton.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.menuPaging then
@@ -269,6 +275,16 @@ local function onMissionLoaded(mission)
         end
     end)
 
+    -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
+    -- RLRM's daily low-health death roll.
+    guarded("map horses fresh start", function()
+        if not mission:getIsServer() then return end
+        EqFreshStart.check()
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+            guarded("map horses fresh start", EqFreshStart.check)
+        end, EqFreshStart)
+    end)
+
     guarded("competition start", function()
         if not mission:getIsServer() or EqCompetitionManager.config == nil then return end
         EqCompetitionManager.ensureOpen()
@@ -311,6 +327,7 @@ local function onMissionDelete()
         EqStatLog.reset()
         EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
+        g_messageCenter:unsubscribeAll(EqFreshStart)
         local config = EqCompetitionManager.config
         EqCompetitionManager.reset()
         EqCompetitionManager.config = config

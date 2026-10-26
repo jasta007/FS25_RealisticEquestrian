@@ -196,7 +196,7 @@ EqTrainingHud.POP_STAT = {
 }
 
 
---- @param mult number 1..COMBO_MAX
+--- @param mult number 1..COMBO_MAX (ROUTINE_MAX for the routine)
 --- @return table color
 function EqTrainingHud.multColor(mult)
     local colors = EqTrainingHud.MULT_COLORS
