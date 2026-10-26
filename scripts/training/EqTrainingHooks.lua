@@ -450,13 +450,11 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- Beats run in Stamina and Freestyle (where the jump combo stays above the panel).
     local view = EqTrainingHooks.getView()
     if view == "stamina" or view == "freestyle" then
-        local beat = EqTraining.beatStep(sheet, gait, dt, math.random)
-        if beat == "hit" or beat == "perfect" then EqTrainingHud.pop("beat_" .. beat) end
+        EqTraining.beatStep(sheet, pace, dt, math.random)
     else
         sheet.beat.pos = nil
     end
     -- Losing the tempo, warm-ups, Sprint ready and over and a routine starting show in the panel only.
-    if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult) end
     local sprintEvent = EqTraining.sprintStep(sheet, pace, dt, record ~= nil and record.trained.speed or nil)
     if sprintEvent ~= nil then Log:info("Sprint: %s (exertion %.0f%%)", sprintEvent, sheet.tiredness) end
     -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
@@ -562,7 +560,42 @@ function EqTrainingHooks.onForwardInput(vehicle, inputValue)
         Log:info("Sprint key: forward input %s", tostring(inputValue))
     end
     if (inputValue or 0) <= 0 then return end
-    EqTrainingHooks.trySprint(vehicle, "forward action")
+    EqTrainingHooks.onGaitKey(vehicle, "forward", "forward action")
+end
+
+
+--- Appended to the base game's back key (brake) action.
+--- @param vehicle table
+--- @param inputValue number
+function EqTrainingHooks.onBackInput(vehicle, inputValue)
+    if (inputValue or 0) <= 0 then return end
+    EqTrainingHooks.onGaitKey(vehicle, "back", "back action")
+end
+
+
+-- The action and the key poll can both see one press, and an action may report a held key
+-- every frame: a report of the same key this soon after the last one is the same press.
+EqTrainingHooks.KEY_REPEAT_MS = 200
+EqTrainingHooks.keyAt = {}
+
+--- Forward (W) or back (S): Sprint and the stamina beat. Every other key is none of their business.
+--- @param vehicle table
+--- @param key string "forward" or "back"
+--- @param source string what saw it, for the log
+function EqTrainingHooks.onGaitKey(vehicle, key, source)
+    local now = g_time or 0
+    local last = EqTrainingHooks.keyAt[key]
+    EqTrainingHooks.keyAt[key] = now
+    if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
+    if key == "forward" then EqTrainingHooks.trySprint(vehicle, source) end
+    local spec = vehicle.spec_rideable
+    local id = spec ~= nil and getRiddenId(spec) or nil
+    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+    if sheet == nil then return end
+    local beat, tempo = EqTraining.beatPress(sheet, key, math.random)
+    if beat ~= nil then Log:info("Beat: %s (%s, exertion %.0f%%, tempo x%d)", beat, source, sheet.tiredness, sheet.tempo.mult) end
+    if tempo == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult)
+    elseif beat == "hit" or beat == "perfect" then EqTrainingHud.pop("beat_" .. beat) end
 end
 
 
@@ -593,8 +626,12 @@ end
 local function pollSprintKey(vehicle)
     if Input == nil or Input.isKeyPressed == nil or Input.KEY_w == nil then return end
     local down = Input.isKeyPressed(Input.KEY_w) == true
-    if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.trySprint(vehicle, "W key") end
+    if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.onGaitKey(vehicle, "forward", "W key") end
     EqTrainingHooks.wWasDown = down
+    if Input.KEY_s == nil then return end
+    down = Input.isKeyPressed(Input.KEY_s) == true
+    if down and not EqTrainingHooks.sWasDown then EqTrainingHooks.onGaitKey(vehicle, "back", "S key") end
+    EqTrainingHooks.sWasDown = down
 end
 
 
@@ -769,7 +806,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 -- The exertion bar only turns green while it's time.
                 local gap = beat.pos - sheet.tiredness
                 if gap <= window then
-                    local target = beat.lastGait == "gallop" and "canter" or "gallop"
+                    local target = beat.target or "gallop"
                     local now = math.abs(gap) <= window
                     local share = now and 1 or 1 - EqStats.clamp(-gap / EqTrainingHooks.BEAT_CUE_LEAD, 0, 1)
                     if now then bar.color = COLOR.green end
@@ -796,8 +833,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 tempoRow.rightColor = COLOR.orange
             end
             table.insert(rows, tempoRow)
-            local toNext = tempo.mult >= EqTraining.TEMPO_MAX and 1
-                or (tempo.ms % EqTraining.TEMPO_STEP_MS) / EqTraining.TEMPO_STEP_MS
+            local toNext = tempo.mult >= EqTraining.TEMPO_MAX and 1 or tempo.hits / EqTraining.TEMPO_HITS
             table.insert(rows, { bar = toNext, color = color })
         elseif view == "stamina" then
             table.insert(rows, { left = g_i18n:getText("eq_train_tempo_none"), leftColor = COLOR.grey })
@@ -958,6 +994,12 @@ function EqTrainingHooks.installRideable(guarded)
             end)
             EqTrainingHooks.sprintKeyHooked = true
             Log:info("Sprint key: hooked Rideable.%s", name)
+        elseif lower:find("brake") or lower:find("gaitdown") then
+            Rideable[name] = Utils.appendedFunction(Rideable[name], function(self, actionName, inputValue)
+                if not EqMain.isActive then return end
+                guarded("back key", function() EqTrainingHooks.onBackInput(self, inputValue) end)
+            end)
+            Log:info("Back key: hooked Rideable.%s", name)
         end
     end
 
