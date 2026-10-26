@@ -381,9 +381,9 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
         end
         return nil
     end
-    -- Settling after a miss: a steady canter, not blowing, for BEAT_SETTLE_MS.
+    -- Settling after a miss: a steady canter below STAMINA_ENTRY_MAX for BEAT_SETTLE_MS.
     if beat.settle then
-        if gait == "canter" and sheet.tiredness < EqTraining.BEAT_GALLOP_MAX then
+        if gait == "canter" and sheet.tiredness < EqTraining.STAMINA_ENTRY_MAX then
             beat.settleMs = beat.settleMs + dt
         else
             beat.settleMs = 0
