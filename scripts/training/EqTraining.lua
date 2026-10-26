@@ -147,6 +147,20 @@ EqTraining.TEMPO_BONUS = 0.375
 EqTraining.TEMPO_BLOWN_MS = 5000
 EqTraining.TEMPO_SLOW_MS = 2500
 
+-- Beats: during a run a marker sweeps along the exertion meter, from 0 to 100 in BEAT_SWEEP_MS,
+-- every BEAT_GAP_MS (a random time in the range). Switching between canter and gallop while it
+-- is within BEAT_WINDOW of the horse's exertion is a hit (within BEAT_PERFECT, a perfect one):
+-- the horse gets its breath back (exertion drops BEAT_RELIEF, BEAT_PERFECT_RELIEF for a
+-- perfect hit) and the tempo streak gains BEAT_TEMPO_MS. That is how a rider holds a high tempo
+-- without blowing.
+EqTraining.BEAT_SWEEP_MS = 2500
+EqTraining.BEAT_GAP_MS = { 4000, 7000 }
+EqTraining.BEAT_WINDOW = 7
+EqTraining.BEAT_PERFECT = 2.5
+EqTraining.BEAT_RELIEF = 6
+EqTraining.BEAT_PERFECT_RELIEF = 10
+EqTraining.BEAT_TEMPO_MS = 3000
+
 -- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
 -- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
 -- for SPRINT_READY_MS more and Sprint is ready: press forward (W) and for SPRINT_MS (more with taps, below) the horse
@@ -199,7 +213,7 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, tempo = EqTraining.newTempo(),
+        tiredness = 0, run = 0, tempo = EqTraining.newTempo(), beat = EqTraining.newBeat(),
         sprint = { count = 0, holdMs = 0, counted = false, warm = false, readyMs = 0, ready = false, activeMs = 0, dropMs = 0, rest = false },
         focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
@@ -245,6 +259,65 @@ function EqTraining.tempoStep(tempo, gait, tiredness, dt)
     if mult > tempo.mult then
         tempo.mult = mult
         return "up"
+    end
+    return nil
+end
+
+
+--- @return table beat a fresh beat state
+function EqTraining.newBeat()
+    return { clock = 0, nextAt = 0, pos = nil, lastGait = nil }
+end
+
+
+--- @param range table { min, max } milliseconds
+--- @param rng function (n) -> 1..n
+local function beatGap(range, rng)
+    return range[1] + (rng(range[2] - range[1] + 1) - 1)
+end
+
+
+--- One frame of the beat. Beats only come during a run at a canter or gallop.
+--- @param sheet table
+--- @param gait string the gait this frame (not the pace held through a jump)
+--- @param dt number milliseconds
+--- @param rng function (n) -> 1..n
+--- @return string|nil event "start", "hit", "perfect", "off" (switched off the beat), "miss"
+function EqTraining.beatStep(sheet, gait, dt, rng)
+    local beat = sheet.beat
+    beat.clock = beat.clock + dt
+    local fast = gait == "canter" or gait == "gallop"
+    local switched = fast and beat.lastGait ~= nil and beat.lastGait ~= gait
+        and (beat.lastGait == "canter" or beat.lastGait == "gallop")
+    beat.lastGait = gait
+
+    if beat.pos ~= nil then
+        if switched then
+            local gap = math.abs(beat.pos - sheet.tiredness)
+            if gap <= EqTraining.BEAT_WINDOW then
+                local perfect = gap <= EqTraining.BEAT_PERFECT
+                sheet.tiredness = math.max(0, sheet.tiredness
+                    - (perfect and EqTraining.BEAT_PERFECT_RELIEF or EqTraining.BEAT_RELIEF))
+                if sheet.tempo.ms > 0 then sheet.tempo.ms = sheet.tempo.ms + EqTraining.BEAT_TEMPO_MS end
+                beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
+                return perfect and "perfect" or "hit"
+            end
+            return "off"
+        end
+        beat.pos = beat.pos + 100 * dt / EqTraining.BEAT_SWEEP_MS
+        if beat.pos > 100 or not fast then
+            beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
+            return "miss"
+        end
+        return nil
+    end
+    if not fast or sheet.run <= 0 then
+        beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_GAP_MS[1])
+        return nil
+    end
+    if beat.clock >= beat.nextAt then
+        beat.pos = 0
+        return "start"
     end
     return nil
 end
@@ -624,6 +697,7 @@ function EqTraining.rest(sheet, ms)
     sheet.quality.stamina, sheet.quality.speed, sheet.quality.agility, sheet.quality.temperament = 0, 0, 0, 0
     sheet.combo.count, sheet.combo.timer = 0, 0
     sheet.tempo = EqTraining.newTempo()
+    sheet.beat = EqTraining.newBeat()
     local sprint = sheet.sprint
     sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
     if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end

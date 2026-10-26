@@ -447,6 +447,14 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local pace = paceGait(spec, gait, now)
     EqTraining.step(sheet, pace, dt, worn, stamina)
     spec.eqLastGait = gait
+    -- Beats run where the rider can see them: the Freestyle and Stamina views.
+    local view = EqTrainingHooks.getView()
+    if view == "freestyle" or view == "stamina" then
+        local beat = EqTraining.beatStep(sheet, gait, dt, math.random)
+        if beat == "hit" or beat == "perfect" or beat == "off" then EqTrainingHud.pop("beat_" .. beat) end
+    else
+        sheet.beat.pos = nil
+    end
     if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult)
     elseif sheet.tempoEvent == "lost" then EqTrainingHud.pop("tempoLost") end
     local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
@@ -741,7 +749,14 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
             right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
         local bar = { bar = sheet.tiredness / 100, color = bandColor }
-        if view ~= "speed" then bar.marks = { EqTraining.ZONE_LOW / 100, EqTraining.ZONE_HIGH / 100 } end
+        if view ~= "speed" then
+            bar.marks = { EqTraining.ZONE_LOW / 100, EqTraining.ZONE_HIGH / 100 }
+            -- The beat marker, with its hit window either side.
+            if sheet.beat.pos ~= nil then
+                bar.window = { (sheet.beat.pos - EqTraining.BEAT_WINDOW) / 100, (sheet.beat.pos + EqTraining.BEAT_WINDOW) / 100 }
+                table.insert(bar.marks, { sheet.beat.pos / 100, COLOR.yellow, 3 })
+            end
+        end
         table.insert(rows, bar)
     end
     if view == "freestyle" or view == "stamina" then

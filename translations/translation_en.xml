@@ -73,13 +73,16 @@
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint over"/>
         <text name="eq_help_speed_3" text="Two good sprints warm your horse up. Keep galloping and press W when Sprint! shows: your horse runs 25% faster, ignores exertion and trains speed three times as fast. Keep tapping W to spur it on and the Sprint lasts longer, though each tap counts for less as it goes on. Drop out of a gallop and it ends. Then rest below 10% exertion before warming up again."/>
-        <text name="eq_help_stamina_3" text="Keep up a high tempo: every 20 seconds of unbroken canter or gallop raises your tempo, up to x5, and stamina gains grow up to 2.5 times. From x3 a gallop builds tempo twice as fast. Blowing hard stops the climb and for more than 5 seconds ends the streak; so does more than a couple of seconds below a canter. A quick trot drops exertion fast if you need it."/>
+        <text name="eq_help_stamina_3" text="Keep up a high tempo: every 20 seconds of unbroken canter or gallop raises your tempo, up to x5, and stamina gains grow up to 2.5 times. Blowing hard for more than 5 seconds, or more than a couple of seconds below a canter, ends the streak. To stay fresh, ride the beat: a yellow marker sweeps along the exertion bar. Switch between canter and gallop as it passes your exertion and your horse catches its breath (exertion drops) and your tempo jumps ahead."/>
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Blowing! %d s"/>
         <text name="eq_train_tempo_slow" text="Back to a canter!"/>
         <text name="eq_train_tempo_none" text="Canter or gallop to build tempo"/>
         <text name="eq_pop_tempo" text="Tempo x%d!"/>
         <text name="eq_pop_tempoLost" text="Tempo lost"/>
+        <text name="eq_pop_beat_perfect" text="Perfect!"/>
+        <text name="eq_pop_beat_hit" text="Good!"/>
+        <text name="eq_pop_beat_off" text="Off beat"/>
         <text name="eq_train_run" text="Run: %d s"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
