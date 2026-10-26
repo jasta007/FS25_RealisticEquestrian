@@ -284,6 +284,29 @@ local function paceGait(spec, gait, now)
 end
 
 
+-- The base game's jump has the same lift (spec_rideable.jumpHeight, 2 m) at every gait, so a
+-- canter (top speed 5 m/s against the gallop's 10) covers about half the distance and often
+-- lands on the obstacle. A canter jumps CANTER_JUMP_SHARE higher, for longer in the air, and
+-- the horse speeds up ACCELERATION_SHARE faster (maxAcceleration, 5 m/s2 in the base game) so
+-- switching between canter and gallop is quicker.
+EqTrainingHooks.CANTER_JUMP_SHARE = 1.5
+EqTrainingHooks.ACCELERATION_SHARE = 1.6
+
+--- Set the base game's jump height and acceleration for the gait, before it jumps.
+--- @param spec table spec_rideable
+--- @param gait string
+local function tuneRiding(spec, gait)
+    if type(spec.jumpHeight) == "number" then
+        spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
+        spec.jumpHeight = spec.eqBaseJumpHeight * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
+    end
+    if type(spec.maxAcceleration) == "number" and spec.eqBaseAcceleration == nil then
+        spec.eqBaseAcceleration = spec.maxAcceleration
+        spec.maxAcceleration = spec.maxAcceleration * EqTrainingHooks.ACCELERATION_SHARE
+    end
+end
+
+
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
@@ -294,6 +317,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local id = getRiddenId(spec)
     if id == nil then return end
+    -- Not while airborne, so the lift a jump started with stays put.
+    if spec.eqJump == nil then tuneRiding(spec, gait) end
 
     local sheet = EqTrainingHooks.getSheet(id)
     local now = g_time or 0

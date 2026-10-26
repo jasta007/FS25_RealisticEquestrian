@@ -71,7 +71,9 @@ uses its genetics, health and fitness.
   - **Agility** comes from jump combos: clear jumps one after another (fences, poles, anything
     solid) for x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but
     stopping, walking or backing up runs the clock down ten times as fast. A jump is judged
-    once the horse has landed: hitting the obstacle or landing on it loses the combo.
+    once the horse has landed: hitting the obstacle or landing on it loses the combo. Horses
+    jump higher and stay in the air longer from a canter, and pick up speed faster, so a
+    controlled canter approach can clear a fence.
   - **Temperament** comes from a routine: walk to start one, then do each movement asked for
     (walk, trot, stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A
     canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs
