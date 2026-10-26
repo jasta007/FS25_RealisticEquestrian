@@ -473,6 +473,37 @@ function EqTraining.ridingBarFactor(stamina)
 end
 
 
+-- Handling: a horse's trained stats change how it rides. Each is a multiplier on the base
+-- game's value, linear in the stat between the two limits (stat 0 to stat 100), so a horse
+-- never gets too slow or too wild to steer.
+EqTraining.HANDLING = {
+    speed = { 0.75, 1.25 },  -- top speed of every forward gait (James: 0 = 25% slower, 100 = 25% faster)
+    jump = { 0.85, 1.3 },    -- jump height, by agility
+    turn = { 0.8, 1.2 },     -- turn rate, by agility
+}
+
+--- @param limits table { at 0, at 100 }
+--- @param stat number|nil trained stat; nil reads as 50
+--- @return number
+local function handlingShare(limits, stat)
+    local t = EqStats.clamp((stat or 50) / 100, 0, 1)
+    return limits[1] + (limits[2] - limits[1]) * t
+end
+
+
+--- How a horse's stats change its riding.
+--- @param speed number|nil trained speed
+--- @param agility number|nil trained agility
+--- @return table { speed, jump, turn } multipliers on the base game's top speeds, jump height and turn rate
+function EqTraining.handling(speed, agility)
+    return {
+        speed = handlingShare(EqTraining.HANDLING.speed, speed),
+        jump = handlingShare(EqTraining.HANDLING.jump, agility),
+        turn = handlingShare(EqTraining.HANDLING.turn, agility),
+    }
+end
+
+
 --- Riding points to add to (or, when negative, take off) what the base game credits this frame:
 --- backing up counts extra, and a fit horse's bar fills more slowly.
 --- @param timer number weighted milliseconds carried over from earlier frames

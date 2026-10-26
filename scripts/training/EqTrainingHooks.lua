@@ -311,21 +311,46 @@ end
 -- canter (top speed 5 m/s against the gallop's 10) covers about half the distance and often
 -- lands on the obstacle. A canter jumps CANTER_JUMP_SHARE higher, for longer in the air, and
 -- the horse speeds up ACCELERATION_SHARE faster (maxAcceleration, 5 m/s2 in the base game) so
--- switching between canter and gallop is quicker.
-EqTrainingHooks.CANTER_JUMP_SHARE = 1.5
+-- switching between canter and gallop is quicker. On top of that the horse's stats change how
+-- it rides (EqTraining.handling): speed sets its top speeds, agility its jump and turn rate.
+EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
 
---- Set the base game's jump height and acceleration for the gait, before it jumps.
+--- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
+--- the horse, before it jumps. The base values are kept on the spec the first time.
 --- @param spec table spec_rideable
 --- @param gait string
-local function tuneRiding(spec, gait)
+--- @param record table|nil the ridden horse's EqHorseRecord
+local function tuneRiding(spec, gait, record)
+    local trained = record ~= nil and record.trained or {}
+    local handling = EqTraining.handling(trained.speed, trained.agility)
     if type(spec.jumpHeight) == "number" then
         spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
-        spec.jumpHeight = spec.eqBaseJumpHeight * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
+        spec.jumpHeight = spec.eqBaseJumpHeight * handling.jump * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
     end
     if type(spec.maxAcceleration) == "number" and spec.eqBaseAcceleration == nil then
         spec.eqBaseAcceleration = spec.maxAcceleration
         spec.maxAcceleration = spec.maxAcceleration * EqTrainingHooks.ACCELERATION_SHARE
+    end
+    if type(spec.maxTurnSpeed) == "number" then
+        spec.eqBaseTurnSpeed = spec.eqBaseTurnSpeed or spec.maxTurnSpeed
+        spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn
+    end
+    if type(spec.topSpeeds) == "table" then
+        if spec.eqBaseTopSpeeds == nil then
+            -- Our own table, in case the base game shares one between horses.
+            spec.eqBaseTopSpeeds, spec.topSpeeds = spec.topSpeeds, {}
+            for key, value in pairs(spec.eqBaseTopSpeeds) do spec.topSpeeds[key] = value end
+        end
+        -- Forward gaits only: backing up stays at the base game's pace.
+        for key, value in pairs(spec.eqBaseTopSpeeds) do
+            if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed or value end
+        end
+    end
+    if spec.eqHandlingFor ~= record then
+        spec.eqHandlingFor = record
+        Log:info("Handling: speed %s (top speeds x%.2f), agility %s (jump x%.2f, turn rate x%.2f)",
+            tostring(trained.speed), handling.speed, tostring(trained.agility), handling.jump, handling.turn)
     end
 end
 
@@ -340,8 +365,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local id = getRiddenId(spec)
     if id == nil then return end
+    local record = EqRegistry.getById(id)
     -- Not while airborne, so the lift a jump started with stays put.
-    if spec.eqJump == nil then tuneRiding(spec, gait) end
+    if spec.eqJump == nil then tuneRiding(spec, gait, record) end
 
     local sheet = EqTrainingHooks.getSheet(id)
     local now = g_time or 0
@@ -349,7 +375,6 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     sheet.clock = now
 
     local worn = isTired(spec.cluster)
-    local record = EqRegistry.getById(id)
     local stamina = record ~= nil and record.trained.stamina or nil
     local pace = paceGait(spec, gait, now)
     EqTraining.step(sheet, pace, dt, worn, stamina)

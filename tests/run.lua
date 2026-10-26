@@ -473,6 +473,15 @@ do
     check("a horse recovers faster below 30%, a fit one faster still",
         EqTraining.exertionRate("halt", 20, 50) < EqTraining.exertionRate("halt", 50, 50)
         and EqTraining.exertionRate("halt", 20, 90) < EqTraining.exertionRate("halt", 20, 30))
+    do
+        local slow, fast, mid = EqTraining.handling(0, 0), EqTraining.handling(100, 100), EqTraining.handling(nil, nil)
+        local function near(a, b) return math.abs(a - b) < 1e-9 end
+        check("speed 0 runs 25% slower, speed 100 25% faster", near(slow.speed, 0.75) and near(fast.speed, 1.25))
+        check("agility raises jump height and turn rate", slow.jump < 1 and fast.jump > 1 and slow.turn < 1 and fast.turn > 1)
+        check("an unknown horse rides like the base game", near(mid.speed, 1) and mid.jump > 1 and near(mid.turn, 1))
+        check("handling stays inside its limits", near(EqTraining.handling(150, -20).speed, 1.25)
+            and near(EqTraining.handling(150, -20).jump, 0.85))
+    end
     check("a fit horse's riding bar fills more slowly", EqTraining.ridingBarFactor(40) == 1
         and math.abs(EqTraining.ridingBarFactor(100) - 1.4) < 1e-9)
     do
