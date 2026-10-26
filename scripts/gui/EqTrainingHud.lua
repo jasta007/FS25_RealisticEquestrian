@@ -149,11 +149,6 @@ EqTrainingHud.STAT_COLOR = {
     agility = { 0.529, 0.706, 0, 1 },
     temperament = { 0.8, 0.55, 1, 1 },
 }
--- Pops that are a setback rather than progress.
-EqTrainingHud.SETBACK_COLOR = {
-    knock = "red", jumpLost = "red", routineLost = "red", tempoLost = "red", comboLost = "red",
-    beat_off = "grey", sprint_over = "grey",
-}
 -- The training mode (EqTraining.modeStep) of the ridden horse, set by EqTrainingHooks.
 EqTrainingHud.mode = nil
 
@@ -226,13 +221,8 @@ function EqTrainingHud.pop(kind, mult)
     -- The training mode has the floor: other stats' news waits (temperament's routine never clashes).
     local mode = EqTrainingHud.mode
     if mode ~= nil and stat ~= nil and stat ~= mode and stat ~= "temperament" then return end
-    -- Good news in the stat's colour; setbacks red, or grey when nothing was lost.
-    local setback = EqTrainingHud.SETBACK_COLOR[kind]
-    if setback ~= nil then
-        color = EqTrainingHud.COLOR[setback]
-    elseif stat ~= nil then
-        color = EqTrainingHud.STAT_COLOR[stat]
-    end
+    -- Every pop, good news or a setback, is in its stat's colour.
+    if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
     -- In a focused view, news about another stat goes in a small line above the panel instead.
     local view = EqTrainingHud.view
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
