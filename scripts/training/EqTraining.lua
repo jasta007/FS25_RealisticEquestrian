@@ -161,7 +161,7 @@ EqTraining.random = math.random
 
 -- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
 -- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
--- for SPRINT_READY_MS more and Sprint is ready: press forward (W) and for SPRINT_MS the horse
+-- for SPRINT_READY_MS more and Sprint is ready: press forward (W) and for SPRINT_MS (more with taps, below) the horse
 -- runs SPRINT_SPEED_SHARE faster (EqTrainingHooks), ignores being blown, tires
 -- SPRINT_EXERTION_SHARE as fast and trains speed SPRINT_TRAIN_SHARE as fast as a fresh gallop.
 -- Dropping below a gallop for SPRINT_DROP_MS ends it. Then it must rest below
@@ -170,7 +170,14 @@ EqTraining.SPRINT_COUNT_MS = 4000
 EqTraining.SPRINT_MIN_QUALITY = 0.5
 EqTraining.SPRINTS_TO_WARM = 2
 EqTraining.SPRINT_READY_MS = 2000
-EqTraining.SPRINT_MS = 12000
+EqTraining.SPRINT_MS = 6000
+-- Tapping forward (W) during Sprint spurs the horse on: each tap at least SPRINT_TAP_GAP_MS
+-- after the last adds SPRINT_TAP_MS, less the longer the Sprint has gone (none after
+-- SPRINT_LIMIT_MS), up to SPRINT_MAX_MS left. Steady tapping about twice a second keeps it going.
+EqTraining.SPRINT_TAP_MS = 700
+EqTraining.SPRINT_TAP_GAP_MS = 300
+EqTraining.SPRINT_MAX_MS = 8000
+EqTraining.SPRINT_LIMIT_MS = 40000
 EqTraining.SPRINT_SPEED_SHARE = 1.25
 EqTraining.SPRINT_EXERTION_SHARE = 1.5
 EqTraining.SPRINT_TRAIN_SHARE = 3
@@ -366,7 +373,22 @@ function EqTraining.startSprint(sheet)
     local sprint = sheet.sprint
     if not sprint.ready or sprint.activeMs > 0 then return false end
     sprint.activeMs, sprint.dropMs, sprint.ready, sprint.readyMs = EqTraining.SPRINT_MS, 0, false, 0
+    -- The press that started it (seen by both the action and the key poll) is not a tap.
+    sprint.elapsedMs, sprint.tapAt = 0, 0
     return true
+end
+
+
+--- A tap of the forward key during Sprint: more time, less as the Sprint goes on.
+--- @param sheet table
+--- @return boolean true when it added time
+function EqTraining.spurSprint(sheet)
+    local sprint = sheet.sprint
+    if sprint.activeMs <= 0 or sprint.elapsedMs - (sprint.tapAt or 0) < EqTraining.SPRINT_TAP_GAP_MS then return false end
+    sprint.tapAt = sprint.elapsedMs
+    local left = 1 - EqStats.clamp(sprint.elapsedMs / EqTraining.SPRINT_LIMIT_MS, 0, 1)
+    sprint.activeMs = math.min(EqTraining.SPRINT_MAX_MS, sprint.activeMs + EqTraining.SPRINT_TAP_MS * left)
+    return left > 0
 end
 
 
@@ -379,6 +401,7 @@ function EqTraining.sprintStep(sheet, gait, dt)
     local sprint = sheet.sprint
     if sprint.activeMs > 0 then
         sprint.activeMs = math.max(0, sprint.activeMs - dt)
+        sprint.elapsedMs = (sprint.elapsedMs or 0) + dt
         sprint.dropMs = gait == "gallop" and 0 or sprint.dropMs + dt
         if sprint.activeMs > 0 and sprint.dropMs < EqTraining.SPRINT_DROP_MS then return nil end
         sprint.activeMs, sprint.count, sprint.warm, sprint.rest = 0, 0, false, true

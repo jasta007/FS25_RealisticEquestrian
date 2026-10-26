@@ -66,7 +66,7 @@ uses its genetics, health and fitness.
     Gallop to climb, canter to hold, a short trot to drop fast.
   - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
     stand still to rest before the next one. Two good sprints warm the horse up; keep galloping
-    and press **W** when **Sprint!** shows for 12 seconds 25% faster, ignoring exertion, with
+    and press **W** when **Sprint!** shows to run 25% faster, ignoring exertion (keep tapping W to spur it on), with
     three times the speed training. Then rest right down before warming up again.
   - A horse blowing hard (over 85% exertion) slows to 75% of its top speed.
   - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until
