@@ -107,6 +107,12 @@ local function indexHorses()
                 local id = EqRegistry.getId(animal)
                 if id ~= nil then index[id] = { animal = animal, farmId = farmId } end
             end
+            -- Horses left in a trailer: an Auto Transport horse still runs, a Manual one is told
+            -- it was never delivered, instead of both being "no longer on a farm".
+            for _, animal in ipairs(EqRLRM.listHorsesInTrailers(farmId)) do
+                local id = EqRegistry.getId(animal)
+                if id ~= nil and index[id] == nil then index[id] = { animal = animal, farmId = farmId } end
+            end
         end
     end
     return index
