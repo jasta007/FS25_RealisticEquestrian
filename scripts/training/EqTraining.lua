@@ -70,6 +70,13 @@ EqTraining.ROUTINE_STEER_MS = 300
 EqTraining.ROUTINE_GAP_MS = { 5000, 8000 }
 EqTraining.ROUTINE_TURN_GAP_MS = { 3000, 4000 }
 EqTraining.ROUTINE_REACT_MS = 3000
+-- After a full stop the next request comes sooner (James: waiting at a halt was boring).
+EqTraining.ROUTINE_HALT_GAP_MS = { 2500, 4000 }
+-- The routine gets more stressful as its multiplier climbs: for each step above x1, gaps
+-- between requests shrink by ROUTINE_GAP_PRESSURE and the time to react by ROUTINE_REACT_PRESSURE
+-- (at x5: gaps 70%, 2.4 s to react).
+EqTraining.ROUTINE_GAP_PRESSURE = 0.075
+EqTraining.ROUTINE_REACT_PRESSURE = 0.05
 EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
 
@@ -410,7 +417,9 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
             routine.mult = math.min(routine.mult + 1, EqTraining.COMBO_MAX)
             if not turned then routine.current = move end
             routine.request = nil
-            routine.nextAt = routine.clock + randomGap(turned and EqTraining.ROUTINE_TURN_GAP_MS or EqTraining.ROUTINE_GAP_MS, rng)
+            local range = turned and EqTraining.ROUTINE_TURN_GAP_MS or move == "halt" and EqTraining.ROUTINE_HALT_GAP_MS
+                or EqTraining.ROUTINE_GAP_MS
+            routine.nextAt = routine.clock + randomGap(range, rng) * (1 - EqTraining.ROUTINE_GAP_PRESSURE * (routine.mult - 1))
             event = "done"
         elseif routine.clock > routine.deadline then
             EqTraining.breakRoutine(sheet)
@@ -419,7 +428,7 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
     elseif routine.clock >= routine.nextAt then
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
-        routine.deadline = routine.clock + EqTraining.ROUTINE_REACT_MS
+        routine.deadline = routine.clock + EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
         -- A turn counts once its key has been held this long after the request shows.
         routine.steerMs = 0
         event = "request"
