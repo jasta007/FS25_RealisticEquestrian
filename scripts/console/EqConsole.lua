@@ -509,26 +509,47 @@ function EqConsole:consoleForceInjury(value)
 end
 
 
---- eqStats <0-100>|reset [horse]: testing, sets every stat of a horse (or of all your horses)
---- to one value. The real stats are kept and are what a save writes; 'reset' puts them back.
-function EqConsole:consoleStats(value, ...)
+--- eqStats [horse] [stat] <0-100>|reset: testing, sets one stat, or every stat, of a horse (or of
+--- all your horses) to a value, in any word order. The real stats are kept and are what a save
+--- writes; 'reset' puts them back.
+function EqConsole:consoleStats(...)
     if g_currentMission == nil then return "No mission loaded" end
     if not g_currentMission:getIsServer() then return "Only the host can change stats" end
-    local level = tonumber(value)
-    if value ~= "reset" and value ~= "Reset" and level == nil then
-        return "Usage: eqStats <0-100> [horse]  or  eqStats reset [horse]  (no horse = all your horses)"
-    end
 
-    local query = table.concat({ ... }, " ")
+    local args = { ... }
+    -- The value is the last number, so a horse id with numbers in it still matches.
+    local valueAt = nil
+    for index, word in ipairs(args) do
+        if tonumber(word) ~= nil then valueAt = index end
+    end
+    local level, reset, only, words = nil, false, nil, {}
+    for index, word in ipairs(args) do
+        local lower = word:lower()
+        local stat = nil
+        for _, key in ipairs(EqConstants.STAT_KEYS) do
+            if key == lower then stat = key end
+        end
+        if index == valueAt then level = EqStats.clamp(tonumber(word), 0, 100)
+        elseif lower == "reset" then reset = true
+        elseif stat ~= nil and only == nil then only = stat
+        else table.insert(words, word) end
+    end
+    if level == nil and not reset then
+        return "Usage: eqStats [horse] [stamina|speed|agility|temperament] <0-100>  or  eqStats [horse] reset  "
+            .. "(no horse = all your horses, no stat = every stat)"
+    end
+    local stats = only ~= nil and { only } or EqConstants.STAT_KEYS
+
+    local query = table.concat(words, " ")
     local names = {}
     for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
         local record = EqRegistry.getOrCreate(animal)
         if record ~= nil and (query == "" or matchesHorse(animal, record, query)) then
-            if level ~= nil then
+            if not reset then
                 record.testStats = record.testStats or {}
-                for _, stat in ipairs(EqConstants.STAT_KEYS) do
+                for _, stat in ipairs(stats) do
                     if record.testStats[stat] == nil then record.testStats[stat] = record.trained[stat] end
-                    record.trained[stat] = EqStats.clamp(level, 0, 100)
+                    record.trained[stat] = level
                 end
             elseif record.testStats ~= nil then
                 for stat, real in pairs(record.testStats) do record.trained[stat] = real end
@@ -539,9 +560,9 @@ function EqConsole:consoleStats(value, ...)
         end
     end
     if #names == 0 then return query == "" and "You have no horses" or string.format("No horse called '%s' on your farm", query) end
-    if level == nil then return "Real stats back for: " .. table.concat(names, ", ") end
-    return string.format("All stats set to %d for: %s. Saves keep the real stats; 'eqStats reset' puts them back.",
-        math.floor(EqStats.clamp(level, 0, 100)), table.concat(names, ", "))
+    if reset then return "Real stats back for: " .. table.concat(names, ", ") end
+    return string.format("%s set to %d for: %s. Saves keep the real stats; 'eqStats reset' puts them back.",
+        only ~= nil and (only:sub(1, 1):upper() .. only:sub(2)) or "All stats", math.floor(level), table.concat(names, ", "))
 end
 
 
@@ -619,7 +640,7 @@ function EqConsole.register()
     addConsoleCommand("eqForceInjury", "Testing: every horse that starts an event is injured: eqForceInjury [on|off]", "consoleForceInjury", EqConsole)
     addConsoleCommand("eqDirt", "Testing: sets a horse's dirt: eqDirt <horse> <0-100>", "consoleDirt", EqConsole)
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
-    addConsoleCommand("eqStats", "Testing: sets every stat to one value until reset: eqStats <0-100>|reset [horse]", "consoleStats", EqConsole)
+    addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
