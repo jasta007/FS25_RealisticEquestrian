@@ -233,12 +233,13 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, opti
         end
     end
 
-    local candidates, enterableKinds = {}, 0
+    local candidates, enterableKinds, missingAlways = {}, 0, {}
     for _, discipline in ipairs(config.disciplines) do
         if racingEnabled or not discipline.racing then
             for _, tier in ipairs(config.tiers) do
                 if tier.monthly == wantMonthly then
                     local enterable = options.enterable ~= nil and options.enterable(discipline.name, tier.name) == true
+                    if tier.always then missingAlways[tier.name] = true end
                     if enterable then enterableKinds = enterableKinds + 1 end
                     table.insert(candidates, { discipline = discipline, tier = tier, copies = 0, enterable = enterable,
                         weight = tier.chance * (discipline.chance or 1) })
@@ -251,19 +252,34 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, opti
     local enterableDrawn = 0
     for drawn = 1, count do
         -- Keep the last places for enterable events when too few have come up so far.
-        local onlyEnterable = wantEnterable - enterableDrawn >= count - drawn + 1
-        local pool = {}
+        -- Likewise keep the last places for tiers every draw must hold (a Training Event), and the
+        -- enterable share the places before those.
+        local left, missing = count - drawn + 1, 0
+        for _ in pairs(missingAlways) do missing = missing + 1 end
+        local need = wantEnterable - enterableDrawn
+        local onlyEnterable = need > 0 and need >= left - missing
+        local onlyAlways = missing > 0 and missing >= left
+        local pool, alwaysPool = {}, {}
         for _, candidate in ipairs(candidates) do
-            if candidate.copies < config.copiesMax and (candidate.enterable or not onlyEnterable) then
+            if candidate.copies < config.copiesMax then
                 local chance = candidate.weight * EqCompetition.COPY_WEIGHT ^ candidate.copies
                     * (candidate.enterable and EqCompetition.ENTERABLE_WEIGHT or 1)
-                if chance > 0 then table.insert(pool, { candidate = candidate, chance = chance }) end
+                if chance > 0 then
+                    local entry = { candidate = candidate, chance = chance }
+                    if not onlyAlways or missingAlways[candidate.tier.name] then
+                        if candidate.enterable or not onlyEnterable then table.insert(pool, entry) end
+                        if onlyAlways then table.insert(alwaysPool, entry) end
+                    end
+                end
             end
         end
+        -- The tier every draw must hold wins over the enterable share when both want the place.
+        if onlyAlways and #pool == 0 then pool = alwaysPool end
         if #pool == 0 then break end
 
         local candidate = pickWeighted(pool, rng).candidate
         candidate.copies = candidate.copies + 1
+        missingAlways[candidate.tier.name] = nil
         if candidate.enterable then enterableDrawn = enterableDrawn + 1 end
         local discipline, tier = candidate.discipline, candidate.tier
         local spread = config.priceSpread

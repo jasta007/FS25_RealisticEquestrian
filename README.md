@@ -136,7 +136,7 @@ uses its genetics, health and fitness.
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
 - **Show events**: round events every day or every month.
-- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter, and multiplayer adds more for each farm with horses.
+- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter and always one Training Event, and multiplayer adds more for each farm with horses.
 - **Races and steeplechases**: on or off.
 - **Event injuries** and **Career-ending injuries**: on or off.
 - **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
