@@ -147,6 +147,7 @@ EqTrainingHud.sideState = nil
 EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
+    tempo = "stamina", tempoLost = "stamina",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament",
     sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
 }
@@ -172,6 +173,10 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
+    elseif kind == "tempo" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_tempo"), mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "tempoLost" then
+        text, color, big = g_i18n:getText("eq_pop_tempoLost"), EqTrainingHud.COLOR.grey, 1
     elseif kind == "sprintCount" then
         text, color, big = string.format(g_i18n:getText("eq_pop_sprintCount"), mult, EqTraining.SPRINTS_TO_WARM), EqTrainingHud.COLOR.yellow, 1
     elseif kind == "sprint_warm" or kind == "sprint_ready" or kind == "sprint_go" then

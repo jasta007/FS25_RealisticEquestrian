@@ -135,29 +135,17 @@ EqTraining.FRESH_UNTIL = 25
 EqTraining.STALE_FROM = 55
 EqTraining.STALE_SHARE = 0
 
--- The stamina zone moves, like the base game's fishing: a band of exertion to keep the horse
--- in during a run. It starts at ZONE_LOW-ZONE_HIGH. While the horse is in it at a trot or
--- faster the hold builds (seconds, up to ZONE_HOLD_FULL; it drains ZONE_HOLD_DRAIN times as
--- fast outside) and the band wanders: every ZONE_RETARGET_MS it heads for a new middle between
--- ZONE_MIN_CENTER and ZONE_MAX_CENTER, at ZONE_MOVE_RATE per second rising to ZONE_MOVE_FAST at a
--- full hold, and it narrows to ZONE_MIN_HALF either side over ZONE_SHRINK_SECONDS of hold.
--- Gallop to climb, canter to hold or creep up, and a short trot to drop fast. Inside the band
--- stamina trains 1 + ZONE_HOLD_BONUS x (hold / ZONE_HOLD_FULL) times as fast; within ZONE_NEAR
--- of it at ZONE_NEAR_SHARE; further off not at all. With no hold the band drifts back home.
-EqTraining.ZONE_HOLD_FULL = 60
-EqTraining.ZONE_SHRINK_SECONDS = 15
-EqTraining.ZONE_MIN_HALF = 4.5
-EqTraining.ZONE_HOLD_BONUS = 1.5
-EqTraining.ZONE_HOLD_DRAIN = 2
-EqTraining.ZONE_NEAR = 5
-EqTraining.ZONE_NEAR_SHARE = 0.4
-EqTraining.ZONE_MIN_CENTER = 60
-EqTraining.ZONE_MAX_CENTER = 80
-EqTraining.ZONE_RETARGET_MS = { 3000, 7000 }
-EqTraining.ZONE_MOVE_RATE = 1.5
-EqTraining.ZONE_MOVE_FAST = 3
--- Random numbers for the zone's moves (n) -> 1..n; tests replace it.
-EqTraining.random = math.random
+-- Tempo streak: stamina rewards keeping a high tempo. Unbroken time at a canter or gallop
+-- (a gallop counts TEMPO_GALLOP_SHARE at x3 and above) raises the tempo by one every
+-- TEMPO_STEP_MS, x1 to TEMPO_MAX, and stamina trains 1 + TEMPO_BONUS x (tempo - 1) times as
+-- fast. Blowing hard (over ZONE_HIGH) stops the climb, and longer than TEMPO_BLOWN_MS breaks
+-- the streak; so does more than TEMPO_SLOW_MS below a canter (a short trot drops exertion fast).
+EqTraining.TEMPO_STEP_MS = 20000
+EqTraining.TEMPO_MAX = 5
+EqTraining.TEMPO_GALLOP_SHARE = 2
+EqTraining.TEMPO_BONUS = 0.375
+EqTraining.TEMPO_BLOWN_MS = 5000
+EqTraining.TEMPO_SLOW_MS = 2500
 
 -- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
 -- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
@@ -211,7 +199,7 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, zone = EqTraining.newZone(),
+        tiredness = 0, run = 0, tempo = EqTraining.newTempo(),
         sprint = { count = 0, holdMs = 0, counted = false, warm = false, readyMs = 0, ready = false, activeMs = 0, dropMs = 0, rest = false },
         focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
@@ -220,80 +208,71 @@ function EqTraining.newSheet()
 end
 
 
---- @return table zone a fresh stamina zone at its home position
-function EqTraining.newZone()
-    local center = (EqTraining.ZONE_LOW + EqTraining.ZONE_HIGH) / 2
-    return { center = center, target = center, retargetMs = 0, hold = 0 }
+--- @return table tempo a fresh tempo streak
+function EqTraining.newTempo()
+    return { ms = 0, mult = 1, slowMs = 0, blownMs = 0 }
 end
 
 
---- The stamina zone's band now.
---- @param zone table|nil from newZone; nil is the home band
---- @return number low, number high exertion
-function EqTraining.zoneBounds(zone)
-    zone = zone or EqTraining.newZone()
-    local full = (EqTraining.ZONE_HIGH - EqTraining.ZONE_LOW) / 2
-    local t = EqStats.clamp(zone.hold / EqTraining.ZONE_SHRINK_SECONDS, 0, 1)
-    local half = full - (full - EqTraining.ZONE_MIN_HALF) * t
-    return zone.center - half, zone.center + half
-end
-
-
---- @param zone table|nil
---- @return number gains multiplier inside the band
-function EqTraining.zoneBonus(zone)
-    return 1 + EqTraining.ZONE_HOLD_BONUS * EqStats.clamp((zone ~= nil and zone.hold or 0) / EqTraining.ZONE_HOLD_FULL, 0, 1)
-end
-
-
---- Move the zone and its hold on by one frame.
---- @param zone table
+--- One frame of the tempo streak.
+--- @param tempo table
+--- @param gait string the pace gait
 --- @param tiredness number
---- @param working boolean true at a trot or faster
---- @param seconds number
-function EqTraining.moveZone(zone, tiredness, working, seconds)
-    local low, high = EqTraining.zoneBounds(zone)
-    if working and tiredness >= low and tiredness <= high then
-        zone.hold = math.min(EqTraining.ZONE_HOLD_FULL, zone.hold + seconds)
-    else
-        zone.hold = math.max(0, zone.hold - EqTraining.ZONE_HOLD_DRAIN * seconds)
+--- @param dt number milliseconds
+--- @return string|nil event "up" (a new tempo), "lost"
+function EqTraining.tempoStep(tempo, gait, tiredness, dt)
+    local had = tempo.ms > 0
+    local function lose()
+        tempo.ms, tempo.mult, tempo.slowMs, tempo.blownMs = 0, 1, 0, 0
+        return had and "lost" or nil
     end
+    if gait ~= "canter" and gait ~= "gallop" then
+        if not had then return nil end
+        tempo.slowMs = tempo.slowMs + dt
+        if tempo.slowMs > EqTraining.TEMPO_SLOW_MS then return lose() end
+        return nil
+    end
+    tempo.slowMs = 0
+    if tiredness > EqTraining.ZONE_HIGH then
+        tempo.blownMs = tempo.blownMs + dt
+        if tempo.blownMs > EqTraining.TEMPO_BLOWN_MS then return lose() end
+        return nil
+    end
+    tempo.blownMs = 0
+    local share = (gait == "gallop" and tempo.mult >= 3) and EqTraining.TEMPO_GALLOP_SHARE or 1
+    tempo.ms = tempo.ms + dt * share
+    local mult = math.min(EqTraining.TEMPO_MAX, 1 + math.floor(tempo.ms / EqTraining.TEMPO_STEP_MS))
+    if mult > tempo.mult then
+        tempo.mult = mult
+        return "up"
+    end
+    return nil
+end
 
-    if zone.hold > 0 then
-        zone.retargetMs = zone.retargetMs - seconds * 1000
-        if zone.retargetMs <= 0 then
-            local range = EqTraining.ZONE_RETARGET_MS
-            zone.retargetMs = range[1] + (EqTraining.random(range[2] - range[1] + 1) - 1)
-            zone.target = EqTraining.ZONE_MIN_CENTER + (EqTraining.random(101) - 1) / 100
-                * (EqTraining.ZONE_MAX_CENTER - EqTraining.ZONE_MIN_CENTER)
-        end
-    else
-        zone.target, zone.retargetMs = (EqTraining.ZONE_LOW + EqTraining.ZONE_HIGH) / 2, 0
-    end
-    local t = zone.hold / EqTraining.ZONE_HOLD_FULL
-    local step = (EqTraining.ZONE_MOVE_RATE + (EqTraining.ZONE_MOVE_FAST - EqTraining.ZONE_MOVE_RATE) * t) * seconds
-    local gap = zone.target - zone.center
-    zone.center = zone.center + EqStats.clamp(gap, -step, step)
+
+--- @param tempo table|nil
+--- @return number stamina gains multiplier
+function EqTraining.tempoBonus(tempo)
+    return 1 + EqTraining.TEMPO_BONUS * ((tempo ~= nil and tempo.mult or 1) - 1)
 end
 
 
 --- How well stamina is training at this tiredness and run length.
 --- @param tiredness number 0-100
 --- @param run number seconds
---- @param zone table|nil the stamina zone (newZone); nil is the home band with no hold
---- @return number share of STAMINA_RATE: 0..1, up to 1 + ZONE_HOLD_BONUS in a held zone
-function EqTraining.staminaQuality(tiredness, run, zone)
-    local low, high = EqTraining.zoneBounds(zone)
-    local share
-    if tiredness >= low and tiredness <= high then
-        share = EqTraining.zoneBonus(zone)
-    elseif tiredness >= low - EqTraining.ZONE_NEAR and tiredness <= high + EqTraining.ZONE_NEAR then
-        share = EqTraining.ZONE_NEAR_SHARE
+--- @return number share 0..1 of STAMINA_RATE, before the tempo bonus
+function EqTraining.staminaQuality(tiredness, run)
+    local zone
+    if tiredness < EqTraining.ZONE_LOW then
+        zone = EqStats.clamp((tiredness - EqTraining.ZONE_FROM) / (EqTraining.ZONE_LOW - EqTraining.ZONE_FROM), 0, 1)
+    elseif tiredness <= EqTraining.ZONE_HIGH then
+        zone = 1
     else
-        share = 0
+        local over = (tiredness - EqTraining.ZONE_HIGH) / (100 - EqTraining.ZONE_HIGH)
+        zone = 1 - over * (1 - EqTraining.ZONE_BLOWN_SHARE)
     end
     local length = EqStats.clamp((run - EqTraining.RUN_START) / (EqTraining.RUN_FULL - EqTraining.RUN_START), 0, 1)
-    return share * length
+    return zone * length
 end
 
 
@@ -344,9 +323,10 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
 
-    EqTraining.moveZone(sheet.zone, sheet.tiredness, EqTraining.STAMINA_RATE[gait] ~= nil, seconds)
+    sheet.tempoEvent = EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt)
 
-    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil and EqTraining.staminaQuality(sheet.tiredness, sheet.run, sheet.zone) or 0
+    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
+        and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo) or 0
     local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) or 0
     if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
     sheet.quality.stamina, sheet.quality.speed = stamina, speed
@@ -443,19 +423,6 @@ function EqTraining.tirednessBand(tiredness)
     if tiredness < EqTraining.ZONE_LOW then return "warm" end
     if tiredness <= EqTraining.ZONE_HIGH then return "zone" end
     return "blown"
-end
-
-
---- Word for the exertion meter against the moving stamina zone.
---- @param tiredness number
---- @param zone table|nil
---- @return string band fresh, under, zone, over or blown
-function EqTraining.zoneBand(tiredness, zone)
-    local low, high = EqTraining.zoneBounds(zone)
-    if tiredness >= low and tiredness <= high then return "zone" end
-    if tiredness > EqTraining.ZONE_HIGH then return "blown" end
-    if tiredness < EqTraining.ZONE_FROM and tiredness < low then return "fresh" end
-    return tiredness < low and "under" or "over"
 end
 
 
@@ -656,7 +623,7 @@ function EqTraining.rest(sheet, ms)
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE.halt * seconds)
     sheet.quality.stamina, sheet.quality.speed, sheet.quality.agility, sheet.quality.temperament = 0, 0, 0, 0
     sheet.combo.count, sheet.combo.timer = 0, 0
-    sheet.zone = EqTraining.newZone()
+    sheet.tempo = EqTraining.newTempo()
     local sprint = sheet.sprint
     sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
     if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end

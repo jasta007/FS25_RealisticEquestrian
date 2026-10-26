@@ -64,7 +64,6 @@
         <text name="eq_train_sprint_fresh" text="Frisch: jetzt sprinten"/>
         <text name="eq_train_sprint_tiring" text="Ermüdet: bald ausruhen"/>
         <text name="eq_train_sprint_stale" text="Zu müde zum Sprinten: ausruhen"/>
-        <text name="eq_train_zoneHold" text="Zone x%.1f"/>
         <text name="eq_train_sprint_on" text="SPRINT! W tippen"/>
         <text name="eq_train_sprint_ready" text="Sprint bereit: W drücken"/>
         <text name="eq_train_sprint_warm" text="Aufgewärmt: weiter Renngalopp für Sprint"/>
@@ -76,9 +75,13 @@
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint vorbei"/>
         <text name="eq_help_speed_3" text="Zwei gute Sprints wärmen Ihr Pferd auf. Bleiben Sie im Renngalopp und drücken Sie W, wenn Sprint! erscheint: Ihr Pferd läuft 25 % schneller, ignoriert die Anstrengung und trainiert Schnelligkeit dreimal so schnell. Tippen Sie weiter W, um es anzutreiben, dann dauert der Sprint länger, auch wenn jeder Tipp mit der Zeit weniger bringt. Fallen Sie aus dem Renngalopp, endet er. Danach unter 10 % Anstrengung erholen, bevor Sie wieder aufwärmen."/>
-        <text name="eq_help_stamina_3" text="Der Zielbereich bewegt sich, wie beim Angeln: Die weißen Marken auf dem Anstrengungsbalken zeigen, wo er ist. Halten Sie ihn, wird er schmaler, wandert schneller und Ihr Gewinn steigt bis zum 2,5-Fachen. Renngalopp zum Steigen, Galopp zum Halten und kurz Trab, um schnell zu fallen. Fallen Sie heraus, schwindet der Bonus."/>
-        <text name="eq_train_tired_under" text="Unter dem Zielbereich: schneller"/>
-        <text name="eq_train_tired_over" text="Über dem Zielbereich: langsamer"/>
+        <text name="eq_help_stamina_3" text="Halten Sie ein hohes Tempo: Alle 20 Sekunden ununterbrochener Galopp oder Renngalopp steigern Ihr Tempo bis x5, und der Ausdauergewinn wächst bis zum 2,5-Fachen. Ab x3 baut Renngalopp doppelt so schnell Tempo auf. Außer Atem stoppt den Anstieg und beendet die Serie nach mehr als 5 Sekunden; ebenso mehr als ein paar Sekunden langsamer als Galopp. Ein kurzer Trab senkt die Anstrengung schnell, wenn nötig."/>
+        <text name="eq_train_tempo" text="Tempo x%d"/>
+        <text name="eq_train_tempo_blown" text="Außer Atem! %d s"/>
+        <text name="eq_train_tempo_slow" text="Zurück in den Galopp!"/>
+        <text name="eq_train_tempo_none" text="Galopp oder Renngalopp baut Tempo auf"/>
+        <text name="eq_pop_tempo" text="Tempo x%d!"/>
+        <text name="eq_pop_tempoLost" text="Tempo verloren"/>
         <text name="eq_train_run" text="Lauf: %d s"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>

@@ -345,23 +345,32 @@ do
         check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
     end
     do
-        -- The stamina zone: held, it narrows, pays more and wanders; let go, it drifts home.
-        local saved = EqTraining.random
-        EqTraining.random = function(n) return n end
-        local zone = EqTraining.newZone()
-        local low, high = EqTraining.zoneBounds(zone)
-        check("the zone starts at home", low == EqTraining.ZONE_LOW and high == EqTraining.ZONE_HIGH)
-        local mid = (low + high) / 2
-        for _ = 1, 100 do EqTraining.moveZone(zone, mid, true, 0.1) end
-        local nLow, nHigh = EqTraining.zoneBounds(zone)
-        check("a held zone narrows and moves", nHigh - nLow < high - low and zone.center > mid)
-        check("a held zone trains faster", EqTraining.staminaQuality(zone.center, 30, zone) > 1
-            and EqTraining.staminaQuality(mid, 30, nil) == 1)
-        check("near the zone trains less, far from it not at all", EqTraining.staminaQuality(nLow - 2, 30, zone) == EqTraining.ZONE_NEAR_SHARE
-            and EqTraining.staminaQuality(nLow - 20, 30, zone) == 0)
-        for _ = 1, 600 do EqTraining.moveZone(zone, 10, true, 0.1) end
-        check("let go, the zone drifts home", zone.hold == 0 and math.abs(zone.center - mid) < 0.01)
-        EqTraining.random = saved
+        -- Tempo streak: unbroken canter or gallop climbs; a long trot or blowing breaks it.
+        local tempo = EqTraining.newTempo()
+        local events = {}
+        local function go(gait, tiredness, ms)
+            for _ = 1, ms / 100 do
+                local event = EqTraining.tempoStep(tempo, gait, tiredness, 100)
+                if event ~= nil then table.insert(events, event) end
+            end
+        end
+        go("canter", 75, 20000)
+        check("20 s of canter is tempo x2", tempo.mult == 2 and events[1] == "up")
+        go("trot", 70, 2000)
+        go("canter", 75, 100)
+        check("a short trot keeps the streak", tempo.mult == 2)
+        go("canter", 75, 20000)
+        local before = tempo.ms
+        go("gallop", 75, 1000)
+        check("at x3 a gallop counts double", tempo.mult == 3 and tempo.ms - before == 2000)
+        check("tempo raises stamina gains", EqTraining.tempoBonus(tempo) > 1.5)
+        go("canter", 90, 4000)
+        check("blowing stops the climb", tempo.blownMs > 0 and tempo.mult == 3)
+        go("canter", 90, 2000)
+        check("blowing too long breaks the streak", tempo.mult == 1 and events[#events] == "lost")
+        go("canter", 75, 1000)
+        go("trot", 70, 3000)
+        check("a long trot breaks the streak", tempo.ms == 0)
     end
     -- Temperament routine.
     local first = function() return 1 end
