@@ -422,9 +422,9 @@ function EqCompetitionManager.resolve(event, horses)
                 local deltas = EqTraining.applyBoost(record, record:getCeilings(), discipline.weights,
                     tier.trainingBoost, mine.animal.age or 0, timeAdjustment,
                     EqSettings.trainingRate(EqCompetitionManager.settings))
+                record:addGains(summary.day, deltas)
                 EqStatLog.add(record.id, summary.day, "event", deltas, { string.format("Training boost from %s (%s), placed %d of %d: %.0f%% of a day's work at staff level",
                     EqCompetitionManager.eventTitle(event), event.tier, runner.place, summary.field, tier.trainingBoost * 100) }, record.trained)
-                record:addGains(summary.day, deltas)
             end
 
             table.insert(summary.placings, { horseId = runner.key, name = entry.name, farmId = entry.farmId,
