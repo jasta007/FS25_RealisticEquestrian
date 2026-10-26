@@ -184,8 +184,8 @@ end
 
 --- @param result string|nil from EqTraining.knockCombo
 local function popKnock(result)
-    if result == "knocked" then EqTrainingHud.pop("knock")
-    elseif result == "lost" then EqTrainingHud.pop("jumpLost") end
+    -- A knock only shows as the combo bar dropping: a "-3 s" popup read like losing stats.
+    if result == "lost" then EqTrainingHud.pop("jumpLost") end
 end
 
 
