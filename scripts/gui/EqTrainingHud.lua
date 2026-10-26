@@ -207,8 +207,8 @@ function EqTrainingHud.pop(kind, mult)
     -- In a focused view, news about another stat goes in a small line above the panel instead.
     local stat = EqTrainingHud.POP_STAT[kind]
     local view = EqTrainingHud.view
-    -- In Freestyle the jump combo is clear enough from the panel, so it stays out of the middle.
-    local side = stat ~= nil and view ~= nil and view ~= stat and (view ~= "freestyle" or stat == "agility")
+    -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
+    local side = stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat)
     if side then
         text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text)
         EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }

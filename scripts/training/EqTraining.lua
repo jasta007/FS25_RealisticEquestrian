@@ -304,8 +304,8 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
     local beat = sheet.beat
     beat.clock = beat.clock + dt
     local fast = gait == "canter" or gait == "gallop"
-    -- Sprint owns W and the middle of the screen: no beats while it's ready or running.
-    if sheet.sprint.ready or EqTraining.isSprinting(sheet) then
+    -- Sprint owns W and a routine command owns the middle of the screen: no beats meanwhile.
+    if sheet.sprint.ready or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil then
         beat.lastGait = gait
         beat.pos = nil
         beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_GAP_MS[1])
@@ -327,6 +327,8 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
                 beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
                 return perfect and "perfect" or "hit"
             end
+            -- Too early (or late): the beat is wasted.
+            beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
             return "off"
         end
         beat.pos = beat.pos + 100 * dt / sweep

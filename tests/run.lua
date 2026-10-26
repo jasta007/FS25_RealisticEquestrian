@@ -374,13 +374,16 @@ do
         for _ = 1, 100 do EqTraining.beatStep(sheet, "gallop", 100, one) end
         sheet.tiredness = 90
         repeat event = EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 20
-        check("switching off the beat does nothing", EqTraining.beatStep(sheet, "canter", 100, one) == "off" and sheet.tiredness == 90)
+        check("switching off the beat wastes it", EqTraining.beatStep(sheet, "canter", 100, one) == "off" and sheet.tiredness == 90
+            and sheet.beat.pos == nil)
         local sprinting = EqTraining.newSheet()
         sprinting.tiredness, sprinting.run = 50, 20
         sprinting.sprint.ready = true
         check("no beats while Sprint is ready", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
         sprinting.sprint.ready, sprinting.sprint.activeMs = false, 5000
         check("no beats while sprinting", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
+        sprinting.sprint.activeMs, sprinting.routine.request = 0, "left"
+        check("no beats during a routine command", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
         local easy = EqTraining.newSheet()
         local hard = EqTraining.newSheet()
         hard.tempo.mult = 5
