@@ -333,6 +333,19 @@ do
         local left = sheet.sprint.activeMs
         check("tapping W adds Sprint time", EqTraining.spurSprint(sheet) and sheet.sprint.activeMs > left
             and not EqTraining.spurSprint(sheet))
+        do
+            local tapped = EqTraining.newSheet()
+            tapped.sprint.ready = true
+            EqTraining.startSprint(tapped)
+            local ms = 0
+            while EqTraining.isSprinting(tapped) and ms < 60000 do
+                EqTraining.sprintStep(tapped, "gallop", 100)
+                ms = ms + 100
+                if ms % 300 == 0 then EqTraining.spurSprint(tapped) end
+            end
+            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > EqTraining.SPRINT_MS + 3000,
+                string.format("%d ms", ms))
+        end
         local before = sheet.focused.speed
         ride("gallop", 3000)
         check("Sprint trains speed hard even when tiring", EqTraining.isSprinting(sheet)
