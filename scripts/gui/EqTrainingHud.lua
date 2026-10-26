@@ -84,6 +84,19 @@ local function text(value, x, y, size, color, align, bold)
 end
 
 
+-- Popups float over the world, which can be as bright as snow: a dark shadow keeps them readable.
+EqTrainingHud.SHADOW = { share = 0.06, alpha = 0.85 }
+
+--- Text with a dark drop shadow (down and right, plus a soft outline the other way).
+local function shadowText(value, x, y, size, color, align, bold)
+    local off = size * EqTrainingHud.SHADOW.share
+    local shade = { 0, 0, 0, (color[4] or 1) * EqTrainingHud.SHADOW.alpha }
+    text(value, x + off, y - off, size, shade, align, bold)
+    text(value, x - off * 0.5, y + off * 0.5, size, { 0, 0, 0, shade[4] * 0.5 }, align, bold)
+    text(value, x, y, size, color, align, bold)
+end
+
+
 local function resetText()
     setTextAlignment(RenderText.ALIGN_LEFT)
     setTextBold(false)
@@ -250,7 +263,7 @@ local function drawSidePop()
     local alpha = age < life - p.fadeMs and 1 or 1 - (age - life + p.fadeMs) / p.fadeMs
     local c = state.color
     local panel = EqTrainingHud.PANEL
-    text(state.text, panel.right, panel.top + panel.padding, panel.titleSize, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_RIGHT, true)
+    shadowText(state.text, panel.right, panel.top + panel.padding, panel.titleSize, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_RIGHT, true)
     resetText()
 end
 
@@ -272,7 +285,7 @@ function EqTrainingHud.drawPops()
     local alpha = age < p.growMs + p.holdMs and 1 or 1 - (age - p.growMs - p.holdMs) / p.fadeMs
     local size = (p.size + p.sizePerMult * (state.big - 1)) * scale
     local c = state.color
-    text(state.text, p.x, p.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    shadowText(state.text, p.x, p.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
     resetText()
 end
 
@@ -284,8 +297,11 @@ end
 function EqTrainingHud.drawPrompt(value, share, color)
     local p = EqTrainingHud.PROMPT
     color = color or EqTrainingHud.COLOR.yellow
-    text(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
+    shadowText(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
     local left = p.x - p.barWidth / 2
+    -- A dark edge round the bar, so it shows against snow too.
+    local edge = p.barHeight * 0.5
+    fill(left - edge, p.y - p.barHeight * 2 - edge, p.barWidth + edge * 2, p.barHeight + edge * 2, { 0, 0, 0, 0.6 })
     fill(left, p.y - p.barHeight * 2, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
     fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, color)
     resetText()
