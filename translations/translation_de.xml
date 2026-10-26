@@ -43,8 +43,8 @@
         <text name="eq_train_combo" text="Sprung-Kombo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
-        <text name="eq_help_speed_2" text="Reiten Sie Schritt oder halten Sie an, um sich vor dem nächsten Sprint zu erholen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken. Energiereicher Mais im Futter ist eine gute Möglichkeit, das Schnelligkeitstraining zu verbessern."/>
-        <text name="eq_help_speed_1" text="Das Schnelligkeitstraining lebt von Sprints. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 % ganz."/>
+        <text name="eq_help_speed_2" text="Reiten Sie Schritt oder halten Sie an, um sich vor dem nächsten Renngalopp zu erholen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken. Energiereicher Mais im Futter ist eine gute Möglichkeit, das Schnelligkeitstraining zu verbessern."/>
+        <text name="eq_help_speed_1" text="Das Schnelligkeitstraining lebt von schnellen Renngaloppen. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 % ganz."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_stamina_2" text="Über 85 % Anstrengung ist Ihr Pferd außer Atem: Es wird langsamer und lernt langsamer, und nach 5 Sekunden bricht Ihr Tempo ab. Mehr als ein paar Sekunden langsamer als Galopp beenden es ebenfalls. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
         <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Halten Sie ununterbrochen Galopp oder Renngalopp, um Ihr Tempo aufzubauen: Alle 20 Sekunden steigt es, bis x5, und der Ausdauergewinn wächst bis zum 2,5-Fachen. Renngalopp ermüdet Ihr Pferd schnell."/>
@@ -61,20 +61,21 @@
         <text name="eq_train_tired_warm" text="Warm geritten"/>
         <text name="eq_train_tired_zone" text="Im Zielbereich"/>
         <text name="eq_train_tired_blown" text="Außer Atem"/>
-        <text name="eq_train_sprint_fresh" text="Frisch: jetzt sprinten"/>
+        <text name="eq_train_sprint_fresh" text="Frisch: jetzt Renngalopp"/>
         <text name="eq_train_sprint_tiring" text="Ermüdet: bald ausruhen"/>
-        <text name="eq_train_sprint_stale" text="Zu müde zum Sprinten: ausruhen"/>
+        <text name="eq_train_sprint_stale" text="Zu müde für Renngalopp: ausruhen"/>
         <text name="eq_train_sprint_on" text="SPRINT! W tippen"/>
+        <text name="eq_train_sprint_limit" text="Am Limit"/>
         <text name="eq_train_sprint_ready" text="Sprint bereit: W drücken"/>
         <text name="eq_train_sprint_warm" text="Aufgewärmt: weiter Renngalopp für Sprint"/>
         <text name="eq_train_sprint_rest" text="Unter 10 % erholen, um wieder aufzuwärmen"/>
-        <text name="eq_train_sprint_count" text="Aufwärmsprints %d/%d"/>
-        <text name="eq_pop_sprintCount" text="Aufwärmen %d/%d"/>
+        <text name="eq_train_sprint_count" text="Aufwärmgaloppe %d/%d"/>
+        <text name="eq_pop_sprintCount" text="Aufwärmgalopp %d/%d"/>
         <text name="eq_pop_sprint_warm" text="Aufgewärmt!"/>
         <text name="eq_pop_sprint_ready" text="Sprint! (W)"/>
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint vorbei"/>
-        <text name="eq_help_speed_3" text="Zwei gute Sprints wärmen Ihr Pferd auf. Bleiben Sie im Renngalopp und drücken Sie W, wenn Sprint! erscheint: Ihr Pferd läuft 25 % schneller, ignoriert die Anstrengung und trainiert Schnelligkeit dreimal so schnell. Tippen Sie weiter W, um es anzutreiben, dann dauert der Sprint länger, auch wenn jeder Tipp mit der Zeit weniger bringt und kein Pferd länger als etwa 14 Sekunden sprintet. Fallen Sie aus dem Renngalopp, endet er. Danach unter 10 % Anstrengung erholen, bevor Sie wieder aufwärmen."/>
+        <text name="eq_help_speed_3" text="Zwei gute Aufwärmgaloppe wärmen Ihr Pferd auf. Bleiben Sie im Renngalopp und drücken Sie W, wenn Sprint! erscheint: Ihr Pferd läuft 25 % schneller und trainiert Schnelligkeit dreimal so schnell, am Limit knapp vor der Atemnot gehalten. Tippen Sie weiter W, um es anzutreiben, dann dauert der Sprint länger, auch wenn jeder Tipp mit der Zeit weniger bringt, ein langsameres Pferd früher erschöpft ist und kein Pferd länger als etwa 14 Sekunden sprintet. Fallen Sie aus dem Renngalopp, endet er. Danach unter 10 % Anstrengung erholen, bevor Sie wieder aufwärmen."/>
         <text name="eq_help_stamina_3" text="Reiten Sie im Takt, um frisch zu bleiben (Ausdauer- und Freistil-Ansicht). Wenn in der Bildschirmmitte Bereit machen zum Galopp... steht, warten Sie und wechseln Sie genau dann, wenn Galopp! (S) oder Renngalopp! (W) erscheint. Im Takt kommt Ihr Pferd zu Atem (die Anstrengung sinkt) und Ihr Tempo springt voran. Zu früh, und der Takt ist vertan. Je höher Ihr Tempo, desto knapper das Timing. Der Takt pausiert während eines Sprints oder eines Routine-Befehls."/>
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Außer Atem! %d s"/>

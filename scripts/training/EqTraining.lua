@@ -191,6 +191,11 @@ EqTraining.SPRINT_EXERTION_SHARE = 1.5
 EqTraining.SPRINT_TRAIN_SHARE = 3
 EqTraining.SPRINT_DROP_MS = 1000
 EqTraining.SPRINT_REST_BELOW = 10
+-- Sprint holds the horse on the limit: exertion stops SPRINT_EXERTION_GAP short of blowing hard.
+EqTraining.SPRINT_EXERTION_GAP = 1
+-- A slower horse's Sprint runs out faster: at speed 0 the clock runs SPRINT_SLOW_DRAIN times
+-- as fast, easing to normal at speed 100.
+EqTraining.SPRINT_SLOW_DRAIN = 1.6
 
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
@@ -421,6 +426,9 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     local sprinting = EqTraining.isSprinting(sheet) and gait == "gallop"
     if sprinting then rate = rate * EqTraining.SPRINT_EXERTION_SHARE end
     sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)
+    if sprinting then
+        sheet.tiredness = math.min(sheet.tiredness, EqTraining.ZONE_HIGH - EqTraining.SPRINT_EXERTION_GAP)
+    end
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
 
     sheet.tempoEvent = EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt)
@@ -476,11 +484,13 @@ end
 --- @param sheet table
 --- @param gait string the pace gait
 --- @param dt number milliseconds
---- @return string|nil event "counted" (a warm-up sprint), "warm", "ready", "over"
-function EqTraining.sprintStep(sheet, gait, dt)
+--- @param speed number|nil the horse's trained speed: a slower horse's Sprint runs out faster
+--- @return string|nil event "counted" (a warm-up gallop), "warm", "ready", "over"
+function EqTraining.sprintStep(sheet, gait, dt, speed)
     local sprint = sheet.sprint
     if sprint.activeMs > 0 then
-        sprint.activeMs = math.max(0, sprint.activeMs - dt)
+        local drain = 1 + (EqTraining.SPRINT_SLOW_DRAIN - 1) * (1 - EqStats.clamp((speed or 100) / 100, 0, 1))
+        sprint.activeMs = math.max(0, sprint.activeMs - dt * drain)
         sprint.elapsedMs = (sprint.elapsedMs or 0) + dt
         if sprint.elapsedMs >= EqTraining.SPRINT_LIMIT_MS then sprint.activeMs = 0 end
         sprint.dropMs = gait == "gallop" and 0 or sprint.dropMs + dt
