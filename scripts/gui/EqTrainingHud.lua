@@ -113,9 +113,20 @@ function EqTrainingHud.drawPanel(title, rows)
             local barY = lineY - p.padding * 0.5 - p.barHeight
             fill(left, barY, right - left, p.barHeight, EqTrainingHud.COLOR.track)
             fill(left, barY, (right - left) * math.min(math.max(row.bar, 0), 1), p.barHeight, row.color or EqTrainingHud.COLOR.white)
-            -- Marks: thin white ticks across the bar, such as the edges of the stamina zone.
+            -- A highlighted window (the beat's hit window), then marks: ticks across the bar, a
+            -- share or { share, color, width multiple }, such as the edges of the stamina zone.
+            if row.window ~= nil then
+                local from = math.max(row.window[1], 0)
+                local to = math.min(row.window[2], 1)
+                fill(left + (right - left) * from, barY, (right - left) * (to - from), p.barHeight, { 1, 0.82, 0.25, 0.35 })
+            end
             for _, mark in ipairs(row.marks or {}) do
-                fill(left + (right - left) * mark - p.markWidth / 2, barY - p.barHeight * 0.5, p.markWidth, p.barHeight * 2, EqTrainingHud.COLOR.white)
+                local share, color, width = mark, EqTrainingHud.COLOR.white, 1
+                if type(mark) == "table" then share, color, width = mark[1], mark[2], mark[3] or 1 end
+                if share >= 0 and share <= 1 then
+                    fill(left + (right - left) * share - p.markWidth * width / 2, barY - p.barHeight * 0.5,
+                        p.markWidth * width, p.barHeight * 2, color)
+                end
             end
             lineY = lineY - p.barHeight - p.padding
         else
@@ -147,7 +158,7 @@ EqTrainingHud.sideState = nil
 EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
-    tempo = "stamina", tempoLost = "stamina",
+    tempo = "stamina", tempoLost = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament",
     sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
 }
@@ -173,6 +184,11 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
+    elseif kind == "beat_perfect" or kind == "beat_hit" then
+        text = g_i18n:getText("eq_pop_" .. kind)
+        color, big = kind == "beat_perfect" and EqTrainingHud.COLOR.green or EqTrainingHud.COLOR.yellow, kind == "beat_perfect" and 3 or 2
+    elseif kind == "beat_off" then
+        text, color, big = g_i18n:getText("eq_pop_beat_off"), EqTrainingHud.COLOR.grey, 1
     elseif kind == "tempo" then
         text, color, big = string.format(g_i18n:getText("eq_pop_tempo"), mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "tempoLost" then

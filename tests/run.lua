@@ -348,6 +348,23 @@ do
         check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
     end
     do
+        -- Beats: switch canter and gallop as the marker passes for a breather.
+        local sheet = EqTraining.newSheet()
+        local one = function() return 1 end
+        sheet.tiredness, sheet.run = 50, 20
+        check("a beat starts during a run", EqTraining.beatStep(sheet, "canter", 100, one) == "start")
+        local event
+        for _ = 1, 30 do
+            event = EqTraining.beatStep(sheet, "canter", 100, one)
+            if sheet.beat.pos ~= nil and sheet.beat.pos >= 49 then break end
+        end
+        event = EqTraining.beatStep(sheet, "gallop", 100, one)
+        check("switching gait on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness <= 44,
+            tostring(event) .. " " .. sheet.tiredness)
+        for _ = 1, 100 do EqTraining.beatStep(sheet, "gallop", 100, one) end
+        sheet.tiredness = 90
+        repeat event = EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 20
+        check("switching off the beat does nothing", EqTraining.beatStep(sheet, "canter", 100, one) == "off" and sheet.tiredness == 90)
         -- Tempo streak: unbroken canter or gallop climbs; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()
         local events = {}
