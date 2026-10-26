@@ -189,6 +189,8 @@ local function popKnock(result)
 end
 
 
+local judgeJump
+
 --- Follow a jump through the air and judge it once the horse has landed and settled.
 --- @param vehicle table
 --- @param spec table spec_rideable
@@ -219,12 +221,26 @@ local function trackJump(vehicle, spec, sheet, worn)
         jump.landedAt = now
     end
 
-    -- Settling: standing on the obstacle or stopping dead after landing spoils the jump.
-    if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then jump.onTop = true end
+    -- Settling: standing on the obstacle or stopping dead after landing spoils the jump. Only
+    -- on the ground: in the air again, the horse is over the next obstacle, not on this one.
+    if spec.isOnGround ~= false and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then jump.onTop = true end
     local speed = math.abs(spec.currentSpeed or 0)
     if jump.speed > 0 and speed < jump.speed * EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE then jump.knocked = true end
     if now - jump.landedAt < EqTrainingHooks.JUMP_SETTLE_MS then return end
 
+    judgeJump(spec, sheet, worn, jump, speed, now)
+end
+
+
+--- Score a landed jump: cleared, cleared with a knock, landed on top, or nothing under it.
+--- @param spec table
+--- @param sheet table
+--- @param worn boolean
+--- @param jump table spec.eqJump
+--- @param speed number current speed, m/s
+--- @param now number g_time
+judgeJump = function(spec, sheet, worn, jump, speed, now)
+    local age = now - jump.startedAt
     spec.eqJump = nil
     local high = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT
     local cleared = high and not jump.onTop and not jump.crashed and not jump.knocked
@@ -326,17 +342,31 @@ EqTrainingHooks.ACCELERATION_SHARE = 1.6
 -- for 2.1 m) and lets it fall at 9.81 m/s2: 1.3 s in the air, 16 m long at 12 m/s, so a jump
 -- floats. We pull a horse in the air down GRAVITY_SHARE times as hard, and raise jumpHeight by
 -- the same share so it still reaches the same height: the jump takes 1/sqrt(GRAVITY_SHARE) as long.
+-- James found 2 great but asked for a touch more float: 1.65 is 10% longer in the air.
 EqTrainingHooks.GRAVITY = 9.81
-EqTrainingHooks.GRAVITY_SHARE = 2
+EqTrainingHooks.GRAVITY_SHARE = 1.65
 -- A real horse picks where to land: in the air it turns this many times as fast as on the ground.
 EqTrainingHooks.AIR_TURN_SHARE = 1.6
+
+-- A horse blowing hard (exertion over EqTraining.ZONE_HIGH) runs BLOWN_SPEED_SHARE as fast,
+-- easing in over BLOWN_EASE_POINTS of exertion.
+EqTrainingHooks.BLOWN_SPEED_SHARE = 0.75
+EqTrainingHooks.BLOWN_EASE_POINTS = 5
+
+--- @param tiredness number|nil exertion meter
+--- @return number share of top speed
+function EqTrainingHooks.blownSpeedShare(tiredness)
+    local over = EqStats.clamp(((tiredness or 0) - EqTraining.ZONE_HIGH) / EqTrainingHooks.BLOWN_EASE_POINTS, 0, 1)
+    return 1 - (1 - EqTrainingHooks.BLOWN_SPEED_SHARE) * over
+end
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
 --- @param spec table spec_rideable
 --- @param gait string
 --- @param record table|nil the ridden horse's EqHorseRecord
-local function tuneRiding(spec, gait, record)
+--- @param tiredness number exertion meter, 0-100
+local function tuneRiding(spec, gait, record, tiredness)
     local trained = record ~= nil and record.trained or {}
     local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
     if type(spec.jumpHeight) == "number" then
@@ -360,9 +390,10 @@ local function tuneRiding(spec, gait, record)
             spec.eqBaseTopSpeeds, spec.topSpeeds = spec.topSpeeds, {}
             for key, value in pairs(spec.eqBaseTopSpeeds) do spec.topSpeeds[key] = value end
         end
-        -- Forward gaits only: backing up stays at the base game's pace.
+        -- Forward gaits only: backing up stays at the base game's pace. A blowing horse slows.
+        local blown = EqTrainingHooks.blownSpeedShare(tiredness)
         for key, value in pairs(spec.eqBaseTopSpeeds) do
-            if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed or value end
+            if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed * blown or value end
         end
     end
     local shown = string.format("%s/%s/%s", tostring(trained.speed), tostring(trained.agility), tostring(trained.temperament))
@@ -387,8 +418,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local id = getRiddenId(spec)
     if id == nil then return end
     local record = EqRegistry.getById(id)
+    local sheet = EqTrainingHooks.getSheet(id)
     -- Not while airborne, so the lift a jump started with stays put.
-    if spec.eqJump == nil then tuneRiding(spec, gait, record) end
+    if spec.eqJump == nil then tuneRiding(spec, gait, record, sheet.tiredness) end
     -- In the air: an extra pull down (see GRAVITY_SHARE) and snappier turning (AIR_TURN_SHARE).
     local airborne = spec.isOnGround == false
     if airborne and type(spec.currentSpeedY) == "number" then
@@ -400,7 +432,6 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     end
     spec.eqAirborne = airborne
 
-    local sheet = EqTrainingHooks.getSheet(id)
     local now = g_time or 0
     if sheet.clock ~= nil and now - sheet.clock > 1000 then EqTraining.rest(sheet, now - sheet.clock) end
     sheet.clock = now
@@ -492,6 +523,12 @@ function EqTrainingHooks.onJump(vehicle)
     if id == nil then return end
 
     local sheet = EqTrainingHooks.getSheet(id)
+    -- Jumping again before the last jump has settled: judge that one now, so a quick double
+    -- counts both.
+    local last = spec.eqJump
+    if last ~= nil and last.landedAt ~= nil then
+        judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0)
+    end
     EqTraining.addJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
