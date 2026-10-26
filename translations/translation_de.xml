@@ -85,6 +85,10 @@
         <text name="eq_pop_beat_perfect" text="Perfekt!"/>
         <text name="eq_pop_beat_hit" text="Gut!"/>
         <text name="eq_pop_beat_off" text="Nicht im Takt"/>
+        <text name="eq_beat_gallop" text="Jetzt Renngalopp! (W)"/>
+        <text name="eq_beat_canter" text="Jetzt Galopp! (S)"/>
+        <text name="eq_beat_ready_gallop" text="Bereit zum Renngalopp (W)..."/>
+        <text name="eq_beat_ready_canter" text="Bereit zum Galopp (S)..."/>
         <text name="eq_train_run" text="Lauf: %d s"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
