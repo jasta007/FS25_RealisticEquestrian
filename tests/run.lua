@@ -170,7 +170,10 @@ end
 check("elite x elite averages below the parents", total / 2000 < 1.5, string.format("mean %.3f", total / 2000))
 
 -- Age curve.
-check("foals do groundwork only", EqStats.ageTrainingFactor(12) == 0.3)
+check("young horses train at full speed", EqStats.ageTrainingFactor(12) == 1.0 and EqStats.ageTrainingFactor(30) == 1.0)
+check("a stat at 0 trains three times as fast", EqTraining.lowSkillFactor(0) == EqTraining.LOW_SKILL_MAX)
+check("a stat at 20 trains twice as fast", math.abs(EqTraining.lowSkillFactor(20) - 2) < 1e-9)
+check("from 40 a stat trains at the normal rate", EqTraining.lowSkillFactor(40) == 1 and EqTraining.lowSkillFactor(70) == 1)
 check("prime age trains fully", EqStats.ageTrainingFactor(100) == 1.0)
 do
     -- Starting stats: a bell curve, low for the young, around START_MEAN for adults.
@@ -340,6 +343,37 @@ do
         r.clock = r.nextAt
         EqTraining.routineStep(sheet, "halt", nil, 0, false, function() return 1 end)
         check("a high routine multiplier gives less time to react", r.request ~= nil and r.deadline - r.clock < EqTraining.ROUTINE_REACT_MS)
+    end
+    do
+        -- The routine goes past the jump combo's x5, and from x4 the pace must be held.
+        local one = function() return 1 end
+        local sheet = EqTraining.newSheet()
+        local r = sheet.routine
+        r.active, r.mult, r.current, r.clock, r.request, r.deadline = true, EqTraining.ROUTINE_MAX - 1, "walk", 0, "trot", 10000
+        EqTraining.routineStep(sheet, "trot", nil, 100, false, one)
+        check("the routine climbs to x8", EqTraining.ROUTINE_MAX == 8 and r.mult == 8)
+        r.request, r.deadline, r.nextAt = "halt", r.clock + 3000, r.clock + 100000
+        r.current = "trot"
+        for _ = 1, 10 do EqTraining.routineStep(sheet, "walk", nil, 100, false, one) end
+        check("passing through a walk on the way to a stop is fine", r.active)
+        EqTraining.routineStep(sheet, "halt", nil, 100, false, one)
+        local event
+        for _ = 1, 10 do event = EqTraining.routineStep(sheet, "walk", nil, 100, false, one) or event end
+        check("at a high multiplier, walking off unasked breaks the routine", not r.active and event == "lost")
+
+        local low = EqTraining.newSheet()
+        local lr = low.routine
+        lr.active, lr.mult, lr.current, lr.clock, lr.nextAt = true, 2, "walk", 0, 100000
+        for _ = 1, 20 do EqTraining.routineStep(low, "trot", nil, 100, false, one) end
+        check("at a low multiplier the pace may drift", lr.active)
+
+        local turn = EqTraining.newSheet()
+        local tr = turn.routine
+        tr.active, tr.mult, tr.current, tr.clock, tr.nextAt = true, 5, "walk", 0, 100000
+        tr.request, tr.deadline = "left", 3000
+        for _ = 1, 5 do EqTraining.routineStep(turn, "trot", "left", 100, false, one) end
+        for _ = 1, 10 do EqTraining.routineStep(turn, "trot", nil, 100, false, one) end
+        check("a turn takes any pace, and the pace it ends at is the one to hold", tr.active and tr.current == "trot" and tr.mult == 6)
     end
     do
         -- Sprint: two warm-up sprints, then a ready Sprint started with W.
@@ -973,7 +1007,7 @@ do
     local schooled = { stamina = 56, speed = 56, agility = 56, temperament = 56 }
     local _, greenBand = EqTraining.boostBenefit(green, ceilings, weights, 24)
     local _, schooledBand = EqTraining.boostBenefit(schooled, ceilings, weights, 30)
-    check("a green two-year-old gets a medium training benefit", greenBand == "medium")
+    check("a green two-year-old gets a high training benefit", greenBand == "high")
     check("a horse at staff level gets none", schooledBand == "none")
     local full = EqTraining.boostBenefit(green, ceilings, weights, 60, 1)
     local novice = EqTraining.boostBenefit(green, ceilings, weights, 60, config.tierByName.novice.trainingBoost)
@@ -1650,7 +1684,8 @@ end
 check("no quick flip: after 3 months you are about where you started", worth[3] < 0.15 * price,
     string.format("price %.0f, up %.0f", price, worth[3]))
 check("after two years it has paid for itself", worth[24] > 0, string.format("%.0f", worth[24]))
-check("but it takes a while to make a lot", worth[12] < 1.0 * price, string.format("%.0f", worth[12]))
+-- Green stats train fast (lowSkillFactor), so a year's work can a little more than double the outlay.
+check("but it takes a while to make a lot", worth[12] < 1.15 * price, string.format("%.0f", worth[12]))
 print(string.format("info: talent-%.0f dealer horse at $%.0f: up $%.0f after 3 months, $%.0f after 12, $%.0f after 24, $%.0f after 36",
     EqDealer.talentScore(prospectCeilings), price, worth[3], worth[12], worth[24], worth[36]))
 

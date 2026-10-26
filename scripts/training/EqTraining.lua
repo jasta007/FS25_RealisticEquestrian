@@ -60,7 +60,7 @@ EqTraining.COMBO_KNOCK_GAP_MS = 3000
 
 -- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
 -- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
--- to start it. Each one done raises the multiplier, up to COMBO_MAX; a miss, a canter, a gallop
+-- to start it. Each one done raises the multiplier, up to ROUTINE_MAX; a miss, a canter, a gallop
 -- or a jump ends the routine. Temperament builds at TEMPERAMENT_RATE per second for each step
 -- of multiplier above x1. Gaits and turns are judged apart: a rider must steer round things
 -- whatever the routine asks, so a gait request ignores steering and a turn request (holding
@@ -75,9 +75,18 @@ EqTraining.ROUTINE_SHOW_MS = 1500
 EqTraining.ROUTINE_HALT_GAP_MS = { 2500, 4000 }
 -- The routine gets more stressful as its multiplier climbs: for each step above x1, gaps
 -- between requests shrink by ROUTINE_GAP_PRESSURE and the time to react by ROUTINE_REACT_PRESSURE
--- (at x5: gaps 70%, 2.4 s to react).
-EqTraining.ROUTINE_GAP_PRESSURE = 0.075
-EqTraining.ROUTINE_REACT_PRESSURE = 0.05
+-- (at x5: gaps 72%, 2.2 s to react; at x8: gaps 51%, 1.5 s).
+-- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
+EqTraining.ROUTINE_MAX = 8
+EqTraining.ROUTINE_GAP_PRESSURE = 0.07
+EqTraining.ROUTINE_REACT_PRESSURE = 0.07
+-- From ROUTINE_STEADY_FROM the horse must also hold its pace between requests: changing gait
+-- unasked for ROUTINE_DRIFT_MS breaks the routine. On the way to a requested gait the ones in
+-- between (a trot passes through a walk to stop) are fine, and so is any gait during a turn.
+EqTraining.ROUTINE_STEADY_FROM = 4
+EqTraining.ROUTINE_DRIFT_MS = 600
+-- The routine's gaits, slowest first: a change between two passes through those in between.
+EqTraining.ROUTINE_PACE = { reverse = 1, halt = 2, walk = 3, trot = 4 }
 EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
 
@@ -814,8 +823,23 @@ function EqTraining.breakRoutine(sheet)
     local was = routine.active
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
     routine.shown = nil
-    routine.steerMs = 0
+    routine.steerMs, routine.driftMs = 0, 0
     return was
+end
+
+
+--- Whether a gait is one the routine allows right now, at a multiplier that asks for a steady pace.
+--- @param routine table
+--- @param move string
+--- @return boolean
+local function steadyPace(routine, move)
+    local request = routine.request
+    if request == "left" or request == "right" then return true end
+    local pace, from = EqTraining.ROUTINE_PACE[move], EqTraining.ROUTINE_PACE[routine.current]
+    if pace == nil or from == nil then return true end
+    local to = from
+    if request ~= nil and EqTraining.ROUTINE_PACE[request] ~= nil then to = EqTraining.ROUTINE_PACE[request] end
+    return pace >= math.min(from, to) and pace <= math.max(from, to)
 end
 
 
@@ -832,7 +856,7 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
     routine.clock = routine.clock + dt
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
-    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.COMBO_MAX - 1) or 0
+    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
     if move == "fast" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
@@ -851,8 +875,9 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         local done = move == routine.request
         if turned then done = steer == routine.request and routine.steerMs >= EqTraining.ROUTINE_STEER_MS end
         if done then
-            routine.mult = math.min(routine.mult + 1, EqTraining.COMBO_MAX)
+            routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
             if not turned then routine.current = move end
+            routine.driftMs = 0
             routine.request = nil
             local range = turned and EqTraining.ROUTINE_TURN_GAP_MS or move == "halt" and EqTraining.ROUTINE_HALT_GAP_MS
                 or EqTraining.ROUTINE_GAP_MS
@@ -873,6 +898,20 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         -- A turn counts once its key has been held this long after the request shows.
         routine.steerMs = 0
         event = "request"
+    end
+
+    if routine.active and (routine.request == "left" or routine.request == "right") and EqTraining.ROUTINE_PACE[move] ~= nil then
+        -- Any pace will do for a turn, and the one it ends at is the pace to hold.
+        routine.current = move
+    end
+    if routine.active and routine.mult >= EqTraining.ROUTINE_STEADY_FROM and not steadyPace(routine, move) then
+        routine.driftMs = (routine.driftMs or 0) + dt
+        if routine.driftMs >= EqTraining.ROUTINE_DRIFT_MS then
+            EqTraining.breakRoutine(sheet)
+            return "lost"
+        end
+    else
+        routine.driftMs = 0
     end
 
     if not worn and routine.mult > 1 then
@@ -1068,8 +1107,21 @@ end
 --- @return number gain
 function EqTraining.gain(level, cap, monthly, effort, ageFactor, timeAdjustment)
     if effort <= 0 or level >= cap then return 0 end
-    local share = math.min(1, monthly / 100 * effort * ageFactor * timeAdjustment)
+    local share = math.min(1, monthly / 100 * effort * ageFactor * timeAdjustment * EqTraining.lowSkillFactor(level))
     return (cap - level) * share
+end
+
+
+-- A green horse learns the basics fast (James, 2026-10-26): below LOW_SKILL_UNTIL a stat trains
+-- faster, up to LOW_SKILL_MAX times at 0, easing back to normal at LOW_SKILL_UNTIL.
+EqTraining.LOW_SKILL_MAX = 3
+EqTraining.LOW_SKILL_UNTIL = 40
+
+--- @param level number trained stat
+--- @return number factor 1..LOW_SKILL_MAX
+function EqTraining.lowSkillFactor(level)
+    local low = EqStats.clamp((EqTraining.LOW_SKILL_UNTIL - (level or 0)) / EqTraining.LOW_SKILL_UNTIL, 0, 1)
+    return 1 + (EqTraining.LOW_SKILL_MAX - 1) * low
 end
 
 

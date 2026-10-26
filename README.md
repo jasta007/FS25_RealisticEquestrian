@@ -54,7 +54,7 @@ uses its genetics, health and fitness.
   - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
   - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo.
+  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
 - An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
