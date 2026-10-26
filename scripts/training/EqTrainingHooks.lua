@@ -776,7 +776,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local effort = EqTraining.playerEffort(sheet)
     local rows = {}
     EqTrainingHud.view = view
-    if view == "freestyle" or view == "stamina" or view == "speed" then
+    -- Exertion only matters to stamina and speed: Freestyle shows it in those modes only.
+    local exertionShown = view == "stamina" or view == "speed"
+        or (view == "freestyle" and (sheet.mode == "stamina" or sheet.mode == "speed"))
+    if exertionShown then
         local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
             or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
         local bandColor = BAND_COLOR[band]
