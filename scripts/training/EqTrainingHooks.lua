@@ -755,6 +755,28 @@ local function statRow(stat, effort, sheet)
 end
 
 
+--- The top of the riding panel: the horse's role, if it has one, and its skills, so the rider
+--- remembers what this horse is being trained for.
+--- @param cluster table|nil RLRM Animal being ridden
+--- @return table rows
+function EqTrainingHooks.horseRows(cluster)
+    local rows = {}
+    local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
+    if record == nil then return rows end
+    if EqRole.has(record) then
+        table.insert(rows, { left = g_i18n:getText("eq_role_title"), leftColor = COLOR.grey,
+            right = EqRole.text(EqRole.get(record)), rightColor = EqRole.COLOR })
+    end
+    local segments = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        table.insert(segments, { string.format("%s %d", g_i18n:getText("eq_stat_short_" .. stat),
+            math.floor(record.trained[stat] or 0)), STAT_COLOR[stat] })
+    end
+    table.insert(rows, { segments = segments })
+    return rows
+end
+
+
 --- Appended to Rideable:onDraw: the training panel, from the server's sheet, and the help popups.
 function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
@@ -774,7 +796,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if sheet == nil then return end
 
     local effort = EqTraining.playerEffort(sheet)
-    local rows = {}
+    local rows = EqTrainingHooks.horseRows(spec.cluster)
     EqTrainingHud.view = view
     -- Exertion only matters to stamina and speed. Freestyle always shows it (so the panel
     -- doesn't jump about), but only stamina mode turns it red when the horse is blowing hard.
@@ -977,6 +999,8 @@ function EqTrainingHooks.onHorseDay(animal)
         facilityRidden = ridden,
         feedBoost = EqFeedHooks.getBoost(animal),
         rate = EqSettings.trainingRate(EqCompetitionManager.settings),
+        staffLuck = EqRandom.new(string.format("staff %s %d", record.id, g_currentMission.environment.currentMonotonicDay or 0))
+            :uniform(EqTraining.STAFF_LUCK.low, EqTraining.STAFF_LUCK.high),
     }
     local deltas, detail = EqTraining.applyDay(record, record:getCeilings(), day)
 

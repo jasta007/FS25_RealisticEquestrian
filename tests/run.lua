@@ -28,6 +28,7 @@ EqLog = { debug = function() end, info = function() end, warning = function() en
 dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
+dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
@@ -2451,6 +2452,48 @@ end)()
     local author = file ~= nil and file:read("*a"):match("<author>(.-)</author>") or ""
     if file ~= nil then file:close() end
     check("modDesc names the maker", string.find(author, EqRandom.mark(), 1, true) ~= nil)
+end)()
+
+-- Horse roles: cycling, staff profiles and the Info tab's role groups
+;(function()
+    g_i18n = g_i18n or { getText = function(_, key) return key end }
+    check("new horse has no role", EqRole.get(EqHorseRecord.new("X 1 1")) == EqRole.NONE
+        and not EqRole.has(EqHorseRecord.new("X 1 1")))
+    check("unknown focus reads as no role", EqRole.get({ focus = "bogus" }) == EqRole.NONE)
+    local role, seen = EqRole.NONE, 0
+    repeat role, seen = EqRole.next(role), seen + 1 until role == EqRole.NONE or seen > 20
+    check("Role button cycles every role and back to none", seen == #EqRole.ORDER)
+    for _, name in ipairs(EqRole.ORDER) do
+        check("staff train to role " .. name, EqTraining.FOCUS[name] ~= nil)
+    end
+    local good = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.high)
+    local bad = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.low)
+    check("staff luck changes a role's own stats", good.temperament > bad.temperament and good.agility > bad.agility)
+    check("staff luck leaves the role's other stats", good.stamina == bad.stamina)
+    check("no role: staff work is steady", EqTraining.staffEffort(100, 0, "balanced", false, 1.5).speed
+        == EqTraining.staffEffort(100, 0, "balanced", false, 0.5).speed)
+
+    local function item(name, focus) return { cluster = { name = name, focus = focus } } end
+    local roleOf = function(cluster) return cluster.focus and EqRole.get({ focus = cluster.focus }) or nil end
+    local a, b, c, d = item("a", "balanced"), item("b", "racing"), item("c", "dressage"), item("d", "racing")
+    local items = { a, b, c, d }
+    local order, byKey, titles = { "subtype_1" }, { subtype_1 = items }, { subtype_1 = "Brown horse" }
+    local o, k, t = EqRole.groupSections(items, order, byKey, titles, roleOf)
+    check("roles group in role order, no role last", #o == 3 and o[1] == "eqRole_dressage" and o[2] == "eqRole_racing"
+        and o[3] == "eqRole_balanced", table.concat(o, ","))
+    check("a group keeps RLRM's order", k.eqRole_racing[1] == b and k.eqRole_racing[2] == d)
+    check("a group is titled by its role", t.eqRole_dressage == "eq_role_dressage")
+    local plain = { item("a", "balanced"), item("b", "balanced") }
+    local o2 = EqRole.groupSections(plain, order, byKey, titles, roleOf)
+    check("no roles: RLRM's groups kept", o2 == order)
+    local cow = { cluster = { name = "cow" } }
+    local o3 = EqRole.groupSections({ b, cow }, order, byKey, titles, roleOf)
+    check("not all horses: RLRM's groups kept", o3 == order)
+    local sickOrder = { "__diseased__", "subtype_1" }
+    local sickBy = { __diseased__ = { c }, subtype_1 = { a, b, d } }
+    local o4, k4 = EqRole.groupSections(items, sickOrder, sickBy, { __diseased__ = "Diseased" }, roleOf)
+    check("diseased horses stay first", o4[1] == "__diseased__" and k4.__diseased__[1] == c and k4.eqRole_dressage == nil
+        and o4[2] == "eqRole_racing", table.concat(o4, ","))
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
