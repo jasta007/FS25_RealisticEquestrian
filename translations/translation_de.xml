@@ -378,7 +378,6 @@
         <text name="eq_and" text="und"/>
         <text name="eq_facility_improves" text="Verbessert das Training von %s (Realistic Equestrian)"/>
         <text name="eq_facility_inside" text="Training in: %s"/>
-        <text name="eq_facility_stable" text="Pferdestall"/>
         <text name="eq_facility_indoorArena" text="Reithalle"/>
         <text name="eq_facility_ridingCentre" text="Reitzentrum"/>
         <text name="eq_facility_outdoorArena" text="Außenreitplatz"/>

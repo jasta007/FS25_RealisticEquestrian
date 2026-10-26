@@ -1686,7 +1686,9 @@ check("Riding Hall 2k26 letters are not jumps",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingHall/objekt.xml", false) == nil)
 check("Riding Stable is a riding centre",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RidingStable/XML/horseBarnBig.xml", true) == "ridingCentre")
-check("Horse Stable is a stable", EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == "stable")
+check("plain stables give no bonus",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_horseStable/horseStable.xml", true) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_horsePack/xml/horseStable.xml", true) == nil)
 check("keywords catch an unknown riding hall",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_SomeRidingHall/ridingHallBig.xml", false) == "indoorArena")
 check("keywords skip husbandries",
@@ -1721,7 +1723,7 @@ check("an owned hall speeds staff up", math.abs(hallOwned.agility - 0.10) < 1e-9
 check("riding half the day in it adds half its ridden share", math.abs(hallRidden.agility - 0.175) < 1e-9)
 local threeJumps = EqFacility.boosts(facilities, { jumps = 3 }, nil)
 check("half a jump course gives half the bonus", math.abs(threeJumps.agility - 0.05) < 1e-9)
-local everything = EqFacility.boosts(facilities, { stable = 2, indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
+local everything = EqFacility.boosts(facilities, { indoorArena = 2, ridingCentre = 1, outdoorArena = 1, roundPen = 1, jumps = 20 },
     { indoorArena = 1, ridingCentre = 1, jumps = 1 })
 check("owned shares are capped", everything.agility <= facilities.ownedCap + 1e-9 and everything.temperament <= facilities.ownedCap + 1e-9)
 local _, everythingRidden = EqFacility.boosts(facilities, { indoorArena = 1, ridingCentre = 1, jumps = 6 }, { indoorArena = 1, ridingCentre = 1, jumps = 1 })
