@@ -432,7 +432,9 @@ do
         local sprinting = EqTraining.newSheet()
         sprinting.tiredness, sprinting.run, sprinting.mode = 50, 20, "stamina"
         sprinting.sprint.ready = true
-        check("no beats while Sprint is ready", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
+        sprinting.beat.nextAt = 0
+        check("a ready Sprint doesn't stop the beats", EqTraining.beatStep(sprinting, "gallop", 100, one) == "start" and sprinting.beat.pos ~= nil)
+        sprinting.beat.pos = nil
         sprinting.sprint.ready, sprinting.sprint.activeMs = false, 5000
         check("no beats while sprinting", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
         sprinting.sprint.activeMs, sprinting.routine.request = 0, "left"
@@ -473,6 +475,17 @@ do
             m.sprint.count, m.mode, m.combo.lock = 1, "speed", 0
             EqTraining.clearJump(m, false)
             check("a jump during warm-ups stays in speed mode", m.mode == "speed")
+            -- A warmed-up horse can still start a stamina run; the gallops done are kept.
+            m.combo.count = 0
+            m.sprint.count, m.sprint.warm = EqTraining.SPRINTS_TO_WARM, true
+            check("a warmed-up horse cantering steadily starts stamina mode", canter(8000) == "stamina"
+                and m.sprint.warm and m.sprint.count == EqTraining.SPRINTS_TO_WARM)
+            m.sprint.ready = true
+            check("Sprint out of a stamina run ends the tempo", EqTraining.startSprint(m) and m.mode == "speed"
+                and m.tempo.ms == 0 and m.beat.pos == nil)
+            m.sprint.activeMs = 0
+            m.sprint.ready = true
+            check("no stamina mode while Sprint is ready", canter(10000) == nil and m.mode ~= "stamina")
         end
         -- Tempo: only beats raise it; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()

@@ -350,7 +350,7 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
     beat.clock = beat.clock + dt
     local fast = gait == "canter" or gait == "gallop"
     -- Sprint owns W and a routine command owns the middle of the screen: no new beats meanwhile.
-    local busy = sheet.mode ~= "stamina" or sheet.sprint.ready or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
+    local busy = sheet.mode ~= "stamina" or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
     local window, _, sweep = EqTraining.beatPressure(sheet)
     if beat.pos ~= nil then
         if busy then
@@ -556,15 +556,17 @@ function EqTraining.modeStep(sheet, gait, dt)
     if mode == "agility" and sheet.combo.count == 0 then mode = nil end
     if mode == "speed" and sheet.sprint.count == 0 and not speedBusy(sheet) then mode = nil end
     sheet.mode = mode
-    -- A steady canter starts stamina mode, unless agility or a warmed-up horse has the floor.
-    if mode == "stamina" or mode == "agility" or (mode == "speed" and speedBusy(sheet)) or gait ~= "canter" then
+    -- A steady canter starts stamina mode, unless agility or a ready or running Sprint has the
+    -- floor. Warm-up gallops already done are kept for later.
+    local sprint = sheet.sprint
+    if mode == "stamina" or mode == "agility" or sprint.ready or sprint.activeMs > 0 or gait ~= "canter" then
         sheet.entryMs = 0
         return nil
     end
     sheet.entryMs = sheet.entryMs + dt
     if sheet.entryMs < EqTraining.STAMINA_ENTRY_MS then return nil end
     sheet.mode, sheet.entryMs = "stamina", 0
-    sheet.sprint.count, sheet.sprint.holdMs, sheet.sprint.counted = 0, 0, false
+    sprint.holdMs, sprint.counted = 0, false
     sheet.tempo = EqTraining.newTempo()
     -- The streak starts now (tempo.ms > 0 is what keeps stamina mode on).
     sheet.tempo.ms = 1
@@ -587,6 +589,12 @@ function EqTraining.startSprint(sheet)
     local sprint = sheet.sprint
     if not sprint.ready or sprint.activeMs > 0 then return false end
     sprint.activeMs, sprint.dropMs, sprint.ready, sprint.readyMs = EqTraining.SPRINT_MS, 0, false, 0
+    -- Sprinting out of a stamina run ends the tempo.
+    if sheet.mode == "stamina" then
+        sheet.tempo = EqTraining.newTempo()
+        sheet.beat.pos, sheet.beat.settle, sheet.beat.settleMs = nil, false, 0
+    end
+    sheet.mode = "speed"
     -- The press that started it (seen by both the action and the key poll) is not a tap.
     sprint.elapsedMs, sprint.tapAt = 0, 0
     return true
