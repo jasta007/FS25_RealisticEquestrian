@@ -119,7 +119,7 @@ EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 
 -- Turns for the routine come from the rider's steering key, not the horse's heading (which
--- is unclear when backing up). The base game's steering axis is negative for left.
+-- is unclear when backing up). Steering is taken as negative for left.
 EqTrainingHooks.STEER_MIN = 0.3
 
 local probe = { vehicle = nil, height = nil, name = nil }
@@ -242,12 +242,23 @@ end
 --- @return string|nil steer left or right while the rider holds a steering key
 local function steerInput(spec)
     -- axisSteer is the local rider's key; on a server the remote rider's comes as axisSteerSend.
-    local axis = spec.inputValues.axisSteer or 0
-    if axis == 0 then axis = spec.inputValues.axisSteerSend or 0 end
+    -- The base game may clear both once it has used them, so fall back on the turn rate it set
+    -- from them (currentTurnSpeed, positive turning left; it follows the key, not the heading).
+    local values = spec.inputValues
+    local axis, source = values.axisSteer or 0, "axisSteer"
+    if axis == 0 then axis, source = values.axisSteerSend or 0, "axisSteerSend" end
+    if axis == 0 and type(spec.currentTurnSpeed) == "number" and (spec.maxTurnSpeed or 0) > 0 then
+        axis, source = -spec.currentTurnSpeed / spec.maxTurnSpeed, "currentTurnSpeed"
+    end
     local steer = nil
     if axis <= -EqTrainingHooks.STEER_MIN then steer = "left" elseif axis >= EqTrainingHooks.STEER_MIN then steer = "right" end
     if steer ~= spec.eqSteer and steer ~= nil then
-        Log:info("Steer: %s (axisSteer %s, axisSteerSend %s)", steer, tostring(spec.inputValues.axisSteer), tostring(spec.inputValues.axisSteerSend))
+        Log:info("Steer: %s from %s (axisSteer %s, axisSteerSend %s, currentTurnSpeed %s)", steer, source,
+            tostring(values.axisSteer), tostring(values.axisSteerSend), tostring(spec.currentTurnSpeed))
+    end
+    if not EqTrainingHooks.loggedInputs then
+        EqTrainingHooks.loggedInputs = true
+        for key, value in pairs(values) do Log:info("Rideable input %s = %s", tostring(key), tostring(value)) end
     end
     spec.eqSteer = steer
     return steer
