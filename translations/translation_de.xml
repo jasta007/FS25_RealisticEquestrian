@@ -317,5 +317,9 @@
         <text name="eq_settings_forcedRetirement_tooltip" text="Ob die schwersten Verletzungen bei Veranstaltungen die Turnierkarriere eines Pferdes endgültig beenden können."/>
         <text name="eq_settings_entriesPerMonth" text="Nennungen pro Monat"/>
         <text name="eq_settings_entriesPerMonth_tooltip" text="Wie viele Nennungen jeder Hof pro Monat abgeben kann."/>
+        <text name="eq_settings_entryFeeScale" text="Startgebühren"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Skaliert die Startgebühr aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihre Startgebühr; Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_settings_prizeScale" text="Preisgeld"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Skaliert das Preisgeld aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihr Preisgeld; Änderungen gelten ab der nächsten Runde."/>
     </texts>
 </l10n>

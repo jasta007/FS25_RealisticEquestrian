@@ -359,7 +359,7 @@ end
 
 
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
----     [entriesPerMonth n] [trainingRate x]
+---     [entriesPerMonth n] [trainingRate x] [entryFeeScale x] [prizeScale x]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -377,15 +377,18 @@ function EqConsole:consoleSettings(name, value)
         settings.entriesPerMonth = math.floor(tonumber(value))
     elseif name == "trainingRate" and tonumber(value) ~= nil and tonumber(value) > 0 then
         settings.trainingRate = tonumber(value)
+    elseif (name == "entryFeeScale" or name == "prizeScale") and tonumber(value) ~= nil and tonumber(value) > 0 then
+        settings[name] = tonumber(value)
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [trainingRate <x, 1 = normal>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  trainingRate=%sx  homeRegion=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
-        tostring(EqSettings.trainingRate(settings)), tostring(EqCompetitionManager.homeRegion()))
+        tostring(EqSettings.trainingRate(settings)), tostring(EqSettings.multiplier(settings, "entryFeeScale")),
+        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()))
 end
 
 

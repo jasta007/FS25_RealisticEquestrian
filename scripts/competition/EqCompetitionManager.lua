@@ -59,7 +59,7 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.nextEventId = 1
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
-        trainingRate = 1 }
+        trainingRate = 1, entryFeeScale = 1, prizeScale = 1 }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
 end
 
@@ -84,8 +84,10 @@ function EqCompetitionManager.openRound(kind)
     local config = EqCompetitionManager.config
     if config == nil then return end
 
-    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing,
-        EqCompetitionManager.homeRegion())
+    local settings = EqCompetitionManager.settings
+    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, settings.racing,
+        EqCompetitionManager.homeRegion(), { fee = EqSettings.multiplier(settings, "entryFeeScale"),
+            prize = EqSettings.multiplier(settings, "prizeScale") })
     for _, event in ipairs(drawn) do
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
@@ -952,6 +954,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setBool(key .. ".settings#forcedRetirement", EqCompetitionManager.settings.forcedRetirement)
     xmlFile:setInt(key .. ".settings#entriesPerMonth", EqCompetitionManager.settings.entriesPerMonth)
     xmlFile:setFloat(key .. ".settings#trainingRate", EqCompetitionManager.settings.trainingRate)
+    xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
+    xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
 
     local farmIds = {}
@@ -1026,6 +1030,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.forcedRetirement = xmlFile:getBool(key .. ".settings#forcedRetirement", settings.forcedRetirement)
     settings.entriesPerMonth = xmlFile:getInt(key .. ".settings#entriesPerMonth", settings.entriesPerMonth)
     settings.trainingRate = xmlFile:getFloat(key .. ".settings#trainingRate", settings.trainingRate)
+    settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
+    settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
 
     local f = 0
