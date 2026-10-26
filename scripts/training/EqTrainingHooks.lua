@@ -678,7 +678,8 @@ function EqTrainingHooks.showHelp(view)
     local pages = {}
     local title = g_i18n:getText("eq_help_" .. view .. "_title")
     for i = 1, EqTrainingHooks.HELP_PAGES[view] or 0 do
-        table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)) })
+        table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)),
+            color = EqTrainingHud.STAT_COLOR[view] })
     end
     EqTrainingHud.showHelp(pages)
 end
@@ -722,12 +723,14 @@ end
 
 
 local COLOR = EqTrainingHud.COLOR
+-- Status colours never borrow a stat's colour (EqTrainingHud.STAT_COLOR): white is good,
+-- yellow a warning, red bad, grey idle.
 local BAND_COLOR = {
-    tired_fresh = COLOR.blue, tired_warm = COLOR.yellow, tired_zone = COLOR.green, tired_blown = COLOR.red,
-    sprint_fresh = COLOR.green, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
+    tired_fresh = COLOR.white, tired_warm = COLOR.white, tired_zone = COLOR.white, tired_blown = COLOR.red,
+    sprint_fresh = COLOR.white, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
 }
 local STAT_COLOR = EqTrainingHud.STAT_COLOR
-local QUALITY_COLOR = { fast = COLOR.green, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.green }
+local QUALITY_COLOR = { fast = COLOR.white, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.white }
 
 
 --- A panel row for a stat: "Stamina 45%" and how it is training now, in that state's colour.
@@ -786,7 +789,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             exertion.right, exertion.rightColor = g_i18n:getText("eq_train_" .. band), bandColor
         end
         table.insert(rows, exertion)
-        local bar = { bar = sheet.tiredness / 100, color = view == "speed" and bandColor or (band == "tired_blown" and bandColor or COLOR.white) }
+        local bar = { bar = sheet.tiredness / 100, color = EqTraining.isSprinting(sheet) and STAT_COLOR.speed or bandColor }
         if view ~= "speed" then
             bar.marks = { EqTraining.ZONE_HIGH / 100 }
             -- The beat marker, with its hit window either side.
@@ -822,7 +825,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 tempoRow.rightColor = COLOR.red
             elseif tempo.slowMs > 0 then
                 tempoRow.right = g_i18n:getText("eq_train_tempo_slow")
-                tempoRow.rightColor = COLOR.orange
+                tempoRow.rightColor = COLOR.yellow
             end
             table.insert(rows, tempoRow)
             local toNext = tempo.mult >= EqTraining.TEMPO_MAX and 1 or tempo.hits / EqTraining.TEMPO_HITS
@@ -876,9 +879,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             if routine.request ~= nil then
                 local left = math.max(0, routine.deadline - routine.clock)
                 row.right = g_i18n:getText("eq_move_" .. routine.request)
-                row.rightColor = COLOR.yellow
+                row.rightColor = color
                 table.insert(rows, row)
-                table.insert(rows, { bar = left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), color = COLOR.yellow })
+                table.insert(rows, { bar = left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), color = color })
                 EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS),
                     STAT_COLOR.temperament)
             else
@@ -903,9 +906,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         end
         table.insert(rows, { left = table.concat(others, "  "), leftColor = COLOR.grey })
     end
-    if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.orange }) end
+    if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
-    EqTrainingHud.drawPanel(string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view)), rows)
+    EqTrainingHud.drawPanel(string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view)), rows,
+        STAT_COLOR[view])
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
     local inside = {}

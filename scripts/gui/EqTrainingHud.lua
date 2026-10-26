@@ -95,7 +95,8 @@ end
 --- @param title string
 --- @param rows table list of { left, leftColor, right, rightColor } text rows and
 ---     { bar = 0..1, color } meter rows
-function EqTrainingHud.drawPanel(title, rows)
+--- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
+function EqTrainingHud.drawPanel(title, rows, titleColor)
     local p = EqTrainingHud.PANEL
     local height = p.padding * 2 + p.lineHeight
     for _, row in ipairs(rows) do
@@ -107,7 +108,7 @@ function EqTrainingHud.drawPanel(title, rows)
 
     local left, right = x + p.padding, p.right - p.padding
     local lineY = p.top - p.padding - p.lineHeight * 0.8
-    text(title, left, lineY, p.titleSize, EqTrainingHud.COLOR.white, nil, true)
+    text(title, left, lineY, p.titleSize, titleColor or EqTrainingHud.COLOR.white, nil, true)
     for _, row in ipairs(rows) do
         if row.bar ~= nil then
             local barY = lineY - p.padding * 0.5 - p.barHeight
@@ -147,6 +148,11 @@ EqTrainingHud.STAT_COLOR = {
     speed = { 1, 0.55, 0.15, 1 },
     agility = { 0.529, 0.706, 0, 1 },
     temperament = { 0.8, 0.55, 1, 1 },
+}
+-- Pops that are a setback rather than progress.
+EqTrainingHud.SETBACK_COLOR = {
+    knock = "red", jumpLost = "red", routineLost = "red", tempoLost = "red", comboLost = "red",
+    beat_off = "grey", sprint_over = "grey",
 }
 -- The training mode (EqTraining.modeStep) of the ridden horse, set by EqTrainingHooks.
 EqTrainingHud.mode = nil
@@ -220,7 +226,13 @@ function EqTrainingHud.pop(kind, mult)
     -- The training mode has the floor: other stats' news waits (temperament's routine never clashes).
     local mode = EqTrainingHud.mode
     if mode ~= nil and stat ~= nil and stat ~= mode and stat ~= "temperament" then return end
-    if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
+    -- Good news in the stat's colour; setbacks red, or grey when nothing was lost.
+    local setback = EqTrainingHud.SETBACK_COLOR[kind]
+    if setback ~= nil then
+        color = EqTrainingHud.COLOR[setback]
+    elseif stat ~= nil then
+        color = EqTrainingHud.STAT_COLOR[stat]
+    end
     -- In a focused view, news about another stat goes in a small line above the panel instead.
     local view = EqTrainingHud.view
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
@@ -368,10 +380,11 @@ function EqTrainingHud.drawHelp()
     local height = p.padding * 2 + p.lineHeight * (#lines + 2.4)
     local x = p.centerX - p.width / 2
     fill(x, p.bottom, p.width, height, { 0, 0, 0, 0.72 })
-    fill(x + p.padding, p.bottom + height - p.padding - p.lineHeight * 1.25, inner, 0.0012, EqTrainingHud.COLOR.green)
+    local accent = page.color or EqTrainingHud.COLOR.green
+    fill(x + p.padding, p.bottom + height - p.padding - p.lineHeight * 1.25, inner, 0.0012, accent)
 
     local y = p.bottom + height - p.padding - p.lineHeight
-    text(page.title, p.centerX, y, p.titleSize, EqTrainingHud.COLOR.green, RenderText.ALIGN_CENTER, true)
+    text(page.title, p.centerX, y, p.titleSize, accent, RenderText.ALIGN_CENTER, true)
     y = y - p.lineHeight * 0.4
     for _, line in ipairs(lines) do
         y = y - p.lineHeight
