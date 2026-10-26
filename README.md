@@ -61,9 +61,9 @@ uses its genetics, health and fitness.
   - **Stamina** comes from runs: gains peak after 15 seconds at canter or gallop, while exertion
     is in the zone, 65-85%. A long canter climbs slowly from the zone into blowing hard, more slowly for a fitter
     horse. Trot to ease off without losing the run; a stop or a walk only wears
-    the run down slowly. The zone moves like the fishing minigame (white marks on the
-    meter): hold it and it narrows and wanders faster while the gains climb, up to 2.5 times.
-    Gallop to climb, canter to hold, a short trot to drop fast.
+    the run down slowly. Keep up the tempo: every 20 seconds of unbroken canter or gallop
+    raises it (up to x5, 2.5 times the gains); blowing hard for 5 seconds or more than a couple
+    of seconds below a canter breaks the streak.
   - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
     stand still to rest before the next one. Two good sprints warm the horse up; keep galloping
     and press **W** when **Sprint!** shows to run 25% faster, ignoring exertion (keep tapping W to spur it on), with

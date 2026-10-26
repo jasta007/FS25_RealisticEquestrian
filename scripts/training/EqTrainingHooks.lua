@@ -447,6 +447,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local pace = paceGait(spec, gait, now)
     EqTraining.step(sheet, pace, dt, worn, stamina)
     spec.eqLastGait = gait
+    if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult)
+    elseif sheet.tempoEvent == "lost" then EqTrainingHud.pop("tempoLost") end
     local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
     if sprintEvent == "counted" then EqTrainingHud.pop("sprintCount", sheet.sprint.count)
     elseif sprintEvent ~= nil then EqTrainingHud.pop("sprint_" .. sprintEvent) end
@@ -685,7 +687,6 @@ end
 local COLOR = EqTrainingHud.COLOR
 local BAND_COLOR = {
     tired_fresh = COLOR.blue, tired_warm = COLOR.yellow, tired_zone = COLOR.green, tired_blown = COLOR.red,
-    tired_under = COLOR.yellow, tired_over = COLOR.orange,
     sprint_fresh = COLOR.green, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
 }
 local QUALITY_COLOR = { fast = COLOR.green, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.green }
@@ -735,26 +736,38 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.view = view
     if view == "freestyle" or view == "stamina" or view == "speed" then
         local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
-            or ("tired_" .. EqTraining.zoneBand(sheet.tiredness, sheet.zone))
+            or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
         local bandColor = BAND_COLOR[band]
         table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
             right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
         local bar = { bar = sheet.tiredness / 100, color = bandColor }
-        if view ~= "speed" then
-            local low, high = EqTraining.zoneBounds(sheet.zone)
-            bar.marks = { low / 100, high / 100 }
-        end
+        if view ~= "speed" then bar.marks = { EqTraining.ZONE_LOW / 100, EqTraining.ZONE_HIGH / 100 } end
         table.insert(rows, bar)
     end
     if view == "freestyle" or view == "stamina" then
         local full = sheet.run >= EqTraining.RUN_FULL
         local row = { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
             leftColor = full and COLOR.green or COLOR.white }
-        if sheet.zone.hold > 0 then
-            row.right = string.format(g_i18n:getText("eq_train_zoneHold"), EqTraining.zoneBonus(sheet.zone))
-            row.rightColor = COLOR.green
-        end
         table.insert(rows, row)
+        local tempo = sheet.tempo
+        if tempo.ms > 0 then
+            local color = EqTrainingHud.multColor(tempo.mult)
+            local tempoRow = { left = string.format(g_i18n:getText("eq_train_tempo"), tempo.mult), leftColor = color }
+            if tempo.blownMs > 0 then
+                tempoRow.right = string.format(g_i18n:getText("eq_train_tempo_blown"),
+                    math.ceil((EqTraining.TEMPO_BLOWN_MS - tempo.blownMs) / 1000))
+                tempoRow.rightColor = COLOR.red
+            elseif tempo.slowMs > 0 then
+                tempoRow.right = g_i18n:getText("eq_train_tempo_slow")
+                tempoRow.rightColor = COLOR.orange
+            end
+            table.insert(rows, tempoRow)
+            local toNext = tempo.mult >= EqTraining.TEMPO_MAX and 1
+                or (tempo.ms % EqTraining.TEMPO_STEP_MS) / EqTraining.TEMPO_STEP_MS
+            table.insert(rows, { bar = toNext, color = color })
+        elseif view == "stamina" then
+            table.insert(rows, { left = g_i18n:getText("eq_train_tempo_none"), leftColor = COLOR.grey })
+        end
     end
     if view == "freestyle" or view == "speed" then
         local sprint = sheet.sprint
