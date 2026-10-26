@@ -2235,6 +2235,39 @@ end)()
     check("training rate scales event boosts", math.abs(boostedWith(3) - 3 * boostedWith(nil)) < 1e-9)
 end)()
 
+-- Recent stat gains: summed per day, kept seven days, saved with the horse.
+;(function()
+    local horse = EqHorseRecord.new("DE 1 9")
+    horse:addGains(10, { stamina = 0.5, speed = 0.1 })
+    horse:addGains(10, { stamina = 0.25 })
+    horse:addGains(14, { stamina = 1, agility = -0.3 })
+    check("same-day gains share an entry", #horse.gains == 2)
+    local gains = horse:getRecentGains(14)
+    check("recent gains sum the week", math.abs(gains.stamina - 1.75) < 1e-9 and math.abs(gains.agility + 0.3) < 1e-9)
+    check("gains older than a week drop out of the sum", math.abs(horse:getRecentGains(17).stamina - 1) < 1e-9)
+    horse:addGains(17, { stamina = 0.1 })
+    check("old gain days are dropped", #horse.gains == 2 and horse.gains[1].day == 14)
+    horse:addGains(18, nil)
+    check("no deltas adds nothing", #horse.gains == 2)
+    local x = memoryXML()
+    horse:saveToXMLFile(x, "h")
+    local back = EqHorseRecord.loadFromXMLFile(x, "h")
+    check("gains survive a save", #back.gains == 2 and math.abs(back:getRecentGains(17).stamina - 1.1) < 1e-9)
+    check("an old save loads with no gains", #EqHorseRecord.loadFromXMLFile((function()
+        local y = memoryXML(); EqHorseRecord.new("DE 1 10"):saveToXMLFile(y, "h"); return y end)(), "h").gains == 0)
+
+    dofile("scripts/gui/EqInfoDisplay.lua")
+    check("gain to one decimal", EqInfoDisplay.gainText(2.84) == "(+2.8)")
+    check("gain rounds", EqInfoDisplay.gainText(2.86) == "(+2.9)" and EqInfoDisplay.gainText(12.96) == "(+13.0)")
+    check("a loss shows a minus", EqInfoDisplay.gainText(-0.45) == "(-0.5)" or EqInfoDisplay.gainText(-0.45) == "(-0.4)")
+    check("tiny changes are not shown", EqInfoDisplay.gainText(0.049) == nil and EqInfoDisplay.gainText(-0.04) == nil
+        and EqInfoDisplay.gainText(0) == nil and EqInfoDisplay.gainText(nil) == nil)
+    check("0.05 shows as 0.1", EqInfoDisplay.gainText(0.051) == "(+0.1)")
+    local white, full, half = EqInfoDisplay.skillColor(0, "speed"), EqInfoDisplay.skillColor(100, "speed"), EqInfoDisplay.skillColor(50, "speed")
+    check("skill shades white to the stat colour", white[1] == 1 and white[2] == 1 and white[3] == 1
+        and math.abs(full[2] - 0.55) < 1e-9 and math.abs(full[3] - 0.15) < 1e-9 and math.abs(half[3] - 0.575) < 1e-9)
+end)()
+
 -- The look-at Skills box draws the skill and the potential in their own colours.
 ;(function()
     local overlay = function() return { x = 0, y = 0, width = 0, height = 0.01,
@@ -2271,7 +2304,14 @@ end)()
     box:clear()
     box:addLine("Stamina", "72 - Competitor", { 0, 1, 0, 1 }, "(Very high)", { 0.2, 1, 0, 1 })
     box:addLine("Favourite event", "None yet")
+    box:addLine("Speed", "54 - Amateur (+2.8)", { 1, 1, 0, 1 }, "(High)", { 0.5, 1, 0, 1 }, { 1, 0.55, 0.15, 1 })
+    local widths = {}
+    box.bgTop.setDimension = function(_, w) if w ~= nil then table.insert(widths, w) end end
     box:draw(0.9, 0.1)
+    check("stat title in its own colour", rendered["Speed"] ~= nil and rendered["Speed"][2] == 0.55)
+    check("value keeps the skill colour beside a stat colour", rendered["54 - Amateur (+2.8)"] ~= nil
+        and rendered["54 - Amateur (+2.8)"][2] == 1)
+    check("box grows to fit a long line", widths[1] ~= nil and widths[1] > 0.2, tostring(widths[1]))
     check("skill value in skill colour", rendered["72 - Competitor"] ~= nil and rendered["72 - Competitor"][1] == 0)
     check("stat title in skill colour", rendered["Stamina"] ~= nil and rendered["Stamina"][2] == 1 and rendered["Stamina"][1] == 0)
     check("potential in potential colour", rendered[" (Very high)"] ~= nil and rendered[" (Very high)"][1] == 0.2)

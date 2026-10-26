@@ -35,6 +35,7 @@ function EqHorseRecord.new(id)
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
+    self.gains = {}              -- recent stat changes, { day, stat -> change } per day, oldest first
     self.monthStarts = 0         -- round events started this month
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
@@ -64,6 +65,42 @@ end
 --- @return boolean true for a horse bought from the dealer that is still settling in
 function EqHorseRecord:isSettling()
     return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
+end
+
+
+--- Days of stat changes kept for the "(+2.8)" shown after each skill.
+EqHorseRecord.GAIN_DAYS = 7
+
+
+--- Add stat changes made on a day (daily training, an event's training boost) to the recent
+--- gains, dropping days older than GAIN_DAYS.
+--- @param day number monotonic day
+--- @param deltas table|nil stat -> change
+function EqHorseRecord:addGains(day, deltas)
+    if deltas == nil then return end
+    local last = self.gains[#self.gains]
+    if last == nil or last.day ~= day then
+        last = { day = day }
+        table.insert(self.gains, last)
+    end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        last[stat] = (last[stat] or 0) + (deltas[stat] or 0)
+    end
+    while #self.gains > 0 and self.gains[1].day <= day - EqHorseRecord.GAIN_DAYS do table.remove(self.gains, 1) end
+end
+
+
+--- @param today number monotonic day
+--- @return table stat -> net change over the last GAIN_DAYS days, today included
+function EqHorseRecord:getRecentGains(today)
+    local total = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = 0 end
+    for _, entry in ipairs(self.gains) do
+        if entry.day > today - EqHorseRecord.GAIN_DAYS then
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = total[stat] + (entry[stat] or 0) end
+        end
+    end
+    return total
 end
 
 
@@ -105,6 +142,11 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
         -- While eqStats (testing) overrides the stats, the real ones are saved.
         local trained = self.testStats ~= nil and self.testStats[stat] or self.trained[stat]
         xmlFile:setFloat(key .. ".trained#" .. stat, trained or 0)
+    end
+    for i, entry in ipairs(self.gains) do
+        local entryKey = string.format("%s.gains.day(%d)", key, i - 1)
+        xmlFile:setInt(entryKey .. "#day", entry.day)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(entryKey .. "#" .. stat, entry[stat] or 0) end
     end
 
     xmlFile:setInt(key .. ".career#starts", self.career.starts)
@@ -180,6 +222,14 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     local ceilings = self:getCeilings()
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         self.trained[stat] = EqStats.clamp(xmlFile:getFloat(key .. ".trained#" .. stat, 0), 0, ceilings[stat])
+    end
+    local day = 0
+    while xmlFile:hasProperty(string.format("%s.gains.day(%d)", key, day)) do
+        local entryKey = string.format("%s.gains.day(%d)", key, day)
+        local entry = { day = xmlFile:getInt(entryKey .. "#day", 0) }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do entry[stat] = xmlFile:getFloat(entryKey .. "#" .. stat, 0) end
+        table.insert(self.gains, entry)
+        day = day + 1
     end
 
     self.career.starts = xmlFile:getInt(key .. ".career#starts", 0)
