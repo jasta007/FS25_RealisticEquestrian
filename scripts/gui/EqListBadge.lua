@@ -2,7 +2,8 @@
     EqListBadge.lua
     Marks a horse waiting for Manual Transport delivery in RLRM's animal lists (Transfer, Move,
     Sell, Animals and the rest), so the player can see which horse to load at the stable without
-    remembering it. Wraps RLAnimalQuery.formatAnimalRow, which every RLRM list frame builds its
+    remembering it. Otherwise a horse with a role (EqRole) shows it there, unless RLRM has a mark
+    of its own on the horse. Wraps RLAnimalQuery.formatAnimalRow, which every RLRM list frame builds its
     rows through, and fills the row's descriptor badge, the same corner RLRM uses for its marks.
     The badge sits bottom right by default, where RLRM's status icons (pregnant, sick) also go,
     so it is moved to the card's top right corner, above the checkbox, a little smaller.
@@ -19,7 +20,14 @@ local Log = EqLog
 function EqListBadge.apply(row, item)
     local animal = item ~= nil and item.cluster or nil
     if animal == nil or animal.isHorse == nil or not animal:isHorse() then return end
-    if not EqCompetitionManager.awaitingDelivery(animal) then return end
+    if not EqCompetitionManager.awaitingDelivery(animal) then
+        local record = not row.descriptorVisible and EqRegistry.getOrCreate(animal) or nil
+        if EqRole.isShown(record) then
+            row.descriptorVisible = true
+            row.descriptorText = EqRole.text(EqRole.shown(record))
+        end
+        return
+    end
 
     -- Ours beats RLRM's mark text: a delivery has a deadline, a mark does not.
     row.descriptorVisible = true

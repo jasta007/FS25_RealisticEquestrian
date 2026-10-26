@@ -128,8 +128,10 @@ function EqStatLog.explainDay(detail, day, info)
 
     local staffShare = math.max(0, (day.riding or 0) - (info.playerPoints or 0))
     if anyEffort(detail.staff) then
-        table.insert(notes, string.format("Staff: %.0f of the riding bar (bar %.0f, yours %.0f), focus %s%s", staffShare,
-            day.riding or 0, info.playerPoints or 0, tostring(info.focus), detail.groomed and ", groomed (+temperament)" or ""))
+        local luck = (info.focus ~= nil and info.focus ~= "balanced" and day.staffLuck ~= nil)
+            and string.format(" (staff managed %.0f%% of the role's work today)", day.staffLuck * 100) or ""
+        table.insert(notes, string.format("Staff: %.0f of the riding bar (bar %.0f, yours %.0f), focus %s%s%s", staffShare,
+            day.riding or 0, info.playerPoints or 0, tostring(info.focus), luck, detail.groomed and ", groomed (+temperament)" or ""))
     else
         table.insert(notes, string.format("Staff: none (riding bar %.0f, yours %.0f)%s", day.riding or 0, info.playerPoints or 0,
             detail.groomed and "" or string.format(", not groomed (dirt %s > %d)", tostring(day.dirt), EqConstants.GROOMED_DIRT)))

@@ -24,6 +24,7 @@ source(modDirectory .. "scripts/core/EqSettings.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
+source(modDirectory .. "scripts/core/EqRole.lua")
 source(modDirectory .. "scripts/core/EqStatLog.lua")
 source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
@@ -52,6 +53,7 @@ source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqSkillsHudBox.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
+source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
@@ -168,6 +170,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.listBadge then
         guarded("list badge hook", function() EqListBadge.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.roleMenu then
+        guarded("role menu hooks", function() EqRoleMenu.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.metabolismFitness then

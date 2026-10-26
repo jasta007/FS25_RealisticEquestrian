@@ -61,6 +61,9 @@ uses its genetics, health and fitness.
   it is in the pen.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
   home. Young horses train slower, idle ones lose condition.
+- **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
+  list groups horses by role, the role shows while you look at or ride the horse, and staff train
+  toward it.
 - Full rules are in [How Realistic Equestrian works](docs/MECHANICS.md#training).
 
 ### Feed
@@ -247,7 +250,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | --- | --- |
 | `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off`, `entriesPerMonth <n>` (0 = no limit) and `trainingRate <x>` (1 = normal). The same settings are on the Settings page |
 | `eqTraining` | Each horse's training focus and today's riding |
-| `eqFocus <horse> <focus>` | Sets what staff train: `balanced`, `showJumping`, `dressage`, `crossCountry` or `racing` |
+| `eqFocus <horse> <focus>` | Sets a horse's role: `balanced` (no role), `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`, `breeding` or `sale` |
 | `eqFeed` | Horse food groups and each horse's feed boost |
 | `eqFacilities` | Your horse buildings and what they give |
 | `eqEvents`, `eqEnter`, `eqResults` | Lists, enters and shows results of events, as the Competitions tab does |

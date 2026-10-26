@@ -118,7 +118,7 @@ horse can clear fences without a full gallop.
 
 - **Staff** (the base game's Animal Workers with Riding turned on for a horse pen, added in patch
   1.25, or RLRM's herdsman horse-care rule) count for whatever share of the riding bar you did not
-  fill yourself, at half the rate of a full day of plain riding. They train to the horse's focus
+  fill yourself, at half the rate of a full day of plain riding. They train to the horse's role
   and stop at 95% of each ceiling; your own focused riding trains a stat up to four times as fast,
   and only it takes a stat the last 5%.
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
@@ -135,8 +135,32 @@ horse can clear fences without a full gallop.
   up to twelve years old, then slow down. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.
 
-Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
-sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
+### Roles
+
+- A **role** is a reminder of what a horse is for: Dressage, Show Jumping, Cross Country, Eventing,
+  Racing, Breeding or For sale (or No role). Press **G** (the Role button) on a horse in RLRM's
+  Info tab to cycle it. Host only for now in multiplayer.
+- Once any horse in a pen has a role, the Info tab lists the pen's horses in groups by role, then
+  No role, then Retired. Retired is not on the Role button: retiring a horse (RLRM's Diseases tab)
+  shows it as Retired everywhere, and bringing it back gives it its old role again. The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
+  Skills box when you look at the horse, in the menu's Skill potential column and at the top of
+  the riding panel, with the horse's four skills.
+- **Staff train toward the role.** Each role has a staff profile (Dressage leans on temperament
+  and agility, Racing on speed and stamina, Eventing on all but speed; Breeding, For sale and No
+  role keep every stat ticking over). Staff don't manage it equally well every day: the role's
+  own stats get between 50% and 150% of their effort each day, 100% on average. `eqChanges` shows
+  how they did.
+
+### Riding bar and names
+
+- When a horse's riding bar is full it trains no more that day: the look-at Skills box says so in
+  red, the Daily riding value reads "100 % - full" (red in RLRM's menu) and the riding panel shows
+  a red line.
+- The look-at box is headed with the horse's name instead of "Animal".
+
+Console commands: `eqTraining` shows each horse's role and today's riding; `eqFocus <name> <role>`
+sets it (`balanced` for no role, `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`,
+`breeding`, `sale`).
 
 ### Feed
 
