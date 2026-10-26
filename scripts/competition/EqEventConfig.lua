@@ -22,7 +22,7 @@ end
 
 
 --- @param xmlFile table An open XMLFile on events.xml
---- @return table config { disciplines, disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
+--- @return table config { disciplines (with their checks, story and phases), disciplineByName, tiers, tierByName, goings, copiesMax, priceSpread, transport, injuries }
 function EqEventConfig.read(xmlFile)
     local config = { disciplines = {}, disciplineByName = {}, tiers = {}, tierByName = {}, goings = {} }
 
@@ -37,11 +37,31 @@ function EqEventConfig.read(xmlFile)
             outdoor = xmlFile:getBool(key .. "#outdoor", false),
             racing = xmlFile:getBool(key .. "#racing", false),
             elimination = xmlFile:getFloat(key .. "#elimination", 0),
+            refusalsOnly = xmlFile:getBool(key .. "#refusalsOnly", false),
             injury = xmlFile:getFloat(key .. "#injury", 0),
             chance = xmlFile:getFloat(key .. "#chance", 1),
             related = {},
+            story = xmlFile:getString(key .. "#story"),
+            checks = {},
+            phases = nil,
         }
         for name in (xmlFile:getString(key .. "#related", "")):gmatch("%S+") do table.insert(discipline.related, name) end
+        for name in (xmlFile:getString(key .. "#phases", "")):gmatch("%S+") do
+            discipline.phases = discipline.phases or {}
+            table.insert(discipline.phases, name)
+        end
+        local j = 0
+        while true do
+            local checkKey = string.format("%s.check(%d)", key, j)
+            if not xmlFile:hasProperty(checkKey) then break end
+            table.insert(discipline.checks, {
+                stat = xmlFile:getString(checkKey .. "#stat", "agility"),
+                difficulty = xmlFile:getFloat(checkKey .. "#difficulty", 0.5),
+                weight = xmlFile:getFloat(checkKey .. "#weight", 1),
+                tag = xmlFile:getString(checkKey .. "#tag"),
+            })
+            j = j + 1
+        end
         table.insert(config.disciplines, discipline)
         config.disciplineByName[discipline.name] = discipline
         i = i + 1
@@ -75,6 +95,11 @@ function EqEventConfig.read(xmlFile)
 
     config.copiesMax = xmlFile:getInt("events.schedule#copiesMax", 3)
     config.priceSpread = xmlFile:getFloat("events.schedule#priceSpread", 0.3)
+    config.eventsMin = xmlFile:getInt("events.schedule#eventsMin", 3)
+    config.eventsMax = xmlFile:getInt("events.schedule#eventsMax", 8)
+    config.monthlyMin = xmlFile:getInt("events.schedule#monthlyMin", 1)
+    config.monthlyMax = xmlFile:getInt("events.schedule#monthlyMax", 2)
+    config.extraFarmShare = xmlFile:getFloat("events.schedule#extraFarmShare", 0.5)
 
     i = 0
     while true do

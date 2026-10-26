@@ -359,7 +359,7 @@ end
 
 
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
----     [entriesPerMonth n] [trainingRate x]
+---     [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x] [entryFeeScale x] [prizeScale x]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -375,17 +375,23 @@ function EqConsole:consoleSettings(name, value)
         settings.forcedRetirement = value == "on"
     elseif name == "entriesPerMonth" and tonumber(value) ~= nil and tonumber(value) >= 0 then
         settings.entriesPerMonth = math.floor(tonumber(value))
+    elseif (name == "eventsMin" or name == "eventsMax") and tonumber(value) ~= nil and tonumber(value) >= 1 then
+        settings[name] = math.floor(tonumber(value))
     elseif name == "trainingRate" and tonumber(value) ~= nil and tonumber(value) > 0 then
         settings.trainingRate = tonumber(value)
+    elseif (name == "entryFeeScale" or name == "prizeScale") and tonumber(value) ~= nil and tonumber(value) > 0 then
+        settings[name] = tonumber(value)
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [trainingRate <x, 1 = normal>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  trainingRate=%sx  homeRegion=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
-        tostring(EqSettings.trainingRate(settings)), tostring(EqCompetitionManager.homeRegion()))
+        settings.eventsMin, math.max(settings.eventsMin, settings.eventsMax),
+        tostring(EqSettings.trainingRate(settings)), tostring(EqSettings.multiplier(settings, "entryFeeScale")),
+        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()))
 end
 
 
@@ -509,6 +515,63 @@ function EqConsole:consoleForceInjury(value)
 end
 
 
+--- eqStats [horse] [stat] <0-100>|reset: testing, sets one stat, or every stat, of a horse (or of
+--- all your horses) to a value, in any word order. The real stats are kept and are what a save
+--- writes; 'reset' puts them back.
+function EqConsole:consoleStats(...)
+    if g_currentMission == nil then return "No mission loaded" end
+    if not g_currentMission:getIsServer() then return "Only the host can change stats" end
+
+    local args = { ... }
+    -- The value is the last number, so a horse id with numbers in it still matches.
+    local valueAt = nil
+    for index, word in ipairs(args) do
+        if tonumber(word) ~= nil then valueAt = index end
+    end
+    local level, reset, only, words = nil, false, nil, {}
+    for index, word in ipairs(args) do
+        local lower = word:lower()
+        local stat = nil
+        for _, key in ipairs(EqConstants.STAT_KEYS) do
+            if key == lower then stat = key end
+        end
+        if index == valueAt then level = EqStats.clamp(tonumber(word), 0, 100)
+        elseif lower == "reset" then reset = true
+        elseif stat ~= nil and only == nil then only = stat
+        else table.insert(words, word) end
+    end
+    if level == nil and not reset then
+        return "Usage: eqStats [horse] [stamina|speed|agility|temperament] <0-100>  or  eqStats [horse] reset  "
+            .. "(no horse = all your horses, no stat = every stat)"
+    end
+    local stats = only ~= nil and { only } or EqConstants.STAT_KEYS
+
+    local query = table.concat(words, " ")
+    local names = {}
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil and (query == "" or matchesHorse(animal, record, query)) then
+            if not reset then
+                record.testStats = record.testStats or {}
+                for _, stat in ipairs(stats) do
+                    if record.testStats[stat] == nil then record.testStats[stat] = record.trained[stat] end
+                    record.trained[stat] = level
+                end
+            elseif record.testStats ~= nil then
+                for stat, real in pairs(record.testStats) do record.trained[stat] = real end
+                record.testStats = nil
+            end
+            if animal.setDirty ~= nil then animal:setDirty() end
+            table.insert(names, animal:getName() or record.id)
+        end
+    end
+    if #names == 0 then return query == "" and "You have no horses" or string.format("No horse called '%s' on your farm", query) end
+    if reset then return "Real stats back for: " .. table.concat(names, ", ") end
+    return string.format("%s set to %d for: %s. Saves keep the real stats; 'eqStats reset' puts them back.",
+        only ~= nil and (only:sub(1, 1):upper() .. only:sub(2)) or "All stats", math.floor(level), table.concat(names, ", "))
+end
+
+
 --- eqDirt <horse> <0-100>: testing, sets a horse's dirt (RLRM shows Cleanliness = 100 - dirt).
 function EqConsole:consoleDirt(...)
     if g_currentMission == nil then return "No mission loaded" end
@@ -574,7 +637,7 @@ function EqConsole.register()
     addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [trainingRate x]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
@@ -583,6 +646,7 @@ function EqConsole.register()
     addConsoleCommand("eqForceInjury", "Testing: every horse that starts an event is injured: eqForceInjury [on|off]", "consoleForceInjury", EqConsole)
     addConsoleCommand("eqDirt", "Testing: sets a horse's dirt: eqDirt <horse> <0-100>", "consoleDirt", EqConsole)
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
+    addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
@@ -594,5 +658,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqChanges" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqChanges", "eqStats" }) do removeConsoleCommand(name) end
 end

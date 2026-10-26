@@ -1,8 +1,11 @@
 --[[
     EqEventsFrame.lua
-    The Events tab in RLRM's menu: open events on the left (or your results, toggled), your
-    horses for the selected event on the right with a panel for the selected horse, and an Enter
-    button for the selected horse.
+    The Events tab in RLRM's menu, with two tabs of its own like RLRM's Settings page:
+    - Upcoming events: open events on the left, your horses for the selected event on the right
+      with a panel for the selected horse, and Enter buttons for it.
+    - Results: your horses on the right with the selected one's career under them, and its last
+      events on the left, each with the few lines on how it went (EqStory). The Messages tab's
+      result lines open this tab on their horse (EqMessagesLink).
 
     The tab is added from our side: EqEventsFrame.install appends to RLMenu:setupMenuPages, so
     once RLRM has registered its own pages we load our frame and register it as one more page,
@@ -71,7 +74,7 @@ function EqEventsFrame.new()
     }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
-        text = g_i18n:getText("eq_ui_button_results"),
+        text = g_i18n:getText("eq_ui_tab_results"),
         callback = function() self:onClickToggle() end,
     }
     self.menuButtonInfo = { self.backButtonInfo, self.toggleButtonInfo }
@@ -161,10 +164,9 @@ end
 function EqEventsFrame:onFrameOpen()
     EqEventsFrame:superClass().onFrameOpen(self)
     self:applyHeaderIcon()
+    self:initializeSubCategoryPages()
     self:refresh()
-    if self.eventsList ~= nil and self.mode == EqEventsFrame.MODE_EVENTS then
-        FocusManager:setFocus(self.eventsList)
-    end
+    self:focusMode()
 end
 
 
@@ -175,49 +177,185 @@ function EqEventsFrame:update(dt)
 end
 
 
---- Rebuild every list from the manager, keeping the selected event where possible.
+-- TABS (the same profiles and wiring as RLRM's Settings page)
+
+EqEventsFrame.TAB_MODES = { EqEventsFrame.MODE_EVENTS, EqEventsFrame.MODE_RESULTS }
+
+
+--- @param mode string
+--- @return number index the mode's tab
+local function tabIndex(mode)
+    return mode == EqEventsFrame.MODE_RESULTS and 2 or 1
+end
+
+
+--- Number the tabs and light the current one, as RLRM's settings frame does: the paging option
+--- holds one text per tab and the tab buttons ask it whether they are selected.
+function EqEventsFrame:initializeSubCategoryPages()
+    if self.subCategoryPaging == nil or self.subCategoryTabs == nil then return end
+    local texts = {}
+    for index, button in ipairs(self.subCategoryTabs) do
+        local isSelected = function()
+            return index == tonumber(self.subCategoryPaging.texts[self.subCategoryPaging:getState()])
+        end
+        button.getIsSelected = isSelected
+        local background = button:getDescendantByName("background")
+        if background ~= nil then background.getIsSelected = isSelected end
+        table.insert(texts, tostring(index))
+    end
+    if self.subCategoryBox ~= nil then
+        self.subCategoryBox:invalidateLayout()
+        self.subCategoryPaging:setTexts(texts)
+        self.subCategoryPaging:setSize(self.subCategoryBox.maxFlowSize + 140 * g_pixelSizeScaledX)
+    else
+        self.subCategoryPaging:setTexts(texts)
+    end
+    -- Without the callback: onFrameOpen refreshes once afterwards.
+    self.subCategoryPaging:setState(tabIndex(self.mode), false)
+end
+
+
+--- The paging option changed: show that tab.
+--- @param state number
+function EqEventsFrame:onSubCategoryChanged(state)
+    local index = self.subCategoryPaging ~= nil and tonumber(self.subCategoryPaging.texts[state]) or nil
+    local mode = index ~= nil and EqEventsFrame.TAB_MODES[index] or nil
+    if mode == nil or mode == self.mode then return end
+    self.mode = mode
+    self.message = nil
+    self:refresh()
+    self:focusMode()
+end
+
+
+--- @param mode string
+function EqEventsFrame:showMode(mode)
+    if self.subCategoryPaging ~= nil and self.subCategoryPaging.texts ~= nil and #self.subCategoryPaging.texts > 0 then
+        self.subCategoryPaging:setState(tabIndex(mode), true)
+    elseif mode ~= self.mode then
+        self.mode = mode
+        self.message = nil
+        self:refresh()
+        self:focusMode()
+    end
+end
+
+
+function EqEventsFrame:onClickUpcomingTab()
+    self:showMode(EqEventsFrame.MODE_EVENTS)
+end
+
+
+function EqEventsFrame:onClickResultsTab()
+    self:showMode(EqEventsFrame.MODE_RESULTS)
+end
+
+
+--- Focus the list the current tab starts on.
+function EqEventsFrame:focusMode()
+    local list = self.mode == EqEventsFrame.MODE_EVENTS and self.eventsList or self.horsesList
+    if list ~= nil then FocusManager:setFocus(list) end
+end
+
+
+--- @param element table|nil
+--- @param visible boolean
+local function show(element, visible)
+    if element ~= nil then element:setVisible(visible) end
+end
+
+
+--- Rebuild every list from the manager, keeping the selected event or horse where possible.
 function EqEventsFrame:refresh()
     local ok, reason = readiness()
     self.isReady = ok
-    if not ok then
-        self.eventRows, self.horseRows, self.resultRows = {}, {}, {}
-    else
-        self.eventRows = EqEventsView.eventRows(farmId())
-        self.resultRows = EqEventsView.resultRows(farmId())
-    end
-
     local isEvents = self.mode == EqEventsFrame.MODE_EVENTS
-    self.eventsHeader:setVisible(isEvents)
-    self.eventsBox:setVisible(isEvents)
-    self.horsesHeader:setVisible(isEvents)
-    self.horsesBox:setVisible(isEvents)
-    self.resultsHeader:setVisible(not isEvents)
-    self.resultsBox:setVisible(not isEvents)
+    self.eventRows = ok and EqEventsView.eventRows(farmId()) or {}
+
+    show(self.eventsHeader, isEvents)
+    show(self.eventsBox, isEvents)
+    show(self.horsesHeader, isEvents)
+    show(self.resultsHeader, not isEvents)
+    show(self.resultsBox, not isEvents)
+    show(self.resultHorsesHeader, not isEvents)
 
     self.eventsList:reloadData()
-    self.resultsList:reloadData()
-
-    local selectIndex = 1
-    for i, row in ipairs(self.eventRows) do
-        if row.event.id == self.selectedEventId then selectIndex = i end
+    if isEvents then
+        self.resultRows = {}
+        self.resultsList:reloadData()
+        local selectIndex = 1
+        for i, row in ipairs(self.eventRows) do
+            if row.event.id == self.selectedEventId then selectIndex = i end
+        end
+        if #self.eventRows > 0 then
+            self.eventsList:setSelectedIndex(selectIndex)
+        end
+        self:selectEvent(self.eventRows[selectIndex])
+    else
+        self:refreshResults()
     end
-    if #self.eventRows > 0 then
-        self.eventsList:setSelectedIndex(selectIndex)
-    end
-    self:selectEvent(self.eventRows[selectIndex])
 
     local empty
     if not ok then
         empty = reason
     elseif isEvents and #self.eventRows == 0 then
         empty = g_i18n:getText("eq_ui_noEvents")
-    elseif not isEvents and #self.resultRows == 0 then
-        empty = g_i18n:getText("eq_ui_noResults")
+    elseif not isEvents then
+        local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
+        if horse == nil then
+            empty = g_i18n:getText("eq_ui_noResults")
+        elseif #self.resultRows == 0 then
+            empty = string.format(g_i18n:getText("eq_ui_noHorseResults"), horse.name)
+        end
     end
     self.emptyState:setText(empty or "")
     self.emptyState:setVisible(empty ~= nil and empty ~= "")
 
     self:updateButtons()
+end
+
+
+--- The Results tab: every horse of the farm on the right, the selected one's last events left.
+function EqEventsFrame:refreshResults()
+    self.horseRows = self.isReady and EqEventsView.resultHorseRows(farmId()) or {}
+    self.horsesList:reloadData()
+    local selectIndex = nil
+    for i, row in ipairs(self.horseRows) do
+        if row.record.id == self.selectedResultHorseId then selectIndex = i end
+    end
+    selectIndex = selectIndex or (#self.horseRows > 0 and 1 or nil)
+    if selectIndex ~= nil then self.horsesList:setSelectedIndex(selectIndex) end
+    self:selectResultHorse(selectIndex)
+
+    local noHorses = #self.horseRows == 0 and self.isReady
+    self.horsesEmptyState:setText(noHorses and g_i18n:getText("eq_ui_noHorses") or "")
+    self.horsesEmptyState:setVisible(noHorses)
+end
+
+
+--- @param index number|nil the horse's row on the Results tab
+function EqEventsFrame:selectResultHorse(index)
+    self.selectedHorseIndex = index
+    local row = index ~= nil and self.horseRows[index] or nil
+    if row ~= nil then self.selectedResultHorseId = row.record.id end
+    self.resultRows = row ~= nil and EqEventsView.horseResultRows(row.record) or {}
+    self.resultsList:reloadData()
+    if #self.resultRows > 0 then self.resultsList:setSelectedIndex(1) end
+    if self.resultsHeaderText ~= nil then
+        self.resultsHeaderText:setText(row ~= nil and row.name or g_i18n:getText("eq_ui_col_result"))
+    end
+    self:updateHorsePanel()
+    self:updateCareerPanel()
+    self:updateSummary()
+end
+
+
+--- Open the Results tab on one horse: the Messages tab's View results button.
+--- @param horseId string
+function EqEventsFrame:showResultsFor(horseId)
+    self.selectedResultHorseId = horseId
+    self.mode = EqEventsFrame.MODE_RESULTS
+    self.message = nil
 end
 
 
@@ -233,6 +371,7 @@ function EqEventsFrame:selectEvent(row)
         self.selectedHorseIndex = nil
     end
     self:updateHorsePanel()
+    self:updateCareerPanel()
 
     local showHorses = self.mode == EqEventsFrame.MODE_EVENTS and row ~= nil
     local noHorses = showHorses and #self.horseRows == 0
@@ -247,6 +386,8 @@ function EqEventsFrame:updateSummary()
     local text = ""
     if self.message ~= nil then
         text = self.message
+    elseif self.mode == EqEventsFrame.MODE_RESULTS then
+        text = string.format(g_i18n:getText("eq_ui_summary_results"), EqHorseRecord.RESULTS_KEPT)
     elseif self.mode == EqEventsFrame.MODE_EVENTS and self.selectedEventId ~= nil then
         local event = EqCompetitionManager.events[self.selectedEventId]
         local tier = event ~= nil and EqCompetitionManager.config.tierByName[event.tier] or nil
@@ -267,7 +408,7 @@ end
 
 
 function EqEventsFrame:updateButtons()
-    self.toggleButtonInfo.text = g_i18n:getText(self.mode == EqEventsFrame.MODE_EVENTS and "eq_ui_button_results" or "eq_ui_button_events")
+    self.toggleButtonInfo.text = g_i18n:getText(self.mode == EqEventsFrame.MODE_EVENTS and "eq_ui_tab_results" or "eq_ui_tab_upcoming")
     self.menuButtonInfo = { self.backButtonInfo, self.toggleButtonInfo }
 
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
@@ -331,8 +472,8 @@ function EqEventsFrame:updateHorsePanel()
         local label, value = self.panelStatLabel[i], self.panelStatValue[i]
         keepDefaultColor(label)
         keepDefaultColor(value)
-        local text, color = EqInfoDisplay.skillValue(row.record.trained[stat] or 0)
-        setText(label, g_i18n:getText("eq_stat_" .. stat), color)
+        local text, color = EqInfoDisplay.skillValue(row.record.trained[stat] or 0, nil, stat)
+        setText(label, g_i18n:getText("eq_stat_" .. stat), EqInfoDisplay.STAT_COLOR[stat])
         setText(value, text, color)
     end
     keepDefaultColor(self.panelTraining)
@@ -349,6 +490,34 @@ function EqEventsFrame:updateHorsePanel()
         g_i18n:formatMoney(fee + row.autoCost, 0, true, true), g_i18n:formatMoney(fee + row.manualCost, 0, true, true)))
     setText(self.panelSuccess, row.success, wordColor(EqEventsFrame.SUCCESS_COLORS, row.successBand))
     setText(self.panelSpecialty, EqCompetitionManager.specialtyText(row.record))
+end
+
+
+--- Fill the career panel under the horses on the Results tab, or hide it.
+function EqEventsFrame:updateCareerPanel()
+    if self.careerPanel == nil then return end
+    local row = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
+    local show = row ~= nil and self.mode == EqEventsFrame.MODE_RESULTS
+    self.careerPanel:setVisible(show)
+    if not show then return end
+
+    local record, career = row.record, row.record.career
+    setText(self.careerName, row.name)
+    setText(self.careerAge, string.format(g_i18n:getText("eq_ui_ageLong"), row.animal.age or 0))
+    for i, stat in ipairs(EqConstants.STAT_KEYS) do
+        local label, value = self.careerStatLabel ~= nil and self.careerStatLabel[i] or nil,
+            self.careerStatValue ~= nil and self.careerStatValue[i] or nil
+        keepDefaultColor(label)
+        keepDefaultColor(value)
+        local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0)
+        setText(label, g_i18n:getText("eq_stat_" .. stat), color)
+        setText(value, text, color)
+    end
+    setText(self.careerStarts, tostring(career.starts))
+    setText(self.careerRecord, string.format("%d / %d", career.wins, career.places))
+    setText(self.careerEarnings, g_i18n:formatMoney(career.earnings, 0, true, true))
+    setText(self.careerEliminations, tostring(career.eliminations))
+    setText(self.careerSpecialty, EqCompetitionManager.specialtyText(record))
 end
 
 
@@ -371,8 +540,54 @@ local function setCell(cell, name, text)
 end
 
 
+-- Text cells a results line has for its plain and bold runs (line1..line<n> in the template).
+EqEventsFrame.LINE_RUNS = 10
+
+
+--- Width of a run as drawn. Measured between two bars, so leading and trailing spaces count.
+--- @param element table TextElement
+--- @param text string
+--- @param bold boolean
+--- @return number width in screen units
+local function runWidth(element, text, bold)
+    setTextBold(bold)
+    local width = getTextWidth(element.textSize, "|" .. text .. "|") - getTextWidth(element.textSize, "||")
+    setTextBold(false)
+    return width
+end
+
+
+--- Show a story line in a results row, its bold runs (horse names, gains) bold.
+--- @param cell table the row
+--- @param text string line with EqStory bold marks
+function EqEventsFrame.setRuns(cell, text)
+    local runs = EqStory.runs(text or "")
+    -- More runs than cells: the last cell takes the rest, plain.
+    if #runs > EqEventsFrame.LINE_RUNS then
+        local rest = {}
+        for i = EqEventsFrame.LINE_RUNS, #runs do table.insert(rest, runs[i].text) end
+        runs[EqEventsFrame.LINE_RUNS] = { text = table.concat(rest), bold = false }
+    end
+    local x
+    for i = 1, EqEventsFrame.LINE_RUNS do
+        local element = cell:getAttribute("line" .. i)
+        if element ~= nil then
+            element.eqStartX = element.eqStartX or element.position[1]
+            x = x or element.eqStartX
+            local run = runs[i]
+            element.textBold = run ~= nil and run.bold or false
+            element:setText(run ~= nil and run.text or "")
+            element:setPosition(x, element.position[2])
+            if run ~= nil then x = x + runWidth(element, run.text, run.bold) end
+        end
+    end
+end
+
+
 function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
     if list == self.eventsList then
+        -- The events list reloads on the Results tab too, hidden; it must not take the horse list.
+        if self.mode ~= EqEventsFrame.MODE_EVENTS then return end
         local row = self.eventRows[index]
         if row == nil then return end
         setCell(cell, "title", row.title)
@@ -385,6 +600,16 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         setCell(cell, "fee", row.fee)
         setCell(cell, "prize", row.prize)
         setCell(cell, "yours", row.yours)
+    elseif list == self.horsesList and self.mode == EqEventsFrame.MODE_RESULTS then
+        local row = self.horseRows[index]
+        if row == nil then return end
+        setCell(cell, "name", row.name)
+        local starts, wins = cell:getAttribute("success"), cell:getAttribute("training")
+        keepDefaultColor(starts)
+        keepDefaultColor(wins)
+        setText(starts, row.starts)
+        setText(wins, row.wins)
+        setCell(cell, "status", row.last)
     elseif list == self.horsesList then
         local row = self.horseRows[index]
         if row == nil then return end
@@ -398,21 +623,29 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
     elseif list == self.resultsList then
         local row = self.resultRows[index]
         if row == nil then return end
-        setCell(cell, "day", row.day)
-        setCell(cell, "title", row.title)
-        setCell(cell, "horse", row.horse)
-        setCell(cell, "result", row.result)
-        setCell(cell, "prize", row.prize)
+        setCell(cell, "title", row.title and row.text or "")
+        EqEventsFrame.setRuns(cell, row.title and "" or row.text)
     end
 end
 
 
 function EqEventsFrame:onListSelectionChanged(list, _section, index)
     if list == self.eventsList then
+        -- The events list reloads on the Results tab too, hidden; it must not take the horse list.
+        if self.mode ~= EqEventsFrame.MODE_EVENTS then return end
         local row = self.eventRows[index]
         if row ~= nil and row.event.id ~= self.selectedEventId then
             self.message = nil
             self:selectEvent(row)
+        end
+        self:updateButtons()
+    elseif list == self.horsesList and self.mode == EqEventsFrame.MODE_RESULTS then
+        if index ~= self.selectedHorseIndex then
+            self:selectResultHorse(index)
+            local row = self.horseRows[index]
+            local empty = (row ~= nil and #self.resultRows == 0) and string.format(g_i18n:getText("eq_ui_noHorseResults"), row.name) or nil
+            self.emptyState:setText(empty or "")
+            self.emptyState:setVisible(empty ~= nil)
         end
         self:updateButtons()
     elseif list == self.horsesList then
@@ -437,11 +670,7 @@ end
 
 
 function EqEventsFrame:onClickToggle()
-    self.mode = self.mode == EqEventsFrame.MODE_EVENTS and EqEventsFrame.MODE_RESULTS or EqEventsFrame.MODE_EVENTS
-    self.message = nil
-    self:refresh()
-    local list = self.mode == EqEventsFrame.MODE_EVENTS and self.eventsList or self.resultsList
-    if list ~= nil then FocusManager:setFocus(list) end
+    self:showMode(self.mode == EqEventsFrame.MODE_EVENTS and EqEventsFrame.MODE_RESULTS or EqEventsFrame.MODE_EVENTS)
 end
 
 
@@ -473,6 +702,8 @@ function EqEventsFrame.addToMenu(menu)
 
     paging:addElement(frame)
     menu.eqEventsFrame = frame
+    EqEventsFrame.menu = menu
+    EqEventsFrame.instance = frame
 
     local predicate = function()
         return g_currentMission ~= nil and EqMain.isActive

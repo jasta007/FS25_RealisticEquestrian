@@ -15,6 +15,8 @@ EqHorseRecord.ORIGIN_DEALER = "dealer"
 EqHorseRecord.FOCUS_BALANCED = "balanced"
 --- The three injuries of 0.1.0.0, and the injury each becomes in a save made by that version.
 EqHorseRecord.OLD_INJURIES = { minor = "soreBack", moderate = "tendon", serious = "suspensory" }
+--- Event results kept per horse for the Events tab's Results page.
+EqHorseRecord.RESULTS_KEPT = 5
 
 
 --- @param id string RLRM identifier
@@ -33,11 +35,13 @@ function EqHorseRecord.new(id)
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
+    self.gains = {}              -- recent stat changes, { day, stat -> change } per day, oldest first
     self.monthStarts = 0         -- round events started this month
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
     self.experience = nil        -- discipline -> { value, idle }, see EqExperience
+    self.results = {}            -- latest events first: { day, discipline, tier, venue, place, field, prize, status, lines }
     return self
 end
 
@@ -50,9 +54,53 @@ function EqHorseRecord:getShownCeilings()
 end
 
 
+--- Keep an event's result, newest first, dropping the oldest past RESULTS_KEPT.
+--- @param result table { day, discipline, tier, venue, place, field, prize, status, lines }
+function EqHorseRecord:addResult(result)
+    table.insert(self.results, 1, result)
+    while #self.results > EqHorseRecord.RESULTS_KEPT do table.remove(self.results) end
+end
+
+
 --- @return boolean true for a horse bought from the dealer that is still settling in
 function EqHorseRecord:isSettling()
     return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
+end
+
+
+--- Days of stat changes kept for the "(+2.8)" shown after each skill.
+EqHorseRecord.GAIN_DAYS = 7
+
+
+--- Add stat changes made on a day (daily training, an event's training boost) to the recent
+--- gains, dropping days older than GAIN_DAYS.
+--- @param day number monotonic day
+--- @param deltas table|nil stat -> change
+function EqHorseRecord:addGains(day, deltas)
+    if deltas == nil then return end
+    local last = self.gains[#self.gains]
+    if last == nil or last.day ~= day then
+        last = { day = day }
+        table.insert(self.gains, last)
+    end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        last[stat] = (last[stat] or 0) + (deltas[stat] or 0)
+    end
+    while #self.gains > 0 and self.gains[1].day <= day - EqHorseRecord.GAIN_DAYS do table.remove(self.gains, 1) end
+end
+
+
+--- @param today number monotonic day
+--- @return table stat -> net change over the last GAIN_DAYS days, today included
+function EqHorseRecord:getRecentGains(today)
+    local total = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = 0 end
+    for _, entry in ipairs(self.gains) do
+        if entry.day > today - EqHorseRecord.GAIN_DAYS then
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = total[stat] + (entry[stat] or 0) end
+        end
+    end
+    return total
 end
 
 
@@ -91,7 +139,14 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         xmlFile:setFloat(key .. ".genes#" .. stat, self.genes[stat] or EqConstants.GENE_MEAN)
-        xmlFile:setFloat(key .. ".trained#" .. stat, self.trained[stat] or 0)
+        -- While eqStats (testing) overrides the stats, the real ones are saved.
+        local trained = self.testStats ~= nil and self.testStats[stat] or self.trained[stat]
+        xmlFile:setFloat(key .. ".trained#" .. stat, trained or 0)
+    end
+    for i, entry in ipairs(self.gains) do
+        local entryKey = string.format("%s.gains.day(%d)", key, i - 1)
+        xmlFile:setInt(entryKey .. "#day", entry.day)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(entryKey .. "#" .. stat, entry[stat] or 0) end
     end
 
     xmlFile:setInt(key .. ".career#starts", self.career.starts)
@@ -101,6 +156,21 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. ".career#eliminations", self.career.eliminations)
     xmlFile:setInt(key .. ".career#injuries", self.career.injuries)
     EqExperience.save(xmlFile, key, self)
+
+    for i, result in ipairs(self.results) do
+        local resultKey = string.format("%s.results.result(%d)", key, i - 1)
+        xmlFile:setInt(resultKey .. "#day", result.day or 0)
+        xmlFile:setString(resultKey .. "#discipline", result.discipline)
+        xmlFile:setString(resultKey .. "#tier", result.tier)
+        if result.venue ~= nil then xmlFile:setString(resultKey .. "#venue", result.venue) end
+        xmlFile:setInt(resultKey .. "#place", result.place or 0)
+        xmlFile:setInt(resultKey .. "#field", result.field or 0)
+        xmlFile:setFloat(resultKey .. "#prize", result.prize or 0)
+        if result.status ~= nil then xmlFile:setString(resultKey .. "#status", result.status) end
+        for j, line in ipairs(result.lines or {}) do
+            xmlFile:setString(string.format("%s.line(%d)#text", resultKey, j - 1), line)
+        end
+    end
 end
 
 
@@ -153,6 +223,14 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         self.trained[stat] = EqStats.clamp(xmlFile:getFloat(key .. ".trained#" .. stat, 0), 0, ceilings[stat])
     end
+    local day = 0
+    while xmlFile:hasProperty(string.format("%s.gains.day(%d)", key, day)) do
+        local entryKey = string.format("%s.gains.day(%d)", key, day)
+        local entry = { day = xmlFile:getInt(entryKey .. "#day", 0) }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do entry[stat] = xmlFile:getFloat(entryKey .. "#" .. stat, 0) end
+        table.insert(self.gains, entry)
+        day = day + 1
+    end
 
     self.career.starts = xmlFile:getInt(key .. ".career#starts", 0)
     self.career.wins = xmlFile:getInt(key .. ".career#wins", 0)
@@ -161,6 +239,32 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.career.eliminations = xmlFile:getInt(key .. ".career#eliminations", 0)
     self.career.injuries = xmlFile:getInt(key .. ".career#injuries", 0)
     EqExperience.load(xmlFile, key, self)
+
+    local i = 0
+    while i < EqHorseRecord.RESULTS_KEPT do
+        local resultKey = string.format("%s.results.result(%d)", key, i)
+        if not xmlFile:hasProperty(resultKey) then break end
+        local result = {
+            day = xmlFile:getInt(resultKey .. "#day", 0),
+            discipline = xmlFile:getString(resultKey .. "#discipline", ""),
+            tier = xmlFile:getString(resultKey .. "#tier", ""),
+            venue = xmlFile:getString(resultKey .. "#venue"),
+            place = xmlFile:getInt(resultKey .. "#place", 0),
+            field = xmlFile:getInt(resultKey .. "#field", 0),
+            prize = xmlFile:getFloat(resultKey .. "#prize", 0),
+            status = xmlFile:getString(resultKey .. "#status"),
+            lines = {},
+        }
+        local j = 0
+        while true do
+            local lineKey = string.format("%s.line(%d)", resultKey, j)
+            if not xmlFile:hasProperty(lineKey) then break end
+            table.insert(result.lines, xmlFile:getString(lineKey .. "#text", ""))
+            j = j + 1
+        end
+        table.insert(self.results, result)
+        i = i + 1
+    end
 
     return self
 end

@@ -6,7 +6,9 @@
     genetics keys, so our lines came out white. This box inherits its size and background and
     replaces draw: each line has a colour for its title and value, and an optional suffix in a
     colour of its own, so "72 - Competitor" takes the skill colour and "(Very high)" the
-    potential colour. A line without a colour is drawn white.
+    potential colour, and the title can take a colour of its own (each stat's colour). A line
+    without a colour is drawn white. When the lines are wider than RLRM's box (a recent gain makes
+    "72 - Competitor (+2.8) (Very high)"), the box grows to the left to fit them.
 ]]
 
 EqSkillsHudBox = {}
@@ -34,25 +36,21 @@ end
 function EqSkillsHudBox.new(infoDisplay, uiScale)
     local base = baseClass()
     local self = base.new(infoDisplay, uiScale)
-    local mt = EqSkillsHudBox.mt
-    if mt == nil then
-        mt = { __index = function(_, key)
-            local own = rawget(EqSkillsHudBox, key)
-            if own ~= nil then return own end
-            return baseClass()[key]
-        end }
-        EqSkillsHudBox.mt = mt
-    end
-    return setmetatable(self, mt)
+    -- The game's Class() metatables are protected, so the box keeps RLRM's and our two
+    -- methods are set on the instance, where they win over the class's.
+    self.addLine = EqSkillsHudBox.addLine
+    self.draw = EqSkillsHudBox.draw
+    return self
 end
 
 
 --- @param key string title
 --- @param value string|nil
---- @param color table|nil { r, g, b, a } for the title and value
+--- @param color table|nil { r, g, b, a } for the value, and the title when keyColor is nil
 --- @param suffix string|nil drawn after the value, such as "(High)"
 --- @param suffixColor table|nil
-function EqSkillsHudBox:addLine(key, value, color, suffix, suffixColor)
+--- @param keyColor table|nil for the title, the value's colour when nil
+function EqSkillsHudBox:addLine(key, value, color, suffix, suffixColor, keyColor)
     self.currentLineIndex = (self.currentLineIndex or 0) + 1
     local line = self.lines[self.currentLineIndex]
     if line == nil then
@@ -64,6 +62,7 @@ function EqSkillsHudBox:addLine(key, value, color, suffix, suffixColor)
     line.color = color or WHITE
     line.suffix = suffix
     line.suffixColor = suffixColor or line.color
+    line.keyColor = keyColor or line.color
     line.isWarning = false
     line.isActive = true
 end
@@ -75,11 +74,21 @@ end
 --- @return number posX
 --- @return number newPosY
 function EqSkillsHudBox:draw(posX, posY)
-    local leftX = posX - self.boxWidth
     local height = self.titleAndBoxHeight
+    local width = self.boxWidth
+    local gap = 12 * g_pixelSizeX
     for _, line in ipairs(self.lines) do
-        if line.isActive then height = height + self.lineHeight end
+        if line.isActive then
+            height = height + self.lineHeight
+            local text = line.value .. ((line.suffix ~= nil and line.suffix ~= "") and (" " .. line.suffix) or "")
+            local needed = self.keyOffsetX - self.valueOffsetX + getTextWidth(self.keyTextSize, line.key)
+                + getTextWidth(self.valueTextSize, text) + gap
+            width = math.max(width, needed)
+        end
     end
+    local leftX = posX - width
+    -- RLRM sizes the background pieces to boxWidth; stretch them when the lines need more.
+    for _, overlay in ipairs({ self.bgBottom, self.bgScale, self.bgTop }) do overlay:setDimension(width, nil) end
 
     self.bgScale:setDimension(nil, height - self.bgBottom.height - self.bgTop.height)
     self.bgBottom:setPosition(leftX, posY)
@@ -103,10 +112,11 @@ function EqSkillsHudBox:draw(posX, posY)
 
     for _, line in ipairs(self.lines) do
         if line.isActive then
-            local color = line.color
-            setTextColor(color[1], color[2], color[3], color[4])
+            local color, keyColor = line.color, line.keyColor or line.color
+            setTextColor(keyColor[1], keyColor[2], keyColor[3], keyColor[4])
             setTextAlignment(RenderText.ALIGN_LEFT)
             renderText(keyX, y, self.keyTextSize, line.key)
+            setTextColor(color[1], color[2], color[3], color[4])
             local keyWidth = getTextWidth(self.keyTextSize, line.key)
 
             setTextAlignment(RenderText.ALIGN_RIGHT)
