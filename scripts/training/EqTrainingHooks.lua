@@ -59,6 +59,8 @@ function EqTrainingHooks.getSheet(id)
     local sheet = EqTrainingHooks.sheets[id]
     if sheet == nil then
         sheet = EqTraining.newSheet()
+        -- The month the riding happens in, for peak form (EqTraining.formFor).
+        sheet.month = EqCompetitionManager.month or 0
         EqTrainingHooks.sheets[id] = sheet
     end
     return sheet
@@ -656,7 +658,7 @@ end
 -- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 2, speed = 2, agility = 2, temperament = 2 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 4, stamina = 2, speed = 2, agility = 2, temperament = 2, form = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -773,6 +775,24 @@ function EqTrainingHooks.horseRows(cluster)
             math.floor(record.trained[stat] or 0)), STAT_COLOR[stat] })
     end
     table.insert(rows, { segments = segments })
+
+    -- Peak form for this month's events, from the player's best session so far.
+    local form = EqCompetitionManager.formFor(record)
+    if EqTraining.hasForm(form) then
+        local formSegments = { { g_i18n:getText("eq_form_title"), COLOR.grey } }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do
+            if (form[stat] or 0) >= 0.5 then
+                table.insert(formSegments, { string.format("%s +%d", g_i18n:getText("eq_stat_short_" .. stat),
+                    math.floor(form[stat] + 0.5)), STAT_COLOR[stat] })
+            end
+        end
+        table.insert(rows, { segments = formSegments })
+        -- The first peak form explains itself once.
+        if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
+            EqTrainingHud.markSeen("form")
+            EqTrainingHooks.showHelp("form")
+        end
+    end
     return rows
 end
 
@@ -1003,9 +1023,16 @@ function EqTrainingHooks.onHorseDay(animal)
             :uniform(EqTraining.STAFF_LUCK.low, EqTraining.STAFF_LUCK.high),
     }
     local deltas, detail = EqTraining.applyDay(record, record:getCeilings(), day)
+    if day.sheet ~= nil then
+        record.form = EqTraining.mergeForm(record.form, day.sheet.month or 0, EqTraining.formFrom(day.sheet))
+    end
 
     local notes = EqStatLog.explainDay(detail, day, { resting = resting, focus = record.focus, sheet = day.sheet,
         playerPoints = EqTraining.playerRidingPoints(day.sheet) })
+    if record.form ~= nil and EqTraining.hasForm(record.form) then
+        table.insert(notes, string.format("Peak form for month %d: sta +%.1f spd +%.1f agi +%.1f tem +%.1f", record.form.month or 0,
+            record.form.stamina or 0, record.form.speed or 0, record.form.agility or 0, record.form.temperament or 0))
+    end
     table.insert(notes, string.format("RLRM before its daily update: fitness %s health %s dirt %s riding %s",
         tostring(animal.fitness), tostring(animal.health), tostring(animal.dirt), tostring(animal.riding)))
     local today = g_currentMission.environment.currentMonotonicDay or 0

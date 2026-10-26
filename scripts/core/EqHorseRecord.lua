@@ -41,6 +41,7 @@ function EqHorseRecord.new(id)
     self.revealed = true         -- false until a dealer horse's real potential has shown
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
     self.experience = nil        -- discipline -> { value, idle }, see EqExperience
+    self.form = nil              -- peak form from the player's riding: { month, stat -> points }, see EqTraining.formFor
     self.results = {}            -- latest events first: { day, discipline, tier, venue, place, field, prize, status, lines }
     return self
 end
@@ -136,6 +137,10 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
         end
     end
     xmlFile:setFloat(key .. ".genes#budget", self.budgetGene)
+    if self.form ~= nil then
+        xmlFile:setInt(key .. ".form#month", self.form.month or 0)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(key .. ".form#" .. stat, self.form[stat] or 0) end
+    end
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         xmlFile:setFloat(key .. ".genes#" .. stat, self.genes[stat] or EqConstants.GENE_MEAN)
@@ -212,6 +217,10 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
         self.revealed = xmlFile:getBool(key .. ".advertised#revealed", false)
     end
     self.budgetGene = EqStats.clampGene(xmlFile:getFloat(key .. ".genes#budget", EqConstants.GENE_MEAN))
+    if xmlFile:hasProperty(key .. ".form") then
+        self.form = { month = xmlFile:getInt(key .. ".form#month", 0) }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do self.form[stat] = xmlFile:getFloat(key .. ".form#" .. stat, 0) end
+    end
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         self.genes[stat] = EqStats.clampGene(xmlFile:getFloat(key .. ".genes#" .. stat, EqConstants.GENE_MEAN))

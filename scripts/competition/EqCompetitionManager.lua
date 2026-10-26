@@ -71,6 +71,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
+    EqCompetitionManager.month = 0          -- months played, counted at each month change: tags peak form
+    EqCompetitionManager.monthChangedDay = nil
 end
 
 EqCompetitionManager.reset()
@@ -314,30 +316,70 @@ end
 --- @param record table
 --- @param event table
 --- @return number rating 0..100
-function EqCompetitionManager.ratingFor(record, event)
+--- @param stats table|nil stat -> level to rate instead of the trained levels (with peak form)
+function EqCompetitionManager.ratingFor(record, event, stats)
     local discipline = EqCompetitionManager.config.disciplineByName[event.discipline]
-    local rating = EqCompetition.rating(record.trained, discipline, getGoing(event))
+    local rating = EqCompetition.rating(stats or record.trained, discipline, getGoing(event))
     return math.min(100, rating + EqExperience.ratingBonus(record, event.discipline))
 end
 
 
+--- A horse's peak form for a month's events: the best of the month's riding, including today's
+--- if the day has not been counted yet.
+--- @param record table
+--- @param month number|nil the month whose events run (this month when nil)
+--- @return table form stat -> points
+function EqCompetitionManager.formFor(record, month)
+    local sheets = EqTrainingHooks ~= nil and EqTrainingHooks.sheets or nil
+    local sheet = sheets ~= nil and record.injury == nil and sheets[record.id] or nil
+    return EqTraining.formFor(record.form, month or EqCompetitionManager.month, sheet)
+end
+
+
+--- @param form table stat -> points, from formFor
+--- @return string|nil text such as "Spd +6  Agi +3", nil when the horse has no peak form
+function EqCompetitionManager.formText(form)
+    if not EqTraining.hasForm(form) then return nil end
+    local parts = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if (form[stat] or 0) >= 0.5 then
+            table.insert(parts, string.format("%s +%d", g_i18n:getText("eq_stat_short_" .. stat), math.floor(form[stat] + 0.5)))
+        end
+    end
+    return table.concat(parts, "  ")
+end
+
+
+--- The month whose events run now. A day change and a month change can come in either order;
+--- after the month change the ended day still belongs to the month before.
+--- @return number month
+function EqCompetitionManager.endedMonth()
+    local today = g_currentMission.environment.currentMonotonicDay or 0
+    if EqCompetitionManager.monthChangedDay == today then return EqCompetitionManager.month - 1 end
+    return EqCompetitionManager.month
+end
+
+
 --- A horse as it starts an event: its rating, condition on the day, stats for its checks, and
---- for eventing its phase ratings.
+--- for eventing its phase ratings. Peak form from the player's riding counts here, but not
+--- toward which events the horse may enter.
 --- @param record table
 --- @param animal table RLRM Animal
 --- @param event table
 --- @param farmId number|nil the horse's farm, for its facilities
+--- @param month number|nil the month whose peak form counts (this month when nil)
 --- @return table entrant for EqCompetition.run
-function EqCompetitionManager.entrantFor(record, animal, event, farmId)
+function EqCompetitionManager.entrantFor(record, animal, event, farmId, month)
     local config = EqCompetitionManager.config
     local discipline = config.disciplineByName[event.discipline]
-    local rating = EqCompetitionManager.ratingFor(record, event)
+    local stats = EqTraining.withForm(record.trained, EqCompetitionManager.formFor(record, month))
+    local rating = EqCompetitionManager.ratingFor(record, event, stats)
     local phaseRatings = nil
     if discipline.phases ~= nil then
         local ratings = {}
         for _, name in ipairs(discipline.phases) do
             if config.disciplineByName[name] ~= nil then
-                ratings[name] = EqCompetitionManager.ratingFor(record, { discipline = name, going = event.going })
+                ratings[name] = EqCompetitionManager.ratingFor(record, { discipline = name, going = event.going }, stats)
             end
         end
         phaseRatings = EqPerformance.scalePhases(ratings, rating)
@@ -347,7 +389,7 @@ function EqCompetitionManager.entrantFor(record, animal, event, farmId)
         rating = rating,
         condition = EqCompetition.condition(animal.fitness, animal.health)
             * EqFacilityHooks.conditionFactor(farmId, event.discipline),
-        stats = record.trained,
+        stats = stats,
         phaseRatings = phaseRatings,
     }
 end
@@ -512,7 +554,8 @@ end
 --- the run went), and a few lines kept on the horse for the Results page.
 --- @param event table
 --- @param horses table from indexHorses
-function EqCompetitionManager.resolve(event, horses)
+--- @param month number|nil the month whose peak form counts (this month when nil)
+function EqCompetitionManager.resolve(event, horses, month)
     local config = EqCompetitionManager.config
     local tier = config.tierByName[event.tier]
     local discipline = config.disciplineByName[event.discipline]
@@ -560,7 +603,7 @@ function EqCompetitionManager.resolve(event, horses)
                 notify(entry.farmId, text, "EQ_SCRATCHED", horse.animal, entry.horseId)
                 keepResult(record, summary, placing, { text })
             else
-                local starter = EqCompetitionManager.entrantFor(record, horse.animal, event, entry.farmId)
+                local starter = EqCompetitionManager.entrantFor(record, horse.animal, event, entry.farmId, month)
                 starter.temperament = record.trained.temperament or 0
                 starter.stamina = record.trained.stamina or 0
                 starter.fitness = horse.animal.fitness or 0
@@ -821,7 +864,8 @@ end
 
 --- Close and resolve every open event of a kind, then open the next round of that kind.
 --- @param kind string
-function EqCompetitionManager.turnOver(kind)
+--- @param month number|nil the month whose peak form counts
+function EqCompetitionManager.turnOver(kind, month)
     local horses = indexHorses()
     local returning = EqCompetitionManager.enteredAnimals(kind, horses)
     local ids = {}
@@ -833,7 +877,7 @@ function EqCompetitionManager.turnOver(kind)
     for _, id in ipairs(ids) do
         local event = EqCompetitionManager.events[id]
         EqCompetitionManager.events[id] = nil
-        EqCompetitionManager.resolve(event, horses)
+        EqCompetitionManager.resolve(event, horses, month)
     end
 
     EqCompetitionManager.openRound(kind)
@@ -844,19 +888,23 @@ end
 function EqCompetitionManager.onDayChanged()
     EqCompetitionManager.dailyCare(indexHorses())
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY then
-        EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
+        EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND, EqCompetitionManager.endedMonth())
     end
 end
 
 
 function EqCompetitionManager.onPeriodChanged()
+    local ended = EqCompetitionManager.month
     EqCompetitionManager.farmEntries = {}
     EqCompetitionManager.monthlyCare(indexHorses())
     -- Monthly events first, so the round's draw knows how many are already on the calendar.
-    EqCompetitionManager.turnOver(EqCompetition.KIND_MONTH)
+    EqCompetitionManager.turnOver(EqCompetition.KIND_MONTH, ended)
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_MONTH then
-        EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND)
+        EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND, ended)
     end
+    -- The ended month's peak form has had its events; a new month's form starts from nothing.
+    EqCompetitionManager.month = ended + 1
+    EqCompetitionManager.monthChangedDay = g_currentMission.environment.currentMonotonicDay or 0
 end
 
 
@@ -1173,6 +1221,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
     xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
+    xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
 
     local farmIds = {}
@@ -1252,6 +1301,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
     settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
+    EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
 
     local f = 0

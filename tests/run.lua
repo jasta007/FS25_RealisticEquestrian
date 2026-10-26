@@ -1188,6 +1188,56 @@ check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing"
 check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
     local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
 
+-- Peak form: the month's best minigame session per stat, never stacked over days.
+;(function()
+    local sheet = EqTraining.newSheet()
+    sheet.month = 4
+    sheet.ms.gallop = 600000
+    check("plain gait riding gives no peak form", not EqTraining.hasForm(EqTraining.formFrom(sheet)))
+    sheet.focused.speed = EqTraining.FORM_FULL
+    sheet.focused.agility = EqTraining.FORM_FULL / 2
+    sheet.focused.stamina = EqTraining.FORM_FULL * 3
+    local points = EqTraining.formFrom(sheet)
+    check("a strong session gives full form", math.abs(points.speed - EqTraining.FORM_MAX) < 1e-9)
+    check("half a session gives half", math.abs(points.agility - EqTraining.FORM_MAX / 2) < 1e-9)
+    check("form never passes FORM_MAX", math.abs(points.stamina - EqTraining.FORM_MAX) < 1e-9)
+
+    local form = EqTraining.mergeForm(nil, 4, points)
+    local weaker = EqTraining.newSheet()
+    weaker.month = 4
+    weaker.focused.speed = EqTraining.FORM_FULL / 4
+    weaker.focused.temperament = EqTraining.FORM_FULL
+    form = EqTraining.mergeForm(form, 4, EqTraining.formFrom(weaker))
+    check("a second day keeps each stat's best, not the sum", math.abs(form.speed - EqTraining.FORM_MAX) < 1e-9
+        and math.abs(form.temperament - EqTraining.FORM_MAX) < 1e-9 and math.abs(form.agility - EqTraining.FORM_MAX / 2) < 1e-9)
+    local again = EqTraining.mergeForm(form, 4, EqTraining.formFrom(sheet))
+    check("riding the same session again adds nothing", math.abs(again.speed - EqTraining.FORM_MAX) < 1e-9)
+    check("a new month starts afresh", EqTraining.mergeForm(form, 5, {}).speed == 0)
+    check("an older month's session can't replace a newer form", EqTraining.mergeForm(form, 3, { speed = 1 }) == form)
+
+    check("form counts in its own month", math.abs(EqTraining.formFor(form, 4).speed - EqTraining.FORM_MAX) < 1e-9)
+    check("form is gone the next month", not EqTraining.hasForm(EqTraining.formFor(form, 5)))
+    local today = EqTraining.newSheet()
+    today.month = 5
+    today.focused.agility = EqTraining.FORM_FULL
+    local live = EqTraining.formFor(form, 5, today)
+    check("today's riding counts before the day is applied", math.abs(live.agility - EqTraining.FORM_MAX) < 1e-9 and live.speed == 0)
+    check("a sheet from another month doesn't count", not EqTraining.hasForm(EqTraining.formFor(nil, 6, today)))
+
+    local stats = EqTraining.withForm({ stamina = 50, speed = 96, agility = 30, temperament = 0 }, { speed = 8, agility = 4 })
+    check("form adds to the stats, capped at 100", stats.speed == 100 and stats.agility == 34 and stats.stamina == 50)
+
+    local horse = EqHorseRecord.new("DE 1 9")
+    horse.form = form
+    local x = memoryXML()
+    horse:saveToXMLFile(x, "h")
+    local back = EqHorseRecord.loadFromXMLFile(x, "h")
+    check("peak form survives a save", back.form ~= nil and back.form.month == 4
+        and math.abs(back.form.speed - form.speed) < 1e-6 and math.abs(back.form.agility - form.agility) < 1e-6)
+    check("an old save loads with no form", EqHorseRecord.loadFromXMLFile((function()
+        local y = memoryXML(); EqHorseRecord.new("DE 1 10"):saveToXMLFile(y, "h"); return y end)(), "h").form == nil)
+end)()
+
 -- Event results: checks, the story lines, rivals and the results kept on a horse.
 ;(function()
     local sj = config.disciplineByName.showJumping

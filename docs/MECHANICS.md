@@ -67,6 +67,23 @@ Every horse trains once a day, at RLRM's daily horse tick.
   stamina 100). Below 30% exertion a horse standing or walking recovers quickly, a fit one faster
   still.
 
+### Peak form
+
+- Your own riding is mostly preparation for contests. Minigame work in a stat puts the horse in
+  **Peak form** for the month's events: up to **+8** to that stat, in full at a strong session
+  (1.5 times a full day of plain riding's work in that stat) and in proportion below it. Just riding
+  the gaits gives no form.
+- **Once a month:** sessions on several days of a month don't add up. Each stat keeps the best
+  session of the month, so at 1 day a month it is simply the day you ride.
+- Peak form counts in every event the horse runs that month, including Advanced and Championship
+  events that resolve at the month change, and the Events tab's chances include it. It adds to the
+  stats the course's checks roll against and to the horse's rating on the day, and may lift a
+  stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
+- It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
+  month's events have run. A popup explains it the first time a horse gets it.
+- Permanent training is unchanged: your riding still trains faster than staff and takes a stat
+  the last 5% of its ceiling.
+
 ### Stamina
 
 Stamina comes from runs at canter or gallop. Canter 8 seconds without jumping or galloping,

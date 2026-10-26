@@ -1271,3 +1271,78 @@ function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, time
     end
     return deltas
 end
+
+
+-- Peak form (James, 2026-10-26): the player's own riding is mostly pre-contest prep. A month's
+-- best minigame session in each stat lifts that stat by up to FORM_MAX points for the month's
+-- events, at FORM_FULL focused effort. Plain gait riding gives none. Sessions on several days of
+-- a month never add up: each stat keeps its best. It clears when the month's events have run.
+EqTraining.FORM_MAX = 8
+EqTraining.FORM_FULL = 1.5
+
+--- @param sheet table|nil
+--- @return table points stat -> 0..FORM_MAX from this sheet's minigame work
+function EqTraining.formFrom(sheet)
+    local points = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local focused = sheet ~= nil and sheet.focused ~= nil and sheet.focused[stat] or 0
+        points[stat] = EqTraining.FORM_MAX * EqStats.clamp(focused / EqTraining.FORM_FULL, 0, 1)
+    end
+    return points
+end
+
+
+--- Fold one session into a horse's form: a new month starts afresh, the same month keeps the best.
+--- @param form table|nil { month, stat -> points }
+--- @param month number the month the session was ridden in
+--- @param points table from formFrom
+--- @return table form
+function EqTraining.mergeForm(form, month, points)
+    if form ~= nil and (form.month or 0) > month then return form end
+    local merged = { month = month }
+    local same = form ~= nil and form.month == month
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        merged[stat] = math.max(same and form[stat] or 0, points[stat] or 0)
+    end
+    return merged
+end
+
+
+--- A horse's form for a month's events: what it kept from earlier days, and today's riding if
+--- the day has not been counted yet.
+--- @param form table|nil record.form
+--- @param month number
+--- @param sheet table|nil today's sheet, not yet applied; sheet.month says when it was ridden
+--- @return table points stat -> points (all 0 when out of form)
+function EqTraining.formFor(form, month, sheet)
+    local points = EqTraining.mergeForm(form ~= nil and form.month == month and form or nil, month, {})
+    if sheet ~= nil and (sheet.month or 0) == month then
+        points = EqTraining.mergeForm(points, month, EqTraining.formFrom(sheet))
+    end
+    points.month = nil
+    return points
+end
+
+
+--- @param form table stat -> points
+--- @return boolean true when any stat has at least half a point of form
+function EqTraining.hasForm(form)
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if (form[stat] or 0) >= 0.5 then return true end
+    end
+    return false
+end
+
+
+--- Stats as the horse competes: trained levels plus form, at most 100. Form may pass the
+--- ceiling: it is sharpness on the day, not training.
+--- @param trained table stat -> level
+--- @param form table|nil stat -> points
+--- @return table stats
+function EqTraining.withForm(trained, form)
+    local stats = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        stats[stat] = math.min(100, (trained[stat] or 0) + (form ~= nil and form[stat] or 0))
+    end
+    return stats
+end
