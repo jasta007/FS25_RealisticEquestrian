@@ -2402,5 +2402,26 @@ end)()
     check("modDesc names the maker", string.find(author, EqRandom.mark(), 1, true) ~= nil)
 end)()
 
+-- Horses left in a farm's livestock trailer still count as the farm's.
+;(function()
+    local savedMission = g_currentMission
+    local function horse(name) return { name = name, isHorse = function() return true end } end
+    local cow = { isHorse = function() return false end }
+    local function trailer(farmId, animals)
+        return { spec_livestockTrailer = {}, getOwnerFarmId = function() return farmId end,
+            getClusters = function() return animals end }
+    end
+    local tractor = { getOwnerFarmId = function() return 1 end }
+    g_currentMission = { vehicleSystem = { vehicles = {
+        trailer(1, { horse("Iolanthe"), cow }), trailer(2, { horse("Other farm") }), tractor,
+        trailer(1, { horse("Shiver") }) } } }
+    local found = EqRLRM.listHorsesInTrailers(1)
+    check("trailer horses found, cows and other farms left out", #found == 2
+        and found[1].name == "Iolanthe" and found[2].name == "Shiver")
+    g_currentMission = nil
+    check("no trailer horses without a mission", #EqRLRM.listHorsesInTrailers(1) == 0)
+    g_currentMission = savedMission
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
