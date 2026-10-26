@@ -22,9 +22,9 @@ function EqListBadge.apply(row, item)
     if animal == nil or animal.isHorse == nil or not animal:isHorse() then return end
     if not EqCompetitionManager.awaitingDelivery(animal) then
         local record = not row.descriptorVisible and EqRegistry.getOrCreate(animal) or nil
-        if EqRole.has(record) then
+        if EqRole.isShown(record) then
             row.descriptorVisible = true
-            row.descriptorText = EqRole.text(EqRole.get(record))
+            row.descriptorText = EqRole.text(EqRole.shown(record))
         end
         return
     end

@@ -296,7 +296,7 @@ end
 local function fillSkillsBox(record, box, animal)
     -- The game's plain box takes a warning flag where ours takes a colour.
     local colored = box.eqColored == true
-    if EqRole.has(record) then
+    if EqRole.has(record) and not record.retired then
         box:addLine(g_i18n:getText("eq_role_title"), EqRole.text(EqRole.get(record)), colored and EqRole.COLOR or nil)
     end
     if EqInfoDisplay.isRidingFull(animal) then
@@ -654,9 +654,9 @@ function EqInfoDisplay.renderSkills(frame, animal)
         end
         local roleCell = section.potential.elements[#EqConstants.STAT_KEYS + 2]
         if roleCell ~= nil then
-            local role = EqRole.get(record)
+            local role = EqRole.shown(record)
             fillCell(roleCell, g_i18n:getText("eq_role_title"), EqRole.text(role),
-                EqRole.has(record) and EqRole.COLOR or EqInfoDisplay.NO_ROLE_COLOR, EqRole.COLOR)
+                EqRole.isShown(record) and EqRole.COLOR or EqInfoDisplay.NO_ROLE_COLOR, EqRole.COLOR)
         end
 
         local line = section.potential.elements[2].size[2]

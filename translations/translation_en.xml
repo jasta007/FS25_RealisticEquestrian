@@ -243,6 +243,7 @@
         <text name="eq_role_racing" text="Racing"/>
         <text name="eq_role_breeding" text="Breeding"/>
         <text name="eq_role_sale" text="For sale"/>
+        <text name="eq_role_retired" text="Retired"/>
         <text name="eq_ui_button_role" text="Role: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Change horse role"/>
         <text name="eq_ui_riding" text="Riding"/>

@@ -138,8 +138,9 @@ horse can clear fences without a full gallop.
 - A **role** is a reminder of what a horse is for: Dressage, Show Jumping, Cross Country, Eventing,
   Racing, Breeding or For sale (or No role). Press **G** (the Role button) on a horse in RLRM's
   Info tab to cycle it. Host only for now in multiplayer.
-- Once any horse in a pen has a role, the Info tab lists the pen's horses in groups by role, No
-  role last. The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
+- Once any horse in a pen has a role, the Info tab lists the pen's horses in groups by role, then
+  No role, then Retired. Retired is not on the Role button: retiring a horse (RLRM's Diseases tab)
+  shows it as Retired everywhere, and bringing it back gives it its old role again. The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
   Skills box when you look at the horse, in the menu's Skill potential column and at the top of
   the riding panel, with the horse's four skills.
 - **Staff train toward the role.** Each role has a staff profile (Dressage leans on temperament

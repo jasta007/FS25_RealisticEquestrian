@@ -2492,6 +2492,18 @@ end)()
     local sickOrder = { "__diseased__", "subtype_1" }
     local sickBy = { __diseased__ = { c }, subtype_1 = { a, b, d } }
     local o4, k4 = EqRole.groupSections(items, sickOrder, sickBy, { __diseased__ = "Diseased" }, roleOf)
+    local retired = item("r", "dressage")
+    local retiredRoleOf = function(cluster)
+        return cluster == retired.cluster and EqRole.RETIRED or roleOf(cluster)
+    end
+    local o5, k5, t5 = EqRole.groupSections({ a, retired, b }, order, { subtype_1 = { a, retired, b } }, titles, retiredRoleOf)
+    check("retired horses get the last group", o5[#o5] == "eqRole_retired" and k5.eqRole_retired[1] == retired
+        and t5.eqRole_retired == "eq_role_retired", table.concat(o5, ","))
+    check("retired shows over a horse's role", EqRole.shown({ focus = "dressage", retired = true }) == EqRole.RETIRED
+        and EqRole.get({ focus = "dressage", retired = true }) == "dressage")
+    local cycled, guard = EqRole.NONE, 0
+    repeat cycled, guard = EqRole.next(cycled), guard + 1 until cycled == EqRole.NONE or cycled == EqRole.RETIRED or guard > 20
+    check("the Role button never gives Retired", cycled == EqRole.NONE)
     check("diseased horses stay first", o4[1] == "__diseased__" and k4.__diseased__[1] == c and k4.eqRole_dressage == nil
         and o4[2] == "eqRole_racing", table.concat(o4, ","))
 end)()

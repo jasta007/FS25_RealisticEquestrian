@@ -7,6 +7,10 @@
     Set with the Set role button in RLRM's Info tab (EqRoleMenu), which then groups horses by
     role. The role also shows on the look-at Skills box, in RLRM's animal lists and on the riding
     panel. "No role" is the old balanced focus.
+
+    Retired shows as a role, and gets the last group, but is not one the button gives: a horse
+    is retired or brought back from RLRM's Diseases tab (EqInjury), and keeps its own role
+    underneath for staff and for when it comes back.
 ]]
 
 EqRole = {}
@@ -15,6 +19,7 @@ EqRole.NONE = "balanced"
 -- The order the Set role button cycles through, and the order of the Info tab's role groups
 -- (No role last there).
 EqRole.ORDER = { "balanced", "dressage", "showJumping", "crossCountry", "eventing", "racing", "breeding", "sale" }
+EqRole.RETIRED = "retired"
 
 -- A soft gold, so the role reads as a note of the player's, apart from the stat colours.
 EqRole.COLOR = { 1, 0.85, 0.45, 1 }
@@ -45,6 +50,21 @@ function EqRole.has(record)
 end
 
 
+--- @param record table|nil
+--- @return string role what the horse shows as: RETIRED for a retired horse, else its role
+function EqRole.shown(record)
+    if record ~= nil and record.retired then return EqRole.RETIRED end
+    return EqRole.get(record)
+end
+
+
+--- @param record table|nil
+--- @return boolean true when the horse shows a role (Retired included)
+function EqRole.isShown(record)
+    return EqRole.shown(record) ~= EqRole.NONE
+end
+
+
 --- @param role string|nil
 --- @return string role the one after it in ORDER, back to NONE after the last
 function EqRole.next(role)
@@ -58,12 +78,13 @@ end
 --- @param role string
 --- @return string text "Dressage", "No role"
 function EqRole.text(role)
+    if role == EqRole.RETIRED then return g_i18n:getText("eq_role_retired") end
     return g_i18n:getText("eq_role_" .. (EqRole.isKnown(role) and role or EqRole.NONE))
 end
 
 
 --- Regroup RLRM's Info tab sections by role: diseased horses stay first, then one section per
---- role in ORDER, horses without one last. Left as RLRM made them when the pen holds anything
+--- role in ORDER, then horses without one, then retired horses. Left as RLRM made them when the pen holds anything
 --- but horses, or no horse has a role.
 --- @param items table RLRM's sorted list items, each with .cluster
 --- @param sectionOrder table RLRM's section keys
@@ -103,6 +124,7 @@ function EqRole.groupSections(items, sectionOrder, itemsBySection, titlesBySecti
     local roleOrder = {}
     for i = 2, #EqRole.ORDER do table.insert(roleOrder, EqRole.ORDER[i]) end
     table.insert(roleOrder, EqRole.NONE)
+    table.insert(roleOrder, EqRole.RETIRED)
     for _, role in ipairs(roleOrder) do
         if grouped[role] ~= nil then
             local key = "eqRole_" .. role

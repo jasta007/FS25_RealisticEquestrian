@@ -1,7 +1,7 @@
 --[[
     EqRoleMenu.lua
     Horse roles (EqRole) in RLRM's Info tab: a Role button (G) on a selected horse cycles its
-    role, and the horse list is grouped by role (Dressage, Show Jumping, ... then No role) once
+    role, and the horse list is grouped by role (Dressage, Show Jumping, ... No role, Retired) once
     any horse in the pen has one. With no roles the list stays RLRM's colour groups.
 
     RLRM's button bar has 9 slots and a horse already fills 8 (9 with the Ride horse button), so
@@ -20,7 +20,7 @@ local Log = EqLog
 --- @return string|nil role nil for anything but a horse
 function EqRoleMenu.roleOf(cluster)
     if cluster.isHorse == nil or not cluster:isHorse() then return nil end
-    return EqRole.get(EqRegistry.getOrCreate(cluster))
+    return EqRole.shown(EqRegistry.getOrCreate(cluster))
 end
 
 
@@ -45,7 +45,8 @@ function EqRoleMenu.updateButtons(frame)
     if type(frame.menuButtonInfo) ~= "table" or not canSetRole() then return end
     local animal = selectedHorse(frame)
     local record = animal ~= nil and EqRegistry.getOrCreate(animal) or nil
-    if record == nil then return end
+    -- Retired is set from the Diseases tab, not here.
+    if record == nil or record.retired then return end
 
     frame.eqRoleButtonInfo = frame.eqRoleButtonInfo or {
         inputAction = InputAction.EQ_HORSE_ROLE,
@@ -83,7 +84,7 @@ function EqRoleMenu.cycle(frame)
     if not canSetRole() then return end
     local animal = selectedHorse(frame)
     local record = animal ~= nil and EqRegistry.getOrCreate(animal) or nil
-    if record == nil then return end
+    if record == nil or record.retired then return end
 
     record.focus = EqRole.next(EqRole.get(record))
     Log:info("EqRoleMenu: %s '%s' role %s", record.id, animal:getName() or "", record.focus)

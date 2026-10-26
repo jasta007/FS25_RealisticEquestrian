@@ -763,9 +763,9 @@ function EqTrainingHooks.horseRows(cluster)
     local rows = {}
     local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
     if record == nil then return rows end
-    if EqRole.has(record) then
+    if EqRole.isShown(record) then
         table.insert(rows, { left = g_i18n:getText("eq_role_title"), leftColor = COLOR.grey,
-            right = EqRole.text(EqRole.get(record)), rightColor = EqRole.COLOR })
+            right = EqRole.text(EqRole.shown(record)), rightColor = EqRole.COLOR })
     end
     local segments = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
