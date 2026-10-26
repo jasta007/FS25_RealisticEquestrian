@@ -32,7 +32,7 @@ EqTrainingHud.COLOR = {
 
 -- Screen positions are shares of the screen, from the bottom left.
 EqTrainingHud.PANEL = { right = 0.985, top = 0.66, width = 0.2, padding = 0.008, lineHeight = 0.02,
-    textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008 }
+    textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008, markWidth = 0.0012 }
 EqTrainingHud.POPUP = { centerX = 0.5, bottom = 0.11, width = 0.36, padding = 0.012, lineHeight = 0.019,
     textSize = 0.015, titleSize = 0.0175 }
 EqTrainingHud.HELP_TIMEOUT_MS = 45000
@@ -113,6 +113,10 @@ function EqTrainingHud.drawPanel(title, rows)
             local barY = lineY - p.padding * 0.5 - p.barHeight
             fill(left, barY, right - left, p.barHeight, EqTrainingHud.COLOR.track)
             fill(left, barY, (right - left) * math.min(math.max(row.bar, 0), 1), p.barHeight, row.color or EqTrainingHud.COLOR.white)
+            -- Marks: thin white ticks across the bar, such as the edges of the stamina zone.
+            for _, mark in ipairs(row.marks or {}) do
+                fill(left + (right - left) * mark - p.markWidth / 2, barY - p.barHeight * 0.5, p.markWidth, p.barHeight * 2, EqTrainingHud.COLOR.white)
+            end
             lineY = lineY - p.barHeight - p.padding
         else
             lineY = lineY - p.lineHeight
@@ -159,6 +163,12 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
+    elseif kind == "sprintCount" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_sprintCount"), mult, EqTraining.SPRINTS_TO_WARM), EqTrainingHud.COLOR.yellow, 1
+    elseif kind == "sprint_warm" or kind == "sprint_ready" or kind == "sprint_go" then
+        text, color, big = g_i18n:getText("eq_pop_" .. kind), EqTrainingHud.COLOR.orange, kind == "sprint_warm" and 2 or 4
+    elseif kind == "sprint_over" then
+        text, color, big = g_i18n:getText("eq_pop_sprint_over"), EqTrainingHud.COLOR.grey, 1
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
@@ -192,12 +202,14 @@ end
 --- Draw a routine request in the middle of the screen with the time left to start it.
 --- @param value string
 --- @param share number 0..1 of the time left
-function EqTrainingHud.drawPrompt(value, share)
+--- @param color table|nil yellow when nil
+function EqTrainingHud.drawPrompt(value, share, color)
     local p = EqTrainingHud.PROMPT
-    text(value, p.x, p.y, p.size, EqTrainingHud.COLOR.yellow, RenderText.ALIGN_CENTER, true)
+    color = color or EqTrainingHud.COLOR.yellow
+    text(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
     local left = p.x - p.barWidth / 2
     fill(left, p.y - p.barHeight * 2, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
-    fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, EqTrainingHud.COLOR.yellow)
+    fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, color)
     resetText()
 end
 

@@ -312,6 +312,47 @@ do
         EqTraining.routineStep(sheet, "halt", nil, 0, false, function() return 1 end)
         check("a high routine multiplier gives less time to react", r.request ~= nil and r.deadline - r.clock < EqTraining.ROUTINE_REACT_MS)
     end
+    do
+        -- Sprint: two warm-up sprints, then a ready Sprint started with W.
+        local sheet = EqTraining.newSheet()
+        local events = {}
+        local function ride(gait, ms)
+            for _ = 1, ms / 100 do
+                EqTraining.step(sheet, gait, 100, false, 50)
+                local event = EqTraining.sprintStep(sheet, gait, 100)
+                if event ~= nil then table.insert(events, event) end
+            end
+        end
+        ride("gallop", 4500)
+        check("a fresh gallop is a warm-up sprint", events[1] == "counted" and sheet.sprint.count == 1)
+        ride("halt", 20000)
+        ride("gallop", 4500)
+        check("two warm-up sprints warm the horse up", events[2] == "warm" and sheet.sprint.warm)
+        check("Sprint can't start before it is ready", not EqTraining.startSprint(sheet))
+        ride("gallop", 2000)
+        check("galloping on makes Sprint ready", events[3] == "ready" and EqTraining.startSprint(sheet))
+        local before = sheet.focused.speed
+        ride("gallop", 3000)
+        check("Sprint trains speed hard even when tiring", EqTraining.isSprinting(sheet)
+            and sheet.focused.speed - before > EqTraining.SPEED_RATE * 3 * 2)
+        ride("trot", 1100)
+        check("dropping out of a gallop ends Sprint", events[4] == "over" and not EqTraining.isSprinting(sheet)
+            and not sheet.sprint.warm and sheet.sprint.rest)
+        ride("halt", 1000)
+        ride("gallop", 4500)
+        check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
+    end
+    do
+        -- Holding the stamina zone narrows it and raises the gains.
+        local low, high = EqTraining.zoneBounds(0)
+        local nLow, nHigh = EqTraining.zoneBounds(EqTraining.ZONE_HOLD_FULL)
+        check("the zone starts full and narrows as it is held", low == EqTraining.ZONE_LOW and high == EqTraining.ZONE_HIGH
+            and nHigh - nLow == EqTraining.ZONE_MIN_HALF * 2)
+        local mid = (low + high) / 2
+        check("a held zone trains faster", EqTraining.staminaQuality(mid, 30, EqTraining.ZONE_HOLD_FULL) > 2
+            and EqTraining.staminaQuality(mid, 30, 0) == 1)
+        check("outside a narrowed zone, inside the full one, trains less", EqTraining.staminaQuality(high - 1, 30, EqTraining.ZONE_HOLD_FULL) < 1)
+    end
     -- Temperament routine.
     local first = function() return 1 end
     local routine = EqTraining.newSheet()

@@ -365,8 +365,8 @@ end
 --- @param spec table spec_rideable
 --- @param gait string
 --- @param record table|nil the ridden horse's EqHorseRecord
---- @param tiredness number exertion meter, 0-100
-local function tuneRiding(spec, gait, record, tiredness)
+--- @param sheet table the horse's training sheet (exertion and Sprint)
+local function tuneRiding(spec, gait, record, sheet)
     local trained = record ~= nil and record.trained or {}
     local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
     if type(spec.jumpHeight) == "number" then
@@ -391,9 +391,15 @@ local function tuneRiding(spec, gait, record, tiredness)
             for key, value in pairs(spec.eqBaseTopSpeeds) do spec.topSpeeds[key] = value end
         end
         -- Forward gaits only: backing up stays at the base game's pace. A blowing horse slows.
-        local blown = EqTrainingHooks.blownSpeedShare(tiredness)
+        -- Sprint ignores being blown and runs the gallop SPRINT_SPEED_SHARE faster.
+        local sprinting = EqTraining.isSprinting(sheet)
+        local blown = sprinting and 1 or EqTrainingHooks.blownSpeedShare(sheet.tiredness)
+        local gallop = Rideable.GAITTYPES ~= nil and Rideable.GAITTYPES.GALLOP or nil
         for key, value in pairs(spec.eqBaseTopSpeeds) do
-            if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed * blown or value end
+            if type(value) == "number" then
+                local sprint = sprinting and key == gallop and EqTraining.SPRINT_SPEED_SHARE or 1
+                spec.topSpeeds[key] = value > 0 and value * handling.speed * blown * sprint or value
+            end
         end
     end
     local shown = string.format("%s/%s/%s", tostring(trained.speed), tostring(trained.agility), tostring(trained.temperament))
@@ -420,7 +426,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local record = EqRegistry.getById(id)
     local sheet = EqTrainingHooks.getSheet(id)
     -- Not while airborne, so the lift a jump started with stays put.
-    if spec.eqJump == nil then tuneRiding(spec, gait, record, sheet.tiredness) end
+    if spec.eqJump == nil then tuneRiding(spec, gait, record, sheet) end
     -- In the air: an extra pull down (see GRAVITY_SHARE) and snappier turning (AIR_TURN_SHARE).
     local airborne = spec.isOnGround == false
     if airborne and type(spec.currentSpeedY) == "number" then
@@ -441,6 +447,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local pace = paceGait(spec, gait, now)
     EqTraining.step(sheet, pace, dt, worn, stamina)
     spec.eqLastGait = gait
+    local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
+    if sprintEvent == "counted" then EqTrainingHud.pop("sprintCount", sheet.sprint.count)
+    elseif sprintEvent ~= nil then EqTrainingHud.pop("sprint_" .. sprintEvent) end
+    if sprintEvent == "ready" then spec.eqSprintKeyFresh = not spec.eqAccelHeld end
+    -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
+    if sheet.sprint.ready and not EqTrainingHooks.sprintKeyHooked
+        and sheet.sprint.readyMs >= EqTraining.SPRINT_READY_MS + EqTrainingHooks.SPRINT_AUTO_MS then
+        EqTrainingHooks.startSprint(sheet)
+    end
 
     local wasJumping = spec.eqJump ~= nil
     trackJump(vehicle, spec, sheet, worn)
@@ -512,6 +527,37 @@ local function logRideableFields(spec)
 end
 
 
+-- Sprint starts with the forward key (W) once ready. If no forward key function could be
+-- hooked, it starts by itself this long after it is ready.
+EqTrainingHooks.SPRINT_AUTO_MS = 1500
+EqTrainingHooks.sprintKeyHooked = false
+
+--- @param sheet table
+function EqTrainingHooks.startSprint(sheet)
+    if EqTraining.startSprint(sheet) then
+        EqTrainingHud.pop("sprint_go")
+        Log:info("Sprint: started (exertion %.0f%%)", sheet.tiredness)
+    end
+end
+
+
+--- Appended to the base game's forward key (accelerate) action: a fresh press of W while
+--- Sprint is ready starts it. Holding W from before Sprint was ready needs a release first.
+--- @param vehicle table
+--- @param inputValue number
+function EqTrainingHooks.onForwardInput(vehicle, inputValue)
+    local spec = vehicle.spec_rideable
+    if spec == nil then return end
+    local held = (inputValue or 0) > 0
+    if not held then spec.eqSprintKeyFresh = true end
+    spec.eqAccelHeld = held
+    if not held or not spec.eqSprintKeyFresh then return end
+    local id = getRiddenId(spec)
+    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+    if sheet ~= nil and sheet.sprint.ready then EqTrainingHooks.startSprint(sheet) end
+end
+
+
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
 --- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but a
 --- stamina run or sprint keeps its pace through it (paceGait).
@@ -541,7 +587,7 @@ end
 -- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 2, speed = 2, agility = 2, temperament = 2 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 3, speed = 3, agility = 2, temperament = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -660,12 +706,41 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local bandColor = BAND_COLOR[band]
         table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
             right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
-        table.insert(rows, { bar = sheet.tiredness / 100, color = bandColor })
+        local bar = { bar = sheet.tiredness / 100, color = bandColor }
+        if view ~= "speed" then
+            local low, high = EqTraining.zoneBounds(sheet.zoneHold)
+            bar.marks = { low / 100, high / 100 }
+        end
+        table.insert(rows, bar)
     end
     if view == "freestyle" or view == "stamina" then
         local full = sheet.run >= EqTraining.RUN_FULL
-        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
-            leftColor = full and COLOR.green or COLOR.white })
+        local row = { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
+            leftColor = full and COLOR.green or COLOR.white }
+        if (sheet.zoneHold or 0) > 0 then
+            local _, _, t = EqTraining.zoneBounds(sheet.zoneHold)
+            row.right = string.format(g_i18n:getText("eq_train_zoneHold"), 1 + EqTraining.ZONE_HOLD_BONUS * t)
+            row.rightColor = COLOR.green
+        end
+        table.insert(rows, row)
+    end
+    if view == "freestyle" or view == "speed" then
+        local sprint = sheet.sprint
+        if EqTraining.isSprinting(sheet) then
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_on"), leftColor = COLOR.red,
+                right = string.format("%d s", math.ceil(sprint.activeMs / 1000)) })
+            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MS, color = COLOR.red })
+        elseif sprint.ready then
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = COLOR.orange })
+            EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, COLOR.orange)
+        elseif sprint.warm then
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_warm"), leftColor = COLOR.yellow })
+        elseif sprint.rest then
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_rest"), leftColor = COLOR.grey })
+        else
+            table.insert(rows, { left = string.format(g_i18n:getText("eq_train_sprint_count"), sprint.count, EqTraining.SPRINTS_TO_WARM),
+                leftColor = view == "speed" and COLOR.white or COLOR.grey })
+        end
     end
 
     local combo = sheet.combo
@@ -689,8 +764,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 row.right = g_i18n:getText("eq_move_" .. routine.request)
                 row.rightColor = COLOR.yellow
                 table.insert(rows, row)
-                table.insert(rows, { bar = left / EqTraining.ROUTINE_REACT_MS, color = COLOR.yellow })
-                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / EqTraining.ROUTINE_REACT_MS)
+                table.insert(rows, { bar = left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), color = COLOR.yellow })
+                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS))
             else
                 table.insert(rows, row)
             end
@@ -785,6 +860,26 @@ function EqTrainingHooks.installRideable(guarded)
         if not EqMain.isActive or not self.isServer then return end
         guarded("jump tracker", function() EqTrainingHooks.onJump(self) end)
     end)
+
+    -- The forward key: we don't know its function's name in FS25 yet, so log Rideable's action
+    -- functions once and hook the ones that look like it.
+    local names = {}
+    for name, fn in pairs(Rideable) do
+        if type(fn) == "function" and type(name) == "string" and name:find("^actionEvent") then table.insert(names, name) end
+    end
+    table.sort(names)
+    Log:info("Rideable action functions: %s", table.concat(names, ", "))
+    for _, name in ipairs(names) do
+        local lower = name:lower()
+        if lower:find("accel") or lower:find("forward") or lower:find("gaitup") then
+            Rideable[name] = Utils.appendedFunction(Rideable[name], function(self, actionName, inputValue)
+                if not EqMain.isActive then return end
+                guarded("sprint key", function() EqTrainingHooks.onForwardInput(self, inputValue) end)
+            end)
+            EqTrainingHooks.sprintKeyHooked = true
+            Log:info("Sprint key: hooked Rideable.%s", name)
+        end
+    end
 
     if Rideable.onRegisterActionEvents ~= nil then
         Rideable.onRegisterActionEvents = Utils.appendedFunction(Rideable.onRegisterActionEvents,
