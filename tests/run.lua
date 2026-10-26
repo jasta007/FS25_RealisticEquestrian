@@ -362,6 +362,12 @@ do
         sheet.tiredness = 90
         repeat event = EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 20
         check("switching off the beat does nothing", EqTraining.beatStep(sheet, "canter", 100, one) == "off" and sheet.tiredness == 90)
+        local easy = EqTraining.newSheet()
+        local hard = EqTraining.newSheet()
+        hard.tempo.mult = 5
+        local w1, r1, s1 = EqTraining.beatPressure(easy)
+        local w5, r5, s5 = EqTraining.beatPressure(hard)
+        check("beats get harder as the tempo climbs", w5 < w1 and r5 < r1 and s5 < s1 and r5 > 0)
         -- Tempo streak: unbroken canter or gallop climbs; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()
         local events = {}
