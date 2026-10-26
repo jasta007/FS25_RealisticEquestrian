@@ -198,8 +198,11 @@ EqTraining.SPRINT_MS = 6000
 -- Tapping forward (W) during Sprint spurs the horse on: each tap at least SPRINT_TAP_GAP_MS
 -- after the last adds SPRINT_TAP_MS, less the longer the Sprint has gone, up to SPRINT_MAX_MS
 -- left. However well the rider taps, the horse conks out after SPRINT_LIMIT_MS.
-EqTraining.SPRINT_TAP_MS = 450
-EqTraining.SPRINT_TAP_GAP_MS = 300
+EqTraining.SPRINT_TAP_MS = 300
+EqTraining.SPRINT_TAP_GAP_MS = 120
+-- The Sprint meter runs down SPRINT_DRAIN times as fast as the clock, so only quick tapping
+-- keeps it up, and less so as the Sprint goes on.
+EqTraining.SPRINT_DRAIN = 1.5
 EqTraining.SPRINT_MAX_MS = 8000
 EqTraining.SPRINT_LIMIT_MS = 14000
 EqTraining.SPRINT_SPEED_SHARE = 1.25
@@ -588,7 +591,7 @@ function EqTraining.sprintStep(sheet, gait, dt, speed)
     local sprint = sheet.sprint
     if sprint.activeMs > 0 then
         local drain = 1 + (EqTraining.SPRINT_SLOW_DRAIN - 1) * (1 - EqStats.clamp((speed or 100) / 100, 0, 1))
-        sprint.activeMs = math.max(0, sprint.activeMs - dt * drain)
+        sprint.activeMs = math.max(0, sprint.activeMs - dt * drain * EqTraining.SPRINT_DRAIN)
         sprint.elapsedMs = (sprint.elapsedMs or 0) + dt
         if sprint.elapsedMs >= EqTraining.SPRINT_LIMIT_MS then sprint.activeMs = 0 end
         sprint.dropMs = gait == "gallop" and 0 or sprint.dropMs + dt

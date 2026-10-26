@@ -566,7 +566,7 @@ end
 
 -- The action and the key poll can both see one press, and an action may report a held key
 -- every frame: a report of the same key this soon after the last one is the same press.
-EqTrainingHooks.KEY_REPEAT_MS = 200
+EqTrainingHooks.KEY_REPEAT_MS = 80
 EqTrainingHooks.keyAt = {}
 
 --- Forward (W) or back (S): Sprint and the stamina beat. Every other key is none of their business.

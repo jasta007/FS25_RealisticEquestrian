@@ -352,9 +352,9 @@ do
             while EqTraining.isSprinting(tapped) and ms < 60000 do
                 EqTraining.sprintStep(tapped, "gallop", 100)
                 ms = ms + 100
-                if ms % 300 == 0 then EqTraining.spurSprint(tapped) end
+                if ms % 100 == 0 then EqTraining.spurSprint(tapped) end
             end
-            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > EqTraining.SPRINT_MS + 3000,
+            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > 10000,
                 string.format("%d ms", ms))
         end
         do
@@ -369,7 +369,7 @@ do
                 end
                 return ms
             end
-            check("a slower horse's Sprint runs out faster", lasts(10) < lasts(90) and lasts(100) == EqTraining.SPRINT_MS,
+            check("a slower horse's Sprint runs out faster", lasts(10) < lasts(90) and math.abs(lasts(100) - EqTraining.SPRINT_MS / EqTraining.SPRINT_DRAIN) <= 100,
                 string.format("%d / %d ms", lasts(10), lasts(90)))
             local s = EqTraining.newSheet()
             s.sprint.ready, s.tiredness = true, 70
