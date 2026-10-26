@@ -61,9 +61,13 @@ uses its genetics, health and fitness.
   - **Stamina** comes from runs: gains peak after 15 seconds at canter or gallop, while exertion
     is in the zone, 65-85%. A long canter climbs slowly from the zone into blowing hard, more slowly for a fitter
     horse. Trot to ease off without losing the run; a stop or a walk only wears
-    the run down slowly.
+    the run down slowly. Hold the zone and it narrows (white marks on the meter) while the
+    gains climb, up to 2.5 times.
   - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
-    stand still to rest before the next one.
+    stand still to rest before the next one. Two good sprints warm the horse up; keep galloping
+    and press **W** when **Sprint!** shows for 12 seconds 25% faster, ignoring exertion, with
+    three times the speed training. Then rest right down before warming up again.
+  - A horse blowing hard (over 85% exertion) slows to 75% of its top speed.
   - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until
     shortly after landing, so you can jump an obstacle in the way.
   - A good session can give up to double what a full day of riding used to. Just riding round

@@ -134,6 +134,35 @@ EqTraining.FRESH_UNTIL = 25
 EqTraining.STALE_FROM = 55
 EqTraining.STALE_SHARE = 0
 
+-- Holding the stamina zone: every second spent in it (at a trot or faster) adds to the hold,
+-- which narrows the zone around its middle, from the full ZONE_LOW-ZONE_HIGH down to
+-- ZONE_MIN_HALF either side after ZONE_HOLD_FULL seconds, and raises the gains up to
+-- 1 + ZONE_HOLD_BONUS times. Outside the narrowed zone the hold drains ZONE_HOLD_DRAIN times as
+-- fast as it built; still inside the full zone the horse trains at ZONE_EDGE_SHARE.
+EqTraining.ZONE_HOLD_FULL = 60
+EqTraining.ZONE_MIN_HALF = 2.5
+EqTraining.ZONE_HOLD_BONUS = 1.5
+EqTraining.ZONE_HOLD_DRAIN = 2
+EqTraining.ZONE_EDGE_SHARE = 0.6
+
+-- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
+-- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
+-- for SPRINT_READY_MS more and Sprint is ready: press forward (W) and for SPRINT_MS the horse
+-- runs SPRINT_SPEED_SHARE faster (EqTrainingHooks), ignores being blown, tires
+-- SPRINT_EXERTION_SHARE as fast and trains speed SPRINT_TRAIN_SHARE as fast as a fresh gallop.
+-- Dropping below a gallop for SPRINT_DROP_MS ends it. Then it must rest below
+-- SPRINT_REST_BELOW exertion before warm-up sprints count again.
+EqTraining.SPRINT_COUNT_MS = 4000
+EqTraining.SPRINT_MIN_QUALITY = 0.5
+EqTraining.SPRINTS_TO_WARM = 2
+EqTraining.SPRINT_READY_MS = 2000
+EqTraining.SPRINT_MS = 12000
+EqTraining.SPRINT_SPEED_SHARE = 1.25
+EqTraining.SPRINT_EXERTION_SHARE = 1.5
+EqTraining.SPRINT_TRAIN_SHARE = 3
+EqTraining.SPRINT_DROP_MS = 1000
+EqTraining.SPRINT_REST_BELOW = 10
+
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
 -- this, because it is hard mental work: it tires a horse nearly as fast as a gallop.
@@ -161,20 +190,41 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        tiredness = 0, run = 0, zoneHold = 0,
+        sprint = { count = 0, holdMs = 0, counted = false, warm = false, readyMs = 0, ready = false, activeMs = 0, dropMs = 0, rest = false },
+        focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         combo = { count = 0, timer = 0, best = 0 },
         routine = { active = false, mult = 0, clock = 0, walkMs = 0, current = nil, request = nil, deadline = 0, nextAt = 0 } }
 end
 
 
+--- The stamina zone, narrowed by how long it has been held.
+--- @param hold number|nil seconds
+--- @return number low, number high exertion
+--- @return number share 0..1 of the way to the narrowest zone
+function EqTraining.zoneBounds(hold)
+    local center = (EqTraining.ZONE_LOW + EqTraining.ZONE_HIGH) / 2
+    local half = (EqTraining.ZONE_HIGH - EqTraining.ZONE_LOW) / 2
+    local t = EqStats.clamp((hold or 0) / EqTraining.ZONE_HOLD_FULL, 0, 1)
+    local now = half - (half - EqTraining.ZONE_MIN_HALF) * t
+    return center - now, center + now, t
+end
+
+
 --- How well stamina is training at this tiredness and run length.
 --- @param tiredness number 0-100
 --- @param run number seconds
---- @return number share 0..1 of STAMINA_RATE
-function EqTraining.staminaQuality(tiredness, run)
+--- @param hold number|nil seconds the zone has been held (see zoneBounds)
+--- @return number share of STAMINA_RATE: 0..1, up to 1 + ZONE_HOLD_BONUS in a held zone
+function EqTraining.staminaQuality(tiredness, run, hold)
     local zone
-    if tiredness < EqTraining.ZONE_LOW then
+    local low, high, t = EqTraining.zoneBounds(hold)
+    if tiredness >= low and tiredness <= high then
+        zone = 1 + EqTraining.ZONE_HOLD_BONUS * t
+    elseif tiredness >= EqTraining.ZONE_LOW and tiredness <= EqTraining.ZONE_HIGH then
+        zone = EqTraining.ZONE_EDGE_SHARE
+    elseif tiredness < EqTraining.ZONE_LOW then
         zone = EqStats.clamp((tiredness - EqTraining.ZONE_FROM) / (EqTraining.ZONE_LOW - EqTraining.ZONE_FROM), 0, 1)
     elseif tiredness <= EqTraining.ZONE_HIGH then
         zone = 1
@@ -229,11 +279,22 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     local rate = EqTraining.exertionRate(gait, sheet.tiredness, stamina)
     if rate == nil or dt <= 0 then return end
     local seconds = dt / 1000
+    local sprinting = EqTraining.isSprinting(sheet) and gait == "gallop"
+    if sprinting then rate = rate * EqTraining.SPRINT_EXERTION_SHARE end
     sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
 
-    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil and EqTraining.staminaQuality(sheet.tiredness, sheet.run) or 0
+    -- The zone hold builds while working inside the (narrowed) zone and drains outside it.
+    local low, high = EqTraining.zoneBounds(sheet.zoneHold)
+    if EqTraining.STAMINA_RATE[gait] ~= nil and sheet.tiredness >= low and sheet.tiredness <= high then
+        sheet.zoneHold = math.min(EqTraining.ZONE_HOLD_FULL, (sheet.zoneHold or 0) + seconds)
+    else
+        sheet.zoneHold = math.max(0, (sheet.zoneHold or 0) - EqTraining.ZONE_HOLD_DRAIN * seconds)
+    end
+
+    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil and EqTraining.staminaQuality(sheet.tiredness, sheet.run, sheet.zoneHold) or 0
     local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) or 0
+    if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
     sheet.quality.stamina, sheet.quality.speed = stamina, speed
     if worn then
         sheet.quality.stamina, sheet.quality.speed = 0, 0
@@ -241,6 +302,66 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     end
     sheet.focused.stamina = sheet.focused.stamina + (EqTraining.STAMINA_RATE[gait] or 0) * stamina * seconds
     sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * speed * seconds
+end
+
+
+--- @param sheet table
+--- @return boolean true while Sprint is on
+function EqTraining.isSprinting(sheet)
+    return sheet.sprint ~= nil and sheet.sprint.activeMs > 0
+end
+
+
+--- Start a Sprint, if one is ready.
+--- @param sheet table
+--- @return boolean true when it started
+function EqTraining.startSprint(sheet)
+    local sprint = sheet.sprint
+    if not sprint.ready or sprint.activeMs > 0 then return false end
+    sprint.activeMs, sprint.dropMs, sprint.ready, sprint.readyMs = EqTraining.SPRINT_MS, 0, false, 0
+    return true
+end
+
+
+--- One frame of warm-up sprints and Sprint, after EqTraining.step.
+--- @param sheet table
+--- @param gait string the pace gait
+--- @param dt number milliseconds
+--- @return string|nil event "counted" (a warm-up sprint), "warm", "ready", "over"
+function EqTraining.sprintStep(sheet, gait, dt)
+    local sprint = sheet.sprint
+    if sprint.activeMs > 0 then
+        sprint.activeMs = math.max(0, sprint.activeMs - dt)
+        sprint.dropMs = gait == "gallop" and 0 or sprint.dropMs + dt
+        if sprint.activeMs > 0 and sprint.dropMs < EqTraining.SPRINT_DROP_MS then return nil end
+        sprint.activeMs, sprint.count, sprint.warm, sprint.rest = 0, 0, false, true
+        sprint.holdMs, sprint.counted, sprint.readyMs, sprint.ready = 0, false, 0, false
+        return "over"
+    end
+    if sprint.rest and sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end
+
+    if gait ~= "gallop" then
+        sprint.holdMs, sprint.counted, sprint.readyMs, sprint.ready = 0, false, 0, false
+        return nil
+    end
+    if sprint.warm then
+        sprint.readyMs = sprint.readyMs + dt
+        if not sprint.ready and sprint.readyMs >= EqTraining.SPRINT_READY_MS then
+            sprint.ready = true
+            return "ready"
+        end
+        return nil
+    end
+    if sprint.rest or EqTraining.speedQuality(sheet.tiredness) < EqTraining.SPRINT_MIN_QUALITY then return nil end
+    sprint.holdMs = sprint.holdMs + dt
+    if sprint.counted or sprint.holdMs < EqTraining.SPRINT_COUNT_MS then return nil end
+    sprint.counted = true
+    sprint.count = sprint.count + 1
+    if sprint.count < EqTraining.SPRINTS_TO_WARM then return "counted" end
+    sprint.warm = true
+    -- Keep galloping from here: the time already held counts towards Sprint being ready.
+    sprint.readyMs = 0
+    return "warm"
 end
 
 
@@ -428,7 +549,8 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
     elseif routine.clock >= routine.nextAt then
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
-        routine.deadline = routine.clock + EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
+        routine.reactMs = EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
+        routine.deadline = routine.clock + routine.reactMs
         -- A turn counts once its key has been held this long after the request shows.
         routine.steerMs = 0
         event = "request"
@@ -451,6 +573,10 @@ function EqTraining.rest(sheet, ms)
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE.halt * seconds)
     sheet.quality.stamina, sheet.quality.speed, sheet.quality.agility, sheet.quality.temperament = 0, 0, 0, 0
     sheet.combo.count, sheet.combo.timer = 0, 0
+    sheet.zoneHold = 0
+    local sprint = sheet.sprint
+    sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
+    if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end
     EqTraining.breakRoutine(sheet)
 end
 
