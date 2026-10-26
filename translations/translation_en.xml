@@ -41,8 +41,8 @@
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_speed_2" text="Walk or rest to recover before the next gallop. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
-        <text name="eq_help_speed_1" text="Speed training improves with fast gallops. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%."/>
+        <text name="eq_help_speed_2" text="Stand still or walk to recover before the next gallop. After about 4 seconds standing, or 5 at a walk, exertion drops quickly, and below 30% it always does; a fit horse recovers even faster. Walking uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
+        <text name="eq_help_speed_1" text="Speed comes mostly from Sprint. Gallops while the horse is fresh (exertion under 25%) add only a little speed, but two good ones warm your horse up for Sprint."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="Above 85% exertion your horse is blowing hard and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a few seconds breaks it too, and stamina training stops until you canter steadily again. Stamina also increases how long your horse can train each day."/>
         <text name="eq_help_stamina_1" text="Stamina comes from runs at a canter or gallop. Canter steadily for 8 seconds, without jumping or galloping, to start stamina training (outside it, runs add only a little stamina), then ride the beat to build your tempo, up to x5: stamina gains grow up to 2.5 times."/>

@@ -91,6 +91,11 @@ EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -3, can
 EqTraining.RECOVER_BELOW = 30
 EqTraining.RECOVER_UNFIT_SHARE = 2
 EqTraining.RECOVER_FIT_SHARE = 4
+-- That fast recovery also starts at any exertion once the horse has stood still SETTLE_HALT_MS,
+-- or walked (or stood) SETTLE_WALK_MS, a walk at SETTLE_WALK_SHARE of the rate.
+EqTraining.SETTLE_HALT_MS = 4000
+EqTraining.SETTLE_WALK_MS = 5000
+EqTraining.SETTLE_WALK_SHARE = 0.75
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -200,6 +205,8 @@ EqTraining.SPRINT_LIMIT_MS = 14000
 EqTraining.SPRINT_SPEED_SHARE = 1.25
 EqTraining.SPRINT_EXERTION_SHARE = 1.5
 EqTraining.SPRINT_TRAIN_SHARE = 3
+-- Outside Sprint (warm-up gallops, any other gallop) speed only trickles in, at this share.
+EqTraining.SPEED_OUTSIDE_SHARE = 0.2
 EqTraining.SPRINT_DROP_MS = 1000
 EqTraining.SPRINT_REST_BELOW = 10
 -- Sprint holds the horse on the limit: exertion stops SPRINT_EXERTION_GAP short of blowing hard.
@@ -435,7 +442,7 @@ end
 --- @param tiredness number 0-100
 --- @param stamina number|nil the horse's trained stamina (50 when nil)
 --- @return number|nil per second; nil for an unknown gait
-function EqTraining.exertionRate(gait, tiredness, stamina)
+function EqTraining.exertionRate(gait, tiredness, stamina, settled)
     local rate = EqTraining.TIREDNESS_RATE[gait]
     if rate == nil then return nil end
     local fitness = EqStats.clamp((stamina or 50) / 100, 0, 1)
@@ -443,8 +450,11 @@ function EqTraining.exertionRate(gait, tiredness, stamina)
         local level = EqTraining.CANTER_LEVEL_BASE + EqTraining.CANTER_LEVEL_PER_STAMINA * fitness * 100
         local creep = EqTraining.CANTER_CREEP_MIN + EqTraining.CANTER_CREEP_UNFIT * (1 - fitness) ^ 1.5
         return tiredness < level and EqTraining.CANTER_RISE or creep
-    elseif (gait == "halt" or gait == "walk") and tiredness < EqTraining.RECOVER_BELOW then
-        return rate * (EqTraining.RECOVER_UNFIT_SHARE + (EqTraining.RECOVER_FIT_SHARE - EqTraining.RECOVER_UNFIT_SHARE) * fitness)
+    elseif (gait == "halt" or gait == "walk") and (tiredness < EqTraining.RECOVER_BELOW or settled) then
+        local fast = rate * (EqTraining.RECOVER_UNFIT_SHARE + (EqTraining.RECOVER_FIT_SHARE - EqTraining.RECOVER_UNFIT_SHARE) * fitness)
+        -- Settled at a walk (rather than a halt) above RECOVER_BELOW: a little slower.
+        if tiredness >= EqTraining.RECOVER_BELOW and settled == "walk" then fast = fast * EqTraining.SETTLE_WALK_SHARE end
+        return fast
     elseif gait == "gallop" then
         return rate * (EqTraining.GALLOP_UNFIT_SHARE + (EqTraining.GALLOP_FIT_SHARE - EqTraining.GALLOP_UNFIT_SHARE) * fitness)
     end
@@ -459,7 +469,12 @@ end
 --- @param worn boolean true when the riding bar is full: the meters move, nothing trains
 --- @param stamina number|nil the horse's trained stamina, which slows how fast it tires
 function EqTraining.step(sheet, gait, dt, worn, stamina)
-    local rate = EqTraining.exertionRate(gait, sheet.tiredness, stamina)
+    -- How long the horse has stood still, and walked or stood, without a break.
+    sheet.haltMs = gait == "halt" and (sheet.haltMs or 0) + dt or 0
+    sheet.easyMs = (gait == "halt" or gait == "walk") and (sheet.easyMs or 0) + dt or 0
+    local settled = (sheet.haltMs >= EqTraining.SETTLE_HALT_MS and "halt")
+        or (sheet.easyMs >= EqTraining.SETTLE_WALK_MS and "walk") or nil
+    local rate = EqTraining.exertionRate(gait, sheet.tiredness, stamina, settled)
     if rate == nil or dt <= 0 then return end
     local seconds = dt / 1000
     local sprinting = EqTraining.isSprinting(sheet) and gait == "gallop"
@@ -475,7 +490,7 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
         and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo)
             * (sheet.mode == "stamina" and 1 or EqTraining.STAMINA_OUTSIDE_SHARE) or 0
-    local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) or 0
+    local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) * EqTraining.SPEED_OUTSIDE_SHARE or 0
     if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
     sheet.quality.stamina, sheet.quality.speed = stamina, speed
     if worn then

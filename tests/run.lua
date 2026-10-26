@@ -612,10 +612,23 @@ local sprints = session(function(sheet, _, state)
     if sheet.tiredness >= 25 then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
     return state.rest and "halt" or "gallop"
 end)
+local sprinted = session(function(sheet, t, state)
+    -- Warm-up gallops while fresh, then the W-tap Sprint, then a rest.
+    if sheet.sprint.ready then EqTraining.startSprint(sheet) end
+    if EqTraining.isSprinting(sheet) then
+        if t % 300 == 0 then EqTraining.spurSprint(sheet) end
+        return "gallop"
+    end
+    if sheet.sprint.warm then return "gallop" end
+    if sheet.tiredness >= 25 or sheet.sprint.rest then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
+    return state.rest and "halt" or "gallop"
+end)
 local flatOut = session(function() return "gallop" end)
 check("long runs in the zone train stamina at up to double the old full day", staminaRun.stamina >= 1.5,
     string.format("got %.2f", staminaRun.stamina))
-check("sprints with rests train speed at up to double the old full day", sprints.speed >= 1.5, string.format("got %.2f", sprints.speed))
+check("warm-ups and the W-tap Sprint train speed at up to double the old full day", sprinted.speed >= 1.5, string.format("got %.2f", sprinted.speed))
+print(string.format("info: speed session: sprinted %.2f, gallops only %.2f, cycled %.2f", sprinted.speed, sprints.speed, cycled.speed))
+check("gallops without the Sprint only trickle speed in", sprints.speed < sprinted.speed / 2, string.format("got %.2f", sprints.speed))
 check("cycling the gaits trains stamina at well under half a focused day", cycled.stamina > 0.15 and cycled.stamina < 0.8,
     string.format("got %.2f", cycled.stamina))
 local knocked = session(function(sheet, t, state)
@@ -625,7 +638,7 @@ local knocked = session(function(sheet, t, state)
 end)
 check("being knocked to a halt now and then does not spoil a stamina session", knocked.stamina >= 1.5,
     string.format("got %.2f", knocked.stamina))
-check("cycling the gaits trains speed at about a quarter of the old day", cycled.speed > 0.05 and cycled.speed < 0.3,
+check("cycling the gaits trains little speed", cycled.speed > 0 and cycled.speed < 0.15,
     string.format("got %.2f", cycled.speed))
 check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
     string.format("flat out %.2f, sprints %.2f", flatOut.speed, sprints.speed))
@@ -672,6 +685,17 @@ do
     check("a horse recovers faster below 30%, a fit one faster still",
         EqTraining.exertionRate("halt", 20, 50) < EqTraining.exertionRate("halt", 50, 50)
         and EqTraining.exertionRate("halt", 20, 90) < EqTraining.exertionRate("halt", 20, 30))
+    do
+        local function drop(gait, ms)
+            local sh = EqTraining.newSheet()
+            sh.tiredness = 60
+            for _ = 1, ms / 100 do EqTraining.step(sh, gait, 100, false, 50) end
+            return 60 - sh.tiredness
+        end
+        check("after a few seconds standing, exertion drops fast at any level", drop("halt", 10000) > drop("halt", 4000) * 2)
+        check("walking settles a little later and a little slower", drop("walk", 10000) > drop("walk", 5000) * 1.5
+            and drop("walk", 10000) < drop("halt", 10000))
+    end
     do
         local slow, fast, mid = EqTraining.handling(10, 0, 0), EqTraining.handling(100, 100, 100), EqTraining.handling(nil, nil, nil)
         local function near(a, b) return math.abs(a - b) < 0.01 end
