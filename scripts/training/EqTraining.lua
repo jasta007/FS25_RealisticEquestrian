@@ -701,8 +701,10 @@ end
 --- @param sheet table
 --- @param gait string
 --- @param dt number milliseconds
+--- @param jumping boolean|nil true while a jump is in the air or not yet judged: the combo
+---     can't run out until it lands and is judged
 --- @return boolean true when the combo was lost this frame
-function EqTraining.comboTick(sheet, gait, dt)
+function EqTraining.comboTick(sheet, gait, dt, jumping)
     local combo = sheet.combo
     combo.lock = math.max(0, (combo.lock or 0) - dt)
     combo.knockLock = math.max(0, (combo.knockLock or 0) - dt)
@@ -711,6 +713,10 @@ function EqTraining.comboTick(sheet, gait, dt)
     local slow = gait == "halt" or gait == "walk" or gait == "reverse"
     combo.timer = combo.timer - dt / 1000 * (slow and EqTraining.COMBO_SLOW_DRAIN or 1)
     if combo.timer > 0 then return false end
+    if jumping then
+        combo.timer = 0
+        return false
+    end
     return EqTraining.loseCombo(sheet)
 end
 
@@ -866,7 +872,7 @@ EqTraining.HANDLING = {
     -- Jump height (and so time in the air and length), by agility. Lowered after James found
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
-    turn = { 0.75, 1.5 },    -- turn rate, by agility
+    turn = { 1, 1.65 },      -- turn rate, by agility
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },

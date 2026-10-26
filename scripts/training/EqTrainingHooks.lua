@@ -472,7 +472,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     spec.eqHalted = halted
     -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
     local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
-    if EqTraining.comboTick(sheet, comboGait, dt) then EqTrainingHud.pop("jumpLost") end
+    if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
     local wasMode = sheet.mode
     if EqTraining.modeStep(sheet, pace, dt) == "stamina" then EqTrainingHud.pop("staminaOn") end
     if sheet.mode ~= wasMode then Log:info("Training mode: %s -> %s", tostring(wasMode), tostring(sheet.mode)) end
@@ -656,7 +656,7 @@ end
 -- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 2, stamina = 3, speed = 3, agility = 2, temperament = 2 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 3, speed = 3, agility = 2, temperament = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -776,10 +776,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local effort = EqTraining.playerEffort(sheet)
     local rows = {}
     EqTrainingHud.view = view
-    -- Exertion only matters to stamina and speed: Freestyle shows it in those modes only.
-    local exertionShown = view == "stamina" or view == "speed"
-        or (view == "freestyle" and (sheet.mode == "stamina" or sheet.mode == "speed"))
-    if exertionShown then
+    -- Exertion only matters to stamina and speed. Freestyle always shows it (so the panel
+    -- doesn't jump about), but only stamina mode turns it red when the horse is blowing hard.
+    if view == "freestyle" or view == "stamina" or view == "speed" then
         local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
             or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
         local bandColor = BAND_COLOR[band]
@@ -792,7 +791,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             exertion.right, exertion.rightColor = g_i18n:getText("eq_train_" .. band), bandColor
         end
         table.insert(rows, exertion)
-        local bar = { bar = sheet.tiredness / 100, color = EqTraining.isSprinting(sheet) and STAT_COLOR.speed or bandColor }
+        local bar = { bar = sheet.tiredness / 100, color = EqTraining.isSprinting(sheet) and STAT_COLOR.speed
+            or (view ~= "speed" and sheet.mode ~= "stamina" and COLOR.white) or bandColor }
         if view ~= "speed" then
             bar.marks = { EqTraining.ZONE_HIGH / 100 }
             -- The beat marker, with its hit window either side.
