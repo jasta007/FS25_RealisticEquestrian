@@ -234,13 +234,19 @@ local function trackJump(vehicle, spec, sheet, worn)
         why = string.format(why, jump.speed, speed)
     end
     Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s, %d ms, ground flag %s, take-off at a %s)",
-        cleared and "cleared" or "nothing cleared", jump.best, tostring(jump.over), why,
+        cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over), why,
         age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
+    elseif high and not jump.onTop then
+        -- Hitting the obstacle on the way over costs combo time, but the jump still counts
+        -- unless that ran the combo out (clearJump then refuses it).
+        local knock = EqTraining.knockCombo(sheet)
+        local mult = knock ~= "lost" and EqTraining.clearJump(sheet, worn) or nil
+        if mult ~= nil then EqTrainingHud.pop("jump", mult) else popKnock(knock) end
     elseif high then
-        -- Hitting or landing on the obstacle doesn't count, and costs combo time.
+        -- Landing on top of the obstacle doesn't count, and costs combo time.
         popKnock(EqTraining.knockCombo(sheet))
     else
         EqTraining.emptyJump(sheet, worn)
