@@ -55,15 +55,61 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Ride your horses.** Each gait trains different stats: walking builds temperament, trotting a
-  mix, cantering stamina and agility, galloping speed and stamina, and backing up agility and
-  temperament. Jumps add agility.
+- **Ride your horses, and pick what to work on.** Stamina and speed train best from focused work,
+  watched by an **Exertion** meter while you ride (it rises in canter and gallop and falls at
+  slower gaits and at a halt):
+  - **Stamina** comes from runs at canter or gallop. Canter 8 seconds without jumping or
+    galloping, starting under 40% exertion, to start stamina training; then the tempo
+    multiplies it (up to x5, 2.5 times the gains). Only well-timed gait changes raise the
+    tempo: when the middle of the screen says **Canter! (S)** or **Gallop! (W)**, press that key
+    right then and your horse gets a breather (a bigger one the more tired it is, so hitting
+    every change keeps it under blowing hard); three good changes (a perfect one counts double)
+    raise the tempo. Pressing too early or missing one loses the progress to the next step, and
+    the next change comes soon after. Timing tightens as the tempo climbs. Blowing hard (over
+    85% exertion) for 5 seconds or more than a few seconds below a canter ends the run: rest
+    under 40%, then canter to start again. Gait changes pause during a Sprint or a routine
+    command.
+  - **Speed** comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under
+    25%) add only a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm the horse up; keep galloping
+    and press **W** when **Sprint!** shows to run 25% faster, held on the limit just short of blowing
+    hard (keep tapping W to spur it on; a slower horse runs out sooner), with
+    three times the speed training. Then rest right down before warming up again.
+  - One kind of training talks at a time, each in its own colour: a steady canter starts
+    stamina (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo
+    ends, a warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple)
+    routines always run. Only that training's popups and prompts show; the panel stays the same.
+  - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until
+    shortly after landing, so you can jump an obstacle in the way.
+  - A good session can give up to double what a full day of riding used to. Just riding round
+    the gaits trains them at about a quarter of that.
+  - **Agility** comes from jump combos: clear jumps one after another (fences, poles, anything
+    solid) for x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but
+    stopping, walking or backing up runs the clock down ten times as fast. A jump is judged
+    once the horse has landed: hitting something or landing on it takes 3 seconds off the combo clock. Horses
+    jump higher and stay in the air longer from a canter, and pick up speed faster, so a
+    controlled canter approach can clear a fence.
+  - **Temperament** comes from a routine: walk to start one, then do each movement asked for
+    (walk, trot, stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A
+    canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs
+    the left or right key held for a moment, at any pace from backing up to a trot, and the
+    other requests ignore steering. Requests show in the Freestyle and Temperament views.
+- **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a
+  line for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours show how each is going.
+  Help pops up at the bottom of the screen the first time you open each view; press **H**
+  to see it again, and click anywhere to move on.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired and
-  trains no more until tomorrow, and galloping tires it fastest, so choose what to work on.
+  trains no more until tomorrow, and galloping tires it fastest, so choose what to work on. A fit
+  horse's bar fills more slowly (up to 1.4 times as long at stamina 100). Below 30% exertion a
+  horse standing or walking recovers quickly, a fit one faster still.
+- **Stats change how a horse rides.** Speed sets its top speed (about 10% slower than the base
+  game at 10, 20% faster at 100); agility sets how high it jumps and how quickly it turns; a
+  calm horse (temperament) changes pace a little quicker and stands less long after a knock.
+  Canter jumps go higher than the base game's, so a horse can clear fences without a full gallop.
 - **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
   in patch 1.25) and the workers' daily ride counts as training, as does RLRM's herdsman. They keep
-  your horses ticking over towards a focus you choose, but only your own riding takes a stat the
-  last few points. A proper staff system of our own is planned (see
+  your horses ticking over towards a focus you choose, at half the rate of a full day of plain
+  riding. Your own focused riding trains a stat up to four times as fast as staff, and only it
+  takes a stat the last few points. A proper staff system of our own is planned (see
   [Planned features](#planned-features)).
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
   overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when
@@ -151,6 +197,7 @@ uses its genetics, health and fitness.
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
 - **Show events**: round events every day or every month.
+- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter, and multiplayer adds more for each farm with horses.
 - **Races and steeplechases**: on or off.
 - **Event injuries** and **Career-ending injuries**: on or off.
 - **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
@@ -197,11 +244,18 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
-3. **Ride it.** Watch the "Training today" line while you ride, and stop when it reads "tired".
+3. **Ride it.** Press **Y** for the Stamina or Speed view and follow the tips. The horse is done
+   for the day when the panel says "Riding bar full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
 5. **Get your result** at the start of the next day or month, with prize money for the top three.
+   Every event starts with an easy temperament check to get the horse to the start (only a very
+   fractious horse fails it and is scratched). Each run is then a handful of stat checks (a show jumping round asks for agility at fences that
+   get harder, a little speed and a calm horse), and the result says how it went: a clear round,
+   a pole at the hardest fence, a refusal, or a course that was too big. The Competitions tab's
+   **Results** page shows each horse's last five events, with who filled the top three, what it
+   learned and any injury; a result line in RLRM's Messages tab opens it with **View results**.
 
 ## Compatibility
 
@@ -236,7 +290,7 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 ## Planned features
 
-- Rival horses with names that turn up in the same events, and sometimes come up for sale
+- Rival horses for sale (the named rivals already turn up in the same events)
 - Stats that change how a horse rides: faster horses run faster and agile ones turn quicker
 - Better staff, building on the game's Animal Workers: several hires and different kinds of staff
   (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the

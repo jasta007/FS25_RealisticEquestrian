@@ -1,0 +1,460 @@
+--[[
+    EqTrainingHud.lua
+    What the rider sees while training: a small panel on the right of the screen with the
+    exertion meter and a line per stat, each in the colour of its state, and help popups at the
+    bottom of the screen.
+
+    The base game's help panel (addExtraPrintText) has no colours and cuts long lines off, so
+    the panel is drawn here with plain text and a one-pixel texture. Popups never take the mouse:
+    a click anywhere moves on to the next page or closes the last one, and each page closes by
+    itself after HELP_TIMEOUT_MS. Combo bursts ("x3!") pop up in the middle of the screen, and a
+    temperament routine's request shows there with its countdown. Which views' help the player has already seen is kept in
+    modSettings, so it only pops up by itself the first time.
+]]
+
+EqTrainingHud = {}
+
+local Log = EqLog
+
+EqTrainingHud.PIXEL = "dataS/menu/base/graph_pixel.dds"
+
+EqTrainingHud.COLOR = {
+    white = { 1, 1, 1, 1 },
+    grey = { 0.75, 0.75, 0.75, 1 },
+    blue = { 0.55, 0.8, 1, 1 },
+    yellow = { 1, 0.82, 0.25, 1 },
+    green = { 0.529, 0.706, 0, 1 },
+    orange = { 1, 0.55, 0.15, 1 },
+    red = { 1, 0.32, 0.25, 1 },
+    track = { 1, 1, 1, 0.15 },
+    background = { 0, 0, 0, 0.6 },
+}
+
+-- Screen positions are shares of the screen, from the bottom left.
+EqTrainingHud.PANEL = { right = 0.985, top = 0.66, width = 0.2, padding = 0.008, lineHeight = 0.02,
+    textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008, markWidth = 0.0012 }
+EqTrainingHud.POPUP = { centerX = 0.5, bottom = 0.11, width = 0.36, padding = 0.012, lineHeight = 0.019,
+    textSize = 0.015, titleSize = 0.0175 }
+EqTrainingHud.HELP_TIMEOUT_MS = 45000
+EqTrainingHud.SEEN_FILE = "FS25_RealisticEquestrian.xml"
+
+EqTrainingHud.pages = nil
+EqTrainingHud.pageIndex = 0
+EqTrainingHud.pageShownAt = 0
+EqTrainingHud.mouseWasDown = true
+EqTrainingHud.seen = nil
+
+
+--- @return table overlay one white pixel, made on first use
+local function pixel()
+    if EqTrainingHud.overlay == nil then
+        EqTrainingHud.overlay = Overlay.new(EqTrainingHud.PIXEL, 0, 0, 1, 1)
+    end
+    return EqTrainingHud.overlay
+end
+
+
+--- @param x number
+--- @param y number
+--- @param width number
+--- @param height number
+--- @param color table
+local function fill(x, y, width, height, color)
+    if width <= 0 or height <= 0 then return end
+    local overlay = pixel()
+    overlay:setPosition(x, y)
+    overlay:setDimension(width, height)
+    overlay:setColor(color[1], color[2], color[3], color[4])
+    overlay:render()
+end
+
+
+--- @param text string
+--- @param x number
+--- @param y number
+--- @param size number
+--- @param color table
+--- @param align number|nil RenderText alignment, left when nil
+--- @param bold boolean|nil
+local function text(value, x, y, size, color, align, bold)
+    setTextAlignment(align or RenderText.ALIGN_LEFT)
+    setTextBold(bold == true)
+    setTextColor(color[1], color[2], color[3], color[4])
+    renderText(x, y, size, value)
+end
+
+
+-- Popups float over the world, which can be as bright as snow: a dark shadow keeps them readable.
+EqTrainingHud.SHADOW = { share = 0.06, alpha = 0.85 }
+
+--- Text with a dark drop shadow (down and right, plus a soft outline the other way).
+local function shadowText(value, x, y, size, color, align, bold)
+    local off = size * EqTrainingHud.SHADOW.share
+    local shade = { 0, 0, 0, (color[4] or 1) * EqTrainingHud.SHADOW.alpha }
+    text(value, x + off, y - off, size, shade, align, bold)
+    text(value, x - off * 0.5, y + off * 0.5, size, { 0, 0, 0, shade[4] * 0.5 }, align, bold)
+    text(value, x, y, size, color, align, bold)
+end
+
+
+local function resetText()
+    setTextAlignment(RenderText.ALIGN_LEFT)
+    setTextBold(false)
+    setTextColor(1, 1, 1, 1)
+end
+
+
+--- Draw the training panel.
+--- @param title string
+--- @param rows table list of { left, leftColor, right, rightColor } text rows and
+---     { bar = 0..1, color } meter rows
+--- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
+function EqTrainingHud.drawPanel(title, rows, titleColor)
+    local p = EqTrainingHud.PANEL
+    local height = p.padding * 2 + p.lineHeight
+    for _, row in ipairs(rows) do
+        height = height + (row.bar ~= nil and (p.barHeight + p.padding) or p.lineHeight)
+    end
+    local x = p.right - p.width
+    local y = p.top - height
+    fill(x, y, p.width, height, EqTrainingHud.COLOR.background)
+
+    local left, right = x + p.padding, p.right - p.padding
+    local lineY = p.top - p.padding - p.lineHeight * 0.8
+    text(title, left, lineY, p.titleSize, titleColor or EqTrainingHud.COLOR.white, nil, true)
+    for _, row in ipairs(rows) do
+        if row.bar ~= nil then
+            local barY = lineY - p.padding * 0.5 - p.barHeight
+            fill(left, barY, right - left, p.barHeight, EqTrainingHud.COLOR.track)
+            fill(left, barY, (right - left) * math.min(math.max(row.bar, 0), 1), p.barHeight, row.color or EqTrainingHud.COLOR.white)
+            -- A highlighted window (the beat's hit window), then marks: ticks across the bar, a
+            -- share or { share, color, width multiple }, such as the edges of the stamina zone.
+            if row.window ~= nil then
+                local from = math.max(row.window[1], 0)
+                local to = math.min(row.window[2], 1)
+                fill(left + (right - left) * from, barY, (right - left) * (to - from), p.barHeight, { 1, 0.82, 0.25, 0.35 })
+            end
+            for _, mark in ipairs(row.marks or {}) do
+                local share, color, width = mark, EqTrainingHud.COLOR.white, 1
+                if type(mark) == "table" then share, color, width = mark[1], mark[2], mark[3] or 1 end
+                if share >= 0 and share <= 1 then
+                    fill(left + (right - left) * share - p.markWidth * width / 2, barY - p.barHeight * 0.5,
+                        p.markWidth * width, p.barHeight * 2, color)
+                end
+            end
+            lineY = lineY - p.barHeight - p.padding
+        else
+            lineY = lineY - p.lineHeight
+            if row.left ~= nil then text(row.left, left, lineY, p.textSize, row.leftColor or EqTrainingHud.COLOR.white) end
+            if row.right ~= nil then
+                text(row.right, right, lineY, p.textSize, row.rightColor or EqTrainingHud.COLOR.white, RenderText.ALIGN_RIGHT)
+            end
+        end
+    end
+    resetText()
+end
+
+
+-- Each stat's colour, so a message says at a glance which training it is about.
+EqTrainingHud.STAT_COLOR = {
+    stamina = { 0.4, 0.7, 1, 1 },
+    speed = { 1, 0.55, 0.15, 1 },
+    agility = { 0.529, 0.706, 0, 1 },
+    temperament = { 0.8, 0.55, 1, 1 },
+}
+-- The training mode (EqTraining.modeStep) of the ridden horse, set by EqTrainingHooks.
+EqTrainingHud.mode = nil
+
+-- Combo multiplier colours, hotter as it climbs.
+EqTrainingHud.MULT_COLORS = {
+    { 1, 1, 1, 1 },
+    { 0.529, 0.706, 0, 1 },
+    { 1, 0.82, 0.25, 1 },
+    { 1, 0.55, 0.15, 1 },
+    { 1, 0.25, 0.3, 1 },
+}
+EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.03, sizePerMult = 0.006, growMs = 150, holdMs = 700, fadeMs = 500 }
+EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.026, barWidth = 0.12, barHeight = 0.006 }
+EqTrainingHud.popState = nil
+EqTrainingHud.sideState = nil
+-- The training view being shown (set by EqTrainingHooks while drawing), and the stat each
+-- kind of pop is about.
+EqTrainingHud.view = nil
+EqTrainingHud.POP_STAT = {
+    jump = "agility", knock = "agility", jumpLost = "agility",
+    tempo = "stamina", tempoLost = "stamina", staminaOn = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
+    routine = "temperament", routineStart = "temperament", routineLost = "temperament",
+    sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
+}
+
+
+--- @param mult number 1..COMBO_MAX
+--- @return table color
+function EqTrainingHud.multColor(mult)
+    local colors = EqTrainingHud.MULT_COLORS
+    return colors[math.max(1, math.min(#colors, mult or 1))]
+end
+
+
+--- Show a short burst of text in the middle of the screen.
+--- @param kind string jump, jumpLost, knock, routine, routineLost or routineStart
+--- @param mult number|nil the combo multiplier for jump and routine
+function EqTrainingHud.pop(kind, mult)
+    local text, color, big
+    if kind == "jump" then
+        text = mult > 1 and string.format("x%d!", mult) or g_i18n:getText("eq_pop_clear")
+        color, big = EqTrainingHud.multColor(mult), mult
+    elseif kind == "routine" then
+        text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "knock" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
+    elseif kind == "beat_perfect" or kind == "beat_hit" then
+        text = g_i18n:getText("eq_pop_" .. kind)
+        color, big = kind == "beat_perfect" and EqTrainingHud.COLOR.green or EqTrainingHud.COLOR.yellow, kind == "beat_perfect" and 3 or 2
+    elseif kind == "beat_off" then
+        text, color, big = g_i18n:getText("eq_pop_beat_off"), EqTrainingHud.COLOR.grey, 1
+    elseif kind == "tempo" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_tempo"), mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "tempoLost" then
+        text, color, big = g_i18n:getText("eq_pop_tempoLost"), EqTrainingHud.COLOR.grey, 1
+    elseif kind == "sprintCount" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_sprintCount"), mult, EqTraining.SPRINTS_TO_WARM), EqTrainingHud.COLOR.yellow, 1
+    elseif kind == "sprint_warm" or kind == "sprint_ready" or kind == "sprint_go" then
+        text, color, big = g_i18n:getText("eq_pop_" .. kind), EqTrainingHud.COLOR.orange, kind == "sprint_warm" and 2 or 4
+    elseif kind == "sprint_over" then
+        text, color, big = g_i18n:getText("eq_pop_sprint_over"), EqTrainingHud.COLOR.grey, 1
+    elseif kind == "staminaOn" then
+        text, color, big = g_i18n:getText("eq_pop_staminaOn"), EqTrainingHud.COLOR.white, 2
+    elseif kind == "routineStart" then
+        text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
+    else
+        text, color, big = g_i18n:getText(kind == "routineLost" and "eq_pop_routineLost" or "eq_pop_comboLost"), EqTrainingHud.COLOR.grey, 1
+    end
+    local stat = EqTrainingHud.POP_STAT[kind]
+    -- The training mode has the floor: other stats' news waits (temperament's routine never clashes).
+    local mode = EqTrainingHud.mode
+    if mode ~= nil and stat ~= nil and stat ~= mode and stat ~= "temperament" then return end
+    -- Every pop, good news or a setback, is in its stat's colour.
+    if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
+    -- In a focused view, news about another stat goes in a small line above the panel instead.
+    local view = EqTrainingHud.view
+    -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
+    local side = stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat)
+    if side then
+        text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text)
+        EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
+        return
+    end
+    EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
+end
+
+
+--- Draw the small line above the panel for news from another stat's training.
+local function drawSidePop()
+    local state = EqTrainingHud.sideState
+    if state == nil then return end
+    local p = EqTrainingHud.POP
+    local age = (g_time or 0) - state.at
+    local life = p.growMs + p.holdMs * 2 + p.fadeMs
+    if age > life then
+        EqTrainingHud.sideState = nil
+        return
+    end
+    local alpha = age < life - p.fadeMs and 1 or 1 - (age - life + p.fadeMs) / p.fadeMs
+    local c = state.color
+    local panel = EqTrainingHud.PANEL
+    shadowText(state.text, panel.right, panel.top + panel.padding, panel.titleSize, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_RIGHT, true)
+    resetText()
+end
+
+
+--- Draw the current burst, growing in, holding and fading out.
+function EqTrainingHud.drawPops()
+    drawSidePop()
+    local state = EqTrainingHud.popState
+    if state == nil then return end
+    local p = EqTrainingHud.POP
+    local age = (g_time or 0) - state.at
+    if age > p.growMs + p.holdMs + p.fadeMs then
+        EqTrainingHud.popState = nil
+        return
+    end
+    local grow = math.min(1, age / p.growMs)
+    -- Overshoot a little as it grows in, for some bounce.
+    local scale = grow < 1 and grow * 1.25 or 1 + 0.25 * math.max(0, 1 - (age - p.growMs) / 120)
+    local alpha = age < p.growMs + p.holdMs and 1 or 1 - (age - p.growMs - p.holdMs) / p.fadeMs
+    local size = (p.size + p.sizePerMult * (state.big - 1)) * scale
+    local c = state.color
+    shadowText(state.text, p.x, p.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    resetText()
+end
+
+
+--- Draw a routine request in the middle of the screen with the time left to start it.
+--- @param value string
+--- @param share number 0..1 of the time left
+--- @param color table|nil yellow when nil
+function EqTrainingHud.drawPrompt(value, share, color)
+    local p = EqTrainingHud.PROMPT
+    color = color or EqTrainingHud.COLOR.yellow
+    shadowText(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
+    local left = p.x - p.barWidth / 2
+    -- A dark edge round the bar, so it shows against snow too.
+    local edge = p.barHeight * 0.5
+    fill(left - edge, p.y - p.barHeight * 2 - edge, p.barWidth + edge * 2, p.barHeight + edge * 2, { 0, 0, 0, 0.6 })
+    fill(left, p.y - p.barHeight * 2, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
+    fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, color)
+    resetText()
+end
+
+
+--- Split text into lines that fit a width.
+--- @param value string
+--- @param width number
+--- @param size number
+--- @return table lines
+local function wrap(value, width, size)
+    local lines, line = {}, ""
+    for word in tostring(value):gmatch("%S+") do
+        local candidate = line == "" and word or (line .. " " .. word)
+        if line == "" or getTextWidth(size, candidate) <= width then
+            line = candidate
+        else
+            table.insert(lines, line)
+            line = word
+        end
+    end
+    if line ~= "" then table.insert(lines, line) end
+    return lines
+end
+
+
+--- Start a series of help popups, replacing any showing.
+--- @param pages table list of { title, text }
+function EqTrainingHud.showHelp(pages)
+    if pages == nil or #pages == 0 then return end
+    EqTrainingHud.pages = pages
+    EqTrainingHud.pageIndex = 1
+    EqTrainingHud.pageShownAt = g_time or 0
+    -- A click held down when the popup opens does not count.
+    EqTrainingHud.mouseWasDown = true
+end
+
+
+function EqTrainingHud.closeHelp()
+    EqTrainingHud.pages = nil
+    EqTrainingHud.pageIndex = 0
+end
+
+
+--- @return boolean true while a help popup is showing
+function EqTrainingHud.isHelpShowing()
+    return EqTrainingHud.pages ~= nil
+end
+
+
+--- Move to the next page on a click or after the timeout. Never takes the click from the game.
+local function updateHelp()
+    local down = Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) or false
+    local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
+    local clicked = down and not EqTrainingHud.mouseWasDown and not guiOpen
+    EqTrainingHud.mouseWasDown = down
+
+    local timedOut = (g_time or 0) - EqTrainingHud.pageShownAt > EqTrainingHud.HELP_TIMEOUT_MS
+    if not clicked and not timedOut then return end
+    EqTrainingHud.pageIndex = EqTrainingHud.pageIndex + 1
+    EqTrainingHud.pageShownAt = g_time or 0
+    if EqTrainingHud.pageIndex > #EqTrainingHud.pages then EqTrainingHud.closeHelp() end
+end
+
+
+--- Draw the help popup, if one is showing. Call every frame while riding.
+function EqTrainingHud.drawHelp()
+    if EqTrainingHud.pages == nil then return end
+    updateHelp()
+    if EqTrainingHud.pages == nil then return end
+
+    local p = EqTrainingHud.POPUP
+    local page = EqTrainingHud.pages[EqTrainingHud.pageIndex]
+    local inner = p.width - p.padding * 2
+    local lines = wrap(page.text, inner, p.textSize)
+    local count = #EqTrainingHud.pages
+    local footer = EqTrainingHud.pageIndex < count
+        and string.format(g_i18n:getText("eq_help_next"), EqTrainingHud.pageIndex, count)
+        or g_i18n:getText("eq_help_close")
+
+    local height = p.padding * 2 + p.lineHeight * (#lines + 2.4)
+    local x = p.centerX - p.width / 2
+    fill(x, p.bottom, p.width, height, { 0, 0, 0, 0.72 })
+    local accent = page.color or EqTrainingHud.COLOR.green
+    fill(x + p.padding, p.bottom + height - p.padding - p.lineHeight * 1.25, inner, 0.0012, accent)
+
+    local y = p.bottom + height - p.padding - p.lineHeight
+    text(page.title, p.centerX, y, p.titleSize, accent, RenderText.ALIGN_CENTER, true)
+    y = y - p.lineHeight * 0.4
+    for _, line in ipairs(lines) do
+        y = y - p.lineHeight
+        text(line, p.centerX, y, p.textSize, EqTrainingHud.COLOR.white, RenderText.ALIGN_CENTER)
+    end
+    text(footer, p.centerX, p.bottom + p.padding, p.textSize * 0.9, EqTrainingHud.COLOR.grey, RenderText.ALIGN_CENTER)
+    resetText()
+end
+
+
+--- @return string|nil path of the file that remembers which help was seen
+local function seenPath()
+    if g_modSettingsDirectory == nil then return nil end
+    return g_modSettingsDirectory .. EqTrainingHud.SEEN_FILE
+end
+
+
+--- @param key string a training view name
+--- @return boolean true once that view's help has popped up by itself
+function EqTrainingHud.hasSeen(key)
+    if EqTrainingHud.seen == nil then
+        EqTrainingHud.seen = {}
+        local path = seenPath()
+        local xmlFile = path ~= nil and XMLFile.loadIfExists("eqHelpSeen", path) or nil
+        if xmlFile ~= nil then
+            xmlFile:iterate("realisticEquestrian.helpSeen.view", function(_, viewKey)
+                local name = xmlFile:getString(viewKey .. "#name")
+                if name ~= nil then EqTrainingHud.seen[name] = true end
+            end)
+            xmlFile:delete()
+        end
+    end
+    return EqTrainingHud.seen[key] == true
+end
+
+
+--- Remember that a view's help has been seen, in modSettings.
+--- @param key string
+function EqTrainingHud.markSeen(key)
+    EqTrainingHud.hasSeen(key)
+    EqTrainingHud.seen[key] = true
+    local path = seenPath()
+    if path == nil then return end
+    if createFolder ~= nil then createFolder(g_modSettingsDirectory) end
+    local xmlFile = XMLFile.create("eqHelpSeen", path, "realisticEquestrian")
+    if xmlFile == nil then
+        Log:warning("EqTrainingHud: could not write %s", path)
+        return
+    end
+    local i = 0
+    for name in pairs(EqTrainingHud.seen) do
+        xmlFile:setString(string.format("realisticEquestrian.helpSeen.view(%d)#name", i), name)
+        i = i + 1
+    end
+    xmlFile:save()
+    xmlFile:delete()
+end
+
+
+function EqTrainingHud.reset()
+    EqTrainingHud.closeHelp()
+    EqTrainingHud.popState = nil
+    if EqTrainingHud.overlay ~= nil then
+        EqTrainingHud.overlay:delete()
+        EqTrainingHud.overlay = nil
+    end
+end

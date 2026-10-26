@@ -56,6 +56,24 @@ def swash_q(img, d, font, cx, baseline, scale, ink):
         r = 1.2 * scale * (1 - 0.4 * t)
         d.ellipse([x - r, y - r, x + r, y + r], fill=ink)
 
+SIG_FONT = "/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf"
+def sign(icon, scale):
+    """Paint the author's signature into the straw at the bottom left, as a painter would."""
+    N = icon.width
+    layer = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    font = ImageFont.truetype(SIG_FONT, int(30 * scale))
+    d.text((52 * scale, N - 52 * scale), "Jasta007", font=font, fill=(58, 34, 16, 205), anchor="ls")
+    layer = layer.rotate(4, resample=Image.BICUBIC, center=(52 * scale, N - 52 * scale))
+    layer = layer.filter(ImageFilter.GaussianBlur(0.35 * scale))
+    out = icon.convert("RGBA"); out.alpha_composite(layer)
+    return out
+
+def mark_dds(path, text=b"Realistic Equestrian by Jasta007"):
+    """Write the maker's name into the DDS header's reserved bytes (offset 32, 44 bytes)."""
+    with open(path, "r+b") as f:
+        f.seek(32); f.write(text[:44].ljust(44, b"\0"))
+
 def logotype(scale, ink, rule, rule_len=190, flourish=True, swash=True):
     W, H = int(1400 * scale), int(540 * scale)
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -96,12 +114,14 @@ alpha = logo.split()[3].filter(ImageFilter.GaussianBlur(6))
 shadow = Image.new("RGBA", logo.size, (10, 8, 5, 0)); shadow.putalpha(alpha.point(lambda a: int(a*0.8)))
 x = (N - logo.width) // 2 + 6; y = 14
 icon.alpha_composite(shadow, (x + 2, y + 4)); icon.alpha_composite(logo, (x, y))
+icon = sign(icon, 1)
 d = ImageDraw.Draw(icon)
 d.rectangle([22, 22, N-23, N-23], outline=(226, 210, 172, 150), width=3)
 icon = icon.convert("RGB")
 icon.resize((512, 512), Image.LANCZOS).save(OUT + "_512.png")
 icon.resize((128, 128), Image.LANCZOS).save(OUT + "_128.png")
 icon.resize((512, 512), Image.LANCZOS).save(OUT + ".dds", pixel_format="DXT1")
+mark_dds(OUT + ".dds")
 
 logotype(1, (31, 58, 43, 255), (150, 120, 70, 255)).save("logotype_green.png")
 logotype(1, cream, (214, 190, 140, 255)).save("logotype_cream.png")

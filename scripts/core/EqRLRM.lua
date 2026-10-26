@@ -32,6 +32,7 @@ EqRLRM.OPTIONAL = {
     menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
     eventsTab = { { "RLMenu", "setupMenuPages" } },
     menuPaging = { { "RLMenu", "updatePages" } },
+    messageLink = { { "RLMessageService", "formatMessage" }, { "RLMenuMessagesFrame", "updateButtonVisibility" } },
     settingsTab = { { "RLMenuSettingsFrame", "onFrameOpen" }, { "RLMenuSettingsFrame", "initializeSubCategoryPages" },
         { "RLMenuSettingsFrame", "updateSubCategoryPages" } },
     animalsPageButton = { { "RLMenu", "openFromBridge" } },
@@ -177,5 +178,25 @@ function EqRLRM.listHorsesForFarm(farmId)
         end
     end
 
+    return horses
+end
+
+
+--- A farm's horses standing in its livestock trailers. They have left their pens, so
+--- listHorsesForFarm doesn't see them, but they are still the farm's: a horse driven somewhere
+--- and left in its trailer must still run in its event (or be told it was never delivered).
+--- @param farmId number
+--- @return table animals RLRM Animal objects
+function EqRLRM.listHorsesInTrailers(farmId)
+    local horses = {}
+    local vehicleSystem = g_currentMission ~= nil and g_currentMission.vehicleSystem or nil
+    for _, vehicle in ipairs(vehicleSystem ~= nil and vehicleSystem.vehicles or {}) do
+        if vehicle.spec_livestockTrailer ~= nil and vehicle.getClusters ~= nil
+            and vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() == farmId then
+            for _, animal in pairs(vehicle:getClusters() or {}) do
+                if animal.isHorse ~= nil and animal:isHorse() then table.insert(horses, animal) end
+            end
+        end
+    end
     return horses
 end

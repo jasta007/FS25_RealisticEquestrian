@@ -12,16 +12,23 @@ EqSettings = {}
 -- Training rate choices: a multiplier on every stat gain from training (riding, staff, events).
 EqSettings.TRAINING_RATES = { 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3 }
 
+-- Entry fee and prize money choices: a multiplier on the fee or purse of each newly drawn event.
+-- Kept to 0.5x-2x so events stay worth entering without flooding the farm with money.
+EqSettings.MONEY_SCALES = { 0.5, 0.75, 1, 1.25, 1.5, 2 }
+
 -- Entry limit choices; 0 means no limit.
 EqSettings.ENTRY_LIMITS = { 0, 1, 2, 3, 4, 5, 6, 8, 10 }
+
+-- Choices for the fewest and most events on the calendar at once.
+EqSettings.EVENT_COUNTS = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15 }
 
 local function onOffTexts()
     return { { key = "eq_settings_off" }, { key = "eq_settings_on" } }
 end
 
-local function rateTexts()
+local function rateTexts(rates)
     local texts = {}
-    for i, rate in ipairs(EqSettings.TRAINING_RATES) do
+    for i, rate in ipairs(rates) do
         texts[i] = { text = (string.format("%.2f", rate):gsub("0+$", ""):gsub("%.$", "")) .. "x" }
     end
     return texts
@@ -35,17 +42,27 @@ local function limitTexts()
     return texts
 end
 
+local function countTexts()
+    local texts = {}
+    for i, count in ipairs(EqSettings.EVENT_COUNTS) do texts[i] = { text = tostring(count) } end
+    return texts
+end
+
 -- Rows in page order. Each has the settings field it edits, the values its states stand for,
 -- and the texts shown for them: { key = l10n key } or { text = literal }. Titles and tooltips
 -- are eq_settings_<id> and eq_settings_<id>_tooltip.
 EqSettings.ROWS = {
-    { id = "trainingRate", values = EqSettings.TRAINING_RATES, texts = rateTexts(), default = 1 },
+    { id = "trainingRate", values = EqSettings.TRAINING_RATES, texts = rateTexts(EqSettings.TRAINING_RATES), default = 1 },
     { id = "cadence", values = { "day", "month" },
         texts = { { key = "eq_settings_cadence_day" }, { key = "eq_settings_cadence_month" } }, default = "day" },
+    { id = "eventsMin", values = EqSettings.EVENT_COUNTS, texts = countTexts(), default = 3 },
+    { id = "eventsMax", values = EqSettings.EVENT_COUNTS, texts = countTexts(), default = 8 },
     { id = "racing", values = { false, true }, texts = onOffTexts(), default = true },
     { id = "injuries", values = { false, true }, texts = onOffTexts(), default = true },
     { id = "forcedRetirement", values = { false, true }, texts = onOffTexts(), default = false },
     { id = "entriesPerMonth", values = EqSettings.ENTRY_LIMITS, texts = limitTexts(), default = 3 },
+    { id = "entryFeeScale", values = EqSettings.MONEY_SCALES, texts = rateTexts(EqSettings.MONEY_SCALES), default = 1 },
+    { id = "prizeScale", values = EqSettings.MONEY_SCALES, texts = rateTexts(EqSettings.MONEY_SCALES), default = 1 },
 }
 
 EqSettings.BY_ID = {}
@@ -86,11 +103,20 @@ function EqSettings.apply(settings, id, state)
 end
 
 
+--- A multiplier setting, 1 when unset or not positive.
+--- @param settings table|nil EqCompetitionManager.settings
+--- @param id string e.g. "trainingRate", "entryFeeScale", "prizeScale"
+--- @return number multiplier
+function EqSettings.multiplier(settings, id)
+    local value = settings ~= nil and tonumber(settings[id]) or nil
+    if value == nil or value <= 0 then return 1 end
+    return value
+end
+
+
 --- The training rate multiplier, 1 when unset.
 --- @param settings table|nil EqCompetitionManager.settings
 --- @return number rate
 function EqSettings.trainingRate(settings)
-    local rate = settings ~= nil and tonumber(settings.trainingRate) or nil
-    if rate == nil or rate <= 0 then return 1 end
-    return rate
+    return EqSettings.multiplier(settings, "trainingRate")
 end

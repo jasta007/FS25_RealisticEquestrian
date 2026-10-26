@@ -15,6 +15,9 @@ local MULTIPLIER = 48271
 
 EqRandom.WARM_UP = 4
 
+-- The maker's mark, kept as bytes so it reads the same whatever happens to the texts.
+local MARK = { 74, 97, 115, 116, 97, 48, 48, 55 }
+
 
 --- a * b mod MODULUS without going past the 2^53 a double holds exactly.
 local function mulMod(a, b)
@@ -39,6 +42,12 @@ function EqRandom.hashString(text)
     end
     if h == 0 then h = 1 end
     return h
+end
+
+
+--- @return string mark who made the mod
+function EqRandom.mark()
+    return string.char((unpack or table.unpack)(MARK))
 end
 
 

@@ -1,6 +1,6 @@
 --[[
     main.lua
-    The mod loader.
+    The mod loader for Realistic Equestrian, by Jasta007.
 
     The game sources mods alphabetically, and a modDesc dependency only makes sure RLRM is
     enabled, not that it loads first: FS25_RealisticEquestrian is sourced BEFORE
@@ -12,6 +12,7 @@
 ]]
 
 local modDirectory = g_currentModDirectory
+local modName = g_currentModName
 
 -- SECTION 1: Our own modules. None of them reads RLRM at file scope.
 source(modDirectory .. "scripts/core/EqLog.lua")
@@ -27,6 +28,7 @@ source(modDirectory .. "scripts/core/EqStatLog.lua")
 source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
@@ -35,6 +37,9 @@ source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
+source(modDirectory .. "scripts/competition/EqPerformance.lua")
+source(modDirectory .. "scripts/competition/EqRivals.lua")
+source(modDirectory .. "scripts/competition/EqStory.lua")
 source(modDirectory .. "scripts/competition/EqCompetition.lua")
 source(modDirectory .. "scripts/competition/EqExperience.lua")
 source(modDirectory .. "scripts/competition/EqRisk.lua")
@@ -49,6 +54,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
+source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
@@ -134,6 +140,10 @@ function EqMain.activate()
         guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then
+        guarded("message link hooks", function() EqMessagesLink.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.menuPaging then
         guarded("menu paging hook", function() EqMenuPaging.install(guarded) end)
     end
@@ -197,9 +207,22 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
-        Log:info("Realistic Equestrian active")
+        Log:info("Realistic Equestrian by %s active", EqRandom.mark())
+        EqMain.checkMark()
     else
         Log:error("Realistic Equestrian is switched off for this session; see the lines above.")
+    end
+end
+
+
+--- Note in the log when this copy no longer names its maker, so a reupload under another name
+--- still says where it came from.
+function EqMain.checkMark()
+    local mark = EqRandom.mark()
+    local mod = g_modManager ~= nil and modName ~= nil and g_modManager:getModByName(modName) or nil
+    local author = mod ~= nil and tostring(mod.author or "") or mark
+    if EqConstants.AUTHOR ~= mark or not string.find(author:lower(), mark:lower(), 1, true) then
+        Log:warning("This copy of Realistic Equestrian has been changed (author '%s'); the original is by %s", author, mark)
     end
 end
 
@@ -278,6 +301,7 @@ local function onMissionDelete()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()
+        EqTrainingHud.reset()
         EqStatLog.reset()
         EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
