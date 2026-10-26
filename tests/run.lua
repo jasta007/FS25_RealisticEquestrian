@@ -483,6 +483,25 @@ do
             m.sprint.activeMs = 0
             m.sprint.ready = true
             check("no stamina mode while Sprint is ready", canter(10000) == nil and m.mode ~= "stamina")
+            local quick = EqTraining.newSheet()
+            local r = quick.routine
+            r.active, r.mult, r.current, r.nextAt = true, 1, "walk", 0
+            EqTraining.routineStep(quick, "walk", nil, 100, false, function() return 1 end)
+            local asked = r.request
+            EqTraining.routineStep(quick, (asked == "left" or asked == "right") and "walk" or asked, asked, 400, false, function() return 1 end)
+            check("a command done at once still shows for a moment", r.shown == asked and r.clock < r.shownUntil)
+            local tired = EqTraining.newSheet()
+            tired.tiredness = 80
+            EqTraining.modeStep(tired, "canter", 100)
+            check("no canter into a stamina run when close to blowing", tired.entryMs == 0)
+            tired.tiredness = 60
+            EqTraining.modeStep(tired, "canter", 100)
+            tired.tiredness = 80
+            EqTraining.modeStep(tired, "canter", 100)
+            check("a canter already under way carries on as exertion rises", tired.entryMs == 200)
+            check("tempo x2 trains stamina a little at low exertion", EqTraining.staminaQuality(30, 60) == 0
+                and EqTraining.staminaQuality(30, 60, EqTraining.TEMPO_LOW_FLOOR) > 0
+                and EqTraining.staminaQuality(75, 60, EqTraining.TEMPO_LOW_FLOOR) == EqTraining.staminaQuality(75, 60))
         end
         -- Tempo: only beats raise it; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()

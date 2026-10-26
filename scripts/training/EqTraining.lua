@@ -70,6 +70,7 @@ EqTraining.ROUTINE_STEER_MS = 300
 EqTraining.ROUTINE_GAP_MS = { 5000, 8000 }
 EqTraining.ROUTINE_TURN_GAP_MS = { 3000, 4000 }
 EqTraining.ROUTINE_REACT_MS = 3000
+EqTraining.ROUTINE_SHOW_MS = 1500
 -- After a full stop the next request comes sooner (James: waiting at a halt was boring).
 EqTraining.ROUTINE_HALT_GAP_MS = { 2500, 4000 }
 -- The routine gets more stressful as its multiplier climbs: for each step above x1, gaps
@@ -160,6 +161,10 @@ EqTraining.TEMPO_MAX = 5
 EqTraining.TEMPO_BONUS = 0.375
 EqTraining.TEMPO_BLOWN_MS = 5000
 EqTraining.TEMPO_SLOW_MS = 3500
+-- At tempo x2 and up, stamina trains at least this share of the zone even while exertion is low.
+EqTraining.TEMPO_LOW_FLOOR = 0.35
+-- The canter into a stamina run doesn't start from this exertion up: it would run the horse into blowing.
+EqTraining.STAMINA_ENTRY_MAX = 75
 
 -- Beats: during a run a marker sweeps along the exertion meter, from 0 to 100 in BEAT_SWEEP_MS,
 -- every BEAT_GAP_MS (a random time in the range). Pressing the key for the other fast gait
@@ -439,11 +444,13 @@ end
 --- How well stamina is training at this tiredness and run length.
 --- @param tiredness number 0-100
 --- @param run number seconds
+--- @param floor number|nil least zone share below the zone (a running tempo)
 --- @return number share 0..1 of STAMINA_RATE, before the tempo bonus
-function EqTraining.staminaQuality(tiredness, run)
+function EqTraining.staminaQuality(tiredness, run, floor)
     local zone
     if tiredness < EqTraining.ZONE_LOW then
         zone = EqStats.clamp((tiredness - EqTraining.ZONE_FROM) / (EqTraining.ZONE_LOW - EqTraining.ZONE_FROM), 0, 1)
+        zone = math.max(zone, floor or 0)
     elseif tiredness <= EqTraining.ZONE_HIGH then
         zone = 1
     else
@@ -516,7 +523,8 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     sheet.tempoEvent = sheet.mode == "stamina" and EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt) or nil
 
     local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
-        and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo)
+        and EqTraining.staminaQuality(sheet.tiredness, sheet.run,
+            sheet.mode == "stamina" and sheet.tempo.mult >= 2 and EqTraining.TEMPO_LOW_FLOOR or nil) * EqTraining.tempoBonus(sheet.tempo)
             * (sheet.mode == "stamina" and 1 or EqTraining.STAMINA_OUTSIDE_SHARE) or 0
     local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) * EqTraining.SPEED_OUTSIDE_SHARE or 0
     if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
@@ -559,7 +567,8 @@ function EqTraining.modeStep(sheet, gait, dt)
     -- A steady canter starts stamina mode, unless agility or a ready or running Sprint has the
     -- floor. Warm-up gallops already done are kept for later.
     local sprint = sheet.sprint
-    if mode == "stamina" or mode == "agility" or sprint.ready or sprint.activeMs > 0 or gait ~= "canter" then
+    if mode == "stamina" or mode == "agility" or sprint.ready or sprint.activeMs > 0 or gait ~= "canter"
+        or (sheet.entryMs == 0 and sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX) then
         sheet.entryMs = 0
         return nil
     end
@@ -571,6 +580,7 @@ function EqTraining.modeStep(sheet, gait, dt)
     -- The streak starts now (tempo.ms > 0 is what keeps stamina mode on).
     sheet.tempo.ms = 1
     sheet.beat.nextAt = sheet.beat.clock + EqTraining.BEAT_GAP_MS[1]
+    sheet.beat.settle, sheet.beat.settleMs = false, 0
     return "stamina"
 end
 
@@ -805,6 +815,7 @@ function EqTraining.breakRoutine(sheet)
     local routine = sheet.routine
     local was = routine.active
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
+    routine.shown = nil
     routine.steerMs = 0
     return was
 end
@@ -859,6 +870,8 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         routine.request = choices[rng(#choices)]
         routine.reactMs = EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
         routine.deadline = routine.clock + routine.reactMs
+        -- The command stays on screen a moment even if the horse is already doing it.
+        routine.shown, routine.shownUntil = routine.request, routine.clock + EqTraining.ROUTINE_SHOW_MS
         -- A turn counts once its key has been held this long after the request shows.
         routine.steerMs = 0
         event = "request"

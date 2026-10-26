@@ -815,7 +815,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 end
             elseif beat.settle and sheet.mode == "stamina" and sheet.routine.request == nil and not sheet.sprint.ready then
                 -- After a miss: back to a steady canter before the beats start again.
-                if spec.eqLastGait == "gallop" then
+                -- Too tired to settle at a canter: the Stamina view says rest, Freestyle says nothing.
+                if sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX then
+                    if view == "stamina" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_train_stamina_rest"), 1, COLOR.yellow) end
+                elseif spec.eqLastGait == "gallop" then
                     EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_canter"), 1, STAT_COLOR.stamina)
                 elseif spec.eqLastGait == "canter" then
                     EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_hold"), beat.settleMs / EqTraining.BEAT_SETTLE_MS, COLOR.grey)
@@ -846,6 +849,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             table.insert(rows, { left = string.format(g_i18n:getText("eq_train_stamina_entry"),
                 math.ceil((EqTraining.STAMINA_ENTRY_MS - sheet.entryMs) / 1000)), leftColor = focused and STAT_COLOR.stamina or COLOR.grey })
             if focused then table.insert(rows, { bar = sheet.entryMs / EqTraining.STAMINA_ENTRY_MS, color = STAT_COLOR.stamina }) end
+        elseif view == "stamina" and sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
+            table.insert(rows, { left = g_i18n:getText("eq_train_stamina_rest"), leftColor = COLOR.yellow })
         elseif view == "stamina" then
             table.insert(rows, { left = g_i18n:getText("eq_train_tempo_none"), leftColor = COLOR.grey })
         end
@@ -896,6 +901,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                     STAT_COLOR.temperament)
             else
                 table.insert(rows, row)
+                -- A command done at once still shows for a moment.
+                if routine.shown ~= nil and routine.clock < (routine.shownUntil or 0) then
+                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.shown), 1, STAT_COLOR.temperament)
+                end
             end
         elseif view == "temperament" then
             table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
