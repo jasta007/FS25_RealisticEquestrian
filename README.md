@@ -186,7 +186,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
 3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
-   for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel says "Riding bar full".
+   for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel
+   says "Riding bar full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
