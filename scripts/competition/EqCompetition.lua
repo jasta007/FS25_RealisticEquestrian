@@ -6,7 +6,8 @@
       going moving weight between stats on outdoor courses. All-round tests (cross country,
       eventing, steeplechase) take part of the rating from the weakest weighted stat, so a hole
       in a horse costs it there; specialists shine in the one-discipline events.
-    - On the day, the rating is scaled by condition (RLRM's fitness and health) and a little luck.
+    - On the day, the rating is scaled by condition (RLRM's fitness and health), and the
+      discipline's checks (EqPerformance) and a little luck decide how the run went.
     - Simulated rivals fill the rest of the field with ratings drawn from the tier's range.
     - The top three share the prize pool 50/30/20.
 ]]
@@ -95,11 +96,13 @@ end
 --- @param eliminationChance number 0..1
 --- @param rng table EqRandom
 --- @param runs number|nil default 200
+--- @param horse table|nil { stats, phaseRatings } for the horse's own checks (see EqCompetition.run)
 --- @return number chance 0..1
-function EqCompetition.podiumChance(event, config, rating, condition, eliminationChance, rng, runs)
+function EqCompetition.podiumChance(event, config, rating, condition, eliminationChance, rng, runs, horse)
     runs = runs or 200
     local podiums = 0
-    local entrants = { { key = "horse", rating = rating, condition = condition } }
+    local entrants = { { key = "horse", rating = rating, condition = condition,
+        stats = horse ~= nil and horse.stats or nil, phaseRatings = horse ~= nil and horse.phaseRatings or nil } }
     for _ = 1, runs do
         for _, runner in ipairs(EqCompetition.run(event, config, entrants, rng)) do
             if runner.key ~= nil then
@@ -234,14 +237,17 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
 end
 
 
---- Run one event.
+--- Run one event. Every runner makes the discipline's checks (EqPerformance), which with a
+--- little plain luck move its score around its rating and condition.
 --- @param event table { discipline, tier, going, prize }
 --- @param config table EqEventConfig
---- @param entrants table list of { key, rating, condition }
+--- @param entrants table list of { key, rating, condition, stats (trained levels; nil uses the
+---     rating for every stat), phaseRatings (eventing: phase -> rating, see EqPerformance.scalePhases) }
 --- @param rng table EqRandom
 --- @param field number|nil runners in total, default the tier's field (fewer when some of the
 ---     field was eliminated before the scoring)
---- @return table results list sorted by place: { key or nil for a rival, place, score, prize }
+--- @return table results list sorted by place: { key or nil for a rival, place, score, prize,
+---     rating, run (EqPerformance.run), phasePlaces (eventing: phase -> place) }
 function EqCompetition.run(event, config, entrants, rng, field)
     local discipline = config.disciplineByName[event.discipline]
     local tier = config.tierByName[event.tier]
@@ -249,24 +255,25 @@ function EqCompetition.run(event, config, entrants, rng, field)
 
     local runners = {}
     for _, entrant in ipairs(entrants) do
-        table.insert(runners, {
-            key = entrant.key,
-            score = entrant.rating * entrant.condition * (1 + rng:normal(0, luck)),
-        })
+        local run = EqPerformance.run(discipline, config, tier, entrant, luck, rng)
+        table.insert(runners, { key = entrant.key, rating = entrant.rating, score = run.score, run = run })
     end
 
     for _ = #entrants + 1, field or tier.field do
         local rating = rng:uniform(tier.rivalMin, tier.rivalMax)
         local condition = rng:uniform(0.85, 1)
-        table.insert(runners, { score = rating * condition * (1 + rng:normal(0, luck)) })
+        local run = EqPerformance.run(discipline, config, tier, { rating = rating, condition = condition }, luck, rng)
+        table.insert(runners, { rating = rating, score = run.score, run = run })
     end
 
     table.sort(runners, function(a, b) return a.score > b.score end)
 
+    local phasePlaces = discipline.phases ~= nil and EqPerformance.phasePlaces(runners, discipline.phases) or nil
     for place, runner in ipairs(runners) do
         runner.place = place
         local share = EqCompetition.PRIZE_SHARES[place]
         runner.prize = share ~= nil and math.floor(event.prize * share + 0.5) or 0
+        if phasePlaces ~= nil then runner.phasePlaces = phasePlaces[runner] end
     end
 
     return runners

@@ -32,6 +32,7 @@ EqRLRM.OPTIONAL = {
     menuLayout = { { "RLAnimalInfoService", "getAnimalDisplay" }, { "Animal", "showGeneticsInfo" } },
     eventsTab = { { "RLMenu", "setupMenuPages" } },
     menuPaging = { { "RLMenu", "updatePages" } },
+    messageLink = { { "RLMessageService", "formatMessage" }, { "RLMenuMessagesFrame", "updateButtonVisibility" } },
     settingsTab = { { "RLMenuSettingsFrame", "onFrameOpen" }, { "RLMenuSettingsFrame", "initializeSubCategoryPages" },
         { "RLMenuSettingsFrame", "updateSubCategoryPages" } },
     animalsPageButton = { { "RLMenu", "openFromBridge" } },

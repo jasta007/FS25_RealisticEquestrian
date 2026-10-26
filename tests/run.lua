@@ -18,6 +18,9 @@ dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/core/EqI18N.lua")
 dofile("scripts/competition/EqEventConfig.lua")
+dofile("scripts/competition/EqPerformance.lua")
+dofile("scripts/competition/EqRivals.lua")
+dofile("scripts/competition/EqStory.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqExperience.lua")
 dofile("scripts/competition/EqRisk.lua")
@@ -784,6 +787,223 @@ check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing"
     and math.abs(EqExperience.get(loaded, "dressage") - EqExperience.get(saved, "dressage")) < 1e-9)
 check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
     local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
+
+-- Event results: checks, the story lines, rivals and the results kept on a horse.
+;(function()
+    local sj = config.disciplineByName.showJumping
+    check("show jumping has its checks", #sj.checks == 6 and sj.story == "jumping" and sj.checks[6].tag == "hardest")
+    check("dressage only ends early with a refusal", config.disciplineByName.dressage.refusalsOnly
+        and EqPerformance.storyKey(config.disciplineByName.dressage, { checks = {} }, true, config) == "eq_story_dressage_elimRefusal")
+    check("eventing is only ended by a fall, never a refusal",
+        EqPerformance.storyKey(config.disciplineByName.eventing, { phases = { { checks = { { check = { stat = "temperament", weight = 1, difficulty = 0 }, passed = false } } } } },
+            true, config) == "eq_story_eventing_eliminated")
+    local race = config.disciplineByName.raceShort
+    local function raceRun(passes)
+        local checks = {}
+        for i, c in ipairs(race.checks) do checks[i] = { check = c, passed = passes[i] } end
+        return { checks = checks }
+    end
+    local behind = raceRun({ true, false, false, true })
+    check("a placed horse that fell behind and won the sprint gets the comeback line",
+        EqPerformance.storyKey(race, behind, false, config, 2) == "eq_story_race_comeback")
+    check("no comeback off the podium", EqPerformance.storyKey(race, behind, false, config, 4) ~= "eq_story_race_comeback")
+    check("no comeback without an early miss", EqPerformance.storyKey(race, raceRun({ true, true, true, true }), false, config, 1) == "eq_story_race_clean")
+    check("no comeback when the sprint was lost", EqPerformance.storyKey(race, raceRun({ true, false, true, false }), false, config, 3) == "eq_story_race_finish")
+    check("eventing runs three phases", #config.disciplineByName.eventing.phases == 3
+        and config.disciplineByName.eventing.phases[1] == "dressage")
+    for _, d in ipairs(config.disciplines) do
+        check(d.name .. " has checks or phases", #d.checks > 0 or d.phases ~= nil)
+    end
+
+    local novice = config.tierByName.novice
+    check("a check at difficulty 0 is below the weakest rival", EqPerformance.target(novice, 0) < novice.rivalMin
+        and EqPerformance.target(novice, 1) < novice.rivalMax)
+    check("an even match passes half the time", math.abs(EqPerformance.passChance(50, 50) - 0.5) < 1e-9)
+    check("a better horse passes more", EqPerformance.passChance(60, 50) > 0.75 and EqPerformance.passChance(40, 50) < 0.25)
+
+    local function c(stat, difficulty, weight, tag) return { stat = stat, difficulty = difficulty, weight = weight, tag = tag } end
+    local course = { c("agility", 0.1, 1), c("speed", 0, 1), c("agility", 0.5, 1.5), c("temperament", 0.4, 2), c("agility", 1, 2.5, "hardest") }
+    local function results(passes)
+        local list = {}
+        for i, check in ipairs(course) do list[i] = { check = check, passed = passes[i] } end
+        return list
+    end
+    check("a clean run", EqPerformance.issue(results({ true, true, true, true, true })) == "clean")
+    check("only the hardest fence down", EqPerformance.issue(results({ true, true, true, true, false })) == "hardest")
+    check("the hardest and another fence down: several", EqPerformance.issue(results({ false, true, true, true, false })) == "agilityMany")
+    check("a refusal is the biggest problem when it weighs most", EqPerformance.issue(results({ true, true, false, false, true })) == "temperament")
+    check("slow round", EqPerformance.issue(results({ true, false, true, true, true })) == "speed")
+    check("failing most of it is a struggle", EqPerformance.issue(results({ false, true, false, false, false })) == "struggled")
+    check("eliminated with a failed temperament check is a refusal",
+        EqPerformance.eliminationIssue(results({ true, true, true, false, true })) == "elimRefusal"
+        and EqPerformance.eliminationIssue(results({ true, true, true, true, false })) == "eliminated")
+
+    -- The start check: a layup unless the horse is very fractious.
+    local function startRate(temperament)
+        local started = 0
+        for i = 1, 2000 do
+            if EqPerformance.startCheck({ temperament = temperament }, 0.9, EqRandom.new("start " .. i)) then started = started + 1 end
+        end
+        return started / 2000
+    end
+    local calm, green, wild = startRate(45), startRate(20), startRate(5)
+    print(string.format("info: start check pass rate at temperament 45: %.3f, 20: %.3f, 5: %.3f", calm, green, wild))
+    check("an ordinary horse almost always starts", calm > 0.998)
+    check("a green horse usually starts", green > 0.85 and green < 0.99)
+    check("a very fractious horse often doesn't", wild < 0.5)
+    local en0 = io.open("translations/translation_en.xml"):read("*a")
+    local de0 = io.open("translations/translation_de.xml"):read("*a")
+    for n = 1, EqPerformance.START_FAIL_TEXTS do
+        local key = 'name="eq_scratch_fractious_' .. n .. '"'
+        check("start scratch text " .. n, en0:find(key, 1, true) ~= nil and de0:find(key, 1, true) ~= nil)
+    end
+
+    -- How often each line comes up for a horse in its band, and that the checks match the placing.
+    local event = { discipline = "showJumping", tier = "novice", prize = 2000 }
+    local stats = { stamina = 45, speed = 45, agility = 45, temperament = 45 }
+    local issues, cleanPlace, struggledPlace, cleanRuns, struggledRuns = {}, 0, 0, 0, 0
+    for i = 1, 1000 do
+        for _, r in ipairs(EqCompetition.run(event, config, { { key = "me", rating = 45, condition = 0.95, stats = stats } }, EqRandom.new("story " .. i))) do
+            if r.key == "me" then
+                local issue = EqPerformance.issue(r.run.checks)
+                issues[issue] = (issues[issue] or 0) + 1
+                if issue == "clean" then cleanPlace, cleanRuns = cleanPlace + r.place, cleanRuns + 1 end
+                if issue == "struggled" then struggledPlace, struggledRuns = struggledPlace + r.place, struggledRuns + 1 end
+            end
+        end
+    end
+    local parts = {}
+    for issue, count in pairs(issues) do table.insert(parts, issue .. " " .. count) end
+    table.sort(parts)
+    print("info: Novice show jumping lines for a mid-band horse (of 1000): " .. table.concat(parts, ", "))
+    check("a mid-band horse gets a mix of lines", (issues.clean or 0) > 50 and (issues.hardest or 0) > 30 and (issues.struggled or 0) > 10
+        and (issues.temperament or 0) > 20, table.concat(parts, ", "))
+    check("clear rounds place better than struggles", cleanRuns > 0 and struggledRuns > 0
+        and cleanPlace / cleanRuns + 2 < struggledPlace / struggledRuns,
+        string.format("%.1f vs %.1f", cleanPlace / math.max(cleanRuns, 1), struggledPlace / math.max(struggledRuns, 1)))
+
+    -- Eventing: placed per phase, and the phases keep the eventing rating's expectation.
+    local scaled = EqPerformance.scalePhases({ dressage = 70, showJumping = 50, crossCountry = 30 }, 45)
+    check("phase ratings average the event rating", math.abs((scaled.dressage + scaled.showJumping + scaled.crossCountry) / 3 - 45) < 1e-9
+        and scaled.dressage > scaled.crossCountry)
+    local eventing = { discipline = "eventing", tier = "intermediate", going = "good", prize = 5000 }
+    local ran = EqCompetition.run(eventing, config, { { key = "me", rating = 60, condition = 1, stats = stats, phaseRatings = scaled } }, EqRandom.new("eventing"))
+    local mine
+    for _, r in ipairs(ran) do if r.key == "me" then mine = r end end
+    check("eventing places every runner in every phase", mine.phasePlaces ~= nil and mine.phasePlaces.dressage ~= nil
+        and mine.phasePlaces.crossCountry ~= nil and #mine.run.phases == 3)
+
+    -- Every line a run can produce has its text, in English and German.
+    local en = io.open("translations/translation_en.xml"):read("*a")
+    local de = io.open("translations/translation_de.xml"):read("*a")
+    local seen = {}
+    for _, d in ipairs(config.disciplines) do
+        for _, key in ipairs(EqPerformance.storyKeys(d, config)) do
+            if not seen[key] then
+                seen[key] = true
+                check("story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil and de:find('name="' .. key .. '"', 1, true) ~= nil)
+            end
+        end
+    end
+    for i = 1, 300 do
+        local d = config.disciplines[(i % #config.disciplines) + 1]
+        local r = EqPerformance.run(d, config, config.tierByName.intermediate, { rating = 30 + i % 50, condition = 0.9 },
+            EqCompetition.LUCK_SD, EqRandom.new("keys " .. i))
+        for _, eliminated in ipairs({ false, true }) do
+            local key = EqPerformance.storyKey(d, r, eliminated, config)
+            if not seen[key] then
+                seen[key] = true
+                check("rolled story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil)
+            end
+        end
+    end
+
+    -- Rivals: the same save draws the same horses; the best name the top events.
+    local rivals = EqRivals.generate(42, config.disciplines)
+    local again = EqRivals.generate(42, config.disciplines)
+    check("fifty rivals", #rivals == EqRivals.RIVAL_COUNT)
+    check("a save's rivals are the same every load", rivals[1].name == again[1].name and rivals[50].levels.dressage == again[50].levels.dressage)
+    check("another save gets other rivals", EqRivals.generate(7, config.disciplines)[1].name ~= rivals[1].name
+        or EqRivals.generate(7, config.disciplines)[1].levels.dressage ~= rivals[1].levels.dressage)
+    local names = {}
+    for _, rival in ipairs(rivals) do names[rival.name] = true end
+    local unique = 0
+    for _ in pairs(names) do unique = unique + 1 end
+    check("rival names are unique", unique == #rivals)
+    local used, pickRng = {}, EqRandom.new("pick")
+    local top = EqRivals.pick(rivals, "showJumping", 95, used, pickRng)
+    local second = EqRivals.pick(rivals, "showJumping", 95, used, pickRng)
+    check("a name is used once per event", top ~= nil and second ~= nil and top ~= second)
+    local function levelOf(name)
+        for _, rival in ipairs(rivals) do if rival.name == name then return rival.levels.showJumping end end
+    end
+    check("the picked rival is near the rating", math.abs(levelOf(EqRivals.pick(rivals, "showJumping", 40, {}, pickRng)) - 40)
+        <= EqRivals.MATCH_RANGE)
+    check("championship and novice podiums name different horses",
+        EqRivals.pick(rivals, "showJumping", 92, {}, pickRng) ~= EqRivals.pick(rivals, "showJumping", 40, {}, pickRng))
+    -- Over many Advanced show jumping podiums, a handful of names do most of the winning.
+    local winners, distinct = {}, 0
+    for i = 1, 200 do
+        local name = EqRivals.pick(rivals, "showJumping", 80 + (i % 9), {}, EqRandom.new("winner " .. i))
+        if winners[name] == nil then distinct = distinct + 1 end
+        winners[name] = (winners[name] or 0) + 1
+    end
+    check("the same names keep turning up, but not just one", distinct >= 3 and distinct <= 20, distinct .. " winners")
+
+    -- Story lines, with a stand-in for the game's texts.
+    local savedI18n = g_i18n
+    local texts = {
+        eq_ord_1 = "%dst", eq_ord_2 = "%dnd", eq_ord_3 = "%drd", eq_ord_n = "%dth",
+        eq_story_podium = "Winner: %s, 2nd: %s, 3rd: %s.", eq_story_winner = "Winner: %s.",
+        eq_story_phase = "%s %s", eq_story_phases = "%s.", eq_story_gains = "Gained %s.",
+        eq_story_injury = "Came home with %s.", eq_story_careerEnded = "Career over.",
+        eq_discipline_dressage = "Dressage", eq_discipline_showJumping = "Show Jumping", eq_discipline_crossCountry = "Cross Country",
+        eq_stat_stamina = "Stamina", eq_stat_speed = "Speed", eq_stat_agility = "Agility", eq_stat_temperament = "Temperament",
+        eq_injury_tendon = "a tendon strain",
+    }
+    g_i18n = { getText = function(_, key) return texts[key] or key end }
+    check("ordinals", EqStory.ordinal(1) == "1st" and EqStory.ordinal(2) == "2nd" and EqStory.ordinal(3) == "3rd"
+        and EqStory.ordinal(4) == "4th" and EqStory.ordinal(11) == "11th" and EqStory.ordinal(12) == "12th"
+        and EqStory.ordinal(22) == "22nd")
+    check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: **Applejack**, 2nd: **Torben**, 3rd: **Winter**.")
+    check("phases line", EqStory.phasesLine({ "dressage", "showJumping", "crossCountry" },
+        { dressage = 4, showJumping = 2, crossCountry = 6 }) == "Dressage 4th, Show Jumping 2nd, Cross Country 6th.")
+    check("gains line skips tiny gains", EqStory.gainsLine({ agility = 0.42, temperament = 0.2, speed = 0.01 })
+        == "Gained Agility **+0.4**, Temperament **+0.2**.")
+    local runs = EqStory.runs("Winner: **Applejack**, 2nd: **Torben**.")
+    check("a line splits into plain and bold runs", #runs == 5 and runs[1].text == "Winner: " and not runs[1].bold
+        and runs[2].text == "Applejack" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
+    check("an old line with no marks is one plain run", #EqStory.runs("Clear inside the time.") == 1
+        and not EqStory.runs("Clear inside the time.")[1].bold)
+    check("plain text drops the marks", EqStory.plain("Gained Agility **+0.4**.") == "Gained Agility +0.4.")
+    check("no gains, no line", EqStory.gainsLine({ agility = 0.01 }) == nil and EqStory.gainsLine(nil) == nil)
+    check("injury line", EqStory.injuryLine({ name = "tendon" }) == "Came home with a tendon strain.")
+    local lines = EqStory.lines({ performance = "Jumped clear.", podium = "Winner: X.", gains = "Gained.", injury = "Hurt." })
+    check("story keeps it short: the injury replaces the gains", #lines == 3 and lines[3] == "Hurt.")
+    check("story skips missing lines", #EqStory.lines({ performance = "Clear.", gains = "Gained." }) == 2)
+    g_i18n = savedI18n
+
+    -- The last five results are kept on the horse and saved with it.
+    local horse = EqHorseRecord.new("DE 1 9")
+    for i = 1, 7 do
+        horse:addResult({ day = i, discipline = "showJumping", tier = "novice", place = i, field = 10, prize = 0,
+            lines = { "Line " .. i, "Winner: X." } })
+    end
+    check("five results kept, newest first", #horse.results == 5 and horse.results[1].day == 7 and horse.results[5].day == 3)
+    horse.results[2].status = "eliminated"
+    horse.results[1].venue = "Pallegney"
+    local store = memoryXML()
+    horse:saveToXMLFile(store, "horse")
+    local back = EqHorseRecord.loadFromXMLFile(store, "horse")
+    check("results survive a save", #back.results == 5 and back.results[1].lines[1] == "Line 7" and back.results[1].lines[2] == "Winner: X."
+        and back.results[1].venue == "Pallegney" and back.results[2].status == "eliminated" and back.results[5].place == 3)
+
+    -- The hidden link a result line carries to its horse.
+    dofile("scripts/core/EqMessages.lua")
+    check("link round trip", EqMessages.linkedHorse({ "text", EqMessages.linkFor("GB 1 42") }) == "GB 1 42")
+    check("plain lines have no link", EqMessages.linkedHorse({ "text" }) == nil and EqMessages.linkedHorse({ "a", "rl_x" }) == nil
+        and EqMessages.linkedHorse(nil) == nil)
+end)()
 
 -- Running a field: a strong horse in its band places well most of the time.
 local event = { discipline = "showJumping", tier = "novice", prize = 2000 }

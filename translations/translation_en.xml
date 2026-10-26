@@ -160,6 +160,9 @@
         <text name="eq_scratch_shoe" text="lost a shoe"/>
         <text name="eq_scratch_retired" text="retired"/>
         <text name="eq_scratch_inFoal" text="too far in foal to compete"/>
+        <text name="eq_scratch_fractious_1" text="wouldn't load into the lorry"/>
+        <text name="eq_scratch_fractious_2" text="was fractious and refused to be mounted"/>
+        <text name="eq_scratch_fractious_3" text="refused to go to the start"/>
         <text name="eq_injury_bruisedSole" text="a bruised sole"/>
         <text name="eq_injury_abscess" text="a hoof abscess"/>
         <text name="eq_injury_overreach" text="an overreach cut"/>
@@ -368,5 +371,82 @@
         <text name="eq_settings_forcedRetirement_tooltip" text="Whether the worst event injuries can end a horse's competition career for good."/>
         <text name="eq_settings_entriesPerMonth" text="Entries per month"/>
         <text name="eq_settings_entriesPerMonth_tooltip" text="How many event entries each farm can make a month."/>
+        <!-- Event results: how a run went (EqPerformance, EqStory) and the Results tab -->
+        <text name="eq_ord_1" text="%dst"/>
+        <text name="eq_ord_2" text="%dnd"/>
+        <text name="eq_ord_3" text="%drd"/>
+        <text name="eq_ord_n" text="%dth"/>
+        <text name="eq_story_podium" text="Winner: %s, 2nd: %s, 3rd: %s."/>
+        <text name="eq_story_winner" text="Winner: %s."/>
+        <text name="eq_story_phase" text="%s %s"/>
+        <text name="eq_story_phases" text="%s."/>
+        <text name="eq_story_gains" text="Gained %s."/>
+        <text name="eq_story_injury" text="Came home with %s."/>
+        <text name="eq_story_careerEnded" text="Suffered a career-ending injury."/>
+        <text name="eq_story_jumping_clean" text="Jumped a clear round."/>
+        <text name="eq_story_jumping_struggled" text="Really struggled with the difficulty of the course."/>
+        <text name="eq_story_jumping_eliminated" text="Went out after a fall."/>
+        <text name="eq_story_jumping_elimRefusal" text="Went out after refusing three times."/>
+        <text name="eq_story_jumping_agility" text="Had a pole down at a tricky combination."/>
+        <text name="eq_story_jumping_agilityMany" text="Had several poles down."/>
+        <text name="eq_story_jumping_hardest" text="Going well until a pole fell at the hardest fence."/>
+        <text name="eq_story_jumping_speed" text="Was slow between fences and lost time."/>
+        <text name="eq_story_jumping_temperament" text="Refused a fence."/>
+        <text name="eq_story_dressage_clean" text="A polished test that impressed the judges."/>
+        <text name="eq_story_dressage_struggled" text="Struggled with the test from start to finish."/>
+        <text name="eq_story_dressage_agility" text="Lost marks in the lateral work."/>
+        <text name="eq_story_dressage_agilityMany" text="Lost marks in several movements."/>
+        <text name="eq_story_dressage_hardest" text="An elegant routine but struggled with the hardest movements."/>
+        <text name="eq_story_dressage_temperament" text="Was noticeably tense and struggled to focus."/>
+        <text name="eq_story_dressage_temperamentMany" text="Tense and distracted for most of the test."/>
+        <text name="eq_story_dressage_elimRefusal" text="Refused to go on and retired from the test."/>
+        <text name="eq_story_crossCountry_clean" text="Clear inside the time."/>
+        <text name="eq_story_crossCountry_struggled" text="Found the course too big and struggled throughout."/>
+        <text name="eq_story_crossCountry_eliminated" text="Went out after a fall."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="Went out after three refusals."/>
+        <text name="eq_story_crossCountry_agility" text="Ran out at a narrow fence."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Stumbled on some landings and lost their rhythm."/>
+        <text name="eq_story_crossCountry_hardest" text="Going well until a run-out at the hardest fence."/>
+        <text name="eq_story_crossCountry_temperament" text="Refused at the water."/>
+        <text name="eq_story_crossCountry_speed" text="Was off the pace between fences and lost time."/>
+        <text name="eq_story_crossCountry_stamina" text="Grew tired over the longer stretches and was behind the pace."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Ran out of energy well before the finish."/>
+        <text name="eq_story_race_clean" text="Ran a great race from start to finish."/>
+        <text name="eq_story_race_struggled" text="Never got into the race."/>
+        <text name="eq_story_race_eliminated" text="Had a fall after a collision and couldn't continue."/>
+        <text name="eq_story_race_elimRefusal" text="Played up at the start and was pulled up."/>
+        <text name="eq_story_race_temperament" text="Missed the break at the start."/>
+        <text name="eq_story_race_speed" text="Couldn't go the early pace."/>
+        <text name="eq_story_race_speedMany" text="Lacked the speed to stay with the leaders."/>
+        <text name="eq_story_race_stamina" text="Faded in the closing stages."/>
+        <text name="eq_story_race_staminaMany" text="Ran out of steam well before the finish."/>
+        <text name="eq_story_race_finish" text="Ran well throughout the race but was outsprinted at the finish."/>
+        <text name="eq_story_race_comeback" text="Fell behind early but had a thrilling sprint for the finish."/>
+        <text name="eq_story_steeplechase_clean" text="Jumped and travelled well throughout."/>
+        <text name="eq_story_steeplechase_struggled" text="Struggled with both the fences and the pace."/>
+        <text name="eq_story_steeplechase_eliminated" text="Had a bad fall at a hedge and couldn't continue."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Refused a fence and was pulled up."/>
+        <text name="eq_story_steeplechase_agility" text="Hit a fence hard and lost ground."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Jumped poorly and lost ground at several fences."/>
+        <text name="eq_story_steeplechase_hardest" text="Travelling well until a blunder at the hardest obstacle."/>
+        <text name="eq_story_steeplechase_speed" text="Couldn't go the early pace."/>
+        <text name="eq_story_steeplechase_temperament" text="Jumped hesitantly and lost ground."/>
+        <text name="eq_story_steeplechase_stamina" text="Tired and faded over the last fences."/>
+        <text name="eq_story_eventing_clean" text="Clear in every phase."/>
+        <text name="eq_story_eventing_struggled" text="Found all three phases a struggle."/>
+        <text name="eq_story_eventing_eliminated" text="Went out after a fall on the cross country."/>
+        <text name="eq_ui_tab_upcoming" text="Upcoming events"/>
+        <text name="eq_ui_tab_results" text="Results"/>
+        <text name="eq_ui_col_starts" text="Starts"/>
+        <text name="eq_ui_col_wins" text="Wins"/>
+        <text name="eq_ui_col_lastResult" text="Last result"/>
+        <text name="eq_ui_result_placeOrd" text="%s of %d"/>
+        <text name="eq_ui_noHorseResults" text="%s has no event results yet."/>
+        <text name="eq_ui_summary_results" text="A horse's last %d events. Pick a horse on the right."/>
+        <text name="eq_ui_career_starts" text="Starts"/>
+        <text name="eq_ui_career_record" text="Wins / places"/>
+        <text name="eq_ui_career_earnings" text="Prize money"/>
+        <text name="eq_ui_career_eliminations" text="Eliminations"/>
+        <text name="eq_ui_button_viewResults" text="View results"/>
     </texts>
 </l10n>

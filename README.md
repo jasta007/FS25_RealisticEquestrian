@@ -234,6 +234,12 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
 5. **Get your result** at the start of the next day or month, with prize money for the top three.
+   Every event starts with an easy temperament check to get the horse to the start (only a very
+   fractious horse fails it and is scratched). Each run is then a handful of stat checks (a show jumping round asks for agility at fences that
+   get harder, a little speed and a calm horse), and the result says how it went: a clear round,
+   a pole at the hardest fence, a refusal, or a course that was too big. The Competitions tab's
+   **Results** page shows each horse's last five events, with who filled the top three, what it
+   learned and any injury; a result line in RLRM's Messages tab opens it with **View results**.
 
 ## Compatibility
 
@@ -268,7 +274,7 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 ## Planned features
 
-- Rival horses with names that turn up in the same events, and sometimes come up for sale
+- Rival horses for sale (the named rivals already turn up in the same events)
 - Stats that change how a horse rides: faster horses run faster and agile ones turn quicker
 - Better staff, building on the game's Animal Workers: several hires and different kinds of staff
   (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the
