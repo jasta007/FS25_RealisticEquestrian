@@ -564,7 +564,9 @@ function EqTrainingHooks.trySprint(vehicle, source)
     local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
     if sheet == nil then return end
-    if sheet.sprint.ready then
+    if EqTraining.isSprinting(sheet) then
+        EqTraining.spurSprint(sheet)
+    elseif sheet.sprint.ready then
         Log:info("Sprint key: %s", source)
         EqTrainingHooks.startSprint(sheet)
     elseif sheet.sprint.warm and (g_time or 0) > (EqTrainingHooks.sprintLogAt or 0) then
@@ -759,7 +761,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         if EqTraining.isSprinting(sheet) then
             table.insert(rows, { left = g_i18n:getText("eq_train_sprint_on"), leftColor = COLOR.red,
                 right = string.format("%d s", math.ceil(sprint.activeMs / 1000)) })
-            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MS, color = COLOR.red })
+            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MAX_MS, color = COLOR.red })
         elseif sprint.ready then
             table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = COLOR.orange })
             EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, COLOR.orange)

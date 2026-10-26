@@ -63,7 +63,7 @@
         <text name="eq_train_sprint_tiring" text="Tiring: rest soon"/>
         <text name="eq_train_sprint_stale" text="Too tired to sprint: rest"/>
         <text name="eq_train_zoneHold" text="Zone x%.1f"/>
-        <text name="eq_train_sprint_on" text="SPRINT!"/>
+        <text name="eq_train_sprint_on" text="SPRINT! Tap W"/>
         <text name="eq_train_sprint_ready" text="Sprint ready: press W"/>
         <text name="eq_train_sprint_warm" text="Warmed up: keep galloping for Sprint"/>
         <text name="eq_train_sprint_rest" text="Rest below 10% to warm up again"/>
@@ -73,7 +73,7 @@
         <text name="eq_pop_sprint_ready" text="Sprint! (W)"/>
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint over"/>
-        <text name="eq_help_speed_3" text="Two good sprints warm your horse up. Keep galloping and press W when Sprint! shows: for 12 seconds your horse runs 25% faster, ignores exertion and trains speed three times as fast. Drop out of a gallop and it ends. Then rest below 10% exertion before warming up again."/>
+        <text name="eq_help_speed_3" text="Two good sprints warm your horse up. Keep galloping and press W when Sprint! shows: your horse runs 25% faster, ignores exertion and trains speed three times as fast. Keep tapping W to spur it on and the Sprint lasts longer, though each tap counts for less as it goes on. Drop out of a gallop and it ends. Then rest below 10% exertion before warming up again."/>
         <text name="eq_help_stamina_3" text="The zone moves, like fishing: the white marks on the exertion bar show where it is. Hold it and it narrows, wanders faster and your gains climb up to 2.5 times. Gallop to climb, canter to hold, and trot briefly to drop fast. Drift out and the bonus drains."/>
         <text name="eq_train_tired_under" text="Below the zone: speed up"/>
         <text name="eq_train_tired_over" text="Above the zone: ease off"/>

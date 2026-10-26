@@ -331,6 +331,11 @@ do
         check("Sprint can't start before it is ready", not EqTraining.startSprint(sheet))
         ride("gallop", 2000)
         check("galloping on makes Sprint ready", events[3] == "ready" and EqTraining.startSprint(sheet))
+        check("the press that starts Sprint is not also a tap", not EqTraining.spurSprint(sheet))
+        ride("gallop", 400)
+        local left = sheet.sprint.activeMs
+        check("tapping W adds Sprint time", EqTraining.spurSprint(sheet) and sheet.sprint.activeMs > left
+            and not EqTraining.spurSprint(sheet))
         local before = sheet.focused.speed
         ride("gallop", 3000)
         check("Sprint trains speed hard even when tiring", EqTraining.isSprinting(sheet)
