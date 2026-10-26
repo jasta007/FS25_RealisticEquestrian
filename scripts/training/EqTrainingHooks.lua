@@ -322,6 +322,8 @@ EqTrainingHooks.ACCELERATION_SHARE = 1.6
 -- the same share so it still reaches the same height: the jump takes 1/sqrt(GRAVITY_SHARE) as long.
 EqTrainingHooks.GRAVITY = 9.81
 EqTrainingHooks.GRAVITY_SHARE = 2
+-- A real horse picks where to land: in the air it turns this many times as fast as on the ground.
+EqTrainingHooks.AIR_TURN_SHARE = 1.6
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
@@ -381,10 +383,16 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local record = EqRegistry.getById(id)
     -- Not while airborne, so the lift a jump started with stays put.
     if spec.eqJump == nil then tuneRiding(spec, gait, record) end
-    -- Extra pull down while in the air (see GRAVITY_SHARE).
-    if spec.isOnGround == false and type(spec.currentSpeedY) == "number" then
+    -- In the air: an extra pull down (see GRAVITY_SHARE) and snappier turning (AIR_TURN_SHARE).
+    local airborne = spec.isOnGround == false
+    if airborne and type(spec.currentSpeedY) == "number" then
         spec.currentSpeedY = spec.currentSpeedY - EqTrainingHooks.GRAVITY * (EqTrainingHooks.GRAVITY_SHARE - 1) * dt / 1000
     end
+    if spec.eqBaseTurnSpeed ~= nil and airborne ~= spec.eqAirborne then
+        local handling = EqTraining.handling(record ~= nil and record.trained.speed or nil, record ~= nil and record.trained.agility or nil)
+        spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn * (airborne and EqTrainingHooks.AIR_TURN_SHARE or 1)
+    end
+    spec.eqAirborne = airborne
 
     local sheet = EqTrainingHooks.getSheet(id)
     local now = g_time or 0
