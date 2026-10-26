@@ -234,20 +234,6 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
 end
 
 
---- Scale a drawn event's entry fee and prize money by the settings, keeping the draw's rounding.
---- @param event table { fee, prize }
---- @param feeScale number|nil default 1
---- @param prizeScale number|nil default 1
-function EqCompetition.scaleMoney(event, feeScale, prizeScale)
-    if feeScale ~= nil and feeScale ~= 1 then
-        event.fee = math.floor(event.fee * feeScale / 10 + 0.5) * 10
-    end
-    if prizeScale ~= nil and prizeScale ~= 1 then
-        event.prize = math.floor(event.prize * prizeScale / 50 + 0.5) * 50
-    end
-end
-
-
 --- Run one event.
 --- @param event table { discipline, tier, going, prize }
 --- @param config table EqEventConfig
@@ -284,4 +270,18 @@ function EqCompetition.run(event, config, entrants, rng, field)
     end
 
     return runners
+end
+
+
+--- Scale a drawn event's entry fee and prize money by the settings, keeping the draw's rounding.
+--- @param event table { fee, prize }
+--- @param feeScale number|nil default 1
+--- @param prizeScale number|nil default 1
+function EqCompetition.scaleMoney(event, feeScale, prizeScale)
+    if feeScale ~= nil and feeScale ~= 1 then
+        event.fee = math.floor(event.fee * feeScale / 10 + 0.5) * 10
+    end
+    if prizeScale ~= nil and prizeScale ~= 1 then
+        event.prize = math.floor(event.prize * prizeScale / 50 + 0.5) * 50
+    end
 end
