@@ -47,23 +47,90 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 
 Every horse trains once a day, at RLRM's daily horse tick.
 
-- **Your riding** trains by gait: walking builds temperament, trotting a mix, cantering stamina
-  and agility, galloping speed and stamina, and backing up builds agility and temperament fast. Jumps at canter or gallop add agility and some temperament. Every gait trains
-  at the same rate, only different stats. The base game's riding bar is the horse's energy for
-  the day: once it reaches 100% the horse is tired, the line reads "Training (tired)", and it
-  trains no more until tomorrow. Galloping tires a horse three times as fast as walking, and
-  galloping until it tires is a full day of speed work, so choose what to work on first. While riding, a
-  "Training today" line shows the effort so far.
-- **Staff** (the base game's animal worker, or RLRM's herdsman horse-care rule) count for whatever
-  share of the riding bar you did not fill yourself. They train to the horse's focus and stop at
-  95% of each ceiling; only your own riding takes a stat the last 5%.
+- **Your riding** is the main way to train. Stamina and speed train best from focused work, watched
+  by an **Exertion** meter while you ride (it rises in canter and gallop and falls at slower gaits
+  and at a halt). A good focused session can give up to double what a full day of riding used to;
+  just riding round the gaits trains them at about a quarter of that.
+- **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a line
+  for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours
+  show how each is going. Help pops up at the bottom of the screen the first time you open each
+  view; press **H** to see it again, and click anywhere to move on.
+- One kind of training talks at a time, each in its own colour: a steady canter starts stamina
+  (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo ends, a
+  warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple) routines
+  always run. Only that training's popups and prompts show; the panel stays the same.
+- Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until shortly
+  after landing, so you can jump an obstacle in the way.
+- **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
+  line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
+  so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
+  stamina 100). Below 30% exertion a horse standing or walking recovers quickly, a fit one faster
+  still.
+
+### Stamina
+
+Stamina comes from runs at canter or gallop. Canter 8 seconds without jumping or galloping,
+starting under 40% exertion, to start stamina training; then the tempo multiplies it (up to x5,
+2.5 times the gains). Only well-timed gait changes raise the tempo: when the middle of the screen
+says **Canter! (S)** or **Gallop! (W)**, press that key right then and your horse gets a breather (a
+bigger one the more tired it is, so hitting every change keeps it under blowing hard); three good
+changes (a perfect one counts double) raise the tempo. Pressing too early or missing one loses the
+progress to the next step, and the next change comes soon after. Timing tightens as the tempo
+climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few seconds below a canter
+ends the run: rest under 40%, then canter to start again. Gait changes pause during a Sprint or a
+routine command.
+
+### Speed
+
+Speed comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under 25%) add only
+a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm
+the horse up; keep galloping and press **W** when **Sprint!** shows to run 25% faster, held on the
+limit just short of blowing hard (keep tapping W to spur it on; a slower horse runs out sooner),
+with three times the speed training. Then rest right down before warming up again.
+
+### Agility
+
+Agility comes from jump combos: clear jumps one after another (fences, poles, anything solid) for
+x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but stopping, walking or
+backing up runs the clock down ten times as fast. A jump is judged once the horse has landed:
+hitting something or landing on it takes 3 seconds off the combo clock. Horses jump higher and stay
+in the air longer from a canter, and pick up speed faster, so a controlled canter approach can clear
+a fence.
+
+### Temperament
+
+Temperament comes from a routine: walk to start one, then do each movement asked for (walk, trot,
+stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A canter, gallop, jump or a
+missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
+moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
+show in the Freestyle and Temperament views.
+
+### How stats change riding
+
+Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
+agility sets how high it jumps and how quickly it turns; a calm horse (temperament) changes pace a
+little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+horse can clear fences without a full gallop.
+
+### Staff, age and metabolism
+
+- **Staff** (the base game's Animal Workers with Riding turned on for a horse pen, added in patch
+  1.25, or RLRM's herdsman horse-care rule) count for whatever share of the riding bar you did not
+  fill yourself, at half the rate of a full day of plain riding. They train to the horse's focus
+  and stop at 95% of each ceiling; your own focused riding trains a stat up to four times as fast,
+  and only it takes a stat the last 5%.
+- **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
+  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when they
+  do their round, they fetch your loose horses back to their own pen (or the nearest staffed pen
+  with room) and look after them with the rest.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
 - **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
   and a slow one is cheap to keep but slow to bring back into condition (down to 60%). Fitness
-  lost is not changed.
-- Gains slow as a stat nears its ceiling. Horses under 24 months train at 30%, 24-36 months at
-  60%. A horse left idle for more than about half a month fades toward half its ceiling, and past
+  lost is not changed, and it doesn't change how fast stats train.
+- Gains slow as a stat nears its ceiling. Horses under 24 months can only do light groundwork and
+  train at 30%, 24-36 months at 60%. From three to twelve they train at full speed, then slow down
+  again. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.
 
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
