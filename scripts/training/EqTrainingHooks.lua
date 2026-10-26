@@ -447,9 +447,10 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local pace = paceGait(spec, gait, now)
     EqTraining.step(sheet, pace, dt, worn, stamina)
     spec.eqLastGait = gait
-    -- Beats run where the rider can see them: the Freestyle and Stamina views.
+    -- Beats only run in the Stamina view: Freestyle already has the routine and the jump combo
+    -- in the middle of the screen.
     local view = EqTrainingHooks.getView()
-    if view == "freestyle" or view == "stamina" then
+    if view == "stamina" then
         local beat = EqTraining.beatStep(sheet, gait, dt, math.random)
         if beat == "hit" or beat == "perfect" or beat == "off" then EqTrainingHud.pop("beat_" .. beat) end
     else
