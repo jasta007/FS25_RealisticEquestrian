@@ -537,6 +537,9 @@ local function logRideableFields(spec)
 end
 
 
+-- The beat cue shows this many exertion points before the marker reaches the horse's exertion.
+EqTrainingHooks.BEAT_CUE_LEAD = 40
+
 -- Sprint starts with the forward key (W) once ready. If no forward key function could be
 -- hooked, it starts by itself this long after it is ready.
 EqTrainingHooks.SPRINT_AUTO_MS = 1500
@@ -752,9 +755,22 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         if view ~= "speed" then
             bar.marks = { EqTraining.ZONE_LOW / 100, EqTraining.ZONE_HIGH / 100 }
             -- The beat marker, with its hit window either side.
-            if sheet.beat.pos ~= nil then
-                bar.window = { (sheet.beat.pos - EqTraining.BEAT_WINDOW) / 100, (sheet.beat.pos + EqTraining.BEAT_WINDOW) / 100 }
-                table.insert(bar.marks, { sheet.beat.pos / 100, COLOR.yellow, 3 })
+            local beat = sheet.beat
+            if beat.pos ~= nil then
+                bar.window = { (beat.pos - EqTraining.BEAT_WINDOW) / 100, (beat.pos + EqTraining.BEAT_WINDOW) / 100 }
+                table.insert(bar.marks, { beat.pos / 100, COLOR.yellow, 3 })
+                -- And a cue in the middle of the screen: the gait to switch to, its bar filling
+                -- as the marker comes up to the horse's exertion, green once it's time.
+                local gap = beat.pos - sheet.tiredness
+                if gap <= EqTraining.BEAT_WINDOW then
+                    local target = beat.lastGait == "gallop" and "canter" or "gallop"
+                    local now = math.abs(gap) <= EqTraining.BEAT_WINDOW
+                    local share = now and 1 or 1 - EqStats.clamp(-gap / EqTrainingHooks.BEAT_CUE_LEAD, 0, 1)
+                    if share > 0 then
+                        EqTrainingHud.drawPrompt(g_i18n:getText(now and ("eq_beat_" .. target) or ("eq_beat_ready_" .. target)),
+                            share, now and COLOR.green or COLOR.yellow)
+                    end
+                end
             end
         end
         table.insert(rows, bar)

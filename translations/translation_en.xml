@@ -83,6 +83,10 @@
         <text name="eq_pop_beat_perfect" text="Perfect!"/>
         <text name="eq_pop_beat_hit" text="Good!"/>
         <text name="eq_pop_beat_off" text="Off beat"/>
+        <text name="eq_beat_gallop" text="Gallop now! (W)"/>
+        <text name="eq_beat_canter" text="Canter now! (S)"/>
+        <text name="eq_beat_ready_gallop" text="Ready to gallop (W)..."/>
+        <text name="eq_beat_ready_canter" text="Ready to canter (S)..."/>
         <text name="eq_train_run" text="Run: %d s"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
