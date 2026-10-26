@@ -191,11 +191,8 @@ end
 --- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
 --- @param racingEnabled boolean
 --- @param home string|nil the player's home region: nearer venues are drawn more often
---- @param money table|nil { fee, prize } multipliers from the settings, default 1
 --- @return table events list of { discipline, tier, going, fee, prize, kind, venue, region }
-function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, money)
-    local feeScale = money ~= nil and money.fee or 1
-    local prizeScale = money ~= nil and money.prize or 1
+function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
     local events = {}
     local wantMonthly = kind == EqCompetition.KIND_MONTH
     local regionWeights = EqCompetition.regionWeights(config, home)
@@ -220,9 +217,9 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, mone
                             discipline = discipline.name,
                             tier = tier.name,
                             going = going ~= nil and going.name or nil,
-                            fee = math.floor(tier.fee * feeScale * priceFactor / 10 + 0.5) * 10,
+                            fee = math.floor(tier.fee * priceFactor / 10 + 0.5) * 10,
                             -- A richer purse costs more to enter, but not in proportion.
-                            prize = math.floor(tier.prize * prizeScale * (priceFactor * priceFactor) / 50 + 0.5) * 50,
+                            prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
                             kind = kind,
                             venue = venue,
                             region = region,
@@ -234,6 +231,20 @@ function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, mone
     end
 
     return events
+end
+
+
+--- Scale a drawn event's entry fee and prize money by the settings, keeping the draw's rounding.
+--- @param event table { fee, prize }
+--- @param feeScale number|nil default 1
+--- @param prizeScale number|nil default 1
+function EqCompetition.scaleMoney(event, feeScale, prizeScale)
+    if feeScale ~= nil and feeScale ~= 1 then
+        event.fee = math.floor(event.fee * feeScale / 10 + 0.5) * 10
+    end
+    if prizeScale ~= nil and prizeScale ~= 1 then
+        event.prize = math.floor(event.prize * prizeScale / 50 + 0.5) * 50
+    end
 end
 
 

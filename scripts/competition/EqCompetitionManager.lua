@@ -84,11 +84,11 @@ function EqCompetitionManager.openRound(kind)
     local config = EqCompetitionManager.config
     if config == nil then return end
 
-    local settings = EqCompetitionManager.settings
-    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, settings.racing,
-        EqCompetitionManager.homeRegion(), { fee = EqSettings.multiplier(settings, "entryFeeScale"),
-            prize = EqSettings.multiplier(settings, "prizeScale") })
+    local drawn = EqCompetition.drawSchedule(config, roundRng(kind), kind, EqCompetitionManager.settings.racing,
+        EqCompetitionManager.homeRegion())
     for _, event in ipairs(drawn) do
+        EqCompetition.scaleMoney(event, EqSettings.multiplier(EqCompetitionManager.settings, "entryFeeScale"),
+            EqSettings.multiplier(EqCompetitionManager.settings, "prizeScale"))
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
         EqCompetitionManager.nextEventId = EqCompetitionManager.nextEventId + 1

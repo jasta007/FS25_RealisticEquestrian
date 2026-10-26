@@ -1505,15 +1505,12 @@ end)()
         check(id .. " falls back to 1", EqSettings.multiplier({}, id) == 1)
     end
 
-    local plain = EqCompetition.drawSchedule(config, EqRandom.new("money"), EqCompetition.KIND_MONTH, true)
-    local scaled = EqCompetition.drawSchedule(config, EqRandom.new("money"), EqCompetition.KIND_MONTH, true, nil,
-        { fee = 2, prize = 0.5 })
-    local scaledOk = #plain == #scaled and #plain > 0
-    for i, event in ipairs(plain) do
-        local s = scaled[i]
-        if s == nil or math.abs(s.fee - event.fee * 2) > 10 or math.abs(s.prize - event.prize * 0.5) > 50 then scaledOk = false end
-    end
-    check("fee and prize scales apply to drawn events", scaledOk)
+    local event = { fee = 250, prize = 1000 }
+    EqCompetition.scaleMoney(event, 2, 0.5)
+    check("fee and prize scales apply to an event", event.fee == 500 and event.prize == 500)
+    event = { fee = 250, prize = 1000 }
+    EqCompetition.scaleMoney(event, 0.75, 1.25)
+    check("scaled money keeps the draw's rounding", event.fee == 190 and event.prize == 1250)
 
     local translations = {}
     for _, lang in ipairs({ "en", "de" }) do
