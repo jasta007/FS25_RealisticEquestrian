@@ -814,7 +814,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if view == "freestyle" or view == "stamina" then
         local tempo = sheet.tempo
         if tempo.ms > 0 then
-            local color = EqTrainingHud.multColor(tempo.mult)
+            local color = STAT_COLOR.stamina
             local tempoRow = { left = string.format(g_i18n:getText("eq_train_tempo"), tempo.mult), leftColor = color }
             if tempo.blownMs > 0 then
                 tempoRow.right = string.format(g_i18n:getText("eq_train_tempo_blown"),
@@ -840,27 +840,27 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if view == "freestyle" or view == "speed" then
         local sprint = sheet.sprint
         if EqTraining.isSprinting(sheet) then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_on"), leftColor = COLOR.red,
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_on"), leftColor = STAT_COLOR.speed,
                 right = string.format("%d s", math.ceil(sprint.activeMs / 1000)) })
-            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MAX_MS, color = COLOR.red })
+            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MAX_MS, color = STAT_COLOR.speed })
         elseif sprint.ready then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = COLOR.orange })
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = STAT_COLOR.speed })
             -- Only the Speed view puts Sprint in the middle of the screen.
             if view == "speed" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, STAT_COLOR.speed) end
         elseif sprint.warm then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_warm"), leftColor = COLOR.yellow })
+            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_warm"), leftColor = STAT_COLOR.speed })
         elseif sprint.rest then
             table.insert(rows, { left = g_i18n:getText("eq_train_sprint_rest"), leftColor = COLOR.grey })
         else
             table.insert(rows, { left = string.format(g_i18n:getText("eq_train_sprint_count"), sprint.count, EqTraining.SPRINTS_TO_WARM),
-                leftColor = view == "speed" and COLOR.white or COLOR.grey })
+                leftColor = STAT_COLOR.speed })
         end
     end
 
     local combo = sheet.combo
     if combo.count > 0 and (view == "freestyle" or view == "agility") then
         local mult = math.min(combo.count, EqTraining.COMBO_MAX)
-        local color = EqTrainingHud.multColor(mult)
+        local color = STAT_COLOR.agility
         table.insert(rows, { left = string.format(g_i18n:getText("eq_train_combo"), mult), leftColor = color,
             right = string.format("%d s", math.ceil(combo.timer)) })
         table.insert(rows, { bar = combo.timer / EqTraining.COMBO_SECONDS, color = color })
@@ -871,7 +871,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local routine = sheet.routine
     if routineShown() then
         if routine.active then
-            local color = EqTrainingHud.multColor(routine.mult)
+            local color = STAT_COLOR.temperament
             local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
             if routine.request ~= nil then
                 local left = math.max(0, routine.deadline - routine.clock)
