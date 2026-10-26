@@ -176,6 +176,11 @@ EqTraining.BEAT_PERFECT = 2.5
 EqTraining.BEAT_RELIEF = 6
 EqTraining.BEAT_PERFECT_RELIEF = 10
 EqTraining.BEAT_NEAR = 15
+-- Never ask for a gallop from BEAT_GALLOP_MAX exertion up: it would push the horse into blowing
+-- hard. After a missed or wasted beat the rider settles first: canter BEAT_SETTLE_MS below
+-- BEAT_GALLOP_MAX before the beats start again.
+EqTraining.BEAT_GALLOP_MAX = 80
+EqTraining.BEAT_SETTLE_MS = 3000
 -- It gets harder as the tempo climbs, so no horse gallops for ever: for each tempo step above
 -- x1 the window shrinks BEAT_WINDOW_PRESSURE, the breather BEAT_RELIEF_PRESSURE and the sweep
 -- time BEAT_SWEEP_PRESSURE (at x5: window 52%, breather 40%, sweep 60%).
@@ -311,7 +316,7 @@ end
 
 --- @return table beat a fresh beat state
 function EqTraining.newBeat()
-    return { clock = 0, nextAt = 0, pos = nil, target = nil }
+    return { clock = 0, nextAt = 0, pos = nil, target = nil, settle = false, settleMs = 0 }
 end
 
 
@@ -354,19 +359,38 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
             return nil
         end
         beat.pos = beat.pos + 100 * dt / sweep
-        -- Until the cue is near, it follows the gait the horse is in.
+        -- Until the cue is near, it follows the gait the horse is in; a gallop it can't afford
+        -- any more is called off quietly.
         if fast and beat.pos - sheet.tiredness < -(window + EqTraining.BEAT_NEAR) then
             beat.target = gait == "gallop" and "canter" or "gallop"
+            if beat.target == "gallop" and sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX then
+                beat.pos, beat.nextAt = nil, beat.clock + EqTraining.BEAT_GAP_MS[1]
+                return nil
+            end
         end
         if beat.pos - sheet.tiredness > window or not fast then
             beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
+            beat.settle, beat.settleMs = true, 0
             EqTraining.tempoBeat(sheet.tempo, 0)
             return "miss"
         end
         return nil
     end
-    if busy or not fast or sheet.run <= 0 then
-        beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_GAP_MS[1])
+    -- Settling after a miss: a steady canter, not blowing, for BEAT_SETTLE_MS.
+    if beat.settle then
+        if gait == "canter" and sheet.tiredness < EqTraining.BEAT_GALLOP_MAX then
+            beat.settleMs = beat.settleMs + dt
+        else
+            beat.settleMs = 0
+        end
+        if beat.settleMs >= EqTraining.BEAT_SETTLE_MS then
+            beat.settle, beat.settleMs = false, 0
+            beat.nextAt = math.min(beat.nextAt, beat.clock)
+        end
+    end
+    if busy or not fast or sheet.run <= 0 or beat.settle
+        or (gait == "canter" and sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX) then
+        beat.nextAt = math.max(beat.nextAt, beat.clock + (beat.settle and 0 or EqTraining.BEAT_GAP_MS[1]))
         return nil
     end
     if beat.clock >= beat.nextAt then
@@ -397,6 +421,7 @@ function EqTraining.beatPress(sheet, key, rng)
     end
     if gap < -window and gap >= -(window + EqTraining.BEAT_NEAR) then
         beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
+        beat.settle, beat.settleMs = true, 0
         EqTraining.tempoBeat(sheet.tempo, 0)
         return "off"
     end

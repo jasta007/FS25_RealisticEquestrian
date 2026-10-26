@@ -813,6 +813,13 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                             share, now and STAT_COLOR.stamina or COLOR.grey)
                     end
                 end
+            elseif beat.settle and sheet.mode == "stamina" and sheet.routine.request == nil and not sheet.sprint.ready then
+                -- After a miss: back to a steady canter before the beats start again.
+                if spec.eqLastGait == "gallop" then
+                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_canter"), 1, STAT_COLOR.stamina)
+                elseif spec.eqLastGait == "canter" then
+                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_hold"), beat.settleMs / EqTraining.BEAT_SETTLE_MS, COLOR.grey)
+                end
             end
         end
         table.insert(rows, bar)

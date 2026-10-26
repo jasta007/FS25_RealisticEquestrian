@@ -406,15 +406,29 @@ do
         check("pressing on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness <= 44,
             tostring(event) .. " " .. sheet.tiredness)
         for _ = 1, 100 do EqTraining.beatStep(sheet, "gallop", 100, one) end
-        sheet.tiredness = 90
+        check("a beat let go by means settling first", sheet.beat.settle and sheet.beat.pos == nil)
+        sheet.beat.settle, sheet.beat.pos, sheet.tiredness = false, nil, 90
         repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 70
         check("a gallop's beat asks for a canter", sheet.beat.target == "canter")
         check("pressing just early wastes the beat", EqTraining.beatPress(sheet, "back", one) == "off" and sheet.tiredness == 90
             and sheet.beat.pos == nil)
-        repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil
-        local missed
-        repeat missed = EqTraining.beatStep(sheet, "gallop", 100, one) until missed ~= nil
-        check("a beat passed by is a miss", missed == "miss" and sheet.beat.pos == nil)
+        local function until_(f, gait, n)
+            for _ = 1, n or 300 do
+                local e = EqTraining.beatStep(sheet, gait, 100, one)
+                if f(e) then return e end
+            end
+        end
+        until_(function() return false end, "gallop", 100)
+        check("after a wasted beat, galloping on brings no beats", sheet.beat.pos == nil and sheet.beat.settle)
+        sheet.tiredness = 82
+        until_(function() return false end, "canter", 50)
+        check("nor a canter while it's still too tired to gallop", sheet.beat.pos == nil and sheet.beat.settle)
+        sheet.tiredness = 74
+        until_(function() return sheet.beat.pos ~= nil end, "canter", 100)
+        check("a settled canter brings the beats back, asking for a gallop", sheet.beat.pos ~= nil and not sheet.beat.settle
+            and sheet.beat.target == "gallop")
+        local missed = until_(function(e) return e ~= nil and e ~= "start" end, "canter")
+        check("a beat passed by is a miss", missed == "miss" and sheet.beat.pos == nil and sheet.beat.settle)
         local sprinting = EqTraining.newSheet()
         sprinting.tiredness, sprinting.run, sprinting.mode = 50, 20, "stamina"
         sprinting.sprint.ready = true

@@ -78,7 +78,7 @@
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint vorbei"/>
         <text name="eq_help_speed_3" text="Zwei gute Aufwärmgaloppe wärmen Ihr Pferd auf. Bleiben Sie im Renngalopp und drücken Sie W, wenn Sprint! erscheint: Ihr Pferd läuft 25 % schneller und trainiert Schnelligkeit dreimal so schnell, am Limit knapp vor der Atemnot gehalten. Tippen Sie weiter W, um es anzutreiben: Je schneller Sie tippen, desto länger dauert der Sprint, auch wenn jeder Tipp mit der Zeit weniger bringt, ein langsameres Pferd früher erschöpft ist und kein Pferd länger als 12 Sekunden sprintet. Fallen Sie aus dem Renngalopp, endet er. Danach unter 10 % Anstrengung erholen, bevor Sie wieder aufwärmen."/>
-        <text name="eq_help_stamina_3" text="Reiten Sie im Takt (Ausdauer- und Freistil-Ansicht). Wenn in der Bildschirmmitte Bereit machen zum Galopp... steht, warten Sie und drücken Sie S genau dann, wenn Galopp! (S) erscheint, oder W bei Renngalopp! (W). Im Takt kommt Ihr Pferd zu Atem (die Anstrengung sinkt), und drei gute Takte (ein perfekter zählt doppelt) steigern Ihr Tempo. Knapp zu früh gedrückt ist der Takt vertan, und ein verpasster oder vertaner Takt kostet den Fortschritt zum nächsten Tempo. Andere Tasten spielen keine Rolle. Je höher Ihr Tempo, desto knapper das Timing. Der Takt pausiert während eines Sprints oder eines Routine-Befehls."/>
+        <text name="eq_help_stamina_3" text="Reiten Sie im Takt (Ausdauer- und Freistil-Ansicht). Wenn in der Bildschirmmitte Bereit machen zum Galopp... steht, warten Sie und drücken Sie S genau dann, wenn Galopp! (S) erscheint, oder W bei Renngalopp! (W). Im Takt kommt Ihr Pferd zu Atem (die Anstrengung sinkt), und drei gute Takte (ein perfekter zählt doppelt) steigern Ihr Tempo. Knapp zu früh gedrückt ist der Takt vertan, und ein verpasster oder vertaner Takt kostet den Fortschritt zum nächsten Tempo. Danach zurück in einen ruhigen Galopp: Die Takte beginnen wieder, sobald sich dein Pferd beruhigt hat, und über 80% Anstrengung wird nie ein schneller Galopp verlangt. Andere Tasten spielen keine Rolle. Je höher Ihr Tempo, desto knapper das Timing. Der Takt pausiert während eines Sprints oder eines Routine-Befehls."/>
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Außer Atem! %d s"/>
         <text name="eq_train_tempo_slow" text="Zurück in den Galopp!"/>
@@ -94,6 +94,8 @@
         <text name="eq_beat_canter" text="Galopp! (S)"/>
         <text name="eq_beat_ready_gallop" text="Bereit machen zum Renngalopp..."/>
         <text name="eq_beat_ready_canter" text="Bereit machen zum Galopp..."/>
+        <text name="eq_beat_settle_canter" text="Zurück in den Galopp (S)"/>
+        <text name="eq_beat_settle_hold" text="Ruhiger Galopp..."/>
         <text name="eq_train_run" text="Lauf: %d s"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
