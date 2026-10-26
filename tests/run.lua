@@ -483,7 +483,7 @@ do
         go("canter", 90, 2000)
         check("blowing too long breaks the streak", tempo.mult == 1 and events[#events] == "lost")
         go("canter", 75, 1000)
-        go("trot", 70, 3000)
+        go("trot", 70, 4000)
         check("a long trot breaks the streak", tempo.ms == 0)
     end
     -- Temperament routine.
@@ -595,6 +595,8 @@ local function session(policy)
     while EqTraining.playerRidingPoints(sheet) < 100 and t < 3600000 do
         local gait = policy(sheet, t, state)
         EqTraining.step(sheet, gait, 50, false)
+        EqTraining.sprintStep(sheet, gait, 50)
+        EqTraining.modeStep(sheet, gait, 50)
         if gait ~= "halt" then EqTraining.addRiding(sheet, gait, 50) end
         t = t + 50
     end
@@ -628,6 +630,15 @@ check("cycling the gaits trains speed at about a quarter of the old day", cycled
 check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
     string.format("flat out %.2f, sprints %.2f", flatOut.speed, sprints.speed))
 check("sprints train little stamina, long runs no speed", sprints.stamina < 0.2 and staminaRun.speed == 0)
+check("outside stamina mode a run only trickles stamina in", (function()
+    local outside, inside = EqTraining.newSheet(), EqTraining.newSheet()
+    inside.mode, inside.tempo.ms = "stamina", 1
+    for _, sh in ipairs({ outside, inside }) do
+        sh.tiredness, sh.run = 75, 30
+        EqTraining.step(sh, "canter", 1000, false)
+    end
+    return outside.focused.stamina > 0 and outside.focused.stamina <= inside.focused.stamina * EqTraining.STAMINA_OUTSIDE_SHARE + 1e-9
+end)())
 print(string.format("info: one riding bar -> cycling sta %.2f spd %.2f, long runs sta %.2f, sprints spd %.2f, flat out spd %.2f",
     cycled.stamina, cycled.speed, staminaRun.stamina, sprints.speed, flatOut.speed))
 end

@@ -64,7 +64,7 @@ uses its genetics, health and fitness.
     **Canter! (S)** or **Gallop! (W)**, press that key right then and exertion drops; three good
     beats (a perfect one counts double) raise the tempo. Pressing just too early wastes the beat,
     and a miss loses the progress to the next step; other keys are ignored. Timing tightens as
-    the tempo climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a couple of
+    the tempo climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few
     seconds below a canter breaks the tempo back to x1. Beats pause during a Sprint or a routine
     command.
   - **Speed** comes from fast gallops: gallop while the horse is fresh (exertion under 25%), then
