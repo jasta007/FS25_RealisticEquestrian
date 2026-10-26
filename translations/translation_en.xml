@@ -41,8 +41,8 @@
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_speed_2" text="Walk or rest to recover before the next sprint. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
-        <text name="eq_help_speed_1" text="Speed training improves with sprints. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%."/>
+        <text name="eq_help_speed_2" text="Walk or rest to recover before the next gallop. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
+        <text name="eq_help_speed_1" text="Speed training improves with fast gallops. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="Above 85% exertion your horse is blowing hard: it slows down and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a couple of seconds breaks it too. Stamina also increases how long your horse can train each day."/>
         <text name="eq_help_stamina_1" text="Stamina comes from runs at a canter or gallop. Hold an unbroken canter or gallop to build your tempo: every 20 seconds raises it, up to x5, and stamina gains grow up to 2.5 times. Galloping tires your horse quickly."/>
@@ -59,20 +59,21 @@
         <text name="eq_train_tired_warm" text="Warming up"/>
         <text name="eq_train_tired_zone" text="In the zone"/>
         <text name="eq_train_tired_blown" text="Blowing hard"/>
-        <text name="eq_train_sprint_fresh" text="Fresh: sprint now"/>
+        <text name="eq_train_sprint_fresh" text="Fresh: gallop now"/>
         <text name="eq_train_sprint_tiring" text="Tiring: rest soon"/>
-        <text name="eq_train_sprint_stale" text="Too tired to sprint: rest"/>
+        <text name="eq_train_sprint_stale" text="Too tired to gallop: rest"/>
         <text name="eq_train_sprint_on" text="SPRINT! Tap W"/>
+        <text name="eq_train_sprint_limit" text="On the limit"/>
         <text name="eq_train_sprint_ready" text="Sprint ready: press W"/>
         <text name="eq_train_sprint_warm" text="Warmed up: keep galloping for Sprint"/>
         <text name="eq_train_sprint_rest" text="Rest below 10% to warm up again"/>
-        <text name="eq_train_sprint_count" text="Warm-up sprints %d/%d"/>
-        <text name="eq_pop_sprintCount" text="Warm-up %d/%d"/>
+        <text name="eq_train_sprint_count" text="Warm-up gallops %d/%d"/>
+        <text name="eq_pop_sprintCount" text="Warm-up gallop %d/%d"/>
         <text name="eq_pop_sprint_warm" text="Warmed up!"/>
         <text name="eq_pop_sprint_ready" text="Sprint! (W)"/>
         <text name="eq_pop_sprint_go" text="SPRINT!"/>
         <text name="eq_pop_sprint_over" text="Sprint over"/>
-        <text name="eq_help_speed_3" text="Two good sprints warm your horse up. Keep galloping and press W when Sprint! shows: your horse runs 25% faster, ignores exertion and trains speed three times as fast. Keep tapping W to spur it on and the Sprint lasts longer, though each tap counts for less as it goes on and no horse sprints for more than about 14 seconds. Drop out of a gallop and it ends. Then rest below 10% exertion before warming up again."/>
+        <text name="eq_help_speed_3" text="Two good warm-up gallops warm your horse up. Keep galloping and press W when Sprint! shows: your horse runs 25% faster and trains speed three times as fast, held on the limit just short of blowing hard. Keep tapping W to spur it on and the Sprint lasts longer, though each tap counts for less as it goes on, a slower horse runs out sooner, and no horse sprints for more than about 14 seconds. Drop out of a gallop and it ends. Then rest below 10% exertion before warming up again."/>
         <text name="eq_help_stamina_3" text="Ride the beat to stay fresh (Stamina and Freestyle views). When the middle of the screen says Get ready to canter..., wait, then switch the moment it says Canter! (S), or Gallop! (W). On the beat your horse catches its breath (exertion drops) and your tempo jumps ahead. Too early and the beat is wasted. The higher your tempo, the tighter the timing. Beats pause during a Sprint or a routine command."/>
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Blowing! %d s"/>

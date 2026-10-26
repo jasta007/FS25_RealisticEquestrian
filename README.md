@@ -64,9 +64,10 @@ uses its genetics, health and fitness.
     Ride the beat to stay fresh: when the middle of the screen says **Canter! (S)** or
     **Gallop! (W)**, switch right then and exertion drops. Too early wastes the beat, and the
     timing tightens as the tempo climbs. Beats pause during a Sprint or a routine command.
-  - **Speed** comes from sprints: gallop while the horse is fresh (exertion under 25%), then
-    stand still to rest before the next one. Two good sprints warm the horse up; keep galloping
-    and press **W** when **Sprint!** shows to run 25% faster, ignoring exertion (keep tapping W to spur it on), with
+  - **Speed** comes from fast gallops: gallop while the horse is fresh (exertion under 25%), then
+    stand still to rest before the next one. Two good warm-up gallops warm the horse up; keep galloping
+    and press **W** when **Sprint!** shows to run 25% faster, held on the limit just short of blowing
+    hard (keep tapping W to spur it on; a slower horse runs out sooner), with
     three times the speed training. Then rest right down before warming up again.
   - A horse blowing hard (over 85% exertion) slows to 75% of its top speed.
   - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until

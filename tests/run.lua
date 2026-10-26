@@ -349,6 +349,27 @@ do
             check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > EqTraining.SPRINT_MS + 3000,
                 string.format("%d ms", ms))
         end
+        do
+            local function lasts(speed)
+                local s = EqTraining.newSheet()
+                s.sprint.ready = true
+                EqTraining.startSprint(s)
+                local ms = 0
+                while EqTraining.isSprinting(s) and ms < 60000 do
+                    EqTraining.sprintStep(s, "gallop", 100, speed)
+                    ms = ms + 100
+                end
+                return ms
+            end
+            check("a slower horse's Sprint runs out faster", lasts(10) < lasts(90) and lasts(100) == EqTraining.SPRINT_MS,
+                string.format("%d / %d ms", lasts(10), lasts(90)))
+            local s = EqTraining.newSheet()
+            s.sprint.ready, s.tiredness = true, 70
+            EqTraining.startSprint(s)
+            for _ = 1, 50 do EqTraining.step(s, "gallop", 100, false, 50) end
+            check("Sprint holds exertion just short of blowing hard", s.tiredness < EqTraining.ZONE_HIGH and s.tiredness >= EqTraining.ZONE_HIGH - 2,
+                tostring(s.tiredness))
+        end
         local before = sheet.focused.speed
         ride("gallop", 3000)
         check("Sprint trains speed hard even when tiring", EqTraining.isSprinting(sheet)

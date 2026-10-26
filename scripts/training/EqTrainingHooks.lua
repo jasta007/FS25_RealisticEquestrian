@@ -457,7 +457,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     end
     -- Losing the tempo, warm-ups, Sprint ready and over and a routine starting show in the panel only.
     if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult) end
-    local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
+    local sprintEvent = EqTraining.sprintStep(sheet, pace, dt, record ~= nil and record.trained.speed or nil)
     if sprintEvent ~= nil then Log:info("Sprint: %s (exertion %.0f%%)", sprintEvent, sheet.tiredness) end
     -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
     if sheet.sprint.ready and not EqTrainingHooks.sprintKeyHooked
@@ -749,7 +749,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local exertion = { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)) }
         -- Outside the Speed view the only word is "Blowing hard" (the horse slows down), and only
         -- when the tempo row isn't already counting it down.
-        if view == "speed" then
+        if EqTraining.isSprinting(sheet) then
+            exertion.right, exertion.rightColor = g_i18n:getText("eq_train_sprint_limit"), COLOR.orange
+        elseif view == "speed" then
             exertion.right, exertion.rightColor = g_i18n:getText("eq_train_" .. band), bandColor
         elseif band == "tired_blown" and sheet.tempo.blownMs <= 0 then
             exertion.right, exertion.rightColor = g_i18n:getText("eq_train_tired_blown"), bandColor
