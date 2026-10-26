@@ -292,6 +292,14 @@ do
         and knocked.combo.count == 1 and math.abs(knocked.combo.timer - (EqTraining.COMBO_SECONDS - EqTraining.COMBO_KNOCK_SECONDS)) < 1e-9)
     check("a second knock straight after costs nothing", EqTraining.knockCombo(knocked) == nil)
     for _ = 1, 30 do EqTraining.comboTick(knocked, "canter", 100) end
+    do
+        local air = EqTraining.newSheet()
+        EqTraining.clearJump(air, false)
+        local lost = false
+        for _ = 1, 120 do lost = EqTraining.comboTick(air, "canter", 100, true) or lost end
+        check("the combo can't run out mid-jump", not lost and air.combo.count == 1)
+        check("it runs out once the jump has landed without a clear", EqTraining.comboTick(air, "canter", 100, false))
+    end
     knocked.combo.timer = 2
     check("a knock that runs the clock out loses the combo", EqTraining.knockCombo(knocked) == "lost" and knocked.combo.count == 0)
     local wornJump = EqTraining.newSheet()
@@ -657,7 +665,7 @@ do
         local slow, fast, mid = EqTraining.handling(10, 0, 0), EqTraining.handling(100, 100, 100), EqTraining.handling(nil, nil, nil)
         local function near(a, b) return math.abs(a - b) < 0.01 end
         check("speed 10 runs about 10% slower, speed 100 20% faster", near(slow.speed, 0.9) and near(fast.speed, 1.2))
-        check("agility raises jump height and turn rate", slow.jump < 1 and fast.jump > 1 and slow.turn < 1 and fast.turn > 1)
+        check("agility raises jump height and turn rate", slow.jump < 1 and fast.jump > 1 and slow.turn < mid.turn and fast.turn > mid.turn and slow.turn >= 1)
         check("temperament quickens gait changes and shortens crash stops",
             slow.acceleration < fast.acceleration and slow.crashHalt > fast.crashHalt)
         check("an unknown horse rides like the base game", near(mid.speed, 1.035) and near(mid.acceleration, 1) and near(mid.crashHalt, 1))
