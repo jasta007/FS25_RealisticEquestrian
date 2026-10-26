@@ -382,24 +382,27 @@ do
         check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
     end
     do
-        -- Beats: switch canter and gallop as the marker passes for a breather.
+        -- Beats: press forward or back for the other fast gait as the marker passes for a breather.
         local sheet = EqTraining.newSheet()
         local one = function() return 1 end
         sheet.tiredness, sheet.run = 50, 20
-        check("a beat starts during a run", EqTraining.beatStep(sheet, "canter", 100, one) == "start")
-        local event
-        for _ = 1, 30 do
-            event = EqTraining.beatStep(sheet, "canter", 100, one)
-            if sheet.beat.pos ~= nil and sheet.beat.pos >= 49 then break end
-        end
-        event = EqTraining.beatStep(sheet, "gallop", 100, one)
-        check("switching gait on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness <= 44,
+        check("a beat starts during a run", EqTraining.beatStep(sheet, "canter", 100, one) == "start" and sheet.beat.target == "gallop")
+        check("a far-off press is ignored", EqTraining.beatPress(sheet, "forward", one) == nil and sheet.beat.pos ~= nil)
+        repeat EqTraining.beatStep(sheet, "canter", 100, one) until sheet.beat.pos >= 49
+        check("the wrong key is ignored", EqTraining.beatPress(sheet, "back", one) == nil and sheet.beat.pos ~= nil)
+        local event = EqTraining.beatPress(sheet, "forward", one)
+        check("pressing on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness <= 44,
             tostring(event) .. " " .. sheet.tiredness)
         for _ = 1, 100 do EqTraining.beatStep(sheet, "gallop", 100, one) end
         sheet.tiredness = 90
-        repeat event = EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 20
-        check("switching off the beat wastes it", EqTraining.beatStep(sheet, "canter", 100, one) == "off" and sheet.tiredness == 90
+        repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 70
+        check("a gallop's beat asks for a canter", sheet.beat.target == "canter")
+        check("pressing just early wastes the beat", EqTraining.beatPress(sheet, "back", one) == "off" and sheet.tiredness == 90
             and sheet.beat.pos == nil)
+        repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil
+        local missed
+        repeat missed = EqTraining.beatStep(sheet, "gallop", 100, one) until missed ~= nil
+        check("a beat passed by is a miss", missed == "miss" and sheet.beat.pos == nil)
         local sprinting = EqTraining.newSheet()
         sprinting.tiredness, sprinting.run = 50, 20
         sprinting.sprint.ready = true
@@ -414,7 +417,7 @@ do
         local w1, r1, s1 = EqTraining.beatPressure(easy)
         local w5, r5, s5 = EqTraining.beatPressure(hard)
         check("beats get harder as the tempo climbs", w5 < w1 and r5 < r1 and s5 < s1 and r5 > 0)
-        -- Tempo streak: unbroken canter or gallop climbs; a long trot or blowing breaks it.
+        -- Tempo: only beats raise it; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()
         local events = {}
         local function go(gait, tiredness, ms)
@@ -423,18 +426,20 @@ do
                 if event ~= nil then table.insert(events, event) end
             end
         end
-        go("canter", 75, 20000)
-        check("20 s of canter is tempo x2", tempo.mult == 2 and events[1] == "up")
+        go("canter", 75, 60000)
+        check("a long canter alone doesn't raise the tempo", tempo.mult == 1 and #events == 0 and tempo.ms > 0)
+        check("three beat hits raise the tempo", EqTraining.tempoBeat(tempo, 1) == nil and EqTraining.tempoBeat(tempo, 1) == nil
+            and EqTraining.tempoBeat(tempo, 1) == "up" and tempo.mult == 2)
+        EqTraining.tempoBeat(tempo, 2)
+        EqTraining.tempoBeat(tempo, 0)
+        check("a missed beat loses the progress, not the tempo", tempo.mult == 2 and tempo.hits == 0)
+        check("a perfect hit counts double", EqTraining.tempoBeat(tempo, 2) == nil and EqTraining.tempoBeat(tempo, 1) == "up" and tempo.mult == 3)
         go("trot", 70, 2000)
         go("canter", 75, 100)
-        check("a short trot keeps the streak", tempo.mult == 2)
-        go("canter", 75, 20000)
-        local before = tempo.ms
-        go("gallop", 75, 1000)
-        check("at x3 a gallop counts double", tempo.mult == 3 and tempo.ms - before == 2000)
+        check("a short trot keeps the streak", tempo.mult == 3)
         check("tempo raises stamina gains", EqTraining.tempoBonus(tempo) > 1.5)
         go("canter", 90, 4000)
-        check("blowing stops the climb", tempo.blownMs > 0 and tempo.mult == 3)
+        check("blowing hard holds the tempo for a while", tempo.blownMs > 0 and tempo.mult == 3)
         go("canter", 90, 2000)
         check("blowing too long breaks the streak", tempo.mult == 1 and events[#events] == "lost")
         go("canter", 75, 1000)

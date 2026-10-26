@@ -58,12 +58,14 @@ uses its genetics, health and fitness.
 - **Ride your horses, and pick what to work on.** Stamina and speed train best from focused work,
   watched by an **Exertion** meter while you ride (it rises in canter and gallop and falls at
   slower gaits and at a halt):
-  - **Stamina** comes from runs at canter or gallop. Keep up the tempo: every 20 seconds of
-    unbroken canter or gallop raises it (up to x5, 2.5 times the gains); blowing hard (over 85%
-    exertion) for 5 seconds or more than a couple of seconds below a canter breaks the streak.
-    Ride the beat to stay fresh: when the middle of the screen says **Canter! (S)** or
-    **Gallop! (W)**, switch right then and exertion drops. Too early wastes the beat, and the
-    timing tightens as the tempo climbs. Beats pause during a Sprint or a routine command.
+  - **Stamina** comes from runs at canter or gallop, and the tempo multiplies it (up to x5,
+    2.5 times the gains). Only the beat raises the tempo: when the middle of the screen says
+    **Canter! (S)** or **Gallop! (W)**, press that key right then and exertion drops; three good
+    beats (a perfect one counts double) raise the tempo. Pressing just too early wastes the beat,
+    and a miss loses the progress to the next step; other keys are ignored. Timing tightens as
+    the tempo climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a couple of
+    seconds below a canter breaks the tempo back to x1. Beats pause during a Sprint or a routine
+    command.
   - **Speed** comes from fast gallops: gallop while the horse is fresh (exertion under 25%), then
     stand still to rest before the next one. Two good warm-up gallops warm the horse up; keep galloping
     and press **W** when **Sprint!** shows to run 25% faster, held on the limit just short of blowing
