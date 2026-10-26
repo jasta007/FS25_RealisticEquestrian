@@ -451,15 +451,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local view = EqTrainingHooks.getView()
     if view == "stamina" or view == "freestyle" then
         local beat = EqTraining.beatStep(sheet, gait, dt, math.random)
-        if beat == "hit" or beat == "perfect" or beat == "off" then EqTrainingHud.pop("beat_" .. beat) end
+        if beat == "hit" or beat == "perfect" then EqTrainingHud.pop("beat_" .. beat) end
     else
         sheet.beat.pos = nil
     end
-    if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult)
-    elseif sheet.tempoEvent == "lost" then EqTrainingHud.pop("tempoLost") end
+    -- Losing the tempo, warm-ups, Sprint ready and over and a routine starting show in the panel only.
+    if sheet.tempoEvent == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult) end
     local sprintEvent = EqTraining.sprintStep(sheet, pace, dt)
-    if sprintEvent == "counted" then EqTrainingHud.pop("sprintCount", sheet.sprint.count)
-    elseif sprintEvent ~= nil then EqTrainingHud.pop("sprint_" .. sprintEvent) end
     if sprintEvent ~= nil then Log:info("Sprint: %s (exertion %.0f%%)", sprintEvent, sheet.tiredness) end
     -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
     if sheet.sprint.ready and not EqTrainingHooks.sprintKeyHooked
@@ -494,8 +492,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         local event = EqTraining.routineStep(sheet, (gait == "canter" or gait == "gallop") and "fast" or gait,
             steerInput(spec), dt, worn, math.random)
         if event == "done" then EqTrainingHud.pop("routine", sheet.routine.mult)
-        elseif event == "lost" then EqTrainingHud.pop("routineLost")
-        elseif event == "start" then EqTrainingHud.pop("routineStart") end
+        elseif event == "lost" then EqTrainingHud.pop("routineLost") end
     elseif EqTraining.breakRoutine(sheet) then
         EqTrainingHud.pop("routineLost")
     end
@@ -749,11 +746,18 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
             or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
         local bandColor = BAND_COLOR[band]
-        table.insert(rows, { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)),
-            right = g_i18n:getText("eq_train_" .. band), rightColor = bandColor })
-        local bar = { bar = sheet.tiredness / 100, color = bandColor }
+        local exertion = { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)) }
+        -- Outside the Speed view the only word is "Blowing hard" (the horse slows down), and only
+        -- when the tempo row isn't already counting it down.
+        if view == "speed" then
+            exertion.right, exertion.rightColor = g_i18n:getText("eq_train_" .. band), bandColor
+        elseif band == "tired_blown" and sheet.tempo.blownMs <= 0 then
+            exertion.right, exertion.rightColor = g_i18n:getText("eq_train_tired_blown"), bandColor
+        end
+        table.insert(rows, exertion)
+        local bar = { bar = sheet.tiredness / 100, color = view == "speed" and bandColor or (band == "tired_blown" and bandColor or COLOR.white) }
         if view ~= "speed" then
-            bar.marks = { EqTraining.ZONE_LOW / 100, EqTraining.ZONE_HIGH / 100 }
+            bar.marks = { EqTraining.ZONE_HIGH / 100 }
             -- The beat marker, with its hit window either side.
             local beat = sheet.beat
             if beat.pos ~= nil then
@@ -777,10 +781,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(rows, bar)
     end
     if view == "freestyle" or view == "stamina" then
-        local full = sheet.run >= EqTraining.RUN_FULL
-        local row = { left = string.format(g_i18n:getText("eq_train_run"), math.floor(sheet.run)),
-            leftColor = full and COLOR.green or COLOR.white }
-        table.insert(rows, row)
         local tempo = sheet.tempo
         if tempo.ms > 0 then
             local color = EqTrainingHud.multColor(tempo.mult)
@@ -809,7 +809,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MAX_MS, color = COLOR.red })
         elseif sprint.ready then
             table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = COLOR.orange })
-            EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, COLOR.orange)
+            -- Only the Speed view puts Sprint in the middle of the screen.
+            if view == "speed" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, COLOR.orange) end
         elseif sprint.warm then
             table.insert(rows, { left = g_i18n:getText("eq_train_sprint_warm"), leftColor = COLOR.yellow })
         elseif sprint.rest then
