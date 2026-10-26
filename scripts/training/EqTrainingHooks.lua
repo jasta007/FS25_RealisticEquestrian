@@ -316,6 +316,8 @@ end
 -- temperament its acceleration and how long it stands after a crash.
 EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
+-- Only used if the base game keeps a gravity value on spec_rideable (not yet seen in a log).
+EqTrainingHooks.GRAVITY_SHARE = 1.4
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
@@ -334,6 +336,11 @@ local function tuneRiding(spec, gait, record)
         spec.maxAcceleration = spec.eqBaseAcceleration * EqTrainingHooks.ACCELERATION_SHARE * handling.acceleration
     end
     spec.eqCrashHaltMs = EqTrainingHooks.CRASH_HALT_MS * handling.crashHalt
+    -- Jumps hang in the air: if the base game keeps its own gravity on the spec, pull harder.
+    if type(spec.gravity) == "number" then
+        spec.eqBaseGravity = spec.eqBaseGravity or spec.gravity
+        spec.gravity = spec.eqBaseGravity * EqTrainingHooks.GRAVITY_SHARE
+    end
     if type(spec.maxTurnSpeed) == "number" then
         spec.eqBaseTurnSpeed = spec.eqBaseTurnSpeed or spec.maxTurnSpeed
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn
@@ -431,6 +438,7 @@ end
 --- settings, so canter jumps and gait changes can be tuned once we know their names.
 local function logRideableFields(spec)
     if EqTrainingHooks.loggedRideable then return end
+    Log:info("Rideable gravity: %s", tostring(spec.eqBaseGravity))
     EqTrainingHooks.loggedRideable = true
     local function dump(prefix, t, depth)
         local keys = {}
@@ -439,8 +447,11 @@ local function logRideableFields(spec)
         for _, key in ipairs(keys) do
             local value, name = t[key], prefix .. tostring(key)
             local lower = name:lower()
-            local wanted = lower:find("jump") or lower:find("speed") or lower:find("gait") or lower:find("accel")
-                or lower:find("decel") or lower:find("velocity") or lower:find("force")
+            -- Every number straight on the spec (looking for a gravity or fall speed for jumps),
+            -- and the riding-looking ones in its tables.
+            local wanted = depth == 0 or lower:find("jump") or lower:find("speed") or lower:find("gait") or lower:find("accel")
+                or lower:find("decel") or lower:find("velocity") or lower:find("force") or lower:find("grav")
+                or lower:find("fall") or lower:find("vertical")
             if (type(value) == "number" or type(value) == "boolean") and wanted then
                 Log:info("Rideable field %s = %s", name, tostring(value))
             elseif type(value) == "table" and depth < 2 and key ~= "cluster" and key ~= "actionEvents" then
