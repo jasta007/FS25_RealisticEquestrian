@@ -141,6 +141,13 @@ EqTraining.STALE_SHARE = 0
 -- towards the next step. Blowing hard (over ZONE_HIGH) for longer than TEMPO_BLOWN_MS breaks
 -- the streak back to x1; so does more than TEMPO_SLOW_MS below a canter.
 EqTraining.TEMPO_HITS = 3
+
+-- Training modes keep stamina, agility and speed from talking over each other: one at a time
+-- owns the beats and the popups (temperament's routine is separate and always runs).
+--   stamina: canter STAMINA_ENTRY_MS without a jump or a gallop; ends when the tempo breaks.
+--   agility: clear a jump outside stamina mode; ends when the combo is lost.
+--   speed: count a warm-up gallop outside the other two; ends when the Sprint is over.
+EqTraining.STAMINA_ENTRY_MS = 8000
 EqTraining.TEMPO_MAX = 5
 EqTraining.TEMPO_BONUS = 0.375
 EqTraining.TEMPO_BLOWN_MS = 5000
@@ -225,7 +232,7 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, tempo = EqTraining.newTempo(), beat = EqTraining.newBeat(),
+        tiredness = 0, run = 0, tempo = EqTraining.newTempo(), beat = EqTraining.newBeat(), mode = nil, entryMs = 0,
         sprint = { count = 0, holdMs = 0, counted = false, warm = false, readyMs = 0, ready = false, activeMs = 0, dropMs = 0, rest = false },
         focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
@@ -325,7 +332,7 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
     beat.clock = beat.clock + dt
     local fast = gait == "canter" or gait == "gallop"
     -- Sprint owns W and a routine command owns the middle of the screen: no new beats meanwhile.
-    local busy = sheet.sprint.ready or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
+    local busy = sheet.mode ~= "stamina" or sheet.sprint.ready or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
     local window, _, sweep = EqTraining.beatPressure(sheet)
     if beat.pos ~= nil then
         if busy then
@@ -460,7 +467,7 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     end
     sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
 
-    sheet.tempoEvent = EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt)
+    sheet.tempoEvent = sheet.mode == "stamina" and EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt) or nil
 
     local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
         and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo) or 0
@@ -480,6 +487,49 @@ end
 --- @return boolean true while Sprint is on
 function EqTraining.isSprinting(sheet)
     return sheet.sprint ~= nil and sheet.sprint.activeMs > 0
+end
+
+
+--- @param sheet table
+--- @return boolean true while warm-up gallops or Sprint are under way
+local function speedBusy(sheet)
+    local sprint = sheet.sprint
+    return sprint.warm or sprint.ready or sprint.activeMs > 0
+end
+
+
+--- One frame of the training mode, after step, sprintStep and comboTick.
+--- @param sheet table
+--- @param gait string the pace gait
+--- @param dt number milliseconds
+--- @return string|nil event "stamina" when stamina mode starts
+function EqTraining.modeStep(sheet, gait, dt)
+    local mode = sheet.mode
+    if mode == "stamina" and sheet.tempo.ms <= 0 then mode = nil end
+    if mode == "agility" and sheet.combo.count == 0 then mode = nil end
+    if mode == "speed" and sheet.sprint.count == 0 and not speedBusy(sheet) then mode = nil end
+    sheet.mode = mode
+    -- A steady canter starts stamina mode, unless agility or a warmed-up horse has the floor.
+    if mode == "stamina" or mode == "agility" or (mode == "speed" and speedBusy(sheet)) or gait ~= "canter" then
+        sheet.entryMs = 0
+        return nil
+    end
+    sheet.entryMs = sheet.entryMs + dt
+    if sheet.entryMs < EqTraining.STAMINA_ENTRY_MS then return nil end
+    sheet.mode, sheet.entryMs = "stamina", 0
+    sheet.sprint.count, sheet.sprint.holdMs, sheet.sprint.counted = 0, 0, false
+    sheet.tempo = EqTraining.newTempo()
+    -- The streak starts now (tempo.ms > 0 is what keeps stamina mode on).
+    sheet.tempo.ms = 1
+    sheet.beat.nextAt = sheet.beat.clock + EqTraining.BEAT_GAP_MS[1]
+    return "stamina"
+end
+
+
+--- A jump outside stamina mode: the canter towards stamina mode starts again.
+--- @param sheet table
+function EqTraining.modeJump(sheet)
+    if sheet.mode ~= "stamina" then sheet.entryMs = 0 end
 end
 
 
@@ -542,11 +592,16 @@ function EqTraining.sprintStep(sheet, gait, dt, speed)
         end
         return nil
     end
-    if sprint.rest or EqTraining.speedQuality(sheet.tiredness) < EqTraining.SPRINT_MIN_QUALITY then return nil end
+    if sprint.rest or EqTraining.speedQuality(sheet.tiredness) < EqTraining.SPRINT_MIN_QUALITY
+        or sheet.mode == "stamina" or sheet.mode == "agility" then
+        sprint.holdMs = 0
+        return nil
+    end
     sprint.holdMs = sprint.holdMs + dt
     if sprint.counted or sprint.holdMs < EqTraining.SPRINT_COUNT_MS then return nil end
     sprint.counted = true
     sprint.count = sprint.count + 1
+    sheet.mode = "speed"
     if sprint.count < EqTraining.SPRINTS_TO_WARM then return "counted" end
     sprint.warm = true
     -- Keep galloping from here: the time already held counts towards Sprint being ready.
@@ -599,6 +654,7 @@ function EqTraining.clearJump(sheet, worn)
     end
     combo.count = combo.count + 1
     combo.timer = EqTraining.COMBO_SECONDS
+    if sheet.mode == nil then sheet.mode = "agility" end
     combo.best = math.max(combo.best, combo.count)
     local mult = math.min(combo.count, EqTraining.COMBO_MAX)
     if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult end
@@ -766,6 +822,7 @@ function EqTraining.rest(sheet, ms)
     sheet.combo.count, sheet.combo.timer = 0, 0
     sheet.tempo = EqTraining.newTempo()
     sheet.beat = EqTraining.newBeat()
+    sheet.mode, sheet.entryMs = nil, 0
     local sprint = sheet.sprint
     sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
     if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end

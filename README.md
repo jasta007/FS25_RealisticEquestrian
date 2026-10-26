@@ -58,7 +58,8 @@ uses its genetics, health and fitness.
 - **Ride your horses, and pick what to work on.** Stamina and speed train best from focused work,
   watched by an **Exertion** meter while you ride (it rises in canter and gallop and falls at
   slower gaits and at a halt):
-  - **Stamina** comes from runs at canter or gallop, and the tempo multiplies it (up to x5,
+  - **Stamina** comes from runs at canter or gallop. Canter 8 seconds without jumping or
+    galloping to start stamina training; then the tempo multiplies it (up to x5,
     2.5 times the gains). Only the beat raises the tempo: when the middle of the screen says
     **Canter! (S)** or **Gallop! (W)**, press that key right then and exertion drops; three good
     beats (a perfect one counts double) raise the tempo. Pressing just too early wastes the beat,
@@ -71,7 +72,10 @@ uses its genetics, health and fitness.
     and press **W** when **Sprint!** shows to run 25% faster, held on the limit just short of blowing
     hard (keep tapping W to spur it on; a slower horse runs out sooner), with
     three times the speed training. Then rest right down before warming up again.
-  - A horse blowing hard (over 85% exertion) slows to 75% of its top speed.
+  - One kind of training talks at a time, each in its own colour: a steady canter starts
+    stamina (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo
+    ends, a warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple)
+    routines always run. Only that training's popups and prompts show; the panel stays the same.
   - Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until
     shortly after landing, so you can jump an obstacle in the way.
   - A good session can give up to double what a full day of riding used to. Just riding round
