@@ -87,9 +87,10 @@ uses its genetics, health and fitness.
   trains no more until tomorrow, and galloping tires it fastest, so choose what to work on. A fit
   horse's bar fills more slowly (up to 1.4 times as long at stamina 100). Below 30% exertion a
   horse standing or walking recovers quickly, a fit one faster still.
-- **Stats change how a horse rides.** Speed sets its top speed (25% slower than the base game
-  at 0, 25% faster at 100); agility sets how high it jumps and how quickly it turns. Canter
-  jumps go higher than the base game's, so a horse can clear fences without a full gallop.
+- **Stats change how a horse rides.** Speed sets its top speed (about 10% slower than the base
+  game at 10, 20% faster at 100); agility sets how high it jumps and how quickly it turns; a
+  calm horse (temperament) changes pace a little quicker and stands less long after a knock.
+  Canter jumps go higher than the base game's, so a horse can clear fences without a full gallop.
 - **Works with the game's Animal Workers.** Turn on Riding for a horse pen (added to the base game
   in patch 1.25) and the workers' daily ride counts as training, as does RLRM's herdsman. They keep
   your horses ticking over towards a focus you choose, at half the rate of a full day of plain
