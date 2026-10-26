@@ -485,6 +485,8 @@
         <text name="eq_ui_career_earnings" text="Preisgeld"/>
         <text name="eq_ui_career_eliminations" text="Ausgeschieden"/>
         <text name="eq_ui_button_viewResults" text="Ergebnisse ansehen"/>
+        <text name="eq_ui_button_rideHorse" text="Pferd reiten"/>
+        <text name="eq_ui_rideNotInPen" text="%s ist gerade nicht draußen im Gehege. Geh zu einem Pferd dort, um es zu reiten."/>
         <text name="eq_settings_entryFeeScale" text="Startgebühren"/>
         <text name="eq_settings_entryFeeScale_tooltip" text="Skaliert die Startgebühr aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihre Startgebühr; Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_prizeScale" text="Preisgeld"/>

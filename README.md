@@ -55,6 +55,8 @@ uses its genetics, health and fitness.
   - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo.
+- **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
+  it is in the pen.
 - An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
@@ -183,8 +185,8 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
-3. **Ride it.** Press **Y** for the Stamina or Speed view and follow the tips. The horse is done
-   for the day when the panel says "Riding bar full".
+3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
+   for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel says "Riding bar full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
