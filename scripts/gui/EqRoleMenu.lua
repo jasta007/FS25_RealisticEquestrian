@@ -4,6 +4,9 @@
     role, and the horse list is grouped by role (Dressage, Show Jumping, ... then No role) once
     any horse in the pen has one. With no roles the list stays RLRM's colour groups.
 
+    RLRM's button bar has 9 slots and a horse already fills 8 (9 with the Ride horse button), so
+    the bar gets more slots, copies of its last button, when the buttons would not fit.
+
     The button is the host's only for now, like the Events tab's entries: roles are saved with
     the horse records, which only the server keeps. No RLRM file changes.
 ]]
@@ -50,7 +53,27 @@ function EqRoleMenu.updateButtons(frame)
     }
     frame.eqRoleButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_role"), EqRole.text(EqRole.get(record)))
     table.insert(frame.menuButtonInfo, frame.eqRoleButtonInfo)
+    -- One spare, for a button another hook adds after this one.
+    EqRoleMenu.ensureSlots(EqEventsFrame.menu, #frame.menuButtonInfo + 1)
     frame:setMenuButtonInfoDirty()
+end
+
+
+--- Give RLRM's menu enough button slots: the menu fills its menuButton elements in order and
+--- hides the rest, so a button past the last slot never shows.
+--- @param menu table|nil RLRM's menu
+--- @param count number buttons to show
+function EqRoleMenu.ensureSlots(menu, count)
+    local slots = menu ~= nil and menu.menuButton or nil
+    if type(slots) ~= "table" or #slots == 0 or #slots >= count then return end
+    local last = slots[#slots]
+    local panel = last.parent
+    if last.clone == nil or panel == nil then return end
+    while #slots < count do
+        table.insert(slots, last:clone(panel, false, true))
+    end
+    if panel.invalidateLayout ~= nil then panel:invalidateLayout() end
+    Log:info("EqRoleMenu: RLRM's button bar now has %d slots", #slots)
 end
 
 
