@@ -2024,7 +2024,9 @@ end)()
     local overlay = function() return { x = 0, y = 0, width = 0, height = 0.01,
         setDimension = function() end, setPosition = function(o, x, y) o.x, o.y = x, y end, render = function() end } end
     local Base = {}
-    function Base.new() return { lines = {}, title = "", currentLineIndex = 0, bgScale = overlay(), bgTop = overlay(), bgBottom = overlay() } end
+    -- Like the game's Class(): the instance's metatable is protected.
+    function Base.new() return setmetatable({ lines = {}, title = "", currentLineIndex = 0, bgScale = overlay(), bgTop = overlay(), bgBottom = overlay() },
+        { __index = Base, __metatable = false }) end
     function Base:storeScaledValues() end
     function Base:clear() for _, l in ipairs(self.lines) do l.isActive = false end self.currentLineIndex = 0 end
     local savedEnv = EqRLRM.env

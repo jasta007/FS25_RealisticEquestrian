@@ -34,16 +34,11 @@ end
 function EqSkillsHudBox.new(infoDisplay, uiScale)
     local base = baseClass()
     local self = base.new(infoDisplay, uiScale)
-    local mt = EqSkillsHudBox.mt
-    if mt == nil then
-        mt = { __index = function(_, key)
-            local own = rawget(EqSkillsHudBox, key)
-            if own ~= nil then return own end
-            return baseClass()[key]
-        end }
-        EqSkillsHudBox.mt = mt
-    end
-    return setmetatable(self, mt)
+    -- The game's Class() metatables are protected, so the box keeps RLRM's and our two
+    -- methods are set on the instance, where they win over the class's.
+    self.addLine = EqSkillsHudBox.addLine
+    self.draw = EqSkillsHudBox.draw
+    return self
 end
 
 
