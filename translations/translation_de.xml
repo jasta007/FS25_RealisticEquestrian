@@ -48,7 +48,7 @@
         <text name="eq_help_speed_1" text="Schnelligkeit steigt durch Sprints, einen besonderen Schub über den normalen Renngalopp hinaus. Um Ihren Sprint aufzuladen, brauchen Sie mindestens zwei normale Renngaloppe, solange das Pferd frisch ist (Anstrengung unter 25 %). Wenn Sprint! erscheint, bleiben Sie im Renngalopp und tippen W, damit der Sprint so lange wie möglich hält. Im Sprint läuft Ihr Pferd 25 % schneller und trainiert Schnelligkeit dreimal so schnell."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_stamina_2" text="Überfordern Sie Ihr Pferd über 85 % Anstrengung, gerät es außer Atem und lernt langsamer, und nach 5 Sekunden bricht Ihr Tempo ab. Mehr als ein paar Sekunden langsamer als Galopp beenden es ebenfalls. Je höher Ihr Tempo, desto knapper das Timing. Finden Sie zurück in den Rhythmus, indem Sie sich ausruhen und dann wieder ruhig galoppieren."/>
-        <text name="eq_help_stamina_1" text="Um das Ausdauertraining zu starten, galoppieren Sie 8 Sekunden ruhig, ohne Sprung oder Renngalopp, und reiten dann im Takt, um Ihr Tempo bis zu einem x5-Bonus zu steigern. Wechseln Sie auf Anweisung in Galopp oder Renngalopp, damit die Anstrengung Ihres Pferdes hoch bleibt, ohne es zu überfordern, und Sie das meiste Ausdauertraining erhalten. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
+        <text name="eq_help_stamina_1" text="Um das Ausdauertraining zu starten, galoppieren Sie 8 Sekunden ruhig, ohne Sprung oder Renngalopp, und wechseln dann auf Anweisung die Gangart, um Ihr Tempo bis zu einem x5-Bonus zu steigern. Jeder gut getimte Wechsel hält die Anstrengung Ihres Pferdes hoch, ohne es zu überfordern, für das meiste Ausdauertraining. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
         <text name="eq_help_freestyle_2" text="Ausdauertraining beginnt, wenn Sie einen ruhigen Galopp halten; danach halten Sie Ihr Pferd im Rhythmus, indem Sie zwischen Galopp und Renngalopp wechseln. Schnelligkeit braucht zuerst Aufwärmgaloppe und Pausen, dann einen harten Sprint im Renngalopp. Wendigkeit trainieren Sie, indem Sie über Hindernisse springen und so eine Kombo aufbauen, und Temperament beginnt, wenn Sie kurz im Schritt bleiben und dann Anweisungen folgen, um seine Kombo aufzubauen."/>
         <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
@@ -84,10 +84,10 @@
         <text name="eq_train_stamina_entry" text="Ruhiger Galopp: Ausdauer in %d s"/>
         <text name="eq_pop_tempo" text="Tempo x%d!"/>
         <text name="eq_pop_tempoLost" text="Tempo verloren"/>
-        <text name="eq_pop_staminaOn" text="Ausdauer: im Takt reiten!"/>
+        <text name="eq_pop_staminaOn" text="Ausdauer: bereit zum Gangwechsel!"/>
         <text name="eq_pop_beat_perfect" text="Perfekt!"/>
         <text name="eq_pop_beat_hit" text="Gut!"/>
-        <text name="eq_pop_beat_off" text="Nicht im Takt"/>
+        <text name="eq_pop_beat_off" text="Zu früh"/>
         <text name="eq_beat_gallop" text="Renngalopp! (W)"/>
         <text name="eq_beat_canter" text="Galopp! (S)"/>
         <text name="eq_beat_ready_gallop" text="Bereit machen zum Renngalopp..."/>
