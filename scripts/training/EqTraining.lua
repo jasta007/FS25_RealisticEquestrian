@@ -148,10 +148,13 @@ EqTraining.TEMPO_HITS = 3
 --   agility: clear a jump outside stamina mode; ends when the combo is lost.
 --   speed: count a warm-up gallop outside the other two; ends when the Sprint is over.
 EqTraining.STAMINA_ENTRY_MS = 8000
+-- Outside stamina mode a run only trickles stamina in, at this share: real stamina gains need
+-- stamina mode and its tempo.
+EqTraining.STAMINA_OUTSIDE_SHARE = 0.2
 EqTraining.TEMPO_MAX = 5
 EqTraining.TEMPO_BONUS = 0.375
 EqTraining.TEMPO_BLOWN_MS = 5000
-EqTraining.TEMPO_SLOW_MS = 2500
+EqTraining.TEMPO_SLOW_MS = 3500
 
 -- Beats: during a run a marker sweeps along the exertion meter, from 0 to 100 in BEAT_SWEEP_MS,
 -- every BEAT_GAP_MS (a random time in the range). Pressing the key for the other fast gait
@@ -470,7 +473,8 @@ function EqTraining.step(sheet, gait, dt, worn, stamina)
     sheet.tempoEvent = sheet.mode == "stamina" and EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt) or nil
 
     local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
-        and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo) or 0
+        and EqTraining.staminaQuality(sheet.tiredness, sheet.run) * EqTraining.tempoBonus(sheet.tempo)
+            * (sheet.mode == "stamina" and 1 or EqTraining.STAMINA_OUTSIDE_SHARE) or 0
     local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) or 0
     if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
     sheet.quality.stamina, sheet.quality.speed = stamina, speed
