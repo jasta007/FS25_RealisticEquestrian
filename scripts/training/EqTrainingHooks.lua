@@ -911,7 +911,14 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
-    EqTrainingHud.drawPanel(string.format(g_i18n:getText("eq_train_title"), g_i18n:getText("eq_train_view_" .. view)), rows,
+    -- The ridden horse's name heads the panel: "Applejack: Freestyle view".
+    local cluster = spec.cluster
+    local horseName = cluster ~= nil and cluster.getName ~= nil and cluster:getName() or nil
+    local viewName = g_i18n:getText("eq_train_view_" .. view)
+    local title = (horseName ~= nil and horseName ~= "")
+        and string.format(g_i18n:getText("eq_train_titleHorse"), horseName, viewName)
+        or string.format(g_i18n:getText("eq_train_title"), viewName)
+    EqTrainingHud.drawPanel(title, rows,
         STAT_COLOR[view])
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.

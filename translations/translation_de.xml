@@ -16,6 +16,7 @@
         <text name="eq_stat_short_agility" text="Wen"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_title" text="Training: Ansicht %s"/>
+        <text name="eq_train_titleHorse" text="%s: Ansicht %s"/>
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_train_view_stamina" text="Ausdauer"/>
