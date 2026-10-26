@@ -656,7 +656,7 @@ end
 -- focused view shows the one stat it trains. Help popups (H, and the first time a view
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 3, speed = 3, agility = 2, temperament = 2 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 2, speed = 2, agility = 2, temperament = 2 }
 EqTrainingHooks.viewIndex = 1
 
 
