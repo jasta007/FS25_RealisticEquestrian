@@ -59,13 +59,15 @@ uses its genetics, health and fitness.
   watched by an **Exertion** meter while you ride (it rises in canter and gallop and falls at
   slower gaits and at a halt):
   - **Stamina** comes from runs at canter or gallop. Canter 8 seconds without jumping or
-    galloping to start stamina training; then the tempo multiplies it (up to x5,
-    2.5 times the gains). Only the beat raises the tempo: when the middle of the screen says
-    **Canter! (S)** or **Gallop! (W)**, press that key right then and exertion drops; three good
-    beats (a perfect one counts double) raise the tempo. Pressing just too early wastes the beat,
-    and a miss loses the progress to the next step; other keys are ignored. Timing tightens as
-    the tempo climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few
-    seconds below a canter breaks the tempo back to x1. Beats pause during a Sprint or a routine
+    galloping, starting under 40% exertion, to start stamina training; then the tempo
+    multiplies it (up to x5, 2.5 times the gains). Only well-timed gait changes raise the
+    tempo: when the middle of the screen says **Canter! (S)** or **Gallop! (W)**, press that key
+    right then and your horse gets a breather (a bigger one the more tired it is, so hitting
+    every change keeps it under blowing hard); three good changes (a perfect one counts double)
+    raise the tempo. Pressing too early or missing one loses the progress to the next step, and
+    the next change comes soon after. Timing tightens as the tempo climbs. Blowing hard (over
+    85% exertion) for 5 seconds or more than a few seconds below a canter ends the run: rest
+    under 40%, then canter to start again. Gait changes pause during a Sprint or a routine
     command.
   - **Speed** comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under
     25%) add only a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm the horse up; keep galloping
