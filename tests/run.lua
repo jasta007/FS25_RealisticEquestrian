@@ -226,6 +226,27 @@ local realRandn = BreedingMath.randn
 pcall(EqRLRM.makeSeededBreeder(BreedingMath, EqRandom.new(1)), 1, 1, { sd = "bad" })
 check("RLRM's randn is put back even after an error", BreedingMath.randn == realRandn)
 
+-- Horses left in a farm's livestock trailer still count as the farm's.
+;(function()
+    local savedMission = g_currentMission
+    local function horse(name) return { name = name, isHorse = function() return true end } end
+    local cow = { isHorse = function() return false end }
+    local function trailer(farmId, animals)
+        return { spec_livestockTrailer = {}, getOwnerFarmId = function() return farmId end,
+            getClusters = function() return animals end }
+    end
+    local tractor = { getOwnerFarmId = function() return 1 end }
+    g_currentMission = { vehicleSystem = { vehicles = {
+        trailer(1, { horse("Iolanthe"), cow }), trailer(2, { horse("Other farm") }), tractor,
+        trailer(1, { horse("Shiver") }) } } }
+    local found = EqRLRM.listHorsesInTrailers(1)
+    check("trailer horses found, cows and other farms left out", #found == 2
+        and found[1].name == "Iolanthe" and found[2].name == "Shiver")
+    g_currentMission = nil
+    check("no trailer horses without a mission", #EqRLRM.listHorsesInTrailers(1) == 0)
+    g_currentMission = savedMission
+end)()
+
 local agilitySum = 0
 for i = 1, 2000 do agilitySum = agilitySum + foalGenes("UK 1 " .. (1000 + i)).agility end
 local expected = (EqStats.regress(1.4) + EqStats.regress(1.6)) / 2
@@ -1574,27 +1595,6 @@ end)()
     EqRLRM.env = {}
     check("skills box unavailable without RLRM's box", not EqSkillsHudBox.isAvailable())
     EqRLRM.env = savedEnv
-end)()
-
--- Horses left in a farm's livestock trailer still count as the farm's.
-;(function()
-    local savedMission = g_currentMission
-    local function horse(name) return { name = name, isHorse = function() return true end } end
-    local cow = { isHorse = function() return false end }
-    local function trailer(farmId, animals)
-        return { spec_livestockTrailer = {}, getOwnerFarmId = function() return farmId end,
-            getClusters = function() return animals end }
-    end
-    local tractor = { getOwnerFarmId = function() return 1 end }
-    g_currentMission = { vehicleSystem = { vehicles = {
-        trailer(1, { horse("Iolanthe"), cow }), trailer(2, { horse("Other farm") }), tractor,
-        trailer(1, { horse("Shiver") }) } } }
-    local found = EqRLRM.listHorsesInTrailers(1)
-    check("trailer horses found, cows and other farms left out", #found == 2
-        and found[1].name == "Iolanthe" and found[2].name == "Shiver")
-    g_currentMission = nil
-    check("no trailer horses without a mission", #EqRLRM.listHorsesInTrailers(1) == 0)
-    g_currentMission = savedMission
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
