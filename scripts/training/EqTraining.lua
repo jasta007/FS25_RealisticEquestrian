@@ -160,6 +160,12 @@ EqTraining.BEAT_PERFECT = 2.5
 EqTraining.BEAT_RELIEF = 6
 EqTraining.BEAT_PERFECT_RELIEF = 10
 EqTraining.BEAT_TEMPO_MS = 3000
+-- It gets harder as the tempo climbs, so no horse gallops for ever: for each tempo step above
+-- x1 the window shrinks BEAT_WINDOW_PRESSURE, the breather BEAT_RELIEF_PRESSURE and the sweep
+-- time BEAT_SWEEP_PRESSURE (at x5: window 52%, breather 40%, sweep 60%).
+EqTraining.BEAT_WINDOW_PRESSURE = 0.12
+EqTraining.BEAT_RELIEF_PRESSURE = 0.15
+EqTraining.BEAT_SWEEP_PRESSURE = 0.1
 
 -- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
 -- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
@@ -277,6 +283,17 @@ local function beatGap(range, rng)
 end
 
 
+--- The beat's window, breather and sweep time at the current tempo.
+--- @param sheet table
+--- @return number window exertion points, number relief share 0..1, number sweep milliseconds
+function EqTraining.beatPressure(sheet)
+    local steps = (sheet.tempo ~= nil and sheet.tempo.mult or 1) - 1
+    return EqTraining.BEAT_WINDOW * (1 - EqTraining.BEAT_WINDOW_PRESSURE * steps),
+        1 - EqTraining.BEAT_RELIEF_PRESSURE * steps,
+        EqTraining.BEAT_SWEEP_MS * (1 - EqTraining.BEAT_SWEEP_PRESSURE * steps)
+end
+
+
 --- One frame of the beat. Beats only come during a run at a canter or gallop.
 --- @param sheet table
 --- @param gait string the gait this frame (not the pace held through a jump)
@@ -291,20 +308,21 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
         and (beat.lastGait == "canter" or beat.lastGait == "gallop")
     beat.lastGait = gait
 
+    local window, relief, sweep = EqTraining.beatPressure(sheet)
     if beat.pos ~= nil then
         if switched then
             local gap = math.abs(beat.pos - sheet.tiredness)
-            if gap <= EqTraining.BEAT_WINDOW then
+            if gap <= window then
                 local perfect = gap <= EqTraining.BEAT_PERFECT
                 sheet.tiredness = math.max(0, sheet.tiredness
-                    - (perfect and EqTraining.BEAT_PERFECT_RELIEF or EqTraining.BEAT_RELIEF))
+                    - (perfect and EqTraining.BEAT_PERFECT_RELIEF or EqTraining.BEAT_RELIEF) * relief)
                 if sheet.tempo.ms > 0 then sheet.tempo.ms = sheet.tempo.ms + EqTraining.BEAT_TEMPO_MS end
                 beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
                 return perfect and "perfect" or "hit"
             end
             return "off"
         end
-        beat.pos = beat.pos + 100 * dt / EqTraining.BEAT_SWEEP_MS
+        beat.pos = beat.pos + 100 * dt / sweep
         if beat.pos > 100 or not fast then
             beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
             return "miss"

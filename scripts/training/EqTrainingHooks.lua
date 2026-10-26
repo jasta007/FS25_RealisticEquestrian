@@ -757,14 +757,15 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
             -- The beat marker, with its hit window either side.
             local beat = sheet.beat
             if beat.pos ~= nil then
-                bar.window = { (beat.pos - EqTraining.BEAT_WINDOW) / 100, (beat.pos + EqTraining.BEAT_WINDOW) / 100 }
+                local window = EqTraining.beatPressure(sheet)
+                bar.window = { (beat.pos - window) / 100, (beat.pos + window) / 100 }
                 table.insert(bar.marks, { beat.pos / 100, COLOR.yellow, 3 })
                 -- And a cue in the middle of the screen: the gait to switch to, its bar filling
                 -- as the marker comes up to the horse's exertion, green once it's time.
                 local gap = beat.pos - sheet.tiredness
-                if gap <= EqTraining.BEAT_WINDOW then
+                if gap <= window then
                     local target = beat.lastGait == "gallop" and "canter" or "gallop"
-                    local now = math.abs(gap) <= EqTraining.BEAT_WINDOW
+                    local now = math.abs(gap) <= window
                     local share = now and 1 or 1 - EqStats.clamp(-gap / EqTrainingHooks.BEAT_CUE_LEAD, 0, 1)
                     if share > 0 then
                         EqTrainingHud.drawPrompt(g_i18n:getText(now and ("eq_beat_" .. target) or ("eq_beat_ready_" .. target)),
