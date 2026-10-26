@@ -512,27 +512,39 @@ function EqConsole:consoleForceInjury(value)
 end
 
 
---- eqHandling [min|max|<speed> <agility>|off]: testing, rides every horse as if it had these
---- stats (EqTraining.handling), without changing them. In memory only: off again on reload.
-function EqConsole:consoleHandling(...)
-    local args = { ... }
-    local mode = args[1]
-    local stats = nil
-    if mode == "min" then stats = { speed = 0, agility = 0 }
-    elseif mode == "max" then stats = { speed = 100, agility = 100 }
-    elseif tonumber(mode) ~= nil then
-        local agility = tonumber(args[2]) or tonumber(mode)
-        stats = { speed = EqStats.clamp(tonumber(mode), 0, 100), agility = EqStats.clamp(agility, 0, 100) }
-    elseif mode ~= nil and mode ~= "off" then
-        return "Usage: eqHandling [min|max|<speed 0-100> [agility 0-100]|off]"
+--- eqStats <0-100>|reset [horse]: testing, sets every stat of a horse (or of all your horses)
+--- to one value. The real stats are kept and are what a save writes; 'reset' puts them back.
+function EqConsole:consoleStats(value, ...)
+    if g_currentMission == nil then return "No mission loaded" end
+    if not g_currentMission:getIsServer() then return "Only the host can change stats" end
+    local level = tonumber(value)
+    if value ~= "reset" and value ~= "Reset" and level == nil then
+        return "Usage: eqStats <0-100> [horse]  or  eqStats reset [horse]  (no horse = all your horses)"
     end
-    if mode ~= nil then EqTrainingHooks.handlingOverride = stats end
 
-    stats = EqTrainingHooks.handlingOverride
-    if stats == nil then return "Handling override off: horses ride by their own speed and agility" end
-    local h = EqTraining.handling(stats.speed, stats.agility)
-    return string.format("Every horse now rides as speed %d, agility %d (top speeds x%.2f, jump x%.2f, turn rate x%.2f). "
-        .. "Its real stats are unchanged. Off with 'eqHandling off' or on reload.", stats.speed, stats.agility, h.speed, h.jump, h.turn)
+    local query = table.concat({ ... }, " ")
+    local names = {}
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil and (query == "" or matchesHorse(animal, record, query)) then
+            if level ~= nil then
+                record.testStats = record.testStats or {}
+                for _, stat in ipairs(EqConstants.STAT_KEYS) do
+                    if record.testStats[stat] == nil then record.testStats[stat] = record.trained[stat] end
+                    record.trained[stat] = EqStats.clamp(level, 0, 100)
+                end
+            elseif record.testStats ~= nil then
+                for stat, real in pairs(record.testStats) do record.trained[stat] = real end
+                record.testStats = nil
+            end
+            if animal.setDirty ~= nil then animal:setDirty() end
+            table.insert(names, animal:getName() or record.id)
+        end
+    end
+    if #names == 0 then return query == "" and "You have no horses" or string.format("No horse called '%s' on your farm", query) end
+    if level == nil then return "Real stats back for: " .. table.concat(names, ", ") end
+    return string.format("All stats set to %d for: %s. Saves keep the real stats; 'eqStats reset' puts them back.",
+        math.floor(EqStats.clamp(level, 0, 100)), table.concat(names, ", "))
 end
 
 
@@ -610,7 +622,7 @@ function EqConsole.register()
     addConsoleCommand("eqForceInjury", "Testing: every horse that starts an event is injured: eqForceInjury [on|off]", "consoleForceInjury", EqConsole)
     addConsoleCommand("eqDirt", "Testing: sets a horse's dirt: eqDirt <horse> <0-100>", "consoleDirt", EqConsole)
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
-    addConsoleCommand("eqHandling", "Testing: rides every horse as if it had these stats: eqHandling [min|max|<speed> [agility]|off]", "consoleHandling", EqConsole)
+    addConsoleCommand("eqStats", "Testing: sets every stat to one value until reset: eqStats <0-100>|reset [horse]", "consoleStats", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
@@ -622,5 +634,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqChanges", "eqHandling" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqChanges", "eqStats" }) do removeConsoleCommand(name) end
 end
