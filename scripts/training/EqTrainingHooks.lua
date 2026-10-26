@@ -67,6 +67,7 @@ end
 
 function EqTrainingHooks.reset()
     EqTrainingHooks.sheets = {}
+    EqTrainingHooks.handlingOverride = nil
 end
 
 
@@ -315,6 +316,8 @@ end
 -- it rides (EqTraining.handling): speed sets its top speeds, agility its jump and turn rate.
 EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
+-- eqHandling (testing): { speed, agility } every ridden horse handles as, instead of its own.
+EqTrainingHooks.handlingOverride = nil
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
@@ -322,7 +325,7 @@ EqTrainingHooks.ACCELERATION_SHARE = 1.6
 --- @param gait string
 --- @param record table|nil the ridden horse's EqHorseRecord
 local function tuneRiding(spec, gait, record)
-    local trained = record ~= nil and record.trained or {}
+    local trained = EqTrainingHooks.handlingOverride or (record ~= nil and record.trained) or {}
     local handling = EqTraining.handling(trained.speed, trained.agility)
     if type(spec.jumpHeight) == "number" then
         spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
@@ -347,8 +350,8 @@ local function tuneRiding(spec, gait, record)
             if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed or value end
         end
     end
-    if spec.eqHandlingFor ~= record then
-        spec.eqHandlingFor = record
+    if spec.eqHandlingFor ~= trained then
+        spec.eqHandlingFor = trained
         Log:info("Handling: speed %s (top speeds x%.2f), agility %s (jump x%.2f, turn rate x%.2f)",
             tostring(trained.speed), handling.speed, tostring(trained.agility), handling.jump, handling.turn)
     end
