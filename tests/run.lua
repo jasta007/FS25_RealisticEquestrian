@@ -354,7 +354,7 @@ do
                 ms = ms + 100
                 if ms % 100 == 0 then EqTraining.spurSprint(tapped) end
             end
-            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > 10000,
+            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > EqTraining.SPRINT_MS / EqTraining.SPRINT_DRAIN + 2000,
                 string.format("%d ms", ms))
         end
         do

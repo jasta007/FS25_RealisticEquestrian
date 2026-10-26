@@ -202,9 +202,9 @@ EqTraining.SPRINT_TAP_MS = 300
 EqTraining.SPRINT_TAP_GAP_MS = 120
 -- The Sprint meter runs down SPRINT_DRAIN times as fast as the clock, so only quick tapping
 -- keeps it up, and less so as the Sprint goes on.
-EqTraining.SPRINT_DRAIN = 1.5
+EqTraining.SPRINT_DRAIN = 1.8
 EqTraining.SPRINT_MAX_MS = 8000
-EqTraining.SPRINT_LIMIT_MS = 14000
+EqTraining.SPRINT_LIMIT_MS = 12000
 EqTraining.SPRINT_SPEED_SHARE = 1.25
 EqTraining.SPRINT_EXERTION_SHARE = 1.5
 EqTraining.SPRINT_TRAIN_SHARE = 3
