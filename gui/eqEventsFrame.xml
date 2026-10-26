@@ -8,6 +8,8 @@
     and under that a panel for the selected horse. Profiles are RLRM's (rlMenu_*) and the base
     game's (fs25_*), so the tab looks like the rest of the menu; this file defines none.
     Content width follows RLRM's frames: 1540px inside fs25_menuContainer.
+
+    Part of Realistic Equestrian by Jasta007.
 -->
 <GUI name="EqEventsFrame">
     <GuiElement profile="fs25_menuContainer">

@@ -9,6 +9,9 @@
 
 EqConstants = {}
 
+-- Realistic Equestrian is made by Jasta007.
+EqConstants.AUTHOR = "Jasta007"
+
 -- Canonical stat order. Saves, UI rows and console output all follow it.
 EqConstants.STAT_KEYS = { "stamina", "speed", "agility", "temperament" }
 

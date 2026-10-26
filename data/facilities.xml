@@ -32,6 +32,8 @@
                         within 2 m of each other count once.
 
     Training rates stack with feed boosts by adding: rate x (1 + feed + facilities).
+
+    Part of Realistic Equestrian by Jasta007.
 -->
 <facilities ownedCap="0.25" riddenCap="0.6" eventCap="0.05">
     <kind name="stable" radius="20" fullAt="1"

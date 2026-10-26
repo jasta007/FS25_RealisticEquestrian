@@ -300,6 +300,7 @@
         <text name="eq_facility_jumps" text="Springparcours"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
         <text name="eq_settings_tab" text="Pferdesport"/>
+        <text name="eq_settings_credit" text="Realistic Equestrian von %s"/>
         <text name="eq_settings_off" text="Aus"/>
         <text name="eq_settings_on" text="An"/>
         <text name="eq_settings_noLimit" text="Unbegrenzt"/>

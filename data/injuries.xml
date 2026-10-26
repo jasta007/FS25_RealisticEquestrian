@@ -26,6 +26,8 @@
     How often each one happens, and whether it can end a career, is in data/events.xml <risk>;
     every name there needs a disease here titled "eqInjury" + the name with a capital first letter.
     The display names are the rl_disease_<title> texts in our translations.
+
+    Part of Realistic Equestrian by Jasta007.
 -->
 <diseases>
 

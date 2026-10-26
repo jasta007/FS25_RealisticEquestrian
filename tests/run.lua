@@ -1576,5 +1576,15 @@ end)()
     EqRLRM.env = savedEnv
 end)()
 
+-- The maker's mark agrees everywhere it is kept
+;(function()
+    check("mark reads Jasta007", EqRandom.mark() == "Jasta007")
+    check("mark matches the author constant", EqRandom.mark() == EqConstants.AUTHOR)
+    local file = io.open("modDesc.xml", "r")
+    local author = file ~= nil and file:read("*a"):match("<author>(.-)</author>") or ""
+    if file ~= nil then file:close() end
+    check("modDesc names the maker", string.find(author, EqRandom.mark(), 1, true) ~= nil)
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

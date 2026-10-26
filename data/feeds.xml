@@ -30,6 +30,8 @@
                         share it (barley and winter barley).
         stack           feeds with the same stack name do not add up: they count once, as the
                         best of them (carrots and apples)
+
+    Part of Realistic Equestrian by Jasta007.
 -->
 <feeds>
     <banned fillTypes="SORGHUM"/>

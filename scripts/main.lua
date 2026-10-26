@@ -1,6 +1,6 @@
 --[[
     main.lua
-    The mod loader.
+    The mod loader for Realistic Equestrian, by Jasta007.
 
     The game sources mods alphabetically, and a modDesc dependency only makes sure RLRM is
     enabled, not that it loads first: FS25_RealisticEquestrian is sourced BEFORE
@@ -12,6 +12,7 @@
 ]]
 
 local modDirectory = g_currentModDirectory
+local modName = g_currentModName
 
 -- SECTION 1: Our own modules. None of them reads RLRM at file scope.
 source(modDirectory .. "scripts/core/EqLog.lua")
@@ -197,9 +198,22 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
-        Log:info("Realistic Equestrian active")
+        Log:info("Realistic Equestrian by %s active", EqRandom.mark())
+        EqMain.checkMark()
     else
         Log:error("Realistic Equestrian is switched off for this session; see the lines above.")
+    end
+end
+
+
+--- Note in the log when this copy no longer names its maker, so a reupload under another name
+--- still says where it came from.
+function EqMain.checkMark()
+    local mark = EqRandom.mark()
+    local mod = g_modManager ~= nil and modName ~= nil and g_modManager:getModByName(modName) or nil
+    local author = mod ~= nil and tostring(mod.author or "") or mark
+    if EqConstants.AUTHOR ~= mark or not string.find(author:lower(), mark:lower(), 1, true) then
+        Log:warning("This copy of Realistic Equestrian has been changed (author '%s'); the original is by %s", author, mark)
     end
 end
 

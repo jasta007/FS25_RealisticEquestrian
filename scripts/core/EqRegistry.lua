@@ -266,6 +266,7 @@ function EqRegistry.saveToDirectory(directory)
     end
 
     xmlFile:setInt("rlEquestrian#version", EqConstants.SAVE_VERSION)
+    xmlFile:setString("rlEquestrian#madeBy", EqRandom.mark())
 
     -- Sorted so the file diffs cleanly between saves.
     local ids = {}
