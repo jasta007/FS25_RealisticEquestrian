@@ -38,6 +38,7 @@ function EqHorseRecord.new(id)
     self.revealed = true         -- false until a dealer horse's real potential has shown
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
     self.experience = nil        -- discipline -> { value, idle }, see EqExperience
+    self.gains = {}              -- recent stat changes, { day, stat -> change } per day, oldest first
     return self
 end
 
@@ -53,6 +54,42 @@ end
 --- @return boolean true for a horse bought from the dealer that is still settling in
 function EqHorseRecord:isSettling()
     return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
+end
+
+
+--- Days of stat changes kept for the "(+2.8)" shown after each skill.
+EqHorseRecord.GAIN_DAYS = 7
+
+
+--- Add stat changes made on a day (daily training, an event's training boost) to the recent
+--- gains, dropping days older than GAIN_DAYS.
+--- @param day number monotonic day
+--- @param deltas table|nil stat -> change
+function EqHorseRecord:addGains(day, deltas)
+    if deltas == nil then return end
+    local last = self.gains[#self.gains]
+    if last == nil or last.day ~= day then
+        last = { day = day }
+        table.insert(self.gains, last)
+    end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        last[stat] = (last[stat] or 0) + (deltas[stat] or 0)
+    end
+    while #self.gains > 0 and self.gains[1].day <= day - EqHorseRecord.GAIN_DAYS do table.remove(self.gains, 1) end
+end
+
+
+--- @param today number monotonic day
+--- @return table stat -> net change over the last GAIN_DAYS days, today included
+function EqHorseRecord:getRecentGains(today)
+    local total = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = 0 end
+    for _, entry in ipairs(self.gains) do
+        if entry.day > today - EqHorseRecord.GAIN_DAYS then
+            for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = total[stat] + (entry[stat] or 0) end
+        end
+    end
+    return total
 end
 
 
@@ -101,6 +138,12 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. ".career#eliminations", self.career.eliminations)
     xmlFile:setInt(key .. ".career#injuries", self.career.injuries)
     EqExperience.save(xmlFile, key, self)
+
+    for i, entry in ipairs(self.gains) do
+        local entryKey = string.format("%s.gains.day(%d)", key, i - 1)
+        xmlFile:setInt(entryKey .. "#day", entry.day)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(entryKey .. "#" .. stat, entry[stat] or 0) end
+    end
 end
 
 
@@ -161,6 +204,15 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.career.eliminations = xmlFile:getInt(key .. ".career#eliminations", 0)
     self.career.injuries = xmlFile:getInt(key .. ".career#injuries", 0)
     EqExperience.load(xmlFile, key, self)
+
+    local i = 0
+    while xmlFile:hasProperty(string.format("%s.gains.day(%d)", key, i)) do
+        local entryKey = string.format("%s.gains.day(%d)", key, i)
+        local entry = { day = xmlFile:getInt(entryKey .. "#day", 0) }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do entry[stat] = xmlFile:getFloat(entryKey .. "#" .. stat, 0) end
+        table.insert(self.gains, entry)
+        i = i + 1
+    end
 
     return self
 end

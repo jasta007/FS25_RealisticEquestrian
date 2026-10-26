@@ -194,7 +194,9 @@ function EqTrainingHooks.onHorseDay(animal)
         playerPoints = EqTraining.playerRidingPoints(day.sheet) })
     table.insert(notes, string.format("RLRM before its daily update: fitness %s health %s dirt %s riding %s",
         tostring(animal.fitness), tostring(animal.health), tostring(animal.dirt), tostring(animal.riding)))
-    EqStatLog.add(record.id, g_currentMission.environment.currentMonotonicDay or 0, "daily training", deltas, notes, record.trained)
+    local today = g_currentMission.environment.currentMonotonicDay or 0
+    EqStatLog.add(record.id, today, "daily training", deltas, notes, record.trained)
+    record:addGains(today, deltas)
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",
         record.id, tostring(animal.riding), tostring(animal.dirt), record.idleDays,
