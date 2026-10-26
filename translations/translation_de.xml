@@ -365,6 +365,10 @@
         <text name="eq_settings_cadence_tooltip" text="Wie oft eine Turnierrunde stattfindet. Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_cadence_day" text="Jeden Tag"/>
         <text name="eq_settings_cadence_month" text="Jeden Monat"/>
+        <text name="eq_settings_eventsMin" text="Wenigste angezeigte Veranstaltungen"/>
+        <text name="eq_settings_eventsMin_tooltip" text="Die wenigsten Veranstaltungen gleichzeitig im Kalender, Fortgeschrittene und Meisterschaften eingeschlossen. Jede Runde lost eine Zahl zwischen diesem Wert und dem Höchstwert aus. Im Mehrspieler kommen für jeden Hof mit Pferden weitere hinzu."/>
+        <text name="eq_settings_eventsMax" text="Meiste angezeigte Veranstaltungen"/>
+        <text name="eq_settings_eventsMax_tooltip" text="Die meisten Veranstaltungen gleichzeitig im Kalender. Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_racing" text="Rennen und Hindernisrennen"/>
         <text name="eq_settings_racing_tooltip" text="Ob Flachrennen und Hindernisrennen im Veranstaltungskalender stehen. Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_injuries" text="Verletzungen bei Veranstaltungen"/>

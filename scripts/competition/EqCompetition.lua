@@ -188,49 +188,103 @@ function EqCompetition.regionWeights(config, home)
 end
 
 
---- Draw the events for one round.
+-- An event some farm's horse could enter is this many times as likely to be drawn.
+EqCompetition.ENTERABLE_WEIGHT = 3
+-- Each further run of the same tier in the same discipline is this much less likely.
+EqCompetition.COPY_WEIGHT = 0.4
+
+
+--- A whole number from lo to hi, each as likely.
+--- @param rng table EqRandom
+--- @param lo number
+--- @param hi number
+--- @return number
+function EqCompetition.drawCount(rng, lo, hi)
+    lo, hi = math.floor(lo), math.floor(hi)
+    if hi <= lo then return math.max(0, lo) end
+    return math.max(0, math.min(hi, lo + math.floor(rng:next() * (hi - lo + 1))))
+end
+
+
+--- Draw the events for one round: a set number of them, picked by each tier's and discipline's
+--- chance, favouring events the players' horses could enter.
 --- @param config table EqEventConfig
 --- @param rng table EqRandom
 --- @param kind string KIND_ROUND (the every-round tiers) or KIND_MONTH (the monthly tiers)
 --- @param racingEnabled boolean
 --- @param home string|nil the player's home region: nearer venues are drawn more often
+--- @param options table|nil { count = events to draw (default: a number from the schedule's
+---     range for the kind), enterable = function(disciplineName, tierName) -> true when some
+---     farm's horse could enter it; then at least half the events drawn are ones it could enter,
+---     when there are enough of them }
 --- @return table events list of { discipline, tier, going, fee, prize, kind, venue, region }
-function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home)
+function EqCompetition.drawSchedule(config, rng, kind, racingEnabled, home, options)
+    options = options or {}
     local events = {}
     local wantMonthly = kind == EqCompetition.KIND_MONTH
     local regionWeights = EqCompetition.regionWeights(config, home)
 
+    local count = options.count
+    if count == nil then
+        if wantMonthly then
+            count = EqCompetition.drawCount(rng, config.monthlyMin or 1, config.monthlyMax or 2)
+        else
+            count = EqCompetition.drawCount(rng, config.eventsMin or 3, config.eventsMax or 8)
+        end
+    end
+
+    local candidates, enterableKinds = {}, 0
     for _, discipline in ipairs(config.disciplines) do
         if racingEnabled or not discipline.racing then
             for _, tier in ipairs(config.tiers) do
                 if tier.monthly == wantMonthly then
-                    local copies = 0
-                    local chance = tier.chance * (discipline.chance or 1)
-                    while copies < config.copiesMax and rng:next() < chance * (copies == 0 and 1 or 0.4) do
-                        copies = copies + 1
-                        local spread = config.priceSpread
-                        local priceFactor = 1 + rng:uniform(-spread, spread)
-                        local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
-                        local venue, region = nil, nil
-                        if tier.venue and #regionWeights > 0 then
-                            local pick = pickWeighted(regionWeights, rng).region
-                            venue, region = pickAny(pick.venues, rng), pick.name
-                        end
-                        table.insert(events, {
-                            discipline = discipline.name,
-                            tier = tier.name,
-                            going = going ~= nil and going.name or nil,
-                            fee = math.floor(tier.fee * priceFactor / 10 + 0.5) * 10,
-                            -- A richer purse costs more to enter, but not in proportion.
-                            prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
-                            kind = kind,
-                            venue = venue,
-                            region = region,
-                        })
-                    end
+                    local enterable = options.enterable ~= nil and options.enterable(discipline.name, tier.name) == true
+                    if enterable then enterableKinds = enterableKinds + 1 end
+                    table.insert(candidates, { discipline = discipline, tier = tier, copies = 0, enterable = enterable,
+                        weight = tier.chance * (discipline.chance or 1) })
                 end
             end
         end
+    end
+
+    local wantEnterable = enterableKinds > 0 and math.ceil(count / 2) or 0
+    local enterableDrawn = 0
+    for drawn = 1, count do
+        -- Keep the last places for enterable events when too few have come up so far.
+        local onlyEnterable = wantEnterable - enterableDrawn >= count - drawn + 1
+        local pool = {}
+        for _, candidate in ipairs(candidates) do
+            if candidate.copies < config.copiesMax and (candidate.enterable or not onlyEnterable) then
+                local chance = candidate.weight * EqCompetition.COPY_WEIGHT ^ candidate.copies
+                    * (candidate.enterable and EqCompetition.ENTERABLE_WEIGHT or 1)
+                if chance > 0 then table.insert(pool, { candidate = candidate, chance = chance }) end
+            end
+        end
+        if #pool == 0 then break end
+
+        local candidate = pickWeighted(pool, rng).candidate
+        candidate.copies = candidate.copies + 1
+        if candidate.enterable then enterableDrawn = enterableDrawn + 1 end
+        local discipline, tier = candidate.discipline, candidate.tier
+        local spread = config.priceSpread
+        local priceFactor = 1 + rng:uniform(-spread, spread)
+        local going = discipline.outdoor and #config.goings > 0 and pickWeighted(config.goings, rng) or nil
+        local venue, region = nil, nil
+        if tier.venue and #regionWeights > 0 then
+            local pick = pickWeighted(regionWeights, rng).region
+            venue, region = pickAny(pick.venues, rng), pick.name
+        end
+        table.insert(events, {
+            discipline = discipline.name,
+            tier = tier.name,
+            going = going ~= nil and going.name or nil,
+            fee = math.floor(tier.fee * priceFactor / 10 + 0.5) * 10,
+            -- A richer purse costs more to enter, but not in proportion.
+            prize = math.floor(tier.prize * (priceFactor * priceFactor) / 50 + 0.5) * 50,
+            kind = kind,
+            venue = venue,
+            region = region,
+        })
     end
 
     return events
