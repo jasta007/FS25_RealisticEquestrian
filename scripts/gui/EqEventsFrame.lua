@@ -331,8 +331,8 @@ function EqEventsFrame:updateHorsePanel()
         local label, value = self.panelStatLabel[i], self.panelStatValue[i]
         keepDefaultColor(label)
         keepDefaultColor(value)
-        local text, color = EqInfoDisplay.skillValue(row.record.trained[stat] or 0)
-        setText(label, g_i18n:getText("eq_stat_" .. stat), color)
+        local text, color = EqInfoDisplay.skillValue(row.record.trained[stat] or 0, nil, stat)
+        setText(label, g_i18n:getText("eq_stat_" .. stat), EqInfoDisplay.STAT_COLOR[stat])
         setText(value, text, color)
     end
     keepDefaultColor(self.panelTraining)

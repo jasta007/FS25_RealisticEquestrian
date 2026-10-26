@@ -12,8 +12,9 @@
       "54 - Amateur (High)" for each stat, the skill in its skill colour and the potential in
       RLRM's genetics colour (EqSkillsHudBox), then whether the potential is still the dealer's view
       and the horse's competition status.
-    - Stat names take the stat's own colour (STAT_COLOR, as on the training panel) while values
-      keep their skill and potential colours, and a skill shows its net change over the last
+    - Stat names take the stat's own colour (STAT_COLOR, as on the training panel), skills shade
+      from white at 0 to that colour at 100, potentials keep RLRM's colours, and a skill shows its
+      net change over the last
       seven days to one decimal, "54 - Amateur (+2.8)", left out when it rounds to 0.0.
 
     In RLRM's menu the stats get a section of their own under Pedigree and Genetics, laid out
@@ -147,8 +148,17 @@ end
 
 
 --- @param value number a trained level, 0-100
---- @return table color { r, g, b, a }: white at 0, yellow by 50, RLRM's brightest green from 95
-function EqInfoDisplay.skillColor(value)
+--- @param stat string|nil with a stat, white at 0 shading to that stat's colour at 100
+--- @return table color { r, g, b, a }: without a stat, white at 0, yellow by 50, RLRM's brightest green from 95
+function EqInfoDisplay.skillColor(value, stat)
+    local full = stat ~= nil and EqInfoDisplay.STAT_COLOR[stat] or nil
+    if full ~= nil then
+        -- White for an untrained horse, shading to the stat's own colour at 100.
+        local t = EqStats.clamp(value or 0, 0, 100) / 100
+        local color = {}
+        for c = 1, 4 do color[c] = 1 + (full[c] - 1) * t end
+        return color
+    end
     local stops = EqInfoDisplay.SKILL_COLOR_STOPS
     value = EqStats.clamp(value or 0, 0, 100)
     for i = 2, #stops do
@@ -168,14 +178,15 @@ end
 
 --- @param trained number
 --- @param change number|nil recent change, shown after the skill when it rounds to 0.1 or more
+--- @param stat string|nil colours the skill from white to this stat's colour
 --- @return string valueText "54 - Amateur", or "54 - Amateur (+2.8)" with a recent change
 --- @return table color
-function EqInfoDisplay.skillValue(trained, change)
+function EqInfoDisplay.skillValue(trained, change, stat)
     local shown = math.floor(trained + 0.5)
     local text = string.format("%d - %s", shown, g_i18n:getText(EqInfoDisplay.skillBandKey(shown)))
     local gain = EqInfoDisplay.gainText(change)
     if gain ~= nil then text = text .. " " .. gain end
-    return text, EqInfoDisplay.skillColor(trained)
+    return text, EqInfoDisplay.skillColor(trained, stat)
 end
 
 
@@ -260,7 +271,7 @@ local function fillSkillsBox(record, box, animal)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local trained = record.trained[stat] or 0
         if box.eqColored then
-            local skill, skillColor = EqInfoDisplay.skillValue(trained, gains[stat])
+            local skill, skillColor = EqInfoDisplay.skillValue(trained, gains[stat], stat)
             local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
             box:addLine(statTitle(stat), skill, skillColor,
                 string.format("(%s)", EqInfoDisplay.potentialText(ceilings[stat], unvetted)), potentialColor,
@@ -554,7 +565,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
             local statColor = EqInfoDisplay.STAT_COLOR[stat]
             fillCell(section.potential.elements[i + 1], statTitle(stat),
                 EqInfoDisplay.potentialText(ceilings[stat], unvetted), potentialColor, statColor)
-            local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0, gains[stat])
+            local text, color = EqInfoDisplay.skillValue(record.trained[stat] or 0, gains[stat], stat)
             fillCell(section.skills.elements[i + 1], statTitle(stat), text, color, statColor)
         end
         local specialtyCell = section.skills.elements[#EqConstants.STAT_KEYS + 2]

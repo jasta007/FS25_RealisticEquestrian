@@ -580,6 +580,9 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("tiny changes are not shown", EqInfoDisplay.gainText(0.049) == nil and EqInfoDisplay.gainText(-0.04) == nil
         and EqInfoDisplay.gainText(0) == nil and EqInfoDisplay.gainText(nil) == nil)
     check("0.05 shows as 0.1", EqInfoDisplay.gainText(0.051) == "(+0.1)")
+    local white, full, half = EqInfoDisplay.skillColor(0, "speed"), EqInfoDisplay.skillColor(100, "speed"), EqInfoDisplay.skillColor(50, "speed")
+    check("skill shades white to the stat colour", white[1] == 1 and white[2] == 1 and white[3] == 1
+        and math.abs(full[2] - 0.55) < 1e-9 and math.abs(full[3] - 0.15) < 1e-9 and math.abs(half[3] - 0.575) < 1e-9)
 end)()
 
 -- Running a field: a strong horse in its band places well most of the time.
