@@ -316,8 +316,12 @@ end
 -- temperament its acceleration and how long it stands after a crash.
 EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
--- Only used if the base game keeps a gravity value on spec_rideable (not yet seen in a log).
-EqTrainingHooks.GRAVITY_SHARE = 1.4
+-- The base game launches a jump at sqrt(2 g jumpHeight) up (spec_rideable.currentSpeedY, 6.4 m/s
+-- for 2.1 m) and lets it fall at 9.81 m/s2: 1.3 s in the air, 16 m long at 12 m/s, so a jump
+-- floats. We pull a horse in the air down GRAVITY_SHARE times as hard, and raise jumpHeight by
+-- the same share so it still reaches the same height: the jump takes 1/sqrt(GRAVITY_SHARE) as long.
+EqTrainingHooks.GRAVITY = 9.81
+EqTrainingHooks.GRAVITY_SHARE = 2
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
@@ -330,17 +334,14 @@ local function tuneRiding(spec, gait, record)
     if type(spec.jumpHeight) == "number" then
         spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
         spec.jumpHeight = spec.eqBaseJumpHeight * handling.jump * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
+            * EqTrainingHooks.GRAVITY_SHARE
     end
     if type(spec.maxAcceleration) == "number" then
         spec.eqBaseAcceleration = spec.eqBaseAcceleration or spec.maxAcceleration
         spec.maxAcceleration = spec.eqBaseAcceleration * EqTrainingHooks.ACCELERATION_SHARE * handling.acceleration
     end
     spec.eqCrashHaltMs = EqTrainingHooks.CRASH_HALT_MS * handling.crashHalt
-    -- Jumps hang in the air: if the base game keeps its own gravity on the spec, pull harder.
-    if type(spec.gravity) == "number" then
-        spec.eqBaseGravity = spec.eqBaseGravity or spec.gravity
-        spec.gravity = spec.eqBaseGravity * EqTrainingHooks.GRAVITY_SHARE
-    end
+
     if type(spec.maxTurnSpeed) == "number" then
         spec.eqBaseTurnSpeed = spec.eqBaseTurnSpeed or spec.maxTurnSpeed
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn
@@ -359,10 +360,10 @@ local function tuneRiding(spec, gait, record)
     local shown = string.format("%s/%s/%s", tostring(trained.speed), tostring(trained.agility), tostring(trained.temperament))
     if spec.eqHandlingFor ~= shown then
         spec.eqHandlingFor = shown
-        Log:info("Handling: speed %s (top speeds x%.2f), agility %s (jump x%.2f, turn rate x%.2f), "
-            .. "temperament %s (acceleration x%.2f, crash stop %d ms)",
-            tostring(trained.speed), handling.speed, tostring(trained.agility), handling.jump, handling.turn,
-            tostring(trained.temperament), handling.acceleration, math.floor(spec.eqCrashHaltMs))
+        Log:info("Handling: speed %.0f (top speeds x%.2f), agility %.0f (jump x%.2f, turn rate x%.2f), "
+            .. "temperament %.0f (acceleration x%.2f, crash stop %d ms)",
+            trained.speed or 50, handling.speed, trained.agility or 50, handling.jump, handling.turn,
+            trained.temperament or 50, handling.acceleration, math.floor(spec.eqCrashHaltMs))
     end
 end
 
@@ -380,6 +381,10 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local record = EqRegistry.getById(id)
     -- Not while airborne, so the lift a jump started with stays put.
     if spec.eqJump == nil then tuneRiding(spec, gait, record) end
+    -- Extra pull down while in the air (see GRAVITY_SHARE).
+    if spec.isOnGround == false and type(spec.currentSpeedY) == "number" then
+        spec.currentSpeedY = spec.currentSpeedY - EqTrainingHooks.GRAVITY * (EqTrainingHooks.GRAVITY_SHARE - 1) * dt / 1000
+    end
 
     local sheet = EqTrainingHooks.getSheet(id)
     local now = g_time or 0
@@ -438,7 +443,6 @@ end
 --- settings, so canter jumps and gait changes can be tuned once we know their names.
 local function logRideableFields(spec)
     if EqTrainingHooks.loggedRideable then return end
-    Log:info("Rideable gravity: %s", tostring(spec.eqBaseGravity))
     EqTrainingHooks.loggedRideable = true
     local function dump(prefix, t, depth)
         local keys = {}
