@@ -279,8 +279,6 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 - **Multiplayer is limited.** Competitions, entries and delivery work in single player and for
   the host of a multiplayer game. Other players see a note on the Competitions tab instead.
   Full multiplayer support is planned.
-- **Settings are console only.** There is no settings screen yet; see
-  [Console commands](#console-commands).
 - **Stats aren't on the game's own Animals screen.** It has room for only five rows and RLRM's
   horse rows take three. Use RLRM's menu (Shift+O) or look at the horse instead.
 - **A horse away at an event isn't in your pasture**, so you can't see or ride it until its result
@@ -298,7 +296,6 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support
-- A settings screen
 
 ## Console commands
 
