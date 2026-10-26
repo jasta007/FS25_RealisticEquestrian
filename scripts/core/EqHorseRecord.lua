@@ -91,7 +91,9 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
 
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         xmlFile:setFloat(key .. ".genes#" .. stat, self.genes[stat] or EqConstants.GENE_MEAN)
-        xmlFile:setFloat(key .. ".trained#" .. stat, self.trained[stat] or 0)
+        -- While eqStats (testing) overrides the stats, the real ones are saved.
+        local trained = self.testStats ~= nil and self.testStats[stat] or self.trained[stat]
+        xmlFile:setFloat(key .. ".trained#" .. stat, trained or 0)
     end
 
     xmlFile:setInt(key .. ".career#starts", self.career.starts)
