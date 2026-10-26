@@ -298,6 +298,17 @@ do
     EqTraining.clearJump(wornJump, true)
     check("a worn-out horse's jumps count for the combo but train nothing", wornJump.combo.count == 1 and wornJump.focused.agility == 0)
 
+    do
+        -- Quicker after a halt, and less time to react at a high multiplier.
+        local sheet = EqTraining.newSheet()
+        local r = sheet.routine
+        r.active, r.mult, r.current, r.clock, r.request, r.deadline = true, 5, "walk", 0, "halt", 10000
+        EqTraining.routineStep(sheet, "halt", nil, 100, false, function() return 1 end)
+        check("after a full stop the next request comes sooner", r.nextAt - r.clock <= 2500 * 0.7 + 1)
+        r.clock = r.nextAt
+        EqTraining.routineStep(sheet, "halt", nil, 0, false, function() return 1 end)
+        check("a high routine multiplier gives less time to react", r.request ~= nil and r.deadline - r.clock < EqTraining.ROUTINE_REACT_MS)
+    end
     -- Temperament routine.
     local first = function() return 1 end
     local routine = EqTraining.newSheet()
