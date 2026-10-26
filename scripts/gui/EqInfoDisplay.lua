@@ -9,11 +9,11 @@
     - AnimalHorse.addHorseInfos feeds the stat rows of RLRM's menu and the pen's animal screen:
       a bar of the trained level with "54 (High)" as its text.
     - When you look at a horse, a Skills box of our own sits below RLRM's Genetics box:
-      "54 - Amateur (High)" for each stat, the skill in its skill colour and the potential in
-      RLRM's genetics colour (EqSkillsHudBox), then whether the potential is still the dealer's view
+      "54 - Amateur (High)" for each stat, the skill and the potential in their stat colour
+      (EqSkillsHudBox), then whether the potential is still the dealer's view
       and the horse's competition status.
     - Stat names take the stat's own colour (STAT_COLOR, as on the training panel), skills shade
-      from white at 0 to that colour at 100, potentials keep RLRM's colours, and a skill shows its
+      from white at 0 to that colour at 100 (potentials too, by their ceiling), and a skill shows its
       net change over the last
       seven days to one decimal, "54 - Amateur (+2.8)", left out when it rounds to 0.0.
 
@@ -272,7 +272,7 @@ local function fillSkillsBox(record, box, animal)
         local trained = record.trained[stat] or 0
         if box.eqColored then
             local skill, skillColor = EqInfoDisplay.skillValue(trained, gains[stat], stat)
-            local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
+            local potentialColor = EqInfoDisplay.skillColor(ceilings[stat], stat)
             box:addLine(statTitle(stat), skill, skillColor,
                 string.format("(%s)", EqInfoDisplay.potentialText(ceilings[stat], unvetted)), potentialColor,
                 EqInfoDisplay.STAT_COLOR[stat])
@@ -561,7 +561,7 @@ function EqInfoDisplay.renderSkills(frame, animal)
         local ceilings, unvetted, gains = record:getShownCeilings(), isUnvetted(record), recentGains(record)
         section.potential.elements[1]:setText(g_i18n:getText(unvetted and "eq_ui_skillPotentialDealer" or "eq_ui_skillPotential"))
         for i, stat in ipairs(EqConstants.STAT_KEYS) do
-            local _, potentialColor = EqInfoDisplay.geneticsValue(ceilings[stat])
+            local potentialColor = EqInfoDisplay.skillColor(ceilings[stat], stat)
             local statColor = EqInfoDisplay.STAT_COLOR[stat]
             fillCell(section.potential.elements[i + 1], statTitle(stat),
                 EqInfoDisplay.potentialText(ceilings[stat], unvetted), potentialColor, statColor)
