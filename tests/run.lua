@@ -400,35 +400,22 @@ do
         repeat EqTraining.beatStep(sheet, "canter", 100, one) until sheet.beat.pos >= 49
         check("the wrong key is ignored", EqTraining.beatPress(sheet, "back", one) == nil and sheet.beat.pos ~= nil)
         local event = EqTraining.beatPress(sheet, "forward", one)
-        check("pressing on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness <= 44,
+        check("pressing on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness < 50,
             tostring(event) .. " " .. sheet.tiredness)
-        for _ = 1, 100 do EqTraining.beatStep(sheet, "gallop", 100, one) end
-        check("a beat let go by means settling first", sheet.beat.settle and sheet.beat.pos == nil)
-        sheet.beat.settle, sheet.beat.pos, sheet.tiredness = false, nil, 90
+        check("a hit's breather grows with exertion", EqTraining.beatRelief(80, false) > EqTraining.beatRelief(65, false) * 3
+            and EqTraining.beatRelief(80, true) > EqTraining.beatRelief(80, false))
+        local missed
+        for _ = 1, 100 do missed = EqTraining.beatStep(sheet, "gallop", 100, one) or missed end
+        check("a beat let go by is a miss and comes again soon", missed ~= nil and sheet.beat.nextAt - sheet.beat.clock <= EqTraining.BEAT_RETRY_MS)
+        sheet.beat.pos, sheet.tiredness = nil, 90
         repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 70
-        check("a gallop's beat asks for a canter", sheet.beat.target == "canter")
+        check("a gallop's beat asks for a canter, even from 90% exertion", sheet.beat.target == "canter")
         check("pressing just early wastes the beat", EqTraining.beatPress(sheet, "back", one) == "off" and sheet.tiredness == 90
-            and sheet.beat.pos == nil)
-        local function until_(f, gait, n)
-            for _ = 1, n or 300 do
-                local e = EqTraining.beatStep(sheet, gait, 100, one)
-                if f(e) then return e end
-            end
-        end
-        until_(function() return false end, "gallop", 100)
-        check("after a wasted beat, galloping on brings no beats", sheet.beat.pos == nil and sheet.beat.settle)
+            and sheet.beat.pos == nil and sheet.beat.nextAt - sheet.beat.clock <= EqTraining.BEAT_RETRY_MS)
         sheet.tiredness = 82
-        until_(function() return false end, "canter", 50)
-        check("nor a canter while it's still too tired to gallop", sheet.beat.pos == nil and sheet.beat.settle)
-        sheet.tiredness = 77
-        until_(function() return false end, "canter", 50)
-        check("nor a canter from 75% exertion (rest first)", sheet.beat.pos == nil and sheet.beat.settle)
-        sheet.tiredness = 74
-        until_(function() return sheet.beat.pos ~= nil end, "canter", 100)
-        check("a settled canter brings the beats back, asking for a gallop", sheet.beat.pos ~= nil and not sheet.beat.settle
-            and sheet.beat.target == "gallop")
-        local missed = until_(function(e) return e ~= nil and e ~= "start" end, "canter")
-        check("a beat passed by is a miss", missed == "miss" and sheet.beat.pos == nil and sheet.beat.settle)
+        local cue
+        for _ = 1, 30 do cue = EqTraining.beatStep(sheet, "canter", 100, one) or cue end
+        check("a canter at 82% still gets its gallop cue", cue == "start" and sheet.beat.target == "gallop")
         local sprinting = EqTraining.newSheet()
         sprinting.tiredness, sprinting.run, sprinting.mode = 50, 20, "stamina"
         sprinting.sprint.ready = true
@@ -442,9 +429,39 @@ do
         local easy = EqTraining.newSheet()
         local hard = EqTraining.newSheet()
         hard.tempo.mult = 5
-        local w1, r1, s1 = EqTraining.beatPressure(easy)
-        local w5, r5, s5 = EqTraining.beatPressure(hard)
-        check("beats get harder as the tempo climbs", w5 < w1 and r5 < r1 and s5 < s1 and r5 > 0)
+        local w1, s1 = EqTraining.beatPressure(easy)
+        local w5, s5 = EqTraining.beatPressure(hard)
+        check("beats get harder as the tempo climbs", w5 < w1 and s5 < s1)
+        -- A whole stamina run, ridden by a rider who presses on the beat except for the beats in miss.
+        local function staminaRun(stamina, miss, seconds)
+            local r = EqTraining.newSheet()
+            local gait, beats, peak, blownMs, ended, n = "canter", 0, 0, 0, false, 0
+            local rng = function(k) n = n % k + 1; return n end
+            for _ = 1, seconds * 10 do
+                EqTraining.step(r, gait, 100, false, stamina)
+                if EqTraining.beatStep(r, gait, 100, rng) == "start" then beats = beats + 1 end
+                if EqTraining.modeStep(r, gait, 100) == nil and r.mode == nil and beats > 0 then ended = true end
+                local b = r.beat
+                if b.pos ~= nil and not miss[beats] and b.pos - r.tiredness >= -EqTraining.BEAT_PERFECT * 0.9 then
+                    local target = b.target
+                    if EqTraining.beatPress(r, target == "gallop" and "forward" or "back", rng) then gait = target end
+                end
+                if beats > 0 then peak = math.max(peak, r.tiredness) end
+                if r.tiredness > EqTraining.ZONE_HIGH then blownMs = blownMs + 100 end
+            end
+            return { peak = peak, blownMs = blownMs, ended = ended, tempo = r.tempo.mult, rest = r.staminaRest }
+        end
+        for _, st in ipairs({ 20, 50, 80 }) do
+            local clean = staminaRun(st, {}, 300)
+            check("hitting every beat holds a stamina-" .. st .. " horse under blowing for 5 minutes",
+                not clean.ended and clean.tempo == 5 and clean.blownMs < EqTraining.TEMPO_BLOWN_MS,
+                string.format("peak %.0f, blown %d ms", clean.peak, clean.blownMs))
+            local one, two = staminaRun(st, { [14] = true }, 300), staminaRun(st, { [14] = true, [15] = true }, 300)
+            check("one missed beat is ridden out (stamina " .. st .. ")", not one.ended and one.tempo == 5)
+            if st >= 50 then check("two missed beats in a row are ridden out (stamina " .. st .. ")", not two.ended and two.tempo == 5) end
+        end
+        local three = staminaRun(50, { [14] = true, [15] = true, [16] = true }, 120)
+        check("three missed beats in a row blow the horse and ask for a rest", three.ended and three.rest)
         -- Training modes: one of stamina, agility and speed at a time.
         do
             local m = EqTraining.newSheet()
@@ -494,10 +511,10 @@ do
             EqTraining.routineStep(quick, (asked == "left" or asked == "right") and "walk" or asked, asked, 400, false, function() return 1 end)
             check("a command done at once still shows for a moment", r.shown == asked and r.clock < r.shownUntil)
             local tired = EqTraining.newSheet()
-            tired.tiredness = 80
+            tired.tiredness = EqTraining.STAMINA_ENTRY_MAX
             EqTraining.modeStep(tired, "canter", 100)
-            check("no canter into a stamina run when close to blowing", tired.entryMs == 0)
-            tired.tiredness = 60
+            check("a stamina run starts from low exertion only", tired.entryMs == 0)
+            tired.tiredness = EqTraining.STAMINA_ENTRY_MAX - 5
             EqTraining.modeStep(tired, "canter", 100)
             tired.tiredness = 80
             EqTraining.modeStep(tired, "canter", 100)
@@ -654,8 +671,16 @@ end
 local gaitCycle = { "walk", "trot", "canter", "gallop" }
 local cycled = session(function(_, t) return gaitCycle[math.floor(t / 20000) % 4 + 1] end)
 local staminaRun = session(function(sheet, _, state)
-    if sheet.tiredness >= 84 then state.ease = true elseif sheet.tiredness <= 72 then state.ease = false end
-    return state.ease and "trot" or "canter"
+    -- A stamina run from a fresh canter, riding every beat.
+    state.gait = state.gait or "canter"
+    local rng = function() return 1 end
+    EqTraining.beatStep(sheet, state.gait, 50, rng)
+    local b = sheet.beat
+    if b.pos ~= nil and b.pos - sheet.tiredness >= -EqTraining.BEAT_PERFECT * 0.9 then
+        local target = b.target
+        if EqTraining.beatPress(sheet, target == "gallop" and "forward" or "back", rng) then state.gait = target end
+    end
+    return state.gait
 end)
 local sprints = session(function(sheet, _, state)
     if sheet.tiredness >= 25 then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
@@ -691,7 +716,9 @@ check("cycling the gaits trains little speed", cycled.speed > 0 and cycled.speed
     string.format("got %.2f", cycled.speed))
 check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
     string.format("flat out %.2f, sprints %.2f", flatOut.speed, sprints.speed))
-check("sprints train little stamina, long runs no speed", sprints.stamina < 0.2 and staminaRun.speed == 0)
+check("sprints train little stamina, stamina runs little speed", sprints.stamina < 0.2 and staminaRun.speed < sprints.speed / 4,
+    string.format("sprints stamina %.2f, run speed %.2f vs sprints %.2f", sprints.stamina, staminaRun.speed, sprints.speed))
+check("a stamina run ridden on the beat fills the stamina day", staminaRun.stamina >= 1.5, string.format("got %.2f", staminaRun.stamina))
 check("outside stamina mode a run only trickles stamina in", (function()
     local outside, inside = EqTraining.newSheet(), EqTraining.newSheet()
     inside.mode, inside.tempo.ms = "stamina", 1
