@@ -32,6 +32,7 @@ dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
 dofile("scripts/core/EqRegistry.lua")
+dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
 dofile("scripts/training/EqLooseHorses.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
@@ -2453,6 +2454,38 @@ end)()
     local author = file ~= nil and file:read("*a"):match("<author>(.-)</author>") or ""
     if file ~= nil then file:close() end
     check("modDesc names the maker", string.find(author, EqRandom.mark(), 1, true) ~= nil)
+end)()
+
+-- Starved map horses get a fresh start; real horses are never touched
+;(function()
+    local function horse(fields)
+        local animal = { isHorse = function() return true end, birthday = { day = 1, month = 1, year = 1, country = 1 },
+            age = 0, health = 0, motherId = "-1", fitness = 0, riding = 0, weight = 0.001, targetWeight = 500 }
+        for k, v in pairs(fields or {}) do animal[k] = v end
+        animal.getIdentifiers = function() return animal.id or "UK 1 1" end
+        return animal
+    end
+    check("a map placeholder is spotted", EqFreshStart.isMapPlaceholder(horse()))
+    check("a foal with a mother is not", not EqFreshStart.isMapPlaceholder(horse({ motherId = "UK 4 7" })))
+    check("a healthy newborn is not", not EqFreshStart.isMapPlaceholder(horse({ health = 80 })))
+    check("a sick adult is not", not EqFreshStart.isMapPlaceholder(horse({ age = 60 })))
+    check("a ridden horse is not", not EqFreshStart.isMapPlaceholder(horse({ fitness = 15 })))
+    check("a dead horse is not", not EqFreshStart.isMapPlaceholder(horse({ isDead = true })))
+    check("a cow is not", not EqFreshStart.isMapPlaceholder({ isHorse = function() return false end, age = 0, health = 0 }))
+
+    EqRegistry.reset()
+    local placeholder = horse({ id = "UK 9 9" })
+    local before = EqRegistry.getOrCreate(placeholder)
+    local foalStats = before.trained.speed + before.trained.agility + before.trained.stamina + before.trained.temperament
+    EqFreshStart.repair(placeholder, EqRandom.new("fresh start test"))
+    local after = EqRegistry.getById("UK 9 9")
+    local adultStats = after.trained.speed + after.trained.agility + after.trained.stamina + after.trained.temperament
+    check("repaired horse is an adult", placeholder.age >= EqFreshStart.MIN_AGE_MONTHS and placeholder.age <= EqFreshStart.MAX_AGE_MONTHS)
+    check("repaired horse is healthy and a normal weight", placeholder.health == 100 and placeholder.weight >= 460)
+    check("repaired horse keeps its record, redrawn for its age", after == before and adultStats > foalStats,
+        string.format("foal %.1f adult %.1f", foalStats, adultStats))
+    check("a repaired horse no longer matches", not EqFreshStart.isMapPlaceholder(placeholder))
+    EqRegistry.reset()
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

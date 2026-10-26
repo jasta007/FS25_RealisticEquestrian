@@ -306,6 +306,13 @@ later, has paid for itself within the second year, and makes good money after th
 bills. `eqDealer` (testing) lists the dealer's horses with their real potential and the
 dealer's view of it.
 
+**Horses that come with a farm:** some maps put horses in their farms' barns with no age and no
+health (Midwest Moraines 4X does). Nobody feeds an unowned barn, so with RLRM they starve to
+nothing before you buy the farm. When one of these reaches your farm it gets a fresh start: an
+adult age of 4 to 12, full health, a normal weight and starting stats for that age. Only a
+newborn with no mother, never ridden and almost no health counts, so a real foal or a sick
+horse is never touched.
+
 ## Risk and retirement
 
 - **Scratches:** a horse that is injured, ill, retired or unsound on the day doesn't start, and
