@@ -312,7 +312,8 @@ end
 -- lands on the obstacle. A canter jumps CANTER_JUMP_SHARE higher, for longer in the air, and
 -- the horse speeds up ACCELERATION_SHARE faster (maxAcceleration, 5 m/s2 in the base game) so
 -- switching between canter and gallop is quicker. On top of that the horse's stats change how
--- it rides (EqTraining.handling): speed sets its top speeds, agility its jump and turn rate.
+-- it rides (EqTraining.handling): speed sets its top speeds, agility its jump and turn rate,
+-- temperament its acceleration and how long it stands after a crash.
 EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
 
@@ -323,15 +324,16 @@ EqTrainingHooks.ACCELERATION_SHARE = 1.6
 --- @param record table|nil the ridden horse's EqHorseRecord
 local function tuneRiding(spec, gait, record)
     local trained = record ~= nil and record.trained or {}
-    local handling = EqTraining.handling(trained.speed, trained.agility)
+    local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
     if type(spec.jumpHeight) == "number" then
         spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
         spec.jumpHeight = spec.eqBaseJumpHeight * handling.jump * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
     end
-    if type(spec.maxAcceleration) == "number" and spec.eqBaseAcceleration == nil then
-        spec.eqBaseAcceleration = spec.maxAcceleration
-        spec.maxAcceleration = spec.maxAcceleration * EqTrainingHooks.ACCELERATION_SHARE
+    if type(spec.maxAcceleration) == "number" then
+        spec.eqBaseAcceleration = spec.eqBaseAcceleration or spec.maxAcceleration
+        spec.maxAcceleration = spec.eqBaseAcceleration * EqTrainingHooks.ACCELERATION_SHARE * handling.acceleration
     end
+    spec.eqCrashHaltMs = EqTrainingHooks.CRASH_HALT_MS * handling.crashHalt
     if type(spec.maxTurnSpeed) == "number" then
         spec.eqBaseTurnSpeed = spec.eqBaseTurnSpeed or spec.maxTurnSpeed
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn
@@ -347,11 +349,13 @@ local function tuneRiding(spec, gait, record)
             if type(value) == "number" then spec.topSpeeds[key] = value > 0 and value * handling.speed or value end
         end
     end
-    local shown = tostring(trained.speed) .. "/" .. tostring(trained.agility)
+    local shown = string.format("%s/%s/%s", tostring(trained.speed), tostring(trained.agility), tostring(trained.temperament))
     if spec.eqHandlingFor ~= shown then
         spec.eqHandlingFor = shown
-        Log:info("Handling: speed %s (top speeds x%.2f), agility %s (jump x%.2f, turn rate x%.2f)",
-            tostring(trained.speed), handling.speed, tostring(trained.agility), handling.jump, handling.turn)
+        Log:info("Handling: speed %s (top speeds x%.2f), agility %s (jump x%.2f, turn rate x%.2f), "
+            .. "temperament %s (acceleration x%.2f, crash stop %d ms)",
+            tostring(trained.speed), handling.speed, tostring(trained.agility), handling.jump, handling.turn,
+            tostring(trained.temperament), handling.acceleration, math.floor(spec.eqCrashHaltMs))
     end
 end
 
@@ -391,7 +395,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local halted = (spec.haltTimer or 0) > 0
     if halted and not spec.eqHalted then
         local was = spec.haltTimer
-        spec.haltTimer = math.min(spec.haltTimer, EqTrainingHooks.CRASH_HALT_MS)
+        spec.haltTimer = math.min(spec.haltTimer, spec.eqCrashHaltMs or EqTrainingHooks.CRASH_HALT_MS)
         -- A jump still in the air or settling when the horse crashes did not clear.
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))

@@ -477,9 +477,16 @@ end
 -- game's value, linear in the stat between the two limits (stat 0 to stat 100), so a horse
 -- never gets too slow or too wild to steer.
 EqTraining.HANDLING = {
-    speed = { 0.75, 1.25 },  -- top speed of every forward gait (James: 0 = 25% slower, 100 = 25% faster)
-    jump = { 0.85, 1.3 },    -- jump height, by agility
-    turn = { 0.8, 1.2 },     -- turn rate, by agility
+    -- Top speed of every forward gait. James, after riding: speed 10 about 10% slower, 100 about 20% faster.
+    speed = { 0.87, 1.2 },
+    -- Jump height (and so time in the air and length), by agility. Lowered after James found
+    -- jumps too high and too long at agility 10 and 100.
+    jump = { 0.8, 1.05 },
+    turn = { 0.75, 1.5 },    -- turn rate, by agility
+    -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
+    -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
+    acceleration = { 0.85, 1.15 },
+    crashHalt = { 1.3, 0.7 },
 }
 
 --- @param limits table { at 0, at 100 }
@@ -494,12 +501,17 @@ end
 --- How a horse's stats change its riding.
 --- @param speed number|nil trained speed
 --- @param agility number|nil trained agility
---- @return table { speed, jump, turn } multipliers on the base game's top speeds, jump height and turn rate
-function EqTraining.handling(speed, agility)
+--- @param temperament number|nil trained temperament
+--- @return table { speed, jump, turn, acceleration, crashHalt } multipliers on the base game's top
+---   speeds, jump height, turn rate and acceleration, and on our crash halt
+function EqTraining.handling(speed, agility, temperament)
+    local limits = EqTraining.HANDLING
     return {
-        speed = handlingShare(EqTraining.HANDLING.speed, speed),
-        jump = handlingShare(EqTraining.HANDLING.jump, agility),
-        turn = handlingShare(EqTraining.HANDLING.turn, agility),
+        speed = handlingShare(limits.speed, speed),
+        jump = handlingShare(limits.jump, agility),
+        turn = handlingShare(limits.turn, agility),
+        acceleration = handlingShare(limits.acceleration, temperament),
+        crashHalt = handlingShare(limits.crashHalt, temperament),
     }
 end
 
