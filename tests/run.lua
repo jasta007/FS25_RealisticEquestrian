@@ -1054,6 +1054,20 @@ do
     check("at least half of a draw is enterable", enterableShort == 0, enterableShort .. " short draws")
     check("monthly draws hold 1 or 2 events", (monthlyCounts[1] or 0) > 0 and (monthlyCounts[2] or 0) > 0
         and (monthlyCounts[1] or 0) + (monthlyCounts[2] or 0) == 300)
+    local noTraining, trainingShort = 0, 0
+    for round = 1, 300 do
+        local count = EqCompetition.drawCount(EqRandom.new("count " .. round), 1, 8)
+        local enterable = round % 2 == 0 and onlyNovice or nil
+        local trainings = 0
+        for _, event in ipairs(EqCompetition.drawSchedule(config, EqRandom.new("training " .. round), EqCompetition.KIND_ROUND,
+            round % 3 ~= 0, nil, { count = count, enterable = enterable })) do
+            if event.tier == "training" then trainings = trainings + 1 end
+        end
+        if trainings == 0 then noTraining = noTraining + 1 end
+        if enterable ~= nil and count >= 3 and trainings == 0 then trainingShort = trainingShort + 1 end
+    end
+    check("every round draw holds a Training Event", noTraining == 0, noTraining .. " draws without one")
+    check("the Training Event fits beside the enterable half", trainingShort == 0)
     local none = EqCompetition.drawSchedule(config, EqRandom.new("nobody"), EqCompetition.KIND_ROUND, true, nil,
         { count = 5, enterable = function() return false end })
     check("a draw still fills when no horse can enter anything", #none == 5)
