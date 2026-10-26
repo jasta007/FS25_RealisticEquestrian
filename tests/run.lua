@@ -2078,6 +2078,21 @@ end)()
         and not EqSettings.apply(settings, "racing", 9))
     check("trainingRate falls back to 1", EqSettings.trainingRate(nil) == 1 and EqSettings.trainingRate({ trainingRate = 0 }) == 1)
 
+    for _, id in ipairs({ "entryFeeScale", "prizeScale" }) do
+        local row = EqSettings.BY_ID[id]
+        check(id .. " runs 0.5x to 2x", row.values[1] == 0.5 and row.values[#row.values] == 2
+            and row.texts[1].text == "0.5x" and row.texts[#row.texts].text == "2x")
+        check(id .. " defaults to 1x", row.values[EqSettings.stateOf(row, nil)] == 1)
+        check(id .. " falls back to 1", EqSettings.multiplier({}, id) == 1)
+    end
+
+    local event = { fee = 250, prize = 1000 }
+    EqCompetition.scaleMoney(event, 2, 0.5)
+    check("fee and prize scales apply to an event", event.fee == 500 and event.prize == 500)
+    event = { fee = 250, prize = 1000 }
+    EqCompetition.scaleMoney(event, 0.75, 1.25)
+    check("scaled money keeps the draw's rounding", event.fee == 190 and event.prize == 1250)
+
     local translations = {}
     for _, lang in ipairs({ "en", "de" }) do
         local file = io.open("translations/translation_" .. lang .. ".xml")

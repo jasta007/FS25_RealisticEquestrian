@@ -67,7 +67,7 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
-        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX }
+        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1 }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -184,6 +184,8 @@ function EqCompetitionManager.openRound(kind)
     local drawn = EqCompetition.drawSchedule(config, rng, kind, EqCompetitionManager.settings.racing,
         EqCompetitionManager.homeRegion(), options)
     for _, event in ipairs(drawn) do
+        EqCompetition.scaleMoney(event, EqSettings.multiplier(EqCompetitionManager.settings, "entryFeeScale"),
+            EqSettings.multiplier(EqCompetitionManager.settings, "prizeScale"))
         event.id = EqCompetitionManager.nextEventId
         event.entries = {}
         EqCompetitionManager.nextEventId = EqCompetitionManager.nextEventId + 1
@@ -1161,6 +1163,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setFloat(key .. ".settings#trainingRate", EqCompetitionManager.settings.trainingRate)
     xmlFile:setInt(key .. ".settings#eventsMin", EqCompetitionManager.settings.eventsMin)
     xmlFile:setInt(key .. ".settings#eventsMax", EqCompetitionManager.settings.eventsMax)
+    xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
+    xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
 
@@ -1238,6 +1242,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.trainingRate = xmlFile:getFloat(key .. ".settings#trainingRate", settings.trainingRate)
     settings.eventsMin = xmlFile:getInt(key .. ".settings#eventsMin", settings.eventsMin)
     settings.eventsMax = xmlFile:getInt(key .. ".settings#eventsMax", settings.eventsMax)
+    settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
+    settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
 

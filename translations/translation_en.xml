@@ -474,5 +474,9 @@
         <text name="eq_ui_career_earnings" text="Prize money"/>
         <text name="eq_ui_career_eliminations" text="Eliminations"/>
         <text name="eq_ui_button_viewResults" text="View results"/>
+        <text name="eq_settings_entryFeeScale" text="Entry fees"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Scales the entry fee of every event. 1x is normal. Events already on the calendar keep their fee; changes apply from the next round."/>
+        <text name="eq_settings_prizeScale" text="Prize money"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Scales the prize money of every event. 1x is normal. Events already on the calendar keep their prizes; changes apply from the next round."/>
     </texts>
 </l10n>
