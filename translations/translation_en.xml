@@ -19,7 +19,7 @@
         <text name="eq_train_view_freestyle" text="Freestyle"/>
         <text name="eq_train_view_stamina" text="Stamina"/>
         <text name="eq_train_view_speed" text="Speed"/>
-        <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
+        <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. From x4 you must also hold your pace between commands. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
         <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a short interval. The training program will then ask you for a new manoeuvre to hold. Achieve it within a few seconds to keep the combo going."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
@@ -376,7 +376,6 @@
         <text name="eq_and" text="and"/>
         <text name="eq_facility_improves" text="Improves %s training (Realistic Equestrian)"/>
         <text name="eq_facility_inside" text="Training in: %s"/>
-        <text name="eq_facility_stable" text="Horse stable"/>
         <text name="eq_facility_indoorArena" text="Riding hall"/>
         <text name="eq_facility_ridingCentre" text="Riding centre"/>
         <text name="eq_facility_outdoorArena" text="Outdoor arena"/>

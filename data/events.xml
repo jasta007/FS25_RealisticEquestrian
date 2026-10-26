@@ -41,6 +41,7 @@
         risk            multiplies elimination and injury chances (easier courses below 1)
         venue           true: the event is held at a named venue from <venues>, which goes in
                         its name ("Pallegney Grand Prix")
+        always          true: every draw of its kind holds at least one event of this tier
 
     goings (shown as Conditions): injury multiplies the injury chance in those conditions.
     risk: the injuries a horse can pick up, by how often each happens. How long each takes to heal,
@@ -101,7 +102,7 @@
     </disciplines>
 
     <tiers>
-        <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5"/>
+        <tier name="training"     minAge="24" maxAge="35" minRating="0"  maxRating="100" fee="150"  prize="0"     field="8"  rivalMin="12" rivalMax="38" monthly="false" chance="0.5"  trainingBoost="1" risk="0.5" always="true"/>
         <tier name="novice"       minAge="36" maxAge="0"  minRating="0"  maxRating="60"  fee="250"  prize="2000"  field="10" rivalMin="32" rivalMax="52" monthly="false" chance="0.6"  trainingBoost="0.5" risk="0.8"/>
         <tier name="intermediate" minAge="36" maxAge="0"  minRating="35" maxRating="100" fee="600"  prize="5000"  field="10" rivalMin="50" rivalMax="70" monthly="false" chance="0.45"  trainingBoost="0.35" risk="1.0"/>
         <tier name="advanced"     minAge="36" maxAge="0"  minRating="55" maxRating="100" fee="1500" prize="15000" field="12" rivalMin="68" rivalMax="88" monthly="true"  chance="0.5"  trainingBoost="0.25" risk="1.1" venue="true"/>

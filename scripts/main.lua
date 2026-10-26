@@ -27,6 +27,7 @@ source(modDirectory .. "scripts/core/EqHorseRecord.lua")
 source(modDirectory .. "scripts/core/EqStatLog.lua")
 source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
@@ -268,6 +269,16 @@ local function onMissionLoaded(mission)
         end
     end)
 
+    -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
+    -- RLRM's daily low-health death roll.
+    guarded("map horses fresh start", function()
+        if not mission:getIsServer() then return end
+        EqFreshStart.check()
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+            guarded("map horses fresh start", EqFreshStart.check)
+        end, EqFreshStart)
+    end)
+
     guarded("competition start", function()
         if not mission:getIsServer() or EqCompetitionManager.config == nil then return end
         EqCompetitionManager.ensureOpen()
@@ -310,6 +321,7 @@ local function onMissionDelete()
         EqStatLog.reset()
         EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
+        g_messageCenter:unsubscribeAll(EqFreshStart)
         local config = EqCompetitionManager.config
         EqCompetitionManager.reset()
         EqCompetitionManager.config = config

@@ -36,9 +36,6 @@
     Part of Realistic Equestrian by Jasta007.
 -->
 <facilities ownedCap="0.25" riddenCap="0.6" eventCap="0.05">
-    <kind name="stable" radius="20" fullAt="1"
-          ownedTemperament="0.05"
-          events="dressage:0.005"/>
     <kind name="indoorArena" radius="35" fullAt="1"
           ownedAgility="0.10" ownedTemperament="0.10"
           riddenStamina="0.15" riddenAgility="0.35" riddenTemperament="0.35"
@@ -60,17 +57,18 @@
           riddenAgility="0.40" riddenTemperament="0.10"
           events="showJumping:0.03 eventing:0.01"/>
 
+    <!-- A plain stable only houses horses, so it gives no bonus: the Equestrian Pack's L barn
+         (horseStable.xml) and the Horse Stable mod are left out on purpose. A building that is
+         a stable and a place to ride, like the Riding Stable mod, counts as what you ride in. -->
+
     <!-- Rudolf Hoermann Equestrian Pack (FS25_horsePack) -->
     <match kind="indoorArena" xml="FS25_horsePack/xml/ridingHall.xml"/>
     <match kind="outdoorArena" xml="FS25_horsePack/xml/outdoorRidingArea.xml"/>
-    <match kind="stable" xml="FS25_horsePack/xml/horseStable.xml"/>
     <!-- Riding Hall 2k26 (FS25_RidingHall): the hall, and its jumps sold one by one -->
     <match kind="indoorArena" xml="FS25_RidingHall/ReitHalle.xml"/>
     <match kind="jumps" xml="FS25_RidingHall/props"/>
     <!-- Riding Stable (FS25_RidingStable): stable with an indoor school and obstacles -->
     <match kind="ridingCentre" xml="FS25_RidingStable/XML/horseBarnBig.xml"/>
-    <!-- Horse Stable (FS25_horseStable) -->
-    <match kind="stable" xml="FS25_horseStable/horseStable.xml"/>
 
     <!-- Base game: the round roofed pen (mapUS barn02, "Farm Barn") on any map that places it,
          such as Elmcreek 25 and Frontier. Only the game's own file: "barn02" is too common a
