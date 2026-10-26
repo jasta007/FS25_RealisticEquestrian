@@ -100,13 +100,21 @@ local function adjustRiding(spec, gait, factor, dt)
 end
 
 
--- Jumps: while the horse is in the air we look straight down from it for anything with a
--- collision that is not the ground. A jump counts as cleared when something at least
--- JUMP_MIN_HEIGHT tall was under it in the air and it did not land on top of it.
+-- Jumps: while the horse is in the air we look down from a row of points along its body (and
+-- either side) for anything with a collision that is not the ground. A jump is judged
+-- JUMP_SETTLE_MS after landing: it counts as cleared when something at least JUMP_MIN_HEIGHT
+-- tall was under the horse in the air, it did not end up standing on it, and it did not hit
+-- anything on the way (a crash, or losing most of its take-off speed).
 EqTrainingHooks.JUMP_MIN_HEIGHT = 0.25
 EqTrainingHooks.JUMP_RAY_UP = 0.3
-EqTrainingHooks.JUMP_RAY_LENGTH = 4
+EqTrainingHooks.JUMP_RAY_LENGTH = 6
+-- Ray offsets in metres: along the horse (forward is positive) and across it.
+EqTrainingHooks.JUMP_RAYS_ALONG = { -1.2, -0.6, 0, 0.6, 1.2 }
+EqTrainingHooks.JUMP_RAYS_ACROSS = { -0.4, 0.4 }
 EqTrainingHooks.JUMP_TIMEOUT_MS = 3000
+EqTrainingHooks.JUMP_SETTLE_MS = 600
+-- A jump that ends with less than this share of the take-off speed hit something.
+EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 
@@ -139,23 +147,37 @@ local function jumpMask()
 end
 
 
---- How tall the thing straight under the horse is, if there is one.
---- @param vehicle table
---- @return number|nil height above the ground in metres
-local function obstacleBelow(vehicle)
-    if raycastAll == nil or vehicle.rootNode == nil then return nil end
-    local x, y, z = getWorldTranslation(vehicle.rootNode)
+--- How tall the thing under one point is, if there is one.
+--- @return number|nil height above the ground in metres, string|nil name
+local function obstacleAt(vehicle, x, y, z)
     local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
     probe.vehicle, probe.height, probe.name = vehicle, nil, nil
     raycastAll(x, y + EqTrainingHooks.JUMP_RAY_UP, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH,
         "jumpRaycastCallback", EqTrainingHooks, jumpMask())
     probe.vehicle = nil
     if probe.height == nil then return nil end
-    return probe.height - ground
+    return probe.height - ground, probe.name
 end
 
 
---- Follow a jump through the air and judge it on landing.
+--- The tallest thing under the horse's body, if there is one.
+--- @param vehicle table
+--- @return number|nil height above the ground in metres, string|nil name
+local function obstacleBelow(vehicle)
+    if raycastAll == nil or vehicle.rootNode == nil then return nil end
+    local best, bestName = nil, nil
+    local function look(along, across)
+        local x, y, z = localToWorld(vehicle.rootNode, across, 0, along)
+        local height, name = obstacleAt(vehicle, x, y, z)
+        if height ~= nil and (best == nil or height > best) then best, bestName = height, name end
+    end
+    for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do look(along, 0) end
+    for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
+    return best, bestName
+end
+
+
+--- Follow a jump through the air and judge it once the horse has landed and settled.
 --- @param vehicle table
 --- @param spec table spec_rideable
 --- @param sheet table
@@ -163,31 +185,52 @@ end
 local function trackJump(vehicle, spec, sheet, worn)
     local jump = spec.eqJump
     if jump == nil then return end
-    local age = (g_time or 0) - jump.startedAt
-    local inAir
-    if spec.isOnGround ~= nil then
-        inAir = not spec.isOnGround
-    else
-        inAir = age < EqTrainingHooks.JUMP_FALLBACK_MS
+    local now = g_time or 0
+    local age = now - jump.startedAt
+    if (spec.haltTimer or 0) > 0 then jump.crashed = true end
+
+    local height, name = obstacleBelow(vehicle)
+    if jump.landedAt == nil then
+        local inAir
+        if spec.isOnGround ~= nil then
+            inAir = not spec.isOnGround
+        else
+            inAir = age < EqTrainingHooks.JUMP_FALLBACK_MS
+        end
+        if inAir then
+            jump.airborne = true
+            if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
+            if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
+        elseif not jump.airborne and age < 500 then
+            return
+        end
+        jump.landedAt = now
     end
 
-    local height = obstacleBelow(vehicle)
-    if inAir then
-        jump.airborne = true
-        if height ~= nil and height > jump.best then jump.best, jump.over = height, probe.name end
-        if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
-    elseif not jump.airborne and age < 500 then
-        return
-    end
+    -- Settling: standing on the obstacle or stopping dead after landing spoils the jump.
+    if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then jump.onTop = true end
+    local speed = math.abs(spec.currentSpeed or 0)
+    if jump.speed > 0 and speed < jump.speed * EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE then jump.knocked = true end
+    if now - jump.landedAt < EqTrainingHooks.JUMP_SETTLE_MS then return end
 
     spec.eqJump = nil
-    local landedOnTop = height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT
-    local cleared = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT and not landedOnTop
-    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s, %d ms, ground flag %s)",
-        cleared and "cleared" or "nothing cleared", jump.best, tostring(jump.over), landedOnTop and ", landed on top of it" or "",
-        age, tostring(spec.isOnGround ~= nil))
+    local high = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT
+    local cleared = high and not jump.onTop and not jump.crashed and not jump.knocked
+    local why = ""
+    if high and not cleared then
+        why = jump.crashed and ", crashed" or jump.knocked and ", hit it (slowed from %.1f to %.1f m/s)" or ", landed on top of it"
+        why = string.format(why, jump.speed, speed)
+    end
+    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s, %d ms, ground flag %s, take-off at a %s)",
+        cleared and "cleared" or "nothing cleared", jump.best, tostring(jump.over), why,
+        age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
     if cleared then
         EqTrainingHud.pop("jump", EqTraining.clearJump(sheet, worn))
+    elseif high then
+        -- Hitting or landing on the obstacle is a refusal: the combo goes.
+        local hadCombo = sheet.combo.count > 0
+        sheet.combo.count, sheet.combo.timer = 0, 0
+        if hadCombo then EqTrainingHud.pop("jumpLost") end
     else
         EqTraining.emptyJump(sheet, worn)
     end
@@ -299,6 +342,31 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 end
 
 
+--- Log, once a game, the base game's riding numbers that look like jump, speed or gait
+--- settings, so canter jumps and gait changes can be tuned once we know their names.
+local function logRideableFields(spec)
+    if EqTrainingHooks.loggedRideable then return end
+    EqTrainingHooks.loggedRideable = true
+    local function dump(prefix, t, depth)
+        local keys = {}
+        for key in pairs(t) do if type(key) == "string" or type(key) == "number" then table.insert(keys, key) end end
+        table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+        for _, key in ipairs(keys) do
+            local value, name = t[key], prefix .. tostring(key)
+            local lower = name:lower()
+            local wanted = lower:find("jump") or lower:find("speed") or lower:find("gait") or lower:find("accel")
+                or lower:find("decel") or lower:find("velocity") or lower:find("force")
+            if (type(value) == "number" or type(value) == "boolean") and wanted then
+                Log:info("Rideable field %s = %s", name, tostring(value))
+            elseif type(value) == "table" and depth < 2 and key ~= "cluster" and key ~= "actionEvents" then
+                dump(name .. ".", value, depth + 1)
+            end
+        end
+    end
+    dump("spec_rideable.", spec, 0)
+end
+
+
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
 --- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but a
 --- stamina run or sprint keeps its pace through it (paceGait).
@@ -312,8 +380,9 @@ function EqTrainingHooks.onJump(vehicle)
     local sheet = EqTrainingHooks.getSheet(id)
     EqTraining.addJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
-    spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false }
+    spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
+    pcall(logRideableFields, spec)
 end
 
 
