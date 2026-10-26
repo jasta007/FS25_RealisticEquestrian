@@ -813,15 +813,14 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                             share, now and STAT_COLOR.stamina or COLOR.grey)
                     end
                 end
-            elseif beat.settle and sheet.mode == "stamina" and sheet.routine.request == nil and not sheet.sprint.ready then
-                -- After a miss: back to a steady canter before the beats start again.
-                -- Too tired to settle at a canter: the Stamina view says rest, Freestyle says nothing.
+            elseif view == "stamina" and sheet.staminaRest and sheet.mode == nil and sheet.entryMs == 0
+                and sheet.routine.request == nil then
+                -- A run is over: rest until a new canter won't blow the horse, then canter again.
                 if sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
-                    if view == "stamina" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_train_stamina_rest"), 1, COLOR.yellow) end
-                elseif spec.eqLastGait == "gallop" then
-                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_canter"), 1, STAT_COLOR.stamina)
-                elseif spec.eqLastGait == "canter" then
-                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_beat_settle_hold"), beat.settleMs / EqTraining.BEAT_SETTLE_MS, COLOR.grey)
+                    EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_train_stamina_rest"), EqTraining.STAMINA_ENTRY_MAX),
+                        EqStats.clamp(1 - (sheet.tiredness - EqTraining.STAMINA_ENTRY_MAX) / (100 - EqTraining.STAMINA_ENTRY_MAX), 0, 1), COLOR.yellow)
+                else
+                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_train_stamina_again"), 1, STAT_COLOR.stamina)
                 end
             end
         end
@@ -850,7 +849,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
                 math.ceil((EqTraining.STAMINA_ENTRY_MS - sheet.entryMs) / 1000)), leftColor = focused and STAT_COLOR.stamina or COLOR.grey })
             if focused then table.insert(rows, { bar = sheet.entryMs / EqTraining.STAMINA_ENTRY_MS, color = STAT_COLOR.stamina }) end
         elseif view == "stamina" and sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
-            table.insert(rows, { left = g_i18n:getText("eq_train_stamina_rest"), leftColor = COLOR.yellow })
+            table.insert(rows, { left = string.format(g_i18n:getText("eq_train_stamina_rest"), EqTraining.STAMINA_ENTRY_MAX), leftColor = COLOR.yellow })
         elseif view == "stamina" then
             table.insert(rows, { left = g_i18n:getText("eq_train_tempo_none"), leftColor = COLOR.grey })
         end

@@ -163,34 +163,37 @@ EqTraining.TEMPO_BLOWN_MS = 5000
 EqTraining.TEMPO_SLOW_MS = 3500
 -- At tempo x2 and up, stamina trains at least this share of the zone even while exertion is low.
 EqTraining.TEMPO_LOW_FLOOR = 0.35
--- The canter into a stamina run doesn't start from this exertion up: it would run the horse into blowing.
-EqTraining.STAMINA_ENTRY_MAX = 75
+-- A stamina run starts from a canter below STAMINA_ENTRY_MAX exertion: the entry canter and the
+-- first beats add about 20, which still leaves room before blowing hard. After a run the horse
+-- rests (walk or stand) below it before the next one.
+EqTraining.STAMINA_ENTRY_MAX = 40
 
 -- Beats: during a run a marker sweeps along the exertion meter, from 0 to 100 in BEAT_SWEEP_MS,
 -- every BEAT_GAP_MS (a random time in the range). Pressing the key for the other fast gait
 -- (forward for gallop, back for canter) while it is within BEAT_WINDOW of the horse's exertion
 -- is a hit (within BEAT_PERFECT, a perfect one); pressing it up to BEAT_NEAR points early wastes
--- the beat, and any other key, or a press further off, is ignored. A hit:
--- the horse gets its breath back (exertion drops BEAT_RELIEF, BEAT_PERFECT_RELIEF for a
--- perfect hit) and the tempo climbs (see TEMPO_HITS). That is how a rider holds a high tempo
--- without blowing.
+-- the beat, and any other key, or a press further off, is ignored. A hit raises the tempo (see
+-- TEMPO_HITS) and gives the horse its breath back: exertion drops BEAT_RELIEF, plus
+-- BEAT_RELIEF_SLOPE for every point above BEAT_RELIEF_FROM (BEAT_PERFECT_SHARE times that for a
+-- perfect hit). The higher the exertion, the bigger the breather, so a rider who hits every beat
+-- swings between about 60 and 80 and never blows (gallop and canter both raise exertion: a
+-- canter and gallop phase together add about 30), while a missed beat (no breather, and a
+-- gallop runs on) costs 10 to 20 points: one or two can be ridden out, three in a row blow the horse.
+-- A missed or wasted beat comes again after BEAT_RETRY_MS rather than a full gap.
 EqTraining.BEAT_SWEEP_MS = 2500
-EqTraining.BEAT_GAP_MS = { 4000, 7000 }
+EqTraining.BEAT_GAP_MS = { 3000, 5000 }
+EqTraining.BEAT_RETRY_MS = 1500
 EqTraining.BEAT_WINDOW = 7
 EqTraining.BEAT_PERFECT = 2.5
-EqTraining.BEAT_RELIEF = 6
-EqTraining.BEAT_PERFECT_RELIEF = 10
+EqTraining.BEAT_RELIEF = 2
+EqTraining.BEAT_RELIEF_FROM = 65
+EqTraining.BEAT_RELIEF_SLOPE = 0.8
+EqTraining.BEAT_PERFECT_SHARE = 1.3
 EqTraining.BEAT_NEAR = 15
--- Never ask for a gallop from BEAT_GALLOP_MAX exertion up: it would push the horse into blowing
--- hard. After a missed or wasted beat the rider settles first: canter BEAT_SETTLE_MS below
--- BEAT_GALLOP_MAX before the beats start again.
-EqTraining.BEAT_GALLOP_MAX = 80
-EqTraining.BEAT_SETTLE_MS = 3000
--- It gets harder as the tempo climbs, so no horse gallops for ever: for each tempo step above
--- x1 the window shrinks BEAT_WINDOW_PRESSURE, the breather BEAT_RELIEF_PRESSURE and the sweep
--- time BEAT_SWEEP_PRESSURE (at x5: window 52%, breather 40%, sweep 60%).
+-- The timing gets harder as the tempo climbs: for each tempo step above x1 the window shrinks
+-- BEAT_WINDOW_PRESSURE and the sweep time BEAT_SWEEP_PRESSURE (at x5: window 52%, sweep 60%).
+-- The breather doesn't shrink: a rider who keeps hitting the beat keeps the horse under blowing.
 EqTraining.BEAT_WINDOW_PRESSURE = 0.12
-EqTraining.BEAT_RELIEF_PRESSURE = 0.15
 EqTraining.BEAT_SWEEP_PRESSURE = 0.1
 
 -- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
@@ -321,7 +324,7 @@ end
 
 --- @return table beat a fresh beat state
 function EqTraining.newBeat()
-    return { clock = 0, nextAt = 0, pos = nil, target = nil, settle = false, settleMs = 0 }
+    return { clock = 0, nextAt = 0, pos = nil, target = nil }
 end
 
 
@@ -332,14 +335,31 @@ local function beatGap(range, rng)
 end
 
 
---- The beat's window, breather and sweep time at the current tempo.
+--- The beat's window and sweep time at the current tempo.
 --- @param sheet table
---- @return number window exertion points, number relief share 0..1, number sweep milliseconds
+--- @return number window exertion points, number sweep milliseconds
 function EqTraining.beatPressure(sheet)
     local steps = (sheet.tempo ~= nil and sheet.tempo.mult or 1) - 1
     return EqTraining.BEAT_WINDOW * (1 - EqTraining.BEAT_WINDOW_PRESSURE * steps),
-        1 - EqTraining.BEAT_RELIEF_PRESSURE * steps,
         EqTraining.BEAT_SWEEP_MS * (1 - EqTraining.BEAT_SWEEP_PRESSURE * steps)
+end
+
+
+--- How much exertion a beat hit takes off.
+--- @param tiredness number 0-100
+--- @param perfect boolean
+--- @return number exertion points
+function EqTraining.beatRelief(tiredness, perfect)
+    local relief = EqTraining.BEAT_RELIEF + EqTraining.BEAT_RELIEF_SLOPE * math.max(0, tiredness - EqTraining.BEAT_RELIEF_FROM)
+    return relief * (perfect and EqTraining.BEAT_PERFECT_SHARE or 1)
+end
+
+
+--- A missed or wasted beat: the tempo progress goes and the cue comes again soon.
+local function beatLost(sheet)
+    local beat = sheet.beat
+    beat.pos, beat.nextAt = nil, beat.clock + EqTraining.BEAT_RETRY_MS
+    EqTraining.tempoBeat(sheet.tempo, 0)
 end
 
 
@@ -356,7 +376,7 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
     local fast = gait == "canter" or gait == "gallop"
     -- Sprint owns W and a routine command owns the middle of the screen: no new beats meanwhile.
     local busy = sheet.mode ~= "stamina" or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
-    local window, _, sweep = EqTraining.beatPressure(sheet)
+    local window, sweep = EqTraining.beatPressure(sheet)
     if beat.pos ~= nil then
         if busy then
             beat.pos = nil
@@ -364,38 +384,18 @@ function EqTraining.beatStep(sheet, gait, dt, rng)
             return nil
         end
         beat.pos = beat.pos + 100 * dt / sweep
-        -- Until the cue is near, it follows the gait the horse is in; a gallop it can't afford
-        -- any more is called off quietly.
+        -- Until the cue is near, it follows the gait the horse is in.
         if fast and beat.pos - sheet.tiredness < -(window + EqTraining.BEAT_NEAR) then
             beat.target = gait == "gallop" and "canter" or "gallop"
-            if beat.target == "gallop" and sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX then
-                beat.pos, beat.nextAt = nil, beat.clock + EqTraining.BEAT_GAP_MS[1]
-                return nil
-            end
         end
         if beat.pos - sheet.tiredness > window or not fast then
-            beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
-            beat.settle, beat.settleMs = true, 0
-            EqTraining.tempoBeat(sheet.tempo, 0)
+            beatLost(sheet)
             return "miss"
         end
         return nil
     end
-    -- Settling after a miss: a steady canter below STAMINA_ENTRY_MAX for BEAT_SETTLE_MS.
-    if beat.settle then
-        if gait == "canter" and sheet.tiredness < EqTraining.STAMINA_ENTRY_MAX then
-            beat.settleMs = beat.settleMs + dt
-        else
-            beat.settleMs = 0
-        end
-        if beat.settleMs >= EqTraining.BEAT_SETTLE_MS then
-            beat.settle, beat.settleMs = false, 0
-            beat.nextAt = math.min(beat.nextAt, beat.clock)
-        end
-    end
-    if busy or not fast or sheet.run <= 0 or beat.settle
-        or (gait == "canter" and sheet.tiredness >= EqTraining.BEAT_GALLOP_MAX) then
-        beat.nextAt = math.max(beat.nextAt, beat.clock + (beat.settle and 0 or EqTraining.BEAT_GAP_MS[1]))
+    if busy or not fast or sheet.run <= 0 then
+        beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_RETRY_MS)
         return nil
     end
     if beat.clock >= beat.nextAt then
@@ -415,19 +415,16 @@ end
 function EqTraining.beatPress(sheet, key, rng)
     local beat = sheet.beat
     if beat.pos == nil or key ~= (beat.target == "gallop" and "forward" or "back") then return nil end
-    local window, relief = EqTraining.beatPressure(sheet)
+    local window = EqTraining.beatPressure(sheet)
     local gap = beat.pos - sheet.tiredness
     if math.abs(gap) <= window then
         local perfect = math.abs(gap) <= EqTraining.BEAT_PERFECT
-        sheet.tiredness = math.max(0, sheet.tiredness
-            - (perfect and EqTraining.BEAT_PERFECT_RELIEF or EqTraining.BEAT_RELIEF) * relief)
+        sheet.tiredness = math.max(0, sheet.tiredness - EqTraining.beatRelief(sheet.tiredness, perfect))
         beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
         return perfect and "perfect" or "hit", EqTraining.tempoBeat(sheet.tempo, perfect and 2 or 1)
     end
     if gap < -window and gap >= -(window + EqTraining.BEAT_NEAR) then
-        beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
-        beat.settle, beat.settleMs = true, 0
-        EqTraining.tempoBeat(sheet.tempo, 0)
+        beatLost(sheet)
         return "off"
     end
     return nil
@@ -560,7 +557,8 @@ end
 --- @return string|nil event "stamina" when stamina mode starts
 function EqTraining.modeStep(sheet, gait, dt)
     local mode = sheet.mode
-    if mode == "stamina" and sheet.tempo.ms <= 0 then mode = nil end
+    -- A run that ends with the tempo (blown, or too long below a canter): rest, then canter again.
+    if mode == "stamina" and sheet.tempo.ms <= 0 then mode, sheet.staminaRest = nil, true end
     if mode == "agility" and sheet.combo.count == 0 then mode = nil end
     if mode == "speed" and sheet.sprint.count == 0 and not speedBusy(sheet) then mode = nil end
     sheet.mode = mode
@@ -580,7 +578,7 @@ function EqTraining.modeStep(sheet, gait, dt)
     -- The streak starts now (tempo.ms > 0 is what keeps stamina mode on).
     sheet.tempo.ms = 1
     sheet.beat.nextAt = sheet.beat.clock + EqTraining.BEAT_GAP_MS[1]
-    sheet.beat.settle, sheet.beat.settleMs = false, 0
+    sheet.staminaRest = nil
     return "stamina"
 end
 
@@ -602,7 +600,7 @@ function EqTraining.startSprint(sheet)
     -- Sprinting out of a stamina run ends the tempo.
     if sheet.mode == "stamina" then
         sheet.tempo = EqTraining.newTempo()
-        sheet.beat.pos, sheet.beat.settle, sheet.beat.settleMs = nil, false, 0
+        sheet.beat.pos = nil
     end
     sheet.mode = "speed"
     -- The press that started it (seen by both the action and the key poll) is not a tap.

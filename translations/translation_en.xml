@@ -90,9 +90,8 @@
         <text name="eq_beat_canter" text="Canter! (S)"/>
         <text name="eq_beat_ready_gallop" text="Get ready to gallop..."/>
         <text name="eq_beat_ready_canter" text="Get ready to canter..."/>
-        <text name="eq_beat_settle_canter" text="Back to a canter (S)"/>
-        <text name="eq_train_stamina_rest" text="Too tired: rest first"/>
-        <text name="eq_beat_settle_hold" text="Steady canter..."/>
+        <text name="eq_train_stamina_rest" text="Rest (walk or stand) until exertion is under %d%%"/>
+        <text name="eq_train_stamina_again" text="Canter to start again"/>
         <text name="eq_train_run" text="Run: %d s"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
