@@ -2630,5 +2630,33 @@ end)()
     EqRegistry.reset()
 end)()
 
+-- Welcome popups: which menu series shows, and the horse pen check.
+;(function()
+    EqTrainingHud = EqTrainingHud or {}
+    dofile("scripts/gui/EqWelcome.lua")
+    local seen = {}
+    local function state(t)
+        t.seen = function(series) return seen[series] == true end
+        return t
+    end
+    check("no menu welcome without horses", EqWelcome.menuSeries(state({ hasHorses = false, infoOpen = true })) == nil)
+    check("menu welcome first", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true })) == "menu")
+    seen.menu = true
+    check("info welcome on the Information tab", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true })) == "info")
+    check("events welcome even without horses", EqWelcome.menuSeries(state({ hasHorses = false, eventsOpen = true })) == "events")
+    seen.info, seen.events = true, true
+    check("nothing once all are seen", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true, eventsOpen = true })) == nil)
+
+    local oldAnimalType = AnimalType
+    AnimalType = { HORSE = 4, COW = 1 }
+    local horsePen = { spec_husbandryAnimals = { animalTypeIndex = 4 }, x = 100, z = 0 }
+    local cowPen = { spec_husbandryAnimals = { animalTypeIndex = 1 }, x = 0, z = 0 }
+    local positionOf = function(p) return p.x, p.z end
+    check("a cow pen is not a horse pen", not EqWelcome.nearHorsePen({ cowPen }, 0, 0, 35, positionOf))
+    check("near a horse pen", EqWelcome.nearHorsePen({ cowPen, {}, horsePen }, 80, 10, 35, positionOf))
+    check("too far from a horse pen", not EqWelcome.nearHorsePen({ horsePen }, 50, 0, 35, positionOf))
+    AnimalType = oldAnimalType
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

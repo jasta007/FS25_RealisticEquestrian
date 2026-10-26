@@ -9,7 +9,8 @@
     a click anywhere moves on to the next page or closes the last one, and each page closes by
     itself after HELP_TIMEOUT_MS. Combo bursts ("x3!") pop up in the middle of the screen, and a
     temperament routine's request shows there with its countdown. Which views' help the player has already seen is kept in
-    modSettings, so it only pops up by itself the first time.
+    modSettings, so it only pops up by itself the first time. The welcome popups (EqWelcome)
+    use the same popup, in the world and over RLRM's menu.
 ]]
 
 EqTrainingHud = {}
@@ -43,6 +44,8 @@ EqTrainingHud.pageIndex = 0
 EqTrainingHud.pageShownAt = 0
 EqTrainingHud.mouseWasDown = true
 EqTrainingHud.seen = nil
+EqTrainingHud.inMenu = false     -- the popups showing belong to RLRM's menu
+EqTrainingHud.drawnAt = nil      -- g_time of the last draw: the riding and world draws share one popup
 
 
 --- @return table overlay one white pixel, made on first use
@@ -339,9 +342,11 @@ end
 
 --- Start a series of help popups, replacing any showing.
 --- @param pages table list of { title, text }
-function EqTrainingHud.showHelp(pages)
+--- @param inMenu boolean|nil true for popups over RLRM's menu
+function EqTrainingHud.showHelp(pages, inMenu)
     if pages == nil or #pages == 0 then return end
     EqTrainingHud.pages = pages
+    EqTrainingHud.inMenu = inMenu == true
     EqTrainingHud.pageIndex = 1
     EqTrainingHud.pageShownAt = g_time or 0
     -- A click held down when the popup opens does not count.
@@ -362,10 +367,11 @@ end
 
 
 --- Move to the next page on a click or after the timeout. Never takes the click from the game.
+--- In the menu every click counts, even one on a tab or a list.
 local function updateHelp()
     local down = Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) or false
     local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
-    local clicked = down and not EqTrainingHud.mouseWasDown and not guiOpen
+    local clicked = down and not EqTrainingHud.mouseWasDown and (EqTrainingHud.inMenu or not guiOpen)
     EqTrainingHud.mouseWasDown = down
 
     local timedOut = (g_time or 0) - EqTrainingHud.pageShownAt > EqTrainingHud.HELP_TIMEOUT_MS
@@ -376,9 +382,19 @@ local function updateHelp()
 end
 
 
---- Draw the help popup, if one is showing. Call every frame while riding.
-function EqTrainingHud.drawHelp()
+--- Draw the help popup, if one is showing. Call every frame while riding, in the world and in
+--- RLRM's menu; a popup only draws where it belongs, and only once a frame.
+--- @param inMenu boolean|nil true when called from RLRM's menu
+function EqTrainingHud.drawHelp(inMenu)
     if EqTrainingHud.pages == nil then return end
+    local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
+    if EqTrainingHud.inMenu ~= (inMenu == true) or (not inMenu and guiOpen) then
+        -- A menu's popups go with the menu; world popups wait until every menu is closed.
+        if EqTrainingHud.inMenu and not guiOpen then EqTrainingHud.closeHelp() end
+        return
+    end
+    if g_time ~= nil and EqTrainingHud.drawnAt == g_time then return end
+    EqTrainingHud.drawnAt = g_time
     updateHelp()
     if EqTrainingHud.pages == nil then return end
 
@@ -440,6 +456,26 @@ end
 function EqTrainingHud.markSeen(key)
     EqTrainingHud.hasSeen(key)
     EqTrainingHud.seen[key] = true
+    EqTrainingHud.saveSeen()
+end
+
+
+--- Forget every help popup seen, so each shows again the next time (the Help popups setting).
+function EqTrainingHud.resetSeen()
+    EqTrainingHud.seen = {}
+    EqTrainingHud.saveSeen()
+end
+
+
+--- @return boolean true when any help popup has been seen
+function EqTrainingHud.anySeen()
+    EqTrainingHud.hasSeen("")
+    return next(EqTrainingHud.seen) ~= nil
+end
+
+
+--- Write the seen list to modSettings.
+function EqTrainingHud.saveSeen()
     local path = seenPath()
     if path == nil then return end
     if createFolder ~= nil then createFolder(g_modSettingsDirectory) end

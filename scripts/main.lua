@@ -61,6 +61,7 @@ source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
 source(modDirectory .. "scripts/gui/EqRideButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
+source(modDirectory .. "scripts/gui/EqWelcome.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
 
@@ -189,6 +190,7 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
+        guarded("welcome popups hooks", function() EqWelcome.install(guarded) end)
         guarded("message log", EqMessages.install)
         guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)
     end
@@ -324,6 +326,7 @@ local function onMissionDelete()
         EqRegistry.reset()
         EqTrainingHooks.reset()
         EqTrainingHud.reset()
+        EqWelcome.reset()
         EqStatLog.reset()
         EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)

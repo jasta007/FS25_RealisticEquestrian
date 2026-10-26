@@ -185,6 +185,9 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 ## Getting started
 
+Welcome popups walk you through the basics the first time you meet a horse and open each tab;
+**Help popups: Show again** on the Equestrian settings tab replays them.
+
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.

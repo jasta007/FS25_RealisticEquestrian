@@ -785,7 +785,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     pollSprintKey(vehicle)
 
     local view = EqTrainingHooks.getView()
-    if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen(view) then
+    -- A first ride starts with the welcome; the view's help follows once it closes.
+    if not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide() and not EqTrainingHud.hasSeen(view) then
         EqTrainingHud.markSeen(view)
         EqTrainingHooks.showHelp(view)
     end
