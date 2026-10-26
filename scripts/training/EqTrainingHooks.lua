@@ -117,6 +117,11 @@ EqTrainingHooks.JUMP_SETTLE_MS = 600
 EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
+-- The base game halts a horse that runs into something for 900 ms; we cut that to this.
+EqTrainingHooks.CRASH_HALT_MS = 350
+-- For this long after a crash the jump combo clock runs at the normal rate, not ten times
+-- faster for the stop and the walk back up to speed.
+EqTrainingHooks.CRASH_GRACE_MS = 2000
 
 -- Turns for the routine come from the rider's steering key, not the horse's heading (which
 -- is unclear when backing up). Steering is taken as negative for left.
@@ -177,6 +182,13 @@ local function obstacleBelow(vehicle)
 end
 
 
+--- @param result string|nil from EqTraining.knockCombo
+local function popKnock(result)
+    if result == "knocked" then EqTrainingHud.pop("knock")
+    elseif result == "lost" then EqTrainingHud.pop("jumpLost") end
+end
+
+
 --- Follow a jump through the air and judge it once the horse has landed and settled.
 --- @param vehicle table
 --- @param spec table spec_rideable
@@ -228,8 +240,8 @@ local function trackJump(vehicle, spec, sheet, worn)
         local mult = EqTraining.clearJump(sheet, worn)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
     elseif high then
-        -- Hitting or landing on the obstacle is a refusal: the combo goes.
-        if EqTraining.loseCombo(sheet) then EqTrainingHud.pop("jumpLost") end
+        -- Hitting or landing on the obstacle doesn't count, and costs combo time.
+        popKnock(EqTraining.knockCombo(sheet))
     else
         EqTraining.emptyJump(sheet, worn)
     end
@@ -347,18 +359,25 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     trackJump(vehicle, spec, sheet, worn)
     if wasJumping and spec.eqJump == nil then spec.eqJumpHoldUntil = now + EqTrainingHooks.JUMP_PACE_HOLD_MS end
 
-    -- The base game stops a horse that runs into something and counts its haltTimer down. A
-    -- crash ends a jump combo (a refusal) and breaks a routine, but not a stamina run.
+    -- The base game stops a horse that runs into something and counts its haltTimer down; we
+    -- cut that stop short. A crash costs jump combo time and breaks a routine, but not a
+    -- stamina run.
     local halted = (spec.haltTimer or 0) > 0
     if halted and not spec.eqHalted then
-        local hadCombo, hadRoutine = EqTraining.loseCombo(sheet), EqTraining.breakRoutine(sheet)
+        local was = spec.haltTimer
+        spec.haltTimer = math.min(spec.haltTimer, EqTrainingHooks.CRASH_HALT_MS)
         -- A jump still in the air or settling when the horse crashes did not clear.
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
-        Log:info("Crash: the horse ran into something at a %s (haltTimer %s)", gait, tostring(spec.haltTimer))
-        if hadCombo or hadRoutine then EqTrainingHud.pop("crash") end
+        Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))
+        spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
+        local knock = EqTraining.knockCombo(sheet)
+        if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
+        popKnock(knock)
     end
     spec.eqHalted = halted
-    if EqTraining.comboTick(sheet, pace, dt) then EqTrainingHud.pop("jumpLost") end
+    -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
+    local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
+    if EqTraining.comboTick(sheet, comboGait, dt) then EqTrainingHud.pop("jumpLost") end
     if routineShown() then
         local event = EqTraining.routineStep(sheet, (gait == "canter" or gait == "gallop") and "fast" or gait,
             steerInput(spec), dt, worn, math.random)

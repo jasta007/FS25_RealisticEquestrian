@@ -53,6 +53,10 @@ EqTraining.COMBO_SECONDS = 10
 EqTraining.COMBO_SLOW_DRAIN = 10
 -- After a combo is lost, jumps start no new one for this long (so a late 'Clear!' can't follow).
 EqTraining.COMBO_LOCK_MS = 2500
+-- Hitting something (a crash, or a jump that hits or lands on the obstacle) takes this much
+-- off the combo clock rather than ending the combo, at most once every COMBO_KNOCK_GAP_MS.
+EqTraining.COMBO_KNOCK_SECONDS = 3
+EqTraining.COMBO_KNOCK_GAP_MS = 3000
 
 -- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
 -- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
@@ -304,6 +308,21 @@ function EqTraining.loseCombo(sheet)
 end
 
 
+--- The horse hit something: take time off the combo clock.
+--- @param sheet table
+--- @return string|nil "knocked", "lost" when that ran the clock out, nil when there was no
+--- combo or it was knocked moments ago
+function EqTraining.knockCombo(sheet)
+    local combo = sheet.combo
+    if combo.count == 0 or (combo.knockLock or 0) > 0 then return nil end
+    combo.knockLock = EqTraining.COMBO_KNOCK_GAP_MS
+    combo.timer = combo.timer - EqTraining.COMBO_KNOCK_SECONDS
+    if combo.timer > 0 then return "knocked" end
+    EqTraining.loseCombo(sheet)
+    return "lost"
+end
+
+
 --- Run the jump combo's clock.
 --- @param sheet table
 --- @param gait string
@@ -312,6 +331,7 @@ end
 function EqTraining.comboTick(sheet, gait, dt)
     local combo = sheet.combo
     combo.lock = math.max(0, (combo.lock or 0) - dt)
+    combo.knockLock = math.max(0, (combo.knockLock or 0) - dt)
     sheet.quality.agility = combo.count > 0 and math.min(combo.count, EqTraining.COMBO_MAX) / EqTraining.COMBO_MAX or 0
     if combo.count == 0 then return false end
     local slow = gait == "halt" or gait == "walk" or gait == "reverse"

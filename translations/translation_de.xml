@@ -29,6 +29,7 @@
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
         <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
         <text name="eq_pop_comboLost" text="Kombo verloren"/>
+        <text name="eq_pop_knock" text="Angestoßen: -%d s"/>
         <text name="eq_pop_clear" text="Geschafft!"/>
         <text name="eq_move_right" text="Rechts wenden!"/>
         <text name="eq_move_left" text="Links wenden!"/>

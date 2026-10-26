@@ -286,6 +286,14 @@ do
     check("a clear just after losing a combo starts no new one", EqTraining.clearJump(jumping, false) == nil and jumping.combo.count == 0)
     for _ = 1, 25 do EqTraining.comboTick(jumping, "canter", 100) end
     check("a new combo can start 2.5 s after losing one", EqTraining.clearJump(jumping, false) == 1)
+    local knocked = EqTraining.newSheet()
+    EqTraining.clearJump(knocked, false)
+    check("a knock takes time off the combo clock", EqTraining.knockCombo(knocked) == "knocked"
+        and knocked.combo.count == 1 and math.abs(knocked.combo.timer - (EqTraining.COMBO_SECONDS - EqTraining.COMBO_KNOCK_SECONDS)) < 1e-9)
+    check("a second knock straight after costs nothing", EqTraining.knockCombo(knocked) == nil)
+    for _ = 1, 30 do EqTraining.comboTick(knocked, "canter", 100) end
+    knocked.combo.timer = 2
+    check("a knock that runs the clock out loses the combo", EqTraining.knockCombo(knocked) == "lost" and knocked.combo.count == 0)
     local wornJump = EqTraining.newSheet()
     EqTraining.clearJump(wornJump, true)
     check("a worn-out horse's jumps count for the combo but train nothing", wornJump.combo.count == 1 and wornJump.focused.agility == 0)
