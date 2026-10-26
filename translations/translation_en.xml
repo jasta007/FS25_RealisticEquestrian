@@ -46,7 +46,7 @@
         <text name="eq_help_speed_1" text="Speed is raised by sprinting, a special speed boost beyond a regular gallop. To charge up your Sprint you need at least two regular gallops while the horse is fresh (exertion under 25%). When Sprint! shows, keep galloping and tap W to make your Sprint last as long as possible. During a Sprint your horse runs 25% faster and trains Speed three times as fast."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_stamina_2" text="If you overwork your horse above 85% exertion, it starts blowing hard and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a few seconds breaks it too. The higher your tempo, the tighter the timing. Get back into rhythm by resting, then start another steady canter."/>
-        <text name="eq_help_stamina_1" text="To start Stamina training, canter steadily for 8 seconds without jumping or galloping, then ride the beat to build your tempo, up to a x5 bonus. Switch to canter or gallop when asked, to keep your horse&apos;s exertion high without overworking it and gain the most Stamina training. Stamina also increases how long your horse can train each day."/>
+        <text name="eq_help_stamina_1" text="To start Stamina training, canter steadily for 8 seconds without jumping or galloping, then change gaits when asked to build your tempo, up to a x5 bonus. Each well-timed change keeps your horse&apos;s exertion high without overworking it, for the most Stamina training. Stamina also increases how long your horse can train each day."/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
         <text name="eq_help_freestyle_2" text="Stamina training starts when you hold a steady canter; then keep your horse in rhythm by switching between canter and gallop. Speed needs warm-up gallops and rests first, then a hard Sprint at a gallop. Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
@@ -82,10 +82,10 @@
         <text name="eq_train_stamina_entry" text="Steady canter: stamina in %d s"/>
         <text name="eq_pop_tempo" text="Tempo x%d!"/>
         <text name="eq_pop_tempoLost" text="Tempo lost"/>
-        <text name="eq_pop_staminaOn" text="Stamina: ride the beat!"/>
+        <text name="eq_pop_staminaOn" text="Stamina: get ready to change gaits!"/>
         <text name="eq_pop_beat_perfect" text="Perfect!"/>
         <text name="eq_pop_beat_hit" text="Good!"/>
-        <text name="eq_pop_beat_off" text="Off beat"/>
+        <text name="eq_pop_beat_off" text="Too early"/>
         <text name="eq_beat_gallop" text="Gallop! (W)"/>
         <text name="eq_beat_canter" text="Canter! (S)"/>
         <text name="eq_beat_ready_gallop" text="Get ready to gallop..."/>
