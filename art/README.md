@@ -10,3 +10,7 @@ in the public domain. `source/herring_stable_1843.png` is the square crop used, 
 remove one duck. `source/compose_icon.py` darkens the top and sets the logotype above the horse's
 head. The lettering uses Playfair Display SC (SIL Open Font License); the
 fonts are not included, only the rendered images.
+
+The icon carries the author's signature, "Jasta007", painted into the straw at the bottom left
+(`sign()` in `compose_icon.py`, Liberation Serif Italic), and both DDS files name the author in
+their header's reserved bytes (`mark_dds()`). The PNGs carry an Author text chunk.

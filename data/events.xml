@@ -47,6 +47,8 @@
         treated or rested, and what treatment costs are in data/injuries.xml. careerEnding: chance
         the injury ends the horse's career instead, only with the forced retirement setting on (the
         default is off).
+
+    Part of Realistic Equestrian by Jasta007.
 -->
 <events>
     <disciplines>

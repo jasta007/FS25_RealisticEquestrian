@@ -80,6 +80,14 @@ local function addRows(layout)
     for _, row in ipairs(EqSettings.ROWS) do
         EqSettingsPage.controls[row.id] = addRow(layout, row)
     end
+
+    local credit = TextElement.new()
+    credit.name = "sectionHeader"
+    credit:loadProfile(g_gui:getProfile("fs25_settingsSectionHeader"), true)
+    credit.textSize = credit.textSize * 0.5
+    credit:setText(string.format(g_i18n:getText("eq_settings_credit"), EqRandom.mark()))
+    layout:addElement(credit)
+    credit:onGuiSetupFinished()
 end
 
 

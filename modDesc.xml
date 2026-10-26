@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="114">
-    <author>James</author>
+    <author>Jasta007</author>
     <version>0.1.2.0</version>
     <title>
         <en>Realistic Equestrian</en>
@@ -12,14 +12,18 @@
 
 Every horse gets four competition stats - Stamina, Speed, Agility and Temperament. Each has an inherited ceiling and a trained level: breeding raises what a horse could become, riding and hired staff make it happen. Enter your horses in daily shows and monthly championships for a fee and see the results the next day or month.
 
-Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).]]>
+Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
+
+Made by Jasta007.]]>
         </en>
         <de>
             <![CDATA[Gibt Ihren Pferden mehr zu tun, als nur verkauft zu werden.
 
 Jedes Pferd erhält vier Turnierwerte: Ausdauer, Schnelligkeit, Wendigkeit und Temperament. Jeder Wert hat eine vererbte Obergrenze und einen trainierten Stand: Die Zucht hebt an, was ein Pferd werden kann, Reiten und angestellte Pfleger machen es wahr. Melden Sie Ihre Pferde gegen eine Startgebühr zu täglichen Turnieren und monatlichen Meisterschaften an und sehen Sie die Ergebnisse am nächsten Tag oder im nächsten Monat.
 
-Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).]]>
+Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
+
+Von Jasta007.]]>
         </de>
     </description>
     <iconFilename>icon_RealisticEquestrian.dds</iconFilename>
