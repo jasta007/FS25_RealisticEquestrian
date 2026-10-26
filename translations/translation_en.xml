@@ -27,7 +27,7 @@
         <text name="eq_pop_routineStart" text="Routine started"/>
         <text name="eq_pop_routineLost" text="Routine broken"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
-        <text name="eq_pop_knock" text="Knocked: -%d s"/>
+        <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Clear!"/>
         <text name="eq_move_right" text="Turn right!"/>
         <text name="eq_move_left" text="Turn left!"/>
