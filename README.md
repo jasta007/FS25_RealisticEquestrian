@@ -67,8 +67,8 @@ uses its genetics, health and fitness.
     the tempo climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few
     seconds below a canter breaks the tempo back to x1. Beats pause during a Sprint or a routine
     command.
-  - **Speed** comes from fast gallops: gallop while the horse is fresh (exertion under 25%), then
-    stand still to rest before the next one. Two good warm-up gallops warm the horse up; keep galloping
+  - **Speed** comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under
+    25%) add only a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm the horse up; keep galloping
     and press **W** when **Sprint!** shows to run 25% faster, held on the limit just short of blowing
     hard (keep tapping W to spur it on; a slower horse runs out sooner), with
     three times the speed training. Then rest right down before warming up again.
