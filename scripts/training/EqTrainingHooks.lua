@@ -552,9 +552,37 @@ function EqTrainingHooks.onForwardInput(vehicle, inputValue)
         Log:info("Sprint key: forward input %s", tostring(inputValue))
     end
     if (inputValue or 0) <= 0 then return end
-    local id = getRiddenId(spec)
+    EqTrainingHooks.trySprint(vehicle, "forward action")
+end
+
+
+--- Start Sprint for the ridden horse if it is ready; log why not while it is warmed up.
+--- @param vehicle table
+--- @param source string what asked, for the log
+function EqTrainingHooks.trySprint(vehicle, source)
+    local spec = vehicle.spec_rideable
+    local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
-    if sheet ~= nil and sheet.sprint.ready then EqTrainingHooks.startSprint(sheet) end
+    if sheet == nil then return end
+    if sheet.sprint.ready then
+        Log:info("Sprint key: %s", source)
+        EqTrainingHooks.startSprint(sheet)
+    elseif sheet.sprint.warm and (g_time or 0) > (EqTrainingHooks.sprintLogAt or 0) then
+        EqTrainingHooks.sprintLogAt = (g_time or 0) + 2000
+        Log:info("Sprint key: %s while warmed up but not ready (gait %s, ready %.1f s)", source,
+            tostring(spec.eqLastGait), sheet.sprint.readyMs / 1000)
+    end
+end
+
+
+--- The W key itself, polled while drawing, in case the forward action doesn't reach us at a
+--- gallop. Only a fresh press counts.
+--- @param vehicle table
+local function pollSprintKey(vehicle)
+    if Input == nil or Input.isKeyPressed == nil or Input.KEY_w == nil then return end
+    local down = Input.isKeyPressed(Input.KEY_w) == true
+    if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.trySprint(vehicle, "W key") end
+    EqTrainingHooks.wWasDown = down
 end
 
 
@@ -687,6 +715,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
     if spec == nil then return end
+    pollSprintKey(vehicle)
 
     local view = EqTrainingHooks.getView()
     if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen(view) then
