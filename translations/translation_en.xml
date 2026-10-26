@@ -332,7 +332,7 @@
         <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
-        <text name="eq_enter_noMoney" text="Not enough money for the entry fee."/>
+        <text name="eq_enter_noMoney" text="Not enough money: entering costs %s (entry fee %s, transport %s)."/>
         <text name="eq_enter_done" text="%s entered in %s (rating %.0f). Auto Transport: %s."/>
         <text name="eq_enter_doneManual" text="%s entered in %s (rating %.0f). Manual Transport: take the horse to the animal dealer %s, or it won't start."/>
         <text name="eq_result_notDelivered" text="%s was never delivered to %s, so didn't start. The entry fee is lost."/>

@@ -1010,7 +1010,12 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
     local autoCost, manualCost = EqCompetitionManager.transportCosts(animal, event, farmId)
     local cost = manual and manualCost or autoCost
     local farm = g_farmManager:getFarmById(farmId)
-    if farm ~= nil and farm:getBalance() < event.fee + cost then return false, g_i18n:getText("eq_enter_noMoney") end
+    -- Everything is paid now, so a farm that cannot cover it all is turned away rather than sent negative.
+    local total = event.fee + cost
+    if farm ~= nil and farm:getBalance() < total then
+        local money = function(amount) return g_i18n:formatMoney(amount, 0, true, true) end
+        return false, string.format(g_i18n:getText("eq_enter_noMoney"), money(total), money(event.fee), money(cost))
+    end
 
     g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
     if cost > 0 then

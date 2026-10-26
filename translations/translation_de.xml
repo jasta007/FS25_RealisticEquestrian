@@ -334,7 +334,7 @@
         <text name="eq_enter_tooOld" text="Zu alt: Diese Veranstaltung ist für Pferde bis %d Monate, Ihres ist %d Monate alt."/>
         <text name="eq_enter_ratingLow" text="Wertung %.0f liegt unter dem Bereich %.0f-%.0f dieser Veranstaltung."/>
         <text name="eq_enter_ratingHigh" text="Wertung %.0f liegt über dem Bereich %.0f-%.0f dieser Veranstaltung: Melden Sie es in einer höheren Stufe."/>
-        <text name="eq_enter_noMoney" text="Nicht genug Geld für die Startgebühr."/>
+        <text name="eq_enter_noMoney" text="Nicht genug Geld: Die Teilnahme kostet %s (Startgebühr %s, Transport %s)."/>
         <text name="eq_enter_done" text="%s für %s gemeldet (Wertung %.0f). Auto-Transport: %s."/>
         <text name="eq_enter_doneManual" text="%s für %s gemeldet (Wertung %.0f). Manueller Transport: Bringen Sie das Pferd %s zum Tierhändler, sonst startet es nicht."/>
         <text name="eq_result_notDelivered" text="%s wurde nie zu %s gebracht und ist daher nicht gestartet. Die Startgebühr ist verloren."/>
