@@ -141,6 +141,16 @@ function EqTrainingHud.drawPanel(title, rows)
 end
 
 
+-- Each stat's colour, so a message says at a glance which training it is about.
+EqTrainingHud.STAT_COLOR = {
+    stamina = { 0.4, 0.7, 1, 1 },
+    speed = { 1, 0.55, 0.15, 1 },
+    agility = { 0.529, 0.706, 0, 1 },
+    temperament = { 0.8, 0.55, 1, 1 },
+}
+-- The training mode (EqTraining.modeStep) of the ridden horse, set by EqTrainingHooks.
+EqTrainingHud.mode = nil
+
 -- Combo multiplier colours, hotter as it climbs.
 EqTrainingHud.MULT_COLORS = {
     { 1, 1, 1, 1 },
@@ -158,7 +168,7 @@ EqTrainingHud.sideState = nil
 EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
-    tempo = "stamina", tempoLost = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
+    tempo = "stamina", tempoLost = "stamina", staminaOn = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament",
     sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
 }
@@ -199,13 +209,19 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = g_i18n:getText("eq_pop_" .. kind), EqTrainingHud.COLOR.orange, kind == "sprint_warm" and 2 or 4
     elseif kind == "sprint_over" then
         text, color, big = g_i18n:getText("eq_pop_sprint_over"), EqTrainingHud.COLOR.grey, 1
+    elseif kind == "staminaOn" then
+        text, color, big = g_i18n:getText("eq_pop_staminaOn"), EqTrainingHud.COLOR.white, 2
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
         text, color, big = g_i18n:getText(kind == "routineLost" and "eq_pop_routineLost" or "eq_pop_comboLost"), EqTrainingHud.COLOR.grey, 1
     end
-    -- In a focused view, news about another stat goes in a small line above the panel instead.
     local stat = EqTrainingHud.POP_STAT[kind]
+    -- The training mode has the floor: other stats' news waits (temperament's routine never clashes).
+    local mode = EqTrainingHud.mode
+    if mode ~= nil and stat ~= nil and stat ~= mode and stat ~= "temperament" then return end
+    if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
+    -- In a focused view, news about another stat goes in a small line above the panel instead.
     local view = EqTrainingHud.view
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
     local side = stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat)

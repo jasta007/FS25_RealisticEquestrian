@@ -383,6 +383,10 @@ do
         local sheet = EqTraining.newSheet()
         local one = function() return 1 end
         sheet.tiredness, sheet.run = 50, 20
+        local outside = EqTraining.newSheet()
+        outside.tiredness, outside.run = 50, 20
+        check("no beats outside stamina mode", EqTraining.beatStep(outside, "canter", 100, one) == nil and outside.beat.pos == nil)
+        sheet.mode = "stamina"
         check("a beat starts during a run", EqTraining.beatStep(sheet, "canter", 100, one) == "start" and sheet.beat.target == "gallop")
         check("a far-off press is ignored", EqTraining.beatPress(sheet, "forward", one) == nil and sheet.beat.pos ~= nil)
         repeat EqTraining.beatStep(sheet, "canter", 100, one) until sheet.beat.pos >= 49
@@ -401,7 +405,7 @@ do
         repeat missed = EqTraining.beatStep(sheet, "gallop", 100, one) until missed ~= nil
         check("a beat passed by is a miss", missed == "miss" and sheet.beat.pos == nil)
         local sprinting = EqTraining.newSheet()
-        sprinting.tiredness, sprinting.run = 50, 20
+        sprinting.tiredness, sprinting.run, sprinting.mode = 50, 20, "stamina"
         sprinting.sprint.ready = true
         check("no beats while Sprint is ready", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
         sprinting.sprint.ready, sprinting.sprint.activeMs = false, 5000
@@ -414,6 +418,37 @@ do
         local w1, r1, s1 = EqTraining.beatPressure(easy)
         local w5, r5, s5 = EqTraining.beatPressure(hard)
         check("beats get harder as the tempo climbs", w5 < w1 and r5 < r1 and s5 < s1 and r5 > 0)
+        -- Training modes: one of stamina, agility and speed at a time.
+        do
+            local m = EqTraining.newSheet()
+            local function canter(ms) local e; for _ = 1, ms / 100 do e = EqTraining.modeStep(m, "canter", 100) or e end; return e end
+            canter(5000)
+            EqTraining.modeJump(m)
+            check("a jump restarts the canter towards stamina mode", m.entryMs == 0 and m.mode == nil)
+            EqTraining.modeStep(m, "gallop", 100)
+            canter(5000)
+            EqTraining.modeStep(m, "gallop", 100)
+            check("a gallop restarts it too", m.entryMs == 0)
+            check("8 s of steady canter starts stamina mode", canter(8000) == "stamina" and m.mode == "stamina" and m.tempo.ms > 0)
+            EqTraining.clearJump(m, false)
+            EqTraining.modeJump(m)
+            check("a jump in stamina mode keeps it", m.mode == "stamina")
+            m.tempo.ms = 0
+            EqTraining.loseCombo(m)
+            EqTraining.modeStep(m, "trot", 100)
+            check("stamina mode ends with the tempo", m.mode == nil)
+            m.combo.lock = 0
+            EqTraining.clearJump(m, false)
+            check("a cleared jump starts agility mode", m.mode == "agility")
+            canter(10000)
+            check("no stamina mode while the combo lasts", m.mode == "agility" and m.entryMs == 0)
+            EqTraining.loseCombo(m)
+            EqTraining.modeStep(m, "trot", 100)
+            check("agility mode ends with the combo", m.mode == nil)
+            m.sprint.count, m.mode, m.combo.lock = 1, "speed", 0
+            EqTraining.clearJump(m, false)
+            check("a jump during warm-ups stays in speed mode", m.mode == "speed")
+        end
         -- Tempo: only beats raise it; a long trot or blowing breaks it.
         local tempo = EqTraining.newTempo()
         local events = {}

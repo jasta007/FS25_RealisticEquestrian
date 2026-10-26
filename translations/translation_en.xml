@@ -44,10 +44,10 @@
         <text name="eq_help_speed_2" text="Walk or rest to recover before the next gallop. Below 30% a horse recovers quickly, a fit one even more so. Walking recovers just as fast, but it uses up the riding bar. Feeding your horses high-energy corn is a great way to improve speed training."/>
         <text name="eq_help_speed_1" text="Speed training improves with fast gallops. Gallop while the horse is fresh, with exertion under 25%. Gains fade as it tires and stop entirely at 55%. Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
-        <text name="eq_help_stamina_2" text="Above 85% exertion your horse is blowing hard: it slows down and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a couple of seconds breaks it too. Stamina also increases how long your horse can train each day."/>
-        <text name="eq_help_stamina_1" text="Stamina comes from runs at a canter or gallop. Ride the beat to build your tempo, up to x5: stamina gains grow up to 2.5 times. Galloping tires your horse quickly. Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
+        <text name="eq_help_stamina_2" text="Above 85% exertion your horse is blowing hard and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a couple of seconds breaks it too, and stamina training stops until you canter steadily again. Stamina also increases how long your horse can train each day."/>
+        <text name="eq_help_stamina_1" text="Stamina comes from runs at a canter or gallop. Canter steadily for 8 seconds, without jumping or galloping, to start stamina training, then ride the beat to build your tempo, up to x5: stamina gains grow up to 2.5 times. Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_freestyle_2" text="Press Y to switch to a focused stat view. Stats progress the same in any view, but those views give you more information and help. Press H to see these help messages again."/>
+        <text name="eq_help_freestyle_2" text="Only one kind of training talks to you at a time, each in its own colour: a steady canter starts Stamina (blue) until your tempo breaks, a cleared jump starts Agility (green) until the combo ends, and a warm-up gallop starts Speed (orange) until the Sprint is over. Temperament (purple) routines always run. Press Y to switch to a focused stat view with more information and help, and H to see these help messages again."/>
         <text name="eq_help_freestyle_1" text="Riding trains your horse's stats, and each stat is best trained in a different way. Stamina and Speed learn most from focused work, measured by the Exertion meter: fast bursts for Speed, longer rides for Stamina. Agility and Temperament improve with the combo system: clear jumps in a row to raise Agility, or perform slow manoeuvres to raise Temperament. The riding bar is the horse's energy for the day: once it is full, that horse cannot make any more progress until the next day. Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
         <text name="eq_help_close" text="Click to close"/>
@@ -78,9 +78,11 @@
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Blowing! %d s"/>
         <text name="eq_train_tempo_slow" text="Back to a canter!"/>
-        <text name="eq_train_tempo_none" text="Canter or gallop and ride the beat to build tempo"/>
+        <text name="eq_train_tempo_none" text="Canter for 8 s without jumping or galloping to start"/>
+        <text name="eq_train_stamina_entry" text="Steady canter: stamina in %d s"/>
         <text name="eq_pop_tempo" text="Tempo x%d!"/>
         <text name="eq_pop_tempoLost" text="Tempo lost"/>
+        <text name="eq_pop_staminaOn" text="Stamina: ride the beat!"/>
         <text name="eq_pop_beat_perfect" text="Perfect!"/>
         <text name="eq_pop_beat_hit" text="Good!"/>
         <text name="eq_pop_beat_off" text="Off beat"/>

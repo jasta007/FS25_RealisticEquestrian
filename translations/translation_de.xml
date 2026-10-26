@@ -46,10 +46,10 @@
         <text name="eq_help_speed_2" text="Reiten Sie Schritt oder halten Sie an, um sich vor dem nächsten Renngalopp zu erholen. Unter 30 % erholt sich ein Pferd schnell, ein fittes noch schneller. Schritt erholt genauso schnell, verbraucht aber den Reitbalken. Energiereicher Mais im Futter ist eine gute Möglichkeit, das Schnelligkeitstraining zu verbessern."/>
         <text name="eq_help_speed_1" text="Das Schnelligkeitstraining lebt von schnellen Renngaloppen. Reiten Sie Renngalopp, solange das Pferd frisch ist, mit einer Anstrengung unter 25 %. Der Gewinn sinkt mit der Ermüdung und endet bei 55 % ganz. Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
-        <text name="eq_help_stamina_2" text="Über 85 % Anstrengung ist Ihr Pferd außer Atem: Es wird langsamer und lernt langsamer, und nach 5 Sekunden bricht Ihr Tempo ab. Mehr als ein paar Sekunden langsamer als Galopp beenden es ebenfalls. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
-        <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Reiten Sie im Takt, um Ihr Tempo aufzubauen, bis x5: Der Ausdauergewinn wächst bis zum 2,5-Fachen. Renngalopp ermüdet Ihr Pferd schnell. Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
+        <text name="eq_help_stamina_2" text="Über 85 % Anstrengung ist Ihr Pferd außer Atem und lernt langsamer, und nach 5 Sekunden bricht Ihr Tempo ab. Mehr als ein paar Sekunden langsamer als Galopp beenden es ebenfalls, und das Ausdauertraining pausiert, bis Sie wieder ruhig galoppieren. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
+        <text name="eq_help_stamina_1" text="Ausdauer entsteht bei Läufen im Galopp oder Renngalopp. Galoppieren Sie 8 Sekunden ruhig, ohne Sprung oder Renngalopp, um das Ausdauertraining zu starten, und reiten Sie dann im Takt, um Ihr Tempo aufzubauen, bis x5: Der Ausdauergewinn wächst bis zum 2,5-Fachen. Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_freestyle_2" text="Mit Y wechseln Sie zu einer Ansicht für einen einzelnen Wert. Die Werte steigen in jeder Ansicht gleich, aber dort erhalten Sie mehr Informationen und Hilfe. Mit H sehen Sie diese Hilfe erneut."/>
+        <text name="eq_help_freestyle_2" text="Es meldet sich immer nur eine Trainingsart, jede in ihrer Farbe: Ruhiger Galopp startet Ausdauer (blau), bis Ihr Tempo abbricht, ein gemeisterter Sprung startet Wendigkeit (grün), bis die Kombo endet, und ein Aufwärmgalopp startet Schnelligkeit (orange), bis der Sprint vorbei ist. Temperament-Routinen (lila) laufen immer. Mit Y wechseln Sie zu einer Ansicht für einen einzelnen Wert mit mehr Informationen und Hilfe, mit H sehen Sie diese Hilfe erneut."/>
         <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes, und jeder Wert wird auf seine eigene Weise am besten trainiert. Ausdauer und Schnelligkeit lernen am meisten durch gezielte Arbeit, gemessen an der Anstrengung: schnelle Renngaloppe für Schnelligkeit, längere Ritte für Ausdauer. Wendigkeit und Temperament steigen mit dem Kombo-System: Meistern Sie Sprünge nacheinander für Wendigkeit oder reiten Sie ruhige Lektionen für Temperament. Der Reitbalken ist die Tagesenergie des Pferdes: Ist er voll, macht dieses Pferd bis zum nächsten Tag keine Fortschritte mehr. Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
         <text name="eq_help_freestyle_title" text="Training: Frei"/>
         <text name="eq_help_close" text="Klicken zum Schließen"/>
@@ -80,9 +80,11 @@
         <text name="eq_train_tempo" text="Tempo x%d"/>
         <text name="eq_train_tempo_blown" text="Außer Atem! %d s"/>
         <text name="eq_train_tempo_slow" text="Zurück in den Galopp!"/>
-        <text name="eq_train_tempo_none" text="Galopp oder Renngalopp im Takt reiten, um Tempo aufzubauen"/>
+        <text name="eq_train_tempo_none" text="8 s galoppieren, ohne Sprung oder Renngalopp, um zu beginnen"/>
+        <text name="eq_train_stamina_entry" text="Ruhiger Galopp: Ausdauer in %d s"/>
         <text name="eq_pop_tempo" text="Tempo x%d!"/>
         <text name="eq_pop_tempoLost" text="Tempo verloren"/>
+        <text name="eq_pop_staminaOn" text="Ausdauer: im Takt reiten!"/>
         <text name="eq_pop_beat_perfect" text="Perfekt!"/>
         <text name="eq_pop_beat_hit" text="Gut!"/>
         <text name="eq_pop_beat_off" text="Nicht im Takt"/>
