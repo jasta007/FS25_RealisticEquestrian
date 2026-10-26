@@ -93,6 +93,7 @@
         <text name="eq_beat_ready_gallop" text="Bereit machen zum Renngalopp..."/>
         <text name="eq_beat_ready_canter" text="Bereit machen zum Galopp..."/>
         <text name="eq_beat_settle_canter" text="Zurück in den Galopp (S)"/>
+        <text name="eq_train_stamina_rest" text="Zu erschöpft: erst ausruhen"/>
         <text name="eq_beat_settle_hold" text="Ruhiger Galopp..."/>
         <text name="eq_train_run" text="Lauf: %d s"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
