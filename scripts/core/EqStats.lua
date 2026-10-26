@@ -116,12 +116,11 @@ function EqStats.breedGenes(dam, sire, breedOffspring, sd)
 end
 
 
---- Share of a full day's training a horse of this age takes in.
+--- Share of a full day's training a horse of this age takes in. Young horses train at full speed
+--- (James, 2026-10-26); only age slows a horse down.
 --- @param ageMonths number
 --- @return number factor 0..1
 function EqStats.ageTrainingFactor(ageMonths)
-    if ageMonths < EqConstants.AGE_GROUNDWORK then return 0.3 end
-    if ageMonths < EqConstants.AGE_MIN_COMPETE then return 0.6 end
     if ageMonths <= EqConstants.AGE_PEAK_END then return 1.0 end
     if ageMonths <= EqConstants.AGE_DECLINE then return 0.6 end
     return 0.3

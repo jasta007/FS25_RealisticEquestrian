@@ -100,8 +100,10 @@ a fence.
 ### Temperament
 
 Temperament comes from a routine: walk to start one, then do each movement asked for (walk, trot,
-stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A canter, gallop, jump or a
-missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
+stop, back up, turn left, turn right) within 3 seconds, for x2 up to x8. Each step up brings the
+requests quicker and gives less time to react (1.5 seconds at x8), and from x4 the horse must hold
+its pace between requests: changing gait unasked breaks the routine (passing through a walk on the
+way to a requested stop is fine). A canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
 show in the Freestyle and Temperament views.
 
@@ -128,9 +130,9 @@ horse can clear fences without a full gallop.
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
   and a slow one is cheap to keep but slow to bring back into condition (down to 60%). Fitness
   lost is not changed, and it doesn't change how fast stats train.
-- Gains slow as a stat nears its ceiling. Horses under 24 months can only do light groundwork and
-  train at 30%, 24-36 months at 60%. From three to twelve they train at full speed, then slow down
-  again. A horse left idle for more than about half a month fades toward half its ceiling, and past
+- Gains slow as a stat nears its ceiling, and a green horse learns the basics fast: a stat below
+  40 trains faster, up to three times as fast at 0 (twice at 20). Young horses train at full speed
+  up to twelve years old, then slow down. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.
 
 Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
