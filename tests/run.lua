@@ -16,6 +16,7 @@ dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/training/EqDressage.lua")
+dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/core/EqI18N.lua")
@@ -1190,6 +1191,89 @@ check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing"
     and math.abs(EqExperience.get(loaded, "dressage") - EqExperience.get(saved, "dressage")) < 1e-9)
 check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
     local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
+
+-- Show jumping courses recorded by riding through the jumps (EqCourse).
+;(function()
+    local rec = EqCourse.newRecording(0, 0, 0)
+    -- A straight: points every POINT_SPACING[1] metres after the first.
+    for z = 0.5, 40, 0.5 do EqCourse.recordStep(rec, 0, 0, z) end
+    check("a straight drops few points", #rec.points >= 4 and #rec.points <= 7, tostring(#rec.points))
+    local straight = #rec.points
+    -- A tight circle (radius 4 m) drops far more per metre.
+    for i = 1, 60 do
+        local a = i / 60 * math.pi * 2
+        EqCourse.recordStep(rec, 4 - 4 * math.cos(a), 0, 40 + 4 * math.sin(a))
+    end
+    check("a tight turn drops many points", #rec.points - straight >= 12, tostring(#rec.points - straight))
+    check("course length follows the path", rec.length > 60 and rec.length < 70, string.format("%.1f", rec.length))
+
+    -- A jump from (-2, 0) to (2, 0).
+    check("crossing a jump between its ends passes it", EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0.2, -0.5) ~= nil)
+    check("crossing the other way is the other side",
+        EqCourse.crossSide(-2, 0, 2, 0, 1, -1, 1, 0.5) == -EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0.2, -0.5))
+    check("going round the end of a jump is no pass", EqCourse.crossSide(-2, 0, 2, 0, 4, 1, 4, -1) == nil)
+    check("just past an end still counts", EqCourse.crossSide(-2, 0, 2, 0, 2.5, 1, 2.5, -1) ~= nil)
+    check("staying on one side is no pass", EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0, 0.2) == nil)
+    check("a jump far away in one frame is no pass", EqCourse.crossSide(-2, 0, 2, 0, 0, 5, 0, -5) == nil)
+    check("a jump at an angle works too", EqCourse.crossSide(0, 0, 3, 3, 2, 0, 0, 2) ~= nil)
+
+    local jumpA, jumpB = { x = 10, z = 10, ry = 0 }, { x = 30, z = 10, ry = 1.57 }
+    check("first fence is number 1", EqCourse.addJump(rec, jumpA, 1, 1000) == 1)
+    check("wobbling back over it counts once", EqCourse.addJump(rec, jumpA, -1, 2000) == nil)
+    check("too few fences are not saved", select(2, EqCourse.finish(rec, "Course 1")) == "jumps")
+    check("second fence is number 2", EqCourse.addJump(rec, jumpB, 1, 3000) == 2)
+    check("the same fence later in the course counts again", EqCourse.addJump(rec, jumpA, 1, 20000) == 3)
+    EqCourse.reset()
+    local course = EqCourse.finish(rec, EqCourse.nextName())
+    check("a course with fences is saved", course ~= nil and #course.jumps == 3 and course.name == "Course 1")
+    EqCourse.add(course)
+    check("names don't repeat", EqCourse.nextName() == "Course 2")
+    check("nearest finds a course close by", EqCourse.nearest(1, 20, 10) == course)
+    check("nearest ignores a course far away", EqCourse.nearest(500, 500, 40) == nil)
+    local line = EqCourse.smooth(course.points)
+    check("the drawn line runs through the ends", #line > #course.points
+        and math.abs(line[1].z - course.points[1].z) < 1e-6 and math.abs(line[#line].z - course.points[#course.points].z) < 1e-6)
+
+    -- Rewind: back to the nearest point, dropping later points and fences.
+    local again = EqCourse.newRecording(0, 0, 0)
+    for z = 1, 30 do EqCourse.recordStep(again, 0, 0, z) end
+    EqCourse.addJump(again, jumpA, 1, 1000)
+    EqCourse.recordStep(again, 0, 0, 31, true)
+    for z = 32, 60 do EqCourse.recordStep(again, 0, 0, z) end
+    EqCourse.addJump(again, jumpB, 1, 9000)
+    EqCourse.recordStep(again, 0, 0, 61, true)
+    local index, away = EqCourse.nearestPoint(again, 2, 40)
+    check("nearest point is found", math.abs(again.points[index].z - 40) <= 5 and away < 6)
+    EqCourse.rewind(again, index)
+    check("rewind drops later points", again.points[#again.points].z <= 45 and #again.jumps == 1)
+    check("rewind keeps the length right", math.abs(again.length - EqCourse.pathLength(again.points)) < 1e-6)
+    local before = #again.points
+    EqCourse.recordStep(again, 3, 0, again.points[#again.points].z + 1)
+    check("no point right after a rewind, even on a turn", #again.points == before)
+    EqCourse.recordStep(again, 6, 0, again.points[#again.points].z + 2)
+    check("the first point after a rewind comes a few metres on", #again.points == before + 1)
+    local labels = EqCourse.labels({ { x = 1, z = 1 }, { x = 9, z = 9 }, { x = 1, z = 1 } })
+    check("a jump ridden twice gets one label", #labels == 2 and labels[1].text == "1, 3" and labels[2].text == "2")
+    EqCourse.rewind(again, 1)
+    check("rewind to the start drops every fence", #again.points == 1 and #again.jumps == 0 and again.length == 0)
+
+    local store = memoryXML()
+    EqCourse.saveToXMLFile(store, "c")
+    EqCourse.loadFromXMLFile(store, "c")
+    local back = EqCourse.list[1]
+    check("a course survives a save", #EqCourse.list == 1 and back.name == "Course 1" and #back.jumps == 3
+        and #back.points == #course.points and math.abs(back.length - course.length) < 1 and back.jumps[2].side == 1
+        and math.abs(back.jumps[2].ry - 1.57) < 0.01)
+    check("fence points survive a save", back.jumps[1].pointIndex ~= nil and back.jumps[1].pointIndex == course.jumps[1].pointIndex)
+    local edit = EqCourse.editRecording(back)
+    check("editing starts from the saved course", #edit.points == #back.points and #edit.jumps == 3 and edit.rewound)
+    edit.points[1].x = 999
+    check("editing does not change the saved course until saved", back.points[1].x ~= 999)
+    EqCourse.replace(1, EqCourse.finish(edit, back.name))
+    check("a saved edit replaces the course", #EqCourse.list == 1 and EqCourse.list[1].points[1].x == 999)
+    EqCourse.loadFromXMLFile(nil, "c")
+    check("a new game has no courses", #EqCourse.list == 0)
+end)()
 
 -- Peak form: the month's best minigame session per stat, never stacked over days.
 ;(function()

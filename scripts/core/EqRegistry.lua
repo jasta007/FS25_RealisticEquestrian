@@ -281,6 +281,7 @@ function EqRegistry.saveToDirectory(directory)
     end
 
     EqCompetitionManager.saveToXMLFile(xmlFile, "rlEquestrian.competition")
+    EqCourse.saveToXMLFile(xmlFile, "rlEquestrian.courses")
 
     xmlFile:save()
     xmlFile:delete()
@@ -293,6 +294,7 @@ function EqRegistry.loadFromDirectory(directory)
     EqRegistry.reset()
     if directory == nil then
         EqCompetitionManager.loadFromXMLFile(nil, "rlEquestrian.competition")
+        EqCourse.loadFromXMLFile(nil, "rlEquestrian.courses")
         return
     end
 
@@ -300,6 +302,7 @@ function EqRegistry.loadFromDirectory(directory)
     if xmlFile == nil then
         Log:info("EqRegistry: no %s yet, horses will be rolled on first sight", EqConstants.SAVE_FILENAME)
         EqCompetitionManager.loadFromXMLFile(nil, "rlEquestrian.competition")
+        EqCourse.loadFromXMLFile(nil, "rlEquestrian.courses")
         return
     end
 
@@ -322,6 +325,8 @@ function EqRegistry.loadFromDirectory(directory)
     if redraw > 0 then Log:info("EqRegistry: %d horse(s) from an older save get new starting stats", redraw) end
 
     EqCompetitionManager.loadFromXMLFile(xmlFile, "rlEquestrian.competition")
+    EqCourse.loadFromXMLFile(xmlFile, "rlEquestrian.courses")
+    if #EqCourse.list > 0 then Log:info("EqRegistry: loaded %d show jumping course(s)", #EqCourse.list) end
 
     xmlFile:delete()
     Log:info("EqRegistry: loaded %d horse record(s)", EqRegistry.count())

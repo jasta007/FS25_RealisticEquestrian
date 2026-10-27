@@ -136,6 +136,7 @@ function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
     end
     local x = p.right - p.width
     local y = p.top - height
+    EqTrainingHud.panelBottom = y
     fill(x, y, p.width, height, EqTrainingHud.COLOR.background)
 
     local left, right = x + p.padding, p.right - p.padding
@@ -256,7 +257,7 @@ end
 
 
 --- Show a short burst of text in the middle of the screen.
---- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank or an EXERTION_POPS key
+--- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank, courseFence or an EXERTION_POPS key
 --- @param mult number|nil the combo multiplier for jump and routine, the speed multiplier for speedBank
 function EqTrainingHud.pop(kind, mult)
     local text, color, big
@@ -278,6 +279,9 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineTest" then
         text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
+    elseif kind == "courseFence" then
+        -- Recording a show jumping course: the jump just ridden through (EqCourseHooks).
+        text, color, big = string.format(g_i18n:getText("eq_pop_courseFence"), mult), EqTrainingHud.COLOR.white, 2
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
@@ -360,6 +364,57 @@ function EqTrainingHud.drawPrompt(value, share, color)
     fill(left - edge, p.y - p.barHeight * 2 - edge, p.barWidth + edge * 2, p.barHeight + edge * 2, { 0, 0, 0, 0.6 })
     fill(left, p.y - p.barHeight * 2, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
     fill(left, p.y - p.barHeight * 2, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, color)
+    resetText()
+end
+
+
+-- Notes beside the panel, as wide as it and wrapped onto more lines, so the middle of the screen
+-- stays for alerts (James, 2026-10-27): one above the panel, one below.
+EqTrainingHud.PANEL_NOTE = { gap = 0.006, lineHeight = 0.019, size = 0.0145, aboveSize = 0.0165 }
+-- Where the panel's bottom was last drawn (its height changes with its rows).
+EqTrainingHud.panelBottom = nil
+
+--- Split text into lines no wider than width.
+--- @param value string
+--- @param size number
+--- @param width number
+--- @param bold boolean|nil
+--- @return table lines
+function EqTrainingHud.wrap(value, size, width, bold)
+    setTextBold(bold == true)
+    local lines, line = {}, nil
+    for word in string.gmatch(value, "%S+") do
+        local candidate = line == nil and word or line .. " " .. word
+        if line ~= nil and getTextWidth(size, candidate) > width then
+            table.insert(lines, line)
+            line = word
+        else
+            line = candidate
+        end
+    end
+    if line ~= nil then table.insert(lines, line) end
+    setTextBold(false)
+    return lines
+end
+
+--- Draw a note above or below the panel, wrapped to its width.
+--- @param value string
+--- @param color table|nil white when nil
+--- @param above boolean true above the panel (bold and a little bigger), else below it
+function EqTrainingHud.drawPanelNote(value, color, above)
+    local p, n = EqTrainingHud.PANEL, EqTrainingHud.PANEL_NOTE
+    local size = above and n.aboveSize or n.size
+    local lines = EqTrainingHud.wrap(value, size, p.width, above)
+    local x = p.right - p.width
+    local y
+    if above then
+        y = p.top + n.gap + (#lines - 1) * n.lineHeight + size * 0.25
+    else
+        y = (EqTrainingHud.panelBottom or p.top - 0.12) - n.gap - size
+    end
+    for i, line in ipairs(lines) do
+        shadowText(line, x, y - (i - 1) * n.lineHeight, size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_LEFT, above)
+    end
     resetText()
 end
 

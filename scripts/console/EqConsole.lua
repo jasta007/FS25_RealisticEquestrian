@@ -659,6 +659,25 @@ function EqConsole:consoleChanges(...)
 end
 
 
+--- eqCourses: the saved show jumping courses, or delete one: eqCourses delete <number>.
+function EqConsole:consoleCourses(action, number)
+    if action == "delete" then
+        local index = tonumber(number)
+        local removed = index ~= nil and EqCourse.remove(index) or nil
+        if removed == nil then return "Usage: eqCourses delete <number>, see eqCourses for the numbers" end
+        EqCourseHooks.near = nil
+        return string.format("Deleted %s", removed.name)
+    end
+    if #EqCourse.list == 0 then return "No show jumping courses yet: ride with Ctrl+J to record one" end
+    for i, course in ipairs(EqCourse.list) do
+        local first = course.points[1]
+        print(string.format("%d. %s: %d fence(s), %.0f m, %d point(s), starts at %.0f, %.0f", i, course.name, #course.jumps,
+            course.length or 0, #course.points, first.x, first.z))
+    end
+    return string.format("%d course(s); eqCourses delete <number> removes one", #EqCourse.list)
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -680,6 +699,7 @@ function EqConsole.register()
     addConsoleCommand("eqRiding", "Testing: sets a horse's riding bar: eqRiding <horse> [0-100], 0 when left out", "consoleRiding", EqConsole)
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
     addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
+    addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
@@ -691,5 +711,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses" }) do removeConsoleCommand(name) end
 end

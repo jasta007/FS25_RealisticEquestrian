@@ -91,6 +91,7 @@ function EqTrainingHooks.reset()
     EqTrainingHooks.sheets = {}
     EqTrainingHooks.showJumpNodes = {}
     EqDressageHooks.reset()
+    EqCourseHooks.reset()
 end
 
 
@@ -819,6 +820,8 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
     end
+    -- Show jumping course keys (EqCourseHooks).
+    EqCourseHooks.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)
@@ -1120,6 +1123,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         EqTrainingHooks.showHelp(view)
     end
     EqTrainingHud.drawHelp()
+    -- Editing a show jumping course: recording, its line and the course keys (EqCourseHooks).
+    EqCourseHooks.onDraw(vehicle)
 
     local id = getRiddenId(spec)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
@@ -1316,6 +1321,7 @@ function EqTrainingHooks.installRideable(guarded)
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
         if not EqMain.isActive then return end
         guarded("dressage markers", EqDressageHooks.update)
+        guarded("course recording", EqCourseHooks.update)
     end)
 end
 

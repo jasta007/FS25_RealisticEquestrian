@@ -188,6 +188,32 @@ asked for to markers within 12 m:
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
+### Show jumping courses
+
+Show jumps are linked into a course by riding it, in an edit mode. While editing, every show jump on
+the map has no collision, so you ride straight through them in the order you want, and the course's
+line and fence numbers are drawn. Show jumps are Riding Hall 2k26's (or any "jumps" facility
+placeable), the jumps in the Equestrian Pack's outdoor arena (any part of a facility with a red and
+a white flag), and map scenery such as Elmcreek's course. A jump counts when the horse crosses the
+line between its flags (or across its placement area) with 0.75 m to spare; the same jump can come
+up again later in the course, but not twice in a row within 4 seconds.
+
+| Key | Not editing | Editing |
+| --- | --- | --- |
+| Ctrl+J | Record a new course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+
+A course needs at least 2 fences to save; a new one with fewer keeps recording. A white line runs from the horse to the nearest
+recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
+shows both numbers ("3, 10"). Getting off the horse (or switching away) ends editing and saves what was recorded; Ctrl+J near
+the course edits it again and Ctrl+K records on from the nearest point.
+
+The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
+horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are saved in
+rlEquestrian.xml. `eqCourses` lists them and `eqCourses delete <number>` removes one. Editing
+works in single player for now.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
