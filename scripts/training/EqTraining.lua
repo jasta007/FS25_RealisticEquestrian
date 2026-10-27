@@ -25,7 +25,7 @@ EqTraining = {}
 
 -- SPEED: every second of a Sprint banks SPEED_RATE, times a multiplier from how high the Sprint
 -- took exertion when it ended: 1 + (SPRINT_MULT_MAX - 1) * share ^ SPRINT_MULT_POWER, so 2x
--- half way to the Blowing Hard line and 10x just short of it. A Sprint that ends at or past the
+-- half way to the Fatigued line and 10x just short of it. A Sprint that ends at or past the
 -- line banks only 1x. (James, 2026-10-27: get the Sprint as high as you dare.)
 EqTraining.SPEED_RATE = 0.0065
 EqTraining.SPRINT_MULT_MAX = 10
@@ -41,7 +41,7 @@ EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 -- - Recovering gets breath back and loses multiplier, by the bar's third (EqExertion.band): fast
 --   from the top third, slowly in the middle "zone" (where breath comes back best), fast again in
 --   the bottom third. A canter or slower loses it fast.
--- - A Sprint holds both. Blowing Hard (or a Sprint that ends past the line) drops it to x1 and
+-- - A Sprint holds both. Fatigued (or a Sprint that ends past the line) drops it to x1 and
 --   stops stamina training until exertion is empty again, with no breath left to start on.
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
@@ -443,7 +443,7 @@ end
 
 
 --- @param value number exertion when the Sprint ended
---- @param over boolean|nil true when it ended at or past the Blowing Hard line
+--- @param over boolean|nil true when it ended at or past the Fatigued line
 --- @return number speed multiplier, 1..SPRINT_MULT_MAX
 function EqTraining.sprintMultiplier(value, over)
     if over or value >= EqExertion.LINE then return 1 end
