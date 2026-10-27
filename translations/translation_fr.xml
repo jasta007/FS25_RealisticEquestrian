@@ -440,7 +440,7 @@
         <text name="eq_ui_entriesLeft" text="Engagements restants ce mois-ci : %d sur %d."/>
         <text name="eq_money_transport" text="Transport de chevaux"/>
         <text name="eq_money_staffWages" text="Salaires du personnel équestre"/>
-        <text name="eq_staff_title" text="Personnel"/>
+        <text name="eq_staff_title" text="Personnel équestre"/>
         <text name="eq_staff_tab_hire" text="Embaucher"/>
         <text name="eq_staff_tab_staff" text="Votre personnel"/>
         <text name="eq_staff_col_name" text="Nom"/>
@@ -448,7 +448,7 @@
         <text name="eq_staff_col_grade" text="Niveau"/>
         <text name="eq_staff_col_best" text="Meilleures compétences"/>
         <text name="eq_staff_col_worksOn" text="S&apos;occupe de"/>
-        <text name="eq_staff_col_wage" text="Salaire / mois"/>
+        <text name="eq_staff_col_wage" text="Salaire / jour"/>
         <text name="eq_staff_job_groom" text="Palefrenier"/>
         <text name="eq_staff_job_dressage" text="Entraîneur de dressage"/>
         <text name="eq_staff_job_showJumping" text="Entraîneur de saut d&apos;obstacles"/>
@@ -476,17 +476,17 @@
         <text name="eq_staff_works_role" text="Tous les chevaux : %s"/>
         <text name="eq_staff_works_passive" text="Chaque cheval"/>
         <text name="eq_staff_wage" text="Salaire"/>
-        <text name="eq_staff_perMonth" text="%s par mois"/>
+        <text name="eq_staff_perDay" text="%s par jour"/>
+        <text name="eq_staff_duties" text="Tâches"/>
+        <text name="eq_staff_duties_groom" text="Entraîne les quatre stats, panse les chevaux, ramène les chevaux en liberté"/>
+        <text name="eq_staff_duties_trainer" text="Se concentre sur %s et %s, entraîne un peu les autres stats et prépare les chevaux à leurs épreuves"/>
+        <text name="eq_staff_duties_vet" text="Moins de blessures, soins plus courts et moins chers, pour chaque cheval"/>
+        <text name="eq_staff_duties_broker" text="Donne un potentiel plus juste des chevaux du marchand. Meilleurs prix à l&apos;achat et à la vente de chevaux."/>
         <text name="eq_staff_coversHorses" text="%s (%d)"/>
         <text name="eq_staff_available_1" text="Ce mois-ci seulement"/>
         <text name="eq_staff_available_2" text="Ce mois-ci et le suivant"/>
         <text name="eq_staff_onOffer" text="Disponible"/>
-        <text name="eq_staff_does" text="Rôle"/>
-        <text name="eq_staff_does_groom" text="Entraîne les quatre stats, panse les chevaux, ramène les chevaux en liberté"/>
-        <text name="eq_staff_does_trainer" text="Entraîne %s et %s"/>
-        <text name="eq_staff_does_vet" text="Moins de blessures, soins plus courts et moins chers, pour chaque cheval"/>
-        <text name="eq_staff_does_broker" text="Évalue mieux le potentiel des chevaux du marchand"/>
-        <text name="eq_staff_button_hire" text="Embaucher (%s par mois)"/>
+        <text name="eq_staff_button_hire" text="Embaucher (%s par jour)"/>
         <text name="eq_staff_button_worksOn" text="Changer d&apos;affectation"/>
         <text name="eq_staff_button_fire" text="Renvoyer"/>
         <text name="eq_staff_fire_confirm" text="Renvoyer %s ? Cette personne ne reviendra pas."/>
@@ -496,7 +496,7 @@
         <text name="eq_staff_noCandidates" text="Personne ne cherche de travail pour l&apos;instant. De nouvelles personnes arrivent chaque mois."/>
         <text name="eq_staff_noStaff" text="Vous n&apos;avez pas encore de personnel. Embauchez dans l&apos;onglet Embaucher."/>
         <text name="eq_staff_summary_hire" text="De nouvelles personnes arrivent chaque mois, pour un ou deux mois. Un seul vétérinaire et un seul courtier par ferme."/>
-        <text name="eq_staff_summary_staff" text="Salaires : %s par mois, payés chaque jour. Le personnel travaille mieux sur peu de chevaux."/>
+        <text name="eq_staff_summary_staff" text="Salaires : %s par jour. Le personnel travaille mieux sur peu de chevaux."/>
         <text name="eq_staff_clientNote" text="Pour l&apos;instant, seul l&apos;hôte peut embaucher."/>
         <text name="eq_result_placed" text="%s a terminé à la %de place sur %d dans l'épreuve %s et gagné %s."/>
         <text name="eq_result_placedNoPrize" text="%s a terminé à la %de place sur %d dans l'épreuve %s."/>

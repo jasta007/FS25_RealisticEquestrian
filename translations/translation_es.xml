@@ -440,7 +440,7 @@
         <text name="eq_ui_entriesLeft" text="Inscripciones restantes este mes: %d de %d."/>
         <text name="eq_money_transport" text="Transporte de caballos"/>
         <text name="eq_money_staffWages" text="Salarios del personal ecuestre"/>
-        <text name="eq_staff_title" text="Personal"/>
+        <text name="eq_staff_title" text="Personal ecuestre"/>
         <text name="eq_staff_tab_hire" text="Contratar"/>
         <text name="eq_staff_tab_staff" text="Tu personal"/>
         <text name="eq_staff_col_name" text="Nombre"/>
@@ -448,7 +448,7 @@
         <text name="eq_staff_col_grade" text="Nivel"/>
         <text name="eq_staff_col_best" text="Mejores habilidades"/>
         <text name="eq_staff_col_worksOn" text="Trabaja con"/>
-        <text name="eq_staff_col_wage" text="Sueldo / mes"/>
+        <text name="eq_staff_col_wage" text="Sueldo / día"/>
         <text name="eq_staff_job_groom" text="Mozo de cuadra"/>
         <text name="eq_staff_job_dressage" text="Entrenador de doma"/>
         <text name="eq_staff_job_showJumping" text="Entrenador de salto"/>
@@ -476,17 +476,17 @@
         <text name="eq_staff_works_role" text="Todos los caballos: %s"/>
         <text name="eq_staff_works_passive" text="Cada caballo"/>
         <text name="eq_staff_wage" text="Sueldo"/>
-        <text name="eq_staff_perMonth" text="%s al mes"/>
+        <text name="eq_staff_perDay" text="%s al día"/>
+        <text name="eq_staff_duties" text="Tareas"/>
+        <text name="eq_staff_duties_groom" text="Entrena las cuatro estadísticas, limpia caballos y recoge los sueltos"/>
+        <text name="eq_staff_duties_trainer" text="Se centra en %s y %s, entrena un poco las demás estadísticas y prepara a los caballos para sus pruebas"/>
+        <text name="eq_staff_duties_vet" text="Menos lesiones y tratamientos más cortos y baratos para cada caballo"/>
+        <text name="eq_staff_duties_broker" text="Da un potencial más preciso de los caballos del tratante. Mejores precios al comprar y vender caballos."/>
         <text name="eq_staff_coversHorses" text="%s (%d)"/>
         <text name="eq_staff_available_1" text="Solo este mes"/>
         <text name="eq_staff_available_2" text="Este mes y el siguiente"/>
         <text name="eq_staff_onOffer" text="Disponible"/>
-        <text name="eq_staff_does" text="Tarea"/>
-        <text name="eq_staff_does_groom" text="Entrena las cuatro estadísticas, limpia caballos y recoge los sueltos"/>
-        <text name="eq_staff_does_trainer" text="Entrena %s y %s"/>
-        <text name="eq_staff_does_vet" text="Menos lesiones y tratamientos más cortos y baratos para cada caballo"/>
-        <text name="eq_staff_does_broker" text="Juzga mejor el potencial de los caballos del tratante"/>
-        <text name="eq_staff_button_hire" text="Contratar (%s al mes)"/>
+        <text name="eq_staff_button_hire" text="Contratar (%s al día)"/>
         <text name="eq_staff_button_worksOn" text="Cambiar asignación"/>
         <text name="eq_staff_button_fire" text="Despedir"/>
         <text name="eq_staff_fire_confirm" text="¿Despedir a %s? No volverá."/>
@@ -496,7 +496,7 @@
         <text name="eq_staff_noCandidates" text="Ahora nadie busca trabajo. Cada mes llega gente nueva."/>
         <text name="eq_staff_noStaff" text="Aún no tienes personal. Contrata en la pestaña Contratar."/>
         <text name="eq_staff_summary_hire" text="Cada mes llega gente nueva, disponible uno o dos meses. Solo un veterinario y un corredor por granja."/>
-        <text name="eq_staff_summary_staff" text="Sueldos: %s al mes, pagados a diario. El personal rinde más con pocos caballos."/>
+        <text name="eq_staff_summary_staff" text="Sueldos: %s al día. El personal rinde más con pocos caballos."/>
         <text name="eq_staff_clientNote" text="Por ahora solo el anfitrión puede contratar."/>
         <text name="eq_result_placed" text="%s terminó en el puesto %d de %d en la prueba %s y ganó %s."/>
         <text name="eq_result_placedNoPrize" text="%s terminó en el puesto %d de %d en la prueba %s."/>

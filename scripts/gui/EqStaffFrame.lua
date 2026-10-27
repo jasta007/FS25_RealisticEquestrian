@@ -265,10 +265,15 @@ function EqStaffFrame:refresh()
     self.horses = {}
     if ok then
         if isHire then
-            for _, member in ipairs(EqStaffManager.candidates) do table.insert(self.rows, personRow(member, nil)) end
+            local people = {}
+            for _, member in ipairs(EqStaffManager.candidates) do table.insert(people, member) end
+            EqStaff.sortPeople(people)
+            for _, member in ipairs(people) do table.insert(self.rows, personRow(member, nil)) end
         else
             self.horses = farmHorses(farmId())
-            for _, member in ipairs(EqStaffManager.membersOf(farmId())) do
+            local people = EqStaffManager.membersOf(farmId())
+            EqStaff.sortPeople(people)
+            for _, member in ipairs(people) do
                 table.insert(self.rows, personRow(member, self.horses))
             end
         end
@@ -322,7 +327,7 @@ function EqStaffFrame:updatePanel()
         setText(self.skillValue[i], string.format("%d - %s", value, g_i18n:getText("eq_staff_level_" .. level.word)),
             EqInfoDisplay.bandColor(level.band))
     end
-    setText(self.panelWage, string.format(g_i18n:getText("eq_staff_perMonth"), row.wage))
+    setText(self.panelWage, string.format(g_i18n:getText("eq_staff_perDay"), row.wage))
 
     if self.mode == EqStaffFrame.MODE_STAFF then
         if EqStaff.trains(member.job) then
@@ -334,7 +339,7 @@ function EqStaffFrame:updatePanel()
         local left = (member.leavesMonth or 0) - EqStaffManager.month
         setText(self.panelWorksOn, g_i18n:getText(left <= 0 and "eq_staff_available_1" or "eq_staff_available_2"))
     end
-    setText(self.panelNoteLabel, g_i18n:getText("eq_staff_does"))
+    setText(self.panelNoteLabel, g_i18n:getText("eq_staff_duties"))
     setText(self.panelNote, EqStaffFrame.jobDoes(member.job))
     -- The Works on row reads On offer on the Hire tab.
     setText(self.panelWorksOnLabel, g_i18n:getText(self.mode == EqStaffFrame.MODE_STAFF and "eq_staff_col_worksOn" or "eq_staff_onOffer"))
@@ -342,7 +347,7 @@ end
 
 
 --- @param job string
---- @return string what the job does, one line
+--- @return string the job's duties
 function EqStaffFrame.jobDoes(job)
     local info = EqStaff.JOBS[job]
     if info ~= nil and info.event ~= nil then
@@ -350,16 +355,16 @@ function EqStaffFrame.jobDoes(job)
         for _, stat in ipairs(EqStaff.STATS) do
             if info.trains[stat] then table.insert(stats, g_i18n:getText("eq_stat_" .. stat)) end
         end
-        return string.format(g_i18n:getText("eq_staff_does_trainer"), stats[1] or "", stats[2] or "")
+        return string.format(g_i18n:getText("eq_staff_duties_trainer"), stats[1] or "", stats[2] or "")
     end
-    return g_i18n:getText("eq_staff_does_" .. job)
+    return g_i18n:getText("eq_staff_duties_" .. job)
 end
 
 
 function EqStaffFrame:updateSummary()
     local text = self.message
     if text == nil and self.isReady then
-        local wages = EqStaff.monthlyWages(EqStaffManager.membersOf(farmId()))
+        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId()))
         if self.mode == EqStaffFrame.MODE_HIRE then
             text = g_i18n:getText("eq_staff_summary_hire")
         else

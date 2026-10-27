@@ -4,7 +4,7 @@
 
     - Candidates: EqStaff.CANDIDATES on offer, shared by every farm; at each month change those
       whose time is up leave and new ones arrive.
-    - Wages are paid every day, a month's wage spread over the days in the month.
+    - Wages are per day, paid every day.
     - A horse's day of training asks workFor for everyone's work on it (EqTrainingHooks.onHorseDay).
     - In the last hour of the day grooms clean horses (EqStaff.toClean) and, like the base game's
       workers, bring the farm's loose horses home (EqLooseHorses).
@@ -210,10 +210,8 @@ end
 
 --- Pay the day's wages.
 function EqStaffManager.onDayChanged()
-    local environment = g_currentMission.environment
-    local days = math.max(1, environment.daysPerPeriod or 1)
     for _, farmId in ipairs(staffedFarms()) do
-        local wages = EqStaff.monthlyWages(EqStaffManager.membersOf(farmId)) / days
+        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId))
         if wages > 0 then
             g_currentMission:addMoney(-wages, farmId, MoneyType.EQ_STAFF_WAGES or MoneyType.OTHER, true, true)
         end
@@ -272,7 +270,7 @@ local function saveMember(xmlFile, key, member)
     xmlFile:setString(key .. "#name", member.name)
     xmlFile:setString(key .. "#job", member.job)
     xmlFile:setInt(key .. "#grade", member.grade)
-    xmlFile:setInt(key .. "#wage", member.wage)
+    xmlFile:setInt(key .. "#dailyWage", member.wage)
     xmlFile:setInt(key .. "#talents", member.talents or 0)
     if member.farmId ~= nil then xmlFile:setInt(key .. "#farmId", member.farmId) end
     if member.leavesMonth ~= nil then xmlFile:setInt(key .. "#leavesMonth", member.leavesMonth) end
@@ -295,7 +293,7 @@ local function loadMember(xmlFile, key)
         name = xmlFile:getString(key .. "#name", "?"),
         job = job,
         grade = math.max(1, math.min(#EqStaff.GRADES, xmlFile:getInt(key .. "#grade", 1))),
-        wage = xmlFile:getInt(key .. "#wage", 0),
+        wage = xmlFile:getInt(key .. "#dailyWage"),
         talents = xmlFile:getInt(key .. "#talents", 0),
         farmId = xmlFile:getInt(key .. "#farmId"),
         leavesMonth = xmlFile:getInt(key .. "#leavesMonth"),
@@ -309,6 +307,10 @@ local function loadMember(xmlFile, key)
     }
     for _, skill in ipairs(EqStaff.SKILLS) do
         member.skills[skill] = xmlFile:getInt(key .. ".skills#" .. skill, 0)
+    end
+    -- Saves from before daily wages held a monthly one: work out the daily wage again.
+    if member.wage == nil then
+        member.wage = EqStaff.wageFor(job, member.grade, member.skills, member.talents, 0)
     end
     return member
 end

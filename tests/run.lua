@@ -998,6 +998,37 @@ do
     check("a legendary groom costs far more than a junior", EqStaff.wageFor("groom", 4, legend, 0, 0)
         > 4 * EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0))
     check("names have a last initial", string.match(candidates[1].name, "^%a+ %u%.$") ~= nil, candidates[1].name)
+    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0)
+        <= 200)
+
+    -- The mix on offer: 2-3 grooms, 2-3 trainers of different events, at most one vet and broker.
+    local mixOk, passiveSeen = true, 0
+    for trial = 1, 200 do
+        local offer = {}
+        EqStaff.refreshCandidates(offer, trial, rng, 1)
+        local count, grooms, trainers = {}, 0, 0
+        for _, c in ipairs(offer) do
+            count[c.job] = (count[c.job] or 0) + 1
+            if c.job == "groom" then grooms = grooms + 1 end
+            if EqStaff.JOBS[c.job].event ~= nil then trainers = trainers + 1 end
+        end
+        if grooms < 2 or grooms > 3 or trainers < 2 or trainers > 3 or (count.vet or 0) > 1 or (count.broker or 0) > 1 then
+            mixOk = false
+        end
+        for _, event in ipairs(EqStaff.EVENTS) do
+            if (count[event] or 0) > 1 then mixOk = false end
+        end
+        if count.vet or count.broker then passiveSeen = passiveSeen + 1 end
+    end
+    check("candidates come in a good mix", mixOk)
+    check("a vet or broker is on offer now and then", passiveSeen > 40 and passiveSeen < 160, tostring(passiveSeen))
+    local people = { member(1, "racing", 30), member(2, "groom", 40), member(3, "racing", 60), member(4, "vet", 50) }
+    people[3].grade = 3
+    EqStaff.sortPeople(people)
+    check("people sort by job, then grade", people[1].job == "groom" and people[2].id == 3 and people[3].id == 1
+        and people[4].job == "vet")
+    check("a broker buys cheaper and sells dearer", EqStaff.dealFactor(1, false) < 1 and EqStaff.dealFactor(1, true) > 1
+        and EqStaff.dealFactor(0, true) == 1)
     local vet = member(9, "vet", 70)
     check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
     check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)

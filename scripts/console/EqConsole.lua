@@ -150,7 +150,7 @@ local function staffLine(member)
         target = "  works on " .. (works.kind == EqStaff.WORKS_ROLE and ("role " .. tostring(works.role))
             or works.kind == EqStaff.WORKS_HORSE and ("horse " .. tostring(works.name or works.id)) or "all horses (general)")
     end
-    return string.format("#%d %s, %s %s, %s a month%s\n    %s", member.id, member.name,
+    return string.format("#%d %s, %s %s, %s a day%s\n    %s", member.id, member.name,
         EqStaff.GRADES[member.grade].name, member.job, g_i18n:formatMoney(member.wage, 0, true, true), target,
         table.concat(skills, " "))
 end
@@ -162,7 +162,7 @@ function EqConsole:consoleStaff()
     if not g_currentMission:getIsServer() then return "Only the host can see staff for now" end
     local farmId = g_currentMission:getFarmId()
     local mine = EqStaffManager.membersOf(farmId)
-    print(string.format("Your staff (%d), %s a month:", #mine, g_i18n:formatMoney(EqStaff.monthlyWages(mine), 0, true, true)))
+    print(string.format("Your staff (%d), %s a day:", #mine, g_i18n:formatMoney(EqStaff.dailyWages(mine), 0, true, true)))
     for _, member in ipairs(mine) do print("  " .. staffLine(member)) end
     print("Candidates:")
     for _, member in ipairs(EqStaffManager.candidates) do

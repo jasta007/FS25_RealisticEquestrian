@@ -40,9 +40,15 @@ EqStaff.JOBS = {
     broker = { main = { "broker" }, trains = {} },
 }
 EqStaff.JOB_ORDER = { "groom", "dressage", "showJumping", "crossCountry", "racing", "vet", "broker" }
--- How often each job turns up among candidates.
+-- How often each job turns up among candidates (EqStaff.roll without a job).
 EqStaff.JOB_CHANCE = { groom = 0.35, dressage = 0.12, showJumping = 0.12, crossCountry = 0.12, racing = 0.12,
     vet = 0.09, broker = 0.08 }
+-- The mix on offer: at least MIX_MIN grooms and trainers (each trainer a different event), at
+-- most MIX_MAX of each; a spare place goes to a vet or broker at MIX_PASSIVE, else a groom or a
+-- trainer. At most one vet and one broker on offer.
+EqStaff.MIX_MIN = 2
+EqStaff.MIX_MAX = 3
+EqStaff.MIX_PASSIVE = 0.3
 -- Jobs a farm can have only one of.
 EqStaff.UNIQUE = { vet = true, broker = true }
 
@@ -60,9 +66,10 @@ EqStaff.OFF_SKILL = { 0, 0.4 }
 EqStaff.TALENT_SKILL = { 0.5, 0.9 }
 EqStaff.TALENT_CHANCE = 0.15
 
--- Monthly wage of a junior with average main skills, by job.
-EqStaff.BASE_WAGE = { groom = 900, dressage = 1400, showJumping = 1400, crossCountry = 1400, racing = 1400,
-    vet = 1800, broker = 1200 }
+-- Daily wage of a junior with average main skills, by job. A junior groom is cheap enough to
+-- hire just for the cleaning.
+EqStaff.BASE_WAGE = { groom = 200, dressage = 450, showJumping = 450, crossCountry = 450, racing = 450,
+    vet = 600, broker = 400 }
 -- Wages vary by up to this share either way, so a bargain or an overpriced hire turns up.
 EqStaff.WAGE_LUCK = 0.15
 -- Each talent adds this share to the wage.
@@ -156,7 +163,7 @@ end
 --- @param skills table skill -> 0..100
 --- @param talents number off-job skills that rolled as talents
 --- @param luck number -1..1, the wage's luck
---- @return number wage per month, rounded to 10
+--- @return number wage per day, rounded to 5
 function EqStaff.wageFor(job, gradeIndex, skills, talents, luck)
     local grade = EqStaff.GRADES[gradeIndex]
     local main, sum = EqStaff.JOBS[job].main, 0
@@ -165,7 +172,7 @@ function EqStaff.wageFor(job, gradeIndex, skills, talents, luck)
     local skillFactor = 1 + (sum / #main - middle) / 100
     local wage = EqStaff.BASE_WAGE[job] * grade.wage * skillFactor * (1 + EqStaff.TALENT_WAGE * talents)
         * (1 + EqStaff.WAGE_LUCK * luck)
-    return math.floor(wage / 10 + 0.5) * 10
+    return math.floor(wage / 5 + 0.5) * 5
 end
 
 
@@ -211,6 +218,66 @@ function EqStaff.roll(rng, id, month, job)
 end
 
 
+--- The job for the next candidate, keeping the mix on offer (MIX_*).
+--- @param candidates table list of members on offer
+--- @param rng table EqRandom
+--- @return string job
+function EqStaff.nextJob(candidates, rng)
+    local count, grooms, trainers = {}, 0, 0
+    for _, candidate in ipairs(candidates) do
+        count[candidate.job] = (count[candidate.job] or 0) + 1
+        if candidate.job == "groom" then grooms = grooms + 1 end
+        if EqStaff.JOBS[candidate.job].event ~= nil then trainers = trainers + 1 end
+    end
+    local function trainer()
+        local free = {}
+        for _, event in ipairs(EqStaff.EVENTS) do
+            if count[event] == nil then table.insert(free, event) end
+        end
+        if #free == 0 then return nil end
+        return free[math.min(#free, math.floor(rng:next() * #free) + 1)]
+    end
+    local function passive()
+        local free = {}
+        for _, job in ipairs({ "vet", "broker" }) do
+            if count[job] == nil then table.insert(free, job) end
+        end
+        if #free == 0 then return nil end
+        return free[math.min(#free, math.floor(rng:next() * #free) + 1)]
+    end
+
+    if grooms < EqStaff.MIX_MIN then return "groom" end
+    if trainers < EqStaff.MIX_MIN then return trainer() or "groom" end
+    if rng:next() < EqStaff.MIX_PASSIVE then
+        local job = passive()
+        if job ~= nil then return job end
+    end
+    local canGroom, canTrain = grooms < EqStaff.MIX_MAX, trainers < EqStaff.MIX_MAX
+    if canGroom and (not canTrain or rng:next() < 0.5) then return "groom" end
+    return (canTrain and trainer()) or passive() or "groom"
+end
+
+
+--- Order people for the lists: by job (JOB_ORDER), then grade, then main skill, best first.
+--- @param people table list of members, sorted in place
+function EqStaff.sortPeople(people)
+    local rank = {}
+    for i, job in ipairs(EqStaff.JOB_ORDER) do rank[job] = i end
+    local function mainSkill(member)
+        local main, sum = EqStaff.JOBS[member.job].main, 0
+        for _, skill in ipairs(main) do sum = sum + (member.skills[skill] or 0) end
+        return sum / #main
+    end
+    table.sort(people, function(a, b)
+        if a.job ~= b.job then return (rank[a.job] or 99) < (rank[b.job] or 99) end
+        if a.grade ~= b.grade then return a.grade > b.grade end
+        local sa, sb = mainSkill(a), mainSkill(b)
+        if sa ~= sb then return sa > sb end
+        return (a.id or 0) < (b.id or 0)
+    end)
+end
+
+
 --- Drop candidates whose time is up and top the list up to CANDIDATES.
 --- @param candidates table list of members, changed in place
 --- @param month number the month counter now
@@ -222,7 +289,7 @@ function EqStaff.refreshCandidates(candidates, month, rng, nextId)
         if (candidates[i].leavesMonth or 0) < month then table.remove(candidates, i) end
     end
     while #candidates < EqStaff.CANDIDATES do
-        table.insert(candidates, EqStaff.roll(rng, nextId, month))
+        table.insert(candidates, EqStaff.roll(rng, nextId, month, EqStaff.nextJob(candidates, rng)))
         nextId = nextId + 1
     end
     return nextId
@@ -331,8 +398,8 @@ end
 
 
 --- @param members table
---- @return number wages per month
-function EqStaff.monthlyWages(members)
+--- @return number wages per day
+function EqStaff.dailyWages(members)
     local total = 0
     for _, member in ipairs(members) do total = total + (member.wage or 0) end
     return total
@@ -465,6 +532,9 @@ EqStaff.VET_CARE = 0.35
 -- and a bought horse's real potential shows up to BROKER_REVEAL months sooner (never before 1).
 EqStaff.BROKER_TRUTH = 0.7
 EqStaff.BROKER_REVEAL = 2
+-- A broker at full strength buys horses BROKER_DEAL cheaper and sells them BROKER_DEAL dearer;
+-- the sale premium only for a horse owned a month or more, so buying to sell back gains nothing.
+EqStaff.BROKER_DEAL = 0.05
 -- A trainer at skill 100 working on a horse adds EVENT_POINTS to that event type's stats in the
 -- month's events (GENERAL_SHARE of that for horses they don't work on). Peak form from the
 -- player's riding goes up to 8 (EqTraining.FORM_MAX); together the bigger counts in full, the
@@ -501,6 +571,15 @@ function EqStaff.brokerView(advertised, real, strength)
         shown[stat] = math.floor((said + (actual - said) * truth) * 10 + 0.5) / 10
     end
     return shown
+end
+
+
+--- @param strength number the farm's Broker, 0..1
+--- @param selling boolean true for the farm's own horse, false for a dealer's
+--- @return number factor on the horse's price
+function EqStaff.dealFactor(strength, selling)
+    local share = EqStaff.BROKER_DEAL * (strength or 0)
+    return selling and 1 + share or 1 - share
 end
 
 

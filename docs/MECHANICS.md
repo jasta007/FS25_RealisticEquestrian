@@ -298,8 +298,8 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Hired staff
 
-Hire grooms, event trainers, a vet and a broker on the **Staff** tab of RLRM's menu: **Hire**
-lists the candidates, **Your staff** your team, with Change who they work on and Let go. Each
+Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
+**Hire** lists the candidates, **Your staff** your team (both grouped by job, best first), with Change who they work on and Let go. Each
 person's ten skills show beside the table. The `eqStaff` console commands do the same. Host only
 for now in multiplayer.
 
@@ -312,11 +312,12 @@ for now in multiplayer.
   Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
   candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%). Other skills are
   0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
-- **Wages.** Monthly, by job (groom 900, trainer 1,400, vet 1,800, broker 1,200) times the grade
+- **Wages.** Per day, by job (groom 200, trainer 450, vet 600, broker 400) times the grade
   (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
-  Horse Staff Wages in Finances. No hiring fee; let staff go at any time.
-- **Candidates.** Six are on offer, shared by every farm. Each stays one or two months; at each
-  month change those whose time is up leave and new ones arrive.
+  Horse Staff Wages in Finances, so a junior groom just for the cleaning is cheap. No hiring fee; let staff go at any time.
+- **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
+  for the same event) and now and then a vet or broker (30% for each spare place). Each stays one
+  or two months; at each month change those whose time is up leave and new ones arrive.
 - **Works on.** A groom or trainer works on all horses (General), every horse with a role, or one
   horse (the Change who they work on button steps through them). Horses they work on get their full work; up to 4 horses each, more share
   it (8 horses get half each). Every other horse gets 20% of it.
@@ -333,10 +334,12 @@ for now in multiplayer.
   The Events tab's injury risk includes it.
 - **Broker.** Works without being told too. At Broker 100 the dealer's "Potential (dealer's view)"
   you see moves 70% of the way to the truth, and a bought horse's real potential shows 2 months
-  sooner (never before 1 month). The dealer's prices stay on the dealer's own view.
+  sooner (never before 1 month). The dealer's prices stay on the dealer's own view. Horses also
+  cost up to 5% less from the dealer and sell for up to 5% more (only once you have had the horse
+  a month, so buying to sell back gains nothing).
 - **Others' vet and broker skill.** The farm's Veterinary and Broker stack over everyone like
   training (best in full, then 40%, then 10%), so a groom with a talent helps a little.
-- **Event bonus.** Trainers coach for events: at skill 100 a trainer working on a horse adds 4
+- **Event bonus.** Trainers focus on their two stats but train the others a little, and coach for events: at skill 100 a trainer working on a horse adds 4
   points to the event's most important stat in that month's events, less to the others by the
   event's weights (20% for horses they don't work on). Races use Racing, Eventing the average of
   Dressage, Show Jumping and Cross Country. A trainer helps in another event by their skill in it.
