@@ -581,7 +581,12 @@ do
     check("the canter is allowed only just after the press", not E.allowGait(r, "gallop", "canter"))
     local recoverHigh, recoverLow = E.new(), E.new()
     recoverHigh.mode, recoverHigh.value, recoverLow.mode, recoverLow.value = "recover", 90, "recover", 10
-    check("easing off is worth most when the horse is working hardest", -E.rate(recoverHigh, "gallop") > -E.rate(recoverLow, "gallop") * 1.5)
+    local recoverZone = E.new()
+    recoverZone.mode, recoverZone.value = "recover", 50
+    check("Recovering is fast in the top and bottom thirds and slow in the middle zone",
+        E.band(90) == "high" and E.band(50) == "zone" and E.band(10) == "low"
+        and -E.rate(recoverHigh, "gallop") > -E.rate(recoverZone, "gallop") * 2
+        and -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop") * 2)
     local d = E.new()
     ride(d, "gallop", 15000)
     E.press(d, "back")
@@ -675,8 +680,8 @@ do
         ride(last, "gallop", 100)
         E.press(last, "forward")
     end
-    check("a Sprint goes past the Blowing hard line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
-    check("the marker runs on into the Blowing hard section", E.marker(last, "gallop") > E.BAR.line)
+    check("a Sprint goes past the Blowing Hard line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
+    check("the marker runs on into the Blowing Hard section", E.marker(last, "gallop") > E.BAR.line)
     events = ride(last, "gallop", 1000)
     check("a Sprint that ends past the line leaves the horse exhausted", events[1] == "spent" and last.lock == "spent"
         and E.forcedGait(last) == "canter")
@@ -706,7 +711,7 @@ do
     m.value = 50
     check("exertion runs along the gallop section", near(E.marker(m, "walk"), (E.BAR.canter + E.BAR.line) / 2))
     m.value = E.LINE
-    check("the Blowing hard line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
+    check("the Blowing Hard line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
     check("the state names the pace, the lock or the gait", E.state(E.new(), "trot") == "trot" and E.state(blown, "canter") ~= nil
         and E.state(sp, "gallop") == "sprint")
 
@@ -740,6 +745,92 @@ do
     resting.value, resting.mode = 60, "push"
     E.rest(resting, 60000)
     check("time out of the saddle rests the horse", resting.value == 0 and resting.mode == nil)
+end
+
+-- GALLOP TRAINING: speed banked from Sprints, stamina at a live multiplier (EqTraining).
+do
+    local E, T = EqExertion, EqTraining
+    check("a Sprint's speed multiplier is 2x half way to the line and nearly 10x at it",
+        math.abs(T.sprintMultiplier(50) - 2) < 1e-6 and T.sprintMultiplier(99.9) > 9.9 and T.sprintMultiplier(20) < 1.3)
+    check("a Sprint that ends at or past the line is worth only 1x", T.sprintMultiplier(E.LINE) == 1 and T.sprintMultiplier(80, true) == 1)
+
+    -- Gallop under a policy (rider's key for the frame, from the sheet), returning the sheet.
+    local function gallop(policy, ms, worn)
+        local sheet = T.newSheet()
+        local ex = sheet.exertion
+        local banked, blown, multMs = {}, false, 0
+        for _ = 1, ms / 50 do
+            local key = policy(ex, sheet)
+            if key == "sprint" then
+                for _ = 1, E.SPRINT_TAPS do E.press(ex, "forward") end
+            elseif key ~= nil then
+                E.press(ex, key)
+            end
+            if ex.mode == "sprint" and ex.clock - ex.tapAt > 150 then E.press(ex, "forward") end
+            local gait = ex.lock ~= nil and "canter" or "gallop"
+            if E.step(ex, gait, 50) == "blown" then blown = true end
+            local mult = T.speedStep(sheet, 50, worn)
+            if mult ~= nil then table.insert(banked, mult) end
+            T.staminaStep(sheet, 50, worn)
+            multMs = multMs + sheet.stamina.mult * 50
+        end
+        sheet.banked, sheet.blown, sheet.averageMult = banked, blown, multMs / ms
+        return sheet
+    end
+    local function sprintTo(stop)
+        return function(ex)
+            if ex.mode == "push" and E.canSprint(ex) then return "sprint" end
+            if ex.mode == "sprint" and ex.value >= stop then return "back" end
+        end
+    end
+    local high, half = gallop(sprintTo(95), 20000), gallop(sprintTo(50), 20000)
+    check("a Sprint banks speed when it ends, more for one taken higher",
+        #high.banked >= 1 and high.banked[1] > 7 and #half.banked >= 1 and half.banked[1] < 2.5
+        and high.focused.speed > half.focused.speed * 3,
+        string.format("x%.1f %.3f vs x%.1f %.3f", high.banked[1] or 0, high.focused.speed, half.banked[1] or 0, half.focused.speed))
+    local over = gallop(sprintTo(115), 20000)
+    check("a Sprint past the line banks only 1x", over.banked[1] == 1 and over.exertion.lock == "spent")
+    local tooTired = gallop(sprintTo(95), 20000, true)
+    check("a worn-out horse's Sprints bank nothing", tooTired.focused.speed == 0)
+    local dropped = T.newSheet()
+    dropped.exertion.mode, dropped.exertion.value, dropped.exertion.tapAt = "sprint", 70, 0
+    T.speedStep(dropped, 3000, false)
+    check("dropping out of a Sprint to a canter ends and banks it",
+        E.step(dropped.exertion, "canter", 50) == "sprintOver" and T.speedStep(dropped, 50, false) ~= nil and dropped.focused.speed > 0)
+
+    -- Stamina: push near the top, recover into the zone and wait there, push again.
+    local skilled = gallop(function(ex)
+        if ex.mode == "push" and ex.value >= 92 then return "back" end
+        if ex.mode == "recover" and ex.value <= 45 then return "forward" end
+    end, 150000)
+    local jiggler = gallop(function(ex)
+        if ex.mode == "push" and ex.value >= 95 then return "back" end
+        if ex.mode == "recover" and ex.value <= 85 then return "forward" end
+    end, 150000)
+    local lazy = gallop(function(ex)
+        if ex.mode == "push" and ex.value >= 92 then return "back" end
+        if ex.mode == "recover" and ex.value <= 3 then return "forward" end
+    end, 150000)
+    local flatOut = gallop(function() return nil end, 150000)
+    check("riding in the zone builds the stamina multiplier towards x5 without Blowing Hard",
+        not skilled.blown and skilled.stamina.mult > 4 and skilled.averageMult > 3,
+        string.format("x%.1f now, x%.2f average", skilled.stamina.mult, skilled.averageMult))
+    check("bouncing between Push and Recover near the top earns little multiplier",
+        jiggler.averageMult < skilled.averageMult * 0.6, string.format("x%.2f average", jiggler.averageMult))
+    check("recovering too far loses the multiplier", lazy.averageMult < skilled.averageMult * 0.75,
+        string.format("x%.2f average", lazy.averageMult))
+    check("Blowing Hard drops the multiplier to x1 and stops stamina training",
+        flatOut.blown and flatOut.focused.stamina < skilled.focused.stamina * 0.6)
+    check("good stamina riding fills most of a day's effort in a riding bar of gallop",
+        skilled.focused.stamina > 1.2, string.format("%.2f in 150 s", skilled.focused.stamina))
+    local blownSheet = T.newSheet()
+    blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4
+    T.staminaStep(blownSheet, 1000, false)
+    check("while Blowing Hard there is no multiplier and no stamina training",
+        blownSheet.stamina.mult == 1 and blownSheet.focused.stamina == 0)
+    print(string.format("info: stamina over 150 s: zone x%.2f avg (%.2f effort), jiggle x%.2f, over-recover x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
+        skilled.averageMult, skilled.focused.stamina, jiggler.averageMult, lazy.averageMult, flatOut.focused.stamina,
+        high.banked[1] or 0, high.focused.speed))
 end
 
 local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)

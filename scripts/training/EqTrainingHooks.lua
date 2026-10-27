@@ -459,6 +459,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local event = EqExertion.step(ex, pace, dt, stamina, record ~= nil and record.trained.speed or nil)
     if event ~= nil then EqTrainingHooks.onExertionEvent(event, ex) end
     if not wasGalloping and EqExertion.isGalloping(ex) then Log:info("Exertion: galloping, pushing (exertion %.0f%%)", ex.value) end
+    -- Stamina and speed train from how well the gallop is ridden.
+    local speedMult, speedGain = EqTraining.speedStep(sheet, dt, worn)
+    if speedMult ~= nil then
+        local last = ex.lastSprint or {}
+        Log:info("Speed: Sprint banked at x%.1f (ended at %.0f%%%s), +%.3f effort", speedMult, last.value or 0,
+            last.over and ", Blowing Hard" or "", speedGain)
+        if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
+    end
+    EqTraining.staminaStep(sheet, dt, worn)
     -- Blown or exhausted: down to a canter now, not next frame.
     EqTrainingHooks.keepGait(spec, ex)
     spec.eqLastGait = gait
@@ -663,9 +672,9 @@ end
 -- opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "agility", "temperament" }
 -- "gallop" pops up the first time the horse gallops, and on H while it gallops.
-EqTrainingHooks.HELP_PAGES = { freestyle = 3, agility = 2, temperament = 2, gallop = 3 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 3, agility = 2, temperament = 2, gallop = 4 }
 -- The stats the player's riding trains for now (stamina and speed are off, see EqTraining).
-EqTrainingHooks.TRAINED_STATS = { "agility", "temperament" }
+EqTrainingHooks.TRAINED_STATS = { "stamina", "speed", "agility", "temperament" }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -774,7 +783,7 @@ end
 
 -- The exertion bar's sections (James's drawing, 2026-10-27), each { from, to, colour when dim,
 -- colour when lit }. A gait's section lights while the horse is in it; the gallop's lights in
--- every pace; Blowing hard lights while the horse is blown or exhausted.
+-- every pace; Blowing Hard lights while the horse is blown or exhausted.
 local BAR = EqExertion.BAR
 EqTrainingHooks.BAR_SECTIONS = {
     halt = { BAR.reverse, BAR.halt, { 0.6, 0.8, 0.98 }, { 0.45, 0.75, 1 } },
@@ -795,9 +804,10 @@ EqTrainingHooks.MARKER_EASE_MS = 120
 
 --- The exertion rows: what the horse is doing and how hard it's working, then the bar.
 --- @param spec table spec_rideable
---- @param ex table EqExertion state
+--- @param sheet table the horse's training sheet
 --- @return table rows
-local function exertionRows(spec, ex)
+local function exertionRows(spec, sheet)
+    local ex = sheet.exertion
     local gait = spec.eqLastGait or "halt"
     local state = EqExertion.state(ex, gait)
     -- Standing lights nothing; backing up lights the first section.
@@ -831,10 +841,39 @@ local function exertionRows(spec, ex)
     spec.eqMarker = spec.eqMarker == nil and target or spec.eqMarker + (target - spec.eqMarker) * step
     spec.eqMarkerAt = now
 
+    local third = (BAR.line - BAR.canter) / 3
     local rows = { words, { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
-        marker = spec.eqMarker } }
+        ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker } }
+    for _, row in ipairs(EqTrainingHooks.gallopTrainingRows(sheet)) do table.insert(rows, row) end
     for _, hint in ipairs(EqTrainingHooks.exertionHints(ex)) do
         table.insert(rows, { left = g_i18n:getText(hint[1]), leftColor = hint[2] })
+    end
+    return rows
+end
+
+
+--- What the gallop is training: the Sprint's speed multiplier and what it will bank, or the
+--- stamina multiplier and breath (EqTraining.speedStep and staminaStep).
+--- @param sheet table
+--- @return table rows
+function EqTrainingHooks.gallopTrainingRows(sheet)
+    local ex, rows = sheet.exertion, {}
+    if ex.mode == "sprint" then
+        local over = ex.value >= EqExertion.LINE
+        local mult = EqTraining.sprintMultiplier(ex.value)
+        local gain = EqTraining.SPEED_RATE * sheet.sprint.ms / 1000 * mult / EqTraining.EFFORT_CAP.speed * 100
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_speedMult"), mult),
+            leftColor = over and COLOR.red or STAT_COLOR.speed,
+            right = over and g_i18n:getText("eq_ex_blowingHard") or string.format("+%d%%", math.floor(gain + 0.5)),
+            rightColor = over and COLOR.red or STAT_COLOR.speed })
+    end
+    local st = sheet.stamina
+    if ex.mode ~= nil or ex.lock ~= nil or st.mult > 1 then
+        local training = ex.mode == "push" or ex.mode == "recover"
+        local right, rightColor = string.format(g_i18n:getText("eq_train_breath"), math.floor(st.breath * 100 + 0.5)), COLOR.grey
+        if ex.lock ~= nil then right, rightColor = g_i18n:getText("eq_train_staminaStopped"), COLOR.red end
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_staminaMult"), st.mult),
+            leftColor = (training or ex.mode == "sprint") and STAT_COLOR.stamina or COLOR.grey, right = right, rightColor = rightColor })
     end
     return rows
 end
@@ -944,7 +983,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.view = view
     -- The exertion bar shows in every view: it says what gait the horse is in, too.
     local ex = sheet.exertion
-    for _, row in ipairs(exertionRows(spec, ex)) do table.insert(rows, row) end
+    for _, row in ipairs(exertionRows(spec, sheet)) do table.insert(rows, row) end
     exertionPrompt(ex)
     if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
         EqTrainingHud.markSeen("gallop")
@@ -988,7 +1027,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     EqTrainingHud.drawPops()
 
-    -- Stamina and speed don't train from riding while the exertion system is tested: no rows for them.
     if view == "freestyle" then
         for _, stat in ipairs(EqTrainingHooks.TRAINED_STATS) do table.insert(rows, statRow(stat, effort, sheet)) end
     else

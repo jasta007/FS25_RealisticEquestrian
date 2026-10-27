@@ -52,7 +52,8 @@ uses its genetics, health and fitness.
 - **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
   and the Agility and Temperament views, and **H** for help.
   - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
-    Sprint. Stamina and Speed don't train from riding while this is tested.
+    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+    Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
 - The riding bar is the horse's energy for the day.

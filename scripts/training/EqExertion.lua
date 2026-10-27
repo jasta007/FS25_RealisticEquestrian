@@ -11,10 +11,10 @@
     - Sprinting: tap W quickly SPRINT_TAPS times while galloping, and keep tapping. Much faster;
       exertion rises slowly at first and ever faster, so taking it as high as possible without
       crossing the line is the skill. Quick taps slow the rise for a while. Ending a Sprint goes to
-      Recovering. Only a Sprint may go past the Blowing hard line, into a last gasp that ends at
+      Recovering. Only a Sprint may go past the Blowing Hard line, into a last gasp that ends at
       EXERTION_MAX. After a Sprint the horse can Push but not Sprint again until exertion is empty.
 
-    Pushing up to the Blowing hard line (LINE) blows the horse: it drops to a canter and can't
+    Pushing up to the Blowing Hard line (LINE) blows the horse: it drops to a canter and can't
     gallop again until exertion is empty. A Sprint that ends past the line leaves it exhausted:
     the same, but while exertion is still past the line it falls only SPENT_SHARE as fast. At a
     canter or slower exertion falls fast, faster the slower the gait.
@@ -27,18 +27,17 @@
 
 EqExertion = {}
 
--- Exertion 0-100 is the gallop; LINE is Blowing hard; a Sprint's last gasp runs on to EXERTION_MAX.
+-- Exertion 0-100 is the gallop; LINE is Blowing Hard; a Sprint's last gasp runs on to EXERTION_MAX.
 EqExertion.LINE = 100
 EqExertion.EXERTION_MAX = 130
 
 -- Pushing: PUSH_RISE per second when empty, PUSH_CLIMB times more at the line.
 EqExertion.PUSH_RISE = 2.2
 EqExertion.PUSH_CLIMB = 1
--- Recovering: RECOVER_DROP per second, from RECOVER_LOW of it when nearly empty to RECOVER_LOW +
--- RECOVER_HIGH near the line: easing off is worth most when the horse is working hardest.
-EqExertion.RECOVER_DROP = 3.5
-EqExertion.RECOVER_LOW = 0.6
-EqExertion.RECOVER_HIGH = 0.8
+-- Recovering: exertion falls this much per second in each third of the gallop (EqExertion.band):
+-- fast from the top third, slowly through the middle "zone", fast again in the bottom third
+-- (James, 2026-10-27: the stamina multiplier follows the same pattern, see EqTraining).
+EqExertion.RECOVER_DROP = { high = 5, zone = 1.8, low = 5 }
 -- Sprinting: SPRINT_RISE per second at the start, SPRINT_RAMP more for every second it lasts, up
 -- to SPRINT_RISE_MAX; the same on both sides of the line. (James, 2026-10-27: start slowly and get
 -- faster pretty rapidly, especially when the taps are slow, so stopping just short of the line
@@ -81,7 +80,7 @@ EqExertion.DOUBLE_TAP_MS = 400
 EqExertion.DROP_GRACE_MS = 300
 
 -- The bar, as shares of its width: a line per slow gait, then the gallop from the canter line to
--- the Blowing hard line, then the last gasp. James's drawing (2026-10-27).
+-- the Blowing Hard line, then the last gasp. James's drawing (2026-10-27).
 EqExertion.BAR = { reverse = 0, halt = 0.033, walk = 0.065, trot = 0.13, canter = 0.26, line = 0.83, finish = 1 }
 
 
@@ -101,6 +100,15 @@ local function byStat(limits, stat)
 end
 
 
+--- @param value number exertion
+--- @return string band "low", "zone" or "high": the third of the gallop it is in
+function EqExertion.band(value)
+    if value < EqExertion.LINE / 3 then return "low" end
+    if value < EqExertion.LINE * 2 / 3 then return "zone" end
+    return "high"
+end
+
+
 --- @param ex table
 --- @return boolean true while the horse is galloping in one of the three paces
 function EqExertion.isGalloping(ex)
@@ -115,12 +123,21 @@ local function lockOut(ex, kind)
 end
 
 
+--- Note how a Sprint ended, for speed training: ex.lastSprint = { value, over }, over when it
+--- ended at or past the Blowing Hard line.
+--- @param ex table
+local function recordSprint(ex)
+    ex.lastSprint = { value = ex.value, over = ex.value >= EqExertion.LINE }
+    ex.sprintMs, ex.tapGap, ex.sprinted = 0, nil, true
+end
+
+
 --- End a Sprint: on to Recovering, or exhausted when it ended past the line. No new Sprint
 --- until exertion is empty.
 --- @param ex table
 --- @return string event "sprintOver" or "spent"
 local function endSprint(ex)
-    ex.sprintMs, ex.tapGap, ex.sprinted = 0, nil, true
+    recordSprint(ex)
     if ex.value >= EqExertion.LINE then
         lockOut(ex, "spent")
         return "spent"
@@ -156,8 +173,7 @@ function EqExertion.rate(ex, gait, stamina, speed)
         return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * math.min(v, EqExertion.LINE) / EqExertion.LINE)
             * byStat(EqExertion.PUSH_STAMINA, stamina)
     elseif ex.mode == "recover" then
-        return -EqExertion.RECOVER_DROP * (EqExertion.RECOVER_LOW + EqExertion.RECOVER_HIGH * math.min(v, EqExertion.LINE) / EqExertion.LINE)
-            * byStat(EqExertion.RECOVER_STAMINA, stamina)
+        return -EqExertion.RECOVER_DROP[EqExertion.band(v)] * byStat(EqExertion.RECOVER_STAMINA, stamina)
     elseif ex.mode == "sprint" then
         -- Tapping pace, 1 for quick taps (and the quick taps that started the Sprint) to 0 for slow.
         local pace = 1
@@ -193,9 +209,14 @@ function EqExertion.step(ex, gait, dt, stamina, speed)
         if ex.mode == nil then ex.mode, ex.taps = "push", 0 end
     elseif ex.mode ~= nil then
         -- Out of the gallop: a Sprint that ends past the line leaves the horse exhausted.
-        if ex.mode == "sprint" and ex.value >= EqExertion.LINE then
-            lockOut(ex, "spent")
-            event = "spent"
+        if ex.mode == "sprint" then
+            recordSprint(ex)
+            if ex.value >= EqExertion.LINE then
+                lockOut(ex, "spent")
+                event = "spent"
+            else
+                event = "sprintOver"
+            end
         end
         ex.mode, ex.sprintMs, ex.tapGap = nil, 0, nil
     end
@@ -295,7 +316,7 @@ end
 
 
 --- Where the marker sits on the bar: on the gait's line while exertion is empty, else along
---- the gallop (and past the Blowing hard line in a last gasp).
+--- the gallop (and past the Blowing Hard line in a last gasp).
 --- @param ex table
 --- @param gait string
 --- @return number share 0..1 of the bar

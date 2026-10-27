@@ -47,10 +47,10 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 
 Every horse trains once a day, at RLRM's daily horse tick.
 
-- **Your riding** is the main way to train agility and temperament, with their own minigames. A
-  good focused session can give up to double what a full day of riding used to; just riding round
-  the gaits trains them at about a quarter of that. **Stamina and speed don't train from your
-  riding for now** while the new gallop (below) is tested on its own; staff still train them.
+- **Your riding** is the main way to train every stat. Agility and temperament have their own
+  minigames, and stamina and speed come from riding the gallop well (below). A good focused session
+  can give up to double what a full day of riding used to; just riding round the gaits trains
+  agility and temperament at about a quarter of that.
 - **Press Y while riding** to switch the training panel between **Freestyle** (a line for each
   stat) and the **Agility** and **Temperament** views. Every view shows the Exertion bar. Help pops
   up at the bottom of the screen the first time you open each view (and the first time you
@@ -69,15 +69,16 @@ The gallop has three paces, and exertion only builds at a gallop:
 
 - **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
   the higher it is (an average horse blows after about half a minute from empty; Stamina slows it).
-- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls, fastest when it
-  is high. The horse keeps galloping at an empty bar; W pushes on again.
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
+  top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
+  quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
 - **Sprinting** (tap W three times quickly while galloping, and keep tapping): 125% of the gallop's
   speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
   (Pushing is fine).
 
-Pushing up to the **Blowing hard** line drops the horse to a canter, and it can't gallop until the
+Pushing up to the **Blowing Hard** line drops the horse to a canter, and it can't gallop until the
 bar is empty again. Only a Sprint can run past the line, into the red last-gasp section; a Sprint
 that ends there leaves the horse **exhausted**: canter only, and while the bar is still past the
 line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
@@ -87,9 +88,28 @@ when Pushing pulsing from 85%), and **Over exerted** in red past the line. Slowi
 canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
 
 The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
-gallop section and the Blowing hard section. The marker sits on the gait's line while the bar is
-empty, and the section for the current gait lights up (none while standing; Blowing hard lights
+gallop section and the Blowing Hard section. The marker sits on the gait's line while the bar is
+empty, and the section for the current gait lights up (none while standing; Blowing Hard lights
 while blown or exhausted).
+
+**Training on the gallop.** Speed comes from Sprints: every second of a Sprint banks speed effort,
+multiplied when it ends by how high it took the bar: x2 half way to the line, rising ever faster to
+x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
+shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
+
+Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar
+with the horse's **Breath**:
+
+- Pushing raises the multiplier, faster the higher the bar is, but uses Breath (a full Breath
+  lasts about 17 seconds of Pushing), and the gain shrinks with what Breath is left.
+- Recovering brings Breath back and costs multiplier: quickly in the top third, slowly in the
+  middle zone (where Breath also comes back best), quickly again in the bottom third. A canter or
+  slower costs it quickly too; a Sprint holds it.
+- So the way to x5 is to push close to the line, recover down into the zone and let the horse
+  breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
+  out of Breath and earns little; letting the bar fall too far throws the multiplier away.
+- Blowing Hard (or a Sprint that ends past the line) drops it to x1 and stops stamina training
+  until the bar is empty, when Breath is full again.
 
 ### Agility
 

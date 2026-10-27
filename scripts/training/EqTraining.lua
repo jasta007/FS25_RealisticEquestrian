@@ -10,9 +10,9 @@
       Staff train to the horse's focus profile and stop at STAFF_CAP of each ceiling.
 
     Agility and temperament are focused work (jump combos and routines); just riding the gaits
-    trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed are switched off
-    for the player's own riding while the exertion system (EqExertion, the gallop's Pushing,
-    Recovering and Sprinting) is tested on its own (James, 2026-10-27); staff still train them.
+    trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed come only from
+    riding the gallop well (EqExertion's Pushing, Recovering and Sprinting): a live stamina
+    multiplier and a speed multiplier banked when a Sprint ends (James, 2026-10-27).
 
     Each stat closes a share of the gap to its cap every month (scaled to the day with the
     game's timeAdjustment), so gains slow as a horse nears its ceiling. Idle horses fade.
@@ -22,6 +22,31 @@
 ]]
 
 EqTraining = {}
+
+-- SPEED: every second of a Sprint banks SPEED_RATE, times a multiplier from how high the Sprint
+-- took exertion when it ended: 1 + (SPRINT_MULT_MAX - 1) * share ^ SPRINT_MULT_POWER, so 2x
+-- half way to the Blowing Hard line and 10x just short of it. A Sprint that ends at or past the
+-- line banks only 1x. (James, 2026-10-27: get the Sprint as high as you dare.)
+EqTraining.SPEED_RATE = 0.0065
+EqTraining.SPRINT_MULT_MAX = 10
+EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
+
+-- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
+-- STAMINA_MULT_MAX (James, 2026-10-27). The multiplier isn't tied to the bar:
+-- - Pushing raises it, faster the higher exertion is (STAMINA_PUSH_GAIN per second, empty to the
+--   line), but only with breath: each second of Pushing uses STAMINA_BREATH_USE of it, and the
+--   gain is scaled by what's left. So bouncing between Push and Recover near the top earns little.
+-- - Recovering gets breath back and loses multiplier, by the bar's third (EqExertion.band): fast
+--   from the top third, slowly in the middle "zone" (where breath comes back best), fast again in
+--   the bottom third. A canter or slower loses it fast.
+-- - A Sprint holds both. Blowing Hard (or a Sprint that ends past the line) drops it to x1 and
+--   stops stamina training until exertion is empty again, when breath is full.
+EqTraining.STAMINA_RATE = 0.0045
+EqTraining.STAMINA_MULT_MAX = 5
+EqTraining.STAMINA_PUSH_GAIN = { 0.15, 0.35 }
+EqTraining.STAMINA_BREATH_USE = 0.06
+EqTraining.STAMINA_LOSS = { high = 0.15, zone = 0.03, low = 0.5, slow = 0.5 }
+EqTraining.STAMINA_BREATH_GAIN = { high = 0.02, zone = 0.07, low = 0.07, slow = 0.1 }
 
 -- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
@@ -131,8 +156,9 @@ EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry"
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
         exertion = EqExertion.new(),
-        focused = { agility = 0, temperament = 0 },
-        quality = { agility = 0, temperament = 0 },
+        focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        stamina = { mult = 1, breath = 1 }, sprint = { ms = 0 },
         combo = { count = 0, timer = 0, best = 0 },
         routine = { active = false, mult = 0, clock = 0, walkMs = 0, current = nil, request = nil, deadline = 0, nextAt = 0 } }
 end
@@ -354,6 +380,71 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
 end
 
 
+--- @param value number exertion when the Sprint ended
+--- @param over boolean|nil true when it ended at or past the Blowing Hard line
+--- @return number speed multiplier, 1..SPRINT_MULT_MAX
+function EqTraining.sprintMultiplier(value, over)
+    if over or value >= EqExertion.LINE then return 1 end
+    local share = math.min(math.max(value / EqExertion.LINE, 0), 1)
+    return 1 + (EqTraining.SPRINT_MULT_MAX - 1) * share ^ EqTraining.SPRINT_MULT_POWER
+end
+
+
+--- One frame of speed training, after EqExertion.step: Sprint time adds up, and is banked at
+--- the multiplier once the Sprint is over.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: nothing trains
+--- @return number|nil mult, number gain when a Sprint was banked this frame
+function EqTraining.speedStep(sheet, dt, worn)
+    local ex, sprint = sheet.exertion, sheet.sprint
+    if ex.mode == "sprint" then
+        if not worn then sprint.ms = sprint.ms + dt end
+        sheet.quality.speed = (EqTraining.sprintMultiplier(ex.value) - 1) / (EqTraining.SPRINT_MULT_MAX - 1)
+        return nil
+    end
+    sheet.quality.speed = 0
+    if sprint.ms <= 0 then return nil end
+    local last = ex.lastSprint or { value = ex.value }
+    local mult = EqTraining.sprintMultiplier(last.value, last.over)
+    local gain = EqTraining.SPEED_RATE * sprint.ms / 1000 * mult
+    sheet.focused.speed = sheet.focused.speed + gain
+    sprint.ms = 0
+    return mult, gain
+end
+
+
+--- One frame of the stamina multiplier and stamina training, after EqExertion.step.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
+function EqTraining.staminaStep(sheet, dt, worn)
+    local ex, st = sheet.exertion, sheet.stamina
+    local seconds = dt / 1000
+    if ex.lock ~= nil then
+        st.mult, st.breath = 1, 0
+    elseif ex.value <= 0 and ex.mode ~= "push" then
+        st.breath = 1
+        st.mult = math.max(1, st.mult - EqTraining.STAMINA_LOSS[ex.mode == "recover" and "low" or "slow"] * seconds)
+    elseif ex.mode == "push" then
+        local share = math.min(ex.value / EqExertion.LINE, 1)
+        local gain = EqTraining.STAMINA_PUSH_GAIN[1] + (EqTraining.STAMINA_PUSH_GAIN[2] - EqTraining.STAMINA_PUSH_GAIN[1]) * share
+        st.mult = st.mult + gain * st.breath * seconds
+        st.breath = st.breath - EqTraining.STAMINA_BREATH_USE * seconds
+    elseif ex.mode ~= "sprint" then
+        local band = ex.mode == "recover" and EqExertion.band(ex.value) or "slow"
+        st.mult = st.mult - EqTraining.STAMINA_LOSS[band] * seconds
+        st.breath = st.breath + EqTraining.STAMINA_BREATH_GAIN[band] * seconds
+    end
+    st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)
+    st.breath = math.min(math.max(st.breath, 0), 1)
+    sheet.quality.stamina = (ex.mode == "push" or ex.mode == "recover") and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
+    if not worn and (ex.mode == "push" or ex.mode == "recover") then
+        sheet.focused.stamina = sheet.focused.stamina + EqTraining.STAMINA_RATE * st.mult * seconds
+    end
+end
+
+
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
@@ -361,7 +452,9 @@ end
 function EqTraining.rest(sheet, ms, stamina)
     if ms <= 0 then return end
     EqExertion.rest(sheet.exertion, ms, stamina)
-    sheet.quality.agility, sheet.quality.temperament = 0, 0
+    sheet.stamina.mult, sheet.stamina.breath = 1, 1
+    sheet.sprint.ms = 0
+    for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0
     EqTraining.breakRoutine(sheet)
 end

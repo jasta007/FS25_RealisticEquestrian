@@ -109,7 +109,8 @@ end
 --- @param rows table list of { left, leftColor, right, rightColor } text rows,
 ---     { segments = { { text, color }, ... } } rows of coloured pieces side by side,
 ---     { bar = 0..1, color } meter rows, and { sections = { { from, to, color }, ... }, lines = { share, ... },
----     marker = share } rows: the exertion bar, coloured sections with dark lines and a marker
+---     ticks = { share, ... }, marker = share } rows: the exertion bar, coloured sections with dark
+---     lines, short ticks and a marker
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
 function EqTrainingHud.drawPanel(title, rows, titleColor)
     local p = EqTrainingHud.PANEL
@@ -160,6 +161,10 @@ function EqTrainingHud.drawPanel(title, rows, titleColor)
             end
             for _, line in ipairs(row.lines or {}) do
                 fill(left + width * line - p.markWidth / 2, barY, p.markWidth, h, { 0, 0, 0, 0.9 })
+            end
+            -- Ticks: short, fainter marks from the bottom edge (the gallop's thirds).
+            for _, tick in ipairs(row.ticks or {}) do
+                fill(left + width * tick - p.markWidth / 2, barY, p.markWidth, h * 0.45, { 0, 0, 0, 0.6 })
             end
             if row.marker ~= nil then
                 -- A white box with a dark edge, a little taller than the bar.
@@ -235,8 +240,8 @@ end
 
 
 --- Show a short burst of text in the middle of the screen.
---- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart or an EXERTION_POPS key
---- @param mult number|nil the combo multiplier for jump and routine
+--- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank or an EXERTION_POPS key
+--- @param mult number|nil the combo multiplier for jump and routine, the speed multiplier for speedBank
 function EqTrainingHud.pop(kind, mult)
     local text, color, big
     if kind == "jump" then
@@ -244,6 +249,10 @@ function EqTrainingHud.pop(kind, mult)
         color, big = EqTrainingHud.multColor(mult), mult
     elseif kind == "routine" then
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "speedBank" then
+        -- A Sprint banked for speed training: "Speed x7.3!", always in the middle.
+        text = string.format(g_i18n:getText("eq_pop_speedBank"), mult)
+        color, big = EqTrainingHud.STAT_COLOR.speed, math.min(5, 1 + math.floor(mult / 2.5))
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
     elseif EqTrainingHud.EXERTION_POPS[kind] ~= nil then

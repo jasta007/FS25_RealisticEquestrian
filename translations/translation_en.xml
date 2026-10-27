@@ -40,7 +40,7 @@
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed don&apos;t train from your riding for now while the new gallop and Exertion bar are being tested: press H while galloping to learn how they work."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
         <text name="eq_help_freestyle_1" text="Riding trains your horse&apos;s stats, and each stat is trained with its own mini game. All stats can be trained at the same time, but some don&apos;t mix well, such as Speed and Temperament. Press Y to switch to a view with better feedback on the stat you want to focus on, or stay in Freestyle for general feedback. The riding bar is still the horse&apos;s energy for the day: once it is full, that horse cannot make any more progress until the next day."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
@@ -51,7 +51,7 @@
         <text name="eq_ex_push" text="Pushing"/>
         <text name="eq_ex_recover" text="Recovering"/>
         <text name="eq_ex_sprint" text="SPRINTING"/>
-        <text name="eq_ex_blown" text="Blowing hard: canter only"/>
+        <text name="eq_ex_blown" text="Blowing Hard: canter only"/>
         <text name="eq_ex_spent" text="Exhausted: canter only"/>
         <text name="eq_ex_gallop" text="Gallop"/>
         <text name="eq_ex_canter" text="Canter"/>
@@ -62,13 +62,14 @@
         <text name="eq_ex_prompt_tap" text="Keep tapping W!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint over"/>
-        <text name="eq_pop_ex_blown" text="Blowing hard!"/>
+        <text name="eq_pop_ex_blown" text="Blowing Hard!"/>
         <text name="eq_pop_ex_spent" text="Exhausted!"/>
         <text name="eq_pop_ex_fresh" text="Ready to gallop"/>
         <text name="eq_help_gallop_title" text="Galloping"/>
-        <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
-        <text name="eq_help_gallop_2" text="If the bar reaches the red Blowing hard section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
-        <text name="eq_help_gallop_3" text="Tap W quickly three times while galloping to Sprint, and keep tapping to hold it: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Blowing hard line, for one last push to the finish, but a Sprint that ends there leaves your horse exhausted and it recovers very slowly until it is back under the line."/>
+        <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
+        <text name="eq_help_gallop_2" text="If the bar reaches the red Blowing Hard section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
+        <text name="eq_help_gallop_3" text="Tap W quickly three times while galloping to Sprint, and keep tapping to hold it: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Blowing Hard line, for one last push to the finish, but a Sprint that ends there leaves your horse exhausted and it recovers very slowly until it is back under the line."/>
+        <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends in Blowing Hard. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. Pushing raises it, faster near the top, but it uses Breath. Recovering in the middle third of the bar brings Breath back and keeps most of the multiplier, while the top and bottom thirds lose it quickly. Blowing Hard drops it to x1 and stops Stamina training until the bar is empty."/>
         <text name="eq_ex_hint_keepTapping" text="Keep tapping W"/>
         <text name="eq_ex_hint_sprint" text="Sprint ready: tap W x3"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
@@ -80,6 +81,12 @@
         <text name="eq_ex_careful" text="Careful"/>
         <text name="eq_ex_overExerted" text="Over exerted"/>
         <text name="eq_train_tiredness" text="Exertion"/>
+        <text name="eq_train_speedMult" text="Speed x%.1f"/>
+        <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
+        <text name="eq_train_breath" text="Breath %d%%"/>
+        <text name="eq_train_staminaStopped" text="No training"/>
+        <text name="eq_ex_blowingHard" text="Blowing Hard"/>
+        <text name="eq_pop_speedBank" text="Speed x%.1f!"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
         <text name="eq_train_quality_slow" text="training slowly"/>
