@@ -47,7 +47,9 @@
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
         <text name="eq_dressage_gait_canter" text="Canter"/>
-        <text name="eq_dressage_bonus" text="Quick, %s!"/>
+        <text name="eq_dressage_change" text="Change: %s"/>
+        <text name="eq_dressage_flying" text="Flying change: %s"/>
+        <text name="eq_dressage_begin" text="Move to %s to begin"/>
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>

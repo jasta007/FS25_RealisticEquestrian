@@ -46,7 +46,8 @@ EqDressage.TIME_FACTOR = 1.2
 EqDressage.GO_MIN_DISTANCE = { walk = 0, trot = 10, canter = 18 }
 -- ...and at most this long: long walks are dull (James), so a walk is only to a nearby marker.
 EqDressage.GO_MAX_DISTANCE = { walk = 12 }
-EqDressage.GO_WEIGHTS = { walk = 3, trot = 4, canter = 3 }
+-- Trot is the usual gait (James, 2026-10-27).
+EqDressage.GO_WEIGHTS = { walk = 1, trot = 6, canter = 3 }
 EqDressage.GO_GAITS = { "walk", "trot", "canter" }
 -- Targets nearer than this are only picked when there is nothing further.
 EqDressage.MIN_TARGET_DISTANCE = 8
@@ -64,7 +65,9 @@ EqDressage.PASS_RADIUS = 3
 EqDressage.PASS_CHANCE = 35
 EqDressage.PASS_REACT_MS = 2000
 -- What comes after reaching a marker, and after a halt there (weights). Backing up is rare.
-EqDressage.AT_MARKER = { { "go", 70 }, { "halt", 22 }, { "reverse", 8 } }
+EqDressage.AT_MARKER = { { "go", 80 }, { "halt", 12 }, { "reverse", 8 } }
+-- Halts only at the middle and end letters, and not too often (James, 2026-10-27).
+EqDressage.HALT_LETTERS = { A = true, C = true, E = true, B = true, X = true }
 EqDressage.AFTER_HALT = { { "go", 60 }, { "turn", 40 } }
 -- Stand this long after a halt is done before the next command (a random time in the range).
 EqDressage.HOLD_MS = { 1500, 3000 }
@@ -295,7 +298,15 @@ function EqDressage.plan(routine, course, done, rng)
     elseif opening == "X" then
         kind = "halt"
     elseif done == "go" then
-        kind = pick(EqDressage.AT_MARKER, rng)
+        local at = routine.from ~= nil and routine.from.letter or nil
+        local choices = EqDressage.AT_MARKER
+        if not EqDressage.HALT_LETTERS[at] then
+            choices = {}
+            for _, entry in ipairs(EqDressage.AT_MARKER) do
+                if entry[1] ~= "halt" then table.insert(choices, entry) end
+            end
+        end
+        kind = pick(choices, rng)
     elseif done == "halt" and not routine.afterReverse then
         kind = pick(EqDressage.AFTER_HALT, rng)
     elseif done == "reverse" then
@@ -304,6 +315,15 @@ function EqDressage.plan(routine, course, done, rng)
     if kind == "go" then return EqDressage.planLeg(routine, course, rng) end
     if kind == "turn" then return { kind = "turn", side = rng(2) == 1 and "left" or "right" } end
     return { kind = kind }
+end
+
+
+--- How a quick change on the way reads: a flying change from a walk up to a canter, else a change.
+--- @param bonus table { gait, from }
+--- @return string text key, eq_dressage_flying or eq_dressage_change
+function EqDressage.changeKey(bonus)
+    if bonus.gait == "canter" and bonus.from == "walk" then return "eq_dressage_flying" end
+    return "eq_dressage_change"
 end
 
 
@@ -443,12 +463,16 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
                     local key = string.format("%.1f:%.1f", marker.x, marker.z)
                     if not routine.passed[key] then
                         routine.passed[key] = true
-                        if rng(100) <= EqDressage.PASS_CHANCE then
-                            local options = {}
-                            for _, other in ipairs(EqDressage.GO_GAITS) do
-                                if other ~= task.gait then table.insert(options, other) end
+                        -- A change only to a gait the rest of the leg has room for: no long walks.
+                        local options = {}
+                        for _, other in ipairs(EqDressage.GO_GAITS) do
+                            local most = EqDressage.GO_MAX_DISTANCE[other]
+                            if other ~= task.gait and d >= EqDressage.GO_MIN_DISTANCE[other] and (most == nil or d <= most) then
+                                table.insert(options, { other, EqDressage.GO_WEIGHTS[other] })
                             end
-                            routine.bonus = { gait = options[rng(#options)], deadline = routine.clock + EqDressage.PASS_REACT_MS,
+                        end
+                        if #options > 0 and rng(100) <= EqDressage.PASS_CHANCE then
+                            routine.bonus = { gait = pick(options, rng), from = task.gait, deadline = routine.clock + EqDressage.PASS_REACT_MS,
                                 letter = marker.letter }
                             event = "request"
                         end

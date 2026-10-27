@@ -112,20 +112,21 @@ least three within 100 m, chained 60 m from each other, not all in a line) the r
 between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 30 m starts it with "Trot: A" (no time limit), then trot to X and halt, 15 more
+test: coming within 30 m starts it with "Move to A to begin" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
 and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:
 
-- Most commands are legs, such as "Trot: Marker B": ride to that marker at that gait (walk, trot or
-  canter). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
+- Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
+  canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
   comes from its length and shrinks as the multiplier climbs. The marker is tagged on the map.
 - After 3 seconds to settle, the wrong gait for 1.5 seconds breaks the routine, and so does a gallop,
   a jump or running out of time. Steering is free.
 - The next command shows about 3 seconds before the marker; reaching it (3 to 4.5 m) is one step up.
-- Passing close to another marker may ask for a quick gait change (2 seconds), worth an extra step.
+- Passing close to another marker may ask for a gait change ("Change: Trot", or "Flying change:
+  Canter" from a walk; 2 seconds), worth an extra step, only to a gait the rest of the leg suits.
   Missing it costs nothing.
-- At a marker the next command can be a stop (then sometimes a turn on the spot, the only turns
+- At A, C, E, B or X the next command can now and then be a stop (then sometimes a turn on the spot, the only turns
   asked for) or, rarely, backing up for 2.5 seconds, a stop and a new leg.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.

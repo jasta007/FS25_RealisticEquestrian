@@ -746,6 +746,9 @@ local STAT_COLOR = EqTrainingHud.STAT_COLOR
 --- @param task table
 --- @return string
 local function dressageText(task)
+    if task.untimed then
+        return string.format(g_i18n:getText("eq_dressage_begin"), task.marker.letter)
+    end
     if task.kind == "go" then
         return string.format(g_i18n:getText("eq_dressage_go"), g_i18n:getText("eq_dressage_gait_" .. task.gait), task.marker.letter)
     end
@@ -777,13 +780,14 @@ local function dressageRows(rows, routine, vehicle)
             row.right = string.format("%s  %.0f m", task.marker.letter, math.sqrt((task.marker.x - x) ^ 2 + (task.marker.z - z) ^ 2))
         end
     end
-    table.insert(rows, { bar = share, color = color })
+    if task.untimed then share = nil end
+    if share ~= nil then table.insert(rows, { bar = share, color = color }) end
     if routine.preview ~= nil then
         table.insert(rows, { left = string.format(g_i18n:getText("eq_dressage_next"), dressageText(routine.preview)), leftColor = color })
     end
     -- A quick gait change on the way has the middle of the screen while it lasts.
     if routine.bonus ~= nil then
-        EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_bonus"), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
+        EqTrainingHud.drawPrompt(string.format(g_i18n:getText(EqDressage.changeKey(routine.bonus)), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
             math.max(0, routine.bonus.deadline - routine.clock) / EqDressage.PASS_REACT_MS, color)
     else
         EqTrainingHud.drawPrompt(text, share, color)

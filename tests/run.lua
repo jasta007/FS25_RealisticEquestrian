@@ -2743,6 +2743,16 @@ end)()
         if leg.gait == "walk" and math.sqrt((leg.marker.x - 10) ^ 2 + leg.marker.z ^ 2) > EqDressage.GO_MAX_DISTANCE.walk then walks = walks + 1 end
     end
     check("no long walks", walks == 0)
+    local badHalt = 0
+    for _ = 1, 300 do
+        local from = ours[rng(#ours)]
+        local nextTask = EqDressage.plan({ from = from }, { x = from.x, z = from.z, markers = ours }, "go", rng)
+        if nextTask.kind == "halt" and not EqDressage.HALT_LETTERS[from.letter] then badHalt = badHalt + 1 end
+    end
+    check("halts only at the middle and end letters", badHalt == 0)
+    check("a change from a walk to a canter is a flying change", EqDressage.changeKey({ gait = "canter", from = "walk" }) == "eq_dressage_flying"
+        and EqDressage.changeKey({ gait = "trot", from = "walk" }) == "eq_dressage_change"
+        and EqDressage.changeKey({ gait = "walk", from = "canter" }) == "eq_dressage_change")
 
     -- Ride a whole arena test: it ends at X with a halt and a big payoff.
     seed = 11

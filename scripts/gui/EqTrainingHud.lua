@@ -308,6 +308,11 @@ function EqTrainingHud.drawPrompt(value, share, color)
     local p = EqTrainingHud.PROMPT
     color = color or EqTrainingHud.COLOR.yellow
     shadowText(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
+    -- No share: an untimed prompt, with no bar under it.
+    if share == nil then
+        resetText()
+        return
+    end
     local left = p.x - p.barWidth / 2
     -- A dark edge round the bar, so it shows against snow too.
     local edge = p.barHeight * 0.5
