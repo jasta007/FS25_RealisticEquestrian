@@ -78,7 +78,7 @@
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
         <text name="eq_welcome_menu_1" text="Abre la pestaña Información (el cerdo con una [i]) para conocer a tus caballos, la pestaña Pruebas (la escarapela) para inscribirlos y la pestaña Personal ecuestre (dos personas) para contratar mozos y entrenadores. Los ajustes propios de Realistic Equestrian están en la pestaña Ajustes (el engranaje)."/>
         <text name="eq_welcome_staff_hire_title" text="Personal ecuestre"/>
-        <text name="eq_welcome_staff_hire" text="Contrata personal en la pestaña Contratar para que cuide de tus caballos cada día. Los mozos entrenan las cuatro aptitudes, limpian los caballos y traen de vuelta a los que se quedan sueltos. Los entrenadores se centran en dos aptitudes y preparan a los caballos para sus pruebas. Un veterinario reduce las lesiones y abarata los tratamientos, y un corredor consigue mejores precios en el tratante. Los sueldos se pagan a diario y los candidatos van y vienen, así que vuelve a mirar si hay otros mejores."/>
+        <text name="eq_welcome_staff_hire" text="Contrata personal en la pestaña Contratar para que cuide de tus caballos cada día. Los mozos entrenan las cuatro aptitudes, limpian los caballos y traen de vuelta a los que se quedan sueltos. Los entrenadores se centran en dos aptitudes y preparan a los caballos para sus pruebas. Un veterinario reduce las lesiones y abarata los tratamientos, y un corredor consigue mejores precios en el tratante. Los sueldos se pagan a diario y los candidatos van y vienen, así que vuelve a mirar si hay otros mejores. Todos usan todas sus habilidades, incluso fuera de sus tareas principales, así que un todoterreno con suerte ayuda en todo."/>
         <text name="eq_welcome_staff_works_title" text="Con quién trabajan"/>
         <text name="eq_welcome_staff_works" text="En Tu personal, elige las cuadras de un mozo o entrenador y después funciones o caballos concretos. El personal es más eficaz cuando cada uno trabaja solo con unos pocos caballos; el resto recibe poco de su tiempo. Desactiva a quien no necesites por la mitad del sueldo: el cambio empieza a la 1 del día siguiente."/>
         <text name="eq_welcome_info_skills_title" text="Habilidades"/>
@@ -500,7 +500,7 @@
         <text name="eq_staff_pick_empty" text="Marca al menos uno."/>
         <text name="eq_staff_wage" text="Sueldo"/>
         <text name="eq_staff_perDay" text="%s al día"/>
-        <text name="eq_staff_duties" text="Tareas"/>
+        <text name="eq_staff_duties" text="Tareas principales"/>
         <text name="eq_staff_duties_groom" text="Entrena las cuatro estadísticas, limpia caballos y recoge los sueltos"/>
         <text name="eq_staff_duties_trainer" text="Se centra en %s y %s, entrena un poco las demás estadísticas y prepara a los caballos para sus pruebas"/>
         <text name="eq_staff_duties_vet" text="Menos lesiones y tratamientos más cortos y baratos para cada caballo"/>

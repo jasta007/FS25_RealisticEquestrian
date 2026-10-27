@@ -78,7 +78,7 @@
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
         <text name="eq_welcome_menu_1" text="Ouvrez l'onglet Informations (le cochon avec un [i]) pour découvrir vos chevaux, l'onglet Épreuves (la rosette) pour les y engager, et l'onglet Personnel équestre (deux personnes) pour embaucher palefreniers et entraîneurs. Les paramètres de Realistic Equestrian se trouvent dans l'onglet Paramètres (l'engrenage)."/>
         <text name="eq_welcome_staff_hire_title" text="Personnel équestre"/>
-        <text name="eq_welcome_staff_hire" text="Embauchez du personnel dans l&apos;onglet Embaucher pour s&apos;occuper de vos chevaux chaque jour. Les palefreniers entraînent les quatre aptitudes, pansent les chevaux et ramènent ceux laissés dehors. Les entraîneurs se concentrent sur deux aptitudes et préparent les chevaux à leurs épreuves. Un vétérinaire réduit les blessures et le coût des soins, et un courtier obtient de meilleurs prix chez le marchand. Les salaires sont payés chaque jour, et les candidats vont et viennent : revenez voir s&apos;il y en a de meilleurs."/>
+        <text name="eq_welcome_staff_hire" text="Embauchez du personnel dans l&apos;onglet Embaucher pour s&apos;occuper de vos chevaux chaque jour. Les palefreniers entraînent les quatre aptitudes, pansent les chevaux et ramènent ceux laissés dehors. Les entraîneurs se concentrent sur deux aptitudes et préparent les chevaux à leurs épreuves. Un vétérinaire réduit les blessures et le coût des soins, et un courtier obtient de meilleurs prix chez le marchand. Les salaires sont payés chaque jour, et les candidats vont et viennent : revenez voir s&apos;il y en a de meilleurs. Chacun utilise toutes ses compétences, même hors de ses tâches principales : un polyvalent chanceux aide partout."/>
         <text name="eq_welcome_staff_works_title" text="Avec qui ils travaillent"/>
         <text name="eq_welcome_staff_works" text="Dans Votre personnel, choisissez les écuries d&apos;un palefrenier ou d&apos;un entraîneur, puis des rôles ou des chevaux précis. Le personnel est plus efficace quand chacun ne s&apos;occupe que de quelques chevaux ; les autres chevaux ne reçoivent qu&apos;un peu de leur temps. Désactivez ceux dont vous n&apos;avez pas besoin pour la moitié du salaire : le changement prend effet à 1 h le lendemain."/>
         <text name="eq_welcome_info_skills_title" text="Compétences"/>
@@ -500,7 +500,7 @@
         <text name="eq_staff_pick_empty" text="Cochez au moins une case."/>
         <text name="eq_staff_wage" text="Salaire"/>
         <text name="eq_staff_perDay" text="%s par jour"/>
-        <text name="eq_staff_duties" text="Tâches"/>
+        <text name="eq_staff_duties" text="Tâches principales"/>
         <text name="eq_staff_duties_groom" text="Entraîne les quatre stats, panse les chevaux, ramène les chevaux en liberté"/>
         <text name="eq_staff_duties_trainer" text="Se concentre sur %s et %s, entraîne un peu les autres stats et prépare les chevaux à leurs épreuves"/>
         <text name="eq_staff_duties_vet" text="Moins de blessures, soins plus courts et moins chers, pour chaque cheval"/>

@@ -456,7 +456,9 @@ function EqStaff.workOn(members, horse, counts)
     local work = {}
     for _, stat in ipairs(EqStaff.STATS) do work[stat] = {} end
     for _, member in ipairs(members) do
-        if member.enabled ~= false and EqStaff.trains(member.job) then
+        -- Everyone uses all their skills: a vet or broker, with no Works on, gives every horse
+        -- the GENERAL_SHARE a groom gives horses they aren't set to.
+        if member.enabled ~= false then
             local targeted = EqStaff.targets(member, horse)
             for _, stat in ipairs(EqStaff.STATS) do
                 local effort, cap = EqStaff.memberEffort(member, stat, targeted, counts[member.id])
@@ -744,8 +746,9 @@ function EqStaff.eventBonus(members, horse, counts, skills, weights)
     for _, skill in ipairs(skills) do
         local values = {}
         for _, member in ipairs(members) do
-            -- Only trainers coach for events; one can help in another event by their skill in it.
-            if member.enabled ~= false and EqStaff.JOBS[member.job] ~= nil and EqStaff.JOBS[member.job].event ~= nil then
+            -- Everyone coaches by their skill in the event: trainers for their own event and others,
+            -- grooms, vets and brokers by their (usually low) off-job skill.
+            if member.enabled ~= false then
                 local share = EqStaff.GENERAL_SHARE
                 if EqStaff.targets(member, horse) then
                     share = math.min(1, EqStaff.HORSES_PER_STAFF / math.max(1, counts[member.id] or 1))

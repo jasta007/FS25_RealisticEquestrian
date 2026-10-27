@@ -1140,8 +1140,16 @@ do
         and near(bonus.stamina, EqStaff.EVENT_POINTS / 3))
     local elsewhere = EqStaff.eventBonus({ coach }, other, EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
     check("other horses get the general share", near(elsewhere.agility, EqStaff.EVENT_POINTS * EqStaff.GENERAL_SHARE))
-    local groomOnly = EqStaff.eventBonus({ member(41, "groom", 100, onStar) }, star, {}, { "showJumping" }, jumpWeights)
-    check("grooms give no event bonus", groomOnly.agility == 0)
+    local groom = member(41, "groom", 100, onStar)
+    local groomOnly = EqStaff.eventBonus({ groom }, star, EqStaff.targetCounts({ groom }, horses), { "showJumping" }, jumpWeights)
+    check("a groom coaches by their off-job skill", near(groomOnly.agility, EqStaff.EVENT_POINTS * 0.1))
+    local vet = member(43, "vet", 100)
+    local vetBonus = EqStaff.eventBonus({ vet }, star, EqStaff.targetCounts({ vet }, horses), { "showJumping" }, jumpWeights)
+    check("a vet coaches every horse at the general share",
+        near(vetBonus.agility, EqStaff.EVENT_POINTS * 0.1 * EqStaff.GENERAL_SHARE))
+    local vetWork = EqStaff.workOn({ vet }, star, EqStaff.targetCounts({ vet }, horses))
+    check("a vet trains every horse at the general share", #vetWork.stamina == 1 and not vetWork.stamina[1].targeted
+        and near(vetWork.stamina[1].effort, EqStaff.GROOM_SHARE * 0.1 * EqStaff.GENERAL_SHARE))
     local twice = EqStaff.eventBonus({ coach, member(42, "showJumping", 100, onStar) }, star,
         EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
     check("a second trainer adds less", twice.agility > bonus.agility and twice.agility < 1.5 * bonus.agility)

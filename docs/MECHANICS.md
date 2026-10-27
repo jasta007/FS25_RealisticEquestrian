@@ -353,6 +353,9 @@ for now in multiplayer.
   Dressage, Show Jumping and Cross Country. A trainer helps in another event by their skill in it.
   With Peak form from your riding (up to 8) the bigger counts in full and the smaller at half, up
   to 10 points.
+- **All skills count.** Duties are only what a job is best at: everyone uses all ten skills. Grooms
+  coach for events by their event skills, and the vet and broker train and coach every horse at the
+  20% rate for horses staff aren't set to work on.
 
 ### Riding bar and names
 

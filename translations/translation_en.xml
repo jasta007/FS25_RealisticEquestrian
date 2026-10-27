@@ -85,7 +85,7 @@
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
         <text name="eq_welcome_menu_1" text="Open the Information tab (the pig with an [i]) to learn about your horses, the Events tab (the rosette) to enter them in events, and the Equestrian Staff tab (two people) to hire grooms and trainers. You can also find Realistic Equestrian&apos;s own settings in the Settings tab (the cog)."/>
         <text name="eq_welcome_staff_hire_title" text="Equestrian Staff"/>
-        <text name="eq_welcome_staff_hire" text="Hire staff on the Hire tab to look after your horses every day. Grooms train all four stats, clean horses and bring loose ones home. Trainers focus on two stats and coach horses for their events. A vet means fewer injuries and cheaper treatment, and a broker gets you better prices at the dealer. Wages are paid daily, and candidates come and go, so check back for better ones."/>
+        <text name="eq_welcome_staff_hire" text="Hire staff on the Hire tab to look after your horses every day. Grooms train all four stats, clean horses and bring loose ones home. Trainers focus on two stats and coach horses for their events. A vet means fewer injuries and cheaper treatment, and a broker gets you better prices at the dealer. Wages are paid daily, and candidates come and go, so check back for better ones. Everyone uses all their skills, even outside their primary duties, so a lucky all-rounder helps in every way."/>
         <text name="eq_welcome_staff_works_title" text="Who they work on"/>
         <text name="eq_welcome_staff_works" text="On Your staff, pick the stables a groom or trainer works in, then either roles or individual horses. Staff are most effective when only working on a few horses each; other horses only get a little of their time. Disable anyone you don&apos;t need for half their wage: the change starts at 1 am the next day."/>
         <text name="eq_welcome_info_skills_title" text="Skills"/>
@@ -563,7 +563,7 @@
         <text name="eq_staff_pick_empty" text="Tick at least one."/>
         <text name="eq_staff_wage" text="Wage"/>
         <text name="eq_staff_perDay" text="%s a day"/>
-        <text name="eq_staff_duties" text="Duties"/>
+        <text name="eq_staff_duties" text="Primary duties"/>
         <text name="eq_staff_duties_groom" text="Trains all four stats, cleans horses, brings loose horses home"/>
         <text name="eq_staff_duties_trainer" text="Focuses on %s and %s, trains the other stats a little and coaches horses for their events"/>
         <text name="eq_staff_duties_vet" text="Fewer injuries, shorter and cheaper treatment, for every horse"/>
