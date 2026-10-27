@@ -76,7 +76,11 @@
         <text name="eq_welcome_welcome_1_title" text="Bienvenido a Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Ahora tus caballos tienen habilidades que entrenar y pruebas en las que competir. Todo está en el menú de Realistic Livestock, que se abre pulsando R en el menú Animales o Mayús+O en cualquier lugar."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
-        <text name="eq_welcome_menu_1" text="Abre la pestaña Información (el cerdo con una [i]) para conocer a tus caballos, y la pestaña Pruebas (la escarapela) para inscribirlos. Los ajustes propios de Realistic Equestrian están en la pestaña Ajustes (el engranaje)."/>
+        <text name="eq_welcome_menu_1" text="Abre la pestaña Información (el cerdo con una [i]) para conocer a tus caballos, la pestaña Pruebas (la escarapela) para inscribirlos y la pestaña Personal ecuestre (dos personas) para contratar mozos y entrenadores. Los ajustes propios de Realistic Equestrian están en la pestaña Ajustes (el engranaje)."/>
+        <text name="eq_welcome_staff_hire_title" text="Personal ecuestre"/>
+        <text name="eq_welcome_staff_hire" text="Contrata personal en la pestaña Contratar para que cuide de tus caballos cada día. Los mozos entrenan las cuatro aptitudes, limpian los caballos y traen de vuelta a los que se quedan sueltos. Los entrenadores se centran en dos aptitudes y preparan a los caballos para sus pruebas. Un veterinario reduce las lesiones y abarata los tratamientos, y un corredor consigue mejores precios en el tratante. Los sueldos se pagan a diario y los candidatos van y vienen, así que vuelve a mirar si hay otros mejores."/>
+        <text name="eq_welcome_staff_works_title" text="Con quién trabajan"/>
+        <text name="eq_welcome_staff_works" text="En Tu personal, elige las cuadras de un mozo o entrenador y después funciones o caballos concretos. El personal es más eficaz cuando cada uno trabaja solo con unos pocos caballos; el resto recibe poco de su tiempo. Desactiva a quien no necesites por la mitad del sueldo: el cambio empieza a la 1 del día siguiente."/>
         <text name="eq_welcome_info_skills_title" text="Habilidades"/>
         <text name="eq_welcome_info_skills" text="La Resistencia permite a un caballo llegar más lejos, la Velocidad lo hace más rápido, la Agilidad le ayuda a saltar y girar, y el Temperamento lo mantiene tranquilo y obediente. Todas las habilidades se pueden entrenar, y aprenderás cómo la primera vez que montes."/>
         <text name="eq_welcome_info_potential_title" text="Potencial"/>
@@ -512,7 +516,7 @@
         <text name="eq_staff_noCandidates" text="Ahora nadie busca trabajo. Cada mes llega gente nueva."/>
         <text name="eq_staff_noStaff" text="Aún no tienes personal. Contrata en la pestaña Contratar."/>
         <text name="eq_staff_summary_hire" text="Llega gente nueva cada pocas horas y sigue disponible de 12 a 72 horas. Solo un veterinario y un corredor por granja."/>
-        <text name="eq_staff_summary_staff" text="Sueldos: %s al día. El personal rinde más con pocos caballos."/>
+        <text name="eq_staff_summary_staff" text="Sueldos: %s al día. El personal es más eficaz cuando cada uno trabaja solo con unos pocos caballos."/>
         <text name="eq_staff_clientNote" text="Por ahora solo el anfitrión puede contratar."/>
         <text name="eq_result_placed" text="%s terminó en el puesto %d de %d en la prueba %s y ganó %s."/>
         <text name="eq_result_placedNoPrize" text="%s terminó en el puesto %d de %d en la prueba %s."/>

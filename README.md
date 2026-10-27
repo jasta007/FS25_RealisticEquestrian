@@ -254,7 +254,6 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 ## Planned features
 
 - Rival horses for sale (the named rivals already turn up in the same events)
-- Staff portraits
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support

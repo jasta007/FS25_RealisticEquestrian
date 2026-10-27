@@ -85,7 +85,11 @@
         <text name="eq_welcome_welcome_1_title" text="Willkommen bei Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Ihre Pferde haben jetzt Fähigkeiten zum Trainieren und Veranstaltungen für Wettkämpfe. Alles finden Sie im Realistic-Livestock-Menü, das Sie mit R im Tiermenü oder überall mit Umschalt+O öffnen."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
-        <text name="eq_welcome_menu_1" text="Im Reiter Information (das Schwein mit [i]) erfahren Sie mehr über Ihre Pferde, im Reiter Veranstaltungen (die Rosette) melden Sie sie zu Veranstaltungen an. Die eigenen Einstellungen von Realistic Equestrian finden Sie im Reiter Einstellungen (das Zahnrad)."/>
+        <text name="eq_welcome_menu_1" text="Im Reiter Information (das Schwein mit [i]) erfahren Sie mehr über Ihre Pferde, im Reiter Veranstaltungen (die Rosette) melden Sie sie zu Veranstaltungen an, und im Reiter Pferdepersonal (zwei Personen) stellen Sie Pfleger und Trainer ein. Die eigenen Einstellungen von Realistic Equestrian finden Sie im Reiter Einstellungen (das Zahnrad)."/>
+        <text name="eq_welcome_staff_hire_title" text="Pferdepersonal"/>
+        <text name="eq_welcome_staff_hire" text="Stellen Sie im Reiter Einstellen Personal ein, das sich jeden Tag um Ihre Pferde kümmert. Pfleger trainieren alle vier Werte, putzen die Pferde und holen frei laufende Pferde zurück. Trainer konzentrieren sich auf zwei Werte und bereiten Pferde auf ihre Veranstaltungen vor. Ein Tierarzt sorgt für weniger Verletzungen und günstigere Behandlungen, ein Makler für bessere Preise beim Händler. Löhne werden täglich gezahlt, und Bewerber kommen und gehen, also schauen Sie öfter vorbei."/>
+        <text name="eq_welcome_staff_works_title" text="Wer mit wem arbeitet"/>
+        <text name="eq_welcome_staff_works" text="Wählen Sie unter Ihr Personal die Ställe eines Pflegers oder Trainers und dann Rollen oder einzelne Pferde. Personal ist am wirksamsten, wenn jeder nur mit wenigen Pferden arbeitet; andere Pferde bekommen nur wenig Zeit. Deaktivieren Sie, wen Sie nicht brauchen, für den halben Lohn: Die Änderung gilt ab 1 Uhr am nächsten Tag."/>
         <text name="eq_welcome_info_skills_title" text="Fähigkeiten"/>
         <text name="eq_welcome_info_skills" text="Ausdauer lässt ein Pferd länger durchhalten, Schnelligkeit macht es schneller, Wendigkeit hilft beim Springen und Wenden, und Temperament hält es ruhig und gehorsam. Jede Fähigkeit lässt sich trainieren; wie, erfahren Sie beim ersten Ausritt."/>
         <text name="eq_welcome_info_potential_title" text="Potenzial"/>
@@ -577,7 +581,7 @@
         <text name="eq_staff_noCandidates" text="Gerade sucht niemand Arbeit. Jeden Monat kommen neue Leute."/>
         <text name="eq_staff_noStaff" text="Sie haben noch kein Personal. Stellen Sie im Reiter Einstellen welches ein."/>
         <text name="eq_staff_summary_hire" text="Alle paar Stunden kommen neue Leute und bleiben 12 bis 72 Stunden im Angebot. Nur ein Tierarzt und ein Makler pro Hof."/>
-        <text name="eq_staff_summary_staff" text="Löhne: %s pro Tag. Personal arbeitet am besten mit wenigen Pferden."/>
+        <text name="eq_staff_summary_staff" text="Löhne: %s pro Tag. Personal ist am wirksamsten, wenn jeder nur mit wenigen Pferden arbeitet."/>
         <text name="eq_staff_clientNote" text="Vorerst kann nur der Host Personal einstellen."/>
         <text name="eq_result_placed" text="%s belegte Platz %d von %d bei %s und gewann %s."/>
         <text name="eq_result_placedNoPrize" text="%s belegte Platz %d von %d bei %s."/>

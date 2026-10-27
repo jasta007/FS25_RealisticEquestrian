@@ -59,7 +59,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
   move on.
 - Welcome popups show the first time you come within 35 m of a horse pen or ride a horse, open
-  RLRM's menu with horses on the farm, open its Information tab, open the Events tab, and open the
+  RLRM's menu with horses on the farm, open its Information tab, open the Events tab, open the Equestrian Staff tab, and open the
   Diseases dialog for a horse. A popup stays until you click through its last page; closed early
   (Esc, getting off), it shows again next time. The **Help popups** setting (Show again) clears
   every seen flag on your machine, so each popup shows once more.

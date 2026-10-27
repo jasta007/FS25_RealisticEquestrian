@@ -62,13 +62,6 @@ function EqStaffFrame:onGuiSetupFinished()
         self.peopleList:setDataSource(self)
         self.peopleList:setDelegate(self)
     end
-    if self.statusToggle ~= nil then
-        self.statusToggle:setTexts({ g_i18n:getText("setting_disasterDestructionState_disabled"),
-            g_i18n:getText("setting_disasterDestructionState_enabled") })
-    end
-    if self.modeToggle ~= nil then
-        self.modeToggle:setTexts({ g_i18n:getText("eq_staff_mode_roles"), g_i18n:getText("eq_staff_mode_horses") })
-    end
 end
 
 
@@ -340,7 +333,7 @@ function EqStaffFrame:updatePanel()
         local statColor = EqInfoDisplay.STAT_COLOR[skill]
         setText(self.skillLabel[i], EqStaffFrame.skillName(skill), statColor)
         setText(self.skillValue[i], string.format("%d - %s", value, g_i18n:getText("eq_staff_level_" .. level.word)),
-            EqInfoDisplay.bandColor(level.band))
+            EqInfoDisplay.skillColor(value, skill))
     end
     local isStaff = self.mode == EqStaffFrame.MODE_STAFF
     local wage = string.format(g_i18n:getText("eq_staff_perDay"), row.wage)
@@ -382,10 +375,12 @@ end
 function EqStaffFrame:updateControls(member)
     local trains = EqStaff.trains(member.job)
     local works = EqStaff.normalizeWorks(member.worksOn)
-    self.statusToggle:setState(EqStaffManager.willBeEnabled(member) and 2 or 1, false)
-    self.modeToggle:setState(works.mode == EqStaff.WORKS_HORSE and 2 or 1, false)
+    -- Plain buttons that flip on click: a resized BinaryOption slid its highlight out of the panel.
+    self.statusButton:setText(g_i18n:getText(EqStaffManager.willBeEnabled(member)
+        and "setting_disasterDestructionState_enabled" or "setting_disasterDestructionState_disabled"))
+    self.modeButton:setText(g_i18n:getText(works.mode == EqStaff.WORKS_HORSE and "eq_staff_mode_horses" or "eq_staff_mode_roles"))
     local canPick = trains and EqRLRM.features.staffPicker
-    for _, element in ipairs({ self.stablesButton, self.modeToggle, self.pickButton }) do element:setDisabled(not trains) end
+    for _, element in ipairs({ self.stablesButton, self.modeButton, self.pickButton }) do element:setDisabled(not trains) end
     self.stablesButton:setDisabled(not canPick)
     self.pickButton:setDisabled(not canPick)
 
@@ -427,20 +422,20 @@ function EqStaffFrame:saveWorks(member, works)
 end
 
 
-function EqStaffFrame:onStatusChanged(state)
+function EqStaffFrame:onClickStatus()
     local member = self:selectedStaff()
     if member == nil then return end
-    EqStaffManager.setEnabled(member.id, farmId(), state == 2)
+    EqStaffManager.setEnabled(member.id, farmId(), not EqStaffManager.willBeEnabled(member))
     self.message = nil
     self:refresh()
 end
 
 
-function EqStaffFrame:onModeChanged(state)
+function EqStaffFrame:onClickMode()
     local member = self:selectedStaff()
     if member == nil or not EqStaff.trains(member.job) then return end
     local works = EqStaff.normalizeWorks(member.worksOn)
-    works.mode = state == 2 and EqStaff.WORKS_HORSE or EqStaff.WORKS_ROLE
+    works.mode = works.mode == EqStaff.WORKS_HORSE and EqStaff.WORKS_ROLE or EqStaff.WORKS_HORSE
     self:saveWorks(member, works)
 end
 

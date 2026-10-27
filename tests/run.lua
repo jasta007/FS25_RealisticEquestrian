@@ -3274,7 +3274,10 @@ end)()
     check("info welcome on the Information tab", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true })) == "info")
     check("events welcome even without horses", EqWelcome.menuSeries(state({ hasHorses = false, eventsOpen = true })) == "events")
     seen.info, seen.events = true, true
-    check("nothing once all are seen", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true, eventsOpen = true })) == nil)
+    check("staff welcome on the Equestrian Staff tab", EqWelcome.menuSeries(state({ hasHorses = false, staffOpen = true })) == "staff")
+    seen.staff = true
+    check("nothing once all are seen",
+        EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true, eventsOpen = true, staffOpen = true })) == nil)
 
     local oldAnimalType = AnimalType
     AnimalType = { HORSE = 4, COW = 1 }

@@ -83,7 +83,11 @@
         <text name="eq_welcome_welcome_1_title" text="Welcome to Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Your horses now have skills to train and events to compete in. It all lives in the Realistic Livestock menu, which you can open by pressing R in the Animals menu or Shift+O anywhere."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
-        <text name="eq_welcome_menu_1" text="Open the Information tab (the pig with an [i]) to learn about your horses, and the Events tab (the rosette) to enter them in events. You can also find Realistic Equestrian&apos;s own settings in the Settings tab (the cog)."/>
+        <text name="eq_welcome_menu_1" text="Open the Information tab (the pig with an [i]) to learn about your horses, the Events tab (the rosette) to enter them in events, and the Equestrian Staff tab (two people) to hire grooms and trainers. You can also find Realistic Equestrian&apos;s own settings in the Settings tab (the cog)."/>
+        <text name="eq_welcome_staff_hire_title" text="Equestrian Staff"/>
+        <text name="eq_welcome_staff_hire" text="Hire staff on the Hire tab to look after your horses every day. Grooms train all four stats, clean horses and bring loose ones home. Trainers focus on two stats and coach horses for their events. A vet means fewer injuries and cheaper treatment, and a broker gets you better prices at the dealer. Wages are paid daily, and candidates come and go, so check back for better ones."/>
+        <text name="eq_welcome_staff_works_title" text="Who they work on"/>
+        <text name="eq_welcome_staff_works" text="On Your staff, pick the stables a groom or trainer works in, then either roles or individual horses. Staff are most effective when only working on a few horses each; other horses only get a little of their time. Disable anyone you don&apos;t need for half their wage: the change starts at 1 am the next day."/>
         <text name="eq_welcome_info_skills_title" text="Skills"/>
         <text name="eq_welcome_info_skills" text="Stamina lets a horse go further, Speed makes it faster, Agility helps it jump and turn, and Temperament keeps it calm and obedient. Every skill can be trained, and you&apos;ll learn how when you first ride."/>
         <text name="eq_welcome_info_potential_title" text="Potential"/>
@@ -575,7 +579,7 @@
         <text name="eq_staff_noCandidates" text="No one is looking for work right now. New people arrive each month."/>
         <text name="eq_staff_noStaff" text="You have no staff yet. Hire some on the Hire tab."/>
         <text name="eq_staff_summary_hire" text="New people arrive every few hours and stay on offer for 12 to 72 hours. Only one vet and one broker per farm."/>
-        <text name="eq_staff_summary_staff" text="Wages: %s a day. Staff work best on a few horses each."/>
+        <text name="eq_staff_summary_staff" text="Wages: %s a day. Staff are most effective when only working on a few horses each."/>
         <text name="eq_staff_clientNote" text="Only the host can hire staff for now."/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
         <text name="eq_result_placedNoPrize" text="%s finished %d of %d in %s."/>
