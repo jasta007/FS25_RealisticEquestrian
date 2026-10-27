@@ -56,7 +56,8 @@ uses its genetics, health and fitness.
     Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
-    Near Riding Hall 2k26 dressage markers, ride between them ("Trot: Marker B") for more.
+    Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
+    arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.

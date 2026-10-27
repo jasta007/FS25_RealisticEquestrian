@@ -24,6 +24,8 @@
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
+        <text name="eq_pop_routineFault" text="Fehler %d/%d"/>
+        <text name="eq_pop_routineTest" text="Aufgabe beendet!"/>
         <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
         <text name="eq_pop_comboLost" text="Kombo verloren"/>
         <text name="eq_pop_knock" text="-%d s!"/>
@@ -36,11 +38,22 @@
         <text name="eq_move_walk" text="Schritt!"/>
         <text name="eq_move_spinLeft" text="Auf der Stelle links wenden!"/>
         <text name="eq_move_spinRight" text="Auf der Stelle rechts wenden!"/>
-        <text name="eq_dressage_go" text="%s: Punkt %s"/>
+        <text name="eq_shop_dressageArena15x30" text="Dressurviereck 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Dressurviereck 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
+        <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>
         <text name="eq_dressage_gait_canter" text="Galopp"/>
-        <text name="eq_dressage_bonus" text="Schnell, %s!"/>
+        <text name="eq_dressage_change" text="Wechsel: %s"/>
+        <text name="eq_dressage_flying" text="Fliegender Wechsel: %s"/>
+        <text name="eq_dressage_begin" text="Zum %s reiten, um eine Dressuraufgabe zu beginnen"/>
+        <text name="eq_dressage_reinBack" text="Rückwärtsrichten!"/>
+        <text name="eq_dressage_backwards" text="Rückwärts gehen"/>
+        <text name="eq_dressage_circle_left" text="Volte links"/>
+        <text name="eq_dressage_circle_right" text="Volte rechts"/>
+        <text name="eq_dressage_out" text="Zurück ins Viereck!"/>
         <text name="eq_dressage_next" text="Als Nächstes: %s"/>
         <text name="eq_dressage_stand" text="Stehen"/>
         <text name="eq_dressage_marker" text="Punkt %s"/>

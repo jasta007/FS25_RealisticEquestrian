@@ -22,6 +22,8 @@
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
         <text name="eq_help_agility_title" text="Training: Agility"/>
         <text name="eq_pop_routineStart" text="Routine started"/>
+        <text name="eq_pop_routineFault" text="Fault %d/%d"/>
+        <text name="eq_pop_routineTest" text="Test complete!"/>
         <text name="eq_pop_routineLost" text="Routine broken"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_knock" text="-%d s!"/>
@@ -34,11 +36,22 @@
         <text name="eq_move_walk" text="Walk!"/>
         <text name="eq_move_spinLeft" text="Turn left on the spot!"/>
         <text name="eq_move_spinRight" text="Turn right on the spot!"/>
-        <text name="eq_dressage_go" text="%s: Marker %s"/>
+        <text name="eq_shop_dressageArena15x30" text="Dressage Arena 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Dressage Arena 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
+        <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
         <text name="eq_dressage_gait_canter" text="Canter"/>
-        <text name="eq_dressage_bonus" text="Quick, %s!"/>
+        <text name="eq_dressage_change" text="Change: %s"/>
+        <text name="eq_dressage_flying" text="Flying change: %s"/>
+        <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
+        <text name="eq_dressage_reinBack" text="Rein back!"/>
+        <text name="eq_dressage_backwards" text="Move backwards"/>
+        <text name="eq_dressage_circle_left" text="Circle left"/>
+        <text name="eq_dressage_circle_right" text="Circle right"/>
+        <text name="eq_dressage_out" text="Return to the Arena!"/>
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>

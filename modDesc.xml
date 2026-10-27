@@ -38,6 +38,11 @@ Von Jasta007.]]>
     <extraSourceFiles>
         <sourceFile filename="scripts/main.lua"/>
     </extraSourceFiles>
+    <storeItems>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena15x30.xml"/>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena20x40.xml"/>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena20x60.xml"/>
+    </storeItems>
     <l10n filenamePrefix="translations/translation"/>
     <actions>
         <action name="EQ_DELIVER"/>

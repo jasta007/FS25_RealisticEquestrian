@@ -234,7 +234,7 @@ EqTrainingHud.sideState = nil
 EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
-    routine = "temperament", routineStart = "temperament", routineLost = "temperament",
+    routine = "temperament", routineStart = "temperament", routineLost = "temperament", routineTest = "temperament", routineFault = "temperament",
 }
 -- The gallop's news (EqExertion) belongs to no stat: it always shows in the middle, in status
 -- colours (white good, red bad, grey idle).
@@ -274,6 +274,10 @@ function EqTrainingHud.pop(kind, mult)
     elseif EqTrainingHud.EXERTION_POPS[kind] ~= nil then
         local pop = EqTrainingHud.EXERTION_POPS[kind]
         text, color, big = g_i18n:getText(pop[1]), EqTrainingHud.COLOR[pop[2]], pop[3]
+    elseif kind == "routineFault" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
+    elseif kind == "routineTest" then
+        text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
@@ -345,6 +349,11 @@ function EqTrainingHud.drawPrompt(value, share, color)
     local p = EqTrainingHud.PROMPT
     color = color or EqTrainingHud.COLOR.yellow
     shadowText(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
+    -- No share: an untimed prompt, with no bar under it.
+    if share == nil then
+        resetText()
+        return
+    end
     local left = p.x - p.barWidth / 2
     -- A dark edge round the bar, so it shows against snow too.
     local edge = p.barHeight * 0.5

@@ -5,6 +5,8 @@
 
     Markers are Riding Hall 2k26's letter boards (EqDressage.MARKER_XML), $1 decorations. The
     letter is the configuration picked when placing one ("solarPanels" in its xml, A to Z).
+    Our own arenas (EqDressage.ARENA_XML) carry every letter as a node named eqMarker_<letter>,
+    and have no collision to take off.
     The boards come with collision, which a horse runs into in the middle of an arena, so we take
     their collision off while a horse is ridden and put it back after (James, 2026-10-27), so
     they can still be picked up and sold in construction mode.
@@ -105,6 +107,28 @@ function EqDressageHooks.setRiding(riding)
 end
 
 
+--- Add the markers of one of our arenas: its nodes named eqMarker_<letter>.
+--- @param placeable table
+--- @param list table
+function EqDressageHooks.addArena(placeable, list)
+    local stack = { placeable.rootNode }
+    while #stack > 0 do
+        local node = table.remove(stack)
+        local letter = EqDressage.arenaLetter(getName(node))
+        if letter ~= nil then
+            local x, _, z = getWorldTranslation(node)
+            table.insert(list, { letter = letter, x = x, z = z, arena = true, arenaId = placeable.rootNode })
+            local key = string.format("%.1f:%.1f", x, z)
+            if not EqDressageHooks.logged[key] then
+                EqDressageHooks.logged[key] = true
+                Log:info("Dressage arena marker %s at %.1f, %.1f", letter, x, z)
+            end
+        end
+        for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+    end
+end
+
+
 --- @return table every dressage marker on the map: { letter, x, z }
 function EqDressageHooks.scan()
     local list, placeables = {}, {}
@@ -112,7 +136,10 @@ function EqDressageHooks.scan()
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
-        if EqDressage.isMarkerXml(placeable.configFileName) and placeable.rootNode ~= nil then
+        if EqDressage.isArenaXml(placeable.configFileName) and placeable.rootNode ~= nil then
+            local ok, err = pcall(EqDressageHooks.addArena, placeable, list)
+            if not ok then Log:warning("Dressage arena: %s", tostring(err)) end
+        elseif EqDressage.isMarkerXml(placeable.configFileName) and placeable.rootNode ~= nil then
             local index = placeable.configurations ~= nil and placeable.configurations.solarPanels or nil
             local okName, name = pcall(configName, placeable, "solarPanels", index)
             name = okName and name or nil

@@ -159,28 +159,41 @@ way to a requested stop is fine). A canter, gallop, jump or a missed request bre
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
 show in the Freestyle, Temperament and Condensed views.
 
-Without dressage markers nearby, that routine trains at 60% of the rate. Near Riding Hall 2k26's
-letter markers (at least three within 100 m, chained 60 m from each other, not all in a line) the
-routine rides between them instead, at the full rate:
+Without dressage markers nearby, that routine trains at 60% of the rate. Near dressage markers (at
+least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
+between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
+20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
+test: coming within 30 m starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
+commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
+and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
+asked for to markers within 12 m:
 
-- Most commands are legs, such as "Trot: Marker B": ride to that marker at that gait (walk, trot or
-  canter). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
+- Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
+  canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
   comes from its length and shrinks as the multiplier climbs. The marker is tagged on the map.
-- After 3 seconds to settle, the wrong gait for 1.5 seconds breaks the routine, and so does a gallop,
-  a jump or running out of time. Steering is free.
-- The next command shows about 3 seconds before the marker; reaching it (3 to 4.5 m) is one step up.
-- Passing close to another marker may ask for a quick gait change (2 seconds), worth an extra step.
+- After 3 seconds to settle, the wrong gait (or a gallop) for 1.5 seconds or running out of time is a
+  **fault**: the multiplier drops two steps and a fresh leg starts from where you are. The third
+  fault ends the routine, and so does a jump. A leg that starts with a turn gets extra time, up to
+  6 seconds at a trot for a full about-turn. Steering is free.
+- The next command shows about 3 seconds before the marker; reaching it (3 m at a walk, 4.5 m at a trot, 7 m at a
+  canter, so there is room to slow down) is one step up.
+- Passing close to another marker may ask for a gait change ("Change: Trot", or "Flying change:
+  Canter" from a walk; 2 seconds), worth an extra step, only to a gait the rest of the leg suits.
   Missing it costs nothing.
-- At a marker the next command can be a stop (then sometimes a turn on the spot, the only turns
-  asked for) or, rarely, backing up for 2.5 seconds, a stop and a new leg.
+- At a marker the next command can be a circle (steer one way at a walk or trot until the horse
+  has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
+  seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
+- In a shop arena, once past X, leaving it (a metre past its letters) for 3 seconds is a fault.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
-agility sets how high it jumps and how quickly it turns; a calm horse (temperament) changes pace a
-little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
+turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
+better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop.
 
 ### Staff, age and metabolism
