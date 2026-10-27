@@ -2,13 +2,19 @@
 Builds the cross country fences in placeables/xcJumps/: one .xml and .i3d per fence, the textures
 they share and a shop image for each.
 
+The cross country flags are the core: a red flag and a white flag, each its own shop item, placed
+either side of anything the player wants ridden as a fence (a map's logs, a table or hedge from any
+mod). The mod pairs each red flag with the nearest white one (EqXcFlags) and the line between them
+is the fence. The flags stay up and have no collision. The log piles are ready-made fences that
+carry their own pair.
+
 Like the dressage arenas, the .i3d files keep their geometry inline (<IndexedTriangleSet>), so no
 GIANTS tools are needed, and the textures are painted here rather than downloaded, so every pixel
 is ours.
 
 A log pile is a pyramid of logs lying along x, so the horse jumps it along z. Each fence has:
 - "logs" and "logEnds": the visible logs (bark) and their sawn ends (rings),
-- "flags": a post at each end of the face, red at +x and white at -x; the empty transform groups
+- "flags": a flag at each end of the face, red at +x and white at -x; the empty transform groups
   "eqFlagsRed" and "eqFlagsWhite" at their feet are what the course recorder reads as the jump's
   two ends (EqCourseHooks.findFlags, as with Riding Hall's "modernFlagsRed"/"modernFlagsWhite"),
 - "collision": one invisible static prism following the pile's outline, with the collision filter
@@ -35,17 +41,14 @@ LOG_PILES = [
     {"name": "xcLogPile", "price": 900, "rows": [3, 2, 1], "diameter": 0.38, "length": 4.2, "seed": 7},
 ]
 
-# Fence markers: no fence of their own. Put one across anything you want ridden as a cross country
-# fence (a map's logs, a bank you landscaped, another mod's prop). They glow gold in construction
-# mode and are hidden while you ride (EqXcMarkers); only their flags' feet matter to the mod.
-MARKERS = [
-    {"name": "xcFenceMarker3m", "price": 250, "width": 3.0},
-    {"name": "xcFenceMarker5m", "price": 250, "width": 5.0},
-    {"name": "xcFenceMarker8m", "price": 250, "width": 8.0},
-]
-MARKER_BARS = (0.45, 1.0)   # heights of the two glowing rails
-MARKER_BAR = 0.06
-GOLD = (236, 184, 52)
+# The standalone flags (EqXcFlags pairs them), one of each colour per fence height (cm). The
+# height is in the name: EqXcFlags reads it back.
+FLAG_HEIGHTS = (60, 90, 120)
+FLAGS = [{"name": f"courseFlag{colour}{h}", "price": 50, "colour": index, "height": h / 100}
+         for h in FLAG_HEIGHTS for index, colour in enumerate(("Red", "White"))]
+GUIDE = "eqXcGuide"     # the gold height bar: construction mode only
+GUIDE_LENGTH = 0.9
+GUIDE_SIZE = 0.03
 
 SIDES = 22              # faces round each log
 RING_STEP = 0.22        # metres between rings along a log (more rings: room to bend and bulge)
@@ -58,10 +61,12 @@ KNOTS = (2, 5)          # swellings round old branches, per log
 STUBS = (1, 3)          # sawn-off branch stubs, per log
 CUT_TILT = 0.14         # a sawn end leans by up to this (rise over run)
 BARK_TILE = 1.1         # metres of log one bark texture covers along it (it wraps once round)
-FLAG_GAP = 0.35         # posts stand this far past the logs' ends
-POST_HEIGHT = 1.45
-POST_SIZE = 0.07
-FLAG_W, FLAG_H, FLAG_T = 0.42, 0.30, 0.012
+FLAG_GAP = 0.3          # flags stand this far past the logs' ends
+POLE_HEIGHT = 1.5       # above the ground; the pole goes 0.15 m into it
+POLE_R = 0.018
+PENNANT_H = 0.30        # down the pole
+PENNANT_W = 0.40        # out from the pole
+SLEEVE_R = 0.026        # the pennant's sleeve wraps the top of the pole
 CLIP = 300              # fences are small: drawn out to 300 m
 # Riding Hall 2k26's static jump collision ("col" in props01.i3d): blocks the horse and the player.
 COLLISION_GROUP = "0x1034"
@@ -187,8 +192,8 @@ def log_end_texture(path, size=256):
     return rgb
 
 
-# One row of four cells: red flag, white flag, post, gold (markers).
-FLAG_CELLS = [(196, 28, 32), (240, 240, 236), (196, 170, 128), GOLD]
+# One row of four cells: red flag, white flag, pole, gold (the height guide).
+FLAG_CELLS = [(200, 26, 30), (244, 244, 240), (232, 232, 228), (236, 184, 52)]
 
 
 def flag_texture(path, cell=32):
@@ -443,35 +448,67 @@ def build_logs(jump):
     return barks, ends
 
 
-def flag_posts(half, mesh=None):
-    """Posts at each end of a fence face, red at +x and white at -x, each flag flying outwards.
-    Returns the mesh and the posts' feet."""
+def cylinder(mesh, x, z, y0, y1, r, uv, sides=10):
+    """An upright cylinder with a top cap."""
+    rings = []
+    for y in (y0, y1):
+        ring = []
+        for k in range(sides + 1):
+            a = 2 * math.pi * k / sides
+            n = (math.cos(a), 0.0, math.sin(a))
+            ring.append(mesh.vertex((x + n[0] * r, y, z + n[2] * r), n, uv))
+        rings.append(ring)
+    tube(mesh, rings, None)
+    middle = mesh.vertex((x, y1, z), (0.0, 1.0, 0.0), uv)
+    rim = [mesh.vertex((x + math.cos(2 * math.pi * k / sides) * r, y1, z + math.sin(2 * math.pi * k / sides) * r),
+                       (0.0, 1.0, 0.0), uv) for k in range(sides)]
+    for k in range(sides):
+        mesh.tri(middle, rim[k], rim[(k + 1) % sides])
+
+
+def pole_height(fence_height):
+    """Flags stand about half a metre above the fence."""
+    return max(1.3, fence_height + 0.55)
+
+
+def flag(mesh, x, colour, side, pole=POLE_HEIGHT):
+    """A thin white pole with a triangle pennant flying towards side (+1 = +x), its sleeve wrapped
+    round the top of the pole. Both faces of the pennant are drawn."""
+    cylinder(mesh, x, 0.0, -0.15, pole, POLE_R, flag_uv(2))
+    top = pole - 0.03
+    bottom = top - PENNANT_H
+    cylinder(mesh, x, 0.0, bottom, top, SLEEVE_R, flag_uv(colour), sides=12)
+    tip = (x + side * (SLEEVE_R + PENNANT_W), (top + bottom) / 2, 0.0)
+    uv = flag_uv(colour)
+    for nz in (1.0, -1.0):
+        n = (0.0, 0.0, nz)
+        a = mesh.vertex((x + side * SLEEVE_R * 0.7, top, 0.0), n, uv)
+        b = mesh.vertex((x + side * SLEEVE_R * 0.7, bottom, 0.0), n, uv)
+        c = mesh.vertex(tip, n, uv)
+        mesh.tri(a, b, c)
+
+
+def guide_bar(fence_height, side):
+    """The gold bar at the fence's height, from the pole towards the fence (against side)."""
+    mesh = Mesh()
+    s = GUIDE_SIZE / 2
+    x0, x1 = (-GUIDE_LENGTH, -POLE_R) if side > 0 else (POLE_R, GUIDE_LENGTH)
+    mesh.box(x0, x1, fence_height - s, fence_height + s, -s, s, flag_uv(3))
+    return mesh
+
+
+def flag_posts(half, fence_height, mesh=None):
+    """A flag at each end of a fence face, red at +x and white at -x, flying outwards.
+    Returns the mesh and the flags' feet."""
     mesh = mesh or Mesh()
-    s = POST_SIZE / 2
-    feet = {}
-    for name, x, colour, side in (("eqFlagsRed", half, 0, 1), ("eqFlagsWhite", -half, 1, -1)):
-        mesh.box(x - s, x + s, -0.1, POST_HEIGHT, -s, s, flag_uv(2))
-        fx0, fx1 = (x + s, x + s + FLAG_W) if side > 0 else (x - s - FLAG_W, x - s)
-        top = POST_HEIGHT - 0.04
-        mesh.box(fx0, fx1, top - FLAG_H, top, -FLAG_T / 2, FLAG_T / 2, flag_uv(colour))
-        feet[name] = (x, 0.0, 0.0)
-    return mesh, feet
+    flag(mesh, half, 0, 1, pole_height(fence_height))
+    flag(mesh, -half, 1, -1, pole_height(fence_height))
+    return mesh, {"eqFlagsRed": (half, 0.0, 0.0), "eqFlagsWhite": (-half, 0.0, 0.0)}
 
 
 def log_pile_half(jump):
     """Half the distance between a log pile's flags."""
     return jump["length"] / 2 + STAGGER + FLAG_GAP
-
-
-def marker_mesh(marker):
-    """Two gold rails between gold posts, and the red and white flags."""
-    half = marker["width"] / 2
-    gold = Mesh()
-    s = MARKER_BAR / 2
-    for y in MARKER_BARS:
-        gold.box(-half, half, y - s, y + s, -s, s, flag_uv(3))
-    flags, feet = flag_posts(half)
-    return gold, flags, feet
 
 
 def collision(jump):
@@ -532,13 +569,15 @@ MATERIALS = [
     ("xcBarkB", "xcBarkB_diffuse.dds", "xcBarkB_normal.dds", False),
     ("xcLogEnd", "xcLogEnd_diffuse.dds", None, False),
     ("xcFlags", "xcFlags_diffuse.dds", None, False),
-    ("xcMarkerGold", "xcFlags_diffuse.dds", None, True),
+    ("xcGuideGold", "xcFlags_diffuse.dds", None, True),
 ]
 
 
-def write_i3d(name, path, shapes, feet, col=None, group=None):
-    """shapes: (node name, mesh, material name, casts shadows). group: a transform group the
-    visible shapes go under (the markers hide it while you ride)."""
+def write_i3d(name, path, shapes, feet, col=None, guide=None):
+    """shapes: (node name, mesh, material name, casts shadows). guide: a (mesh, material) shown
+    only in construction mode, under a transform group named GUIDE (EqXcFlags hides it)."""
+    if guide is not None:
+        shapes = shapes + [("guide", guide[0], guide[1], False)]
     used = [m for m in MATERIALS if m[0] in {shape[2] for shape in shapes}]
     files = sorted({texture for _, texture, _, _ in used} | {n for _, _, n, _ in used if n})
     lines = [
@@ -575,21 +614,22 @@ def write_i3d(name, path, shapes, feet, col=None, group=None):
     lines.append("  <Scene>")
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     node_id = 2
-    indent = "      "
-    if group is not None:
-        lines.append(f'{indent}<TransformGroup name="{group}" nodeId="{node_id}">')
-        node_id += 1
-        indent += "  "
     for i, (node, _, material, shadows) in enumerate(shapes):
         cast = "true" if shadows else "false"
-        lines.append(f'{indent}<Shape name="{node}" shapeId="{i + 1}" clipDistance="{CLIP}" nodeId="{node_id}" '
-                     f'materialIds="{material_ids[material]}" castsShadows="{cast}" receiveShadows="true"/>')
+        shape = (f'<Shape name="{node}" shapeId="{i + 1}" clipDistance="{CLIP}" nodeId="{node_id}" '
+                 f'materialIds="{material_ids[material]}" castsShadows="{cast}" receiveShadows="true"/>')
+        if node == "guide":
+            lines.append(f'      <TransformGroup name="{GUIDE}" nodeId="{node_id + 1}">')
+            lines.append("        " + shape)
+            lines.append("      </TransformGroup>")
+            node_id += 1
+        else:
+            lines.append("      " + shape)
         node_id += 1
-    if group is not None:
-        lines.append("      </TransformGroup>")
-    for flag in ("eqFlagsRed", "eqFlagsWhite"):
-        lines.append(f'      <TransformGroup name="{flag}" translation="{fmt(feet[flag])}" nodeId="{node_id}"/>')
-        node_id += 1
+    for name_ in ("eqFlagsRed", "eqFlagsWhite"):
+        if name_ in feet:
+            lines.append(f'      <TransformGroup name="{name_}" translation="{fmt(feet[name_])}" nodeId="{node_id}"/>')
+            node_id += 1
     if col is not None:
         lines.append(f'      <TransformGroup name="collision" nodeId="{node_id}">')
         lines.append(f'        <Shape name="col" shapeId="{len(shapes) + 1}" static="true" collisionFilterGroup="{COLLISION_GROUP}" '
@@ -607,7 +647,7 @@ def write_xml(name, price, note, path):
     <storeData>
         <name>$l10n_eq_shop_{name}</name>
         <functions>
-            <function>$l10n_eq_shop_{"xcFenceMarker" if "Marker" in name else "xcJump"}_function</function>
+            <function>$l10n_eq_shop_{"courseFlag" if "Flag" in name else "xcJump"}_function</function>
         </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
@@ -677,7 +717,10 @@ def render(meshes, size=512, yaw=-35, pitch=18, ss=2):
         sx = ox + P[:, 0] * scale
         sy_ = oy - P[:, 1] * scale
         th, tw = tex.shape[:2]
+        facing = (N @ rot.T)[:, 2]
         for a, b, c in mesh.tris:
+            if facing[a] + facing[b] + facing[c] < -0.15:
+                continue  # facing away
             xs = np.array([sx[a], sx[b], sx[c]])
             ys = np.array([sy_[a], sy_[b], sy_[c]])
             area = (xs[1] - xs[0]) * (ys[2] - ys[0]) - (xs[2] - xs[0]) * (ys[1] - ys[0])
@@ -711,8 +754,8 @@ def render(meshes, size=512, yaw=-35, pitch=18, ss=2):
     return img.resize((size, size), Image.LANCZOS)
 
 
-def store_image(meshes, label, path, preview_dir):
-    img = render(meshes)
+def store_image(meshes, label, path, preview_dir, **view):
+    img = render(meshes, **view)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(FONT, 28)
     draw.text((img.width - 16, img.height - 14), label, font=font, fill=(250, 250, 250), anchor="rd")
@@ -733,7 +776,7 @@ def main():
     for jump in LOG_PILES:
         name = jump["name"]
         bark_meshes, ends_mesh = build_logs(jump)
-        posts, feet = flag_posts(log_pile_half(jump))
+        posts, feet = flag_posts(log_pile_half(jump), height(jump))
         shapes = [(f"logs{chr(65 + i)}", m, b["name"], True) for i, (m, b) in enumerate(zip(bark_meshes, BARKS)) if m.tris]
         shapes += [("logEnds", ends_mesh, "xcLogEnd", True), ("flags", posts, "xcFlags", True)]
         write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, feet, col=collision(jump))
@@ -744,17 +787,18 @@ def main():
                     os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
         print(name, f"{height(jump):.2f} m high,", len(layout(jump)), "logs,",
               sum(len(m.tris) for m in bark_meshes) + len(ends_mesh.tris) + len(posts.tris), "triangles")
-    for marker in MARKERS:
-        name = marker["name"]
-        gold, posts, feet = marker_mesh(marker)
-        shapes = [("rails", gold, "xcMarkerGold", False), ("flags", posts, "xcFlags", False)]
-        write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, feet, group="eqXcMarkerVisual")
-        write_xml(name, marker["price"], f"A {marker['width']:g} m fence face with no fence: hidden while riding.",
+    for item in FLAGS:
+        name = item["name"]
+        mesh = Mesh()
+        side = 1 if item["colour"] == 0 else -1
+        flag(mesh, 0.0, item["colour"], side, pole_height(item["height"]))
+        guide = guide_bar(item["height"], side)
+        write_i3d(name, os.path.join(OUT, name + ".i3d"), [("flag", mesh, "xcFlags", True)], {}, guide=(guide, "xcGuideGold"))
+        write_xml(name, item["price"], f"A cross country flag for a {item['height']:.1f} m fence: pairs with the nearest flag of the other colour.",
                   os.path.join(OUT, name + ".xml"))
-        store_image([(gold, flags), (posts, flags)], f"{marker['width']:g} m",
-                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
-        print(name, f"{marker['width']:g} m")
-
+        store_image([(mesh, flags), (guide, flags)], f"{item['height']:.1f} m", os.path.join(OUT, "store_" + name + ".dds"),
+                    preview_dir, yaw=-15, pitch=8)
+        print(name)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_courseFlagRed60</name>
+        <functions>
+            <function>$l10n_eq_shop_courseFlag_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_courseFlagRed60.dds</image>
+        <price>50</price>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
+        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
+        <textureMemoryUsage>0</textureMemoryUsage>
+        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
+        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/courseFlagRed60.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- A cross country flag for a 0.6 m fence: pairs with the nearest flag of the other colour. -->
+    </placement>
+</placeable>

@@ -1815,20 +1815,37 @@ check("a round pen is a temperament and dressage place",
     and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
 check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
     and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
-check("our log piles and fence markers are cross country fences",
+check("our log piles are cross country fences, flags alone are not",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml", false) == "xcFence"
-    and EqFacility.kindForXml(facilities, "C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcFenceMarker5m.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, "C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcLogPileSmall.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/courseFlagRed90.xml", false) == nil
     and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml", false) == nil)
 check("a cross country course helps cross country more than show jumping",
     EqFacility.eventBonus(facilities, { xcFence = 8 }, "crossCountry") > EqFacility.eventBonus(facilities, { xcFence = 8 }, "showJumping"))
 
-dofile("scripts/facilities/EqXcMarkers.lua")
-check("fence markers are recognised", EqXcMarkers.isMarkerXml("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcFenceMarker3m.xml")
-    and EqXcMarkers.isMarkerXml("FS25_RealisticEquestrian/placeables/xcJumps/xcFenceMarker8m.xml")
-    and not EqXcMarkers.isMarkerXml("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
-    and not EqXcMarkers.isMarkerXml(nil))
-check("fence markers show in construction mode and while editing a course only",
-    EqXcMarkers.wantShown(true, false) and EqXcMarkers.wantShown(false, true) and not EqXcMarkers.wantShown(false, false))
+dofile("scripts/facilities/EqXcFlags.lua")
+do
+    local colour, h = EqXcFlags.parseXml("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlagRed90.xml")
+    local colour2, h2 = EqXcFlags.parseXml("FS25_RealisticEquestrian/placeables/xcJumps/courseFlagWhite120.xml")
+    check("course flags give their colour and fence height", colour == "red" and math.abs(h - 0.9) < 1e-9
+        and colour2 == "white" and math.abs(h2 - 1.2) < 1e-9
+        and EqXcFlags.parseXml("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml") == nil
+        and EqXcFlags.parseXml(nil) == nil)
+    local function f(colour, height, x, z) return { colour = colour, height = height, x = x, z = z } end
+    local fences = EqXcFlags.pair({
+        f("red", 0.9, 0, 0), f("white", 0.9, 4, 0),     -- a 4 m fence
+        f("white", 0.9, -6, 0),                         -- further from the red: left over
+        f("red", 0.6, 100, 0), f("white", 0.9, 103, 0), -- heights differ: no fence
+        f("red", 1.2, 200, 0), f("white", 1.2, 216, 0), -- too far apart
+        f("red", 1.2, 300, 0), f("white", 1.2, 300.5, 0), -- too close
+    })
+    check("each red flag pairs with the nearest white flag of its height", #fences == 1
+        and fences[1].red.x == 0 and fences[1].white.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9)
+    local shared = EqXcFlags.pair({ f("red", 0.9, 0, 0), f("white", 0.9, 5, 0), f("red", 0.9, 9, 0) })
+    check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
+end
+check("height guides show in construction mode and while editing a course only",
+    EqXcFlags.wantGuides(true, false) and EqXcFlags.wantGuides(false, true) and not EqXcFlags.wantGuides(false, false))
 do
     -- Every shop item is in the mod, with its i3d, shop image and name.
     local modDesc = io.open("modDesc.xml"):read("*a")

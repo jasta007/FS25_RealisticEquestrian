@@ -282,18 +282,18 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
-| Cross country course (the shop's log piles and fence markers) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
+| Cross country course (the shop's log piles) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
 | Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
 
 Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
 bonus.
 
-Cross country fences: the shop's log piles (0.71 m and 1.00 m) are solid fences the horse has to
-jump. Fence markers (3, 5 and 8 m) are a fence face with nothing in it: place one across anything
-you want ridden as a fence. They show as gold rails with a red and a white flag in construction
-mode and while a course is edited, and are invisible with no collision the rest of the time. On
-every cross country fence the red flag is at one end and the white at the other; the line
-between them is the jump.
+Cross country fences: set a red and a white cross country flag either side of anything you want
+ridden as a fence (a map's logs, a table or hedge from any mod). Each red flag pairs with the
+nearest white flag of the same height 1 to 15 m away, and the line between them is the fence
+(`eqXcFences` lists them). Flags come for 0.6, 0.9 and 1.2 m fences; a gold bar at that height,
+pointing at the fence, helps line them up and shows only in construction mode. Flags have no
+collision. The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

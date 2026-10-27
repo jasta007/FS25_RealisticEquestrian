@@ -2,12 +2,12 @@
 <!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
     <storeData>
-        <name>$l10n_eq_shop_xcFenceMarker5m</name>
+        <name>$l10n_eq_shop_courseFlagWhite120</name>
         <functions>
-            <function>$l10n_eq_shop_xcFenceMarker_function</function>
+            <function>$l10n_eq_shop_courseFlag_function</function>
         </functions>
-        <image>placeables/xcJumps/store_xcFenceMarker5m.dds</image>
-        <price>250</price>
+        <image>placeables/xcJumps/store_courseFlagWhite120.dds</image>
+        <price>50</price>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
         <brand>NONE</brand>
@@ -26,11 +26,11 @@
     </storeData>
 
     <base>
-        <filename>placeables/xcJumps/xcFenceMarker5m.i3d</filename>
+        <filename>placeables/xcJumps/courseFlagWhite120.i3d</filename>
         <canBeRenamed>false</canBeRenamed>
     </base>
 
     <placement useRandomYRotation="false" useManualYRotation="true">
-        <!-- A 5 m fence face with no fence: hidden while riding. -->
+        <!-- A cross country flag for a 1.2 m fence: pairs with the nearest flag of the other colour. -->
     </placement>
 </placeable>

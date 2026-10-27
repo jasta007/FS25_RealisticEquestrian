@@ -43,10 +43,13 @@
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
-        <text name="eq_shop_xcFenceMarker3m" text="Cross Country Fence Marker 3 m"/>
-        <text name="eq_shop_xcFenceMarker5m" text="Cross Country Fence Marker 5 m"/>
-        <text name="eq_shop_xcFenceMarker8m" text="Cross Country Fence Marker 8 m"/>
-        <text name="eq_shop_xcFenceMarker_function" text="Turns anything into a cross country fence: place it across a log, bank or ditch. Only seen in construction mode; invisible while you ride."/>
+        <text name="eq_shop_courseFlagRed60" text="Cross Country Flag, Red (0.6 m)"/>
+        <text name="eq_shop_courseFlagWhite60" text="Cross Country Flag, White (0.6 m)"/>
+        <text name="eq_shop_courseFlagRed90" text="Cross Country Flag, Red (0.9 m)"/>
+        <text name="eq_shop_courseFlagWhite90" text="Cross Country Flag, White (0.9 m)"/>
+        <text name="eq_shop_courseFlagRed120" text="Cross Country Flag, Red (1.2 m)"/>
+        <text name="eq_shop_courseFlagWhite120" text="Cross Country Flag, White (1.2 m)"/>
+        <text name="eq_shop_courseFlag_function" text="Set a red and a white flag either side of anything (a log, a table, a hedge) to make it a cross country fence. The gold bar marks the fence height and only shows in construction mode."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>

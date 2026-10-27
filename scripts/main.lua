@@ -39,7 +39,7 @@ source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
-source(modDirectory .. "scripts/facilities/EqXcMarkers.lua")
+source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -256,8 +256,8 @@ guarded("probe hook", EqProbe.install)
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
--- Cross country fence markers show only in construction mode (and while a course is edited).
-guarded("fence marker hook", function() EqXcMarkers.install(guarded) end)
+-- Cross country flags' height guides show only in construction mode (and while a course is edited).
+guarded("course flag hook", function() EqXcFlags.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
