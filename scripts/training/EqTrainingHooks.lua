@@ -316,6 +316,8 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
     Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s, %d ms, ground flag %s, take-off at a %s)",
         cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over),
         jump.showJump and ", a show jump" or "", why, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
+    -- A show jumping round (EqCourseHooks) hears how the fence went: knocked or landed on top is a rail.
+    EqCourseHooks.onJumpJudged(cleared and "clear" or high and "knock" or "nothing")
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
@@ -548,6 +550,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))
         spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
+        -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
+        EqCourseHooks.onCrash()
         local knock = EqTraining.knockCombo(sheet)
         if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
         popKnock(knock)
@@ -1155,7 +1159,16 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local routine = sheet.routine
     local onCourse = routineShown() and routine.active and routine.kind == "markers"
-    EqDressageHooks.setTag(onCourse and routine.task ~= nil and routine.task.marker or nil)
+    -- The dressage test tags its next marker, else a show jumping round its next fence.
+    if onCourse then
+        EqDressageHooks.setTag(routine.task ~= nil and routine.task.marker or nil)
+    else
+        EqDressageHooks.setTag(EqCourseHooks.tagTarget())
+    end
+    -- A finished show jumping round pays agility training, unless the horse is worn out.
+    local roundEffort = EqCourseHooks.takePayoff()
+    if roundEffort > 0 and not isTired(spec.cluster) then sheet.focused.agility = sheet.focused.agility + roundEffort end
+    EqCourseHooks.roundRows(rows)
     if onCourse then
         -- Condensed: no panel rows, but the rider still needs the commands.
         dressageRows(condensed and {} or rows, routine, vehicle)

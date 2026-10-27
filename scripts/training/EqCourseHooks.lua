@@ -21,7 +21,13 @@
     (any node with a red and a white flag under it), and map scenery such as Elmcreek's course.
     A jump's line runs between its red and white flags, or across its placement area.
 
-    Recording runs where the rider is (Rideable.onDraw), so it is single player for now.
+    Out of edit mode, near a saved course the horse rides a timed round (EqShowJumping): "Move
+    to the start line to begin Show Jumping", a 3, 2, 1 countdown, then the fences in order with
+    the next one tagged on the map and the way to it drawn. A placed start or finish line
+    (placeables/courseLines) close to where the course begins or ends is used, else one is made
+    12 m before fence 1 and after the last fence.
+
+    Recording and rounds run where the rider is (Rideable.onDraw), so they are single player for now.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -49,8 +55,22 @@ EqCourseHooks.FLAG_DEPTH = 6
 EqCourseHooks.LINE_COLOR = { 0.2, 0.9, 1 }
 EqCourseHooks.TRAIL_COLOR = { 1, 0.6, 0.1 }
 EqCourseHooks.NEAREST_COLOR = { 1, 1, 1 }
+-- In a round: the way to the next fence, and the start and finish lines.
+EqCourseHooks.ROUND_COLOR = { 1, 0.85, 0.2 }
+EqCourseHooks.START_COLOR = { 0.3, 1, 0.3 }
+EqCourseHooks.FINISH_COLOR = { 1, 0.3, 0.3 }
+-- The way to the next fence is drawn as a band of lines this far apart, so it reads as solid.
+EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
+-- A placed start or finish line counts for a course within this many metres of the line the
+-- course would make itself.
+EqCourseHooks.LINE_RADIUS = 30
+EqCourseHooks.LINE_FILES = {
+    start = "placeables/courselines/coursestartline.xml",
+    finish = "placeables/courselines/coursefinishline.xml",
+}
 
 EqCourseHooks.editing = nil
+EqCourseHooks.round = nil
 EqCourseHooks.near = nil
 EqCourseHooks.bodies = {}
 EqCourseHooks.drawFailed = false
@@ -59,6 +79,7 @@ EqCourseHooks.textFailed = false
 
 function EqCourseHooks.reset()
     EqCourseHooks.editing, EqCourseHooks.near, EqCourseHooks.bodies = nil, nil, {}
+    EqCourseHooks.round, EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.payoff = nil, nil, false, 0
 end
 
 
@@ -277,6 +298,7 @@ end
 --- @param index number|nil the saved course to edit, nil for a new one
 local function startEditing(vehicle, index)
     local editing = { vehicle = vehicle, index = index, seenAt = g_time or 0 }
+    EqCourseHooks.round = nil
     if index ~= nil then
         local course = EqCourse.list[index]
         editing.name = course.name
@@ -549,10 +571,11 @@ end
 
 --- Fence numbers over the jumps of a course (one label per jump, "3, 10" when ridden twice).
 --- @param jumps table
-local function drawNumbers(jumps)
+--- @param labels table|nil { x, z, text } to draw instead
+local function drawNumbers(jumps, labels)
     if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
     local ok, err = pcall(function()
-        for _, label in ipairs(EqCourse.labels(jumps)) do
+        for _, label in ipairs(labels or EqCourse.labels(jumps)) do
             local y = groundAt(label.x, 0, label.z)
             Utils.renderTextAtWorldPosition(label.x, y + EqCourseHooks.NUMBER_LIFT, label.z, label.text, getCorrectTextSize(0.025), 0)
         end
@@ -570,7 +593,11 @@ function EqCourseHooks.onDraw(vehicle)
     if vehicle.rootNode == nil then return end
     EqCourseHooks.updateActions(vehicle)
     local editing = EqCourseHooks.editing
-    if editing == nil or editing.vehicle ~= vehicle then return end
+    if editing == nil then
+        EqCourseHooks.roundDraw(vehicle)
+        return
+    end
+    if editing.vehicle ~= vehicle then return end
     editing.seenAt = g_time or 0
     step(editing, vehicle)
 
@@ -593,11 +620,318 @@ function EqCourseHooks.onDraw(vehicle)
 end
 
 
+--- A placed start or finish line's two posts, red end a and white end b.
+--- @param placeable table
+--- @return table|nil line { ax, az, bx, bz, x, z }
+local function placedLine(placeable)
+    local red, white = nil, nil
+    local stack = { placeable.rootNode }
+    while #stack > 0 and (red == nil or white == nil) do
+        local node = table.remove(stack)
+        local name = getName(node)
+        if name == "eqLineRed" then red = node elseif name == "eqLineWhite" then white = node end
+        for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+    end
+    if red == nil or white == nil then return nil end
+    local ax, _, az = getWorldTranslation(red)
+    local bx, _, bz = getWorldTranslation(white)
+    return { ax = ax, az = az, bx = bx, bz = bz, x = (ax + bx) / 2, z = (az + bz) / 2 }
+end
+
+
+--- The placed line of a kind nearest a line made from the path, turned so the horse rides it
+--- the right way: towards fence 1 over a start line, away from the last fence over a finish.
+--- @param kind string "start" or "finish"
+--- @param made table the line made from the path
+--- @param fence table the course's first (start) or last (finish) fence
+--- @return table|nil
+local function findPlacedLine(kind, made, fence)
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    if system == nil or system.placeables == nil then return nil end
+    local file = EqCourseHooks.LINE_FILES[kind]
+    local best, bestDistance = nil, EqCourseHooks.LINE_RADIUS
+    for _, placeable in ipairs(system.placeables) do
+        local config = placeable.configFileName ~= nil and placeable.configFileName:lower():gsub("\\", "/") or ""
+        if placeable.rootNode ~= nil and config:sub(-#file) == file then
+            local line = placedLine(placeable)
+            if line ~= nil then
+                local dx, dz = line.x - made.x, line.z - made.z
+                local d = math.sqrt(dx * dx + dz * dz)
+                if d <= bestDistance then best, bestDistance = line, d end
+            end
+        end
+    end
+    if best == nil then return nil end
+    -- However it was put down, fence 1 lies past a start line and the last fence before a finish.
+    local past = EqShowJumping.sideOf(best, fence.x, fence.z) == 1
+    if (kind == "start") ~= past then
+        best.ax, best.az, best.bx, best.bz = best.bx, best.bz, best.ax, best.az
+    end
+    return best
+end
+
+
+--- Fill in a course's fence ends from the jumps on the map (a course saved before they were kept).
+--- @param course table
+local function fillEnds(course)
+    local missing = false
+    for _, jump in ipairs(course.jumps) do if jump.ax == nil then missing = true end end
+    if not missing then return end
+    local live = EqCourseHooks.listJumps()
+    for _, jump in ipairs(course.jumps) do
+        if jump.ax == nil then
+            for _, found in ipairs(live) do
+                if EqCourse.sameJump(jump, found) then
+                    jump.ax, jump.az, jump.bx, jump.bz = found.ax, found.az, found.bx, found.bz
+                    break
+                end
+            end
+        end
+    end
+end
+
+
+--- A new round on a course, with any placed start and finish lines.
+--- @param vehicle table
+--- @param course table
+--- @return table
+local function newRound(vehicle, course)
+    fillEnds(course)
+    local start = findPlacedLine("start", EqShowJumping.startFromPath(course), course.jumps[1])
+    local finish = findPlacedLine("finish", EqShowJumping.finishFromPath(course), course.jumps[#course.jumps])
+    local sj = EqShowJumping.newRound(course, start, finish)
+    Log:info("Show jumping: round on '%s', %d fence(s), time allowed %d s, %s start line, %s finish line", course.name,
+        #course.jumps, sj.allowed, start ~= nil and "placed" or "path", finish ~= nil and "placed" or "path")
+    return { vehicle = vehicle, course = course, sj = sj, seenAt = g_time or 0 }
+end
+
+
+--- Judged jumps and crashes from EqTrainingHooks, for the round's next frame.
+--- @param result string "clear", "knock" or "nothing"
+function EqCourseHooks.onJumpJudged(result)
+    if EqCourseHooks.round ~= nil then EqCourseHooks.judged = result end
+end
+
+
+function EqCourseHooks.onCrash()
+    if EqCourseHooks.round ~= nil then EqCourseHooks.crashed = true end
+end
+
+
+--- Agility effort earned by a finished round, handed over once (EqTrainingHooks adds it).
+--- @return number
+function EqCourseHooks.takePayoff()
+    local effort = EqCourseHooks.payoff or 0
+    EqCourseHooks.payoff = 0
+    return effort
+end
+
+
+--- @param seconds number
+--- @return string "52.3 s"
+local function secondsText(seconds)
+    return string.format("%.1f s", seconds)
+end
+
+
+--- Tell the rider what the round just did.
+--- @param round table
+--- @param event string from EqShowJumping.step
+local function announce(round, event)
+    local sj = round.sj
+    if event == "count" then
+        EqTrainingHud.pop("showJumping", tostring(sj.count))
+    elseif event == "go" then
+        EqTrainingHud.pop("showJumping", text("eq_sj_go"))
+    elseif event == "early" then
+        notify(text("eq_sj_early"))
+    elseif event == "started" then
+        Log:info("Show jumping: started '%s'", round.course.name)
+    elseif event == "fence" then
+        -- A clear fence: the jump's own combo pop says so, the panel counts on.
+        Log:info("Show jumping: fence %d of %d clear", sj.next - 1, #round.course.jumps)
+    elseif event == "rail" then
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_rail"), sj.faults))
+    elseif event == "refusal" then
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_refusal"), sj.faults))
+    elseif event == "eliminated" then
+        local why = sj.result.eliminated
+        Log:info("Show jumping: eliminated (%s) after %.1f s", why, sj.result.seconds)
+        local message = why == "wrongCourse" and string.format(text("eq_sj_out_wrongCourse"), sj.why)
+            or text("eq_sj_out_" .. why)
+        notify(message)
+        EqTrainingHud.pop("showJumping", text("eq_sj_eliminated"))
+    elseif event == "finished" then
+        local result = sj.result
+        local effort = EqShowJumping.payoff(result)
+        EqCourseHooks.payoff = (EqCourseHooks.payoff or 0) + effort
+        Log:info("Show jumping: finished '%s' in %.1f s (allowed %d), %d fault(s) + %d time fault(s), agility effort %.3f",
+            round.course.name, result.seconds, sj.allowed, result.faults, result.timeFaults, effort)
+        local message = result.clear and string.format(text("eq_sj_clear"), secondsText(result.seconds))
+            or string.format(text("eq_sj_faults"), result.total, secondsText(result.seconds))
+        notify(message)
+        EqTrainingHud.pop("showJumping", result.clear and text("eq_sj_clearPop") or string.format(text("eq_sj_faultsPop"), result.total))
+    end
+end
+
+
+--- A line across the ground between a line's two ends, with a post at each.
+--- @param line table
+--- @param color table
+local function drawCrossing(line, color, x, z)
+    local ya = groundAt(line.ax, 0, line.az)
+    local yb = groundAt(line.bx, 0, line.bz)
+    for _, lift in ipairs({ 0.1, 0.2, 0.3 }) do
+        drawLine({ { x = line.ax, y = ya + lift, z = line.az }, { x = line.bx, y = yb + lift, z = line.bz } }, color, x, z)
+    end
+    drawLine({ { x = line.ax, y = ya, z = line.az }, { x = line.ax, y = ya + 2, z = line.az } }, color, x, z)
+    drawLine({ { x = line.bx, y = yb, z = line.bz }, { x = line.bx, y = yb + 2, z = line.bz } }, color, x, z)
+end
+
+
+--- The way from one path index to another, smoothed and drawn as a band.
+--- @param round table
+--- @param from number
+--- @param to number
+local function drawWay(round, from, to, x, z)
+    local key = from .. ":" .. to
+    if round.wayKey ~= key then
+        local slice = {}
+        local points = round.course.points
+        for i = math.max(1, from), math.min(#points, to) do table.insert(slice, points[i]) end
+        round.way, round.wayKey = #slice >= 2 and EqCourse.smooth(slice) or slice, key
+    end
+    local way = round.way
+    if #way < 2 then return end
+    for _, offset in ipairs(EqCourseHooks.BAND) do
+        local band = {}
+        for i, p in ipairs(way) do
+            local q = way[math.min(#way, i + 1)]
+            local r = way[math.max(1, i - 1)]
+            local tx, tz = q.x - r.x, q.z - r.z
+            local d = math.sqrt(tx * tx + tz * tz)
+            if d < 1e-6 then tx, tz, d = 0, 1, 1 end
+            band[i] = { x = p.x - tz / d * offset, y = p.y + 0.05, z = p.z + tx / d * offset }
+        end
+        drawLine(band, EqCourseHooks.ROUND_COLOR, x, z)
+    end
+end
+
+
+--- Where the round tags the map: the start line until the clock runs, then the next fence.
+--- @return table|nil { x, z }, string|nil its name
+function EqCourseHooks.tagTarget()
+    local round = EqCourseHooks.round
+    if round == nil then return nil, nil end
+    local sj = round.sj
+    if sj.state == "approach" or sj.state == "countdown" or sj.state == "go" then
+        return sj.start, text("eq_sj_startLine")
+    end
+    if sj.state == "running" then
+        local fence = round.course.jumps[sj.next]
+        if fence ~= nil then return fence, string.format(text("eq_pop_courseFence"), sj.next) end
+        if sj.finish ~= nil then return sj.finish, text("eq_sj_finishLine") end
+    end
+    return nil, nil
+end
+
+
+--- The round's rows in the riding panel.
+--- @param rows table
+function EqCourseHooks.roundRows(rows)
+    local round = EqCourseHooks.round
+    if round == nil or round.sj.state ~= "running" then return end
+    local sj = round.sj
+    local color = EqTrainingHud.STAT_COLOR.agility
+    local jumps = #round.course.jumps
+    table.insert(rows, { left = string.format(text("eq_sj_fenceRow"), math.min(sj.next, jumps), jumps), leftColor = color,
+        right = string.format(text("eq_sj_faultsRow"), sj.faults), rightColor = sj.faults > 0 and EqTrainingHud.COLOR.orange or color })
+    local seconds = sj.clock / 1000
+    table.insert(rows, { left = text("eq_sj_timeRow"), leftColor = color,
+        right = string.format("%s / %d s", secondsText(seconds), sj.allowed),
+        rightColor = seconds > sj.allowed and EqTrainingHud.COLOR.red or color })
+end
+
+
+--- Out of edit mode, each frame for the ridden horse: the round on the nearby course.
+--- @param vehicle table
+function EqCourseHooks.roundDraw(vehicle)
+    local now = g_time or 0
+    local round = EqCourseHooks.round
+    local course, _ = EqCourseHooks.nearCourse(vehicle)
+    if round ~= nil and (round.vehicle ~= vehicle or round.course ~= course) then
+        -- Away from the course (or onto another): a round under way is over.
+        if round.sj.state == "running" or round.sj.state == "go" then notify(text("eq_sj_retired")) end
+        round = nil
+        EqCourseHooks.round = nil
+    end
+    if course == nil or #course.jumps < EqCourse.MIN_JUMPS then return end
+    if round == nil then
+        round = newRound(vehicle, course)
+        EqCourseHooks.round = round
+        EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
+    end
+
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local dt = round.at ~= nil and math.max(0, math.min(200, now - round.at)) or 0
+    local last = round.last or { x, z }
+    round.at, round.last, round.seenAt = now, { x, z }, now
+    local sj = round.sj
+    local event = EqShowJumping.step(sj, { px = last[1], pz = last[2], x = x, z = z, dt = dt,
+        judged = EqCourseHooks.judged, crashed = EqCourseHooks.crashed })
+    EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
+    if event ~= nil then announce(round, event) end
+
+    local state = sj.state
+    if state == "approach" or state == "countdown" or state == "go" then
+        drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z)
+        local _, from = EqShowJumping.startFromPath(round.course)
+        drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z)
+        if state == "approach" then
+            EqTrainingHud.drawPrompt(text("eq_sj_begin"), nil, EqTrainingHud.STAT_COLOR.agility)
+        elseif state == "countdown" then
+            EqTrainingHud.drawPrompt(text("eq_sj_ready"), sj.countMs / EqShowJumping.COUNT_MS, EqTrainingHud.STAT_COLOR.agility)
+        else
+            EqTrainingHud.drawPrompt(text("eq_sj_cross"), sj.goMs / EqShowJumping.GO_MS, EqTrainingHud.STAT_COLOR.agility)
+        end
+    elseif state == "running" then
+        local jumps = round.course.jumps
+        local fence = jumps[sj.next]
+        local previous = jumps[sj.next - 1]
+        if fence ~= nil then
+            local from = previous ~= nil and previous.pointIndex or select(2, EqShowJumping.startFromPath(round.course))
+            drawWay(round, from, fence.pointIndex or from, x, z)
+            drawNumbers(nil, { { x = fence.x, z = fence.z, text = string.format(text("eq_pop_courseFence"), sj.next) } })
+        elseif sj.finish ~= nil then
+            local _, to = EqShowJumping.finishFromPath(round.course)
+            drawWay(round, previous.pointIndex or to, to, x, z)
+            drawCrossing(sj.finish, EqCourseHooks.FINISH_COLOR, x, z)
+        end
+    elseif state == "done" and sj.result ~= nil then
+        local result = sj.result
+        local message
+        if result.eliminated ~= nil then
+            message = text("eq_sj_eliminated")
+        elseif result.clear then
+            message = string.format(text("eq_sj_clear"), secondsText(result.seconds))
+        else
+            message = string.format(text("eq_sj_faults"), result.total, secondsText(result.seconds))
+        end
+        EqTrainingHud.drawPrompt(message, sj.restMs / EqShowJumping.REST_MS, EqTrainingHud.STAT_COLOR.agility)
+    end
+end
+
+
 --- Each frame: edit mode ends when the rider gets off, throwing away what was not saved.
 function EqCourseHooks.update()
+    local now = g_time or 0
+    local round = EqCourseHooks.round
+    if round ~= nil and (now - round.seenAt > EqCourseHooks.STALE_MS or now < round.seenAt) then
+        if round.sj.state == "running" or round.sj.state == "go" then notify(text("eq_sj_retired")) end
+        EqCourseHooks.round = nil
+    end
     local editing = EqCourseHooks.editing
     if editing == nil then return end
-    local now = g_time or 0
     if now - editing.seenAt > EqCourseHooks.STALE_MS or now < editing.seenAt then
         stopEditing(editing.recording and "eq_course_cancelled" or "eq_course_finished")
     end

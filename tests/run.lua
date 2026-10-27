@@ -17,6 +17,7 @@ dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
+dofile("scripts/training/EqShowJumping.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/core/EqI18N.lua")
@@ -1273,6 +1274,110 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("a saved edit replaces the course", #EqCourse.list == 1 and EqCourse.list[1].points[1].x == 999)
     EqCourse.loadFromXMLFile(nil, "c")
     check("a new game has no courses", #EqCourse.list == 0)
+end)()
+
+-- A timed show jumping round over a course (EqShowJumping).
+;(function()
+    local points = {}
+    for z = 0, 120, 2 do points[#points + 1] = { x = 0, y = 0, z = z } end
+    local function fence(z)
+        return { x = 0, z = z, ry = 0, side = -1, pointIndex = z / 2 + 1, ax = -2, az = z, bx = 2, bz = z }
+    end
+    local course = { name = "Course 1", points = points, jumps = { fence(40), fence(70) }, length = 120 }
+    local round = EqShowJumping.newRound(course)
+    check("a path start line stands before fence 1", math.abs(round.start.z - 28) < 1e-6 and round.start.ax < round.start.bx)
+    check("a path finish line stands after the last fence", math.abs(round.finish.z - 82) < 1e-6)
+    check("the time allowed is at least the minimum", round.allowed >= EqShowJumping.MIN_TIME)
+
+    -- Ride along x = 0 from one z to another, a frame each half metre; returns the events seen.
+    -- Frames end a quarter metre off the lines, as a real horse never stops exactly on one.
+    local z = 0.25
+    local function ride(to, dt, extra)
+        local seen = {}
+        while z < to do
+            local input = { px = 0, pz = z, x = 0, z = z + 0.5, dt = dt or 100 }
+            if extra ~= nil then extra(input) end
+            z = input.z
+            local event = EqShowJumping.step(round, input)
+            if event ~= nil then seen[#seen + 1] = event; seen[event] = (seen[event] or 0) + 1 end
+        end
+        return seen
+    end
+    local function wait(ms)
+        local seen = {}
+        for _ = 1, ms / 100 do
+            local event = EqShowJumping.step(round, { px = 0, pz = z, x = 0, z = z, dt = 100 })
+            if event ~= nil then seen[#seen + 1] = event; seen[event] = (seen[event] or 0) + 1 end
+        end
+        return seen
+    end
+
+    ride(10)
+    check("far from the start line nothing happens", round.state == "approach")
+    local seen = ride(20)
+    check("close behind the start line the countdown starts", round.state == "countdown" and round.count == 3)
+    seen = ride(30)
+    check("crossing the line in the countdown is too early", seen.early == 1 and round.state == "approach")
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    seen = wait(3000)
+    check("the countdown counts down to go", round.state == "go" and seen.count == 2 and seen.go == 1)
+    seen = ride(39)
+    check("the clock starts at the start line", seen.started == 1 and round.state == "running" and round.next == 1)
+    seen = ride(41, 100, function(input) if input.z >= 40 and input.pz < 40 then input.judged = "clear" end end)
+    check("fence 1 cleared", round.next == 2 and seen.rail == nil and round.faults == 0)
+    seen = ride(71, 100, function(input) if input.z >= 70 and input.pz < 70 then input.judged = "knock" end end)
+    check("a rail down is 4 faults", seen.rail == 1 and round.faults == 4)
+    seen = ride(90)
+    check("the finish line stops the clock", seen.finished == 1 and round.state == "done"
+        and round.result.faults == 4 and round.result.timeFaults == 0 and not round.result.clear)
+    check("a round with faults pays less than a clear", EqShowJumping.payoff(round.result) > 0
+        and EqShowJumping.payoff(round.result) < EqShowJumping.payoff({ total = 0, clear = true }))
+    seen = wait(EqShowJumping.REST_MS)
+    check("after the result the next round can start", seen.ready == 1 and round.state == "approach")
+
+    -- Out of order: fence 2 before fence 1.
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(29)
+    round.course.jumps[1].ax, round.course.jumps[1].bx = 10, 14
+    seen = ride(75)
+    check("jumping the wrong fence eliminates", seen.eliminated == 1 and round.result.eliminated == "wrongCourse")
+    check("an elimination pays nothing", EqShowJumping.payoff(round.result) == 0)
+    round.course.jumps[1].ax, round.course.jumps[1].bx = -2, 2
+
+    -- Refusals and time.
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(35)
+    check("a crash at the next fence is a refusal", EqShowJumping.step(round, { px = 0, pz = 35, x = 0, z = 35, dt = 100, crashed = true }) == "refusal"
+        and round.faults == 4)
+    check("a second refusal eliminates", EqShowJumping.step(round, { px = 0, pz = 35, x = 0, z = 35, dt = 100, crashed = true }) == "eliminated"
+        and round.result.eliminated == "refusals")
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(30)
+    ride(85, (round.allowed + 2.5) * 1000 / 110)
+    check("a slow round gets time faults", round.result ~= nil and round.result.timeFaults > 0
+        and round.result.timeFaults == math.ceil(round.result.seconds - round.allowed), round.result and tostring(round.result.timeFaults))
+    round = EqShowJumping.newRound(course, nil, false)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    -- No judgement comes, so the last fence counts as clear after PENDING_MS.
+    seen = ride(110)
+    check("with no finish line the round ends after the last fence", seen.finished == 1)
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    seen = ride(85, 10)
+    check("a finish line crossed before the last fence is judged still ends the round", seen.finished == 1 and round.result.clear)
 end)()
 
 -- Peak form: the month's best minigame session per stat, never stacked over days.

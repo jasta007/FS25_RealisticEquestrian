@@ -214,6 +214,28 @@ horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are sav
 rlEquestrian.xml. `eqCourses` lists them and `eqCourses delete <number>` removes one. Editing
 works in single player for now.
 
+#### The timed round
+
+Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
+Show Jumping". The start line is a placed Show Jumping Start Line (in the shop under horses) within
+30 m of where the course begins, else one made 12 m before fence 1; the finish line likewise, after
+the last fence. Placed lines work either way round. Within 12 m behind the start line a 3, 2, 1
+countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
+clock starts as you do. The next fence is tagged on the map and the way to it drawn in gold.
+
+| Fault | Penalty |
+| --- | --- |
+| Rail down (hitting or landing on the fence) | 4 |
+| Refusal (running into the next fence) | 4; a second eliminates |
+| Jumping another fence of the course, the right way, out of order | Eliminated |
+| Each second (or part) over the time allowed | 1 |
+| Over twice the time allowed, or not starting within 45 s | Eliminated |
+
+The time allowed is the course length at 350 m a minute (at least 20 s). A finished round pays
+agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20 faults or when
+eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
+can start.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);

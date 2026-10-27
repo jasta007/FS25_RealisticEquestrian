@@ -309,6 +309,31 @@
         <text name="eq_course_cancelled" text="Editing stopped: you got off the horse, the last changes were not saved"/>
         <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m (jumps have no collision)"/>
         <text name="eq_course_name" text="Course %d"/>
+        <text name="eq_sj_begin" text="Move to the start line to begin Show Jumping"/>
+        <text name="eq_sj_ready" text="Get ready..."/>
+        <text name="eq_sj_go" text="Go!"/>
+        <text name="eq_sj_cross" text="Go! Cross the start line"/>
+        <text name="eq_sj_early" text="Too early! Move back behind the start line"/>
+        <text name="eq_sj_rail" text="Rail down! %d faults"/>
+        <text name="eq_sj_refusal" text="Refusal! %d faults"/>
+        <text name="eq_sj_eliminated" text="Eliminated"/>
+        <text name="eq_sj_out_late" text="Eliminated: the start line was not crossed in time"/>
+        <text name="eq_sj_out_wrongCourse" text="Eliminated: wrong course (fence %d jumped out of order)"/>
+        <text name="eq_sj_out_refusals" text="Eliminated: second refusal"/>
+        <text name="eq_sj_out_timeLimit" text="Eliminated: over the time limit"/>
+        <text name="eq_sj_clear" text="Clear round in %s!"/>
+        <text name="eq_sj_faults" text="%d faults in %s"/>
+        <text name="eq_sj_clearPop" text="Clear round!"/>
+        <text name="eq_sj_faultsPop" text="%d faults"/>
+        <text name="eq_sj_retired" text="Show jumping round abandoned"/>
+        <text name="eq_sj_startLine" text="Start line"/>
+        <text name="eq_sj_finishLine" text="Finish line"/>
+        <text name="eq_sj_fenceRow" text="Fence %d of %d"/>
+        <text name="eq_sj_faultsRow" text="%d faults"/>
+        <text name="eq_sj_timeRow" text="Time"/>
+        <text name="eq_shop_courseStartLine" text="Show Jumping Start Line"/>
+        <text name="eq_shop_courseFinishLine" text="Show Jumping Finish Line"/>
+        <text name="eq_shop_courseLine_function" text="Marks where a recorded show jumping course starts or finishes. Ride through with the red flag on your right."/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
         <text name="input_EQ_COURSE_REWIND" text="Rewind course to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
