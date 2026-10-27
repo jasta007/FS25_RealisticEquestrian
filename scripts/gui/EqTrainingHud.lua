@@ -29,7 +29,7 @@ EqTrainingHud.COLOR = {
     track = { 1, 1, 1, 0.15 },
     background = { 0, 0, 0, 0.6 },
     -- The exertion bar's dividers and ticks: solid, the shade the old see-through ticks showed.
-    barLine = { 0.32, 0.32, 0.3, 1 },
+    barLine = { 0.16, 0.16, 0.15, 1 },
 }
 
 -- Screen positions are shares of the screen, from the bottom left.
