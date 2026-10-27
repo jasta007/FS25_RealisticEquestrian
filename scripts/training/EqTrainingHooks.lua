@@ -673,7 +673,7 @@ end
 EqTrainingHooks.VIEWS = { "freestyle", "agility", "temperament" }
 -- "gallop" pops up the first time the horse gallops, and on H while it gallops.
 EqTrainingHooks.HELP_PAGES = { freestyle = 3, agility = 2, temperament = 2, gallop = 4 }
--- The stats the player's riding trains for now (stamina and speed are off, see EqTraining).
+-- The stats the player's riding trains.
 EqTrainingHooks.TRAINED_STATS = { "stamina", "speed", "agility", "temperament" }
 EqTrainingHooks.viewIndex = 1
 
