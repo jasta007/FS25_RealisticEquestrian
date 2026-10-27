@@ -316,6 +316,8 @@ local function fillSkillsBox(record, box, animal)
         end
     end
     box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
+    local formText = EqCompetitionManager.formText(EqCompetitionManager.formFor(record))
+    if formText ~= nil then box:addLine(g_i18n:getText("eq_form_title"), formText) end
     if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
     local status = statusText(record, animal)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
