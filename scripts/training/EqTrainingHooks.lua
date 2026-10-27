@@ -867,18 +867,26 @@ end
 --- The middle of the screen: keep tapping during a Sprint, ease off near the line.
 --- @param ex table
 -- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
-EqTrainingHooks.SPRINT_INTRO_MS = 2500
+EqTrainingHooks.SPRINT_INTRO_MS = 1250
+-- A Sprint climbs fast, so its warnings come early (James): a yellow "Careful" from
+-- SPRINT_CAREFUL_FROM, red and flashing from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
+EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
+EqTrainingHooks.SPRINT_DANGER_FROM = 75
 
 local function exertionPrompt(ex)
     local label, labelColor, pulse = nil, COLOR.yellow, false
     if ex.value > EqExertion.LINE then
         label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
-    elseif ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+    elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_DANGER_FROM then
+        label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
+    elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_CAREFUL_FROM then
+        label = g_i18n:getText("eq_ex_careful")
+    elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
         label, pulse = g_i18n:getText("eq_ex_careful"), true
     end
     if ex.mode == "sprint" then
         local left = 1 - (ex.clock - ex.tapAt) / EqExertion.SPRINT_KEEP_MS
-        local color = ex.value > EqExertion.LINE and COLOR.red or COLOR.white
+        local color = label ~= nil and labelColor or COLOR.white
         if ex.sprintMs < EqTrainingHooks.SPRINT_INTRO_MS then
             EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_tap"), left, color)
         else

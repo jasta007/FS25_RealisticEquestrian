@@ -330,7 +330,7 @@ end
 
 
 -- The bar alone in the middle: a small word above it, and a faint slow pulse (never a strobe).
-EqTrainingHud.CENTRE_BAR = { labelSize = 0.014, pulseMs = 900, pulseDepth = 0.35 }
+EqTrainingHud.CENTRE_BAR = { labelSize = 0.014, pulseMs = 700, pulseDepth = 0.75 }
 
 --- Draw just the prompt's bar in the middle of the screen, with an optional small word above.
 --- @param share number 0..1

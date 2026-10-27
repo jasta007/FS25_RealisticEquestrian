@@ -82,7 +82,8 @@ bar is empty again. Only a Sprint can run past the line, into the red last-gasp 
 that ends there leaves the horse **exhausted**: canter only, and while the bar is still past the
 line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
 the gait. The panel lists what you can press now (Sprint ready, S or double tap S to canter), and
-near the line the middle of the screen pulses faintly with **Careful**, or **Over exerted** past it. Slowing from a gallop to a
+the middle of the screen warns **Careful** (in a Sprint yellow from 50%, red and pulsing from 75%;
+when Pushing pulsing from 85%), and **Over exerted** in red past the line. Slowing from a gallop to a
 canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
 
 The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
