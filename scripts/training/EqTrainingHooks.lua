@@ -316,8 +316,11 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
     Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s, %d ms, ground flag %s, take-off at a %s)",
         cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over),
         jump.showJump and ", a show jump" or "", why, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
-    -- A show jumping round (EqCourseHooks) hears how the fence went: knocked or landed on top is a rail.
-    EqCourseHooks.onJumpJudged(cleared and "clear" or high and "knock" or "nothing")
+    -- A show jumping round (EqCourseHooks) hears how the fence went: knocking a show jump or
+    -- landing on top of it is a rail. A crash (into the arena wall, say) is no rail: running
+    -- into things is penalty enough (James, 2026-10-27).
+    local rail = high and jump.showJump and not jump.crashed and (jump.knocked or jump.onTop)
+    EqCourseHooks.onJumpJudged(cleared and "clear" or rail and "knock" or "nothing")
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end

@@ -36,8 +36,9 @@ EqShowJumping.PENDING_MS = 3000
 EqShowJumping.RAIL_FAULTS = 4
 EqShowJumping.REFUSAL_FAULTS = 4
 EqShowJumping.REFUSALS_OUT = 2
--- A crash this close to the next fence is a refusal.
-EqShowJumping.REFUSAL_RADIUS = 8
+-- A crash this close to the next fence's line (between its flags) is a refusal; running into
+-- anything else, like the arena wall, is not.
+EqShowJumping.REFUSAL_RADIUS = 3
 -- Time allowed: the course at 350 m a minute (a usual show jumping speed), at least MIN_TIME s.
 EqShowJumping.TIME_SPEED = 350 / 60
 EqShowJumping.MIN_TIME = 20
@@ -144,6 +145,19 @@ function EqShowJumping.sideOf(line, x, z)
     local dx, dz = line.bx - line.ax, line.bz - line.az
     local s = dx * (z - line.az) - dz * (x - line.ax)
     return s > 0 and 1 or -1
+end
+
+
+--- @param line table { ax, az, bx, bz }
+--- @param x number
+--- @param z number
+--- @return number metres from the point to the nearest part of the line
+function EqShowJumping.distanceToLine(line, x, z)
+    local dx, dz = line.bx - line.ax, line.bz - line.az
+    local length2 = dx * dx + dz * dz
+    local share = length2 > 1e-9 and math.max(0, math.min(1, ((x - line.ax) * dx + (z - line.az) * dz) / length2)) or 0
+    local px, pz = line.ax + dx * share - x, line.az + dz * share - z
+    return math.sqrt(px * px + pz * pz)
 end
 
 
@@ -303,8 +317,8 @@ function EqShowJumping.step(round, input)
 
     -- Running into the next fence is a refusal.
     if input.crashed and round.pending == nil and nextJump ~= nil then
-        local dx, dz = input.x - nextJump.x, input.z - nextJump.z
-        if dx * dx + dz * dz <= EqShowJumping.REFUSAL_RADIUS ^ 2 then
+        if EqShowJumping.distanceToLine(nextJump.ax ~= nil and nextJump or { ax = nextJump.x, az = nextJump.z,
+            bx = nextJump.x, bz = nextJump.z }, input.x, input.z) <= EqShowJumping.REFUSAL_RADIUS then
             round.refusals = round.refusals + 1
             round.faults = round.faults + EqShowJumping.REFUSAL_FAULTS
             if round.refusals >= EqShowJumping.REFUSALS_OUT then return eliminate(round, "refusals") end

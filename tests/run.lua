@@ -1352,10 +1352,12 @@ end)()
     z = 20.25
     EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
     wait(3000)
-    ride(35)
-    check("a crash at the next fence is a refusal", EqShowJumping.step(round, { px = 0, pz = 35, x = 0, z = 35, dt = 100, crashed = true }) == "refusal"
+    ride(38)
+    check("a crash at the next fence is a refusal", EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }) == "refusal"
         and round.faults == 4)
-    check("a second refusal eliminates", EqShowJumping.step(round, { px = 0, pz = 35, x = 0, z = 35, dt = 100, crashed = true }) == "eliminated"
+    check("running into something else is no refusal", EqShowJumping.step(round, { px = 0, pz = 35, x = 6, z = 35, dt = 100, crashed = true }) == nil
+        and round.faults == 4)
+    check("a second refusal eliminates", EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }) == "eliminated"
         and round.result.eliminated == "refusals")
     round = EqShowJumping.newRound(course)
     z = 20.25
