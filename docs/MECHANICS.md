@@ -190,20 +190,29 @@ asked for to markers within 12 m:
 
 ### Show jumping courses
 
-Show jumps (Riding Hall 2k26's, or any "jumps" facility placeable) are linked into a course by
-riding it once. Ctrl+J while riding starts a recording: every show jump on the map loses its
-collision, so you ride straight through them in the order you want. A jump counts when the horse
-crosses its line between its ends (with 0.75 m to spare); the same jump can come up again later in
-the course, but not twice in a row within 4 seconds. Ctrl+J again saves the course ("Course 1",
-"Course 2"...) if it has at least 2 fences; getting off throws the recording away. Collision comes
-back either way. While recording, a white line runs from the horse to the nearest recorded point;
-Ctrl+K drops everything after that point (and any fences passed after it) and records on from there; the next point waits until the horse is 5 m from it. A jump ridden twice shows both numbers ("3, 10").
+Show jumps are linked into a course by riding it, in an edit mode. While editing, every show jump on
+the map has no collision, so you ride straight through them in the order you want, and the course's
+line and fence numbers are drawn. Show jumps are Riding Hall 2k26's (or any "jumps" facility
+placeable), the jumps in the Equestrian Pack's outdoor arena (any part of a facility with a red and
+a white flag), and map scenery such as Elmcreek's course. A jump counts when the horse crosses the
+line between its flags (or across its placement area) with 0.75 m to spare; the same jump can come
+up again later in the course, but not twice in a row within 4 seconds.
+
+| Key | Not editing | Editing |
+| --- | --- | --- |
+| Ctrl+J | Record a new course, or edit the course within 40 m | Save (while recording); record on from the nearest point (while not) |
+| Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
+| Ctrl+L | | Save if recording, and finish: the line goes and the jumps get their collision back |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+
+A course needs at least 2 fences to save. A white line runs from the horse to the nearest
+recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
+shows both numbers ("3, 10"). Getting off the horse ends editing and throws away what was not saved.
 
 The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
-horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Within 40 m of a saved course its
-line is drawn smoothed on the ground with the fence numbers over the jumps. Courses are saved in
-rlEquestrian.xml; a jump moved after recording is no longer found at its place. `eqCourses` lists
-them and `eqCourses delete <number>` removes one. Recording works in single player for now.
+horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are saved in
+rlEquestrian.xml. `eqCourses` lists them and `eqCourses delete <number>` removes one. Editing
+works in single player for now.
 
 ### How stats change riding
 

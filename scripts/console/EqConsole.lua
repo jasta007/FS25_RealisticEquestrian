@@ -665,7 +665,7 @@ function EqConsole:consoleCourses(action, number)
         local index = tonumber(number)
         local removed = index ~= nil and EqCourse.remove(index) or nil
         if removed == nil then return "Usage: eqCourses delete <number>, see eqCourses for the numbers" end
-        EqCourseHooks.shown = nil
+        EqCourseHooks.near = nil
         return string.format("Deleted %s", removed.name)
     end
     if #EqCourse.list == 0 then return "No show jumping courses yet: ride with Ctrl+J to record one" end

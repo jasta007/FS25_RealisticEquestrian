@@ -300,19 +300,31 @@
         <text name="eq_role_retired" text="Retired"/>
         <text name="eq_ui_button_role" text="Role: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Change horse role"/>
-        <text name="input_EQ_COURSE_RECORD" text="Record show jumping course"/>
-        <text name="eq_course_recordAction" text="Record jump course"/>
-        <text name="eq_course_finishAction" text="Save jump course"/>
-        <text name="eq_course_started" text="Recording a course: ride through the jumps in order, then press the key again to save"/>
+        <text name="input_EQ_COURSE_RECORD" text="Record or edit show jumping course"/>
+        <text name="eq_course_recordAction" text="Record new jump course"/>
+        <text name="eq_course_started" text="Recording %s: ride through the jumps in order. Jumps have no collision while you edit"/>
         <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
         <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
-        <text name="eq_course_cancelled" text="Course recording stopped: you got off the horse"/>
-        <text name="eq_course_recording" text="Recording course: %d fences, %.0f m"/>
+        <text name="eq_course_cancelled" text="Editing stopped: you got off the horse, the last changes were not saved"/>
+        <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m (jumps have no collision)"/>
         <text name="eq_course_name" text="Course %d"/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
         <text name="input_EQ_COURSE_REWIND" text="Rewind course to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
+        <text name="eq_course_resumed" text="Recording from the nearest point"/>
+        <text name="eq_course_finished" text="Finished editing: the jumps have their collision back"/>
+        <text name="eq_course_deleted" text="%s deleted"/>
+        <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
+        <text name="eq_course_deleteTitle" text="Delete course"/>
+        <text name="eq_course_deleteAction" text="Delete %s"/>
+        <text name="eq_course_editAction" text="Edit %s"/>
+        <text name="eq_course_resumeAction" text="Record from nearest point"/>
+        <text name="eq_course_saveAction" text="Save jump course"/>
+        <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m (jumps have no collision)"/>
+        <text name="eq_course_editStarted" text="Editing %s: jumps have no collision until you finish editing"/>
+        <text name="input_EQ_COURSE_DELETE" text="Delete nearby course"/>
+        <text name="input_EQ_COURSE_FINISH" text="Finish editing course"/>
         <text name="eq_ui_riding" text="Riding"/>
         <text name="eq_ui_ridingFull" text="Full, no more training today"/>
         <text name="eq_ui_ridingFullValue" text="%s - full"/>

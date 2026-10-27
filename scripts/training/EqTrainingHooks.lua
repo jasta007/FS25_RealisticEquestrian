@@ -820,25 +820,8 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
     end
-    if InputAction.EQ_COURSE_RECORD ~= nil then
-        local _, courseId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_COURSE_RECORD, vehicle,
-            function() EqCourseHooks.onRecordAction(vehicle) end, false, true, false, true, nil)
-        spec.eqCourseEventId = courseId
-        if courseId ~= nil then
-            g_inputBinding:setActionEventText(courseId, EqCourseHooks.actionText())
-            g_inputBinding:setActionEventTextPriority(courseId, GS_PRIO_LOW)
-        end
-    end
-    if InputAction.EQ_COURSE_REWIND ~= nil then
-        local _, rewindId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_COURSE_REWIND, vehicle,
-            function() EqCourseHooks.onRewindAction(vehicle) end, false, true, false, true, nil)
-        spec.eqRewindEventId = rewindId
-        if rewindId ~= nil then
-            g_inputBinding:setActionEventText(rewindId, g_i18n:getText("input_EQ_COURSE_REWIND"))
-            g_inputBinding:setActionEventTextPriority(rewindId, GS_PRIO_LOW)
-            g_inputBinding:setActionEventTextVisibility(rewindId, EqCourseHooks.isRecording())
-        end
-    end
+    -- Show jumping course keys (EqCourseHooks).
+    EqCourseHooks.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)
@@ -1140,7 +1123,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         EqTrainingHooks.showHelp(view)
     end
     EqTrainingHud.drawHelp()
-    -- Recording a show jumping course, or the line of a saved one nearby (EqCourseHooks).
+    -- Editing a show jumping course: recording, its line and the course keys (EqCourseHooks).
     EqCourseHooks.onDraw(vehicle)
 
     local id = getRiddenId(spec)

@@ -1207,11 +1207,15 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("a tight turn drops many points", #rec.points - straight >= 12, tostring(#rec.points - straight))
     check("course length follows the path", rec.length > 60 and rec.length < 70, string.format("%.1f", rec.length))
 
-    check("crossing a jump between its ends passes it", EqCourse.passSide(0, 1, 0.2, -0.5, -2, 2) == 1)
-    check("crossing the other way is the other side", EqCourse.passSide(1, -1, 1, 0.5, -2, 2) == -1)
-    check("going round the end of a jump is no pass", EqCourse.passSide(4, 1, 4, -1, -2, 2) == nil)
-    check("staying on one side is no pass", EqCourse.passSide(0, 1, 0, 0.2, -2, 2) == nil)
-    check("a jump far away in one frame is no pass", EqCourse.passSide(0, 5, 0, -5, -2, 2) == nil)
+    -- A jump from (-2, 0) to (2, 0).
+    check("crossing a jump between its ends passes it", EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0.2, -0.5) ~= nil)
+    check("crossing the other way is the other side",
+        EqCourse.crossSide(-2, 0, 2, 0, 1, -1, 1, 0.5) == -EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0.2, -0.5))
+    check("going round the end of a jump is no pass", EqCourse.crossSide(-2, 0, 2, 0, 4, 1, 4, -1) == nil)
+    check("just past an end still counts", EqCourse.crossSide(-2, 0, 2, 0, 2.5, 1, 2.5, -1) ~= nil)
+    check("staying on one side is no pass", EqCourse.crossSide(-2, 0, 2, 0, 0, 1, 0, 0.2) == nil)
+    check("a jump far away in one frame is no pass", EqCourse.crossSide(-2, 0, 2, 0, 0, 5, 0, -5) == nil)
+    check("a jump at an angle works too", EqCourse.crossSide(0, 0, 3, 3, 2, 0, 0, 2) ~= nil)
 
     local jumpA, jumpB = { x = 10, z = 10, ry = 0 }, { x = 30, z = 10, ry = 1.57 }
     check("first fence is number 1", EqCourse.addJump(rec, jumpA, 1, 1000) == 1)
@@ -1260,6 +1264,13 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("a course survives a save", #EqCourse.list == 1 and back.name == "Course 1" and #back.jumps == 3
         and #back.points == #course.points and math.abs(back.length - course.length) < 1 and back.jumps[2].side == 1
         and math.abs(back.jumps[2].ry - 1.57) < 0.01)
+    check("fence points survive a save", back.jumps[1].pointIndex ~= nil and back.jumps[1].pointIndex == course.jumps[1].pointIndex)
+    local edit = EqCourse.editRecording(back)
+    check("editing starts from the saved course", #edit.points == #back.points and #edit.jumps == 3 and edit.rewound)
+    edit.points[1].x = 999
+    check("editing does not change the saved course until saved", back.points[1].x ~= 999)
+    EqCourse.replace(1, EqCourse.finish(edit, back.name))
+    check("a saved edit replaces the course", #EqCourse.list == 1 and EqCourse.list[1].points[1].x == 999)
     EqCourse.loadFromXMLFile(nil, "c")
     check("a new game has no courses", #EqCourse.list == 0)
 end)()

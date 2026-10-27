@@ -265,7 +265,7 @@ function EqFacilityHooks.scanMap()
         local kind = EqFacility.kindForNode(config, getName(node))
         if kind ~= nil then
             local x, _, z = getWorldTranslation(node)
-            table.insert(found, { kind = kind, x = x, z = z, name = getName(node) })
+            table.insert(found, { kind = kind, x = x, z = z, name = getName(node), node = node })
         end
         for i = getNumOfChildren(node) - 1, 0, -1 do table.insert(stack, getChildAt(node, i)) end
     end
