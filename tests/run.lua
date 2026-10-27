@@ -2661,6 +2661,7 @@ end)()
     local SPEED = { walk = 1.7, trot = 3.5, canter = 5.5 }
     local function ride(rng, ms, markers, log)
         local sheet, x, z = EqTraining.newSheet(), 12, 3
+        local spin = 0
         local events = {}
         for _ = 1, ms / 50 do
             local r = sheet.routine
@@ -2674,6 +2675,11 @@ end)()
                     if d > 0 then x, z = x + dx / d * step, z + dz / d * step end
                 elseif task.kind == "reverse" then move = "reverse"
                 elseif task.kind == "turn" then move, steer = "halt", task.side
+                elseif task.kind == "circle" then
+                    -- A 3 m circle at a walk.
+                    move, steer = "walk", task.side
+                    spin = spin + 0.03
+                    x, z = x + math.sin(spin) * 0.09, z + math.cos(spin) * 0.09
                 else move = "halt" end
             end
             local event = EqTraining.routineStep(sheet, move, steer, 50, false, rng, markers and { x = x, z = z, markers = markers } or nil)
@@ -2727,7 +2733,7 @@ end)()
     local ours = {}
     for _, m in ipairs(course) do ours[#ours + 1] = { letter = m.letter, x = m.x, z = m.z, arena = true } end
     local opening = EqTraining.newSheet()
-    local at = { x = 12, z = 3, markers = ours }
+    local at = { x = 12, z = 8, markers = ours }
     for _ = 1, 50 do EqTraining.routineStep(opening, "walk", nil, 50, false, one, at) end
     local o = opening.routine
     check("in our arenas the first leg goes to A", o.kind == "markers" and o.task.opening == "A" and o.task.marker.letter == "A")
@@ -2754,6 +2760,20 @@ end)()
         if nextTask.kind == "halt" and not EqDressage.HALT_LETTERS[from.letter] then badHalt = badHalt + 1 end
     end
     check("halts only at the middle and end letters", badHalt == 0)
+    local bounds = EqDressage.arenaBounds({ markers = ours }, ours[10])
+    check("an arena's bounds come from its letters", bounds ~= nil and EqDressage.inArena(bounds, 10, 20)
+        and EqDressage.inArena(bounds, 0.5, 39) and not EqDressage.inArena(bounds, -5, 20) and not EqDressage.inArena(bounds, 10, 45))
+    local out = EqTraining.newSheet()
+    local inside = { x = 10, z = 1, markers = ours }
+    EqTraining.routineStep(out, "walk", nil, 50, false, one, inside)
+    local outside = { x = -10, z = 20, markers = ours }
+    local outEvents = {}
+    for _ = 1, 70 do
+        local e = EqTraining.routineStep(out, "walk", nil, 50, false, one, outside)
+        if e then outEvents[e] = (outEvents[e] or 0) + 1 end
+    end
+    check("leaving the arena is a fault after a few seconds", out.routine.active and outEvents.fault == 1 and out.routine.faults == 1,
+        string.format("faults %s", tostring(out.routine.faults)))
     check("a change from a walk to a canter is a flying change", EqDressage.changeKey({ gait = "canter", from = "walk" }) == "eq_dressage_flying"
         and EqDressage.changeKey({ gait = "trot", from = "walk" }) == "eq_dressage_change"
         and EqDressage.changeKey({ gait = "walk", from = "canter" }) == "eq_dressage_change")
@@ -2762,6 +2782,7 @@ end)()
     seed = 11
     local tested = EqTraining.newSheet()
     local tx, tz = 12, 3
+    local spin = 0
     local finished, before = false, 0
     for _ = 1, 20000 do
         local r2 = tested.routine
@@ -2775,6 +2796,10 @@ end)()
                 if d > 0 then tx, tz = tx + dx / d * stepLen, tz + dz / d * stepLen end
             elseif task.kind == "reverse" then move = "reverse"
             elseif task.kind == "turn" then move, steer = "halt", task.side
+            elseif task.kind == "circle" then
+                move, steer = "walk", task.side
+                spin = spin + 0.03
+                tx, tz = tx + math.sin(spin) * 0.09, tz + math.cos(spin) * 0.09
             else move = "halt" end
         end
         before = tested.focused.temperament

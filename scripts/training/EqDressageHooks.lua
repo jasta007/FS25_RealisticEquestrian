@@ -117,7 +117,7 @@ function EqDressageHooks.addArena(placeable, list)
         local letter = EqDressage.arenaLetter(getName(node))
         if letter ~= nil then
             local x, _, z = getWorldTranslation(node)
-            table.insert(list, { letter = letter, x = x, z = z, arena = true })
+            table.insert(list, { letter = letter, x = x, z = z, arena = true, arenaId = placeable.rootNode })
             local key = string.format("%.1f:%.1f", x, z)
             if not EqDressageHooks.logged[key] then
                 EqDressageHooks.logged[key] = true

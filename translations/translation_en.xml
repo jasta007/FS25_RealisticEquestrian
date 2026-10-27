@@ -50,7 +50,12 @@
         <text name="eq_dressage_gait_canter" text="Canter"/>
         <text name="eq_dressage_change" text="Change: %s"/>
         <text name="eq_dressage_flying" text="Flying change: %s"/>
-        <text name="eq_dressage_begin" text="Move to %s to begin"/>
+        <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
+        <text name="eq_dressage_reinBack" text="Rein back!"/>
+        <text name="eq_dressage_backwards" text="Move backwards"/>
+        <text name="eq_dressage_circle_left" text="Circle left"/>
+        <text name="eq_dressage_circle_right" text="Circle right"/>
+        <text name="eq_dressage_out" text="Back into the arena!"/>
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>

@@ -52,7 +52,8 @@ EqDressage.GO_GAITS = { "walk", "trot", "canter" }
 -- Targets nearer than this are only picked when there is nothing further.
 EqDressage.MIN_TARGET_DISTANCE = 8
 -- How close counts as at a marker, by gait.
-EqDressage.ARRIVE_RADIUS = { walk = 3, trot = 3.5, canter = 4.5 }
+-- Wider at speed, so there is room to slow down (James, 2026-10-27).
+EqDressage.ARRIVE_RADIUS = { walk = 3, trot = 4.5, canter = 7 }
 -- The next command shows when the marker is this many seconds out at the leg's gait (and never
 -- closer than PREVIEW_MIN metres), so there is time to plan the turn.
 EqDressage.PREVIEW_SECONDS = 3
@@ -65,10 +66,11 @@ EqDressage.PASS_RADIUS = 3
 EqDressage.PASS_CHANCE = 35
 EqDressage.PASS_REACT_MS = 2000
 -- What comes after reaching a marker, and after a halt there (weights). Backing up is rare.
-EqDressage.AT_MARKER = { { "go", 80 }, { "halt", 12 }, { "reverse", 8 } }
+EqDressage.AT_MARKER = { { "go", 70 }, { "halt", 12 }, { "circle", 10 }, { "reverse", 8 } }
 -- Halts only at the middle and end letters, and not too often (James, 2026-10-27).
 EqDressage.HALT_LETTERS = { A = true, C = true, E = true, B = true, X = true }
-EqDressage.AFTER_HALT = { { "go", 60 }, { "turn", 40 } }
+-- No turns on the spot: the base game's animation for them looks wrong (James). Circles instead.
+EqDressage.AFTER_HALT = { { "go", 1 } }
 -- Stand this long after a halt is done before the next command (a random time in the range).
 EqDressage.HOLD_MS = { 1500, 3000 }
 -- Back up for this long, then halt.
@@ -90,6 +92,13 @@ EqDressage.TURN_ALLOW_MS = { walk = 4000, trot = 6000, canter = 8000 }
 -- multiplier drops FAULT_DROP steps and a fresh leg starts from here; FAULTS faults end it.
 EqDressage.FAULTS = 3
 EqDressage.FAULT_DROP = 2
+-- A circle (volte) at a walk or trot, steering one way: done once the horse has come this far
+-- round (radians), within CIRCLE_MS.
+EqDressage.CIRCLE_TURN = math.pi * 2 * 0.9
+EqDressage.CIRCLE_MS = 20000
+-- Out of the arena (OUT_MARGIN metres past its letters) for OUT_MS is a fault (James).
+EqDressage.OUT_MARGIN = 1
+EqDressage.OUT_MS = 3000
 
 
 --- @return number metres between two points on the ground
@@ -255,6 +264,44 @@ function EqDressage.nearArena(course)
 end
 
 
+--- The rectangle of the arena an X belongs to, from its A and C and how far its letters stand
+--- from the centre line, OUT_MARGIN wider all round.
+--- @param course table
+--- @param x table the arena's X marker
+--- @return table|nil { mx, mz, ux, uz, halfLength, halfWidth }
+function EqDressage.arenaBounds(course, x)
+    local a, c
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and marker.arenaId == x.arenaId then
+            if marker.letter == "A" and (a == nil or distance(x.x, x.z, marker.x, marker.z) < distance(x.x, x.z, a.x, a.z)) then a = marker end
+            if marker.letter == "C" and (c == nil or distance(x.x, x.z, marker.x, marker.z) < distance(x.x, x.z, c.x, c.z)) then c = marker end
+        end
+    end
+    if a == nil or c == nil then return nil end
+    local length = distance(a.x, a.z, c.x, c.z)
+    if length < 1 then return nil end
+    local bounds = { mx = (a.x + c.x) / 2, mz = (a.z + c.z) / 2, ux = (c.x - a.x) / length, uz = (c.z - a.z) / length,
+        halfLength = length / 2 + EqDressage.OUT_MARGIN, halfWidth = 0 }
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and marker.arenaId == x.arenaId then
+            local across = math.abs((marker.x - bounds.mx) * bounds.uz - (marker.z - bounds.mz) * bounds.ux)
+            if across <= length then bounds.halfWidth = math.max(bounds.halfWidth, across) end
+        end
+    end
+    bounds.halfWidth = bounds.halfWidth + EqDressage.OUT_MARGIN
+    return bounds
+end
+
+
+--- @param bounds table from arenaBounds
+--- @return boolean true when a point is inside the arena
+function EqDressage.inArena(bounds, px, pz)
+    local dx, dz = px - bounds.mx, pz - bounds.mz
+    return math.abs(dx * bounds.ux + dz * bounds.uz) <= bounds.halfLength
+        and math.abs(dx * bounds.uz - dz * bounds.ux) <= bounds.halfWidth
+end
+
+
 --- In one of our arenas a routine opens as a dressage test does: ride to A, trot down the centre
 --- line to X and halt there (James, 2026-10-27). The arena is the one whose X is nearest.
 --- @param course table { x, z, markers }
@@ -275,12 +322,14 @@ function EqDressage.openingLeg(course)
             if aD == nil or d < aD then a, aD = marker, d end
         end
     end
-    local toX = { kind = "go", gait = "trot", opening = "X", marker = { letter = x.letter, x = x.x, z = x.z } }
+    local toX = { kind = "go", gait = "trot", opening = "X", marker = { letter = x.letter, x = x.x, z = x.z },
+        arena = EqDressage.arenaBounds(course, x) }
     if a == nil or distance(course.x, course.z, a.x, a.z) <= EqDressage.ARRIVE_RADIUS.walk then
         if bestD < EqDressage.GO_MIN_DISTANCE.trot then toX.gait = "walk" end
         return toX
     end
-    return { kind = "go", gait = "trot", opening = "A", untimed = true, marker = { letter = a.letter, x = a.x, z = a.z }, nextLeg = toX }
+    return { kind = "go", gait = "trot", opening = "A", untimed = true, marker = { letter = a.letter, x = a.x, z = a.z },
+        nextLeg = toX, arena = toX.arena }
 end
 
 
@@ -321,6 +370,7 @@ function EqDressage.plan(routine, course, done, rng)
     end
     if kind == "go" then return EqDressage.planLeg(routine, course, rng) end
     if kind == "turn" then return { kind = "turn", side = rng(2) == 1 and "left" or "right" } end
+    if kind == "circle" then return { kind = "circle", side = rng(2) == 1 and "left" or "right", turned = 0 } end
     return { kind = kind }
 end
 
@@ -340,6 +390,7 @@ end
 function EqDressage.requestName(task)
     if task == nil then return nil end
     if task.kind == "turn" then return task.side == "left" and "spinLeft" or "spinRight" end
+    if task.kind == "circle" then return task.side == "left" and "circleLeft" or "circleRight" end
     return task.kind
 end
 
@@ -365,6 +416,8 @@ local function begin(routine, task, course)
             local turn = math.acos(math.max(-1, math.min(1, (dx * heading.x + dz * heading.z) / length))) / math.pi
             routine.reactMs = routine.reactMs + EqDressage.TURN_ALLOW_MS[task.gait] * turn * EqDressage.TIME_FACTOR
         end
+    elseif task.kind == "circle" then
+        routine.reactMs = EqDressage.CIRCLE_MS * EqDressage.TIME_FACTOR
     else
         routine.reactMs = EqDressage.REACT_MS * EqDressage.TIME_FACTOR
     end
@@ -380,8 +433,10 @@ end
 --- @param rng function
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone, routine.steps, routine.testX = "markers", nil, nil, 0, nil
-    routine.faults, routine.heading = 0, nil
-    begin(routine, EqDressage.openingLeg(course) or EqDressage.planLeg(routine, course, rng), course)
+    routine.faults, routine.heading, routine.outMs = 0, nil, 0
+    local opening = EqDressage.openingLeg(course)
+    routine.arena = opening ~= nil and opening.arena or nil
+    begin(routine, opening or EqDressage.planLeg(routine, course, rng), course)
 end
 
 
@@ -455,6 +510,17 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
     routine.taskMs = (routine.taskMs or 0) + dt
+
+    -- Leaving the arena: a few seconds to get back in, then a fault.
+    if routine.arena ~= nil and not task.untimed and not EqDressage.inArena(routine.arena, course.x, course.z) then
+        routine.outMs = (routine.outMs or 0) + dt
+        if routine.outMs >= EqDressage.OUT_MS then
+            routine.outMs = 0
+            return fault(sheet, course, rng)
+        end
+    else
+        routine.outMs = 0
+    end
 
     if task.kind == "hold" then
         if move ~= "halt" then
@@ -548,6 +614,28 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
     elseif task.kind == "turn" then
         routine.steerMs = steer == task.side and (move == "halt" or move == "walk") and routine.steerMs + dt or 0
         done = routine.steerMs >= EqDressage.TURN_MS
+    elseif task.kind == "circle" then
+        -- How far round the horse has come, from where it goes, while steering that way.
+        if move == "canter" or move == "gallop" or move == "fast" then
+            routine.driftMs = routine.driftMs + dt
+            if routine.driftMs >= EqDressage.DRIFT_MS then return fault(sheet, course, rng) end
+        else
+            routine.driftMs = 0
+        end
+        if task.lastX == nil then
+            task.lastX, task.lastZ = course.x, course.z
+        else
+            local dx, dz = course.x - task.lastX, course.z - task.lastZ
+            if dx * dx + dz * dz >= 0.04 then
+                local dir = math.atan2(dx, dz)
+                if task.lastDir ~= nil and steer == task.side then
+                    local delta = (dir - task.lastDir + math.pi) % (2 * math.pi) - math.pi
+                    task.turned = (task.turned or 0) + math.abs(delta)
+                end
+                task.lastDir, task.lastX, task.lastZ = dir, course.x, course.z
+            end
+        end
+        done = (task.turned or 0) >= EqDressage.CIRCLE_TURN
     elseif task.kind == "reverse" then
         if move == "reverse" then
             task.backMs = (task.backMs or 0) + dt

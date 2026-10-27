@@ -112,7 +112,7 @@ least three within 100 m, chained 60 m from each other, not all in a line) the r
 between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 30 m starts it with "Move to A to begin" (no time limit), then trot to X and halt, 15 more
+test: coming within 30 m starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
 and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:
@@ -124,12 +124,15 @@ asked for to markers within 12 m:
   **fault**: the multiplier drops two steps and a fresh leg starts from where you are. The third
   fault ends the routine, and so does a jump. A leg that starts with a turn gets extra time, up to
   6 seconds at a trot for a full about-turn. Steering is free.
-- The next command shows about 3 seconds before the marker; reaching it (3 to 4.5 m) is one step up.
+- The next command shows about 3 seconds before the marker; reaching it (3 m at a walk, 4.5 m at a trot, 7 m at a
+  canter, so there is room to slow down) is one step up.
 - Passing close to another marker may ask for a gait change ("Change: Trot", or "Flying change:
   Canter" from a walk; 2 seconds), worth an extra step, only to a gait the rest of the leg suits.
   Missing it costs nothing.
-- At A, C, E, B or X the next command can now and then be a stop (then sometimes a turn on the spot, the only turns
-  asked for) or, rarely, backing up for 2.5 seconds, a stop and a new leg.
+- At a marker the next command can be a circle (steer one way at a walk or trot until the horse
+  has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
+  seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
+- In a shop arena, leaving it (a metre past its letters) for 3 seconds is a fault.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 

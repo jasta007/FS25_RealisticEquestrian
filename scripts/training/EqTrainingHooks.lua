@@ -769,6 +769,8 @@ local function dressageText(task)
     if task.kind == "go" then
         return string.format(g_i18n:getText("eq_dressage_go"), g_i18n:getText("eq_dressage_gait_" .. task.gait), task.marker.letter)
     end
+    if task.kind == "reverse" then return g_i18n:getText("eq_dressage_reinBack") end
+    if task.kind == "circle" then return g_i18n:getText("eq_dressage_circle_" .. task.side) end
     return g_i18n:getText("eq_move_" .. EqDressage.requestName(task))
 end
 
@@ -797,13 +799,20 @@ local function dressageRows(rows, routine, vehicle)
             row.right = string.format("%s  %.0f m", task.marker.letter, math.sqrt((task.marker.x - x) ^ 2 + (task.marker.z - z) ^ 2))
         end
     end
+    if task.kind == "reverse" then
+        row.right, row.rightColor = g_i18n:getText("eq_dressage_backwards"), color
+    elseif task.kind == "circle" then
+        row.right, row.rightColor = string.format("%d°", math.floor(math.deg(task.turned or 0))), color
+    end
     if task.untimed then share = nil end
     if share ~= nil then table.insert(rows, { bar = share, color = color }) end
     if routine.preview ~= nil then
         table.insert(rows, { left = string.format(g_i18n:getText("eq_dressage_next"), dressageText(routine.preview)), leftColor = color })
     end
-    -- A quick gait change on the way has the middle of the screen while it lasts.
-    if routine.bonus ~= nil then
+    -- Out of the arena: getting back in comes first. Then a quick gait change on the way, while it lasts.
+    if (routine.outMs or 0) > 0 then
+        EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_out"), 1 - routine.outMs / EqDressage.OUT_MS, COLOR.red or color)
+    elseif routine.bonus ~= nil then
         EqTrainingHud.drawPrompt(string.format(g_i18n:getText(EqDressage.changeKey(routine.bonus)), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
             math.max(0, routine.bonus.deadline - routine.clock) / EqDressage.PASS_REACT_MS, color)
     else
