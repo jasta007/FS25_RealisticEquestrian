@@ -14,6 +14,8 @@
 
 EqDressageHooks = {}
 
+local Log = EqLog
+
 -- The map's markers are listed again this often, and the course round the horse worked out.
 EqDressageHooks.SCAN_MS = 5000
 EqDressageHooks.COURSE_MS = 1000
