@@ -447,6 +447,14 @@ prizes, and sometimes none in a discipline.
   **3 Day Eventer** when show jumping, dressage and cross country are close, **Racehorse** for
   close races, or **All Rounder** for three or more others. It shows in the Events tab's horse
   panel, RLRM's Skills section and the look-at box.
+- **Eventing** is scored the real way, in penalties, and the lowest total wins. Dressage gives
+  marks: about 22 for the best test, more the further behind it a horse is. Show jumping gives 4
+  for each fence down or refusal plus a penalty a second over the time; cross country 20 for a
+  refusal plus 0.4 a second over the time. About 40% of show jumping rounds are clear and about
+  1 in 10 horses has a cross country refusal. The Results tab shows the scoresheet: each phase's
+  place and penalties ("Cross Country: 6th, 21.2 penalties (1 refusal, 1.2 time)"), then the
+  total. A horse eliminated on the cross country gets no total. The rules are
+  `EqPerformance.PHASE_SCORING`.
 - The top three share the prize pool 50/30/20. Horses from different farms can enter the same
   event.
 - Racing can be switched off: `eqSettings racing off`.

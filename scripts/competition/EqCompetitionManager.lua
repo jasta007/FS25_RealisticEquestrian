@@ -676,7 +676,7 @@ function EqCompetitionManager.resolve(event, horses, month)
             end
             notify(entry.farmId, text .. " " .. performance, runner.prize > 0 and "EQ_PLACED" or "EQ_FINISHED", mine.animal, runner.key)
             stories[runner.key] = { placing = placing, performance = performance, podium = podium,
-                phases = EqStory.phasesLine(discipline.phases, runner.phasePlaces), gains = EqStory.gainsLine(deltas) }
+                phases = EqStory.scoreLines(runner.run, runner.phasePlaces), gains = EqStory.gainsLine(deltas) }
         end
     end
 
