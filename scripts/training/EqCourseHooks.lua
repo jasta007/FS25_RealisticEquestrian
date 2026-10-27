@@ -285,14 +285,14 @@ local function drawLine(points, color, x, z)
 end
 
 
---- Fence numbers over the jumps of a course.
+--- Fence numbers over the jumps of a course (one label per jump, "3, 10" when ridden twice).
 --- @param jumps table
 local function drawNumbers(jumps)
     if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
     local ok, err = pcall(function()
-        for i, jump in ipairs(jumps) do
-            local y = groundAt(jump.x, 0, jump.z)
-            Utils.renderTextAtWorldPosition(jump.x, y + EqCourseHooks.NUMBER_LIFT, jump.z, tostring(i), getCorrectTextSize(0.025), 0)
+        for _, label in ipairs(EqCourse.labels(jumps)) do
+            local y = groundAt(label.x, 0, label.z)
+            Utils.renderTextAtWorldPosition(label.x, y + EqCourseHooks.NUMBER_LIFT, label.z, label.text, getCorrectTextSize(0.025), 0)
         end
     end)
     if not ok then

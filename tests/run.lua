@@ -1243,6 +1243,13 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     EqCourse.rewind(again, index)
     check("rewind drops later points", again.points[#again.points].z <= 45 and #again.jumps == 1)
     check("rewind keeps the length right", math.abs(again.length - EqCourse.pathLength(again.points)) < 1e-6)
+    local before = #again.points
+    EqCourse.recordStep(again, 3, 0, again.points[#again.points].z + 1)
+    check("no point right after a rewind, even on a turn", #again.points == before)
+    EqCourse.recordStep(again, 6, 0, again.points[#again.points].z + 2)
+    check("the first point after a rewind comes a few metres on", #again.points == before + 1)
+    local labels = EqCourse.labels({ { x = 1, z = 1 }, { x = 9, z = 9 }, { x = 1, z = 1 } })
+    check("a jump ridden twice gets one label", #labels == 2 and labels[1].text == "1, 3" and labels[2].text == "2")
     EqCourse.rewind(again, 1)
     check("rewind to the start drops every fence", #again.points == 1 and #again.jumps == 0 and again.length == 0)
 

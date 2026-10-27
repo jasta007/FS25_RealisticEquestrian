@@ -33,6 +33,9 @@ EqCourse.POINT_SPACING = {
 }
 -- The first point after the start is dropped this far out.
 EqCourse.FIRST_SPACING = 3
+-- After a rewind the next point waits until the horse is this far from the point it went back
+-- to, whatever the turn, so the line doesn't kink (James, 2026-10-27: it dropped one a foot away).
+EqCourse.REWIND_SPACING = 5
 -- A horse passes through a jump when it crosses the jump's line (local z = 0) between its ends,
 -- with this much to spare either side, and moves less than PASS_MAX_STEP along z in one frame.
 EqCourse.PASS_MARGIN = 0.75
@@ -97,13 +100,16 @@ function EqCourse.recordStep(recording, x, y, z, force)
     local distance = math.sqrt(dx * dx + dz * dz)
     if distance < 0.05 then return false end
     local spacing
-    if #points < 2 then
+    if recording.rewound then
+        spacing = EqCourse.REWIND_SPACING
+    elseif #points < 2 then
         spacing = EqCourse.FIRST_SPACING
     else
         local before = points[#points - 1]
         spacing = EqCourse.spacingFor(EqCourse.turnAngle(last.x - before.x, last.z - before.z, dx, dz))
     end
     if not force and distance < spacing then return false end
+    recording.rewound = nil
     table.insert(points, { x = x, y = y, z = z })
     recording.length = recording.length + distance
     return true
@@ -181,6 +187,7 @@ function EqCourse.rewind(recording, index)
         end
     end
     recording.length = EqCourse.pathLength(points)
+    recording.rewound = true
     return droppedPoints, droppedJumps
 end
 
@@ -231,6 +238,26 @@ end
 function EqCourse.remove(index)
     if EqCourse.list[index] == nil then return nil end
     return table.remove(EqCourse.list, index)
+end
+
+
+--- Fence numbers by where they stand: a jump ridden more than once is one label, "3, 10".
+--- @param jumps table a course's jumps, in order
+--- @return table { x, z, text }
+function EqCourse.labels(jumps)
+    local labels = {}
+    for i, jump in ipairs(jumps) do
+        local found = nil
+        for _, label in ipairs(labels) do
+            if EqCourse.sameJump(label, jump) then found = label break end
+        end
+        if found ~= nil then
+            found.text = found.text .. ", " .. i
+        else
+            table.insert(labels, { x = jump.x, z = jump.z, text = tostring(i) })
+        end
+    end
+    return labels
 end
 
 
