@@ -25,6 +25,9 @@ EqDressage = {}
 
 -- Riding Hall 2k26's markers: placeable xml filenames, lowercased, matched at the end.
 EqDressage.MARKER_XML = { "fs25_ridinghall/objekt.xml" }
+-- Our own arenas (placeables/dressageArena): every letter is a node named eqMarker_<letter>.
+EqDressage.ARENA_XML = "placeables/dressagearena/dressagearena"
+EqDressage.ARENA_NODE = "^eqMarker_(%u)$"
 EqDressage.SEARCH_RADIUS = 100
 EqDressage.LINK_RADIUS = 60
 EqDressage.MAX_MARKERS = 40
@@ -82,6 +85,23 @@ function EqDressage.isMarkerXml(filename)
         if lower:sub(-#suffix) == suffix then return true end
     end
     return false
+end
+
+
+--- @param filename string|nil a placeable's xml filename
+--- @return boolean true for one of our dressage arenas
+function EqDressage.isArenaXml(filename)
+    if type(filename) ~= "string" then return false end
+    local lower = filename:lower():gsub("\\", "/")
+    return lower:find(EqDressage.ARENA_XML, 1, true) ~= nil and lower:sub(-4) == ".xml"
+end
+
+
+--- @param name string|nil a node's name in an arena
+--- @return string|nil the letter when the node is a marker
+function EqDressage.arenaLetter(name)
+    if type(name) ~= "string" then return nil end
+    return name:match(EqDressage.ARENA_NODE)
 end
 
 

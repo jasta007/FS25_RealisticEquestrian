@@ -107,9 +107,11 @@ way to a requested stop is fine). A canter, gallop, jump or a missed request bre
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
 show in the Freestyle and Temperament views.
 
-Without dressage markers nearby, that routine trains at 60% of the rate. Near Riding Hall 2k26's
-letter markers (at least three within 100 m, chained 60 m from each other, not all in a line) the
-routine rides between them instead, at the full rate:
+Without dressage markers nearby, that routine trains at 60% of the rate. Near dressage markers (at
+least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
+between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
+20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off:
 
 - Most commands are legs, such as "Trot: Marker B": ride to that marker at that gait (walk, trot or
   canter). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg

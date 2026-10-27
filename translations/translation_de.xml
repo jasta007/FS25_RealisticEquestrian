@@ -40,6 +40,10 @@
         <text name="eq_move_walk" text="Schritt!"/>
         <text name="eq_move_spinLeft" text="Auf der Stelle links wenden!"/>
         <text name="eq_move_spinRight" text="Auf der Stelle rechts wenden!"/>
+        <text name="eq_shop_dressageArena15x30" text="Dressurviereck 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Dressurviereck 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
         <text name="eq_dressage_go" text="%s: Punkt %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>

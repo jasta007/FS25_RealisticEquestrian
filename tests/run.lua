@@ -2651,6 +2651,11 @@ end)()
         and EqDressage.letterFor(1, "Letter K") == "K" and EqDressage.letterFor(nil, nil) == "?")
     check("Riding Hall 2k26 markers are recognised", EqDressage.isMarkerXml("C:\\mods\\FS25_RidingHall\\objekt.xml")
         and not EqDressage.isMarkerXml("FS25_RidingHall/props01.xml"))
+    check("our dressage arenas are recognised", EqDressage.isArenaXml("C:\\mods\\FS25_RealisticEquestrian\\placeables\\dressageArena\\dressageArena20x40.xml")
+        and EqDressage.isArenaXml("FS25_RealisticEquestrian/placeables/dressageArena/dressageArena15x30.xml")
+        and not EqDressage.isArenaXml("FS25_RidingHall/objekt.xml") and not EqDressage.isArenaXml(nil))
+    check("arena marker nodes give their letter", EqDressage.arenaLetter("eqMarker_X") == "X"
+        and EqDressage.arenaLetter("eqMarkers") == nil and EqDressage.arenaLetter("arena") == nil)
 
     -- A rider who does what is asked, ridden frame by frame.
     local SPEED = { walk = 1.7, trot = 3.5, canter = 5.5 }

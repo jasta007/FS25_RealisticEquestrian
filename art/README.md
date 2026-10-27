@@ -14,3 +14,7 @@ fonts are not included, only the rendered images.
 The icon carries the author's signature, "Jasta007", painted into the straw at the bottom left
 (`sign()` in `compose_icon.py`, Liberation Serif Italic), and both DDS files name the author in
 their header's reserved bytes (`mark_dds()`). The PNGs carry an Author text chunk.
+
+`source/dressage_arenas.py` builds the dressage arenas in `placeables/dressageArena/` (the .i3d with
+inline geometry, the placeable .xml, the letter texture and the shop images). Change the script and
+run it again rather than editing those files. Letters use DejaVu Sans Bold (rendered only).
