@@ -42,6 +42,7 @@ function EqHorseRecord.new(id)
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
     self.experience = nil        -- discipline -> { value, idle }, see EqExperience
     self.results = {}            -- latest events first: { day, discipline, tier, venue, place, field, prize, status, lines }
+    self.start = nil             -- { day, stat -> level } when the horse joined the farm, for eqChanges
     return self
 end
 
@@ -104,6 +105,15 @@ function EqHorseRecord:getRecentGains(today)
 end
 
 
+--- Note the stats a horse joined the farm with (bought, bred or first seen), once.
+--- @param day number monotonic day
+function EqHorseRecord:markStart(day)
+    if self.start ~= nil then return end
+    self.start = { day = day }
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do self.start[stat] = self.trained[stat] or 0 end
+end
+
+
 --- @return table ceilings stat key -> ceiling after the talent budget
 function EqHorseRecord:getCeilings()
     return EqStats.computeCeilings(self.genes, self.budgetGene)
@@ -142,6 +152,10 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
         -- While eqStats (testing) overrides the stats, the real ones are saved.
         local trained = self.testStats ~= nil and self.testStats[stat] or self.trained[stat]
         xmlFile:setFloat(key .. ".trained#" .. stat, trained or 0)
+    end
+    if self.start ~= nil then
+        xmlFile:setInt(key .. ".start#day", self.start.day)
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(key .. ".start#" .. stat, self.start[stat]) end
     end
     for i, entry in ipairs(self.gains) do
         local entryKey = string.format("%s.gains.day(%d)", key, i - 1)
@@ -222,6 +236,10 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     local ceilings = self:getCeilings()
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         self.trained[stat] = EqStats.clamp(xmlFile:getFloat(key .. ".trained#" .. stat, 0), 0, ceilings[stat])
+    end
+    if xmlFile:hasProperty(key .. ".start") then
+        self.start = { day = xmlFile:getInt(key .. ".start#day", 0) }
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do self.start[stat] = xmlFile:getFloat(key .. ".start#" .. stat, 0) end
     end
     local day = 0
     while xmlFile:hasProperty(string.format("%s.gains.day(%d)", key, day)) do
