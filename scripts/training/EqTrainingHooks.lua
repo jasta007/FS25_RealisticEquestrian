@@ -654,6 +654,41 @@ end
 EqTrainingHooks.KEY_REPEAT_MS = 80
 EqTrainingHooks.keyAt = {}
 
+--- The base game ignores gait changes in the air, so a rider tapping to slow down after a jump
+--- had to wait for the landing and then overshot (James, 2026-10-27). A forward or back press in
+--- the air is queued instead, shown lit on the gait bar, and made the moment the horse lands
+--- (applyQueuedGait). Not while galloping, where the keys set the pace.
+--- @param spec table spec_rideable
+--- @param key string "forward" or "back"
+function EqTrainingHooks.queueGait(spec, key)
+    local types = Rideable.GAITTYPES
+    local current = spec.inputValues.currentGait
+    if types == nil or current == nil or current == types.GALLOP then return end
+    local queued = spec.eqQueuedGait
+    if queued == nil then
+        queued = { from = current, steps = 0 }
+        spec.eqQueuedGait = queued
+    end
+    queued.steps = queued.steps + (key == "forward" and 1 or -1)
+    local low = types.STILL or types.WALK
+    queued.target = math.max(low, math.min(types.GALLOP, queued.from + queued.steps))
+    Log:info("Gait: %s in the air, %s on landing", key, tostring(getGaitNames()[queued.target] or queued.target))
+end
+
+
+--- Make a queued gait change once the horse is on the ground. Called every frame while drawing.
+--- @param spec table spec_rideable
+function EqTrainingHooks.applyQueuedGait(spec)
+    local queued = spec.eqQueuedGait
+    if queued == nil or spec.isOnGround == false then return end
+    spec.eqQueuedGait = nil
+    if spec.inputValues.currentGait ~= queued.target then
+        spec.inputValues.currentGait = queued.target
+        Log:info("Gait: landed, now %s", tostring(getGaitNames()[queued.target] or queued.target))
+    end
+end
+
+
 --- Forward (W) or back (S): the gallop's pace. Every other key is none of its business.
 --- @param vehicle table
 --- @param key string "forward" or "back"
@@ -664,6 +699,7 @@ function EqTrainingHooks.onGaitKey(vehicle, key, source)
     EqTrainingHooks.keyAt[key] = now
     if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
     local spec = vehicle.spec_rideable
+    if spec ~= nil and spec.inputValues ~= nil and spec.isOnGround == false then EqTrainingHooks.queueGait(spec, key) end
     local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
     if sheet == nil then return end
@@ -705,6 +741,8 @@ end
 --- every gait. Only a fresh press counts.
 --- @param vehicle table
 local function pollGaitKeys(vehicle)
+    local spec = vehicle.spec_rideable
+    if spec ~= nil and spec.inputValues ~= nil then EqTrainingHooks.applyQueuedGait(spec) end
     if Input == nil or Input.isKeyPressed == nil or Input.KEY_w == nil then return end
     local down = Input.isKeyPressed(Input.KEY_w) == true
     if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.onGaitKey(vehicle, "forward", "W key") end
@@ -932,6 +970,10 @@ local function exertionRows(spec, sheet, view)
     local lit = { [gait == "reverse" and "halt" or gait] = gait ~= "halt" }
     if ex.mode ~= nil then lit.gallop = true end
     if ex.lock ~= nil or ex.value > EqExertion.LINE then lit.blown = true end
+    -- A gait change asked for in the air lights the gait the horse will land into.
+    local queued = spec.eqQueuedGait
+    local queuedName = queued ~= nil and getGaitNames()[queued.target] or nil
+    if queuedName ~= nil and EqTrainingHooks.BAR_SECTIONS[queuedName] ~= nil then lit[queuedName] = true end
 
     local color = COLOR.grey
     if ex.lock ~= nil or ex.value > EqExertion.LINE then

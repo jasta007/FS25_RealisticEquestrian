@@ -194,7 +194,9 @@ Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% f
 agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
 turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
 better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
-horse can clear fences without a full gallop.
+horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
+press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
+bar, and takes effect the moment the horse lands.
 
 ### Staff, age and metabolism
 
