@@ -585,8 +585,8 @@
         <text name="eq_staff_summary_hire" text="新しい人が数時間ごとに現れ、12～72時間応募を続けます。獣医と仲介人は1つの農場に1人ずつです。"/>
         <text name="eq_staff_summary_staff" text="給料：日給%s。スタッフは担当する馬が少ないほど効果的です。"/>
         <text name="eq_staff_clientNote" text="現在スタッフを雇えるのはホストだけです。"/>
-        <text name="eq_result_placed" text="%sは%d位（%d頭中）、%s、賞金%sを獲得しました。"/>
-        <text name="eq_result_placedNoPrize" text="%sは%d位（%d頭中）、%sでした。"/>
+        <text name="eq_result_placed" text="%sは%d位（%d頭中）でした（%s）。賞金%sを獲得しました。"/>
+        <text name="eq_result_placedNoPrize" text="%sは%d位（%d頭中）でした（%s）。"/>
         <text name="eq_result_gone" text="%sは%sに出走できませんでした：その馬はもう農場にいません。"/>
         <text name="eq_and" text="と"/>
         <text name="eq_facility_improves" text="%sのトレーニングを強化（Realistic Equestrian）"/>
