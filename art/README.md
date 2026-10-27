@@ -18,3 +18,12 @@ their header's reserved bytes (`mark_dds()`). The PNGs carry an Author text chun
 `source/dressage_arenas.py` builds the dressage arenas in `placeables/dressageArena/` (the .i3d with
 inline geometry, the placeable .xml, the letter texture and the shop images). Change the script and
 run it again rather than editing those files. Letters use DejaVu Sans Bold (rendered only).
+
+`source/xc_jumps.py` builds the cross country fences in `placeables/xcJumps/`: the log piles (two
+barks with moss, lichen and normal maps, log ends and flags, all painted by the script; bowed, lumpy
+logs with knots, branch stubs and leaning sawn ends; inline geometry, one invisible static collision
+prism with Riding Hall 2k26's jump collision filter), the cross country flags (`courseFlags`, a newFence: a white and a red flag post, a thin pole with
+a pennant wrapped round it, and gold height bars for 0.6, 0.9 and 1.2 m that `EqXcFlags` shows only
+in construction mode) and the drop walls (painted planks and peeled posts, a
+half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes; PNG copies
+go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.

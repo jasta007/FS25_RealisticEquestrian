@@ -272,6 +272,12 @@ function EqConsole:consoleProbe()
 end
 
 
+--- eqXcFences: the cross country fences the flags on the map make.
+function EqConsole:consoleXcFences()
+    return EqXcFlags.describe()
+end
+
+
 --- eqDeliver <horse name or id>: testing, delivers without driving to the dealer.
 function EqConsole:consoleDeliver(...)
     local ok, message = competitionsReady()
@@ -700,6 +706,7 @@ function EqConsole.register()
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
     addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
+    addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
@@ -711,5 +718,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences" }) do removeConsoleCommand(name) end
 end

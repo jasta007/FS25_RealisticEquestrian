@@ -345,10 +345,26 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
+| Cross country course (the shop's log piles and drop walls) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
 | Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
 
 Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
 bonus.
+
+Cross country fences: Cross Country Flags is a spline fence, placed like the base game's pillar
+fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or 1.2 m fence, and a
+red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
+hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
+15 m away and the line between them is the fence; the bar nearest its middle gives its height
+(`eqXcFences` lists them). The bars show only in construction mode; the flags always show. The flags
+and bars have small collision boxes so they can be picked to delete. The cross country pieces
+(flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
+land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
+Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
+on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
+triangle side walls hide the steep sculpted slope. A plank deck covers the top, so the bank top
+needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
+rides over the deck and drops off the lip.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

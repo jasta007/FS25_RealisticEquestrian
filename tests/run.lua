@@ -2089,6 +2089,72 @@ check("a round pen is a temperament and dressage place",
     and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
 check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
     and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
+check("our log piles are cross country fences, flags alone are not",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, "C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcLogPileSmall.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml", false) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml", false) == nil)
+check("a cross country course helps cross country more than show jumping",
+    EqFacility.eventBonus(facilities, { xcFence = 8 }, "crossCountry") > EqFacility.eventBonus(facilities, { xcFence = 8 }, "showJumping"))
+
+dofile("scripts/facilities/EqXcFlags.lua")
+do
+    check("the flag fence is found by its xml", EqXcFlags.isFlagFence("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")
+        and EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml")
+        and not EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
+        and not EqXcFlags.isFlagFence(nil))
+    local colour = EqXcFlags.classify("eqXcFlagRed")
+    local _, h = EqXcFlags.classify("eqXcBar90")
+    check("flag fence nodes give a flag colour or a bar height", colour == "red" and EqXcFlags.classify("eqXcFlagWhite") == "white"
+        and math.abs(h - 0.9) < 1e-9 and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
+    local function f(colour, x, z) return { colour = colour, x = x, z = z } end
+    local function b(height, x, z) return { height = height, x = x, z = z } end
+    local fences = EqXcFlags.pair({
+        f("white", 0, 0), f("red", 4, 0),        -- a 4 m fence
+        f("white", -6, 0),                       -- further from the red: left over
+        f("white", 200, 0), f("red", 216, 0),    -- too far apart
+        f("white", 300, 0), f("red", 300.5, 0),  -- too close
+        f("white", 400, 0), f("red", 405, 0),    -- no bar near
+    }, { b(0.9, 1.5, 0), b(0.9, 2.5, 0), b(1.2, 2, 3), b(0.6, 402.5, 9) })
+    check("each red flag pairs with the nearest white flag, the bar nearest the middle gives the height", #fences == 2
+        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9 and fences[1].poleHeight == EqXcFlags.POLE_HEIGHT
+        and fences[2].white.x == 400 and fences[2].height == nil)
+    local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
+    check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
+end
+dofile("scripts/facilities/EqPlaceAnywhere.lua")
+check("only our cross country pieces skip the land rule",
+    EqPlaceAnywhere.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")
+    and EqPlaceAnywhere.isOurs(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcDropWall12.xml")
+    and not EqPlaceAnywhere.isOurs(modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml")
+    and not EqPlaceAnywhere.isOurs("data/placeables/brandless/fences/US/fence05/fence05.xml")
+    and not EqPlaceAnywhere.isOurs(modsDir .. "FS25_OtherMod/placeables/xcJumps/xcLogPile.xml")
+    and not EqPlaceAnywhere.isOurs(nil))
+do
+    local land = EqPlaceAnywhere.landErrors({ NOT_OWNED_FARMLAND = 3, STORE_PLACE = 4, RESTRICTED_ZONE = 5, NO_ACCESS = 6, UNKNOWN = 7, LANDSCAPING = 8 })
+    check("land ownership errors are picked out by name", land[3] == "NOT_OWNED_FARMLAND" and land[4] == nil and land[5] == nil and land[6] == nil and land[7] == nil and land[8] == nil)
+end
+check("height guides show in construction mode and while editing a course only",
+    EqXcFlags.wantGuides(true, false) and EqXcFlags.wantGuides(false, true) and not EqXcFlags.wantGuides(false, false))
+do
+    -- Every shop item is in the mod, with its i3d, shop image and name.
+    local modDesc = io.open("modDesc.xml"):read("*a")
+    local en = io.open("translations/translation_en.xml"):read("*a")
+    local items = 0
+    for xml in modDesc:gmatch('<storeItem xmlFilename="([^"]+)"') do
+        items = items + 1
+        local file = io.open(xml)
+        local text = file ~= nil and file:read("*a") or ""
+        if file ~= nil then file:close() end
+        local i3d = text:match("<filename>([^<]+)</filename>")
+        local image = text:match("<image>([^<]+)</image>")
+        local name = text:match("<name>%$l10n_([^<]+)</name>")
+        local function exists(path) local f = path and io.open(path) if f then f:close() return true end return false end
+        check("shop item " .. xml .. " is complete", exists(i3d) and exists(image) and name ~= nil
+            and en:find('name="' .. name .. '"', 1, true) ~= nil)
+    end
+    check("the shop items are listed", items >= 8)
+end
 
 local points = EqFacility.dedupe({
     { kind = "jumps", x = 0, z = 0 }, { kind = "jumps", x = 0.5, z = 0 }, { kind = "jumps", x = 0, z = 12 },

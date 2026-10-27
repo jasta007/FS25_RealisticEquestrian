@@ -66,6 +66,12 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena15x30.xml"/>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena20x40.xml"/>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena20x60.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/courseFlags.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcLogPileSmall.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcLogPile.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall08.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall12.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall16.xml"/>
     </storeItems>
     <l10n filenamePrefix="translations/translation"/>
     <actions>

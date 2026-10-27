@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<!-- Segments (N/M): white flag, bars for 0.6, 0.9 and 1.2 m fences, red flag. -->
+<placeable type="newFence">
+    <storeData>
+        <name>$l10n_eq_shop_courseFlags</name>
+        <functions>
+            <function>$l10n_eq_shop_courseFlags_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_courseFlags.dds</image>
+        <price>10</price>
+        <dailyUpkeep>0</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>fences</category>
+        <canBeSold>true</canBeSold>
+        <showInStore>true</showInStore>
+        <brush>
+            <type>newFence</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
+        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
+        <textureMemoryUsage>0</textureMemoryUsage>
+        <audioMemoryUsage>0</audioMemoryUsage>
+        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
+        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/courseFlags.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <sounds>
+            <place template="fenceWoodImp"/>
+            <destroy template="destroyFence"/>
+        </sounds>
+    </placement>
+
+    <fence>
+        <segment id="WHITE_FLAG" class="FenceGate" maxVerticalAngle="45">
+            <gate node="0>0" length="0.3" hasStartPole="false" hasEndPole="false"/>
+        </segment>
+        <segment id="BAR_60" class="FenceSegment" maxVerticalAngle="45">
+            <poles>
+                <pole node="1>0" radius="0.0"/>
+            </poles>
+            <panels maxScale="1.5">
+                <panel node="2>0" length="1"/>
+            </panels>
+        </segment>
+        <segment id="BAR_90" class="FenceSegment" maxVerticalAngle="45">
+            <poles>
+                <pole node="1>0" radius="0.0"/>
+            </poles>
+            <panels maxScale="1.5">
+                <panel node="2>1" length="1"/>
+            </panels>
+        </segment>
+        <segment id="BAR_120" class="FenceSegment" maxVerticalAngle="45">
+            <poles>
+                <pole node="1>0" radius="0.0"/>
+            </poles>
+            <panels maxScale="1.5">
+                <panel node="2>2" length="1"/>
+            </panels>
+        </segment>
+        <segment id="RED_FLAG" class="FenceGate" maxVerticalAngle="45">
+            <gate node="0>1" length="0.3" hasStartPole="false" hasEndPole="false"/>
+        </segment>
+    </fence>
+</placeable>
