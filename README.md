@@ -87,7 +87,8 @@ uses its genetics, health and fitness.
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
 - Cross country flags: a spline fence (white flag, height bar, red flag) that marks any obstacle as a
-  cross country fence. The shop also sells log piles, and drop walls to dress a sculpted bank.
+  cross country fence. The shop also sells log piles, and drop walls to dress a sculpted bank. All of
+  them can be placed on land you don't own.
 - Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.

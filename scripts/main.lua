@@ -40,6 +40,7 @@ source(modDirectory .. "scripts/training/EqLooseHorses.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
+source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -258,6 +259,7 @@ guarded("probe hook", EqProbe.install)
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
 -- Cross country flags' height guides show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
+guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()

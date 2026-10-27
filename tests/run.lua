@@ -1848,6 +1848,18 @@ do
     local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
 end
+dofile("scripts/facilities/EqPlaceAnywhere.lua")
+check("only our cross country pieces skip the land rule",
+    EqPlaceAnywhere.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")
+    and EqPlaceAnywhere.isOurs(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcDropWall12.xml")
+    and not EqPlaceAnywhere.isOurs(modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml")
+    and not EqPlaceAnywhere.isOurs("data/placeables/brandless/fences/US/fence05/fence05.xml")
+    and not EqPlaceAnywhere.isOurs(modsDir .. "FS25_OtherMod/placeables/xcJumps/xcLogPile.xml")
+    and not EqPlaceAnywhere.isOurs(nil))
+do
+    local land = EqPlaceAnywhere.landErrors({ NOT_OWNED_FARMLAND = 3, STORE_PLACE = 4, RESTRICTED_ZONE = 5, NO_ACCESS = 6, UNKNOWN = 7, LANDSCAPING = 8 })
+    check("land ownership errors are picked out by name", land[3] == "NOT_OWNED_FARMLAND" and land[4] == nil and land[5] == nil and land[6] == nil and land[7] == nil and land[8] == nil)
+end
 check("height guides show in construction mode and while editing a course only",
     EqXcFlags.wantGuides(true, false) and EqXcFlags.wantGuides(false, true) and not EqXcFlags.wantGuides(false, false))
 do
