@@ -1087,8 +1087,7 @@ function EqTrainingHooks.horseRows(cluster)
         if not EqTraining.hasForm(form) then
             form = nil
         elseif EqTrainingHooks.HELP_PAGES.form ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
-            -- The first peak form explains itself once.
-            EqTrainingHud.markSeen("form")
+            -- The first peak form explains itself, until its last page is clicked.
             EqTrainingHooks.showHelp("form")
         end
     end
