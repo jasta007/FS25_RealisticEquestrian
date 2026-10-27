@@ -37,6 +37,8 @@ EqTrainingHud.PANEL = { right = 0.985, top = 0.66, width = 0.2, padding = 0.008,
     textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008, markWidth = 0.0012 }
 EqTrainingHud.POPUP = { centerX = 0.5, bottom = 0.11, width = 0.36, padding = 0.012, lineHeight = 0.019,
     textSize = 0.015, titleSize = 0.0175 }
+-- Nearly opaque: over a menu, the panel behind showed through and was hard to read past.
+EqTrainingHud.POPUP_BACKGROUND = { 0.04, 0.04, 0.04, 0.96 }
 EqTrainingHud.SEEN_FILE = "FS25_RealisticEquestrian.xml"
 
 EqTrainingHud.pages = nil
@@ -422,9 +424,9 @@ function EqTrainingHud.drawHelp(place)
 
     local height = p.padding * 2 + p.lineHeight * (#lines + 2.4)
     local x = p.centerX - p.width / 2
-    fill(x, p.bottom, p.width, height, { 0, 0, 0, 0.72 })
+    fill(x, p.bottom, p.width, height, EqTrainingHud.POPUP_BACKGROUND)
     local accent = page.color or EqTrainingHud.COLOR.green
-    fill(x + p.padding, p.bottom + height - p.padding - p.lineHeight * 1.25, inner, 0.0012, accent)
+    fill(x + p.padding, p.bottom + height - p.padding - p.lineHeight * 1.4, inner, 0.0012, accent)
 
     local y = p.bottom + height - p.padding - p.lineHeight
     text(page.title, p.centerX, y, p.titleSize, accent, RenderText.ALIGN_CENTER, true)
