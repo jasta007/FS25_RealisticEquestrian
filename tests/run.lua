@@ -542,8 +542,8 @@ do
         return t / 1000
     end
     local unfit, average, fit = pushUntilBlown(10), pushUntilBlown(50), pushUntilBlown(90)
-    check("Pushing from empty blows an average horse in about half a minute, a fit one later",
-        unfit < average and average < fit and average > 20 and average < 45 and fit < 90,
+    check("Pushing from empty blows an average horse in about a quarter of a minute, a fit one later",
+        unfit < average and average < fit and average > 10 and average < 22 and fit < 30,
         string.format("stamina 10 %.0f s, 50 %.0f s, 90 %.0f s", unfit, average, fit))
 
     local blown = E.new()
@@ -564,7 +564,7 @@ do
 
     -- Recovering, and slowing to a canter.
     local r = E.new()
-    ride(r, "gallop", 20000)
+    ride(r, "gallop", 8000)
     check("S while Pushing Recovers", E.press(r, "back") == "recover" and r.mode == "recover")
     check("a single S while Recovering with exertion left keeps the gallop", (function()
         ride(r, "gallop", 1000)
@@ -588,14 +588,14 @@ do
         and -E.rate(recoverHigh, "gallop") > -E.rate(recoverZone, "gallop") * 2
         and -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop") * 2)
     local d = E.new()
-    ride(d, "gallop", 15000)
+    ride(d, "gallop", 6000)
     E.press(d, "back")
     ride(d, "gallop", 200)
     check("a quick double tap of S allows a canter from Pushing", E.press(d, "back") == "canter" and E.allowGait(d, "gallop", "canter"))
     ride(d, "canter", 50)
     check("in a canter the gallop's pace is gone", d.mode == nil)
     local slowTaps = E.new()
-    ride(slowTaps, "gallop", 15000)
+    ride(slowTaps, "gallop", 6000)
     E.press(slowTaps, "back")
     ride(slowTaps, "gallop", 800)
     check("two slow presses of S are not a double tap", E.press(slowTaps, "back") == "recover" and not E.allowGait(slowTaps, "gallop", "canter"))
@@ -735,7 +735,7 @@ do
         if g.mode == "recover" and g.value <= 50 then return "forward" end
     end, 50)
     local reckless, recklessBlown = gallopFor(function() return nil end, 50)
-    check("pushing and recovering in turn never blows and keeps up the pace", skilledBlown == nil and skilled > 0.88,
+    check("pushing and recovering in turn never blows and keeps up the pace", skilledBlown == nil and skilled > 0.83,
         string.format("average %.2f of the gallop", skilled))
     check("pushing flat out blows, and is slower in the end", recklessBlown ~= nil and reckless < skilled,
         string.format("average %.2f, blown at %s ms", reckless, tostring(recklessBlown)))
@@ -813,7 +813,7 @@ do
     end, 150000)
     local flatOut = gallop(function() return nil end, 150000)
     check("riding in the zone builds the stamina multiplier towards x5 without Blowing Hard",
-        not skilled.blown and skilled.stamina.mult > 4 and skilled.averageMult > 3,
+        not skilled.blown and skilled.stamina.mult > 2.5 and skilled.averageMult > 3,
         string.format("x%.1f now, x%.2f average", skilled.stamina.mult, skilled.averageMult))
     check("bouncing between Push and Recover near the top earns little multiplier",
         jiggler.averageMult < skilled.averageMult * 0.6, string.format("x%.2f average", jiggler.averageMult))

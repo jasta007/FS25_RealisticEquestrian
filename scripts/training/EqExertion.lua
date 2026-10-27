@@ -31,9 +31,11 @@ EqExertion = {}
 EqExertion.LINE = 100
 EqExertion.EXERTION_MAX = 130
 
--- Pushing: PUSH_RISE per second when empty, PUSH_CLIMB times more at the line.
-EqExertion.PUSH_RISE = 2.2
-EqExertion.PUSH_CLIMB = 1
+-- Pushing: PUSH_RISE per second when empty, climbing with the square of exertion to PUSH_CLIMB
+-- times more at the line, so the rise is plainly speeding up near the top (James, 2026-10-27:
+-- it took too long and didn't feel like it sped up).
+EqExertion.PUSH_RISE = 4
+EqExertion.PUSH_CLIMB = 3
 -- Recovering: exertion falls this much per second in each third of the gallop (EqExertion.band):
 -- fast from the top third, slowly through the middle "zone", fast again in the bottom third
 -- (James, 2026-10-27: the stamina multiplier follows the same pattern, see EqTraining).
@@ -55,7 +57,7 @@ EqExertion.SPENT_SHARE = 0.2
 -- Stats change the rates: how fast Pushing tires the horse, by Stamina (stat 0 to 100), how fast
 -- it gets its breath back (Recovering, cantering or slower), by Stamina, and how fast a Sprint
 -- tires it, by Speed.
-EqExertion.PUSH_STAMINA = { 1.4, 0.65 }
+EqExertion.PUSH_STAMINA = { 1.3, 0.75 }
 EqExertion.RECOVER_STAMINA = { 0.75, 1.3 }
 EqExertion.SPRINT_SPEED = { 1.3, 0.75 }
 
@@ -170,7 +172,8 @@ end
 function EqExertion.rate(ex, gait, stamina, speed)
     local v = ex.value
     if ex.mode == "push" then
-        return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * math.min(v, EqExertion.LINE) / EqExertion.LINE)
+        local share = math.min(v, EqExertion.LINE) / EqExertion.LINE
+        return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * share * share)
             * byStat(EqExertion.PUSH_STAMINA, stamina)
     elseif ex.mode == "recover" then
         return -EqExertion.RECOVER_DROP[EqExertion.band(v)] * byStat(EqExertion.RECOVER_STAMINA, stamina)

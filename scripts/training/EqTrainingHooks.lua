@@ -322,7 +322,7 @@ end
 --- @return boolean true when the routine runs: it only asks for moves where the rider sees them
 local function routineShown()
     local view = EqTrainingHooks.getView()
-    return view == "freestyle" or view == "temperament"
+    return view == "freestyle" or view == "temperament" or view == "condensed"
 end
 
 
@@ -668,11 +668,15 @@ end
 
 
 -- Riding HUD views, switched with the training view key (Y). Freestyle shows every stat; a
--- focused view shows the one stat it trains. Help popups (H, and the first time a view
--- opens) explain each view in HELP_PAGES pages.
-EqTrainingHooks.VIEWS = { "freestyle", "agility", "temperament" }
+-- focused view shows only its own stat's training (Stamina and Speed the gallop's multipliers
+-- and keys, Agility the jump combo, Temperament the routine); Condensed shows just the bar, with
+-- news in a small line above it (James, 2026-10-27: the panel was too busy). Every view trains
+-- everything. Help popups (H, and the first time a view opens) explain each view in HELP_PAGES pages.
+EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament", "condensed" }
 -- "gallop" pops up the first time the horse gallops, and on H while it gallops.
-EqTrainingHooks.HELP_PAGES = { freestyle = 3, agility = 2, temperament = 2, gallop = 4 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 2, speed = 2, agility = 2, temperament = 2, condensed = 1, gallop = 4 }
+-- Views that show the gallop's training rows and keys under the bar.
+EqTrainingHooks.GALLOP_VIEWS = { freestyle = true, stamina = true, speed = true }
 -- The stats the player's riding trains.
 EqTrainingHooks.TRAINED_STATS = { "stamina", "speed", "agility", "temperament" }
 EqTrainingHooks.viewIndex = 1
@@ -805,8 +809,9 @@ EqTrainingHooks.MARKER_EASE_MS = 120
 --- The exertion rows: what the horse is doing and how hard it's working, then the bar.
 --- @param spec table spec_rideable
 --- @param sheet table the horse's training sheet
+--- @param view string
 --- @return table rows
-local function exertionRows(spec, sheet)
+local function exertionRows(spec, sheet, view)
     local ex = sheet.exertion
     local gait = spec.eqLastGait or "halt"
     local state = EqExertion.state(ex, gait)
@@ -842,64 +847,76 @@ local function exertionRows(spec, sheet)
     spec.eqMarkerAt = now
 
     local third = (BAR.line - BAR.canter) / 3
-    local rows = { words, { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
-        ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker } }
-    for _, row in ipairs(EqTrainingHooks.gallopTrainingRows(sheet)) do table.insert(rows, row) end
-    for _, hint in ipairs(EqTrainingHooks.exertionHints(ex)) do
-        table.insert(rows, { left = g_i18n:getText(hint[1]), leftColor = hint[2] })
+    local bar = { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
+        ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker }
+    if view == "condensed" then return { bar } end
+    local rows = { words, bar }
+    if EqTrainingHooks.GALLOP_VIEWS[view] then
+        for _, row in ipairs(EqTrainingHooks.gallopTrainingRows(sheet, view)) do table.insert(rows, row) end
+        local hint = EqTrainingHooks.exertionHints(ex)
+        if hint ~= nil then table.insert(rows, hint) end
     end
     return rows
 end
 
 
---- What the gallop is training: the Sprint's speed multiplier and what it will bank, or the
---- stamina multiplier and breath (EqTraining.speedStep and staminaStep).
+--- What the gallop is training, in one row: the stamina multiplier, and in a Sprint the speed
+--- multiplier and what it will bank (EqTraining.staminaStep and speedStep). The Stamina and Speed
+--- views always show their own, with the last Sprint's multiplier between Sprints.
 --- @param sheet table
+--- @param view string
 --- @return table rows
-function EqTrainingHooks.gallopTrainingRows(sheet)
-    local ex, rows = sheet.exertion, {}
+function EqTrainingHooks.gallopTrainingRows(sheet, view)
+    local ex, st = sheet.exertion, sheet.stamina
+    local row = {}
+    if view ~= "speed" and (view == "stamina" or ex.mode ~= nil or ex.lock ~= nil or st.mult > 1) then
+        local training = ex.mode == "push" or ex.mode == "recover" or ex.mode == "sprint"
+        row.left = ex.lock ~= nil and string.format("%s: %s", g_i18n:getText("eq_stat_stamina"), g_i18n:getText("eq_train_staminaStopped"))
+            or string.format(g_i18n:getText("eq_train_staminaMult"), st.mult)
+        row.leftColor = ex.lock ~= nil and COLOR.red or training and STAT_COLOR.stamina or COLOR.grey
+    end
     if ex.mode == "sprint" then
         local over = ex.value >= EqExertion.LINE
         local mult = EqTraining.sprintMultiplier(ex.value)
         local gain = EqTraining.SPEED_RATE * sheet.sprint.ms / 1000 * mult / EqTraining.EFFORT_CAP.speed * 100
-        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_speedMult"), mult),
-            leftColor = over and COLOR.red or STAT_COLOR.speed,
-            right = over and g_i18n:getText("eq_ex_blowingHard") or string.format("+%d%%", math.floor(gain + 0.5)),
-            rightColor = over and COLOR.red or STAT_COLOR.speed })
+        local color = over and COLOR.red or STAT_COLOR.speed
+        local text = string.format(g_i18n:getText("eq_train_speedMult"), mult)
+        if view == "speed" then
+            row.left, row.leftColor = text, color
+            row.right, row.rightColor = over and g_i18n:getText("eq_ex_blowingHard") or string.format("+%d%%", math.floor(gain + 0.5)), color
+        else
+            row.right, row.rightColor = string.format("%s +%d%%", text, math.floor(gain + 0.5)), color
+        end
+    elseif view == "speed" then
+        local last = sheet.sprint.last
+        row.left = last ~= nil and string.format(g_i18n:getText("eq_train_lastSprint"), last) or g_i18n:getText("eq_train_sprintToTrain")
+        row.leftColor = last ~= nil and STAT_COLOR.speed or COLOR.grey
     end
-    local st = sheet.stamina
-    if ex.mode ~= nil or ex.lock ~= nil or st.mult > 1 then
-        local training = ex.mode == "push" or ex.mode == "recover"
-        local right, rightColor = string.format(g_i18n:getText("eq_train_breath"), math.floor(st.breath * 100 + 0.5)), COLOR.grey
-        if ex.lock ~= nil then right, rightColor = g_i18n:getText("eq_train_staminaStopped"), COLOR.red end
-        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_staminaMult"), st.mult),
-            leftColor = (training or ex.mode == "sprint") and STAT_COLOR.stamina or COLOR.grey, right = right, rightColor = rightColor })
-    end
-    return rows
+    if row.left == nil and row.right == nil then return {} end
+    return { row }
 end
 
 
---- What the rider can press now, for the panel under the bar.
+--- What the rider can press now, in one row under the bar: Sprint on the left, canter on the right.
 --- @param ex table
---- @return table list of { text key, colour }
+--- @return table|nil row
 function EqTrainingHooks.exertionHints(ex)
-    local hints = {}
-    if ex.mode == "sprint" then
-        table.insert(hints, { "eq_ex_hint_keepTapping", COLOR.white })
-    elseif ex.mode ~= nil then
+    local left, leftColor, right = nil, COLOR.grey, nil
+    if ex.mode == "push" or ex.mode == "recover" then
         if EqExertion.canSprint(ex) then
-            table.insert(hints, { "eq_ex_hint_sprint", COLOR.white })
+            left, leftColor = "eq_ex_hint_sprint", COLOR.white
         else
-            table.insert(hints, { "eq_ex_hint_sprintRest", COLOR.grey })
+            left = "eq_ex_hint_sprintRest"
         end
-        table.insert(hints, { ex.mode == "push" and "eq_ex_hint_recover" or "eq_ex_hint_push", COLOR.grey })
     elseif ex.lock ~= nil then
-        table.insert(hints, { "eq_ex_hint_locked", COLOR.grey })
+        left = "eq_ex_hint_locked"
     end
     if ex.mode ~= nil then
-        table.insert(hints, { EqExertion.canterOnOneTap(ex) and "eq_ex_hint_canterOne" or "eq_ex_hint_canterDouble", COLOR.grey })
+        right = EqExertion.canterOnOneTap(ex) and "eq_ex_hint_canterOne" or "eq_ex_hint_canterDouble"
     end
-    return hints
+    if left == nil and right == nil then return nil end
+    return { left = left ~= nil and g_i18n:getText(left) or nil, leftColor = leftColor,
+        right = right ~= nil and g_i18n:getText(right) or nil, rightColor = COLOR.grey }
 end
 
 
@@ -912,7 +929,8 @@ EqTrainingHooks.SPRINT_INTRO_MS = 1250
 EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
 EqTrainingHooks.SPRINT_DANGER_FROM = 75
 
-local function exertionPrompt(ex)
+--- @param small boolean the Condensed view: a smaller bar, no words
+local function exertionPrompt(ex, small)
     local label, labelColor, pulse = nil, COLOR.yellow, false
     if ex.value > EqExertion.LINE then
         label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
@@ -923,33 +941,31 @@ local function exertionPrompt(ex)
     elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
         label, pulse = g_i18n:getText("eq_ex_careful"), true
     end
+    local warned = label ~= nil
+    if small then label = nil end
     if ex.mode == "sprint" then
         local left = 1 - (ex.clock - ex.tapAt) / EqExertion.SPRINT_KEEP_MS
-        local color = label ~= nil and labelColor or COLOR.white
-        if ex.sprintMs < EqTrainingHooks.SPRINT_INTRO_MS then
+        local color = warned and labelColor or COLOR.white
+        if ex.sprintMs < EqTrainingHooks.SPRINT_INTRO_MS and not small then
             EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_tap"), left, color)
         else
-            EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse)
+            EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse, small)
         end
-    elseif ex.mode == "push" and label ~= nil then
+    elseif ex.mode == "push" and warned then
         EqTrainingHud.drawCentreBar((EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM),
-            COLOR.yellow, label, labelColor, pulse)
+            labelColor, label, labelColor, pulse, small)
     end
 end
 
 
---- The top of the riding panel: the horse's role, if it has one, and its skills, so the rider
---- remembers what this horse is being trained for.
+--- The top of the riding panel: the horse's skills, so the rider remembers what this horse is
+--- being trained for (its role is in the title).
 --- @param cluster table|nil RLRM Animal being ridden
 --- @return table rows
 function EqTrainingHooks.horseRows(cluster)
     local rows = {}
     local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
     if record == nil then return rows end
-    if EqRole.isShown(record) then
-        table.insert(rows, { left = g_i18n:getText("eq_role_title"), leftColor = COLOR.grey,
-            right = EqRole.text(EqRole.shown(record)), rightColor = EqRole.COLOR })
-    end
     local segments = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         table.insert(segments, { string.format("%s %d", g_i18n:getText("eq_stat_short_" .. stat),
@@ -979,12 +995,13 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if sheet == nil then return end
 
     local effort = EqTraining.playerEffort(sheet)
-    local rows = EqTrainingHooks.horseRows(spec.cluster)
+    local condensed = view == "condensed"
+    local rows = condensed and {} or EqTrainingHooks.horseRows(spec.cluster)
     EqTrainingHud.view = view
     -- The exertion bar shows in every view: it says what gait the horse is in, too.
     local ex = sheet.exertion
-    for _, row in ipairs(exertionRows(spec, sheet)) do table.insert(rows, row) end
-    exertionPrompt(ex)
+    for _, row in ipairs(exertionRows(spec, sheet, view)) do table.insert(rows, row) end
+    exertionPrompt(ex, condensed)
     if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
         EqTrainingHud.markSeen("gallop")
         EqTrainingHooks.showHelp("gallop")
@@ -995,7 +1012,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local mult = math.min(combo.count, EqTraining.COMBO_MAX)
         local color = STAT_COLOR.agility
         table.insert(rows, { left = string.format(g_i18n:getText("eq_train_combo"), mult), leftColor = color,
-            right = string.format("%d s", math.ceil(combo.timer)) })
+            right = view == "agility" and string.format("%d s", math.ceil(combo.timer)) or nil })
         table.insert(rows, { bar = combo.timer / EqTraining.COMBO_SECONDS, color = color })
     elseif view == "agility" then
         table.insert(rows, { left = g_i18n:getText("eq_train_combo_none"), leftColor = COLOR.grey })
@@ -1003,7 +1020,13 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local routine = sheet.routine
     if routineShown() then
-        if routine.active then
+        if routine.active and condensed then
+            -- Condensed: no panel rows, but the rider still needs the commands.
+            if routine.request ~= nil then
+                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request),
+                    math.max(0, routine.deadline - routine.clock) / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), STAT_COLOR.temperament)
+            end
+        elseif routine.active then
             local color = STAT_COLOR.temperament
             local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
             if routine.request ~= nil then
@@ -1027,30 +1050,32 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     EqTrainingHud.drawPops()
 
+    -- Today's effort: two stats to a row in Freestyle, the view's own stat in a focused view.
     if view == "freestyle" then
-        for _, stat in ipairs(EqTrainingHooks.TRAINED_STATS) do table.insert(rows, statRow(stat, effort, sheet)) end
-    else
-        table.insert(rows, statRow(view, effort, sheet))
-        local others = {}
-        for _, stat in ipairs(EqTrainingHooks.TRAINED_STATS) do
-            if stat ~= view then
-                table.insert(others, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat),
-                    math.floor(effort[stat] / EqTraining.EFFORT_CAP[stat] * 100 + 0.5)))
-            end
+        local stats = EqTrainingHooks.TRAINED_STATS
+        for i = 1, #stats, 2 do
+            local first, second = statRow(stats[i], effort, sheet), stats[i + 1] and statRow(stats[i + 1], effort, sheet)
+            table.insert(rows, { left = first.left, leftColor = first.leftColor,
+                right = second and second.left, rightColor = second and second.leftColor })
         end
-        table.insert(rows, { left = table.concat(others, "  "), leftColor = COLOR.grey })
+    elseif not condensed then
+        table.insert(rows, statRow(view, effort, sheet))
     end
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
-    -- The ridden horse's name heads the panel: "Applejack: Freestyle view".
-    local cluster = spec.cluster
-    local horseName = cluster ~= nil and cluster.getName ~= nil and cluster:getName() or nil
-    local viewName = g_i18n:getText("eq_train_view_" .. view)
-    local title = (horseName ~= nil and horseName ~= "")
-        and string.format(g_i18n:getText("eq_train_titleHorse"), horseName, viewName)
-        or string.format(g_i18n:getText("eq_train_title"), viewName)
-    EqTrainingHud.drawPanel(title, rows,
-        STAT_COLOR[view])
+    -- The ridden horse's name and role head the panel, the view on the right: Condensed has no title.
+    local title, titleRight = nil, nil
+    if not condensed then
+        local cluster = spec.cluster
+        local horseName = cluster ~= nil and cluster.getName ~= nil and cluster:getName() or nil
+        title = (horseName ~= nil and horseName ~= "") and horseName or g_i18n:getText("eq_train_titlePlain")
+        local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
+        if record ~= nil and EqRole.isShown(record) then
+            title = string.format("%s (%s)", title, EqRole.text(EqRole.shown(record)))
+        end
+        titleRight = g_i18n:getText("eq_train_view_" .. view)
+    end
+    EqTrainingHud.drawPanel(title, rows, STAT_COLOR[view], titleRight)
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
     local inside = {}

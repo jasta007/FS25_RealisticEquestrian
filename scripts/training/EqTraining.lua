@@ -34,19 +34,23 @@ EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 -- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
 -- STAMINA_MULT_MAX (James, 2026-10-27). The multiplier isn't tied to the bar:
 -- - Pushing raises it, faster the higher exertion is (STAMINA_PUSH_GAIN per second, empty to the
---   line), but only with breath: each second of Pushing uses STAMINA_BREATH_USE of it, and the
---   gain is scaled by what's left. So bouncing between Push and Recover near the top earns little.
+--   line, with the square of exertion). Every point of exertion Pushing adds uses STAMINA_BREATH_USE of the horse's breath,
+--   hidden from the rider: with less breath the multiplier rises more slowly (down to STAMINA_LOW_BREATH_GAIN of
+--   the rate) and falls faster (up to STAMINA_LOW_BREATH_LOSS times), but never stops either way
+--   (James). So bouncing between Push and Recover near the top earns little.
 -- - Recovering gets breath back and loses multiplier, by the bar's third (EqExertion.band): fast
 --   from the top third, slowly in the middle "zone" (where breath comes back best), fast again in
 --   the bottom third. A canter or slower loses it fast.
 -- - A Sprint holds both. Blowing Hard (or a Sprint that ends past the line) drops it to x1 and
---   stops stamina training until exertion is empty again, when breath is full.
+--   stops stamina training until exertion is empty again, with no breath left to start on.
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
-EqTraining.STAMINA_PUSH_GAIN = { 0.15, 0.35 }
-EqTraining.STAMINA_BREATH_USE = 0.06
-EqTraining.STAMINA_LOSS = { high = 0.15, zone = 0.03, low = 0.5, slow = 0.5 }
-EqTraining.STAMINA_BREATH_GAIN = { high = 0.02, zone = 0.07, low = 0.07, slow = 0.1 }
+EqTraining.STAMINA_PUSH_GAIN = { 0.15, 2.0 }
+EqTraining.STAMINA_BREATH_USE = 0.01
+EqTraining.STAMINA_LOW_BREATH_GAIN = 0.1
+EqTraining.STAMINA_LOW_BREATH_LOSS = 2
+EqTraining.STAMINA_LOSS = { high = 0.25, zone = 0.03, low = 0.8, slow = 0.6 }
+EqTraining.STAMINA_BREATH_GAIN = { high = 0, zone = 0.07, low = 0.07, slow = 0.05 }
 
 -- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
@@ -409,7 +413,7 @@ function EqTraining.speedStep(sheet, dt, worn)
     local mult = EqTraining.sprintMultiplier(last.value, last.over)
     local gain = EqTraining.SPEED_RATE * sprint.ms / 1000 * mult
     sheet.focused.speed = sheet.focused.speed + gain
-    sprint.ms = 0
+    sprint.ms, sprint.last = 0, mult
     return mult, gain
 end
 
@@ -420,20 +424,23 @@ end
 --- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
 function EqTraining.staminaStep(sheet, dt, worn)
     local ex, st = sheet.exertion, sheet.stamina
+    local climbed = math.max(0, ex.value - (st.lastValue or ex.value))
+    st.lastValue = ex.value
     local seconds = dt / 1000
     if ex.lock ~= nil then
         st.mult, st.breath = 1, 0
-    elseif ex.value <= 0 and ex.mode ~= "push" then
-        st.breath = 1
-        st.mult = math.max(1, st.mult - EqTraining.STAMINA_LOSS[ex.mode == "recover" and "low" or "slow"] * seconds)
+    elseif ex.mode == "sprint" then
+        -- A Sprint holds the multiplier and the breath.
     elseif ex.mode == "push" then
         local share = math.min(ex.value / EqExertion.LINE, 1)
-        local gain = EqTraining.STAMINA_PUSH_GAIN[1] + (EqTraining.STAMINA_PUSH_GAIN[2] - EqTraining.STAMINA_PUSH_GAIN[1]) * share
-        st.mult = st.mult + gain * st.breath * seconds
-        st.breath = st.breath - EqTraining.STAMINA_BREATH_USE * seconds
-    elseif ex.mode ~= "sprint" then
+        local gain = EqTraining.STAMINA_PUSH_GAIN[1] + (EqTraining.STAMINA_PUSH_GAIN[2] - EqTraining.STAMINA_PUSH_GAIN[1]) * share * share
+        local low = EqTraining.STAMINA_LOW_BREATH_GAIN
+        st.mult = st.mult + gain * (low + (1 - low) * st.breath) * seconds
+        st.breath = st.breath - EqTraining.STAMINA_BREATH_USE * climbed
+    else
         local band = ex.mode == "recover" and EqExertion.band(ex.value) or "slow"
-        st.mult = st.mult - EqTraining.STAMINA_LOSS[band] * seconds
+        local winded = 1 + (EqTraining.STAMINA_LOW_BREATH_LOSS - 1) * (1 - st.breath)
+        st.mult = st.mult - EqTraining.STAMINA_LOSS[band] * winded * seconds
         st.breath = st.breath + EqTraining.STAMINA_BREATH_GAIN[band] * seconds
     end
     st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)

@@ -112,9 +112,11 @@ end
 ---     ticks = { share, ... }, marker = share } rows: the exertion bar, coloured sections with dark
 ---     lines, short ticks and a marker
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
-function EqTrainingHud.drawPanel(title, rows, titleColor)
+--- @param titleRight string|nil grey text at the right of the title line
+--- With no title the panel is just its rows (the Condensed view).
+function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
     local p = EqTrainingHud.PANEL
-    local height = p.padding * 2 + p.lineHeight
+    local height = p.padding * 2 + (title ~= nil and p.lineHeight or 0)
     for _, row in ipairs(rows) do
         if row.bar ~= nil then
             height = height + p.barHeight + p.padding
@@ -129,8 +131,12 @@ function EqTrainingHud.drawPanel(title, rows, titleColor)
     fill(x, y, p.width, height, EqTrainingHud.COLOR.background)
 
     local left, right = x + p.padding, p.right - p.padding
-    local lineY = p.top - p.padding - p.lineHeight * 0.8
-    text(title, left, lineY, p.titleSize, titleColor or EqTrainingHud.COLOR.white, nil, true)
+    local lineY = p.top - p.padding * 0.25
+    if title ~= nil then
+        lineY = p.top - p.padding - p.lineHeight * 0.8
+        text(title, left, lineY, p.titleSize, titleColor or EqTrainingHud.COLOR.white, nil, true)
+        if titleRight ~= nil then text(titleRight, right, lineY, p.textSize, EqTrainingHud.COLOR.grey, RenderText.ALIGN_RIGHT) end
+    end
     for _, row in ipairs(rows) do
         if row.bar ~= nil then
             local barY = lineY - p.padding * 0.5 - p.barHeight
@@ -209,8 +215,8 @@ EqTrainingHud.MULT_COLORS = {
     { 1, 0.55, 0.15, 1 },
     { 1, 0.25, 0.3, 1 },
 }
-EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.03, sizePerMult = 0.006, growMs = 150, holdMs = 700, fadeMs = 500 }
-EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.026, barWidth = 0.12, barHeight = 0.006 }
+EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growMs = 150, holdMs = 700, fadeMs = 500 }
+EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.021, barWidth = 0.12, barHeight = 0.006 }
 EqTrainingHud.popState = nil
 EqTrainingHud.sideState = nil
 -- The training view being shown (set by EqTrainingHooks while drawing), and the stat each
@@ -269,9 +275,10 @@ function EqTrainingHud.pop(kind, mult)
     -- In a focused view, news about another stat goes in a small line above the panel instead.
     local view = EqTrainingHud.view
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
-    local side = stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat)
+    -- In Condensed all of it does, as the only text on screen.
+    local side = view == "condensed" or (stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat))
     if side then
-        text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text)
+        if stat ~= nil then text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text) end
         EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
         return
     end
@@ -338,17 +345,22 @@ function EqTrainingHud.drawPrompt(value, share, color)
 end
 
 
--- The bar alone in the middle: a small word above it, and a faint slow pulse (never a strobe).
-EqTrainingHud.CENTRE_BAR = { labelSize = 0.014, pulseMs = 250, pulseDepth = 0.5 }
+-- The bar alone in the middle: a small word above it, and a quick pulse to half brightness.
+-- The Condensed view draws it at smallShare of the size.
+EqTrainingHud.CENTRE_BAR = { labelSize = 0.013, pulseMs = 250, pulseDepth = 0.5, smallShare = 0.7 }
 
 --- Draw just the prompt's bar in the middle of the screen, with an optional small word above.
 --- @param share number 0..1
 --- @param color table
 --- @param label string|nil
 --- @param labelColor table|nil
---- @param pulse boolean|nil true to pulse the bar faintly
-function EqTrainingHud.drawCentreBar(share, color, label, labelColor, pulse)
+--- @param pulse boolean|nil true to pulse the bar
+--- @param small boolean|nil true for the Condensed view's smaller bar
+function EqTrainingHud.drawCentreBar(share, color, label, labelColor, pulse, small)
     local p, c = EqTrainingHud.PROMPT, EqTrainingHud.CENTRE_BAR
+    if small then
+        p = { x = p.x, y = p.y, barWidth = p.barWidth * c.smallShare, barHeight = p.barHeight * c.smallShare }
+    end
     local alpha = 1
     if pulse then
         local phase = ((g_time or 0) % c.pulseMs) / c.pulseMs

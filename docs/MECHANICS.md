@@ -51,8 +51,10 @@ Every horse trains once a day, at RLRM's daily horse tick.
   minigames, and stamina and speed come from riding the gallop well (below). A good focused session
   can give up to double what a full day of riding used to; just riding round the gaits trains
   agility and temperament at about a quarter of that.
-- **Press Y while riding** to switch the training panel between **Freestyle** (a line for each
-  stat) and the **Agility** and **Temperament** views. Every view shows the Exertion bar. Help pops
+- **Press Y while riding** to switch the training panel between **Freestyle** (everything),
+  the **Stamina**, **Speed**, **Agility** and **Temperament** views (just that stat's training)
+  and **Condensed** (only the Exertion bar, with news in a small line above it and a smaller,
+  wordless Sprint bar). Every view shows the Exertion bar, and every view trains everything. Help pops
   up at the bottom of the screen the first time you open each view (and the first time you
   gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
   move on.
@@ -68,7 +70,8 @@ Every horse trains once a day, at RLRM's daily horse tick.
 The gallop has three paces, and exertion only builds at a gallop:
 
 - **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
-  the higher it is (an average horse blows after about half a minute from empty; Stamina slows it).
+  the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
+  empty; Stamina slows it).
 - **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
   top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
   quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
@@ -97,19 +100,20 @@ multiplied when it ends by how high it took the bar: x2 half way to the line, ri
 x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
-Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar
-with the horse's **Breath**:
+Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
+Behind it the horse has a hidden breath:
 
-- Pushing raises the multiplier, faster the higher the bar is, but uses Breath (a full Breath
-  lasts about 17 seconds of Pushing), and the gain shrinks with what Breath is left.
-- Recovering brings Breath back and costs multiplier: quickly in the top third, slowly in the
-  middle zone (where Breath also comes back best), quickly again in the bottom third. A canter or
-  slower costs it quickly too; a Sprint holds it.
+- Pushing raises the multiplier, faster the higher the bar is (with its square), and every point of
+  exertion pushed uses a hundredth of the breath. With less breath the multiplier rises more slowly
+  (down to a tenth of the rate) and falls faster (up to twice as fast), but never stops either way.
+- Recovering costs multiplier: quickly in the top third, slowly in the middle zone, quickly again
+  in the bottom third. Breath comes back in the middle and bottom thirds, not the top. A canter or
+  slower costs multiplier quickly too; a Sprint holds it.
 - So the way to x5 is to push close to the line, recover down into the zone and let the horse
   breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
-  out of Breath and earns little; letting the bar fall too far throws the multiplier away.
-- Blowing Hard (or a Sprint that ends past the line) drops it to x1 and stops stamina training
-  until the bar is empty, when Breath is full again.
+  out of breath and earns little; letting the bar fall too far throws the multiplier away.
+- Blowing Hard (or a Sprint that ends past the line) drops it to x1, empties the breath and stops
+  stamina training until the bar is empty.
 
 ### Agility
 
@@ -128,7 +132,7 @@ requests quicker and gives less time to react (1.5 seconds at x8), and from x4 t
 its pace between requests: changing gait unasked breaks the routine (passing through a walk on the
 way to a requested stop is fine). A canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
-show in the Freestyle and Temperament views.
+show in the Freestyle, Temperament and Condensed views.
 
 ### How stats change riding
 

@@ -49,8 +49,8 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
-  and the Agility and Temperament views, and **H** for help.
+- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
+  a view per stat and Condensed (just the bar), and **H** for help.
   - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
     Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
     Recovering train Stamina at a multiplier up to x5.
