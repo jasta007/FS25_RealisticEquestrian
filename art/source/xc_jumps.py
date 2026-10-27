@@ -50,6 +50,26 @@ GUIDE = "eqXcGuide"     # the gold height bar: construction mode only
 GUIDE_LENGTH = 0.9
 GUIDE_SIZE = 0.03
 
+# Drop walls: a timber retaining wall for the edge of a bank the player sculpts (James, 2026-10-27).
+# The face is along x and faces -z (the low side); its top edge, the lip, is 1 m in front of the
+# origin, so the placeable takes its height from the flat top of the bank, not the slope. The boards
+# go SKIRT below the drop so they tuck into wherever the low ground ends up. Triangle wing walls at
+# each end run back over the bank's sides; a half-round log caps the lip. No terrain levelling.
+DROP_WALLS = [
+    {"name": "xcDropWall08", "price": 1500, "drop": 0.8},
+    {"name": "xcDropWall12", "price": 1800, "drop": 1.2},
+    {"name": "xcDropWall16", "price": 2100, "drop": 1.6},
+]
+DROP_WIDTH = 4.0
+DROP_LIP = 1.0          # the lip is this far in front of the origin
+SKIRT = 0.5             # boards and posts reach this far below the drop
+BOARD_T = 0.05          # board thickness
+POST_W = 0.16           # square posts
+POST_STEP = 1.4         # most space between posts along the face
+CAP_R = 0.15            # the half-round log along the lip
+RAIL_R = 0.07           # the round rail along each wing's top
+PLANK_TILE = (2.0, 1.6) # metres one plank texture covers, along and up (8 boards of 0.2 m)
+
 SIDES = 22              # faces round each log
 RING_STEP = 0.22        # metres between rings along a log (more rings: room to bend and bulge)
 SINK = 0.04             # logs sit this far into the ground so they never float on a slope
@@ -190,6 +210,47 @@ def log_end_texture(path, size=256):
     Image.fromarray(rgb, "RGB").save(path, pixel_format="DXT1")
     mark_dds(path)
     return rgb
+
+
+def plank_texture(path, normal_path, size=512):
+    """Eight horizontal boards of sawn, weathered softwood: grain along them, a few knots, dark
+    gaps between boards, each board its own shade, the lower boards darker and greener (damp)."""
+    rng = np.random.default_rng(31)
+    boards = 8
+    row = (np.arange(size)[:, None] + 0.5) / size * boards
+    board = np.floor(row).astype(int) % boards
+    within = row - np.floor(row)
+    grain = periodic_noise(size, rng, 40, 1.2) * 0.6 + periodic_noise(size, rng, 120, 3) * 0.4
+    shade = rng.uniform(-0.08, 0.08, boards)[board]
+    gap = np.clip(1 - np.minimum(within, 1 - within) / 0.035, 0, 1)
+    light = 0.78 + 0.06 * grain + shade - 0.55 * gap
+    # knots: dark ovals stretched along the board
+    for _ in range(14):
+        kx, ky = rng.uniform(0, size), (rng.integers(0, boards) + rng.uniform(0.3, 0.7)) * size / boards
+        dx = np.minimum(np.abs(np.arange(size)[None, :] - kx), size - np.abs(np.arange(size)[None, :] - kx)) / 9
+        dy = np.abs(np.arange(size)[:, None] - ky) / 5
+        light -= 0.35 * np.exp(-(dx ** 2 + dy ** 2))
+    weather = np.clip(periodic_noise(size, rng, 30, 20) * 0.5 + 0.2, 0, 1)
+    damp = np.clip((row / boards - 0.55) * 2.2, 0, 1) * np.clip(periodic_noise(size, rng, 25, 8) + 0.8, 0, 1)
+    colour = np.array([186, 148, 104]) * (1 - weather[..., None] * 0.35) + np.array([150, 144, 130]) * weather[..., None] * 0.35
+    colour = colour * (1 - damp[..., None] * 0.4) + np.array([86, 84, 52]) * damp[..., None] * 0.4
+    rgb = np.clip(light, 0.1, 1.1)[..., None] * colour
+    save_dds(rgb, path)
+    normal_map(0.4 * grain * 0.1 - gap, normal_path, strength=2.5)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def peeled_texture(path, size=256):
+    """Peeled softwood for posts and rails: pale, streaked along the grain (v), with a few strips
+    of bark left on."""
+    rng = np.random.default_rng(37)
+    streaks = periodic_noise(size, rng, 1.5, 40) * 0.6 + periodic_noise(size, rng, 6, 80) * 0.4
+    light = 0.82 + 0.07 * streaks
+    rgb = light[..., None] * np.array([214, 178, 128])
+    bark = np.clip((periodic_noise(size, rng, 10, 60) - 1.6) * 3, 0, 1)
+    rgb = rgb * (1 - bark[..., None]) + np.array([92, 74, 56]) * bark[..., None]
+    save_dds(rgb, path)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
 
 
 # One row of four cells: red flag, white flag, pole, gold (the height guide).
@@ -511,6 +572,135 @@ def log_pile_half(jump):
     return jump["length"] / 2 + STAGGER + FLAG_GAP
 
 
+def slab(mesh, outline, thickness, plane, uv):
+    """A flat slab: outline (a convex polygon, counter-clockwise) in the plane's own (a, b)
+    coordinates, extruded by thickness along its normal. plane(a, b, c) gives a 3D point, c being
+    the offset along the normal; uv(a, b) the texture coordinates of the broad faces."""
+    def at(a, b, c):
+        return plane(a, b, c)
+    n_front = norm(sub(at(0, 0, -1), at(0, 0, 0)))
+    n_back = (-n_front[0], -n_front[1], -n_front[2])
+    for c, n in ((0.0, n_front), (thickness, n_back)):
+        ids = [mesh.vertex(at(a, b, -c if c else 0.0), n, uv(a, b)) for a, b in outline]
+        for k in range(1, len(ids) - 1):
+            mesh.tri(ids[0], ids[k], ids[k + 1])
+    centre = (sum(a for a, _ in outline) / len(outline), sum(b for _, b in outline) / len(outline))
+    for k in range(len(outline)):
+        (a0, b0), (a1, b1) = outline[k], outline[(k + 1) % len(outline)]
+        p0, p1 = at(a0, b0, 0.0), at(a1, b1, 0.0)
+        q0, q1 = at(a0, b0, -thickness), at(a1, b1, -thickness)
+        edge_mid = at((a0 + a1) / 2, (b0 + b1) / 2, 0.0)
+        out = norm(sub(edge_mid, at(centre[0], centre[1], 0.0)))
+        length = math.dist(p0, p1)
+        mesh.quad([p0, p1, q1, q0], out, [(0, 0), (length / PLANK_TILE[0], 0), (length / PLANK_TILE[0], 0.02), (0, 0.02)])
+
+
+def textured_box(mesh, x0, x1, y0, y1, z0, z1, tile=1.0):
+    """A box with its texture's v running up (posts) on the sides, and a flat top."""
+    faces = [
+        ((0, 0, 1), [(x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)], lambda p: (p[0], p[1])),
+        ((0, 0, -1), [(x1, y0, z0), (x0, y0, z0), (x0, y1, z0), (x1, y1, z0)], lambda p: (p[0], p[1])),
+        ((1, 0, 0), [(x1, y0, z1), (x1, y0, z0), (x1, y1, z0), (x1, y1, z1)], lambda p: (p[2], p[1])),
+        ((-1, 0, 0), [(x0, y0, z0), (x0, y0, z1), (x0, y1, z1), (x0, y1, z0)], lambda p: (p[2], p[1])),
+        ((0, 1, 0), [(x0, y1, z1), (x1, y1, z1), (x1, y1, z0), (x0, y1, z0)], lambda p: (p[0], p[2])),
+    ]
+    for n, corners, project in faces:
+        mesh.quad(corners, n, [tuple(c / tile for c in project(p)) for p in corners])
+
+
+def round_rail(mesh, ends, a, b, r, half=False, sides=12):
+    """A round (or half-round, flat side down) log from a to b, both (x, y, z), with end caps in
+    the ends mesh. v runs along it."""
+    axis = sub(b, a)
+    length = math.sqrt(dot(axis, axis))
+    axis = norm(axis)
+    side = norm(cross(axis, (0.0, 1.0, 0.0)))
+    up = cross(side, axis)
+    angles = [math.pi * k / sides for k in range(sides + 1)] if half else [2 * math.pi * k / sides for k in range(sides + 1)]
+    rings = []
+    for end, t in ((a, 0.0), (b, length)):
+        ring = []
+        for k, angle in enumerate(angles):
+            d = tuple(side[m] * math.cos(angle) + up[m] * math.sin(angle) for m in range(3))
+            p = tuple(end[m] + d[m] * r for m in range(3))
+            ring.append(mesh.vertex(p, d, (k / sides * 0.5, t / 1.5)))
+        rings.append(ring)
+    tube(mesh, rings, None)
+    for end, sign in ((a, -1.0), (b, 1.0)):
+        n = tuple(axis[m] * sign for m in range(3))
+        middle = ends.vertex(end, n, (0.5, 0.5))
+        rim = []
+        for angle in angles:
+            d = tuple(side[m] * math.cos(angle) + up[m] * math.sin(angle) for m in range(3))
+            rim.append(ends.vertex(tuple(end[m] + d[m] * r for m in range(3)), n,
+                                   (0.5 + 0.45 * math.cos(angle), 0.5 + 0.45 * math.sin(angle))))
+        for k in range(len(rim) - 1):
+            ends.tri(middle, rim[k], rim[k + 1])
+        if not half:
+            ends.tri(middle, rim[-1], rim[0])
+
+
+def drop_depth(wall):
+    """How far each wing runs back over the bank's side."""
+    return max(2.4, 2.5 * wall["drop"])
+
+
+def build_drop_wall(wall):
+    """The plank face, posts, lip cap and wings; and one collision mesh (face and wings)."""
+    planks, wood, ends, col = Mesh(), Mesh(), Mesh(), Mesh()
+    h = wall["drop"]
+    half = DROP_WIDTH / 2
+    lip = -DROP_LIP           # z of the face's front
+    bottom = -h - SKIRT
+    depth = drop_depth(wall)
+
+    def face_plane(a, b, c):
+        return (a, b, lip + BOARD_T + c)
+    face = [(-half, bottom), (half, bottom), (half, 0.0), (-half, 0.0)]
+    slab(planks, face, BOARD_T, face_plane, lambda a, b: (a / PLANK_TILE[0], -b / PLANK_TILE[1]))
+    slab(col, face, BOARD_T + 0.1, face_plane, lambda a, b: (0, 0))
+    # wings: top edge level with the lip, front edge the full drop, the bottom rising to nothing
+    # at the back; boards run horizontally, the outline reaches SKIRT below the slope
+    wing = [(0.0, bottom), (depth, -SKIRT * 0.6), (depth, 0.0), (0.0, 0.0)]
+    for x, sign in ((-half, -1), (half, 1)):
+        def wing_plane(a, b, c, x=x, sign=sign):
+            return (x - sign * (BOARD_T + c), b, lip + a)
+        outline = wing if sign > 0 else list(reversed(wing))
+        slab(planks, outline, BOARD_T, wing_plane, lambda a, b: (a / PLANK_TILE[0], -b / PLANK_TILE[1]))
+        slab(col, outline, BOARD_T + 0.1, wing_plane, lambda a, b: (0, 0))
+        round_rail(wood, ends, (x, RAIL_R * 0.8, lip + 0.05), (x, RAIL_R * 0.8, lip + depth + 0.15), RAIL_R)
+    # posts along the face (in front of the boards), corner posts a little proud
+    count = max(2, int(math.ceil(DROP_WIDTH / POST_STEP)) + 1)
+    s = POST_W / 2
+    for i in range(count):
+        x = -half + DROP_WIDTH * i / (count - 1)
+        x = min(max(x, -half + s), half - s)
+        corner = i in (0, count - 1)
+        textured_box(wood, x - s, x + s, bottom, 0.12 if corner else -0.02, lip - POST_W, lip)
+    # the half-round log along the lip, flat side down, overhanging the face a little
+    round_rail(wood, ends, (-half + s * 2, 0.0, lip + CAP_R * 0.6), (half - s * 2, 0.0, lip + CAP_R * 0.6), CAP_R, half=True)
+    return planks, wood, ends, col
+
+
+def preview_ground(wall):
+    """Grass for the shop image only: the low ground in front, the bank behind, and either side
+    a ramp rising from the low ground at the face to the top at the wings' far end."""
+    g = Mesh()
+    h = wall["drop"]
+    lip = -DROP_LIP
+    depth = drop_depth(wall)
+    back = lip + depth
+    up = (0.0, 1.0, 0.0)
+    flat = [(0.5, 0.5)] * 4
+    g.quad([(-14, -h, lip - 14), (14, -h, lip - 14), (14, -h, lip), (-14, -h, lip)], up, flat)
+    g.quad([(-14, 0.0, back), (14, 0.0, back), (14, 0.0, back + 12), (-14, 0.0, back + 12)], up, flat)
+    g.quad([(-2, 0.0, lip), (2, 0.0, lip), (2, 0.0, back), (-2, 0.0, back)], up, flat)
+    ramp = norm((0.0, depth, -h))
+    for x0, x1 in ((-14, -2), (2, 14)):
+        g.quad([(x0, -h, lip), (x1, -h, lip), (x1, 0.0, back), (x0, 0.0, back)], ramp, flat)
+    return g
+
+
 def collision(jump):
     """One prism round the pile's outline (seen from the side), as long as the shortest log."""
     d = jump["diameter"]
@@ -568,6 +758,8 @@ MATERIALS = [
     ("xcBarkA", "xcBarkA_diffuse.dds", "xcBarkA_normal.dds", False),
     ("xcBarkB", "xcBarkB_diffuse.dds", "xcBarkB_normal.dds", False),
     ("xcLogEnd", "xcLogEnd_diffuse.dds", None, False),
+    ("xcPlanks", "xcPlanks_diffuse.dds", "xcPlanks_normal.dds", False),
+    ("xcPeeled", "xcPeeled_diffuse.dds", None, False),
     ("xcFlags", "xcFlags_diffuse.dds", None, False),
     ("xcGuideGold", "xcFlags_diffuse.dds", None, True),
 ]
@@ -647,7 +839,7 @@ def write_xml(name, price, note, path):
     <storeData>
         <name>$l10n_eq_shop_{name}</name>
         <functions>
-            <function>$l10n_eq_shop_{"courseFlag" if "Flag" in name else "xcJump"}_function</function>
+            <function>$l10n_eq_shop_{"courseFlag" if "Flag" in name else "xcDrop" if "Drop" in name else "xcJump"}_function</function>
         </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
@@ -685,15 +877,15 @@ def write_xml(name, price, note, path):
 # ---------------------------------------------------------------------------------------------
 # Shop image: a small software render of the fence itself, three-quarter view.
 
-def render(meshes, size=512, yaw=-35, pitch=18, ss=2):
+def render(meshes, size=512, yaw=-35, pitch=18, ss=2, skip_fit=0):
     """A small z-buffered rasteriser: textured, smooth-shaded triangles, supersampled.
-    meshes: (mesh, texture as an RGB array)."""
+    meshes: (mesh, texture as an RGB array); the first skip_fit (scenery) are left out of the framing."""
     cy, sy = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
     cp, sp = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
     rot = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
     rot = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ rot
     light = np.array(norm((-0.4, 0.8, 0.5)))
-    pts = np.concatenate([np.array([v[0] for v in m.verts]) for m, _ in meshes if m.verts]) @ rot.T
+    pts = np.concatenate([np.array([v[0] for v in m.verts]) for m, _ in meshes[skip_fit:] if m.verts]) @ rot.T
     span = max(np.ptp(pts[:, 0]), np.ptp(pts[:, 1]))
     w = size * ss
     scale = w * 0.8 / span
@@ -787,6 +979,19 @@ def main():
                     os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
         print(name, f"{height(jump):.2f} m high,", len(layout(jump)), "logs,",
               sum(len(m.tris) for m in bark_meshes) + len(ends_mesh.tris) + len(posts.tris), "triangles")
+    planks_rgb = plank_texture(os.path.join(OUT, "xcPlanks_diffuse.dds"), os.path.join(OUT, "xcPlanks_normal.dds"))
+    peeled_rgb = peeled_texture(os.path.join(OUT, "xcPeeled_diffuse.dds"))
+    grass = np.full((4, 4, 3), (92, 122, 58), dtype=np.uint8)
+    for wall in DROP_WALLS:
+        name = wall["name"]
+        planks, wood, ends_mesh, col = build_drop_wall(wall)
+        shapes = [("planks", planks, "xcPlanks", True), ("wood", wood, "xcPeeled", True), ("ends", ends_mesh, "xcLogEnd", True)]
+        write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, {}, col=col)
+        write_xml(name, wall["price"], f"A {wall['drop']:.1f} m drop: set the origin on the flat top of a bank, the lip {DROP_LIP:g} m in front of it.",
+                  os.path.join(OUT, name + ".xml"))
+        store_image([(preview_ground(wall), grass), (planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
+                    f"{wall['drop']:.1f} m drop", os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-145, pitch=16, skip_fit=1)
+        print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
     for item in FLAGS:
         name = item["name"]
         mesh = Mesh()

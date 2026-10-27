@@ -282,7 +282,7 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
-| Cross country course (the shop's log piles) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
+| Cross country course (the shop's log piles and drop walls) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
 | Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
 
 Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
@@ -294,6 +294,10 @@ nearest white flag of the same height 1 to 15 m away, and the line between them 
 (`eqXcFences` lists them). Flags come for 0.6, 0.9 and 1.2 m fences; a gold bar at that height,
 pointing at the fence, helps line them up and shows only in construction mode. Flags have no
 collision. The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
+Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
+on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
+triangle side walls hide the steep sculpted slope. The terrain is not levelled. Only the face and
+side walls are solid, so the horse drops off the lip; add a pair of flags at the lip.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

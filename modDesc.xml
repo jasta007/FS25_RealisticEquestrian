@@ -44,6 +44,9 @@ Von Jasta007.]]>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena20x60.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcLogPileSmall.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcLogPile.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall08.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall12.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall16.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/courseFlagRed60.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/courseFlagWhite60.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/courseFlagRed90.xml"/>

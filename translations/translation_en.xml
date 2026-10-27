@@ -42,6 +42,10 @@
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
         <text name="eq_shop_courseFlagRed60" text="Cross Country Flag, Red (0.6 m)"/>
         <text name="eq_shop_courseFlagWhite60" text="Cross Country Flag, White (0.6 m)"/>

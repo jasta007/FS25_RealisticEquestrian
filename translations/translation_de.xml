@@ -44,6 +44,10 @@
         <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
         <text name="eq_shop_xcLogPileSmall" text="Holzstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Holzstapel"/>
+        <text name="eq_shop_xcDropWall08" text="Absprungwand (0,8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Absprungwand (1,2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
         <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
         <text name="eq_shop_courseFlagRed60" text="Geländeflagge, Rot (0,6 m)"/>
         <text name="eq_shop_courseFlagWhite60" text="Geländeflagge, Weiß (0,6 m)"/>
