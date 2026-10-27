@@ -301,10 +301,8 @@
         <text name="eq_ui_months" text="%d Monat(e)"/>
         <text name="eq_ui_perMonth" text="%s pro Monat"/>
         <text name="eq_ui_retire" text="Ruhestand"/>
-        <text name="eq_ui_unretire" text="Zurück zum Turniersport"/>
-        <text name="eq_ui_retireConfirm" text="%s aus dem Turniersport nehmen? Das Pferd kann dann an keinen Veranstaltungen mehr teilnehmen. Sie können es später zurückholen."/>
-        <text name="eq_ui_retireConfirmInjured" text="%s aus dem Turniersport nehmen? Die Behandlung der Verletzung kostet dann %d%% weniger, aber das Pferd kann an keinen Veranstaltungen teilnehmen. Sie können es später zurückholen, dann zum vollen Preis."/>
-        <text name="eq_ui_unretireConfirm" text="%s zurück in den Turniersport holen? Die Behandlung einer Verletzung kostet dann wieder den vollen Preis."/>
+        <text name="eq_ui_retireConfirm" text="%s aus dem Turniersport nehmen? Das Pferd kann dann an keinen Veranstaltungen mehr teilnehmen. Das ist endgültig und kann nicht rückgängig gemacht werden."/>
+        <text name="eq_ui_retireConfirmInjured" text="%s aus dem Turniersport nehmen? Die Behandlung der Verletzung kostet dann %d%% weniger, aber das Pferd kann an keinen Veranstaltungen mehr teilnehmen. Das ist endgültig und kann nicht rückgängig gemacht werden."/>
         <text name="eq_ui_dayTreatmentConfirm" text="%s gegen %s behandeln? Das dauert %s und kostet %s."/>
         <text name="eq_risk_low" text="Gering"/>
         <text name="eq_risk_minor" text="Leicht"/>

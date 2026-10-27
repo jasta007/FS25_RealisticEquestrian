@@ -816,8 +816,9 @@ function EqCompetitionManager.isRecoveringFromFoaling(animal)
 end
 
 
---- Retire a horse from competition, or bring it back. An injured horse still has to heal, but
---- its treatment fee drops to EqInjury.RETIRED_FEE_SHARE (back up if it returns).
+--- Retire a horse from competition, or bring it back. In game retirement is permanent: only the
+--- eqRetire undo debug command brings a horse back. An injured horse still has to heal, but its
+--- treatment fee drops to EqInjury.RETIRED_FEE_SHARE (back up if it returns).
 --- @param record table
 --- @param retired boolean
 --- @return boolean ok

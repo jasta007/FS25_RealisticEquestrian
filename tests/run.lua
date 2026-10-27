@@ -2158,6 +2158,10 @@ local function injuryTests()
         and EqInjury.restFor(1, 2) == 1 and EqInjury.restFor(9, 1) == 9 and EqInjury.restFor(1, 28) == 1)
     check("whole months shown", EqInjury.wholeMonths(0.2) == 1 and EqInjury.wholeMonths(2) == 2 and EqInjury.wholeMonths(2.01) == 3)
     check("a retired horse pays 40%", EqInjury.fee(4000, true) == 1600 and EqInjury.fee(4000, false) == 4000)
+    check("the Retire warnings say it is permanent, and there is no way back in game",
+        translations:match('name="eq_ui_retireConfirm" text="[^"]*permanent') ~= nil
+        and translations:match('name="eq_ui_retireConfirmInjured" text="[^"]*permanent') ~= nil
+        and translations:find('eq_ui_unretire', 1, true) == nil)
     check("the event colic chance follows RLRM's age bands",
         EqInjury.monthlyChance({ { ageMonths = 11, perMonth = 0.003 }, { ageMonths = 12, perMonth = 0.006 } }, 6) == 0.003
         and EqInjury.monthlyChance({ { ageMonths = 11, perMonth = 0.003 }, { ageMonths = 12, perMonth = 0.006 } }, 60) == 0.006)

@@ -124,6 +124,7 @@ uses its genetics, health and fitness.
   one-day $400 fix or a month of rest; a chip fracture is two months of surgery at $12,000 a
   month or a year off. Injuries never spread, and an injured horse can't be sold until it heals.
 - **Retire** on that page (or `eqRetire`) cuts an injured horse's treatment fee by 60%.
+  Retirement is permanent.
 - Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
   (colic), more after a long trip. A sick horse can't be entered until it is better.
 - With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
