@@ -60,7 +60,6 @@
         <text name="eq_ex_halt" text="Standing"/>
         <text name="eq_ex_reverse" text="Backing up"/>
         <text name="eq_ex_prompt_tap" text="Keep tapping W!"/>
-        <text name="eq_ex_prompt_recover" text="Ease off! (S)"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint over"/>
         <text name="eq_pop_ex_blown" text="Blowing hard!"/>
@@ -69,7 +68,17 @@
         <text name="eq_help_gallop_title" text="Galloping"/>
         <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
         <text name="eq_help_gallop_2" text="If the bar reaches the red Blowing hard section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
-        <text name="eq_help_gallop_3" text="Tap W quickly three times while galloping to Sprint, and keep tapping to hold it: much faster, but the bar fills fast. Quick taps slow that down for a while. Only a Sprint can go past the Blowing hard line, for one last push to the finish, but a Sprint that ends there leaves your horse exhausted and it recovers very slowly."/>
+        <text name="eq_help_gallop_3" text="Tap W quickly three times while galloping to Sprint, and keep tapping to hold it: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Blowing hard line, for one last push to the finish, but a Sprint that ends there leaves your horse exhausted and it recovers very slowly until it is back under the line."/>
+        <text name="eq_ex_hint_keepTapping" text="Keep tapping W"/>
+        <text name="eq_ex_hint_sprint" text="Sprint ready: tap W x3"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
+        <text name="eq_ex_hint_recover" text="S: recover"/>
+        <text name="eq_ex_hint_push" text="W: push"/>
+        <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
+        <text name="eq_ex_hint_canterOne" text="S: canter"/>
+        <text name="eq_ex_hint_canterDouble" text="Double tap S: canter"/>
+        <text name="eq_ex_careful" text="Careful"/>
+        <text name="eq_ex_overExerted" text="Over exerted"/>
         <text name="eq_train_tiredness" text="Exertion"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>

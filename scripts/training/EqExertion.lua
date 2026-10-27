@@ -8,14 +8,16 @@
       stat. Exertion rises, faster the higher it is, more slowly for a horse with more Stamina.
     - Recovering: S from Pushing. A slower gallop that brings exertion back down to empty, and
       stays a gallop until the rider asks for a canter.
-    - Sprinting: tap W quickly SPRINT_TAPS times while galloping, and keep tapping. Much faster,
-      exertion rises fast; quick taps slow that for a while. Only a Sprint may go past the
-      Blowing hard line, into a last gasp that ends at EXERTION_MAX.
+    - Sprinting: tap W quickly SPRINT_TAPS times while galloping, and keep tapping. Much faster;
+      exertion rises slowly at first and ever faster, so taking it as high as possible without
+      crossing the line is the skill. Quick taps slow the rise for a while. Ending a Sprint goes to
+      Recovering. Only a Sprint may go past the Blowing hard line, into a last gasp that ends at
+      EXERTION_MAX. After a Sprint the horse can Push but not Sprint again until exertion is empty.
 
     Pushing up to the Blowing hard line (LINE) blows the horse: it drops to a canter and can't
     gallop again until exertion is empty. A Sprint that ends past the line leaves it exhausted:
-    the same, but exertion falls SPENT_SHARE as fast. At a canter or slower exertion falls fast,
-    faster the slower the gait.
+    the same, but while exertion is still past the line it falls only SPENT_SHARE as fast. At a
+    canter or slower exertion falls fast, faster the slower the gait.
 
     Slowing from a gallop to a canter takes one press of S while Recovering with exertion empty,
     or else a quick double tap. EqTrainingHooks keeps the base game's gait in line with this.
@@ -34,15 +36,20 @@ EqExertion.PUSH_RISE = 2.2
 EqExertion.PUSH_CLIMB = 1
 -- Recovering: RECOVER_DROP per second, from RECOVER_LOW of it when nearly empty to RECOVER_LOW +
 -- RECOVER_HIGH near the line: easing off is worth most when the horse is working hardest.
-EqExertion.RECOVER_DROP = 2.5
+EqExertion.RECOVER_DROP = 3.5
 EqExertion.RECOVER_LOW = 0.6
 EqExertion.RECOVER_HIGH = 0.8
--- Sprinting: SPRINT_RISE per second, the same on both sides of the line.
-EqExertion.SPRINT_RISE = 7
+-- Sprinting: SPRINT_RISE per second at the start, SPRINT_RAMP more for every second it lasts, up
+-- to SPRINT_RISE_MAX; the same on both sides of the line. (James, 2026-10-27: start slowly and get
+-- faster, so stopping just short of the line is a challenge.)
+EqExertion.SPRINT_RISE = 3
+EqExertion.SPRINT_RAMP = 1.6
+EqExertion.SPRINT_RISE_MAX = 20
 -- Canter and slower: exertion falls this much per second.
-EqExertion.FALL = { canter = 5, trot = 7, reverse = 7, walk = 9, halt = 10 }
--- Exhausted (a Sprint ended past the line): it falls at this share of the rate.
-EqExertion.SPENT_SHARE = 0.25
+EqExertion.FALL = { canter = 9, trot = 12, reverse = 12, walk = 14, halt = 16 }
+-- Exhausted (a Sprint ended past the line): while still past the line it falls at this share of
+-- the rate (slower gaits still help).
+EqExertion.SPENT_SHARE = 0.2
 
 -- Stats change the rates: how fast Pushing tires the horse, by Stamina (stat 0 to 100), how fast
 -- it gets its breath back (Recovering, cantering or slower), by Stamina, and how fast a Sprint
@@ -61,10 +68,10 @@ EqExertion.GALLOP_SHARE = { recover = 0.8, push = 1, sprint = 1.25 }
 EqExertion.SPRINT_TAPS = 3
 EqExertion.SPRINT_TAP_GAP_MS = 400
 EqExertion.SPRINT_KEEP_MS = 600
-EqExertion.SPRINT_TAP_EASE = 0.6
+EqExertion.SPRINT_TAP_EASE = 0.4
 EqExertion.SPRINT_FAST_TAP_MS = 130
 EqExertion.SPRINT_SLOW_TAP_MS = 450
-EqExertion.SPRINT_EASE_MS = 8000
+EqExertion.SPRINT_EASE_MS = 10000
 
 -- Two presses of S this close together are a double tap. A press that allows a canter allows it
 -- for DROP_GRACE_MS, in case the base game changes gait a frame later.
@@ -79,7 +86,7 @@ EqExertion.BAR = { reverse = 0, halt = 0.033, walk = 0.065, trot = 0.13, canter 
 --- @return table ex a rested horse
 function EqExertion.new()
     return { value = 0, mode = nil, lock = nil, clock = 0, taps = 0, tapAt = -math.huge, backAt = -math.huge,
-        dropUntil = -math.huge, sprintMs = 0, tapGap = nil }
+        dropUntil = -math.huge, sprintMs = 0, tapGap = nil, sprinted = false }
 end
 
 
@@ -106,17 +113,32 @@ local function lockOut(ex, kind)
 end
 
 
---- End a Sprint: back to Pushing, or exhausted when it ended past the line.
+--- End a Sprint: on to Recovering, or exhausted when it ended past the line. No new Sprint
+--- until exertion is empty.
 --- @param ex table
 --- @return string event "sprintOver" or "spent"
 local function endSprint(ex)
-    ex.sprintMs, ex.tapGap = 0, nil
+    ex.sprintMs, ex.tapGap, ex.sprinted = 0, nil, true
     if ex.value >= EqExertion.LINE then
         lockOut(ex, "spent")
         return "spent"
     end
-    ex.mode, ex.taps = "push", 0
+    ex.mode, ex.taps = "recover", 0
     return "sprintOver"
+end
+
+
+--- @param ex table
+--- @return boolean true when taps of W would start a Sprint
+function EqExertion.canSprint(ex)
+    return (ex.mode == "push" or ex.mode == "recover") and not ex.sprinted
+end
+
+
+--- @param ex table
+--- @return boolean true when one press of S slows to a canter (else it takes a double tap)
+function EqExertion.canterOnOneTap(ex)
+    return ex.mode == "recover" and ex.value <= 0
 end
 
 
@@ -141,10 +163,12 @@ function EqExertion.rate(ex, gait, stamina, speed)
             local fade = 1 - ex.sprintMs / EqExertion.SPRINT_EASE_MS
             ease = EqExertion.SPRINT_TAP_EASE * math.min(math.max(pace, 0), 1) * math.min(math.max(fade, 0), 1)
         end
-        return EqExertion.SPRINT_RISE * byStat(EqExertion.SPRINT_SPEED, speed) * (1 - ease)
+        local rise = math.min(EqExertion.SPRINT_RISE + EqExertion.SPRINT_RAMP * ex.sprintMs / 1000, EqExertion.SPRINT_RISE_MAX)
+        return rise * byStat(EqExertion.SPRINT_SPEED, speed) * (1 - ease)
     end
     local fall = EqExertion.FALL[gait] or EqExertion.FALL.canter
-    return -fall * byStat(EqExertion.RECOVER_STAMINA, stamina) * (ex.lock == "spent" and EqExertion.SPENT_SHARE or 1)
+    local spent = ex.lock == "spent" and v > EqExertion.LINE
+    return -fall * byStat(EqExertion.RECOVER_STAMINA, stamina) * (spent and EqExertion.SPENT_SHARE or 1)
 end
 
 
@@ -184,9 +208,12 @@ function EqExertion.step(ex, gait, dt, stamina, speed)
         endSprint(ex)
         event = "spent"
     end
-    if ex.lock ~= nil and ex.value <= 0 then
-        ex.lock = nil
-        event = "fresh"
+    if ex.value <= 0 then
+        ex.sprinted = false
+        if ex.lock ~= nil then
+            ex.lock = nil
+            event = "fresh"
+        end
     end
     return event
 end
@@ -207,7 +234,7 @@ function EqExertion.press(ex, key)
         end
         ex.taps = now - ex.tapAt <= EqExertion.SPRINT_TAP_GAP_MS and ex.taps + 1 or 1
         ex.tapAt = now
-        if ex.taps >= EqExertion.SPRINT_TAPS then
+        if ex.taps >= EqExertion.SPRINT_TAPS and not ex.sprinted then
             ex.mode, ex.sprintMs, ex.tapGap, ex.taps = "sprint", 0, nil, 0
             return "sprint"
         end

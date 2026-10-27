@@ -800,7 +800,8 @@ EqTrainingHooks.MARKER_EASE_MS = 120
 local function exertionRows(spec, ex)
     local gait = spec.eqLastGait or "halt"
     local state = EqExertion.state(ex, gait)
-    local lit = { [gait == "reverse" and "halt" or gait] = true }
+    -- Standing lights nothing; backing up lights the first section.
+    local lit = { [gait == "reverse" and "halt" or gait] = gait ~= "halt" }
     if ex.mode ~= nil then lit.gallop = true end
     if ex.lock ~= nil or ex.value > EqExertion.LINE then lit.blown = true end
 
@@ -830,20 +831,62 @@ local function exertionRows(spec, ex)
     spec.eqMarker = spec.eqMarker == nil and target or spec.eqMarker + (target - spec.eqMarker) * step
     spec.eqMarkerAt = now
 
-    return { words, { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
+    local rows = { words, { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
         marker = spec.eqMarker } }
+    for _, hint in ipairs(EqTrainingHooks.exertionHints(ex)) do
+        table.insert(rows, { left = g_i18n:getText(hint[1]), leftColor = hint[2] })
+    end
+    return rows
+end
+
+
+--- What the rider can press now, for the panel under the bar.
+--- @param ex table
+--- @return table list of { text key, colour }
+function EqTrainingHooks.exertionHints(ex)
+    local hints = {}
+    if ex.mode == "sprint" then
+        table.insert(hints, { "eq_ex_hint_keepTapping", COLOR.white })
+    elseif ex.mode ~= nil then
+        if EqExertion.canSprint(ex) then
+            table.insert(hints, { "eq_ex_hint_sprint", COLOR.white })
+        else
+            table.insert(hints, { "eq_ex_hint_sprintRest", COLOR.grey })
+        end
+        table.insert(hints, { ex.mode == "push" and "eq_ex_hint_recover" or "eq_ex_hint_push", COLOR.grey })
+    elseif ex.lock ~= nil then
+        table.insert(hints, { "eq_ex_hint_locked", COLOR.grey })
+    end
+    if ex.mode ~= nil then
+        table.insert(hints, { EqExertion.canterOnOneTap(ex) and "eq_ex_hint_canterOne" or "eq_ex_hint_canterDouble", COLOR.grey })
+    end
+    return hints
 end
 
 
 --- The middle of the screen: keep tapping during a Sprint, ease off near the line.
 --- @param ex table
+-- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
+EqTrainingHooks.SPRINT_INTRO_MS = 2500
+
 local function exertionPrompt(ex)
+    local label, labelColor, pulse = nil, COLOR.yellow, false
+    if ex.value > EqExertion.LINE then
+        label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
+    elseif ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+        label, pulse = g_i18n:getText("eq_ex_careful"), true
+    end
     if ex.mode == "sprint" then
         local left = 1 - (ex.clock - ex.tapAt) / EqExertion.SPRINT_KEEP_MS
-        EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_tap"), left, ex.value > EqExertion.LINE and COLOR.red or COLOR.white)
-    elseif ex.mode == "push" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
-        EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_recover"),
-            (EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM), COLOR.yellow)
+        local color = ex.value > EqExertion.LINE and COLOR.red or COLOR.white
+        if ex.sprintMs < EqTrainingHooks.SPRINT_INTRO_MS then
+            EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_tap"), left, color)
+        else
+            EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse)
+        end
+    elseif ex.mode == "push" and label ~= nil then
+        EqTrainingHud.drawCentreBar((EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM),
+            COLOR.yellow, label, labelColor, pulse)
     end
 end
 

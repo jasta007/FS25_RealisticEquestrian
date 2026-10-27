@@ -62,7 +62,6 @@
         <text name="eq_ex_halt" text="Stillstand"/>
         <text name="eq_ex_reverse" text="Rückwärts"/>
         <text name="eq_ex_prompt_tap" text="Weiter W tippen!"/>
-        <text name="eq_ex_prompt_recover" text="Nachlassen! (S)"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint vorbei"/>
         <text name="eq_pop_ex_blown" text="Außer Atem!"/>
@@ -71,7 +70,17 @@
         <text name="eq_help_gallop_title" text="Renngalopp"/>
         <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Drücken Sie im Galopp W, um mit dem Antreiben zu beginnen: schnell, aber der Anstrengungsbalken füllt sich, und zwar umso schneller, je höher er steht. Drücken Sie S zum Erholen: ein langsamerer Renngalopp, in dem die Anstrengung wieder sinkt, ohne dass Sie den Renngalopp verlassen. Mit W treiben Sie wieder an. Ein fitteres Pferd ermüdet langsamer und erholt sich schneller."/>
         <text name="eq_help_gallop_2" text="Erreicht der Balken beim Antreiben den roten Bereich Außer Atem, fällt Ihr Pferd in den Galopp zurück und kann erst wieder in den Renngalopp, wenn der Balken leer ist. Um selbst in den Galopp zu wechseln, drücken Sie beim Erholen mit leerem Balken einmal S oder jederzeit zweimal schnell S."/>
-        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp dreimal schnell W, um zu sprinten, und tippen Sie weiter, um den Sprint zu halten: viel schneller, aber der Balken füllt sich rasch. Schnelles Tippen bremst das eine Weile. Nur ein Sprint kann über die Linie Außer Atem hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd erschöpft und erholt sich nur sehr langsam."/>
+        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp dreimal schnell W, um zu sprinten, und tippen Sie weiter, um den Sprint zu halten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie Außer Atem hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd erschöpft und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
+        <text name="eq_ex_hint_keepTapping" text="Weiter W tippen"/>
+        <text name="eq_ex_hint_sprint" text="Sprint bereit: 3x W tippen"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: erst ganz erholen"/>
+        <text name="eq_ex_hint_recover" text="S: erholen"/>
+        <text name="eq_ex_hint_push" text="W: antreiben"/>
+        <text name="eq_ex_hint_locked" text="Galopp, bis der Balken leer ist"/>
+        <text name="eq_ex_hint_canterOne" text="S: Galopp"/>
+        <text name="eq_ex_hint_canterDouble" text="2x S tippen: Galopp"/>
+        <text name="eq_ex_careful" text="Vorsicht"/>
+        <text name="eq_ex_overExerted" text="Überanstrengt"/>
         <text name="eq_train_tiredness" text="Anstrengung"/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>

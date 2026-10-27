@@ -329,6 +329,36 @@ function EqTrainingHud.drawPrompt(value, share, color)
 end
 
 
+-- The bar alone in the middle: a small word above it, and a faint slow pulse (never a strobe).
+EqTrainingHud.CENTRE_BAR = { labelSize = 0.014, pulseMs = 900, pulseDepth = 0.35 }
+
+--- Draw just the prompt's bar in the middle of the screen, with an optional small word above.
+--- @param share number 0..1
+--- @param color table
+--- @param label string|nil
+--- @param labelColor table|nil
+--- @param pulse boolean|nil true to pulse the bar faintly
+function EqTrainingHud.drawCentreBar(share, color, label, labelColor, pulse)
+    local p, c = EqTrainingHud.PROMPT, EqTrainingHud.CENTRE_BAR
+    local alpha = 1
+    if pulse then
+        local phase = ((g_time or 0) % c.pulseMs) / c.pulseMs
+        alpha = 1 - c.pulseDepth * (0.5 - 0.5 * math.cos(phase * 2 * math.pi))
+    end
+    local left = p.x - p.barWidth / 2
+    local y = p.y - p.barHeight * 2
+    local edge = p.barHeight * 0.5
+    fill(left - edge, y - edge, p.barWidth + edge * 2, p.barHeight + edge * 2, { 0, 0, 0, 0.6 })
+    fill(left, y, p.barWidth, p.barHeight, EqTrainingHud.COLOR.track)
+    fill(left, y, p.barWidth * math.max(0, math.min(1, share)), p.barHeight, { color[1], color[2], color[3], alpha })
+    if label ~= nil then
+        local lc = labelColor or color
+        shadowText(label, p.x, y + p.barHeight * 2, c.labelSize, { lc[1], lc[2], lc[3], pulse and alpha or 1 }, RenderText.ALIGN_CENTER, true)
+    end
+    resetText()
+end
+
+
 --- Split text into lines that fit a width.
 --- @param value string
 --- @param width number

@@ -614,13 +614,27 @@ do
     check("Sprint is the fastest pace, Recovering the slowest", E.speedShare(sp) > 1
         and E.GALLOP_SHARE.recover < E.GALLOP_SHARE.push and E.GALLOP_SHARE.push < E.speedShare(sp))
     events = ride(sp, "gallop", 1000)
-    check("a Sprint ends when the tapping stops", events[1] == "sprintOver" and sp.mode == "push")
+    check("a Sprint ends when the tapping stops, into Recovering", events[1] == "sprintOver" and sp.mode == "recover")
+    check("no new Sprint until the bar is empty", not E.canSprint(sp) and tap(sp, 3, 150) ~= "sprint" and sp.mode == "push")
+    check("but Pushing is fine", sp.mode == "push")
+    ride(sp, "canter", 30000)
+    ride(sp, "gallop", 100)
+    check("an empty bar allows a Sprint again", E.canSprint(sp) and tap(sp, 3, 150) == "sprint")
+    local ramp = E.new()
+    ramp.mode, ramp.tapAt = "sprint", 0
+    local first = E.rate(ramp, "gallop", 50, 50)
+    ramp.sprintMs = 6000
+    check("a Sprint fills the bar slowly at first, then ever faster", E.rate(ramp, "gallop", 50, 50) > first * 3)
+    local pushRate = E.new()
+    pushRate.mode, pushRate.value = "push", 40
+    check("a Sprint starts no faster than Pushing near the top", first < E.rate(pushRate, "gallop", 50) * 1.5)
     local function sprintRise(gap, after)
         local s2 = E.new()
         ride(s2, "gallop", 100)
         tap(s2, 3, 100)
         local t = 0
         while t < after do
+            s2.value = 0
             ride(s2, "gallop", gap)
             E.press(s2, "forward")
             t = t + gap
@@ -628,7 +642,7 @@ do
         return E.rate(s2, "gallop", 50, 50)
     end
     check("quick taps slow the Sprint's rise", sprintRise(150, 1000) < sprintRise(400, 1000) * 0.7)
-    check("but only for so long", near(sprintRise(150, 9000), sprintRise(400, 9000), 1e-9))
+    check("but only for so long", near(sprintRise(150, 11000), sprintRise(400, 11000), 1e-9))
     check("a faster horse tires more slowly when Sprinting", (function()
         local a, b = E.new(), E.new()
         a.mode, b.mode = "sprint", "sprint"
@@ -653,7 +667,14 @@ do
         and E.forcedGait(last) == "canter")
     local fresh = E.new()
     fresh.lock, fresh.value = "blown", last.value
-    check("an exhausted horse recovers much more slowly", -E.rate(last, "canter") < -E.rate(fresh, "canter") * 0.3)
+    check("an exhausted horse recovers much more slowly while past the line", -E.rate(last, "canter") < -E.rate(fresh, "canter") * 0.3)
+    check("slower gaits still help an exhausted horse", -E.rate(last, "trot") > -E.rate(last, "canter"))
+    local under = E.new()
+    under.lock, under.value = "spent", 60
+    check("once back under the line it recovers at the normal rate", near(E.rate(under, "canter"), E.rate(fresh, "canter")))
+    local recovering = E.new()
+    recovering.mode, recovering.value = "recover", 60
+    check("dropping to a canter brings the bar down much faster than Recovering", -E.rate(fresh, "canter") > -E.rate(recovering, "gallop") * 2)
     local gasp = E.new()
     gasp.mode, gasp.value, gasp.tapAt = "sprint", E.EXERTION_MAX - 0.1, 0
     events = ride(gasp, "gallop", 50)
@@ -672,7 +693,7 @@ do
     m.value = E.LINE
     check("the Blowing hard line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
     check("the state names the pace, the lock or the gait", E.state(E.new(), "trot") == "trot" and E.state(blown, "canter") ~= nil
-        and E.state(sp, "gallop") == "push")
+        and E.state(sp, "gallop") == "sprint")
 
     -- A rider who pushes, eases off before the line and pushes again keeps a fast average for
     -- five minutes without blowing; one who only pushes blows.
