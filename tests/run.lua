@@ -2710,11 +2710,15 @@ end)()
     r.task.gait = "canter"
     EqTraining.routineStep(sheet, "canter", nil, 50, false, one, here)
     check("a canter asked for keeps the routine", r.active)
-    EqTraining.routineStep(sheet, "gallop", nil, 50, false, one, here)
-    check("a gallop breaks it", not r.active)
-    for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
-    for _ = 1, 100 do EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here) end
-    check("stopping mid-leg breaks it", not r.active)
+    r.mult = 5
+    local faults = 0
+    for _ = 1, 40 do
+        if EqTraining.routineStep(sheet, "gallop", nil, 50, false, one, here) == "fault" then faults = faults + 1 end
+    end
+    check("galloping is a fault, not the end", r.active and faults == 1 and r.faults == 1 and r.mult == 3 and r.task.kind == "go",
+        string.format("faults %d mult %d", faults, r.mult))
+    for _ = 1, 400 do EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here) end
+    check("three faults end it", not r.active)
     for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
     EqTraining.routineStep(sheet, "walk", nil, 50, false, one, nil)
     check("leaving the course carries on with the free routine", r.active and r.kind == "free" and r.task == nil)

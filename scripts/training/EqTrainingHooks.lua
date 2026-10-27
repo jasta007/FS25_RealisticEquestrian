@@ -373,6 +373,22 @@ local function tuneRiding(spec, gait, record, sheet)
         spec.eqBaseTurnSpeed = spec.eqBaseTurnSpeed or spec.maxTurnSpeed
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn
     end
+    -- Above a walk the base game turns no tighter than each gait's minimum radius, so the turn
+    -- rate alone hardly shows (James, 2026-10-27): the radii shrink by the same factor.
+    if type(spec.minTurnRadius) == "table" then
+        if spec.eqBaseTurnRadius == nil then
+            spec.eqBaseTurnRadius, spec.minTurnRadius = spec.minTurnRadius, {}
+            local listed = {}
+            for key, value in pairs(spec.eqBaseTurnRadius) do
+                spec.minTurnRadius[key] = value
+                table.insert(listed, string.format("%s=%s", tostring(key), tostring(value)))
+            end
+            Log:info("Base turn radii: %s", table.concat(listed, ", "))
+        end
+        for key, value in pairs(spec.eqBaseTurnRadius) do
+            if type(value) == "number" then spec.minTurnRadius[key] = value / handling.turn end
+        end
+    end
     if type(spec.topSpeeds) == "table" then
         if spec.eqBaseTopSpeeds == nil then
             -- Our own table, in case the base game shares one between horses.
@@ -485,6 +501,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         local okCourse, course = pcall(EqDressageHooks.courseFor, vehicle, spec)
         local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
+        elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
         elseif event == "test" then EqTrainingHud.pop("routineTest")
         elseif event == "lost" then EqTrainingHud.pop("routineLost") end
         if event ~= nil and sheet.routine.kind == "markers" then

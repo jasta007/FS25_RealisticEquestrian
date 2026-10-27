@@ -191,7 +191,7 @@ EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
     tempo = "stamina", tempoLost = "stamina", staminaOn = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
-    routine = "temperament", routineStart = "temperament", routineLost = "temperament", routineTest = "temperament",
+    routine = "temperament", routineStart = "temperament", routineLost = "temperament", routineTest = "temperament", routineFault = "temperament",
     sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
 }
 
@@ -233,6 +233,8 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = g_i18n:getText("eq_pop_sprint_over"), EqTrainingHud.COLOR.grey, 1
     elseif kind == "staminaOn" then
         text, color, big = g_i18n:getText("eq_pop_staminaOn"), EqTrainingHud.COLOR.white, 2
+    elseif kind == "routineFault" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineTest" then
         text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
     elseif kind == "routineStart" then

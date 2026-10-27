@@ -120,8 +120,10 @@ asked for to markers within 12 m:
 - Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
   canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
   comes from its length and shrinks as the multiplier climbs. The marker is tagged on the map.
-- After 3 seconds to settle, the wrong gait for 1.5 seconds breaks the routine, and so does a gallop,
-  a jump or running out of time. Steering is free.
+- After 3 seconds to settle, the wrong gait (or a gallop) for 1.5 seconds or running out of time is a
+  **fault**: the multiplier drops two steps and a fresh leg starts from where you are. The third
+  fault ends the routine, and so does a jump. A leg that starts with a turn gets extra time, up to
+  6 seconds at a trot for a full about-turn. Steering is free.
 - The next command shows about 3 seconds before the marker; reaching it (3 to 4.5 m) is one step up.
 - Passing close to another marker may ask for a gait change ("Change: Trot", or "Flying change:
   Canter" from a walk; 2 seconds), worth an extra step, only to a gait the rest of the leg suits.
@@ -134,8 +136,9 @@ asked for to markers within 12 m:
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
-agility sets how high it jumps and how quickly it turns; a calm horse (temperament) changes pace a
-little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
+turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
+better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop.
 
 ### Staff, age and metabolism

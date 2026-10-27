@@ -83,6 +83,13 @@ EqDressage.ARENA_NEAR = 30
 EqDressage.TEST_MOVES = 15
 EqDressage.TEST_BONUS_SECONDS = 60
 EqDressage.TEST_REST_MS = 20000
+-- A leg that starts with a turn gets more time: TURN_ALLOW_MS at its gait for a full about-turn,
+-- in proportion for less (James: turning round at M to ride to K eats a third of the time).
+EqDressage.TURN_ALLOW_MS = { walk = 4000, trot = 6000, canter = 8000 }
+-- A mistake (the wrong gait, running out of time) is a fault, not the end (James): the
+-- multiplier drops FAULT_DROP steps and a fresh leg starts from here; FAULTS faults end it.
+EqDressage.FAULTS = 3
+EqDressage.FAULT_DROP = 2
 
 
 --- @return number metres between two points on the ground
@@ -348,7 +355,16 @@ local function begin(routine, task, course)
     routine.afterReverse = task.kind == "halt" and routine.lastDone == "reverse"
     if task.kind == "go" then
         task.gaitMs = 0
-        routine.reactMs = EqDressage.legMs(routine, task.gait, distance(course.x, course.z, task.marker.x, task.marker.z))
+        local dx, dz = task.marker.x - course.x, task.marker.z - course.z
+        local length = math.sqrt(dx * dx + dz * dz)
+        routine.reactMs = EqDressage.legMs(routine, task.gait, length)
+        task.startX, task.startZ = course.x, course.z
+        local heading = routine.heading
+        if heading ~= nil and length > 0.5 then
+            -- 0 straight on, 1 a full about-turn from the way the last leg rode.
+            local turn = math.acos(math.max(-1, math.min(1, (dx * heading.x + dz * heading.z) / length))) / math.pi
+            routine.reactMs = routine.reactMs + EqDressage.TURN_ALLOW_MS[task.gait] * turn * EqDressage.TIME_FACTOR
+        end
     else
         routine.reactMs = EqDressage.REACT_MS * EqDressage.TIME_FACTOR
     end
@@ -364,6 +380,7 @@ end
 --- @param rng function
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone, routine.steps, routine.testX = "markers", nil, nil, 0, nil
+    routine.faults, routine.heading = 0, nil
     begin(routine, EqDressage.openingLeg(course) or EqDressage.planLeg(routine, course, rng), course)
 end
 
@@ -377,7 +394,12 @@ local function finish(routine, course, rng)
     if routine.testX ~= nil and not task.opening then routine.steps = (routine.steps or 0) + 1 end
     routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
     routine.lastDone = task.kind
-    if task.kind == "go" then routine.from = task.marker end
+    if task.kind == "go" then
+        routine.from = task.marker
+        local hx, hz = task.marker.x - (task.startX or task.marker.x), task.marker.z - (task.startZ or task.marker.z)
+        local length = math.sqrt(hx * hx + hz * hz)
+        if length > 0.5 then routine.heading = { x = hx / length, z = hz / length } end
+    end
     local nextTask = routine.preview or EqDressage.plan(routine, course, task.kind, rng)
     if task.kind == "halt" or task.kind == "turn" then
         -- Stand a moment before the next command.
@@ -392,6 +414,32 @@ local function finish(routine, course, rng)
 end
 
 
+--- A mistake: a fault, the multiplier down FAULT_DROP steps and a fresh leg from here; the
+--- FAULTS-th ends the routine.
+--- @return string event "fault" or "lost"
+local function fault(sheet, course, rng)
+    local routine = sheet.routine
+    routine.faults = (routine.faults or 0) + 1
+    if routine.faults >= EqDressage.FAULTS then
+        EqTraining.breakRoutine(sheet)
+        return "lost"
+    end
+    routine.mult = math.max(1, routine.mult - EqDressage.FAULT_DROP)
+    routine.from = nil
+    -- Keep the test's place: its final legs come back once the count is reached.
+    local nextTask
+    if routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES then
+        local x = routine.testX
+        nextTask = { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
+    else
+        nextTask = EqDressage.planLeg(routine, course, rng)
+    end
+    routine.pending = nil
+    begin(routine, nextTask, course)
+    return "fault"
+end
+
+
 --- One frame of the routine on a course.
 --- @param sheet table
 --- @param move string walk, trot, canter, gallop, halt or reverse
@@ -399,11 +447,11 @@ end
 --- @param dt number milliseconds
 --- @param rng function
 --- @param course table { x, z, markers } the horse's position and the course
---- @return string|nil event "request", "done", "bonus", "lost" or nil
+--- @return string|nil event "request", "done", "bonus", "fault", "lost" or nil
 function EqDressage.step(sheet, move, steer, dt, rng, course)
     local routine = sheet.routine
     local task = routine.task
-    if move == "gallop" or move == "fast" or task == nil then
+    if task == nil then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
     routine.taskMs = (routine.taskMs or 0) + dt
@@ -411,10 +459,7 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
     if task.kind == "hold" then
         if move ~= "halt" then
             routine.driftMs = routine.driftMs + dt
-            if routine.driftMs >= EqDressage.DRIFT_MS then
-                EqTraining.breakRoutine(sheet)
-                return "lost"
-            end
+            if routine.driftMs >= EqDressage.DRIFT_MS then return fault(sheet, course, rng) end
         else
             routine.driftMs = 0
         end
@@ -485,19 +530,15 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
         -- short of a gallop. Otherwise the leg's gait.
         if task.untimed then return event end
         local free = routine.taskMs < EqDressage.REACT_MS or routine.bonus ~= nil or routine.preview ~= nil
-        if free or move == gait then
+        -- A gallop is never asked for.
+        local galloping = move == "gallop" or (move == "fast" and gait ~= "canter")
+        if move == gait or (free and not galloping) or (move == "fast" and gait == "canter") then
             routine.driftMs = 0
         else
             routine.driftMs = routine.driftMs + dt
-            if routine.driftMs >= EqDressage.DRIFT_MS then
-                EqTraining.breakRoutine(sheet)
-                return "lost"
-            end
+            if routine.driftMs >= EqDressage.DRIFT_MS then return fault(sheet, course, rng) end
         end
-        if routine.clock > routine.deadline then
-            EqTraining.breakRoutine(sheet)
-            return "lost"
-        end
+        if routine.clock > routine.deadline then return fault(sheet, course, rng) end
         return event
     end
 
@@ -516,9 +557,6 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
         done = (task.backMs or 0) >= EqDressage.REVERSE_MS
     end
     if done then return finish(routine, course, rng) end
-    if routine.clock > routine.deadline then
-        EqTraining.breakRoutine(sheet)
-        return "lost"
-    end
+    if routine.clock > routine.deadline then return fault(sheet, course, rng) end
     return nil
 end
