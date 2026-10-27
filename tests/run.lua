@@ -13,6 +13,7 @@ dofile("scripts/core/EqConstants.lua")
 dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
+dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
@@ -278,11 +279,10 @@ end
 local cap70 = { stamina = 70, speed = 70, agility = 70, temperament = 70 }
 
 local canterDay = EqTraining.playerEffort(ridden("canter", 100000))
-check("a full canter day trains agility; stamina only a little without focused work",
-    math.abs(canterDay.stamina - 0.08) < 1e-9 and math.abs(canterDay.agility - 0.12) < 1e-9 and canterDay.speed == 0)
+check("a full canter day trains agility a little; stamina and speed don't train from riding for now",
+    canterDay.stamina == 0 and math.abs(canterDay.agility - 0.12) < 1e-9 and canterDay.speed == 0)
 check("galloping fills riding three times as fast", EqTraining.playerRidingPoints(ridden("gallop", 100000)) == 100)
-check("galloping alone trains speed at a tenth of its gait weight",
-    math.abs(EqTraining.playerEffort(ridden("gallop", 60000)).speed - 0.06) < 1e-9)
+check("galloping trains no speed while the exertion system is tested", EqTraining.playerEffort(ridden("gallop", 60000)).speed == 0)
 check("backing up fills riding 2.5 times as fast as walking", EqTraining.playerRidingPoints(ridden("reverse", 120000)) == 100)
 do
     local reversePoints, reverseTimer, reverseTotal = 0, 0, 0
@@ -379,239 +379,14 @@ do
         check("a turn takes any pace, and the pace it ends at is the one to hold", tr.active and tr.current == "trot" and tr.mult == 6)
     end
     do
-        -- Sprint: two warm-up sprints, then a ready Sprint started with W.
-        local sheet = EqTraining.newSheet()
-        local events = {}
-        local function ride(gait, ms)
-            for _ = 1, ms / 100 do
-                EqTraining.step(sheet, gait, 100, false, 50)
-                local event = EqTraining.sprintStep(sheet, gait, 100)
-                if event ~= nil then table.insert(events, event) end
-            end
-        end
-        ride("gallop", 4500)
-        check("a fresh gallop is a warm-up sprint", events[1] == "counted" and sheet.sprint.count == 1)
-        ride("halt", 20000)
-        ride("gallop", 4500)
-        check("two warm-up sprints warm the horse up", events[2] == "warm" and sheet.sprint.warm)
-        check("Sprint can't start before it is ready", not EqTraining.startSprint(sheet))
-        ride("gallop", 2000)
-        check("galloping on makes Sprint ready", events[3] == "ready" and EqTraining.startSprint(sheet))
-        check("the press that starts Sprint is not also a tap", not EqTraining.spurSprint(sheet))
-        ride("gallop", 400)
-        local left = sheet.sprint.activeMs
-        check("tapping W adds Sprint time", EqTraining.spurSprint(sheet) and sheet.sprint.activeMs > left
-            and not EqTraining.spurSprint(sheet))
-        do
-            local tapped = EqTraining.newSheet()
-            tapped.sprint.ready = true
-            EqTraining.startSprint(tapped)
-            local ms = 0
-            while EqTraining.isSprinting(tapped) and ms < 60000 do
-                EqTraining.sprintStep(tapped, "gallop", 100)
-                ms = ms + 100
-                if ms % 100 == 0 then EqTraining.spurSprint(tapped) end
-            end
-            check("even perfect tapping can't keep Sprint going for ever", ms <= EqTraining.SPRINT_LIMIT_MS and ms > EqTraining.SPRINT_MS / EqTraining.SPRINT_DRAIN + 2000,
-                string.format("%d ms", ms))
-        end
-        do
-            local function lasts(speed)
-                local s = EqTraining.newSheet()
-                s.sprint.ready = true
-                EqTraining.startSprint(s)
-                local ms = 0
-                while EqTraining.isSprinting(s) and ms < 60000 do
-                    EqTraining.sprintStep(s, "gallop", 100, speed)
-                    ms = ms + 100
-                end
-                return ms
-            end
-            check("a slower horse's Sprint runs out faster", lasts(10) < lasts(90) and math.abs(lasts(100) - EqTraining.SPRINT_MS / EqTraining.SPRINT_DRAIN) <= 100,
-                string.format("%d / %d ms", lasts(10), lasts(90)))
-            local s = EqTraining.newSheet()
-            s.sprint.ready, s.tiredness = true, 70
-            EqTraining.startSprint(s)
-            for _ = 1, 50 do EqTraining.step(s, "gallop", 100, false, 50) end
-            check("Sprint holds exertion just short of blowing hard", s.tiredness < EqTraining.ZONE_HIGH and s.tiredness >= EqTraining.ZONE_HIGH - 2,
-                tostring(s.tiredness))
-        end
-        local before = sheet.focused.speed
-        ride("gallop", 3000)
-        check("Sprint trains speed hard even when tiring", EqTraining.isSprinting(sheet)
-            and sheet.focused.speed - before > EqTraining.SPEED_RATE * 3 * 2)
-        ride("trot", 1100)
-        check("dropping out of a gallop ends Sprint", events[4] == "over" and not EqTraining.isSprinting(sheet)
-            and not sheet.sprint.warm and sheet.sprint.rest)
-        ride("halt", 1000)
-        ride("gallop", 4500)
-        check("no warm-up sprint counts until the horse has rested", sheet.sprint.count == 0 or sheet.tiredness < EqTraining.SPRINT_REST_BELOW)
-    end
-    do
-        -- Beats: press forward or back for the other fast gait as the marker passes for a breather.
-        local sheet = EqTraining.newSheet()
-        local one = function() return 1 end
-        sheet.tiredness, sheet.run = 50, 20
-        local outside = EqTraining.newSheet()
-        outside.tiredness, outside.run = 50, 20
-        check("no beats outside stamina mode", EqTraining.beatStep(outside, "canter", 100, one) == nil and outside.beat.pos == nil)
-        sheet.mode = "stamina"
-        check("a beat starts during a run", EqTraining.beatStep(sheet, "canter", 100, one) == "start" and sheet.beat.target == "gallop")
-        check("a far-off press is ignored", EqTraining.beatPress(sheet, "forward", one) == nil and sheet.beat.pos ~= nil)
-        repeat EqTraining.beatStep(sheet, "canter", 100, one) until sheet.beat.pos >= 49
-        check("the wrong key is ignored", EqTraining.beatPress(sheet, "back", one) == nil and sheet.beat.pos ~= nil)
-        local event = EqTraining.beatPress(sheet, "forward", one)
-        check("pressing on the beat is a hit and a breather", (event == "perfect" or event == "hit") and sheet.tiredness < 50,
-            tostring(event) .. " " .. sheet.tiredness)
-        check("a hit's breather grows with exertion", EqTraining.beatRelief(80, false) > EqTraining.beatRelief(65, false) * 3
-            and EqTraining.beatRelief(80, true) > EqTraining.beatRelief(80, false))
-        local missed
-        for _ = 1, 100 do missed = EqTraining.beatStep(sheet, "gallop", 100, one) or missed end
-        check("a beat let go by is a miss and comes again soon", missed ~= nil and sheet.beat.nextAt - sheet.beat.clock <= EqTraining.BEAT_RETRY_MS)
-        sheet.beat.pos, sheet.tiredness = nil, 90
-        repeat EqTraining.beatStep(sheet, "gallop", 100, one) until sheet.beat.pos ~= nil and sheet.beat.pos > 70
-        check("a gallop's beat asks for a canter, even from 90% exertion", sheet.beat.target == "canter")
-        check("pressing just early wastes the beat", EqTraining.beatPress(sheet, "back", one) == "off" and sheet.tiredness == 90
-            and sheet.beat.pos == nil and sheet.beat.nextAt - sheet.beat.clock <= EqTraining.BEAT_RETRY_MS)
-        sheet.tiredness = 82
-        local cue
-        for _ = 1, 30 do cue = EqTraining.beatStep(sheet, "canter", 100, one) or cue end
-        check("a canter at 82% still gets its gallop cue", cue == "start" and sheet.beat.target == "gallop")
-        local sprinting = EqTraining.newSheet()
-        sprinting.tiredness, sprinting.run, sprinting.mode = 50, 20, "stamina"
-        sprinting.sprint.ready = true
-        sprinting.beat.nextAt = 0
-        check("a ready Sprint doesn't stop the beats", EqTraining.beatStep(sprinting, "gallop", 100, one) == "start" and sprinting.beat.pos ~= nil)
-        sprinting.beat.pos = nil
-        sprinting.sprint.ready, sprinting.sprint.activeMs = false, 5000
-        check("no beats while sprinting", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
-        sprinting.sprint.activeMs, sprinting.routine.request = 0, "left"
-        check("no beats during a routine command", EqTraining.beatStep(sprinting, "gallop", 100, one) == nil and sprinting.beat.pos == nil)
-        local easy = EqTraining.newSheet()
-        local hard = EqTraining.newSheet()
-        hard.tempo.mult = 5
-        local w1, s1 = EqTraining.beatPressure(easy)
-        local w5, s5 = EqTraining.beatPressure(hard)
-        check("beats get harder as the tempo climbs", w5 < w1 and s5 < s1)
-        -- A whole stamina run, ridden by a rider who presses on the beat except for the beats in miss.
-        local function staminaRun(stamina, miss, seconds)
-            local r = EqTraining.newSheet()
-            local gait, beats, peak, blownMs, ended, n = "canter", 0, 0, 0, false, 0
-            local rng = function(k) n = n % k + 1; return n end
-            for _ = 1, seconds * 10 do
-                EqTraining.step(r, gait, 100, false, stamina)
-                if EqTraining.beatStep(r, gait, 100, rng) == "start" then beats = beats + 1 end
-                if EqTraining.modeStep(r, gait, 100) == nil and r.mode == nil and beats > 0 then ended = true end
-                local b = r.beat
-                if b.pos ~= nil and not miss[beats] and b.pos - r.tiredness >= -EqTraining.BEAT_PERFECT * 0.9 then
-                    local target = b.target
-                    if EqTraining.beatPress(r, target == "gallop" and "forward" or "back", rng) then gait = target end
-                end
-                if beats > 0 then peak = math.max(peak, r.tiredness) end
-                if r.tiredness > EqTraining.ZONE_HIGH then blownMs = blownMs + 100 end
-            end
-            return { peak = peak, blownMs = blownMs, ended = ended, tempo = r.tempo.mult, rest = r.staminaRest }
-        end
-        for _, st in ipairs({ 20, 50, 80 }) do
-            local clean = staminaRun(st, {}, 300)
-            check("hitting every beat holds a stamina-" .. st .. " horse under blowing for 5 minutes",
-                not clean.ended and clean.tempo == 5 and clean.blownMs < EqTraining.TEMPO_BLOWN_MS,
-                string.format("peak %.0f, blown %d ms", clean.peak, clean.blownMs))
-            local one, two = staminaRun(st, { [14] = true }, 300), staminaRun(st, { [14] = true, [15] = true }, 300)
-            check("one missed beat is ridden out (stamina " .. st .. ")", not one.ended and one.tempo == 5)
-            if st >= 50 then check("two missed beats in a row are ridden out (stamina " .. st .. ")", not two.ended and two.tempo == 5) end
-        end
-        local three = staminaRun(50, { [14] = true, [15] = true, [16] = true }, 120)
-        check("three missed beats in a row blow the horse and ask for a rest", three.ended and three.rest)
-        -- Training modes: one of stamina, agility and speed at a time.
-        do
-            local m = EqTraining.newSheet()
-            local function canter(ms) local e; for _ = 1, ms / 100 do e = EqTraining.modeStep(m, "canter", 100) or e end; return e end
-            canter(5000)
-            EqTraining.modeJump(m)
-            check("a jump restarts the canter towards stamina mode", m.entryMs == 0 and m.mode == nil)
-            EqTraining.modeStep(m, "gallop", 100)
-            canter(5000)
-            EqTraining.modeStep(m, "gallop", 100)
-            check("a gallop restarts it too", m.entryMs == 0)
-            check("8 s of steady canter starts stamina mode", canter(8000) == "stamina" and m.mode == "stamina" and m.tempo.ms > 0)
-            EqTraining.clearJump(m, false)
-            EqTraining.modeJump(m)
-            check("a jump in stamina mode keeps it", m.mode == "stamina")
-            m.tempo.ms = 0
-            EqTraining.loseCombo(m)
-            EqTraining.modeStep(m, "trot", 100)
-            check("stamina mode ends with the tempo", m.mode == nil)
-            m.combo.lock = 0
-            EqTraining.clearJump(m, false)
-            check("a cleared jump starts agility mode", m.mode == "agility")
-            canter(10000)
-            check("no stamina mode while the combo lasts", m.mode == "agility" and m.entryMs == 0)
-            EqTraining.loseCombo(m)
-            EqTraining.modeStep(m, "trot", 100)
-            check("agility mode ends with the combo", m.mode == nil)
-            m.sprint.count, m.mode, m.combo.lock = 1, "speed", 0
-            EqTraining.clearJump(m, false)
-            check("a jump during warm-ups stays in speed mode", m.mode == "speed")
-            -- A warmed-up horse can still start a stamina run; the gallops done are kept.
-            m.combo.count = 0
-            m.sprint.count, m.sprint.warm = EqTraining.SPRINTS_TO_WARM, true
-            check("a warmed-up horse cantering steadily starts stamina mode", canter(8000) == "stamina"
-                and m.sprint.warm and m.sprint.count == EqTraining.SPRINTS_TO_WARM)
-            m.sprint.ready = true
-            check("Sprint out of a stamina run ends the tempo", EqTraining.startSprint(m) and m.mode == "speed"
-                and m.tempo.ms == 0 and m.beat.pos == nil)
-            m.sprint.activeMs = 0
-            m.sprint.ready = true
-            check("no stamina mode while Sprint is ready", canter(10000) == nil and m.mode ~= "stamina")
-            local quick = EqTraining.newSheet()
-            local r = quick.routine
-            r.active, r.mult, r.current, r.nextAt = true, 1, "walk", 0
-            EqTraining.routineStep(quick, "walk", nil, 100, false, function() return 1 end)
-            local asked = r.request
-            EqTraining.routineStep(quick, (asked == "left" or asked == "right") and "walk" or asked, asked, 400, false, function() return 1 end)
-            check("a command done at once still shows for a moment", r.shown == asked and r.clock < r.shownUntil)
-            local tired = EqTraining.newSheet()
-            tired.tiredness = EqTraining.STAMINA_ENTRY_MAX
-            EqTraining.modeStep(tired, "canter", 100)
-            check("a stamina run starts from low exertion only", tired.entryMs == 0)
-            tired.tiredness = EqTraining.STAMINA_ENTRY_MAX - 5
-            EqTraining.modeStep(tired, "canter", 100)
-            tired.tiredness = 80
-            EqTraining.modeStep(tired, "canter", 100)
-            check("a canter already under way carries on as exertion rises", tired.entryMs == 200)
-            check("tempo x2 trains stamina a little at low exertion", EqTraining.staminaQuality(30, 60) == 0
-                and EqTraining.staminaQuality(30, 60, EqTraining.TEMPO_LOW_FLOOR) > 0
-                and EqTraining.staminaQuality(75, 60, EqTraining.TEMPO_LOW_FLOOR) == EqTraining.staminaQuality(75, 60))
-        end
-        -- Tempo: only beats raise it; a long trot or blowing breaks it.
-        local tempo = EqTraining.newTempo()
-        local events = {}
-        local function go(gait, tiredness, ms)
-            for _ = 1, ms / 100 do
-                local event = EqTraining.tempoStep(tempo, gait, tiredness, 100)
-                if event ~= nil then table.insert(events, event) end
-            end
-        end
-        go("canter", 75, 60000)
-        check("a long canter alone doesn't raise the tempo", tempo.mult == 1 and #events == 0 and tempo.ms > 0)
-        check("three beat hits raise the tempo", EqTraining.tempoBeat(tempo, 1) == nil and EqTraining.tempoBeat(tempo, 1) == nil
-            and EqTraining.tempoBeat(tempo, 1) == "up" and tempo.mult == 2)
-        EqTraining.tempoBeat(tempo, 2)
-        EqTraining.tempoBeat(tempo, 0)
-        check("a missed beat loses the progress, not the tempo", tempo.mult == 2 and tempo.hits == 0)
-        check("a perfect hit counts double", EqTraining.tempoBeat(tempo, 2) == nil and EqTraining.tempoBeat(tempo, 1) == "up" and tempo.mult == 3)
-        go("trot", 70, 2000)
-        go("canter", 75, 100)
-        check("a short trot keeps the streak", tempo.mult == 3)
-        check("tempo raises stamina gains", EqTraining.tempoBonus(tempo) > 1.5)
-        go("canter", 90, 4000)
-        check("blowing hard holds the tempo for a while", tempo.blownMs > 0 and tempo.mult == 3)
-        go("canter", 90, 2000)
-        check("blowing too long breaks the streak", tempo.mult == 1 and events[#events] == "lost")
-        go("canter", 75, 1000)
-        go("trot", 70, 4000)
-        check("a long trot breaks the streak", tempo.ms == 0)
+        -- A routine command shows for a moment even when it is done at once.
+        local quick = EqTraining.newSheet()
+        local r = quick.routine
+        r.active, r.mult, r.current, r.nextAt = true, 1, "walk", 0
+        EqTraining.routineStep(quick, "walk", nil, 100, false, function() return 1 end)
+        local asked = r.request
+        EqTraining.routineStep(quick, (asked == "left" or asked == "right") and "walk" or asked, asked, 400, false, function() return 1 end)
+        check("a command done at once still shows for a moment", r.shown == asked and r.clock < r.shownUntil)
     end
     -- Temperament routine.
     local first = function() return 1 end
@@ -674,7 +449,6 @@ do
         local rng = function() return 1 end
         while EqTraining.playerRidingPoints(sheet) < 100 and t < 3600000 do
             local gait, move, jumped = policy(sheet, t, state)
-            EqTraining.step(sheet, gait, 50, false)
             if jumped then EqTraining.clearJump(sheet, false) end
             EqTraining.comboTick(sheet, gait, 50)
             local steer = (move == "left" or move == "right") and move or nil
@@ -709,130 +483,7 @@ do
     check("agility effort is capped at two full days", EqTraining.playerEffort(big).agility == 2)
 end
 do
-    local big = ridden("gallop", 0)
-    big.focused.stamina, big.focused.speed = 5, 5
-    local capped = EqTraining.playerEffort(big)
-    check("focused effort is capped at two full days", capped.stamina == 2 and capped.speed == 2)
-end
-
--- Focused stamina and speed: a session ridden frame by frame until the riding bar is full.
-do
-local function session(policy)
-    local sheet, state, t = EqTraining.newSheet(), {}, 0
-    while EqTraining.playerRidingPoints(sheet) < 100 and t < 3600000 do
-        local gait = policy(sheet, t, state)
-        EqTraining.step(sheet, gait, 50, false)
-        EqTraining.sprintStep(sheet, gait, 50)
-        EqTraining.modeStep(sheet, gait, 50)
-        if gait ~= "halt" then EqTraining.addRiding(sheet, gait, 50) end
-        t = t + 50
-    end
-    return EqTraining.playerEffort(sheet), sheet
-end
-local gaitCycle = { "walk", "trot", "canter", "gallop" }
-local cycled = session(function(_, t) return gaitCycle[math.floor(t / 20000) % 4 + 1] end)
-local staminaRun = session(function(sheet, _, state)
-    -- A stamina run from a fresh canter, riding every beat.
-    state.gait = state.gait or "canter"
-    local rng = function() return 1 end
-    EqTraining.beatStep(sheet, state.gait, 50, rng)
-    local b = sheet.beat
-    if b.pos ~= nil and b.pos - sheet.tiredness >= -EqTraining.BEAT_PERFECT * 0.9 then
-        local target = b.target
-        if EqTraining.beatPress(sheet, target == "gallop" and "forward" or "back", rng) then state.gait = target end
-    end
-    return state.gait
-end)
-local sprints = session(function(sheet, _, state)
-    if sheet.tiredness >= 25 then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
-    return state.rest and "halt" or "gallop"
-end)
-local sprinted = session(function(sheet, t, state)
-    -- Warm-up gallops while fresh, then the W-tap Sprint, then a rest.
-    if sheet.sprint.ready then EqTraining.startSprint(sheet) end
-    if EqTraining.isSprinting(sheet) then
-        if t % 300 == 0 then EqTraining.spurSprint(sheet) end
-        return "gallop"
-    end
-    if sheet.sprint.warm then return "gallop" end
-    if sheet.tiredness >= 25 or sheet.sprint.rest then state.rest = true elseif sheet.tiredness <= 0 then state.rest = false end
-    return state.rest and "halt" or "gallop"
-end)
-local flatOut = session(function() return "gallop" end)
-check("long runs in the zone train stamina at up to double the old full day", staminaRun.stamina >= 1.5,
-    string.format("got %.2f", staminaRun.stamina))
-check("warm-ups and the W-tap Sprint train speed at up to double the old full day", sprinted.speed >= 1.5, string.format("got %.2f", sprinted.speed))
-print(string.format("info: speed session: sprinted %.2f, gallops only %.2f, cycled %.2f", sprinted.speed, sprints.speed, cycled.speed))
-check("gallops without the Sprint only trickle speed in", sprints.speed < sprinted.speed / 2, string.format("got %.2f", sprints.speed))
-check("cycling the gaits trains stamina at well under half a focused day", cycled.stamina > 0.15 and cycled.stamina < 0.8,
-    string.format("got %.2f", cycled.stamina))
-local knocked = session(function(sheet, t, state)
-    if t > 5000 and t % 20000 < 3000 then return "halt" end
-    if sheet.tiredness >= 84 then state.ease = true elseif sheet.tiredness <= 72 then state.ease = false end
-    return state.ease and "trot" or "canter"
-end)
-check("being knocked to a halt now and then does not spoil a stamina session", knocked.stamina >= 1.5,
-    string.format("got %.2f", knocked.stamina))
-check("cycling the gaits trains little speed", cycled.speed > 0 and cycled.speed < 0.15,
-    string.format("got %.2f", cycled.speed))
-check("galloping flat out without rests trains speed far less than sprints", flatOut.speed < sprints.speed / 2,
-    string.format("flat out %.2f, sprints %.2f", flatOut.speed, sprints.speed))
-check("sprints train little stamina, stamina runs little speed", sprints.stamina < 0.2 and staminaRun.speed < sprints.speed / 4,
-    string.format("sprints stamina %.2f, run speed %.2f vs sprints %.2f", sprints.stamina, staminaRun.speed, sprints.speed))
-check("a stamina run ridden on the beat fills the stamina day", staminaRun.stamina >= 1.5, string.format("got %.2f", staminaRun.stamina))
-check("outside stamina mode a run only trickles stamina in", (function()
-    local outside, inside = EqTraining.newSheet(), EqTraining.newSheet()
-    inside.mode, inside.tempo.ms = "stamina", 1
-    for _, sh in ipairs({ outside, inside }) do
-        sh.tiredness, sh.run = 75, 30
-        EqTraining.step(sh, "canter", 1000, false)
-    end
-    return outside.focused.stamina > 0 and outside.focused.stamina <= inside.focused.stamina * EqTraining.STAMINA_OUTSIDE_SHARE + 1e-9
-end)())
-print(string.format("info: one riding bar -> cycling sta %.2f spd %.2f, long runs sta %.2f, sprints spd %.2f, flat out spd %.2f",
-    cycled.stamina, cycled.speed, staminaRun.stamina, sprints.speed, flatOut.speed))
-end
-
-do
-    local sheet = EqTraining.newSheet()
-    for _ = 1, 200 do EqTraining.step(sheet, "gallop", 100, false) end
     local function near(a, b) return math.abs(a - b) < 1e-6 end
-    check("galloping raises tiredness", near(sheet.tiredness, 60) and near(sheet.run, 20))
-    check("tiredness bands", EqTraining.tirednessBand(10) == "fresh" and EqTraining.tirednessBand(70) == "zone"
-        and EqTraining.tirednessBand(95) == "blown" and EqTraining.sprintBand(60) == "stale")
-    EqTraining.rest(sheet, 5000)
-    check("time out of the saddle rests the horse", near(sheet.tiredness, 45) and near(sheet.run, 5))
-    local steady = EqTraining.newSheet()
-    for _ = 1, 3000 do EqTraining.step(steady, "canter", 100, false, 50) end
-    local function cantersUntilBlown(stamina)
-        local canter, seconds = EqTraining.newSheet(), 0
-        while canter.tiredness <= EqTraining.ZONE_HIGH and seconds < 3600 do
-            EqTraining.step(canter, "canter", 100, false, stamina)
-            seconds = seconds + 0.1
-        end
-        return seconds
-    end
-    local unfitBlown, averageBlown, fitBlown = cantersUntilBlown(20), cantersUntilBlown(52), cantersUntilBlown(85)
-    check("every horse blows in a long canter, a fit one only after a long time",
-        unfitBlown < 80 and averageBlown > 80 and averageBlown < 100 and fitBlown > 130 and fitBlown < 600,
-        string.format("stamina 20 %.0f s, 52 %.0f s, 85 %.0f s", unfitBlown, averageBlown, fitBlown))
-    check("a canter reaches the zone in about half a minute", steady.tiredness > 85)
-    check("a fitter horse tires more slowly at a gallop",
-        EqTraining.exertionRate("gallop", 0, 90) < EqTraining.exertionRate("gallop", 0, 30))
-    check("a horse recovers faster below 30%, a fit one faster still",
-        EqTraining.exertionRate("halt", 20, 50) < EqTraining.exertionRate("halt", 50, 50)
-        and EqTraining.exertionRate("halt", 20, 90) < EqTraining.exertionRate("halt", 20, 30))
-    do
-        local function drop(gait, ms)
-            local sh = EqTraining.newSheet()
-            sh.tiredness = 60
-            for _ = 1, ms / 100 do EqTraining.step(sh, gait, 100, false, 50) end
-            return 60 - sh.tiredness
-        end
-        check("after a few seconds standing, exertion drops fast at any level", drop("halt", 10000) > drop("halt", 4000) * 2)
-        check("walking settles a little later and a little slower", drop("walk", 10000) > drop("walk", 5000) * 1.5
-            and drop("walk", 10000) < drop("halt", 10000))
-    end
     do
         local slow, fast, mid = EqTraining.handling(10, 0, 0), EqTraining.handling(100, 100, 100), EqTraining.handling(nil, nil, nil)
         local function near(a, b) return math.abs(a - b) < 0.01 end
@@ -856,10 +507,203 @@ do
         -- 100 s of gallop is 100 points to the base game; at 1.5x it should be 67.
         check("a fit horse's gallop takes riding points back off", total == -33, string.format("got %d", total))
     end
-    local worn = EqTraining.newSheet()
-    for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
-    check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0
-        and worn.quality.speed == 0)
+end
+
+-- EXERTION: the gallop's Pushing, Recovering and Sprinting (EqExertion).
+do
+    local E = EqExertion
+    local function near(a, b, tolerance) return math.abs(a - b) < (tolerance or 1e-6) end
+    local function ride(ex, gait, ms, stamina, speed)
+        local events = {}
+        for _ = 1, ms / 50 do
+            local event = E.step(ex, gait, 50, stamina, speed)
+            if event ~= nil then table.insert(events, event) end
+        end
+        return events
+    end
+
+    local ex = E.new()
+    ride(ex, "canter", 2000)
+    check("a canter is not a gallop pace and stays empty", ex.mode == nil and ex.value == 0)
+    ride(ex, "gallop", 50)
+    check("galloping starts Pushing", ex.mode == "push")
+    ride(ex, "gallop", 5000)
+    local early = E.rate(ex, "gallop", 50)
+    ex.value = 80
+    check("Pushing tires the horse faster the higher exertion is", E.rate(ex, "gallop", 50) > early * 1.5)
+    check("a fitter horse tires more slowly when Pushing", E.rate(ex, "gallop", 90) < E.rate(ex, "gallop", 20))
+
+    local function pushUntilBlown(stamina)
+        local p, t = E.new(), 0
+        while p.lock == nil and t < 600000 do
+            E.step(p, "gallop", 50, stamina)
+            t = t + 50
+        end
+        return t / 1000
+    end
+    local unfit, average, fit = pushUntilBlown(10), pushUntilBlown(50), pushUntilBlown(90)
+    check("Pushing from empty blows an average horse in about half a minute, a fit one later",
+        unfit < average and average < fit and average > 20 and average < 45 and fit < 90,
+        string.format("stamina 10 %.0f s, 50 %.0f s, 90 %.0f s", unfit, average, fit))
+
+    local blown = E.new()
+    local events = {}
+    while blown.lock == nil and #events == 0 do events = ride(blown, "gallop", 50) end
+    check("Pushing up to the line blows the horse", events[#events] == "blown" and blown.lock == "blown"
+        and blown.value == E.LINE and E.forcedGait(blown) == "canter")
+    check("a blown horse can't gallop", not E.allowGait(blown, "canter", "gallop"))
+    events = ride(blown, "canter", 5000)
+    check("a blown horse's exertion falls fast at a canter", blown.value < 85 and blown.lock == "blown")
+    events = ride(blown, "canter", 30000)
+    check("once empty it may gallop again", events[#events] == "fresh" and blown.lock == nil and E.allowGait(blown, "canter", "gallop"))
+    local walkFall, canterFall = E.new(), E.new()
+    walkFall.value, canterFall.value = 50, 50
+    ride(walkFall, "walk", 2000)
+    ride(canterFall, "canter", 2000)
+    check("slower gaits bring exertion down faster", walkFall.value < canterFall.value)
+
+    -- Recovering, and slowing to a canter.
+    local r = E.new()
+    ride(r, "gallop", 20000)
+    check("S while Pushing Recovers", E.press(r, "back") == "recover" and r.mode == "recover")
+    check("a single S while Recovering with exertion left keeps the gallop", (function()
+        ride(r, "gallop", 1000)
+        E.press(r, "back")
+        return not E.allowGait(r, "gallop", "canter") and r.mode == "recover"
+    end)())
+    local before = r.value
+    ride(r, "gallop", 3000)
+    check("Recovering brings exertion down while still galloping", r.value < before and r.mode == "recover")
+    ride(r, "gallop", 120000)
+    check("Recovering stops at empty and stays a gallop", r.value == 0 and r.mode == "recover")
+    check("one S while Recovering with an empty bar allows a canter", E.press(r, "back") == "canter" and E.allowGait(r, "gallop", "canter"))
+    ride(r, "gallop", 1000)
+    check("the canter is allowed only just after the press", not E.allowGait(r, "gallop", "canter"))
+    local recoverHigh, recoverLow = E.new(), E.new()
+    recoverHigh.mode, recoverHigh.value, recoverLow.mode, recoverLow.value = "recover", 90, "recover", 10
+    check("easing off is worth most when the horse is working hardest", -E.rate(recoverHigh, "gallop") > -E.rate(recoverLow, "gallop") * 1.5)
+    local d = E.new()
+    ride(d, "gallop", 15000)
+    E.press(d, "back")
+    ride(d, "gallop", 200)
+    check("a quick double tap of S allows a canter from Pushing", E.press(d, "back") == "canter" and E.allowGait(d, "gallop", "canter"))
+    ride(d, "canter", 50)
+    check("in a canter the gallop's pace is gone", d.mode == nil)
+    local slowTaps = E.new()
+    ride(slowTaps, "gallop", 15000)
+    E.press(slowTaps, "back")
+    ride(slowTaps, "gallop", 800)
+    check("two slow presses of S are not a double tap", E.press(slowTaps, "back") == "recover" and not E.allowGait(slowTaps, "gallop", "canter"))
+    check("W while Recovering pushes on", E.press(slowTaps, "forward") == "push" and slowTaps.mode == "push")
+
+    -- Sprinting.
+    local function tap(sp, n, gap)
+        local event
+        for i = 1, n do
+            event = E.press(sp, "forward") or event
+            if i < n then ride(sp, "gallop", gap) end
+        end
+        return event
+    end
+    local slow = E.new()
+    ride(slow, "gallop", 1000)
+    check("slow W presses don't Sprint", tap(slow, 4, 600) ~= "sprint" and slow.mode == "push")
+    local sp = E.new()
+    ride(sp, "gallop", 1000)
+    check("three quick taps of W Sprint", tap(sp, 3, 150) == "sprint" and sp.mode == "sprint")
+    check("Sprint is the fastest pace, Recovering the slowest", E.speedShare(sp) > 1
+        and E.GALLOP_SHARE.recover < E.GALLOP_SHARE.push and E.GALLOP_SHARE.push < E.speedShare(sp))
+    events = ride(sp, "gallop", 1000)
+    check("a Sprint ends when the tapping stops", events[1] == "sprintOver" and sp.mode == "push")
+    local function sprintRise(gap, after)
+        local s2 = E.new()
+        ride(s2, "gallop", 100)
+        tap(s2, 3, 100)
+        local t = 0
+        while t < after do
+            ride(s2, "gallop", gap)
+            E.press(s2, "forward")
+            t = t + gap
+        end
+        return E.rate(s2, "gallop", 50, 50)
+    end
+    check("quick taps slow the Sprint's rise", sprintRise(150, 1000) < sprintRise(400, 1000) * 0.7)
+    check("but only for so long", near(sprintRise(150, 9000), sprintRise(400, 9000), 1e-9))
+    check("a faster horse tires more slowly when Sprinting", (function()
+        local a, b = E.new(), E.new()
+        a.mode, b.mode = "sprint", "sprint"
+        return E.rate(a, "gallop", 50, 90) < E.rate(b, "gallop", 50, 10)
+    end)())
+
+    local last = E.new()
+    last.mode, last.value = "push", 95
+    E.press(last, "forward")
+    ride(last, "gallop", 100)
+    E.press(last, "forward")
+    ride(last, "gallop", 100)
+    E.press(last, "forward")
+    for _ = 1, 30 do
+        ride(last, "gallop", 100)
+        E.press(last, "forward")
+    end
+    check("a Sprint goes past the Blowing hard line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
+    check("the marker runs on into the Blowing hard section", E.marker(last, "gallop") > E.BAR.line)
+    events = ride(last, "gallop", 1000)
+    check("a Sprint that ends past the line leaves the horse exhausted", events[1] == "spent" and last.lock == "spent"
+        and E.forcedGait(last) == "canter")
+    local fresh = E.new()
+    fresh.lock, fresh.value = "blown", last.value
+    check("an exhausted horse recovers much more slowly", -E.rate(last, "canter") < -E.rate(fresh, "canter") * 0.3)
+    local gasp = E.new()
+    gasp.mode, gasp.value, gasp.tapAt = "sprint", E.EXERTION_MAX - 0.1, 0
+    events = ride(gasp, "gallop", 50)
+    check("the last gasp ends at the end of the bar", events[1] == "spent" and gasp.lock == "spent")
+    local dropOut = E.new()
+    dropOut.mode, dropOut.value, dropOut.tapAt = "sprint", 110, 0
+    E.press(dropOut, "back")
+    check("easing off a Sprint past the line exhausts the horse too", dropOut.lock == "spent")
+
+    -- The bar.
+    local m = E.new()
+    check("an empty bar sits on the gait's line", E.marker(m, "walk") == E.BAR.walk and E.marker(m, "canter") == E.BAR.canter
+        and E.marker(m, "gallop") == E.BAR.canter and E.marker(m, "reverse") == 0)
+    m.value = 50
+    check("exertion runs along the gallop section", near(E.marker(m, "walk"), (E.BAR.canter + E.BAR.line) / 2))
+    m.value = E.LINE
+    check("the Blowing hard line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
+    check("the state names the pace, the lock or the gait", E.state(E.new(), "trot") == "trot" and E.state(blown, "canter") ~= nil
+        and E.state(sp, "gallop") == "push")
+
+    -- A rider who pushes, eases off before the line and pushes again keeps a fast average for
+    -- five minutes without blowing; one who only pushes blows.
+    local function gallopFor(policy, stamina)
+        local g, t, share, blownAt = E.new(), 0, 0, nil
+        E.step(g, "gallop", 50, stamina)
+        while t < 300000 do
+            local key = policy(g)
+            if key ~= nil then E.press(g, key) end
+            local gait = g.lock ~= nil and "canter" or "gallop"
+            if E.step(g, gait, 50, stamina) == "blown" and blownAt == nil then blownAt = t end
+            share = share + (g.lock ~= nil and 0.5 or E.speedShare(g)) * 50
+            t = t + 50
+        end
+        return share / t, blownAt
+    end
+    local skilled, skilledBlown = gallopFor(function(g)
+        if g.mode == "push" and g.value >= 90 then return "back" end
+        if g.mode == "recover" and g.value <= 50 then return "forward" end
+    end, 50)
+    local reckless, recklessBlown = gallopFor(function() return nil end, 50)
+    check("pushing and recovering in turn never blows and keeps up the pace", skilledBlown == nil and skilled > 0.88,
+        string.format("average %.2f of the gallop", skilled))
+    check("pushing flat out blows, and is slower in the end", recklessBlown ~= nil and reckless < skilled,
+        string.format("average %.2f, blown at %s ms", reckless, tostring(recklessBlown)))
+    print(string.format("info: five minutes at a gallop: push 90/recover 50 %.2f of top speed, flat out %.2f", skilled, reckless))
+
+    local resting = E.new()
+    resting.value, resting.mode = 60, "push"
+    E.rest(resting, 60000)
+    check("time out of the saddle rests the horse", resting.value == 0 and resting.mode == nil)
 end
 
 local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
@@ -868,16 +712,18 @@ check("riding the player did is not credited to staff", EqTraining.staffEffort(1
 check("grooming adds temperament", EqTraining.staffEffort(0, 0, "balanced", true).temperament > 0)
 
 -- Staff alone stop at 95% of the ceiling; the player's riding takes it the rest of the way.
-local staffHorse = horse("racing", 10)
+local staffHorse = horse("showJumping", 10)
 for _ = 1, 400 do
     EqTraining.applyDay(staffHorse, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
 end
-check("staff stop at 95% of the ceiling", staffHorse.trained.speed <= 70 * 0.95 + 1e-6 and staffHorse.trained.speed > 66,
-    string.format("got %.2f", staffHorse.trained.speed))
+check("staff stop at 95% of the ceiling", staffHorse.trained.agility <= 70 * 0.95 + 1e-6 and staffHorse.trained.agility > 66,
+    string.format("got %.2f", staffHorse.trained.agility))
 for _ = 1, 400 do
-    EqTraining.applyDay(staffHorse, cap70, { sheet = ridden("gallop", 100000), riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+    local sheet = ridden("canter", 100000)
+    sheet.focused.agility = 1
+    EqTraining.applyDay(staffHorse, cap70, { sheet = sheet, riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
 end
-check("the player's riding reaches the ceiling", staffHorse.trained.speed > 69.5, string.format("got %.2f", staffHorse.trained.speed))
+check("the player's riding reaches the ceiling", staffHorse.trained.agility > 69.5, string.format("got %.2f", staffHorse.trained.agility))
 
 -- Pace: two years of full work takes a prime horse most of the way.
 local paced = horse("crossCountry", 10)
@@ -1873,10 +1719,23 @@ local function trainedSpeed(feedBoost, sheet)
     EqTraining.applyDay(record, ceilings, { sheet = sheet, riding = 0, ageMonths = 60, timeAdjustment = 1 / 30, feedBoost = feedBoost })
     return record.trained.speed
 end
-local gallop = ridden("gallop", 100000)
-local plain, corn = trainedSpeed(nil, gallop), trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), ridden("gallop", 100000))
-check("corn makes galloping train speed faster", corn > plain and near((corn - 30) / (plain - 30), 1.30),
-    string.format("%.4f vs %.4f", corn, plain))
+-- Riding trains no speed while the exertion system is tested, so jumping and barley stand in.
+do
+    local function jumped()
+        local sheet = ridden("canter", 100000)
+        sheet.focused.agility = 1
+        return sheet
+    end
+    local function trainedAgility(feedBoost, sheet)
+        local record = { trained = { stamina = 30, speed = 30, agility = 30, temperament = 30 }, focus = "balanced", idleDays = 0 }
+        local ceilings = { stamina = 80, speed = 80, agility = 80, temperament = 80 }
+        EqTraining.applyDay(record, ceilings, { sheet = sheet, riding = 0, ageMonths = 60, timeAdjustment = 1 / 30, feedBoost = feedBoost })
+        return record.trained.agility
+    end
+    local plain, barley = trainedAgility(nil, jumped()), trainedAgility(EqFeed.dietBoost({ BARLEY = 1 }, feeds), jumped())
+    check("barley makes jumping train agility faster", barley > plain and near((barley - 30) / (plain - 30), 1.20),
+        string.format("%.4f vs %.4f", barley, plain))
+end
 check("feed alone trains nothing", trainedSpeed(EqFeed.dietBoost({ MAIZE = 1 }, feeds), nil) == 30)
 
 -- Pen food rows: each group is named for what it mostly holds, and lists the stats it can boost.

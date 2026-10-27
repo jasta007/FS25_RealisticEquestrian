@@ -50,12 +50,12 @@ uses its genetics, health and fitness.
 
 ### Training
 - **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
-  and the Stamina, Speed, Agility and Temperament views, and **H** for help.
-  - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
-  - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
+  and the Agility and Temperament views, and **H** for help.
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
+    Sprint. Stamina and Speed don't train from riding while this is tested.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
-- An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
+- The riding bar is the horse's energy for the day.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.

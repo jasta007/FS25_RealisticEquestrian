@@ -47,46 +47,43 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 
 Every horse trains once a day, at RLRM's daily horse tick.
 
-- **Your riding** is the main way to train. Stamina and speed train best from focused work, watched
-  by an **Exertion** meter while you ride (it rises in canter and gallop and falls at slower gaits
-  and at a halt). A good focused session can give up to double what a full day of riding used to;
-  just riding round the gaits trains them at about a quarter of that.
-- **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a line
-  for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours
-  show how each is going. Help pops up at the bottom of the screen the first time you open each
-  view; press **H** to see it again, and click anywhere to move on.
-- One kind of training talks at a time, each in its own colour: a steady canter starts stamina
-  (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo ends, a
-  warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple) routines
-  always run. Only that training's popups and prompts show; the panel stays the same.
-- Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until shortly
-  after landing, so you can jump an obstacle in the way.
+- **Your riding** is the main way to train agility and temperament, with their own minigames. A
+  good focused session can give up to double what a full day of riding used to; just riding round
+  the gaits trains them at about a quarter of that. **Stamina and speed don't train from your
+  riding for now** while the new gallop (below) is tested on its own; staff still train them.
+- **Press Y while riding** to switch the training panel between **Freestyle** (a line for each
+  stat) and the **Agility** and **Temperament** views. Every view shows the Exertion bar. Help pops
+  up at the bottom of the screen the first time you open each view (and the first time you
+  gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
+  move on.
+- Jumping doesn't interrupt the gallop: the pace from before take-off counts until shortly after
+  landing, so you can jump an obstacle in the way.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
   line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
   so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
-  stamina 100). Below 30% exertion a horse standing or walking recovers quickly, a fit one faster
-  still.
+  stamina 100).
 
-### Stamina
+### The gallop and the Exertion bar (experimental)
 
-Stamina comes from runs at canter or gallop. Canter 8 seconds without jumping or galloping,
-starting under 40% exertion, to start stamina training; then the tempo multiplies it (up to x5,
-2.5 times the gains). Only well-timed gait changes raise the tempo: when the middle of the screen
-says **Canter! (S)** or **Gallop! (W)**, press that key right then and your horse gets a breather (a
-bigger one the more tired it is, so hitting every change keeps it under blowing hard); three good
-changes (a perfect one counts double) raise the tempo. Pressing too early or missing one loses the
-progress to the next step, and the next change comes soon after. Timing tightens as the tempo
-climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few seconds below a canter
-ends the run: rest under 40%, then canter to start again. Gait changes pause during a Sprint or a
-routine command.
+The gallop has three paces, and exertion only builds at a gallop:
 
-### Speed
+- **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
+  the higher it is (an average horse blows after about half a minute from empty; Stamina slows it).
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls, fastest when it
+  is high. The horse keeps galloping at an empty bar; W pushes on again.
+- **Sprinting** (tap W three times quickly while galloping, and keep tapping): 125% of the gallop's
+  speed and exertion rises fast (Speed slows it). Quick taps ease the rise for the first few
+  seconds. The Sprint ends when the taps stop.
 
-Speed comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under 25%) add only
-a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm
-the horse up; keep galloping and press **W** when **Sprint!** shows to run 25% faster, held on the
-limit just short of blowing hard (keep tapping W to spur it on; a slower horse runs out sooner),
-with three times the speed training. Then rest right down before warming up again.
+Pushing up to the **Blowing hard** line drops the horse to a canter, and it can't gallop until the
+bar is empty again. Only a Sprint can run past the line, into the red last-gasp section; a Sprint
+that ends there leaves the horse **exhausted**: canter only, and the bar falls four times as slowly.
+At a canter or slower the bar falls fast, faster the slower the gait. Slowing from a gallop to a
+canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
+
+The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
+gallop section and the Blowing hard section. The marker sits on the gait's line while the bar is
+empty, and the section for the current gait lights up (Blowing hard lights while blown or exhausted).
 
 ### Agility
 

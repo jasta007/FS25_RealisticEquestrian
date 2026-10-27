@@ -1,7 +1,7 @@
 --[[
     EqTrainingHud.lua
     What the rider sees while training: a small panel on the right of the screen with the
-    exertion meter and a line per stat, each in the colour of its state, and help popups at the
+    exertion bar and a line per stat, each in the colour of its state, and help popups at the
     bottom of the screen.
 
     The base game's help panel (addExtraPrintText) has no colours and cuts long lines off, so
@@ -32,7 +32,7 @@ EqTrainingHud.COLOR = {
 
 -- Screen positions are shares of the screen, from the bottom left.
 EqTrainingHud.PANEL = { right = 0.985, top = 0.66, width = 0.2, padding = 0.008, lineHeight = 0.02,
-    textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008, markWidth = 0.0012 }
+    textSize = 0.0145, titleSize = 0.0165, barHeight = 0.008, markWidth = 0.0012, meterHeight = 0.015 }
 EqTrainingHud.POPUP = { centerX = 0.5, bottom = 0.11, width = 0.36, padding = 0.012, lineHeight = 0.019,
     textSize = 0.015, titleSize = 0.0175 }
 EqTrainingHud.HELP_TIMEOUT_MS = 45000
@@ -107,14 +107,21 @@ end
 --- Draw the training panel.
 --- @param title string
 --- @param rows table list of { left, leftColor, right, rightColor } text rows,
----     { segments = { { text, color }, ... } } rows of coloured pieces side by side, and
----     { bar = 0..1, color } meter rows
+---     { segments = { { text, color }, ... } } rows of coloured pieces side by side,
+---     { bar = 0..1, color } meter rows, and { sections = { { from, to, color }, ... }, lines = { share, ... },
+---     marker = share } rows: the exertion bar, coloured sections with dark lines and a marker
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
 function EqTrainingHud.drawPanel(title, rows, titleColor)
     local p = EqTrainingHud.PANEL
     local height = p.padding * 2 + p.lineHeight
     for _, row in ipairs(rows) do
-        height = height + (row.bar ~= nil and (p.barHeight + p.padding) or p.lineHeight)
+        if row.bar ~= nil then
+            height = height + p.barHeight + p.padding
+        elseif row.sections ~= nil then
+            height = height + p.meterHeight + p.padding * 1.5
+        else
+            height = height + p.lineHeight
+        end
     end
     local x = p.right - p.width
     local y = p.top - height
@@ -144,6 +151,24 @@ function EqTrainingHud.drawPanel(title, rows, titleColor)
                 end
             end
             lineY = lineY - p.barHeight - p.padding
+        elseif row.sections ~= nil then
+            local h = p.meterHeight
+            local barY = lineY - p.padding * 0.75 - h
+            local width = right - left
+            for _, section in ipairs(row.sections) do
+                fill(left + width * section[1], barY, width * (section[2] - section[1]), h, section[3])
+            end
+            for _, line in ipairs(row.lines or {}) do
+                fill(left + width * line - p.markWidth / 2, barY, p.markWidth, h, { 0, 0, 0, 0.9 })
+            end
+            if row.marker ~= nil then
+                -- A white box with a dark edge, a little taller than the bar.
+                local markerX = left + width * math.min(math.max(row.marker, 0), 1)
+                local mw, edge = p.markWidth * 3, p.markWidth
+                fill(markerX - mw / 2 - edge, barY - h * 0.25 - edge, mw + edge * 2, h * 1.5 + edge * 2, { 0, 0, 0, 0.9 })
+                fill(markerX - mw / 2, barY - h * 0.25, mw, h * 1.5, EqTrainingHud.COLOR.white)
+            end
+            lineY = lineY - h - p.padding * 1.5
         elseif row.segments ~= nil then
             lineY = lineY - p.lineHeight
             local x = left
@@ -170,8 +195,6 @@ EqTrainingHud.STAT_COLOR = {
     agility = { 0.529, 0.706, 0, 1 },
     temperament = { 0.8, 0.55, 1, 1 },
 }
--- The training mode (EqTraining.modeStep) of the ridden horse, set by EqTrainingHooks.
-EqTrainingHud.mode = nil
 
 -- Combo multiplier colours, hotter as it climbs.
 EqTrainingHud.MULT_COLORS = {
@@ -190,9 +213,16 @@ EqTrainingHud.sideState = nil
 EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
-    tempo = "stamina", tempoLost = "stamina", staminaOn = "stamina", beat_hit = "stamina", beat_perfect = "stamina", beat_off = "stamina",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament",
-    sprintCount = "speed", sprint_warm = "speed", sprint_ready = "speed", sprint_go = "speed", sprint_over = "speed",
+}
+-- The gallop's news (EqExertion) belongs to no stat: it always shows in the middle, in status
+-- colours (white good, red bad, grey idle).
+EqTrainingHud.EXERTION_POPS = {
+    ex_sprint = { "eq_pop_ex_sprint", "white", 4 },
+    ex_sprintOver = { "eq_pop_ex_sprintOver", "grey", 1 },
+    ex_blown = { "eq_pop_ex_blown", "red", 3 },
+    ex_spent = { "eq_pop_ex_spent", "red", 3 },
+    ex_fresh = { "eq_pop_ex_fresh", "white", 2 },
 }
 
 
@@ -205,7 +235,7 @@ end
 
 
 --- Show a short burst of text in the middle of the screen.
---- @param kind string jump, jumpLost, knock, routine, routineLost or routineStart
+--- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart or an EXERTION_POPS key
 --- @param mult number|nil the combo multiplier for jump and routine
 function EqTrainingHud.pop(kind, mult)
     local text, color, big
@@ -216,32 +246,15 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
-    elseif kind == "beat_perfect" or kind == "beat_hit" then
-        text = g_i18n:getText("eq_pop_" .. kind)
-        color, big = kind == "beat_perfect" and EqTrainingHud.COLOR.green or EqTrainingHud.COLOR.yellow, kind == "beat_perfect" and 3 or 2
-    elseif kind == "beat_off" then
-        text, color, big = g_i18n:getText("eq_pop_beat_off"), EqTrainingHud.COLOR.grey, 1
-    elseif kind == "tempo" then
-        text, color, big = string.format(g_i18n:getText("eq_pop_tempo"), mult), EqTrainingHud.multColor(mult), mult
-    elseif kind == "tempoLost" then
-        text, color, big = g_i18n:getText("eq_pop_tempoLost"), EqTrainingHud.COLOR.grey, 1
-    elseif kind == "sprintCount" then
-        text, color, big = string.format(g_i18n:getText("eq_pop_sprintCount"), mult, EqTraining.SPRINTS_TO_WARM), EqTrainingHud.COLOR.yellow, 1
-    elseif kind == "sprint_warm" or kind == "sprint_ready" or kind == "sprint_go" then
-        text, color, big = g_i18n:getText("eq_pop_" .. kind), EqTrainingHud.COLOR.orange, kind == "sprint_warm" and 2 or 4
-    elseif kind == "sprint_over" then
-        text, color, big = g_i18n:getText("eq_pop_sprint_over"), EqTrainingHud.COLOR.grey, 1
-    elseif kind == "staminaOn" then
-        text, color, big = g_i18n:getText("eq_pop_staminaOn"), EqTrainingHud.COLOR.white, 2
+    elseif EqTrainingHud.EXERTION_POPS[kind] ~= nil then
+        local pop = EqTrainingHud.EXERTION_POPS[kind]
+        text, color, big = g_i18n:getText(pop[1]), EqTrainingHud.COLOR[pop[2]], pop[3]
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
         text, color, big = g_i18n:getText(kind == "routineLost" and "eq_pop_routineLost" or "eq_pop_comboLost"), EqTrainingHud.COLOR.grey, 1
     end
     local stat = EqTrainingHud.POP_STAT[kind]
-    -- The training mode has the floor: other stats' news waits (temperament's routine never clashes).
-    local mode = EqTrainingHud.mode
-    if mode ~= nil and stat ~= nil and stat ~= mode and stat ~= "temperament" then return end
     -- Every pop, good news or a setback, is in its stat's colour.
     if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
     -- In a focused view, news about another stat goes in a small line above the panel instead.
