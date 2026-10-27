@@ -40,6 +40,13 @@
         <text name="eq_shop_dressageArena20x40" text="Dressage Arena 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
+        <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
+        <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
+        <text name="eq_shop_xcFenceMarker3m" text="Cross Country Fence Marker 3 m"/>
+        <text name="eq_shop_xcFenceMarker5m" text="Cross Country Fence Marker 5 m"/>
+        <text name="eq_shop_xcFenceMarker8m" text="Cross Country Fence Marker 8 m"/>
+        <text name="eq_shop_xcFenceMarker_function" text="Turns anything into a cross country fence: place it across a log, bank or ditch. Only seen in construction mode; invisible while you ride."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
@@ -448,6 +455,7 @@
         <text name="eq_facility_outdoorArena" text="Outdoor arena"/>
         <text name="eq_facility_roundPen" text="Round pen"/>
         <text name="eq_facility_jumps" text="Jump course"/>
+        <text name="eq_facility_xcFence" text="Cross country course"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
         <text name="eq_settings_tab" text="Equestrian"/>
         <text name="eq_settings_credit" text="Realistic Equestrian by %s"/>

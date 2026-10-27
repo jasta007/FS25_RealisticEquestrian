@@ -86,6 +86,8 @@ uses its genetics, health and fitness.
 - Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
+- The shop sells cross country log piles, and fence markers that turn anything (a log, a bank, a
+  ditch) into a cross country fence; markers only show in construction mode.
 - Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.

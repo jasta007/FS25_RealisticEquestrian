@@ -1815,6 +1815,39 @@ check("a round pen is a temperament and dressage place",
     and EqFacility.eventBonus(facilities, { roundPen = 1 }, "dressage") > EqFacility.eventBonus(facilities, { roundPen = 1 }, "showJumping"))
 check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseObstacleBales_PREFAB") == "jumps"
     and EqFacility.kindForNode(facilities, "horseSoccerBall") == nil)
+check("our log piles and fence markers are cross country fences",
+    EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, "C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcFenceMarker5m.xml", false) == "xcFence"
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml", false) == nil)
+check("a cross country course helps cross country more than show jumping",
+    EqFacility.eventBonus(facilities, { xcFence = 8 }, "crossCountry") > EqFacility.eventBonus(facilities, { xcFence = 8 }, "showJumping"))
+
+dofile("scripts/facilities/EqXcMarkers.lua")
+check("fence markers are recognised", EqXcMarkers.isMarkerXml("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcFenceMarker3m.xml")
+    and EqXcMarkers.isMarkerXml("FS25_RealisticEquestrian/placeables/xcJumps/xcFenceMarker8m.xml")
+    and not EqXcMarkers.isMarkerXml("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
+    and not EqXcMarkers.isMarkerXml(nil))
+check("fence markers show in construction mode and while editing a course only",
+    EqXcMarkers.wantShown(true, false) and EqXcMarkers.wantShown(false, true) and not EqXcMarkers.wantShown(false, false))
+do
+    -- Every shop item is in the mod, with its i3d, shop image and name.
+    local modDesc = io.open("modDesc.xml"):read("*a")
+    local en = io.open("translations/translation_en.xml"):read("*a")
+    local items = 0
+    for xml in modDesc:gmatch('<storeItem xmlFilename="([^"]+)"') do
+        items = items + 1
+        local file = io.open(xml)
+        local text = file ~= nil and file:read("*a") or ""
+        if file ~= nil then file:close() end
+        local i3d = text:match("<filename>([^<]+)</filename>")
+        local image = text:match("<image>([^<]+)</image>")
+        local name = text:match("<name>%$l10n_([^<]+)</name>")
+        local function exists(path) local f = path and io.open(path) if f then f:close() return true end return false end
+        check("shop item " .. xml .. " is complete", exists(i3d) and exists(image) and name ~= nil
+            and en:find('name="' .. name .. '"', 1, true) ~= nil)
+    end
+    check("the shop items are listed", items >= 8)
+end
 
 local points = EqFacility.dedupe({
     { kind = "jumps", x = 0, z = 0 }, { kind = "jumps", x = 0.5, z = 0 }, { kind = "jumps", x = 0, z = 12 },

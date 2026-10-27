@@ -42,6 +42,13 @@
         <text name="eq_shop_dressageArena20x40" text="Dressurviereck 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
+        <text name="eq_shop_xcLogPileSmall" text="Holzstapel (klein)"/>
+        <text name="eq_shop_xcLogPile" text="Holzstapel"/>
+        <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
+        <text name="eq_shop_xcFenceMarker3m" text="Geländehindernis-Markierung 3 m"/>
+        <text name="eq_shop_xcFenceMarker5m" text="Geländehindernis-Markierung 5 m"/>
+        <text name="eq_shop_xcFenceMarker8m" text="Geländehindernis-Markierung 8 m"/>
+        <text name="eq_shop_xcFenceMarker_function" text="Macht alles zum Geländehindernis: über einen Baumstamm, Wall oder Graben setzen. Nur im Baumodus sichtbar, beim Reiten unsichtbar."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>
@@ -450,6 +457,7 @@
         <text name="eq_facility_outdoorArena" text="Außenreitplatz"/>
         <text name="eq_facility_roundPen" text="Longierzirkel"/>
         <text name="eq_facility_jumps" text="Springparcours"/>
+        <text name="eq_facility_xcFence" text="Geländestrecke"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
         <text name="eq_settings_tab" text="Pferdesport"/>
         <text name="eq_settings_credit" text="Realistic Equestrian von %s"/>
