@@ -9,8 +9,10 @@
         info      the first time its Information tab shows with horses on the farm: skills,
                   potential, roles, staff and feed
         events    the first time the Events tab opens: disciplines, transport, injuries
+        diseases  the first time RLRM's Diseases dialog opens for a horse: treatment, retiring
 
-    The menu popups are drawn after RLMenu draws, so they sit on top of it. Which have been
+    The menu popups are drawn after RLMenu draws, so they sit on top of it, and the diseases
+    popup after DiseaseDialog draws. Which have been
     seen is kept with the training help's, and the Help popups setting clears them all.
 ]]
 
@@ -24,10 +26,11 @@ EqWelcome.HORSES_INTERVAL_MS = 2000  -- how long "the farm has horses" is truste
 
 -- Each series' pages; page p's texts are eq_welcome_<p>_title and eq_welcome_<p>.
 EqWelcome.SERIES = {
-    welcome = { "welcome_1", "welcome_2" },
+    welcome = { "welcome_1" },
     menu = { "menu_1" },
     info = { "info_skills", "info_potential", "info_roles", "info_feed" },
     events = { "events_disciplines", "events_transport", "events_risks" },
+    diseases = { "diseases_treatment" },
 }
 
 EqWelcome.checkedAt = nil
@@ -56,10 +59,10 @@ end
 
 --- Show a series once: marks it seen and pops it up.
 --- @param series string
---- @param inMenu boolean|nil
-function EqWelcome.show(series, inMenu)
+--- @param place string|nil "menu" or "dialog", nil in the world (see EqTrainingHud.showHelp)
+function EqWelcome.show(series, place)
     EqTrainingHud.markSeen(EqWelcome.seenKey(series))
-    EqTrainingHud.showHelp(EqWelcome.pages(series), inMenu)
+    EqTrainingHud.showHelp(EqWelcome.pages(series), place)
     Log:info("EqWelcome: showing the '%s' popups", series)
 end
 
@@ -189,16 +192,30 @@ end
 function EqWelcome.onMenuDraw(menu)
     if not EqMain.isActive then return end
     local fullMenu = menu.openMode == nil or menu.openMode == "full"
-    if fullMenu and not (EqTrainingHud.isHelpShowing() and EqTrainingHud.inMenu) then
+    if fullMenu and not (EqTrainingHud.isHelpShowing() and EqTrainingHud.place ~= nil) then
         local series = EqWelcome.menuSeries({
             hasHorses = farmHasHorses(),
             infoOpen = isPageOpen(menu, menu.infoFrame),
             eventsOpen = isPageOpen(menu, menu.eqEventsFrame),
             seen = EqWelcome.hasSeen,
         })
-        if series ~= nil then EqWelcome.show(series, true) end
+        if series ~= nil then EqWelcome.show(series, "menu") end
     end
-    EqTrainingHud.drawHelp(true)
+    EqTrainingHud.drawHelp("menu")
+end
+
+
+--- Appended to RLRM's DiseaseDialog:draw: the treatment popup, the first time it shows a horse.
+--- @param dialog table DiseaseDialog
+function EqWelcome.onDiseaseDialogDraw(dialog)
+    if not EqMain.isActive then return end
+    local animal = dialog.animal
+    local isHorse = animal ~= nil and animal.isHorse ~= nil and animal:isHorse()
+    if isHorse and not EqWelcome.hasSeen("diseases")
+        and not (EqTrainingHud.isHelpShowing() and EqTrainingHud.place == "dialog") then
+        EqWelcome.show("diseases", "dialog")
+    end
+    EqTrainingHud.drawHelp("dialog")
 end
 
 
@@ -220,6 +237,12 @@ function EqWelcome.install(guarded)
         end)
     else
         Log:warning("EqWelcome: RLRM's menu has no draw; the menu's welcome popups are off")
+    end
+    local dialog = EqRLRM.get("DiseaseDialog")
+    if dialog ~= nil and dialog.draw ~= nil then
+        dialog.draw = Utils.appendedFunction(dialog.draw, function(self)
+            guarded("diseases welcome popup", function() EqWelcome.onDiseaseDialogDraw(self) end)
+        end)
     end
 end
 

@@ -44,7 +44,7 @@ EqTrainingHud.pageIndex = 0
 EqTrainingHud.pageShownAt = 0
 EqTrainingHud.mouseWasDown = true
 EqTrainingHud.seen = nil
-EqTrainingHud.inMenu = false     -- the popups showing belong to RLRM's menu
+EqTrainingHud.place = nil        -- where the popups showing belong: nil (the world), "menu" or "dialog"
 EqTrainingHud.drawnAt = nil      -- g_time of the last draw: the riding and world draws share one popup
 
 
@@ -342,11 +342,11 @@ end
 
 --- Start a series of help popups, replacing any showing.
 --- @param pages table list of { title, text }
---- @param inMenu boolean|nil true for popups over RLRM's menu
-function EqTrainingHud.showHelp(pages, inMenu)
+--- @param place string|nil "menu" over RLRM's menu, "dialog" over its Diseases dialog, nil in the world
+function EqTrainingHud.showHelp(pages, place)
     if pages == nil or #pages == 0 then return end
     EqTrainingHud.pages = pages
-    EqTrainingHud.inMenu = inMenu == true
+    EqTrainingHud.place = place
     EqTrainingHud.pageIndex = 1
     EqTrainingHud.pageShownAt = g_time or 0
     -- A click held down when the popup opens does not count.
@@ -371,7 +371,7 @@ end
 local function updateHelp()
     local down = Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) or false
     local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
-    local clicked = down and not EqTrainingHud.mouseWasDown and (EqTrainingHud.inMenu or not guiOpen)
+    local clicked = down and not EqTrainingHud.mouseWasDown and (EqTrainingHud.place ~= nil or not guiOpen)
     EqTrainingHud.mouseWasDown = down
 
     local timedOut = (g_time or 0) - EqTrainingHud.pageShownAt > EqTrainingHud.HELP_TIMEOUT_MS
@@ -384,13 +384,13 @@ end
 
 --- Draw the help popup, if one is showing. Call every frame while riding, in the world and in
 --- RLRM's menu; a popup only draws where it belongs, and only once a frame.
---- @param inMenu boolean|nil true when called from RLRM's menu
-function EqTrainingHud.drawHelp(inMenu)
+--- @param place string|nil "menu" or "dialog" when called from RLRM's menu or Diseases dialog
+function EqTrainingHud.drawHelp(place)
     if EqTrainingHud.pages == nil then return end
     local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
-    if EqTrainingHud.inMenu ~= (inMenu == true) or (not inMenu and guiOpen) then
+    if EqTrainingHud.place ~= place or (place == nil and guiOpen) then
         -- A menu's popups go with the menu; world popups wait until every menu is closed.
-        if EqTrainingHud.inMenu and not guiOpen then EqTrainingHud.closeHelp() end
+        if EqTrainingHud.place ~= nil and not guiOpen then EqTrainingHud.closeHelp() end
         return
     end
     if g_time ~= nil and EqTrainingHud.drawnAt == g_time then return end

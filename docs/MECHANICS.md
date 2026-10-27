@@ -56,8 +56,9 @@ Every horse trains once a day, at RLRM's daily horse tick.
   show how each is going. Help pops up at the bottom of the screen the first time you open each
   view; press **H** to see it again, and click anywhere to move on. Welcome popups do the same
   the first time you come within 35 m of a horse pen or ride a horse, open RLRM's menu with
-  horses on the farm, open its Information tab, and open the Events tab. The **Help popups**
-  setting (Show again) clears every seen flag on your machine, so each popup shows once more.
+  horses on the farm, open its Information tab, open the Events tab, and open the Diseases dialog
+  for a horse. The **Help popups** setting (Show again) clears every seen flag on your machine,
+  so each popup shows once more.
 - One kind of training talks at a time, each in its own colour: a steady canter starts stamina
   (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo ends, a
   warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple) routines
