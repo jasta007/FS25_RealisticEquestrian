@@ -5,6 +5,7 @@
         <name>$l10n_eq_shop_xcLogPileSmall</name>
         <functions>
             <function>$l10n_eq_shop_xcJump_function</function>
+            <function>$l10n_eq_shop_xcHidden_function</function>
         </functions>
         <image>placeables/xcJumps/store_xcLogPileSmall.dds</image>
         <price>600</price>
@@ -33,4 +34,12 @@
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- 0.71 m high, 0.80 m deep; jumped along z, red flag at +x. -->
     </placement>
+
+    <!-- Always visible: No hides the piece outside construction, course editing and rounds (EqXcHide). -->
+    <eqAlwaysVisible>
+        <eqAlwaysVisibleConfigurations>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqAlwaysVisibleConfigurations>
+    </eqAlwaysVisible>
 </placeable>

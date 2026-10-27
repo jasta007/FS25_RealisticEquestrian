@@ -358,7 +358,7 @@ fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or
 red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
 hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
 15 m away and the line between them is the fence; the bar nearest its middle gives its height
-(`eqXcFences` lists them). The bars show only in construction mode; the flags always show. The flags
+(`eqXcFences` lists them). The bars show only in construction mode and while a course is edited; the flags hide like the other pieces (below). The flags
 and bars have small collision boxes so they can be picked to delete. The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
@@ -367,6 +367,16 @@ on its flat top with the lip at the edge (the lip is 1 m in front of the placeme
 triangle side walls hide the steep sculpted slope. A plank deck covers the top, so the bank top
 needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
 rides over the deck and drops off the lip.
+
+Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidden with no collision
+while you just ride or drive around, so a course can cross the map without leaving flags and logs
+everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
+a course is edited (seen but ridden through), and in a round from 60 m before the start line to the
+result (with collision). Buy a piece with the shop's **Always visible: Yes** configuration to keep
+it in the world all the time. In multiplayer they always show. Show jumps are never hidden. A
+vehicle left on a hidden piece can be thrown when its collision comes back. Road traffic is switched
+off from a cross country round's countdown to its finish and back on after (the savegame's traffic
+setting is not changed).
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

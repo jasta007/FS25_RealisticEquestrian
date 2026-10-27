@@ -2148,6 +2148,33 @@ do
 end
 check("height guides show in construction mode and while editing a course only",
     EqXcFlags.wantGuides(true, false) and EqXcFlags.wantGuides(false, true) and not EqXcFlags.wantGuides(false, false))
+dofile("scripts/facilities/EqXcHide.lua")
+do
+    local S, G, H = EqXcHide.SHOWN, EqXcHide.GHOST, EqXcHide.HIDDEN
+    check("cross country pieces hide unless building, editing a course or in a round",
+        EqXcHide.wantMode({}) == H and EqXcHide.wantMode({ construction = true }) == S
+        and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == S
+        and EqXcHide.wantMode({ construction = true, editing = true }) == S and EqXcHide.wantMode({ multiplayer = true }) == S)
+    check("pieces show from near the start line to the end of a round",
+        not EqXcHide.roundShows(nil, 0) and not EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR + 1)
+        and not EqXcHide.roundShows("approach", nil) and EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR)
+        and EqXcHide.roundShows("countdown", 500) and EqXcHide.roundShows("running", 500) and EqXcHide.roundShows("done", 500))
+    local xc = EqCourse.CROSS_COUNTRY
+    check("traffic is off only while a cross country round runs",
+        EqXcHide.wantsTrafficOff(xc, "countdown") and EqXcHide.wantsTrafficOff(xc, "go") and EqXcHide.wantsTrafficOff(xc, "running")
+        and not EqXcHide.wantsTrafficOff(xc, "approach") and not EqXcHide.wantsTrafficOff(xc, "done")
+        and not EqXcHide.wantsTrafficOff(nil, "running") and not EqXcHide.wantsTrafficOff(xc, nil))
+    check("the Always visible configuration is the second choice",
+        EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 2 }) and not EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 1 })
+        and not EqXcHide.isAlwaysVisible({}) and not EqXcHide.isAlwaysVisible(nil))
+    for _, name in ipairs({ "courseFlags", "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
+        local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
+        local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))
+        check(name .. " offers Always visible, No first", choices == 2
+            and text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_no"', 1, true) < text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_yes"', 1, true)
+            and text:find("eq_shop_xcHidden_function", 1, true) ~= nil)
+    end
+end
 do
     -- Every shop item is in the mod, with its i3d, shop image and name.
     local modDesc = io.open("modDesc.xml"):read("*a")

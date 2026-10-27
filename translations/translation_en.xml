@@ -49,6 +49,8 @@
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
         <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
+        <text name="eq_shop_xcHidden_function" text="Hidden outside construction, course editing and cross country rounds, unless bought Always visible."/>
+        <text name="eq_config_alwaysVisible" text="Always visible"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
