@@ -84,6 +84,7 @@ function EqStaffManager.hire(id, farmId)
     table.remove(EqStaffManager.candidates, index)
     candidate.farmId = farmId
     candidate.leavesAt = nil
+    candidate.enabled = true
     table.insert(EqStaffManager.hired, candidate)
     EqStaffManager.dayCache = {}
     Log:info("EqStaff: farm %d hired %s (%s, %s, %d a day)", farmId, candidate.name, candidate.job,
@@ -108,21 +109,59 @@ end
 
 --- @param id number member id
 --- @param farmId number
---- @param works table { kind, role?, id?, name? }
+--- @param works table { mode, stables, roles, horses } (EqStaff.WORKS_*)
 --- @return boolean ok
 function EqStaffManager.setWorksOn(id, farmId, works)
     local member = find(EqStaffManager.hired, id)
     if member == nil or member.farmId ~= farmId or not EqStaff.trains(member.job) then return false end
-    member.worksOn = works
+    member.worksOn = EqStaff.normalizeWorks(works)
     EqStaffManager.dayCache = {}
     return true
 end
 
 
+--- Switch a member on or off from the next morning (EqStaff.ENABLE_HOUR).
+--- @param id number member id
+--- @param farmId number
+--- @param enabled boolean
+--- @return boolean ok
+function EqStaffManager.setEnabled(id, farmId, enabled)
+    local member = find(EqStaffManager.hired, id)
+    if member == nil or member.farmId ~= farmId then return false end
+    if enabled == (member.enabled ~= false) then
+        member.nextEnabled = nil
+    else
+        member.nextEnabled = enabled
+    end
+    return true
+end
+
+
+--- @param member table
+--- @return boolean enabled what the member will be from the next morning
+function EqStaffManager.willBeEnabled(member)
+    if member.nextEnabled ~= nil then return member.nextEnabled end
+    return member.enabled ~= false
+end
+
+
+--- @param animal table|nil RLRM Animal
+--- @return string|nil key of the stable it lives in (RLRM's husbandry key), nil while ridden
+function EqStaffManager.stableOf(animal)
+    local system = animal ~= nil and animal.clusterSystem or nil
+    local owner = system ~= nil and system.owner or nil
+    if owner == nil or owner.spec_husbandryAnimals == nil then return nil end
+    local keys = EqRLRM.get("RLHusbandryTargetKey")
+    return keys ~= nil and keys.keyFor(owner) or nil
+end
+
+
 --- @param record table EqHorseRecord
+--- @param animal table|nil RLRM Animal, for its stable
 --- @return table horse what EqStaff needs to know about it
-function EqStaffManager.horseInfo(record)
-    return { id = record.id, role = EqRole.get(record), retired = record.retired == true }
+function EqStaffManager.horseInfo(record, animal)
+    return { id = record.id, role = EqRole.get(record), retired = record.retired == true,
+        stable = EqStaffManager.stableOf(animal) }
 end
 
 
@@ -132,8 +171,40 @@ local function farmHorses(farmId)
     local out = {}
     for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
         local record = EqRegistry.getOrCreate(animal)
-        if record ~= nil then table.insert(out, { horse = EqStaffManager.horseInfo(record), animal = animal }) end
+        if record ~= nil then table.insert(out, { horse = EqStaffManager.horseInfo(record, animal), animal = animal }) end
     end
+    return out
+end
+EqStaffManager.farmHorses = farmHorses
+
+
+--- The farm's horse stables, for the stable picker.
+--- @param farmId number
+--- @return table list of { uniqueId, name }
+function EqStaffManager.stablesOf(farmId)
+    local out, seen = {}, {}
+    local query = EqRLRM.get("RLAnimalQuery")
+    local keys = EqRLRM.get("RLHusbandryTargetKey")
+    if query == nil or keys == nil then return out end
+    for i, placeable in ipairs(query.listHusbandriesForFarm(farmId)) do
+        local holdsHorses = false
+        local spec = placeable.spec_husbandryAnimals
+        if spec ~= nil and spec.getClusters ~= nil then
+            for _, animal in pairs(spec:getClusters() or {}) do
+                if animal.isHorse ~= nil and animal:isHorse() then holdsHorses = true end
+            end
+        end
+        local typeIndex = placeable.getAnimalTypeIndex ~= nil and placeable:getAnimalTypeIndex() or nil
+        local horseType = AnimalType ~= nil and AnimalType.HORSE or nil
+        local key = keys.keyFor(placeable)
+        if key ~= nil and not seen[key] and (holdsHorses or (horseType ~= nil and typeIndex == horseType)) then
+            seen[key] = true
+            local name = query.formatHusbandryLabel ~= nil and query.formatHusbandryLabel(placeable, i)
+                or (placeable.getName ~= nil and placeable:getName()) or key
+            table.insert(out, { uniqueId = key, name = name })
+        end
+    end
+    table.sort(out, function(a, b) return string.lower(a.name) < string.lower(b.name) end)
     return out
 end
 
@@ -145,12 +216,15 @@ local function cacheFor(farmId)
     local today = g_currentMission ~= nil and g_currentMission.environment.currentMonotonicDay or 0
     local cache = EqStaffManager.dayCache[farmId]
     if cache == nil or cache.day ~= today then
-        local members = EqStaffManager.membersOf(farmId)
-        local horses = {}
+        local members = EqStaff.working(EqStaffManager.membersOf(farmId))
+        local horses, byId = {}, {}
         if #members > 0 then
-            for _, entry in ipairs(farmHorses(farmId)) do table.insert(horses, entry.horse) end
+            for _, entry in ipairs(farmHorses(farmId)) do
+                table.insert(horses, entry.horse)
+                byId[entry.horse.id] = entry.horse
+            end
         end
-        cache = { day = today, members = members, counts = EqStaff.targetCounts(members, horses) }
+        cache = { day = today, members = members, counts = EqStaff.targetCounts(members, horses), byId = byId }
         EqStaffManager.dayCache[farmId] = cache
     end
     return cache
@@ -165,7 +239,7 @@ function EqStaffManager.workFor(record, farmId)
     if farmId == nil then return nil end
     local cache = cacheFor(farmId)
     if #cache.members == 0 then return nil end
-    return EqStaff.workOn(cache.members, EqStaffManager.horseInfo(record), cache.counts)
+    return EqStaff.workOn(cache.members, cache.byId[record.id] or EqStaffManager.horseInfo(record), cache.counts)
 end
 
 
@@ -178,7 +252,7 @@ function EqStaffManager.eventBonusFor(record, farmId, discipline)
     if farmId == nil or discipline == nil then return nil end
     local cache = cacheFor(farmId)
     if #cache.members == 0 then return nil end
-    return EqStaff.eventBonus(cache.members, EqStaffManager.horseInfo(record), cache.counts,
+    return EqStaff.eventBonus(cache.members, cache.byId[record.id] or EqStaffManager.horseInfo(record), cache.counts,
         EqStaff.eventSkills(discipline), discipline.weights or {})
 end
 
@@ -232,10 +306,21 @@ function EqStaffManager.onHourChanged()
     EqStaffManager.nextId = EqStaff.refreshCandidates(EqStaffManager.candidates, EqStaffManager.hourNow(), newRng(),
         EqStaffManager.nextId, false)
     local environment = g_currentMission.environment
-    if environment == nil or environment.currentHour ~= EqStaffManager.ROUND_HOUR then return end
+    if environment == nil then return end
+    if environment.currentHour == EqStaff.ENABLE_HOUR then
+        -- Switching on or off takes effect each morning, for a whole day.
+        for _, member in ipairs(EqStaffManager.hired) do
+            if member.nextEnabled ~= nil then
+                member.enabled = member.nextEnabled
+                member.nextEnabled = nil
+            end
+        end
+        EqStaffManager.dayCache = {}
+    end
+    if environment.currentHour ~= EqStaffManager.ROUND_HOUR then return end
 
     for _, farmId in ipairs(staffedFarms()) do
-        local members = EqStaffManager.membersOf(farmId)
+        local members = EqStaff.working(EqStaffManager.membersOf(farmId))
         local hasGroom = false
         for _, member in ipairs(members) do
             if member.job == "groom" then hasGroom = true end
@@ -280,11 +365,48 @@ local function saveMember(xmlFile, key, member)
     for _, skill in ipairs(EqStaff.SKILLS) do
         xmlFile:setInt(key .. ".skills#" .. skill, member.skills[skill] or 0)
     end
-    local works = member.worksOn or { kind = EqStaff.WORKS_GENERAL }
-    xmlFile:setString(key .. ".worksOn#kind", works.kind)
-    if works.role ~= nil then xmlFile:setString(key .. ".worksOn#role", works.role) end
-    if works.id ~= nil then xmlFile:setString(key .. ".worksOn#horse", works.id) end
-    if works.name ~= nil then xmlFile:setString(key .. ".worksOn#name", works.name) end
+    if member.enabled == false then xmlFile:setBool(key .. "#enabled", false) end
+    if member.nextEnabled ~= nil then xmlFile:setBool(key .. "#nextEnabled", member.nextEnabled) end
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    xmlFile:setString(key .. ".worksOn#mode", works.mode)
+    for listName, values in pairs({ stable = works.stables, role = works.roles, horse = works.horses }) do
+        for i, value in ipairs(values or {}) do
+            xmlFile:setString(string.format("%s.worksOn.%s(%d)#id", key, listName, i - 1), value)
+        end
+    end
+    -- An empty stable or role list means none chosen; a missing one means all.
+    if works.stables ~= nil then xmlFile:setBool(key .. ".worksOn#someStables", true) end
+    if works.roles ~= nil then xmlFile:setBool(key .. ".worksOn#someRoles", true) end
+end
+
+
+--- @return table|nil list of the ids saved under key.listName(i)#id
+local function loadList(xmlFile, key, listName)
+    local out, i = {}, 0
+    while true do
+        local value = xmlFile:getString(string.format("%s.%s(%d)#id", key, listName, i))
+        if value == nil then break end
+        table.insert(out, value)
+        i = i + 1
+    end
+    return out
+end
+
+
+--- @return table worksOn
+local function loadWorks(xmlFile, key)
+    local mode = xmlFile:getString(key .. "#mode")
+    if mode == nil then
+        -- Before stables and checklists: one role or one horse.
+        return EqStaff.normalizeWorks({ kind = xmlFile:getString(key .. "#kind", EqStaff.WORKS_GENERAL),
+            role = xmlFile:getString(key .. "#role"), id = xmlFile:getString(key .. "#horse") })
+    end
+    return {
+        mode = mode,
+        stables = xmlFile:getBool(key .. "#someStables", false) and loadList(xmlFile, key, "stable") or nil,
+        roles = xmlFile:getBool(key .. "#someRoles", false) and loadList(xmlFile, key, "role") or nil,
+        horses = loadList(xmlFile, key, "horse"),
+    }
 end
 
 
@@ -301,12 +423,9 @@ local function loadMember(xmlFile, key)
         farmId = xmlFile:getInt(key .. "#farmId"),
         leavesAt = xmlFile:getInt(key .. "#leavesAt"),
         skills = {},
-        worksOn = {
-            kind = xmlFile:getString(key .. ".worksOn#kind", EqStaff.WORKS_GENERAL),
-            role = xmlFile:getString(key .. ".worksOn#role"),
-            id = xmlFile:getString(key .. ".worksOn#horse"),
-            name = xmlFile:getString(key .. ".worksOn#name"),
-        },
+        enabled = xmlFile:getBool(key .. "#enabled", true),
+        nextEnabled = xmlFile:getBool(key .. "#nextEnabled"),
+        worksOn = loadWorks(xmlFile, key .. ".worksOn"),
     }
     for _, skill in ipairs(EqStaff.SKILLS) do
         member.skills[skill] = xmlFile:getInt(key .. ".skills#" .. skill, 0)

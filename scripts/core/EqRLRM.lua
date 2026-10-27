@@ -49,6 +49,7 @@ EqRLRM.OPTIONAL = {
     dealerDelivery = { { "RLAnimalMoveService", "moveAnimals" }, { "RLAnimalMoveService", "getValidDestinations" },
         { "RLAnimalMoveService", "getErrorText" } },
     looseHorses = { { "Animal", "applyExercise" }, { "Animal", "applyGrooming" } },
+    staffPicker = { { "RLHusbandryTargetKey", "keyFor" }, { "RLHerdsmanHusbandryPickerDialog", "show" } },
 }
 
 EqRLRM.env = nil

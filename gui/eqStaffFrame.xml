@@ -4,7 +4,8 @@
     Realistic Equestrian's Staff tab inside RLRM's menu, laid out like the Events tab.
 
     Two tabs: Hire (the candidates on offer) and Your staff. Left, the people in a table; right,
-    the selected person: their job, all ten skills, wage and who they work on. Profiles are RLRM's
+    the selected person: their job, all ten skills, wage and, for your staff, Herdsman-style
+    controls for who they work on and whether they work. Profiles are RLRM's
     (rlMenu_*) and the base game's (fs25_*), as on the Events tab.
 
     Part of Realistic Equestrian by Jasta007.
@@ -59,7 +60,7 @@
         </GuiElement>
 
         <!-- The selected person: label left, value at 200px -->
-        <GuiElement profile="rlMenu_container" id="personPanel" position="1070px -120px" size="490px 700px">
+        <GuiElement profile="rlMenu_container" id="personPanel" position="1070px -120px" size="490px 740px">
             <GuiElement profile="rlMenu_container" position="0px 0px" size="490px 36px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 36px" id="panelName" textSize="22px" textBold="true" textLayoutMode="scrolling"/>
             </GuiElement>
@@ -119,6 +120,31 @@
                 <!-- Duties wrap over up to four lines. -->
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px -4px" size="290px 108px" id="panelNote"
                       textVerticalAlignment="top" textMaxWidth="290px" textMaxNumLines="4" textLayoutMode="truncate"/>
+            </GuiElement>
+
+            <!-- Your staff only: who they work on and whether they work, as on RLRM's Herdsman
+                 page. Stables and the role/horse checklist open RLRM's husbandry picker. -->
+            <GuiElement profile="rlMenu_container" id="staffControls" position="0px -556px" size="490px 184px">
+                <GuiElement profile="rlMenu_container" position="0px 0px" size="490px 42px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 42px" text="$l10n_eq_staff_status" textLayoutMode="scrolling"/>
+                    <BinaryOption profile="fs25_settingsBinaryOption" id="statusToggle" position="0px 0px" size="290px 38px" onClick="onStatusChanged"/>
+                </GuiElement>
+                <GuiElement profile="rlMenu_container" position="0px -46px" size="490px 42px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 42px" text="$l10n_eq_staff_stables" textLayoutMode="scrolling"/>
+                    <Button profile="rl_settingsButton" id="stablesButton" position="0px 0px" size="290px 38px" onClick="onClickStables">
+                        <ThreePartBitmap profile="fs25_settingsButtonBg"/>
+                    </Button>
+                </GuiElement>
+                <GuiElement profile="rlMenu_container" position="0px -92px" size="490px 42px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 42px" text="$l10n_eq_staff_col_worksOn" textLayoutMode="scrolling"/>
+                    <BinaryOption profile="fs25_settingsBinaryOption" id="modeToggle" position="0px 0px" size="290px 38px" onClick="onModeChanged"/>
+                </GuiElement>
+                <GuiElement profile="rlMenu_container" position="0px -138px" size="490px 42px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 42px" id="pickLabel" textLayoutMode="scrolling"/>
+                    <Button profile="rl_settingsButton" id="pickButton" position="0px 0px" size="290px 38px" onClick="onClickPick">
+                        <ThreePartBitmap profile="fs25_settingsButtonBg"/>
+                    </Button>
+                </GuiElement>
             </GuiElement>
         </GuiElement>
 

@@ -299,8 +299,8 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 ### Hired staff
 
 Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
-**Hire** lists the candidates, **Your staff** your team (both grouped by job, best first), with Change who they work on and Let go. Each
-person's ten skills show beside the table. The `eqStaff` console commands do the same. Host only
+**Hire** lists the candidates, **Your staff** your team (both grouped by job, best first), with
+Let go. Each person's ten skills show beside the table, and for your staff the controls below. The `eqStaff` console commands do the same. Host only
 for now in multiplayer.
 
 - **Jobs.** A groom trains all four stats and cleans horses. A Dressage, Show Jumping, Cross
@@ -319,9 +319,14 @@ for now in multiplayer.
   for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
   offer 12 to 72 game hours (Time remaining on the Hire tab). When a place is free, someone new
   turns up with a 25% chance each hour, so people come and go a few at a time.
-- **Works on.** A groom or trainer works on all horses (General), every horse with a role, or one
-  horse (the Change who they work on button steps through them). Horses they work on get their full work; up to 4 horses each, more share
-  it (8 horses get half each). Every other horse gets 20% of it.
+- **Works on.** Like RLRM's Herdsman: **Stables** picks the stables (all by default), and **By
+  role** ticks roles (with how many horses have each, retired horses left out) or **Individual**
+  ticks horses. A new hire works on every horse. The horses they work on share their full work:
+  up to 4 horses each get all of it, more share it (8 horses get half each). Every other horse
+  gets 20% of it.
+- **Status.** Disabled staff do no work (no training, cleaning, event bonus, vet or broker) and
+  get half pay. A switch takes effect at 01:00 the next morning and lasts at least a day, so it
+  can't be timed around the day's training, the grooms' round or the wages.
 - **Training.** Per day, a trainer gives 0.5 x skill/100 effort in its two stats, and anyone gives
   0.35 x skill/100 in the other stats (so a groom trains everything, and a talented trainer
   helps a little elsewhere). Each person trains a stat up to 60% + 35% x skill/100 of its

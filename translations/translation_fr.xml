@@ -472,9 +472,28 @@
         <text name="eq_staff_level_4" text="Très bon"/>
         <text name="eq_staff_level_5" text="Excellent"/>
         <text name="eq_staff_level_6" text="Légendaire"/>
-        <text name="eq_staff_works_general" text="Tous les chevaux (général)"/>
-        <text name="eq_staff_works_role" text="Tous les chevaux : %s"/>
+        <text name="eq_staff_works_general" text="Tous les chevaux"/>
         <text name="eq_staff_works_passive" text="Chaque cheval"/>
+        <text name="eq_staff_status" text="Statut"/>
+        <text name="eq_staff_stables" text="Écuries"/>
+        <text name="eq_staff_roles" text="Rôles"/>
+        <text name="eq_staff_horses" text="Chevaux"/>
+        <text name="eq_staff_covers" text="Chevaux suivis"/>
+        <text name="eq_staff_mode_roles" text="Par rôle"/>
+        <text name="eq_staff_mode_horses" text="Individuel"/>
+        <text name="eq_staff_allStables" text="Toutes les écuries"/>
+        <text name="eq_staff_nStables" text="%d écuries"/>
+        <text name="eq_staff_allRoles" text="Tous les rôles"/>
+        <text name="eq_staff_nRoles" text="%d rôles"/>
+        <text name="eq_staff_nHorses" text="%d chevaux"/>
+        <text name="eq_staff_noHorses" text="Choisir des chevaux"/>
+        <text name="eq_staff_works_off" text="Désactivé"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, désactivé dès demain"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, de retour au travail demain"/>
+        <text name="eq_staff_pick_stables" text="Choisir les écuries"/>
+        <text name="eq_staff_pick_roles" text="Choisir les rôles"/>
+        <text name="eq_staff_pick_horses" text="Choisir les chevaux"/>
+        <text name="eq_staff_pick_empty" text="Cochez au moins une case."/>
         <text name="eq_staff_wage" text="Salaire"/>
         <text name="eq_staff_perDay" text="%s par jour"/>
         <text name="eq_staff_duties" text="Tâches"/>
@@ -482,11 +501,9 @@
         <text name="eq_staff_duties_trainer" text="Se concentre sur %s et %s, entraîne un peu les autres stats et prépare les chevaux à leurs épreuves"/>
         <text name="eq_staff_duties_vet" text="Moins de blessures, soins plus courts et moins chers, pour chaque cheval"/>
         <text name="eq_staff_duties_broker" text="Donne un potentiel plus juste des chevaux du marchand. Meilleurs prix à l&apos;achat et à la vente de chevaux."/>
-        <text name="eq_staff_coversHorses" text="%s (%d)"/>
         <text name="eq_staff_timeLeft" text="Temps restant"/>
         <text name="eq_staff_hours" text="%d h"/>
         <text name="eq_staff_button_hire" text="Embaucher (%s par jour)"/>
-        <text name="eq_staff_button_worksOn" text="Changer d&apos;affectation"/>
         <text name="eq_staff_button_fire" text="Renvoyer"/>
         <text name="eq_staff_fire_confirm" text="Renvoyer %s ? Cette personne ne reviendra pas."/>
         <text name="eq_staff_letGo" text="%s est parti(e)."/>

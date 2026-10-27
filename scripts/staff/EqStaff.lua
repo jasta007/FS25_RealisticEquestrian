@@ -100,10 +100,65 @@ EqStaff.STACK = { 1, 0.4, 0.1 }
 -- Every groom cleans this many horses a day: the ones they work on first, then any others.
 EqStaff.CLEAN_PER_GROOM = 8
 
--- What "Works on" can be.
+-- Who a groom or trainer works on: { mode, stables, roles, horses }. In WORKS_ROLE mode every
+-- horse in the chosen stables (nil: all) with one of the chosen roles (nil: all) that isn't
+-- retired; in WORKS_HORSE mode the chosen horses. WORKS_GENERAL is only read from old saves.
 EqStaff.WORKS_GENERAL = "general"
 EqStaff.WORKS_ROLE = "role"
 EqStaff.WORKS_HORSE = "horse"
+-- A disabled member does no work and is paid this share of their wage. Switching takes effect
+-- at ENABLE_HOUR the next morning and holds for a whole day, so it can't be timed around the
+-- day's training, the grooms' round or the wages.
+EqStaff.DISABLED_WAGE = 0.5
+EqStaff.ENABLE_HOUR = 1
+
+
+--- @return table worksOn every horse in every stable
+function EqStaff.defaultWorks()
+    return { mode = EqStaff.WORKS_ROLE, horses = {} }
+end
+
+
+--- @param list table|nil
+--- @param value any
+--- @return boolean
+local function contains(list, value)
+    if list == nil then return false end
+    for _, item in ipairs(list) do
+        if item == value then return true end
+    end
+    return false
+end
+EqStaff.contains = contains
+
+
+--- Bring an old save's Works on ({ kind, role, id }) into the current shape.
+--- @param works table|nil
+--- @return table works
+function EqStaff.normalizeWorks(works)
+    if works == nil then return EqStaff.defaultWorks() end
+    if works.mode ~= nil then
+        works.horses = works.horses or {}
+        return works
+    end
+    if works.kind == EqStaff.WORKS_ROLE and works.role ~= nil then
+        return { mode = EqStaff.WORKS_ROLE, roles = { works.role }, horses = {} }
+    elseif works.kind == EqStaff.WORKS_HORSE and works.id ~= nil then
+        return { mode = EqStaff.WORKS_HORSE, horses = { works.id } }
+    end
+    return EqStaff.defaultWorks()
+end
+
+
+--- @param members table
+--- @return table the members at work (not disabled)
+function EqStaff.working(members)
+    local out = {}
+    for _, member in ipairs(members) do
+        if member.enabled ~= false then table.insert(out, member) end
+    end
+    return out
+end
 
 
 --- @param job string
@@ -215,7 +270,7 @@ function EqStaff.roll(rng, id, hour, job)
         skills = skills,
         talents = talents,
         wage = EqStaff.wageFor(job, gradeIndex, skills, talents, rng:uniform(-1, 1)),
-        worksOn = { kind = EqStaff.WORKS_GENERAL },
+        worksOn = EqStaff.defaultWorks(),
         leavesAt = hour + hours[1] + math.floor(rng:next() * (hours[2] - hours[1] + 1)),
     }
 end
@@ -340,14 +395,12 @@ end
 --- @param horse table { id, role, retired }
 --- @return boolean true when the member is set to work on this horse
 function EqStaff.targets(member, horse)
-    local works = member.worksOn
-    if works == nil or not EqStaff.trains(member.job) then return false end
-    if works.kind == EqStaff.WORKS_ROLE then
-        return not horse.retired and horse.role == works.role
-    elseif works.kind == EqStaff.WORKS_HORSE then
-        return horse.id == works.id
-    end
-    return false
+    if member.enabled == false or not EqStaff.trains(member.job) then return false end
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    if works.mode == EqStaff.WORKS_HORSE then return contains(works.horses, horse.id) end
+    if horse.retired then return false end
+    if works.stables ~= nil and horse.stable ~= nil and not contains(works.stables, horse.stable) then return false end
+    return works.roles == nil or contains(works.roles, horse.role)
 end
 
 
@@ -398,7 +451,7 @@ function EqStaff.workOn(members, horse, counts)
     local work = {}
     for _, stat in ipairs(EqStaff.STATS) do work[stat] = {} end
     for _, member in ipairs(members) do
-        if EqStaff.trains(member.job) then
+        if member.enabled ~= false and EqStaff.trains(member.job) then
             local targeted = EqStaff.targets(member, horse)
             for _, stat in ipairs(EqStaff.STATS) do
                 local effort, cap = EqStaff.memberEffort(member, stat, targeted, counts[member.id])
@@ -419,7 +472,7 @@ end
 function EqStaff.strength(members, skill)
     local values = {}
     for _, member in ipairs(members) do
-        table.insert(values, (member.skills[skill] or 0) / 100)
+        if member.enabled ~= false then table.insert(values, (member.skills[skill] or 0) / 100) end
     end
     return math.min(1, EqStaff.stack(values))
 end
@@ -429,7 +482,9 @@ end
 --- @return number wages per day
 function EqStaff.dailyWages(members)
     local total = 0
-    for _, member in ipairs(members) do total = total + (member.wage or 0) end
+    for _, member in ipairs(members) do
+        total = total + (member.wage or 0) * (member.enabled == false and EqStaff.DISABLED_WAGE or 1)
+    end
     return total
 end
 
@@ -442,7 +497,7 @@ end
 function EqStaff.toClean(members, horses)
     local grooms = 0
     for _, member in ipairs(members) do
-        if member.job == "groom" then grooms = grooms + 1 end
+        if member.job == "groom" and member.enabled ~= false then grooms = grooms + 1 end
     end
     local room = grooms * EqStaff.CLEAN_PER_GROOM
     local first, rest = {}, {}
@@ -463,50 +518,32 @@ function EqStaff.toClean(members, horses)
 end
 
 
---- What a groom or trainer can be set to work on, in the order the Works on button steps
---- through: General, each role some horse has, then each horse by name.
---- @param horses table list of { id, role, retired, name }
---- @param roleOrder table roles in order (EqRole.ORDER)
---- @return table options list of worksOn tables
-function EqStaff.worksOptions(horses, roleOrder)
-    local options = { { kind = EqStaff.WORKS_GENERAL } }
-    local used = {}
+--- How many horses have each role, in the chosen stables, for the role checklist.
+--- @param horses table list of { id, role, retired, stable }
+--- @param stables table|nil stable keys; nil for all
+--- @return table counts role -> horses
+function EqStaff.roleCounts(horses, stables)
+    local counts = {}
     for _, horse in ipairs(horses) do
-        if not horse.retired then used[horse.role] = true end
+        if not horse.retired and (stables == nil or horse.stable == nil or contains(stables, horse.stable)) then
+            counts[horse.role] = (counts[horse.role] or 0) + 1
+        end
     end
-    for _, role in ipairs(roleOrder) do
-        if used[role] and role ~= "balanced" then table.insert(options, { kind = EqStaff.WORKS_ROLE, role = role }) end
-    end
-    local sorted = {}
-    for _, horse in ipairs(horses) do table.insert(sorted, horse) end
-    table.sort(sorted, function(a, b) return string.lower(a.name or a.id) < string.lower(b.name or b.id) end)
-    for _, horse in ipairs(sorted) do
-        table.insert(options, { kind = EqStaff.WORKS_HORSE, id = horse.id, name = horse.name or horse.id })
-    end
-    return options
+    return counts
 end
 
 
---- @param a table worksOn
---- @param b table worksOn
---- @return boolean same
-function EqStaff.sameWorks(a, b)
-    if a == nil or b == nil or a.kind ~= b.kind then return false end
-    if a.kind == EqStaff.WORKS_ROLE then return a.role == b.role end
-    if a.kind == EqStaff.WORKS_HORSE then return a.id == b.id end
-    return true
-end
-
-
---- The option after the current one, wrapping round.
---- @param options table from worksOptions
---- @param current table|nil worksOn
---- @return table worksOn
-function EqStaff.nextWorks(options, current)
-    for i, option in ipairs(options) do
-        if EqStaff.sameWorks(option, current) then return options[i % #options + 1] end
+--- The horses in the chosen stables, by name, for the horse checklist.
+--- @param horses table list of { id, name, stable }
+--- @param stables table|nil stable keys; nil for all
+--- @return table horses
+function EqStaff.horsesIn(horses, stables)
+    local out = {}
+    for _, horse in ipairs(horses) do
+        if stables == nil or horse.stable == nil or contains(stables, horse.stable) then table.insert(out, horse) end
     end
-    return options[1]
+    table.sort(out, function(a, b) return string.lower(a.name or a.id) < string.lower(b.name or b.id) end)
+    return out
 end
 
 
@@ -656,7 +693,7 @@ function EqStaff.eventBonus(members, horse, counts, skills, weights)
         local values = {}
         for _, member in ipairs(members) do
             -- Only trainers coach for events; one can help in another event by their skill in it.
-            if EqStaff.JOBS[member.job] ~= nil and EqStaff.JOBS[member.job].event ~= nil then
+            if member.enabled ~= false and EqStaff.JOBS[member.job] ~= nil and EqStaff.JOBS[member.job].event ~= nil then
                 local share = EqStaff.GENERAL_SHARE
                 if EqStaff.targets(member, horse) then
                     share = math.min(1, EqStaff.HORSES_PER_STAFF / math.max(1, counts[member.id] or 1))

@@ -537,9 +537,28 @@
         <text name="eq_staff_level_4" text="Sehr gut"/>
         <text name="eq_staff_level_5" text="Hervorragend"/>
         <text name="eq_staff_level_6" text="Legendär"/>
-        <text name="eq_staff_works_general" text="Alle Pferde (allgemein)"/>
-        <text name="eq_staff_works_role" text="Alle Pferde: %s"/>
+        <text name="eq_staff_works_general" text="Alle Pferde"/>
         <text name="eq_staff_works_passive" text="Jedes Pferd"/>
+        <text name="eq_staff_status" text="Status"/>
+        <text name="eq_staff_stables" text="Ställe"/>
+        <text name="eq_staff_roles" text="Rollen"/>
+        <text name="eq_staff_horses" text="Pferde"/>
+        <text name="eq_staff_covers" text="Betreute Pferde"/>
+        <text name="eq_staff_mode_roles" text="Nach Rolle"/>
+        <text name="eq_staff_mode_horses" text="Einzeln"/>
+        <text name="eq_staff_allStables" text="Alle Ställe"/>
+        <text name="eq_staff_nStables" text="%d Ställe"/>
+        <text name="eq_staff_allRoles" text="Alle Rollen"/>
+        <text name="eq_staff_nRoles" text="%d Rollen"/>
+        <text name="eq_staff_nHorses" text="%d Pferde"/>
+        <text name="eq_staff_noHorses" text="Pferde wählen"/>
+        <text name="eq_staff_works_off" text="Deaktiviert"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, ab morgen deaktiviert"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, ab morgen wieder im Dienst"/>
+        <text name="eq_staff_pick_stables" text="Ställe wählen"/>
+        <text name="eq_staff_pick_roles" text="Rollen wählen"/>
+        <text name="eq_staff_pick_horses" text="Pferde wählen"/>
+        <text name="eq_staff_pick_empty" text="Wählen Sie mindestens einen Eintrag."/>
         <text name="eq_staff_wage" text="Lohn"/>
         <text name="eq_staff_perDay" text="%s pro Tag"/>
         <text name="eq_staff_duties" text="Aufgaben"/>
@@ -547,11 +566,9 @@
         <text name="eq_staff_duties_trainer" text="Schwerpunkt %s und %s, trainiert die anderen Werte etwas und bereitet Pferde auf ihre Turniere vor"/>
         <text name="eq_staff_duties_vet" text="Weniger Verletzungen, kürzere und günstigere Behandlung für jedes Pferd"/>
         <text name="eq_staff_duties_broker" text="Zeigt das Potenzial der Händlerpferde genauer. Bessere Preise beim Kauf und Verkauf von Pferden."/>
-        <text name="eq_staff_coversHorses" text="%s (%d)"/>
         <text name="eq_staff_timeLeft" text="Verbleibende Zeit"/>
         <text name="eq_staff_hours" text="%d Std."/>
         <text name="eq_staff_button_hire" text="Einstellen (%s pro Tag)"/>
-        <text name="eq_staff_button_worksOn" text="Zuständigkeit ändern"/>
         <text name="eq_staff_button_fire" text="Entlassen"/>
         <text name="eq_staff_fire_confirm" text="%s entlassen? Diese Person kommt nicht zurück."/>
         <text name="eq_staff_letGo" text="%s ist gegangen."/>

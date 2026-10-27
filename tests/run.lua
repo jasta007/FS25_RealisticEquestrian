@@ -932,7 +932,7 @@ do
         for _, skill in ipairs(EqStaff.SKILLS) do skills[skill] = 10 end
         for _, skill in ipairs(EqStaff.JOBS[job].main) do skills[skill] = level end
         return { id = id, name = job .. id, job = job, grade = 2, skills = skills, wage = 1000,
-            worksOn = worksOn or { kind = EqStaff.WORKS_GENERAL } }
+            worksOn = worksOn or { kind = EqStaff.WORKS_GENERAL } }  -- an old save's shape, read as every horse
     end
     local star = { id = "S", role = "showJumping" }
     local other = { id = "O", role = "dressage" }
@@ -1059,14 +1059,32 @@ do
     local clean = EqStaff.toClean(grooms, yard)
     check("a groom cleans 8 horses, theirs first", #clean == EqStaff.CLEAN_PER_GROOM and clean[1].id == "Y12")
     check("no grooms, no cleaning", #EqStaff.toClean({ vet }, yard) == 0)
-    local options = EqStaff.worksOptions({ { id = "b", name = "Bella", role = "racing" }, { id = "a", name = "Ace", role = "balanced" },
-        { id = "r", name = "Old", role = "dressage", retired = true } }, EqRole.ORDER)
-    check("Works on: general, roles in use, then horses by name", #options == 5 and options[2].role == "racing"
-        and options[3].name == "Ace" and options[5].name == "Old")
-    check("Works on steps round", EqStaff.nextWorks(options, options[5]).kind == EqStaff.WORKS_GENERAL
-        and EqStaff.nextWorks(options, { kind = EqStaff.WORKS_GENERAL }).role == "racing")
-    check("a gone horse starts again at general", EqStaff.nextWorks(options, { kind = EqStaff.WORKS_HORSE, id = "x" }).kind
-        == EqStaff.WORKS_GENERAL)
+    -- Works on: stables, roles or chosen horses, and switching staff off.
+    local barn = { { id = "a", name = "Ace", role = "racing", stable = "barn" },
+        { id = "b", name = "Bella", role = "racing", stable = "yard" },
+        { id = "c", name = "Cody", role = "dressage", stable = "barn" },
+        { id = "r", name = "Old", role = "racing", stable = "barn", retired = true } }
+    local counts = EqStaff.roleCounts(barn, { "barn" })
+    check("role counts follow the stables, not retired horses", counts.racing == 1 and counts.dressage == 1)
+    check("role counts in every stable", EqStaff.roleCounts(barn, nil).racing == 2)
+    local listed = EqStaff.horsesIn(barn, { "yard" })
+    check("the horse list follows the stables", #listed == 1 and listed[1].name == "Bella")
+    local inBarn = member(40, "groom", 50, { mode = EqStaff.WORKS_ROLE, stables = { "barn" }, roles = { "racing" } })
+    check("a stable and role pick", EqStaff.targets(inBarn, barn[1]) and not EqStaff.targets(inBarn, barn[2])
+        and not EqStaff.targets(inBarn, barn[3]) and not EqStaff.targets(inBarn, barn[4]))
+    local everyone = member(41, "groom", 50, EqStaff.defaultWorks())
+    check("by default staff work on every horse but the retired", EqStaff.targets(everyone, barn[2])
+        and not EqStaff.targets(everyone, barn[4]))
+    local picked = member(42, "groom", 50, { mode = EqStaff.WORKS_HORSE, horses = { "b", "r" } })
+    check("chosen horses, retired too", EqStaff.targets(picked, barn[2]) and EqStaff.targets(picked, barn[4])
+        and not EqStaff.targets(picked, barn[1]))
+    check("old saves' Works on still read", EqStaff.normalizeWorks({ kind = EqStaff.WORKS_ROLE, role = "racing" }).roles[1] == "racing"
+        and EqStaff.normalizeWorks({ kind = EqStaff.WORKS_GENERAL }).roles == nil)
+    local off = member(43, "groom", 50)
+    off.enabled = false
+    check("a disabled member does no work", not EqStaff.targets(off, barn[1])
+        and #EqStaff.workOn({ off }, barn[1], {}).speed == 0 and #EqStaff.toClean({ off }, barn) == 0)
+    check("a disabled member is paid half", EqStaff.dailyWages({ off, member(44, "groom", 50) }) == 1500)
     check("skill words", EqStaff.level(95).word == 6 and EqStaff.level(0).word == 1 and EqStaff.level(59).word == 3)
     check("best skills first", EqStaff.bestSkills(member(30, "racing", 70), 2)[1] == "racing")
 

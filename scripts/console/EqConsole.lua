@@ -144,12 +144,14 @@ local function staffLine(member)
     for _, skill in ipairs(EqStaff.SKILLS) do
         table.insert(skills, string.format("%s %d", string.sub(skill, 1, 4), member.skills[skill] or 0))
     end
-    local works = member.worksOn or {}
+    local works = EqStaff.normalizeWorks(member.worksOn)
     local target = ""
     if EqStaff.trains(member.job) then
-        target = "  works on " .. (works.kind == EqStaff.WORKS_ROLE and ("role " .. tostring(works.role))
-            or works.kind == EqStaff.WORKS_HORSE and ("horse " .. tostring(works.name or works.id)) or "all horses (general)")
+        target = "  works on " .. (works.mode == EqStaff.WORKS_HORSE and ("horses " .. table.concat(works.horses, ","))
+            or works.roles ~= nil and ("roles " .. table.concat(works.roles, ",")) or "all horses")
+            .. (works.stables ~= nil and string.format(" in %d stable(s)", #works.stables) or "")
     end
+    if member.enabled == false then target = target .. "  DISABLED" end
     return string.format("#%d %s, %s %s, %s a day%s\n    %s", member.id, member.name,
         EqStaff.GRADES[member.grade].name, member.job, g_i18n:formatMoney(member.wage, 0, true, true), target,
         table.concat(skills, " "))
@@ -198,14 +200,14 @@ function EqConsole:consoleStaffWork(id, ...)
     if query == "" then return usage end
     local works
     if query == "general" then
-        works = { kind = EqStaff.WORKS_GENERAL }
+        works = EqStaff.defaultWorks()
     elseif EqRole.isKnown(query) then
-        works = { kind = EqStaff.WORKS_ROLE, role = query }
+        works = { mode = EqStaff.WORKS_ROLE, roles = { query }, horses = {} }
     else
         for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
             local record = EqRegistry.getOrCreate(animal)
             if record ~= nil and matchesHorse(animal, record, query) then
-                works = { kind = EqStaff.WORKS_HORSE, id = record.id, name = animal:getName() or record.id }
+                works = { mode = EqStaff.WORKS_HORSE, horses = { record.id } }
             end
         end
         if works == nil then return string.format("No horse called '%s' on your farm. %s", query, usage) end
