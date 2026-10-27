@@ -15,6 +15,7 @@ dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/core/EqI18N.lua")
@@ -2721,6 +2722,90 @@ end)()
     check("an old save loads with no starting stats", EqHorseRecord.loadFromXMLFile((function()
         local y = memoryXML(); EqHorseRecord.new("DE 1 11"):saveToXMLFile(y, "h"); return y end)(), "h").start == nil)
     EqRegistry.reset()
+end)()
+
+;(function()
+    -- Dressage markers: a standard 20 x 40 m arena.
+    local arena = {}
+    for _, m in ipairs({ { "A", 10, 0 }, { "K", 0, 6 }, { "E", 0, 20 }, { "H", 0, 34 }, { "C", 10, 40 }, { "M", 20, 34 },
+        { "B", 20, 20 }, { "F", 20, 6 }, { "D", 10, 6 }, { "X", 10, 20 }, { "G", 10, 34 } }) do
+        table.insert(arena, { letter = m[1], x = m[2], z = m[3] })
+    end
+    local far = { letter = "Q", x = 500, z = 500 }
+    local all = { far }
+    for _, m in ipairs(arena) do table.insert(all, m) end
+    local course = EqDressage.findCourse(all, 12, 3)
+    check("the whole arena is a course", course ~= nil and #course == #arena and course[1].letter == "D")
+    check("no markers within 100 m: no course", EqDressage.findCourse(all, 300, 300) == nil)
+    check("markers in a line are no course", EqDressage.findCourse({ { letter = "A", x = 0, z = 0 }, { letter = "X", x = 0, z = 20 },
+        { letter = "C", x = 0.5, z = 40 } }, 0, 0) == nil)
+    check("two markers are no course", EqDressage.findCourse({ arena[1], arena[2] }, 10, 0) == nil)
+    check("a marker's letter comes from its configuration", EqDressage.letterFor(2, nil) == "B" and EqDressage.letterFor(26, "letter_Z") == "Z"
+        and EqDressage.letterFor(1, "Letter K") == "K" and EqDressage.letterFor(nil, nil) == "?")
+    check("Riding Hall 2k26 markers are recognised", EqDressage.isMarkerXml("C:\\mods\\FS25_RidingHall\\objekt.xml")
+        and not EqDressage.isMarkerXml("FS25_RidingHall/props01.xml"))
+
+    -- A rider who does what is asked, ridden frame by frame.
+    local SPEED = { walk = 1.7, trot = 3.5, canter = 5.5 }
+    local function ride(rng, ms, markers, log)
+        local sheet, x, z = EqTraining.newSheet(), 12, 3
+        local events = {}
+        for _ = 1, ms / 50 do
+            local r = sheet.routine
+            local task, move, steer = r.task, "walk", nil
+            if task ~= nil then
+                if task.kind == "go" then
+                    move = r.bonus ~= nil and r.bonus.gait or task.gait
+                    local dx, dz = task.marker.x - x, task.marker.z - z
+                    local d = math.sqrt(dx * dx + dz * dz)
+                    local step = math.min(d, SPEED[move] * 0.05)
+                    if d > 0 then x, z = x + dx / d * step, z + dz / d * step end
+                elseif task.kind == "reverse" then move = "reverse"
+                elseif task.kind == "turn" then move, steer = "halt", task.side
+                else move = "halt" end
+            end
+            local event = EqTraining.routineStep(sheet, move, steer, 50, false, rng, markers and { x = x, z = z, markers = markers } or nil)
+            if event ~= nil then events[event] = (events[event] or 0) + 1 end
+            if log and task ~= nil and r.task ~= task then log[task.kind] = (log[task.kind] or 0) + 1 end
+        end
+        return sheet, events
+    end
+    local seed = 7
+    local function rng(n) seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n + 1 end
+    local kinds = {}
+    local danced, events = ride(rng, 600000, course, kinds)
+    check("a rider who follows the markers keeps the routine going", danced.routine.active and danced.routine.mult == EqTraining.ROUTINE_MAX
+        and (events.lost or 0) == 0, string.format("mult %d, lost %d", danced.routine.mult, events.lost or 0))
+    check("legs are the most common command, backing up the rarest", (kinds.go or 0) > (kinds.halt or 0)
+        and (kinds.reverse or 0) < (kinds.halt or 0) and (kinds.reverse or 0) > 0,
+        string.format("go %d halt %d turn %d reverse %d", kinds.go or 0, kinds.halt or 0, kinds.turn or 0, kinds.reverse or 0))
+    check("passing other markers sometimes earns a bonus", (events.bonus or 0) > 0)
+    seed = 7
+    local free = ride(rng, 600000, nil)
+    check("without markers the free routine runs, training less", free.routine.kind == "free"
+        and danced.focused.temperament > free.focused.temperament,
+        string.format("markers %.2f free %.2f", danced.focused.temperament, free.focused.temperament))
+
+    local sheet = EqTraining.newSheet()
+    local here = { x = 12, z = 3, markers = course }
+    local one = function() return 1 end
+    for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
+    local r = sheet.routine
+    check("walking near markers starts a marker routine with a leg", r.kind == "markers" and r.request == "go" and r.task.marker ~= nil)
+    check("the first leg goes to a marker at least 8 m away", math.sqrt((r.task.marker.x - 12) ^ 2 + (r.task.marker.z - 3) ^ 2) >= 8)
+    local deadline = r.deadline
+    check("a leg gets far more time than a free command", deadline - r.clock > EqTraining.ROUTINE_REACT_MS * 2)
+    r.task.gait = "canter"
+    EqTraining.routineStep(sheet, "canter", nil, 50, false, one, here)
+    check("a canter asked for keeps the routine", r.active)
+    EqTraining.routineStep(sheet, "gallop", nil, 50, false, one, here)
+    check("a gallop breaks it", not r.active)
+    for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
+    for _ = 1, 100 do EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here) end
+    check("stopping mid-leg breaks it", not r.active)
+    for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
+    EqTraining.routineStep(sheet, "walk", nil, 50, false, one, nil)
+    check("leaving the course carries on with the free routine", r.active and r.kind == "free" and r.task == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

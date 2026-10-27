@@ -119,11 +119,23 @@ EqTraining.ROUTINE_DRIFT_MS = 600
 EqTraining.ROUTINE_PACE = { reverse = 1, halt = 2, walk = 3, trot = 4 }
 EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
+-- Near dressage markers the routine is ridden between them (EqDressage). Without a course
+-- (James, 2026-10-27) it falls back to the free routine above, which trains at this share.
+EqTraining.FREE_ROUTINE_SHARE = 0.6
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
 EqTraining.BAR_FROM_STAMINA = 50
 EqTraining.BAR_FIT_SHARE = 1.4
+
+-- Riding that trains little (getting to a facility, hacking about) costs much less of the riding
+-- bar: it fills at CRUISE_BAR_SHARE of the usual rate when the horse's focused work (stamina,
+-- speed, jump combos, routines) is earning nothing, rising to the full rate at WORK_FULL_RATE
+-- effort a second (stamina at about x2, a x5 jump combo, a x8 routine). The rate is averaged
+-- over about WORK_WINDOW_MS, so a jump or two keeps it up for a while.
+EqTraining.CRUISE_BAR_SHARE = 0.25
+EqTraining.WORK_FULL_RATE = 0.01
+EqTraining.WORK_WINDOW_MS = 20000
 
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
@@ -293,6 +305,7 @@ function EqTraining.breakRoutine(sheet)
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
     routine.shown = nil
     routine.steerMs, routine.driftMs = 0, 0
+    routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
     return was
 end
 
@@ -314,27 +327,65 @@ end
 
 --- One frame of the temperament routine.
 --- @param sheet table
---- @param move string walk, trot, halt, reverse, or fast (canter or gallop)
+--- @param move string walk, trot, halt, reverse, canter, gallop, or fast (canter or gallop)
 --- @param steer string|nil left or right while the rider holds that steering key
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
 --- @param rng function (n) -> 1..n
---- @return string|nil event "start", "request", "done", "lost", or nil
-function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
+--- @param course table|nil { x, z, markers } dressage markers round the horse (EqDressage)
+--- @return string|nil event "start", "request", "done", "bonus", "lost", or nil
+function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     local routine = sheet.routine
     routine.clock = routine.clock + dt
+    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
+
+    -- Round the markers: a canter is one of the gaits asked for.
+    if routine.active and routine.kind == "markers" then
+        if course ~= nil then
+            local event = EqDressage.step(sheet, move, steer, dt, rng, course)
+            if event == "test" then
+                -- An arena test ridden to the end: a big payoff at once, then a rest.
+                if not worn then
+                    sheet.focused.temperament = sheet.focused.temperament
+                        + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
+                end
+                EqTraining.breakRoutine(sheet)
+                routine.restUntil = routine.clock + EqDressage.TEST_REST_MS
+                return "test"
+            end
+            if routine.active then EqTraining.routineTrain(sheet, worn, dt, 1) end
+            return event
+        end
+        -- Off the course: carry on with the free routine from here.
+        routine.kind, routine.task, routine.preview, routine.bonus, routine.pending = "free", nil, nil, nil, nil
+        routine.request, routine.current = nil, EqTraining.ROUTINE_PACE[move] ~= nil and move or "walk"
+        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+    end
+
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
-    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
-    if move == "fast" then
+    local resting = routine.clock < (routine.restUntil or 0)
+    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop.
+    if not routine.active and not resting and course ~= nil and move ~= "gallop" and move ~= "fast"
+        and EqDressage.nearArena(course) then
+        routine.active, routine.mult, routine.current = true, 1, "walk"
+        EqDressage.start(routine, course, rng)
+        return "start"
+    end
+    if move == "fast" or move == "canter" or move == "gallop" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
 
     if not routine.active then
-        routine.walkMs = move == "walk" and routine.walkMs + dt or 0
+        routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
-        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        if course ~= nil then
+            EqDressage.start(routine, course, rng)
+        else
+            routine.kind = "free"
+            routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        end
         return "start"
     end
 
@@ -356,6 +407,10 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
             EqTraining.breakRoutine(sheet)
             return "lost"
         end
+    elseif routine.clock >= routine.nextAt and course ~= nil then
+        -- Markers came in sight: the next command sends the horse to one.
+        EqDressage.start(routine, course, rng)
+        return "request"
     elseif routine.clock >= routine.nextAt then
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
@@ -382,9 +437,7 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         routine.driftMs = 0
     end
 
-    if not worn and routine.mult > 1 then
-        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
-    end
+    EqTraining.routineTrain(sheet, worn, dt, EqTraining.FREE_ROUTINE_SHARE)
     return event
 end
 
@@ -462,6 +515,19 @@ function EqTraining.staminaStep(sheet, dt, worn)
 end
 
 
+--- Temperament from a running routine: TEMPERAMENT_RATE for each step above x1.
+--- @param sheet table
+--- @param worn boolean
+--- @param dt number milliseconds
+--- @param share number FREE_ROUTINE_SHARE for the free routine, 1 round markers
+function EqTraining.routineTrain(sheet, worn, dt, share)
+    local routine = sheet.routine
+    if not worn and routine.mult > 1 then
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * share * (routine.mult - 1) * dt / 1000
+    end
+end
+
+
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
@@ -473,6 +539,7 @@ function EqTraining.rest(sheet, ms, stamina)
     sheet.sprint.ms = 0
     for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0
+    sheet.workRate = 0
     EqTraining.breakRoutine(sheet)
 end
 
@@ -489,9 +556,33 @@ end
 --- @param sheet table
 --- @param gait string reverse, walk, trot, canter or gallop; anything else is ignored
 --- @param dt number milliseconds
-function EqTraining.addRiding(sheet, gait, dt)
+--- @param share number|nil how much of the time counts (workShare), 1 when nil
+function EqTraining.addRiding(sheet, gait, dt, share)
     if sheet.ms[gait] == nil or dt <= 0 then return end
-    sheet.ms[gait] = sheet.ms[gait] + dt
+    sheet.ms[gait] = sheet.ms[gait] + dt * (share or 1)
+end
+
+
+--- Follow how fast the horse's focused work is earning effort, and say how much of the riding
+--- bar's usual rate this riding costs.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @return number share CRUISE_BAR_SHARE..1
+function EqTraining.workStep(sheet, dt)
+    local total = 0
+    for _, value in pairs(sheet.focused) do total = total + value end
+    local gained = math.max(0, total - (sheet.workTotal or total))
+    sheet.workTotal = total
+    if dt > 0 then
+        -- An average over WORK_WINDOW_MS: each frame's gain counts in full, then fades.
+        local keep = math.exp(-dt / EqTraining.WORK_WINDOW_MS)
+        sheet.workRate = (sheet.workRate or 0) * keep + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    else
+        sheet.workRate = (sheet.workRate or 0) + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    end
+    local work = EqStats.clamp(sheet.workRate / EqTraining.WORK_FULL_RATE, 0, 1)
+    sheet.workShare = EqTraining.CRUISE_BAR_SHARE + (1 - EqTraining.CRUISE_BAR_SHARE) * work
+    return sheet.workShare
 end
 
 
@@ -514,6 +605,8 @@ EqTraining.HANDLING = {
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
     turn = { 1, 1.65 },      -- turn rate, by agility
+    -- ...and a little more from a calm, attentive horse (James, 2026-10-27).
+    turnTemperament = { 1, 1.2 },
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },
@@ -540,7 +633,7 @@ function EqTraining.handling(speed, agility, temperament)
     return {
         speed = handlingShare(limits.speed, speed),
         jump = handlingShare(limits.jump, agility),
-        turn = handlingShare(limits.turn, agility),
+        turn = handlingShare(limits.turn, agility) * handlingShare(limits.turnTemperament, temperament),
         acceleration = handlingShare(limits.acceleration, temperament),
         crashHalt = handlingShare(limits.crashHalt, temperament),
     }
@@ -548,7 +641,7 @@ end
 
 
 --- Riding points to add to (or, when negative, take off) what the base game credits this frame:
---- backing up counts extra, and a fit horse's bar fills more slowly.
+--- backing up counts extra, and a fit horse's (or an easy ride's, see workStep) bar fills more slowly.
 --- @param timer number weighted milliseconds carried over from earlier frames
 --- @param dt number milliseconds ridden this frame
 --- @param gait string
