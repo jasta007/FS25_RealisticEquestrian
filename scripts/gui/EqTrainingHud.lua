@@ -398,6 +398,15 @@ function EqTrainingHud.drawHelp(place)
     updateHelp()
     if EqTrainingHud.pages == nil then return end
 
+    -- The engine draws every text of a 2D layer after its images, so over a menu the menu's own
+    -- text showed through the popup's background. A layer of its own puts the popup on top, the
+    -- way the GUI stacks a dialog over its screen.
+    if new2DLayer ~= nil then new2DLayer() end
+    if not EqTrainingHud.layerLogged then
+        EqTrainingHud.layerLogged = true
+        Log:info("EqTrainingHud: popups on their own layer: %s", tostring(new2DLayer ~= nil))
+    end
+
     local p = EqTrainingHud.POPUP
     local page = EqTrainingHud.pages[EqTrainingHud.pageIndex]
     local inner = p.width - p.padding * 2
