@@ -137,6 +137,93 @@ function EqConsole:consoleSetFocus(...)
 end
 
 
+--- @param member table
+--- @return string line one staff member for the console
+local function staffLine(member)
+    local skills = {}
+    for _, skill in ipairs(EqStaff.SKILLS) do
+        table.insert(skills, string.format("%s %d", string.sub(skill, 1, 4), member.skills[skill] or 0))
+    end
+    local works = member.worksOn or {}
+    local target = ""
+    if EqStaff.trains(member.job) then
+        target = "  works on " .. (works.kind == EqStaff.WORKS_ROLE and ("role " .. tostring(works.role))
+            or works.kind == EqStaff.WORKS_HORSE and ("horse " .. tostring(works.name or works.id)) or "all horses (general)")
+    end
+    return string.format("#%d %s, %s %s, %s a month%s\n    %s", member.id, member.name,
+        EqStaff.GRADES[member.grade].name, member.job, g_i18n:formatMoney(member.wage, 0, true, true), target,
+        table.concat(skills, " "))
+end
+
+
+--- eqStaff: your staff and the candidates on offer.
+function EqConsole:consoleStaff()
+    if g_currentMission == nil then return "No mission loaded" end
+    if not g_currentMission:getIsServer() then return "Only the host can see staff for now" end
+    local farmId = g_currentMission:getFarmId()
+    local mine = EqStaffManager.membersOf(farmId)
+    print(string.format("Your staff (%d), %s a month:", #mine, g_i18n:formatMoney(EqStaff.monthlyWages(mine), 0, true, true)))
+    for _, member in ipairs(mine) do print("  " .. staffLine(member)) end
+    print("Candidates:")
+    for _, member in ipairs(EqStaffManager.candidates) do
+        print(string.format("  %s (on offer until month %d)", staffLine(member), member.leavesMonth or 0))
+    end
+    return "eqStaffHire <#> hires, eqStaffFire <#> lets go, eqStaffWork <#> <general|role|horse> sets who they work on"
+end
+
+
+--- eqStaffHire <#>
+function EqConsole:consoleStaffHire(id)
+    if g_currentMission == nil or not g_currentMission:getIsServer() then return "Only the host can hire staff for now" end
+    local ok, why = EqStaffManager.hire(tonumber(id) or -1, g_currentMission:getFarmId())
+    if ok then return "Hired. They start work today." end
+    if why == "unique" then return "You already have one of those: a farm can have only one vet and one broker" end
+    return "No candidate #" .. tostring(id) .. ". Try eqStaff"
+end
+
+
+--- eqStaffFire <#>
+function EqConsole:consoleStaffFire(id)
+    if g_currentMission == nil or not g_currentMission:getIsServer() then return "Only the host can change staff for now" end
+    if EqStaffManager.fire(tonumber(id) or -1, g_currentMission:getFarmId()) then return "Let go." end
+    return "None of your staff is #" .. tostring(id) .. ". Try eqStaff"
+end
+
+
+--- eqStaffWork <#> <general|role|horse name>
+function EqConsole:consoleStaffWork(id, ...)
+    local usage = "Usage: eqStaffWork <#> <general|" .. table.concat(EqRole.ORDER, "|") .. "|horse name or id>"
+    if g_currentMission == nil or not g_currentMission:getIsServer() then return "Only the host can change staff for now" end
+    local query = table.concat({ ... }, " ")
+    if query == "" then return usage end
+    local works
+    if query == "general" then
+        works = { kind = EqStaff.WORKS_GENERAL }
+    elseif EqRole.isKnown(query) then
+        works = { kind = EqStaff.WORKS_ROLE, role = query }
+    else
+        for _, animal in ipairs(EqRLRM.listHorsesForFarm(g_currentMission:getFarmId())) do
+            local record = EqRegistry.getOrCreate(animal)
+            if record ~= nil and matchesHorse(animal, record, query) then
+                works = { kind = EqStaff.WORKS_HORSE, id = record.id, name = animal:getName() or record.id }
+            end
+        end
+        if works == nil then return string.format("No horse called '%s' on your farm. %s", query, usage) end
+    end
+    if EqStaffManager.setWorksOn(tonumber(id) or -1, g_currentMission:getFarmId(), works) then return "Done." end
+    return "None of your grooms or trainers is #" .. tostring(id) .. ". " .. usage
+end
+
+
+--- eqStaffRoll: testing, a fresh set of candidates.
+function EqConsole:consoleStaffRoll()
+    if g_currentMission == nil or not g_currentMission:getIsServer() then return "Only the host can do this" end
+    EqStaffManager.candidates = {}
+    EqStaffManager.ensureCandidates()
+    return "New candidates. Try eqStaff"
+end
+
+
 --- @param query string horse name or identifier
 --- @return table|nil animal one of the player's horses
 local function findOwnHorse(query)
@@ -698,7 +785,12 @@ function EqConsole.register()
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo] (undo is debug only, retiring is permanent in game)", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
-    addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
+    addConsoleCommand("eqFocus", "Sets a horse's role: eqFocus <name or id> <role>", "consoleSetFocus", EqConsole)
+    addConsoleCommand("eqStaff", "Lists your staff and the candidates you can hire", "consoleStaff", EqConsole)
+    addConsoleCommand("eqStaffHire", "Hires a candidate: eqStaffHire <#>", "consoleStaffHire", EqConsole)
+    addConsoleCommand("eqStaffFire", "Lets a staff member go: eqStaffFire <#>", "consoleStaffFire", EqConsole)
+    addConsoleCommand("eqStaffWork", "Sets who a groom or trainer works on: eqStaffWork <#> <general|role|horse>", "consoleStaffWork", EqConsole)
+    addConsoleCommand("eqStaffRoll", "Testing: a fresh set of staff candidates", "consoleStaffRoll", EqConsole)
     addConsoleCommand("eqFacilities", "Shows your farm's horse facilities and their bonuses: eqFacilities [near]", "consoleFacilities", EqConsole)
     addConsoleCommand("eqForceInjury", "Testing: every horse that starts an event is injured: eqForceInjury [on|off]", "consoleForceInjury", EqConsole)
     addConsoleCommand("eqDirt", "Testing: sets a horse's dirt: eqDirt <horse> <0-100>", "consoleDirt", EqConsole)
@@ -718,5 +810,8 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges",
+        "eqStats", "eqCourses", "eqXcFences", "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
+        removeConsoleCommand(name)
+    end
 end

@@ -15,6 +15,8 @@ dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/staff/EqStaffNames.lua")
+dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
@@ -904,18 +906,18 @@ do
     end
 end
 
-local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
-check("staff train to the focus, at half its profile", racingStaff.speed == 0.5 and racingStaff.agility < 0.1)
-check("riding the player did is not credited to staff", EqTraining.staffEffort(100, 100, "racing", false).speed == 0)
-check("grooming adds temperament", EqTraining.staffEffort(0, 0, "balanced", true).temperament > 0)
+local helped = EqTraining.helperEffort(100, 0, false)
+check("helpers give a tiny general effort", helped.speed == EqTraining.HELPER_EFFORT and helped.agility == EqTraining.HELPER_EFFORT)
+check("riding the player did is not credited to helpers", EqTraining.helperEffort(100, 100, false).speed == 0)
+check("grooming adds temperament", EqTraining.helperEffort(0, 0, true).temperament > 0)
 
--- Staff alone stop at 95% of the ceiling; the player's riding takes it the rest of the way.
+-- Helpers alone stop at HELPER_CAP of the ceiling; the player's riding takes it the rest of the way.
 local staffHorse = horse("showJumping", 10)
 for _ = 1, 400 do
     EqTraining.applyDay(staffHorse, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
 end
-check("staff stop at 95% of the ceiling", staffHorse.trained.agility <= 70 * 0.95 + 1e-6 and staffHorse.trained.agility > 66,
-    string.format("got %.2f", staffHorse.trained.agility))
+check("helpers stop at their cap", staffHorse.trained.agility <= 70 * EqTraining.HELPER_CAP + 1e-6
+    and staffHorse.trained.agility > 70 * EqTraining.HELPER_CAP - 2, string.format("got %.2f", staffHorse.trained.agility))
 for _ = 1, 400 do
     local sheet = ridden("canter", 100000)
     sheet.focused.agility = 1
@@ -923,15 +925,93 @@ for _ = 1, 400 do
 end
 check("the player's riding reaches the ceiling", staffHorse.trained.agility > 69.5, string.format("got %.2f", staffHorse.trained.agility))
 
--- Pace: two years of full work takes a prime horse most of the way.
-local paced = horse("crossCountry", 10)
-for _ = 1, 24 do
-    EqTraining.applyDay(paced, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+-- Hired staff: a groom and a show jumping trainer on one horse.
+do
+    local function member(id, job, level, worksOn)
+        local skills = {}
+        for _, skill in ipairs(EqStaff.SKILLS) do skills[skill] = 10 end
+        for _, skill in ipairs(EqStaff.JOBS[job].main) do skills[skill] = level end
+        return { id = id, name = job .. id, job = job, grade = 2, skills = skills, wage = 1000,
+            worksOn = worksOn or { kind = EqStaff.WORKS_GENERAL } }
+    end
+    local star = { id = "S", role = "showJumping" }
+    local other = { id = "O", role = "dressage" }
+    local onStar = { kind = EqStaff.WORKS_HORSE, id = "S" }
+    local pair = { member(1, "groom", 55, onStar), member(2, "showJumping", 55, onStar) }
+    local horses = { star, other }
+    local counts = EqStaff.targetCounts(pair, horses)
+    local work = EqStaff.workOn(pair, star, counts)
+    check("a targeted trainer gives its stats half its skill", math.abs(work.agility[2].effort - 0.275) < 1e-9
+        or math.abs(work.agility[1].effort - 0.275) < 1e-9)
+    local general = EqStaff.workOn(pair, other, counts)
+    check("other horses get the general share", math.abs(general.agility[1].effort + general.agility[2].effort
+        - (0.275 + 0.35 * 0.55) * EqStaff.GENERAL_SHARE) < 1e-9)
+    check("stacking: best full, second at 40%", math.abs(EqStaff.stack({ 0.1, 0.3, 0.2 }) - (0.3 + 0.4 * 0.2 + 0.1 * 0.1)) < 1e-9)
+    local byRole = { member(3, "groom", 60, { kind = EqStaff.WORKS_ROLE, role = "showJumping" }) }
+    local many = {}
+    for i = 1, 8 do table.insert(many, { id = "H" .. i, role = "showJumping" }) end
+    table.insert(many, { id = "R", role = "showJumping", retired = true })
+    local roleCounts = EqStaff.targetCounts(byRole, many)
+    check("a role group covers that role's horses, not retired ones", roleCounts[3] == 8)
+    local shared = EqStaff.workOn(byRole, many[1], roleCounts)
+    check("past 4 horses the work is shared", math.abs(shared.speed[1].effort - 0.35 * 0.6 * 0.5) < 1e-9)
+    check("a member's cap follows their skill", math.abs(select(2, EqStaff.memberEffort(byRole[1], "speed", true, 1))
+        - (EqStaff.CAP_BASE + EqStaff.CAP_SKILL * 0.6)) < 1e-9)
+
+    -- Two years with an Experienced pair beat helpers alone, and riding on top beats both.
+    local function run(staffWork, ride)
+        local h = horse("showJumping", 10)
+        for _ = 1, 24 * 4 do
+            local sheet = nil
+            if ride then
+                sheet = ridden("canter", 30000)
+                sheet.focused.agility = 1.5
+            end
+            EqTraining.applyDay(h, cap70, { sheet = sheet, riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 0.25,
+                staff = staffWork })
+        end
+        return h.trained.agility
+    end
+    local alone, staffed, ridingOnly, both = run(nil, false), run(work, false), run(nil, true), run(work, true)
+    check("an Experienced pair trains well past the helpers", staffed > alone + 10, string.format("%.1f vs %.1f", staffed, alone))
+    check("riding with staff beats riding alone", both > ridingOnly, string.format("%.1f vs %.1f", both, ridingOnly))
+    print(string.format("info: 2 years agility from 10 (ceiling 70): helpers %.1f, Experienced pair %.1f, riding %.1f, riding + pair %.1f",
+        alone, staffed, ridingOnly, both))
+
+    -- Candidates, wages, the one-vet rule and cleaning.
+    local rng = EqRandom.new("staff test")
+    local candidates, grades, jobs = {}, {}, {}
+    local nextId = EqStaff.refreshCandidates(candidates, 1, rng, 1)
+    check("six candidates on offer", #candidates == EqStaff.CANDIDATES and nextId == EqStaff.CANDIDATES + 1)
+    for i = 1, 2000 do
+        local c = EqStaff.roll(rng, i, 1)
+        grades[c.grade] = (grades[c.grade] or 0) + 1
+        jobs[c.job] = (jobs[c.job] or 0) + 1
+        for _, skill in ipairs(EqStaff.SKILLS) do
+            if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
+        end
+        if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+    end
+    check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
+    check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
+    local legend = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    check("a legendary groom costs far more than a junior", EqStaff.wageFor("groom", 4, legend, 0, 0)
+        > 4 * EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0))
+    check("names have a last initial", string.match(candidates[1].name, "^%a+ %u%.$") ~= nil, candidates[1].name)
+    local vet = member(9, "vet", 70)
+    check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
+    check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)
+    local oldMonth = candidates[1].leavesMonth
+    EqStaff.refreshCandidates(candidates, oldMonth + 1, rng, nextId)
+    check("candidates leave when their time is up", #candidates == EqStaff.CANDIDATES and candidates[1].leavesMonth > oldMonth)
+    local yard = {}
+    for i = 1, 12 do table.insert(yard, { id = "Y" .. i, role = "balanced" }) end
+    yard[12].role = "racing"
+    local grooms = { member(20, "groom", 40, { kind = EqStaff.WORKS_ROLE, role = "racing" }) }
+    local clean = EqStaff.toClean(grooms, yard)
+    check("a groom cleans 8 horses, theirs first", #clean == EqStaff.CLEAN_PER_GROOM and clean[1].id == "Y12")
+    check("no grooms, no cleaning", #EqStaff.toClean({ vet }, yard) == 0)
 end
-check("two years of staff work gets stamina most of the way", paced.trained.stamina > 0.8 * 66.5,
-    string.format("got %.1f", paced.trained.stamina))
-print(string.format("info: 24 months of cross-country staff work from 10 -> sta %.1f spd %.1f agi %.1f tem %.1f (ceilings 70)",
-    paced.trained.stamina, paced.trained.speed, paced.trained.agility, paced.trained.temperament))
 
 -- The same months give the same result whatever the days per month.
 local short, long = horse("balanced", 10), horse("balanced", 10)
@@ -1874,7 +1954,7 @@ do
     local logDay = { sheet = ridden("canter", 100000), riding = 100, dirt = 5, ageMonths = 60, timeAdjustment = 1, feedBoost = { stamina = 0.1 } }
     local logDeltas, logDetail = EqTraining.applyDay(logged, cap70, logDay)
     check("applyDay explains each stat", logDetail.stats.agility ~= nil and logDetail.stats.agility.fromPlayer > 0)
-    check("applyDay detail matches the delta", math.abs(math.max(logDetail.stats.agility.fromPlayer, logDetail.stats.agility.fromStaff)
+    check("applyDay detail matches the delta", math.abs(EqTraining.mixGains(logDetail.stats.agility.fromPlayer, logDetail.stats.agility.fromStaff)
         + logDetail.stats.agility.faded + logDetail.stats.agility.aged - logDeltas.agility) < 1e-9)
     local logNotes = EqStatLog.explainDay(logDetail, logDay, { focus = "balanced", sheet = logDay.sheet,
         playerPoints = EqTraining.playerRidingPoints(logDay.sheet) })
@@ -2941,12 +3021,6 @@ end)()
     for _, name in ipairs(EqRole.ORDER) do
         check("staff train to role " .. name, EqTraining.FOCUS[name] ~= nil)
     end
-    local good = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.high)
-    local bad = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.low)
-    check("staff luck changes a role's own stats", good.temperament > bad.temperament and good.agility > bad.agility)
-    check("staff luck leaves the role's other stats", good.stamina == bad.stamina)
-    check("no role: staff work is steady", EqTraining.staffEffort(100, 0, "balanced", false, 1.5).speed
-        == EqTraining.staffEffort(100, 0, "balanced", false, 0.5).speed)
 
     local function item(name, focus) return { cluster = { name = name, focus = focus } } end
     local roleOf = function(cluster) return cluster.focus and EqRole.get({ focus = cluster.focus }) or nil end

@@ -67,11 +67,12 @@ uses its genetics, health and fitness.
   Gait keys pressed in the air take effect as the horse lands.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
-- The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
-  home. Young horses train slower, idle ones lose condition.
+- **Staff (new):** hire grooms and event trainers with skills and wages, and set who they work
+  on (console `eqStaff` for now). The game's Animal Workers and RLRM's herdsman only keep horses
+  ticking over. Idle horses lose condition.
 - **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
-  list groups horses by role, the role shows while you look at or ride the horse, and staff train
-  toward it.
+  list groups horses by role, the role shows while you look at or ride the horse, and staff can
+  work on a role.
 - Full rules are in [How Realistic Equestrian works](docs/MECHANICS.md#training).
 
 ### Feed
@@ -252,9 +253,7 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 ## Planned features
 
 - Rival horses for sale (the named rivals already turn up in the same events)
-- Better staff, building on the game's Animal Workers: several hires and different kinds of staff
-  (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the
-  dealer is overselling a horse
+- Hire and Staff tabs, a vet and a broker, and trainers' bonuses before events
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support
@@ -268,6 +267,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off`, `entriesPerMonth <n>` (0 = no limit) and `trainingRate <x>` (1 = normal). The same settings are on the Settings page |
 | `eqTraining` | Each horse's training focus and today's riding |
 | `eqFocus <horse> <focus>` | Sets a horse's role: `balanced` (no role), `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`, `breeding` or `sale` |
+| `eqStaff` | Your staff and the candidates on offer; `eqStaffHire <#>`, `eqStaffFire <#>`, `eqStaffWork <#> <general\|role\|horse>` |
 | `eqFeed` | Horse food groups and each horse's feed boost |
 | `eqFacilities` | Your horse buildings and what they give |
 | `eqEvents`, `eqEnter`, `eqResults` | Lists, enters and shows results of events, as the Competitions tab does |

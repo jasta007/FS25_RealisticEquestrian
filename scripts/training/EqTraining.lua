@@ -5,9 +5,14 @@
     A day's work comes from two places:
     - The player's own riding. EqTrainingHooks records milliseconds spent in each gait and
       jumps taken into a "sheet" per horse. Each gait trains a different mix of stats.
-    - Staff. Whatever share of RLRM's riding value the player's sheet does not explain was put
+    - Helpers. Whatever share of RLRM's riding value the player's sheet does not explain was put
       there by someone else: the base game's animal worker, or RLRM's herdsman horse-care rule.
-      Staff train to the horse's focus profile and stop at STAFF_CAP of each ceiling.
+      They are stable kids keeping horses active (James, 2026-10-27): HELPER_EFFORT in every
+      stat, up to HELPER_CAP of each ceiling.
+    - Hired staff (EqStaff): grooms and event trainers, each with their own effort and cap.
+    Each of those is worked out on its own and stacked with diminishing returns (EqStaff.stack);
+    then the bigger of the player's gain and the staff's counts in full and the smaller at
+    MIXED_SHARE, so riding a horse that has a groom and a trainer is best.
 
     Agility and temperament are focused work (jump combos and routines); just riding the gaits
     trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed come only from
@@ -145,8 +150,8 @@ EqTraining.GAIT_SPEED_FACTOR = { reverse = 2.5, walk = 1, trot = 1, canter = 2, 
 -- What the base game already credits for backing up; the rest of reverse's factor is ours.
 EqTraining.BASE_REVERSE_FACTOR = 1
 
--- What staff work on, per focus: the horse's role (EqRole), set with the Set role button in
--- RLRM's Info tab or the eqFocus console command. Breeding and sale horses are kept ticking over.
+-- Role profiles: what each role's work is about (EqRole). Hired staff no longer train to these
+-- (EqStaff decides by job and skill); the eqFocus console command and the role list still use them.
 EqTraining.FOCUS = {
     balanced = { stamina = 0.6, speed = 0.6, agility = 0.6, temperament = 0.6 },
     showJumping = { stamina = 0.3, speed = 0.4, agility = 1.0, temperament = 0.7 },
@@ -158,15 +163,16 @@ EqTraining.FOCUS = {
     sale = { stamina = 0.6, speed = 0.6, agility = 0.6, temperament = 0.6 },
 }
 
--- Staff ride at this share of their focus profile, so a rider's own focused work (up to
--- EFFORT_CAP) is well ahead of what staff give: staff keep horses ticking over.
-EqTraining.STAFF_EFFORT_SHARE = 0.5
+-- The base game's riding worker and RLRM's horse care rule (James, 2026-10-27): the most basic
+-- training there is, HELPER_EFFORT in every stat on a day they fill the whole riding bar, up to
+-- HELPER_CAP of each ceiling. A groomed horse (cleaned by anyone) gets GROOMED_TEMPERAMENT more
+-- temperament, up to the same cap.
+EqTraining.HELPER_EFFORT = 0.08
+EqTraining.HELPER_CAP = 0.6
 
--- Staff don't manage a role's work equally well every day: each day the stats a role is about
--- (FOCUS_STAT_MIN or more in its profile) get a share between these of their effort, 1 on
--- average. A horse without a role (balanced) gets the same steady work every day.
-EqTraining.STAFF_LUCK = { low = 0.5, high = 1.5 }
-EqTraining.FOCUS_STAT_MIN = 0.7
+-- When the player and staff both train a stat, the bigger gain counts in full and the smaller
+-- at this share.
+EqTraining.MIXED_SHARE = 0.5
 
 EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry", "eventing", "racing", "breeding", "sale" }
 
@@ -723,25 +729,48 @@ function EqTraining.playerEffort(sheet)
 end
 
 
+--- The helpers' work (the base game's worker, RLRM's horse care) on one day.
 --- @param riding number RLRM's riding value (0-100) at the day's end
 --- @param playerPoints number from playerRidingPoints
---- @param focus string a key of EqTraining.FOCUS
 --- @param groomed boolean
---- @param luck number|nil how well staff managed the role's own stats today (STAFF_LUCK), 1 when nil
 --- @return table effort stat -> 0..1
-function EqTraining.staffEffort(riding, playerPoints, focus, groomed, luck)
+function EqTraining.helperEffort(riding, playerPoints, groomed)
     local share = EqStats.clamp(((riding or 0) - playerPoints) / 100, 0, 1)
-    local profile = EqTraining.FOCUS[focus] or EqTraining.FOCUS.balanced
-
     local effort = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        local success = (focus ~= "balanced" and profile[stat] >= EqTraining.FOCUS_STAT_MIN) and (luck or 1) or 1
-        effort[stat] = math.min(1, share * profile[stat] * EqTraining.STAFF_EFFORT_SHARE * success)
+        effort[stat] = share * EqTraining.HELPER_EFFORT
     end
     if groomed then
         effort.temperament = math.min(1, effort.temperament + EqConstants.GROOMED_TEMPERAMENT)
     end
     return effort
+end
+
+
+--- A stat's gain from all staff: each worker's gain toward their own cap, stacked with
+--- diminishing returns.
+--- @param level number
+--- @param ceiling number
+--- @param monthly number
+--- @param workers table list of { effort, cap }
+--- @param ageFactor number
+--- @param timeAdjustment number
+--- @return number gain
+function EqTraining.staffGain(level, ceiling, monthly, workers, ageFactor, timeAdjustment)
+    local gains = {}
+    for _, worker in ipairs(workers) do
+        table.insert(gains, EqTraining.gain(level, ceiling * worker.cap, monthly, worker.effort, ageFactor, timeAdjustment))
+    end
+    return EqStaff.stack(gains)
+end
+
+
+--- Put the player's and the staff's gains together: the bigger in full, the smaller at MIXED_SHARE.
+--- @param fromPlayer number
+--- @param fromStaff number
+--- @return number gain
+function EqTraining.mixGains(fromPlayer, fromStaff)
+    return math.max(fromPlayer, fromStaff) + EqTraining.MIXED_SHARE * math.min(fromPlayer, fromStaff)
 end
 
 
@@ -784,10 +813,11 @@ end
 --- @param record table EqHorseRecord (uses trained, focus, idleDays)
 --- @param ceilings table stat -> ceiling
 --- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden,
----     feedBoost, rate, staffLuck }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil;
----     rate is the Training rate setting (1 when nil)
+---     feedBoost, rate, staff }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil;
+---     rate is the Training rate setting (1 when nil); staff is EqStaff.workOn's stat -> list of
+---     { effort, cap }, or nil with no hired staff
 --- @return table deltas stat -> change, for logging
---- @return table detail why: { player, staff (effort stat -> 0..1), groomed, ageFactor, idleDays,
+--- @return table detail why: { player, helper (effort stat -> 0..1), staff, groomed, ageFactor, idleDays,
 ---     fading, old, stats = stat -> { fromPlayer, fromStaff, faded, aged } } for EqStatLog
 function EqTraining.applyDay(record, ceilings, day)
     local timeAdjustment = day.timeAdjustment or 1
@@ -796,12 +826,19 @@ function EqTraining.applyDay(record, ceilings, day)
     local groomed = day.dirt ~= nil and day.dirt <= EqConstants.GROOMED_DIRT
 
     local player = EqTraining.playerEffort(day.sheet)
-    local staff = EqTraining.staffEffort(day.riding, EqTraining.playerRidingPoints(day.sheet), record.focus, groomed,
-        day.staffLuck)
+    local helper = EqTraining.helperEffort(day.riding, EqTraining.playerRidingPoints(day.sheet), groomed)
+    local staff = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        staff[stat] = {}
+        if helper[stat] > 0 then table.insert(staff[stat], { effort = helper[stat], cap = EqTraining.HELPER_CAP }) end
+        for _, worker in ipairs(day.staff ~= nil and day.staff[stat] or {}) do
+            if worker.effort > 0 then table.insert(staff[stat], worker) end
+        end
+    end
 
     local worked = false
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        if player[stat] > 0 or staff[stat] > 0 then worked = true end
+        if player[stat] > 0 or #staff[stat] > 0 then worked = true end
     end
     record.idleDays = worked and 0 or (record.idleDays or 0) + 1
     local fading = record.idleDays >= EqConstants.FADE_GRACE_DAYS
@@ -809,7 +846,7 @@ function EqTraining.applyDay(record, ceilings, day)
     local old = (day.ageMonths or 0) > EqConstants.AGE_DECLINE
 
     local deltas = {}
-    local detail = { player = player, staff = staff, groomed = groomed, ageFactor = ageFactor,
+    local detail = { player = player, helper = helper, staff = staff, groomed = groomed, ageFactor = ageFactor,
         idleDays = record.idleDays, fading = fading, old = old, stats = {} }
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local ceiling = ceilings[stat]
@@ -822,8 +859,8 @@ function EqTraining.applyDay(record, ceilings, day)
         local monthlyRidden = EqConstants.TRAIN_MONTHLY[stat] * (1 + owned + fed + ridden) * rate
 
         local fromPlayer = EqTraining.gain(level, ceiling, monthlyRidden, player[stat], ageFactor, timeAdjustment)
-        local fromStaff = EqTraining.gain(level, ceiling * EqConstants.STAFF_CAP, monthly, staff[stat], ageFactor, timeAdjustment)
-        level = level + math.max(fromPlayer, fromStaff)
+        local fromStaff = EqTraining.staffGain(level, ceiling, monthly, staff[stat], ageFactor, timeAdjustment)
+        level = level + EqTraining.mixGains(fromPlayer, fromStaff)
 
         local trainedTo = level
         if fading then

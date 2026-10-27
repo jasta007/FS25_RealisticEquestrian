@@ -86,8 +86,8 @@ Every horse trains once a day, at RLRM's daily horse tick.
   stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
 - It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
   month's events have run. A popup explains it the first time a horse gets it.
-- Permanent training is unchanged: your riding still trains faster than staff and takes a stat
-  the last 5% of its ceiling.
+- Permanent training is unchanged: your riding still trains faster than staff and is the only
+  way to take a stat to its ceiling.
 
 ### The gallop and the Exertion bar (experimental)
 
@@ -261,15 +261,17 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Staff, age and metabolism
 
-- **Staff** (the base game's Animal Workers with Riding turned on for a horse pen, added in patch
-  1.25, or RLRM's herdsman horse-care rule) count for whatever share of the riding bar you did not
-  fill yourself, at half the rate of a full day of plain riding. They train to the horse's role
-  and stop at 95% of each ceiling; your own focused riding trains a stat up to four times as fast,
-  and only it takes a stat the last 5%.
+- **Helpers** (the base game's Animal Workers with Riding turned on for a horse pen, or RLRM's
+  herdsman horse-care rule) are stable kids keeping horses active: on a day they fill the whole
+  riding bar they give 0.08 effort in every stat (a good minigame session is about 1.5), up to 60%
+  of each ceiling. They count for whatever share of the riding bar you did not fill yourself.
+- **Hired staff** are much better: see [Hired staff](#hired-staff) below. Your riding and staff
+  add up: the bigger gain counts in full and the smaller at half, so riding a horse that has a
+  groom and a trainer is best. Only your riding takes a stat to its ceiling.
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
-  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when they
-  do their round, they fetch your loose horses back to their own pen (or the nearest staffed pen
-  with room) and look after them with the rest.
+  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens or have
+  a groom: when they do their round, they fetch your loose horses back to their own pen (or the
+  nearest staffed pen with room) and look after them with the rest.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
 - **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
@@ -290,11 +292,40 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
   shows it as Retired everywhere for good (the `eqRetire <horse> undo` debug command brings it back with its old role). The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
   Skills box when you look at the horse, in the menu's Skill potential column and at the top of
   the riding panel, with the horse's four skills.
-- **Staff train toward the role.** Each role has a staff profile (Dressage leans on temperament
-  and agility, Racing on speed and stamina, Eventing on all but speed; Breeding, For sale and No
-  role keep every stat ticking over). Staff don't manage it equally well every day: the role's
-  own stats get between 50% and 150% of their effort each day, 100% on average. `eqChanges` shows
-  how they did.
+- **Staff can work on a role.** A groom or trainer set to a role works on every horse with that
+  role (not retired ones). Each role also keeps a profile of the stats it is about, which the
+  `eqFocus` command shows.
+
+### Hired staff
+
+Hire grooms, event trainers, a vet and a broker with the `eqStaff` console commands (Hire and
+Staff tabs are coming). Host only for now in multiplayer.
+
+- **Jobs.** A groom trains all four stats and cleans horses. A Dressage, Show Jumping, Cross
+  Country or Racing trainer trains that event's two main stats (Dressage: temperament and agility;
+  Show Jumping: agility and temperament; Cross Country: stamina and agility; Racing: speed and
+  stamina; Racing covers steeplechase, Eventing uses the other three). A farm can have only one vet
+  and one broker.
+- **Skills.** Everyone has ten skills from 0 to 100: the four stats, the four event types,
+  Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
+  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%). Other skills are
+  0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
+- **Wages.** Monthly, by job (groom 900, trainer 1,400, vet 1,800, broker 1,200) times the grade
+  (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
+  Horse Staff Wages in Finances. No hiring fee; let staff go at any time.
+- **Candidates.** Six are on offer, shared by every farm. Each stays one or two months; at each
+  month change those whose time is up leave and new ones arrive.
+- **Works on.** A groom or trainer works on all horses (General), every horse with a role, or one
+  horse (`eqStaffWork`). Horses they work on get their full work; up to 4 horses each, more share
+  it (8 horses get half each). Every other horse gets 20% of it.
+- **Training.** Per day, a trainer gives 0.5 x skill/100 effort in its two stats, and anyone gives
+  0.35 x skill/100 in the other stats (so a groom trains everything, and a talented trainer
+  helps a little elsewhere). Each person trains a stat up to 60% + 35% x skill/100 of its
+  ceiling (Junior about 72%, Legendary about 92%).
+- **Diminishing returns.** On one stat the best person's gain counts in full, the second at 40%
+  and any more at 10% each, helpers included. A second groom on the same horse adds little.
+- **Cleaning.** In the last hour of the day each groom cleans up to 8 horses, the ones they work on
+  first. Clean horses count as groomed, and grooms bring loose horses home.
 
 ### Riding bar and names
 

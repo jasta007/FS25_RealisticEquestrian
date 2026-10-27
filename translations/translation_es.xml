@@ -439,6 +439,7 @@
         <text name="eq_ui_farmLimit" text="No quedan inscripciones este mes"/>
         <text name="eq_ui_entriesLeft" text="Inscripciones restantes este mes: %d de %d."/>
         <text name="eq_money_transport" text="Transporte de caballos"/>
+        <text name="eq_money_staffWages" text="Salarios del personal ecuestre"/>
         <text name="eq_result_placed" text="%s terminó en el puesto %d de %d en la prueba %s y ganó %s."/>
         <text name="eq_result_placedNoPrize" text="%s terminó en el puesto %d de %d en la prueba %s."/>
         <text name="eq_result_gone" text="%s no pudo correr en la prueba %s: el caballo ya no está en una granja."/>

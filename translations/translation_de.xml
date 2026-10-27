@@ -504,6 +504,7 @@
         <text name="eq_ui_farmLimit" text="Keine Nennungen mehr diesen Monat"/>
         <text name="eq_ui_entriesLeft" text="Verbleibende Nennungen diesen Monat: %d von %d."/>
         <text name="eq_money_transport" text="Pferdetransport"/>
+        <text name="eq_money_staffWages" text="Löhne für Pferdepersonal"/>
         <text name="eq_result_placed" text="%s belegte Platz %d von %d bei %s und gewann %s."/>
         <text name="eq_result_placedNoPrize" text="%s belegte Platz %d von %d bei %s."/>
         <text name="eq_result_gone" text="%s konnte bei %s nicht starten: Das Pferd ist auf keinem Hof mehr."/>

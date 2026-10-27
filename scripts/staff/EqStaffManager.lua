@@ -1,0 +1,334 @@
+--[[
+    EqStaffManager.lua
+    The farm's hired staff and the candidates on offer (EqStaff does the maths). Server only.
+
+    - Candidates: EqStaff.CANDIDATES on offer, shared by every farm; at each month change those
+      whose time is up leave and new ones arrive.
+    - Wages are paid every day, a month's wage spread over the days in the month.
+    - A horse's day of training asks workFor for everyone's work on it (EqTrainingHooks.onHorseDay).
+    - In the last hour of the day grooms clean horses (EqStaff.toClean) and, like the base game's
+      workers, bring the farm's loose horses home (EqLooseHorses).
+    - Saved in the mod's own save file, beside the horse records (EqRegistry).
+]]
+
+EqStaffManager = {}
+
+-- Grooms do their round in this hour, with the base game's workers (EqLooseHorses.ROUND_FROM_HOUR).
+EqStaffManager.ROUND_HOUR = 23
+
+local Log = EqLog
+
+
+--- Forget everything. Called when a mission loads or ends.
+function EqStaffManager.reset()
+    EqStaffManager.hired = {}       -- members, each with farmId
+    EqStaffManager.candidates = {}
+    EqStaffManager.nextId = 1
+    EqStaffManager.month = 0        -- months played, counted at each month change
+    EqStaffManager.dayCache = {}    -- farmId -> { day, members, counts } for the daily training
+end
+EqStaffManager.reset()
+
+
+--- @return table rng a generator for new candidates
+local function newRng()
+    return EqRandom.new(string.format("staff %d %d %s", EqStaffManager.month, EqStaffManager.nextId, tostring(g_time or 0)))
+end
+
+
+--- Fill the candidate list. Safe to call any time.
+function EqStaffManager.ensureCandidates()
+    EqStaffManager.nextId = EqStaff.refreshCandidates(EqStaffManager.candidates, EqStaffManager.month, newRng(),
+        EqStaffManager.nextId)
+end
+
+
+--- @param farmId number
+--- @return table members the farm's hired staff
+function EqStaffManager.membersOf(farmId)
+    local members = {}
+    for _, member in ipairs(EqStaffManager.hired) do
+        if member.farmId == farmId then table.insert(members, member) end
+    end
+    return members
+end
+
+
+--- @param list table
+--- @param id number
+--- @return table|nil member, number|nil index
+local function find(list, id)
+    for i, member in ipairs(list) do
+        if member.id == id then return member, i end
+    end
+    return nil, nil
+end
+
+
+--- Hire a candidate for a farm.
+--- @param id number candidate id
+--- @param farmId number
+--- @return boolean ok
+--- @return string|nil why "gone" or "unique" when not
+function EqStaffManager.hire(id, farmId)
+    local candidate, index = find(EqStaffManager.candidates, id)
+    if candidate == nil then return false, "gone" end
+    if not EqStaff.canHire(EqStaffManager.membersOf(farmId), candidate) then return false, "unique" end
+    table.remove(EqStaffManager.candidates, index)
+    candidate.farmId = farmId
+    candidate.leavesMonth = nil
+    table.insert(EqStaffManager.hired, candidate)
+    EqStaffManager.dayCache = {}
+    Log:info("EqStaff: farm %d hired %s (%s, %s, %d a month)", farmId, candidate.name, candidate.job,
+        EqStaff.GRADES[candidate.grade].name, candidate.wage)
+    return true
+end
+
+
+--- Let a member go.
+--- @param id number member id
+--- @param farmId number
+--- @return boolean ok
+function EqStaffManager.fire(id, farmId)
+    local member, index = find(EqStaffManager.hired, id)
+    if member == nil or member.farmId ~= farmId then return false end
+    table.remove(EqStaffManager.hired, index)
+    EqStaffManager.dayCache = {}
+    Log:info("EqStaff: farm %d let %s go", farmId, member.name)
+    return true
+end
+
+
+--- @param id number member id
+--- @param farmId number
+--- @param works table { kind, role?, id?, name? }
+--- @return boolean ok
+function EqStaffManager.setWorksOn(id, farmId, works)
+    local member = find(EqStaffManager.hired, id)
+    if member == nil or member.farmId ~= farmId or not EqStaff.trains(member.job) then return false end
+    member.worksOn = works
+    EqStaffManager.dayCache = {}
+    return true
+end
+
+
+--- @param record table EqHorseRecord
+--- @return table horse what EqStaff needs to know about it
+function EqStaffManager.horseInfo(record)
+    return { id = record.id, role = EqRole.get(record), retired = record.retired == true }
+end
+
+
+--- @param farmId number
+--- @return table list of { horse, animal } for the farm's horses
+local function farmHorses(farmId)
+    local out = {}
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(farmId)) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil then table.insert(out, { horse = EqStaffManager.horseInfo(record), animal = animal }) end
+    end
+    return out
+end
+
+
+--- Everyone's work on one horse today, for EqTraining.applyDay.
+--- @param record table EqHorseRecord
+--- @param farmId number|nil
+--- @return table|nil work stat -> list, nil with no staff
+function EqStaffManager.workFor(record, farmId)
+    if farmId == nil then return nil end
+    local today = g_currentMission ~= nil and g_currentMission.environment.currentMonotonicDay or 0
+    local cache = EqStaffManager.dayCache[farmId]
+    if cache == nil or cache.day ~= today then
+        local members = EqStaffManager.membersOf(farmId)
+        local horses = {}
+        if #members > 0 then
+            for _, entry in ipairs(farmHorses(farmId)) do table.insert(horses, entry.horse) end
+        end
+        cache = { day = today, members = members, counts = EqStaff.targetCounts(members, horses) }
+        EqStaffManager.dayCache[farmId] = cache
+    end
+    if #cache.members == 0 then return nil end
+    return EqStaff.workOn(cache.members, EqStaffManager.horseInfo(record), cache.counts)
+end
+
+
+--- @return table farmIds farms with any staff
+local function staffedFarms()
+    local seen, out = {}, {}
+    for _, member in ipairs(EqStaffManager.hired) do
+        if not seen[member.farmId] then
+            seen[member.farmId] = true
+            table.insert(out, member.farmId)
+        end
+    end
+    table.sort(out)
+    return out
+end
+
+
+--- Pay the day's wages.
+function EqStaffManager.onDayChanged()
+    local environment = g_currentMission.environment
+    local days = math.max(1, environment.daysPerPeriod or 1)
+    for _, farmId in ipairs(staffedFarms()) do
+        local wages = EqStaff.monthlyWages(EqStaffManager.membersOf(farmId)) / days
+        if wages > 0 then
+            g_currentMission:addMoney(-wages, farmId, MoneyType.EQ_STAFF_WAGES or MoneyType.OTHER, true, true)
+        end
+    end
+end
+
+
+--- A new month: candidates come and go.
+function EqStaffManager.onPeriodChanged()
+    EqStaffManager.month = EqStaffManager.month + 1
+    EqStaffManager.ensureCandidates()
+end
+
+
+--- Grooms' round in the last hour of the day: clean, and bring loose horses home.
+function EqStaffManager.onHourChanged()
+    local environment = g_currentMission.environment
+    if environment == nil or environment.currentHour ~= EqStaffManager.ROUND_HOUR then return end
+
+    for _, farmId in ipairs(staffedFarms()) do
+        local members = EqStaffManager.membersOf(farmId)
+        local hasGroom = false
+        for _, member in ipairs(members) do
+            if member.job == "groom" then hasGroom = true end
+        end
+        if hasGroom then
+            local entries, byId = farmHorses(farmId), {}
+            local horses = {}
+            for _, entry in ipairs(entries) do
+                table.insert(horses, entry.horse)
+                byId[entry.horse.id] = entry.animal
+            end
+            local cleaned = 0
+            for _, horse in ipairs(EqStaff.toClean(members, horses)) do
+                local animal = byId[horse.id]
+                if animal ~= nil and (animal.dirt or 0) > 0 and animal.changeDirt ~= nil then
+                    if animal.setDirty ~= nil then animal:setDirty() end
+                    animal:changeDirt(-100)
+                    cleaned = cleaned + 1
+                end
+            end
+            -- Every pen with a horse in it counts as staffed, so loose horses come home.
+            for _, entry in ipairs(entries) do
+                local system = entry.animal.clusterSystem
+                local pen = system ~= nil and system.owner or nil
+                if pen ~= nil and pen.spec_husbandryAnimals ~= nil then EqLooseHorses.noteStaffed(pen) end
+            end
+            Log:debug("EqStaff: farm %d grooms cleaned %d horse(s)", farmId, cleaned)
+        end
+    end
+end
+
+
+local function saveMember(xmlFile, key, member)
+    xmlFile:setInt(key .. "#id", member.id)
+    xmlFile:setString(key .. "#name", member.name)
+    xmlFile:setString(key .. "#job", member.job)
+    xmlFile:setInt(key .. "#grade", member.grade)
+    xmlFile:setInt(key .. "#wage", member.wage)
+    xmlFile:setInt(key .. "#talents", member.talents or 0)
+    if member.farmId ~= nil then xmlFile:setInt(key .. "#farmId", member.farmId) end
+    if member.leavesMonth ~= nil then xmlFile:setInt(key .. "#leavesMonth", member.leavesMonth) end
+    for _, skill in ipairs(EqStaff.SKILLS) do
+        xmlFile:setInt(key .. ".skills#" .. skill, member.skills[skill] or 0)
+    end
+    local works = member.worksOn or { kind = EqStaff.WORKS_GENERAL }
+    xmlFile:setString(key .. ".worksOn#kind", works.kind)
+    if works.role ~= nil then xmlFile:setString(key .. ".worksOn#role", works.role) end
+    if works.id ~= nil then xmlFile:setString(key .. ".worksOn#horse", works.id) end
+    if works.name ~= nil then xmlFile:setString(key .. ".worksOn#name", works.name) end
+end
+
+
+local function loadMember(xmlFile, key)
+    local job = xmlFile:getString(key .. "#job")
+    if EqStaff.JOBS[job] == nil then return nil end
+    local member = {
+        id = xmlFile:getInt(key .. "#id", 0),
+        name = xmlFile:getString(key .. "#name", "?"),
+        job = job,
+        grade = math.max(1, math.min(#EqStaff.GRADES, xmlFile:getInt(key .. "#grade", 1))),
+        wage = xmlFile:getInt(key .. "#wage", 0),
+        talents = xmlFile:getInt(key .. "#talents", 0),
+        farmId = xmlFile:getInt(key .. "#farmId"),
+        leavesMonth = xmlFile:getInt(key .. "#leavesMonth"),
+        skills = {},
+        worksOn = {
+            kind = xmlFile:getString(key .. ".worksOn#kind", EqStaff.WORKS_GENERAL),
+            role = xmlFile:getString(key .. ".worksOn#role"),
+            id = xmlFile:getString(key .. ".worksOn#horse"),
+            name = xmlFile:getString(key .. ".worksOn#name"),
+        },
+    }
+    for _, skill in ipairs(EqStaff.SKILLS) do
+        member.skills[skill] = xmlFile:getInt(key .. ".skills#" .. skill, 0)
+    end
+    return member
+end
+
+
+--- @param xmlFile table XMLFile
+--- @param key string
+function EqStaffManager.saveToXMLFile(xmlFile, key)
+    xmlFile:setInt(key .. "#nextId", EqStaffManager.nextId)
+    xmlFile:setInt(key .. "#month", EqStaffManager.month)
+    for i, member in ipairs(EqStaffManager.hired) do
+        saveMember(xmlFile, string.format("%s.hired.member(%d)", key, i - 1), member)
+    end
+    for i, member in ipairs(EqStaffManager.candidates) do
+        saveMember(xmlFile, string.format("%s.candidates.member(%d)", key, i - 1), member)
+    end
+end
+
+
+--- @param xmlFile table|nil XMLFile; nil for a new game
+--- @param key string
+function EqStaffManager.loadFromXMLFile(xmlFile, key)
+    EqStaffManager.reset()
+    if xmlFile ~= nil then
+        EqStaffManager.nextId = xmlFile:getInt(key .. "#nextId", 1)
+        EqStaffManager.month = xmlFile:getInt(key .. "#month", 0)
+        for _, list in ipairs({ { "hired", EqStaffManager.hired }, { "candidates", EqStaffManager.candidates } }) do
+            local i = 0
+            while true do
+                local memberKey = string.format("%s.%s.member(%d)", key, list[1], i)
+                if not xmlFile:hasProperty(memberKey) then break end
+                local member = loadMember(xmlFile, memberKey)
+                if member ~= nil then
+                    table.insert(list[2], member)
+                    EqStaffManager.nextId = math.max(EqStaffManager.nextId, member.id + 1)
+                end
+                i = i + 1
+            end
+        end
+        if #EqStaffManager.hired > 0 then Log:info("EqStaff: loaded %d staff member(s)", #EqStaffManager.hired) end
+    end
+    EqStaffManager.ensureCandidates()
+end
+
+
+--- Start the daily wages, monthly candidates and the grooms' round. Server only.
+--- @param guarded function main.lua's error guard
+function EqStaffManager.start(guarded)
+    g_messageCenter:subscribe(MessageType.DAY_CHANGED, function()
+        guarded("staff wages", EqStaffManager.onDayChanged)
+    end, EqStaffManager)
+    g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
+        guarded("staff candidates", EqStaffManager.onPeriodChanged)
+    end, EqStaffManager)
+    g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+        guarded("staff round", EqStaffManager.onHourChanged)
+    end, EqStaffManager)
+end
+
+
+function EqStaffManager.stop()
+    g_messageCenter:unsubscribeAll(EqStaffManager)
+    EqStaffManager.reset()
+end
