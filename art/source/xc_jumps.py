@@ -47,12 +47,17 @@ MARKER_BARS = (0.45, 1.0)   # heights of the two glowing rails
 MARKER_BAR = 0.06
 GOLD = (236, 184, 52)
 
-SIDES = 16              # faces round each log
+SIDES = 22              # faces round each log
+RING_STEP = 0.22        # metres between rings along a log (more rings: room to bend and bulge)
 SINK = 0.04             # logs sit this far into the ground so they never float on a slope
 STAGGER = 0.18          # most a log's ends stick out past the others (either way)
-TAPER = 0.08            # a log is up to this share thinner at one end
-BUMP = 0.035            # how far round a log wanders from a perfect circle (share of radius)
-BARK_TILE = 1.0         # metres of log one bark texture covers, round and along
+TAPER = 0.10            # a log is up to this share thinner at one end
+LUMPS = 0.05            # how far a log's outline wanders from a circle (share of radius)
+BEND = 0.035            # most a log bows sideways along its length (metres)
+KNOTS = (2, 5)          # swellings round old branches, per log
+STUBS = (1, 3)          # sawn-off branch stubs, per log
+CUT_TILT = 0.14         # a sawn end leans by up to this (rise over run)
+BARK_TILE = 1.1         # metres of log one bark texture covers along it (it wraps once round)
 FLAG_GAP = 0.35         # posts stand this far past the logs' ends
 POST_HEIGHT = 1.45
 POST_SIZE = 0.07
@@ -84,32 +89,73 @@ def periodic_noise(size, rng, scale_u, scale_v):
     return (out - out.mean()) / (out.std() + 1e-9)
 
 
-def bark_texture(path, size=512):
-    """Grey-brown bark with deep fissures running along the log (v) and plates between them."""
-    rng = np.random.default_rng(11)
-    # fissures: narrow across the log, long along it, wobbling sideways
+def save_dds(rgb, path):
+    Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8), "RGB").save(path, pixel_format="DXT1")
+    mark_dds(path)
+
+
+def normal_map(height, path, strength):
+    """A tangent space normal map (green up) from a tiling height field."""
+    dx = (np.roll(height, -1, axis=1) - np.roll(height, 1, axis=1)) * strength
+    dy = (np.roll(height, -1, axis=0) - np.roll(height, 1, axis=0)) * strength
+    n = np.stack([-dx, dy, np.ones_like(height)], axis=-1)
+    n /= np.linalg.norm(n, axis=-1, keepdims=True)
+    save_dds((n * 0.5 + 0.5) * 255, path)
+
+
+# Two barks, so neighbouring logs differ: a deeply fissured old trunk and a smoother, younger one
+# with lichen. u runs once round the log, starting on top (u = 0 and 1); v runs along it.
+BARKS = [
+    {"name": "xcBarkA", "seed": 11, "lanes": 9, "fissure": 0.62, "plates": 70, "base": (104, 86, 68),
+     "lichen": 0.0, "moss": 0.9, "bare": 0.10},
+    {"name": "xcBarkB", "seed": 23, "lanes": 14, "fissure": 0.35, "plates": 30, "base": (118, 104, 88),
+     "lichen": 0.7, "moss": 0.55, "bare": 0.05},
+]
+
+
+def bark_texture(bark, path, normal_path, size=512):
+    """Bark with fissures along the log, cross breaks, moss along the top of the log, lichen
+    spots and a few patches where the bark has come off and the grey wood shows."""
+    rng = np.random.default_rng(bark["seed"])
     wobble = periodic_noise(size, rng, 40, 90) * 6
     cols = (np.arange(size)[None, :] + wobble) % size
     ridges = np.zeros((size, size))
-    lanes = 9
+    lanes = bark["lanes"]
     phase = periodic_noise(size, rng, 200, 160)
     for k in range(lanes):
-        centre = (k + 0.5) * size / lanes
+        centre = (k + rng.uniform(0.2, 0.8)) * size / lanes
         d = np.abs(((cols - centre + size / 2) % size) - size / 2)
-        width = 4.5 + 2.5 * phase
+        width = (4.5 + 2.5 * phase) * (12 / lanes) ** 0.5
         ridges = np.maximum(ridges, np.clip(1 - d / np.maximum(width, 1.5), 0, 1))
-    # cross breaks in the plates, so they read as bark and not corduroy
-    breaks = np.clip(periodic_noise(size, rng, 6, 2) - 1.6, 0, 1)
-    plates = periodic_noise(size, rng, 30, 70)
+    breaks = np.clip(periodic_noise(size, rng, 6, 2) - 1.5, 0, 1)
+    plates = periodic_noise(size, rng, 30, bark["plates"])
     grain = periodic_noise(size, rng, 1.5, 6)
-    light = 0.62 + 0.10 * plates + 0.06 * grain - 0.55 * ridges ** 1.5 - 0.25 * breaks
-    light = np.clip(light, 0.08, 1)
-    base = np.array([112, 92, 72], dtype=float)
-    tint = periodic_noise(size, rng, 80, 80)[..., None] * np.array([6, 4, 2])
-    rgb = np.clip(light[..., None] * (base + tint) * 1.25, 0, 255).astype(np.uint8)
-    Image.fromarray(rgb, "RGB").save(path, pixel_format="DXT1")
-    mark_dds(path)
-    return rgb
+    height = 1 - bark["fissure"] * ridges ** 1.5 - 0.3 * breaks + 0.15 * plates + 0.05 * grain
+    light = 0.62 + 0.10 * plates + 0.06 * grain - bark["fissure"] * 0.9 * ridges ** 1.5 - 0.25 * breaks
+    base = np.array(bark["base"], dtype=float)
+    tint = periodic_noise(size, rng, 80, 80)[..., None] * np.array([7, 5, 3])
+    rgb = np.clip(light, 0.08, 1)[..., None] * (base + tint) * 1.25
+
+    u = (np.arange(size)[None, :] + 0.5) / size
+    top = np.exp(-(np.minimum(u, 1 - u) / 0.16) ** 2)   # u = 0 is the top of the log
+    # moss: soft green clumps along the top, filling the fissures first
+    clumps = periodic_noise(size, rng, 14, 18) + 0.8 * periodic_noise(size, rng, 5, 5)
+    moss = np.clip((clumps + 1.6 * top - 1.2 + 0.6 * ridges) * 1.4, 0, 1) * bark["moss"] * (0.25 + 0.75 * top)
+    moss_colour = np.array([78, 104, 38]) + periodic_noise(size, rng, 6, 6)[..., None] * np.array([12, 14, 6])
+    rgb = rgb * (1 - moss[..., None]) + moss_colour * (0.6 + 0.4 * light[..., None]) * moss[..., None]
+    height = height + 0.25 * moss
+    # lichen: small pale grey-green spots anywhere
+    spots = np.clip((periodic_noise(size, rng, 7, 7) - 1.7) * 1.5, 0, 0.75) * bark["lichen"]
+    spots *= np.clip(periodic_noise(size, rng, 40, 40) + 0.5, 0, 1)
+    rgb = rgb * (1 - spots[..., None]) + np.array([150, 160, 128]) * (0.8 + 0.2 * grain[..., None]) * spots[..., None]
+    # bare patches: smooth grey weathered wood where the bark fell away
+    bare = np.clip((periodic_noise(size, rng, 22, 40) - 2.2 + 10 * bark["bare"]) * 3, 0, 1) * (1 - top)
+    bare_colour = np.array([150, 138, 120]) * (0.85 + 0.15 * periodic_noise(size, rng, 1, 30))[..., None]
+    rgb = rgb * (1 - bare[..., None]) + bare_colour * bare[..., None]
+    height = height * (1 - bare) + 0.55 * bare
+    save_dds(rgb, path)
+    normal_map(height, normal_path, strength=3.0)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
 
 
 def log_end_texture(path, size=256):
@@ -122,13 +168,16 @@ def log_end_texture(path, size=256):
     a = np.arctan2(v, u)
     wobble = periodic_noise(size, rng, 30, 30) * 0.015
     rr = r + wobble + 0.01 * np.sin(a * 3 + 1)
-    rings = 0.5 + 0.5 * np.sin(rr * 2 * math.pi * 14) ** 7
-    light = 0.86 - 0.16 * rings - 0.10 * rr
-    for crack_angle in (0.4, 2.3, 4.4):
-        da = np.abs((a - crack_angle + math.pi) % (2 * math.pi) - math.pi)
-        light -= 0.45 * np.clip(1 - da * r / 0.012, 0, 1) * (r < 0.6) * (r > 0.08)
+    rings = 0.5 + 0.5 * np.sin(rr * 2 * math.pi * 16) ** 9
+    light = 0.95 - 0.10 * rings - 0.08 * rr
+    # checks: splits running in from the rim, of different lengths
+    for crack_angle, inner in ((0.4, 0.35), (2.6, 0.62), (4.1, 0.5), (5.3, 0.78)):
+        da = np.abs((a - crack_angle + 0.04 * np.sin(r * 30) + math.pi) % (2 * math.pi) - math.pi)
+        light -= 0.4 * np.clip(1 - da * r / 0.008, 0, 1) * (r > inner) * (r < 0.9)
     light -= 0.5 * np.clip(1 - r / 0.05, 0, 1)
-    rgb = light[..., None] * np.array([214, 178, 128], dtype=float)
+    # a sawn end greys with weather from the rim in, and darkens where it touches the ground
+    weather = np.clip(rr * 1.1 - 0.2 + periodic_noise(size, rng, 20, 20) * 0.12, 0, 1)
+    rgb = light[..., None] * (np.array([214, 178, 128]) * (1 - weather[..., None]) + np.array([168, 156, 140]) * weather[..., None])
     # bark rim
     rim = np.clip((r - 0.86) / 0.04, 0, 1)[..., None]
     rgb = rgb * (1 - rim) + rim * np.array([74, 58, 44])
@@ -245,47 +294,153 @@ def height(jump):
     return d + (len(jump["rows"]) - 1) * d * math.sqrt(3) / 2 - SINK
 
 
-def build_logs(jump):
-    bark, ends = Mesh(), Mesh()
-    for y, z, x0, x1, r0, r1, seed in layout(jump):
-        rng = random.Random(seed)
-        bumps = [1 + rng.uniform(-BUMP, BUMP) for _ in range(SIDES)]
-        turn = rng.uniform(0, 2 * math.pi)
-        mean_r = (r0 + r1) / 2
-        u_scale = 2 * math.pi * mean_r / BARK_TILE
-        v_shift = rng.uniform(0, 1)
-        rings = []
-        for end, (x, r) in enumerate(((x0, r0), (x1, r1))):
-            ring = []
-            for k in range(SIDES + 1):
-                a = turn + 2 * math.pi * k / SIDES
-                b = bumps[k % SIDES]
-                p = (x, y + math.sin(a) * r * b, z + math.cos(a) * r * b)
-                n = (0.0, math.sin(a), math.cos(a))
-                uv = (k / SIDES * u_scale, x / BARK_TILE + v_shift)
-                ring.append(bark.vertex(p, n, uv))
-            rings.append(ring)
+def lumps(rng):
+    """A log's slow wobble round and along it: a function of angle a and position t (0..1)."""
+    waves = [(rng.choice([2, 3, 4]), rng.uniform(0, 6.3), rng.uniform(-3, 3), rng.uniform(0.3, 1)) for _ in range(3)]
+    total = sum(w[3] for w in waves)
+
+    def at(a, t):
+        return sum(amp * math.sin(k * a + phase + drift * t) for k, phase, drift, amp in waves) / total
+    return at
+
+
+def tube(mesh, rings, uvs):
+    """Join rings of vertex ids (all the same length, last = first again) into a skin."""
+    for i in range(len(rings) - 1):
+        for k in range(len(rings[i]) - 1):
+            a, b = rings[i][k], rings[i][k + 1]
+            c, d = rings[i + 1][k + 1], rings[i + 1][k]
+            mesh.tri(a, b, c)
+            mesh.tri(a, c, d)
+
+
+def smooth_normals(grid):
+    """Normals for a grid of points (rows along the log, columns round it) from its neighbours."""
+    rows, cols = len(grid), len(grid[0])
+    out = []
+    for i in range(rows):
+        row = []
+        for k in range(cols):
+            along = sub(grid[min(i + 1, rows - 1)][k], grid[max(i - 1, 0)][k])
+            round_ = sub(grid[i][(k + 1) % cols], grid[i][(k - 1) % cols])
+            row.append(norm(cross(round_, along)))
+        out.append(row)
+    return out
+
+
+def build_log(log, bark, ends):
+    """One log: a bowed, lumpy, tapering trunk with knots and branch stubs, and sawn ends that
+    lean a little. Bark wraps once round it with u = 0 on top."""
+    y, z, x0, x1, r0, r1, seed = log
+    rng = random.Random(seed)
+    length = x1 - x0
+    steps = max(4, int(math.ceil(length / RING_STEP)))
+    wobble = lumps(rng)
+    bow_y = rng.uniform(-0.3, 1) * BEND
+    bow_z = rng.uniform(-1, 1) * BEND
+    knots = [(rng.uniform(0, 2 * math.pi), rng.uniform(0.1, 0.9), rng.uniform(0.06, 0.16))
+             for _ in range(rng.randint(*KNOTS))]
+    tilt = [(rng.uniform(-1, 1) * CUT_TILT, rng.uniform(-1, 1) * CUT_TILT) for _ in range(2)]
+    v_shift = rng.uniform(0, 1)
+
+    def centre(t):
+        bow = math.sin(math.pi * t)
+        return y + bow_y * bow, z + bow_z * bow
+
+    def radius(a, t):
+        r = (r0 + (r1 - r0) * t) * (1 + LUMPS * wobble(a, t))
+        for ka, kt, size in knots:
+            da = (a - ka + math.pi) % (2 * math.pi) - math.pi
+            dt = (t - kt) * length
+            r += (r0 + r1) / 2 * size * math.exp(-(da / 0.35) ** 2 - (dt / 0.12) ** 2)
+        return r
+
+    grid = []
+    for i in range(steps + 1):
+        t = i / steps
+        cy, cz = centre(t)
+        row = []
         for k in range(SIDES):
-            a, b = rings[0][k], rings[0][k + 1]
-            c, e = rings[1][k + 1], rings[1][k]
-            bark.tri(a, b, c)
-            bark.tri(a, c, e)
-        # sawn ends: a fan round the middle, the ring texture mapped flat
-        for x, r, nx in ((x0, r0, -1.0), (x1, r1, 1.0)):
-            n = (nx, 0.0, 0.0)
-            spin = rng.uniform(0, 2 * math.pi)
-            centre = ends.vertex((x, y, z), n, (0.5, 0.5))
-            rim = []
-            for k in range(SIDES):
-                a = turn + 2 * math.pi * k / SIDES
-                b = bumps[k]
-                p = (x, y + math.sin(a) * r * b, z + math.cos(a) * r * b)
-                t = a - turn + spin
-                uv = (0.5 + 0.5 * math.cos(t) * 0.95, 0.5 + 0.5 * math.sin(t) * 0.95)
-                rim.append(ends.vertex(p, n, uv))
-            for k in range(SIDES):
-                ends.tri(centre, rim[k], rim[(k + 1) % SIDES])
-    return bark, ends
+            a = 2 * math.pi * k / SIDES
+            r = radius(a, t)
+            dy, dz = math.cos(a) * r, math.sin(a) * r     # a = 0 is the top
+            x = x0 + length * t
+            if i == 0:
+                x += tilt[0][0] * dy + tilt[0][1] * dz
+            elif i == steps:
+                x += tilt[1][0] * dy + tilt[1][1] * dz
+            row.append((x, cy + dy, cz + dz))
+        grid.append(row)
+    normals = smooth_normals(grid)
+    rings = []
+    for i, row in enumerate(grid):
+        ring = []
+        for k in range(SIDES + 1):
+            p, n = row[k % SIDES], normals[i][k % SIDES]
+            ring.append(bark.vertex(p, n, (k / SIDES, (p[0] - x0) / BARK_TILE + v_shift)))
+        rings.append(ring)
+    tube(bark, rings, None)
+
+    # sawn ends: a fan round the middle, the ring texture laid flat and turned at random
+    for i, sign, (ty, tz) in ((0, -1.0, tilt[0]), (steps, 1.0, tilt[1])):
+        n = norm((sign, -sign * ty, -sign * tz))
+        cy, cz = centre(i / steps)
+        cx = sum(p[0] for p in grid[i]) / SIDES
+        spin = rng.uniform(0, 2 * math.pi)
+        middle = ends.vertex((cx, cy, cz), n, (0.5, 0.5))
+        rim = []
+        for k, p in enumerate(grid[i]):
+            a = 2 * math.pi * k / SIDES + spin
+            rel = radius(2 * math.pi * k / SIDES, i / steps) / ((r0 + r1) / 2)
+            uv = (0.5 + 0.5 * math.cos(a) * 0.93 * rel, 0.5 + 0.5 * math.sin(a) * 0.93 * rel)
+            rim.append(ends.vertex(p, n, uv))
+        for k in range(SIDES):
+            ends.tri(middle, rim[k], rim[(k + 1) % SIDES])
+
+    # branch stubs, sawn or snapped off, on the sides and top (never underneath)
+    for _ in range(rng.randint(*STUBS)):
+        a = rng.uniform(-1.9, 1.9)
+        t = rng.uniform(0.15, 0.85)
+        cy, cz = centre(t)
+        r = radius(a, t)
+        out = (0.0, math.cos(a), math.sin(a))
+        lean = rng.choice([-1, 1]) * rng.uniform(0.3, 0.7)
+        axis = norm((lean, out[1], out[2]))
+        base = (x0 + length * t, cy + out[1] * r * 0.7, cz + out[2] * r * 0.7)
+        stub_r = rng.uniform(0.025, 0.05)
+        stub_len = r * 0.3 + rng.uniform(0.05, 0.16)
+        side = norm(cross(axis, (0.0, 0.0, 1.0) if abs(axis[2]) < 0.9 else (0.0, 1.0, 0.0)))
+        up = cross(side, axis)
+        stub_rings = []
+        for j, (along, rr) in enumerate(((0.0, stub_r * 1.25), (stub_len, stub_r * 0.8))):
+            ring = []
+            for k in range(9):
+                b = 2 * math.pi * k / 8
+                d = tuple(side[m] * math.cos(b) + up[m] * math.sin(b) for m in range(3))
+                p = tuple(base[m] + axis[m] * along + d[m] * rr for m in range(3))
+                ring.append(bark.vertex(p, d, (k / 8 * 0.15, j * 0.12)))
+            stub_rings.append(ring)
+        tube(bark, stub_rings, None)
+        tip = tuple(base[m] + axis[m] * stub_len for m in range(3))
+        middle = ends.vertex(tip, axis, (0.5, 0.5))
+        rim = []
+        for k in range(8):
+            b = 2 * math.pi * k / 8
+            d = tuple(side[m] * math.cos(b) + up[m] * math.sin(b) for m in range(3))
+            p = tuple(tip[m] + d[m] * stub_r * 0.8 for m in range(3))
+            rim.append(ends.vertex(p, axis, (0.5 + 0.45 * math.cos(b), 0.5 + 0.45 * math.sin(b))))
+        for k in range(8):
+            ends.tri(middle, rim[k], rim[(k + 1) % 8])
+
+
+def build_logs(jump):
+    """The pile's logs, alternating between the two barks. Returns one mesh per bark, and the ends."""
+    barks = [Mesh() for _ in BARKS]
+    ends = Mesh()
+    for i, log in enumerate(layout(jump)):
+        pick = (i + random.Random(log[6]).randint(0, 1)) % len(BARKS)
+        build_log(log, barks[pick], ends)
+    return barks, ends
 
 
 def flag_posts(half, mesh=None):
@@ -372,18 +527,20 @@ def shape_lines(mesh, name, shape_id):
 
 
 MATERIALS = [
-    # name, texture, emissive (glows without light)
-    ("xcBark", "xcBark_diffuse.dds", False),
-    ("xcLogEnd", "xcLogEnd_diffuse.dds", False),
-    ("xcFlags", "xcFlags_diffuse.dds", False),
-    ("xcMarkerGold", "xcFlags_diffuse.dds", True),
+    # name, texture, normal map, emissive (glows without light)
+    ("xcBarkA", "xcBarkA_diffuse.dds", "xcBarkA_normal.dds", False),
+    ("xcBarkB", "xcBarkB_diffuse.dds", "xcBarkB_normal.dds", False),
+    ("xcLogEnd", "xcLogEnd_diffuse.dds", None, False),
+    ("xcFlags", "xcFlags_diffuse.dds", None, False),
+    ("xcMarkerGold", "xcFlags_diffuse.dds", None, True),
 ]
 
 
 def write_i3d(name, path, shapes, feet, col=None, group=None):
     """shapes: (node name, mesh, material name, casts shadows). group: a transform group the
     visible shapes go under (the markers hide it while you ride)."""
-    files = sorted({texture for _, texture, _ in MATERIALS})
+    used = [m for m in MATERIALS if m[0] in {shape[2] for shape in shapes}]
+    files = sorted({texture for _, texture, _, _ in used} | {n for _, _, n, _ in used if n})
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
         "",
@@ -399,10 +556,12 @@ def write_i3d(name, path, shapes, feet, col=None, group=None):
     lines.append("  </Files>")
     lines.append("  <Materials>")
     material_ids = {}
-    for i, (material, texture, emissive) in enumerate(MATERIALS):
+    for i, (material, texture, normal, emissive) in enumerate(used):
         material_ids[material] = i + 1
-        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.15 0.6 0">')
+        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0">')
         lines.append(f'      <Texture fileId="{files.index(texture) + 1}"/>')
+        if normal:
+            lines.append(f'      <Normalmap fileId="{files.index(normal) + 1}"/>')
         if emissive:
             lines.append(f'      <Emissivemap fileId="{files.index(texture) + 1}"/>')
         lines.append("    </Material>")
@@ -486,58 +645,70 @@ def write_xml(name, price, note, path):
 # ---------------------------------------------------------------------------------------------
 # Shop image: a small software render of the fence itself, three-quarter view.
 
-def render(meshes, size=512, yaw=-35, pitch=18):
-    """Painter's algorithm over flat-shaded, texture-tinted triangles. meshes: (mesh, texture)."""
+def render(meshes, size=512, yaw=-35, pitch=18, ss=2):
+    """A small z-buffered rasteriser: textured, smooth-shaded triangles, supersampled.
+    meshes: (mesh, texture as an RGB array)."""
     cy, sy = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
     cp, sp = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
+    rot = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+    rot = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ rot
+    light = np.array(norm((-0.4, 0.8, 0.5)))
+    pts = np.concatenate([np.array([v[0] for v in m.verts]) for m, _ in meshes if m.verts]) @ rot.T
+    span = max(np.ptp(pts[:, 0]), np.ptp(pts[:, 1]))
+    w = size * ss
+    scale = w * 0.8 / span
+    ox = w / 2 - (pts[:, 0].max() + pts[:, 0].min()) / 2 * scale
+    oy = w * 0.55 + (pts[:, 1].max() + pts[:, 1].min()) / 2 * scale
 
-    def view(p):
-        x, y, z = p
-        x, z = x * cy + z * sy, -x * sy + z * cy
-        y, z = y * cp - z * sp, y * sp + z * cp
-        return x, y, z
-
-    light = norm((-0.4, 0.8, 0.5))
-    polys = []
-    pts = []
+    sky = np.zeros((w, w, 3))
+    horizon = int(w * 0.42)
+    t = np.arange(w)[:, None] / w
+    sky[:] = np.where(np.arange(w)[:, None, None] < horizon,
+                      np.array([150, 190, 225]) + np.array([60, 40, 20]) * (np.arange(w)[:, None, None] / horizon),
+                      np.array([96, 128, 62]) - np.array([30, 30, 20]) * ((np.arange(w)[:, None, None] - horizon) / (w - horizon)))
+    image = sky
+    depth = np.full((w, w), np.inf)
     for mesh, tex in meshes:
-        h, w = tex.shape[:2]
+        if not mesh.tris:
+            continue
+        P = np.array([v[0] for v in mesh.verts]) @ rot.T
+        N = np.array([v[1] for v in mesh.verts])
+        UV = np.array([v[2] for v in mesh.verts])
+        sx = ox + P[:, 0] * scale
+        sy_ = oy - P[:, 1] * scale
+        th, tw = tex.shape[:2]
         for a, b, c in mesh.tris:
-            ps = [mesh.verts[i][0] for i in (a, b, c)]
-            n = norm(cross(sub(ps[1], ps[0]), sub(ps[2], ps[0])))
-            vs = [view(p) for p in ps]
-            vn = view(n)
-            if vn[2] < 0:
-                continue  # facing away
-            uv = [mesh.verts[i][2] for i in (a, b, c)]
-            u = (sum(t[0] for t in uv) / 3) % 1
-            v = (sum(t[1] for t in uv) / 3) % 1
-            colour = tex[min(h - 1, int(v * h)), min(w - 1, int(u * w))].astype(float)
-            shade = 0.45 + 0.65 * max(0.0, dot(n, light))
-            depth = sum(p[2] for p in vs) / 3
-            polys.append((depth, vs, tuple(int(min(255, ch * shade)) for ch in colour[:3])))
-            pts += vs
-    xs = [p[0] for p in pts]
-    ys = [p[1] for p in pts]
-    span = max(max(xs) - min(xs), max(ys) - min(ys))
-    scale = size * 0.8 / span
-    ox = size / 2 - (max(xs) + min(xs)) / 2 * scale
-    oy = size * 0.55 + (max(ys) + min(ys)) / 2 * scale
-    img = Image.new("RGB", (size, size))
-    draw = ImageDraw.Draw(img)
-    # sky to grass
-    horizon = int(size * 0.42)
-    for y in range(size):
-        if y < horizon:
-            t = y / horizon
-            colour = (int(150 + 60 * t), int(190 + 40 * t), int(225 + 20 * t))
-        else:
-            t = (y - horizon) / (size - horizon)
-            colour = (int(96 - 30 * t), int(128 - 30 * t), int(62 - 20 * t))
-        draw.line([0, y, size, y], fill=colour)
-    for _, vs, colour in sorted(polys, key=lambda item: item[0]):
-        draw.polygon([(ox + x * scale, oy - y * scale) for x, y, _ in vs], fill=colour)
-    return img
+            xs = np.array([sx[a], sx[b], sx[c]])
+            ys = np.array([sy_[a], sy_[b], sy_[c]])
+            area = (xs[1] - xs[0]) * (ys[2] - ys[0]) - (xs[2] - xs[0]) * (ys[1] - ys[0])
+            if abs(area) < 1e-9:
+                continue
+            x0, x1 = max(int(xs.min()), 0), min(int(xs.max()) + 1, w)
+            y0, y1 = max(int(ys.min()), 0), min(int(ys.max()) + 1, w)
+            if x0 >= x1 or y0 >= y1:
+                continue
+            gx, gy = np.meshgrid(np.arange(x0, x1) + 0.5, np.arange(y0, y1) + 0.5)
+            l1 = ((xs[1] - gx) * (ys[2] - gy) - (xs[2] - gx) * (ys[1] - gy)) / area
+            l2 = ((xs[2] - gx) * (ys[0] - gy) - (xs[0] - gx) * (ys[2] - gy)) / area
+            l3 = 1 - l1 - l2
+            inside = (l1 >= 0) & (l2 >= 0) & (l3 >= 0)
+            if not inside.any():
+                continue
+            z = l1 * P[a, 2] + l2 * P[b, 2] + l3 * P[c, 2]
+            region = depth[y0:y1, x0:x1]
+            closer = inside & (-z < region)
+            if not closer.any():
+                continue
+            u = (l1 * UV[a, 0] + l2 * UV[b, 0] + l3 * UV[c, 0]) % 1
+            v = (l1 * UV[a, 1] + l2 * UV[b, 1] + l3 * UV[c, 1]) % 1
+            n = l1[..., None] * N[a] + l2[..., None] * N[b] + l3[..., None] * N[c]
+            n /= np.linalg.norm(n, axis=-1, keepdims=True) + 1e-9
+            shade = 0.42 + 0.7 * np.clip(n @ light, 0, 1)
+            colour = tex[(v * th).astype(int) % th, (u * tw).astype(int) % tw][..., :3] * shade[..., None]
+            region[closer] = -z[closer]
+            image[y0:y1, x0:x1][closer] = colour[closer]
+    img = Image.fromarray(np.clip(image, 0, 255).astype(np.uint8), "RGB")
+    return img.resize((size, size), Image.LANCZOS)
 
 
 def store_image(meshes, label, path, preview_dir):
@@ -555,22 +726,24 @@ def store_image(meshes, label, path, preview_dir):
 def main():
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
     os.makedirs(OUT, exist_ok=True)
-    bark = bark_texture(os.path.join(OUT, "xcBark_diffuse.dds"))
+    bark_rgbs = [bark_texture(b, os.path.join(OUT, b["name"] + "_diffuse.dds"), os.path.join(OUT, b["name"] + "_normal.dds"))
+                 for b in BARKS]
     ends = log_end_texture(os.path.join(OUT, "xcLogEnd_diffuse.dds"))
     flags = flag_texture(os.path.join(OUT, "xcFlags_diffuse.dds"))
     for jump in LOG_PILES:
         name = jump["name"]
-        bark_mesh, ends_mesh = build_logs(jump)
+        bark_meshes, ends_mesh = build_logs(jump)
         posts, feet = flag_posts(log_pile_half(jump))
-        shapes = [("logs", bark_mesh, "xcBark", True), ("logEnds", ends_mesh, "xcLogEnd", True), ("flags", posts, "xcFlags", True)]
+        shapes = [(f"logs{chr(65 + i)}", m, b["name"], True) for i, (m, b) in enumerate(zip(bark_meshes, BARKS)) if m.tris]
+        shapes += [("logEnds", ends_mesh, "xcLogEnd", True), ("flags", posts, "xcFlags", True)]
         write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, feet, col=collision(jump))
         depth = jump["rows"][0] * jump["diameter"]
         write_xml(name, jump["price"], f"{height(jump):.2f} m high, {depth:.2f} m deep; jumped along z, red flag at +x.",
                   os.path.join(OUT, name + ".xml"))
-        store_image([(bark_mesh, bark), (ends_mesh, ends), (posts, flags)], f"{height(jump):.2f} m",
+        store_image([(m, rgb) for m, rgb in zip(bark_meshes, bark_rgbs)] + [(ends_mesh, ends), (posts, flags)], f"{height(jump):.2f} m",
                     os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
         print(name, f"{height(jump):.2f} m high,", len(layout(jump)), "logs,",
-              len(bark_mesh.tris) + len(ends_mesh.tris) + len(posts.tris), "triangles")
+              sum(len(m.tris) for m in bark_meshes) + len(ends_mesh.tris) + len(posts.tris), "triangles")
     for marker in MARKERS:
         name = marker["name"]
         gold, posts, feet = marker_mesh(marker)

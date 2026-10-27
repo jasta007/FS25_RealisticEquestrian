@@ -5,23 +5,15 @@
     <Export program="Realistic Equestrian xc_jumps.py" version="1"/>
   </Asset>
   <Files>
-    <File fileId="1" filename="xcBark_diffuse.dds"/>
-    <File fileId="2" filename="xcFlags_diffuse.dds"/>
-    <File fileId="3" filename="xcLogEnd_diffuse.dds"/>
+    <File fileId="1" filename="xcFlags_diffuse.dds"/>
   </Files>
   <Materials>
-    <Material name="xcBark" materialId="1" specularColor="0.15 0.6 0">
+    <Material name="xcFlags" materialId="1" specularColor="0.1 0.7 0">
       <Texture fileId="1"/>
     </Material>
-    <Material name="xcLogEnd" materialId="2" specularColor="0.15 0.6 0">
-      <Texture fileId="3"/>
-    </Material>
-    <Material name="xcFlags" materialId="3" specularColor="0.15 0.6 0">
-      <Texture fileId="2"/>
-    </Material>
-    <Material name="xcMarkerGold" materialId="4" specularColor="0.15 0.6 0">
-      <Texture fileId="2"/>
-      <Emissivemap fileId="2"/>
+    <Material name="xcMarkerGold" materialId="2" specularColor="0.1 0.7 0">
+      <Texture fileId="1"/>
+      <Emissivemap fileId="1"/>
     </Material>
   </Materials>
   <Shapes>
@@ -227,8 +219,8 @@
   <Scene>
     <TransformGroup name="xcFenceMarker5m" nodeId="1">
       <TransformGroup name="eqXcMarkerVisual" nodeId="2">
-        <Shape name="rails" shapeId="1" clipDistance="300" nodeId="3" materialIds="4" castsShadows="false" receiveShadows="true"/>
-        <Shape name="flags" shapeId="2" clipDistance="300" nodeId="4" materialIds="3" castsShadows="false" receiveShadows="true"/>
+        <Shape name="rails" shapeId="1" clipDistance="300" nodeId="3" materialIds="2" castsShadows="false" receiveShadows="true"/>
+        <Shape name="flags" shapeId="2" clipDistance="300" nodeId="4" materialIds="1" castsShadows="false" receiveShadows="true"/>
       </TransformGroup>
       <TransformGroup name="eqFlagsRed" translation="2.5 0 0" nodeId="5"/>
       <TransformGroup name="eqFlagsWhite" translation="-2.5 0 0" nodeId="6"/>

@@ -19,8 +19,9 @@ their header's reserved bytes (`mark_dds()`). The PNGs carry an Author text chun
 inline geometry, the placeable .xml, the letter texture and the shop images). Change the script and
 run it again rather than editing those files. Letters use DejaVu Sans Bold (rendered only).
 
-`source/xc_jumps.py` builds the cross country fences in `placeables/xcJumps/`: the log piles (bark,
-log end and flag textures painted by the script, inline geometry, one invisible static collision
+`source/xc_jumps.py` builds the cross country fences in `placeables/xcJumps/`: the log piles (two
+barks with moss, lichen and normal maps, log ends and flags, all painted by the script; bowed, lumpy
+logs with knots, branch stubs and leaning sawn ends; inline geometry, one invisible static collision
 prism with Riding Hall 2k26's jump collision filter) and the fence markers (gold rails, hidden
 in game by `EqXcMarkers`). The shop images are small software renders of the meshes; PNG copies
 go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.
