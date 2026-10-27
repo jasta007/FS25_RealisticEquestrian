@@ -778,15 +778,14 @@ local function announce(round, event)
         Log:info("Show jumping: fence %d of %d clear", sj.next - 1, #round.course.jumps)
     elseif event == "rail" then
         EqTrainingHud.pop("showJumping", string.format(text("eq_sj_rail"), sj.faults))
-    elseif event == "skipped" then
-        Log:info("Show jumping: %d fence(s) skipped, now at fence %d", sj.why, sj.next - 1)
-        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_skipped"), sj.faults))
     elseif event == "refusal" then
         EqTrainingHud.pop("showJumping", string.format(text("eq_sj_refusal"), sj.faults))
     elseif event == "eliminated" then
         local why = sj.result.eliminated
         Log:info("Show jumping: eliminated (%s) after %.1f s", why, sj.result.seconds)
-        notify(text("eq_sj_out_" .. why))
+        local message = why == "wrongCourse" and string.format(text("eq_sj_out_wrongCourse"), sj.why)
+            or text("eq_sj_out_" .. why)
+        notify(message)
         EqTrainingHud.pop("showJumping", text("eq_sj_eliminated"))
     elseif event == "finished" then
         local result = sj.result

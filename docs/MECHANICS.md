@@ -221,18 +221,18 @@ Show Jumping". The start line is a placed Show Jumping Start Line (in the shop u
 30 m of where the course begins, else one made 12 m before fence 1; the finish line likewise, after
 the last fence. Placed lines work either way round. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. A gold line runs across the next fence between its flags, its number beside it, and the way to it is drawn in gold. The next fence counts whichever way you jump it; jumping a later one first skips the ones before it (real rules eliminate, this is kinder).
+clock starts as you do. A gold line runs across the next fence between its flags, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
 | Rail down (hitting or landing on the fence) | 4 |
 | Refusal (running into the next fence) | 4; a second eliminates |
-| Skipping a fence (jumping a later one first) | 20 per fence skipped; the round carries on |
+| Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
 | Over twice the time allowed, or not starting within 45 s | Eliminated |
 
 The time allowed is the course length at 350 m a minute (at least 20 s). A finished round pays
-agility training worth 12 top-combo show jumps, less 2.5% per fault (nothing at 40 faults or when
+agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20 faults or when
 eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
 can start.
 

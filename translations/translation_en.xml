@@ -318,7 +318,7 @@
         <text name="eq_sj_refusal" text="Refusal! %d faults"/>
         <text name="eq_sj_eliminated" text="Eliminated"/>
         <text name="eq_sj_out_late" text="Eliminated: the start line was not crossed in time"/>
-        <text name="eq_sj_skipped" text="Fence skipped! %d faults"/>
+        <text name="eq_sj_out_wrongCourse" text="Eliminated: wrong course (fence %d jumped out of order)"/>
         <text name="eq_sj_out_refusals" text="Eliminated: second refusal"/>
         <text name="eq_sj_out_timeLimit" text="Eliminated: over the time limit"/>
         <text name="eq_sj_clear" text="Clear round in %s!"/>
