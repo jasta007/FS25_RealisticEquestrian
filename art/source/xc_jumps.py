@@ -746,14 +746,16 @@ def fmt(values):
     return " ".join(f"{v:.5g}" for v in values)
 
 
-def shape_lines(mesh, name, shape_id):
+def shape_lines(mesh, name, shape_id, uv1=None):
+    """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient."""
     centre, radius = mesh.bounds()
     lines = [
         f'    <IndexedTriangleSet name="{name}" shapeId="{shape_id}" bvCenter="{fmt(centre)}" bvRadius="{radius:.5g}">',
-        f'      <Vertices count="{len(mesh.verts)}" normal="true" uv0="true">',
+        f'      <Vertices count="{len(mesh.verts)}" normal="true" uv0="true"{' uv1="true"' if uv1 else ""}>',
     ]
     for p, n, uv in mesh.verts:
-        lines.append(f'        <v p="{fmt(p)}" n="{fmt(n)}" t0="{fmt(uv)}"/>')
+        second = f' t1="{fmt(uv1(p))}"' if uv1 else ""
+        lines.append(f'        <v p="{fmt(p)}" n="{fmt(n)}" t0="{fmt(uv)}"{second}/>')
     lines.append("      </Vertices>")
     lines.append(f'      <Triangles count="{len(mesh.tris)}">')
     for a, b, c in mesh.tris:
@@ -897,18 +899,24 @@ def write_flag_fence_i3d(path, posts, bars):
         "  </Asset>",
         "  <Files>",
         '    <File fileId="1" filename="xcFlags_diffuse.dds"/>',
+        '    <File fileId="2" filename="$data/shaders/placeableShader.xml"/>',
         "  </Files>",
         "  <Materials>",
     ]
     for i, (material, _, _, emissive) in enumerate(used):
-        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0">')
+        # the bars lean with the slope like the base game's fence panels: the placeable shader's
+        # vertexOffset variation lifts each vertex by the panel's yOffset times its uv1.x
+        shader = ' customShaderId="2" customShaderVariation="vertexOffset"' if emissive else ""
+        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0"{shader}>')
         lines.append('      <Texture fileId="1"/>')
         if emissive:
             lines.append('      <Emissivemap fileId="1"/>')
         lines.append("    </Material>")
     lines += ["  </Materials>", "  <Shapes>"]
+    bar_meshes = {id(mesh) for mesh, _ in bars.values()}
     for i, (mesh, _) in enumerate(shapes):
-        lines += shape_lines(mesh, f"{FLAG_FENCE}_{i + 1}", i + 1)
+        slope = (lambda p: (p[2] / BAR_PANEL, 0.0)) if id(mesh) in bar_meshes else None
+        lines += shape_lines(mesh, f"{FLAG_FENCE}_{i + 1}", i + 1, uv1=slope)
     lines += ["  </Shapes>", "  <Scene>"]
     node_id = [1]
 
