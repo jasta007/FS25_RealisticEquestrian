@@ -194,7 +194,7 @@ Show jumps are linked into a course by riding it, in an edit mode. While editing
 the map has no collision, so you ride straight through them in the order you want, and the course's
 line and fence numbers are drawn. Show jumps are Riding Hall 2k26's (or any "jumps" facility
 placeable), the jumps in the Equestrian Pack's outdoor arena (any part of a facility with a red and
-a white flag), and map scenery such as Elmcreek's course. A jump counts when the horse crosses the
+a white flag), map scenery such as Elmcreek's course, and any fence marked with the shop's red and white flags. A jump counts when the horse crosses the
 line between its flags (or across its placement area) with 0.75 m to spare; the same jump can come
 up again later in the course, but not twice in a row within 4 seconds.
 

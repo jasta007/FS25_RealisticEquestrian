@@ -220,11 +220,9 @@ local function innerJumps(placeable)
 end
 
 
---- Cross country fences: each pair of red and white flags (EqXcFlags, when loaded), and the
---- "xcFence" facility placeables such as log piles and drop walls.
---- @return table { node|nil, x, z, ry, ax, az, bx, bz }
-local function listXcFences()
-    local list = {}
+--- Add the fences marked by a red and a white flag (EqXcFlags, when loaded) to a list.
+--- @param list table
+local function addFlagFences(list)
     if EqXcFlags ~= nil and EqXcFlags.fences ~= nil then
         local ok, fences = pcall(EqXcFlags.fences)
         if ok and type(fences) == "table" then
@@ -237,6 +235,15 @@ local function listXcFences()
             end
         end
     end
+end
+
+
+--- Cross country fences: the flagged ones and the "xcFence" facility placeables such as log
+--- piles and drop walls.
+--- @return table { node|nil, x, z, ry, ax, az, bx, bz }
+local function listXcFences()
+    local list = {}
+    addFlagFences(list)
     for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
         if entry.kind == "xcFence" and entry.placeable.rootNode ~= nil then addJump(list, entry.placeable.rootNode, entry.placeable) end
     end
@@ -264,6 +271,8 @@ function EqCourseHooks.listJumps(kind)
             addJump(list, point.node, nil)
         end
     end
+    -- Flagged fences count in show jumping too (James, 2026-10-27: "it's a cool system").
+    addFlagFences(list)
     return list
 end
 
@@ -355,7 +364,7 @@ local function startEditing(vehicle, index, kind)
     end
     EqCourseHooks.editing = editing
     -- Cross country flags show their height guides while a course is edited.
-    if EqXcFlags ~= nil then EqXcFlags.editing = editing.course.kind == EqCourse.CROSS_COUNTRY end
+    if EqXcFlags ~= nil then EqXcFlags.editing = true end
     scanJumps(editing)
     Log:info("Course: editing %s %s '%s', %d jump(s) on the map without collision", index ~= nil and "saved" or "new",
         tostring(editing.course.kind), editing.name, #editing.jumps)
