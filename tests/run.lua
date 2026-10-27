@@ -3205,6 +3205,15 @@ end)()
     local near = EqTraining.newSheet()
     EqTraining.routineStep(near, "trot", nil, 50, false, one, at)
     check("coming up to our arena starts its test at once", near.routine.active and near.routine.task.opening == "A")
+    -- Far from our arena (past C at the far end): no test, and no "Move to A" from 80 m off.
+    local beyond = { x = 10, z = 40 + 50, markers = ours }
+    check("not near an arena 50 m past its end", not EqDressage.nearArena(beyond))
+    check("near an arena 10 m past its end", EqDressage.nearArena({ x = 10, z = 40 + 10, markers = ours }))
+    local away = EqTraining.newSheet()
+    for _ = 1, 50 do EqTraining.routineStep(away, "walk", nil, 50, false, one, beyond) end
+    check("walking far from our arena rides the free routine", away.routine.active and away.routine.kind == "free")
+    for _ = 1, 3 do EqTraining.routineStep(away, "walk", nil, 50, false, one, at) end
+    check("riding up to the arena turns it into the test", away.routine.kind == "markers" and away.routine.task.opening == "A")
     local walks = 0
     for _ = 1, 200 do
         local leg = EqDressage.planLeg({ from = nil }, { x = 10, z = 0, markers = ours }, rng)

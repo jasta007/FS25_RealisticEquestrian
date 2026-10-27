@@ -164,7 +164,7 @@ least three within 100 m, chained 60 m from each other, not all in a line) the r
 between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 30 m starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
+test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
 and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:

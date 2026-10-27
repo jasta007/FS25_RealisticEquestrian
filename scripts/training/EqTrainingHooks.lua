@@ -517,6 +517,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if id == nil then return end
     local record = EqRegistry.getById(id)
     local sheet = EqTrainingHooks.getSheet(id)
+    -- Nobody in the saddle (the rider got off or switched to another horse or vehicle; the
+    -- base game still updates a horse left out): a routine or test ends at once, the jump
+    -- combo goes and nothing trains (James, 2026-10-27: a test ran on, faulting, while he was
+    -- on another horse).
+    if vehicle.getIsControlled ~= nil and not vehicle:getIsControlled() then
+        local ended = EqTraining.breakRoutine(sheet)
+        if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
+        return
+    end
     -- First undo a gait change the exertion system doesn't allow (the base game may have made
     -- it this frame), so the gait below is the one the horse keeps.
     EqTrainingHooks.keepGait(spec, sheet.exertion)
@@ -988,6 +997,9 @@ local function dressageRows(rows, routine, vehicle)
     elseif routine.bonus ~= nil then
         EqTrainingHud.drawPrompt(string.format(g_i18n:getText(EqDressage.changeKey(routine.bonus)), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
             math.max(0, routine.bonus.deadline - routine.clock) / EqDressage.PASS_REACT_MS, color)
+    elseif task.untimed then
+        -- "Move to A to begin": not an alert, so beside the panel, not in the middle.
+        EqTrainingHud.drawPanelNote(text, color, true)
     else
         EqTrainingHud.drawPrompt(text, share, color)
     end

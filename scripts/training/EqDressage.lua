@@ -77,11 +77,12 @@ EqDressage.HOLD_MS = { 1500, 3000 }
 EqDressage.REVERSE_MS = 2500
 -- A turn on the spot counts once its steering key is held this long.
 EqDressage.TURN_MS = 600
--- Our arenas (markers with arena set) ride a test: coming within ARENA_NEAR metres of one starts
+-- Our arenas (markers with arena set) ride a test: coming within ARENA_NEAR metres of one's rail
+-- (not of any letter: from a long arena's far end, "Move to A" showed 84 m off) starts
 -- it with "Trot: A", untimed; then down the centre line to X and halt, TEST_MOVES more commands,
 -- and a final trot to X and halt. Finishing pays TEST_BONUS_SECONDS of temperament training at
 -- the top multiplier at once; after that no new test starts for TEST_REST_MS.
-EqDressage.ARENA_NEAR = 30
+EqDressage.ARENA_NEAR = 12
 EqDressage.TEST_MOVES = 15
 EqDressage.TEST_BONUS_SECONDS = 60
 EqDressage.TEST_REST_MS = 20000
@@ -255,12 +256,30 @@ end
 
 
 --- @param course table { x, z, markers }
---- @return boolean true within ARENA_NEAR of one of our arenas' markers
+--- @return boolean true within ARENA_NEAR of one of our arenas (its letters' rectangle)
 function EqDressage.nearArena(course)
     for _, marker in ipairs(course.markers) do
-        if marker.arena and distance(course.x, course.z, marker.x, marker.z) <= EqDressage.ARENA_NEAR then return true end
+        if marker.arena and marker.letter == "X" then
+            local bounds = EqDressage.arenaBounds(course, marker)
+            if bounds ~= nil then
+                local dx, dz = course.x - bounds.mx, course.z - bounds.mz
+                local along = math.max(math.abs(dx * bounds.ux + dz * bounds.uz) - bounds.halfLength, 0)
+                local across = math.max(math.abs(dx * bounds.uz - dz * bounds.ux) - bounds.halfWidth, 0)
+                if math.sqrt(along * along + across * across) <= EqDressage.ARENA_NEAR then return true end
+            end
+        end
     end
     return false
+end
+
+
+--- @param course table { x, z, markers }
+--- @return boolean true when every marker is one of our arenas' (no other markers to ride round)
+function EqDressage.arenaOnly(course)
+    for _, marker in ipairs(course.markers) do
+        if not marker.arena then return false end
+    end
+    return true
 end
 
 
@@ -434,7 +453,8 @@ end
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone, routine.steps, routine.testX = "markers", nil, nil, 0, nil
     routine.faults, routine.heading, routine.outMs = 0, nil, 0
-    local opening = EqDressage.openingLeg(course)
+    -- The test opening only close to an arena: from further off, "Move to A" showed 80 m away.
+    local opening = EqDressage.nearArena(course) and EqDressage.openingLeg(course) or nil
     routine.arena = opening ~= nil and opening.arena or nil
     begin(routine, opening or EqDressage.planLeg(routine, course, rng), course)
 end

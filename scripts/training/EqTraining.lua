@@ -365,10 +365,13 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
     local resting = routine.clock < (routine.restUntil or 0)
-    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop.
-    if not routine.active and not resting and course ~= nil and move ~= "gallop" and move ~= "fast"
-        and EqDressage.nearArena(course) then
-        routine.active, routine.mult, routine.current = true, 1, "walk"
+    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop,
+    -- and takes over from a free routine (keeping its multiplier).
+    if (not routine.active or routine.kind == "free") and not resting and course ~= nil and move ~= "gallop"
+        and move ~= "fast" and EqDressage.nearArena(course) then
+        if not routine.active then routine.mult = 1 end
+        routine.active, routine.current = true, "walk"
+        routine.request, routine.nextAt, routine.pending = nil, nil, nil
         EqDressage.start(routine, course, rng)
         return "start"
     end
@@ -380,7 +383,8 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
         routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
-        if course ~= nil then
+        -- An arena's markers alone are only ridden as its test, from close by (ARENA_NEAR).
+        if course ~= nil and not EqDressage.arenaOnly(course) then
             EqDressage.start(routine, course, rng)
         else
             routine.kind = "free"
