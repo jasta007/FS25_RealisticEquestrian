@@ -16,7 +16,7 @@
     A vehicle parked on a hidden piece can be thrown when its collision comes back. James is
     fine with that: the game's reset handles it.
 
-    During a cross country round (countdown to finish) road traffic is switched off, and back
+    During a cross country round (start line to finish) road traffic is switched off, and back
     on after, so cars don't get in the way of riders on roads (James). Only the running traffic
     system is touched, never the savegame's traffic setting.
 
@@ -69,13 +69,14 @@ function EqXcHide.roundShows(sjState, startDistance)
 end
 
 
---- Is road traffic kept off: a cross country round from the countdown to the result.
+--- Is road traffic kept off: a cross country round from crossing the start line to the finish,
+--- not while riding up to it or counting down (James, 2026-10-27).
 --- @param kind string|nil the round's course kind
 --- @param sjState string|nil the round's EqShowJumping state
 --- @return boolean
 function EqXcHide.wantsTrafficOff(kind, sjState)
     if kind ~= EqCourse.CROSS_COUNTRY then return false end
-    return sjState == "countdown" or sjState == "go" or sjState == "running"
+    return sjState == "running"
 end
 
 

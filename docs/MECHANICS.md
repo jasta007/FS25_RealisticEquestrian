@@ -376,7 +376,7 @@ result (with collision). Buy a log pile or drop wall with the shop's **Always vi
 configuration to keep it in the world all the time; the flags always hide. In multiplayer they
 always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
 collision comes back. Road traffic is switched
-off from a cross country round's countdown to its finish and back on after (the savegame's traffic
+off from crossing a cross country round's start line to its finish and back on after (the savegame's traffic
 setting is not changed).
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event

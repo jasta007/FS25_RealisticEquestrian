@@ -2161,7 +2161,7 @@ do
         and EqXcHide.roundShows("countdown", 500) and EqXcHide.roundShows("running", 500) and EqXcHide.roundShows("done", 500))
     local xc = EqCourse.CROSS_COUNTRY
     check("traffic is off only while a cross country round runs",
-        EqXcHide.wantsTrafficOff(xc, "countdown") and EqXcHide.wantsTrafficOff(xc, "go") and EqXcHide.wantsTrafficOff(xc, "running")
+        EqXcHide.wantsTrafficOff(xc, "running") and not EqXcHide.wantsTrafficOff(xc, "countdown") and not EqXcHide.wantsTrafficOff(xc, "go")
         and not EqXcHide.wantsTrafficOff(xc, "approach") and not EqXcHide.wantsTrafficOff(xc, "done")
         and not EqXcHide.wantsTrafficOff(nil, "running") and not EqXcHide.wantsTrafficOff(xc, nil))
     check("the Always visible configuration is the second choice",
