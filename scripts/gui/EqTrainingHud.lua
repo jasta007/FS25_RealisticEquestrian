@@ -113,10 +113,11 @@ end
 --- Draw the training panel.
 --- @param title string
 --- @param rows table list of { left, leftColor, right, rightColor } text rows,
----     { segments = { { text, color }, ... } } rows of coloured pieces side by side,
----     { bar = 0..1, color } meter rows, and { sections = { { from, to, color }, ... }, lines = { share, ... },
----     ticks = { share, ... }, marker = share } rows: the exertion bar, coloured sections with dark
----     lines, short ticks and a marker
+---     { segments = { { text, color, bold, at, tight }, ... } } rows of coloured pieces side by side
+---     (at, a share of the row's width, starts a piece in its own column; tight keeps the next piece
+---     one space after it, as a name and its number), { bar = 0..1, color } meter rows, and
+---     { sections = { { from, to, color }, ... }, lines = { share, ... }, ticks = { share, ... },
+---     marker = share } rows: the exertion bar, coloured sections with dark lines, short ticks and a marker
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
 --- @param titleRight string|nil grey text at the right of the title line
 --- With no title the panel is just its rows (the Condensed view).
@@ -192,8 +193,9 @@ function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
             lineY = lineY - p.lineHeight
             local x = left
             for _, segment in ipairs(row.segments) do
-                text(segment[1], x, lineY, p.textSize, segment[2] or EqTrainingHud.COLOR.white)
-                x = x + getTextWidth(p.textSize, segment[1] .. "  ")
+                if segment.at ~= nil then x = left + (right - left) * segment.at end
+                text(segment[1], x, lineY, p.textSize, segment[2] or EqTrainingHud.COLOR.white, nil, segment.bold)
+                x = x + getTextWidth(p.textSize, segment[1] .. (segment.tight and " " or "  "))
             end
         else
             lineY = lineY - p.lineHeight
