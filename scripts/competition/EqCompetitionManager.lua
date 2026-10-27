@@ -1005,7 +1005,7 @@ function EqCompetitionManager.homeRegion()
 
     local rl = EqRLRM.get("RealisticLivestock")
     if rl ~= nil and rl.getMapCountryCode ~= nil then
-        local ok, code = pcall(rl.getMapCountryCode)
+        local ok, code = EqLog.try("EqCompetitionManager.homeRegion getMapCountryCode", rl.getMapCountryCode)
         if ok and code ~= nil and home.countries[code] ~= nil then return home.countries[code] end
     end
     return home.default

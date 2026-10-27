@@ -28,7 +28,8 @@ dofile("scripts/competition/EqStory.lua")
 dofile("scripts/competition/EqCompetition.lua")
 dofile("scripts/competition/EqExperience.lua")
 dofile("scripts/competition/EqRisk.lua")
-EqLog = { debug = function() end, info = function() end, warning = function() end, error = function() end }
+dofile("scripts/core/EqLog.lua")
+for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")

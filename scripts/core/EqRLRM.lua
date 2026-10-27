@@ -135,10 +135,8 @@ function EqRLRM.makeSeededBreeder(breedingMath, rng)
     return function(parent1, parent2, opts)
         local randn = breedingMath.randn
         breedingMath.randn = function() return rng:normal(0, 1) end
-        local ok, child = pcall(breedingMath.breedOffspring, parent1, parent2, opts)
-        breedingMath.randn = randn
-        if not ok then error(child, 0) end
-        return child
+        return EqLog.finally(function() breedingMath.randn = randn end,
+            breedingMath.breedOffspring, parent1, parent2, opts)
     end
 end
 

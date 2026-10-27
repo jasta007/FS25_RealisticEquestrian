@@ -126,9 +126,7 @@ function EqRideButton.ride(frame)
         if id == key then return x, y, z, 0, 0, 0 end
         return getAnimalPosition(self, id, ...)
     end
-    local ok, err = pcall(placeable.startRiding, placeable, key, player)
-    herd.getAnimalPosition = nil
-    if not ok then error(err) end
+    EqLog.finally(function() herd.getAnimalPosition = nil end, placeable.startRiding, placeable, key, player)
     Log:info("Ride horse: %s from the menu, at the pen's spare spot (no visual)", tostring(key))
 end
 

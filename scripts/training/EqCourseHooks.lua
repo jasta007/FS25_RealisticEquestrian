@@ -99,7 +99,7 @@ end
 --- @param text string
 local function notify(text)
     Log:info("Course: %s", text)
-    pcall(function()
+    EqLog.try("EqCourseHooks.notify", function()
         g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_OK, text)
     end)
 end
@@ -116,7 +116,7 @@ end
 local function groundAt(x, y, z)
     local terrain = g_currentMission ~= nil and g_currentMission.terrainRootNode or nil
     if terrain ~= nil and terrain ~= 0 and getTerrainHeightAtWorldPos ~= nil then
-        local ok, height = pcall(getTerrainHeightAtWorldPos, terrain, x, 0, z)
+        local ok, height = EqLog.try("EqCourseHooks.groundAt getTerrainHeightAtWorldPos", getTerrainHeightAtWorldPos, terrain, x, 0, z)
         if ok and height ~= nil then return height end
     end
     return y
@@ -224,7 +224,7 @@ end
 --- @param list table
 local function addFlagFences(list)
     if EqXcFlags ~= nil and EqXcFlags.fences ~= nil then
-        local ok, fences = pcall(EqXcFlags.fences)
+        local ok, fences = EqLog.try("EqCourseHooks.addFlagFences fences", EqXcFlags.fences)
         if ok and type(fences) == "table" then
             for _, fence in ipairs(fences) do
                 local red, white = fence.red, fence.white
@@ -286,9 +286,9 @@ local function collisionOff(node)
     local stack = { node }
     while #stack > 0 do
         local current = table.remove(stack)
-        local okType, kind = pcall(getRigidBodyType, current)
+        local okType, kind = EqLog.try("EqCourseHooks.collisionOff getRigidBodyType", getRigidBodyType, current)
         if okType and kind ~= nil and kind ~= none and kind ~= "NoRigidBody" then
-            if pcall(setRigidBodyType, current, none) then table.insert(bodies, { node = current, kind = kind }) end
+            if EqLog.try("EqCourseHooks.collisionOff setRigidBodyType", setRigidBodyType, current, none) then table.insert(bodies, { node = current, kind = kind }) end
         end
         for i = 0, getNumOfChildren(current) - 1 do table.insert(stack, getChildAt(current, i)) end
     end
@@ -300,7 +300,7 @@ end
 local function collisionOnAll()
     for _, bodies in pairs(EqCourseHooks.bodies) do
         for _, body in ipairs(bodies) do
-            if entityExists == nil or entityExists(body.node) then pcall(setRigidBodyType, body.node, body.kind) end
+            if entityExists == nil or entityExists(body.node) then EqLog.try("EqCourseHooks.collisionOnAll setRigidBodyType", setRigidBodyType, body.node, body.kind) end
         end
     end
     EqCourseHooks.bodies = {}
@@ -314,7 +314,7 @@ local function scanJumps(editing)
     editing.jumps = EqCourseHooks.listJumps(editing.course.kind)
     for _, jump in ipairs(editing.jumps) do
         if jump.node ~= nil then
-            local ok, err = pcall(collisionOff, jump.node)
+            local ok, err = EqLog.try("EqCourseHooks.scanJumps collisionOff", collisionOff, jump.node)
             if not ok then Log:warning("Course jump collision: %s", tostring(err)) end
         end
     end
@@ -607,7 +607,7 @@ local function drawLine(points, color, x, z)
     if EqCourseHooks.drawFailed or drawDebugLine == nil then return end
     local radius2 = EqCourseHooks.DRAW_RADIUS * EqCourseHooks.DRAW_RADIUS
     local lift = EqCourseHooks.LINE_LIFT
-    local ok, err = pcall(function()
+    local ok, err = EqLog.try("EqCourseHooks.drawLine", function()
         for i = 2, #points do
             local a, b = points[i - 1], points[i]
             local dx, dz = b.x - x, b.z - z
@@ -629,7 +629,7 @@ end
 --- @param lift number|nil metres over the ground, NUMBER_LIFT when nil
 local function drawNumbers(jumps, labels, lift)
     if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
-    local ok, err = pcall(function()
+    local ok, err = EqLog.try("EqCourseHooks.drawNumbers", function()
         for _, label in ipairs(labels or EqCourse.labels(jumps)) do
             local y = groundAt(label.x, 0, label.z)
             Utils.renderTextAtWorldPosition(label.x, y + (lift or EqCourseHooks.NUMBER_LIFT), label.z, label.text, getCorrectTextSize(0.025), 0)
@@ -1045,7 +1045,7 @@ function EqCourseHooks.update()
         if not editing.recording then
             stopEditing("eq_course_finished")
         else
-            local ok, saved = pcall(save, editing, true)
+            local ok, saved = EqLog.try("EqCourseHooks.update save", save, editing, true)
             stopEditing(ok and saved and "eq_course_leftSaved" or "eq_course_cancelled")
         end
     end

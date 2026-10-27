@@ -111,29 +111,14 @@ EqMain.activated = false
 EqMain.isActive = false
 
 
-local failureCounts = {}
-
---- Every hook body runs under xpcall: these hooks sit inside the game's own load, save and
+--- Every hook body runs protected: these hooks sit inside the game's own load, save and
 --- display code, next to RLRM's, so an error here must be logged and swallowed, never allowed
---- to abort the chain and take RLRM down with it. Display hooks run every frame, so each
---- context logs its first failure in full and then only every 1000th.
+--- to abort the chain and take RLRM down with it. EqLog.guard logs each context's first
+--- failure in full and then only every 1000th, as display hooks run every frame.
 --- @param context string Name for the log line
 --- @param fn function
 local function guarded(context, fn)
-    -- The game may strip the debug library, so the traceback is optional.
-    local ok, err = xpcall(fn, function(e)
-        local trace = (debug ~= nil and debug.traceback ~= nil) and ("\n" .. debug.traceback()) or ""
-        return tostring(e) .. trace
-    end)
-    if ok then return end
-
-    local count = (failureCounts[context] or 0) + 1
-    failureCounts[context] = count
-    if count == 1 then
-        Log:error("%s failed: %s", context, err)
-    elseif count % 1000 == 0 then
-        Log:error("%s has failed %d times", context, count)
-    end
+    EqLog.guard(context, fn)
 end
 
 

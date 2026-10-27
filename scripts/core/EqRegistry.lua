@@ -33,7 +33,7 @@ end
 function EqRegistry.getId(animal)
     if animal == nil or animal.getIdentifiers == nil or animal.birthday == nil then return nil end
 
-    local ok, id = pcall(animal.getIdentifiers, animal)
+    local ok, id = EqLog.try("EqRegistry.getId getIdentifiers", animal.getIdentifiers, animal)
     if not ok then
         Log:debug("EqRegistry.getId: getIdentifiers raised for uniqueId=%s: %s",
             tostring(animal.uniqueId), tostring(id))

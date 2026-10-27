@@ -417,7 +417,7 @@ end
 --- @return number|nil x, number|nil y, number|nil z the local player's position, or the
 ---     ridden horse's
 local function localPosition()
-    local ok, x, y, z = pcall(function()
+    local ok, x, y, z = EqLog.try("EqConsole.localPosition", function()
         if g_localPlayer ~= nil and g_localPlayer.getPosition ~= nil then return g_localPlayer:getPosition() end
         return nil
     end)

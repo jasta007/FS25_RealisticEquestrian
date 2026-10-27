@@ -91,7 +91,7 @@ end
 --- @return boolean room for one more of this subtype
 local function hasRoom(placeable, subTypeIndex)
     if placeable.getNumOfFreeAnimalSlots == nil then return false end
-    local ok, free = pcall(placeable.getNumOfFreeAnimalSlots, placeable, subTypeIndex)
+    local ok, free = EqLog.try("EqLooseHorses.hasRoom getNumOfFreeAnimalSlots", placeable.getNumOfFreeAnimalSlots, placeable, subTypeIndex)
     return ok and (free or 0) >= 1
 end
 
@@ -101,7 +101,7 @@ end
 local function placeablePosition(placeable)
     local node = placeable.rootNode
     if type(node) ~= "number" or node == 0 then return nil end
-    local ok, x, _, z = pcall(getWorldTranslation, node)
+    local ok, x, _, z = EqLog.try("EqLooseHorses.placeablePosition getWorldTranslation", getWorldTranslation, node)
     if ok then return x, z end
     return nil
 end
@@ -191,7 +191,7 @@ function EqLooseHorses.fetch()
         local home = id ~= nil and EqLooseHorses.homes[id] or nil
         local x, z = nil, nil
         if horse.vehicle.rootNode ~= nil then
-            local ok, hx, _, hz = pcall(getWorldTranslation, horse.vehicle.rootNode)
+            local ok, hx, _, hz = EqLog.try("EqLooseHorses.fetch getWorldTranslation", getWorldTranslation, horse.vehicle.rootNode)
             if ok then x, z = hx, hz end
         end
 

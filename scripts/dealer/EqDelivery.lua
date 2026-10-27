@@ -32,7 +32,7 @@ local Log = EqLog
 local function triggerPosition(trigger)
     local node = trigger.triggerNode
     if type(node) ~= "number" or node == 0 then return nil end
-    local ok, x, _, z = pcall(getWorldTranslation, node)
+    local ok, x, _, z = EqLog.try("EqDelivery.triggerPosition getWorldTranslation", getWorldTranslation, node)
     if ok then return x, z end
     return nil
 end
@@ -43,15 +43,15 @@ end
 --- @return number|nil x, number|nil z
 local function playerPosition()
     if g_localPlayer == nil then return nil end
-    local okVehicle, vehicle = pcall(function()
+    local okVehicle, vehicle = EqLog.try("EqDelivery.playerPosition", function()
         return g_localPlayer.getCurrentVehicle ~= nil and g_localPlayer:getCurrentVehicle() or nil
     end)
     if okVehicle and type(vehicle) == "table" and type(vehicle.rootNode) == "number" and vehicle.rootNode ~= 0 then
-        local ok, x, _, z = pcall(getWorldTranslation, vehicle.rootNode)
+        local ok, x, _, z = EqLog.try("EqDelivery.playerPosition getWorldTranslation", getWorldTranslation, vehicle.rootNode)
         if ok then return x, z end
     end
     if g_localPlayer.getPosition == nil then return nil end
-    local ok, x, _, z = pcall(g_localPlayer.getPosition, g_localPlayer)
+    local ok, x, _, z = EqLog.try("EqDelivery.playerPosition getPosition", g_localPlayer.getPosition, g_localPlayer)
     if ok then return x, z end
     return nil
 end
@@ -164,7 +164,7 @@ function EqDelivery.deliver(trailer, horses)
     local service = EqRLRM.get("RLAnimalMoveService")
     local pasture = destination.placeable
     EqDelivery.pending = true
-    local ok, accepted = pcall(service.moveAnimals, trailer, pasture, horses, "TARGET", function(errorCode)
+    local ok, accepted = EqLog.try("EqDelivery.deliver moveAnimals", service.moveAnimals, trailer, pasture, horses, "TARGET", function(errorCode)
         EqDelivery.pending = false
         if errorCode ~= nil and errorCode ~= AnimalMoveEvent.MOVE_SUCCESS then
             notify(FSBaseMission.INGAME_NOTIFICATION_CRITICAL,

@@ -121,7 +121,7 @@ function EqXcFlags.inConstruction()
     local gui = g_gui.currentGui
     local target = gui ~= nil and gui.target or nil
     if target == nil or ConstructionScreen == nil or target.isa == nil then return false end
-    local ok, isConstruction = pcall(target.isa, target, ConstructionScreen)
+    local ok, isConstruction = EqLog.try("EqXcFlags.inConstruction isa", target.isa, target, ConstructionScreen)
     return ok and isConstruction == true
 end
 
