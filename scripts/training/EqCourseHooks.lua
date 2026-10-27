@@ -7,7 +7,9 @@
     so the rider goes straight through them in order instead of jumping a course they don't
     know yet (James, 2026-10-27). Each frame the horse's position feeds the trail, and crossing
     a jump's line between its ends adds that jump to the course. The key again saves it;
-    getting off throws it away. Collision comes back either way.
+    getting off throws it away. Collision comes back either way. While recording, a line runs
+    from the horse to the nearest recorded point, and the rewind key (EQ_COURSE_REWIND) drops
+    everything after that point and carries on from it, like AutoDrive's.
 
     Near a saved course the line is drawn on the ground with the fence numbers above the jumps.
     Recording runs where the rider is (Rideable.onDraw), so it is single player for now.
@@ -35,6 +37,7 @@ EqCourseHooks.NUMBER_LIFT = 2.2
 EqCourseHooks.DEFAULT_HALF_WIDTH = 2.5
 EqCourseHooks.LINE_COLOR = { 0.2, 0.9, 1 }
 EqCourseHooks.TRAIL_COLOR = { 1, 0.6, 0.1 }
+EqCourseHooks.NEAREST_COLOR = { 1, 1, 1 }
 
 EqCourseHooks.recording = nil
 EqCourseHooks.shown = nil
@@ -185,6 +188,19 @@ function EqCourseHooks.cancel()
 end
 
 
+--- The rewind key was pressed: back to the recorded point nearest the horse.
+--- @param vehicle table
+function EqCourseHooks.onRewindAction(vehicle)
+    local recording = EqCourseHooks.recording
+    if recording == nil or recording.vehicle ~= vehicle or vehicle.rootNode == nil then return end
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local index, distance = EqCourse.nearestPoint(recording.course, x, z)
+    local points, jumps = EqCourse.rewind(recording.course, index)
+    Log:info("Course: rewound to point %d (%.1f m away), dropped %d point(s) and %d fence(s)", index, distance, points, jumps)
+    notify(string.format(text("eq_course_rewound"), #recording.course.jumps))
+end
+
+
 --- The record key was pressed.
 --- @param vehicle table
 function EqCourseHooks.onRecordAction(vehicle)
@@ -196,6 +212,9 @@ function EqCourseHooks.onRecordAction(vehicle)
     local spec = vehicle.spec_rideable
     if spec ~= nil and spec.eqCourseEventId ~= nil then
         g_inputBinding:setActionEventText(spec.eqCourseEventId, EqCourseHooks.actionText())
+    end
+    if spec ~= nil and spec.eqRewindEventId ~= nil then
+        g_inputBinding:setActionEventTextVisibility(spec.eqRewindEventId, EqCourseHooks.isRecording())
     end
 end
 
@@ -292,6 +311,11 @@ function EqCourseHooks.onDraw(vehicle)
     if recording ~= nil and recording.vehicle == vehicle then
         step(recording, vehicle)
         drawLine(recording.course.points, EqCourseHooks.TRAIL_COLOR, x, z)
+        -- Where the rewind key would go back to.
+        local index = EqCourse.nearestPoint(recording.course, x, z)
+        local nearest = recording.course.points[index]
+        local _, y = getWorldTranslation(vehicle.rootNode)
+        drawLine({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, EqCourseHooks.NEAREST_COLOR, x, z)
         drawNumbers(recording.course.jumps)
         EqTrainingHud.drawPrompt(string.format(text("eq_course_recording"), #recording.course.jumps, recording.course.length), 1,
             EqTrainingHud.STAT_COLOR.agility)

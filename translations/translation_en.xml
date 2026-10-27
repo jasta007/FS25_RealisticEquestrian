@@ -311,6 +311,8 @@
         <text name="eq_course_recording" text="Recording course: %d fences, %.0f m"/>
         <text name="eq_course_name" text="Course %d"/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Rewind course to nearest point"/>
+        <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
         <text name="eq_ui_riding" text="Riding"/>
         <text name="eq_ui_ridingFull" text="Full, no more training today"/>
         <text name="eq_ui_ridingFullValue" text="%s - full"/>

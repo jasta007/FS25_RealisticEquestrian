@@ -313,6 +313,8 @@
         <text name="eq_course_recording" text="Parcours wird aufgezeichnet: %d Hindernisse, %.0f m"/>
         <text name="eq_course_name" text="Parcours %d"/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Parcours bis zum nächsten Punkt zurücksetzen"/>
+        <text name="eq_course_rewound" text="Parcours bis zum nächsten Punkt zurückgesetzt: %d Hindernisse behalten"/>
         <text name="eq_ui_riding" text="Reiten"/>
         <text name="eq_ui_ridingFull" text="Voll, heute kein Training mehr"/>
         <text name="eq_ui_ridingFullValue" text="%s - voll"/>

@@ -59,7 +59,8 @@ uses its genetics, health and fitness.
     Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
     arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
 - **Show jumping courses (new):** press **Ctrl+J** while riding, ride through your show jumps in
-  order (they lose their collision while recording), then Ctrl+J again to save. The saved line and
+  order (they lose their collision while recording), then Ctrl+J again to save. Went wrong?
+  **Ctrl+K** rewinds to the nearest point on the white line and records on from there. The saved line and
   fence numbers show when you ride near it. A timed round over it comes next.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up

@@ -142,8 +142,46 @@ function EqCourse.addJump(recording, jump, side, now)
         last.at = now
         return nil
     end
-    table.insert(recording.jumps, { x = jump.x, z = jump.z, ry = jump.ry or 0, side = side, at = now })
+    -- The point dropped at the jump (EqCourseHooks drops one right after), for rewind.
+    table.insert(recording.jumps, { x = jump.x, z = jump.z, ry = jump.ry or 0, side = side, at = now,
+        pointIndex = #recording.points + 1 })
     return #recording.jumps
+end
+
+
+--- @param recording table
+--- @param x number
+--- @param z number
+--- @return number index of the recorded point nearest (x, z), number its distance
+function EqCourse.nearestPoint(recording, x, z)
+    local bestIndex, best = 1, math.huge
+    for i, point in ipairs(recording.points) do
+        local dx, dz = point.x - x, point.z - z
+        local d = dx * dx + dz * dz
+        if d < best then bestIndex, best = i, d end
+    end
+    return bestIndex, math.sqrt(best)
+end
+
+
+--- Go back to a point: everything recorded after it, points and jumps, is dropped, and the
+--- recording carries on from there (James, 2026-10-27, like AutoDrive's line to the nearest point).
+--- @param recording table
+--- @param index number point to keep as the last
+--- @return number points dropped, number jumps dropped
+function EqCourse.rewind(recording, index)
+    local points, jumps = recording.points, recording.jumps
+    index = math.max(1, math.min(#points, index))
+    local droppedPoints, droppedJumps = #points - index, 0
+    for i = #points, index + 1, -1 do points[i] = nil end
+    for i = #jumps, 1, -1 do
+        if (jumps[i].pointIndex or 0) > index then
+            table.remove(jumps, i)
+            droppedJumps = droppedJumps + 1
+        end
+    end
+    recording.length = EqCourse.pathLength(points)
+    return droppedPoints, droppedJumps
 end
 
 

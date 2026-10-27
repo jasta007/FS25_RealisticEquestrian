@@ -829,6 +829,16 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
             g_inputBinding:setActionEventTextPriority(courseId, GS_PRIO_LOW)
         end
     end
+    if InputAction.EQ_COURSE_REWIND ~= nil then
+        local _, rewindId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_COURSE_REWIND, vehicle,
+            function() EqCourseHooks.onRewindAction(vehicle) end, false, true, false, true, nil)
+        spec.eqRewindEventId = rewindId
+        if rewindId ~= nil then
+            g_inputBinding:setActionEventText(rewindId, g_i18n:getText("input_EQ_COURSE_REWIND"))
+            g_inputBinding:setActionEventTextPriority(rewindId, GS_PRIO_LOW)
+            g_inputBinding:setActionEventTextVisibility(rewindId, EqCourseHooks.isRecording())
+        end
+    end
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)

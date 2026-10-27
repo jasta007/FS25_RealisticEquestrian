@@ -196,7 +196,8 @@ collision, so you ride straight through them in the order you want. A jump count
 crosses its line between its ends (with 0.75 m to spare); the same jump can come up again later in
 the course, but not twice in a row within 4 seconds. Ctrl+J again saves the course ("Course 1",
 "Course 2"...) if it has at least 2 fences; getting off throws the recording away. Collision comes
-back either way.
+back either way. While recording, a white line runs from the horse to the nearest recorded point;
+Ctrl+K drops everything after that point (and any fences passed after it) and records on from there.
 
 The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
 horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Within 40 m of a saved course its

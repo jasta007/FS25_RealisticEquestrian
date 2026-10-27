@@ -50,6 +50,7 @@ Von Jasta007.]]>
         <action name="EQ_TRAINING_HELP"/>
         <action name="EQ_HORSE_ROLE"/>
         <action name="EQ_COURSE_RECORD"/>
+        <action name="EQ_COURSE_REWIND"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -66,6 +67,9 @@ Von Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_COURSE_RECORD">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_j" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COURSE_REWIND">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_k" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

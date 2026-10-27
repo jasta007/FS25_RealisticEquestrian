@@ -1230,6 +1230,22 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("the drawn line runs through the ends", #line > #course.points
         and math.abs(line[1].z - course.points[1].z) < 1e-6 and math.abs(line[#line].z - course.points[#course.points].z) < 1e-6)
 
+    -- Rewind: back to the nearest point, dropping later points and fences.
+    local again = EqCourse.newRecording(0, 0, 0)
+    for z = 1, 30 do EqCourse.recordStep(again, 0, 0, z) end
+    EqCourse.addJump(again, jumpA, 1, 1000)
+    EqCourse.recordStep(again, 0, 0, 31, true)
+    for z = 32, 60 do EqCourse.recordStep(again, 0, 0, z) end
+    EqCourse.addJump(again, jumpB, 1, 9000)
+    EqCourse.recordStep(again, 0, 0, 61, true)
+    local index, away = EqCourse.nearestPoint(again, 2, 40)
+    check("nearest point is found", math.abs(again.points[index].z - 40) <= 5 and away < 6)
+    EqCourse.rewind(again, index)
+    check("rewind drops later points", again.points[#again.points].z <= 45 and #again.jumps == 1)
+    check("rewind keeps the length right", math.abs(again.length - EqCourse.pathLength(again.points)) < 1e-6)
+    EqCourse.rewind(again, 1)
+    check("rewind to the start drops every fence", #again.points == 1 and #again.jumps == 0 and again.length == 0)
+
     local store = memoryXML()
     EqCourse.saveToXMLFile(store, "c")
     EqCourse.loadFromXMLFile(store, "c")
