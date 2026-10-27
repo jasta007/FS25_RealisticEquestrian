@@ -61,9 +61,15 @@ EqCourseHooks.START_COLOR = { 0.3, 1, 0.3 }
 EqCourseHooks.FINISH_COLOR = { 1, 0.3, 0.3 }
 -- The way to the next fence is drawn as a band of lines this far apart, so it reads as solid.
 EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
+-- The glow marks: poles as tall as the flags, the bar at the fence height. Cross country fences
+-- carry their own (EqXcFlags: poleHeight, height); these are for the rest.
+EqCourseHooks.POLE_HEIGHT = 1.5
+EqCourseHooks.BAR_HEIGHT = 0.9
 -- In a round the way to the next fence stops this far short of it (its pointIndex is just past
 -- the fence), and the fence's label stands beside its white flag.
 EqCourseHooks.WAY_SHORT = 5
+-- After a refusal or run-out the way back to the fence comes round to this far in front of it.
+EqCourseHooks.REPRESENT_BACK = 12
 EqCourseHooks.ROUND_NUMBER_LIFT = 1.8
 EqCourseHooks.NUMBER_ASIDE = 1.5
 -- The start line is tagged on the map only until the horse is this close (the game draws the
@@ -84,6 +90,7 @@ EqCourseHooks.textFailed = false
 function EqCourseHooks.reset()
     EqCourseHooks.editing, EqCourseHooks.near, EqCourseHooks.bodies = nil, nil, {}
     EqCourseHooks.round, EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.payoff = nil, nil, false, 0
+    EqCourseGlow.delete()
 end
 
 
@@ -223,7 +230,8 @@ local function listXcFences()
                 local red, white = fence.red, fence.white
                 -- The red flag on the right, as on a show jump: a is red.
                 table.insert(list, { x = (red.x + white.x) / 2, z = (red.z + white.z) / 2,
-                    ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z })
+                    ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z,
+                    height = fence.height, poleHeight = fence.poleHeight })
             end
         end
     end
@@ -649,7 +657,9 @@ function EqCourseHooks.onDraw(vehicle)
     EqCourseHooks.updateActions(vehicle)
     local editing = EqCourseHooks.editing
     if editing == nil then
+        EqCourseGlow.begin()
         EqCourseHooks.roundDraw(vehicle)
+        EqCourseGlow.finish()
         return
     end
     if editing.vehicle ~= vehicle then return end
@@ -726,6 +736,16 @@ end
 --- @return table
 local function newRound(vehicle, course)
     fillEnds(course)
+    -- Each fence's glow height from the fence on the map, when it has one (cross country flags).
+    local live = EqCourseHooks.listJumps(course.kind)
+    for _, jump in ipairs(course.jumps) do
+        for _, found in ipairs(live) do
+            if EqCourse.sameJump(jump, found) then
+                jump.height, jump.poleHeight = found.height, found.poleHeight
+                break
+            end
+        end
+    end
     local sj = EqShowJumping.newRound(course)
     Log:info("Show jumping: round on '%s', %d fence(s), time allowed %d s", course.name, #course.jumps, sj.allowed)
     return { vehicle = vehicle, course = course, sj = sj, seenAt = g_time or 0 }
@@ -753,6 +773,14 @@ function EqCourseHooks.takePayoff()
 end
 
 
+--- @param faults number
+--- @return string "4", or "4.4" with cross country's part faults
+local function faultsText(faults)
+    if math.abs(faults - math.floor(faults + 0.5)) < 1e-6 then return string.format("%d", math.floor(faults + 0.5)) end
+    return string.format("%.1f", faults)
+end
+
+
 --- @param seconds number
 --- @return string "52.3 s"
 local function secondsText(seconds)
@@ -777,17 +805,17 @@ local function announce(round, event)
         -- A clear fence: the jump's own combo pop says so, the panel counts on.
         Log:info("Show jumping: fence %d of %d clear", sj.next - 1, #round.course.jumps)
     elseif event == "rail" then
-        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_rail"), sj.faults))
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_rail"), faultsText(sj.faults)))
     elseif event == "runout" then
         Log:info("Show jumping: run-out at fence %d (past its flags)", sj.next)
-        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_runout"), sj.faults))
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_runout"), faultsText(sj.faults)))
     elseif event == "refusal" then
-        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_refusal"), sj.faults))
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_refusal"), faultsText(sj.faults)))
     elseif event == "eliminated" then
         local why = sj.result.eliminated
         Log:info("Show jumping: eliminated (%s) after %.1f s", why, sj.result.seconds)
         local message = why == "wrongCourse" and string.format(text("eq_sj_out_wrongCourse"), sj.why)
-            or text("eq_sj_out_" .. why)
+            or text(why == "refusals" and sj.xc and "eq_sj_out_refusalsXc" or "eq_sj_out_" .. why)
         notify(message)
         EqTrainingHud.pop("showJumping", text("eq_sj_eliminated"))
     elseif event == "finished" then
@@ -797,9 +825,9 @@ local function announce(round, event)
         Log:info("Show jumping: finished '%s' in %.1f s (allowed %d), %d fault(s) + %d time fault(s), agility effort %.3f",
             round.course.name, result.seconds, sj.allowed, result.faults, result.timeFaults, effort)
         local message = result.clear and string.format(text("eq_sj_clear"), secondsText(result.seconds))
-            or string.format(text("eq_sj_faults"), result.total, secondsText(result.seconds))
+            or string.format(text("eq_sj_faults"), faultsText(result.total), secondsText(result.seconds))
         notify(message)
-        EqTrainingHud.pop("showJumping", result.clear and text("eq_sj_clearPop") or string.format(text("eq_sj_faultsPop"), result.total))
+        EqTrainingHud.pop("showJumping", result.clear and text("eq_sj_clearPop") or string.format(text("eq_sj_faultsPop"), faultsText(result.total)))
     end
 end
 
@@ -810,11 +838,19 @@ end
 local function drawCrossing(line, color, x, z)
     local ya = groundAt(line.ax, 0, line.az)
     local yb = groundAt(line.bx, 0, line.bz)
+    local pole = line.poleHeight or EqCourseHooks.POLE_HEIGHT
+    local height = math.min(line.height or EqCourseHooks.BAR_HEIGHT, pole)
+    -- A glowing pole at each flag and a soft bar at the fence height (EqCourseGlow).
+    if EqCourseGlow.pole(line.ax, ya, line.az, pole) then
+        EqCourseGlow.pole(line.bx, yb, line.bz, pole)
+        EqCourseGlow.bar(line.ax, ya + height, line.az, line.bx, yb + height, line.bz)
+        return
+    end
     for _, lift in ipairs({ 0.1, 0.2, 0.3 }) do
         drawLine({ { x = line.ax, y = ya + lift, z = line.az }, { x = line.bx, y = yb + lift, z = line.bz } }, color, x, z)
     end
-    drawLine({ { x = line.ax, y = ya, z = line.az }, { x = line.ax, y = ya + 2, z = line.az } }, color, x, z)
-    drawLine({ { x = line.bx, y = yb, z = line.bz }, { x = line.bx, y = yb + 2, z = line.bz } }, color, x, z)
+    drawLine({ { x = line.ax, y = ya, z = line.az }, { x = line.ax, y = ya + pole, z = line.az } }, color, x, z)
+    drawLine({ { x = line.bx, y = yb, z = line.bz }, { x = line.bx, y = yb + pole, z = line.bz } }, color, x, z)
 end
 
 
@@ -822,6 +858,8 @@ end
 --- @param round table
 --- @param from number
 --- @param to number
+local drawBand
+
 local function drawWay(round, from, to, x, z, short)
     local key = from .. ":" .. to
     if round.wayKey ~= key then
@@ -844,7 +882,13 @@ local function drawWay(round, from, to, x, z, short)
         end
         round.way, round.wayKey = way, key
     end
-    local way = round.way
+    drawBand(round.way, x, z)
+end
+
+
+--- A gold band along a list of points.
+--- @param way table points { x, y, z }
+function drawBand(way, x, z)
     if #way < 2 then return end
     for _, offset in ipairs(EqCourseHooks.BAND) do
         local band = {}
@@ -893,7 +937,7 @@ function EqCourseHooks.roundRows(rows)
     local color = EqTrainingHud.STAT_COLOR.agility
     local jumps = #round.course.jumps
     table.insert(rows, { left = string.format(text("eq_sj_fenceRow"), math.min(sj.next, jumps), jumps), leftColor = color,
-        right = string.format(text("eq_sj_faultsRow"), sj.faults), rightColor = sj.faults > 0 and EqTrainingHud.COLOR.orange or color })
+        right = string.format(text("eq_sj_faultsRow"), faultsText(sj.faults)), rightColor = sj.faults > 0 and EqTrainingHud.COLOR.orange or color })
     local seconds = sj.clock / 1000
     table.insert(rows, { left = text("eq_sj_timeRow"), leftColor = color,
         right = string.format("%s / %d s", secondsText(seconds), sj.allowed),
@@ -947,9 +991,24 @@ function EqCourseHooks.roundDraw(vehicle)
         local jumps = round.course.jumps
         local fence = jumps[sj.next]
         local previous = jumps[sj.next - 1]
-        if fence ~= nil then
+        if fence ~= nil and sj.represent and fence.ax ~= nil then
+            -- After a refusal or run-out the fence must be jumped again: the band runs from the
+            -- horse round to REPRESENT_BACK metres in front of it, on the side it is jumped from.
+            local dx, dz = fence.bx - fence.ax, fence.bz - fence.az
+            local d = math.max(1e-6, math.sqrt(dx * dx + dz * dz))
+            local side = fence.side or -1
+            local back = EqCourseHooks.REPRESENT_BACK
+            local mx, mz = (fence.ax + fence.bx) / 2, (fence.az + fence.bz) / 2
+            local px, pz = mx - dz / d * back * side, mz + dx / d * back * side
+            local qx, qz = mx - dz / d * EqCourseHooks.WAY_SHORT * side, mz + dx / d * EqCourseHooks.WAY_SHORT * side
+            drawBand({ { x = x, y = groundAt(x, 0, z), z = z }, { x = px, y = groundAt(px, 0, pz), z = pz },
+                { x = qx, y = groundAt(qx, 0, qz), z = qz } }, x, z)
+            EqTrainingHud.drawPrompt(string.format(text("eq_sj_represent"), sj.next), nil, EqTrainingHud.STAT_COLOR.agility)
+        elseif fence ~= nil then
             local from = previous ~= nil and previous.pointIndex or select(2, EqShowJumping.startFromPath(round.course))
             drawWay(round, from, fence.pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
+        end
+        if fence ~= nil then
             -- The gold line across the fence between its flags, like the start line (James's
             -- pick), and its number beside the white flag rather than over the poles.
             drawCrossing(fence, EqCourseHooks.ROUND_COLOR, x, z)
@@ -971,7 +1030,7 @@ function EqCourseHooks.roundDraw(vehicle)
         elseif result.clear then
             message = string.format(text("eq_sj_clear"), secondsText(result.seconds))
         else
-            message = string.format(text("eq_sj_faults"), result.total, secondsText(result.seconds))
+            message = string.format(text("eq_sj_faults"), faultsText(result.total), secondsText(result.seconds))
         end
         EqTrainingHud.drawPrompt(message, sj.restMs / EqShowJumping.REST_MS, EqTrainingHud.STAT_COLOR.agility)
     end
@@ -981,6 +1040,7 @@ end
 --- Each frame: edit mode ends when the rider gets off, throwing away what was not saved.
 function EqCourseHooks.update()
     local now = g_time or 0
+    EqCourseGlow.update()
     local round = EqCourseHooks.round
     if round ~= nil and (now - round.seenAt > EqCourseHooks.STALE_MS or now < round.seenAt) then
         if round.sj.state == "running" or round.sj.state == "go" then notify(text("eq_sj_retired")) end

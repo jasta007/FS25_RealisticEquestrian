@@ -61,6 +61,16 @@ EqShowJumping.REST_MS = 8000
 EqShowJumping.ROUND_BONUS_JUMPS = 12
 EqShowJumping.FAULTS_NO_PAY = 20
 
+-- Cross country (a course of kind EqCourse.CROSS_COUNTRY) is judged by eventing rules: no rails;
+-- a refusal or run-out costs XC_REFUSAL_FAULTS[n] for the nth at that fence, and the rider must
+-- go back and jump it; the third at one fence or XC_REFUSALS_OUT on the course eliminates; time
+-- over the optimum costs XC_TIME_FAULTS a second. A finished round pays nothing from
+-- XC_FAULTS_NO_PAY faults.
+EqShowJumping.XC_REFUSAL_FAULTS = { 20, 40 }
+EqShowJumping.XC_REFUSALS_OUT = 4
+EqShowJumping.XC_TIME_FAULTS = 0.4
+EqShowJumping.XC_FAULTS_NO_PAY = 100
+
 
 --- @param points table
 --- @param from number index
@@ -179,13 +189,15 @@ function EqShowJumping.newRound(course, start, finish)
     return {
         course = course, start = start or EqShowJumping.startFromPath(course), finish = finish or nil,
         state = "approach", allowed = EqShowJumping.timeAllowed(course), clock = 0,
-        next = 1, faults = 0, refusals = 0, count = nil,
+        next = 1, faults = 0, refusals = 0, count = nil, fenceRefusals = {},
+        xc = course.kind == EqCourse.CROSS_COUNTRY,
     }
 end
 
 
 local function restart(round)
     round.state, round.clock, round.next, round.faults, round.refusals = "approach", 0, 1, 0, 0
+    round.fenceRefusals, round.represent = {}, nil
     round.pending, round.count, round.result, round.why = nil, nil, nil, nil
 end
 
@@ -201,9 +213,10 @@ end
 local function finish(round)
     local seconds = round.clock / 1000
     local timeFaults = math.max(0, math.ceil(seconds - round.allowed - 1e-9))
+    if round.xc then timeFaults = timeFaults * EqShowJumping.XC_TIME_FAULTS end
     round.state, round.restMs = "done", EqShowJumping.REST_MS
     round.result = { seconds = seconds, faults = round.faults, timeFaults = timeFaults,
-        total = round.faults + timeFaults, clear = round.faults + timeFaults == 0 }
+        total = round.faults + timeFaults, clear = round.faults + timeFaults == 0, xc = round.xc }
     return "finished"
 end
 
@@ -212,6 +225,25 @@ end
 --- @param line table
 --- @param input table
 --- @return number|nil crossSide of this frame's step over the line
+--- A refusal or run-out at the next fence: its faults, and whether it eliminates. The fence stays
+--- next, to be jumped again (round.represent says so).
+--- @return boolean true when eliminated
+local function refuse(round)
+    round.refusals = round.refusals + 1
+    local atFence = (round.fenceRefusals[round.next] or 0) + 1
+    round.fenceRefusals[round.next] = atFence
+    round.represent = true
+    if round.xc then
+        local faults = EqShowJumping.XC_REFUSAL_FAULTS[atFence]
+        if faults == nil or round.refusals >= EqShowJumping.XC_REFUSALS_OUT then return true end
+        round.faults = round.faults + faults
+        return false
+    end
+    round.faults = round.faults + EqShowJumping.REFUSAL_FAULTS
+    return round.refusals >= EqShowJumping.REFUSALS_OUT
+end
+
+
 local function crossed(line, input, margin)
     return EqCourse.crossSide(line.ax, line.az, line.bx, line.bz, input.px, input.pz, input.x, input.z, margin)
 end
@@ -287,7 +319,7 @@ function EqShowJumping.step(round, input)
     -- A fence crossed waits for its jump's judgement.
     local pending = round.pending
     if pending ~= nil then
-        if input.judged == "knock" then
+        if input.judged == "knock" and not round.xc then
             round.faults = round.faults + EqShowJumping.RAIL_FAULTS
             round.pending, event = nil, "rail"
         elseif input.judged ~= nil or round.clock - pending.at >= EqShowJumping.PENDING_MS then
@@ -302,15 +334,14 @@ function EqShowJumping.step(round, input)
     if nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input, EqShowJumping.RUNOUT_MARGIN) ~= nil
         and crossed(nextJump, input, EqShowJumping.INSIDE_MARGIN) == nil then
         -- Past the end of the fence, over a wing or round a flag: a run-out.
-        round.refusals = round.refusals + 1
-        round.faults = round.faults + EqShowJumping.REFUSAL_FAULTS
-        if round.refusals >= EqShowJumping.REFUSALS_OUT then return eliminate(round, "refusals") end
+        if refuse(round) then return eliminate(round, "refusals") end
         event = "runout"
     elseif nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input, EqShowJumping.INSIDE_MARGIN) ~= nil then
         if round.pending ~= nil then event = "fence" end
         round.pending = { index = round.next, at = round.clock }
         round.next = round.next + 1
-        if input.judged == "knock" then
+        round.represent = nil
+        if input.judged == "knock" and not round.xc then
             round.faults = round.faults + EqShowJumping.RAIL_FAULTS
             round.pending, event = nil, "rail"
         end
@@ -335,9 +366,7 @@ function EqShowJumping.step(round, input)
     if input.crashed and round.pending == nil and nextJump ~= nil then
         if EqShowJumping.distanceToLine(nextJump.ax ~= nil and nextJump or { ax = nextJump.x, az = nextJump.z,
             bx = nextJump.x, bz = nextJump.z }, input.x, input.z) <= EqShowJumping.REFUSAL_RADIUS then
-            round.refusals = round.refusals + 1
-            round.faults = round.faults + EqShowJumping.REFUSAL_FAULTS
-            if round.refusals >= EqShowJumping.REFUSALS_OUT then return eliminate(round, "refusals") end
+            if refuse(round) then return eliminate(round, "refusals") end
             event = "refusal"
         end
     end
@@ -361,7 +390,8 @@ end
 --- @return number effort
 function EqShowJumping.payoff(result)
     if result == nil or result.eliminated ~= nil then return 0 end
-    local share = math.max(0, 1 - (result.total or 0) / EqShowJumping.FAULTS_NO_PAY)
+    local noPay = result.xc and EqShowJumping.XC_FAULTS_NO_PAY or EqShowJumping.FAULTS_NO_PAY
+    local share = math.max(0, 1 - (result.total or 0) / noPay)
     return EqTraining.AGILITY_PER_JUMP * EqTraining.COMBO_MAX * EqTraining.SHOW_JUMP_FACTOR
         * EqShowJumping.ROUND_BONUS_JUMPS * share
 end

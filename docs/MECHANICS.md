@@ -208,8 +208,11 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
 white flag (the fence runs between them), log piles and drop walls. Their flags' height guides show
-while you edit. Edit, delete and the round work as for show jumping, with the time allowed at
-520 m a minute.
+while you edit. Edit, delete and the round work as for show jumping, but by eventing rules: the time
+allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
+run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
+eliminates. After a refusal or run-out the gold way leads back round to the fence, which must be
+jumped again.
 
 A course needs at least 2 fences to save. A white line runs from the horse to the nearest
 recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
@@ -227,7 +230,7 @@ Show Jumping". The start line stands on the route 12 m before fence 1 and the fi
 the last fence; both are drawn in gold while they matter, so no objects are needed and a course
 can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. A gold line runs across the next fence between its flags, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. Glowing gold poles stand at the next fence's flags with a soft bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |

@@ -1395,6 +1395,33 @@ end)()
     wait(3000)
     seen = ride(85, 10)
     check("a finish line crossed before the last fence is judged still ends the round", seen.finished == 1 and round.result.clear)
+    -- Cross country: eventing rules.
+    course.kind = EqCourse.CROSS_COUNTRY
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(38)
+    local crash = { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }
+    check("a cross country refusal is 20", EqShowJumping.step(round, crash) == "refusal" and round.faults == 20 and round.represent)
+    check("a second at the same fence is 40 more, not out", EqShowJumping.step(round, crash) == "refusal" and round.faults == 60)
+    check("a third at the same fence eliminates", EqShowJumping.step(round, crash) == "eliminated")
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    seen = ride(90, 100, function(input) if input.z >= 40 and input.pz < 40 then input.judged = "knock" end end)
+    check("a cross country knock is no fault", seen.rail == nil and round.result ~= nil and round.result.faults == 0)
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(30)
+    ride(85, (round.allowed + 5.5) * 1000 / 110)
+    check("cross country time faults are 0.4 a second", round.result ~= nil and round.result.timeFaults > 0
+        and math.abs(round.result.timeFaults / 0.4 - math.floor(round.result.timeFaults / 0.4 + 0.5)) < 1e-6, round.result and tostring(round.result.timeFaults))
+    course.kind = nil
+
     course.jumps[2].side = 1
     round = EqShowJumping.newRound(course)
     z = 20.25
