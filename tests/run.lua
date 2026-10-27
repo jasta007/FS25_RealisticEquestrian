@@ -2732,6 +2732,50 @@ end)()
     o.task = toX
     check("and a halt at X", EqDressage.plan(o, { x = 10, z = 20, markers = ours }, "go", one).kind == "halt")
     check("a horse at A already goes straight to X", EqDressage.openingLeg({ x = 10, z = 1, markers = ours }).opening == "X")
+    local toA = EqDressage.openingLeg(at)
+    check("the first trip to A is a trot, untimed", toA.gait == "trot" and toA.untimed)
+    local near = EqTraining.newSheet()
+    EqTraining.routineStep(near, "trot", nil, 50, false, one, at)
+    check("coming up to our arena starts its test at once", near.routine.active and near.routine.task.opening == "A")
+    local walks = 0
+    for _ = 1, 200 do
+        local leg = EqDressage.planLeg({ from = nil }, { x = 10, z = 0, markers = ours }, rng)
+        if leg.gait == "walk" and math.sqrt((leg.marker.x - 10) ^ 2 + leg.marker.z ^ 2) > EqDressage.GO_MAX_DISTANCE.walk then walks = walks + 1 end
+    end
+    check("no long walks", walks == 0)
+
+    -- Ride a whole arena test: it ends at X with a halt and a big payoff.
+    seed = 11
+    local tested = EqTraining.newSheet()
+    local tx, tz = 12, 3
+    local finished, before = false, 0
+    for _ = 1, 20000 do
+        local r2 = tested.routine
+        local task, move, steer = r2.task, "walk", nil
+        if task ~= nil then
+            if task.kind == "go" then
+                move = r2.bonus ~= nil and r2.bonus.gait or task.gait
+                local dx, dz = task.marker.x - tx, task.marker.z - tz
+                local d = math.sqrt(dx * dx + dz * dz)
+                local stepLen = math.min(d, SPEED[move] * 0.05)
+                if d > 0 then tx, tz = tx + dx / d * stepLen, tz + dz / d * stepLen end
+            elseif task.kind == "reverse" then move = "reverse"
+            elseif task.kind == "turn" then move, steer = "halt", task.side
+            else move = "halt" end
+        end
+        before = tested.focused.temperament
+        if EqTraining.routineStep(tested, move, steer, 50, false, rng, { x = tx, z = tz, markers = ours }) == "test" then
+            finished = true
+            break
+        end
+    end
+    check("a whole arena test ends in a halt at X", finished and math.abs(tx - 10) < 4 and math.abs(tz - 20) < 4,
+        string.format("at %.1f, %.1f", tx, tz))
+    check("finishing pays a big bonus and rests", tested.focused.temperament - before
+        >= EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS * 0.99
+        and not tested.routine.active)
+    EqTraining.routineStep(tested, "walk", nil, 50, false, one, { x = tx, z = tz, markers = ours })
+    check("no new test straight after", not tested.routine.active)
     check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
 end)()
 

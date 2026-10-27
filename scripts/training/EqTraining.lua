@@ -875,6 +875,16 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     if routine.active and routine.kind == "markers" then
         if course ~= nil then
             local event = EqDressage.step(sheet, move, steer, dt, rng, course)
+            if event == "test" then
+                -- An arena test ridden to the end: a big payoff at once, then a rest.
+                if not worn then
+                    sheet.focused.temperament = sheet.focused.temperament
+                        + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
+                end
+                EqTraining.breakRoutine(sheet)
+                routine.restUntil = routine.clock + EqDressage.TEST_REST_MS
+                return "test"
+            end
             if routine.active then EqTraining.routineTrain(sheet, worn, dt, 1) end
             return event
         end
@@ -886,12 +896,20 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
 
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
+    local resting = routine.clock < (routine.restUntil or 0)
+    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop.
+    if not routine.active and not resting and course ~= nil and move ~= "gallop" and move ~= "fast"
+        and EqDressage.nearArena(course) then
+        routine.active, routine.mult, routine.current = true, 1, "walk"
+        EqDressage.start(routine, course, rng)
+        return "start"
+    end
     if move == "fast" or move == "canter" or move == "gallop" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
 
     if not routine.active then
-        routine.walkMs = move == "walk" and routine.walkMs + dt or 0
+        routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
         if course ~= nil then

@@ -111,7 +111,11 @@ Without dressage markers nearby, that routine trains at 60% of the rate. Near dr
 least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
 between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
-no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas a routine opens like a dressage test: walk to A, trot to X and halt:
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
+test: coming within 30 m starts it with "Trot: A" (no time limit), then trot to X and halt, 15 more
+commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
+and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
+asked for to markers within 12 m:
 
 - Most commands are legs, such as "Trot: Marker B": ride to that marker at that gait (walk, trot or
   canter). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg

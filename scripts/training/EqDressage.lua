@@ -40,8 +40,12 @@ EqDressage.GO_SPEED = { walk = 1.4, trot = 2.8, canter = 4.5 }
 EqDressage.GO_SLACK = 1.6
 EqDressage.GO_PRESSURE = 0.06
 EqDressage.GO_EXTRA_MS = 4000
+-- Every command gets this much longer than the above (James, 2026-10-27: 20% more time).
+EqDressage.TIME_FACTOR = 1.2
 -- A gait is only asked for on a leg at least this long, and picked by these weights.
 EqDressage.GO_MIN_DISTANCE = { walk = 0, trot = 10, canter = 18 }
+-- ...and at most this long: long walks are dull (James), so a walk is only to a nearby marker.
+EqDressage.GO_MAX_DISTANCE = { walk = 12 }
 EqDressage.GO_WEIGHTS = { walk = 3, trot = 4, canter = 3 }
 EqDressage.GO_GAITS = { "walk", "trot", "canter" }
 -- Targets nearer than this are only picked when there is nothing further.
@@ -68,6 +72,14 @@ EqDressage.HOLD_MS = { 1500, 3000 }
 EqDressage.REVERSE_MS = 2500
 -- A turn on the spot counts once its steering key is held this long.
 EqDressage.TURN_MS = 600
+-- Our arenas (markers with arena set) ride a test: coming within ARENA_NEAR metres of one starts
+-- it with "Trot: A", untimed; then down the centre line to X and halt, TEST_MOVES more commands,
+-- and a final trot to X and halt. Finishing pays TEST_BONUS_SECONDS of temperament training at
+-- the top multiplier at once; after that no new test starts for TEST_REST_MS.
+EqDressage.ARENA_NEAR = 30
+EqDressage.TEST_MOVES = 15
+EqDressage.TEST_BONUS_SECONDS = 60
+EqDressage.TEST_REST_MS = 20000
 
 
 --- @return number metres between two points on the ground
@@ -190,7 +202,7 @@ end
 --- @return number milliseconds a leg of that length gets
 function EqDressage.legMs(routine, gait, metres)
     local slack = EqDressage.GO_SLACK * (1 - EqDressage.GO_PRESSURE * (math.max(1, routine.mult or 1) - 1))
-    return EqDressage.GO_EXTRA_MS + metres / EqDressage.GO_SPEED[gait] * slack * 1000
+    return (EqDressage.GO_EXTRA_MS + metres / EqDressage.GO_SPEED[gait] * slack * 1000) * EqDressage.TIME_FACTOR
 end
 
 
@@ -215,10 +227,21 @@ function EqDressage.planLeg(routine, course, rng)
     local chosen = candidates[pick(weighted, rng)]
     local gaits = {}
     for _, gait in ipairs(EqDressage.GO_GAITS) do
-        if chosen[2] >= EqDressage.GO_MIN_DISTANCE[gait] then table.insert(gaits, { gait, EqDressage.GO_WEIGHTS[gait] }) end
+        local most = EqDressage.GO_MAX_DISTANCE[gait]
+        if chosen[2] >= EqDressage.GO_MIN_DISTANCE[gait] and (most == nil or chosen[2] <= most) then table.insert(gaits, { gait, EqDressage.GO_WEIGHTS[gait] }) end
     end
     local marker = chosen[1]
     return { kind = "go", gait = pick(gaits, rng), marker = { letter = marker.letter, x = marker.x, z = marker.z } }
+end
+
+
+--- @param course table { x, z, markers }
+--- @return boolean true within ARENA_NEAR of one of our arenas' markers
+function EqDressage.nearArena(course)
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and distance(course.x, course.z, marker.x, marker.z) <= EqDressage.ARENA_NEAR then return true end
+    end
+    return false
 end
 
 
@@ -247,7 +270,7 @@ function EqDressage.openingLeg(course)
         if bestD < EqDressage.GO_MIN_DISTANCE.trot then toX.gait = "walk" end
         return toX
     end
-    return { kind = "go", gait = "walk", opening = "A", marker = { letter = a.letter, x = a.x, z = a.z }, nextLeg = toX }
+    return { kind = "go", gait = "trot", opening = "A", untimed = true, marker = { letter = a.letter, x = a.x, z = a.z }, nextLeg = toX }
 end
 
 
@@ -259,9 +282,16 @@ end
 --- @return table task
 function EqDressage.plan(routine, course, done, rng)
     local kind = "go"
-    local opening = done == "go" and routine.task ~= nil and routine.task.opening or nil
+    local task = routine.task
+    local opening = done == "go" and task ~= nil and task.opening or nil
     if opening == "A" then
-        return routine.task.nextLeg
+        return task.nextLeg
+    elseif done == "go" and task ~= nil and task.final then
+        return { kind = "halt", final = true }
+    elseif routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES and done ~= "reverse" then
+        -- The test is ridden: finish down the centre line to X and halt.
+        local x = routine.testX
+        return { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
     elseif opening == "X" then
         kind = "halt"
     elseif done == "go" then
@@ -300,8 +330,9 @@ local function begin(routine, task, course)
         task.gaitMs = 0
         routine.reactMs = EqDressage.legMs(routine, task.gait, distance(course.x, course.z, task.marker.x, task.marker.z))
     else
-        routine.reactMs = EqDressage.REACT_MS
+        routine.reactMs = EqDressage.REACT_MS * EqDressage.TIME_FACTOR
     end
+    if task.opening == "X" then routine.testX = task.marker end
     routine.deadline = routine.clock + routine.reactMs
     routine.shown, routine.shownUntil = routine.request, routine.clock + 1500
 end
@@ -312,15 +343,18 @@ end
 --- @param course table
 --- @param rng function
 function EqDressage.start(routine, course, rng)
-    routine.kind, routine.from, routine.lastDone = "markers", nil, nil
+    routine.kind, routine.from, routine.lastDone, routine.steps, routine.testX = "markers", nil, nil, 0, nil
     begin(routine, EqDressage.openingLeg(course) or EqDressage.planLeg(routine, course, rng), course)
 end
 
 
 --- One step done: raise the multiplier and move on.
---- @return string event "done"
+--- @return string event "done", or "test" when the arena test's final halt is done
 local function finish(routine, course, rng)
     local task = routine.task
+    if task.final and task.kind == "halt" then return "test" end
+    -- The test's count starts once it has halted at X.
+    if routine.testX ~= nil and not task.opening then routine.steps = (routine.steps or 0) + 1 end
     routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
     routine.lastDone = task.kind
     if task.kind == "go" then routine.from = task.marker end
@@ -425,6 +459,7 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
 
         -- Settling in, a quick change on the way, or the last stretch to the marker: any gait
         -- short of a gallop. Otherwise the leg's gait.
+        if task.untimed then return event end
         local free = routine.taskMs < EqDressage.REACT_MS or routine.bonus ~= nil or routine.preview ~= nil
         if free or move == gait then
             routine.driftMs = 0

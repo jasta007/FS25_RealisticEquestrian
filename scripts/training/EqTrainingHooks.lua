@@ -485,6 +485,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         local okCourse, course = pcall(EqDressageHooks.courseFor, vehicle, spec)
         local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
+        elseif event == "test" then EqTrainingHud.pop("routineTest")
         elseif event == "lost" then EqTrainingHud.pop("routineLost") end
         if event ~= nil and sheet.routine.kind == "markers" then
             local task = sheet.routine.task

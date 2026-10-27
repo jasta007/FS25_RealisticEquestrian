@@ -26,6 +26,7 @@
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
         <text name="eq_help_agility_title" text="Training: Agility"/>
         <text name="eq_pop_routineStart" text="Routine started"/>
+        <text name="eq_pop_routineTest" text="Test complete!"/>
         <text name="eq_pop_routineLost" text="Routine broken"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_knock" text="-%d s!"/>
@@ -42,7 +43,7 @@
         <text name="eq_shop_dressageArena20x40" text="Dressage Arena 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
-        <text name="eq_dressage_go" text="%s: Marker %s"/>
+        <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
         <text name="eq_dressage_gait_canter" text="Canter"/>
