@@ -107,7 +107,8 @@ end
 --- Draw the training panel.
 --- @param title string
 --- @param rows table list of { left, leftColor, right, rightColor } text rows,
----     { segments = { { text, color }, ... } } rows of coloured pieces side by side, and
+---     { segments = { { text, color, bold, at }, ... } } rows of coloured pieces side by side (at, a
+---     share of the row's width, starts a piece in its own column), and
 ---     { bar = 0..1, color } meter rows
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
 function EqTrainingHud.drawPanel(title, rows, titleColor)
@@ -148,8 +149,9 @@ function EqTrainingHud.drawPanel(title, rows, titleColor)
             lineY = lineY - p.lineHeight
             local x = left
             for _, segment in ipairs(row.segments) do
-                text(segment[1], x, lineY, p.textSize, segment[2] or EqTrainingHud.COLOR.white)
-                x = x + getTextWidth(p.textSize, segment[1] .. "  ")
+                if segment.at ~= nil then x = left + (right - left) * segment.at end
+                text(segment[1], x, lineY, p.textSize, segment[2] or EqTrainingHud.COLOR.white, nil, segment.bold)
+                x = x + getTextWidth(p.textSize, segment[1] .. " ")
             end
         else
             lineY = lineY - p.lineHeight

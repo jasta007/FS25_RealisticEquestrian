@@ -767,12 +767,16 @@ function EqTrainingHooks.horseRows(cluster)
         table.insert(rows, { left = g_i18n:getText("eq_role_title"), leftColor = COLOR.grey,
             right = EqRole.text(EqRole.shown(record)), rightColor = EqRole.COLOR })
     end
-    local segments = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        table.insert(segments, { string.format("%s %d", g_i18n:getText("eq_stat_short_" .. stat),
-            math.floor(record.trained[stat] or 0)), STAT_COLOR[stat] })
+    -- Full stat names with the numbers in bold, two stats to a line so long names fit.
+    local segments
+    for i, stat in ipairs(EqConstants.STAT_KEYS) do
+        if i % 2 == 1 then
+            segments = {}
+            table.insert(rows, { segments = segments })
+        end
+        table.insert(segments, { g_i18n:getText("eq_stat_" .. stat), STAT_COLOR[stat], at = i % 2 == 1 and 0 or 0.5 })
+        table.insert(segments, { tostring(math.floor(record.trained[stat] or 0)), STAT_COLOR[stat], bold = true })
     end
-    table.insert(rows, { segments = segments })
     return rows
 end
 
