@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Upravuje startovné všech závodů. 1x je normální. Závody už v kalendáři si ponechají své startovné; změny platí od dalšího kola."/>
         <text name="eq_settings_prizeScale" text="Výhry"/>
         <text name="eq_settings_prizeScale_tooltip" text="Upravuje výhry všech závodů. 1x je normální. Závody už v kalendáři si ponechají své výhry; změny platí od dalšího kola."/>
+        <text name="eq_story_phaseScore" text="%s: %s, trestné body: %s"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, trestné body: %s (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, čistě"/>
+        <text name="eq_story_down1" text="1 shoz"/>
+        <text name="eq_story_downN" text="shozy: %d"/>
+        <text name="eq_story_refusal1" text="1 odmítnutí"/>
+        <text name="eq_story_refusalN" text="odmítnutí: %d"/>
+        <text name="eq_story_time" text="%s za čas"/>
+        <text name="eq_story_total" text="Celkem trestné body: %s"/>
     </texts>
 </l10n>

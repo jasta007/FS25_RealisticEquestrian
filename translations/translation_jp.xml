@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="すべての大会のエントリー料を調整します。1xが標準です。カレンダーにある大会は料金を維持し、変更は次のラウンドから適用されます。"/>
         <text name="eq_settings_prizeScale" text="賞金"/>
         <text name="eq_settings_prizeScale_tooltip" text="すべての大会の賞金を調整します。1xが標準です。カレンダーにある大会は賞金を維持し、変更は次のラウンドから適用されます。"/>
+        <text name="eq_story_phaseScore" text="%s：%s、減点%s"/>
+        <text name="eq_story_phaseFaults" text="%s：%s、減点%s（%s）"/>
+        <text name="eq_story_phaseClear" text="%s：%s、減点なし"/>
+        <text name="eq_story_down1" text="落下1"/>
+        <text name="eq_story_downN" text="落下%d"/>
+        <text name="eq_story_refusal1" text="拒止1"/>
+        <text name="eq_story_refusalN" text="拒止%d"/>
+        <text name="eq_story_time" text="タイム%s"/>
+        <text name="eq_story_total" text="合計：減点%s"/>
     </texts>
 </l10n>

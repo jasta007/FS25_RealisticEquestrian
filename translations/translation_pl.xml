@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Skaluje wpisowe wszystkich zawodów. 1x to normalne. Zawody już w kalendarzu zachowują swoje wpisowe; zmiany obowiązują od następnej rundy."/>
         <text name="eq_settings_prizeScale" text="Nagrody"/>
         <text name="eq_settings_prizeScale_tooltip" text="Skaluje nagrody wszystkich zawodów. 1x to normalne. Zawody już w kalendarzu zachowują swoje nagrody; zmiany obowiązują od następnej rundy."/>
+        <text name="eq_story_phaseScore" text="%s: %s, punkty karne: %s"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, punkty karne: %s (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, czysto"/>
+        <text name="eq_story_down1" text="1 zrzutka"/>
+        <text name="eq_story_downN" text="zrzutki: %d"/>
+        <text name="eq_story_refusal1" text="1 odmowa"/>
+        <text name="eq_story_refusalN" text="odmowy: %d"/>
+        <text name="eq_story_time" text="%s za czas"/>
+        <text name="eq_story_total" text="Razem punkty karne: %s"/>
     </texts>
 </l10n>

@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="調整所有賽事的報名費。1x為正常。已在日曆上的賽事保持原報名費；更改從下一輪開始生效。"/>
         <text name="eq_settings_prizeScale" text="獎金"/>
         <text name="eq_settings_prizeScale_tooltip" text="調整所有賽事的獎金。1x為正常。已在日曆上的賽事保持原獎金；更改從下一輪開始生效。"/>
+        <text name="eq_story_phaseScore" text="%s：%s，罰%s分"/>
+        <text name="eq_story_phaseFaults" text="%s：%s，罰%s分（%s）"/>
+        <text name="eq_story_phaseClear" text="%s：%s，零罰分"/>
+        <text name="eq_story_down1" text="碰落1次"/>
+        <text name="eq_story_downN" text="碰落%d次"/>
+        <text name="eq_story_refusal1" text="拒跳1次"/>
+        <text name="eq_story_refusalN" text="拒跳%d次"/>
+        <text name="eq_story_time" text="超時%s"/>
+        <text name="eq_story_total" text="總計：罰%s分"/>
     </texts>
 </l10n>

@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Schaalt het inschrijfgeld van elke wedstrijd. 1x is normaal. Wedstrijden die al op de kalender staan houden hun inschrijfgeld; wijzigingen gelden vanaf de volgende ronde."/>
         <text name="eq_settings_prizeScale" text="Prijzengeld"/>
         <text name="eq_settings_prizeScale_tooltip" text="Schaalt het prijzengeld van elke wedstrijd. 1x is normaal. Wedstrijden die al op de kalender staan houden hun prijzen; wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s strafpunten"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s strafpunten (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, foutloos"/>
+        <text name="eq_story_down1" text="1 balk"/>
+        <text name="eq_story_downN" text="%d balken"/>
+        <text name="eq_story_refusal1" text="1 weigering"/>
+        <text name="eq_story_refusalN" text="%d weigeringen"/>
+        <text name="eq_story_time" text="%s tijd"/>
+        <text name="eq_story_total" text="Totaal: %s strafpunten"/>
     </texts>
 </l10n>

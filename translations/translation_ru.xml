@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Масштабирует стартовый взнос всех соревнований. 1x — обычный. Соревнования, уже стоящие в календаре, сохраняют свой взнос; изменения действуют со следующего раунда."/>
         <text name="eq_settings_prizeScale" text="Призовые"/>
         <text name="eq_settings_prizeScale_tooltip" text="Масштабирует призовые всех соревнований. 1x — обычные. Соревнования, уже стоящие в календаре, сохраняют свои призы; изменения действуют со следующего раунда."/>
+        <text name="eq_story_phaseScore" text="%s: %s, штраф %s"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, штраф %s (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, чисто"/>
+        <text name="eq_story_down1" text="1 повал"/>
+        <text name="eq_story_downN" text="повалов: %d"/>
+        <text name="eq_story_refusal1" text="1 закидка"/>
+        <text name="eq_story_refusalN" text="закидок: %d"/>
+        <text name="eq_story_time" text="%s за время"/>
+        <text name="eq_story_total" text="Итого штраф: %s"/>
     </texts>
 </l10n>

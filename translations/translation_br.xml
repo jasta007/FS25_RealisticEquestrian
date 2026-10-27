@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Ajusta a taxa de inscrição de todas as competições. 1x é o normal. Competições já no calendário mantêm a taxa; as mudanças valem a partir da próxima rodada."/>
         <text name="eq_settings_prizeScale" text="Prêmios"/>
         <text name="eq_settings_prizeScale_tooltip" text="Ajusta os prêmios de todas as competições. 1x é o normal. Competições já no calendário mantêm os prêmios; as mudanças valem a partir da próxima rodada."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s pontos de penalidade"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s pontos de penalidade (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, sem faltas"/>
+        <text name="eq_story_down1" text="1 derrubada"/>
+        <text name="eq_story_downN" text="%d derrubadas"/>
+        <text name="eq_story_refusal1" text="1 recusa"/>
+        <text name="eq_story_refusalN" text="%d recusas"/>
+        <text name="eq_story_time" text="%s por tempo"/>
+        <text name="eq_story_total" text="Total: %s pontos de penalidade"/>
     </texts>
 </l10n>

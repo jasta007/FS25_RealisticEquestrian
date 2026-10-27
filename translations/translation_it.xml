@@ -703,5 +703,14 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Scala la quota d'iscrizione di ogni gara. 1x è normale. Le gare già in calendario mantengono la loro quota; le modifiche valgono dal turno successivo."/>
         <text name="eq_settings_prizeScale" text="Premi"/>
         <text name="eq_settings_prizeScale_tooltip" text="Scala i premi di ogni gara. 1x è normale. Le gare già in calendario mantengono i loro premi; le modifiche valgono dal turno successivo."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s penalità"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s penalità (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, netto"/>
+        <text name="eq_story_down1" text="1 abbattimento"/>
+        <text name="eq_story_downN" text="%d abbattimenti"/>
+        <text name="eq_story_refusal1" text="1 rifiuto"/>
+        <text name="eq_story_refusalN" text="%d rifiuti"/>
+        <text name="eq_story_time" text="%s sul tempo"/>
+        <text name="eq_story_total" text="Totale: %s penalità"/>
     </texts>
 </l10n>
