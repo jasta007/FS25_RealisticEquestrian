@@ -681,7 +681,7 @@ function EqTrainingHooks.showHelp(view)
         table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)),
             color = EqTrainingHud.STAT_COLOR[view] })
     end
-    EqTrainingHud.showHelp(pages)
+    EqTrainingHud.showHelp(pages, nil, view)
 end
 
 
@@ -787,7 +787,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local view = EqTrainingHooks.getView()
     -- A first ride starts with the welcome; the view's help follows once it closes.
     if not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide() and not EqTrainingHud.hasSeen(view) then
-        EqTrainingHud.markSeen(view)
         EqTrainingHooks.showHelp(view)
     end
     EqTrainingHud.drawHelp()

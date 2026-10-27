@@ -57,12 +57,11 @@ function EqWelcome.pages(series)
 end
 
 
---- Show a series once: marks it seen and pops it up.
+--- Pop a series up; it counts as seen once its last page is clicked away.
 --- @param series string
 --- @param place string|nil "menu" or "dialog", nil in the world (see EqTrainingHud.showHelp)
 function EqWelcome.show(series, place)
-    EqTrainingHud.markSeen(EqWelcome.seenKey(series))
-    EqTrainingHud.showHelp(EqWelcome.pages(series), place)
+    EqTrainingHud.showHelp(EqWelcome.pages(series), place, EqWelcome.seenKey(series))
     Log:info("EqWelcome: showing the '%s' popups", series)
 end
 
@@ -242,6 +241,12 @@ function EqWelcome.install(guarded)
     if dialog ~= nil and dialog.draw ~= nil then
         dialog.draw = Utils.appendedFunction(dialog.draw, function(self)
             guarded("diseases welcome popup", function() EqWelcome.onDiseaseDialogDraw(self) end)
+        end)
+    end
+    if dialog ~= nil and dialog.onClose ~= nil then
+        -- Its popup goes with it; unread, it shows again next time.
+        dialog.onClose = Utils.appendedFunction(dialog.onClose, function()
+            if EqTrainingHud.place == "dialog" then EqTrainingHud.closeHelp() end
         end)
     end
 end
