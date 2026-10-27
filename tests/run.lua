@@ -335,6 +335,10 @@ do
     local wornJump = EqTraining.newSheet()
     EqTraining.clearJump(wornJump, true)
     check("a worn-out horse's jumps count for the combo but train nothing", wornJump.combo.count == 1 and wornJump.focused.agility == 0)
+    local showJump = EqTraining.newSheet()
+    EqTraining.clearJump(showJump, false, true)
+    check("a cleared show jump trains more agility than a fence",
+        math.abs(showJump.focused.agility - EqTraining.AGILITY_PER_JUMP * EqTraining.SHOW_JUMP_FACTOR) < 1e-9)
 
     do
         -- Quicker after a halt, and less time to react at a high multiplier.

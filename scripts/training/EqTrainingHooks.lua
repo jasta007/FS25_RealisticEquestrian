@@ -67,6 +67,7 @@ end
 
 function EqTrainingHooks.reset()
     EqTrainingHooks.sheets = {}
+    EqTrainingHooks.showJumpNodes = {}
 end
 
 
@@ -104,7 +105,9 @@ end
 -- either side) for anything with a collision that is not the ground. A jump is judged
 -- JUMP_SETTLE_MS after landing: it counts as cleared when something at least JUMP_MIN_HEIGHT
 -- tall was under the horse in the air, it did not end up standing on it, and it did not hit
--- anything on the way (a crash, or losing most of its take-off speed).
+-- anything on the way (a crash, or losing most of its take-off speed). A clear over a proper
+-- show jump (a "jumps" facility: Riding Hall 2k26's shop jumps, a map's jump course) trains
+-- more agility than one over a fence, a bale or a parked tractor.
 EqTrainingHooks.JUMP_MIN_HEIGHT = 0.25
 EqTrainingHooks.JUMP_RAY_UP = 0.3
 EqTrainingHooks.JUMP_RAY_LENGTH = 6
@@ -127,7 +130,38 @@ EqTrainingHooks.CRASH_GRACE_MS = 2000
 -- is unclear when backing up). Steering is taken as negative for left.
 EqTrainingHooks.STEER_MIN = 0.3
 
-local probe = { vehicle = nil, height = nil, name = nil }
+local probe = { vehicle = nil, height = nil, name = nil, showJump = false }
+-- How many parents up from the hit collision we look for a show jump's placeable or map node.
+EqTrainingHooks.SHOW_JUMP_DEPTH = 12
+-- Hit node -> true/false, so each collision is only looked up once (emptied with the mission).
+EqTrainingHooks.showJumpNodes = {}
+
+
+--- Whether a node the jump ray hit belongs to a show jump: a placeable or a map node of the
+--- "jumps" facility kind, found by walking up from the collision.
+--- @param node number
+--- @return boolean
+function EqTrainingHooks.isShowJump(node)
+    local known = EqTrainingHooks.showJumpNodes[node]
+    if known ~= nil then return known end
+    local config = EqFacilityHooks.config
+    if config == nil then return false end
+    local roots = {}
+    for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
+        if entry.kind == "jumps" and entry.placeable.rootNode ~= nil then roots[entry.placeable.rootNode] = true end
+    end
+    local found, current = false, node
+    for _ = 1, EqTrainingHooks.SHOW_JUMP_DEPTH do
+        if current == nil or current == 0 then break end
+        if roots[current] or EqFacility.kindForNode(config, getName(current)) == "jumps" then
+            found = true
+            break
+        end
+        current = getParent(current)
+    end
+    EqTrainingHooks.showJumpNodes[node] = found
+    return found
+end
 
 
 --- raycastAll callback: skip the horse itself, keep the first thing below it.
@@ -138,6 +172,8 @@ function EqTrainingHooks:jumpRaycastCallback(hitObjectId, x, y, z, distance)
     if object ~= nil and object == probe.vehicle then return true end
     probe.height = y
     probe.name = getName ~= nil and getName(hitObjectId) or tostring(hitObjectId)
+    local ok, showJump = pcall(EqTrainingHooks.isShowJump, hitObjectId)
+    probe.showJump = ok and showJump or false
     return false
 end
 
@@ -153,32 +189,34 @@ end
 
 
 --- How tall the thing under one point is, if there is one.
---- @return number|nil height above the ground in metres, string|nil name
+--- @return number|nil height above the ground in metres, string|nil name, boolean show jump
 local function obstacleAt(vehicle, x, y, z)
     local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
-    probe.vehicle, probe.height, probe.name = vehicle, nil, nil
+    probe.vehicle, probe.height, probe.name, probe.showJump = vehicle, nil, nil, false
     raycastAll(x, y + EqTrainingHooks.JUMP_RAY_UP, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH,
         "jumpRaycastCallback", EqTrainingHooks, jumpMask())
     probe.vehicle = nil
     if probe.height == nil then return nil end
-    return probe.height - ground, probe.name
+    return probe.height - ground, probe.name, probe.showJump
 end
 
 
 --- The tallest thing under the horse's body, if there is one.
 --- @param vehicle table
---- @return number|nil height above the ground in metres, string|nil name
+--- @return number|nil height above the ground in metres, string|nil name, boolean show jump
+---   (any ray over a show jump at least JUMP_MIN_HEIGHT tall)
 local function obstacleBelow(vehicle)
     if raycastAll == nil or vehicle.rootNode == nil then return nil end
-    local best, bestName = nil, nil
+    local best, bestName, showJump = nil, nil, false
     local function look(along, across)
         local x, y, z = localToWorld(vehicle.rootNode, across, 0, along)
-        local height, name = obstacleAt(vehicle, x, y, z)
+        local height, name, isShowJump = obstacleAt(vehicle, x, y, z)
         if height ~= nil and (best == nil or height > best) then best, bestName = height, name end
+        if isShowJump and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then showJump = true end
     end
     for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do look(along, 0) end
     for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
-    return best, bestName
+    return best, bestName, showJump
 end
 
 
@@ -203,7 +241,7 @@ local function trackJump(vehicle, spec, sheet, worn)
     local age = now - jump.startedAt
     if (spec.haltTimer or 0) > 0 then jump.crashed = true end
 
-    local height, name = obstacleBelow(vehicle)
+    local height, name, showJump = obstacleBelow(vehicle)
     if jump.landedAt == nil then
         local inAir
         if spec.isOnGround ~= nil then
@@ -214,6 +252,7 @@ local function trackJump(vehicle, spec, sheet, worn)
         if inAir then
             jump.airborne = true
             if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
+            if showJump then jump.showJump = true end
             if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
         elseif not jump.airborne and age < 500 then
             return
@@ -249,17 +288,17 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
         why = jump.crashed and ", crashed" or jump.knocked and ", hit it (slowed from %.1f to %.1f m/s)" or ", landed on top of it"
         why = string.format(why, jump.speed, speed)
     end
-    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s, %d ms, ground flag %s, take-off at a %s)",
-        cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over), why,
-        age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
+    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s, %d ms, ground flag %s, take-off at a %s)",
+        cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over),
+        jump.showJump and ", a show jump" or "", why, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
     if cleared then
-        local mult = EqTraining.clearJump(sheet, worn)
+        local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
     elseif high and not jump.onTop then
         -- Hitting the obstacle on the way over costs combo time, but the jump still counts
         -- unless that ran the combo out (clearJump then refuses it).
         local knock = EqTraining.knockCombo(sheet)
-        local mult = knock ~= "lost" and EqTraining.clearJump(sheet, worn) or nil
+        local mult = knock ~= "lost" and EqTraining.clearJump(sheet, worn, jump.showJump) or nil
         if mult ~= nil then EqTrainingHud.pop("jump", mult) else popKnock(knock) end
     elseif high then
         -- Landing on top of the obstacle doesn't count, and costs combo time.

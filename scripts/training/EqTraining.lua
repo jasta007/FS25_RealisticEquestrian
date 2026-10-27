@@ -46,6 +46,9 @@ EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 2, temperament = 2 }
 -- combo is lost COMBO_SECONDS after the last clear, a clock that runs COMBO_SLOW_DRAIN times as
 -- fast at a halt, a walk or backing up, so slowing to a trot for a tight fence is fine.
 EqTraining.AGILITY_PER_JUMP = 0.015
+-- A cleared show jump (a Riding Hall 2k26 jump or a map's jump course, the "jumps" kind in
+-- data/facilities.xml) trains this many times as much agility as a fence or a bale.
+EqTraining.SHOW_JUMP_FACTOR = 1.5
 -- A jump over nothing still trains a little, without touching the combo.
 EqTraining.AGILITY_PER_EMPTY_JUMP = 0.004
 EqTraining.COMBO_MAX = 5
@@ -727,8 +730,9 @@ end
 --- A jump that cleared something: raise the combo and train agility.
 --- @param sheet table
 --- @param worn boolean true when the riding bar is full: the combo counts, nothing trains
+--- @param showJump boolean|nil true when it was a proper show jump: SHOW_JUMP_FACTOR as much agility
 --- @return number|nil multiplier this jump was worth, nil just after a combo was lost
-function EqTraining.clearJump(sheet, worn)
+function EqTraining.clearJump(sheet, worn, showJump)
     local combo = sheet.combo
     if (combo.lock or 0) > 0 then
         EqTraining.emptyJump(sheet, worn)
@@ -739,7 +743,8 @@ function EqTraining.clearJump(sheet, worn)
     if sheet.mode == nil then sheet.mode = "agility" end
     combo.best = math.max(combo.best, combo.count)
     local mult = math.min(combo.count, EqTraining.COMBO_MAX)
-    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult end
+    local factor = showJump and EqTraining.SHOW_JUMP_FACTOR or 1
+    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult * factor end
     return mult
 end
 
