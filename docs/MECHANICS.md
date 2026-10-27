@@ -221,7 +221,7 @@ Show Jumping". The start line is a placed Show Jumping Start Line (in the shop u
 30 m of where the course begins, else one made 12 m before fence 1; the finish line likewise, after
 the last fence. Placed lines work either way round. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. The next fence is tagged on the map and the way to it drawn in gold.
+clock starts as you do. A gold line runs across the next fence between its flags, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |

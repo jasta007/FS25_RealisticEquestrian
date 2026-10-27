@@ -1378,6 +1378,14 @@ end)()
     wait(3000)
     seen = ride(85, 10)
     check("a finish line crossed before the last fence is judged still ends the round", seen.finished == 1 and round.result.clear)
+    course.jumps[2].side = 1
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    seen = ride(110)
+    check("the next fence counts whichever way its side was recorded", seen.finished == 1 and seen.eliminated == nil)
+    course.jumps[2].side = -1
 end)()
 
 -- Peak form: the month's best minigame session per stat, never stacked over days.

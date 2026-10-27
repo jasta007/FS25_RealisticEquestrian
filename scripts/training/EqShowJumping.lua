@@ -272,10 +272,11 @@ function EqShowJumping.step(round, input)
         end
     end
 
-    -- The next fence, jumped the way it was recorded. A fence before it still waiting for its
-    -- judgement (a double, close together) counts as clear: a jump is judged by the next take-off.
+    -- The next fence, jumped either way (a course recorded with the side the wrong way round
+    -- would otherwise never let it count). A fence before it still waiting for its judgement (a
+    -- double, close together) counts as clear: a jump is judged by the next take-off.
     local nextJump = jumps[round.next]
-    if nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input) == nextJump.side then
+    if nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input) ~= nil then
         if round.pending ~= nil then event = "fence" end
         round.pending = { index = round.next, at = round.clock }
         round.next = round.next + 1

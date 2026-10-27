@@ -61,6 +61,14 @@ EqCourseHooks.START_COLOR = { 0.3, 1, 0.3 }
 EqCourseHooks.FINISH_COLOR = { 1, 0.3, 0.3 }
 -- The way to the next fence is drawn as a band of lines this far apart, so it reads as solid.
 EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
+-- In a round the way to the next fence stops this far short of it (its pointIndex is just past
+-- the fence), and the fence's label stands beside its white flag.
+EqCourseHooks.WAY_SHORT = 5
+EqCourseHooks.ROUND_NUMBER_LIFT = 1.8
+EqCourseHooks.NUMBER_ASIDE = 1.5
+-- The start line is tagged on the map only until the horse is this close (the game draws the
+-- tag on the line itself).
+EqCourseHooks.TAG_CLOSE = 25
 -- A placed start or finish line counts for a course within this many metres of the line the
 -- course would make itself.
 EqCourseHooks.LINE_RADIUS = 30
@@ -572,12 +580,13 @@ end
 --- Fence numbers over the jumps of a course (one label per jump, "3, 10" when ridden twice).
 --- @param jumps table
 --- @param labels table|nil { x, z, text } to draw instead
-local function drawNumbers(jumps, labels)
+--- @param lift number|nil metres over the ground, NUMBER_LIFT when nil
+local function drawNumbers(jumps, labels, lift)
     if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
     local ok, err = pcall(function()
         for _, label in ipairs(labels or EqCourse.labels(jumps)) do
             local y = groundAt(label.x, 0, label.z)
-            Utils.renderTextAtWorldPosition(label.x, y + EqCourseHooks.NUMBER_LIFT, label.z, label.text, getCorrectTextSize(0.025), 0)
+            Utils.renderTextAtWorldPosition(label.x, y + (lift or EqCourseHooks.NUMBER_LIFT), label.z, label.text, getCorrectTextSize(0.025), 0)
         end
     end)
     if not ok then
@@ -671,18 +680,35 @@ local function findPlacedLine(kind, made, fence)
 end
 
 
---- Fill in a course's fence ends from the jumps on the map (a course saved before they were kept).
+--- Fill in what a course saved by an earlier version lacks: each fence's point on the path
+--- (the nearest one after the fence before, so a jump ridden twice gets two), its ends from the
+--- jumps on the map, and then the side it is jumped from, read off the path.
 --- @param course table
 local function fillEnds(course)
-    local missing = false
-    for _, jump in ipairs(course.jumps) do if jump.ax == nil then missing = true end end
-    if not missing then return end
-    local live = EqCourseHooks.listJumps()
+    local points = course.points
+    local from = 1
+    for _, jump in ipairs(course.jumps) do
+        if jump.pointIndex == nil then
+            local best, bestDistance = from, math.huge
+            for i = from, #points do
+                local dx, dz = points[i].x - jump.x, points[i].z - jump.z
+                local d = dx * dx + dz * dz
+                if d < bestDistance then best, bestDistance = i, d end
+            end
+            jump.pointIndex = best
+        end
+        from = math.max(from, jump.pointIndex)
+    end
+    local live = nil
     for _, jump in ipairs(course.jumps) do
         if jump.ax == nil then
+            live = live or EqCourseHooks.listJumps()
             for _, found in ipairs(live) do
                 if EqCourse.sameJump(jump, found) then
                     jump.ax, jump.az, jump.bx, jump.bz = found.ax, found.az, found.bx, found.bz
+                    -- The path before the fence says which way it was ridden.
+                    local before = points[math.max(1, jump.pointIndex - 2)]
+                    if before ~= nil then jump.side = EqShowJumping.sideOf(jump, before.x, before.z) end
                     break
                 end
             end
@@ -793,13 +819,27 @@ end
 --- @param round table
 --- @param from number
 --- @param to number
-local function drawWay(round, from, to, x, z)
+local function drawWay(round, from, to, x, z, short)
     local key = from .. ":" .. to
     if round.wayKey ~= key then
         local slice = {}
         local points = round.course.points
         for i = math.max(1, from), math.min(#points, to) do table.insert(slice, points[i]) end
-        round.way, round.wayKey = #slice >= 2 and EqCourse.smooth(slice) or slice, key
+        local way = #slice >= 2 and EqCourse.smooth(slice) or slice
+        -- Stop short of the fence, so the line doesn't run through the jump.
+        local left = short or 0
+        while left > 0 and #way > 2 do
+            local a, b = way[#way - 1], way[#way]
+            local dx, dz = b.x - a.x, b.z - a.z
+            local d = math.sqrt(dx * dx + dz * dz)
+            if d > left then
+                way[#way] = { x = b.x - dx / d * left, y = b.y, z = b.z - dz / d * left }
+                break
+            end
+            left = left - d
+            table.remove(way)
+        end
+        round.way, round.wayKey = way, key
     end
     local way = round.way
     if #way < 2 then return end
@@ -825,12 +865,17 @@ function EqCourseHooks.tagTarget()
     if round == nil then return nil, nil end
     local sj = round.sj
     if sj.state == "approach" or sj.state == "countdown" or sj.state == "go" then
+        local last = round.last
+        if last ~= nil then
+            local dx, dz = last[1] - sj.start.x, last[2] - sj.start.z
+            if dx * dx + dz * dz < EqCourseHooks.TAG_CLOSE ^ 2 then return nil, nil end
+        end
         return sj.start, text("eq_sj_startLine")
     end
     if sj.state == "running" then
-        local fence = round.course.jumps[sj.next]
-        if fence ~= nil then return fence, string.format(text("eq_pop_courseFence"), sj.next) end
-        if sj.finish ~= nil then return sj.finish, text("eq_sj_finishLine") end
+        -- No tag on the fences: the game draws it right in front of the jump (James, 2026-10-27).
+        -- The label over the next fence and the way to it show where to go.
+        if round.course.jumps[sj.next] == nil and sj.finish ~= nil then return sj.finish, text("eq_sj_finishLine") end
     end
     return nil, nil
 end
@@ -886,7 +931,7 @@ function EqCourseHooks.roundDraw(vehicle)
     if state == "approach" or state == "countdown" or state == "go" then
         drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z)
         local _, from = EqShowJumping.startFromPath(round.course)
-        drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z)
+        drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
         if state == "approach" then
             EqTrainingHud.drawPrompt(text("eq_sj_begin"), nil, EqTrainingHud.STAT_COLOR.agility)
         elseif state == "countdown" then
@@ -900,8 +945,15 @@ function EqCourseHooks.roundDraw(vehicle)
         local previous = jumps[sj.next - 1]
         if fence ~= nil then
             local from = previous ~= nil and previous.pointIndex or select(2, EqShowJumping.startFromPath(round.course))
-            drawWay(round, from, fence.pointIndex or from, x, z)
-            drawNumbers(nil, { { x = fence.x, z = fence.z, text = string.format(text("eq_pop_courseFence"), sj.next) } })
+            drawWay(round, from, fence.pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
+            -- The gold line across the fence between its flags, like the start line (James's
+            -- pick), and its number beside the white flag rather than over the poles.
+            drawCrossing(fence, EqCourseHooks.ROUND_COLOR, x, z)
+            local dx, dz = fence.bx - fence.ax, fence.bz - fence.az
+            local d = math.max(1e-6, math.sqrt(dx * dx + dz * dz))
+            local out = EqCourseHooks.NUMBER_ASIDE
+            drawNumbers(nil, { { x = fence.bx + dx / d * out, z = fence.bz + dz / d * out,
+                text = string.format(text("eq_pop_courseFence"), sj.next) } }, EqCourseHooks.ROUND_NUMBER_LIFT)
         elseif sj.finish ~= nil then
             local _, to = EqShowJumping.finishFromPath(round.course)
             drawWay(round, previous.pointIndex or to, to, x, z)
