@@ -394,8 +394,8 @@ function EqTraining.sprintMultiplier(value, over)
 end
 
 
---- One frame of speed training, after EqExertion.step: Sprint time adds up, and is banked at
---- the multiplier once the Sprint is over.
+--- One frame of speed training, after EqExertion.step: Sprint time earns 1x as it goes, and the
+--- rest of the multiplier is banked once the Sprint is over.
 --- @param sheet table
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: nothing trains
@@ -403,7 +403,12 @@ end
 function EqTraining.speedStep(sheet, dt, worn)
     local ex, sprint = sheet.exertion, sheet.sprint
     if ex.mode == "sprint" then
-        if not worn then sprint.ms = sprint.ms + dt end
+        -- The 1x part counts as it is earned (so the riding bar sees steady work), the rest of
+        -- the multiplier when the Sprint ends.
+        if not worn then
+            sprint.ms = sprint.ms + dt
+            sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * dt / 1000
+        end
         sheet.quality.speed = (EqTraining.sprintMultiplier(ex.value) - 1) / (EqTraining.SPRINT_MULT_MAX - 1)
         return nil
     end
@@ -412,7 +417,7 @@ function EqTraining.speedStep(sheet, dt, worn)
     local last = ex.lastSprint or { value = ex.value }
     local mult = EqTraining.sprintMultiplier(last.value, last.over)
     local gain = EqTraining.SPEED_RATE * sprint.ms / 1000 * mult
-    sheet.focused.speed = sheet.focused.speed + gain
+    sheet.focused.speed = sheet.focused.speed + gain - EqTraining.SPEED_RATE * sprint.ms / 1000
     sprint.ms, sprint.last = 0, mult
     return mult, gain
 end
