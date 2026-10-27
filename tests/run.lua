@@ -150,7 +150,7 @@ check("selective breeding never gets three stats to 95+", worstViolation <= 2, "
     end
     local enList, en = texts("translations/translation_en.xml")
     for _, name in ipairs(enList) do check("English text " .. name .. " appears once", en[name] ~= false) end
-    for _, language in ipairs({ "de" }) do
+    for _, language in ipairs({ "de", "fr", "es" }) do
         local _, other = texts("translations/translation_" .. language .. ".xml")
         for _, name in ipairs(enList) do
             check(language .. " has " .. name, type(other[name]) == "string")
@@ -1306,9 +1306,12 @@ end)()
     check("a very fractious horse often doesn't", wild < 0.5)
     local en0 = io.open("translations/translation_en.xml"):read("*a")
     local de0 = io.open("translations/translation_de.xml"):read("*a")
+    local fr0 = io.open("translations/translation_fr.xml"):read("*a")
+    local es0 = io.open("translations/translation_es.xml"):read("*a")
     for n = 1, EqPerformance.START_FAIL_TEXTS do
         local key = 'name="eq_scratch_fractious_' .. n .. '"'
-        check("start scratch text " .. n, en0:find(key, 1, true) ~= nil and de0:find(key, 1, true) ~= nil)
+        check("start scratch text " .. n, en0:find(key, 1, true) ~= nil and de0:find(key, 1, true) ~= nil
+            and fr0:find(key, 1, true) ~= nil and es0:find(key, 1, true) ~= nil)
     end
 
     -- How often each line comes up for a horse in its band, and that the checks match the placing.
@@ -1346,15 +1349,18 @@ end)()
     check("eventing places every runner in every phase", mine.phasePlaces ~= nil and mine.phasePlaces.dressage ~= nil
         and mine.phasePlaces.crossCountry ~= nil and #mine.run.phases == 3)
 
-    -- Every line a run can produce has its text, in English and German.
+    -- Every line a run can produce has its text, in English, German, French and Spanish.
     local en = io.open("translations/translation_en.xml"):read("*a")
     local de = io.open("translations/translation_de.xml"):read("*a")
+    local fr = io.open("translations/translation_fr.xml"):read("*a")
+    local es = io.open("translations/translation_es.xml"):read("*a")
     local seen = {}
     for _, d in ipairs(config.disciplines) do
         for _, key in ipairs(EqPerformance.storyKeys(d, config)) do
             if not seen[key] then
                 seen[key] = true
-                check("story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil and de:find('name="' .. key .. '"', 1, true) ~= nil)
+                check("story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil and de:find('name="' .. key .. '"', 1, true) ~= nil
+                    and fr:find('name="' .. key .. '"', 1, true) ~= nil and es:find('name="' .. key .. '"', 1, true) ~= nil)
             end
         end
     end
