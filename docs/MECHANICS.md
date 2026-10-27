@@ -105,19 +105,19 @@ The gallop has three paces, and exertion only builds at a gallop:
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
   (Pushing is fine).
 
-Pushing up to the **Blowing Hard** line drops the horse to a canter, and it can't gallop until the
+Pushing up to the line leaves the horse **Fatigued**: it drops to a canter, and it can't gallop until the
 bar is empty again. Only a Sprint can run past the line, into the red last-gasp section; a Sprint
-that ends there leaves the horse **exhausted**: canter only, and while the bar is still past the
+that ends there leaves the horse **Blown**: canter only, and while the bar is still past the
 line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
 the gait. The panel lists what you can press now (Sprint ready, S or double tap S to canter), and
-the middle of the screen warns **Careful** (in a Sprint yellow from 50%, red and pulsing from 75%;
-when Pushing pulsing from 85%), and **Over exerted** in red past the line. Slowing from a gallop to a
+the middle of the screen warns **Tiring...** in yellow (in a Sprint from 50%, when Pushing pulsing
+from 85%), **Caution** in red and pulsing (in a Sprint from 75%), and **Fatigued!** in red past the line. Slowing from a gallop to a
 canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
 
 The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
-gallop section and the Blowing Hard section. The marker sits on the gait's line while the bar is
-empty, and the section for the current gait lights up (none while standing; Blowing Hard lights
-while blown or exhausted).
+gallop section and the red Fatigued section past the line. The marker sits on the gait's line while the bar is
+empty, and the section for the current gait lights up (none while standing; the red section lights
+while Fatigued or Blown).
 
 **Training on the gallop.** Speed comes from Sprints: every second of a Sprint banks speed effort,
 multiplied when it ends by how high it took the bar: x2 half way to the line, rising ever faster to
@@ -136,7 +136,7 @@ Behind it the horse has a hidden breath:
 - So the way to x5 is to push close to the line, recover down into the zone and let the horse
   breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
   out of breath and earns little; letting the bar fall too far throws the multiplier away.
-- Blowing Hard (or a Sprint that ends past the line) drops it to x1, empties the breath and stops
+- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1, empties the breath and stops
   stamina training until the bar is empty.
 
 ### Agility

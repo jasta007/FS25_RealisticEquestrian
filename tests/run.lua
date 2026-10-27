@@ -685,8 +685,8 @@ do
         ride(last, "gallop", 100)
         E.press(last, "forward")
     end
-    check("a Sprint goes past the Blowing Hard line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
-    check("the marker runs on into the Blowing Hard section", E.marker(last, "gallop") > E.BAR.line)
+    check("a Sprint goes past the Fatigued line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
+    check("the marker runs on into the Fatigued section", E.marker(last, "gallop") > E.BAR.line)
     events = ride(last, "gallop", 1000)
     check("a Sprint that ends past the line leaves the horse exhausted", events[1] == "spent" and last.lock == "spent"
         and E.forcedGait(last) == "canter")
@@ -716,7 +716,7 @@ do
     m.value = 50
     check("exertion runs along the gallop section", near(E.marker(m, "walk"), (E.BAR.canter + E.BAR.line) / 2))
     m.value = E.LINE
-    check("the Blowing Hard line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
+    check("the Fatigued line is the end of the gallop section", near(E.marker(m, "gallop"), E.BAR.line))
     check("the state names the pace, the lock or the gait", E.state(E.new(), "trot") == "trot" and E.state(blown, "canter") ~= nil
         and E.state(sp, "gallop") == "sprint")
 
@@ -817,21 +817,21 @@ do
         if ex.mode == "recover" and ex.value <= 3 then return "forward" end
     end, 150000)
     local flatOut = gallop(function() return nil end, 150000)
-    check("riding in the zone builds the stamina multiplier towards x5 without Blowing Hard",
+    check("riding in the zone builds the stamina multiplier towards x5 without Fatigued",
         not skilled.blown and skilled.stamina.mult > 2.5 and skilled.averageMult > 3,
         string.format("x%.1f now, x%.2f average", skilled.stamina.mult, skilled.averageMult))
     check("bouncing between Push and Recover near the top earns little multiplier",
         jiggler.averageMult < skilled.averageMult * 0.6, string.format("x%.2f average", jiggler.averageMult))
     check("recovering too far loses the multiplier", lazy.averageMult < skilled.averageMult * 0.75,
         string.format("x%.2f average", lazy.averageMult))
-    check("Blowing Hard drops the multiplier to x1 and stops stamina training",
+    check("Fatigued drops the multiplier to x1 and stops stamina training",
         flatOut.blown and flatOut.focused.stamina < skilled.focused.stamina * 0.6)
     check("good stamina riding fills most of a day's effort in a riding bar of gallop",
         skilled.focused.stamina > 1.2, string.format("%.2f in 150 s", skilled.focused.stamina))
     local blownSheet = T.newSheet()
     blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4
     T.staminaStep(blownSheet, 1000, false)
-    check("while Blowing Hard there is no multiplier and no stamina training",
+    check("while Fatigued there is no multiplier and no stamina training",
         blownSheet.stamina.mult == 1 and blownSheet.focused.stamina == 0)
     print(string.format("info: stamina over 150 s: zone x%.2f avg (%.2f effort), jiggle x%.2f, over-recover x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
         skilled.averageMult, skilled.focused.stamina, jiggler.averageMult, lazy.averageMult, flatOut.focused.stamina,

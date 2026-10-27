@@ -525,7 +525,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if speedMult ~= nil then
         local last = ex.lastSprint or {}
         Log:info("Speed: Sprint banked at x%.1f (ended at %.0f%%%s), +%.3f effort", speedMult, last.value or 0,
-            last.over and ", Blowing Hard" or "", speedGain)
+            last.over and ", Fatigued" or "", speedGain)
         if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
     end
     EqTraining.staminaStep(sheet, dt, worn)
@@ -900,7 +900,7 @@ end
 
 -- The exertion bar's sections (James's drawing, 2026-10-27), each { from, to, colour when dim,
 -- colour when lit }. A gait's section lights while the horse is in it; the gallop's lights in
--- every pace; Blowing Hard lights while the horse is blown or exhausted.
+-- every pace; Fatigued lights while the horse is blown or exhausted.
 local BAR = EqExertion.BAR
 EqTrainingHooks.BAR_SECTIONS = {
     halt = { BAR.reverse, BAR.halt, { 0.6, 0.8, 0.98 }, { 0.45, 0.75, 1 } },
@@ -996,7 +996,7 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
         local text = string.format(g_i18n:getText("eq_train_speedMult"), mult)
         if view == "speed" then
             row.left, row.leftColor = text, color
-            row.right, row.rightColor = over and g_i18n:getText("eq_ex_blowingHard") or string.format("+%d%%", math.floor(gain + 0.5)), color
+            row.right, row.rightColor = over and g_i18n:getText("eq_ex_fatigued") or string.format("+%d%%", math.floor(gain + 0.5)), color
         else
             row.right, row.rightColor = string.format("%s +%d%%", text, math.floor(gain + 0.5)), color
         end
@@ -1037,8 +1037,8 @@ end
 --- @param ex table
 -- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
 EqTrainingHooks.SPRINT_INTRO_MS = 1250
--- A Sprint climbs fast, so its warnings come early (James): a yellow "Careful" from
--- SPRINT_CAREFUL_FROM, red and flashing from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
+-- A Sprint climbs fast, so its warnings come early (James): a yellow "Tiring..." from
+-- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
 EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
 EqTrainingHooks.SPRINT_DANGER_FROM = 75
 
@@ -1050,9 +1050,9 @@ local function exertionPrompt(ex, small)
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_DANGER_FROM then
         label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_CAREFUL_FROM then
-        label = g_i18n:getText("eq_ex_careful")
+        label = g_i18n:getText("eq_ex_tiring")
     elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
-        label, pulse = g_i18n:getText("eq_ex_careful"), true
+        label, pulse = g_i18n:getText("eq_ex_tiring"), true
     end
     local warned = label ~= nil
     if small then label = nil end
@@ -1087,8 +1087,7 @@ function EqTrainingHooks.horseRows(cluster)
         if not EqTraining.hasForm(form) then
             form = nil
         elseif EqTrainingHooks.HELP_PAGES.form ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
-            -- The first peak form explains itself once.
-            EqTrainingHud.markSeen("form")
+            -- The first peak form explains itself, until its last page is clicked.
             EqTrainingHooks.showHelp("form")
         end
     end
