@@ -36,6 +36,11 @@ EqShowJumping.PENDING_MS = 3000
 EqShowJumping.RAIL_FAULTS = 4
 EqShowJumping.REFUSAL_FAULTS = 4
 EqShowJumping.REFUSALS_OUT = 2
+-- In a round a fence only counts when the horse goes over it this far inside both flags, so
+-- clipping a wing is no clear (James, 2026-10-27). Going through within RUNOUT_MARGIN outside
+-- the flags without that is a run-out: a refusal.
+EqShowJumping.INSIDE_MARGIN = -0.75
+EqShowJumping.RUNOUT_MARGIN = 2.5
 -- A crash this close to the next fence's line (between its flags) is a refusal; running into
 -- anything else, like the arena wall, is not.
 EqShowJumping.REFUSAL_RADIUS = 3
@@ -203,15 +208,15 @@ end
 --- @param line table
 --- @param input table
 --- @return number|nil crossSide of this frame's step over the line
-local function crossed(line, input)
-    return EqCourse.crossSide(line.ax, line.az, line.bx, line.bz, input.px, input.pz, input.x, input.z)
+local function crossed(line, input, margin)
+    return EqCourse.crossSide(line.ax, line.az, line.bx, line.bz, input.px, input.pz, input.x, input.z, margin)
 end
 
 
 --- One frame of the round.
 --- @param round table
 --- @param input table { px, pz (last frame), x, z, dt ms, judged = nil|"clear"|"knock"|"nothing", crashed = bool }
---- @return string|nil event: "count", "early", "go", "started", "fence", "rail", "refusal",
+--- @return string|nil event: "count", "early", "go", "started", "fence", "rail", "refusal", "runout",
 ---   "eliminated", "finished", "reset", "ready" (the next round can start)
 function EqShowJumping.step(round, input)
     local dt = input.dt or 0
@@ -290,7 +295,14 @@ function EqShowJumping.step(round, input)
     -- would otherwise never let it count). A fence before it still waiting for its judgement (a
     -- double, close together) counts as clear: a jump is judged by the next take-off.
     local nextJump = jumps[round.next]
-    if nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input) ~= nil then
+    if nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input, EqShowJumping.RUNOUT_MARGIN) ~= nil
+        and crossed(nextJump, input, EqShowJumping.INSIDE_MARGIN) == nil then
+        -- Past the end of the fence, over a wing or round a flag: a run-out.
+        round.refusals = round.refusals + 1
+        round.faults = round.faults + EqShowJumping.REFUSAL_FAULTS
+        if round.refusals >= EqShowJumping.REFUSALS_OUT then return eliminate(round, "refusals") end
+        event = "runout"
+    elseif nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input, EqShowJumping.INSIDE_MARGIN) ~= nil then
         if round.pending ~= nil then event = "fence" end
         round.pending = { index = round.next, at = round.clock }
         round.next = round.next + 1
@@ -305,7 +317,7 @@ function EqShowJumping.step(round, input)
         local current = jumps[round.next]
         local same = (current ~= nil and EqCourse.sameJump(jump, current))
             or (round.pending ~= nil and EqCourse.sameJump(jump, jumps[round.pending.index]))
-        if i ~= round.next and not same and jump.ax ~= nil and crossed(jump, input) == jump.side then
+        if i ~= round.next and not same and jump.ax ~= nil and crossed(jump, input, EqShowJumping.INSIDE_MARGIN) == jump.side then
             -- Only one that is not the fence just jumped (the same jump twice in a course).
             local just = jumps[round.next - 1]
             if just == nil or not EqCourse.sameJump(jump, just) then

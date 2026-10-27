@@ -119,10 +119,10 @@ end
 
 --- Whether the horse went through a jump between two frames: its step from p to q crosses the
 --- jump's line from a to b (the jump's two ends, its red and white flags), with PASS_MARGIN to
---- spare past either end.
+--- spare past either end, or margin metres when given (negative: that far inside the flags).
 --- @return number|nil the side it came from (1 or -1, which way round the line it was), nil when
 ---   it did not pass
-function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz)
+function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz, margin)
     local dx, dz = bx - ax, bz - az
     local length2 = dx * dx + dz * dz
     if length2 < 1e-6 then return nil end
@@ -134,7 +134,7 @@ function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz)
     local share = sp / (sp - sq)
     local cx, cz = px + sx * share, pz + sz * share
     local along = ((cx - ax) * dx + (cz - az) * dz) / length2
-    local margin = EqCourse.PASS_MARGIN / math.sqrt(length2)
+    margin = (margin or EqCourse.PASS_MARGIN) / math.sqrt(length2)
     if along < -margin or along > 1 + margin then return nil end
     return sp > 0 and 1 or -1
 end

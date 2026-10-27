@@ -315,6 +315,7 @@
         <text name="eq_sj_cross" text="Go! Cross the start line"/>
         <text name="eq_sj_early" text="Too early! Move back behind the start line"/>
         <text name="eq_sj_rail" text="Rail down! %d faults"/>
+        <text name="eq_sj_runout" text="Run-out! %d faults"/>
         <text name="eq_sj_refusal" text="Refusal! %d faults"/>
         <text name="eq_sj_eliminated" text="Eliminated"/>
         <text name="eq_sj_out_late" text="Eliminated: the start line was not crossed in time"/>

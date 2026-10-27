@@ -317,6 +317,7 @@
         <text name="eq_sj_cross" text="Los! Überqueren Sie die Startlinie"/>
         <text name="eq_sj_early" text="Zu früh! Reiten Sie zurück hinter die Startlinie"/>
         <text name="eq_sj_rail" text="Stange gefallen! %d Fehler"/>
+        <text name="eq_sj_runout" text="Vorbeigelaufen! %d Fehler"/>
         <text name="eq_sj_refusal" text="Verweigerung! %d Fehler"/>
         <text name="eq_sj_eliminated" text="Ausgeschieden"/>
         <text name="eq_sj_out_late" text="Ausgeschieden: die Startlinie wurde nicht rechtzeitig überquert"/>

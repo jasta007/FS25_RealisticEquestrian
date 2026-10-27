@@ -789,6 +789,9 @@ local function announce(round, event)
         Log:info("Show jumping: fence %d of %d clear", sj.next - 1, #round.course.jumps)
     elseif event == "rail" then
         EqTrainingHud.pop("showJumping", string.format(text("eq_sj_rail"), sj.faults))
+    elseif event == "runout" then
+        Log:info("Show jumping: run-out at fence %d (past its flags)", sj.next)
+        EqTrainingHud.pop("showJumping", string.format(text("eq_sj_runout"), sj.faults))
     elseif event == "refusal" then
         EqTrainingHud.pop("showJumping", string.format(text("eq_sj_refusal"), sj.faults))
     elseif event == "eliminated" then
