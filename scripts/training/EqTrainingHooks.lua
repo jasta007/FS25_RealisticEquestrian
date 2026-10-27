@@ -774,7 +774,8 @@ function EqTrainingHooks.horseRows(cluster)
             segments = {}
             table.insert(rows, { segments = segments })
         end
-        table.insert(segments, { g_i18n:getText("eq_stat_" .. stat), STAT_COLOR[stat], at = i % 2 == 1 and 0 or 0.5 })
+        table.insert(segments, { g_i18n:getText("eq_stat_" .. stat), STAT_COLOR[stat],
+            at = i % 2 == 1 and 0 or 0.5, tight = true })
         table.insert(segments, { tostring(math.floor(record.trained[stat] or 0)), STAT_COLOR[stat], bold = true })
     end
     return rows
