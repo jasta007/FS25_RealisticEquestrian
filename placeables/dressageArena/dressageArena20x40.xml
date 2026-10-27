@@ -12,11 +12,11 @@
         <rotation>0</rotation>
         <brand>NONE</brand>
         <species>placeable</species>
-        <category>decoration</category>
+        <category>animalpens</category>
         <brush>
             <type>placeable</type>
-            <category>decoration</category>
-            <tab>uncategorized</tab>
+            <category>animals</category>
+            <tab>horses</tab>
         </brush>
         <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
         <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
