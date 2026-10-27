@@ -5,6 +5,8 @@
     <title>
         <en>Realistic Equestrian</en>
         <de>Realistic Equestrian</de>
+        <fr>Realistic Equestrian</fr>
+        <es>Realistic Equestrian</es>
     </title>
     <description>
         <en>
@@ -29,6 +31,28 @@ Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, d
 
 Von Jasta007.]]>
         </de>
+        <fr>
+            <![CDATA[Donne à vos chevaux autre chose à faire que d'être vendus.
+
+Chaque cheval reçoit quatre compétences de compétition : Endurance, Vitesse, Agilité et Tempérament. Chacune a un plafond hérité et un niveau entraîné : l'élevage relève ce qu'un cheval peut devenir, la monte et le personnel embauché le concrétisent. Engagez vos chevaux dans des concours quotidiens et des championnats mensuels moyennant des frais d'engagement, et découvrez les résultats le lendemain ou le mois suivant.
+
+Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
+
+Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
+
+Par Jasta007.]]>
+        </fr>
+        <es>
+            <![CDATA[Da a tus caballos algo que hacer además de ser vendidos.
+
+Cada caballo tiene cuatro habilidades de competición: Resistencia, Velocidad, Agilidad y Temperamento. Cada una tiene un techo heredado y un nivel entrenado: la cría eleva lo que un caballo puede llegar a ser, y la monta y el personal contratado lo hacen realidad. Inscribe a tus caballos en concursos diarios y campeonatos mensuales pagando una inscripción y consulta los resultados al día o al mes siguiente.
+
+Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
+
+Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
+
+Por Jasta007.]]>
+        </es>
     </description>
     <iconFilename>icon_RealisticEquestrian.dds</iconFilename>
     <multiplayer supported="true"/>
