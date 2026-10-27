@@ -56,10 +56,18 @@
           ownedAgility="0.10"
           riddenAgility="0.40" riddenTemperament="0.10"
           events="showJumping:0.03 eventing:0.01"/>
+    <!-- Cross country fences: our log piles (placeables/xcJumps; the flags alone are not facilities). -->
+    <kind name="xcFence" radius="20" fullAt="8"
+          ownedStamina="0.05" ownedAgility="0.05"
+          riddenStamina="0.20" riddenSpeed="0.10" riddenAgility="0.20"
+          events="crossCountry:0.03 eventing:0.02"/>
 
     <!-- A plain stable only houses horses, so it gives no bonus: the Equestrian Pack's L barn
          (horseStable.xml) and the Horse Stable mod are left out on purpose. A building that is
          a stable and a place to ride, like the Riding Stable mod, counts as what you ride in. -->
+
+    <!-- Our own cross country fences: the log piles -->
+    <match kind="xcFence" xml="placeables/xcJumps/xc"/>
 
     <!-- Rudolf Hoermann Equestrian Pack (FS25_horsePack) -->
     <match kind="indoorArena" xml="FS25_horsePack/xml/ridingHall.xml"/>

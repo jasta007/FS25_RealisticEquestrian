@@ -164,7 +164,7 @@ least three within 100 m, chained 60 m from each other, not all in a line) the r
 between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 30 m starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
+test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
 and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:
@@ -188,13 +188,76 @@ asked for to markers within 12 m:
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
+### Show jumping courses
+
+Show jumps are linked into a course by riding it, in an edit mode. While editing, every show jump on
+the map has no collision, so you ride straight through them in the order you want, and the course's
+line and fence numbers are drawn. Show jumps are Riding Hall 2k26's (or any "jumps" facility
+placeable), the jumps in the Equestrian Pack's outdoor arena (any part of a facility with a red and
+a white flag), map scenery such as Elmcreek's course, and any fence marked with the shop's red and white flags. A jump counts when the horse crosses the
+line between its flags (or across its placement area) with 0.75 m to spare; the same jump can come
+up again later in the course, but not twice in a row within 4 seconds.
+
+| Key | Not editing | Editing |
+| --- | --- | --- |
+| Ctrl+J | Record a new show jumping course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+E | Record a new cross country (eventing) course | As Ctrl+J |
+| Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+
+A cross country course is recorded the same way over cross country fences: each pair of a red and a
+white flag (the fence runs between them), log piles and drop walls. Their flags' height guides show
+while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
+collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
+allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
+run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
+eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
+jumped again.
+
+A course needs at least 2 fences to save; a new one with fewer keeps recording. A white line runs from the horse to the nearest
+recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
+shows both numbers ("3, 10"). Getting off the horse (or switching away) ends editing and saves what was recorded; Ctrl+J near
+the course edits it again and Ctrl+K records on from the nearest point.
+
+The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
+horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are saved in
+rlEquestrian.xml. `eqCourses` lists them and `eqCourses delete <number>` removes one. Editing
+works in single player for now.
+
+#### The timed round
+
+Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
+Show Jumping". The start line stands on the route 12 m before fence 1 and the finish line 12 m after
+the last fence; both are drawn in gold while they matter, so no objects are needed and a course
+can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
+countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
+clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants) with a faint bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+
+| Fault | Penalty |
+| --- | --- |
+| Rail down (knocking or landing on the show jump; a crash into anything else is no fault) | 4 |
+| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
+| Jumping another fence of the course, the right way, out of order | Eliminated |
+| Each second (or part) over the time allowed | 1 |
+| Over twice the time allowed, or not starting within 45 s | Eliminated |
+
+The time allowed is the course length at 350 m a minute (at least 20 s). A finished round pays
+agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20 faults or when
+eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
+can start.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
 agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
 turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
 better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
-horse can clear fences without a full gallop.
+horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
+press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
+bar, and takes effect the moment the horse lands. A gallop jump from the bottom third of the bar
+(Pushing or Recovering) makes exertion plummet (45 a second) and S queues a canter too: it is made
+on landing if exertion is down to the canter line, within 1.5 s. In the air the horse also turns
+on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Staff, age and metabolism
 
@@ -237,7 +300,9 @@ horse can clear fences without a full gallop.
 
 - When a horse's riding bar is full it trains no more that day: the look-at Skills box says so in
   red, the Daily riding value reads "100 % - full" (red in RLRM's menu) and the riding panel shows
-  a red line.
+  a red line. Everything earned before it filled is kept: jumps, routines and stamina count as
+  they happen, and a Sprint running when the bar fills is banked at once at the multiplier it had
+  reached ("Speed xN!" beside the panel).
 - The look-at box is headed with the horse's name instead of "Animal".
 
 Console commands: `eqTraining` shows each horse's role and today's riding; `eqFocus <name> <role>`
@@ -282,10 +347,26 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Riding centre (Riding Stable) | Agility, Temperament, Stamina | Dressage, Show Jumping |
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
+| Cross country course (the shop's log piles and drop walls) | Stamina, Agility; Speed while riding round it. Eight fences give the full bonus | Cross Country, Eventing |
 | Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
 
 Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
 bonus.
+
+Cross country fences: Cross Country Flags is a spline fence, placed like the base game's pillar
+fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or 1.2 m fence, and a
+red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
+hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
+15 m away and the line between them is the fence; the bar nearest its middle gives its height
+(`eqXcFences` lists them). The bars show only in construction mode; the flags always show. The flags
+and bars have small collision boxes so they can be picked to delete. The cross country pieces
+(flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
+land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
+Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
+on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
+triangle side walls hide the steep sculpted slope. A plank deck covers the top, so the bank top
+needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
+rides over the deck and drops off the lip.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

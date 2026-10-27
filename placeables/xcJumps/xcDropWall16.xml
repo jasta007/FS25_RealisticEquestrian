@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_xcDropWall16</name>
+        <functions>
+            <function>$l10n_eq_shop_xcDrop_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_xcDropWall16.dds</image>
+        <price>2100</price>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
+        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
+        <textureMemoryUsage>0</textureMemoryUsage>
+        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
+        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/xcDropWall16.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- A 1.6 m drop: set the origin on the flat top of a bank, the lip 1 m in front of it. -->
+    </placement>
+</placeable>

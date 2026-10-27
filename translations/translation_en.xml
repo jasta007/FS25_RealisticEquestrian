@@ -40,6 +40,15 @@
         <text name="eq_shop_dressageArena20x40" text="Dressage Arena 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
+        <text name="eq_shop_courseFlags" text="Cross Country Flags"/>
+        <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag, stretch a gold bar (0.6, 0.9 or 1.2 m) over the obstacle, then place a red flag. The bar shows only in construction mode."/>
+        <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
+        <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
+        <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
@@ -300,6 +309,62 @@
         <text name="eq_role_retired" text="Retired"/>
         <text name="eq_ui_button_role" text="Role: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Change horse role"/>
+        <text name="input_EQ_COURSE_RECORD" text="Record or edit show jumping course"/>
+        <text name="eq_course_recordAction" text="New show jumping course"/>
+        <text name="eq_course_started" text="Recording %s: ride through the jumps in order. Placed obstacles from Realistic Equestrian have no collision while you edit; other obstacles stay solid"/>
+        <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
+        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
+        <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
+        <text name="eq_course_cancelled" text="Editing stopped: you left the horse before the course had enough fences to save"/>
+        <text name="eq_course_leftSaved" text="Course saved as you left the horse: press Ctrl+J near it to edit, then Ctrl+K to record on from the nearest point"/>
+        <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Placed obstacles from Realistic Equestrian have no collision while you trace the course; other obstacles stay solid"/>
+        <text name="eq_course_name" text="Course %d"/>
+        <text name="eq_sj_begin" text="Move to the start line to begin Show Jumping"/>
+        <text name="eq_sj_ready" text="Get ready..."/>
+        <text name="eq_sj_go" text="Go!"/>
+        <text name="eq_sj_cross" text="Go! Cross the start line"/>
+        <text name="eq_sj_early" text="Too early! Move back behind the start line"/>
+        <text name="eq_sj_rail" text="Rail down! %s faults"/>
+        <text name="eq_sj_runout" text="Run-out! %s faults"/>
+        <text name="eq_sj_refusal" text="Refusal! %s faults"/>
+        <text name="eq_sj_eliminated" text="Eliminated"/>
+        <text name="eq_sj_out_late" text="Eliminated: the start line was not crossed in time"/>
+        <text name="eq_sj_out_wrongCourse" text="Eliminated: wrong course (fence %d jumped out of order)"/>
+        <text name="eq_sj_out_refusals" text="Eliminated: second refusal"/>
+        <text name="eq_sj_out_timeLimit" text="Eliminated: over the time limit"/>
+        <text name="eq_sj_clear" text="Clear round in %s!"/>
+        <text name="eq_sj_faults" text="%s faults in %s"/>
+        <text name="eq_sj_clearPop" text="Clear round!"/>
+        <text name="eq_sj_faultsPop" text="%s faults"/>
+        <text name="eq_sj_retired" text="Show jumping round abandoned"/>
+        <text name="eq_sj_startLine" text="Start line"/>
+        <text name="eq_sj_finishLine" text="Finish line"/>
+        <text name="eq_sj_fenceRow" text="Fence %d of %d"/>
+        <text name="eq_sj_faultsRow" text="%s faults"/>
+        <text name="eq_sj_timeRow" text="Time"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Record cross country course"/>
+        <text name="eq_course_recordXcAction" text="New cross country course"/>
+        <text name="eq_course_xcName" text="Cross Country %d"/>
+        <text name="eq_course_noXcJumps" text="No cross country fences found: set a red and a white flag either side of a fence, or place log piles or drop walls"/>
+        <text name="eq_sj_beginXc" text="Move to the start line to begin Cross Country"/>
+        <text name="eq_sj_out_refusalsXc" text="Eliminated: three refusals at one fence, or four on the course"/>
+        <text name="eq_sj_represent" text="Go back and jump fence %d"/>
+        <text name="eq_pop_courseFence" text="Fence %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Rewind to nearest point"/>
+        <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
+        <text name="eq_course_resumed" text="Recording from the nearest point"/>
+        <text name="eq_course_finished" text="Finished editing: placed Realistic Equestrian obstacles have their collision back"/>
+        <text name="eq_course_deleted" text="%s deleted"/>
+        <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
+        <text name="eq_course_deleteTitle" text="Delete course"/>
+        <text name="eq_course_deleteAction" text="Delete %s"/>
+        <text name="eq_course_editAction" text="Edit %s"/>
+        <text name="eq_course_doneAction" text="Finish editing course"/>
+        <text name="eq_course_saveAction" text="Save course and finish"/>
+        <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m"/>
+        <text name="eq_course_editStarted" text="Editing %s: placed obstacles from Realistic Equestrian have no collision until you finish; other obstacles stay solid"/>
+        <text name="input_EQ_COURSE_DELETE" text="Delete nearby course"/>
         <text name="eq_ui_riding" text="Riding"/>
         <text name="eq_ui_ridingFull" text="Full, no more training today"/>
         <text name="eq_ui_ridingFullValue" text="%s - full"/>
@@ -448,6 +513,7 @@
         <text name="eq_facility_outdoorArena" text="Outdoor arena"/>
         <text name="eq_facility_roundPen" text="Round pen"/>
         <text name="eq_facility_jumps" text="Jump course"/>
+        <text name="eq_facility_xcFence" text="Cross country course"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
         <text name="eq_settings_tab" text="Equestrian"/>
         <text name="eq_settings_credit" text="Realistic Equestrian by %s"/>

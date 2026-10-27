@@ -42,6 +42,15 @@
         <text name="eq_shop_dressageArena20x40" text="Dressurviereck 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
+        <text name="eq_shop_courseFlags" text="Geländeflaggen"/>
+        <text name="eq_shop_courseFlags_function" text="Macht jedes Hindernis zum Geländesprung. Segmente mit N/M wechseln: weiße Flagge setzen, goldene Stange (0,6, 0,9 oder 1,2 m) über das Hindernis ziehen, dann rote Flagge setzen. Die Stange ist nur im Baumodus sichtbar."/>
+        <text name="eq_shop_xcLogPileSmall" text="Holzstapel (klein)"/>
+        <text name="eq_shop_xcLogPile" text="Holzstapel"/>
+        <text name="eq_shop_xcDropWall08" text="Absprungwand (0,8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Absprungwand (1,2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
+        <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>
@@ -302,6 +311,62 @@
         <text name="eq_role_retired" text="Im Ruhestand"/>
         <text name="eq_ui_button_role" text="Rolle: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Rolle des Pferdes ändern"/>
+        <text name="input_EQ_COURSE_RECORD" text="Springparcours aufzeichnen oder bearbeiten"/>
+        <text name="eq_course_recordAction" text="Neuer Springparcours"/>
+        <text name="eq_course_started" text="%s wird aufgezeichnet: durch die Hindernisse in der richtigen Reihenfolge reiten. Platzierte Hindernisse von Realistic Equestrian haben beim Bearbeiten keine Kollision, andere Hindernisse bleiben fest"/>
+        <text name="eq_course_noJumps" text="Parcours wird aufgezeichnet, aber auf der Karte stehen noch keine Springhindernisse"/>
+        <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten"/>
+        <text name="eq_course_saved" text="%s gespeichert: %d Hindernisse, %.0f m"/>
+        <text name="eq_course_cancelled" text="Bearbeitung beendet: Sie haben das Pferd verlassen, bevor der Parcours genug Hindernisse zum Speichern hatte"/>
+        <text name="eq_course_leftSaved" text="Parcours beim Absteigen gespeichert: in der Nähe Strg+J zum Bearbeiten, dann Strg+K, um ab dem nächsten Punkt weiter aufzuzeichnen"/>
+        <text name="eq_course_recording" text="%s wird aufgezeichnet: %d Hindernisse, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Platzierte Hindernisse von Realistic Equestrian haben beim Aufzeichnen keine Kollision, andere Hindernisse bleiben fest"/>
+        <text name="eq_course_name" text="Parcours %d"/>
+        <text name="eq_sj_begin" text="Reiten Sie zur Startlinie, um mit dem Springreiten zu beginnen"/>
+        <text name="eq_sj_ready" text="Bereit machen..."/>
+        <text name="eq_sj_go" text="Los!"/>
+        <text name="eq_sj_cross" text="Los! Überqueren Sie die Startlinie"/>
+        <text name="eq_sj_early" text="Zu früh! Reiten Sie zurück hinter die Startlinie"/>
+        <text name="eq_sj_rail" text="Stange gefallen! %s Fehler"/>
+        <text name="eq_sj_runout" text="Vorbeigelaufen! %s Fehler"/>
+        <text name="eq_sj_refusal" text="Verweigerung! %s Fehler"/>
+        <text name="eq_sj_eliminated" text="Ausgeschieden"/>
+        <text name="eq_sj_out_late" text="Ausgeschieden: die Startlinie wurde nicht rechtzeitig überquert"/>
+        <text name="eq_sj_out_wrongCourse" text="Ausgeschieden: Parcours verritten (Hindernis %d außer der Reihe)"/>
+        <text name="eq_sj_out_refusals" text="Ausgeschieden: zweite Verweigerung"/>
+        <text name="eq_sj_out_timeLimit" text="Ausgeschieden: Höchstzeit überschritten"/>
+        <text name="eq_sj_clear" text="Fehlerfreie Runde in %s!"/>
+        <text name="eq_sj_faults" text="%s Fehler in %s"/>
+        <text name="eq_sj_clearPop" text="Fehlerfrei!"/>
+        <text name="eq_sj_faultsPop" text="%s Fehler"/>
+        <text name="eq_sj_retired" text="Springrunde abgebrochen"/>
+        <text name="eq_sj_startLine" text="Startlinie"/>
+        <text name="eq_sj_finishLine" text="Ziellinie"/>
+        <text name="eq_sj_fenceRow" text="Hindernis %d von %d"/>
+        <text name="eq_sj_faultsRow" text="%s Fehler"/>
+        <text name="eq_sj_timeRow" text="Zeit"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Geländestrecke aufzeichnen"/>
+        <text name="eq_course_recordXcAction" text="Neue Geländestrecke"/>
+        <text name="eq_course_xcName" text="Geländestrecke %d"/>
+        <text name="eq_course_noXcJumps" text="Keine Geländehindernisse gefunden: Stellen Sie eine rote und eine weiße Flagge zu beiden Seiten eines Hindernisses oder platzieren Sie Baumstämme oder Absprünge"/>
+        <text name="eq_sj_beginXc" text="Reiten Sie zur Startlinie, um mit dem Geländeritt zu beginnen"/>
+        <text name="eq_sj_out_refusalsXc" text="Ausgeschieden: drei Verweigerungen an einem Hindernis oder vier auf der Strecke"/>
+        <text name="eq_sj_represent" text="Zurück und Hindernis %d springen"/>
+        <text name="eq_pop_courseFence" text="Hindernis %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Zum nächsten Punkt zurück"/>
+        <text name="eq_course_rewound" text="Parcours bis zum nächsten Punkt zurückgesetzt: %d Hindernisse behalten"/>
+        <text name="eq_course_resumed" text="Aufzeichnung ab dem nächsten Punkt"/>
+        <text name="eq_course_finished" text="Bearbeitung beendet: platzierte Realistic-Equestrian-Hindernisse haben wieder Kollision"/>
+        <text name="eq_course_deleted" text="%s gelöscht"/>
+        <text name="eq_course_deleteAsk" text="%s mit %d Hindernissen auf %.0f m löschen?"/>
+        <text name="eq_course_deleteTitle" text="Parcours löschen"/>
+        <text name="eq_course_deleteAction" text="%s löschen"/>
+        <text name="eq_course_editAction" text="%s bearbeiten"/>
+        <text name="eq_course_doneAction" text="Bearbeitung beenden"/>
+        <text name="eq_course_saveAction" text="Parcours speichern und beenden"/>
+        <text name="eq_course_editing" text="%s wird bearbeitet: %d Hindernisse, %.0f m"/>
+        <text name="eq_course_editStarted" text="%s wird bearbeitet: platzierte Hindernisse von Realistic Equestrian haben bis zum Abschluss keine Kollision, andere Hindernisse bleiben fest"/>
+        <text name="input_EQ_COURSE_DELETE" text="Parcours in der Nähe löschen"/>
         <text name="eq_ui_riding" text="Reiten"/>
         <text name="eq_ui_ridingFull" text="Voll, heute kein Training mehr"/>
         <text name="eq_ui_ridingFullValue" text="%s - voll"/>
@@ -450,6 +515,7 @@
         <text name="eq_facility_outdoorArena" text="Außenreitplatz"/>
         <text name="eq_facility_roundPen" text="Longierzirkel"/>
         <text name="eq_facility_jumps" text="Springparcours"/>
+        <text name="eq_facility_xcFence" text="Geländestrecke"/>
         <text name="eq_settings_title" text="Realistic Equestrian"/>
         <text name="eq_settings_tab" text="Pferdesport"/>
         <text name="eq_settings_credit" text="Realistic Equestrian von %s"/>

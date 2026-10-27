@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="114">
     <author>Jasta007</author>
-    <version>0.3.0.0</version>
+    <version>0.4.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
         <de>Realistic Equestrian</de>
+        <fr>Realistic Equestrian</fr>
+        <es>Realistic Equestrian</es>
     </title>
     <description>
         <en>
@@ -29,6 +31,28 @@ Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, d
 
 Von Jasta007.]]>
         </de>
+        <fr>
+            <![CDATA[Donne à vos chevaux autre chose à faire que d'être vendus.
+
+Chaque cheval reçoit quatre compétences de compétition : Endurance, Vitesse, Agilité et Tempérament. Chacune a un plafond hérité et un niveau entraîné : l'élevage relève ce qu'un cheval peut devenir, la monte et le personnel embauché le concrétisent. Engagez vos chevaux dans des concours quotidiens et des championnats mensuels moyennant des frais d'engagement, et découvrez les résultats le lendemain ou le mois suivant.
+
+Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
+
+Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
+
+Par Jasta007.]]>
+        </fr>
+        <es>
+            <![CDATA[Da a tus caballos algo que hacer además de ser vendidos.
+
+Cada caballo tiene cuatro habilidades de competición: Resistencia, Velocidad, Agilidad y Temperamento. Cada una tiene un techo heredado y un nivel entrenado: la cría eleva lo que un caballo puede llegar a ser, y la monta y el personal contratado lo hacen realidad. Inscribe a tus caballos en concursos diarios y campeonatos mensuales pagando una inscripción y consulta los resultados al día o al mes siguiente.
+
+Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
+
+Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
+
+Por Jasta007.]]>
+        </es>
     </description>
     <iconFilename>icon_RealisticEquestrian.dds</iconFilename>
     <multiplayer supported="true"/>
@@ -42,6 +66,12 @@ Von Jasta007.]]>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena15x30.xml"/>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena20x40.xml"/>
         <storeItem xmlFilename="placeables/dressageArena/dressageArena20x60.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/courseFlags.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcLogPileSmall.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcLogPile.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall08.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall12.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcDropWall16.xml"/>
     </storeItems>
     <l10n filenamePrefix="translations/translation"/>
     <actions>
@@ -49,6 +79,10 @@ Von Jasta007.]]>
         <action name="EQ_TRAINING_VIEW"/>
         <action name="EQ_TRAINING_HELP"/>
         <action name="EQ_HORSE_ROLE"/>
+        <action name="EQ_COURSE_RECORD"/>
+        <action name="EQ_COURSE_RECORD_XC"/>
+        <action name="EQ_COURSE_REWIND"/>
+        <action name="EQ_COURSE_DELETE"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -62,6 +96,18 @@ Von Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_HORSE_ROLE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COURSE_RECORD">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_j" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COURSE_RECORD_XC">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_e" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COURSE_REWIND">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_k" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COURSE_DELETE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_backspace" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

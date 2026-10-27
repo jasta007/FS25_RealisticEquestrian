@@ -365,10 +365,13 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
     local resting = routine.clock < (routine.restUntil or 0)
-    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop.
-    if not routine.active and not resting and course ~= nil and move ~= "gallop" and move ~= "fast"
-        and EqDressage.nearArena(course) then
-        routine.active, routine.mult, routine.current = true, 1, "walk"
+    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop,
+    -- and takes over from a free routine (keeping its multiplier).
+    if (not routine.active or routine.kind == "free") and not resting and course ~= nil and move ~= "gallop"
+        and move ~= "fast" and EqDressage.nearArena(course) then
+        if not routine.active then routine.mult = 1 end
+        routine.active, routine.current = true, "walk"
+        routine.request, routine.nextAt, routine.pending = nil, nil, nil
         EqDressage.start(routine, course, rng)
         return "start"
     end
@@ -380,7 +383,8 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
         routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
-        if course ~= nil then
+        -- An arena's markers alone are only ridden as its test, from close by (ARENA_NEAR).
+        if course ~= nil and not EqDressage.arenaOnly(course) then
             EqDressage.start(routine, course, rng)
         else
             routine.kind = "free"
@@ -456,21 +460,32 @@ end
 --- rest of the multiplier is banked once the Sprint is over.
 --- @param sheet table
 --- @param dt number milliseconds
---- @param worn boolean true when the riding bar is full: nothing trains
+--- @param worn boolean true when the riding bar is full: nothing more trains, and a Sprint
+---   running when it fills is banked at once
 --- @return number|nil mult, number gain when a Sprint was banked this frame
 function EqTraining.speedStep(sheet, dt, worn)
     local ex, sprint = sheet.exertion, sheet.sprint
     if ex.mode == "sprint" then
+        if worn then
+            -- The riding bar filled mid-Sprint (James): what it earned so far is paid out now,
+            -- at the multiplier it had reached, and nothing more builds.
+            sheet.quality.speed = 0
+            if sprint.ms <= 0 then return nil end
+            local mult = EqTraining.sprintMultiplier(ex.value)
+            local gain = EqTraining.SPEED_RATE * sprint.ms / 1000 * mult
+            sheet.focused.speed = sheet.focused.speed + gain - EqTraining.SPEED_RATE * sprint.ms / 1000
+            sprint.ms, sprint.last, sprint.cashed = 0, mult, true
+            return mult, gain
+        end
         -- The 1x part counts as it is earned (so the riding bar sees steady work), the rest of
         -- the multiplier when the Sprint ends.
-        if not worn then
-            sprint.ms = sprint.ms + dt
-            sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * dt / 1000
-        end
+        sprint.ms = sprint.ms + dt
+        sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * dt / 1000
         sheet.quality.speed = (EqTraining.sprintMultiplier(ex.value) - 1) / (EqTraining.SPRINT_MULT_MAX - 1)
         return nil
     end
     sheet.quality.speed = 0
+    sprint.cashed = nil
     if sprint.ms <= 0 then return nil end
     local last = ex.lastSprint or { value = ex.value }
     local mult = EqTraining.sprintMultiplier(last.value, last.over)
