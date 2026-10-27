@@ -405,6 +405,8 @@ end
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
+    -- Dressage markers lose their collision while anyone rides.
+    EqDressageHooks.ridingSeen = g_time
 
     local gait = getGaitNames()[spec.inputValues.currentGait]
     if gait == nil or math.abs(spec.currentSpeed or 0) < 0.05 then gait = "halt" end

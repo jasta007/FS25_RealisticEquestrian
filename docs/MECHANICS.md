@@ -123,7 +123,8 @@ no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes
   Missing it costs nothing.
 - At a marker the next command can be a stop (then sometimes a turn on the spot, the only turns
   asked for) or, rarely, backing up for 2.5 seconds, a stop and a new leg.
-- Markers lose their collision, so horses ride through them.
+- Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
+  comes back, so they can be moved or sold.
 
 ### How stats change riding
 

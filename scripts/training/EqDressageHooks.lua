@@ -8,7 +8,8 @@
     Our own arenas (EqDressage.ARENA_XML) carry every letter as a node named eqMarker_<letter>,
     and have no collision to take off.
     The boards come with collision, which a horse runs into in the middle of an arena, so we take
-    their collision off as we find them (James, 2026-10-27).
+    their collision off while a horse is ridden and put it back after (James, 2026-10-27), so
+    they can still be picked up and sold in construction mode.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -20,8 +21,13 @@ EqDressageHooks.SCAN_MS = 5000
 EqDressageHooks.COURSE_MS = 1000
 -- A tag not refreshed for this long (the rider got off) is taken down.
 EqDressageHooks.TAG_STALE_MS = 1000
+-- Markers have no collision while a horse was ridden within this long (see setRiding).
+EqDressageHooks.RIDING_GRACE_MS = 1000
 
 EqDressageHooks.markers = {}
+EqDressageHooks.placeables = {}
+EqDressageHooks.collisionOff = false
+EqDressageHooks.ridingSeen = nil
 EqDressageHooks.scannedAt = nil
 EqDressageHooks.logged = {}
 EqDressageHooks.tag = nil
@@ -31,6 +37,7 @@ EqDressageHooks.tagFailed = false
 function EqDressageHooks.reset()
     EqDressageHooks.clearTag()
     EqDressageHooks.markers, EqDressageHooks.scannedAt, EqDressageHooks.logged = {}, nil, {}
+    EqDressageHooks.placeables, EqDressageHooks.collisionOff, EqDressageHooks.ridingSeen = {}, false, nil
 end
 
 
@@ -48,24 +55,53 @@ local function configName(placeable, key, index)
 end
 
 
---- Take the collision off a marker: every rigid body under its root node goes. Done once per
---- placeable; it comes back when the save loads again, and we take it off again.
+--- Take the collision off a marker: every rigid body under its root node goes, and is kept
+--- so restoreCollision can put it back.
 --- @param placeable table
 function EqDressageHooks.removeCollision(placeable)
-    if placeable.eqNoCollision or setRigidBodyType == nil or getRigidBodyType == nil then return end
-    placeable.eqNoCollision = true
+    if placeable.eqBodies ~= nil or setRigidBodyType == nil or getRigidBodyType == nil then return end
     local none = RigidBodyType ~= nil and RigidBodyType.NONE or "NoRigidBody"
-    local count = 0
+    local bodies = {}
     local stack = { placeable.rootNode }
     while #stack > 0 do
         local node = table.remove(stack)
         local okType, kind = pcall(getRigidBodyType, node)
         if okType and kind ~= nil and kind ~= none and kind ~= "NoRigidBody" then
-            if pcall(setRigidBodyType, node, none) then count = count + 1 end
+            if pcall(setRigidBodyType, node, none) then table.insert(bodies, { node = node, kind = kind }) end
         end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
-    Log:info("Dressage marker: collision off on %d node(s)", count)
+    placeable.eqBodies = bodies
+    if not EqDressageHooks.loggedCollision then
+        EqDressageHooks.loggedCollision = true
+        Log:info("Dressage marker: collision off on %d node(s) while riding", #bodies)
+    end
+end
+
+
+--- Give a marker its collision back, so it can be picked up, moved or sold.
+--- @param placeable table
+function EqDressageHooks.restoreCollision(placeable)
+    local bodies = placeable.eqBodies
+    if bodies == nil then return end
+    placeable.eqBodies = nil
+    for _, body in ipairs(bodies) do
+        if entityExists == nil or entityExists(body.node) then pcall(setRigidBodyType, body.node, body.kind) end
+    end
+end
+
+
+--- Markers only lose their collision while the player rides (James, 2026-10-27: off a horse
+--- they must be selectable in construction mode). Called each frame.
+--- @param riding boolean
+function EqDressageHooks.setRiding(riding)
+    if riding == EqDressageHooks.collisionOff then return end
+    EqDressageHooks.collisionOff = riding
+    for _, placeable in ipairs(EqDressageHooks.placeables) do
+        local ok, err = pcall(riding and EqDressageHooks.removeCollision or EqDressageHooks.restoreCollision, placeable)
+        if not ok then Log:warning("Dressage marker collision: %s", tostring(err)) end
+    end
+    Log:info("Dressage markers: collision %s (%d markers)", riding and "off while riding" or "back on", #EqDressageHooks.placeables)
 end
 
 
@@ -93,7 +129,8 @@ end
 
 --- @return table every dressage marker on the map: { letter, x, z }
 function EqDressageHooks.scan()
-    local list = {}
+    local list, placeables = {}, {}
+    EqDressageHooks.placeables = placeables
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
@@ -105,8 +142,11 @@ function EqDressageHooks.scan()
             local okName, name = pcall(configName, placeable, "solarPanels", index)
             name = okName and name or nil
             local letter = EqDressage.letterFor(index, name)
-            local okCollision, err = pcall(EqDressageHooks.removeCollision, placeable)
-            if not okCollision then Log:warning("Dressage marker collision: %s", tostring(err)) end
+            table.insert(placeables, placeable)
+            if EqDressageHooks.collisionOff then
+                local okCollision, err = pcall(EqDressageHooks.removeCollision, placeable)
+                if not okCollision then Log:warning("Dressage marker collision: %s", tostring(err)) end
+            end
             local x, _, z = getWorldTranslation(placeable.rootNode)
             table.insert(list, { letter = letter, x = x, z = z })
             local key = string.format("%.1f:%.1f", x, z)
@@ -202,6 +242,8 @@ end
 --- take the tag down once the riding overlay stops refreshing it.
 function EqDressageHooks.update()
     local now = g_time or 0
+    EqDressageHooks.setRiding(EqDressageHooks.ridingSeen ~= nil and now >= EqDressageHooks.ridingSeen
+        and now - EqDressageHooks.ridingSeen < EqDressageHooks.RIDING_GRACE_MS)
     if EqDressageHooks.scannedAt == nil or now - EqDressageHooks.scannedAt >= EqDressageHooks.SCAN_MS or now < EqDressageHooks.scannedAt then
         EqDressageHooks.scannedAt = now
         EqDressageHooks.markers = EqDressageHooks.scan()
