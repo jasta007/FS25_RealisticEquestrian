@@ -320,7 +320,7 @@
         <text name="eq_sj_refusal" text="Verweigerung! %d Fehler"/>
         <text name="eq_sj_eliminated" text="Ausgeschieden"/>
         <text name="eq_sj_out_late" text="Ausgeschieden: die Startlinie wurde nicht rechtzeitig überquert"/>
-        <text name="eq_sj_out_wrongCourse" text="Ausgeschieden: Parcours verritten (Hindernis %d außer der Reihe)"/>
+        <text name="eq_sj_skipped" text="Hindernis ausgelassen! %d Fehler"/>
         <text name="eq_sj_out_refusals" text="Ausgeschieden: zweite Verweigerung"/>
         <text name="eq_sj_out_timeLimit" text="Ausgeschieden: Höchstzeit überschritten"/>
         <text name="eq_sj_clear" text="Fehlerfreie Runde in %s!"/>

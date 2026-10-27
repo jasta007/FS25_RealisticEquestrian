@@ -1336,15 +1336,17 @@ end)()
     seen = wait(EqShowJumping.REST_MS)
     check("after the result the next round can start", seen.ready == 1 and round.state == "approach")
 
-    -- Out of order: fence 2 before fence 1.
+    -- Out of order: fence 2 before fence 1 skips fence 1.
     z = 20.25
     EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
     wait(3000)
     ride(29)
     round.course.jumps[1].ax, round.course.jumps[1].bx = 10, 14
-    seen = ride(75)
-    check("jumping the wrong fence eliminates", seen.eliminated == 1 and round.result.eliminated == "wrongCourse")
-    check("an elimination pays nothing", EqShowJumping.payoff(round.result) == 0)
+    seen = ride(90)
+    check("jumping a later fence first skips the one before", seen.skipped == 1 and seen.eliminated == nil
+        and round.result ~= nil and round.result.faults == EqShowJumping.SKIP_FAULTS)
+    check("a skipped fence still pays a little", EqShowJumping.payoff(round.result) > 0)
+    check("an elimination pays nothing", EqShowJumping.payoff({ eliminated = "refusals" }) == 0)
     round.course.jumps[1].ax, round.course.jumps[1].bx = -2, 2
 
     -- Refusals and time.

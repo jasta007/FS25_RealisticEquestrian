@@ -11,8 +11,9 @@
     clock stops at the finish line (or, with none, at the last fence).
 
     Faults as in a real round: a rail down is 4, a refusal (running into the next fence) 4,
-    a second refusal or jumping a fence out of order eliminates, and each second (or part) over
-    the time allowed is 1. The time allowed comes from the course length at TIME_SPEED; twice
+    a second refusal eliminates, and each second (or part) over the time allowed is 1. Kinder
+    than the real rules: jumping a later fence first skips the ones before it at SKIP_FAULTS
+    each instead of eliminating (James, 2026-10-27). The time allowed comes from the course length at TIME_SPEED; twice
     that is the time limit. A finished round pays agility training (payoff), most for a clear.
 
     A line (start, finish) is { ax, az, bx, bz, x, z }: its red end a, white end b, crossed the
@@ -38,6 +39,8 @@ EqShowJumping.REFUSAL_FAULTS = 4
 EqShowJumping.REFUSALS_OUT = 2
 -- A crash this close to the next fence is a refusal.
 EqShowJumping.REFUSAL_RADIUS = 8
+-- Each fence skipped (a later one jumped first) costs this many faults.
+EqShowJumping.SKIP_FAULTS = 20
 -- Time allowed: the course at 350 m a minute (a usual show jumping speed), at least MIN_TIME s.
 EqShowJumping.TIME_SPEED = 350 / 60
 EqShowJumping.MIN_TIME = 20
@@ -50,7 +53,7 @@ EqShowJumping.REST_MS = 8000
 -- A finished round pays this many top-combo show jumps' worth of agility training, less for
 -- faults (none at FAULTS_NO_PAY), and none when eliminated.
 EqShowJumping.ROUND_BONUS_JUMPS = 12
-EqShowJumping.FAULTS_NO_PAY = 20
+EqShowJumping.FAULTS_NO_PAY = 40
 
 
 --- @param points table
@@ -197,7 +200,7 @@ end
 --- One frame of the round.
 --- @param round table
 --- @param input table { px, pz (last frame), x, z, dt ms, judged = nil|"clear"|"knock"|"nothing", crashed = bool }
---- @return string|nil event: "count", "early", "go", "started", "fence", "rail", "refusal",
+--- @return string|nil event: "count", "early", "go", "started", "fence", "rail", "refusal", "skipped",
 ---   "eliminated", "finished", "reset", "ready" (the next round can start)
 function EqShowJumping.step(round, input)
     local dt = input.dt or 0
@@ -286,18 +289,23 @@ function EqShowJumping.step(round, input)
         end
     end
 
-    -- Any other fence of the course jumped the right way is the wrong course.
-    for i, jump in ipairs(jumps) do
-        local current = jumps[round.next]
+    -- A later fence of the course jumped the right way skips the ones before it: SKIP_FAULTS
+    -- each, and the round carries on from there (James, 2026-10-27). Jumping an earlier fence
+    -- again does nothing.
+    local current = jumps[round.next]
+    for i = round.next + 1, #jumps do
+        local jump = jumps[i]
         local same = (current ~= nil and EqCourse.sameJump(jump, current))
             or (round.pending ~= nil and EqCourse.sameJump(jump, jumps[round.pending.index]))
-        if i ~= round.next and not same and jump.ax ~= nil and crossed(jump, input) == jump.side then
-            -- Only one that is not the fence just jumped (the same jump twice in a course).
-            local just = jumps[round.next - 1]
-            if just == nil or not EqCourse.sameJump(jump, just) then
-                round.why = i
-                return eliminate(round, "wrongCourse")
-            end
+            or (jumps[round.next - 1] ~= nil and EqCourse.sameJump(jump, jumps[round.next - 1]))
+        if not same and jump.ax ~= nil and crossed(jump, input) == jump.side then
+            round.skipped = (round.skipped or 0) + (i - round.next)
+            round.faults = round.faults + EqShowJumping.SKIP_FAULTS * (i - round.next)
+            round.why = i - round.next
+            round.pending = { index = i, at = round.clock }
+            round.next = i + 1
+            event = "skipped"
+            break
         end
     end
 
