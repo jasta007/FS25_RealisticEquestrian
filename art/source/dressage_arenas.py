@@ -222,7 +222,7 @@ def write_xml(arena, path):
         <functions>
             <function>$l10n_eq_shop_dressageArena_function</function>
         </functions>
-        <image>store_{name}.dds</image>
+        <image>placeables/dressageArena/store_{name}.dds</image>
         <price>{arena["price"]}</price>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
@@ -242,7 +242,7 @@ def write_xml(arena, path):
     </storeData>
 
     <base>
-        <filename>{name}.i3d</filename>
+        <filename>placeables/dressageArena/{name}.i3d</filename>
         <canBeRenamed>false</canBeRenamed>
     </base>
 

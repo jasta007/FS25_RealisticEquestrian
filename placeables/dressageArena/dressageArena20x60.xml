@@ -6,7 +6,7 @@
         <functions>
             <function>$l10n_eq_shop_dressageArena_function</function>
         </functions>
-        <image>store_dressageArena20x60.dds</image>
+        <image>placeables/dressageArena/store_dressageArena20x60.dds</image>
         <price>2000</price>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
@@ -26,7 +26,7 @@
     </storeData>
 
     <base>
-        <filename>dressageArena20x60.i3d</filename>
+        <filename>placeables/dressageArena/dressageArena20x60.i3d</filename>
         <canBeRenamed>false</canBeRenamed>
     </base>
 
