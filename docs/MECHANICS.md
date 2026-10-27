@@ -216,7 +216,8 @@ jumped again.
 
 A course needs at least 2 fences to save; a new one with fewer keeps recording. A white line runs from the horse to the nearest
 recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
-shows both numbers ("3, 10"). Getting off the horse ends editing and throws away what was not saved.
+shows both numbers ("3, 10"). Getting off the horse (or switching away) ends editing and saves what was recorded; Ctrl+J near
+the course edits it again and Ctrl+K records on from the nearest point.
 
 The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
 horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are saved in

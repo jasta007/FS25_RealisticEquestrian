@@ -13,7 +13,7 @@
     - The rewind key (EQ_COURSE_REWIND, Ctrl+K) drops everything after the recorded point
       nearest the horse (a white line points to it, like AutoDrive's) and records on from there.
     - The delete key (EQ_COURSE_DELETE, Ctrl+Backspace) asks, then deletes the nearby course.
-    Getting off the horse leaves edit mode and throws away what was not saved.
+    Getting off the horse (or switching to another) leaves edit mode and saves what was recorded.
 
     Show jumps are Riding Hall 2k26's shop jumps (and any other "jumps" facility placeable),
     the jumps inside another facility placeable such as the Equestrian Pack's outdoor arena
@@ -379,9 +379,9 @@ end
 --- Save what is being edited. A new course with too few fences is not saved.
 --- @param editing table
 --- @return boolean true when saved
-local function save(editing)
+local function save(editing, quiet)
     local vehicle = editing.vehicle
-    if editing.recording and vehicle.rootNode ~= nil then
+    if editing.recording and vehicle.rootNode ~= nil and (entityExists == nil or entityExists(vehicle.rootNode)) then
         local x, y, z = getWorldTranslation(vehicle.rootNode)
         EqCourse.recordStep(editing.course, x, groundAt(x, y, z), z, true)
     end
@@ -401,7 +401,7 @@ local function save(editing)
     editing.recording = false
     EqCourseHooks.near = nil
     Log:info("Course: saved '%s', %d jump(s), %d point(s), %.0f m", course.name, #course.jumps, #course.points, course.length)
-    notify(string.format(text("eq_course_saved"), course.name, #course.jumps, course.length))
+    if not quiet then notify(string.format(text("eq_course_saved"), course.name, #course.jumps, course.length)) end
     return true
 end
 
@@ -1040,6 +1040,13 @@ function EqCourseHooks.update()
     local editing = EqCourseHooks.editing
     if editing == nil then return end
     if now - editing.seenAt > EqCourseHooks.STALE_MS or now < editing.seenAt then
-        stopEditing(editing.recording and "eq_course_cancelled" or "eq_course_finished")
+        -- Off the horse (or onto another): what was recorded is saved, to edit and record on
+        -- from later (James, 2026-10-27). A new course too short to save is left behind.
+        if not editing.recording then
+            stopEditing("eq_course_finished")
+        else
+            local ok, saved = pcall(save, editing, true)
+            stopEditing(ok and saved and "eq_course_leftSaved" or "eq_course_cancelled")
+        end
     end
 end

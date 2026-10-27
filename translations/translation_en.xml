@@ -306,7 +306,8 @@
         <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
         <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
-        <text name="eq_course_cancelled" text="Editing stopped: you got off the horse, the last changes were not saved"/>
+        <text name="eq_course_cancelled" text="Editing stopped: you left the horse before the course had enough fences to save"/>
+        <text name="eq_course_leftSaved" text="Course saved as you left the horse: press Ctrl+J near it to edit, then Ctrl+K to record on from the nearest point"/>
         <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m"/>
         <text name="eq_course_collisionNote" text="Placed obstacles from Realistic Equestrian have no collision while you trace the course; other obstacles stay solid"/>
         <text name="eq_course_name" text="Course %d"/>
