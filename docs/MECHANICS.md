@@ -358,7 +358,7 @@ fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or
 red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
 hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
 15 m away and the line between them is the fence; the bar nearest its middle gives its height
-(`eqXcFences` lists them). The bars show only in construction mode and while a course is edited; the flags hide like the other pieces (below). The flags
+(`eqXcFences` lists them). A pair with no bar between is a gate: ride between the flags; in a round only its poles glow. The bars show only in construction mode and while a course is edited; the flags hide like the other pieces (below). The flags
 and bars have small collision boxes so they can be picked to delete. The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.

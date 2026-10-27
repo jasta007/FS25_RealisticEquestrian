@@ -231,7 +231,7 @@ local function addFlagFences(list)
                 -- The red flag on the right, as on a show jump: a is red.
                 table.insert(list, { x = (red.x + white.x) / 2, z = (red.z + white.z) / 2,
                     ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z,
-                    height = fence.height, poleHeight = fence.poleHeight })
+                    height = fence.height, poleHeight = fence.poleHeight, gate = fence.height == nil })
             end
         end
     end
@@ -735,7 +735,7 @@ local function newRound(vehicle, course)
     for _, jump in ipairs(course.jumps) do
         for _, found in ipairs(live) do
             if EqCourse.sameJump(jump, found) then
-                jump.height, jump.poleHeight = found.height, found.poleHeight
+                jump.height, jump.poleHeight, jump.gate = found.height, found.poleHeight, found.gate
                 break
             end
         end
@@ -835,10 +835,11 @@ local function drawCrossing(line, color, x, z)
     local top = EqXcFlags ~= nil and EqXcFlags.PENNANT_BOTTOM or EqCourseHooks.POLE_TOP
     local pole = math.min(line.poleHeight or EqCourseHooks.POLE_HEIGHT, top)
     local height = math.min(line.height or EqCourseHooks.BAR_HEIGHT, pole)
-    -- A glowing pole at each flag and a soft bar at the fence height (EqCourseGlow).
+    -- A glowing pole at each flag and a soft bar at the fence height (EqCourseGlow). Flags with
+    -- no bar between them are a gate to ride through: poles only (James, 2026-10-27).
     if EqCourseGlow.pole(line.ax, ya, line.az, pole) then
         EqCourseGlow.pole(line.bx, yb, line.bz, pole)
-        EqCourseGlow.bar(line.ax, ya + height, line.az, line.bx, yb + height, line.bz)
+        if not line.gate then EqCourseGlow.bar(line.ax, ya + height, line.az, line.bx, yb + height, line.bz) end
         return
     end
     for _, lift in ipairs({ 0.1, 0.2, 0.3 }) do
