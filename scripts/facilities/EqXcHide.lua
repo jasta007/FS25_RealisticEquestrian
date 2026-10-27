@@ -9,9 +9,9 @@
       collision off for the same reason);
     - in a round, from the start line's approach (SHOW_NEAR) to the end, with collision.
 
-    A piece bought with the "Always visible" configuration (EqXcHide.CONFIG, No by default) is
-    left alone, as is everything in multiplayer, where rounds don't run yet and collision is the
-    server's. Show jumps are never touched: they are mostly other mods' (James).
+    A log pile or drop wall bought with the "Always visible" configuration (EqXcHide.CONFIG, No by
+    default) is left alone; the flag fence has no such choice and always hides (James). Everything
+    is left alone in multiplayer, where rounds don't run yet and collision is the server's. Show jumps are never touched: they are mostly other mods' (James).
 
     A vehicle parked on a hidden piece can be thrown when its collision comes back. James is
     fine with that: the game's reset handles it.
@@ -86,7 +86,7 @@ function EqXcHide.isAlwaysVisible(configurations)
 end
 
 
---- Register the configuration, so the shop offers it on our pieces (placeables/xcJumps/*.xml
+--- Register the configuration, so the shop offers it on our log piles and drop walls (their xmls
 --- carry <eqAlwaysVisible><eqAlwaysVisibleConfigurations>, like a shed's solar panels). Runs
 --- at source time, before the store items load.
 function EqXcHide.registerConfiguration()
@@ -108,8 +108,9 @@ function EqXcHide.pieces()
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
+        -- The flag fence always hides (James): Always visible is for the solid pieces.
         if placeable.rootNode ~= nil and EqPlaceAnywhere.isOurs(placeable.configFileName)
-            and not EqXcHide.isAlwaysVisible(placeable.configurations) then
+            and (EqXcFlags.isFlagFence(placeable.configFileName) or not EqXcHide.isAlwaysVisible(placeable.configurations)) then
             table.insert(list, placeable)
         end
     end

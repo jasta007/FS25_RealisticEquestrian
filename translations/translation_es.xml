@@ -567,6 +567,7 @@
         <text name="eq_shop_xcDrop_function" text="Un muro de tablones para una bajada de cross. Esculpe un talud, coloca el muro arriba con el borde en el filo; sus muros laterales tapan la pendiente empinada."/>
         <text name="eq_shop_xcJump_function" text="Un obstáculo de cross. Sus banderas roja y blanca marcan dónde saltar."/>
         <text name="eq_shop_xcHidden_function" text="Oculto fuera del modo construcción, la edición de recorridos y los recorridos de cross, salvo si se compra Siempre visible."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Oculto fuera del modo construcción, la edición de recorridos y los recorridos."/>
         <text name="eq_config_alwaysVisible" text="Siempre visible"/>
         <text name="input_EQ_COURSE_RECORD" text="Grabar o editar recorrido de salto"/>
         <text name="eq_course_recordAction" text="Nuevo recorrido de salto"/>

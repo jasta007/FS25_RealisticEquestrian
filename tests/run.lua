@@ -2167,7 +2167,10 @@ do
     check("the Always visible configuration is the second choice",
         EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 2 }) and not EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 1 })
         and not EqXcHide.isAlwaysVisible({}) and not EqXcHide.isAlwaysVisible(nil))
-    for _, name in ipairs({ "courseFlags", "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
+    local flags = io.open("placeables/xcJumps/courseFlags.xml"):read("*a")
+    check("the flag fence always hides: no Always visible choice", flags:find("eqAlwaysVisible", 1, true) == nil
+        and flags:find("eq_shop_xcFlagsHidden_function", 1, true) ~= nil)
+    for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
         local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))
         check(name .. " offers Always visible, No first", choices == 2

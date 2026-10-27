@@ -372,9 +372,10 @@ Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidde
 while you just ride or drive around, so a course can cross the map without leaving flags and logs
 everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
 a course is edited (seen but ridden through), and in a round from 60 m before the start line to the
-result (with collision). Buy a piece with the shop's **Always visible: Yes** configuration to keep
-it in the world all the time. In multiplayer they always show. Show jumps are never hidden. A
-vehicle left on a hidden piece can be thrown when its collision comes back. Road traffic is switched
+result (with collision). Buy a log pile or drop wall with the shop's **Always visible: Yes**
+configuration to keep it in the world all the time; the flags always hide. In multiplayer they
+always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
+collision comes back. Road traffic is switched
 off from a cross country round's countdown to its finish and back on after (the savegame's traffic
 setting is not changed).
 
