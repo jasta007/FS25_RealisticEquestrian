@@ -522,7 +522,10 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if not wasGalloping and EqExertion.isGalloping(ex) then Log:info("Exertion: galloping, pushing (exertion %.0f%%)", ex.value) end
     -- Stamina and speed train from how well the gallop is ridden.
     local speedMult, speedGain = EqTraining.speedStep(sheet, dt, worn)
-    if speedMult ~= nil then
+    if speedMult ~= nil and ex.mode == "sprint" then
+        Log:info("Speed: riding bar full mid-Sprint, banked at x%.1f (at %.0f%%), +%.3f effort", speedMult, ex.value, speedGain)
+        EqTrainingHud.pop("speedBank", speedMult)
+    elseif speedMult ~= nil then
         local last = ex.lastSprint or {}
         Log:info("Speed: Sprint banked at x%.1f (ended at %.0f%%%s), +%.3f effort", speedMult, last.value or 0,
             last.over and ", Fatigued" or "", speedGain)
@@ -988,7 +991,8 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
             or string.format(g_i18n:getText("eq_train_staminaMult"), st.mult)
         row.leftColor = ex.lock ~= nil and COLOR.red or training and STAT_COLOR.stamina or COLOR.grey
     end
-    if ex.mode == "sprint" then
+    -- Once a Sprint is paid out (the riding bar filled), its multiplier is no longer shown.
+    if ex.mode == "sprint" and not sheet.sprint.cashed then
         local over = ex.value >= EqExertion.LINE
         local mult = EqTraining.sprintMultiplier(ex.value)
         local gain = EqTraining.SPEED_RATE * sheet.sprint.ms / 1000 * mult / EqTraining.EFFORT_CAP.speed * 100

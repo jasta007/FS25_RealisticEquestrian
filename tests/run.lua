@@ -797,6 +797,18 @@ do
     check("a Sprint past the line banks only 1x", over.banked[1] == 1 and over.exertion.lock == "spent")
     local tooTired = gallop(sprintTo(95), 20000, true)
     check("a worn-out horse's Sprints bank nothing", tooTired.focused.speed == 0)
+    local filled = T.newSheet()
+    filled.exertion.mode, filled.exertion.value, filled.exertion.tapAt = "sprint", 90, 0
+    T.speedStep(filled, 3000, false)
+    local plain = filled.focused.speed
+    local fillMult = T.speedStep(filled, 50, true)
+    local paid = filled.focused.speed
+    T.speedStep(filled, 3000, true)
+    filled.exertion.mode = "recover"
+    check("a riding bar that fills mid-Sprint pays the Sprint out at once, then nothing more",
+        fillMult ~= nil and fillMult > 5 and paid > plain * 5 and filled.focused.speed == paid
+        and T.speedStep(filled, 50, true) == nil and not filled.sprint.cashed,
+        string.format("x%s %.4f -> %.4f -> %.4f", tostring(fillMult), plain, paid, filled.focused.speed))
     local dropped = T.newSheet()
     dropped.exertion.mode, dropped.exertion.value, dropped.exertion.tapAt = "sprint", 70, 0
     T.speedStep(dropped, 3000, false)
