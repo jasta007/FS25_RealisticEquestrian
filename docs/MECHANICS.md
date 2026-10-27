@@ -194,15 +194,25 @@ Show jumps are linked into a course by riding it, in an edit mode. While editing
 the map has no collision, so you ride straight through them in the order you want, and the course's
 line and fence numbers are drawn. Show jumps are Riding Hall 2k26's (or any "jumps" facility
 placeable), the jumps in the Equestrian Pack's outdoor arena (any part of a facility with a red and
-a white flag), and map scenery such as Elmcreek's course. A jump counts when the horse crosses the
+a white flag), map scenery such as Elmcreek's course, and any fence marked with the shop's red and white flags. A jump counts when the horse crosses the
 line between its flags (or across its placement area) with 0.75 m to spare; the same jump can come
 up again later in the course, but not twice in a row within 4 seconds.
 
 | Key | Not editing | Editing |
 | --- | --- | --- |
-| Ctrl+J | Record a new course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+J | Record a new show jumping course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+E | Record a new cross country (eventing) course | As Ctrl+J |
 | Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
 | Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+
+A cross country course is recorded the same way over cross country fences: each pair of a red and a
+white flag (the fence runs between them), log piles and drop walls. Their flags' height guides show
+while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
+collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
+allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
+run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
+eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
+jumped again.
 
 A course needs at least 2 fences to save; a new one with fewer keeps recording. A white line runs from the horse to the nearest
 recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
@@ -213,6 +223,28 @@ The path is kept as points, like AutoDrive's recorder: one every 10 m on a strai
 horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Courses are saved in
 rlEquestrian.xml. `eqCourses` lists them and `eqCourses delete <number>` removes one. Editing
 works in single player for now.
+
+#### The timed round
+
+Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
+Show Jumping". The start line stands on the route 12 m before fence 1 and the finish line 12 m after
+the last fence; both are drawn in gold while they matter, so no objects are needed and a course
+can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
+countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
+clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants) with a faint bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+
+| Fault | Penalty |
+| --- | --- |
+| Rail down (knocking or landing on the show jump; a crash into anything else is no fault) | 4 |
+| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
+| Jumping another fence of the course, the right way, out of order | Eliminated |
+| Each second (or part) over the time allowed | 1 |
+| Over twice the time allowed, or not starting within 45 s | Eliminated |
+
+The time allowed is the course length at 350 m a minute (at least 20 s). A finished round pays
+agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20 faults or when
+eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
+can start.
 
 ### How stats change riding
 

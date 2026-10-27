@@ -190,7 +190,8 @@ end
 --- Tag a marker as the map target (the game's own "tag" on the map), unless the player has
 --- tagged something of their own. Does nothing more after any error.
 --- @param marker table|nil { letter, x, z }; nil takes our tag down
-function EqDressageHooks.setTag(marker)
+--- @param name string|nil the tag's name, instead of the marker's letter (a show jump's fence)
+function EqDressageHooks.setTag(marker, name)
     if marker == nil then
         EqDressageHooks.clearTag()
         return
@@ -199,7 +200,8 @@ function EqDressageHooks.setTag(marker)
         or PlaceableHotspot == nil then return end
     local tag = EqDressageHooks.tag
     EqDressageHooks.tagSeen = g_time or 0
-    if tag ~= nil and tag.x == marker.x and tag.z == marker.z then return end
+    name = name or string.format(g_i18n:getText("eq_dressage_marker"), marker.letter)
+    if tag ~= nil and tag.x == marker.x and tag.z == marker.z and tag.name == name then return end
     local ok, err = pcall(function()
         local current = g_currentMission.currentMapTargetHotspot
         if current ~= nil and (tag == nil or current ~= tag.hotspot) then return end
@@ -212,11 +214,9 @@ function EqDressageHooks.setTag(marker)
             tag = { hotspot = hotspot }
             EqDressageHooks.tag = tag
         end
-        tag.x, tag.z = marker.x, marker.z
+        tag.x, tag.z, tag.name = marker.x, marker.z, name
         tag.hotspot:setWorldPosition(marker.x, marker.z)
-        if tag.hotspot.setName ~= nil then
-            tag.hotspot:setName(string.format(g_i18n:getText("eq_dressage_marker"), marker.letter))
-        end
+        if tag.hotspot.setName ~= nil then tag.hotspot:setName(name) end
         g_currentMission:setMapTargetHotspot(tag.hotspot)
     end)
     if not ok then

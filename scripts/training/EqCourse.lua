@@ -10,7 +10,8 @@
     jumps are ridden through with their collision off, in order; each one passed is kept with
     the side it was taken from. A smooth curve through the points (smooth) is only for drawing.
 
-    A course is { name, points = { {x, y, z}... }, jumps = { {x, z, ry, side, pointIndex}... }, length }.
+    A course is { name, points = { {x, y, z}... }, jumps = { {x, z, ry, side, pointIndex, ax, az, bx, bz}... },
+    length }: ax..bz are the jump's two ends (its flags), so a round can tell when it is jumped.
     A jump is kept by where its placeable stands and which way it faces, so a jump moved in
     construction mode is no longer part of the course.
 
@@ -18,6 +19,10 @@
 ]]
 
 EqCourse = {}
+
+-- A course is ridden as one of these (James, 2026-10-27: one key to start each).
+EqCourse.SHOW_JUMPING = "showJumping"
+EqCourse.CROSS_COUNTRY = "crossCountry"
 
 -- Saved courses, in the order they were recorded.
 EqCourse.list = {}
@@ -58,8 +63,9 @@ end
 --- @param y number
 --- @param z number
 --- @return table recording
-function EqCourse.newRecording(x, y, z)
-    return { points = { { x = x, y = y, z = z } }, jumps = {}, length = 0 }
+--- @param kind string|nil "showJumping" (the default) or "crossCountry"
+function EqCourse.newRecording(x, y, z, kind)
+    return { points = { { x = x, y = y, z = z } }, jumps = {}, length = 0, kind = kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -118,10 +124,10 @@ end
 
 --- Whether the horse went through a jump between two frames: its step from p to q crosses the
 --- jump's line from a to b (the jump's two ends, its red and white flags), with PASS_MARGIN to
---- spare past either end.
+--- spare past either end, or margin metres when given (negative: that far inside the flags).
 --- @return number|nil the side it came from (1 or -1, which way round the line it was), nil when
 ---   it did not pass
-function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz)
+function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz, margin)
     local dx, dz = bx - ax, bz - az
     local length2 = dx * dx + dz * dz
     if length2 < 1e-6 then return nil end
@@ -133,7 +139,7 @@ function EqCourse.crossSide(ax, az, bx, bz, px, pz, qx, qz)
     local share = sp / (sp - sq)
     local cx, cz = px + sx * share, pz + sz * share
     local along = ((cx - ax) * dx + (cz - az) * dz) / length2
-    local margin = EqCourse.PASS_MARGIN / math.sqrt(length2)
+    margin = (margin or EqCourse.PASS_MARGIN) / math.sqrt(length2)
     if along < -margin or along > 1 + margin then return nil end
     return sp > 0 and 1 or -1
 end
@@ -154,7 +160,7 @@ function EqCourse.addJump(recording, jump, side, now)
     end
     -- The point dropped at the jump (EqCourseHooks drops one right after), for rewind.
     table.insert(recording.jumps, { x = jump.x, z = jump.z, ry = jump.ry or 0, side = side, at = now,
-        pointIndex = #recording.points + 1 })
+        pointIndex = #recording.points + 1, ax = jump.ax, az = jump.az, bx = jump.bx, bz = jump.bz })
     return #recording.jumps
 end
 
@@ -224,9 +230,11 @@ function EqCourse.finish(recording, name)
     local jumps = {}
     for _, jump in ipairs(recording.jumps) do
         table.insert(jumps, { x = jump.x, z = jump.z, ry = jump.ry, side = jump.side,
-            pointIndex = math.min(jump.pointIndex or #recording.points, #recording.points) })
+            pointIndex = math.min(jump.pointIndex or #recording.points, #recording.points),
+            ax = jump.ax, az = jump.az, bx = jump.bx, bz = jump.bz })
     end
-    return { name = name, points = recording.points, jumps = jumps, length = recording.length }
+    return { name = name, points = recording.points, jumps = jumps, length = recording.length,
+        kind = recording.kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -242,9 +250,11 @@ function EqCourse.editRecording(course)
             -- Saved before rewinds: the point nearest the jump.
             index = EqCourse.nearestPoint({ points = points }, jump.x, jump.z)
         end
-        table.insert(jumps, { x = jump.x, z = jump.z, ry = jump.ry, side = jump.side, pointIndex = index, at = -math.huge })
+        table.insert(jumps, { x = jump.x, z = jump.z, ry = jump.ry, side = jump.side, pointIndex = index, at = -math.huge,
+            ax = jump.ax, az = jump.az, bx = jump.bx, bz = jump.bz })
     end
-    return { points = points, jumps = jumps, length = EqCourse.pathLength(points), rewound = true }
+    return { points = points, jumps = jumps, length = EqCourse.pathLength(points), rewound = true,
+        kind = course.kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -384,6 +394,7 @@ function EqCourse.saveToXMLFile(xmlFile, key)
         local courseKey = string.format("%s.course(%d)", key, i - 1)
         xmlFile:setString(courseKey .. "#name", course.name)
         xmlFile:setString(courseKey .. "#points", encodePoints(course.points))
+        if course.kind ~= nil and course.kind ~= EqCourse.SHOW_JUMPING then xmlFile:setString(courseKey .. "#kind", course.kind) end
         for j, jump in ipairs(course.jumps) do
             local jumpKey = string.format("%s.jump(%d)", courseKey, j - 1)
             xmlFile:setFloat(jumpKey .. "#x", jump.x)
@@ -391,6 +402,9 @@ function EqCourse.saveToXMLFile(xmlFile, key)
             xmlFile:setFloat(jumpKey .. "#ry", jump.ry or 0)
             xmlFile:setInt(jumpKey .. "#side", jump.side or 1)
             if jump.pointIndex ~= nil then xmlFile:setInt(jumpKey .. "#point", jump.pointIndex) end
+            if jump.ax ~= nil then
+                xmlFile:setString(jumpKey .. "#ends", string.format("%.2f %.2f %.2f %.2f", jump.ax, jump.az, jump.bx, jump.bz))
+            end
         end
     end
 end
@@ -406,7 +420,8 @@ function EqCourse.loadFromXMLFile(xmlFile, key)
         local courseKey = string.format("%s.course(%d)", key, i)
         if not xmlFile:hasProperty(courseKey) then break end
         local course = { name = xmlFile:getString(courseKey .. "#name", string.format("Course %d", i + 1)),
-            points = decodePoints(xmlFile:getString(courseKey .. "#points")), jumps = {} }
+            points = decodePoints(xmlFile:getString(courseKey .. "#points")), jumps = {},
+            kind = xmlFile:getString(courseKey .. "#kind", EqCourse.SHOW_JUMPING) }
         local j = 0
         while true do
             local jumpKey = string.format("%s.jump(%d)", courseKey, j)
@@ -414,6 +429,12 @@ function EqCourse.loadFromXMLFile(xmlFile, key)
             table.insert(course.jumps, { x = xmlFile:getFloat(jumpKey .. "#x", 0), z = xmlFile:getFloat(jumpKey .. "#z", 0),
                 ry = xmlFile:getFloat(jumpKey .. "#ry", 0), side = xmlFile:getInt(jumpKey .. "#side", 1),
                 pointIndex = xmlFile:getInt(jumpKey .. "#point") })
+            local ends = xmlFile:getString(jumpKey .. "#ends")
+            local ax, az, bx, bz = string.match(ends or "", "^(%S+) (%S+) (%S+) (%S+)$")
+            if bz ~= nil then
+                local jump = course.jumps[#course.jumps]
+                jump.ax, jump.az, jump.bx, jump.bz = tonumber(ax), tonumber(az), tonumber(bx), tonumber(bz)
+            end
             j = j + 1
         end
         course.length = EqCourse.pathLength(course.points)
