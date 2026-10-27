@@ -68,7 +68,9 @@ Every horse trains once a day, at RLRM's daily horse tick.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
   line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
   so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
-  stamina 100).
+  stamina 100). Riding that trains little (walking or cantering over to a facility) costs only a
+  quarter of the usual riding bar, rising to the full rate as focused work (stamina, speed, jump
+  combos, routines) earns more effort, averaged over about 20 seconds.
 
 ### Peak form
 
