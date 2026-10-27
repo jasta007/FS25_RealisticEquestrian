@@ -76,6 +76,13 @@ EqExertion.SPRINT_FAST_TAP_MS = 130
 EqExertion.SPRINT_SLOW_TAP_MS = 450
 EqExertion.SPRINT_EASE_MS = 10000
 
+-- A jump from the bottom third of the gallop (Pushing or Recovering, not a Sprint) takes the
+-- horse's breath back: exertion plummets at AIR_DROP per second while it is in the air, and once
+-- it reaches the canter line the horse may drop to a canter, for AIR_CANTER_MS after landing
+-- (James, 2026-10-27: getting locked into giant gallop jumps was killing show jumping rounds).
+EqExertion.AIR_DROP = 45
+EqExertion.AIR_CANTER_MS = 1500
+
 -- Two presses of S this close together are a double tap. A press that allows a canter allows it
 -- for DROP_GRACE_MS, in case the base game changes gait a frame later.
 EqExertion.DOUBLE_TAP_MS = 400
@@ -171,6 +178,9 @@ end
 --- @return number per second
 function EqExertion.rate(ex, gait, stamina, speed)
     local v = ex.value
+    if ex.air and ex.airDrop then
+        return -EqExertion.AIR_DROP * byStat(EqExertion.RECOVER_STAMINA, stamina)
+    end
     if ex.mode == "push" then
         local share = math.min(v, EqExertion.LINE) / EqExertion.LINE
         return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * share * share)
@@ -238,6 +248,11 @@ function EqExertion.step(ex, gait, dt, stamina, speed)
         endSprint(ex)
         event = "spent"
     end
+    if ex.air and ex.airDrop and ex.value <= 0 then
+        -- Down to the canter line in a low jump: a canter is allowed until a while after landing
+        -- (setAir sets the end).
+        ex.dropUntil = math.huge
+    end
     if ex.value <= 0 then
         ex.sprinted = false
         if ex.lock ~= nil then
@@ -287,6 +302,29 @@ function EqExertion.press(ex, key)
     end
     ex.mode = "recover"
     return "recover"
+end
+
+
+--- The horse left the ground or landed.
+--- @param ex table
+--- @param airborne boolean
+function EqExertion.setAir(ex, airborne)
+    if airborne == (ex.air == true) then return end
+    ex.air = airborne
+    if airborne then
+        ex.airDrop = (ex.mode == "push" or ex.mode == "recover") and ex.value < EqExertion.LINE / 3
+    elseif ex.airDrop then
+        -- Landed: a canter stays allowed for AIR_CANTER_MS if exertion got down to the line.
+        if ex.value <= 0 then ex.dropUntil = ex.clock + EqExertion.AIR_CANTER_MS end
+        ex.airDrop = false
+    end
+end
+
+
+--- @param ex table
+--- @return boolean true when a gallop jump lets the rider queue a slower gait for the landing
+function EqExertion.airQueue(ex)
+    return ex.air == true and ex.airDrop == true
 end
 
 

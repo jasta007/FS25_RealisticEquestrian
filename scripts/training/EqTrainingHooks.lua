@@ -409,6 +409,28 @@ EqTrainingHooks.GRAVITY = 9.81
 EqTrainingHooks.GRAVITY_SHARE = 1.65
 -- A real horse picks where to land: in the air it turns this many times as fast as on the ground.
 EqTrainingHooks.AIR_TURN_SHARE = 1.6
+-- The base game hardly turns a horse in the air however fast it may (James, 2026-10-27: still
+-- super sluggish), so while A or D is held in the air we turn it ourselves as well, at this
+-- share of its ground turn rate.
+EqTrainingHooks.AIR_TURN_EXTRA = 1.2
+
+--- Turn the horse in the air from the steering keys (A left, D right), on top of the base game.
+--- @param spec table spec_rideable
+--- @param dt number ms
+function EqTrainingHooks.airTurn(spec, dt)
+    if type(spec.currentTurnAngle) ~= "number" or spec.eqBaseTurnSpeed == nil then return end
+    local axis = spec.inputValues ~= nil and (spec.inputValues.axisSteer or 0) or 0
+    if axis == 0 and Input ~= nil and Input.isKeyPressed ~= nil and Input.KEY_a ~= nil and Input.KEY_d ~= nil then
+        axis = (Input.isKeyPressed(Input.KEY_d) and 1 or 0) - (Input.isKeyPressed(Input.KEY_a) and 1 or 0)
+    end
+    if axis == 0 then return end
+    -- currentTurnAngle grows turning left; a right axis is positive.
+    spec.currentTurnAngle = spec.currentTurnAngle - axis * spec.eqBaseTurnSpeed * EqTrainingHooks.AIR_TURN_EXTRA * dt / 1000
+    if not spec.eqAirTurnLogged then
+        spec.eqAirTurnLogged = true
+        Log:info("Air turn: steering %s in the air (axisSteer %s)", axis > 0 and "right" or "left", tostring(spec.inputValues.axisSteer))
+    end
+end
 
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
@@ -507,6 +529,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn * (airborne and EqTrainingHooks.AIR_TURN_SHARE or 1)
     end
     spec.eqAirborne = airborne
+    EqExertion.setAir(sheet.exertion, airborne)
+    if airborne then EqTrainingHooks.airTurn(spec, dt) end
 
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil
@@ -657,13 +681,17 @@ EqTrainingHooks.keyAt = {}
 --- The base game ignores gait changes in the air, so a rider tapping to slow down after a jump
 --- had to wait for the landing and then overshot (James, 2026-10-27). A forward or back press in
 --- the air is queued instead, shown lit on the gait bar, and made the moment the horse lands
---- (applyQueuedGait). Not while galloping, where the keys set the pace.
+--- (applyQueuedGait). Not while galloping, where the keys set the pace, except in a jump from
+--- the bottom third of the gallop (EqExertion.airQueue): then a slower gait is queued too, and
+--- made on landing once exertion is down to the canter line.
 --- @param spec table spec_rideable
 --- @param key string "forward" or "back"
-function EqTrainingHooks.queueGait(spec, key)
+--- @param ex table|nil the horse's exertion
+function EqTrainingHooks.queueGait(spec, key, ex)
     local types = Rideable.GAITTYPES
     local current = spec.inputValues.currentGait
-    if types == nil or current == nil or current == types.GALLOP then return end
+    if types == nil or current == nil then return end
+    if current == types.GALLOP and (ex == nil or not EqExertion.airQueue(ex)) then return end
     local queued = spec.eqQueuedGait
     if queued == nil then
         queued = { from = current, steps = 0 }
@@ -678,9 +706,23 @@ end
 
 --- Make a queued gait change once the horse is on the ground. Called every frame while drawing.
 --- @param spec table spec_rideable
-function EqTrainingHooks.applyQueuedGait(spec)
+function EqTrainingHooks.applyQueuedGait(spec, ex)
     local queued = spec.eqQueuedGait
     if queued == nil or spec.isOnGround == false then return end
+    local types = Rideable.GAITTYPES
+    if types ~= nil and queued.from == types.GALLOP and queued.target < types.GALLOP and ex ~= nil then
+        -- Out of a gallop only once exertion is at the canter line; else the queue goes after
+        -- AIR_CANTER_MS and the horse gallops on.
+        local now = g_time or 0
+        queued.landedAt = queued.landedAt or now
+        if ex.value > 0 or ex.clock > ex.dropUntil then
+            if now - queued.landedAt > EqExertion.AIR_CANTER_MS then
+                spec.eqQueuedGait = nil
+                Log:info("Gait: landed at exertion %.0f%%, still galloping", ex.value)
+            end
+            return
+        end
+    end
     spec.eqQueuedGait = nil
     if spec.inputValues.currentGait ~= queued.target then
         spec.inputValues.currentGait = queued.target
@@ -699,9 +741,11 @@ function EqTrainingHooks.onGaitKey(vehicle, key, source)
     EqTrainingHooks.keyAt[key] = now
     if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
     local spec = vehicle.spec_rideable
-    if spec ~= nil and spec.inputValues ~= nil and spec.isOnGround == false then EqTrainingHooks.queueGait(spec, key) end
     local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
+    if spec ~= nil and spec.inputValues ~= nil and spec.isOnGround == false then
+        EqTrainingHooks.queueGait(spec, key, sheet ~= nil and sheet.exertion or nil)
+    end
     if sheet == nil then return end
     local event = EqExertion.press(sheet.exertion, key)
     if event == "tap" then return end
@@ -742,7 +786,11 @@ end
 --- @param vehicle table
 local function pollGaitKeys(vehicle)
     local spec = vehicle.spec_rideable
-    if spec ~= nil and spec.inputValues ~= nil then EqTrainingHooks.applyQueuedGait(spec) end
+    if spec ~= nil and spec.inputValues ~= nil then
+        local id = getRiddenId(spec)
+        local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+        EqTrainingHooks.applyQueuedGait(spec, sheet ~= nil and sheet.exertion or nil)
+    end
     if Input == nil or Input.isKeyPressed == nil or Input.KEY_w == nil then return end
     local down = Input.isKeyPressed(Input.KEY_w) == true
     if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.onGaitKey(vehicle, "forward", "W key") end

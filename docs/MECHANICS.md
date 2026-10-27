@@ -196,7 +196,10 @@ turning circle at every gait shrinking to match); a calm horse (temperament) tur
 better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
 press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
-bar, and takes effect the moment the horse lands.
+bar, and takes effect the moment the horse lands. A gallop jump from the bottom third of the bar
+(Pushing or Recovering) makes exertion plummet (45 a second) and S queues a canter too: it is made
+on landing if exertion is down to the canter line, within 1.5 s. In the air the horse also turns
+on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Staff, age and metabolism
 
