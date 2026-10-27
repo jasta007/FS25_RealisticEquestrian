@@ -78,6 +78,7 @@ function EqRegistry.getOrCreate(animal)
         return held.record
     end
 
+    local isNew = record == nil
     if record == nil and EqRegistry.dealer[id] ~= nil then
         record = EqRegistry.promote(id)
     elseif record == nil then
@@ -96,6 +97,7 @@ function EqRegistry.getOrCreate(animal)
         record.trained = EqStats.initialTrained(record:getCeilings(), animal.age or 0, EqRandom.new("start " .. id))
         record.redrawStart = nil
     end
+    if isNew then record:markStart(currentDay()) end
 
     record.lastSeenDay = currentDay()
     return record
@@ -177,6 +179,7 @@ function EqRegistry.promote(id)
     local record = EqRegistry.dealer[id].record
     EqRegistry.dealer[id] = nil
     record.ownedMonths = 0
+    record:markStart(currentDay())
     EqRegistry.records[id] = record
     Log:debug("EqRegistry: %s bought from the dealer", id)
     return record

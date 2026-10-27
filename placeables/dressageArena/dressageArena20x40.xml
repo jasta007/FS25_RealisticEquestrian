@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/dressage_arenas.py: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_dressageArena20x40</name>
+        <functions>
+            <function>$l10n_eq_shop_dressageArena_function</function>
+        </functions>
+        <image>placeables/dressageArena/store_dressageArena20x40.dds</image>
+        <price>1500</price>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
+        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
+        <textureMemoryUsage>0</textureMemoryUsage>
+        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
+        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
+    </storeData>
+
+    <base>
+        <filename>placeables/dressageArena/dressageArena20x40.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- The arena is 20 x 40 m inside the rail; letters stand outside it. -->
+    </placement>
+</placeable>

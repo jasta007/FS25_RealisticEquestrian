@@ -8,7 +8,8 @@
 
     The settings belong to the savegame and the server: they are saved in rlEquestrian.xml with
     the rest of our data. There is no multiplayer sync yet, so on a client the rows are shown
-    but cannot be changed.
+    but cannot be changed. The last row, Help popups, is the player's own: "Show again" forgets
+    which help and welcome popups were seen (modSettings), so each pops up once more.
 ]]
 
 EqSettingsPage = {}
@@ -18,6 +19,10 @@ local Log = EqLog
 EqSettingsPage.controls = {}    -- row id -> MultiTextOptionElement
 EqSettingsPage.layout = nil     -- the layout the rows were added to
 EqSettingsPage.guarded = function(_, fn) fn() end
+
+-- The player's own row, after the savegame's.
+EqSettingsPage.HELP_ROW = { id = "helpPopups",
+    texts = { { key = "eq_settings_helpPopups_seen" }, { key = "eq_settings_helpPopups_again" } } }
 
 
 --- @param row table an EqSettings.ROWS entry
@@ -80,6 +85,7 @@ local function addRows(layout)
     for _, row in ipairs(EqSettings.ROWS) do
         EqSettingsPage.controls[row.id] = addRow(layout, row)
     end
+    EqSettingsPage.controls.helpPopups = addRow(layout, EqSettingsPage.HELP_ROW)
 
     local credit = TextElement.new()
     credit.name = "sectionHeader"
@@ -113,7 +119,7 @@ local function buildOnGeneralPage(page)
     layout:invalidateLayout()
     if page.updateAlternatingElements ~= nil then page:updateAlternatingElements(layout) end
     if page.updateGeneralSettings ~= nil then page:updateGeneralSettings(layout) end
-    Log:info("EqSettingsPage: added %d settings to the General settings page", #EqSettings.ROWS)
+    Log:info("EqSettingsPage: added %d settings to the General settings page", #EqSettings.ROWS + 1)
 end
 
 
@@ -216,7 +222,7 @@ local function buildRLRMTab(frame)
     end
     layout:invalidateLayout()
     if frame.updateAlternatingElements ~= nil then frame:updateAlternatingElements(layout) end
-    Log:info("EqSettingsPage: added the Equestrian tab to RLRM's settings with %d settings", #EqSettings.ROWS)
+    Log:info("EqSettingsPage: added the Equestrian tab to RLRM's settings with %d settings", #EqSettings.ROWS + 1)
 end
 
 
@@ -231,6 +237,8 @@ function EqSettingsPage.refresh()
             option:setDisabled(locked)
         end
     end
+    local help = EqSettingsPage.controls.helpPopups
+    if help ~= nil then help:setState(EqTrainingHud.anySeen() and 1 or 2) end
 end
 
 
@@ -260,6 +268,13 @@ function EqSettingsPage:onOptionChanged(state, option)
     EqSettingsPage.guarded("settings change", function()
         local id = option ~= nil and option.eqSettingId or nil
         if id == nil then return end
+        if id == EqSettingsPage.HELP_ROW.id then
+            if state == 2 then
+                EqTrainingHud.resetSeen()
+                Log:info("EqSettingsPage: help popups will show again")
+            end
+            return
+        end
         if not canChange() then
             EqSettingsPage.refresh()
             return

@@ -13,12 +13,8 @@
         <text name="eq_stat_short_speed" text="Spd"/>
         <text name="eq_stat_short_agility" text="Agi"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
-        <text name="eq_train_title" text="Training: %s view"/>
-        <text name="eq_train_titleHorse" text="%s: %s view"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_train_view_stamina" text="Stamina"/>
-        <text name="eq_train_view_speed" text="Speed"/>
         <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. From x4 you must also hold your pace between commands. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
         <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a short interval. The training program will then ask you for a new manoeuvre to hold. Achieve it within a few seconds to keep the combo going."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
@@ -26,6 +22,8 @@
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
         <text name="eq_help_agility_title" text="Training: Agility"/>
         <text name="eq_pop_routineStart" text="Routine started"/>
+        <text name="eq_pop_routineFault" text="Fault %d/%d"/>
+        <text name="eq_pop_routineTest" text="Test complete!"/>
         <text name="eq_pop_routineLost" text="Routine broken"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_knock" text="-%d s!"/>
@@ -36,63 +34,118 @@
         <text name="eq_move_halt" text="Stop!"/>
         <text name="eq_move_trot" text="Trot!"/>
         <text name="eq_move_walk" text="Walk!"/>
+        <text name="eq_move_spinLeft" text="Turn left on the spot!"/>
+        <text name="eq_move_spinRight" text="Turn right on the spot!"/>
+        <text name="eq_shop_dressageArena15x30" text="Dressage Arena 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Dressage Arena 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
+        <text name="eq_dressage_go" text="%s: %s"/>
+        <text name="eq_dressage_gait_walk" text="Walk"/>
+        <text name="eq_dressage_gait_trot" text="Trot"/>
+        <text name="eq_dressage_gait_canter" text="Canter"/>
+        <text name="eq_dressage_change" text="Change: %s"/>
+        <text name="eq_dressage_flying" text="Flying change: %s"/>
+        <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
+        <text name="eq_dressage_reinBack" text="Rein back!"/>
+        <text name="eq_dressage_backwards" text="Move backwards"/>
+        <text name="eq_dressage_circle_left" text="Circle left"/>
+        <text name="eq_dressage_circle_right" text="Circle right"/>
+        <text name="eq_dressage_out" text="Return to the Arena!"/>
+        <text name="eq_dressage_next" text="Next: %s"/>
+        <text name="eq_dressage_stand" text="Stand"/>
+        <text name="eq_dressage_marker" text="Marker %s"/>
         <text name="eq_train_routine_none" text="Walk to start a routine"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_speed_2" text="Stand still or walk to recover before the next gallop. A horse with high Stamina recovers even faster, and feeding your horses high-energy corn is a great way to improve Speed training."/>
-        <text name="eq_help_speed_1" text="Speed is raised by sprinting, a special speed boost beyond a regular gallop. To charge up your Sprint you need at least two regular gallops while the horse is fresh (exertion under 25%). When Sprint! shows, keep galloping and tap W to make your Sprint last as long as possible. During a Sprint your horse runs 25% faster and trains Speed three times as fast."/>
-        <text name="eq_help_speed_title" text="Training: Speed"/>
-        <text name="eq_help_stamina_2" text="If you overwork your horse above 85% exertion, it starts blowing hard and learns more slowly, and after 5 seconds your tempo breaks. Dropping below a canter for more than a few seconds breaks it too. The higher your tempo, the tighter the timing. Get back into rhythm by resting, then start another steady canter."/>
-        <text name="eq_help_stamina_1" text="To start Stamina training, canter steadily for 8 seconds without jumping or galloping, then change gaits when asked to build your tempo, up to a x5 bonus. Each well-timed change keeps your horse&apos;s exertion high without overworking it, for the most Stamina training. Stamina also increases how long your horse can train each day."/>
-        <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_freestyle_2" text="Stamina training starts when you hold a steady canter; then keep your horse in rhythm by switching between canter and gallop. Speed needs warm-up gallops and rests first, then a hard Sprint at a gallop. Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
+        <text name="eq_form_title" text="Peak form"/>
+        <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
+        <text name="eq_help_form_title" text="Peak form"/>
+        <text name="eq_help_form_1" text="Your own riding does more than train: it puts your horse in Peak form for this month&apos;s events. Each stat you worked in its mini game gets up to +8 in every event this month, shown as Peak form here and in the horse&apos;s Skills box. Better sessions give a bigger bonus; just riding the gaits gives none."/>
+        <text name="eq_help_form_2" text="Peak form doesn&apos;t add up over the days of a month: each stat keeps your best session. It can even lift a horse past its potential on the day, then wears off once this month&apos;s events have run. Staff keep up the daily training, so save your riding for the events that matter."/>
         <text name="eq_help_freestyle_1" text="Riding trains your horse&apos;s stats, and each stat is trained with its own mini game. All stats can be trained at the same time, but some don&apos;t mix well, such as Speed and Temperament. Press Y to switch to a view with better feedback on the stat you want to focus on, or stay in Freestyle for general feedback. The riding bar is still the horse&apos;s energy for the day: once it is full, that horse cannot make any more progress until the next day."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
+        <text name="eq_welcome_ride_title" text="Training"/>
+        <text name="eq_welcome_welcome_1_title" text="Welcome to Realistic Equestrian"/>
+        <text name="eq_welcome_welcome_1" text="Your horses now have skills to train and events to compete in. It all lives in the Realistic Livestock menu, which you can open by pressing R in the Animals menu or Shift+O anywhere."/>
+        <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
+        <text name="eq_welcome_menu_1" text="Open the Information tab (the pig with an [i]) to learn about your horses, and the Events tab (the rosette) to enter them in events. You can also find Realistic Equestrian&apos;s own settings in the Settings tab (the cog)."/>
+        <text name="eq_welcome_info_skills_title" text="Skills"/>
+        <text name="eq_welcome_info_skills" text="Stamina lets a horse go further, Speed makes it faster, Agility helps it jump and turn, and Temperament keeps it calm and obedient. Every skill can be trained, and you&apos;ll learn how when you first ride."/>
+        <text name="eq_welcome_info_potential_title" text="Potential"/>
+        <text name="eq_welcome_info_potential" text="Potential is how far each skill can grow with training. Young horses learn the fastest, and older horses can lose potential. Potential is only estimated, and even the estimate can be wrong until you have owned the horse for a while."/>
+        <text name="eq_welcome_info_roles_title" text="Roles and staff"/>
+        <text name="eq_welcome_info_roles" text="You can give a horse a role with the Role button to help keep track, and it also tells your staff which skills to train. Hire staff in the standard Animals menu to help with training and care."/>
+        <text name="eq_welcome_info_feed_title" text="Feed"/>
+        <text name="eq_welcome_info_feed" text="Hay is the basic diet. Oats give a minor boost to Stamina and Temperament, barley a moderate boost to Stamina and Agility, and corn a large boost to Speed. Carrots (and apples, if available) give a large boost to Temperament."/>
+        <text name="eq_welcome_events_disciplines_title" text="Events"/>
+        <text name="eq_welcome_events_disciplines" text="Dressage favours Temperament and Agility, Show Jumping Agility, races Speed and Stamina, and Cross Country and Eventing favour all-rounders."/>
+        <text name="eq_welcome_events_transport_title" text="Getting there"/>
+        <text name="eq_welcome_events_transport" text="Auto Transport takes your horse to the event for a fee. This can cost much more than regular automatic transport, as your horse could be going much further and you want to get it back! Taking your horses to the animal dealer yourself (Manual Transport) can save a lot of money."/>
+        <text name="eq_welcome_events_risks_title" text="Injuries and scratchings"/>
+        <text name="eq_welcome_events_risks" text="Every event has an injury and disease risk, shown before you enter. The Diseases button in the Information tab lets you treat injuries. A horse can also be scratched before an event for failing a Temperament check or for poor health, but you get part of the entry fee back."/>
+        <text name="eq_settings_helpPopups" text="Help popups"/>
+        <text name="eq_settings_helpPopups_tooltip" text="Show again: every welcome and training help popup pops up once more."/>
+        <text name="eq_settings_helpPopups_seen" text="Seen"/>
+        <text name="eq_settings_helpPopups_again" text="Show again"/>
+        <text name="eq_welcome_diseases_treatment_title" text="Treatment"/>
+        <text name="eq_welcome_diseases_treatment" text="Most injuries heal on their own but can take a long time! Treating them speeds this up but can get expensive. You can retire an injured horse to keep breeding from it, which makes recovery much cheaper. Some bad injuries can force retirement, and all of this can be changed in the settings."/>
         <text name="eq_help_close" text="Click to close"/>
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Training help"/>
-        <text name="eq_train_worn" text="Riding bar full: this horse cannot train any more today"/>
+        <text name="eq_train_worn" text="Riding bar full: no more training today"/>
+        <text name="eq_ex_push" text="Pushing"/>
+        <text name="eq_ex_recover" text="Recovering"/>
+        <text name="eq_ex_sprint" text="SPRINTING"/>
+        <text name="eq_ex_blown" text="Blowing Hard: canter only"/>
+        <text name="eq_ex_spent" text="Exhausted: canter only"/>
+        <text name="eq_ex_gallop" text="Gallop"/>
+        <text name="eq_ex_canter" text="Canter"/>
+        <text name="eq_ex_trot" text="Trot"/>
+        <text name="eq_ex_walk" text="Walk"/>
+        <text name="eq_ex_halt" text="Standing"/>
+        <text name="eq_ex_reverse" text="Backing up"/>
+        <text name="eq_ex_prompt_tap" text="Keep tapping W!"/>
+        <text name="eq_pop_ex_sprint" text="SPRINT!"/>
+        <text name="eq_pop_ex_sprintOver" text="Sprint over"/>
+        <text name="eq_pop_ex_blown" text="Blowing Hard!"/>
+        <text name="eq_pop_ex_spent" text="Exhausted!"/>
+        <text name="eq_pop_ex_fresh" text="Ready to gallop"/>
+        <text name="eq_help_gallop_title" text="Galloping"/>
+        <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
+        <text name="eq_help_gallop_2" text="If the bar reaches the red Blowing Hard section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
+        <text name="eq_help_gallop_3" text="Tap W continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Blowing Hard line, for one last push to the finish, but a Sprint that ends there leaves your horse exhausted and it recovers very slowly until it is back under the line."/>
+        <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends in Blowing Hard. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. Pushing raises it, faster near the top. Recovering in the middle third of the bar lets your horse get its breath back and keeps most of the multiplier, while the top and bottom thirds lose it quickly, and a horse that never gets its breath back gains much more slowly. Blowing Hard drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_ex_hint_sprint" text="Continually tap W to sprint"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
+        <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
+        <text name="eq_ex_hint_canterOne" text="S: canter"/>
+        <text name="eq_ex_hint_canterDouble" text="Double tap S: canter"/>
+        <text name="eq_ex_careful" text="Careful"/>
+        <text name="eq_ex_overExerted" text="Over exerted"/>
         <text name="eq_train_tiredness" text="Exertion"/>
-        <text name="eq_train_tired_fresh" text="Fresh"/>
-        <text name="eq_train_tired_warm" text="Warming up"/>
-        <text name="eq_train_tired_zone" text="In the zone"/>
-        <text name="eq_train_tired_blown" text="Blowing hard"/>
-        <text name="eq_train_sprint_fresh" text="Fresh: gallop now"/>
-        <text name="eq_train_sprint_tiring" text="Tiring: rest soon"/>
-        <text name="eq_train_sprint_stale" text="Too tired to gallop: rest"/>
-        <text name="eq_train_sprint_on" text="SPRINT! Tap W"/>
-        <text name="eq_train_sprint_limit" text="On the limit"/>
-        <text name="eq_train_sprint_ready" text="Sprint ready: press W"/>
-        <text name="eq_train_sprint_warm" text="Warmed up: keep galloping for Sprint"/>
-        <text name="eq_train_sprint_rest" text="Rest below 10% to warm up again"/>
-        <text name="eq_train_sprint_count" text="Warm-up gallops %d/%d"/>
-        <text name="eq_pop_sprintCount" text="Warm-up gallop %d/%d"/>
-        <text name="eq_pop_sprint_warm" text="Warmed up!"/>
-        <text name="eq_pop_sprint_ready" text="Sprint! (W)"/>
-        <text name="eq_pop_sprint_go" text="SPRINT!"/>
-        <text name="eq_pop_sprint_over" text="Sprint over"/>
-        <text name="eq_train_tempo" text="Tempo x%d"/>
-        <text name="eq_train_tempo_blown" text="Blowing! %d s"/>
-        <text name="eq_train_tempo_slow" text="Back to a canter!"/>
-        <text name="eq_train_tempo_none" text="Canter for 8 s without jumping or galloping to start"/>
-        <text name="eq_train_stamina_entry" text="Steady canter: stamina in %d s"/>
-        <text name="eq_pop_tempo" text="Tempo x%d!"/>
-        <text name="eq_pop_tempoLost" text="Tempo lost"/>
-        <text name="eq_pop_staminaOn" text="Stamina: get ready to change gaits!"/>
-        <text name="eq_pop_beat_perfect" text="Perfect!"/>
-        <text name="eq_pop_beat_hit" text="Good!"/>
-        <text name="eq_pop_beat_off" text="Too early"/>
-        <text name="eq_beat_gallop" text="Gallop! (W)"/>
-        <text name="eq_beat_canter" text="Canter! (S)"/>
-        <text name="eq_beat_ready_gallop" text="Get ready to gallop..."/>
-        <text name="eq_beat_ready_canter" text="Get ready to canter..."/>
-        <text name="eq_train_stamina_rest" text="Rest (walk or stand) until exertion is under %d%%"/>
-        <text name="eq_train_stamina_again" text="Canter to start again"/>
-        <text name="eq_train_run" text="Run: %d s"/>
+        <text name="eq_train_titlePlain" text="Training"/>
+        <text name="eq_train_lastSprint" text="Last Sprint x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Sprint to train Speed"/>
+        <text name="eq_train_view_stamina" text="Stamina"/>
+        <text name="eq_train_view_speed" text="Speed"/>
+        <text name="eq_train_view_condensed" text="Condensed"/>
+        <text name="eq_help_stamina_title" text="Training: Stamina"/>
+        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina multiplier, up to x5. Pushing raises it, and the closer you get to Blowing Hard the faster it climbs. Recovering lowers it: quickly from the top third of the bar, slowly in the middle third, quickly again in the bottom third."/>
+        <text name="eq_help_stamina_2" text="So push close to the line, ease off into the middle of the bar and let your horse get its breath back there for a while, then push again. Bouncing between Push and Recover near the top tires your horse without raising the multiplier, and Blowing Hard drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_help_speed_title" text="Training: Speed"/>
+        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap W continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
+        <text name="eq_help_speed_2" text="A Sprint that ends in Blowing Hard is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
+        <text name="eq_train_speedMult" text="Speed x%.1f"/>
+        <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
+        <text name="eq_train_staminaStopped" text="no training"/>
+        <text name="eq_ex_blowingHard" text="Blowing Hard"/>
+        <text name="eq_pop_speedBank" text="Speed x%.1f!"/>
         <text name="eq_train_quality_fast" text="training fast"/>
         <text name="eq_train_quality_steady" text="training"/>
         <text name="eq_train_quality_slow" text="training slowly"/>
@@ -269,10 +322,8 @@
         <text name="eq_ui_months" text="%d month(s)"/>
         <text name="eq_ui_perMonth" text="%s a month"/>
         <text name="eq_ui_retire" text="Retire"/>
-        <text name="eq_ui_unretire" text="Back to competition"/>
-        <text name="eq_ui_retireConfirm" text="Retire %s from competition? It won't be able to enter events. You can bring it back later."/>
-        <text name="eq_ui_retireConfirmInjured" text="Retire %s from competition? Its injury treatment will cost %d%% less, but it won't be able to enter events. You can bring it back later, at the full fee."/>
-        <text name="eq_ui_unretireConfirm" text="Bring %s back into competition? Any injury treatment goes back to the full fee."/>
+        <text name="eq_ui_retireConfirm" text="Retire %s from competition? It won't be able to enter events again. This is permanent and can't be undone."/>
+        <text name="eq_ui_retireConfirmInjured" text="Retire %s from competition? Its injury treatment will cost %d%% less, but it won't be able to enter events again. This is permanent and can't be undone."/>
         <text name="eq_ui_dayTreatmentConfirm" text="Treat %s for %s? It takes %s and costs %s."/>
         <text name="eq_risk_low" text="Low"/>
         <text name="eq_risk_minor" text="Minor"/>

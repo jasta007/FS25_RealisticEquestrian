@@ -49,13 +49,18 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
-  and the Stamina, Speed, Agility and Temperament views, and **H** for help.
-  - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
-  - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
+- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
+  a view per stat and Condensed (just the bar), and **H** for help.
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
+    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+    Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
-- An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
+    Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
+    arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
+- The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
+- **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
+  to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
@@ -121,6 +126,7 @@ uses its genetics, health and fitness.
   one-day $400 fix or a month of rest; a chip fracture is two months of surgery at $12,000 a
   month or a year off. Injuries never spread, and an injured horse can't be sold until it heals.
 - **Retire** on that page (or `eqRetire`) cuts an injured horse's treatment fee by 60%.
+  Retirement is permanent.
 - Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
   (colic), more after a long trip. A sick horse can't be entered until it is better.
 - With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
@@ -158,14 +164,18 @@ For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.m
 - [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
   (`FS25_RealisticLivestockRM`). Without it the mod stays switched off.
 
+**Strongly recommended**
+
+- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
+  (`FS25_RidingHall`): a riding hall and show jumps you can buy and place anywhere. Clearing
+  them trains more agility than jumping fences or bales.
+
 **Recommended, not required**
 
 These add horse buildings that speed up training. The mod works fine without them.
 
 - [Rudolf Hoermann Equestrian Pack](https://www.farming-simulator.com/mod.php?mod_id=309997&title=fs2025)
   (`FS25_horsePack`): riding hall, outdoor training area and L barn
-- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
-  (`FS25_RidingHall`): riding hall and sellable show jumps
 - [Riding Stable](https://www.farming-simulator.com/mod.php?mod_id=320241&title=fs2025)
   (`FS25_RidingStable`): a full riding centre
 
@@ -184,6 +194,9 @@ These add horse buildings that speed up training. The mod works fine without the
 To update, replace the zip with the new one. Your horses' stats are kept in your savegame.
 
 ## Getting started
+
+Welcome popups walk you through the basics the first time you meet a horse and open each tab;
+**Help popups: Show again** on the Equestrian settings tab replays them.
 
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
@@ -264,7 +277,8 @@ Testing commands, for checking the mod works rather than for play:
 | --- | --- |
 | `eqForceInjury on\|off` | Every horse that starts an event is injured, even with injuries off. Not saved |
 | `eqDirt <horse> <0-100>` | Sets a horse's dirt (0 = spotless; Cleanliness is 100 minus dirt). 10 or less at the day's end counts as groomed |
-| `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload |
+| `eqRiding <horse> [0-100]` | Sets a horse's riding bar (0 when left out, a fresh bar for the day). Training stops at 100 |
+| `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload. Also shows the change since the horse joined your farm |
 
 ## A note on AI
 
