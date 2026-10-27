@@ -58,6 +58,9 @@ uses its genetics, health and fitness.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
     Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
     arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
+- **Show jumping courses (new):** press **Ctrl+J** while riding, ride through your show jumps in
+  order (they lose their collision while recording), then Ctrl+J again to save. The saved line and
+  fence numbers show when you ride near it. A timed round over it comes next.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
@@ -269,6 +272,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqEvents`, `eqEnter`, `eqResults` | Lists, enters and shows results of events, as the Competitions tab does |
 | `eqRatings [horse]` | Ratings in each discipline, experience, favourite event and career |
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
+| `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
 
 Testing commands, for checking the mod works rather than for play:

@@ -16,6 +16,7 @@ dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/training/EqDressage.lua")
+dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
 dofile("scripts/core/EqI18N.lua")
@@ -1190,6 +1191,55 @@ check("experience survives a save", math.abs(EqExperience.get(loaded, "eventing"
     and math.abs(EqExperience.get(loaded, "dressage") - EqExperience.get(saved, "dressage")) < 1e-9)
 check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((function()
     local x = memoryXML(); EqHorseRecord.new("DE 1 8"):saveToXMLFile(x, "h"); return x end)(), "h").experience == nil)
+
+-- Show jumping courses recorded by riding through the jumps (EqCourse).
+;(function()
+    local rec = EqCourse.newRecording(0, 0, 0)
+    -- A straight: points every POINT_SPACING[1] metres after the first.
+    for z = 0.5, 40, 0.5 do EqCourse.recordStep(rec, 0, 0, z) end
+    check("a straight drops few points", #rec.points >= 4 and #rec.points <= 7, tostring(#rec.points))
+    local straight = #rec.points
+    -- A tight circle (radius 4 m) drops far more per metre.
+    for i = 1, 60 do
+        local a = i / 60 * math.pi * 2
+        EqCourse.recordStep(rec, 4 - 4 * math.cos(a), 0, 40 + 4 * math.sin(a))
+    end
+    check("a tight turn drops many points", #rec.points - straight >= 12, tostring(#rec.points - straight))
+    check("course length follows the path", rec.length > 60 and rec.length < 70, string.format("%.1f", rec.length))
+
+    check("crossing a jump between its ends passes it", EqCourse.passSide(0, 1, 0.2, -0.5, -2, 2) == 1)
+    check("crossing the other way is the other side", EqCourse.passSide(1, -1, 1, 0.5, -2, 2) == -1)
+    check("going round the end of a jump is no pass", EqCourse.passSide(4, 1, 4, -1, -2, 2) == nil)
+    check("staying on one side is no pass", EqCourse.passSide(0, 1, 0, 0.2, -2, 2) == nil)
+    check("a jump far away in one frame is no pass", EqCourse.passSide(0, 5, 0, -5, -2, 2) == nil)
+
+    local jumpA, jumpB = { x = 10, z = 10, ry = 0 }, { x = 30, z = 10, ry = 1.57 }
+    check("first fence is number 1", EqCourse.addJump(rec, jumpA, 1, 1000) == 1)
+    check("wobbling back over it counts once", EqCourse.addJump(rec, jumpA, -1, 2000) == nil)
+    check("too few fences are not saved", select(2, EqCourse.finish(rec, "Course 1")) == "jumps")
+    check("second fence is number 2", EqCourse.addJump(rec, jumpB, 1, 3000) == 2)
+    check("the same fence later in the course counts again", EqCourse.addJump(rec, jumpA, 1, 20000) == 3)
+    EqCourse.reset()
+    local course = EqCourse.finish(rec, EqCourse.nextName())
+    check("a course with fences is saved", course ~= nil and #course.jumps == 3 and course.name == "Course 1")
+    EqCourse.add(course)
+    check("names don't repeat", EqCourse.nextName() == "Course 2")
+    check("nearest finds a course close by", EqCourse.nearest(1, 20, 10) == course)
+    check("nearest ignores a course far away", EqCourse.nearest(500, 500, 40) == nil)
+    local line = EqCourse.smooth(course.points)
+    check("the drawn line runs through the ends", #line > #course.points
+        and math.abs(line[1].z - course.points[1].z) < 1e-6 and math.abs(line[#line].z - course.points[#course.points].z) < 1e-6)
+
+    local store = memoryXML()
+    EqCourse.saveToXMLFile(store, "c")
+    EqCourse.loadFromXMLFile(store, "c")
+    local back = EqCourse.list[1]
+    check("a course survives a save", #EqCourse.list == 1 and back.name == "Course 1" and #back.jumps == 3
+        and #back.points == #course.points and math.abs(back.length - course.length) < 1 and back.jumps[2].side == 1
+        and math.abs(back.jumps[2].ry - 1.57) < 0.01)
+    EqCourse.loadFromXMLFile(nil, "c")
+    check("a new game has no courses", #EqCourse.list == 0)
+end)()
 
 -- Peak form: the month's best minigame session per stat, never stacked over days.
 ;(function()

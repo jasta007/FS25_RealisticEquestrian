@@ -188,6 +188,22 @@ asked for to markers within 12 m:
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
+### Show jumping courses
+
+Show jumps (Riding Hall 2k26's, or any "jumps" facility placeable) are linked into a course by
+riding it once. Ctrl+J while riding starts a recording: every show jump on the map loses its
+collision, so you ride straight through them in the order you want. A jump counts when the horse
+crosses its line between its ends (with 0.75 m to spare); the same jump can come up again later in
+the course, but not twice in a row within 4 seconds. Ctrl+J again saves the course ("Course 1",
+"Course 2"...) if it has at least 2 fences; getting off throws the recording away. Collision comes
+back either way.
+
+The path is kept as points, like AutoDrive's recorder: one every 10 m on a straight, closer as the
+horse turns (5, 3, 1.5 and 0.75 m from 2, 5, 10 and 20 degrees). Within 40 m of a saved course its
+line is drawn smoothed on the ground with the fence numbers over the jumps. Courses are saved in
+rlEquestrian.xml; a jump moved after recording is no longer found at its place. `eqCourses` lists
+them and `eqCourses delete <number>` removes one. Recording works in single player for now.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);

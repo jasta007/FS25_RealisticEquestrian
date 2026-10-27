@@ -256,7 +256,7 @@ end
 
 
 --- Show a short burst of text in the middle of the screen.
---- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank or an EXERTION_POPS key
+--- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank, courseFence or an EXERTION_POPS key
 --- @param mult number|nil the combo multiplier for jump and routine, the speed multiplier for speedBank
 function EqTrainingHud.pop(kind, mult)
     local text, color, big
@@ -278,6 +278,9 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineTest" then
         text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
+    elseif kind == "courseFence" then
+        -- Recording a show jumping course: the jump just ridden through (EqCourseHooks).
+        text, color, big = string.format(g_i18n:getText("eq_pop_courseFence"), mult), EqTrainingHud.COLOR.white, 2
     elseif kind == "routineStart" then
         text, color, big = g_i18n:getText("eq_pop_routineStart"), EqTrainingHud.COLOR.white, 1
     else
