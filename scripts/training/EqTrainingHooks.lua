@@ -6,9 +6,11 @@
       per horse. Vehicle functions are copied into each vehicle type when types are registered,
       so these two are patched at source time, before that happens; the hook bodies stay idle
       until EqMain is active. Both run on the server only, which is where riding is counted.
-    - Rideable.updateRiding also steps the tiredness meter and the focused stamina and speed work
-      (EqTraining.step), at a halt too; a fitter horse tires more slowly.
-    - Rideable.onDraw shows the training panel while riding (EqTrainingHud): the exertion meter
+    - Rideable.updateRiding also steps the exertion system (EqExertion), at a halt too, and keeps
+      the base game's gait in line with it: a blown horse can't gallop, and slowing from a
+      gallop to a canter takes what EqExertion.allowGait says. The forward and back keys
+      (Rideable.actionEventAccelerate and actionEventBrake) pick the gallop's pace.
+    - Rideable.onDraw shows the training panel while riding (EqTrainingHud): the exertion bar
       and a line per stat for today's training; the farm's facility the horse is
       inside (EqFacilityHooks) and the boost its feed gives (EqFeedHooks) in the help panel. The
       training view key (Y, Rideable.onRegisterActionEvents) switches to a focused view for one
@@ -27,6 +29,7 @@ EqTrainingHooks.sheets = {}
 local Log = EqLog
 
 local gaitNames = nil
+local gaitTypes = nil
 
 
 --- @param cluster table|nil RLRM Animal being ridden
@@ -48,8 +51,25 @@ local function getGaitNames()
             [types.GALLOP] = "gallop",
         }
         if types.BACKWARDS ~= nil then gaitNames[types.BACKWARDS] = "reverse" end
+        gaitTypes = {}
+        for value, name in pairs(gaitNames) do gaitTypes[name] = value end
     end
     return gaitNames
+end
+
+
+--- @param spec table spec_rideable
+--- @return string|nil the gait the rider has asked for (not "halt" when it stands still)
+local function inputGait(spec)
+    return getGaitNames()[spec.inputValues.currentGait]
+end
+
+
+--- @param spec table spec_rideable
+--- @param name string canter or gallop
+local function setInputGait(spec, name)
+    getGaitNames()
+    if gaitTypes[name] ~= nil then spec.inputValues.currentGait = gaitTypes[name] end
 end
 
 
@@ -304,14 +324,13 @@ end
 --- @return boolean true when the routine runs: it only asks for moves where the rider sees them
 local function routineShown()
     local view = EqTrainingHooks.getView()
-    return view == "freestyle" or view == "temperament"
+    return view == "freestyle" or view == "temperament" or view == "condensed"
 end
 
 
 -- A jump (and the stumble after landing) can knock the gait or speed down for a moment. A
--- rider sometimes has to jump to keep the pace, so stamina and speed training (and the jump
--- combo clock) carry on at the
--- gait from before take-off until this long after landing.
+-- rider sometimes has to jump to keep the pace, so exertion (and the jump combo clock) carry on
+-- at the gait from before take-off until this long after landing.
 EqTrainingHooks.JUMP_PACE_HOLD_MS = 1500
 
 local PACE_GAITS = { trot = true, canter = true, gallop = true }
@@ -319,7 +338,7 @@ local PACE_GAITS = { trot = true, canter = true, gallop = true }
 --- @param spec table
 --- @param gait string the gait this frame
 --- @param now number g_time
---- @return string gait for stamina and speed training
+--- @return string gait for exertion and the jump combo
 local function paceGait(spec, gait, now)
     local held = spec.eqJumpGait
     if held == nil or not PACE_GAITS[held] then return gait end
@@ -355,7 +374,7 @@ EqTrainingHooks.AIR_TURN_SHARE = 1.6
 --- @param spec table spec_rideable
 --- @param gait string
 --- @param record table|nil the ridden horse's EqHorseRecord
---- @param sheet table the horse's training sheet (exertion and Sprint)
+--- @param sheet table the horse's training sheet (its exertion sets the gallop's pace)
 local function tuneRiding(spec, gait, record, sheet)
     local trained = record ~= nil and record.trained or {}
     local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
@@ -380,14 +399,14 @@ local function tuneRiding(spec, gait, record, sheet)
             spec.eqBaseTopSpeeds, spec.topSpeeds = spec.topSpeeds, {}
             for key, value in pairs(spec.eqBaseTopSpeeds) do spec.topSpeeds[key] = value end
         end
-        -- Forward gaits only: backing up stays at the base game's pace. Sprint runs the gallop
-        -- SPRINT_SPEED_SHARE faster.
-        local sprinting = EqTraining.isSprinting(sheet)
+        -- Forward gaits only: backing up stays at the base game's pace. The gallop's pace
+        -- (Recovering, Pushing, Sprinting) sets its share of the gallop's speed.
+        local pace = EqExertion.speedShare(sheet.exertion)
         local gallop = Rideable.GAITTYPES ~= nil and Rideable.GAITTYPES.GALLOP or nil
         for key, value in pairs(spec.eqBaseTopSpeeds) do
             if type(value) == "number" then
-                local sprint = sprinting and key == gallop and EqTraining.SPRINT_SPEED_SHARE or 1
-                spec.topSpeeds[key] = value > 0 and value * handling.speed * sprint or value
+                local share = key == gallop and pace or 1
+                spec.topSpeeds[key] = value > 0 and value * handling.speed * share or value
             end
         end
     end
@@ -407,13 +426,16 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
 
-    local gait = getGaitNames()[spec.inputValues.currentGait]
-    if gait == nil or math.abs(spec.currentSpeed or 0) < 0.05 then gait = "halt" end
-
     local id = getRiddenId(spec)
     if id == nil then return end
     local record = EqRegistry.getById(id)
     local sheet = EqTrainingHooks.getSheet(id)
+    -- First undo a gait change the exertion system doesn't allow (the base game may have made
+    -- it this frame), so the gait below is the one the horse keeps.
+    EqTrainingHooks.keepGait(spec, sheet.exertion)
+
+    local gait = getGaitNames()[spec.inputValues.currentGait]
+    if gait == nil or math.abs(spec.currentSpeed or 0) < 0.05 then gait = "halt" end
     -- Not while airborne, so the lift a jump started with stays put.
     if spec.eqJump == nil then tuneRiding(spec, gait, record, sheet) end
     -- In the air: an extra pull down (see GRAVITY_SHARE) and snappier turning (AIR_TURN_SHARE).
@@ -428,37 +450,36 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     spec.eqAirborne = airborne
 
     local now = g_time or 0
-    if sheet.clock ~= nil and now - sheet.clock > 1000 then EqTraining.rest(sheet, now - sheet.clock) end
+    local stamina = record ~= nil and record.trained.stamina or nil
+    if sheet.clock ~= nil and now - sheet.clock > 1000 then EqTraining.rest(sheet, now - sheet.clock, stamina) end
     sheet.clock = now
 
     local worn = isTired(spec.cluster)
-    local stamina = record ~= nil and record.trained.stamina or nil
     local pace = paceGait(spec, gait, now)
-    EqTraining.step(sheet, pace, dt, worn, stamina)
+    local ex = sheet.exertion
+    local wasGalloping = EqExertion.isGalloping(ex)
+    local event = EqExertion.step(ex, pace, dt, stamina, record ~= nil and record.trained.speed or nil)
+    if event ~= nil then EqTrainingHooks.onExertionEvent(event, ex) end
+    if not wasGalloping and EqExertion.isGalloping(ex) then Log:info("Exertion: galloping, pushing (exertion %.0f%%)", ex.value) end
+    -- Stamina and speed train from how well the gallop is ridden.
+    local speedMult, speedGain = EqTraining.speedStep(sheet, dt, worn)
+    if speedMult ~= nil then
+        local last = ex.lastSprint or {}
+        Log:info("Speed: Sprint banked at x%.1f (ended at %.0f%%%s), +%.3f effort", speedMult, last.value or 0,
+            last.over and ", Blowing Hard" or "", speedGain)
+        if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
+    end
+    EqTraining.staminaStep(sheet, dt, worn)
+    -- Blown or exhausted: down to a canter now, not next frame.
+    EqTrainingHooks.keepGait(spec, ex)
     spec.eqLastGait = gait
-    -- Beats run in stamina mode, in the Stamina and Freestyle views.
-    local view = EqTrainingHooks.getView()
-    if view == "stamina" or view == "freestyle" then
-        EqTraining.beatStep(sheet, pace, dt, math.random)
-    else
-        sheet.beat.pos = nil
-    end
-    -- Losing the tempo, warm-ups, Sprint ready and over and a routine starting show in the panel only.
-    local sprintEvent = EqTraining.sprintStep(sheet, pace, dt, record ~= nil and record.trained.speed or nil)
-    if sprintEvent ~= nil then Log:info("Sprint: %s (exertion %.0f%%)", sprintEvent, sheet.tiredness) end
-    -- Without a forward key hook, Sprint starts by itself after SPRINT_AUTO_MS ready.
-    if sheet.sprint.ready and not EqTrainingHooks.sprintKeyHooked
-        and sheet.sprint.readyMs >= EqTraining.SPRINT_READY_MS + EqTrainingHooks.SPRINT_AUTO_MS then
-        EqTrainingHooks.startSprint(sheet)
-    end
 
     local wasJumping = spec.eqJump ~= nil
     trackJump(vehicle, spec, sheet, worn)
     if wasJumping and spec.eqJump == nil then spec.eqJumpHoldUntil = now + EqTrainingHooks.JUMP_PACE_HOLD_MS end
 
     -- The base game stops a horse that runs into something and counts its haltTimer down; we
-    -- cut that stop short. A crash costs jump combo time and breaks a routine, but not a
-    -- stamina run.
+    -- cut that stop short. A crash costs jump combo time and breaks a routine.
     local halted = (spec.haltTimer or 0) > 0
     if halted and not spec.eqHalted then
         local was = spec.haltTimer
@@ -475,10 +496,6 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
     local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
     if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
-    local wasMode = sheet.mode
-    if EqTraining.modeStep(sheet, pace, dt) == "stamina" then EqTrainingHud.pop("staminaOn") end
-    if sheet.mode ~= wasMode then Log:info("Training mode: %s -> %s", tostring(wasMode), tostring(sheet.mode)) end
-    EqTrainingHud.mode = sheet.mode
     if routineShown() then
         local event = EqTraining.routineStep(sheet, (gait == "canter" or gait == "gallop") and "fast" or gait,
             steerInput(spec), dt, worn, math.random)
@@ -525,44 +542,38 @@ local function logRideableFields(spec)
 end
 
 
--- The beat cue shows this many exertion points before the marker reaches the horse's exertion.
-EqTrainingHooks.BEAT_CUE_LEAD = 40
-
--- Sprint starts with the forward key (W) once ready. If no forward key function could be
--- hooked, it starts by itself this long after it is ready.
-EqTrainingHooks.SPRINT_AUTO_MS = 1500
-EqTrainingHooks.sprintKeyHooked = false
-
---- @param sheet table
-function EqTrainingHooks.startSprint(sheet)
-    if EqTraining.startSprint(sheet) then
-        EqTrainingHud.pop("sprint_go")
-        Log:info("Sprint: started (exertion %.0f%%)", sheet.tiredness)
+--- The base game's gait, kept in line with the exertion system: down to a canter while the
+--- horse is blown or exhausted, and back to the gait it had when a change isn't allowed (a gallop
+--- that drops to a canter without a double tap, say). Called every frame and after every press.
+--- @param spec table spec_rideable
+--- @param ex table EqExertion state
+function EqTrainingHooks.keepGait(spec, ex)
+    local now = inputGait(spec)
+    local last = spec.eqInputGait
+    spec.eqInputGait = now
+    if now == nil then return end
+    local forced = EqExertion.forcedGait(ex)
+    if forced ~= nil and now == "gallop" then
+        setInputGait(spec, forced)
+        spec.eqInputGait = forced
+        return
+    end
+    if last ~= nil and last ~= now and not EqExertion.allowGait(ex, last, now) then
+        setInputGait(spec, last)
+        spec.eqInputGait = last
+        Log:info("Gait: kept at %s (asked for %s, exertion %.0f%%, %s)", last, now, ex.value, tostring(ex.mode or ex.lock))
     end
 end
 
 
---- Appended to the base game's forward key (accelerate) action: W while Sprint is ready starts it.
---- @param vehicle table
---- @param inputValue number
-function EqTrainingHooks.onForwardInput(vehicle, inputValue)
-    local spec = vehicle.spec_rideable
-    if spec == nil then return end
-    if not EqTrainingHooks.loggedForward then
-        EqTrainingHooks.loggedForward = true
-        Log:info("Sprint key: forward input %s", tostring(inputValue))
+--- Popups and log lines for what the exertion system did.
+--- @param event string from EqExertion.step or EqExertion.press
+--- @param ex table
+function EqTrainingHooks.onExertionEvent(event, ex)
+    Log:info("Exertion: %s (exertion %.0f%%)", event, ex.value)
+    if event == "blown" or event == "spent" or event == "sprint" or event == "fresh" or event == "sprintOver" then
+        EqTrainingHud.pop("ex_" .. event)
     end
-    if (inputValue or 0) <= 0 then return end
-    EqTrainingHooks.onGaitKey(vehicle, "forward", "forward action")
-end
-
-
---- Appended to the base game's back key (brake) action.
---- @param vehicle table
---- @param inputValue number
-function EqTrainingHooks.onBackInput(vehicle, inputValue)
-    if (inputValue or 0) <= 0 then return end
-    EqTrainingHooks.onGaitKey(vehicle, "back", "back action")
 end
 
 
@@ -571,7 +582,7 @@ end
 EqTrainingHooks.KEY_REPEAT_MS = 80
 EqTrainingHooks.keyAt = {}
 
---- Forward (W) or back (S): Sprint and the stamina beat. Every other key is none of their business.
+--- Forward (W) or back (S): the gallop's pace. Every other key is none of its business.
 --- @param vehicle table
 --- @param key string "forward" or "back"
 --- @param source string what saw it, for the log
@@ -580,43 +591,48 @@ function EqTrainingHooks.onGaitKey(vehicle, key, source)
     local last = EqTrainingHooks.keyAt[key]
     EqTrainingHooks.keyAt[key] = now
     if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
-    if key == "forward" then EqTrainingHooks.trySprint(vehicle, source) end
     local spec = vehicle.spec_rideable
     local id = spec ~= nil and getRiddenId(spec) or nil
-    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+    local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
     if sheet == nil then return end
-    local beat, tempo = EqTraining.beatPress(sheet, key, math.random)
-    if beat ~= nil then Log:info("Beat: %s (%s, exertion %.0f%%, tempo x%d)", beat, source, sheet.tiredness, sheet.tempo.mult) end
-    if tempo == "up" then EqTrainingHud.pop("tempo", sheet.tempo.mult)
-    elseif beat == "hit" or beat == "perfect" then EqTrainingHud.pop("beat_" .. beat) end
-end
-
-
---- Start Sprint for the ridden horse if it is ready; log why not while it is warmed up.
---- @param vehicle table
---- @param source string what asked, for the log
-function EqTrainingHooks.trySprint(vehicle, source)
-    local spec = vehicle.spec_rideable
-    local id = spec ~= nil and getRiddenId(spec) or nil
-    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
-    if sheet == nil then return end
-    if EqTraining.isSprinting(sheet) then
-        EqTraining.spurSprint(sheet)
-    elseif sheet.sprint.ready then
-        Log:info("Sprint key: %s", source)
-        EqTrainingHooks.startSprint(sheet)
-    elseif sheet.sprint.warm and (g_time or 0) > (EqTrainingHooks.sprintLogAt or 0) then
-        EqTrainingHooks.sprintLogAt = (g_time or 0) + 2000
-        Log:info("Sprint key: %s while warmed up but not ready (gait %s, ready %.1f s)", source,
-            tostring(spec.eqLastGait), sheet.sprint.readyMs / 1000)
+    local event = EqExertion.press(sheet.exertion, key)
+    if event == "tap" then return end
+    if event ~= nil then
+        Log:info("Gallop key: %s from %s", key, source)
+        EqTrainingHooks.onExertionEvent(event, sheet.exertion)
     end
 end
 
 
---- The W key itself, polled while drawing, in case the forward action doesn't reach us at a
---- gallop. Only a fresh press counts.
+-- Wrapped round the base game's forward and back key actions: the press picks the gallop's pace
+-- first (beforeGaitAction), then the base game changes gait, and keepGait undoes a change that
+-- isn't allowed (afterGaitAction).
+
 --- @param vehicle table
-local function pollSprintKey(vehicle)
+--- @param key string "forward" or "back"
+--- @param inputValue number|nil
+function EqTrainingHooks.beforeGaitAction(vehicle, key, inputValue)
+    local spec = vehicle.spec_rideable
+    if spec == nil or spec.inputValues == nil then return end
+    if (inputValue or 0) > 0 then EqTrainingHooks.onGaitKey(vehicle, key, key .. " action") end
+    spec.eqInputGait = inputGait(spec)
+end
+
+
+--- @param vehicle table
+function EqTrainingHooks.afterGaitAction(vehicle)
+    local spec = vehicle.spec_rideable
+    if spec == nil or spec.inputValues == nil then return end
+    local id = getRiddenId(spec)
+    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+    if sheet ~= nil then EqTrainingHooks.keepGait(spec, sheet.exertion) end
+end
+
+
+--- The W and S keys themselves, polled while drawing, in case the actions don't reach us at
+--- every gait. Only a fresh press counts.
+--- @param vehicle table
+local function pollGaitKeys(vehicle)
     if Input == nil or Input.isKeyPressed == nil or Input.KEY_w == nil then return end
     local down = Input.isKeyPressed(Input.KEY_w) == true
     if down and not EqTrainingHooks.wWasDown then EqTrainingHooks.onGaitKey(vehicle, "forward", "W key") end
@@ -629,8 +645,8 @@ end
 
 
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
---- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but a
---- stamina run or sprint keeps its pace through it (paceGait).
+--- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but the
+--- gallop keeps its pace through it (paceGait).
 function EqTrainingHooks.onJump(vehicle)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
@@ -646,7 +662,6 @@ function EqTrainingHooks.onJump(vehicle)
         judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0)
     end
     EqTraining.addJump(sheet)
-    EqTraining.modeJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
@@ -655,10 +670,17 @@ end
 
 
 -- Riding HUD views, switched with the training view key (Y). Freestyle shows every stat; a
--- focused view shows the one stat it trains. Help popups (H, and the first time a view
--- opens) explain each view in HELP_PAGES pages.
-EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament" }
-EqTrainingHooks.HELP_PAGES = { freestyle = 4, stamina = 2, speed = 2, agility = 2, temperament = 2, form = 2 }
+-- focused view shows only its own stat's training (Stamina and Speed the gallop's multipliers
+-- and keys, Agility the jump combo, Temperament the routine); Condensed shows just the bar, with
+-- news in a small line above it (James, 2026-10-27: the panel was too busy). Every view trains
+-- everything. Help popups (H, and the first time a view opens) explain each view in HELP_PAGES pages.
+EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament", "condensed" }
+-- "gallop" pops up the first time the horse gallops, and on H while it gallops.
+EqTrainingHooks.HELP_PAGES = { freestyle = 4, stamina = 2, speed = 2, agility = 2, temperament = 2, gallop = 4, form = 2 }
+-- Views that show the gallop's training rows and keys under the bar.
+EqTrainingHooks.GALLOP_VIEWS = { freestyle = true, stamina = true, speed = true }
+-- The stats the player's riding trains.
+EqTrainingHooks.TRAINED_STATS = { "stamina", "speed", "agility", "temperament" }
 EqTrainingHooks.viewIndex = 1
 
 
@@ -681,9 +703,21 @@ function EqTrainingHooks.showHelp(view)
     local title = g_i18n:getText("eq_help_" .. view .. "_title")
     for i = 1, EqTrainingHooks.HELP_PAGES[view] or 0 do
         table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)),
-            color = EqTrainingHud.STAT_COLOR[view] })
+            color = EqTrainingHud.STAT_COLOR[view] or EqTrainingHud.COLOR.white })
     end
     EqTrainingHud.showHelp(pages, nil, view)
+end
+
+
+--- The help key was pressed: the gallop's help while galloping, else the view's.
+--- @param vehicle table
+function EqTrainingHooks.onHelpAction(vehicle)
+    local spec = vehicle.spec_rideable
+    local id = spec ~= nil and getRiddenId(spec) or nil
+    local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
+    local ex = sheet ~= nil and sheet.exertion or nil
+    local galloping = ex ~= nil and (EqExertion.isGalloping(ex) or ex.lock ~= nil)
+    EqTrainingHooks.showHelp(galloping and "gallop" or EqTrainingHooks.getView())
 end
 
 
@@ -715,7 +749,7 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
     end
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
-            function() EqTrainingHooks.showHelp(EqTrainingHooks.getView()) end, false, true, false, true, nil)
+            function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)
         if helpId ~= nil then
             g_inputBinding:setActionEventText(helpId, g_i18n:getText("input_EQ_TRAINING_HELP"))
             g_inputBinding:setActionEventTextPriority(helpId, GS_PRIO_LOW)
@@ -727,71 +761,213 @@ end
 local COLOR = EqTrainingHud.COLOR
 -- Status colours never borrow a stat's colour (EqTrainingHud.STAT_COLOR): white is good,
 -- yellow a warning, red bad, grey idle.
-local BAND_COLOR = {
-    tired_fresh = COLOR.white, tired_warm = COLOR.white, tired_zone = COLOR.white, tired_blown = COLOR.red,
-    sprint_fresh = COLOR.white, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
-}
 local STAT_COLOR = EqTrainingHud.STAT_COLOR
-local QUALITY_COLOR = { fast = COLOR.white, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.white }
 
 
---- A panel row for a stat: "Stamina 45%" and how it is training now, in that state's colour.
---- @param stat string
---- @param effort table from EqTraining.playerEffort
---- @param sheet table
---- @return table row
-local function statRow(stat, effort, sheet)
-    local cap = EqTraining.EFFORT_CAP[stat]
-    local band
-    if effort[stat] >= cap then
-        band = "full"
-    elseif sheet.quality[stat] ~= nil then
-        band = EqTraining.qualityBand(sheet.quality[stat])
+-- The exertion bar's sections (James's drawing, 2026-10-27), each { from, to, colour when dim,
+-- colour when lit }. A gait's section lights while the horse is in it; the gallop's lights in
+-- every pace; Blowing Hard lights while the horse is blown or exhausted.
+local BAR = EqExertion.BAR
+EqTrainingHooks.BAR_SECTIONS = {
+    halt = { BAR.reverse, BAR.halt, { 0.6, 0.8, 0.98 }, { 0.45, 0.75, 1 } },
+    walk = { BAR.halt, BAR.walk, { 0.92, 0.98, 0.92 }, { 1, 1, 1 } },
+    trot = { BAR.walk, BAR.trot, { 0.75, 1, 0.78 }, { 0.6, 1, 0.65 } },
+    canter = { BAR.trot, BAR.canter, { 0.6, 0.98, 0.66 }, { 0, 1, 0 } },
+    gallop = { BAR.canter, BAR.line, { 0.91, 0.95, 0.6 }, { 0.97, 0.97, 0.25 } },
+    blown = { BAR.line, BAR.finish, { 0.8, 0.62, 0.62 }, { 0.85, 0.18, 0.18 } },
+}
+EqTrainingHooks.BAR_ORDER = { "halt", "walk", "trot", "canter", "gallop", "blown" }
+EqTrainingHooks.BAR_DIM_ALPHA = 0.4
+-- A Sprint lights the gallop amber.
+EqTrainingHooks.BAR_SPRINT = { 1, 0.72, 0.2 }
+-- Above this exertion while Pushing, the words turn yellow and the middle of the screen says to ease off.
+EqTrainingHooks.EASE_OFF_FROM = 85
+-- How quickly the marker slides to where it should be, in milliseconds.
+EqTrainingHooks.MARKER_EASE_MS = 120
+
+--- The exertion rows: what the horse is doing and how hard it's working, then the bar.
+--- @param spec table spec_rideable
+--- @param sheet table the horse's training sheet
+--- @param view string
+--- @return table rows
+local function exertionRows(spec, sheet, view)
+    local ex = sheet.exertion
+    local gait = spec.eqLastGait or "halt"
+    local state = EqExertion.state(ex, gait)
+    -- Standing lights nothing; backing up lights the first section.
+    local lit = { [gait == "reverse" and "halt" or gait] = gait ~= "halt" }
+    if ex.mode ~= nil then lit.gallop = true end
+    if ex.lock ~= nil or ex.value > EqExertion.LINE then lit.blown = true end
+
+    local color = COLOR.grey
+    if ex.lock ~= nil or ex.value > EqExertion.LINE then
+        color = COLOR.red
+    elseif ex.mode == "push" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+        color = COLOR.yellow
+    elseif ex.mode ~= nil then
+        color = COLOR.white
     end
-    return {
-        left = string.format("%s %d%%", g_i18n:getText("eq_stat_" .. stat), math.floor(effort[stat] / cap * 100 + 0.5)),
-        leftColor = STAT_COLOR[stat],
-        right = band ~= nil and g_i18n:getText("eq_train_quality_" .. band) or nil,
-        rightColor = band ~= nil and QUALITY_COLOR[band] or nil,
-    }
+    local words = { left = g_i18n:getText("eq_ex_" .. state), leftColor = color,
+        right = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(ex.value + 0.5)), rightColor = color }
+
+    local sections = {}
+    for _, name in ipairs(EqTrainingHooks.BAR_ORDER) do
+        local section = EqTrainingHooks.BAR_SECTIONS[name]
+        local rgb = lit[name] and section[4] or section[3]
+        if lit[name] and name == "gallop" and ex.mode == "sprint" then rgb = EqTrainingHooks.BAR_SPRINT end
+        table.insert(sections, { section[1], section[2], { rgb[1], rgb[2], rgb[3], lit[name] and 1 or EqTrainingHooks.BAR_DIM_ALPHA } })
+    end
+
+    -- The marker slides rather than jumps between the gait lines.
+    local target = EqExertion.marker(ex, gait)
+    local now = g_time or 0
+    local step = math.min(1, math.max(0, now - (spec.eqMarkerAt or now)) / EqTrainingHooks.MARKER_EASE_MS)
+    spec.eqMarker = spec.eqMarker == nil and target or spec.eqMarker + (target - spec.eqMarker) * step
+    spec.eqMarkerAt = now
+
+    local third = (BAR.line - BAR.canter) / 3
+    local bar = { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
+        ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker }
+    if view == "condensed" then return { bar } end
+    local rows = { words, bar }
+    if EqTrainingHooks.GALLOP_VIEWS[view] then
+        for _, row in ipairs(EqTrainingHooks.gallopTrainingRows(sheet, view)) do table.insert(rows, row) end
+        local hint = EqTrainingHooks.exertionHints(ex)
+        if hint ~= nil then table.insert(rows, hint) end
+    end
+    return rows
 end
 
 
---- The top of the riding panel: the horse's role, if it has one, and its skills, so the rider
---- remembers what this horse is being trained for.
+--- What the gallop is training, in one row: the stamina multiplier, and in a Sprint the speed
+--- multiplier and what it will bank (EqTraining.staminaStep and speedStep). The Stamina and Speed
+--- views always show their own, with the last Sprint's multiplier between Sprints.
+--- @param sheet table
+--- @param view string
+--- @return table rows
+function EqTrainingHooks.gallopTrainingRows(sheet, view)
+    local ex, st = sheet.exertion, sheet.stamina
+    local row = {}
+    if view ~= "speed" and (view == "stamina" or ex.mode ~= nil or ex.lock ~= nil or st.mult > 1) then
+        local training = ex.mode == "push" or ex.mode == "recover" or ex.mode == "sprint"
+        row.left = ex.lock ~= nil and string.format("%s: %s", g_i18n:getText("eq_stat_stamina"), g_i18n:getText("eq_train_staminaStopped"))
+            or string.format(g_i18n:getText("eq_train_staminaMult"), st.mult)
+        row.leftColor = ex.lock ~= nil and COLOR.red or training and STAT_COLOR.stamina or COLOR.grey
+    end
+    if ex.mode == "sprint" then
+        local over = ex.value >= EqExertion.LINE
+        local mult = EqTraining.sprintMultiplier(ex.value)
+        local gain = EqTraining.SPEED_RATE * sheet.sprint.ms / 1000 * mult / EqTraining.EFFORT_CAP.speed * 100
+        local color = over and COLOR.red or STAT_COLOR.speed
+        local text = string.format(g_i18n:getText("eq_train_speedMult"), mult)
+        if view == "speed" then
+            row.left, row.leftColor = text, color
+            row.right, row.rightColor = over and g_i18n:getText("eq_ex_blowingHard") or string.format("+%d%%", math.floor(gain + 0.5)), color
+        else
+            row.right, row.rightColor = string.format("%s +%d%%", text, math.floor(gain + 0.5)), color
+        end
+    elseif view == "speed" then
+        local last = sheet.sprint.last
+        row.left = last ~= nil and string.format(g_i18n:getText("eq_train_lastSprint"), last) or g_i18n:getText("eq_train_sprintToTrain")
+        row.leftColor = last ~= nil and STAT_COLOR.speed or COLOR.grey
+    end
+    if row.left == nil and row.right == nil then return {} end
+    return { row }
+end
+
+
+--- What the rider can press now, in one row under the bar: Sprint on the left, canter on the right.
+--- @param ex table
+--- @return table|nil row
+function EqTrainingHooks.exertionHints(ex)
+    local left, leftColor, right = nil, COLOR.grey, nil
+    if ex.mode == "push" or ex.mode == "recover" then
+        if EqExertion.canSprint(ex) then
+            left, leftColor = "eq_ex_hint_sprint", COLOR.white
+        else
+            left = "eq_ex_hint_sprintRest"
+        end
+    elseif ex.lock ~= nil then
+        left = "eq_ex_hint_locked"
+    end
+    if ex.mode ~= nil then
+        right = EqExertion.canterOnOneTap(ex) and "eq_ex_hint_canterOne" or "eq_ex_hint_canterDouble"
+    end
+    if left == nil and right == nil then return nil end
+    return { left = left ~= nil and g_i18n:getText(left) or nil, leftColor = leftColor,
+        right = right ~= nil and g_i18n:getText(right) or nil, rightColor = COLOR.grey }
+end
+
+
+--- The middle of the screen: keep tapping during a Sprint, ease off near the line.
+--- @param ex table
+-- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
+EqTrainingHooks.SPRINT_INTRO_MS = 1250
+-- A Sprint climbs fast, so its warnings come early (James): a yellow "Careful" from
+-- SPRINT_CAREFUL_FROM, red and flashing from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
+EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
+EqTrainingHooks.SPRINT_DANGER_FROM = 75
+
+--- @param small boolean the Condensed view: a smaller bar, no words
+local function exertionPrompt(ex, small)
+    local label, labelColor, pulse = nil, COLOR.yellow, false
+    if ex.value > EqExertion.LINE then
+        label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
+    elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_DANGER_FROM then
+        label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
+    elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_CAREFUL_FROM then
+        label = g_i18n:getText("eq_ex_careful")
+    elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+        label, pulse = g_i18n:getText("eq_ex_careful"), true
+    end
+    local warned = label ~= nil
+    if small then label = nil end
+    if ex.mode == "sprint" then
+        local left = 1 - (ex.clock - ex.tapAt) / EqExertion.SPRINT_KEEP_MS
+        local color = warned and labelColor or COLOR.white
+        if ex.sprintMs < EqTrainingHooks.SPRINT_INTRO_MS and not small then
+            EqTrainingHud.drawPrompt(g_i18n:getText("eq_ex_prompt_tap"), left, color)
+        else
+            EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse, small)
+        end
+    elseif ex.mode == "push" and warned then
+        EqTrainingHud.drawCentreBar((EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM),
+            labelColor, label, labelColor, pulse, small)
+    end
+end
+
+
+--- The top of the riding panel: the horse's skills, two to a line, "Stamina: 34 (+1)" with any
+--- Peak form this month in brackets, so the rider remembers what this horse is being trained for
+--- (its role is in the title). James (2026-10-27): no separate Peak form or effort lines.
 --- @param cluster table|nil RLRM Animal being ridden
 --- @return table rows
 function EqTrainingHooks.horseRows(cluster)
     local rows = {}
     local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
     if record == nil then return rows end
-    if EqRole.isShown(record) then
-        table.insert(rows, { left = g_i18n:getText("eq_role_title"), leftColor = COLOR.grey,
-            right = EqRole.text(EqRole.shown(record)), rightColor = EqRole.COLOR })
-    end
-    local segments = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        table.insert(segments, { string.format("%s %d", g_i18n:getText("eq_stat_short_" .. stat),
-            math.floor(record.trained[stat] or 0)), STAT_COLOR[stat] })
-    end
-    table.insert(rows, { segments = segments })
-
-    -- Peak form for this month's events, from the player's best session so far.
-    local form = EqCompetitionManager.formFor(record)
-    if EqTraining.hasForm(form) then
-        local formSegments = { { g_i18n:getText("eq_form_title"), COLOR.grey } }
-        for _, stat in ipairs(EqConstants.STAT_KEYS) do
-            if (form[stat] or 0) >= 0.5 then
-                table.insert(formSegments, { string.format("%s +%d", g_i18n:getText("eq_stat_short_" .. stat),
-                    math.floor(form[stat] + 0.5)), STAT_COLOR[stat] })
-            end
-        end
-        table.insert(rows, { segments = formSegments })
-        -- The first peak form explains itself once.
-        if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
+    -- Peak form comes with the Peak form feature (EqCompetitionManager.formFor), when it is there.
+    local form = nil
+    if EqCompetitionManager ~= nil and EqCompetitionManager.formFor ~= nil and EqTraining.hasForm ~= nil then
+        form = EqCompetitionManager.formFor(record)
+        if not EqTraining.hasForm(form) then
+            form = nil
+        elseif EqTrainingHooks.HELP_PAGES.form ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
+            -- The first peak form explains itself once.
             EqTrainingHud.markSeen("form")
             EqTrainingHooks.showHelp("form")
         end
+    end
+    local segments
+    for i, stat in ipairs(EqConstants.STAT_KEYS) do
+        if i % 2 == 1 then
+            segments = {}
+            table.insert(rows, { segments = segments })
+        end
+        local boost = form ~= nil and math.floor((form[stat] or 0) + 0.5) or 0
+        table.insert(segments, { g_i18n:getText("eq_stat_" .. stat) .. ":", STAT_COLOR[stat], at = i % 2 == 1 and 0 or 0.5, tight = true })
+        table.insert(segments, { tostring(math.floor(record.trained[stat] or 0)), STAT_COLOR[stat], bold = true, tight = boost > 0 })
+        if boost > 0 then table.insert(segments, { string.format("(+%d)", boost), STAT_COLOR[stat] }) end
     end
     return rows
 end
@@ -802,11 +978,12 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
     if spec == nil then return end
-    pollSprintKey(vehicle)
+    pollGaitKeys(vehicle)
 
     local view = EqTrainingHooks.getView()
     -- A first ride starts with the welcome; the view's help follows once it closes.
-    if not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide() and not EqTrainingHud.hasSeen(view) then
+    if EqTrainingHooks.HELP_PAGES[view] ~= nil and not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide()
+        and not EqTrainingHud.hasSeen(view) then
         EqTrainingHooks.showHelp(view)
     end
     EqTrainingHud.drawHelp()
@@ -815,105 +992,16 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
     if sheet == nil then return end
 
-    local effort = EqTraining.playerEffort(sheet)
-    local rows = EqTrainingHooks.horseRows(spec.cluster)
+    local condensed = view == "condensed"
+    local rows = condensed and {} or EqTrainingHooks.horseRows(spec.cluster)
     EqTrainingHud.view = view
-    -- Exertion only matters to stamina and speed. Freestyle always shows it (so the panel
-    -- doesn't jump about), but only stamina mode turns it red when the horse is blowing hard.
-    if view == "freestyle" or view == "stamina" or view == "speed" then
-        local band = view == "speed" and ("sprint_" .. EqTraining.sprintBand(sheet.tiredness))
-            or ("tired_" .. EqTraining.tirednessBand(sheet.tiredness))
-        local bandColor = BAND_COLOR[band]
-        local exertion = { left = string.format("%s %d%%", g_i18n:getText("eq_train_tiredness"), math.floor(sheet.tiredness + 0.5)) }
-        -- Exertion is mostly the Speed view's business; elsewhere the tempo row counts down
-        -- blowing hard.
-        if EqTraining.isSprinting(sheet) then
-            exertion.right, exertion.rightColor = g_i18n:getText("eq_train_sprint_limit"), STAT_COLOR.speed
-        elseif view == "speed" then
-            exertion.right, exertion.rightColor = g_i18n:getText("eq_train_" .. band), bandColor
-        end
-        table.insert(rows, exertion)
-        local bar = { bar = sheet.tiredness / 100, color = EqTraining.isSprinting(sheet) and STAT_COLOR.speed
-            or (view ~= "speed" and sheet.mode ~= "stamina" and COLOR.white) or bandColor }
-        if view ~= "speed" then
-            bar.marks = { EqTraining.ZONE_HIGH / 100 }
-            -- The beat marker, with its hit window either side.
-            local beat = sheet.beat
-            if beat.pos ~= nil then
-                local window = EqTraining.beatPressure(sheet)
-                -- The cue is in the middle of the screen: the gait to switch to, its bar filling
-                -- as the (hidden) marker comes up to the horse's exertion, green once it's time.
-                -- The exertion bar only turns green while it's time.
-                local gap = beat.pos - sheet.tiredness
-                if gap <= window then
-                    local target = beat.target or "gallop"
-                    local now = math.abs(gap) <= window
-                    local share = now and 1 or 1 - EqStats.clamp(-gap / EqTrainingHooks.BEAT_CUE_LEAD, 0, 1)
-                    if now then bar.color = STAT_COLOR.stamina end
-                    if share > 0 then
-                        EqTrainingHud.drawPrompt(g_i18n:getText(now and ("eq_beat_" .. target) or ("eq_beat_ready_" .. target)),
-                            share, now and STAT_COLOR.stamina or COLOR.grey)
-                    end
-                end
-            elseif view == "stamina" and sheet.staminaRest and sheet.mode == nil and sheet.entryMs == 0
-                and sheet.routine.request == nil then
-                -- A run is over: rest until a new canter won't blow the horse, then canter again.
-                if sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
-                    EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_train_stamina_rest"), EqTraining.STAMINA_ENTRY_MAX),
-                        EqStats.clamp(1 - (sheet.tiredness - EqTraining.STAMINA_ENTRY_MAX) / (100 - EqTraining.STAMINA_ENTRY_MAX), 0, 1), COLOR.yellow)
-                else
-                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_train_stamina_again"), 1, STAT_COLOR.stamina)
-                end
-            end
-        end
-        table.insert(rows, bar)
-    end
-    if view == "freestyle" or view == "stamina" then
-        local tempo = sheet.tempo
-        if tempo.ms > 0 then
-            local color = STAT_COLOR.stamina
-            local tempoRow = { left = string.format(g_i18n:getText("eq_train_tempo"), tempo.mult), leftColor = color }
-            if tempo.blownMs > 0 then
-                tempoRow.right = string.format(g_i18n:getText("eq_train_tempo_blown"),
-                    math.ceil((EqTraining.TEMPO_BLOWN_MS - tempo.blownMs) / 1000))
-                tempoRow.rightColor = COLOR.red
-            elseif tempo.slowMs > 0 then
-                tempoRow.right = g_i18n:getText("eq_train_tempo_slow")
-                tempoRow.rightColor = COLOR.yellow
-            end
-            table.insert(rows, tempoRow)
-            local toNext = tempo.mult >= EqTraining.TEMPO_MAX and 1 or tempo.hits / EqTraining.TEMPO_HITS
-            table.insert(rows, { bar = toNext, color = color })
-        elseif sheet.entryMs > 0 then
-            -- On the way into stamina mode: quiet in Freestyle, plain in the Stamina view.
-            local focused = view == "stamina"
-            table.insert(rows, { left = string.format(g_i18n:getText("eq_train_stamina_entry"),
-                math.ceil((EqTraining.STAMINA_ENTRY_MS - sheet.entryMs) / 1000)), leftColor = focused and STAT_COLOR.stamina or COLOR.grey })
-            if focused then table.insert(rows, { bar = sheet.entryMs / EqTraining.STAMINA_ENTRY_MS, color = STAT_COLOR.stamina }) end
-        elseif view == "stamina" and sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX then
-            table.insert(rows, { left = string.format(g_i18n:getText("eq_train_stamina_rest"), EqTraining.STAMINA_ENTRY_MAX), leftColor = COLOR.yellow })
-        elseif view == "stamina" then
-            table.insert(rows, { left = g_i18n:getText("eq_train_tempo_none"), leftColor = COLOR.grey })
-        end
-    end
-    if view == "freestyle" or view == "speed" then
-        local sprint = sheet.sprint
-        if EqTraining.isSprinting(sheet) then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_on"), leftColor = STAT_COLOR.speed,
-                right = string.format("%d s", math.ceil(sprint.activeMs / 1000)) })
-            table.insert(rows, { bar = sprint.activeMs / EqTraining.SPRINT_MAX_MS, color = STAT_COLOR.speed })
-        elseif sprint.ready then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_ready"), leftColor = STAT_COLOR.speed })
-            -- Only the Speed view puts Sprint in the middle of the screen.
-            if view == "speed" then EqTrainingHud.drawPrompt(g_i18n:getText("eq_pop_sprint_ready"), 1, STAT_COLOR.speed) end
-        elseif sprint.warm then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_warm"), leftColor = STAT_COLOR.speed })
-        elseif sprint.rest then
-            table.insert(rows, { left = g_i18n:getText("eq_train_sprint_rest"), leftColor = COLOR.grey })
-        else
-            table.insert(rows, { left = string.format(g_i18n:getText("eq_train_sprint_count"), sprint.count, EqTraining.SPRINTS_TO_WARM),
-                leftColor = STAT_COLOR.speed })
-        end
+    -- The exertion bar shows in every view: it says what gait the horse is in, too.
+    local ex = sheet.exertion
+    for _, row in ipairs(exertionRows(spec, sheet, view)) do table.insert(rows, row) end
+    exertionPrompt(ex, condensed)
+    if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
+        EqTrainingHud.markSeen("gallop")
+        EqTrainingHooks.showHelp("gallop")
     end
 
     local combo = sheet.combo
@@ -921,7 +1009,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         local mult = math.min(combo.count, EqTraining.COMBO_MAX)
         local color = STAT_COLOR.agility
         table.insert(rows, { left = string.format(g_i18n:getText("eq_train_combo"), mult), leftColor = color,
-            right = string.format("%d s", math.ceil(combo.timer)) })
+            right = view == "agility" and string.format("%d s", math.ceil(combo.timer)) or nil })
         table.insert(rows, { bar = combo.timer / EqTraining.COMBO_SECONDS, color = color })
     elseif view == "agility" then
         table.insert(rows, { left = g_i18n:getText("eq_train_combo_none"), leftColor = COLOR.grey })
@@ -929,7 +1017,13 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local routine = sheet.routine
     if routineShown() then
-        if routine.active then
+        if routine.active and condensed then
+            -- Condensed: no panel rows, but the rider still needs the commands.
+            if routine.request ~= nil then
+                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request),
+                    math.max(0, routine.deadline - routine.clock) / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), STAT_COLOR.temperament)
+            end
+        elseif routine.active then
             local color = STAT_COLOR.temperament
             local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
             if routine.request ~= nil then
@@ -953,30 +1047,21 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     EqTrainingHud.drawPops()
 
-    if view == "freestyle" then
-        for _, stat in ipairs(EqConstants.STAT_KEYS) do table.insert(rows, statRow(stat, effort, sheet)) end
-    else
-        table.insert(rows, statRow(view, effort, sheet))
-        local others = {}
-        for _, stat in ipairs(EqConstants.STAT_KEYS) do
-            if stat ~= view then
-                table.insert(others, string.format("%s %d%%", g_i18n:getText("eq_stat_short_" .. stat),
-                    math.floor(effort[stat] / EqTraining.EFFORT_CAP[stat] * 100 + 0.5)))
-            end
-        end
-        table.insert(rows, { left = table.concat(others, "  "), leftColor = COLOR.grey })
-    end
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
-    -- The ridden horse's name heads the panel: "Applejack: Freestyle view".
-    local cluster = spec.cluster
-    local horseName = cluster ~= nil and cluster.getName ~= nil and cluster:getName() or nil
-    local viewName = g_i18n:getText("eq_train_view_" .. view)
-    local title = (horseName ~= nil and horseName ~= "")
-        and string.format(g_i18n:getText("eq_train_titleHorse"), horseName, viewName)
-        or string.format(g_i18n:getText("eq_train_title"), viewName)
-    EqTrainingHud.drawPanel(title, rows,
-        STAT_COLOR[view])
+    -- The ridden horse's name and role head the panel, the view on the right: Condensed has no title.
+    local title, titleRight = nil, nil
+    if not condensed then
+        local cluster = spec.cluster
+        local horseName = cluster ~= nil and cluster.getName ~= nil and cluster:getName() or nil
+        title = (horseName ~= nil and horseName ~= "") and horseName or g_i18n:getText("eq_train_titlePlain")
+        local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
+        if record ~= nil and EqRole.isShown(record) then
+            title = string.format("%s (%s)", title, EqRole.text(EqRole.shown(record)))
+        end
+        titleRight = g_i18n:getText("eq_train_view_" .. view)
+    end
+    EqTrainingHud.drawPanel(title, rows, STAT_COLOR[view], titleRight)
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
     local inside = {}
@@ -1058,29 +1143,20 @@ function EqTrainingHooks.installRideable(guarded)
         guarded("jump tracker", function() EqTrainingHooks.onJump(self) end)
     end)
 
-    -- The forward key: we don't know its function's name in FS25 yet, so log Rideable's action
-    -- functions once and hook the ones that look like it.
-    local names = {}
-    for name, fn in pairs(Rideable) do
-        if type(fn) == "function" and type(name) == "string" and name:find("^actionEvent") then table.insert(names, name) end
-    end
-    table.sort(names)
-    Log:info("Rideable action functions: %s", table.concat(names, ", "))
-    for _, name in ipairs(names) do
-        local lower = name:lower()
-        if lower:find("accel") or lower:find("forward") or lower:find("gaitup") then
-            Rideable[name] = Utils.appendedFunction(Rideable[name], function(self, actionName, inputValue)
-                if not EqMain.isActive then return end
-                guarded("sprint key", function() EqTrainingHooks.onForwardInput(self, inputValue) end)
+    -- The forward and back keys pick the gallop's pace, and a change the exertion system doesn't
+    -- allow is undone (EqTrainingHooks.gaitAction).
+    for name, key in pairs({ actionEventAccelerate = "forward", actionEventBrake = "back" }) do
+        if type(Rideable[name]) == "function" then
+            Rideable[name] = Utils.overwrittenFunction(Rideable[name], function(self, superFunc, actionName, inputValue, ...)
+                if not EqMain.isActive then return superFunc(self, actionName, inputValue, ...) end
+                guarded("gallop key", function() EqTrainingHooks.beforeGaitAction(self, key, inputValue) end)
+                local result = superFunc(self, actionName, inputValue, ...)
+                guarded("gallop key", function() EqTrainingHooks.afterGaitAction(self) end)
+                return result
             end)
-            EqTrainingHooks.sprintKeyHooked = true
-            Log:info("Sprint key: hooked Rideable.%s", name)
-        elseif lower:find("brake") or lower:find("gaitdown") then
-            Rideable[name] = Utils.appendedFunction(Rideable[name], function(self, actionName, inputValue)
-                if not EqMain.isActive then return end
-                guarded("back key", function() EqTrainingHooks.onBackInput(self, inputValue) end)
-            end)
-            Log:info("Back key: hooked Rideable.%s", name)
+            Log:info("Gallop keys: wrapped Rideable.%s", name)
+        else
+            Log:warning("EqTrainingHooks: Rideable.%s missing; the gallop keys only work through the key poll", name)
         end
     end
 

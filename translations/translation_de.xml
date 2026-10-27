@@ -15,12 +15,8 @@
         <text name="eq_stat_short_speed" text="Sch"/>
         <text name="eq_stat_short_agility" text="Wen"/>
         <text name="eq_stat_short_temperament" text="Tem"/>
-        <text name="eq_train_title" text="Training: Ansicht %s"/>
-        <text name="eq_train_titleHorse" text="%s: Ansicht %s"/>
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
-        <text name="eq_train_view_stamina" text="Ausdauer"/>
-        <text name="eq_train_view_speed" text="Schnelligkeit"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_temperament_2" text="Sie verlieren den Multiplikator, wenn Sie in Galopp oder Renngalopp beschleunigen, gegen ein Hindernis stoßen oder die nächste Bewegung verpassen. Ab x4 müssen Sie außerdem Ihr Tempo zwischen den Anweisungen halten. Leckerlis wie Karotten im Futter sind ebenfalls eine gute Möglichkeit, das Temperament zu verbessern."/>
         <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt Ihr Pferd Gehorsam. Beginnen Sie eine Lektion, indem Sie in den Schritt wechseln und das Tempo kurz halten. Das Trainingsprogramm verlangt dann eine neue Bewegung, die Sie halten sollen. Führen Sie sie innerhalb weniger Sekunden aus, damit die Kombo weiterläuft."/>
@@ -44,13 +40,7 @@
         <text name="eq_train_combo" text="Sprung-Kombo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
-        <text name="eq_help_speed_2" text="Halten Sie an oder reiten Sie Schritt, um sich vor dem nächsten Renngalopp zu erholen. Ein Pferd mit hoher Ausdauer erholt sich noch schneller, und energiereicher Mais ist eine gute Möglichkeit, das Schnelligkeitstraining zu verbessern."/>
-        <text name="eq_help_speed_1" text="Schnelligkeit steigt durch Sprints, einen besonderen Schub über den normalen Renngalopp hinaus. Um Ihren Sprint aufzuladen, brauchen Sie mindestens zwei normale Renngaloppe, solange das Pferd frisch ist (Anstrengung unter 25 %). Wenn Sprint! erscheint, bleiben Sie im Renngalopp und tippen W, damit der Sprint so lange wie möglich hält. Im Sprint läuft Ihr Pferd 25 % schneller und trainiert Schnelligkeit dreimal so schnell."/>
-        <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
-        <text name="eq_help_stamina_2" text="Überfordern Sie Ihr Pferd über 85 % Anstrengung, gerät es außer Atem und lernt langsamer, und nach 5 Sekunden bricht Ihr Tempo ab. Mehr als ein paar Sekunden langsamer als Galopp beenden es ebenfalls. Je höher Ihr Tempo, desto knapper das Timing. Finden Sie zurück in den Rhythmus, indem Sie sich ausruhen und dann wieder ruhig galoppieren."/>
-        <text name="eq_help_stamina_1" text="Um das Ausdauertraining zu starten, galoppieren Sie 8 Sekunden ruhig, ohne Sprung oder Renngalopp, und wechseln dann auf Anweisung die Gangart, um Ihr Tempo bis zu einem x5-Bonus zu steigern. Jeder gut getimte Wechsel hält die Anstrengung Ihres Pferdes hoch, ohne es zu überfordern, für das meiste Ausdauertraining. Ausdauer verlängert außerdem, wie lange Ihr Pferd jeden Tag trainieren kann."/>
-        <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_freestyle_2" text="Ausdauertraining beginnt, wenn Sie einen ruhigen Galopp halten; danach halten Sie Ihr Pferd im Rhythmus, indem Sie zwischen Galopp und Renngalopp wechseln. Schnelligkeit braucht zuerst Aufwärmgaloppe und Pausen, dann einen harten Sprint im Renngalopp. Wendigkeit trainieren Sie, indem Sie über Hindernisse springen und so eine Kombo aufbauen, und Temperament beginnt, wenn Sie kurz im Schritt bleiben und dann Anweisungen folgen, um seine Kombo aufzubauen."/>
+        <text name="eq_help_freestyle_2" text="Wendigkeit trainieren Sie, indem Sie über Hindernisse springen und so eine Kombo aufbauen, und Temperament beginnt, wenn Sie kurz im Schritt bleiben und dann Anweisungen folgen, um seine Kombo aufzubauen. Ausdauer und Schnelligkeit trainieren Sie, indem Sie den Renngalopp gut reiten: Drücken Sie im Renngalopp H, um zu erfahren, wie."/>
         <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
         <text name="eq_form_title" text="Topform"/>
         <text name="eq_help_freestyle_4" text="Reiten Sie vor einem Wettbewerb! Jeder Wert, den Sie mit seinem Minispiel trainieren, bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform, bis zu +8 pro Wert. Mehrere Tage addieren sich nicht: Ihre beste Einheit des Monats zählt."/>
@@ -87,44 +77,54 @@
         <text name="eq_help_close" text="Klicken zum Schließen"/>
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshilfe"/>
-        <text name="eq_train_worn" text="Reitbalken voll: Dieses Pferd kann heute nicht mehr trainieren"/>
+        <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
+        <text name="eq_ex_push" text="Antreiben"/>
+        <text name="eq_ex_recover" text="Erholen"/>
+        <text name="eq_ex_sprint" text="SPRINT"/>
+        <text name="eq_ex_blown" text="Außer Atem: nur Galopp"/>
+        <text name="eq_ex_spent" text="Erschöpft: nur Galopp"/>
+        <text name="eq_ex_gallop" text="Renngalopp"/>
+        <text name="eq_ex_canter" text="Galopp"/>
+        <text name="eq_ex_trot" text="Trab"/>
+        <text name="eq_ex_walk" text="Schritt"/>
+        <text name="eq_ex_halt" text="Stillstand"/>
+        <text name="eq_ex_reverse" text="Rückwärts"/>
+        <text name="eq_ex_prompt_tap" text="Weiter W tippen!"/>
+        <text name="eq_pop_ex_sprint" text="SPRINT!"/>
+        <text name="eq_pop_ex_sprintOver" text="Sprint vorbei"/>
+        <text name="eq_pop_ex_blown" text="Außer Atem!"/>
+        <text name="eq_pop_ex_spent" text="Erschöpft!"/>
+        <text name="eq_pop_ex_fresh" text="Bereit zum Renngalopp"/>
+        <text name="eq_help_gallop_title" text="Renngalopp"/>
+        <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Drücken Sie im Galopp W, um mit dem Antreiben zu beginnen: schnell, aber der Anstrengungsbalken füllt sich, und zwar umso schneller, je höher er steht. Drücken Sie S zum Erholen: ein langsamerer Renngalopp, in dem die Anstrengung wieder sinkt, ohne dass Sie den Renngalopp verlassen, schnell im oberen und unteren Drittel des Balkens, langsam im mittleren. Mit W treiben Sie wieder an. Ein fitteres Pferd ermüdet langsamer und erholt sich schneller."/>
+        <text name="eq_help_gallop_2" text="Erreicht der Balken beim Antreiben den roten Bereich Außer Atem, fällt Ihr Pferd in den Galopp zurück und kann erst wieder in den Renngalopp, wenn der Balken leer ist. Um selbst in den Galopp zu wechseln, drücken Sie beim Erholen mit leerem Balken einmal S oder jederzeit zweimal schnell S."/>
+        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp ständig W, um zu sprinten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie Außer Atem hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd erschöpft und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
+        <text name="eq_help_gallop_4" text="Training: Ein Sprint trainiert Schnelligkeit, und je höher er den Balken treibt, bevor er endet, desto mehr ist er wert: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor, aber nur x1, wenn er in Außer Atem endet. Antreiben und Erholen trainieren Ausdauer mit dem Ausdauer-Multiplikator, bis zu x5. Antreiben erhöht ihn, oben schneller. Erholen im mittleren Drittel des Balkens lässt Ihr Pferd durchatmen und hält den Multiplikator größtenteils, im oberen und unteren Drittel sinkt er schnell, und ein Pferd, das nie durchatmen kann, legt viel langsamer zu. Außer Atem setzt ihn auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_ex_hint_sprint" text="Für den Sprint ständig W tippen"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: erst ganz erholen"/>
+        <text name="eq_ex_hint_locked" text="Galopp, bis der Balken leer ist"/>
+        <text name="eq_ex_hint_canterOne" text="S: Galopp"/>
+        <text name="eq_ex_hint_canterDouble" text="2x S tippen: Galopp"/>
+        <text name="eq_ex_careful" text="Vorsicht"/>
+        <text name="eq_ex_overExerted" text="Überanstrengt"/>
+        <text name="eq_train_speedMult" text="Schnelligkeit x%.1f"/>
+        <text name="eq_train_staminaMult" text="Ausdauer x%.1f"/>
+        <text name="eq_train_staminaStopped" text="kein Training"/>
+        <text name="eq_ex_blowingHard" text="Außer Atem"/>
+        <text name="eq_pop_speedBank" text="Schnelligkeit x%.1f!"/>
         <text name="eq_train_tiredness" text="Anstrengung"/>
-        <text name="eq_train_tired_fresh" text="Frisch"/>
-        <text name="eq_train_tired_warm" text="Warm geritten"/>
-        <text name="eq_train_tired_zone" text="Im Zielbereich"/>
-        <text name="eq_train_tired_blown" text="Außer Atem"/>
-        <text name="eq_train_sprint_fresh" text="Frisch: jetzt Renngalopp"/>
-        <text name="eq_train_sprint_tiring" text="Ermüdet: bald ausruhen"/>
-        <text name="eq_train_sprint_stale" text="Zu müde für Renngalopp: ausruhen"/>
-        <text name="eq_train_sprint_on" text="SPRINT! W tippen"/>
-        <text name="eq_train_sprint_limit" text="Am Limit"/>
-        <text name="eq_train_sprint_ready" text="Sprint bereit: W drücken"/>
-        <text name="eq_train_sprint_warm" text="Aufgewärmt: weiter Renngalopp für Sprint"/>
-        <text name="eq_train_sprint_rest" text="Unter 10 % erholen, um wieder aufzuwärmen"/>
-        <text name="eq_train_sprint_count" text="Aufwärmgaloppe %d/%d"/>
-        <text name="eq_pop_sprintCount" text="Aufwärmgalopp %d/%d"/>
-        <text name="eq_pop_sprint_warm" text="Aufgewärmt!"/>
-        <text name="eq_pop_sprint_ready" text="Sprint! (W)"/>
-        <text name="eq_pop_sprint_go" text="SPRINT!"/>
-        <text name="eq_pop_sprint_over" text="Sprint vorbei"/>
-        <text name="eq_train_tempo" text="Tempo x%d"/>
-        <text name="eq_train_tempo_blown" text="Außer Atem! %d s"/>
-        <text name="eq_train_tempo_slow" text="Zurück in den Galopp!"/>
-        <text name="eq_train_tempo_none" text="8 s galoppieren, ohne Sprung oder Renngalopp, um zu beginnen"/>
-        <text name="eq_train_stamina_entry" text="Ruhiger Galopp: Ausdauer in %d s"/>
-        <text name="eq_pop_tempo" text="Tempo x%d!"/>
-        <text name="eq_pop_tempoLost" text="Tempo verloren"/>
-        <text name="eq_pop_staminaOn" text="Ausdauer: bereit zum Gangwechsel!"/>
-        <text name="eq_pop_beat_perfect" text="Perfekt!"/>
-        <text name="eq_pop_beat_hit" text="Gut!"/>
-        <text name="eq_pop_beat_off" text="Zu früh"/>
-        <text name="eq_beat_gallop" text="Renngalopp! (W)"/>
-        <text name="eq_beat_canter" text="Galopp! (S)"/>
-        <text name="eq_beat_ready_gallop" text="Bereit machen zum Renngalopp..."/>
-        <text name="eq_beat_ready_canter" text="Bereit machen zum Galopp..."/>
-        <text name="eq_train_stamina_rest" text="Ausruhen (Schritt oder Halt), bis die Anstrengung unter %d%% liegt"/>
-        <text name="eq_train_stamina_again" text="Galoppieren, um neu zu beginnen"/>
-        <text name="eq_train_run" text="Lauf: %d s"/>
+        <text name="eq_train_titlePlain" text="Training"/>
+        <text name="eq_train_lastSprint" text="Letzter Sprint x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Sprinten trainiert Schnelligkeit"/>
+        <text name="eq_train_view_stamina" text="Ausdauer"/>
+        <text name="eq_train_view_speed" text="Schnelligkeit"/>
+        <text name="eq_train_view_condensed" text="Kompakt"/>
+        <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
+        <text name="eq_help_stamina_1" text="Ausdauer trainiert, während Sie im Renngalopp antreiben und erholen, mit dem Ausdauer-Multiplikator, bis zu x5. Antreiben erhöht ihn, und je näher Sie an Außer Atem kommen, desto schneller steigt er. Erholen senkt ihn: schnell im oberen Drittel des Balkens, langsam im mittleren, wieder schnell im unteren."/>
+        <text name="eq_help_stamina_2" text="Treiben Sie also bis nahe an die Linie, erholen Sie sich bis in die Mitte des Balkens und lassen Sie Ihr Pferd dort eine Weile durchatmen, dann treiben Sie wieder an. Ständiges Wechseln zwischen Antreiben und Erholen ganz oben ermüdet Ihr Pferd, ohne den Multiplikator zu erhöhen, und Außer Atem setzt ihn auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
+        <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig W. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
+        <text name="eq_help_speed_2" text="Ein Sprint, der in Außer Atem endet, zählt nur x1, also hören Sie vor der Linie auf zu tippen (oder drücken Sie S). Nach einem Sprint muss sich Ihr Pferd bis zum leeren Balken erholen, bevor es wieder sprinten kann."/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
         <text name="eq_train_quality_slow" text="trainiert langsam"/>

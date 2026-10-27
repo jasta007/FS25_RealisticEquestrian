@@ -49,13 +49,14 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
-  and the Stamina, Speed, Agility and Temperament views, and **H** for help.
-  - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
-  - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
+- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
+  a view per stat and Condensed (just the bar), and **H** for help.
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
+    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+    Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
-- An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
+- The riding bar is the horse's energy for the day.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
