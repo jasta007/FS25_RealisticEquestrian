@@ -25,5 +25,5 @@ logs with knots, branch stubs and leaning sawn ends; inline geometry, one invisi
 prism with Riding Hall 2k26's jump collision filter), the cross country flags (`courseFlags`, a newFence: a white and a red flag post, a thin pole with
 a pennant wrapped round it, and gold height bars for 0.6, 0.9 and 1.2 m that `EqXcFlags` shows only
 in construction mode) and the drop walls (painted planks and peeled posts, a
-half-round log on the lip, triangle side walls; collision on the face and sides only). The shop images are small software renders of the meshes; PNG copies
+half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes; PNG copies
 go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.

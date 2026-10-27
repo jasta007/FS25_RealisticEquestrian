@@ -299,8 +299,9 @@ and bars have small collision boxes so they can be picked to delete. The cross c
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
 Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
 on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
-triangle side walls hide the steep sculpted slope. The terrain is not levelled. Only the face and
-side walls are solid, so the horse drops off the lip.
+triangle side walls hide the steep sculpted slope. A plank deck covers the top, so the bank top
+needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
+rides over the deck and drops off the lip.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

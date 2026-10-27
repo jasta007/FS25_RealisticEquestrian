@@ -73,6 +73,7 @@ POST_W = 0.16           # square posts
 POST_STEP = 1.4         # most space between posts along the face
 CAP_R = 0.15            # the half-round log along the lip
 RAIL_R = 0.07           # the round rail along each wing's top
+DECK_Y = 0.05           # the plank deck's top, over the wall tops (James: hides the bank top)
 PLANK_TILE = (2.0, 1.6) # metres one plank texture covers, along and up (8 boards of 0.2 m)
 
 SIDES = 22              # faces round each log
@@ -579,21 +580,22 @@ def log_pile_half(jump):
 
 def slab(mesh, outline, thickness, plane, uv):
     """A flat slab: outline (a convex polygon, counter-clockwise) in the plane's own (a, b)
-    coordinates, extruded by thickness along its normal. plane(a, b, c) gives a 3D point, c being
-    the offset along the normal; uv(a, b) the texture coordinates of the broad faces."""
+    coordinates, extruded by thickness behind it. plane(a, b, c) gives a 3D point, c being the
+    depth behind the front face (c = -1 is in front, the way the front faces); uv(a, b) the
+    texture coordinates of the broad faces."""
     def at(a, b, c):
         return plane(a, b, c)
     n_front = norm(sub(at(0, 0, -1), at(0, 0, 0)))
     n_back = (-n_front[0], -n_front[1], -n_front[2])
     for c, n in ((0.0, n_front), (thickness, n_back)):
-        ids = [mesh.vertex(at(a, b, -c if c else 0.0), n, uv(a, b)) for a, b in outline]
+        ids = [mesh.vertex(at(a, b, c), n, uv(a, b)) for a, b in outline]
         for k in range(1, len(ids) - 1):
             mesh.tri(ids[0], ids[k], ids[k + 1])
     centre = (sum(a for a, _ in outline) / len(outline), sum(b for _, b in outline) / len(outline))
     for k in range(len(outline)):
         (a0, b0), (a1, b1) = outline[k], outline[(k + 1) % len(outline)]
         p0, p1 = at(a0, b0, 0.0), at(a1, b1, 0.0)
-        q0, q1 = at(a0, b0, -thickness), at(a1, b1, -thickness)
+        q0, q1 = at(a0, b0, thickness), at(a1, b1, thickness)
         edge_mid = at((a0 + a1) / 2, (b0 + b1) / 2, 0.0)
         out = norm(sub(edge_mid, at(centre[0], centre[1], 0.0)))
         length = math.dist(p0, p1)
@@ -651,7 +653,7 @@ def drop_depth(wall):
 
 
 def build_drop_wall(wall):
-    """The plank face, posts, lip cap and wings; and one collision mesh (face and wings)."""
+    """The plank face, deck, posts, lip cap and wings; and one collision mesh (face, deck and wings)."""
     planks, wood, ends, col = Mesh(), Mesh(), Mesh(), Mesh()
     h = wall["drop"]
     half = DROP_WIDTH / 2
@@ -660,7 +662,7 @@ def build_drop_wall(wall):
     depth = drop_depth(wall)
 
     def face_plane(a, b, c):
-        return (a, b, lip + BOARD_T + c)
+        return (a, b, lip + c)
     face = [(-half, bottom), (half, bottom), (half, 0.0), (-half, 0.0)]
     slab(planks, face, BOARD_T, face_plane, lambda a, b: (a / PLANK_TILE[0], -b / PLANK_TILE[1]))
     slab(col, face, BOARD_T + 0.1, face_plane, lambda a, b: (0, 0))
@@ -669,11 +671,17 @@ def build_drop_wall(wall):
     wing = [(0.0, bottom), (depth, -SKIRT * 0.6), (depth, 0.0), (0.0, 0.0)]
     for x, sign in ((-half, -1), (half, 1)):
         def wing_plane(a, b, c, x=x, sign=sign):
-            return (x - sign * (BOARD_T + c), b, lip + a)
+            return (x - sign * c, b, lip + a)
         outline = wing if sign > 0 else list(reversed(wing))
         slab(planks, outline, BOARD_T, wing_plane, lambda a, b: (a / PLANK_TILE[0], -b / PLANK_TILE[1]))
         slab(col, outline, BOARD_T + 0.1, wing_plane, lambda a, b: (0, 0))
-        round_rail(wood, ends, (x, RAIL_R * 0.8, lip + 0.05), (x, RAIL_R * 0.8, lip + depth + 0.15), RAIL_R)
+        round_rail(wood, ends, (x, DECK_Y + RAIL_R * 0.8, lip + 0.05), (x, DECK_Y + RAIL_R * 0.8, lip + depth + 0.15), RAIL_R)
+    # a plank deck over the whole box, boards parallel to the lip, so the bank top needn't be flat
+    def deck_plane(a, b, c):
+        return (a, DECK_Y - c, b)
+    deck = [(-half, lip), (half, lip), (half, lip + depth), (-half, lip + depth)]
+    slab(planks, deck, BOARD_T, deck_plane, lambda a, b: (a / PLANK_TILE[0], b / PLANK_TILE[1]))
+    slab(col, deck, BOARD_T, deck_plane, lambda a, b: (0, 0))
     # posts along the face (in front of the boards), corner posts a little proud
     count = max(2, int(math.ceil(DROP_WIDTH / POST_STEP)) + 1)
     s = POST_W / 2
@@ -683,7 +691,7 @@ def build_drop_wall(wall):
         corner = i in (0, count - 1)
         textured_box(wood, x - s, x + s, bottom, 0.12 if corner else -0.02, lip - POST_W, lip)
     # the half-round log along the lip, flat side down, overhanging the face a little
-    round_rail(wood, ends, (-half + s * 2, 0.0, lip + CAP_R * 0.6), (half - s * 2, 0.0, lip + CAP_R * 0.6), CAP_R, half=True)
+    round_rail(wood, ends, (-half + s * 2, DECK_Y, lip + CAP_R * 0.6), (half - s * 2, DECK_Y, lip + CAP_R * 0.6), CAP_R, half=True)
     return planks, wood, ends, col
 
 
