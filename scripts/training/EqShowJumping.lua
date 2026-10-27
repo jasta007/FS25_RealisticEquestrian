@@ -36,10 +36,11 @@ EqShowJumping.PENDING_MS = 3000
 EqShowJumping.RAIL_FAULTS = 4
 EqShowJumping.REFUSAL_FAULTS = 4
 EqShowJumping.REFUSALS_OUT = 2
--- In a round a fence only counts when the horse goes over it this far inside both flags, so
--- clipping a wing is no clear (James, 2026-10-27). Going through within RUNOUT_MARGIN outside
+-- In a round a fence only counts when the horse goes over it between its flags (not the 0.75 m
+-- spare recording allows), so going over a wing is no clear, while any off-centre jump between
+-- the flags still is (James, 2026-10-27). Going through within RUNOUT_MARGIN outside
 -- the flags without that is a run-out: a refusal.
-EqShowJumping.INSIDE_MARGIN = -0.75
+EqShowJumping.INSIDE_MARGIN = 0
 EqShowJumping.RUNOUT_MARGIN = 2.5
 -- A crash this close to the next fence's line (between its flags) is a refusal; running into
 -- anything else, like the arena wall, is not.

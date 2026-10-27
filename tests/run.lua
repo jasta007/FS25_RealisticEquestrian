@@ -1356,7 +1356,7 @@ end)()
     check("a crash at the next fence is a refusal", EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }) == "refusal"
         and round.faults == 4)
     round.refusals = 0
-    check("going past the end of the next fence is a run-out", EqShowJumping.step(round, { px = 1.6, pz = 39.75, x = 1.6, z = 40.25, dt = 100 }) == "runout"
+    check("going past the end of the next fence is a run-out", EqShowJumping.step(round, { px = 2.3, pz = 39.75, x = 2.3, z = 40.25, dt = 100 }) == "runout"
         and round.faults == 8 and round.next == 1)
     round.faults = 4
     check("running into something else is no refusal", EqShowJumping.step(round, { px = 0, pz = 35, x = 6, z = 35, dt = 100, crashed = true }) == nil

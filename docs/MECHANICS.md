@@ -226,7 +226,7 @@ clock starts as you do. A gold line runs across the next fence between its flags
 | Fault | Penalty |
 | --- | --- |
 | Rail down (knocking or landing on the show jump; a crash into anything else is no fault) | 4 |
-| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts 0.75 m inside both flags) | 4; a second eliminates |
+| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
 | Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
 | Over twice the time allowed, or not starting within 45 s | Eliminated |
