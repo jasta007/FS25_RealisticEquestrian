@@ -58,11 +58,8 @@ uses its genetics, health and fitness.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
     Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
     arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
-- **Show jumping courses (new):** press **Ctrl+J** while riding and ride through your show jumps in
-  order (placed Realistic Equestrian obstacles have no collision while you edit), Ctrl+J again to
-  save and finish (**Ctrl+E** records a cross country course). **Ctrl+K** rewinds to the nearest
-  point, Ctrl+J near a course edits it and **Ctrl+Backspace** deletes it. Then ride a timed round:
-  start line, 3 2 1, the next fence marked in gold, faults and a clock.
+- **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
+  again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
@@ -92,9 +89,8 @@ uses its genetics, health and fitness.
 - Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
-- Cross country flags: a spline fence (white flag, height bar, red flag) that marks any obstacle as a
-  cross country fence. The shop also sells log piles, and drop walls to dress a sculpted bank. All of
-  them can be placed on land you don't own.
+- Cross country flags mark any obstacle as a cross country fence; the shop also sells log piles and
+  drop walls.
 - Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.
@@ -256,7 +252,6 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 ## Planned features
 
 - Rival horses for sale (the named rivals already turn up in the same events)
-- Stats that change how a horse rides: faster horses run faster and agile ones turn quicker
 - Better staff, building on the game's Animal Workers: several hires and different kinds of staff
   (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the
   dealer is overselling a horse
