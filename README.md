@@ -55,6 +55,7 @@ uses its genetics, health and fitness.
   - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
+    Near Riding Hall 2k26 dressage markers, ride between them ("Trot: Marker B") for more.
 - An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever

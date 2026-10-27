@@ -67,6 +67,7 @@ end
 
 function EqTrainingHooks.reset()
     EqTrainingHooks.sheets = {}
+    EqDressageHooks.reset()
 end
 
 
@@ -478,10 +479,16 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if sheet.mode ~= wasMode then Log:info("Training mode: %s -> %s", tostring(wasMode), tostring(sheet.mode)) end
     EqTrainingHud.mode = sheet.mode
     if routineShown() then
-        local event = EqTraining.routineStep(sheet, (gait == "canter" or gait == "gallop") and "fast" or gait,
-            steerInput(spec), dt, worn, math.random)
-        if event == "done" then EqTrainingHud.pop("routine", sheet.routine.mult)
+        -- Near dressage markers the routine rides between them (EqDressage).
+        local okCourse, course = pcall(EqDressageHooks.courseFor, vehicle, spec)
+        local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
+        if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "lost" then EqTrainingHud.pop("routineLost") end
+        if event ~= nil and sheet.routine.kind == "markers" then
+            local task = sheet.routine.task
+            Log:info("Dressage routine: %s x%d, now %s%s", event, sheet.routine.mult, tostring(sheet.routine.request),
+                task ~= nil and task.marker ~= nil and string.format(" %s to %s", task.gait, task.marker.letter) or "")
+        end
     elseif EqTraining.breakRoutine(sheet) then
         EqTrainingHud.pop("routineLost")
     end
@@ -730,6 +737,55 @@ local BAND_COLOR = {
     sprint_fresh = COLOR.white, sprint_tiring = COLOR.yellow, sprint_stale = COLOR.red,
 }
 local STAT_COLOR = EqTrainingHud.STAT_COLOR
+
+
+--- A dressage command as text: "Trot: Marker B", "Stop!", "Turn left on the spot!".
+--- @param task table
+--- @return string
+local function dressageText(task)
+    if task.kind == "go" then
+        return string.format(g_i18n:getText("eq_dressage_go"), g_i18n:getText("eq_dressage_gait_" .. task.gait), task.marker.letter)
+    end
+    return g_i18n:getText("eq_move_" .. EqDressage.requestName(task))
+end
+
+
+--- The routine round dressage markers: its panel rows and the command in the middle.
+--- @param rows table panel rows to add to
+--- @param routine table
+--- @param vehicle table the ridden horse
+local function dressageRows(rows, routine, vehicle)
+    local color = STAT_COLOR.temperament
+    local task = routine.task
+    local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
+    table.insert(rows, row)
+    if task == nil then return end
+    if task.kind == "hold" then
+        row.right, row.rightColor = g_i18n:getText("eq_dressage_stand"), COLOR.grey
+        return
+    end
+    local share = math.max(0, routine.deadline - routine.clock) / (routine.reactMs or EqDressage.REACT_MS)
+    if task.kind == "reverse" and (task.backMs or 0) > 0 then share = 1 - task.backMs / EqDressage.REVERSE_MS end
+    local text = dressageText(task)
+    if task.kind == "go" then
+        row.right, row.rightColor = task.marker.letter, color
+        if vehicle.rootNode ~= nil then
+            local x, _, z = getWorldTranslation(vehicle.rootNode)
+            row.right = string.format("%s  %.0f m", task.marker.letter, math.sqrt((task.marker.x - x) ^ 2 + (task.marker.z - z) ^ 2))
+        end
+    end
+    table.insert(rows, { bar = share, color = color })
+    if routine.preview ~= nil then
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_dressage_next"), dressageText(routine.preview)), leftColor = color })
+    end
+    -- A quick gait change on the way has the middle of the screen while it lasts.
+    if routine.bonus ~= nil then
+        EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_bonus"), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
+            math.max(0, routine.bonus.deadline - routine.clock) / EqDressage.PASS_REACT_MS, color)
+    else
+        EqTrainingHud.drawPrompt(text, share, color)
+    end
+end
 local QUALITY_COLOR = { fast = COLOR.white, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.white }
 
 
@@ -908,7 +964,11 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
 
     local routine = sheet.routine
-    if routineShown() then
+    local onCourse = routineShown() and routine.active and routine.kind == "markers"
+    EqDressageHooks.setTag(onCourse and routine.task ~= nil and routine.task.marker or nil)
+    if onCourse then
+        dressageRows(rows, routine, vehicle)
+    elseif routineShown() then
         if routine.active then
             local color = STAT_COLOR.temperament
             local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
@@ -1070,6 +1130,12 @@ function EqTrainingHooks.installRideable(guarded)
     Rideable.onDraw = Utils.appendedFunction(Rideable.onDraw, function(self, isActiveForInput, isActiveForInputIgnoreSelection)
         if not EqMain.isActive then return end
         guarded("training overlay", function() EqTrainingHooks.onDraw(self, isActiveForInputIgnoreSelection) end)
+    end)
+    -- Dressage markers lose their collision as they are found; the tag comes down once nobody
+    -- rides to it.
+    FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
+        if not EqMain.isActive then return end
+        guarded("dressage markers", EqDressageHooks.update)
     end)
 end
 

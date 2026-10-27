@@ -107,6 +107,22 @@ way to a requested stop is fine). A canter, gallop, jump or a missed request bre
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
 show in the Freestyle and Temperament views.
 
+Without dressage markers nearby, that routine trains at 60% of the rate. Near Riding Hall 2k26's
+letter markers (at least three within 100 m, chained 60 m from each other, not all in a line) the
+routine rides between them instead, at the full rate:
+
+- Most commands are legs, such as "Trot: Marker B": ride to that marker at that gait (walk, trot or
+  canter). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
+  comes from its length and shrinks as the multiplier climbs. The marker is tagged on the map.
+- After 3 seconds to settle, the wrong gait for 1.5 seconds breaks the routine, and so does a gallop,
+  a jump or running out of time. Steering is free.
+- The next command shows about 3 seconds before the marker; reaching it (3 to 4.5 m) is one step up.
+- Passing close to another marker may ask for a quick gait change (2 seconds), worth an extra step.
+  Missing it costs nothing.
+- At a marker the next command can be a stop (then sometimes a turn on the spot, the only turns
+  asked for) or, rarely, backing up for 2.5 seconds, a stop and a new leg.
+- Markers lose their collision, so horses ride through them.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);

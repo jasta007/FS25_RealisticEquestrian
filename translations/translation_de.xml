@@ -38,6 +38,16 @@
         <text name="eq_move_halt" text="Halt!"/>
         <text name="eq_move_trot" text="Trab!"/>
         <text name="eq_move_walk" text="Schritt!"/>
+        <text name="eq_move_spinLeft" text="Auf der Stelle links wenden!"/>
+        <text name="eq_move_spinRight" text="Auf der Stelle rechts wenden!"/>
+        <text name="eq_dressage_go" text="%s: Punkt %s"/>
+        <text name="eq_dressage_gait_walk" text="Schritt"/>
+        <text name="eq_dressage_gait_trot" text="Trab"/>
+        <text name="eq_dressage_gait_canter" text="Galopp"/>
+        <text name="eq_dressage_bonus" text="Schnell, %s!"/>
+        <text name="eq_dressage_next" text="Als Nächstes: %s"/>
+        <text name="eq_dressage_stand" text="Stehen"/>
+        <text name="eq_dressage_marker" text="Punkt %s"/>
         <text name="eq_train_routine_none" text="Schritt reiten, um eine Lektion zu beginnen"/>
         <text name="eq_train_routine" text="Lektion x%d"/>
         <text name="eq_train_combo_none" text="Für eine Kombo einen Sprung meistern"/>

@@ -89,6 +89,9 @@ EqTraining.ROUTINE_DRIFT_MS = 600
 EqTraining.ROUTINE_PACE = { reverse = 1, halt = 2, walk = 3, trot = 4 }
 EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
+-- Near dressage markers the routine is ridden between them (EqDressage). Without a course
+-- (James, 2026-10-27) it falls back to the free routine above, which trains at this share.
+EqTraining.FREE_ROUTINE_SHARE = 0.6
 
 -- Exertion meter (0-100) change per second, by gait. "halt" is standing still. Canter is
 -- worked out in exertionRate: it levels off rather than climbing for ever.
@@ -834,6 +837,7 @@ function EqTraining.breakRoutine(sheet)
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
     routine.shown = nil
     routine.steerMs, routine.driftMs = 0, 0
+    routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
     return was
 end
 
@@ -855,19 +859,34 @@ end
 
 --- One frame of the temperament routine.
 --- @param sheet table
---- @param move string walk, trot, halt, reverse, or fast (canter or gallop)
+--- @param move string walk, trot, halt, reverse, canter, gallop, or fast (canter or gallop)
 --- @param steer string|nil left or right while the rider holds that steering key
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
 --- @param rng function (n) -> 1..n
---- @return string|nil event "start", "request", "done", "lost", or nil
-function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
+--- @param course table|nil { x, z, markers } dressage markers round the horse (EqDressage)
+--- @return string|nil event "start", "request", "done", "bonus", "lost", or nil
+function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     local routine = sheet.routine
     routine.clock = routine.clock + dt
+    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
+
+    -- Round the markers: a canter is one of the gaits asked for.
+    if routine.active and routine.kind == "markers" then
+        if course ~= nil then
+            local event = EqDressage.step(sheet, move, steer, dt, rng, course)
+            if routine.active then EqTraining.routineTrain(sheet, worn, dt, 1) end
+            return event
+        end
+        -- Off the course: carry on with the free routine from here.
+        routine.kind, routine.task, routine.preview, routine.bonus, routine.pending = "free", nil, nil, nil, nil
+        routine.request, routine.current = nil, EqTraining.ROUTINE_PACE[move] ~= nil and move or "walk"
+        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+    end
+
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
-    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
-    if move == "fast" then
+    if move == "fast" or move == "canter" or move == "gallop" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
 
@@ -875,7 +894,12 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         routine.walkMs = move == "walk" and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
-        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        if course ~= nil then
+            EqDressage.start(routine, course, rng)
+        else
+            routine.kind = "free"
+            routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        end
         return "start"
     end
 
@@ -898,6 +922,10 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
             return "lost"
         end
     -- A beat on its way waits for nothing: the next command comes after it.
+    elseif routine.clock >= routine.nextAt and course ~= nil then
+        -- Markers came in sight: the next command sends the horse to one.
+        EqDressage.start(routine, course, rng)
+        return "request"
     elseif routine.clock >= routine.nextAt and (sheet.beat == nil or sheet.beat.pos == nil) then
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
@@ -924,10 +952,21 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         routine.driftMs = 0
     end
 
-    if not worn and routine.mult > 1 then
-        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
-    end
+    EqTraining.routineTrain(sheet, worn, dt, EqTraining.FREE_ROUTINE_SHARE)
     return event
+end
+
+
+--- Temperament from a running routine: TEMPERAMENT_RATE for each step above x1.
+--- @param sheet table
+--- @param worn boolean
+--- @param dt number milliseconds
+--- @param share number FREE_ROUTINE_SHARE for the free routine, 1 round markers
+function EqTraining.routineTrain(sheet, worn, dt, share)
+    local routine = sheet.routine
+    if not worn and routine.mult > 1 then
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * share * (routine.mult - 1) * dt / 1000
+    end
 end
 
 
