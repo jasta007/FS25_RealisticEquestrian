@@ -511,8 +511,9 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
     end
     routine.taskMs = (routine.taskMs or 0) + dt
 
-    -- Leaving the arena: a few seconds to get back in, then a fault.
-    if routine.arena ~= nil and not task.untimed and not EqDressage.inArena(routine.arena, course.x, course.z) then
+    -- Leaving the arena: a few seconds to get back in, then a fault. Not on the way in, to A and
+    -- down to X: A stands outside the rail (James).
+    if routine.arena ~= nil and not task.opening and not EqDressage.inArena(routine.arena, course.x, course.z) then
         routine.outMs = (routine.outMs or 0) + dt
         if routine.outMs >= EqDressage.OUT_MS then
             routine.outMs = 0

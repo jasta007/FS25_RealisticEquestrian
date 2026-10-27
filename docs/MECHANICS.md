@@ -132,7 +132,7 @@ asked for to markers within 12 m:
 - At a marker the next command can be a circle (steer one way at a walk or trot until the horse
   has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
   seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
-- In a shop arena, leaving it (a metre past its letters) for 3 seconds is a fault.
+- In a shop arena, once past X, leaving it (a metre past its letters) for 3 seconds is a fault.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 

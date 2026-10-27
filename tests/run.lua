@@ -2766,12 +2766,20 @@ end)()
     local out = EqTraining.newSheet()
     local inside = { x = 10, z = 1, markers = ours }
     EqTraining.routineStep(out, "walk", nil, 50, false, one, inside)
+    out.routine.task.opening = nil -- past X: the test proper
     local outside = { x = -10, z = 20, markers = ours }
     local outEvents = {}
     for _ = 1, 70 do
         local e = EqTraining.routineStep(out, "walk", nil, 50, false, one, outside)
         if e then outEvents[e] = (outEvents[e] or 0) + 1 end
     end
+    local entering = EqTraining.newSheet()
+    local enterEvents = {}
+    for _ = 1, 100 do
+        local e = EqTraining.routineStep(entering, "trot", nil, 50, false, one, { x = 10, z = -6, markers = ours })
+        if e then enterEvents[e] = (enterEvents[e] or 0) + 1 end
+    end
+    check("no arena faults on the way in to A", entering.routine.active and (enterEvents.fault or 0) == 0)
     check("leaving the arena is a fault after a few seconds", out.routine.active and outEvents.fault == 1 and out.routine.faults == 1,
         string.format("faults %s", tostring(out.routine.faults)))
     check("a change from a walk to a canter is a flying change", EqDressage.changeKey({ gait = "canter", from = "walk" }) == "eq_dressage_flying"
