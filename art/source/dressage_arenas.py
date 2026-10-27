@@ -51,6 +51,8 @@ ARENAS = [
 # Rail: white boards round the edge, with a gap at A to ride in.
 RAIL_HEIGHT = 0.3
 RAIL_THICK = 0.06
+# Half the board sits below the ground, so the rail stands 15 cm high (James, 2026-10-27).
+RAIL_SUNK = 0.15
 GATE = 2.0
 # Letter boxes stand this far outside the rail; centre line letters are plates on the ground.
 MARKER_GAP = 0.6
@@ -138,13 +140,13 @@ def layout(arena):
 def build_mesh(arena):
     mesh = Mesh()
     half_w, half_l = arena["width"] / 2, arena["length"] / 2
-    t, h = RAIL_THICK, RAIL_HEIGHT
+    t, y0, y1 = RAIL_THICK, -RAIL_SUNK, RAIL_HEIGHT - RAIL_SUNK
     # long sides, the C end, and the A end either side of the gate
-    mesh.box(-half_w - t, -half_w, 0, h, -half_l - t, half_l + t)
-    mesh.box(half_w, half_w + t, 0, h, -half_l - t, half_l + t)
-    mesh.box(-half_w, half_w, 0, h, -half_l - t, -half_l)
-    mesh.box(-half_w, -GATE / 2, 0, h, half_l, half_l + t)
-    mesh.box(GATE / 2, half_w, 0, h, half_l, half_l + t)
+    mesh.box(-half_w - t, -half_w, y0, y1, -half_l - t, half_l + t)
+    mesh.box(half_w, half_w + t, y0, y1, -half_l - t, half_l + t)
+    mesh.box(-half_w, half_w, y0, y1, -half_l - t, -half_l)
+    mesh.box(-half_w, -GATE / 2, y0, y1, half_l, half_l + t)
+    mesh.box(GATE / 2, half_w, y0, y1, half_l, half_l + t)
     for letter, x, z, kind in layout(arena):
         if kind == "box":
             s = MARKER_SIZE / 2

@@ -2718,6 +2718,21 @@ end)()
     for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
     EqTraining.routineStep(sheet, "walk", nil, 50, false, one, nil)
     check("leaving the course carries on with the free routine", r.active and r.kind == "free" and r.task == nil)
+
+    -- In one of our arenas the routine opens at X with a halt.
+    local ours = {}
+    for _, m in ipairs(course) do ours[#ours + 1] = { letter = m.letter, x = m.x, z = m.z, arena = true } end
+    local opening = EqTraining.newSheet()
+    local at = { x = 12, z = 3, markers = ours }
+    for _ = 1, 50 do EqTraining.routineStep(opening, "walk", nil, 50, false, one, at) end
+    local o = opening.routine
+    check("in our arenas the first leg goes to A", o.kind == "markers" and o.task.opening == "A" and o.task.marker.letter == "A")
+    local toX = EqDressage.plan(o, { x = 10, z = 0, markers = ours }, "go", one)
+    check("then a trot down the centre line to X", toX.marker.letter == "X" and toX.gait == "trot")
+    o.task = toX
+    check("and a halt at X", EqDressage.plan(o, { x = 10, z = 20, markers = ours }, "go", one).kind == "halt")
+    check("a horse at A already goes straight to X", EqDressage.openingLeg({ x = 10, z = 1, markers = ours }).opening == "X")
+    check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

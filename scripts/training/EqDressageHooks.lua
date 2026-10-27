@@ -16,6 +16,8 @@
 
 EqDressageHooks = {}
 
+local Log = EqLog
+
 -- The map's markers are listed again this often, and the course round the horse worked out.
 EqDressageHooks.SCAN_MS = 5000
 EqDressageHooks.COURSE_MS = 1000
@@ -115,7 +117,7 @@ function EqDressageHooks.addArena(placeable, list)
         local letter = EqDressage.arenaLetter(getName(node))
         if letter ~= nil then
             local x, _, z = getWorldTranslation(node)
-            table.insert(list, { letter = letter, x = x, z = z })
+            table.insert(list, { letter = letter, x = x, z = z, arena = true })
             local key = string.format("%.1f:%.1f", x, z)
             if not EqDressageHooks.logged[key] then
                 EqDressageHooks.logged[key] = true

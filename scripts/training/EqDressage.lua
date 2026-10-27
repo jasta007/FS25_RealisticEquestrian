@@ -222,6 +222,35 @@ function EqDressage.planLeg(routine, course, rng)
 end
 
 
+--- In one of our arenas a routine opens as a dressage test does: ride to A, trot down the centre
+--- line to X and halt there (James, 2026-10-27). The arena is the one whose X is nearest.
+--- @param course table { x, z, markers }
+--- @return table|nil task the leg to A, or straight to X when the horse is at A already
+function EqDressage.openingLeg(course)
+    local x, bestD = nil, nil
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and marker.letter == "X" then
+            local d = distance(course.x, course.z, marker.x, marker.z)
+            if bestD == nil or d < bestD then x, bestD = marker, d end
+        end
+    end
+    if x == nil then return nil end
+    local a, aD = nil, nil
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and marker.letter == "A" then
+            local d = distance(x.x, x.z, marker.x, marker.z)
+            if aD == nil or d < aD then a, aD = marker, d end
+        end
+    end
+    local toX = { kind = "go", gait = "trot", opening = "X", marker = { letter = x.letter, x = x.x, z = x.z } }
+    if a == nil or distance(course.x, course.z, a.x, a.z) <= EqDressage.ARRIVE_RADIUS.walk then
+        if bestD < EqDressage.GO_MIN_DISTANCE.trot then toX.gait = "walk" end
+        return toX
+    end
+    return { kind = "go", gait = "walk", opening = "A", marker = { letter = a.letter, x = a.x, z = a.z }, nextLeg = toX }
+end
+
+
 --- The command after one is done.
 --- @param routine table
 --- @param course table
@@ -230,7 +259,12 @@ end
 --- @return table task
 function EqDressage.plan(routine, course, done, rng)
     local kind = "go"
-    if done == "go" then
+    local opening = done == "go" and routine.task ~= nil and routine.task.opening or nil
+    if opening == "A" then
+        return routine.task.nextLeg
+    elseif opening == "X" then
+        kind = "halt"
+    elseif done == "go" then
         kind = pick(EqDressage.AT_MARKER, rng)
     elseif done == "halt" and not routine.afterReverse then
         kind = pick(EqDressage.AFTER_HALT, rng)
@@ -279,7 +313,7 @@ end
 --- @param rng function
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone = "markers", nil, nil
-    begin(routine, EqDressage.planLeg(routine, course, rng), course)
+    begin(routine, EqDressage.openingLeg(course) or EqDressage.planLeg(routine, course, rng), course)
 end
 
 
