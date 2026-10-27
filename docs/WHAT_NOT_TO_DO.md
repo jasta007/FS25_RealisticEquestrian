@@ -24,8 +24,9 @@ Easy mistakes on this project, each learned the hard way. Add to it when a new o
 - **Every placeable needs `<dailyUpkeep>` in its storeData**, even when it is 0.
 - **Don't write `*BufferMemoryUsage` / `textureMemoryUsage` into storeData.** The game works them out.
 - **Inline i3d geometry fails the TestRunner.** The scripts write shapes into the .i3d; GIANTS Editor
-  turns them into a binary `.i3d.shapes` on Save. Running an art script again undoes that, so
-  re-save its .i3d files in GIANTS Editor afterwards.
+  turns them into a binary `.i3d.shapes` on Save, but only with Preferences > Save "force external
+  binary files" switched on (off by default). Running an art script again undoes that, so re-save
+  its .i3d files in GIANTS Editor afterwards.
 - **Mod atlas icons in Bitmaps must be made without `sliceId`** (header icon bug, PR #40).
 
 ## modDesc

@@ -30,5 +30,6 @@ go to `art/previews/` (not in the mod). Change the script and run it again rathe
 
 The art scripts write DDS files with `source/eqdds.py`: shop images as BC7, 3D textures as DXT1
 with mipmaps, as GIANTS' TestRunner wants. It needs `pip install etcpak`. The scripts write inline
-i3d geometry, so after running one, open its .i3d files in GIANTS Editor and Save to get the
+i3d geometry, so after running one, open its .i3d files in GIANTS Editor and Save (with Preferences >
+Save "force external binary files" on) to get the
 binary `.i3d.shapes` files.
