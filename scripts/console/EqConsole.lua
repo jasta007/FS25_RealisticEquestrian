@@ -618,6 +618,14 @@ function EqConsole:consoleChanges(...)
         EqStatLog.statLine(record.trained, "%.2f")))
     print(string.format("    RLRM now: fitness %s health %s dirt %s riding %s, age %dm", tostring(animal.fitness), tostring(animal.health),
         tostring(animal.dirt), tostring(animal.riding), animal.age or 0))
+    if record.start ~= nil then
+        local change = {}
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do change[stat] = (record.trained[stat] or 0) - record.start[stat] end
+        print(string.format("    Since joined the farm on day %d (%d day(s) ago): %s  (started %s)", record.start.day,
+            today - record.start.day, EqStatLog.statLine(change, "%+.2f"), EqStatLog.statLine(record.start, "%.2f")))
+    else
+        print("    Since joined the farm: not recorded (owned before this was added)")
+    end
     for _, entry in ipairs(entries) do
         print(string.format("  day %d %s: %s%s", entry.day, entry.source, EqStatLog.statLine(entry.deltas, "%+.2f"),
             entry.after ~= nil and ("  -> " .. EqStatLog.statLine(entry.after, "%.2f")) or ""))

@@ -2698,5 +2698,26 @@ end)()
     AnimalType = oldAnimalType
 end)()
 
+-- Stats a horse joined the farm with, for eqChanges "since joined"
+;(function()
+    EqRegistry.reset()
+    local animal = { isHorse = function() return true end, birthday = { day = 1, month = 1, year = 1, country = 1 },
+        age = 60, motherId = "-1", getIdentifiers = function() return "UK 7 77" end }
+    local record = EqRegistry.getOrCreate(animal)
+    check("a new horse notes its starting stats", record.start ~= nil and record.start.stamina == record.trained.stamina)
+    local stamina = record.start.stamina
+    record.trained.stamina = record.trained.stamina + 5
+    EqRegistry.getOrCreate(animal)
+    check("starting stats are noted once", record.start.stamina == stamina)
+
+    local x = memoryXML()
+    record:saveToXMLFile(x, "h")
+    local back = EqHorseRecord.loadFromXMLFile(x, "h")
+    check("starting stats survive a save", back.start ~= nil and math.abs(back.start.stamina - stamina) < 0.001)
+    check("an old save loads with no starting stats", EqHorseRecord.loadFromXMLFile((function()
+        local y = memoryXML(); EqHorseRecord.new("DE 1 11"):saveToXMLFile(y, "h"); return y end)(), "h").start == nil)
+    EqRegistry.reset()
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
