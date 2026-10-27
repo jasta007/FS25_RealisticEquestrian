@@ -41,9 +41,11 @@ EqExertion.RECOVER_LOW = 0.6
 EqExertion.RECOVER_HIGH = 0.8
 -- Sprinting: SPRINT_RISE per second at the start, SPRINT_RAMP more for every second it lasts, up
 -- to SPRINT_RISE_MAX; the same on both sides of the line. (James, 2026-10-27: start slowly and get
--- faster, so stopping just short of the line is a challenge.)
+-- faster pretty rapidly, especially when the taps are slow, so stopping just short of the line
+-- is a challenge.)
 EqExertion.SPRINT_RISE = 3
-EqExertion.SPRINT_RAMP = 1.6
+EqExertion.SPRINT_RAMP = 2.2
+EqExertion.SPRINT_SLOW_RAMP = 1.8
 EqExertion.SPRINT_RISE_MAX = 20
 -- Canter and slower: exertion falls this much per second.
 EqExertion.FALL = { canter = 9, trot = 12, reverse = 12, walk = 14, halt = 16 }
@@ -157,13 +159,17 @@ function EqExertion.rate(ex, gait, stamina, speed)
         return -EqExertion.RECOVER_DROP * (EqExertion.RECOVER_LOW + EqExertion.RECOVER_HIGH * math.min(v, EqExertion.LINE) / EqExertion.LINE)
             * byStat(EqExertion.RECOVER_STAMINA, stamina)
     elseif ex.mode == "sprint" then
-        local ease = 0
+        -- Tapping pace, 1 for quick taps (and the quick taps that started the Sprint) to 0 for slow.
+        local pace = 1
         if ex.tapGap ~= nil then
-            local pace = (EqExertion.SPRINT_SLOW_TAP_MS - ex.tapGap) / (EqExertion.SPRINT_SLOW_TAP_MS - EqExertion.SPRINT_FAST_TAP_MS)
-            local fade = 1 - ex.sprintMs / EqExertion.SPRINT_EASE_MS
-            ease = EqExertion.SPRINT_TAP_EASE * math.min(math.max(pace, 0), 1) * math.min(math.max(fade, 0), 1)
+            pace = (EqExertion.SPRINT_SLOW_TAP_MS - ex.tapGap) / (EqExertion.SPRINT_SLOW_TAP_MS - EqExertion.SPRINT_FAST_TAP_MS)
+            pace = math.min(math.max(pace, 0), 1)
         end
-        local rise = math.min(EqExertion.SPRINT_RISE + EqExertion.SPRINT_RAMP * ex.sprintMs / 1000, EqExertion.SPRINT_RISE_MAX)
+        local fade = math.min(math.max(1 - ex.sprintMs / EqExertion.SPRINT_EASE_MS, 0), 1)
+        local ease = EqExertion.SPRINT_TAP_EASE * pace * fade
+        -- Slow tapping also steepens the ramp, up to SPRINT_SLOW_RAMP times.
+        local ramp = EqExertion.SPRINT_RAMP * (1 + (EqExertion.SPRINT_SLOW_RAMP - 1) * (1 - pace))
+        local rise = math.min(EqExertion.SPRINT_RISE + ramp * ex.sprintMs / 1000, EqExertion.SPRINT_RISE_MAX)
         return rise * byStat(EqExertion.SPRINT_SPEED, speed) * (1 - ease)
     end
     local fall = EqExertion.FALL[gait] or EqExertion.FALL.canter

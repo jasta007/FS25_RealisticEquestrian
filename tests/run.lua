@@ -628,6 +628,21 @@ do
     local pushRate = E.new()
     pushRate.mode, pushRate.value = "push", 40
     check("a Sprint starts no faster than Pushing near the top", first < E.rate(pushRate, "gallop", 50) * 1.5)
+    local function sprintFill(gap)
+        local f = E.new()
+        f.mode, f.value, f.tapAt = "sprint", 40, 0
+        local t = 0
+        while f.value < E.LINE and t < 60000 do
+            E.press(f, "forward")
+            ride(f, "gallop", gap)
+            t = t + gap
+        end
+        return t / 1000
+    end
+    local quickFill, slowFill = sprintFill(150), sprintFill(450)
+    print(string.format("info: Sprint from 40%% to the line: quick taps %.1f s, slow taps %.1f s", quickFill, slowFill))
+    check("a Sprint from 40% reaches the line in a few seconds, sooner with slow taps",
+        slowFill < quickFill and quickFill < 9 and slowFill > 2.5, string.format("quick taps %.1f s, slow taps %.1f s", quickFill, slowFill))
     local function sprintRise(gap, after)
         local s2 = E.new()
         ride(s2, "gallop", 100)
@@ -676,7 +691,7 @@ do
     recovering.mode, recovering.value = "recover", 60
     check("dropping to a canter brings the bar down much faster than Recovering", -E.rate(fresh, "canter") > -E.rate(recovering, "gallop") * 2)
     local gasp = E.new()
-    gasp.mode, gasp.value, gasp.tapAt = "sprint", E.EXERTION_MAX - 0.1, 0
+    gasp.mode, gasp.value, gasp.tapAt = "sprint", E.EXERTION_MAX - 0.01, 0
     events = ride(gasp, "gallop", 50)
     check("the last gasp ends at the end of the bar", events[1] == "spent" and gasp.lock == "spent")
     local dropOut = E.new()
