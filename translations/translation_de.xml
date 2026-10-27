@@ -54,6 +54,7 @@
         <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
         <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes, und jeder Wert hat sein eigenes Minispiel. Alle Werte lassen sich gleichzeitig trainieren, aber manche passen schlecht zusammen, etwa Schnelligkeit und Temperament. Mit Y wechseln Sie zu einer Ansicht mit genauerer Rückmeldung zu dem Wert, auf den Sie sich konzentrieren möchten, oder bleiben in der Ansicht Frei für allgemeine Rückmeldungen. Der Reitbalken ist weiterhin die Energie des Pferdes für den Tag: Ist er voll, macht das Pferd bis zum nächsten Tag keine Fortschritte mehr."/>
         <text name="eq_help_freestyle_title" text="Training: Frei"/>
+        <text name="eq_welcome_ride_title" text="Training"/>
         <text name="eq_welcome_welcome_1_title" text="Willkommen bei Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Ihre Pferde haben jetzt Fähigkeiten zum Trainieren und Veranstaltungen für Wettkämpfe. Alles finden Sie im Realistic-Livestock-Menü, das Sie mit R im Tiermenü oder überall mit Umschalt+O öffnen."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>

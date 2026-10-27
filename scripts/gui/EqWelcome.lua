@@ -171,7 +171,11 @@ end
 --- @return boolean true when it showed
 function EqWelcome.onRide()
     if EqWelcome.hasSeen("welcome") then return false end
-    EqWelcome.show("welcome")
+    -- In the saddle the welcome is titled for what comes next (James).
+    local pages = EqWelcome.pages("welcome")
+    pages[1].title = g_i18n:getText("eq_welcome_ride_title")
+    EqTrainingHud.showHelp(pages, nil, EqWelcome.seenKey("welcome"))
+    Log:info("EqWelcome: showing the 'welcome' popups on a first ride")
     return true
 end
 

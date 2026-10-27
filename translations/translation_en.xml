@@ -52,6 +52,7 @@
         <text name="eq_help_freestyle_3" text="Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
         <text name="eq_help_freestyle_1" text="Riding trains your horse&apos;s stats, and each stat is trained with its own mini game. All stats can be trained at the same time, but some don&apos;t mix well, such as Speed and Temperament. Press Y to switch to a view with better feedback on the stat you want to focus on, or stay in Freestyle for general feedback. The riding bar is still the horse&apos;s energy for the day: once it is full, that horse cannot make any more progress until the next day."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
+        <text name="eq_welcome_ride_title" text="Training"/>
         <text name="eq_welcome_welcome_1_title" text="Welcome to Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Your horses now have skills to train and events to compete in. It all lives in the Realistic Livestock menu, which you can open by pressing R in the Animals menu or Shift+O anywhere."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
