@@ -112,6 +112,15 @@ EqTraining.SETTLE_WALK_SHARE = 0.75
 EqTraining.BAR_FROM_STAMINA = 50
 EqTraining.BAR_FIT_SHARE = 1.4
 
+-- Riding that trains little (getting to a facility, hacking about) costs much less of the riding
+-- bar: it fills at CRUISE_BAR_SHARE of the usual rate when the horse's focused work (stamina,
+-- speed, jump combos, routines) is earning nothing, rising to the full rate at WORK_FULL_RATE
+-- effort a second (a good stamina canter, a x5 jump combo, a x8 routine). The rate is averaged
+-- over about WORK_WINDOW_MS, so a jump or two keeps it up for a while.
+EqTraining.CRUISE_BAR_SHARE = 0.25
+EqTraining.WORK_FULL_RATE = 0.01
+EqTraining.WORK_WINDOW_MS = 20000
+
 -- A canter raises exertion at CANTER_RISE per second up to a level inside the zone (72, plus
 -- CANTER_LEVEL_PER_STAMINA per stamina point), then keeps creeping up for as long as it goes on,
 -- at CANTER_CREEP_MIN + CANTER_CREEP_UNFIT x (1 - stamina/100)^1.5 per second. So every horse
@@ -944,6 +953,7 @@ function EqTraining.rest(sheet, ms)
     sheet.tempo = EqTraining.newTempo()
     sheet.beat = EqTraining.newBeat()
     sheet.mode, sheet.entryMs = nil, 0
+    sheet.workRate = 0
     local sprint = sheet.sprint
     sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
     if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end
@@ -963,9 +973,33 @@ end
 --- @param sheet table
 --- @param gait string reverse, walk, trot, canter or gallop; anything else is ignored
 --- @param dt number milliseconds
-function EqTraining.addRiding(sheet, gait, dt)
+--- @param share number|nil how much of the time counts (workShare), 1 when nil
+function EqTraining.addRiding(sheet, gait, dt, share)
     if sheet.ms[gait] == nil or dt <= 0 then return end
-    sheet.ms[gait] = sheet.ms[gait] + dt
+    sheet.ms[gait] = sheet.ms[gait] + dt * (share or 1)
+end
+
+
+--- Follow how fast the horse's focused work is earning effort, and say how much of the riding
+--- bar's usual rate this riding costs.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @return number share CRUISE_BAR_SHARE..1
+function EqTraining.workStep(sheet, dt)
+    local total = 0
+    for _, value in pairs(sheet.focused) do total = total + value end
+    local gained = math.max(0, total - (sheet.workTotal or total))
+    sheet.workTotal = total
+    if dt > 0 then
+        -- An average over WORK_WINDOW_MS: each frame's gain counts in full, then fades.
+        local keep = math.exp(-dt / EqTraining.WORK_WINDOW_MS)
+        sheet.workRate = (sheet.workRate or 0) * keep + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    else
+        sheet.workRate = (sheet.workRate or 0) + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    end
+    local work = EqStats.clamp(sheet.workRate / EqTraining.WORK_FULL_RATE, 0, 1)
+    sheet.workShare = EqTraining.CRUISE_BAR_SHARE + (1 - EqTraining.CRUISE_BAR_SHARE) * work
+    return sheet.workShare
 end
 
 
@@ -1022,7 +1056,7 @@ end
 
 
 --- Riding points to add to (or, when negative, take off) what the base game credits this frame:
---- backing up counts extra, and a fit horse's bar fills more slowly.
+--- backing up counts extra, and a fit horse's (or an easy ride's, see workStep) bar fills more slowly.
 --- @param timer number weighted milliseconds carried over from earlier frames
 --- @param dt number milliseconds ridden this frame
 --- @param gait string

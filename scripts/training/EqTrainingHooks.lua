@@ -84,11 +84,12 @@ local function getRiddenId(spec)
 end
 
 
---- Backing up tires a horse faster than the base game counts, and a fit horse's bar fills more
---- slowly: add the difference to (or take it off) its riding bar.
+--- Backing up tires a horse faster than the base game counts, a fit horse's bar fills more
+--- slowly, and riding that trains little costs less: add the difference to (or take it off) its
+--- riding bar.
 --- @param spec table spec_rideable
 --- @param gait string
---- @param factor number EqTraining.ridingBarFactor
+--- @param factor number EqTraining.ridingBarFactor over EqTraining.workStep's share
 --- @param dt number milliseconds
 local function adjustRiding(spec, gait, factor, dt)
     local cluster = spec.cluster
@@ -486,12 +487,17 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         EqTrainingHud.pop("routineLost")
     end
 
+    local share = EqTraining.workStep(sheet, dt)
+    if (share < 0.5) ~= (spec.eqCruising == true) then
+        spec.eqCruising = share < 0.5
+        Log:info("Riding bar: %s (%.0f%% of the usual rate)", spec.eqCruising and "easy riding" or "training", share * 100)
+    end
     if worn or gait == "halt" then return end
 
     sheet.barFactor = EqTraining.ridingBarFactor(stamina)
-    EqTraining.addRiding(sheet, gait, dt)
-    adjustRiding(spec, gait, sheet.barFactor, dt)
-    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt) end
+    EqTraining.addRiding(sheet, gait, dt, share)
+    adjustRiding(spec, gait, sheet.barFactor / share, dt)
+    for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt * share) end
 end
 
 

@@ -856,6 +856,31 @@ do
         -- 100 s of gallop is 100 points to the base game; at 1.5x it should be 67.
         check("a fit horse's gallop takes riding points back off", total == -33, string.format("got %d", total))
     end
+    do
+        -- Riding that earns nothing costs a quarter of the bar; steady focused work the full rate.
+        local easy = EqTraining.newSheet()
+        local share
+        for _ = 1, 600 do share = EqTraining.workStep(easy, 100) end
+        check("an easy ride costs a quarter of the riding bar", math.abs(share - EqTraining.CRUISE_BAR_SHARE) < 1e-9)
+        local busy = EqTraining.newSheet()
+        for _ = 1, 600 do
+            busy.focused.stamina = busy.focused.stamina + 0.015 * 0.1
+            share = EqTraining.workStep(busy, 100)
+        end
+        check("good focused work costs the full riding bar", math.abs(share - 1) < 1e-6, string.format("got %.3f", share))
+        -- Two clear jumps keep it above the easy rate for a while, then it fades.
+        local jumps = EqTraining.newSheet()
+        EqTraining.workStep(jumps, 100)
+        EqTraining.clearJump(jumps, false)
+        EqTraining.clearJump(jumps, false)
+        local after = EqTraining.workStep(jumps, 100)
+        for _ = 1, 1200 do share = EqTraining.workStep(jumps, 100) end
+        check("jumps lift the riding cost, then it fades", after > 0.3 and share < 0.26,
+            string.format("after %.3f, later %.3f", after, share))
+        local sheet = EqTraining.newSheet()
+        EqTraining.addRiding(sheet, "canter", 1000, 0.25)
+        check("easy riding counts less towards the player's share", sheet.ms.canter == 250)
+    end
     local worn = EqTraining.newSheet()
     for _ = 1, 200 do EqTraining.step(worn, "gallop", 100, true) end
     check("a worn-out horse's meter moves but nothing trains", near(worn.tiredness, 60) and worn.focused.speed == 0
