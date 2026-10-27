@@ -370,6 +370,18 @@ function EqTrainingHud.drawPrompt(value, share, color)
 end
 
 
+-- A smaller line under the prompt and its bar.
+EqTrainingHud.PROMPT_NOTE = { gap = 0.024, size = 0.014, color = { 1, 1, 1, 0.85 } }
+
+--- Draw a small note under the prompt.
+--- @param value string
+function EqTrainingHud.drawPromptNote(value)
+    local p, n = EqTrainingHud.PROMPT, EqTrainingHud.PROMPT_NOTE
+    shadowText(value, p.x, p.y - p.barHeight * 2 - n.gap, n.size, n.color, RenderText.ALIGN_CENTER, false)
+    resetText()
+end
+
+
 -- The bar alone in the middle: a small word above it, and a quick pulse to half brightness.
 -- The Condensed view draws it at smallShare of the size.
 EqTrainingHud.CENTRE_BAR = { labelSize = 0.013, pulseMs = 250, pulseDepth = 0.5, smallShare = 0.7 }

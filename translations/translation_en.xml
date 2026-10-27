@@ -307,7 +307,8 @@
         <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
         <text name="eq_course_cancelled" text="Editing stopped: you got off the horse, the last changes were not saved"/>
-        <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m (placed Realistic Equestrian obstacles have no collision)"/>
+        <text name="eq_course_recording" text="Recording %s: %d fences, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Placed obstacles from Realistic Equestrian have no collision while you trace the course; other obstacles stay solid"/>
         <text name="eq_course_name" text="Course %d"/>
         <text name="eq_sj_begin" text="Move to the start line to begin Show Jumping"/>
         <text name="eq_sj_ready" text="Get ready..."/>
@@ -351,7 +352,7 @@
         <text name="eq_course_editAction" text="Edit %s"/>
         <text name="eq_course_resumeAction" text="Record from nearest point"/>
         <text name="eq_course_saveAction" text="Save jump course"/>
-        <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m (placed Realistic Equestrian obstacles have no collision)"/>
+        <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m"/>
         <text name="eq_course_editStarted" text="Editing %s: placed obstacles from Realistic Equestrian have no collision until you finish; other obstacles stay solid"/>
         <text name="input_EQ_COURSE_DELETE" text="Delete nearby course"/>
         <text name="input_EQ_COURSE_FINISH" text="Finish editing course"/>
