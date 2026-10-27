@@ -360,6 +360,7 @@ local function saveMember(xmlFile, key, member)
     xmlFile:setInt(key .. "#grade", member.grade)
     xmlFile:setInt(key .. "#dailyWage", member.wage)
     xmlFile:setInt(key .. "#talents", member.talents or 0)
+    xmlFile:setInt(key .. "#face", EqStaff.faceOf(member))
     if member.farmId ~= nil then xmlFile:setInt(key .. "#farmId", member.farmId) end
     if member.leavesAt ~= nil then xmlFile:setInt(key .. "#leavesAt", member.leavesAt) end
     for _, skill in ipairs(EqStaff.SKILLS) do
@@ -420,6 +421,7 @@ local function loadMember(xmlFile, key)
         grade = math.max(1, math.min(#EqStaff.GRADES, xmlFile:getInt(key .. "#grade", 1))),
         wage = xmlFile:getInt(key .. "#dailyWage"),
         talents = xmlFile:getInt(key .. "#talents", 0),
+        face = xmlFile:getInt(key .. "#face"),
         farmId = xmlFile:getInt(key .. "#farmId"),
         leavesAt = xmlFile:getInt(key .. "#leavesAt"),
         skills = {},

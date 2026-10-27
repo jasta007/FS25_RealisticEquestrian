@@ -61,11 +61,13 @@
 
         <!-- The selected person: label left, value at 200px -->
         <GuiElement profile="rlMenu_container" id="personPanel" position="1070px -120px" size="490px 740px">
-            <GuiElement profile="rlMenu_container" position="0px 0px" size="490px 36px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 36px" id="panelName" textSize="22px" textBold="true" textLayoutMode="scrolling"/>
+            <!-- Portrait (gui/eqStaffFaces.dds, set by EqStaffFrame:updatePanel), name and job beside it -->
+            <Bitmap profile="eq_staffFace" id="panelFace" position="0px 0px" size="64px 64px"/>
+            <GuiElement profile="rlMenu_container" position="74px 0px" size="416px 36px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="416px 36px" id="panelName" textSize="22px" textBold="true" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -36px" size="490px 28px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="panelJob" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="74px -36px" size="416px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="416px 28px" id="panelJob" textLayoutMode="scrolling"/>
             </GuiElement>
             <GuiElement profile="rlMenu_container" position="0px -74px" size="490px 28px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="skillLabel[1]" textLayoutMode="scrolling"/>
@@ -156,4 +158,14 @@
         </Bitmap>
 
     </GuiElement>
+
+    <GUIProfiles>
+        <!-- The portrait: a plain white image, our atlas set from Lua (EqEventsFrame.showSlice). -->
+        <Profile name="eq_staffFace" extends="emptyPanel" with="anchorTopLeft">
+            <imageColor value="1 1 1 1"/>
+            <imageSelectedColor value="1 1 1 1"/>
+            <imageHighlightedColor value="1 1 1 1"/>
+            <imageFocusedColor value="1 1 1 1"/>
+        </Profile>
+    </GUIProfiles>
 </GUI>

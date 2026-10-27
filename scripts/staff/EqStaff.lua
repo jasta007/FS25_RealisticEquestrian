@@ -262,9 +262,11 @@ function EqStaff.roll(rng, id, hour, job)
     end
 
     local hours = EqStaff.CANDIDATE_HOURS
+    local name, gender = EqStaffNames.roll(rng)
     return {
         id = id,
-        name = EqStaffNames.roll(rng),
+        name = name,
+        face = EqStaff.rollFace(rng, gender),
         job = job,
         grade = gradeIndex,
         skills = skills,
@@ -544,6 +546,41 @@ function EqStaff.horsesIn(horses, stables)
     end
     table.sort(out, function(a, b) return string.lower(a.name or a.id) < string.lower(b.name or b.id) end)
     return out
+end
+
+
+-- PORTRAITS (gui/eqStaffFaces.xml, faces by kawsar4404). Numbered row by row on the artist's
+-- sheet. A person mostly gets a face for their name; FACE_ANY of people get any face.
+EqStaff.FACES = {
+    male = { 1, 9, 13, 17 },
+    either = { 2, 5, 6, 15, 19 },
+    female = { 3, 4, 7, 8, 10, 11, 12, 14, 16, 18, 20 },
+}
+EqStaff.FACE_COUNT = 20
+EqStaff.FACE_ANY = 0.1
+
+
+--- @param rng table EqRandom
+--- @param gender string|nil "female" or "male"
+--- @return number face 1..FACE_COUNT
+function EqStaff.rollFace(rng, gender)
+    local pool = {}
+    if gender == nil or rng:next() < EqStaff.FACE_ANY then
+        for i = 1, EqStaff.FACE_COUNT do table.insert(pool, i) end
+    else
+        for _, face in ipairs(EqStaff.FACES[gender] or {}) do table.insert(pool, face) end
+        for _, face in ipairs(EqStaff.FACES.either) do table.insert(pool, face) end
+    end
+    return pool[math.min(#pool, math.floor(rng:next() * #pool) + 1)]
+end
+
+
+--- @param member table
+--- @return number face 1..FACE_COUNT; people from before portraits get one from their id
+function EqStaff.faceOf(member)
+    if member.face ~= nil then return member.face end
+    member.face = EqStaff.rollFace(EqRandom.new("face " .. tostring(member.id)), EqStaffNames.genderOf(member.name))
+    return member.face
 end
 
 

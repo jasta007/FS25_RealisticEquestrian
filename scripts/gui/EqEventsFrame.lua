@@ -128,8 +128,23 @@ function EqEventsFrame:applyHeaderIcon(sliceId)
         Log:info("EqEventsFrame: header icon file '%s' uvs (%s) state %s",
             tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
     end
+    if EqEventsFrame.isSliceShown(overlay, slice) then return false end
+    if not self.loggedHeaderIcon then
+        self.loggedHeaderIcon = true
+        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
+            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
+    end
+    EqEventsFrame.showSlice(overlay, slice)
+    return true
+end
+
+
+--- @param overlay table a Bitmap's GuiOverlay
+--- @param slice table from g_overlayManager:getSliceInfoById
+--- @return boolean shown the overlay already draws exactly this slice
+function EqEventsFrame.isSliceShown(overlay, slice)
     local clean = overlay.filename == slice.filename and overlay.overlay ~= nil and overlay.sliceId == nil
-    -- Both tabs' icons share one file, so the UVs must be this slice's too.
+    -- Our icons share files, so the UVs must be this slice's too.
     for i, uv in ipairs(slice.uvs or {}) do
         if overlay.uvs == nil or overlay.uvs[i] ~= uv then clean = false end
     end
@@ -139,14 +154,14 @@ function EqEventsFrame:applyHeaderIcon(sliceId)
             clean = false
         end
     end
-    if clean then return false end
+    return clean
+end
 
-    if not self.loggedHeaderIcon then
-        self.loggedHeaderIcon = true
-        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
-            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
-    end
 
+--- Point a Bitmap's overlay at one of our slices for every state, without a slice id.
+--- @param overlay table a Bitmap's GuiOverlay
+--- @param slice table from g_overlayManager:getSliceInfoById
+function EqEventsFrame.showSlice(overlay, slice)
     GuiOverlay.deleteOverlay(overlay)
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL then
@@ -163,7 +178,6 @@ function EqEventsFrame:applyHeaderIcon(sliceId)
     overlay.sliceId = nil
     overlay.overlay = nil
     GuiOverlay.createOverlay(overlay)
-    return true
 end
 
 
@@ -686,6 +700,8 @@ end
 --- builds its menu, the same moment RLRM registers its own atlas.
 function EqEventsFrame.registerIcons()
     g_overlayManager:addTextureConfigFile(modDirectory .. "gui/eqMenuIcons.xml", "eqMenu")
+    -- Staff portraits (EqStaffFrame), faces by kawsar4404.
+    g_overlayManager:addTextureConfigFile(modDirectory .. "gui/eqStaffFaces.xml", "eqFaces")
 end
 
 

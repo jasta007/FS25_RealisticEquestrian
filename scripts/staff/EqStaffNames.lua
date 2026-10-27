@@ -28,9 +28,25 @@ EqStaffNames.INITIALS = "ABCDEFGHJKLMNOPRSTVWY"
 --- A name for a new candidate.
 --- @param rng table EqRandom
 --- @return string name such as "Amara K."
+--- @return string gender "female" or "male", for the portrait
 function EqStaffNames.roll(rng)
-    local list = rng:next() < 0.5 and EqStaffNames.WOMEN or EqStaffNames.MEN
+    local female = rng:next() < 0.5
+    local list = female and EqStaffNames.WOMEN or EqStaffNames.MEN
     local first = list[math.min(#list, math.floor(rng:next() * #list) + 1)]
     local at = math.min(#EqStaffNames.INITIALS, math.floor(rng:next() * #EqStaffNames.INITIALS) + 1)
-    return string.format("%s %s.", first, string.sub(EqStaffNames.INITIALS, at, at))
+    return string.format("%s %s.", first, string.sub(EqStaffNames.INITIALS, at, at)), female and "female" or "male"
+end
+
+
+--- @param name string such as "Amara K."
+--- @return string|nil gender "female" or "male", nil for a name not on the lists
+function EqStaffNames.genderOf(name)
+    local first = string.match(name or "", "^(%S+)")
+    for _, known in ipairs(EqStaffNames.WOMEN) do
+        if known == first then return "female" end
+    end
+    for _, known in ipairs(EqStaffNames.MEN) do
+        if known == first then return "male" end
+    end
+    return nil
 end

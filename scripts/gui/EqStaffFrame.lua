@@ -327,6 +327,12 @@ function EqStaffFrame:updatePanel()
     local member = row.member
 
     setText(self.panelName, member.name)
+    if self.panelFace ~= nil and self.panelFace.overlay ~= nil then
+        local slice = g_overlayManager:getSliceInfoById(string.format("eqFaces.face%02d", EqStaff.faceOf(member)))
+        if slice ~= nil and not EqEventsFrame.isSliceShown(self.panelFace.overlay, slice) then
+            EqEventsFrame.showSlice(self.panelFace.overlay, slice)
+        end
+    end
     setText(self.panelJob, string.format("%s, %s", row.job, row.grade))
     for i, skill in ipairs(EqStaff.SKILLS) do
         local value = member.skills[skill] or 0

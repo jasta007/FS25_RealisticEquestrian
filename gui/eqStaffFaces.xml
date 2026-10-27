@@ -1,0 +1,29 @@
+<!-- Realistic Equestrian by Jasta007. Faces by kawsar4404. Made by art/source/staff_faces.py. -->
+<texture>
+	<meta>
+		<filename>eqStaffFaces.dds</filename>
+		<size width="1024" height="1024"/>
+	</meta>
+	<slices>
+		<slice id="face01" uvs="0px 0px 200px 200px"/>
+		<slice id="face02" uvs="204px 0px 200px 200px"/>
+		<slice id="face03" uvs="408px 0px 200px 200px"/>
+		<slice id="face04" uvs="612px 0px 200px 200px"/>
+		<slice id="face05" uvs="816px 0px 200px 200px"/>
+		<slice id="face06" uvs="0px 204px 200px 200px"/>
+		<slice id="face07" uvs="204px 204px 200px 200px"/>
+		<slice id="face08" uvs="408px 204px 200px 200px"/>
+		<slice id="face09" uvs="612px 204px 200px 200px"/>
+		<slice id="face10" uvs="816px 204px 200px 200px"/>
+		<slice id="face11" uvs="0px 408px 200px 200px"/>
+		<slice id="face12" uvs="204px 408px 200px 200px"/>
+		<slice id="face13" uvs="408px 408px 200px 200px"/>
+		<slice id="face14" uvs="612px 408px 200px 200px"/>
+		<slice id="face15" uvs="816px 408px 200px 200px"/>
+		<slice id="face16" uvs="0px 612px 200px 200px"/>
+		<slice id="face17" uvs="204px 612px 200px 200px"/>
+		<slice id="face18" uvs="408px 612px 200px 200px"/>
+		<slice id="face19" uvs="612px 612px 200px 200px"/>
+		<slice id="face20" uvs="816px 612px 200px 200px"/>
+	</slices>
+</texture>

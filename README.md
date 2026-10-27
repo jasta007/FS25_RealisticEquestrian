@@ -309,9 +309,12 @@ James
   by Ritter, itself based on Arrow-kb's Realistic Livestock. No RLRM files are changed.
 - Icon: John Frederick Herring Senior, *The Interior of a Stable with a Dapple Grey Horse in
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
+- Staff portraits: [kawsar4404](https://depositphotos.com/portfolio-41609378.html) on
+  Depositphotos, licensed for this mod.
 
 Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as long as you
 credit the original, keep your version under the same licence, and don't sell it or use it
-commercially.
+commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
+covered by that licence: don't reuse them outside this mod.
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).

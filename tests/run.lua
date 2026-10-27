@@ -1085,6 +1085,25 @@ do
     check("a disabled member does no work", not EqStaff.targets(off, barn[1])
         and #EqStaff.workOn({ off }, barn[1], {}).speed == 0 and #EqStaff.toClean({ off }, barn) == 0)
     check("a disabled member is paid half", EqStaff.dailyWages({ off, member(44, "groom", 50) }) == 1500)
+    -- Portraits: mostly a face for the name, 10% any face.
+    local faceRng = EqRandom.new("faces")
+    local maleOk, femaleFaces, total = 0, {}, 0
+    local maleSet = {}
+    for _, f in ipairs(EqStaff.FACES.male) do maleSet[f] = true end
+    for _, f in ipairs(EqStaff.FACES.either) do maleSet[f] = true end
+    for _ = 1, 2000 do
+        local f = EqStaff.rollFace(faceRng, "male")
+        if maleSet[f] then maleOk = maleOk + 1 end
+        femaleFaces[EqStaff.rollFace(faceRng, "female")] = true
+    end
+    for _ in pairs(femaleFaces) do total = total + 1 end
+    check("men mostly get men's or either faces", maleOk > 1850 and maleOk < 2000, tostring(maleOk))
+    check("every face turns up", total == EqStaff.FACE_COUNT)
+    local count = #EqStaff.FACES.male + #EqStaff.FACES.either + #EqStaff.FACES.female
+    check("the face groups cover the sheet once", count == EqStaff.FACE_COUNT)
+    check("names know their gender", EqStaffNames.genderOf("Amara K.") == "female" and EqStaffNames.genderOf("Liam T.") == "male")
+    local oldMember = { id = 77, name = "Liam T." }
+    check("people from before portraits get a steady face", EqStaff.faceOf(oldMember) == EqStaff.faceOf({ id = 77, name = "Liam T." }))
     check("skill words", EqStaff.level(95).word == 6 and EqStaff.level(0).word == 1 and EqStaff.level(59).word == 3)
     check("best skills first", EqStaff.bestSkills(member(30, "racing", 70), 2)[1] == "racing")
 
