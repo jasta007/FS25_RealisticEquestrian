@@ -211,7 +211,7 @@ white flag (the fence runs between them), log piles and drop walls. Their flags'
 while you edit. Edit, delete and the round work as for show jumping, but by eventing rules: the time
 allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
 run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
-eliminates. After a refusal or run-out the gold way leads back round to the fence, which must be
+eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
 jumped again.
 
 A course needs at least 2 fences to save. A white line runs from the horse to the nearest

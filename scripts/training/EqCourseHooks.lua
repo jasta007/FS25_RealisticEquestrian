@@ -66,10 +66,8 @@ EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
 EqCourseHooks.POLE_HEIGHT = 1.5
 EqCourseHooks.BAR_HEIGHT = 0.9
 -- In a round the way to the next fence stops this far short of it (its pointIndex is just past
--- the fence), and the fence's label stands beside its white flag.
+-- the fence), and the fence's label stands beside its red flag, on the rider's right.
 EqCourseHooks.WAY_SHORT = 5
--- After a refusal or run-out the way back to the fence comes round to this far in front of it.
-EqCourseHooks.REPRESENT_BACK = 12
 EqCourseHooks.ROUND_NUMBER_LIFT = 1.8
 EqCourseHooks.NUMBER_ASIDE = 1.5
 -- The start line is tagged on the map only until the horse is this close (the game draws the
@@ -991,31 +989,24 @@ function EqCourseHooks.roundDraw(vehicle)
         local jumps = round.course.jumps
         local fence = jumps[sj.next]
         local previous = jumps[sj.next - 1]
-        if fence ~= nil and sj.represent and fence.ax ~= nil then
-            -- After a refusal or run-out the fence must be jumped again: the band runs from the
-            -- horse round to REPRESENT_BACK metres in front of it, on the side it is jumped from.
-            local dx, dz = fence.bx - fence.ax, fence.bz - fence.az
-            local d = math.max(1e-6, math.sqrt(dx * dx + dz * dz))
-            local side = fence.side or -1
-            local back = EqCourseHooks.REPRESENT_BACK
-            local mx, mz = (fence.ax + fence.bx) / 2, (fence.az + fence.bz) / 2
-            local px, pz = mx - dz / d * back * side, mz + dx / d * back * side
-            local qx, qz = mx - dz / d * EqCourseHooks.WAY_SHORT * side, mz + dx / d * EqCourseHooks.WAY_SHORT * side
-            drawBand({ { x = x, y = groundAt(x, 0, z), z = z }, { x = px, y = groundAt(px, 0, pz), z = pz },
-                { x = qx, y = groundAt(qx, 0, qz), z = qz } }, x, z)
-            EqTrainingHud.drawPrompt(string.format(text("eq_sj_represent"), sj.next), nil, EqTrainingHud.STAT_COLOR.agility)
-        elseif fence ~= nil then
+        if fence ~= nil then
+            -- After a refusal or run-out the fence must be jumped again: the same way to it
+            -- stays (James, 2026-10-27), with a prompt saying so.
+            if sj.represent then
+                EqTrainingHud.drawPrompt(string.format(text("eq_sj_represent"), sj.next), nil, EqTrainingHud.STAT_COLOR.agility)
+            end
             local from = previous ~= nil and previous.pointIndex or select(2, EqShowJumping.startFromPath(round.course))
             drawWay(round, from, fence.pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
         end
         if fence ~= nil then
             -- The gold line across the fence between its flags, like the start line (James's
-            -- pick), and its number beside the white flag rather than over the poles.
+            -- pick).
             drawCrossing(fence, EqCourseHooks.ROUND_COLOR, x, z)
-            local dx, dz = fence.bx - fence.ax, fence.bz - fence.az
+            -- The number on the right as the horse comes in: beside the red flag (a).
+            local dx, dz = fence.ax - fence.bx, fence.az - fence.bz
             local d = math.max(1e-6, math.sqrt(dx * dx + dz * dz))
             local out = EqCourseHooks.NUMBER_ASIDE
-            drawNumbers(nil, { { x = fence.bx + dx / d * out, z = fence.bz + dz / d * out,
+            drawNumbers(nil, { { x = fence.ax + dx / d * out, z = fence.az + dz / d * out,
                 text = string.format(text("eq_pop_courseFence"), sj.next) } }, EqCourseHooks.ROUND_NUMBER_LIFT)
         elseif sj.finish ~= nil then
             local _, to = EqShowJumping.finishFromPath(round.course)
