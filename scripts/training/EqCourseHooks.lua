@@ -74,6 +74,9 @@ EqCourseHooks.NUMBER_ASIDE = 1.5
 -- The start line is tagged on the map only until the horse is this close (the game draws the
 -- tag on the line itself).
 EqCourseHooks.TAG_CLOSE = 25
+--- "Ride to the start line" shows only this close to the start line (anywhere near a big cross
+--- country course was too far), beside the panel: the middle is for alerts (James, 2026-10-27).
+EqCourseHooks.BEGIN_NEAR = 30
 -- A course saved before fence points were kept: a fence's point is the first one within this
 -- many metres of it.
 EqCourseHooks.PASS_NEAR = 6
@@ -963,8 +966,11 @@ function EqCourseHooks.roundDraw(vehicle)
         local _, from = EqShowJumping.startFromPath(round.course)
         drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
         if state == "approach" then
-            local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
-            EqTrainingHud.drawPrompt(text(begin), nil, EqTrainingHud.STAT_COLOR.agility)
+            local dx, dz = x - sj.start.x, z - sj.start.z
+            if dx * dx + dz * dz <= EqCourseHooks.BEGIN_NEAR ^ 2 then
+                local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
+                EqTrainingHud.drawPanelNote(text(begin), EqTrainingHud.STAT_COLOR.agility, true)
+            end
         elseif state == "countdown" then
             EqTrainingHud.drawPrompt(text("eq_sj_ready"), sj.countMs / EqShowJumping.COUNT_MS, EqTrainingHud.STAT_COLOR.agility)
         else
