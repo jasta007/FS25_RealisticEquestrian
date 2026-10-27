@@ -24,6 +24,11 @@ EqXcFlags.FLAG_NODES = { eqXcFlagWhite = "white", eqXcFlagRed = "red" }
 EqXcFlags.BAR_NODE = "^eqXcBar(%d+)$"
 -- A flag post's length along the fence line (art/source/xc_jumps.py FLAG_POST); the flag stands in its middle.
 EqXcFlags.POST = 0.3
+-- Every flag pole's top above the ground (xc_jumps.py POLE_HEIGHT); the pennant hangs from just
+-- under it, PENNANT_TOP down to PENNANT_BOTTOM.
+EqXcFlags.POLE_HEIGHT = 1.5
+EqXcFlags.PENNANT_TOP = 1.47
+EqXcFlags.PENNANT_BOTTOM = 1.17
 -- A pair's flags stand at least this far apart and at most this far (metres).
 EqXcFlags.MIN_WIDTH = 1
 EqXcFlags.MAX_WIDTH = 15
@@ -65,7 +70,7 @@ end
 --- that of the bar nearest its middle, if one is within BAR_REACH past half its width.
 --- @param flags table list of { colour, x, z, ... }
 --- @param bars table|nil list of { height, x, z }
---- @return table fences list of { red, white, width, height|nil }, nearest first
+--- @return table fences list of { red, white, width, height|nil, poleHeight }, nearest first
 function EqXcFlags.pair(flags, bars)
     local candidates = {}
     for _, red in ipairs(flags) do
@@ -74,7 +79,7 @@ function EqXcFlags.pair(flags, bars)
                 if white.colour == "white" then
                     local width = math.sqrt((red.x - white.x) ^ 2 + (red.z - white.z) ^ 2)
                     if width >= EqXcFlags.MIN_WIDTH and width <= EqXcFlags.MAX_WIDTH then
-                        table.insert(candidates, { red = red, white = white, width = width })
+                        table.insert(candidates, { red = red, white = white, width = width, poleHeight = EqXcFlags.POLE_HEIGHT })
                     end
                 end
             end
