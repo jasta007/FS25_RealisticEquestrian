@@ -59,11 +59,10 @@ uses its genetics, health and fitness.
     Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
     arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
 - **Show jumping courses (new):** press **Ctrl+J** while riding and ride through your show jumps in
-  order (placed Realistic Equestrian obstacles have no collision while you edit), Ctrl+J again to save (**Ctrl+E** records a cross
-  country course). **Ctrl+K** rewinds to the
-  nearest point, **Ctrl+L** finishes editing, Ctrl+J near a course edits it and **Ctrl+Backspace**
-  deletes it. Then ride a timed round: start line, 3 2 1, the next fence marked in gold, faults and a
-  clock.
+  order (placed Realistic Equestrian obstacles have no collision while you edit), Ctrl+J again to
+  save and finish (**Ctrl+E** records a cross country course). **Ctrl+K** rewinds to the nearest
+  point, Ctrl+J near a course edits it and **Ctrl+Backspace** deletes it. Then ride a timed round:
+  start line, 3 2 1, the next fence marked in gold, faults and a clock.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.

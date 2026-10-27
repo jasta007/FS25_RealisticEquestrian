@@ -7,12 +7,11 @@
     course they don't know yet, and the course's line is drawn with the fence numbers.
 
     - The record key (EQ_COURSE_RECORD, Ctrl+J) starts a new course, or edits the saved course
-      the horse is near. While recording, the same key saves; while editing but not recording,
-      it records on from the nearest point.
+      the horse is near. While editing, the same key saves (if recording) and finishes: the
+      line goes and the jumps get their collision back. A new course too short to save stays
+      recording. (James, 2026-10-27: a separate save key and finish key were too alike.)
     - The rewind key (EQ_COURSE_REWIND, Ctrl+K) drops everything after the recorded point
       nearest the horse (a white line points to it, like AutoDrive's) and records on from there.
-    - The finish key (EQ_COURSE_FINISH, Ctrl+L) saves and leaves edit mode: the line goes and
-      the jumps get their collision back.
     - The delete key (EQ_COURSE_DELETE, Ctrl+Backspace) asks, then deletes the nearby course.
     Getting off the horse leaves edit mode and throws away what was not saved.
 
@@ -422,7 +421,7 @@ local function stopEditing(why)
 end
 
 
---- The record key: a new course, edit the nearby one, save, or record on.
+--- The record key: a new course, edit the nearby one, or save and finish.
 --- @param vehicle table
 function EqCourseHooks.onRecordAction(vehicle)
     if vehicle.rootNode == nil then return end
@@ -432,10 +431,8 @@ function EqCourseHooks.onRecordAction(vehicle)
         startEditing(vehicle, index)
     elseif editing.vehicle ~= vehicle then
         return
-    elseif editing.recording then
-        save(editing)
-    else
-        rewind(editing)
+    elseif not editing.recording or save(editing) then
+        stopEditing("eq_course_finished")
     end
     EqCourseHooks.updateActions(vehicle)
 end
@@ -460,18 +457,6 @@ function EqCourseHooks.onRewindAction(vehicle)
     local editing = EqCourseHooks.editing
     if editing == nil or editing.vehicle ~= vehicle or vehicle.rootNode == nil then return end
     rewind(editing)
-    EqCourseHooks.updateActions(vehicle)
-end
-
-
---- The finish key: save and leave edit mode.
---- @param vehicle table
-function EqCourseHooks.onFinishAction(vehicle)
-    local editing = EqCourseHooks.editing
-    if editing == nil or editing.vehicle ~= vehicle then return end
-    -- A new course with too few fences is left behind, not saved.
-    if editing.recording then save(editing) end
-    stopEditing("eq_course_finished")
     EqCourseHooks.updateActions(vehicle)
 end
 
@@ -512,7 +497,6 @@ local ACTIONS = {
     { field = "eqCourseEventId", action = "EQ_COURSE_RECORD", handler = "onRecordAction" },
     { field = "eqCourseXcEventId", action = "EQ_COURSE_RECORD_XC", handler = "onRecordXcAction" },
     { field = "eqRewindEventId", action = "EQ_COURSE_REWIND", handler = "onRewindAction" },
-    { field = "eqFinishEventId", action = "EQ_COURSE_FINISH", handler = "onFinishAction" },
     { field = "eqDeleteEventId", action = "EQ_COURSE_DELETE", handler = "onDeleteAction" },
 }
 
@@ -545,7 +529,7 @@ function EqCourseHooks.updateActions(vehicle)
     local near = editing == nil and EqCourseHooks.nearCourse(vehicle) or nil
     local recordText
     if mine then
-        recordText = editing.recording and text("eq_course_saveAction") or text("eq_course_resumeAction")
+        recordText = editing.recording and text("eq_course_saveAction") or text("eq_course_doneAction")
     elseif near ~= nil then
         recordText = string.format(text("eq_course_editAction"), near.name)
     else
@@ -563,10 +547,6 @@ function EqCourseHooks.updateActions(vehicle)
     if spec.eqRewindEventId ~= nil then
         binding:setActionEventText(spec.eqRewindEventId, text("input_EQ_COURSE_REWIND"))
         binding:setActionEventTextVisibility(spec.eqRewindEventId, mine)
-    end
-    if spec.eqFinishEventId ~= nil then
-        binding:setActionEventText(spec.eqFinishEventId, text("input_EQ_COURSE_FINISH"))
-        binding:setActionEventTextVisibility(spec.eqFinishEventId, mine)
     end
     if spec.eqDeleteEventId ~= nil then
         binding:setActionEventText(spec.eqDeleteEventId, near ~= nil and string.format(text("eq_course_deleteAction"), near.name) or "")

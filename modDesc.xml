@@ -52,7 +52,6 @@ Von Jasta007.]]>
         <action name="EQ_COURSE_RECORD"/>
         <action name="EQ_COURSE_RECORD_XC"/>
         <action name="EQ_COURSE_REWIND"/>
-        <action name="EQ_COURSE_FINISH"/>
         <action name="EQ_COURSE_DELETE"/>
     </actions>
     <inputBinding>
@@ -76,9 +75,6 @@ Von Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_COURSE_REWIND">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_k" index="1"/>
-        </actionBinding>
-        <actionBinding action="EQ_COURSE_FINISH">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_l" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_COURSE_DELETE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_backspace" index="1"/>

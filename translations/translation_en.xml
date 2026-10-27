@@ -341,7 +341,7 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminated: three refusals at one fence, or four on the course"/>
         <text name="eq_sj_represent" text="Go back and jump fence %d"/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
-        <text name="input_EQ_COURSE_REWIND" text="Rewind course to nearest point"/>
+        <text name="input_EQ_COURSE_REWIND" text="Rewind to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
         <text name="eq_course_resumed" text="Recording from the nearest point"/>
         <text name="eq_course_finished" text="Finished editing: placed Realistic Equestrian obstacles have their collision back"/>
@@ -350,12 +350,11 @@
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
         <text name="eq_course_editAction" text="Edit %s"/>
-        <text name="eq_course_resumeAction" text="Record from nearest point"/>
-        <text name="eq_course_saveAction" text="Save jump course"/>
+        <text name="eq_course_doneAction" text="Finish editing course"/>
+        <text name="eq_course_saveAction" text="Save course and finish"/>
         <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m"/>
         <text name="eq_course_editStarted" text="Editing %s: placed obstacles from Realistic Equestrian have no collision until you finish; other obstacles stay solid"/>
         <text name="input_EQ_COURSE_DELETE" text="Delete nearby course"/>
-        <text name="input_EQ_COURSE_FINISH" text="Finish editing course"/>
         <text name="eq_ui_riding" text="Riding"/>
         <text name="eq_ui_ridingFull" text="Full, no more training today"/>
         <text name="eq_ui_ridingFullValue" text="%s - full"/>
