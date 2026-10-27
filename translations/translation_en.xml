@@ -332,9 +332,6 @@
         <text name="eq_sj_fenceRow" text="Fence %d of %d"/>
         <text name="eq_sj_faultsRow" text="%d faults"/>
         <text name="eq_sj_timeRow" text="Time"/>
-        <text name="eq_shop_courseStartLine" text="Show Jumping Start Line"/>
-        <text name="eq_shop_courseFinishLine" text="Show Jumping Finish Line"/>
-        <text name="eq_shop_courseLine_function" text="Marks where a recorded show jumping course starts or finishes. Ride through with the red flag on your right."/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
         <text name="input_EQ_COURSE_REWIND" text="Rewind course to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>

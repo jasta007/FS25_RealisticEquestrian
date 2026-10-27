@@ -334,9 +334,6 @@
         <text name="eq_sj_fenceRow" text="Hindernis %d von %d"/>
         <text name="eq_sj_faultsRow" text="%d Fehler"/>
         <text name="eq_sj_timeRow" text="Zeit"/>
-        <text name="eq_shop_courseStartLine" text="Springreiten-Startlinie"/>
-        <text name="eq_shop_courseFinishLine" text="Springreiten-Ziellinie"/>
-        <text name="eq_shop_courseLine_function" text="Markiert Start oder Ziel eines aufgezeichneten Springparcours. Reiten Sie mit der roten Flagge rechts hindurch."/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
         <text name="input_EQ_COURSE_REWIND" text="Parcours bis zum nächsten Punkt zurücksetzen"/>
         <text name="eq_course_rewound" text="Parcours bis zum nächsten Punkt zurückgesetzt: %d Hindernisse behalten"/>

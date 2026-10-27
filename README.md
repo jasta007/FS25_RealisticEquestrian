@@ -62,7 +62,7 @@ uses its genetics, health and fitness.
   order (they have no collision while you edit), Ctrl+J again to save. **Ctrl+K** rewinds to the
   nearest point, **Ctrl+L** finishes editing, Ctrl+J near a course edits it and **Ctrl+Backspace**
   deletes it. Then ride a timed round: start line, 3 2 1, the next fence marked in gold, faults and a
-  clock. Start and finish line objects are in the shop.
+  clock.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.

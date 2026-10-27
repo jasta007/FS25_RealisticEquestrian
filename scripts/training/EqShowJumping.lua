@@ -168,8 +168,8 @@ end
 
 
 --- @param course table
---- @param start table|nil a placed start line, else one from the path
---- @param finish table|nil a placed finish line, else one from the path; false for none
+--- @param start table|nil a start line, else one from the path
+--- @param finish table|nil a finish line, else one from the path; false for none
 --- @return table round
 function EqShowJumping.newRound(course, start, finish)
     if finish == nil then finish = EqShowJumping.finishFromPath(course) end

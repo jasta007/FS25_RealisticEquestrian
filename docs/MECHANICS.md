@@ -217,9 +217,9 @@ works in single player for now.
 #### The timed round
 
 Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
-Show Jumping". The start line is a placed Show Jumping Start Line (in the shop under horses) within
-30 m of where the course begins, else one made 12 m before fence 1; the finish line likewise, after
-the last fence. Placed lines work either way round. Within 12 m behind the start line a 3, 2, 1
+Show Jumping". The start line stands on the route 12 m before fence 1 and the finish line 12 m after
+the last fence; both are drawn in gold while they matter, so no objects are needed and a course
+can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
 clock starts as you do. A gold line runs across the next fence between its flags, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 

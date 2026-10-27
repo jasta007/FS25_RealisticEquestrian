@@ -23,9 +23,9 @@
 
     Out of edit mode, near a saved course the horse rides a timed round (EqShowJumping): "Move
     to the start line to begin Show Jumping", a 3, 2, 1 countdown, then the fences in order with
-    the next one tagged on the map and the way to it drawn. A placed start or finish line
-    (placeables/courseLines) close to where the course begins or ends is used, else one is made
-    12 m before fence 1 and after the last fence.
+    the next one marked in gold. The start line stands 12 m before fence 1 and the finish 12 m
+    after the last fence, on the course's route: no objects needed, so players dress a course as
+    they like (James, 2026-10-27).
 
     Recording and rounds run where the rider is (Rideable.onDraw), so they are single player for now.
 
@@ -72,13 +72,6 @@ EqCourseHooks.TAG_CLOSE = 25
 -- A course saved before fence points were kept: a fence's point is the first one within this
 -- many metres of it.
 EqCourseHooks.PASS_NEAR = 6
--- A placed start or finish line counts for a course within this many metres of the line the
--- course would make itself.
-EqCourseHooks.LINE_RADIUS = 30
-EqCourseHooks.LINE_FILES = {
-    start = "placeables/courselines/coursestartline.xml",
-    finish = "placeables/courselines/coursefinishline.xml",
-}
 
 EqCourseHooks.editing = nil
 EqCourseHooks.round = nil
@@ -632,57 +625,6 @@ function EqCourseHooks.onDraw(vehicle)
 end
 
 
---- A placed start or finish line's two posts, red end a and white end b.
---- @param placeable table
---- @return table|nil line { ax, az, bx, bz, x, z }
-local function placedLine(placeable)
-    local red, white = nil, nil
-    local stack = { placeable.rootNode }
-    while #stack > 0 and (red == nil or white == nil) do
-        local node = table.remove(stack)
-        local name = getName(node)
-        if name == "eqLineRed" then red = node elseif name == "eqLineWhite" then white = node end
-        for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
-    end
-    if red == nil or white == nil then return nil end
-    local ax, _, az = getWorldTranslation(red)
-    local bx, _, bz = getWorldTranslation(white)
-    return { ax = ax, az = az, bx = bx, bz = bz, x = (ax + bx) / 2, z = (az + bz) / 2 }
-end
-
-
---- The placed line of a kind nearest a line made from the path, turned so the horse rides it
---- the right way: towards fence 1 over a start line, away from the last fence over a finish.
---- @param kind string "start" or "finish"
---- @param made table the line made from the path
---- @param fence table the course's first (start) or last (finish) fence
---- @return table|nil
-local function findPlacedLine(kind, made, fence)
-    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
-    if system == nil or system.placeables == nil then return nil end
-    local file = EqCourseHooks.LINE_FILES[kind]
-    local best, bestDistance = nil, EqCourseHooks.LINE_RADIUS
-    for _, placeable in ipairs(system.placeables) do
-        local config = placeable.configFileName ~= nil and placeable.configFileName:lower():gsub("\\", "/") or ""
-        if placeable.rootNode ~= nil and config:sub(-#file) == file then
-            local line = placedLine(placeable)
-            if line ~= nil then
-                local dx, dz = line.x - made.x, line.z - made.z
-                local d = math.sqrt(dx * dx + dz * dz)
-                if d <= bestDistance then best, bestDistance = line, d end
-            end
-        end
-    end
-    if best == nil then return nil end
-    -- However it was put down, fence 1 lies past a start line and the last fence before a finish.
-    local past = EqShowJumping.sideOf(best, fence.x, fence.z) == 1
-    if (kind == "start") ~= past then
-        best.ax, best.az, best.bx, best.bz = best.bx, best.bz, best.ax, best.az
-    end
-    return best
-end
-
-
 --- Fill in what a course saved by an earlier version lacks: each fence's point on the path
 --- (the nearest one after the fence before, so a jump ridden twice gets two), its ends from the
 --- jumps on the map, and then the side it is jumped from, read off the path.
@@ -728,17 +670,14 @@ local function fillEnds(course)
 end
 
 
---- A new round on a course, with any placed start and finish lines.
+--- A new round on a course.
 --- @param vehicle table
 --- @param course table
 --- @return table
 local function newRound(vehicle, course)
     fillEnds(course)
-    local start = findPlacedLine("start", EqShowJumping.startFromPath(course), course.jumps[1])
-    local finish = findPlacedLine("finish", EqShowJumping.finishFromPath(course), course.jumps[#course.jumps])
-    local sj = EqShowJumping.newRound(course, start, finish)
-    Log:info("Show jumping: round on '%s', %d fence(s), time allowed %d s, %s start line, %s finish line", course.name,
-        #course.jumps, sj.allowed, start ~= nil and "placed" or "path", finish ~= nil and "placed" or "path")
+    local sj = EqShowJumping.newRound(course)
+    Log:info("Show jumping: round on '%s', %d fence(s), time allowed %d s", course.name, #course.jumps, sj.allowed)
     return { vehicle = vehicle, course = course, sj = sj, seenAt = g_time or 0 }
 end
 
