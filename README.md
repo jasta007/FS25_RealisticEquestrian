@@ -67,6 +67,7 @@ uses its genetics, health and fitness.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
+  Gait keys pressed in the air take effect as the horse lands.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses

@@ -516,6 +516,33 @@ do
     end
 end
 
+-- A gallop jump from the bottom third drops exertion and lets the horse land into a canter.
+;(function()
+    local E = EqExertion
+    local ex = E.new()
+    E.step(ex, "gallop", 100)
+    for _ = 1, 30 do E.step(ex, "gallop", 100) end
+    local before = ex.value
+    check("a gallop pushes exertion up", before > 5 and before < E.LINE / 3, tostring(before))
+    check("a canter is not allowed straight from a push", not E.allowGait(ex, "gallop", "canter"))
+    E.setAir(ex, true)
+    check("a low gallop jump lets the rider queue a slower gait", E.airQueue(ex))
+    for _ = 1, 9 do E.step(ex, "gallop", 100) end
+    check("exertion plummets in a low gallop jump", ex.value == 0, tostring(ex.value))
+    E.setAir(ex, false)
+    check("landing at the canter line allows a canter", E.allowGait(ex, "gallop", "canter"))
+    for _ = 1, 16 do E.step(ex, "gallop", 100) end
+    check("the canter is only allowed just after landing", not E.allowGait(ex, "gallop", "canter"))
+
+    local high = E.new()
+    E.step(high, "gallop", 100)
+    high.value = 60
+    E.setAir(high, true)
+    check("a jump high in the gallop queues nothing", not E.airQueue(high))
+    E.step(high, "gallop", 100)
+    check("and exertion does not plummet", high.value > 59)
+end)()
+
 -- EXERTION: the gallop's Pushing, Recovering and Sprinting (EqExertion).
 do
     local E = EqExertion
