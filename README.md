@@ -162,14 +162,18 @@ For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.m
 - [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
   (`FS25_RealisticLivestockRM`). Without it the mod stays switched off.
 
+**Strongly recommended**
+
+- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
+  (`FS25_RidingHall`): a riding hall and show jumps you can buy and place anywhere. Clearing
+  them trains more agility than jumping fences or bales.
+
 **Recommended, not required**
 
 These add horse buildings that speed up training. The mod works fine without them.
 
 - [Rudolf Hoermann Equestrian Pack](https://www.farming-simulator.com/mod.php?mod_id=309997&title=fs2025)
   (`FS25_horsePack`): riding hall, outdoor training area and L barn
-- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
-  (`FS25_RidingHall`): riding hall and sellable show jumps
 - [Riding Stable](https://www.farming-simulator.com/mod.php?mod_id=320241&title=fs2025)
   (`FS25_RidingStable`): a full riding centre
 

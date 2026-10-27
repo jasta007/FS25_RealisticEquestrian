@@ -140,7 +140,8 @@ Behind it the horse has a hidden breath:
 ### Agility
 
 Agility comes from jump combos: clear jumps one after another (fences, poles, anything solid) for
-x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but stopping, walking or
+x2 up to x5. A proper show jump (Riding Hall 2k26's shop jumps, or a map's jump course such as
+Elmcreek 25's) trains 1.5 times the agility of a fence, a bale or a parked vehicle. You have 10 seconds to clear the next one; a trot is fine, but stopping, walking or
 backing up runs the clock down ten times as fast. A jump is judged once the horse has landed:
 hitting something or landing on it takes 3 seconds off the combo clock. Horses jump higher and stay
 in the air longer from a canter, and pick up speed faster, so a controlled canter approach can clear
