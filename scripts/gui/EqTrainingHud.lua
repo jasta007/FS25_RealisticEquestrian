@@ -116,7 +116,8 @@ end
 --- With no title the panel is just its rows (the Condensed view).
 function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
     local p = EqTrainingHud.PANEL
-    local height = p.padding * 2 + (title ~= nil and p.lineHeight or 0)
+    -- Without a title the bar sits with equal room above and below.
+    local height = title ~= nil and p.padding * 2 + p.lineHeight or p.padding * 0.5
     for _, row in ipairs(rows) do
         if row.bar ~= nil then
             height = height + p.barHeight + p.padding

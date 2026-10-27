@@ -95,8 +95,6 @@
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig W. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
         <text name="eq_help_speed_2" text="Ein Sprint, der in Außer Atem endet, zählt nur x1, also hören Sie vor der Linie auf zu tippen (oder drücken Sie S). Nach einem Sprint muss sich Ihr Pferd bis zum leeren Balken erholen, bevor es wieder sprinten kann."/>
-        <text name="eq_help_condensed_title" text="Training: Kompakt"/>
-        <text name="eq_help_condensed_1" text="Nur der Anstrengungsbalken, mit Trainingsneuigkeiten in einer kleinen Zeile darüber. Alles trainiert weiter wie in der Ansicht Frei. Mit Y wechseln Sie die Ansicht, mit H öffnen Sie die Hilfe."/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
         <text name="eq_train_quality_slow" text="trainiert langsam"/>

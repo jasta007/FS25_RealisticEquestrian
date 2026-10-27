@@ -88,8 +88,6 @@
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap W continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
         <text name="eq_help_speed_2" text="A Sprint that ends in Blowing Hard is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
-        <text name="eq_help_condensed_title" text="Training: Condensed"/>
-        <text name="eq_help_condensed_1" text="Just the Exertion bar, with training news in a small line above it. Everything still trains as in Freestyle. Press Y to switch views, or H for help."/>
         <text name="eq_train_speedMult" text="Speed x%.1f"/>
         <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
         <text name="eq_train_staminaStopped" text="no training"/>

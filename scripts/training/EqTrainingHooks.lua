@@ -674,7 +674,7 @@ end
 -- everything. Help popups (H, and the first time a view opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament", "condensed" }
 -- "gallop" pops up the first time the horse gallops, and on H while it gallops.
-EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 2, speed = 2, agility = 2, temperament = 2, condensed = 1, gallop = 4 }
+EqTrainingHooks.HELP_PAGES = { freestyle = 3, stamina = 2, speed = 2, agility = 2, temperament = 2, gallop = 4 }
 -- Views that show the gallop's training rows and keys under the bar.
 EqTrainingHooks.GALLOP_VIEWS = { freestyle = true, stamina = true, speed = true }
 -- The stats the player's riding trains.
@@ -760,29 +760,6 @@ local COLOR = EqTrainingHud.COLOR
 -- Status colours never borrow a stat's colour (EqTrainingHud.STAT_COLOR): white is good,
 -- yellow a warning, red bad, grey idle.
 local STAT_COLOR = EqTrainingHud.STAT_COLOR
-local QUALITY_COLOR = { fast = COLOR.white, steady = COLOR.yellow, slow = COLOR.grey, full = COLOR.white }
-
-
---- A panel row for a stat: "Stamina 45%" and how it is training now, in that state's colour.
---- @param stat string
---- @param effort table from EqTraining.playerEffort
---- @param sheet table
---- @return table row
-local function statRow(stat, effort, sheet)
-    local cap = EqTraining.EFFORT_CAP[stat]
-    local band
-    if effort[stat] >= cap then
-        band = "full"
-    elseif sheet.quality[stat] ~= nil then
-        band = EqTraining.qualityBand(sheet.quality[stat])
-    end
-    return {
-        left = string.format("%s %d%%", g_i18n:getText("eq_stat_" .. stat), math.floor(effort[stat] / cap * 100 + 0.5)),
-        leftColor = STAT_COLOR[stat],
-        right = band ~= nil and g_i18n:getText("eq_train_quality_" .. band) or nil,
-        rightColor = band ~= nil and QUALITY_COLOR[band] or nil,
-    }
-end
 
 
 -- The exertion bar's sections (James's drawing, 2026-10-27), each { from, to, colour when dim,
@@ -958,20 +935,38 @@ local function exertionPrompt(ex, small)
 end
 
 
---- The top of the riding panel: the horse's skills, so the rider remembers what this horse is
---- being trained for (its role is in the title).
+--- The top of the riding panel: the horse's skills, two to a line, "Stamina: 34 (+1)" with any
+--- Peak form this month in brackets, so the rider remembers what this horse is being trained for
+--- (its role is in the title). James (2026-10-27): no separate Peak form or effort lines.
 --- @param cluster table|nil RLRM Animal being ridden
 --- @return table rows
 function EqTrainingHooks.horseRows(cluster)
     local rows = {}
     local record = cluster ~= nil and EqRegistry.getOrCreate(cluster) or nil
     if record == nil then return rows end
-    local segments = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        table.insert(segments, { string.format("%s %d", g_i18n:getText("eq_stat_short_" .. stat),
-            math.floor(record.trained[stat] or 0)), STAT_COLOR[stat] })
+    -- Peak form comes with the Peak form feature (EqCompetitionManager.formFor), when it is there.
+    local form = nil
+    if EqCompetitionManager ~= nil and EqCompetitionManager.formFor ~= nil and EqTraining.hasForm ~= nil then
+        form = EqCompetitionManager.formFor(record)
+        if not EqTraining.hasForm(form) then
+            form = nil
+        elseif EqTrainingHooks.HELP_PAGES.form ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
+            -- The first peak form explains itself once.
+            EqTrainingHud.markSeen("form")
+            EqTrainingHooks.showHelp("form")
+        end
     end
-    table.insert(rows, { segments = segments })
+    local segments
+    for i, stat in ipairs(EqConstants.STAT_KEYS) do
+        if i % 2 == 1 then
+            segments = {}
+            table.insert(rows, { segments = segments })
+        end
+        local boost = form ~= nil and math.floor((form[stat] or 0) + 0.5) or 0
+        table.insert(segments, { g_i18n:getText("eq_stat_" .. stat) .. ":", STAT_COLOR[stat], at = i % 2 == 1 and 0 or 0.5, tight = true })
+        table.insert(segments, { tostring(math.floor(record.trained[stat] or 0)), STAT_COLOR[stat], bold = true, tight = boost > 0 })
+        if boost > 0 then table.insert(segments, { string.format("(+%d)", boost), STAT_COLOR[stat] }) end
+    end
     return rows
 end
 
@@ -984,7 +979,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     pollGaitKeys(vehicle)
 
     local view = EqTrainingHooks.getView()
-    if not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen(view) then
+    if EqTrainingHooks.HELP_PAGES[view] ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen(view) then
         EqTrainingHud.markSeen(view)
         EqTrainingHooks.showHelp(view)
     end
@@ -994,7 +989,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
     if sheet == nil then return end
 
-    local effort = EqTraining.playerEffort(sheet)
     local condensed = view == "condensed"
     local rows = condensed and {} or EqTrainingHooks.horseRows(spec.cluster)
     EqTrainingHud.view = view
@@ -1050,17 +1044,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     end
     EqTrainingHud.drawPops()
 
-    -- Today's effort: two stats to a row in Freestyle, the view's own stat in a focused view.
-    if view == "freestyle" then
-        local stats = EqTrainingHooks.TRAINED_STATS
-        for i = 1, #stats, 2 do
-            local first, second = statRow(stats[i], effort, sheet), stats[i + 1] and statRow(stats[i + 1], effort, sheet)
-            table.insert(rows, { left = first.left, leftColor = first.leftColor,
-                right = second and second.left, rightColor = second and second.leftColor })
-        end
-    elseif not condensed then
-        table.insert(rows, statRow(view, effort, sheet))
-    end
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
     -- The ridden horse's name and role head the panel, the view on the right: Condensed has no title.
