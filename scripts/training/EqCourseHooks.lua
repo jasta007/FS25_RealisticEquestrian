@@ -69,6 +69,9 @@ EqCourseHooks.NUMBER_ASIDE = 1.5
 -- The start line is tagged on the map only until the horse is this close (the game draws the
 -- tag on the line itself).
 EqCourseHooks.TAG_CLOSE = 25
+-- A course saved before fence points were kept: a fence's point is the first one within this
+-- many metres of it.
+EqCourseHooks.PASS_NEAR = 6
 -- A placed start or finish line counts for a course within this many metres of the line the
 -- course would make itself.
 EqCourseHooks.LINE_RADIUS = 30
@@ -689,13 +692,21 @@ local function fillEnds(course)
     local from = 1
     for _, jump in ipairs(course.jumps) do
         if jump.pointIndex == nil then
-            local best, bestDistance = from, math.huge
+            -- The first pass close by, not the nearest overall: a jump ridden twice is passed
+            -- twice, and the later pass may happen to be closer.
+            local best, bestDistance = nil, math.huge
+            local nearest, nearestDistance = from, math.huge
             for i = from, #points do
                 local dx, dz = points[i].x - jump.x, points[i].z - jump.z
                 local d = dx * dx + dz * dz
-                if d < bestDistance then best, bestDistance = i, d end
+                if d < nearestDistance then nearest, nearestDistance = i, d end
+                if d <= EqCourseHooks.PASS_NEAR ^ 2 and d < bestDistance then
+                    best, bestDistance = i, d
+                elseif best ~= nil then
+                    break
+                end
             end
-            jump.pointIndex = best
+            jump.pointIndex = best or nearest
         end
         from = math.max(from, jump.pointIndex)
     end
