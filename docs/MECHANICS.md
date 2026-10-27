@@ -300,7 +300,9 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 - When a horse's riding bar is full it trains no more that day: the look-at Skills box says so in
   red, the Daily riding value reads "100 % - full" (red in RLRM's menu) and the riding panel shows
-  a red line.
+  a red line. Everything earned before it filled is kept: jumps, routines and stamina count as
+  they happen, and a Sprint running when the bar fills is banked at once at the multiplier it had
+  reached ("Speed xN!" beside the panel).
 - The look-at box is headed with the horse's name instead of "Animal".
 
 Console commands: `eqTraining` shows each horse's role and today's riding; `eqFocus <name> <role>`
