@@ -71,7 +71,7 @@
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
         <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
-        <text name="eq_help_freestyle_3" text="Rather not ride? Animal staff or RLRM&apos;s Herdsman still train your horses automatically each day, just more slowly than riding them yourself."/>
+        <text name="eq_help_freestyle_3" text="Rather not ride? Hire grooms and trainers on the Staff tab to train your horses each day. The game&apos;s animal staff and RLRM&apos;s Herdsman only keep them ticking over."/>
         <text name="eq_form_title" text="Peak form"/>
         <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
         <text name="eq_help_form_title" text="Peak form"/>
@@ -89,7 +89,7 @@
         <text name="eq_welcome_info_potential_title" text="Potential"/>
         <text name="eq_welcome_info_potential" text="Potential is how far each skill can grow with training. Young horses learn the fastest, and older horses can lose potential. Potential is only estimated, and even the estimate can be wrong until you have owned the horse for a while."/>
         <text name="eq_welcome_info_roles_title" text="Roles and staff"/>
-        <text name="eq_welcome_info_roles" text="You can give a horse a role with the Role button to help keep track, and it also tells your staff which skills to train. Hire staff in the standard Animals menu to help with training and care."/>
+        <text name="eq_welcome_info_roles" text="You can give a horse a role with the Role button to help keep track. Grooms and trainers on the Staff tab can work on every horse with a role, or on one horse."/>
         <text name="eq_welcome_info_feed_title" text="Feed"/>
         <text name="eq_welcome_info_feed" text="Hay is the basic diet. Oats give a minor boost to Stamina and Temperament, barley a moderate boost to Stamina and Agility, and corn a large boost to Speed. Carrots (and apples, if available) give a large boost to Temperament."/>
         <text name="eq_welcome_events_disciplines_title" text="Events"/>
@@ -503,6 +503,64 @@
         <text name="eq_ui_entriesLeft" text="Entries left this month: %d of %d."/>
         <text name="eq_money_transport" text="Horse Transport"/>
         <text name="eq_money_staffWages" text="Horse Staff Wages"/>
+        <text name="eq_staff_title" text="Staff"/>
+        <text name="eq_staff_tab_hire" text="Hire"/>
+        <text name="eq_staff_tab_staff" text="Your staff"/>
+        <text name="eq_staff_col_name" text="Name"/>
+        <text name="eq_staff_col_job" text="Job"/>
+        <text name="eq_staff_col_grade" text="Grade"/>
+        <text name="eq_staff_col_best" text="Best skills"/>
+        <text name="eq_staff_col_worksOn" text="Works on"/>
+        <text name="eq_staff_col_wage" text="Wage / month"/>
+        <text name="eq_staff_job_groom" text="Groom"/>
+        <text name="eq_staff_job_dressage" text="Dressage trainer"/>
+        <text name="eq_staff_job_showJumping" text="Show jumping trainer"/>
+        <text name="eq_staff_job_crossCountry" text="Cross country trainer"/>
+        <text name="eq_staff_job_racing" text="Racing trainer"/>
+        <text name="eq_staff_job_vet" text="Vet"/>
+        <text name="eq_staff_job_broker" text="Broker"/>
+        <text name="eq_staff_grade_junior" text="Junior"/>
+        <text name="eq_staff_grade_experienced" text="Experienced"/>
+        <text name="eq_staff_grade_senior" text="Senior"/>
+        <text name="eq_staff_grade_legendary" text="Legendary"/>
+        <text name="eq_staff_skill_dressage" text="Dressage"/>
+        <text name="eq_staff_skill_showJumping" text="Show Jumping"/>
+        <text name="eq_staff_skill_crossCountry" text="Cross Country"/>
+        <text name="eq_staff_skill_racing" text="Racing"/>
+        <text name="eq_staff_skill_veterinary" text="Veterinary"/>
+        <text name="eq_staff_skill_broker" text="Broker"/>
+        <text name="eq_staff_level_1" text="Poor"/>
+        <text name="eq_staff_level_2" text="Fair"/>
+        <text name="eq_staff_level_3" text="Good"/>
+        <text name="eq_staff_level_4" text="Very good"/>
+        <text name="eq_staff_level_5" text="Excellent"/>
+        <text name="eq_staff_level_6" text="Legendary"/>
+        <text name="eq_staff_works_general" text="All horses (general)"/>
+        <text name="eq_staff_works_role" text="All %s horses"/>
+        <text name="eq_staff_works_passive" text="Every horse"/>
+        <text name="eq_staff_wage" text="Wage"/>
+        <text name="eq_staff_perMonth" text="%s a month"/>
+        <text name="eq_staff_coversHorses" text="%s (%d)"/>
+        <text name="eq_staff_available_1" text="This month only"/>
+        <text name="eq_staff_available_2" text="This month and next"/>
+        <text name="eq_staff_onOffer" text="Available"/>
+        <text name="eq_staff_does" text="Does"/>
+        <text name="eq_staff_does_groom" text="Trains all four stats, cleans horses, brings loose horses home"/>
+        <text name="eq_staff_does_trainer" text="Trains %s and %s"/>
+        <text name="eq_staff_does_vet" text="Fewer injuries, shorter and cheaper treatment, for every horse"/>
+        <text name="eq_staff_does_broker" text="Reads dealer horses&apos; potential more truly"/>
+        <text name="eq_staff_button_hire" text="Hire (%s a month)"/>
+        <text name="eq_staff_button_worksOn" text="Change who they work on"/>
+        <text name="eq_staff_button_fire" text="Let go"/>
+        <text name="eq_staff_fire_confirm" text="Let %s go? They won&apos;t be back."/>
+        <text name="eq_staff_letGo" text="%s has left."/>
+        <text name="eq_staff_hired" text="%s starts work today."/>
+        <text name="eq_staff_unique" text="You already have a %s. A farm can have only one."/>
+        <text name="eq_staff_noCandidates" text="No one is looking for work right now. New people arrive each month."/>
+        <text name="eq_staff_noStaff" text="You have no staff yet. Hire some on the Hire tab."/>
+        <text name="eq_staff_summary_hire" text="New people arrive each month and stay on offer for one or two months. Only one vet and one broker per farm."/>
+        <text name="eq_staff_summary_staff" text="Wages: %s a month, paid daily. Staff work best on a few horses each."/>
+        <text name="eq_staff_clientNote" text="Only the host can hire staff for now."/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>
         <text name="eq_result_placedNoPrize" text="%s finished %d of %d in %s."/>
         <text name="eq_result_gone" text="%s could not run in %s: the horse is no longer on a farm."/>

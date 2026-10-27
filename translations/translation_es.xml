@@ -64,7 +64,7 @@
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilidad"/>
         <text name="eq_help_freestyle_2" text="La Agilidad se entrena saltando obstáculos para llenar un medidor de combo, y el Temperamento empieza manteniendo el paso un momento y luego siguiendo órdenes para llenar el suyo. La Resistencia y la Velocidad se entrenan galopando bien: pulsa H mientras galopas para aprender cómo."/>
-        <text name="eq_help_freestyle_3" text="¿Prefieres no montar? Los trabajadores de animales o el Pastor de RLRM siguen entrenando tus caballos cada día, solo que más despacio que si los montas tú."/>
+        <text name="eq_help_freestyle_3" text="¿Prefieres no montar? Contrata mozos y entrenadores en la pestaña Personal para entrenar tus caballos cada día. Los trabajadores de animales y el Pastor de RLRM solo los mantienen activos."/>
         <text name="eq_form_title" text="Mejor forma"/>
         <text name="eq_help_freestyle_4" text="¡Monta antes de una competición! Cada habilidad que entrenas con su minijuego pone a tu caballo en Mejor forma para las pruebas de este mes, hasta +8 por habilidad. No se acumula en varios días: cuenta tu mejor sesión del mes."/>
         <text name="eq_help_form_title" text="Mejor forma"/>
@@ -82,7 +82,7 @@
         <text name="eq_welcome_info_potential_title" text="Potencial"/>
         <text name="eq_welcome_info_potential" text="El potencial indica hasta dónde puede crecer cada habilidad con entrenamiento. Los caballos jóvenes aprenden más rápido, y los mayores pueden perder potencial. El potencial solo es una estimación, e incluso la estimación puede fallar hasta que lleves un tiempo con el caballo."/>
         <text name="eq_welcome_info_roles_title" text="Funciones y personal"/>
-        <text name="eq_welcome_info_roles" text="Con el botón Función puedes asignar una función a un caballo para organizarte, y además indica a tu personal qué habilidades entrenar. Contrata personal en el menú Animales normal para que te ayude con el entrenamiento y los cuidados."/>
+        <text name="eq_welcome_info_roles" text="Con el botón Función puedes asignar una función a un caballo para organizarte. Los mozos y entrenadores de la pestaña Personal pueden trabajar con todos los caballos de una función o con uno solo."/>
         <text name="eq_welcome_info_feed_title" text="Alimentación"/>
         <text name="eq_welcome_info_feed" text="El heno es la dieta básica. La avena da un pequeño impulso a la Resistencia y el Temperamento, la cebada un impulso moderado a la Resistencia y la Agilidad, y el maíz un gran impulso a la Velocidad. Las zanahorias (y las manzanas, si las hay) dan un gran impulso al Temperamento."/>
         <text name="eq_welcome_events_disciplines_title" text="Pruebas"/>
@@ -440,6 +440,64 @@
         <text name="eq_ui_entriesLeft" text="Inscripciones restantes este mes: %d de %d."/>
         <text name="eq_money_transport" text="Transporte de caballos"/>
         <text name="eq_money_staffWages" text="Salarios del personal ecuestre"/>
+        <text name="eq_staff_title" text="Personal"/>
+        <text name="eq_staff_tab_hire" text="Contratar"/>
+        <text name="eq_staff_tab_staff" text="Tu personal"/>
+        <text name="eq_staff_col_name" text="Nombre"/>
+        <text name="eq_staff_col_job" text="Puesto"/>
+        <text name="eq_staff_col_grade" text="Nivel"/>
+        <text name="eq_staff_col_best" text="Mejores habilidades"/>
+        <text name="eq_staff_col_worksOn" text="Trabaja con"/>
+        <text name="eq_staff_col_wage" text="Sueldo / mes"/>
+        <text name="eq_staff_job_groom" text="Mozo de cuadra"/>
+        <text name="eq_staff_job_dressage" text="Entrenador de doma"/>
+        <text name="eq_staff_job_showJumping" text="Entrenador de salto"/>
+        <text name="eq_staff_job_crossCountry" text="Entrenador de cross"/>
+        <text name="eq_staff_job_racing" text="Entrenador de carreras"/>
+        <text name="eq_staff_job_vet" text="Veterinario"/>
+        <text name="eq_staff_job_broker" text="Corredor"/>
+        <text name="eq_staff_grade_junior" text="Júnior"/>
+        <text name="eq_staff_grade_experienced" text="Experimentado"/>
+        <text name="eq_staff_grade_senior" text="Sénior"/>
+        <text name="eq_staff_grade_legendary" text="Legendario"/>
+        <text name="eq_staff_skill_dressage" text="Doma"/>
+        <text name="eq_staff_skill_showJumping" text="Salto"/>
+        <text name="eq_staff_skill_crossCountry" text="Cross"/>
+        <text name="eq_staff_skill_racing" text="Carreras"/>
+        <text name="eq_staff_skill_veterinary" text="Veterinaria"/>
+        <text name="eq_staff_skill_broker" text="Corretaje"/>
+        <text name="eq_staff_level_1" text="Flojo"/>
+        <text name="eq_staff_level_2" text="Regular"/>
+        <text name="eq_staff_level_3" text="Bueno"/>
+        <text name="eq_staff_level_4" text="Muy bueno"/>
+        <text name="eq_staff_level_5" text="Excelente"/>
+        <text name="eq_staff_level_6" text="Legendario"/>
+        <text name="eq_staff_works_general" text="Todos los caballos (general)"/>
+        <text name="eq_staff_works_role" text="Todos los caballos: %s"/>
+        <text name="eq_staff_works_passive" text="Cada caballo"/>
+        <text name="eq_staff_wage" text="Sueldo"/>
+        <text name="eq_staff_perMonth" text="%s al mes"/>
+        <text name="eq_staff_coversHorses" text="%s (%d)"/>
+        <text name="eq_staff_available_1" text="Solo este mes"/>
+        <text name="eq_staff_available_2" text="Este mes y el siguiente"/>
+        <text name="eq_staff_onOffer" text="Disponible"/>
+        <text name="eq_staff_does" text="Tarea"/>
+        <text name="eq_staff_does_groom" text="Entrena las cuatro estadísticas, limpia caballos y recoge los sueltos"/>
+        <text name="eq_staff_does_trainer" text="Entrena %s y %s"/>
+        <text name="eq_staff_does_vet" text="Menos lesiones y tratamientos más cortos y baratos para cada caballo"/>
+        <text name="eq_staff_does_broker" text="Juzga mejor el potencial de los caballos del tratante"/>
+        <text name="eq_staff_button_hire" text="Contratar (%s al mes)"/>
+        <text name="eq_staff_button_worksOn" text="Cambiar asignación"/>
+        <text name="eq_staff_button_fire" text="Despedir"/>
+        <text name="eq_staff_fire_confirm" text="¿Despedir a %s? No volverá."/>
+        <text name="eq_staff_letGo" text="%s se ha ido."/>
+        <text name="eq_staff_hired" text="%s empieza hoy."/>
+        <text name="eq_staff_unique" text="Ya tienes un %s. Una granja solo puede tener uno."/>
+        <text name="eq_staff_noCandidates" text="Ahora nadie busca trabajo. Cada mes llega gente nueva."/>
+        <text name="eq_staff_noStaff" text="Aún no tienes personal. Contrata en la pestaña Contratar."/>
+        <text name="eq_staff_summary_hire" text="Cada mes llega gente nueva, disponible uno o dos meses. Solo un veterinario y un corredor por granja."/>
+        <text name="eq_staff_summary_staff" text="Sueldos: %s al mes, pagados a diario. El personal rinde más con pocos caballos."/>
+        <text name="eq_staff_clientNote" text="Por ahora solo el anfitrión puede contratar."/>
         <text name="eq_result_placed" text="%s terminó en el puesto %d de %d en la prueba %s y ganó %s."/>
         <text name="eq_result_placedNoPrize" text="%s terminó en el puesto %d de %d en la prueba %s."/>
         <text name="eq_result_gone" text="%s no pudo correr en la prueba %s: el caballo ya no está en una granja."/>

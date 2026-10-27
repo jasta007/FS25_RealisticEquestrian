@@ -67,8 +67,8 @@ uses its genetics, health and fitness.
   Gait keys pressed in the air take effect as the horse lands.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
-- **Staff (new):** hire grooms and event trainers with skills and wages, and set who they work
-  on (console `eqStaff` for now). The game's Animal Workers and RLRM's herdsman only keep horses
+- **Staff (new):** hire grooms and event trainers with skills and wages on the **Staff** tab of
+  RLRM's menu, and set who they work on. The game's Animal Workers and RLRM's herdsman only keep horses
   ticking over. Idle horses lose condition.
 - **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
   list groups horses by role, the role shows while you look at or ride the horse, and staff can
@@ -253,7 +253,7 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 ## Planned features
 
 - Rival horses for sale (the named rivals already turn up in the same events)
-- Hire and Staff tabs, a vet and a broker, and trainers' bonuses before events
+- Vet and broker effects, and trainers' bonuses before events
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support

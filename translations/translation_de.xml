@@ -73,7 +73,7 @@
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
         <text name="eq_help_freestyle_2" text="Wendigkeit trainieren Sie, indem Sie über Hindernisse springen und so eine Kombo aufbauen, und Temperament beginnt, wenn Sie kurz im Schritt bleiben und dann Anweisungen folgen, um seine Kombo aufzubauen. Ausdauer und Schnelligkeit trainieren Sie, indem Sie den Renngalopp gut reiten: Drücken Sie im Renngalopp H, um zu erfahren, wie."/>
-        <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Tierpfleger oder der Herdsman von RLRM trainieren Ihre Pferde weiterhin jeden Tag automatisch, nur langsamer, als wenn Sie selbst reiten."/>
+        <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Stellen Sie im Reiter Personal Pferdepfleger und Trainer ein, die Ihre Pferde jeden Tag trainieren. Tierpfleger und der Herdsman von RLRM halten sie nur in Bewegung."/>
         <text name="eq_form_title" text="Topform"/>
         <text name="eq_help_freestyle_4" text="Reiten Sie vor einem Wettbewerb! Jeder Wert, den Sie mit seinem Minispiel trainieren, bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform, bis zu +8 pro Wert. Mehrere Tage addieren sich nicht: Ihre beste Einheit des Monats zählt."/>
         <text name="eq_help_form_title" text="Topform"/>
@@ -91,7 +91,7 @@
         <text name="eq_welcome_info_potential_title" text="Potenzial"/>
         <text name="eq_welcome_info_potential" text="Das Potenzial zeigt, wie weit jede Fähigkeit durch Training wachsen kann. Junge Pferde lernen am schnellsten, ältere können Potenzial verlieren. Das Potenzial ist nur geschätzt, und selbst die Schätzung kann falsch sein, bis Sie das Pferd eine Weile besitzen."/>
         <text name="eq_welcome_info_roles_title" text="Rollen und Personal"/>
-        <text name="eq_welcome_info_roles" text="Mit der Schaltfläche Rolle können Sie einem Pferd eine Rolle geben, um den Überblick zu behalten; sie sagt Ihrem Personal außerdem, welche Fähigkeiten es trainieren soll. Personal stellen Sie im normalen Tiermenü ein; es hilft bei Training und Pflege."/>
+        <text name="eq_welcome_info_roles" text="Mit der Schaltfläche Rolle können Sie einem Pferd eine Rolle geben, um den Überblick zu behalten. Pfleger und Trainer im Reiter Personal können mit allen Pferden einer Rolle oder mit einem Pferd arbeiten."/>
         <text name="eq_welcome_info_feed_title" text="Futter"/>
         <text name="eq_welcome_info_feed" text="Heu ist das Grundfutter. Hafer gibt Ausdauer und Temperament einen kleinen Schub, Gerste Ausdauer und Wendigkeit einen mittleren und Mais der Schnelligkeit einen großen. Karotten (und Äpfel, falls verfügbar) geben dem Temperament einen großen Schub."/>
         <text name="eq_welcome_events_disciplines_title" text="Veranstaltungen"/>
@@ -505,6 +505,64 @@
         <text name="eq_ui_entriesLeft" text="Verbleibende Nennungen diesen Monat: %d von %d."/>
         <text name="eq_money_transport" text="Pferdetransport"/>
         <text name="eq_money_staffWages" text="Löhne für Pferdepersonal"/>
+        <text name="eq_staff_title" text="Personal"/>
+        <text name="eq_staff_tab_hire" text="Einstellen"/>
+        <text name="eq_staff_tab_staff" text="Ihr Personal"/>
+        <text name="eq_staff_col_name" text="Name"/>
+        <text name="eq_staff_col_job" text="Beruf"/>
+        <text name="eq_staff_col_grade" text="Stufe"/>
+        <text name="eq_staff_col_best" text="Beste Fähigkeiten"/>
+        <text name="eq_staff_col_worksOn" text="Arbeitet mit"/>
+        <text name="eq_staff_col_wage" text="Lohn / Monat"/>
+        <text name="eq_staff_job_groom" text="Pferdepfleger"/>
+        <text name="eq_staff_job_dressage" text="Dressurtrainer"/>
+        <text name="eq_staff_job_showJumping" text="Springtrainer"/>
+        <text name="eq_staff_job_crossCountry" text="Geländetrainer"/>
+        <text name="eq_staff_job_racing" text="Renntrainer"/>
+        <text name="eq_staff_job_vet" text="Tierarzt"/>
+        <text name="eq_staff_job_broker" text="Pferdemakler"/>
+        <text name="eq_staff_grade_junior" text="Junior"/>
+        <text name="eq_staff_grade_experienced" text="Erfahren"/>
+        <text name="eq_staff_grade_senior" text="Senior"/>
+        <text name="eq_staff_grade_legendary" text="Legendär"/>
+        <text name="eq_staff_skill_dressage" text="Dressur"/>
+        <text name="eq_staff_skill_showJumping" text="Springreiten"/>
+        <text name="eq_staff_skill_crossCountry" text="Gelände"/>
+        <text name="eq_staff_skill_racing" text="Rennen"/>
+        <text name="eq_staff_skill_veterinary" text="Tiermedizin"/>
+        <text name="eq_staff_skill_broker" text="Handel"/>
+        <text name="eq_staff_level_1" text="Schwach"/>
+        <text name="eq_staff_level_2" text="Mäßig"/>
+        <text name="eq_staff_level_3" text="Gut"/>
+        <text name="eq_staff_level_4" text="Sehr gut"/>
+        <text name="eq_staff_level_5" text="Hervorragend"/>
+        <text name="eq_staff_level_6" text="Legendär"/>
+        <text name="eq_staff_works_general" text="Alle Pferde (allgemein)"/>
+        <text name="eq_staff_works_role" text="Alle Pferde: %s"/>
+        <text name="eq_staff_works_passive" text="Jedes Pferd"/>
+        <text name="eq_staff_wage" text="Lohn"/>
+        <text name="eq_staff_perMonth" text="%s pro Monat"/>
+        <text name="eq_staff_coversHorses" text="%s (%d)"/>
+        <text name="eq_staff_available_1" text="Nur diesen Monat"/>
+        <text name="eq_staff_available_2" text="Diesen und nächsten Monat"/>
+        <text name="eq_staff_onOffer" text="Verfügbar"/>
+        <text name="eq_staff_does" text="Aufgabe"/>
+        <text name="eq_staff_does_groom" text="Trainiert alle vier Werte, putzt Pferde, holt freilaufende Pferde heim"/>
+        <text name="eq_staff_does_trainer" text="Trainiert %s und %s"/>
+        <text name="eq_staff_does_vet" text="Weniger Verletzungen, kürzere und günstigere Behandlung für jedes Pferd"/>
+        <text name="eq_staff_does_broker" text="Schätzt das Potenzial der Händlerpferde genauer ein"/>
+        <text name="eq_staff_button_hire" text="Einstellen (%s pro Monat)"/>
+        <text name="eq_staff_button_worksOn" text="Zuständigkeit ändern"/>
+        <text name="eq_staff_button_fire" text="Entlassen"/>
+        <text name="eq_staff_fire_confirm" text="%s entlassen? Diese Person kommt nicht zurück."/>
+        <text name="eq_staff_letGo" text="%s ist gegangen."/>
+        <text name="eq_staff_hired" text="%s fängt heute an."/>
+        <text name="eq_staff_unique" text="Sie haben schon einen %s. Ein Hof kann nur einen haben."/>
+        <text name="eq_staff_noCandidates" text="Gerade sucht niemand Arbeit. Jeden Monat kommen neue Leute."/>
+        <text name="eq_staff_noStaff" text="Sie haben noch kein Personal. Stellen Sie im Reiter Einstellen welches ein."/>
+        <text name="eq_staff_summary_hire" text="Jeden Monat kommen neue Leute, für ein bis zwei Monate. Nur ein Tierarzt und ein Makler pro Hof."/>
+        <text name="eq_staff_summary_staff" text="Löhne: %s pro Monat, täglich gezahlt. Personal arbeitet am besten mit wenigen Pferden."/>
+        <text name="eq_staff_clientNote" text="Vorerst kann nur der Host Personal einstellen."/>
         <text name="eq_result_placed" text="%s belegte Platz %d von %d bei %s und gewann %s."/>
         <text name="eq_result_placedNoPrize" text="%s belegte Platz %d von %d bei %s."/>
         <text name="eq_result_gone" text="%s konnte bei %s nicht starten: Das Pferd ist auf keinem Hof mehr."/>

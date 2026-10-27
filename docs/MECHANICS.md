@@ -298,8 +298,10 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Hired staff
 
-Hire grooms, event trainers, a vet and a broker with the `eqStaff` console commands (Hire and
-Staff tabs are coming). Host only for now in multiplayer.
+Hire grooms, event trainers, a vet and a broker on the **Staff** tab of RLRM's menu: **Hire**
+lists the candidates, **Your staff** your team, with Change who they work on and Let go. Each
+person's ten skills show beside the table. The `eqStaff` console commands do the same. Host only
+for now in multiplayer.
 
 - **Jobs.** A groom trains all four stats and cleans horses. A Dressage, Show Jumping, Cross
   Country or Racing trainer trains that event's two main stats (Dressage: temperament and agility;
@@ -316,7 +318,7 @@ Staff tabs are coming). Host only for now in multiplayer.
 - **Candidates.** Six are on offer, shared by every farm. Each stays one or two months; at each
   month change those whose time is up leave and new ones arrive.
 - **Works on.** A groom or trainer works on all horses (General), every horse with a role, or one
-  horse (`eqStaffWork`). Horses they work on get their full work; up to 4 horses each, more share
+  horse (the Change who they work on button steps through them). Horses they work on get their full work; up to 4 horses each, more share
   it (8 horses get half each). Every other horse gets 20% of it.
 - **Training.** Per day, a trainer gives 0.5 x skill/100 effort in its two stats, and anyone gives
   0.35 x skill/100 in the other stats (so a groom trains everything, and a talented trainer

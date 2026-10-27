@@ -1011,6 +1011,16 @@ do
     local clean = EqStaff.toClean(grooms, yard)
     check("a groom cleans 8 horses, theirs first", #clean == EqStaff.CLEAN_PER_GROOM and clean[1].id == "Y12")
     check("no grooms, no cleaning", #EqStaff.toClean({ vet }, yard) == 0)
+    local options = EqStaff.worksOptions({ { id = "b", name = "Bella", role = "racing" }, { id = "a", name = "Ace", role = "balanced" },
+        { id = "r", name = "Old", role = "dressage", retired = true } }, EqRole.ORDER)
+    check("Works on: general, roles in use, then horses by name", #options == 5 and options[2].role == "racing"
+        and options[3].name == "Ace" and options[5].name == "Old")
+    check("Works on steps round", EqStaff.nextWorks(options, options[5]).kind == EqStaff.WORKS_GENERAL
+        and EqStaff.nextWorks(options, { kind = EqStaff.WORKS_GENERAL }).role == "racing")
+    check("a gone horse starts again at general", EqStaff.nextWorks(options, { kind = EqStaff.WORKS_HORSE, id = "x" }).kind
+        == EqStaff.WORKS_GENERAL)
+    check("skill words", EqStaff.level(95).word == 6 and EqStaff.level(0).word == 1 and EqStaff.level(59).word == 3)
+    check("best skills first", EqStaff.bestSkills(member(30, "racing", 70), 2)[1] == "racing")
 end
 
 -- The same months give the same result whatever the days per month.

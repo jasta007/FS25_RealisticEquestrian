@@ -68,6 +68,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
+source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
@@ -156,6 +157,7 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab then
         guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
+        guarded("staff tab hook", function() EqStaffFrame.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then

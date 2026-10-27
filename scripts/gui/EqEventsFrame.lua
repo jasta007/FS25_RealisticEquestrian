@@ -112,11 +112,13 @@ end
 --- Point the header icon at our texture for every overlay state, without a slice id. Loaded from
 --- the XML's imageSliceId, the icon showed the whole base UI atlas squashed into the square,
 --- so set the overlay ourselves: our file, our UVs, no per-state overrides.
+--- Also used by the Staff tab (EqStaffFrame), with its own slice.
+--- @param sliceId string|nil our atlas slice, the Events icon when nil
 --- @return boolean changed true when the icon was not showing our slice
-function EqEventsFrame:applyHeaderIcon()
+function EqEventsFrame:applyHeaderIcon(sliceId)
     local icon = self.headerIcon
     if icon == nil or icon.overlay == nil then return false end
-    local slice = g_overlayManager:getSliceInfoById(EqEventsFrame.ICON_SLICE)
+    local slice = g_overlayManager:getSliceInfoById(sliceId or EqEventsFrame.ICON_SLICE)
     if slice == nil then return false end
 
     local overlay = icon.overlay
@@ -127,6 +129,10 @@ function EqEventsFrame:applyHeaderIcon()
             tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
     end
     local clean = overlay.filename == slice.filename and overlay.overlay ~= nil and overlay.sliceId == nil
+    -- Both tabs' icons share one file, so the UVs must be this slice's too.
+    for i, uv in ipairs(slice.uvs or {}) do
+        if overlay.uvs == nil or overlay.uvs[i] ~= uv then clean = false end
+    end
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL
             and (overlay["filename" .. suffix] ~= nil or overlay["uvs" .. suffix] ~= nil) then

@@ -366,3 +366,90 @@ function EqStaff.toClean(members, horses)
     end
     return out
 end
+
+
+--- What a groom or trainer can be set to work on, in the order the Works on button steps
+--- through: General, each role some horse has, then each horse by name.
+--- @param horses table list of { id, role, retired, name }
+--- @param roleOrder table roles in order (EqRole.ORDER)
+--- @return table options list of worksOn tables
+function EqStaff.worksOptions(horses, roleOrder)
+    local options = { { kind = EqStaff.WORKS_GENERAL } }
+    local used = {}
+    for _, horse in ipairs(horses) do
+        if not horse.retired then used[horse.role] = true end
+    end
+    for _, role in ipairs(roleOrder) do
+        if used[role] and role ~= "balanced" then table.insert(options, { kind = EqStaff.WORKS_ROLE, role = role }) end
+    end
+    local sorted = {}
+    for _, horse in ipairs(horses) do table.insert(sorted, horse) end
+    table.sort(sorted, function(a, b) return string.lower(a.name or a.id) < string.lower(b.name or b.id) end)
+    for _, horse in ipairs(sorted) do
+        table.insert(options, { kind = EqStaff.WORKS_HORSE, id = horse.id, name = horse.name or horse.id })
+    end
+    return options
+end
+
+
+--- @param a table worksOn
+--- @param b table worksOn
+--- @return boolean same
+function EqStaff.sameWorks(a, b)
+    if a == nil or b == nil or a.kind ~= b.kind then return false end
+    if a.kind == EqStaff.WORKS_ROLE then return a.role == b.role end
+    if a.kind == EqStaff.WORKS_HORSE then return a.id == b.id end
+    return true
+end
+
+
+--- The option after the current one, wrapping round.
+--- @param options table from worksOptions
+--- @param current table|nil worksOn
+--- @return table worksOn
+function EqStaff.nextWorks(options, current)
+    for i, option in ipairs(options) do
+        if EqStaff.sameWorks(option, current) then return options[i % #options + 1] end
+    end
+    return options[1]
+end
+
+
+-- Words for a staff skill, from 0 up, with the RLRM genetics band whose colour they borrow.
+EqStaff.LEVELS = {
+    { from = 0, word = 1, band = "rl_ui_genetics_extremelyLow" },
+    { from = 20, word = 2, band = "rl_ui_genetics_low" },
+    { from = 40, word = 3, band = "rl_ui_genetics_average" },
+    { from = 60, word = 4, band = "rl_ui_genetics_high" },
+    { from = 80, word = 5, band = "rl_ui_genetics_veryHigh" },
+    { from = 90, word = 6, band = "rl_ui_genetics_extremelyHigh" },
+}
+
+
+--- @param value number skill 0..100
+--- @return table level an entry of LEVELS
+function EqStaff.level(value)
+    local found = EqStaff.LEVELS[1]
+    for _, level in ipairs(EqStaff.LEVELS) do
+        if value >= level.from then found = level end
+    end
+    return found
+end
+
+
+--- A member's best skills, for the Hire table.
+--- @param member table
+--- @param count number how many
+--- @return table skills list of skill keys, best first
+function EqStaff.bestSkills(member, count)
+    local keys = {}
+    for _, skill in ipairs(EqStaff.SKILLS) do table.insert(keys, skill) end
+    table.sort(keys, function(a, b)
+        local va, vb = member.skills[a] or 0, member.skills[b] or 0
+        if va ~= vb then return va > vb end
+        return a < b
+    end)
+    local out = {}
+    for i = 1, math.min(count, #keys) do table.insert(out, keys[i]) end
+    return out
+end
