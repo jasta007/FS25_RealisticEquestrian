@@ -569,8 +569,9 @@ function EqCourseHooks.onDraw(vehicle)
     local nearest = course.points[EqCourse.nearestPoint(course, x, z)]
     drawLine({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, EqCourseHooks.NEAREST_COLOR, x, z)
     local key = editing.recording and "eq_course_recording" or "eq_course_editing"
-    EqTrainingHud.drawPrompt(string.format(text(key), editing.name, #course.jumps, course.length), 1, EqTrainingHud.STAT_COLOR.agility)
-    EqTrainingHud.drawPromptNote(text("eq_course_collisionNote"))
+    -- Beside the panel, not in the middle: the middle is for alerts.
+    EqTrainingHud.drawPanelNote(string.format(text(key), editing.name, #course.jumps, course.length), EqTrainingHud.STAT_COLOR.agility, true)
+    EqTrainingHud.drawPanelNote(text("eq_course_collisionNote"), nil, false)
 end
 
 
