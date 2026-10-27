@@ -264,6 +264,7 @@ Testing commands, for checking the mod works rather than for play:
 | --- | --- |
 | `eqForceInjury on\|off` | Every horse that starts an event is injured, even with injuries off. Not saved |
 | `eqDirt <horse> <0-100>` | Sets a horse's dirt (0 = spotless; Cleanliness is 100 minus dirt). 10 or less at the day's end counts as groomed |
+| `eqRiding <horse> [0-100]` | Sets a horse's riding bar (0 when left out, a fresh bar for the day). Training stops at 100 |
 | `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload |
 
 ## A note on AI
