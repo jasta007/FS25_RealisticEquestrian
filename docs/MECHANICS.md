@@ -230,7 +230,7 @@ Show Jumping". The start line stands on the route 12 m before fence 1 and the fi
 the last fence; both are drawn in gold while they matter, so no objects are needed and a course
 can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. Glowing gold poles stand at the next fence's flags with a soft bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants) with a faint bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |

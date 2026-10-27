@@ -5,7 +5,7 @@
     <Export program="Realistic Equestrian course_glow.py" version="1"/>
   </Asset>
   <Materials>
-    <Material name="courseGlow" materialId="1" diffuseColor="1 0.8 0.25 0.35" emissiveColor="1 0.8 0.25 1" specularColor="0 0 0" alphaBlending="true"/>
+    <Material name="courseGlow" materialId="1" diffuseColor="1 0.8 0.25 0.25" emissiveColor="0.55 0.44 0.1375 1" specularColor="0 0 0" alphaBlending="true"/>
   </Materials>
   <Shapes>
     <IndexedTriangleSet name="glowBar" shapeId="1" bvCenter="0 0.5 0.5" bvRadius="1">

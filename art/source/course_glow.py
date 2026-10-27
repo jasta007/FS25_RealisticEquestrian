@@ -19,7 +19,9 @@ import os
 
 OUT = "placeables/courseGlow/courseGlow.i3d"
 COLOUR = (1.0, 0.8, 0.25)
-ALPHA = 0.35
+ALPHA = 0.25
+# How strongly it glows: well under full, so it stays subtle (James, 2026-10-27).
+GLOW = 0.55
 SIDES = 12
 
 
@@ -99,7 +101,7 @@ def main():
         '    <Export program="Realistic Equestrian course_glow.py" version="1"/>',
         "  </Asset>",
         "  <Materials>",
-        f'    <Material name="courseGlow" materialId="1" diffuseColor="{fmt(c)} {ALPHA}" emissiveColor="{fmt(c)} 1" '
+        f'    <Material name="courseGlow" materialId="1" diffuseColor="{fmt(c)} {ALPHA}" emissiveColor="{fmt(v * GLOW for v in c)} 1" '
         'specularColor="0 0 0" alphaBlending="true"/>',
         "  </Materials>",
         "  <Shapes>",

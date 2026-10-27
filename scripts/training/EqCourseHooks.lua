@@ -60,9 +60,11 @@ EqCourseHooks.START_COLOR = { 0.3, 1, 0.3 }
 EqCourseHooks.FINISH_COLOR = { 1, 0.3, 0.3 }
 -- The way to the next fence is drawn as a band of lines this far apart, so it reads as solid.
 EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
--- The glow marks: poles as tall as the flags, the bar at the fence height. Cross country fences
--- carry their own (EqXcFlags: poleHeight, height); these are for the rest.
+-- The glow marks: poles up to the flags, the bar at the fence height. Cross country fences
+-- carry their own (EqXcFlags: poleHeight, height); these are for the rest. A pole never goes
+-- above POLE_TOP, the bottom of the flags' pennants (EqXcFlags.PENNANT_BOTTOM).
 EqCourseHooks.POLE_HEIGHT = 1.5
+EqCourseHooks.POLE_TOP = 1.17
 EqCourseHooks.BAR_HEIGHT = 0.9
 -- In a round the way to the next fence stops this far short of it (its pointIndex is just past
 -- the fence), and the fence's label stands beside its red flag, on the rider's right.
@@ -817,7 +819,8 @@ end
 local function drawCrossing(line, color, x, z)
     local ya = groundAt(line.ax, 0, line.az)
     local yb = groundAt(line.bx, 0, line.bz)
-    local pole = line.poleHeight or EqCourseHooks.POLE_HEIGHT
+    local top = EqXcFlags ~= nil and EqXcFlags.PENNANT_BOTTOM or EqCourseHooks.POLE_TOP
+    local pole = math.min(line.poleHeight or EqCourseHooks.POLE_HEIGHT, top)
     local height = math.min(line.height or EqCourseHooks.BAR_HEIGHT, pole)
     -- A glowing pole at each flag and a soft bar at the fence height (EqCourseGlow).
     if EqCourseGlow.pole(line.ax, ya, line.az, pole) then

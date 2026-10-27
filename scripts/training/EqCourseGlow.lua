@@ -18,8 +18,9 @@ EqCourseGlow = {}
 local Log = EqLog
 
 EqCourseGlow.FILE = "placeables/courseGlow/courseGlow.i3d"
-EqCourseGlow.POLE_WIDTH = 0.14
-EqCourseGlow.BAR_WIDTH = 0.09
+-- A pole just wider than a flag pole (3.6 cm), and a thin bar (James, 2026-10-27).
+EqCourseGlow.POLE_WIDTH = 0.06
+EqCourseGlow.BAR_WIDTH = 0.06
 -- Nothing drawn for this long (the rider got off): everything hides.
 EqCourseGlow.STALE_MS = 300
 
