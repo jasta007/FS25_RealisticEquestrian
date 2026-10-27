@@ -557,5 +557,71 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Ajusta la inscripción de cada prueba. 1x es lo normal. Las pruebas ya en el calendario mantienen su inscripción; los cambios se aplican desde la siguiente ronda."/>
         <text name="eq_settings_prizeScale" text="Premios"/>
         <text name="eq_settings_prizeScale_tooltip" text="Ajusta los premios de cada prueba. 1x es lo normal. Las pruebas ya en el calendario mantienen sus premios; los cambios se aplican desde la siguiente ronda."/>
+        <text name="eq_shop_courseFlags" text="Banderas de cross"/>
+        <text name="eq_shop_courseFlags_function" text="Convierte cualquier obstáculo en un obstáculo de cross. Cambia de segmento con N/M: pon una bandera blanca, extiende una barra dorada (0,6, 0,9 o 1,2 m) sobre el obstáculo y luego pon una bandera roja. La barra solo se ve en el modo construcción."/>
+        <text name="eq_shop_xcLogPileSmall" text="Pila de troncos (pequeña)"/>
+        <text name="eq_shop_xcLogPile" text="Pila de troncos"/>
+        <text name="eq_shop_xcDropWall08" text="Muro de bajada (0,8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Muro de bajada (1,2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Muro de bajada (1,6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="Un muro de tablones para una bajada de cross. Esculpe un talud, coloca el muro arriba con el borde en el filo; sus muros laterales tapan la pendiente empinada."/>
+        <text name="eq_shop_xcJump_function" text="Un obstáculo de cross. Sus banderas roja y blanca marcan dónde saltar."/>
+        <text name="input_EQ_COURSE_RECORD" text="Grabar o editar recorrido de salto"/>
+        <text name="eq_course_recordAction" text="Nuevo recorrido de salto"/>
+        <text name="eq_course_started" text="Grabando %s: pasa por los obstáculos en orden. Los obstáculos colocados de Realistic Equestrian no tienen colisión mientras editas; los demás siguen siendo sólidos"/>
+        <text name="eq_course_noJumps" text="Grabando recorrido, pero aún no hay obstáculos de salto en el mapa"/>
+        <text name="eq_course_tooFew" text="Recorrido no guardado: pasa por al menos %d obstáculos de salto"/>
+        <text name="eq_course_saved" text="%s guardado: %d obstáculos, %.0f m"/>
+        <text name="eq_course_cancelled" text="Edición detenida: te bajaste del caballo antes de que el recorrido tuviera suficientes obstáculos para guardarlo"/>
+        <text name="eq_course_leftSaved" text="Recorrido guardado al bajarte del caballo: pulsa Ctrl+J cerca para editarlo y luego Ctrl+K para seguir grabando desde el punto más cercano"/>
+        <text name="eq_course_recording" text="Grabando %s: %d obstáculos, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Los obstáculos colocados de Realistic Equestrian no tienen colisión mientras trazas el recorrido; los demás siguen siendo sólidos"/>
+        <text name="eq_course_name" text="Recorrido %d"/>
+        <text name="eq_sj_begin" text="Ve a la línea de salida para empezar el salto de obstáculos"/>
+        <text name="eq_sj_ready" text="Prepárate..."/>
+        <text name="eq_sj_go" text="¡Ya!"/>
+        <text name="eq_sj_cross" text="¡Ya! Cruza la línea de salida"/>
+        <text name="eq_sj_early" text="¡Demasiado pronto! Vuelve detrás de la línea de salida"/>
+        <text name="eq_sj_rail" text="¡Derribo! %s faltas"/>
+        <text name="eq_sj_runout" text="¡Escapada! %s faltas"/>
+        <text name="eq_sj_refusal" text="¡Rehúse! %s faltas"/>
+        <text name="eq_sj_eliminated" text="Eliminado"/>
+        <text name="eq_sj_out_late" text="Eliminado: no cruzaste la línea de salida a tiempo"/>
+        <text name="eq_sj_out_wrongCourse" text="Eliminado: recorrido equivocado (obstáculo %d fuera de orden)"/>
+        <text name="eq_sj_out_refusals" text="Eliminado: segundo rehúse"/>
+        <text name="eq_sj_out_timeLimit" text="Eliminado: tiempo límite superado"/>
+        <text name="eq_sj_clear" text="¡Recorrido sin faltas en %s!"/>
+        <text name="eq_sj_faults" text="%s faltas en %s"/>
+        <text name="eq_sj_clearPop" text="¡Sin faltas!"/>
+        <text name="eq_sj_faultsPop" text="%s faltas"/>
+        <text name="eq_sj_retired" text="Recorrido abandonado"/>
+        <text name="eq_sj_startLine" text="Línea de salida"/>
+        <text name="eq_sj_finishLine" text="Línea de meta"/>
+        <text name="eq_sj_fenceRow" text="Obstáculo %d de %d"/>
+        <text name="eq_sj_faultsRow" text="%s faltas"/>
+        <text name="eq_sj_timeRow" text="Tiempo"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Grabar recorrido de cross"/>
+        <text name="eq_course_recordXcAction" text="Nuevo recorrido de cross"/>
+        <text name="eq_course_xcName" text="Cross %d"/>
+        <text name="eq_course_noXcJumps" text="No se han encontrado obstáculos de cross: pon una bandera roja y una blanca a cada lado de un obstáculo, o coloca troncos o caídas"/>
+        <text name="eq_sj_beginXc" text="Ve a la línea de salida para empezar el cross"/>
+        <text name="eq_sj_out_refusalsXc" text="Eliminado: tres rehúses en un obstáculo, o cuatro en el recorrido"/>
+        <text name="eq_sj_represent" text="Vuelve y salta el obstáculo %d"/>
+        <text name="eq_pop_courseFence" text="Obstáculo %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Volver al punto más cercano"/>
+        <text name="eq_course_rewound" text="Recorrido devuelto al punto más cercano: %d obstáculos conservados"/>
+        <text name="eq_course_resumed" text="Grabando desde el punto más cercano"/>
+        <text name="eq_course_finished" text="Edición terminada: los obstáculos colocados de Realistic Equestrian vuelven a tener colisión"/>
+        <text name="eq_course_deleted" text="%s borrado"/>
+        <text name="eq_course_deleteAsk" text="¿Borrar %s con %d obstáculos en %.0f m?"/>
+        <text name="eq_course_deleteTitle" text="Borrar recorrido"/>
+        <text name="eq_course_deleteAction" text="Borrar %s"/>
+        <text name="eq_course_editAction" text="Editar %s"/>
+        <text name="eq_course_doneAction" text="Terminar de editar el recorrido"/>
+        <text name="eq_course_saveAction" text="Guardar recorrido y terminar"/>
+        <text name="eq_course_editing" text="Editando %s: %d obstáculos, %.0f m"/>
+        <text name="eq_course_editStarted" text="Editando %s: los obstáculos colocados de Realistic Equestrian no tienen colisión hasta que termines; los demás siguen siendo sólidos"/>
+        <text name="input_EQ_COURSE_DELETE" text="Borrar el recorrido cercano"/>
+        <text name="eq_facility_xcFence" text="Recorrido de cross"/>
     </texts>
 </l10n>
