@@ -1272,6 +1272,17 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("editing does not change the saved course until saved", back.points[1].x ~= 999)
     EqCourse.replace(1, EqCourse.finish(edit, back.name))
     check("a saved edit replaces the course", #EqCourse.list == 1 and EqCourse.list[1].points[1].x == 999)
+    local xc = EqCourse.finish(EqCourse.editRecording(EqCourse.list[1]), "Cross Country 1")
+    xc.kind = EqCourse.CROSS_COUNTRY
+    EqCourse.add(xc)
+    local kinds = memoryXML()
+    EqCourse.saveToXMLFile(kinds, "c")
+    EqCourse.loadFromXMLFile(kinds, "c")
+    check("a course keeps its kind through a save", EqCourse.list[1].kind == EqCourse.SHOW_JUMPING
+        and EqCourse.list[2].kind == EqCourse.CROSS_COUNTRY)
+    check("editing keeps the kind", EqCourse.finish(EqCourse.editRecording(EqCourse.list[2]), "x").kind == EqCourse.CROSS_COUNTRY)
+    check("a cross country course gets less time over the same route",
+        EqShowJumping.timeAllowed(EqCourse.list[2]) <= EqShowJumping.timeAllowed(EqCourse.list[1]))
     EqCourse.loadFromXMLFile(nil, "c")
     check("a new game has no courses", #EqCourse.list == 0)
 end)()

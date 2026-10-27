@@ -303,7 +303,7 @@
         <text name="eq_ui_button_role" text="Rolle: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Rolle des Pferdes ändern"/>
         <text name="input_EQ_COURSE_RECORD" text="Springparcours aufzeichnen oder bearbeiten"/>
-        <text name="eq_course_recordAction" text="Neuen Parcours aufzeichnen"/>
+        <text name="eq_course_recordAction" text="Neuer Springparcours"/>
         <text name="eq_course_started" text="%s wird aufgezeichnet: durch die Hindernisse in der richtigen Reihenfolge reiten. Beim Bearbeiten haben die Hindernisse keine Kollision"/>
         <text name="eq_course_noJumps" text="Parcours wird aufgezeichnet, aber auf der Karte stehen noch keine Springhindernisse"/>
         <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten"/>
@@ -334,6 +334,11 @@
         <text name="eq_sj_fenceRow" text="Hindernis %d von %d"/>
         <text name="eq_sj_faultsRow" text="%d Fehler"/>
         <text name="eq_sj_timeRow" text="Zeit"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Geländestrecke aufzeichnen"/>
+        <text name="eq_course_recordXcAction" text="Neue Geländestrecke"/>
+        <text name="eq_course_xcName" text="Geländestrecke %d"/>
+        <text name="eq_course_noXcJumps" text="Keine Geländehindernisse gefunden: Stellen Sie eine rote und eine weiße Flagge zu beiden Seiten eines Hindernisses oder platzieren Sie Baumstämme oder Absprünge"/>
+        <text name="eq_sj_beginXc" text="Reiten Sie zur Startlinie, um mit dem Geländeritt zu beginnen"/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
         <text name="input_EQ_COURSE_REWIND" text="Parcours bis zum nächsten Punkt zurücksetzen"/>
         <text name="eq_course_rewound" text="Parcours bis zum nächsten Punkt zurückgesetzt: %d Hindernisse behalten"/>

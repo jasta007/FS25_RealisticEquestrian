@@ -20,6 +20,10 @@
 
 EqCourse = {}
 
+-- A course is ridden as one of these (James, 2026-10-27: one key to start each).
+EqCourse.SHOW_JUMPING = "showJumping"
+EqCourse.CROSS_COUNTRY = "crossCountry"
+
 -- Saved courses, in the order they were recorded.
 EqCourse.list = {}
 
@@ -59,8 +63,9 @@ end
 --- @param y number
 --- @param z number
 --- @return table recording
-function EqCourse.newRecording(x, y, z)
-    return { points = { { x = x, y = y, z = z } }, jumps = {}, length = 0 }
+--- @param kind string|nil "showJumping" (the default) or "crossCountry"
+function EqCourse.newRecording(x, y, z, kind)
+    return { points = { { x = x, y = y, z = z } }, jumps = {}, length = 0, kind = kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -228,7 +233,8 @@ function EqCourse.finish(recording, name)
             pointIndex = math.min(jump.pointIndex or #recording.points, #recording.points),
             ax = jump.ax, az = jump.az, bx = jump.bx, bz = jump.bz })
     end
-    return { name = name, points = recording.points, jumps = jumps, length = recording.length }
+    return { name = name, points = recording.points, jumps = jumps, length = recording.length,
+        kind = recording.kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -247,7 +253,8 @@ function EqCourse.editRecording(course)
         table.insert(jumps, { x = jump.x, z = jump.z, ry = jump.ry, side = jump.side, pointIndex = index, at = -math.huge,
             ax = jump.ax, az = jump.az, bx = jump.bx, bz = jump.bz })
     end
-    return { points = points, jumps = jumps, length = EqCourse.pathLength(points), rewound = true }
+    return { points = points, jumps = jumps, length = EqCourse.pathLength(points), rewound = true,
+        kind = course.kind or EqCourse.SHOW_JUMPING }
 end
 
 
@@ -387,6 +394,7 @@ function EqCourse.saveToXMLFile(xmlFile, key)
         local courseKey = string.format("%s.course(%d)", key, i - 1)
         xmlFile:setString(courseKey .. "#name", course.name)
         xmlFile:setString(courseKey .. "#points", encodePoints(course.points))
+        if course.kind ~= nil and course.kind ~= EqCourse.SHOW_JUMPING then xmlFile:setString(courseKey .. "#kind", course.kind) end
         for j, jump in ipairs(course.jumps) do
             local jumpKey = string.format("%s.jump(%d)", courseKey, j - 1)
             xmlFile:setFloat(jumpKey .. "#x", jump.x)
@@ -412,7 +420,8 @@ function EqCourse.loadFromXMLFile(xmlFile, key)
         local courseKey = string.format("%s.course(%d)", key, i)
         if not xmlFile:hasProperty(courseKey) then break end
         local course = { name = xmlFile:getString(courseKey .. "#name", string.format("Course %d", i + 1)),
-            points = decodePoints(xmlFile:getString(courseKey .. "#points")), jumps = {} }
+            points = decodePoints(xmlFile:getString(courseKey .. "#points")), jumps = {},
+            kind = xmlFile:getString(courseKey .. "#kind", EqCourse.SHOW_JUMPING) }
         local j = 0
         while true do
             local jumpKey = string.format("%s.jump(%d)", courseKey, j)

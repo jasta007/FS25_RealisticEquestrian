@@ -47,6 +47,8 @@ EqShowJumping.RUNOUT_MARGIN = 2.5
 EqShowJumping.REFUSAL_RADIUS = 3
 -- Time allowed: the course at 350 m a minute (a usual show jumping speed), at least MIN_TIME s.
 EqShowJumping.TIME_SPEED = 350 / 60
+-- A cross country course is ridden faster: 520 m a minute, a usual novice eventing speed.
+EqShowJumping.TIME_SPEED_XC = 520 / 60
 EqShowJumping.MIN_TIME = 20
 EqShowJumping.TIME_LIMIT_FACTOR = 2
 -- A line made from the course's path stands this far before fence 1 and after the last fence.
@@ -139,7 +141,8 @@ function EqShowJumping.timeAllowed(course)
     local _, from = EqShowJumping.startFromPath(course)
     local _, to = EqShowJumping.finishFromPath(course)
     local metres = pathBetween(course.points, from, to) + 2 * EqShowJumping.LINE_OFFSET
-    return math.max(EqShowJumping.MIN_TIME, math.ceil(metres / EqShowJumping.TIME_SPEED))
+    local speed = course.kind == EqCourse.CROSS_COUNTRY and EqShowJumping.TIME_SPEED_XC or EqShowJumping.TIME_SPEED
+    return math.max(EqShowJumping.MIN_TIME, math.ceil(metres / speed))
 end
 
 

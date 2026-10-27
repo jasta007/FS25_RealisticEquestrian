@@ -211,8 +211,33 @@ local function innerJumps(placeable)
 end
 
 
---- @return table every show jump on the map: { node, x, z, ry, ax, az, bx, bz }
-function EqCourseHooks.listJumps()
+--- Cross country fences: each pair of red and white flags (EqXcFlags, when loaded), and the
+--- "xcFence" facility placeables such as log piles and drop walls.
+--- @return table { node|nil, x, z, ry, ax, az, bx, bz }
+local function listXcFences()
+    local list = {}
+    if EqXcFlags ~= nil and EqXcFlags.fences ~= nil then
+        local ok, fences = pcall(EqXcFlags.fences)
+        if ok and type(fences) == "table" then
+            for _, fence in ipairs(fences) do
+                local red, white = fence.red, fence.white
+                -- The red flag on the right, as on a show jump: a is red.
+                table.insert(list, { x = (red.x + white.x) / 2, z = (red.z + white.z) / 2,
+                    ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z })
+            end
+        end
+    end
+    for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
+        if entry.kind == "xcFence" and entry.placeable.rootNode ~= nil then addJump(list, entry.placeable.rootNode, entry.placeable) end
+    end
+    return list
+end
+
+
+--- @param kind string|nil EqCourse.CROSS_COUNTRY for cross country fences, else show jumps
+--- @return table every show jump (or cross country fence) on the map: { node, x, z, ry, ax, az, bx, bz }
+function EqCourseHooks.listJumps(kind)
+    if kind == EqCourse.CROSS_COUNTRY then return listXcFences() end
     local list = {}
     for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
         local placeable = entry.placeable
@@ -267,10 +292,12 @@ end
 --- @param editing table
 local function scanJumps(editing)
     editing.scannedAt = g_time or 0
-    editing.jumps = EqCourseHooks.listJumps()
+    editing.jumps = EqCourseHooks.listJumps(editing.course.kind)
     for _, jump in ipairs(editing.jumps) do
-        local ok, err = pcall(collisionOff, jump.node)
-        if not ok then Log:warning("Course jump collision: %s", tostring(err)) end
+        if jump.node ~= nil then
+            local ok, err = pcall(collisionOff, jump.node)
+            if not ok then Log:warning("Course jump collision: %s", tostring(err)) end
+        end
     end
 end
 
@@ -300,7 +327,8 @@ end
 --- Enter edit mode.
 --- @param vehicle table
 --- @param index number|nil the saved course to edit, nil for a new one
-local function startEditing(vehicle, index)
+--- @param kind string|nil a new course's EqCourse kind
+local function startEditing(vehicle, index, kind)
     local editing = { vehicle = vehicle, index = index, seenAt = g_time or 0 }
     EqCourseHooks.round = nil
     if index ~= nil then
@@ -310,16 +338,19 @@ local function startEditing(vehicle, index)
         editing.recording = false
     else
         local x, y, z = getWorldTranslation(vehicle.rootNode)
-        editing.name = EqCourse.nextName(text("eq_course_name"))
-        editing.course = EqCourse.newRecording(x, groundAt(x, y, z), z)
+        local xc = kind == EqCourse.CROSS_COUNTRY
+        editing.name = EqCourse.nextName(text(xc and "eq_course_xcName" or "eq_course_name"))
+        editing.course = EqCourse.newRecording(x, groundAt(x, y, z), z, kind)
         editing.recording = true
     end
     EqCourseHooks.editing = editing
+    -- Cross country flags show their height guides while a course is edited.
+    if EqXcFlags ~= nil then EqXcFlags.editing = editing.course.kind == EqCourse.CROSS_COUNTRY end
     scanJumps(editing)
-    Log:info("Course: editing %s '%s', %d show jump(s) on the map without collision", index ~= nil and "saved" or "new",
-        editing.name, #editing.jumps)
+    Log:info("Course: editing %s %s '%s', %d jump(s) on the map without collision", index ~= nil and "saved" or "new",
+        tostring(editing.course.kind), editing.name, #editing.jumps)
     if #editing.jumps == 0 then
-        notify(text("eq_course_noJumps"))
+        notify(text(editing.course.kind == EqCourse.CROSS_COUNTRY and "eq_course_noXcJumps" or "eq_course_noJumps"))
     else
         notify(string.format(text(index ~= nil and "eq_course_editStarted" or "eq_course_started"), editing.name))
     end
@@ -378,6 +409,7 @@ end
 --- @param why string|nil a notification text key, nil to say nothing
 local function stopEditing(why)
     EqCourseHooks.editing = nil
+    if EqXcFlags ~= nil then EqXcFlags.editing = false end
     EqCourseHooks.near = nil
     collisionOnAll()
     if why ~= nil then notify(text(why)) end
@@ -399,6 +431,19 @@ function EqCourseHooks.onRecordAction(vehicle)
     else
         rewind(editing)
     end
+    EqCourseHooks.updateActions(vehicle)
+end
+
+
+--- The cross country record key: a new cross country course; while editing, as the record key.
+--- @param vehicle table
+function EqCourseHooks.onRecordXcAction(vehicle)
+    if vehicle.rootNode == nil then return end
+    if EqCourseHooks.editing ~= nil then
+        EqCourseHooks.onRecordAction(vehicle)
+        return
+    end
+    startEditing(vehicle, nil, EqCourse.CROSS_COUNTRY)
     EqCourseHooks.updateActions(vehicle)
 end
 
@@ -459,6 +504,7 @@ end
 -- The keys, by spec field, action and handler; registered from EqTrainingHooks.
 local ACTIONS = {
     { field = "eqCourseEventId", action = "EQ_COURSE_RECORD", handler = "onRecordAction" },
+    { field = "eqCourseXcEventId", action = "EQ_COURSE_RECORD_XC", handler = "onRecordXcAction" },
     { field = "eqRewindEventId", action = "EQ_COURSE_REWIND", handler = "onRewindAction" },
     { field = "eqFinishEventId", action = "EQ_COURSE_FINISH", handler = "onFinishAction" },
     { field = "eqDeleteEventId", action = "EQ_COURSE_DELETE", handler = "onDeleteAction" },
@@ -499,11 +545,15 @@ function EqCourseHooks.updateActions(vehicle)
     else
         recordText = text("eq_course_recordAction")
     end
-    local state = string.format("%s|%s|%s", recordText, tostring(mine), tostring(near ~= nil))
+    local state = string.format("%s|%s|%s|%s", recordText, tostring(mine), tostring(near ~= nil), tostring(editing == nil))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
     if spec.eqCourseEventId ~= nil then binding:setActionEventText(spec.eqCourseEventId, recordText) end
+    if spec.eqCourseXcEventId ~= nil then
+        binding:setActionEventText(spec.eqCourseXcEventId, text("eq_course_recordXcAction"))
+        binding:setActionEventTextVisibility(spec.eqCourseXcEventId, editing == nil)
+    end
     if spec.eqRewindEventId ~= nil then
         binding:setActionEventText(spec.eqRewindEventId, text("input_EQ_COURSE_REWIND"))
         binding:setActionEventTextVisibility(spec.eqRewindEventId, mine)
@@ -655,7 +705,7 @@ local function fillEnds(course)
     local live = nil
     for _, jump in ipairs(course.jumps) do
         if jump.ax == nil then
-            live = live or EqCourseHooks.listJumps()
+            live = live or EqCourseHooks.listJumps(course.kind)
             for _, found in ipairs(live) do
                 if EqCourse.sameJump(jump, found) then
                     jump.ax, jump.az, jump.bx, jump.bz = found.ax, found.az, found.bx, found.bz
@@ -886,7 +936,8 @@ function EqCourseHooks.roundDraw(vehicle)
         local _, from = EqShowJumping.startFromPath(round.course)
         drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
         if state == "approach" then
-            EqTrainingHud.drawPrompt(text("eq_sj_begin"), nil, EqTrainingHud.STAT_COLOR.agility)
+            local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
+            EqTrainingHud.drawPrompt(text(begin), nil, EqTrainingHud.STAT_COLOR.agility)
         elseif state == "countdown" then
             EqTrainingHud.drawPrompt(text("eq_sj_ready"), sj.countMs / EqShowJumping.COUNT_MS, EqTrainingHud.STAT_COLOR.agility)
         else
