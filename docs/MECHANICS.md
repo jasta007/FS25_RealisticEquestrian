@@ -288,16 +288,17 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
 bonus.
 
-Cross country fences: set a red and a white cross country flag either side of anything you want
-ridden as a fence (a map's logs, a table or hedge from any mod). Each red flag pairs with the
-nearest white flag of the same height 1 to 15 m away, and the line between them is the fence
-(`eqXcFences` lists them). Flags come for 0.6, 0.9 and 1.2 m fences; a gold bar at that height,
-pointing at the fence, helps line them up and shows only in construction mode. Flags have no
-collision. The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
+Cross country fences: Cross Country Flags is a spline fence, placed like the base game's pillar
+fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or 1.2 m fence, and a
+red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
+hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
+15 m away and the line between them is the fence; the bar nearest its middle gives its height
+(`eqXcFences` lists them). The bars show only in construction mode; the flags always show. The flags
+and bars have small collision boxes so they can be picked to delete. The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
 Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
 on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
 triangle side walls hide the steep sculpted slope. The terrain is not levelled. Only the face and
-side walls are solid, so the horse drops off the lip; add a pair of flags at the lip.
+side walls are solid, so the horse drops off the lip.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say

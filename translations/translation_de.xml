@@ -42,6 +42,8 @@
         <text name="eq_shop_dressageArena20x40" text="Dressurviereck 20 x 40 m"/>
         <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
+        <text name="eq_shop_courseFlags" text="Geländeflaggen"/>
+        <text name="eq_shop_courseFlags_function" text="Macht jedes Hindernis zum Geländesprung. Segmente mit N/M wechseln: weiße Flagge setzen, goldene Stange (0,6, 0,9 oder 1,2 m) über das Hindernis ziehen, dann rote Flagge setzen. Die Stange ist nur im Baumodus sichtbar."/>
         <text name="eq_shop_xcLogPileSmall" text="Holzstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Holzstapel"/>
         <text name="eq_shop_xcDropWall08" text="Absprungwand (0,8 m)"/>
@@ -49,13 +51,6 @@
         <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
         <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
-        <text name="eq_shop_courseFlagRed60" text="Geländeflagge, Rot (0,6 m)"/>
-        <text name="eq_shop_courseFlagWhite60" text="Geländeflagge, Weiß (0,6 m)"/>
-        <text name="eq_shop_courseFlagRed90" text="Geländeflagge, Rot (0,9 m)"/>
-        <text name="eq_shop_courseFlagWhite90" text="Geländeflagge, Weiß (0,9 m)"/>
-        <text name="eq_shop_courseFlagRed120" text="Geländeflagge, Rot (1,2 m)"/>
-        <text name="eq_shop_courseFlagWhite120" text="Geländeflagge, Weiß (1,2 m)"/>
-        <text name="eq_shop_courseFlag_function" text="Setzen Sie eine rote und eine weiße Flagge links und rechts von etwas (Baumstamm, Tisch, Hecke), um daraus ein Geländehindernis zu machen. Der goldene Balken zeigt die Hindernishöhe und ist nur im Baumodus sichtbar."/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>

@@ -1818,30 +1818,34 @@ check("Elmcreek obstacles are jumps", EqFacility.kindForNode(facilities, "horseO
 check("our log piles are cross country fences, flags alone are not",
     EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml", false) == "xcFence"
     and EqFacility.kindForXml(facilities, "C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcLogPileSmall.xml", false) == "xcFence"
-    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/courseFlagRed90.xml", false) == nil
+    and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml", false) == nil
     and EqFacility.kindForXml(facilities, modsDir .. "FS25_RealisticEquestrian/placeables/dressageArena/dressageArena20x40.xml", false) == nil)
 check("a cross country course helps cross country more than show jumping",
     EqFacility.eventBonus(facilities, { xcFence = 8 }, "crossCountry") > EqFacility.eventBonus(facilities, { xcFence = 8 }, "showJumping"))
 
 dofile("scripts/facilities/EqXcFlags.lua")
 do
-    local colour, h = EqXcFlags.parseXml("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlagRed90.xml")
-    local colour2, h2 = EqXcFlags.parseXml("FS25_RealisticEquestrian/placeables/xcJumps/courseFlagWhite120.xml")
-    check("course flags give their colour and fence height", colour == "red" and math.abs(h - 0.9) < 1e-9
-        and colour2 == "white" and math.abs(h2 - 1.2) < 1e-9
-        and EqXcFlags.parseXml("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml") == nil
-        and EqXcFlags.parseXml(nil) == nil)
-    local function f(colour, height, x, z) return { colour = colour, height = height, x = x, z = z } end
+    check("the flag fence is found by its xml", EqXcFlags.isFlagFence("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")
+        and EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml")
+        and not EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
+        and not EqXcFlags.isFlagFence(nil))
+    local colour = EqXcFlags.classify("eqXcFlagRed")
+    local _, h = EqXcFlags.classify("eqXcBar90")
+    check("flag fence nodes give a flag colour or a bar height", colour == "red" and EqXcFlags.classify("eqXcFlagWhite") == "white"
+        and math.abs(h - 0.9) < 1e-9 and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
+    local function f(colour, x, z) return { colour = colour, x = x, z = z } end
+    local function b(height, x, z) return { height = height, x = x, z = z } end
     local fences = EqXcFlags.pair({
-        f("red", 0.9, 0, 0), f("white", 0.9, 4, 0),     -- a 4 m fence
-        f("white", 0.9, -6, 0),                         -- further from the red: left over
-        f("red", 0.6, 100, 0), f("white", 0.9, 103, 0), -- heights differ: no fence
-        f("red", 1.2, 200, 0), f("white", 1.2, 216, 0), -- too far apart
-        f("red", 1.2, 300, 0), f("white", 1.2, 300.5, 0), -- too close
-    })
-    check("each red flag pairs with the nearest white flag of its height", #fences == 1
-        and fences[1].red.x == 0 and fences[1].white.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9)
-    local shared = EqXcFlags.pair({ f("red", 0.9, 0, 0), f("white", 0.9, 5, 0), f("red", 0.9, 9, 0) })
+        f("white", 0, 0), f("red", 4, 0),        -- a 4 m fence
+        f("white", -6, 0),                       -- further from the red: left over
+        f("white", 200, 0), f("red", 216, 0),    -- too far apart
+        f("white", 300, 0), f("red", 300.5, 0),  -- too close
+        f("white", 400, 0), f("red", 405, 0),    -- no bar near
+    }, { b(0.9, 1.5, 0), b(0.9, 2.5, 0), b(1.2, 2, 3), b(0.6, 402.5, 9) })
+    check("each red flag pairs with the nearest white flag, the bar nearest the middle gives the height", #fences == 2
+        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9
+        and fences[2].white.x == 400 and fences[2].height == nil)
+    local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
 end
 check("height guides show in construction mode and while editing a course only",

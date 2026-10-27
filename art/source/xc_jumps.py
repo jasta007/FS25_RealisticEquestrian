@@ -2,11 +2,11 @@
 Builds the cross country fences in placeables/xcJumps/: one .xml and .i3d per fence, the textures
 they share and a shop image for each.
 
-The cross country flags are the core: a red flag and a white flag, each its own shop item, placed
-either side of anything the player wants ridden as a fence (a map's logs, a table or hedge from any
-mod). The mod pairs each red flag with the nearest white one (EqXcFlags) and the line between them
-is the fence. The flags stay up and have no collision. The log piles are ready-made fences that
-carry their own pair.
+The cross country flags are the core: one spline fence (courseFlags) whose segment types are a
+white flag, a gold height bar and a red flag, set across anything the player wants ridden as a
+fence (a map's logs, a table or hedge from any mod). EqXcFlags pairs each red flag with the nearest
+white one and the line between them is the fence. The log piles and drop walls are ready-made
+fences.
 
 Like the dressage arenas, the .i3d files keep their geometry inline (<IndexedTriangleSet>), so no
 GIANTS tools are needed, and the textures are painted here rather than downloaded, so every pixel
@@ -41,11 +41,16 @@ LOG_PILES = [
     {"name": "xcLogPile", "price": 900, "rows": [3, 2, 1], "diameter": 0.38, "length": 4.2, "seed": 7},
 ]
 
-# The standalone flags (EqXcFlags pairs them), one of each colour per fence height (cm). The
-# height is in the name: EqXcFlags reads it back.
-FLAG_HEIGHTS = (60, 90, 120)
-FLAGS = [{"name": f"courseFlag{colour}{h}", "price": 50, "colour": index, "height": h / 100}
-         for h in FLAG_HEIGHTS for index, colour in enumerate(("Red", "White"))]
+# The flag fence (James, 2026-10-27): one spline fence, placed like the base game's pillar fences,
+# whose N/M segment types are a white flag (a one-click post), a gold height bar that stretches
+# over whatever the player wants jumped, and a red flag. The bars show only in construction mode.
+FLAG_FENCE = "courseFlags"
+FLAG_FENCE_PRICE = 10
+FLAG_POST = 0.3         # a flag post's length along the fence line (a fixed "gate" segment)
+BAR_HEIGHTS = (60, 90, 120)
+BAR_PANEL = 1.0         # bar panels repeat every metre, stretched up to BAR_MAX_SCALE
+BAR_MAX_SCALE = 1.5
+FENCE_COLLISION_GROUP = "0x3e"   # the base game fences' collision, which construction picks to delete
 GUIDE = "eqXcGuide"     # the gold height bar: construction mode only
 GUIDE_LENGTH = 0.9
 GUIDE_SIZE = 0.03
@@ -832,6 +837,179 @@ def write_i3d(name, path, shapes, feet, col=None, guide=None):
         f.write("\n".join(lines) + "\n")
 
 
+def turned(mesh):
+    """The mesh turned a quarter round y, so what ran along +x runs along +z."""
+    out = Mesh()
+    out.verts = [((-p[2], p[1], p[0]), (-n[2], n[1], n[0]), uv) for p, n, uv in mesh.verts]
+    out.tris = list(mesh.tris)
+    return out
+
+
+def build_flag_fence():
+    """The flag fence's pieces, each along +z from 0 (a fence segment's direction):
+    the two flag posts with a thin collision box (so they can be picked to delete), the bars,
+    each with a small box at bar height for picking."""
+    posts = {}
+    for colour, side, name in ((1, -1, "eqXcFlagWhite"), (0, 1, "eqXcFlagRed")):
+        mesh = Mesh()
+        flag(mesh, 0.0, colour, side, POLE_HEIGHT)   # white flies back down the line, red on ahead
+        mesh = turned(mesh)
+        for v in range(len(mesh.verts)):
+            p, n, uv = mesh.verts[v]
+            mesh.verts[v] = ((p[0], p[1], p[2] + FLAG_POST / 2), n, uv)
+        col = Mesh()
+        col.box(-0.04, 0.04, 0.0, POLE_HEIGHT, FLAG_POST / 2 - 0.04, FLAG_POST / 2 + 0.04, (0.5, 0.5))
+        posts[name] = (mesh, col)
+    bars = {}
+    s = GUIDE_SIZE / 2
+    for cm in BAR_HEIGHTS:
+        h = cm / 100
+        bar = Mesh()
+        bar.box(-s, s, h - s, h + s, 0.0, BAR_PANEL, flag_uv(3))
+        col = Mesh()
+        col.box(-0.025, 0.025, h - 0.025, h + 0.025, BAR_PANEL / 2 - 0.025, BAR_PANEL / 2 + 0.025, (0.5, 0.5))
+        bars[f"eqXcBar{cm}"] = (bar, col)
+    return posts, bars
+
+
+def write_flag_fence_i3d(path, posts, bars):
+    """gates (the flag posts), poles (one empty: the bars have none) and panels (the bars), looked
+    up by index from the fence xml."""
+    shapes = []   # (mesh, material or None for collision)
+    for mesh, col in list(posts.values()) + list(bars.values()):
+        shapes += [(mesh, None), (col, "col")]
+    used = [m for m in MATERIALS if m[0] in ("xcFlags", "xcGuideGold")]
+    lines = [
+        '<?xml version="1.0" encoding="iso-8859-1"?>',
+        "",
+        f'<i3D name="{FLAG_FENCE}" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        'xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">',
+        "  <Asset>",
+        '    <Export program="Realistic Equestrian xc_jumps.py" version="1"/>',
+        "  </Asset>",
+        "  <Files>",
+        '    <File fileId="1" filename="xcFlags_diffuse.dds"/>',
+        "  </Files>",
+        "  <Materials>",
+    ]
+    for i, (material, _, _, emissive) in enumerate(used):
+        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0">')
+        lines.append('      <Texture fileId="1"/>')
+        if emissive:
+            lines.append('      <Emissivemap fileId="1"/>')
+        lines.append("    </Material>")
+    lines += ["  </Materials>", "  <Shapes>"]
+    for i, (mesh, _) in enumerate(shapes):
+        lines += shape_lines(mesh, f"{FLAG_FENCE}_{i + 1}", i + 1)
+    lines += ["  </Shapes>", "  <Scene>"]
+    node_id = [1]
+
+    def next_id():
+        node_id[0] += 1
+        return node_id[0] - 1
+
+    def col_line(shape_id, indent):
+        return (f'{indent}<Shape name="col" shapeId="{shape_id}" static="true" collisionFilterGroup="{FENCE_COLLISION_GROUP}" '
+                f'collisionFilterMask="{COLLISION_MASK}" density="0.01" nodeId="{next_id()}" nonRenderable="true" materialIds="1"/>')
+    shape_id = 1
+    lines.append(f'    <TransformGroup name="gates" nodeId="{next_id()}">')
+    for name in posts:
+        lines.append(f'      <TransformGroup name="{name}" nodeId="{next_id()}">')
+        lines.append(f'        <Shape name="flag" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="1" castsShadows="true" receiveShadows="true"/>')
+        lines.append(col_line(shape_id + 1, "        "))
+        lines.append("      </TransformGroup>")
+        shape_id += 2
+    lines.append("    </TransformGroup>")
+    lines.append(f'    <TransformGroup name="poles" nodeId="{next_id()}">')
+    lines.append(f'      <TransformGroup name="eqXcNoPole" nodeId="{next_id()}"/>')
+    lines.append("    </TransformGroup>")
+    lines.append(f'    <TransformGroup name="panels" nodeId="{next_id()}">')
+    for name in bars:
+        lines.append(f'      <TransformGroup name="{name}" nodeId="{next_id()}">')
+        lines.append(f'        <TransformGroup name="{GUIDE}" nodeId="{next_id()}">')
+        lines.append(f'          <Shape name="bar" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="2" castsShadows="false" receiveShadows="true"/>')
+        lines.append("        </TransformGroup>")
+        lines.append(col_line(shape_id + 1, "        "))
+        lines.append("      </TransformGroup>")
+        shape_id += 2
+    lines.append("    </TransformGroup>")
+    lines += ["  </Scene>", "</i3D>"]
+    with open(path, "w", encoding="iso-8859-1", newline="\n") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def write_flag_fence_xml(path, posts, bars):
+    """A newFence like the base game's pillar fences: flag posts are fixed "gates" placed with one
+    click, without poles of their own; the bars are stretchy segments with an empty pole."""
+    segments = []
+    gate = lambda i, sid: f"""        <segment id="{sid}" class="FenceGate" maxVerticalAngle="45">
+            <gate node="0>{i}" length="{FLAG_POST:g}" hasStartPole="false" hasEndPole="false"/>
+        </segment>"""
+    segments.append(gate(0, "WHITE_FLAG"))
+    for i, cm in enumerate(BAR_HEIGHTS):
+        segments.append(f"""        <segment id="BAR_{cm}" class="FenceSegment" maxVerticalAngle="45">
+            <poles>
+                <pole node="1>0" radius="0.0"/>
+            </poles>
+            <panels maxScale="{BAR_MAX_SCALE:g}">
+                <panel node="2>{i}" length="{BAR_PANEL:g}"/>
+            </panels>
+        </segment>""")
+    segments.append(gate(1, "RED_FLAG"))
+    body = "\n".join(segments)
+    text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<!-- Segments (N/M): white flag, bars for 0.6, 0.9 and 1.2 m fences, red flag. -->
+<placeable type="newFence">
+    <storeData>
+        <name>$l10n_eq_shop_{FLAG_FENCE}</name>
+        <functions>
+            <function>$l10n_eq_shop_{FLAG_FENCE}_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_{FLAG_FENCE}.dds</image>
+        <price>{FLAG_FENCE_PRICE}</price>
+        <dailyUpkeep>0</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>fences</category>
+        <canBeSold>true</canBeSold>
+        <showInStore>true</showInStore>
+        <brush>
+            <type>newFence</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
+        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
+        <textureMemoryUsage>0</textureMemoryUsage>
+        <audioMemoryUsage>0</audioMemoryUsage>
+        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
+        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/{FLAG_FENCE}.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <sounds>
+            <place template="fenceWoodImp"/>
+            <destroy template="destroyFence"/>
+        </sounds>
+    </placement>
+
+    <fence>
+{body}
+    </fence>
+</placeable>
+"""
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+
+
 def write_xml(name, price, note, path):
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
@@ -839,7 +1017,7 @@ def write_xml(name, price, note, path):
     <storeData>
         <name>$l10n_eq_shop_{name}</name>
         <functions>
-            <function>$l10n_eq_shop_{"courseFlag" if "Flag" in name else "xcDrop" if "Drop" in name else "xcJump"}_function</function>
+            <function>$l10n_eq_shop_{"xcDrop" if "Drop" in name else "xcJump"}_function</function>
         </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
@@ -992,18 +1170,18 @@ def main():
         store_image([(preview_ground(wall), grass), (planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
                     f"{wall['drop']:.1f} m drop", os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-145, pitch=16, skip_fit=1)
         print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
-    for item in FLAGS:
-        name = item["name"]
-        mesh = Mesh()
-        side = 1 if item["colour"] == 0 else -1
-        flag(mesh, 0.0, item["colour"], side, pole_height(item["height"]))
-        guide = guide_bar(item["height"], side)
-        write_i3d(name, os.path.join(OUT, name + ".i3d"), [("flag", mesh, "xcFlags", True)], {}, guide=(guide, "xcGuideGold"))
-        write_xml(name, item["price"], f"A cross country flag for a {item['height']:.1f} m fence: pairs with the nearest flag of the other colour.",
-                  os.path.join(OUT, name + ".xml"))
-        store_image([(mesh, flags), (guide, flags)], f"{item['height']:.1f} m", os.path.join(OUT, "store_" + name + ".dds"),
-                    preview_dir, yaw=-15, pitch=8)
-        print(name)
+    posts, bars = build_flag_fence()
+    write_flag_fence_i3d(os.path.join(OUT, FLAG_FENCE + ".i3d"), posts, bars)
+    write_flag_fence_xml(os.path.join(OUT, FLAG_FENCE + ".xml"), posts, bars)
+    # shop image: white flag, a 0.9 m bar over 3 m, red flag
+    white, red, bar = posts["eqXcFlagWhite"][0], posts["eqXcFlagRed"][0], bars["eqXcBar90"][0]
+    span = Mesh()
+    for mesh, dz, stretch in ((white, 0.0, 1.0), (bar, FLAG_POST, 3.0), (red, FLAG_POST + 3.0, 1.0)):
+        base = len(span.verts)
+        span.verts += [((p[0], p[1], p[2] * stretch + dz), n, uv) for p, n, uv in mesh.verts]
+        span.tris += [(a + base, b + base, c + base) for a, b, c in mesh.tris]
+    store_image([(span, flags)], "0.6 to 1.2 m", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
+    print(FLAG_FENCE, sum(len(m.tris) for m, _ in list(posts.values()) + list(bars.values())), "triangles")
 
 if __name__ == "__main__":
     main()

@@ -22,8 +22,8 @@ run it again rather than editing those files. Letters use DejaVu Sans Bold (rend
 `source/xc_jumps.py` builds the cross country fences in `placeables/xcJumps/`: the log piles (two
 barks with moss, lichen and normal maps, log ends and flags, all painted by the script; bowed, lumpy
 logs with knots, branch stubs and leaning sawn ends; inline geometry, one invisible static collision
-prism with Riding Hall 2k26's jump collision filter) and the cross country flags (a thin pole and a
-pennant wrapped round it, in red and white for three fence heights, each with a gold height bar that
-`EqXcFlags` shows only in construction mode) and the drop walls (painted planks and peeled posts, a
+prism with Riding Hall 2k26's jump collision filter), the cross country flags (`courseFlags`, a newFence: a white and a red flag post, a thin pole with
+a pennant wrapped round it, and gold height bars for 0.6, 0.9 and 1.2 m that `EqXcFlags` shows only
+in construction mode) and the drop walls (painted planks and peeled posts, a
 half-round log on the lip, triangle side walls; collision on the face and sides only). The shop images are small software renders of the meshes; PNG copies
 go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.
