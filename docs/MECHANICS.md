@@ -328,6 +328,20 @@ for now in multiplayer.
   and any more at 10% each, helpers included. A second groom on the same horse adds little.
 - **Cleaning.** In the last hour of the day each groom cleans up to 8 horses, the ones they work on
   first. Clean horses count as groomed, and grooms bring loose horses home.
+- **Vet.** Works on every horse without being told. A vet at Veterinary 100 cuts the chance of an
+  injury at events by 40%, and an injury's rest and treatment fee by 35% (less at lower skill).
+  The Events tab's injury risk includes it.
+- **Broker.** Works without being told too. At Broker 100 the dealer's "Potential (dealer's view)"
+  you see moves 70% of the way to the truth, and a bought horse's real potential shows 2 months
+  sooner (never before 1 month). The dealer's prices stay on the dealer's own view.
+- **Others' vet and broker skill.** The farm's Veterinary and Broker stack over everyone like
+  training (best in full, then 40%, then 10%), so a groom with a talent helps a little.
+- **Event bonus.** Trainers coach for events: at skill 100 a trainer working on a horse adds 4
+  points to the event's most important stat in that month's events, less to the others by the
+  event's weights (20% for horses they don't work on). Races use Racing, Eventing the average of
+  Dressage, Show Jumping and Cross Country. A trainer helps in another event by their skill in it.
+  With Peak form from your riding (up to 8) the bigger counts in full and the smaller at half, up
+  to 10 points.
 
 ### Riding bar and names
 

@@ -13,7 +13,8 @@
       temperament. An eliminated horse wins nothing.
     - Injury: the discipline's base chance, scaled by the tier, the going, the trip (a horse
       hauled abroad arrives tired), fitness, stamina and health, and doubled for a horse
-      eliminated over fences (that is where falls happen). Most injuries
+      eliminated over fences (that is where falls happen), and cut by the farm's vet
+      (entrant.injuryFactor, EqStaff.injuryFactor). Most injuries
       mean months of box rest and vet bills; a forced retirement is rare, and only with that
       setting on.
 ]]
@@ -199,7 +200,7 @@ function EqRisk.rollEvent(event, config, entrants, rng, settings)
         -- forceInjuries is the eqForceInjury testing switch: every starter is hurt.
         local hurt = settings.forceInjuries
             or (settings.injuries and injuryRoll < EqRisk.injuryChance(discipline, tier, going, entrant.fitness, entrant.stamina, eliminated,
-                entrant.travel, entrant.health))
+                entrant.travel, entrant.health) * (entrant.injuryFactor or 1))
         if hurt and #config.injuries > 0 then
             injury = EqRisk.rollInjury(config.injuries, rng, settings.forcedRetirement)
         end

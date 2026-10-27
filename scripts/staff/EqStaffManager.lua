@@ -131,12 +131,10 @@ local function farmHorses(farmId)
 end
 
 
---- Everyone's work on one horse today, for EqTraining.applyDay.
---- @param record table EqHorseRecord
---- @param farmId number|nil
---- @return table|nil work stat -> list, nil with no staff
-function EqStaffManager.workFor(record, farmId)
-    if farmId == nil then return nil end
+--- The farm's staff and how many horses each works on, worked out once a day.
+--- @param farmId number
+--- @return table cache { day, members, counts }
+local function cacheFor(farmId)
     local today = g_currentMission ~= nil and g_currentMission.environment.currentMonotonicDay or 0
     local cache = EqStaffManager.dayCache[farmId]
     if cache == nil or cache.day ~= today then
@@ -148,9 +146,52 @@ function EqStaffManager.workFor(record, farmId)
         cache = { day = today, members = members, counts = EqStaff.targetCounts(members, horses) }
         EqStaffManager.dayCache[farmId] = cache
     end
+    return cache
+end
+
+
+--- Everyone's work on one horse today, for EqTraining.applyDay.
+--- @param record table EqHorseRecord
+--- @param farmId number|nil
+--- @return table|nil work stat -> list, nil with no staff
+function EqStaffManager.workFor(record, farmId)
+    if farmId == nil then return nil end
+    local cache = cacheFor(farmId)
     if #cache.members == 0 then return nil end
     return EqStaff.workOn(cache.members, EqStaffManager.horseInfo(record), cache.counts)
 end
+
+
+--- Staff's bonus to a horse's stats in an event of this discipline.
+--- @param record table EqHorseRecord
+--- @param farmId number|nil
+--- @param discipline table events.xml discipline
+--- @return table|nil bonus stat -> points, nil with no staff
+function EqStaffManager.eventBonusFor(record, farmId, discipline)
+    if farmId == nil or discipline == nil then return nil end
+    local cache = cacheFor(farmId)
+    if #cache.members == 0 then return nil end
+    return EqStaff.eventBonus(cache.members, EqStaffManager.horseInfo(record), cache.counts,
+        EqStaff.eventSkills(discipline), discipline.weights or {})
+end
+
+
+--- @param farmId number|nil
+--- @param skill string "veterinary" or "broker"
+--- @return number strength 0..1, 0 with no farm
+function EqStaffManager.strength(farmId, skill)
+    if farmId == nil then return 0 end
+    return EqStaff.strength(EqStaffManager.membersOf(farmId), skill)
+end
+
+
+--- The local player's farm's Broker, for the dealer's view (EqHorseRecord:getShownCeilings).
+--- @return number strength 0..1
+function EqStaffManager.localBroker()
+    if g_currentMission == nil or not g_currentMission:getIsServer() then return 0 end
+    return EqStaffManager.strength(g_currentMission:getFarmId(), "broker")
+end
+EqHorseRecord.brokerStrength = EqStaffManager.localBroker
 
 
 --- @return table farmIds farms with any staff

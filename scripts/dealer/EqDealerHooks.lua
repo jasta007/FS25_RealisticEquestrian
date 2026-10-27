@@ -27,7 +27,7 @@ function EqDealerHooks.priceFor(animal, rlrmPrice)
     local record = EqRegistry.getOrCreate(animal)
     local base = basePrice(animal)
     if record == nil or base == nil then return rlrmPrice end
-    return EqDealer.price(rlrmPrice, base, record:getShownCeilings(), record.trained, animal.age or 0,
+    return EqDealer.price(rlrmPrice, base, record:getDealerCeilings(), record.trained, animal.age or 0,
         EqDealer.condition(animal, record))
 end
 

@@ -453,3 +453,134 @@ function EqStaff.bestSkills(member, count)
     for i = 1, math.min(count, #keys) do table.insert(out, keys[i]) end
     return out
 end
+
+
+-- THE PASSIVE JOBS AND EVENT BONUSES (EqStaff.strength gives a farm's skill, 0..1)
+
+-- A vet at full strength takes VET_INJURY off the chance of an injury at an event, and VET_CARE
+-- off an injury's rest and treatment fee.
+EqStaff.VET_INJURY = 0.4
+EqStaff.VET_CARE = 0.35
+-- A broker at full strength shows the dealer's view BROKER_TRUTH of the way to the real potential,
+-- and a bought horse's real potential shows up to BROKER_REVEAL months sooner (never before 1).
+EqStaff.BROKER_TRUTH = 0.7
+EqStaff.BROKER_REVEAL = 2
+-- A trainer at skill 100 working on a horse adds EVENT_POINTS to that event type's stats in the
+-- month's events (GENERAL_SHARE of that for horses they don't work on). Peak form from the
+-- player's riding goes up to 8 (EqTraining.FORM_MAX); together the bigger counts in full, the
+-- smaller at half, up to FORM_CAP.
+EqStaff.EVENT_POINTS = 4
+EqStaff.FORM_CAP = 10
+
+
+--- @param strength number the farm's Veterinary, 0..1
+--- @return number factor on the chance of an injury at an event
+function EqStaff.injuryFactor(strength)
+    return 1 - EqStaff.VET_INJURY * (strength or 0)
+end
+
+
+--- @param strength number the farm's Veterinary, 0..1
+--- @return number factor on an injury's rest and fee
+function EqStaff.careFactor(strength)
+    return 1 - EqStaff.VET_CARE * (strength or 0)
+end
+
+
+--- The dealer's view as the farm's broker reads it.
+--- @param advertised table stat -> the dealer's view
+--- @param real table stat -> the real ceiling
+--- @param strength number the farm's Broker, 0..1
+--- @return table shown stat -> ceiling
+function EqStaff.brokerView(advertised, real, strength)
+    local truth = EqStaff.BROKER_TRUTH * (strength or 0)
+    if truth <= 0 then return advertised end
+    local shown = {}
+    for _, stat in ipairs(EqStaff.STATS) do
+        local said, actual = advertised[stat] or 0, real[stat] or 0
+        shown[stat] = math.floor((said + (actual - said) * truth) * 10 + 0.5) / 10
+    end
+    return shown
+end
+
+
+--- @param months number months on the farm before the real potential shows
+--- @param strength number the farm's Broker, 0..1
+--- @return number months
+function EqStaff.revealMonths(months, strength)
+    return math.max(1, months - math.floor(EqStaff.BROKER_REVEAL * (strength or 0) + 0.5))
+end
+
+
+--- The event skills that help in a discipline: its own, Racing for any race, the three phases
+--- for eventing.
+--- @param discipline table events.xml discipline { name, racing, phases }
+--- @return table skills list of event skill keys
+function EqStaff.eventSkills(discipline)
+    if discipline.racing then return { "racing" } end
+    if discipline.phases ~= nil then
+        local skills = {}
+        for _, phase in ipairs(discipline.phases) do
+            for _, event in ipairs(EqStaff.EVENTS) do
+                if event == phase then table.insert(skills, phase) end
+            end
+        end
+        return skills
+    end
+    for _, event in ipairs(EqStaff.EVENTS) do
+        if event == discipline.name then return { event } end
+    end
+    return {}
+end
+
+
+--- Staff's bonus to a horse's stats in an event: each event skill stacked over the staff, then
+--- averaged over the discipline's skills (eventing needs all three), spread over the stats by the
+--- discipline's weights.
+--- @param members table
+--- @param horse table { id, role, retired }
+--- @param counts table from targetCounts
+--- @param skills table from eventSkills
+--- @param weights table stat -> discipline weight
+--- @return table bonus stat -> points
+function EqStaff.eventBonus(members, horse, counts, skills, weights)
+    local total = 0
+    for _, skill in ipairs(skills) do
+        local values = {}
+        for _, member in ipairs(members) do
+            -- Only trainers coach for events; one can help in another event by their skill in it.
+            if EqStaff.JOBS[member.job] ~= nil and EqStaff.JOBS[member.job].event ~= nil then
+                local share = EqStaff.GENERAL_SHARE
+                if EqStaff.targets(member, horse) then
+                    share = math.min(1, EqStaff.HORSES_PER_STAFF / math.max(1, counts[member.id] or 1))
+                end
+                table.insert(values, EqStaff.EVENT_POINTS * (member.skills[skill] or 0) / 100 * share)
+            end
+        end
+        total = total + EqStaff.stack(values)
+    end
+    if #skills > 0 then total = total / #skills end
+
+    local maxWeight = 0
+    for _, stat in ipairs(EqStaff.STATS) do maxWeight = math.max(maxWeight, weights[stat] or 0) end
+    local bonus = {}
+    for _, stat in ipairs(EqStaff.STATS) do
+        bonus[stat] = maxWeight > 0 and total * (weights[stat] or 0) / maxWeight or 0
+    end
+    return bonus
+end
+
+
+--- Put the player's peak form and staff's event bonus together.
+--- @param form table stat -> points
+--- @param bonus table|nil stat -> points
+--- @return table form stat -> points
+function EqStaff.mixForm(form, bonus)
+    if bonus == nil then return form end
+    local mixed = {}
+    for _, stat in ipairs(EqStaff.STATS) do
+        local a, b = form[stat] or 0, bonus[stat] or 0
+        mixed[stat] = math.min(EqStaff.FORM_CAP, math.max(a, b) + 0.5 * math.min(a, b))
+    end
+    return mixed
+end

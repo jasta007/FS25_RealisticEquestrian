@@ -1021,6 +1021,44 @@ do
         == EqStaff.WORKS_GENERAL)
     check("skill words", EqStaff.level(95).word == 6 and EqStaff.level(0).word == 1 and EqStaff.level(59).word == 3)
     check("best skills first", EqStaff.bestSkills(member(30, "racing", 70), 2)[1] == "racing")
+
+    -- Vet and broker.
+    local function near(a, b) return math.abs(a - b) < 1e-9 end
+    check("no vet changes nothing", EqStaff.injuryFactor(0) == 1 and EqStaff.careFactor(0) == 1)
+    check("a full vet cuts injuries and care", near(EqStaff.injuryFactor(1), 1 - EqStaff.VET_INJURY)
+        and near(EqStaff.careFactor(1), 1 - EqStaff.VET_CARE))
+    check("a cheaper fee with a vet", EqInjury.fee(4000, false, 0.65) == 2600 and EqInjury.fee(4000, true, 0.5) == 800)
+    local said, real = { stamina = 80, speed = 40, agility = 60, temperament = 60 },
+        { stamina = 60, speed = 60, agility = 60, temperament = 60 }
+    check("no broker shows the dealer's view", EqStaff.brokerView(said, real, 0) == said)
+    local read = EqStaff.brokerView(said, real, 1)
+    check("a broker reads closer to the truth", read.stamina == 66 and read.speed == 54 and read.agility == 60,
+        string.format("stamina %.1f speed %.1f", read.stamina, read.speed))
+    check("a broker brings the reveal sooner", EqStaff.revealMonths(3, 0) == 3 and EqStaff.revealMonths(3, 1) == 1
+        and EqStaff.revealMonths(1, 1) == 1)
+
+    -- Event bonuses.
+    check("races use racing", EqStaff.eventSkills({ name = "raceLong", racing = true })[1] == "racing")
+    check("eventing uses its phases", #EqStaff.eventSkills({ name = "eventing",
+        phases = { "dressage", "showJumping", "crossCountry" } }) == 3)
+    check("show jumping uses its own", EqStaff.eventSkills({ name = "showJumping" })[1] == "showJumping")
+    local jumpWeights = { stamina = 1, speed = 1, agility = 3, temperament = 2 }
+    local coach = member(40, "showJumping", 100, onStar)
+    local bonus = EqStaff.eventBonus({ coach }, star, EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("a top trainer gives full points to the main stat", near(bonus.agility, EqStaff.EVENT_POINTS)
+        and near(bonus.stamina, EqStaff.EVENT_POINTS / 3))
+    local elsewhere = EqStaff.eventBonus({ coach }, other, EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("other horses get the general share", near(elsewhere.agility, EqStaff.EVENT_POINTS * EqStaff.GENERAL_SHARE))
+    local groomOnly = EqStaff.eventBonus({ member(41, "groom", 100, onStar) }, star, {}, { "showJumping" }, jumpWeights)
+    check("grooms give no event bonus", groomOnly.agility == 0)
+    local twice = EqStaff.eventBonus({ coach, member(42, "showJumping", 100, onStar) }, star,
+        EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("a second trainer adds less", twice.agility > bonus.agility and twice.agility < 1.5 * bonus.agility)
+    local mixed = EqStaff.mixForm({ stamina = 8, speed = 0, agility = 8, temperament = 2 }, bonus)
+    check("form and bonus mix, bigger in full", near(mixed.agility, 8 + 0.5 * EqStaff.EVENT_POINTS)
+        and near(mixed.speed, bonus.speed))
+    local capped = EqStaff.mixForm({ stamina = 10, speed = 10, agility = 10, temperament = 10 }, bonus)
+    check("form stays under its cap", capped.agility == EqStaff.FORM_CAP)
 end
 
 -- The same months give the same result whatever the days per month.
