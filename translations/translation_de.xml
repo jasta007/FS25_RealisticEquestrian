@@ -313,7 +313,7 @@
         <text name="eq_course_collisionNote" text="Platzierte Hindernisse von Realistic Equestrian haben beim Aufzeichnen keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="eq_course_name" text="Parcours %d"/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
-        <text name="input_EQ_COURSE_REWIND" text="Parcours bis zum nächsten Punkt zurücksetzen"/>
+        <text name="input_EQ_COURSE_REWIND" text="Zum nächsten Punkt zurück"/>
         <text name="eq_course_rewound" text="Parcours bis zum nächsten Punkt zurückgesetzt: %d Hindernisse behalten"/>
         <text name="eq_course_resumed" text="Aufzeichnung ab dem nächsten Punkt"/>
         <text name="eq_course_finished" text="Bearbeitung beendet: platzierte Realistic-Equestrian-Hindernisse haben wieder Kollision"/>
@@ -322,12 +322,11 @@
         <text name="eq_course_deleteTitle" text="Parcours löschen"/>
         <text name="eq_course_deleteAction" text="%s löschen"/>
         <text name="eq_course_editAction" text="%s bearbeiten"/>
-        <text name="eq_course_resumeAction" text="Ab dem nächsten Punkt aufzeichnen"/>
-        <text name="eq_course_saveAction" text="Parcours speichern"/>
+        <text name="eq_course_doneAction" text="Bearbeitung beenden"/>
+        <text name="eq_course_saveAction" text="Parcours speichern und beenden"/>
         <text name="eq_course_editing" text="%s wird bearbeitet: %d Hindernisse, %.0f m"/>
         <text name="eq_course_editStarted" text="%s wird bearbeitet: platzierte Hindernisse von Realistic Equestrian haben bis zum Abschluss keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="input_EQ_COURSE_DELETE" text="Parcours in der Nähe löschen"/>
-        <text name="input_EQ_COURSE_FINISH" text="Parcours fertig bearbeiten"/>
         <text name="eq_ui_riding" text="Reiten"/>
         <text name="eq_ui_ridingFull" text="Voll, heute kein Training mehr"/>
         <text name="eq_ui_ridingFullValue" text="%s - voll"/>

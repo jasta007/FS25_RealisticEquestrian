@@ -200,12 +200,11 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 | Key | Not editing | Editing |
 | --- | --- | --- |
-| Ctrl+J | Record a new course, or edit the course within 40 m | Save (while recording); record on from the nearest point (while not) |
+| Ctrl+J | Record a new course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
 | Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
-| Ctrl+L | | Save if recording, and finish: the line goes and the jumps get their collision back |
 | Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
 
-A course needs at least 2 fences to save. A white line runs from the horse to the nearest
+A course needs at least 2 fences to save; a new one with fewer keeps recording. A white line runs from the horse to the nearest
 recorded point; after a rewind the next point waits until the horse is 5 m on. A jump ridden twice
 shows both numbers ("3, 10"). Getting off the horse ends editing and throws away what was not saved.
 
