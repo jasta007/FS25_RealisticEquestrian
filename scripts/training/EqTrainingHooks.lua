@@ -895,6 +895,9 @@ local function dressageRows(rows, routine, vehicle)
     elseif routine.bonus ~= nil then
         EqTrainingHud.drawPrompt(string.format(g_i18n:getText(EqDressage.changeKey(routine.bonus)), g_i18n:getText("eq_dressage_gait_" .. routine.bonus.gait)),
             math.max(0, routine.bonus.deadline - routine.clock) / EqDressage.PASS_REACT_MS, color)
+    elseif task.untimed then
+        -- "Move to A to begin": not an alert, so beside the panel, not in the middle.
+        EqTrainingHud.drawPanelNote(text, color, true)
     else
         EqTrainingHud.drawPrompt(text, share, color)
     end
