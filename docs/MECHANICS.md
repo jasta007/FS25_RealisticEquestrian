@@ -208,7 +208,8 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
 white flag (the fence runs between them), log piles and drop walls. Their flags' height guides show
-while you edit. Edit, delete and the round work as for show jumping, but by eventing rules: the time
+while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
+collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
 allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
 run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
 eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
