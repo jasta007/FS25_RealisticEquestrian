@@ -28,6 +28,8 @@ EqTrainingHud.COLOR = {
     red = { 1, 0.32, 0.25, 1 },
     track = { 1, 1, 1, 0.15 },
     background = { 0, 0, 0, 0.6 },
+    -- The exertion bar's dividers and ticks: solid, the shade the old see-through ticks showed.
+    barLine = { 0.43, 0.43, 0.4, 1 },
 }
 
 -- Screen positions are shares of the screen, from the bottom left.
@@ -167,11 +169,12 @@ function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
                 fill(left + width * section[1], barY, width * (section[2] - section[1]), h, section[3])
             end
             for _, line in ipairs(row.lines or {}) do
-                fill(left + width * line - p.markWidth / 2, barY, p.markWidth, h, { 0, 0, 0, 0.9 })
+                fill(left + width * line - p.markWidth / 2, barY, p.markWidth, h, EqTrainingHud.COLOR.barLine)
             end
-            -- Ticks: short, fainter marks from the bottom edge (the gallop's thirds).
+            -- Ticks: short marks from the bottom edge (the gallop's thirds), the same solid grey as
+            -- the lines so no section's colour shows through either (James).
             for _, tick in ipairs(row.ticks or {}) do
-                fill(left + width * tick - p.markWidth / 2, barY, p.markWidth, h * 0.45, { 0, 0, 0, 0.6 })
+                fill(left + width * tick - p.markWidth / 2, barY, p.markWidth, h * 0.45, EqTrainingHud.COLOR.barLine)
             end
             if row.marker ~= nil then
                 -- A white box with a dark edge, a little taller than the bar.
