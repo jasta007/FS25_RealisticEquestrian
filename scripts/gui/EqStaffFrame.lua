@@ -219,7 +219,7 @@ local function personRow(member, horses)
         name = member.name,
         job = EqStaffFrame.jobText(member.job),
         grade = g_i18n:getText("eq_staff_grade_" .. EqStaff.GRADES[member.grade].name),
-        wage = g_i18n:formatMoney(member.wage, 0, true, true),
+        wage = g_i18n:formatMoney(EqStaff.wageOf(member, EqStaffManager.daysPerPeriod()), 0, true, true),
     }
     if horses ~= nil then
         local names = {}
@@ -341,7 +341,7 @@ function EqStaffFrame:updatePanel()
         local enabled = member.enabled ~= false
         local willBe = EqStaffManager.willBeEnabled(member)
         if not enabled then
-            wage = string.format(g_i18n:getText("eq_staff_perDay"), g_i18n:formatMoney(member.wage * EqStaff.DISABLED_WAGE, 0, true, true))
+            wage = string.format(g_i18n:getText("eq_staff_perDay"), g_i18n:formatMoney(EqStaff.wageOf(member, EqStaffManager.daysPerPeriod()) * EqStaff.DISABLED_WAGE, 0, true, true))
         end
         if willBe ~= enabled then
             wage = string.format(g_i18n:getText(willBe and "eq_staff_onFromTomorrow" or "eq_staff_offFromTomorrow"), wage)
@@ -537,7 +537,7 @@ end
 function EqStaffFrame:updateSummary()
     local text = self.message
     if text == nil and self.isReady then
-        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId()))
+        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId()), EqStaffManager.daysPerPeriod())
         if self.mode == EqStaffFrame.MODE_HIRE then
             text = g_i18n:getText("eq_staff_summary_hire")
         else

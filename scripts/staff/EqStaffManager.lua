@@ -289,10 +289,17 @@ local function staffedFarms()
 end
 
 
+--- @return number days per month in this game
+function EqStaffManager.daysPerPeriod()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    return environment ~= nil and (environment.daysPerPeriod or 1) or 1
+end
+
+
 --- Pay the day's wages.
 function EqStaffManager.onDayChanged()
     for _, farmId in ipairs(staffedFarms()) do
-        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId))
+        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId), EqStaffManager.daysPerPeriod())
         if wages > 0 then
             g_currentMission:addMoney(-wages, farmId, MoneyType.EQ_STAFF_WAGES or MoneyType.OTHER, true, true)
         end

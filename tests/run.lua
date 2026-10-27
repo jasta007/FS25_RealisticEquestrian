@@ -1085,6 +1085,12 @@ do
     check("a disabled member does no work", not EqStaff.targets(off, barn[1])
         and #EqStaff.workOn({ off }, barn[1], {}).speed == 0 and #EqStaff.toClean({ off }, barn) == 0)
     check("a disabled member is paid half", EqStaff.dailyWages({ off, member(44, "groom", 50) }) == 1500)
+    local vet = { job = "vet", wage = 600 }
+    check("a vet's wage is per day on one-day months", EqStaff.wageOf(vet, 1) == 600)
+    check("a vet's wage is spread over a 28-day month", EqStaff.wageOf(vet, 28) == 20)
+    check("a cheap broker still costs something", EqStaff.wageOf({ job = "broker", wage = 20 }, 28) == 5)
+    check("a groom's wage is not spread", EqStaff.wageOf({ job = "groom", wage = 200 }, 28) == 200)
+    check("daily wages spread a disabled vet too", EqStaff.dailyWages({ { job = "vet", wage = 600, enabled = false } }, 3) == 100)
     -- Portraits: mostly a face for the name, 10% any face.
     local faceRng = EqRandom.new("faces")
     local maleOk, femaleFaces, total = 0, {}, 0

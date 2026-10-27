@@ -70,6 +70,9 @@ EqStaff.TALENT_CHANCE = 0.15
 -- hire just for the cleaning.
 EqStaff.BASE_WAGE = { groom = 200, dressage = 450, showJumping = 450, crossCountry = 450, racing = 450,
     vet = 600, broker = 400 }
+-- Vets and brokers help per event or deal, not per day of training, so their daily wage is
+-- spread over the days of a month: with more days per month, each day costs less.
+EqStaff.MONTHLY_PAY = { vet = true, broker = true }
 -- Wages vary by up to this share either way, so a bargain or an overpriced hire turns up.
 EqStaff.WAGE_LUCK = 0.15
 -- Each talent adds this share to the wage.
@@ -480,12 +483,24 @@ function EqStaff.strength(members, skill)
 end
 
 
+--- @param member table
+--- @param daysPerPeriod number|nil days per month, 1 if nil
+--- @return number what one working day costs: the wage, spread over the month for a vet or broker
+function EqStaff.wageOf(member, daysPerPeriod)
+    local wage = member.wage or 0
+    local days = math.max(daysPerPeriod or 1, 1)
+    if not EqStaff.MONTHLY_PAY[member.job] or days == 1 then return wage end
+    return math.max(5, math.floor(wage / days / 5 + 0.5) * 5)
+end
+
+
 --- @param members table
+--- @param daysPerPeriod number|nil
 --- @return number wages per day
-function EqStaff.dailyWages(members)
+function EqStaff.dailyWages(members, daysPerPeriod)
     local total = 0
     for _, member in ipairs(members) do
-        total = total + (member.wage or 0) * (member.enabled == false and EqStaff.DISABLED_WAGE or 1)
+        total = total + EqStaff.wageOf(member, daysPerPeriod) * (member.enabled == false and EqStaff.DISABLED_WAGE or 1)
     end
     return total
 end
