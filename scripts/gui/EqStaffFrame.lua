@@ -336,13 +336,13 @@ function EqStaffFrame:updatePanel()
             setText(self.panelWorksOn, row.fourth)
         end
     else
-        local left = (member.leavesMonth or 0) - EqStaffManager.month
-        setText(self.panelWorksOn, g_i18n:getText(left <= 0 and "eq_staff_available_1" or "eq_staff_available_2"))
+        setText(self.panelWorksOn, string.format(g_i18n:getText("eq_staff_hours"),
+            EqStaff.hoursLeft(member, EqStaffManager.hourNow())))
     end
     setText(self.panelNoteLabel, g_i18n:getText("eq_staff_duties"))
     setText(self.panelNote, EqStaffFrame.jobDoes(member.job))
-    -- The Works on row reads On offer on the Hire tab.
-    setText(self.panelWorksOnLabel, g_i18n:getText(self.mode == EqStaffFrame.MODE_STAFF and "eq_staff_col_worksOn" or "eq_staff_onOffer"))
+    -- The Works on row reads Time remaining on the Hire tab.
+    setText(self.panelWorksOnLabel, g_i18n:getText(self.mode == EqStaffFrame.MODE_STAFF and "eq_staff_col_worksOn" or "eq_staff_timeLeft"))
 end
 
 

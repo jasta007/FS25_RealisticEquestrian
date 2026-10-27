@@ -2,8 +2,8 @@
     EqStaffManager.lua
     The farm's hired staff and the candidates on offer (EqStaff does the maths). Server only.
 
-    - Candidates: EqStaff.CANDIDATES on offer, shared by every farm; at each month change those
-      whose time is up leave and new ones arrive.
+    - Candidates: up to EqStaff.CANDIDATES on offer, shared by every farm; each stays some hours,
+      and new ones arrive a few hours apart (EqStaff.refreshCandidates, every game hour).
     - Wages are per day, paid every day.
     - A horse's day of training asks workFor for everyone's work on it (EqTrainingHooks.onHorseDay).
     - In the last hour of the day grooms clean horses (EqStaff.toClean) and, like the base game's
@@ -24,22 +24,29 @@ function EqStaffManager.reset()
     EqStaffManager.hired = {}       -- members, each with farmId
     EqStaffManager.candidates = {}
     EqStaffManager.nextId = 1
-    EqStaffManager.month = 0        -- months played, counted at each month change
     EqStaffManager.dayCache = {}    -- farmId -> { day, members, counts } for the daily training
 end
 EqStaffManager.reset()
 
 
+--- @return number the game hour now
+function EqStaffManager.hourNow()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    if environment == nil then return 0 end
+    return EqStaff.gameHour(environment.currentMonotonicDay, environment.currentHour)
+end
+
+
 --- @return table rng a generator for new candidates
 local function newRng()
-    return EqRandom.new(string.format("staff %d %d %s", EqStaffManager.month, EqStaffManager.nextId, tostring(g_time or 0)))
+    return EqRandom.new(string.format("staff %d %d %s", EqStaffManager.hourNow(), EqStaffManager.nextId, tostring(g_time or 0)))
 end
 
 
 --- Fill the candidate list. Safe to call any time.
 function EqStaffManager.ensureCandidates()
-    EqStaffManager.nextId = EqStaff.refreshCandidates(EqStaffManager.candidates, EqStaffManager.month, newRng(),
-        EqStaffManager.nextId)
+    EqStaffManager.nextId = EqStaff.refreshCandidates(EqStaffManager.candidates, EqStaffManager.hourNow(), newRng(),
+        EqStaffManager.nextId, true)
 end
 
 
@@ -76,10 +83,10 @@ function EqStaffManager.hire(id, farmId)
     if not EqStaff.canHire(EqStaffManager.membersOf(farmId), candidate) then return false, "unique" end
     table.remove(EqStaffManager.candidates, index)
     candidate.farmId = farmId
-    candidate.leavesMonth = nil
+    candidate.leavesAt = nil
     table.insert(EqStaffManager.hired, candidate)
     EqStaffManager.dayCache = {}
-    Log:info("EqStaff: farm %d hired %s (%s, %s, %d a month)", farmId, candidate.name, candidate.job,
+    Log:info("EqStaff: farm %d hired %s (%s, %s, %d a day)", farmId, candidate.name, candidate.job,
         EqStaff.GRADES[candidate.grade].name, candidate.wage)
     return true
 end
@@ -219,15 +226,11 @@ function EqStaffManager.onDayChanged()
 end
 
 
---- A new month: candidates come and go.
-function EqStaffManager.onPeriodChanged()
-    EqStaffManager.month = EqStaffManager.month + 1
-    EqStaffManager.ensureCandidates()
-end
-
-
---- Grooms' round in the last hour of the day: clean, and bring loose horses home.
+--- Each hour candidates come and go; in the last hour of the day the grooms' round: clean, and
+--- bring loose horses home.
 function EqStaffManager.onHourChanged()
+    EqStaffManager.nextId = EqStaff.refreshCandidates(EqStaffManager.candidates, EqStaffManager.hourNow(), newRng(),
+        EqStaffManager.nextId, false)
     local environment = g_currentMission.environment
     if environment == nil or environment.currentHour ~= EqStaffManager.ROUND_HOUR then return end
 
@@ -273,7 +276,7 @@ local function saveMember(xmlFile, key, member)
     xmlFile:setInt(key .. "#dailyWage", member.wage)
     xmlFile:setInt(key .. "#talents", member.talents or 0)
     if member.farmId ~= nil then xmlFile:setInt(key .. "#farmId", member.farmId) end
-    if member.leavesMonth ~= nil then xmlFile:setInt(key .. "#leavesMonth", member.leavesMonth) end
+    if member.leavesAt ~= nil then xmlFile:setInt(key .. "#leavesAt", member.leavesAt) end
     for _, skill in ipairs(EqStaff.SKILLS) do
         xmlFile:setInt(key .. ".skills#" .. skill, member.skills[skill] or 0)
     end
@@ -296,7 +299,7 @@ local function loadMember(xmlFile, key)
         wage = xmlFile:getInt(key .. "#dailyWage"),
         talents = xmlFile:getInt(key .. "#talents", 0),
         farmId = xmlFile:getInt(key .. "#farmId"),
-        leavesMonth = xmlFile:getInt(key .. "#leavesMonth"),
+        leavesAt = xmlFile:getInt(key .. "#leavesAt"),
         skills = {},
         worksOn = {
             kind = xmlFile:getString(key .. ".worksOn#kind", EqStaff.WORKS_GENERAL),
@@ -320,7 +323,6 @@ end
 --- @param key string
 function EqStaffManager.saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. "#nextId", EqStaffManager.nextId)
-    xmlFile:setInt(key .. "#month", EqStaffManager.month)
     for i, member in ipairs(EqStaffManager.hired) do
         saveMember(xmlFile, string.format("%s.hired.member(%d)", key, i - 1), member)
     end
@@ -336,7 +338,6 @@ function EqStaffManager.loadFromXMLFile(xmlFile, key)
     EqStaffManager.reset()
     if xmlFile ~= nil then
         EqStaffManager.nextId = xmlFile:getInt(key .. "#nextId", 1)
-        EqStaffManager.month = xmlFile:getInt(key .. "#month", 0)
         for _, list in ipairs({ { "hired", EqStaffManager.hired }, { "candidates", EqStaffManager.candidates } }) do
             local i = 0
             while true do
@@ -356,17 +357,14 @@ function EqStaffManager.loadFromXMLFile(xmlFile, key)
 end
 
 
---- Start the daily wages, monthly candidates and the grooms' round. Server only.
+--- Start the daily wages, the hourly candidates and the grooms' round. Server only.
 --- @param guarded function main.lua's error guard
 function EqStaffManager.start(guarded)
     g_messageCenter:subscribe(MessageType.DAY_CHANGED, function()
         guarded("staff wages", EqStaffManager.onDayChanged)
     end, EqStaffManager)
-    g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
-        guarded("staff candidates", EqStaffManager.onPeriodChanged)
-    end, EqStaffManager)
     g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
-        guarded("staff round", EqStaffManager.onHourChanged)
+        guarded("staff candidates and round", EqStaffManager.onHourChanged)
     end, EqStaffManager)
 end
 

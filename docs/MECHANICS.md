@@ -316,8 +316,9 @@ for now in multiplayer.
   (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
   Horse Staff Wages in Finances, so a junior groom just for the cleaning is cheap. No hiring fee; let staff go at any time.
 - **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
-  for the same event) and now and then a vet or broker (30% for each spare place). Each stays one
-  or two months; at each month change those whose time is up leave and new ones arrive.
+  for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
+  offer 12 to 72 game hours (Time remaining on the Hire tab). When a place is free, someone new
+  turns up with a 25% chance each hour, so people come and go a few at a time.
 - **Works on.** A groom or trainer works on all horses (General), every horse with a role, or one
   horse (the Change who they work on button steps through them). Horses they work on get their full work; up to 4 horses each, more share
   it (8 horses get half each). Every other horse gets 20% of it.

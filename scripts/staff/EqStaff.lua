@@ -75,9 +75,12 @@ EqStaff.WAGE_LUCK = 0.15
 -- Each talent adds this share to the wage.
 EqStaff.TALENT_WAGE = 0.04
 
--- Candidates on offer at a time, and how many months each stays on offer.
+-- Candidates on offer at a time, and how many game hours each stays on offer. When one leaves
+-- or is hired, a new one turns up each hour at ARRIVAL_CHANCE, so people come and go a few at a
+-- time.
 EqStaff.CANDIDATES = 6
-EqStaff.CANDIDATE_MONTHS = { 1, 2 }
+EqStaff.CANDIDATE_HOURS = { 12, 72 }
+EqStaff.ARRIVAL_CHANCE = 0.25
 
 -- TRAINING. Effort per day is the same unit as the player's riding (EqTraining.playerEffort):
 -- a trainer gives TRAINER_SHARE x skill/100 in its stats, every member GROOM_SHARE x skill/100 in
@@ -179,10 +182,10 @@ end
 --- Roll a new candidate.
 --- @param rng table EqRandom
 --- @param id number the member's id
---- @param month number the month counter now, for how long they stay on offer
+--- @param hour number the game hour now (EqStaff.gameHour), for how long they stay on offer
 --- @param job string|nil a job to roll, else a random one
---- @return table member { id, name, job, grade, skills, wage, worksOn, leavesMonth }
-function EqStaff.roll(rng, id, month, job)
+--- @return table member { id, name, job, grade, skills, wage, worksOn, leavesAt }
+function EqStaff.roll(rng, id, hour, job)
     job = job or pick(rng, EqStaff.JOB_CHANCE, EqStaff.JOB_ORDER)
     local gradeIndex = EqStaff.rollGrade(rng)
     local grade = EqStaff.GRADES[gradeIndex]
@@ -203,7 +206,7 @@ function EqStaff.roll(rng, id, month, job)
         skills[skill] = math.floor(math.max(0, math.min(100, value)) + 0.5)
     end
 
-    local months = EqStaff.CANDIDATE_MONTHS
+    local hours = EqStaff.CANDIDATE_HOURS
     return {
         id = id,
         name = EqStaffNames.roll(rng),
@@ -213,7 +216,7 @@ function EqStaff.roll(rng, id, month, job)
         talents = talents,
         wage = EqStaff.wageFor(job, gradeIndex, skills, talents, rng:uniform(-1, 1)),
         worksOn = { kind = EqStaff.WORKS_GENERAL },
-        leavesMonth = month + months[1] + math.floor(rng:next() * (months[2] - months[1] + 1)),
+        leavesAt = hour + hours[1] + math.floor(rng:next() * (hours[2] - hours[1] + 1)),
     }
 end
 
@@ -278,19 +281,44 @@ function EqStaff.sortPeople(people)
 end
 
 
---- Drop candidates whose time is up and top the list up to CANDIDATES.
+--- @param day number the monotonic day
+--- @param hour number the hour of the day
+--- @return number hours since the game began
+function EqStaff.gameHour(day, hour)
+    return (day or 0) * 24 + (hour or 0)
+end
+
+
+--- @param candidate table
+--- @param hour number the game hour now
+--- @return number hours left on offer, at least 1
+function EqStaff.hoursLeft(candidate, hour)
+    return math.max(1, (candidate.leavesAt or hour) - hour)
+end
+
+
+--- Drop candidates whose time is up, and let new ones arrive: the whole list at once when fill
+--- is true (a new game), else at most one, at ARRIVAL_CHANCE.
 --- @param candidates table list of members, changed in place
---- @param month number the month counter now
+--- @param hour number the game hour now
 --- @param rng table EqRandom
 --- @param nextId number the next free member id
+--- @param fill boolean|nil
 --- @return number nextId
-function EqStaff.refreshCandidates(candidates, month, rng, nextId)
+function EqStaff.refreshCandidates(candidates, hour, rng, nextId, fill)
     for i = #candidates, 1, -1 do
-        if (candidates[i].leavesMonth or 0) < month then table.remove(candidates, i) end
+        if candidates[i].leavesAt == nil then
+            -- From a save before hours: a fresh window.
+            candidates[i].leavesAt = hour + EqStaff.CANDIDATE_HOURS[1]
+                + math.floor(rng:next() * (EqStaff.CANDIDATE_HOURS[2] - EqStaff.CANDIDATE_HOURS[1] + 1))
+        elseif candidates[i].leavesAt <= hour then
+            table.remove(candidates, i)
+        end
     end
-    while #candidates < EqStaff.CANDIDATES do
-        table.insert(candidates, EqStaff.roll(rng, nextId, month, EqStaff.nextJob(candidates, rng)))
+    while #candidates < EqStaff.CANDIDATES and (fill or rng:next() < EqStaff.ARRIVAL_CHANCE) do
+        table.insert(candidates, EqStaff.roll(rng, nextId, hour, EqStaff.nextJob(candidates, rng)))
         nextId = nextId + 1
+        if not fill then break end
     end
     return nextId
 end

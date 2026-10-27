@@ -981,7 +981,7 @@ do
     -- Candidates, wages, the one-vet rule and cleaning.
     local rng = EqRandom.new("staff test")
     local candidates, grades, jobs = {}, {}, {}
-    local nextId = EqStaff.refreshCandidates(candidates, 1, rng, 1)
+    local nextId = EqStaff.refreshCandidates(candidates, 1, rng, 1, true)
     check("six candidates on offer", #candidates == EqStaff.CANDIDATES and nextId == EqStaff.CANDIDATES + 1)
     for i = 1, 2000 do
         local c = EqStaff.roll(rng, i, 1)
@@ -1005,7 +1005,7 @@ do
     local mixOk, passiveSeen = true, 0
     for trial = 1, 200 do
         local offer = {}
-        EqStaff.refreshCandidates(offer, trial, rng, 1)
+        EqStaff.refreshCandidates(offer, trial, rng, 1, true)
         local count, grooms, trainers = {}, 0, 0
         for _, c in ipairs(offer) do
             count[c.job] = (count[c.job] or 0) + 1
@@ -1032,9 +1032,26 @@ do
     local vet = member(9, "vet", 70)
     check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
     check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)
-    local oldMonth = candidates[1].leavesMonth
-    EqStaff.refreshCandidates(candidates, oldMonth + 1, rng, nextId)
-    check("candidates leave when their time is up", #candidates == EqStaff.CANDIDATES and candidates[1].leavesMonth > oldMonth)
+    local firstLeaves = candidates[1].leavesAt
+    check("candidates stay 12-72 hours", firstLeaves >= 1 + 12 and firstLeaves <= 1 + 72)
+    check("hours left", EqStaff.hoursLeft(candidates[1], firstLeaves - 5) == 5)
+    local staggered = {}
+    for _, c in ipairs(candidates) do table.insert(staggered, c) end
+    local maxSeen, arrivals = 0, 0
+    for hour = 2, 200 do
+        local ids = {}
+        for _, c in ipairs(staggered) do ids[c.id] = true end
+        nextId = EqStaff.refreshCandidates(staggered, hour, rng, nextId, false)
+        local new = 0
+        for _, c in ipairs(staggered) do if not ids[c.id] then new = new + 1 end end
+        maxSeen = math.max(maxSeen, new)
+        arrivals = arrivals + new
+        if #staggered > EqStaff.CANDIDATES then maxSeen = 99 end
+    end
+    check("new candidates arrive one at a time", maxSeen == 1 and arrivals > 10, string.format("%d, %d", maxSeen, arrivals))
+    local stale = { { id = 1, job = "groom" } }
+    EqStaff.refreshCandidates(stale, 100, rng, 2, false)
+    check("old saves get a fresh window", stale[1].leavesAt ~= nil and stale[1].leavesAt > 100)
     local yard = {}
     for i = 1, 12 do table.insert(yard, { id = "Y" .. i, role = "balanced" }) end
     yard[12].role = "racing"

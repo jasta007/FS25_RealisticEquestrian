@@ -483,9 +483,8 @@
         <text name="eq_staff_duties_vet" text="Menos lesiones y tratamientos más cortos y baratos para cada caballo"/>
         <text name="eq_staff_duties_broker" text="Da un potencial más preciso de los caballos del tratante. Mejores precios al comprar y vender caballos."/>
         <text name="eq_staff_coversHorses" text="%s (%d)"/>
-        <text name="eq_staff_available_1" text="Solo este mes"/>
-        <text name="eq_staff_available_2" text="Este mes y el siguiente"/>
-        <text name="eq_staff_onOffer" text="Disponible"/>
+        <text name="eq_staff_timeLeft" text="Tiempo restante"/>
+        <text name="eq_staff_hours" text="%d h"/>
         <text name="eq_staff_button_hire" text="Contratar (%s al día)"/>
         <text name="eq_staff_button_worksOn" text="Cambiar asignación"/>
         <text name="eq_staff_button_fire" text="Despedir"/>
@@ -495,7 +494,7 @@
         <text name="eq_staff_unique" text="Ya tienes un %s. Una granja solo puede tener uno."/>
         <text name="eq_staff_noCandidates" text="Ahora nadie busca trabajo. Cada mes llega gente nueva."/>
         <text name="eq_staff_noStaff" text="Aún no tienes personal. Contrata en la pestaña Contratar."/>
-        <text name="eq_staff_summary_hire" text="Cada mes llega gente nueva, disponible uno o dos meses. Solo un veterinario y un corredor por granja."/>
+        <text name="eq_staff_summary_hire" text="Llega gente nueva cada pocas horas y sigue disponible de 12 a 72 horas. Solo un veterinario y un corredor por granja."/>
         <text name="eq_staff_summary_staff" text="Sueldos: %s al día. El personal rinde más con pocos caballos."/>
         <text name="eq_staff_clientNote" text="Por ahora solo el anfitrión puede contratar."/>
         <text name="eq_result_placed" text="%s terminó en el puesto %d de %d en la prueba %s y ganó %s."/>

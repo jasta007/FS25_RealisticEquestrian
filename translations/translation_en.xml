@@ -546,9 +546,8 @@
         <text name="eq_staff_duties_vet" text="Fewer injuries, shorter and cheaper treatment, for every horse"/>
         <text name="eq_staff_duties_broker" text="Gives more accurate horse potential at the dealer. Better prices when buying and selling horses."/>
         <text name="eq_staff_coversHorses" text="%s (%d)"/>
-        <text name="eq_staff_available_1" text="This month only"/>
-        <text name="eq_staff_available_2" text="This month and next"/>
-        <text name="eq_staff_onOffer" text="Available"/>
+        <text name="eq_staff_timeLeft" text="Time remaining"/>
+        <text name="eq_staff_hours" text="%d h"/>
         <text name="eq_staff_button_hire" text="Hire (%s a day)"/>
         <text name="eq_staff_button_worksOn" text="Change who they work on"/>
         <text name="eq_staff_button_fire" text="Let go"/>
@@ -558,7 +557,7 @@
         <text name="eq_staff_unique" text="You already have a %s. A farm can have only one."/>
         <text name="eq_staff_noCandidates" text="No one is looking for work right now. New people arrive each month."/>
         <text name="eq_staff_noStaff" text="You have no staff yet. Hire some on the Hire tab."/>
-        <text name="eq_staff_summary_hire" text="New people arrive each month and stay on offer for one or two months. Only one vet and one broker per farm."/>
+        <text name="eq_staff_summary_hire" text="New people arrive every few hours and stay on offer for 12 to 72 hours. Only one vet and one broker per farm."/>
         <text name="eq_staff_summary_staff" text="Wages: %s a day. Staff work best on a few horses each."/>
         <text name="eq_staff_clientNote" text="Only the host can hire staff for now."/>
         <text name="eq_result_placed" text="%s finished %d of %d in %s, winning %s."/>

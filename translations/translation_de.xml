@@ -548,9 +548,8 @@
         <text name="eq_staff_duties_vet" text="Weniger Verletzungen, kürzere und günstigere Behandlung für jedes Pferd"/>
         <text name="eq_staff_duties_broker" text="Zeigt das Potenzial der Händlerpferde genauer. Bessere Preise beim Kauf und Verkauf von Pferden."/>
         <text name="eq_staff_coversHorses" text="%s (%d)"/>
-        <text name="eq_staff_available_1" text="Nur diesen Monat"/>
-        <text name="eq_staff_available_2" text="Diesen und nächsten Monat"/>
-        <text name="eq_staff_onOffer" text="Verfügbar"/>
+        <text name="eq_staff_timeLeft" text="Verbleibende Zeit"/>
+        <text name="eq_staff_hours" text="%d Std."/>
         <text name="eq_staff_button_hire" text="Einstellen (%s pro Tag)"/>
         <text name="eq_staff_button_worksOn" text="Zuständigkeit ändern"/>
         <text name="eq_staff_button_fire" text="Entlassen"/>
@@ -560,7 +559,7 @@
         <text name="eq_staff_unique" text="Sie haben schon einen %s. Ein Hof kann nur einen haben."/>
         <text name="eq_staff_noCandidates" text="Gerade sucht niemand Arbeit. Jeden Monat kommen neue Leute."/>
         <text name="eq_staff_noStaff" text="Sie haben noch kein Personal. Stellen Sie im Reiter Einstellen welches ein."/>
-        <text name="eq_staff_summary_hire" text="Jeden Monat kommen neue Leute, für ein bis zwei Monate. Nur ein Tierarzt und ein Makler pro Hof."/>
+        <text name="eq_staff_summary_hire" text="Alle paar Stunden kommen neue Leute und bleiben 12 bis 72 Stunden im Angebot. Nur ein Tierarzt und ein Makler pro Hof."/>
         <text name="eq_staff_summary_staff" text="Löhne: %s pro Tag. Personal arbeitet am besten mit wenigen Pferden."/>
         <text name="eq_staff_clientNote" text="Vorerst kann nur der Host Personal einstellen."/>
         <text name="eq_result_placed" text="%s belegte Platz %d von %d bei %s und gewann %s."/>

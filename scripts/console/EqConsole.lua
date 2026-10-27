@@ -166,7 +166,7 @@ function EqConsole:consoleStaff()
     for _, member in ipairs(mine) do print("  " .. staffLine(member)) end
     print("Candidates:")
     for _, member in ipairs(EqStaffManager.candidates) do
-        print(string.format("  %s (on offer until month %d)", staffLine(member), member.leavesMonth or 0))
+        print(string.format("  %s (%d h left)", staffLine(member), EqStaff.hoursLeft(member, EqStaffManager.hourNow())))
     end
     return "eqStaffHire <#> hires, eqStaffFire <#> lets go, eqStaffWork <#> <general|role|horse> sets who they work on"
 end
