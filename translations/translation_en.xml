@@ -55,7 +55,7 @@
         <text name="eq_dressage_backwards" text="Move backwards"/>
         <text name="eq_dressage_circle_left" text="Circle left"/>
         <text name="eq_dressage_circle_right" text="Circle right"/>
-        <text name="eq_dressage_out" text="Back into the arena!"/>
+        <text name="eq_dressage_out" text="Return to the Arena!"/>
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>
