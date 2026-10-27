@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="114">
     <author>Jasta007</author>
-    <version>0.2.0.0</version>
+    <version>0.3.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
         <de>Realistic Equestrian</de>
@@ -14,6 +14,8 @@ Every horse gets four competition stats - Stamina, Speed, Agility and Temperamen
 
 Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
+Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
+
 Made by Jasta007.]]>
         </en>
         <de>
@@ -22,6 +24,8 @@ Made by Jasta007.]]>
 Jedes Pferd erhält vier Turnierwerte: Ausdauer, Schnelligkeit, Wendigkeit und Temperament. Jeder Wert hat eine vererbte Obergrenze und einen trainierten Stand: Die Zucht hebt an, was ein Pferd werden kann, Reiten und angestellte Pfleger machen es wahr. Melden Sie Ihre Pferde gegen eine Startgebühr zu täglichen Turnieren und monatlichen Meisterschaften an und sehen Sie die Ergebnisse am nächsten Tag oder im nächsten Monat.
 
 Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
+
+Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
 Von Jasta007.]]>
         </de>
@@ -34,11 +38,17 @@ Von Jasta007.]]>
     <extraSourceFiles>
         <sourceFile filename="scripts/main.lua"/>
     </extraSourceFiles>
+    <storeItems>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena15x30.xml"/>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena20x40.xml"/>
+        <storeItem xmlFilename="placeables/dressageArena/dressageArena20x60.xml"/>
+    </storeItems>
     <l10n filenamePrefix="translations/translation"/>
     <actions>
         <action name="EQ_DELIVER"/>
         <action name="EQ_TRAINING_VIEW"/>
         <action name="EQ_TRAINING_HELP"/>
+        <action name="EQ_HORSE_ROLE"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -49,6 +59,9 @@ Von Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_HELP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_h" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_HORSE_ROLE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

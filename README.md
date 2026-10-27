@@ -49,16 +49,26 @@ uses its genetics, health and fitness.
 - Horses already on your farm get believable starting stats for their age.
 
 ### Training
-- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle
-  and the Stamina, Speed, Agility and Temperament views, and **H** for help.
-  - **Stamina:** switch between canter and gallop when asked to build your tempo, up to x5.
-  - **Speed:** two warm-up gallops charge a Sprint. Press W when Sprint! shows.
+- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
+  a view per stat and Condensed (just the bar), and **H** for help.
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
+    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+    Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo.
-- An Exertion meter shows how hard your horse is working. The riding bar is its energy for the day.
+  - **Temperament:** follow the commands (walk, trot, stop, back up, turn) to build a combo, up to x8.
+    Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
+    arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
+- The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
+- **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
+  to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
+- **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
+  it is in the pen.
 - The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
   home. Young horses train slower, idle ones lose condition.
+- **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
+  list groups horses by role, the role shows while you look at or ride the horse, and staff train
+  toward it.
 - Full rules are in [How Realistic Equestrian works](docs/MECHANICS.md#training).
 
 ### Feed
@@ -76,7 +86,7 @@ uses its genetics, health and fitness.
 - Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
-- Supports the Equestrian Pack, Riding Hall 2k26, Riding Stable and Horse Stable mods, and map
+- Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.
 
@@ -116,6 +126,7 @@ uses its genetics, health and fitness.
   one-day $400 fix or a month of rest; a chip fracture is two months of surgery at $12,000 a
   month or a year off. Injuries never spread, and an injured horse can't be sold until it heals.
 - **Retire** on that page (or `eqRetire`) cuts an injured horse's treatment fee by 60%.
+  Retirement is permanent.
 - Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
   (colic), more after a long trip. A sick horse can't be entered until it is better.
 - With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
@@ -136,7 +147,7 @@ uses its genetics, health and fitness.
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
 - **Show events**: round events every day or every month.
-- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter, and multiplayer adds more for each farm with horses.
+- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter and always one Training Event, and multiplayer adds more for each farm with horses.
 - **Races and steeplechases**: on or off.
 - **Event injuries** and **Career-ending injuries**: on or off.
 - **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
@@ -153,14 +164,18 @@ For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.m
 - [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
   (`FS25_RealisticLivestockRM`). Without it the mod stays switched off.
 
+**Strongly recommended**
+
+- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
+  (`FS25_RidingHall`): a riding hall and show jumps you can buy and place anywhere. Clearing
+  them trains more agility than jumping fences or bales.
+
 **Recommended, not required**
 
 These add horse buildings that speed up training. The mod works fine without them.
 
 - [Rudolf Hoermann Equestrian Pack](https://www.farming-simulator.com/mod.php?mod_id=309997&title=fs2025)
   (`FS25_horsePack`): riding hall, outdoor training area and L barn
-- [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
-  (`FS25_RidingHall`): riding hall and sellable show jumps
 - [Riding Stable](https://www.farming-simulator.com/mod.php?mod_id=320241&title=fs2025)
   (`FS25_RidingStable`): a full riding centre
 
@@ -180,11 +195,15 @@ To update, replace the zip with the new one. Your horses' stats are kept in your
 
 ## Getting started
 
+Welcome popups walk you through the basics the first time you meet a horse and open each tab;
+**Help popups: Show again** on the Equestrian settings tab replays them.
+
 1. **Get a horse.** Use one you own or buy one from the animal dealer.
 2. **Have a look at it.** Press **Shift+O** to open RLRM's menu. Under Genetics
    you'll see its **Skill potential** and current **Skills**.
-3. **Ride it.** Press **Y** for the Stamina or Speed view and follow the tips. The horse is done
-   for the day when the panel says "Riding bar full".
+3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
+   for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel
+   says "Riding bar full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.
@@ -244,7 +263,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | --- | --- |
 | `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off`, `entriesPerMonth <n>` (0 = no limit) and `trainingRate <x>` (1 = normal). The same settings are on the Settings page |
 | `eqTraining` | Each horse's training focus and today's riding |
-| `eqFocus <horse> <focus>` | Sets what staff train: `balanced`, `showJumping`, `dressage`, `crossCountry` or `racing` |
+| `eqFocus <horse> <focus>` | Sets a horse's role: `balanced` (no role), `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`, `breeding` or `sale` |
 | `eqFeed` | Horse food groups and each horse's feed boost |
 | `eqFacilities` | Your horse buildings and what they give |
 | `eqEvents`, `eqEnter`, `eqResults` | Lists, enters and shows results of events, as the Competitions tab does |
@@ -258,7 +277,8 @@ Testing commands, for checking the mod works rather than for play:
 | --- | --- |
 | `eqForceInjury on\|off` | Every horse that starts an event is injured, even with injuries off. Not saved |
 | `eqDirt <horse> <0-100>` | Sets a horse's dirt (0 = spotless; Cleanliness is 100 minus dirt). 10 or less at the day's end counts as groomed |
-| `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload |
+| `eqRiding <horse> [0-100]` | Sets a horse's riding bar (0 when left out, a fresh bar for the day). Training stops at 100 |
+| `eqChanges <horse> [days]` | What changed the horse's four stats and why (your riding, staff, feed, facilities, age, fading, events, injuries), for today and yesterday or the last few days. Kept for a week, starts again on reload. Also shows the change since the horse joined your farm |
 
 ## A note on AI
 

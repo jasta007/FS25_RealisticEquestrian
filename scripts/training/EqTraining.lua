@@ -9,12 +9,10 @@
       there by someone else: the base game's animal worker, or RLRM's herdsman horse-care rule.
       Staff train to the horse's focus profile and stop at STAFF_CAP of each ceiling.
 
-    Stamina and speed are focused work. Most of what they learn comes from how the horse is
-    worked, not how long: an exertion meter (a short-term one, separate from the riding bar, which
-    is the day's energy) rises in canter and gallop and falls at slower gaits and at a halt.
-    Stamina comes from runs (full after RUN_FULL seconds) that hold the meter high but not too high; speed comes from
-    galloping while the meter is low, so the best speed work is sprints with rests between. Just
-    riding the gaits trains them at UNFOCUSED_SHARE of the gait weights below.
+    Agility and temperament are focused work (jump combos and routines); just riding the gaits
+    trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed come only from
+    riding the gallop well (EqExertion's Pushing, Recovering and Sprinting): a live stamina
+    multiplier and a speed multiplier banked when a Sprint ends (James, 2026-10-27).
 
     Each stat closes a share of the gap to its cap every month (scaled to the day with the
     game's timeAdjustment), so gains slow as a horse nears its ceiling. Idle horses fade.
@@ -25,18 +23,47 @@
 
 EqTraining = {}
 
+-- SPEED: every second of a Sprint banks SPEED_RATE, times a multiplier from how high the Sprint
+-- took exertion when it ended: 1 + (SPRINT_MULT_MAX - 1) * share ^ SPRINT_MULT_POWER, so 2x
+-- half way to the Blowing Hard line and 10x just short of it. A Sprint that ends at or past the
+-- line banks only 1x. (James, 2026-10-27: get the Sprint as high as you dare.)
+EqTraining.SPEED_RATE = 0.0065
+EqTraining.SPRINT_MULT_MAX = 10
+EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
+
+-- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
+-- STAMINA_MULT_MAX (James, 2026-10-27). The multiplier isn't tied to the bar:
+-- - Pushing raises it, faster the higher exertion is (STAMINA_PUSH_GAIN per second, empty to the
+--   line, with the square of exertion). Every point of exertion Pushing adds uses STAMINA_BREATH_USE of the horse's breath,
+--   hidden from the rider: with less breath the multiplier rises more slowly (down to STAMINA_LOW_BREATH_GAIN of
+--   the rate) and falls faster (up to STAMINA_LOW_BREATH_LOSS times), but never stops either way
+--   (James). So bouncing between Push and Recover near the top earns little.
+-- - Recovering gets breath back and loses multiplier, by the bar's third (EqExertion.band): fast
+--   from the top third, slowly in the middle "zone" (where breath comes back best), fast again in
+--   the bottom third. A canter or slower loses it fast.
+-- - A Sprint holds both. Blowing Hard (or a Sprint that ends past the line) drops it to x1 and
+--   stops stamina training until exertion is empty again, with no breath left to start on.
+EqTraining.STAMINA_RATE = 0.0045
+EqTraining.STAMINA_MULT_MAX = 5
+EqTraining.STAMINA_PUSH_GAIN = { 0.15, 2.0 }
+EqTraining.STAMINA_BREATH_USE = 0.01
+EqTraining.STAMINA_LOW_BREATH_GAIN = 0.1
+EqTraining.STAMINA_LOW_BREATH_LOSS = 2
+EqTraining.STAMINA_LOSS = { high = 0.25, zone = 0.03, low = 0.8, slow = 0.6 }
+EqTraining.STAMINA_BREATH_GAIN = { high = 0, zone = 0.07, low = 0.07, slow = 0.05 }
+
 -- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
-    walk = { temperament = 1.0, stamina = 0.3 },
-    trot = { temperament = 0.6, stamina = 0.6, agility = 0.3 },
-    canter = { stamina = 0.8, agility = 0.8, temperament = 0.3 },
-    gallop = { speed = 1.0, stamina = 0.8 },
+    walk = { temperament = 1.0 },
+    trot = { temperament = 0.6, agility = 0.3 },
+    canter = { agility = 0.8, temperament = 0.3 },
+    gallop = {},
     -- Backing up is slow, fiddly schooling: a little of it does a lot for balance and manners.
     reverse = { agility = 2.0, temperament = 2.0 },
 }
 
--- Stats trained by focused work (see step); their gait weights count at UNFOCUSED_SHARE.
-EqTraining.UNFOCUSED_SHARE = { stamina = 0.1, speed = 0.1, agility = 0.15, temperament = 0.08 }
+-- Stats trained by focused work; their gait weights count at UNFOCUSED_SHARE.
+EqTraining.UNFOCUSED_SHARE = { agility = 0.15, temperament = 0.08 }
 
 -- The most effort a day can give each stat. Good focused work goes past the old full day (1).
 EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 2, temperament = 2 }
@@ -46,6 +73,9 @@ EqTraining.EFFORT_CAP = { stamina = 2, speed = 2, agility = 2, temperament = 2 }
 -- combo is lost COMBO_SECONDS after the last clear, a clock that runs COMBO_SLOW_DRAIN times as
 -- fast at a halt, a walk or backing up, so slowing to a trot for a tight fence is fine.
 EqTraining.AGILITY_PER_JUMP = 0.015
+-- A cleared show jump (a Riding Hall 2k26 jump or a map's jump course, the "jumps" kind in
+-- data/facilities.xml) trains this many times as much agility as a fence or a bale.
+EqTraining.SHOW_JUMP_FACTOR = 1.5
 -- A jump over nothing still trains a little, without touching the combo.
 EqTraining.AGILITY_PER_EMPTY_JUMP = 0.004
 EqTraining.COMBO_MAX = 5
@@ -60,7 +90,7 @@ EqTraining.COMBO_KNOCK_GAP_MS = 3000
 
 -- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
 -- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
--- to start it. Each one done raises the multiplier, up to COMBO_MAX; a miss, a canter, a gallop
+-- to start it. Each one done raises the multiplier, up to ROUTINE_MAX; a miss, a canter, a gallop
 -- or a jump ends the routine. Temperament builds at TEMPERAMENT_RATE per second for each step
 -- of multiplier above x1. Gaits and turns are judged apart: a rider must steer round things
 -- whatever the routine asks, so a gait request ignores steering and a turn request (holding
@@ -75,161 +105,37 @@ EqTraining.ROUTINE_SHOW_MS = 1500
 EqTraining.ROUTINE_HALT_GAP_MS = { 2500, 4000 }
 -- The routine gets more stressful as its multiplier climbs: for each step above x1, gaps
 -- between requests shrink by ROUTINE_GAP_PRESSURE and the time to react by ROUTINE_REACT_PRESSURE
--- (at x5: gaps 70%, 2.4 s to react).
-EqTraining.ROUTINE_GAP_PRESSURE = 0.075
-EqTraining.ROUTINE_REACT_PRESSURE = 0.05
+-- (at x5: gaps 72%, 2.2 s to react; at x8: gaps 51%, 1.5 s).
+-- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
+EqTraining.ROUTINE_MAX = 8
+EqTraining.ROUTINE_GAP_PRESSURE = 0.07
+EqTraining.ROUTINE_REACT_PRESSURE = 0.07
+-- From ROUTINE_STEADY_FROM the horse must also hold its pace between requests: changing gait
+-- unasked for ROUTINE_DRIFT_MS breaks the routine. On the way to a requested gait the ones in
+-- between (a trot passes through a walk to stop) are fine, and so is any gait during a turn.
+EqTraining.ROUTINE_STEADY_FROM = 4
+EqTraining.ROUTINE_DRIFT_MS = 600
+-- The routine's gaits, slowest first: a change between two passes through those in between.
+EqTraining.ROUTINE_PACE = { reverse = 1, halt = 2, walk = 3, trot = 4 }
 EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
-
--- Exertion meter (0-100) change per second, by gait. "halt" is standing still. Canter is
--- worked out in exertionRate: it levels off rather than climbing for ever.
--- A trot drops exertion fast, so a short one brings a run back down into the stamina zone.
-EqTraining.TIREDNESS_RATE = { halt = -3, walk = -3, reverse = -1, trot = -3, canter = 0, gallop = 3 }
-
--- Below RECOVER_BELOW exertion, standing or walking recovers faster: RECOVER_UNFIT_SHARE times
--- as fast for an unfit horse, up to RECOVER_FIT_SHARE for a fit one, so the wait between sprints
--- stays short.
-EqTraining.RECOVER_BELOW = 30
-EqTraining.RECOVER_UNFIT_SHARE = 2
-EqTraining.RECOVER_FIT_SHARE = 4
--- That fast recovery also starts at any exertion once the horse has stood still SETTLE_HALT_MS,
--- or walked (or stood) SETTLE_WALK_MS, a walk at SETTLE_WALK_SHARE of the rate.
-EqTraining.SETTLE_HALT_MS = 4000
-EqTraining.SETTLE_WALK_MS = 5000
-EqTraining.SETTLE_WALK_SHARE = 0.75
+-- Near dressage markers the routine is ridden between them (EqDressage). Without a course
+-- (James, 2026-10-27) it falls back to the free routine above, which trains at this share.
+EqTraining.FREE_ROUTINE_SHARE = 0.6
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
 EqTraining.BAR_FROM_STAMINA = 50
 EqTraining.BAR_FIT_SHARE = 1.4
 
--- A canter raises exertion at CANTER_RISE per second up to a level inside the zone (72, plus
--- CANTER_LEVEL_PER_STAMINA per stamina point), then keeps creeping up for as long as it goes on,
--- at CANTER_CREEP_MIN + CANTER_CREEP_UNFIT x (1 - stamina/100)^1.5 per second. So every horse
--- blows in the end, a fit one only after a long canter (an unfit horse after about a minute,
--- an average one after a minute and a half, a stamina-80 one after more than two).
-EqTraining.CANTER_RISE = 2
-EqTraining.CANTER_LEVEL_BASE = 72
-EqTraining.CANTER_LEVEL_PER_STAMINA = 0.08
-EqTraining.CANTER_CREEP_MIN = 0.03
-EqTraining.CANTER_CREEP_UNFIT = 0.45
-
--- A gallop tires a fit horse more slowly: GALLOP_FIT_SHARE of the rate at stamina 100,
--- GALLOP_UNFIT_SHARE at 0.
-EqTraining.GALLOP_UNFIT_SHARE = 1.25
-EqTraining.GALLOP_FIT_SHARE = 0.75
-
--- A run is time spent at canter or gallop. Trotting holds it; walking, backing up or being
--- knocked to a halt wear it down slowly rather than ending it, since FS horses stop easily.
-EqTraining.RUN_RATE = { halt = -3, walk = -3, reverse = -3, trot = 0, canter = 1, gallop = 1 }
-EqTraining.RUN_START = 0
-EqTraining.RUN_FULL = 15
-
--- Stamina effort per second in each gait at the best tiredness and a long run.
-EqTraining.STAMINA_RATE = { trot = 0.0065, canter = 0.0165, gallop = 0.021 }
--- Stamina zone: no stamina work below ZONE_FROM, building to full at ZONE_LOW, full up to
--- ZONE_HIGH, then falling to ZONE_BLOWN_SHARE at 100.
-EqTraining.ZONE_FROM = 55
-EqTraining.ZONE_LOW = 68
-EqTraining.ZONE_HIGH = 85
-EqTraining.ZONE_BLOWN_SHARE = 0.2
-
--- Speed effort per second at a gallop while fresh: full up to FRESH_UNTIL, falling to
--- STALE_SHARE at STALE_FROM and above.
-EqTraining.SPEED_RATE = 0.02
-EqTraining.FRESH_UNTIL = 25
-EqTraining.STALE_FROM = 55
-EqTraining.STALE_SHARE = 0
-
--- Tempo: stamina rewards riding the beat. Only beats raise it: every TEMPO_HITS beat points
--- (a hit is 1, a perfect hit 2) raise the tempo by one, x1 to TEMPO_MAX, and stamina trains
--- 1 + TEMPO_BONUS x (tempo - 1) times as fast. A missed or wasted beat loses the points
--- towards the next step. Blowing hard (over ZONE_HIGH) for longer than TEMPO_BLOWN_MS breaks
--- the streak back to x1; so does more than TEMPO_SLOW_MS below a canter.
-EqTraining.TEMPO_HITS = 3
-
--- Training modes keep stamina, agility and speed from talking over each other: one at a time
--- owns the beats and the popups (temperament's routine is separate and always runs).
---   stamina: canter STAMINA_ENTRY_MS without a jump or a gallop; ends when the tempo breaks.
---   agility: clear a jump outside stamina mode; ends when the combo is lost.
---   speed: count a warm-up gallop outside the other two; ends when the Sprint is over.
-EqTraining.STAMINA_ENTRY_MS = 8000
--- Outside stamina mode a run only trickles stamina in, at this share: real stamina gains need
--- stamina mode and its tempo.
-EqTraining.STAMINA_OUTSIDE_SHARE = 0.2
-EqTraining.TEMPO_MAX = 5
-EqTraining.TEMPO_BONUS = 0.375
-EqTraining.TEMPO_BLOWN_MS = 5000
-EqTraining.TEMPO_SLOW_MS = 3500
--- At tempo x2 and up, stamina trains at least this share of the zone even while exertion is low.
-EqTraining.TEMPO_LOW_FLOOR = 0.35
--- A stamina run starts from a canter below STAMINA_ENTRY_MAX exertion: the entry canter and the
--- first beats add about 20, which still leaves room before blowing hard. After a run the horse
--- rests (walk or stand) below it before the next one.
-EqTraining.STAMINA_ENTRY_MAX = 40
-
--- Beats: during a run a marker sweeps along the exertion meter, from 0 to 100 in BEAT_SWEEP_MS,
--- every BEAT_GAP_MS (a random time in the range). Pressing the key for the other fast gait
--- (forward for gallop, back for canter) while it is within BEAT_WINDOW of the horse's exertion
--- is a hit (within BEAT_PERFECT, a perfect one); pressing it up to BEAT_NEAR points early wastes
--- the beat, and any other key, or a press further off, is ignored. A hit raises the tempo (see
--- TEMPO_HITS) and gives the horse its breath back: exertion drops BEAT_RELIEF, plus
--- BEAT_RELIEF_SLOPE for every point above BEAT_RELIEF_FROM (BEAT_PERFECT_SHARE times that for a
--- perfect hit). The higher the exertion, the bigger the breather, so a rider who hits every beat
--- swings between about 60 and 80 and never blows (gallop and canter both raise exertion: a
--- canter and gallop phase together add about 30), while a missed beat (no breather, and a
--- gallop runs on) costs 10 to 20 points: one or two can be ridden out, three in a row blow the horse.
--- A missed or wasted beat comes again after BEAT_RETRY_MS rather than a full gap.
-EqTraining.BEAT_SWEEP_MS = 2500
-EqTraining.BEAT_GAP_MS = { 3000, 5000 }
-EqTraining.BEAT_RETRY_MS = 1500
-EqTraining.BEAT_WINDOW = 7
-EqTraining.BEAT_PERFECT = 2.5
-EqTraining.BEAT_RELIEF = 2
-EqTraining.BEAT_RELIEF_FROM = 65
-EqTraining.BEAT_RELIEF_SLOPE = 0.8
-EqTraining.BEAT_PERFECT_SHARE = 1.3
-EqTraining.BEAT_NEAR = 15
--- The timing gets harder as the tempo climbs: for each tempo step above x1 the window shrinks
--- BEAT_WINDOW_PRESSURE and the sweep time BEAT_SWEEP_PRESSURE (at x5: window 52%, sweep 60%).
--- The breather doesn't shrink: a rider who keeps hitting the beat keeps the horse under blowing.
-EqTraining.BEAT_WINDOW_PRESSURE = 0.12
-EqTraining.BEAT_SWEEP_PRESSURE = 0.1
-
--- SPEED: sprints. A gallop held SPRINT_COUNT_MS while speed is training at SPRINT_MIN_QUALITY
--- or better is a warm-up sprint; after SPRINTS_TO_WARM of them the horse is warmed up. Gallop
--- for SPRINT_READY_MS more and Sprint is ready: press forward (W) and for SPRINT_MS (more with taps, below) the horse
--- runs SPRINT_SPEED_SHARE faster (EqTrainingHooks), ignores being blown, tires
--- SPRINT_EXERTION_SHARE as fast and trains speed SPRINT_TRAIN_SHARE as fast as a fresh gallop.
--- Dropping below a gallop for SPRINT_DROP_MS ends it. Then it must rest below
--- SPRINT_REST_BELOW exertion before warm-up sprints count again.
-EqTraining.SPRINT_COUNT_MS = 4000
-EqTraining.SPRINT_MIN_QUALITY = 0.5
-EqTraining.SPRINTS_TO_WARM = 2
-EqTraining.SPRINT_READY_MS = 2000
-EqTraining.SPRINT_MS = 6000
--- Tapping forward (W) during Sprint spurs the horse on: each tap at least SPRINT_TAP_GAP_MS
--- after the last adds SPRINT_TAP_MS, less the longer the Sprint has gone, up to SPRINT_MAX_MS
--- left. However well the rider taps, the horse conks out after SPRINT_LIMIT_MS.
-EqTraining.SPRINT_TAP_MS = 300
-EqTraining.SPRINT_TAP_GAP_MS = 120
--- The Sprint meter runs down SPRINT_DRAIN times as fast as the clock, so only quick tapping
--- keeps it up, and less so as the Sprint goes on.
-EqTraining.SPRINT_DRAIN = 1.8
-EqTraining.SPRINT_MAX_MS = 8000
-EqTraining.SPRINT_LIMIT_MS = 12000
-EqTraining.SPRINT_SPEED_SHARE = 1.25
-EqTraining.SPRINT_EXERTION_SHARE = 1.5
-EqTraining.SPRINT_TRAIN_SHARE = 3
--- Outside Sprint (warm-up gallops, any other gallop) speed only trickles in, at this share.
-EqTraining.SPEED_OUTSIDE_SHARE = 0.2
-EqTraining.SPRINT_DROP_MS = 1000
-EqTraining.SPRINT_REST_BELOW = 10
--- Sprint holds the horse on the limit: exertion stops SPRINT_EXERTION_GAP short of blowing hard.
-EqTraining.SPRINT_EXERTION_GAP = 1
--- A slower horse's Sprint runs out faster: at speed 0 the clock runs SPRINT_SLOW_DRAIN times
--- as fast, easing to normal at speed 100.
-EqTraining.SPRINT_SLOW_DRAIN = 1.6
+-- Riding that trains little (getting to a facility, hacking about) costs much less of the riding
+-- bar: it fills at CRUISE_BAR_SHARE of the usual rate when the horse's focused work (stamina,
+-- speed, jump combos, routines) is earning nothing, rising to the full rate at WORK_FULL_RATE
+-- effort a second (stamina at about x2, a x5 jump combo, a x8 routine). The rate is averaged
+-- over about WORK_WINDOW_MS, so a jump or two keeps it up for a while.
+EqTraining.CRUISE_BAR_SHARE = 0.25
+EqTraining.WORK_FULL_RATE = 0.01
+EqTraining.WORK_WINDOW_MS = 20000
 
 -- How fast each gait fills the riding bar. The base game's factors (Rideable:updateRiding),
 -- except backing up: the base game counts it like a walk, and EqTrainingHooks tops it up to
@@ -239,458 +145,41 @@ EqTraining.GAIT_SPEED_FACTOR = { reverse = 2.5, walk = 1, trot = 1, canter = 2, 
 -- What the base game already credits for backing up; the rest of reverse's factor is ours.
 EqTraining.BASE_REVERSE_FACTOR = 1
 
--- What staff work on, per focus. Set with the eqFocus console command for now.
+-- What staff work on, per focus: the horse's role (EqRole), set with the Set role button in
+-- RLRM's Info tab or the eqFocus console command. Breeding and sale horses are kept ticking over.
 EqTraining.FOCUS = {
     balanced = { stamina = 0.6, speed = 0.6, agility = 0.6, temperament = 0.6 },
     showJumping = { stamina = 0.3, speed = 0.4, agility = 1.0, temperament = 0.7 },
     dressage = { stamina = 0.2, speed = 0.2, agility = 0.7, temperament = 1.0 },
     crossCountry = { stamina = 1.0, speed = 0.6, agility = 0.6, temperament = 0.5 },
     racing = { stamina = 0.9, speed = 1.0, agility = 0.1, temperament = 0.1 },
+    eventing = { stamina = 0.8, speed = 0.6, agility = 0.8, temperament = 0.8 },
+    breeding = { stamina = 0.6, speed = 0.6, agility = 0.6, temperament = 0.6 },
+    sale = { stamina = 0.6, speed = 0.6, agility = 0.6, temperament = 0.6 },
 }
 
 -- Staff ride at this share of their focus profile, so a rider's own focused work (up to
 -- EFFORT_CAP) is well ahead of what staff give: staff keep horses ticking over.
 EqTraining.STAFF_EFFORT_SHARE = 0.5
 
-EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry", "racing" }
+-- Staff don't manage a role's work equally well every day: each day the stats a role is about
+-- (FOCUS_STAT_MIN or more in its profile) get a share between these of their effort, 1 on
+-- average. A horse without a role (balanced) gets the same steady work every day.
+EqTraining.STAFF_LUCK = { low = 0.5, high = 1.5 }
+EqTraining.FOCUS_STAT_MIN = 0.7
+
+EqTraining.FOCUS_ORDER = { "balanced", "showJumping", "dressage", "crossCountry", "eventing", "racing", "breeding", "sale" }
 
 
 --- @return table sheet One horse's riding since its last daily tick
 function EqTraining.newSheet()
     return { ms = { reverse = 0, walk = 0, trot = 0, canter = 0, gallop = 0 }, jumps = 0, inside = {},
-        tiredness = 0, run = 0, tempo = EqTraining.newTempo(), beat = EqTraining.newBeat(), mode = nil, entryMs = 0,
-        sprint = { count = 0, holdMs = 0, counted = false, warm = false, readyMs = 0, ready = false, activeMs = 0, dropMs = 0, rest = false },
+        exertion = EqExertion.new(),
         focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
+        stamina = { mult = 1, breath = 1 }, sprint = { ms = 0 },
         combo = { count = 0, timer = 0, best = 0 },
         routine = { active = false, mult = 0, clock = 0, walkMs = 0, current = nil, request = nil, deadline = 0, nextAt = 0 } }
-end
-
-
---- @return table tempo a fresh tempo streak
-function EqTraining.newTempo()
-    return { ms = 0, mult = 1, hits = 0, slowMs = 0, blownMs = 0 }
-end
-
-
---- One frame of the tempo streak.
---- @param tempo table
---- @param gait string the pace gait
---- @param tiredness number
---- @param dt number milliseconds
---- @return string|nil event "lost"
-function EqTraining.tempoStep(tempo, gait, tiredness, dt)
-    local had = tempo.ms > 0
-    local function lose()
-        local gained = tempo.mult > 1 or tempo.hits > 0
-        tempo.ms, tempo.mult, tempo.hits, tempo.slowMs, tempo.blownMs = 0, 1, 0, 0, 0
-        return had and gained and "lost" or nil
-    end
-    if gait ~= "canter" and gait ~= "gallop" then
-        if not had then return nil end
-        tempo.slowMs = tempo.slowMs + dt
-        if tempo.slowMs > EqTraining.TEMPO_SLOW_MS then return lose() end
-        return nil
-    end
-    tempo.slowMs = 0
-    if tiredness > EqTraining.ZONE_HIGH then
-        tempo.blownMs = tempo.blownMs + dt
-        if tempo.blownMs > EqTraining.TEMPO_BLOWN_MS then return lose() end
-        return nil
-    end
-    tempo.blownMs = 0
-    -- The streak's running time: it shows the tempo row, but only beats raise the tempo.
-    tempo.ms = tempo.ms + dt
-    return nil
-end
-
-
---- A beat hit (or miss) for the tempo.
---- @param tempo table
---- @param points number 1 for a hit, 2 for a perfect one, 0 for a miss or wasted beat
---- @return string|nil event "up" (a new tempo)
-function EqTraining.tempoBeat(tempo, points)
-    if points <= 0 then
-        tempo.hits = 0
-        return nil
-    end
-    if tempo.mult >= EqTraining.TEMPO_MAX then return nil end
-    tempo.hits = tempo.hits + points
-    if tempo.hits < EqTraining.TEMPO_HITS then return nil end
-    tempo.mult, tempo.hits = tempo.mult + 1, 0
-    return "up"
-end
-
-
---- @return table beat a fresh beat state
-function EqTraining.newBeat()
-    return { clock = 0, nextAt = 0, pos = nil, target = nil }
-end
-
-
---- @param range table { min, max } milliseconds
---- @param rng function (n) -> 1..n
-local function beatGap(range, rng)
-    return range[1] + (rng(range[2] - range[1] + 1) - 1)
-end
-
-
---- The beat's window and sweep time at the current tempo.
---- @param sheet table
---- @return number window exertion points, number sweep milliseconds
-function EqTraining.beatPressure(sheet)
-    local steps = (sheet.tempo ~= nil and sheet.tempo.mult or 1) - 1
-    return EqTraining.BEAT_WINDOW * (1 - EqTraining.BEAT_WINDOW_PRESSURE * steps),
-        EqTraining.BEAT_SWEEP_MS * (1 - EqTraining.BEAT_SWEEP_PRESSURE * steps)
-end
-
-
---- How much exertion a beat hit takes off.
---- @param tiredness number 0-100
---- @param perfect boolean
---- @return number exertion points
-function EqTraining.beatRelief(tiredness, perfect)
-    local relief = EqTraining.BEAT_RELIEF + EqTraining.BEAT_RELIEF_SLOPE * math.max(0, tiredness - EqTraining.BEAT_RELIEF_FROM)
-    return relief * (perfect and EqTraining.BEAT_PERFECT_SHARE or 1)
-end
-
-
---- A missed or wasted beat: the tempo progress goes and the cue comes again soon.
-local function beatLost(sheet)
-    local beat = sheet.beat
-    beat.pos, beat.nextAt = nil, beat.clock + EqTraining.BEAT_RETRY_MS
-    EqTraining.tempoBeat(sheet.tempo, 0)
-end
-
-
---- One frame of the beat. Beats only come during a run at a canter or gallop; the rider's key
---- presses are judged by EqTraining.beatPress.
---- @param sheet table
---- @param gait string
---- @param dt number milliseconds
---- @param rng function (n) -> 1..n
---- @return string|nil event "start" or "miss"
-function EqTraining.beatStep(sheet, gait, dt, rng)
-    local beat = sheet.beat
-    beat.clock = beat.clock + dt
-    local fast = gait == "canter" or gait == "gallop"
-    -- Sprint owns W and a routine command owns the middle of the screen: no new beats meanwhile.
-    local busy = sheet.mode ~= "stamina" or EqTraining.isSprinting(sheet) or sheet.routine.request ~= nil
-    local window, sweep = EqTraining.beatPressure(sheet)
-    if beat.pos ~= nil then
-        if busy then
-            beat.pos = nil
-            beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_GAP_MS[1])
-            return nil
-        end
-        beat.pos = beat.pos + 100 * dt / sweep
-        -- Until the cue is near, it follows the gait the horse is in.
-        if fast and beat.pos - sheet.tiredness < -(window + EqTraining.BEAT_NEAR) then
-            beat.target = gait == "gallop" and "canter" or "gallop"
-        end
-        if beat.pos - sheet.tiredness > window or not fast then
-            beatLost(sheet)
-            return "miss"
-        end
-        return nil
-    end
-    if busy or not fast or sheet.run <= 0 then
-        beat.nextAt = math.max(beat.nextAt, beat.clock + EqTraining.BEAT_RETRY_MS)
-        return nil
-    end
-    if beat.clock >= beat.nextAt then
-        beat.pos, beat.target = 0, gait == "gallop" and "canter" or "gallop"
-        return "start"
-    end
-    return nil
-end
-
-
---- The rider pressed forward or back during a beat.
---- @param sheet table
---- @param key string "forward" or "back"
---- @param rng function (n) -> 1..n
---- @return string|nil event "hit", "perfect", "off" (too early: the beat is wasted) or nil (ignored)
---- @return string|nil tempo "up" when the hit raised the tempo
-function EqTraining.beatPress(sheet, key, rng)
-    local beat = sheet.beat
-    if beat.pos == nil or key ~= (beat.target == "gallop" and "forward" or "back") then return nil end
-    local window = EqTraining.beatPressure(sheet)
-    local gap = beat.pos - sheet.tiredness
-    if math.abs(gap) <= window then
-        local perfect = math.abs(gap) <= EqTraining.BEAT_PERFECT
-        sheet.tiredness = math.max(0, sheet.tiredness - EqTraining.beatRelief(sheet.tiredness, perfect))
-        beat.pos, beat.nextAt = nil, beat.clock + beatGap(EqTraining.BEAT_GAP_MS, rng)
-        return perfect and "perfect" or "hit", EqTraining.tempoBeat(sheet.tempo, perfect and 2 or 1)
-    end
-    if gap < -window and gap >= -(window + EqTraining.BEAT_NEAR) then
-        beatLost(sheet)
-        return "off"
-    end
-    return nil
-end
-
-
---- @param tempo table|nil
---- @return number stamina gains multiplier
-function EqTraining.tempoBonus(tempo)
-    return 1 + EqTraining.TEMPO_BONUS * ((tempo ~= nil and tempo.mult or 1) - 1)
-end
-
-
---- How well stamina is training at this tiredness and run length.
---- @param tiredness number 0-100
---- @param run number seconds
---- @param floor number|nil least zone share below the zone (a running tempo)
---- @return number share 0..1 of STAMINA_RATE, before the tempo bonus
-function EqTraining.staminaQuality(tiredness, run, floor)
-    local zone
-    if tiredness < EqTraining.ZONE_LOW then
-        zone = EqStats.clamp((tiredness - EqTraining.ZONE_FROM) / (EqTraining.ZONE_LOW - EqTraining.ZONE_FROM), 0, 1)
-        zone = math.max(zone, floor or 0)
-    elseif tiredness <= EqTraining.ZONE_HIGH then
-        zone = 1
-    else
-        local over = (tiredness - EqTraining.ZONE_HIGH) / (100 - EqTraining.ZONE_HIGH)
-        zone = 1 - over * (1 - EqTraining.ZONE_BLOWN_SHARE)
-    end
-    local length = EqStats.clamp((run - EqTraining.RUN_START) / (EqTraining.RUN_FULL - EqTraining.RUN_START), 0, 1)
-    return zone * length
-end
-
-
---- How well a gallop trains speed at this tiredness.
---- @param tiredness number 0-100
---- @return number share 0..1 of SPEED_RATE
-function EqTraining.speedQuality(tiredness)
-    if tiredness <= EqTraining.FRESH_UNTIL then return 1 end
-    local stale = EqStats.clamp((tiredness - EqTraining.FRESH_UNTIL) / (EqTraining.STALE_FROM - EqTraining.FRESH_UNTIL), 0, 1)
-    return 1 - stale * (1 - EqTraining.STALE_SHARE)
-end
-
-
---- How fast exertion changes in a gait.
---- @param gait string
---- @param tiredness number 0-100
---- @param stamina number|nil the horse's trained stamina (50 when nil)
---- @return number|nil per second; nil for an unknown gait
-function EqTraining.exertionRate(gait, tiredness, stamina, settled)
-    local rate = EqTraining.TIREDNESS_RATE[gait]
-    if rate == nil then return nil end
-    local fitness = EqStats.clamp((stamina or 50) / 100, 0, 1)
-    if gait == "canter" then
-        local level = EqTraining.CANTER_LEVEL_BASE + EqTraining.CANTER_LEVEL_PER_STAMINA * fitness * 100
-        local creep = EqTraining.CANTER_CREEP_MIN + EqTraining.CANTER_CREEP_UNFIT * (1 - fitness) ^ 1.5
-        return tiredness < level and EqTraining.CANTER_RISE or creep
-    elseif (gait == "halt" or gait == "walk") and (tiredness < EqTraining.RECOVER_BELOW or settled) then
-        local fast = rate * (EqTraining.RECOVER_UNFIT_SHARE + (EqTraining.RECOVER_FIT_SHARE - EqTraining.RECOVER_UNFIT_SHARE) * fitness)
-        -- Settled at a walk (rather than a halt) above RECOVER_BELOW: a little slower.
-        if tiredness >= EqTraining.RECOVER_BELOW and settled == "walk" then fast = fast * EqTraining.SETTLE_WALK_SHARE end
-        return fast
-    elseif gait == "gallop" then
-        return rate * (EqTraining.GALLOP_UNFIT_SHARE + (EqTraining.GALLOP_FIT_SHARE - EqTraining.GALLOP_UNFIT_SHARE) * fitness)
-    end
-    return rate
-end
-
-
---- One frame of riding for the meters and focused work.
---- @param sheet table
---- @param gait string halt, reverse, walk, trot, canter or gallop
---- @param dt number milliseconds
---- @param worn boolean true when the riding bar is full: the meters move, nothing trains
---- @param stamina number|nil the horse's trained stamina, which slows how fast it tires
-function EqTraining.step(sheet, gait, dt, worn, stamina)
-    -- How long the horse has stood still, and walked or stood, without a break.
-    sheet.haltMs = gait == "halt" and (sheet.haltMs or 0) + dt or 0
-    sheet.easyMs = (gait == "halt" or gait == "walk") and (sheet.easyMs or 0) + dt or 0
-    local settled = (sheet.haltMs >= EqTraining.SETTLE_HALT_MS and "halt")
-        or (sheet.easyMs >= EqTraining.SETTLE_WALK_MS and "walk") or nil
-    local rate = EqTraining.exertionRate(gait, sheet.tiredness, stamina, settled)
-    if rate == nil or dt <= 0 then return end
-    local seconds = dt / 1000
-    local sprinting = EqTraining.isSprinting(sheet) and gait == "gallop"
-    if sprinting then rate = rate * EqTraining.SPRINT_EXERTION_SHARE end
-    sheet.tiredness = EqStats.clamp(sheet.tiredness + rate * seconds, 0, 100)
-    if sprinting then
-        sheet.tiredness = math.min(sheet.tiredness, EqTraining.ZONE_HIGH - EqTraining.SPRINT_EXERTION_GAP)
-    end
-    sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE[gait] * seconds)
-
-    sheet.tempoEvent = sheet.mode == "stamina" and EqTraining.tempoStep(sheet.tempo, gait, sheet.tiredness, dt) or nil
-
-    local stamina = EqTraining.STAMINA_RATE[gait] ~= nil
-        and EqTraining.staminaQuality(sheet.tiredness, sheet.run,
-            sheet.mode == "stamina" and sheet.tempo.mult >= 2 and EqTraining.TEMPO_LOW_FLOOR or nil) * EqTraining.tempoBonus(sheet.tempo)
-            * (sheet.mode == "stamina" and 1 or EqTraining.STAMINA_OUTSIDE_SHARE) or 0
-    local speed = gait == "gallop" and EqTraining.speedQuality(sheet.tiredness) * EqTraining.SPEED_OUTSIDE_SHARE or 0
-    if sprinting then speed = EqTraining.SPRINT_TRAIN_SHARE end
-    sheet.quality.stamina, sheet.quality.speed = stamina, speed
-    if worn then
-        sheet.quality.stamina, sheet.quality.speed = 0, 0
-        return
-    end
-    sheet.focused.stamina = sheet.focused.stamina + (EqTraining.STAMINA_RATE[gait] or 0) * stamina * seconds
-    sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * speed * seconds
-end
-
-
---- @param sheet table
---- @return boolean true while Sprint is on
-function EqTraining.isSprinting(sheet)
-    return sheet.sprint ~= nil and sheet.sprint.activeMs > 0
-end
-
-
---- @param sheet table
---- @return boolean true while warm-up gallops or Sprint are under way
-local function speedBusy(sheet)
-    local sprint = sheet.sprint
-    return sprint.warm or sprint.ready or sprint.activeMs > 0
-end
-
-
---- One frame of the training mode, after step, sprintStep and comboTick.
---- @param sheet table
---- @param gait string the pace gait
---- @param dt number milliseconds
---- @return string|nil event "stamina" when stamina mode starts
-function EqTraining.modeStep(sheet, gait, dt)
-    local mode = sheet.mode
-    -- A run that ends with the tempo (blown, or too long below a canter): rest, then canter again.
-    if mode == "stamina" and sheet.tempo.ms <= 0 then mode, sheet.staminaRest = nil, true end
-    if mode == "agility" and sheet.combo.count == 0 then mode = nil end
-    if mode == "speed" and sheet.sprint.count == 0 and not speedBusy(sheet) then mode = nil end
-    sheet.mode = mode
-    -- A steady canter starts stamina mode, unless agility or a ready or running Sprint has the
-    -- floor. Warm-up gallops already done are kept for later.
-    local sprint = sheet.sprint
-    if mode == "stamina" or mode == "agility" or sprint.ready or sprint.activeMs > 0 or gait ~= "canter"
-        or (sheet.entryMs == 0 and sheet.tiredness >= EqTraining.STAMINA_ENTRY_MAX) then
-        sheet.entryMs = 0
-        return nil
-    end
-    sheet.entryMs = sheet.entryMs + dt
-    if sheet.entryMs < EqTraining.STAMINA_ENTRY_MS then return nil end
-    sheet.mode, sheet.entryMs = "stamina", 0
-    sprint.holdMs, sprint.counted = 0, false
-    sheet.tempo = EqTraining.newTempo()
-    -- The streak starts now (tempo.ms > 0 is what keeps stamina mode on).
-    sheet.tempo.ms = 1
-    sheet.beat.nextAt = sheet.beat.clock + EqTraining.BEAT_GAP_MS[1]
-    sheet.staminaRest = nil
-    return "stamina"
-end
-
-
---- A jump outside stamina mode: the canter towards stamina mode starts again.
---- @param sheet table
-function EqTraining.modeJump(sheet)
-    if sheet.mode ~= "stamina" then sheet.entryMs = 0 end
-end
-
-
---- Start a Sprint, if one is ready.
---- @param sheet table
---- @return boolean true when it started
-function EqTraining.startSprint(sheet)
-    local sprint = sheet.sprint
-    if not sprint.ready or sprint.activeMs > 0 then return false end
-    sprint.activeMs, sprint.dropMs, sprint.ready, sprint.readyMs = EqTraining.SPRINT_MS, 0, false, 0
-    -- Sprinting out of a stamina run ends the tempo.
-    if sheet.mode == "stamina" then
-        sheet.tempo = EqTraining.newTempo()
-        sheet.beat.pos = nil
-    end
-    sheet.mode = "speed"
-    -- The press that started it (seen by both the action and the key poll) is not a tap.
-    sprint.elapsedMs, sprint.tapAt = 0, 0
-    return true
-end
-
-
---- A tap of the forward key during Sprint: more time, less as the Sprint goes on.
---- @param sheet table
---- @return boolean true when it added time
-function EqTraining.spurSprint(sheet)
-    local sprint = sheet.sprint
-    if sprint.activeMs <= 0 or sprint.elapsedMs - (sprint.tapAt or 0) < EqTraining.SPRINT_TAP_GAP_MS then return false end
-    sprint.tapAt = sprint.elapsedMs
-    local left = 1 - EqStats.clamp(sprint.elapsedMs / EqTraining.SPRINT_LIMIT_MS, 0, 1)
-    sprint.activeMs = math.min(EqTraining.SPRINT_MAX_MS, sprint.activeMs + EqTraining.SPRINT_TAP_MS * left)
-    return left > 0
-end
-
-
---- One frame of warm-up sprints and Sprint, after EqTraining.step.
---- @param sheet table
---- @param gait string the pace gait
---- @param dt number milliseconds
---- @param speed number|nil the horse's trained speed: a slower horse's Sprint runs out faster
---- @return string|nil event "counted" (a warm-up gallop), "warm", "ready", "over"
-function EqTraining.sprintStep(sheet, gait, dt, speed)
-    local sprint = sheet.sprint
-    if sprint.activeMs > 0 then
-        local drain = 1 + (EqTraining.SPRINT_SLOW_DRAIN - 1) * (1 - EqStats.clamp((speed or 100) / 100, 0, 1))
-        sprint.activeMs = math.max(0, sprint.activeMs - dt * drain * EqTraining.SPRINT_DRAIN)
-        sprint.elapsedMs = (sprint.elapsedMs or 0) + dt
-        if sprint.elapsedMs >= EqTraining.SPRINT_LIMIT_MS then sprint.activeMs = 0 end
-        sprint.dropMs = gait == "gallop" and 0 or sprint.dropMs + dt
-        if sprint.activeMs > 0 and sprint.dropMs < EqTraining.SPRINT_DROP_MS then return nil end
-        sprint.activeMs, sprint.count, sprint.warm, sprint.rest = 0, 0, false, true
-        sprint.holdMs, sprint.counted, sprint.readyMs, sprint.ready = 0, false, 0, false
-        return "over"
-    end
-    if sprint.rest and sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end
-
-    if gait ~= "gallop" then
-        sprint.holdMs, sprint.counted, sprint.readyMs, sprint.ready = 0, false, 0, false
-        return nil
-    end
-    if sprint.warm then
-        sprint.readyMs = sprint.readyMs + dt
-        if not sprint.ready and sprint.readyMs >= EqTraining.SPRINT_READY_MS then
-            sprint.ready = true
-            return "ready"
-        end
-        return nil
-    end
-    if sprint.rest or EqTraining.speedQuality(sheet.tiredness) < EqTraining.SPRINT_MIN_QUALITY
-        or sheet.mode == "stamina" or sheet.mode == "agility" then
-        sprint.holdMs = 0
-        return nil
-    end
-    sprint.holdMs = sprint.holdMs + dt
-    if sprint.counted or sprint.holdMs < EqTraining.SPRINT_COUNT_MS then return nil end
-    sprint.counted = true
-    sprint.count = sprint.count + 1
-    sheet.mode = "speed"
-    if sprint.count < EqTraining.SPRINTS_TO_WARM then return "counted" end
-    sprint.warm = true
-    -- Keep galloping from here: the time already held counts towards Sprint being ready.
-    sprint.readyMs = 0
-    return "warm"
-end
-
-
---- Word for the tiredness meter, for the riding HUD.
---- @param tiredness number 0-100
---- @return string band fresh, warm, zone or blown
-function EqTraining.tirednessBand(tiredness)
-    if tiredness < EqTraining.ZONE_FROM then return "fresh" end
-    if tiredness < EqTraining.ZONE_LOW then return "warm" end
-    if tiredness <= EqTraining.ZONE_HIGH then return "zone" end
-    return "blown"
-end
-
-
---- Word for the tiredness meter in the Speed view.
---- @param tiredness number 0-100
---- @return string band fresh, tiring or stale
-function EqTraining.sprintBand(tiredness)
-    if tiredness <= EqTraining.FRESH_UNTIL then return "fresh" end
-    if tiredness < EqTraining.STALE_FROM then return "tiring" end
-    return "stale"
 end
 
 
@@ -708,8 +197,9 @@ end
 --- A jump that cleared something: raise the combo and train agility.
 --- @param sheet table
 --- @param worn boolean true when the riding bar is full: the combo counts, nothing trains
+--- @param showJump boolean|nil true when it was a proper show jump: SHOW_JUMP_FACTOR as much agility
 --- @return number|nil multiplier this jump was worth, nil just after a combo was lost
-function EqTraining.clearJump(sheet, worn)
+function EqTraining.clearJump(sheet, worn, showJump)
     local combo = sheet.combo
     if (combo.lock or 0) > 0 then
         EqTraining.emptyJump(sheet, worn)
@@ -717,10 +207,10 @@ function EqTraining.clearJump(sheet, worn)
     end
     combo.count = combo.count + 1
     combo.timer = EqTraining.COMBO_SECONDS
-    if sheet.mode == nil then sheet.mode = "agility" end
     combo.best = math.max(combo.best, combo.count)
     local mult = math.min(combo.count, EqTraining.COMBO_MAX)
-    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult end
+    local factor = showJump and EqTraining.SHOW_JUMP_FACTOR or 1
+    if not worn then sheet.focused.agility = sheet.focused.agility + EqTraining.AGILITY_PER_JUMP * mult * factor end
     return mult
 end
 
@@ -814,34 +304,88 @@ function EqTraining.breakRoutine(sheet)
     local was = routine.active
     routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
     routine.shown = nil
-    routine.steerMs = 0
+    routine.steerMs, routine.driftMs = 0, 0
+    routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
     return was
+end
+
+
+--- Whether a gait is one the routine allows right now, at a multiplier that asks for a steady pace.
+--- @param routine table
+--- @param move string
+--- @return boolean
+local function steadyPace(routine, move)
+    local request = routine.request
+    if request == "left" or request == "right" then return true end
+    local pace, from = EqTraining.ROUTINE_PACE[move], EqTraining.ROUTINE_PACE[routine.current]
+    if pace == nil or from == nil then return true end
+    local to = from
+    if request ~= nil and EqTraining.ROUTINE_PACE[request] ~= nil then to = EqTraining.ROUTINE_PACE[request] end
+    return pace >= math.min(from, to) and pace <= math.max(from, to)
 end
 
 
 --- One frame of the temperament routine.
 --- @param sheet table
---- @param move string walk, trot, halt, reverse, or fast (canter or gallop)
+--- @param move string walk, trot, halt, reverse, canter, gallop, or fast (canter or gallop)
 --- @param steer string|nil left or right while the rider holds that steering key
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
 --- @param rng function (n) -> 1..n
---- @return string|nil event "start", "request", "done", "lost", or nil
-function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
+--- @param course table|nil { x, z, markers } dressage markers round the horse (EqDressage)
+--- @return string|nil event "start", "request", "done", "bonus", "lost", or nil
+function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     local routine = sheet.routine
     routine.clock = routine.clock + dt
+    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
+
+    -- Round the markers: a canter is one of the gaits asked for.
+    if routine.active and routine.kind == "markers" then
+        if course ~= nil then
+            local event = EqDressage.step(sheet, move, steer, dt, rng, course)
+            if event == "test" then
+                -- An arena test ridden to the end: a big payoff at once, then a rest.
+                if not worn then
+                    sheet.focused.temperament = sheet.focused.temperament
+                        + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
+                end
+                EqTraining.breakRoutine(sheet)
+                routine.restUntil = routine.clock + EqDressage.TEST_REST_MS
+                return "test"
+            end
+            if routine.active then EqTraining.routineTrain(sheet, worn, dt, 1) end
+            return event
+        end
+        -- Off the course: carry on with the free routine from here.
+        routine.kind, routine.task, routine.preview, routine.bonus, routine.pending = "free", nil, nil, nil, nil
+        routine.request, routine.current = nil, EqTraining.ROUTINE_PACE[move] ~= nil and move or "walk"
+        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+    end
+
     routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
     routine.steerSide = steer
-    sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.COMBO_MAX - 1) or 0
-    if move == "fast" then
+    local resting = routine.clock < (routine.restUntil or 0)
+    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop.
+    if not routine.active and not resting and course ~= nil and move ~= "gallop" and move ~= "fast"
+        and EqDressage.nearArena(course) then
+        routine.active, routine.mult, routine.current = true, 1, "walk"
+        EqDressage.start(routine, course, rng)
+        return "start"
+    end
+    if move == "fast" or move == "canter" or move == "gallop" then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
 
     if not routine.active then
-        routine.walkMs = move == "walk" and routine.walkMs + dt or 0
+        routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
         if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
         routine.active, routine.mult, routine.current = true, 1, "walk"
-        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        if course ~= nil then
+            EqDressage.start(routine, course, rng)
+        else
+            routine.kind = "free"
+            routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+        end
         return "start"
     end
 
@@ -851,8 +395,9 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         local done = move == routine.request
         if turned then done = steer == routine.request and routine.steerMs >= EqTraining.ROUTINE_STEER_MS end
         if done then
-            routine.mult = math.min(routine.mult + 1, EqTraining.COMBO_MAX)
+            routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
             if not turned then routine.current = move end
+            routine.driftMs = 0
             routine.request = nil
             local range = turned and EqTraining.ROUTINE_TURN_GAP_MS or move == "halt" and EqTraining.ROUTINE_HALT_GAP_MS
                 or EqTraining.ROUTINE_GAP_MS
@@ -862,8 +407,11 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
             EqTraining.breakRoutine(sheet)
             return "lost"
         end
-    -- A beat on its way waits for nothing: the next command comes after it.
-    elseif routine.clock >= routine.nextAt and (sheet.beat == nil or sheet.beat.pos == nil) then
+    elseif routine.clock >= routine.nextAt and course ~= nil then
+        -- Markers came in sight: the next command sends the horse to one.
+        EqDressage.start(routine, course, rng)
+        return "request"
+    elseif routine.clock >= routine.nextAt then
         local choices = EqTraining.routineChoices(routine.current)
         routine.request = choices[rng(#choices)]
         routine.reactMs = EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
@@ -875,29 +423,123 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng)
         event = "request"
     end
 
-    if not worn and routine.mult > 1 then
-        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
+    if routine.active and (routine.request == "left" or routine.request == "right") and EqTraining.ROUTINE_PACE[move] ~= nil then
+        -- Any pace will do for a turn, and the one it ends at is the pace to hold.
+        routine.current = move
     end
+    if routine.active and routine.mult >= EqTraining.ROUTINE_STEADY_FROM and not steadyPace(routine, move) then
+        routine.driftMs = (routine.driftMs or 0) + dt
+        if routine.driftMs >= EqTraining.ROUTINE_DRIFT_MS then
+            EqTraining.breakRoutine(sheet)
+            return "lost"
+        end
+    else
+        routine.driftMs = 0
+    end
+
+    EqTraining.routineTrain(sheet, worn, dt, EqTraining.FREE_ROUTINE_SHARE)
     return event
+end
+
+
+--- @param value number exertion when the Sprint ended
+--- @param over boolean|nil true when it ended at or past the Blowing Hard line
+--- @return number speed multiplier, 1..SPRINT_MULT_MAX
+function EqTraining.sprintMultiplier(value, over)
+    if over or value >= EqExertion.LINE then return 1 end
+    local share = math.min(math.max(value / EqExertion.LINE, 0), 1)
+    return 1 + (EqTraining.SPRINT_MULT_MAX - 1) * share ^ EqTraining.SPRINT_MULT_POWER
+end
+
+
+--- One frame of speed training, after EqExertion.step: Sprint time earns 1x as it goes, and the
+--- rest of the multiplier is banked once the Sprint is over.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: nothing trains
+--- @return number|nil mult, number gain when a Sprint was banked this frame
+function EqTraining.speedStep(sheet, dt, worn)
+    local ex, sprint = sheet.exertion, sheet.sprint
+    if ex.mode == "sprint" then
+        -- The 1x part counts as it is earned (so the riding bar sees steady work), the rest of
+        -- the multiplier when the Sprint ends.
+        if not worn then
+            sprint.ms = sprint.ms + dt
+            sheet.focused.speed = sheet.focused.speed + EqTraining.SPEED_RATE * dt / 1000
+        end
+        sheet.quality.speed = (EqTraining.sprintMultiplier(ex.value) - 1) / (EqTraining.SPRINT_MULT_MAX - 1)
+        return nil
+    end
+    sheet.quality.speed = 0
+    if sprint.ms <= 0 then return nil end
+    local last = ex.lastSprint or { value = ex.value }
+    local mult = EqTraining.sprintMultiplier(last.value, last.over)
+    local gain = EqTraining.SPEED_RATE * sprint.ms / 1000 * mult
+    sheet.focused.speed = sheet.focused.speed + gain - EqTraining.SPEED_RATE * sprint.ms / 1000
+    sprint.ms, sprint.last = 0, mult
+    return mult, gain
+end
+
+
+--- One frame of the stamina multiplier and stamina training, after EqExertion.step.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
+function EqTraining.staminaStep(sheet, dt, worn)
+    local ex, st = sheet.exertion, sheet.stamina
+    local climbed = math.max(0, ex.value - (st.lastValue or ex.value))
+    st.lastValue = ex.value
+    local seconds = dt / 1000
+    if ex.lock ~= nil then
+        st.mult, st.breath = 1, 0
+    elseif ex.mode == "sprint" then
+        -- A Sprint holds the multiplier and the breath.
+    elseif ex.mode == "push" then
+        local share = math.min(ex.value / EqExertion.LINE, 1)
+        local gain = EqTraining.STAMINA_PUSH_GAIN[1] + (EqTraining.STAMINA_PUSH_GAIN[2] - EqTraining.STAMINA_PUSH_GAIN[1]) * share * share
+        local low = EqTraining.STAMINA_LOW_BREATH_GAIN
+        st.mult = st.mult + gain * (low + (1 - low) * st.breath) * seconds
+        st.breath = st.breath - EqTraining.STAMINA_BREATH_USE * climbed
+    else
+        local band = ex.mode == "recover" and EqExertion.band(ex.value) or "slow"
+        local winded = 1 + (EqTraining.STAMINA_LOW_BREATH_LOSS - 1) * (1 - st.breath)
+        st.mult = st.mult - EqTraining.STAMINA_LOSS[band] * winded * seconds
+        st.breath = st.breath + EqTraining.STAMINA_BREATH_GAIN[band] * seconds
+    end
+    st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)
+    st.breath = math.min(math.max(st.breath, 0), 1)
+    sheet.quality.stamina = (ex.mode == "push" or ex.mode == "recover") and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
+    if not worn and (ex.mode == "push" or ex.mode == "recover") then
+        sheet.focused.stamina = sheet.focused.stamina + EqTraining.STAMINA_RATE * st.mult * seconds
+    end
+end
+
+
+--- Temperament from a running routine: TEMPERAMENT_RATE for each step above x1.
+--- @param sheet table
+--- @param worn boolean
+--- @param dt number milliseconds
+--- @param share number FREE_ROUTINE_SHARE for the free routine, 1 round markers
+function EqTraining.routineTrain(sheet, worn, dt, share)
+    local routine = sheet.routine
+    if not worn and routine.mult > 1 then
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * share * (routine.mult - 1) * dt / 1000
+    end
 end
 
 
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
-function EqTraining.rest(sheet, ms)
+--- @param stamina number|nil the horse's trained stamina
+function EqTraining.rest(sheet, ms, stamina)
     if ms <= 0 then return end
-    local seconds = ms / 1000
-    sheet.tiredness = EqStats.clamp(sheet.tiredness + EqTraining.TIREDNESS_RATE.halt * seconds, 0, 100)
-    sheet.run = math.max(0, sheet.run + EqTraining.RUN_RATE.halt * seconds)
-    sheet.quality.stamina, sheet.quality.speed, sheet.quality.agility, sheet.quality.temperament = 0, 0, 0, 0
+    EqExertion.rest(sheet.exertion, ms, stamina)
+    sheet.stamina.mult, sheet.stamina.breath = 1, 1
+    sheet.sprint.ms = 0
+    for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0
-    sheet.tempo = EqTraining.newTempo()
-    sheet.beat = EqTraining.newBeat()
-    sheet.mode, sheet.entryMs = nil, 0
-    local sprint = sheet.sprint
-    sprint.activeMs, sprint.ready, sprint.readyMs, sprint.holdMs, sprint.counted = 0, false, 0, 0, false
-    if sheet.tiredness < EqTraining.SPRINT_REST_BELOW then sprint.rest = false end
+    sheet.workRate = 0
     EqTraining.breakRoutine(sheet)
 end
 
@@ -914,9 +556,33 @@ end
 --- @param sheet table
 --- @param gait string reverse, walk, trot, canter or gallop; anything else is ignored
 --- @param dt number milliseconds
-function EqTraining.addRiding(sheet, gait, dt)
+--- @param share number|nil how much of the time counts (workShare), 1 when nil
+function EqTraining.addRiding(sheet, gait, dt, share)
     if sheet.ms[gait] == nil or dt <= 0 then return end
-    sheet.ms[gait] = sheet.ms[gait] + dt
+    sheet.ms[gait] = sheet.ms[gait] + dt * (share or 1)
+end
+
+
+--- Follow how fast the horse's focused work is earning effort, and say how much of the riding
+--- bar's usual rate this riding costs.
+--- @param sheet table
+--- @param dt number milliseconds
+--- @return number share CRUISE_BAR_SHARE..1
+function EqTraining.workStep(sheet, dt)
+    local total = 0
+    for _, value in pairs(sheet.focused) do total = total + value end
+    local gained = math.max(0, total - (sheet.workTotal or total))
+    sheet.workTotal = total
+    if dt > 0 then
+        -- An average over WORK_WINDOW_MS: each frame's gain counts in full, then fades.
+        local keep = math.exp(-dt / EqTraining.WORK_WINDOW_MS)
+        sheet.workRate = (sheet.workRate or 0) * keep + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    else
+        sheet.workRate = (sheet.workRate or 0) + gained * 1000 / EqTraining.WORK_WINDOW_MS
+    end
+    local work = EqStats.clamp(sheet.workRate / EqTraining.WORK_FULL_RATE, 0, 1)
+    sheet.workShare = EqTraining.CRUISE_BAR_SHARE + (1 - EqTraining.CRUISE_BAR_SHARE) * work
+    return sheet.workShare
 end
 
 
@@ -939,6 +605,8 @@ EqTraining.HANDLING = {
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
     turn = { 1, 1.65 },      -- turn rate, by agility
+    -- ...and a little more from a calm, attentive horse (James, 2026-10-27).
+    turnTemperament = { 1, 1.2 },
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },
@@ -965,7 +633,7 @@ function EqTraining.handling(speed, agility, temperament)
     return {
         speed = handlingShare(limits.speed, speed),
         jump = handlingShare(limits.jump, agility),
-        turn = handlingShare(limits.turn, agility),
+        turn = handlingShare(limits.turn, agility) * handlingShare(limits.turnTemperament, temperament),
         acceleration = handlingShare(limits.acceleration, temperament),
         crashHalt = handlingShare(limits.crashHalt, temperament),
     }
@@ -973,7 +641,7 @@ end
 
 
 --- Riding points to add to (or, when negative, take off) what the base game credits this frame:
---- backing up counts extra, and a fit horse's bar fills more slowly.
+--- backing up counts extra, and a fit horse's (or an easy ride's, see workStep) bar fills more slowly.
 --- @param timer number weighted milliseconds carried over from earlier frames
 --- @param dt number milliseconds ridden this frame
 --- @param gait string
@@ -1044,13 +712,17 @@ end
 --- @param playerPoints number from playerRidingPoints
 --- @param focus string a key of EqTraining.FOCUS
 --- @param groomed boolean
+--- @param luck number|nil how well staff managed the role's own stats today (STAFF_LUCK), 1 when nil
 --- @return table effort stat -> 0..1
-function EqTraining.staffEffort(riding, playerPoints, focus, groomed)
+function EqTraining.staffEffort(riding, playerPoints, focus, groomed, luck)
     local share = EqStats.clamp(((riding or 0) - playerPoints) / 100, 0, 1)
     local profile = EqTraining.FOCUS[focus] or EqTraining.FOCUS.balanced
 
     local effort = {}
-    for _, stat in ipairs(EqConstants.STAT_KEYS) do effort[stat] = share * profile[stat] * EqTraining.STAFF_EFFORT_SHARE end
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local success = (focus ~= "balanced" and profile[stat] >= EqTraining.FOCUS_STAT_MIN) and (luck or 1) or 1
+        effort[stat] = math.min(1, share * profile[stat] * EqTraining.STAFF_EFFORT_SHARE * success)
+    end
     if groomed then
         effort.temperament = math.min(1, effort.temperament + EqConstants.GROOMED_TEMPERAMENT)
     end
@@ -1068,8 +740,21 @@ end
 --- @return number gain
 function EqTraining.gain(level, cap, monthly, effort, ageFactor, timeAdjustment)
     if effort <= 0 or level >= cap then return 0 end
-    local share = math.min(1, monthly / 100 * effort * ageFactor * timeAdjustment)
+    local share = math.min(1, monthly / 100 * effort * ageFactor * timeAdjustment * EqTraining.lowSkillFactor(level))
     return (cap - level) * share
+end
+
+
+-- A green horse learns the basics fast (James, 2026-10-26): below LOW_SKILL_UNTIL a stat trains
+-- faster, up to LOW_SKILL_MAX times at 0, easing back to normal at LOW_SKILL_UNTIL.
+EqTraining.LOW_SKILL_MAX = 3
+EqTraining.LOW_SKILL_UNTIL = 40
+
+--- @param level number trained stat
+--- @return number factor 1..LOW_SKILL_MAX
+function EqTraining.lowSkillFactor(level)
+    local low = EqStats.clamp((EqTraining.LOW_SKILL_UNTIL - (level or 0)) / EqTraining.LOW_SKILL_UNTIL, 0, 1)
+    return 1 + (EqTraining.LOW_SKILL_MAX - 1) * low
 end
 
 
@@ -1084,7 +769,7 @@ end
 --- @param record table EqHorseRecord (uses trained, focus, idleDays)
 --- @param ceilings table stat -> ceiling
 --- @param day table { sheet, riding, dirt, ageMonths, timeAdjustment, facilityOwned, facilityRidden,
----     feedBoost, rate }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil;
+---     feedBoost, rate, staffLuck }; each boost table is stat -> share (EqFacility.boosts, EqFeed.dietBoost), or nil;
 ---     rate is the Training rate setting (1 when nil)
 --- @return table deltas stat -> change, for logging
 --- @return table detail why: { player, staff (effort stat -> 0..1), groomed, ageFactor, idleDays,
@@ -1096,7 +781,8 @@ function EqTraining.applyDay(record, ceilings, day)
     local groomed = day.dirt ~= nil and day.dirt <= EqConstants.GROOMED_DIRT
 
     local player = EqTraining.playerEffort(day.sheet)
-    local staff = EqTraining.staffEffort(day.riding, EqTraining.playerRidingPoints(day.sheet), record.focus, groomed)
+    local staff = EqTraining.staffEffort(day.riding, EqTraining.playerRidingPoints(day.sheet), record.focus, groomed,
+        day.staffLuck)
 
     local worked = false
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
@@ -1203,4 +889,79 @@ function EqTraining.applyBoost(record, ceilings, weights, boost, ageMonths, time
         deltas[stat] = record.trained[stat] - before
     end
     return deltas
+end
+
+
+-- Peak form (James, 2026-10-26): the player's own riding is mostly pre-contest prep. A month's
+-- best minigame session in each stat lifts that stat by up to FORM_MAX points for the month's
+-- events, at FORM_FULL focused effort. Plain gait riding gives none. Sessions on several days of
+-- a month never add up: each stat keeps its best. It clears when the month's events have run.
+EqTraining.FORM_MAX = 8
+EqTraining.FORM_FULL = 1.5
+
+--- @param sheet table|nil
+--- @return table points stat -> 0..FORM_MAX from this sheet's minigame work
+function EqTraining.formFrom(sheet)
+    local points = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        local focused = sheet ~= nil and sheet.focused ~= nil and sheet.focused[stat] or 0
+        points[stat] = EqTraining.FORM_MAX * EqStats.clamp(focused / EqTraining.FORM_FULL, 0, 1)
+    end
+    return points
+end
+
+
+--- Fold one session into a horse's form: a new month starts afresh, the same month keeps the best.
+--- @param form table|nil { month, stat -> points }
+--- @param month number the month the session was ridden in
+--- @param points table from formFrom
+--- @return table form
+function EqTraining.mergeForm(form, month, points)
+    if form ~= nil and (form.month or 0) > month then return form end
+    local merged = { month = month }
+    local same = form ~= nil and form.month == month
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        merged[stat] = math.max(same and form[stat] or 0, points[stat] or 0)
+    end
+    return merged
+end
+
+
+--- A horse's form for a month's events: what it kept from earlier days, and today's riding if
+--- the day has not been counted yet.
+--- @param form table|nil record.form
+--- @param month number
+--- @param sheet table|nil today's sheet, not yet applied; sheet.month says when it was ridden
+--- @return table points stat -> points (all 0 when out of form)
+function EqTraining.formFor(form, month, sheet)
+    local points = EqTraining.mergeForm(form ~= nil and form.month == month and form or nil, month, {})
+    if sheet ~= nil and (sheet.month or 0) == month then
+        points = EqTraining.mergeForm(points, month, EqTraining.formFrom(sheet))
+    end
+    points.month = nil
+    return points
+end
+
+
+--- @param form table stat -> points
+--- @return boolean true when any stat has at least half a point of form
+function EqTraining.hasForm(form)
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        if (form[stat] or 0) >= 0.5 then return true end
+    end
+    return false
+end
+
+
+--- Stats as the horse competes: trained levels plus form, at most 100. Form may pass the
+--- ceiling: it is sharpness on the day, not training.
+--- @param trained table stat -> level
+--- @param form table|nil stat -> points
+--- @return table stats
+function EqTraining.withForm(trained, form)
+    local stats = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        stats[stat] = math.min(100, (trained[stat] or 0) + (form ~= nil and form[stat] or 0))
+    end
+    return stats
 end

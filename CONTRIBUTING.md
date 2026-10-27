@@ -23,11 +23,11 @@ Notes for anyone changing the mod. Players want the [README](README.md); the rul
 ## Building a test zip
 
 Zip the folder's contents, not the folder itself, as `FS25_RealisticEquestrian.zip`: `modDesc.xml`
-must sit at the top of the zip. Only `data/`, `gui/`, `scripts/`, `translations/`, `modDesc.xml` and
+must sit at the top of the zip. Only `data/`, `gui/`, `placeables/`, `scripts/`, `translations/`, `modDesc.xml` and
 `icon_RealisticEquestrian.dds` are needed. For example:
 
 ```
-git archive -o FS25_RealisticEquestrian.zip HEAD data gui scripts translations modDesc.xml icon_RealisticEquestrian.dds
+git archive -o FS25_RealisticEquestrian.zip HEAD data gui placeables scripts translations modDesc.xml icon_RealisticEquestrian.dds
 ```
 
 ## Testing in game

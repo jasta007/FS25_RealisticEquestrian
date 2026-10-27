@@ -24,10 +24,15 @@ source(modDirectory .. "scripts/core/EqSettings.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
 source(modDirectory .. "scripts/core/EqHorseRecord.lua")
+source(modDirectory .. "scripts/core/EqRole.lua")
 source(modDirectory .. "scripts/core/EqStatLog.lua")
 source(modDirectory .. "scripts/dealer/EqDealer.lua")
 source(modDirectory .. "scripts/core/EqRegistry.lua")
+source(modDirectory .. "scripts/core/EqFreshStart.lua")
+source(modDirectory .. "scripts/training/EqExertion.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqDressage.lua")
+source(modDirectory .. "scripts/training/EqDressageHooks.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
@@ -51,12 +56,15 @@ source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqSkillsHudBox.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
+source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
+source(modDirectory .. "scripts/gui/EqRideButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
+source(modDirectory .. "scripts/gui/EqWelcome.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
 
@@ -144,6 +152,10 @@ function EqMain.activate()
         guarded("message link hooks", function() EqMessagesLink.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.rideButton then
+        guarded("ride button hook", function() EqRideButton.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.menuPaging then
         guarded("menu paging hook", function() EqMenuPaging.install(guarded) end)
     end
@@ -164,6 +176,10 @@ function EqMain.activate()
         guarded("list badge hook", function() EqListBadge.install(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.roleMenu then
+        guarded("role menu hooks", function() EqRoleMenu.install(guarded) end)
+    end
+
     if EqMain.isActive and EqRLRM.features.metabolismFitness then
         guarded("metabolism hook", function() EqMetabolism.install(guarded) end)
     end
@@ -177,6 +193,7 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
+        guarded("welcome popups hooks", function() EqWelcome.install(guarded) end)
         guarded("message log", EqMessages.install)
         guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)
     end
@@ -263,6 +280,16 @@ local function onMissionLoaded(mission)
         end
     end)
 
+    -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
+    -- RLRM's daily low-health death roll.
+    guarded("map horses fresh start", function()
+        if not mission:getIsServer() then return end
+        EqFreshStart.check()
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+            guarded("map horses fresh start", EqFreshStart.check)
+        end, EqFreshStart)
+    end)
+
     guarded("competition start", function()
         if not mission:getIsServer() or EqCompetitionManager.config == nil then return end
         EqCompetitionManager.ensureOpen()
@@ -302,9 +329,11 @@ local function onMissionDelete()
         EqRegistry.reset()
         EqTrainingHooks.reset()
         EqTrainingHud.reset()
+        EqWelcome.reset()
         EqStatLog.reset()
         EqFacilityHooks.reset()
         g_messageCenter:unsubscribeAll(EqCompetitionManager)
+        g_messageCenter:unsubscribeAll(EqFreshStart)
         local config = EqCompetitionManager.config
         EqCompetitionManager.reset()
         EqCompetitionManager.config = config

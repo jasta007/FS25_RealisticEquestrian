@@ -64,7 +64,7 @@ jobs:
       - name: Build mod zip
         run: |
           mkdir dist
-          git archive -o "dist/$ZIP_NAME" HEAD data gui scripts translations modDesc.xml icon_RealisticEquestrian.dds
+          git archive -o "dist/$ZIP_NAME" HEAD data gui placeables scripts translations modDesc.xml icon_RealisticEquestrian.dds
           unzip -l "dist/$ZIP_NAME" | grep -q ' modDesc.xml$' || { echo "::error::modDesc.xml is not at the zip root"; exit 1; }
           unzip -l "dist/$ZIP_NAME" | tail -n 1
 

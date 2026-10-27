@@ -311,7 +311,8 @@ function EqConsole:consoleResults()
 end
 
 
---- eqRetire <horse> [undo]: retire a horse from competition, or bring it back.
+--- eqRetire <horse> [undo]: retire a horse from competition, or bring it back (undo is the only
+--- way back: in game retirement is permanent).
 function EqConsole:consoleRetire(...)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -596,6 +597,29 @@ function EqConsole:consoleDirt(...)
 end
 
 
+--- eqRiding <horse> [0-100]: testing, sets a horse's riding bar (default 0, fresh for the day).
+function EqConsole:consoleRiding(...)
+    if g_currentMission == nil then return "No mission loaded" end
+    if not g_currentMission:getIsServer() then return "Only the host can change riding" end
+
+    local args = { ... }
+    local value = tonumber(args[#args])
+    if value ~= nil then table.remove(args) end
+    local query = table.concat(args, " ")
+    if query == "" then
+        return "Usage: eqRiding <horse name or id> [0-100]  (default 0: a fresh riding bar; training stops at 100)"
+    end
+    local animal = findOwnHorse(query)
+    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
+
+    local before = animal.riding or 0
+    value = math.floor(EqStats.clamp(value or 0, 0, 100))
+    if animal.changeRiding ~= nil then animal:changeRiding(value - before) else animal.riding = value end
+    if animal.setDirty ~= nil then animal:setDirty() end
+    return string.format("'%s' riding %s -> %s", animal:getName() or query, tostring(before), tostring(animal.riding))
+end
+
+
 --- eqChanges <horse> [days]: testing, what changed the horse's stats and why, from today back.
 function EqConsole:consoleChanges(...)
     if g_currentMission == nil then return "No mission loaded" end
@@ -617,6 +641,14 @@ function EqConsole:consoleChanges(...)
         EqStatLog.statLine(record.trained, "%.2f")))
     print(string.format("    RLRM now: fitness %s health %s dirt %s riding %s, age %dm", tostring(animal.fitness), tostring(animal.health),
         tostring(animal.dirt), tostring(animal.riding), animal.age or 0))
+    if record.start ~= nil then
+        local change = {}
+        for _, stat in ipairs(EqConstants.STAT_KEYS) do change[stat] = (record.trained[stat] or 0) - record.start[stat] end
+        print(string.format("    Since joined the farm on day %d (%d day(s) ago): %s  (started %s)", record.start.day,
+            today - record.start.day, EqStatLog.statLine(change, "%+.2f"), EqStatLog.statLine(record.start, "%.2f")))
+    else
+        print("    Since joined the farm: not recorded (owned before this was added)")
+    end
     for _, entry in ipairs(entries) do
         print(string.format("  day %d %s: %s%s", entry.day, entry.source, EqStatLog.statLine(entry.deltas, "%+.2f"),
             entry.after ~= nil and ("  -> " .. EqStatLog.statLine(entry.after, "%.2f")) or ""))
@@ -638,13 +670,14 @@ function EqConsole.register()
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
-    addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
+    addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo] (undo is debug only, retiring is permanent in game)", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)
     addConsoleCommand("eqFacilities", "Shows your farm's horse facilities and their bonuses: eqFacilities [near]", "consoleFacilities", EqConsole)
     addConsoleCommand("eqForceInjury", "Testing: every horse that starts an event is injured: eqForceInjury [on|off]", "consoleForceInjury", EqConsole)
     addConsoleCommand("eqDirt", "Testing: sets a horse's dirt: eqDirt <horse> <0-100>", "consoleDirt", EqConsole)
+    addConsoleCommand("eqRiding", "Testing: sets a horse's riding bar: eqRiding <horse> [0-100], 0 when left out", "consoleRiding", EqConsole)
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
     addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -658,5 +691,5 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqChanges", "eqStats" }) do removeConsoleCommand(name) end
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats" }) do removeConsoleCommand(name) end
 end

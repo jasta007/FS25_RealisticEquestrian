@@ -47,51 +47,103 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 
 Every horse trains once a day, at RLRM's daily horse tick.
 
-- **Your riding** is the main way to train. Stamina and speed train best from focused work, watched
-  by an **Exertion** meter while you ride (it rises in canter and gallop and falls at slower gaits
-  and at a halt). A good focused session can give up to double what a full day of riding used to;
-  just riding round the gaits trains them at about a quarter of that.
-- **Press Y while riding** to switch the training panel between **Freestyle** (the meter and a line
-  for each stat) and the **Stamina**, **Speed**, **Agility** and **Temperament** views. Colours
-  show how each is going. Help pops up at the bottom of the screen the first time you open each
-  view; press **H** to see it again, and click anywhere to move on.
-- One kind of training talks at a time, each in its own colour: a steady canter starts stamina
-  (blue) until the tempo breaks, a cleared jump starts agility (green) until the combo ends, a
-  warm-up gallop starts speed (orange) until the Sprint is over. Temperament (purple) routines
-  always run. Only that training's popups and prompts show; the panel stays the same.
-- Jumping doesn't interrupt a run or a sprint: the pace from before take-off counts until shortly
-  after landing, so you can jump an obstacle in the way.
+- **Your riding** is the main way to train every stat. Agility and temperament have their own
+  minigames, and stamina and speed come from riding the gallop well (below). A good focused session
+  can give up to double what a full day of riding used to; just riding round the gaits trains
+  agility and temperament at about a quarter of that.
+- **Press Y while riding** to switch the training panel between **Freestyle** (everything),
+  the **Stamina**, **Speed**, **Agility** and **Temperament** views (just that stat's training)
+  and **Condensed** (only the Exertion bar, with news in a small line above it and a smaller,
+  wordless Sprint bar). Every view shows the Exertion bar, and every view trains everything. Help pops
+  up at the bottom of the screen the first time you open each view (and the first time you
+  gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
+  move on.
+- Welcome popups show the first time you come within 35 m of a horse pen or ride a horse, open
+  RLRM's menu with horses on the farm, open its Information tab, open the Events tab, and open the
+  Diseases dialog for a horse. A popup stays until you click through its last page; closed early
+  (Esc, getting off), it shows again next time. The **Help popups** setting (Show again) clears
+  every seen flag on your machine, so each popup shows once more.
+- Jumping doesn't interrupt the gallop: the pace from before take-off counts until shortly after
+  landing, so you can jump an obstacle in the way.
 - **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
   line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
   so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
-  stamina 100). Below 30% exertion a horse standing or walking recovers quickly, a fit one faster
-  still.
+  stamina 100). Riding that trains little (walking or cantering over to a facility) costs only a
+  quarter of the usual riding bar, rising to the full rate as focused work (stamina, speed, jump
+  combos, routines) earns more effort, averaged over about 20 seconds.
 
-### Stamina
+### Peak form
 
-Stamina comes from runs at canter or gallop. Canter 8 seconds without jumping or galloping,
-starting under 40% exertion, to start stamina training; then the tempo multiplies it (up to x5,
-2.5 times the gains). Only well-timed gait changes raise the tempo: when the middle of the screen
-says **Canter! (S)** or **Gallop! (W)**, press that key right then and your horse gets a breather (a
-bigger one the more tired it is, so hitting every change keeps it under blowing hard); three good
-changes (a perfect one counts double) raise the tempo. Pressing too early or missing one loses the
-progress to the next step, and the next change comes soon after. Timing tightens as the tempo
-climbs. Blowing hard (over 85% exertion) for 5 seconds or more than a few seconds below a canter
-ends the run: rest under 40%, then canter to start again. Gait changes pause during a Sprint or a
-routine command.
+- Your own riding is mostly preparation for contests. Minigame work in a stat puts the horse in
+  **Peak form** for the month's events: up to **+8** to that stat, in full at a strong session
+  (1.5 times a full day of plain riding's work in that stat) and in proportion below it. Just riding
+  the gaits gives no form.
+- **Once a month:** sessions on several days of a month don't add up. Each stat keeps the best
+  session of the month, so at 1 day a month it is simply the day you ride.
+- Peak form counts in every event the horse runs that month, including Advanced and Championship
+  events that resolve at the month change, and the Events tab's chances include it. It adds to the
+  stats the course's checks roll against and to the horse's rating on the day, and may lift a
+  stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
+- It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
+  month's events have run. A popup explains it the first time a horse gets it.
+- Permanent training is unchanged: your riding still trains faster than staff and takes a stat
+  the last 5% of its ceiling.
 
-### Speed
+### The gallop and the Exertion bar (experimental)
 
-Speed comes mostly from Sprint. Fast gallops while the horse is fresh (exertion under 25%) add only
-a little; stand still (4 s) or walk (5 s) and exertion drops quickly. Two good warm-up gallops warm
-the horse up; keep galloping and press **W** when **Sprint!** shows to run 25% faster, held on the
-limit just short of blowing hard (keep tapping W to spur it on; a slower horse runs out sooner),
-with three times the speed training. Then rest right down before warming up again.
+The gallop has three paces, and exertion only builds at a gallop:
+
+- **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
+  the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
+  empty; Stamina slows it).
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
+  top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
+  quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
+- **Sprinting** (tap W three times quickly while galloping, and keep tapping): 125% of the gallop's
+  speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
+  you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
+  ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
+  (Pushing is fine).
+
+Pushing up to the **Blowing Hard** line drops the horse to a canter, and it can't gallop until the
+bar is empty again. Only a Sprint can run past the line, into the red last-gasp section; a Sprint
+that ends there leaves the horse **exhausted**: canter only, and while the bar is still past the
+line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
+the gait. The panel lists what you can press now (Sprint ready, S or double tap S to canter), and
+the middle of the screen warns **Careful** (in a Sprint yellow from 50%, red and pulsing from 75%;
+when Pushing pulsing from 85%), and **Over exerted** in red past the line. Slowing from a gallop to a
+canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
+
+The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
+gallop section and the Blowing Hard section. The marker sits on the gait's line while the bar is
+empty, and the section for the current gait lights up (none while standing; Blowing Hard lights
+while blown or exhausted).
+
+**Training on the gallop.** Speed comes from Sprints: every second of a Sprint banks speed effort,
+multiplied when it ends by how high it took the bar: x2 half way to the line, rising ever faster to
+x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
+shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
+
+Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
+Behind it the horse has a hidden breath:
+
+- Pushing raises the multiplier, faster the higher the bar is (with its square), and every point of
+  exertion pushed uses a hundredth of the breath. With less breath the multiplier rises more slowly
+  (down to a tenth of the rate) and falls faster (up to twice as fast), but never stops either way.
+- Recovering costs multiplier: quickly in the top third, slowly in the middle zone, quickly again
+  in the bottom third. Breath comes back in the middle and bottom thirds, not the top. A canter or
+  slower costs multiplier quickly too; a Sprint holds it.
+- So the way to x5 is to push close to the line, recover down into the zone and let the horse
+  breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
+  out of breath and earns little; letting the bar fall too far throws the multiplier away.
+- Blowing Hard (or a Sprint that ends past the line) drops it to x1, empties the breath and stops
+  stamina training until the bar is empty.
 
 ### Agility
 
 Agility comes from jump combos: clear jumps one after another (fences, poles, anything solid) for
-x2 up to x5. You have 10 seconds to clear the next one; a trot is fine, but stopping, walking or
+x2 up to x5. A proper show jump (Riding Hall 2k26's shop jumps, or a map's jump course such as
+Elmcreek 25's) trains 1.5 times the agility of a fence, a bale or a parked vehicle. You have 10 seconds to clear the next one; a trot is fine, but stopping, walking or
 backing up runs the clock down ten times as fast. A jump is judged once the horse has landed:
 hitting something or landing on it takes 3 seconds off the combo clock. Horses jump higher and stay
 in the air longer from a canter, and pick up speed faster, so a controlled canter approach can clear
@@ -100,23 +152,55 @@ a fence.
 ### Temperament
 
 Temperament comes from a routine: walk to start one, then do each movement asked for (walk, trot,
-stop, back up, turn left, turn right) within 3 seconds, for x2 up to x5. A canter, gallop, jump or a
-missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
+stop, back up, turn left, turn right) within 3 seconds, for x2 up to x8. Each step up brings the
+requests quicker and gives less time to react (1.5 seconds at x8), and from x4 the horse must hold
+its pace between requests: changing gait unasked breaks the routine (passing through a walk on the
+way to a requested stop is fine). A canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
 moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
-show in the Freestyle and Temperament views.
+show in the Freestyle, Temperament and Condensed views.
+
+Without dressage markers nearby, that routine trains at 60% of the rate. Near dressage markers (at
+least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
+between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
+20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
+test: coming within 30 m starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
+commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
+and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
+asked for to markers within 12 m:
+
+- Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
+  canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
+  comes from its length and shrinks as the multiplier climbs. The marker is tagged on the map.
+- After 3 seconds to settle, the wrong gait (or a gallop) for 1.5 seconds or running out of time is a
+  **fault**: the multiplier drops two steps and a fresh leg starts from where you are. The third
+  fault ends the routine, and so does a jump. A leg that starts with a turn gets extra time, up to
+  6 seconds at a trot for a full about-turn. Steering is free.
+- The next command shows about 3 seconds before the marker; reaching it (3 m at a walk, 4.5 m at a trot, 7 m at a
+  canter, so there is room to slow down) is one step up.
+- Passing close to another marker may ask for a gait change ("Change: Trot", or "Flying change:
+  Canter" from a walk; 2 seconds), worth an extra step, only to a gait the rest of the leg suits.
+  Missing it costs nothing.
+- At a marker the next command can be a circle (steer one way at a walk or trot until the horse
+  has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
+  seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
+- In a shop arena, once past X, leaving it (a metre past its letters) for 3 seconds is a fault.
+- Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
+  comes back, so they can be moved or sold.
 
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
-agility sets how high it jumps and how quickly it turns; a calm horse (temperament) changes pace a
-little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
+turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
+better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop.
 
 ### Staff, age and metabolism
 
 - **Staff** (the base game's Animal Workers with Riding turned on for a horse pen, added in patch
   1.25, or RLRM's herdsman horse-care rule) count for whatever share of the riding bar you did not
-  fill yourself, at half the rate of a full day of plain riding. They train to the horse's focus
+  fill yourself, at half the rate of a full day of plain riding. They train to the horse's role
   and stop at 95% of each ceiling; your own focused riding trains a stat up to four times as fast,
   and only it takes a stat the last 5%.
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
@@ -128,13 +212,37 @@ horse can clear fences without a full gallop.
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
   and a slow one is cheap to keep but slow to bring back into condition (down to 60%). Fitness
   lost is not changed, and it doesn't change how fast stats train.
-- Gains slow as a stat nears its ceiling. Horses under 24 months can only do light groundwork and
-  train at 30%, 24-36 months at 60%. From three to twelve they train at full speed, then slow down
-  again. A horse left idle for more than about half a month fades toward half its ceiling, and past
+- Gains slow as a stat nears its ceiling, and a green horse learns the basics fast: a stat below
+  40 trains faster, up to three times as fast at 0 (twice at 20). Young horses train at full speed
+  up to twelve years old, then slow down. A horse left idle for more than about half a month fades toward half its ceiling, and past
   16 years every stat slowly declines.
 
-Console commands: `eqTraining` shows each horse's focus and today's riding; `eqFocus <name> <focus>`
-sets what staff work on (`balanced`, `showJumping`, `dressage`, `crossCountry`, `racing`).
+### Roles
+
+- A **role** is a reminder of what a horse is for: Dressage, Show Jumping, Cross Country, Eventing,
+  Racing, Breeding or For sale (or No role). Press **G** (the Role button) on a horse in RLRM's
+  Info tab to cycle it. Host only for now in multiplayer.
+- Once any horse in a pen has a role, the Info tab lists the pen's horses in groups by role, then
+  No role, then Retired. Retired is not on the Role button: retiring a horse (RLRM's Diseases tab)
+  shows it as Retired everywhere for good (the `eqRetire <horse> undo` debug command brings it back with its old role). The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
+  Skills box when you look at the horse, in the menu's Skill potential column and at the top of
+  the riding panel, with the horse's four skills.
+- **Staff train toward the role.** Each role has a staff profile (Dressage leans on temperament
+  and agility, Racing on speed and stamina, Eventing on all but speed; Breeding, For sale and No
+  role keep every stat ticking over). Staff don't manage it equally well every day: the role's
+  own stats get between 50% and 150% of their effort each day, 100% on average. `eqChanges` shows
+  how they did.
+
+### Riding bar and names
+
+- When a horse's riding bar is full it trains no more that day: the look-at Skills box says so in
+  red, the Daily riding value reads "100 % - full" (red in RLRM's menu) and the riding panel shows
+  a red line.
+- The look-at box is headed with the horse's name instead of "Animal".
+
+Console commands: `eqTraining` shows each horse's role and today's riding; `eqFocus <name> <role>`
+sets it (`balanced` for no role, `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`,
+`breeding`, `sale`).
 
 ### Feed
 
@@ -175,7 +283,9 @@ yourself speeds your riding up a lot more, by the share of the day's riding you 
 | Outdoor arena (Equestrian Pack outdoor training area) | Stamina, Agility; Speed while riding in it | Cross Country, Eventing |
 | Jump course (Riding Hall 2k26 jumps, map courses like Elmcreek 25's) | Agility; Temperament while riding through it. Six fences give the full bonus | Show Jumping, Eventing |
 | Round pen (the base game's round roofed barn02, on any map: Elmcreek 25, Frontier) | Temperament; a little Agility | Dressage |
-| Horse stable mods (Horse Stable, Equestrian Pack L barn) | Temperament, a little | Dressage, a little |
+
+Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house horses and give no
+bonus.
 
 Owned bonuses add up to at most +25% a stat, riding inside to at most +60% more, and the event
 bonus to at most +5% condition. Feed boosts stack with these by adding. Matched buildings say
@@ -304,6 +414,13 @@ later, has paid for itself within the second year, and makes good money after th
 bills. `eqDealer` (testing) lists the dealer's horses with their real potential and the
 dealer's view of it.
 
+**Horses that come with a farm:** some maps put horses in their farms' barns with no age and no
+health (Midwest Moraines 4X does). Nobody feeds an unowned barn, so with RLRM they starve to
+nothing before you buy the farm. When one of these reaches your farm it gets a fresh start: an
+adult age of 4 to 12, full health, a normal weight and starting stats for that age. Only a
+newborn with no mother, never ridden and almost no health counts, so a real foal or a sick
+horse is never touched.
+
 ## Risk and retirement
 
 - **Scratches:** a horse that is injured, ill, retired or unsound on the day doesn't start, and
@@ -345,8 +462,9 @@ dealer's view of it.
   is for a typical horse (discipline, level, conditions and how far the venue is), and the
   selected horse's panel shows that horse's own risk (its fitness, stamina, health and how likely
   it is to fall). It reads Off with injuries turned off.
-- **Retirement is your choice:** the Retire button on the horse's Diseases page (or `eqRetire
-  <horse>`) retires a horse, and the same button (or `eqRetire <horse> undo`) brings it back.
+- **Retirement is your choice, and permanent:** the Retire button on the horse's Diseases page
+  (or `eqRetire <horse>`) retires a horse after a warning that it can't be undone, and the button
+  then goes away. Only the `eqRetire <horse> undo` debug command brings a horse back.
   An injured horse still has to heal, but retired, its treatment costs 60% less, even mid-course.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
   fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.

@@ -268,14 +268,40 @@ function EqInfoDisplay.addHorseInfos(animal, infos)
         table.insert(infos, { title = g_i18n:getText("eq_status_title"), text = "", value = 0, ratio = 0,
             valueText = status, eqBlock = true })
     end
+
+    -- RLRM remakes its riding row's text every time, so this never stacks up.
+    local riding = animal.infoRiding
+    if EqInfoDisplay.isRidingFull(animal) and riding ~= nil and riding.valueText ~= nil then
+        riding.valueText = string.format(g_i18n:getText("eq_ui_ridingFullValue"), riding.valueText)
+    end
 end
 
 
---- Fill the look-at Skills box: one line per stat, the dealer's-view note and the status.
+-- A full riding bar, in red wherever it shows: no more training today.
+EqInfoDisplay.FULL_COLOR = { 1, 0.32, 0.25, 1 }
+
+
+--- @param animal table|nil RLRM Animal
+--- @return boolean true when the horse's riding bar is full for today, so it trains no more
+function EqInfoDisplay.isRidingFull(animal)
+    return animal ~= nil and (animal.riding or 0) >= 100
+end
+
+
+--- Fill the look-at Skills box: the role and a full riding bar first, then one line per stat,
+--- the dealer's-view note and the status.
 --- @param record table EqHorseRecord
 --- @param box table HUD key-value box
 --- @param animal table RLRM Animal
 local function fillSkillsBox(record, box, animal)
+    -- The game's plain box takes a warning flag where ours takes a colour.
+    local colored = box.eqColored == true
+    if EqRole.has(record) and not record.retired then
+        box:addLine(g_i18n:getText("eq_role_title"), EqRole.text(EqRole.get(record)), colored and EqRole.COLOR or nil)
+    end
+    if EqInfoDisplay.isRidingFull(animal) then
+        box:addLine(g_i18n:getText("eq_ui_riding"), g_i18n:getText("eq_ui_ridingFull"), colored and EqInfoDisplay.FULL_COLOR or nil)
+    end
     local ceilings, unvetted, gains = record:getShownCeilings(), isUnvetted(record), recentGains(record)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local trained = record.trained[stat] or 0
@@ -290,6 +316,8 @@ local function fillSkillsBox(record, box, animal)
         end
     end
     box:addLine(g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
+    local formText = EqCompetitionManager.formText(EqCompetitionManager.formFor(record))
+    if formText ~= nil then box:addLine(g_i18n:getText("eq_form_title"), formText) end
     if unvetted then box:addLine(g_i18n:getText("eq_ui_potentialTitle"), g_i18n:getText("eq_ui_potentialDealer")) end
     local status = statusText(record, animal)
     if status ~= nil then box:addLine(g_i18n:getText("eq_status_title"), status) end
@@ -324,6 +352,28 @@ function EqInfoDisplay.showSkillsBox(hudUpdater, animal)
     box:setTitle(g_i18n:getText("eq_ui_skills"))
     fillSkillsBox(record, box, animal)
     box:showNextFrame()
+
+    EqInfoDisplay.markAnimalBox(hudUpdater.objectBox, animal)
+end
+
+
+--- The base game's look-at box for the animal: its title says only "Animal", and the name is a
+--- line among many. Head it with the horse's name instead, and say so when the riding bar is
+--- full. That box draws every line white, so the red is on the Skills box.
+--- @param box table|nil PlayerHUDUpdater.objectBox, filled for this animal this frame
+--- @param animal table RLRM Animal (a horse)
+function EqInfoDisplay.markAnimalBox(box, animal)
+    if box == nil or type(box.lines) ~= "table" then return end
+    local name = animal.getName ~= nil and animal:getName() or nil
+    if name ~= nil and name ~= "" and box.setTitle ~= nil then box:setTitle(name) end
+
+    if not EqInfoDisplay.isRidingFull(animal) then return end
+    local key = g_i18n:getText("infohud_riding")
+    for _, line in ipairs(box.lines) do
+        if line.isActive and line.key == key and type(line.value) == "string" then
+            line.value = string.format(g_i18n:getText("eq_ui_ridingFullValue"), line.value)
+        end
+    end
 end
 
 
@@ -471,9 +521,9 @@ local function ensureSection(frame)
     local section = { row = row, potential = potential, skills = skills }
     potential.elements[1]:setText(g_i18n:getText("eq_ui_skillPotential"))
     skills.elements[1]:setText(g_i18n:getText("eq_ui_skills"))
-    -- Skills has one more line than the stats: the horse's favourite event.
+    -- Each column has one more line than the stats: the horse's role, and its favourite event.
     for i, column in ipairs({ potential, skills }) do
-        local lines = #EqConstants.STAT_KEYS + (column == skills and 1 or 0)
+        local lines = #EqConstants.STAT_KEYS + 1
         for index = 2, #column.elements do
             column.elements[index]:setVisible(index - 1 <= lines)
         end
@@ -546,11 +596,34 @@ local function fitDescription(frame, fit, line)
 end
 
 
+EqInfoDisplay.NO_ROLE_COLOR = { 0.6, 0.6, 0.6, 1 }
+
+
+--- Turn the Daily riding value in RLRM's stat grid red while the bar is full, and give every
+--- other value back the colour it had.
+--- @param frame table RLRM menu frame
+--- @param animal table|nil
+function EqInfoDisplay.colorRiding(frame, animal)
+    if type(frame.statLabel) ~= "table" or type(frame.statValue) ~= "table" then return end
+    local full = isHorse(animal) and EqInfoDisplay.isRidingFull(animal)
+    local title = g_i18n:getText("ui_horseDailyRiding")
+    for index, value in pairs(frame.statValue) do
+        local label = frame.statLabel[index]
+        if value.setTextColor ~= nil and type(value.textColor) == "table" then
+            if value.eqColor == nil then value.eqColor = { unpack(value.textColor) } end
+            local red = full and label ~= nil and label.text == title
+            value:setTextColor(unpack(red and EqInfoDisplay.FULL_COLOR or value.eqColor))
+        end
+    end
+end
+
+
 --- Appended to RLDetailPaneHelper.updateAnimalDisplay: fill the Skill potential / Skills section
 --- for a horse, or hide it and put RLRM's layout back for any other animal.
 --- @param frame table RLRM menu frame
 --- @param animal table|nil
 function EqInfoDisplay.renderSkills(frame, animal)
+    EqInfoDisplay.colorRiding(frame, animal)
     local record = isHorse(animal) and EqRegistry.getOrCreate(animal) or nil
     local section = record ~= nil and ensureSection(frame) or frame.eqSkills
 
@@ -580,6 +653,12 @@ function EqInfoDisplay.renderSkills(frame, animal)
         local specialtyCell = section.skills.elements[#EqConstants.STAT_KEYS + 2]
         if specialtyCell ~= nil then
             fillCell(specialtyCell, g_i18n:getText("eq_specialty_title"), EqCompetitionManager.specialtyText(record))
+        end
+        local roleCell = section.potential.elements[#EqConstants.STAT_KEYS + 2]
+        if roleCell ~= nil then
+            local role = EqRole.shown(record)
+            fillCell(roleCell, g_i18n:getText("eq_role_title"), EqRole.text(role),
+                EqRole.isShown(record) and EqRole.COLOR or EqInfoDisplay.NO_ROLE_COLOR, EqRole.COLOR)
         end
 
         local line = section.potential.elements[2].size[2]
