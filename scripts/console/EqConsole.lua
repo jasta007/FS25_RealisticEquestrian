@@ -311,7 +311,8 @@ function EqConsole:consoleResults()
 end
 
 
---- eqRetire <horse> [undo]: retire a horse from competition, or bring it back.
+--- eqRetire <horse> [undo]: retire a horse from competition, or bring it back (undo is the only
+--- way back: in game retirement is permanent).
 function EqConsole:consoleRetire(...)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -638,7 +639,7 @@ function EqConsole.register()
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
     addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
-    addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo]", "consoleRetire", EqConsole)
+    addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo] (undo is debug only, retiring is permanent in game)", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
     addConsoleCommand("eqFocus", "Sets what staff train a horse for: eqFocus <name or id> <focus>", "consoleSetFocus", EqConsole)

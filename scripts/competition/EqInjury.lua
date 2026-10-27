@@ -536,17 +536,16 @@ local function daysText(days)
 end
 
 
---- The Diseases dialog's extra button: Retire, or Back to competition.
+--- The Diseases dialog's extra button: Retire. Retirement is for good, so a retired horse has no
+--- button (only the eqRetire undo debug command brings one back).
 local function updateRetireButton(dialog)
     local button = dialog.eqRetireButton
     if button == nil then return end
     local record = recordOf(dialog.animal)
-    local shown = record ~= nil and not record.careerEnded
+    local shown = record ~= nil and not record.retired
     button:setVisible(shown)
     if dialog.eqRetireSeparator ~= nil then dialog.eqRetireSeparator:setVisible(shown) end
-    if shown then
-        button:setText(g_i18n:getText(record.retired and "eq_ui_unretire" or "eq_ui_retire"))
-    end
+    if shown then button:setText(g_i18n:getText("eq_ui_retire")) end
     if button.parent ~= nil and button.parent.invalidateLayout ~= nil then button.parent:invalidateLayout() end
 end
 
@@ -573,19 +572,14 @@ local function addRetireButton(dialog)
 end
 
 
---- The Retire button: confirm, then retire the horse (or bring it back).
+--- The Retire button: warn that it is permanent, then retire the horse.
 --- @param dialog table RLRM's DiseaseDialog
 function EqInjury.onClickRetire(dialog)
     local record = recordOf(dialog.animal)
-    if record == nil then return end
+    if record == nil or record.retired then return end
     local name = dialog.animal.getName ~= nil and dialog.animal:getName() or record.id
-    local text
-    if record.retired then
-        text = string.format(g_i18n:getText("eq_ui_unretireConfirm"), name)
-    else
-        text = string.format(g_i18n:getText(record.injury ~= nil and "eq_ui_retireConfirmInjured" or "eq_ui_retireConfirm"),
-            name, math.floor((1 - EqInjury.RETIRED_FEE_SHARE) * 100 + 0.5))
-    end
+    local text = string.format(g_i18n:getText(record.injury ~= nil and "eq_ui_retireConfirmInjured" or "eq_ui_retireConfirm"),
+        name, math.floor((1 - EqInjury.RETIRED_FEE_SHARE) * 100 + 0.5))
     YesNoDialog.show(EqInjury.onRetireConfirmed, dialog, text, g_i18n:getText("eq_ui_retire"), nil, nil,
         DialogElement.TYPE_QUESTION)
 end
@@ -596,8 +590,8 @@ end
 function EqInjury.onRetireConfirmed(dialog, yes)
     if not yes then return end
     local record = recordOf(dialog.animal)
-    if record == nil then return end
-    local _, message = EqCompetitionManager.setRetired(record, not record.retired)
+    if record == nil or record.retired then return end
+    local _, message = EqCompetitionManager.setRetired(record, true)
     if message ~= nil then g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, message) end
     -- The fees on the rows follow the retirement.
     if dialog.rebuildRows ~= nil then dialog:rebuildRows() end

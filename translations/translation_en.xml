@@ -269,10 +269,8 @@
         <text name="eq_ui_months" text="%d month(s)"/>
         <text name="eq_ui_perMonth" text="%s a month"/>
         <text name="eq_ui_retire" text="Retire"/>
-        <text name="eq_ui_unretire" text="Back to competition"/>
-        <text name="eq_ui_retireConfirm" text="Retire %s from competition? It won't be able to enter events. You can bring it back later."/>
-        <text name="eq_ui_retireConfirmInjured" text="Retire %s from competition? Its injury treatment will cost %d%% less, but it won't be able to enter events. You can bring it back later, at the full fee."/>
-        <text name="eq_ui_unretireConfirm" text="Bring %s back into competition? Any injury treatment goes back to the full fee."/>
+        <text name="eq_ui_retireConfirm" text="Retire %s from competition? It won't be able to enter events again. This is permanent and can't be undone."/>
+        <text name="eq_ui_retireConfirmInjured" text="Retire %s from competition? Its injury treatment will cost %d%% less, but it won't be able to enter events again. This is permanent and can't be undone."/>
         <text name="eq_ui_dayTreatmentConfirm" text="Treat %s for %s? It takes %s and costs %s."/>
         <text name="eq_risk_low" text="Low"/>
         <text name="eq_risk_minor" text="Minor"/>
