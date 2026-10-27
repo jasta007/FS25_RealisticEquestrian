@@ -59,7 +59,7 @@ uses its genetics, health and fitness.
     Near dressage markers, ride between them ("Trot: Marker B") for more. The shop has dressage
     arenas (15x30, 20x40, 20x60 m) with every letter in place; Riding Hall 2k26 markers work too.
 - **Show jumping courses (new):** press **Ctrl+J** while riding and ride through your show jumps in
-  order (they have no collision while you edit), Ctrl+J again to save. **Ctrl+K** rewinds to the
+  order (placed Realistic Equestrian obstacles have no collision while you edit), Ctrl+J again to save. **Ctrl+K** rewinds to the
   nearest point, **Ctrl+L** finishes editing, Ctrl+J near a course edits it and **Ctrl+Backspace**
   deletes it. A timed round over it comes next.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
