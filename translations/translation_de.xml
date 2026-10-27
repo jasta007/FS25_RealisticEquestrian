@@ -308,7 +308,8 @@
         <text name="eq_course_noJumps" text="Parcours wird aufgezeichnet, aber auf der Karte stehen noch keine Springhindernisse"/>
         <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten"/>
         <text name="eq_course_saved" text="%s gespeichert: %d Hindernisse, %.0f m"/>
-        <text name="eq_course_cancelled" text="Bearbeitung beendet: vom Pferd abgestiegen, die letzten Änderungen wurden nicht gespeichert"/>
+        <text name="eq_course_cancelled" text="Bearbeitung beendet: Sie haben das Pferd verlassen, bevor der Parcours genug Hindernisse zum Speichern hatte"/>
+        <text name="eq_course_leftSaved" text="Parcours beim Absteigen gespeichert: in der Nähe Strg+J zum Bearbeiten, dann Strg+K, um ab dem nächsten Punkt weiter aufzuzeichnen"/>
         <text name="eq_course_recording" text="%s wird aufgezeichnet: %d Hindernisse, %.0f m"/>
         <text name="eq_course_collisionNote" text="Platzierte Hindernisse von Realistic Equestrian haben beim Aufzeichnen keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="eq_course_name" text="Parcours %d"/>
