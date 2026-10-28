@@ -94,8 +94,9 @@ def atlas(path):
 
 
 def cell_uv(name):
+    # V counts up from the bottom of the image in GIANTS, so row 0 (the top) is near v = 1.
     i = CELL_OF[name]
-    return ((i % CELLS + 0.5) / CELLS, (i // CELLS + 0.5) / CELLS)
+    return ((i % CELLS + 0.5) / CELLS, 1 - (i // CELLS + 0.5) / CELLS)
 
 
 def sponsor_board(path):
@@ -161,9 +162,10 @@ def build(size):
         lx0, lx1 = x0 + LOGO_INSET, x1 - LOGO_INSET
         ly0, ly1 = BOARD_BOTTOM + LOGO_INSET, BOARD_TOP - LOGO_INSET
         z = zf - 0.004
-        # facing -z: seen from the front, +x is on the right... so u runs from +x (left) to -x
+        # facing -z: seen from the front, +x is on the left, so u runs from +x to -x; v = 0 is
+        # the image's bottom row in GIANTS
         logo.quad([(lx1, ly0, z), (lx0, ly0, z), (lx0, ly1, z), (lx1, ly1, z)], (0, 0, -1),
-                  [(0, 1), (1, 1), (1, 0), (0, 0)])
+                  [(0, 0), (1, 0), (1, 1), (0, 1)])
         logos.append(logo)
     return frame, logos, col
 
@@ -274,7 +276,8 @@ def main():
         frame, logos, col = build(size)
         write_i3d(size, os.path.join(OUT, name + ".i3d"), frame, logos, col)
         write_xml(size, os.path.join(OUT, name + ".xml"))
-        store_image([(frame, atlas_rgb)] + [(logo, sponsor_rgb) for logo in logos],
+        # our preview renderer reads v from the top of the image, GIANTS from the bottom
+        store_image([(frame, atlas_rgb[::-1])] + [(logo, sponsor_rgb[::-1]) for logo in logos],
                     f"{size['rows']} rows, {size['length']} m", os.path.join(OUT, "store_" + name + ".dds"),
                     preview_dir, yaw=-150, pitch=18)
         print(name, len(frame.tris) + sum(len(m.tris) for m in logos), "triangles,", len(logos), "sponsor boards")
