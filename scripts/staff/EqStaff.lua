@@ -78,12 +78,14 @@ EqStaff.WAGE_LUCK = 0.15
 -- Each talent adds this share to the wage.
 EqStaff.TALENT_WAGE = 0.04
 
--- Candidates on offer at a time, and how many game hours each stays on offer. When one leaves
--- or is hired, a new one turns up each hour at ARRIVAL_CHANCE, so people come and go a few at a
--- time.
+-- Candidates on offer at a time. The list only changes every CANDIDATE_STEP game hours (00:00,
+-- 08:00, 16:00), so high time compression doesn't sweep it away: each candidate stays for
+-- CANDIDATE_STEPS of those, and a free place gets someone new at ARRIVAL_CHANCE per step, one
+-- at a time.
 EqStaff.CANDIDATES = 6
-EqStaff.CANDIDATE_HOURS = { 12, 72 }
-EqStaff.ARRIVAL_CHANCE = 0.25
+EqStaff.CANDIDATE_STEP = 8
+EqStaff.CANDIDATE_STEPS = { 3, 12 }
+EqStaff.ARRIVAL_CHANCE = 0.75
 
 -- TRAINING. Effort per day is the same unit as the player's riding (EqTraining.playerEffort):
 -- a trainer gives TRAINER_SHARE x skill/100 in its stats, every member GROOM_SHARE x skill/100 in
@@ -264,7 +266,6 @@ function EqStaff.roll(rng, id, hour, job)
         skills[skill] = math.floor(math.max(0, math.min(100, value)) + 0.5)
     end
 
-    local hours = EqStaff.CANDIDATE_HOURS
     local name, gender = EqStaffNames.roll(rng)
     return {
         id = id,
@@ -276,8 +277,17 @@ function EqStaff.roll(rng, id, hour, job)
         talents = talents,
         wage = EqStaff.wageFor(job, gradeIndex, skills, talents, rng:uniform(-1, 1)),
         worksOn = EqStaff.defaultWorks(),
-        leavesAt = hour + hours[1] + math.floor(rng:next() * (hours[2] - hours[1] + 1)),
+        leavesAt = EqStaff.leavesAt(hour, rng),
     }
+end
+
+
+--- @param hour number the game hour now
+--- @param rng table EqRandom
+--- @return number the game hour a new candidate leaves at, on a CANDIDATE_STEP boundary
+function EqStaff.leavesAt(hour, rng)
+    local step, steps = EqStaff.CANDIDATE_STEP, EqStaff.CANDIDATE_STEPS
+    return hour - hour % step + step * (steps[1] + math.floor(rng:next() * (steps[2] - steps[1] + 1)))
 end
 
 
@@ -358,7 +368,7 @@ end
 
 
 --- Drop candidates whose time is up, and let new ones arrive: the whole list at once when fill
---- is true (a new game), else at most one, at ARRIVAL_CHANCE.
+--- is true (a new game), else at most one, at ARRIVAL_CHANCE. Only on CANDIDATE_STEP hours.
 --- @param candidates table list of members, changed in place
 --- @param hour number the game hour now
 --- @param rng table EqRandom
@@ -369,11 +379,12 @@ function EqStaff.refreshCandidates(candidates, hour, rng, nextId, fill)
     for i = #candidates, 1, -1 do
         if candidates[i].leavesAt == nil then
             -- From a save before hours: a fresh window.
-            candidates[i].leavesAt = hour + EqStaff.CANDIDATE_HOURS[1]
-                + math.floor(rng:next() * (EqStaff.CANDIDATE_HOURS[2] - EqStaff.CANDIDATE_HOURS[1] + 1))
-        elseif candidates[i].leavesAt <= hour then
-            table.remove(candidates, i)
+            candidates[i].leavesAt = EqStaff.leavesAt(hour, rng)
         end
+    end
+    if not fill and hour % EqStaff.CANDIDATE_STEP ~= 0 then return nextId end
+    for i = #candidates, 1, -1 do
+        if candidates[i].leavesAt <= hour then table.remove(candidates, i) end
     end
     while #candidates < EqStaff.CANDIDATES and (fill or rng:next() < EqStaff.ARRIVAL_CHANCE) do
         table.insert(candidates, EqStaff.roll(rng, nextId, hour, EqStaff.nextJob(candidates, rng)))

@@ -299,7 +299,7 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 ### Hired staff
 
 Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
-**Hire** lists the candidates (Decline turns one down; the place refills at the usual hourly rate), **Your staff** your team (both grouped by job, best first), with
+**Hire** lists the candidates (Decline turns one down; the place refills like any other), **Your staff** your team (both grouped by job, best first), with
 Let go. Each person's ten skills show beside the table, and for your staff the controls below. The `eqStaff` console commands do the same. Host only
 for now in multiplayer.
 
@@ -319,8 +319,9 @@ for now in multiplayer.
   (at least 5), since they help per event or deal rather than per day of training.
 - **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
   for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
-  offer 12 to 72 game hours (Time remaining on the Hire tab). When a place is free, someone new
-  turns up with a 25% chance each hour, so people come and go a few at a time.
+  offer 24 to 96 game hours (Time remaining on the Hire tab). The list only changes at 00:00, 08:00
+  and 16:00, so high time compression doesn't sweep it away: then anyone whose time is up leaves,
+  and a free place gets someone new with a 75% chance, one at a time.
 - **Works on.** Like RLRM's Herdsman: **Stables** picks the stables (all by default), and **By
   role** ticks roles (with how many horses have each, retired horses left out) or **Individual**
   ticks horses. A new hire works on every horse. The horses they work on share their full work:
