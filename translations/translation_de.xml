@@ -574,6 +574,8 @@
         <text name="eq_staff_hours" text="%d Std."/>
         <text name="eq_staff_button_hire" text="Einstellen (%s pro Tag)"/>
         <text name="eq_staff_button_fire" text="Entlassen"/>
+        <text name="eq_staff_button_decline" text="Ablehnen"/>
+        <text name="eq_staff_declined" text="%s kommt nicht wieder. In den nächsten Stunden meldet sich vielleicht jemand Neues."/>
         <text name="eq_staff_fire_confirm" text="%s entlassen? Diese Person kommt nicht zurück."/>
         <text name="eq_staff_letGo" text="%s ist gegangen."/>
         <text name="eq_staff_hired" text="%s fängt heute an."/>

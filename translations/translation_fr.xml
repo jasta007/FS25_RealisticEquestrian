@@ -509,6 +509,8 @@
         <text name="eq_staff_hours" text="%d h"/>
         <text name="eq_staff_button_hire" text="Embaucher (%s par jour)"/>
         <text name="eq_staff_button_fire" text="Renvoyer"/>
+        <text name="eq_staff_button_decline" text="Refuser"/>
+        <text name="eq_staff_declined" text="%s ne reviendra pas. Quelqu&apos;un d&apos;autre pourrait se présenter dans les prochaines heures."/>
         <text name="eq_staff_fire_confirm" text="Renvoyer %s ? Cette personne ne reviendra pas."/>
         <text name="eq_staff_letGo" text="%s est parti(e)."/>
         <text name="eq_staff_hired" text="%s commence aujourd&apos;hui."/>

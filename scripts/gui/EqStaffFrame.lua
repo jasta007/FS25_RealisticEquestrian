@@ -46,6 +46,11 @@ function EqStaffFrame.new()
         text = g_i18n:getText("eq_staff_button_fire"),
         callback = function() self:onClickFire() end,
     }
+    self.declineButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_staff_button_decline"),
+        callback = function() self:onClickDecline() end,
+    }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
         text = g_i18n:getText("eq_staff_tab_staff"),
@@ -556,6 +561,7 @@ function EqStaffFrame:updateButtons()
         if self.mode == EqStaffFrame.MODE_HIRE then
             self.hireButtonInfo.text = string.format(g_i18n:getText("eq_staff_button_hire"), row.wage)
             table.insert(self.menuButtonInfo, self.hireButtonInfo)
+            table.insert(self.menuButtonInfo, self.declineButtonInfo)
         else
             table.insert(self.menuButtonInfo, self.fireButtonInfo)
         end
@@ -602,6 +608,17 @@ function EqStaffFrame:onClickHire()
         self.message = string.format(g_i18n:getText("eq_staff_unique"), row.job)
     else
         self.message = nil
+    end
+    self:refresh()
+end
+
+
+function EqStaffFrame:onClickDecline()
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    if row == nil then return end
+    if EqStaffManager.decline(row.member.id) then
+        self.message = string.format(g_i18n:getText("eq_staff_declined"), row.member.name)
+        self.selectedId = nil
     end
     self:refresh()
 end

@@ -572,6 +572,8 @@
         <text name="eq_staff_hours" text="%d h"/>
         <text name="eq_staff_button_hire" text="Hire (%s a day)"/>
         <text name="eq_staff_button_fire" text="Let go"/>
+        <text name="eq_staff_button_decline" text="Decline"/>
+        <text name="eq_staff_declined" text="%s won&apos;t be back. Someone new may turn up within the next few hours."/>
         <text name="eq_staff_fire_confirm" text="Let %s go? They won&apos;t be back."/>
         <text name="eq_staff_letGo" text="%s has left."/>
         <text name="eq_staff_hired" text="%s starts work today."/>

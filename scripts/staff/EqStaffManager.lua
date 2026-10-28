@@ -93,6 +93,18 @@ function EqStaffManager.hire(id, farmId)
 end
 
 
+--- Turn a candidate down. Their place fills like any other, at ARRIVAL_CHANCE an hour.
+--- @param id number candidate id
+--- @return boolean ok
+function EqStaffManager.decline(id)
+    local candidate, index = find(EqStaffManager.candidates, id)
+    if candidate == nil then return false end
+    table.remove(EqStaffManager.candidates, index)
+    Log:info("EqStaff: declined %s (%s)", candidate.name, candidate.job)
+    return true
+end
+
+
 --- Let a member go.
 --- @param id number member id
 --- @param farmId number
