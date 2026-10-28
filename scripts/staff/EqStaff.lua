@@ -80,12 +80,12 @@ EqStaff.TALENT_WAGE = 0.04
 
 -- Candidates on offer at a time. The list only changes every CANDIDATE_STEP game hours (00:00,
 -- 08:00, 16:00), so high time compression doesn't sweep it away: each candidate stays for
--- CANDIDATE_STEPS of those, and a free place gets someone new at ARRIVAL_CHANCE per step, one
--- at a time.
+-- CANDIDATE_STEPS of those (a day or two), and each free place gets someone new at
+-- ARRIVAL_CHANCE per step, so the list usually holds four or five.
 EqStaff.CANDIDATES = 6
 EqStaff.CANDIDATE_STEP = 8
-EqStaff.CANDIDATE_STEPS = { 3, 12 }
-EqStaff.ARRIVAL_CHANCE = 0.75
+EqStaff.CANDIDATE_STEPS = { 3, 6 }
+EqStaff.ARRIVAL_CHANCE = 0.6
 
 -- TRAINING. Effort per day is the same unit as the player's riding (EqTraining.playerEffort):
 -- a trainer gives TRAINER_SHARE x skill/100 in its stats, every member GROOM_SHARE x skill/100 in
@@ -368,7 +368,7 @@ end
 
 
 --- Drop candidates whose time is up, and let new ones arrive: the whole list at once when fill
---- is true (a new game), else at most one, at ARRIVAL_CHANCE. Only on CANDIDATE_STEP hours.
+--- is true (a new game), else each free place at ARRIVAL_CHANCE. Only on CANDIDATE_STEP hours.
 --- @param candidates table list of members, changed in place
 --- @param hour number the game hour now
 --- @param rng table EqRandom
@@ -386,10 +386,11 @@ function EqStaff.refreshCandidates(candidates, hour, rng, nextId, fill)
     for i = #candidates, 1, -1 do
         if candidates[i].leavesAt <= hour then table.remove(candidates, i) end
     end
-    while #candidates < EqStaff.CANDIDATES and (fill or rng:next() < EqStaff.ARRIVAL_CHANCE) do
-        table.insert(candidates, EqStaff.roll(rng, nextId, hour, EqStaff.nextJob(candidates, rng)))
-        nextId = nextId + 1
-        if not fill then break end
+    for _ = #candidates + 1, EqStaff.CANDIDATES do
+        if fill or rng:next() < EqStaff.ARRIVAL_CHANCE then
+            table.insert(candidates, EqStaff.roll(rng, nextId, hour, EqStaff.nextJob(candidates, rng)))
+            nextId = nextId + 1
+        end
     end
     return nextId
 end

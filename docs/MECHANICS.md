@@ -319,9 +319,9 @@ for now in multiplayer.
   (at least 5), since they help per event or deal rather than per day of training.
 - **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
   for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
-  offer 24 to 96 game hours (Time remaining on the Hire tab). The list only changes at 00:00, 08:00
+  offer 24 to 48 game hours (Time remaining on the Hire tab). The list only changes at 00:00, 08:00
   and 16:00, so high time compression doesn't sweep it away: then anyone whose time is up leaves,
-  and a free place gets someone new with a 75% chance, one at a time.
+  and each free place gets someone new with a 60% chance, so four or five are usually on offer.
 - **Works on.** Like RLRM's Herdsman: **Stables** picks the stables (all by default), and **By
   role** ticks roles (with how many horses have each, retired horses left out) or **Individual**
   ticks horses. A new hire works on every horse. The horses they work on share their full work:

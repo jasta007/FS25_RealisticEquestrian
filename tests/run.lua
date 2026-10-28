@@ -1034,8 +1034,8 @@ do
     check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
     check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)
     local firstLeaves = candidates[1].leavesAt
-    check("candidates stay 24-96 hours, leaving on an 8-hour step", firstLeaves % 8 == 0
-        and firstLeaves >= 24 and firstLeaves <= 1 + 96)
+    check("candidates stay a day or two, leaving on an 8-hour step", firstLeaves % 8 == 0
+        and firstLeaves >= 24 and firstLeaves <= 1 + 48)
     check("hours left", EqStaff.hoursLeft(candidates[1], firstLeaves - 5) == 5)
     local staggered = {}
     for _, c in ipairs(candidates) do table.insert(staggered, c) end
@@ -1050,7 +1050,8 @@ do
         arrivals = arrivals + new
         if #staggered > EqStaff.CANDIDATES then maxSeen = 99 end
     end
-    check("new candidates arrive one at a time", maxSeen == 1 and arrivals > 5, string.format("%d, %d", maxSeen, arrivals))
+    check("new candidates arrive a few at a time", maxSeen >= 1 and maxSeen <= EqStaff.CANDIDATES and arrivals > 10,
+        string.format("%d, %d", maxSeen, arrivals))
     local before = #staggered
     local snapshot = {}
     for _, c in ipairs(staggered) do snapshot[c.id] = true end
