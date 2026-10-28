@@ -21,6 +21,8 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont
 
+from eqdds import save_bc7, save_dxt1
+
 OUT = "placeables/dressageArena"
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
@@ -77,15 +79,7 @@ def letter_texture(path):
         # a thin grey frame so the letter face reads as a board
         x0 = (i + 1) * CELL
         draw.rectangle([x0 + 1, 1, x0 + CELL - 2, CELL - 2], outline=(150, 150, 150), width=1)
-    img.save(path, pixel_format="DXT1")
-    mark_dds(path)
-
-
-def mark_dds(path, text=b"Realistic Equestrian by Jasta007"):
-    """Name the author in the DDS header's reserved bytes, like the mod icon."""
-    with open(path, "r+b") as f:
-        f.seek(32)
-        f.write(text[:44].ljust(44, b"\0"))
+    save_dxt1(img, path)
 
 
 def cell_uv(letter):
@@ -226,6 +220,7 @@ def write_xml(arena, path):
         </functions>
         <image>placeables/dressageArena/store_{name}.dds</image>
         <price>{arena["price"]}</price>
+        <dailyUpkeep>0</dailyUpkeep>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
         <brand>NONE</brand>
@@ -236,11 +231,6 @@ def write_xml(arena, path):
             <category>animals</category>
             <tab>horses</tab>
         </brush>
-        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
-        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
-        <textureMemoryUsage>0</textureMemoryUsage>
-        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
-        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
     </storeData>
 
     <base>
@@ -291,8 +281,7 @@ def store_image(arena, path):
             draw.text((px, py), letter, font=small, fill=(60, 45, 30), anchor="mm")
     label = ImageFont.truetype(FONT, 30)
     draw.text((size - 16, size - 14), f"{w} x {l} m", font=label, fill=(250, 250, 250), anchor="rd")
-    img.save(path, pixel_format="DXT1")
-    mark_dds(path)
+    save_bc7(img, path)
 
 
 def main():

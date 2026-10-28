@@ -115,7 +115,7 @@ end
 --- @return number|nil x, number|nil z
 local function nodePosition(node)
     if type(node) ~= "number" or node == 0 then return nil end
-    local ok, x, _, z = pcall(getWorldTranslation, node)
+    local ok, x, _, z = EqLog.try("EqWelcome.nodePosition getWorldTranslation", getWorldTranslation, node)
     if ok then return x, z end
     return nil
 end
@@ -128,7 +128,7 @@ local function playerPosition()
     local vehicle = g_localPlayer.getCurrentVehicle ~= nil and g_localPlayer:getCurrentVehicle() or nil
     if type(vehicle) == "table" then return nodePosition(vehicle.rootNode) end
     if g_localPlayer.getPosition == nil then return nil end
-    local ok, x, _, z = pcall(g_localPlayer.getPosition, g_localPlayer)
+    local ok, x, _, z = EqLog.try("EqWelcome.playerPosition getPosition", g_localPlayer.getPosition, g_localPlayer)
     if ok then return x, z end
     return nil
 end

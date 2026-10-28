@@ -32,6 +32,8 @@ import random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from eqdds import save_bc7, save_dxt1
+
 OUT = "placeables/xcJumps"
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
@@ -102,13 +104,6 @@ COLLISION_MASK = "0xfffffbff"
 # ---------------------------------------------------------------------------------------------
 # Textures
 
-def mark_dds(path, text=b"Realistic Equestrian by Jasta007"):
-    """Name the author in the DDS header's reserved bytes, like the mod icon."""
-    with open(path, "r+b") as f:
-        f.seek(32)
-        f.write(text[:44].ljust(44, b"\0"))
-
-
 def periodic_noise(size, rng, scale_u, scale_v):
     """Smooth noise that tiles: white noise filtered in frequency space. scale_* = feature size in
     pixels across u (columns) and v (rows); a long v scale makes streaks running along v."""
@@ -121,8 +116,7 @@ def periodic_noise(size, rng, scale_u, scale_v):
 
 
 def save_dds(rgb, path):
-    Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8), "RGB").save(path, pixel_format="DXT1")
-    mark_dds(path)
+    save_dxt1(rgb, path)
 
 
 def normal_map(height, path, strength):
@@ -213,8 +207,7 @@ def log_end_texture(path, size=256):
     rim = np.clip((r - 0.86) / 0.04, 0, 1)[..., None]
     rgb = rgb * (1 - rim) + rim * np.array([74, 58, 44])
     rgb = np.clip(rgb, 0, 255).astype(np.uint8)
-    Image.fromarray(rgb, "RGB").save(path, pixel_format="DXT1")
-    mark_dds(path)
+    save_dxt1(rgb, path)
     return rgb
 
 
@@ -268,8 +261,7 @@ def flag_texture(path, cell=32):
     draw = ImageDraw.Draw(img)
     for i, colour in enumerate(FLAG_CELLS):
         draw.rectangle([i * cell, 0, (i + 1) * cell - 1, cell - 1], fill=colour)
-    img.save(path, pixel_format="DXT1")
-    mark_dds(path)
+    save_dxt1(img, path)
     return np.asarray(img)
 
 
@@ -997,12 +989,6 @@ def write_flag_fence_xml(path, posts, bars):
             <category>animals</category>
             <tab>horses</tab>
         </brush>
-        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
-        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
-        <textureMemoryUsage>0</textureMemoryUsage>
-        <audioMemoryUsage>0</audioMemoryUsage>
-        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
-        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
     </storeData>
 
     <base>
@@ -1037,6 +1023,7 @@ def write_xml(name, price, note, path):
         </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
+        <dailyUpkeep>0</dailyUpkeep>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
         <brand>NONE</brand>
@@ -1047,11 +1034,6 @@ def write_xml(name, price, note, path):
             <category>animals</category>
             <tab>horses</tab>
         </brush>
-        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
-        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
-        <textureMemoryUsage>0</textureMemoryUsage>
-        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
-        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
     </storeData>
 
     <base>
@@ -1145,8 +1127,7 @@ def store_image(meshes, label, path, preview_dir, **view):
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(FONT, 28)
     draw.text((img.width - 16, img.height - 14), label, font=font, fill=(250, 250, 250), anchor="rd")
-    img.save(path, pixel_format="DXT1")
-    mark_dds(path)
+    save_bc7(img, path)
     # a PNG copy to look at, kept out of the mod
     os.makedirs(preview_dir, exist_ok=True)
     img.save(os.path.join(preview_dir, os.path.basename(path).replace(".dds", ".png")))

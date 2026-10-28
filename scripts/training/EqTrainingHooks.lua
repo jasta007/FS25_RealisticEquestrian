@@ -197,7 +197,7 @@ function EqTrainingHooks:jumpRaycastCallback(hitObjectId, x, y, z, distance)
     if object ~= nil and object == probe.vehicle then return true end
     probe.height = y
     probe.name = getName ~= nil and getName(hitObjectId) or tostring(hitObjectId)
-    local ok, showJump = pcall(EqTrainingHooks.isShowJump, hitObjectId)
+    local ok, showJump = EqLog.try("EqTrainingHooks.jumpRaycastCallback isShowJump", EqTrainingHooks.isShowJump, hitObjectId)
     probe.showJump = ok and showJump or false
     return false
 end
@@ -601,7 +601,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
     if routineShown() then
         -- Near dressage markers the routine rides between them (EqDressage).
-        local okCourse, course = pcall(EqDressageHooks.courseFor, vehicle, spec)
+        local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
         local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
@@ -843,7 +843,7 @@ function EqTrainingHooks.onJump(vehicle)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
-    pcall(logRideableFields, spec)
+    EqLog.try("EqTrainingHooks.onJump logRideableFields", logRideableFields, spec)
 end
 
 

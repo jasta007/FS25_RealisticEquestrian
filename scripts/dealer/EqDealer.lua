@@ -185,7 +185,7 @@ end
 function EqDealer.condition(animal, record)
     local health = 1
     if animal ~= nil and animal.getHealthFactor ~= nil then
-        local ok, value = pcall(animal.getHealthFactor, animal)
+        local ok, value = EqLog.try("EqDealer.condition getHealthFactor", animal.getHealthFactor, animal)
         if ok and type(value) == "number" then health = EqStats.clamp(value, 0, 1) end
     end
     local soundness = health

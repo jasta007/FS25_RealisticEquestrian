@@ -454,7 +454,7 @@ function EqInjury.rollIllness(animal, travel, rng)
             * EqInjury.EVENT_ILLNESS_MONTHS * (travel or 1), 1)
         if enabled and eligible and roll < chance then
             EqInjury.catching = true
-            local ok, err = pcall(m.contractDisease, m, animal, model)
+            local ok, err = EqLog.try("EqInjury.rollIllness contractDisease", m.contractDisease, m, animal, model)
             EqInjury.catching = false
             if not ok then error(err, 0) end
             table.insert(caught, model.name or title)
@@ -512,10 +512,7 @@ local function withHorseTerms(model, animal, billing, fn, ...)
     terms.cost = EqInjury.fee(full.cost, retired)
     if billing and info.treatDays ~= nil then terms.cost = terms.cost / info.treatDays * daysPerPeriod() end
     model.treatment = terms
-    local results = { pcall(fn, ...) }
-    model.treatment = full
-    if not results[1] then error(results[2], 0) end
-    return unpack(results, 2, table.maxn(results))
+    return EqLog.finally(function() model.treatment = full end, fn, ...)
 end
 
 
@@ -632,10 +629,7 @@ function EqInjury.install(guarded)
         if name == nil or model == nil or model.durationMonths == nil then return original(disease, ...) end
         local authored = model.durationMonths
         model.durationMonths = EqInjury.restMonths(name)
-        local results = { pcall(original, disease, ...) }
-        model.durationMonths = authored
-        if not results[1] then error(results[2], 0) end
-        return unpack(results, 2, table.maxn(results))
+        return EqLog.finally(function() model.durationMonths = authored end, original, disease, ...)
     end
     local INSTRUCTION = e.RLDiseaseProgression ~= nil and e.RLDiseaseProgression.INSTRUCTION or nil
     local NO_TREATMENT = e.RLDiseaseRecord ~= nil and e.RLDiseaseRecord.TREATMENT_RESULT.NONE or nil
