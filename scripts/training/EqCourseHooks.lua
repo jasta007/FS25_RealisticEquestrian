@@ -239,13 +239,18 @@ end
 
 
 --- Cross country fences: the flagged ones and the "xcFence" facility placeables such as log
---- piles and drop walls.
+--- piles. Drop walls are ridden over freely unless flagged: boxes set side by side for a long
+--- deck each made a fence of their own (James, 2026-10-28).
 --- @return table { node|nil, x, z, ry, ax, az, bx, bz }
 local function listXcFences()
     local list = {}
     addFlagFences(list)
     for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
-        if entry.kind == "xcFence" and entry.placeable.rootNode ~= nil then addJump(list, entry.placeable.rootNode, entry.placeable) end
+        local placeable = entry.placeable
+        if entry.kind == "xcFence" and placeable.rootNode ~= nil
+            and not string.find(tostring(placeable.configFileName):lower(), "xcdropwall", 1, true) then
+            addJump(list, placeable.rootNode, placeable)
+        end
     end
     return list
 end
