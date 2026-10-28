@@ -647,6 +647,9 @@
         <text name="eq_shop_xcDropWall16" text="Mur de descente (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un mur en planches pour une descente de cross. Sculptez un talus, posez le mur sur le dessus avec le rebord au bord ; ses murs latéraux cachent la pente raide."/>
         <text name="eq_shop_xcJump_function" text="Un obstacle de cross. Ses drapeaux rouge et blanc indiquent où sauter."/>
+        <text name="eq_shop_xcHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours de cross, sauf si acheté Toujours visible."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours."/>
+        <text name="eq_config_alwaysVisible" text="Toujours visible"/>
         <text name="input_EQ_COURSE_RECORD" text="Enregistrer ou modifier un parcours d'obstacles"/>
         <text name="eq_course_recordAction" text="Nouveau parcours de saut d&apos;obstacles"/>
         <text name="eq_course_started" text="Enregistrement de %s : passez dans les obstacles dans l&apos;ordre. Les obstacles posés de Realistic Equestrian n&apos;ont pas de collision pendant l&apos;édition ; les autres restent solides"/>

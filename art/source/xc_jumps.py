@@ -973,6 +973,7 @@ def write_flag_fence_xml(path, posts, bars):
         <name>$l10n_eq_shop_{FLAG_FENCE}</name>
         <functions>
             <function>$l10n_eq_shop_{FLAG_FENCE}_function</function>
+            <function>$l10n_eq_shop_xcFlagsHidden_function</function>
         </functions>
         <image>placeables/xcJumps/store_{FLAG_FENCE}.dds</image>
         <price>{FLAG_FENCE_PRICE}</price>
@@ -1020,6 +1021,7 @@ def write_xml(name, price, note, path):
         <name>$l10n_eq_shop_{name}</name>
         <functions>
             <function>$l10n_eq_shop_{"xcDrop" if "Drop" in name else "xcJump"}_function</function>
+            <function>$l10n_eq_shop_xcHidden_function</function>
         </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
@@ -1044,6 +1046,14 @@ def write_xml(name, price, note, path):
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- {note} -->
     </placement>
+
+    <!-- Always visible: No hides the piece outside construction, course editing and rounds (EqXcHide). -->
+    <eqAlwaysVisible>
+        <eqAlwaysVisibleConfigurations>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqAlwaysVisibleConfigurations>
+    </eqAlwaysVisible>
 </placeable>
 """
     with open(path, "w", encoding="utf-8", newline="\n") as f:

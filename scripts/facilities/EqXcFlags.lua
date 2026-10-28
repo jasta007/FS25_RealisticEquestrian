@@ -8,8 +8,9 @@
     the line between them is the fence, and the bar nearest its middle gives its height.
 
     The bars (nodes "eqXcGuide") show only in construction mode or while a course is edited
-    (EqXcFlags.editing); the flags always show. The game keeps every segment of one fence type in
-    one placeable, so the flags and bars are found by node name under it.
+    (EqXcFlags.editing); the flags hide outside construction, editing and rounds (EqXcHide). The
+    game keeps every segment of one fence type in one placeable, so the flags and bars are found by
+    node name under it.
 
     Part of Realistic Equestrian by Jasta007.
 ]]

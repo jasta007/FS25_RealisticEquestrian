@@ -5,6 +5,7 @@
         <name>$l10n_eq_shop_xcDropWall12</name>
         <functions>
             <function>$l10n_eq_shop_xcDrop_function</function>
+            <function>$l10n_eq_shop_xcHidden_function</function>
         </functions>
         <image>placeables/xcJumps/store_xcDropWall12.dds</image>
         <price>1800</price>
@@ -29,4 +30,12 @@
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- A 1.2 m drop: set the origin on the flat top of a bank, the lip 1 m in front of it. -->
     </placement>
+
+    <!-- Always visible: No hides the piece outside construction, course editing and rounds (EqXcHide). -->
+    <eqAlwaysVisible>
+        <eqAlwaysVisibleConfigurations>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqAlwaysVisibleConfigurations>
+    </eqAlwaysVisible>
 </placeable>

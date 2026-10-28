@@ -38,6 +38,7 @@ EqDressageHooks.tagFailed = false
 
 function EqDressageHooks.reset()
     EqDressageHooks.clearTag()
+    EqDressageHooks.spareHotspot = nil
     EqDressageHooks.markers, EqDressageHooks.scannedAt, EqDressageHooks.logged = {}, nil, {}
     EqDressageHooks.placeables, EqDressageHooks.collisionOff, EqDressageHooks.ridingSeen = {}, false, nil
 end
@@ -206,9 +207,14 @@ function EqDressageHooks.setTag(marker, name)
         local current = g_currentMission.currentMapTargetHotspot
         if current ~= nil and (tag == nil or current ~= tag.hotspot) then return end
         if tag == nil then
-            local hotspot = PlaceableHotspot.new()
-            if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
-                hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
+            -- One hotspot is made and reused (see clearTag).
+            local hotspot = EqDressageHooks.spareHotspot
+            EqDressageHooks.spareHotspot = nil
+            if hotspot == nil then
+                hotspot = PlaceableHotspot.new()
+                if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
+                    hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
+                end
             end
             g_currentMission:addMapHotspot(hotspot)
             tag = { hotspot = hotspot }
@@ -227,7 +233,9 @@ function EqDressageHooks.setTag(marker, name)
 end
 
 
---- Take our tag down (leaving any of the player's own).
+--- Take our tag down (leaving any of the player's own). The hotspot is kept, not deleted, for the
+--- next tag: the map went on drawing a deleted one for a moment and logged "PlaceableHotspot.lua:225:
+--- attempt to index nil with 'width'" every frame (James's log, 2026-10-27).
 function EqDressageHooks.clearTag()
     local tag = EqDressageHooks.tag
     if tag == nil then return end
@@ -235,8 +243,8 @@ function EqDressageHooks.clearTag()
     EqLog.try("EqDressageHooks.clearTag", function()
         if g_currentMission.currentMapTargetHotspot == tag.hotspot then g_currentMission:setMapTargetHotspot(nil) end
         g_currentMission:removeMapHotspot(tag.hotspot)
-        tag.hotspot:delete()
     end)
+    EqDressageHooks.spareHotspot = tag.hotspot
 end
 
 

@@ -51,6 +51,9 @@
         <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
         <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
+        <text name="eq_shop_xcHidden_function" text="Außerhalb des Baumodus, der Parcoursbearbeitung und von Geländeritten ausgeblendet, außer mit Immer sichtbar gekauft."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Außerhalb des Baumodus, der Parcoursbearbeitung und von Ritten ausgeblendet."/>
+        <text name="eq_config_alwaysVisible" text="Immer sichtbar"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>
