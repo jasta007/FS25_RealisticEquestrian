@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="Celkem trestné body: %s"/>
         <text name="eq_staff_button_decline" text="Odmítnout"/>
         <text name="eq_staff_declined" text="%s se už nevrátí. Během několika hodin se může objevit někdo nový."/>
+        <text name="eq_ui_tab_host" text="Pořádat"/>
+        <text name="eq_host_eventName" text="%s – %s"/>
+        <text name="eq_host_type_dressage" text="Drezura"/>
+        <text name="eq_host_type_showJumping" text="Parkur"/>
+        <text name="eq_host_type_crossCountry" text="Terénní jízda"/>
+        <text name="eq_host_type_eventing" text="Všestrannost"/>
+        <text name="eq_host_rating_novice" text="Začátečníci"/>
+        <text name="eq_host_rating_intermediate" text="Střední"/>
+        <text name="eq_host_rating_championship" text="Mistrovství"/>
+        <text name="eq_host_col_event" text="Závod, který můžeš pořádat"/>
+        <text name="eq_host_col_ready" text="Připraveno"/>
+        <text name="eq_host_col_popularity" text="Oblíbenost"/>
+        <text name="eq_host_col_setup" text="Poplatek za přípravu"/>
+        <text name="eq_host_col_takings" text="Tržby"/>
+        <text name="eq_host_col_check" text="Požadavek"/>
+        <text name="eq_host_col_have" text="Máš"/>
+        <text name="eq_host_col_need" text="Potřeba"/>
+        <text name="eq_host_check_arena" text="Drezurní obdélník"/>
+        <text name="eq_host_check_dressageSeating" text="Tribuny u obdélníku"/>
+        <text name="eq_host_check_showJumps" text="Parkurové skoky"/>
+        <text name="eq_host_check_showJumpingSeating" text="Tribuny u trati"/>
+        <text name="eq_host_check_xcLength" text="Délka terénu"/>
+        <text name="eq_host_check_xcJumps" text="Terénní skoky"/>
+        <text name="eq_host_check_stables" text="Volná místa ve stáji"/>
+        <text name="eq_host_check_feed" text="Krmivo pro koně"/>
+        <text name="eq_host_part_base" text="Základ"/>
+        <text name="eq_host_part_course" text="trať"/>
+        <text name="eq_host_part_seating" text="tribuny"/>
+        <text name="eq_host_part_facilities" text="zázemí"/>
+        <text name="eq_host_part_reputation" text="pověst"/>
+        <text name="eq_host_part_star" text="hvězdný kůň"/>
+        <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_label_yours" text="Tvůj závod"/>
+        <text name="eq_host_label_month" text="Rezervovat na"/>
+        <text name="eq_host_label_next" text="Nejbližší volný měsíc"/>
+        <text name="eq_host_label_setup" text="Poplatek za přípravu"/>
+        <text name="eq_host_label_popularity" text="Oblíbenost"/>
+        <text name="eq_host_label_visitors" text="Účast"/>
+        <text name="eq_host_label_takings" text="Tržby"/>
+        <text name="eq_host_label_reputation" text="Pověst"/>
+        <text name="eq_host_yours_open" text="%s, probíhá tento měsíc"/>
+        <text name="eq_host_yours_booked" text="%s – %s"/>
+        <text name="eq_host_yours_none" text="Nic rezervováno"/>
+        <text name="eq_host_ready" text="Připraveno"/>
+        <text name="eq_host_missing" text="Chybí %d"/>
+        <text name="eq_host_none" text="Žádný"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d z %d hostujících koní"/>
+        <text name="eq_host_takingsLine" text="%s startovné, %s vstupné"/>
+        <text name="eq_host_monthsAhead" text="za %d měs."/>
+        <text name="eq_host_yourFarm" text="Tvoje farma"/>
+        <text name="eq_host_opened" text="Tvůj závod %s začal. Přihlas koně na záložce Závody; výsledky budou na konci měsíce."/>
+        <text name="eq_host_book_noConfig" text="Pořádání není dostupné: pravidla se nenačetla."/>
+        <text name="eq_host_book_already" text="Už máš závod rezervovaný."/>
+        <text name="eq_host_book_month" text="Tento měsíc nelze rezervovat."/>
+        <text name="eq_host_book_requirements" text="Tvoje farma zatím nesplňuje požadavky tohoto závodu."/>
+        <text name="eq_host_book_money" text="Na poplatek za přípravu potřebuješ %s."/>
+        <text name="eq_host_book_done" text="%s rezervován na %s. Poplatek za přípravu zaplacen: %s."/>
+        <text name="eq_host_cancel_none" text="Nemáš rezervovaný žádný závod."/>
+        <text name="eq_host_cancel_done" text="%s zrušen. Vráceno: %s."/>
+        <text name="eq_host_cancel_confirm" text="Zrušit tvůj %s? Dostaneš zpět %s z poplatku za přípravu."/>
+        <text name="eq_host_enter_notYours" text="Přihlásit se může jen farma, která tento závod pořádá."/>
+        <text name="eq_host_enter_done" text="%s přihlášen do %s (hodnocení %.0f). Startuje doma: bez startovného a dopravy."/>
+        <text name="eq_host_button_book" text="Rezervovat na %s"/>
+        <text name="eq_host_button_cancel" text="Zrušit rezervaci"/>
+        <text name="eq_host_button_enter" text="Přihlásit"/>
+        <text name="eq_host_button_month" text="Změnit měsíc"/>
+        <text name="eq_host_summary" text="%s. Oblíbenost: %s."/>
+        <text name="eq_money_hosting" text="Pořádané závody"/>
+        <text name="rl_messageTitle_eqHosting" text="Pořádání"/>
+        <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
     </texts>
 </l10n>

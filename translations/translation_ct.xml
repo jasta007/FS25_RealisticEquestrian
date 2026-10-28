@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="總計：罰%s分"/>
         <text name="eq_staff_button_decline" text="拒絕"/>
         <text name="eq_staff_declined" text="%s不會再來了。接下來幾小時內可能會有新人出現。"/>
+        <text name="eq_ui_tab_host" text="主辦"/>
+        <text name="eq_host_eventName" text="%s（%s）"/>
+        <text name="eq_host_type_dressage" text="盛裝舞步"/>
+        <text name="eq_host_type_showJumping" text="場地障礙"/>
+        <text name="eq_host_type_crossCountry" text="越野"/>
+        <text name="eq_host_type_eventing" text="三項賽"/>
+        <text name="eq_host_rating_novice" text="新手級"/>
+        <text name="eq_host_rating_intermediate" text="中級"/>
+        <text name="eq_host_rating_championship" text="錦標賽"/>
+        <text name="eq_host_col_event" text="可主辦的比賽"/>
+        <text name="eq_host_col_ready" text="準備"/>
+        <text name="eq_host_col_popularity" text="人氣"/>
+        <text name="eq_host_col_setup" text="籌辦費"/>
+        <text name="eq_host_col_takings" text="收入"/>
+        <text name="eq_host_col_check" text="要求"/>
+        <text name="eq_host_col_have" text="現有"/>
+        <text name="eq_host_col_need" text="需要"/>
+        <text name="eq_host_check_arena" text="盛裝舞步場地"/>
+        <text name="eq_host_check_dressageSeating" text="場地看臺"/>
+        <text name="eq_host_check_showJumps" text="障礙"/>
+        <text name="eq_host_check_showJumpingSeating" text="賽道看臺"/>
+        <text name="eq_host_check_xcLength" text="越野長度"/>
+        <text name="eq_host_check_xcJumps" text="越野障礙"/>
+        <text name="eq_host_check_stables" text="空閒馬位"/>
+        <text name="eq_host_check_feed" text="馬飼料"/>
+        <text name="eq_host_part_base" text="基礎"/>
+        <text name="eq_host_part_course" text="賽道"/>
+        <text name="eq_host_part_seating" text="看臺"/>
+        <text name="eq_host_part_facilities" text="設施"/>
+        <text name="eq_host_part_reputation" text="聲譽"/>
+        <text name="eq_host_part_star" text="明星馬"/>
+        <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_label_yours" text="你的比賽"/>
+        <text name="eq_host_label_month" text="預訂月份"/>
+        <text name="eq_host_label_next" text="下一個可用月份"/>
+        <text name="eq_host_label_setup" text="籌辦費"/>
+        <text name="eq_host_label_popularity" text="人氣"/>
+        <text name="eq_host_label_visitors" text="參賽"/>
+        <text name="eq_host_label_takings" text="收入"/>
+        <text name="eq_host_label_reputation" text="聲譽"/>
+        <text name="eq_host_yours_open" text="%s（本月進行中）"/>
+        <text name="eq_host_yours_booked" text="%s（%s）"/>
+        <text name="eq_host_yours_none" text="未預訂"/>
+        <text name="eq_host_ready" text="已就緒"/>
+        <text name="eq_host_missing" text="缺少%d項"/>
+        <text name="eq_host_none" text="無"/>
+        <text name="eq_host_metres" text="%d 米"/>
+        <text name="eq_host_litres" text="%d 升"/>
+        <text name="eq_host_visitors" text="%d / %d 匹來訪馬"/>
+        <text name="eq_host_takingsLine" text="報名費 %s，門票 %s"/>
+        <text name="eq_host_monthsAhead" text="%d個月後"/>
+        <text name="eq_host_yourFarm" text="你的農場"/>
+        <text name="eq_host_opened" text="你的%s已開始。在比賽標籤頁為你的馬報名；結果在月底公佈。"/>
+        <text name="eq_host_book_noConfig" text="無法主辦：主辦規則未能載入。"/>
+        <text name="eq_host_book_already" text="你已經預訂了一場比賽。"/>
+        <text name="eq_host_book_month" text="該月份無法預訂。"/>
+        <text name="eq_host_book_requirements" text="你的農場還不滿足這場比賽的要求。"/>
+        <text name="eq_host_book_money" text="籌辦費需要%s。"/>
+        <text name="eq_host_book_done" text="已預訂%s，時間為%s。已付籌辦費：%s。"/>
+        <text name="eq_host_cancel_none" text="你沒有預訂比賽。"/>
+        <text name="eq_host_cancel_done" text="%s已取消。退款：%s。"/>
+        <text name="eq_host_cancel_confirm" text="取消你的%s？將退還籌辦費中的%s。"/>
+        <text name="eq_host_enter_notYours" text="只有主辦這場比賽的農場可以報名。"/>
+        <text name="eq_host_enter_done" text="%s已報名%s（評分 %.0f）。在自家比賽：無費用、無運輸。"/>
+        <text name="eq_host_button_book" text="預訂%s"/>
+        <text name="eq_host_button_cancel" text="取消預訂"/>
+        <text name="eq_host_button_enter" text="報名"/>
+        <text name="eq_host_button_month" text="更換月份"/>
+        <text name="eq_host_summary" text="%s。人氣：%s。"/>
+        <text name="eq_money_hosting" text="主辦比賽"/>
+        <text name="rl_messageTitle_eqHosting" text="主辦"/>
+        <text name="eq_settings_hostInterval" text="主辦比賽間隔（月）"/>
+        <text name="eq_settings_hostInterval_tooltip" text="從你上次主辦比賽的月份起，需要多少個月才能再次主辦。"/>
     </texts>
 </l10n>

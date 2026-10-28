@@ -114,6 +114,9 @@ uses its genetics, health and fitness.
   **Favourite event** such as "Show Jumping & Dressage", "3 Day Eventer" or "All Rounder".
 - Every outing teaches a little, and limits on entries a month keep a good horse from being an
   endless money tap.
+- **Host your own event:** the **Host** tab books a Dressage, Show Jumping, Cross Country or 3 Day
+  Event at your farm (Novice, Intermediate or Championship) if your courses, arenas, stables and
+  feed are up to it. It runs for its month; enter up to two of your own horses, free.
 
 ### Getting there
 - **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or

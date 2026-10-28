@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="Totaal: %s strafpunten"/>
         <text name="eq_staff_button_decline" text="Afwijzen"/>
         <text name="eq_staff_declined" text="%s komt niet terug. Binnen een paar uur kan er iemand nieuw opduiken."/>
+        <text name="eq_ui_tab_host" text="Organiseren"/>
+        <text name="eq_host_eventName" text="%s bij %s"/>
+        <text name="eq_host_type_dressage" text="Dressuur"/>
+        <text name="eq_host_type_showJumping" text="Springen"/>
+        <text name="eq_host_type_crossCountry" text="Cross"/>
+        <text name="eq_host_type_eventing" text="Eventing"/>
+        <text name="eq_host_rating_novice" text="Beginners"/>
+        <text name="eq_host_rating_intermediate" text="Gevorderd"/>
+        <text name="eq_host_rating_championship" text="Kampioenschap"/>
+        <text name="eq_host_col_event" text="Wedstrijd die je kunt organiseren"/>
+        <text name="eq_host_col_ready" text="Klaar"/>
+        <text name="eq_host_col_popularity" text="Populariteit"/>
+        <text name="eq_host_col_setup" text="Opzetkosten"/>
+        <text name="eq_host_col_takings" text="Opbrengst"/>
+        <text name="eq_host_col_check" text="Eis"/>
+        <text name="eq_host_col_have" text="Je hebt"/>
+        <text name="eq_host_col_need" text="Nodig"/>
+        <text name="eq_host_check_arena" text="Dressuurbak"/>
+        <text name="eq_host_check_dressageSeating" text="Tribunes bij de bak"/>
+        <text name="eq_host_check_showJumps" text="Springhindernissen"/>
+        <text name="eq_host_check_showJumpingSeating" text="Tribunes bij het parcours"/>
+        <text name="eq_host_check_xcLength" text="Lengte crossparcours"/>
+        <text name="eq_host_check_xcJumps" text="Crosshindernissen"/>
+        <text name="eq_host_check_stables" text="Vrije stalplaatsen"/>
+        <text name="eq_host_check_feed" text="Paardenvoer"/>
+        <text name="eq_host_part_base" text="Basis"/>
+        <text name="eq_host_part_course" text="parcours"/>
+        <text name="eq_host_part_seating" text="tribunes"/>
+        <text name="eq_host_part_facilities" text="voorzieningen"/>
+        <text name="eq_host_part_reputation" text="reputatie"/>
+        <text name="eq_host_part_star" text="sterpaard"/>
+        <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_label_yours" text="Jouw wedstrijd"/>
+        <text name="eq_host_label_month" text="Boeken voor"/>
+        <text name="eq_host_label_next" text="Volgende vrije maand"/>
+        <text name="eq_host_label_setup" text="Opzetkosten"/>
+        <text name="eq_host_label_popularity" text="Populariteit"/>
+        <text name="eq_host_label_visitors" text="Opkomst"/>
+        <text name="eq_host_label_takings" text="Opbrengst"/>
+        <text name="eq_host_label_reputation" text="Reputatie"/>
+        <text name="eq_host_yours_open" text="%s, deze maand bezig"/>
+        <text name="eq_host_yours_booked" text="%s in %s"/>
+        <text name="eq_host_yours_none" text="Niets geboekt"/>
+        <text name="eq_host_ready" text="Klaar"/>
+        <text name="eq_host_missing" text="%d ontbreken"/>
+        <text name="eq_host_none" text="Geen"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d van %d gastpaarden"/>
+        <text name="eq_host_takingsLine" text="%s inschrijvingen, %s entree"/>
+        <text name="eq_host_monthsAhead" text="over %d maanden"/>
+        <text name="eq_host_yourFarm" text="Jouw boerderij"/>
+        <text name="eq_host_opened" text="Jouw %s is begonnen. Schrijf je paarden in op het tabblad Wedstrijden; uitslagen aan het eind van de maand."/>
+        <text name="eq_host_book_noConfig" text="Organiseren is niet beschikbaar: de regels zijn niet geladen."/>
+        <text name="eq_host_book_already" text="Je hebt al een wedstrijd geboekt."/>
+        <text name="eq_host_book_month" text="Die maand kan niet geboekt worden."/>
+        <text name="eq_host_book_requirements" text="Je boerderij voldoet nog niet aan de eisen van deze wedstrijd."/>
+        <text name="eq_host_book_money" text="Je hebt %s nodig voor de opzetkosten."/>
+        <text name="eq_host_book_done" text="%s geboekt voor %s. Opzetkosten betaald: %s."/>
+        <text name="eq_host_cancel_none" text="Je hebt geen wedstrijd geboekt."/>
+        <text name="eq_host_cancel_done" text="%s geannuleerd. Terugbetaling: %s."/>
+        <text name="eq_host_cancel_confirm" text="Je %s annuleren? Je krijgt %s van de opzetkosten terug."/>
+        <text name="eq_host_enter_notYours" text="Alleen de boerderij die deze wedstrijd organiseert kan inschrijven."/>
+        <text name="eq_host_enter_done" text="%s ingeschreven voor %s (waardering %.0f). Rijdt thuis: geen inschrijfgeld of vervoer."/>
+        <text name="eq_host_button_book" text="Boeken voor %s"/>
+        <text name="eq_host_button_cancel" text="Boeking annuleren"/>
+        <text name="eq_host_button_enter" text="Inschrijven"/>
+        <text name="eq_host_button_month" text="Andere maand"/>
+        <text name="eq_host_summary" text="%s. Populariteit: %s."/>
+        <text name="eq_money_hosting" text="Georganiseerde wedstrijden"/>
+        <text name="rl_messageTitle_eqHosting" text="Organiseren"/>
+        <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
     </texts>
 </l10n>

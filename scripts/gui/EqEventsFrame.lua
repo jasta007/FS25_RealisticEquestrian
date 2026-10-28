@@ -6,6 +6,8 @@
     - Results: your horses on the right with the selected one's career under them, and its last
       events on the left, each with the few lines on how it went (EqStory). The Messages tab's
       result lines open this tab on their horse (EqMessagesLink).
+    - Host: every event the farm could host (EqHostView) on the left, the selected one's
+      requirements on the right and the farm's booking under them, with Book and Cancel.
 
     The tab is added from our side: EqEventsFrame.install appends to RLMenu:setupMenuPages, so
     once RLRM has registered its own pages we load our frame and register it as one more page,
@@ -27,6 +29,7 @@ EqEventsFrame.ICON_SLICE = "eqMenu.events"
 
 EqEventsFrame.MODE_EVENTS = "events"
 EqEventsFrame.MODE_RESULTS = "results"
+EqEventsFrame.MODE_HOST = "host"
 
 -- RLRM genetics bands whose colours the Success and Training words borrow.
 EqEventsFrame.SUCCESS_COLORS = {
@@ -57,6 +60,10 @@ function EqEventsFrame.new()
     self.eventRows = {}
     self.horseRows = {}
     self.resultRows = {}
+    self.hostRows = {}
+    self.hostCheckRows = {}
+    self.selectedHostIndex = nil
+    self.hostMonthIndex = 1
     self.selectedEventId = nil
     self.selectedHorseIndex = nil
     self.hasCustomMenuButtons = true
@@ -72,6 +79,26 @@ function EqEventsFrame.new()
         text = g_i18n:getText("eq_ui_button_enterManual"),
         callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_MANUAL) end,
     }
+    self.enterHomeButtonInfo = {
+        inputAction = InputAction.MENU_ACCEPT,
+        text = g_i18n:getText("eq_host_button_enter"),
+        callback = function() self:onClickEnter(EqCompetitionManager.TRANSPORT_HOME) end,
+    }
+    self.bookButtonInfo = {
+        inputAction = InputAction.MENU_ACCEPT,
+        text = g_i18n:getText("eq_host_button_book"),
+        callback = function() self:onClickBook() end,
+    }
+    self.cancelBookingButtonInfo = {
+        inputAction = InputAction.MENU_ACCEPT,
+        text = g_i18n:getText("eq_host_button_cancel"),
+        callback = function() self:onClickCancelBooking() end,
+    }
+    self.monthButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_host_button_month"),
+        callback = function() self:onClickMonth() end,
+    }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
         text = g_i18n:getText("eq_ui_tab_results"),
@@ -84,7 +111,7 @@ end
 
 function EqEventsFrame:onGuiSetupFinished()
     EqEventsFrame:superClass().onGuiSetupFinished(self)
-    for _, list in ipairs({ self.eventsList, self.horsesList, self.resultsList }) do
+    for _, list in ipairs({ self.eventsList, self.horsesList, self.resultsList, self.hostList, self.hostChecksList }) do
         if list ~= nil then
             list:setDataSource(self)
             list:setDelegate(self)
@@ -199,13 +226,16 @@ end
 
 -- TABS (the same profiles and wiring as RLRM's Settings page)
 
-EqEventsFrame.TAB_MODES = { EqEventsFrame.MODE_EVENTS, EqEventsFrame.MODE_RESULTS }
+EqEventsFrame.TAB_MODES = { EqEventsFrame.MODE_EVENTS, EqEventsFrame.MODE_RESULTS, EqEventsFrame.MODE_HOST }
 
 
 --- @param mode string
 --- @return number index the mode's tab
 local function tabIndex(mode)
-    return mode == EqEventsFrame.MODE_RESULTS and 2 or 1
+    for index, tabMode in ipairs(EqEventsFrame.TAB_MODES) do
+        if tabMode == mode then return index end
+    end
+    return 1
 end
 
 
@@ -271,9 +301,15 @@ function EqEventsFrame:onClickResultsTab()
 end
 
 
+function EqEventsFrame:onClickHostTab()
+    self:showMode(EqEventsFrame.MODE_HOST)
+end
+
+
 --- Focus the list the current tab starts on.
 function EqEventsFrame:focusMode()
-    local list = self.mode == EqEventsFrame.MODE_EVENTS and self.eventsList or self.horsesList
+    local list = self.mode == EqEventsFrame.MODE_EVENTS and self.eventsList
+        or self.mode == EqEventsFrame.MODE_HOST and self.hostList or self.horsesList
     if list ~= nil then FocusManager:setFocus(list) end
 end
 
@@ -290,17 +326,33 @@ function EqEventsFrame:refresh()
     local ok, reason = readiness()
     self.isReady = ok
     local isEvents = self.mode == EqEventsFrame.MODE_EVENTS
+    local isResults = self.mode == EqEventsFrame.MODE_RESULTS
+    local isHost = self.mode == EqEventsFrame.MODE_HOST
     self.eventRows = ok and EqEventsView.eventRows(farmId()) or {}
 
     show(self.eventsHeader, isEvents)
     show(self.eventsBox, isEvents)
     show(self.horsesHeader, isEvents)
-    show(self.resultsHeader, not isEvents)
-    show(self.resultsBox, not isEvents)
-    show(self.resultHorsesHeader, not isEvents)
+    show(self.resultsHeader, isResults)
+    show(self.resultsBox, isResults)
+    show(self.resultHorsesHeader, isResults)
+    show(self.horsesBox, not isHost)
+    for _, element in ipairs({ self.hostHeader, self.hostBox, self.hostChecksHeader, self.hostChecksBox }) do
+        show(element, isHost)
+    end
 
     self.eventsList:reloadData()
-    if isEvents then
+    if isHost then
+        self.horseRows = {}
+        self.resultRows = {}
+        self.horsesList:reloadData()
+        self.resultsList:reloadData()
+        self.selectedHorseIndex = nil
+        self.horsesEmptyState:setVisible(false)
+        self:updateHorsePanel()
+        self:updateCareerPanel()
+        self:refreshHost()
+    elseif isEvents then
         self.resultRows = {}
         self.resultsList:reloadData()
         local selectIndex = 1
@@ -320,7 +372,9 @@ function EqEventsFrame:refresh()
         empty = reason
     elseif isEvents and #self.eventRows == 0 then
         empty = g_i18n:getText("eq_ui_noEvents")
-    elseif not isEvents then
+    elseif isHost then
+        if #self.hostRows == 0 then empty = g_i18n:getText("eq_host_book_noConfig") end
+    elseif isResults then
         local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
         if horse == nil then
             empty = g_i18n:getText("eq_ui_noResults")
@@ -379,6 +433,38 @@ function EqEventsFrame:showResultsFor(horseId)
 end
 
 
+--- The Host tab: every event type and rating, the selected one's checks and the booking panel.
+function EqEventsFrame:refreshHost()
+    local selected = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
+    self.hostRows = self.isReady and EqHostView.optionRows(farmId(), EqHostVenue.read(farmId())) or {}
+    self.hostList:reloadData()
+    local selectIndex = #self.hostRows > 0 and 1 or nil
+    for i, row in ipairs(self.hostRows) do
+        if selected ~= nil and row.type == selected.type and row.rating == selected.rating then selectIndex = i end
+    end
+    if selectIndex ~= nil then self.hostList:setSelectedIndex(selectIndex) end
+    self:selectHost(selectIndex)
+end
+
+
+--- @return table months the farm could book now, soonest first
+function EqEventsFrame:hostMonths()
+    if not self.isReady then return {} end
+    return EqHostManager.choices(EqCompetitionManager.month, EqHostManager.lastMonth[farmId()], EqHostManager.interval())
+end
+
+
+--- @param index number|nil the option's row on the Host tab
+function EqEventsFrame:selectHost(index)
+    self.selectedHostIndex = index
+    local row = index ~= nil and self.hostRows[index] or nil
+    self.hostCheckRows = EqHostView.checkRows(row ~= nil and row.result or nil)
+    self.hostChecksList:reloadData()
+    self:updateHostPanel()
+    self:updateSummary()
+end
+
+
 --- @param row table|nil an event row
 function EqEventsFrame:selectEvent(row)
     self.selectedEventId = row ~= nil and row.event.id or nil
@@ -408,6 +494,11 @@ function EqEventsFrame:updateSummary()
         text = self.message
     elseif self.mode == EqEventsFrame.MODE_RESULTS then
         text = string.format(g_i18n:getText("eq_ui_summary_results"), EqHorseRecord.RESULTS_KEPT)
+    elseif self.mode == EqEventsFrame.MODE_HOST then
+        local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
+        if row ~= nil then
+            text = string.format(g_i18n:getText("eq_host_summary"), row.title, EqHostView.partsText(row.parts))
+        end
     elseif self.mode == EqEventsFrame.MODE_EVENTS and self.selectedEventId ~= nil then
         local event = EqCompetitionManager.events[self.selectedEventId]
         local tier = event ~= nil and EqCompetitionManager.config.tierByName[event.tier] or nil
@@ -427,13 +518,32 @@ function EqEventsFrame:updateSummary()
 end
 
 
+--- @return string mode the tab the toggle button goes to
+function EqEventsFrame:nextMode()
+    local index = tabIndex(self.mode) % #EqEventsFrame.TAB_MODES + 1
+    return EqEventsFrame.TAB_MODES[index]
+end
+
+
+local TAB_TEXTS = { events = "eq_ui_tab_upcoming", results = "eq_ui_tab_results", host = "eq_ui_tab_host" }
+
+
 function EqEventsFrame:updateButtons()
-    self.toggleButtonInfo.text = g_i18n:getText(self.mode == EqEventsFrame.MODE_EVENTS and "eq_ui_tab_results" or "eq_ui_tab_upcoming")
+    self.toggleButtonInfo.text = g_i18n:getText(TAB_TEXTS[self:nextMode()])
     self.menuButtonInfo = { self.backButtonInfo, self.toggleButtonInfo }
 
+    if self.mode == EqEventsFrame.MODE_HOST then
+        self:addHostButtons()
+        self:setMenuButtonInfoDirty()
+        return
+    end
+
     local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
-    if self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter then
-        local event = EqCompetitionManager.events[self.selectedEventId]
+    local event = self.selectedEventId ~= nil and EqCompetitionManager.events[self.selectedEventId] or nil
+    if self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter and event ~= nil and event.hosted ~= nil then
+        -- Your own event: at home, no fee and no transport.
+        table.insert(self.menuButtonInfo, self.enterHomeButtonInfo)
+    elseif self.mode == EqEventsFrame.MODE_EVENTS and horse ~= nil and horse.canEnter then
         local fee = event ~= nil and event.fee or 0
         self.enterButtonInfo.text = string.format(g_i18n:getText("eq_ui_button_enterAuto"),
             g_i18n:formatMoney(fee + horse.autoCost, 0, true, true))
@@ -443,6 +553,26 @@ function EqEventsFrame:updateButtons()
         table.insert(self.menuButtonInfo, self.enterManualButtonInfo)
     end
     self:setMenuButtonInfoDirty()
+end
+
+
+--- Book (with the month to book, and a button to change it) or Cancel booking.
+function EqEventsFrame:addHostButtons()
+    if not self.isReady then return end
+    local id = farmId()
+    if EqHostManager.bookings[id] ~= nil then
+        table.insert(self.menuButtonInfo, self.cancelBookingButtonInfo)
+        return
+    end
+    if EqHostManager.openEvent(id) ~= nil then return end
+    local months = self:hostMonths()
+    local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
+    if #months == 0 or row == nil then return end
+    if self.hostMonthIndex > #months then self.hostMonthIndex = 1 end
+    self.bookButtonInfo.text = string.format(g_i18n:getText("eq_host_button_book"),
+        EqHostManager.monthText(months[self.hostMonthIndex]))
+    table.insert(self.menuButtonInfo, self.bookButtonInfo)
+    if #months > 1 then table.insert(self.menuButtonInfo, self.monthButtonInfo) end
 end
 
 
@@ -474,6 +604,23 @@ end
 --- @return table|nil color
 local function wordColor(colors, band)
     return band ~= nil and colors[band] ~= nil and EqInfoDisplay.bandColor(colors[band]) or nil
+end
+
+
+--- Your booking and the selected option's numbers, under the checks on the Host tab.
+function EqEventsFrame:updateHostPanel()
+    if self.hostPanel == nil then return end
+    local show = self.mode == EqEventsFrame.MODE_HOST and self.isReady
+    self.hostPanel:setVisible(show)
+    if not show then return end
+    local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
+    local months = self:hostMonths()
+    local lines = EqHostView.panelLines(farmId(), row, months[self.hostMonthIndex] or months[1])
+    for i = 1, #(self.hostLabel or {}) do
+        local line = lines[i]
+        setText(self.hostLabel[i], line ~= nil and line.label or "")
+        setText(self.hostValue[i], line ~= nil and line.value or "")
+    end
 end
 
 
@@ -544,6 +691,8 @@ end
 -- LIST DATA SOURCE AND DELEGATE
 
 function EqEventsFrame:getNumberOfItemsInSection(list, _section)
+    if list == self.hostList then return #self.hostRows end
+    if list == self.hostChecksList then return #self.hostCheckRows end
     if list == self.eventsList then return #self.eventRows end
     if list == self.horsesList then return #self.horseRows end
     if list == self.resultsList then return #self.resultRows end
@@ -605,6 +754,28 @@ end
 
 
 function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
+    if list == self.hostList then
+        local row = self.hostRows[index]
+        if row == nil then return end
+        setCell(cell, "title", row.title)
+        local ready = cell:getAttribute("ready")
+        keepDefaultColor(ready)
+        setText(ready, row.ready, wordColor(EqEventsFrame.RISK_COLORS, row.ok and "low" or "risky"))
+        setCell(cell, "popularity", row.popularity)
+        setCell(cell, "setup", row.setup)
+        setCell(cell, "takings", row.takingsText)
+        return
+    elseif list == self.hostChecksList then
+        local row = self.hostCheckRows[index]
+        if row == nil then return end
+        local color = wordColor(EqEventsFrame.RISK_COLORS, row.ok and "low" or "risky")
+        setCell(cell, "label", row.label)
+        local have = cell:getAttribute("have")
+        keepDefaultColor(have)
+        setText(have, row.have, color)
+        setCell(cell, "need", row.need)
+        return
+    end
     if list == self.eventsList then
         -- The events list reloads on the Results tab too, hidden; it must not take the horse list.
         if self.mode ~= EqEventsFrame.MODE_EVENTS then return end
@@ -650,6 +821,17 @@ end
 
 
 function EqEventsFrame:onListSelectionChanged(list, _section, index)
+    if list == self.hostList then
+        if self.mode ~= EqEventsFrame.MODE_HOST then return end
+        if index ~= self.selectedHostIndex then
+            self.message = nil
+            self:selectHost(index)
+        end
+        self:updateButtons()
+        return
+    elseif list == self.hostChecksList then
+        return
+    end
     if list == self.eventsList then
         -- The events list reloads on the Results tab too, hidden; it must not take the horse list.
         if self.mode ~= EqEventsFrame.MODE_EVENTS then return end
@@ -690,7 +872,44 @@ end
 
 
 function EqEventsFrame:onClickToggle()
-    self:showMode(self.mode == EqEventsFrame.MODE_EVENTS and EqEventsFrame.MODE_RESULTS or EqEventsFrame.MODE_EVENTS)
+    self:showMode(self:nextMode())
+end
+
+
+function EqEventsFrame:onClickBook()
+    local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
+    local months = self:hostMonths()
+    local month = months[self.hostMonthIndex] or months[1]
+    if row == nil or month == nil then return end
+    local _, text = EqHostManager.book(farmId(), row.type, row.rating, month)
+    self.message = text
+    self:refresh()
+end
+
+
+function EqEventsFrame:onClickCancelBooking()
+    local booking = EqHostManager.bookings[farmId()]
+    if booking == nil then return end
+    local refund = EqHostManager.refundFor(booking, EqCompetitionManager.month)
+    local question = string.format(g_i18n:getText("eq_host_cancel_confirm"), EqHostManager.title(booking.type, booking.rating),
+        g_i18n:formatMoney(refund, 0, true, true))
+    YesNoDialog.show(function(_, yes)
+        if yes then
+            local _, text = EqHostManager.cancel(farmId())
+            self.message = text
+            self:refresh()
+        end
+    end, self, question, g_i18n:getText("eq_host_button_cancel"))
+end
+
+
+--- Cycle the month the Book button books.
+function EqEventsFrame:onClickMonth()
+    local months = self:hostMonths()
+    if #months == 0 then return end
+    self.hostMonthIndex = self.hostMonthIndex % #months + 1
+    self:updateHostPanel()
+    self:updateButtons()
 end
 
 

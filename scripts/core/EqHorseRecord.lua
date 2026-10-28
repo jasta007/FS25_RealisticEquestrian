@@ -74,7 +74,7 @@ end
 
 
 --- Keep an event's result, newest first, dropping the oldest past RESULTS_KEPT.
---- @param result table { day, discipline, tier, venue, place, field, prize, status, lines }
+--- @param result table { day, discipline, tier, venue, hosted, place, field, prize, status, lines }
 function EqHorseRecord:addResult(result)
     table.insert(self.results, 1, result)
     while #self.results > EqHorseRecord.RESULTS_KEPT do table.remove(self.results) end
@@ -199,6 +199,7 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
         xmlFile:setString(resultKey .. "#discipline", result.discipline)
         xmlFile:setString(resultKey .. "#tier", result.tier)
         if result.venue ~= nil then xmlFile:setString(resultKey .. "#venue", result.venue) end
+        if result.hosted then xmlFile:setBool(resultKey .. "#hosted", true) end
         xmlFile:setInt(resultKey .. "#place", result.place or 0)
         xmlFile:setInt(resultKey .. "#field", result.field or 0)
         xmlFile:setFloat(resultKey .. "#prize", result.prize or 0)
@@ -293,6 +294,7 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
             discipline = xmlFile:getString(resultKey .. "#discipline", ""),
             tier = xmlFile:getString(resultKey .. "#tier", ""),
             venue = xmlFile:getString(resultKey .. "#venue"),
+            hosted = xmlFile:getBool(resultKey .. "#hosted", false),
             place = xmlFile:getInt(resultKey .. "#place", 0),
             field = xmlFile:getInt(resultKey .. "#field", 0),
             prize = xmlFile:getFloat(resultKey .. "#prize", 0),

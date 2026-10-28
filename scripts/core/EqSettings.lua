@@ -19,6 +19,9 @@ EqSettings.MONEY_SCALES = { 0.5, 0.75, 1, 1.25, 1.5, 2 }
 -- Entry limit choices; 0 means no limit.
 EqSettings.ENTRY_LIMITS = { 0, 1, 2, 3, 4, 5, 6, 8, 10 }
 
+-- Months between two events a farm hosts (EqHostManager).
+EqSettings.HOST_INTERVALS = { 3, 4, 6, 12 }
+
 -- Choices for the fewest and most events on the calendar at once.
 EqSettings.EVENT_COUNTS = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15 }
 
@@ -63,6 +66,11 @@ EqSettings.ROWS = {
     { id = "entriesPerMonth", values = EqSettings.ENTRY_LIMITS, texts = limitTexts(), default = 3 },
     { id = "entryFeeScale", values = EqSettings.MONEY_SCALES, texts = rateTexts(EqSettings.MONEY_SCALES), default = 1 },
     { id = "prizeScale", values = EqSettings.MONEY_SCALES, texts = rateTexts(EqSettings.MONEY_SCALES), default = 1 },
+    { id = "hostInterval", values = EqSettings.HOST_INTERVALS, texts = (function()
+        local texts = {}
+        for i, months in ipairs(EqSettings.HOST_INTERVALS) do texts[i] = { text = tostring(months) } end
+        return texts
+    end)(), default = 6 },
 }
 
 EqSettings.BY_ID = {}

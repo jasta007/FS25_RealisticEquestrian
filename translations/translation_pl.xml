@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="Razem punkty karne: %s"/>
         <text name="eq_staff_button_decline" text="Odrzuć"/>
         <text name="eq_staff_declined" text="%s już nie wróci. W ciągu kilku najbliższych godzin może pojawić się ktoś nowy."/>
+        <text name="eq_ui_tab_host" text="Organizuj"/>
+        <text name="eq_host_eventName" text="%s – %s"/>
+        <text name="eq_host_type_dressage" text="Ujeżdżenie"/>
+        <text name="eq_host_type_showJumping" text="Skoki przez przeszkody"/>
+        <text name="eq_host_type_crossCountry" text="Cross"/>
+        <text name="eq_host_type_eventing" text="WKKW"/>
+        <text name="eq_host_rating_novice" text="Początkujący"/>
+        <text name="eq_host_rating_intermediate" text="Średni"/>
+        <text name="eq_host_rating_championship" text="Mistrzostwa"/>
+        <text name="eq_host_col_event" text="Zawody do zorganizowania"/>
+        <text name="eq_host_col_ready" text="Gotowe"/>
+        <text name="eq_host_col_popularity" text="Popularność"/>
+        <text name="eq_host_col_setup" text="Opłata organizacyjna"/>
+        <text name="eq_host_col_takings" text="Wpływy"/>
+        <text name="eq_host_col_check" text="Wymaganie"/>
+        <text name="eq_host_col_have" text="Masz"/>
+        <text name="eq_host_col_need" text="Potrzeba"/>
+        <text name="eq_host_check_arena" text="Czworobok"/>
+        <text name="eq_host_check_dressageSeating" text="Trybuny przy czworoboku"/>
+        <text name="eq_host_check_showJumps" text="Przeszkody skokowe"/>
+        <text name="eq_host_check_showJumpingSeating" text="Trybuny przy parkurze"/>
+        <text name="eq_host_check_xcLength" text="Długość crossu"/>
+        <text name="eq_host_check_xcJumps" text="Przeszkody crossowe"/>
+        <text name="eq_host_check_stables" text="Wolne miejsca w stajni"/>
+        <text name="eq_host_check_feed" text="Pasza dla koni"/>
+        <text name="eq_host_part_base" text="Baza"/>
+        <text name="eq_host_part_course" text="trasa"/>
+        <text name="eq_host_part_seating" text="trybuny"/>
+        <text name="eq_host_part_facilities" text="obiekty"/>
+        <text name="eq_host_part_reputation" text="reputacja"/>
+        <text name="eq_host_part_star" text="koń gwiazda"/>
+        <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_label_yours" text="Twoje zawody"/>
+        <text name="eq_host_label_month" text="Rezerwuj na"/>
+        <text name="eq_host_label_next" text="Najbliższy wolny miesiąc"/>
+        <text name="eq_host_label_setup" text="Opłata organizacyjna"/>
+        <text name="eq_host_label_popularity" text="Popularność"/>
+        <text name="eq_host_label_visitors" text="Frekwencja"/>
+        <text name="eq_host_label_takings" text="Wpływy"/>
+        <text name="eq_host_label_reputation" text="Reputacja"/>
+        <text name="eq_host_yours_open" text="%s, trwają w tym miesiącu"/>
+        <text name="eq_host_yours_booked" text="%s – %s"/>
+        <text name="eq_host_yours_none" text="Brak rezerwacji"/>
+        <text name="eq_host_ready" text="Gotowe"/>
+        <text name="eq_host_missing" text="Brakuje: %d"/>
+        <text name="eq_host_none" text="Brak"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d z %d koni gości"/>
+        <text name="eq_host_takingsLine" text="%s wpisowe, %s bilety"/>
+        <text name="eq_host_monthsAhead" text="za %d mies."/>
+        <text name="eq_host_yourFarm" text="Twoje gospodarstwo"/>
+        <text name="eq_host_opened" text="Twoje zawody %s się rozpoczęły. Zgłoś konie w zakładce Zawody; wyniki pod koniec miesiąca."/>
+        <text name="eq_host_book_noConfig" text="Organizacja niedostępna: zasady organizacji się nie wczytały."/>
+        <text name="eq_host_book_already" text="Masz już zarezerwowane zawody."/>
+        <text name="eq_host_book_month" text="Tego miesiąca nie można zarezerwować."/>
+        <text name="eq_host_book_requirements" text="Twoje gospodarstwo nie spełnia jeszcze wymagań tych zawodów."/>
+        <text name="eq_host_book_money" text="Potrzebujesz %s na opłatę organizacyjną."/>
+        <text name="eq_host_book_done" text="%s zarezerwowane na %s. Zapłacona opłata organizacyjna: %s."/>
+        <text name="eq_host_cancel_none" text="Nie masz zarezerwowanych zawodów."/>
+        <text name="eq_host_cancel_done" text="%s odwołane. Zwrot: %s."/>
+        <text name="eq_host_cancel_confirm" text="Odwołać %s? Odzyskasz %s opłaty organizacyjnej."/>
+        <text name="eq_host_enter_notYours" text="Tylko gospodarstwo organizujące te zawody może się do nich zgłosić."/>
+        <text name="eq_host_enter_done" text="%s zgłoszony do %s (ocena %.0f). Startuje u siebie: bez wpisowego i transportu."/>
+        <text name="eq_host_button_book" text="Rezerwuj na %s"/>
+        <text name="eq_host_button_cancel" text="Odwołaj rezerwację"/>
+        <text name="eq_host_button_enter" text="Zgłoś"/>
+        <text name="eq_host_button_month" text="Zmień miesiąc"/>
+        <text name="eq_host_summary" text="%s. Popularność: %s."/>
+        <text name="eq_money_hosting" text="Organizowane zawody"/>
+        <text name="rl_messageTitle_eqHosting" text="Organizacja"/>
+        <text name="eq_settings_hostInterval" text="Miesiące między własnymi zawodami"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Ile miesięcy po miesiącu ostatnich własnych zawodów musi minąć, zanim zorganizujesz kolejne."/>
     </texts>
 </l10n>

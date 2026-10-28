@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="合計：減点%s"/>
         <text name="eq_staff_button_decline" text="断る"/>
         <text name="eq_staff_declined" text="%sはもう来ません。数時間以内に新しい人が現れるかもしれません。"/>
+        <text name="eq_ui_tab_host" text="主催"/>
+        <text name="eq_host_eventName" text="%s（%s）"/>
+        <text name="eq_host_type_dressage" text="馬場馬術"/>
+        <text name="eq_host_type_showJumping" text="障害飛越"/>
+        <text name="eq_host_type_crossCountry" text="クロスカントリー"/>
+        <text name="eq_host_type_eventing" text="総合馬術"/>
+        <text name="eq_host_rating_novice" text="初級"/>
+        <text name="eq_host_rating_intermediate" text="中級"/>
+        <text name="eq_host_rating_championship" text="選手権"/>
+        <text name="eq_host_col_event" text="主催できる大会"/>
+        <text name="eq_host_col_ready" text="準備"/>
+        <text name="eq_host_col_popularity" text="人気"/>
+        <text name="eq_host_col_setup" text="開催費用"/>
+        <text name="eq_host_col_takings" text="収入"/>
+        <text name="eq_host_col_check" text="条件"/>
+        <text name="eq_host_col_have" text="現在"/>
+        <text name="eq_host_col_need" text="必要"/>
+        <text name="eq_host_check_arena" text="馬場"/>
+        <text name="eq_host_check_dressageSeating" text="馬場の観客席"/>
+        <text name="eq_host_check_showJumps" text="障害"/>
+        <text name="eq_host_check_showJumpingSeating" text="コースの観客席"/>
+        <text name="eq_host_check_xcLength" text="クロスカントリーの距離"/>
+        <text name="eq_host_check_xcJumps" text="クロスカントリーの障害"/>
+        <text name="eq_host_check_stables" text="空き馬房"/>
+        <text name="eq_host_check_feed" text="馬の飼料"/>
+        <text name="eq_host_part_base" text="基本"/>
+        <text name="eq_host_part_course" text="コース"/>
+        <text name="eq_host_part_seating" text="観客席"/>
+        <text name="eq_host_part_facilities" text="施設"/>
+        <text name="eq_host_part_reputation" text="評判"/>
+        <text name="eq_host_part_star" text="スター馬"/>
+        <text name="eq_host_part_winter" text="冬"/>
+        <text name="eq_host_label_yours" text="あなたの大会"/>
+        <text name="eq_host_label_month" text="予約月"/>
+        <text name="eq_host_label_next" text="次に空いている月"/>
+        <text name="eq_host_label_setup" text="開催費用"/>
+        <text name="eq_host_label_popularity" text="人気"/>
+        <text name="eq_host_label_visitors" text="参加"/>
+        <text name="eq_host_label_takings" text="収入"/>
+        <text name="eq_host_label_reputation" text="評判"/>
+        <text name="eq_host_yours_open" text="%s（今月開催中）"/>
+        <text name="eq_host_yours_booked" text="%s（%s）"/>
+        <text name="eq_host_yours_none" text="予約なし"/>
+        <text name="eq_host_ready" text="準備完了"/>
+        <text name="eq_host_missing" text="%d件不足"/>
+        <text name="eq_host_none" text="なし"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d L"/>
+        <text name="eq_host_visitors" text="来場馬 %d / %d 頭"/>
+        <text name="eq_host_takingsLine" text="エントリー料 %s、入場料 %s"/>
+        <text name="eq_host_monthsAhead" text="%dか月後"/>
+        <text name="eq_host_yourFarm" text="あなたの牧場"/>
+        <text name="eq_host_opened" text="あなたの%sが始まりました。大会タブで馬をエントリーしてください。結果は月末に出ます。"/>
+        <text name="eq_host_book_noConfig" text="主催できません：主催ルールを読み込めませんでした。"/>
+        <text name="eq_host_book_already" text="すでに大会を予約しています。"/>
+        <text name="eq_host_book_month" text="その月は予約できません。"/>
+        <text name="eq_host_book_requirements" text="牧場がまだこの大会の条件を満たしていません。"/>
+        <text name="eq_host_book_money" text="開催費用に%sが必要です。"/>
+        <text name="eq_host_book_done" text="%sを%sに予約しました。開催費用：%s。"/>
+        <text name="eq_host_cancel_none" text="予約している大会はありません。"/>
+        <text name="eq_host_cancel_done" text="%sを中止しました。返金：%s。"/>
+        <text name="eq_host_cancel_confirm" text="%sを中止しますか？開催費用のうち%sが返金されます。"/>
+        <text name="eq_host_enter_notYours" text="この大会には主催する牧場しかエントリーできません。"/>
+        <text name="eq_host_enter_done" text="%sを%sにエントリーしました（評価 %.0f）。自分の牧場で出場：費用・輸送なし。"/>
+        <text name="eq_host_button_book" text="%sに予約"/>
+        <text name="eq_host_button_cancel" text="予約を取り消す"/>
+        <text name="eq_host_button_enter" text="エントリー"/>
+        <text name="eq_host_button_month" text="月を変更"/>
+        <text name="eq_host_summary" text="%s。人気：%s。"/>
+        <text name="eq_money_hosting" text="主催大会"/>
+        <text name="rl_messageTitle_eqHosting" text="主催"/>
+        <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
+        <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
     </texts>
 </l10n>

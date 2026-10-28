@@ -712,5 +712,78 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Scales the entry fee of every event. 1x is normal. Events already on the calendar keep their fee; changes apply from the next round."/>
         <text name="eq_settings_prizeScale" text="Prize money"/>
         <text name="eq_settings_prizeScale_tooltip" text="Scales the prize money of every event. 1x is normal. Events already on the calendar keep their prizes; changes apply from the next round."/>
+        <text name="eq_ui_tab_host" text="Host"/>
+        <text name="eq_host_eventName" text="%s at %s"/>
+        <text name="eq_host_type_dressage" text="Dressage"/>
+        <text name="eq_host_type_showJumping" text="Show Jumping"/>
+        <text name="eq_host_type_crossCountry" text="Cross Country"/>
+        <text name="eq_host_type_eventing" text="3 Day Event"/>
+        <text name="eq_host_rating_novice" text="Novice"/>
+        <text name="eq_host_rating_intermediate" text="Intermediate"/>
+        <text name="eq_host_rating_championship" text="Championship"/>
+        <text name="eq_host_col_event" text="Event you could host"/>
+        <text name="eq_host_col_ready" text="Ready"/>
+        <text name="eq_host_col_popularity" text="Popularity"/>
+        <text name="eq_host_col_setup" text="Setup fee"/>
+        <text name="eq_host_col_takings" text="Takings"/>
+        <text name="eq_host_col_check" text="Requirement"/>
+        <text name="eq_host_col_have" text="You have"/>
+        <text name="eq_host_col_need" text="Needed"/>
+        <text name="eq_host_check_arena" text="Dressage arena"/>
+        <text name="eq_host_check_dressageSeating" text="Arena seating"/>
+        <text name="eq_host_check_showJumps" text="Show jumps"/>
+        <text name="eq_host_check_showJumpingSeating" text="Course seating"/>
+        <text name="eq_host_check_xcLength" text="Cross country length"/>
+        <text name="eq_host_check_xcJumps" text="Cross country jumps"/>
+        <text name="eq_host_check_stables" text="Free stable places"/>
+        <text name="eq_host_check_feed" text="Horse feed"/>
+        <text name="eq_host_part_base" text="Base"/>
+        <text name="eq_host_part_course" text="course"/>
+        <text name="eq_host_part_seating" text="seating"/>
+        <text name="eq_host_part_facilities" text="facilities"/>
+        <text name="eq_host_part_reputation" text="reputation"/>
+        <text name="eq_host_part_star" text="star horse"/>
+        <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_label_yours" text="Your event"/>
+        <text name="eq_host_label_month" text="Book for"/>
+        <text name="eq_host_label_next" text="Next free month"/>
+        <text name="eq_host_label_setup" text="Setup fee"/>
+        <text name="eq_host_label_popularity" text="Popularity"/>
+        <text name="eq_host_label_visitors" text="Turnout"/>
+        <text name="eq_host_label_takings" text="Takings"/>
+        <text name="eq_host_label_reputation" text="Reputation"/>
+        <text name="eq_host_yours_open" text="%s, on this month"/>
+        <text name="eq_host_yours_booked" text="%s in %s"/>
+        <text name="eq_host_yours_none" text="Nothing booked"/>
+        <text name="eq_host_ready" text="Ready"/>
+        <text name="eq_host_missing" text="%d missing"/>
+        <text name="eq_host_none" text="None"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d of %d visiting horses"/>
+        <text name="eq_host_takingsLine" text="%s entries, %s gate"/>
+        <text name="eq_host_monthsAhead" text="in %d months"/>
+        <text name="eq_host_yourFarm" text="Your Farm"/>
+        <text name="eq_host_opened" text="Your %s has started. Enter your horses on the Events tab; results come at the end of the month."/>
+        <text name="eq_host_book_noConfig" text="Hosting is not available: the hosting rules did not load."/>
+        <text name="eq_host_book_already" text="You already have an event booked."/>
+        <text name="eq_host_book_month" text="That month cannot be booked."/>
+        <text name="eq_host_book_requirements" text="Your farm does not meet this event's requirements yet."/>
+        <text name="eq_host_book_money" text="You need %s for the setup fee."/>
+        <text name="eq_host_book_done" text="%s booked for %s. Setup fee paid: %s."/>
+        <text name="eq_host_cancel_none" text="You have no event booked."/>
+        <text name="eq_host_cancel_done" text="%s cancelled. Refund: %s."/>
+        <text name="eq_host_cancel_confirm" text="Cancel your %s? You get back %s of the setup fee."/>
+        <text name="eq_host_enter_notYours" text="Only the farm hosting this event can enter it."/>
+        <text name="eq_host_enter_done" text="%s entered in %s (rating %.0f). It competes at home: no fee or transport."/>
+        <text name="eq_host_button_book" text="Book for %s"/>
+        <text name="eq_host_button_cancel" text="Cancel booking"/>
+        <text name="eq_host_button_enter" text="Enter"/>
+        <text name="eq_host_button_month" text="Change month"/>
+        <text name="eq_host_summary" text="%s. Popularity: %s."/>
+        <text name="eq_money_hosting" text="Hosted Events"/>
+        <text name="rl_messageTitle_eqHosting" text="Hosting"/>
+        <text name="eq_settings_hostInterval" text="Months between hosted events"/>
+        <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
     </texts>
 </l10n>

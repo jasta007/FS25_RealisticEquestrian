@@ -19,7 +19,8 @@ local Log = EqLog
 function EqAway.awayIds()
     local ids = {}
     for _, event in pairs(EqCompetitionManager.events or {}) do
-        for _, entry in ipairs(event.entries or {}) do
+        -- Horses entered in their own farm's event stay at home to be ridden.
+        for _, entry in ipairs(event.hosted == nil and event.entries or {}) do
             -- A Manual Transport horse stays home, to be loaded, until it is delivered.
             if EqCompetitionManager.isDelivered(entry) then ids[entry.horseId] = true end
         end

@@ -712,5 +712,78 @@
         <text name="eq_story_total" text="Итого штраф: %s"/>
         <text name="eq_staff_button_decline" text="Отклонить"/>
         <text name="eq_staff_declined" text="%s больше не придёт. В ближайшие несколько часов может появиться кто-то новый."/>
+        <text name="eq_ui_tab_host" text="Проведение"/>
+        <text name="eq_host_eventName" text="%s: %s"/>
+        <text name="eq_host_type_dressage" text="Выездка"/>
+        <text name="eq_host_type_showJumping" text="Конкур"/>
+        <text name="eq_host_type_crossCountry" text="Кросс"/>
+        <text name="eq_host_type_eventing" text="Троеборье"/>
+        <text name="eq_host_rating_novice" text="Новички"/>
+        <text name="eq_host_rating_intermediate" text="Средний уровень"/>
+        <text name="eq_host_rating_championship" text="Чемпионат"/>
+        <text name="eq_host_col_event" text="Соревнование, которое можно провести"/>
+        <text name="eq_host_col_ready" text="Готово"/>
+        <text name="eq_host_col_popularity" text="Популярность"/>
+        <text name="eq_host_col_setup" text="Взнос за организацию"/>
+        <text name="eq_host_col_takings" text="Доход"/>
+        <text name="eq_host_col_check" text="Требование"/>
+        <text name="eq_host_col_have" text="Есть"/>
+        <text name="eq_host_col_need" text="Нужно"/>
+        <text name="eq_host_check_arena" text="Манеж для выездки"/>
+        <text name="eq_host_check_dressageSeating" text="Трибуны у манежа"/>
+        <text name="eq_host_check_showJumps" text="Конкурные препятствия"/>
+        <text name="eq_host_check_showJumpingSeating" text="Трибуны у маршрута"/>
+        <text name="eq_host_check_xcLength" text="Длина кросса"/>
+        <text name="eq_host_check_xcJumps" text="Препятствия кросса"/>
+        <text name="eq_host_check_stables" text="Свободные денники"/>
+        <text name="eq_host_check_feed" text="Корм для лошадей"/>
+        <text name="eq_host_part_base" text="База"/>
+        <text name="eq_host_part_course" text="маршрут"/>
+        <text name="eq_host_part_seating" text="трибуны"/>
+        <text name="eq_host_part_facilities" text="постройки"/>
+        <text name="eq_host_part_reputation" text="репутация"/>
+        <text name="eq_host_part_star" text="звёздная лошадь"/>
+        <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_label_yours" text="Ваше соревнование"/>
+        <text name="eq_host_label_month" text="Забронировать на"/>
+        <text name="eq_host_label_next" text="Ближайший свободный месяц"/>
+        <text name="eq_host_label_setup" text="Взнос за организацию"/>
+        <text name="eq_host_label_popularity" text="Популярность"/>
+        <text name="eq_host_label_visitors" text="Участники"/>
+        <text name="eq_host_label_takings" text="Доход"/>
+        <text name="eq_host_label_reputation" text="Репутация"/>
+        <text name="eq_host_yours_open" text="%s, идёт в этом месяце"/>
+        <text name="eq_host_yours_booked" text="%s, %s"/>
+        <text name="eq_host_yours_none" text="Ничего не забронировано"/>
+        <text name="eq_host_ready" text="Готово"/>
+        <text name="eq_host_missing" text="Не хватает: %d"/>
+        <text name="eq_host_none" text="Нет"/>
+        <text name="eq_host_metres" text="%d м"/>
+        <text name="eq_host_litres" text="%d л"/>
+        <text name="eq_host_visitors" text="%d из %d гостевых лошадей"/>
+        <text name="eq_host_takingsLine" text="%s взносы, %s билеты"/>
+        <text name="eq_host_monthsAhead" text="через %d мес."/>
+        <text name="eq_host_yourFarm" text="Ваша ферма"/>
+        <text name="eq_host_opened" text="Ваше соревнование «%s» началось. Заявите лошадей на вкладке «Соревнования»; итоги в конце месяца."/>
+        <text name="eq_host_book_noConfig" text="Проведение недоступно: правила проведения не загрузились."/>
+        <text name="eq_host_book_already" text="У вас уже забронировано соревнование."/>
+        <text name="eq_host_book_month" text="Этот месяц нельзя забронировать."/>
+        <text name="eq_host_book_requirements" text="Ваша ферма пока не отвечает требованиям этого соревнования."/>
+        <text name="eq_host_book_money" text="Для взноса за организацию нужно %s."/>
+        <text name="eq_host_book_done" text="«%s» забронировано на %s. Взнос за организацию: %s."/>
+        <text name="eq_host_cancel_none" text="У вас нет забронированного соревнования."/>
+        <text name="eq_host_cancel_done" text="«%s» отменено. Возврат: %s."/>
+        <text name="eq_host_cancel_confirm" text="Отменить «%s»? Вам вернут %s от взноса за организацию."/>
+        <text name="eq_host_enter_notYours" text="Участвовать может только ферма, которая проводит это соревнование."/>
+        <text name="eq_host_enter_done" text="%s заявлен(а) на %s (рейтинг %.0f). Выступает дома: без взноса и перевозки."/>
+        <text name="eq_host_button_book" text="Забронировать на %s"/>
+        <text name="eq_host_button_cancel" text="Отменить бронь"/>
+        <text name="eq_host_button_enter" text="Заявить"/>
+        <text name="eq_host_button_month" text="Сменить месяц"/>
+        <text name="eq_host_summary" text="%s. Популярность: %s."/>
+        <text name="eq_money_hosting" text="Проведение соревнований"/>
+        <text name="rl_messageTitle_eqHosting" text="Проведение"/>
+        <text name="eq_settings_hostInterval" text="Месяцев между своими соревнованиями"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Сколько месяцев после месяца вашего последнего соревнования должно пройти до следующего."/>
     </texts>
 </l10n>

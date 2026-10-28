@@ -544,6 +544,38 @@ Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with e
 favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
+### Hosting your own event
+
+The Events tab's third tab, **Host**, lists every event your farm could host: Dressage, Show
+Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or **Championship**
+(the rules are `data/hosting.xml`, read by `EqHosting`).
+
+| Rating | Field | Setup fee | Dressage arena | Show jumps | Cross country | Bleachers |
+| --- | --- | --- | --- | --- | --- | --- |
+| Novice | 8 | 5,000 | 15x30 | 6 | 3000 m, 20 jumps | 0 |
+| Intermediate | 16 | 20,000 | 20x40 | 10 | 4000 m, 30 jumps | 1 |
+| Championship | 32 | 80,000 | 20x60 | 12 | 5000 m, 40 jumps | 2 |
+
+- **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
+  **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
+  60 m of a course or arena; an indoor arena counts as one. A 3 Day Event needs all three, with
+  seating at both the arena and the show jumping course, and costs 1.5x to set up.
+- Two places are yours; every other place is a visiting horse, which needs a **free stable place**
+  in your horse pens and a month of **horse feed** (troughs and silos both count).
+- **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to
+  15 for extra bleachers or an indoor arena, up to 10 for horse facilities, and your hosting
+  reputation. It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
+  each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate.
+- **Booking:** one event at a time, from next month up to a year ahead, and at least the
+  **Months between hosted events** setting (3, 4, 6 or 12; default 6) after your last one.
+  Booking pays the setup fee. Cancelling two or more months ahead refunds half; later, nothing.
+- When its month starts the event opens on the Upcoming tab as "Show Jumping at <your farm>".
+  Your horses enter with one **Enter** button: no fee, no transport, and they stay at home. It
+  counts toward Entries per month, and results come at the end of the month with the other
+  monthly events.
+
+Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement.
+
 ## Buying horses
 
 The dealer sells horses of every quality, priced by their talent: an ordinary horse costs about

@@ -714,5 +714,78 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Skaliert die Startgebühr aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihre Startgebühr; Änderungen gelten ab der nächsten Runde."/>
         <text name="eq_settings_prizeScale" text="Preisgeld"/>
         <text name="eq_settings_prizeScale_tooltip" text="Skaliert das Preisgeld aller Veranstaltungen. 1x ist normal. Bereits ausgeschriebene Veranstaltungen behalten ihr Preisgeld; Änderungen gelten ab der nächsten Runde."/>
+        <text name="eq_ui_tab_host" text="Ausrichten"/>
+        <text name="eq_host_eventName" text="%s auf %s"/>
+        <text name="eq_host_type_dressage" text="Dressur"/>
+        <text name="eq_host_type_showJumping" text="Springreiten"/>
+        <text name="eq_host_type_crossCountry" text="Geländeritt"/>
+        <text name="eq_host_type_eventing" text="Vielseitigkeit"/>
+        <text name="eq_host_rating_novice" text="Einsteiger"/>
+        <text name="eq_host_rating_intermediate" text="Mittelstufe"/>
+        <text name="eq_host_rating_championship" text="Meisterschaft"/>
+        <text name="eq_host_col_event" text="Turnier zum Ausrichten"/>
+        <text name="eq_host_col_ready" text="Bereit"/>
+        <text name="eq_host_col_popularity" text="Beliebtheit"/>
+        <text name="eq_host_col_setup" text="Einrichtungsgebühr"/>
+        <text name="eq_host_col_takings" text="Einnahmen"/>
+        <text name="eq_host_col_check" text="Anforderung"/>
+        <text name="eq_host_col_have" text="Vorhanden"/>
+        <text name="eq_host_col_need" text="Benötigt"/>
+        <text name="eq_host_check_arena" text="Dressurviereck"/>
+        <text name="eq_host_check_dressageSeating" text="Tribünen am Viereck"/>
+        <text name="eq_host_check_showJumps" text="Springhindernisse"/>
+        <text name="eq_host_check_showJumpingSeating" text="Tribünen am Parcours"/>
+        <text name="eq_host_check_xcLength" text="Geländestrecke"/>
+        <text name="eq_host_check_xcJumps" text="Geländesprünge"/>
+        <text name="eq_host_check_stables" text="Freie Stallplätze"/>
+        <text name="eq_host_check_feed" text="Pferdefutter"/>
+        <text name="eq_host_part_base" text="Basis"/>
+        <text name="eq_host_part_course" text="Strecke"/>
+        <text name="eq_host_part_seating" text="Tribünen"/>
+        <text name="eq_host_part_facilities" text="Anlagen"/>
+        <text name="eq_host_part_reputation" text="Ruf"/>
+        <text name="eq_host_part_star" text="Starpferd"/>
+        <text name="eq_host_part_winter" text="Winter"/>
+        <text name="eq_host_label_yours" text="Dein Turnier"/>
+        <text name="eq_host_label_month" text="Buchen für"/>
+        <text name="eq_host_label_next" text="Nächster freier Monat"/>
+        <text name="eq_host_label_setup" text="Einrichtungsgebühr"/>
+        <text name="eq_host_label_popularity" text="Beliebtheit"/>
+        <text name="eq_host_label_visitors" text="Teilnehmer"/>
+        <text name="eq_host_label_takings" text="Einnahmen"/>
+        <text name="eq_host_label_reputation" text="Ruf"/>
+        <text name="eq_host_yours_open" text="%s, läuft diesen Monat"/>
+        <text name="eq_host_yours_booked" text="%s im %s"/>
+        <text name="eq_host_yours_none" text="Nichts gebucht"/>
+        <text name="eq_host_ready" text="Bereit"/>
+        <text name="eq_host_missing" text="%d fehlen"/>
+        <text name="eq_host_none" text="Keine"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d von %d Gastpferden"/>
+        <text name="eq_host_takingsLine" text="%s Startgelder, %s Eintritt"/>
+        <text name="eq_host_monthsAhead" text="in %d Monaten"/>
+        <text name="eq_host_yourFarm" text="Dein Hof"/>
+        <text name="eq_host_opened" text="Dein Turnier %s hat begonnen. Melde deine Pferde im Tab Turniere an; die Ergebnisse gibt es am Monatsende."/>
+        <text name="eq_host_book_noConfig" text="Ausrichten ist nicht verfügbar: die Regeln dafür wurden nicht geladen."/>
+        <text name="eq_host_book_already" text="Du hast schon ein Turnier gebucht."/>
+        <text name="eq_host_book_month" text="Dieser Monat kann nicht gebucht werden."/>
+        <text name="eq_host_book_requirements" text="Dein Hof erfüllt die Anforderungen dieses Turniers noch nicht."/>
+        <text name="eq_host_book_money" text="Du brauchst %s für die Einrichtungsgebühr."/>
+        <text name="eq_host_book_done" text="%s für %s gebucht. Einrichtungsgebühr bezahlt: %s."/>
+        <text name="eq_host_cancel_none" text="Du hast kein Turnier gebucht."/>
+        <text name="eq_host_cancel_done" text="%s abgesagt. Erstattung: %s."/>
+        <text name="eq_host_cancel_confirm" text="Dein Turnier %s absagen? Du bekommst %s der Einrichtungsgebühr zurück."/>
+        <text name="eq_host_enter_notYours" text="Nur der ausrichtende Hof kann bei diesem Turnier starten."/>
+        <text name="eq_host_enter_done" text="%s für %s gemeldet (Wertung %.0f). Startet zu Hause: keine Gebühr, kein Transport."/>
+        <text name="eq_host_button_book" text="Buchen für %s"/>
+        <text name="eq_host_button_cancel" text="Buchung absagen"/>
+        <text name="eq_host_button_enter" text="Anmelden"/>
+        <text name="eq_host_button_month" text="Monat wechseln"/>
+        <text name="eq_host_summary" text="%s. Beliebtheit: %s."/>
+        <text name="eq_money_hosting" text="Ausgerichtete Turniere"/>
+        <text name="rl_messageTitle_eqHosting" text="Ausrichten"/>
+        <text name="eq_settings_hostInterval" text="Monate zwischen eigenen Turnieren"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Wie viele Monate nach dem Monat deines letzten eigenen Turniers du ein weiteres ausrichten kannst."/>
     </texts>
 </l10n>
