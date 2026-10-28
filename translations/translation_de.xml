@@ -724,10 +724,10 @@
         <text name="eq_host_rating_intermediate" text="Mittelstufe"/>
         <text name="eq_host_rating_championship" text="Meisterschaft"/>
         <text name="eq_host_col_event" text="Turnier zum Ausrichten"/>
-        <text name="eq_host_col_ready" text="Bereit"/>
+        <text name="eq_host_col_ready" text="Anforderungen"/>
         <text name="eq_host_col_popularity" text="Beliebtheit"/>
         <text name="eq_host_col_setup" text="Einrichtungsgebühr"/>
-        <text name="eq_host_col_takings" text="Einnahmen"/>
+        <text name="eq_host_col_takings" text="Max. Einnahmen"/>
         <text name="eq_host_col_check" text="Anforderung"/>
         <text name="eq_host_col_have" text="Vorhanden"/>
         <text name="eq_host_col_need" text="Benötigt"/>
@@ -752,7 +752,7 @@
         <text name="eq_host_label_setup" text="Einrichtungsgebühr"/>
         <text name="eq_host_label_popularity" text="Beliebtheit"/>
         <text name="eq_host_label_visitors" text="Teilnehmer"/>
-        <text name="eq_host_label_takings" text="Einnahmen"/>
+        <text name="eq_host_label_takings" text="Erwartete Einnahmen"/>
         <text name="eq_host_label_reputation" text="Ruf"/>
         <text name="eq_host_yours_open" text="%s, läuft diesen Monat"/>
         <text name="eq_host_yours_booked" text="%s im %s"/>
