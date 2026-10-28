@@ -3,7 +3,7 @@
     Staff bring loose horses home. A horse the player rode and left out in the world stays a
     rideable vehicle, and the base game leaves it there overnight. When a pen's paid animal
     workers do their round (the riding or grooming task, at the end of the day or on "Do it
-    now"), they also fetch that farm's loose horses: each goes back into its own pen, or the
+    now"), or hired grooms do theirs (EqStaffManager), they also fetch that farm's loose horses: each goes back into its own pen, or the
     nearest staffed horse pen with room, and gets the same care the pen just had. With no
     staff on any of the farm's horse pens, loose horses stay where they were left.
 
@@ -64,6 +64,18 @@ function EqLooseHorses.noteRound(animal, task)
         EqLooseHorses.staffed[placeable] = round
     end
     if task ~= nil then round[task] = true end
+end
+
+
+--- Note that hired grooms did their round on a pen (EqStaffManager): its loose horses come home.
+--- @param placeable table horse pen
+function EqLooseHorses.noteStaffed(placeable)
+    local round = EqLooseHorses.staffed[placeable]
+    if round == nil then
+        round = {}
+        EqLooseHorses.staffed[placeable] = round
+    end
+    round.grooming = true
 end
 
 

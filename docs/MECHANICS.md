@@ -59,7 +59,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
   move on.
 - Welcome popups show the first time you come within 35 m of a horse pen or ride a horse, open
-  RLRM's menu with horses on the farm, open its Information tab, open the Events tab, and open the
+  RLRM's menu with horses on the farm, open its Information tab, open the Events tab, open the Equestrian Staff tab, and open the
   Diseases dialog for a horse. A popup stays until you click through its last page; closed early
   (Esc, getting off), it shows again next time. The **Help popups** setting (Show again) clears
   every seen flag on your machine, so each popup shows once more.
@@ -86,8 +86,8 @@ Every horse trains once a day, at RLRM's daily horse tick.
   stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
 - It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
   month's events have run. A popup explains it the first time a horse gets it.
-- Permanent training is unchanged: your riding still trains faster than staff and takes a stat
-  the last 5% of its ceiling.
+- Permanent training is unchanged: your riding still trains faster than staff and is the only
+  way to take a stat to its ceiling.
 
 ### The gallop and the Exertion bar (experimental)
 
@@ -261,15 +261,17 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 ### Staff, age and metabolism
 
-- **Staff** (the base game's Animal Workers with Riding turned on for a horse pen, added in patch
-  1.25, or RLRM's herdsman horse-care rule) count for whatever share of the riding bar you did not
-  fill yourself, at half the rate of a full day of plain riding. They train to the horse's role
-  and stop at 95% of each ceiling; your own focused riding trains a stat up to four times as fast,
-  and only it takes a stat the last 5%.
+- **Helpers** (the base game's Animal Workers with Riding turned on for a horse pen, or RLRM's
+  herdsman horse-care rule) are stable kids keeping horses active: on a day they fill the whole
+  riding bar they give 0.08 effort in every stat (a good minigame session is about 1.5), up to 60%
+  of each ceiling. They count for whatever share of the riding bar you did not fill yourself.
+- **Hired staff** are much better: see [Hired staff](#hired-staff) below. Your riding and staff
+  add up: the bigger gain counts in full and the smaller at half, so riding a horse that has a
+  groom and a trainer is best. Only your riding takes a stat to its ceiling.
 - **Staff bring loose horses home.** A horse you ride and leave out in the world stays there
-  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens: when they
-  do their round, they fetch your loose horses back to their own pen (or the nearest staffed pen
-  with room) and look after them with the rest.
+  overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens or have
+  a groom: when they do their round, they fetch your loose horses back to their own pen (or the
+  nearest staffed pen with room) and look after them with the rest.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
 - **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
@@ -290,11 +292,70 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
   shows it as Retired everywhere for good (the `eqRetire <horse> undo` debug command brings it back with its old role). The role also shows in RLRM's other lists (unless RLRM has a mark there), on the
   Skills box when you look at the horse, in the menu's Skill potential column and at the top of
   the riding panel, with the horse's four skills.
-- **Staff train toward the role.** Each role has a staff profile (Dressage leans on temperament
-  and agility, Racing on speed and stamina, Eventing on all but speed; Breeding, For sale and No
-  role keep every stat ticking over). Staff don't manage it equally well every day: the role's
-  own stats get between 50% and 150% of their effort each day, 100% on average. `eqChanges` shows
-  how they did.
+- **Staff can work on a role.** A groom or trainer set to a role works on every horse with that
+  role (not retired ones). Each role also keeps a profile of the stats it is about, which the
+  `eqFocus` command shows.
+
+### Hired staff
+
+Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
+**Hire** lists the candidates (Decline turns one down; the place refills at the usual hourly rate), **Your staff** your team (both grouped by job, best first), with
+Let go. Each person's ten skills show beside the table, and for your staff the controls below. The `eqStaff` console commands do the same. Host only
+for now in multiplayer.
+
+- **Jobs.** A groom trains all four stats and cleans horses. A Dressage, Show Jumping, Cross
+  Country or Racing trainer trains that event's two main stats (Dressage: temperament and agility;
+  Show Jumping: agility and temperament; Cross Country: stamina and agility; Racing: speed and
+  stamina; Racing covers steeplechase, Eventing uses the other three). A farm can have only one vet
+  and one broker.
+- **Skills.** Everyone has ten skills from 0 to 100: the four stats, the four event types,
+  Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
+  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%). Other skills are
+  0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
+- **Wages.** Per day, by job (groom 200, trainer 450, vet 600, broker 400) times the grade
+  (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
+  Horse Staff Wages in Finances, so a junior groom just for the cleaning is cheap. No hiring fee; let staff go at any time.
+  A vet's or broker's wage is spread over the month: with 28 days per month, each day costs 1/28 of it
+  (at least 5), since they help per event or deal rather than per day of training.
+- **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
+  for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
+  offer 12 to 72 game hours (Time remaining on the Hire tab). When a place is free, someone new
+  turns up with a 25% chance each hour, so people come and go a few at a time.
+- **Works on.** Like RLRM's Herdsman: **Stables** picks the stables (all by default), and **By
+  role** ticks roles (with how many horses have each, retired horses left out) or **Individual**
+  ticks horses. A new hire works on every horse. The horses they work on share their full work:
+  up to 4 horses each get all of it, more share it (8 horses get half each). Every other horse
+  gets 20% of it.
+- **Status.** Disabled staff do no work (no training, cleaning, event bonus, vet or broker) and
+  get half pay. A switch takes effect at 01:00 the next morning and lasts at least a day, so it
+  can't be timed around the day's training, the grooms' round or the wages.
+- **Training.** Per day, a trainer gives 0.5 x skill/100 effort in its two stats, and anyone gives
+  0.35 x skill/100 in the other stats (so a groom trains everything, and a talented trainer
+  helps a little elsewhere). Each person trains a stat up to 60% + 35% x skill/100 of its
+  ceiling (Junior about 72%, Legendary about 92%).
+- **Diminishing returns.** On one stat the best person's gain counts in full, the second at 40%
+  and any more at 10% each, helpers included. A second groom on the same horse adds little.
+- **Cleaning.** In the last hour of the day each groom cleans up to 8 horses, the ones they work on
+  first. Clean horses count as groomed, and grooms bring loose horses home.
+- **Vet.** Works on every horse without being told. A vet at Veterinary 100 cuts the chance of an
+  injury at events by 40%, and an injury's rest and treatment fee by 35% (less at lower skill).
+  The Events tab's injury risk includes it.
+- **Broker.** Works without being told too. At Broker 100 the dealer's "Potential (dealer's view)"
+  you see moves 70% of the way to the truth, and a bought horse's real potential shows 2 months
+  sooner (never before 1 month). The dealer's prices stay on the dealer's own view. Horses also
+  cost up to 5% less from the dealer and sell for up to 5% more (only once you have had the horse
+  a month, so buying to sell back gains nothing).
+- **Others' vet and broker skill.** The farm's Veterinary and Broker stack over everyone like
+  training (best in full, then 40%, then 10%), so a groom with a talent helps a little.
+- **Event bonus.** Trainers focus on their two stats but train the others a little, and coach for events: at skill 100 a trainer working on a horse adds 4
+  points to the event's most important stat in that month's events, less to the others by the
+  event's weights (20% for horses they don't work on). Races use Racing, Eventing the average of
+  Dressage, Show Jumping and Cross Country. A trainer helps in another event by their skill in it.
+  With Peak form from your riding (up to 8) the bigger counts in full and the smaller at half, up
+  to 10 points.
+- **All skills count.** Duties are only what a job is best at: everyone uses all ten skills. Grooms
+  coach for events by their event skills, and the vet and broker train and coach every horse at the
+  20% rate for horses staff aren't set to work on.
 
 ### Riding bar and names
 

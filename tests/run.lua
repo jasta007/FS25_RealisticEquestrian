@@ -15,6 +15,8 @@ dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/staff/EqStaffNames.lua")
+dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
@@ -905,18 +907,18 @@ do
     end
 end
 
-local racingStaff = EqTraining.staffEffort(100, 0, "racing", false)
-check("staff train to the focus, at half its profile", racingStaff.speed == 0.5 and racingStaff.agility < 0.1)
-check("riding the player did is not credited to staff", EqTraining.staffEffort(100, 100, "racing", false).speed == 0)
-check("grooming adds temperament", EqTraining.staffEffort(0, 0, "balanced", true).temperament > 0)
+local helped = EqTraining.helperEffort(100, 0, false)
+check("helpers give a tiny general effort", helped.speed == EqTraining.HELPER_EFFORT and helped.agility == EqTraining.HELPER_EFFORT)
+check("riding the player did is not credited to helpers", EqTraining.helperEffort(100, 100, false).speed == 0)
+check("grooming adds temperament", EqTraining.helperEffort(0, 0, true).temperament > 0)
 
--- Staff alone stop at 95% of the ceiling; the player's riding takes it the rest of the way.
+-- Helpers alone stop at HELPER_CAP of the ceiling; the player's riding takes it the rest of the way.
 local staffHorse = horse("showJumping", 10)
 for _ = 1, 400 do
     EqTraining.applyDay(staffHorse, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
 end
-check("staff stop at 95% of the ceiling", staffHorse.trained.agility <= 70 * 0.95 + 1e-6 and staffHorse.trained.agility > 66,
-    string.format("got %.2f", staffHorse.trained.agility))
+check("helpers stop at their cap", staffHorse.trained.agility <= 70 * EqTraining.HELPER_CAP + 1e-6
+    and staffHorse.trained.agility > 70 * EqTraining.HELPER_CAP - 2, string.format("got %.2f", staffHorse.trained.agility))
 for _ = 1, 400 do
     local sheet = ridden("canter", 100000)
     sheet.focused.agility = 1
@@ -924,15 +926,240 @@ for _ = 1, 400 do
 end
 check("the player's riding reaches the ceiling", staffHorse.trained.agility > 69.5, string.format("got %.2f", staffHorse.trained.agility))
 
--- Pace: two years of full work takes a prime horse most of the way.
-local paced = horse("crossCountry", 10)
-for _ = 1, 24 do
-    EqTraining.applyDay(paced, cap70, { riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 1 })
+-- Hired staff: a groom and a show jumping trainer on one horse.
+do
+    local function member(id, job, level, worksOn)
+        local skills = {}
+        for _, skill in ipairs(EqStaff.SKILLS) do skills[skill] = 10 end
+        for _, skill in ipairs(EqStaff.JOBS[job].main) do skills[skill] = level end
+        return { id = id, name = job .. id, job = job, grade = 2, skills = skills, wage = 1000,
+            worksOn = worksOn or { kind = EqStaff.WORKS_GENERAL } }  -- an old save's shape, read as every horse
+    end
+    local star = { id = "S", role = "showJumping" }
+    local other = { id = "O", role = "dressage" }
+    local onStar = { kind = EqStaff.WORKS_HORSE, id = "S" }
+    local pair = { member(1, "groom", 55, onStar), member(2, "showJumping", 55, onStar) }
+    local horses = { star, other }
+    local counts = EqStaff.targetCounts(pair, horses)
+    local work = EqStaff.workOn(pair, star, counts)
+    check("a targeted trainer gives its stats half its skill", math.abs(work.agility[2].effort - 0.275) < 1e-9
+        or math.abs(work.agility[1].effort - 0.275) < 1e-9)
+    local general = EqStaff.workOn(pair, other, counts)
+    check("other horses get the general share", math.abs(general.agility[1].effort + general.agility[2].effort
+        - (0.275 + 0.35 * 0.55) * EqStaff.GENERAL_SHARE) < 1e-9)
+    check("stacking: best full, second at 40%", math.abs(EqStaff.stack({ 0.1, 0.3, 0.2 }) - (0.3 + 0.4 * 0.2 + 0.1 * 0.1)) < 1e-9)
+    local byRole = { member(3, "groom", 60, { kind = EqStaff.WORKS_ROLE, role = "showJumping" }) }
+    local many = {}
+    for i = 1, 8 do table.insert(many, { id = "H" .. i, role = "showJumping" }) end
+    table.insert(many, { id = "R", role = "showJumping", retired = true })
+    local roleCounts = EqStaff.targetCounts(byRole, many)
+    check("a role group covers that role's horses, not retired ones", roleCounts[3] == 8)
+    local shared = EqStaff.workOn(byRole, many[1], roleCounts)
+    check("past 4 horses the work is shared", math.abs(shared.speed[1].effort - 0.35 * 0.6 * 0.5) < 1e-9)
+    check("a member's cap follows their skill", math.abs(select(2, EqStaff.memberEffort(byRole[1], "speed", true, 1))
+        - (EqStaff.CAP_BASE + EqStaff.CAP_SKILL * 0.6)) < 1e-9)
+
+    -- Two years with an Experienced pair beat helpers alone, and riding on top beats both.
+    local function run(staffWork, ride)
+        local h = horse("showJumping", 10)
+        for _ = 1, 24 * 4 do
+            local sheet = nil
+            if ride then
+                sheet = ridden("canter", 30000)
+                sheet.focused.agility = 1.5
+            end
+            EqTraining.applyDay(h, cap70, { sheet = sheet, riding = 100, dirt = 50, ageMonths = 60, timeAdjustment = 0.25,
+                staff = staffWork })
+        end
+        return h.trained.agility
+    end
+    local alone, staffed, ridingOnly, both = run(nil, false), run(work, false), run(nil, true), run(work, true)
+    check("an Experienced pair trains well past the helpers", staffed > alone + 10, string.format("%.1f vs %.1f", staffed, alone))
+    check("riding with staff beats riding alone", both > ridingOnly, string.format("%.1f vs %.1f", both, ridingOnly))
+    print(string.format("info: 2 years agility from 10 (ceiling 70): helpers %.1f, Experienced pair %.1f, riding %.1f, riding + pair %.1f",
+        alone, staffed, ridingOnly, both))
+
+    -- Candidates, wages, the one-vet rule and cleaning.
+    local rng = EqRandom.new("staff test")
+    local candidates, grades, jobs = {}, {}, {}
+    local nextId = EqStaff.refreshCandidates(candidates, 1, rng, 1, true)
+    check("six candidates on offer", #candidates == EqStaff.CANDIDATES and nextId == EqStaff.CANDIDATES + 1)
+    for i = 1, 2000 do
+        local c = EqStaff.roll(rng, i, 1)
+        grades[c.grade] = (grades[c.grade] or 0) + 1
+        jobs[c.job] = (jobs[c.job] or 0) + 1
+        for _, skill in ipairs(EqStaff.SKILLS) do
+            if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
+        end
+        if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+    end
+    check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
+    check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
+    local legend = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    check("a legendary groom costs far more than a junior", EqStaff.wageFor("groom", 4, legend, 0, 0)
+        > 4 * EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0))
+    check("names have a last initial", string.match(candidates[1].name, "^%a+ %u%.$") ~= nil, candidates[1].name)
+    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0)
+        <= 200)
+
+    -- The mix on offer: 2-3 grooms, 2-3 trainers of different events, at most one vet and broker.
+    local mixOk, passiveSeen = true, 0
+    for trial = 1, 200 do
+        local offer = {}
+        EqStaff.refreshCandidates(offer, trial, rng, 1, true)
+        local count, grooms, trainers = {}, 0, 0
+        for _, c in ipairs(offer) do
+            count[c.job] = (count[c.job] or 0) + 1
+            if c.job == "groom" then grooms = grooms + 1 end
+            if EqStaff.JOBS[c.job].event ~= nil then trainers = trainers + 1 end
+        end
+        if grooms < 2 or grooms > 3 or trainers < 2 or trainers > 3 or (count.vet or 0) > 1 or (count.broker or 0) > 1 then
+            mixOk = false
+        end
+        for _, event in ipairs(EqStaff.EVENTS) do
+            if (count[event] or 0) > 1 then mixOk = false end
+        end
+        if count.vet or count.broker then passiveSeen = passiveSeen + 1 end
+    end
+    check("candidates come in a good mix", mixOk)
+    check("a vet or broker is on offer now and then", passiveSeen > 40 and passiveSeen < 160, tostring(passiveSeen))
+    local people = { member(1, "racing", 30), member(2, "groom", 40), member(3, "racing", 60), member(4, "vet", 50) }
+    people[3].grade = 3
+    EqStaff.sortPeople(people)
+    check("people sort by job, then grade", people[1].job == "groom" and people[2].id == 3 and people[3].id == 1
+        and people[4].job == "vet")
+    check("a broker buys cheaper and sells dearer", EqStaff.dealFactor(1, false) < 1 and EqStaff.dealFactor(1, true) > 1
+        and EqStaff.dealFactor(0, true) == 1)
+    local vet = member(9, "vet", 70)
+    check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
+    check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)
+    local firstLeaves = candidates[1].leavesAt
+    check("candidates stay 12-72 hours", firstLeaves >= 1 + 12 and firstLeaves <= 1 + 72)
+    check("hours left", EqStaff.hoursLeft(candidates[1], firstLeaves - 5) == 5)
+    local staggered = {}
+    for _, c in ipairs(candidates) do table.insert(staggered, c) end
+    local maxSeen, arrivals = 0, 0
+    for hour = 2, 200 do
+        local ids = {}
+        for _, c in ipairs(staggered) do ids[c.id] = true end
+        nextId = EqStaff.refreshCandidates(staggered, hour, rng, nextId, false)
+        local new = 0
+        for _, c in ipairs(staggered) do if not ids[c.id] then new = new + 1 end end
+        maxSeen = math.max(maxSeen, new)
+        arrivals = arrivals + new
+        if #staggered > EqStaff.CANDIDATES then maxSeen = 99 end
+    end
+    check("new candidates arrive one at a time", maxSeen == 1 and arrivals > 10, string.format("%d, %d", maxSeen, arrivals))
+    local stale = { { id = 1, job = "groom" } }
+    EqStaff.refreshCandidates(stale, 100, rng, 2, false)
+    check("old saves get a fresh window", stale[1].leavesAt ~= nil and stale[1].leavesAt > 100)
+    local yard = {}
+    for i = 1, 12 do table.insert(yard, { id = "Y" .. i, role = "balanced" }) end
+    yard[12].role = "racing"
+    local grooms = { member(20, "groom", 40, { kind = EqStaff.WORKS_ROLE, role = "racing" }) }
+    local clean = EqStaff.toClean(grooms, yard)
+    check("a groom cleans 8 horses, theirs first", #clean == EqStaff.CLEAN_PER_GROOM and clean[1].id == "Y12")
+    check("no grooms, no cleaning", #EqStaff.toClean({ vet }, yard) == 0)
+    -- Works on: stables, roles or chosen horses, and switching staff off.
+    local barn = { { id = "a", name = "Ace", role = "racing", stable = "barn" },
+        { id = "b", name = "Bella", role = "racing", stable = "yard" },
+        { id = "c", name = "Cody", role = "dressage", stable = "barn" },
+        { id = "r", name = "Old", role = "racing", stable = "barn", retired = true } }
+    local counts = EqStaff.roleCounts(barn, { "barn" })
+    check("role counts follow the stables, not retired horses", counts.racing == 1 and counts.dressage == 1)
+    check("role counts in every stable", EqStaff.roleCounts(barn, nil).racing == 2)
+    local listed = EqStaff.horsesIn(barn, { "yard" })
+    check("the horse list follows the stables", #listed == 1 and listed[1].name == "Bella")
+    local inBarn = member(40, "groom", 50, { mode = EqStaff.WORKS_ROLE, stables = { "barn" }, roles = { "racing" } })
+    check("a stable and role pick", EqStaff.targets(inBarn, barn[1]) and not EqStaff.targets(inBarn, barn[2])
+        and not EqStaff.targets(inBarn, barn[3]) and not EqStaff.targets(inBarn, barn[4]))
+    local everyone = member(41, "groom", 50, EqStaff.defaultWorks())
+    check("by default staff work on every horse but the retired", EqStaff.targets(everyone, barn[2])
+        and not EqStaff.targets(everyone, barn[4]))
+    local picked = member(42, "groom", 50, { mode = EqStaff.WORKS_HORSE, horses = { "b", "r" } })
+    check("chosen horses, retired too", EqStaff.targets(picked, barn[2]) and EqStaff.targets(picked, barn[4])
+        and not EqStaff.targets(picked, barn[1]))
+    check("old saves' Works on still read", EqStaff.normalizeWorks({ kind = EqStaff.WORKS_ROLE, role = "racing" }).roles[1] == "racing"
+        and EqStaff.normalizeWorks({ kind = EqStaff.WORKS_GENERAL }).roles == nil)
+    local off = member(43, "groom", 50)
+    off.enabled = false
+    check("a disabled member does no work", not EqStaff.targets(off, barn[1])
+        and #EqStaff.workOn({ off }, barn[1], {}).speed == 0 and #EqStaff.toClean({ off }, barn) == 0)
+    check("a disabled member is paid half", EqStaff.dailyWages({ off, member(44, "groom", 50) }) == 1500)
+    local vet = { job = "vet", wage = 600 }
+    check("a vet's wage is per day on one-day months", EqStaff.wageOf(vet, 1) == 600)
+    check("a vet's wage is spread over a 28-day month", EqStaff.wageOf(vet, 28) == 20)
+    check("a cheap broker still costs something", EqStaff.wageOf({ job = "broker", wage = 20 }, 28) == 5)
+    check("a groom's wage is not spread", EqStaff.wageOf({ job = "groom", wage = 200 }, 28) == 200)
+    check("daily wages spread a disabled vet too", EqStaff.dailyWages({ { job = "vet", wage = 600, enabled = false } }, 3) == 100)
+    -- Portraits: mostly a face for the name, 10% any face.
+    local faceRng = EqRandom.new("faces")
+    local maleOk, femaleFaces, total = 0, {}, 0
+    local maleSet = {}
+    for _, f in ipairs(EqStaff.FACES.male) do maleSet[f] = true end
+    for _, f in ipairs(EqStaff.FACES.either) do maleSet[f] = true end
+    for _ = 1, 2000 do
+        local f = EqStaff.rollFace(faceRng, "male")
+        if maleSet[f] then maleOk = maleOk + 1 end
+        femaleFaces[EqStaff.rollFace(faceRng, "female")] = true
+    end
+    for _ in pairs(femaleFaces) do total = total + 1 end
+    check("men mostly get men's or either faces", maleOk > 1850 and maleOk < 2000, tostring(maleOk))
+    check("every face turns up", total == EqStaff.FACE_COUNT)
+    local count = #EqStaff.FACES.male + #EqStaff.FACES.either + #EqStaff.FACES.female
+    check("the face groups cover the sheet once", count == EqStaff.FACE_COUNT)
+    check("names know their gender", EqStaffNames.genderOf("Amara K.") == "female" and EqStaffNames.genderOf("Liam T.") == "male")
+    local oldMember = { id = 77, name = "Liam T." }
+    check("people from before portraits get a steady face", EqStaff.faceOf(oldMember) == EqStaff.faceOf({ id = 77, name = "Liam T." }))
+    check("skill words", EqStaff.level(95).word == 6 and EqStaff.level(0).word == 1 and EqStaff.level(59).word == 3)
+    check("best skills first", EqStaff.bestSkills(member(30, "racing", 70), 2)[1] == "racing")
+
+    -- Vet and broker.
+    local function near(a, b) return math.abs(a - b) < 1e-9 end
+    check("no vet changes nothing", EqStaff.injuryFactor(0) == 1 and EqStaff.careFactor(0) == 1)
+    check("a full vet cuts injuries and care", near(EqStaff.injuryFactor(1), 1 - EqStaff.VET_INJURY)
+        and near(EqStaff.careFactor(1), 1 - EqStaff.VET_CARE))
+    check("a cheaper fee with a vet", EqInjury.fee(4000, false, 0.65) == 2600 and EqInjury.fee(4000, true, 0.5) == 800)
+    local said, real = { stamina = 80, speed = 40, agility = 60, temperament = 60 },
+        { stamina = 60, speed = 60, agility = 60, temperament = 60 }
+    check("no broker shows the dealer's view", EqStaff.brokerView(said, real, 0) == said)
+    local read = EqStaff.brokerView(said, real, 1)
+    check("a broker reads closer to the truth", read.stamina == 66 and read.speed == 54 and read.agility == 60,
+        string.format("stamina %.1f speed %.1f", read.stamina, read.speed))
+    check("a broker brings the reveal sooner", EqStaff.revealMonths(3, 0) == 3 and EqStaff.revealMonths(3, 1) == 1
+        and EqStaff.revealMonths(1, 1) == 1)
+
+    -- Event bonuses.
+    check("races use racing", EqStaff.eventSkills({ name = "raceLong", racing = true })[1] == "racing")
+    check("eventing uses its phases", #EqStaff.eventSkills({ name = "eventing",
+        phases = { "dressage", "showJumping", "crossCountry" } }) == 3)
+    check("show jumping uses its own", EqStaff.eventSkills({ name = "showJumping" })[1] == "showJumping")
+    local jumpWeights = { stamina = 1, speed = 1, agility = 3, temperament = 2 }
+    local coach = member(40, "showJumping", 100, onStar)
+    local bonus = EqStaff.eventBonus({ coach }, star, EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("a top trainer gives full points to the main stat", near(bonus.agility, EqStaff.EVENT_POINTS)
+        and near(bonus.stamina, EqStaff.EVENT_POINTS / 3))
+    local elsewhere = EqStaff.eventBonus({ coach }, other, EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("other horses get the general share", near(elsewhere.agility, EqStaff.EVENT_POINTS * EqStaff.GENERAL_SHARE))
+    local groom = member(41, "groom", 100, onStar)
+    local groomOnly = EqStaff.eventBonus({ groom }, star, EqStaff.targetCounts({ groom }, horses), { "showJumping" }, jumpWeights)
+    check("a groom coaches by their off-job skill", near(groomOnly.agility, EqStaff.EVENT_POINTS * 0.1))
+    local vet = member(43, "vet", 100)
+    local vetBonus = EqStaff.eventBonus({ vet }, star, EqStaff.targetCounts({ vet }, horses), { "showJumping" }, jumpWeights)
+    check("a vet coaches every horse at the general share",
+        near(vetBonus.agility, EqStaff.EVENT_POINTS * 0.1 * EqStaff.GENERAL_SHARE))
+    local vetWork = EqStaff.workOn({ vet }, star, EqStaff.targetCounts({ vet }, horses))
+    check("a vet trains every horse at the general share", #vetWork.stamina == 1 and not vetWork.stamina[1].targeted
+        and near(vetWork.stamina[1].effort, EqStaff.GROOM_SHARE * 0.1 * EqStaff.GENERAL_SHARE))
+    local twice = EqStaff.eventBonus({ coach, member(42, "showJumping", 100, onStar) }, star,
+        EqStaff.targetCounts({ coach }, horses), { "showJumping" }, jumpWeights)
+    check("a second trainer adds less", twice.agility > bonus.agility and twice.agility < 1.5 * bonus.agility)
+    local mixed = EqStaff.mixForm({ stamina = 8, speed = 0, agility = 8, temperament = 2 }, bonus)
+    check("form and bonus mix, bigger in full", near(mixed.agility, 8 + 0.5 * EqStaff.EVENT_POINTS)
+        and near(mixed.speed, bonus.speed))
+    local capped = EqStaff.mixForm({ stamina = 10, speed = 10, agility = 10, temperament = 10 }, bonus)
+    check("form stays under its cap", capped.agility == EqStaff.FORM_CAP)
 end
-check("two years of staff work gets stamina most of the way", paced.trained.stamina > 0.8 * 66.5,
-    string.format("got %.1f", paced.trained.stamina))
-print(string.format("info: 24 months of cross-country staff work from 10 -> sta %.1f spd %.1f agi %.1f tem %.1f (ceilings 70)",
-    paced.trained.stamina, paced.trained.speed, paced.trained.agility, paced.trained.temperament))
 
 -- The same months give the same result whatever the days per month.
 local short, long = horse("balanced", 10), horse("balanced", 10)
@@ -1875,7 +2102,7 @@ do
     local logDay = { sheet = ridden("canter", 100000), riding = 100, dirt = 5, ageMonths = 60, timeAdjustment = 1, feedBoost = { stamina = 0.1 } }
     local logDeltas, logDetail = EqTraining.applyDay(logged, cap70, logDay)
     check("applyDay explains each stat", logDetail.stats.agility ~= nil and logDetail.stats.agility.fromPlayer > 0)
-    check("applyDay detail matches the delta", math.abs(math.max(logDetail.stats.agility.fromPlayer, logDetail.stats.agility.fromStaff)
+    check("applyDay detail matches the delta", math.abs(EqTraining.mixGains(logDetail.stats.agility.fromPlayer, logDetail.stats.agility.fromStaff)
         + logDetail.stats.agility.faded + logDetail.stats.agility.aged - logDeltas.agility) < 1e-9)
     local logNotes = EqStatLog.explainDay(logDetail, logDay, { focus = "balanced", sheet = logDay.sheet,
         playerPoints = EqTraining.playerRidingPoints(logDay.sheet) })
@@ -2942,12 +3169,6 @@ end)()
     for _, name in ipairs(EqRole.ORDER) do
         check("staff train to role " .. name, EqTraining.FOCUS[name] ~= nil)
     end
-    local good = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.high)
-    local bad = EqTraining.staffEffort(100, 0, "dressage", false, EqTraining.STAFF_LUCK.low)
-    check("staff luck changes a role's own stats", good.temperament > bad.temperament and good.agility > bad.agility)
-    check("staff luck leaves the role's other stats", good.stamina == bad.stamina)
-    check("no role: staff work is steady", EqTraining.staffEffort(100, 0, "balanced", false, 1.5).speed
-        == EqTraining.staffEffort(100, 0, "balanced", false, 0.5).speed)
 
     local function item(name, focus) return { cluster = { name = name, focus = focus } } end
     local roleOf = function(cluster) return cluster.focus and EqRole.get({ focus = cluster.focus }) or nil end
@@ -3068,7 +3289,10 @@ end)()
     check("info welcome on the Information tab", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true })) == "info")
     check("events welcome even without horses", EqWelcome.menuSeries(state({ hasHorses = false, eventsOpen = true })) == "events")
     seen.info, seen.events = true, true
-    check("nothing once all are seen", EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true, eventsOpen = true })) == nil)
+    check("staff welcome on the Equestrian Staff tab", EqWelcome.menuSeries(state({ hasHorses = false, staffOpen = true })) == "staff")
+    seen.staff = true
+    check("nothing once all are seen",
+        EqWelcome.menuSeries(state({ hasHorses = true, infoOpen = true, eventsOpen = true, staffOpen = true })) == nil)
 
     local oldAnimalType = AnimalType
     AnimalType = { HORSE = 4, COW = 1 }

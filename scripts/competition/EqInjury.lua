@@ -19,7 +19,8 @@
 
     Retiring a hurt horse cuts its treatment fee to RETIRED_FEE_SHARE: while RLRM bills, shows
     or confirms a course for a retired horse, the model's treatment block is swapped for a
-    cheaper copy. The Diseases dialog also gets a Retire button.
+    cheaper copy. The Diseases dialog also gets a Retire button. A farm vet (EqStaff.careFactor)
+    cuts the fee the same way, and shortens the rest from the day of the injury.
 ]]
 
 EqInjury = {}
@@ -153,10 +154,21 @@ end
 
 --- @param cost number the full monthly fee
 --- @param retired boolean
+--- @param care number|nil the farm vet's factor (EqStaff.careFactor), 1 without a vet
 --- @return number fee
-function EqInjury.fee(cost, retired)
-    if retired then return math.floor(cost * EqInjury.RETIRED_FEE_SHARE + 0.5) end
-    return cost
+function EqInjury.fee(cost, retired, care)
+    local share = (retired and EqInjury.RETIRED_FEE_SHARE or 1) * (care or 1)
+    if share >= 1 then return cost end
+    return math.floor(cost * share + 0.5)
+end
+
+
+--- The farm vet's factor on this horse's rest and fees.
+--- @param animal table|nil
+--- @return number care 1 without a vet
+function EqInjury.careOf(animal)
+    if EqStaffManager == nil or animal == nil then return 1 end
+    return EqStaff.careFactor(EqStaffManager.strength(EqFacilityHooks.farmOfAnimal(animal), "veterinary"))
 end
 
 
@@ -311,11 +323,14 @@ end
 --- @param name string injury name
 --- @return boolean onRLRM true when it is on the Diseases page, false when it rests on our clock
 function EqInjury.start(record, animal, name)
-    if EqInjury.rlrmReady() and contract(animal, name, nil) then
+    -- The farm's vet shortens the rest; on RLRM's books that is a head start on the months.
+    local care = EqInjury.careOf(animal)
+    local rest = EqInjury.restMonths(name) * care
+    if EqInjury.rlrmReady() and contract(animal, name, care < 1 and rest or nil) then
         record.injury = { name = name, rlrm = true }
         return true
     end
-    record.injury = { name = name, untilDay = EqInjury.clockFor(EqInjury.restMonths(name), today(), daysPerPeriod()) }
+    record.injury = { name = name, untilDay = EqInjury.clockFor(rest, today(), daysPerPeriod()) }
     return false
 end
 
@@ -488,7 +503,7 @@ end
 --- @return number fee
 local function feeFor(model, animal)
     local record = recordOf(animal)
-    return EqInjury.fee(model.treatment.cost, record ~= nil and record.retired)
+    return EqInjury.fee(model.treatment.cost, record ~= nil and record.retired, EqInjury.careOf(animal))
 end
 
 
@@ -504,12 +519,13 @@ local function withHorseTerms(model, animal, billing, fn, ...)
     if info == nil or model.treatment == nil then return fn(...) end
     local record = recordOf(animal)
     local retired = record ~= nil and record.retired
-    if not retired and not (billing and info.treatDays ~= nil) then return fn(...) end
+    local care = EqInjury.careOf(animal)
+    if not retired and care >= 1 and not (billing and info.treatDays ~= nil) then return fn(...) end
 
     local full = model.treatment
     local terms = {}
     for key, value in pairs(full) do terms[key] = value end
-    terms.cost = EqInjury.fee(full.cost, retired)
+    terms.cost = EqInjury.fee(full.cost, retired, care)
     if billing and info.treatDays ~= nil then terms.cost = terms.cost / info.treatDays * daysPerPeriod() end
     model.treatment = terms
     return EqLog.finally(function() model.treatment = full end, fn, ...)

@@ -1,10 +1,11 @@
-<!-- Realistic Equestrian by Jasta007 -->
+<!-- Realistic Equestrian by Jasta007. Made by art/source/menu_icons.py. -->
 <texture>
 	<meta>
 		<filename>eqMenuIcons.dds</filename>
-		<size width="512" height="512"/>
+		<size width="1024" height="512"/>
 	</meta>
 	<slices>
 		<slice id="events" uvs="0px 0px 512px 512px"/>
+		<slice id="staff" uvs="512px 0px 512px 512px"/>
 	</slices>
 </texture>

@@ -48,9 +48,26 @@ function EqHorseRecord.new(id)
 end
 
 
---- The potential the player can see: the dealer's view until the real one has shown.
+-- The farm's Broker skill, 0..1 (EqStaffManager sets it; none in the headless tests).
+EqHorseRecord.brokerStrength = nil
+
+
+--- The potential the player can see: the dealer's view until the real one has shown, read by
+--- the farm's broker (EqStaff.brokerView).
 --- @return table ceilings stat key -> ceiling
 function EqHorseRecord:getShownCeilings()
+    if self.advertised ~= nil and not self.revealed then
+        local strength = EqHorseRecord.brokerStrength ~= nil and EqHorseRecord.brokerStrength() or 0
+        if strength > 0 and EqStaff ~= nil then return EqStaff.brokerView(self.advertised, self:getCeilings(), strength) end
+        return self.advertised
+    end
+    return self:getCeilings()
+end
+
+
+--- The potential the dealer prices by: the dealer's own view until the real one has shown.
+--- @return table ceilings stat key -> ceiling
+function EqHorseRecord:getDealerCeilings()
     if self.advertised ~= nil and not self.revealed then return self.advertised end
     return self:getCeilings()
 end
