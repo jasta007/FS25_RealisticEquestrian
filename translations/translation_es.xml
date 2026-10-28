@@ -562,8 +562,15 @@
         <text name="eq_ord_n" text="%dº"/>
         <text name="eq_story_podium" text="Ganador: %s, 2º: %s, 3º: %s."/>
         <text name="eq_story_winner" text="Ganador: %s."/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s puntos"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s puntos (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, sin faltas"/>
+        <text name="eq_story_down1" text="1 derribo"/>
+        <text name="eq_story_downN" text="%d derribos"/>
+        <text name="eq_story_refusal1" text="1 rehúse"/>
+        <text name="eq_story_refusalN" text="%d rehúses"/>
+        <text name="eq_story_time" text="%s de tiempo"/>
+        <text name="eq_story_total" text="Total: %s puntos"/>
         <text name="eq_story_gains" text="Ganó %s."/>
         <text name="eq_story_injury" text="Volvió a casa con %s."/>
         <text name="eq_story_careerEnded" text="Sufrió una lesión que acaba con su carrera."/>

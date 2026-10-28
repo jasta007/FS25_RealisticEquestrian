@@ -317,7 +317,8 @@ end
 --- @param field number|nil runners in total, default the tier's field (fewer when some of the
 ---     field was eliminated before the scoring)
 --- @return table results list sorted by place: { key or nil for a rival, place, score, prize,
----     rating, run (EqPerformance.run), phasePlaces (eventing: phase -> place) }
+---     rating, run (EqPerformance.run; eventing adds penalties, and a sheet on each phase),
+---     phasePlaces (eventing: phase -> place) }
 function EqCompetition.run(event, config, entrants, rng, field)
     local discipline = config.disciplineByName[event.discipline]
     local tier = config.tierByName[event.tier]
@@ -336,9 +337,14 @@ function EqCompetition.run(event, config, entrants, rng, field)
         table.insert(runners, { rating = rating, score = run.score, run = run })
     end
 
-    table.sort(runners, function(a, b) return a.score > b.score end)
-
-    local phasePlaces = discipline.phases ~= nil and EqPerformance.phasePlaces(runners, discipline.phases) or nil
+    local phasePlaces = nil
+    if discipline.phases ~= nil then
+        EqPerformance.scorePenalties(runners, discipline.phases, rng)
+        table.sort(runners, function(a, b) return EqPerformance.penaltyOrder(a, b) end)
+        phasePlaces = EqPerformance.phasePlaces(runners, discipline.phases)
+    else
+        table.sort(runners, function(a, b) return a.score > b.score end)
+    end
     for place, runner in ipairs(runners) do
         runner.place = place
         local share = EqCompetition.PRIZE_SHARES[place]

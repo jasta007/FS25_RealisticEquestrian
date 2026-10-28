@@ -1,8 +1,8 @@
 --[[
     EqStory.lua
-    The few lines that tell a horse's event: how it went (EqPerformance), eventing's phase
-    placings, who took the top three, and what the horse came home with (stat gains or an
-    injury). At most four lines under the result itself, each one short.
+    The few lines that tell a horse's event: how it went (EqPerformance), eventing's scoresheet
+    (each phase's place and penalties, then the total), who took the top three, and what the
+    horse came home with (stat gains or an injury). Each line short.
 ]]
 
 EqStory = {}
@@ -66,20 +66,58 @@ function EqStory.podiumLine(names)
 end
 
 
---- @param phases table phase names, in order
---- @param places table phase -> place
---- @return string|nil line "Dressage 4th, Show Jumping 2nd, Cross Country 6th."
-function EqStory.phasesLine(phases, places)
-    if phases == nil or places == nil then return nil end
+--- @param value number penalties
+--- @param decimal boolean always show one decimal (dressage marks)
+--- @return string text such as "28.4", "4" or "6.8"
+function EqStory.penalties(value, decimal)
+    if not decimal and math.abs(value - math.floor(value + 0.5)) < 0.05 then return string.format("%d", math.floor(value + 0.5)) end
+    return string.format("%.1f", value)
+end
+
+
+--- What a jumping phase's penalties were for: fences down, refusals, time.
+--- @param sheet table from EqPerformance.phaseSheet
+--- @return string|nil text such as "1 down, 2 time"
+local function sheetReasons(sheet)
     local parts = {}
-    for _, name in ipairs(phases) do
-        if places[name] ~= nil then
-            table.insert(parts, string.format(g_i18n:getText("eq_story_phase"), g_i18n:getText("eq_discipline_" .. name),
-                EqStory.ordinal(places[name])))
+    if sheet.down > 0 then
+        table.insert(parts, sheet.down == 1 and g_i18n:getText("eq_story_down1") or string.format(g_i18n:getText("eq_story_downN"), sheet.down))
+    end
+    if sheet.refusals > 0 then
+        table.insert(parts, sheet.refusals == 1 and g_i18n:getText("eq_story_refusal1") or string.format(g_i18n:getText("eq_story_refusalN"), sheet.refusals))
+    end
+    if sheet.time > 0 then table.insert(parts, string.format(g_i18n:getText("eq_story_time"), EqStory.penalties(sheet.time))) end
+    if #parts == 0 then return nil end
+    return table.concat(parts, ", ")
+end
+
+
+--- Eventing's scoresheet: each phase's place and penalties, then the total.
+--- @param run table|nil from EqPerformance.run, scored by EqPerformance.scorePenalties
+--- @param places table|nil phase -> place
+--- @return table|nil lines "Dressage: 4th, 28.4 penalties", "Show Jumping: 2nd, clear",
+---     "Cross Country: 6th, 21.2 penalties (1 refusal, 1.2 time)", "Total: 49.6 penalties"
+function EqStory.scoreLines(run, places)
+    if run == nil or run.phases == nil or run.penalties == nil or places == nil then return nil end
+    local lines = {}
+    for _, phase in ipairs(run.phases) do
+        local sheet, place = phase.sheet, places[phase.name]
+        if sheet ~= nil and place ~= nil then
+            local name, placeText = g_i18n:getText("eq_discipline_" .. phase.name), EqStory.bold(EqStory.ordinal(place))
+            local reasons = sheetReasons(sheet)
+            if sheet.penalties == 0 then
+                table.insert(lines, string.format(g_i18n:getText("eq_story_phaseClear"), name, placeText))
+            elseif reasons ~= nil then
+                table.insert(lines, string.format(g_i18n:getText("eq_story_phaseFaults"), name, placeText, EqStory.penalties(sheet.penalties), reasons))
+            else
+                -- Dressage: marks, always to one decimal.
+                table.insert(lines, string.format(g_i18n:getText("eq_story_phaseScore"), name, placeText, EqStory.penalties(sheet.penalties, true)))
+            end
         end
     end
-    if #parts == 0 then return nil end
-    return string.format(g_i18n:getText("eq_story_phases"), table.concat(parts, ", "))
+    if #lines == 0 then return nil end
+    table.insert(lines, string.format(g_i18n:getText("eq_story_total"), EqStory.bold(EqStory.penalties(run.penalties, true))))
+    return lines
 end
 
 
@@ -108,13 +146,17 @@ function EqStory.injuryLine(injury)
 end
 
 
---- @param story table { performance, phases, podium, gains, injury } lines, any of them nil
---- @return table lines in order; the injury replaces the gains, keeping it to four
+--- @param story table { performance, phases (eventing's scoresheet lines), podium, gains, injury }
+---     lines, any of them nil
+--- @return table lines in order; the injury replaces the gains
 function EqStory.lines(story)
     local lines = {}
-    local parts = { story.performance, story.phases, story.podium, story.injury or story.gains }
-    for i = 1, 4 do
-        if parts[i] ~= nil and parts[i] ~= "" then table.insert(lines, parts[i]) end
+    local function add(line)
+        if line ~= nil and line ~= "" then table.insert(lines, line) end
     end
+    add(story.performance)
+    for _, line in ipairs(story.phases or {}) do add(line) end
+    add(story.podium)
+    add(story.injury or story.gains)
     return lines
 end

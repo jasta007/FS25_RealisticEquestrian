@@ -1856,6 +1856,33 @@ end)()
     for _, r in ipairs(ran) do if r.key == "me" then mine = r end end
     check("eventing places every runner in every phase", mine.phasePlaces ~= nil and mine.phasePlaces.dressage ~= nil
         and mine.phasePlaces.crossCountry ~= nil and #mine.run.phases == 3)
+    -- Scored in penalties: lowest total wins, each phase placed on its own penalties.
+    local ordered, phasesAdd, dressageWinner, sjClear, xcRefusals, sjRuns = true, true, true, 0, 0, 0
+    local penaltyRng = EqRandom.new("penalties")
+    for _ = 1, 200 do
+        local field = EqCompetition.run(eventing, config, {}, penaltyRng)
+        for i, runner in ipairs(field) do
+            if i > 1 and runner.run.penalties < field[i - 1].run.penalties then ordered = false end
+            local sum = 0
+            for _, phase in ipairs(runner.run.phases) do sum = sum + phase.sheet.penalties end
+            if math.abs(sum - runner.run.penalties) > 0.06 then phasesAdd = false end
+            if runner.phasePlaces.dressage == 1 and runner.run.phases[1].sheet.penalties ~= EqPerformance.PHASE_SCORING.dressage.best then
+                dressageWinner = false
+            end
+            sjRuns = sjRuns + 1
+            if runner.run.phases[2].sheet.penalties == 0 then sjClear = sjClear + 1 end
+            if runner.run.phases[3].sheet.refusals > 0 then xcRefusals = xcRefusals + 1 end
+        end
+    end
+    check("eventing: fewest penalties wins", ordered)
+    check("eventing: the phases add up to the total", phasesAdd)
+    check("eventing: the dressage winner scores the best marks", dressageWinner)
+    check("eventing: a fair share of clear show jumping rounds", sjClear / sjRuns > 0.25 and sjClear / sjRuns < 0.6,
+        string.format("%.0f%%", sjClear / sjRuns * 100))
+    check("eventing: cross country refusals now and then", xcRefusals / sjRuns > 0.04 and xcRefusals / sjRuns < 0.25,
+        string.format("%.0f%%", xcRefusals / sjRuns * 100))
+    local sheet = EqPerformance.phaseSheet("crossCountry", {}, 0.1, EqRandom.new("x"))
+    check("cross country time: 0.4 a second over", sheet.time == 3.2 and sheet.penalties == 3.2, tostring(sheet.time))
 
     -- Every line a run can produce has its text, in English, German, French and Spanish.
     local en = io.open("translations/translation_en.xml"):read("*a")
@@ -1922,7 +1949,10 @@ end)()
     local texts = {
         eq_ord_1 = "%dst", eq_ord_2 = "%dnd", eq_ord_3 = "%drd", eq_ord_n = "%dth",
         eq_story_podium = "Winner: %s, 2nd: %s, 3rd: %s.", eq_story_winner = "Winner: %s.",
-        eq_story_phase = "%s %s", eq_story_phases = "%s.", eq_story_gains = "Gained %s.",
+        eq_story_phaseScore = "%s: %s, %s penalties", eq_story_phaseFaults = "%s: %s, %s penalties (%s)",
+        eq_story_phaseClear = "%s: %s, clear", eq_story_down1 = "1 down", eq_story_downN = "%d down",
+        eq_story_refusal1 = "1 refusal", eq_story_refusalN = "%d refusals", eq_story_time = "%s time",
+        eq_story_total = "Total: %s penalties", eq_story_gains = "Gained %s.",
         eq_story_injury = "Came home with %s.", eq_story_careerEnded = "Career over.",
         eq_discipline_dressage = "Dressage", eq_discipline_showJumping = "Show Jumping", eq_discipline_crossCountry = "Cross Country",
         eq_stat_stamina = "Stamina", eq_stat_speed = "Speed", eq_stat_agility = "Agility", eq_stat_temperament = "Temperament",
@@ -1933,8 +1963,19 @@ end)()
         and EqStory.ordinal(4) == "4th" and EqStory.ordinal(11) == "11th" and EqStory.ordinal(12) == "12th"
         and EqStory.ordinal(22) == "22nd")
     check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: **Applejack**, 2nd: **Torben**, 3rd: **Winter**.")
-    check("phases line", EqStory.phasesLine({ "dressage", "showJumping", "crossCountry" },
-        { dressage = 4, showJumping = 2, crossCountry = 6 }) == "Dressage 4th, Show Jumping 2nd, Cross Country 6th.")
+    local sheetRun = { penalties = 53.6, phases = {
+        { name = "dressage", sheet = { penalties = 28, down = 0, refusals = 0, time = 0 } },
+        { name = "showJumping", sheet = { penalties = 0, down = 0, refusals = 0, time = 0 } },
+        { name = "crossCountry", sheet = { penalties = 25.6, down = 0, refusals = 1, time = 5.6 } } } }
+    local sheetLines = EqStory.scoreLines(sheetRun, { dressage = 4, showJumping = 2, crossCountry = 6 })
+    check("eventing scoresheet: each phase, then the total", sheetLines ~= nil and #sheetLines == 4
+        and sheetLines[1] == "Dressage: **4th**, 28.0 penalties" and sheetLines[2] == "Show Jumping: **2nd**, clear"
+        and sheetLines[3] == "Cross Country: **6th**, 25.6 penalties (1 refusal, 5.6 time)"
+        and sheetLines[4] == "Total: **53.6** penalties", table.concat(sheetLines or {}, " | "))
+    local jumped = EqStory.scoreLines({ penalties = 34, phases = { { name = "showJumping", sheet = { penalties = 9, down = 2, refusals = 0, time = 1 } } } },
+        { showJumping = 7 })
+    check("show jumping faults read as fences down and time", jumped[1] == "Show Jumping: **7th**, 9 penalties (2 down, 1 time)", jumped[1])
+    check("no scoresheet without penalties", EqStory.scoreLines({ phases = {} }, {}) == nil and EqStory.scoreLines(nil, nil) == nil)
     check("gains line skips tiny gains", EqStory.gainsLine({ agility = 0.42, temperament = 0.2, speed = 0.01 })
         == "Gained Agility **+0.4**, Temperament **+0.2**.")
     local runs = EqStory.runs("Winner: **Applejack**, 2nd: **Torben**.")
@@ -1948,6 +1989,9 @@ end)()
     local lines = EqStory.lines({ performance = "Jumped clear.", podium = "Winner: X.", gains = "Gained.", injury = "Hurt." })
     check("story keeps it short: the injury replaces the gains", #lines == 3 and lines[3] == "Hurt.")
     check("story skips missing lines", #EqStory.lines({ performance = "Clear.", gains = "Gained." }) == 2)
+    local withSheet = EqStory.lines({ performance = "Clear.", phases = { "A", "B", "C", "Total" }, podium = "Winner: X.", gains = "Gained." })
+    check("the scoresheet sits between the run and the podium", #withSheet == 7 and withSheet[2] == "A" and withSheet[5] == "Total"
+        and withSheet[6] == "Winner: X.")
     g_i18n = savedI18n
 
     -- The last five results are kept on the horse and saved with it.

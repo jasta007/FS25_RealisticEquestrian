@@ -19,7 +19,8 @@
     the lorry, ready and to the start. Only a very fractious horse fails it, and is scratched.
 
     Eventing has no checks of its own: it runs the dressage, show jumping and cross country checks
-    as three phases, each placed on its own, and the total decides the result.
+    as three phases and scores them the real way, in penalties (see PHASE_SCORING). Each phase is
+    placed on its own, and the lowest total wins.
 ]]
 
 EqPerformance = {}
@@ -45,6 +46,21 @@ EqPerformance.START_FAIL_TEXTS = 3
 EqPerformance.STRUGGLED_SHARE = 0.6
 -- A comeback (failed early, passed the "finish" check) only gets its line on the podium.
 EqPerformance.COMEBACK_PLACE = 3
+-- Eventing penalties per phase. Every phase adds penalties for how far its score fell short of
+-- the phase's best, as a share of that best ("short", 0 for the phase winner): dressage as
+-- marks (best + short * spread, to one decimal), the jumping phases as seconds over the time
+-- (short * seconds, whole seconds, each worth perSecond). A failed check can also be a fault
+-- (chance): show jumping 4 for a fence down (agility) or a refusal (temperament), cross country
+-- 20 for a refusal. That gives about 40% clear show jumping rounds and 10% cross country
+-- refusals; a real dressage winner scores about 20 to 30.
+EqPerformance.PHASE_SCORING = {
+    dressage = { best = 22, spread = 50 },
+    showJumping = { seconds = 5, perSecond = 1, faults = {
+        agility = { penalty = 4, kind = "down", chance = 0.3 },
+        temperament = { penalty = 4, kind = "refusal", chance = 0.3 } } },
+    crossCountry = { seconds = 80, perSecond = 0.4, faults = {
+        temperament = { penalty = 20, kind = "refusal", chance = 0.3 } } },
+}
 
 
 --- @param tier table
@@ -317,8 +333,69 @@ function EqPerformance.storyKeys(discipline, config)
 end
 
 
---- Places within each eventing phase.
---- @param runners table list with .run (from EqPerformance.run)
+--- One phase's penalties.
+--- @param name string the phase's discipline
+--- @param checks table its results from roll
+--- @param short number how far the score fell short of the phase's best, as a share of it
+--- @param rng table EqRandom, for which failed checks become faults
+--- @return table sheet { penalties, down, refusals, time (time penalties) }
+function EqPerformance.phaseSheet(name, checks, short, rng)
+    local scoring = EqPerformance.PHASE_SCORING[name] or EqPerformance.PHASE_SCORING.dressage
+    local sheet = { penalties = 0, down = 0, refusals = 0, time = 0 }
+    if scoring.spread ~= nil then
+        sheet.penalties = math.floor((scoring.best + short * scoring.spread) * 10 + 0.5) / 10
+        return sheet
+    end
+    local faults = 0
+    for _, result in ipairs(checks) do
+        local fault = scoring.faults[result.check.stat]
+        if fault ~= nil and not result.passed and rng:next() < fault.chance then
+            faults = faults + fault.penalty
+            if fault.kind == "down" then sheet.down = sheet.down + 1 else sheet.refusals = sheet.refusals + 1 end
+        end
+    end
+    -- Whole tenths, so 0.4 a second adds up without float dust.
+    sheet.time = math.floor(math.floor(short * scoring.seconds) * scoring.perSecond * 10 + 0.5) / 10
+    sheet.penalties = faults + sheet.time
+    return sheet
+end
+
+
+--- Score an eventing field in penalties: each phase against that phase's best score.
+--- @param runners table list with .run (from EqPerformance.run, with phases)
+--- @param phases table phase names
+--- @param rng table EqRandom
+function EqPerformance.scorePenalties(runners, phases, rng)
+    for i, name in ipairs(phases) do
+        local best = 0
+        for _, runner in ipairs(runners) do best = math.max(best, runner.run.phases[i].score) end
+        for _, runner in ipairs(runners) do
+            local phase = runner.run.phases[i]
+            local short = best > 0 and math.max(0, (best - phase.score) / best) or 0
+            phase.sheet = EqPerformance.phaseSheet(name, phase.checks, short, rng)
+        end
+    end
+    for _, runner in ipairs(runners) do
+        local total = 0
+        for _, phase in ipairs(runner.run.phases) do total = total + phase.sheet.penalties end
+        runner.run.penalties = math.floor(total * 10 + 0.5) / 10
+    end
+end
+
+
+--- Eventing order: fewest penalties first, the better score on a tie.
+--- @return boolean
+function EqPerformance.penaltyOrder(a, b, i)
+    local pa = i ~= nil and a.run.phases[i].sheet.penalties or a.run.penalties
+    local pb = i ~= nil and b.run.phases[i].sheet.penalties or b.run.penalties
+    if pa ~= pb then return pa < pb end
+    if i ~= nil then return a.run.phases[i].score > b.run.phases[i].score end
+    return a.score > b.score
+end
+
+
+--- Places within each eventing phase, by that phase's penalties.
+--- @param runners table list with .run (from EqPerformance.run, scored by scorePenalties)
 --- @param phases table phase names
 --- @return table places runner -> { phase name -> place }
 function EqPerformance.phasePlaces(runners, phases)
@@ -329,7 +406,7 @@ function EqPerformance.phasePlaces(runners, phases)
         for _, runner in ipairs(runners) do
             if runner.run ~= nil and runner.run.phases ~= nil and runner.run.phases[i] ~= nil then table.insert(order, runner) end
         end
-        table.sort(order, function(a, b) return a.run.phases[i].score > b.run.phases[i].score end)
+        table.sort(order, function(a, b) return EqPerformance.penaltyOrder(a, b, i) end)
         for place, runner in ipairs(order) do places[runner][name] = place end
     end
     return places

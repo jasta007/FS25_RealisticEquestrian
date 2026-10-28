@@ -104,6 +104,7 @@ uses its genetics, health and fitness.
   Outsider or Long shot.
 - **Six disciplines:** show jumping, dressage, cross country, eventing, flat racing and the
   occasional steeplechase, each favouring different stats.
+- **Eventing scoresheets:** each phase's place and penalties, then the total; lowest wins.
 - **Five levels**, from Training and Novice classes every day (or month) to Advanced and Championship events
   each month at named venues across four regions. Young horse classes for two-year-olds teach
   rather than pay.
