@@ -627,8 +627,6 @@
         <text name="eq_ord_n" text="第%d"/>
         <text name="eq_story_podium" text="冠軍：%s，第2名：%s，第3名：%s。"/>
         <text name="eq_story_winner" text="冠軍：%s。"/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s。"/>
         <text name="eq_story_gains" text="獲得%s。"/>
         <text name="eq_story_injury" text="帶著%s回到家。"/>
         <text name="eq_story_careerEnded" text="遭受了終結職業生涯的傷病。"/>

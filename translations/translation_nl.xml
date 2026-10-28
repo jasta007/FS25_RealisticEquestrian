@@ -627,8 +627,6 @@
         <text name="eq_ord_n" text="%de"/>
         <text name="eq_story_podium" text="Winnaar: %s, 2e: %s, 3e: %s."/>
         <text name="eq_story_winner" text="Winnaar: %s."/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s."/>
         <text name="eq_story_gains" text="%s erbij."/>
         <text name="eq_story_injury" text="Kwam thuis met %s."/>
         <text name="eq_story_careerEnded" text="Liep een carrièrebeëindigende blessure op."/>

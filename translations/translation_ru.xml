@@ -627,8 +627,6 @@
         <text name="eq_ord_n" text="%d-е"/>
         <text name="eq_story_podium" text="Победитель: %s, 2-е: %s, 3-е: %s."/>
         <text name="eq_story_winner" text="Победитель: %s."/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s."/>
         <text name="eq_story_gains" text="Прибавка: %s."/>
         <text name="eq_story_injury" text="Вернулась домой: %s."/>
         <text name="eq_story_careerEnded" text="Получила травму, завершившую карьеру."/>

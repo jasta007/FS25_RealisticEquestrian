@@ -627,8 +627,6 @@
         <text name="eq_ord_n" text="%d位"/>
         <text name="eq_story_podium" text="優勝：%s、2位：%s、3位：%s。"/>
         <text name="eq_story_winner" text="優勝：%s。"/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s。"/>
         <text name="eq_story_gains" text="%s上昇。"/>
         <text name="eq_story_injury" text="%sを負って帰ってきました。"/>
         <text name="eq_story_careerEnded" text="競技生命を絶つケガを負いました。"/>

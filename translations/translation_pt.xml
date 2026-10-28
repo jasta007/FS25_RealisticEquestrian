@@ -627,8 +627,6 @@
         <text name="eq_ord_n" text="%dº"/>
         <text name="eq_story_podium" text="Vencedor: %s, 2º: %s, 3º: %s."/>
         <text name="eq_story_winner" text="Vencedor: %s."/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s."/>
         <text name="eq_story_gains" text="Ganhou %s."/>
         <text name="eq_story_injury" text="Voltou para casa com %s."/>
         <text name="eq_story_careerEnded" text="Sofreu uma lesão que encerrou a carreira."/>
