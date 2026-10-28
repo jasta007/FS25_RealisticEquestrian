@@ -76,8 +76,12 @@ SPONSOR_SIZE = (512, 192)
 def atlas(path):
     rng = np.random.default_rng(11)
     img = np.zeros((CELL * CELLS, CELL * CELLS, 3))
-    for name, colour in COLOURS.items():
-        i = CELL_OF[name]
+    # Every cell is filled, the spare ones repeating the colours, so the small mip levels
+    # (which average neighbouring cells) stay these colours rather than fading to black.
+    names = list(COLOURS)
+    for i in range(CELLS * CELLS):
+        name = names[i % len(names)]
+        colour = COLOURS[name]
         x, y = (i % CELLS) * CELL, (i // CELLS) * CELL
         grain = rng.normal(0, 4, (CELL, CELL, 1))
         if name == "bench":
