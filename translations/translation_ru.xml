@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Russian texts. Machine-assisted first draft: please have a native speaker check it. Keys and
+     their %s/%d/%.0f placeholders must stay in the same order as translation_en.xml. -->
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Выносливость"/>
+        <text name="eq_stat_speed" text="Скорость"/>
+        <text name="eq_stat_agility" text="Ловкость"/>
+        <text name="eq_stat_temperament" text="Темперамент"/>
+        <text name="eq_potential_stamina" text="Потенциал выносливости"/>
+        <text name="eq_potential_speed" text="Потенциал скорости"/>
+        <text name="eq_potential_agility" text="Потенциал ловкости"/>
+        <text name="eq_potential_temperament" text="Потенциал темперамента"/>
+        <text name="eq_stat_short_stamina" text="Вын"/>
+        <text name="eq_stat_short_speed" text="Скр"/>
+        <text name="eq_stat_short_agility" text="Лов"/>
+        <text name="eq_stat_short_temperament" text="Тем"/>
+        <text name="eq_train_viewAction" text="Режим тренировки: %s"/>
+        <text name="eq_train_view_freestyle" text="Свободный"/>
+        <text name="eq_help_temperament_2" text="Множитель теряется, если перейти в галоп или карьер, задеть препятствие или пропустить следующий элемент. С x4 нужно также держать аллюр между командами. Лакомства вроде моркови тоже отлично развивают Темперамент."/>
+        <text name="eq_help_temperament_1" text="Тренировка Темперамента учит лошадь управляемости. Начните программу, перейдя на шаг и удерживая его недолго. Затем программа попросит выполнить новый элемент. Выполните его за несколько секунд, чтобы продолжить комбо."/>
+        <text name="eq_help_temperament_title" text="Тренировка: Темперамент"/>
+        <text name="eq_help_agility_2" text="Множитель теряется, если не взять новое препятствие вовремя или слишком сильно потерять скорость. Прыжки без препятствия немного тренируют, но не повышают множитель."/>
+        <text name="eq_help_agility_1" text="Ловкость — это прыжки через препятствия, хотя смена аллюров тоже немного помогает. Берите препятствия, чтобы набрать множитель Ловкости. Он гаснет через десять секунд или раньше, если задеть препятствие."/>
+        <text name="eq_help_agility_title" text="Тренировка: Ловкость"/>
+        <text name="eq_pop_routineStart" text="Программа начата"/>
+        <text name="eq_pop_routineFault" text="Ошибка %d/%d"/>
+        <text name="eq_pop_routineTest" text="Езда завершена!"/>
+        <text name="eq_pop_routineLost" text="Программа прервана"/>
+        <text name="eq_pop_comboLost" text="Комбо потеряно"/>
+        <text name="eq_pop_knock" text="-%d с!"/>
+        <text name="eq_pop_clear" text="Чисто!"/>
+        <text name="eq_move_right" text="Направо!"/>
+        <text name="eq_move_left" text="Налево!"/>
+        <text name="eq_move_reverse" text="Назад!"/>
+        <text name="eq_move_halt" text="Стоп!"/>
+        <text name="eq_move_trot" text="Рысь!"/>
+        <text name="eq_move_walk" text="Шаг!"/>
+        <text name="eq_move_spinLeft" text="Поворот налево на месте!"/>
+        <text name="eq_move_spinRight" text="Поворот направо на месте!"/>
+        <text name="eq_shop_dressageArena15x30" text="Манеж для выездки 15 x 30 м"/>
+        <text name="eq_shop_dressageArena20x40" text="Манеж для выездки 20 x 40 м"/>
+        <text name="eq_shop_dressageArena20x60" text="Манеж для выездки 20 x 60 м"/>
+        <text name="eq_shop_dressageArena_function" text="Манеж для выездки со всеми буквами на месте. Езжайте на лошади внутри, чтобы тренировать темперамент между буквами."/>
+        <text name="eq_shop_courseFlags" text="Флажки для кросса"/>
+        <text name="eq_shop_courseFlags_function" text="Отметьте любое препятствие как препятствие кросса. Переключайте части клавишами N/M: поставьте белый флажок, протяните золотую планку (0,6, 0,9 или 1,2 м) над препятствием, затем поставьте красный флажок. Планка видна только в режиме строительства."/>
+        <text name="eq_shop_xcLogPileSmall" text="Штабель брёвен (малый)"/>
+        <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
+        <text name="eq_shop_xcDropWall08" text="Стенка спуска (0,8 м)"/>
+        <text name="eq_shop_xcDropWall12" text="Стенка спуска (1,2 м)"/>
+        <text name="eq_shop_xcDropWall16" text="Стенка спуска (1,6 м)"/>
+        <text name="eq_shop_xcDrop_function" text="Дощатая стенка для спуска на кроссе. Насыпьте склон, поставьте её наверху краем к обрыву, и боковые стенки скроют крутой склон."/>
+        <text name="eq_shop_xcJump_function" text="Препятствие кросса. Красный и белый флажки показывают, где прыгать."/>
+        <text name="eq_shop_xcHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов кросса, если не куплено как «Всегда видно»."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов."/>
+        <text name="eq_config_alwaysVisible" text="Всегда видно"/>
+        <text name="eq_dressage_go" text="%s: %s"/>
+        <text name="eq_dressage_gait_walk" text="Шаг"/>
+        <text name="eq_dressage_gait_trot" text="Рысь"/>
+        <text name="eq_dressage_gait_canter" text="Галоп"/>
+        <text name="eq_dressage_change" text="Смена: %s"/>
+        <text name="eq_dressage_flying" text="Смена ноги в воздухе: %s"/>
+        <text name="eq_dressage_begin" text="Подъедьте к %s, чтобы начать программу выездки"/>
+        <text name="eq_dressage_reinBack" text="Осаживание!"/>
+        <text name="eq_dressage_backwards" text="Двигайтесь назад"/>
+        <text name="eq_dressage_circle_left" text="Вольт налево"/>
+        <text name="eq_dressage_circle_right" text="Вольт направо"/>
+        <text name="eq_dressage_out" text="Вернитесь на манеж!"/>
+        <text name="eq_dressage_next" text="Далее: %s"/>
+        <text name="eq_dressage_stand" text="Стоять"/>
+        <text name="eq_dressage_marker" text="Буква %s"/>
+        <text name="eq_train_routine_none" text="Перейдите на шаг, чтобы начать программу"/>
+        <text name="eq_train_routine" text="Программа x%d"/>
+        <text name="eq_train_combo_none" text="Возьмите препятствие, чтобы начать комбо"/>
+        <text name="eq_train_combo" text="Комбо прыжков x%d"/>
+        <text name="eq_train_view_temperament" text="Темперамент"/>
+        <text name="eq_train_view_agility" text="Ловкость"/>
+        <text name="eq_help_freestyle_2" text="Ловкость тренируется прыжками через препятствия, которые заполняют шкалу комбо, а Темперамент — удержанием шага в течение короткого времени и выполнением команд, которые заполняют его шкалу комбо. Выносливость и Скорость тренируются правильной ездой карьером: нажмите H на карьере, чтобы узнать как."/>
+        <text name="eq_help_freestyle_3" text="Не хотите ездить сами? Наймите конюхов и тренеров на вкладке «Персонал», и они будут тренировать лошадей каждый день. Работники игры и Herdsman из RLRM лишь поддерживают их в форме."/>
+        <text name="eq_form_title" text="Пиковая форма"/>
+        <text name="eq_help_freestyle_4" text="Проедьтесь перед стартом! Каждый показатель, натренированный в его мини-игре, даёт лошади Пиковую форму на соревнованиях этого месяца, до +8 к показателю. Она не складывается за несколько дней: засчитывается лучшая тренировка месяца."/>
+        <text name="eq_help_form_title" text="Пиковая форма"/>
+        <text name="eq_help_form_1" text="Ваша собственная езда не только тренирует, но и даёт лошади Пиковую форму на соревнованиях этого месяца. Каждый показатель, проработанный в мини-игре, получает до +8 на всех стартах месяца; это видно здесь как Пиковая форма и в окне навыков лошади. Чем лучше тренировка, тем больше бонус; простая езда разными аллюрами его не даёт."/>
+        <text name="eq_help_form_2" text="Пиковая форма не складывается за дни месяца: для каждого показателя сохраняется лучшая тренировка. В день старта она может даже поднять лошадь выше её потенциала, а после соревнований месяца проходит. Персонал ведёт ежедневные тренировки, так что приберегите свою езду для важных стартов."/>
+        <text name="eq_help_freestyle_1" text="Езда тренирует показатели лошади, и у каждого показателя своя мини-игра. Все показатели можно тренировать одновременно, но некоторые плохо сочетаются, например Скорость и Темперамент. Нажмите Y, чтобы переключиться на режим с подробной информацией о нужном показателе, или оставайтесь в свободном режиме для общей картины. Шкала езды — это по-прежнему дневной запас сил лошади: когда она заполнена, лошадь не прогрессирует до следующего дня."/>
+        <text name="eq_help_freestyle_title" text="Тренировка: Свободный режим"/>
+        <text name="eq_welcome_ride_title" text="Тренировка"/>
+        <text name="eq_welcome_welcome_1_title" text="Добро пожаловать в Realistic Equestrian"/>
+        <text name="eq_welcome_welcome_1" text="Теперь у ваших лошадей есть навыки для тренировки и соревнования для участия. Всё это находится в меню Realistic Livestock, которое открывается клавишей R в меню животных или Shift+O где угодно."/>
+        <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
+        <text name="eq_welcome_menu_1" text="Откройте вкладку «Информация» (свинья со знаком [i]), чтобы узнать о своих лошадях, вкладку «Соревнования» (розетка), чтобы записать их на старты, и вкладку «Конный персонал» (два человека), чтобы нанять конюхов и тренеров. Настройки Realistic Equestrian находятся на вкладке «Настройки» (шестерёнка)."/>
+        <text name="eq_welcome_staff_hire_title" text="Конный персонал"/>
+        <text name="eq_welcome_staff_hire" text="Нанимайте людей на вкладке «Найм», чтобы они ухаживали за лошадьми каждый день. Конюхи тренируют все четыре показателя, чистят лошадей и возвращают сбежавших. Тренеры сосредоточены на двух показателях и готовят лошадей к стартам. Ветеринар означает меньше травм и более дешёвое лечение, а брокер добивается лучших цен у торговца. Зарплата платится ежедневно, а кандидаты приходят и уходят, так что заглядывайте за лучшими. Каждый использует все свои навыки, даже вне основных обязанностей, так что удачный универсал помогает во всём."/>
+        <text name="eq_welcome_staff_works_title" text="С кем они работают"/>
+        <text name="eq_welcome_staff_works" text="На вкладке «Ваш персонал» выберите конюшни, где работает конюх или тренер, затем роли или отдельных лошадей. Персонал эффективнее всего, когда у каждого немного лошадей; остальным достаётся лишь немного внимания. Отключите ненужных работников за половину зарплаты: изменение вступает в силу в 1:00 следующего дня."/>
+        <text name="eq_welcome_info_skills_title" text="Навыки"/>
+        <text name="eq_welcome_info_skills" text="Выносливость позволяет лошади пройти дальше, Скорость делает её быстрее, Ловкость помогает прыгать и поворачивать, а Темперамент сохраняет её спокойной и послушной. Каждый навык можно тренировать, и вы узнаете как, когда впервые сядете в седло."/>
+        <text name="eq_welcome_info_potential_title" text="Потенциал"/>
+        <text name="eq_welcome_info_potential" text="Потенциал — это предел, до которого каждый навык может вырасти с тренировками. Молодые лошади учатся быстрее всех, а старые могут терять потенциал. Потенциал лишь оценивается, и даже оценка может быть неверной, пока лошадь не побудет у вас какое-то время."/>
+        <text name="eq_welcome_info_roles_title" text="Роли и персонал"/>
+        <text name="eq_welcome_info_roles" text="Кнопкой «Роль» лошади можно назначить роль, чтобы не запутаться. Конюхи и тренеры с вкладки «Персонал» могут работать со всеми лошадьми одной роли или с одной лошадью."/>
+        <text name="eq_welcome_info_feed_title" text="Корм"/>
+        <text name="eq_welcome_info_feed" text="Сено — основа рациона. Овёс немного повышает Выносливость и Темперамент, ячмень умеренно повышает Выносливость и Ловкость, а кукуруза сильно повышает Скорость. Морковь (и яблоки, если есть) сильно повышает Темперамент."/>
+        <text name="eq_welcome_events_disciplines_title" text="Соревнования"/>
+        <text name="eq_welcome_events_disciplines" text="В выездке важны Темперамент и Ловкость, в конкуре — Ловкость, в скачках — Скорость и Выносливость, а в кроссе и троеборье — разносторонность."/>
+        <text name="eq_welcome_events_transport_title" text="Как туда добраться"/>
+        <text name="eq_welcome_events_transport" text="Автоперевозка доставит лошадь на соревнование за плату. Она может стоить гораздо дороже обычной автоматической перевозки, ведь лошадь может ехать гораздо дальше, а вы хотите получить её обратно! Если отвезти лошадей к торговцу животными самостоятельно (ручная перевозка), можно сильно сэкономить."/>
+        <text name="eq_welcome_events_risks_title" text="Травмы и снятия"/>
+        <text name="eq_welcome_events_risks" text="У каждого соревнования есть риск травм и болезней, он показан до записи. Кнопка «Болезни» на вкладке «Информация» позволяет лечить травмы. Лошадь также могут снять перед стартом из-за проваленной проверки Темперамента или плохого здоровья, но часть стартового взноса вернут."/>
+        <text name="eq_settings_helpPopups" text="Окна подсказок"/>
+        <text name="eq_settings_helpPopups_tooltip" text="Показать снова: каждое приветственное окно и подсказка по тренировкам появятся ещё раз."/>
+        <text name="eq_settings_helpPopups_seen" text="Просмотрены"/>
+        <text name="eq_settings_helpPopups_again" text="Показать снова"/>
+        <text name="eq_welcome_diseases_treatment_title" text="Лечение"/>
+        <text name="eq_welcome_diseases_treatment" text="Большинство травм заживает само, но это может занять много времени! Лечение ускоряет процесс, но может дорого обойтись. Травмированную лошадь можно отправить на покой и использовать для разведения, тогда восстановление намного дешевле. Некоторые тяжёлые травмы могут вынудить уйти на покой; всё это можно изменить в настройках."/>
+        <text name="eq_help_close" text="Нажмите, чтобы закрыть"/>
+        <text name="eq_help_next" text="Нажмите, чтобы продолжить (%d/%d)"/>
+        <text name="input_EQ_TRAINING_HELP" text="Помощь по тренировке"/>
+        <text name="eq_train_worn" text="Шкала езды заполнена: на сегодня тренировка окончена"/>
+        <text name="eq_ex_push" text="Разгон"/>
+        <text name="eq_ex_recover" text="Отдых"/>
+        <text name="eq_ex_sprint" text="СПРИНТ"/>
+        <text name="eq_ex_blown" text="Утомлена: только галоп"/>
+        <text name="eq_ex_spent" text="Выдохлась: только галоп"/>
+        <text name="eq_ex_gallop" text="Карьер"/>
+        <text name="eq_ex_canter" text="Галоп"/>
+        <text name="eq_ex_trot" text="Рысь"/>
+        <text name="eq_ex_walk" text="Шаг"/>
+        <text name="eq_ex_halt" text="Стоит"/>
+        <text name="eq_ex_reverse" text="Назад"/>
+        <text name="eq_ex_prompt_tap" text="Жмите W!"/>
+        <text name="eq_pop_ex_sprint" text="СПРИНТ!"/>
+        <text name="eq_pop_ex_sprintOver" text="Спринт окончен"/>
+        <text name="eq_pop_ex_blown" text="Утомлена!"/>
+        <text name="eq_pop_ex_spent" text="Выдохлась!"/>
+        <text name="eq_pop_ex_fresh" text="Готова к карьеру"/>
+        <text name="eq_help_gallop_title" text="Карьер"/>
+        <text name="eq_help_gallop_1" text="Лошадь скачет карьером в трёх темпах. Нажмите W на галопе, чтобы начать Разгон: быстро, но шкала Нагрузки растёт, и тем быстрее, чем она выше. Нажмите S для Отдыха: более медленный карьер, при котором нагрузка снижается, пока вы продолжаете скакать; быстро в верхней и нижней трети шкалы, медленно в середине. Нажмите W снова, чтобы продолжить разгон. Более тренированная лошадь устаёт медленнее и восстанавливается быстрее."/>
+        <text name="eq_help_gallop_2" text="Если во время Разгона шкала дойдёт до красной зоны «Утомлена», лошадь перейдёт на галоп и не сможет снова пойти карьером, пока шкала не опустеет. Чтобы перейти на галоп самому, нажмите S один раз во время Отдыха с пустой шкалой или дважды нажмите S в любой момент."/>
+        <text name="eq_help_gallop_3" text="Быстро жмите W на карьере для Спринта: намного быстрее, шкала сначала растёт медленно, потом всё быстрее, так что остановитесь до черты. После Спринта начинается Отдых, и нового Спринта не будет, пока шкала не опустеет. Только Спринт может пройти за черту «Утомлена» — для последнего рывка к финишу, но Спринт, закончившийся там, оставляет лошадь выдохшейся, и она очень медленно восстанавливается, пока не вернётся ниже черты."/>
+        <text name="eq_help_gallop_4" text="Тренировка: Спринт тренирует Скорость, и чем выше он поднял шкалу до окончания, тем ценнее: x2 на полпути до черты, до x10 прямо перед ней, но только x1, если он закончился за чертой. Разгон и Отдых тренируют Выносливость с множителем Выносливости, до x5. Разгон повышает его, быстрее у верха шкалы. Отдых в средней трети шкалы даёт лошади отдышаться и сохраняет большую часть множителя, а в верхней и нижней трети он быстро теряется, и лошадь, которая никогда не отдыхает, прогрессирует гораздо медленнее. «Утомлена» или «Выдохлась» сбрасывает его до x1 и останавливает тренировку Выносливости, пока шкала не опустеет."/>
+        <text name="eq_ex_hint_sprint" text="Быстро жмите W для спринта"/>
+        <text name="eq_ex_hint_sprintRest" text="Спринт: сначала отдых до пустой шкалы"/>
+        <text name="eq_ex_hint_locked" text="Галоп, пока шкала не опустеет"/>
+        <text name="eq_ex_hint_canterOne" text="S: галоп"/>
+        <text name="eq_ex_hint_canterDouble" text="Дважды S: галоп"/>
+        <text name="eq_ex_tiring" text="Устаёт..."/>
+        <text name="eq_ex_careful" text="Осторожно"/>
+        <text name="eq_ex_overExerted" text="Утомлена!"/>
+        <text name="eq_train_tiredness" text="Нагрузка"/>
+        <text name="eq_train_titlePlain" text="Тренировка"/>
+        <text name="eq_train_lastSprint" text="Последний спринт x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Спринт тренирует Скорость"/>
+        <text name="eq_train_view_stamina" text="Выносливость"/>
+        <text name="eq_train_view_speed" text="Скорость"/>
+        <text name="eq_train_view_condensed" text="Компактный"/>
+        <text name="eq_help_stamina_title" text="Тренировка: Выносливость"/>
+        <text name="eq_help_stamina_1" text="Выносливость тренируется во время Разгона и Отдыха на карьере с множителем Выносливости, до x5. Разгон повышает его, и чем ближе к черте, тем быстрее он растёт. Отдых снижает его: быстро в верхней трети шкалы, медленно в средней и снова быстро в нижней."/>
+        <text name="eq_help_stamina_2" text="Поэтому разгоняйтесь почти до черты, сбавьте до середины шкалы и дайте лошади отдышаться там какое-то время, затем снова разгоняйтесь. Частая смена Разгона и Отдыха у верха утомляет лошадь, не повышая множитель, а «Утомлена» или «Выдохлась» сбрасывает его до x1 и останавливает тренировку Выносливости, пока шкала не опустеет."/>
+        <text name="eq_help_speed_title" text="Тренировка: Скорость"/>
+        <text name="eq_help_speed_1" text="Скорость тренируется во время Спринта: быстро жмите W на карьере. Каждая секунда Спринта идёт в зачёт, а в конце умножается на высоту шкалы: x2 на полпути до черты, до x10 прямо перед ней."/>
+        <text name="eq_help_speed_2" text="Спринт, закончившийся за чертой, стоит только x1, так что перестаньте жать (или нажмите S) до черты. После Спринта лошадь должна отдохнуть до пустой шкалы, прежде чем снова спринтовать."/>
+        <text name="eq_train_speedMult" text="Скорость x%.1f"/>
+        <text name="eq_train_staminaMult" text="Выносливость x%.1f"/>
+        <text name="eq_train_staminaStopped" text="нет тренировки"/>
+        <text name="eq_ex_fatigued" text="Утомлена"/>
+        <text name="eq_pop_speedBank" text="Скорость x%.1f!"/>
+        <text name="eq_train_quality_fast" text="быстрая тренировка"/>
+        <text name="eq_train_quality_steady" text="тренировка"/>
+        <text name="eq_train_quality_slow" text="медленная тренировка"/>
+        <text name="eq_train_quality_full" text="на сегодня всё"/>
+        <text name="input_EQ_TRAINING_VIEW" text="Сменить режим тренировки"/>
+        <text name="eq_feed_boost" text="Корм"/>
+        <text name="eq_feedGroup_hay" text="Сено"/>
+        <text name="eq_feedGroup_grain" text="Концентраты"/>
+        <text name="eq_feedGroup_treat" text="Лакомства"/>
+        <text name="eq_feedGroup_otherGrain" text="Другое зерно"/>
+        <text name="eq_feedRow_oats" text="Овёс"/>
+        <text name="eq_feedRow_barley" text="Ячмень"/>
+        <text name="eq_feedRow_corn" text="Кукуруза"/>
+        <text name="eq_feed_noBoost" text="без бонуса"/>
+        <text name="eq_discipline_showJumping" text="Конкур"/>
+        <text name="eq_discipline_dressage" text="Выездка"/>
+        <text name="eq_discipline_crossCountry" text="Кросс"/>
+        <text name="eq_discipline_eventing" text="Троеборье"/>
+        <text name="eq_discipline_raceShort" text="Гладкие скачки (спринт)"/>
+        <text name="eq_discipline_raceLong" text="Гладкие скачки (стайер)"/>
+        <text name="eq_discipline_steeplechase" text="Стипль-чез"/>
+        <text name="eq_type_showJumping" text="Конкур"/>
+        <text name="eq_type_dressage" text="Выездка"/>
+        <text name="eq_type_crossCountry" text="Кросс"/>
+        <text name="eq_type_eventing" text="Троеборье"/>
+        <text name="eq_type_raceShort" text="Гладкие скачки"/>
+        <text name="eq_type_raceLong" text="Гладкие скачки"/>
+        <text name="eq_type_steeplechase" text="Стипль-чез"/>
+        <text name="eq_tier_training" text="Молодые лошади"/>
+        <text name="eq_tier_novice" text="Новички"/>
+        <text name="eq_tier_intermediate" text="Средний уровень"/>
+        <text name="eq_tier_advanced" text="Высокий уровень"/>
+        <text name="eq_tier_championship" text="Чемпионат"/>
+        <text name="eq_going_firm" text="Твёрдый грунт"/>
+        <text name="eq_going_good" text="Хороший грунт"/>
+        <text name="eq_going_soft" text="Мягкий грунт"/>
+        <text name="eq_going_heavy" text="Тяжёлый грунт"/>
+        <text name="eq_going_hot" text="Жара"/>
+        <text name="eq_going_indoor" text="В манеже"/>
+        <text name="eq_event_showJumping_training" text="Конкур на чистоту"/>
+        <text name="eq_event_showJumping_novice" text="Конкур 1,00 м"/>
+        <text name="eq_event_showJumping_intermediate" text="Конкур 1,20 м"/>
+        <text name="eq_event_showJumping_advanced" text="%s: классика 1,40 м"/>
+        <text name="eq_event_showJumping_championship" text="%s: Гран-при"/>
+        <text name="eq_event_dressage_training" text="Вводная езда по выездке"/>
+        <text name="eq_event_dressage_novice" text="Выездка, начальный уровень"/>
+        <text name="eq_event_dressage_intermediate" text="Выездка, средний уровень"/>
+        <text name="eq_event_dressage_advanced" text="%s: Приз Сен-Жорж"/>
+        <text name="eq_event_dressage_championship" text="%s: Гран-при по выездке"/>
+        <text name="eq_event_crossCountry_training" text="Полевые испытания молодых лошадей"/>
+        <text name="eq_event_crossCountry_novice" text="Полевые испытания"/>
+        <text name="eq_event_crossCountry_intermediate" text="Открытые полевые испытания"/>
+        <text name="eq_event_crossCountry_advanced" text="%s: командный кросс"/>
+        <text name="eq_event_crossCountry_championship" text="%s: чемпионат по командному кроссу"/>
+        <text name="eq_event_eventing_training" text="Вводное троеборье"/>
+        <text name="eq_event_eventing_novice" text="Однодневное троеборье"/>
+        <text name="eq_event_eventing_intermediate" text="Троеборье две звезды"/>
+        <text name="eq_event_eventing_advanced" text="%s: троеборье четыре звезды"/>
+        <text name="eq_event_eventing_championship" text="%s: трёхдневное троеборье"/>
+        <text name="eq_event_raceShort_training" text="Галоп на ипподроме (1200 м)"/>
+        <text name="eq_event_raceShort_novice" text="Спринт для дебютантов (1200 м)"/>
+        <text name="eq_event_raceShort_intermediate" text="Гандикап-спринт (1200 м)"/>
+        <text name="eq_event_raceShort_advanced" text="%s: листовый спринт (1200 м)"/>
+        <text name="eq_event_raceShort_championship" text="%s: Кубок спринтеров (1200 м)"/>
+        <text name="eq_event_raceLong_training" text="Галоп на ипподроме (1600 м)"/>
+        <text name="eq_event_raceLong_novice" text="Приз для дебютантов (2400 м)"/>
+        <text name="eq_event_raceLong_intermediate" text="Гандикап (2400 м)"/>
+        <text name="eq_event_raceLong_advanced" text="%s: листовый приз (2400 м)"/>
+        <text name="eq_event_raceLong_championship" text="%s: Золотой кубок (3200 м)"/>
+        <text name="eq_event_steeplechase_training" text="Учебный барьерный бег"/>
+        <text name="eq_event_steeplechase_novice" text="Барьерный бег для новичков"/>
+        <text name="eq_event_steeplechase_intermediate" text="Гандикап-стипль-чез"/>
+        <text name="eq_event_steeplechase_advanced" text="%s: групповой стипль-чез"/>
+        <text name="eq_event_steeplechase_championship" text="%s: Кубок стипль-чеза"/>
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Соревнование"/>
+        <text name="rl_messageTitle_eqInjury" text="Травма"/>
+        <text name="rl_messageTitle_eqRetirement" text="Завершение карьеры"/>
+        <text name="rl_messageTitle_eqDealer" text="Торговец"/>
+        <text name="rl_messageTitle_eqTransport" text="Перевозка"/>
+        <text name="eq_money_entryFees" text="Стартовые взносы"/>
+        <text name="eq_money_prizeMoney" text="Призовые"/>
+        <text name="eq_money_vetBills" text="Счета ветеринара"/>
+        <text name="eq_enter_injured" text="Эта лошадь травмирована: до выздоровления мес.: %d."/>
+        <text name="eq_enter_sick" text="Эта лошадь больна. Сначала вылечите её на странице «Болезни»."/>
+        <text name="eq_enter_unwell" text="Здоровье этой лошади слишком низкое для стартов (25 или ниже). Хорошо кормите её, и она поправится."/>
+        <text name="eq_enter_lowHealth" text="Её здоровье %d: шанс %d%%, что её снимут в день старта. При здоровье ниже 50 каждые 5 пунктов добавляют 10%%, а при %d и ниже она не может выступать."/>
+        <text name="eq_result_eliminated" text="Лошадь %s дисквалифицирована (%s)."/>
+        <text name="eq_result_pulledUp" text="Лошадь %s снята с дистанции (%s)."/>
+        <text name="eq_result_scratched" text="Лошадь %s снята со старта (%s; %s). Возвращено %s взноса."/>
+        <text name="eq_scratch_injured" text="травма"/>
+        <text name="eq_scratch_sick" text="болезнь"/>
+        <text name="eq_scratch_unsound" text="хромота в день старта"/>
+        <text name="eq_scratch_shoe" text="потеряна подкова"/>
+        <text name="eq_scratch_retired" text="завершила карьеру"/>
+        <text name="eq_scratch_inFoal" text="слишком поздний срок жерёбости"/>
+        <text name="eq_scratch_fractious_1" text="не захотела заходить в коневоз"/>
+        <text name="eq_scratch_fractious_2" text="была неспокойна и не дала сесть в седло"/>
+        <text name="eq_scratch_fractious_3" text="отказалась идти на старт"/>
+        <text name="eq_injury_bruisedSole" text="ушиб подошвы"/>
+        <text name="eq_injury_abscess" text="абсцесс копыта"/>
+        <text name="eq_injury_overreach" text="засечка"/>
+        <text name="eq_injury_soreBack" text="боль в спине"/>
+        <text name="eq_injury_splints" text="накостник"/>
+        <text name="eq_injury_tendon" text="растяжение сухожилия"/>
+        <text name="eq_injury_chipFracture" text="отрывной перелом"/>
+        <text name="eq_injury_suspensory" text="разрыв подвешивающей связки"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Ушиб подошвы"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Абсцесс копыта"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Засечка"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Боль в спине"/>
+        <text name="rl_disease_eqInjurySplints" text="Накостник"/>
+        <text name="rl_disease_eqInjuryTendon" text="Растяжение сухожилия"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Отрывной перелом"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Разрыв связки"/>
+        <text name="eq_injury_newTreatable" text="Лошадь %s травмирована (%s): %s. Лечите на её странице «Болезни» (%s, %s) или дайте зажить самой, мес.: %d."/>
+        <text name="eq_injury_newRest" text="Лошадь %s травмирована (%s): %s. Покой в деннике, мес.: %d."/>
+        <text name="eq_illness_new" text="Лошадь %s подхватила %s (%s). См. её страницу «Болезни»."/>
+        <text name="eq_injury_careerEnding" text="Лошадь %s получила травму, завершившую карьеру (%s), и больше не выступает."/>
+        <text name="eq_injury_recovered" text="Лошадь %s поправилась и снова может выступать."/>
+        <text name="eq_retire_done" text="Завершила спортивную карьеру."/>
+        <text name="eq_retire_doneInjured" text="Завершила спортивную карьеру. Травма ещё должна зажить, но лечение теперь на %d%% дешевле."/>
+        <text name="eq_retire_undone" text="Снова выступает."/>
+        <text name="eq_retire_careerEnded" text="Карьера этой лошади завершилась из-за травмы; она больше не может выступать."/>
+        <text name="eq_status_title" text="Соревнования"/>
+        <text name="eq_status_injured" text="Травма, мес.: %d"/>
+        <text name="eq_status_retired" text="Завершила карьеру"/>
+        <text name="eq_status_sick" text="Больна"/>
+        <text name="eq_status_unwell" text="Слабое здоровье"/>
+        <text name="eq_status_settling" text="Привыкает"/>
+        <text name="eq_status_rested" text="Отдыхает в этом месяце"/>
+        <text name="eq_status_inFoal" text="Жерёбая"/>
+        <text name="eq_status_foaled" text="Восстанавливается после родов"/>
+        <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Потенциал навыков"/>
+        <text name="eq_ui_skillPotentialDealer" text="Потенциал (по словам торговца)"/>
+        <text name="eq_ui_potentialTitle" text="Потенциал"/>
+        <text name="eq_ui_potentialDealer" text="По словам торговца, может быть неверно"/>
+        <text name="eq_ui_skills" text="Навыки"/>
+        <text name="eq_specialty_title" text="Любимый вид"/>
+        <text name="eq_role_title" text="Роль"/>
+        <text name="eq_role_balanced" text="Без роли"/>
+        <text name="eq_role_dressage" text="Выездка"/>
+        <text name="eq_role_showJumping" text="Конкур"/>
+        <text name="eq_role_crossCountry" text="Кросс"/>
+        <text name="eq_role_eventing" text="Троеборье"/>
+        <text name="eq_role_racing" text="Скачки"/>
+        <text name="eq_role_breeding" text="Разведение"/>
+        <text name="eq_role_sale" text="На продажу"/>
+        <text name="eq_role_retired" text="На покое"/>
+        <text name="eq_ui_button_role" text="Роль: %s"/>
+        <text name="input_EQ_HORSE_ROLE" text="Сменить роль лошади"/>
+        <text name="input_EQ_COURSE_RECORD" text="Записать или изменить маршрут конкура"/>
+        <text name="eq_course_recordAction" text="Новый маршрут конкура"/>
+        <text name="eq_course_started" text="Запись «%s»: проедьте препятствия по порядку. Поставленные препятствия Realistic Equestrian не имеют столкновений во время редактирования; остальные остаются твёрдыми"/>
+        <text name="eq_course_noJumps" text="Идёт запись маршрута, но на карте ещё нет конкурных препятствий"/>
+        <text name="eq_course_tooFew" text="Маршрут не сохранён: проедьте не менее %d конкурных препятствий"/>
+        <text name="eq_course_saved" text="«%s» сохранён: препятствий: %d, %.0f м"/>
+        <text name="eq_course_cancelled" text="Редактирование остановлено: вы слезли с лошади до того, как в маршруте стало достаточно препятствий"/>
+        <text name="eq_course_leftSaved" text="Маршрут сохранён, когда вы слезли с лошади: нажмите Ctrl+J рядом с ним, чтобы изменить, затем Ctrl+K, чтобы продолжить запись с ближайшей точки"/>
+        <text name="eq_course_recording" text="Запись «%s»: препятствий: %d, %.0f м"/>
+        <text name="eq_course_collisionNote" text="Поставленные препятствия Realistic Equestrian не имеют столкновений, пока вы прокладываете маршрут; остальные остаются твёрдыми"/>
+        <text name="eq_course_name" text="Маршрут %d"/>
+        <text name="eq_sj_begin" text="Подъедьте к линии старта, чтобы начать конкур"/>
+        <text name="eq_sj_ready" text="Приготовьтесь..."/>
+        <text name="eq_sj_go" text="Вперёд!"/>
+        <text name="eq_sj_cross" text="Вперёд! Пересеките линию старта"/>
+        <text name="eq_sj_early" text="Слишком рано! Вернитесь за линию старта"/>
+        <text name="eq_sj_rail" text="Повал! Штрафных очков: %s"/>
+        <text name="eq_sj_runout" text="Обнос! Штрафных очков: %s"/>
+        <text name="eq_sj_refusal" text="Закидка! Штрафных очков: %s"/>
+        <text name="eq_sj_eliminated" text="Дисквалификация"/>
+        <text name="eq_sj_out_late" text="Дисквалификация: линия старта не пересечена вовремя"/>
+        <text name="eq_sj_out_wrongCourse" text="Дисквалификация: ошибка маршрута (препятствие %d взято не по порядку)"/>
+        <text name="eq_sj_out_refusals" text="Дисквалификация: вторая закидка"/>
+        <text name="eq_sj_out_timeLimit" text="Дисквалификация: превышена норма времени"/>
+        <text name="eq_sj_clear" text="Чистый проезд за %s!"/>
+        <text name="eq_sj_faults" text="Штрафных очков: %s, время %s"/>
+        <text name="eq_sj_clearPop" text="Чистый проезд!"/>
+        <text name="eq_sj_faultsPop" text="Штрафных очков: %s"/>
+        <text name="eq_sj_retired" text="Конкурный заезд прерван"/>
+        <text name="eq_sj_startLine" text="Линия старта"/>
+        <text name="eq_sj_finishLine" text="Линия финиша"/>
+        <text name="eq_sj_fenceRow" text="Препятствие %d из %d"/>
+        <text name="eq_sj_faultsRow" text="Штраф: %s"/>
+        <text name="eq_sj_timeRow" text="Время"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Записать маршрут кросса"/>
+        <text name="eq_course_recordXcAction" text="Новый маршрут кросса"/>
+        <text name="eq_course_xcName" text="Кросс %d"/>
+        <text name="eq_course_noXcJumps" text="Препятствия кросса не найдены: поставьте красный и белый флажки по краям препятствия или разместите штабеля брёвен или стенки спуска"/>
+        <text name="eq_sj_beginXc" text="Подъедьте к линии старта, чтобы начать кросс"/>
+        <text name="eq_sj_out_refusalsXc" text="Дисквалификация: три закидки на одном препятствии или четыре на маршруте"/>
+        <text name="eq_sj_represent" text="Вернитесь и возьмите препятствие %d"/>
+        <text name="eq_pop_courseFence" text="Препятствие %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Откат к ближайшей точке"/>
+        <text name="eq_course_rewound" text="Маршрут откачен к ближайшей точке: сохранено препятствий: %d"/>
+        <text name="eq_course_resumed" text="Запись с ближайшей точки"/>
+        <text name="eq_course_finished" text="Редактирование завершено: поставленным препятствиям Realistic Equestrian возвращены столкновения"/>
+        <text name="eq_course_deleted" text="«%s» удалён"/>
+        <text name="eq_course_deleteAsk" text="Удалить «%s» (препятствий: %d, %.0f м)?"/>
+        <text name="eq_course_deleteTitle" text="Удалить маршрут"/>
+        <text name="eq_course_deleteAction" text="Удалить «%s»"/>
+        <text name="eq_course_editAction" text="Изменить «%s»"/>
+        <text name="eq_course_doneAction" text="Завершить редактирование маршрута"/>
+        <text name="eq_course_saveAction" text="Сохранить маршрут и завершить"/>
+        <text name="eq_course_editing" text="Редактирование «%s»: препятствий: %d, %.0f м"/>
+        <text name="eq_course_editStarted" text="Редактирование «%s»: поставленные препятствия Realistic Equestrian не имеют столкновений до завершения; остальные остаются твёрдыми"/>
+        <text name="input_EQ_COURSE_DELETE" text="Удалить ближайший маршрут"/>
+        <text name="eq_ui_riding" text="Езда"/>
+        <text name="eq_ui_ridingFull" text="Заполнено, на сегодня тренировка окончена"/>
+        <text name="eq_ui_ridingFullValue" text="%s - заполнено"/>
+        <text name="eq_specialty_none" text="Пока нет"/>
+        <text name="eq_specialty_pair" text="%s и %s"/>
+        <text name="eq_specialty_eventer" text="Троеборец"/>
+        <text name="eq_specialty_racehorse" text="Скаковая лошадь"/>
+        <text name="eq_specialty_allRounder" text="Универсал"/>
+        <text name="eq_enter_settling" text="Эта лошадь ещё привыкает после переезда. Выступать можно со следующего месяца."/>
+        <text name="eq_enter_rested" text="У этой лошади в этом месяце уже стартов: %d, и ей нужен отдых. Снова выступать можно в следующем месяце."/>
+        <text name="eq_reveal_better" text="Вы лучше узнали лошадь %s, и она выглядит даже лучше, чем говорил торговец."/>
+        <text name="eq_reveal_worse" text="Вы лучше узнали лошадь %s, и у вас есть ощущение, что вас обманули."/>
+        <text name="eq_reveal_fair" text="Вы лучше узнали лошадь %s и теперь точнее представляете её потенциал."/>
+        <text name="eq_ui_title" text="Соревнования"/>
+        <text name="eq_ui_col_event" text="Соревнование"/>
+        <text name="eq_ui_col_going" text="Условия"/>
+        <text name="eq_ui_col_risk" text="Риск"/>
+        <text name="eq_ui_injuryRisk" text="Риск травмы"/>
+        <text name="eq_ui_dayCount" text="%d дн."/>
+        <text name="eq_ui_days" text="%d дн."/>
+        <text name="eq_ui_months" text="%d мес."/>
+        <text name="eq_ui_perMonth" text="%s в месяц"/>
+        <text name="eq_ui_retire" text="Завершить карьеру"/>
+        <text name="eq_ui_retireConfirm" text="Завершить спортивную карьеру лошади %s? Она больше не сможет участвовать в соревнованиях. Это навсегда и не может быть отменено."/>
+        <text name="eq_ui_retireConfirmInjured" text="Завершить спортивную карьеру лошади %s? Лечение травмы станет на %d%% дешевле, но она больше не сможет участвовать в соревнованиях. Это навсегда и не может быть отменено."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="Лечить лошадь %s от: %s? Это займёт %s и стоит %s."/>
+        <text name="eq_risk_low" text="Низкий"/>
+        <text name="eq_risk_minor" text="Небольшой"/>
+        <text name="eq_risk_moderate" text="Умеренный"/>
+        <text name="eq_risk_risky" text="Высокий"/>
+        <text name="eq_risk_off" text="Выкл."/>
+        <text name="eq_ui_col_level" text="Уровень"/>
+        <text name="eq_ui_col_type" text="Вид"/>
+        <text name="eq_skill_untrained" text="Не обучена"/>
+        <text name="eq_skill_novice" text="Новичок"/>
+        <text name="eq_skill_trainee" text="Ученик"/>
+        <text name="eq_skill_amateur" text="Любитель"/>
+        <text name="eq_skill_promising" text="Перспективная"/>
+        <text name="eq_skill_competitor" text="Спортсмен"/>
+        <text name="eq_skill_contender" text="Претендент"/>
+        <text name="eq_skill_champion" text="Чемпион"/>
+        <text name="eq_skill_legend" text="Легенда"/>
+        <text name="eq_ui_col_when" text="Результаты"/>
+        <text name="eq_ui_col_fee" text="Взнос"/>
+        <text name="eq_ui_col_prize" text="Призовой фонд"/>
+        <text name="eq_ui_col_yours" text="Ваши лошади"/>
+        <text name="eq_ui_col_day" text="День"/>
+        <text name="eq_ui_col_horse" text="Лошадь"/>
+        <text name="eq_ui_col_result" text="Результат"/>
+        <text name="eq_ui_col_status" text="Статус"/>
+        <text name="eq_ui_horseDescription" text="Лошади едят сено, зерно и лакомства и нуждаются в воде. Здоровые кобылы старше 22 месяцев могут размножаться."/>
+        <text name="eq_ui_col_success" text="Шансы"/>
+        <text name="eq_ui_col_training" text="Тренировка"/>
+        <text name="eq_ui_trainingBenefit" text="Польза для тренировки"/>
+        <text name="eq_ui_ageLong" text="%d мес."/>
+        <text name="eq_success_favourite" text="Фаворит"/>
+        <text name="eq_success_contender" text="Претендент"/>
+        <text name="eq_success_outsider" text="Аутсайдер"/>
+        <text name="eq_success_longShot" text="Тёмная лошадка"/>
+        <text name="eq_benefit_high" text="Высокая"/>
+        <text name="eq_benefit_medium" text="Средняя"/>
+        <text name="eq_benefit_low" text="Низкая"/>
+        <text name="eq_benefit_none" text="Нет"/>
+        <text name="eq_ui_when_tomorrow" text="Завтра"/>
+        <text name="eq_ui_when_nextMonth" text="В следующем месяце"/>
+        <text name="eq_ui_trainingOnly" text="Только тренировка"/>
+        <text name="eq_ui_entered" text="Записаны: %s"/>
+        <text name="eq_ui_canEnter" text="Могут участвовать: %d"/>
+        <text name="eq_ui_noneEligible" text="Нет подходящих"/>
+        <text name="eq_ui_ageMonths" text="%d мес."/>
+        <text name="eq_ui_day" text="День %d"/>
+        <text name="eq_ui_status_ok" text="Можно записать"/>
+        <text name="eq_ui_status_lowHealth" text="Слабое здоровье: %d%% снятия"/>
+        <text name="eq_ui_status_eventFull" text="Уже записаны две ваши лошади"/>
+        <text name="eq_ui_status_tooYoung" text="Слишком молода"/>
+        <text name="eq_ui_status_tooOld" text="Слишком стара"/>
+        <text name="eq_ui_status_ratingLow" text="Рейтинг слишком низкий"/>
+        <text name="eq_ui_status_ratingHigh" text="Слишком сильна для уровня"/>
+        <text name="eq_ui_status_enteredHere" text="Записана"/>
+        <text name="eq_ui_status_enteredElsewhere" text="На другом старте"/>
+        <text name="eq_ui_result_place" text="%d из %d"/>
+        <text name="eq_ui_result_eliminated" text="Дисквалификация"/>
+        <text name="eq_ui_result_scratched" text="Снята"/>
+        <text name="eq_ui_button_enterAuto" text="Записать, автоперевозка (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Записать, ручная перевозка (%s)"/>
+        <text name="eq_ui_transportLabel" text="Общая стоимость"/>
+        <text name="eq_ui_transportLine" text="Авто %s · Вручную %s"/>
+        <text name="eq_ui_transportLabel_near" text="Стоимость, за рубежом"/>
+        <text name="eq_ui_transportLabel_far" text="Стоимость, дальний путь"/>
+        <text name="eq_ui_awaiting" text="%s (ждёт доставки)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Ждёт доставки"/>
+        <text name="input_EQ_DELIVER" text="Доставить лошадь на соревнование"/>
+        <text name="eq_deliver_prompt" text="Доставить лошадь %s на соревнование"/>
+        <text name="eq_deliver_promptMany" text="Доставить лошадей на соревнования: %d"/>
+        <text name="eq_deliver_done" text="Лошадь %s доставлена и отправляется на соревнование."/>
+        <text name="eq_deliver_doneMany" text="Доставлено лошадей: %d. Они отправляются на соревнования."/>
+        <text name="eq_deliver_noRoom" text="Доставка невозможна: лошадям нужно свободное место на одном из ваших пастбищ, чтобы вернуться."/>
+        <text name="eq_deliver_failed" text="Доставка не удалась: %s"/>
+        <text name="eq_deliver_title" text="Доставка на соревнование"/>
+        <text name="eq_deliver_ask" text="Лошадь %s ждёт отправки на соревнование. Доставить сейчас или открыть торговца как обычно?"/>
+        <text name="eq_deliver_askMany" text="Лошадей в этом прицепе, ждущих отправки на соревнования: %d. Доставить сейчас или открыть торговца как обычно?"/>
+        <text name="eq_deliver_yes" text="Доставить"/>
+        <text name="eq_deliver_no" text="Открыть торговца"/>
+        <text name="eq_loose_broughtHome" text="Ваш персонал вернул лошадь %s: %s."/>
+        <text name="eq_loose_broughtHomeUnnamed" text="Ваш персонал вернул сбежавшую лошадь: %s."/>
+        <text name="eq_ui_result_notDelivered" text="Не доставлена"/>
+        <text name="eq_ui_deadline_round" text="до завтрашних результатов"/>
+        <text name="eq_ui_deadline_month" text="до конца месяца"/>
+        <text name="eq_ui_button_results" text="Результаты"/>
+        <text name="eq_ui_button_manageAnimals" text="Управление животными"/>
+        <text name="eq_ui_button_events" text="Соревнования"/>
+        <text name="eq_ui_noEvents" text="Сейчас нет открытых соревнований. Новые разыгрываются каждый раунд."/>
+        <text name="eq_ui_noResults" text="У ваших лошадей пока нет результатов."/>
+        <text name="eq_ui_noHorses" text="У вас нет лошадей."/>
+        <text name="eq_ui_clientNote" text="Соревнования проводит хост. Запись с клиента в сетевой игре появится в следующей версии."/>
+        <text name="eq_ui_noConfig" text="Не удалось загрузить список соревнований; см. журнал."/>
+        <text name="eq_ui_ages_range" text="возраст %d-%d мес."/>
+        <text name="eq_ui_ages_from" text="от %d мес."/>
+        <text name="eq_ui_summary_event" text="%s: %s, рейтинг %.0f-%.0f, участников: %d. Выберите лошадь и нажмите Enter."/>
+        <text name="eq_enter_noEvent" text="Запись на это соревнование закрыта."/>
+        <text name="eq_enter_retired" text="Эта лошадь завершила спортивную карьеру."/>
+        <text name="eq_enter_inFoal" text="Срок жерёбости этой кобылы слишком велик для стартов. Она сможет выступать после выжеребки."/>
+        <text name="eq_enter_foaled" text="Эта кобыла ещё восстанавливается после выжеребки. Она сможет выступать через три месяца после родов."/>
+        <text name="eq_enter_already" text="Эта лошадь уже записана: %s."/>
+        <text name="eq_enter_eventFull" text="На одно соревнование можно записать не более %d лошадей."/>
+        <text name="eq_enter_tooYoung" text="Слишком молода: соревнование для лошадей от %d мес., а вашей %d мес."/>
+        <text name="eq_enter_tooOld" text="Слишком стара: соревнование для лошадей до %d мес., а вашей %d мес."/>
+        <text name="eq_enter_ratingLow" text="Рейтинг %.0f ниже диапазона %.0f-%.0f этого соревнования."/>
+        <text name="eq_enter_ratingHigh" text="Рейтинг %.0f выше диапазона %.0f-%.0f этого соревнования: выберите уровень выше."/>
+        <text name="eq_enter_noMoney" text="Недостаточно денег: запись стоит %s (взнос %s, перевозка %s)."/>
+        <text name="eq_enter_done" text="Лошадь %s записана: %s (рейтинг %.0f). Автоперевозка: %s."/>
+        <text name="eq_enter_doneManual" text="Лошадь %s записана: %s (рейтинг %.0f). Ручная перевозка: отвезите лошадь к торговцу животными %s, иначе она не стартует."/>
+        <text name="eq_result_notDelivered" text="Лошадь %s так и не была доставлена (%s) и не стартовала. Взнос потерян."/>
+        <text name="eq_enter_farmLimit" text="Вы использовали все записи этого месяца (%d). Новые откроются в следующем месяце."/>
+        <text name="eq_ui_farmLimit" text="В этом месяце записей не осталось"/>
+        <text name="eq_ui_entriesLeft" text="Осталось записей в этом месяце: %d из %d."/>
+        <text name="eq_money_transport" text="Перевозка лошадей"/>
+        <text name="eq_money_staffWages" text="Зарплата конного персонала"/>
+        <text name="eq_staff_title" text="Конный персонал"/>
+        <text name="eq_staff_tab_hire" text="Найм"/>
+        <text name="eq_staff_tab_staff" text="Ваш персонал"/>
+        <text name="eq_staff_col_name" text="Имя"/>
+        <text name="eq_staff_col_job" text="Должность"/>
+        <text name="eq_staff_col_grade" text="Уровень"/>
+        <text name="eq_staff_col_best" text="Лучшие навыки"/>
+        <text name="eq_staff_col_worksOn" text="Работает с"/>
+        <text name="eq_staff_col_wage" text="Зарплата / день"/>
+        <text name="eq_staff_job_groom" text="Конюх"/>
+        <text name="eq_staff_job_dressage" text="Тренер по выездке"/>
+        <text name="eq_staff_job_showJumping" text="Тренер по конкуру"/>
+        <text name="eq_staff_job_crossCountry" text="Тренер по кроссу"/>
+        <text name="eq_staff_job_racing" text="Тренер скаковых лошадей"/>
+        <text name="eq_staff_job_vet" text="Ветеринар"/>
+        <text name="eq_staff_job_broker" text="Брокер"/>
+        <text name="eq_staff_grade_junior" text="Младший"/>
+        <text name="eq_staff_grade_experienced" text="Опытный"/>
+        <text name="eq_staff_grade_senior" text="Старший"/>
+        <text name="eq_staff_grade_legendary" text="Легендарный"/>
+        <text name="eq_staff_skill_dressage" text="Выездка"/>
+        <text name="eq_staff_skill_showJumping" text="Конкур"/>
+        <text name="eq_staff_skill_crossCountry" text="Кросс"/>
+        <text name="eq_staff_skill_racing" text="Скачки"/>
+        <text name="eq_staff_skill_veterinary" text="Ветеринария"/>
+        <text name="eq_staff_skill_broker" text="Посредничество"/>
+        <text name="eq_staff_level_1" text="Слабо"/>
+        <text name="eq_staff_level_2" text="Сносно"/>
+        <text name="eq_staff_level_3" text="Хорошо"/>
+        <text name="eq_staff_level_4" text="Очень хорошо"/>
+        <text name="eq_staff_level_5" text="Отлично"/>
+        <text name="eq_staff_level_6" text="Легендарно"/>
+        <text name="eq_staff_works_general" text="Все лошади"/>
+        <text name="eq_staff_works_passive" text="Каждая лошадь"/>
+        <text name="eq_staff_status" text="Статус"/>
+        <text name="eq_staff_stables" text="Конюшни"/>
+        <text name="eq_staff_roles" text="Роли"/>
+        <text name="eq_staff_horses" text="Лошади"/>
+        <text name="eq_staff_covers" text="Охвачено лошадей"/>
+        <text name="eq_staff_mode_roles" text="По ролям"/>
+        <text name="eq_staff_mode_horses" text="Выборочно"/>
+        <text name="eq_staff_allStables" text="Все конюшни"/>
+        <text name="eq_staff_nStables" text="Конюшен: %d"/>
+        <text name="eq_staff_allRoles" text="Все роли"/>
+        <text name="eq_staff_nRoles" text="Ролей: %d"/>
+        <text name="eq_staff_nHorses" text="Лошадей: %d"/>
+        <text name="eq_staff_noHorses" text="Выберите лошадей"/>
+        <text name="eq_staff_works_off" text="Отключён"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, отключение с завтрашнего дня"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, снова работает с завтрашнего дня"/>
+        <text name="eq_staff_pick_stables" text="Выбрать конюшни"/>
+        <text name="eq_staff_pick_roles" text="Выбрать роли"/>
+        <text name="eq_staff_pick_horses" text="Выбрать лошадей"/>
+        <text name="eq_staff_pick_empty" text="Отметьте хотя бы одно."/>
+        <text name="eq_staff_wage" text="Зарплата"/>
+        <text name="eq_staff_perDay" text="%s в день"/>
+        <text name="eq_staff_duties" text="Основные обязанности"/>
+        <text name="eq_staff_duties_groom" text="Тренирует все четыре показателя, чистит лошадей, возвращает сбежавших"/>
+        <text name="eq_staff_duties_trainer" text="Сосредоточен на навыках %s и %s, немного тренирует остальные и готовит лошадей к стартам"/>
+        <text name="eq_staff_duties_vet" text="Меньше травм, более короткое и дешёвое лечение для каждой лошади"/>
+        <text name="eq_staff_duties_broker" text="Точнее оценивает потенциал лошадей у торговца. Лучшие цены при покупке и продаже лошадей."/>
+        <text name="eq_staff_timeLeft" text="Осталось времени"/>
+        <text name="eq_staff_hours" text="%d ч"/>
+        <text name="eq_staff_button_hire" text="Нанять (%s в день)"/>
+        <text name="eq_staff_button_fire" text="Уволить"/>
+        <text name="eq_staff_fire_confirm" text="Уволить: %s? Этот человек не вернётся."/>
+        <text name="eq_staff_letGo" text="%s больше у вас не работает."/>
+        <text name="eq_staff_hired" text="%s выходит на работу сегодня."/>
+        <text name="eq_staff_unique" text="У вас уже есть %s. На ферме может быть только один."/>
+        <text name="eq_staff_noCandidates" text="Сейчас никто не ищет работу. Новые люди приходят каждый месяц."/>
+        <text name="eq_staff_noStaff" text="У вас пока нет персонала. Наймите его на вкладке «Найм»."/>
+        <text name="eq_staff_summary_hire" text="Новые люди приходят каждые несколько часов и ждут предложения от 12 до 72 часов. Только один ветеринар и один брокер на ферму."/>
+        <text name="eq_staff_summary_staff" text="Зарплата: %s в день. Персонал эффективнее всего, когда у каждого немного лошадей."/>
+        <text name="eq_staff_clientNote" text="Пока нанимать персонал может только хост."/>
+        <text name="eq_result_placed" text="Лошадь %s заняла %d-е место из %d (%s) и выиграла %s."/>
+        <text name="eq_result_placedNoPrize" text="Лошадь %s заняла %d-е место из %d (%s)."/>
+        <text name="eq_result_gone" text="Лошадь %s не смогла выступить (%s): её больше нет на ферме."/>
+        <text name="eq_and" text="и"/>
+        <text name="eq_facility_improves" text="Улучшает тренировку: %s (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Тренировка в: %s"/>
+        <text name="eq_facility_indoorArena" text="Крытый манеж"/>
+        <text name="eq_facility_ridingCentre" text="Конноспортивный центр"/>
+        <text name="eq_facility_outdoorArena" text="Открытый манеж"/>
+        <text name="eq_facility_roundPen" text="Бочка"/>
+        <text name="eq_facility_jumps" text="Конкурное поле"/>
+        <text name="eq_facility_xcFence" text="Трасса кросса"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_tab" text="Конный спорт"/>
+        <text name="eq_settings_credit" text="Realistic Equestrian от %s"/>
+        <text name="eq_settings_off" text="Выкл."/>
+        <text name="eq_settings_on" text="Вкл."/>
+        <text name="eq_settings_noLimit" text="Без ограничений"/>
+        <text name="eq_settings_trainingRate" text="Скорость тренировки"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Как быстро езда, персонал и соревнования повышают показатели лошади. 1x — обычная скорость."/>
+        <text name="eq_settings_cadence" text="Соревнования"/>
+        <text name="eq_settings_cadence_tooltip" text="Как часто проходит раунд соревнований. Изменения действуют со следующего раунда."/>
+        <text name="eq_settings_cadence_day" text="Каждый день"/>
+        <text name="eq_settings_cadence_month" text="Каждый месяц"/>
+        <text name="eq_settings_eventsMin" text="Минимум соревнований"/>
+        <text name="eq_settings_eventsMin_tooltip" text="Наименьшее число соревнований в календаре одновременно, включая высокий уровень и чемпионаты. Каждый раунд выбирает число между этим и максимумом. В сетевой игре добавляются ещё за каждую ферму с лошадьми."/>
+        <text name="eq_settings_eventsMax" text="Максимум соревнований"/>
+        <text name="eq_settings_eventsMax_tooltip" text="Наибольшее число соревнований в календаре одновременно. Изменения действуют со следующего раунда."/>
+        <text name="eq_settings_racing" text="Скачки и стипль-чезы"/>
+        <text name="eq_settings_racing_tooltip" text="Есть ли в календаре гладкие скачки и стипль-чезы. Изменения действуют со следующего раунда."/>
+        <text name="eq_settings_injuries" text="Травмы на соревнованиях"/>
+        <text name="eq_settings_injuries_tooltip" text="Могут ли лошади получать травмы на соревнованиях."/>
+        <text name="eq_settings_forcedRetirement" text="Травмы, завершающие карьеру"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Могут ли самые тяжёлые травмы навсегда завершить спортивную карьеру лошади."/>
+        <text name="eq_settings_entriesPerMonth" text="Записей в месяц"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Сколько записей на соревнования каждая ферма может сделать за месяц."/>
+        <text name="eq_ord_1" text="%d-е"/>
+        <text name="eq_ord_2" text="%d-е"/>
+        <text name="eq_ord_3" text="%d-е"/>
+        <text name="eq_ord_n" text="%d-е"/>
+        <text name="eq_story_podium" text="Победитель: %s, 2-е: %s, 3-е: %s."/>
+        <text name="eq_story_winner" text="Победитель: %s."/>
+        <text name="eq_story_phase" text="%s %s"/>
+        <text name="eq_story_phases" text="%s."/>
+        <text name="eq_story_gains" text="Прибавка: %s."/>
+        <text name="eq_story_injury" text="Вернулась домой: %s."/>
+        <text name="eq_story_careerEnded" text="Получила травму, завершившую карьеру."/>
+        <text name="eq_story_jumping_clean" text="Прошла маршрут чисто."/>
+        <text name="eq_story_jumping_struggled" text="С большим трудом справлялась со сложностью маршрута."/>
+        <text name="eq_story_jumping_eliminated" text="Выбыла после падения."/>
+        <text name="eq_story_jumping_elimRefusal" text="Выбыла после трёх закидок."/>
+        <text name="eq_story_jumping_agility" text="Повалила жердь на сложной системе."/>
+        <text name="eq_story_jumping_agilityMany" text="Повалила несколько жердей."/>
+        <text name="eq_story_jumping_hardest" text="Шла хорошо, пока не повалила жердь на самом сложном препятствии."/>
+        <text name="eq_story_jumping_speed" text="Медленно шла между препятствиями и потеряла время."/>
+        <text name="eq_story_jumping_temperament" text="Закинулась перед препятствием."/>
+        <text name="eq_story_dressage_clean" text="Отточенная езда, впечатлившая судей."/>
+        <text name="eq_story_dressage_struggled" text="С трудом проходила езду от начала до конца."/>
+        <text name="eq_story_dressage_agility" text="Потеряла баллы в боковых движениях."/>
+        <text name="eq_story_dressage_agilityMany" text="Потеряла баллы в нескольких элементах."/>
+        <text name="eq_story_dressage_hardest" text="Элегантная езда, но трудности на самых сложных элементах."/>
+        <text name="eq_story_dressage_temperament" text="Была заметно напряжена и плохо сосредотачивалась."/>
+        <text name="eq_story_dressage_temperamentMany" text="Напряжена и рассеянна большую часть езды."/>
+        <text name="eq_story_dressage_elimRefusal" text="Отказалась продолжать и сошла с езды."/>
+        <text name="eq_story_crossCountry_clean" text="Чисто и в норму времени."/>
+        <text name="eq_story_crossCountry_struggled" text="Маршрут оказался слишком сложным, трудности на всём протяжении."/>
+        <text name="eq_story_crossCountry_eliminated" text="Выбыла после падения."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="Выбыла после трёх закидок."/>
+        <text name="eq_story_crossCountry_agility" text="Обнесла узкое препятствие."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Спотыкалась на приземлениях и сбилась с ритма."/>
+        <text name="eq_story_crossCountry_hardest" text="Шла хорошо до обноса на самом сложном препятствии."/>
+        <text name="eq_story_crossCountry_temperament" text="Закинулась перед водой."/>
+        <text name="eq_story_crossCountry_speed" text="Отставала от темпа между препятствиями и потеряла время."/>
+        <text name="eq_story_crossCountry_stamina" text="Устала на длинных отрезках и отстала от темпа."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Выдохлась задолго до финиша."/>
+        <text name="eq_story_race_clean" text="Отлично провела скачку от старта до финиша."/>
+        <text name="eq_story_race_struggled" text="Так и не включилась в борьбу."/>
+        <text name="eq_story_race_eliminated" text="Упала после столкновения и не смогла продолжить."/>
+        <text name="eq_story_race_elimRefusal" text="Капризничала на старте и была снята."/>
+        <text name="eq_story_race_temperament" text="Опоздала со старта."/>
+        <text name="eq_story_race_speed" text="Не выдержала начального темпа."/>
+        <text name="eq_story_race_speedMany" text="Не хватило скорости, чтобы держаться с лидерами."/>
+        <text name="eq_story_race_stamina" text="Сдала на финишной прямой."/>
+        <text name="eq_story_race_staminaMany" text="Выдохлась задолго до финиша."/>
+        <text name="eq_story_race_finish" text="Хорошо шла всю скачку, но уступила в финишном рывке."/>
+        <text name="eq_story_race_comeback" text="Рано отстала, но выдала захватывающий финишный рывок."/>
+        <text name="eq_story_steeplechase_clean" text="Хорошо прыгала и шла всю дистанцию."/>
+        <text name="eq_story_steeplechase_struggled" text="Не справлялась ни с препятствиями, ни с темпом."/>
+        <text name="eq_story_steeplechase_eliminated" text="Тяжело упала на живой изгороди и не смогла продолжить."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Закинулась перед препятствием и была снята."/>
+        <text name="eq_story_steeplechase_agility" text="Сильно задела препятствие и потеряла позицию."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Плохо прыгала и теряла позицию на нескольких препятствиях."/>
+        <text name="eq_story_steeplechase_hardest" text="Шла хорошо до грубой ошибки на самом сложном препятствии."/>
+        <text name="eq_story_steeplechase_speed" text="Не выдержала начального темпа."/>
+        <text name="eq_story_steeplechase_temperament" text="Прыгала неуверенно и теряла позицию."/>
+        <text name="eq_story_steeplechase_stamina" text="Устала и сдала на последних препятствиях."/>
+        <text name="eq_story_eventing_clean" text="Чисто во всех видах."/>
+        <text name="eq_story_eventing_struggled" text="Тяжело далась все три вида."/>
+        <text name="eq_story_eventing_eliminated" text="Выбыла после падения на кроссе."/>
+        <text name="eq_ui_tab_upcoming" text="Ближайшие соревнования"/>
+        <text name="eq_ui_tab_results" text="Результаты"/>
+        <text name="eq_ui_col_starts" text="Старты"/>
+        <text name="eq_ui_col_wins" text="Победы"/>
+        <text name="eq_ui_col_lastResult" text="Последний результат"/>
+        <text name="eq_ui_result_placeOrd" text="%s из %d"/>
+        <text name="eq_ui_noHorseResults" text="У лошади %s пока нет результатов соревнований."/>
+        <text name="eq_ui_summary_results" text="Последние соревнования лошади: %d. Выберите лошадь справа."/>
+        <text name="eq_ui_career_starts" text="Старты"/>
+        <text name="eq_ui_career_record" text="Победы / призовые места"/>
+        <text name="eq_ui_career_earnings" text="Призовые"/>
+        <text name="eq_ui_career_eliminations" text="Дисквалификации"/>
+        <text name="eq_ui_button_viewResults" text="Результаты"/>
+        <text name="eq_ui_button_rideHorse" text="Сесть на лошадь"/>
+        <text name="eq_ui_rideNotInPen" text="Лошади %s сейчас нет в загоне. Подойдите к лошади там, чтобы сесть на неё."/>
+        <text name="eq_settings_entryFeeScale" text="Стартовые взносы"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Масштабирует стартовый взнос всех соревнований. 1x — обычный. Соревнования, уже стоящие в календаре, сохраняют свой взнос; изменения действуют со следующего раунда."/>
+        <text name="eq_settings_prizeScale" text="Призовые"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Масштабирует призовые всех соревнований. 1x — обычные. Соревнования, уже стоящие в календаре, сохраняют свои призы; изменения действуют со следующего раунда."/>
+        <text name="eq_story_phaseScore" text="%s: %s, штраф %s"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, штраф %s (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, чисто"/>
+        <text name="eq_story_down1" text="1 повал"/>
+        <text name="eq_story_downN" text="повалов: %d"/>
+        <text name="eq_story_refusal1" text="1 закидка"/>
+        <text name="eq_story_refusalN" text="закидок: %d"/>
+        <text name="eq_story_time" text="%s за время"/>
+        <text name="eq_story_total" text="Итого штраф: %s"/>
+        <text name="eq_staff_button_decline" text="Отклонить"/>
+        <text name="eq_staff_declined" text="%s больше не придёт. В ближайшие несколько часов может появиться кто-то новый."/>
+    </texts>
+</l10n>

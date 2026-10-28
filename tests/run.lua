@@ -155,7 +155,7 @@ check("selective breeding never gets three stats to 95+", worstViolation <= 2, "
     end
     local enList, en = texts("translations/translation_en.xml")
     for _, name in ipairs(enList) do check("English text " .. name .. " appears once", en[name] ~= false) end
-    for _, language in ipairs({ "de", "fr", "es" }) do
+    for _, language in ipairs({ "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
         local _, other = texts("translations/translation_" .. language .. ".xml")
         for _, name in ipairs(enList) do
             check(language .. " has " .. name, type(other[name]) == "string")
@@ -3346,6 +3346,25 @@ end)()
         string.format("foal %.1f adult %.1f", foalStats, adultStats))
     check("a repaired horse no longer matches", not EqFreshStart.isMapPlaceholder(placeholder))
     EqRegistry.reset()
+end)()
+
+-- HUD wrapping: at spaces, and between Chinese and Japanese characters, which have none.
+;(function()
+    local oldBold, oldWidth = setTextBold, getTextWidth
+    setTextBold = function() end
+    getTextWidth = function(size, text)
+        local count = 0
+        for _ in text:gmatch("[%z\1-\127\194-\244][\128-\191]*") do count = count + 1 end
+        return count * size
+    end
+    dofile("scripts/gui/EqTrainingHud.lua")
+    local english = EqTrainingHud.wrap("Your horses now have skills", 1, 12)
+    check("English wraps at spaces", #english == 3 and english[1] == "Your horses" and english[3] == "skills", table.concat(english, "|"))
+    local japanese = EqTrainingHud.wrap("馬に鍛えるスキルと出場する大会ができました", 1, 10)
+    check("Japanese wraps between characters", #japanese == 3 and japanese[1] == "馬に鍛えるスキルと出", table.concat(japanese, "|"))
+    local mixed = EqTrainingHud.wrap("すべてRealistic Livestockメニュー", 1, 13)
+    check("a Latin name inside Japanese stays whole", mixed[1] == "すべてRealistic" and mixed[2] == "Livestockメニュー", table.concat(mixed, "|"))
+    setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 
 -- Welcome popups: which menu series shows, and the horse pen check.
