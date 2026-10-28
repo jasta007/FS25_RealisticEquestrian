@@ -299,7 +299,7 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 ### Hired staff
 
 Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
-**Hire** lists the candidates, **Your staff** your team (both grouped by job, best first), with
+**Hire** lists the candidates (Decline turns one down; the place refills at the usual hourly rate), **Your staff** your team (both grouped by job, best first), with
 Let go. Each person's ten skills show beside the table, and for your staff the controls below. The `eqStaff` console commands do the same. Host only
 for now in multiplayer.
 
