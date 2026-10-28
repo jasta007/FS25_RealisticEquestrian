@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="拒止%d"/>
         <text name="eq_story_time" text="タイム%s"/>
         <text name="eq_story_total" text="合計：減点%s"/>
+        <text name="eq_staff_button_decline" text="断る"/>
+        <text name="eq_staff_declined" text="%sはもう来ません。数時間以内に新しい人が現れるかもしれません。"/>
     </texts>
 </l10n>

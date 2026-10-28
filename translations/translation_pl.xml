@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="odmowy: %d"/>
         <text name="eq_story_time" text="%s za czas"/>
         <text name="eq_story_total" text="Razem punkty karne: %s"/>
+        <text name="eq_staff_button_decline" text="Odrzuć"/>
+        <text name="eq_staff_declined" text="%s już nie wróci. W ciągu kilku najbliższych godzin może pojawić się ktoś nowy."/>
     </texts>
 </l10n>

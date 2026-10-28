@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="拒跳%d次"/>
         <text name="eq_story_time" text="超时%s"/>
         <text name="eq_story_total" text="总计：罚%s分"/>
+        <text name="eq_staff_button_decline" text="拒绝"/>
+        <text name="eq_staff_declined" text="%s不会再来了。接下来几小时内可能会有新人出现。"/>
     </texts>
 </l10n>

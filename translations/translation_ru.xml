@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="закидок: %d"/>
         <text name="eq_story_time" text="%s за время"/>
         <text name="eq_story_total" text="Итого штраф: %s"/>
+        <text name="eq_staff_button_decline" text="Отклонить"/>
+        <text name="eq_staff_declined" text="%s больше не придёт. В ближайшие несколько часов может появиться кто-то новый."/>
     </texts>
 </l10n>

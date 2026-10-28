@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="%d recusas"/>
         <text name="eq_story_time" text="%s por tempo"/>
         <text name="eq_story_total" text="Total: %s pontos de penalidade"/>
+        <text name="eq_staff_button_decline" text="Recusar"/>
+        <text name="eq_staff_declined" text="%s não vai voltar. Alguém novo pode aparecer nas próximas horas."/>
     </texts>
 </l10n>

@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="%d weigeringen"/>
         <text name="eq_story_time" text="%s tijd"/>
         <text name="eq_story_total" text="Totaal: %s strafpunten"/>
+        <text name="eq_staff_button_decline" text="Afwijzen"/>
+        <text name="eq_staff_declined" text="%s komt niet terug. Binnen een paar uur kan er iemand nieuw opduiken."/>
     </texts>
 </l10n>

@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="%d rifiuti"/>
         <text name="eq_story_time" text="%s sul tempo"/>
         <text name="eq_story_total" text="Totale: %s penalità"/>
+        <text name="eq_staff_button_decline" text="Rifiuta"/>
+        <text name="eq_staff_declined" text="%s non tornerà. Qualcuno di nuovo potrebbe presentarsi nelle prossime ore."/>
     </texts>
 </l10n>

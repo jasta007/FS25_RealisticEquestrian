@@ -712,5 +712,7 @@
         <text name="eq_story_refusalN" text="odmítnutí: %d"/>
         <text name="eq_story_time" text="%s za čas"/>
         <text name="eq_story_total" text="Celkem trestné body: %s"/>
+        <text name="eq_staff_button_decline" text="Odmítnout"/>
+        <text name="eq_staff_declined" text="%s se už nevrátí. Během několika hodin se může objevit někdo nový."/>
     </texts>
 </l10n>
