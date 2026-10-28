@@ -36,6 +36,7 @@ dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -3755,6 +3756,17 @@ end)()
     end
     check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
         and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
+
+    -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
+    local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }
+    local order = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
+    check("sponsors: owned brands first", order[1] == "ECHO" and order[2] == "BRAVO" and order[3] == "CHARLIE" and #order == 5)
+    local again = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
+    check("sponsors: the same order for the same farm", table.concat(order, " ") == table.concat(again, " "))
+    for _, name in ipairs(order) do check("sponsors: the placeholder brand is never shown", name ~= "NONE") end
+    check("sponsors: our bleachers are known", EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\bleachers\\bleachers5x10.xml")
+        and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
+    check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
 
     EqHostManager.reset()
     EqHostManager.bookings[3] = { type = "eventing", rating = "championship", month = 15, setupFee = 120000, previousLast = 4 }

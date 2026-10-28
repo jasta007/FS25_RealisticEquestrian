@@ -794,5 +794,10 @@
         <text name="eq_host_ride_out" text="%s contado para %s: eliminado."/>
         <text name="eq_host_ride_already" text="La prueba de %s de este caballo para %s ya está hecha; esta es de práctica."/>
         <text name="eq_host_ride_small" text="Este recorrido es demasiado pequeño para %s; la ronda es de práctica."/>
+        <text name="eq_shop_bleachers3x6" text="Gradas 3 filas, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Gradas 5 filas, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Gradas 8 filas, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Asientos para los concursos que organizas: cuentan a menos de 60 m de un recorrido o pista de doma."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Los carteles de patrocinadores delante muestran las marcas de tus máquinas."/>
     </texts>
 </l10n>

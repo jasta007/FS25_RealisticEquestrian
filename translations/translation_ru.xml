@@ -792,5 +792,10 @@
         <text name="eq_host_ride_out" text="%s засчитан для «%s»: снятие."/>
         <text name="eq_host_ride_already" text="%s этой лошади для «%s» уже пройден; этот заезд тренировочный."/>
         <text name="eq_host_ride_small" text="Этот маршрут слишком мал для «%s», заезд тренировочный."/>
+        <text name="eq_shop_bleachers3x6" text="Трибуна 3 ряда, 6 м"/>
+        <text name="eq_shop_bleachers5x10" text="Трибуна 5 рядов, 10 м"/>
+        <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядов, 16 м"/>
+        <text name="eq_shop_bleachers_function" text="Места для зрителей на ваших соревнованиях: считается в пределах 60 м от маршрута или манежа для выездки."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Спонсорские щиты перед ней показывают марки вашей техники."/>
     </texts>
 </l10n>

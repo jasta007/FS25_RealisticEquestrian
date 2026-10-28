@@ -792,5 +792,10 @@
         <text name="eq_host_ride_out" text="%s contado para %s: eliminado."/>
         <text name="eq_host_ride_already" text="O %s deste cavalo para %s já foi feito; este é treino."/>
         <text name="eq_host_ride_small" text="Este percurso é pequeno demais para %s; a volta é treino."/>
+        <text name="eq_shop_bleachers3x6" text="Arquibancada 3 fileiras, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Arquibancada 5 fileiras, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Arquibancada 8 fileiras, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Assentos para os eventos que você organiza: conta a até 60 m de um percurso ou pista de adestramento."/>
+        <text name="eq_shop_bleachersSponsors_function" text="As placas de patrocinadores na frente mostram as marcas das suas máquinas."/>
     </texts>
 </l10n>

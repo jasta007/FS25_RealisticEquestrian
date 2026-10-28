@@ -794,5 +794,10 @@
         <text name="eq_host_ride_out" text="%s compté pour %s : éliminé."/>
         <text name="eq_host_ride_already" text="Le %s de ce cheval pour %s est déjà monté ; celui-ci est un entraînement."/>
         <text name="eq_host_ride_small" text="Ce parcours est trop petit pour %s, ce tour est un entraînement."/>
+        <text name="eq_shop_bleachers3x6" text="Tribune 3 rangs, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribune 5 rangs, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribune 8 rangs, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Places assises pour les concours que vous organisez : compte à moins de 60 m d'un parcours ou d'une carrière de dressage."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Les panneaux de sponsors devant affichent les marques de vos machines."/>
     </texts>
 </l10n>

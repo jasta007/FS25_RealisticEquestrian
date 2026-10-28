@@ -49,6 +49,7 @@ source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
+source(modDirectory .. "scripts/facilities/EqSponsors.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
@@ -269,6 +270,7 @@ guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 -- Cross country pieces hide outside construction, course editing and rounds; the shop's
 -- "Always visible" configuration has to be registered before the store items load.
 guarded("cross country pieces hook", function() EqXcHide.install(guarded) end)
+guarded("sponsor boards hook", function() EqSponsors.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()

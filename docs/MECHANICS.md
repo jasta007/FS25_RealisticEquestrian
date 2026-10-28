@@ -560,6 +560,9 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
   60 m of a course or arena; an indoor arena counts as one. A 3 Day Event needs all three, with
   seating at both the arena and the show jumping course, and costs 1.5x to set up.
+- **Bleachers:** the shop's Horses tab has our own, 3 rows x 6 m, 5 x 10 m and 8 x 16 m (any
+  placeable named like a bleacher, grandstand or tribune counts too). Their sponsor boards show the
+  brands of the farm's machines, most owned first, then other brands from the game.
 - Two places are yours; every other place is a visiting horse, which needs a **free stable place**
   in your horse pens and a month of **horse feed** (troughs and silos both count).
 - **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to

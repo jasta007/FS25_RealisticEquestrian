@@ -792,5 +792,10 @@
         <text name="eq_host_ride_out" text="%s zaliczony do %s: eliminacja."/>
         <text name="eq_host_ride_already" text="%s tego konia w %s jest już przejechany; ten to trening."/>
         <text name="eq_host_ride_small" text="Ta trasa jest za mała na %s, przejazd to trening."/>
+        <text name="eq_shop_bleachers3x6" text="Trybuna 3 rzędy, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Trybuna 5 rzędów, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Trybuna 8 rzędów, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Miejsca na organizowane przez ciebie zawody: liczy się do 60 m od trasy lub czworoboku."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Tablice sponsorów z przodu pokazują marki twoich maszyn."/>
     </texts>
 </l10n>

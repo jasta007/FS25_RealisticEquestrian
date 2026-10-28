@@ -792,5 +792,10 @@
         <text name="eq_host_ride_out" text="%s telt voor %s: uitgeschakeld."/>
         <text name="eq_host_ride_already" text="De %s van dit paard voor %s is al gereden; deze is oefening."/>
         <text name="eq_host_ride_small" text="Dit parcours is te klein voor %s, de ronde is oefening."/>
+        <text name="eq_shop_bleachers3x6" text="Tribune 3 rijen, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribune 5 rijen, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribune 8 rijen, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Zitplaatsen voor de wedstrijden die je organiseert: telt binnen 60 m van een parcours of dressuurbak."/>
+        <text name="eq_shop_bleachersSponsors_function" text="De sponsorborden ervoor tonen de merken van je machines."/>
     </texts>
 </l10n>
