@@ -366,7 +366,7 @@ function EqDressage.plan(routine, course, done, rng)
         return task.nextLeg
     elseif done == "go" and task ~= nil and task.final then
         return { kind = "halt", final = true }
-    elseif routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES and done ~= "reverse" then
+    elseif routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) and done ~= "reverse" then
         -- The test is ridden: finish down the centre line to X and halt.
         local x = routine.testX
         return { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
@@ -456,6 +456,8 @@ function EqDressage.start(routine, course, rng)
     -- The test opening only close to an arena: from further off, "Move to A" showed 80 m away.
     local opening = EqDressage.nearArena(course) and EqDressage.openingLeg(course) or nil
     routine.arena = opening ~= nil and opening.arena or nil
+    -- A competition test in your own event is longer (EqHostManager.testMovesFor).
+    routine.testMoves = opening ~= nil and course.testMoves or nil
     begin(routine, opening or EqDressage.planLeg(routine, course, rng), course)
 end
 
@@ -503,7 +505,7 @@ local function fault(sheet, course, rng)
     routine.from = nil
     -- Keep the test's place: its final legs come back once the count is reached.
     local nextTask
-    if routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES then
+    if routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) then
         local x = routine.testX
         nextTask = { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
     else

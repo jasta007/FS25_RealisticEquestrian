@@ -788,5 +788,9 @@
         <text name="eq_host_warning" text="你的%s缺少：%s。今天解决，否则明天比赛将被取消。"/>
         <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主办声誉受损。"/>
         <text name="eq_host_done" text="你的%s已结束：来了%d匹来访马。收入 %s（报名费 %s，门票 %s），人气 %d。"/>
+        <text name="eq_host_ride_counted" text="%s已计入%s：罚分 %s。"/>
+        <text name="eq_host_ride_out" text="%s已计入%s：淘汰。"/>
+        <text name="eq_host_ride_already" text="这匹马的%s（%s）已完成；本次为练习。"/>
+        <text name="eq_host_ride_small" text="此赛道对%s来说太小，本轮为练习。"/>
     </texts>
 </l10n>

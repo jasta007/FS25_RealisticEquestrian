@@ -337,11 +337,24 @@ function EqCompetition.run(event, config, entrants, rng, field)
         table.insert(runners, { rating = rating, score = run.score, run = run })
     end
 
+    -- Rounds ridden in your own event (EqHosting) are placed by their real penalties, so a
+    -- one-phase event is scored in penalties too, as a single phase.
+    local ridden = event.hosted ~= nil and event.hosted.ridden or nil
+    if ridden ~= nil and next(ridden) == nil then ridden = nil end
+    local phases = discipline.phases
+    if phases == nil and ridden ~= nil then
+        phases = { discipline.name }
+        for _, runner in ipairs(runners) do
+            runner.run.phases = { { name = discipline.name, score = runner.run.score, checks = runner.run.checks } }
+        end
+    end
+
     local phasePlaces = nil
-    if discipline.phases ~= nil then
-        EqPerformance.scorePenalties(runners, discipline.phases, rng)
+    if phases ~= nil then
+        EqPerformance.scorePenalties(runners, phases, rng)
+        if ridden ~= nil and EqHosting ~= nil then EqHosting.applyRidden(runners, ridden) end
         table.sort(runners, function(a, b) return EqPerformance.penaltyOrder(a, b) end)
-        phasePlaces = EqPerformance.phasePlaces(runners, discipline.phases)
+        phasePlaces = EqPerformance.phasePlaces(runners, phases)
     else
         table.sort(runners, function(a, b) return a.score > b.score end)
     end

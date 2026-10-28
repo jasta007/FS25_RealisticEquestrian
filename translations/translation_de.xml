@@ -790,5 +790,9 @@
         <text name="eq_host_warning" text="Deinem Turnier %s fehlt: %s. Kümmere dich heute darum, sonst wird es morgen abgesagt."/>
         <text name="eq_host_cancelled" text="Dein Turnier %s wurde abgesagt, es fehlte weiter: %s. Dein Ruf als Ausrichter leidet."/>
         <text name="eq_host_done" text="Dein Turnier %s ist vorbei: %d Gastpferde kamen. Einnahmen %s (%s Startgelder, %s Eintritt), Beliebtheit %d."/>
+        <text name="eq_host_ride_counted" text="%s gewertet für %s: %s Strafpunkte."/>
+        <text name="eq_host_ride_out" text="%s gewertet für %s: ausgeschieden."/>
+        <text name="eq_host_ride_already" text="Die %s dieses Pferdes für %s ist schon geritten; das hier ist Training."/>
+        <text name="eq_host_ride_small" text="Dieser Parcours ist zu klein für %s, die Runde ist Training."/>
     </texts>
 </l10n>

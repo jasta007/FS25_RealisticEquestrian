@@ -17,6 +17,9 @@
     - At the end of the month popularity is worked out again (a Champion of yours entered draws
       a crowd), which sets the turnout and the field; the visitors' entry fees and the gate are
       paid, and the farm's reputation goes up.
+    - Ridden rounds: while the event runs, a round ridden on one of your horses entered in it,
+      on a course that qualifies, or the dressage test in an arena that does (the test then has
+      the rating's length), is that horse's phase, scored by EqHosting. Once per horse and phase.
 
     Months are counted as EqCompetitionManager.month counts them (months played), so a booking
     keeps its place whatever the calendar says.
@@ -392,6 +395,130 @@ function EqHostManager.afterResolve(event)
 end
 
 
+-- RIDDEN ROUNDS
+
+--- @param horseId string|nil
+--- @return table|nil event the running hosted event the horse is entered in
+function EqHostManager.liveEventFor(horseId)
+    if horseId == nil then return nil end
+    for _, event in pairs(EqCompetitionManager.events) do
+        if event.hosted ~= nil then
+            for _, entry in ipairs(event.entries) do
+                if entry.horseId == horseId then return event end
+            end
+        end
+    end
+    return nil
+end
+
+
+--- @param event table
+--- @param phase string
+--- @return boolean the event has this phase
+local function hasPhase(event, phase)
+    for _, name in ipairs(EqHosting.phasesOf(event.discipline)) do
+        if name == phase then return true end
+    end
+    return false
+end
+
+
+--- @param vehicle table a ridden horse
+--- @return string|nil horseId
+function EqHostManager.horseIdOf(vehicle)
+    local spec = vehicle ~= nil and vehicle.spec_rideable or nil
+    local cluster = spec ~= nil and spec.cluster or nil
+    if cluster == nil or cluster.isHorse == nil or not cluster:isHorse() then return nil end
+    return EqRegistry.getId(cluster)
+end
+
+
+--- @param event table
+--- @return table|nil rating from data/hosting.xml
+local function ratingOf(event)
+    local config = EqHostVenue.config
+    return config ~= nil and config.ratingByName[event.hosted.rating] or nil
+end
+
+
+--- Keep a ridden phase, once, and tell the rider.
+--- @param event table
+--- @param horseId string
+--- @param phase string
+--- @param sheet table
+--- @return boolean kept
+local function keepRidden(event, horseId, phase, sheet)
+    local hosted = event.hosted
+    hosted.ridden = hosted.ridden or {}
+    local mine = hosted.ridden[horseId] or {}
+    local title, phaseName = EqCompetitionManager.eventTitle(event), g_i18n:getText("eq_discipline_" .. phase)
+    if mine[phase] ~= nil then
+        tell(hosted.farmId, "EQ_HOST_RIDDEN", string.format(g_i18n:getText("eq_host_ride_already"), phaseName, title))
+        return false
+    end
+    mine[phase] = sheet
+    hosted.ridden[horseId] = mine
+    local text = sheet.eliminated and string.format(g_i18n:getText("eq_host_ride_out"), phaseName, title)
+        or string.format(g_i18n:getText("eq_host_ride_counted"), phaseName, title, EqStory.penalties(sheet.penalties, phase == "dressage"))
+    Log:info("EqHostManager: %s rode %s for event %d: %s", horseId, phase, event.id,
+        sheet.eliminated and "eliminated" or tostring(sheet.penalties))
+    tell(hosted.farmId, "EQ_HOST_RIDDEN", text)
+    return true
+end
+
+
+--- A show jumping or cross country round has ended (EqCourseHooks).
+--- @param vehicle table
+--- @param course table EqCourse course
+--- @param sj table the EqShowJumping round, its result set
+function EqHostManager.onRoundDone(vehicle, course, sj)
+    local horseId = EqHostManager.horseIdOf(vehicle)
+    local event = EqHostManager.liveEventFor(horseId)
+    if event == nil or sj.result == nil then return end
+    local phase = course.kind or EqCourse.SHOW_JUMPING
+    local rating = ratingOf(event)
+    if rating == nil or not hasPhase(event, phase) then return end
+    local shape = { kind = phase, jumps = #course.jumps, length = course.length or EqCourse.pathLength(course.points) }
+    if not EqHosting.courseQualifies(rating, phase, shape) then
+        tell(event.hosted.farmId, "EQ_HOST_RIDDEN", string.format(g_i18n:getText("eq_host_ride_small"),
+            EqCompetitionManager.eventTitle(event)))
+        return
+    end
+    keepRidden(event, horseId, phase, EqHosting.roundSheet(sj.result, sj.refusals))
+end
+
+
+--- How long the dressage test is for this horse here: the rating's length when it is entered
+--- in a running hosted event with a dressage phase not yet ridden, and these markers make an
+--- arena big enough. nil for the usual test.
+--- @param horseId string|nil
+--- @param markers table the dressage course's markers
+--- @return number|nil moves
+function EqHostManager.testMovesFor(horseId, markers)
+    local event = EqHostManager.liveEventFor(horseId)
+    if event == nil or not hasPhase(event, "dressage") then return nil end
+    local rating = ratingOf(event)
+    local ridden = event.hosted.ridden ~= nil and event.hosted.ridden[horseId] or nil
+    if rating == nil or (ridden ~= nil and ridden.dressage ~= nil) then return nil end
+    for _, arena in ipairs(EqHosting.arenasFromMarkers(markers or {})) do
+        if arena.length >= rating.dressageArena then return rating.dressageMoves end
+    end
+    return nil
+end
+
+
+--- A competition dressage test has ended (EqTrainingHooks).
+--- @param vehicle table
+--- @param faults number
+--- @param lost boolean ended on its last fault
+function EqHostManager.onTestDone(vehicle, faults, lost)
+    local horseId = EqHostManager.horseIdOf(vehicle)
+    local event = EqHostManager.liveEventFor(horseId)
+    if event == nil or not hasPhase(event, "dressage") then return end
+    keepRidden(event, horseId, "dressage", EqHosting.testSheet(faults, lost))
+end
+
+
 --- @param xmlFile table
 --- @param key string the event's hosted key
 --- @param hosted table
@@ -401,6 +528,23 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.competitors ~= nil then xmlFile:setInt(key .. "#competitors", hosted.competitors) end
     if hosted.feedPerHorse ~= nil then xmlFile:setFloat(key .. "#feedPerHorse", hosted.feedPerHorse) end
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
+    local horseIds = {}
+    for horseId in pairs(hosted.ridden or {}) do table.insert(horseIds, horseId) end
+    table.sort(horseIds)
+    local i = 0
+    for _, horseId in ipairs(horseIds) do
+        for phase, sheet in pairs(hosted.ridden[horseId]) do
+            local rideKey = string.format("%s.ridden(%d)", key, i)
+            xmlFile:setString(rideKey .. "#horseId", horseId)
+            xmlFile:setString(rideKey .. "#phase", phase)
+            xmlFile:setFloat(rideKey .. "#penalties", sheet.penalties or 0)
+            xmlFile:setInt(rideKey .. "#down", sheet.down or 0)
+            xmlFile:setInt(rideKey .. "#refusals", sheet.refusals or 0)
+            xmlFile:setFloat(rideKey .. "#time", sheet.time or 0)
+            if sheet.eliminated then xmlFile:setBool(rideKey .. "#eliminated", true) end
+            i = i + 1
+        end
+    end
 end
 
 
@@ -413,6 +557,20 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.competitors = xmlFile:getInt(key .. "#competitors")
     hosted.feedPerHorse = xmlFile:getFloat(key .. "#feedPerHorse")
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
+    local i = 0
+    while true do
+        local rideKey = string.format("%s.ridden(%d)", key, i)
+        if not xmlFile:hasProperty(rideKey) then break end
+        local horseId, phase = xmlFile:getString(rideKey .. "#horseId"), xmlFile:getString(rideKey .. "#phase")
+        if horseId ~= nil and phase ~= nil then
+            hosted.ridden = hosted.ridden or {}
+            hosted.ridden[horseId] = hosted.ridden[horseId] or {}
+            hosted.ridden[horseId][phase] = { penalties = xmlFile:getFloat(rideKey .. "#penalties", 0),
+                down = xmlFile:getInt(rideKey .. "#down", 0), refusals = xmlFile:getInt(rideKey .. "#refusals", 0),
+                time = xmlFile:getFloat(rideKey .. "#time", 0), eliminated = xmlFile:getBool(rideKey .. "#eliminated", false) or nil }
+        end
+        i = i + 1
+    end
 end
 
 

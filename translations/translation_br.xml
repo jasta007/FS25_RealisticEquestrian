@@ -788,5 +788,9 @@
         <text name="eq_host_warning" text="Falta ao seu %s: %s. Resolva hoje ou o evento será cancelado amanhã."/>
         <text name="eq_host_cancelled" text="Seu %s foi cancelado, ainda faltava: %s. Sua reputação como organizador é prejudicada."/>
         <text name="eq_host_done" text="Seu %s terminou: vieram %d cavalos visitantes. Receita %s (%s de inscrições, %s de bilheteria), popularidade %d."/>
+        <text name="eq_host_ride_counted" text="%s contado para %s: %s penalidades."/>
+        <text name="eq_host_ride_out" text="%s contado para %s: eliminado."/>
+        <text name="eq_host_ride_already" text="O %s deste cavalo para %s já foi feito; este é treino."/>
+        <text name="eq_host_ride_small" text="Este percurso é pequeno demais para %s; a volta é treino."/>
     </texts>
 </l10n>

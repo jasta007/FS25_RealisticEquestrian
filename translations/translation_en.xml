@@ -788,5 +788,9 @@
         <text name="eq_host_warning" text="Your %s is short of: %s. Sort it out today or the event is cancelled tomorrow."/>
         <text name="eq_host_cancelled" text="Your %s was cancelled, still short of: %s. Your hosting reputation suffers."/>
         <text name="eq_host_done" text="Your %s is over: %d visiting horses came. Takings %s (%s entries, %s gate), popularity %d."/>
+        <text name="eq_host_ride_counted" text="%s counted for %s: %s penalties."/>
+        <text name="eq_host_ride_out" text="%s counted for %s: eliminated."/>
+        <text name="eq_host_ride_already" text="This horse's %s for %s is already ridden; this one is practice."/>
+        <text name="eq_host_ride_small" text="This course is too small for %s, so the round is practice."/>
     </texts>
 </l10n>

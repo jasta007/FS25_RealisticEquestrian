@@ -681,6 +681,14 @@ function EqCompetitionManager.resolve(event, horses, month)
     end
 
     local outcomes = EqRisk.rollEvent(event, config, starters, riskRng, EqCompetitionManager.settings)
+    -- In your own event a phase you rode decides: eliminated there is out, and every phase ridden
+    -- and finished is no simulated elimination.
+    if event.hosted ~= nil and event.hosted.ridden ~= nil and EqHosting ~= nil then
+        for _, starter in ipairs(starters) do
+            local fate = EqHosting.riddenFate(event.hosted.ridden, starter.key, event.discipline)
+            if fate ~= nil then outcomes[starter.key].eliminated = fate == "eliminated" end
+        end
+    end
     local finishers, eliminated = {}, {}
     for _, starter in ipairs(starters) do
         table.insert(outcomes[starter.key].eliminated and eliminated or finishers, starter)

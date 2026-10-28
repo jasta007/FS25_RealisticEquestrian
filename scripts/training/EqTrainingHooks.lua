@@ -602,7 +602,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if routineShown() then
         -- Near dressage markers the routine rides between them (EqDressage).
         local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
+        -- A competition test (in your own event) counts when it ends: its faults before this step.
+        local before = sheet.routine
+        local competing = before ~= nil and before.active and before.kind == "markers" and before.testMoves ~= nil and before.testX ~= nil
+        local faultsBefore = competing and (before.faults or 0) or 0
         local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
+        if competing and (event == "test" or event == "lost") and EqHostManager ~= nil then
+            local lost = event == "lost"
+            EqLog.try("EqTrainingHooks hosted test", EqHostManager.onTestDone, vehicle, lost and EqDressage.FAULTS or faultsBefore, lost)
+        end
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
         elseif event == "test" then EqTrainingHud.pop("routineTest")
