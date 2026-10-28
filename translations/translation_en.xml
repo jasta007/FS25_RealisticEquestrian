@@ -41,7 +41,7 @@
         <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
         <text name="eq_shop_courseFlags" text="Cross Country Flags"/>
-        <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag, stretch a gold bar (0.6, 0.9 or 1.2 m) over the obstacle, then place a red flag. The bar shows only in construction mode."/>
+        <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag at one end of the obstacle, run the gold line along the ground to its other end, then place a red flag. The line shows only in construction mode; the obstacle itself is what gets jumped."/>
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
         <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>

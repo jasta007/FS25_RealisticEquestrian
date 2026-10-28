@@ -2387,22 +2387,20 @@ do
         and EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml")
         and not EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
         and not EqXcFlags.isFlagFence(nil))
-    local colour = EqXcFlags.classify("eqXcFlagRed")
-    local _, h = EqXcFlags.classify("eqXcBar90")
-    check("flag fence nodes give a flag colour or a bar height", colour == "red" and EqXcFlags.classify("eqXcFlagWhite") == "white"
-        and math.abs(h - 0.9) < 1e-9 and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
+    check("flag fence nodes give a flag colour, nothing else does", EqXcFlags.classify("eqXcFlagRed") == "red"
+        and EqXcFlags.classify("eqXcFlagWhite") == "white" and EqXcFlags.classify("eqXcBar90") == nil
+        and EqXcFlags.classify("eqXcLine") == nil and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
     local function f(colour, x, z) return { colour = colour, x = x, z = z } end
-    local function b(height, x, z) return { height = height, x = x, z = z } end
     local fences = EqXcFlags.pair({
         f("white", 0, 0), f("red", 4, 0),        -- a 4 m fence
         f("white", -6, 0),                       -- further from the red: left over
         f("white", 200, 0), f("red", 216, 0),    -- too far apart
         f("white", 300, 0), f("red", 300.5, 0),  -- too close
-        f("white", 400, 0), f("red", 405, 0),    -- no bar near
-    }, { b(0.9, 1.5, 0), b(0.9, 2.5, 0), b(1.2, 2, 3), b(0.6, 402.5, 9) })
-    check("each red flag pairs with the nearest white flag, the bar nearest the middle gives the height", #fences == 2
-        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9 and fences[1].poleHeight == EqXcFlags.POLE_HEIGHT
-        and fences[2].white.x == 400 and fences[2].height == nil)
+        f("white", 400, 0), f("red", 405, 0),    -- another fence
+    })
+    check("each red flag pairs with the nearest white flag, with no fence height", #fences == 2
+        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == nil
+        and fences[1].poleHeight == EqXcFlags.POLE_HEIGHT and fences[2].white.x == 400)
     local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
 end
@@ -2442,6 +2440,16 @@ do
     local flags = io.open("placeables/xcJumps/courseFlags.xml"):read("*a")
     check("the flag fence always hides: no Always visible choice", flags:find("eqAlwaysVisible", 1, true) == nil
         and flags:find("eq_shop_xcFlagsHidden_function", 1, true) ~= nil)
+    check("the flag fence has one guide line segment, kept as BAR_90 for saved fences",
+        select(2, flags:gsub("<segment ", "")) == 3 and flags:find('id="BAR_90"', 1, true) ~= nil
+        and flags:find('id="BAR_60"', 1, true) == nil and flags:find('id="BAR_120"', 1, true) == nil)
+    local i3d = io.open("placeables/xcJumps/courseFlags.i3d"):read("*a")
+    check("the guide line lies on the ground", i3d:find('name="eqXcLine"', 1, true) ~= nil and i3d:find("eqXcBar", 1, true) == nil)
+    local construction, round = { construction = true }, { round = true }
+    check("in a round the flag fence is ridden through, other pieces are solid",
+        EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
+        and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
+        and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
     for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
         local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))

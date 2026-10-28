@@ -7,7 +7,9 @@
     - in construction mode, with collision, so they can be picked, moved and sold;
     - while a course is edited, seen but ridden through (the course editor takes show jumps'
       collision off for the same reason);
-    - in a round, from the start line's approach (SHOW_NEAR) to the end, with collision.
+    - in a round, from the start line's approach (SHOW_NEAR) to the end, with collision; the flag
+      fence only seen, so its flags and guide line never stop a horse or count as hitting a
+      fence: faults come from the jump itself (James, 2026-10-28).
 
     A log pile or drop wall bought with the "Always visible" configuration (EqXcHide.CONFIG, No by
     default) is left alone; the flag fence has no such choice and always hides (James). Everything
@@ -54,6 +56,18 @@ function EqXcHide.wantMode(state)
     if state.editing then return EqXcHide.GHOST end
     if state.round then return EqXcHide.SHOWN end
     return EqXcHide.HIDDEN
+end
+
+
+--- The mode for one piece: the flag fence is ridden through wherever the others would be solid,
+--- except in construction mode (picked to delete) and multiplayer (left alone).
+--- @param mode string from wantMode
+--- @param flagFence boolean
+--- @param state table as for wantMode
+--- @return string
+function EqXcHide.modeFor(mode, flagFence, state)
+    if flagFence and mode == EqXcHide.SHOWN and not state.construction and not state.multiplayer then return EqXcHide.GHOST end
+    return mode
 end
 
 
@@ -220,19 +234,22 @@ end
 --- placed pieces in the mode every SCAN_MS.
 function EqXcHide.update()
     local kind, sjState, distance = roundState()
-    local mode = EqXcHide.wantMode({
+    local state = {
         construction = EqXcFlags.inConstruction(),
         editing = EqCourseHooks ~= nil and EqCourseHooks.editing ~= nil,
         round = EqXcHide.roundShows(sjState, distance),
         multiplayer = isMultiplayer(),
-    })
+    }
+    local mode = EqXcHide.wantMode(state)
     EqXcHide.setTrafficOff(not isMultiplayer() and EqXcHide.wantsTrafficOff(kind, sjState))
 
     local now = g_time or 0
     local due = EqXcHide.scannedAt == nil or now - EqXcHide.scannedAt >= EqXcHide.SCAN_MS or now < EqXcHide.scannedAt
     if mode == EqXcHide.mode and not due then return end
     local pieces = EqXcHide.pieces()
-    for _, placeable in ipairs(pieces) do EqXcHide.apply(placeable, mode) end
+    for _, placeable in ipairs(pieces) do
+        EqXcHide.apply(placeable, EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state))
+    end
     if mode ~= EqXcHide.mode and #pieces > 0 then
         Log:info("EqXcHide: %d cross country piece(s) %s", #pieces, mode)
     end

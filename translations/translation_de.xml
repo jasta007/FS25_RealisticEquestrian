@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Dressurviereck 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Ein Dressurviereck mit allen Buchstaben am richtigen Platz. Reiten Sie hier ein Pferd, um Temperament zwischen den Buchstaben zu trainieren."/>
         <text name="eq_shop_courseFlags" text="Geländeflaggen"/>
-        <text name="eq_shop_courseFlags_function" text="Macht jedes Hindernis zum Geländesprung. Segmente mit N/M wechseln: weiße Flagge setzen, goldene Stange (0,6, 0,9 oder 1,2 m) über das Hindernis ziehen, dann rote Flagge setzen. Die Stange ist nur im Baumodus sichtbar."/>
+        <text name="eq_shop_courseFlags_function" text="Macht jedes Hindernis zum Geländesprung. Segmente mit N/M wechseln: weiße Flagge an ein Ende des Hindernisses setzen, die goldene Linie am Boden bis zum anderen Ende ziehen, dann rote Flagge setzen. Die Linie ist nur im Baumodus sichtbar; gesprungen wird das Hindernis selbst."/>
         <text name="eq_shop_xcLogPileSmall" text="Holzstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Holzstapel"/>
         <text name="eq_shop_xcDropWall08" text="Absprungwand (0,8 m)"/>

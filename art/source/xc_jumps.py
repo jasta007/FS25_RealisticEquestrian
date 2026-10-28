@@ -3,9 +3,10 @@ Builds the cross country fences in placeables/xcJumps/: one .xml and .i3d per fe
 they share and a shop image for each.
 
 The cross country flags are the core: one spline fence (courseFlags) whose segment types are a
-white flag, a gold height bar and a red flag, set across anything the player wants ridden as a
-fence (a map's logs, a table or hedge from any mod). EqXcFlags pairs each red flag with the nearest
-white one and the line between them is the fence. The log piles and drop walls are ready-made
+white flag, a gold guide line on the ground and a red flag, set along anything the player wants
+ridden as a fence (a map's logs, a table or hedge from any mod). EqXcFlags pairs each red flag with
+the nearest white one and the line between them is where the fence is crossed; the obstacle itself
+is what gets jumped. The log piles and drop walls are ready-made
 fences.
 
 Like the dressage arenas, the .i3d files keep their geometry inline (<IndexedTriangleSet>), so no
@@ -44,16 +45,23 @@ LOG_PILES = [
 ]
 
 # The flag fence (James, 2026-10-27): one spline fence, placed like the base game's pillar fences,
-# whose N/M segment types are a white flag (a one-click post), a gold height bar that stretches
-# over whatever the player wants jumped, and a red flag. The bars show only in construction mode.
+# whose N/M segment types are a white flag (a one-click post), a gold guide line on the ground
+# that stretches along whatever the player wants jumped, and a red flag. The line shows only in
+# construction mode and while a course is edited. It was a bar at the fence height (0.6, 0.9 or
+# 1.2 m) with collision until James found it looked bad and gave false faults (2026-10-28): now
+# the jump is judged by the obstacle itself.
 FLAG_FENCE = "courseFlags"
 FLAG_FENCE_PRICE = 10
 FLAG_POST = 0.3         # a flag post's length along the fence line (a fixed "gate" segment)
-BAR_HEIGHTS = (60, 90, 120)
-BAR_PANEL = 1.0         # bar panels repeat every metre, stretched up to BAR_MAX_SCALE
+LINE_ID = "BAR_90"      # the guide line's segment id: the old 0.9 m bar's, so saved fences keep it
+LINE_NODE = "eqXcLine"
+LINE_WIDTH = 0.08
+LINE_BOTTOM = 0.01      # just off the ground
+LINE_TOP = 0.025
+BAR_PANEL = 1.0         # line panels repeat every metre, stretched up to BAR_MAX_SCALE
 BAR_MAX_SCALE = 1.5
 FENCE_COLLISION_GROUP = "0x3e"   # the base game fences' collision, which construction picks to delete
-GUIDE = "eqXcGuide"     # the gold height bar: construction mode only
+GUIDE = "eqXcGuide"     # the gold guide line: construction mode and course editing only
 GUIDE_LENGTH = 0.9
 GUIDE_SIZE = 0.03
 
@@ -849,8 +857,8 @@ def turned(mesh):
 
 def build_flag_fence():
     """The flag fence's pieces, each along +z from 0 (a fence segment's direction):
-    the two flag posts with a thin collision box (so they can be picked to delete), the bars,
-    each with a small box at bar height for picking."""
+    the two flag posts with a thin collision box (so they can be picked to delete), and the guide
+    line with a flat box half sunk in the ground for picking."""
     posts = {}
     for colour, side, name in ((1, -1, "eqXcFlagWhite"), (0, 1, "eqXcFlagRed")):
         mesh = Mesh()
@@ -862,20 +870,16 @@ def build_flag_fence():
         col = Mesh()
         col.box(-0.04, 0.04, 0.0, POLE_HEIGHT, FLAG_POST / 2 - 0.04, FLAG_POST / 2 + 0.04, (0.5, 0.5))
         posts[name] = (mesh, col)
-    bars = {}
-    s = GUIDE_SIZE / 2
-    for cm in BAR_HEIGHTS:
-        h = cm / 100
-        bar = Mesh()
-        bar.box(-s, s, h - s, h + s, 0.0, BAR_PANEL, flag_uv(3))
-        col = Mesh()
-        col.box(-0.025, 0.025, h - 0.025, h + 0.025, BAR_PANEL / 2 - 0.025, BAR_PANEL / 2 + 0.025, (0.5, 0.5))
-        bars[f"eqXcBar{cm}"] = (bar, col)
-    return posts, bars
+    w = LINE_WIDTH / 2
+    line = Mesh()
+    line.box(-w, w, LINE_BOTTOM, LINE_TOP, 0.0, BAR_PANEL, flag_uv(3))
+    col = Mesh()
+    col.box(-0.03, 0.03, -0.03, 0.03, BAR_PANEL / 2 - 0.03, BAR_PANEL / 2 + 0.03, (0.5, 0.5))
+    return posts, {LINE_NODE: (line, col)}
 
 
 def write_flag_fence_i3d(path, posts, bars):
-    """gates (the flag posts), poles (one empty: the bars have none) and panels (the bars), looked
+    """gates (the flag posts), poles (one empty: the line has none) and panels (the line), looked
     up by index from the fence xml."""
     shapes = []   # (mesh, material or None for collision)
     for mesh, col in list(posts.values()) + list(bars.values()):
@@ -896,7 +900,7 @@ def write_flag_fence_i3d(path, posts, bars):
         "  <Materials>",
     ]
     for i, (material, _, _, emissive) in enumerate(used):
-        # the bars lean with the slope like the base game's fence panels: the placeable shader's
+        # the line leans with the slope like the base game's fence panels: the placeable shader's
         # vertexOffset variation lifts each vertex by the panel's yOffset times its uv1.x
         shader = ' customShaderId="2" customShaderVariation="vertexOffset"' if emissive else ""
         lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0"{shader}>')
@@ -935,7 +939,7 @@ def write_flag_fence_i3d(path, posts, bars):
     for name in bars:
         lines.append(f'      <TransformGroup name="{name}" nodeId="{next_id()}">')
         lines.append(f'        <TransformGroup name="{GUIDE}" nodeId="{next_id()}">')
-        lines.append(f'          <Shape name="bar" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="2" castsShadows="false" receiveShadows="true"/>')
+        lines.append(f'          <Shape name="line" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="2" castsShadows="false" receiveShadows="true"/>')
         lines.append("        </TransformGroup>")
         lines.append(col_line(shape_id + 1, "        "))
         lines.append("      </TransformGroup>")
@@ -948,14 +952,14 @@ def write_flag_fence_i3d(path, posts, bars):
 
 def write_flag_fence_xml(path, posts, bars):
     """A newFence like the base game's pillar fences: flag posts are fixed "gates" placed with one
-    click, without poles of their own; the bars are stretchy segments with an empty pole."""
+    click, without poles of their own; the line is a stretchy segment with an empty pole."""
     segments = []
     gate = lambda i, sid: f"""        <segment id="{sid}" class="FenceGate" maxVerticalAngle="45">
             <gate node="0>{i}" length="{FLAG_POST:g}" hasStartPole="false" hasEndPole="false"/>
         </segment>"""
     segments.append(gate(0, "WHITE_FLAG"))
-    for i, cm in enumerate(BAR_HEIGHTS):
-        segments.append(f"""        <segment id="BAR_{cm}" class="FenceSegment" maxVerticalAngle="45">
+    for i, _ in enumerate(bars):
+        segments.append(f"""        <segment id="{LINE_ID}" class="FenceSegment" maxVerticalAngle="45">
             <poles>
                 <pole node="1>0" radius="0.0"/>
             </poles>
@@ -967,7 +971,7 @@ def write_flag_fence_xml(path, posts, bars):
     body = "\n".join(segments)
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
-<!-- Segments (N/M): white flag, bars for 0.6, 0.9 and 1.2 m fences, red flag. -->
+<!-- Segments (N/M): white flag, guide line on the ground, red flag. -->
 <placeable type="newFence">
     <storeData>
         <name>$l10n_eq_shop_{FLAG_FENCE}</name>
@@ -1177,18 +1181,29 @@ def main():
         store_image([(preview_ground(wall), grass), (planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
                     f"{wall['drop']:.1f} m drop", os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-145, pitch=16, skip_fit=1)
         print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
+    flag_fence(flags, preview_dir)
+
+
+def flag_fence(flags, preview_dir):
+    """The flag fence's i3d, xml and shop image. python3 art/source/xc_jumps.py flags makes only these."""
     posts, bars = build_flag_fence()
     write_flag_fence_i3d(os.path.join(OUT, FLAG_FENCE + ".i3d"), posts, bars)
     write_flag_fence_xml(os.path.join(OUT, FLAG_FENCE + ".xml"), posts, bars)
-    # shop image: white flag, a 0.9 m bar over 3 m, red flag
-    white, red, bar = posts["eqXcFlagWhite"][0], posts["eqXcFlagRed"][0], bars["eqXcBar90"][0]
+    # shop image: white flag, the guide line over 3 m, red flag
+    white, red, bar = posts["eqXcFlagWhite"][0], posts["eqXcFlagRed"][0], bars[LINE_NODE][0]
     span = Mesh()
     for mesh, dz, stretch in ((white, 0.0, 1.0), (bar, FLAG_POST, 3.0), (red, FLAG_POST + 3.0, 1.0)):
         base = len(span.verts)
         span.verts += [((p[0], p[1], p[2] * stretch + dz), n, uv) for p, n, uv in mesh.verts]
         span.tris += [(a + base, b + base, c + base) for a, b, c in mesh.tris]
-    store_image([(span, flags)], "0.6 to 1.2 m", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
+    store_image([(span, flags)], "any fence", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
     print(FLAG_FENCE, sum(len(m.tris) for m, _ in list(posts.values()) + list(bars.values())), "triangles")
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if sys.argv[1:] == ["flags"]:
+        import tempfile
+        flag_fence(flag_texture(os.path.join(tempfile.mkdtemp(), "xcFlags_diffuse.dds")),
+                   os.environ.get("XC_PREVIEW_DIR", "art/previews"))
+    else:
+        main()

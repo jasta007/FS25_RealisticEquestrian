@@ -143,6 +143,14 @@ EqTrainingHooks.JUMP_TIMEOUT_MS = 3000
 EqTrainingHooks.JUMP_SETTLE_MS = 600
 -- A jump that ends with less than this share of the take-off speed hit something.
 EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
+-- Clipping the jump (James, 2026-10-28: a show jump drops a pole when the horse just clips the
+-- jump model): in the air, rays from CLIP_RAY_UP above the horse's hooves (its root) down
+-- through where its legs are look for the jump's top. A top less than CLIP_CLEARANCE under the
+-- hooves, on anything at least JUMP_MIN_HEIGHT tall, is a clip. Only rays this near the middle of
+-- the horse count: past the legs its body is well above the hooves.
+EqTrainingHooks.CLIP_RAY_UP = 1.0
+EqTrainingHooks.CLIP_CLEARANCE = 0.0
+EqTrainingHooks.CLIP_REACH = 0.6
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 -- The base game halts a horse that runs into something for 900 ms; we cut that to this.
@@ -214,15 +222,18 @@ end
 
 
 --- How tall the thing under one point is, if there is one.
---- @return number|nil height above the ground in metres, string|nil name, boolean show jump
-local function obstacleAt(vehicle, x, y, z)
+--- @param up number|nil metres above y the ray starts (JUMP_RAY_UP)
+--- @return number|nil height above the ground in metres, string|nil name, boolean show jump,
+---   number|nil the top's world height
+local function obstacleAt(vehicle, x, y, z, up)
     local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
+    up = up or EqTrainingHooks.JUMP_RAY_UP
     probe.vehicle, probe.height, probe.name, probe.showJump = vehicle, nil, nil, false
-    raycastAll(x, y + EqTrainingHooks.JUMP_RAY_UP, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH,
+    raycastAll(x, y + up, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH + up - EqTrainingHooks.JUMP_RAY_UP,
         "jumpRaycastCallback", EqTrainingHooks, jumpMask())
     probe.vehicle = nil
     if probe.height == nil then return nil end
-    return probe.height - ground, probe.name, probe.showJump
+    return probe.height - ground, probe.name, probe.showJump, probe.height
 end
 
 
@@ -242,6 +253,34 @@ local function obstacleBelow(vehicle)
     for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do look(along, 0) end
     for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
     return best, bestName, showJump
+end
+
+
+--- How far the horse's hooves are above the top of what is under its legs: negative when its
+--- legs are down in it. Nil with nothing JUMP_MIN_HEIGHT tall under them.
+--- @param vehicle table
+--- @return number|nil metres
+local function legClearance(vehicle)
+    if raycastAll == nil or vehicle.rootNode == nil then return nil end
+    local _, hoof, _ = getWorldTranslation(vehicle.rootNode)
+    local least = nil
+    local function look(along, across)
+        local x, y, z = localToWorld(vehicle.rootNode, across, 0, along)
+        local height, _, _, top = obstacleAt(vehicle, x, y, z, EqTrainingHooks.CLIP_RAY_UP)
+        if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT and (least == nil or hoof - top < least) then least = hoof - top end
+    end
+    for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do
+        if math.abs(along) <= EqTrainingHooks.CLIP_REACH then look(along, 0) end
+    end
+    for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
+    return least
+end
+
+
+--- @param clearance number|nil from legClearance
+--- @return boolean true when the legs clip the jump
+function EqTrainingHooks.isClip(clearance)
+    return clearance ~= nil and clearance < EqTrainingHooks.CLIP_CLEARANCE
 end
 
 
@@ -278,6 +317,9 @@ local function trackJump(vehicle, spec, sheet, worn)
             jump.airborne = true
             if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
             if showJump then jump.showJump = true end
+            local clearance = legClearance(vehicle)
+            if clearance ~= nil and (jump.clearance == nil or clearance < jump.clearance) then jump.clearance = clearance end
+            if EqTrainingHooks.isClip(clearance) then jump.clipped = true end
             if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
         elseif not jump.airborne and age < 500 then
             return
@@ -313,13 +355,15 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
         why = jump.crashed and ", crashed" or jump.knocked and ", hit it (slowed from %.1f to %.1f m/s)" or ", landed on top of it"
         why = string.format(why, jump.speed, speed)
     end
-    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s, %d ms, ground flag %s, take-off at a %s)",
+    local legs = jump.clearance ~= nil and string.format(", hooves %.2f m over its top%s", jump.clearance, jump.clipped and ": clipped" or "") or ""
+    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s%s, %d ms, ground flag %s, take-off at a %s)",
         cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over),
-        jump.showJump and ", a show jump" or "", why, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
-    -- A show jumping round (EqCourseHooks) hears how the fence went: knocking a show jump or
-    -- landing on top of it is a rail. A crash (into the arena wall, say) is no rail: running
-    -- into things is penalty enough (James, 2026-10-27).
-    local rail = high and jump.showJump and not jump.crashed and (jump.knocked or jump.onTop)
+        jump.showJump and ", a show jump" or "", why, legs, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
+    -- A show jumping round (EqCourseHooks) hears how the fence went: the horse's legs clipping
+    -- the jump, knocking it or landing on top of it is a rail, whatever the jump is (a show jump
+    -- or anything flagged). A crash (into the arena wall, say) is no rail unless the legs
+    -- clipped the jump on the way: running into things is penalty enough (James, 2026-10-27).
+    local rail = high and (jump.clipped or (not jump.crashed and (jump.knocked or jump.onTop)))
     EqCourseHooks.onJumpJudged(cleared and "clear" or rail and "knock" or "nothing")
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)

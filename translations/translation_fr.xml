@@ -646,7 +646,7 @@
         <text name="eq_settings_prizeScale" text="Gains"/>
         <text name="eq_settings_prizeScale_tooltip" text="Ajuste la dotation de chaque épreuve. 1x est la normale. Les épreuves déjà au calendrier gardent leur dotation ; les changements s'appliquent dès le tour suivant."/>
         <text name="eq_shop_courseFlags" text="Drapeaux de cross"/>
-        <text name="eq_shop_courseFlags_function" text="Fait de n'importe quel obstacle un obstacle de cross. Changez de segment avec N/M : posez un drapeau blanc, tendez une barre dorée (0,6, 0,9 ou 1,2 m) au-dessus de l'obstacle, puis posez un drapeau rouge. La barre n'apparaît qu'en mode construction."/>
+        <text name="eq_shop_courseFlags_function" text="Fait de n'importe quel obstacle un obstacle de cross. Changez de segment avec N/M : posez un drapeau blanc à un bout de l'obstacle, tirez la ligne dorée au sol jusqu'à l'autre bout, puis posez un drapeau rouge. La ligne n'apparaît qu'en mode construction ; c'est l'obstacle lui-même qui est sauté."/>
         <text name="eq_shop_xcLogPileSmall" text="Tas de rondins (petit)"/>
         <text name="eq_shop_xcLogPile" text="Tas de rondins"/>
         <text name="eq_shop_xcDropWall08" text="Mur de descente (0,8 m)"/>

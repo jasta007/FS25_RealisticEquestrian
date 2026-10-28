@@ -60,12 +60,14 @@ EqCourseHooks.START_COLOR = { 0.3, 1, 0.3 }
 EqCourseHooks.FINISH_COLOR = { 1, 0.3, 0.3 }
 -- The way to the next fence is drawn as a band of lines this far apart, so it reads as solid.
 EqCourseHooks.BAND = { -0.12, -0.06, 0, 0.06, 0.12 }
--- The glow marks: poles up to the flags, the bar at the fence height. Cross country fences
--- carry their own (EqXcFlags: poleHeight, height); these are for the rest. A pole never goes
--- above POLE_TOP, the bottom of the flags' pennants (EqXcFlags.PENNANT_BOTTOM).
+-- The glow marks: a pole up to each flag. Cross country flags carry their own height
+-- (EqXcFlags: poleHeight); this is for the rest. A pole never goes above POLE_TOP, the bottom of
+-- the flags' pennants (EqXcFlags.PENNANT_BOTTOM). Only the start and finish lines get a bar,
+-- at LINE_BAR_HEIGHT: a fence is judged by the jump itself, and a bar at a guessed height never
+-- matched it (James, 2026-10-28).
 EqCourseHooks.POLE_HEIGHT = 1.5
 EqCourseHooks.POLE_TOP = 1.17
-EqCourseHooks.BAR_HEIGHT = 0.9
+EqCourseHooks.LINE_BAR_HEIGHT = 0.9
 -- In a round the way to the next fence stops this far short of it (its pointIndex is just past
 -- the fence), and the fence's label stands beside its red flag, on the rider's right.
 EqCourseHooks.WAY_SHORT = 5
@@ -231,7 +233,7 @@ local function addFlagFences(list)
                 -- The red flag on the right, as on a show jump: a is red.
                 table.insert(list, { x = (red.x + white.x) / 2, z = (red.z + white.z) / 2,
                     ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z,
-                    height = fence.height, poleHeight = fence.poleHeight, gate = fence.height == nil })
+                    poleHeight = fence.poleHeight })
             end
         end
     end
@@ -363,7 +365,7 @@ local function startEditing(vehicle, index, kind)
         editing.recording = true
     end
     EqCourseHooks.editing = editing
-    -- Cross country flags show their height guides while a course is edited.
+    -- Cross country flags show their gold guide lines while a course is edited.
     if EqXcFlags ~= nil then EqXcFlags.editing = true end
     scanJumps(editing)
     Log:info("Course: editing %s %s '%s', %d jump(s) on the map without collision", index ~= nil and "saved" or "new",
@@ -730,12 +732,12 @@ end
 --- @return table
 local function newRound(vehicle, course)
     fillEnds(course)
-    -- Each fence's glow height from the fence on the map, when it has one (cross country flags).
+    -- Each fence's glow pole height from the fence on the map, when it has one (cross country flags).
     local live = EqCourseHooks.listJumps(course.kind)
     for _, jump in ipairs(course.jumps) do
         for _, found in ipairs(live) do
             if EqCourse.sameJump(jump, found) then
-                jump.height, jump.poleHeight, jump.gate = found.height, found.poleHeight, found.gate
+                jump.poleHeight = found.poleHeight
                 break
             end
         end
@@ -826,24 +828,26 @@ local function announce(round, event)
 end
 
 
---- A line across the ground between a line's two ends, with a post at each.
+--- A post at each of a line's two ends, and for the start and finish a bar between them.
 --- @param line table
 --- @param color table
-local function drawCrossing(line, color, x, z)
+--- @param bar boolean|nil true for a start or finish line
+local function drawCrossing(line, color, x, z, bar)
     local ya = groundAt(line.ax, 0, line.az)
     local yb = groundAt(line.bx, 0, line.bz)
     local top = EqXcFlags ~= nil and EqXcFlags.PENNANT_BOTTOM or EqCourseHooks.POLE_TOP
     local pole = math.min(line.poleHeight or EqCourseHooks.POLE_HEIGHT, top)
-    local height = math.min(line.height or EqCourseHooks.BAR_HEIGHT, pole)
-    -- A glowing pole at each flag and a soft bar at the fence height (EqCourseGlow). Flags with
-    -- no bar between them are a gate to ride through: poles only (James, 2026-10-27).
+    local height = math.min(EqCourseHooks.LINE_BAR_HEIGHT, pole)
+    -- A glowing pole at each flag (EqCourseGlow); a fence gets no bar (James, 2026-10-28).
     if EqCourseGlow.pole(line.ax, ya, line.az, pole) then
         EqCourseGlow.pole(line.bx, yb, line.bz, pole)
-        if not line.gate then EqCourseGlow.bar(line.ax, ya + height, line.az, line.bx, yb + height, line.bz) end
+        if bar then EqCourseGlow.bar(line.ax, ya + height, line.az, line.bx, yb + height, line.bz) end
         return
     end
-    for _, lift in ipairs({ 0.1, 0.2, 0.3 }) do
-        drawLine({ { x = line.ax, y = ya + lift, z = line.az }, { x = line.bx, y = yb + lift, z = line.bz } }, color, x, z)
+    if bar then
+        for _, lift in ipairs({ 0.1, 0.2, 0.3 }) do
+            drawLine({ { x = line.ax, y = ya + lift, z = line.az }, { x = line.bx, y = yb + lift, z = line.bz } }, color, x, z)
+        end
     end
     drawLine({ { x = line.ax, y = ya, z = line.az }, { x = line.ax, y = ya + pole, z = line.az } }, color, x, z)
     drawLine({ { x = line.bx, y = yb, z = line.bz }, { x = line.bx, y = yb + pole, z = line.bz } }, color, x, z)
@@ -972,7 +976,7 @@ function EqCourseHooks.roundDraw(vehicle)
 
     local state = sj.state
     if state == "approach" or state == "countdown" or state == "go" then
-        drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z)
+        drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z, true)
         local _, from = EqShowJumping.startFromPath(round.course)
         drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
         if state == "approach" then
@@ -1012,7 +1016,7 @@ function EqCourseHooks.roundDraw(vehicle)
         elseif sj.finish ~= nil then
             local _, to = EqShowJumping.finishFromPath(round.course)
             drawWay(round, previous.pointIndex or to, to, x, z)
-            drawCrossing(sj.finish, EqCourseHooks.FINISH_COLOR, x, z)
+            drawCrossing(sj.finish, EqCourseHooks.FINISH_COLOR, x, z, true)
         end
     elseif state == "done" and sj.result ~= nil then
         local result = sj.result

@@ -255,7 +255,7 @@ guarded("probe hook", EqProbe.install)
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
--- Cross country flags' height guides show only in construction mode (and while a course is edited).
+-- Cross country flags' guide lines show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
 guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 -- Cross country pieces hide outside construction, course editing and rounds; the shop's

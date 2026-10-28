@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Rettangolo da dressage 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Un rettangolo da dressage con tutte le lettere al loro posto. Cavalcaci dentro per allenare il temperamento tra le lettere."/>
         <text name="eq_shop_courseFlags" text="Bandierine da cross"/>
-        <text name="eq_shop_courseFlags_function" text="Segna qualsiasi ostacolo come ostacolo da cross. Cambia segmento con N/M: piazza una bandierina bianca, stendi una barra dorata (0,6, 0,9 o 1,2 m) sopra l'ostacolo, poi piazza una bandierina rossa. La barra si vede solo in modalità costruzione."/>
+        <text name="eq_shop_courseFlags_function" text="Segna qualsiasi ostacolo come ostacolo da cross. Cambia segmento con N/M: piazza una bandierina bianca a un capo dell'ostacolo, stendi la linea dorata a terra fino all'altro capo, poi piazza una bandierina rossa. La linea si vede solo in modalità costruzione; si salta l'ostacolo stesso."/>
         <text name="eq_shop_xcLogPileSmall" text="Catasta di tronchi (piccola)"/>
         <text name="eq_shop_xcLogPile" text="Catasta di tronchi"/>
         <text name="eq_shop_xcDropWall08" text="Muro di discesa (0,8 m)"/>

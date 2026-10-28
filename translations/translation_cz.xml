@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Drezurní obdélník 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Drezurní obdélník se všemi písmeny na svém místě. Jezděte v něm na koni a trénujte temperament mezi písmeny."/>
         <text name="eq_shop_courseFlags" text="Terénní praporky"/>
-        <text name="eq_shop_courseFlags_function" text="Označte libovolnou překážku jako terénní skok. Segmenty přepínejte klávesami N/M: postavte bílý praporek, natáhněte zlatou tyč (0,6, 0,9 nebo 1,2 m) přes překážku a pak postavte červený praporek. Tyč je vidět jen v režimu stavby."/>
+        <text name="eq_shop_courseFlags_function" text="Označte libovolnou překážku jako terénní skok. Segmenty přepínejte klávesami N/M: postavte bílý praporek na jeden konec překážky, natáhněte zlatou čáru po zemi k druhému konci a pak postavte červený praporek. Čára je vidět jen v režimu stavby; skáče se přes samotnou překážku."/>
         <text name="eq_shop_xcLogPileSmall" text="Hromada klád (malá)"/>
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
         <text name="eq_shop_xcDropWall08" text="Seskoková stěna (0,8 m)"/>

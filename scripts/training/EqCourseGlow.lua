@@ -1,8 +1,9 @@
 --[[
     EqCourseGlow.lua
-    The glowing marks over a round's next fence: a soft gold pole at each flag and a thicker,
-    see-through gold bar between them at the fence height (James, 2026-10-27: the debug lines
-    poked above the flags and looked one pixel thin). The shapes come from
+    The glowing marks over a round's next fence: a soft gold pole at each flag (James,
+    2026-10-27: the debug lines poked above the flags and looked one pixel thin), and a
+    see-through gold bar between the start and finish lines' poles. Fences get no bar since
+    they are judged by the jump itself (James, 2026-10-28). The shapes come from
     placeables/courseGlow/courseGlow.i3d (art/source/course_glow.py), loaded once and cloned
     into pools as needed.
 

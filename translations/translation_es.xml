@@ -646,7 +646,7 @@
         <text name="eq_settings_prizeScale" text="Premios"/>
         <text name="eq_settings_prizeScale_tooltip" text="Ajusta los premios de cada prueba. 1x es lo normal. Las pruebas ya en el calendario mantienen sus premios; los cambios se aplican desde la siguiente ronda."/>
         <text name="eq_shop_courseFlags" text="Banderas de cross"/>
-        <text name="eq_shop_courseFlags_function" text="Convierte cualquier obstáculo en un obstáculo de cross. Cambia de segmento con N/M: pon una bandera blanca, extiende una barra dorada (0,6, 0,9 o 1,2 m) sobre el obstáculo y luego pon una bandera roja. La barra solo se ve en el modo construcción."/>
+        <text name="eq_shop_courseFlags_function" text="Convierte cualquier obstáculo en un obstáculo de cross. Cambia de segmento con N/M: pon una bandera blanca en un extremo del obstáculo, extiende la línea dorada por el suelo hasta el otro extremo y luego pon una bandera roja. La línea solo se ve en el modo construcción; lo que se salta es el propio obstáculo."/>
         <text name="eq_shop_xcLogPileSmall" text="Pila de troncos (pequeña)"/>
         <text name="eq_shop_xcLogPile" text="Pila de troncos"/>
         <text name="eq_shop_xcDropWall08" text="Muro de bajada (0,8 m)"/>

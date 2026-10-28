@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="馬場馬術アリーナ 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="すべての標記文字がそろった馬場馬術アリーナ。中で馬に乗ると、標記の間で気性をトレーニングできます。"/>
         <text name="eq_shop_courseFlags" text="クロスカントリー旗"/>
-        <text name="eq_shop_courseFlags_function" text="どんな障害物でもクロスカントリー障害に指定できます。N/Mで部品を切り替え、白旗を置き、障害物の上に金色のバー（0.6、0.9、1.2 m）を伸ばし、赤旗を置きます。バーは建設モードでのみ表示されます。"/>
+        <text name="eq_shop_courseFlags_function" text="どんな障害物でもクロスカントリー障害に指定できます。N/Mで部品を切り替え、障害物の一端に白旗を置き、金色のラインを地面に沿って反対の端まで伸ばし、赤旗を置きます。ラインは建設モードでのみ表示されます。飛ぶのは障害物そのものです。"/>
         <text name="eq_shop_xcLogPileSmall" text="丸太積み（小）"/>
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
         <text name="eq_shop_xcDropWall08" text="ドロップ壁（0.8 m）"/>
