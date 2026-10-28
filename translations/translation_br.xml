@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="Intermediário"/>
         <text name="eq_host_rating_championship" text="Campeonato"/>
         <text name="eq_host_col_event" text="Evento que você pode organizar"/>
-        <text name="eq_host_col_ready" text="Pronto"/>
+        <text name="eq_host_col_ready" text="Requisitos"/>
         <text name="eq_host_col_popularity" text="Popularidade"/>
         <text name="eq_host_col_setup" text="Taxa de montagem"/>
-        <text name="eq_host_col_takings" text="Receita"/>
+        <text name="eq_host_col_takings" text="Receita máx."/>
         <text name="eq_host_col_check" text="Requisito"/>
         <text name="eq_host_col_have" text="Você tem"/>
         <text name="eq_host_col_need" text="Necessário"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="Taxa de montagem"/>
         <text name="eq_host_label_popularity" text="Popularidade"/>
         <text name="eq_host_label_visitors" text="Público"/>
-        <text name="eq_host_label_takings" text="Receita"/>
+        <text name="eq_host_label_takings" text="Receita prevista"/>
         <text name="eq_host_label_reputation" text="Reputação"/>
         <text name="eq_host_yours_open" text="%s, acontecendo este mês"/>
         <text name="eq_host_yours_booked" text="%s em %s"/>

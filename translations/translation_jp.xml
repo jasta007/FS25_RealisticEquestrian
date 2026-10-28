@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="中級"/>
         <text name="eq_host_rating_championship" text="選手権"/>
         <text name="eq_host_col_event" text="主催できる大会"/>
-        <text name="eq_host_col_ready" text="準備"/>
+        <text name="eq_host_col_ready" text="条件"/>
         <text name="eq_host_col_popularity" text="人気"/>
         <text name="eq_host_col_setup" text="開催費用"/>
-        <text name="eq_host_col_takings" text="収入"/>
+        <text name="eq_host_col_takings" text="最大収入"/>
         <text name="eq_host_col_check" text="条件"/>
         <text name="eq_host_col_have" text="現在"/>
         <text name="eq_host_col_need" text="必要"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="開催費用"/>
         <text name="eq_host_label_popularity" text="人気"/>
         <text name="eq_host_label_visitors" text="参加"/>
-        <text name="eq_host_label_takings" text="収入"/>
+        <text name="eq_host_label_takings" text="見込み収入"/>
         <text name="eq_host_label_reputation" text="評判"/>
         <text name="eq_host_yours_open" text="%s（今月開催中）"/>
         <text name="eq_host_yours_booked" text="%s（%s）"/>
