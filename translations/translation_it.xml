@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="Intermedio"/>
         <text name="eq_host_rating_championship" text="Campionato"/>
         <text name="eq_host_col_event" text="Gara che puoi organizzare"/>
-        <text name="eq_host_col_ready" text="Pronta"/>
+        <text name="eq_host_col_ready" text="Requisiti"/>
         <text name="eq_host_col_popularity" text="Popolarità"/>
         <text name="eq_host_col_setup" text="Costo di allestimento"/>
-        <text name="eq_host_col_takings" text="Incassi"/>
+        <text name="eq_host_col_takings" text="Incassi max"/>
         <text name="eq_host_col_check" text="Requisito"/>
         <text name="eq_host_col_have" text="Hai"/>
         <text name="eq_host_col_need" text="Serve"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="Costo di allestimento"/>
         <text name="eq_host_label_popularity" text="Popolarità"/>
         <text name="eq_host_label_visitors" text="Affluenza"/>
-        <text name="eq_host_label_takings" text="Incassi"/>
+        <text name="eq_host_label_takings" text="Incassi previsti"/>
         <text name="eq_host_label_reputation" text="Reputazione"/>
         <text name="eq_host_yours_open" text="%s, in corso questo mese"/>
         <text name="eq_host_yours_booked" text="%s a %s"/>

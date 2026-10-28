@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="Средний уровень"/>
         <text name="eq_host_rating_championship" text="Чемпионат"/>
         <text name="eq_host_col_event" text="Соревнование, которое можно провести"/>
-        <text name="eq_host_col_ready" text="Готово"/>
+        <text name="eq_host_col_ready" text="Требования"/>
         <text name="eq_host_col_popularity" text="Популярность"/>
         <text name="eq_host_col_setup" text="Взнос за организацию"/>
-        <text name="eq_host_col_takings" text="Доход"/>
+        <text name="eq_host_col_takings" text="Макс. доход"/>
         <text name="eq_host_col_check" text="Требование"/>
         <text name="eq_host_col_have" text="Есть"/>
         <text name="eq_host_col_need" text="Нужно"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="Взнос за организацию"/>
         <text name="eq_host_label_popularity" text="Популярность"/>
         <text name="eq_host_label_visitors" text="Участники"/>
-        <text name="eq_host_label_takings" text="Доход"/>
+        <text name="eq_host_label_takings" text="Ожидаемый доход"/>
         <text name="eq_host_label_reputation" text="Репутация"/>
         <text name="eq_host_yours_open" text="%s, идёт в этом месяце"/>
         <text name="eq_host_yours_booked" text="%s, %s"/>
