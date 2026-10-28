@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="Segna qualsiasi ostacolo come ostacolo da cross. Cambia segmento con N/M: piazza una bandierina bianca a un capo dell'ostacolo, stendi la linea dorata a terra fino all'altro capo, poi piazza una bandierina rossa. La linea si vede solo in modalità costruzione; si salta l'ostacolo stesso."/>
         <text name="eq_shop_xcLogPileSmall" text="Catasta di tronchi (piccola)"/>
         <text name="eq_shop_xcLogPile" text="Catasta di tronchi"/>
+        <text name="eq_shop_showJumpUpright" text="Ostacolo: Verticale"/>
+        <text name="eq_shop_showJumpOxer" text="Ostacolo: Oxer"/>
+        <text name="eq_shop_showJump_function" text="Un ostacolo da salto le cui barriere cadono quando il cavallo le tocca e tornano al loro posto dopo il percorso, o quando ti allontani."/>
         <text name="eq_shop_xcDropWall08" text="Muro di discesa (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Muro di discesa (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Muro di discesa (1,6 m)"/>

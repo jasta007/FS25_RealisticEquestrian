@@ -44,6 +44,9 @@
         <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag at one end of the obstacle, run the gold line along the ground to its other end, then place a red flag. The line shows only in construction mode; the obstacle itself is what gets jumped."/>
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_showJumpUpright" text="Show Jump: Upright"/>
+        <text name="eq_shop_showJumpOxer" text="Show Jump: Oxer"/>
+        <text name="eq_shop_showJump_function" text="A show jump whose poles fall when your horse hits them and go back up after the round, or once you ride away."/>
         <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>

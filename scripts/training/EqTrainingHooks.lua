@@ -92,6 +92,7 @@ function EqTrainingHooks.reset()
     EqTrainingHooks.showJumpNodes = {}
     EqDressageHooks.reset()
     EqCourseHooks.reset()
+    EqPoles.reset()
 end
 
 
@@ -163,7 +164,7 @@ EqTrainingHooks.CRASH_GRACE_MS = 2000
 -- is unclear when backing up). Steering is taken as negative for left.
 EqTrainingHooks.STEER_MIN = 0.3
 
-local probe = { vehicle = nil, height = nil, name = nil, showJump = false }
+local probe = { vehicle = nil, height = nil, name = nil, showJump = false, node = nil, x = nil, z = nil }
 -- How many parents up from the hit collision we look for a show jump's placeable or map node.
 EqTrainingHooks.SHOW_JUMP_DEPTH = 12
 -- Hit node -> true/false, so each collision is only looked up once (emptied with the mission).
@@ -203,7 +204,7 @@ function EqTrainingHooks:jumpRaycastCallback(hitObjectId, x, y, z, distance)
     if g_currentMission.terrainRootNode ~= nil and hitObjectId == g_currentMission.terrainRootNode then return true end
     local object = g_currentMission.getNodeObject ~= nil and g_currentMission:getNodeObject(hitObjectId) or nil
     if object ~= nil and object == probe.vehicle then return true end
-    probe.height = y
+    probe.height, probe.node, probe.x, probe.z = y, hitObjectId, x, z
     probe.name = getName ~= nil and getName(hitObjectId) or tostring(hitObjectId)
     local ok, showJump = EqLog.try("EqTrainingHooks.jumpRaycastCallback isShowJump", EqTrainingHooks.isShowJump, hitObjectId)
     probe.showJump = ok and showJump or false
@@ -224,16 +225,16 @@ end
 --- How tall the thing under one point is, if there is one.
 --- @param up number|nil metres above y the ray starts (JUMP_RAY_UP)
 --- @return number|nil height above the ground in metres, string|nil name, boolean show jump,
----   number|nil the top's world height
+---   number|nil the top's world height, number|nil the collision hit
 local function obstacleAt(vehicle, x, y, z, up)
     local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
     up = up or EqTrainingHooks.JUMP_RAY_UP
-    probe.vehicle, probe.height, probe.name, probe.showJump = vehicle, nil, nil, false
+    probe.vehicle, probe.height, probe.name, probe.showJump, probe.node = vehicle, nil, nil, false, nil
     raycastAll(x, y + up, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH + up - EqTrainingHooks.JUMP_RAY_UP,
         "jumpRaycastCallback", EqTrainingHooks, jumpMask())
     probe.vehicle = nil
     if probe.height == nil then return nil end
-    return probe.height - ground, probe.name, probe.showJump, probe.height
+    return probe.height - ground, probe.name, probe.showJump, probe.height, probe.node
 end
 
 
@@ -259,21 +260,24 @@ end
 --- How far the horse's hooves are above the top of what is under its legs: negative when its
 --- legs are down in it. Nil with nothing JUMP_MIN_HEIGHT tall under them.
 --- @param vehicle table
---- @return number|nil metres
+--- @return number|nil metres, number|nil the collision it is over the least, number|nil world x
+---   and number|nil z of that ray
 local function legClearance(vehicle)
     if raycastAll == nil or vehicle.rootNode == nil then return nil end
     local _, hoof, _ = getWorldTranslation(vehicle.rootNode)
-    local least = nil
+    local least, leastNode, leastX, leastZ = nil, nil, nil, nil
     local function look(along, across)
         local x, y, z = localToWorld(vehicle.rootNode, across, 0, along)
-        local height, _, _, top = obstacleAt(vehicle, x, y, z, EqTrainingHooks.CLIP_RAY_UP)
-        if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT and (least == nil or hoof - top < least) then least = hoof - top end
+        local height, _, _, top, node = obstacleAt(vehicle, x, y, z, EqTrainingHooks.CLIP_RAY_UP)
+        if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT and (least == nil or hoof - top < least) then
+            least, leastNode, leastX, leastZ = hoof - top, node, x, z
+        end
     end
     for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do
         if math.abs(along) <= EqTrainingHooks.CLIP_REACH then look(along, 0) end
     end
     for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
-    return least
+    return least, leastNode, leastX, leastZ
 end
 
 
@@ -317,9 +321,14 @@ local function trackJump(vehicle, spec, sheet, worn)
             jump.airborne = true
             if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
             if showJump then jump.showJump = true end
-            local clearance = legClearance(vehicle)
+            local clearance, node, hitX, hitZ = legClearance(vehicle)
             if clearance ~= nil and (jump.clearance == nil or clearance < jump.clearance) then jump.clearance = clearance end
-            if EqTrainingHooks.isClip(clearance) then jump.clipped = true end
+            if EqTrainingHooks.isClip(clearance) then
+                jump.clipped = true
+                -- One of our show jumps' poles falls as it is hit (EqPoles).
+                local ok, fell = EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip", EqPoles.onClip, node, vehicle, hitX, hitZ)
+                if ok and fell then jump.poleDown = true end
+            end
             if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
         elseif not jump.airborne and age < 500 then
             return
@@ -334,7 +343,7 @@ local function trackJump(vehicle, spec, sheet, worn)
     if jump.speed > 0 and speed < jump.speed * EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE then jump.knocked = true end
     if now - jump.landedAt < EqTrainingHooks.JUMP_SETTLE_MS then return end
 
-    judgeJump(spec, sheet, worn, jump, speed, now)
+    judgeJump(spec, sheet, worn, jump, speed, now, vehicle)
 end
 
 
@@ -345,7 +354,8 @@ end
 --- @param jump table spec.eqJump
 --- @param speed number current speed, m/s
 --- @param now number g_time
-judgeJump = function(spec, sheet, worn, jump, speed, now)
+--- @param vehicle table
+judgeJump = function(spec, sheet, worn, jump, speed, now, vehicle)
     local age = now - jump.startedAt
     spec.eqJump = nil
     local high = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT
@@ -365,6 +375,8 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
     -- clipped the jump on the way: running into things is penalty enough (James, 2026-10-27).
     local rail = high and (jump.clipped or (not jump.crashed and (jump.knocked or jump.onTop)))
     EqCourseHooks.onJumpJudged(cleared and "clear" or rail and "knock" or "nothing")
+    -- A rail over one of our show jumps brings a pole down, if the clip didn't already.
+    if rail and not jump.poleDown and vehicle ~= nil then EqLog.try("EqTrainingHooks.judgeJump EqPoles.onRail", EqPoles.onRail, vehicle) end
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
@@ -620,6 +632,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     spec.eqLastGait = gait
 
     local wasJumping = spec.eqJump ~= nil
+    EqPoles.noteRider(vehicle)
     trackJump(vehicle, spec, sheet, worn)
     if wasJumping and spec.eqJump == nil then spec.eqJumpHoldUntil = now + EqTrainingHooks.JUMP_PACE_HOLD_MS end
 
@@ -881,7 +894,7 @@ function EqTrainingHooks.onJump(vehicle)
     -- counts both.
     local last = spec.eqJump
     if last ~= nil and last.landedAt ~= nil then
-        judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0)
+        judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0, vehicle)
     end
     EqTraining.addJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
@@ -1488,6 +1501,7 @@ function EqTrainingHooks.installRideable(guarded)
         if not EqMain.isActive then return end
         guarded("dressage markers", EqDressageHooks.update)
         guarded("course recording", EqCourseHooks.update)
+        guarded("show jump poles", EqPoles.update)
     end)
 end
 

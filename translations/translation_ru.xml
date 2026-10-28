@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="Отметьте любое препятствие как препятствие кросса. Переключайте части клавишами N/M: поставьте белый флажок у одного края препятствия, протяните золотую линию по земле к другому краю, затем поставьте красный флажок. Линия видна только в режиме строительства; прыгают через само препятствие."/>
         <text name="eq_shop_xcLogPileSmall" text="Штабель брёвен (малый)"/>
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
+        <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
+        <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJump_function" text="Конкурное препятствие, жерди которого падают, когда лошадь их задевает, и возвращаются на место после маршрута или когда вы уезжаете."/>
         <text name="eq_shop_xcDropWall08" text="Стенка спуска (0,8 м)"/>
         <text name="eq_shop_xcDropWall12" text="Стенка спуска (1,2 м)"/>
         <text name="eq_shop_xcDropWall16" text="Стенка спуска (1,6 м)"/>

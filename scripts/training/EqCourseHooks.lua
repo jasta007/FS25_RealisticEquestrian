@@ -975,6 +975,9 @@ function EqCourseHooks.roundDraw(vehicle)
     if event ~= nil then announce(round, event) end
 
     local state = sj.state
+    -- Poles knocked before go back up as the countdown starts (EqPoles).
+    if state == "countdown" and round.lastState ~= "countdown" then EqLog.try("EqCourseHooks.roundDraw EqPoles.raiseAll", EqPoles.raiseAll) end
+    round.lastState = state
     if state == "approach" or state == "countdown" or state == "go" then
         drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z, true)
         local _, from = EqShowJumping.startFromPath(round.course)

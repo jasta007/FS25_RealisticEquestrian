@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="Marque qualquer obstáculo como salto de cross country. Troque de segmento com N/M: coloque uma bandeira branca numa ponta do obstáculo, estique a linha dourada pelo chão até à outra ponta e depois coloque uma bandeira vermelha. A linha só aparece no modo de construção; o salto é o próprio obstáculo."/>
         <text name="eq_shop_xcLogPileSmall" text="Pilha de troncos (pequena)"/>
         <text name="eq_shop_xcLogPile" text="Pilha de troncos"/>
+        <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
+        <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJump_function" text="Um obstáculo de salto cujas varas caem quando o cavalo lhes toca e voltam ao lugar depois do percurso, ou quando se afasta."/>
         <text name="eq_shop_xcDropWall08" text="Muro de descida (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Muro de descida (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Muro de descida (1,6 m)"/>

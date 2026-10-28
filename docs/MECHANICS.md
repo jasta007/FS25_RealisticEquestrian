@@ -247,6 +247,17 @@ agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20
 eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
 can start.
 
+#### Falling poles
+
+The shop's own show jumps (Show Jump: Upright, 1.00 m, and Show Jump: Oxer, 0.95 m front and 1.00 m
+back, 1.1 m spread) have poles that fall. The stands and wings never move. When the horse's legs
+clip a pole in the air, that pole drops at once; any other rail over one of these jumps (it hit
+the jump hard or landed on it) drops the highest pole still up. The fall is animated, not physics:
+one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
+horse's way, then lies on the ground with no collision. Poles go back up when a round's countdown
+starts, or once a pole has been down 6 seconds with no ridden horse within 12 m of the jump, but
+never during a round: rails stay down to the finish. Single player for now.
+
 ### How stats change riding
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);

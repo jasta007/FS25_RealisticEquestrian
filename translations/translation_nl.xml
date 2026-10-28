@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag aan één kant van het obstakel, trek de gouden lijn over de grond naar de andere kant en plaats dan een rode vlag. De lijn is alleen zichtbaar in de bouwmodus; je springt over het obstakel zelf."/>
         <text name="eq_shop_xcLogPileSmall" text="Boomstammenstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
+        <text name="eq_shop_showJumpUpright" text="Springhindernis: steilsprong"/>
+        <text name="eq_shop_showJumpOxer" text="Springhindernis: oxer"/>
+        <text name="eq_shop_showJump_function" text="Een springhindernis waarvan de balken vallen als je paard ze raakt en na de ronde, of zodra je wegrijdt, weer worden opgelegd."/>
         <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Afsprongmuur (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Afsprongmuur (1,6 m)"/>

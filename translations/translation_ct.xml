@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="把任何障礙物標記為越野障礙。用N/M切換部件：在障礙物一端放置白旗，沿地面把金色線拉到另一端，再放置紅旗。金色線只在建造模式中顯示；跳躍的是障礙物本身。"/>
         <text name="eq_shop_xcLogPileSmall" text="原木堆（小）"/>
         <text name="eq_shop_xcLogPile" text="原木堆"/>
+        <text name="eq_shop_showJumpUpright" text="障礙: 垂直障礙"/>
+        <text name="eq_shop_showJumpOxer" text="障礙: 雙橫木"/>
+        <text name="eq_shop_showJump_function" text="馬碰到時橫木會掉落的障礙。跑完路線後或離開時，橫木會放回原位。"/>
         <text name="eq_shop_xcDropWall08" text="落差牆（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="落差牆（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="落差牆（1.6 m）"/>

@@ -33,6 +33,7 @@ dofile("scripts/competition/EqRisk.lua")
 dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
+dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
@@ -3629,6 +3630,44 @@ end)()
     EqTraining.routineStep(tested, "walk", nil, 50, false, one, { x = tx, z = tz, markers = ours })
     check("no new test straight after", not tested.routine.active)
     check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
+end)()
+
+-- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
+-- do block: the main chunk is at Lua's 200 locals.
+;(function()
+    local fall = { y0 = 0.95, restA = 0.05, restB = 0.05, lead = 1, push = 1, length = 3.5 }
+    local y, dz, tilt, still = EqPoles.fallPose(fall, 0)
+    check("a pole starts in its cups", math.abs(y - 0.95) < 1e-9 and dz == 0 and tilt == 0 and not still)
+    y, dz, tilt = EqPoles.fallPose(fall, EqPoles.LAG)
+    check("the leading end drops first", tilt < 0 and y < 0.95, string.format("tilt %.3f", tilt))
+    local _, _, tiltB = EqPoles.fallPose({ y0 = 0.95, restA = 0.05, restB = 0.05, lead = -1, push = 1, length = 3.5 }, EqPoles.LAG)
+    check("the other end can lead", tiltB > 0)
+    local slide = EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
+    y, dz, tilt, still = EqPoles.fallPose(fall, 3)
+    check("a fallen pole lies flat on the ground", math.abs(y - 0.05) < 1e-9 and math.abs(tilt) < 1e-9 and still)
+    check("it slid the horse's way", math.abs(dz - slide) < 1e-9)
+    local _, back = EqPoles.fallPose({ y0 = 0.95, restA = 0.05, restB = 0.05, lead = 1, push = -1, length = 3.5 }, 3)
+    check("it slides the other way for a horse going the other way", math.abs(back + slide) < 1e-9)
+    local _, _, slope = EqPoles.fallPose({ y0 = 0.95, restA = 0.15, restB = 0.05, lead = 1, push = 1, length = 3.5 }, 3)
+    check("on a slope it lies along the ground", math.abs(slope - math.asin(0.1 / 3.5)) < 1e-9)
+    local frames, last, lowest = 0, 0.95, 0.95
+    for t = 0, 2, 1 / 60 do
+        local fy = EqPoles.fallPose(fall, t)
+        lowest = math.min(lowest, fy)
+        if fy > last + 1e-9 then frames = frames + 1 end
+        last = fy
+    end
+    check("a falling pole never bounces up or goes under the ground", frames == 0 and lowest >= 0.05 - 1e-9)
+
+    local down = { state = EqPoles.DOWN, downAt = 1000 }
+    check("a dropped pole stays down a while", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS - 1, false, false))
+    check("then goes back up", EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, false))
+    check("not while a round is under way", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, true, false))
+    check("not while a rider is at the jump", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, true))
+    check("a pole up or falling is left alone", not EqPoles.mayReset({ state = EqPoles.FALLING, downAt = 0 }, 99999, false, false))
+    check("a clock gone back (new game) puts it up", EqPoles.mayReset(down, 500, false, false))
+    check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

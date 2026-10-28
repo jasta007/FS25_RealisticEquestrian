@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="どんな障害物でもクロスカントリー障害に指定できます。N/Mで部品を切り替え、障害物の一端に白旗を置き、金色のラインを地面に沿って反対の端まで伸ばし、赤旗を置きます。ラインは建設モードでのみ表示されます。飛ぶのは障害物そのものです。"/>
         <text name="eq_shop_xcLogPileSmall" text="丸太積み（小）"/>
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
+        <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
+        <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJump_function" text="馬が触れるとバーが落ちる障害。走行後、または離れるとバーは元に戻ります。"/>
         <text name="eq_shop_xcDropWall08" text="ドロップ壁（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="ドロップ壁（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="ドロップ壁（1.6 m）"/>

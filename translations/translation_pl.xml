@@ -46,6 +46,9 @@
         <text name="eq_shop_courseFlags_function" text="Oznacz dowolną przeszkodę jako przeszkodę crossową. Przełączaj segmenty klawiszami N/M: postaw białą flagę przy jednym końcu przeszkody, poprowadź złotą linię po ziemi do drugiego końca, a potem postaw czerwoną flagę. Linia jest widoczna tylko w trybie budowy; skacze się przez samą przeszkodę."/>
         <text name="eq_shop_xcLogPileSmall" text="Stos bali (mały)"/>
         <text name="eq_shop_xcLogPile" text="Stos bali"/>
+        <text name="eq_shop_showJumpUpright" text="Przeszkoda: stacjonata"/>
+        <text name="eq_shop_showJumpOxer" text="Przeszkoda: okser"/>
+        <text name="eq_shop_showJump_function" text="Przeszkoda skokowa, której drągi spadają, gdy koń je zahaczy, i wracają na miejsce po przejeździe albo gdy odjedziesz."/>
         <text name="eq_shop_xcDropWall08" text="Ściana uskoku (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Ściana uskoku (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Ściana uskoku (1,6 m)"/>
