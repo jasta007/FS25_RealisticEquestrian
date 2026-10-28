@@ -345,6 +345,7 @@
         <text name="eq_sj_clearPop" text="Clear round!"/>
         <text name="eq_sj_faultsPop" text="%s faults"/>
         <text name="eq_sj_retired" text="Show jumping round abandoned"/>
+        <text name="eq_xc_retired" text="Cross country round abandoned"/>
         <text name="eq_sj_startLine" text="Start line"/>
         <text name="eq_sj_finishLine" text="Finish line"/>
         <text name="eq_sj_fenceRow" text="Fence %d of %d"/>

@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="Percurso limpo!"/>
         <text name="eq_sj_faultsPop" text="%s faltas"/>
         <text name="eq_sj_retired" text="Percurso de salto abandonado"/>
+        <text name="eq_xc_retired" text="Percurso de cross country abandonado"/>
         <text name="eq_sj_startLine" text="Linha de largada"/>
         <text name="eq_sj_finishLine" text="Linha de chegada"/>
         <text name="eq_sj_fenceRow" text="Obstáculo %d de %d"/>

@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="Percorso netto!"/>
         <text name="eq_sj_faultsPop" text="%s penalità"/>
         <text name="eq_sj_retired" text="Percorso di salto abbandonato"/>
+        <text name="eq_xc_retired" text="Percorso di cross abbandonato"/>
         <text name="eq_sj_startLine" text="Linea di partenza"/>
         <text name="eq_sj_finishLine" text="Linea d'arrivo"/>
         <text name="eq_sj_fenceRow" text="Ostacolo %d di %d"/>

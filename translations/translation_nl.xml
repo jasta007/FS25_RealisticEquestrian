@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="Foutloze ronde!"/>
         <text name="eq_sj_faultsPop" text="%s strafpunten"/>
         <text name="eq_sj_retired" text="Springronde afgebroken"/>
+        <text name="eq_xc_retired" text="Crossparcours afgebroken"/>
         <text name="eq_sj_startLine" text="Startlijn"/>
         <text name="eq_sj_finishLine" text="Finishlijn"/>
         <text name="eq_sj_fenceRow" text="Hindernis %d van %d"/>

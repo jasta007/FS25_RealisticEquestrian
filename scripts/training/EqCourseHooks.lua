@@ -963,7 +963,7 @@ function EqCourseHooks.roundDraw(vehicle)
     local course, _ = EqCourseHooks.nearCourse(vehicle)
     if round ~= nil and (round.vehicle ~= vehicle or round.course ~= course) then
         -- Away from the course (or onto another): a round under way is over.
-        if round.sj.state == "running" or round.sj.state == "go" then notify(text("eq_sj_retired")) end
+        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
         round = nil
         EqCourseHooks.round = nil
     end
@@ -1049,7 +1049,7 @@ function EqCourseHooks.update()
     EqCourseGlow.update()
     local round = EqCourseHooks.round
     if round ~= nil and (now - round.seenAt > EqCourseHooks.STALE_MS or now < round.seenAt) then
-        if round.sj.state == "running" or round.sj.state == "go" then notify(text("eq_sj_retired")) end
+        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
         EqCourseHooks.round = nil
     end
     local editing = EqCourseHooks.editing

@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="零罚分！"/>
         <text name="eq_sj_faultsPop" text="罚%s分"/>
         <text name="eq_sj_retired" text="场地障碍已放弃"/>
+        <text name="eq_xc_retired" text="越野赛已放弃"/>
         <text name="eq_sj_startLine" text="起点线"/>
         <text name="eq_sj_finishLine" text="终点线"/>
         <text name="eq_sj_fenceRow" text="障碍 %d/%d"/>

@@ -686,6 +686,7 @@
         <text name="eq_sj_clearPop" text="Sans faute !"/>
         <text name="eq_sj_faultsPop" text="%s pénalités"/>
         <text name="eq_sj_retired" text="Parcours abandonné"/>
+        <text name="eq_xc_retired" text="Parcours de cross abandonné"/>
         <text name="eq_sj_startLine" text="Ligne de départ"/>
         <text name="eq_sj_finishLine" text="Ligne d'arrivée"/>
         <text name="eq_sj_fenceRow" text="Obstacle %d sur %d"/>
