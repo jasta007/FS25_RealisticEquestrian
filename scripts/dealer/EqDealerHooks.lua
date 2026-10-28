@@ -3,7 +3,9 @@
     Prices a horse by its skill, talent, soundness and breeding value, on top of RLRM's own price. Wraps RLRM's
     AnimalHorse.getHorseSellPrice, which both the dealer's asking price (times RLRM's dealer
     markup) and a horse's sale value go through, so buying and selling stay consistent and the
-    markup still stops buy-and-sell-back loops. No RLRM file changes.
+    markup still stops buy-and-sell-back loops. A farm's broker takes a little off buying and adds a
+    little to selling (EqStaff.dealFactor); the sale premium waits a month after buying, so the
+    markup still guards against buying to sell back. No RLRM file changes.
 ]]
 
 EqDealerHooks = {}
@@ -27,8 +29,23 @@ function EqDealerHooks.priceFor(animal, rlrmPrice)
     local record = EqRegistry.getOrCreate(animal)
     local base = basePrice(animal)
     if record == nil or base == nil then return rlrmPrice end
-    return EqDealer.price(rlrmPrice, base, record:getShownCeilings(), record.trained, animal.age or 0,
+    local price = EqDealer.price(rlrmPrice, base, record:getDealerCeilings(), record.trained, animal.age or 0,
         EqDealer.condition(animal, record))
+    return price * EqDealerHooks.brokerFactor(animal, record)
+end
+
+
+--- A farm's broker gets a better price: cheaper from the dealer (for the local player, who is
+--- the one buying), dearer when selling a horse the farm has had a month or more.
+--- @param animal table RLRM Animal (a horse)
+--- @param record table EqHorseRecord
+--- @return number factor
+function EqDealerHooks.brokerFactor(animal, record)
+    if EqStaffManager == nil then return 1 end
+    local farmId = EqFacilityHooks.farmOfAnimal(animal)
+    if farmId == nil then return EqStaff.dealFactor(EqStaffManager.localBroker(), false) end
+    if record.ownedMonths ~= nil and record.ownedMonths < 1 then return 1 end
+    return EqStaff.dealFactor(EqStaffManager.strength(farmId, "broker"), true)
 end
 
 

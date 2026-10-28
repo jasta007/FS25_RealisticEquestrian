@@ -67,11 +67,13 @@ uses its genetics, health and fitness.
   Gait keys pressed in the air take effect as the horse lands.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
-- The game's Animal Workers and RLRM's herdsman keep horses ticking over, and bring loose horses
-  home. Young horses train slower, idle ones lose condition.
+- **Staff (new):** hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab
+  of RLRM's menu, and set who they work on. Trainers also coach for events, the vet cuts injuries
+  and fees, the broker gets better prices. The game's Animal Workers and RLRM's herdsman only keep
+  horses ticking over. Idle horses lose condition.
 - **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
-  list groups horses by role, the role shows while you look at or ride the horse, and staff train
-  toward it.
+  list groups horses by role, the role shows while you look at or ride the horse, and staff can
+  work on a role.
 - Full rules are in [How Realistic Equestrian works](docs/MECHANICS.md#training).
 
 ### Feed
@@ -90,7 +92,8 @@ uses its genetics, health and fitness.
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
 - Cross country flags mark any obstacle as a cross country fence; the shop also sells log piles and
-  drop walls.
+  drop walls. They stay hidden outside construction, course editing and rounds (log piles
+  and drop walls can be bought Always visible), and road traffic stops during a cross country round.
 - Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
   scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
   Frontier. Matching buildings say what they improve in the shop.
@@ -101,6 +104,7 @@ uses its genetics, health and fitness.
   Outsider or Long shot.
 - **Six disciplines:** show jumping, dressage, cross country, eventing, flat racing and the
   occasional steeplechase, each favouring different stats.
+- **Eventing scoresheets:** each phase's place and penalties, then the total; lowest wins.
 - **Five levels**, from Training and Novice classes every day (or month) to Advanced and Championship events
   each month at named venues across four regions. Young horse classes for two-year-olds teach
   rather than pay.
@@ -252,9 +256,6 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 ## Planned features
 
 - Rival horses for sale (the named rivals already turn up in the same events)
-- Better staff, building on the game's Animal Workers: several hires and different kinds of staff
-  (grooms, exercise riders, discipline trainers), including an expert who can tell you whether the
-  dealer is overselling a horse
 - Stud missions: deliver a stallion of a set standard to the dealer for a fee
 - More ways to earn, such as pony rides and riding lessons
 - Full multiplayer support
@@ -268,6 +269,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqSettings` | Shows the settings. `eqSettings cadence day\|month` sets how often round events run, plus `racing on\|off`, `injuries on\|off`, `forcedRetirement on\|off`, `entriesPerMonth <n>` (0 = no limit) and `trainingRate <x>` (1 = normal). The same settings are on the Settings page |
 | `eqTraining` | Each horse's training focus and today's riding |
 | `eqFocus <horse> <focus>` | Sets a horse's role: `balanced` (no role), `showJumping`, `dressage`, `crossCountry`, `eventing`, `racing`, `breeding` or `sale` |
+| `eqStaff` | Your staff and the candidates on offer; `eqStaffHire <#>`, `eqStaffFire <#>`, `eqStaffWork <#> <general\|role\|horse>` |
 | `eqFeed` | Horse food groups and each horse's feed boost |
 | `eqFacilities` | Your horse buildings and what they give |
 | `eqEvents`, `eqEnter`, `eqResults` | Lists, enters and shows results of events, as the Competitions tab does |
@@ -308,9 +310,12 @@ James
   by Ritter, itself based on Arrow-kb's Realistic Livestock. No RLRM files are changed.
 - Icon: John Frederick Herring Senior, *The Interior of a Stable with a Dapple Grey Horse in
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
+- Staff portraits: [kawsar4404](https://depositphotos.com/portfolio-41609378.html) on
+  Depositphotos, licensed for this mod.
 
 Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as long as you
 credit the original, keep your version under the same licence, and don't sell it or use it
-commercially.
+commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
+covered by that licence: don't reuse them outside this mod.
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).

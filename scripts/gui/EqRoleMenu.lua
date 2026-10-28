@@ -100,7 +100,7 @@ function EqRoleMenu.install(guarded)
     local failed = false
     query.buildSections = function(items, ...)
         local order, byKey, titles = build(items, ...)
-        local ok, newOrder, newByKey, newTitles = pcall(EqRole.groupSections, items, order, byKey, titles, EqRoleMenu.roleOf)
+        local ok, newOrder, newByKey, newTitles = EqLog.try("EqRoleMenu.buildSections groupSections", EqRole.groupSections, items, order, byKey, titles, EqRoleMenu.roleOf)
         if ok then return newOrder, newByKey, newTitles end
         if not failed then
             failed = true

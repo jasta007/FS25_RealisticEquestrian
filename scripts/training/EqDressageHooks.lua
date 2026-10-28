@@ -38,6 +38,7 @@ EqDressageHooks.tagFailed = false
 
 function EqDressageHooks.reset()
     EqDressageHooks.clearTag()
+    EqDressageHooks.spareHotspot = nil
     EqDressageHooks.markers, EqDressageHooks.scannedAt, EqDressageHooks.logged = {}, nil, {}
     EqDressageHooks.placeables, EqDressageHooks.collisionOff, EqDressageHooks.ridingSeen = {}, false, nil
 end
@@ -67,9 +68,9 @@ function EqDressageHooks.removeCollision(placeable)
     local stack = { placeable.rootNode }
     while #stack > 0 do
         local node = table.remove(stack)
-        local okType, kind = pcall(getRigidBodyType, node)
+        local okType, kind = EqLog.try("EqDressageHooks.removeCollision getRigidBodyType", getRigidBodyType, node)
         if okType and kind ~= nil and kind ~= none and kind ~= "NoRigidBody" then
-            if pcall(setRigidBodyType, node, none) then table.insert(bodies, { node = node, kind = kind }) end
+            if EqLog.try("EqDressageHooks.removeCollision setRigidBodyType", setRigidBodyType, node, none) then table.insert(bodies, { node = node, kind = kind }) end
         end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
@@ -88,7 +89,7 @@ function EqDressageHooks.restoreCollision(placeable)
     if bodies == nil then return end
     placeable.eqBodies = nil
     for _, body in ipairs(bodies) do
-        if entityExists == nil or entityExists(body.node) then pcall(setRigidBodyType, body.node, body.kind) end
+        if entityExists == nil or entityExists(body.node) then EqLog.try("EqDressageHooks.restoreCollision setRigidBodyType", setRigidBodyType, body.node, body.kind) end
     end
 end
 
@@ -100,7 +101,7 @@ function EqDressageHooks.setRiding(riding)
     if riding == EqDressageHooks.collisionOff then return end
     EqDressageHooks.collisionOff = riding
     for _, placeable in ipairs(EqDressageHooks.placeables) do
-        local ok, err = pcall(riding and EqDressageHooks.removeCollision or EqDressageHooks.restoreCollision, placeable)
+        local ok, err = EqLog.try("EqDressageHooks.setRiding", riding and EqDressageHooks.removeCollision or EqDressageHooks.restoreCollision, placeable)
         if not ok then Log:warning("Dressage marker collision: %s", tostring(err)) end
     end
     Log:info("Dressage markers: collision %s (%d markers)", riding and "off while riding" or "back on", #EqDressageHooks.placeables)
@@ -137,16 +138,16 @@ function EqDressageHooks.scan()
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
         if EqDressage.isArenaXml(placeable.configFileName) and placeable.rootNode ~= nil then
-            local ok, err = pcall(EqDressageHooks.addArena, placeable, list)
+            local ok, err = EqLog.try("EqDressageHooks.scan addArena", EqDressageHooks.addArena, placeable, list)
             if not ok then Log:warning("Dressage arena: %s", tostring(err)) end
         elseif EqDressage.isMarkerXml(placeable.configFileName) and placeable.rootNode ~= nil then
             local index = placeable.configurations ~= nil and placeable.configurations.solarPanels or nil
-            local okName, name = pcall(configName, placeable, "solarPanels", index)
+            local okName, name = EqLog.try("EqDressageHooks.scan configName", configName, placeable, "solarPanels", index)
             name = okName and name or nil
             local letter = EqDressage.letterFor(index, name)
             table.insert(placeables, placeable)
             if EqDressageHooks.collisionOff then
-                local okCollision, err = pcall(EqDressageHooks.removeCollision, placeable)
+                local okCollision, err = EqLog.try("EqDressageHooks.scan removeCollision", EqDressageHooks.removeCollision, placeable)
                 if not okCollision then Log:warning("Dressage marker collision: %s", tostring(err)) end
             end
             local x, _, z = getWorldTranslation(placeable.rootNode)
@@ -202,13 +203,18 @@ function EqDressageHooks.setTag(marker, name)
     EqDressageHooks.tagSeen = g_time or 0
     name = name or string.format(g_i18n:getText("eq_dressage_marker"), marker.letter)
     if tag ~= nil and tag.x == marker.x and tag.z == marker.z and tag.name == name then return end
-    local ok, err = pcall(function()
+    local ok, err = EqLog.try("EqDressageHooks.setTag", function()
         local current = g_currentMission.currentMapTargetHotspot
         if current ~= nil and (tag == nil or current ~= tag.hotspot) then return end
         if tag == nil then
-            local hotspot = PlaceableHotspot.new()
-            if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
-                hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
+            -- One hotspot is made and reused (see clearTag).
+            local hotspot = EqDressageHooks.spareHotspot
+            EqDressageHooks.spareHotspot = nil
+            if hotspot == nil then
+                hotspot = PlaceableHotspot.new()
+                if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
+                    hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
+                end
             end
             g_currentMission:addMapHotspot(hotspot)
             tag = { hotspot = hotspot }
@@ -227,16 +233,18 @@ function EqDressageHooks.setTag(marker, name)
 end
 
 
---- Take our tag down (leaving any of the player's own).
+--- Take our tag down (leaving any of the player's own). The hotspot is kept, not deleted, for the
+--- next tag: the map went on drawing a deleted one for a moment and logged "PlaceableHotspot.lua:225:
+--- attempt to index nil with 'width'" every frame (James's log, 2026-10-27).
 function EqDressageHooks.clearTag()
     local tag = EqDressageHooks.tag
     if tag == nil then return end
     EqDressageHooks.tag = nil
-    pcall(function()
+    EqLog.try("EqDressageHooks.clearTag", function()
         if g_currentMission.currentMapTargetHotspot == tag.hotspot then g_currentMission:setMapTargetHotspot(nil) end
         g_currentMission:removeMapHotspot(tag.hotspot)
-        tag.hotspot:delete()
     end)
+    EqDressageHooks.spareHotspot = tag.hotspot
 end
 
 

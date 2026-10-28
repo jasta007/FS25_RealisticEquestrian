@@ -1,0 +1,684 @@
+--[[
+    EqStaffFrame.lua
+    The Staff tab in RLRM's menu, laid out like the Events tab, with two tabs of its own:
+    - Hire: the candidates on offer (EqStaffManager.candidates). Hire takes the selected one on.
+    - Your staff: the farm's staff. Below their skills, Herdsman-style controls: Status (on from
+      the next morning, half pay while off), Stables and By role / Individual with a checklist,
+      both through RLRM's husbandry picker. Let go asks first.
+    Left, the people in a table; right, the selected person's job, all ten skills and wage. Added to RLRM's menu after the Events tab (EqStaffFrame.install), the same way.
+
+    Hiring changes server state, so for now the tab works for a single player or the host; a
+    multiplayer client sees a note instead (milestone 7).
+]]
+
+EqStaffFrame = {}
+local EqStaffFrame_mt = Class(EqStaffFrame, TabbedMenuFrameElement)
+
+local Log = EqLog
+local modDirectory = g_currentModDirectory
+
+EqStaffFrame.NAME = "EqStaffFrame"
+EqStaffFrame.ICON_SLICE = "eqMenu.staff"
+
+EqStaffFrame.MODE_HIRE = "hire"
+EqStaffFrame.MODE_STAFF = "staff"
+EqStaffFrame.TAB_MODES = { EqStaffFrame.MODE_HIRE, EqStaffFrame.MODE_STAFF }
+
+
+--- @return table self
+function EqStaffFrame.new()
+    local self = EqStaffFrame:superClass().new(nil, EqStaffFrame_mt)
+    self.name = EqStaffFrame.NAME
+    self.mode = EqStaffFrame.MODE_HIRE
+    self.rows = {}
+    self.selectedIndex = nil
+    self.selectedId = nil
+    self.hasCustomMenuButtons = true
+
+    self.backButtonInfo = { inputAction = InputAction.MENU_BACK }
+    self.hireButtonInfo = {
+        inputAction = InputAction.MENU_ACCEPT,
+        text = g_i18n:getText("eq_staff_button_hire"),
+        callback = function() self:onClickHire() end,
+    }
+    self.fireButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_staff_button_fire"),
+        callback = function() self:onClickFire() end,
+    }
+    self.declineButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_staff_button_decline"),
+        callback = function() self:onClickDecline() end,
+    }
+    self.toggleButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_1,
+        text = g_i18n:getText("eq_staff_tab_staff"),
+        callback = function() self:onClickToggle() end,
+    }
+    self.menuButtonInfo = { self.backButtonInfo, self.toggleButtonInfo }
+    return self
+end
+
+
+function EqStaffFrame:onGuiSetupFinished()
+    EqStaffFrame:superClass().onGuiSetupFinished(self)
+    if self.peopleList ~= nil then
+        self.peopleList:setDataSource(self)
+        self.peopleList:setDelegate(self)
+    end
+end
+
+
+--- @return boolean ok
+--- @return string|nil reason
+local function readiness()
+    if g_currentMission == nil then return false, "" end
+    if not g_currentMission:getIsServer() then return false, g_i18n:getText("eq_staff_clientNote") end
+    return true
+end
+
+
+--- @return number farmId
+local function farmId()
+    return g_currentMission:getFarmId()
+end
+
+
+function EqStaffFrame:onFrameOpen()
+    EqStaffFrame:superClass().onFrameOpen(self)
+    EqEventsFrame.applyHeaderIcon(self, EqStaffFrame.ICON_SLICE)
+    self:initializeSubCategoryPages()
+    self:refresh()
+    if self.peopleList ~= nil then FocusManager:setFocus(self.peopleList) end
+end
+
+
+function EqStaffFrame:update(dt)
+    EqStaffFrame:superClass().update(self, dt)
+    EqEventsFrame.applyHeaderIcon(self, EqStaffFrame.ICON_SLICE)
+end
+
+
+-- TABS (as on the Events tab)
+
+local function tabIndex(mode)
+    return mode == EqStaffFrame.MODE_STAFF and 2 or 1
+end
+
+
+function EqStaffFrame:initializeSubCategoryPages()
+    if self.subCategoryPaging == nil or self.subCategoryTabs == nil then return end
+    local texts = {}
+    for index, button in ipairs(self.subCategoryTabs) do
+        local isSelected = function()
+            return index == tonumber(self.subCategoryPaging.texts[self.subCategoryPaging:getState()])
+        end
+        button.getIsSelected = isSelected
+        local background = button:getDescendantByName("background")
+        if background ~= nil then background.getIsSelected = isSelected end
+        table.insert(texts, tostring(index))
+    end
+    self.subCategoryPaging:setTexts(texts)
+    if self.subCategoryBox ~= nil then
+        self.subCategoryBox:invalidateLayout()
+        self.subCategoryPaging:setSize(self.subCategoryBox.maxFlowSize + 140 * g_pixelSizeScaledX)
+    end
+    self.subCategoryPaging:setState(tabIndex(self.mode), false)
+end
+
+
+function EqStaffFrame:onSubCategoryChanged(state)
+    local index = self.subCategoryPaging ~= nil and tonumber(self.subCategoryPaging.texts[state]) or nil
+    local mode = index ~= nil and EqStaffFrame.TAB_MODES[index] or nil
+    if mode == nil or mode == self.mode then return end
+    self.mode = mode
+    self.message = nil
+    self.selectedId = nil
+    self:refresh()
+end
+
+
+function EqStaffFrame:showMode(mode)
+    if self.subCategoryPaging ~= nil and self.subCategoryPaging.texts ~= nil and #self.subCategoryPaging.texts > 0 then
+        self.subCategoryPaging:setState(tabIndex(mode), true)
+    elseif mode ~= self.mode then
+        self.mode = mode
+        self.message = nil
+        self.selectedId = nil
+        self:refresh()
+    end
+end
+
+
+function EqStaffFrame:onClickHireTab()
+    self:showMode(EqStaffFrame.MODE_HIRE)
+end
+
+
+function EqStaffFrame:onClickStaffTab()
+    self:showMode(EqStaffFrame.MODE_STAFF)
+end
+
+
+function EqStaffFrame:onClickToggle()
+    self:showMode(self.mode == EqStaffFrame.MODE_HIRE and EqStaffFrame.MODE_STAFF or EqStaffFrame.MODE_HIRE)
+end
+
+
+-- TEXTS
+
+--- @param job string
+--- @return string
+function EqStaffFrame.jobText(job)
+    return g_i18n:getText("eq_staff_job_" .. job)
+end
+
+
+--- @param skill string
+--- @return string
+function EqStaffFrame.skillName(skill)
+    if EqInfoDisplay.STAT_COLOR[skill] ~= nil then return g_i18n:getText("eq_stat_" .. skill) end
+    return g_i18n:getText("eq_staff_skill_" .. skill)
+end
+
+
+--- @param works table|nil worksOn
+--- @param names table|nil horse id -> name
+--- @return string a short line for the list
+function EqStaffFrame.worksText(works, names)
+    works = EqStaff.normalizeWorks(works)
+    if works.mode == EqStaff.WORKS_HORSE then
+        if #works.horses == 1 then return (names or {})[works.horses[1]] or works.horses[1] end
+        return string.format(g_i18n:getText("eq_staff_nHorses"), #works.horses)
+    end
+    if works.roles == nil then return g_i18n:getText("eq_staff_works_general") end
+    if #works.roles == 1 then return EqRole.text(works.roles[1]) end
+    return string.format(g_i18n:getText("eq_staff_nRoles"), #works.roles)
+end
+
+
+--- @param farm number
+--- @return table horses { id, role, retired, name } for the farm's horses
+local function farmHorses(farm)
+    local horses = {}
+    for _, animal in ipairs(EqRLRM.listHorsesForFarm(farm)) do
+        local record = EqRegistry.getOrCreate(animal)
+        if record ~= nil then
+            local horse = EqStaffManager.horseInfo(record, animal)
+            horse.name = animal.getName ~= nil and animal:getName() or record.id
+            if horse.name == "" then horse.name = record.id end
+            table.insert(horses, horse)
+        end
+    end
+    return horses
+end
+
+
+--- @param member table
+--- @param horses table|nil for the Your staff tab: the farm's horses
+--- @return table row
+local function personRow(member, horses)
+    local row = {
+        member = member,
+        name = member.name,
+        job = EqStaffFrame.jobText(member.job),
+        grade = g_i18n:getText("eq_staff_grade_" .. EqStaff.GRADES[member.grade].name),
+        wage = g_i18n:formatMoney(EqStaff.wageOf(member, EqStaffManager.daysPerPeriod()), 0, true, true),
+    }
+    if horses ~= nil then
+        local names = {}
+        for _, horse in ipairs(horses) do names[horse.id] = horse.name end
+        row.fourth = EqStaff.trains(member.job) and EqStaffFrame.worksText(member.worksOn, names) or g_i18n:getText("eq_staff_works_passive")
+        if member.enabled == false then row.fourth = g_i18n:getText("eq_staff_works_off") end
+        local count = 0
+        for _, horse in ipairs(horses) do
+            if EqStaff.targets(member, horse) then count = count + 1 end
+        end
+        row.covers = count
+    else
+        local best = {}
+        for _, skill in ipairs(EqStaff.bestSkills(member, 3)) do
+            table.insert(best, string.format("%s %d", EqStaffFrame.skillName(skill), member.skills[skill] or 0))
+        end
+        row.fourth = table.concat(best, ", ")
+    end
+    return row
+end
+
+
+-- REFRESH
+
+--- @param element table|nil
+--- @param text string|nil
+--- @param color table|nil
+local function setText(element, text, color)
+    if element == nil then return end
+    if element.eqDefaultColor == nil and element.textColor ~= nil then element.eqDefaultColor = { unpack(element.textColor) } end
+    element:setText(text or "")
+    if color ~= nil then
+        element:setTextColor(unpack(color))
+    elseif element.eqDefaultColor ~= nil then
+        element:setTextColor(unpack(element.eqDefaultColor))
+    end
+end
+
+
+function EqStaffFrame:refresh()
+    local ok, reason = readiness()
+    self.isReady = ok
+    local isHire = self.mode == EqStaffFrame.MODE_HIRE
+    self.rows = {}
+    self.horses = {}
+    if ok then
+        if isHire then
+            local people = {}
+            for _, member in ipairs(EqStaffManager.candidates) do table.insert(people, member) end
+            EqStaff.sortPeople(people)
+            for _, member in ipairs(people) do table.insert(self.rows, personRow(member, nil)) end
+        else
+            self.horses = farmHorses(farmId())
+            local people = EqStaffManager.membersOf(farmId())
+            EqStaff.sortPeople(people)
+            for _, member in ipairs(people) do
+                table.insert(self.rows, personRow(member, self.horses))
+            end
+        end
+    end
+    setText(self.peopleHeaderFourth, g_i18n:getText(isHire and "eq_staff_col_best" or "eq_staff_col_worksOn"))
+
+    self.peopleList:reloadData()
+    local selectIndex = nil
+    for i, row in ipairs(self.rows) do
+        if row.member.id == self.selectedId then selectIndex = i end
+    end
+    selectIndex = selectIndex or (#self.rows > 0 and 1 or nil)
+    if selectIndex ~= nil then self.peopleList:setSelectedIndex(selectIndex) end
+    self:select(selectIndex)
+
+    local empty
+    if not ok then
+        empty = reason
+    elseif #self.rows == 0 then
+        empty = g_i18n:getText(isHire and "eq_staff_noCandidates" or "eq_staff_noStaff")
+    end
+    self.emptyState:setText(empty or "")
+    self.emptyState:setVisible(empty ~= nil and empty ~= "")
+end
+
+
+--- @param index number|nil
+function EqStaffFrame:select(index)
+    self.selectedIndex = index
+    local row = index ~= nil and self.rows[index] or nil
+    self.selectedId = row ~= nil and row.member.id or self.selectedId
+    self:updatePanel()
+    self:updateSummary()
+    self:updateButtons()
+end
+
+
+function EqStaffFrame:updatePanel()
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    self.personPanel:setVisible(row ~= nil)
+    if row == nil then return end
+    local member = row.member
+
+    setText(self.panelName, member.name)
+    if self.panelFace ~= nil and self.panelFace.overlay ~= nil then
+        local slice = g_overlayManager:getSliceInfoById(string.format("eqFaces.face%02d", EqStaff.faceOf(member)))
+        if slice ~= nil and not EqEventsFrame.isSliceShown(self.panelFace.overlay, slice) then
+            EqEventsFrame.showSlice(self.panelFace.overlay, slice)
+        end
+    end
+    setText(self.panelJob, string.format("%s, %s", row.job, row.grade))
+    for i, skill in ipairs(EqStaff.SKILLS) do
+        local value = member.skills[skill] or 0
+        local level = EqStaff.level(value)
+        local statColor = EqInfoDisplay.STAT_COLOR[skill]
+        setText(self.skillLabel[i], EqStaffFrame.skillName(skill), statColor)
+        setText(self.skillValue[i], string.format("%d - %s", value, g_i18n:getText("eq_staff_level_" .. level.word)),
+            EqInfoDisplay.skillColor(value, skill))
+    end
+    local isStaff = self.mode == EqStaffFrame.MODE_STAFF
+    local wage = string.format(g_i18n:getText("eq_staff_perDay"), row.wage)
+    if isStaff then
+        local enabled = member.enabled ~= false
+        local willBe = EqStaffManager.willBeEnabled(member)
+        if not enabled then
+            wage = string.format(g_i18n:getText("eq_staff_perDay"), g_i18n:formatMoney(EqStaff.wageOf(member, EqStaffManager.daysPerPeriod()) * EqStaff.DISABLED_WAGE, 0, true, true))
+        end
+        if willBe ~= enabled then
+            wage = string.format(g_i18n:getText(willBe and "eq_staff_onFromTomorrow" or "eq_staff_offFromTomorrow"), wage)
+        end
+    end
+    setText(self.panelWage, wage)
+    self.staffControls:setVisible(isStaff)
+    if isStaff then self:updateControls(member) end
+
+    if isStaff then
+        if member.enabled == false then
+            setText(self.panelWorksOn, g_i18n:getText("eq_staff_works_off"))
+        elseif EqStaff.trains(member.job) then
+            setText(self.panelWorksOn, tostring(row.covers))
+        else
+            setText(self.panelWorksOn, row.fourth)
+        end
+    else
+        setText(self.panelWorksOn, string.format(g_i18n:getText("eq_staff_hours"),
+            EqStaff.hoursLeft(member, EqStaffManager.hourNow())))
+    end
+    setText(self.panelNoteLabel, g_i18n:getText("eq_staff_duties"))
+    setText(self.panelNote, EqStaffFrame.jobDoes(member.job))
+    -- The Works on row reads Time remaining on the Hire tab.
+    setText(self.panelWorksOnLabel, g_i18n:getText(isStaff and "eq_staff_covers" or "eq_staff_timeLeft"))
+end
+
+
+--- The Herdsman-style controls for one of your staff.
+--- @param member table
+function EqStaffFrame:updateControls(member)
+    local trains = EqStaff.trains(member.job)
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    -- Plain buttons that flip on click: a resized BinaryOption slid its highlight out of the panel.
+    self.statusButton:setText(g_i18n:getText(EqStaffManager.willBeEnabled(member)
+        and "setting_disasterDestructionState_enabled" or "setting_disasterDestructionState_disabled"))
+    self.modeButton:setText(g_i18n:getText(works.mode == EqStaff.WORKS_HORSE and "eq_staff_mode_horses" or "eq_staff_mode_roles"))
+    local canPick = trains and EqRLRM.features.staffPicker
+    for _, element in ipairs({ self.stablesButton, self.modeButton, self.pickButton }) do element:setDisabled(not trains) end
+    self.stablesButton:setDisabled(not canPick)
+    self.pickButton:setDisabled(not canPick)
+
+    local stables = EqStaffManager.stablesOf(farmId())
+    local stableText = g_i18n:getText("eq_staff_allStables")
+    if works.stables ~= nil and #works.stables < #stables then
+        stableText = string.format(g_i18n:getText("eq_staff_nStables"), #works.stables)
+        if #works.stables == 1 then
+            for _, stable in ipairs(stables) do
+                if stable.uniqueId == works.stables[1] then stableText = stable.name end
+            end
+        end
+    end
+    self.stablesButton:setText(trains and stableText or "-")
+
+    local names = {}
+    for _, horse in ipairs(self.horses or {}) do names[horse.id] = horse.name end
+    setText(self.pickLabel, g_i18n:getText(works.mode == EqStaff.WORKS_HORSE and "eq_staff_horses" or "eq_staff_roles"))
+    local pickText = EqStaffFrame.worksText(works, names)
+    if works.mode == EqStaff.WORKS_ROLE and works.roles == nil then pickText = g_i18n:getText("eq_staff_allRoles") end
+    if works.mode == EqStaff.WORKS_HORSE and #works.horses == 0 then pickText = g_i18n:getText("eq_staff_noHorses") end
+    self.pickButton:setText(trains and pickText or "-")
+end
+
+
+--- @return table|nil member the selected member of your staff
+function EqStaffFrame:selectedStaff()
+    if self.mode ~= EqStaffFrame.MODE_STAFF then return nil end
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    return row ~= nil and row.member or nil
+end
+
+
+--- @param works table the member's new Works on
+function EqStaffFrame:saveWorks(member, works)
+    EqStaffManager.setWorksOn(member.id, farmId(), works)
+    self.message = nil
+    self:refresh()
+end
+
+
+function EqStaffFrame:onClickStatus()
+    local member = self:selectedStaff()
+    if member == nil then return end
+    EqStaffManager.setEnabled(member.id, farmId(), not EqStaffManager.willBeEnabled(member))
+    self.message = nil
+    self:refresh()
+end
+
+
+function EqStaffFrame:onClickMode()
+    local member = self:selectedStaff()
+    if member == nil or not EqStaff.trains(member.job) then return end
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    works.mode = works.mode == EqStaff.WORKS_HORSE and EqStaff.WORKS_ROLE or EqStaff.WORKS_HORSE
+    self:saveWorks(member, works)
+end
+
+
+--- Open RLRM's husbandry picker (the Herdsman's) as a checklist of our own.
+--- @param title string
+--- @param candidates table list of { uniqueId, name }
+--- @param current table list of checked keys
+--- @param onDone function(keys) called with the checked keys, not on Back
+function EqStaffFrame:openPicker(title, candidates, current, onDone)
+    local picker = EqRLRM.get("RLHerdsmanHusbandryPickerDialog")
+    if picker == nil then return end
+    local function restore(dialog)
+        if dialog == nil then return end
+        dialog.showHint = nil
+        if dialog.dialogTitleElement ~= nil and dialog.eqTitle ~= nil then dialog.dialogTitleElement:setText(dialog.eqTitle) end
+    end
+    picker.show(function(_, keys)
+        restore(picker.INSTANCE)
+        if keys ~= nil then onDone(keys) end
+    end, self, candidates, current)
+    local dialog = picker.INSTANCE
+    if dialog == nil then return end
+    -- Our title and empty-list hint for this opening only; put back when it closes.
+    if dialog.dialogTitleElement ~= nil then
+        dialog.eqTitle = dialog.eqTitle or dialog.dialogTitleElement.text
+        dialog.dialogTitleElement:setText(title)
+    end
+    local hint = g_i18n:getText("eq_staff_pick_empty")
+    dialog.showHint = function(d)
+        if d.hintText == nil then return end
+        d.hintText:setText(hint)
+        d.hintText:setVisible(true)
+    end
+end
+
+
+function EqStaffFrame:onClickStables()
+    local member = self:selectedStaff()
+    if member == nil or not EqStaff.trains(member.job) then return end
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    local stables = EqStaffManager.stablesOf(farmId())
+    local current = works.stables
+    if current == nil then
+        current = {}
+        for _, stable in ipairs(stables) do table.insert(current, stable.uniqueId) end
+    end
+    self:openPicker(g_i18n:getText("eq_staff_pick_stables"), stables, current, function(keys)
+        works.stables = #keys >= #stables and nil or keys
+        self:saveWorks(member, works)
+    end)
+end
+
+
+function EqStaffFrame:onClickPick()
+    local member = self:selectedStaff()
+    if member == nil or not EqStaff.trains(member.job) then return end
+    local works = EqStaff.normalizeWorks(member.worksOn)
+    if works.mode == EqStaff.WORKS_HORSE then
+        local candidates = {}
+        for _, horse in ipairs(EqStaff.horsesIn(self.horses or {}, works.stables)) do
+            local name = horse.name
+            if horse.retired then name = string.format("%s (%s)", name, EqRole.text(EqRole.RETIRED)) end
+            table.insert(candidates, { uniqueId = horse.id, name = name })
+        end
+        self:openPicker(g_i18n:getText("eq_staff_pick_horses"), candidates, works.horses, function(keys)
+            works.horses = keys
+            self:saveWorks(member, works)
+        end)
+    else
+        local counts = EqStaff.roleCounts(self.horses or {}, works.stables)
+        local candidates = {}
+        for _, role in ipairs(EqRole.ORDER) do
+            table.insert(candidates, { uniqueId = role, name = string.format("%s (%d)", EqRole.text(role), counts[role] or 0) })
+        end
+        self:openPicker(g_i18n:getText("eq_staff_pick_roles"), candidates, works.roles or EqRole.ORDER, function(keys)
+            works.roles = #keys >= #EqRole.ORDER and nil or keys
+            self:saveWorks(member, works)
+        end)
+    end
+end
+
+
+--- @param job string
+--- @return string the job's duties
+function EqStaffFrame.jobDoes(job)
+    local info = EqStaff.JOBS[job]
+    if info ~= nil and info.event ~= nil then
+        local stats = {}
+        for _, stat in ipairs(EqStaff.STATS) do
+            if info.trains[stat] then table.insert(stats, g_i18n:getText("eq_stat_" .. stat)) end
+        end
+        return string.format(g_i18n:getText("eq_staff_duties_trainer"), stats[1] or "", stats[2] or "")
+    end
+    return g_i18n:getText("eq_staff_duties_" .. job)
+end
+
+
+function EqStaffFrame:updateSummary()
+    local text = self.message
+    if text == nil and self.isReady then
+        local wages = EqStaff.dailyWages(EqStaffManager.membersOf(farmId()), EqStaffManager.daysPerPeriod())
+        if self.mode == EqStaffFrame.MODE_HIRE then
+            text = g_i18n:getText("eq_staff_summary_hire")
+        else
+            text = string.format(g_i18n:getText("eq_staff_summary_staff"), g_i18n:formatMoney(wages, 0, true, true))
+        end
+    end
+    self.summaryText:setText(text or "")
+end
+
+
+function EqStaffFrame:updateButtons()
+    self.toggleButtonInfo.text = g_i18n:getText(self.mode == EqStaffFrame.MODE_HIRE and "eq_staff_tab_staff" or "eq_staff_tab_hire")
+    self.menuButtonInfo = { self.backButtonInfo, self.toggleButtonInfo }
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    if row ~= nil and self.isReady then
+        if self.mode == EqStaffFrame.MODE_HIRE then
+            self.hireButtonInfo.text = string.format(g_i18n:getText("eq_staff_button_hire"), row.wage)
+            table.insert(self.menuButtonInfo, self.hireButtonInfo)
+            table.insert(self.menuButtonInfo, self.declineButtonInfo)
+        else
+            table.insert(self.menuButtonInfo, self.fireButtonInfo)
+        end
+    end
+    self:setMenuButtonInfoDirty()
+end
+
+
+-- LIST
+
+function EqStaffFrame:getNumberOfItemsInSection(_list, _section)
+    return #self.rows
+end
+
+
+function EqStaffFrame:populateCellForItemInSection(_list, _section, index, cell)
+    local row = self.rows[index]
+    if row == nil then return end
+    for _, name in ipairs({ "name", "job", "grade", "fourth", "wage" }) do
+        local element = cell:getAttribute(name)
+        if element ~= nil then element:setText(row[name] or "") end
+    end
+end
+
+
+function EqStaffFrame:onListSelectionChanged(_list, _section, index)
+    if index ~= self.selectedIndex then
+        self.message = nil
+        self:select(index)
+    end
+end
+
+
+-- BUTTONS
+
+function EqStaffFrame:onClickHire()
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    if row == nil then return end
+    local ok, why = EqStaffManager.hire(row.member.id, farmId())
+    if ok then
+        self.message = string.format(g_i18n:getText("eq_staff_hired"), row.member.name)
+        self.selectedId = nil
+    elseif why == "unique" then
+        self.message = string.format(g_i18n:getText("eq_staff_unique"), row.job)
+    else
+        self.message = nil
+    end
+    self:refresh()
+end
+
+
+function EqStaffFrame:onClickDecline()
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    if row == nil then return end
+    if EqStaffManager.decline(row.member.id) then
+        self.message = string.format(g_i18n:getText("eq_staff_declined"), row.member.name)
+        self.selectedId = nil
+    end
+    self:refresh()
+end
+
+
+function EqStaffFrame:onClickFire()
+    local row = self.selectedIndex ~= nil and self.rows[self.selectedIndex] or nil
+    if row == nil then return end
+    local id = row.member.id
+    YesNoDialog.show(function(_, yes)
+        if yes and EqStaffManager.fire(id, farmId()) then
+            self.message = string.format(g_i18n:getText("eq_staff_letGo"), row.member.name)
+            self.selectedId = nil
+            self:refresh()
+        end
+    end, self, string.format(g_i18n:getText("eq_staff_fire_confirm"), row.member.name), g_i18n:getText("eq_staff_button_fire"))
+end
+
+
+-- INSTALL
+
+--- Load our frame and register it after the Events tab in RLRM's menu.
+--- @param menu table the RLMenu instance, inside its setupMenuPages
+function EqStaffFrame.addToMenu(menu)
+    local frame = EqStaffFrame.new()
+    g_gui:loadGui(modDirectory .. "gui/eqStaffFrame.xml", EqStaffFrame.NAME, frame, true)
+
+    local paging = menu.pagingElement
+    frame.positionOrigin = paging.positionOrigin
+    frame.screenAlign = paging.screenAlign
+    frame:setSize(unpack(paging.size))
+    local root = frame:getRootElement()
+    root.positionOrigin = paging.positionOrigin
+    root.screenAlign = paging.screenAlign
+    root:setSize(unpack(paging.size))
+
+    paging:addElement(frame)
+    menu.eqStaffFrame = frame
+    EqStaffFrame.instance = frame
+
+    local predicate = function()
+        return g_currentMission ~= nil and EqMain.isActive
+            and (menu.openMode == nil or menu.openMode == "full")
+    end
+    menu:registerPage(frame, nil, predicate)
+    menu:addPageTab(frame, nil, nil, EqStaffFrame.ICON_SLICE)
+    if frame.initialize ~= nil then frame:initialize() end
+
+    paging:updateAbsolutePosition()
+    paging:updatePageMapping()
+    Log:info("EqStaffFrame: Staff tab added to RLRM's menu")
+end
+
+
+--- Append our page to RLRM's menu setup, after the Events tab. Call after EqEventsFrame.install.
+--- @param guarded function main.lua's error guard
+function EqStaffFrame.install(guarded)
+    local rlMenu = EqRLRM.get("RLMenu")
+    rlMenu.setupMenuPages = Utils.appendedFunction(rlMenu.setupMenuPages, function(menu)
+        guarded("staff tab", function() EqStaffFrame.addToMenu(menu) end)
+    end)
+    Log:debug("EqStaffFrame: hooked RLMenu:setupMenuPages")
+end

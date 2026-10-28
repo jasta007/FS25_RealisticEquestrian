@@ -54,8 +54,8 @@ EqConstants.START_MIN = 5
 -- Every stat of a horse saved before starting stats were drawn sat at this level.
 EqConstants.OLD_START_LEVEL = 10
 
--- Hired staff (the animal worker, RLRM's herdsman) can train a stat up to this share of its
--- ceiling; only the player's own riding reaches the rest.
+-- An event's training boost can take a stat up to this share of its ceiling; only the player's
+-- own riding reaches the rest. Staff have their own caps (EqStaff, EqTraining.HELPER_CAP).
 EqConstants.STAFF_CAP = 0.95
 
 -- Age gates in months.

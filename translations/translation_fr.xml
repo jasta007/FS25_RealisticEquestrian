@@ -64,7 +64,7 @@
         <text name="eq_train_view_temperament" text="Tempérament"/>
         <text name="eq_train_view_agility" text="Agilité"/>
         <text name="eq_help_freestyle_2" text="L'Agilité s'entraîne en sautant des obstacles pour remplir une jauge de combo. Le Tempérament commence par un pas tenu un court instant, puis il faut suivre les ordres pour remplir sa jauge. L'Endurance et la Vitesse s'entraînent en galopant bien : appuyez sur H au grand galop pour apprendre comment."/>
-        <text name="eq_help_freestyle_3" text="Vous préférez ne pas monter ? Les ouvriers animaliers ou l'Éleveur de RLRM entraînent toujours vos chevaux chaque jour, simplement plus lentement que si vous les montiez vous-même."/>
+        <text name="eq_help_freestyle_3" text="Vous préférez ne pas monter ? Embauchez des palefreniers et des entraîneurs dans l&apos;onglet Personnel pour entraîner vos chevaux chaque jour. Les ouvriers animaliers et l&apos;Éleveur de RLRM ne font que les garder actifs."/>
         <text name="eq_form_title" text="Pic de forme"/>
         <text name="eq_help_freestyle_4" text="Montez avant une compétition ! Chaque compétence entraînée avec son mini-jeu met votre cheval en Pic de forme pour les épreuves du mois, jusqu'à +8 par compétence. Cela ne s'additionne pas sur plusieurs jours : votre meilleure séance du mois compte."/>
         <text name="eq_help_form_title" text="Pic de forme"/>
@@ -76,13 +76,17 @@
         <text name="eq_welcome_welcome_1_title" text="Bienvenue dans Realistic Equestrian"/>
         <text name="eq_welcome_welcome_1" text="Vos chevaux ont maintenant des compétences à entraîner et des épreuves à disputer. Tout se trouve dans le menu Realistic Livestock, qui s'ouvre avec R dans le menu Animaux ou Maj+O n'importe où."/>
         <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
-        <text name="eq_welcome_menu_1" text="Ouvrez l'onglet Informations (le cochon avec un [i]) pour découvrir vos chevaux, et l'onglet Épreuves (la rosette) pour les y engager. Les paramètres de Realistic Equestrian se trouvent dans l'onglet Paramètres (l'engrenage)."/>
+        <text name="eq_welcome_menu_1" text="Ouvrez l'onglet Informations (le cochon avec un [i]) pour découvrir vos chevaux, l'onglet Épreuves (la rosette) pour les y engager, et l'onglet Personnel équestre (deux personnes) pour embaucher palefreniers et entraîneurs. Les paramètres de Realistic Equestrian se trouvent dans l'onglet Paramètres (l'engrenage)."/>
+        <text name="eq_welcome_staff_hire_title" text="Personnel équestre"/>
+        <text name="eq_welcome_staff_hire" text="Embauchez du personnel dans l&apos;onglet Embaucher pour s&apos;occuper de vos chevaux chaque jour. Les palefreniers entraînent les quatre aptitudes, pansent les chevaux et ramènent ceux laissés dehors. Les entraîneurs se concentrent sur deux aptitudes et préparent les chevaux à leurs épreuves. Un vétérinaire réduit les blessures et le coût des soins, et un courtier obtient de meilleurs prix chez le marchand. Les salaires sont payés chaque jour, et les candidats vont et viennent : revenez voir s&apos;il y en a de meilleurs. Chacun utilise toutes ses compétences, même hors de ses tâches principales : un polyvalent chanceux aide partout."/>
+        <text name="eq_welcome_staff_works_title" text="Avec qui ils travaillent"/>
+        <text name="eq_welcome_staff_works" text="Dans Votre personnel, choisissez les écuries d&apos;un palefrenier ou d&apos;un entraîneur, puis des rôles ou des chevaux précis. Le personnel est plus efficace quand chacun ne s&apos;occupe que de quelques chevaux ; les autres chevaux ne reçoivent qu&apos;un peu de leur temps. Désactivez ceux dont vous n&apos;avez pas besoin pour la moitié du salaire : le changement prend effet à 1 h le lendemain."/>
         <text name="eq_welcome_info_skills_title" text="Compétences"/>
         <text name="eq_welcome_info_skills" text="L'Endurance permet à un cheval d'aller plus loin, la Vitesse le rend plus rapide, l'Agilité l'aide à sauter et à tourner, et le Tempérament le garde calme et obéissant. Chaque compétence s'entraîne, et vous apprendrez comment lors de votre première monte."/>
         <text name="eq_welcome_info_potential_title" text="Potentiel"/>
         <text name="eq_welcome_info_potential" text="Le potentiel indique jusqu'où chaque compétence peut progresser avec l'entraînement. Les jeunes chevaux apprennent le plus vite, et les plus âgés peuvent perdre du potentiel. Le potentiel n'est qu'une estimation, et même l'estimation peut être fausse tant que vous ne possédez pas le cheval depuis un moment."/>
         <text name="eq_welcome_info_roles_title" text="Rôles et personnel"/>
-        <text name="eq_welcome_info_roles" text="Le bouton Rôle permet de donner un rôle à un cheval pour mieux vous y retrouver, et il indique aussi à votre personnel quelles compétences entraîner. Embauchez du personnel dans le menu Animaux standard pour vous aider à l'entraînement et aux soins."/>
+        <text name="eq_welcome_info_roles" text="Le bouton Rôle permet de donner un rôle à un cheval pour mieux vous y retrouver. Les palefreniers et entraîneurs de l&apos;onglet Personnel peuvent s&apos;occuper de tous les chevaux d&apos;un rôle, ou d&apos;un seul cheval."/>
         <text name="eq_welcome_info_feed_title" text="Alimentation"/>
         <text name="eq_welcome_info_feed" text="Le foin est la base de la ration. L'avoine donne un petit bonus d'Endurance et de Tempérament, l'orge un bonus moyen d'Endurance et d'Agilité, et le maïs un gros bonus de Vitesse. Les carottes (et les pommes, si disponibles) donnent un gros bonus de Tempérament."/>
         <text name="eq_welcome_events_disciplines_title" text="Épreuves"/>
@@ -439,6 +443,83 @@
         <text name="eq_ui_farmLimit" text="Plus d'engagements ce mois-ci"/>
         <text name="eq_ui_entriesLeft" text="Engagements restants ce mois-ci : %d sur %d."/>
         <text name="eq_money_transport" text="Transport de chevaux"/>
+        <text name="eq_money_staffWages" text="Salaires du personnel équestre"/>
+        <text name="eq_staff_title" text="Personnel équestre"/>
+        <text name="eq_staff_tab_hire" text="Embaucher"/>
+        <text name="eq_staff_tab_staff" text="Votre personnel"/>
+        <text name="eq_staff_col_name" text="Nom"/>
+        <text name="eq_staff_col_job" text="Poste"/>
+        <text name="eq_staff_col_grade" text="Niveau"/>
+        <text name="eq_staff_col_best" text="Meilleures compétences"/>
+        <text name="eq_staff_col_worksOn" text="S&apos;occupe de"/>
+        <text name="eq_staff_col_wage" text="Salaire / jour"/>
+        <text name="eq_staff_job_groom" text="Palefrenier"/>
+        <text name="eq_staff_job_dressage" text="Entraîneur de dressage"/>
+        <text name="eq_staff_job_showJumping" text="Entraîneur de saut d&apos;obstacles"/>
+        <text name="eq_staff_job_crossCountry" text="Entraîneur de cross"/>
+        <text name="eq_staff_job_racing" text="Entraîneur de course"/>
+        <text name="eq_staff_job_vet" text="Vétérinaire"/>
+        <text name="eq_staff_job_broker" text="Courtier"/>
+        <text name="eq_staff_grade_junior" text="Junior"/>
+        <text name="eq_staff_grade_experienced" text="Expérimenté"/>
+        <text name="eq_staff_grade_senior" text="Confirmé"/>
+        <text name="eq_staff_grade_legendary" text="Légendaire"/>
+        <text name="eq_staff_skill_dressage" text="Dressage"/>
+        <text name="eq_staff_skill_showJumping" text="Saut d&apos;obstacles"/>
+        <text name="eq_staff_skill_crossCountry" text="Cross"/>
+        <text name="eq_staff_skill_racing" text="Course"/>
+        <text name="eq_staff_skill_veterinary" text="Médecine vétérinaire"/>
+        <text name="eq_staff_skill_broker" text="Courtage"/>
+        <text name="eq_staff_level_1" text="Faible"/>
+        <text name="eq_staff_level_2" text="Passable"/>
+        <text name="eq_staff_level_3" text="Bon"/>
+        <text name="eq_staff_level_4" text="Très bon"/>
+        <text name="eq_staff_level_5" text="Excellent"/>
+        <text name="eq_staff_level_6" text="Légendaire"/>
+        <text name="eq_staff_works_general" text="Tous les chevaux"/>
+        <text name="eq_staff_works_passive" text="Chaque cheval"/>
+        <text name="eq_staff_status" text="Statut"/>
+        <text name="eq_staff_stables" text="Écuries"/>
+        <text name="eq_staff_roles" text="Rôles"/>
+        <text name="eq_staff_horses" text="Chevaux"/>
+        <text name="eq_staff_covers" text="Chevaux suivis"/>
+        <text name="eq_staff_mode_roles" text="Par rôle"/>
+        <text name="eq_staff_mode_horses" text="Individuel"/>
+        <text name="eq_staff_allStables" text="Toutes les écuries"/>
+        <text name="eq_staff_nStables" text="%d écuries"/>
+        <text name="eq_staff_allRoles" text="Tous les rôles"/>
+        <text name="eq_staff_nRoles" text="%d rôles"/>
+        <text name="eq_staff_nHorses" text="%d chevaux"/>
+        <text name="eq_staff_noHorses" text="Choisir des chevaux"/>
+        <text name="eq_staff_works_off" text="Désactivé"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, désactivé dès demain"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, de retour au travail demain"/>
+        <text name="eq_staff_pick_stables" text="Choisir les écuries"/>
+        <text name="eq_staff_pick_roles" text="Choisir les rôles"/>
+        <text name="eq_staff_pick_horses" text="Choisir les chevaux"/>
+        <text name="eq_staff_pick_empty" text="Cochez au moins une case."/>
+        <text name="eq_staff_wage" text="Salaire"/>
+        <text name="eq_staff_perDay" text="%s par jour"/>
+        <text name="eq_staff_duties" text="Tâches principales"/>
+        <text name="eq_staff_duties_groom" text="Entraîne les quatre stats, panse les chevaux, ramène les chevaux en liberté"/>
+        <text name="eq_staff_duties_trainer" text="Se concentre sur %s et %s, entraîne un peu les autres stats et prépare les chevaux à leurs épreuves"/>
+        <text name="eq_staff_duties_vet" text="Moins de blessures, soins plus courts et moins chers, pour chaque cheval"/>
+        <text name="eq_staff_duties_broker" text="Donne un potentiel plus juste des chevaux du marchand. Meilleurs prix à l&apos;achat et à la vente de chevaux."/>
+        <text name="eq_staff_timeLeft" text="Temps restant"/>
+        <text name="eq_staff_hours" text="%d h"/>
+        <text name="eq_staff_button_hire" text="Embaucher (%s par jour)"/>
+        <text name="eq_staff_button_fire" text="Renvoyer"/>
+        <text name="eq_staff_button_decline" text="Refuser"/>
+        <text name="eq_staff_declined" text="%s ne reviendra pas. Quelqu&apos;un d&apos;autre pourrait se présenter dans les prochaines heures."/>
+        <text name="eq_staff_fire_confirm" text="Renvoyer %s ? Cette personne ne reviendra pas."/>
+        <text name="eq_staff_letGo" text="%s est parti(e)."/>
+        <text name="eq_staff_hired" text="%s commence aujourd&apos;hui."/>
+        <text name="eq_staff_unique" text="Vous avez déjà un %s. Une ferme ne peut en avoir qu&apos;un."/>
+        <text name="eq_staff_noCandidates" text="Personne ne cherche de travail pour l&apos;instant. De nouvelles personnes arrivent chaque mois."/>
+        <text name="eq_staff_noStaff" text="Vous n&apos;avez pas encore de personnel. Embauchez dans l&apos;onglet Embaucher."/>
+        <text name="eq_staff_summary_hire" text="De nouvelles personnes arrivent toutes les quelques heures et restent disponibles de 12 à 72 heures. Un seul vétérinaire et un seul courtier par ferme."/>
+        <text name="eq_staff_summary_staff" text="Salaires : %s par jour. Le personnel est plus efficace quand chacun ne s&apos;occupe que de quelques chevaux."/>
+        <text name="eq_staff_clientNote" text="Pour l&apos;instant, seul l&apos;hôte peut embaucher."/>
         <text name="eq_result_placed" text="%s a terminé à la %de place sur %d dans l'épreuve %s et gagné %s."/>
         <text name="eq_result_placedNoPrize" text="%s a terminé à la %de place sur %d dans l'épreuve %s."/>
         <text name="eq_result_gone" text="%s n'a pas pu courir dans l'épreuve %s : le cheval n'est plus dans une ferme."/>
@@ -481,8 +562,15 @@
         <text name="eq_ord_n" text="%de"/>
         <text name="eq_story_podium" text="Vainqueur : %s, 2e : %s, 3e : %s."/>
         <text name="eq_story_winner" text="Vainqueur : %s."/>
-        <text name="eq_story_phase" text="%s %s"/>
-        <text name="eq_story_phases" text="%s."/>
+        <text name="eq_story_phaseScore" text="%s : %s, %s pénalités"/>
+        <text name="eq_story_phaseFaults" text="%s : %s, %s pénalités (%s)"/>
+        <text name="eq_story_phaseClear" text="%s : %s, sans faute"/>
+        <text name="eq_story_down1" text="1 barre"/>
+        <text name="eq_story_downN" text="%d barres"/>
+        <text name="eq_story_refusal1" text="1 refus"/>
+        <text name="eq_story_refusalN" text="%d refus"/>
+        <text name="eq_story_time" text="%s de temps"/>
+        <text name="eq_story_total" text="Total : %s pénalités"/>
         <text name="eq_story_gains" text="Gains : %s."/>
         <text name="eq_story_injury" text="Est rentré avec %s."/>
         <text name="eq_story_careerEnded" text="A subi une blessure qui met fin à sa carrière."/>
@@ -566,6 +654,9 @@
         <text name="eq_shop_xcDropWall16" text="Mur de descente (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un mur en planches pour une descente de cross. Sculptez un talus, posez le mur sur le dessus avec le rebord au bord ; ses murs latéraux cachent la pente raide."/>
         <text name="eq_shop_xcJump_function" text="Un obstacle de cross. Ses drapeaux rouge et blanc indiquent où sauter."/>
+        <text name="eq_shop_xcHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours de cross, sauf si acheté Toujours visible."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours."/>
+        <text name="eq_config_alwaysVisible" text="Toujours visible"/>
         <text name="input_EQ_COURSE_RECORD" text="Enregistrer ou modifier un parcours d'obstacles"/>
         <text name="eq_course_recordAction" text="Nouveau parcours de saut d&apos;obstacles"/>
         <text name="eq_course_started" text="Enregistrement de %s : passez dans les obstacles dans l&apos;ordre. Les obstacles posés de Realistic Equestrian n&apos;ont pas de collision pendant l&apos;édition ; les autres restent solides"/>

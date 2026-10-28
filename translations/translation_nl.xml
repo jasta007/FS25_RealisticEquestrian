@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Dutch texts. Machine-assisted first draft: please have a native speaker check it. Keys and
+     their %s/%d/%.0f placeholders must stay in the same order as translation_en.xml. -->
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Conditie"/>
+        <text name="eq_stat_speed" text="Snelheid"/>
+        <text name="eq_stat_agility" text="Wendbaarheid"/>
+        <text name="eq_stat_temperament" text="Temperament"/>
+        <text name="eq_potential_stamina" text="Potentieel conditie"/>
+        <text name="eq_potential_speed" text="Potentieel snelheid"/>
+        <text name="eq_potential_agility" text="Potentieel wendbaarheid"/>
+        <text name="eq_potential_temperament" text="Potentieel temperament"/>
+        <text name="eq_stat_short_stamina" text="Con"/>
+        <text name="eq_stat_short_speed" text="Snh"/>
+        <text name="eq_stat_short_agility" text="Wnd"/>
+        <text name="eq_stat_short_temperament" text="Tem"/>
+        <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
+        <text name="eq_train_view_freestyle" text="Vrij"/>
+        <text name="eq_help_temperament_2" text="Je verliest je vermenigvuldiger als je versnelt naar galop of gestrekte galop, tegen een obstakel botst of de volgende oefening mist. Vanaf x4 moet je ook je gang aanhouden tussen de commando's. Je paarden lekkers zoals wortels geven is ook een prima manier om Temperament te verbeteren."/>
+        <text name="eq_help_temperament_1" text="Temperamenttraining draait om je paard controle leren. Begin een proef door naar stap over te gaan en die gang even aan te houden. Het trainingsprogramma vraagt dan om een nieuwe oefening om vast te houden. Voer die binnen een paar seconden uit om de combo gaande te houden."/>
+        <text name="eq_help_temperament_title" text="Training: Temperament"/>
+        <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
+        <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
+        <text name="eq_help_agility_title" text="Training: Wendbaarheid"/>
+        <text name="eq_pop_routineStart" text="Proef gestart"/>
+        <text name="eq_pop_routineFault" text="Fout %d/%d"/>
+        <text name="eq_pop_routineTest" text="Proef voltooid!"/>
+        <text name="eq_pop_routineLost" text="Proef onderbroken"/>
+        <text name="eq_pop_comboLost" text="Combo kwijt"/>
+        <text name="eq_pop_knock" text="-%d s!"/>
+        <text name="eq_pop_clear" text="Foutloos!"/>
+        <text name="eq_move_right" text="Rechtsaf!"/>
+        <text name="eq_move_left" text="Linksaf!"/>
+        <text name="eq_move_reverse" text="Achteruit!"/>
+        <text name="eq_move_halt" text="Halt!"/>
+        <text name="eq_move_trot" text="Draf!"/>
+        <text name="eq_move_walk" text="Stap!"/>
+        <text name="eq_move_spinLeft" text="Draai op de plaats naar links!"/>
+        <text name="eq_move_spinRight" text="Draai op de plaats naar rechts!"/>
+        <text name="eq_shop_dressageArena15x30" text="Dressuurrijbaan 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Dressuurrijbaan 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Dressuurrijbaan 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="Een dressuurrijbaan met alle letters op hun plek. Rijd er met een paard in om temperament te trainen tussen de letters."/>
+        <text name="eq_shop_courseFlags" text="Crossvlaggen"/>
+        <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag, trek een gouden balk (0,6, 0,9 of 1,2 m) over het obstakel en plaats dan een rode vlag. De balk is alleen zichtbaar in de bouwmodus."/>
+        <text name="eq_shop_xcLogPileSmall" text="Boomstammenstapel (klein)"/>
+        <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
+        <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Afsprongmuur (1,2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Afsprongmuur (1,6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="Een plankenmuur voor een afsprong op de cross. Vorm een talud, zet de muur bovenop met de rand aan de afgrond, en de zijwanden verbergen de steile helling."/>
+        <text name="eq_shop_xcJump_function" text="Een crosshindernis. De rode en witte vlag geven aan waar je springt."/>
+        <text name="eq_shop_xcHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en crossrondes, tenzij gekocht als Altijd zichtbaar."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en rondes."/>
+        <text name="eq_config_alwaysVisible" text="Altijd zichtbaar"/>
+        <text name="eq_dressage_go" text="%s: %s"/>
+        <text name="eq_dressage_gait_walk" text="Stap"/>
+        <text name="eq_dressage_gait_trot" text="Draf"/>
+        <text name="eq_dressage_gait_canter" text="Galop"/>
+        <text name="eq_dressage_change" text="Wissel: %s"/>
+        <text name="eq_dressage_flying" text="Galopwissel: %s"/>
+        <text name="eq_dressage_begin" text="Ga naar %s om een dressuurproef te beginnen"/>
+        <text name="eq_dressage_reinBack" text="Achterwaarts!"/>
+        <text name="eq_dressage_backwards" text="Ga achteruit"/>
+        <text name="eq_dressage_circle_left" text="Volte links"/>
+        <text name="eq_dressage_circle_right" text="Volte rechts"/>
+        <text name="eq_dressage_out" text="Terug in de rijbaan!"/>
+        <text name="eq_dressage_next" text="Volgende: %s"/>
+        <text name="eq_dressage_stand" text="Halt"/>
+        <text name="eq_dressage_marker" text="Letter %s"/>
+        <text name="eq_train_routine_none" text="Stap om een proef te beginnen"/>
+        <text name="eq_train_routine" text="Proef x%d"/>
+        <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>
+        <text name="eq_train_combo" text="Springcombo x%d"/>
+        <text name="eq_train_view_temperament" text="Temperament"/>
+        <text name="eq_train_view_agility" text="Wendbaarheid"/>
+        <text name="eq_help_freestyle_2" text="Wendbaarheid train je door obstakels te springen om een combometer te vullen, en Temperament begint met even stap aanhouden en dan instructies opvolgen om zijn combometer te vullen. Conditie en Snelheid train je door goed te galopperen in gestrekte galop: druk tijdens de gestrekte galop op H om te leren hoe."/>
+        <text name="eq_help_freestyle_3" text="Liever niet rijden? Neem verzorgers en trainers aan op het tabblad Personeel om je paarden elke dag te trainen. Het dierenpersoneel van het spel en de Herdsman van RLRM houden ze alleen in beweging."/>
+        <text name="eq_form_title" text="Topvorm"/>
+        <text name="eq_help_freestyle_4" text="Rijd voor een wedstrijd! Elke eigenschap die je met zijn minigame traint, brengt je paard in Topvorm voor de wedstrijden van deze maand, tot +8 per eigenschap. Het telt niet op over meerdere dagen: je beste sessie van de maand telt."/>
+        <text name="eq_help_form_title" text="Topvorm"/>
+        <text name="eq_help_form_1" text="Zelf rijden doet meer dan trainen: het brengt je paard in Topvorm voor de wedstrijden van deze maand. Elke eigenschap die je in zijn minigame hebt getraind, krijgt tot +8 in elke wedstrijd deze maand, hier en in het Vaardigheden-vak van het paard getoond als Topvorm. Betere sessies geven een grotere bonus; alleen door de gangen rijden geeft er geen."/>
+        <text name="eq_help_form_2" text="Topvorm telt niet op over de dagen van een maand: elke eigenschap houdt je beste sessie. Het kan een paard op de dag zelf zelfs boven zijn potentieel tillen en verdwijnt zodra de wedstrijden van deze maand voorbij zijn. Personeel houdt de dagelijkse training bij, dus bewaar je eigen ritten voor de wedstrijden die ertoe doen."/>
+        <text name="eq_help_freestyle_1" text="Rijden traint de eigenschappen van je paard, en elke eigenschap heeft zijn eigen minigame. Alle eigenschappen kunnen tegelijk getraind worden, maar sommige gaan slecht samen, zoals Snelheid en Temperament. Druk op Y om te wisselen naar een weergave met betere feedback over de eigenschap waarop je je wilt richten, of blijf in Vrij voor algemene feedback. De rijbalk is nog steeds de energie van het paard voor de dag: zodra die vol is, maakt dat paard geen vooruitgang meer tot de volgende dag."/>
+        <text name="eq_help_freestyle_title" text="Training: Vrij"/>
+        <text name="eq_welcome_ride_title" text="Training"/>
+        <text name="eq_welcome_welcome_1_title" text="Welkom bij Realistic Equestrian"/>
+        <text name="eq_welcome_welcome_1" text="Je paarden hebben nu vaardigheden om te trainen en wedstrijden om aan mee te doen. Alles zit in het menu van Realistic Livestock, dat je opent met R in het Dierenmenu of overal met Shift+O."/>
+        <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
+        <text name="eq_welcome_menu_1" text="Open het tabblad Informatie (het varken met een [i]) om meer over je paarden te weten, het tabblad Wedstrijden (de rozet) om ze in te schrijven en het tabblad Ruiterpersoneel (twee mensen) om verzorgers en trainers aan te nemen. De instellingen van Realistic Equestrian vind je op het tabblad Instellingen (het tandwiel)."/>
+        <text name="eq_welcome_staff_hire_title" text="Ruiterpersoneel"/>
+        <text name="eq_welcome_staff_hire" text="Neem personeel aan op het tabblad Aannemen om elke dag voor je paarden te zorgen. Verzorgers trainen alle vier eigenschappen, poetsen paarden en brengen losgelopen paarden terug. Trainers richten zich op twee eigenschappen en bereiden paarden voor op hun wedstrijden. Een dierenarts betekent minder blessures en goedkopere behandeling, en een makelaar regelt betere prijzen bij de handelaar. Lonen worden per dag betaald, en kandidaten komen en gaan, dus kijk vaker voor betere. Iedereen gebruikt al zijn vaardigheden, ook buiten de hoofdtaken, dus een gelukkige alleskunner helpt overal mee."/>
+        <text name="eq_welcome_staff_works_title" text="Met wie ze werken"/>
+        <text name="eq_welcome_staff_works" text="Kies bij Jouw personeel de stallen waar een verzorger of trainer werkt, en dan rollen of individuele paarden. Personeel is het effectiefst als ieder maar een paar paarden heeft; andere paarden krijgen maar een beetje van hun tijd. Zet wie je niet nodig hebt uit voor het halve loon: de wijziging gaat de volgende dag om 1 uur 's nachts in."/>
+        <text name="eq_welcome_info_skills_title" text="Vaardigheden"/>
+        <text name="eq_welcome_info_skills" text="Conditie laat een paard verder gaan, Snelheid maakt het sneller, Wendbaarheid helpt bij springen en draaien, en Temperament houdt het rustig en gehoorzaam. Elke vaardigheid is te trainen, en je leert hoe als je voor het eerst rijdt."/>
+        <text name="eq_welcome_info_potential_title" text="Potentieel"/>
+        <text name="eq_welcome_info_potential" text="Potentieel is hoe ver elke vaardigheid met training kan groeien. Jonge paarden leren het snelst, en oudere paarden kunnen potentieel verliezen. Potentieel is alleen een schatting, en zelfs die schatting kan fout zijn tot je het paard een tijdje hebt."/>
+        <text name="eq_welcome_info_roles_title" text="Rollen en personeel"/>
+        <text name="eq_welcome_info_roles" text="Met de knop Rol kun je een paard een rol geven om het overzicht te houden. Verzorgers en trainers op het tabblad Personeel kunnen met alle paarden van een rol werken, of met één paard."/>
+        <text name="eq_welcome_info_feed_title" text="Voer"/>
+        <text name="eq_welcome_info_feed" text="Hooi is het basisvoer. Haver geeft een kleine boost aan Conditie en Temperament, gerst een gemiddelde boost aan Conditie en Wendbaarheid, en maïs een grote boost aan Snelheid. Wortels (en appels, als die er zijn) geven een grote boost aan Temperament."/>
+        <text name="eq_welcome_events_disciplines_title" text="Wedstrijden"/>
+        <text name="eq_welcome_events_disciplines" text="Dressuur beloont Temperament en Wendbaarheid, springen Wendbaarheid, races Snelheid en Conditie, en cross en eventing beloont allrounders."/>
+        <text name="eq_welcome_events_transport_title" text="Er komen"/>
+        <text name="eq_welcome_events_transport" text="Automatisch transport brengt je paard tegen betaling naar de wedstrijd. Dat kan veel meer kosten dan gewoon automatisch transport, want je paard kan veel verder reizen en je wilt het wel terug! Zelf je paarden naar de dierenhandelaar brengen (Handmatig transport) kan veel geld besparen."/>
+        <text name="eq_welcome_events_risks_title" text="Blessures en afmeldingen"/>
+        <text name="eq_welcome_events_risks" text="Elke wedstrijd heeft een risico op blessures en ziekte, getoond voor je inschrijft. Met de knop Ziektes op het tabblad Informatie kun je blessures behandelen. Een paard kan ook voor een wedstrijd worden afgemeld door een gezakte Temperamenttest of slechte gezondheid, maar je krijgt een deel van het inschrijfgeld terug."/>
+        <text name="eq_settings_helpPopups" text="Hulpvensters"/>
+        <text name="eq_settings_helpPopups_tooltip" text="Opnieuw tonen: elk welkomst- en trainingshulpvenster verschijnt nog één keer."/>
+        <text name="eq_settings_helpPopups_seen" text="Gezien"/>
+        <text name="eq_settings_helpPopups_again" text="Opnieuw tonen"/>
+        <text name="eq_welcome_diseases_treatment_title" text="Behandeling"/>
+        <text name="eq_welcome_diseases_treatment" text="De meeste blessures genezen vanzelf, maar dat kan lang duren! Behandelen versnelt dat, maar kan duur worden. Je kunt een geblesseerd paard met pensioen sturen om ermee te blijven fokken, wat herstel veel goedkoper maakt. Sommige zware blessures kunnen pensioen afdwingen, en dit alles is aan te passen in de instellingen."/>
+        <text name="eq_help_close" text="Klik om te sluiten"/>
+        <text name="eq_help_next" text="Klik om verder te gaan (%d/%d)"/>
+        <text name="input_EQ_TRAINING_HELP" text="Trainingshulp"/>
+        <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
+        <text name="eq_ex_push" text="Doorzetten"/>
+        <text name="eq_ex_recover" text="Herstellen"/>
+        <text name="eq_ex_sprint" text="SPRINT"/>
+        <text name="eq_ex_blown" text="Vermoeid: alleen galop"/>
+        <text name="eq_ex_spent" text="Uitgeput: alleen galop"/>
+        <text name="eq_ex_gallop" text="Gestrekte galop"/>
+        <text name="eq_ex_canter" text="Galop"/>
+        <text name="eq_ex_trot" text="Draf"/>
+        <text name="eq_ex_walk" text="Stap"/>
+        <text name="eq_ex_halt" text="Stilstaan"/>
+        <text name="eq_ex_reverse" text="Achteruit"/>
+        <text name="eq_ex_prompt_tap" text="Blijf op W tikken!"/>
+        <text name="eq_pop_ex_sprint" text="SPRINT!"/>
+        <text name="eq_pop_ex_sprintOver" text="Sprint voorbij"/>
+        <text name="eq_pop_ex_blown" text="Vermoeid!"/>
+        <text name="eq_pop_ex_spent" text="Uitgeput!"/>
+        <text name="eq_pop_ex_fresh" text="Klaar voor gestrekte galop"/>
+        <text name="eq_help_gallop_title" text="Gestrekte galop"/>
+        <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo's. Druk vanuit galop op W om te beginnen met Doorzetten: snel, maar de Inspanningsbalk loopt vol, en sneller naarmate hij hoger staat. Druk op S om te Herstellen: een langzamere galop die de inspanning laat zakken terwijl je doorgaloppeert, snel in het bovenste en onderste derde van de balk, langzaam in het midden. Druk weer op W om door te zetten. Een fitter paard wordt langzamer moe en herstelt sneller."/>
+        <text name="eq_help_gallop_2" text="Als de balk tijdens Doorzetten het rode deel Vermoeid bereikt, valt je paard terug in galop en kan het niet opnieuw gestrekt galopperen tot de balk leeg is. Om zelf terug te gaan naar galop druk je één keer op S tijdens Herstellen met een lege balk, of tik je op elk moment twee keer op S."/>
+        <text name="eq_help_gallop_3" text="Tik onafgebroken op W tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
+        <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voor hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 vlak ervoor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, sneller bij de top. Herstellen in het middelste derde van de balk laat je paard op adem komen en houdt het grootste deel van de vermenigvuldiger, terwijl het bovenste en onderste derde hem snel verliezen, en een paard dat nooit op adem komt, gaat veel langzamer vooruit. Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
+        <text name="eq_ex_hint_sprint" text="Tik onafgebroken op W om te sprinten"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: eerst herstellen tot leeg"/>
+        <text name="eq_ex_hint_locked" text="Galop tot de balk leeg is"/>
+        <text name="eq_ex_hint_canterOne" text="S: galop"/>
+        <text name="eq_ex_hint_canterDouble" text="Twee keer S: galop"/>
+        <text name="eq_ex_tiring" text="Wordt moe..."/>
+        <text name="eq_ex_careful" text="Let op"/>
+        <text name="eq_ex_overExerted" text="Vermoeid!"/>
+        <text name="eq_train_tiredness" text="Inspanning"/>
+        <text name="eq_train_titlePlain" text="Training"/>
+        <text name="eq_train_lastSprint" text="Laatste sprint x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Sprint om Snelheid te trainen"/>
+        <text name="eq_train_view_stamina" text="Conditie"/>
+        <text name="eq_train_view_speed" text="Snelheid"/>
+        <text name="eq_train_view_condensed" text="Compact"/>
+        <text name="eq_help_stamina_title" text="Training: Conditie"/>
+        <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, en hoe dichter bij de lijn, hoe sneller hij stijgt. Herstellen verlaagt hem: snel in het bovenste derde van de balk, langzaam in het middelste derde en weer snel in het onderste derde."/>
+        <text name="eq_help_stamina_2" text="Zet dus door tot dicht bij de lijn, neem gas terug tot het midden van de balk en laat je paard daar even op adem komen, en zet dan weer door. Heen en weer schakelen tussen Doorzetten en Herstellen bij de top maakt je paard moe zonder de vermenigvuldiger te verhogen, en Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
+        <text name="eq_help_speed_title" text="Training: Snelheid"/>
+        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: tik onafgebroken op W tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
+        <text name="eq_help_speed_2" text="Een Sprint die voorbij de lijn eindigt is maar x1 waard, dus stop met tikken (of druk op S) voor de lijn. Na een Sprint moet je paard herstellen tot een lege balk voor het weer kan sprinten."/>
+        <text name="eq_train_speedMult" text="Snelheid x%.1f"/>
+        <text name="eq_train_staminaMult" text="Conditie x%.1f"/>
+        <text name="eq_train_staminaStopped" text="geen training"/>
+        <text name="eq_ex_fatigued" text="Vermoeid"/>
+        <text name="eq_pop_speedBank" text="Snelheid x%.1f!"/>
+        <text name="eq_train_quality_fast" text="snelle training"/>
+        <text name="eq_train_quality_steady" text="training"/>
+        <text name="eq_train_quality_slow" text="langzame training"/>
+        <text name="eq_train_quality_full" text="vol voor vandaag"/>
+        <text name="input_EQ_TRAINING_VIEW" text="Trainingsweergave wisselen"/>
+        <text name="eq_feed_boost" text="Voer"/>
+        <text name="eq_feedGroup_hay" text="Hooi"/>
+        <text name="eq_feedGroup_grain" text="Krachtvoer"/>
+        <text name="eq_feedGroup_treat" text="Lekkers"/>
+        <text name="eq_feedGroup_otherGrain" text="Ander graan"/>
+        <text name="eq_feedRow_oats" text="Haver"/>
+        <text name="eq_feedRow_barley" text="Gerst"/>
+        <text name="eq_feedRow_corn" text="Maïs"/>
+        <text name="eq_feed_noBoost" text="geen boost"/>
+        <text name="eq_discipline_showJumping" text="Springen"/>
+        <text name="eq_discipline_dressage" text="Dressuur"/>
+        <text name="eq_discipline_crossCountry" text="Cross"/>
+        <text name="eq_discipline_eventing" text="Eventing"/>
+        <text name="eq_discipline_raceShort" text="Vlakkoers (sprint)"/>
+        <text name="eq_discipline_raceLong" text="Vlakkoers (lange afstand)"/>
+        <text name="eq_discipline_steeplechase" text="Steeplechase"/>
+        <text name="eq_type_showJumping" text="Springen"/>
+        <text name="eq_type_dressage" text="Dressuur"/>
+        <text name="eq_type_crossCountry" text="Cross"/>
+        <text name="eq_type_eventing" text="Eventing"/>
+        <text name="eq_type_raceShort" text="Vlakkoers"/>
+        <text name="eq_type_raceLong" text="Vlakkoers"/>
+        <text name="eq_type_steeplechase" text="Steeplechase"/>
+        <text name="eq_tier_training" text="Jonge paarden"/>
+        <text name="eq_tier_novice" text="Beginners"/>
+        <text name="eq_tier_intermediate" text="Gevorderd"/>
+        <text name="eq_tier_advanced" text="Gevorderd+"/>
+        <text name="eq_tier_championship" text="Kampioenschap"/>
+        <text name="eq_going_firm" text="Hard"/>
+        <text name="eq_going_good" text="Goed"/>
+        <text name="eq_going_soft" text="Zacht"/>
+        <text name="eq_going_heavy" text="Zwaar"/>
+        <text name="eq_going_hot" text="Heet"/>
+        <text name="eq_going_indoor" text="Binnen"/>
+        <text name="eq_event_showJumping_training" text="Foutloos springen"/>
+        <text name="eq_event_showJumping_novice" text="Springen 1,00 m"/>
+        <text name="eq_event_showJumping_intermediate" text="Springen 1,20 m"/>
+        <text name="eq_event_showJumping_advanced" text="%s Klassieker 1,40 m"/>
+        <text name="eq_event_showJumping_championship" text="%s Grand Prix"/>
+        <text name="eq_event_dressage_training" text="Introductie dressuurproef"/>
+        <text name="eq_event_dressage_novice" text="Dressuur voorbereidend"/>
+        <text name="eq_event_dressage_intermediate" text="Dressuur midden"/>
+        <text name="eq_event_dressage_advanced" text="%s Prix St Georges"/>
+        <text name="eq_event_dressage_championship" text="%s Grand Prix Dressuur"/>
+        <text name="eq_event_crossCountry_training" text="Jonge paarden veldproef"/>
+        <text name="eq_event_crossCountry_novice" text="Veldproef"/>
+        <text name="eq_event_crossCountry_intermediate" text="Open veldproef"/>
+        <text name="eq_event_crossCountry_advanced" text="%s Team Chase"/>
+        <text name="eq_event_crossCountry_championship" text="%s Team Chase Kampioenschap"/>
+        <text name="eq_event_eventing_training" text="Introductie eventing"/>
+        <text name="eq_event_eventing_novice" text="Eendaagse eventing"/>
+        <text name="eq_event_eventing_intermediate" text="Tweesterren eventing"/>
+        <text name="eq_event_eventing_advanced" text="%s Viersterren eventing"/>
+        <text name="eq_event_eventing_championship" text="%s Driedaagse eventing"/>
+        <text name="eq_event_raceShort_training" text="Renbaangalop (1200 m)"/>
+        <text name="eq_event_raceShort_novice" text="Maidensprint (1200 m)"/>
+        <text name="eq_event_raceShort_intermediate" text="Sprinthandicap (1200 m)"/>
+        <text name="eq_event_raceShort_advanced" text="%s Listed sprint (1200 m)"/>
+        <text name="eq_event_raceShort_championship" text="%s Sprint Cup (1200 m)"/>
+        <text name="eq_event_raceLong_training" text="Renbaangalop (1600 m)"/>
+        <text name="eq_event_raceLong_novice" text="Maidenkoers (2400 m)"/>
+        <text name="eq_event_raceLong_intermediate" text="Handicap (2400 m)"/>
+        <text name="eq_event_raceLong_advanced" text="%s Listed koers (2400 m)"/>
+        <text name="eq_event_raceLong_championship" text="%s Gold Cup (3200 m)"/>
+        <text name="eq_event_steeplechase_training" text="Oefenhordenrace"/>
+        <text name="eq_event_steeplechase_novice" text="Hordenrace voor beginners"/>
+        <text name="eq_event_steeplechase_intermediate" text="Handicap steeple"/>
+        <text name="eq_event_steeplechase_advanced" text="%s Groepsteeple"/>
+        <text name="eq_event_steeplechase_championship" text="%s Steeplechase Cup"/>
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Wedstrijd"/>
+        <text name="rl_messageTitle_eqInjury" text="Blessure"/>
+        <text name="rl_messageTitle_eqRetirement" text="Pensioen"/>
+        <text name="rl_messageTitle_eqDealer" text="Handelaar"/>
+        <text name="rl_messageTitle_eqTransport" text="Transport"/>
+        <text name="eq_money_entryFees" text="Inschrijfgeld wedstrijden"/>
+        <text name="eq_money_prizeMoney" text="Prijzengeld wedstrijden"/>
+        <text name="eq_money_vetBills" text="Dierenartskosten"/>
+        <text name="eq_enter_injured" text="Dat paard is geblesseerd: nog %d maand(en) tot het geneest."/>
+        <text name="eq_enter_sick" text="Dat paard is ziek. Behandel het eerst op zijn Ziektes-pagina."/>
+        <text name="eq_enter_unwell" text="De gezondheid van dat paard is te laag om mee te doen (25 of lager). Geef het goed te eten en het herstelt."/>
+        <text name="eq_enter_lowHealth" text="Zijn gezondheid is %d: %d%% kans dat het op de dag wordt afgemeld als niet fit. Onder 50 gezondheid voegt elke 5 punten minder 10%% toe, en bij %d of lager mag het niet meedoen."/>
+        <text name="eq_result_eliminated" text="%s is uitgesloten in %s."/>
+        <text name="eq_result_pulledUp" text="%s is gestopt in %s."/>
+        <text name="eq_result_scratched" text="%s is afgemeld voor %s (%s). %s van het inschrijfgeld is terugbetaald."/>
+        <text name="eq_scratch_injured" text="geblesseerd"/>
+        <text name="eq_scratch_sick" text="ziek"/>
+        <text name="eq_scratch_unsound" text="niet fit op de dag"/>
+        <text name="eq_scratch_shoe" text="hoefijzer verloren"/>
+        <text name="eq_scratch_retired" text="met pensioen"/>
+        <text name="eq_scratch_inFoal" text="te ver drachtig om mee te doen"/>
+        <text name="eq_scratch_fractious_1" text="wilde de vrachtwagen niet in"/>
+        <text name="eq_scratch_fractious_2" text="was onrustig en liet zich niet bestijgen"/>
+        <text name="eq_scratch_fractious_3" text="weigerde naar de start te gaan"/>
+        <text name="eq_injury_bruisedSole" text="een gekneusde zool"/>
+        <text name="eq_injury_abscess" text="een hoefzweer"/>
+        <text name="eq_injury_overreach" text="een aantrapwond"/>
+        <text name="eq_injury_soreBack" text="een pijnlijke rug"/>
+        <text name="eq_injury_splints" text="een overbeen"/>
+        <text name="eq_injury_tendon" text="een verrekte pees"/>
+        <text name="eq_injury_chipFracture" text="een chipfractuur"/>
+        <text name="eq_injury_suspensory" text="een gescheurde tussenbeenspier"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Gekneusde zool"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Hoefzweer"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Aantrapwond"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Pijnlijke rug"/>
+        <text name="rl_disease_eqInjurySplints" text="Overbeen"/>
+        <text name="rl_disease_eqInjuryTendon" text="Verrekte pees"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Chipfractuur"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Gescheurde tussenbeenspier"/>
+        <text name="eq_injury_newTreatable" text="%s raakte geblesseerd in %s: %s. Behandel het via de Ziektes-pagina van het paard (%s, %s), of laat het vanzelf genezen in %d maand(en)."/>
+        <text name="eq_injury_newRest" text="%s raakte geblesseerd in %s: %s. %d maand(en) boxrust."/>
+        <text name="eq_illness_new" text="%s heeft %s opgelopen bij %s. Zie de Ziektes-pagina."/>
+        <text name="eq_injury_careerEnding" text="%s liep een carrièrebeëindigende blessure op in %s en stopt met wedstrijden."/>
+        <text name="eq_injury_recovered" text="%s is hersteld en mag weer meedoen."/>
+        <text name="eq_retire_done" text="Gestopt met wedstrijden."/>
+        <text name="eq_retire_doneInjured" text="Gestopt met wedstrijden. De blessure moet nog genezen, maar behandeling kost nu %d%% minder."/>
+        <text name="eq_retire_undone" text="Weer actief in wedstrijden."/>
+        <text name="eq_retire_careerEnded" text="De carrière van dat paard is door een blessure beëindigd; het mag niet meer meedoen."/>
+        <text name="eq_status_title" text="Wedstrijden"/>
+        <text name="eq_status_injured" text="Geblesseerd, %d maand(en)"/>
+        <text name="eq_status_retired" text="Met pensioen"/>
+        <text name="eq_status_sick" text="Ziek"/>
+        <text name="eq_status_unwell" text="Gezondheid te laag"/>
+        <text name="eq_status_settling" text="Aan het wennen"/>
+        <text name="eq_status_rested" text="Rust deze maand"/>
+        <text name="eq_status_inFoal" text="Drachtig"/>
+        <text name="eq_status_foaled" text="Herstelt van het veulenen"/>
+        <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Potentieel vaardigheden"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potentieel (volgens handelaar)"/>
+        <text name="eq_ui_potentialTitle" text="Potentieel"/>
+        <text name="eq_ui_potentialDealer" text="Volgens handelaar, kan fout zijn"/>
+        <text name="eq_ui_skills" text="Vaardigheden"/>
+        <text name="eq_specialty_title" text="Favoriete wedstrijd"/>
+        <text name="eq_role_title" text="Rol"/>
+        <text name="eq_role_balanced" text="Geen rol"/>
+        <text name="eq_role_dressage" text="Dressuur"/>
+        <text name="eq_role_showJumping" text="Springen"/>
+        <text name="eq_role_crossCountry" text="Cross"/>
+        <text name="eq_role_eventing" text="Eventing"/>
+        <text name="eq_role_racing" text="Racen"/>
+        <text name="eq_role_breeding" text="Fokken"/>
+        <text name="eq_role_sale" text="Te koop"/>
+        <text name="eq_role_retired" text="Met pensioen"/>
+        <text name="eq_ui_button_role" text="Rol: %s"/>
+        <text name="input_EQ_HORSE_ROLE" text="Rol van paard wijzigen"/>
+        <text name="input_EQ_COURSE_RECORD" text="Springparcours opnemen of bewerken"/>
+        <text name="eq_course_recordAction" text="Nieuw springparcours"/>
+        <text name="eq_course_started" text="%s opnemen: rijd de hindernissen op volgorde door. Geplaatste obstakels van Realistic Equestrian hebben geen botsing tijdens het bewerken; andere obstakels blijven vast"/>
+        <text name="eq_course_noJumps" text="Parcours wordt opgenomen, maar er staan nog geen springhindernissen op de kaart"/>
+        <text name="eq_course_tooFew" text="Parcours niet opgeslagen: rijd door minstens %d springhindernissen"/>
+        <text name="eq_course_saved" text="%s opgeslagen: %d hindernissen, %.0f m"/>
+        <text name="eq_course_cancelled" text="Bewerken gestopt: je stapte af voor het parcours genoeg hindernissen had om op te slaan"/>
+        <text name="eq_course_leftSaved" text="Parcours opgeslagen toen je afstapte: druk er vlakbij op Ctrl+J om te bewerken, en dan Ctrl+K om verder op te nemen vanaf het dichtstbijzijnde punt"/>
+        <text name="eq_course_recording" text="%s opnemen: %d hindernissen, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Geplaatste obstakels van Realistic Equestrian hebben geen botsing terwijl je het parcours uitzet; andere obstakels blijven vast"/>
+        <text name="eq_course_name" text="Parcours %d"/>
+        <text name="eq_sj_begin" text="Ga naar de startlijn om het springen te beginnen"/>
+        <text name="eq_sj_ready" text="Maak je klaar..."/>
+        <text name="eq_sj_go" text="Start!"/>
+        <text name="eq_sj_cross" text="Start! Passeer de startlijn"/>
+        <text name="eq_sj_early" text="Te vroeg! Ga terug achter de startlijn"/>
+        <text name="eq_sj_rail" text="Balk eraf! %s strafpunten"/>
+        <text name="eq_sj_runout" text="Uitbreken! %s strafpunten"/>
+        <text name="eq_sj_refusal" text="Weigering! %s strafpunten"/>
+        <text name="eq_sj_eliminated" text="Uitgesloten"/>
+        <text name="eq_sj_out_late" text="Uitgesloten: de startlijn is niet op tijd gepasseerd"/>
+        <text name="eq_sj_out_wrongCourse" text="Uitgesloten: verkeerd parcours (hindernis %d buiten volgorde gesprongen)"/>
+        <text name="eq_sj_out_refusals" text="Uitgesloten: tweede weigering"/>
+        <text name="eq_sj_out_timeLimit" text="Uitgesloten: over de maximale tijd"/>
+        <text name="eq_sj_clear" text="Foutloos in %s!"/>
+        <text name="eq_sj_faults" text="%s strafpunten in %s"/>
+        <text name="eq_sj_clearPop" text="Foutloze ronde!"/>
+        <text name="eq_sj_faultsPop" text="%s strafpunten"/>
+        <text name="eq_sj_retired" text="Springronde afgebroken"/>
+        <text name="eq_sj_startLine" text="Startlijn"/>
+        <text name="eq_sj_finishLine" text="Finishlijn"/>
+        <text name="eq_sj_fenceRow" text="Hindernis %d van %d"/>
+        <text name="eq_sj_faultsRow" text="%s strafpunten"/>
+        <text name="eq_sj_timeRow" text="Tijd"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Crossparcours opnemen"/>
+        <text name="eq_course_recordXcAction" text="Nieuw crossparcours"/>
+        <text name="eq_course_xcName" text="Cross %d"/>
+        <text name="eq_course_noXcJumps" text="Geen crosshindernissen gevonden: zet een rode en een witte vlag aan weerszijden van een hindernis, of plaats boomstammenstapels of afsprongmuren"/>
+        <text name="eq_sj_beginXc" text="Ga naar de startlijn om de cross te beginnen"/>
+        <text name="eq_sj_out_refusalsXc" text="Uitgesloten: drie weigeringen bij één hindernis, of vier op het parcours"/>
+        <text name="eq_sj_represent" text="Ga terug en spring hindernis %d"/>
+        <text name="eq_pop_courseFence" text="Hindernis %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Terug naar dichtstbijzijnde punt"/>
+        <text name="eq_course_rewound" text="Parcours teruggezet naar het dichtstbijzijnde punt: %d hindernissen behouden"/>
+        <text name="eq_course_resumed" text="Opnemen vanaf het dichtstbijzijnde punt"/>
+        <text name="eq_course_finished" text="Bewerken klaar: geplaatste obstakels van Realistic Equestrian hebben hun botsing terug"/>
+        <text name="eq_course_deleted" text="%s verwijderd"/>
+        <text name="eq_course_deleteAsk" text="%s met %d hindernissen over %.0f m verwijderen?"/>
+        <text name="eq_course_deleteTitle" text="Parcours verwijderen"/>
+        <text name="eq_course_deleteAction" text="%s verwijderen"/>
+        <text name="eq_course_editAction" text="%s bewerken"/>
+        <text name="eq_course_doneAction" text="Parcours bewerken afronden"/>
+        <text name="eq_course_saveAction" text="Parcours opslaan en afronden"/>
+        <text name="eq_course_editing" text="%s bewerken: %d hindernissen, %.0f m"/>
+        <text name="eq_course_editStarted" text="%s bewerken: geplaatste obstakels van Realistic Equestrian hebben geen botsing tot je klaar bent; andere obstakels blijven vast"/>
+        <text name="input_EQ_COURSE_DELETE" text="Parcours in de buurt verwijderen"/>
+        <text name="eq_ui_riding" text="Rijden"/>
+        <text name="eq_ui_ridingFull" text="Vol, vandaag geen training meer"/>
+        <text name="eq_ui_ridingFullValue" text="%s - vol"/>
+        <text name="eq_specialty_none" text="Nog geen"/>
+        <text name="eq_specialty_pair" text="%s &amp; %s"/>
+        <text name="eq_specialty_eventer" text="Eventingpaard"/>
+        <text name="eq_specialty_racehorse" text="Renpaard"/>
+        <text name="eq_specialty_allRounder" text="Allrounder"/>
+        <text name="eq_enter_settling" text="Dat paard moet na de verhuizing nog wennen. Het mag vanaf volgende maand meedoen."/>
+        <text name="eq_enter_rested" text="Dat paard heeft deze maand al %d starts gehad en heeft rust nodig. Volgende maand mag het weer."/>
+        <text name="eq_reveal_better" text="Je kent %s nu beter, en het paard lijkt nog beter dan de handelaar liet blijken."/>
+        <text name="eq_reveal_worse" text="Je kent %s nu beter, en je hebt het gevoel dat je misschien misleid bent."/>
+        <text name="eq_reveal_fair" text="Je kent %s nu beter en hebt een duidelijker beeld van het potentieel."/>
+        <text name="eq_ui_title" text="Wedstrijden"/>
+        <text name="eq_ui_col_event" text="Wedstrijd"/>
+        <text name="eq_ui_col_going" text="Omstandigheden"/>
+        <text name="eq_ui_col_risk" text="Risico"/>
+        <text name="eq_ui_injuryRisk" text="Blessurerisico"/>
+        <text name="eq_ui_dayCount" text="%d dag"/>
+        <text name="eq_ui_days" text="%d dagen"/>
+        <text name="eq_ui_months" text="%d maand(en)"/>
+        <text name="eq_ui_perMonth" text="%s per maand"/>
+        <text name="eq_ui_retire" text="Pensioneren"/>
+        <text name="eq_ui_retireConfirm" text="%s met wedstrijdpensioen sturen? Het paard kan dan nooit meer meedoen aan wedstrijden. Dit is definitief en kan niet ongedaan worden gemaakt."/>
+        <text name="eq_ui_retireConfirmInjured" text="%s met wedstrijdpensioen sturen? De behandeling van de blessure kost dan %d%% minder, maar het paard kan nooit meer meedoen aan wedstrijden. Dit is definitief en kan niet ongedaan worden gemaakt."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="%s behandelen voor %s? Duurt %s en kost %s."/>
+        <text name="eq_risk_low" text="Laag"/>
+        <text name="eq_risk_minor" text="Klein"/>
+        <text name="eq_risk_moderate" text="Matig"/>
+        <text name="eq_risk_risky" text="Riskant"/>
+        <text name="eq_risk_off" text="Uit"/>
+        <text name="eq_ui_col_level" text="Niveau"/>
+        <text name="eq_ui_col_type" text="Type"/>
+        <text name="eq_skill_untrained" text="Ongetraind"/>
+        <text name="eq_skill_novice" text="Beginner"/>
+        <text name="eq_skill_trainee" text="Leerling"/>
+        <text name="eq_skill_amateur" text="Amateur"/>
+        <text name="eq_skill_promising" text="Veelbelovend"/>
+        <text name="eq_skill_competitor" text="Deelnemer"/>
+        <text name="eq_skill_contender" text="Kanshebber"/>
+        <text name="eq_skill_champion" text="Kampioen"/>
+        <text name="eq_skill_legend" text="Legendarisch"/>
+        <text name="eq_ui_col_when" text="Uitslagen"/>
+        <text name="eq_ui_col_fee" text="Inschrijfgeld"/>
+        <text name="eq_ui_col_prize" text="Prijzenpot"/>
+        <text name="eq_ui_col_yours" text="Jouw paarden"/>
+        <text name="eq_ui_col_day" text="Dag"/>
+        <text name="eq_ui_col_horse" text="Paard"/>
+        <text name="eq_ui_col_result" text="Uitslag"/>
+        <text name="eq_ui_col_status" text="Status"/>
+        <text name="eq_ui_horseDescription" text="Paarden eten hooi, graan en lekkers en hebben water nodig. Gezonde merries ouder dan 22 maanden kunnen fokken."/>
+        <text name="eq_ui_col_success" text="Kans"/>
+        <text name="eq_ui_col_training" text="Training"/>
+        <text name="eq_ui_trainingBenefit" text="Trainingsvoordeel"/>
+        <text name="eq_ui_ageLong" text="%d maanden"/>
+        <text name="eq_success_favourite" text="Favoriet"/>
+        <text name="eq_success_contender" text="Kanshebber"/>
+        <text name="eq_success_outsider" text="Outsider"/>
+        <text name="eq_success_longShot" text="Gokje"/>
+        <text name="eq_benefit_high" text="Hoog"/>
+        <text name="eq_benefit_medium" text="Gemiddeld"/>
+        <text name="eq_benefit_low" text="Laag"/>
+        <text name="eq_benefit_none" text="Geen"/>
+        <text name="eq_ui_when_tomorrow" text="Morgen"/>
+        <text name="eq_ui_when_nextMonth" text="Volgende maand"/>
+        <text name="eq_ui_trainingOnly" text="Alleen training"/>
+        <text name="eq_ui_entered" text="Ingeschreven: %s"/>
+        <text name="eq_ui_canEnter" text="%d kunnen meedoen"/>
+        <text name="eq_ui_noneEligible" text="Niemand toegelaten"/>
+        <text name="eq_ui_ageMonths" text="%d mnd"/>
+        <text name="eq_ui_day" text="Dag %d"/>
+        <text name="eq_ui_status_ok" text="Kan meedoen"/>
+        <text name="eq_ui_status_lowHealth" text="Lage gezondheid: %d%% afmelding"/>
+        <text name="eq_ui_status_eventFull" text="Al twee van je paarden ingeschreven"/>
+        <text name="eq_ui_status_tooYoung" text="Te jong"/>
+        <text name="eq_ui_status_tooOld" text="Te oud"/>
+        <text name="eq_ui_status_ratingLow" text="Rating te laag"/>
+        <text name="eq_ui_status_ratingHigh" text="Te goed voor dit niveau"/>
+        <text name="eq_ui_status_enteredHere" text="Ingeschreven"/>
+        <text name="eq_ui_status_enteredElsewhere" text="In een andere wedstrijd"/>
+        <text name="eq_ui_result_place" text="%d van %d"/>
+        <text name="eq_ui_result_eliminated" text="Uitgesloten"/>
+        <text name="eq_ui_result_scratched" text="Afgemeld"/>
+        <text name="eq_ui_button_enterAuto" text="Inschrijven, automatisch transport (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Inschrijven, handmatig transport (%s)"/>
+        <text name="eq_ui_transportLabel" text="Totale kosten"/>
+        <text name="eq_ui_transportLine" text="Auto %s · Handmatig %s"/>
+        <text name="eq_ui_transportLabel_near" text="Kosten, buitenland"/>
+        <text name="eq_ui_transportLabel_far" text="Kosten, lange afstand"/>
+        <text name="eq_ui_awaiting" text="%s (wacht op aflevering)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Wacht op aflevering"/>
+        <text name="input_EQ_DELIVER" text="Paard afleveren voor wedstrijd"/>
+        <text name="eq_deliver_prompt" text="%s afleveren voor wedstrijd"/>
+        <text name="eq_deliver_promptMany" text="%d paarden afleveren voor hun wedstrijden"/>
+        <text name="eq_deliver_done" text="%s afgeleverd. Het paard vertrekt naar de wedstrijd."/>
+        <text name="eq_deliver_doneMany" text="%d paarden afgeleverd. Ze vertrekken naar hun wedstrijden."/>
+        <text name="eq_deliver_noRoom" text="Kan niet afleveren: je paarden hebben een vrije plek in een van je weides nodig om naar terug te komen."/>
+        <text name="eq_deliver_failed" text="Aflevering mislukt: %s"/>
+        <text name="eq_deliver_title" text="Afleveren voor wedstrijd"/>
+        <text name="eq_deliver_ask" text="%s wacht om naar een wedstrijd te gaan. Nu afleveren, of de handelaar openen zoals gewoonlijk?"/>
+        <text name="eq_deliver_askMany" text="%d paarden in deze trailer wachten om naar hun wedstrijden te gaan. Nu afleveren, of de handelaar openen zoals gewoonlijk?"/>
+        <text name="eq_deliver_yes" text="Afleveren"/>
+        <text name="eq_deliver_no" text="Handelaar openen"/>
+        <text name="eq_loose_broughtHome" text="Je personeel heeft %s teruggebracht naar %s."/>
+        <text name="eq_loose_broughtHomeUnnamed" text="Je personeel heeft een losgelopen paard teruggebracht naar %s."/>
+        <text name="eq_ui_result_notDelivered" text="Niet afgeleverd"/>
+        <text name="eq_ui_deadline_round" text="voor de uitslagen van morgen"/>
+        <text name="eq_ui_deadline_month" text="voor het einde van de maand"/>
+        <text name="eq_ui_button_results" text="Uitslagen"/>
+        <text name="eq_ui_button_manageAnimals" text="Dieren beheren"/>
+        <text name="eq_ui_button_events" text="Wedstrijden"/>
+        <text name="eq_ui_noEvents" text="Er staan nu geen wedstrijden open. Elke ronde worden nieuwe getrokken."/>
+        <text name="eq_ui_noResults" text="Je paarden hebben nog geen uitslagen."/>
+        <text name="eq_ui_noHorses" text="Je hebt geen paarden."/>
+        <text name="eq_ui_clientNote" text="Wedstrijden worden door de host gerund. Inschrijven vanaf een multiplayer-client komt in een latere versie."/>
+        <text name="eq_ui_noConfig" text="De wedstrijdlijst kon niet worden geladen; zie de log."/>
+        <text name="eq_ui_ages_range" text="leeftijd %d-%d maanden"/>
+        <text name="eq_ui_ages_from" text="vanaf %d maanden"/>
+        <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, veld van %d. Kies een paard en druk op Enter."/>
+        <text name="eq_enter_noEvent" text="Die wedstrijd staat niet open voor inschrijvingen."/>
+        <text name="eq_enter_retired" text="Dat paard is gestopt met wedstrijden."/>
+        <text name="eq_enter_inFoal" text="Die merrie is te ver drachtig om mee te doen. Na het veulenen mag ze weer."/>
+        <text name="eq_enter_foaled" text="Die merrie herstelt nog van het veulenen. Ze mag drie maanden na de geboorte weer meedoen."/>
+        <text name="eq_enter_already" text="Dat paard is al ingeschreven voor %s."/>
+        <text name="eq_enter_eventFull" text="Je kunt maximaal %d paarden inschrijven voor één wedstrijd."/>
+        <text name="eq_enter_tooYoung" text="Te jong: deze wedstrijd is voor paarden van %d maanden en ouder, en het jouwe is %d maanden."/>
+        <text name="eq_enter_tooOld" text="Te oud: deze wedstrijd is voor paarden tot %d maanden, en het jouwe is %d maanden."/>
+        <text name="eq_enter_ratingLow" text="Rating %.0f ligt onder het bereik %.0f-%.0f van deze wedstrijd."/>
+        <text name="eq_enter_ratingHigh" text="Rating %.0f ligt boven het bereik %.0f-%.0f van deze wedstrijd: schrijf in op een hoger niveau."/>
+        <text name="eq_enter_noMoney" text="Niet genoeg geld: inschrijven kost %s (inschrijfgeld %s, transport %s)."/>
+        <text name="eq_enter_done" text="%s ingeschreven voor %s (rating %.0f). Automatisch transport: %s."/>
+        <text name="eq_enter_doneManual" text="%s ingeschreven voor %s (rating %.0f). Handmatig transport: breng het paard naar de dierenhandelaar %s, anders start het niet."/>
+        <text name="eq_result_notDelivered" text="%s is nooit afgeleverd voor %s en is dus niet gestart. Het inschrijfgeld is verloren."/>
+        <text name="eq_enter_farmLimit" text="Je hebt alle %d inschrijvingen van deze maand gebruikt. Volgende maand komen er meer."/>
+        <text name="eq_ui_farmLimit" text="Geen inschrijvingen meer deze maand"/>
+        <text name="eq_ui_entriesLeft" text="Inschrijvingen over deze maand: %d van %d."/>
+        <text name="eq_money_transport" text="Paardentransport"/>
+        <text name="eq_money_staffWages" text="Lonen ruiterpersoneel"/>
+        <text name="eq_staff_title" text="Ruiterpersoneel"/>
+        <text name="eq_staff_tab_hire" text="Aannemen"/>
+        <text name="eq_staff_tab_staff" text="Jouw personeel"/>
+        <text name="eq_staff_col_name" text="Naam"/>
+        <text name="eq_staff_col_job" text="Functie"/>
+        <text name="eq_staff_col_grade" text="Niveau"/>
+        <text name="eq_staff_col_best" text="Beste vaardigheden"/>
+        <text name="eq_staff_col_worksOn" text="Werkt met"/>
+        <text name="eq_staff_col_wage" text="Loon / dag"/>
+        <text name="eq_staff_job_groom" text="Verzorger"/>
+        <text name="eq_staff_job_dressage" text="Dressuurtrainer"/>
+        <text name="eq_staff_job_showJumping" text="Springtrainer"/>
+        <text name="eq_staff_job_crossCountry" text="Crosstrainer"/>
+        <text name="eq_staff_job_racing" text="Rentrainer"/>
+        <text name="eq_staff_job_vet" text="Dierenarts"/>
+        <text name="eq_staff_job_broker" text="Makelaar"/>
+        <text name="eq_staff_grade_junior" text="Junior"/>
+        <text name="eq_staff_grade_experienced" text="Ervaren"/>
+        <text name="eq_staff_grade_senior" text="Senior"/>
+        <text name="eq_staff_grade_legendary" text="Legendarisch"/>
+        <text name="eq_staff_skill_dressage" text="Dressuur"/>
+        <text name="eq_staff_skill_showJumping" text="Springen"/>
+        <text name="eq_staff_skill_crossCountry" text="Cross"/>
+        <text name="eq_staff_skill_racing" text="Racen"/>
+        <text name="eq_staff_skill_veterinary" text="Diergeneeskunde"/>
+        <text name="eq_staff_skill_broker" text="Bemiddeling"/>
+        <text name="eq_staff_level_1" text="Zwak"/>
+        <text name="eq_staff_level_2" text="Redelijk"/>
+        <text name="eq_staff_level_3" text="Goed"/>
+        <text name="eq_staff_level_4" text="Zeer goed"/>
+        <text name="eq_staff_level_5" text="Uitstekend"/>
+        <text name="eq_staff_level_6" text="Legendarisch"/>
+        <text name="eq_staff_works_general" text="Alle paarden"/>
+        <text name="eq_staff_works_passive" text="Elk paard"/>
+        <text name="eq_staff_status" text="Status"/>
+        <text name="eq_staff_stables" text="Stallen"/>
+        <text name="eq_staff_roles" text="Rollen"/>
+        <text name="eq_staff_horses" text="Paarden"/>
+        <text name="eq_staff_covers" text="Paarden onder zorg"/>
+        <text name="eq_staff_mode_roles" text="Per rol"/>
+        <text name="eq_staff_mode_horses" text="Individueel"/>
+        <text name="eq_staff_allStables" text="Alle stallen"/>
+        <text name="eq_staff_nStables" text="%d stallen"/>
+        <text name="eq_staff_allRoles" text="Alle rollen"/>
+        <text name="eq_staff_nRoles" text="%d rollen"/>
+        <text name="eq_staff_nHorses" text="%d paarden"/>
+        <text name="eq_staff_noHorses" text="Kies paarden"/>
+        <text name="eq_staff_works_off" text="Uitgeschakeld"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, uitgeschakeld vanaf morgen"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, vanaf morgen weer aan het werk"/>
+        <text name="eq_staff_pick_stables" text="Stallen kiezen"/>
+        <text name="eq_staff_pick_roles" text="Rollen kiezen"/>
+        <text name="eq_staff_pick_horses" text="Paarden kiezen"/>
+        <text name="eq_staff_pick_empty" text="Vink er minstens één aan."/>
+        <text name="eq_staff_wage" text="Loon"/>
+        <text name="eq_staff_perDay" text="%s per dag"/>
+        <text name="eq_staff_duties" text="Hoofdtaken"/>
+        <text name="eq_staff_duties_groom" text="Traint alle vier eigenschappen, poetst paarden, brengt losgelopen paarden terug"/>
+        <text name="eq_staff_duties_trainer" text="Richt zich op %s en %s, traint de andere eigenschappen een beetje en bereidt paarden voor op hun wedstrijden"/>
+        <text name="eq_staff_duties_vet" text="Minder blessures, kortere en goedkopere behandeling, voor elk paard"/>
+        <text name="eq_staff_duties_broker" text="Geeft een nauwkeuriger potentieel van paarden bij de handelaar. Betere prijzen bij het kopen en verkopen van paarden."/>
+        <text name="eq_staff_timeLeft" text="Resterende tijd"/>
+        <text name="eq_staff_hours" text="%d u"/>
+        <text name="eq_staff_button_hire" text="Aannemen (%s per dag)"/>
+        <text name="eq_staff_button_fire" text="Laten gaan"/>
+        <text name="eq_staff_fire_confirm" text="%s laten gaan? Die komt niet meer terug."/>
+        <text name="eq_staff_letGo" text="%s is vertrokken."/>
+        <text name="eq_staff_hired" text="%s begint vandaag."/>
+        <text name="eq_staff_unique" text="Je hebt al een %s. Een boerderij kan er maar één hebben."/>
+        <text name="eq_staff_noCandidates" text="Niemand zoekt nu werk. Elke maand komen er nieuwe mensen."/>
+        <text name="eq_staff_noStaff" text="Je hebt nog geen personeel. Neem iemand aan op het tabblad Aannemen."/>
+        <text name="eq_staff_summary_hire" text="Elke paar uur komen er nieuwe mensen bij, die 12 tot 72 uur beschikbaar blijven. Maar één dierenarts en één makelaar per boerderij."/>
+        <text name="eq_staff_summary_staff" text="Lonen: %s per dag. Personeel is het effectiefst als ieder maar een paar paarden heeft."/>
+        <text name="eq_staff_clientNote" text="Voorlopig kan alleen de host personeel aannemen."/>
+        <text name="eq_result_placed" text="%s eindigde als %d van %d in %s en won %s."/>
+        <text name="eq_result_placedNoPrize" text="%s eindigde als %d van %d in %s."/>
+        <text name="eq_result_gone" text="%s kon niet starten in %s: het paard staat niet meer op een boerderij."/>
+        <text name="eq_and" text="en"/>
+        <text name="eq_facility_improves" text="Verbetert %s-training (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Training in: %s"/>
+        <text name="eq_facility_indoorArena" text="Binnenmanege"/>
+        <text name="eq_facility_ridingCentre" text="Manege"/>
+        <text name="eq_facility_outdoorArena" text="Buitenbak"/>
+        <text name="eq_facility_roundPen" text="Longeercirkel"/>
+        <text name="eq_facility_jumps" text="Springparcours"/>
+        <text name="eq_facility_xcFence" text="Crossparcours"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_tab" text="Paardensport"/>
+        <text name="eq_settings_credit" text="Realistic Equestrian door %s"/>
+        <text name="eq_settings_off" text="Uit"/>
+        <text name="eq_settings_on" text="Aan"/>
+        <text name="eq_settings_noLimit" text="Geen limiet"/>
+        <text name="eq_settings_trainingRate" text="Trainingstempo"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Hoe snel rijden, personeel en wedstrijden de eigenschappen van een paard verhogen. 1x is het normale tempo."/>
+        <text name="eq_settings_cadence" text="Wedstrijden"/>
+        <text name="eq_settings_cadence_tooltip" text="Hoe vaak de wedstrijdronde plaatsvindt. Wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_settings_cadence_day" text="Elke dag"/>
+        <text name="eq_settings_cadence_month" text="Elke maand"/>
+        <text name="eq_settings_eventsMin" text="Minste wedstrijden"/>
+        <text name="eq_settings_eventsMin_tooltip" text="Het kleinste aantal wedstrijden tegelijk op de kalender, inclusief Gevorderd+ en Kampioenschap. Elke ronde trekt een aantal tussen dit en het maximum. Multiplayer voegt er meer toe voor elke boerderij met paarden."/>
+        <text name="eq_settings_eventsMax" text="Meeste wedstrijden"/>
+        <text name="eq_settings_eventsMax_tooltip" text="Het grootste aantal wedstrijden tegelijk op de kalender. Wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_settings_racing" text="Races en steeplechases"/>
+        <text name="eq_settings_racing_tooltip" text="Of vlakkoersen en steeplechases op de wedstrijdkalender staan. Wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_settings_injuries" text="Blessures bij wedstrijden"/>
+        <text name="eq_settings_injuries_tooltip" text="Of paarden geblesseerd kunnen raken bij wedstrijden."/>
+        <text name="eq_settings_forcedRetirement" text="Carrièrebeëindigende blessures"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Of de zwaarste wedstrijdblessures de wedstrijdcarrière van een paard voorgoed kunnen beëindigen."/>
+        <text name="eq_settings_entriesPerMonth" text="Inschrijvingen per maand"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Hoeveel wedstrijdinschrijvingen elke boerderij per maand kan doen."/>
+        <text name="eq_ord_1" text="%de"/>
+        <text name="eq_ord_2" text="%de"/>
+        <text name="eq_ord_3" text="%de"/>
+        <text name="eq_ord_n" text="%de"/>
+        <text name="eq_story_podium" text="Winnaar: %s, 2e: %s, 3e: %s."/>
+        <text name="eq_story_winner" text="Winnaar: %s."/>
+        <text name="eq_story_gains" text="%s erbij."/>
+        <text name="eq_story_injury" text="Kwam thuis met %s."/>
+        <text name="eq_story_careerEnded" text="Liep een carrièrebeëindigende blessure op."/>
+        <text name="eq_story_jumping_clean" text="Sprong foutloos."/>
+        <text name="eq_story_jumping_struggled" text="Had het erg zwaar met de moeilijkheid van het parcours."/>
+        <text name="eq_story_jumping_eliminated" text="Lag eruit na een val."/>
+        <text name="eq_story_jumping_elimRefusal" text="Lag eruit na drie weigeringen."/>
+        <text name="eq_story_jumping_agility" text="Gooide een balk bij een lastige combinatie."/>
+        <text name="eq_story_jumping_agilityMany" text="Gooide meerdere balken."/>
+        <text name="eq_story_jumping_hardest" text="Ging goed tot er een balk viel bij de moeilijkste hindernis."/>
+        <text name="eq_story_jumping_speed" text="Was traag tussen de hindernissen en verloor tijd."/>
+        <text name="eq_story_jumping_temperament" text="Weigerde een hindernis."/>
+        <text name="eq_story_dressage_clean" text="Een verzorgde proef die de jury imponeerde."/>
+        <text name="eq_story_dressage_struggled" text="Worstelde van begin tot eind met de proef."/>
+        <text name="eq_story_dressage_agility" text="Verloor punten in het zijwaartse werk."/>
+        <text name="eq_story_dressage_agilityMany" text="Verloor punten bij meerdere oefeningen."/>
+        <text name="eq_story_dressage_hardest" text="Een elegante proef, maar moeite met de moeilijkste oefeningen."/>
+        <text name="eq_story_dressage_temperament" text="Was zichtbaar gespannen en kon zich slecht concentreren."/>
+        <text name="eq_story_dressage_temperamentMany" text="Gespannen en afgeleid tijdens het grootste deel van de proef."/>
+        <text name="eq_story_dressage_elimRefusal" text="Weigerde verder te gaan en stopte met de proef."/>
+        <text name="eq_story_crossCountry_clean" text="Foutloos binnen de tijd."/>
+        <text name="eq_story_crossCountry_struggled" text="Vond het parcours te zwaar en worstelde de hele weg."/>
+        <text name="eq_story_crossCountry_eliminated" text="Lag eruit na een val."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="Lag eruit na drie weigeringen."/>
+        <text name="eq_story_crossCountry_agility" text="Brak uit bij een smalle hindernis."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Struikelde bij een paar landingen en raakte het ritme kwijt."/>
+        <text name="eq_story_crossCountry_hardest" text="Ging goed tot een uitbreking bij de moeilijkste hindernis."/>
+        <text name="eq_story_crossCountry_temperament" text="Weigerde bij het water."/>
+        <text name="eq_story_crossCountry_speed" text="Lag uit het tempo tussen de hindernissen en verloor tijd."/>
+        <text name="eq_story_crossCountry_stamina" text="Werd moe op de langere stukken en liep achter het tempo aan."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Had ruim voor de finish geen energie meer."/>
+        <text name="eq_story_race_clean" text="Liep een prachtige race van start tot finish."/>
+        <text name="eq_story_race_struggled" text="Kwam nooit in de race."/>
+        <text name="eq_story_race_eliminated" text="Viel na een botsing en kon niet verder."/>
+        <text name="eq_story_race_elimRefusal" text="Deed lastig bij de start en werd gestopt."/>
+        <text name="eq_story_race_temperament" text="Miste de start."/>
+        <text name="eq_story_race_speed" text="Kon het begintempo niet bijhouden."/>
+        <text name="eq_story_race_speedMany" text="Miste de snelheid om bij de koplopers te blijven."/>
+        <text name="eq_story_race_stamina" text="Zakte weg in de slotfase."/>
+        <text name="eq_story_race_staminaMany" text="Was ruim voor de finish door de benzine heen."/>
+        <text name="eq_story_race_finish" text="Liep de hele race goed, maar werd in de eindsprint geklopt."/>
+        <text name="eq_story_race_comeback" text="Raakte vroeg achterop, maar had een spannende eindsprint."/>
+        <text name="eq_story_steeplechase_clean" text="Sprong en liep de hele race goed."/>
+        <text name="eq_story_steeplechase_struggled" text="Had moeite met zowel de hindernissen als het tempo."/>
+        <text name="eq_story_steeplechase_eliminated" text="Viel zwaar bij een haag en kon niet verder."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Weigerde een hindernis en werd gestopt."/>
+        <text name="eq_story_steeplechase_agility" text="Raakte een hindernis hard en verloor terrein."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Sprong slecht en verloor terrein bij meerdere hindernissen."/>
+        <text name="eq_story_steeplechase_hardest" text="Ging goed tot een flinke fout bij de moeilijkste hindernis."/>
+        <text name="eq_story_steeplechase_speed" text="Kon het begintempo niet bijhouden."/>
+        <text name="eq_story_steeplechase_temperament" text="Sprong aarzelend en verloor terrein."/>
+        <text name="eq_story_steeplechase_stamina" text="Werd moe en zakte weg over de laatste hindernissen."/>
+        <text name="eq_story_eventing_clean" text="Foutloos in elk onderdeel."/>
+        <text name="eq_story_eventing_struggled" text="Had het zwaar in alle drie de onderdelen."/>
+        <text name="eq_story_eventing_eliminated" text="Lag eruit na een val op de cross."/>
+        <text name="eq_ui_tab_upcoming" text="Komende wedstrijden"/>
+        <text name="eq_ui_tab_results" text="Uitslagen"/>
+        <text name="eq_ui_col_starts" text="Starts"/>
+        <text name="eq_ui_col_wins" text="Overwinningen"/>
+        <text name="eq_ui_col_lastResult" text="Laatste uitslag"/>
+        <text name="eq_ui_result_placeOrd" text="%s van %d"/>
+        <text name="eq_ui_noHorseResults" text="%s heeft nog geen wedstrijduitslagen."/>
+        <text name="eq_ui_summary_results" text="De laatste %d wedstrijden van een paard. Kies rechts een paard."/>
+        <text name="eq_ui_career_starts" text="Starts"/>
+        <text name="eq_ui_career_record" text="Overwinningen / ereplaatsen"/>
+        <text name="eq_ui_career_earnings" text="Prijzengeld"/>
+        <text name="eq_ui_career_eliminations" text="Uitsluitingen"/>
+        <text name="eq_ui_button_viewResults" text="Uitslagen bekijken"/>
+        <text name="eq_ui_button_rideHorse" text="Paard berijden"/>
+        <text name="eq_ui_rideNotInPen" text="%s staat nu niet in de wei. Loop daar naar een paard toe om het te berijden."/>
+        <text name="eq_settings_entryFeeScale" text="Inschrijfgeld"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Schaalt het inschrijfgeld van elke wedstrijd. 1x is normaal. Wedstrijden die al op de kalender staan houden hun inschrijfgeld; wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_settings_prizeScale" text="Prijzengeld"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Schaalt het prijzengeld van elke wedstrijd. 1x is normaal. Wedstrijden die al op de kalender staan houden hun prijzen; wijzigingen gelden vanaf de volgende ronde."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s strafpunten"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s strafpunten (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, foutloos"/>
+        <text name="eq_story_down1" text="1 balk"/>
+        <text name="eq_story_downN" text="%d balken"/>
+        <text name="eq_story_refusal1" text="1 weigering"/>
+        <text name="eq_story_refusalN" text="%d weigeringen"/>
+        <text name="eq_story_time" text="%s tijd"/>
+        <text name="eq_story_total" text="Totaal: %s strafpunten"/>
+        <text name="eq_staff_button_decline" text="Afwijzen"/>
+        <text name="eq_staff_declined" text="%s komt niet terug. Binnen een paar uur kan er iemand nieuw opduiken."/>
+    </texts>
+</l10n>

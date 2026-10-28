@@ -378,7 +378,28 @@ EqTrainingHud.PANEL_NOTE = { gap = 0.006, lineHeight = 0.019, size = 0.0145, abo
 -- Where the panel's bottom was last drawn (its height changes with its rows).
 EqTrainingHud.panelBottom = nil
 
---- Split text into lines no wider than width.
+--- Pieces of one space-separated word, for wrapping. Chinese and Japanese have no spaces, so
+--- each of their characters is a piece of its own; any other run of characters stays together.
+--- @param word string
+--- @return table pieces
+local function wordPieces(word)
+    local pieces, run = {}, ""
+    for char in word:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
+        local lead = char:byte(1)
+        -- 0xE3-0xE9 lead the CJK blocks (U+3000-U+9FFF), 0xEF the full-width forms.
+        if (lead >= 227 and lead <= 233) or lead == 239 then
+            if run ~= "" then table.insert(pieces, run) end
+            table.insert(pieces, char)
+            run = ""
+        else
+            run = run .. char
+        end
+    end
+    if run ~= "" then table.insert(pieces, run) end
+    return pieces
+end
+
+--- Split text into lines no wider than width, at spaces or between Chinese and Japanese characters.
 --- @param value string
 --- @param size number
 --- @param width number
@@ -387,13 +408,15 @@ EqTrainingHud.panelBottom = nil
 function EqTrainingHud.wrap(value, size, width, bold)
     setTextBold(bold == true)
     local lines, line = {}, nil
-    for word in string.gmatch(value, "%S+") do
-        local candidate = line == nil and word or line .. " " .. word
-        if line ~= nil and getTextWidth(size, candidate) > width then
-            table.insert(lines, line)
-            line = word
-        else
-            line = candidate
+    for word in string.gmatch(tostring(value), "%S+") do
+        for i, piece in ipairs(wordPieces(word)) do
+            local candidate = line == nil and piece or line .. (i == 1 and " " or "") .. piece
+            if line ~= nil and getTextWidth(size, candidate) > width then
+                table.insert(lines, line)
+                line = piece
+            else
+                line = candidate
+            end
         end
     end
     if line ~= nil then table.insert(lines, line) end
@@ -464,18 +487,7 @@ end
 --- @param size number
 --- @return table lines
 local function wrap(value, width, size)
-    local lines, line = {}, ""
-    for word in tostring(value):gmatch("%S+") do
-        local candidate = line == "" and word or (line .. " " .. word)
-        if line == "" or getTextWidth(size, candidate) <= width then
-            line = candidate
-        else
-            table.insert(lines, line)
-            line = word
-        end
-    end
-    if line ~= "" then table.insert(lines, line) end
-    return lines
+    return EqTrainingHud.wrap(value, size, width, false)
 end
 
 

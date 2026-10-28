@@ -9,6 +9,7 @@
         info      the first time its Information tab shows with horses on the farm: skills,
                   potential, roles, staff and feed
         events    the first time the Events tab opens: disciplines, transport, injuries
+        staff     the first time the Equestrian Staff tab opens: jobs, wages, who they work on
         diseases  the first time RLRM's Diseases dialog opens for a horse: treatment, retiring
 
     The menu popups are drawn after RLMenu draws, so they sit on top of it, and the diseases
@@ -30,6 +31,7 @@ EqWelcome.SERIES = {
     menu = { "menu_1" },
     info = { "info_skills", "info_potential", "info_roles", "info_feed" },
     events = { "events_disciplines", "events_transport", "events_risks" },
+    staff = { "staff_hire", "staff_works" },
     diseases = { "diseases_treatment" },
 }
 
@@ -74,12 +76,13 @@ end
 
 
 --- Which menu series to show now, if any. Pure, for the tests.
---- @param state table { hasHorses, infoOpen, eventsOpen, seen = function(series) }
+--- @param state table { hasHorses, infoOpen, eventsOpen, staffOpen, seen = function(series) }
 --- @return string|nil series
 function EqWelcome.menuSeries(state)
     if state.hasHorses and not state.seen("menu") then return "menu" end
     if state.infoOpen and state.hasHorses and not state.seen("info") then return "info" end
     if state.eventsOpen and not state.seen("events") then return "events" end
+    if state.staffOpen and not state.seen("staff") then return "staff" end
     return nil
 end
 
@@ -115,7 +118,7 @@ end
 --- @return number|nil x, number|nil z
 local function nodePosition(node)
     if type(node) ~= "number" or node == 0 then return nil end
-    local ok, x, _, z = pcall(getWorldTranslation, node)
+    local ok, x, _, z = EqLog.try("EqWelcome.nodePosition getWorldTranslation", getWorldTranslation, node)
     if ok then return x, z end
     return nil
 end
@@ -128,7 +131,7 @@ local function playerPosition()
     local vehicle = g_localPlayer.getCurrentVehicle ~= nil and g_localPlayer:getCurrentVehicle() or nil
     if type(vehicle) == "table" then return nodePosition(vehicle.rootNode) end
     if g_localPlayer.getPosition == nil then return nil end
-    local ok, x, _, z = pcall(g_localPlayer.getPosition, g_localPlayer)
+    local ok, x, _, z = EqLog.try("EqWelcome.playerPosition getPosition", g_localPlayer.getPosition, g_localPlayer)
     if ok then return x, z end
     return nil
 end
@@ -200,6 +203,7 @@ function EqWelcome.onMenuDraw(menu)
             hasHorses = farmHasHorses(),
             infoOpen = isPageOpen(menu, menu.infoFrame),
             eventsOpen = isPageOpen(menu, menu.eqEventsFrame),
+            staffOpen = isPageOpen(menu, menu.eqStaffFrame),
             seen = EqWelcome.hasSeen,
         })
         if series ~= nil then EqWelcome.show(series, "menu") end

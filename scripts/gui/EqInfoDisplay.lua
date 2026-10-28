@@ -700,9 +700,7 @@ function EqInfoDisplay.showGeneticsWithoutMeat(original, animal, box)
         if title == skip then return end
         return addLine(target, title, ...)
     end
-    local ok, err = pcall(original, animal, box)
-    box.addLine = own
-    if not ok then error(err, 0) end
+    EqLog.finally(function() box.addLine = own end, original, animal, box)
 end
 
 

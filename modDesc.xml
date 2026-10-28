@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<modDesc descVersion="114">
+<modDesc descVersion="115">
     <author>Jasta007</author>
-    <version>0.4.0.0</version>
+    <version>0.5.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
-        <de>Realistic Equestrian</de>
-        <fr>Realistic Equestrian</fr>
-        <es>Realistic Equestrian</es>
     </title>
     <description>
         <en>
@@ -17,6 +14,12 @@ Every horse gets four competition stats - Stamina, Speed, Agility and Temperamen
 Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
+
+Changelog 0.5.0.0:
+- Equestrian Staff: hire grooms, event trainers, a vet and a broker
+- Eventing scoresheets with each phase's penalties and the total
+- Cross country pieces stay hidden outside construction, editing and rounds
+- Portuguese, Russian, Polish, Italian, Dutch, Czech, Japanese and Chinese translations
 
 Made by Jasta007.]]>
         </en>
@@ -29,6 +32,12 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
+Änderungen 0.5.0.0:
+- Pferdepersonal: Pfleger, Turniertrainer, einen Tierarzt und einen Makler einstellen
+- Vielseitigkeit: Ergebnisbogen mit Strafpunkten je Teilprüfung und Gesamtergebnis
+- Geländehindernisse bleiben außerhalb von Baumodus, Bearbeitung und Runden verborgen
+- Übersetzungen ins Portugiesische, Russische, Polnische, Italienische, Niederländische, Tschechische, Japanische und Chinesische
+
 Von Jasta007.]]>
         </de>
         <fr>
@@ -40,6 +49,12 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
+Changements 0.5.0.0 :
+- Personnel équestre : embauchez palefreniers, entraîneurs de concours, un vétérinaire et un courtier
+- Concours complet : feuille de résultats avec les pénalités de chaque épreuve et le total
+- Les éléments de cross restent cachés hors construction, édition et tours
+- Traductions portugaise, russe, polonaise, italienne, néerlandaise, tchèque, japonaise et chinoise
+
 Par Jasta007.]]>
         </fr>
         <es>
@@ -50,6 +65,12 @@ Cada caballo tiene cuatro habilidades de competición: Resistencia, Velocidad, A
 Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
+
+Cambios 0.5.0.0:
+- Personal ecuestre: contrata mozos de cuadra, entrenadores de concurso, un veterinario y un corredor
+- Concurso completo: hoja de resultados con las penalizaciones de cada prueba y el total
+- Las piezas de cross quedan ocultas fuera de construcción, edición y recorridos
+- Traducciones al portugués, ruso, polaco, italiano, neerlandés, checo, japonés y chino
 
 Por Jasta007.]]>
         </es>

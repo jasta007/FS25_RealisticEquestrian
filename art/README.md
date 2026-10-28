@@ -27,3 +27,9 @@ a pennant wrapped round it, and gold height bars for 0.6, 0.9 and 1.2 m that `Eq
 in construction mode) and the drop walls (painted planks and peeled posts, a
 half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes; PNG copies
 go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.
+
+The art scripts write DDS files with `source/eqdds.py`: shop images as BC7, 3D textures as DXT1
+with mipmaps, as GIANTS' TestRunner wants. It needs `pip install etcpak`. The scripts write inline
+i3d geometry, so after running one, open its .i3d files in GIANTS Editor and Save (with Preferences >
+Save "force external binary files" on) to get the
+binary `.i3d.shapes` files.

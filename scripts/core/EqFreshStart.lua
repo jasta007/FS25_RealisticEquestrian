@@ -52,7 +52,7 @@ function EqFreshStart.repair(animal, rng)
     if record ~= nil and record.career.starts == 0 then record.redrawStart = true end
     EqRegistry.getOrCreate(animal)
 
-    if animal.setDirty ~= nil then pcall(animal.setDirty, animal) end
+    if animal.setDirty ~= nil then EqLog.try("EqFreshStart.repair setDirty", animal.setDirty, animal) end
 end
 
 

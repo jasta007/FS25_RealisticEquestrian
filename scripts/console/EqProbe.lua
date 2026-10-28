@@ -35,7 +35,7 @@ local function describe(value)
     if kind == "table" then
         local name = nil
         if type(value.getName) == "function" then
-            local ok, result = pcall(value.getName, value)
+            local ok, result = EqLog.try("EqProbe.describe getName", value.getName, value)
             if ok then name = result end
         end
         local typeName = value.typeName or (value.customEnvironment ~= nil and "vehicle") or nil
@@ -48,7 +48,7 @@ end
 
 --- @return number|nil x, number|nil y, number|nil z the local player's position
 local function playerPosition()
-    local ok, x, y, z = pcall(function()
+    local ok, x, y, z = EqLog.try("EqProbe.playerPosition", function()
         if g_localPlayer ~= nil and g_localPlayer.getPosition ~= nil then return g_localPlayer:getPosition() end
         return nil
     end)
@@ -62,7 +62,7 @@ end
 local function triggerPosition(trigger)
     local node = trigger.triggerNode or trigger.rootNode or trigger.activationTrigger
     if type(node) ~= "number" or node == 0 then return nil end
-    local ok, x, y, z = pcall(getWorldTranslation, node)
+    local ok, x, y, z = EqLog.try("EqProbe.triggerPosition getWorldTranslation", getWorldTranslation, node)
     if ok then return x, y, z end
     return nil
 end
@@ -80,7 +80,7 @@ local function describeTrailer(trailer, lines)
     for key, value in pairs(spec) do
         table.insert(lines, string.format("    spec.%s = %s", tostring(key), describe(value)))
     end
-    local ok, clusters = pcall(function() return trailer:getClusters() end)
+    local ok, clusters = EqLog.try("EqProbe.describeTrailer", function() return trailer:getClusters() end)
     if ok and type(clusters) == "table" then
         for _, animal in pairs(clusters) do
             local id = EqRegistry ~= nil and EqRegistry.getId(animal) or nil
@@ -125,7 +125,7 @@ function EqProbe.run()
         end
     end
 
-    local ok, vehicle = pcall(function() return g_localPlayer ~= nil and g_localPlayer:getCurrentVehicle() or nil end)
+    local ok, vehicle = EqLog.try("EqProbe.run", function() return g_localPlayer ~= nil and g_localPlayer:getCurrentVehicle() or nil end)
     if ok and type(vehicle) == "table" then
         table.insert(lines, "player's vehicle:")
         describeTrailer(vehicle, lines)

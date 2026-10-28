@@ -8,8 +8,9 @@
     the line between them is the fence, and the bar nearest its middle gives its height.
 
     The bars (nodes "eqXcGuide") show only in construction mode or while a course is edited
-    (EqXcFlags.editing); the flags always show. The game keeps every segment of one fence type in
-    one placeable, so the flags and bars are found by node name under it.
+    (EqXcFlags.editing); the flags hide outside construction, editing and rounds (EqXcHide). The
+    game keeps every segment of one fence type in one placeable, so the flags and bars are found by
+    node name under it.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -121,7 +122,7 @@ function EqXcFlags.inConstruction()
     local gui = g_gui.currentGui
     local target = gui ~= nil and gui.target or nil
     if target == nil or ConstructionScreen == nil or target.isa == nil then return false end
-    local ok, isConstruction = pcall(target.isa, target, ConstructionScreen)
+    local ok, isConstruction = EqLog.try("EqXcFlags.inConstruction isa", target.isa, target, ConstructionScreen)
     return ok and isConstruction == true
 end
 

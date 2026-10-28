@@ -6,6 +6,7 @@
         <name>$l10n_eq_shop_courseFlags</name>
         <functions>
             <function>$l10n_eq_shop_courseFlags_function</function>
+            <function>$l10n_eq_shop_xcFlagsHidden_function</function>
         </functions>
         <image>placeables/xcJumps/store_courseFlags.dds</image>
         <price>10</price>
@@ -22,12 +23,6 @@
             <category>animals</category>
             <tab>horses</tab>
         </brush>
-        <vertexBufferMemoryUsage>0</vertexBufferMemoryUsage>
-        <indexBufferMemoryUsage>0</indexBufferMemoryUsage>
-        <textureMemoryUsage>0</textureMemoryUsage>
-        <audioMemoryUsage>0</audioMemoryUsage>
-        <instanceVertexBufferMemoryUsage>0</instanceVertexBufferMemoryUsage>
-        <instanceIndexBufferMemoryUsage>0</instanceIndexBufferMemoryUsage>
     </storeData>
 
     <base>

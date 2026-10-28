@@ -372,7 +372,9 @@ end
 function EqCompetitionManager.entrantFor(record, animal, event, farmId, month)
     local config = EqCompetitionManager.config
     local discipline = config.disciplineByName[event.discipline]
-    local stats = EqTraining.withForm(record.trained, EqCompetitionManager.formFor(record, month))
+    local form = EqCompetitionManager.formFor(record, month)
+    if EqStaffManager ~= nil then form = EqStaff.mixForm(form, EqStaffManager.eventBonusFor(record, farmId, discipline)) end
+    local stats = EqTraining.withForm(record.trained, form)
     local rating = EqCompetitionManager.ratingFor(record, event, stats)
     local phaseRatings = nil
     if discipline.phases ~= nil then
@@ -408,6 +410,15 @@ function EqCompetitionManager.specialtyText(record)
 end
 
 
+--- The farm vet's cut to the chance of an injury at an event (EqStaff.injuryFactor).
+--- @param farmId number|nil
+--- @return number factor
+function EqCompetitionManager.vetFactor(farmId)
+    if EqStaffManager == nil then return 1 end
+    return EqStaff.injuryFactor(EqStaffManager.strength(farmId, "veterinary"))
+end
+
+
 --- What a horse could expect from an event, for the Events tab.
 --- @param record table
 --- @param animal table RLRM Animal
@@ -437,7 +448,8 @@ function EqCompetitionManager.prospects(record, animal, event)
     if EqCompetitionManager.settings.injuries then
         local going = EqCompetitionManager.goingByName(event.going)
         risk = EqRisk.riskBand(EqRisk.runInjuryChance(discipline, tier, going, animal.fitness or 0,
-            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event), animal.health))
+            record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event), animal.health)
+            * EqCompetitionManager.vetFactor(EqFacilityHooks.farmOfAnimal(animal)))
     end
     return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk }
 end
@@ -500,13 +512,14 @@ function EqCompetitionManager.applyInjury(record, entry, injury, event, animal)
     end
 
     local onRLRM = EqInjury.start(record, animal, injury.name)
-    local rest = EqInjury.wholeMonths(EqInjury.restMonths(injury.name))
+    local care = EqInjury.careOf(animal)
+    local rest = EqInjury.wholeMonths(EqInjury.restMonths(injury.name) * care)
     local text
     if onRLRM and info ~= nil then
         local course = info.treatDays ~= nil
             and string.format(g_i18n:getText(info.treatDays == 1 and "eq_ui_dayCount" or "eq_ui_days"), info.treatDays)
             or string.format(g_i18n:getText("eq_ui_months"), EqInjury.wholeMonths(info.treatMonths))
-        local fee = g_i18n:formatMoney(EqInjury.fee(info.cost, record.retired), 0, true, true)
+        local fee = g_i18n:formatMoney(EqInjury.fee(info.cost, record.retired, care), 0, true, true)
         if info.treatDays == nil then fee = string.format(g_i18n:getText("eq_ui_perMonth"), fee) end
         text = string.format(g_i18n:getText("eq_injury_newTreatable"), entry.name, EqCompetitionManager.eventTitle(event),
             EqCompetitionManager.injuryTitle(injury.name), course, fee, rest)
@@ -609,6 +622,7 @@ function EqCompetitionManager.resolve(event, horses, month)
                 starter.fitness = horse.animal.fitness or 0
                 starter.travel = EqCompetitionManager.travelInjury(event)
                 starter.health = horse.animal.health
+                starter.injuryFactor = EqCompetitionManager.vetFactor(entry.farmId)
                 table.insert(starters, starter)
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
@@ -676,7 +690,7 @@ function EqCompetitionManager.resolve(event, horses, month)
             end
             notify(entry.farmId, text .. " " .. performance, runner.prize > 0 and "EQ_PLACED" or "EQ_FINISHED", mine.animal, runner.key)
             stories[runner.key] = { placing = placing, performance = performance, podium = podium,
-                phases = EqStory.phasesLine(discipline.phases, runner.phasePlaces), gains = EqStory.gainsLine(deltas) }
+                phases = EqStory.scoreLines(runner.run, runner.phasePlaces), gains = EqStory.gainsLine(deltas) }
         end
     end
 
@@ -773,7 +787,9 @@ end
 function EqCompetitionManager.countOwnedMonth(record, farmId, name, animal)
     if record.ownedMonths == nil then return end
     record.ownedMonths = record.ownedMonths + 1
-    if record.advertised ~= nil and not record.revealed and record.ownedMonths >= EqConstants.REVEAL_MONTHS then
+    local revealAt = EqConstants.REVEAL_MONTHS
+    if EqStaffManager ~= nil then revealAt = EqStaff.revealMonths(revealAt, EqStaffManager.strength(farmId, "broker")) end
+    if record.advertised ~= nil and not record.revealed and record.ownedMonths >= revealAt then
         record.revealed = true
         local verdict = EqDealer.verdict(record.advertised, record:getCeilings())
         notify(farmId, string.format(g_i18n:getText("eq_reveal_" .. verdict), name), "EQ_REVEAL_" .. string.upper(verdict), animal)
@@ -1005,7 +1021,7 @@ function EqCompetitionManager.homeRegion()
 
     local rl = EqRLRM.get("RealisticLivestock")
     if rl ~= nil and rl.getMapCountryCode ~= nil then
-        local ok, code = pcall(rl.getMapCountryCode)
+        local ok, code = EqLog.try("EqCompetitionManager.homeRegion getMapCountryCode", rl.getMapCountryCode)
         if ok and code ~= nil and home.countries[code] ~= nil then return home.countries[code] end
     end
     return home.default

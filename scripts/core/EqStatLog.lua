@@ -127,15 +127,21 @@ function EqStatLog.explainDay(detail, day, info)
     end
 
     local staffShare = math.max(0, (day.riding or 0) - (info.playerPoints or 0))
-    if anyEffort(detail.staff) then
-        local luck = (info.focus ~= nil and info.focus ~= "balanced" and day.staffLuck ~= nil)
-            and string.format(" (staff managed %.0f%% of the role's work today)", day.staffLuck * 100) or ""
-        table.insert(notes, string.format("Staff: %.0f of the riding bar (bar %.0f, yours %.0f), focus %s%s%s", staffShare,
-            day.riding or 0, info.playerPoints or 0, tostring(info.focus), luck, detail.groomed and ", groomed (+temperament)" or ""))
+    if anyEffort(detail.helper) then
+        table.insert(notes, string.format("Helpers: %.0f of the riding bar (bar %.0f, yours %.0f)%s", staffShare,
+            day.riding or 0, info.playerPoints or 0, detail.groomed and ", groomed (+temperament)" or ""))
     else
-        table.insert(notes, string.format("Staff: none (riding bar %.0f, yours %.0f)%s", day.riding or 0, info.playerPoints or 0,
+        table.insert(notes, string.format("Helpers: none (riding bar %.0f, yours %.0f)%s", day.riding or 0, info.playerPoints or 0,
             detail.groomed and "" or string.format(", not groomed (dirt %s > %d)", tostring(day.dirt), EqConstants.GROOMED_DIRT)))
     end
+    local hired = {}
+    for _, stat in ipairs(EqConstants.STAT_KEYS) do
+        for _, worker in ipairs(day.staff ~= nil and day.staff[stat] or {}) do
+            table.insert(hired, string.format("%s %s %.2f%s (to %.0f%%)", SHORT[stat], tostring(worker.name), worker.effort,
+                worker.targeted and " targeted" or "", worker.cap * 100))
+        end
+    end
+    if #hired > 0 then table.insert(notes, "Hired staff: " .. table.concat(hired, ", ")) end
 
     local rates = { string.format("age %dm x%.1f", day.ageMonths or 0, detail.ageFactor) }
     local fed, owned, ridden = boostText(day.feedBoost), boostText(day.facilityOwned), boostText(day.facilityRidden)
@@ -148,15 +154,14 @@ function EqStatLog.explainDay(detail, day, info)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local s = detail.stats[stat]
         if s.fromPlayer > 0 or s.fromStaff > 0 then
-            local own = s.fromPlayer >= s.fromStaff
-            table.insert(winners, string.format("%s %+.2f from %s (%s %+.2f)", SHORT[stat], math.max(s.fromPlayer, s.fromStaff),
-                own and "you" or "staff", own and "staff" or "you", math.min(s.fromPlayer, s.fromStaff)))
+            table.insert(winners, string.format("%s you %+.2f, staff %+.2f", SHORT[stat], s.fromPlayer, s.fromStaff))
         end
     end
     if #winners > 0 then
-        table.insert(notes, "Gains (the better of you or staff counts): " .. table.concat(winners, ", "))
-    elseif anyEffort(detail.player) or anyEffort(detail.staff) then
-        table.insert(notes, "Gains: none, the stats are at their caps (staff stop at " .. EqConstants.STAFF_CAP * 100 .. "% of the ceiling)")
+        table.insert(notes, "Gains (the bigger in full, the smaller at half): " .. table.concat(winners, ", "))
+    elseif anyEffort(detail.player) or #hired > 0 or anyEffort(detail.helper) then
+        table.insert(notes, "Gains: none, the stats are at their caps (helpers stop at "
+            .. EqTraining.HELPER_CAP * 100 .. "% of the ceiling, hired staff by skill)")
     end
 
     local faded, aged = {}, {}

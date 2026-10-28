@@ -41,10 +41,14 @@ source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
+source(modDirectory .. "scripts/staff/EqStaffNames.lua")
+source(modDirectory .. "scripts/staff/EqStaff.lua")
+source(modDirectory .. "scripts/staff/EqStaffManager.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
+source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -65,6 +69,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
+source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
 source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
@@ -86,6 +91,7 @@ EqMain.MONEY_STATS = {
     { name = "eqPrizeMoney", title = "eq_money_prizeMoney" },
     { name = "eqVetBills", title = "eq_money_vetBills" },
     { name = "eqTransport", title = "eq_money_transport" },
+    { name = "eqStaffWages", title = "eq_money_staffWages" },
 }
 for _, stat in ipairs(EqMain.MONEY_STATS) do
     if FinanceStats.statNameToIndex[stat.name] == nil then
@@ -111,29 +117,14 @@ EqMain.activated = false
 EqMain.isActive = false
 
 
-local failureCounts = {}
-
---- Every hook body runs under xpcall: these hooks sit inside the game's own load, save and
+--- Every hook body runs protected: these hooks sit inside the game's own load, save and
 --- display code, next to RLRM's, so an error here must be logged and swallowed, never allowed
---- to abort the chain and take RLRM down with it. Display hooks run every frame, so each
---- context logs its first failure in full and then only every 1000th.
+--- to abort the chain and take RLRM down with it. EqLog.guard logs each context's first
+--- failure in full and then only every 1000th, as display hooks run every frame.
 --- @param context string Name for the log line
 --- @param fn function
 local function guarded(context, fn)
-    -- The game may strip the debug library, so the traceback is optional.
-    local ok, err = xpcall(fn, function(e)
-        local trace = (debug ~= nil and debug.traceback ~= nil) and ("\n" .. debug.traceback()) or ""
-        return tostring(e) .. trace
-    end)
-    if ok then return end
-
-    local count = (failureCounts[context] or 0) + 1
-    failureCounts[context] = count
-    if count == 1 then
-        Log:error("%s failed: %s", context, err)
-    elseif count % 1000 == 0 then
-        Log:error("%s has failed %d times", context, count)
-    end
+    EqLog.guard(context, fn)
 end
 
 
@@ -152,6 +143,7 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.eventsTab then
         guarded("events tab hook", function() EqEventsFrame.install(guarded) end)
+        guarded("staff tab hook", function() EqStaffFrame.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.eventsTab and EqRLRM.features.messageLink then
@@ -220,6 +212,8 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_TRANSPORT = MoneyType.register("eqTransport", "eq_money_transport")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_STAFF_WAGES = MoneyType.register("eqStaffWages", "eq_money_staffWages")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
             EqInjury.loadConfig(modDirectory)
         end)
@@ -264,6 +258,9 @@ guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory)
 -- Cross country flags' height guides show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
 guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
+-- Cross country pieces hide outside construction, course editing and rounds; the shop's
+-- "Always visible" configuration has to be registered before the store items load.
+guarded("cross country pieces hook", function() EqXcHide.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
@@ -287,6 +284,10 @@ local function onMissionLoaded(mission)
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
         end
+    end)
+
+    guarded("staff start", function()
+        if mission:getIsServer() then EqStaffManager.start(guarded) end
     end)
 
     -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
@@ -334,6 +335,7 @@ local function onMissionDelete()
         EqConsole.unregister()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
+        EqStaffManager.stop()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

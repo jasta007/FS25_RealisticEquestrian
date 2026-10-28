@@ -125,7 +125,7 @@ function EqMessages.post(farmId, id, text, animal, horseId)
 
     local identifiers = nil
     if animal ~= nil and animal.getIdentifiers ~= nil then
-        local ok, value = pcall(animal.getIdentifiers, animal)
+        local ok, value = EqLog.try("EqMessages.post getIdentifiers", animal.getIdentifiers, animal)
         if ok then identifiers = value end
     end
     local args = { text }

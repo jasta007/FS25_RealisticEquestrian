@@ -46,10 +46,10 @@ end
 
 
 --- @return boolean true when the shapes are ready
-local function load()
+local function ensureLoaded()
     if EqCourseGlow.templates ~= nil then return true end
     if EqCourseGlow.failed then return false end
-    local ok, err = pcall(function()
+    local ok, err = EqLog.try("EqCourseGlow.ensureLoaded", function()
         local root = g_i3DManager:loadI3DFile((EqCourseGlow.modDirectory or "") .. EqCourseGlow.FILE, false, false)
         if root == nil or root == 0 then error("no node") end
         local bar, pole = findNode(root, "glowBar"), findNode(root, "glowPole")
@@ -92,7 +92,7 @@ end
 --- A glowing pole standing at x, y, z.
 --- @return boolean false when the glow can't be drawn
 function EqCourseGlow.pole(x, y, z, height)
-    if not load() then return false end
+    if not ensureLoaded() then return false end
     local node = take("pole")
     setTranslation(node, x, y, z)
     setRotation(node, 0, 0, 0)
@@ -105,7 +105,7 @@ end
 --- A glowing bar from a to b.
 --- @return boolean false when the glow can't be drawn
 function EqCourseGlow.bar(ax, ay, az, bx, by, bz)
-    if not load() then return false end
+    if not ensureLoaded() then return false end
     local dx, dy, dz = bx - ax, by - ay, bz - az
     local length = math.sqrt(dx * dx + dy * dy + dz * dz)
     if length < 0.01 then return true end
@@ -141,9 +141,9 @@ end
 --- Delete the clones and the loaded file (mission end).
 function EqCourseGlow.delete()
     for _, pool in pairs(EqCourseGlow.pools) do
-        for _, node in ipairs(pool) do pcall(delete, node) end
+        for _, node in ipairs(pool) do EqLog.try("EqCourseGlow.delete", delete, node) end
     end
-    if EqCourseGlow.root ~= nil then pcall(delete, EqCourseGlow.root) end
+    if EqCourseGlow.root ~= nil then EqLog.try("EqCourseGlow.delete", delete, EqCourseGlow.root) end
     EqCourseGlow.pools, EqCourseGlow.used = { bar = {}, pole = {} }, { bar = 0, pole = 0 }
     EqCourseGlow.templates, EqCourseGlow.root, EqCourseGlow.failed, EqCourseGlow.drawnAt = nil, nil, false, nil
 end

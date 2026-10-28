@@ -112,11 +112,13 @@ end
 --- Point the header icon at our texture for every overlay state, without a slice id. Loaded from
 --- the XML's imageSliceId, the icon showed the whole base UI atlas squashed into the square,
 --- so set the overlay ourselves: our file, our UVs, no per-state overrides.
+--- Also used by the Staff tab (EqStaffFrame), with its own slice.
+--- @param sliceId string|nil our atlas slice, the Events icon when nil
 --- @return boolean changed true when the icon was not showing our slice
-function EqEventsFrame:applyHeaderIcon()
+function EqEventsFrame:applyHeaderIcon(sliceId)
     local icon = self.headerIcon
     if icon == nil or icon.overlay == nil then return false end
-    local slice = g_overlayManager:getSliceInfoById(EqEventsFrame.ICON_SLICE)
+    local slice = g_overlayManager:getSliceInfoById(sliceId or EqEventsFrame.ICON_SLICE)
     if slice == nil then return false end
 
     local overlay = icon.overlay
@@ -126,21 +128,40 @@ function EqEventsFrame:applyHeaderIcon()
         Log:info("EqEventsFrame: header icon file '%s' uvs (%s) state %s",
             tostring(overlay.filename), table.concat(uvs, " "), tostring(icon:getOverlayState()))
     end
+    if EqEventsFrame.isSliceShown(overlay, slice) then return false end
+    if not self.loggedHeaderIcon then
+        self.loggedHeaderIcon = true
+        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
+            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
+    end
+    EqEventsFrame.showSlice(overlay, slice)
+    return true
+end
+
+
+--- @param overlay table a Bitmap's GuiOverlay
+--- @param slice table from g_overlayManager:getSliceInfoById
+--- @return boolean shown the overlay already draws exactly this slice
+function EqEventsFrame.isSliceShown(overlay, slice)
     local clean = overlay.filename == slice.filename and overlay.overlay ~= nil and overlay.sliceId == nil
+    -- Our icons share files, so the UVs must be this slice's too.
+    for i, uv in ipairs(slice.uvs or {}) do
+        if overlay.uvs == nil or overlay.uvs[i] ~= uv then clean = false end
+    end
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL
             and (overlay["filename" .. suffix] ~= nil or overlay["uvs" .. suffix] ~= nil) then
             clean = false
         end
     end
-    if clean then return false end
+    return clean
+end
 
-    if not self.loggedHeaderIcon then
-        self.loggedHeaderIcon = true
-        Log:info("EqEventsFrame: header icon was '%s' in state %s, setting it to '%s'",
-            tostring(overlay.filename), tostring(icon:getOverlayState()), slice.filename)
-    end
 
+--- Point a Bitmap's overlay at one of our slices for every state, without a slice id.
+--- @param overlay table a Bitmap's GuiOverlay
+--- @param slice table from g_overlayManager:getSliceInfoById
+function EqEventsFrame.showSlice(overlay, slice)
     GuiOverlay.deleteOverlay(overlay)
     for state, suffix in pairs(GuiOverlay.OVERLAY_STATE_SUFFIXES) do
         if state ~= GuiOverlay.STATE_NORMAL then
@@ -157,7 +178,6 @@ function EqEventsFrame:applyHeaderIcon()
     overlay.sliceId = nil
     overlay.overlay = nil
     GuiOverlay.createOverlay(overlay)
-    return true
 end
 
 
@@ -680,6 +700,8 @@ end
 --- builds its menu, the same moment RLRM registers its own atlas.
 function EqEventsFrame.registerIcons()
     g_overlayManager:addTextureConfigFile(modDirectory .. "gui/eqMenuIcons.xml", "eqMenu")
+    -- Staff portraits (EqStaffFrame), faces by kawsar4404.
+    g_overlayManager:addTextureConfigFile(modDirectory .. "gui/eqStaffFaces.xml", "eqFaces")
 end
 
 

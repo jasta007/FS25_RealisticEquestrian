@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Italian texts. Machine-assisted first draft: please have a native speaker check it. Keys and
+     their %s/%d/%.0f placeholders must stay in the same order as translation_en.xml. -->
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Resistenza"/>
+        <text name="eq_stat_speed" text="Velocità"/>
+        <text name="eq_stat_agility" text="Agilità"/>
+        <text name="eq_stat_temperament" text="Temperamento"/>
+        <text name="eq_potential_stamina" text="Potenziale di resistenza"/>
+        <text name="eq_potential_speed" text="Potenziale di velocità"/>
+        <text name="eq_potential_agility" text="Potenziale di agilità"/>
+        <text name="eq_potential_temperament" text="Potenziale di temperamento"/>
+        <text name="eq_stat_short_stamina" text="Res"/>
+        <text name="eq_stat_short_speed" text="Vel"/>
+        <text name="eq_stat_short_agility" text="Agi"/>
+        <text name="eq_stat_short_temperament" text="Tem"/>
+        <text name="eq_train_viewAction" text="Vista allenamento: %s"/>
+        <text name="eq_train_view_freestyle" text="Libero"/>
+        <text name="eq_help_temperament_2" text="Perdi il moltiplicatore se acceleri al galoppo o al galoppo pieno, urti un ostacolo o manchi la manovra successiva. Da x4 devi anche mantenere l'andatura tra un comando e l'altro. Dare ai cavalli premi come le carote è anche un ottimo modo per migliorare il Temperamento."/>
+        <text name="eq_help_temperament_1" text="L'allenamento del Temperamento serve a insegnare il controllo al cavallo. Inizia una ripresa passando al passo e mantenendolo per un breve intervallo. Il programma ti chiederà poi una nuova manovra da mantenere. Eseguila entro pochi secondi per continuare la combo."/>
+        <text name="eq_help_temperament_title" text="Allenamento: Temperamento"/>
+        <text name="eq_help_agility_2" text="Perdi il moltiplicatore se non superi un nuovo ostacolo in tempo o perdi troppa velocità. Saltare senza ostacolo allena un po', ma non aumenta il moltiplicatore."/>
+        <text name="eq_help_agility_1" text="L'Agilità si allena soprattutto superando ostacoli, anche se alternare le andature aiuta un po'. Supera ostacoli per costruire un moltiplicatore di allenamento dell'Agilità, che svanisce dopo dieci secondi, o prima se urti un ostacolo."/>
+        <text name="eq_help_agility_title" text="Allenamento: Agilità"/>
+        <text name="eq_pop_routineStart" text="Ripresa iniziata"/>
+        <text name="eq_pop_routineFault" text="Errore %d/%d"/>
+        <text name="eq_pop_routineTest" text="Ripresa completata!"/>
+        <text name="eq_pop_routineLost" text="Ripresa interrotta"/>
+        <text name="eq_pop_comboLost" text="Combo persa"/>
+        <text name="eq_pop_knock" text="-%d s!"/>
+        <text name="eq_pop_clear" text="Netto!"/>
+        <text name="eq_move_right" text="Gira a destra!"/>
+        <text name="eq_move_left" text="Gira a sinistra!"/>
+        <text name="eq_move_reverse" text="Indietro!"/>
+        <text name="eq_move_halt" text="Fermo!"/>
+        <text name="eq_move_trot" text="Trotto!"/>
+        <text name="eq_move_walk" text="Passo!"/>
+        <text name="eq_move_spinLeft" text="Gira a sinistra sul posto!"/>
+        <text name="eq_move_spinRight" text="Gira a destra sul posto!"/>
+        <text name="eq_shop_dressageArena15x30" text="Rettangolo da dressage 15 x 30 m"/>
+        <text name="eq_shop_dressageArena20x40" text="Rettangolo da dressage 20 x 40 m"/>
+        <text name="eq_shop_dressageArena20x60" text="Rettangolo da dressage 20 x 60 m"/>
+        <text name="eq_shop_dressageArena_function" text="Un rettangolo da dressage con tutte le lettere al loro posto. Cavalcaci dentro per allenare il temperamento tra le lettere."/>
+        <text name="eq_shop_courseFlags" text="Bandierine da cross"/>
+        <text name="eq_shop_courseFlags_function" text="Segna qualsiasi ostacolo come ostacolo da cross. Cambia segmento con N/M: piazza una bandierina bianca, stendi una barra dorata (0,6, 0,9 o 1,2 m) sopra l'ostacolo, poi piazza una bandierina rossa. La barra si vede solo in modalità costruzione."/>
+        <text name="eq_shop_xcLogPileSmall" text="Catasta di tronchi (piccola)"/>
+        <text name="eq_shop_xcLogPile" text="Catasta di tronchi"/>
+        <text name="eq_shop_xcDropWall08" text="Muro di discesa (0,8 m)"/>
+        <text name="eq_shop_xcDropWall12" text="Muro di discesa (1,2 m)"/>
+        <text name="eq_shop_xcDropWall16" text="Muro di discesa (1,6 m)"/>
+        <text name="eq_shop_xcDrop_function" text="Un muro di assi per una discesa da cross. Modella una scarpata, posizionalo in cima con il bordo sul ciglio, e le pareti laterali nascondono il pendio ripido."/>
+        <text name="eq_shop_xcJump_function" text="Un ostacolo da cross. Le bandierine rossa e bianca indicano dove saltare."/>
+        <text name="eq_shop_xcHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove di cross, a meno che non sia acquistato come Sempre visibile."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove."/>
+        <text name="eq_config_alwaysVisible" text="Sempre visibile"/>
+        <text name="eq_dressage_go" text="%s: %s"/>
+        <text name="eq_dressage_gait_walk" text="Passo"/>
+        <text name="eq_dressage_gait_trot" text="Trotto"/>
+        <text name="eq_dressage_gait_canter" text="Galoppo"/>
+        <text name="eq_dressage_change" text="Cambio: %s"/>
+        <text name="eq_dressage_flying" text="Cambio di galoppo in aria: %s"/>
+        <text name="eq_dressage_begin" text="Vai a %s per iniziare una ripresa di dressage"/>
+        <text name="eq_dressage_reinBack" text="Rinculo!"/>
+        <text name="eq_dressage_backwards" text="Vai all'indietro"/>
+        <text name="eq_dressage_circle_left" text="Circolo a sinistra"/>
+        <text name="eq_dressage_circle_right" text="Circolo a destra"/>
+        <text name="eq_dressage_out" text="Torna nel rettangolo!"/>
+        <text name="eq_dressage_next" text="Prossimo: %s"/>
+        <text name="eq_dressage_stand" text="Alt"/>
+        <text name="eq_dressage_marker" text="Lettera %s"/>
+        <text name="eq_train_routine_none" text="Vai al passo per iniziare una ripresa"/>
+        <text name="eq_train_routine" text="Ripresa x%d"/>
+        <text name="eq_train_combo_none" text="Supera un ostacolo per iniziare una combo"/>
+        <text name="eq_train_combo" text="Combo salti x%d"/>
+        <text name="eq_train_view_temperament" text="Temperamento"/>
+        <text name="eq_train_view_agility" text="Agilità"/>
+        <text name="eq_help_freestyle_2" text="L'Agilità si allena saltando ostacoli per riempire un indicatore combo, e il Temperamento inizia mantenendo il passo per un breve tempo, poi seguendo le istruzioni per riempire il suo indicatore combo. Resistenza e Velocità si allenano galoppando bene: premi H durante il galoppo pieno per imparare come."/>
+        <text name="eq_help_freestyle_3" text="Preferisci non cavalcare? Assumi stallieri e istruttori nella scheda Personale per allenare i cavalli ogni giorno. Gli addetti agli animali del gioco e l'Herdsman di RLRM li mantengono solo in esercizio."/>
+        <text name="eq_form_title" text="Forma ottimale"/>
+        <text name="eq_help_freestyle_4" text="Cavalca prima di una gara! Ogni caratteristica che alleni con il suo minigioco mette il cavallo in Forma ottimale per le gare di questo mese, fino a +8 per caratteristica. Non si somma su più giorni: conta la tua migliore sessione del mese."/>
+        <text name="eq_help_form_title" text="Forma ottimale"/>
+        <text name="eq_help_form_1" text="Cavalcare di persona non serve solo ad allenare: mette il cavallo in Forma ottimale per le gare di questo mese. Ogni caratteristica lavorata nel suo minigioco riceve fino a +8 in ogni gara del mese, mostrato qui come Forma ottimale e nel riquadro Abilità del cavallo. Sessioni migliori danno un bonus più alto; cavalcare semplicemente nelle andature non ne dà."/>
+        <text name="eq_help_form_2" text="La Forma ottimale non si somma nei giorni del mese: ogni caratteristica conserva la tua migliore sessione. Può persino portare il cavallo oltre il suo potenziale nel giorno della gara, poi svanisce dopo le gare del mese. Il personale porta avanti l'allenamento quotidiano, quindi tieni le tue cavalcate per le gare che contano."/>
+        <text name="eq_help_freestyle_1" text="Cavalcare allena le caratteristiche del cavallo, e ogni caratteristica ha il suo minigioco. Tutte possono essere allenate insieme, ma alcune non si combinano bene, come Velocità e Temperamento. Premi Y per passare a una vista con indicazioni migliori sulla caratteristica su cui vuoi concentrarti, o resta in Libero per indicazioni generali. La barra cavalcata resta l'energia giornaliera del cavallo: quando è piena, quel cavallo non fa altri progressi fino al giorno dopo."/>
+        <text name="eq_help_freestyle_title" text="Allenamento: Libero"/>
+        <text name="eq_welcome_ride_title" text="Allenamento"/>
+        <text name="eq_welcome_welcome_1_title" text="Benvenuto in Realistic Equestrian"/>
+        <text name="eq_welcome_welcome_1" text="I tuoi cavalli ora hanno abilità da allenare e gare a cui partecipare. Tutto si trova nel menu di Realistic Livestock, che apri premendo R nel menu Animali o Shift+O ovunque."/>
+        <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
+        <text name="eq_welcome_menu_1" text="Apri la scheda Informazioni (il maiale con una [i]) per conoscere i tuoi cavalli, la scheda Gare (la coccarda) per iscriverli alle gare e la scheda Personale equestre (due persone) per assumere stallieri e istruttori. Le impostazioni di Realistic Equestrian sono nella scheda Impostazioni (l'ingranaggio)."/>
+        <text name="eq_welcome_staff_hire_title" text="Personale equestre"/>
+        <text name="eq_welcome_staff_hire" text="Assumi personale nella scheda Assumi per prenderti cura dei cavalli ogni giorno. Gli stallieri allenano tutte e quattro le caratteristiche, puliscono i cavalli e riportano a casa quelli scappati. Gli istruttori si concentrano su due caratteristiche e preparano i cavalli per le gare. Un veterinario significa meno infortuni e cure più economiche, e un mediatore ti ottiene prezzi migliori dal commerciante. Gli stipendi si pagano ogni giorno, e i candidati vanno e vengono, quindi ricontrolla per trovarne di migliori. Ognuno usa tutte le sue abilità, anche fuori dalle mansioni principali, quindi un tuttofare fortunato aiuta in tutto."/>
+        <text name="eq_welcome_staff_works_title" text="Con chi lavorano"/>
+        <text name="eq_welcome_staff_works" text="In Il tuo personale, scegli le stalle in cui lavora uno stalliere o un istruttore, poi i ruoli o i singoli cavalli. Il personale rende di più quando ognuno segue pochi cavalli; gli altri ricevono solo un po' del suo tempo. Disattiva chi non ti serve per metà stipendio: il cambio vale dall'1:00 del giorno dopo."/>
+        <text name="eq_welcome_info_skills_title" text="Abilità"/>
+        <text name="eq_welcome_info_skills" text="La Resistenza fa andare il cavallo più lontano, la Velocità lo rende più veloce, l'Agilità lo aiuta a saltare e girare, e il Temperamento lo mantiene calmo e obbediente. Ogni abilità si può allenare, e scoprirai come la prima volta che cavalchi."/>
+        <text name="eq_welcome_info_potential_title" text="Potenziale"/>
+        <text name="eq_welcome_info_potential" text="Il potenziale è fin dove ogni abilità può crescere con l'allenamento. I cavalli giovani imparano più in fretta, e quelli anziani possono perdere potenziale. Il potenziale è solo stimato, e anche la stima può essere sbagliata finché non possiedi il cavallo da un po'."/>
+        <text name="eq_welcome_info_roles_title" text="Ruoli e personale"/>
+        <text name="eq_welcome_info_roles" text="Puoi dare un ruolo a un cavallo con il pulsante Ruolo per tenerli in ordine. Stallieri e istruttori della scheda Personale possono lavorare con tutti i cavalli di un ruolo o con un solo cavallo."/>
+        <text name="eq_welcome_info_feed_title" text="Alimentazione"/>
+        <text name="eq_welcome_info_feed" text="Il fieno è la dieta base. L'avena dà un piccolo bonus a Resistenza e Temperamento, l'orzo un bonus moderato a Resistenza e Agilità, e il mais un grande bonus alla Velocità. Le carote (e le mele, se disponibili) danno un grande bonus al Temperamento."/>
+        <text name="eq_welcome_events_disciplines_title" text="Gare"/>
+        <text name="eq_welcome_events_disciplines" text="Il Dressage premia Temperamento e Agilità, il Salto ostacoli l'Agilità, le corse Velocità e Resistenza, e Cross e Concorso completo i cavalli completi."/>
+        <text name="eq_welcome_events_transport_title" text="Come arrivarci"/>
+        <text name="eq_welcome_events_transport" text="Il Trasporto automatico porta il cavallo alla gara a pagamento. Può costare molto più del normale trasporto automatico, perché il cavallo può andare molto più lontano e tu vuoi riaverlo! Portare tu stesso i cavalli dal commerciante di animali (Trasporto manuale) può far risparmiare parecchio."/>
+        <text name="eq_welcome_events_risks_title" text="Infortuni e ritiri"/>
+        <text name="eq_welcome_events_risks" text="Ogni gara ha un rischio di infortuni e malattie, mostrato prima dell'iscrizione. Il pulsante Malattie nella scheda Informazioni permette di curare gli infortuni. Un cavallo può anche essere ritirato prima di una gara per un test di Temperamento fallito o per salute scarsa, ma ti viene restituita parte della quota d'iscrizione."/>
+        <text name="eq_settings_helpPopups" text="Finestre di aiuto"/>
+        <text name="eq_settings_helpPopups_tooltip" text="Mostra di nuovo: ogni finestra di benvenuto e di aiuto all'allenamento comparirà ancora una volta."/>
+        <text name="eq_settings_helpPopups_seen" text="Viste"/>
+        <text name="eq_settings_helpPopups_again" text="Mostra di nuovo"/>
+        <text name="eq_welcome_diseases_treatment_title" text="Cure"/>
+        <text name="eq_welcome_diseases_treatment" text="La maggior parte degli infortuni guarisce da sola, ma può volerci molto tempo! Curarli accelera la guarigione, ma può costare caro. Puoi ritirare un cavallo infortunato per continuare ad allevarlo, il che rende la guarigione molto più economica. Alcuni infortuni gravi possono imporre il ritiro, e tutto questo si può cambiare nelle impostazioni."/>
+        <text name="eq_help_close" text="Clicca per chiudere"/>
+        <text name="eq_help_next" text="Clicca per continuare (%d/%d)"/>
+        <text name="input_EQ_TRAINING_HELP" text="Aiuto allenamento"/>
+        <text name="eq_train_worn" text="Barra cavalcata piena: niente più allenamento oggi"/>
+        <text name="eq_ex_push" text="Spinta"/>
+        <text name="eq_ex_recover" text="Recupero"/>
+        <text name="eq_ex_sprint" text="SPRINT"/>
+        <text name="eq_ex_blown" text="Affaticato: solo galoppo"/>
+        <text name="eq_ex_spent" text="Sfinito: solo galoppo"/>
+        <text name="eq_ex_gallop" text="Galoppo pieno"/>
+        <text name="eq_ex_canter" text="Galoppo"/>
+        <text name="eq_ex_trot" text="Trotto"/>
+        <text name="eq_ex_walk" text="Passo"/>
+        <text name="eq_ex_halt" text="Fermo"/>
+        <text name="eq_ex_reverse" text="Indietro"/>
+        <text name="eq_ex_prompt_tap" text="Continua a premere W!"/>
+        <text name="eq_pop_ex_sprint" text="SPRINT!"/>
+        <text name="eq_pop_ex_sprintOver" text="Sprint finito"/>
+        <text name="eq_pop_ex_blown" text="Affaticato!"/>
+        <text name="eq_pop_ex_spent" text="Sfinito!"/>
+        <text name="eq_pop_ex_fresh" text="Pronto a galoppare"/>
+        <text name="eq_help_gallop_title" text="Galoppo pieno"/>
+        <text name="eq_help_gallop_1" text="Il cavallo galoppa a tre ritmi. Premi W dal galoppo per iniziare la Spinta: veloce, ma la barra dello Sforzo si riempie, e tanto più in fretta quanto più è alta. Premi S per il Recupero: un galoppo più lento che abbassa lo sforzo mentre continui a galoppare, in fretta nel terzo superiore e in quello inferiore della barra, lentamente nel mezzo. Premi di nuovo W per spingere ancora. Un cavallo più in forma si stanca più lentamente e recupera più in fretta."/>
+        <text name="eq_help_gallop_2" text="Se la barra raggiunge la zona rossa Affaticato durante la Spinta, il cavallo scende al galoppo e non può galoppare pieno di nuovo finché la barra non si svuota. Per rallentare al galoppo tu stesso, premi S una volta durante il Recupero con la barra vuota, o premi S due volte in qualsiasi momento."/>
+        <text name="eq_help_gallop_3" text="Premi W di continuo durante il galoppo pieno per lo Sprint: molto più veloce, e la barra si riempie piano all'inizio, poi sempre più in fretta, quindi fermati prima della linea. Finito lo Sprint si passa al Recupero, e non c'è un nuovo Sprint finché la barra non si svuota. Solo uno Sprint può superare la linea Affaticato, per un ultimo sforzo verso il traguardo, ma uno Sprint che finisce lì lascia il cavallo Sfinito, e recupera molto lentamente finché non torna sotto la linea."/>
+        <text name="eq_help_gallop_4" text="Allenamento: lo Sprint allena la Velocità, e più alto porta la barra prima di finire, più vale: x2 a metà strada dalla linea, fino a x10 appena prima, ma solo x1 se finisce oltre la linea. Spinta e Recupero allenano la Resistenza con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, più in fretta vicino alla cima. Recuperare nel terzo centrale della barra fa riprendere fiato al cavallo e conserva gran parte del moltiplicatore, mentre i terzi superiore e inferiore lo perdono in fretta, e un cavallo che non riprende mai fiato migliora molto più lentamente. Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_ex_hint_sprint" text="Premi W di continuo per lo sprint"/>
+        <text name="eq_ex_hint_sprintRest" text="Sprint: prima recupera fino a vuoto"/>
+        <text name="eq_ex_hint_locked" text="Galoppo finché la barra non è vuota"/>
+        <text name="eq_ex_hint_canterOne" text="S: galoppo"/>
+        <text name="eq_ex_hint_canterDouble" text="Doppio S: galoppo"/>
+        <text name="eq_ex_tiring" text="Si stanca..."/>
+        <text name="eq_ex_careful" text="Attenzione"/>
+        <text name="eq_ex_overExerted" text="Affaticato!"/>
+        <text name="eq_train_tiredness" text="Sforzo"/>
+        <text name="eq_train_titlePlain" text="Allenamento"/>
+        <text name="eq_train_lastSprint" text="Ultimo sprint x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Sprinta per allenare la Velocità"/>
+        <text name="eq_train_view_stamina" text="Resistenza"/>
+        <text name="eq_train_view_speed" text="Velocità"/>
+        <text name="eq_train_view_condensed" text="Compatta"/>
+        <text name="eq_help_stamina_title" text="Allenamento: Resistenza"/>
+        <text name="eq_help_stamina_1" text="La Resistenza si allena durante Spinta e Recupero al galoppo pieno, con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, e più ti avvicini alla linea, più sale in fretta. Il Recupero lo abbassa: in fretta nel terzo superiore della barra, lentamente in quello centrale, di nuovo in fretta in quello inferiore."/>
+        <text name="eq_help_stamina_2" text="Quindi spingi fin vicino alla linea, rallenta fino al centro della barra e lascia che il cavallo riprenda fiato lì per un po', poi spingi di nuovo. Alternare Spinta e Recupero vicino alla cima stanca il cavallo senza alzare il moltiplicatore, e Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_help_speed_title" text="Allenamento: Velocità"/>
+        <text name="eq_help_speed_1" text="La Velocità si allena durante lo Sprint: premi W di continuo al galoppo pieno. Ogni secondo di Sprint conta, e alla fine viene moltiplicato per quanto in alto hai portato la barra: x2 a metà strada dalla linea, fino a x10 appena prima."/>
+        <text name="eq_help_speed_2" text="Uno Sprint che finisce oltre la linea vale solo x1, quindi smetti di premere (o premi S) prima della linea. Dopo uno Sprint il cavallo deve recuperare fino a barra vuota prima di sprintare ancora."/>
+        <text name="eq_train_speedMult" text="Velocità x%.1f"/>
+        <text name="eq_train_staminaMult" text="Resistenza x%.1f"/>
+        <text name="eq_train_staminaStopped" text="nessun allenamento"/>
+        <text name="eq_ex_fatigued" text="Affaticato"/>
+        <text name="eq_pop_speedBank" text="Velocità x%.1f!"/>
+        <text name="eq_train_quality_fast" text="allenamento rapido"/>
+        <text name="eq_train_quality_steady" text="allenamento"/>
+        <text name="eq_train_quality_slow" text="allenamento lento"/>
+        <text name="eq_train_quality_full" text="pieno per oggi"/>
+        <text name="input_EQ_TRAINING_VIEW" text="Cambia vista allenamento"/>
+        <text name="eq_feed_boost" text="Mangime"/>
+        <text name="eq_feedGroup_hay" text="Fieno"/>
+        <text name="eq_feedGroup_grain" text="Concentrati"/>
+        <text name="eq_feedGroup_treat" text="Premi"/>
+        <text name="eq_feedGroup_otherGrain" text="Altri cereali"/>
+        <text name="eq_feedRow_oats" text="Avena"/>
+        <text name="eq_feedRow_barley" text="Orzo"/>
+        <text name="eq_feedRow_corn" text="Mais"/>
+        <text name="eq_feed_noBoost" text="nessun bonus"/>
+        <text name="eq_discipline_showJumping" text="Salto ostacoli"/>
+        <text name="eq_discipline_dressage" text="Dressage"/>
+        <text name="eq_discipline_crossCountry" text="Cross"/>
+        <text name="eq_discipline_eventing" text="Concorso completo"/>
+        <text name="eq_discipline_raceShort" text="Corsa in piano (velocità)"/>
+        <text name="eq_discipline_raceLong" text="Corsa in piano (fondo)"/>
+        <text name="eq_discipline_steeplechase" text="Steeple-chase"/>
+        <text name="eq_type_showJumping" text="Salto ostacoli"/>
+        <text name="eq_type_dressage" text="Dressage"/>
+        <text name="eq_type_crossCountry" text="Cross"/>
+        <text name="eq_type_eventing" text="Completo"/>
+        <text name="eq_type_raceShort" text="Corsa in piano"/>
+        <text name="eq_type_raceLong" text="Corsa in piano"/>
+        <text name="eq_type_steeplechase" text="Steeple-chase"/>
+        <text name="eq_tier_training" text="Giovani cavalli"/>
+        <text name="eq_tier_novice" text="Esordienti"/>
+        <text name="eq_tier_intermediate" text="Intermedio"/>
+        <text name="eq_tier_advanced" text="Avanzato"/>
+        <text name="eq_tier_championship" text="Campionato"/>
+        <text name="eq_going_firm" text="Duro"/>
+        <text name="eq_going_good" text="Buono"/>
+        <text name="eq_going_soft" text="Morbido"/>
+        <text name="eq_going_heavy" text="Pesante"/>
+        <text name="eq_going_hot" text="Caldo"/>
+        <text name="eq_going_indoor" text="Al coperto"/>
+        <text name="eq_event_showJumping_training" text="Salto a percorso netto"/>
+        <text name="eq_event_showJumping_novice" text="Salto 1,00 m"/>
+        <text name="eq_event_showJumping_intermediate" text="Salto 1,20 m"/>
+        <text name="eq_event_showJumping_advanced" text="Classica 1,40 m di %s"/>
+        <text name="eq_event_showJumping_championship" text="Gran Premio di %s"/>
+        <text name="eq_event_dressage_training" text="Ripresa di dressage introduttiva"/>
+        <text name="eq_event_dressage_novice" text="Dressage preliminare"/>
+        <text name="eq_event_dressage_intermediate" text="Dressage medio"/>
+        <text name="eq_event_dressage_advanced" text="Prix St Georges di %s"/>
+        <text name="eq_event_dressage_championship" text="Gran Premio di dressage di %s"/>
+        <text name="eq_event_crossCountry_training" text="Prova di campagna per giovani cavalli"/>
+        <text name="eq_event_crossCountry_novice" text="Prova di campagna"/>
+        <text name="eq_event_crossCountry_intermediate" text="Prova di campagna aperta"/>
+        <text name="eq_event_crossCountry_advanced" text="Team Chase di %s"/>
+        <text name="eq_event_crossCountry_championship" text="Campionato di Team Chase di %s"/>
+        <text name="eq_event_eventing_training" text="Completo introduttivo"/>
+        <text name="eq_event_eventing_novice" text="Completo di un giorno"/>
+        <text name="eq_event_eventing_intermediate" text="Completo due stelle"/>
+        <text name="eq_event_eventing_advanced" text="Completo quattro stelle di %s"/>
+        <text name="eq_event_eventing_championship" text="Completo di tre giorni di %s"/>
+        <text name="eq_event_raceShort_training" text="Galoppo all'ippodromo (1200 m)"/>
+        <text name="eq_event_raceShort_novice" text="Sprint per maiden (1200 m)"/>
+        <text name="eq_event_raceShort_intermediate" text="Handicap di velocità (1200 m)"/>
+        <text name="eq_event_raceShort_advanced" text="Sprint Listed di %s (1200 m)"/>
+        <text name="eq_event_raceShort_championship" text="Coppa della velocità di %s (1200 m)"/>
+        <text name="eq_event_raceLong_training" text="Galoppo all'ippodromo (1600 m)"/>
+        <text name="eq_event_raceLong_novice" text="Premio per maiden (2400 m)"/>
+        <text name="eq_event_raceLong_intermediate" text="Handicap (2400 m)"/>
+        <text name="eq_event_raceLong_advanced" text="Premio Listed di %s (2400 m)"/>
+        <text name="eq_event_raceLong_championship" text="Coppa d'Oro di %s (3200 m)"/>
+        <text name="eq_event_steeplechase_training" text="Siepi di addestramento"/>
+        <text name="eq_event_steeplechase_novice" text="Siepi per esordienti"/>
+        <text name="eq_event_steeplechase_intermediate" text="Handicap a ostacoli"/>
+        <text name="eq_event_steeplechase_advanced" text="Steeple-chase di gruppo di %s"/>
+        <text name="eq_event_steeplechase_championship" text="Coppa di Steeple-chase di %s"/>
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Gara"/>
+        <text name="rl_messageTitle_eqInjury" text="Infortunio"/>
+        <text name="rl_messageTitle_eqRetirement" text="Ritiro"/>
+        <text name="rl_messageTitle_eqDealer" text="Commerciante"/>
+        <text name="rl_messageTitle_eqTransport" text="Trasporto"/>
+        <text name="eq_money_entryFees" text="Quote d'iscrizione alle gare"/>
+        <text name="eq_money_prizeMoney" text="Premi delle gare"/>
+        <text name="eq_money_vetBills" text="Spese veterinarie"/>
+        <text name="eq_enter_injured" text="Quel cavallo è infortunato: %d mese/i alla guarigione."/>
+        <text name="eq_enter_sick" text="Quel cavallo è malato. Curalo prima nella sua pagina Malattie."/>
+        <text name="eq_enter_unwell" text="La salute di quel cavallo è troppo bassa per gareggiare (25 o meno). Nutrilo bene e si riprenderà."/>
+        <text name="eq_enter_lowHealth" text="La sua salute è %d: %d%% di probabilità che venga ritirato come non idoneo il giorno della gara. Sotto 50 di salute, ogni 5 punti in meno aggiungono il 10%%, e a %d o meno non può gareggiare."/>
+        <text name="eq_result_eliminated" text="%s è stato eliminato in %s."/>
+        <text name="eq_result_pulledUp" text="%s è stato fermato in %s."/>
+        <text name="eq_result_scratched" text="%s è stato ritirato da %s (%s). È stato rimborsato %s della quota d'iscrizione."/>
+        <text name="eq_scratch_injured" text="infortunato"/>
+        <text name="eq_scratch_sick" text="malato"/>
+        <text name="eq_scratch_unsound" text="non idoneo il giorno della gara"/>
+        <text name="eq_scratch_shoe" text="ha perso un ferro"/>
+        <text name="eq_scratch_retired" text="ritirato"/>
+        <text name="eq_scratch_inFoal" text="gravidanza troppo avanzata per gareggiare"/>
+        <text name="eq_scratch_fractious_1" text="non voleva salire sul camion"/>
+        <text name="eq_scratch_fractious_2" text="era agitato e non si è fatto montare"/>
+        <text name="eq_scratch_fractious_3" text="si è rifiutato di andare alla partenza"/>
+        <text name="eq_injury_bruisedSole" text="una contusione alla suola"/>
+        <text name="eq_injury_abscess" text="un ascesso allo zoccolo"/>
+        <text name="eq_injury_overreach" text="una ferita da raggiungimento"/>
+        <text name="eq_injury_soreBack" text="mal di schiena"/>
+        <text name="eq_injury_splints" text="schinelle"/>
+        <text name="eq_injury_tendon" text="uno stiramento al tendine"/>
+        <text name="eq_injury_chipFracture" text="una frattura da scheggia"/>
+        <text name="eq_injury_suspensory" text="un legamento sospensore lesionato"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Contusione alla suola"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Ascesso allo zoccolo"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Ferita da raggiungimento"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Mal di schiena"/>
+        <text name="rl_disease_eqInjurySplints" text="Schinelle"/>
+        <text name="rl_disease_eqInjuryTendon" text="Stiramento al tendine"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Frattura da scheggia"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Sospensore lesionato"/>
+        <text name="eq_injury_newTreatable" text="%s si è infortunato in %s: %s. Curalo dalla pagina Malattie del cavallo (%s, %s), o lascia che guarisca da solo in %d mese/i."/>
+        <text name="eq_injury_newRest" text="%s si è infortunato in %s: %s. %d mese/i di riposo in box."/>
+        <text name="eq_illness_new" text="%s ha preso %s a %s. Vedi la sua pagina Malattie."/>
+        <text name="eq_injury_careerEnding" text="%s ha subito un infortunio che ha chiuso la carriera in %s e si è ritirato dalle gare."/>
+        <text name="eq_injury_recovered" text="%s si è ripreso e può tornare a gareggiare."/>
+        <text name="eq_retire_done" text="Ritirato dalle gare."/>
+        <text name="eq_retire_doneInjured" text="Ritirato dalle gare. L'infortunio deve ancora guarire, ma ora le cure costano il %d%% in meno."/>
+        <text name="eq_retire_undone" text="Di nuovo in gara."/>
+        <text name="eq_retire_careerEnded" text="La carriera di quel cavallo si è chiusa con un infortunio; non può più gareggiare."/>
+        <text name="eq_status_title" text="Gare"/>
+        <text name="eq_status_injured" text="Infortunato, %d mese/i"/>
+        <text name="eq_status_retired" text="Ritirato"/>
+        <text name="eq_status_sick" text="Malato"/>
+        <text name="eq_status_unwell" text="Salute troppo bassa"/>
+        <text name="eq_status_settling" text="In ambientamento"/>
+        <text name="eq_status_rested" text="A riposo per il mese"/>
+        <text name="eq_status_inFoal" text="Gravida"/>
+        <text name="eq_status_foaled" text="In ripresa dal parto"/>
+        <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Potenziale delle abilità"/>
+        <text name="eq_ui_skillPotentialDealer" text="Potenziale (secondo il commerciante)"/>
+        <text name="eq_ui_potentialTitle" text="Potenziale"/>
+        <text name="eq_ui_potentialDealer" text="Secondo il commerciante, può essere sbagliato"/>
+        <text name="eq_ui_skills" text="Abilità"/>
+        <text name="eq_specialty_title" text="Gara preferita"/>
+        <text name="eq_role_title" text="Ruolo"/>
+        <text name="eq_role_balanced" text="Nessun ruolo"/>
+        <text name="eq_role_dressage" text="Dressage"/>
+        <text name="eq_role_showJumping" text="Salto ostacoli"/>
+        <text name="eq_role_crossCountry" text="Cross"/>
+        <text name="eq_role_eventing" text="Completo"/>
+        <text name="eq_role_racing" text="Corse"/>
+        <text name="eq_role_breeding" text="Riproduzione"/>
+        <text name="eq_role_sale" text="In vendita"/>
+        <text name="eq_role_retired" text="Ritirato"/>
+        <text name="eq_ui_button_role" text="Ruolo: %s"/>
+        <text name="input_EQ_HORSE_ROLE" text="Cambia ruolo del cavallo"/>
+        <text name="input_EQ_COURSE_RECORD" text="Registra o modifica percorso di salto"/>
+        <text name="eq_course_recordAction" text="Nuovo percorso di salto"/>
+        <text name="eq_course_started" text="Registrazione di %s: passa sugli ostacoli in ordine. Gli ostacoli piazzati di Realistic Equestrian non hanno collisioni mentre modifichi; gli altri restano solidi"/>
+        <text name="eq_course_noJumps" text="Registrazione di un percorso, ma sulla mappa non ci sono ancora ostacoli da salto"/>
+        <text name="eq_course_tooFew" text="Percorso non salvato: passa su almeno %d ostacoli da salto"/>
+        <text name="eq_course_saved" text="%s salvato: %d ostacoli, %.0f m"/>
+        <text name="eq_course_cancelled" text="Modifica interrotta: sei sceso da cavallo prima che il percorso avesse abbastanza ostacoli per salvarlo"/>
+        <text name="eq_course_leftSaved" text="Percorso salvato quando sei sceso da cavallo: premi Ctrl+J vicino a esso per modificarlo, poi Ctrl+K per registrare dal punto più vicino"/>
+        <text name="eq_course_recording" text="Registrazione di %s: %d ostacoli, %.0f m"/>
+        <text name="eq_course_collisionNote" text="Gli ostacoli piazzati di Realistic Equestrian non hanno collisioni mentre tracci il percorso; gli altri restano solidi"/>
+        <text name="eq_course_name" text="Percorso %d"/>
+        <text name="eq_sj_begin" text="Vai alla linea di partenza per iniziare il salto ostacoli"/>
+        <text name="eq_sj_ready" text="Preparati..."/>
+        <text name="eq_sj_go" text="Via!"/>
+        <text name="eq_sj_cross" text="Via! Supera la linea di partenza"/>
+        <text name="eq_sj_early" text="Troppo presto! Torna dietro la linea di partenza"/>
+        <text name="eq_sj_rail" text="Barriera abbattuta! %s penalità"/>
+        <text name="eq_sj_runout" text="Scarto! %s penalità"/>
+        <text name="eq_sj_refusal" text="Rifiuto! %s penalità"/>
+        <text name="eq_sj_eliminated" text="Eliminato"/>
+        <text name="eq_sj_out_late" text="Eliminato: la linea di partenza non è stata superata in tempo"/>
+        <text name="eq_sj_out_wrongCourse" text="Eliminato: errore di percorso (ostacolo %d saltato fuori ordine)"/>
+        <text name="eq_sj_out_refusals" text="Eliminato: secondo rifiuto"/>
+        <text name="eq_sj_out_timeLimit" text="Eliminato: oltre il tempo limite"/>
+        <text name="eq_sj_clear" text="Percorso netto in %s!"/>
+        <text name="eq_sj_faults" text="%s penalità in %s"/>
+        <text name="eq_sj_clearPop" text="Percorso netto!"/>
+        <text name="eq_sj_faultsPop" text="%s penalità"/>
+        <text name="eq_sj_retired" text="Percorso di salto abbandonato"/>
+        <text name="eq_sj_startLine" text="Linea di partenza"/>
+        <text name="eq_sj_finishLine" text="Linea d'arrivo"/>
+        <text name="eq_sj_fenceRow" text="Ostacolo %d di %d"/>
+        <text name="eq_sj_faultsRow" text="%s penalità"/>
+        <text name="eq_sj_timeRow" text="Tempo"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Registra percorso di cross"/>
+        <text name="eq_course_recordXcAction" text="Nuovo percorso di cross"/>
+        <text name="eq_course_xcName" text="Cross %d"/>
+        <text name="eq_course_noXcJumps" text="Nessun ostacolo da cross trovato: metti una bandierina rossa e una bianca ai lati di un ostacolo, o piazza cataste di tronchi o muri di discesa"/>
+        <text name="eq_sj_beginXc" text="Vai alla linea di partenza per iniziare il cross"/>
+        <text name="eq_sj_out_refusalsXc" text="Eliminato: tre rifiuti a un ostacolo, o quattro sul percorso"/>
+        <text name="eq_sj_represent" text="Torna indietro e salta l'ostacolo %d"/>
+        <text name="eq_pop_courseFence" text="Ostacolo %d"/>
+        <text name="input_EQ_COURSE_REWIND" text="Torna al punto più vicino"/>
+        <text name="eq_course_rewound" text="Percorso riportato al punto più vicino: %d ostacoli mantenuti"/>
+        <text name="eq_course_resumed" text="Registrazione dal punto più vicino"/>
+        <text name="eq_course_finished" text="Modifica terminata: gli ostacoli piazzati di Realistic Equestrian hanno di nuovo le collisioni"/>
+        <text name="eq_course_deleted" text="%s eliminato"/>
+        <text name="eq_course_deleteAsk" text="Eliminare %s con %d ostacoli su %.0f m?"/>
+        <text name="eq_course_deleteTitle" text="Elimina percorso"/>
+        <text name="eq_course_deleteAction" text="Elimina %s"/>
+        <text name="eq_course_editAction" text="Modifica %s"/>
+        <text name="eq_course_doneAction" text="Termina modifica del percorso"/>
+        <text name="eq_course_saveAction" text="Salva percorso e termina"/>
+        <text name="eq_course_editing" text="Modifica di %s: %d ostacoli, %.0f m"/>
+        <text name="eq_course_editStarted" text="Modifica di %s: gli ostacoli piazzati di Realistic Equestrian non hanno collisioni finché non termini; gli altri restano solidi"/>
+        <text name="input_EQ_COURSE_DELETE" text="Elimina percorso vicino"/>
+        <text name="eq_ui_riding" text="Cavalcata"/>
+        <text name="eq_ui_ridingFull" text="Piena, niente più allenamento oggi"/>
+        <text name="eq_ui_ridingFullValue" text="%s - piena"/>
+        <text name="eq_specialty_none" text="Nessuna per ora"/>
+        <text name="eq_specialty_pair" text="%s e %s"/>
+        <text name="eq_specialty_eventer" text="Cavallo da completo"/>
+        <text name="eq_specialty_racehorse" text="Cavallo da corsa"/>
+        <text name="eq_specialty_allRounder" text="Tuttofare"/>
+        <text name="eq_enter_settling" text="Quel cavallo si sta ancora ambientando dopo il trasferimento. Può gareggiare dal mese prossimo."/>
+        <text name="eq_enter_rested" text="Quel cavallo ha già fatto %d partenze questo mese e ha bisogno di riposo. Può correre di nuovo il mese prossimo."/>
+        <text name="eq_reveal_better" text="Hai conosciuto meglio %s, e sembra ancora migliore di quanto lasciasse intendere il commerciante."/>
+        <text name="eq_reveal_worse" text="Hai conosciuto meglio %s, e hai la sensazione di essere stato ingannato."/>
+        <text name="eq_reveal_fair" text="Hai conosciuto meglio %s e hai un'idea più precisa del suo potenziale."/>
+        <text name="eq_ui_title" text="Gare"/>
+        <text name="eq_ui_col_event" text="Gara"/>
+        <text name="eq_ui_col_going" text="Condizioni"/>
+        <text name="eq_ui_col_risk" text="Rischio"/>
+        <text name="eq_ui_injuryRisk" text="Rischio infortuni"/>
+        <text name="eq_ui_dayCount" text="%d giorno"/>
+        <text name="eq_ui_days" text="%d giorni"/>
+        <text name="eq_ui_months" text="%d mese/i"/>
+        <text name="eq_ui_perMonth" text="%s al mese"/>
+        <text name="eq_ui_retire" text="Ritira"/>
+        <text name="eq_ui_retireConfirm" text="Ritirare %s dalle gare? Non potrà più iscriversi alle gare. È permanente e non si può annullare."/>
+        <text name="eq_ui_retireConfirmInjured" text="Ritirare %s dalle gare? Le cure per l'infortunio costeranno il %d%% in meno, ma non potrà più iscriversi alle gare. È permanente e non si può annullare."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="Curare %s per %s? Richiede %s e costa %s."/>
+        <text name="eq_risk_low" text="Basso"/>
+        <text name="eq_risk_minor" text="Lieve"/>
+        <text name="eq_risk_moderate" text="Moderato"/>
+        <text name="eq_risk_risky" text="Alto"/>
+        <text name="eq_risk_off" text="Disattivato"/>
+        <text name="eq_ui_col_level" text="Livello"/>
+        <text name="eq_ui_col_type" text="Tipo"/>
+        <text name="eq_skill_untrained" text="Non addestrato"/>
+        <text name="eq_skill_novice" text="Novizio"/>
+        <text name="eq_skill_trainee" text="Allievo"/>
+        <text name="eq_skill_amateur" text="Amatore"/>
+        <text name="eq_skill_promising" text="Promettente"/>
+        <text name="eq_skill_competitor" text="Agonista"/>
+        <text name="eq_skill_contender" text="Sfidante"/>
+        <text name="eq_skill_champion" text="Campione"/>
+        <text name="eq_skill_legend" text="Leggendario"/>
+        <text name="eq_ui_col_when" text="Risultati"/>
+        <text name="eq_ui_col_fee" text="Iscrizione"/>
+        <text name="eq_ui_col_prize" text="Montepremi"/>
+        <text name="eq_ui_col_yours" text="I tuoi cavalli"/>
+        <text name="eq_ui_col_day" text="Giorno"/>
+        <text name="eq_ui_col_horse" text="Cavallo"/>
+        <text name="eq_ui_col_result" text="Risultato"/>
+        <text name="eq_ui_col_status" text="Stato"/>
+        <text name="eq_ui_horseDescription" text="I cavalli mangiano fieno, cereali e premi e hanno bisogno di acqua. Le fattrici sane oltre i 22 mesi possono riprodursi."/>
+        <text name="eq_ui_col_success" text="Probabilità"/>
+        <text name="eq_ui_col_training" text="Allenamento"/>
+        <text name="eq_ui_trainingBenefit" text="Beneficio allenamento"/>
+        <text name="eq_ui_ageLong" text="%d mesi"/>
+        <text name="eq_success_favourite" text="Favorito"/>
+        <text name="eq_success_contender" text="Sfidante"/>
+        <text name="eq_success_outsider" text="Outsider"/>
+        <text name="eq_success_longShot" text="Sorpresa"/>
+        <text name="eq_benefit_high" text="Alto"/>
+        <text name="eq_benefit_medium" text="Medio"/>
+        <text name="eq_benefit_low" text="Basso"/>
+        <text name="eq_benefit_none" text="Nessuno"/>
+        <text name="eq_ui_when_tomorrow" text="Domani"/>
+        <text name="eq_ui_when_nextMonth" text="Mese prossimo"/>
+        <text name="eq_ui_trainingOnly" text="Solo allenamento"/>
+        <text name="eq_ui_entered" text="Iscritti: %s"/>
+        <text name="eq_ui_canEnter" text="%d possono iscriversi"/>
+        <text name="eq_ui_noneEligible" text="Nessuno idoneo"/>
+        <text name="eq_ui_ageMonths" text="%d m"/>
+        <text name="eq_ui_day" text="Giorno %d"/>
+        <text name="eq_ui_status_ok" text="Può iscriversi"/>
+        <text name="eq_ui_status_lowHealth" text="Salute bassa: %d%% ritiro"/>
+        <text name="eq_ui_status_eventFull" text="Due tuoi cavalli già iscritti"/>
+        <text name="eq_ui_status_tooYoung" text="Troppo giovane"/>
+        <text name="eq_ui_status_tooOld" text="Troppo vecchio"/>
+        <text name="eq_ui_status_ratingLow" text="Valutazione troppo bassa"/>
+        <text name="eq_ui_status_ratingHigh" text="Troppo bravo per questo livello"/>
+        <text name="eq_ui_status_enteredHere" text="Iscritto"/>
+        <text name="eq_ui_status_enteredElsewhere" text="In un'altra gara"/>
+        <text name="eq_ui_result_place" text="%d su %d"/>
+        <text name="eq_ui_result_eliminated" text="Eliminato"/>
+        <text name="eq_ui_result_scratched" text="Ritirato"/>
+        <text name="eq_ui_button_enterAuto" text="Iscrivi, trasporto automatico (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Iscrivi, trasporto manuale (%s)"/>
+        <text name="eq_ui_transportLabel" text="Costo totale"/>
+        <text name="eq_ui_transportLine" text="Automatico %s · Manuale %s"/>
+        <text name="eq_ui_transportLabel_near" text="Costo, estero"/>
+        <text name="eq_ui_transportLabel_far" text="Costo, lunga distanza"/>
+        <text name="eq_ui_awaiting" text="%s (in attesa di consegna)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="In attesa di consegna"/>
+        <text name="input_EQ_DELIVER" text="Consegna cavallo alla gara"/>
+        <text name="eq_deliver_prompt" text="Consegna %s alla gara"/>
+        <text name="eq_deliver_promptMany" text="Consegna %d cavalli alle loro gare"/>
+        <text name="eq_deliver_done" text="%s consegnato. Parte per la sua gara."/>
+        <text name="eq_deliver_doneMany" text="%d cavalli consegnati. Partono per le loro gare."/>
+        <text name="eq_deliver_noRoom" text="Impossibile consegnare: i tuoi cavalli hanno bisogno di un posto libero in uno dei tuoi pascoli per tornare."/>
+        <text name="eq_deliver_failed" text="Consegna non riuscita: %s"/>
+        <text name="eq_deliver_title" text="Consegna alla gara"/>
+        <text name="eq_deliver_ask" text="%s aspetta di andare a una gara. Consegnarlo ora o aprire il commerciante come al solito?"/>
+        <text name="eq_deliver_askMany" text="%d cavalli in questo rimorchio aspettano di andare alle loro gare. Consegnarli ora o aprire il commerciante come al solito?"/>
+        <text name="eq_deliver_yes" text="Consegna"/>
+        <text name="eq_deliver_no" text="Apri commerciante"/>
+        <text name="eq_loose_broughtHome" text="Il tuo personale ha riportato %s a %s."/>
+        <text name="eq_loose_broughtHomeUnnamed" text="Il tuo personale ha riportato un cavallo scappato a %s."/>
+        <text name="eq_ui_result_notDelivered" text="Non consegnato"/>
+        <text name="eq_ui_deadline_round" text="prima dei risultati di domani"/>
+        <text name="eq_ui_deadline_month" text="prima della fine del mese"/>
+        <text name="eq_ui_button_results" text="Risultati"/>
+        <text name="eq_ui_button_manageAnimals" text="Gestisci animali"/>
+        <text name="eq_ui_button_events" text="Gare"/>
+        <text name="eq_ui_noEvents" text="Nessuna gara aperta al momento. Le nuove vengono estratte a ogni turno."/>
+        <text name="eq_ui_noResults" text="I tuoi cavalli non hanno ancora risultati."/>
+        <text name="eq_ui_noHorses" text="Non hai cavalli."/>
+        <text name="eq_ui_clientNote" text="Le gare sono gestite dall'host. L'iscrizione da un client multigiocatore arriverà in una versione futura."/>
+        <text name="eq_ui_noConfig" text="Impossibile caricare l'elenco delle gare; vedi il log."/>
+        <text name="eq_ui_ages_range" text="età %d-%d mesi"/>
+        <text name="eq_ui_ages_from" text="da %d mesi"/>
+        <text name="eq_ui_summary_event" text="%s: %s, valutazione %.0f-%.0f, %d partenti. Seleziona un cavallo e premi Invio."/>
+        <text name="eq_enter_noEvent" text="Quella gara non è aperta alle iscrizioni."/>
+        <text name="eq_enter_retired" text="Quel cavallo si è ritirato dalle gare."/>
+        <text name="eq_enter_inFoal" text="Quella fattrice ha una gravidanza troppo avanzata per gareggiare. Potrà tornare a gareggiare dopo il parto."/>
+        <text name="eq_enter_foaled" text="Quella fattrice si sta ancora riprendendo dal parto. Potrà gareggiare tre mesi dopo la nascita."/>
+        <text name="eq_enter_already" text="Quel cavallo è già iscritto a %s."/>
+        <text name="eq_enter_eventFull" text="Puoi iscrivere al massimo %d cavalli a una gara."/>
+        <text name="eq_enter_tooYoung" text="Troppo giovane: questa gara è per cavalli da %d mesi in su, e il tuo ha %d mesi."/>
+        <text name="eq_enter_tooOld" text="Troppo vecchio: questa gara è per cavalli fino a %d mesi, e il tuo ha %d mesi."/>
+        <text name="eq_enter_ratingLow" text="La valutazione %.0f è sotto la fascia %.0f-%.0f di questa gara."/>
+        <text name="eq_enter_ratingHigh" text="La valutazione %.0f è sopra la fascia %.0f-%.0f di questa gara: iscriviti a un livello superiore."/>
+        <text name="eq_enter_noMoney" text="Soldi insufficienti: l'iscrizione costa %s (quota %s, trasporto %s)."/>
+        <text name="eq_enter_done" text="%s iscritto a %s (valutazione %.0f). Trasporto automatico: %s."/>
+        <text name="eq_enter_doneManual" text="%s iscritto a %s (valutazione %.0f). Trasporto manuale: porta il cavallo dal commerciante di animali %s, o non partirà."/>
+        <text name="eq_result_notDelivered" text="%s non è mai stato consegnato a %s, quindi non è partito. La quota d'iscrizione è persa."/>
+        <text name="eq_enter_farmLimit" text="Hai usato tutte le %d iscrizioni di questo mese. Altre si aprono il mese prossimo."/>
+        <text name="eq_ui_farmLimit" text="Nessuna iscrizione rimasta questo mese"/>
+        <text name="eq_ui_entriesLeft" text="Iscrizioni rimaste questo mese: %d su %d."/>
+        <text name="eq_money_transport" text="Trasporto cavalli"/>
+        <text name="eq_money_staffWages" text="Stipendi del personale equestre"/>
+        <text name="eq_staff_title" text="Personale equestre"/>
+        <text name="eq_staff_tab_hire" text="Assumi"/>
+        <text name="eq_staff_tab_staff" text="Il tuo personale"/>
+        <text name="eq_staff_col_name" text="Nome"/>
+        <text name="eq_staff_col_job" text="Ruolo"/>
+        <text name="eq_staff_col_grade" text="Grado"/>
+        <text name="eq_staff_col_best" text="Abilità migliori"/>
+        <text name="eq_staff_col_worksOn" text="Lavora con"/>
+        <text name="eq_staff_col_wage" text="Stipendio / giorno"/>
+        <text name="eq_staff_job_groom" text="Stalliere"/>
+        <text name="eq_staff_job_dressage" text="Istruttore di dressage"/>
+        <text name="eq_staff_job_showJumping" text="Istruttore di salto ostacoli"/>
+        <text name="eq_staff_job_crossCountry" text="Istruttore di cross"/>
+        <text name="eq_staff_job_racing" text="Allenatore da corsa"/>
+        <text name="eq_staff_job_vet" text="Veterinario"/>
+        <text name="eq_staff_job_broker" text="Mediatore"/>
+        <text name="eq_staff_grade_junior" text="Junior"/>
+        <text name="eq_staff_grade_experienced" text="Esperto"/>
+        <text name="eq_staff_grade_senior" text="Senior"/>
+        <text name="eq_staff_grade_legendary" text="Leggendario"/>
+        <text name="eq_staff_skill_dressage" text="Dressage"/>
+        <text name="eq_staff_skill_showJumping" text="Salto ostacoli"/>
+        <text name="eq_staff_skill_crossCountry" text="Cross"/>
+        <text name="eq_staff_skill_racing" text="Corse"/>
+        <text name="eq_staff_skill_veterinary" text="Veterinaria"/>
+        <text name="eq_staff_skill_broker" text="Mediazione"/>
+        <text name="eq_staff_level_1" text="Scarso"/>
+        <text name="eq_staff_level_2" text="Discreto"/>
+        <text name="eq_staff_level_3" text="Buono"/>
+        <text name="eq_staff_level_4" text="Molto buono"/>
+        <text name="eq_staff_level_5" text="Eccellente"/>
+        <text name="eq_staff_level_6" text="Leggendario"/>
+        <text name="eq_staff_works_general" text="Tutti i cavalli"/>
+        <text name="eq_staff_works_passive" text="Ogni cavallo"/>
+        <text name="eq_staff_status" text="Stato"/>
+        <text name="eq_staff_stables" text="Stalle"/>
+        <text name="eq_staff_roles" text="Ruoli"/>
+        <text name="eq_staff_horses" text="Cavalli"/>
+        <text name="eq_staff_covers" text="Cavalli seguiti"/>
+        <text name="eq_staff_mode_roles" text="Per ruolo"/>
+        <text name="eq_staff_mode_horses" text="Singoli"/>
+        <text name="eq_staff_allStables" text="Tutte le stalle"/>
+        <text name="eq_staff_nStables" text="%d stalle"/>
+        <text name="eq_staff_allRoles" text="Tutti i ruoli"/>
+        <text name="eq_staff_nRoles" text="%d ruoli"/>
+        <text name="eq_staff_nHorses" text="%d cavalli"/>
+        <text name="eq_staff_noHorses" text="Scegli i cavalli"/>
+        <text name="eq_staff_works_off" text="Disattivato"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, disattivato da domani"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, di nuovo al lavoro da domani"/>
+        <text name="eq_staff_pick_stables" text="Seleziona stalle"/>
+        <text name="eq_staff_pick_roles" text="Seleziona ruoli"/>
+        <text name="eq_staff_pick_horses" text="Seleziona cavalli"/>
+        <text name="eq_staff_pick_empty" text="Spunta almeno una voce."/>
+        <text name="eq_staff_wage" text="Stipendio"/>
+        <text name="eq_staff_perDay" text="%s al giorno"/>
+        <text name="eq_staff_duties" text="Mansioni principali"/>
+        <text name="eq_staff_duties_groom" text="Allena tutte e quattro le caratteristiche, pulisce i cavalli, riporta a casa quelli scappati"/>
+        <text name="eq_staff_duties_trainer" text="Si concentra su %s e %s, allena un po' le altre caratteristiche e prepara i cavalli per le gare"/>
+        <text name="eq_staff_duties_vet" text="Meno infortuni, cure più brevi ed economiche, per ogni cavallo"/>
+        <text name="eq_staff_duties_broker" text="Dà un potenziale dei cavalli più preciso dal commerciante. Prezzi migliori quando compri e vendi cavalli."/>
+        <text name="eq_staff_timeLeft" text="Tempo rimanente"/>
+        <text name="eq_staff_hours" text="%d h"/>
+        <text name="eq_staff_button_hire" text="Assumi (%s al giorno)"/>
+        <text name="eq_staff_button_fire" text="Licenzia"/>
+        <text name="eq_staff_fire_confirm" text="Licenziare %s? Non tornerà."/>
+        <text name="eq_staff_letGo" text="%s se n'è andato."/>
+        <text name="eq_staff_hired" text="%s inizia a lavorare oggi."/>
+        <text name="eq_staff_unique" text="Hai già un %s. Una fattoria può averne solo uno."/>
+        <text name="eq_staff_noCandidates" text="Nessuno cerca lavoro al momento. Arrivano nuove persone ogni mese."/>
+        <text name="eq_staff_noStaff" text="Non hai ancora personale. Assumilo nella scheda Assumi."/>
+        <text name="eq_staff_summary_hire" text="Nuove persone arrivano ogni poche ore e restano disponibili da 12 a 72 ore. Solo un veterinario e un mediatore per fattoria."/>
+        <text name="eq_staff_summary_staff" text="Stipendi: %s al giorno. Il personale rende di più quando ognuno segue pochi cavalli."/>
+        <text name="eq_staff_clientNote" text="Per ora solo l'host può assumere personale."/>
+        <text name="eq_result_placed" text="%s si è piazzato %d su %d in %s, vincendo %s."/>
+        <text name="eq_result_placedNoPrize" text="%s si è piazzato %d su %d in %s."/>
+        <text name="eq_result_gone" text="%s non ha potuto correre in %s: il cavallo non è più in una fattoria."/>
+        <text name="eq_and" text="e"/>
+        <text name="eq_facility_improves" text="Migliora l'allenamento di %s (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Allenamento in: %s"/>
+        <text name="eq_facility_indoorArena" text="Maneggio coperto"/>
+        <text name="eq_facility_ridingCentre" text="Centro ippico"/>
+        <text name="eq_facility_outdoorArena" text="Campo all'aperto"/>
+        <text name="eq_facility_roundPen" text="Tondino"/>
+        <text name="eq_facility_jumps" text="Campo ostacoli"/>
+        <text name="eq_facility_xcFence" text="Percorso di cross"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_tab" text="Equitazione"/>
+        <text name="eq_settings_credit" text="Realistic Equestrian di %s"/>
+        <text name="eq_settings_off" text="Disattivato"/>
+        <text name="eq_settings_on" text="Attivo"/>
+        <text name="eq_settings_noLimit" text="Nessun limite"/>
+        <text name="eq_settings_trainingRate" text="Ritmo di allenamento"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Quanto velocemente cavalcate, personale e gare alzano le caratteristiche di un cavallo. 1x è il ritmo normale."/>
+        <text name="eq_settings_cadence" text="Gare"/>
+        <text name="eq_settings_cadence_tooltip" text="Quanto spesso si svolge il turno di gare. Le modifiche valgono dal turno successivo."/>
+        <text name="eq_settings_cadence_day" text="Ogni giorno"/>
+        <text name="eq_settings_cadence_month" text="Ogni mese"/>
+        <text name="eq_settings_eventsMin" text="Gare minime"/>
+        <text name="eq_settings_eventsMin_tooltip" text="Il numero minimo di gare in calendario allo stesso tempo, incluse Avanzato e Campionato. Ogni turno estrae un numero tra questo e il massimo. In multigiocatore se ne aggiungono altre per ogni fattoria con cavalli."/>
+        <text name="eq_settings_eventsMax" text="Gare massime"/>
+        <text name="eq_settings_eventsMax_tooltip" text="Il numero massimo di gare in calendario allo stesso tempo. Le modifiche valgono dal turno successivo."/>
+        <text name="eq_settings_racing" text="Corse e steeple-chase"/>
+        <text name="eq_settings_racing_tooltip" text="Se corse in piano e steeple-chase sono nel calendario. Le modifiche valgono dal turno successivo."/>
+        <text name="eq_settings_injuries" text="Infortuni nelle gare"/>
+        <text name="eq_settings_injuries_tooltip" text="Se i cavalli possono infortunarsi nelle gare."/>
+        <text name="eq_settings_forcedRetirement" text="Infortuni che chiudono la carriera"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Se gli infortuni peggiori nelle gare possono chiudere per sempre la carriera agonistica di un cavallo."/>
+        <text name="eq_settings_entriesPerMonth" text="Iscrizioni al mese"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Quante iscrizioni alle gare ogni fattoria può fare in un mese."/>
+        <text name="eq_ord_1" text="%dº"/>
+        <text name="eq_ord_2" text="%dº"/>
+        <text name="eq_ord_3" text="%dº"/>
+        <text name="eq_ord_n" text="%dº"/>
+        <text name="eq_story_podium" text="Vincitore: %s, 2º: %s, 3º: %s."/>
+        <text name="eq_story_winner" text="Vincitore: %s."/>
+        <text name="eq_story_gains" text="Ha guadagnato %s."/>
+        <text name="eq_story_injury" text="È tornato a casa con %s."/>
+        <text name="eq_story_careerEnded" text="Ha subito un infortunio che ha chiuso la carriera."/>
+        <text name="eq_story_jumping_clean" text="Ha fatto un percorso netto."/>
+        <text name="eq_story_jumping_struggled" text="Ha faticato molto con la difficoltà del percorso."/>
+        <text name="eq_story_jumping_eliminated" text="È uscito dopo una caduta."/>
+        <text name="eq_story_jumping_elimRefusal" text="È uscito dopo tre rifiuti."/>
+        <text name="eq_story_jumping_agility" text="Ha abbattuto una barriera in una combinazione difficile."/>
+        <text name="eq_story_jumping_agilityMany" text="Ha abbattuto diverse barriere."/>
+        <text name="eq_story_jumping_hardest" text="Andava bene finché è caduta una barriera all'ostacolo più difficile."/>
+        <text name="eq_story_jumping_speed" text="È stato lento tra gli ostacoli e ha perso tempo."/>
+        <text name="eq_story_jumping_temperament" text="Ha rifiutato un ostacolo."/>
+        <text name="eq_story_dressage_clean" text="Una ripresa curata che ha colpito i giudici."/>
+        <text name="eq_story_dressage_struggled" text="Ha faticato nella ripresa dall'inizio alla fine."/>
+        <text name="eq_story_dressage_agility" text="Ha perso punti nei lavori laterali."/>
+        <text name="eq_story_dressage_agilityMany" text="Ha perso punti in diversi movimenti."/>
+        <text name="eq_story_dressage_hardest" text="Una ripresa elegante, ma ha faticato nei movimenti più difficili."/>
+        <text name="eq_story_dressage_temperament" text="Era visibilmente teso e faticava a concentrarsi."/>
+        <text name="eq_story_dressage_temperamentMany" text="Teso e distratto per gran parte della ripresa."/>
+        <text name="eq_story_dressage_elimRefusal" text="Si è rifiutato di proseguire e si è ritirato dalla ripresa."/>
+        <text name="eq_story_crossCountry_clean" text="Netto entro il tempo."/>
+        <text name="eq_story_crossCountry_struggled" text="Ha trovato il percorso troppo impegnativo e ha faticato dall'inizio alla fine."/>
+        <text name="eq_story_crossCountry_eliminated" text="È uscito dopo una caduta."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="È uscito dopo tre rifiuti."/>
+        <text name="eq_story_crossCountry_agility" text="Ha scartato a un ostacolo stretto."/>
+        <text name="eq_story_crossCountry_agilityMany" text="È inciampato in alcuni atterraggi e ha perso il ritmo."/>
+        <text name="eq_story_crossCountry_hardest" text="Andava bene fino a uno scarto all'ostacolo più difficile."/>
+        <text name="eq_story_crossCountry_temperament" text="Ha rifiutato all'acqua."/>
+        <text name="eq_story_crossCountry_speed" text="Era fuori ritmo tra gli ostacoli e ha perso tempo."/>
+        <text name="eq_story_crossCountry_stamina" text="Si è stancato nei tratti più lunghi ed è rimasto indietro."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Ha finito le energie ben prima dell'arrivo."/>
+        <text name="eq_story_race_clean" text="Ha corso una grande gara dall'inizio alla fine."/>
+        <text name="eq_story_race_struggled" text="Non è mai entrato in gara."/>
+        <text name="eq_story_race_eliminated" text="È caduto dopo uno scontro e non ha potuto continuare."/>
+        <text name="eq_story_race_elimRefusal" text="Ha fatto i capricci alla partenza ed è stato fermato."/>
+        <text name="eq_story_race_temperament" text="Ha sbagliato la partenza."/>
+        <text name="eq_story_race_speed" text="Non ha tenuto il ritmo iniziale."/>
+        <text name="eq_story_race_speedMany" text="Gli è mancata la velocità per stare con i primi."/>
+        <text name="eq_story_race_stamina" text="Ha ceduto nel finale."/>
+        <text name="eq_story_race_staminaMany" text="Ha finito la benzina ben prima dell'arrivo."/>
+        <text name="eq_story_race_finish" text="Ha corso bene per tutta la gara, ma è stato battuto allo sprint finale."/>
+        <text name="eq_story_race_comeback" text="È rimasto indietro all'inizio, ma ha fatto uno sprint emozionante fino al traguardo."/>
+        <text name="eq_story_steeplechase_clean" text="Ha saltato e corso bene per tutto il percorso."/>
+        <text name="eq_story_steeplechase_struggled" text="Ha faticato sia con gli ostacoli sia con il ritmo."/>
+        <text name="eq_story_steeplechase_eliminated" text="È caduto malamente su una siepe e non ha potuto continuare."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Ha rifiutato un ostacolo ed è stato fermato."/>
+        <text name="eq_story_steeplechase_agility" text="Ha colpito forte un ostacolo e ha perso terreno."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Ha saltato male e perso terreno a diversi ostacoli."/>
+        <text name="eq_story_steeplechase_hardest" text="Andava bene fino a un errore all'ostacolo più difficile."/>
+        <text name="eq_story_steeplechase_speed" text="Non ha tenuto il ritmo iniziale."/>
+        <text name="eq_story_steeplechase_temperament" text="Ha saltato con esitazione e perso terreno."/>
+        <text name="eq_story_steeplechase_stamina" text="Si è stancato e ha ceduto sugli ultimi ostacoli."/>
+        <text name="eq_story_eventing_clean" text="Netto in ogni prova."/>
+        <text name="eq_story_eventing_struggled" text="Ha faticato in tutte e tre le prove."/>
+        <text name="eq_story_eventing_eliminated" text="È uscito dopo una caduta nel cross."/>
+        <text name="eq_ui_tab_upcoming" text="Prossime gare"/>
+        <text name="eq_ui_tab_results" text="Risultati"/>
+        <text name="eq_ui_col_starts" text="Partenze"/>
+        <text name="eq_ui_col_wins" text="Vittorie"/>
+        <text name="eq_ui_col_lastResult" text="Ultimo risultato"/>
+        <text name="eq_ui_result_placeOrd" text="%s su %d"/>
+        <text name="eq_ui_noHorseResults" text="%s non ha ancora risultati in gara."/>
+        <text name="eq_ui_summary_results" text="Le ultime %d gare di un cavallo. Scegli un cavallo a destra."/>
+        <text name="eq_ui_career_starts" text="Partenze"/>
+        <text name="eq_ui_career_record" text="Vittorie / piazzamenti"/>
+        <text name="eq_ui_career_earnings" text="Premi vinti"/>
+        <text name="eq_ui_career_eliminations" text="Eliminazioni"/>
+        <text name="eq_ui_button_viewResults" text="Vedi risultati"/>
+        <text name="eq_ui_button_rideHorse" text="Monta cavallo"/>
+        <text name="eq_ui_rideNotInPen" text="%s non è nel recinto ora. Avvicinati a un cavallo lì per montarlo."/>
+        <text name="eq_settings_entryFeeScale" text="Quote d'iscrizione"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Scala la quota d'iscrizione di ogni gara. 1x è normale. Le gare già in calendario mantengono la loro quota; le modifiche valgono dal turno successivo."/>
+        <text name="eq_settings_prizeScale" text="Premi"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Scala i premi di ogni gara. 1x è normale. Le gare già in calendario mantengono i loro premi; le modifiche valgono dal turno successivo."/>
+        <text name="eq_story_phaseScore" text="%s: %s, %s penalità"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, %s penalità (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, netto"/>
+        <text name="eq_story_down1" text="1 abbattimento"/>
+        <text name="eq_story_downN" text="%d abbattimenti"/>
+        <text name="eq_story_refusal1" text="1 rifiuto"/>
+        <text name="eq_story_refusalN" text="%d rifiuti"/>
+        <text name="eq_story_time" text="%s sul tempo"/>
+        <text name="eq_story_total" text="Totale: %s penalità"/>
+        <text name="eq_staff_button_decline" text="Rifiuta"/>
+        <text name="eq_staff_declined" text="%s non tornerà. Qualcuno di nuovo potrebbe presentarsi nelle prossime ore."/>
+    </texts>
+</l10n>
