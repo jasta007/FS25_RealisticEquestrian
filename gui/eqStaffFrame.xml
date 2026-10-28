@@ -117,17 +117,17 @@
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="panelWorksOnLabel" textLayoutMode="scrolling"/>
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="panelWorksOn" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -438px" size="490px 112px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -4px" size="195px 108px" id="panelNoteLabel"
+            <GuiElement profile="rlMenu_container" position="0px -438px" size="490px 78px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -4px" size="195px 74px" id="panelNoteLabel"
                       textVerticalAlignment="top" textLayoutMode="scrolling"/>
-                <!-- Duties wrap over up to four lines. -->
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px -4px" size="290px 108px" id="panelNote"
-                      textVerticalAlignment="top" textMaxWidth="290px" textMaxNumLines="4" textLayoutMode="truncate"/>
+                <!-- Duties wrap over up to three lines. -->
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px -4px" size="290px 74px" id="panelNote"
+                      textVerticalAlignment="top" textMaxWidth="290px" textMaxNumLines="3" textLayoutMode="truncate"/>
             </GuiElement>
 
             <!-- Your staff only: who they work on and whether they work, as on RLRM's Herdsman
                  page. Stables and the role/horse checklist open RLRM's husbandry picker. -->
-            <GuiElement profile="rlMenu_container" id="staffControls" position="0px -556px" size="490px 184px">
+            <GuiElement profile="rlMenu_container" id="staffControls" position="0px -522px" size="490px 184px">
                 <GuiElement profile="rlMenu_container" position="0px 0px" size="490px 42px">
                     <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 42px" text="$l10n_eq_staff_status" textLayoutMode="scrolling"/>
                     <Button profile="rl_settingsButton" id="statusButton" position="0px 0px" size="290px 38px" onClick="onClickStatus">
