@@ -773,6 +773,54 @@ function EqConsole:consoleCourses(action, number)
 end
 
 
+--- eqHostCheck [type] [rating]: testing, what the farm has for hosting an event and which
+--- ratings it could book now (data/hosting.xml).
+function EqConsole:consoleHostCheck(typeName, ratingName)
+    if g_currentMission == nil then return "No mission loaded" end
+    local config = EqHostVenue.config
+    if config == nil then return "data/hosting.xml did not load; see log.txt" end
+    if typeName ~= nil and not EqHosting.isType(typeName) then
+        return "Usage: eqHostCheck [" .. table.concat(EqHosting.TYPES, "|") .. "] [rating]"
+    end
+    local farmId = g_currentMission:getFarmId()
+    local venue = EqHostVenue.read(farmId)
+
+    for _, course in ipairs(venue.courses) do
+        print(string.format("  course %s (%s): %d jump(s), %.0f m, %d bleacher(s)%s", course.name, course.kind, course.jumps,
+            course.length, course.seating, course.indoor and ", indoors" or ""))
+    end
+    for _, arena in ipairs(venue.arenas) do
+        print(string.format("  arena %s (A to C %.1f m) at %.0f, %.0f: %d bleacher(s)%s", arena.name, arena.measured, arena.x,
+            arena.z, arena.seating, arena.indoor and ", indoors" or ""))
+    end
+    print(string.format("  %d bleacher(s), %d free horse place(s), %d kind(s) of horse facility", #venue.bleachers,
+        venue.freePlaces, venue.facilityKinds))
+    for _, source in ipairs(venue.feedSources) do print(string.format("  feed: %s %.0f l", source.name, source.litres)) end
+    print(string.format("  horse feed %.0f l; a visiting horse eats %.0f l a month", venue.feed, venue.feedPerHorse))
+
+    local types = typeName ~= nil and { typeName } or EqHosting.TYPES
+    local bookable = {}
+    for _, name in ipairs(types) do
+        for _, rating in ipairs(config.ratings) do
+            if ratingName == nil or ratingName == rating.name then
+                local result = EqHosting.check(config, name, rating.name, venue)
+                local score = EqHosting.popularity(config, name, result, { facilityKinds = venue.facilityKinds })
+                local takings = EqHosting.takings(config, name, rating, score, result.seatingTotal)
+                local missing = {}
+                for _, check in ipairs(result.checks) do
+                    if not check.ok then table.insert(missing, string.format("%s %s/%s", check.id, tostring(check.have), tostring(check.need))) end
+                end
+                print(string.format("%s %s: %s, setup %d, popularity %d, takings %d (%d of %d visitors, gate %d)", name, rating.name,
+                    result.ok and "OK" or ("needs " .. table.concat(missing, ", ")), result.setupFee, score, takings.total,
+                    takings.competitors, takings.visitors, takings.gate))
+                if result.ok then table.insert(bookable, name .. " " .. rating.name) end
+            end
+        end
+    end
+    return "Could book: " .. (#bookable > 0 and table.concat(bookable, ", ") or "nothing yet")
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -800,6 +848,7 @@ function EqConsole.register()
     addConsoleCommand("eqChanges", "Testing: what changed a horse's stats and why: eqChanges <horse> [days]", "consoleChanges", EqConsole)
     addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
+    addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
@@ -812,8 +861,9 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality", "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges",
-        "eqStats", "eqCourses", "eqXcFences", "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck",
+        "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end
 end

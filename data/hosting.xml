@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    Hosting your own event: what each rating asks of your farm, what it costs and what it earns.
+    Read by EqHosting; balance changes need no code.
+
+    hosting
+        ownPlaces           places kept for your own horses (you may enter up to this many); the
+                            rest of the field are visiting horses, who need stabling and feed
+        seatingRadius       metres from a course's line, or an arena's edge, that a bleacher counts
+        eventingSetupFactor a 3 Day Event's setup fee is the rating's times this
+        eventingFeeFactor   and its visitors pay the entry fee times this
+        turnoutMin          share of the visiting places filled at popularity 0; full at 100
+
+    rating
+        name            key used in saves (eq_host_rating_<name>)
+        tier            the events.xml tier its rivals, prizes and rules come from
+        field           runners in total, your own horses included
+        setupFee        paid when booking
+        entryFee        paid to you by each visiting horse that turns up (stabling included)
+        gate            each bleacher's spectator takings at popularity 100
+        seating         bleachers needed beside the show jumping course and the dressage arena
+                        (an indoor arena counts as one)
+        dressageArena   arena length needed in metres: 30 (15x30), 40 (20x40) or 60 (20x60)
+        dressageMoves   commands in the dressage test
+        showJumps       jumps on the show jumping course
+        xcLength        metres of cross country course
+        xcJumps         jumps on the cross country course
+
+    popularity          points out of 100
+        base            every event starts here
+        course          most points for a course or arena beyond the rating's minimum, full at
+                        courseFullAt (a share above the minimum: 0.25 = 25% more jumps)
+        seating         most points for bleachers beyond the minimum (seatingEach each) and an
+                        indoor arena (indoor)
+        facilities      for horse facilities on the farm (facilitiesEach per kind)
+        reputationMin/Max   the range of your hosting reputation; success and cancel move it
+        star            a Champion or Legendary horse of yours in the field
+        winter          cross country (and 3 Day Events) in winter
+
+    seating             what counts as a bleacher: <match> by xml filename, <keyword> a Lua
+                        pattern tried against the lowercased xml filename (as in facilities.xml)
+
+    Part of Realistic Equestrian by Jasta007.
+-->
+<hosting ownPlaces="2" seatingRadius="60" eventingSetupFactor="1.5" eventingFeeFactor="2" turnoutMin="0.5">
+    <ratings>
+        <rating name="novice"       tier="novice"       field="8"  setupFee="5000"  entryFee="600"  gate="1000"  seating="0" dressageArena="30" dressageMoves="15" showJumps="6"  xcLength="3000" xcJumps="20"/>
+        <rating name="intermediate" tier="intermediate" field="16" setupFee="20000" entryFee="1500" gate="4000"  seating="1" dressageArena="40" dressageMoves="20" showJumps="10" xcLength="4000" xcJumps="30"/>
+        <rating name="championship" tier="championship" field="32" setupFee="80000" entryFee="3500" gate="12000" seating="2" dressageArena="60" dressageMoves="25" showJumps="12" xcLength="5000" xcJumps="40"/>
+    </ratings>
+
+    <popularity base="30" course="15" courseFullAt="0.25" seating="15" seatingEach="5" indoor="5"
+                facilities="10" facilitiesEach="5" reputationMin="-25" reputationMax="20" success="8" cancel="-15"
+                star="10" winter="-10"/>
+
+    <seating>
+        <match xml="placeables/bleachers/bleachers"/>
+        <keyword pattern="bleacher"/>
+        <keyword pattern="grandstand"/>
+        <keyword pattern="tribune"/>
+        <keyword pattern="tribuene"/>
+        <keyword pattern="spectator"/>
+    </seating>
+</hosting>
