@@ -3653,7 +3653,7 @@ end)()
         courses = {
             { name = "SJ small", kind = "showJumping", jumps = 7, length = 400, seating = 0, indoor = false },
             { name = "SJ big", kind = "showJumping", jumps = 13, length = 500, seating = 1, indoor = true },
-            { name = "XC", kind = "crossCountry", jumps = 32, length = 4300, seating = 0, indoor = false },
+            { name = "XC", kind = "crossCountry", jumps = 32, length = 2600, seating = 0, indoor = false },
         },
         arenas = { { name = "20x40", length = 40, seating = 1, indoor = false } },
         freePlaces = 14, feed = 14000, feedPerHorse = feedNeedEach, facilityKinds = 1,
@@ -3676,7 +3676,7 @@ end)()
     check("hosting: visitors = field less own places", result.visitors == 14 and result.feedNeed == 14000)
 
     result = EqHosting.check(host, "crossCountry", "championship", venue)
-    check("hosting: 4300 m falls short of 5000", not result.ok and result.checks[1].id == "xcLength" and not result.checks[1].ok)
+    check("hosting: 2600 m falls short of 3000", not result.ok and result.checks[1].id == "xcLength" and not result.checks[1].ok)
     result = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 0 })
     check("hosting: no arena fails dressage", not result.ok and result.checks[1].id == "arena" and result.checks[1].have == 0)
 

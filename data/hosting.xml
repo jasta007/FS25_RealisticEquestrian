@@ -44,9 +44,9 @@
 -->
 <hosting ownPlaces="2" seatingRadius="60" eventingSetupFactor="1.5" eventingFeeFactor="2" turnoutMin="0.5">
     <ratings>
-        <rating name="novice"       tier="novice"       field="8"  setupFee="5000"  entryFee="600"  gate="1000"  seating="0" dressageArena="30" dressageMoves="15" showJumps="6"  xcLength="3000" xcJumps="20"/>
-        <rating name="intermediate" tier="intermediate" field="16" setupFee="20000" entryFee="1500" gate="4000"  seating="1" dressageArena="40" dressageMoves="20" showJumps="10" xcLength="4000" xcJumps="30"/>
-        <rating name="championship" tier="championship" field="32" setupFee="80000" entryFee="3500" gate="12000" seating="2" dressageArena="60" dressageMoves="25" showJumps="12" xcLength="5000" xcJumps="40"/>
+        <rating name="novice"       tier="novice"       field="8"  setupFee="5000"  entryFee="600"  gate="1000"  seating="0" dressageArena="30" dressageMoves="15" showJumps="6"  xcLength="1500" xcJumps="20"/>
+        <rating name="intermediate" tier="intermediate" field="16" setupFee="20000" entryFee="1500" gate="4000"  seating="1" dressageArena="40" dressageMoves="20" showJumps="10" xcLength="2000" xcJumps="30"/>
+        <rating name="championship" tier="championship" field="32" setupFee="80000" entryFee="3500" gate="12000" seating="2" dressageArena="60" dressageMoves="25" showJumps="12" xcLength="3000" xcJumps="40"/>
     </ratings>
 
     <popularity base="30" course="15" courseFullAt="0.25" seating="15" seatingEach="5" indoor="5"
