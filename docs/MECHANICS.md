@@ -573,6 +573,15 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   Your horses enter with one **Enter** button: no fee, no transport, and they stay at home. It
   counts toward Entries per month, and results come at the end of the month with the other
   monthly events.
+- **The event month:** your farm is checked when the event opens and every day after. If
+  anything is short (including that day's feed for the visitors) you get a warning; still short
+  the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
+  a month's horse ration divided by the days in a month, taken from your silos first, then your
+  horse troughs.
+- **Results:** at the end of the month popularity is worked out again, plus 10 if one of your
+  entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
+  how many visitors came (the field is them plus your two places). Their entry fees and the gate
+  are paid to you, and your reputation rises 8 (from -25 up to 20).
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement.
 

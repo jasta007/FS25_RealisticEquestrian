@@ -785,5 +785,8 @@
         <text name="rl_messageTitle_eqHosting" text="Organizzazione"/>
         <text name="eq_settings_hostInterval" text="Mesi tra le tue gare"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quanti mesi dopo il mese della tua ultima gara organizzata prima di poterne organizzare un'altra."/>
+        <text name="eq_host_warning" text="Alla tua %s manca: %s. Rimedia oggi o la gara sarà annullata domani."/>
+        <text name="eq_host_cancelled" text="La tua %s è stata annullata, mancava ancora: %s. La tua reputazione di organizzatore ne risente."/>
+        <text name="eq_host_done" text="La tua %s è finita: sono venuti %d cavalli ospiti. Incassi %s (%s iscrizioni, %s biglietti), popolarità %d."/>
     </texts>
 </l10n>

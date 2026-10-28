@@ -10,6 +10,13 @@
       held at the farm (EqCompetitionManager.openHosted): the farm's own horses enter it from the
       Events tab, with no fee or transport, and it is resolved at the end of the month with the
       other monthly events.
+    - The event month: the farm is checked again when it opens and every day. Short of anything
+      (the visitors' feed for the day included), it gets a warning; still short a day later, the
+      event is cancelled, which costs reputation. Each day the visitors' feed is taken from the
+      farm's silos, then its troughs.
+    - At the end of the month popularity is worked out again (a Champion of yours entered draws
+      a crowd), which sets the turnout and the field; the visitors' entry fees and the gate are
+      paid, and the farm's reputation goes up.
 
     Months are counted as EqCompetitionManager.month counts them (months played), so a booking
     keeps its place whatever the calendar says.
@@ -24,8 +31,23 @@ EqHostManager.BOOK_AHEAD = 12
 -- Cancelling at least this many months before the event refunds REFUND_SHARE of the setup fee.
 EqHostManager.REFUND_MONTHS = 2
 EqHostManager.REFUND_SHARE = 0.5
+-- An entered horse rated this high for the event (Champion and up) makes it a star event.
+EqHostManager.STAR_RATING = 90
 
 local Log = EqLog
+
+
+--- @param farmId number
+--- @param kind string EqMessages type
+--- @param text string
+--- @param level number|nil FSBaseMission notification type
+local function tell(farmId, kind, text, level)
+    if g_currentMission:getFarmId() == farmId then
+        g_currentMission:addIngameNotification(level or FSBaseMission.INGAME_NOTIFICATION_INFO, text)
+    end
+    EqMessages.post(farmId, kind, text)
+end
+
 
 
 function EqHostManager.reset()
@@ -195,13 +217,202 @@ function EqHostManager.onMonthStarted(month)
         EqHostManager.bookings[farmId] = nil
         local event = EqCompetitionManager.openHosted(farmId, booking.type, booking.rating, EqHostManager.venueName(farmId))
         if event ~= nil then
-            local text = string.format(g_i18n:getText("eq_host_opened"), EqCompetitionManager.eventTitle(event))
-            if g_currentMission:getFarmId() == farmId then
-                g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, text)
-            end
-            EqMessages.post(farmId, "EQ_HOST_OPENED", text)
+            tell(farmId, "EQ_HOST_OPENED", string.format(g_i18n:getText("eq_host_opened"), EqCompetitionManager.eventTitle(event)))
+            if EqHostVenue.config ~= nil then EqHostManager.startMonth(event) end
         end
     end
+end
+
+
+-- THE EVENT MONTH
+
+--- Feed the visitors eat in a day. Pure.
+--- @param feedPerHorse number litres a horse eats in a month
+--- @param horses number visiting horses
+--- @param daysPerPeriod number
+--- @return number litres
+function EqHostManager.dailyFeed(feedPerHorse, horses, daysPerPeriod)
+    return math.ceil((feedPerHorse or 0) * (horses or 0) / math.max(1, daysPerPeriod or 1))
+end
+
+
+--- The checks a running event fails. Pure.
+--- @param result table from EqHosting.check
+--- @param skipFeed boolean leave out the month's feed (it is checked a day at a time)
+--- @return table ids of the failed checks
+function EqHostManager.failedChecks(result, skipFeed)
+    local failed = {}
+    for _, check in ipairs(result.checks or {}) do
+        if not check.ok and not (skipFeed and check.id == "feed") then table.insert(failed, check.id) end
+    end
+    return failed
+end
+
+
+--- @return number day
+local function today()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    return environment ~= nil and environment.currentMonotonicDay or 0
+end
+
+
+--- @return boolean true in winter
+local function isWinter()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    return environment ~= nil and Season ~= nil and environment.currentSeason == Season.WINTER
+end
+
+
+--- Popularity and turnout for a hosted event, from the farm as it is now.
+--- @param event table
+--- @param star boolean|nil
+--- @return table result from EqHosting.check
+--- @return number popularity
+--- @return table takings from EqHosting.takings
+local function assess(event, star)
+    local config = EqHostVenue.config
+    local hosted = event.hosted
+    local venue = EqHostVenue.read(hosted.farmId)
+    local result = EqHosting.check(config, event.discipline, hosted.rating, venue)
+    local context = { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[hosted.farmId] or 0,
+        star = star, winter = isWinter() }
+    local score = EqHosting.popularity(config, event.discipline, result, context)
+    local takings = EqHosting.takings(config, event.discipline, config.ratingByName[hosted.rating], score, result.seatingTotal)
+    return result, score, takings, venue
+end
+
+
+--- @param ids table failed check ids
+--- @return string their names, such as "Horse feed, Free stable places"
+local function checkNames(ids)
+    local names = {}
+    for _, id in ipairs(ids) do table.insert(names, g_i18n:getText("eq_host_check_" .. id)) end
+    return table.concat(names, ", ")
+end
+
+
+--- A hosted event has just opened: settle its expected turnout and check the farm.
+--- @param event table
+function EqHostManager.startMonth(event)
+    local hosted = event.hosted
+    local result, score, takings, venue = assess(event, false)
+    hosted.openedDay = today()
+    hosted.popularity = score
+    hosted.competitors = takings.competitors
+    hosted.feedPerHorse = venue.feedPerHorse
+    event.field = takings.competitors + EqHostVenue.config.ownPlaces
+    local failed = EqHostManager.failedChecks(result, false)
+    if #failed > 0 then
+        hosted.warned = true
+        tell(hosted.farmId, "EQ_HOST_WARNING", string.format(g_i18n:getText("eq_host_warning"),
+            EqCompetitionManager.eventTitle(event), checkNames(failed)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
+    end
+end
+
+
+--- Cancel a running hosted event: it leaves the calendar and the farm's reputation drops.
+--- @param event table
+--- @param failed table check ids it failed
+function EqHostManager.cancelRunning(event, failed)
+    local hosted = event.hosted
+    EqCompetitionManager.events[event.id] = nil
+    local config = EqHostVenue.config
+    EqHostManager.reputation[hosted.farmId] = EqHosting.nextReputation(config, EqHostManager.reputation[hosted.farmId] or 0, false)
+    Log:info("EqHostManager: farm %d's event %d cancelled (%s)", hosted.farmId, event.id, table.concat(failed, " "))
+    tell(hosted.farmId, "EQ_HOST_CANCELLED", string.format(g_i18n:getText("eq_host_cancelled"),
+        EqCompetitionManager.eventTitle(event), checkNames(failed)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
+end
+
+
+--- A new day: feed the visitors and check every running hosted event.
+function EqHostManager.onDayChanged()
+    if EqHostVenue.config == nil then return end
+    local events = {}
+    for _, event in pairs(EqCompetitionManager.events) do
+        if event.hosted ~= nil and event.hosted.openedDay ~= today() then table.insert(events, event) end
+    end
+    table.sort(events, function(a, b) return a.id < b.id end)
+    local environment = g_currentMission.environment
+    for _, event in ipairs(events) do
+        local hosted = event.hosted
+        local result = EqHosting.check(EqHostVenue.config, event.discipline, hosted.rating, EqHostVenue.read(hosted.farmId))
+        local failed = EqHostManager.failedChecks(result, true)
+        local need = EqHostManager.dailyFeed(hosted.feedPerHorse, hosted.competitors, environment.daysPerPeriod)
+        local taken = need > 0 and EqHostVenue.takeFeed(hosted.farmId, need) or 0
+        if taken < need - 0.5 then table.insert(failed, "feed") end
+        if #failed == 0 then
+            hosted.warned = nil
+        elseif hosted.warned then
+            EqHostManager.cancelRunning(event, failed)
+        else
+            hosted.warned = true
+            tell(hosted.farmId, "EQ_HOST_WARNING", string.format(g_i18n:getText("eq_host_warning"),
+                EqCompetitionManager.eventTitle(event), checkNames(failed)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
+        end
+    end
+end
+
+
+--- @param event table
+--- @return boolean star one of the farm's entries is rated Champion or better for it
+local function hasStar(event)
+    for _, entry in ipairs(event.entries) do
+        local record = EqRegistry.getById(entry.horseId)
+        if record ~= nil and EqCompetitionManager.ratingFor(record, event) >= EqHostManager.STAR_RATING then return true end
+    end
+    return false
+end
+
+
+--- The month is over: the final popularity sets the turnout, which sets the field.
+--- @param event table
+function EqHostManager.beforeResolve(event)
+    if EqHostVenue.config == nil then return end
+    local _, score, takings = assess(event, hasStar(event))
+    event.hosted.popularity = score
+    event.hosted.takings = takings
+    event.field = takings.competitors + EqHostVenue.config.ownPlaces
+end
+
+
+--- Pay the takings and raise the farm's reputation.
+--- @param event table
+function EqHostManager.afterResolve(event)
+    local hosted = event.hosted
+    local takings = hosted.takings
+    if takings == nil then return end
+    if takings.total > 0 then
+        g_currentMission:addMoney(takings.total, hosted.farmId, MoneyType.EQ_HOSTING or MoneyType.OTHER, true, true)
+    end
+    EqHostManager.reputation[hosted.farmId] = EqHosting.nextReputation(EqHostVenue.config,
+        EqHostManager.reputation[hosted.farmId] or 0, true)
+    local money = function(amount) return g_i18n:formatMoney(amount, 0, true, true) end
+    tell(hosted.farmId, "EQ_HOST_DONE", string.format(g_i18n:getText("eq_host_done"), EqCompetitionManager.eventTitle(event),
+        takings.competitors, money(takings.total), money(takings.entries), money(takings.gate), hosted.popularity))
+end
+
+
+--- @param xmlFile table
+--- @param key string the event's hosted key
+--- @param hosted table
+function EqHostManager.saveEventState(xmlFile, key, hosted)
+    if hosted.openedDay ~= nil then xmlFile:setInt(key .. "#openedDay", hosted.openedDay) end
+    if hosted.popularity ~= nil then xmlFile:setInt(key .. "#popularity", hosted.popularity) end
+    if hosted.competitors ~= nil then xmlFile:setInt(key .. "#competitors", hosted.competitors) end
+    if hosted.feedPerHorse ~= nil then xmlFile:setFloat(key .. "#feedPerHorse", hosted.feedPerHorse) end
+    if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
+end
+
+
+--- @param xmlFile table
+--- @param key string
+--- @param hosted table filled in
+function EqHostManager.loadEventState(xmlFile, key, hosted)
+    hosted.openedDay = xmlFile:getInt(key .. "#openedDay")
+    hosted.popularity = xmlFile:getInt(key .. "#popularity")
+    hosted.competitors = xmlFile:getInt(key .. "#competitors")
+    hosted.feedPerHorse = xmlFile:getFloat(key .. "#feedPerHorse")
+    hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
 end
 
 

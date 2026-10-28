@@ -785,5 +785,8 @@
         <text name="rl_messageTitle_eqHosting" text="主催"/>
         <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
+        <text name="eq_host_warning" text="あなたの%sに不足があります：%s。今日中に対応しないと明日中止になります。"/>
+        <text name="eq_host_cancelled" text="あなたの%sは中止になりました（不足：%s）。主催者としての評判が下がります。"/>
+        <text name="eq_host_done" text="あなたの%sが終わりました：来場馬 %d 頭。収入 %s（エントリー料 %s、入場料 %s）、人気 %d。"/>
     </texts>
 </l10n>
