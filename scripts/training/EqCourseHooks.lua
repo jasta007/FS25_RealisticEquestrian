@@ -327,6 +327,15 @@ function EqCourseHooks.isEditing()
 end
 
 
+--- @return boolean true while recording a course or riding a round past its approach: no
+--- training routine then, its walk and trot commands get in the way (James, 2026-10-28)
+function EqCourseHooks.isBusy()
+    if EqCourseHooks.editing ~= nil then return true end
+    local round = EqCourseHooks.round
+    return round ~= nil and round.sj ~= nil and round.sj.state ~= "approach" and round.sj.state ~= "done"
+end
+
+
 --- @param vehicle table
 --- @return table|nil the saved course near the horse, number|nil its index
 function EqCourseHooks.nearCourse(vehicle)
