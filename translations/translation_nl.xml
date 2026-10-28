@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="Gevorderd"/>
         <text name="eq_host_rating_championship" text="Kampioenschap"/>
         <text name="eq_host_col_event" text="Wedstrijd die je kunt organiseren"/>
-        <text name="eq_host_col_ready" text="Klaar"/>
+        <text name="eq_host_col_ready" text="Eisen"/>
         <text name="eq_host_col_popularity" text="Populariteit"/>
         <text name="eq_host_col_setup" text="Opzetkosten"/>
-        <text name="eq_host_col_takings" text="Opbrengst"/>
+        <text name="eq_host_col_takings" text="Max. opbrengst"/>
         <text name="eq_host_col_check" text="Eis"/>
         <text name="eq_host_col_have" text="Je hebt"/>
         <text name="eq_host_col_need" text="Nodig"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="Opzetkosten"/>
         <text name="eq_host_label_popularity" text="Populariteit"/>
         <text name="eq_host_label_visitors" text="Opkomst"/>
-        <text name="eq_host_label_takings" text="Opbrengst"/>
+        <text name="eq_host_label_takings" text="Verwachte opbrengst"/>
         <text name="eq_host_label_reputation" text="Reputatie"/>
         <text name="eq_host_yours_open" text="%s, deze maand bezig"/>
         <text name="eq_host_yours_booked" text="%s in %s"/>

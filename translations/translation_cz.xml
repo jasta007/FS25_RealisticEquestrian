@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="Střední"/>
         <text name="eq_host_rating_championship" text="Mistrovství"/>
         <text name="eq_host_col_event" text="Závod, který můžeš pořádat"/>
-        <text name="eq_host_col_ready" text="Připraveno"/>
+        <text name="eq_host_col_ready" text="Požadavky"/>
         <text name="eq_host_col_popularity" text="Oblíbenost"/>
         <text name="eq_host_col_setup" text="Poplatek za přípravu"/>
-        <text name="eq_host_col_takings" text="Tržby"/>
+        <text name="eq_host_col_takings" text="Max. tržby"/>
         <text name="eq_host_col_check" text="Požadavek"/>
         <text name="eq_host_col_have" text="Máš"/>
         <text name="eq_host_col_need" text="Potřeba"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="Poplatek za přípravu"/>
         <text name="eq_host_label_popularity" text="Oblíbenost"/>
         <text name="eq_host_label_visitors" text="Účast"/>
-        <text name="eq_host_label_takings" text="Tržby"/>
+        <text name="eq_host_label_takings" text="Očekávané tržby"/>
         <text name="eq_host_label_reputation" text="Pověst"/>
         <text name="eq_host_yours_open" text="%s, probíhá tento měsíc"/>
         <text name="eq_host_yours_booked" text="%s – %s"/>

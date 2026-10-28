@@ -722,10 +722,10 @@
         <text name="eq_host_rating_intermediate" text="中级"/>
         <text name="eq_host_rating_championship" text="锦标赛"/>
         <text name="eq_host_col_event" text="可主办的比赛"/>
-        <text name="eq_host_col_ready" text="准备"/>
+        <text name="eq_host_col_ready" text="要求"/>
         <text name="eq_host_col_popularity" text="人气"/>
         <text name="eq_host_col_setup" text="筹办费"/>
-        <text name="eq_host_col_takings" text="收入"/>
+        <text name="eq_host_col_takings" text="最高收入"/>
         <text name="eq_host_col_check" text="要求"/>
         <text name="eq_host_col_have" text="现有"/>
         <text name="eq_host_col_need" text="需要"/>
@@ -750,7 +750,7 @@
         <text name="eq_host_label_setup" text="筹办费"/>
         <text name="eq_host_label_popularity" text="人气"/>
         <text name="eq_host_label_visitors" text="参赛"/>
-        <text name="eq_host_label_takings" text="收入"/>
+        <text name="eq_host_label_takings" text="预计收入"/>
         <text name="eq_host_label_reputation" text="声誉"/>
         <text name="eq_host_yours_open" text="%s（本月进行中）"/>
         <text name="eq_host_yours_booked" text="%s（%s）"/>

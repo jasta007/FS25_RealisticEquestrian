@@ -552,7 +552,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 
 | Rating | Field | Setup fee | Dressage arena | Show jumps | Cross country | Bleachers |
 | --- | --- | --- | --- | --- | --- | --- |
-| Novice | 8 | 5,000 | 15x30 | 6 | 1500 m, 20 jumps | 0 |
+| Novice | 8 | 5,000 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
 | Intermediate | 16 | 20,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
 | Championship | 32 | 80,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
 
@@ -565,7 +565,9 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 - **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to
   15 for extra bleachers or an indoor arena, up to 10 for horse facilities, and your hosting
   reputation. It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
-  each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate.
+  each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
+  shows the most an event could take (at popularity 100); its details show the expected takings
+  at today's popularity, which can still change before the event.
 - **Booking:** one event at a time, from next month up to a year ahead, and at least the
   **Months between hosted events** setting (3, 4, 6 or 12; default 6) after your last one.
   Booking pays the setup fee. Cancelling two or more months ahead refunds half; later, nothing.

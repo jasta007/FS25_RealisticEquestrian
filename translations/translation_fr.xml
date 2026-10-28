@@ -724,10 +724,10 @@
         <text name="eq_host_rating_intermediate" text="Intermédiaire"/>
         <text name="eq_host_rating_championship" text="Championnat"/>
         <text name="eq_host_col_event" text="Concours à organiser"/>
-        <text name="eq_host_col_ready" text="Prêt"/>
+        <text name="eq_host_col_ready" text="Exigences"/>
         <text name="eq_host_col_popularity" text="Popularité"/>
         <text name="eq_host_col_setup" text="Frais d'organisation"/>
-        <text name="eq_host_col_takings" text="Recettes"/>
+        <text name="eq_host_col_takings" text="Recettes max."/>
         <text name="eq_host_col_check" text="Exigence"/>
         <text name="eq_host_col_have" text="Vous avez"/>
         <text name="eq_host_col_need" text="Requis"/>
@@ -752,7 +752,7 @@
         <text name="eq_host_label_setup" text="Frais d'organisation"/>
         <text name="eq_host_label_popularity" text="Popularité"/>
         <text name="eq_host_label_visitors" text="Participation"/>
-        <text name="eq_host_label_takings" text="Recettes"/>
+        <text name="eq_host_label_takings" text="Recettes prévues"/>
         <text name="eq_host_label_reputation" text="Réputation"/>
         <text name="eq_host_yours_open" text="%s, en cours ce mois-ci"/>
         <text name="eq_host_yours_booked" text="%s en %s"/>
