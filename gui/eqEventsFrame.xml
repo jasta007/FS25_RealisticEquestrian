@@ -278,7 +278,8 @@
         <!-- The month to book: a picker, shown while nothing is booked -->
         <GuiElement profile="rlMenu_container" id="hostMonthBox" position="1070px -463px" size="490px 44px" visible="false">
             <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 44px" text="$l10n_eq_host_label_month"/>
-            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostMonthOption" position="200px 0px" size="290px 44px"
+            <!-- The settings profile anchors on the right, so 0px puts it flush right (200px to 490px) -->
+            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostMonthOption" position="0px 0px" size="290px 44px"
                              onClick="onClickHostMonth"/>
         </GuiElement>
 
