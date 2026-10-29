@@ -2469,6 +2469,24 @@ do
             and i3d:find('name="pennantRed"', 1, true) ~= nil and i3d:find('name="col"', 1, true) ~= nil
             and (xml:find("<eqCornerSide>", 1, true) ~= nil) == corner)
     end
+    -- the placed corners are looked over each second (onPostLoad never came for the choice in game)
+    local nodes = { root = { "red", "white" }, red = { x = 2.45, ry = 0 }, white = { x = -2.45, ry = 0 } }
+    local saved = { getNumOfChildren, getChildAt, getName, getTranslation, setTranslation, setRotation, g_currentMission, g_time, g_gui }
+    getNumOfChildren = function(n) return n == "root" and 2 or 0 end
+    getChildAt = function(n, i) return nodes[n][i + 1] end
+    getName = function(n) return n == "red" and "eqFlagsRed" or "eqFlagsWhite" end
+    getTranslation = function(n) return nodes[n].x, 0, 0 end
+    setTranslation = function(n, x) nodes[n].x = x end
+    setRotation = function(n, _, ry) nodes[n].ry = ry end
+    local corner = { rootNode = "root", configFileName = modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcCornerLog.xml",
+        configurations = { eqCornerSide = EqXcCorners.LEFT } }
+    g_currentMission, g_time, g_gui = { placeableSystem = { placeables = { corner } } }, 5000, nil
+    EqXcCorners.scannedAt = nil
+    EqXcCorners.update()
+    check("a placed Point left corner gets its flags swapped by the scan", nodes.red.x == -2.45 and nodes.white.x == 2.45
+        and math.abs(nodes.red.ry - math.pi) < 1e-9 and corner.eqCornerSide == EqXcCorners.LEFT)
+    getNumOfChildren, getChildAt, getName, getTranslation, setTranslation, setRotation, g_currentMission, g_time, g_gui = unpack(saved, 1, 9)
+    EqXcCorners.scannedAt = nil
     check("the Corner choice has its texts", en:find('name="eq_config_corner"', 1, true) ~= nil
         and en:find('name="eq_config_cornerRight"', 1, true) ~= nil and en:find('name="eq_config_cornerLeft"', 1, true) ~= nil)
 end

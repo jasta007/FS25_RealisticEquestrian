@@ -8,8 +8,10 @@
     The flags are the transform groups "eqFlagsRed" and "eqFlagsWhite" (each holding its flag's
     shape) at +x and -x. Swapping moves each to the other's place, turned round so its pennant
     still flies outwards. The course recorder and the flag letters read the groups, so nothing
-    else changes. Done when the choice loads (also in the shop's preview) and again before the
-    course lists its fences, in case that never came.
+    else changes. The game never called PlaceableConfigurationItem.onPostLoad for this choice
+    (James, 2026-10-29: Point left did nothing), so the placed corners and the construction
+    brush's preview are looked over every second instead, and again before the course lists its
+    fences.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -94,15 +96,33 @@ function EqXcCorners.apply(placeable)
 end
 
 
+EqXcCorners.SCAN_MS = 1000
+
+
+--- Put every placed corner's flags, and the one on the construction brush, where they belong.
+function EqXcCorners.update()
+    local now = g_time or 0
+    if EqXcCorners.scannedAt ~= nil and now - EqXcCorners.scannedAt < EqXcCorners.SCAN_MS then return end
+    EqXcCorners.scannedAt = now
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    if system ~= nil and system.placeables ~= nil then
+        for _, placeable in ipairs(system.placeables) do EqXcCorners.apply(placeable) end
+    end
+    local gui = g_gui ~= nil and g_gui.currentGui or nil
+    local target = gui ~= nil and gui.target or nil
+    local brush = type(target) == "table" and target.brush or nil
+    if type(brush) == "table" and type(brush.placeable) == "table" then EqXcCorners.apply(brush.placeable) end
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqXcCorners.install(guarded)
     guarded("corner configuration", EqXcCorners.registerConfiguration)
-    if PlaceableConfigurationItem ~= nil and PlaceableConfigurationItem.onPostLoad ~= nil then
-        PlaceableConfigurationItem.onPostLoad = Utils.appendedFunction(PlaceableConfigurationItem.onPostLoad,
-            function(item, placeable)
-                if not EqMain.isActive or type(placeable) ~= "table" or type(item) ~= "table" then return end
-                if item.configName ~= EqXcCorners.CONFIG then return end
-                guarded("corner flags", function() EqXcCorners.apply(placeable) end)
-            end)
-    end
+    FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
+        if not EqMain.isActive then return end
+        guarded("corner flags", EqXcCorners.update)
+    end)
+    FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, function()
+        EqXcCorners.scannedAt = nil
+    end)
 end

@@ -44,10 +44,10 @@
       <Shape name="logsB" shapeId="2" clipDistance="300" nodeId="20" castsShadows="true" receiveShadows="true" materialIds="8"/>
       <Shape name="ends" shapeId="3" clipDistance="300" nodeId="21" castsShadows="true" receiveShadows="true" materialIds="5"/>
       <Shape name="deck" shapeId="4" clipDistance="300" nodeId="22" castsShadows="true" receiveShadows="true" materialIds="6"/>
-      <TransformGroup name="eqFlagsRed" translation="0.95 0 0" nodeId="23">
+      <TransformGroup name="eqFlagsRed" translation="2.45 0 0" nodeId="23">
         <Shape name="pennantRed" shapeId="5" clipDistance="300" nodeId="24" castsShadows="true" receiveShadows="true" materialIds="9"/>
       </TransformGroup>
-      <TransformGroup name="eqFlagsWhite" translation="-0.95 0 0" nodeId="25">
+      <TransformGroup name="eqFlagsWhite" translation="-2.45 0 0" nodeId="25">
         <Shape name="pennantWhite" shapeId="6" clipDistance="300" nodeId="26" castsShadows="true" receiveShadows="true" materialIds="9"/>
       </TransformGroup>
       <TransformGroup name="collision" nodeId="27">

@@ -36,10 +36,10 @@
     <TransformGroup name="xcCornerPlank" nodeId="14">
       <Shape name="boards" shapeId="1" clipDistance="300" nodeId="15" castsShadows="true" receiveShadows="true" materialIds="5"/>
       <Shape name="deck" shapeId="2" clipDistance="300" nodeId="16" castsShadows="true" receiveShadows="true" materialIds="6"/>
-      <TransformGroup name="eqFlagsRed" translation="0.95 0 0" nodeId="17">
+      <TransformGroup name="eqFlagsRed" translation="2.45 0 0" nodeId="17">
         <Shape name="pennantRed" shapeId="3" clipDistance="300" nodeId="18" castsShadows="true" receiveShadows="true" materialIds="7"/>
       </TransformGroup>
-      <TransformGroup name="eqFlagsWhite" translation="-0.95 0 0" nodeId="19">
+      <TransformGroup name="eqFlagsWhite" translation="-2.45 0 0" nodeId="19">
         <Shape name="pennantWhite" shapeId="4" clipDistance="300" nodeId="20" castsShadows="true" receiveShadows="true" materialIds="7"/>
       </TransformGroup>
       <TransformGroup name="collision" nodeId="21">

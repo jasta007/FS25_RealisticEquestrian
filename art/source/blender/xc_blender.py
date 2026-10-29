@@ -25,10 +25,10 @@ SPACING = 6.0           # jumps stand this far apart along X in the scene, for l
 BOARD = (2.0, 1.6)      # metres one plank texture covers: along the grain (u), across the 8 boards (v)
 ROUND_V = 1.5           # metres of round wood one peeled/dark texture covers along it
 
-CORNER_LENGTH = 4.4     # along X, apex at +X
+CORNER_LENGTH = 4.0     # along X, apex at +X
 CORNER_TIP = 0.2        # half the width of the cut-off apex
-CORNER_TIP_X = 0.5      # where the apex is: the flags bracket only the narrow end (James: take it
-                        # at the narrow end or get into trouble), the wide end runs on past the white flag
+CORNER_TIP_X = CORNER_LENGTH / 2   # centred: the flags stand past both ends and the rider picks
+                                   # the line (James: narrow end safe, wide end trouble)
 CORNER_HALF_ANGLE = 30  # degrees each arm turns away from the flag line (a 60 degree corner)
 FLAG_GAP = 0.45         # flags stand this far past the ends
 
