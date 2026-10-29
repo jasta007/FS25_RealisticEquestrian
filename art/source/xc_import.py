@@ -12,6 +12,10 @@ group, red at +x. A corner's Corner choice (EqXcCorners) swaps the two groups' p
 
 Run from the repository root: python3 art/source/xc_import.py
 
+The game builds no collision from inline geometry, so after running this, re-save the six .i3d
+files in GIANTS Editor (art/source/ge-resave.ps1, from inside PowerShell: & ge-resave.ps1 -Files a,b,c)
+and commit the .i3d with its binary .i3d.shapes.
+
 Part of Realistic Equestrian by Jasta007.
 """
 
