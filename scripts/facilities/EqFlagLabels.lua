@@ -216,6 +216,58 @@ local function cameraPosition()
 end
 
 
+-- GUI elements whose area hides a letter under them (the game draws all text after the menus,
+-- whatever order it is drawn in: James, 2026-10-29). Elements nearly the whole screen are
+-- backdrops, not panels, and are left out.
+EqFlagLabels.COVER_TYPES = { Bitmap = true, Button = true, ThreePartBitmap = true, SmoothList = true, List = true,
+    MultiTextOption = true, Slider = true, TextInput = true }
+EqFlagLabels.BACKDROP = 0.9
+EqFlagLabels.MAX_COVER_NODES = 2000
+
+
+--- Whether a screen point is inside any of the rectangles. Pure, for the tests.
+--- @param rects table { { x, y, w, h } }
+--- @return boolean
+function EqFlagLabels.covered(rects, x, y)
+    for _, r in ipairs(rects) do
+        if x >= r[1] and x <= r[1] + r[3] and y >= r[2] and y <= r[2] + r[4] then return true end
+    end
+    return false
+end
+
+
+--- The visible menu panels of the open screen (the construction menu), as screen rectangles.
+--- @return table rects
+function EqFlagLabels.menuRects()
+    local rects = {}
+    local gui = g_gui ~= nil and g_gui.currentGui or nil
+    local root = gui ~= nil and (gui.target or gui) or nil
+    if type(root) ~= "table" or type(root.elements) ~= "table" then return rects end
+    local stack, count = { root }, 0
+    while #stack > 0 and count < EqFlagLabels.MAX_COVER_NODES do
+        local element = table.remove(stack)
+        count = count + 1
+        local visible = element.visible ~= false
+        if visible and element.getIsVisible ~= nil then
+            local ok, shown = pcall(element.getIsVisible, element)
+            visible = not ok or shown ~= false
+        end
+        if visible then
+            local pos, size = element.absPosition, element.absSize
+            if element ~= root and EqFlagLabels.COVER_TYPES[element.typeName] and type(pos) == "table" and type(size) == "table"
+                and size[1] ~= nil and size[2] ~= nil and size[1] > 0 and size[2] > 0
+                and not (size[1] >= EqFlagLabels.BACKDROP and size[2] >= EqFlagLabels.BACKDROP) then
+                table.insert(rects, { pos[1], pos[2], size[1], size[2] })
+            end
+            if type(element.elements) == "table" then
+                for _, child in ipairs(element.elements) do table.insert(stack, child) end
+            end
+        end
+    end
+    return rects
+end
+
+
 --- Draw the letters. Once per frame however many draws call it.
 function EqFlagLabels.draw()
     if EqFlagLabels.failed or not EqFlagLabels.wanted() then
@@ -243,12 +295,15 @@ function EqFlagLabels.draw()
         end
         local getText = g_i18n ~= nil and function(key) return g_i18n:getText(key) end or nil
         local size = getCorrectTextSize ~= nil and getCorrectTextSize(EqFlagLabels.TEXT_SIZE) or EqFlagLabels.TEXT_SIZE
+        local okRects, rects = EqLog.try("EqFlagLabels.menuRects", EqFlagLabels.menuRects)
+        if not okRects then rects = {} end
         setTextAlignment(RenderText.ALIGN_CENTER)
         setTextBold(true)
         for _, entry in ipairs(EqFlagLabels.near(EqFlagLabels.positions(entries), cx, cy, cz, EqFlagLabels.RANGE)) do
             local flag, textSize = entry.flag, size * EqFlagLabels.scale(entry.distance)
             local sx, sy, sz = project(flag.x, flag.y + EqFlagLabels.LIFT, flag.z)
-            if sx ~= nil and sx > -0.1 and sx < 1.1 and sy > -0.1 and sy < 1.1 and sz <= 1 then
+            if sx ~= nil and sx > -0.1 and sx < 1.1 and sy > -0.1 and sy < 1.1 and sz <= 1
+                and not EqFlagLabels.covered(rects, sx, sy + textSize * 0.5) then
                 local text = EqFlagLabels.letter(flag.colour, getText)
                 setTextColor(0, 0, 0, 0.8)
                 renderText(sx + 0.0012, sy - 0.0018, textSize, text)
@@ -269,8 +324,8 @@ end
 
 
 --- Draw from the mission and, in case the world's draw is skipped under it, the construction screen.
---- Before each one's own drawing, so the HUD and the construction menu cover the letters (James,
---- 2026-10-29: drawn after, they sat on top of the shop's tiles).
+--- Before each one's own drawing. The game still draws text after the menus, so letters over a
+--- menu panel are left out (EqFlagLabels.menuRects).
 --- @param guarded function main.lua's error guard
 function EqFlagLabels.install(guarded)
     local function hook(class, label)

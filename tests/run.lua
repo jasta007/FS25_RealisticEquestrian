@@ -2419,6 +2419,8 @@ do
 end
 dofile("scripts/facilities/EqFlagLabels.lua")
 do
+    check("a letter over a menu panel is left out", EqFlagLabels.covered({ { 0, 0, 0.5, 1 } }, 0.3, 0.5)
+        and not EqFlagLabels.covered({ { 0, 0, 0.5, 1 } }, 0.7, 0.5) and not EqFlagLabels.covered({}, 0.3, 0.5))
     check("jump flag nodes are white or red, from every source", EqFlagLabels.classify("eqFlagsWhite") == "white"
         and EqFlagLabels.classify("eqFlagsRed") == "red" and EqFlagLabels.classify("modernFlagsWhite") == "white"
         and EqFlagLabels.classify("modernFlagsRed01") == "red" and EqFlagLabels.classify("eqXcFlagWhite") == "white"
