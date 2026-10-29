@@ -152,6 +152,10 @@ EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
 EqTrainingHooks.CLIP_RAY_UP = 1.0
 EqTrainingHooks.CLIP_CLEARANCE = 0.0
 EqTrainingHooks.CLIP_REACH = 0.6
+-- On the ground after a jump, hooves less than this over the top of one of our show jump poles
+-- knock it too (in the air a near miss stays clear): a horse landing on top of a pole stands on its collision, level with its top, so it never dips below
+-- (James, 2026-10-29: landing on top only knocked it about half the time).
+EqTrainingHooks.POLE_STAND = 0.15
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 -- The base game halts a horse that runs into something for 900 ms; we cut that to this.
@@ -288,6 +292,14 @@ function EqTrainingHooks.isClip(clearance)
 end
 
 
+--- @param clearance number|nil from legClearance
+--- @return boolean true when the hooves are on (or just over) the top: a pole there falls
+---   (EqPoles.onClip leaves anything that isn't one of our poles alone)
+function EqTrainingHooks.isOnPole(clearance)
+    return clearance ~= nil and clearance < EqTrainingHooks.POLE_STAND
+end
+
+
 --- @param result string|nil from EqTraining.knockCombo
 local function popKnock(result)
     -- A knock only shows as the combo bar dropping: a "-3 s" popup read like losing stats.
@@ -342,7 +354,14 @@ local function trackJump(vehicle, spec, sheet, worn)
 
     -- Settling: standing on the obstacle or stopping dead after landing spoils the jump. Only
     -- on the ground: in the air again, the horse is over the next obstacle, not on this one.
-    if spec.isOnGround ~= false and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then jump.onTop = true end
+    if spec.isOnGround ~= false and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then
+        jump.onTop = true
+        -- Landed on one of our show jumps' poles: it falls under the horse (EqPoles).
+        local clearance, node, hitX, hitZ = legClearance(vehicle)
+        if EqTrainingHooks.isClip(clearance) or EqTrainingHooks.isOnPole(clearance) then
+            EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip landed", EqPoles.onClip, node, vehicle, hitX, hitZ)
+        end
+    end
     local speed = math.abs(spec.currentSpeed or 0)
     if jump.speed > 0 and speed < jump.speed * EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE then jump.knocked = true end
     if now - jump.landedAt < EqTrainingHooks.JUMP_SETTLE_MS then return end
