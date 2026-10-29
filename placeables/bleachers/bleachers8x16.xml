@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/bleachers.py: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_bleachers8x16</name>
+        <functions>
+            <function>$l10n_eq_shop_bleachers_function</function>
+            <function>$l10n_eq_shop_bleachersSponsors_function</function>
+        </functions>
+        <image>placeables/bleachers/store_bleachers8x16.dds</image>
+        <price>35000</price>
+        <dailyUpkeep>20</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+    </storeData>
+
+    <base>
+        <filename>placeables/bleachers/bleachers8x16.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- 8 rows over 16 x 6.4 m; spectators face -z, the sponsor boards stand 1.4 m in front. -->
+    </placement>
+</placeable>

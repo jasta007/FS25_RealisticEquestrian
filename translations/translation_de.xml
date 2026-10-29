@@ -831,5 +831,10 @@
         <text name="eq_host_ride_out" text="%s gewertet für %s: ausgeschieden."/>
         <text name="eq_host_ride_already" text="Die %s dieses Pferdes für %s ist schon geritten; das hier ist Training."/>
         <text name="eq_host_ride_small" text="Dieser Parcours ist zu klein für %s, die Runde ist Training."/>
+        <text name="eq_shop_bleachers3x6" text="Tribüne 3 Reihen, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribüne 5 Reihen, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribüne 8 Reihen, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Sitzplätze für Ihre eigenen Turniere: zählt bis 60 m von einem Parcours oder Dressurviereck."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Die Sponsorentafeln davor zeigen die Marken Ihrer Maschinen."/>
     </texts>
 </l10n>

@@ -829,5 +829,10 @@
         <text name="eq_host_ride_out" text="%s已計入%s：淘汰。"/>
         <text name="eq_host_ride_already" text="這匹馬的%s（%s）已完成；本次為練習。"/>
         <text name="eq_host_ride_small" text="此賽道對%s來說太小，本輪為練習。"/>
+        <text name="eq_shop_bleachers3x6" text="看臺 3排，6 米"/>
+        <text name="eq_shop_bleachers5x10" text="看臺 5排，10 米"/>
+        <text name="eq_shop_bleachers8x16" text="看臺 8排，16 米"/>
+        <text name="eq_shop_bleachers_function" text="你主辦比賽的觀眾座位：在賽道或盛裝舞步場地60米內計入。"/>
+        <text name="eq_shop_bleachersSponsors_function" text="前方的贊助商廣告牌顯示你的機械品牌。"/>
     </texts>
 </l10n>

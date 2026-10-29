@@ -829,5 +829,10 @@
         <text name="eq_host_ride_out" text="%s započítán do %s: vyloučen."/>
         <text name="eq_host_ride_already" text="%s tohoto koně pro %s už je odjetý; tohle je trénink."/>
         <text name="eq_host_ride_small" text="Tato trať je pro %s příliš malá, jízda je trénink."/>
+        <text name="eq_shop_bleachers3x6" text="Tribuna 3 řady, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribuna 5 řad, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribuna 8 řad, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Sezení pro závody, které pořádáš: počítá se do 60 m od trati nebo drezurního obdélníku."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Sponzorské tabule vpředu ukazují značky tvých strojů."/>
     </texts>
 </l10n>

@@ -829,5 +829,10 @@
         <text name="eq_host_ride_out" text="%s valido per %s: eliminato."/>
         <text name="eq_host_ride_already" text="Il %s di questo cavallo per %s è già stato corso; questo è allenamento."/>
         <text name="eq_host_ride_small" text="Questo percorso è troppo piccolo per %s: il giro è allenamento."/>
+        <text name="eq_shop_bleachers3x6" text="Tribuna 3 file, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribuna 5 file, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribuna 8 file, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Posti a sedere per le gare che organizzi: conta entro 60 m da un percorso o rettangolo da dressage."/>
+        <text name="eq_shop_bleachersSponsors_function" text="I pannelli degli sponsor davanti mostrano i marchi dei tuoi mezzi."/>
     </texts>
 </l10n>

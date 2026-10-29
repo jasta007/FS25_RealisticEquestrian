@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="bleachers5x10.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="3" filename="bleacherSponsor_diffuse.dds"/>
+    <File fileId="1" filename="bleachers_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="bleachers" materialId="99" specularColor="0.301961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="eqSponsor1" materialId="100" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="3"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="bleachers5x10.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="bleachers5x10" nodeId="109">
+      <Shape name="frame" shapeId="1" clipDistance="400" nodeId="110" castsShadows="true" receiveShadows="true" materialIds="99"/>
+      <TransformGroup name="eqSponsors" nodeId="111">
+        <Shape name="eqSponsor_1" shapeId="2" clipDistance="400" nodeId="112" castsShadows="false" receiveShadows="true" materialIds="100"/>
+        <Shape name="eqSponsor_2" shapeId="3" clipDistance="400" nodeId="113" castsShadows="false" receiveShadows="true" materialIds="100"/>
+        <Shape name="eqSponsor_3" shapeId="4" clipDistance="400" nodeId="114" castsShadows="false" receiveShadows="true" materialIds="100"/>
+        <Shape name="eqSponsor_4" shapeId="5" clipDistance="400" nodeId="115" castsShadows="false" receiveShadows="true" materialIds="100"/>
+        <Shape name="eqSponsor_5" shapeId="6" clipDistance="400" nodeId="116" castsShadows="false" receiveShadows="true" materialIds="100"/>
+      </TransformGroup>
+      <TransformGroup name="collision" nodeId="117">
+        <Shape name="col" shapeId="7" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="118" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="99"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

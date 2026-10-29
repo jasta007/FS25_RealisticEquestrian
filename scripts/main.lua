@@ -52,6 +52,7 @@ source(modDirectory .. "scripts/facilities/EqFlagLabels.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/facilities/EqJumpColours.lua")
+source(modDirectory .. "scripts/facilities/EqSponsors.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
@@ -275,6 +276,7 @@ guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 guarded("cross country pieces hook", function() EqXcHide.install(guarded) end)
 -- Show jumps' pole and wing colour options, registered before the store items load too.
 guarded("show jump colours hook", function() EqJumpColours.install(guarded) end)
+guarded("sponsor boards hook", function() EqSponsors.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()

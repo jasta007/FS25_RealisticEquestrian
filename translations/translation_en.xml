@@ -829,5 +829,10 @@
         <text name="eq_host_ride_out" text="%s counted for %s: eliminated."/>
         <text name="eq_host_ride_already" text="This horse's %s for %s is already ridden; this one is practice."/>
         <text name="eq_host_ride_small" text="This course is too small for %s, so the round is practice."/>
+        <text name="eq_shop_bleachers3x6" text="Bleachers 3 rows, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Bleachers 5 rows, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Seating for the events you host: counts within 60 m of a course or dressage arena."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Sponsor boards in front show the brands of your machines."/>
     </texts>
 </l10n>

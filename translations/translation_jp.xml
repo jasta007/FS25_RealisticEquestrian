@@ -829,5 +829,10 @@
         <text name="eq_host_ride_out" text="%sを%sの成績として記録：失格。"/>
         <text name="eq_host_ride_already" text="この馬の%sは%sですでに記録済みです。今回は練習です。"/>
         <text name="eq_host_ride_small" text="このコースは%sには小さすぎるため、練習扱いです。"/>
+        <text name="eq_shop_bleachers3x6" text="観客席 3列・6 m"/>
+        <text name="eq_shop_bleachers5x10" text="観客席 5列・10 m"/>
+        <text name="eq_shop_bleachers8x16" text="観客席 8列・16 m"/>
+        <text name="eq_shop_bleachers_function" text="主催する大会の観客席：コースや馬場から60 m以内で数えられます。"/>
+        <text name="eq_shop_bleachersSponsors_function" text="前のスポンサーボードには、所有する機械のブランドが表示されます。"/>
     </texts>
 </l10n>
