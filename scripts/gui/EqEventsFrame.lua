@@ -634,7 +634,9 @@ function EqEventsFrame:updateHostPanel()
     if self.hostMonthBox ~= nil then self.hostMonthBox:setVisible(picking) end
     if picking and self.hostMonthOption ~= nil then
         self.hostMonthOption:setTexts(EqHostView.monthOptions(months))
-        self.hostMonthOption:setState(self.hostMonthIndex, true)
+        -- No forced event: it calls onClickHostMonth, which lands back here, until the stack
+        -- overflows (James's log 2026-10-29, month names falling back to "now").
+        self.hostMonthOption:setState(self.hostMonthIndex, false)
     end
 end
 
