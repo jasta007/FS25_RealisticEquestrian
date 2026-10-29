@@ -27,6 +27,11 @@ Easy mistakes on this project, each learned the hard way. Add to it when a new o
   turns them into a binary `.i3d.shapes` on Save, but only with Preferences > Save "force external
   binary files" switched on (off by default). Running an art script again undoes that, so re-save
   its .i3d files in GIANTS Editor afterwards.
+- **Inline collision doesn't work in game.** A collision shape left inline in the .i3d gets a "Mesh
+  cooking" warning and gives no physics: the horse rides through and construction can't pick the
+  placeable to sell it (show jumps, 2026-10-29). Re-save new placeables in GIANTS Editor before testing.
+  `art/source/ge-resave.ps1 -Files a.i3d,b.i3d` does it without touching the keyboard (File > Save
+  sent straight to the editor's window).
 - **Mod atlas icons in Bitmaps must be made without `sliceId`** (header icon bug, PR #40).
 
 ## modDesc

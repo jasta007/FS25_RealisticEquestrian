@@ -93,6 +93,16 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/xcJumps/xcDropWall08.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcDropWall12.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcDropWall16.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpAscendingOxer.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpTripleBar.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpHogsback.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpFan2.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpFan3.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpLiverpool.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpCavaletti.xml"/>
     </storeItems>
     <l10n filenamePrefix="translations/translation"/>
     <actions>

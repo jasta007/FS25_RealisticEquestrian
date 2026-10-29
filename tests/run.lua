@@ -33,6 +33,8 @@ dofile("scripts/competition/EqRisk.lua")
 dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
+dofile("scripts/training/EqPoles.lua")
+dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
@@ -1665,6 +1667,46 @@ end)()
     -- No judgement comes, so the last fence counts as clear after PENDING_MS.
     seen = ride(110)
     check("with no finish line the round ends after the last fence", seen.finished == 1)
+
+    -- Our show jumps: a pole falling is the rail, once per fence (James, 2026-10-29).
+    round = EqShowJumping.newRound(course)
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("a pole falling just before the line is a rail at that fence",
+        EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100, polesDown = { { x = 0.5, z = 40.1 } } }) == "rail"
+        and round.faults == 4 and round.railed[1])
+    seen = ride(41, 100, function(input)
+        if input.z >= 40 and input.pz < 40 then input.polesDown = { { x = -0.4, z = 40.2 }, { x = 0.4, z = 40.2 } } end
+    end)
+    check("more poles of the same fence add nothing", round.faults == 4 and round.next == 2)
+    seen = wait(EqShowJumping.PENDING_MS + 200)
+    check("a railed fence is never announced clear after", seen.fence == nil)
+    seen = ride(65, 100, function(input) if input.z >= 50 and input.pz < 50 then input.polesDown = { { x = 0, z = 50 } } end end)
+    check("a pole down far from any fence of the round counts nothing", round.faults == 4 and seen.rail == nil)
+    seen = ride(71, 100, function(input) if input.z >= 70 and input.pz < 70 then input.judged = "knock"; input.polesDown = { { x = 0, z = 70.3 } } end end)
+    check("a pole down and a knock at one fence are one rail", seen.rail == 1 and round.faults == 8)
+    check("a fallen pole belongs to the nearest fence of the two", EqShowJumping.fenceOfPole(
+        { course = course, next = 2, pending = { index = 1 } }, 0, 69) == 2
+        and EqShowJumping.fenceOfPole({ course = course, next = 2, pending = { index = 1 } }, 0, 41) == 1)
+    round = EqShowJumping.newRound(course)
+    round.xc = true
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("cross country has no rails from poles", EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100,
+        polesDown = { { x = 0, z = 40 } } }) == nil and round.faults == 0)
+
+    -- A course's fences onto the jumps on the map now (a jump replaced since recording).
+    local jumps = { { x = 0, z = 40, ry = 0, ax = -2, az = 40, bx = 2, bz = 40 }, { x = 0, z = 70, ry = 0, ax = -2, az = 70, bx = 2, bz = 70 } }
+    local live = { { x = 1.2, z = 41.5, ry = 0.1, ax = 3.6, az = 41.6, bx = -1.2, bz = 41.4 }, { x = 30, z = 70, ax = 28, az = 70, bx = 32, bz = 70 } }
+    check("a fence moves onto a jump nearby", EqCourse.refreshJumps(jumps, live, 3) == 1
+        and jumps[1].x == 1.2 and jumps[1].z == 41.5 and jumps[1].ry == 0.1)
+    check("its ends stay the same way round", jumps[1].ax == -1.2 and jumps[1].bx == 3.6)
+    check("a fence with no jump nearby stays", jumps[2].x == 0 and jumps[2].ax == -2)
+    check("a fence already on its jump does not move", EqCourse.refreshJumps(jumps, live, 3) == 0)
     round = EqShowJumping.newRound(course)
     z = 20.25
     EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
@@ -3642,6 +3684,77 @@ end)()
     EqTraining.routineStep(tested, "walk", nil, 50, false, one, { x = tx, z = tz, markers = ours })
     check("no new test straight after", not tested.routine.active)
     check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
+end)()
+
+-- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
+-- do block: the main chunk is at Lua's 200 locals.
+;(function()
+    local function level(lead, push, restA)
+        return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
+    end
+    local fall = level(1, 1)
+    local pose = EqPoles.fallPose(fall, 0)
+    check("a pole starts in its cups", math.abs(pose.y - 0.95) < 1e-9 and pose.z == 0 and pose.rz == 0 and pose.ry == 0 and not pose.still)
+    pose = EqPoles.fallPose(fall, EqPoles.LAG)
+    check("the leading end drops first", pose.rz < 0 and pose.y < 0.95, string.format("tilt %.3f", pose.rz))
+    check("the other end can lead", EqPoles.fallPose(level(-1, 1), EqPoles.LAG).rz > 0)
+    local slide = EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
+    pose = EqPoles.fallPose(fall, 3)
+    check("a fallen pole lies flat on the ground", math.abs(pose.y - 0.05) < 1e-9 and math.abs(pose.rz) < 1e-9 and pose.still)
+    check("it slid the horse's way", math.abs(pose.z - slide) < 1e-9)
+    check("it slides the other way for a horse going the other way", math.abs(EqPoles.fallPose(level(1, -1), 3).z + slide) < 1e-9)
+    check("on a slope it lies along the ground", math.abs(EqPoles.fallPose(level(1, 1, 0.15), 3).rz - math.atan2(0.1, 3.5)) < 1e-9)
+    local frames, last, lowest = 0, 0.95, 0.95
+    for t = 0, 2, 1 / 60 do
+        local fy = EqPoles.fallPose(fall, t).y
+        lowest = math.min(lowest, fy)
+        if fy > last + 1e-9 then frames = frames + 1 end
+        last = fy
+    end
+    check("a falling pole never bounces up or goes under the ground", frames == 0 and lowest >= 0.05 - 1e-9)
+    local cross = { a = { 1.7, 0.73, -0.06 }, b = { -1.7, 0.25, -0.06 }, restA = 0.05, restB = 0.05, lead = 1, push = 1 }
+    pose = EqPoles.fallPose(cross, 0)
+    check("a crossrail's pole starts tilted in its cups", math.abs(pose.rz - math.atan2(0.48, 3.4)) < 1e-9 and math.abs(pose.y - 0.49) < 1e-9)
+    pose = EqPoles.fallPose(cross, 3)
+    check("and lies flat once down", math.abs(pose.rz) < 1e-9 and pose.still)
+    local fan = { a = { 1.68, 0.95, 0.7 }, b = { -1.68, 0.95, 0.055 }, restA = 0.05, restB = 0.05, lead = -1, push = -1 }
+    pose = EqPoles.fallPose(fan, 0)
+    check("a fan's pole starts turned", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and pose.ry < 0)
+    pose = EqPoles.fallPose(fan, 3)
+    check("and stays turned as it lies", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and math.abs(pose.z - (0.3775 - slide)) < 1e-9)
+
+    -- The shop's colour options: the same list, in the same order, as the generator writes.
+    local source = io.open("art/source/show_jumps.py"):read("*a")
+    local listed, same = 0, true
+    for name, r, g, b in source:gmatch('%("(%w+)", %(([%d.]+), ([%d.]+), ([%d.]+)%)%)') do
+        listed = listed + 1
+        local entry = EqJumpColours.LIST[listed]
+        if entry == nil or entry[1] ~= name or math.abs(entry[2] - tonumber(r)) > 1e-9
+            or math.abs(entry[3] - tonumber(g)) > 1e-9 or math.abs(entry[4] - tonumber(b)) > 1e-9 then same = false end
+    end
+    check("jump colours match the generator's list", same and listed == #EqJumpColours.LIST, listed .. " listed")
+    local red = EqJumpColours.colour(3)
+    check("an option's index gives its colour", red ~= nil and red[1] == 0.55 and EqJumpColours.colour(99) == nil and EqJumpColours.colour(nil) == nil)
+    check("a jump's colour key changes with its options",
+        EqJumpColours.key({ eqPoleColour = 3 }) ~= EqJumpColours.key({ eqPoleColour = 4 }) and EqJumpColours.key(nil) == EqJumpColours.key({}))
+
+    local down = { state = EqPoles.DOWN, downAt = 1000 }
+    check("a dropped pole stays down a while", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS - 1, false, false))
+    check("then goes back up", EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, false))
+    check("not while a round is under way", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, true, false))
+    check("not while a rider is at the jump", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, true))
+    check("a pole up or falling is left alone", not EqPoles.mayReset({ state = EqPoles.FALLING, downAt = 0 }, 99999, false, false))
+    check("a clock gone back (new game) puts it up", EqPoles.mayReset(down, 500, false, false))
+    local oxer = { { state = EqPoles.UP, home = { 0, 0.4, -0.55 } }, { state = EqPoles.UP, home = { 0, 0.9, -0.55 } },
+        { state = EqPoles.UP, home = { 0, 0.95, 0.55 } } }
+    check("running into an oxer's front knocks its front top pole", EqPoles.crashPole(oxer, -1.5) == oxer[2])
+    check("from behind, its back pole", EqPoles.crashPole(oxer, 1.5) == oxer[3])
+    oxer[2].state = EqPoles.DOWN
+    check("with the top pole down, the one under it", EqPoles.crashPole(oxer, -1.5) == oxer[1])
+    oxer[1].state, oxer[3].state = EqPoles.DOWN, EqPoles.DOWN
+    check("nothing left up, nothing falls", EqPoles.crashPole(oxer, -1.5) == nil)
+    check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

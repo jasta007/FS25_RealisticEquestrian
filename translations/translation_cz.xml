@@ -46,6 +46,35 @@
         <text name="eq_shop_courseFlags_function" text="Označte libovolnou překážku jako terénní skok. Segmenty přepínejte klávesami N/M: postavte bílý praporek na jeden konec překážky, natáhněte zlatou čáru po zemi k druhému konci a pak postavte červený praporek. Čára je vidět jen v režimu stavby; skáče se přes samotnou překážku."/>
         <text name="eq_shop_xcLogPileSmall" text="Hromada klád (malá)"/>
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
+        <text name="eq_shop_showJumpUpright" text="Překážka: kolmý skok"/>
+        <text name="eq_shop_showJumpOxer" text="Překážka: oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Překážka: křížek"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Překážka: stoupající oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Překážka: triplebarre"/>
+        <text name="eq_shop_showJumpHogsback" text="Překážka: hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Překážka: vějíř se 2 bidly"/>
+        <text name="eq_shop_showJumpFan3" text="Překážka: vějíř se 3 bidly"/>
+        <text name="eq_shop_showJumpLiverpool" text="Překážka: liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Překážka: kavalety"/>
+        <text name="eq_config_poleColour" text="Barva bidel"/>
+        <text name="eq_config_wingColour" text="Barva křídel"/>
+        <text name="eq_colour_white" text="Bílá"/>
+        <text name="eq_colour_cream" text="Krémová"/>
+        <text name="eq_colour_red" text="Červená"/>
+        <text name="eq_colour_burgundy" text="Vínová"/>
+        <text name="eq_colour_orange" text="Oranžová"/>
+        <text name="eq_colour_yellow" text="Žlutá"/>
+        <text name="eq_colour_lime" text="Limetková"/>
+        <text name="eq_colour_green" text="Zelená"/>
+        <text name="eq_colour_darkGreen" text="Tmavě zelená"/>
+        <text name="eq_colour_skyBlue" text="Nebeská modrá"/>
+        <text name="eq_colour_blue" text="Modrá"/>
+        <text name="eq_colour_navy" text="Námořnická modrá"/>
+        <text name="eq_colour_purple" text="Fialová"/>
+        <text name="eq_colour_pink" text="Růžová"/>
+        <text name="eq_colour_grey" text="Šedá"/>
+        <text name="eq_colour_black" text="Černá"/>
+        <text name="eq_shop_showJump_function" text="Parkurová překážka, jejíž bidla spadnou, když se jich kůň dotkne, a po parkuru nebo když odjedete se vrátí na místo."/>
         <text name="eq_shop_xcDropWall08" text="Seskoková stěna (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Seskoková stěna (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Seskoková stěna (1,6 m)"/>

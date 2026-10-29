@@ -46,6 +46,35 @@
         <text name="eq_shop_courseFlags_function" text="把任何障礙物標記為越野障礙。用N/M切換部件：在障礙物一端放置白旗，沿地面把金色線拉到另一端，再放置紅旗。金色線只在建造模式中顯示；跳躍的是障礙物本身。"/>
         <text name="eq_shop_xcLogPileSmall" text="原木堆（小）"/>
         <text name="eq_shop_xcLogPile" text="原木堆"/>
+        <text name="eq_shop_showJumpUpright" text="障礙: 垂直障礙"/>
+        <text name="eq_shop_showJumpOxer" text="障礙: 雙橫木"/>
+        <text name="eq_shop_showJumpCrossrail" text="障礙: 交叉桿"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="障礙: 上升雙橫木"/>
+        <text name="eq_shop_showJumpTripleBar" text="障礙: 三橫木"/>
+        <text name="eq_shop_showJumpHogsback" text="障礙: 豬背障礙"/>
+        <text name="eq_shop_showJumpFan2" text="障礙: 雙桿扇形"/>
+        <text name="eq_shop_showJumpFan3" text="障礙: 三桿扇形"/>
+        <text name="eq_shop_showJumpLiverpool" text="障礙: 利物浦水障"/>
+        <text name="eq_shop_showJumpCavaletti" text="障礙: 地桿"/>
+        <text name="eq_config_poleColour" text="橫桿顏色"/>
+        <text name="eq_config_wingColour" text="側翼顏色"/>
+        <text name="eq_colour_white" text="白色"/>
+        <text name="eq_colour_cream" text="奶油色"/>
+        <text name="eq_colour_red" text="紅色"/>
+        <text name="eq_colour_burgundy" text="酒紅色"/>
+        <text name="eq_colour_orange" text="橙色"/>
+        <text name="eq_colour_yellow" text="黃色"/>
+        <text name="eq_colour_lime" text="青檸色"/>
+        <text name="eq_colour_green" text="綠色"/>
+        <text name="eq_colour_darkGreen" text="深綠色"/>
+        <text name="eq_colour_skyBlue" text="天藍色"/>
+        <text name="eq_colour_blue" text="藍色"/>
+        <text name="eq_colour_navy" text="海軍藍"/>
+        <text name="eq_colour_purple" text="紫色"/>
+        <text name="eq_colour_pink" text="粉紅色"/>
+        <text name="eq_colour_grey" text="灰色"/>
+        <text name="eq_colour_black" text="黑色"/>
+        <text name="eq_shop_showJump_function" text="馬碰到時橫木會掉落的障礙。跑完路線後或離開時，橫木會放回原位。"/>
         <text name="eq_shop_xcDropWall08" text="落差牆（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="落差牆（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="落差牆（1.6 m）"/>

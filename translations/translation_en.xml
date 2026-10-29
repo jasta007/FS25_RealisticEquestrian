@@ -44,6 +44,35 @@
         <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag at one end of the obstacle, run the gold line along the ground to its other end, then place a red flag. The line shows only in construction mode; the obstacle itself is what gets jumped."/>
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_showJumpUpright" text="Show Jump: Upright"/>
+        <text name="eq_shop_showJumpOxer" text="Show Jump: Oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Show Jump: Crossrail"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Show Jump: Ascending Oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Show Jump: Triple Bar"/>
+        <text name="eq_shop_showJumpHogsback" text="Show Jump: Hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Show Jump: 2 Pole Fan"/>
+        <text name="eq_shop_showJumpFan3" text="Show Jump: 3 Pole Fan"/>
+        <text name="eq_shop_showJumpLiverpool" text="Show Jump: Liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Show Jump: Cavaletti"/>
+        <text name="eq_config_poleColour" text="Pole colour"/>
+        <text name="eq_config_wingColour" text="Wing colour"/>
+        <text name="eq_colour_white" text="White"/>
+        <text name="eq_colour_cream" text="Cream"/>
+        <text name="eq_colour_red" text="Red"/>
+        <text name="eq_colour_burgundy" text="Burgundy"/>
+        <text name="eq_colour_orange" text="Orange"/>
+        <text name="eq_colour_yellow" text="Yellow"/>
+        <text name="eq_colour_lime" text="Lime"/>
+        <text name="eq_colour_green" text="Green"/>
+        <text name="eq_colour_darkGreen" text="Dark green"/>
+        <text name="eq_colour_skyBlue" text="Sky blue"/>
+        <text name="eq_colour_blue" text="Blue"/>
+        <text name="eq_colour_navy" text="Navy"/>
+        <text name="eq_colour_purple" text="Purple"/>
+        <text name="eq_colour_pink" text="Pink"/>
+        <text name="eq_colour_grey" text="Grey"/>
+        <text name="eq_colour_black" text="Black"/>
+        <text name="eq_shop_showJump_function" text="A show jump whose poles fall when your horse hits them and go back up after the round, or once you ride away."/>
         <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>

@@ -649,6 +649,35 @@
         <text name="eq_shop_courseFlags_function" text="Convierte cualquier obstáculo en un obstáculo de cross. Cambia de segmento con N/M: pon una bandera blanca en un extremo del obstáculo, extiende la línea dorada por el suelo hasta el otro extremo y luego pon una bandera roja. La línea solo se ve en el modo construcción; lo que se salta es el propio obstáculo."/>
         <text name="eq_shop_xcLogPileSmall" text="Pila de troncos (pequeña)"/>
         <text name="eq_shop_xcLogPile" text="Pila de troncos"/>
+        <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
+        <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Obstáculo: Cruzada"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Obstáculo: Oxer ascendente"/>
+        <text name="eq_shop_showJumpTripleBar" text="Obstáculo: Triple barra"/>
+        <text name="eq_shop_showJumpHogsback" text="Obstáculo: Lomo de cerdo"/>
+        <text name="eq_shop_showJumpFan2" text="Obstáculo: Abanico de 2 barras"/>
+        <text name="eq_shop_showJumpFan3" text="Obstáculo: Abanico de 3 barras"/>
+        <text name="eq_shop_showJumpLiverpool" text="Obstáculo: Liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Obstáculo: Cavaletti"/>
+        <text name="eq_config_poleColour" text="Color de las barras"/>
+        <text name="eq_config_wingColour" text="Color de los laterales"/>
+        <text name="eq_colour_white" text="Blanco"/>
+        <text name="eq_colour_cream" text="Crema"/>
+        <text name="eq_colour_red" text="Rojo"/>
+        <text name="eq_colour_burgundy" text="Burdeos"/>
+        <text name="eq_colour_orange" text="Naranja"/>
+        <text name="eq_colour_yellow" text="Amarillo"/>
+        <text name="eq_colour_lime" text="Lima"/>
+        <text name="eq_colour_green" text="Verde"/>
+        <text name="eq_colour_darkGreen" text="Verde oscuro"/>
+        <text name="eq_colour_skyBlue" text="Azul cielo"/>
+        <text name="eq_colour_blue" text="Azul"/>
+        <text name="eq_colour_navy" text="Azul marino"/>
+        <text name="eq_colour_purple" text="Morado"/>
+        <text name="eq_colour_pink" text="Rosa"/>
+        <text name="eq_colour_grey" text="Gris"/>
+        <text name="eq_colour_black" text="Negro"/>
+        <text name="eq_shop_showJump_function" text="Un obstáculo de salto cuyas barras caen cuando tu caballo las toca y vuelven a su sitio tras el recorrido, o cuando te alejas."/>
         <text name="eq_shop_xcDropWall08" text="Muro de bajada (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Muro de bajada (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Muro de bajada (1,6 m)"/>
