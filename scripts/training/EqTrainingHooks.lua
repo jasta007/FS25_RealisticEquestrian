@@ -721,6 +721,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
                 Log:info("Dressage test: %s, movement %d/%d, mark %s, errors %d, %s%%", event, path.cur - 1, #path.test.moves,
                     tostring(path.lastMark), path.errors, tostring(path.percent or EqDressagePath.percent(path)))
             end
+            if event == "done" and path.lastDetail ~= nil then Log:info("Dressage mark %s: %s", tostring(path.lastMark), path.lastDetail) end
         elseif event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
         elseif event == "test" then EqTrainingHud.pop("routineTest")

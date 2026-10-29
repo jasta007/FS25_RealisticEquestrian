@@ -170,17 +170,25 @@ line on the ground from just outside A. The test is a chain of figures drawn on 
 gold line, and it is scored on how closely the horse follows it:
 
 - It opens down the centre line from A with a halt at X, then proceeds to track left or right at
-  C. Then come the figures (5 in training), and it ends down the centre line from A to a halt at X.
-- Figures: 20 m circles at A, C, E and B (15 m in the 15 m wide arena), 10 m voltes at the side
-  letters, changes of rein on the long (F-X-H) and short (F-E) diagonals, half voltes, across the
-  arena (half school or change of rein), centre lines, serpentines of 3 to 5 loops, a shallow loop
-  (5 m, 3 m in the small arena), change of rein through the circle and a figure of eight. Each is
-  built for one end and side and mirrored, and they only chain on the same rein: the track between
-  them ("go large") joins the end of one to the start of the next. Nothing is tighter than a 3.5 m
-  radius (the horse's turn) except the 15x30's turns onto the centre line.
-- Gait changes sit at letters on the track and at set points in a figure (X on a diagonal, half
-  way round a circle, where a serpentine crosses the centre line). Walks are never longer than
-  30 m. Some centre lines have a halt at X: stand 2.5 s, then trot on.
+  C. Then come the figures (7 in training), and it ends down the centre line from A to a halt at X.
+- **Each figure has one gait, and its turns are sized for it** (James, 2026-10-29: a canter asked
+  for just before a tight turn could not follow it). Walk: 8 m voltes, half voltes, across the
+  arena, centre lines, long diagonal (free walk), shallow loop. Trot: everything, with 10 m and
+  15 m voltes, serpentines of 3 to 5 loops, change of rein through the circle. Canter: only the
+  wide ones, 20 m circles (15 m in the 15 m arena), 15 m voltes, the diagonals, a shallow loop
+  (3 m, 2 m in the small arena) and a figure of eight. Turns are no tighter than 3.5 m radius at a
+  walk, 4 m at a trot and 7 m at a canter (3, 3 and 6 in the 15x30), and the track's corners
+  between figures are sized for the gait ridden on them, so a sudden big circle often means a
+  canter is coming. Each figure is built for one end and side and mirrored, and they only chain
+  on the same rein; nearby figures are likelier, so the track between them ("go large") is short.
+- **Changes** to a figure's gait come on the track at the last letter before it (the first
+  letter when trotting on from a walk), or 4 m before the figure with no letter there; one gait
+  at a time, never walk to canter. Inside a figure only a change down comes (X on a diagonal,
+  half way round a circle), and never one closer than 15 m to the last. On the track between
+  figures: 45% of the time a stretch at another gait between two letters (a canter along one long
+  side for 15 m or more, a walk of 10 to 30 m, a trot from a walk or canter), else 20% a halt at
+  a letter. Centre lines have a halt at X 60% of the time: stand 2.5 s, then go on (at a trot
+  after a walk). A walking figure never follows another.
 - The horse's temperament (0 to 100) sets how much of the line shows ahead (8 to 30 m), how early a
   change or halt shows in the middle of the screen with a gold pole on the line (3 to 12 m before
   it), and the window that counts as on time (1.5 to 3.5 m either side). The panel shows the
@@ -679,7 +687,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
   real faults and time. In an arena big enough, the dressage test is the event's fixed test of
-  6, 8 or 10 figures by rating and scores 100 less its percentage in penalties (a 72% test is
+  8, 10 or 13 figures by rating and scores 100 less its percentage in penalties (a 72% test is
   28); a third error of course eliminates. Each horse
   gets one go at each phase, and later rounds are practice. Phases you don't ride are
   simulated. A one-phase event with a ridden round is scored in penalties like eventing.

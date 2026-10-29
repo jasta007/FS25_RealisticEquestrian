@@ -3685,6 +3685,8 @@ end)()
 
 -- Dressage tests of figures (EqDressagePath) in the shop's three arenas.
 ;(function()
+    -- A walk lasts until the figure it is in ends.
+    local WALK_LONGEST = 80
     local SHOP = {
         { 15, 30, { { "K", 4.5 }, { "E", 15 }, { "H", 25.5 } }, { { "F", 4.5 }, { "B", 15 }, { "M", 25.5 } }, { { "D", 4.5 }, { "X", 15 }, { "G", 25.5 } } },
         { 20, 40, { { "K", 6 }, { "E", 20 }, { "H", 34 } }, { { "F", 6 }, { "B", 20 }, { "M", 34 } }, { { "D", 6 }, { "X", 20 }, { "G", 34 } } },
@@ -3746,38 +3748,51 @@ end)()
         local frame = EqDressagePath.frameFor(markers, xOf(markers))
         check(name .. ": the arena's frame comes from its letters", frame ~= nil and math.abs(frame.halfW - arena[1] / 2) < 0.01
             and math.abs(frame.halfL - arena[2] / 2) < 0.01)
-        local library = EqDressagePath.library(frame)
-        local keys = {}
-        for _, figure in ipairs(library) do keys[figure.key] = true end
+        local library, _, g = EqDressagePath.library(frame)
+        local keys, tight, canters = {}, 0, {}
+        for _, figure in ipairs(library) do
+            keys[figure.key] = true
+            if EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
+            if figure.gait == "canter" then canters[figure.key] = true end
+        end
+        -- Each figure is ridden at one gait, its turns sized for it (James 2026-10-29); a
+        -- canter keeps to wide circles, diagonals, shallow loops and figures of eight.
+        check(name .. ": no figure turns tighter than its gait allows", tight == 0, tostring(tight))
+        check(name .. ": a canter only on wide figures", canters.circle and not canters.serpentine and not canters.across
+            and not canters.halfVolte and not canters.centre and not canters.throughCircle)
         check(name .. ": circles, diagonals, serpentines, loops and figures of eight fit", keys.circle and keys.longDiagonal
             and keys.shortDiagonal and keys.serpentine and keys.shallowLoop and keys.eight and keys.across and keys.centre)
         local x, y = EqDressagePath.toLocal(frame, xOf(markers).x, xOf(markers).z)
         check(name .. ": X is the arena's middle", math.abs(x) < 1e-6 and math.abs(y) < 1e-6)
-        local gaps, outs, unsorted, walks, finals = 0, 0, 0, 0, 0
+        local gaps, outs, unsorted, walks, finals, jumps = 0, 0, 0, 0, 0, 0
         for seed = 1, 30 do
             local rolls = EqRandom.new(seed)
-            local test = EqDressagePath.build(frame, 6, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
+            local test = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
             for i = 2, #test.pts do
                 local p, q = test.pts[i - 1], test.pts[i]
                 if math.sqrt((p.x - q.x) ^ 2 + (p.y - q.y) ^ 2) > 1.2 then gaps = gaps + 1 end
                 if q.s > 3 and (math.abs(q.x) > frame.halfW - 0.5 or math.abs(q.y) > frame.halfL - 0.5) then outs = outs + 1 end
             end
-            local walkFrom = nil
+            local walkFrom, gait = nil, EqDressagePath.PROCEED
             for i, e in ipairs(test.events) do
                 if i > 1 and e.s < test.events[i - 1].s then unsorted = unsorted + 1 end
-                if walkFrom ~= nil and e.s - walkFrom > EqDressagePath.WALK_MAX + 0.01 then walks = walks + 1 end
-                walkFrom = e.gait == "walk" and e.s or nil
+                if walkFrom ~= nil and e.s - walkFrom > WALK_LONGEST then walks = walks + 1 end
+                -- One gait at a time: never walk to canter or back.
+                if e.kind == "change" and (gait == "walk" and e.gait == "canter" or gait == "canter" and e.gait == "walk") then jumps = jumps + 1 end
+                walkFrom = e.gait == "walk" and (walkFrom or e.s) or nil
+                if e.kind == "change" or not e.final then gait = e.gait end
             end
             local last = test.events[#test.events]
-            if last.kind == "halt" and last.final and #test.moves == 9 then finals = finals + 1 end
+            if last.kind == "halt" and last.final and #test.moves == EqDressagePath.TRAINING_FIGURES + 3 then finals = finals + 1 end
         end
         check(name .. ": a test's line has no gaps", gaps == 0, tostring(gaps))
         check(name .. ": a test's line stays inside the rail", outs == 0, tostring(outs))
-        check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0)
+        check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0, unsorted .. " " .. walks)
+        check(name .. ": a change is one gait at a time", jumps == 0, tostring(jumps))
         check(name .. ": every test opens and ends at X, with its figures between", finals == 30, tostring(finals))
 
         local rolls = EqRandom.new(5)
-        local test = EqDressagePath.build(frame, 6, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
+        local test = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
         local run, event = ride(test, frame, 0, 0)
         check(name .. ": a rider on the line, on time, scores 100%", event == "test" and run.percent == 100 and run.errors == 0,
             string.format("%s %s%%", event, tostring(run.percent)))
@@ -3785,7 +3800,7 @@ end)()
         check(name .. ": wandering 2 m either side scores much less", event == "test" and run.percent < 85 and run.percent > 40,
             string.format("%s %s%%", event, tostring(run.percent)))
         run, event = ride(test, frame, 0, 6)
-        check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 80,
+        check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 65,
             string.format("%s %s%%", event, tostring(run.percent)))
     end
 
@@ -3812,8 +3827,8 @@ end)()
         and stuck.eliminated)
     check("a temperamental horse sees less of the line and less warning", EqDressagePath.newRun(one, 10).look < EqDressagePath.newRun(one, 90).look
         and EqDressagePath.newRun(one, 10).warn < EqDressagePath.newRun(one, 90).warn)
-    check("a hosted test's length: 15, 20, 25 make 6, 8, 10 figures", EqDressagePath.figuresFor(15) == 6 and EqDressagePath.figuresFor(20) == 8
-        and EqDressagePath.figuresFor(25) == 10 and EqDressagePath.figuresFor(nil) == EqDressagePath.TRAINING_FIGURES)
+    check("a hosted test's length: 15, 20, 25 make 8, 10, 13 figures", EqDressagePath.figuresFor(15) == 8 and EqDressagePath.figuresFor(20) == 10
+        and EqDressagePath.figuresFor(25) == 13 and EqDressagePath.figuresFor(nil) == EqDressagePath.TRAINING_FIGURES)
     check("the test's payoff grows with its score", EqDressagePath.payoffShare(70) == 1 and EqDressagePath.payoffShare(30) == EqDressagePath.PAYOFF_MIN
         and EqDressagePath.payoffShare(55) > EqDressagePath.PAYOFF_MIN and EqDressagePath.payoffShare(55) < 1)
     check("marks: 10 on the line, less off it and at the wrong gait", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0 }) == 10

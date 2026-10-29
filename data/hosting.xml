@@ -21,7 +21,7 @@
         seating         bleachers needed beside the show jumping course and the dressage arena
                         (an indoor arena counts as one)
         dressageArena   arena length needed in metres: 30 (15x30), 40 (20x40) or 60 (20x60)
-        dressageMoves   length of the dressage test: figures = 0.4 x this (6, 8, 10), EqDressagePath.figuresFor
+        dressageMoves   length of the dressage test: figures = 0.5 x this (8, 10, 13), EqDressagePath.figuresFor
         showJumps       jumps on the show jumping course
         xcLength        metres of cross country course
         xcJumps         jumps on the cross country course
