@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="Seskoková stěna (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Prkenná stěna pro terénní seskok. Vytvarujte val, postavte ji nahoru hranou k okraji a její boční stěny skryjí prudký svah."/>
         <text name="eq_shop_xcJump_function" text="Terénní skok. Červený a bílý praporek ukazují, kde skákat."/>
-        <text name="eq_shop_xcHidden_function" text="Skryto mimo režim stavby, úpravy trasy a terénní jízdy, pokud nebylo koupeno jako Vždy viditelné."/>
+        <text name="eq_shop_xcHidden_function" text="Mizí mimo stavbu, úpravu trati a jízdy, pokud nebyla koupena s volbou Mizející: Ne."/>
+        <text name="eq_shop_showJumpHidden_function" text="Koupená s volbou Mizející: Ano mizí mimo stavbu, úpravu trati a jízdy."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Skryto mimo režim stavby, úpravy trasy a jízdy."/>
-        <text name="eq_config_alwaysVisible" text="Vždy viditelné"/>
+        <text name="eq_config_disappearing" text="Mizející"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Krok"/>
         <text name="eq_dressage_gait_trot" text="Klus"/>

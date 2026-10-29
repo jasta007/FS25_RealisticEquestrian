@@ -275,6 +275,7 @@ def write_xml(jump, path):
         <name>$l10n_eq_shop_{name}</name>
         <functions>
             <function>$l10n_eq_shop_showJump_function</function>
+            <function>$l10n_eq_shop_showJumpHidden_function</function>
         </functions>
         <image>placeables/showJumps/store_{name}.dds</image>
         <price>{jump["price"]}</price>
@@ -299,6 +300,15 @@ def write_xml(jump, path):
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- {top:.2f} m high, {max(zs) - min(zs):.2f} m spread; jumped along z, red flag at +x. Poles eqPole1.. fall (EqPoles). -->
     </placement>
+
+    <!-- Disappearing: No (the first, default) keeps the jump in the world; Yes hides it outside
+         construction, course editing and rounds, like the cross country pieces (EqXcHide). -->
+    <eqDisappearing>
+        <eqDisappearingConfigurations>
+            <eqDisappearingConfiguration name="$l10n_ui_no" price="0"/>
+            <eqDisappearingConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqDisappearingConfigurations>
+    </eqDisappearing>
 </placeable>
 """
     with open(path, "w", encoding="utf-8", newline="\n") as f:

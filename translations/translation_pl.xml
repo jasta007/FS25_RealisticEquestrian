@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="Ściana uskoku (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Ściana z desek na uskok crossowy. Uformuj skarpę, postaw ścianę na górze krawędzią przy brzegu, a jej boki ukryją stromy stok."/>
         <text name="eq_shop_xcJump_function" text="Przeszkoda crossowa. Czerwona i biała flaga pokazują, gdzie skakać."/>
-        <text name="eq_shop_xcHidden_function" text="Ukryte poza trybem budowy, edycją trasy i przejazdami crossowymi, chyba że kupione jako Zawsze widoczne."/>
+        <text name="eq_shop_xcHidden_function" text="Znika poza budową, edycją trasy i przejazdami, chyba że kupiona z opcją Znikająca: Nie."/>
+        <text name="eq_shop_showJumpHidden_function" text="Kupiona z opcją Znikająca: Tak znika poza budową, edycją trasy i przejazdami."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Ukryte poza trybem budowy, edycją trasy i przejazdami."/>
-        <text name="eq_config_alwaysVisible" text="Zawsze widoczne"/>
+        <text name="eq_config_disappearing" text="Znikająca"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Stęp"/>
         <text name="eq_dressage_gait_trot" text="Kłus"/>

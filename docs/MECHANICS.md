@@ -447,13 +447,15 @@ triangle side walls hide the steep sculpted slope. A plank deck covers the top, 
 needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
 rides over the deck and drops off the lip.
 
-Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidden with no collision
-while you just ride or drive around, so a course can cross the map without leaving flags and logs
-everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
-a course is edited (seen but ridden through), and in a round from 30 m before the start line to the
-result (with collision, except the flag fence, which is only seen). Buy a log pile or drop wall with the shop's **Always visible: Yes**
-configuration to keep it in the world all the time; the flags always hide. In multiplayer they
-always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
+Disappearing pieces: the cross country pieces (flags, log piles, drop walls) disappear, with no
+collision, while you just ride or drive around, so a course can cross the map without leaving flags
+and logs everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell),
+while a course is edited (seen but ridden through), and in a round from its countdown (right at the
+start line) to the result (with collision, except the flag fence, which is only seen); riding past a
+start line shows nothing. Every piece has a **Disappearing** shop configuration: Yes by default on
+log piles and drop walls, No by default on the shop's show jumps (Yes makes them disappear the same
+way). The flags always disappear. In multiplayer everything always shows. Other mods' show jumps are
+never hidden. A vehicle left on a hidden piece can be thrown when its
 collision comes back. Road traffic is switched
 off from crossing a cross country round's start line to its finish and back on after (the savegame's traffic
 setting is not changed).

@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="ドロップ壁（1.6 m）"/>
         <text name="eq_shop_xcDrop_function" text="クロスカントリーの段差用の板壁。土手を作り、縁を端に合わせて上に置くと、側壁が急斜面を隠します。"/>
         <text name="eq_shop_xcJump_function" text="クロスカントリー障害。赤旗と白旗が跳ぶ場所を示します。"/>
-        <text name="eq_shop_xcHidden_function" text="「常に表示」で購入しない限り、建設モード、コース編集、クロスカントリー走行以外では非表示になります。"/>
+        <text name="eq_shop_xcHidden_function" text="「消える：いいえ」で購入しない限り、建設モード、コース編集、走行以外では消えます。"/>
+        <text name="eq_shop_showJumpHidden_function" text="「消える：はい」で購入すると、建設モード、コース編集、走行以外では消えます。"/>
         <text name="eq_shop_xcFlagsHidden_function" text="建設モード、コース編集、走行以外では非表示になります。"/>
-        <text name="eq_config_alwaysVisible" text="常に表示"/>
+        <text name="eq_config_disappearing" text="消える"/>
         <text name="eq_dressage_go" text="%s：%s"/>
         <text name="eq_dressage_gait_walk" text="常歩"/>
         <text name="eq_dressage_gait_trot" text="速歩"/>

@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="落差牆（1.6 m）"/>
         <text name="eq_shop_xcDrop_function" text="用於越野落差障礙的木板牆。塑造一道土坡，把它放在坡頂並讓邊緣對齊坡沿，側牆會遮住陡坡。"/>
         <text name="eq_shop_xcJump_function" text="越野障礙。紅旗和白旗標出跳躍的位置。"/>
-        <text name="eq_shop_xcHidden_function" text="除非以“始終可見”購買，否則在建造模式、路線編輯和越野賽之外隱藏。"/>
+        <text name="eq_shop_xcHidden_function" text="除非購買時選擇「消失：否」，否則在建造、路線編輯和比賽之外會消失。"/>
+        <text name="eq_shop_showJumpHidden_function" text="購買時選擇「消失：是」，它會在建造、路線編輯和比賽之外消失。"/>
         <text name="eq_shop_xcFlagsHidden_function" text="在建造模式、路線編輯和比賽之外隱藏。"/>
-        <text name="eq_config_alwaysVisible" text="始終可見"/>
+        <text name="eq_config_disappearing" text="消失"/>
         <text name="eq_dressage_go" text="%s：%s"/>
         <text name="eq_dressage_gait_walk" text="慢步"/>
         <text name="eq_dressage_gait_trot" text="快步"/>

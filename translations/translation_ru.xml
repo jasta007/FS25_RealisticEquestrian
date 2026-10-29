@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="Стенка спуска (1,6 м)"/>
         <text name="eq_shop_xcDrop_function" text="Дощатая стенка для спуска на кроссе. Насыпьте склон, поставьте её наверху краем к обрыву, и боковые стенки скроют крутой склон."/>
         <text name="eq_shop_xcJump_function" text="Препятствие кросса. Красный и белый флажки показывают, где прыгать."/>
-        <text name="eq_shop_xcHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов кросса, если не куплено как «Всегда видно»."/>
+        <text name="eq_shop_xcHidden_function" text="Исчезает вне строительства, редактирования маршрута и заездов, если не куплен с «Исчезающий: Нет»."/>
+        <text name="eq_shop_showJumpHidden_function" text="Купленный с «Исчезающий: Да», он исчезает вне строительства, редактирования маршрута и заездов."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов."/>
-        <text name="eq_config_alwaysVisible" text="Всегда видно"/>
+        <text name="eq_config_disappearing" text="Исчезающий"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Шаг"/>
         <text name="eq_dressage_gait_trot" text="Рысь"/>

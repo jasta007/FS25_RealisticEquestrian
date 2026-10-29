@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="Afsprongmuur (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Een plankenmuur voor een afsprong op de cross. Vorm een talud, zet de muur bovenop met de rand aan de afgrond, en de zijwanden verbergen de steile helling."/>
         <text name="eq_shop_xcJump_function" text="Een crosshindernis. De rode en witte vlag geven aan waar je springt."/>
-        <text name="eq_shop_xcHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en crossrondes, tenzij gekocht als Altijd zichtbaar."/>
+        <text name="eq_shop_xcHidden_function" text="Verdwijnt buiten bouwen, parcours bewerken en rondes, tenzij gekocht met Verdwijnt: Nee."/>
+        <text name="eq_shop_showJumpHidden_function" text="Gekocht met Verdwijnt: Ja verdwijnt hij buiten bouwen, parcours bewerken en rondes."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en rondes."/>
-        <text name="eq_config_alwaysVisible" text="Altijd zichtbaar"/>
+        <text name="eq_config_disappearing" text="Verdwijnt"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Stap"/>
         <text name="eq_dressage_gait_trot" text="Draf"/>

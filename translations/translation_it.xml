@@ -54,9 +54,10 @@
         <text name="eq_shop_xcDropWall16" text="Muro di discesa (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un muro di assi per una discesa da cross. Modella una scarpata, posizionalo in cima con il bordo sul ciglio, e le pareti laterali nascondono il pendio ripido."/>
         <text name="eq_shop_xcJump_function" text="Un ostacolo da cross. Le bandierine rossa e bianca indicano dove saltare."/>
-        <text name="eq_shop_xcHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove di cross, a meno che non sia acquistato come Sempre visibile."/>
+        <text name="eq_shop_xcHidden_function" text="Scompare fuori da costruzione, modifica percorso e manche, a meno che non sia acquistato con Scompare: No."/>
+        <text name="eq_shop_showJumpHidden_function" text="Acquistato con Scompare: Sì, scompare fuori da costruzione, modifica percorso e manche."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove."/>
-        <text name="eq_config_alwaysVisible" text="Sempre visibile"/>
+        <text name="eq_config_disappearing" text="Scompare"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Passo"/>
         <text name="eq_dressage_gait_trot" text="Trotto"/>

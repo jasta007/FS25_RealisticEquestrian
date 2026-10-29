@@ -2349,18 +2349,23 @@ do
         EqXcHide.wantMode({}) == H and EqXcHide.wantMode({ construction = true }) == S
         and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == S
         and EqXcHide.wantMode({ construction = true, editing = true }) == S and EqXcHide.wantMode({ multiplayer = true }) == S)
-    check("pieces show from near the start line to the end of a round",
-        not EqXcHide.roundShows(nil, 0) and not EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR + 1)
-        and not EqXcHide.roundShows("approach", nil) and EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR)
-        and EqXcHide.roundShows("countdown", 500) and EqXcHide.roundShows("running", 500) and EqXcHide.roundShows("done", 500))
+    check("pieces show only from a round's countdown to its result, not on the way to the start",
+        not EqXcHide.roundShows(nil) and not EqXcHide.roundShows("approach")
+        and EqXcHide.roundShows("countdown") and EqXcHide.roundShows("running") and EqXcHide.roundShows("done"))
     local xc = EqCourse.CROSS_COUNTRY
     check("traffic is off only while a cross country round runs",
         EqXcHide.wantsTrafficOff(xc, "running") and not EqXcHide.wantsTrafficOff(xc, "countdown") and not EqXcHide.wantsTrafficOff(xc, "go")
         and not EqXcHide.wantsTrafficOff(xc, "approach") and not EqXcHide.wantsTrafficOff(xc, "done")
         and not EqXcHide.wantsTrafficOff(nil, "running") and not EqXcHide.wantsTrafficOff(xc, nil))
-    check("the Always visible configuration is the second choice",
+    check("Disappearing: No is a cross country piece's second choice, stored as always visible",
         EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 2 }) and not EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 1 })
         and not EqXcHide.isAlwaysVisible({}) and not EqXcHide.isAlwaysVisible(nil))
+    local mod = "C:/mods/FS25_RealisticEquestrian/placeables/"
+    check("cross country pieces disappear by default, our show jumps only when bought Disappearing",
+        EqXcHide.disappears(mod .. "xcJumps/xcLogPile.xml", {}) and not EqXcHide.disappears(mod .. "xcJumps/xcLogPile.xml", { eqAlwaysVisible = 2 })
+        and EqXcHide.disappears(mod .. "xcJumps/courseFlags.xml", { eqAlwaysVisible = 2 })
+        and not EqXcHide.disappears(mod .. "showJumps/showJumpOxer.xml", {}) and not EqXcHide.disappears(mod .. "showJumps/showJumpOxer.xml", { eqDisappearing = 1 })
+        and EqXcHide.disappears(mod .. "showJumps/showJumpUpright.xml", { eqDisappearing = 2 }))
     local flags = io.open("placeables/xcJumps/courseFlags.xml"):read("*a")
     check("the flag fence always hides: no Always visible choice", flags:find("eqAlwaysVisible", 1, true) == nil
         and flags:find("eq_shop_xcFlagsHidden_function", 1, true) ~= nil)
@@ -2377,9 +2382,16 @@ do
     for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
         local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))
-        check(name .. " offers Always visible, No first", choices == 2
-            and text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_no"', 1, true) < text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_yes"', 1, true)
+        check(name .. " offers Disappearing, Yes first", choices == 2
+            and text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_yes"', 1, true) < text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_no"', 1, true)
             and text:find("eq_shop_xcHidden_function", 1, true) ~= nil)
+    end
+    for _, name in ipairs({ "showJumpUpright", "showJumpOxer" }) do
+        local text = io.open("placeables/showJumps/" .. name .. ".xml"):read("*a")
+        local choices = select(2, text:gsub("<eqDisappearingConfiguration ", ""))
+        check(name .. " offers Disappearing, No first", choices == 2
+            and text:find('<eqDisappearingConfiguration name="$l10n_ui_no"', 1, true) < text:find('<eqDisappearingConfiguration name="$l10n_ui_yes"', 1, true)
+            and text:find("eq_shop_showJumpHidden_function", 1, true) ~= nil)
     end
 end
 do
