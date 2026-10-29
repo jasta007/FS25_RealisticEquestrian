@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Nový parkur"/>
         <text name="eq_course_started" text="Nahrávání %s: projeďte skoky v pořadí. Postavené překážky z Realistic Equestrian při úpravách nemají kolize; ostatní překážky zůstávají pevné"/>
         <text name="eq_course_noJumps" text="Nahrává se trasa, ale na mapě zatím nejsou žádné skokové překážky"/>
-        <text name="eq_course_tooFew" text="Trasa neuložena: projeďte alespoň %d skokových překážek"/>
+        <text name="eq_course_tooFew" text="Trasa neuložena: projeďte alespoň %d skokových překážek, nebo stiskněte Ctrl+Backspace pro zrušení"/>
         <text name="eq_course_saved" text="%s uloženo: překážek %d, %.0f m"/>
         <text name="eq_course_cancelled" text="Úpravy zastaveny: sesedli jste z koně dřív, než měla trasa dost překážek k uložení"/>
         <text name="eq_course_leftSaved" text="Trasa uložena, když jste sesedli: poblíž stiskněte Ctrl+J pro úpravu, pak Ctrl+K pro nahrávání od nejbližšího bodu"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="Smazat %s (překážek %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Smazat trasu"/>
         <text name="eq_course_deleteAction" text="Smazat %s"/>
+        <text name="eq_course_cancelAction" text="Zrušit nový parkur"/>
+        <text name="eq_course_discardAction" text="Zahodit změny v %s"/>
+        <text name="eq_course_newCancelled" text="Zrušeno: %s nebyl uložen"/>
+        <text name="eq_course_changesDiscarded" text="Změny v %s zahozeny: uložený parkur zůstává beze změny"/>
         <text name="eq_course_editAction" text="Upravit %s"/>
         <text name="eq_course_doneAction" text="Dokončit úpravy trasy"/>
         <text name="eq_course_saveAction" text="Uložit trasu a dokončit"/>

@@ -325,7 +325,7 @@
         <text name="eq_course_recordAction" text="Neuer Springparcours"/>
         <text name="eq_course_started" text="%s wird aufgezeichnet: durch die Hindernisse in der richtigen Reihenfolge reiten. Platzierte Hindernisse von Realistic Equestrian haben beim Bearbeiten keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="eq_course_noJumps" text="Parcours wird aufgezeichnet, aber auf der Karte stehen noch keine Springhindernisse"/>
-        <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten"/>
+        <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten, oder Strg+Rücktaste zum Abbrechen"/>
         <text name="eq_course_saved" text="%s gespeichert: %d Hindernisse, %.0f m"/>
         <text name="eq_course_cancelled" text="Bearbeitung beendet: Sie haben das Pferd verlassen, bevor der Parcours genug Hindernisse zum Speichern hatte"/>
         <text name="eq_course_leftSaved" text="Parcours beim Absteigen gespeichert: in der Nähe Strg+J zum Bearbeiten, dann Strg+K, um ab dem nächsten Punkt weiter aufzuzeichnen"/>
@@ -372,6 +372,10 @@
         <text name="eq_course_deleteAsk" text="%s mit %d Hindernissen auf %.0f m löschen?"/>
         <text name="eq_course_deleteTitle" text="Parcours löschen"/>
         <text name="eq_course_deleteAction" text="%s löschen"/>
+        <text name="eq_course_cancelAction" text="Neuen Parcours abbrechen"/>
+        <text name="eq_course_discardAction" text="Änderungen an %s verwerfen"/>
+        <text name="eq_course_newCancelled" text="Abgebrochen: %s wurde nicht gespeichert"/>
+        <text name="eq_course_changesDiscarded" text="Änderungen an %s verworfen: der gespeicherte Parcours bleibt unverändert"/>
         <text name="eq_course_editAction" text="%s bearbeiten"/>
         <text name="eq_course_doneAction" text="Bearbeitung beenden"/>
         <text name="eq_course_saveAction" text="Parcours speichern und beenden"/>

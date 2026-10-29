@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Novo percurso de salto"/>
         <text name="eq_course_started" text="Gravando %s: passe pelos obstáculos em ordem. Os obstáculos colocados do Realistic Equestrian ficam sem colisão enquanto você edita; os outros continuam sólidos"/>
         <text name="eq_course_noJumps" text="Gravando um percurso, mas ainda não há obstáculos de salto no mapa"/>
-        <text name="eq_course_tooFew" text="Percurso não salvo: passe por pelo menos %d obstáculos de salto"/>
+        <text name="eq_course_tooFew" text="Percurso não salvo: passe por pelo menos %d obstáculos de salto, ou prima Ctrl+Backspace para cancelar"/>
         <text name="eq_course_saved" text="%s salvo: %d obstáculos, %.0f m"/>
         <text name="eq_course_cancelled" text="Edição parada: você saiu do cavalo antes de o percurso ter obstáculos suficientes para salvar"/>
         <text name="eq_course_leftSaved" text="Percurso salvo ao sair do cavalo: pressione Ctrl+J perto dele para editar e depois Ctrl+K para continuar a gravar do ponto mais próximo"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="Apagar %s com %d obstáculos em %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Apagar percurso"/>
         <text name="eq_course_deleteAction" text="Apagar %s"/>
+        <text name="eq_course_cancelAction" text="Cancelar novo percurso"/>
+        <text name="eq_course_discardAction" text="Descartar alterações em %s"/>
+        <text name="eq_course_newCancelled" text="Cancelado: %s não foi guardado"/>
+        <text name="eq_course_changesDiscarded" text="Alterações em %s descartadas: o percurso guardado mantém-se como estava"/>
         <text name="eq_course_editAction" text="Editar %s"/>
         <text name="eq_course_doneAction" text="Concluir edição do percurso"/>
         <text name="eq_course_saveAction" text="Salvar percurso e concluir"/>

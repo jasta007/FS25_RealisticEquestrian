@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Nieuw springparcours"/>
         <text name="eq_course_started" text="%s opnemen: rijd de hindernissen op volgorde door. Geplaatste obstakels van Realistic Equestrian hebben geen botsing tijdens het bewerken; andere obstakels blijven vast"/>
         <text name="eq_course_noJumps" text="Parcours wordt opgenomen, maar er staan nog geen springhindernissen op de kaart"/>
-        <text name="eq_course_tooFew" text="Parcours niet opgeslagen: rijd door minstens %d springhindernissen"/>
+        <text name="eq_course_tooFew" text="Parcours niet opgeslagen: rijd door minstens %d springhindernissen, of druk op Ctrl+Backspace om te annuleren"/>
         <text name="eq_course_saved" text="%s opgeslagen: %d hindernissen, %.0f m"/>
         <text name="eq_course_cancelled" text="Bewerken gestopt: je stapte af voor het parcours genoeg hindernissen had om op te slaan"/>
         <text name="eq_course_leftSaved" text="Parcours opgeslagen toen je afstapte: druk er vlakbij op Ctrl+J om te bewerken, en dan Ctrl+K om verder op te nemen vanaf het dichtstbijzijnde punt"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="%s met %d hindernissen over %.0f m verwijderen?"/>
         <text name="eq_course_deleteTitle" text="Parcours verwijderen"/>
         <text name="eq_course_deleteAction" text="%s verwijderen"/>
+        <text name="eq_course_cancelAction" text="Nieuw parcours annuleren"/>
+        <text name="eq_course_discardAction" text="Wijzigingen aan %s verwerpen"/>
+        <text name="eq_course_newCancelled" text="Geannuleerd: %s is niet opgeslagen"/>
+        <text name="eq_course_changesDiscarded" text="Wijzigingen aan %s verworpen: het opgeslagen parcours blijft zoals het was"/>
         <text name="eq_course_editAction" text="%s bewerken"/>
         <text name="eq_course_doneAction" text="Parcours bewerken afronden"/>
         <text name="eq_course_saveAction" text="Parcours opslaan en afronden"/>

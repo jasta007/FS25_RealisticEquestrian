@@ -200,7 +200,7 @@ up again later in the course, but not twice in a row within 4 seconds.
 | Ctrl+J | Record a new show jumping course, or edit the show jumping course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
 | Ctrl+E | Record a new cross country (eventing) course, or edit the cross country course within 40 m | As Ctrl+J |
 | Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
-| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | Cancel: a new course is dropped unsaved; on a saved course, changes since its last save are thrown away |
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
 white flag (the fence runs between them) and log piles. Drop walls are not fences of their own:

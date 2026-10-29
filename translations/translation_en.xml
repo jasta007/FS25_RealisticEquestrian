@@ -323,7 +323,7 @@
         <text name="eq_course_recordAction" text="New show jumping course"/>
         <text name="eq_course_started" text="Recording %s: ride through the jumps in order. Placed obstacles from Realistic Equestrian have no collision while you edit; other obstacles stay solid"/>
         <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
-        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
+        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps, or press Ctrl+Backspace to cancel"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
         <text name="eq_course_cancelled" text="Editing stopped: you left the horse before the course had enough fences to save"/>
         <text name="eq_course_leftSaved" text="Course saved as you left the horse: press Ctrl+J near it to edit, then Ctrl+K to record on from the nearest point"/>
@@ -370,6 +370,10 @@
         <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
+        <text name="eq_course_cancelAction" text="Cancel new course"/>
+        <text name="eq_course_discardAction" text="Discard changes to %s"/>
+        <text name="eq_course_newCancelled" text="Cancelled: %s was not saved"/>
+        <text name="eq_course_changesDiscarded" text="Changes to %s discarded: the saved course is as it was"/>
         <text name="eq_course_editAction" text="Edit %s"/>
         <text name="eq_course_doneAction" text="Finish editing course"/>
         <text name="eq_course_saveAction" text="Save course and finish"/>

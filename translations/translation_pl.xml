@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Nowy parkur"/>
         <text name="eq_course_started" text="Nagrywanie: %s. Przejedź przez przeszkody po kolei. Postawione przeszkody z Realistic Equestrian nie mają kolizji podczas edycji; inne przeszkody pozostają twarde"/>
         <text name="eq_course_noJumps" text="Nagrywanie parkuru, ale na mapie nie ma jeszcze przeszkód skokowych"/>
-        <text name="eq_course_tooFew" text="Parkur nie zapisany: przejedź przez co najmniej %d przeszkód skokowych"/>
+        <text name="eq_course_tooFew" text="Parkur nie zapisany: przejedź przez co najmniej %d przeszkód skokowych lub naciśnij Ctrl+Backspace, aby anulować"/>
         <text name="eq_course_saved" text="Zapisano %s: przeszkód: %d, %.0f m"/>
         <text name="eq_course_cancelled" text="Edycja przerwana: zszedłeś z konia, zanim parkur miał dość przeszkód, by go zapisać"/>
         <text name="eq_course_leftSaved" text="Parkur zapisany po zejściu z konia: naciśnij Ctrl+J w jego pobliżu, aby edytować, potem Ctrl+K, aby nagrywać dalej od najbliższego punktu"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="Usunąć %s (przeszkód: %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Usuń trasę"/>
         <text name="eq_course_deleteAction" text="Usuń %s"/>
+        <text name="eq_course_cancelAction" text="Anuluj nowy parkur"/>
+        <text name="eq_course_discardAction" text="Odrzuć zmiany w %s"/>
+        <text name="eq_course_newCancelled" text="Anulowano: %s nie został zapisany"/>
+        <text name="eq_course_changesDiscarded" text="Odrzucono zmiany w %s: zapisany parkur pozostaje bez zmian"/>
         <text name="eq_course_editAction" text="Edytuj %s"/>
         <text name="eq_course_doneAction" text="Zakończ edycję trasy"/>
         <text name="eq_course_saveAction" text="Zapisz trasę i zakończ"/>

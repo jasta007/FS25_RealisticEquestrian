@@ -664,7 +664,7 @@
         <text name="eq_course_recordAction" text="Nouveau parcours de saut d&apos;obstacles"/>
         <text name="eq_course_started" text="Enregistrement de %s : passez dans les obstacles dans l&apos;ordre. Les obstacles posés de Realistic Equestrian n&apos;ont pas de collision pendant l&apos;édition ; les autres restent solides"/>
         <text name="eq_course_noJumps" text="Enregistrement du parcours, mais il n'y a encore aucun obstacle sur la carte"/>
-        <text name="eq_course_tooFew" text="Parcours non sauvegardé : passez dans au moins %d obstacles de saut"/>
+        <text name="eq_course_tooFew" text="Parcours non sauvegardé : passez dans au moins %d obstacles de saut, ou Ctrl+Retour arrière pour annuler"/>
         <text name="eq_course_saved" text="%s sauvegardé : %d obstacles, %.0f m"/>
         <text name="eq_course_cancelled" text="Édition arrêtée : vous êtes descendu du cheval avant que le parcours ait assez d&apos;obstacles pour être sauvegardé"/>
         <text name="eq_course_leftSaved" text="Parcours sauvegardé en descendant du cheval : appuyez sur Ctrl+J à proximité pour le modifier, puis Ctrl+K pour reprendre depuis le point le plus proche"/>
@@ -711,6 +711,10 @@
         <text name="eq_course_deleteAsk" text="Supprimer %s avec %d obstacles sur %.0f m ?"/>
         <text name="eq_course_deleteTitle" text="Supprimer le parcours"/>
         <text name="eq_course_deleteAction" text="Supprimer %s"/>
+        <text name="eq_course_cancelAction" text="Annuler le nouveau parcours"/>
+        <text name="eq_course_discardAction" text="Abandonner les modifications de %s"/>
+        <text name="eq_course_newCancelled" text="Annulé : %s n&apos;a pas été sauvegardé"/>
+        <text name="eq_course_changesDiscarded" text="Modifications de %s abandonnées : le parcours sauvegardé reste tel quel"/>
         <text name="eq_course_editAction" text="Modifier %s"/>
         <text name="eq_course_doneAction" text="Terminer l&apos;édition du parcours"/>
         <text name="eq_course_saveAction" text="Sauvegarder le parcours et terminer"/>

@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Nuovo percorso di salto"/>
         <text name="eq_course_started" text="Registrazione di %s: passa sugli ostacoli in ordine. Gli ostacoli piazzati di Realistic Equestrian non hanno collisioni mentre modifichi; gli altri restano solidi"/>
         <text name="eq_course_noJumps" text="Registrazione di un percorso, ma sulla mappa non ci sono ancora ostacoli da salto"/>
-        <text name="eq_course_tooFew" text="Percorso non salvato: passa su almeno %d ostacoli da salto"/>
+        <text name="eq_course_tooFew" text="Percorso non salvato: passa su almeno %d ostacoli da salto, oppure premi Ctrl+Backspace per annullare"/>
         <text name="eq_course_saved" text="%s salvato: %d ostacoli, %.0f m"/>
         <text name="eq_course_cancelled" text="Modifica interrotta: sei sceso da cavallo prima che il percorso avesse abbastanza ostacoli per salvarlo"/>
         <text name="eq_course_leftSaved" text="Percorso salvato quando sei sceso da cavallo: premi Ctrl+J vicino a esso per modificarlo, poi Ctrl+K per registrare dal punto più vicino"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="Eliminare %s con %d ostacoli su %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Elimina percorso"/>
         <text name="eq_course_deleteAction" text="Elimina %s"/>
+        <text name="eq_course_cancelAction" text="Annulla nuovo percorso"/>
+        <text name="eq_course_discardAction" text="Scarta le modifiche a %s"/>
+        <text name="eq_course_newCancelled" text="Annullato: %s non è stato salvato"/>
+        <text name="eq_course_changesDiscarded" text="Modifiche a %s scartate: il percorso salvato resta com&apos;era"/>
         <text name="eq_course_editAction" text="Modifica %s"/>
         <text name="eq_course_doneAction" text="Termina modifica del percorso"/>
         <text name="eq_course_saveAction" text="Salva percorso e termina"/>

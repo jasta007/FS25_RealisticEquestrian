@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="新しい障害飛越コース"/>
         <text name="eq_course_started" text="%sを記録中：障害を順番に通過してください。編集中、配置したRealistic Equestrianの障害物は当たり判定がなくなります。その他の障害物は固いままです"/>
         <text name="eq_course_noJumps" text="コースを記録中ですが、マップにまだ障害飛越の障害がありません"/>
-        <text name="eq_course_tooFew" text="コースは保存されませんでした：障害を%d個以上通過してください"/>
+        <text name="eq_course_tooFew" text="コースは保存されませんでした：障害を%d個以上通過してください（Ctrl+Backspaceでキャンセル）"/>
         <text name="eq_course_saved" text="%sを保存：障害%d個、%.0f m"/>
         <text name="eq_course_cancelled" text="編集を中止しました：保存できるだけの障害が揃う前に下馬しました"/>
         <text name="eq_course_leftSaved" text="下馬したのでコースを保存しました：近くでCtrl+Jを押して編集し、Ctrl+Kで最寄りの地点から記録を再開します"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="%s（障害%d個、%.0f m）を削除しますか？"/>
         <text name="eq_course_deleteTitle" text="コースを削除"/>
         <text name="eq_course_deleteAction" text="%sを削除"/>
+        <text name="eq_course_cancelAction" text="新しいコースをキャンセル"/>
+        <text name="eq_course_discardAction" text="%sの変更を破棄"/>
+        <text name="eq_course_newCancelled" text="キャンセルしました：%sは保存されていません"/>
+        <text name="eq_course_changesDiscarded" text="%sの変更を破棄しました：保存済みのコースはそのままです"/>
         <text name="eq_course_editAction" text="%sを編集"/>
         <text name="eq_course_doneAction" text="コース編集を完了"/>
         <text name="eq_course_saveAction" text="コースを保存して完了"/>

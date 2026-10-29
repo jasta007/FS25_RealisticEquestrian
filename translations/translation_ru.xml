@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="Новый маршрут конкура"/>
         <text name="eq_course_started" text="Запись «%s»: проедьте препятствия по порядку. Поставленные препятствия Realistic Equestrian не имеют столкновений во время редактирования; остальные остаются твёрдыми"/>
         <text name="eq_course_noJumps" text="Идёт запись маршрута, но на карте ещё нет конкурных препятствий"/>
-        <text name="eq_course_tooFew" text="Маршрут не сохранён: проедьте не менее %d конкурных препятствий"/>
+        <text name="eq_course_tooFew" text="Маршрут не сохранён: проедьте не менее %d конкурных препятствий или нажмите Ctrl+Backspace для отмены"/>
         <text name="eq_course_saved" text="«%s» сохранён: препятствий: %d, %.0f м"/>
         <text name="eq_course_cancelled" text="Редактирование остановлено: вы слезли с лошади до того, как в маршруте стало достаточно препятствий"/>
         <text name="eq_course_leftSaved" text="Маршрут сохранён, когда вы слезли с лошади: нажмите Ctrl+J рядом с ним, чтобы изменить, затем Ctrl+K, чтобы продолжить запись с ближайшей точки"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="Удалить «%s» (препятствий: %d, %.0f м)?"/>
         <text name="eq_course_deleteTitle" text="Удалить маршрут"/>
         <text name="eq_course_deleteAction" text="Удалить «%s»"/>
+        <text name="eq_course_cancelAction" text="Отменить новый маршрут"/>
+        <text name="eq_course_discardAction" text="Отменить изменения в %s"/>
+        <text name="eq_course_newCancelled" text="Отменено: %s не сохранён"/>
+        <text name="eq_course_changesDiscarded" text="Изменения в %s отменены: сохранённый маршрут остался прежним"/>
         <text name="eq_course_editAction" text="Изменить «%s»"/>
         <text name="eq_course_doneAction" text="Завершить редактирование маршрута"/>
         <text name="eq_course_saveAction" text="Сохранить маршрут и завершить"/>

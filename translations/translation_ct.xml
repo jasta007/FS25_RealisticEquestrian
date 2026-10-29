@@ -324,7 +324,7 @@
         <text name="eq_course_recordAction" text="新場地障礙路線"/>
         <text name="eq_course_started" text="正在錄製%s：按順序穿過各個障礙。編輯時，Realistic Equestrian放置的障礙物沒有碰撞；其他障礙物仍是實體"/>
         <text name="eq_course_noJumps" text="正在錄製路線，但地圖上還沒有場地障礙"/>
-        <text name="eq_course_tooFew" text="路線未儲存：至少穿過%d個場地障礙"/>
+        <text name="eq_course_tooFew" text="路線未儲存：至少穿過%d個場地障礙，或按 Ctrl+Backspace 取消"/>
         <text name="eq_course_saved" text="已儲存%s：%d個障礙，%.0f米"/>
         <text name="eq_course_cancelled" text="已停止編輯：路線障礙數量足夠儲存之前你下了馬"/>
         <text name="eq_course_leftSaved" text="下馬時已儲存路線：在附近按Ctrl+J編輯，再按Ctrl+K從最近的點繼續錄製"/>
@@ -371,6 +371,10 @@
         <text name="eq_course_deleteAsk" text="刪除%s（%d個障礙，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="刪除路線"/>
         <text name="eq_course_deleteAction" text="刪除%s"/>
+        <text name="eq_course_cancelAction" text="取消新路線"/>
+        <text name="eq_course_discardAction" text="放棄對%s的修改"/>
+        <text name="eq_course_newCancelled" text="已取消：%s未儲存"/>
+        <text name="eq_course_changesDiscarded" text="已放棄對%s的修改：已儲存的路線保持不變"/>
         <text name="eq_course_editAction" text="編輯%s"/>
         <text name="eq_course_doneAction" text="完成路線編輯"/>
         <text name="eq_course_saveAction" text="儲存路線並完成"/>

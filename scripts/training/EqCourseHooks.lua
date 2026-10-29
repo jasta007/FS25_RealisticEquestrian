@@ -13,6 +13,8 @@
     - The rewind key (EQ_COURSE_REWIND, Ctrl+K) drops everything after the recorded point
       nearest the horse (a white line points to it, like AutoDrive's) and records on from there.
     - The delete key (EQ_COURSE_DELETE, Ctrl+Backspace) asks, then deletes the nearby course.
+      While editing it cancels instead: a new course is dropped unsaved, and changes recorded
+      to a saved one since its last save are thrown away (James, 2026-10-29).
     Getting off the horse (or switching to another) leaves edit mode and saves what was recorded.
 
     Show jumps are Riding Hall 2k26's shop jumps (and any other "jumps" facility placeable),
@@ -558,10 +560,36 @@ function EqCourseHooks.onRewindAction(vehicle)
 end
 
 
---- The delete key: ask, then delete the nearby course.
+--- @param editing table
+--- @return boolean true when cancelling would throw something away: a new course, or a saved
+--- one being recorded on
+local function discardable(editing)
+    return editing.index == nil or editing.recording
+end
+
+
+--- The delete key while editing: stop without saving.
+--- @param editing table
+local function cancelEditing(editing)
+    local new = editing.index == nil
+    Log:info("Course: cancelled %s '%s' unsaved", new and "new" or "changes to", editing.name)
+    stopEditing(nil)
+    notify(string.format(text(new and "eq_course_newCancelled" or "eq_course_changesDiscarded"), editing.name))
+end
+
+
+--- The delete key: ask, then delete the nearby course; while editing, cancel.
 --- @param vehicle table
 function EqCourseHooks.onDeleteAction(vehicle)
-    if EqCourseHooks.editing ~= nil or vehicle.rootNode == nil then return end
+    if vehicle.rootNode == nil then return end
+    local editing = EqCourseHooks.editing
+    if editing ~= nil then
+        if editing.vehicle == vehicle and discardable(editing) then
+            cancelEditing(editing)
+            EqCourseHooks.updateActions(vehicle)
+        end
+        return
+    end
     if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
     local course, index = EqCourseHooks.nearCourse(vehicle)
     if course == nil then return end
@@ -639,7 +667,8 @@ function EqCourseHooks.updateActions(vehicle)
         recordText = text("eq_course_recordAction")
     end
     local xcText = nearXc ~= nil and string.format(text("eq_course_editAction"), nearXc.name) or text("eq_course_recordXcAction")
-    local state = string.format("%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle), tostring(busy))
+    local cancel = mine and discardable(editing)
+    local state = string.format("%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle), tostring(busy), tostring(cancel))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
@@ -656,8 +685,14 @@ function EqCourseHooks.updateActions(vehicle)
         binding:setActionEventTextVisibility(spec.eqRewindEventId, mine)
     end
     if spec.eqDeleteEventId ~= nil then
-        binding:setActionEventText(spec.eqDeleteEventId, near ~= nil and string.format(text("eq_course_deleteAction"), near.name) or "")
-        binding:setActionEventTextVisibility(spec.eqDeleteEventId, near ~= nil)
+        local deleteText = ""
+        if cancel then
+            deleteText = editing.index == nil and text("eq_course_cancelAction") or string.format(text("eq_course_discardAction"), editing.name)
+        elseif near ~= nil then
+            deleteText = string.format(text("eq_course_deleteAction"), near.name)
+        end
+        binding:setActionEventText(spec.eqDeleteEventId, deleteText)
+        binding:setActionEventTextVisibility(spec.eqDeleteEventId, cancel or near ~= nil)
     end
 end
 
