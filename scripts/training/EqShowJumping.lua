@@ -34,6 +34,9 @@ EqShowJumping.GO_MS = 45000
 -- A fence crossed waits this long for its jump to be judged before it counts as clear.
 EqShowJumping.PENDING_MS = 3000
 EqShowJumping.RAIL_FAULTS = 4
+-- A fallen pole counts at a fence when it lies this close to the fence's line (a pole falls
+-- from up to an oxer's spread off it, and rolls).
+EqShowJumping.POLE_NEAR = 3.5
 EqShowJumping.REFUSAL_FAULTS = 4
 EqShowJumping.REFUSALS_OUT = 2
 -- In a round a fence only counts when the horse goes over it between its flags (not the 0.75 m
@@ -189,7 +192,7 @@ function EqShowJumping.newRound(course, start, finish)
     return {
         course = course, start = start or EqShowJumping.startFromPath(course), finish = finish or nil,
         state = "approach", allowed = EqShowJumping.timeAllowed(course), clock = 0,
-        next = 1, faults = 0, refusals = 0, count = nil, fenceRefusals = {},
+        next = 1, faults = 0, refusals = 0, count = nil, fenceRefusals = {}, railed = {},
         xc = course.kind == EqCourse.CROSS_COUNTRY,
     }
 end
@@ -197,7 +200,7 @@ end
 
 local function restart(round)
     round.state, round.clock, round.next, round.faults, round.refusals = "approach", 0, 1, 0, 0
-    round.fenceRefusals, round.represent = {}, nil
+    round.fenceRefusals, round.represent, round.railed = {}, nil, {}
     round.pending, round.count, round.result, round.why = nil, nil, nil, nil
 end
 
@@ -244,6 +247,39 @@ local function refuse(round)
 end
 
 
+--- Four faults for a rail at a fence, once: a second pole of it, or the jump judged a knock
+--- after its pole fell, adds none.
+--- @return boolean true when it counted
+local function rail(round, index)
+    if round.railed[index] then return false end
+    round.railed[index] = true
+    round.faults = round.faults + EqShowJumping.RAIL_FAULTS
+    return true
+end
+
+
+--- Which fence a fallen pole belongs to: the one waiting for its judgement or the next, when
+--- the pole lies within POLE_NEAR of its line. Pure.
+--- @param round table
+--- @param x number
+--- @param z number
+--- @return number|nil the fence's index
+function EqShowJumping.fenceOfPole(round, x, z)
+    local jumps = round.course.jumps
+    local best, bestDistance = nil, EqShowJumping.POLE_NEAR
+    local candidates = { round.pending ~= nil and round.pending.index or nil, round.next }
+    for _, index in pairs(candidates) do
+        local jump = jumps[index]
+        if jump ~= nil then
+            local line = jump.ax ~= nil and jump or { ax = jump.x, az = jump.z, bx = jump.x, bz = jump.z }
+            local d = EqShowJumping.distanceToLine(line, x, z)
+            if d <= bestDistance then best, bestDistance = index, d end
+        end
+    end
+    return best
+end
+
+
 local function crossed(line, input, margin)
     return EqCourse.crossSide(line.ax, line.az, line.bx, line.bz, input.px, input.pz, input.x, input.z, margin)
 end
@@ -251,7 +287,8 @@ end
 
 --- One frame of the round.
 --- @param round table
---- @param input table { px, pz (last frame), x, z, dt ms, judged = nil|"clear"|"knock"|"nothing", crashed = bool }
+--- @param input table { px, pz (last frame), x, z, dt ms, judged = nil|"clear"|"knock"|"nothing", crashed = bool,
+---   polesDown = nil|{ { x, z }... } poles of our show jumps that fell this frame }
 --- @return string|nil event: "count", "early", "go", "started", "fence", "rail", "refusal", "runout",
 ---   "eliminated", "finished", "reset", "ready" (the next round can start)
 function EqShowJumping.step(round, input)
@@ -313,17 +350,28 @@ function EqShowJumping.step(round, input)
 
     -- Running.
     round.clock = round.clock + dt
+    round.railed = round.railed or {}
     local jumps = round.course.jumps
     local event = nil
+
+    -- A pole down is a rail at the fence it stands in: the one just jumped, or the next (the
+    -- pole can fall before the horse is over the line). Once per fence, however many fall.
+    if input.polesDown ~= nil and not round.xc then
+        for _, pole in ipairs(input.polesDown) do
+            local index = EqShowJumping.fenceOfPole(round, pole.x, pole.z)
+            if index ~= nil and rail(round, index) then event = "rail" end
+        end
+    end
 
     -- A fence crossed waits for its jump's judgement.
     local pending = round.pending
     if pending ~= nil then
         if input.judged == "knock" and not round.xc then
-            round.faults = round.faults + EqShowJumping.RAIL_FAULTS
-            round.pending, event = nil, "rail"
+            if rail(round, pending.index) then event = "rail" end
+            round.pending = nil
         elseif input.judged ~= nil or round.clock - pending.at >= EqShowJumping.PENDING_MS then
-            round.pending, event = nil, "fence"
+            round.pending = nil
+            if not round.railed[pending.index] then event = event or "fence" end
         end
     end
 
@@ -337,13 +385,13 @@ function EqShowJumping.step(round, input)
         if refuse(round) then return eliminate(round, "refusals") end
         event = "runout"
     elseif nextJump ~= nil and nextJump.ax ~= nil and crossed(nextJump, input, EqShowJumping.INSIDE_MARGIN) ~= nil then
-        if round.pending ~= nil then event = "fence" end
+        if round.pending ~= nil and not round.railed[round.pending.index] then event = event or "fence" end
         round.pending = { index = round.next, at = round.clock }
         round.next = round.next + 1
         round.represent = nil
         if input.judged == "knock" and not round.xc then
-            round.faults = round.faults + EqShowJumping.RAIL_FAULTS
-            round.pending, event = nil, "rail"
+            if rail(round, round.pending.index) then event = "rail" end
+            round.pending = nil
         end
     end
 

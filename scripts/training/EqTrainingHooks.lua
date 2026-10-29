@@ -319,6 +319,11 @@ local function trackJump(vehicle, spec, sheet, worn)
         end
         if inAir then
             jump.airborne = true
+            -- Over (or by) one of our show jumps: only its poles falling make a rail (judgeJump).
+            if jump.ours == nil then
+                local ok, ours = EqLog.try("EqTrainingHooks.trackJump EqPoles.nearest", EqPoles.nearest, vehicle)
+                if ok and ours ~= nil then jump.ours = ours end
+            end
             if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
             if showJump then jump.showJump = true end
             local clearance, node, hitX, hitZ = legClearance(vehicle)
@@ -326,8 +331,7 @@ local function trackJump(vehicle, spec, sheet, worn)
             if EqTrainingHooks.isClip(clearance) then
                 jump.clipped = true
                 -- One of our show jumps' poles falls as it is hit (EqPoles).
-                local ok, fell = EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip", EqPoles.onClip, node, vehicle, hitX, hitZ)
-                if ok and fell then jump.poleDown = true end
+                EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip", EqPoles.onClip, node, vehicle, hitX, hitZ)
             end
             if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
         elseif not jump.airborne and age < 500 then
@@ -373,10 +377,12 @@ judgeJump = function(spec, sheet, worn, jump, speed, now, vehicle)
     -- the jump, knocking it or landing on top of it is a rail, whatever the jump is (a show jump
     -- or anything flagged). A crash (into the arena wall, say) is no rail unless the legs
     -- clipped the jump on the way: running into things is penalty enough (James, 2026-10-27).
+    -- Over one of our show jumps only a pole falling is a rail, as in a real round (James,
+    -- 2026-10-29: poles knocked with no fault, faults with no pole down): the pole tells the
+    -- round itself (EqPoles.knock), so the jump only says the fence is done.
     local rail = high and (jump.clipped or (not jump.crashed and (jump.knocked or jump.onTop)))
+    if jump.ours ~= nil then rail = false end
     EqCourseHooks.onJumpJudged(cleared and "clear" or rail and "knock" or "nothing")
-    -- A rail over one of our show jumps brings a pole down, if the clip didn't already.
-    if rail and not jump.poleDown and vehicle ~= nil then EqLog.try("EqTrainingHooks.judgeJump EqPoles.onRail", EqPoles.onRail, vehicle) end
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
         if mult ~= nil then EqTrainingHud.pop("jump", mult) end
@@ -646,10 +652,10 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))
         spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
-        -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
-        EqCourseHooks.onCrash()
-        -- Running into one of our show jumps knocks a pole off it (EqPoles).
-        EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle)
+        -- Running into one of our show jumps knocks a pole off it (EqPoles): a rail, not a refusal.
+        local ok, fell = EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle)
+        -- Running into the next fence of a show jumping round otherwise is a refusal (EqCourseHooks).
+        if not (ok and fell) then EqCourseHooks.onCrash() end
         local knock = EqTraining.knockCombo(sheet)
         if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
         popKnock(knock)

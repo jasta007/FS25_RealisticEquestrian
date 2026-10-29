@@ -82,6 +82,9 @@ EqCourseHooks.BEGIN_NEAR = 30
 -- A course saved before fence points were kept: a fence's point is the first one within this
 -- many metres of it.
 EqCourseHooks.PASS_NEAR = 6
+-- At a round's start a fence takes the place and ends of the jump on the map within this many
+-- metres (EqCourse.refreshJumps).
+EqCourseHooks.REFRESH_NEAR = 3
 
 EqCourseHooks.editing = nil
 EqCourseHooks.round = nil
@@ -94,6 +97,7 @@ EqCourseHooks.textFailed = false
 function EqCourseHooks.reset()
     EqCourseHooks.editing, EqCourseHooks.near, EqCourseHooks.bodies = nil, nil, {}
     EqCourseHooks.round, EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.payoff = nil, nil, false, 0
+    EqCourseHooks.polesDown = nil
     EqCourseGlow.delete()
 end
 
@@ -732,8 +736,11 @@ end
 --- @return table
 local function newRound(vehicle, course)
     fillEnds(course)
-    -- Each fence's glow pole height from the fence on the map, when it has one (cross country flags).
+    -- Each fence onto the jump on the map now (one replaced or nudged since recording), and its
+    -- glow pole height from it, when it has one (cross country flags).
     local live = EqCourseHooks.listJumps(course.kind)
+    local moved = EqCourse.refreshJumps(course.jumps, live, EqCourseHooks.REFRESH_NEAR)
+    if moved > 0 then Log:info("Show jumping: %d fence(s) of '%s' moved onto the jumps on the map", moved, course.name) end
     for _, jump in ipairs(course.jumps) do
         for _, found in ipairs(live) do
             if EqCourse.sameJump(jump, found) then
@@ -757,6 +764,16 @@ end
 
 function EqCourseHooks.onCrash()
     if EqCourseHooks.round ~= nil then EqCourseHooks.crashed = true end
+end
+
+
+--- One of our show jumps' poles fell (EqPoles): a rail at the fence it stands in.
+--- @param x number world x of the pole's middle
+--- @param z number
+function EqCourseHooks.onPoleDown(x, z)
+    if EqCourseHooks.round == nil then return end
+    EqCourseHooks.polesDown = EqCourseHooks.polesDown or {}
+    table.insert(EqCourseHooks.polesDown, { x = x, z = z })
 end
 
 
@@ -961,7 +978,7 @@ function EqCourseHooks.roundDraw(vehicle)
     if round == nil then
         round = newRound(vehicle, course)
         EqCourseHooks.round = round
-        EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
+        EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.polesDown = nil, false, nil
     end
 
     local x, _, z = getWorldTranslation(vehicle.rootNode)
@@ -970,8 +987,8 @@ function EqCourseHooks.roundDraw(vehicle)
     round.at, round.last, round.seenAt = now, { x, z }, now
     local sj = round.sj
     local event = EqShowJumping.step(sj, { px = last[1], pz = last[2], x = x, z = z, dt = dt,
-        judged = EqCourseHooks.judged, crashed = EqCourseHooks.crashed })
-    EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
+        judged = EqCourseHooks.judged, crashed = EqCourseHooks.crashed, polesDown = EqCourseHooks.polesDown })
+    EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.polesDown = nil, false, nil
     if event ~= nil then announce(round, event) end
 
     local state = sj.state

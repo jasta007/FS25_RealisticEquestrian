@@ -1658,6 +1658,46 @@ end)()
     -- No judgement comes, so the last fence counts as clear after PENDING_MS.
     seen = ride(110)
     check("with no finish line the round ends after the last fence", seen.finished == 1)
+
+    -- Our show jumps: a pole falling is the rail, once per fence (James, 2026-10-29).
+    round = EqShowJumping.newRound(course)
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("a pole falling just before the line is a rail at that fence",
+        EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100, polesDown = { { x = 0.5, z = 40.1 } } }) == "rail"
+        and round.faults == 4 and round.railed[1])
+    seen = ride(41, 100, function(input)
+        if input.z >= 40 and input.pz < 40 then input.polesDown = { { x = -0.4, z = 40.2 }, { x = 0.4, z = 40.2 } } end
+    end)
+    check("more poles of the same fence add nothing", round.faults == 4 and round.next == 2)
+    seen = wait(EqShowJumping.PENDING_MS + 200)
+    check("a railed fence is never announced clear after", seen.fence == nil)
+    seen = ride(65, 100, function(input) if input.z >= 50 and input.pz < 50 then input.polesDown = { { x = 0, z = 50 } } end end)
+    check("a pole down far from any fence of the round counts nothing", round.faults == 4 and seen.rail == nil)
+    seen = ride(71, 100, function(input) if input.z >= 70 and input.pz < 70 then input.judged = "knock"; input.polesDown = { { x = 0, z = 70.3 } } end end)
+    check("a pole down and a knock at one fence are one rail", seen.rail == 1 and round.faults == 8)
+    check("a fallen pole belongs to the nearest fence of the two", EqShowJumping.fenceOfPole(
+        { course = course, next = 2, pending = { index = 1 } }, 0, 69) == 2
+        and EqShowJumping.fenceOfPole({ course = course, next = 2, pending = { index = 1 } }, 0, 41) == 1)
+    round = EqShowJumping.newRound(course)
+    round.xc = true
+    z = 20.25
+    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("cross country has no rails from poles", EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100,
+        polesDown = { { x = 0, z = 40 } } }) == nil and round.faults == 0)
+
+    -- A course's fences onto the jumps on the map now (a jump replaced since recording).
+    local jumps = { { x = 0, z = 40, ry = 0, ax = -2, az = 40, bx = 2, bz = 40 }, { x = 0, z = 70, ry = 0, ax = -2, az = 70, bx = 2, bz = 70 } }
+    local live = { { x = 1.2, z = 41.5, ry = 0.1, ax = 3.6, az = 41.6, bx = -1.2, bz = 41.4 }, { x = 30, z = 70, ax = 28, az = 70, bx = 32, bz = 70 } }
+    check("a fence moves onto a jump nearby", EqCourse.refreshJumps(jumps, live, 3) == 1
+        and jumps[1].x == 1.2 and jumps[1].z == 41.5 and jumps[1].ry == 0.1)
+    check("its ends stay the same way round", jumps[1].ax == -1.2 and jumps[1].bx == 3.6)
+    check("a fence with no jump nearby stays", jumps[2].x == 0 and jumps[2].ax == -2)
+    check("a fence already on its jump does not move", EqCourse.refreshJumps(jumps, live, 3) == 0)
     round = EqShowJumping.newRound(course)
     z = 20.25
     EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })

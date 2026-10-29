@@ -232,12 +232,12 @@ Show Jumping". The start line stands on the route 12 m before fence 1 and the fi
 the last fence; both are drawn in gold while they matter, so no objects are needed and a course
 can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 3 m of where it was recorded, so a jump replaced or nudged since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
-| Rail down (the horse's legs clip the jump in the air, it knocks the jump hard enough to lose most of its speed, or lands on top; any jump, flagged ones too. A crash into anything else is no fault) | 4 |
-| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
+| Rail down: over our own show jumps, a pole falling (once per fence, however many fall); over any other jump, flagged ones too, the horse's legs clipping it in the air, knocking it hard enough to lose most of its speed, or landing on top. A crash into anything else is no fault | 4 |
+| Refusal (running into the next fence, within 3 m of its poles, without knocking a pole off) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
 | Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
 | Over twice the time allowed, or not starting within 45 s | Eliminated |
@@ -266,9 +266,8 @@ The shop's own show jumps have poles that fall:
 
 Each has a Pole colour option in the shop (the poles' coloured bands, stand tops and trim) and,
 with wings, a Wing colour option, from 16 colours. The stands and wings never move. When the horse's legs
-clip a pole in the air, that pole drops at once; any other rail over one of these jumps (it hit
-the jump hard or landed on it) drops the highest pole still up, and running into the jump without
-jumping knocks the top pole of the row it ran into. The fall is animated, not physics:
+clip a pole in the air, that pole drops at once, and running into the jump knocks the top pole
+of the row it ran into. Only those drop a pole, and in a round only a pole down is a rail. The fall is animated, not physics:
 one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
 horse's way, then lies on the ground with no collision. A wooden knock sounds as the pole leaves its
 cups (one of two recordings, pitch varied a little each time). Poles go back up when a round's countdown

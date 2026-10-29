@@ -210,6 +210,44 @@ function EqCourse.sameJump(a, b)
 end
 
 
+--- A course's fences moved onto the jumps standing on the map now: a jump replaced or nudged
+--- since the course was recorded would otherwise keep the old place and ends, and its glow and
+--- line would sit off the flags (James, 2026-10-29). Each takes the nearest jump within near
+--- metres, its ends kept the same way round so the side it is jumped from still holds. Pure.
+--- @param jumps table the course's { x, z, ry, ax, az, bx, bz }
+--- @param live table the map's jumps, as EqCourseHooks.listJumps gives them
+--- @param near number metres
+--- @return number how many moved
+function EqCourse.refreshJumps(jumps, live, near)
+    local moved = 0
+    for _, jump in ipairs(jumps) do
+        local best, bestDistance = nil, near * near
+        for _, found in ipairs(live) do
+            local dx, dz = found.x - jump.x, found.z - jump.z
+            local d = dx * dx + dz * dz
+            if d <= bestDistance and found.ax ~= nil then best, bestDistance = found, d end
+        end
+        if best ~= nil then
+            local ax, az, bx, bz = best.ax, best.az, best.bx, best.bz
+            if jump.ax ~= nil then
+                local function d2(x1, z1, x2, z2) return (x1 - x2) ^ 2 + (z1 - z2) ^ 2 end
+                local kept = d2(ax, az, jump.ax, jump.az) + d2(bx, bz, jump.bx, jump.bz)
+                local swapped = d2(bx, bz, jump.ax, jump.az) + d2(ax, az, jump.bx, jump.bz)
+                if swapped < kept then ax, az, bx, bz = bx, bz, ax, az end
+            end
+            local changed = jump.ax == nil or math.abs(jump.x - best.x) + math.abs(jump.z - best.z)
+                + math.abs(jump.ax - ax) + math.abs(jump.az - az) + math.abs(jump.bx - bx) + math.abs(jump.bz - bz) > 0.01
+            if changed then
+                jump.x, jump.z, jump.ry = best.x, best.z, best.ry or jump.ry
+                jump.ax, jump.az, jump.bx, jump.bz = ax, az, bx, bz
+                moved = moved + 1
+            end
+        end
+    end
+    return moved
+end
+
+
 --- @return string the next free name: "Course 1", "Course 2"...
 function EqCourse.nextName(format)
     format = format or "Course %d"

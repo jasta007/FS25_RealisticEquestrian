@@ -4,9 +4,10 @@
     when the horse hits them and go back up afterwards (James, 2026-10-28). The stands, wings and
     cups never move; each pole is a transform group "eqPole<n>" with its own static collision box.
 
-    What knocks a pole: the jump tracker (EqTrainingHooks) already judges rails. When the horse's
-    leg rays find its hooves below a pole's top in the air, that pole goes (onClip); any other rail
-    over one of these jumps (hit it, landed on it) drops its highest pole still up (onRail).
+    What knocks a pole: when the horse's leg rays (EqTrainingHooks) find its hooves below a pole's
+    top in the air, that pole goes (onClip); running into the jump drops the pole in front
+    (onCrash). In a show jumping round a pole falling is the rail (EqCourseHooks.onPoleDown):
+    over these jumps nothing else counts as one (James, 2026-10-29).
 
     The fall is scripted, not physics, so a pole can never turn into a spinning beam of death
     (James): its collision comes off, one end leaves its cup a moment before the other, it drops
@@ -290,6 +291,12 @@ function EqPoles.knock(pole, dirX, dirZ, hitX)
     pole.state, pole.t = EqPoles.FALLING, 0
     EqLog.try("EqPoles.knock sound", playKnock, pole)
     Log:info("Poles: %s knocked down (%s end first)", getName(pole.node), lead > 0 and "+x" or "-x")
+    -- A show jumping round counts a rail at the fence it falls from (EqCourseHooks): poles down,
+    -- not the jump's landing, give the faults (James, 2026-10-29).
+    if EqCourseHooks ~= nil and EqCourseHooks.onPoleDown ~= nil then
+        local wx, _, wz = localToWorld(root, (ax + bx) / 2, 0, (az + bz) / 2)
+        EqCourseHooks.onPoleDown(wx, wz)
+    end
     return true
 end
 
@@ -412,10 +419,10 @@ function EqPoles.onCrash(vehicle)
 end
 
 
---- A rail was judged: when the horse is at one of our jumps and no pole fell yet, its highest
---- pole still up falls.
+--- The nearest of our jumps to a horse, within NEAR of its middle line.
 --- @param vehicle table
-function EqPoles.onRail(vehicle)
+--- @return table|nil jump, number|nil metres
+function EqPoles.nearest(vehicle)
     if EqPoles.scannedAt == nil then EqPoles.scan() end
     local x, _, z = getWorldTranslation(vehicle.rootNode)
     local best, bestDistance = nil, EqPoles.NEAR
@@ -428,15 +435,7 @@ function EqPoles.onRail(vehicle)
             if distance <= bestDistance then best, bestDistance = jump, distance end
         end
     end
-    if best == nil then return end
-    for i = #best.poles, 1, -1 do
-        local pole = best.poles[i]
-        if pole.state == EqPoles.UP then
-            local dx, dz = heading(vehicle)
-            EqPoles.knock(pole, dx, dz, nil)
-            return
-        end
-    end
+    return best, best ~= nil and bestDistance or nil
 end
 
 
