@@ -56,7 +56,7 @@
         <Shape name="col" shapeId="3" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="27" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
         <Shape name="col" shapeId="4" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="28" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
-      <TransformGroup name="eqPole1" translation="0 0.42 0" nodeId="29">
+      <TransformGroup name="eqPole1" translation="0 0.42 -0" nodeId="29">
         <Shape name="eqPaint" shapeId="5" clipDistance="300" nodeId="30" castsShadows="true" receiveShadows="true" materialIds="6"/>
         <Shape name="white" shapeId="6" clipDistance="300" nodeId="31" castsShadows="true" receiveShadows="true" materialIds="5"/>
         <Shape name="ends" shapeId="7" clipDistance="300" nodeId="32" castsShadows="false" receiveShadows="true" materialIds="5"/>

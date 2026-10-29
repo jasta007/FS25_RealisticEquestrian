@@ -67,21 +67,21 @@
         <Shape name="col" shapeId="12" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="45" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
         <Shape name="col" shapeId="13" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="46" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
-      <TransformGroup name="eqPole1" translation="0 0.7 -0.8" nodeId="47">
+      <TransformGroup name="eqPole1" translation="0 0.7 0.8" nodeId="47">
         <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="48" castsShadows="true" receiveShadows="true" materialIds="6"/>
         <Shape name="white" shapeId="15" clipDistance="300" nodeId="49" castsShadows="true" receiveShadows="true" materialIds="5"/>
         <Shape name="ends" shapeId="16" clipDistance="300" nodeId="50" castsShadows="false" receiveShadows="true" materialIds="5"/>
         <Shape name="poleCol" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="51" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
         <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="52"/>
       </TransformGroup>
-      <TransformGroup name="eqPole2" translation="0 0.8 0.8" nodeId="53">
+      <TransformGroup name="eqPole2" translation="0 0.8 -0.8" nodeId="53">
         <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="54" castsShadows="true" receiveShadows="true" materialIds="6"/>
         <Shape name="white" shapeId="15" clipDistance="300" nodeId="55" castsShadows="true" receiveShadows="true" materialIds="5"/>
         <Shape name="ends" shapeId="16" clipDistance="300" nodeId="56" castsShadows="false" receiveShadows="true" materialIds="5"/>
         <Shape name="poleCol" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="57" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
         <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="58"/>
       </TransformGroup>
-      <TransformGroup name="eqPole3" translation="0 1.05 0" nodeId="59">
+      <TransformGroup name="eqPole3" translation="0 1.05 -0" nodeId="59">
         <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="60" castsShadows="true" receiveShadows="true" materialIds="6"/>
         <Shape name="white" shapeId="15" clipDistance="300" nodeId="61" castsShadows="true" receiveShadows="true" materialIds="5"/>
         <Shape name="ends" shapeId="16" clipDistance="300" nodeId="62" castsShadows="false" receiveShadows="true" materialIds="5"/>

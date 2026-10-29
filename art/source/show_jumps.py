@@ -120,7 +120,9 @@ CAVALETTI_LEAN = 0.13   # past the middle at the top
 CAVALETTI_PLANK = (0.08, 0.05)
 CAVALETTI_POLE_Y = 0.42  # the pole's middle
 
-# name, price, default pole and wing colours, wing style, poles as (a, b) end points
+# name, price, default pole and wing colours, wing style, poles as (a, b) end points. Rows are
+# written front first at -z, as read on the page; approach() turns them round below, because the
+# horse comes from +z: facing the jump that way the red flag (+x) is on the rider's right.
 JUMPS = [
     {"name": "showJumpUpright", "price": 450, "colour": "red", "wingColour": "white", "wing": "picket",
      "poles": row(0.0, 0.40, 0.72, 1.00)},
@@ -143,6 +145,16 @@ JUMPS = [
     {"name": "showJumpCavaletti", "price": 150, "colour": "red", "wingColour": "white", "wing": None,
      "poles": cavaletti(), "cavaletti": True},
 ]
+
+
+def approach(poles):
+    """Mirror along z: the front row (written at -z) ends up facing a horse coming from +z (James
+    2026-10-29: the ascending oxer was descending)."""
+    return [((a[0], a[1], -a[2]), (b[0], b[1], -b[2])) for a, b in poles]
+
+
+for _jump in JUMPS:
+    _jump["poles"] = approach(_jump["poles"])
 
 
 # ---------------------------------------------------------------------------------------------
@@ -384,8 +396,8 @@ def x_end(parts, x):
 
 
 def liverpool_tray(parts):
-    """A shallow water tray under the poles and in front of them."""
-    x0, x1, z0, z1 = -1.60, 1.60, -1.35, 0.20
+    """A shallow water tray under the poles and in front of them (the horse comes from +z)."""
+    x0, x1, z0, z1 = -1.60, 1.60, -0.20, 1.35
     rim = 0.06
     box(parts.water, x0 + rim, x1 - rim, 0.0, 0.035, z0 + rim, z1 - rim)
     for bx0, bx1, bz0, bz1 in ((x0, x1, z0, z0 + rim), (x0, x1, z1 - rim, z1), (x0, x0 + rim, z0, z1), (x1 - rim, x1, z0, z1)):
@@ -607,7 +619,7 @@ def colour_configurations(key, default):
     lines = [f"    <{key}>", f"        <{key}Configurations>"]
     for name, rgb in COLOURS:
         extra = ' isDefault="true"' if name == default else ""
-        lines.append(f'            <{key}Configuration name="$l10n_eq_colour_{name}" color="{fmt(rgb)}" price="0"{extra}/>')
+        lines.append(f'            <{key}Configuration name="$l10n_eq_colour_{name}" price="0"{extra}/>')
     lines += [f"        </{key}Configurations>", f"    </{key}>"]
     return "\n".join(lines)
 

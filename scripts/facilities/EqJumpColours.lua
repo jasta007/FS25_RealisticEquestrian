@@ -6,8 +6,8 @@
     game's vehicle shader; this sets its colorScale on the shapes named "eqPaint" and
     "eqWingPaint" from the option bought.
 
-    The options are registered as colour configurations, so the shop shows them as swatches.
-    Their xml lists COLOURS from art/source/show_jumps.py, in the same order as LIST here: the
+    The options are plain named configurations (a colour configuration's picker took no input in
+    the build menu). Their xml lists COLOURS from art/source/show_jumps.py, in the same order as LIST here: the
     option's index is all that is read back. A jump placed before these options existed has none
     and keeps the colours its i3d gives it.
 
@@ -78,7 +78,9 @@ function EqJumpColours.registerConfiguration()
         Log:warning("EqJumpColours: no placeable configurations, show jumps keep their colours")
         return
     end
-    local itemClass = PlaceableConfigurationItemColor or PlaceableConfigurationItem
+    -- Plain named options, not colour swatches: as colour configurations the build menu opened a
+    -- colour picker that took no clicks or keys (James, 2026-10-29), so the colours are listed by name.
+    local itemClass = PlaceableConfigurationItem
     if itemClass == nil then return end
     for _, config in ipairs(EqJumpColours.CONFIGS) do
         if manager.configurations == nil or manager.configurations[config.name] == nil then
@@ -136,10 +138,11 @@ function EqJumpColours.install(guarded)
     guarded("show jump colour configuration", EqJumpColours.registerConfiguration)
     -- Paint a jump as its colour option loads: in the shop's preview as well as placed ones.
     -- EqPoles.scan paints placed jumps too, in case this event never comes.
-    if PlaceableConfigurationItemColor ~= nil and PlaceableConfigurationItemColor.onPostLoad ~= nil then
-        PlaceableConfigurationItemColor.onPostLoad = Utils.appendedFunction(PlaceableConfigurationItemColor.onPostLoad,
+    if PlaceableConfigurationItem ~= nil and PlaceableConfigurationItem.onPostLoad ~= nil then
+        PlaceableConfigurationItem.onPostLoad = Utils.appendedFunction(PlaceableConfigurationItem.onPostLoad,
             function(item, placeable)
-                if not EqMain.isActive or type(placeable) ~= "table" then return end
+                if not EqMain.isActive or type(placeable) ~= "table" or type(item) ~= "table" then return end
+                if item.configName ~= "eqPoleColour" and item.configName ~= "eqWingColour" then return end
                 guarded("show jump colours", function() EqJumpColours.apply(placeable) end)
             end)
     end
