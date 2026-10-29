@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="クリアラウンド！"/>
         <text name="eq_sj_faultsPop" text="減点%s"/>
         <text name="eq_sj_retired" text="障害飛越を中止しました"/>
+        <text name="eq_xc_retired" text="クロスカントリー走行を中止しました"/>
         <text name="eq_sj_startLine" text="スタートライン"/>
         <text name="eq_sj_finishLine" text="ゴールライン"/>
         <text name="eq_sj_fenceRow" text="障害 %d/%d"/>

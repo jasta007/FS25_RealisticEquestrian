@@ -38,7 +38,6 @@ EqDressageHooks.tagFailed = false
 
 function EqDressageHooks.reset()
     EqDressageHooks.clearTag()
-    EqDressageHooks.spareHotspot = nil
     EqDressageHooks.markers, EqDressageHooks.scannedAt, EqDressageHooks.logged = {}, nil, {}
     EqDressageHooks.placeables, EqDressageHooks.collisionOff, EqDressageHooks.ridingSeen = {}, false, nil
 end
@@ -188,6 +187,36 @@ function EqDressageHooks.courseFor(vehicle, spec)
 end
 
 
+--- Our hotspot's methods (its own and inherited), each guarded: an error in one takes our tag
+--- down for the rest of the game instead of breaking the whole HUD's draw every frame (James's
+--- log, 2026-10-28: "PlaceableHotspot.lua:225: attempt to index nil with 'width'", HUD gone).
+--- @param hotspot table
+local function guardHotspot(hotspot)
+    local seen = {}
+    local mt = getmetatable(hotspot)
+    local class = mt ~= nil and mt.__index or nil
+    while type(class) == "table" and not seen[class] do
+        seen[class] = true
+        for name, fn in pairs(class) do
+            if type(fn) == "function" and name ~= "new" and rawget(hotspot, name) == nil then
+                hotspot[name] = function(self, ...)
+                    local result = { pcall(fn, self, ...) }
+                    if result[1] then return unpack(result, 2, table.maxn(result)) end
+                    if not EqDressageHooks.tagFailed then
+                        EqDressageHooks.tagFailed = true
+                        Log:warning("Map tag hotspot failed in %s, tags off for this game: %s", tostring(name), tostring(result[2]))
+                        EqDressageHooks.clearTag()
+                    end
+                    return nil
+                end
+            end
+        end
+        local parent = getmetatable(class)
+        class = parent ~= nil and parent.__index or nil
+    end
+end
+
+
 --- Tag a marker as the map target (the game's own "tag" on the map), unless the player has
 --- tagged something of their own. Does nothing more after any error.
 --- @param marker table|nil { letter, x, z }; nil takes our tag down
@@ -206,16 +235,18 @@ function EqDressageHooks.setTag(marker, name)
     local ok, err = EqLog.try("EqDressageHooks.setTag", function()
         local current = g_currentMission.currentMapTargetHotspot
         if current ~= nil and (tag == nil or current ~= tag.hotspot) then return end
+        if tag ~= nil and current == nil then
+            -- The game took our tag down itself (it may have deleted it): never use it again.
+            EqDressageHooks.clearTag()
+            tag = nil
+        end
         if tag == nil then
-            -- One hotspot is made and reused (see clearTag).
-            local hotspot = EqDressageHooks.spareHotspot
-            EqDressageHooks.spareHotspot = nil
-            if hotspot == nil then
-                hotspot = PlaceableHotspot.new()
-                if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
-                    hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
-                end
+            -- A fresh hotspot each time: one the game or we let go of may be deleted.
+            local hotspot = PlaceableHotspot.new()
+            if PlaceableHotspot.TYPE ~= nil and PlaceableHotspot.TYPE.EXCLAMATION_MARK ~= nil then
+                hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
             end
+            guardHotspot(hotspot)
             g_currentMission:addMapHotspot(hotspot)
             tag = { hotspot = hotspot }
             EqDressageHooks.tag = tag
@@ -233,9 +264,9 @@ function EqDressageHooks.setTag(marker, name)
 end
 
 
---- Take our tag down (leaving any of the player's own). The hotspot is kept, not deleted, for the
---- next tag: the map went on drawing a deleted one for a moment and logged "PlaceableHotspot.lua:225:
---- attempt to index nil with 'width'" every frame (James's log, 2026-10-27).
+--- Take our tag down (leaving any of the player's own). The hotspot is let go, never deleted: the
+--- map went on drawing a deleted one for a moment and logged "PlaceableHotspot.lua:225: attempt to
+--- index nil with 'width'" every frame (James's log, 2026-10-27). Nor is it reused (2026-10-28).
 function EqDressageHooks.clearTag()
     local tag = EqDressageHooks.tag
     if tag == nil then return end
@@ -244,7 +275,6 @@ function EqDressageHooks.clearTag()
         if g_currentMission.currentMapTargetHotspot == tag.hotspot then g_currentMission:setMapTargetHotspot(nil) end
         g_currentMission:removeMapHotspot(tag.hotspot)
     end)
-    EqDressageHooks.spareHotspot = tag.hotspot
 end
 
 

@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="Чистый проезд!"/>
         <text name="eq_sj_faultsPop" text="Штрафных очков: %s"/>
         <text name="eq_sj_retired" text="Конкурный заезд прерван"/>
+        <text name="eq_xc_retired" text="Заезд по кроссу прерван"/>
         <text name="eq_sj_startLine" text="Линия старта"/>
         <text name="eq_sj_finishLine" text="Линия финиша"/>
         <text name="eq_sj_fenceRow" text="Препятствие %d из %d"/>

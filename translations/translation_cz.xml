@@ -346,6 +346,7 @@
         <text name="eq_sj_clearPop" text="Čistá jízda!"/>
         <text name="eq_sj_faultsPop" text="Trestné body: %s"/>
         <text name="eq_sj_retired" text="Parkurová jízda přerušena"/>
+        <text name="eq_xc_retired" text="Terénní jízda přerušena"/>
         <text name="eq_sj_startLine" text="Startovní čára"/>
         <text name="eq_sj_finishLine" text="Cílová čára"/>
         <text name="eq_sj_fenceRow" text="Překážka %d z %d"/>
