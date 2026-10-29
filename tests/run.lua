@@ -1662,6 +1662,13 @@ end)()
     check("its ends stay the same way round", jumps[1].ax == -1.2 and jumps[1].bx == 3.6)
     check("a fence with no jump nearby stays", jumps[2].x == 0 and jumps[2].ax == -2)
     check("a fence already on its jump does not move", EqCourse.refreshJumps(jumps, live, 3) == 0)
+    -- A jump moved 4 m takes its fence, but not a jump another fence still stands on.
+    jumps = { { x = 0, z = 0, ax = -2, az = 0, bx = 2, bz = 0 }, { x = 5, z = 0, ax = 3, az = 0, bx = 7, bz = 0 },
+        { x = 0, z = 50, ax = -2, az = 50, bx = 2, bz = 50 }, { x = 0, z = 50, ax = -2, az = 50, bx = 2, bz = 50 } }
+    live = { { x = 5, z = 0, ax = 3, az = 0, bx = 7, bz = 0 }, { x = 0, z = 54, ax = -2, az = 54, bx = 2, bz = 54 } }
+    EqCourse.refreshJumps(jumps, live, 6)
+    check("a fence keeps off a jump another fence stands on", jumps[1].x == 0 and jumps[2].x == 5)
+    check("a jump moved 4 m takes its fence, used twice in the course", jumps[3].z == 54 and jumps[4].z == 54)
     round = EqShowJumping.newRound(course)
     z = 25.25
     EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })

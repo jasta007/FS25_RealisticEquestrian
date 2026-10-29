@@ -98,7 +98,7 @@ EqCourseHooks.TAG_CLOSE = EqCourseHooks.BEGIN_NEAR
 EqCourseHooks.PASS_NEAR = 6
 -- At a round's start a fence takes the place and ends of the jump on the map within this many
 -- metres (EqCourse.refreshJumps).
-EqCourseHooks.REFRESH_NEAR = 3
+EqCourseHooks.REFRESH_NEAR = 6
 
 EqCourseHooks.editing = nil
 EqCourseHooks.round = nil

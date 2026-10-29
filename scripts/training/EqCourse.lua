@@ -212,25 +212,44 @@ end
 
 --- A course's fences moved onto the jumps standing on the map now: a jump replaced or nudged
 --- since the course was recorded would otherwise keep the old place and ends, and its glow and
---- line would sit off the flags (James, 2026-10-29). Each takes the nearest jump within near
---- metres, its ends kept the same way round so the side it is jumped from still holds. Pure.
+--- line would sit off the flags (James, 2026-10-29). A fence takes a jump still on its spot
+--- first; the rest each take the nearest jump within near metres that no other fence has
+--- (a jump moved 4 m kept its old fence, and jumping it was a run-out: James, 2026-10-29). Ends
+--- are kept the same way round so the side it is jumped from still holds. Pure.
 --- @param jumps table the course's { x, z, ry, ax, az, bx, bz }
 --- @param live table the map's jumps, as EqCourseHooks.listJumps gives them
 --- @param near number metres
 --- @return number how many moved
 function EqCourse.refreshJumps(jumps, live, near)
-    local moved = 0
-    for _, jump in ipairs(jumps) do
-        local best, bestDistance = nil, near * near
+    local function d2(x1, z1, x2, z2) return (x1 - x2) ^ 2 + (z1 - z2) ^ 2 end
+    -- live jump -> the fence that took it (one fence of the course jumped twice shares it)
+    local takenBy, choice = {}, {}
+    for i, jump in ipairs(jumps) do
         for _, found in ipairs(live) do
-            local dx, dz = found.x - jump.x, found.z - jump.z
-            local d = dx * dx + dz * dz
-            if d <= bestDistance and found.ax ~= nil then best, bestDistance = found, d end
+            if found.ax ~= nil and EqCourse.sameJump(jump, found) then
+                choice[i], takenBy[found] = found, takenBy[found] or jump
+                break
+            end
         end
+    end
+    for i, jump in ipairs(jumps) do
+        if choice[i] == nil then
+            local best, bestDistance = nil, near * near
+            for _, found in ipairs(live) do
+                local owner = takenBy[found]
+                local free = owner == nil or EqCourse.sameJump(owner, jump)
+                local d = d2(found.x, found.z, jump.x, jump.z)
+                if free and found.ax ~= nil and d <= bestDistance then best, bestDistance = found, d end
+            end
+            if best ~= nil then choice[i], takenBy[best] = best, takenBy[best] or jump end
+        end
+    end
+    local moved = 0
+    for i, jump in ipairs(jumps) do
+        local best = choice[i]
         if best ~= nil then
             local ax, az, bx, bz = best.ax, best.az, best.bx, best.bz
             if jump.ax ~= nil then
-                local function d2(x1, z1, x2, z2) return (x1 - x2) ^ 2 + (z1 - z2) ^ 2 end
                 local kept = d2(ax, az, jump.ax, jump.az) + d2(bx, bz, jump.bx, jump.bz)
                 local swapped = d2(bx, bz, jump.ax, jump.az) + d2(ax, az, jump.bx, jump.bz)
                 if swapped < kept then ax, az, bx, bz = bx, bz, ax, az end

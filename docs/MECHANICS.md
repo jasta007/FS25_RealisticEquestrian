@@ -236,7 +236,7 @@ after the last fence, so no objects are needed and a course can be dressed howev
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
 clock starts as you do. From the countdown on the round has the screen to itself: no other
 course, start line or dressage routine cuts in, and the course keys hide, until the result is
-shown, you get off or switch horse, or you ride 100 m away from the course. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 3 m of where it was recorded, so a jump replaced or nudged since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+shown, you get off or switch horse, or you ride 100 m away from the course. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 6 m of where it was recorded (one no other fence of the course stands on), so a jump replaced or moved since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
