@@ -320,6 +320,13 @@ local function trackJump(vehicle, spec, sheet, worn)
     local now = g_time or 0
     local age = now - jump.startedAt
     if (spec.haltTimer or 0) > 0 then jump.crashed = true end
+    -- A jumping horse flies through our show jumps' poles, knocking off each one its legs pass
+    -- through (EqPoles). Its poles' collision is off then, so the jump rays miss them: the jump
+    -- reports its own height.
+    local okFly, _, poleHeight = EqLog.try("EqTrainingHooks.trackJump EqPoles.flyThrough", EqPoles.flyThrough, vehicle)
+    if okFly and poleHeight ~= nil and jump.landedAt == nil and poleHeight > jump.best then
+        jump.best, jump.over, jump.showJump = poleHeight, "show jump", true
+    end
 
     local height, name, showJump = obstacleBelow(vehicle)
     if jump.landedAt == nil then
@@ -671,10 +678,12 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))
         spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
-        -- Running into one of our show jumps knocks a pole off it (EqPoles): a rail, not a refusal.
-        local ok, fell = EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle)
-        -- Running into the next fence of a show jumping round otherwise is a refusal (EqCourseHooks).
-        if not (ok and fell) then EqCourseHooks.onCrash() end
+        -- Running into one of our show jumps knocks a pole off it (EqPoles). Without jumping that
+        -- is a refusal, not a rail (James, 2026-10-29); in the air it is a rail.
+        local refusal = spec.eqJump == nil
+        local ok, fell = EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle, refusal)
+        -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
+        if refusal or not (ok and fell) then EqCourseHooks.onCrash() end
         local knock = EqTraining.knockCombo(sheet)
         if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
         popKnock(knock)

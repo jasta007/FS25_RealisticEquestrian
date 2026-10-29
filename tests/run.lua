@@ -3761,6 +3761,19 @@ end)()
     check("nothing left up, nothing falls", EqPoles.crashPole(oxer, -1.5) == nil)
     check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
     check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
+
+    -- A jumping horse's legs through a pole (EqPoles.legThrough): a pole along x at 1 m.
+    local pa, pb = { 1.75, 1.0, 0 }, { -1.75, 1.0, 0 }
+    check("a leg crossing the pole low knocks it", EqPoles.legThrough(pa, pb, { 0.3, 0.2 }, { 0.3, -0.2 }, 0.9))
+    check("a leg crossing over the top doesn't", not EqPoles.legThrough(pa, pb, { 0.3, 0.2 }, { 0.3, -0.2 }, 1.1))
+    check("a leg past the pole's end doesn't", not EqPoles.legThrough(pa, pb, { 2.2, 0.2 }, { 2.2, -0.2 }, 0.5))
+    check("a leg landing on the pole knocks it", EqPoles.legThrough(pa, pb, { 0.3, 0.08 }, { 0.3, 0.12 }, 1.02))
+    check("a leg landing beside it doesn't", not EqPoles.legThrough(pa, pb, { 0.3, 0.5 }, { 0.3, 0.6 }, 0.2))
+    local hit, t = EqPoles.legThrough(pa, pb, { 1.0, 0.2 }, { 1.0, -0.2 }, 0.5)
+    check("where along the pole: near its +x end", hit and t < 0.5, tostring(t))
+    local low = { 1.7, 0.73, 0 }
+    check("a crossrail's low end is lower", EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { -1.5, 0.1 }, { -1.5, -0.1 }, 0.45) == false
+        and EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { 1.5, 0.1 }, { 1.5, -0.1 }, 0.45))
 end)()
 
 -- Hosting your own event: data/hosting.xml, the requirement checks, popularity and takings.

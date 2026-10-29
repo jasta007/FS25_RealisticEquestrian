@@ -44,6 +44,21 @@ EqPoles.NEAR = 4.5
 -- pole off when a point this far in front of it is within CRASH_REACH of the jump's poles.
 EqPoles.CRASH_AHEAD = 1.0
 EqPoles.CRASH_REACH = 1.5
+-- A horse in the air passes through our poles with its own momentum (James, 2026-10-29: "the
+-- fences stop you way too much"): from take-off the poles of the nearest of our jumps (within
+-- NEAR) lose their collision, and each one its legs pass through falls. Legs are LEG_ALONG in
+-- front of and behind the horse's middle, LEG_ACROSS either side, and touch a pole within
+-- LEG_REACH of it. A
+-- pole gets its collision back GHOST_KEEP_MS after the last jump near it, once no ridden horse
+-- is within GHOST_CLEAR of it. Running into a jump without jumping still stops the horse.
+EqPoles.GHOST_KEEP_MS = 400
+EqPoles.GHOST_CLEAR = 1.5
+EqPoles.LEG_ALONG = { -0.6, 0.6 }
+EqPoles.LEG_ACROSS = { -0.15, 0.15 }
+EqPoles.LEG_REACH = 0.1
+-- A horse within this of a jump's rows of poles (along its z) is over it.
+EqPoles.OVER_MARGIN = 0.6
+EqPoles.legsAt = {}
 -- A dropped pole stays down at least this long, then goes up once no ridden horse is this near.
 EqPoles.RESET_MS = 6000
 EqPoles.RESET_CLEAR = 12
@@ -71,7 +86,7 @@ EqPoles.at = nil
 
 
 function EqPoles.reset()
-    EqPoles.jumps, EqPoles.byNode, EqPoles.riders = {}, {}, {}
+    EqPoles.jumps, EqPoles.byNode, EqPoles.riders, EqPoles.legsAt = {}, {}, {}, {}
     EqPoles.scannedAt, EqPoles.at = nil, nil
 end
 
@@ -263,9 +278,11 @@ end
 --- @param dirX number|nil the horse's way, in the world
 --- @param dirZ number|nil
 --- @param hitX number|nil where along the pole it was hit, in the jump's space (that end goes first)
+--- @param noRail boolean|nil true for a refusal into the jump: the refusal is the fault, not a rail
 --- @return boolean true when it falls
-function EqPoles.knock(pole, dirX, dirZ, hitX)
+function EqPoles.knock(pole, dirX, dirZ, hitX, noRail)
     if pole.state ~= EqPoles.UP or not exists(pole.node) then return false end
+    pole.ghostAt = nil
     local root = pole.root
     local push = 1
     if dirX ~= nil and dirZ ~= nil then
@@ -293,12 +310,15 @@ function EqPoles.knock(pole, dirX, dirZ, hitX)
     Log:info("Poles: %s knocked down (%s end first)", getName(pole.node), lead > 0 and "+x" or "-x")
     -- A show jumping round counts a rail at the fence it falls from (EqCourseHooks): poles down,
     -- not the jump's landing, give the faults (James, 2026-10-29).
-    if EqCourseHooks ~= nil and EqCourseHooks.onPoleDown ~= nil then
+    if not noRail and EqCourseHooks ~= nil and EqCourseHooks.onPoleDown ~= nil then
         local wx, _, wz = localToWorld(root, (ax + bx) / 2, 0, (az + bz) / 2)
         EqCourseHooks.onPoleDown(wx, wz)
     end
     return true
 end
+
+
+local restoreCollision
 
 
 --- A pole back in its cups, with its collision.
@@ -308,11 +328,28 @@ function EqPoles.raise(pole)
     local h = pole.home
     setTranslation(pole.node, h[1], h[2], h[3])
     setRotation(pole.node, h[4], h[5], h[6])
-    -- While a course is edited the jump's collision is off (EqCourseHooks): hand the pole's to
-    -- the editor, which gives it all back when editing ends.
+    restoreCollision(pole)
+    pole.state, pole.fall, pole.t, pole.downAt = EqPoles.UP, nil, nil, nil
+end
+
+
+--- @param pole table
+--- @return table|nil the list holding the jump's collision instead of it, while the course
+---   editor (EqCourseHooks) or a hidden Disappearing jump (EqXcHide) has it
+local function heldBodies(pole)
     local taken = EqCourseHooks ~= nil and EqCourseHooks.bodies ~= nil and EqCourseHooks.bodies[pole.placeableRoot] or nil
-    -- A jump hidden as Disappearing (EqXcHide) keeps it until it shows again.
     if taken == nil and EqXcHide ~= nil then taken = EqXcHide.heldBodies(pole.placeableRoot) end
+    return taken
+end
+
+
+--- A pole's collision back on (or handed to whoever holds the jump's).
+--- @param pole table
+restoreCollision = function(pole)
+    -- While a course is edited the jump's collision is off (EqCourseHooks): hand the pole's to
+    -- the editor, which gives it all back when editing ends. A jump hidden as Disappearing
+    -- (EqXcHide) keeps it until it shows again.
+    local taken = heldBodies(pole)
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then
             if taken ~= nil then
@@ -322,7 +359,7 @@ function EqPoles.raise(pole)
             end
         end
     end
-    pole.state, pole.fall, pole.t, pole.downAt = EqPoles.UP, nil, nil, nil
+    pole.ghostAt = nil
 end
 
 
@@ -379,6 +416,150 @@ function EqPoles.onClip(node, vehicle, hitX, hitZ)
 end
 
 
+--- Whether a leg passes through a pole: it crossed the pole's line since last frame (or is
+--- within reach of it) between its ends, with the hoof under the pole's top. Pure, for the tests.
+--- @param a table { x, y, z } one end of the pole's middle line, in the world
+--- @param b table { x, y, z } the other end
+--- @param p table { x, z } the leg now
+--- @param q table|nil { x, z } the leg last frame
+--- @param hoofY number
+--- @param reach number|nil LEG_REACH
+--- @return boolean, number|nil t along the pole from a (0) to b (1)
+function EqPoles.legThrough(a, b, p, q, hoofY, reach)
+    reach = reach or EqPoles.LEG_REACH
+    local ux, uz = b[1] - a[1], b[3] - a[3]
+    local length = math.sqrt(ux * ux + uz * uz)
+    if length < 1e-6 then return false end
+    ux, uz = ux / length, uz / length
+    local nx, nz = -uz, ux
+    local dp = (p[1] - a[1]) * nx + (p[2] - a[3]) * nz
+    local dq = q ~= nil and (q[1] - a[1]) * nx + (q[2] - a[3]) * nz or dp
+    local crossing = (dp <= 0 and dq >= 0) or (dp >= 0 and dq <= 0)
+    if not crossing and math.abs(dp) > EqPoles.RADIUS + reach then return false end
+    local cx, cz = p[1], p[2]
+    if crossing and q ~= nil and dq ~= dp then
+        local k = dq / (dq - dp)
+        cx, cz = q[1] + (p[1] - q[1]) * k, q[2] + (p[2] - q[2]) * k
+    end
+    local t = ((cx - a[1]) * ux + (cz - a[3]) * uz) / length
+    if t < 0 or t > 1 then return false end
+    local top = a[2] + (b[2] - a[2]) * t + EqPoles.RADIUS
+    return hoofY < top, t
+end
+
+
+--- The horse's legs in the world: { x, z } each, and the hooves' height.
+--- @param vehicle table
+--- @return table legs, number hoofY
+local function legsOf(vehicle)
+    local legs = {}
+    for _, along in ipairs(EqPoles.LEG_ALONG) do
+        for _, across in ipairs(EqPoles.LEG_ACROSS) do
+            local x, _, z = localToWorld(vehicle.rootNode, across, 0, along)
+            table.insert(legs, { x, z })
+        end
+    end
+    local _, hoofY, _ = getWorldTranslation(vehicle.rootNode)
+    return legs, hoofY
+end
+
+
+--- @param pole table
+--- @return boolean true when its collision may be switched off for a horse to pass
+local function canGhost(pole)
+    return pole.state == EqPoles.UP and exists(pole.node) and heldBodies(pole) == nil
+end
+
+
+--- Each frame of a jump (take-off to settled): the nearest of our jumps lets the horse through,
+--- and each pole its legs pass through falls.
+--- @param vehicle table
+--- @return boolean true when a pole fell, number|nil the jump's height (its top pole's top over
+---   its root, on the ground): the jump rays no longer find poles without collision
+function EqPoles.flyThrough(vehicle)
+    if vehicle.rootNode == nil then return false end
+    if EqPoles.scannedAt == nil then EqPoles.scan() end
+    local now = g_time or 0
+    local legs, hoofY = legsOf(vehicle)
+    local last = EqPoles.legsAt[vehicle]
+    -- Legs last frame only when that was just now (not a jump seconds ago).
+    local before = last ~= nil and now - last.at <= 200 and now >= last.at and last.legs or nil
+    local lastY = before ~= nil and last.hoofY or hoofY
+    EqPoles.legsAt[vehicle] = { legs = legs, hoofY = hoofY, at = now }
+
+    local jump = EqPoles.nearest(vehicle)
+    if jump == nil then return false, nil end
+    local dx, dz = heading(vehicle)
+    local fell, height = false, nil
+    -- Its height counts only with the horse over it: between its ends, over its rows of poles.
+    local over = false
+    local first = jump.poles[1]
+    if first ~= nil and exists(first.root) then
+        local x, _, z = getWorldTranslation(vehicle.rootNode)
+        local lx, _, lz = worldToLocal(first.root, x, 0, z)
+        local front, back = nil, nil
+        for _, pole in ipairs(jump.poles) do
+            front = math.min(front or pole.home[3], pole.home[3])
+            back = math.max(back or pole.home[3], pole.home[3])
+        end
+        over = front ~= nil and math.abs(lx) <= EqPoles.LENGTH / 2 and lz >= front - EqPoles.OVER_MARGIN
+            and lz <= back + EqPoles.OVER_MARGIN
+    end
+    for _, pole in ipairs(jump.poles) do
+        if pole.ghostAt == nil and canGhost(pole) then
+            for _, col in ipairs(pole.cols) do
+                if exists(col.node) then EqLog.try("EqPoles.flyThrough setRigidBodyType", setRigidBodyType, col.node, noneType()) end
+            end
+            pole.ghostAt = now
+        elseif pole.ghostAt ~= nil then
+            pole.ghostAt = now
+        end
+        local top = pole.home[2] + EqPoles.RADIUS
+        if over and (height == nil or top > height) then height = top end
+        if pole.ghostAt ~= nil and pole.state == EqPoles.UP then
+            local half = pole.half or EqPoles.LENGTH / 2
+            local ax, ay, az = localToWorld(pole.node, half, 0, 0)
+            local bx, by, bz = localToWorld(pole.node, -half, 0, 0)
+            for i, leg in ipairs(legs) do
+                local through, t = EqPoles.legThrough({ ax, ay, az }, { bx, by, bz }, leg, before ~= nil and before[i] or nil,
+                    math.min(hoofY, lastY))
+                if through then
+                    -- The end nearer where it was hit goes first: +x is end a.
+                    if EqPoles.knock(pole, dx, dz, t < 0.5 and half or -half) then fell = true end
+                    break
+                end
+            end
+        end
+    end
+    return fell, height
+end
+
+
+--- Poles a jump let through get their collision back once nobody is in them.
+--- @param pole table
+--- @param now number
+local function settleGhost(pole, now)
+    if pole.ghostAt == nil or pole.state ~= EqPoles.UP then return end
+    if now - pole.ghostAt < EqPoles.GHOST_KEEP_MS and now >= pole.ghostAt then return end
+    local half = pole.half or EqPoles.LENGTH / 2
+    local ax, _, az = localToWorld(pole.node, half, 0, 0)
+    local bx, _, bz = localToWorld(pole.node, -half, 0, 0)
+    for _, rider in pairs(EqPoles.riders) do
+        if now - rider.at <= EqPoles.RIDER_MS and now >= rider.at then
+            local ux, uz = bx - ax, bz - az
+            local lengthSq = math.max(1e-6, ux * ux + uz * uz)
+            local t = math.max(0, math.min(1, ((rider.x - ax) * ux + (rider.z - az) * uz) / lengthSq))
+            local cx, cz = ax + ux * t, az + uz * t
+            if (rider.x - cx) ^ 2 + (rider.z - cz) ^ 2 <= EqPoles.GHOST_CLEAR ^ 2 then
+                pole.ghostAt = now - EqPoles.GHOST_KEEP_MS
+                return
+            end
+        end
+    end
+    restoreCollision(pole)
+end
+
+
 --- Which pole a horse running into a jump knocks off: the highest still up in the row of poles
 --- nearest it (an oxer's front row from the front). Pure, for the tests.
 --- @param poles table { state, home = { x, y, z } }
@@ -400,7 +581,8 @@ end
 --- The horse ran into something: if it is one of our jumps, a pole falls.
 --- @param vehicle table
 --- @return boolean true when a pole fell
-function EqPoles.onCrash(vehicle)
+--- @param refusal boolean|nil the horse ran in without jumping: a refusal, not a rail
+function EqPoles.onCrash(vehicle, refusal)
     if EqPoles.scannedAt == nil then EqPoles.scan() end
     local x, _, z = localToWorld(vehicle.rootNode, 0, 0, EqPoles.CRASH_AHEAD)
     local dx, dz = heading(vehicle)
@@ -412,7 +594,7 @@ function EqPoles.onCrash(vehicle)
                 local pole = EqPoles.crashPole(jump.poles, lz)
                 if pole ~= nil and math.abs(pole.home[3] - lz) <= EqPoles.CRASH_REACH then
                     Log:info("Poles: ran into %s", getName(pole.node))
-                    return EqPoles.knock(pole, dx, dz, nil)
+                    return EqPoles.knock(pole, dx, dz, nil, refusal)
                 end
             end
         end
@@ -481,6 +663,7 @@ function EqPoles.update()
     for _, jump in ipairs(EqPoles.jumps) do
         local near = nil
         for _, pole in ipairs(jump.poles) do
+            if pole.ghostAt ~= nil and exists(pole.node) then settleGhost(pole, now) end
             if pole.state == EqPoles.FALLING and exists(pole.node) then
                 pole.t = pole.t + dt / 1000
                 local pose = EqPoles.fallPose(pole.fall, pole.t)

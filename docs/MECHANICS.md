@@ -241,7 +241,7 @@ shown, you get off or switch horse, or you ride 100 m away from the course. Thin
 | Fault | Penalty |
 | --- | --- |
 | Rail down: over our own show jumps, a pole falling (once per fence, however many fall); over any other jump, flagged ones too, the horse's legs clipping it in the air, knocking it hard enough to lose most of its speed, or landing on top. A crash into anything else is no fault | 4 |
-| Refusal (running into the next fence, within 3 m of its poles, without knocking a pole off) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
+| Refusal (running into the next fence, within 3 m of its poles, without jumping; a pole it knocks off then is no rail) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
 | Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
 | Over twice the time allowed, or not starting within 45 s | Eliminated |
@@ -269,9 +269,11 @@ The shop's own show jumps have poles that fall:
 | Cavaletti | 0.47 m | - | 1 on wooden X ends | None |
 
 Each has a Pole colour option in the shop (the poles' coloured bands, stand tops and trim) and,
-with wings, a Wing colour option, from 16 colours. The stands and wings never move. When the horse's legs
-clip a pole in the air, that pole drops at once, and running into the jump knocks the top pole
-of the row it ran into. Only those drop a pole, and in a round only a pole down is a rail. The fall is animated, not physics:
+with wings, a Wing colour option, from 16 colours. The stands and wings never move. From take-off the jump's
+poles don't stop the horse: it carries on through them with its own momentum, and every pole its
+legs pass through (low over it, or landing on it) drops at once. Running into the jump without
+jumping still stops the horse and knocks the top pole of the row it ran into; in a round that is a
+refusal, not a rail. Only those drop a pole, and in a round only a pole down from a jump is a rail. The fall is animated, not physics:
 one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
 horse's way, then lies on the ground with no collision. A wooden knock sounds as the pole leaves its
 cups (one of two recordings, pitch varied a little each time). Poles go back up when a round's countdown
