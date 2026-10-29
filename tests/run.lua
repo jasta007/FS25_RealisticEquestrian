@@ -3712,12 +3712,13 @@ end)()
     -- The event month: a day's feed, and the checks a running event can fail.
     check("host month: a day's feed for the visitors", EqHostManager.dailyFeed(3000, 14, 3) == 14000)
     do
-        local event = { discipline = "crossCountry", venue = "My farm", hosted = { rating = "novice", popularity = 60, setupFee = 5000,
+        local event = { discipline = "crossCountry", venue = "My farm", hosted = { rating = "novice", popularity = 60, setupFee = 5000, feedEaten = 4200,
             takings = { competitors = 5, visitors = 6, entries = 3000, gate = 0, total = 3000 },
             report = { podium = { "A", "B", "C" }, field = 7, placings = { { name = "Tango", place = 2 } } } } }
         local report = EqHostManager.report(event, 40)
         check("host report: turnout, money and podium", report.competitors == 5 and report.visitors == 6 and report.total == 3000
             and report.setupFee == 5000 and report.podium[1] == "A" and report.field == 7 and report.day == 40)
+        check("host report: the feed the visitors ate", report.feed == 4200)
         check("host report: your horses' places", report.mine[1].name == "Tango" and report.mine[1].place == 2)
         local saved = EqHostManager.history
         EqHostManager.history = {}

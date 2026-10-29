@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="Výsledky budou na konci měsíce, za %d dní. Tví přihlášení koně mohou své disciplíny do té doby odjet kterýkoli den."/>
         <text name="eq_host_report_field" text="%d startujících"/>
         <text name="eq_host_report_turnout" text="Účast: přijelo %d z %d hostujících koní (popularita %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Hostující koně zatím snědli %d l tvého krmiva (%d l denně)."/>
+        <text name="eq_host_report_feed" text="Hostující koně snědli %d l tvého krmiva."/>
         <text name="eq_host_report_money" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s: zisk %s."/>
         <text name="eq_host_report_mine" text="Tvůj kůň %s: %s."/>
         <text name="eq_host_results_row" text="Tvoje závody"/>

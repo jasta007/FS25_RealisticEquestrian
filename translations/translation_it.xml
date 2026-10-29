@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="I risultati arrivano a fine mese, tra %d giorni. I tuoi cavalli iscritti possono correre le loro prove in qualsiasi giorno fino ad allora."/>
         <text name="eq_host_report_field" text="%d partenti"/>
         <text name="eq_host_report_turnout" text="Affluenza: sono venuti %d di %d cavalli ospiti (popolarità %d)."/>
+        <text name="eq_host_report_feedSoFar" text="I cavalli ospiti hanno mangiato finora %d l del tuo mangime (%d l al giorno)."/>
+        <text name="eq_host_report_feed" text="I cavalli ospiti hanno mangiato %d l del tuo mangime."/>
         <text name="eq_host_report_money" text="Incassi %s (iscrizioni %s, biglietti %s), quota di organizzazione %s: utile %s."/>
         <text name="eq_host_report_mine" text="Il tuo cavallo %s: %s."/>
         <text name="eq_host_results_row" text="I tuoi eventi"/>

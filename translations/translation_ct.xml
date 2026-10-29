@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="結果在月底公佈，還有%d天。在那之前，你報名的馬可以在任何一天騎完它們的專案。"/>
         <text name="eq_host_report_field" text="%d匹參賽"/>
         <text name="eq_host_report_turnout" text="到場：%d/%d匹來訪馬到場（人氣%d）。"/>
+        <text name="eq_host_report_feedSoFar" text="來訪馬至今已吃掉你%d公升飼料（每天%d公升）。"/>
+        <text name="eq_host_report_feed" text="來訪馬吃掉了你%d公升飼料。"/>
         <text name="eq_host_report_money" text="收入%s（報名費%s，門票%s），舉辦費%s：利潤%s。"/>
         <text name="eq_host_report_mine" text="你的馬%s：%s。"/>
         <text name="eq_host_results_row" text="你的賽事"/>

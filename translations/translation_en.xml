@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="Results come at the end of the month, in %d days. Your entered horses can ride their phases any day until then."/>
         <text name="eq_host_report_field" text="%d starters"/>
         <text name="eq_host_report_turnout" text="Turnout: %d of %d visiting horses came (popularity %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Visiting horses have eaten %d l of your feed so far (%d l a day)."/>
+        <text name="eq_host_report_feed" text="Visiting horses ate %d l of your feed."/>
         <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
         <text name="eq_host_report_mine" text="Your horse %s: %s."/>
         <text name="eq_host_results_row" text="Your events"/>

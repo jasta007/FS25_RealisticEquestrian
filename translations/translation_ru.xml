@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="Итоги будут в конце месяца, через %d дн. Ваши заявленные лошади могут пройти свои этапы в любой день до этого."/>
         <text name="eq_host_report_field" text="%d участников"/>
         <text name="eq_host_report_turnout" text="Явка: приехало %d из %d гостевых лошадей (популярность %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Гостевые лошади уже съели %d л вашего корма (%d л в день)."/>
+        <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
         <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
         <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
         <text name="eq_host_results_row" text="Ваши турниры"/>

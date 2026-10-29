@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="Wyniki będą pod koniec miesiąca, za %d dni. Twoje zgłoszone konie mogą do tego czasu przejechać swoje konkurencje w dowolny dzień."/>
         <text name="eq_host_report_field" text="%d startujących"/>
         <text name="eq_host_report_turnout" text="Frekwencja: przyjechało %d z %d koni gości (popularność %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Konie gości zjadły dotąd %d l twojej paszy (%d l dziennie)."/>
+        <text name="eq_host_report_feed" text="Konie gości zjadły %d l twojej paszy."/>
         <text name="eq_host_report_money" text="Wpływy %s (wpisowe %s, bilety %s), opłata organizacyjna %s: zysk %s."/>
         <text name="eq_host_report_mine" text="Twój koń %s: %s."/>
         <text name="eq_host_results_row" text="Twoje zawody"/>

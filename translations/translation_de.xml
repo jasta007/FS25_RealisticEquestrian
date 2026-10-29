@@ -768,6 +768,8 @@
         <text name="eq_host_report_runningLine" text="Ergebnisse gibt es am Monatsende, in %d Tagen. Deine gemeldeten Pferde können ihre Prüfungen bis dahin an jedem Tag reiten."/>
         <text name="eq_host_report_field" text="%d Starter"/>
         <text name="eq_host_report_turnout" text="Teilnahme: %d von %d Gastpferden kamen (Beliebtheit %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Die Gastpferde haben bisher %d l deines Futters gefressen (%d l pro Tag)."/>
+        <text name="eq_host_report_feed" text="Die Gastpferde haben %d l deines Futters gefressen."/>
         <text name="eq_host_report_money" text="Einnahmen %s (Nenngelder %s, Eintritt %s), Ausrichtungsgebühr %s: Gewinn %s."/>
         <text name="eq_host_report_mine" text="Dein Pferd %s: %s."/>
         <text name="eq_host_results_row" text="Deine Veranstaltungen"/>

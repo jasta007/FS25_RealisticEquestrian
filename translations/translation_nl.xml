@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="De uitslag komt aan het eind van de maand, over %d dagen. Je ingeschreven paarden kunnen hun onderdelen tot dan elke dag rijden."/>
         <text name="eq_host_report_field" text="%d deelnemers"/>
         <text name="eq_host_report_turnout" text="Opkomst: %d van %d gastpaarden kwamen (populariteit %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Gastpaarden hebben tot nu toe %d l van je voer gegeten (%d l per dag)."/>
+        <text name="eq_host_report_feed" text="Gastpaarden aten %d l van je voer."/>
         <text name="eq_host_report_money" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s: winst %s."/>
         <text name="eq_host_report_mine" text="Je paard %s: %s."/>
         <text name="eq_host_results_row" text="Je evenementen"/>

@@ -766,6 +766,8 @@
         <text name="eq_host_report_runningLine" text="結果は月末、あと%d日で出ます。それまでの好きな日に、エントリーした馬で種目を走れます。"/>
         <text name="eq_host_report_field" text="出走%d頭"/>
         <text name="eq_host_report_turnout" text="来場：%d頭が来場（招待枠%d頭、人気%d）"/>
+        <text name="eq_host_report_feedSoFar" text="来訪馬はこれまでに飼料を%dL食べました（1日%dL）。"/>
+        <text name="eq_host_report_feed" text="来訪馬は飼料を%dL食べました。"/>
         <text name="eq_host_report_money" text="収入%s（エントリー料%s、入場料%s）、開催費%s：利益%s"/>
         <text name="eq_host_report_mine" text="あなたの馬 %s：%s"/>
         <text name="eq_host_results_row" text="あなたの大会"/>

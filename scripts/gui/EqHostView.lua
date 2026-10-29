@@ -176,6 +176,10 @@ function EqHostView.reportRows(farmId)
         local days = EqHostManager.daysLeft()
         table.insert(rows, { title = true, text = string.format(g_i18n:getText("eq_host_report_running"), manager.eventTitle(open)) })
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_runningLine"), days or 0) })
+        if (open.hosted.feedEaten or 0) > 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feedSoFar"), math.floor(open.hosted.feedEaten),
+                math.floor(open.hosted.feedDaily or 0)) })
+        end
     end
     for _, report in ipairs(EqHostManager.history[farmId] or {}) do
         local parts = {
@@ -190,6 +194,9 @@ function EqHostView.reportRows(farmId)
             report.popularity) })
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_money"), money(report.total), money(report.entries),
             money(report.gate), money(report.setupFee), money(report.total - report.setupFee)) })
+        if (report.feed or 0) > 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feed"), math.floor(report.feed)) })
+        end
         for _, horse in ipairs(report.mine or {}) do
             local how = horse.status ~= nil and g_i18n:getText("eq_ui_result_" .. horse.status)
                 or string.format(g_i18n:getText("eq_ui_result_placeOrd"), EqStory.ordinal(horse.place), report.field)

@@ -360,6 +360,10 @@ function EqHostManager.onDayChanged()
         local failed = EqHostManager.failedChecks(result, true)
         local need = EqHostManager.dailyFeed(hosted.feedPerHorse, hosted.competitors, environment.daysPerPeriod)
         local taken = need > 0 and EqHostVenue.takeFeed(hosted.farmId, need) or 0
+        -- The visiting horses really eat it (James, 2026-10-29): counted for the Results tab.
+        hosted.feedEaten = (hosted.feedEaten or 0) + taken
+        hosted.feedDaily = need
+        Log:info("EqHostManager: event %s visitors ate %.0f of %.0f l feed (%.0f l so far)", tostring(event.id), taken, need, hosted.feedEaten)
         if taken < need - 0.5 then table.insert(failed, "feed") end
         if #failed == 0 then
             hosted.warned = nil
@@ -411,7 +415,7 @@ function EqHostManager.report(event, day)
     return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue,
         field = result.field or 0, competitors = takings.competitors or 0, visitors = takings.visitors or 0,
         popularity = hosted.popularity or 0, entries = takings.entries or 0, gate = takings.gate or 0,
-        total = takings.total or 0, setupFee = hosted.setupFee or 0, podium = result.podium or {}, mine = mine }
+        total = takings.total or 0, setupFee = hosted.setupFee or 0, feed = hosted.feedEaten or 0, podium = result.podium or {}, mine = mine }
 end
 
 
@@ -615,6 +619,8 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.setupFee ~= nil then xmlFile:setFloat(key .. "#setupFee", hosted.setupFee) end
     if hosted.competitors ~= nil then xmlFile:setInt(key .. "#competitors", hosted.competitors) end
     if hosted.feedPerHorse ~= nil then xmlFile:setFloat(key .. "#feedPerHorse", hosted.feedPerHorse) end
+    if hosted.feedEaten ~= nil then xmlFile:setFloat(key .. "#feedEaten", hosted.feedEaten) end
+    if hosted.feedDaily ~= nil then xmlFile:setFloat(key .. "#feedDaily", hosted.feedDaily) end
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
     local horseIds = {}
     for horseId in pairs(hosted.ridden or {}) do table.insert(horseIds, horseId) end
@@ -646,6 +652,8 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.setupFee = xmlFile:getFloat(key .. "#setupFee")
     hosted.competitors = xmlFile:getInt(key .. "#competitors")
     hosted.feedPerHorse = xmlFile:getFloat(key .. "#feedPerHorse")
+    hosted.feedEaten = xmlFile:getFloat(key .. "#feedEaten")
+    hosted.feedDaily = xmlFile:getFloat(key .. "#feedDaily")
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
     local i = 0
     while true do
@@ -701,7 +709,7 @@ end
 
 
 local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity" }
-local REPORT_FLOATS = { "entries", "gate", "total", "setupFee" }
+local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed" }
 local REPORT_STRINGS = { "discipline", "rating", "venue" }
 
 
