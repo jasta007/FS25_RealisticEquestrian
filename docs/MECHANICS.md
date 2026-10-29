@@ -110,8 +110,10 @@ bar is empty again. Only a Sprint can run past the line, into the red last-gasp 
 that ends there leaves the horse **Blown**: canter only, and while the bar is still past the
 line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
 the gait. The panel lists what you can press now (Sprint ready, S or double tap S to canter), and
-the middle of the screen warns **Tiring...** in yellow (in a Sprint from 50%, when Pushing pulsing
-from 85%), **Caution** in red and pulsing (in a Sprint from 75%), and **Fatigued!** in red past the line. Slowing from a gallop to a
+the middle of the screen warns **Tiring...** in yellow (in a Sprint from 50%, when Pushing 3 seconds
+before the line), **Caution** in red and pulsing (in a Sprint from 75%, when Pushing 1.5 seconds
+before the line), and **Fatigued!** in red past the line. Pushing warns by the time left at the
+horse's Stamina, so a Push started part way up the bar still gets the whole warning. Slowing from a gallop to a
 canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
 
 The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the

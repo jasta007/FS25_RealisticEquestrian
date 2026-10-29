@@ -1100,8 +1100,23 @@ EqTrainingHooks.BAR_ORDER = { "halt", "walk", "trot", "canter", "gallop", "blown
 EqTrainingHooks.BAR_DIM_ALPHA = 0.4
 -- A Sprint lights the gallop amber.
 EqTrainingHooks.BAR_SPRINT = { 1, 0.72, 0.2 }
--- Above this exertion while Pushing, the words turn yellow and the middle of the screen says to ease off.
-EqTrainingHooks.EASE_OFF_FROM = 85
+-- Pushing warns by the time left before the horse is Fatigued, not by the bar, so a Push started
+-- part way up still gets the whole warning (James, 2026-10-29): a yellow "Tiring..." from
+-- PUSH_TIRING_S seconds out, a red flashing "Caution" from PUSH_CAUTION_S.
+EqTrainingHooks.PUSH_TIRING_S = 3
+EqTrainingHooks.PUSH_CAUTION_S = 1.5
+
+--- How hard the Push warning is: nil, "tiring" or "caution".
+--- @param ex table
+--- @param stamina number|nil trained stamina
+--- @return string|nil
+function EqTrainingHooks.pushWarning(ex, stamina)
+    if ex.mode ~= "push" or ex.value >= EqExertion.LINE then return nil end
+    local left = EqExertion.pushSecondsLeft(ex, stamina)
+    if left <= EqTrainingHooks.PUSH_CAUTION_S then return "caution" end
+    if left <= EqTrainingHooks.PUSH_TIRING_S then return "tiring" end
+    return nil
+end
 -- How quickly the marker slides to where it should be, in milliseconds.
 EqTrainingHooks.MARKER_EASE_MS = 120
 
@@ -1110,7 +1125,7 @@ EqTrainingHooks.MARKER_EASE_MS = 120
 --- @param sheet table the horse's training sheet
 --- @param view string
 --- @return table rows
-local function exertionRows(spec, sheet, view)
+local function exertionRows(spec, sheet, view, stamina)
     local ex = sheet.exertion
     local gait = spec.eqLastGait or "halt"
     local state = EqExertion.state(ex, gait)
@@ -1126,7 +1141,7 @@ local function exertionRows(spec, sheet, view)
     local color = COLOR.grey
     if ex.lock ~= nil or ex.value > EqExertion.LINE then
         color = COLOR.red
-    elseif ex.mode == "push" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+    elseif EqTrainingHooks.pushWarning(ex, stamina) ~= nil then
         color = COLOR.yellow
     elseif ex.mode ~= nil then
         color = COLOR.white
@@ -1229,21 +1244,26 @@ end
 -- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
 EqTrainingHooks.SPRINT_INTRO_MS = 1250
 -- A Sprint climbs fast, so its warnings come early (James): a yellow "Tiring..." from
--- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
+-- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns by time
+-- left (PUSH_TIRING_S, PUSH_CAUTION_S).
 EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
 EqTrainingHooks.SPRINT_DANGER_FROM = 75
 
 --- @param small boolean the Condensed view: a smaller bar, no words
-local function exertionPrompt(ex, small)
+--- @param stamina number|nil trained stamina
+local function exertionPrompt(ex, small, stamina)
     local label, labelColor, pulse = nil, COLOR.yellow, false
+    local push = EqTrainingHooks.pushWarning(ex, stamina)
     if ex.value > EqExertion.LINE then
         label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_DANGER_FROM then
         label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_CAREFUL_FROM then
         label = g_i18n:getText("eq_ex_tiring")
-    elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
-        label, pulse = g_i18n:getText("eq_ex_tiring"), true
+    elseif push == "caution" then
+        label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
+    elseif push == "tiring" then
+        label = g_i18n:getText("eq_ex_tiring")
     end
     local warned = label ~= nil
     if small then label = nil end
@@ -1256,7 +1276,7 @@ local function exertionPrompt(ex, small)
             EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse, small)
         end
     elseif ex.mode == "push" and warned then
-        EqTrainingHud.drawCentreBar((EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM),
+        EqTrainingHud.drawCentreBar(EqExertion.pushSecondsLeft(ex, stamina) / EqTrainingHooks.PUSH_TIRING_S,
             labelColor, label, labelColor, pulse, small)
     end
 end
@@ -1323,8 +1343,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.view = view
     -- The exertion bar shows in every view: it says what gait the horse is in, too.
     local ex = sheet.exertion
-    for _, row in ipairs(exertionRows(spec, sheet, view)) do table.insert(rows, row) end
-    exertionPrompt(ex, condensed)
+    local record = spec.cluster ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
+    local stamina = record ~= nil and record.trained.stamina or nil
+    for _, row in ipairs(exertionRows(spec, sheet, view, stamina)) do table.insert(rows, row) end
+    exertionPrompt(ex, condensed, stamina)
     if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
         EqTrainingHud.markSeen("gallop")
         EqTrainingHooks.showHelp("gallop")
