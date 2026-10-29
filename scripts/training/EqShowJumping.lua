@@ -10,7 +10,7 @@
     starts as the horse crosses the start line, then the fences are jumped in order and the
     clock stops at the finish line (or, with none, at the last fence).
 
-    Faults as in a real round: a rail down is 4, a refusal (running into the next fence) 4,
+    Faults as in a real round: a rail down (the horse clipping the jump itself, EqTrainingHooks) is 4, a refusal (running into the next fence) 4,
     a second refusal or jumping a fence out of order eliminates, and each second (or part) over
     the time allowed is 1. The time allowed comes from the course length at TIME_SPEED; twice
     that is the time limit. A finished round pays agility training (payoff), most for a clear.

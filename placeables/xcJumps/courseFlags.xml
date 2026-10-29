@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
-<!-- Segments (N/M): white flag, bars for 0.6, 0.9 and 1.2 m fences, red flag. -->
+<!-- Segments (N/M): white flag, guide line on the ground, red flag. -->
 <placeable type="newFence">
     <storeData>
         <name>$l10n_eq_shop_courseFlags</name>
@@ -41,28 +41,12 @@
         <segment id="WHITE_FLAG" class="FenceGate" maxVerticalAngle="45">
             <gate node="0>0" length="0.3" hasStartPole="false" hasEndPole="false"/>
         </segment>
-        <segment id="BAR_60" class="FenceSegment" maxVerticalAngle="45">
-            <poles>
-                <pole node="1>0" radius="0.0"/>
-            </poles>
-            <panels maxScale="1.5">
-                <panel node="2>0" length="1"/>
-            </panels>
-        </segment>
         <segment id="BAR_90" class="FenceSegment" maxVerticalAngle="45">
             <poles>
                 <pole node="1>0" radius="0.0"/>
             </poles>
             <panels maxScale="1.5">
-                <panel node="2>1" length="1"/>
-            </panels>
-        </segment>
-        <segment id="BAR_120" class="FenceSegment" maxVerticalAngle="45">
-            <poles>
-                <pole node="1>0" radius="0.0"/>
-            </poles>
-            <panels maxScale="1.5">
-                <panel node="2>2" length="1"/>
+                <panel node="2>0" length="1"/>
             </panels>
         </segment>
         <segment id="RED_FLAG" class="FenceGate" maxVerticalAngle="45">

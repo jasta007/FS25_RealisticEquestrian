@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Czworobok ujeżdżeniowy 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Czworobok ujeżdżeniowy ze wszystkimi literami na miejscu. Jedź po nim konno, aby trenować temperament między literami."/>
         <text name="eq_shop_courseFlags" text="Flagi crossowe"/>
-        <text name="eq_shop_courseFlags_function" text="Oznacz dowolną przeszkodę jako przeszkodę crossową. Przełączaj segmenty klawiszami N/M: postaw białą flagę, rozciągnij złotą belkę (0,6, 0,9 lub 1,2 m) nad przeszkodą, a potem postaw czerwoną flagę. Belka jest widoczna tylko w trybie budowy."/>
+        <text name="eq_shop_courseFlags_function" text="Oznacz dowolną przeszkodę jako przeszkodę crossową. Przełączaj segmenty klawiszami N/M: postaw białą flagę przy jednym końcu przeszkody, poprowadź złotą linię po ziemi do drugiego końca, a potem postaw czerwoną flagę. Linia jest widoczna tylko w trybie budowy; skacze się przez samą przeszkodę."/>
         <text name="eq_shop_xcLogPileSmall" text="Stos bali (mały)"/>
         <text name="eq_shop_xcLogPile" text="Stos bali"/>
         <text name="eq_shop_xcDropWall08" text="Ściana uskoku (0,8 m)"/>

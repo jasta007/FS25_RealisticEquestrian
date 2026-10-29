@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Pista de adestramento 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Uma pista de adestramento com todas as letras no lugar. Monte um cavalo nela para treinar temperamento entre as letras."/>
         <text name="eq_shop_courseFlags" text="Bandeiras de cross country"/>
-        <text name="eq_shop_courseFlags_function" text="Marque qualquer obstáculo como salto de cross country. Troque de segmento com N/M: coloque uma bandeira branca, estique uma barra dourada (0,6, 0,9 ou 1,2 m) sobre o obstáculo e depois coloque uma bandeira vermelha. A barra só aparece no modo de construção."/>
+        <text name="eq_shop_courseFlags_function" text="Marque qualquer obstáculo como salto de cross country. Troque de segmento com N/M: coloque uma bandeira branca numa ponta do obstáculo, estique a linha dourada pelo chão até à outra ponta e depois coloque uma bandeira vermelha. A linha só aparece no modo de construção; o salto é o próprio obstáculo."/>
         <text name="eq_shop_xcLogPileSmall" text="Pilha de troncos (pequena)"/>
         <text name="eq_shop_xcLogPile" text="Pilha de troncos"/>
         <text name="eq_shop_xcDropWall08" text="Muro de descida (0,8 m)"/>

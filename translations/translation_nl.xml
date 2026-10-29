@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="Dressuurrijbaan 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Een dressuurrijbaan met alle letters op hun plek. Rijd er met een paard in om temperament te trainen tussen de letters."/>
         <text name="eq_shop_courseFlags" text="Crossvlaggen"/>
-        <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag, trek een gouden balk (0,6, 0,9 of 1,2 m) over het obstakel en plaats dan een rode vlag. De balk is alleen zichtbaar in de bouwmodus."/>
+        <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag aan één kant van het obstakel, trek de gouden lijn over de grond naar de andere kant en plaats dan een rode vlag. De lijn is alleen zichtbaar in de bouwmodus; je springt over het obstakel zelf."/>
         <text name="eq_shop_xcLogPileSmall" text="Boomstammenstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
         <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>

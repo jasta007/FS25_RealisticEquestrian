@@ -210,8 +210,9 @@ white flag (the fence runs between them) and log piles. Drop walls are not fence
 ride over them freely, or flag one to make it a fence. Their flags' height guides show
 while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
 collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
-allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
-run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
+allowed is at 520 m a minute and each second over costs 0.4; there are no rails, and touching a
+fence on the way over is no fault: a refusal is only the fence stopping the horse (running into it
+within 3 m of its line) or a run-out. A refusal or run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
 eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
 jumped again.
 
@@ -232,11 +233,11 @@ Show Jumping". The start line stands on the route 12 m before fence 1 and the fi
 the last fence; both are drawn in gold while they matter, so no objects are needed and a course
 can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants) with a faint bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
-| Rail down (knocking or landing on the show jump; a crash into anything else is no fault) | 4 |
+| Rail down (the horse's legs clip the jump in the air, it knocks the jump hard enough to lose most of its speed, or lands on top; any jump, flagged ones too. A crash into anything else is no fault) | 4 |
 | Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
 | Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
@@ -417,12 +418,16 @@ Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house hors
 bonus.
 
 Cross country fences: Cross Country Flags is a spline fence, placed like the base game's pillar
-fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or 1.2 m fence, and a
-red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
-hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
-15 m away and the line between them is the fence; the bar nearest its middle gives its height
-(`eqXcFences` lists them). A pair with no bar between is a gate: ride between the flags; in a round only its poles glow. The bars show only in construction mode and while a course is edited; the flags hide like the other pieces (below). The flags
-and bars have small collision boxes so they can be picked to delete. The cross country pieces
+fences, whose segment types (N/M) are a white flag, a gold guide line on the ground, and a red
+flag. Place a white flag at one end of anything you want jumped (a map's logs, a table or hedge
+from any mod), run the line along the ground to its other end, then place a red flag. Each red flag
+pairs with the nearest white flag 1 to 15 m away and the line between them is the fence
+(`eqXcFences` lists them). The fence is judged by the obstacle itself: the guide line has no height
+and nothing to hit. It shows only in construction mode and while a course is edited; the flags hide
+like the other pieces (below), and in a round they are seen but ridden through. The flags and line
+have small collision boxes (the line's half sunk in the ground) so they can be picked to delete.
+The line was once a bar at 0.6, 0.9 or 1.2 m; a saved 0.9 m bar becomes the line, and a 0.6 or
+1.2 m one may be dropped when the game loads (the flags still pair without it). The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
 Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
@@ -435,7 +440,7 @@ Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidde
 while you just ride or drive around, so a course can cross the map without leaving flags and logs
 everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
 a course is edited (seen but ridden through), and in a round from 60 m before the start line to the
-result (with collision). Buy a log pile or drop wall with the shop's **Always visible: Yes**
+result (with collision, except the flag fence, which is only seen). Buy a log pile or drop wall with the shop's **Always visible: Yes**
 configuration to keep it in the world all the time; the flags always hide. In multiplayer they
 always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
 collision comes back. Road traffic is switched

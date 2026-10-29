@@ -43,7 +43,7 @@
         <text name="eq_shop_dressageArena20x60" text="盛裝舞步場地 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="所有字母標記齊全的盛裝舞步場地。騎馬進入場地，在標記之間訓練性情。"/>
         <text name="eq_shop_courseFlags" text="越野旗幟"/>
-        <text name="eq_shop_courseFlags_function" text="把任何障礙物標記為越野障礙。用N/M切換部件：放置白旗，在障礙物上方拉出一根金色橫杆（0.6、0.9或1.2 m），再放置紅旗。橫杆只在建造模式中顯示。"/>
+        <text name="eq_shop_courseFlags_function" text="把任何障礙物標記為越野障礙。用N/M切換部件：在障礙物一端放置白旗，沿地面把金色線拉到另一端，再放置紅旗。金色線只在建造模式中顯示；跳躍的是障礙物本身。"/>
         <text name="eq_shop_xcLogPileSmall" text="原木堆（小）"/>
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_xcDropWall08" text="落差牆（0.8 m）"/>
