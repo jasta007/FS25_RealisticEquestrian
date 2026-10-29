@@ -702,6 +702,8 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminado: tres rehúses en un obstáculo, o cuatro en el recorrido"/>
         <text name="eq_sj_represent" text="Vuelve y salta el obstáculo %d"/>
         <text name="eq_pop_courseFence" text="Obstáculo %d"/>
+        <text name="eq_flagLeft" text="I"/>
+        <text name="eq_flagRight" text="D"/>
         <text name="input_EQ_COURSE_REWIND" text="Volver al punto más cercano"/>
         <text name="eq_course_rewound" text="Recorrido devuelto al punto más cercano: %d obstáculos conservados"/>
         <text name="eq_course_resumed" text="Grabando desde el punto más cercano"/>

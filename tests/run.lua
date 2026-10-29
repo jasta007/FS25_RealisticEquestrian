@@ -2405,6 +2405,23 @@ do
     local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
 end
+dofile("scripts/facilities/EqFlagLabels.lua")
+do
+    check("jump flag nodes are white or red, from every source", EqFlagLabels.classify("eqFlagsWhite") == "white"
+        and EqFlagLabels.classify("eqFlagsRed") == "red" and EqFlagLabels.classify("modernFlagsWhite") == "white"
+        and EqFlagLabels.classify("modernFlagsRed01") == "red" and EqFlagLabels.classify("eqXcFlagWhite") == "white"
+        and EqFlagLabels.classify("eqXcFlagRed") == "red" and EqFlagLabels.classify("eqXcGuide") == nil
+        and EqFlagLabels.classify("flagPole") == nil and EqFlagLabels.classify(nil) == nil)
+    local texts = { eq_flagLeft = "G", eq_flagRight = "D" }
+    check("white flags say left, red flags say right, translated when the text exists",
+        EqFlagLabels.letter("white") == "L" and EqFlagLabels.letter("red") == "R"
+        and EqFlagLabels.letter("white", function(key) return texts[key] end) == "G"
+        and EqFlagLabels.letter("red", function(key) return texts[key] end) == "D"
+        and EqFlagLabels.letter("red", function(key) return "Missing '" .. key .. "'" end) == "R"
+        and EqFlagLabels.letter("red", function() error("no texts") end) == "R")
+    local near = EqFlagLabels.near({ { x = 0, z = 0 }, { x = 120, z = 120 }, { x = 140, z = 0 } }, 0, 0, 150)
+    check("labels only near the camera", #near == 2 and near[2].x == 140)
+end
 dofile("scripts/facilities/EqPlaceAnywhere.lua")
 check("only our cross country pieces skip the land rule",
     EqPlaceAnywhere.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")

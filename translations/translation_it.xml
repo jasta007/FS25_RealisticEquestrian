@@ -362,6 +362,8 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminato: tre rifiuti a un ostacolo, o quattro sul percorso"/>
         <text name="eq_sj_represent" text="Torna indietro e salta l'ostacolo %d"/>
         <text name="eq_pop_courseFence" text="Ostacolo %d"/>
+        <text name="eq_flagLeft" text="S"/>
+        <text name="eq_flagRight" text="D"/>
         <text name="input_EQ_COURSE_REWIND" text="Torna al punto più vicino"/>
         <text name="eq_course_rewound" text="Percorso riportato al punto più vicino: %d ostacoli mantenuti"/>
         <text name="eq_course_resumed" text="Registrazione dal punto più vicino"/>

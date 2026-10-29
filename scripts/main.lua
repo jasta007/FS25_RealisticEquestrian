@@ -48,6 +48,7 @@ source(modDirectory .. "scripts/staff/EqStaffManager.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
+source(modDirectory .. "scripts/facilities/EqFlagLabels.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
@@ -258,6 +259,7 @@ guarded("probe hook", EqProbe.install)
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
 -- Cross country flags' guide lines show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
+guarded("flag label hook", function() EqFlagLabels.install(guarded) end)
 guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 -- Cross country pieces hide outside construction, course editing and rounds; the shop's
 -- "Always visible" configuration has to be registered before the store items load.

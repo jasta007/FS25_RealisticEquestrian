@@ -435,6 +435,10 @@ pairs with the nearest white flag 1 to 15 m away and the line between them is th
 and nothing to hit. It shows only in construction mode and while a course is edited; the flags hide
 like the other pieces (below), and in a round they are seen but ridden through. The flags and line
 have small collision boxes (the line's half sunk in the ground) so they can be picked to delete.
+In construction mode and while a course is edited, every jump flag (the flag fence's, our show
+jumps' and log piles', Riding Hall and Equestrian Pack jumps') has a letter over it: "L" over white
+flags and "R" over red ones, the side of the rider they belong on when facing the jump
+(`EqFlagLabels`, drawn as text so the models are unchanged).
 The line was once a bar at 0.6, 0.9 or 1.2 m; a saved 0.9 m bar becomes the line, and a 0.6 or
 1.2 m one may be dropped when the game loads (the flags still pair without it). The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
