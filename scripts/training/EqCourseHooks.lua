@@ -782,6 +782,31 @@ local function secondsText(seconds)
 end
 
 
+--- A round on a course where the horse could ride its phase of your own event: announce it
+--- once as the horse comes up to the start line, and keep a gold note above the panel.
+--- @param round table
+--- @return string|nil note the panel note while it waits at the start
+function EqCourseHooks.hostedNote(round)
+    if EqHostManager == nil then return nil end
+    if round.hosted == nil then
+        local ok, event, status = EqLog.try("EqCourseHooks hosted start", EqHostManager.competitionFor, round.vehicle, round.course)
+        round.hosted = ok and event ~= nil and { event = event, status = status } or false
+        if round.hosted then
+            local title = EqCompetitionManager.eventTitle(event)
+            if status == "counts" then
+                EqTrainingHud.announce(title, text("eq_host_ann_round"))
+            elseif status == "ridden" then
+                EqTrainingHud.announce(title, text("eq_host_ann_ridden"), EqTrainingHud.COLOR.grey)
+            else
+                EqTrainingHud.announce(title, text("eq_host_ann_small"), EqTrainingHud.COLOR.orange)
+            end
+        end
+    end
+    if not round.hosted then return nil end
+    return string.format(text("eq_host_note_" .. round.hosted.status), EqCompetitionManager.eventTitle(round.hosted.event))
+end
+
+
 --- Tell the rider what the round just did.
 --- @param round table
 --- @param event string from EqShowJumping.step
@@ -793,6 +818,9 @@ local function announce(round, event)
         EqTrainingHud.pop("showJumping", text("eq_sj_go"))
     elseif event == "early" then
         notify(text("eq_sj_early"))
+    elseif event == "ready" then
+        -- Back at the start for another go: whether it counts is asked again.
+        round.hosted = nil
     elseif event == "started" then
         Log:info("Show jumping: started '%s'", round.course.name)
     elseif event == "fence" then
@@ -982,7 +1010,8 @@ function EqCourseHooks.roundDraw(vehicle)
             local dx, dz = x - sj.start.x, z - sj.start.z
             if dx * dx + dz * dz <= EqCourseHooks.BEGIN_NEAR ^ 2 then
                 local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
-                EqTrainingHud.drawPanelNote(text(begin), EqTrainingHud.STAT_COLOR.agility, true)
+                local note = EqCourseHooks.hostedNote(round)
+                EqTrainingHud.drawPanelNote(note or text(begin), note ~= nil and EqTrainingHud.GOLD or EqTrainingHud.STAT_COLOR.agility, true)
             end
         elseif state == "countdown" then
             EqTrainingHud.drawPrompt(text("eq_sj_ready"), sj.countMs / EqShowJumping.COUNT_MS, EqTrainingHud.STAT_COLOR.agility)

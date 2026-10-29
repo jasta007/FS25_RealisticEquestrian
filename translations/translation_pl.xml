@@ -747,6 +747,30 @@
         <text name="eq_host_label_yours" text="Twoje zawody"/>
         <text name="eq_host_label_month" text="Rezerwuj na"/>
         <text name="eq_host_label_next" text="Najbliższy wolny miesiąc"/>
+        <text name="eq_host_ann_out" text="Wyeliminowany"/>
+        <text name="eq_host_ann_counted" text="%s pkt karnych: to się liczy!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: wyniki pod koniec miesiąca, za %d dni"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: wyniki pod koniec miesiąca"/>
+        <text name="eq_host_ann_round" text="Przejazd konkursowy: ten się liczy!"/>
+        <text name="eq_host_ann_ridden" text="Już przejechany: to tylko trening"/>
+        <text name="eq_host_ann_small" text="Ten parkur jest za mały na twoje zawody: tylko trening"/>
+        <text name="eq_host_note_counts" text="Przejazd konkursowy w %s: podjedź do linii startu"/>
+        <text name="eq_host_note_ridden" text="Trening: ta konkurencja %s jest już przejechana"/>
+        <text name="eq_host_note_small" text="Trening: parkur za mały na %s"/>
+        <text name="eq_host_label_now" text="Ten miesiąc"/>
+        <text name="eq_host_next_oneAtATime" text="jedne zawody naraz"/>
+        <text name="eq_host_next_interval" text="%d mies. między zawodami, zobacz Ustawienia"/>
+        <text name="eq_host_monthOption" text="%s (za %d mies.)"/>
+        <text name="eq_host_monthOption1" text="%s (w przyszłym miesiącu)"/>
+        <text name="eq_host_report_running" text="Trwa: %s"/>
+        <text name="eq_host_report_runningLine" text="Wyniki będą pod koniec miesiąca, za %d dni. Twoje zgłoszone konie mogą do tego czasu przejechać swoje konkurencje w dowolny dzień."/>
+        <text name="eq_host_report_field" text="%d startujących"/>
+        <text name="eq_host_report_turnout" text="Frekwencja: przyjechało %d z %d koni gości (popularność %d)."/>
+        <text name="eq_host_report_money" text="Wpływy %s (wpisowe %s, bilety %s), opłata organizacyjna %s: zysk %s."/>
+        <text name="eq_host_report_mine" text="Twój koń %s: %s."/>
+        <text name="eq_host_results_row" text="Twoje zawody"/>
+        <text name="eq_host_results_running" text="Trwa"/>
+        <text name="eq_host_results_winner" text="Wygrał %s"/>
         <text name="eq_host_label_setup" text="Opłata organizacyjna"/>
         <text name="eq_host_label_popularity" text="Popularność"/>
         <text name="eq_host_label_visitors" text="Frekwencja"/>
@@ -779,7 +803,6 @@
         <text name="eq_host_button_book" text="Rezerwuj na %s"/>
         <text name="eq_host_button_cancel" text="Odwołaj rezerwację"/>
         <text name="eq_host_button_enter" text="Zgłoś"/>
-        <text name="eq_host_button_month" text="Zmień miesiąc"/>
         <text name="eq_host_summary" text="%s. Popularność: %s."/>
         <text name="eq_money_hosting" text="Organizowane zawody"/>
         <text name="rl_messageTitle_eqHosting" text="Organizacja"/>

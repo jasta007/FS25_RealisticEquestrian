@@ -747,6 +747,30 @@
         <text name="eq_host_label_yours" text="Your event"/>
         <text name="eq_host_label_month" text="Book for"/>
         <text name="eq_host_label_next" text="Next free month"/>
+        <text name="eq_host_ann_out" text="Eliminated"/>
+        <text name="eq_host_ann_counted" text="%s penalties: it counts!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: results at the end of the month, in %d days"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: results at the end of the month"/>
+        <text name="eq_host_ann_round" text="Competition round: this one counts!"/>
+        <text name="eq_host_ann_ridden" text="Already ridden: this is just practice"/>
+        <text name="eq_host_ann_small" text="This course is too small for your event: just practice"/>
+        <text name="eq_host_note_counts" text="Competition round for %s: ride to the start line"/>
+        <text name="eq_host_note_ridden" text="Practice: this phase of %s is already ridden"/>
+        <text name="eq_host_note_small" text="Practice: too small a course for %s"/>
+        <text name="eq_host_label_now" text="This month"/>
+        <text name="eq_host_next_oneAtATime" text="one event at a time"/>
+        <text name="eq_host_next_interval" text="%d months between events, see Settings"/>
+        <text name="eq_host_monthOption" text="%s (in %d months)"/>
+        <text name="eq_host_monthOption1" text="%s (next month)"/>
+        <text name="eq_host_report_running" text="On now: %s"/>
+        <text name="eq_host_report_runningLine" text="Results come at the end of the month, in %d days. Your entered horses can ride their phases any day until then."/>
+        <text name="eq_host_report_field" text="%d starters"/>
+        <text name="eq_host_report_turnout" text="Turnout: %d of %d visiting horses came (popularity %d)."/>
+        <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
+        <text name="eq_host_report_mine" text="Your horse %s: %s."/>
+        <text name="eq_host_results_row" text="Your events"/>
+        <text name="eq_host_results_running" text="On now"/>
+        <text name="eq_host_results_winner" text="Won by %s"/>
         <text name="eq_host_label_setup" text="Setup fee"/>
         <text name="eq_host_label_popularity" text="Popularity"/>
         <text name="eq_host_label_visitors" text="Turnout"/>
@@ -779,7 +803,6 @@
         <text name="eq_host_button_book" text="Book for %s"/>
         <text name="eq_host_button_cancel" text="Cancel booking"/>
         <text name="eq_host_button_enter" text="Enter"/>
-        <text name="eq_host_button_month" text="Change month"/>
         <text name="eq_host_summary" text="%s. Popularity: %s."/>
         <text name="eq_money_hosting" text="Hosted Events"/>
         <text name="rl_messageTitle_eqHosting" text="Hosting"/>

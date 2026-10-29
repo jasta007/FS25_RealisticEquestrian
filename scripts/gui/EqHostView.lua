@@ -100,6 +100,21 @@ function EqHostView.partsText(parts)
 end
 
 
+--- The month picker's texts: "March (in 2 months)".
+--- @param months table months as EqCompetitionManager.month counts them
+--- @return table texts
+function EqHostView.monthOptions(months)
+    local texts = {}
+    local now = EqCompetitionManager.month or 0
+    for _, month in ipairs(months) do
+        local ahead = month - now
+        local key = ahead == 1 and "eq_host_monthOption1" or "eq_host_monthOption"
+        table.insert(texts, string.format(g_i18n:getText(key), EqHostManager.monthText(month), ahead))
+    end
+    return texts
+end
+
+
 --- The panel under the checks: the farm's booking and what the selected row would be.
 --- @param farmId number
 --- @param row table|nil the selected option row
@@ -118,14 +133,19 @@ function EqHostView.panelLines(farmId, row, month)
     else
         yours = g_i18n:getText("eq_host_yours_none")
     end
+    -- What month it is now (James forgot and had to leave the menu to look).
+    table.insert(lines, 1, { label = g_i18n:getText("eq_host_label_now"), value = EqHostManager.monthText(EqCompetitionManager.month) })
     table.insert(lines, { label = g_i18n:getText("eq_host_label_yours"), value = yours })
 
-    local choices = EqHostManager.choices(EqCompetitionManager.month, EqHostManager.lastMonth[farmId], EqHostManager.interval())
-    if booking == nil and open == nil then
-        table.insert(lines, { label = g_i18n:getText("eq_host_label_month"),
-            value = month ~= nil and EqHostManager.monthText(month) or "-" })
-    elseif choices[1] ~= nil then
-        table.insert(lines, { label = g_i18n:getText("eq_host_label_next"), value = EqHostManager.monthText(choices[1]) })
+    -- When the next event can be, and why not sooner: one at a time, and the months between.
+    local now = EqCompetitionManager.month
+    local choices = EqHostManager.choices(now, EqHostManager.lastMonth[farmId], EqHostManager.interval())
+    local soonest = choices[1]
+    if soonest ~= nil and (booking ~= nil or open ~= nil or soonest > now + 1) then
+        local why = (booking ~= nil or open ~= nil) and g_i18n:getText("eq_host_next_oneAtATime")
+            or string.format(g_i18n:getText("eq_host_next_interval"), EqHostManager.interval())
+        table.insert(lines, { label = g_i18n:getText("eq_host_label_next"),
+            value = string.format("%s (%s)", EqHostManager.monthText(soonest), why) })
     end
 
     if row ~= nil then
@@ -141,4 +161,56 @@ function EqHostView.panelLines(farmId, row, month)
     table.insert(lines, { label = g_i18n:getText("eq_host_label_reputation"),
         value = string.format("%+d", math.floor((EqHostManager.reputation[farmId] or 0) + 0.5)) })
     return lines
+end
+
+
+--- The "Your events" row's lines on the Results tab: the event on now, then each finished one
+--- with its winners, turnout, money and how your horses did.
+--- @param farmId number
+--- @return table rows { title = true|nil, text }
+function EqHostView.reportRows(farmId)
+    local manager = EqCompetitionManager
+    local rows = {}
+    local open = EqHostManager.openEvent(farmId)
+    if open ~= nil then
+        local days = EqHostManager.daysLeft()
+        table.insert(rows, { title = true, text = string.format(g_i18n:getText("eq_host_report_running"), manager.eventTitle(open)) })
+        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_runningLine"), days or 0) })
+    end
+    for _, report in ipairs(EqHostManager.history[farmId] or {}) do
+        local parts = {
+            string.format(g_i18n:getText("eq_ui_day"), report.day),
+            string.format("%s (%s)", manager.eventName(report.discipline, report.rating, report.venue, true), manager.tierTitle(report.rating)),
+            string.format(g_i18n:getText("eq_host_report_field"), report.field),
+        }
+        table.insert(rows, { title = true, text = table.concat(parts, "  |  ") })
+        local podium = EqStory.podiumLine(report.podium or {})
+        if podium ~= nil then table.insert(rows, { text = podium }) end
+        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_turnout"), report.competitors, report.visitors,
+            report.popularity) })
+        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_money"), money(report.total), money(report.entries),
+            money(report.gate), money(report.setupFee), money(report.total - report.setupFee)) })
+        for _, horse in ipairs(report.mine or {}) do
+            local how = horse.status ~= nil and g_i18n:getText("eq_ui_result_" .. horse.status)
+                or string.format(g_i18n:getText("eq_ui_result_placeOrd"), EqStory.ordinal(horse.place), report.field)
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_mine"), horse.name, how) })
+        end
+    end
+    return rows
+end
+
+
+--- The "Your events" row for the Results tab's horse list, or nil before the farm has hosted.
+--- @param farmId number
+--- @return table|nil row shaped like EqEventsView.resultHorseRows' rows
+function EqHostView.resultsRow(farmId)
+    local history = EqHostManager.history[farmId] or {}
+    local open = EqHostManager.openEvent(farmId)
+    if #history == 0 and open == nil then return nil end
+    local last = history[1]
+    local winner = last ~= nil and last.podium ~= nil and last.podium[1] or nil
+    return { hosted = true, record = { id = "eqHostedEvents" }, name = g_i18n:getText("eq_host_results_row"),
+        starts = tostring(#history), wins = "-",
+        last = open ~= nil and g_i18n:getText("eq_host_results_running")
+            or (winner ~= nil and string.format(g_i18n:getText("eq_host_results_winner"), winner) or "-") }
 end

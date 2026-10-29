@@ -34,6 +34,8 @@ EqHostManager.BOOK_AHEAD = 12
 -- Cancelling at least this many months before the event refunds REFUND_SHARE of the setup fee.
 EqHostManager.REFUND_MONTHS = 2
 EqHostManager.REFUND_SHARE = 0.5
+-- Reports of a farm's past hosted events kept for the Results tab.
+EqHostManager.HISTORY_KEPT = 12
 -- An entered horse rated this high for the event (Champion and up) makes it a star event.
 EqHostManager.STAR_RATING = 90
 
@@ -57,6 +59,7 @@ function EqHostManager.reset()
     EqHostManager.bookings = {}     -- farmId -> { type, rating, month, setupFee, previousLast }
     EqHostManager.lastMonth = {}    -- farmId -> month of the farm's last hosted event (booked or held)
     EqHostManager.reputation = {}   -- farmId -> hosting reputation (EqHosting.nextReputation)
+    EqHostManager.history = {}      -- farmId -> list of EqHostManager.report, newest first
 end
 
 EqHostManager.reset()
@@ -220,6 +223,7 @@ function EqHostManager.onMonthStarted(month)
         EqHostManager.bookings[farmId] = nil
         local event = EqCompetitionManager.openHosted(farmId, booking.type, booking.rating, EqHostManager.venueName(farmId))
         if event ~= nil then
+            event.hosted.setupFee = booking.setupFee
             tell(farmId, "EQ_HOST_OPENED", string.format(g_i18n:getText("eq_host_opened"), EqCompetitionManager.eventTitle(event)))
             if EqHostVenue.config ~= nil then EqHostManager.startMonth(event) end
         end
@@ -374,7 +378,37 @@ function EqHostManager.beforeResolve(event)
     local _, score, takings = assess(event, hasStar(event))
     event.hosted.popularity = score
     event.hosted.takings = takings
-    event.field = takings.competitors + EqHostVenue.config.ownPlaces
+    event.field = takings.competitors + math.min(#event.entries, EqHostVenue.config.ownPlaces)
+end
+
+
+--- What a finished hosted event came to, kept for the Results tab. Pure.
+--- @param event table the resolved event (hosted.report from EqCompetitionManager.resolve)
+--- @param day number
+--- @return table report
+function EqHostManager.report(event, day)
+    local hosted = event.hosted
+    local takings = hosted.takings or {}
+    local result = hosted.report or {}
+    local mine = {}
+    for _, placing in ipairs(result.placings or {}) do
+        table.insert(mine, { name = placing.name, place = placing.place or 0, status = placing.status })
+    end
+    return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue,
+        field = result.field or 0, competitors = takings.competitors or 0, visitors = takings.visitors or 0,
+        popularity = hosted.popularity or 0, entries = takings.entries or 0, gate = takings.gate or 0,
+        total = takings.total or 0, setupFee = hosted.setupFee or 0, podium = result.podium or {}, mine = mine }
+end
+
+
+--- Keep a report on the farm's history, newest first.
+--- @param farmId number
+--- @param report table
+function EqHostManager.keepReport(farmId, report)
+    local list = EqHostManager.history[farmId] or {}
+    table.insert(list, 1, report)
+    while #list > EqHostManager.HISTORY_KEPT do table.remove(list) end
+    EqHostManager.history[farmId] = list
 end
 
 
@@ -384,6 +418,8 @@ function EqHostManager.afterResolve(event)
     local hosted = event.hosted
     local takings = hosted.takings
     if takings == nil then return end
+    local environment = g_currentMission.environment
+    EqHostManager.keepReport(hosted.farmId, EqHostManager.report(event, environment ~= nil and environment.currentMonotonicDay or 0))
     if takings.total > 0 then
         g_currentMission:addMoney(takings.total, hosted.farmId, MoneyType.EQ_HOSTING or MoneyType.OTHER, true, true)
     end
@@ -463,7 +499,44 @@ local function keepRidden(event, horseId, phase, sheet)
     Log:info("EqHostManager: %s rode %s for event %d: %s", horseId, phase, event.id,
         sheet.eliminated and "eliminated" or tostring(sheet.penalties))
     tell(hosted.farmId, "EQ_HOST_RIDDEN", text)
+    if EqTrainingHud ~= nil and EqTrainingHud.announce ~= nil then
+        local days = EqHostManager.daysLeft()
+        local headline = sheet.eliminated and g_i18n:getText("eq_host_ann_out")
+            or string.format(g_i18n:getText("eq_host_ann_counted"), EqStory.penalties(sheet.penalties, phase == "dressage"))
+        local sub = days ~= nil and days > 0 and string.format(g_i18n:getText("eq_host_ann_resultsIn"), title, days)
+            or string.format(g_i18n:getText("eq_host_ann_resultsSoon"), title)
+        EqTrainingHud.announce(headline, sub)
+    end
     return true
+end
+
+
+--- Would a round on this course count in the horse's own event? For the start line's fanfare.
+--- @param vehicle table the ridden horse
+--- @param course table EqCourse course
+--- @return table|nil event the running hosted event the horse is entered in, with this phase
+--- @return string|nil status "counts", "ridden" (this phase is done) or "small" (the course is too small)
+function EqHostManager.competitionFor(vehicle, course)
+    local horseId = EqHostManager.horseIdOf(vehicle)
+    local event = EqHostManager.liveEventFor(horseId)
+    if event == nil or course == nil then return nil end
+    local phase = course.kind or EqCourse.SHOW_JUMPING
+    local rating = ratingOf(event)
+    if rating == nil or not hasPhase(event, phase) then return nil end
+    local ridden = event.hosted.ridden ~= nil and event.hosted.ridden[horseId] or nil
+    if ridden ~= nil and ridden[phase] ~= nil then return event, "ridden" end
+    local shape = { kind = phase, jumps = #course.jumps, length = course.length or EqCourse.pathLength(course.points) }
+    if not EqHosting.courseQualifies(rating, phase, shape) then return event, "small" end
+    return event, "counts"
+end
+
+
+--- How many days are left in the month, for "results in N days".
+--- @return number|nil days
+function EqHostManager.daysLeft()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    if environment == nil or environment.daysPerPeriod == nil or environment.currentDayInPeriod == nil then return nil end
+    return math.max(0, environment.daysPerPeriod - environment.currentDayInPeriod)
 end
 
 
@@ -525,6 +598,7 @@ end
 function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.openedDay ~= nil then xmlFile:setInt(key .. "#openedDay", hosted.openedDay) end
     if hosted.popularity ~= nil then xmlFile:setInt(key .. "#popularity", hosted.popularity) end
+    if hosted.setupFee ~= nil then xmlFile:setFloat(key .. "#setupFee", hosted.setupFee) end
     if hosted.competitors ~= nil then xmlFile:setInt(key .. "#competitors", hosted.competitors) end
     if hosted.feedPerHorse ~= nil then xmlFile:setFloat(key .. "#feedPerHorse", hosted.feedPerHorse) end
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
@@ -554,6 +628,7 @@ end
 function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.openedDay = xmlFile:getInt(key .. "#openedDay")
     hosted.popularity = xmlFile:getInt(key .. "#popularity")
+    hosted.setupFee = xmlFile:getFloat(key .. "#setupFee")
     hosted.competitors = xmlFile:getInt(key .. "#competitors")
     hosted.feedPerHorse = xmlFile:getFloat(key .. "#feedPerHorse")
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
@@ -580,7 +655,7 @@ end
 --- @param key string such as "rlEquestrian.hosting"
 function EqHostManager.saveToXMLFile(xmlFile, key)
     local farmIds, seen = {}, {}
-    for _, list in ipairs({ EqHostManager.bookings, EqHostManager.lastMonth, EqHostManager.reputation }) do
+    for _, list in ipairs({ EqHostManager.bookings, EqHostManager.lastMonth, EqHostManager.reputation, EqHostManager.history }) do
         for farmId in pairs(list) do
             if not seen[farmId] then
                 seen[farmId] = true
@@ -602,7 +677,56 @@ function EqHostManager.saveToXMLFile(xmlFile, key)
             xmlFile:setFloat(farmKey .. ".booking#setupFee", booking.setupFee or 0)
             if booking.previousLast ~= nil then xmlFile:setInt(farmKey .. ".booking#previousLast", booking.previousLast) end
         end
+        for r, report in ipairs(EqHostManager.history[farmId] or {}) do
+            EqHostManager.saveReport(xmlFile, string.format("%s.report(%d)", farmKey, r - 1), report)
+        end
     end
+end
+
+
+local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity" }
+local REPORT_FLOATS = { "entries", "gate", "total", "setupFee" }
+local REPORT_STRINGS = { "discipline", "rating", "venue" }
+
+
+--- @param xmlFile table
+--- @param key string
+--- @param report table
+function EqHostManager.saveReport(xmlFile, key, report)
+    for _, name in ipairs(REPORT_INTS) do xmlFile:setInt(key .. "#" .. name, report[name] or 0) end
+    for _, name in ipairs(REPORT_FLOATS) do xmlFile:setFloat(key .. "#" .. name, report[name] or 0) end
+    for _, name in ipairs(REPORT_STRINGS) do xmlFile:setString(key .. "#" .. name, report[name] or "") end
+    for i, name in ipairs(report.podium or {}) do xmlFile:setString(string.format("%s.podium(%d)#name", key, i - 1), name) end
+    for i, horse in ipairs(report.mine or {}) do
+        local horseKey = string.format("%s.horse(%d)", key, i - 1)
+        xmlFile:setString(horseKey .. "#name", horse.name or "")
+        xmlFile:setInt(horseKey .. "#place", horse.place or 0)
+        if horse.status ~= nil then xmlFile:setString(horseKey .. "#status", horse.status) end
+    end
+end
+
+
+--- @param xmlFile table
+--- @param key string
+--- @return table report
+function EqHostManager.loadReport(xmlFile, key)
+    local report = { podium = {}, mine = {} }
+    for _, name in ipairs(REPORT_INTS) do report[name] = xmlFile:getInt(key .. "#" .. name, 0) end
+    for _, name in ipairs(REPORT_FLOATS) do report[name] = xmlFile:getFloat(key .. "#" .. name, 0) end
+    for _, name in ipairs(REPORT_STRINGS) do report[name] = xmlFile:getString(key .. "#" .. name, "") end
+    local i = 0
+    while xmlFile:hasProperty(string.format("%s.podium(%d)", key, i)) do
+        table.insert(report.podium, xmlFile:getString(string.format("%s.podium(%d)#name", key, i), "?"))
+        i = i + 1
+    end
+    i = 0
+    while xmlFile:hasProperty(string.format("%s.horse(%d)", key, i)) do
+        local horseKey = string.format("%s.horse(%d)", key, i)
+        table.insert(report.mine, { name = xmlFile:getString(horseKey .. "#name", ""), place = xmlFile:getInt(horseKey .. "#place", 0),
+            status = xmlFile:getString(horseKey .. "#status") })
+        i = i + 1
+    end
+    return report
 end
 
 
@@ -628,6 +752,13 @@ function EqHostManager.loadFromXMLFile(xmlFile, key)
                     previousLast = xmlFile:getInt(farmKey .. ".booking#previousLast"),
                 }
                 if EqHosting.isType(booking.type) then EqHostManager.bookings[farmId] = booking end
+            end
+            local r = 0
+            while xmlFile:hasProperty(string.format("%s.report(%d)", farmKey, r)) do
+                local report = EqHostManager.loadReport(xmlFile, string.format("%s.report(%d)", farmKey, r))
+                EqHostManager.history[farmId] = EqHostManager.history[farmId] or {}
+                table.insert(EqHostManager.history[farmId], report)
+                r = r + 1
             end
         end
         i = i + 1

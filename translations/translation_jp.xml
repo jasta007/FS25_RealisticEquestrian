@@ -747,6 +747,30 @@
         <text name="eq_host_label_yours" text="あなたの大会"/>
         <text name="eq_host_label_month" text="予約月"/>
         <text name="eq_host_label_next" text="次に空いている月"/>
+        <text name="eq_host_ann_out" text="失格"/>
+        <text name="eq_host_ann_counted" text="減点%s：カウントされます！"/>
+        <text name="eq_host_ann_resultsIn" text="%s：結果は月末、あと%d日"/>
+        <text name="eq_host_ann_resultsSoon" text="%s：結果は月末"/>
+        <text name="eq_host_ann_round" text="競技ラウンド：これは本番です！"/>
+        <text name="eq_host_ann_ridden" text="走行済み：これは練習です"/>
+        <text name="eq_host_ann_small" text="このコースはあなたの大会には小さすぎます：練習のみ"/>
+        <text name="eq_host_note_counts" text="%sの競技ラウンド：スタートラインへ"/>
+        <text name="eq_host_note_ridden" text="練習：%sのこの種目は走行済み"/>
+        <text name="eq_host_note_small" text="練習：%sにはコースが小さすぎます"/>
+        <text name="eq_host_label_now" text="今月"/>
+        <text name="eq_host_next_oneAtATime" text="大会は一度に一つ"/>
+        <text name="eq_host_next_interval" text="大会の間隔は%dか月、設定を参照"/>
+        <text name="eq_host_monthOption" text="%s（%dか月後）"/>
+        <text name="eq_host_monthOption1" text="%s（来月）"/>
+        <text name="eq_host_report_running" text="開催中：%s"/>
+        <text name="eq_host_report_runningLine" text="結果は月末、あと%d日で出ます。それまでの好きな日に、エントリーした馬で種目を走れます。"/>
+        <text name="eq_host_report_field" text="出走%d頭"/>
+        <text name="eq_host_report_turnout" text="来場：%d頭が来場（招待枠%d頭、人気%d）"/>
+        <text name="eq_host_report_money" text="収入%s（エントリー料%s、入場料%s）、開催費%s：利益%s"/>
+        <text name="eq_host_report_mine" text="あなたの馬 %s：%s"/>
+        <text name="eq_host_results_row" text="あなたの大会"/>
+        <text name="eq_host_results_running" text="開催中"/>
+        <text name="eq_host_results_winner" text="優勝：%s"/>
         <text name="eq_host_label_setup" text="開催費用"/>
         <text name="eq_host_label_popularity" text="人気"/>
         <text name="eq_host_label_visitors" text="参加"/>
@@ -779,7 +803,6 @@
         <text name="eq_host_button_book" text="%sに予約"/>
         <text name="eq_host_button_cancel" text="予約を取り消す"/>
         <text name="eq_host_button_enter" text="エントリー"/>
-        <text name="eq_host_button_month" text="月を変更"/>
         <text name="eq_host_summary" text="%s。人気：%s。"/>
         <text name="eq_money_hosting" text="主催大会"/>
         <text name="rl_messageTitle_eqHosting" text="主催"/>

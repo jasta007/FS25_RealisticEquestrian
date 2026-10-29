@@ -747,6 +747,30 @@
         <text name="eq_host_label_yours" text="Tvůj závod"/>
         <text name="eq_host_label_month" text="Rezervovat na"/>
         <text name="eq_host_label_next" text="Nejbližší volný měsíc"/>
+        <text name="eq_host_ann_out" text="Vyloučen"/>
+        <text name="eq_host_ann_counted" text="%s trestných bodů: počítá se to!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: výsledky na konci měsíce, za %d dní"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: výsledky na konci měsíce"/>
+        <text name="eq_host_ann_round" text="Soutěžní kolo: tohle se počítá!"/>
+        <text name="eq_host_ann_ridden" text="Už odjeto: jen trénink"/>
+        <text name="eq_host_ann_small" text="Tato trať je na tvé závody příliš malá: jen trénink"/>
+        <text name="eq_host_note_counts" text="Soutěžní kolo pro %s: jeď ke startovní čáře"/>
+        <text name="eq_host_note_ridden" text="Trénink: tato disciplína %s je už odjetá"/>
+        <text name="eq_host_note_small" text="Trénink: trať je pro %s příliš malá"/>
+        <text name="eq_host_label_now" text="Tento měsíc"/>
+        <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
+        <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>
+        <text name="eq_host_monthOption" text="%s (za %d měs.)"/>
+        <text name="eq_host_monthOption1" text="%s (příští měsíc)"/>
+        <text name="eq_host_report_running" text="Právě probíhá: %s"/>
+        <text name="eq_host_report_runningLine" text="Výsledky budou na konci měsíce, za %d dní. Tví přihlášení koně mohou své disciplíny do té doby odjet kterýkoli den."/>
+        <text name="eq_host_report_field" text="%d startujících"/>
+        <text name="eq_host_report_turnout" text="Účast: přijelo %d z %d hostujících koní (popularita %d)."/>
+        <text name="eq_host_report_money" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s: zisk %s."/>
+        <text name="eq_host_report_mine" text="Tvůj kůň %s: %s."/>
+        <text name="eq_host_results_row" text="Tvoje závody"/>
+        <text name="eq_host_results_running" text="Probíhá"/>
+        <text name="eq_host_results_winner" text="Vyhrál %s"/>
         <text name="eq_host_label_setup" text="Poplatek za přípravu"/>
         <text name="eq_host_label_popularity" text="Oblíbenost"/>
         <text name="eq_host_label_visitors" text="Účast"/>
@@ -779,7 +803,6 @@
         <text name="eq_host_button_book" text="Rezervovat na %s"/>
         <text name="eq_host_button_cancel" text="Zrušit rezervaci"/>
         <text name="eq_host_button_enter" text="Přihlásit"/>
-        <text name="eq_host_button_month" text="Změnit měsíc"/>
         <text name="eq_host_summary" text="%s. Oblíbenost: %s."/>
         <text name="eq_money_hosting" text="Pořádané závody"/>
         <text name="rl_messageTitle_eqHosting" text="Pořádání"/>

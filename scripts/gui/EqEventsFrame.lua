@@ -94,11 +94,6 @@ function EqEventsFrame.new()
         text = g_i18n:getText("eq_host_button_cancel"),
         callback = function() self:onClickCancelBooking() end,
     }
-    self.monthButtonInfo = {
-        inputAction = InputAction.MENU_EXTRA_2,
-        text = g_i18n:getText("eq_host_button_month"),
-        callback = function() self:onClickMonth() end,
-    }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
         text = g_i18n:getText("eq_ui_tab_results"),
@@ -340,6 +335,11 @@ function EqEventsFrame:refresh()
     for _, element in ipairs({ self.hostHeader, self.hostBox, self.hostChecksHeader, self.hostChecksBox }) do
         show(element, isHost)
     end
+    -- The Host tab's panel and month picker sit where the other tabs' horse panels are.
+    if not isHost then
+        show(self.hostPanel, false)
+        show(self.hostMonthBox, false)
+    end
 
     self.eventsList:reloadData()
     if isHost then
@@ -392,6 +392,9 @@ end
 --- The Results tab: every horse of the farm on the right, the selected one's last events left.
 function EqEventsFrame:refreshResults()
     self.horseRows = self.isReady and EqEventsView.resultHorseRows(farmId()) or {}
+    -- Your own events first: their winners, turnout and money, whether or not your horses ran.
+    local hostedRow = self.isReady and EqHostView ~= nil and EqHostView.resultsRow(farmId()) or nil
+    if hostedRow ~= nil then table.insert(self.horseRows, 1, hostedRow) end
     self.horsesList:reloadData()
     local selectIndex = nil
     for i, row in ipairs(self.horseRows) do
@@ -412,7 +415,11 @@ function EqEventsFrame:selectResultHorse(index)
     self.selectedHorseIndex = index
     local row = index ~= nil and self.horseRows[index] or nil
     if row ~= nil then self.selectedResultHorseId = row.record.id end
-    self.resultRows = row ~= nil and EqEventsView.horseResultRows(row.record) or {}
+    if row ~= nil and row.hosted then
+        self.resultRows = EqHostView.reportRows(farmId())
+    else
+        self.resultRows = row ~= nil and EqEventsView.horseResultRows(row.record) or {}
+    end
     self.resultsList:reloadData()
     if #self.resultRows > 0 then self.resultsList:setSelectedIndex(1) end
     if self.resultsHeaderText ~= nil then
@@ -572,7 +579,6 @@ function EqEventsFrame:addHostButtons()
     self.bookButtonInfo.text = string.format(g_i18n:getText("eq_host_button_book"),
         EqHostManager.monthText(months[self.hostMonthIndex]))
     table.insert(self.menuButtonInfo, self.bookButtonInfo)
-    if #months > 1 then table.insert(self.menuButtonInfo, self.monthButtonInfo) end
 end
 
 
@@ -615,12 +621,31 @@ function EqEventsFrame:updateHostPanel()
     if not show then return end
     local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
     local months = self:hostMonths()
+    if self.hostMonthIndex > #months then self.hostMonthIndex = 1 end
     local lines = EqHostView.panelLines(farmId(), row, months[self.hostMonthIndex] or months[1])
     for i = 1, #(self.hostLabel or {}) do
         local line = lines[i]
         setText(self.hostLabel[i], line ~= nil and line.label or "")
         setText(self.hostValue[i], line ~= nil and line.value or "")
     end
+
+    -- The month to book, picked from a list (James, 2026-10-29), while there is nothing booked.
+    local id = farmId()
+    local picking = #months > 0 and EqHostManager.bookings[id] == nil and EqHostManager.openEvent(id) == nil
+    if self.hostMonthBox ~= nil then self.hostMonthBox:setVisible(picking) end
+    if picking and self.hostMonthOption ~= nil then
+        self.hostMonthOption:setTexts(EqHostView.monthOptions(months))
+        self.hostMonthOption:setState(self.hostMonthIndex, true)
+    end
+end
+
+
+--- The month picker on the Host tab.
+--- @param state number the picked month's index
+function EqEventsFrame:onClickHostMonth(state)
+    self.hostMonthIndex = state or 1
+    self:updateHostPanel()
+    self:updateButtons()
 end
 
 
@@ -664,7 +689,7 @@ end
 function EqEventsFrame:updateCareerPanel()
     if self.careerPanel == nil then return end
     local row = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
-    local show = row ~= nil and self.mode == EqEventsFrame.MODE_RESULTS
+    local show = row ~= nil and not row.hosted and self.mode == EqEventsFrame.MODE_RESULTS
     self.careerPanel:setVisible(show)
     if not show then return end
 
@@ -900,16 +925,6 @@ function EqEventsFrame:onClickCancelBooking()
             self:refresh()
         end
     end, self, question, g_i18n:getText("eq_host_button_cancel"))
-end
-
-
---- Cycle the month the Book button books.
-function EqEventsFrame:onClickMonth()
-    local months = self:hostMonths()
-    if #months == 0 then return end
-    self.hostMonthIndex = self.hostMonthIndex % #months + 1
-    self:updateHostPanel()
-    self:updateButtons()
 end
 
 

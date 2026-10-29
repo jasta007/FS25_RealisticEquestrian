@@ -230,6 +230,11 @@ EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growM
 EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.021, barWidth = 0.12, barHeight = 0.006 }
 EqTrainingHud.popState = nil
 EqTrainingHud.sideState = nil
+-- A big two-line announcement above the pops, for news that should feel like an occasion: a
+-- round in your own event (James, 2026-10-29: "a bit more fanfare").
+EqTrainingHud.ANNOUNCE = { x = 0.5, y = 0.8, size = 0.04, subSize = 0.02, growMs = 250, holdMs = 3500, fadeMs = 900 }
+EqTrainingHud.GOLD = { 1, 0.78, 0.2, 1 }
+EqTrainingHud.announceState = nil
 -- The training view being shown (set by EqTrainingHooks while drawing), and the stat each
 -- kind of pop is about.
 EqTrainingHud.view = nil
@@ -327,9 +332,40 @@ local function drawSidePop()
 end
 
 
+--- Show a big announcement in the top middle of the screen.
+--- @param title string
+--- @param sub string|nil a smaller line under it
+--- @param color table|nil gold when nil
+function EqTrainingHud.announce(title, sub, color)
+    EqTrainingHud.announceState = { title = title, sub = sub, color = color or EqTrainingHud.GOLD, at = g_time or 0 }
+end
+
+
+local function drawAnnounce()
+    local state = EqTrainingHud.announceState
+    if state == nil then return end
+    local a = EqTrainingHud.ANNOUNCE
+    local age = (g_time or 0) - state.at
+    if age > a.growMs + a.holdMs + a.fadeMs then
+        EqTrainingHud.announceState = nil
+        return
+    end
+    local grow = math.min(1, age / a.growMs)
+    local scale = grow < 1 and grow * 1.15 or 1 + 0.15 * math.max(0, 1 - (age - a.growMs) / 200)
+    local alpha = age < a.growMs + a.holdMs and 1 or 1 - (age - a.growMs - a.holdMs) / a.fadeMs
+    local c = state.color
+    shadowText(state.title, a.x, a.y, a.size * scale, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    if state.sub ~= nil then
+        shadowText(state.sub, a.x, a.y - a.size * 0.9, a.subSize, { 1, 1, 1, alpha }, RenderText.ALIGN_CENTER, false)
+    end
+    resetText()
+end
+
+
 --- Draw the current burst, growing in, holding and fading out.
 function EqTrainingHud.drawPops()
     drawSidePop()
+    drawAnnounce()
     local state = EqTrainingHud.popState
     if state == nil then return end
     local p = EqTrainingHud.POP
@@ -662,6 +698,7 @@ end
 function EqTrainingHud.reset()
     EqTrainingHud.closeHelp()
     EqTrainingHud.popState = nil
+    EqTrainingHud.announceState = nil
     if EqTrainingHud.overlay ~= nil then
         EqTrainingHud.overlay:delete()
         EqTrainingHud.overlay = nil

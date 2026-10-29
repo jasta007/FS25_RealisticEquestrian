@@ -749,6 +749,30 @@
         <text name="eq_host_label_yours" text="Votre concours"/>
         <text name="eq_host_label_month" text="Réserver pour"/>
         <text name="eq_host_label_next" text="Prochain mois libre"/>
+        <text name="eq_host_ann_out" text="Éliminé"/>
+        <text name="eq_host_ann_counted" text="%s pénalités : ça compte !"/>
+        <text name="eq_host_ann_resultsIn" text="%s : résultats en fin de mois, dans %d jours"/>
+        <text name="eq_host_ann_resultsSoon" text="%s : résultats en fin de mois"/>
+        <text name="eq_host_ann_round" text="Manche de compétition : celle-ci compte !"/>
+        <text name="eq_host_ann_ridden" text="Déjà courue : simple entraînement"/>
+        <text name="eq_host_ann_small" text="Ce parcours est trop petit pour votre épreuve : simple entraînement"/>
+        <text name="eq_host_note_counts" text="Manche de compétition pour %s : allez à la ligne de départ"/>
+        <text name="eq_host_note_ridden" text="Entraînement : cette épreuve de %s est déjà courue"/>
+        <text name="eq_host_note_small" text="Entraînement : parcours trop petit pour %s"/>
+        <text name="eq_host_label_now" text="Ce mois-ci"/>
+        <text name="eq_host_next_oneAtATime" text="une épreuve à la fois"/>
+        <text name="eq_host_next_interval" text="%d mois entre deux épreuves, voir Paramètres"/>
+        <text name="eq_host_monthOption" text="%s (dans %d mois)"/>
+        <text name="eq_host_monthOption1" text="%s (le mois prochain)"/>
+        <text name="eq_host_report_running" text="En cours : %s"/>
+        <text name="eq_host_report_runningLine" text="Les résultats tombent en fin de mois, dans %d jours. Vos chevaux engagés peuvent courir leurs épreuves n'importe quel jour d'ici là."/>
+        <text name="eq_host_report_field" text="%d partants"/>
+        <text name="eq_host_report_turnout" text="Participation : %d chevaux invités sur %d sont venus (popularité %d)."/>
+        <text name="eq_host_report_money" text="Recettes %s (engagements %s, entrées %s), frais d'organisation %s : bénéfice %s."/>
+        <text name="eq_host_report_mine" text="Votre cheval %s : %s."/>
+        <text name="eq_host_results_row" text="Vos épreuves"/>
+        <text name="eq_host_results_running" text="En cours"/>
+        <text name="eq_host_results_winner" text="Gagné par %s"/>
         <text name="eq_host_label_setup" text="Frais d'organisation"/>
         <text name="eq_host_label_popularity" text="Popularité"/>
         <text name="eq_host_label_visitors" text="Participation"/>
@@ -781,7 +805,6 @@
         <text name="eq_host_button_book" text="Réserver pour %s"/>
         <text name="eq_host_button_cancel" text="Annuler la réservation"/>
         <text name="eq_host_button_enter" text="Engager"/>
-        <text name="eq_host_button_month" text="Changer de mois"/>
         <text name="eq_host_summary" text="%s. Popularité : %s."/>
         <text name="eq_money_hosting" text="Concours organisés"/>
         <text name="rl_messageTitle_eqHosting" text="Organisation"/>
