@@ -784,6 +784,32 @@
         <text name="eq_host_label_yours" text="Jouw wedstrijd"/>
         <text name="eq_host_label_month" text="Boeken voor"/>
         <text name="eq_host_label_next" text="Volgende vrije maand"/>
+        <text name="eq_host_ann_out" text="Uitgeschakeld"/>
+        <text name="eq_host_ann_counted" text="%s strafpunten: het telt!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: uitslag aan het eind van de maand, over %d dagen"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: uitslag aan het eind van de maand"/>
+        <text name="eq_host_ann_round" text="Wedstrijdronde: deze telt!"/>
+        <text name="eq_host_ann_ridden" text="Al gereden: dit is alleen oefenen"/>
+        <text name="eq_host_ann_small" text="Dit parcours is te klein voor je evenement: alleen oefenen"/>
+        <text name="eq_host_note_counts" text="Wedstrijdronde voor %s: rijd naar de startlijn"/>
+        <text name="eq_host_note_ridden" text="Oefenen: dit onderdeel van %s is al gereden"/>
+        <text name="eq_host_note_small" text="Oefenen: parcours te klein voor %s"/>
+        <text name="eq_host_label_now" text="Deze maand"/>
+        <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
+        <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>
+        <text name="eq_host_monthOption" text="%s (over %d maanden)"/>
+        <text name="eq_host_monthOption1" text="%s (volgende maand)"/>
+        <text name="eq_host_report_running" text="Nu bezig: %s"/>
+        <text name="eq_host_report_runningLine" text="De uitslag komt aan het eind van de maand, over %d dagen. Je ingeschreven paarden kunnen hun onderdelen tot dan elke dag rijden."/>
+        <text name="eq_host_report_field" text="%d deelnemers"/>
+        <text name="eq_host_report_turnout" text="Opkomst: %d van %d gastpaarden kwamen (populariteit %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Gastpaarden hebben tot nu toe %d l van je voer gegeten (%d l per dag)."/>
+        <text name="eq_host_report_feed" text="Gastpaarden aten %d l van je voer."/>
+        <text name="eq_host_report_money" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s: winst %s."/>
+        <text name="eq_host_report_mine" text="Je paard %s: %s."/>
+        <text name="eq_host_results_row" text="Je evenementen"/>
+        <text name="eq_host_results_running" text="Nu bezig"/>
+        <text name="eq_host_results_winner" text="Gewonnen door %s"/>
         <text name="eq_host_label_setup" text="Opzetkosten"/>
         <text name="eq_host_label_popularity" text="Populariteit"/>
         <text name="eq_host_label_visitors" text="Opkomst"/>
@@ -800,6 +826,7 @@
         <text name="eq_host_visitors" text="%d van %d gastpaarden"/>
         <text name="eq_host_takingsLine" text="%s inschrijvingen, %s entree"/>
         <text name="eq_host_monthsAhead" text="over %d maanden"/>
+        <text name="eq_host_monthNow" text="nu"/>
         <text name="eq_host_yourFarm" text="Jouw boerderij"/>
         <text name="eq_host_opened" text="Jouw %s is begonnen. Schrijf je paarden in op het tabblad Wedstrijden; uitslagen aan het eind van de maand."/>
         <text name="eq_host_book_noConfig" text="Organiseren is niet beschikbaar: de regels zijn niet geladen."/>
@@ -816,7 +843,6 @@
         <text name="eq_host_button_book" text="Boeken voor %s"/>
         <text name="eq_host_button_cancel" text="Boeking annuleren"/>
         <text name="eq_host_button_enter" text="Inschrijven"/>
-        <text name="eq_host_button_month" text="Andere maand"/>
         <text name="eq_host_summary" text="%s. Populariteit: %s."/>
         <text name="eq_money_hosting" text="Georganiseerde wedstrijden"/>
         <text name="rl_messageTitle_eqHosting" text="Organiseren"/>

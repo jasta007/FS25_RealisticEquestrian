@@ -821,6 +821,17 @@ function EqConsole:consoleHostCheck(typeName, ratingName)
 end
 
 
+--- eqHostWait: testing, ends the wait before your farm can host another event.
+function EqConsole:consoleHostWait()
+    if g_currentMission == nil then return "No mission loaded" end
+    local farmId = g_currentMission:getFarmId()
+    local had = EqHostManager.clearWait(farmId)
+    local note = EqHostManager.bookings[farmId] ~= nil and " Your booked event still stands; cancel it to book a different one." or ""
+    if EqHostManager.openEvent(farmId) ~= nil then note = note .. " Your event this month still runs until month end." end
+    return (had and "Hosting wait cleared: you can book any month now." or "No hosting wait to clear.") .. note
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -849,6 +860,7 @@ function EqConsole.register()
     addConsoleCommand("eqStats", "Testing: sets stats until reset: eqStats [horse] [stat] <0-100>, or eqStats [horse] reset", "consoleStats", EqConsole)
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
+    addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
@@ -862,7 +874,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

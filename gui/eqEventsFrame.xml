@@ -262,17 +262,24 @@
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </GuiElement>
 
-        <GuiElement profile="rlMenu_container" id="hostChecksBox" position="1060px -165px" size="520px 336px" visible="false">
-            <SmoothList profile="rlMenu_tableList" id="hostChecksList" position="0px 0px" size="500px 336px">
+        <GuiElement profile="rlMenu_container" id="hostChecksBox" position="1060px -165px" size="520px 290px" visible="false">
+            <SmoothList profile="rlMenu_tableList" id="hostChecksList" position="0px 0px" size="500px 290px">
                 <ListItem profile="rlMenu_tableListItem" name="hostCheckRowTemplate" size="500px 42px">
                     <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="220px 42px" name="label" textLayoutMode="scrolling"/>
                     <Text profile="rlMenu_tableRowCellRightAligned" position="235px 0px" size="125px 42px" name="have"/>
                     <Text profile="rlMenu_tableRowCellRightAligned" position="365px 0px" size="125px 42px" name="need"/>
                 </ListItem>
             </SmoothList>
-            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 336px" with="anchorTopRight">
-                <Slider profile="fs25_listSlider" size="6px 328px" dataElementId="hostChecksList"/>
+            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 290px" with="anchorTopRight">
+                <Slider profile="fs25_listSlider" size="6px 282px" dataElementId="hostChecksList"/>
             </ThreePartBitmap>
+        </GuiElement>
+
+        <!-- The month to book: a picker, shown while nothing is booked -->
+        <GuiElement profile="rlMenu_container" id="hostMonthBox" position="1070px -463px" size="490px 44px" visible="false">
+            <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 44px" text="$l10n_eq_host_label_month"/>
+            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostMonthOption" position="200px 0px" size="290px 44px"
+                             onClick="onClickHostMonth"/>
         </GuiElement>
 
         <!-- Your booking and the selected event's numbers: label left, value at 200px -->

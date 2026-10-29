@@ -784,6 +784,32 @@
         <text name="eq_host_label_yours" text="Seu evento"/>
         <text name="eq_host_label_month" text="Reservar para"/>
         <text name="eq_host_label_next" text="Próximo mês livre"/>
+        <text name="eq_host_ann_out" text="Eliminado"/>
+        <text name="eq_host_ann_counted" text="%s penalidades: conta!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: resultados no fim do mês, em %d dias"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: resultados no fim do mês"/>
+        <text name="eq_host_ann_round" text="Rodada de competição: esta conta!"/>
+        <text name="eq_host_ann_ridden" text="Já montada: é só treino"/>
+        <text name="eq_host_ann_small" text="Este percurso é pequeno demais para o seu evento: só treino"/>
+        <text name="eq_host_note_counts" text="Rodada de competição para %s: vá até a linha de largada"/>
+        <text name="eq_host_note_ridden" text="Treino: esta prova de %s já foi montada"/>
+        <text name="eq_host_note_small" text="Treino: percurso pequeno demais para %s"/>
+        <text name="eq_host_label_now" text="Este mês"/>
+        <text name="eq_host_next_oneAtATime" text="um evento por vez"/>
+        <text name="eq_host_next_interval" text="%d meses entre eventos, veja Configurações"/>
+        <text name="eq_host_monthOption" text="%s (em %d meses)"/>
+        <text name="eq_host_monthOption1" text="%s (próximo mês)"/>
+        <text name="eq_host_report_running" text="Acontecendo: %s"/>
+        <text name="eq_host_report_runningLine" text="Os resultados saem no fim do mês, em %d dias. Seus cavalos inscritos podem montar as provas em qualquer dia até lá."/>
+        <text name="eq_host_report_field" text="%d participantes"/>
+        <text name="eq_host_report_turnout" text="Público: vieram %d de %d cavalos visitantes (popularidade %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Os cavalos visitantes já comeram %d l da sua ração (%d l por dia)."/>
+        <text name="eq_host_report_feed" text="Os cavalos visitantes comeram %d l da sua ração."/>
+        <text name="eq_host_report_money" text="Receita %s (inscrições %s, bilheteria %s), taxa de organização %s: lucro %s."/>
+        <text name="eq_host_report_mine" text="Seu cavalo %s: %s."/>
+        <text name="eq_host_results_row" text="Seus eventos"/>
+        <text name="eq_host_results_running" text="Acontecendo"/>
+        <text name="eq_host_results_winner" text="Vencido por %s"/>
         <text name="eq_host_label_setup" text="Taxa de montagem"/>
         <text name="eq_host_label_popularity" text="Popularidade"/>
         <text name="eq_host_label_visitors" text="Público"/>
@@ -800,6 +826,7 @@
         <text name="eq_host_visitors" text="%d de %d cavalos visitantes"/>
         <text name="eq_host_takingsLine" text="%s de inscrições, %s de bilheteria"/>
         <text name="eq_host_monthsAhead" text="em %d meses"/>
+        <text name="eq_host_monthNow" text="agora"/>
         <text name="eq_host_yourFarm" text="Sua fazenda"/>
         <text name="eq_host_opened" text="Seu %s começou. Inscreva seus cavalos na aba Eventos; os resultados saem no fim do mês."/>
         <text name="eq_host_book_noConfig" text="Não é possível organizar: as regras de organização não carregaram."/>
@@ -816,7 +843,6 @@
         <text name="eq_host_button_book" text="Reservar para %s"/>
         <text name="eq_host_button_cancel" text="Cancelar reserva"/>
         <text name="eq_host_button_enter" text="Inscrever"/>
-        <text name="eq_host_button_month" text="Mudar mês"/>
         <text name="eq_host_summary" text="%s. Popularidade: %s."/>
         <text name="eq_money_hosting" text="Eventos organizados"/>
         <text name="rl_messageTitle_eqHosting" text="Organização"/>

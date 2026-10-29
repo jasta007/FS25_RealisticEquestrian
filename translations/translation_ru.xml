@@ -784,6 +784,32 @@
         <text name="eq_host_label_yours" text="Ваше соревнование"/>
         <text name="eq_host_label_month" text="Забронировать на"/>
         <text name="eq_host_label_next" text="Ближайший свободный месяц"/>
+        <text name="eq_host_ann_out" text="Снят"/>
+        <text name="eq_host_ann_counted" text="%s штрафных очков: засчитано!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: итоги в конце месяца, через %d дн."/>
+        <text name="eq_host_ann_resultsSoon" text="%s: итоги в конце месяца"/>
+        <text name="eq_host_ann_round" text="Зачётный заезд: этот засчитывается!"/>
+        <text name="eq_host_ann_ridden" text="Уже пройдено: это просто тренировка"/>
+        <text name="eq_host_ann_small" text="Этот маршрут слишком мал для вашего турнира: просто тренировка"/>
+        <text name="eq_host_note_counts" text="Зачётный заезд на %s: подъезжайте к линии старта"/>
+        <text name="eq_host_note_ridden" text="Тренировка: этот этап %s уже пройден"/>
+        <text name="eq_host_note_small" text="Тренировка: маршрут слишком мал для %s"/>
+        <text name="eq_host_label_now" text="Этот месяц"/>
+        <text name="eq_host_next_oneAtATime" text="один турнир за раз"/>
+        <text name="eq_host_next_interval" text="%d мес. между турнирами, см. Настройки"/>
+        <text name="eq_host_monthOption" text="%s (через %d мес.)"/>
+        <text name="eq_host_monthOption1" text="%s (в следующем месяце)"/>
+        <text name="eq_host_report_running" text="Идёт сейчас: %s"/>
+        <text name="eq_host_report_runningLine" text="Итоги будут в конце месяца, через %d дн. Ваши заявленные лошади могут пройти свои этапы в любой день до этого."/>
+        <text name="eq_host_report_field" text="%d участников"/>
+        <text name="eq_host_report_turnout" text="Явка: приехало %d из %d гостевых лошадей (популярность %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Гостевые лошади уже съели %d л вашего корма (%d л в день)."/>
+        <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
+        <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
+        <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
+        <text name="eq_host_results_row" text="Ваши турниры"/>
+        <text name="eq_host_results_running" text="Идёт сейчас"/>
+        <text name="eq_host_results_winner" text="Победитель: %s"/>
         <text name="eq_host_label_setup" text="Взнос за организацию"/>
         <text name="eq_host_label_popularity" text="Популярность"/>
         <text name="eq_host_label_visitors" text="Участники"/>
@@ -800,6 +826,7 @@
         <text name="eq_host_visitors" text="%d из %d гостевых лошадей"/>
         <text name="eq_host_takingsLine" text="%s взносы, %s билеты"/>
         <text name="eq_host_monthsAhead" text="через %d мес."/>
+        <text name="eq_host_monthNow" text="сейчас"/>
         <text name="eq_host_yourFarm" text="Ваша ферма"/>
         <text name="eq_host_opened" text="Ваше соревнование «%s» началось. Заявите лошадей на вкладке «Соревнования»; итоги в конце месяца."/>
         <text name="eq_host_book_noConfig" text="Проведение недоступно: правила проведения не загрузились."/>
@@ -816,7 +843,6 @@
         <text name="eq_host_button_book" text="Забронировать на %s"/>
         <text name="eq_host_button_cancel" text="Отменить бронь"/>
         <text name="eq_host_button_enter" text="Заявить"/>
-        <text name="eq_host_button_month" text="Сменить месяц"/>
         <text name="eq_host_summary" text="%s. Популярность: %s."/>
         <text name="eq_money_hosting" text="Проведение соревнований"/>
         <text name="rl_messageTitle_eqHosting" text="Проведение"/>

@@ -696,13 +696,17 @@ function EqCompetitionManager.resolve(event, horses, month)
 
     -- Simulated rivals fill the field around the finishers; an eliminated horse takes its place
     -- in the field but not in the placings.
+    -- Your own event runs whether or not your horses do: somebody has to win it.
     local results = {}
-    if #starters > 0 then
+    if #starters > 0 or event.hosted ~= nil then
         results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), (event.field or tier.field) - #eliminated)
     end
     summary.field = #results + #eliminated
-    local podium = EqStory.podiumLine(EqCompetitionManager.podiumNames(results, byKey, event.discipline,
-        EqRandom.new("podium " .. event.id)))
+    local podiumNames = EqCompetitionManager.podiumNames(results, byKey, event.discipline, EqRandom.new("podium " .. event.id))
+    local podium = EqStory.podiumLine(podiumNames)
+    if event.hosted ~= nil then
+        event.hosted.report = { podium = podiumNames, field = summary.field, placings = summary.placings }
+    end
 
     -- Each starter's story, finished once its injuries are known.
     local stories = {}

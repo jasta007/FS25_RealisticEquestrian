@@ -784,6 +784,32 @@
         <text name="eq_host_label_yours" text="你的比賽"/>
         <text name="eq_host_label_month" text="預訂月份"/>
         <text name="eq_host_label_next" text="下一個可用月份"/>
+        <text name="eq_host_ann_out" text="淘汰"/>
+        <text name="eq_host_ann_counted" text="罰分%s：計入成績！"/>
+        <text name="eq_host_ann_resultsIn" text="%s：月底公佈結果，還有%d天"/>
+        <text name="eq_host_ann_resultsSoon" text="%s：月底公佈結果"/>
+        <text name="eq_host_ann_round" text="比賽輪次：這一輪計入成績！"/>
+        <text name="eq_host_ann_ridden" text="已騎過：這只是練習"/>
+        <text name="eq_host_ann_small" text="這條路線對你的賽事來說太小：只是練習"/>
+        <text name="eq_host_note_counts" text="%s的比賽輪次：騎到起跑線"/>
+        <text name="eq_host_note_ridden" text="練習：%s的這個專案已騎過"/>
+        <text name="eq_host_note_small" text="練習：路線對%s來說太小"/>
+        <text name="eq_host_label_now" text="本月"/>
+        <text name="eq_host_next_oneAtATime" text="一次只能舉辦一場賽事"/>
+        <text name="eq_host_next_interval" text="賽事之間間隔%d個月，見設定"/>
+        <text name="eq_host_monthOption" text="%s（%d個月後）"/>
+        <text name="eq_host_monthOption1" text="%s（下個月）"/>
+        <text name="eq_host_report_running" text="進行中：%s"/>
+        <text name="eq_host_report_runningLine" text="結果在月底公佈，還有%d天。在那之前，你報名的馬可以在任何一天騎完它們的專案。"/>
+        <text name="eq_host_report_field" text="%d匹參賽"/>
+        <text name="eq_host_report_turnout" text="到場：%d/%d匹來訪馬到場（人氣%d）。"/>
+        <text name="eq_host_report_feedSoFar" text="來訪馬至今已吃掉你%d公升飼料（每天%d公升）。"/>
+        <text name="eq_host_report_feed" text="來訪馬吃掉了你%d公升飼料。"/>
+        <text name="eq_host_report_money" text="收入%s（報名費%s，門票%s），舉辦費%s：利潤%s。"/>
+        <text name="eq_host_report_mine" text="你的馬%s：%s。"/>
+        <text name="eq_host_results_row" text="你的賽事"/>
+        <text name="eq_host_results_running" text="進行中"/>
+        <text name="eq_host_results_winner" text="冠軍：%s"/>
         <text name="eq_host_label_setup" text="籌辦費"/>
         <text name="eq_host_label_popularity" text="人氣"/>
         <text name="eq_host_label_visitors" text="參賽"/>
@@ -800,6 +826,7 @@
         <text name="eq_host_visitors" text="%d / %d 匹來訪馬"/>
         <text name="eq_host_takingsLine" text="報名費 %s，門票 %s"/>
         <text name="eq_host_monthsAhead" text="%d個月後"/>
+        <text name="eq_host_monthNow" text="本月"/>
         <text name="eq_host_yourFarm" text="你的農場"/>
         <text name="eq_host_opened" text="你的%s已開始。在比賽標籤頁為你的馬報名；結果在月底公佈。"/>
         <text name="eq_host_book_noConfig" text="無法主辦：主辦規則未能載入。"/>
@@ -816,7 +843,6 @@
         <text name="eq_host_button_book" text="預訂%s"/>
         <text name="eq_host_button_cancel" text="取消預訂"/>
         <text name="eq_host_button_enter" text="報名"/>
-        <text name="eq_host_button_month" text="更換月份"/>
         <text name="eq_host_summary" text="%s。人氣：%s。"/>
         <text name="eq_money_hosting" text="主辦比賽"/>
         <text name="rl_messageTitle_eqHosting" text="主辦"/>

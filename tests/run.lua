@@ -3848,6 +3848,22 @@ end)()
 
     -- The event month: a day's feed, and the checks a running event can fail.
     check("host month: a day's feed for the visitors", EqHostManager.dailyFeed(3000, 14, 3) == 14000)
+    do
+        local event = { discipline = "crossCountry", venue = "My farm", hosted = { rating = "novice", popularity = 60, setupFee = 5000, feedEaten = 4200,
+            takings = { competitors = 5, visitors = 6, entries = 3000, gate = 0, total = 3000 },
+            report = { podium = { "A", "B", "C" }, field = 7, placings = { { name = "Tango", place = 2 } } } } }
+        local report = EqHostManager.report(event, 40)
+        check("host report: turnout, money and podium", report.competitors == 5 and report.visitors == 6 and report.total == 3000
+            and report.setupFee == 5000 and report.podium[1] == "A" and report.field == 7 and report.day == 40)
+        check("host report: the feed the visitors ate", report.feed == 4200)
+        check("host report: your horses' places", report.mine[1].name == "Tango" and report.mine[1].place == 2)
+        local saved = EqHostManager.history
+        EqHostManager.history = {}
+        for i = 1, EqHostManager.HISTORY_KEPT + 2 do EqHostManager.keepReport(1, { day = i }) end
+        check("host report: newest first, a few kept", #EqHostManager.history[1] == EqHostManager.HISTORY_KEPT
+            and EqHostManager.history[1][1].day == EqHostManager.HISTORY_KEPT + 2)
+        EqHostManager.history = saved
+    end
     check("host month: no visitors eat nothing", EqHostManager.dailyFeed(3000, 0, 3) == 0)
     local short = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 100 })
     local failed = EqHostManager.failedChecks(short, true)
@@ -3894,6 +3910,33 @@ end)()
     check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
         and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
 
+    -- Graded rounds: the ride picks where in its own range the horse lands.
+    check("ride grade: clear inside the time is perfect", EqHosting.rideGrade("showJumping", 0, 40, 41) == 1)
+    local slow = EqHosting.rideGrade("showJumping", 0, 67.3, 41)
+    check("ride grade: very slow costs most of the time part", slow > 0.41 and slow < 0.44, string.format("%.3f", slow))
+    check("ride grade: rails cost more than a little time", EqHosting.rideGrade("showJumping", 8, 40, 41)
+        < EqHosting.rideGrade("showJumping", 0, 45, 41))
+    check("ride grade: a cross country refusal is about one rail's worth less",
+        EqHosting.rideGrade("crossCountry", 20, 100, 120) > EqHosting.rideGrade("showJumping", 12, 40, 41))
+    local graded = EqHosting.roundSheet({ seconds = 50, faults = 4, timeFaults = 9, total = 13 }, 0, 41)
+    check("ride grade: kept on the sheet", graded.grade ~= nil and graded.grade < 1 and graded.penalties == 13)
+    local function meanPlace(grade, rating)
+        local sum = 0
+        for i = 1, 200 do
+            local ev = { discipline = "showJumping", tier = "novice", prize = 1000,
+                hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0, grade = grade } } } } }
+            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = rating, condition = 1, stats = stats } },
+                EqRandom.new("graded " .. i), 8)) do
+                if r.key == "me" then sum = sum + r.place end
+            end
+        end
+        return sum / 200
+    end
+    local good, bad = meanPlace(1, 45), meanPlace(0.1, 45)
+    check("ride grade: a good ride places better than a poor one", good + 1 < bad, string.format("%.2f vs %.2f", good, bad))
+    local weakClear = meanPlace(1, 10)
+    check("ride grade: a weak horse ridden clear still doesn't win every time", weakClear > 1.5, string.format("%.2f", weakClear))
+
     -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
     local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }
     local order = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
@@ -3918,6 +3961,36 @@ end)()
         and booking.month == 15 and booking.setupFee == 120000 and booking.previousLast == 4)
     check("host booking: last month and reputation saved", EqHostManager.lastMonth[3] == 15 and EqHostManager.reputation[3] == -7.5
         and EqHostManager.lastMonth[5] == 2 and EqHostManager.bookings[5] == nil)
+    EqHostManager.reset()
+end)()
+
+;(function()
+    EqHostManager.reset()
+    EqHostManager.lastMonth[3] = 15
+    EqHostManager.bookings[3] = { type = "dressage", rating = "novice", month = 15, previousLast = 9 }
+    check("host wait: clearing reports a wait", EqHostManager.clearWait(3) == true)
+    check("host wait: last month and booking's previous month forgotten",
+        EqHostManager.lastMonth[3] == nil and EqHostManager.bookings[3].previousLast == nil)
+    check("host wait: any month free after clearing", #EqHostManager.choices(16, EqHostManager.lastMonth[3], 6) > 0
+        and EqHostManager.choices(16, EqHostManager.lastMonth[3], 6)[1] == 17)
+    check("host wait: nothing to clear twice", EqHostManager.clearWait(3) == false)
+
+    -- Month names come from the game's own I18N (through our proxy another mod's hook overflowed).
+    local savedManager = EqCompetitionManager
+    EqCompetitionManager = EqCompetitionManager or {}
+    local savedMission, savedGlobal, savedMonth = g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month
+    EqCompetitionManager.month = 10
+    g_currentMission = { environment = { currentPeriod = 11 } }
+    EqI18N.globalI18N = function() return { formatPeriod = function(_, period) return "P" .. period end } end
+    local text, named = EqHostManager.monthText(12)
+    check("host month: named by the game's period", text == "P1" and named == true, tostring(text))
+    EqI18N.globalI18N = function() return { formatPeriod = function() error("stack overflow") end } end
+    text, named = EqHostManager.monthText(12)
+    local nowText = EqHostManager.monthText(10)
+    check("host month: falls back to months ahead, and now", named == false and text ~= nowText
+        and nowText == g_i18n:getText("eq_host_monthNow"), tostring(text) .. " / " .. tostring(nowText))
+    g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
+    EqCompetitionManager = savedManager
     EqHostManager.reset()
 end)()
 

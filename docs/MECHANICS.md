@@ -615,7 +615,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
   shows the most an event could take (at popularity 100); its details show the expected takings
   at today's popularity, which can still change before the event.
-- **Booking:** one event at a time, from next month up to a year ahead, and at least the
+- **Booking:** one booking at a time, from next month up to a year ahead, and at least the
   **Months between hosted events** setting (3, 4, 6 or 12; default 6) after your last one.
   Booking pays the setup fee. Cancelling two or more months ahead refunds half; later, nothing.
 - When its month starts the event opens on the Upcoming tab as "Show Jumping at <your farm>".
@@ -626,20 +626,29 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   anything is short (including that day's feed for the visitors) you get a warning; still short
   the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
   a month's horse ration divided by the days in a month, taken from your silos first, then your
-  horse troughs.
+  horse troughs. The Results tab shows how much they have eaten.
 - **Results:** at the end of the month popularity is worked out again, plus 10 if one of your
   entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
-  how many visitors came (the field is them plus your two places). Their entry fees and the gate
-  are paid to you, and your reputation rises 8 (from -25 up to 20).
+  how many visitors came (the field is them plus your entered horses). Their entry fees and the
+  gate are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
+  if none of your horses entered. **Your events**, at the top of the Results tab, shows each
+  one's winners, turnout, takings against the setup fee, and how your horses did.
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
   real faults and time. In an arena big enough, the dressage test is the rating's length (15,
   20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
   gets one go at each phase, and later rounds are practice. Phases you don't ride are
-  simulated. A one-phase event with a ridden round is scored in penalties like eventing, and
-  your round is placed against the simulated field.
+  simulated. A one-phase event with a ridden round is scored in penalties like eventing.
+  A show jumping or cross country round is not put straight against the simulated rivals: it is
+  graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
+  course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
+  of your own horse it gets, from its best to its worst. The horse's stats still decide most;
+  your riding decides its day. A ridden dressage test counts its real faults. Coming up to the start line on an entered
+  horse, a gold announcement says whether this round counts, is practice (phase already
+  ridden) or the course is too small; the finish says what was kept and when results come.
 
-Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement.
+Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
+`eqHostWait` (testing) ends the wait before you can host again.
 
 ## Buying horses
 

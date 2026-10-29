@@ -784,6 +784,32 @@
         <text name="eq_host_label_yours" text="你的比赛"/>
         <text name="eq_host_label_month" text="预订月份"/>
         <text name="eq_host_label_next" text="下一个可用月份"/>
+        <text name="eq_host_ann_out" text="淘汰"/>
+        <text name="eq_host_ann_counted" text="罚分%s：计入成绩！"/>
+        <text name="eq_host_ann_resultsIn" text="%s：月底公布结果，还有%d天"/>
+        <text name="eq_host_ann_resultsSoon" text="%s：月底公布结果"/>
+        <text name="eq_host_ann_round" text="比赛轮次：这一轮计入成绩！"/>
+        <text name="eq_host_ann_ridden" text="已骑过：这只是练习"/>
+        <text name="eq_host_ann_small" text="这条路线对你的赛事来说太小：只是练习"/>
+        <text name="eq_host_note_counts" text="%s的比赛轮次：骑到起跑线"/>
+        <text name="eq_host_note_ridden" text="练习：%s的这个项目已骑过"/>
+        <text name="eq_host_note_small" text="练习：路线对%s来说太小"/>
+        <text name="eq_host_label_now" text="本月"/>
+        <text name="eq_host_next_oneAtATime" text="一次只能举办一场赛事"/>
+        <text name="eq_host_next_interval" text="赛事之间间隔%d个月，见设置"/>
+        <text name="eq_host_monthOption" text="%s（%d个月后）"/>
+        <text name="eq_host_monthOption1" text="%s（下个月）"/>
+        <text name="eq_host_report_running" text="进行中：%s"/>
+        <text name="eq_host_report_runningLine" text="结果在月底公布，还有%d天。在那之前，你报名的马可以在任何一天骑完它们的项目。"/>
+        <text name="eq_host_report_field" text="%d匹参赛"/>
+        <text name="eq_host_report_turnout" text="到场：%d/%d匹来访马到场（人气%d）。"/>
+        <text name="eq_host_report_feedSoFar" text="来访马至今已吃掉你%d升饲料（每天%d升）。"/>
+        <text name="eq_host_report_feed" text="来访马吃掉了你%d升饲料。"/>
+        <text name="eq_host_report_money" text="收入%s（报名费%s，门票%s），举办费%s：利润%s。"/>
+        <text name="eq_host_report_mine" text="你的马%s：%s。"/>
+        <text name="eq_host_results_row" text="你的赛事"/>
+        <text name="eq_host_results_running" text="进行中"/>
+        <text name="eq_host_results_winner" text="冠军：%s"/>
         <text name="eq_host_label_setup" text="筹办费"/>
         <text name="eq_host_label_popularity" text="人气"/>
         <text name="eq_host_label_visitors" text="参赛"/>
@@ -800,6 +826,7 @@
         <text name="eq_host_visitors" text="%d / %d 匹来访马"/>
         <text name="eq_host_takingsLine" text="报名费 %s，门票 %s"/>
         <text name="eq_host_monthsAhead" text="%d个月后"/>
+        <text name="eq_host_monthNow" text="本月"/>
         <text name="eq_host_yourFarm" text="你的农场"/>
         <text name="eq_host_opened" text="你的%s已开始。在比赛标签页为你的马报名；结果在月底公布。"/>
         <text name="eq_host_book_noConfig" text="无法主办：主办规则未能加载。"/>
@@ -816,7 +843,6 @@
         <text name="eq_host_button_book" text="预订%s"/>
         <text name="eq_host_button_cancel" text="取消预订"/>
         <text name="eq_host_button_enter" text="报名"/>
-        <text name="eq_host_button_month" text="更换月份"/>
         <text name="eq_host_summary" text="%s。人气：%s。"/>
         <text name="eq_money_hosting" text="主办比赛"/>
         <text name="rl_messageTitle_eqHosting" text="主办"/>

@@ -786,6 +786,32 @@
         <text name="eq_host_label_yours" text="Dein Turnier"/>
         <text name="eq_host_label_month" text="Buchen für"/>
         <text name="eq_host_label_next" text="Nächster freier Monat"/>
+        <text name="eq_host_ann_out" text="Ausgeschieden"/>
+        <text name="eq_host_ann_counted" text="%s Strafpunkte: Es zählt!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: Ergebnisse am Monatsende, in %d Tagen"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: Ergebnisse am Monatsende"/>
+        <text name="eq_host_ann_round" text="Wettkampfrunde: Diese zählt!"/>
+        <text name="eq_host_ann_ridden" text="Schon geritten: Das ist nur Training"/>
+        <text name="eq_host_ann_small" text="Dieser Parcours ist zu klein für deine Veranstaltung: nur Training"/>
+        <text name="eq_host_note_counts" text="Wettkampfrunde für %s: Reite zur Startlinie"/>
+        <text name="eq_host_note_ridden" text="Training: Diese Prüfung von %s ist schon geritten"/>
+        <text name="eq_host_note_small" text="Training: Parcours zu klein für %s"/>
+        <text name="eq_host_label_now" text="Dieser Monat"/>
+        <text name="eq_host_next_oneAtATime" text="nur eine Veranstaltung zur Zeit"/>
+        <text name="eq_host_next_interval" text="%d Monate zwischen Veranstaltungen, siehe Einstellungen"/>
+        <text name="eq_host_monthOption" text="%s (in %d Monaten)"/>
+        <text name="eq_host_monthOption1" text="%s (nächster Monat)"/>
+        <text name="eq_host_report_running" text="Läuft gerade: %s"/>
+        <text name="eq_host_report_runningLine" text="Ergebnisse gibt es am Monatsende, in %d Tagen. Deine gemeldeten Pferde können ihre Prüfungen bis dahin an jedem Tag reiten."/>
+        <text name="eq_host_report_field" text="%d Starter"/>
+        <text name="eq_host_report_turnout" text="Teilnahme: %d von %d Gastpferden kamen (Beliebtheit %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Die Gastpferde haben bisher %d l deines Futters gefressen (%d l pro Tag)."/>
+        <text name="eq_host_report_feed" text="Die Gastpferde haben %d l deines Futters gefressen."/>
+        <text name="eq_host_report_money" text="Einnahmen %s (Nenngelder %s, Eintritt %s), Ausrichtungsgebühr %s: Gewinn %s."/>
+        <text name="eq_host_report_mine" text="Dein Pferd %s: %s."/>
+        <text name="eq_host_results_row" text="Deine Veranstaltungen"/>
+        <text name="eq_host_results_running" text="Läuft gerade"/>
+        <text name="eq_host_results_winner" text="Gewonnen von %s"/>
         <text name="eq_host_label_setup" text="Einrichtungsgebühr"/>
         <text name="eq_host_label_popularity" text="Beliebtheit"/>
         <text name="eq_host_label_visitors" text="Teilnehmer"/>
@@ -802,6 +828,7 @@
         <text name="eq_host_visitors" text="%d von %d Gastpferden"/>
         <text name="eq_host_takingsLine" text="%s Startgelder, %s Eintritt"/>
         <text name="eq_host_monthsAhead" text="in %d Monaten"/>
+        <text name="eq_host_monthNow" text="jetzt"/>
         <text name="eq_host_yourFarm" text="Dein Hof"/>
         <text name="eq_host_opened" text="Dein Turnier %s hat begonnen. Melde deine Pferde im Tab Turniere an; die Ergebnisse gibt es am Monatsende."/>
         <text name="eq_host_book_noConfig" text="Ausrichten ist nicht verfügbar: die Regeln dafür wurden nicht geladen."/>
@@ -818,7 +845,6 @@
         <text name="eq_host_button_book" text="Buchen für %s"/>
         <text name="eq_host_button_cancel" text="Buchung absagen"/>
         <text name="eq_host_button_enter" text="Anmelden"/>
-        <text name="eq_host_button_month" text="Monat wechseln"/>
         <text name="eq_host_summary" text="%s. Beliebtheit: %s."/>
         <text name="eq_money_hosting" text="Ausgerichtete Turniere"/>
         <text name="rl_messageTitle_eqHosting" text="Ausrichten"/>
