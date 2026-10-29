@@ -255,7 +255,8 @@ clip a pole in the air, that pole drops at once; any other rail over one of thes
 the jump hard or landed on it) drops the highest pole still up, and running into the jump without
 jumping knocks the top pole of the row it ran into. The fall is animated, not physics:
 one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
-horse's way, then lies on the ground with no collision. Poles go back up when a round's countdown
+horse's way, then lies on the ground with no collision. A wooden knock sounds as the pole leaves its
+cups (one of two recordings, pitch varied a little each time). Poles go back up when a round's countdown
 starts, or once a pole has been down 6 seconds with no ridden horse within 12 m of the jump, but
 never during a round: rails stay down to the finish. Single player for now.
 

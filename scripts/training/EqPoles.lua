@@ -50,6 +50,15 @@ EqPoles.RIDER_MS = 1000
 -- Jumps are listed again this often, to catch newly placed (or sold) ones.
 EqPoles.SCAN_MS = 1000
 
+-- The clonk as a pole comes off its cups (James's recordings, 2026-10-29): one of these, picked at
+-- random, at a random pitch in PITCH so no two knocks sound the same. Heard up to SOUND_RANGE metres.
+EqPoles.SOUNDS = { "sounds/poleKnock1.ogg", "sounds/poleKnock2.ogg" }
+EqPoles.PITCH = { 0.88, 1.12 }
+EqPoles.SOUND_RANGE = 60
+EqPoles.SOUND_INNER = 8
+EqPoles.SOUND_VOLUME = 1.0
+EqPoles.modDirectory = g_currentModDirectory
+
 EqPoles.UP, EqPoles.FALLING, EqPoles.DOWN = "up", "falling", "down"
 
 EqPoles.jumps = {}
@@ -214,6 +223,29 @@ local function groundIn(root, x, z)
 end
 
 
+--- The knock sound, played where the pole is: a 3D audio source on the pole, made the first time
+--- it is knocked and used again after.
+--- @param pole table
+local function playKnock(pole)
+    if createAudioSource == nil or getAudioSourceSample == nil or playSample == nil or EqPoles.modDirectory == nil then return end
+    local index = math.random(#EqPoles.SOUNDS)
+    pole.sounds = pole.sounds or {}
+    local source = pole.sounds[index]
+    if source == nil then
+        source = createAudioSource("eqPoleKnock" .. index, EqPoles.modDirectory .. EqPoles.SOUNDS[index], EqPoles.SOUND_RANGE,
+            EqPoles.SOUND_INNER, EqPoles.SOUND_VOLUME, 1)
+        if source == nil or source == 0 then return end
+        link(pole.node, source)
+        if setAudioSourceAutoPlay ~= nil then setAudioSourceAutoPlay(source, false) end
+        pole.sounds[index] = source
+    end
+    local sample = getAudioSourceSample(source)
+    if setSampleGroup ~= nil and AudioGroup ~= nil and AudioGroup.ENVIRONMENT ~= nil then setSampleGroup(sample, AudioGroup.ENVIRONMENT) end
+    if setSamplePitch ~= nil then setSamplePitch(sample, EqPoles.PITCH[1] + math.random() * (EqPoles.PITCH[2] - EqPoles.PITCH[1])) end
+    playSample(sample, 1, EqPoles.SOUND_VOLUME, 0, 0, 0)
+end
+
+
 --- Knock one pole off its cups.
 --- @param pole table
 --- @param dirX number|nil the horse's way, in the world
@@ -242,6 +274,7 @@ function EqPoles.knock(pole, dirX, dirZ, hitX)
         if exists(col.node) then EqLog.try("EqPoles.knock setRigidBodyType", setRigidBodyType, col.node, noneType()) end
     end
     pole.state, pole.t = EqPoles.FALLING, 0
+    EqLog.try("EqPoles.knock sound", playKnock, pole)
     Log:info("Poles: %s knocked down (%s end first)", getName(pole.node), lead > 0 and "+x" or "-x")
     return true
 end
