@@ -125,13 +125,13 @@ function EqHostView.panelLines(farmId, row, month)
     local booking = EqHostManager.bookings[farmId]
     local open = EqHostManager.openEvent(farmId)
     local yours
+    local booked = booking ~= nil and string.format(g_i18n:getText("eq_host_yours_booked"),
+        EqHostManager.title(booking.type, booking.rating), EqHostManager.monthText(booking.month)) or nil
     if open ~= nil then
         yours = string.format(g_i18n:getText("eq_host_yours_open"), EqCompetitionManager.eventTitle(open))
-    elseif booking ~= nil then
-        yours = string.format(g_i18n:getText("eq_host_yours_booked"), EqHostManager.title(booking.type, booking.rating),
-            EqHostManager.monthText(booking.month))
+        if booked ~= nil then yours = yours .. "; " .. booked end
     else
-        yours = g_i18n:getText("eq_host_yours_none")
+        yours = booked or g_i18n:getText("eq_host_yours_none")
     end
     -- What month it is now (James forgot and had to leave the menu to look).
     table.insert(lines, 1, { label = g_i18n:getText("eq_host_label_now"), value = EqHostManager.monthText(EqCompetitionManager.month) })
@@ -141,8 +141,8 @@ function EqHostView.panelLines(farmId, row, month)
     local now = EqCompetitionManager.month
     local choices = EqHostManager.choices(now, EqHostManager.lastMonth[farmId], EqHostManager.interval())
     local soonest = choices[1]
-    if soonest ~= nil and (booking ~= nil or open ~= nil or soonest > now + 1) then
-        local why = (booking ~= nil or open ~= nil) and g_i18n:getText("eq_host_next_oneAtATime")
+    if soonest ~= nil and (booking ~= nil or soonest > now + 1) then
+        local why = booking ~= nil and g_i18n:getText("eq_host_next_oneAtATime")
             or string.format(g_i18n:getText("eq_host_next_interval"), EqHostManager.interval())
         table.insert(lines, { label = g_i18n:getText("eq_host_label_next"),
             value = string.format("%s (%s)", EqHostManager.monthText(soonest), why) })

@@ -571,7 +571,6 @@ function EqEventsFrame:addHostButtons()
         table.insert(self.menuButtonInfo, self.cancelBookingButtonInfo)
         return
     end
-    if EqHostManager.openEvent(id) ~= nil then return end
     local months = self:hostMonths()
     local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
     if #months == 0 or row == nil then return end
@@ -631,7 +630,7 @@ function EqEventsFrame:updateHostPanel()
 
     -- The month to book, picked from a list (James, 2026-10-29), while there is nothing booked.
     local id = farmId()
-    local picking = #months > 0 and EqHostManager.bookings[id] == nil and EqHostManager.openEvent(id) == nil
+    local picking = #months > 0 and EqHostManager.bookings[id] == nil
     if self.hostMonthBox ~= nil then self.hostMonthBox:setVisible(picking) end
     if picking and self.hostMonthOption ~= nil then
         self.hostMonthOption:setTexts(EqHostView.monthOptions(months))

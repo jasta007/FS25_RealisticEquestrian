@@ -143,7 +143,8 @@ end
 function EqHostManager.bookProblem(farmId, typeName, ratingName, month, result)
     local config = EqHostVenue.config
     if config == nil or EqCompetitionManager.config == nil then return "eq_host_book_noConfig" end
-    if EqHostManager.bookings[farmId] ~= nil or EqHostManager.openEvent(farmId) ~= nil then return "eq_host_book_already" end
+    -- A running event doesn't block the next booking: the wait between events does (eqHostWait clears it).
+    if EqHostManager.bookings[farmId] ~= nil then return "eq_host_book_already" end
     local allowed = false
     for _, choice in ipairs(EqHostManager.choices(EqCompetitionManager.month, EqHostManager.lastMonth[farmId], EqHostManager.interval())) do
         if choice == month then allowed = true end

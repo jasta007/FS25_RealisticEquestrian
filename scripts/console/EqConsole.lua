@@ -827,7 +827,7 @@ function EqConsole:consoleHostWait()
     local farmId = g_currentMission:getFarmId()
     local had = EqHostManager.clearWait(farmId)
     local note = EqHostManager.bookings[farmId] ~= nil and " Your booked event still stands; cancel it to book a different one." or ""
-    if EqHostManager.openEvent(farmId) ~= nil then note = " Your event this month still runs until month end." end
+    if EqHostManager.openEvent(farmId) ~= nil then note = note .. " Your event this month still runs until month end." end
     return (had and "Hosting wait cleared: you can book any month now." or "No hosting wait to clear.") .. note
 end
 

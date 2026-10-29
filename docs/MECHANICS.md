@@ -571,7 +571,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
   shows the most an event could take (at popularity 100); its details show the expected takings
   at today's popularity, which can still change before the event.
-- **Booking:** one event at a time, from next month up to a year ahead, and at least the
+- **Booking:** one booking at a time, from next month up to a year ahead, and at least the
   **Months between hosted events** setting (3, 4, 6 or 12; default 6) after your last one.
   Booking pays the setup fee. Cancelling two or more months ahead refunds half; later, nothing.
 - When its month starts the event opens on the Upcoming tab as "Show Jumping at <your farm>".
