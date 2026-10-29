@@ -52,6 +52,8 @@ source(modDirectory .. "scripts/facilities/EqFlagLabels.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/facilities/EqJumpColours.lua")
+source(modDirectory .. "scripts/hosting/EqHosting.lua")
+source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -224,6 +226,7 @@ function EqMain.activate()
             guarded("injury hooks", function() EqInjury.install(guarded) end)
         end
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
+        guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then

@@ -36,6 +36,7 @@ dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/facilities/EqFacility.lua")
+dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -3758,6 +3759,81 @@ end)()
     check("nothing left up, nothing falls", EqPoles.crashPole(oxer, -1.5) == nil)
     check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
     check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
+end)()
+
+-- Hosting your own event: data/hosting.xml, the requirement checks, popularity and takings.
+;(function()
+    local host = EqHosting.read(TestXML.load("data/hosting.xml"))
+    check("hosting: three ratings", #host.ratings == 3 and host.ratingByName.championship ~= nil)
+    for _, rating in ipairs(host.ratings) do
+        check("hosting: rating " .. rating.name .. " uses a known tier", config.tierByName[rating.tier] ~= nil)
+    end
+    check("hosting: fields 8/16/32", host.ratingByName.novice.field == 8 and host.ratingByName.intermediate.field == 16
+        and host.ratingByName.championship.field == 32)
+    check("hosting: bleachers match by keyword", EqHosting.isSeatingXml(host, "C:/mods/FS25_BleachersPack/xml/bleachers5Row.xml"))
+    check("hosting: our bleachers match", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
+    check("hosting: a shed is not a bleacher", not EqHosting.isSeatingXml(host, "$data/placeables/sheds/shed01.xml"))
+
+    check("hosting: arena sizes", EqHosting.arenaLength(31.2) == 30 and EqHosting.arenaLength(41.2) == 40
+        and EqHosting.arenaLength(61.2) == 60 and EqHosting.arenaLength(12) == 0)
+    local arenas = EqHosting.arenasFromMarkers({
+        { letter = "A", x = 0, z = 0, arena = true, arenaId = 7 }, { letter = "C", x = 0, z = 41.2, arena = true, arenaId = 7 },
+        { letter = "X", x = 0, z = 20.6, arena = true, arenaId = 7 },
+        { letter = "A", x = 200, z = 0 }, { letter = "C", x = 200, z = 61 }, { letter = "C", x = 500, z = 0 },
+    })
+    check("hosting: our arena and a loose pair make two arenas", #arenas == 2, tostring(#arenas))
+    check("hosting: arena lengths read", arenas[1].length == 40 and arenas[2].length == 60)
+
+    local feedNeedEach = 1000
+    local venue = {
+        courses = {
+            { name = "SJ small", kind = "showJumping", jumps = 7, length = 400, seating = 0, indoor = false },
+            { name = "SJ big", kind = "showJumping", jumps = 13, length = 500, seating = 1, indoor = true },
+            { name = "XC", kind = "crossCountry", jumps = 32, length = 2600, seating = 0, indoor = false },
+        },
+        arenas = { { name = "20x40", length = 40, seating = 1, indoor = false } },
+        freePlaces = 14, feed = 14000, feedPerHorse = feedNeedEach, facilityKinds = 1,
+    }
+    local result = EqHosting.check(host, "showJumping", "championship", venue)
+    check("hosting: championship show jumping passes with 13 jumps, a bleacher and indoors (stables aside)",
+        result.picks.showJumping.name == "SJ big")
+    local failed = {}
+    for _, c in ipairs(result.checks) do if not c.ok then failed[c.id] = c end end
+    check("hosting: 30 visitors need 30 places", failed.stables ~= nil and failed.stables.need == 30 and failed.feed ~= nil)
+    check("hosting: only stables and feed fail", failed.showJumps == nil and failed.showJumpingSeating == nil)
+
+    result = EqHosting.check(host, "eventing", "intermediate", venue)
+    check("hosting: intermediate 3 Day Event passes", result.ok, (function()
+        local t = {}
+        for _, c in ipairs(result.checks) do if not c.ok then table.insert(t, c.id) end end
+        return table.concat(t, " ")
+    end)())
+    check("hosting: 3 Day Event setup fee 1.5x", result.setupFee == 30000)
+    check("hosting: visitors = field less own places", result.visitors == 14 and result.feedNeed == 14000)
+
+    result = EqHosting.check(host, "crossCountry", "championship", venue)
+    check("hosting: 2600 m falls short of 3000", not result.ok and result.checks[1].id == "xcLength" and not result.checks[1].ok)
+    result = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 0 })
+    check("hosting: no arena fails dressage", not result.ok and result.checks[1].id == "arena" and result.checks[1].have == 0)
+
+    local novice = EqHosting.check(host, "showJumping", "novice", venue)
+    local score, parts = EqHosting.popularity(host, "showJumping", novice, { facilityKinds = 1, reputation = 0 })
+    -- 13 jumps against 6 is far over the minimum: full course points; 1 bleacher + indoor over 0 needed.
+    check("hosting: popularity adds base, course, seating and facilities", score == 30 + 15 + 15 + 5, tostring(score))
+    check("hosting: popularity parts listed", parts[1].id == "base" and #parts == 4)
+    local winter = EqHosting.popularity(host, "crossCountry", novice, { winter = true })
+    local summer = EqHosting.popularity(host, "crossCountry", novice, {})
+    check("hosting: winter costs cross country", winter == summer - 10)
+    check("hosting: popularity stays in 0..100", EqHosting.popularity(host, "dressage", novice, { reputation = -1000 }) >= 0)
+    check("hosting: reputation range", EqHosting.nextReputation(host, 18, true) == 20 and EqHosting.nextReputation(host, -20, false) == -25)
+
+    local champ = host.ratingByName.championship
+    local low = EqHosting.takings(host, "showJumping", champ, 50, 2)
+    local high = EqHosting.takings(host, "showJumping", champ, 100, 2)
+    check("hosting: turnout 75% at 50", low.competitors == 23 and low.visitors == 30, tostring(low.competitors))
+    check("hosting: full turnout at 100", high.competitors == 30 and high.entries == 105000 and high.gate == 24000)
+    local three = EqHosting.takings(host, "eventing", host.ratingByName.novice, 100, 0)
+    check("hosting: 3 Day Event visitors pay double", three.entryFee == 1200 and three.total == 6 * 1200)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
