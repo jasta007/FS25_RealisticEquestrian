@@ -269,11 +269,13 @@ end
 
 
 --- Draw from the mission and, in case the world's draw is skipped under it, the construction screen.
+--- Before each one's own drawing, so the HUD and the construction menu cover the letters (James,
+--- 2026-10-29: drawn after, they sat on top of the shop's tiles).
 --- @param guarded function main.lua's error guard
 function EqFlagLabels.install(guarded)
     local function hook(class, label)
         if class == nil or class.draw == nil then return false end
-        class.draw = Utils.appendedFunction(class.draw, function()
+        class.draw = Utils.prependedFunction(class.draw, function()
             if not EqMain.isActive then return end
             guarded(label, EqFlagLabels.draw)
         end)
