@@ -28,8 +28,19 @@ EqCourseGlow.STALE_MS = 300
 EqCourseGlow.modDirectory = g_currentModDirectory
 EqCourseGlow.templates = nil
 EqCourseGlow.failed = false
-EqCourseGlow.pools = { bar = {}, pole = {} }
-EqCourseGlow.used = { bar = 0, pole = 0 }
+-- The bar in other colours (glowBar_<colour>), for path guides; gold is the plain bar.
+EqCourseGlow.COLOURS = { "green", "lime", "yellow", "orange", "red", "cyan", "white" }
+-- A path guide (James, 2026-10-29): pieces SEGMENT metres apart along the path, each GAP short
+-- of the next so they don't overlap at the bends (a dashed look).
+EqCourseGlow.SEGMENT = 1
+EqCourseGlow.GAP = 0.3
+EqCourseGlow.PATH_WIDTH = 0.25
+EqCourseGlow.PATH_THICK = 0.03
+EqCourseGlow.PATH_LIFT = 0.05
+-- At most this many pieces a frame for all the paths together.
+EqCourseGlow.MAX_PIECES = 600
+EqCourseGlow.pools = {}
+EqCourseGlow.used = {}
 EqCourseGlow.drawnAt = nil
 
 
@@ -57,6 +68,10 @@ local function ensureLoaded()
         if bar == nil or pole == nil then error("glowBar or glowPole missing") end
         EqCourseGlow.root = root
         EqCourseGlow.templates = { bar = bar, pole = pole }
+        -- Coloured bars from an older file may be missing: those paths stay gold.
+        for _, colour in ipairs(EqCourseGlow.COLOURS) do
+            EqCourseGlow.templates["bar_" .. colour] = findNode(root, "glowBar_" .. colour) or bar
+        end
     end)
     if not ok then
         EqCourseGlow.failed = true
@@ -68,12 +83,16 @@ local function ensureLoaded()
 end
 
 
---- @param kind string "bar" or "pole"
+--- @param kind string "bar", "pole" or "bar_<colour>"
 --- @return number node, shown
 local function take(kind)
-    local used = EqCourseGlow.used[kind] + 1
+    local used = (EqCourseGlow.used[kind] or 0) + 1
     EqCourseGlow.used[kind] = used
     local pool = EqCourseGlow.pools[kind]
+    if pool == nil then
+        pool = {}
+        EqCourseGlow.pools[kind] = pool
+    end
     local node = pool[used]
     if node == nil then
         node = clone(EqCourseGlow.templates[kind], false, false, false)
@@ -86,7 +105,8 @@ end
 
 
 function EqCourseGlow.begin()
-    EqCourseGlow.used.bar, EqCourseGlow.used.pole = 0, 0
+    for kind in pairs(EqCourseGlow.used) do EqCourseGlow.used[kind] = 0 end
+    EqCourseGlow.pieceCount = 0
 end
 
 
@@ -119,15 +139,15 @@ function EqCourseGlow.bar(ax, ay, az, bx, by, bz)
 end
 
 
---- A flat strip from a to b, width across and thick high: the dressage test's line on the
---- ground (EqDressageHooks.drawPath).
+--- A flat strip from a to b, width across and thick high.
+--- @param colour string|nil one of COLOURS, gold when nil
 --- @return boolean false when the glow can't be drawn
-function EqCourseGlow.strip(ax, ay, az, bx, by, bz, width, thick)
+function EqCourseGlow.strip(ax, ay, az, bx, by, bz, width, thick, colour)
     if not ensureLoaded() then return false end
     local dx, dy, dz = bx - ax, by - ay, bz - az
     local length = math.sqrt(dx * dx + dy * dy + dz * dz)
     if length < 0.01 then return true end
-    local node = take("bar")
+    local node = take(colour ~= nil and EqCourseGlow.templates["bar_" .. colour] ~= nil and "bar_" .. colour or "bar")
     setTranslation(node, ax, ay, az)
     setDirection(node, dx / length, dy / length, dz / length, 0, 1, 0)
     setScale(node, width, thick, length)
@@ -136,10 +156,73 @@ function EqCourseGlow.strip(ax, ay, az, bx, by, bz, width, thick)
 end
 
 
+--- The pieces of a path guide (pure): along points { x, y, z }, a piece every SEGMENT metres,
+--- GAP short of the next. Points further than radius from (nearX, nearZ) are left out.
+--- @param points table
+--- @param from number|nil metres along the path where the first piece starts (keeps pieces
+--- still on the ground as the path is cut shorter in front of the horse)
+--- @return table pieces { ax, ay, az, bx, by, bz }
+function EqCourseGlow.pieces(points, from, nearX, nearZ, radius)
+    local list = {}
+    local step, gap = EqCourseGlow.SEGMENT, EqCourseGlow.GAP
+    local radius2 = radius ~= nil and radius * radius or nil
+    -- Walk the line, cutting it at whole steps from its start.
+    local s = 0
+    local nextCut = from ~= nil and (math.ceil(from / step - 1e-9) * step - from) or 0
+    local cut = nil
+    local function at(a, b, t)
+        return a.x + (b.x - a.x) * t, (a.y or 0) + ((b.y or 0) - (a.y or 0)) * t, a.z + (b.z - a.z) * t
+    end
+    for i = 2, #points do
+        local a, b = points[i - 1], points[i]
+        local d = math.sqrt((b.x - a.x) ^ 2 + (b.z - a.z) ^ 2)
+        while d > 1e-6 and nextCut <= s + d do
+            local x, y, z = at(a, b, (nextCut - s) / d)
+            if cut ~= nil and nextCut - cut.s >= step - 1e-6 then
+                -- The piece from the last cut, ending GAP short of this one.
+                local f = (step - gap) / step
+                local bx, by, bz = cut.x + (x - cut.x) * f, cut.y + (y - cut.y) * f, cut.z + (z - cut.z) * f
+                if radius2 == nil or (bx - nearX) ^ 2 + (bz - nearZ) ^ 2 <= radius2 then
+                    table.insert(list, { cut.x, cut.y, cut.z, bx, by, bz })
+                end
+            end
+            cut = { x = x, y = y, z = z, s = nextCut }
+            nextCut = nextCut + step
+        end
+        s = s + d
+    end
+    -- What is left past the last cut, if it is more than a gap.
+    local last = points[#points]
+    if cut ~= nil and last ~= nil and s - cut.s > gap then
+        local f = (s - cut.s - gap) / (s - cut.s)
+        local ly = last.y or 0
+        table.insert(list, { cut.x, cut.y, cut.z, cut.x + (last.x - cut.x) * f, cut.y + (ly - cut.y) * f, cut.z + (last.z - cut.z) * f })
+    end
+    return list
+end
+
+
+--- A path guide on the ground: flat strips with gaps between them (pieces).
+--- @param points table { x, y, z } on the ground
+--- @param colour string|nil one of COLOURS, gold when nil
+--- @param from number|nil see pieces
+--- @return boolean false when the glow can't be drawn
+function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius)
+    if not ensureLoaded() then return false end
+    local lift = EqCourseGlow.PATH_LIFT
+    for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius)) do
+        if (EqCourseGlow.pieceCount or 0) >= EqCourseGlow.MAX_PIECES then break end
+        EqCourseGlow.pieceCount = (EqCourseGlow.pieceCount or 0) + 1
+        EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, colour)
+    end
+    return true
+end
+
+
 --- Hide what this frame did not use.
 function EqCourseGlow.finish()
     for kind, pool in pairs(EqCourseGlow.pools) do
-        for i = EqCourseGlow.used[kind] + 1, #pool do setVisibility(pool[i], false) end
+        for i = (EqCourseGlow.used[kind] or 0) + 1, #pool do setVisibility(pool[i], false) end
     end
 end
 
@@ -162,6 +245,6 @@ function EqCourseGlow.delete()
         for _, node in ipairs(pool) do EqLog.try("EqCourseGlow.delete", delete, node) end
     end
     if EqCourseGlow.root ~= nil then EqLog.try("EqCourseGlow.delete", delete, EqCourseGlow.root) end
-    EqCourseGlow.pools, EqCourseGlow.used = { bar = {}, pole = {} }, { bar = 0, pole = 0 }
+    EqCourseGlow.pools, EqCourseGlow.used = {}, {}
     EqCourseGlow.templates, EqCourseGlow.root, EqCourseGlow.failed, EqCourseGlow.drawnAt = nil, nil, false, nil
 end

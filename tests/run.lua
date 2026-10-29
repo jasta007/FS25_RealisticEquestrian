@@ -18,6 +18,7 @@ dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
+dofile("scripts/training/EqCourseGlow.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
@@ -3682,6 +3683,31 @@ end)()
         return legs.routine.kind == "markers" and legs.routine.path == nil
     end)())
 end)()
+
+-- Path guides (EqCourseGlow.pieces): pieces a step apart with gaps, held still as the path is cut.
+;(function()
+    local line = { { x = 0, y = 0, z = 0 }, { x = 3.2, y = 0, z = 0 }, { x = 3.2, y = 0, z = 5 } }
+    local pieces = EqCourseGlow.pieces(line)
+    local step, gap = EqCourseGlow.SEGMENT, EqCourseGlow.GAP
+    local spaced = #pieces == 8
+    for i, p in ipairs(pieces) do
+        local length = math.sqrt((p[4] - p[1]) ^ 2 + (p[6] - p[3]) ^ 2)
+        if length > step - gap + 1e-6 then spaced = false end
+        if i > 1 then
+            local q = pieces[i - 1]
+            if math.sqrt((p[1] - q[4]) ^ 2 + (p[3] - q[6]) ^ 2) < gap * 0.5 then spaced = false end
+        end
+    end
+    check("a path guide is pieces with gaps between, never end to end", spaced, tostring(#pieces))
+    -- Cut 0.4 m in: the pieces still start at whole metres along the line.
+    local cut = EqCourseGlow.pieces({ { x = 0.4, y = 0, z = 0 }, { x = 3.2, y = 0, z = 0 } }, 0.4)
+    check("a path guide's pieces stay put as the line ahead is cut shorter", #cut >= 2 and math.abs(cut[1][1] - 1) < 1e-6
+        and math.abs(cut[2][1] - 2) < 1e-6)
+    check("only the pieces near the horse are drawn", #EqCourseGlow.pieces(line, nil, 0, 0, 2) == 2)
+    check("the dressage line goes green to red as the horse wanders off it", EqDressagePath.colourFor(0.2) == "green"
+        and EqDressagePath.colourFor(1.3) == "yellow" and EqDressagePath.colourFor(5) == "red")
+end)()
+
 
 -- Dressage tests of figures (EqDressagePath) in the shop's three arenas.
 ;(function()

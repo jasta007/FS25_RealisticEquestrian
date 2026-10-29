@@ -199,10 +199,11 @@ function EqDressageHooks.courseFor(vehicle, spec)
 end
 
 
--- The test's line on the ground (EqDressagePath): a thin gold strip, lifted off the ground.
-EqDressageHooks.STRIP_WIDTH = 0.25
-EqDressageHooks.STRIP_THICK = 0.03
-EqDressageHooks.STRIP_LIFT = 0.03
+-- The test's line on the ground (EqDressagePath) is a path guide (EqCourseGlow.path): gold until
+-- the test begins, then green to red by how far off it the horse is, eased over SHADE_MS so it
+-- doesn't flicker.
+EqDressageHooks.SHADE_MS = 400
+EqDressageHooks.shownDev = nil
 -- A gold pole stands where a change or halt is coming, and where the test begins.
 EqDressageHooks.POLE_HEIGHT = 1.2
 -- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
@@ -232,15 +233,25 @@ function EqDressageHooks.drawPath(vehicle)
     local pts, frame = run.test.pts, run.frame
     local first = run.started and run.i or 1
     local reach = pts[first].s + run.look
-    local lift, width, thick = EqDressageHooks.STRIP_LIFT, EqDressageHooks.STRIP_WIDTH, EqDressageHooks.STRIP_THICK
-    local i = first
-    while i < #pts and pts[i].s < reach do
-        local j = math.min(i + 2, #pts)
-        local a, b = pts[i], pts[j]
-        local ay, by = pointY(frame, a), pointY(frame, b)
-        if not EqCourseGlow.strip(a.wx, ay + lift, a.wz, b.wx, by + lift, b.wz, width, thick) then return end
-        i = j
+    local line = {}
+    for i = first, #pts do
+        local p = pts[i]
+        local y = pointY(frame, p)
+        table.insert(line, { x = p.wx, y = y, z = p.wz })
+        if p.s >= reach then break end
     end
+    local colour = nil
+    if run.started then
+        local dt = EqDressageHooks.drawnAt ~= nil and math.max(0, now - EqDressageHooks.drawnAt) or 0
+        local dev = run.dev or 0
+        local shown = EqDressageHooks.shownDev or dev
+        EqDressageHooks.shownDev = shown + (dev - shown) * math.min(1, dt / EqDressageHooks.SHADE_MS)
+        colour = EqDressagePath.colourFor(EqDressageHooks.shownDev)
+    else
+        EqDressageHooks.shownDev = nil
+    end
+    EqDressageHooks.drawnAt = now
+    if not EqCourseGlow.path(line, colour, pts[first].s) then return end
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)

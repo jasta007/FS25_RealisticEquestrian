@@ -1048,6 +1048,21 @@ function EqDressagePath.percent(run, all)
 end
 
 
+-- The line's colour by how far off it the horse is (James, 2026-10-29: green to yellow to red),
+-- metres: { up to, colour }; past the last, red.
+EqDressagePath.COLOUR_BANDS = { { 0.5, "green" }, { 1, "lime" }, { 1.6, "yellow" }, { 2.4, "orange" } }
+
+
+--- @param dev number|nil metres off the line
+--- @return string colour one of EqCourseGlow.COLOURS
+function EqDressagePath.colourFor(dev)
+    for _, band in ipairs(EqDressagePath.COLOUR_BANDS) do
+        if (dev or 0) <= band[1] then return band[2] end
+    end
+    return "red"
+end
+
+
 --- @param percent number|nil
 --- @return number share of the test's training payoff
 function EqDressagePath.payoffShare(percent)

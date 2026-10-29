@@ -167,7 +167,10 @@ the courses quiet until it ends.
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
 rail, not of any letter) shows "Move to A to begin a Dressage Routine" (no time limit) and a gold
 line on the ground from just outside A. The test is a chain of figures drawn on the ground as a
-gold line, and it is scored on how closely the horse follows it:
+line of short glowing pieces (gold until it begins, then green, lime, yellow, orange or red as the
+horse is up to 0.5, 1, 1.6, 2.4 m or further off it), and it is scored on how closely the horse follows it.
+Every path guide (a round's way to the next fence, course recording and editing) uses the same
+pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends:
 
 - It opens down the centre line from A with a halt at X, then proceeds to track left or right at
   C. Then come the figures (7 in training), and it ends down the centre line from A to a halt at X.
