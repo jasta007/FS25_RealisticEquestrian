@@ -3666,6 +3666,14 @@ end)()
     check("not while a rider is at the jump", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, true))
     check("a pole up or falling is left alone", not EqPoles.mayReset({ state = EqPoles.FALLING, downAt = 0 }, 99999, false, false))
     check("a clock gone back (new game) puts it up", EqPoles.mayReset(down, 500, false, false))
+    local oxer = { { state = EqPoles.UP, home = { 0, 0.4, -0.55 } }, { state = EqPoles.UP, home = { 0, 0.9, -0.55 } },
+        { state = EqPoles.UP, home = { 0, 0.95, 0.55 } } }
+    check("running into an oxer's front knocks its front top pole", EqPoles.crashPole(oxer, -1.5) == oxer[2])
+    check("from behind, its back pole", EqPoles.crashPole(oxer, 1.5) == oxer[3])
+    oxer[2].state = EqPoles.DOWN
+    check("with the top pole down, the one under it", EqPoles.crashPole(oxer, -1.5) == oxer[1])
+    oxer[1].state, oxer[3].state = EqPoles.DOWN, EqPoles.DOWN
+    check("nothing left up, nothing falls", EqPoles.crashPole(oxer, -1.5) == nil)
     check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
     check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
 end)()

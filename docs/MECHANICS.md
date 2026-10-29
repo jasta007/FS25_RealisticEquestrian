@@ -252,7 +252,8 @@ can start.
 The shop's own show jumps (Show Jump: Upright, 1.00 m, and Show Jump: Oxer, 0.95 m front and 1.00 m
 back, 1.1 m spread) have poles that fall. The stands and wings never move. When the horse's legs
 clip a pole in the air, that pole drops at once; any other rail over one of these jumps (it hit
-the jump hard or landed on it) drops the highest pole still up. The fall is animated, not physics:
+the jump hard or landed on it) drops the highest pole still up, and running into the jump without
+jumping knocks the top pole of the row it ran into. The fall is animated, not physics:
 one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
 horse's way, then lies on the ground with no collision. Poles go back up when a round's countdown
 starts, or once a pole has been down 6 seconds with no ridden horse within 12 m of the jump, but

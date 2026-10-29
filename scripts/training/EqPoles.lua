@@ -38,6 +38,10 @@ EqPoles.PUSH = 1.1
 EqPoles.PUSH_DRAG = 2.2
 -- A rail with no pole clipped drops a pole of the nearest of our jumps this near the horse (m).
 EqPoles.NEAR = 4.5
+-- A horse running into one of our jumps (James, 2026-10-29: "it probably should" fall) knocks a
+-- pole off when a point this far in front of it is within CRASH_REACH of the jump's poles.
+EqPoles.CRASH_AHEAD = 1.0
+EqPoles.CRASH_REACH = 1.5
 -- A dropped pole stays down at least this long, then goes up once no ridden horse is this near.
 EqPoles.RESET_MS = 6000
 EqPoles.RESET_CLEAR = 12
@@ -316,6 +320,48 @@ function EqPoles.onClip(node, vehicle, hitX, hitZ)
     local localX = nil
     if hitX ~= nil and hitZ ~= nil then localX = worldToLocal(pole.root, hitX, 0, hitZ) end
     return EqPoles.knock(pole, dx, dz, localX)
+end
+
+
+--- Which pole a horse running into a jump knocks off: the highest still up in the row of poles
+--- nearest it (an oxer's front row from the front). Pure, for the tests.
+--- @param poles table { state, home = { x, y, z } }
+--- @param lz number the horse's front, along the jump's z
+--- @return table|nil pole
+function EqPoles.crashPole(poles, lz)
+    local row = nil
+    for _, pole in ipairs(poles) do
+        if pole.state == EqPoles.UP and (row == nil or math.abs(pole.home[3] - lz) < math.abs(row - lz)) then row = pole.home[3] end
+    end
+    local best = nil
+    for _, pole in ipairs(poles) do
+        if pole.state == EqPoles.UP and pole.home[3] == row and (best == nil or pole.home[2] > best.home[2]) then best = pole end
+    end
+    return best
+end
+
+
+--- The horse ran into something: if it is one of our jumps, a pole falls.
+--- @param vehicle table
+--- @return boolean true when a pole fell
+function EqPoles.onCrash(vehicle)
+    if EqPoles.scannedAt == nil then EqPoles.scan() end
+    local x, _, z = localToWorld(vehicle.rootNode, 0, 0, EqPoles.CRASH_AHEAD)
+    local dx, dz = heading(vehicle)
+    for _, jump in ipairs(EqPoles.jumps) do
+        local first = jump.poles[1]
+        if first ~= nil and exists(first.root) then
+            local lx, _, lz = worldToLocal(first.root, x, 0, z)
+            if math.abs(lx) <= EqPoles.LENGTH / 2 then
+                local pole = EqPoles.crashPole(jump.poles, lz)
+                if pole ~= nil and math.abs(pole.home[3] - lz) <= EqPoles.CRASH_REACH then
+                    Log:info("Poles: ran into %s", getName(pole.node))
+                    return EqPoles.knock(pole, dx, dz, nil)
+                end
+            end
+        end
+    end
+    return false
 end
 
 

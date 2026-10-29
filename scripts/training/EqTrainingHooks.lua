@@ -648,6 +648,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
         -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
         EqCourseHooks.onCrash()
+        -- Running into one of our show jumps knocks a pole off it (EqPoles).
+        EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle)
         local knock = EqTraining.knockCombo(sheet)
         if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
         popKnock(knock)
