@@ -37,6 +37,7 @@ dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
+dofile("scripts/hosting/EqHostManager.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -3834,6 +3835,30 @@ end)()
     check("hosting: full turnout at 100", high.competitors == 30 and high.entries == 105000 and high.gate == 24000)
     local three = EqHosting.takings(host, "eventing", host.ratingByName.novice, 100, 0)
     check("hosting: 3 Day Event visitors pay double", three.entryFee == 1200 and three.total == 6 * 1200)
+
+    -- Booking months: from next month, at least the interval after the last event, up to a year ahead.
+    local months = EqHostManager.choices(10, nil, 6)
+    check("host booking: first choice is next month", months[1] == 11 and months[#months] == 22 and #months == 12)
+    months = EqHostManager.choices(10, 8, 6)
+    check("host booking: waits the interval after the last event", months[1] == 14 and months[#months] == 22)
+    check("host booking: nothing within a year of a far booking", #EqHostManager.choices(10, 20, 12) == 0)
+    check("host booking: refund half two months ahead", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 10) == 10000)
+    check("host booking: no refund the month before", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 11) == 0)
+
+    EqHostManager.reset()
+    EqHostManager.bookings[3] = { type = "eventing", rating = "championship", month = 15, setupFee = 120000, previousLast = 4 }
+    EqHostManager.lastMonth[3] = 15
+    EqHostManager.reputation[3] = -7.5
+    EqHostManager.lastMonth[5] = 2
+    local store = memoryXML()
+    EqHostManager.saveToXMLFile(store, "hosting")
+    EqHostManager.loadFromXMLFile(store, "hosting")
+    local booking = EqHostManager.bookings[3]
+    check("host booking: survives a save", booking ~= nil and booking.type == "eventing" and booking.rating == "championship"
+        and booking.month == 15 and booking.setupFee == 120000 and booking.previousLast == 4)
+    check("host booking: last month and reputation saved", EqHostManager.lastMonth[3] == 15 and EqHostManager.reputation[3] == -7.5
+        and EqHostManager.lastMonth[5] == 2 and EqHostManager.bookings[5] == nil)
+    EqHostManager.reset()
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

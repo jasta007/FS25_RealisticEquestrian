@@ -266,7 +266,7 @@ function EqConsole:consoleEvents()
         print(string.format("%s #%-4d %-7s %-44s %-8s age %-7s fee %7s  prize %9s  rating %d-%d  entries %d",
             eligible > 0 and string.format("[%d can enter]", eligible) or "              ", event.id,
             event.kind == EqCompetition.KIND_MONTH and "monthly" or "round",
-            EqCompetitionManager.eventName(event.discipline, event.tier, event.venue) .. " (" .. EqCompetitionManager.tierTitle(event.tier) .. ")",
+            EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil) .. " (" .. EqCompetitionManager.tierTitle(event.tier) .. ")",
             EqCompetitionManager.conditionsText(event.going),
             ages, g_i18n:formatMoney(event.fee, 0, true, true), g_i18n:formatMoney(event.prize, 0, true, true),
             tier.minRating, tier.maxRating, #event.entries))
@@ -396,7 +396,7 @@ function EqConsole:consoleResults()
                 local outcome = placing.status ~= nil and string.upper(placing.status)
                     or string.format("%d of %d", placing.place, summary.field)
                 print(string.format("day %d  %s (%s) #%d  '%s' %s  %s", summary.day,
-                    EqCompetitionManager.eventName(summary.discipline, summary.tier, summary.venue), EqCompetitionManager.tierTitle(summary.tier),
+                    EqCompetitionManager.eventName(summary.discipline, summary.tier, summary.venue, summary.hosted), EqCompetitionManager.tierTitle(summary.tier),
                     summary.eventId, placing.name, outcome, g_i18n:formatMoney(placing.prize, 0, true, true)))
             end
         end

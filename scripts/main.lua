@@ -54,6 +54,7 @@ source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/facilities/EqJumpColours.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
+source(modDirectory .. "scripts/hosting/EqHostManager.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -73,6 +74,7 @@ source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
+source(modDirectory .. "scripts/gui/EqHostView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
@@ -97,6 +99,7 @@ EqMain.MONEY_STATS = {
     { name = "eqVetBills", title = "eq_money_vetBills" },
     { name = "eqTransport", title = "eq_money_transport" },
     { name = "eqStaffWages", title = "eq_money_staffWages" },
+    { name = "eqHosting", title = "eq_money_hosting" },
 }
 for _, stat in ipairs(EqMain.MONEY_STATS) do
     if FinanceStats.statNameToIndex[stat.name] == nil then
@@ -218,6 +221,8 @@ function EqMain.activate()
             MoneyType.EQ_TRANSPORT = MoneyType.register("eqTransport", "eq_money_transport")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_STAFF_WAGES = MoneyType.register("eqStaffWages", "eq_money_staffWages")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_HOSTING = MoneyType.register("eqHosting", "eq_money_hosting")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
             EqInjury.loadConfig(modDirectory)
@@ -345,6 +350,7 @@ local function onMissionDelete()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
+        EqHostManager.reset()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

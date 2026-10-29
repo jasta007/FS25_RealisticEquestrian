@@ -54,6 +54,8 @@ EqCompetitionManager.TRANSPORT_EXTRA_HORSE_SHARE = 0.25
 -- the dealer by the player and must be delivered before the event runs.
 EqCompetitionManager.TRANSPORT_AUTO = "auto"
 EqCompetitionManager.TRANSPORT_MANUAL = "manual"
+-- Your own event (EqHostManager): the horse stays at home and is ridden there.
+EqCompetitionManager.TRANSPORT_HOME = "home"
 
 -- A Training Event under the monthly cadence counts as this share of a month's work.
 EqCompetitionManager.MONTHLY_BOOST_MONTHS = 0.25
@@ -67,7 +69,7 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
-        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1 }
+        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6 }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -197,6 +199,47 @@ function EqCompetitionManager.openRound(kind)
 end
 
 
+--- Open a farm's own event for the month (EqHostManager): one more monthly event, held at the
+--- farm, with the rating's field and the tier's prizes. Only the farm's own horses enter it.
+--- @param farmId number
+--- @param typeName string an EqHosting type, the discipline it runs as
+--- @param ratingName string a data/hosting.xml rating
+--- @param venue string the farm's name
+--- @return table|nil event
+function EqCompetitionManager.openHosted(farmId, typeName, ratingName, venue)
+    local config = EqCompetitionManager.config
+    local hostConfig = EqHostVenue ~= nil and EqHostVenue.config or nil
+    local rating = hostConfig ~= nil and hostConfig.ratingByName[ratingName] or nil
+    local tier = rating ~= nil and config ~= nil and config.tierByName[rating.tier] or nil
+    local discipline = config ~= nil and config.disciplineByName[typeName] or nil
+    if tier == nil or discipline == nil then
+        Log:warning("EqCompetition: cannot open the hosted %s %s", tostring(typeName), tostring(ratingName))
+        return nil
+    end
+    local going = nil
+    if discipline.outdoor and #config.goings > 0 then
+        local rng = roundRng("hosted " .. farmId)
+        local total = 0
+        for _, entry in ipairs(config.goings) do total = total + entry.chance end
+        local roll = rng:uniform(0, total)
+        for _, entry in ipairs(config.goings) do
+            roll = roll - entry.chance
+            if going == nil and roll <= 0 then going = entry.name end
+        end
+        going = going or config.goings[#config.goings].name
+    end
+    local event = { discipline = typeName, tier = tier.name, going = going, fee = 0, prize = tier.prize,
+        kind = EqCompetition.KIND_MONTH, venue = venue, region = EqCompetitionManager.homeRegion(), field = rating.field,
+        hosted = { farmId = farmId, rating = ratingName }, entries = {} }
+    EqCompetition.scaleMoney(event, 1, EqSettings.multiplier(EqCompetitionManager.settings, "prizeScale"))
+    event.id = EqCompetitionManager.nextEventId
+    EqCompetitionManager.nextEventId = EqCompetitionManager.nextEventId + 1
+    EqCompetitionManager.events[event.id] = event
+    Log:info("EqCompetition: farm %d's %s %s is open (event %d)", farmId, ratingName, typeName, event.id)
+    return event
+end
+
+
 --- Every horse on every farm, by identifier.
 --- @return table id -> { animal, farmId }
 local function indexHorses()
@@ -265,8 +308,13 @@ end
 --- @param discipline string
 --- @param tier string
 --- @param venue string|nil the event's venue; nil (a save from before venues) uses the first one
+--- @param hosted boolean|nil true for an event a farm hosts: "Show Jumping at <farm>"
 --- @return string name
-function EqCompetitionManager.eventName(discipline, tier, venue)
+function EqCompetitionManager.eventName(discipline, tier, venue, hosted)
+    if hosted then
+        return string.format(g_i18n:getText("eq_host_eventName"), g_i18n:getText("eq_host_type_" .. discipline),
+            venue or "")
+    end
     local key = string.format("eq_event_%s_%s", discipline, tier)
     if g_i18n.hasText ~= nil and not g_i18n:hasText(key) then
         return string.format("%s %s", EqCompetitionManager.tierTitle(tier), EqCompetitionManager.disciplineTitle(discipline))
@@ -295,7 +343,7 @@ end
 --- @param event table
 --- @return string title such as "1.20m Jumping (Intermediate)", without the event number players never need
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue),
+    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil),
         EqCompetitionManager.tierTitle(event.tier))
 end
 
@@ -558,6 +606,7 @@ end
 local function keepResult(record, summary, placing, lines)
     if record == nil then return end
     record:addResult({ day = summary.day, discipline = summary.discipline, tier = summary.tier, venue = summary.venue,
+        hosted = summary.hosted,
         place = placing.place, field = summary.field, prize = placing.prize, status = placing.status, lines = lines })
 end
 
@@ -574,7 +623,7 @@ function EqCompetitionManager.resolve(event, horses, month)
     local discipline = config.disciplineByName[event.discipline]
     local riskRng = EqRandom.new("risk " .. event.id)
     local summary = { eventId = event.id, discipline = event.discipline, tier = event.tier, going = event.going,
-        venue = event.venue, region = event.region, field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
+        venue = event.venue, region = event.region, hosted = event.hosted ~= nil, field = 0, day = g_currentMission.environment.currentMonotonicDay or 0, placings = {} }
     local starters, byKey = {}, {}
     local title = EqCompetitionManager.eventTitle(event)
 
@@ -641,7 +690,7 @@ function EqCompetitionManager.resolve(event, horses, month)
     -- in the field but not in the placings.
     local results = {}
     if #starters > 0 then
-        results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), tier.field - #eliminated)
+        results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), (event.field or tier.field) - #eliminated)
     end
     summary.field = #results + #eliminated
     local podium = EqStory.podiumLine(EqCompetitionManager.podiumNames(results, byKey, event.discipline,
@@ -922,6 +971,8 @@ function EqCompetitionManager.onPeriodChanged()
     -- The ended month's peak form has had its events; a new month's form starts from nothing.
     EqCompetitionManager.month = ended + 1
     EqCompetitionManager.monthChangedDay = g_currentMission.environment.currentMonotonicDay or 0
+    -- Hosted events booked for the new month open now (after the month's draw, so they are extra).
+    if EqHostManager ~= nil then EqHostManager.onMonthStarted(EqCompetitionManager.month) end
 end
 
 
@@ -1077,6 +1128,8 @@ end
 --- @return number auto Auto Transport (long-haul and quarantine included for a trip abroad)
 --- @return number manual Manual Transport (nothing locally; the dealer's quarantine yard abroad)
 function EqCompetitionManager.transportCosts(animal, event, farmId)
+    -- Your own event is at home: no lorry, no quarantine.
+    if event ~= nil and event.hosted ~= nil then return 0, 0 end
     local haul = EqCompetitionManager.transportCost(animal)
     local config = EqCompetitionManager.config
     local distance = config ~= nil and config.distances ~= nil and config.distances[EqCompetitionManager.eventDistance(event)] or nil
@@ -1145,6 +1198,12 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
 
     local record = EqRegistry.getOrCreate(animal)
     if record == nil then return false, g_i18n:getText("eq_enter_noEvent") end
+    -- Your own event is for your horses only, who stay at home: no fee, no transport.
+    if event.hosted ~= nil then
+        if event.hosted.farmId ~= farmId then return false, g_i18n:getText("eq_host_enter_notYours") end
+        manual = false
+        transport = EqCompetitionManager.TRANSPORT_HOME
+    end
     local left = EqCompetitionManager.entriesLeft(farmId)
     if left ~= nil and left <= 0 then
         return false, string.format(g_i18n:getText("eq_enter_farmLimit"), EqCompetitionManager.settings.entriesPerMonth)
@@ -1187,19 +1246,24 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
         return false, string.format(g_i18n:getText("eq_enter_noMoney"), money(total), money(event.fee), money(cost))
     end
 
-    g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
+    if event.fee > 0 then
+        g_currentMission:addMoney(-event.fee, farmId, MoneyType.EQ_ENTRY_FEES or MoneyType.OTHER, true, true)
+    end
     if cost > 0 then
         g_currentMission:addMoney(-cost, farmId, MoneyType.EQ_TRANSPORT or MoneyType.OTHER, true, true)
     end
     EqCompetitionManager.farmEntries[farmId] = (EqCompetitionManager.farmEntries[farmId] or 0) + 1
     local name = animal.getName ~= nil and animal:getName() or record.id
     table.insert(event.entries, { horseId = record.id, farmId = farmId, name = name,
-        transport = manual and EqCompetitionManager.TRANSPORT_MANUAL or EqCompetitionManager.TRANSPORT_AUTO,
+        transport = transport == EqCompetitionManager.TRANSPORT_HOME and transport
+            or (manual and EqCompetitionManager.TRANSPORT_MANUAL or EqCompetitionManager.TRANSPORT_AUTO),
         delivered = not manual })
     if not manual then EqCompetitionManager.refreshAway({ animal }) end
 
     local text
-    if manual then
+    if transport == EqCompetitionManager.TRANSPORT_HOME then
+        text = string.format(g_i18n:getText("eq_host_enter_done"), name, EqCompetitionManager.eventTitle(event), rating)
+    elseif manual then
         text = string.format(g_i18n:getText("eq_enter_doneManual"), name, EqCompetitionManager.eventTitle(event), rating,
             g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_deadline_month" or "eq_ui_deadline_round"))
     else
@@ -1237,6 +1301,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. ".settings#eventsMax", EqCompetitionManager.settings.eventsMax)
     xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
     xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
+    xmlFile:setInt(key .. ".settings#hostInterval", EqCompetitionManager.settings.hostInterval)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
@@ -1265,6 +1330,11 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         if event.region ~= nil then xmlFile:setString(eventKey .. "#region", event.region) end
         xmlFile:setFloat(eventKey .. "#fee", event.fee)
         xmlFile:setFloat(eventKey .. "#prize", event.prize)
+        if event.field ~= nil then xmlFile:setInt(eventKey .. "#field", event.field) end
+        if event.hosted ~= nil then
+            xmlFile:setInt(eventKey .. ".hosted#farmId", event.hosted.farmId)
+            xmlFile:setString(eventKey .. ".hosted#rating", event.hosted.rating)
+        end
         for j, entry in ipairs(event.entries) do
             local entryKey = string.format("%s.entry(%d)", eventKey, j - 1)
             xmlFile:setString(entryKey .. "#horseId", entry.horseId)
@@ -1283,6 +1353,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         if summary.going ~= nil then xmlFile:setString(resultKey .. "#going", summary.going) end
         if summary.venue ~= nil then xmlFile:setString(resultKey .. "#venue", summary.venue) end
         if summary.region ~= nil then xmlFile:setString(resultKey .. "#region", summary.region) end
+        if summary.hosted then xmlFile:setBool(resultKey .. "#hosted", true) end
         xmlFile:setInt(resultKey .. "#field", summary.field)
         xmlFile:setInt(resultKey .. "#day", summary.day)
         for j, placing in ipairs(summary.placings) do
@@ -1317,6 +1388,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.eventsMax = xmlFile:getInt(key .. ".settings#eventsMax", settings.eventsMax)
     settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
     settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
+    settings.hostInterval = xmlFile:getInt(key .. ".settings#hostInterval", settings.hostInterval)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
@@ -1344,8 +1416,13 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             region = xmlFile:getString(eventKey .. "#region"),
             fee = xmlFile:getFloat(eventKey .. "#fee", 0),
             prize = xmlFile:getFloat(eventKey .. "#prize", 0),
+            field = xmlFile:getInt(eventKey .. "#field"),
             entries = {},
         }
+        if xmlFile:hasProperty(eventKey .. ".hosted") then
+            event.hosted = { farmId = xmlFile:getInt(eventKey .. ".hosted#farmId", 1),
+                rating = xmlFile:getString(eventKey .. ".hosted#rating", "") }
+        end
         local j = 0
         while true do
             local entryKey = string.format("%s.entry(%d)", eventKey, j)
@@ -1377,6 +1454,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
             going = xmlFile:getString(resultKey .. "#going"),
             venue = xmlFile:getString(resultKey .. "#venue"),
             region = xmlFile:getString(resultKey .. "#region"),
+            hosted = xmlFile:getBool(resultKey .. "#hosted", false),
             field = xmlFile:getInt(resultKey .. "#field", 0),
             day = xmlFile:getInt(resultKey .. "#day", 0),
             placings = {},

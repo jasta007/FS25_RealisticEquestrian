@@ -749,5 +749,78 @@
         <text name="eq_story_total" text="总计：罚%s分"/>
         <text name="eq_staff_button_decline" text="拒绝"/>
         <text name="eq_staff_declined" text="%s不会再来了。接下来几小时内可能会有新人出现。"/>
+        <text name="eq_ui_tab_host" text="主办"/>
+        <text name="eq_host_eventName" text="%s（%s）"/>
+        <text name="eq_host_type_dressage" text="盛装舞步"/>
+        <text name="eq_host_type_showJumping" text="场地障碍"/>
+        <text name="eq_host_type_crossCountry" text="越野"/>
+        <text name="eq_host_type_eventing" text="三项赛"/>
+        <text name="eq_host_rating_novice" text="新手级"/>
+        <text name="eq_host_rating_intermediate" text="中级"/>
+        <text name="eq_host_rating_championship" text="锦标赛"/>
+        <text name="eq_host_col_event" text="可主办的比赛"/>
+        <text name="eq_host_col_ready" text="要求"/>
+        <text name="eq_host_col_popularity" text="人气"/>
+        <text name="eq_host_col_setup" text="筹办费"/>
+        <text name="eq_host_col_takings" text="最高收入"/>
+        <text name="eq_host_col_check" text="要求"/>
+        <text name="eq_host_col_have" text="现有"/>
+        <text name="eq_host_col_need" text="需要"/>
+        <text name="eq_host_check_arena" text="盛装舞步场地"/>
+        <text name="eq_host_check_dressageSeating" text="场地看台"/>
+        <text name="eq_host_check_showJumps" text="障碍"/>
+        <text name="eq_host_check_showJumpingSeating" text="赛道看台"/>
+        <text name="eq_host_check_xcLength" text="越野长度"/>
+        <text name="eq_host_check_xcJumps" text="越野障碍"/>
+        <text name="eq_host_check_stables" text="空闲马位"/>
+        <text name="eq_host_check_feed" text="马饲料"/>
+        <text name="eq_host_part_base" text="基础"/>
+        <text name="eq_host_part_course" text="赛道"/>
+        <text name="eq_host_part_seating" text="看台"/>
+        <text name="eq_host_part_facilities" text="设施"/>
+        <text name="eq_host_part_reputation" text="声誉"/>
+        <text name="eq_host_part_star" text="明星马"/>
+        <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_label_yours" text="你的比赛"/>
+        <text name="eq_host_label_month" text="预订月份"/>
+        <text name="eq_host_label_next" text="下一个可用月份"/>
+        <text name="eq_host_label_setup" text="筹办费"/>
+        <text name="eq_host_label_popularity" text="人气"/>
+        <text name="eq_host_label_visitors" text="参赛"/>
+        <text name="eq_host_label_takings" text="预计收入"/>
+        <text name="eq_host_label_reputation" text="声誉"/>
+        <text name="eq_host_yours_open" text="%s（本月进行中）"/>
+        <text name="eq_host_yours_booked" text="%s（%s）"/>
+        <text name="eq_host_yours_none" text="未预订"/>
+        <text name="eq_host_ready" text="已就绪"/>
+        <text name="eq_host_missing" text="缺少%d项"/>
+        <text name="eq_host_none" text="无"/>
+        <text name="eq_host_metres" text="%d 米"/>
+        <text name="eq_host_litres" text="%d 升"/>
+        <text name="eq_host_visitors" text="%d / %d 匹来访马"/>
+        <text name="eq_host_takingsLine" text="报名费 %s，门票 %s"/>
+        <text name="eq_host_monthsAhead" text="%d个月后"/>
+        <text name="eq_host_yourFarm" text="你的农场"/>
+        <text name="eq_host_opened" text="你的%s已开始。在比赛标签页为你的马报名；结果在月底公布。"/>
+        <text name="eq_host_book_noConfig" text="无法主办：主办规则未能加载。"/>
+        <text name="eq_host_book_already" text="你已经预订了一场比赛。"/>
+        <text name="eq_host_book_month" text="该月份无法预订。"/>
+        <text name="eq_host_book_requirements" text="你的农场还不满足这场比赛的要求。"/>
+        <text name="eq_host_book_money" text="筹办费需要%s。"/>
+        <text name="eq_host_book_done" text="已预订%s，时间为%s。已付筹办费：%s。"/>
+        <text name="eq_host_cancel_none" text="你没有预订比赛。"/>
+        <text name="eq_host_cancel_done" text="%s已取消。退款：%s。"/>
+        <text name="eq_host_cancel_confirm" text="取消你的%s？将退还筹办费中的%s。"/>
+        <text name="eq_host_enter_notYours" text="只有主办这场比赛的农场可以报名。"/>
+        <text name="eq_host_enter_done" text="%s已报名%s（评分 %.0f）。在自家比赛：无费用、无运输。"/>
+        <text name="eq_host_button_book" text="预订%s"/>
+        <text name="eq_host_button_cancel" text="取消预订"/>
+        <text name="eq_host_button_enter" text="报名"/>
+        <text name="eq_host_button_month" text="更换月份"/>
+        <text name="eq_host_summary" text="%s。人气：%s。"/>
+        <text name="eq_money_hosting" text="主办比赛"/>
+        <text name="rl_messageTitle_eqHosting" text="主办"/>
+        <text name="eq_settings_hostInterval" text="主办比赛间隔（月）"/>
+        <text name="eq_settings_hostInterval_tooltip" text="从你上次主办比赛的月份起，需要多少个月才能再次主办。"/>
     </texts>
 </l10n>
