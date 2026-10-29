@@ -20,9 +20,14 @@
     (any node with a red and a white flag under it), and map scenery such as Elmcreek's course.
     A jump's line runs between its red and white flags, or across its placement area.
 
-    Out of edit mode, near a saved course the horse rides a timed round (EqShowJumping): "Move
-    to the start line to begin Show Jumping", a 3, 2, 1 countdown, then the fences in order with
-    the next one marked in gold. The start line stands 12 m before fence 1 and the finish 12 m
+    Out of edit mode, the course whose start line is nearest (within START_NEAR) is the one a
+    round can be ridden on (EqShowJumping). Further out than BEGIN_NEAR only the map tag points to
+    its start; within BEGIN_NEAR its start line glows and "Move to the start line to begin Show
+    Jumping" shows beside the panel; only right at the line (EqShowJumping.READY_RADIUS) does the
+    3, 2, 1 countdown start. From then on the round owns the screen until it ends, the rider gets
+    off, or rides LEAVE_RADIUS away from its route: no other course or dressage test cuts in
+    (James, 2026-10-29), and a dressage test under way keeps the courses quiet the same way.
+    Then the fences are ridden in order with the next one marked in gold. The start line stands 12 m before fence 1 and the finish 12 m
     after the last fence, on the course's route: no objects needed, so players dress a course as
     they like (James, 2026-10-27).
 
@@ -40,7 +45,13 @@ EqCourseHooks.STALE_MS = 1500
 -- The show jumps are listed again this often while editing.
 EqCourseHooks.SCAN_MS = 3000
 -- A saved course within this many metres of the horse is "nearby": edited or deleted by the keys.
+-- The show jumping key only looks at show jumping courses and the cross country key at cross
+-- country ones, so a big cross country course nearby never hides "New show jumping course".
 EqCourseHooks.NEAR_RADIUS = 40
+-- A round is offered on the course whose start line is nearest, within this many metres.
+EqCourseHooks.START_NEAR = 60
+-- A round under way ends if the horse gets this far from its course's route.
+EqCourseHooks.LEAVE_RADIUS = 100
 EqCourseHooks.NEAR_CHECK_MS = 1000
 -- Only the part of a line within this many metres of the horse is drawn.
 EqCourseHooks.DRAW_RADIUS = 80
@@ -73,12 +84,13 @@ EqCourseHooks.LINE_BAR_HEIGHT = 0.9
 EqCourseHooks.WAY_SHORT = 5
 EqCourseHooks.ROUND_NUMBER_LIFT = 1.8
 EqCourseHooks.NUMBER_ASIDE = 1.5
--- The start line is tagged on the map only until the horse is this close (the game draws the
--- tag on the line itself).
-EqCourseHooks.TAG_CLOSE = 25
---- "Ride to the start line" shows only this close to the start line (anywhere near a big cross
---- country course was too far), beside the panel: the middle is for alerts (James, 2026-10-27).
+--- "Ride to the start line" and the start line's glow show only this close to the start line
+--- (anywhere near a big cross country course was too far), beside the panel: the middle is for
+--- alerts (James, 2026-10-27).
 EqCourseHooks.BEGIN_NEAR = 30
+-- The start line is tagged on the map only until the horse is this close: the game draws its
+-- own pin on the tag, and inside BEGIN_NEAR the glowing line does that job (James, 2026-10-29).
+EqCourseHooks.TAG_CLOSE = EqCourseHooks.BEGIN_NEAR
 -- A course saved before fence points were kept: a fence's point is the first one within this
 -- many metres of it.
 EqCourseHooks.PASS_NEAR = 6
@@ -86,13 +98,16 @@ EqCourseHooks.PASS_NEAR = 6
 EqCourseHooks.editing = nil
 EqCourseHooks.round = nil
 EqCourseHooks.near = nil
+EqCourseHooks.start = nil
+EqCourseHooks.dressageActive = false
 EqCourseHooks.bodies = {}
 EqCourseHooks.drawFailed = false
 EqCourseHooks.textFailed = false
 
 
 function EqCourseHooks.reset()
-    EqCourseHooks.editing, EqCourseHooks.near, EqCourseHooks.bodies = nil, nil, {}
+    EqCourseHooks.editing, EqCourseHooks.near, EqCourseHooks.start, EqCourseHooks.bodies = nil, nil, nil, {}
+    EqCourseHooks.dressageActive = false
     EqCourseHooks.round, EqCourseHooks.judged, EqCourseHooks.crashed, EqCourseHooks.payoff = nil, nil, false, 0
     EqCourseGlow.delete()
 end
@@ -343,19 +358,67 @@ function EqCourseHooks.isBusy()
 end
 
 
+--- @param round table|nil
+--- @return boolean true once a round has begun (countdown on) until it is over and ready again:
+--- it owns the screen, and no other course or test cuts in (James, 2026-10-29)
+local function underWay(round)
+    return round ~= nil and round.sj ~= nil and round.sj.state ~= "approach"
+end
+
+
+--- @return number|nil metres to the start line of the course a round is offered on, when within
+--- BEGIN_NEAR and no round is under way (for the dressage test: the nearest start wins)
+function EqCourseHooks.beginDistance()
+    local round = EqCourseHooks.round
+    if round == nil or underWay(round) or round.startDistance == nil then return nil end
+    if round.startDistance > EqCourseHooks.BEGIN_NEAR then return nil end
+    return round.startDistance
+end
+
+
 --- @param vehicle table
+--- @param kind string|nil EqCourse kind to look for, nil for any
 --- @return table|nil the saved course near the horse, number|nil its index
-function EqCourseHooks.nearCourse(vehicle)
+function EqCourseHooks.nearCourse(vehicle, kind)
     local now = g_time or 0
     local near = EqCourseHooks.near
     if near == nil or now - near.at >= EqCourseHooks.NEAR_CHECK_MS or now < near.at then
-        local x, _, z = getWorldTranslation(vehicle.rootNode)
-        local course, index = EqCourse.nearest(x, z, EqCourseHooks.NEAR_RADIUS)
-        near = { at = now, course = course, index = index }
+        near = { at = now }
         EqCourseHooks.near = near
     end
-    if near.course ~= nil and EqCourse.list[near.index] ~= near.course then return nil end
-    return near.course, near.index
+    local key = kind or "any"
+    local found = near[key]
+    if found == nil then
+        local x, _, z = getWorldTranslation(vehicle.rootNode)
+        local course, index = EqCourse.nearest(x, z, EqCourseHooks.NEAR_RADIUS, kind)
+        found = { course = course, index = index }
+        near[key] = found
+    end
+    if found.course ~= nil and EqCourse.list[found.index] ~= found.course then return nil end
+    return found.course, found.index
+end
+
+
+--- The course a round is offered on: the one whose start line is nearest, within START_NEAR.
+--- @param vehicle table
+--- @return table|nil course, number|nil metres to its start line
+function EqCourseHooks.startCourse(vehicle)
+    local now = g_time or 0
+    local start = EqCourseHooks.start
+    if start == nil or now - start.at >= EqCourseHooks.NEAR_CHECK_MS or now < start.at then
+        local x, _, z = getWorldTranslation(vehicle.rootNode)
+        local course = EqShowJumping.nearestStart(EqCourse.list, x, z, EqCourseHooks.START_NEAR)
+        start = { at = now, course = course }
+        EqCourseHooks.start = start
+    end
+    if start.course ~= nil then
+        local listed = false
+        for _, course in ipairs(EqCourse.list) do
+            if course == start.course then listed = true break end
+        end
+        if not listed then return nil end
+    end
+    return start.course
 end
 
 
@@ -457,7 +520,8 @@ function EqCourseHooks.onRecordAction(vehicle)
     if vehicle.rootNode == nil then return end
     local editing = EqCourseHooks.editing
     if editing == nil then
-        local _, index = EqCourseHooks.nearCourse(vehicle)
+        if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
+        local _, index = EqCourseHooks.nearCourse(vehicle, EqCourse.SHOW_JUMPING)
         startEditing(vehicle, index)
     elseif editing.vehicle ~= vehicle then
         return
@@ -468,7 +532,8 @@ function EqCourseHooks.onRecordAction(vehicle)
 end
 
 
---- The cross country record key: a new cross country course; while editing, as the record key.
+--- The cross country record key: a new cross country course, or edit the nearby one; while
+--- editing, as the record key.
 --- @param vehicle table
 function EqCourseHooks.onRecordXcAction(vehicle)
     if vehicle.rootNode == nil then return end
@@ -476,7 +541,9 @@ function EqCourseHooks.onRecordXcAction(vehicle)
         EqCourseHooks.onRecordAction(vehicle)
         return
     end
-    startEditing(vehicle, nil, EqCourse.CROSS_COUNTRY)
+    if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
+    local _, index = EqCourseHooks.nearCourse(vehicle, EqCourse.CROSS_COUNTRY)
+    startEditing(vehicle, index, EqCourse.CROSS_COUNTRY)
     EqCourseHooks.updateActions(vehicle)
 end
 
@@ -495,6 +562,7 @@ end
 --- @param vehicle table
 function EqCourseHooks.onDeleteAction(vehicle)
     if EqCourseHooks.editing ~= nil or vehicle.rootNode == nil then return end
+    if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
     local course, index = EqCourseHooks.nearCourse(vehicle)
     if course == nil then return end
     local question = string.format(text("eq_course_deleteAsk"), course.name, #course.jumps, course.length or 0)
@@ -556,23 +624,32 @@ function EqCourseHooks.updateActions(vehicle)
     if spec == nil or vehicle.rootNode == nil then return end
     local editing = EqCourseHooks.editing
     local mine = editing ~= nil and editing.vehicle == vehicle
-    local near = editing == nil and EqCourseHooks.nearCourse(vehicle) or nil
+    -- A round or dressage test under way: the course keys keep out of the way until it is over.
+    local busy = editing == nil and (underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive)
+    local idle = editing == nil and not busy
+    local near = idle and EqCourseHooks.nearCourse(vehicle) or nil
+    local nearSj = idle and EqCourseHooks.nearCourse(vehicle, EqCourse.SHOW_JUMPING) or nil
+    local nearXc = idle and EqCourseHooks.nearCourse(vehicle, EqCourse.CROSS_COUNTRY) or nil
     local recordText
     if mine then
         recordText = editing.recording and text("eq_course_saveAction") or text("eq_course_doneAction")
-    elseif near ~= nil then
-        recordText = string.format(text("eq_course_editAction"), near.name)
+    elseif nearSj ~= nil then
+        recordText = string.format(text("eq_course_editAction"), nearSj.name)
     else
         recordText = text("eq_course_recordAction")
     end
-    local state = string.format("%s|%s|%s|%s", recordText, tostring(mine), tostring(near ~= nil), tostring(editing == nil))
+    local xcText = nearXc ~= nil and string.format(text("eq_course_editAction"), nearXc.name) or text("eq_course_recordXcAction")
+    local state = string.format("%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle), tostring(busy))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
-    if spec.eqCourseEventId ~= nil then binding:setActionEventText(spec.eqCourseEventId, recordText) end
+    if spec.eqCourseEventId ~= nil then
+        binding:setActionEventText(spec.eqCourseEventId, recordText)
+        binding:setActionEventTextVisibility(spec.eqCourseEventId, not busy)
+    end
     if spec.eqCourseXcEventId ~= nil then
-        binding:setActionEventText(spec.eqCourseXcEventId, text("eq_course_recordXcAction"))
-        binding:setActionEventTextVisibility(spec.eqCourseXcEventId, editing == nil)
+        binding:setActionEventText(spec.eqCourseXcEventId, xcText)
+        binding:setActionEventTextVisibility(spec.eqCourseXcEventId, idle)
     end
     if spec.eqRewindEventId ~= nil then
         binding:setActionEventText(spec.eqRewindEventId, text("input_EQ_COURSE_REWIND"))
@@ -925,7 +1002,8 @@ function EqCourseHooks.tagTarget()
     local round = EqCourseHooks.round
     if round == nil then return nil, nil end
     local sj = round.sj
-    if sj.state == "approach" or sj.state == "countdown" or sj.state == "go" then
+    if sj.state == "approach" or sj.state == "go" then
+        -- Up close the glowing start line shows the way, not the game's pin on top of it.
         local last = round.last
         if last ~= nil then
             local dx, dz = last[1] - sj.start.x, last[2] - sj.start.z
@@ -964,21 +1042,32 @@ end
 function EqCourseHooks.roundDraw(vehicle)
     local now = g_time or 0
     local round = EqCourseHooks.round
-    local course, _ = EqCourseHooks.nearCourse(vehicle)
-    if round ~= nil and (round.vehicle ~= vehicle or round.course ~= course) then
-        -- Away from the course (or onto another): a round under way is over.
-        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
-        round = nil
-        EqCourseHooks.round = nil
-    end
-    if course == nil or #course.jumps < EqCourse.MIN_JUMPS then return end
-    if round == nil then
-        round = newRound(vehicle, course)
-        EqCourseHooks.round = round
-        EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
-    end
-
     local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local leave = round ~= nil and round.vehicle ~= vehicle
+    if not leave and underWay(round) then
+        -- A round under way stays on its course whatever else is near (James, 2026-10-29: "If I
+        -- start a run... that's what I'm doing"), unless the horse rides right away from it.
+        if round.leaveAt == nil or now - round.leaveAt >= EqCourseHooks.NEAR_CHECK_MS or now < round.leaveAt then
+            round.leaveAt = now
+            leave = EqCourse.distanceTo(round.course, x, z) > EqCourseHooks.LEAVE_RADIUS
+        end
+    elseif not leave then
+        -- Between rounds: the course with the nearest start line, unless a dressage test is on.
+        local course = not EqCourseHooks.dressageActive and EqCourseHooks.startCourse(vehicle) or nil
+        leave = round ~= nil and round.course ~= course
+        if round == nil and course ~= nil then
+            round = newRound(vehicle, course)
+            EqCourseHooks.round = round
+            EqCourseHooks.judged, EqCourseHooks.crashed = nil, false
+        end
+    end
+    if leave then
+        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
+        EqCourseHooks.round = nil
+        return
+    end
+    if round == nil then return end
+
     local dt = round.at ~= nil and math.max(0, math.min(200, now - round.at)) or 0
     local last = round.last or { x, z }
     round.at, round.last, round.seenAt = now, { x, z }, now
@@ -992,17 +1081,20 @@ function EqCourseHooks.roundDraw(vehicle)
     -- Poles knocked before go back up as the countdown starts (EqPoles).
     if state == "countdown" and round.lastState ~= "countdown" then EqLog.try("EqCourseHooks.roundDraw EqPoles.raiseAll", EqPoles.raiseAll) end
     round.lastState = state
-    if state == "approach" or state == "countdown" or state == "go" then
+    round.startDistance = math.sqrt((x - sj.start.x) ^ 2 + (z - sj.start.z) ^ 2)
+    if state == "approach" then
+        -- Only near the start: its line glows and the hint says to ride to it. Nothing else of
+        -- the course shows until the countdown (James, 2026-10-29).
+        if round.startDistance <= EqCourseHooks.BEGIN_NEAR then
+            drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z, true)
+            local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
+            EqTrainingHud.drawPanelNote(text(begin), EqTrainingHud.STAT_COLOR.agility, true)
+        end
+    elseif state == "countdown" or state == "go" then
         drawCrossing(sj.start, EqCourseHooks.START_COLOR, x, z, true)
         local _, from = EqShowJumping.startFromPath(round.course)
         drawWay(round, from, round.course.jumps[1].pointIndex or from, x, z, EqCourseHooks.WAY_SHORT)
-        if state == "approach" then
-            local dx, dz = x - sj.start.x, z - sj.start.z
-            if dx * dx + dz * dz <= EqCourseHooks.BEGIN_NEAR ^ 2 then
-                local begin = round.course.kind == EqCourse.CROSS_COUNTRY and "eq_sj_beginXc" or "eq_sj_begin"
-                EqTrainingHud.drawPanelNote(text(begin), EqTrainingHud.STAT_COLOR.agility, true)
-            end
-        elseif state == "countdown" then
+        if state == "countdown" then
             EqTrainingHud.drawPrompt(text("eq_sj_ready"), sj.countMs / EqShowJumping.COUNT_MS, EqTrainingHud.STAT_COLOR.agility)
         else
             EqTrainingHud.drawPrompt(text("eq_sj_cross"), sj.goMs / EqShowJumping.GO_MS, EqTrainingHud.STAT_COLOR.agility)

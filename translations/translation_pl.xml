@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Widok treningu: %s"/>
         <text name="eq_train_view_freestyle" text="Swobodny"/>
-        <text name="eq_help_temperament_2" text="Tracisz mnożnik, jeśli przejdziesz do galopu lub cwału, zderzysz się z przeszkodą albo przegapisz następny manewr. Od x4 musisz też utrzymać chód między poleceniami. Karmienie koni smakołykami, np. marchewkami, to też świetny sposób na poprawę Temperamentu."/>
-        <text name="eq_help_temperament_1" text="Trening Temperamentu polega na uczeniu konia posłuszeństwa. Rozpocznij program, przechodząc do stępa i utrzymując go przez krótką chwilę. Program poprosi wtedy o nowy manewr do utrzymania. Wykonaj go w kilka sekund, aby podtrzymać combo."/>
+        <text name="eq_help_temperament_2" text="Zbyt wiele błędów, np. galop lub wyjazd z czworoboku, kończy program; ukończ go, aby zyskać duży bonus do temperamentu. Poza czworobokiem stęp i cofanie nadal trochę trenują temperament. Przysmaki, takie jak marchewki, to również świetny sposób na poprawę temperamentu."/>
+        <text name="eq_help_temperament_1" text="Trening temperamentu uczy konia posłuszeństwa i wymaga czworoboku ujeżdżeniowego: kup go w sklepie lub ustaw litery ujeżdżeniowe. Podjedź do niego, a rozpocznie się program: jedź do liter wskazanym chodem, zatrzymuj się, cofaj i jeźdź po kole. Wykonuj każde polecenie na czas, aby zwiększać mnożnik."/>
         <text name="eq_help_temperament_title" text="Trening: Temperament"/>
         <text name="eq_help_agility_2" text="Tracisz mnożnik, jeśli nie pokonasz nowej przeszkody na czas lub stracisz za dużo prędkości. Skoki bez przeszkody dają trochę treningu, ale nie podnoszą mnożnika."/>
         <text name="eq_help_agility_1" text="Zwinność to przede wszystkim pokonywanie przeszkód, choć zmiana chodów też trochę pomaga. Pokonuj przeszkody, aby budować mnożnik treningu Zwinności, który wygasa po dziesięciu sekundach lub wcześniej, jeśli uderzysz w przeszkodę."/>
@@ -72,13 +72,13 @@
         <text name="eq_dressage_next" text="Dalej: %s"/>
         <text name="eq_dressage_stand" text="Stój"/>
         <text name="eq_dressage_marker" text="Litera %s"/>
-        <text name="eq_train_routine_none" text="Przejdź do stępa, aby rozpocząć program"/>
+        <text name="eq_train_routine_none" text="Podjedź na czworobok ujeżdżeniowy, aby rozpocząć program"/>
         <text name="eq_train_routine" text="Program x%d"/>
         <text name="eq_train_combo_none" text="Pokonaj przeszkodę, aby rozpocząć combo"/>
         <text name="eq_train_combo" text="Combo skoków x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Zwinność"/>
-        <text name="eq_help_freestyle_2" text="Zwinność trenuje się skacząc przez przeszkody, aby zapełnić wskaźnik combo, a Temperament zaczyna się od krótkiego utrzymania stępa, potem wykonywania poleceń, aby zapełnić jego wskaźnik combo. Wytrzymałość i Szybkość trenują się dobrą jazdą cwałem: naciśnij H podczas cwału, aby dowiedzieć się jak."/>
+        <text name="eq_help_freestyle_2" text="Zwinność trenuje się, skacząc przez przeszkody i budując licznik kombinacji, a temperament, jadąc program na czworoboku ujeżdżeniowym. Wytrzymałość i szybkość trenuje się dobrym galopem: naciśnij H w galopie, aby dowiedzieć się jak."/>
         <text name="eq_help_freestyle_3" text="Wolisz nie jeździć? Zatrudnij stajennych i trenerów w zakładce Personel, aby codziennie trenowali twoje konie. Pracownicy gry i Herdsman z RLRM tylko utrzymują je w formie."/>
         <text name="eq_form_title" text="Szczytowa forma"/>
         <text name="eq_help_freestyle_4" text="Pojeździj przed zawodami! Każda cecha trenowana w swojej minigrze daje koniowi Szczytową formę na zawody w tym miesiącu, do +8 na cechę. Nie sumuje się przez kilka dni: liczy się najlepsza sesja w miesiącu."/>

@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
         <text name="eq_train_view_freestyle" text="Vrij"/>
-        <text name="eq_help_temperament_2" text="Je verliest je vermenigvuldiger als je versnelt naar galop of gestrekte galop, tegen een obstakel botst of de volgende oefening mist. Vanaf x4 moet je ook je gang aanhouden tussen de commando's. Je paarden lekkers zoals wortels geven is ook een prima manier om Temperament te verbeteren."/>
-        <text name="eq_help_temperament_1" text="Temperamenttraining draait om je paard controle leren. Begin een proef door naar stap over te gaan en die gang even aan te houden. Het trainingsprogramma vraagt dan om een nieuwe oefening om vast te houden. Voer die binnen een paar seconden uit om de combo gaande te houden."/>
+        <text name="eq_help_temperament_2" text="Te veel fouten, zoals galopperen of de baan verlaten, beëindigen de proef; rijd hem uit voor een flinke temperamentboost. Buiten een rijbaan trainen stappen en achterwaarts gaan nog steeds een beetje temperament. Traktaties zoals wortels zijn ook een prima manier om temperament te verbeteren."/>
+        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd erheen en er begint een proef die je naar de letters stuurt in vaste gangen, laat halthouden, achterwaarts gaan en volte rijden. Voer elke opdracht op tijd uit om je vermenigvuldiger te verhogen."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
         <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
@@ -72,13 +72,13 @@
         <text name="eq_dressage_next" text="Volgende: %s"/>
         <text name="eq_dressage_stand" text="Halt"/>
         <text name="eq_dressage_marker" text="Letter %s"/>
-        <text name="eq_train_routine_none" text="Stap om een proef te beginnen"/>
+        <text name="eq_train_routine_none" text="Rijd naar een dressuurrijbaan om een proef te beginnen"/>
         <text name="eq_train_routine" text="Proef x%d"/>
         <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>
         <text name="eq_train_combo" text="Springcombo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendbaarheid"/>
-        <text name="eq_help_freestyle_2" text="Wendbaarheid train je door obstakels te springen om een combometer te vullen, en Temperament begint met even stap aanhouden en dan instructies opvolgen om zijn combometer te vullen. Conditie en Snelheid train je door goed te galopperen in gestrekte galop: druk tijdens de gestrekte galop op H om te leren hoe."/>
+        <text name="eq_help_freestyle_2" text="Behendigheid train je door hindernissen te springen en een combometer op te bouwen, temperament door een proef te rijden in een dressuurrijbaan. Uithoudingsvermogen en snelheid train je door goed te galopperen: druk in galop op H om te leren hoe."/>
         <text name="eq_help_freestyle_3" text="Liever niet rijden? Neem verzorgers en trainers aan op het tabblad Personeel om je paarden elke dag te trainen. Het dierenpersoneel van het spel en de Herdsman van RLRM houden ze alleen in beweging."/>
         <text name="eq_form_title" text="Topvorm"/>
         <text name="eq_help_freestyle_4" text="Rijd voor een wedstrijd! Elke eigenschap die je met zijn minigame traint, brengt je paard in Topvorm voor de wedstrijden van deze maand, tot +8 per eigenschap. Het telt niet op over meerdere dagen: je beste sessie van de maand telt."/>

@@ -660,7 +660,14 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if routineShown() and not coursing then
         -- Near dressage markers the routine rides between them (EqDressage).
         local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
-        local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
+        course = okCourse and course or nil
+        -- Before a test starts, a course's start line nearer than the arena wins: one prompt
+        -- at a time, the nearest (James, 2026-10-29).
+        if course ~= nil and not sheet.routine.active then
+            local startDistance = EqCourseHooks.beginDistance()
+            if startDistance ~= nil and startDistance < EqDressage.startDistance(course) then course = nil end
+        end
+        local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, course)
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
         elseif event == "test" then EqTrainingHud.pop("routineTest")
@@ -673,6 +680,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     elseif EqTraining.breakRoutine(sheet) and not coursing then
         EqTrainingHud.pop("routineLost")
     end
+    -- A dressage test under way keeps the courses quiet: no start line, hint or countdown.
+    EqCourseHooks.dressageActive = sheet.routine.active
 
     local share = EqTraining.workStep(sheet, dt)
     if (share < 0.5) ~= (spec.eqCruising == true) then
@@ -1339,33 +1348,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if onCourse then
         -- Condensed: no panel rows, but the rider still needs the commands.
         dressageRows(condensed and {} or rows, routine, vehicle)
-    elseif routineShown() then
-        if routine.active and condensed then
-            if routine.request ~= nil then
-                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request),
-                    math.max(0, routine.deadline - routine.clock) / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), STAT_COLOR.temperament)
-            end
-        elseif routine.active then
-            local color = STAT_COLOR.temperament
-            local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
-            if routine.request ~= nil then
-                local left = math.max(0, routine.deadline - routine.clock)
-                row.right = g_i18n:getText("eq_move_" .. routine.request)
-                row.rightColor = color
-                table.insert(rows, row)
-                table.insert(rows, { bar = left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), color = color })
-                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS),
-                    STAT_COLOR.temperament)
-            else
-                table.insert(rows, row)
-                -- A command done at once still shows for a moment.
-                if routine.shown ~= nil and routine.clock < (routine.shownUntil or 0) then
-                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.shown), 1, STAT_COLOR.temperament)
-                end
-            end
-        elseif view == "temperament" then
-            table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
-        end
+    elseif view == "temperament" then
+        -- No routine without markers: say where one starts.
+        table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
     end
     EqTrainingHud.drawPops()
 

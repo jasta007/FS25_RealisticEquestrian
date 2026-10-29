@@ -32,8 +32,9 @@ local Log = EqLog
 -- The placeable configuration: 1 = No (hidden outside rounds), 2 = Yes (always visible).
 EqXcHide.CONFIG = "eqAlwaysVisible"
 EqXcHide.ALWAYS = 2
--- Pieces show once the rider is this near the start line before a round (metres).
-EqXcHide.SHOW_NEAR = 60
+-- Pieces show once the rider is this near the start line before a round (metres): where the
+-- start line glows and the hint shows (EqCourseHooks.BEGIN_NEAR), not before (James, 2026-10-29).
+EqXcHide.SHOW_NEAR = 30
 -- Pieces are listed again this often, to catch newly placed ones.
 EqXcHide.SCAN_MS = 1000
 -- Most nodes searched under one piece (a long flag fence has many).

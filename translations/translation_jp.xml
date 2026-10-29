@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="気性"/>
         <text name="eq_train_viewAction" text="トレーニング表示：%s"/>
         <text name="eq_train_view_freestyle" text="フリー"/>
-        <text name="eq_help_temperament_2" text="駈歩や襲歩に上げる、障害物にぶつかる、次の動作を逃すと倍率を失います。x4以上では指示の間も歩様を保つ必要があります。ニンジンなどのおやつを与えるのも気性を良くする効果的な方法です。"/>
-        <text name="eq_help_temperament_1" text="気性のトレーニングは馬に制御を教えることです。常歩に移って少しの間その歩様を保つと演技が始まります。続いてトレーニングプログラムが新しい動作を指示します。数秒以内に達成するとコンボが続きます。"/>
+        <text name="eq_help_temperament_2" text="駈歩やアリーナからはみ出すなどのミスが多すぎると演技は終了します。最後までやり遂げると気性が大きく伸びます。アリーナの外でも、常歩や後退で少しは気性が鍛えられます。ニンジンなどのおやつを与えるのも気性を伸ばす良い方法です。"/>
+        <text name="eq_help_temperament_1" text="気性トレーニングは馬に制御を教えるもので、馬場馬術アリーナが必要です。ショップで購入するか、馬場馬術マーカーを設置してください。近づくと演技が始まり、指定の歩法で文字へ向かう、停止、後退、輪乗りなどを求められます。各指示を時間内にこなして倍率を上げましょう。"/>
         <text name="eq_help_temperament_title" text="トレーニング：気性"/>
         <text name="eq_help_agility_2" text="時間内に新しい障害物を越えられなかったり、速度を落としすぎたりすると倍率を失います。障害物なしのジャンプも少しは鍛えられますが、倍率は上がりません。"/>
         <text name="eq_help_agility_1" text="敏捷性は主に障害を跳ぶことで鍛えられますが、歩様を切り替えることでも少し上がります。障害物を越えて敏捷性のトレーニング倍率を上げましょう。倍率は10秒後、または障害物に当たるとそれより早く下がります。"/>
@@ -72,13 +72,13 @@
         <text name="eq_dressage_next" text="次：%s"/>
         <text name="eq_dressage_stand" text="停止"/>
         <text name="eq_dressage_marker" text="標記 %s"/>
-        <text name="eq_train_routine_none" text="常歩で演技を開始"/>
+        <text name="eq_train_routine_none" text="馬場馬術アリーナへ行って演技を開始"/>
         <text name="eq_train_routine" text="演技 x%d"/>
         <text name="eq_train_combo_none" text="障害を越えてコンボ開始"/>
         <text name="eq_train_combo" text="ジャンプコンボ x%d"/>
         <text name="eq_train_view_temperament" text="気性"/>
         <text name="eq_train_view_agility" text="敏捷性"/>
-        <text name="eq_help_freestyle_2" text="敏捷性は障害物を跳んでコンボメーターを貯めて鍛えます。気性は少しの間常歩を保ってから、指示に従ってコンボメーターを貯めます。スタミナとスピードは襲歩を上手に走ると鍛えられます。襲歩中にHを押すと方法がわかります。"/>
+        <text name="eq_help_freestyle_2" text="敏捷性は障害物を飛んでコンボメーターを溜めて鍛え、気性は馬場馬術アリーナで演技をして鍛えます。持久力とスピードは上手な襲歩で鍛えます。襲歩中にHを押すと方法がわかります。"/>
         <text name="eq_help_freestyle_3" text="自分で乗りたくない？スタッフタブで厩務員やトレーナーを雇えば、毎日馬を鍛えてくれます。ゲームの動物スタッフやRLRMのHerdsmanは現状維持しかしません。"/>
         <text name="eq_form_title" text="絶好調"/>
         <text name="eq_help_freestyle_4" text="大会の前に乗りましょう！ミニゲームで鍛えた能力ごとに、今月の大会で馬が絶好調になり、能力ごとに最大+8されます。数日分は合算されず、その月の最高のセッションが採用されます。"/>
