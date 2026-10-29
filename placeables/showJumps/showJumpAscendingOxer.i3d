@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="showJumpAscendingOxer.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="1" filename="$data/shaders/vehicleShader.xml"/>
+    <File fileId="4" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
+    <File fileId="3" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
+    <File fileId="2" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="9" filename="../xcJumps/xcFlags_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="sjFlags" materialId="9" specularColor="0.101961 1 0">
+      <Texture fileId="9"/>
+    </Material>
+    <Material name="sjMetal" materialId="7" customShaderId="1">
+      <Custommap name="detailSpecular" fileId="2"/>
+      <Custommap name="detailNormal" fileId="3"/>
+      <Custommap name="detailDiffuse" fileId="4"/>
+      <CustomParameter name="colorScale" value="0.06 0.06 0.065"/>
+      <CustomParameter name="smoothnessScale" value="0.6"/>
+      <CustomParameter name="metalnessScale" value="0.8"/>
+    </Material>
+    <Material name="sjPaint" materialId="6" customShaderId="1">
+      <Custommap name="detailSpecular" fileId="2"/>
+      <Custommap name="detailNormal" fileId="3"/>
+      <Custommap name="detailDiffuse" fileId="4"/>
+      <CustomParameter name="colorScale" value="0.8 0.22 0.02"/>
+      <CustomParameter name="smoothnessScale" value="0.55"/>
+      <CustomParameter name="metalnessScale" value="0"/>
+    </Material>
+    <Material name="sjWhite" materialId="5" customShaderId="1">
+      <Custommap name="detailSpecular" fileId="2"/>
+      <Custommap name="detailNormal" fileId="3"/>
+      <Custommap name="detailDiffuse" fileId="4"/>
+      <CustomParameter name="colorScale" value="0.8 0.8 0.78"/>
+      <CustomParameter name="smoothnessScale" value="0.55"/>
+      <CustomParameter name="metalnessScale" value="0"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="showJumpAscendingOxer.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="showJumpAscendingOxer" nodeId="28">
+      <Shape name="frame" shapeId="1" clipDistance="300" nodeId="29" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqPaint" shapeId="2" clipDistance="300" nodeId="30" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <Shape name="eqWingPaint" shapeId="3" clipDistance="300" nodeId="31" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="cups" shapeId="4" clipDistance="300" nodeId="32" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      <Shape name="flags" shapeId="5" clipDistance="300" nodeId="33" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      <TransformGroup name="eqFlagsRed" translation="3.06 0 0" nodeId="34"/>
+      <TransformGroup name="eqFlagsWhite" translation="-3.06 0 0" nodeId="35"/>
+      <TransformGroup name="collision" nodeId="36">
+        <Shape name="col" shapeId="6" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="37" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="7" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="38" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="8" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="39" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="9" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="40" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="10" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="41" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="11" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="42" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole1" translation="0 0.4 0.6" nodeId="43">
+        <Shape name="eqPaint" shapeId="12" clipDistance="300" nodeId="44" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="13" clipDistance="300" nodeId="45" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="14" clipDistance="300" nodeId="46" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="47" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="48"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole2" translation="0 0.5 -0.6" nodeId="49">
+        <Shape name="eqPaint" shapeId="12" clipDistance="300" nodeId="50" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="13" clipDistance="300" nodeId="51" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="14" clipDistance="300" nodeId="52" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="53" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="54"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole3" translation="0 0.8 0.6" nodeId="55">
+        <Shape name="eqPaint" shapeId="12" clipDistance="300" nodeId="56" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="13" clipDistance="300" nodeId="57" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="14" clipDistance="300" nodeId="58" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="59" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="60"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole4" translation="0 1 -0.6" nodeId="61">
+        <Shape name="eqPaint" shapeId="12" clipDistance="300" nodeId="62" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="13" clipDistance="300" nodeId="63" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="14" clipDistance="300" nodeId="64" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="65" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="66"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

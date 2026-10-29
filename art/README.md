@@ -28,6 +28,12 @@ in construction mode) and the drop walls (painted planks and peeled posts, a
 half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes; PNG copies
 go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.
 
+`source/bleachers.py` builds the bleachers in `placeables/bleachers/` (3 rows x 6 m, 5 x 10 m and
+8 x 16 m): a stepped steel frame with aluminium benches and a back rail, and a row of sponsor
+boards in front. Each board's face is its own shape (`eqSponsor_<n>`) with its own material, so
+`EqSponsors` can put one of the game's brand logos on it at run time; the texture it starts with is
+our own board. Change the script and run it again rather than editing those files.
+
 The art scripts write DDS files with `source/eqdds.py`: shop images as BC7, 3D textures as DXT1
 with mipmaps, as GIANTS' TestRunner wants. It needs `pip install etcpak`. The scripts write inline
 i3d geometry, so after running one, open its .i3d files in GIANTS Editor and Save (with Preferences >

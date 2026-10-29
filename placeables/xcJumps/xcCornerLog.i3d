@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="xcCornerLog.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="7" filename="xcFlags_diffuse.dds"/>
+    <File fileId="4" filename="xcLogEnd_diffuse.dds"/>
+    <File fileId="3" filename="xcPeeledB_diffuse.dds"/>
+    <File fileId="1" filename="xcPeeled_diffuse.dds"/>
+    <File fileId="5" filename="xcPlanks_diffuse.dds"/>
+    <File fileId="6" filename="xcPlanks_normal.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="xcFlags" materialId="9" specularColor="0.101961 1 0">
+      <Texture fileId="7"/>
+    </Material>
+    <Material name="xcLogEnd" materialId="5" specularColor="0.101961 1 0">
+      <Texture fileId="4"/>
+    </Material>
+    <Material name="xcPeeled" materialId="7" specularColor="0.101961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="xcPeeledB" materialId="8" specularColor="0.101961 1 0">
+      <Texture fileId="3"/>
+    </Material>
+    <Material name="xcPlanks" materialId="6" specularColor="0.101961 1 0">
+      <Texture fileId="5"/>
+      <Normalmap fileId="6"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="xcCornerLog.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="xcCornerLog" nodeId="18">
+      <Shape name="logs" shapeId="1" clipDistance="300" nodeId="19" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      <Shape name="logsB" shapeId="2" clipDistance="300" nodeId="20" castsShadows="true" receiveShadows="true" materialIds="8"/>
+      <Shape name="ends" shapeId="3" clipDistance="300" nodeId="21" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="deck" shapeId="4" clipDistance="300" nodeId="22" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <TransformGroup name="eqFlagsRed" translation="2.45 0 0" nodeId="23">
+        <Shape name="pennantRed" shapeId="5" clipDistance="300" nodeId="24" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      </TransformGroup>
+      <TransformGroup name="eqFlagsWhite" translation="-2.45 0 0" nodeId="25">
+        <Shape name="pennantWhite" shapeId="6" clipDistance="300" nodeId="26" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      </TransformGroup>
+      <TransformGroup name="collision" nodeId="27">
+        <Shape name="col" shapeId="7" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="28" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

@@ -337,11 +337,48 @@ function EqCompetition.run(event, config, entrants, rng, field)
         table.insert(runners, { rating = rating, score = run.score, run = run })
     end
 
+    -- Rounds ridden in your own event (EqHosting) are scored in penalties, so a one-phase event
+    -- is scored in penalties too, as a single phase.
+    local ridden = event.hosted ~= nil and event.hosted.ridden or nil
+    if ridden ~= nil and next(ridden) == nil then ridden = nil end
+    local phases = discipline.phases
+    if phases == nil and ridden ~= nil then
+        phases = { discipline.name }
+        for _, runner in ipairs(runners) do
+            runner.run.phases = { { name = discipline.name, score = runner.run.score, checks = runner.run.checks } }
+        end
+    end
+    -- A graded jumping round picks which of the horse's own simulated rounds it gets.
+    if ridden ~= nil and EqHosting ~= nil then
+        for i, entrant in ipairs(entrants) do
+            local mine, runner = ridden[entrant.key], runners[i]
+            for _, phase in ipairs(mine ~= nil and runner.run.phases or {}) do
+                local sheet = mine[phase.name]
+                if sheet ~= nil and sheet.grade ~= nil and not sheet.eliminated then
+                    local def = config.disciplineByName[phase.name] or discipline
+                    local rating = entrant.phaseRatings ~= nil and entrant.phaseRatings[phase.name] or entrant.rating
+                    local stats = EqPerformance.statsOrFlat(entrant.stats, entrant.rating)
+                    local draws = {}
+                    for _ = 1, EqHosting.GRADE_DRAWS do
+                        local checks, swing = EqPerformance.roll(def.checks or {}, tier, stats, entrant.condition, rng)
+                        table.insert(draws, { score = EqPerformance.score(rating, entrant.condition, luck, swing, rng), checks = checks })
+                    end
+                    local draw = EqHosting.pickDraw(sheet.grade, draws, rng)
+                    phase.score, phase.checks = draw.score, draw.checks
+                end
+            end
+            if mine ~= nil and #runner.run.phases == 1 and runner.run.phases[1].name == discipline.name then
+                runner.score = runner.run.phases[1].score
+            end
+        end
+    end
+
     local phasePlaces = nil
-    if discipline.phases ~= nil then
-        EqPerformance.scorePenalties(runners, discipline.phases, rng)
+    if phases ~= nil then
+        EqPerformance.scorePenalties(runners, phases, rng)
+        if ridden ~= nil and EqHosting ~= nil then EqHosting.applyRidden(runners, ridden) end
         table.sort(runners, function(a, b) return EqPerformance.penaltyOrder(a, b) end)
-        phasePlaces = EqPerformance.phasePlaces(runners, discipline.phases)
+        phasePlaces = EqPerformance.phasePlaces(runners, phases)
     else
         table.sort(runners, function(a, b) return a.score > b.score end)
     end

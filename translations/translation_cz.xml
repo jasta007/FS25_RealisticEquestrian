@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Zobrazení tréninku: %s"/>
         <text name="eq_train_view_freestyle" text="Volný"/>
-        <text name="eq_help_temperament_2" text="Násobič ztratíte, když zrychlíte do cvalu nebo trysku, narazíte do překážky nebo minete další cvik. Od x4 musíte také mezi povely držet chod. Krmení koní pamlsky, jako je mrkev, je také skvělý způsob, jak zlepšit Temperament."/>
-        <text name="eq_help_temperament_1" text="Trénink Temperamentu znamená učit koně ovladatelnosti. Úlohu zahájíte přechodem do kroku a krátkým udržením tohoto chodu. Tréninkový program vás pak požádá o nový cvik. Splňte ho během pár sekund a combo pokračuje."/>
+        <text name="eq_help_temperament_2" text="Příliš mnoho chyb, třeba cval nebo opuštění obdélníku, úlohu ukončí; dokončete ji a získáte velký bonus k temperamentu. Mimo obdélník krok a couvání stále trochu trénují temperament. Pamlsky jako mrkev jsou také skvělý způsob, jak temperament zlepšit."/>
+        <text name="eq_help_temperament_1" text="Trénink temperamentu učí koně ovladatelnosti a potřebuje drezurní obdélník: kupte ho v obchodě nebo rozmístěte drezurní písmena. Přijeďte k němu a začne úloha: jeďte k písmenům zadaným chodem, zastavujte, couvejte a jezděte kruhy. Plňte každý pokyn včas, abyste zvyšovali násobitel."/>
         <text name="eq_help_temperament_title" text="Trénink: Temperament"/>
         <text name="eq_help_agility_2" text="Násobič ztratíte, když včas nepřekonáte novou překážku nebo příliš zpomalíte. Skok bez překážky trochu trénuje, ale násobič nezvyšuje."/>
         <text name="eq_help_agility_1" text="Obratnost je hlavně o skákání překážek, i když střídání chodů trochu pomůže. Překonávejte překážky a budujte násobič tréninku Obratnosti, který vyprchá po deseti sekundách, nebo dřív, když do překážky narazíte."/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="Drezurní obdélník 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Drezurní obdélník se všemi písmeny na svém místě. Jezděte v něm na koni a trénujte temperament mezi písmeny."/>
         <text name="eq_shop_courseFlags" text="Terénní praporky"/>
-        <text name="eq_shop_courseFlags_function" text="Označte libovolnou překážku jako terénní skok. Segmenty přepínejte klávesami N/M: postavte bílý praporek, natáhněte zlatou tyč (0,6, 0,9 nebo 1,2 m) přes překážku a pak postavte červený praporek. Tyč je vidět jen v režimu stavby."/>
+        <text name="eq_shop_courseFlags_function" text="Označte libovolnou překážku jako terénní skok. Segmenty přepínejte klávesami N/M: postavte bílý praporek na jeden konec překážky, natáhněte zlatou čáru po zemi k druhému konci a pak postavte červený praporek. Čára je vidět jen v režimu stavby; skáče se přes samotnou překážku."/>
         <text name="eq_shop_xcLogPileSmall" text="Hromada klád (malá)"/>
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
+        <text name="eq_shop_showJumpUpright" text="Překážka: kolmý skok"/>
+        <text name="eq_shop_showJumpOxer" text="Překážka: oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Překážka: křížek"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Překážka: stoupající oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Překážka: triplebarre"/>
+        <text name="eq_shop_showJumpHogsback" text="Překážka: hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Překážka: vějíř se 2 bidly"/>
+        <text name="eq_shop_showJumpFan3" text="Překážka: vějíř se 3 bidly"/>
+        <text name="eq_shop_showJumpLiverpool" text="Překážka: liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Překážka: kavalety"/>
+        <text name="eq_config_poleColour" text="Barva bidel"/>
+        <text name="eq_config_wingColour" text="Barva křídel"/>
+        <text name="eq_colour_white" text="Bílá"/>
+        <text name="eq_colour_cream" text="Krémová"/>
+        <text name="eq_colour_red" text="Červená"/>
+        <text name="eq_colour_burgundy" text="Vínová"/>
+        <text name="eq_colour_orange" text="Oranžová"/>
+        <text name="eq_colour_yellow" text="Žlutá"/>
+        <text name="eq_colour_lime" text="Limetková"/>
+        <text name="eq_colour_green" text="Zelená"/>
+        <text name="eq_colour_darkGreen" text="Tmavě zelená"/>
+        <text name="eq_colour_skyBlue" text="Nebeská modrá"/>
+        <text name="eq_colour_blue" text="Modrá"/>
+        <text name="eq_colour_navy" text="Námořnická modrá"/>
+        <text name="eq_colour_purple" text="Fialová"/>
+        <text name="eq_colour_pink" text="Růžová"/>
+        <text name="eq_colour_grey" text="Šedá"/>
+        <text name="eq_colour_black" text="Černá"/>
+        <text name="eq_shop_showJump_function" text="Parkurová překážka, jejíž bidla spadnou, když se jich kůň dotkne, a po parkuru nebo když odjedete se vrátí na místo."/>
         <text name="eq_shop_xcDropWall08" text="Seskoková stěna (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Seskoková stěna (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Seskoková stěna (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Roh (prkna)"/>
+        <text name="eq_shop_xcCornerLog" text="Roh (klády)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (čtvrtina)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (polovina)"/>
+        <text name="eq_shop_xcTable" text="Stůl"/>
+        <text name="eq_shop_xcBigLog" text="Velká kláda"/>
+        <text name="eq_config_corner" text="Roh"/>
+        <text name="eq_config_cornerRight" text="Špička vpravo"/>
+        <text name="eq_config_cornerLeft" text="Špička vlevo"/>
         <text name="eq_shop_xcDrop_function" text="Prkenná stěna pro terénní seskok. Vytvarujte val, postavte ji nahoru hranou k okraji a její boční stěny skryjí prudký svah."/>
         <text name="eq_shop_xcJump_function" text="Terénní skok. Červený a bílý praporek ukazují, kde skákat."/>
-        <text name="eq_shop_xcHidden_function" text="Skryto mimo režim stavby, úpravy trasy a terénní jízdy, pokud nebylo koupeno jako Vždy viditelné."/>
+        <text name="eq_shop_xcHidden_function" text="Mizí mimo stavbu, úpravu trati a jízdy, pokud nebyla koupena s volbou Mizející: Ne."/>
+        <text name="eq_shop_showJumpHidden_function" text="Koupená s volbou Mizející: Ano mizí mimo stavbu, úpravu trati a jízdy."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Skryto mimo režim stavby, úpravy trasy a jízdy."/>
-        <text name="eq_config_alwaysVisible" text="Vždy viditelné"/>
+        <text name="eq_config_disappearing" text="Mizející"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Krok"/>
         <text name="eq_dressage_gait_trot" text="Klus"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="Další: %s"/>
         <text name="eq_dressage_stand" text="Stát"/>
         <text name="eq_dressage_marker" text="Písmeno %s"/>
-        <text name="eq_train_routine_none" text="Přejděte do kroku a zahajte úlohu"/>
+        <text name="eq_train_routine_none" text="Jeďte k drezurnímu obdélníku a zahajte úlohu"/>
         <text name="eq_train_routine" text="Úloha x%d"/>
         <text name="eq_train_combo_none" text="Překonejte překážku a začněte combo"/>
         <text name="eq_train_combo" text="Skokové combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Obratnost"/>
-        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skákáním překážek, které plní ukazatel comba, a Temperament začíná krátkým udržením kroku a pak plněním pokynů, které plní jeho ukazatel comba. Vytrvalost a Rychlost se trénují dobrou jízdou v trysku: stiskněte v trysku H a dozvíte se jak."/>
+        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skákáním přes překážky a budováním ukazatele komba, temperament jízdou úlohy v drezurním obdélníku. Vytrvalost a rychlost se trénují dobrým cvalem: stiskněte ve cvalu H a zjistěte jak."/>
         <text name="eq_help_freestyle_3" text="Nechcete jezdit? Najměte si ošetřovatele a trenéry na kartě Personál a budou vaše koně trénovat každý den. Zaměstnanci hry a Herdsman z RLRM je jen udržují v kondici."/>
         <text name="eq_form_title" text="Vrcholná forma"/>
         <text name="eq_help_freestyle_4" text="Projeďte se před závodem! Každá vlastnost, kterou natrénujete v její minihře, dostane koně do Vrcholné formy na závody tohoto měsíce, až +8 za vlastnost. Nesčítá se přes víc dní: počítá se nejlepší trénink měsíce."/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="Nový parkur"/>
         <text name="eq_course_started" text="Nahrávání %s: projeďte skoky v pořadí. Postavené překážky z Realistic Equestrian při úpravách nemají kolize; ostatní překážky zůstávají pevné"/>
         <text name="eq_course_noJumps" text="Nahrává se trasa, ale na mapě zatím nejsou žádné skokové překážky"/>
-        <text name="eq_course_tooFew" text="Trasa neuložena: projeďte alespoň %d skokových překážek"/>
+        <text name="eq_course_tooFew" text="Trasa neuložena: projeďte alespoň %d skokových překážek, nebo stiskněte Ctrl+Backspace pro zrušení"/>
         <text name="eq_course_saved" text="%s uloženo: překážek %d, %.0f m"/>
         <text name="eq_course_cancelled" text="Úpravy zastaveny: sesedli jste z koně dřív, než měla trasa dost překážek k uložení"/>
         <text name="eq_course_leftSaved" text="Trasa uložena, když jste sesedli: poblíž stiskněte Ctrl+J pro úpravu, pak Ctrl+K pro nahrávání od nejbližšího bodu"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="Čistá jízda!"/>
         <text name="eq_sj_faultsPop" text="Trestné body: %s"/>
         <text name="eq_sj_retired" text="Parkurová jízda přerušena"/>
+        <text name="eq_xc_retired" text="Terénní jízda přerušena"/>
         <text name="eq_sj_startLine" text="Startovní čára"/>
         <text name="eq_sj_finishLine" text="Cílová čára"/>
         <text name="eq_sj_fenceRow" text="Překážka %d z %d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="Vyloučen: tři odmítnutí na jedné překážce nebo čtyři na trati"/>
         <text name="eq_sj_represent" text="Vraťte se a skočte překážku %d"/>
         <text name="eq_pop_courseFence" text="Překážka %d"/>
+        <text name="eq_flagLeft" text="L"/>
+        <text name="eq_flagRight" text="P"/>
         <text name="input_EQ_COURSE_REWIND" text="Vrátit k nejbližšímu bodu"/>
         <text name="eq_course_rewound" text="Trasa vrácena k nejbližšímu bodu: ponecháno překážek: %d"/>
         <text name="eq_course_resumed" text="Nahrávání od nejbližšího bodu"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="Smazat %s (překážek %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Smazat trasu"/>
         <text name="eq_course_deleteAction" text="Smazat %s"/>
+        <text name="eq_course_cancelAction" text="Zrušit nový parkur"/>
+        <text name="eq_course_discardAction" text="Zahodit změny v %s"/>
+        <text name="eq_course_newCancelled" text="Zrušeno: %s nebyl uložen"/>
+        <text name="eq_course_changesDiscarded" text="Změny v %s zahozeny: uložený parkur zůstává beze změny"/>
         <text name="eq_course_editAction" text="Upravit %s"/>
         <text name="eq_course_doneAction" text="Dokončit úpravy trasy"/>
         <text name="eq_course_saveAction" text="Uložit trasu a dokončit"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="Celkem trestné body: %s"/>
         <text name="eq_staff_button_decline" text="Odmítnout"/>
         <text name="eq_staff_declined" text="%s se už nevrátí. Během několika hodin se může objevit někdo nový."/>
+        <text name="eq_ui_tab_host" text="Pořádat"/>
+        <text name="eq_host_eventName" text="%s – %s"/>
+        <text name="eq_host_type_dressage" text="Drezura"/>
+        <text name="eq_host_type_showJumping" text="Parkur"/>
+        <text name="eq_host_type_crossCountry" text="Terénní jízda"/>
+        <text name="eq_host_type_eventing" text="Všestrannost"/>
+        <text name="eq_host_rating_novice" text="Začátečníci"/>
+        <text name="eq_host_rating_intermediate" text="Střední"/>
+        <text name="eq_host_rating_championship" text="Mistrovství"/>
+        <text name="eq_host_col_event" text="Závod, který můžeš pořádat"/>
+        <text name="eq_host_col_ready" text="Požadavky"/>
+        <text name="eq_host_col_popularity" text="Oblíbenost"/>
+        <text name="eq_host_col_setup" text="Poplatek za přípravu"/>
+        <text name="eq_host_col_takings" text="Max. tržby"/>
+        <text name="eq_host_col_check" text="Požadavek"/>
+        <text name="eq_host_col_have" text="Máš"/>
+        <text name="eq_host_col_need" text="Potřeba"/>
+        <text name="eq_host_check_arena" text="Drezurní obdélník"/>
+        <text name="eq_host_check_dressageSeating" text="Tribuny u obdélníku"/>
+        <text name="eq_host_check_showJumps" text="Parkurové skoky"/>
+        <text name="eq_host_check_showJumpingSeating" text="Tribuny u trati"/>
+        <text name="eq_host_check_xcLength" text="Délka terénu"/>
+        <text name="eq_host_check_xcJumps" text="Terénní skoky"/>
+        <text name="eq_host_check_stables" text="Volná místa ve stáji"/>
+        <text name="eq_host_check_feed" text="Krmivo pro koně"/>
+        <text name="eq_host_part_base" text="Základ"/>
+        <text name="eq_host_part_course" text="trať"/>
+        <text name="eq_host_part_seating" text="tribuny"/>
+        <text name="eq_host_part_facilities" text="zázemí"/>
+        <text name="eq_host_part_reputation" text="pověst"/>
+        <text name="eq_host_part_star" text="hvězdný kůň"/>
+        <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_label_yours" text="Tvůj závod"/>
+        <text name="eq_host_label_month" text="Rezervovat na"/>
+        <text name="eq_host_label_next" text="Nejbližší volný měsíc"/>
+        <text name="eq_host_ann_out" text="Vyloučen"/>
+        <text name="eq_host_ann_counted" text="%s trestných bodů: počítá se to!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: výsledky na konci měsíce, za %d dní"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: výsledky na konci měsíce"/>
+        <text name="eq_host_ann_round" text="Soutěžní kolo: tohle se počítá!"/>
+        <text name="eq_host_ann_ridden" text="Už odjeto: jen trénink"/>
+        <text name="eq_host_ann_small" text="Tato trať je na tvé závody příliš malá: jen trénink"/>
+        <text name="eq_host_note_counts" text="Soutěžní kolo pro %s: jeď ke startovní čáře"/>
+        <text name="eq_host_note_ridden" text="Trénink: tato disciplína %s je už odjetá"/>
+        <text name="eq_host_note_small" text="Trénink: trať je pro %s příliš malá"/>
+        <text name="eq_host_label_now" text="Tento měsíc"/>
+        <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
+        <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>
+        <text name="eq_host_monthOption" text="%s (za %d měs.)"/>
+        <text name="eq_host_monthOption1" text="%s (příští měsíc)"/>
+        <text name="eq_host_report_running" text="Právě probíhá: %s"/>
+        <text name="eq_host_report_runningLine" text="Výsledky budou na konci měsíce, za %d dní. Tví přihlášení koně mohou své disciplíny do té doby odjet kterýkoli den."/>
+        <text name="eq_host_report_field" text="%d startujících"/>
+        <text name="eq_host_report_turnout" text="Účast: přijelo %d z %d hostujících koní (popularita %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Hostující koně zatím snědli %d l tvého krmiva (%d l denně)."/>
+        <text name="eq_host_report_feed" text="Hostující koně snědli %d l tvého krmiva."/>
+        <text name="eq_host_report_money" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s: zisk %s."/>
+        <text name="eq_host_report_mine" text="Tvůj kůň %s: %s."/>
+        <text name="eq_host_results_row" text="Tvoje závody"/>
+        <text name="eq_host_results_running" text="Probíhá"/>
+        <text name="eq_host_results_winner" text="Vyhrál %s"/>
+        <text name="eq_host_label_setup" text="Poplatek za přípravu"/>
+        <text name="eq_host_label_popularity" text="Oblíbenost"/>
+        <text name="eq_host_label_visitors" text="Účast"/>
+        <text name="eq_host_label_takings" text="Očekávané tržby"/>
+        <text name="eq_host_label_reputation" text="Pověst"/>
+        <text name="eq_host_yours_open" text="%s, probíhá tento měsíc"/>
+        <text name="eq_host_yours_booked" text="%s – %s"/>
+        <text name="eq_host_yours_none" text="Nic rezervováno"/>
+        <text name="eq_host_ready" text="Připraveno"/>
+        <text name="eq_host_missing" text="Chybí %d"/>
+        <text name="eq_host_none" text="Žádný"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d z %d hostujících koní"/>
+        <text name="eq_host_takingsLine" text="%s startovné, %s vstupné"/>
+        <text name="eq_host_monthsAhead" text="za %d měs."/>
+        <text name="eq_host_monthNow" text="nyní"/>
+        <text name="eq_host_yourFarm" text="Tvoje farma"/>
+        <text name="eq_host_opened" text="Tvůj závod %s začal. Přihlas koně na záložce Závody; výsledky budou na konci měsíce."/>
+        <text name="eq_host_book_noConfig" text="Pořádání není dostupné: pravidla se nenačetla."/>
+        <text name="eq_host_book_already" text="Už máš závod rezervovaný."/>
+        <text name="eq_host_book_month" text="Tento měsíc nelze rezervovat."/>
+        <text name="eq_host_book_requirements" text="Tvoje farma zatím nesplňuje požadavky tohoto závodu."/>
+        <text name="eq_host_book_money" text="Na poplatek za přípravu potřebuješ %s."/>
+        <text name="eq_host_book_done" text="%s rezervován na %s. Poplatek za přípravu zaplacen: %s."/>
+        <text name="eq_host_cancel_none" text="Nemáš rezervovaný žádný závod."/>
+        <text name="eq_host_cancel_done" text="%s zrušen. Vráceno: %s."/>
+        <text name="eq_host_cancel_confirm" text="Zrušit tvůj %s? Dostaneš zpět %s z poplatku za přípravu."/>
+        <text name="eq_host_enter_notYours" text="Přihlásit se může jen farma, která tento závod pořádá."/>
+        <text name="eq_host_enter_done" text="%s přihlášen do %s (hodnocení %.0f). Startuje doma: bez startovného a dopravy."/>
+        <text name="eq_host_button_book" text="Rezervovat na %s"/>
+        <text name="eq_host_button_cancel" text="Zrušit rezervaci"/>
+        <text name="eq_host_button_enter" text="Přihlásit"/>
+        <text name="eq_host_summary" text="%s. Oblíbenost: %s."/>
+        <text name="eq_money_hosting" text="Pořádané závody"/>
+        <text name="rl_messageTitle_eqHosting" text="Pořádání"/>
+        <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
+        <text name="eq_host_warning" text="Tvému závodu %s chybí: %s. Vyřeš to dnes, jinak bude zítra zrušen."/>
+        <text name="eq_host_cancelled" text="Tvůj závod %s byl zrušen, stále chybělo: %s. Tvoje pověst pořadatele utrpí."/>
+        <text name="eq_host_done" text="Tvůj závod %s skončil: přijelo %d hostujících koní. Tržby %s (%s startovné, %s vstupné), oblíbenost %d."/>
+        <text name="eq_host_ride_counted" text="%s započítán do %s: %s trestných bodů."/>
+        <text name="eq_host_ride_out" text="%s započítán do %s: vyloučen."/>
+        <text name="eq_host_ride_already" text="%s tohoto koně pro %s už je odjetý; tohle je trénink."/>
+        <text name="eq_host_ride_small" text="Tato trať je pro %s příliš malá, jízda je trénink."/>
+        <text name="eq_shop_bleachers3x6" text="Tribuna 3 řady, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribuna 5 řad, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribuna 8 řad, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Sezení pro závody, které pořádáš: počítá se do 60 m od trati nebo drezurního obdélníku."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Sponzorské tabule vpředu ukazují značky tvých strojů."/>
     </texts>
 </l10n>

@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Тем"/>
         <text name="eq_train_viewAction" text="Режим тренировки: %s"/>
         <text name="eq_train_view_freestyle" text="Свободный"/>
-        <text name="eq_help_temperament_2" text="Множитель теряется, если перейти в галоп или карьер, задеть препятствие или пропустить следующий элемент. С x4 нужно также держать аллюр между командами. Лакомства вроде моркови тоже отлично развивают Темперамент."/>
-        <text name="eq_help_temperament_1" text="Тренировка Темперамента учит лошадь управляемости. Начните программу, перейдя на шаг и удерживая его недолго. Затем программа попросит выполнить новый элемент. Выполните его за несколько секунд, чтобы продолжить комбо."/>
+        <text name="eq_help_temperament_2" text="Слишком много ошибок, например галоп или выезд из манежа, завершают программу; пройдите её до конца, чтобы получить большой бонус к темпераменту. Вне манежа шаг и осаживание по-прежнему немного тренируют темперамент. Лакомства вроде моркови тоже отлично улучшают темперамент."/>
+        <text name="eq_help_temperament_1" text="Тренировка темперамента учит лошадь послушанию, и для неё нужен манеж для выездки: купите его в магазине или расставьте буквы для выездки. Подъедьте к нему, и начнётся программа: двигайтесь к буквам заданным аллюром, останавливайтесь, осаживайте и делайте вольты. Выполняйте каждую команду вовремя, чтобы повышать множитель."/>
         <text name="eq_help_temperament_title" text="Тренировка: Темперамент"/>
         <text name="eq_help_agility_2" text="Множитель теряется, если не взять новое препятствие вовремя или слишком сильно потерять скорость. Прыжки без препятствия немного тренируют, но не повышают множитель."/>
         <text name="eq_help_agility_1" text="Ловкость — это прыжки через препятствия, хотя смена аллюров тоже немного помогает. Берите препятствия, чтобы набрать множитель Ловкости. Он гаснет через десять секунд или раньше, если задеть препятствие."/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="Манеж для выездки 20 x 60 м"/>
         <text name="eq_shop_dressageArena_function" text="Манеж для выездки со всеми буквами на месте. Езжайте на лошади внутри, чтобы тренировать темперамент между буквами."/>
         <text name="eq_shop_courseFlags" text="Флажки для кросса"/>
-        <text name="eq_shop_courseFlags_function" text="Отметьте любое препятствие как препятствие кросса. Переключайте части клавишами N/M: поставьте белый флажок, протяните золотую планку (0,6, 0,9 или 1,2 м) над препятствием, затем поставьте красный флажок. Планка видна только в режиме строительства."/>
+        <text name="eq_shop_courseFlags_function" text="Отметьте любое препятствие как препятствие кросса. Переключайте части клавишами N/M: поставьте белый флажок у одного края препятствия, протяните золотую линию по земле к другому краю, затем поставьте красный флажок. Линия видна только в режиме строительства; прыгают через само препятствие."/>
         <text name="eq_shop_xcLogPileSmall" text="Штабель брёвен (малый)"/>
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
+        <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
+        <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJumpCrossrail" text="Препятствие: крестовина"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Препятствие: восходящий оксер"/>
+        <text name="eq_shop_showJumpTripleBar" text="Препятствие: тройная жердь"/>
+        <text name="eq_shop_showJumpHogsback" text="Препятствие: хогсбэк"/>
+        <text name="eq_shop_showJumpFan2" text="Препятствие: веер из 2 жердей"/>
+        <text name="eq_shop_showJumpFan3" text="Препятствие: веер из 3 жердей"/>
+        <text name="eq_shop_showJumpLiverpool" text="Препятствие: ливерпуль"/>
+        <text name="eq_shop_showJumpCavaletti" text="Препятствие: кавалетти"/>
+        <text name="eq_config_poleColour" text="Цвет жердей"/>
+        <text name="eq_config_wingColour" text="Цвет крыльев"/>
+        <text name="eq_colour_white" text="Белый"/>
+        <text name="eq_colour_cream" text="Кремовый"/>
+        <text name="eq_colour_red" text="Красный"/>
+        <text name="eq_colour_burgundy" text="Бордовый"/>
+        <text name="eq_colour_orange" text="Оранжевый"/>
+        <text name="eq_colour_yellow" text="Жёлтый"/>
+        <text name="eq_colour_lime" text="Лаймовый"/>
+        <text name="eq_colour_green" text="Зелёный"/>
+        <text name="eq_colour_darkGreen" text="Тёмно-зелёный"/>
+        <text name="eq_colour_skyBlue" text="Голубой"/>
+        <text name="eq_colour_blue" text="Синий"/>
+        <text name="eq_colour_navy" text="Тёмно-синий"/>
+        <text name="eq_colour_purple" text="Фиолетовый"/>
+        <text name="eq_colour_pink" text="Розовый"/>
+        <text name="eq_colour_grey" text="Серый"/>
+        <text name="eq_colour_black" text="Чёрный"/>
+        <text name="eq_shop_showJump_function" text="Конкурное препятствие, жерди которого падают, когда лошадь их задевает, и возвращаются на место после маршрута или когда вы уезжаете."/>
         <text name="eq_shop_xcDropWall08" text="Стенка спуска (0,8 м)"/>
         <text name="eq_shop_xcDropWall12" text="Стенка спуска (1,2 м)"/>
         <text name="eq_shop_xcDropWall16" text="Стенка спуска (1,6 м)"/>
+        <text name="eq_shop_xcCornerPlank" text="Угол (доски)"/>
+        <text name="eq_shop_xcCornerLog" text="Угол (брёвна)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Ролл-топ (четверть)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Ролл-топ (половина)"/>
+        <text name="eq_shop_xcTable" text="Стол"/>
+        <text name="eq_shop_xcBigLog" text="Большое бревно"/>
+        <text name="eq_config_corner" text="Угол"/>
+        <text name="eq_config_cornerRight" text="Острие справа"/>
+        <text name="eq_config_cornerLeft" text="Острие слева"/>
         <text name="eq_shop_xcDrop_function" text="Дощатая стенка для спуска на кроссе. Насыпьте склон, поставьте её наверху краем к обрыву, и боковые стенки скроют крутой склон."/>
         <text name="eq_shop_xcJump_function" text="Препятствие кросса. Красный и белый флажки показывают, где прыгать."/>
-        <text name="eq_shop_xcHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов кросса, если не куплено как «Всегда видно»."/>
+        <text name="eq_shop_xcHidden_function" text="Исчезает вне строительства, редактирования маршрута и заездов, если не куплен с «Исчезающий: Нет»."/>
+        <text name="eq_shop_showJumpHidden_function" text="Купленный с «Исчезающий: Да», он исчезает вне строительства, редактирования маршрута и заездов."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Скрыто вне режима строительства, редактирования маршрута и заездов."/>
-        <text name="eq_config_alwaysVisible" text="Всегда видно"/>
+        <text name="eq_config_disappearing" text="Исчезающий"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Шаг"/>
         <text name="eq_dressage_gait_trot" text="Рысь"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="Далее: %s"/>
         <text name="eq_dressage_stand" text="Стоять"/>
         <text name="eq_dressage_marker" text="Буква %s"/>
-        <text name="eq_train_routine_none" text="Перейдите на шаг, чтобы начать программу"/>
+        <text name="eq_train_routine_none" text="Подъедьте к манежу для выездки, чтобы начать программу"/>
         <text name="eq_train_routine" text="Программа x%d"/>
         <text name="eq_train_combo_none" text="Возьмите препятствие, чтобы начать комбо"/>
         <text name="eq_train_combo" text="Комбо прыжков x%d"/>
         <text name="eq_train_view_temperament" text="Темперамент"/>
         <text name="eq_train_view_agility" text="Ловкость"/>
-        <text name="eq_help_freestyle_2" text="Ловкость тренируется прыжками через препятствия, которые заполняют шкалу комбо, а Темперамент — удержанием шага в течение короткого времени и выполнением команд, которые заполняют его шкалу комбо. Выносливость и Скорость тренируются правильной ездой карьером: нажмите H на карьере, чтобы узнать как."/>
+        <text name="eq_help_freestyle_2" text="Ловкость тренируется прыжками через препятствия с накоплением комбо, а темперамент — программой в манеже для выездки. Выносливость и скорость тренируются хорошим галопом: нажмите H на галопе, чтобы узнать как."/>
         <text name="eq_help_freestyle_3" text="Не хотите ездить сами? Наймите конюхов и тренеров на вкладке «Персонал», и они будут тренировать лошадей каждый день. Работники игры и Herdsman из RLRM лишь поддерживают их в форме."/>
         <text name="eq_form_title" text="Пиковая форма"/>
         <text name="eq_help_freestyle_4" text="Проедьтесь перед стартом! Каждый показатель, натренированный в его мини-игре, даёт лошади Пиковую форму на соревнованиях этого месяца, до +8 к показателю. Она не складывается за несколько дней: засчитывается лучшая тренировка месяца."/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="Новый маршрут конкура"/>
         <text name="eq_course_started" text="Запись «%s»: проедьте препятствия по порядку. Поставленные препятствия Realistic Equestrian не имеют столкновений во время редактирования; остальные остаются твёрдыми"/>
         <text name="eq_course_noJumps" text="Идёт запись маршрута, но на карте ещё нет конкурных препятствий"/>
-        <text name="eq_course_tooFew" text="Маршрут не сохранён: проедьте не менее %d конкурных препятствий"/>
+        <text name="eq_course_tooFew" text="Маршрут не сохранён: проедьте не менее %d конкурных препятствий или нажмите Ctrl+Backspace для отмены"/>
         <text name="eq_course_saved" text="«%s» сохранён: препятствий: %d, %.0f м"/>
         <text name="eq_course_cancelled" text="Редактирование остановлено: вы слезли с лошади до того, как в маршруте стало достаточно препятствий"/>
         <text name="eq_course_leftSaved" text="Маршрут сохранён, когда вы слезли с лошади: нажмите Ctrl+J рядом с ним, чтобы изменить, затем Ctrl+K, чтобы продолжить запись с ближайшей точки"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="Чистый проезд!"/>
         <text name="eq_sj_faultsPop" text="Штрафных очков: %s"/>
         <text name="eq_sj_retired" text="Конкурный заезд прерван"/>
+        <text name="eq_xc_retired" text="Заезд по кроссу прерван"/>
         <text name="eq_sj_startLine" text="Линия старта"/>
         <text name="eq_sj_finishLine" text="Линия финиша"/>
         <text name="eq_sj_fenceRow" text="Препятствие %d из %d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="Дисквалификация: три закидки на одном препятствии или четыре на маршруте"/>
         <text name="eq_sj_represent" text="Вернитесь и возьмите препятствие %d"/>
         <text name="eq_pop_courseFence" text="Препятствие %d"/>
+        <text name="eq_flagLeft" text="Л"/>
+        <text name="eq_flagRight" text="П"/>
         <text name="input_EQ_COURSE_REWIND" text="Откат к ближайшей точке"/>
         <text name="eq_course_rewound" text="Маршрут откачен к ближайшей точке: сохранено препятствий: %d"/>
         <text name="eq_course_resumed" text="Запись с ближайшей точки"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="Удалить «%s» (препятствий: %d, %.0f м)?"/>
         <text name="eq_course_deleteTitle" text="Удалить маршрут"/>
         <text name="eq_course_deleteAction" text="Удалить «%s»"/>
+        <text name="eq_course_cancelAction" text="Отменить новый маршрут"/>
+        <text name="eq_course_discardAction" text="Отменить изменения в %s"/>
+        <text name="eq_course_newCancelled" text="Отменено: %s не сохранён"/>
+        <text name="eq_course_changesDiscarded" text="Изменения в %s отменены: сохранённый маршрут остался прежним"/>
         <text name="eq_course_editAction" text="Изменить «%s»"/>
         <text name="eq_course_doneAction" text="Завершить редактирование маршрута"/>
         <text name="eq_course_saveAction" text="Сохранить маршрут и завершить"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="Итого штраф: %s"/>
         <text name="eq_staff_button_decline" text="Отклонить"/>
         <text name="eq_staff_declined" text="%s больше не придёт. В ближайшие несколько часов может появиться кто-то новый."/>
+        <text name="eq_ui_tab_host" text="Проведение"/>
+        <text name="eq_host_eventName" text="%s: %s"/>
+        <text name="eq_host_type_dressage" text="Выездка"/>
+        <text name="eq_host_type_showJumping" text="Конкур"/>
+        <text name="eq_host_type_crossCountry" text="Кросс"/>
+        <text name="eq_host_type_eventing" text="Троеборье"/>
+        <text name="eq_host_rating_novice" text="Новички"/>
+        <text name="eq_host_rating_intermediate" text="Средний уровень"/>
+        <text name="eq_host_rating_championship" text="Чемпионат"/>
+        <text name="eq_host_col_event" text="Соревнование, которое можно провести"/>
+        <text name="eq_host_col_ready" text="Требования"/>
+        <text name="eq_host_col_popularity" text="Популярность"/>
+        <text name="eq_host_col_setup" text="Взнос за организацию"/>
+        <text name="eq_host_col_takings" text="Макс. доход"/>
+        <text name="eq_host_col_check" text="Требование"/>
+        <text name="eq_host_col_have" text="Есть"/>
+        <text name="eq_host_col_need" text="Нужно"/>
+        <text name="eq_host_check_arena" text="Манеж для выездки"/>
+        <text name="eq_host_check_dressageSeating" text="Трибуны у манежа"/>
+        <text name="eq_host_check_showJumps" text="Конкурные препятствия"/>
+        <text name="eq_host_check_showJumpingSeating" text="Трибуны у маршрута"/>
+        <text name="eq_host_check_xcLength" text="Длина кросса"/>
+        <text name="eq_host_check_xcJumps" text="Препятствия кросса"/>
+        <text name="eq_host_check_stables" text="Свободные денники"/>
+        <text name="eq_host_check_feed" text="Корм для лошадей"/>
+        <text name="eq_host_part_base" text="База"/>
+        <text name="eq_host_part_course" text="маршрут"/>
+        <text name="eq_host_part_seating" text="трибуны"/>
+        <text name="eq_host_part_facilities" text="постройки"/>
+        <text name="eq_host_part_reputation" text="репутация"/>
+        <text name="eq_host_part_star" text="звёздная лошадь"/>
+        <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_label_yours" text="Ваше соревнование"/>
+        <text name="eq_host_label_month" text="Забронировать на"/>
+        <text name="eq_host_label_next" text="Ближайший свободный месяц"/>
+        <text name="eq_host_ann_out" text="Снят"/>
+        <text name="eq_host_ann_counted" text="%s штрафных очков: засчитано!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: итоги в конце месяца, через %d дн."/>
+        <text name="eq_host_ann_resultsSoon" text="%s: итоги в конце месяца"/>
+        <text name="eq_host_ann_round" text="Зачётный заезд: этот засчитывается!"/>
+        <text name="eq_host_ann_ridden" text="Уже пройдено: это просто тренировка"/>
+        <text name="eq_host_ann_small" text="Этот маршрут слишком мал для вашего турнира: просто тренировка"/>
+        <text name="eq_host_note_counts" text="Зачётный заезд на %s: подъезжайте к линии старта"/>
+        <text name="eq_host_note_ridden" text="Тренировка: этот этап %s уже пройден"/>
+        <text name="eq_host_note_small" text="Тренировка: маршрут слишком мал для %s"/>
+        <text name="eq_host_label_now" text="Этот месяц"/>
+        <text name="eq_host_next_oneAtATime" text="один турнир за раз"/>
+        <text name="eq_host_next_interval" text="%d мес. между турнирами, см. Настройки"/>
+        <text name="eq_host_monthOption" text="%s (через %d мес.)"/>
+        <text name="eq_host_monthOption1" text="%s (в следующем месяце)"/>
+        <text name="eq_host_report_running" text="Идёт сейчас: %s"/>
+        <text name="eq_host_report_runningLine" text="Итоги будут в конце месяца, через %d дн. Ваши заявленные лошади могут пройти свои этапы в любой день до этого."/>
+        <text name="eq_host_report_field" text="%d участников"/>
+        <text name="eq_host_report_turnout" text="Явка: приехало %d из %d гостевых лошадей (популярность %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Гостевые лошади уже съели %d л вашего корма (%d л в день)."/>
+        <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
+        <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
+        <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
+        <text name="eq_host_results_row" text="Ваши турниры"/>
+        <text name="eq_host_results_running" text="Идёт сейчас"/>
+        <text name="eq_host_results_winner" text="Победитель: %s"/>
+        <text name="eq_host_label_setup" text="Взнос за организацию"/>
+        <text name="eq_host_label_popularity" text="Популярность"/>
+        <text name="eq_host_label_visitors" text="Участники"/>
+        <text name="eq_host_label_takings" text="Ожидаемый доход"/>
+        <text name="eq_host_label_reputation" text="Репутация"/>
+        <text name="eq_host_yours_open" text="%s, идёт в этом месяце"/>
+        <text name="eq_host_yours_booked" text="%s, %s"/>
+        <text name="eq_host_yours_none" text="Ничего не забронировано"/>
+        <text name="eq_host_ready" text="Готово"/>
+        <text name="eq_host_missing" text="Не хватает: %d"/>
+        <text name="eq_host_none" text="Нет"/>
+        <text name="eq_host_metres" text="%d м"/>
+        <text name="eq_host_litres" text="%d л"/>
+        <text name="eq_host_visitors" text="%d из %d гостевых лошадей"/>
+        <text name="eq_host_takingsLine" text="%s взносы, %s билеты"/>
+        <text name="eq_host_monthsAhead" text="через %d мес."/>
+        <text name="eq_host_monthNow" text="сейчас"/>
+        <text name="eq_host_yourFarm" text="Ваша ферма"/>
+        <text name="eq_host_opened" text="Ваше соревнование «%s» началось. Заявите лошадей на вкладке «Соревнования»; итоги в конце месяца."/>
+        <text name="eq_host_book_noConfig" text="Проведение недоступно: правила проведения не загрузились."/>
+        <text name="eq_host_book_already" text="У вас уже забронировано соревнование."/>
+        <text name="eq_host_book_month" text="Этот месяц нельзя забронировать."/>
+        <text name="eq_host_book_requirements" text="Ваша ферма пока не отвечает требованиям этого соревнования."/>
+        <text name="eq_host_book_money" text="Для взноса за организацию нужно %s."/>
+        <text name="eq_host_book_done" text="«%s» забронировано на %s. Взнос за организацию: %s."/>
+        <text name="eq_host_cancel_none" text="У вас нет забронированного соревнования."/>
+        <text name="eq_host_cancel_done" text="«%s» отменено. Возврат: %s."/>
+        <text name="eq_host_cancel_confirm" text="Отменить «%s»? Вам вернут %s от взноса за организацию."/>
+        <text name="eq_host_enter_notYours" text="Участвовать может только ферма, которая проводит это соревнование."/>
+        <text name="eq_host_enter_done" text="%s заявлен(а) на %s (рейтинг %.0f). Выступает дома: без взноса и перевозки."/>
+        <text name="eq_host_button_book" text="Забронировать на %s"/>
+        <text name="eq_host_button_cancel" text="Отменить бронь"/>
+        <text name="eq_host_button_enter" text="Заявить"/>
+        <text name="eq_host_summary" text="%s. Популярность: %s."/>
+        <text name="eq_money_hosting" text="Проведение соревнований"/>
+        <text name="rl_messageTitle_eqHosting" text="Проведение"/>
+        <text name="eq_settings_hostInterval" text="Месяцев между своими соревнованиями"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Сколько месяцев после месяца вашего последнего соревнования должно пройти до следующего."/>
+        <text name="eq_host_warning" text="Для соревнования «%s» не хватает: %s. Исправьте сегодня, иначе завтра оно будет отменено."/>
+        <text name="eq_host_cancelled" text="Соревнование «%s» отменено, по-прежнему не хватало: %s. Ваша репутация организатора страдает."/>
+        <text name="eq_host_done" text="Соревнование «%s» завершено: приехало гостевых лошадей: %d. Доход %s (%s взносы, %s билеты), популярность %d."/>
+        <text name="eq_host_ride_counted" text="%s засчитан для «%s»: %s штрафных очков."/>
+        <text name="eq_host_ride_out" text="%s засчитан для «%s»: снятие."/>
+        <text name="eq_host_ride_already" text="%s этой лошади для «%s» уже пройден; этот заезд тренировочный."/>
+        <text name="eq_host_ride_small" text="Этот маршрут слишком мал для «%s», заезд тренировочный."/>
+        <text name="eq_shop_bleachers3x6" text="Трибуна 3 ряда, 6 м"/>
+        <text name="eq_shop_bleachers5x10" text="Трибуна 5 рядов, 10 м"/>
+        <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядов, 16 м"/>
+        <text name="eq_shop_bleachers_function" text="Места для зрителей на ваших соревнованиях: считается в пределах 60 м от маршрута или манежа для выездки."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Спонсорские щиты перед ней показывают марки вашей техники."/>
     </texts>
 </l10n>

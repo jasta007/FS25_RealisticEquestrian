@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Visão de treino: %s"/>
         <text name="eq_train_view_freestyle" text="Livre"/>
-        <text name="eq_help_temperament_2" text="Você perde o multiplicador se acelerar para o galope ou o galope de corrida, bater em um obstáculo ou errar a próxima manobra. A partir de x4 você também precisa manter o andamento entre os comandos. Dar petiscos como cenouras aos seus cavalos também é uma ótima forma de melhorar o Temperamento."/>
-        <text name="eq_help_temperament_1" text="O treino de Temperamento é ensinar controle ao seu cavalo. Comece uma rotina passando ao passo e mantendo esse andamento por um curto intervalo. O programa de treino então pede uma nova manobra para manter. Cumpra-a em poucos segundos para continuar o combo."/>
+        <text name="eq_help_temperament_2" text="Faltas demais, como galopar ou sair da pista, encerram a rotina; termine-a para um grande bônus de temperamento. Fora de uma pista, andar a passo e recuar ainda treinam um pouco de temperamento. Dar petiscos como cenouras também é ótimo para melhorar o temperamento."/>
+        <text name="eq_help_temperament_1" text="O treino de temperamento ensina controle ao seu cavalo e precisa de uma pista de adestramento: compre uma na loja ou posicione letras de adestramento. Aproxime-se e uma rotina começa, pedindo que você vá até as letras nas andaduras indicadas, pare, recue e faça círculos. Cumpra cada comando a tempo para aumentar seu multiplicador."/>
         <text name="eq_help_temperament_title" text="Treino: Temperamento"/>
         <text name="eq_help_agility_2" text="Você perde o multiplicador se não saltar um novo obstáculo a tempo ou perder velocidade demais. Saltar sem obstáculo dá algum treino, mas não aumenta o multiplicador."/>
         <text name="eq_help_agility_1" text="Agilidade é saltar obstáculos, embora alternar entre os andamentos também ajude um pouco. Salte obstáculos para formar um multiplicador de treino de Agilidade, que some após dez segundos, ou antes se você bater em um obstáculo."/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="Pista de adestramento 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Uma pista de adestramento com todas as letras no lugar. Monte um cavalo nela para treinar temperamento entre as letras."/>
         <text name="eq_shop_courseFlags" text="Bandeiras de cross country"/>
-        <text name="eq_shop_courseFlags_function" text="Marque qualquer obstáculo como salto de cross country. Troque de segmento com N/M: coloque uma bandeira branca, estique uma barra dourada (0,6, 0,9 ou 1,2 m) sobre o obstáculo e depois coloque uma bandeira vermelha. A barra só aparece no modo de construção."/>
+        <text name="eq_shop_courseFlags_function" text="Marque qualquer obstáculo como salto de cross country. Troque de segmento com N/M: coloque uma bandeira branca numa ponta do obstáculo, estique a linha dourada pelo chão até a outra ponta e depois coloque uma bandeira vermelha. A linha só aparece no modo de construção; o salto é o próprio obstáculo."/>
         <text name="eq_shop_xcLogPileSmall" text="Pilha de troncos (pequena)"/>
         <text name="eq_shop_xcLogPile" text="Pilha de troncos"/>
+        <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
+        <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Obstáculo: Cruzado"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Obstáculo: Oxer ascendente"/>
+        <text name="eq_shop_showJumpTripleBar" text="Obstáculo: Triplo"/>
+        <text name="eq_shop_showJumpHogsback" text="Obstáculo: Hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Obstáculo: Leque de 2 varas"/>
+        <text name="eq_shop_showJumpFan3" text="Obstáculo: Leque de 3 varas"/>
+        <text name="eq_shop_showJumpLiverpool" text="Obstáculo: Liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Obstáculo: Cavaletti"/>
+        <text name="eq_config_poleColour" text="Cor das varas"/>
+        <text name="eq_config_wingColour" text="Cor das laterais"/>
+        <text name="eq_colour_white" text="Branco"/>
+        <text name="eq_colour_cream" text="Creme"/>
+        <text name="eq_colour_red" text="Vermelho"/>
+        <text name="eq_colour_burgundy" text="Vinho"/>
+        <text name="eq_colour_orange" text="Laranja"/>
+        <text name="eq_colour_yellow" text="Amarelo"/>
+        <text name="eq_colour_lime" text="Verde-limão"/>
+        <text name="eq_colour_green" text="Verde"/>
+        <text name="eq_colour_darkGreen" text="Verde-escuro"/>
+        <text name="eq_colour_skyBlue" text="Azul-celeste"/>
+        <text name="eq_colour_blue" text="Azul"/>
+        <text name="eq_colour_navy" text="Azul-marinho"/>
+        <text name="eq_colour_purple" text="Roxo"/>
+        <text name="eq_colour_pink" text="Rosa"/>
+        <text name="eq_colour_grey" text="Cinza"/>
+        <text name="eq_colour_black" text="Preto"/>
+        <text name="eq_shop_showJump_function" text="Um obstáculo de salto cujas varas caem quando o cavalo encosta nelas e voltam ao lugar depois do percurso, ou quando você se afasta."/>
         <text name="eq_shop_xcDropWall08" text="Muro de descida (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Muro de descida (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Muro de descida (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Canto (tábuas)"/>
+        <text name="eq_shop_xcCornerLog" text="Canto (troncos)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (quarto)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (meio)"/>
+        <text name="eq_shop_xcTable" text="Mesa"/>
+        <text name="eq_shop_xcBigLog" text="Tronco grande"/>
+        <text name="eq_config_corner" text="Canto"/>
+        <text name="eq_config_cornerRight" text="Ponta à direita"/>
+        <text name="eq_config_cornerLeft" text="Ponta à esquerda"/>
         <text name="eq_shop_xcDrop_function" text="Um muro de tábuas para uma descida de cross country. Molde um barranco, coloque-o no topo com a borda na beirada, e as paredes laterais escondem a encosta íngreme."/>
         <text name="eq_shop_xcJump_function" text="Um salto de cross country. Suas bandeiras vermelha e branca marcam onde saltar."/>
-        <text name="eq_shop_xcHidden_function" text="Oculto fora do modo de construção, da edição de percursos e das provas de cross country, a menos que comprado como Sempre visível."/>
+        <text name="eq_shop_xcHidden_function" text="Desaparece fora da construção, edição de percurso e provas, a menos que comprado com Desaparece: Não."/>
+        <text name="eq_shop_showJumpHidden_function" text="Comprado com Desaparece: Sim, ele desaparece fora da construção, edição de percurso e provas."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Oculto fora do modo de construção, da edição de percursos e das provas."/>
-        <text name="eq_config_alwaysVisible" text="Sempre visível"/>
+        <text name="eq_config_disappearing" text="Desaparece"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Passo"/>
         <text name="eq_dressage_gait_trot" text="Trote"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="Próximo: %s"/>
         <text name="eq_dressage_stand" text="Parado"/>
         <text name="eq_dressage_marker" text="Letra %s"/>
-        <text name="eq_train_routine_none" text="Ande a passo para iniciar uma rotina"/>
+        <text name="eq_train_routine_none" text="Vá até uma pista de adestramento para iniciar uma rotina"/>
         <text name="eq_train_routine" text="Rotina x%d"/>
         <text name="eq_train_combo_none" text="Salte um obstáculo para iniciar um combo"/>
         <text name="eq_train_combo" text="Combo de saltos x%d"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilidade"/>
-        <text name="eq_help_freestyle_2" text="A Agilidade é treinada saltando obstáculos para encher um medidor de combo, e o Temperamento começa mantendo o passo por um curto tempo e depois seguindo instruções para encher o seu medidor de combo. Resistência e Velocidade treinam galopando bem: pressione H durante o galope para aprender como."/>
+        <text name="eq_help_freestyle_2" text="A agilidade é treinada saltando obstáculos para encher um medidor de combo, e o temperamento fazendo uma rotina numa pista de adestramento. Resistência e velocidade treinam com um bom galope: pressione H galopando para saber como."/>
         <text name="eq_help_freestyle_3" text="Prefere não montar? Contrate tratadores e treinadores na aba Equipe para treinar seus cavalos todos os dias. Os funcionários de animais do jogo e o Herdsman do RLRM só os mantêm em dia."/>
         <text name="eq_form_title" text="Forma máxima"/>
         <text name="eq_help_freestyle_4" text="Monte antes de uma competição! Cada atributo que você treina com seu minijogo deixa o cavalo em Forma máxima para as competições deste mês, até +8 por atributo. Não se acumula ao longo de vários dias: vale a sua melhor sessão do mês."/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="Novo percurso de salto"/>
         <text name="eq_course_started" text="Gravando %s: passe pelos obstáculos em ordem. Os obstáculos colocados do Realistic Equestrian ficam sem colisão enquanto você edita; os outros continuam sólidos"/>
         <text name="eq_course_noJumps" text="Gravando um percurso, mas ainda não há obstáculos de salto no mapa"/>
-        <text name="eq_course_tooFew" text="Percurso não salvo: passe por pelo menos %d obstáculos de salto"/>
+        <text name="eq_course_tooFew" text="Percurso não salvo: passe por pelo menos %d obstáculos de salto, ou pressione Ctrl+Backspace para cancelar"/>
         <text name="eq_course_saved" text="%s salvo: %d obstáculos, %.0f m"/>
         <text name="eq_course_cancelled" text="Edição parada: você saiu do cavalo antes de o percurso ter obstáculos suficientes para salvar"/>
         <text name="eq_course_leftSaved" text="Percurso salvo ao sair do cavalo: pressione Ctrl+J perto dele para editar e depois Ctrl+K para continuar a gravar do ponto mais próximo"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="Percurso limpo!"/>
         <text name="eq_sj_faultsPop" text="%s faltas"/>
         <text name="eq_sj_retired" text="Percurso de salto abandonado"/>
+        <text name="eq_xc_retired" text="Percurso de cross country abandonado"/>
         <text name="eq_sj_startLine" text="Linha de largada"/>
         <text name="eq_sj_finishLine" text="Linha de chegada"/>
         <text name="eq_sj_fenceRow" text="Obstáculo %d de %d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminado: três recusas em um obstáculo, ou quatro no percurso"/>
         <text name="eq_sj_represent" text="Volte e salte o obstáculo %d"/>
         <text name="eq_pop_courseFence" text="Obstáculo %d"/>
+        <text name="eq_flagLeft" text="E"/>
+        <text name="eq_flagRight" text="D"/>
         <text name="input_EQ_COURSE_REWIND" text="Voltar ao ponto mais próximo"/>
         <text name="eq_course_rewound" text="Percurso voltado ao ponto mais próximo: %d obstáculos mantidos"/>
         <text name="eq_course_resumed" text="Gravando a partir do ponto mais próximo"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="Apagar %s com %d obstáculos em %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Apagar percurso"/>
         <text name="eq_course_deleteAction" text="Apagar %s"/>
+        <text name="eq_course_cancelAction" text="Cancelar novo percurso"/>
+        <text name="eq_course_discardAction" text="Descartar alterações em %s"/>
+        <text name="eq_course_newCancelled" text="Cancelado: %s não foi salvo"/>
+        <text name="eq_course_changesDiscarded" text="Alterações em %s descartadas: o percurso salvo continua como estava"/>
         <text name="eq_course_editAction" text="Editar %s"/>
         <text name="eq_course_doneAction" text="Concluir edição do percurso"/>
         <text name="eq_course_saveAction" text="Salvar percurso e concluir"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="Total: %s pontos de penalidade"/>
         <text name="eq_staff_button_decline" text="Recusar"/>
         <text name="eq_staff_declined" text="%s não vai voltar. Alguém novo pode aparecer nas próximas horas."/>
+        <text name="eq_ui_tab_host" text="Organizar"/>
+        <text name="eq_host_eventName" text="%s em %s"/>
+        <text name="eq_host_type_dressage" text="Adestramento"/>
+        <text name="eq_host_type_showJumping" text="Salto"/>
+        <text name="eq_host_type_crossCountry" text="Cross Country"/>
+        <text name="eq_host_type_eventing" text="CCE"/>
+        <text name="eq_host_rating_novice" text="Iniciante"/>
+        <text name="eq_host_rating_intermediate" text="Intermediário"/>
+        <text name="eq_host_rating_championship" text="Campeonato"/>
+        <text name="eq_host_col_event" text="Evento que você pode organizar"/>
+        <text name="eq_host_col_ready" text="Requisitos"/>
+        <text name="eq_host_col_popularity" text="Popularidade"/>
+        <text name="eq_host_col_setup" text="Taxa de montagem"/>
+        <text name="eq_host_col_takings" text="Receita máx."/>
+        <text name="eq_host_col_check" text="Requisito"/>
+        <text name="eq_host_col_have" text="Você tem"/>
+        <text name="eq_host_col_need" text="Necessário"/>
+        <text name="eq_host_check_arena" text="Pista de adestramento"/>
+        <text name="eq_host_check_dressageSeating" text="Arquibancadas da pista"/>
+        <text name="eq_host_check_showJumps" text="Obstáculos de salto"/>
+        <text name="eq_host_check_showJumpingSeating" text="Arquibancadas do percurso"/>
+        <text name="eq_host_check_xcLength" text="Extensão do cross"/>
+        <text name="eq_host_check_xcJumps" text="Obstáculos de cross"/>
+        <text name="eq_host_check_stables" text="Baias livres"/>
+        <text name="eq_host_check_feed" text="Ração para cavalos"/>
+        <text name="eq_host_part_base" text="Base"/>
+        <text name="eq_host_part_course" text="percurso"/>
+        <text name="eq_host_part_seating" text="arquibancadas"/>
+        <text name="eq_host_part_facilities" text="instalações"/>
+        <text name="eq_host_part_reputation" text="reputação"/>
+        <text name="eq_host_part_star" text="cavalo estrela"/>
+        <text name="eq_host_part_winter" text="inverno"/>
+        <text name="eq_host_label_yours" text="Seu evento"/>
+        <text name="eq_host_label_month" text="Reservar para"/>
+        <text name="eq_host_label_next" text="Próximo mês livre"/>
+        <text name="eq_host_ann_out" text="Eliminado"/>
+        <text name="eq_host_ann_counted" text="%s penalidades: conta!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: resultados no fim do mês, em %d dias"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: resultados no fim do mês"/>
+        <text name="eq_host_ann_round" text="Rodada de competição: esta conta!"/>
+        <text name="eq_host_ann_ridden" text="Já montada: é só treino"/>
+        <text name="eq_host_ann_small" text="Este percurso é pequeno demais para o seu evento: só treino"/>
+        <text name="eq_host_note_counts" text="Rodada de competição para %s: vá até a linha de largada"/>
+        <text name="eq_host_note_ridden" text="Treino: esta prova de %s já foi montada"/>
+        <text name="eq_host_note_small" text="Treino: percurso pequeno demais para %s"/>
+        <text name="eq_host_label_now" text="Este mês"/>
+        <text name="eq_host_next_oneAtATime" text="um evento por vez"/>
+        <text name="eq_host_next_interval" text="%d meses entre eventos, veja Configurações"/>
+        <text name="eq_host_monthOption" text="%s (em %d meses)"/>
+        <text name="eq_host_monthOption1" text="%s (próximo mês)"/>
+        <text name="eq_host_report_running" text="Acontecendo: %s"/>
+        <text name="eq_host_report_runningLine" text="Os resultados saem no fim do mês, em %d dias. Seus cavalos inscritos podem montar as provas em qualquer dia até lá."/>
+        <text name="eq_host_report_field" text="%d participantes"/>
+        <text name="eq_host_report_turnout" text="Público: vieram %d de %d cavalos visitantes (popularidade %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Os cavalos visitantes já comeram %d l da sua ração (%d l por dia)."/>
+        <text name="eq_host_report_feed" text="Os cavalos visitantes comeram %d l da sua ração."/>
+        <text name="eq_host_report_money" text="Receita %s (inscrições %s, bilheteria %s), taxa de organização %s: lucro %s."/>
+        <text name="eq_host_report_mine" text="Seu cavalo %s: %s."/>
+        <text name="eq_host_results_row" text="Seus eventos"/>
+        <text name="eq_host_results_running" text="Acontecendo"/>
+        <text name="eq_host_results_winner" text="Vencido por %s"/>
+        <text name="eq_host_label_setup" text="Taxa de montagem"/>
+        <text name="eq_host_label_popularity" text="Popularidade"/>
+        <text name="eq_host_label_visitors" text="Público"/>
+        <text name="eq_host_label_takings" text="Receita prevista"/>
+        <text name="eq_host_label_reputation" text="Reputação"/>
+        <text name="eq_host_yours_open" text="%s, acontecendo este mês"/>
+        <text name="eq_host_yours_booked" text="%s em %s"/>
+        <text name="eq_host_yours_none" text="Nada reservado"/>
+        <text name="eq_host_ready" text="Pronto"/>
+        <text name="eq_host_missing" text="Faltam %d"/>
+        <text name="eq_host_none" text="Nenhuma"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d de %d cavalos visitantes"/>
+        <text name="eq_host_takingsLine" text="%s de inscrições, %s de bilheteria"/>
+        <text name="eq_host_monthsAhead" text="em %d meses"/>
+        <text name="eq_host_monthNow" text="agora"/>
+        <text name="eq_host_yourFarm" text="Sua fazenda"/>
+        <text name="eq_host_opened" text="Seu %s começou. Inscreva seus cavalos na aba Eventos; os resultados saem no fim do mês."/>
+        <text name="eq_host_book_noConfig" text="Não é possível organizar: as regras de organização não carregaram."/>
+        <text name="eq_host_book_already" text="Você já tem um evento reservado."/>
+        <text name="eq_host_book_month" text="Esse mês não pode ser reservado."/>
+        <text name="eq_host_book_requirements" text="Sua fazenda ainda não atende aos requisitos deste evento."/>
+        <text name="eq_host_book_money" text="Você precisa de %s para a taxa de montagem."/>
+        <text name="eq_host_book_done" text="%s reservado para %s. Taxa de montagem paga: %s."/>
+        <text name="eq_host_cancel_none" text="Você não tem evento reservado."/>
+        <text name="eq_host_cancel_done" text="%s cancelado. Reembolso: %s."/>
+        <text name="eq_host_cancel_confirm" text="Cancelar seu %s? Você recebe de volta %s da taxa de montagem."/>
+        <text name="eq_host_enter_notYours" text="Só a fazenda que organiza este evento pode se inscrever nele."/>
+        <text name="eq_host_enter_done" text="%s inscrito em %s (nota %.0f). Compete em casa: sem taxa nem transporte."/>
+        <text name="eq_host_button_book" text="Reservar para %s"/>
+        <text name="eq_host_button_cancel" text="Cancelar reserva"/>
+        <text name="eq_host_button_enter" text="Inscrever"/>
+        <text name="eq_host_summary" text="%s. Popularidade: %s."/>
+        <text name="eq_money_hosting" text="Eventos organizados"/>
+        <text name="rl_messageTitle_eqHosting" text="Organização"/>
+        <text name="eq_settings_hostInterval" text="Meses entre eventos próprios"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Quantos meses após o mês do seu último evento organizado até poder organizar outro."/>
+        <text name="eq_host_warning" text="Falta ao seu %s: %s. Resolva hoje ou o evento será cancelado amanhã."/>
+        <text name="eq_host_cancelled" text="Seu %s foi cancelado, ainda faltava: %s. Sua reputação como organizador é prejudicada."/>
+        <text name="eq_host_done" text="Seu %s terminou: vieram %d cavalos visitantes. Receita %s (%s de inscrições, %s de bilheteria), popularidade %d."/>
+        <text name="eq_host_ride_counted" text="%s contado para %s: %s penalidades."/>
+        <text name="eq_host_ride_out" text="%s contado para %s: eliminado."/>
+        <text name="eq_host_ride_already" text="O %s deste cavalo para %s já foi feito; este é treino."/>
+        <text name="eq_host_ride_small" text="Este percurso é pequeno demais para %s; a volta é treino."/>
+        <text name="eq_shop_bleachers3x6" text="Arquibancada 3 fileiras, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Arquibancada 5 fileiras, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Arquibancada 8 fileiras, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Assentos para os eventos que você organiza: conta a até 60 m de um percurso ou pista de adestramento."/>
+        <text name="eq_shop_bleachersSponsors_function" text="As placas de patrocinadores na frente mostram as marcas das suas máquinas."/>
     </texts>
 </l10n>

@@ -2,8 +2,8 @@
     EqDressage.lua
     The temperament routine ridden round dressage markers: pure functions with no game calls, so
     they run headless. EqTrainingHooks finds the markers (Riding Hall 2k26's letter boards) and
-    passes them in as a course; without one the routine falls back to EqTraining's free routine,
-    which trains less (EqTraining.FREE_ROUTINE_SHARE).
+    passes them in as a course. A test starts only when the rider comes to the markers
+    (ARENA_NEAR); with none near, there is no routine (James, 2026-10-29).
 
     A course is every marker linked to the one nearest the horse: the nearest within
     SEARCH_RADIUS, then any within LINK_RADIUS of a marker already in. It needs at least three
@@ -86,6 +86,8 @@ EqDressage.ARENA_NEAR = 12
 EqDressage.TEST_MOVES = 15
 EqDressage.TEST_BONUS_SECONDS = 60
 EqDressage.TEST_REST_MS = 20000
+-- A test broken by faults waits this long before the markers start a new one.
+EqDressage.BREAK_REST_MS = 5000
 -- A leg that starts with a turn gets more time: TURN_ALLOW_MS at its gait for a full about-turn,
 -- in proportion for less (James: turning round at M to ride to K eats a third of the time).
 EqDressage.TURN_ALLOW_MS = { walk = 4000, trot = 6000, canter = 8000 }
@@ -256,6 +258,30 @@ end
 
 
 --- @param course table { x, z, markers }
+--- How far the horse is from where a test starts: the nearest of our arenas' letter rectangles,
+--- or the nearest other marker (Riding Hall's letter boards).
+--- @param course table { x, z, markers }
+--- @return number metres, 0 inside an arena, math.huge with no markers
+function EqDressage.startDistance(course)
+    local best = math.huge
+    for _, marker in ipairs(course.markers) do
+        if not marker.arena then
+            best = math.min(best, distance(course.x, course.z, marker.x, marker.z))
+        elseif marker.letter == "X" then
+            local bounds = EqDressage.arenaBounds(course, marker)
+            if bounds ~= nil then
+                local dx, dz = course.x - bounds.mx, course.z - bounds.mz
+                local along = math.max(math.abs(dx * bounds.ux + dz * bounds.uz) - bounds.halfLength, 0)
+                local across = math.max(math.abs(dx * bounds.uz - dz * bounds.ux) - bounds.halfWidth, 0)
+                best = math.min(best, math.sqrt(along * along + across * across))
+            end
+        end
+    end
+    return best
+end
+
+
+--- @param course table { x, z, markers }
 --- @return boolean true within ARENA_NEAR of one of our arenas (its letters' rectangle)
 function EqDressage.nearArena(course)
     for _, marker in ipairs(course.markers) do
@@ -270,6 +296,13 @@ function EqDressage.nearArena(course)
         end
     end
     return false
+end
+
+
+--- @param course table { x, z, markers }
+--- @return boolean true close enough to the markers for a test to start (ARENA_NEAR)
+function EqDressage.atMarkers(course)
+    return EqDressage.startDistance(course) <= EqDressage.ARENA_NEAR
 end
 
 
@@ -366,7 +399,7 @@ function EqDressage.plan(routine, course, done, rng)
         return task.nextLeg
     elseif done == "go" and task ~= nil and task.final then
         return { kind = "halt", final = true }
-    elseif routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES and done ~= "reverse" then
+    elseif routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) and done ~= "reverse" then
         -- The test is ridden: finish down the centre line to X and halt.
         local x = routine.testX
         return { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
@@ -456,6 +489,8 @@ function EqDressage.start(routine, course, rng)
     -- The test opening only close to an arena: from further off, "Move to A" showed 80 m away.
     local opening = EqDressage.nearArena(course) and EqDressage.openingLeg(course) or nil
     routine.arena = opening ~= nil and opening.arena or nil
+    -- A competition test in your own event is longer (EqHostManager.testMovesFor).
+    routine.testMoves = opening ~= nil and course.testMoves or nil
     begin(routine, opening or EqDressage.planLeg(routine, course, rng), course)
 end
 
@@ -503,7 +538,7 @@ local function fault(sheet, course, rng)
     routine.from = nil
     -- Keep the test's place: its final legs come back once the count is reached.
     local nextTask
-    if routine.testX ~= nil and (routine.steps or 0) >= EqDressage.TEST_MOVES then
+    if routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) then
         local x = routine.testX
         nextTask = { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
     else
@@ -588,7 +623,9 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
             elseif routine.clock > routine.bonus.deadline then
                 routine.bonus = nil
             end
-        elseif routine.preview == nil then
+        elseif routine.preview == nil and not task.opening then
+            -- No quick changes on the way in to A or down to X: riding up past the arena's
+            -- letters showed "Change: Canter" before the test began (James, 2026-10-28).
             for _, marker in ipairs(course.markers) do
                 if not same(marker, task.marker) and not same(marker, routine.from)
                     and distance(course.x, course.z, marker.x, marker.z) <= EqDressage.PASS_RADIUS then

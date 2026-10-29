@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="xcBigLog.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="1" filename="xcBigLog_diffuse.dds"/>
+    <File fileId="4" filename="xcFlags_diffuse.dds"/>
+    <File fileId="3" filename="xcLogEnd_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="xcBigLog" materialId="6" specularColor="0.101961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="xcFlags" materialId="7" specularColor="0.101961 1 0">
+      <Texture fileId="4"/>
+    </Material>
+    <Material name="xcLogEnd" materialId="5" specularColor="0.101961 1 0">
+      <Texture fileId="3"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="xcBigLog.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="xcBigLog" nodeId="14">
+      <Shape name="log" shapeId="1" clipDistance="300" nodeId="15" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <Shape name="ends" shapeId="2" clipDistance="300" nodeId="16" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <TransformGroup name="eqFlagsRed" translation="3.1 0 0" nodeId="17">
+        <Shape name="pennantRed" shapeId="3" clipDistance="300" nodeId="18" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      </TransformGroup>
+      <TransformGroup name="eqFlagsWhite" translation="-3.1 0 0" nodeId="19">
+        <Shape name="pennantWhite" shapeId="4" clipDistance="300" nodeId="20" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      </TransformGroup>
+      <TransformGroup name="collision" nodeId="21">
+        <Shape name="col" shapeId="5" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="22" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

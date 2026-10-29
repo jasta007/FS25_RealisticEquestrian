@@ -3,12 +3,13 @@
     eqEventsFrame.xml
     Realistic Equestrian's Events tab inside RLRM's menu.
 
-    Two tabs, in the style of RLRM's Settings page (the same base game profiles).
+    Three tabs, in the style of RLRM's Settings page (the same base game profiles).
     Upcoming events: open events on the left; right, your horses for the selected event, with
     their chance of success, what the event would teach them and whether they can enter, and
     under that a panel for the selected horse.
     Results: your horses on the right with their career under the list; left, the selected
-    horse's last events, each a title row and a few lines on how it went. Profiles are RLRM's (rlMenu_*) and the base
+    horse's last events, each a title row and a few lines on how it went.
+    Host: every event you could host, its requirements and your booking (EqHostView). Profiles are RLRM's (rlMenu_*) and the base
     game's (fs25_*), so the tab looks like the rest of the menu; this file defines none.
     Content width follows RLRM's frames: 1540px inside fs25_menuContainer.
 
@@ -32,6 +33,10 @@
             </Button>
             <Button profile="fs25_subCategorySelectorTabbedTab" id="subCategoryTabs[2]"
                     text="$l10n_eq_ui_tab_results" onClick="onClickResultsTab">
+                <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+            </Button>
+            <Button profile="fs25_subCategorySelectorTabbedTab" id="subCategoryTabs[3]"
+                    text="$l10n_eq_ui_tab_host" onClick="onClickHostTab">
                 <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
             </Button>
         </BoxLayout>
@@ -221,6 +226,100 @@
             <GuiElement profile="rlMenu_container" position="0px -280px" size="490px 28px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" text="$l10n_eq_specialty_title" textLayoutMode="scrolling"/>
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="careerSpecialty" textLayoutMode="scrolling"/>
+            </GuiElement>
+        </GuiElement>
+
+        <!-- Host: every event you could host on the left; the selected one's requirements right,
+             your booking under them -->
+        <GuiElement profile="rlMenu_container" id="hostHeader" position="20px -120px" size="1000px 40px" visible="false">
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="330px 40px" text="$l10n_eq_host_col_event"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="350px 0px" size="200px 40px" text="$l10n_eq_host_col_ready"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="555px 0px" size="130px 40px" text="$l10n_eq_host_col_popularity"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="690px 0px" size="145px 40px" text="$l10n_eq_host_col_setup"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="840px 0px" size="150px 40px" text="$l10n_eq_host_col_takings"/>
+            <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
+        </GuiElement>
+
+        <GuiElement profile="rlMenu_container" id="hostBox" position="20px -165px" size="1020px 700px" visible="false">
+            <SmoothList profile="rlMenu_tableList" id="hostList" position="0px 0px" size="1000px 700px">
+                <ListItem profile="rlMenu_tableListItem" name="hostRowTemplate" size="1000px 48px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="330px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="350px 0px" size="200px 48px" name="ready" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="555px 0px" size="130px 48px" name="popularity"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="690px 0px" size="145px 48px" name="setup"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="840px 0px" size="150px 48px" name="takings"/>
+                </ListItem>
+            </SmoothList>
+            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">
+                <Slider profile="fs25_listSlider" size="6px 692px" dataElementId="hostList"/>
+            </ThreePartBitmap>
+        </GuiElement>
+
+        <GuiElement profile="rlMenu_container" id="hostChecksHeader" position="1060px -120px" size="500px 40px" visible="false">
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="220px 40px" text="$l10n_eq_host_col_check"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="235px 0px" size="125px 40px" text="$l10n_eq_host_col_have"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="365px 0px" size="125px 40px" text="$l10n_eq_host_col_need"/>
+            <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
+        </GuiElement>
+
+        <GuiElement profile="rlMenu_container" id="hostChecksBox" position="1060px -165px" size="520px 290px" visible="false">
+            <SmoothList profile="rlMenu_tableList" id="hostChecksList" position="0px 0px" size="500px 290px">
+                <ListItem profile="rlMenu_tableListItem" name="hostCheckRowTemplate" size="500px 42px">
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="220px 42px" name="label" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="235px 0px" size="125px 42px" name="have"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="365px 0px" size="125px 42px" name="need"/>
+                </ListItem>
+            </SmoothList>
+            <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 290px" with="anchorTopRight">
+                <Slider profile="fs25_listSlider" size="6px 282px" dataElementId="hostChecksList"/>
+            </ThreePartBitmap>
+        </GuiElement>
+
+        <!-- The month to book: a picker, shown while nothing is booked -->
+        <GuiElement profile="rlMenu_container" id="hostMonthBox" position="1070px -463px" size="490px 44px" visible="false">
+            <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 44px" text="$l10n_eq_host_label_month"/>
+            <!-- The settings profile anchors on the right, so 0px puts it flush right (200px to 490px) -->
+            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostMonthOption" position="0px 0px" size="290px 44px"
+                             onClick="onClickHostMonth"/>
+        </GuiElement>
+
+        <!-- Your booking and the selected event's numbers: label left, value at 200px -->
+        <GuiElement profile="rlMenu_container" id="hostPanel" position="1070px -517px" size="490px 340px" visible="false">
+            <GuiElement profile="rlMenu_container" position="0px -0px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[1]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[1]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -34px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[2]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[2]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -68px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[3]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[3]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -102px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[4]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[4]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -136px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[5]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[5]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -170px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[6]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[6]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -204px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[7]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[7]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -238px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[8]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[8]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -272px" size="490px 30px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[9]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[9]" textLayoutMode="scrolling"/>
             </GuiElement>
         </GuiElement>
 

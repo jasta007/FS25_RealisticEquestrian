@@ -48,7 +48,10 @@ function EqEventsView.eventRows(farmId)
     local manager = EqCompetitionManager
     local horses = EqRLRM.listHorsesForFarm(farmId)
     local list = {}
-    for _, event in pairs(manager.events) do table.insert(list, event) end
+    for _, event in pairs(manager.events) do
+        -- Another farm's own event is for its horses only.
+        if event.hosted == nil or event.hosted.farmId == farmId then table.insert(list, event) end
+    end
     table.sort(list, EqEventsView.compareEvents)
 
     local cadence = manager.settings.cadence == manager.CADENCE_DAY and "eq_ui_when_tomorrow" or "eq_ui_when_nextMonth"
@@ -75,7 +78,7 @@ function EqEventsView.eventRows(farmId)
         local riskBand = manager.eventRisk(event)
         table.insert(rows, {
             event = event,
-            title = manager.eventName(event.discipline, event.tier, event.venue),
+            title = manager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil),
             type = g_i18n:getText("eq_type_" .. event.discipline),
             level = manager.tierTitle(event.tier),
             going = manager.conditionsText(event.going),
@@ -222,7 +225,7 @@ function EqEventsView.horseResultRows(record)
     for _, result in ipairs(record.results) do
         local parts = {
             string.format(g_i18n:getText("eq_ui_day"), result.day),
-            string.format("%s (%s)", manager.eventName(result.discipline, result.tier, result.venue), manager.tierTitle(result.tier)),
+            string.format("%s (%s)", manager.eventName(result.discipline, result.tier, result.venue, result.hosted), manager.tierTitle(result.tier)),
             EqEventsView.resultText(result),
         }
         if (result.prize or 0) > 0 then table.insert(parts, money(result.prize)) end

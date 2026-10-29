@@ -33,7 +33,12 @@ dofile("scripts/competition/EqRisk.lua")
 dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
+dofile("scripts/training/EqPoles.lua")
+dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/facilities/EqFacility.lua")
+dofile("scripts/hosting/EqHosting.lua")
+dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -347,110 +352,19 @@ do
         math.abs(showJump.focused.agility - EqTraining.AGILITY_PER_JUMP * EqTraining.SHOW_JUMP_FACTOR) < 1e-9)
 
     do
-        -- Quicker after a halt, and less time to react at a high multiplier.
-        local sheet = EqTraining.newSheet()
-        local r = sheet.routine
-        r.active, r.mult, r.current, r.clock, r.request, r.deadline = true, 5, "walk", 0, "halt", 10000
-        EqTraining.routineStep(sheet, "halt", nil, 100, false, function() return 1 end)
-        check("after a full stop the next request comes sooner", r.nextAt - r.clock <= 2500 * 0.7 + 1)
-        r.clock = r.nextAt
-        EqTraining.routineStep(sheet, "halt", nil, 0, false, function() return 1 end)
-        check("a high routine multiplier gives less time to react", r.request ~= nil and r.deadline - r.clock < EqTraining.ROUTINE_REACT_MS)
-    end
-    do
-        -- The routine goes past the jump combo's x5, and from x4 the pace must be held.
-        local one = function() return 1 end
-        local sheet = EqTraining.newSheet()
-        local r = sheet.routine
-        r.active, r.mult, r.current, r.clock, r.request, r.deadline = true, EqTraining.ROUTINE_MAX - 1, "walk", 0, "trot", 10000
-        EqTraining.routineStep(sheet, "trot", nil, 100, false, one)
-        check("the routine climbs to x8", EqTraining.ROUTINE_MAX == 8 and r.mult == 8)
-        r.request, r.deadline, r.nextAt = "halt", r.clock + 3000, r.clock + 100000
-        r.current = "trot"
-        for _ = 1, 10 do EqTraining.routineStep(sheet, "walk", nil, 100, false, one) end
-        check("passing through a walk on the way to a stop is fine", r.active)
-        EqTraining.routineStep(sheet, "halt", nil, 100, false, one)
-        local event
-        for _ = 1, 10 do event = EqTraining.routineStep(sheet, "walk", nil, 100, false, one) or event end
-        check("at a high multiplier, walking off unasked breaks the routine", not r.active and event == "lost")
-
-        local low = EqTraining.newSheet()
-        local lr = low.routine
-        lr.active, lr.mult, lr.current, lr.clock, lr.nextAt = true, 2, "walk", 0, 100000
-        for _ = 1, 20 do EqTraining.routineStep(low, "trot", nil, 100, false, one) end
-        check("at a low multiplier the pace may drift", lr.active)
-
-        local turn = EqTraining.newSheet()
-        local tr = turn.routine
-        tr.active, tr.mult, tr.current, tr.clock, tr.nextAt = true, 5, "walk", 0, 100000
-        tr.request, tr.deadline = "left", 3000
-        for _ = 1, 5 do EqTraining.routineStep(turn, "trot", "left", 100, false, one) end
-        for _ = 1, 10 do EqTraining.routineStep(turn, "trot", nil, 100, false, one) end
-        check("a turn takes any pace, and the pace it ends at is the one to hold", tr.active and tr.current == "trot" and tr.mult == 6)
-    end
-    do
-        -- A routine command shows for a moment even when it is done at once.
-        local quick = EqTraining.newSheet()
-        local r = quick.routine
-        r.active, r.mult, r.current, r.nextAt = true, 1, "walk", 0
-        EqTraining.routineStep(quick, "walk", nil, 100, false, function() return 1 end)
-        local asked = r.request
-        EqTraining.routineStep(quick, (asked == "left" or asked == "right") and "walk" or asked, asked, 400, false, function() return 1 end)
-        check("a command done at once still shows for a moment", r.shown == asked and r.clock < r.shownUntil)
-    end
-    -- Temperament routine.
-    local first = function() return 1 end
-    local routine = EqTraining.newSheet()
-    local events = {}
-    local function ride(move, ms)
-        for _ = 1, ms / 100 do
-            local gait, steer = move, nil
-            if move == "left" or move == "right" then gait, steer = "walk", move end
-            local event = EqTraining.routineStep(routine, gait, steer, 100, false, first)
-            if event ~= nil then table.insert(events, event) end
+        -- No free routine (James, 2026-10-29): walking, trotting or backing up anywhere asks
+        -- for nothing; only dressage markers start one.
+        local idle = EqTraining.newSheet()
+        local events = 0
+        for _, move in ipairs({ "walk", "trot", "halt", "reverse", "walk" }) do
+            for _ = 1, 100 do
+                if EqTraining.routineStep(idle, move, nil, 100, false, function() return 1 end) ~= nil then events = events + 1 end
+            end
         end
+        check("walking without markers starts no routine and asks for nothing", not idle.routine.active and idle.routine.request == nil and events == 0)
+        check("the free routine's settings are gone", EqTraining.FREE_ROUTINE_SHARE == nil and EqTraining.routineChoices == nil
+            and EqTraining.ROUTINE_START_MS == nil)
     end
-    ride("trot", 3000)
-    check("trotting does not start a routine", not routine.routine.active)
-    ride("walk", 2000)
-    check("walking starts a routine", routine.routine.active and routine.routine.mult == 1 and events[1] == "start")
-    ride("walk", 5000)
-    check("the routine asks for a new movement", routine.routine.request == "trot" and events[2] == "request")
-    ride("trot", 500)
-    check("doing it raises the multiplier", routine.routine.mult == 2 and events[3] == "done" and routine.routine.current == "trot")
-    check("from a trot it never asks to back up", not table.concat(EqTraining.routineChoices("trot"), ","):find("reverse")
-        and not table.concat(EqTraining.routineChoices("reverse"), ","):find("trot"))
-    local before = routine.focused.temperament
-    ride("trot", 4000)
-    check("a routine above x1 trains temperament", routine.focused.temperament > before)
-    ride("trot", 5000)
-    check("missing a request ends the routine", not routine.routine.active and events[#events] == "lost")
-    ride("walk", 2000)
-    ride("fast", 100)
-    check("a canter ends the routine", not routine.routine.active and events[#events] == "lost")
-
-    -- Turns come from the steering key, whatever the gait; gaits ignore steering.
-    local turning = EqTraining.newSheet()
-    local function rideSteer(gait, steer, ms)
-        local last
-        for _ = 1, ms / 100 do last = EqTraining.routineStep(turning, gait, steer, 100, false, first) or last end
-        return last
-    end
-    rideSteer("walk", "left", 2000)
-    check("walking while steering starts a routine", turning.routine.active)
-    turning.routine.request, turning.routine.deadline = "right", turning.routine.clock + 3000
-    rideSteer("reverse", "left", 500)
-    check("steering the wrong way does not count as the turn", turning.routine.request == "right")
-    check("backing up while turning counts as the asked-for turn",
-        rideSteer("reverse", "right", 500) == "done" and turning.routine.mult == 2)
-    turning.routine.request, turning.routine.deadline = "halt", turning.routine.clock + 3000
-    check("a stop counts while the rider steers", rideSteer("halt", "left", 200) == "done")
-    rideSteer("halt", nil, 100)
-    turning.routine.request, turning.routine.deadline = "left", turning.routine.clock + 3000
-    rideSteer("halt", "left", 200)
-    check("a turn needs its key held for a moment", turning.routine.request == "left")
-    rideSteer("halt", "left", 200)
-    check("held, it counts at a standstill too", turning.routine.request == nil)
 end
 do
     -- One riding bar of jumping or a routine, ridden frame by frame.
@@ -471,19 +385,10 @@ do
     local course = bar(function(_, t) return "canter", "fast", t > 0 and t % 5000 == 0 end)
     local spaced = bar(function(_, t) return "canter", "fast", t > 0 and t % 12000 == 0 end)
     local walked = bar(function() return "walk" end)
-    local danced = bar(function(sheet, _, state)
-        if sheet.routine.request ~= nil then state.move = sheet.routine.request end
-        local move = state.move or "walk"
-        if move == "walk" or move == "trot" then state.base = move end
-        local gait = (move == "left" or move == "right") and (state.base or "walk") or move
-        return gait, move
-    end)
     check("a jump course with a clear every 5 s trains agility up to double the old full day", course.agility >= 1.8,
         string.format("got %.2f", course.agility))
     check("jumps too far apart for a combo train agility far less", spaced.agility < course.agility / 3,
         string.format("got %.2f", spaced.agility))
-    check("a routine done well trains temperament up to double the old full day", danced.temperament >= 1.8,
-        string.format("got %.2f", danced.temperament))
     check("just walking trains temperament at about a quarter of the old day", walked.temperament < 0.3,
         string.format("got %.2f", walked.temperament))
 end
@@ -582,6 +487,35 @@ do
     check("Pushing from empty blows an average horse in about a quarter of a minute, a fit one later",
         unfit < average and average < fit and average > 10 and average < 22 and fit < 30,
         string.format("stamina 10 %.0f s, 50 %.0f s, 90 %.0f s", unfit, average, fit))
+
+    local function pushFrom(value, stamina)
+        local p, t = E.new(), 0
+        p.value = value
+        E.step(p, "gallop", 0.001, stamina)
+        while p.lock == nil and t < 600000 do
+            E.step(p, "gallop", 50, stamina)
+            t = t + 50
+        end
+        return t / 1000
+    end
+    local fromEmpty = E.new()
+    check("pushSecondsLeft from empty matches a real Push", near(E.pushSecondsLeft(fromEmpty, 50), average, 0.1),
+        string.format("%.2f s vs %.2f s", E.pushSecondsLeft(fromEmpty, 50), average))
+    for _, start in ipairs({ 40, 70, 90 }) do
+        for _, stamina in ipairs({ 10, 90 }) do
+            local mid = E.new()
+            mid.value = start
+            check(string.format("pushSecondsLeft from %d%% at stamina %d matches a real Push", start, stamina),
+                near(E.pushSecondsLeft(mid, stamina), pushFrom(start, stamina), 0.1),
+                string.format("%.2f s vs %.2f s", E.pushSecondsLeft(mid, stamina), pushFrom(start, stamina)))
+        end
+    end
+    local full = E.new()
+    full.value = E.LINE
+    check("no Push left at the line", E.pushSecondsLeft(full, 50) == 0)
+    local lower, higher = E.new(), E.new()
+    lower.value, higher.value = 40, 60
+    check("less Push is left higher up the bar", E.pushSecondsLeft(higher, 50) < E.pushSecondsLeft(lower, 50))
 
     local blown = E.new()
     local events = {}
@@ -1034,7 +968,8 @@ do
     check("only one vet", not EqStaff.canHire({ vet }, member(10, "vet", 80)) and EqStaff.canHire({ vet }, member(11, "groom", 50)))
     check("a vet's skill stacks with others'", EqStaff.strength({ vet, member(12, "groom", 50) }, "veterinary") > 0.7)
     local firstLeaves = candidates[1].leavesAt
-    check("candidates stay 12-72 hours", firstLeaves >= 1 + 12 and firstLeaves <= 1 + 72)
+    check("candidates stay a day or two, leaving on an 8-hour step", firstLeaves % 8 == 0
+        and firstLeaves >= 24 and firstLeaves <= 1 + 48)
     check("hours left", EqStaff.hoursLeft(candidates[1], firstLeaves - 5) == 5)
     local staggered = {}
     for _, c in ipairs(candidates) do table.insert(staggered, c) end
@@ -1049,7 +984,15 @@ do
         arrivals = arrivals + new
         if #staggered > EqStaff.CANDIDATES then maxSeen = 99 end
     end
-    check("new candidates arrive one at a time", maxSeen == 1 and arrivals > 10, string.format("%d, %d", maxSeen, arrivals))
+    check("new candidates arrive a few at a time", maxSeen >= 1 and maxSeen <= EqStaff.CANDIDATES and arrivals > 10,
+        string.format("%d, %d", maxSeen, arrivals))
+    local before = #staggered
+    local snapshot = {}
+    for _, c in ipairs(staggered) do snapshot[c.id] = true end
+    for hour = 201, 207 do nextId = EqStaff.refreshCandidates(staggered, hour, rng, nextId, false) end
+    local same = #staggered == before
+    for _, c in ipairs(staggered) do same = same and snapshot[c.id] == true end
+    check("nobody comes or goes between 8-hour steps", same)
     local stale = { { id = 1, job = "groom" } }
     EqStaff.refreshCandidates(stale, 100, rng, 2, false)
     check("old saves get a fresh window", stale[1].leavesAt ~= nil and stale[1].leavesAt > 100)
@@ -1554,6 +1497,29 @@ check("an old save loads with no experience", EqHorseRecord.loadFromXMLFile((fun
     check("a new game has no courses", #EqCourse.list == 0)
 end)()
 
+-- Which course a round or a key belongs to (James, 2026-10-29: a big cross country course
+-- next door hid "New show jumping course" and cut into rounds).
+;(function()
+    local function line(x0, kind)
+        local points = {}
+        for z = 0, 120, 2 do points[#points + 1] = { x = x0, y = 0, z = z } end
+        local function fence(z) return { x = x0, z = z, pointIndex = z / 2 + 1, ax = x0 - 2, az = z, bx = x0 + 2, bz = z } end
+        return { name = kind, points = points, jumps = { fence(40), fence(70) }, length = 120, kind = kind }
+    end
+    local saved = EqCourse.list
+    local sj, xc = line(0, EqCourse.SHOW_JUMPING), line(30, EqCourse.CROSS_COUNTRY)
+    EqCourse.list = { sj, xc }
+    check("each course key only looks at its own kind", EqCourse.nearest(28, 50, 40, EqCourse.SHOW_JUMPING) == sj
+        and EqCourse.nearest(28, 50, 40) == xc and EqCourse.nearest(2, 50, 40, EqCourse.CROSS_COUNTRY) == xc)
+    check("no course of a kind nearby is nil", EqCourse.nearest(-60, 50, 40, EqCourse.CROSS_COUNTRY) == nil)
+    local course, d = EqShowJumping.nearestStart(EqCourse.list, 25, 27, 60)
+    check("a round is offered on the course whose start line is nearest", course == xc and math.abs(d - math.sqrt(26)) < 1e-6)
+    check("the middle of a course is not near its start", EqShowJumping.nearestStart(EqCourse.list, 0, 110, 60) == nil)
+    check("a course too short for a round offers none", EqShowJumping.nearestStart({ { points = sj.points, jumps = { sj.jumps[1] } } }, 0, 27, 60) == nil)
+    check("the countdown waits until the horse is right at the start", EqShowJumping.READY_RADIUS <= 4)
+    EqCourse.list = saved
+end)()
+
 -- A timed show jumping round over a course (EqShowJumping).
 ;(function()
     local points = {}
@@ -1590,14 +1556,14 @@ end)()
         return seen
     end
 
-    ride(10)
-    check("far from the start line nothing happens", round.state == "approach")
-    local seen = ride(20)
+    ride(22)
+    check("6 m from the start line nothing happens yet", round.state == "approach")
+    local seen = ride(25)
     check("close behind the start line the countdown starts", round.state == "countdown" and round.count == 3)
     seen = ride(30)
     check("crossing the line in the countdown is too early", seen.early == 1 and round.state == "approach")
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     seen = wait(3000)
     check("the countdown counts down to go", round.state == "go" and seen.count == 2 and seen.go == 1)
     seen = ride(39)
@@ -1615,8 +1581,8 @@ end)()
     check("after the result the next round can start", seen.ready == 1 and round.state == "approach")
 
     -- Out of order: fence 2 before fence 1.
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(29)
     round.course.jumps[1].ax, round.course.jumps[1].bx = 10, 14
@@ -1627,8 +1593,8 @@ end)()
 
     -- Refusals and time.
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(38)
     check("a crash at the next fence is a refusal", EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }) == "refusal"
@@ -1642,31 +1608,78 @@ end)()
     check("a second refusal eliminates", EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }) == "eliminated"
         and round.result.eliminated == "refusals")
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(30)
     ride(85, (round.allowed + 2.5) * 1000 / 110)
     check("a slow round gets time faults", round.result ~= nil and round.result.timeFaults > 0
         and round.result.timeFaults == math.ceil(round.result.seconds - round.allowed), round.result and tostring(round.result.timeFaults))
     round = EqShowJumping.newRound(course, nil, false)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     -- No judgement comes, so the last fence counts as clear after PENDING_MS.
     seen = ride(110)
     check("with no finish line the round ends after the last fence", seen.finished == 1)
+
+    -- Our show jumps: a pole falling is the rail, once per fence (James, 2026-10-29).
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("a pole falling just before the line is a rail at that fence",
+        EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100, polesDown = { { x = 0.5, z = 40.1 } } }) == "rail"
+        and round.faults == 4 and round.railed[1])
+    seen = ride(41, 100, function(input)
+        if input.z >= 40 and input.pz < 40 then input.polesDown = { { x = -0.4, z = 40.2 }, { x = 0.4, z = 40.2 } } end
+    end)
+    check("more poles of the same fence add nothing", round.faults == 4 and round.next == 2)
+    seen = wait(EqShowJumping.PENDING_MS + 200)
+    check("a railed fence is never announced clear after", seen.fence == nil)
+    seen = ride(65, 100, function(input) if input.z >= 50 and input.pz < 50 then input.polesDown = { { x = 0, z = 50 } } end end)
+    check("a pole down far from any fence of the round counts nothing", round.faults == 4 and seen.rail == nil)
+    seen = ride(71, 100, function(input) if input.z >= 70 and input.pz < 70 then input.judged = "knock"; input.polesDown = { { x = 0, z = 70.3 } } end end)
+    check("a pole down and a knock at one fence are one rail", seen.rail == 1 and round.faults == 8)
+    check("a fallen pole belongs to the nearest fence of the two", EqShowJumping.fenceOfPole(
+        { course = course, next = 2, pending = { index = 1 } }, 0, 69) == 2
+        and EqShowJumping.fenceOfPole({ course = course, next = 2, pending = { index = 1 } }, 0, 41) == 1)
+    round = EqShowJumping.newRound(course)
+    round.xc = true
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
+    wait(3000)
+    ride(39.5)
+    check("cross country has no rails from poles", EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100,
+        polesDown = { { x = 0, z = 40 } } }) == nil and round.faults == 0)
+
+    -- A course's fences onto the jumps on the map now (a jump replaced since recording).
+    local jumps = { { x = 0, z = 40, ry = 0, ax = -2, az = 40, bx = 2, bz = 40 }, { x = 0, z = 70, ry = 0, ax = -2, az = 70, bx = 2, bz = 70 } }
+    local live = { { x = 1.2, z = 41.5, ry = 0.1, ax = 3.6, az = 41.6, bx = -1.2, bz = 41.4 }, { x = 30, z = 70, ax = 28, az = 70, bx = 32, bz = 70 } }
+    check("a fence moves onto a jump nearby", EqCourse.refreshJumps(jumps, live, 3) == 1
+        and jumps[1].x == 1.2 and jumps[1].z == 41.5 and jumps[1].ry == 0.1)
+    check("its ends stay the same way round", jumps[1].ax == -1.2 and jumps[1].bx == 3.6)
+    check("a fence with no jump nearby stays", jumps[2].x == 0 and jumps[2].ax == -2)
+    check("a fence already on its jump does not move", EqCourse.refreshJumps(jumps, live, 3) == 0)
+    -- A jump moved 4 m takes its fence, but not a jump another fence still stands on.
+    jumps = { { x = 0, z = 0, ax = -2, az = 0, bx = 2, bz = 0 }, { x = 5, z = 0, ax = 3, az = 0, bx = 7, bz = 0 },
+        { x = 0, z = 50, ax = -2, az = 50, bx = 2, bz = 50 }, { x = 0, z = 50, ax = -2, az = 50, bx = 2, bz = 50 } }
+    live = { { x = 5, z = 0, ax = 3, az = 0, bx = 7, bz = 0 }, { x = 0, z = 54, ax = -2, az = 54, bx = 2, bz = 54 } }
+    EqCourse.refreshJumps(jumps, live, 6)
+    check("a fence keeps off a jump another fence stands on", jumps[1].x == 0 and jumps[2].x == 5)
+    check("a jump moved 4 m takes its fence, used twice in the course", jumps[3].z == 54 and jumps[4].z == 54)
+    round = EqShowJumping.newRound(course)
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     seen = ride(85, 10)
     check("a finish line crossed before the last fence is judged still ends the round", seen.finished == 1 and round.result.clear)
     -- Cross country: eventing rules.
     course.kind = EqCourse.CROSS_COUNTRY
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(38)
     local crash = { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }
@@ -1674,14 +1687,14 @@ end)()
     check("a second at the same fence is 40 more, not out", EqShowJumping.step(round, crash) == "refusal" and round.faults == 60)
     check("a third at the same fence eliminates", EqShowJumping.step(round, crash) == "eliminated")
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     seen = ride(90, 100, function(input) if input.z >= 40 and input.pz < 40 then input.judged = "knock" end end)
     check("a cross country knock is no fault", seen.rail == nil and round.result ~= nil and round.result.faults == 0)
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(30)
     ride(85, (round.allowed + 5.5) * 1000 / 110)
@@ -1691,8 +1704,8 @@ end)()
 
     course.jumps[2].side = 1
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     seen = ride(110)
     check("the next fence counts whichever way its side was recorded", seen.finished == 1 and seen.eliminated == nil)
@@ -2387,24 +2400,98 @@ do
         and EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/courseFlags.xml")
         and not EqXcFlags.isFlagFence("FS25_RealisticEquestrian/placeables/xcJumps/xcLogPile.xml")
         and not EqXcFlags.isFlagFence(nil))
-    local colour = EqXcFlags.classify("eqXcFlagRed")
-    local _, h = EqXcFlags.classify("eqXcBar90")
-    check("flag fence nodes give a flag colour or a bar height", colour == "red" and EqXcFlags.classify("eqXcFlagWhite") == "white"
-        and math.abs(h - 0.9) < 1e-9 and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
+    check("flag fence nodes give a flag colour, nothing else does", EqXcFlags.classify("eqXcFlagRed") == "red"
+        and EqXcFlags.classify("eqXcFlagWhite") == "white" and EqXcFlags.classify("eqXcBar90") == nil
+        and EqXcFlags.classify("eqXcLine") == nil and EqXcFlags.classify("eqXcGuide") == nil and EqXcFlags.classify(nil) == nil)
     local function f(colour, x, z) return { colour = colour, x = x, z = z } end
-    local function b(height, x, z) return { height = height, x = x, z = z } end
     local fences = EqXcFlags.pair({
         f("white", 0, 0), f("red", 4, 0),        -- a 4 m fence
         f("white", -6, 0),                       -- further from the red: left over
         f("white", 200, 0), f("red", 216, 0),    -- too far apart
         f("white", 300, 0), f("red", 300.5, 0),  -- too close
-        f("white", 400, 0), f("red", 405, 0),    -- no bar near
-    }, { b(0.9, 1.5, 0), b(0.9, 2.5, 0), b(1.2, 2, 3), b(0.6, 402.5, 9) })
-    check("each red flag pairs with the nearest white flag, the bar nearest the middle gives the height", #fences == 2
-        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == 0.9 and fences[1].poleHeight == EqXcFlags.POLE_HEIGHT
-        and fences[2].white.x == 400 and fences[2].height == nil)
+        f("white", 400, 0), f("red", 405, 0),    -- another fence
+    })
+    check("each red flag pairs with the nearest white flag, with no fence height", #fences == 2
+        and fences[1].white.x == 0 and fences[1].red.x == 4 and math.abs(fences[1].width - 4) < 1e-9 and fences[1].height == nil
+        and fences[1].poleHeight == EqXcFlags.POLE_HEIGHT and fences[2].white.x == 400)
     local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
+end
+dofile("scripts/facilities/EqFlagLabels.lua")
+do
+    check("a letter over a menu panel is left out", EqFlagLabels.covered({ { 0, 0, 0.5, 1 } }, 0.3, 0.5)
+        and not EqFlagLabels.covered({ { 0, 0, 0.5, 1 } }, 0.7, 0.5) and not EqFlagLabels.covered({}, 0.3, 0.5))
+    check("jump flag nodes are white or red, from every source", EqFlagLabels.classify("eqFlagsWhite") == "white"
+        and EqFlagLabels.classify("eqFlagsRed") == "red" and EqFlagLabels.classify("modernFlagsWhite") == "white"
+        and EqFlagLabels.classify("modernFlagsRed01") == "red" and EqFlagLabels.classify("eqXcFlagWhite") == "white"
+        and EqFlagLabels.classify("eqXcFlagRed") == "red" and EqFlagLabels.classify("eqXcGuide") == nil
+        and EqFlagLabels.classify("flagPole") == nil and EqFlagLabels.classify(nil) == nil)
+    local texts = { eq_flagLeft = "G", eq_flagRight = "D" }
+    check("white flags say left, red flags say right, translated when the text exists",
+        EqFlagLabels.letter("white") == "L" and EqFlagLabels.letter("red") == "R"
+        and EqFlagLabels.letter("white", function(key) return texts[key] end) == "G"
+        and EqFlagLabels.letter("red", function(key) return texts[key] end) == "D"
+        and EqFlagLabels.letter("red", function(key) return "Missing '" .. key .. "'" end) == "R"
+        and EqFlagLabels.letter("red", function() error("no texts") end) == "R")
+    local savedLocalToWorld = localToWorld
+    localToWorld = function(node, x, y, z) return node * 10, 0, z end
+    local placed = EqFlagLabels.positions({ { node = 1, colour = "white", offset = 0.15 }, { node = 2, colour = "red" }, { node = 1, colour = "white", offset = 0.15 } })
+    localToWorld = savedLocalToWorld
+    check("flag positions are read from their nodes, each node once", #placed == 2 and placed[1].x == 10 and placed[1].z == 0.15
+        and placed[2].colour == "red" and placed[2].z == 0)
+    local lift = EqFlagLabels.LIFT
+    local near = EqFlagLabels.near({ { x = 0, y = 0, z = 10 }, { x = 40, y = 0, z = 40 }, { x = 0, y = 0, z = 40 } }, 0, lift, 0, 45)
+    check("labels only near the camera", #near == 2 and near[1].distance == 10 and near[2].flag.z == 40)
+    local high = EqFlagLabels.near({ { x = 0, y = 0, z = 10 } }, 0, 100, 0, 45)
+    check("a camera high above the flags shows no labels", #high == 0)
+    check("labels shrink with distance, whole up close", EqFlagLabels.scale(5) == 1 and EqFlagLabels.scale(EqFlagLabels.FULL_SIZE_RANGE) == 1
+        and EqFlagLabels.scale(30) < 1 and EqFlagLabels.scale(30) > EqFlagLabels.MIN_SCALE
+        and math.abs(EqFlagLabels.scale(EqFlagLabels.RANGE) - EqFlagLabels.MIN_SCALE) < 1e-9
+        and EqFlagLabels.scale(1000) == EqFlagLabels.MIN_SCALE)
+end
+dofile("scripts/facilities/EqXcCorners.lua")
+do
+    check("the corners are found by their xml", EqXcCorners.isCorner("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcCornerLog.xml")
+        and EqXcCorners.isCorner(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcCornerPlank.xml")
+        and not EqXcCorners.isCorner(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcTable.xml")
+        and not EqXcCorners.isCorner(modsDir .. "FS25_OtherMod/placeables/xcJumps/xcCornerLog.xml") and not EqXcCorners.isCorner(nil))
+    local rx, rry, wx, wry = EqXcCorners.flagPlaces(nil, 1.85)
+    local lx, lry, lwx, lwry = EqXcCorners.flagPlaces(EqXcCorners.LEFT, -1.85)
+    check("Point right keeps red at the point (+x), Point left swaps the flags and turns them round",
+        rx == 1.85 and rry == 0 and wx == -1.85 and wry == 0 and EqXcCorners.flagPlaces(EqXcCorners.RIGHT, 1.85) == 1.85
+        and lx == -1.85 and lwx == 1.85 and math.abs(lry - math.pi) < 1e-9 and math.abs(lwry - math.pi) < 1e-9)
+    local en = io.open("translations/translation_en.xml"):read("*a")
+    for _, name in ipairs({ "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
+        local xml = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
+        local i3d = io.open("placeables/xcJumps/" .. name .. ".i3d"):read("*a")
+        local corner = name:find("Corner", 1, true) ~= nil
+        check(name .. " has flag groups holding their flags, collision" .. (corner and " and the Corner choice" or ""),
+            i3d:find('<TransformGroup name="eqFlagsRed" translation="[%d.]+ 0 0"') ~= nil
+            and i3d:find('<TransformGroup name="eqFlagsWhite" translation="%-[%d.]+ 0 0"') ~= nil
+            and i3d:find('name="pennantRed"', 1, true) ~= nil and i3d:find('name="col"', 1, true) ~= nil
+            and (xml:find("<eqCornerSide>", 1, true) ~= nil) == corner)
+    end
+    -- the placed corners are looked over each second (onPostLoad never came for the choice in game)
+    -- the flags sit under the i3d's top node, a level below the placeable's root
+    local nodes = { root = { "top" }, top = { "red", "white" }, red = { x = 2.45, ry = 0 }, white = { x = -2.45, ry = 0 } }
+    local saved = { getNumOfChildren, getChildAt, getName, getTranslation, setTranslation, setRotation, g_currentMission, g_time, g_gui }
+    getNumOfChildren = function(n) return (n == "root" and 1) or (n == "top" and 2) or 0 end
+    getChildAt = function(n, i) return nodes[n][i + 1] end
+    getName = function(n) return ({ red = "eqFlagsRed", white = "eqFlagsWhite" })[n] or n end
+    getTranslation = function(n) return nodes[n].x, 0, 0 end
+    setTranslation = function(n, x) nodes[n].x = x end
+    setRotation = function(n, _, ry) nodes[n].ry = ry end
+    local corner = { rootNode = "root", configFileName = modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcCornerLog.xml",
+        configurations = { eqCornerSide = EqXcCorners.LEFT } }
+    g_currentMission, g_time, g_gui = { placeableSystem = { placeables = { corner } } }, 5000, nil
+    EqXcCorners.scannedAt = nil
+    EqXcCorners.update()
+    check("a placed Point left corner gets its flags swapped by the scan", nodes.red.x == -2.45 and nodes.white.x == 2.45
+        and math.abs(nodes.red.ry - math.pi) < 1e-9 and corner.eqCornerSide == EqXcCorners.LEFT)
+    getNumOfChildren, getChildAt, getName, getTranslation, setTranslation, setRotation, g_currentMission, g_time, g_gui = unpack(saved, 1, 9)
+    EqXcCorners.scannedAt = nil
+    check("the Corner choice has its texts", en:find('name="eq_config_corner"', 1, true) ~= nil
+        and en:find('name="eq_config_cornerRight"', 1, true) ~= nil and en:find('name="eq_config_cornerLeft"', 1, true) ~= nil)
 end
 dofile("scripts/facilities/EqPlaceAnywhere.lua")
 check("only our cross country pieces skip the land rule",
@@ -2427,27 +2514,50 @@ do
         EqXcHide.wantMode({}) == H and EqXcHide.wantMode({ construction = true }) == S
         and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == S
         and EqXcHide.wantMode({ construction = true, editing = true }) == S and EqXcHide.wantMode({ multiplayer = true }) == S)
-    check("pieces show from near the start line to the end of a round",
-        not EqXcHide.roundShows(nil, 0) and not EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR + 1)
-        and not EqXcHide.roundShows("approach", nil) and EqXcHide.roundShows("approach", EqXcHide.SHOW_NEAR)
-        and EqXcHide.roundShows("countdown", 500) and EqXcHide.roundShows("running", 500) and EqXcHide.roundShows("done", 500))
+    check("pieces show only from a round's countdown to its result, not on the way to the start",
+        not EqXcHide.roundShows(nil) and not EqXcHide.roundShows("approach")
+        and EqXcHide.roundShows("countdown") and EqXcHide.roundShows("running") and EqXcHide.roundShows("done"))
     local xc = EqCourse.CROSS_COUNTRY
     check("traffic is off only while a cross country round runs",
         EqXcHide.wantsTrafficOff(xc, "running") and not EqXcHide.wantsTrafficOff(xc, "countdown") and not EqXcHide.wantsTrafficOff(xc, "go")
         and not EqXcHide.wantsTrafficOff(xc, "approach") and not EqXcHide.wantsTrafficOff(xc, "done")
         and not EqXcHide.wantsTrafficOff(nil, "running") and not EqXcHide.wantsTrafficOff(xc, nil))
-    check("the Always visible configuration is the second choice",
+    check("Disappearing: No is a cross country piece's second choice, stored as always visible",
         EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 2 }) and not EqXcHide.isAlwaysVisible({ eqAlwaysVisible = 1 })
         and not EqXcHide.isAlwaysVisible({}) and not EqXcHide.isAlwaysVisible(nil))
+    local mod = "C:/mods/FS25_RealisticEquestrian/placeables/"
+    check("cross country pieces disappear by default, our show jumps only when bought Disappearing",
+        EqXcHide.disappears(mod .. "xcJumps/xcLogPile.xml", {}) and not EqXcHide.disappears(mod .. "xcJumps/xcLogPile.xml", { eqAlwaysVisible = 2 })
+        and EqXcHide.disappears(mod .. "xcJumps/courseFlags.xml", { eqAlwaysVisible = 2 })
+        and not EqXcHide.disappears(mod .. "showJumps/showJumpOxer.xml", {}) and not EqXcHide.disappears(mod .. "showJumps/showJumpOxer.xml", { eqDisappearing = 1 })
+        and EqXcHide.disappears(mod .. "showJumps/showJumpUpright.xml", { eqDisappearing = 2 }))
     local flags = io.open("placeables/xcJumps/courseFlags.xml"):read("*a")
     check("the flag fence always hides: no Always visible choice", flags:find("eqAlwaysVisible", 1, true) == nil
         and flags:find("eq_shop_xcFlagsHidden_function", 1, true) ~= nil)
-    for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
+    check("the flag fence has one guide line segment, kept as BAR_90 for saved fences",
+        select(2, flags:gsub("<segment ", "")) == 3 and flags:find('id="BAR_90"', 1, true) ~= nil
+        and flags:find('id="BAR_60"', 1, true) == nil and flags:find('id="BAR_120"', 1, true) == nil)
+    local i3d = io.open("placeables/xcJumps/courseFlags.i3d"):read("*a")
+    check("the guide line lies on the ground", i3d:find('name="eqXcLine"', 1, true) ~= nil and i3d:find("eqXcBar", 1, true) == nil)
+    local construction, round = { construction = true }, { round = true }
+    check("in a round the flag fence is ridden through, other pieces are solid",
+        EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
+        and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
+        and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
+    for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16",
+        "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
         local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))
-        check(name .. " offers Always visible, No first", choices == 2
-            and text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_no"', 1, true) < text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_yes"', 1, true)
+        check(name .. " offers Disappearing, Yes first", choices == 2
+            and text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_yes"', 1, true) < text:find('<eqAlwaysVisibleConfiguration name="$l10n_ui_no"', 1, true)
             and text:find("eq_shop_xcHidden_function", 1, true) ~= nil)
+    end
+    for _, name in ipairs({ "showJumpUpright", "showJumpOxer" }) do
+        local text = io.open("placeables/showJumps/" .. name .. ".xml"):read("*a")
+        local choices = select(2, text:gsub("<eqDisappearingConfiguration ", ""))
+        check(name .. " offers Disappearing, No first", choices == 2
+            and text:find('<eqDisappearingConfiguration name="$l10n_ui_no"', 1, true) < text:find('<eqDisappearingConfiguration name="$l10n_ui_yes"', 1, true)
+            and text:find("eq_shop_showJumpHidden_function", 1, true) ~= nil)
     end
 end
 do
@@ -3488,19 +3598,18 @@ end)()
     check("passing other markers sometimes earns a bonus", (events.bonus or 0) > 0)
     seed = 7
     local free = ride(rng, 600000, nil)
-    check("without markers the free routine runs, training less", free.routine.kind == "free"
-        and danced.focused.temperament > free.focused.temperament,
-        string.format("markers %.2f free %.2f", danced.focused.temperament, free.focused.temperament))
+    check("without markers there is no routine and no routine training", not free.routine.active
+        and free.focused.temperament == 0 and danced.focused.temperament > 0)
 
     local sheet = EqTraining.newSheet()
     local here = { x = 12, z = 3, markers = course }
     local one = function() return 1 end
     for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
     local r = sheet.routine
-    check("walking near markers starts a marker routine with a leg", r.kind == "markers" and r.request == "go" and r.task.marker ~= nil)
+    check("coming to markers starts a marker routine with a leg", r.kind == "markers" and r.request == "go" and r.task.marker ~= nil)
     check("the first leg goes to a marker at least 8 m away", math.sqrt((r.task.marker.x - 12) ^ 2 + (r.task.marker.z - 3) ^ 2) >= 8)
     local deadline = r.deadline
-    check("a leg gets far more time than a free command", deadline - r.clock > EqTraining.ROUTINE_REACT_MS * 2)
+    check("a leg gets plenty of time", deadline - r.clock > 6000)
     r.task.gait = "canter"
     EqTraining.routineStep(sheet, "canter", nil, 50, false, one, here)
     check("a canter asked for keeps the routine", r.active)
@@ -3511,11 +3620,19 @@ end)()
     end
     check("galloping is a fault, not the end", r.active and faults == 1 and r.faults == 1 and r.mult == 3 and r.task.kind == "go",
         string.format("faults %d mult %d", faults, r.mult))
-    for _ = 1, 400 do EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here) end
+    for _ = 1, 400 do
+        EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here)
+        if not r.active then break end
+    end
     check("three faults end it", not r.active)
+    for _ = 1, EqDressage.BREAK_REST_MS / 50 - 2 do EqTraining.routineStep(sheet, "halt", nil, 50, false, one, here) end
+    check("a broken test waits a moment before the next", not r.active)
     for _ = 1, 50 do EqTraining.routineStep(sheet, "walk", nil, 50, false, one, here) end
     EqTraining.routineStep(sheet, "walk", nil, 50, false, one, nil)
-    check("leaving the course carries on with the free routine", r.active and r.kind == "free" and r.task == nil)
+    check("riding away from the markers ends the routine", not r.active and r.task == nil)
+    local far = EqTraining.newSheet()
+    for _ = 1, 100 do EqTraining.routineStep(far, "walk", nil, 50, false, one, { x = 12 + EqDressage.ARENA_NEAR + 40, z = 3, markers = course }) end
+    check("walking with markers in sight but not near them starts nothing", not far.routine.active)
 
     -- In one of our arenas the routine opens at X with a halt.
     local ours = {}
@@ -3532,6 +3649,10 @@ end)()
     check("a horse at A already goes straight to X", EqDressage.openingLeg({ x = 10, z = 1, markers = ours }).opening == "X")
     local toA = EqDressage.openingLeg(at)
     check("the first trip to A is a trot, untimed", toA.gait == "trot" and toA.untimed)
+    local side = EqTraining.newSheet()
+    EqTraining.routineStep(side, "trot", nil, 50, false, one, { x = -2, z = 20, markers = ours })
+    for _, z in ipairs({ 20, 34, 6 }) do EqTraining.routineStep(side, "trot", nil, 50, false, one, { x = 0, z = z, markers = ours }) end
+    check("riding past the letters on the way to A asks for no gait change", side.routine.task.opening == "A" and side.routine.bonus == nil)
     local near = EqTraining.newSheet()
     EqTraining.routineStep(near, "trot", nil, 50, false, one, at)
     check("coming up to our arena starts its test at once", near.routine.active and near.routine.task.opening == "A")
@@ -3541,9 +3662,11 @@ end)()
     check("near an arena 10 m past its end", EqDressage.nearArena({ x = 10, z = 40 + 10, markers = ours }))
     local away = EqTraining.newSheet()
     for _ = 1, 50 do EqTraining.routineStep(away, "walk", nil, 50, false, one, beyond) end
-    check("walking far from our arena rides the free routine", away.routine.active and away.routine.kind == "free")
+    check("walking far from our arena starts nothing", not away.routine.active)
     for _ = 1, 3 do EqTraining.routineStep(away, "walk", nil, 50, false, one, at) end
-    check("riding up to the arena turns it into the test", away.routine.kind == "markers" and away.routine.task.opening == "A")
+    check("riding up to the arena starts the test", away.routine.kind == "markers" and away.routine.task.opening == "A")
+    check("the test starts from the arena's distance", EqDressage.startDistance(at) == 0 and EqDressage.startDistance(beyond) > EqDressage.ARENA_NEAR
+        and EqDressage.atMarkers(at) and not EqDressage.atMarkers(beyond))
     local walks = 0
     for _ = 1, 200 do
         local leg = EqDressage.planLeg({ from = nil }, { x = 10, z = 0, markers = ours }, rng)
@@ -3621,6 +3744,323 @@ end)()
     EqTraining.routineStep(tested, "walk", nil, 50, false, one, { x = tx, z = tz, markers = ours })
     check("no new test straight after", not tested.routine.active)
     check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
+end)()
+
+-- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
+-- do block: the main chunk is at Lua's 200 locals.
+;(function()
+    local function level(lead, push, restA)
+        return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
+    end
+    local fall = level(1, 1)
+    local pose = EqPoles.fallPose(fall, 0)
+    check("a pole starts in its cups", math.abs(pose.y - 0.95) < 1e-9 and pose.z == 0 and pose.rz == 0 and pose.ry == 0 and not pose.still)
+    pose = EqPoles.fallPose(fall, EqPoles.LAG)
+    check("the leading end drops first", pose.rz < 0 and pose.y < 0.95, string.format("tilt %.3f", pose.rz))
+    check("the other end can lead", EqPoles.fallPose(level(-1, 1), EqPoles.LAG).rz > 0)
+    local slide = EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
+    pose = EqPoles.fallPose(fall, 3)
+    check("a fallen pole lies flat on the ground", math.abs(pose.y - 0.05) < 1e-9 and math.abs(pose.rz) < 1e-9 and pose.still)
+    check("it slid the horse's way", math.abs(pose.z - slide) < 1e-9)
+    check("it slides the other way for a horse going the other way", math.abs(EqPoles.fallPose(level(1, -1), 3).z + slide) < 1e-9)
+    check("on a slope it lies along the ground", math.abs(EqPoles.fallPose(level(1, 1, 0.15), 3).rz - math.atan2(0.1, 3.5)) < 1e-9)
+    local frames, last, lowest = 0, 0.95, 0.95
+    for t = 0, 2, 1 / 60 do
+        local fy = EqPoles.fallPose(fall, t).y
+        lowest = math.min(lowest, fy)
+        if fy > last + 1e-9 then frames = frames + 1 end
+        last = fy
+    end
+    check("a falling pole never bounces up or goes under the ground", frames == 0 and lowest >= 0.05 - 1e-9)
+    local cross = { a = { 1.7, 0.73, -0.06 }, b = { -1.7, 0.25, -0.06 }, restA = 0.05, restB = 0.05, lead = 1, push = 1 }
+    pose = EqPoles.fallPose(cross, 0)
+    check("a crossrail's pole starts tilted in its cups", math.abs(pose.rz - math.atan2(0.48, 3.4)) < 1e-9 and math.abs(pose.y - 0.49) < 1e-9)
+    pose = EqPoles.fallPose(cross, 3)
+    check("and lies flat once down", math.abs(pose.rz) < 1e-9 and pose.still)
+    local fan = { a = { 1.68, 0.95, 0.7 }, b = { -1.68, 0.95, 0.055 }, restA = 0.05, restB = 0.05, lead = -1, push = -1 }
+    pose = EqPoles.fallPose(fan, 0)
+    check("a fan's pole starts turned", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and pose.ry < 0)
+    pose = EqPoles.fallPose(fan, 3)
+    check("and stays turned as it lies", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and math.abs(pose.z - (0.3775 - slide)) < 1e-9)
+
+    -- The shop's colour options: the same list, in the same order, as the generator writes.
+    local source = io.open("art/source/show_jumps.py"):read("*a")
+    local listed, same = 0, true
+    for name, r, g, b in source:gmatch('%("(%w+)", %(([%d.]+), ([%d.]+), ([%d.]+)%)%)') do
+        listed = listed + 1
+        local entry = EqJumpColours.LIST[listed]
+        if entry == nil or entry[1] ~= name or math.abs(entry[2] - tonumber(r)) > 1e-9
+            or math.abs(entry[3] - tonumber(g)) > 1e-9 or math.abs(entry[4] - tonumber(b)) > 1e-9 then same = false end
+    end
+    check("jump colours match the generator's list", same and listed == #EqJumpColours.LIST, listed .. " listed")
+    local red = EqJumpColours.colour(3)
+    check("an option's index gives its colour", red ~= nil and red[1] == 0.55 and EqJumpColours.colour(99) == nil and EqJumpColours.colour(nil) == nil)
+    check("a jump's colour key changes with its options",
+        EqJumpColours.key({ eqPoleColour = 3 }) ~= EqJumpColours.key({ eqPoleColour = 4 }) and EqJumpColours.key(nil) == EqJumpColours.key({}))
+
+    local down = { state = EqPoles.DOWN, downAt = 1000 }
+    check("a dropped pole stays down a while", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS - 1, false, false))
+    check("then goes back up", EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, false))
+    check("not while a round is under way", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, true, false))
+    check("not while a rider is at the jump", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS, false, true))
+    check("a pole up or falling is left alone", not EqPoles.mayReset({ state = EqPoles.FALLING, downAt = 0 }, 99999, false, false))
+    check("a clock gone back (new game) puts it up", EqPoles.mayReset(down, 500, false, false))
+    local oxer = { { state = EqPoles.UP, home = { 0, 0.4, -0.55 } }, { state = EqPoles.UP, home = { 0, 0.9, -0.55 } },
+        { state = EqPoles.UP, home = { 0, 0.95, 0.55 } } }
+    check("running into an oxer's front knocks its front top pole", EqPoles.crashPole(oxer, -1.5) == oxer[2])
+    check("from behind, its back pole", EqPoles.crashPole(oxer, 1.5) == oxer[3])
+    oxer[2].state = EqPoles.DOWN
+    check("with the top pole down, the one under it", EqPoles.crashPole(oxer, -1.5) == oxer[1])
+    oxer[1].state, oxer[3].state = EqPoles.DOWN, EqPoles.DOWN
+    check("nothing left up, nothing falls", EqPoles.crashPole(oxer, -1.5) == nil)
+    check("our show jumps carry poles", EqPoles.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("other jumps don't", not EqPoles.isOurs("FS25_RidingHall/props01.xml") and not EqPoles.isOurs(nil))
+
+    -- A jumping horse's legs through a pole (EqPoles.legThrough): a pole along x at 1 m.
+    local pa, pb = { 1.75, 1.0, 0 }, { -1.75, 1.0, 0 }
+    check("a leg crossing the pole low knocks it", EqPoles.legThrough(pa, pb, { 0.3, 0.2 }, { 0.3, -0.2 }, 0.9))
+    check("a leg crossing over the top doesn't", not EqPoles.legThrough(pa, pb, { 0.3, 0.2 }, { 0.3, -0.2 }, 1.1))
+    check("a leg past the pole's end doesn't", not EqPoles.legThrough(pa, pb, { 2.2, 0.2 }, { 2.2, -0.2 }, 0.5))
+    check("a leg landing on the pole knocks it", EqPoles.legThrough(pa, pb, { 0.3, 0.08 }, { 0.3, 0.12 }, 1.02))
+    check("a leg landing beside it doesn't", not EqPoles.legThrough(pa, pb, { 0.3, 0.5 }, { 0.3, 0.6 }, 0.2))
+    local hit, t = EqPoles.legThrough(pa, pb, { 1.0, 0.2 }, { 1.0, -0.2 }, 0.5)
+    check("where along the pole: near its +x end", hit and t < 0.5, tostring(t))
+    local low = { 1.7, 0.73, 0 }
+    check("a crossrail's low end is lower", EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { -1.5, 0.1 }, { -1.5, -0.1 }, 0.45) == false
+        and EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { 1.5, 0.1 }, { 1.5, -0.1 }, 0.45))
+end)()
+
+-- Hosting your own event: data/hosting.xml, the requirement checks, popularity and takings.
+;(function()
+    local host = EqHosting.read(TestXML.load("data/hosting.xml"))
+    check("hosting: three ratings", #host.ratings == 3 and host.ratingByName.championship ~= nil)
+    for _, rating in ipairs(host.ratings) do
+        check("hosting: rating " .. rating.name .. " uses a known tier", config.tierByName[rating.tier] ~= nil)
+    end
+    check("hosting: fields 8/16/32", host.ratingByName.novice.field == 8 and host.ratingByName.intermediate.field == 16
+        and host.ratingByName.championship.field == 32)
+    check("hosting: bleachers match by keyword", EqHosting.isSeatingXml(host, "C:/mods/FS25_BleachersPack/xml/bleachers5Row.xml"))
+    check("hosting: our bleachers match", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
+    check("hosting: a shed is not a bleacher", not EqHosting.isSeatingXml(host, "$data/placeables/sheds/shed01.xml"))
+
+    check("hosting: arena sizes", EqHosting.arenaLength(31.2) == 30 and EqHosting.arenaLength(41.2) == 40
+        and EqHosting.arenaLength(61.2) == 60 and EqHosting.arenaLength(12) == 0)
+    local arenas = EqHosting.arenasFromMarkers({
+        { letter = "A", x = 0, z = 0, arena = true, arenaId = 7 }, { letter = "C", x = 0, z = 41.2, arena = true, arenaId = 7 },
+        { letter = "X", x = 0, z = 20.6, arena = true, arenaId = 7 },
+        { letter = "A", x = 200, z = 0 }, { letter = "C", x = 200, z = 61 }, { letter = "C", x = 500, z = 0 },
+    })
+    check("hosting: our arena and a loose pair make two arenas", #arenas == 2, tostring(#arenas))
+    check("hosting: arena lengths read", arenas[1].length == 40 and arenas[2].length == 60)
+
+    local feedNeedEach = 1000
+    local venue = {
+        courses = {
+            { name = "SJ small", kind = "showJumping", jumps = 7, length = 400, seating = 0, indoor = false },
+            { name = "SJ big", kind = "showJumping", jumps = 13, length = 500, seating = 1, indoor = true },
+            { name = "XC", kind = "crossCountry", jumps = 32, length = 2600, seating = 0, indoor = false },
+        },
+        arenas = { { name = "20x40", length = 40, seating = 1, indoor = false } },
+        freePlaces = 14, feed = 14000, feedPerHorse = feedNeedEach, facilityKinds = 1,
+    }
+    local result = EqHosting.check(host, "showJumping", "championship", venue)
+    check("hosting: championship show jumping passes with 13 jumps, a bleacher and indoors (stables aside)",
+        result.picks.showJumping.name == "SJ big")
+    local failed = {}
+    for _, c in ipairs(result.checks) do if not c.ok then failed[c.id] = c end end
+    check("hosting: 30 visitors need 30 places", failed.stables ~= nil and failed.stables.need == 30 and failed.feed ~= nil)
+    check("hosting: only stables and feed fail", failed.showJumps == nil and failed.showJumpingSeating == nil)
+
+    result = EqHosting.check(host, "eventing", "intermediate", venue)
+    check("hosting: intermediate 3 Day Event passes", result.ok, (function()
+        local t = {}
+        for _, c in ipairs(result.checks) do if not c.ok then table.insert(t, c.id) end end
+        return table.concat(t, " ")
+    end)())
+    check("hosting: 3 Day Event setup fee 1.5x", result.setupFee == 30000)
+    check("hosting: visitors = field less own places", result.visitors == 14 and result.feedNeed == 14000)
+
+    result = EqHosting.check(host, "crossCountry", "championship", venue)
+    check("hosting: 2600 m falls short of 3000", not result.ok and result.checks[1].id == "xcLength" and not result.checks[1].ok)
+    result = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 0 })
+    check("hosting: no arena fails dressage", not result.ok and result.checks[1].id == "arena" and result.checks[1].have == 0)
+
+    local novice = EqHosting.check(host, "showJumping", "novice", venue)
+    local score, parts = EqHosting.popularity(host, "showJumping", novice, { facilityKinds = 1, reputation = 0 })
+    -- 13 jumps against 6 is far over the minimum: full course points; 1 bleacher + indoor over 0 needed.
+    check("hosting: popularity adds base, course, seating and facilities", score == 30 + 15 + 15 + 5, tostring(score))
+    check("hosting: popularity parts listed", parts[1].id == "base" and #parts == 4)
+    local winter = EqHosting.popularity(host, "crossCountry", novice, { winter = true })
+    local summer = EqHosting.popularity(host, "crossCountry", novice, {})
+    check("hosting: winter costs cross country", winter == summer - 10)
+    check("hosting: popularity stays in 0..100", EqHosting.popularity(host, "dressage", novice, { reputation = -1000 }) >= 0)
+    check("hosting: reputation range", EqHosting.nextReputation(host, 18, true) == 20 and EqHosting.nextReputation(host, -20, false) == -25)
+
+    local champ = host.ratingByName.championship
+    local low = EqHosting.takings(host, "showJumping", champ, 50, 2)
+    local high = EqHosting.takings(host, "showJumping", champ, 100, 2)
+    check("hosting: turnout 75% at 50", low.competitors == 23 and low.visitors == 30, tostring(low.competitors))
+    check("hosting: full turnout at 100", high.competitors == 30 and high.entries == 105000 and high.gate == 24000)
+    local three = EqHosting.takings(host, "eventing", host.ratingByName.novice, 100, 0)
+    check("hosting: 3 Day Event visitors pay double", three.entryFee == 1200 and three.total == 6 * 1200)
+
+    -- Booking months: from next month, at least the interval after the last event, up to a year ahead.
+    local months = EqHostManager.choices(10, nil, 6)
+    check("host booking: first choice is next month", months[1] == 11 and months[#months] == 22 and #months == 12)
+    months = EqHostManager.choices(10, 8, 6)
+    check("host booking: waits the interval after the last event", months[1] == 14 and months[#months] == 22)
+    check("host booking: nothing within a year of a far booking", #EqHostManager.choices(10, 20, 12) == 0)
+    check("host booking: refund half two months ahead", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 10) == 10000)
+    check("host booking: no refund the month before", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 11) == 0)
+
+    -- The event month: a day's feed, and the checks a running event can fail.
+    check("host month: a day's feed for the visitors", EqHostManager.dailyFeed(3000, 14, 3) == 14000)
+    do
+        local event = { discipline = "crossCountry", venue = "My farm", hosted = { rating = "novice", popularity = 60, setupFee = 5000, feedEaten = 4200,
+            takings = { competitors = 5, visitors = 6, entries = 3000, gate = 0, total = 3000 },
+            report = { podium = { "A", "B", "C" }, field = 7, placings = { { name = "Tango", place = 2 } } } } }
+        local report = EqHostManager.report(event, 40)
+        check("host report: turnout, money and podium", report.competitors == 5 and report.visitors == 6 and report.total == 3000
+            and report.setupFee == 5000 and report.podium[1] == "A" and report.field == 7 and report.day == 40)
+        check("host report: the feed the visitors ate", report.feed == 4200)
+        check("host report: your horses' places", report.mine[1].name == "Tango" and report.mine[1].place == 2)
+        local saved = EqHostManager.history
+        EqHostManager.history = {}
+        for i = 1, EqHostManager.HISTORY_KEPT + 2 do EqHostManager.keepReport(1, { day = i }) end
+        check("host report: newest first, a few kept", #EqHostManager.history[1] == EqHostManager.HISTORY_KEPT
+            and EqHostManager.history[1][1].day == EqHostManager.HISTORY_KEPT + 2)
+        EqHostManager.history = saved
+    end
+    check("host month: no visitors eat nothing", EqHostManager.dailyFeed(3000, 0, 3) == 0)
+    local short = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 100 })
+    local failed = EqHostManager.failedChecks(short, true)
+    local hasFeed = false
+    for _, id in ipairs(failed) do if id == "feed" then hasFeed = true end end
+    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "arena" and not hasFeed)
+    local all = EqHostManager.failedChecks(short, false)
+    check("host month: the opening check counts the feed", all[#all] == "feed")
+
+    -- Ridden rounds in your own event.
+    local novice = host.ratingByName.novice
+    check("ridden: a course with enough jumps qualifies", EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 6 })
+        and not EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 5 })
+        and not EqHosting.courseQualifies(novice, "showJumping", { kind = "crossCountry", jumps = 30, length = 4000 }))
+    check("ridden: cross country needs length and jumps", EqHosting.courseQualifies(novice, "crossCountry", { kind = "crossCountry", jumps = 20, length = 1000 })
+        and not EqHosting.courseQualifies(novice, "crossCountry", { kind = "crossCountry", jumps = 25, length = 900 }))
+    local sheet = EqHosting.roundSheet({ faults = 8, timeFaults = 2, total = 10 }, 1)
+    check("ridden: show jumping sheet splits rails and refusals", sheet.penalties == 10 and sheet.down == 1 and sheet.refusals == 1 and sheet.time == 2)
+    sheet = EqHosting.roundSheet({ faults = 20, timeFaults = 1.2, total = 21.2, xc = true }, 1)
+    check("ridden: cross country sheet", sheet.penalties == 21.2 and sheet.down == 0 and sheet.refusals == 1)
+    check("ridden: eliminated round", EqHosting.roundSheet({ eliminated = "refusals" }, 2).eliminated == true)
+    check("ridden: dressage marks per fault", EqHosting.testSheet(2, false).penalties == 34 and EqHosting.testSheet(3, true).eliminated)
+    local rode = { h = { dressage = { penalties = 22 }, showJumping = { penalties = 0 } } }
+    check("ridden: some phases leave it to the simulation", EqHosting.riddenFate(rode, "h", "eventing") == nil
+        and EqHosting.riddenFate(rode, "h", "showJumping") == "finished" and EqHosting.riddenFate(rode, "x", "dressage") == nil)
+    rode.h.crossCountry = { eliminated = true, penalties = 0 }
+    check("ridden: an eliminated phase is out", EqHosting.riddenFate(rode, "h", "eventing") == "eliminated")
+
+    -- A weak horse ridden clear beats every rival with penalties.
+    local better, worse, mineSj = 0, 0, nil
+    for i = 1, 50 do
+        local hostedEvent = { discipline = "showJumping", tier = "novice", prize = 1000,
+            hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0 } } } } }
+        local field = EqCompetition.run(hostedEvent, config, { { key = "me", rating = 15, condition = 1, stats = stats } }, EqRandom.new("ridden " .. i), 8)
+        for _, r in ipairs(field) do
+            if r.key == "me" then mineSj = r end
+        end
+        for _, r in ipairs(field) do
+            if r.key ~= "me" and r.run.penalties > 0 then
+                if r.place > mineSj.place then better = better + 1 else worse = worse + 1 end
+            end
+        end
+    end
+    check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
+        and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
+
+    -- Graded rounds: the ride picks where in its own range the horse lands.
+    check("ride grade: clear inside the time is perfect", EqHosting.rideGrade("showJumping", 0, 40, 41) == 1)
+    local slow = EqHosting.rideGrade("showJumping", 0, 67.3, 41)
+    check("ride grade: very slow costs most of the time part", slow > 0.41 and slow < 0.44, string.format("%.3f", slow))
+    check("ride grade: rails cost more than a little time", EqHosting.rideGrade("showJumping", 8, 40, 41)
+        < EqHosting.rideGrade("showJumping", 0, 45, 41))
+    check("ride grade: a cross country refusal is about one rail's worth less",
+        EqHosting.rideGrade("crossCountry", 20, 100, 120) > EqHosting.rideGrade("showJumping", 12, 40, 41))
+    local graded = EqHosting.roundSheet({ seconds = 50, faults = 4, timeFaults = 9, total = 13 }, 0, 41)
+    check("ride grade: kept on the sheet", graded.grade ~= nil and graded.grade < 1 and graded.penalties == 13)
+    local function meanPlace(grade, rating)
+        local sum = 0
+        for i = 1, 200 do
+            local ev = { discipline = "showJumping", tier = "novice", prize = 1000,
+                hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0, grade = grade } } } } }
+            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = rating, condition = 1, stats = stats } },
+                EqRandom.new("graded " .. i), 8)) do
+                if r.key == "me" then sum = sum + r.place end
+            end
+        end
+        return sum / 200
+    end
+    local good, bad = meanPlace(1, 45), meanPlace(0.1, 45)
+    check("ride grade: a good ride places better than a poor one", good + 1 < bad, string.format("%.2f vs %.2f", good, bad))
+    local weakClear = meanPlace(1, 10)
+    check("ride grade: a weak horse ridden clear still doesn't win every time", weakClear > 1.5, string.format("%.2f", weakClear))
+
+    -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
+    local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }
+    local order = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
+    check("sponsors: owned brands first", order[1] == "ECHO" and order[2] == "BRAVO" and order[3] == "CHARLIE" and #order == 5)
+    local again = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
+    check("sponsors: the same order for the same farm", table.concat(order, " ") == table.concat(again, " "))
+    for _, name in ipairs(order) do check("sponsors: the placeholder brand is never shown", name ~= "NONE") end
+    check("sponsors: our bleachers are known", EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\bleachers\\bleachers5x10.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcTable.xml")
+        and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcBigLog.xml")
+        and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
+    check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
+
+    EqHostManager.reset()
+    EqHostManager.bookings[3] = { type = "eventing", rating = "championship", month = 15, setupFee = 120000, previousLast = 4 }
+    EqHostManager.lastMonth[3] = 15
+    EqHostManager.reputation[3] = -7.5
+    EqHostManager.lastMonth[5] = 2
+    local store = memoryXML()
+    EqHostManager.saveToXMLFile(store, "hosting")
+    EqHostManager.loadFromXMLFile(store, "hosting")
+    local booking = EqHostManager.bookings[3]
+    check("host booking: survives a save", booking ~= nil and booking.type == "eventing" and booking.rating == "championship"
+        and booking.month == 15 and booking.setupFee == 120000 and booking.previousLast == 4)
+    check("host booking: last month and reputation saved", EqHostManager.lastMonth[3] == 15 and EqHostManager.reputation[3] == -7.5
+        and EqHostManager.lastMonth[5] == 2 and EqHostManager.bookings[5] == nil)
+    EqHostManager.reset()
+end)()
+
+;(function()
+    EqHostManager.reset()
+    EqHostManager.lastMonth[3] = 15
+    EqHostManager.bookings[3] = { type = "dressage", rating = "novice", month = 15, previousLast = 9 }
+    check("host wait: clearing reports a wait", EqHostManager.clearWait(3) == true)
+    check("host wait: last month and booking's previous month forgotten",
+        EqHostManager.lastMonth[3] == nil and EqHostManager.bookings[3].previousLast == nil)
+    check("host wait: any month free after clearing", #EqHostManager.choices(16, EqHostManager.lastMonth[3], 6) > 0
+        and EqHostManager.choices(16, EqHostManager.lastMonth[3], 6)[1] == 17)
+    check("host wait: nothing to clear twice", EqHostManager.clearWait(3) == false)
+
+    -- Month names come from the game's own I18N (through our proxy another mod's hook overflowed).
+    local savedManager = EqCompetitionManager
+    EqCompetitionManager = EqCompetitionManager or {}
+    local savedMission, savedGlobal, savedMonth = g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month
+    EqCompetitionManager.month = 10
+    g_currentMission = { environment = { currentPeriod = 11 } }
+    EqI18N.globalI18N = function() return { formatPeriod = function(_, period) return "P" .. period end } end
+    local text, named = EqHostManager.monthText(12)
+    check("host month: named by the game's period", text == "P1" and named == true, tostring(text))
+    EqI18N.globalI18N = function() return { formatPeriod = function() error("stack overflow") end } end
+    text, named = EqHostManager.monthText(12)
+    local nowText = EqHostManager.monthText(10)
+    check("host month: falls back to months ahead, and now", named == false and text ~= nowText
+        and nowText == g_i18n:getText("eq_host_monthNow"), tostring(text) .. " / " .. tostring(nowText))
+    g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
+    EqCompetitionManager = savedManager
+    EqHostManager.reset()
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

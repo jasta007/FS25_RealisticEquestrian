@@ -34,6 +34,11 @@ EqMessages.TYPES = {
     EQ_REVEAL_FAIR = { title = "eqDealer", severity = "INFO" },
     EQ_REVEAL_WORSE = { title = "eqDealer", severity = "NOTICE" },
     EQ_DELIVERED = { title = "eqTransport", severity = "INFO" },
+    EQ_HOST_OPENED = { title = "eqHosting", severity = "INFO" },
+    EQ_HOST_WARNING = { title = "eqHosting", severity = "WARNING" },
+    EQ_HOST_CANCELLED = { title = "eqHosting", severity = "WARNING" },
+    EQ_HOST_DONE = { title = "eqHosting", severity = "SUCCESS" },
+    EQ_HOST_RIDDEN = { title = "eqHosting", severity = "INFO" },
 }
 
 -- The one body template, and the texts RLRM looks up without our mod name.
@@ -45,6 +50,7 @@ EqMessages.TEXT_KEYS = {
     "rl_messageTitle_eqRetirement",
     "rl_messageTitle_eqDealer",
     "rl_messageTitle_eqTransport",
+    "rl_messageTitle_eqHosting",
 }
 
 EqMessages.isInstalled = false

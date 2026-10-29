@@ -3,9 +3,10 @@ Builds the cross country fences in placeables/xcJumps/: one .xml and .i3d per fe
 they share and a shop image for each.
 
 The cross country flags are the core: one spline fence (courseFlags) whose segment types are a
-white flag, a gold height bar and a red flag, set across anything the player wants ridden as a
-fence (a map's logs, a table or hedge from any mod). EqXcFlags pairs each red flag with the nearest
-white one and the line between them is the fence. The log piles and drop walls are ready-made
+white flag, a gold guide line on the ground and a red flag, set along anything the player wants
+ridden as a fence (a map's logs, a table or hedge from any mod). EqXcFlags pairs each red flag with
+the nearest white one and the line between them is where the fence is crossed; the obstacle itself
+is what gets jumped. The log piles and drop walls are ready-made
 fences.
 
 Like the dressage arenas, the .i3d files keep their geometry inline (<IndexedTriangleSet>), so no
@@ -44,16 +45,23 @@ LOG_PILES = [
 ]
 
 # The flag fence (James, 2026-10-27): one spline fence, placed like the base game's pillar fences,
-# whose N/M segment types are a white flag (a one-click post), a gold height bar that stretches
-# over whatever the player wants jumped, and a red flag. The bars show only in construction mode.
+# whose N/M segment types are a white flag (a one-click post), a gold guide line on the ground
+# that stretches along whatever the player wants jumped, and a red flag. The line shows only in
+# construction mode and while a course is edited. It was a bar at the fence height (0.6, 0.9 or
+# 1.2 m) with collision until James found it looked bad and gave false faults (2026-10-28): now
+# the jump is judged by the obstacle itself.
 FLAG_FENCE = "courseFlags"
 FLAG_FENCE_PRICE = 10
 FLAG_POST = 0.3         # a flag post's length along the fence line (a fixed "gate" segment)
-BAR_HEIGHTS = (60, 90, 120)
-BAR_PANEL = 1.0         # bar panels repeat every metre, stretched up to BAR_MAX_SCALE
+LINE_ID = "BAR_90"      # the guide line's segment id: the old 0.9 m bar's, so saved fences keep it
+LINE_NODE = "eqXcLine"
+LINE_WIDTH = 0.08
+LINE_BOTTOM = 0.01      # just off the ground
+LINE_TOP = 0.025
+BAR_PANEL = 1.0         # line panels repeat every metre, stretched up to BAR_MAX_SCALE
 BAR_MAX_SCALE = 1.5
 FENCE_COLLISION_GROUP = "0x3e"   # the base game fences' collision, which construction picks to delete
-GUIDE = "eqXcGuide"     # the gold height bar: construction mode only
+GUIDE = "eqXcGuide"     # the gold guide line: construction mode and course editing only
 GUIDE_LENGTH = 0.9
 GUIDE_SIZE = 0.03
 
@@ -239,17 +247,107 @@ def plank_texture(path, normal_path, size=512):
     return np.clip(rgb, 0, 255).astype(np.uint8)
 
 
-def peeled_texture(path, size=256):
+def peeled_texture(path, size=256, seed=37, colour=(214, 178, 128), contrast=0.07):
     """Peeled softwood for posts and rails: pale, streaked along the grain (v), with a few strips
-    of bark left on."""
-    rng = np.random.default_rng(37)
+    of bark left on. Another seed, colour and contrast give a second log's wood."""
+    rng = np.random.default_rng(seed)
     streaks = periodic_noise(size, rng, 1.5, 40) * 0.6 + periodic_noise(size, rng, 6, 80) * 0.4
-    light = 0.82 + 0.07 * streaks
-    rgb = light[..., None] * np.array([214, 178, 128])
+    light = 0.82 + contrast * streaks
+    rgb = light[..., None] * np.array(colour)
     bark = np.clip((periodic_noise(size, rng, 10, 60) - 1.6) * 3, 0, 1)
     rgb = rgb * (1 - bark[..., None]) + np.array([92, 74, 56]) * bark[..., None]
     save_dds(rgb, path)
     return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def stain_texture(path, normal_path, size=512):
+    """Eight boards painted with a brown wood stain (the plank corner's deck and trim): the grain
+    shows through, the stain wears pale along the boards' edges, dark gaps between boards."""
+    rng = np.random.default_rng(43)
+    boards = 8
+    row = (np.arange(size)[:, None] + 0.5) / size * boards
+    board = np.floor(row).astype(int) % boards
+    within = row - np.floor(row)
+    grain = periodic_noise(size, rng, 50, 1.0) * 0.6 + periodic_noise(size, rng, 140, 3) * 0.4
+    shade = rng.uniform(-0.05, 0.05, boards)[board]
+    gap = np.clip(1 - np.minimum(within, 1 - within) / 0.03, 0, 1)
+    edge = np.clip(1 - np.minimum(within, 1 - within) / 0.12, 0, 1) * np.clip(periodic_noise(size, rng, 20, 4) + 0.3, 0, 1)
+    light = 0.80 + 0.07 * grain + shade - 0.6 * gap
+    colour = np.array([118, 80, 62]) * (1 - 0.3 * edge[..., None]) + np.array([150, 128, 112]) * 0.3 * edge[..., None]
+    rgb = np.clip(light, 0.1, 1.1)[..., None] * colour
+    save_dds(rgb, path)
+    normal_map(0.04 * grain - gap, normal_path, strength=2.5)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def dark_wood_texture(path, size=256):
+    """Round wood treated almost black (the half roll top): streaked along the grain (v), a little
+    sheen of brown where the treatment has worn."""
+    rng = np.random.default_rng(47)
+    streaks = periodic_noise(size, rng, 1.5, 40) * 0.6 + periodic_noise(size, rng, 6, 80) * 0.4
+    worn = np.clip(periodic_noise(size, rng, 12, 50) - 0.8, 0, 1)
+    light = 0.85 + 0.12 * streaks
+    rgb = light[..., None] * (np.array([46, 38, 32]) * (1 - worn[..., None]) + np.array([92, 70, 52]) * worn[..., None])
+    save_dds(rgb, path)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def big_log_texture(path, size=1024):
+    """The whole of the big log's skin in one image (James, 2026-10-29: the tiling wood looked
+    too procedural on one big trunk): u once round it (top at 0.25, underside at 0.75), v from
+    one end to the other. Weathered peeled wood with long wandering cracks, knots with the grain
+    swirling round them, a knothole, a strip of bark left on, sun-bleached on top and damp, dirty
+    and mossy underneath, greyer towards one end."""
+    rng = np.random.default_rng(61)
+    u = (np.arange(size)[None, :] + 0.5) / size
+    v = (np.arange(size)[:, None] + 0.5) / size
+    wander = periodic_noise(size, rng, 30, 160) * 0.012
+    uu = (u + wander) % 1.0
+    # knots: the grain bends round them, a dark core with rings
+    knots = [(0.18, 0.22, 0.020), (0.33, 0.58, 0.028), (0.47, 0.81, 0.016), (0.62, 0.35, 0.022), (0.08, 0.66, 0.014)]
+    bend = np.zeros((size, size))
+    core = np.zeros((size, size))
+    for ku, kv, kr in knots:
+        du = (uu - ku + 0.5) % 1.0 - 0.5
+        dv = (v - kv) * 4.2 / 2.9          # metres along over metres round, so knots come out round
+        d = np.sqrt(du ** 2 + dv ** 2)
+        bend += kr * 1.6 * np.exp(-(d / (kr * 3)) ** 2) * np.sign(du)
+        core = np.maximum(core, np.clip(1 - d / kr, 0, 1))
+        core = np.maximum(core, 0.22 * np.clip(1 - np.abs(d - kr * 1.8) / (kr * 0.6), 0, 1))
+    ug = (uu + bend) % 1.0
+    grain = np.sin(ug * 2 * math.pi * 70 + periodic_noise(size, rng, 6, 60) * 1.5)
+    streaks = periodic_noise(size, rng, 1.5, 50) * 0.6 + periodic_noise(size, rng, 8, 120) * 0.4
+    light = 0.80 + 0.05 * grain + 0.07 * streaks
+    # cracks (checks): dark, wandering along the log, wider in the middle of their length
+    for cu, v0, v1, w in ((0.24, 0.05, 0.62, 0.0035), (0.29, 0.40, 0.95, 0.0025), (0.12, 0.30, 0.55, 0.002),
+                          (0.40, 0.10, 0.38, 0.002), (0.55, 0.55, 0.92, 0.0018), (0.95, 0.20, 0.48, 0.0015)):
+        path_u = cu + periodic_noise(size, rng, 1, 140)[:, :1] * 0.004 + 0.01 * np.sin(v * 9 + cu * 20)
+        along = np.clip((v - v0) / (v1 - v0), 0, 1)
+        width = 1.7 * w * np.sin(math.pi * along) ** 0.6 * ((v > v0) & (v < v1))
+        dist = np.abs((uu - path_u + 0.5) % 1.0 - 0.5)
+        light -= 0.55 * np.clip(1 - dist / np.maximum(width, 1e-6), 0, 1)
+        light += 0.06 * np.clip(1 - dist / np.maximum(width * 3, 1e-6), 0, 1) * (dist > width)  # pale edges
+    # the knothole: a deep dark hollow in the biggest knot
+    du = (uu - 0.33 + 0.5) % 1.0 - 0.5
+    hole = np.clip(1 - np.sqrt(du ** 2 + ((v - 0.58) * 1.45) ** 2) / 0.016, 0, 1)
+    light = light * (1 - 0.5 * core) - 0.55 * np.clip(hole * 2, 0, 1)
+    colour = np.array([200, 172, 132], dtype=float)
+    # sun-bleached top, greyer towards the v = 1 end
+    top = np.exp(-(((u - 0.25 + 0.5) % 1.0 - 0.5) / 0.18) ** 2)
+    grey = np.clip(v * 0.9 - 0.2 + periodic_noise(size, rng, 40, 40) * 0.15, 0, 1) * 0.6 + top * 0.35
+    rgb = light[..., None] * (colour * (1 - grey[..., None]) + np.array([168, 162, 150]) * grey[..., None])
+    # underneath: damp, dirt and moss where it lies on the ground
+    under = np.exp(-(((u - 0.75 + 0.5) % 1.0 - 0.5) / 0.12) ** 2)
+    damp = np.clip(under * 1.3 + periodic_noise(size, rng, 20, 30) * 0.25 - 0.35, 0, 1)
+    rgb = rgb * (1 - 0.45 * damp[..., None]) + np.array([70, 72, 40]) * 0.45 * damp[..., None]
+    moss = np.clip((periodic_noise(size, rng, 10, 14) - 0.6) * 2, 0, 1) * damp
+    rgb = rgb * (1 - moss[..., None] * 0.7) + np.array([84, 110, 44]) * moss[..., None] * 0.7
+    # a strip of bark left on, low on one side
+    bark = np.clip((periodic_noise(size, rng, 12, 60) - 0.9) * 3, 0, 1) * np.exp(-(((u - 0.62 + 0.5) % 1.0 - 0.5) / 0.05) ** 2)
+    rgb = rgb * (1 - bark[..., None]) + np.array([86, 68, 52]) * (0.8 + 0.2 * streaks[..., None]) * bark[..., None]
+    rgb = np.clip(rgb, 0, 255)
+    save_dds(rgb, path)
+    return rgb.astype(np.uint8)
 
 
 # One row of four cells: red flag, white flag, pole, gold (the height guide).
@@ -767,6 +865,10 @@ MATERIALS = [
     ("xcLogEnd", "xcLogEnd_diffuse.dds", None, False),
     ("xcPlanks", "xcPlanks_diffuse.dds", "xcPlanks_normal.dds", False),
     ("xcPeeled", "xcPeeled_diffuse.dds", None, False),
+    ("xcPeeledB", "xcPeeledB_diffuse.dds", None, False),
+    ("xcStain", "xcStain_diffuse.dds", "xcStain_normal.dds", False),
+    ("xcDark", "xcDark_diffuse.dds", None, False),
+    ("xcBigLog", "xcBigLog_diffuse.dds", None, False),
     ("xcFlags", "xcFlags_diffuse.dds", None, False),
     ("xcGuideGold", "xcFlags_diffuse.dds", None, True),
 ]
@@ -849,8 +951,8 @@ def turned(mesh):
 
 def build_flag_fence():
     """The flag fence's pieces, each along +z from 0 (a fence segment's direction):
-    the two flag posts with a thin collision box (so they can be picked to delete), the bars,
-    each with a small box at bar height for picking."""
+    the two flag posts with a thin collision box (so they can be picked to delete), and the guide
+    line with a flat box half sunk in the ground for picking."""
     posts = {}
     for colour, side, name in ((1, -1, "eqXcFlagWhite"), (0, 1, "eqXcFlagRed")):
         mesh = Mesh()
@@ -862,20 +964,16 @@ def build_flag_fence():
         col = Mesh()
         col.box(-0.04, 0.04, 0.0, POLE_HEIGHT, FLAG_POST / 2 - 0.04, FLAG_POST / 2 + 0.04, (0.5, 0.5))
         posts[name] = (mesh, col)
-    bars = {}
-    s = GUIDE_SIZE / 2
-    for cm in BAR_HEIGHTS:
-        h = cm / 100
-        bar = Mesh()
-        bar.box(-s, s, h - s, h + s, 0.0, BAR_PANEL, flag_uv(3))
-        col = Mesh()
-        col.box(-0.025, 0.025, h - 0.025, h + 0.025, BAR_PANEL / 2 - 0.025, BAR_PANEL / 2 + 0.025, (0.5, 0.5))
-        bars[f"eqXcBar{cm}"] = (bar, col)
-    return posts, bars
+    w = LINE_WIDTH / 2
+    line = Mesh()
+    line.box(-w, w, LINE_BOTTOM, LINE_TOP, 0.0, BAR_PANEL, flag_uv(3))
+    col = Mesh()
+    col.box(-0.03, 0.03, -0.03, 0.03, BAR_PANEL / 2 - 0.03, BAR_PANEL / 2 + 0.03, (0.5, 0.5))
+    return posts, {LINE_NODE: (line, col)}
 
 
 def write_flag_fence_i3d(path, posts, bars):
-    """gates (the flag posts), poles (one empty: the bars have none) and panels (the bars), looked
+    """gates (the flag posts), poles (one empty: the line has none) and panels (the line), looked
     up by index from the fence xml."""
     shapes = []   # (mesh, material or None for collision)
     for mesh, col in list(posts.values()) + list(bars.values()):
@@ -896,7 +994,7 @@ def write_flag_fence_i3d(path, posts, bars):
         "  <Materials>",
     ]
     for i, (material, _, _, emissive) in enumerate(used):
-        # the bars lean with the slope like the base game's fence panels: the placeable shader's
+        # the line leans with the slope like the base game's fence panels: the placeable shader's
         # vertexOffset variation lifts each vertex by the panel's yOffset times its uv1.x
         shader = ' customShaderId="2" customShaderVariation="vertexOffset"' if emissive else ""
         lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0"{shader}>')
@@ -935,7 +1033,7 @@ def write_flag_fence_i3d(path, posts, bars):
     for name in bars:
         lines.append(f'      <TransformGroup name="{name}" nodeId="{next_id()}">')
         lines.append(f'        <TransformGroup name="{GUIDE}" nodeId="{next_id()}">')
-        lines.append(f'          <Shape name="bar" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="2" castsShadows="false" receiveShadows="true"/>')
+        lines.append(f'          <Shape name="line" shapeId="{shape_id}" clipDistance="{CLIP}" nodeId="{next_id()}" materialIds="2" castsShadows="false" receiveShadows="true"/>')
         lines.append("        </TransformGroup>")
         lines.append(col_line(shape_id + 1, "        "))
         lines.append("      </TransformGroup>")
@@ -948,14 +1046,14 @@ def write_flag_fence_i3d(path, posts, bars):
 
 def write_flag_fence_xml(path, posts, bars):
     """A newFence like the base game's pillar fences: flag posts are fixed "gates" placed with one
-    click, without poles of their own; the bars are stretchy segments with an empty pole."""
+    click, without poles of their own; the line is a stretchy segment with an empty pole."""
     segments = []
     gate = lambda i, sid: f"""        <segment id="{sid}" class="FenceGate" maxVerticalAngle="45">
             <gate node="0>{i}" length="{FLAG_POST:g}" hasStartPole="false" hasEndPole="false"/>
         </segment>"""
     segments.append(gate(0, "WHITE_FLAG"))
-    for i, cm in enumerate(BAR_HEIGHTS):
-        segments.append(f"""        <segment id="BAR_{cm}" class="FenceSegment" maxVerticalAngle="45">
+    for i, _ in enumerate(bars):
+        segments.append(f"""        <segment id="{LINE_ID}" class="FenceSegment" maxVerticalAngle="45">
             <poles>
                 <pole node="1>0" radius="0.0"/>
             </poles>
@@ -967,7 +1065,7 @@ def write_flag_fence_xml(path, posts, bars):
     body = "\n".join(segments)
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
-<!-- Segments (N/M): white flag, bars for 0.6, 0.9 and 1.2 m fences, red flag. -->
+<!-- Segments (N/M): white flag, guide line on the ground, red flag. -->
 <placeable type="newFence">
     <storeData>
         <name>$l10n_eq_shop_{FLAG_FENCE}</name>
@@ -1013,9 +1111,10 @@ def write_flag_fence_xml(path, posts, bars):
         f.write(text)
 
 
-def write_xml(name, price, note, path):
+def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py"):
+    """extra: more configuration blocks, before the end."""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<!-- Made by {made_by}: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
     <storeData>
         <name>$l10n_eq_shop_{name}</name>
@@ -1047,14 +1146,15 @@ def write_xml(name, price, note, path):
         <!-- {note} -->
     </placement>
 
-    <!-- Always visible: No hides the piece outside construction, course editing and rounds (EqXcHide). -->
+    <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
+         and rounds (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". -->
     <eqAlwaysVisible>
         <eqAlwaysVisibleConfigurations>
-            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
             <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
         </eqAlwaysVisibleConfigurations>
     </eqAlwaysVisible>
-</placeable>
+{extra}</placeable>
 """
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
@@ -1177,18 +1277,29 @@ def main():
         store_image([(preview_ground(wall), grass), (planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
                     f"{wall['drop']:.1f} m drop", os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-145, pitch=16, skip_fit=1)
         print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
+    flag_fence(flags, preview_dir)
+
+
+def flag_fence(flags, preview_dir):
+    """The flag fence's i3d, xml and shop image. python3 art/source/xc_jumps.py flags makes only these."""
     posts, bars = build_flag_fence()
     write_flag_fence_i3d(os.path.join(OUT, FLAG_FENCE + ".i3d"), posts, bars)
     write_flag_fence_xml(os.path.join(OUT, FLAG_FENCE + ".xml"), posts, bars)
-    # shop image: white flag, a 0.9 m bar over 3 m, red flag
-    white, red, bar = posts["eqXcFlagWhite"][0], posts["eqXcFlagRed"][0], bars["eqXcBar90"][0]
+    # shop image: white flag, the guide line over 3 m, red flag
+    white, red, bar = posts["eqXcFlagWhite"][0], posts["eqXcFlagRed"][0], bars[LINE_NODE][0]
     span = Mesh()
     for mesh, dz, stretch in ((white, 0.0, 1.0), (bar, FLAG_POST, 3.0), (red, FLAG_POST + 3.0, 1.0)):
         base = len(span.verts)
         span.verts += [((p[0], p[1], p[2] * stretch + dz), n, uv) for p, n, uv in mesh.verts]
         span.tris += [(a + base, b + base, c + base) for a, b, c in mesh.tris]
-    store_image([(span, flags)], "0.6 to 1.2 m", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
+    store_image([(span, flags)], "any fence", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
     print(FLAG_FENCE, sum(len(m.tris) for m, _ in list(posts.values()) + list(bars.values())), "triangles")
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if sys.argv[1:] == ["flags"]:
+        import tempfile
+        flag_fence(flag_texture(os.path.join(tempfile.mkdtemp(), "xcFlags_diffuse.dds")),
+                   os.environ.get("XC_PREVIEW_DIR", "art/previews"))
+    else:
+        main()

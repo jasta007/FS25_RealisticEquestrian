@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
         <text name="eq_train_view_freestyle" text="Vrij"/>
-        <text name="eq_help_temperament_2" text="Je verliest je vermenigvuldiger als je versnelt naar galop of gestrekte galop, tegen een obstakel botst of de volgende oefening mist. Vanaf x4 moet je ook je gang aanhouden tussen de commando's. Je paarden lekkers zoals wortels geven is ook een prima manier om Temperament te verbeteren."/>
-        <text name="eq_help_temperament_1" text="Temperamenttraining draait om je paard controle leren. Begin een proef door naar stap over te gaan en die gang even aan te houden. Het trainingsprogramma vraagt dan om een nieuwe oefening om vast te houden. Voer die binnen een paar seconden uit om de combo gaande te houden."/>
+        <text name="eq_help_temperament_2" text="Te veel fouten, zoals galopperen of de baan verlaten, beëindigen de proef; rijd hem uit voor een flinke temperamentboost. Buiten een rijbaan trainen stappen en achterwaarts gaan nog steeds een beetje temperament. Traktaties zoals wortels zijn ook een prima manier om temperament te verbeteren."/>
+        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd erheen en er begint een proef die je naar de letters stuurt in vaste gangen, laat halthouden, achterwaarts gaan en volte rijden. Voer elke opdracht op tijd uit om je vermenigvuldiger te verhogen."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
         <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="Dressuurrijbaan 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="Een dressuurrijbaan met alle letters op hun plek. Rijd er met een paard in om temperament te trainen tussen de letters."/>
         <text name="eq_shop_courseFlags" text="Crossvlaggen"/>
-        <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag, trek een gouden balk (0,6, 0,9 of 1,2 m) over het obstakel en plaats dan een rode vlag. De balk is alleen zichtbaar in de bouwmodus."/>
+        <text name="eq_shop_courseFlags_function" text="Markeer elk obstakel als crosshindernis. Wissel van segment met N/M: plaats een witte vlag aan één kant van het obstakel, trek de gouden lijn over de grond naar de andere kant en plaats dan een rode vlag. De lijn is alleen zichtbaar in de bouwmodus; je springt over het obstakel zelf."/>
         <text name="eq_shop_xcLogPileSmall" text="Boomstammenstapel (klein)"/>
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
+        <text name="eq_shop_showJumpUpright" text="Springhindernis: steilsprong"/>
+        <text name="eq_shop_showJumpOxer" text="Springhindernis: oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Springhindernis: kruis"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Springhindernis: oplopende oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Springhindernis: triplebarre"/>
+        <text name="eq_shop_showJumpHogsback" text="Springhindernis: hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Springhindernis: waaier met 2 balken"/>
+        <text name="eq_shop_showJumpFan3" text="Springhindernis: waaier met 3 balken"/>
+        <text name="eq_shop_showJumpLiverpool" text="Springhindernis: liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Springhindernis: cavaletti"/>
+        <text name="eq_config_poleColour" text="Kleur balken"/>
+        <text name="eq_config_wingColour" text="Kleur vleugels"/>
+        <text name="eq_colour_white" text="Wit"/>
+        <text name="eq_colour_cream" text="Crème"/>
+        <text name="eq_colour_red" text="Rood"/>
+        <text name="eq_colour_burgundy" text="Bordeaux"/>
+        <text name="eq_colour_orange" text="Oranje"/>
+        <text name="eq_colour_yellow" text="Geel"/>
+        <text name="eq_colour_lime" text="Limoen"/>
+        <text name="eq_colour_green" text="Groen"/>
+        <text name="eq_colour_darkGreen" text="Donkergroen"/>
+        <text name="eq_colour_skyBlue" text="Hemelsblauw"/>
+        <text name="eq_colour_blue" text="Blauw"/>
+        <text name="eq_colour_navy" text="Marineblauw"/>
+        <text name="eq_colour_purple" text="Paars"/>
+        <text name="eq_colour_pink" text="Roze"/>
+        <text name="eq_colour_grey" text="Grijs"/>
+        <text name="eq_colour_black" text="Zwart"/>
+        <text name="eq_shop_showJump_function" text="Een springhindernis waarvan de balken vallen als je paard ze raakt en na de ronde, of zodra je wegrijdt, weer worden opgelegd."/>
         <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Afsprongmuur (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Afsprongmuur (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Hoek (planken)"/>
+        <text name="eq_shop_xcCornerLog" text="Hoek (stammen)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (kwart)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (half)"/>
+        <text name="eq_shop_xcTable" text="Tafel"/>
+        <text name="eq_shop_xcBigLog" text="Grote boomstam"/>
+        <text name="eq_config_corner" text="Hoek"/>
+        <text name="eq_config_cornerRight" text="Punt rechts"/>
+        <text name="eq_config_cornerLeft" text="Punt links"/>
         <text name="eq_shop_xcDrop_function" text="Een plankenmuur voor een afsprong op de cross. Vorm een talud, zet de muur bovenop met de rand aan de afgrond, en de zijwanden verbergen de steile helling."/>
         <text name="eq_shop_xcJump_function" text="Een crosshindernis. De rode en witte vlag geven aan waar je springt."/>
-        <text name="eq_shop_xcHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en crossrondes, tenzij gekocht als Altijd zichtbaar."/>
+        <text name="eq_shop_xcHidden_function" text="Verdwijnt buiten bouwen, parcours bewerken en rondes, tenzij gekocht met Verdwijnt: Nee."/>
+        <text name="eq_shop_showJumpHidden_function" text="Gekocht met Verdwijnt: Ja verdwijnt hij buiten bouwen, parcours bewerken en rondes."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Verborgen buiten de bouwmodus, parcoursbewerking en rondes."/>
-        <text name="eq_config_alwaysVisible" text="Altijd zichtbaar"/>
+        <text name="eq_config_disappearing" text="Verdwijnt"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Stap"/>
         <text name="eq_dressage_gait_trot" text="Draf"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="Volgende: %s"/>
         <text name="eq_dressage_stand" text="Halt"/>
         <text name="eq_dressage_marker" text="Letter %s"/>
-        <text name="eq_train_routine_none" text="Stap om een proef te beginnen"/>
+        <text name="eq_train_routine_none" text="Rijd naar een dressuurrijbaan om een proef te beginnen"/>
         <text name="eq_train_routine" text="Proef x%d"/>
         <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>
         <text name="eq_train_combo" text="Springcombo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendbaarheid"/>
-        <text name="eq_help_freestyle_2" text="Wendbaarheid train je door obstakels te springen om een combometer te vullen, en Temperament begint met even stap aanhouden en dan instructies opvolgen om zijn combometer te vullen. Conditie en Snelheid train je door goed te galopperen in gestrekte galop: druk tijdens de gestrekte galop op H om te leren hoe."/>
+        <text name="eq_help_freestyle_2" text="Behendigheid train je door hindernissen te springen en een combometer op te bouwen, temperament door een proef te rijden in een dressuurrijbaan. Uithoudingsvermogen en snelheid train je door goed te galopperen: druk in galop op H om te leren hoe."/>
         <text name="eq_help_freestyle_3" text="Liever niet rijden? Neem verzorgers en trainers aan op het tabblad Personeel om je paarden elke dag te trainen. Het dierenpersoneel van het spel en de Herdsman van RLRM houden ze alleen in beweging."/>
         <text name="eq_form_title" text="Topvorm"/>
         <text name="eq_help_freestyle_4" text="Rijd voor een wedstrijd! Elke eigenschap die je met zijn minigame traint, brengt je paard in Topvorm voor de wedstrijden van deze maand, tot +8 per eigenschap. Het telt niet op over meerdere dagen: je beste sessie van de maand telt."/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="Nieuw springparcours"/>
         <text name="eq_course_started" text="%s opnemen: rijd de hindernissen op volgorde door. Geplaatste obstakels van Realistic Equestrian hebben geen botsing tijdens het bewerken; andere obstakels blijven vast"/>
         <text name="eq_course_noJumps" text="Parcours wordt opgenomen, maar er staan nog geen springhindernissen op de kaart"/>
-        <text name="eq_course_tooFew" text="Parcours niet opgeslagen: rijd door minstens %d springhindernissen"/>
+        <text name="eq_course_tooFew" text="Parcours niet opgeslagen: rijd door minstens %d springhindernissen, of druk op Ctrl+Backspace om te annuleren"/>
         <text name="eq_course_saved" text="%s opgeslagen: %d hindernissen, %.0f m"/>
         <text name="eq_course_cancelled" text="Bewerken gestopt: je stapte af voor het parcours genoeg hindernissen had om op te slaan"/>
         <text name="eq_course_leftSaved" text="Parcours opgeslagen toen je afstapte: druk er vlakbij op Ctrl+J om te bewerken, en dan Ctrl+K om verder op te nemen vanaf het dichtstbijzijnde punt"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="Foutloze ronde!"/>
         <text name="eq_sj_faultsPop" text="%s strafpunten"/>
         <text name="eq_sj_retired" text="Springronde afgebroken"/>
+        <text name="eq_xc_retired" text="Crossparcours afgebroken"/>
         <text name="eq_sj_startLine" text="Startlijn"/>
         <text name="eq_sj_finishLine" text="Finishlijn"/>
         <text name="eq_sj_fenceRow" text="Hindernis %d van %d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="Uitgesloten: drie weigeringen bij één hindernis, of vier op het parcours"/>
         <text name="eq_sj_represent" text="Ga terug en spring hindernis %d"/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
+        <text name="eq_flagLeft" text="L"/>
+        <text name="eq_flagRight" text="R"/>
         <text name="input_EQ_COURSE_REWIND" text="Terug naar dichtstbijzijnde punt"/>
         <text name="eq_course_rewound" text="Parcours teruggezet naar het dichtstbijzijnde punt: %d hindernissen behouden"/>
         <text name="eq_course_resumed" text="Opnemen vanaf het dichtstbijzijnde punt"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="%s met %d hindernissen over %.0f m verwijderen?"/>
         <text name="eq_course_deleteTitle" text="Parcours verwijderen"/>
         <text name="eq_course_deleteAction" text="%s verwijderen"/>
+        <text name="eq_course_cancelAction" text="Nieuw parcours annuleren"/>
+        <text name="eq_course_discardAction" text="Wijzigingen aan %s verwerpen"/>
+        <text name="eq_course_newCancelled" text="Geannuleerd: %s is niet opgeslagen"/>
+        <text name="eq_course_changesDiscarded" text="Wijzigingen aan %s verworpen: het opgeslagen parcours blijft zoals het was"/>
         <text name="eq_course_editAction" text="%s bewerken"/>
         <text name="eq_course_doneAction" text="Parcours bewerken afronden"/>
         <text name="eq_course_saveAction" text="Parcours opslaan en afronden"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="Totaal: %s strafpunten"/>
         <text name="eq_staff_button_decline" text="Afwijzen"/>
         <text name="eq_staff_declined" text="%s komt niet terug. Binnen een paar uur kan er iemand nieuw opduiken."/>
+        <text name="eq_ui_tab_host" text="Organiseren"/>
+        <text name="eq_host_eventName" text="%s bij %s"/>
+        <text name="eq_host_type_dressage" text="Dressuur"/>
+        <text name="eq_host_type_showJumping" text="Springen"/>
+        <text name="eq_host_type_crossCountry" text="Cross"/>
+        <text name="eq_host_type_eventing" text="Eventing"/>
+        <text name="eq_host_rating_novice" text="Beginners"/>
+        <text name="eq_host_rating_intermediate" text="Gevorderd"/>
+        <text name="eq_host_rating_championship" text="Kampioenschap"/>
+        <text name="eq_host_col_event" text="Wedstrijd die je kunt organiseren"/>
+        <text name="eq_host_col_ready" text="Eisen"/>
+        <text name="eq_host_col_popularity" text="Populariteit"/>
+        <text name="eq_host_col_setup" text="Opzetkosten"/>
+        <text name="eq_host_col_takings" text="Max. opbrengst"/>
+        <text name="eq_host_col_check" text="Eis"/>
+        <text name="eq_host_col_have" text="Je hebt"/>
+        <text name="eq_host_col_need" text="Nodig"/>
+        <text name="eq_host_check_arena" text="Dressuurbak"/>
+        <text name="eq_host_check_dressageSeating" text="Tribunes bij de bak"/>
+        <text name="eq_host_check_showJumps" text="Springhindernissen"/>
+        <text name="eq_host_check_showJumpingSeating" text="Tribunes bij het parcours"/>
+        <text name="eq_host_check_xcLength" text="Lengte crossparcours"/>
+        <text name="eq_host_check_xcJumps" text="Crosshindernissen"/>
+        <text name="eq_host_check_stables" text="Vrije stalplaatsen"/>
+        <text name="eq_host_check_feed" text="Paardenvoer"/>
+        <text name="eq_host_part_base" text="Basis"/>
+        <text name="eq_host_part_course" text="parcours"/>
+        <text name="eq_host_part_seating" text="tribunes"/>
+        <text name="eq_host_part_facilities" text="voorzieningen"/>
+        <text name="eq_host_part_reputation" text="reputatie"/>
+        <text name="eq_host_part_star" text="sterpaard"/>
+        <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_label_yours" text="Jouw wedstrijd"/>
+        <text name="eq_host_label_month" text="Boeken voor"/>
+        <text name="eq_host_label_next" text="Volgende vrije maand"/>
+        <text name="eq_host_ann_out" text="Uitgeschakeld"/>
+        <text name="eq_host_ann_counted" text="%s strafpunten: het telt!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: uitslag aan het eind van de maand, over %d dagen"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: uitslag aan het eind van de maand"/>
+        <text name="eq_host_ann_round" text="Wedstrijdronde: deze telt!"/>
+        <text name="eq_host_ann_ridden" text="Al gereden: dit is alleen oefenen"/>
+        <text name="eq_host_ann_small" text="Dit parcours is te klein voor je evenement: alleen oefenen"/>
+        <text name="eq_host_note_counts" text="Wedstrijdronde voor %s: rijd naar de startlijn"/>
+        <text name="eq_host_note_ridden" text="Oefenen: dit onderdeel van %s is al gereden"/>
+        <text name="eq_host_note_small" text="Oefenen: parcours te klein voor %s"/>
+        <text name="eq_host_label_now" text="Deze maand"/>
+        <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
+        <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>
+        <text name="eq_host_monthOption" text="%s (over %d maanden)"/>
+        <text name="eq_host_monthOption1" text="%s (volgende maand)"/>
+        <text name="eq_host_report_running" text="Nu bezig: %s"/>
+        <text name="eq_host_report_runningLine" text="De uitslag komt aan het eind van de maand, over %d dagen. Je ingeschreven paarden kunnen hun onderdelen tot dan elke dag rijden."/>
+        <text name="eq_host_report_field" text="%d deelnemers"/>
+        <text name="eq_host_report_turnout" text="Opkomst: %d van %d gastpaarden kwamen (populariteit %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Gastpaarden hebben tot nu toe %d l van je voer gegeten (%d l per dag)."/>
+        <text name="eq_host_report_feed" text="Gastpaarden aten %d l van je voer."/>
+        <text name="eq_host_report_money" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s: winst %s."/>
+        <text name="eq_host_report_mine" text="Je paard %s: %s."/>
+        <text name="eq_host_results_row" text="Je evenementen"/>
+        <text name="eq_host_results_running" text="Nu bezig"/>
+        <text name="eq_host_results_winner" text="Gewonnen door %s"/>
+        <text name="eq_host_label_setup" text="Opzetkosten"/>
+        <text name="eq_host_label_popularity" text="Populariteit"/>
+        <text name="eq_host_label_visitors" text="Opkomst"/>
+        <text name="eq_host_label_takings" text="Verwachte opbrengst"/>
+        <text name="eq_host_label_reputation" text="Reputatie"/>
+        <text name="eq_host_yours_open" text="%s, deze maand bezig"/>
+        <text name="eq_host_yours_booked" text="%s in %s"/>
+        <text name="eq_host_yours_none" text="Niets geboekt"/>
+        <text name="eq_host_ready" text="Klaar"/>
+        <text name="eq_host_missing" text="%d ontbreken"/>
+        <text name="eq_host_none" text="Geen"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d van %d gastpaarden"/>
+        <text name="eq_host_takingsLine" text="%s inschrijvingen, %s entree"/>
+        <text name="eq_host_monthsAhead" text="over %d maanden"/>
+        <text name="eq_host_monthNow" text="nu"/>
+        <text name="eq_host_yourFarm" text="Jouw boerderij"/>
+        <text name="eq_host_opened" text="Jouw %s is begonnen. Schrijf je paarden in op het tabblad Wedstrijden; uitslagen aan het eind van de maand."/>
+        <text name="eq_host_book_noConfig" text="Organiseren is niet beschikbaar: de regels zijn niet geladen."/>
+        <text name="eq_host_book_already" text="Je hebt al een wedstrijd geboekt."/>
+        <text name="eq_host_book_month" text="Die maand kan niet geboekt worden."/>
+        <text name="eq_host_book_requirements" text="Je boerderij voldoet nog niet aan de eisen van deze wedstrijd."/>
+        <text name="eq_host_book_money" text="Je hebt %s nodig voor de opzetkosten."/>
+        <text name="eq_host_book_done" text="%s geboekt voor %s. Opzetkosten betaald: %s."/>
+        <text name="eq_host_cancel_none" text="Je hebt geen wedstrijd geboekt."/>
+        <text name="eq_host_cancel_done" text="%s geannuleerd. Terugbetaling: %s."/>
+        <text name="eq_host_cancel_confirm" text="Je %s annuleren? Je krijgt %s van de opzetkosten terug."/>
+        <text name="eq_host_enter_notYours" text="Alleen de boerderij die deze wedstrijd organiseert kan inschrijven."/>
+        <text name="eq_host_enter_done" text="%s ingeschreven voor %s (waardering %.0f). Rijdt thuis: geen inschrijfgeld of vervoer."/>
+        <text name="eq_host_button_book" text="Boeken voor %s"/>
+        <text name="eq_host_button_cancel" text="Boeking annuleren"/>
+        <text name="eq_host_button_enter" text="Inschrijven"/>
+        <text name="eq_host_summary" text="%s. Populariteit: %s."/>
+        <text name="eq_money_hosting" text="Georganiseerde wedstrijden"/>
+        <text name="rl_messageTitle_eqHosting" text="Organiseren"/>
+        <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
+        <text name="eq_host_warning" text="Je %s komt tekort: %s. Los het vandaag op, anders wordt de wedstrijd morgen geannuleerd."/>
+        <text name="eq_host_cancelled" text="Je %s is geannuleerd, nog steeds tekort: %s. Je reputatie als organisator lijdt eronder."/>
+        <text name="eq_host_done" text="Je %s is voorbij: er kwamen %d gastpaarden. Opbrengst %s (%s inschrijvingen, %s entree), populariteit %d."/>
+        <text name="eq_host_ride_counted" text="%s telt voor %s: %s strafpunten."/>
+        <text name="eq_host_ride_out" text="%s telt voor %s: uitgeschakeld."/>
+        <text name="eq_host_ride_already" text="De %s van dit paard voor %s is al gereden; deze is oefening."/>
+        <text name="eq_host_ride_small" text="Dit parcours is te klein voor %s, de ronde is oefening."/>
+        <text name="eq_shop_bleachers3x6" text="Tribune 3 rijen, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Tribune 5 rijen, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Tribune 8 rijen, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Zitplaatsen voor de wedstrijden die je organiseert: telt binnen 60 m van een parcours of dressuurbak."/>
+        <text name="eq_shop_bleachersSponsors_function" text="De sponsorborden ervoor tonen de merken van je machines."/>
     </texts>
 </l10n>

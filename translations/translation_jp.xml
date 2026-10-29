@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="気性"/>
         <text name="eq_train_viewAction" text="トレーニング表示：%s"/>
         <text name="eq_train_view_freestyle" text="フリー"/>
-        <text name="eq_help_temperament_2" text="駈歩や襲歩に上げる、障害物にぶつかる、次の動作を逃すと倍率を失います。x4以上では指示の間も歩様を保つ必要があります。ニンジンなどのおやつを与えるのも気性を良くする効果的な方法です。"/>
-        <text name="eq_help_temperament_1" text="気性のトレーニングは馬に制御を教えることです。常歩に移って少しの間その歩様を保つと演技が始まります。続いてトレーニングプログラムが新しい動作を指示します。数秒以内に達成するとコンボが続きます。"/>
+        <text name="eq_help_temperament_2" text="駈歩やアリーナからはみ出すなどのミスが多すぎると演技は終了します。最後までやり遂げると気性が大きく伸びます。アリーナの外でも、常歩や後退で少しは気性が鍛えられます。ニンジンなどのおやつを与えるのも気性を伸ばす良い方法です。"/>
+        <text name="eq_help_temperament_1" text="気性トレーニングは馬に制御を教えるもので、馬場馬術アリーナが必要です。ショップで購入するか、馬場馬術マーカーを設置してください。近づくと演技が始まり、指定の歩法で文字へ向かう、停止、後退、輪乗りなどを求められます。各指示を時間内にこなして倍率を上げましょう。"/>
         <text name="eq_help_temperament_title" text="トレーニング：気性"/>
         <text name="eq_help_agility_2" text="時間内に新しい障害物を越えられなかったり、速度を落としすぎたりすると倍率を失います。障害物なしのジャンプも少しは鍛えられますが、倍率は上がりません。"/>
         <text name="eq_help_agility_1" text="敏捷性は主に障害を跳ぶことで鍛えられますが、歩様を切り替えることでも少し上がります。障害物を越えて敏捷性のトレーニング倍率を上げましょう。倍率は10秒後、または障害物に当たるとそれより早く下がります。"/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="馬場馬術アリーナ 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="すべての標記文字がそろった馬場馬術アリーナ。中で馬に乗ると、標記の間で気性をトレーニングできます。"/>
         <text name="eq_shop_courseFlags" text="クロスカントリー旗"/>
-        <text name="eq_shop_courseFlags_function" text="どんな障害物でもクロスカントリー障害に指定できます。N/Mで部品を切り替え、白旗を置き、障害物の上に金色のバー（0.6、0.9、1.2 m）を伸ばし、赤旗を置きます。バーは建設モードでのみ表示されます。"/>
+        <text name="eq_shop_courseFlags_function" text="どんな障害物でもクロスカントリー障害に指定できます。N/Mで部品を切り替え、障害物の一端に白旗を置き、金色のラインを地面に沿って反対の端まで伸ばし、赤旗を置きます。ラインは建設モードでのみ表示されます。飛ぶのは障害物そのものです。"/>
         <text name="eq_shop_xcLogPileSmall" text="丸太積み（小）"/>
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
+        <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
+        <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJumpCrossrail" text="障害: クロスバー"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="障害: 上昇オクサー"/>
+        <text name="eq_shop_showJumpTripleBar" text="障害: トリプルバー"/>
+        <text name="eq_shop_showJumpHogsback" text="障害: ホッグスバック"/>
+        <text name="eq_shop_showJumpFan2" text="障害: 2本扇形"/>
+        <text name="eq_shop_showJumpFan3" text="障害: 3本扇形"/>
+        <text name="eq_shop_showJumpLiverpool" text="障害: リバプール"/>
+        <text name="eq_shop_showJumpCavaletti" text="障害: キャバレッティ"/>
+        <text name="eq_config_poleColour" text="バーの色"/>
+        <text name="eq_config_wingColour" text="ウィングの色"/>
+        <text name="eq_colour_white" text="白"/>
+        <text name="eq_colour_cream" text="クリーム"/>
+        <text name="eq_colour_red" text="赤"/>
+        <text name="eq_colour_burgundy" text="ワインレッド"/>
+        <text name="eq_colour_orange" text="オレンジ"/>
+        <text name="eq_colour_yellow" text="黄"/>
+        <text name="eq_colour_lime" text="ライム"/>
+        <text name="eq_colour_green" text="緑"/>
+        <text name="eq_colour_darkGreen" text="深緑"/>
+        <text name="eq_colour_skyBlue" text="空色"/>
+        <text name="eq_colour_blue" text="青"/>
+        <text name="eq_colour_navy" text="紺"/>
+        <text name="eq_colour_purple" text="紫"/>
+        <text name="eq_colour_pink" text="ピンク"/>
+        <text name="eq_colour_grey" text="灰色"/>
+        <text name="eq_colour_black" text="黒"/>
+        <text name="eq_shop_showJump_function" text="馬が触れるとバーが落ちる障害。走行後、または離れるとバーは元に戻ります。"/>
         <text name="eq_shop_xcDropWall08" text="ドロップ壁（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="ドロップ壁（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="ドロップ壁（1.6 m）"/>
+        <text name="eq_shop_xcCornerPlank" text="コーナー（板）"/>
+        <text name="eq_shop_xcCornerLog" text="コーナー（丸太）"/>
+        <text name="eq_shop_xcRollTopQuarter" text="ロールトップ（四分円）"/>
+        <text name="eq_shop_xcRollTopHalf" text="ロールトップ（半円）"/>
+        <text name="eq_shop_xcTable" text="テーブル"/>
+        <text name="eq_shop_xcBigLog" text="大丸太"/>
+        <text name="eq_config_corner" text="コーナー"/>
+        <text name="eq_config_cornerRight" text="先端が右"/>
+        <text name="eq_config_cornerLeft" text="先端が左"/>
         <text name="eq_shop_xcDrop_function" text="クロスカントリーの段差用の板壁。土手を作り、縁を端に合わせて上に置くと、側壁が急斜面を隠します。"/>
         <text name="eq_shop_xcJump_function" text="クロスカントリー障害。赤旗と白旗が跳ぶ場所を示します。"/>
-        <text name="eq_shop_xcHidden_function" text="「常に表示」で購入しない限り、建設モード、コース編集、クロスカントリー走行以外では非表示になります。"/>
+        <text name="eq_shop_xcHidden_function" text="「消える：いいえ」で購入しない限り、建設モード、コース編集、走行以外では消えます。"/>
+        <text name="eq_shop_showJumpHidden_function" text="「消える：はい」で購入すると、建設モード、コース編集、走行以外では消えます。"/>
         <text name="eq_shop_xcFlagsHidden_function" text="建設モード、コース編集、走行以外では非表示になります。"/>
-        <text name="eq_config_alwaysVisible" text="常に表示"/>
+        <text name="eq_config_disappearing" text="消える"/>
         <text name="eq_dressage_go" text="%s：%s"/>
         <text name="eq_dressage_gait_walk" text="常歩"/>
         <text name="eq_dressage_gait_trot" text="速歩"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="次：%s"/>
         <text name="eq_dressage_stand" text="停止"/>
         <text name="eq_dressage_marker" text="標記 %s"/>
-        <text name="eq_train_routine_none" text="常歩で演技を開始"/>
+        <text name="eq_train_routine_none" text="馬場馬術アリーナへ行って演技を開始"/>
         <text name="eq_train_routine" text="演技 x%d"/>
         <text name="eq_train_combo_none" text="障害を越えてコンボ開始"/>
         <text name="eq_train_combo" text="ジャンプコンボ x%d"/>
         <text name="eq_train_view_temperament" text="気性"/>
         <text name="eq_train_view_agility" text="敏捷性"/>
-        <text name="eq_help_freestyle_2" text="敏捷性は障害物を跳んでコンボメーターを貯めて鍛えます。気性は少しの間常歩を保ってから、指示に従ってコンボメーターを貯めます。スタミナとスピードは襲歩を上手に走ると鍛えられます。襲歩中にHを押すと方法がわかります。"/>
+        <text name="eq_help_freestyle_2" text="敏捷性は障害物を飛んでコンボメーターを溜めて鍛え、気性は馬場馬術アリーナで演技をして鍛えます。持久力とスピードは上手な襲歩で鍛えます。襲歩中にHを押すと方法がわかります。"/>
         <text name="eq_help_freestyle_3" text="自分で乗りたくない？スタッフタブで厩務員やトレーナーを雇えば、毎日馬を鍛えてくれます。ゲームの動物スタッフやRLRMのHerdsmanは現状維持しかしません。"/>
         <text name="eq_form_title" text="絶好調"/>
         <text name="eq_help_freestyle_4" text="大会の前に乗りましょう！ミニゲームで鍛えた能力ごとに、今月の大会で馬が絶好調になり、能力ごとに最大+8されます。数日分は合算されず、その月の最高のセッションが採用されます。"/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="新しい障害飛越コース"/>
         <text name="eq_course_started" text="%sを記録中：障害を順番に通過してください。編集中、配置したRealistic Equestrianの障害物は当たり判定がなくなります。その他の障害物は固いままです"/>
         <text name="eq_course_noJumps" text="コースを記録中ですが、マップにまだ障害飛越の障害がありません"/>
-        <text name="eq_course_tooFew" text="コースは保存されませんでした：障害を%d個以上通過してください"/>
+        <text name="eq_course_tooFew" text="コースは保存されませんでした：障害を%d個以上通過してください（Ctrl+Backspaceでキャンセル）"/>
         <text name="eq_course_saved" text="%sを保存：障害%d個、%.0f m"/>
         <text name="eq_course_cancelled" text="編集を中止しました：保存できるだけの障害が揃う前に下馬しました"/>
         <text name="eq_course_leftSaved" text="下馬したのでコースを保存しました：近くでCtrl+Jを押して編集し、Ctrl+Kで最寄りの地点から記録を再開します"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="クリアラウンド！"/>
         <text name="eq_sj_faultsPop" text="減点%s"/>
         <text name="eq_sj_retired" text="障害飛越を中止しました"/>
+        <text name="eq_xc_retired" text="クロスカントリー走行を中止しました"/>
         <text name="eq_sj_startLine" text="スタートライン"/>
         <text name="eq_sj_finishLine" text="ゴールライン"/>
         <text name="eq_sj_fenceRow" text="障害 %d/%d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="失格：1つの障害で3回、またはコース全体で4回の拒止"/>
         <text name="eq_sj_represent" text="戻って障害%dを跳んでください"/>
         <text name="eq_pop_courseFence" text="障害%d"/>
+        <text name="eq_flagLeft" text="左"/>
+        <text name="eq_flagRight" text="右"/>
         <text name="input_EQ_COURSE_REWIND" text="最寄りの地点まで戻す"/>
         <text name="eq_course_rewound" text="コースを最寄りの地点まで戻しました：障害%d個を保持"/>
         <text name="eq_course_resumed" text="最寄りの地点から記録中"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="%s（障害%d個、%.0f m）を削除しますか？"/>
         <text name="eq_course_deleteTitle" text="コースを削除"/>
         <text name="eq_course_deleteAction" text="%sを削除"/>
+        <text name="eq_course_cancelAction" text="新しいコースをキャンセル"/>
+        <text name="eq_course_discardAction" text="%sの変更を破棄"/>
+        <text name="eq_course_newCancelled" text="キャンセルしました：%sは保存されていません"/>
+        <text name="eq_course_changesDiscarded" text="%sの変更を破棄しました：保存済みのコースはそのままです"/>
         <text name="eq_course_editAction" text="%sを編集"/>
         <text name="eq_course_doneAction" text="コース編集を完了"/>
         <text name="eq_course_saveAction" text="コースを保存して完了"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="合計：減点%s"/>
         <text name="eq_staff_button_decline" text="断る"/>
         <text name="eq_staff_declined" text="%sはもう来ません。数時間以内に新しい人が現れるかもしれません。"/>
+        <text name="eq_ui_tab_host" text="主催"/>
+        <text name="eq_host_eventName" text="%s（%s）"/>
+        <text name="eq_host_type_dressage" text="馬場馬術"/>
+        <text name="eq_host_type_showJumping" text="障害飛越"/>
+        <text name="eq_host_type_crossCountry" text="クロスカントリー"/>
+        <text name="eq_host_type_eventing" text="総合馬術"/>
+        <text name="eq_host_rating_novice" text="初級"/>
+        <text name="eq_host_rating_intermediate" text="中級"/>
+        <text name="eq_host_rating_championship" text="選手権"/>
+        <text name="eq_host_col_event" text="主催できる大会"/>
+        <text name="eq_host_col_ready" text="条件"/>
+        <text name="eq_host_col_popularity" text="人気"/>
+        <text name="eq_host_col_setup" text="開催費用"/>
+        <text name="eq_host_col_takings" text="最大収入"/>
+        <text name="eq_host_col_check" text="条件"/>
+        <text name="eq_host_col_have" text="現在"/>
+        <text name="eq_host_col_need" text="必要"/>
+        <text name="eq_host_check_arena" text="馬場"/>
+        <text name="eq_host_check_dressageSeating" text="馬場の観客席"/>
+        <text name="eq_host_check_showJumps" text="障害"/>
+        <text name="eq_host_check_showJumpingSeating" text="コースの観客席"/>
+        <text name="eq_host_check_xcLength" text="クロスカントリーの距離"/>
+        <text name="eq_host_check_xcJumps" text="クロスカントリーの障害"/>
+        <text name="eq_host_check_stables" text="空き馬房"/>
+        <text name="eq_host_check_feed" text="馬の飼料"/>
+        <text name="eq_host_part_base" text="基本"/>
+        <text name="eq_host_part_course" text="コース"/>
+        <text name="eq_host_part_seating" text="観客席"/>
+        <text name="eq_host_part_facilities" text="施設"/>
+        <text name="eq_host_part_reputation" text="評判"/>
+        <text name="eq_host_part_star" text="スター馬"/>
+        <text name="eq_host_part_winter" text="冬"/>
+        <text name="eq_host_label_yours" text="あなたの大会"/>
+        <text name="eq_host_label_month" text="予約月"/>
+        <text name="eq_host_label_next" text="次に空いている月"/>
+        <text name="eq_host_ann_out" text="失格"/>
+        <text name="eq_host_ann_counted" text="減点%s：カウントされます！"/>
+        <text name="eq_host_ann_resultsIn" text="%s：結果は月末、あと%d日"/>
+        <text name="eq_host_ann_resultsSoon" text="%s：結果は月末"/>
+        <text name="eq_host_ann_round" text="競技ラウンド：これは本番です！"/>
+        <text name="eq_host_ann_ridden" text="走行済み：これは練習です"/>
+        <text name="eq_host_ann_small" text="このコースはあなたの大会には小さすぎます：練習のみ"/>
+        <text name="eq_host_note_counts" text="%sの競技ラウンド：スタートラインへ"/>
+        <text name="eq_host_note_ridden" text="練習：%sのこの種目は走行済み"/>
+        <text name="eq_host_note_small" text="練習：%sにはコースが小さすぎます"/>
+        <text name="eq_host_label_now" text="今月"/>
+        <text name="eq_host_next_oneAtATime" text="大会は一度に一つ"/>
+        <text name="eq_host_next_interval" text="大会の間隔は%dか月、設定を参照"/>
+        <text name="eq_host_monthOption" text="%s（%dか月後）"/>
+        <text name="eq_host_monthOption1" text="%s（来月）"/>
+        <text name="eq_host_report_running" text="開催中：%s"/>
+        <text name="eq_host_report_runningLine" text="結果は月末、あと%d日で出ます。それまでの好きな日に、エントリーした馬で種目を走れます。"/>
+        <text name="eq_host_report_field" text="出走%d頭"/>
+        <text name="eq_host_report_turnout" text="来場：%d頭が来場（招待枠%d頭、人気%d）"/>
+        <text name="eq_host_report_feedSoFar" text="来訪馬はこれまでに飼料を%dL食べました（1日%dL）。"/>
+        <text name="eq_host_report_feed" text="来訪馬は飼料を%dL食べました。"/>
+        <text name="eq_host_report_money" text="収入%s（エントリー料%s、入場料%s）、開催費%s：利益%s"/>
+        <text name="eq_host_report_mine" text="あなたの馬 %s：%s"/>
+        <text name="eq_host_results_row" text="あなたの大会"/>
+        <text name="eq_host_results_running" text="開催中"/>
+        <text name="eq_host_results_winner" text="優勝：%s"/>
+        <text name="eq_host_label_setup" text="開催費用"/>
+        <text name="eq_host_label_popularity" text="人気"/>
+        <text name="eq_host_label_visitors" text="参加"/>
+        <text name="eq_host_label_takings" text="見込み収入"/>
+        <text name="eq_host_label_reputation" text="評判"/>
+        <text name="eq_host_yours_open" text="%s（今月開催中）"/>
+        <text name="eq_host_yours_booked" text="%s（%s）"/>
+        <text name="eq_host_yours_none" text="予約なし"/>
+        <text name="eq_host_ready" text="準備完了"/>
+        <text name="eq_host_missing" text="%d件不足"/>
+        <text name="eq_host_none" text="なし"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d L"/>
+        <text name="eq_host_visitors" text="来場馬 %d / %d 頭"/>
+        <text name="eq_host_takingsLine" text="エントリー料 %s、入場料 %s"/>
+        <text name="eq_host_monthsAhead" text="%dか月後"/>
+        <text name="eq_host_monthNow" text="今月"/>
+        <text name="eq_host_yourFarm" text="あなたの牧場"/>
+        <text name="eq_host_opened" text="あなたの%sが始まりました。大会タブで馬をエントリーしてください。結果は月末に出ます。"/>
+        <text name="eq_host_book_noConfig" text="主催できません：主催ルールを読み込めませんでした。"/>
+        <text name="eq_host_book_already" text="すでに大会を予約しています。"/>
+        <text name="eq_host_book_month" text="その月は予約できません。"/>
+        <text name="eq_host_book_requirements" text="牧場がまだこの大会の条件を満たしていません。"/>
+        <text name="eq_host_book_money" text="開催費用に%sが必要です。"/>
+        <text name="eq_host_book_done" text="%sを%sに予約しました。開催費用：%s。"/>
+        <text name="eq_host_cancel_none" text="予約している大会はありません。"/>
+        <text name="eq_host_cancel_done" text="%sを中止しました。返金：%s。"/>
+        <text name="eq_host_cancel_confirm" text="%sを中止しますか？開催費用のうち%sが返金されます。"/>
+        <text name="eq_host_enter_notYours" text="この大会には主催する牧場しかエントリーできません。"/>
+        <text name="eq_host_enter_done" text="%sを%sにエントリーしました（評価 %.0f）。自分の牧場で出場：費用・輸送なし。"/>
+        <text name="eq_host_button_book" text="%sに予約"/>
+        <text name="eq_host_button_cancel" text="予約を取り消す"/>
+        <text name="eq_host_button_enter" text="エントリー"/>
+        <text name="eq_host_summary" text="%s。人気：%s。"/>
+        <text name="eq_money_hosting" text="主催大会"/>
+        <text name="rl_messageTitle_eqHosting" text="主催"/>
+        <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
+        <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
+        <text name="eq_host_warning" text="あなたの%sに不足があります：%s。今日中に対応しないと明日中止になります。"/>
+        <text name="eq_host_cancelled" text="あなたの%sは中止になりました（不足：%s）。主催者としての評判が下がります。"/>
+        <text name="eq_host_done" text="あなたの%sが終わりました：来場馬 %d 頭。収入 %s（エントリー料 %s、入場料 %s）、人気 %d。"/>
+        <text name="eq_host_ride_counted" text="%sを%sの成績として記録：減点 %s。"/>
+        <text name="eq_host_ride_out" text="%sを%sの成績として記録：失格。"/>
+        <text name="eq_host_ride_already" text="この馬の%sは%sですでに記録済みです。今回は練習です。"/>
+        <text name="eq_host_ride_small" text="このコースは%sには小さすぎるため、練習扱いです。"/>
+        <text name="eq_shop_bleachers3x6" text="観客席 3列・6 m"/>
+        <text name="eq_shop_bleachers5x10" text="観客席 5列・10 m"/>
+        <text name="eq_shop_bleachers8x16" text="観客席 8列・16 m"/>
+        <text name="eq_shop_bleachers_function" text="主催する大会の観客席：コースや馬場から60 m以内で数えられます。"/>
+        <text name="eq_shop_bleachersSponsors_function" text="前のスポンサーボードには、所有する機械のブランドが表示されます。"/>
     </texts>
 </l10n>

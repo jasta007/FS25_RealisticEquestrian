@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_import.py from art/source/models/xcTable.obj: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_xcTable</name>
+        <functions>
+            <function>$l10n_eq_shop_xcJump_function</function>
+            <function>$l10n_eq_shop_xcHidden_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_xcTable.dds</image>
+        <price>1600</price>
+        <dailyUpkeep>0</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/xcTable.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- 1.15 m high; jumped along z, red flag at +x. -->
+    </placement>
+
+    <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
+         and rounds (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". -->
+    <eqAlwaysVisible>
+        <eqAlwaysVisibleConfigurations>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+        </eqAlwaysVisibleConfigurations>
+    </eqAlwaysVisible>
+</placeable>

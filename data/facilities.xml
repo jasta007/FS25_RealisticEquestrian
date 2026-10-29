@@ -68,6 +68,8 @@
 
     <!-- Our own cross country fences: the log piles -->
     <match kind="xcFence" xml="placeables/xcJumps/xc"/>
+    <!-- Our own show jumps, whose poles fall (EqPoles) -->
+    <match kind="jumps" xml="placeables/showJumps/showJump"/>
 
     <!-- Rudolf Hoermann Equestrian Pack (FS25_horsePack) -->
     <match kind="indoorArena" xml="FS25_horsePack/xml/ridingHall.xml"/>

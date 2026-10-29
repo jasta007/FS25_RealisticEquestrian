@@ -3,7 +3,7 @@
     The farm's hired staff and the candidates on offer (EqStaff does the maths). Server only.
 
     - Candidates: up to EqStaff.CANDIDATES on offer, shared by every farm; each stays some hours,
-      and new ones arrive a few hours apart (EqStaff.refreshCandidates, every game hour).
+      and new ones arrive a few hours apart (EqStaff.refreshCandidates, every 8 game hours).
     - Wages are per day, paid every day.
     - A horse's day of training asks workFor for everyone's work on it (EqTrainingHooks.onHorseDay).
     - In the last hour of the day grooms clean horses (EqStaff.toClean) and, like the base game's
@@ -93,7 +93,7 @@ function EqStaffManager.hire(id, farmId)
 end
 
 
---- Turn a candidate down. Their place fills like any other, at ARRIVAL_CHANCE an hour.
+--- Turn a candidate down. Their place fills like any other, at ARRIVAL_CHANCE every 8 hours.
 --- @param id number candidate id
 --- @return boolean ok
 function EqStaffManager.decline(id)

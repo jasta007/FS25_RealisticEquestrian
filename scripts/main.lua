@@ -37,6 +37,7 @@ source(modDirectory .. "scripts/training/EqCourse.lua")
 source(modDirectory .. "scripts/training/EqShowJumping.lua")
 source(modDirectory .. "scripts/training/EqCourseGlow.lua")
 source(modDirectory .. "scripts/training/EqCourseHooks.lua")
+source(modDirectory .. "scripts/training/EqPoles.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
@@ -47,8 +48,15 @@ source(modDirectory .. "scripts/staff/EqStaffManager.lua")
 source(modDirectory .. "scripts/facilities/EqFacility.lua")
 source(modDirectory .. "scripts/facilities/EqFacilityHooks.lua")
 source(modDirectory .. "scripts/facilities/EqXcFlags.lua")
+source(modDirectory .. "scripts/facilities/EqFlagLabels.lua")
 source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
+source(modDirectory .. "scripts/facilities/EqJumpColours.lua")
+source(modDirectory .. "scripts/facilities/EqXcCorners.lua")
+source(modDirectory .. "scripts/facilities/EqSponsors.lua")
+source(modDirectory .. "scripts/hosting/EqHosting.lua")
+source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
+source(modDirectory .. "scripts/hosting/EqHostManager.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -68,6 +76,7 @@ source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
+source(modDirectory .. "scripts/gui/EqHostView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
@@ -92,6 +101,7 @@ EqMain.MONEY_STATS = {
     { name = "eqVetBills", title = "eq_money_vetBills" },
     { name = "eqTransport", title = "eq_money_transport" },
     { name = "eqStaffWages", title = "eq_money_staffWages" },
+    { name = "eqHosting", title = "eq_money_hosting" },
 }
 for _, stat in ipairs(EqMain.MONEY_STATS) do
     if FinanceStats.statNameToIndex[stat.name] == nil then
@@ -214,6 +224,8 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_STAFF_WAGES = MoneyType.register("eqStaffWages", "eq_money_staffWages")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_HOSTING = MoneyType.register("eqHosting", "eq_money_hosting")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
             EqInjury.loadConfig(modDirectory)
         end)
@@ -221,6 +233,7 @@ function EqMain.activate()
             guarded("injury hooks", function() EqInjury.install(guarded) end)
         end
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
+        guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then
@@ -255,12 +268,17 @@ guarded("probe hook", EqProbe.install)
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
--- Cross country flags' height guides show only in construction mode (and while a course is edited).
+-- Cross country flags' guide lines show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
+guarded("flag label hook", function() EqFlagLabels.install(guarded) end)
 guarded("place anywhere hook", function() EqPlaceAnywhere.install(guarded) end)
 -- Cross country pieces hide outside construction, course editing and rounds; the shop's
 -- "Always visible" configuration has to be registered before the store items load.
 guarded("cross country pieces hook", function() EqXcHide.install(guarded) end)
+-- Show jumps' pole and wing colour options, registered before the store items load too.
+guarded("show jump colours hook", function() EqJumpColours.install(guarded) end)
+guarded("corner flags hook", function() EqXcCorners.install(guarded) end)
+guarded("sponsor boards hook", function() EqSponsors.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
@@ -336,6 +354,7 @@ local function onMissionDelete()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
+        EqHostManager.reset()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

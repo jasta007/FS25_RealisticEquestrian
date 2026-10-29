@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/xc_import.py from art/source/models/xcCornerLog.obj: change that and run it again rather than editing this. -->
+<placeable type="simplePlaceable">
+    <storeData>
+        <name>$l10n_eq_shop_xcCornerLog</name>
+        <functions>
+            <function>$l10n_eq_shop_xcJump_function</function>
+            <function>$l10n_eq_shop_xcHidden_function</function>
+        </functions>
+        <image>placeables/xcJumps/store_xcCornerLog.dds</image>
+        <price>1500</price>
+        <dailyUpkeep>0</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <brand>NONE</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>animals</category>
+            <tab>horses</tab>
+        </brush>
+    </storeData>
+
+    <base>
+        <filename>placeables/xcJumps/xcCornerLog.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- 1.15 m high; jumped along z, red flag at +x. -->
+    </placement>
+
+    <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
+         and rounds (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". -->
+    <eqAlwaysVisible>
+        <eqAlwaysVisibleConfigurations>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+        </eqAlwaysVisibleConfigurations>
+    </eqAlwaysVisible>
+
+    <!-- Corner: which side the point is on, seen riding at it. Point right (the first) keeps the
+         red flag at the point; Point left swaps the flags (EqXcCorners), so the corner is jumped
+         the other way round. -->
+    <eqCornerSide>
+        <eqCornerSideConfigurations>
+            <eqCornerSideConfiguration name="$l10n_eq_config_cornerRight" price="0"/>
+            <eqCornerSideConfiguration name="$l10n_eq_config_cornerLeft" price="0"/>
+        </eqCornerSideConfigurations>
+    </eqCornerSide>
+</placeable>

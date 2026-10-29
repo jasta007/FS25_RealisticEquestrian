@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="xcTable.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="8" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
+    <File fileId="9" filename="xcFlags_diffuse.dds"/>
+    <File fileId="7" filename="xcLogEnd_diffuse.dds"/>
+    <File fileId="6" filename="xcPeeled_diffuse.dds"/>
+    <File fileId="1" filename="xcPlanks_diffuse.dds"/>
+    <File fileId="2" filename="xcPlanks_normal.dds"/>
+    <File fileId="4" filename="xcStain_diffuse.dds"/>
+    <File fileId="5" filename="xcStain_normal.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="eqSponsor1" materialId="10" specularColor="0.101961 1 0" alphaBlending="true">
+      <Texture fileId="8"/>
+    </Material>
+    <Material name="xcFlags" materialId="9" specularColor="0.101961 1 0">
+      <Texture fileId="9"/>
+    </Material>
+    <Material name="xcLogEnd" materialId="5" specularColor="0.101961 1 0">
+      <Texture fileId="7"/>
+    </Material>
+    <Material name="xcPeeled" materialId="7" specularColor="0.101961 1 0">
+      <Texture fileId="6"/>
+    </Material>
+    <Material name="xcPlanks" materialId="6" specularColor="0.101961 1 0">
+      <Texture fileId="1"/>
+      <Normalmap fileId="2"/>
+    </Material>
+    <Material name="xcStain" materialId="8" specularColor="0.101961 1 0">
+      <Texture fileId="4"/>
+      <Normalmap fileId="5"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="xcTable.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="xcTable" nodeId="20">
+      <Shape name="boards" shapeId="1" clipDistance="300" nodeId="21" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <Shape name="deck" shapeId="2" clipDistance="300" nodeId="22" castsShadows="true" receiveShadows="true" materialIds="8"/>
+      <Shape name="posts" shapeId="3" clipDistance="300" nodeId="23" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      <Shape name="ends" shapeId="4" clipDistance="300" nodeId="24" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqSponsor_1" shapeId="5" clipDistance="300" nodeId="25" castsShadows="true" receiveShadows="true" materialIds="10"/>
+      <TransformGroup name="eqFlagsRed" translation="2.25 0 0" nodeId="26">
+        <Shape name="pennantRed" shapeId="6" clipDistance="300" nodeId="27" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      </TransformGroup>
+      <TransformGroup name="eqFlagsWhite" translation="-2.25 0 0" nodeId="28">
+        <Shape name="pennantWhite" shapeId="7" clipDistance="300" nodeId="29" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      </TransformGroup>
+      <TransformGroup name="collision" nodeId="30">
+        <Shape name="col" shapeId="8" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="31" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

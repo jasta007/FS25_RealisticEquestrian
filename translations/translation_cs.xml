@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="训练视图：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="如果你加速到跑步或袭步、撞上障碍物或错过下一个动作，就会失去倍率。从x4开始，你还必须在指令之间保持步法。给马喂胡萝卜等零食也是提升性情的好方法。"/>
-        <text name="eq_help_temperament_1" text="性情训练就是教会你的马服从控制。转为慢步并保持一小段时间即可开始一套动作。训练程序随后会要求你保持一个新动作。在几秒内完成即可延续连击。"/>
+        <text name="eq_help_temperament_2" text="失误过多（例如袭步或离开场地）会结束这套动作；完成它可大幅提升气质。在场地之外，慢步和后退仍能少量训练气质。喂胡萝卜等零食也是提升气质的好方法。"/>
+        <text name="eq_help_temperament_1" text="气质训练是教会马匹服从控制，需要一个盛装舞步场地：在商店购买一个，或摆放盛装舞步字母标记。骑到场地旁就会开始一套动作，要求你以指定步法前往字母、停止、后退和打圈。及时完成每个指令即可提高倍率。"/>
         <text name="eq_help_temperament_title" text="训练：性情"/>
         <text name="eq_help_agility_2" text="如果你没能及时跳过新的障碍物或速度掉得太多，就会失去倍率。没有障碍物的跳跃也有一点训练效果，但不会提高倍率。"/>
         <text name="eq_help_agility_1" text="敏捷主要靠跨越障碍训练，不过在各种步法之间切换也能获得少许提升。跳过障碍物来积累敏捷训练倍率，倍率会在十秒后消退，撞到障碍物则会更早消退。"/>
@@ -43,17 +43,56 @@
         <text name="eq_shop_dressageArena20x60" text="盛装舞步场地 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="所有字母标记齐全的盛装舞步场地。骑马进入场地，在标记之间训练性情。"/>
         <text name="eq_shop_courseFlags" text="越野旗帜"/>
-        <text name="eq_shop_courseFlags_function" text="把任何障碍物标记为越野障碍。用N/M切换部件：放置白旗，在障碍物上方拉出一根金色横杆（0.6、0.9或1.2 m），再放置红旗。横杆只在建造模式中显示。"/>
+        <text name="eq_shop_courseFlags_function" text="把任何障碍物标记为越野障碍。用N/M切换部件：在障碍物一端放置白旗，沿地面把金色线拉到另一端，再放置红旗。金色线只在建造模式中显示；跳跃的是障碍物本身。"/>
         <text name="eq_shop_xcLogPileSmall" text="原木堆（小）"/>
         <text name="eq_shop_xcLogPile" text="原木堆"/>
+        <text name="eq_shop_showJumpUpright" text="障碍: 垂直障碍"/>
+        <text name="eq_shop_showJumpOxer" text="障碍: 双横木"/>
+        <text name="eq_shop_showJumpCrossrail" text="障碍: 交叉杆"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="障碍: 上升双横木"/>
+        <text name="eq_shop_showJumpTripleBar" text="障碍: 三横木"/>
+        <text name="eq_shop_showJumpHogsback" text="障碍: 猪背障碍"/>
+        <text name="eq_shop_showJumpFan2" text="障碍: 双杆扇形"/>
+        <text name="eq_shop_showJumpFan3" text="障碍: 三杆扇形"/>
+        <text name="eq_shop_showJumpLiverpool" text="障碍: 利物浦水障"/>
+        <text name="eq_shop_showJumpCavaletti" text="障碍: 地杆"/>
+        <text name="eq_config_poleColour" text="横杆颜色"/>
+        <text name="eq_config_wingColour" text="侧翼颜色"/>
+        <text name="eq_colour_white" text="白色"/>
+        <text name="eq_colour_cream" text="奶油色"/>
+        <text name="eq_colour_red" text="红色"/>
+        <text name="eq_colour_burgundy" text="酒红色"/>
+        <text name="eq_colour_orange" text="橙色"/>
+        <text name="eq_colour_yellow" text="黄色"/>
+        <text name="eq_colour_lime" text="青柠色"/>
+        <text name="eq_colour_green" text="绿色"/>
+        <text name="eq_colour_darkGreen" text="深绿色"/>
+        <text name="eq_colour_skyBlue" text="天蓝色"/>
+        <text name="eq_colour_blue" text="蓝色"/>
+        <text name="eq_colour_navy" text="海军蓝"/>
+        <text name="eq_colour_purple" text="紫色"/>
+        <text name="eq_colour_pink" text="粉色"/>
+        <text name="eq_colour_grey" text="灰色"/>
+        <text name="eq_colour_black" text="黑色"/>
+        <text name="eq_shop_showJump_function" text="马碰到时横木会掉落的障碍。跑完路线后或离开时，横木会放回原位。"/>
         <text name="eq_shop_xcDropWall08" text="落差墙（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="落差墙（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="落差墙（1.6 m）"/>
+        <text name="eq_shop_xcCornerPlank" text="角障碍（木板）"/>
+        <text name="eq_shop_xcCornerLog" text="角障碍（原木）"/>
+        <text name="eq_shop_xcRollTopQuarter" text="圆顶障碍（四分之一）"/>
+        <text name="eq_shop_xcRollTopHalf" text="圆顶障碍（半圆）"/>
+        <text name="eq_shop_xcTable" text="桌形障碍"/>
+        <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_config_corner" text="角障碍"/>
+        <text name="eq_config_cornerRight" text="尖端在右"/>
+        <text name="eq_config_cornerLeft" text="尖端在左"/>
         <text name="eq_shop_xcDrop_function" text="用于越野落差障碍的木板墙。塑造一道土坡，把它放在坡顶并让边缘对齐坡沿，侧墙会遮住陡坡。"/>
         <text name="eq_shop_xcJump_function" text="越野障碍。红旗和白旗标出跳跃的位置。"/>
-        <text name="eq_shop_xcHidden_function" text="除非以“始终可见”购买，否则在建造模式、路线编辑和越野赛之外隐藏。"/>
+        <text name="eq_shop_xcHidden_function" text="除非购买时选择“消失：否”，否则在建造、路线编辑和比赛之外会消失。"/>
+        <text name="eq_shop_showJumpHidden_function" text="购买时选择“消失：是”，它会在建造、路线编辑和比赛之外消失。"/>
         <text name="eq_shop_xcFlagsHidden_function" text="在建造模式、路线编辑和比赛之外隐藏。"/>
-        <text name="eq_config_alwaysVisible" text="始终可见"/>
+        <text name="eq_config_disappearing" text="消失"/>
         <text name="eq_dressage_go" text="%s：%s"/>
         <text name="eq_dressage_gait_walk" text="慢步"/>
         <text name="eq_dressage_gait_trot" text="快步"/>
@@ -69,13 +108,13 @@
         <text name="eq_dressage_next" text="下一个：%s"/>
         <text name="eq_dressage_stand" text="立定"/>
         <text name="eq_dressage_marker" text="标记 %s"/>
-        <text name="eq_train_routine_none" text="慢步开始一套动作"/>
+        <text name="eq_train_routine_none" text="前往盛装舞步场地开始一套动作"/>
         <text name="eq_train_routine" text="动作 x%d"/>
         <text name="eq_train_combo_none" text="跳过障碍开始连击"/>
         <text name="eq_train_combo" text="跳跃连击 x%d"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷通过跳越障碍来积累连击槽进行训练；性情则先保持一小段时间的慢步，再按指令行动来积累它的连击槽。耐力和速度通过正确地袭步来训练：袭步时按H了解方法。"/>
+        <text name="eq_help_freestyle_2" text="敏捷通过跳越障碍积累连击条来训练，气质通过在盛装舞步场地完成一套动作来训练。耐力和速度通过良好的袭步来训练：袭步时按 H 了解方法。"/>
         <text name="eq_help_freestyle_3" text="不想自己骑？在员工标签页雇用马夫和教练，每天替你训练马匹。游戏自带的动物员工和RLRM的Herdsman只能让它们维持状态。"/>
         <text name="eq_form_title" text="巅峰状态"/>
         <text name="eq_help_freestyle_4" text="赛前骑一骑！你用小游戏训练的每项属性，都会让马在本月的比赛中进入巅峰状态，每项最多+8。多天的训练不会叠加：只计算本月最好的一次训练。"/>
@@ -321,7 +360,7 @@
         <text name="eq_course_recordAction" text="新场地障碍路线"/>
         <text name="eq_course_started" text="正在录制%s：按顺序穿过各个障碍。编辑时，Realistic Equestrian放置的障碍物没有碰撞；其他障碍物仍是实体"/>
         <text name="eq_course_noJumps" text="正在录制路线，但地图上还没有场地障碍"/>
-        <text name="eq_course_tooFew" text="路线未保存：至少穿过%d个场地障碍"/>
+        <text name="eq_course_tooFew" text="路线未保存：至少穿过%d个场地障碍，或按 Ctrl+Backspace 取消"/>
         <text name="eq_course_saved" text="已保存%s：%d个障碍，%.0f米"/>
         <text name="eq_course_cancelled" text="已停止编辑：路线障碍数量足够保存之前你下了马"/>
         <text name="eq_course_leftSaved" text="下马时已保存路线：在附近按Ctrl+J编辑，再按Ctrl+K从最近的点继续录制"/>
@@ -346,6 +385,7 @@
         <text name="eq_sj_clearPop" text="零罚分！"/>
         <text name="eq_sj_faultsPop" text="罚%s分"/>
         <text name="eq_sj_retired" text="场地障碍已放弃"/>
+        <text name="eq_xc_retired" text="越野赛已放弃"/>
         <text name="eq_sj_startLine" text="起点线"/>
         <text name="eq_sj_finishLine" text="终点线"/>
         <text name="eq_sj_fenceRow" text="障碍 %d/%d"/>
@@ -359,6 +399,8 @@
         <text name="eq_sj_out_refusalsXc" text="淘汰：在一道障碍拒跳三次，或全程拒跳四次"/>
         <text name="eq_sj_represent" text="返回并跳过第%d道障碍"/>
         <text name="eq_pop_courseFence" text="障碍%d"/>
+        <text name="eq_flagLeft" text="左"/>
+        <text name="eq_flagRight" text="右"/>
         <text name="input_EQ_COURSE_REWIND" text="回退到最近的点"/>
         <text name="eq_course_rewound" text="路线已回退到最近的点：保留%d个障碍"/>
         <text name="eq_course_resumed" text="从最近的点开始录制"/>
@@ -367,6 +409,10 @@
         <text name="eq_course_deleteAsk" text="删除%s（%d个障碍，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="删除路线"/>
         <text name="eq_course_deleteAction" text="删除%s"/>
+        <text name="eq_course_cancelAction" text="取消新路线"/>
+        <text name="eq_course_discardAction" text="放弃对%s的修改"/>
+        <text name="eq_course_newCancelled" text="已取消：%s未保存"/>
+        <text name="eq_course_changesDiscarded" text="已放弃对%s的修改：已保存的路线保持不变"/>
         <text name="eq_course_editAction" text="编辑%s"/>
         <text name="eq_course_doneAction" text="完成路线编辑"/>
         <text name="eq_course_saveAction" text="保存路线并完成"/>
@@ -712,5 +758,116 @@
         <text name="eq_story_total" text="总计：罚%s分"/>
         <text name="eq_staff_button_decline" text="拒绝"/>
         <text name="eq_staff_declined" text="%s不会再来了。接下来几小时内可能会有新人出现。"/>
+        <text name="eq_ui_tab_host" text="主办"/>
+        <text name="eq_host_eventName" text="%s（%s）"/>
+        <text name="eq_host_type_dressage" text="盛装舞步"/>
+        <text name="eq_host_type_showJumping" text="场地障碍"/>
+        <text name="eq_host_type_crossCountry" text="越野"/>
+        <text name="eq_host_type_eventing" text="三项赛"/>
+        <text name="eq_host_rating_novice" text="新手级"/>
+        <text name="eq_host_rating_intermediate" text="中级"/>
+        <text name="eq_host_rating_championship" text="锦标赛"/>
+        <text name="eq_host_col_event" text="可主办的比赛"/>
+        <text name="eq_host_col_ready" text="要求"/>
+        <text name="eq_host_col_popularity" text="人气"/>
+        <text name="eq_host_col_setup" text="筹办费"/>
+        <text name="eq_host_col_takings" text="最高收入"/>
+        <text name="eq_host_col_check" text="要求"/>
+        <text name="eq_host_col_have" text="现有"/>
+        <text name="eq_host_col_need" text="需要"/>
+        <text name="eq_host_check_arena" text="盛装舞步场地"/>
+        <text name="eq_host_check_dressageSeating" text="场地看台"/>
+        <text name="eq_host_check_showJumps" text="障碍"/>
+        <text name="eq_host_check_showJumpingSeating" text="赛道看台"/>
+        <text name="eq_host_check_xcLength" text="越野长度"/>
+        <text name="eq_host_check_xcJumps" text="越野障碍"/>
+        <text name="eq_host_check_stables" text="空闲马位"/>
+        <text name="eq_host_check_feed" text="马饲料"/>
+        <text name="eq_host_part_base" text="基础"/>
+        <text name="eq_host_part_course" text="赛道"/>
+        <text name="eq_host_part_seating" text="看台"/>
+        <text name="eq_host_part_facilities" text="设施"/>
+        <text name="eq_host_part_reputation" text="声誉"/>
+        <text name="eq_host_part_star" text="明星马"/>
+        <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_label_yours" text="你的比赛"/>
+        <text name="eq_host_label_month" text="预订月份"/>
+        <text name="eq_host_label_next" text="下一个可用月份"/>
+        <text name="eq_host_ann_out" text="淘汰"/>
+        <text name="eq_host_ann_counted" text="罚分%s：计入成绩！"/>
+        <text name="eq_host_ann_resultsIn" text="%s：月底公布结果，还有%d天"/>
+        <text name="eq_host_ann_resultsSoon" text="%s：月底公布结果"/>
+        <text name="eq_host_ann_round" text="比赛轮次：这一轮计入成绩！"/>
+        <text name="eq_host_ann_ridden" text="已骑过：这只是练习"/>
+        <text name="eq_host_ann_small" text="这条路线对你的赛事来说太小：只是练习"/>
+        <text name="eq_host_note_counts" text="%s的比赛轮次：骑到起跑线"/>
+        <text name="eq_host_note_ridden" text="练习：%s的这个项目已骑过"/>
+        <text name="eq_host_note_small" text="练习：路线对%s来说太小"/>
+        <text name="eq_host_label_now" text="本月"/>
+        <text name="eq_host_next_oneAtATime" text="一次只能举办一场赛事"/>
+        <text name="eq_host_next_interval" text="赛事之间间隔%d个月，见设置"/>
+        <text name="eq_host_monthOption" text="%s（%d个月后）"/>
+        <text name="eq_host_monthOption1" text="%s（下个月）"/>
+        <text name="eq_host_report_running" text="进行中：%s"/>
+        <text name="eq_host_report_runningLine" text="结果在月底公布，还有%d天。在那之前，你报名的马可以在任何一天骑完它们的项目。"/>
+        <text name="eq_host_report_field" text="%d匹参赛"/>
+        <text name="eq_host_report_turnout" text="到场：%d/%d匹来访马到场（人气%d）。"/>
+        <text name="eq_host_report_feedSoFar" text="来访马至今已吃掉你%d升饲料（每天%d升）。"/>
+        <text name="eq_host_report_feed" text="来访马吃掉了你%d升饲料。"/>
+        <text name="eq_host_report_money" text="收入%s（报名费%s，门票%s），举办费%s：利润%s。"/>
+        <text name="eq_host_report_mine" text="你的马%s：%s。"/>
+        <text name="eq_host_results_row" text="你的赛事"/>
+        <text name="eq_host_results_running" text="进行中"/>
+        <text name="eq_host_results_winner" text="冠军：%s"/>
+        <text name="eq_host_label_setup" text="筹办费"/>
+        <text name="eq_host_label_popularity" text="人气"/>
+        <text name="eq_host_label_visitors" text="参赛"/>
+        <text name="eq_host_label_takings" text="预计收入"/>
+        <text name="eq_host_label_reputation" text="声誉"/>
+        <text name="eq_host_yours_open" text="%s（本月进行中）"/>
+        <text name="eq_host_yours_booked" text="%s（%s）"/>
+        <text name="eq_host_yours_none" text="未预订"/>
+        <text name="eq_host_ready" text="已就绪"/>
+        <text name="eq_host_missing" text="缺少%d项"/>
+        <text name="eq_host_none" text="无"/>
+        <text name="eq_host_metres" text="%d 米"/>
+        <text name="eq_host_litres" text="%d 升"/>
+        <text name="eq_host_visitors" text="%d / %d 匹来访马"/>
+        <text name="eq_host_takingsLine" text="报名费 %s，门票 %s"/>
+        <text name="eq_host_monthsAhead" text="%d个月后"/>
+        <text name="eq_host_monthNow" text="本月"/>
+        <text name="eq_host_yourFarm" text="你的农场"/>
+        <text name="eq_host_opened" text="你的%s已开始。在比赛标签页为你的马报名；结果在月底公布。"/>
+        <text name="eq_host_book_noConfig" text="无法主办：主办规则未能加载。"/>
+        <text name="eq_host_book_already" text="你已经预订了一场比赛。"/>
+        <text name="eq_host_book_month" text="该月份无法预订。"/>
+        <text name="eq_host_book_requirements" text="你的农场还不满足这场比赛的要求。"/>
+        <text name="eq_host_book_money" text="筹办费需要%s。"/>
+        <text name="eq_host_book_done" text="已预订%s，时间为%s。已付筹办费：%s。"/>
+        <text name="eq_host_cancel_none" text="你没有预订比赛。"/>
+        <text name="eq_host_cancel_done" text="%s已取消。退款：%s。"/>
+        <text name="eq_host_cancel_confirm" text="取消你的%s？将退还筹办费中的%s。"/>
+        <text name="eq_host_enter_notYours" text="只有主办这场比赛的农场可以报名。"/>
+        <text name="eq_host_enter_done" text="%s已报名%s（评分 %.0f）。在自家比赛：无费用、无运输。"/>
+        <text name="eq_host_button_book" text="预订%s"/>
+        <text name="eq_host_button_cancel" text="取消预订"/>
+        <text name="eq_host_button_enter" text="报名"/>
+        <text name="eq_host_summary" text="%s。人气：%s。"/>
+        <text name="eq_money_hosting" text="主办比赛"/>
+        <text name="rl_messageTitle_eqHosting" text="主办"/>
+        <text name="eq_settings_hostInterval" text="主办比赛间隔（月）"/>
+        <text name="eq_settings_hostInterval_tooltip" text="从你上次主办比赛的月份起，需要多少个月才能再次主办。"/>
+        <text name="eq_host_warning" text="你的%s缺少：%s。今天解决，否则明天比赛将被取消。"/>
+        <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主办声誉受损。"/>
+        <text name="eq_host_done" text="你的%s已结束：来了%d匹来访马。收入 %s（报名费 %s，门票 %s），人气 %d。"/>
+        <text name="eq_host_ride_counted" text="%s已计入%s：罚分 %s。"/>
+        <text name="eq_host_ride_out" text="%s已计入%s：淘汰。"/>
+        <text name="eq_host_ride_already" text="这匹马的%s（%s）已完成；本次为练习。"/>
+        <text name="eq_host_ride_small" text="此赛道对%s来说太小，本轮为练习。"/>
+        <text name="eq_shop_bleachers3x6" text="看台 3排，6 米"/>
+        <text name="eq_shop_bleachers5x10" text="看台 5排，10 米"/>
+        <text name="eq_shop_bleachers8x16" text="看台 8排，16 米"/>
+        <text name="eq_shop_bleachers_function" text="你主办比赛的观众座位：在赛道或盛装舞步场地60米内计入。"/>
+        <text name="eq_shop_bleachersSponsors_function" text="前方的赞助商广告牌显示你的机械品牌。"/>
     </texts>
 </l10n>

@@ -92,6 +92,7 @@ function EqTrainingHooks.reset()
     EqTrainingHooks.showJumpNodes = {}
     EqDressageHooks.reset()
     EqCourseHooks.reset()
+    EqPoles.reset()
 end
 
 
@@ -143,6 +144,18 @@ EqTrainingHooks.JUMP_TIMEOUT_MS = 3000
 EqTrainingHooks.JUMP_SETTLE_MS = 600
 -- A jump that ends with less than this share of the take-off speed hit something.
 EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE = 0.4
+-- Clipping the jump (James, 2026-10-28: a show jump drops a pole when the horse just clips the
+-- jump model): in the air, rays from CLIP_RAY_UP above the horse's hooves (its root) down
+-- through where its legs are look for the jump's top. A top less than CLIP_CLEARANCE under the
+-- hooves, on anything at least JUMP_MIN_HEIGHT tall, is a clip. Only rays this near the middle of
+-- the horse count: past the legs its body is well above the hooves.
+EqTrainingHooks.CLIP_RAY_UP = 1.0
+EqTrainingHooks.CLIP_CLEARANCE = 0.0
+EqTrainingHooks.CLIP_REACH = 0.6
+-- On the ground after a jump, hooves less than this over the top of one of our show jump poles
+-- knock it too (in the air a near miss stays clear): a horse landing on top of a pole stands on its collision, level with its top, so it never dips below
+-- (James, 2026-10-29: landing on top only knocked it about half the time).
+EqTrainingHooks.POLE_STAND = 0.15
 -- Without a ground flag a jump is judged this long after take-off.
 EqTrainingHooks.JUMP_FALLBACK_MS = 1500
 -- The base game halts a horse that runs into something for 900 ms; we cut that to this.
@@ -155,7 +168,7 @@ EqTrainingHooks.CRASH_GRACE_MS = 2000
 -- is unclear when backing up). Steering is taken as negative for left.
 EqTrainingHooks.STEER_MIN = 0.3
 
-local probe = { vehicle = nil, height = nil, name = nil, showJump = false }
+local probe = { vehicle = nil, height = nil, name = nil, showJump = false, node = nil, x = nil, z = nil }
 -- How many parents up from the hit collision we look for a show jump's placeable or map node.
 EqTrainingHooks.SHOW_JUMP_DEPTH = 12
 -- Hit node -> true/false, so each collision is only looked up once (emptied with the mission).
@@ -195,7 +208,7 @@ function EqTrainingHooks:jumpRaycastCallback(hitObjectId, x, y, z, distance)
     if g_currentMission.terrainRootNode ~= nil and hitObjectId == g_currentMission.terrainRootNode then return true end
     local object = g_currentMission.getNodeObject ~= nil and g_currentMission:getNodeObject(hitObjectId) or nil
     if object ~= nil and object == probe.vehicle then return true end
-    probe.height = y
+    probe.height, probe.node, probe.x, probe.z = y, hitObjectId, x, z
     probe.name = getName ~= nil and getName(hitObjectId) or tostring(hitObjectId)
     local ok, showJump = EqLog.try("EqTrainingHooks.jumpRaycastCallback isShowJump", EqTrainingHooks.isShowJump, hitObjectId)
     probe.showJump = ok and showJump or false
@@ -214,15 +227,18 @@ end
 
 
 --- How tall the thing under one point is, if there is one.
---- @return number|nil height above the ground in metres, string|nil name, boolean show jump
-local function obstacleAt(vehicle, x, y, z)
+--- @param up number|nil metres above y the ray starts (JUMP_RAY_UP)
+--- @return number|nil height above the ground in metres, string|nil name, boolean show jump,
+---   number|nil the top's world height, number|nil the collision hit
+local function obstacleAt(vehicle, x, y, z, up)
     local ground = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, y, z)
-    probe.vehicle, probe.height, probe.name, probe.showJump = vehicle, nil, nil, false
-    raycastAll(x, y + EqTrainingHooks.JUMP_RAY_UP, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH,
+    up = up or EqTrainingHooks.JUMP_RAY_UP
+    probe.vehicle, probe.height, probe.name, probe.showJump, probe.node = vehicle, nil, nil, false, nil
+    raycastAll(x, y + up, z, 0, -1, 0, EqTrainingHooks.JUMP_RAY_LENGTH + up - EqTrainingHooks.JUMP_RAY_UP,
         "jumpRaycastCallback", EqTrainingHooks, jumpMask())
     probe.vehicle = nil
     if probe.height == nil then return nil end
-    return probe.height - ground, probe.name, probe.showJump
+    return probe.height - ground, probe.name, probe.showJump, probe.height, probe.node
 end
 
 
@@ -242,6 +258,45 @@ local function obstacleBelow(vehicle)
     for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do look(along, 0) end
     for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
     return best, bestName, showJump
+end
+
+
+--- How far the horse's hooves are above the top of what is under its legs: negative when its
+--- legs are down in it. Nil with nothing JUMP_MIN_HEIGHT tall under them.
+--- @param vehicle table
+--- @return number|nil metres, number|nil the collision it is over the least, number|nil world x
+---   and number|nil z of that ray
+local function legClearance(vehicle)
+    if raycastAll == nil or vehicle.rootNode == nil then return nil end
+    local _, hoof, _ = getWorldTranslation(vehicle.rootNode)
+    local least, leastNode, leastX, leastZ = nil, nil, nil, nil
+    local function look(along, across)
+        local x, y, z = localToWorld(vehicle.rootNode, across, 0, along)
+        local height, _, _, top, node = obstacleAt(vehicle, x, y, z, EqTrainingHooks.CLIP_RAY_UP)
+        if height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT and (least == nil or hoof - top < least) then
+            least, leastNode, leastX, leastZ = hoof - top, node, x, z
+        end
+    end
+    for _, along in ipairs(EqTrainingHooks.JUMP_RAYS_ALONG) do
+        if math.abs(along) <= EqTrainingHooks.CLIP_REACH then look(along, 0) end
+    end
+    for _, across in ipairs(EqTrainingHooks.JUMP_RAYS_ACROSS) do look(0, across) end
+    return least, leastNode, leastX, leastZ
+end
+
+
+--- @param clearance number|nil from legClearance
+--- @return boolean true when the legs clip the jump
+function EqTrainingHooks.isClip(clearance)
+    return clearance ~= nil and clearance < EqTrainingHooks.CLIP_CLEARANCE
+end
+
+
+--- @param clearance number|nil from legClearance
+--- @return boolean true when the hooves are on (or just over) the top: a pole there falls
+---   (EqPoles.onClip leaves anything that isn't one of our poles alone)
+function EqTrainingHooks.isOnPole(clearance)
+    return clearance ~= nil and clearance < EqTrainingHooks.POLE_STAND
 end
 
 
@@ -265,6 +320,13 @@ local function trackJump(vehicle, spec, sheet, worn)
     local now = g_time or 0
     local age = now - jump.startedAt
     if (spec.haltTimer or 0) > 0 then jump.crashed = true end
+    -- A jumping horse flies through our show jumps' poles, knocking off each one its legs pass
+    -- through (EqPoles). Its poles' collision is off then, so the jump rays miss them: the jump
+    -- reports its own height.
+    local okFly, _, poleHeight = EqLog.try("EqTrainingHooks.trackJump EqPoles.flyThrough", EqPoles.flyThrough, vehicle)
+    if okFly and poleHeight ~= nil and jump.landedAt == nil and poleHeight > jump.best then
+        jump.best, jump.over, jump.showJump = poleHeight, "show jump", true
+    end
 
     local height, name, showJump = obstacleBelow(vehicle)
     if jump.landedAt == nil then
@@ -276,8 +338,20 @@ local function trackJump(vehicle, spec, sheet, worn)
         end
         if inAir then
             jump.airborne = true
+            -- Over (or by) one of our show jumps: only its poles falling make a rail (judgeJump).
+            if jump.ours == nil then
+                local ok, ours = EqLog.try("EqTrainingHooks.trackJump EqPoles.nearest", EqPoles.nearest, vehicle)
+                if ok and ours ~= nil then jump.ours = ours end
+            end
             if height ~= nil and height > jump.best then jump.best, jump.over = height, name end
             if showJump then jump.showJump = true end
+            local clearance, node, hitX, hitZ = legClearance(vehicle)
+            if clearance ~= nil and (jump.clearance == nil or clearance < jump.clearance) then jump.clearance = clearance end
+            if EqTrainingHooks.isClip(clearance) then
+                jump.clipped = true
+                -- One of our show jumps' poles falls as it is hit (EqPoles).
+                EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip", EqPoles.onClip, node, vehicle, hitX, hitZ)
+            end
             if age < EqTrainingHooks.JUMP_TIMEOUT_MS then return end
         elseif not jump.airborne and age < 500 then
             return
@@ -287,12 +361,19 @@ local function trackJump(vehicle, spec, sheet, worn)
 
     -- Settling: standing on the obstacle or stopping dead after landing spoils the jump. Only
     -- on the ground: in the air again, the horse is over the next obstacle, not on this one.
-    if spec.isOnGround ~= false and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then jump.onTop = true end
+    if spec.isOnGround ~= false and height ~= nil and height >= EqTrainingHooks.JUMP_MIN_HEIGHT then
+        jump.onTop = true
+        -- Landed on one of our show jumps' poles: it falls under the horse (EqPoles).
+        local clearance, node, hitX, hitZ = legClearance(vehicle)
+        if EqTrainingHooks.isClip(clearance) or EqTrainingHooks.isOnPole(clearance) then
+            EqLog.try("EqTrainingHooks.trackJump EqPoles.onClip landed", EqPoles.onClip, node, vehicle, hitX, hitZ)
+        end
+    end
     local speed = math.abs(spec.currentSpeed or 0)
     if jump.speed > 0 and speed < jump.speed * EqTrainingHooks.JUMP_KNOCK_SPEED_SHARE then jump.knocked = true end
     if now - jump.landedAt < EqTrainingHooks.JUMP_SETTLE_MS then return end
 
-    judgeJump(spec, sheet, worn, jump, speed, now)
+    judgeJump(spec, sheet, worn, jump, speed, now, vehicle)
 end
 
 
@@ -303,7 +384,8 @@ end
 --- @param jump table spec.eqJump
 --- @param speed number current speed, m/s
 --- @param now number g_time
-judgeJump = function(spec, sheet, worn, jump, speed, now)
+--- @param vehicle table
+judgeJump = function(spec, sheet, worn, jump, speed, now, vehicle)
     local age = now - jump.startedAt
     spec.eqJump = nil
     local high = jump.best >= EqTrainingHooks.JUMP_MIN_HEIGHT
@@ -313,13 +395,19 @@ judgeJump = function(spec, sheet, worn, jump, speed, now)
         why = jump.crashed and ", crashed" or jump.knocked and ", hit it (slowed from %.1f to %.1f m/s)" or ", landed on top of it"
         why = string.format(why, jump.speed, speed)
     end
-    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s, %d ms, ground flag %s, take-off at a %s)",
+    local legs = jump.clearance ~= nil and string.format(", hooves %.2f m over its top%s", jump.clearance, jump.clipped and ": clipped" or "") or ""
+    Log:info("Jump: %s (tallest thing under the horse %.2f m '%s'%s%s%s, %d ms, ground flag %s, take-off at a %s)",
         cleared and "cleared" or (high and not jump.onTop) and "cleared with a knock" or "nothing cleared", jump.best, tostring(jump.over),
-        jump.showJump and ", a show jump" or "", why, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
-    -- A show jumping round (EqCourseHooks) hears how the fence went: knocking a show jump or
-    -- landing on top of it is a rail. A crash (into the arena wall, say) is no rail: running
-    -- into things is penalty enough (James, 2026-10-27).
-    local rail = high and jump.showJump and not jump.crashed and (jump.knocked or jump.onTop)
+        jump.showJump and ", a show jump" or "", why, legs, age, tostring(spec.isOnGround ~= nil), tostring(jump.gait))
+    -- A show jumping round (EqCourseHooks) hears how the fence went: the horse's legs clipping
+    -- the jump, knocking it or landing on top of it is a rail, whatever the jump is (a show jump
+    -- or anything flagged). A crash (into the arena wall, say) is no rail unless the legs
+    -- clipped the jump on the way: running into things is penalty enough (James, 2026-10-27).
+    -- Over one of our show jumps only a pole falling is a rail, as in a real round (James,
+    -- 2026-10-29: poles knocked with no fault, faults with no pole down): the pole tells the
+    -- round itself (EqPoles.knock), so the jump only says the fence is done.
+    local rail = high and (jump.clipped or (not jump.crashed and (jump.knocked or jump.onTop)))
+    if jump.ours ~= nil then rail = false end
     EqCourseHooks.onJumpJudged(cleared and "clear" or rail and "knock" or "nothing")
     if cleared then
         local mult = EqTraining.clearJump(sheet, worn, jump.showJump)
@@ -576,6 +664,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     spec.eqLastGait = gait
 
     local wasJumping = spec.eqJump ~= nil
+    EqPoles.noteRider(vehicle)
     trackJump(vehicle, spec, sheet, worn)
     if wasJumping and spec.eqJump == nil then spec.eqJumpHoldUntil = now + EqTrainingHooks.JUMP_PACE_HOLD_MS end
 
@@ -589,8 +678,12 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if spec.eqJump ~= nil then spec.eqJump.crashed = true end
         Log:info("Crash: the horse ran into something at a %s (haltTimer %s, cut to %s)", gait, tostring(was), tostring(spec.haltTimer))
         spec.eqCrashGraceUntil = now + EqTrainingHooks.CRASH_GRACE_MS
+        -- Running into one of our show jumps knocks a pole off it (EqPoles). Without jumping that
+        -- is a refusal, not a rail (James, 2026-10-29); in the air it is a rail.
+        local refusal = spec.eqJump == nil
+        local ok, fell = EqLog.try("EqTrainingHooks crash EqPoles.onCrash", EqPoles.onCrash, vehicle, refusal)
         -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
-        EqCourseHooks.onCrash()
+        if refusal or not (ok and fell) then EqCourseHooks.onCrash() end
         local knock = EqTraining.knockCombo(sheet)
         if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
         popKnock(knock)
@@ -599,10 +692,26 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
     local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
     if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
-    if routineShown() then
+    local coursing = EqCourseHooks.isBusy()
+    if routineShown() and not coursing then
         -- Near dressage markers the routine rides between them (EqDressage).
         local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
-        local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
+        course = okCourse and course or nil
+        -- Before a test starts, a course's start line nearer than the arena wins: one prompt
+        -- at a time, the nearest (James, 2026-10-29).
+        if course ~= nil and not sheet.routine.active then
+            local startDistance = EqCourseHooks.beginDistance()
+            if startDistance ~= nil and startDistance < EqDressage.startDistance(course) then course = nil end
+        end
+        -- A competition test (in your own event) counts when it ends: its faults before this step.
+        local before = sheet.routine
+        local competing = before ~= nil and before.active and before.kind == "markers" and before.testMoves ~= nil and before.testX ~= nil
+        local faultsBefore = competing and (before.faults or 0) or 0
+        local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, course)
+        if competing and (event == "test" or event == "lost") and EqHostManager ~= nil then
+            local lost = event == "lost"
+            EqLog.try("EqTrainingHooks hosted test", EqHostManager.onTestDone, vehicle, lost and EqDressage.FAULTS or faultsBefore, lost)
+        end
         if event == "done" or event == "bonus" then EqTrainingHud.pop("routine", sheet.routine.mult)
         elseif event == "fault" then EqTrainingHud.pop("routineFault", sheet.routine.faults)
         elseif event == "test" then EqTrainingHud.pop("routineTest")
@@ -612,9 +721,11 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             Log:info("Dressage routine: %s x%d, now %s%s", event, sheet.routine.mult, tostring(sheet.routine.request),
                 task ~= nil and task.marker ~= nil and string.format(" %s to %s", task.gait, task.marker.letter) or "")
         end
-    elseif EqTraining.breakRoutine(sheet) then
+    elseif EqTraining.breakRoutine(sheet) and not coursing then
         EqTrainingHud.pop("routineLost")
     end
+    -- A dressage test under way keeps the courses quiet: no start line, hint or countdown.
+    EqCourseHooks.dressageActive = sheet.routine.active
 
     local share = EqTraining.workStep(sheet, dt)
     if (share < 0.5) ~= (spec.eqCruising == true) then
@@ -837,7 +948,7 @@ function EqTrainingHooks.onJump(vehicle)
     -- counts both.
     local last = spec.eqJump
     if last ~= nil and last.landedAt ~= nil then
-        judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0)
+        judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0, vehicle)
     end
     EqTraining.addJump(sheet)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
@@ -1025,8 +1136,23 @@ EqTrainingHooks.BAR_ORDER = { "halt", "walk", "trot", "canter", "gallop", "blown
 EqTrainingHooks.BAR_DIM_ALPHA = 0.4
 -- A Sprint lights the gallop amber.
 EqTrainingHooks.BAR_SPRINT = { 1, 0.72, 0.2 }
--- Above this exertion while Pushing, the words turn yellow and the middle of the screen says to ease off.
-EqTrainingHooks.EASE_OFF_FROM = 85
+-- Pushing warns by the time left before the horse is Fatigued, not by the bar, so a Push started
+-- part way up still gets the whole warning (James, 2026-10-29): a yellow "Tiring..." from
+-- PUSH_TIRING_S seconds out, a red flashing "Caution" from PUSH_CAUTION_S.
+EqTrainingHooks.PUSH_TIRING_S = 3
+EqTrainingHooks.PUSH_CAUTION_S = 1.5
+
+--- How hard the Push warning is: nil, "tiring" or "caution".
+--- @param ex table
+--- @param stamina number|nil trained stamina
+--- @return string|nil
+function EqTrainingHooks.pushWarning(ex, stamina)
+    if ex.mode ~= "push" or ex.value >= EqExertion.LINE then return nil end
+    local left = EqExertion.pushSecondsLeft(ex, stamina)
+    if left <= EqTrainingHooks.PUSH_CAUTION_S then return "caution" end
+    if left <= EqTrainingHooks.PUSH_TIRING_S then return "tiring" end
+    return nil
+end
 -- How quickly the marker slides to where it should be, in milliseconds.
 EqTrainingHooks.MARKER_EASE_MS = 120
 
@@ -1035,7 +1161,7 @@ EqTrainingHooks.MARKER_EASE_MS = 120
 --- @param sheet table the horse's training sheet
 --- @param view string
 --- @return table rows
-local function exertionRows(spec, sheet, view)
+local function exertionRows(spec, sheet, view, stamina)
     local ex = sheet.exertion
     local gait = spec.eqLastGait or "halt"
     local state = EqExertion.state(ex, gait)
@@ -1051,7 +1177,7 @@ local function exertionRows(spec, sheet, view)
     local color = COLOR.grey
     if ex.lock ~= nil or ex.value > EqExertion.LINE then
         color = COLOR.red
-    elseif ex.mode == "push" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
+    elseif EqTrainingHooks.pushWarning(ex, stamina) ~= nil then
         color = COLOR.yellow
     elseif ex.mode ~= nil then
         color = COLOR.white
@@ -1154,21 +1280,26 @@ end
 -- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
 EqTrainingHooks.SPRINT_INTRO_MS = 1250
 -- A Sprint climbs fast, so its warnings come early (James): a yellow "Tiring..." from
--- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns from EASE_OFF_FROM.
+-- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns by time
+-- left (PUSH_TIRING_S, PUSH_CAUTION_S).
 EqTrainingHooks.SPRINT_CAREFUL_FROM = 50
 EqTrainingHooks.SPRINT_DANGER_FROM = 75
 
 --- @param small boolean the Condensed view: a smaller bar, no words
-local function exertionPrompt(ex, small)
+--- @param stamina number|nil trained stamina
+local function exertionPrompt(ex, small, stamina)
     local label, labelColor, pulse = nil, COLOR.yellow, false
+    local push = EqTrainingHooks.pushWarning(ex, stamina)
     if ex.value > EqExertion.LINE then
         label, labelColor = g_i18n:getText("eq_ex_overExerted"), COLOR.red
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_DANGER_FROM then
         label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
     elseif ex.mode == "sprint" and ex.value >= EqTrainingHooks.SPRINT_CAREFUL_FROM then
         label = g_i18n:getText("eq_ex_tiring")
-    elseif ex.mode ~= "sprint" and ex.value >= EqTrainingHooks.EASE_OFF_FROM then
-        label, pulse = g_i18n:getText("eq_ex_tiring"), true
+    elseif push == "caution" then
+        label, labelColor, pulse = g_i18n:getText("eq_ex_careful"), COLOR.red, true
+    elseif push == "tiring" then
+        label = g_i18n:getText("eq_ex_tiring")
     end
     local warned = label ~= nil
     if small then label = nil end
@@ -1181,7 +1312,7 @@ local function exertionPrompt(ex, small)
             EqTrainingHud.drawCentreBar(left, color, label, labelColor, pulse, small)
         end
     elseif ex.mode == "push" and warned then
-        EqTrainingHud.drawCentreBar((EqExertion.LINE - ex.value) / (EqExertion.LINE - EqTrainingHooks.EASE_OFF_FROM),
+        EqTrainingHud.drawCentreBar(EqExertion.pushSecondsLeft(ex, stamina) / EqTrainingHooks.PUSH_TIRING_S,
             labelColor, label, labelColor, pulse, small)
     end
 end
@@ -1248,8 +1379,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.view = view
     -- The exertion bar shows in every view: it says what gait the horse is in, too.
     local ex = sheet.exertion
-    for _, row in ipairs(exertionRows(spec, sheet, view)) do table.insert(rows, row) end
-    exertionPrompt(ex, condensed)
+    local record = spec.cluster ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
+    local stamina = record ~= nil and record.trained.stamina or nil
+    for _, row in ipairs(exertionRows(spec, sheet, view, stamina)) do table.insert(rows, row) end
+    exertionPrompt(ex, condensed, stamina)
     if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
         EqTrainingHud.markSeen("gallop")
         EqTrainingHooks.showHelp("gallop")
@@ -1268,12 +1401,11 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local routine = sheet.routine
     local onCourse = routineShown() and routine.active and routine.kind == "markers"
-    -- The dressage test tags its next marker, else a show jumping round its next fence.
-    if onCourse then
-        EqDressageHooks.setTag(routine.task ~= nil and routine.task.marker or nil)
-    else
-        EqDressageHooks.setTag(EqCourseHooks.tagTarget())
-    end
+    -- The dressage test tags its next marker. A course's start line gets no tag: it came and went
+    -- at 30 m from the line, and each time the map drew the hotspot let go for a moment and broke
+    -- the HUD's draw ("PlaceableHotspot.lua:225: attempt to index nil with 'width'", James's log
+    -- 2026-10-29, a burst after each "round on"). The glowing line and the hint show the way.
+    EqDressageHooks.setTag(onCourse and routine.task ~= nil and routine.task.marker or nil)
     -- A finished show jumping round pays agility training, unless the horse is worn out.
     local roundEffort = EqCourseHooks.takePayoff()
     if roundEffort > 0 and not isTired(spec.cluster) then sheet.focused.agility = sheet.focused.agility + roundEffort end
@@ -1281,33 +1413,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if onCourse then
         -- Condensed: no panel rows, but the rider still needs the commands.
         dressageRows(condensed and {} or rows, routine, vehicle)
-    elseif routineShown() then
-        if routine.active and condensed then
-            if routine.request ~= nil then
-                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request),
-                    math.max(0, routine.deadline - routine.clock) / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), STAT_COLOR.temperament)
-            end
-        elseif routine.active then
-            local color = STAT_COLOR.temperament
-            local row = { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color }
-            if routine.request ~= nil then
-                local left = math.max(0, routine.deadline - routine.clock)
-                row.right = g_i18n:getText("eq_move_" .. routine.request)
-                row.rightColor = color
-                table.insert(rows, row)
-                table.insert(rows, { bar = left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS), color = color })
-                EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.request), left / (routine.reactMs or EqTraining.ROUTINE_REACT_MS),
-                    STAT_COLOR.temperament)
-            else
-                table.insert(rows, row)
-                -- A command done at once still shows for a moment.
-                if routine.shown ~= nil and routine.clock < (routine.shownUntil or 0) then
-                    EqTrainingHud.drawPrompt(g_i18n:getText("eq_move_" .. routine.shown), 1, STAT_COLOR.temperament)
-                end
-            end
-        elseif view == "temperament" then
-            table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
-        end
+    elseif view == "temperament" then
+        -- No routine without markers: say where one starts.
+        table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
     end
     EqTrainingHud.drawPops()
 
@@ -1444,6 +1552,7 @@ function EqTrainingHooks.installRideable(guarded)
         if not EqMain.isActive then return end
         guarded("dressage markers", EqDressageHooks.update)
         guarded("course recording", EqCourseHooks.update)
+        guarded("show jump poles", EqPoles.update)
     end)
 end
 

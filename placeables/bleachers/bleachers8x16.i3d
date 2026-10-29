@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="bleachers8x16.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="3" filename="bleacherSponsor_diffuse.dds"/>
+    <File fileId="1" filename="bleachers_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="bleachers" materialId="121" specularColor="0.301961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="eqSponsor1" materialId="122" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="3"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="bleachers8x16.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="bleachers8x16" nodeId="134">
+      <Shape name="frame" shapeId="1" clipDistance="400" nodeId="135" castsShadows="true" receiveShadows="true" materialIds="121"/>
+      <TransformGroup name="eqSponsors" nodeId="136">
+        <Shape name="eqSponsor_1" shapeId="2" clipDistance="400" nodeId="137" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_2" shapeId="3" clipDistance="400" nodeId="138" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_3" shapeId="4" clipDistance="400" nodeId="139" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_4" shapeId="5" clipDistance="400" nodeId="140" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_5" shapeId="6" clipDistance="400" nodeId="141" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_6" shapeId="7" clipDistance="400" nodeId="142" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_7" shapeId="8" clipDistance="400" nodeId="143" castsShadows="false" receiveShadows="true" materialIds="122"/>
+        <Shape name="eqSponsor_8" shapeId="9" clipDistance="400" nodeId="144" castsShadows="false" receiveShadows="true" materialIds="122"/>
+      </TransformGroup>
+      <TransformGroup name="collision" nodeId="145">
+        <Shape name="col" shapeId="10" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="146" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="121"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

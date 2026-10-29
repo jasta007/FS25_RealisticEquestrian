@@ -110,8 +110,10 @@ bar is empty again. Only a Sprint can run past the line, into the red last-gasp 
 that ends there leaves the horse **Blown**: canter only, and while the bar is still past the
 line it falls at a fifth of the rate. At a canter or slower the bar falls fast, faster the slower
 the gait. The panel lists what you can press now (Sprint ready, S or double tap S to canter), and
-the middle of the screen warns **Tiring...** in yellow (in a Sprint from 50%, when Pushing pulsing
-from 85%), **Caution** in red and pulsing (in a Sprint from 75%), and **Fatigued!** in red past the line. Slowing from a gallop to a
+the middle of the screen warns **Tiring...** in yellow (in a Sprint from 50%, when Pushing 3 seconds
+before the line), **Caution** in red and pulsing (in a Sprint from 75%, when Pushing 1.5 seconds
+before the line), and **Fatigued!** in red past the line. Pushing warns by the time left at the
+horse's Stamina, so a Push started part way up the bar still gets the whole warning. Slowing from a gallop to a
 canter takes one press of S while Recovering with an empty bar, or a quick double tap of S.
 
 The bar shows the gaits too: a line for backing up, standing, walk, trot and canter, then the
@@ -151,22 +153,19 @@ a fence.
 
 ### Temperament
 
-Temperament comes from a routine: walk to start one, then do each movement asked for (walk, trot,
-stop, back up, turn left, turn right) within 3 seconds, for x2 up to x8. Each step up brings the
-requests quicker and gives less time to react (1.5 seconds at x8), and from x4 the horse must hold
-its pace between requests: changing gait unasked breaks the routine (passing through a walk on the
-way to a requested stop is fine). A canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
-moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
-show in the Freestyle, Temperament and Condensed views.
-
-Without dressage markers nearby, that routine trains at 60% of the rate. Near dressage markers (at
-least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
-between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
+Temperament's focused training is a dressage routine, and it needs dressage markers: nothing starts
+from just walking about (the old free routine that gave orders whenever the horse walked for a
+moment is gone, James 2026-10-29). Walking and backing up still train a little temperament
+anywhere. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
+chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
+between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
 test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
-and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
+and the next test can start 20 s later (5 s after one broken by faults). If a course's start line is
+nearer than the markers, the course's hint shows instead; a routine under way keeps the courses
+quiet until it ends. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:
 
 - Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
@@ -200,17 +199,19 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 | Key | Not editing | Editing |
 | --- | --- | --- |
-| Ctrl+J | Record a new show jumping course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
-| Ctrl+E | Record a new cross country (eventing) course | As Ctrl+J |
+| Ctrl+J | Record a new show jumping course, or edit the show jumping course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+E | Record a new cross country (eventing) course, or edit the cross country course within 40 m | As Ctrl+J |
 | Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
-| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | Cancel: a new course is dropped unsaved; on a saved course, changes since its last save are thrown away |
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
-white flag (the fence runs between them), log piles and drop walls. Their flags' height guides show
+white flag (the fence runs between them) and log piles. Drop walls are not fences of their own:
+ride over them freely, or flag one to make it a fence. Their flags' height guides show
 while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
 collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
-allowed is at 520 m a minute and each second over costs 0.4; there are no rails; a refusal or
-run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
+allowed is at 520 m a minute and each second over costs 0.4; there are no rails, and touching a
+fence on the way over is no fault: a refusal is only the fence stopping the horse (running into it
+within 3 m of its line) or a run-out. A refusal or run-out costs 20, a second at the same fence 40, and a third there (or a fourth on the course)
 eliminates. After a refusal or run-out the fence stays next ("Go back and jump fence N") and must be
 jumped again.
 
@@ -226,17 +227,21 @@ works in single player for now.
 
 #### The timed round
 
-Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
-Show Jumping". The start line stands on the route 12 m before fence 1 and the finish line 12 m after
-the last fence; both are drawn in gold while they matter, so no objects are needed and a course
-can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
+Out of edit mode, the course whose start line is nearest (within 60 m) is the one you can ride.
+Within 30 m the start line glows gold and you
+are asked to "Move to the start line to begin Show Jumping" beside the panel; nothing else of the
+course shows yet. The start line stands on the route 12 m before fence 1 and the finish line 12 m
+after the last fence, so no objects are needed and a course can be dressed however you like. Within
+4 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants) with a faint bar between them at the fence height, its number beside it, and the way to it is drawn in gold. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. From the countdown on the round has the screen to itself: no other
+course, start line or dressage routine cuts in, and the course keys hide, until the result is
+shown, you get off or switch horse, or you ride 100 m away from the course. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 6 m of where it was recorded (one no other fence of the course stands on), so a jump replaced or moved since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
-| Rail down (knocking or landing on the show jump; a crash into anything else is no fault) | 4 |
-| Refusal (running into the next fence, within 3 m of its poles) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
+| Rail down: over our own show jumps, a pole falling (once per fence, however many fall); over any other jump, flagged ones too, the horse's legs clipping it in the air, knocking it hard enough to lose most of its speed, or landing on top. A crash into anything else is no fault | 4 |
+| Refusal (running into the next fence, within 3 m of its poles, without jumping; a pole it knocks off then is no rail) or run-out (going past its end: a fence only counts between its flags) | 4; a second eliminates |
 | Jumping another fence of the course, the right way, out of order | Eliminated |
 | Each second (or part) over the time allowed | 1 |
 | Over twice the time allowed, or not starting within 45 s | Eliminated |
@@ -245,6 +250,35 @@ The time allowed is the course length at 350 m a minute (at least 20 s). A finis
 agility training worth 12 top-combo show jumps, less 5% per fault (nothing at 20 faults or when
 eliminated), on top of the jumps themselves. The result shows for 8 seconds, then the next round
 can start.
+
+#### Falling poles
+
+The shop's own show jumps have poles that fall:
+
+| Jump | Top | Spread | Poles | Wings |
+|---|---|---|---|---|
+| Upright | 1.00 m | - | 3 | Picket fence |
+| Oxer | 1.00 m | 1.1 m | 2 front, 1 back | Fan panel |
+| Crossrail | 0.78 m at the ends | - | 2 crossed | Rustic logs |
+| Ascending Oxer | 1.05 m | 1.2 m | 2 front, 2 back (higher) | Sloping ladder |
+| Triple Bar | 1.10 m | 1.8 m | 1 per row, rising | Pillars |
+| Hogsback | 1.10 m (middle) | 1.6 m | 1 per row, middle highest | Fan panel |
+| 2 Pole Fan | 1.00 m | 1.4 m at the wide end | 2 from one stand | Sloping ladder |
+| 3 Pole Fan | 1.00 m | 1.8 m at the wide end | 3 from one stand | Pillars |
+| Liverpool | 1.00 m | - | 2, over a water tray | Picket fence |
+| Cavaletti | 0.47 m | - | 1 on wooden X ends | None |
+
+Each has a Pole colour option in the shop (the poles' coloured bands, stand tops and trim) and,
+with wings, a Wing colour option, from 16 colours. The stands and wings never move. From take-off the jump's
+poles don't stop the horse: it carries on through them with its own momentum, and every pole its
+legs pass through (low over it, or landing on it) drops at once. Running into the jump without
+jumping still stops the horse and knocks the top pole of the row it ran into; in a round that is a
+refusal, not a rail. Only those drop a pole, and in a round only a pole down from a jump is a rail. The fall is animated, not physics:
+one end leaves its cup a moment before the other, the pole drops and slides about half a metre the
+horse's way, then lies on the ground with no collision. A wooden knock sounds as the pole leaves its
+cups (one of two recordings, pitch varied a little each time). Poles go back up when a round's countdown
+starts, or once a pole has been down 6 seconds with no ridden horse within 12 m of the jump, but
+never during a round: rails stay down to the finish. Single player for now.
 
 ### How stats change riding
 
@@ -299,7 +333,7 @@ on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 ### Hired staff
 
 Hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab of RLRM's menu:
-**Hire** lists the candidates (Decline turns one down; the place refills at the usual hourly rate), **Your staff** your team (both grouped by job, best first), with
+**Hire** lists the candidates (Decline turns one down; the place refills like any other), **Your staff** your team (both grouped by job, best first), with
 Let go. Each person's ten skills show beside the table, and for your staff the controls below. The `eqStaff` console commands do the same. Host only
 for now in multiplayer.
 
@@ -319,8 +353,9 @@ for now in multiplayer.
   (at least 5), since they help per event or deal rather than per day of training.
 - **Candidates.** Six are on offer, shared by every farm: 2-3 grooms, 2-3 trainers (never two
   for the same event) and now and then a vet or broker (30% for each spare place). Each stays on
-  offer 12 to 72 game hours (Time remaining on the Hire tab). When a place is free, someone new
-  turns up with a 25% chance each hour, so people come and go a few at a time.
+  offer 24 to 48 game hours (Time remaining on the Hire tab). The list only changes at 00:00, 08:00
+  and 16:00, so high time compression doesn't sweep it away: then anyone whose time is up leaves,
+  and each free place gets someone new with a 60% chance, so four or five are usually on offer.
 - **Works on.** Like RLRM's Herdsman: **Stables** picks the stables (all by default), and **By
   role** ticks roles (with how many horses have each, retired horses left out) or **Individual**
   ticks horses. A new hire works on every horse. The horses they work on share their full work:
@@ -415,27 +450,44 @@ Plain stables (the Horse Stable mod, the Equestrian Pack L barn) only house hors
 bonus.
 
 Cross country fences: Cross Country Flags is a spline fence, placed like the base game's pillar
-fences, whose segment types (N/M) are a white flag, a gold bar for a 0.6, 0.9 or 1.2 m fence, and a
-red flag. Place a white flag, stretch a bar over anything you want jumped (a map's logs, a table or
-hedge from any mod), then place a red flag. Each red flag pairs with the nearest white flag 1 to
-15 m away and the line between them is the fence; the bar nearest its middle gives its height
-(`eqXcFences` lists them). A pair with no bar between is a gate: ride between the flags; in a round only its poles glow. The bars show only in construction mode and while a course is edited; the flags hide like the other pieces (below). The flags
-and bars have small collision boxes so they can be picked to delete. The cross country pieces
+fences, whose segment types (N/M) are a white flag, a gold guide line on the ground, and a red
+flag. Place a white flag at one end of anything you want jumped (a map's logs, a table or hedge
+from any mod), run the line along the ground to its other end, then place a red flag. Each red flag
+pairs with the nearest white flag 1 to 15 m away and the line between them is the fence
+(`eqXcFences` lists them). The fence is judged by the obstacle itself: the guide line has no height
+and nothing to hit. It shows only in construction mode and while a course is edited; the flags hide
+like the other pieces (below), and in a round they are seen but ridden through. The flags and line
+have small collision boxes (the line's half sunk in the ground) so they can be picked to delete.
+In construction mode and while a course is edited, every jump flag (the flag fence's, our show
+jumps' and log piles', Riding Hall and Equestrian Pack jumps') has a letter over it: "L" over white
+flags and "R" over red ones, the side of the rider they belong on when facing the jump
+(`EqFlagLabels`, drawn as text so the models are unchanged). They show within 45 m of the camera,
+shrinking past 15 m.
+The line was once a bar at 0.6, 0.9 or 1.2 m; a saved 0.9 m bar becomes the line, and a 0.6 or
+1.2 m one may be dropped when the game loads (the flags still pair without it). The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
+The corners (planks 1.10 m, logs 1.15 m, a 60 degree angle: the flags stand past both ends, so
+you pick your line, narrow and safe or wide and deep), the quarter and half roll tops (1.00 m and 0.95 m), the table (1.15 m, a 2.2 m deep top) and
+the big log (1.15 m) are solid fences with their own flags too, modelled in Blender
+(`art/source/blender/xc_blender.py`, turned into game files by `art/source/xc_import.py`). A corner's
+**Corner** choice in the shop puts its point on your right (red flag at the point, the default) or on
+your left (the flags swap places, so the same corner is jumped the other way round).
 Drop walls (0.8, 1.2 and 1.6 m) are plank retaining walls for a drop: sculpt a bank, set the wall
 on its flat top with the lip at the edge (the lip is 1 m in front of the placement point), and the
 triangle side walls hide the steep sculpted slope. A plank deck covers the top, so the bank top
 needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
 rides over the deck and drops off the lip.
 
-Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidden with no collision
-while you just ride or drive around, so a course can cross the map without leaving flags and logs
-everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
-a course is edited (seen but ridden through), and in a round from 60 m before the start line to the
-result (with collision). Buy a log pile or drop wall with the shop's **Always visible: Yes**
-configuration to keep it in the world all the time; the flags always hide. In multiplayer they
-always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
+Disappearing pieces: the cross country pieces (flags, log piles, drop walls) disappear, with no
+collision, while you just ride or drive around, so a course can cross the map without leaving flags
+and logs everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell),
+while a course is edited (seen but ridden through), and in a round from its countdown (right at the
+start line) to the result (with collision, except the flag fence, which is only seen); riding past a
+start line shows nothing. Every piece has a **Disappearing** shop configuration: Yes by default on
+log piles and drop walls, No by default on the shop's show jumps (Yes makes them disappear the same
+way). The flags always disappear. In multiplayer everything always shows. Other mods' show jumps are
+never hidden. A vehicle left on a hidden piece can be thrown when its
 collision comes back. Road traffic is switched
 off from crossing a cross country round's start line to its finish and back on after (the savegame's traffic
 setting is not changed).
@@ -543,6 +595,68 @@ For now the tab works in single player and for the host; multiplayer clients get
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with experience),
 favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
+
+### Hosting your own event
+
+The Events tab's third tab, **Host**, lists every event your farm could host: Dressage, Show
+Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or **Championship**
+(the rules are `data/hosting.xml`, read by `EqHosting`).
+
+| Rating | Field | Setup fee | Dressage arena | Show jumps | Cross country | Bleachers |
+| --- | --- | --- | --- | --- | --- | --- |
+| Novice | 8 | 5,000 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
+| Intermediate | 16 | 20,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
+| Championship | 32 | 80,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
+
+- **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
+  **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
+  60 m of a course or arena; an indoor arena counts as one. A 3 Day Event needs all three, with
+  seating at both the arena and the show jumping course, and costs 1.5x to set up.
+- **Bleachers:** the shop's Horses tab has our own, 3 rows x 6 m, 5 x 10 m and 8 x 16 m (any
+  placeable named like a bleacher, grandstand or tribune counts too). Their sponsor boards show the
+  brands of the farm's machines, most owned first, then other brands from the game.
+- Two places are yours; every other place is a visiting horse, which needs a **free stable place**
+  in your horse pens and a month of **horse feed** (troughs and silos both count).
+- **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to
+  15 for extra bleachers or an indoor arena, up to 10 for horse facilities, and your hosting
+  reputation. It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
+  each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
+  shows the most an event could take (at popularity 100); its details show the expected takings
+  at today's popularity, which can still change before the event.
+- **Booking:** one booking at a time, from next month up to a year ahead, and at least the
+  **Months between hosted events** setting (3, 4, 6 or 12; default 6) after your last one.
+  Booking pays the setup fee. Cancelling two or more months ahead refunds half; later, nothing.
+- When its month starts the event opens on the Upcoming tab as "Show Jumping at <your farm>".
+  Your horses enter with one **Enter** button: no fee, no transport, and they stay at home. It
+  counts toward Entries per month, and results come at the end of the month with the other
+  monthly events.
+- **The event month:** your farm is checked when the event opens and every day after. If
+  anything is short (including that day's feed for the visitors) you get a warning; still short
+  the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
+  a month's horse ration divided by the days in a month, taken from your silos first, then your
+  horse troughs. The Results tab shows how much they have eaten.
+- **Results:** at the end of the month popularity is worked out again, plus 10 if one of your
+  entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
+  how many visitors came (the field is them plus your entered horses). Their entry fees and the
+  gate are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
+  if none of your horses entered. **Your events**, at the top of the Results tab, shows each
+  one's winners, turnout, takings against the setup fee, and how your horses did.
+- **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
+  on a course that meets the rating, is that horse's show jumping or cross country, with its
+  real faults and time. In an arena big enough, the dressage test is the rating's length (15,
+  20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
+  gets one go at each phase, and later rounds are practice. Phases you don't ride are
+  simulated. A one-phase event with a ridden round is scored in penalties like eventing.
+  A show jumping or cross country round is not put straight against the simulated rivals: it is
+  graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
+  course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
+  of your own horse it gets, from its best to its worst. The horse's stats still decide most;
+  your riding decides its day. A ridden dressage test counts its real faults. Coming up to the start line on an entered
+  horse, a gold announcement says whether this round counts, is practice (phase already
+  ridden) or the course is too small; the finish says what was kept and when results come.
+
+Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
+`eqHostWait` (testing) ends the wait before you can host again.
 
 ## Buying horses
 

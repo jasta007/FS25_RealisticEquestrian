@@ -15,8 +15,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. From x4 you must also hold your pace between commands. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a short interval. The training program will then ask you for a new manoeuvre to hold. Achieve it within a few seconds to keep the combo going."/>
+        <text name="eq_help_temperament_2" text="Too many faults, such as galloping or leaving the arena, end the test; finish it for a big Temperament boost. Away from an arena, walking and backing up still train a little Temperament. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
+        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. Ride up to it and a test starts, asking you to ride to the letters at set gaits, halt, rein back and circle. Follow each command in time to raise your multiplier."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
@@ -41,17 +41,56 @@
         <text name="eq_shop_dressageArena20x60" text="Dressage Arena 20 x 60 m"/>
         <text name="eq_shop_dressageArena_function" text="A dressage arena with every letter in place. Ride a horse in it to train temperament between the markers."/>
         <text name="eq_shop_courseFlags" text="Cross Country Flags"/>
-        <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag, stretch a gold bar (0.6, 0.9 or 1.2 m) over the obstacle, then place a red flag. The bar shows only in construction mode."/>
+        <text name="eq_shop_courseFlags_function" text="Mark any obstacle as a cross country fence. Switch segments with N/M: place a white flag at one end of the obstacle, run the gold line along the ground to its other end, then place a red flag. The line shows only in construction mode; the obstacle itself is what gets jumped."/>
         <text name="eq_shop_xcLogPileSmall" text="Log Pile (small)"/>
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
+        <text name="eq_shop_showJumpUpright" text="Show Jump: Upright"/>
+        <text name="eq_shop_showJumpOxer" text="Show Jump: Oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Show Jump: Crossrail"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Show Jump: Ascending Oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Show Jump: Triple Bar"/>
+        <text name="eq_shop_showJumpHogsback" text="Show Jump: Hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Show Jump: 2 Pole Fan"/>
+        <text name="eq_shop_showJumpFan3" text="Show Jump: 3 Pole Fan"/>
+        <text name="eq_shop_showJumpLiverpool" text="Show Jump: Liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Show Jump: Cavaletti"/>
+        <text name="eq_config_poleColour" text="Pole colour"/>
+        <text name="eq_config_wingColour" text="Wing colour"/>
+        <text name="eq_colour_white" text="White"/>
+        <text name="eq_colour_cream" text="Cream"/>
+        <text name="eq_colour_red" text="Red"/>
+        <text name="eq_colour_burgundy" text="Burgundy"/>
+        <text name="eq_colour_orange" text="Orange"/>
+        <text name="eq_colour_yellow" text="Yellow"/>
+        <text name="eq_colour_lime" text="Lime"/>
+        <text name="eq_colour_green" text="Green"/>
+        <text name="eq_colour_darkGreen" text="Dark green"/>
+        <text name="eq_colour_skyBlue" text="Sky blue"/>
+        <text name="eq_colour_blue" text="Blue"/>
+        <text name="eq_colour_navy" text="Navy"/>
+        <text name="eq_colour_purple" text="Purple"/>
+        <text name="eq_colour_pink" text="Pink"/>
+        <text name="eq_colour_grey" text="Grey"/>
+        <text name="eq_colour_black" text="Black"/>
+        <text name="eq_shop_showJump_function" text="A show jump whose poles fall when your horse hits them and go back up after the round, or once you ride away."/>
         <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Corner (planks)"/>
+        <text name="eq_shop_xcCornerLog" text="Corner (logs)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll Top (quarter)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll Top (half)"/>
+        <text name="eq_shop_xcTable" text="Table"/>
+        <text name="eq_shop_xcBigLog" text="Big Log"/>
+        <text name="eq_config_corner" text="Corner"/>
+        <text name="eq_config_cornerRight" text="Point right"/>
+        <text name="eq_config_cornerLeft" text="Point left"/>
         <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
-        <text name="eq_shop_xcHidden_function" text="Hidden outside construction, course editing and cross country rounds, unless bought Always visible."/>
+        <text name="eq_shop_xcHidden_function" text="Disappears outside construction, course editing and rounds unless bought with Disappearing: No."/>
+        <text name="eq_shop_showJumpHidden_function" text="Bought with Disappearing: Yes, it disappears outside construction, course editing and rounds."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Hidden outside construction, course editing and rounds."/>
-        <text name="eq_config_alwaysVisible" text="Always visible"/>
+        <text name="eq_config_disappearing" text="Disappearing"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
@@ -67,13 +106,13 @@
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>
-        <text name="eq_train_routine_none" text="Walk to start a routine"/>
+        <text name="eq_train_routine_none" text="Ride to a dressage arena to start a test"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament by riding a test in a dressage arena. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Hire grooms and trainers on the Staff tab to train your horses each day. The game&apos;s animal staff and RLRM&apos;s Herdsman only keep them ticking over."/>
         <text name="eq_form_title" text="Peak form"/>
         <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
@@ -320,7 +359,7 @@
         <text name="eq_course_recordAction" text="New show jumping course"/>
         <text name="eq_course_started" text="Recording %s: ride through the jumps in order. Placed obstacles from Realistic Equestrian have no collision while you edit; other obstacles stay solid"/>
         <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
-        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
+        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps, or press Ctrl+Backspace to cancel"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
         <text name="eq_course_cancelled" text="Editing stopped: you left the horse before the course had enough fences to save"/>
         <text name="eq_course_leftSaved" text="Course saved as you left the horse: press Ctrl+J near it to edit, then Ctrl+K to record on from the nearest point"/>
@@ -345,6 +384,7 @@
         <text name="eq_sj_clearPop" text="Clear round!"/>
         <text name="eq_sj_faultsPop" text="%s faults"/>
         <text name="eq_sj_retired" text="Show jumping round abandoned"/>
+        <text name="eq_xc_retired" text="Cross country round abandoned"/>
         <text name="eq_sj_startLine" text="Start line"/>
         <text name="eq_sj_finishLine" text="Finish line"/>
         <text name="eq_sj_fenceRow" text="Fence %d of %d"/>
@@ -358,6 +398,8 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminated: three refusals at one fence, or four on the course"/>
         <text name="eq_sj_represent" text="Go back and jump fence %d"/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
+        <text name="eq_flagLeft" text="L"/>
+        <text name="eq_flagRight" text="R"/>
         <text name="input_EQ_COURSE_REWIND" text="Rewind to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
         <text name="eq_course_resumed" text="Recording from the nearest point"/>
@@ -366,6 +408,10 @@
         <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
+        <text name="eq_course_cancelAction" text="Cancel new course"/>
+        <text name="eq_course_discardAction" text="Discard changes to %s"/>
+        <text name="eq_course_newCancelled" text="Cancelled: %s was not saved"/>
+        <text name="eq_course_changesDiscarded" text="Changes to %s discarded: the saved course is as it was"/>
         <text name="eq_course_editAction" text="Edit %s"/>
         <text name="eq_course_doneAction" text="Finish editing course"/>
         <text name="eq_course_saveAction" text="Save course and finish"/>
@@ -712,5 +758,116 @@
         <text name="eq_settings_entryFeeScale_tooltip" text="Scales the entry fee of every event. 1x is normal. Events already on the calendar keep their fee; changes apply from the next round."/>
         <text name="eq_settings_prizeScale" text="Prize money"/>
         <text name="eq_settings_prizeScale_tooltip" text="Scales the prize money of every event. 1x is normal. Events already on the calendar keep their prizes; changes apply from the next round."/>
+        <text name="eq_ui_tab_host" text="Host"/>
+        <text name="eq_host_eventName" text="%s at %s"/>
+        <text name="eq_host_type_dressage" text="Dressage"/>
+        <text name="eq_host_type_showJumping" text="Show Jumping"/>
+        <text name="eq_host_type_crossCountry" text="Cross Country"/>
+        <text name="eq_host_type_eventing" text="3 Day Event"/>
+        <text name="eq_host_rating_novice" text="Novice"/>
+        <text name="eq_host_rating_intermediate" text="Intermediate"/>
+        <text name="eq_host_rating_championship" text="Championship"/>
+        <text name="eq_host_col_event" text="Event you could host"/>
+        <text name="eq_host_col_ready" text="Requirements"/>
+        <text name="eq_host_col_popularity" text="Popularity"/>
+        <text name="eq_host_col_setup" text="Setup fee"/>
+        <text name="eq_host_col_takings" text="Max takings"/>
+        <text name="eq_host_col_check" text="Requirement"/>
+        <text name="eq_host_col_have" text="You have"/>
+        <text name="eq_host_col_need" text="Needed"/>
+        <text name="eq_host_check_arena" text="Dressage arena"/>
+        <text name="eq_host_check_dressageSeating" text="Arena seating"/>
+        <text name="eq_host_check_showJumps" text="Show jumps"/>
+        <text name="eq_host_check_showJumpingSeating" text="Course seating"/>
+        <text name="eq_host_check_xcLength" text="Cross country length"/>
+        <text name="eq_host_check_xcJumps" text="Cross country jumps"/>
+        <text name="eq_host_check_stables" text="Free stable places"/>
+        <text name="eq_host_check_feed" text="Horse feed"/>
+        <text name="eq_host_part_base" text="Base"/>
+        <text name="eq_host_part_course" text="course"/>
+        <text name="eq_host_part_seating" text="seating"/>
+        <text name="eq_host_part_facilities" text="facilities"/>
+        <text name="eq_host_part_reputation" text="reputation"/>
+        <text name="eq_host_part_star" text="star horse"/>
+        <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_label_yours" text="Your event"/>
+        <text name="eq_host_label_month" text="Book for"/>
+        <text name="eq_host_label_next" text="Next free month"/>
+        <text name="eq_host_ann_out" text="Eliminated"/>
+        <text name="eq_host_ann_counted" text="%s penalties: it counts!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: results at the end of the month, in %d days"/>
+        <text name="eq_host_ann_resultsSoon" text="%s: results at the end of the month"/>
+        <text name="eq_host_ann_round" text="Competition round: this one counts!"/>
+        <text name="eq_host_ann_ridden" text="Already ridden: this is just practice"/>
+        <text name="eq_host_ann_small" text="This course is too small for your event: just practice"/>
+        <text name="eq_host_note_counts" text="Competition round for %s: ride to the start line"/>
+        <text name="eq_host_note_ridden" text="Practice: this phase of %s is already ridden"/>
+        <text name="eq_host_note_small" text="Practice: too small a course for %s"/>
+        <text name="eq_host_label_now" text="This month"/>
+        <text name="eq_host_next_oneAtATime" text="one event at a time"/>
+        <text name="eq_host_next_interval" text="%d months between events, see Settings"/>
+        <text name="eq_host_monthOption" text="%s (in %d months)"/>
+        <text name="eq_host_monthOption1" text="%s (next month)"/>
+        <text name="eq_host_report_running" text="On now: %s"/>
+        <text name="eq_host_report_runningLine" text="Results come at the end of the month, in %d days. Your entered horses can ride their phases any day until then."/>
+        <text name="eq_host_report_field" text="%d starters"/>
+        <text name="eq_host_report_turnout" text="Turnout: %d of %d visiting horses came (popularity %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Visiting horses have eaten %d l of your feed so far (%d l a day)."/>
+        <text name="eq_host_report_feed" text="Visiting horses ate %d l of your feed."/>
+        <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
+        <text name="eq_host_report_mine" text="Your horse %s: %s."/>
+        <text name="eq_host_results_row" text="Your events"/>
+        <text name="eq_host_results_running" text="On now"/>
+        <text name="eq_host_results_winner" text="Won by %s"/>
+        <text name="eq_host_label_setup" text="Setup fee"/>
+        <text name="eq_host_label_popularity" text="Popularity"/>
+        <text name="eq_host_label_visitors" text="Turnout"/>
+        <text name="eq_host_label_takings" text="Expected takings"/>
+        <text name="eq_host_label_reputation" text="Reputation"/>
+        <text name="eq_host_yours_open" text="%s, on this month"/>
+        <text name="eq_host_yours_booked" text="%s in %s"/>
+        <text name="eq_host_yours_none" text="Nothing booked"/>
+        <text name="eq_host_ready" text="Ready"/>
+        <text name="eq_host_missing" text="%d missing"/>
+        <text name="eq_host_none" text="None"/>
+        <text name="eq_host_metres" text="%d m"/>
+        <text name="eq_host_litres" text="%d l"/>
+        <text name="eq_host_visitors" text="%d of %d visiting horses"/>
+        <text name="eq_host_takingsLine" text="%s entries, %s gate"/>
+        <text name="eq_host_monthsAhead" text="in %d months"/>
+        <text name="eq_host_monthNow" text="now"/>
+        <text name="eq_host_yourFarm" text="Your Farm"/>
+        <text name="eq_host_opened" text="Your %s has started. Enter your horses on the Events tab; results come at the end of the month."/>
+        <text name="eq_host_book_noConfig" text="Hosting is not available: the hosting rules did not load."/>
+        <text name="eq_host_book_already" text="You already have an event booked."/>
+        <text name="eq_host_book_month" text="That month cannot be booked."/>
+        <text name="eq_host_book_requirements" text="Your farm does not meet this event's requirements yet."/>
+        <text name="eq_host_book_money" text="You need %s for the setup fee."/>
+        <text name="eq_host_book_done" text="%s booked for %s. Setup fee paid: %s."/>
+        <text name="eq_host_cancel_none" text="You have no event booked."/>
+        <text name="eq_host_cancel_done" text="%s cancelled. Refund: %s."/>
+        <text name="eq_host_cancel_confirm" text="Cancel your %s? You get back %s of the setup fee."/>
+        <text name="eq_host_enter_notYours" text="Only the farm hosting this event can enter it."/>
+        <text name="eq_host_enter_done" text="%s entered in %s (rating %.0f). It competes at home: no fee or transport."/>
+        <text name="eq_host_button_book" text="Book for %s"/>
+        <text name="eq_host_button_cancel" text="Cancel booking"/>
+        <text name="eq_host_button_enter" text="Enter"/>
+        <text name="eq_host_summary" text="%s. Popularity: %s."/>
+        <text name="eq_money_hosting" text="Hosted Events"/>
+        <text name="rl_messageTitle_eqHosting" text="Hosting"/>
+        <text name="eq_settings_hostInterval" text="Months between hosted events"/>
+        <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
+        <text name="eq_host_warning" text="Your %s is short of: %s. Sort it out today or the event is cancelled tomorrow."/>
+        <text name="eq_host_cancelled" text="Your %s was cancelled, still short of: %s. Your hosting reputation suffers."/>
+        <text name="eq_host_done" text="Your %s is over: %d visiting horses came. Takings %s (%s entries, %s gate), popularity %d."/>
+        <text name="eq_host_ride_counted" text="%s counted for %s: %s penalties."/>
+        <text name="eq_host_ride_out" text="%s counted for %s: eliminated."/>
+        <text name="eq_host_ride_already" text="This horse's %s for %s is already ridden; this one is practice."/>
+        <text name="eq_host_ride_small" text="This course is too small for %s, so the round is practice."/>
+        <text name="eq_shop_bleachers3x6" text="Bleachers 3 rows, 6 m"/>
+        <text name="eq_shop_bleachers5x10" text="Bleachers 5 rows, 10 m"/>
+        <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
+        <text name="eq_shop_bleachers_function" text="Seating for the events you host: counts within 60 m of a course or dressage arena."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Sponsor boards in front show the brands of your machines."/>
     </texts>
 </l10n>
