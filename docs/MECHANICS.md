@@ -438,7 +438,8 @@ have small collision boxes (the line's half sunk in the ground) so they can be p
 In construction mode and while a course is edited, every jump flag (the flag fence's, our show
 jumps' and log piles', Riding Hall and Equestrian Pack jumps') has a letter over it: "L" over white
 flags and "R" over red ones, the side of the rider they belong on when facing the jump
-(`EqFlagLabels`, drawn as text so the models are unchanged).
+(`EqFlagLabels`, drawn as text so the models are unchanged). They show within 45 m of the camera,
+shrinking past 15 m.
 The line was once a bar at 0.6, 0.9 or 1.2 m; a saved 0.9 m bar becomes the line, and a 0.6 or
 1.2 m one may be dropped when the game loads (the flags still pair without it). The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their

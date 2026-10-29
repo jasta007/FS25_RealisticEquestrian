@@ -2419,8 +2419,15 @@ do
         and EqFlagLabels.letter("red", function(key) return texts[key] end) == "D"
         and EqFlagLabels.letter("red", function(key) return "Missing '" .. key .. "'" end) == "R"
         and EqFlagLabels.letter("red", function() error("no texts") end) == "R")
-    local near = EqFlagLabels.near({ { x = 0, z = 0 }, { x = 120, z = 120 }, { x = 140, z = 0 } }, 0, 0, 150)
-    check("labels only near the camera", #near == 2 and near[2].x == 140)
+    local lift = EqFlagLabels.LIFT
+    local near = EqFlagLabels.near({ { x = 0, y = 0, z = 10 }, { x = 40, y = 0, z = 40 }, { x = 0, y = 0, z = 40 } }, 0, lift, 0, 45)
+    check("labels only near the camera", #near == 2 and near[1].distance == 10 and near[2].flag.z == 40)
+    local high = EqFlagLabels.near({ { x = 0, y = 0, z = 10 } }, 0, 100, 0, 45)
+    check("a camera high above the flags shows no labels", #high == 0)
+    check("labels shrink with distance, whole up close", EqFlagLabels.scale(5) == 1 and EqFlagLabels.scale(EqFlagLabels.FULL_SIZE_RANGE) == 1
+        and EqFlagLabels.scale(30) < 1 and EqFlagLabels.scale(30) > EqFlagLabels.MIN_SCALE
+        and math.abs(EqFlagLabels.scale(EqFlagLabels.RANGE) - EqFlagLabels.MIN_SCALE) < 1e-9
+        and EqFlagLabels.scale(1000) == EqFlagLabels.MIN_SCALE)
 end
 dofile("scripts/facilities/EqPlaceAnywhere.lua")
 check("only our cross country pieces skip the land rule",

@@ -17,8 +17,12 @@ local Log = EqLog
 
 -- Metres over a flag's foot (show jump poles stand 1.7 m, flag fence poles 1.5 m).
 EqFlagLabels.LIFT = 2.1
--- Labels further than this from the camera are left out (metres).
-EqFlagLabels.RANGE = 150
+-- Labels further than this from the camera (straight line, height counts) are left out, and
+-- they shrink from FULL_SIZE_RANGE out to MIN_SCALE of their size at RANGE: screen text keeps
+-- its size however far away, so zoomed out they were giant (James, 2026-10-29).
+EqFlagLabels.RANGE = 45
+EqFlagLabels.FULL_SIZE_RANGE = 15
+EqFlagLabels.MIN_SCALE = 0.5
 -- Flags are found again this often while labels show.
 EqFlagLabels.SCAN_MS = 1000
 -- How deep and how many nodes are searched under one placeable for flag nodes.
@@ -63,16 +67,27 @@ end
 
 --- @param flags table list of { colour, x, y, z }
 --- @param cx number camera position
+--- @param cy number
 --- @param cz number
 --- @param range number
---- @return table the flags within range of the camera
-function EqFlagLabels.near(flags, cx, cz, range)
-    local out, range2 = {}, range * range
+--- @return table list of { flag, distance } for the flags within range of the camera
+function EqFlagLabels.near(flags, cx, cy, cz, range)
+    local out = {}
     for _, flag in ipairs(flags) do
-        local dx, dz = flag.x - cx, flag.z - cz
-        if dx * dx + dz * dz <= range2 then table.insert(out, flag) end
+        local dx, dy, dz = flag.x - cx, flag.y + EqFlagLabels.LIFT - cy, flag.z - cz
+        local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
+        if distance <= range then table.insert(out, { flag = flag, distance = distance }) end
     end
     return out
+end
+
+
+--- @param distance number metres from the camera
+--- @return number the label's size as a share of TEXT_SIZE: whole up close, smaller further away
+function EqFlagLabels.scale(distance)
+    if distance <= EqFlagLabels.FULL_SIZE_RANGE then return 1 end
+    local t = math.min(1, (distance - EqFlagLabels.FULL_SIZE_RANGE) / (EqFlagLabels.RANGE - EqFlagLabels.FULL_SIZE_RANGE))
+    return 1 - t * (1 - EqFlagLabels.MIN_SCALE)
 end
 
 
@@ -131,12 +146,11 @@ function EqFlagLabels.scan()
 end
 
 
---- @return number|nil, number|nil the active camera's x and z
+--- @return number|nil, number|nil, number|nil the active camera's position
 local function cameraPosition()
     local camera = getCamera ~= nil and getCamera() or nil
-    if camera == nil or camera == 0 then return nil, nil end
-    local x, _, z = getWorldTranslation(camera)
-    return x, z
+    if camera == nil or camera == 0 then return nil, nil, nil end
+    return getWorldTranslation(camera)
 end
 
 
@@ -155,21 +169,22 @@ function EqFlagLabels.draw()
             EqFlagLabels.labels = EqFlagLabels.scan()
             EqFlagLabels.scannedAt = now
         end
-        local cx, cz = cameraPosition()
-        local flags = cx ~= nil and EqFlagLabels.near(EqFlagLabels.labels, cx, cz, EqFlagLabels.RANGE) or EqFlagLabels.labels
+        local cx, cy, cz = cameraPosition()
+        if cx == nil then return end
         local getText = g_i18n ~= nil and function(key) return g_i18n:getText(key) end or nil
         local size = getCorrectTextSize ~= nil and getCorrectTextSize(EqFlagLabels.TEXT_SIZE) or EqFlagLabels.TEXT_SIZE
         setTextAlignment(RenderText.ALIGN_CENTER)
         setTextBold(true)
-        for _, flag in ipairs(flags) do
+        for _, entry in ipairs(EqFlagLabels.near(EqFlagLabels.labels, cx, cy, cz, EqFlagLabels.RANGE)) do
+            local flag, textSize = entry.flag, size * EqFlagLabels.scale(entry.distance)
             local sx, sy, sz = project(flag.x, flag.y + EqFlagLabels.LIFT, flag.z)
             if sx ~= nil and sx > -0.1 and sx < 1.1 and sy > -0.1 and sy < 1.1 and sz <= 1 then
                 local text = EqFlagLabels.letter(flag.colour, getText)
                 setTextColor(0, 0, 0, 0.8)
-                renderText(sx + 0.0012, sy - 0.0018, size, text)
+                renderText(sx + 0.0012, sy - 0.0018, textSize, text)
                 local c = EqFlagLabels.COLOURS[flag.colour]
                 setTextColor(c[1], c[2], c[3], c[4])
-                renderText(sx, sy, size, text)
+                renderText(sx, sy, textSize, text)
             end
         end
         setTextColor(1, 1, 1, 1)
