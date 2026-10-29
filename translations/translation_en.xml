@@ -389,6 +389,8 @@
         <text name="eq_sj_out_refusalsXc" text="Eliminated: three refusals at one fence, or four on the course"/>
         <text name="eq_sj_represent" text="Go back and jump fence %d"/>
         <text name="eq_pop_courseFence" text="Fence %d"/>
+        <text name="eq_flagLeft" text="L"/>
+        <text name="eq_flagRight" text="R"/>
         <text name="input_EQ_COURSE_REWIND" text="Rewind to nearest point"/>
         <text name="eq_course_rewound" text="Course rewound to the nearest point: %d fences kept"/>
         <text name="eq_course_resumed" text="Recording from the nearest point"/>

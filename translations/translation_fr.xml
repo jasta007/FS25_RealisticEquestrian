@@ -730,6 +730,8 @@
         <text name="eq_sj_out_refusalsXc" text="Éliminé : trois refus au même obstacle, ou quatre sur le parcours"/>
         <text name="eq_sj_represent" text="Revenez sauter l&apos;obstacle %d"/>
         <text name="eq_pop_courseFence" text="Obstacle %d"/>
+        <text name="eq_flagLeft" text="G"/>
+        <text name="eq_flagRight" text="D"/>
         <text name="input_EQ_COURSE_REWIND" text="Revenir au point le plus proche"/>
         <text name="eq_course_rewound" text="Parcours ramené au point le plus proche : %d obstacles conservés"/>
         <text name="eq_course_resumed" text="Enregistrement depuis le point le plus proche"/>

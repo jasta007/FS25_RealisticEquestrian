@@ -2378,6 +2378,36 @@ do
     local shared = EqXcFlags.pair({ f("red", 0, 0), f("white", 5, 0), f("red", 9, 0) })
     check("a white flag between two red ones goes to the nearer", #shared == 1 and shared[1].red.x == 9)
 end
+dofile("scripts/facilities/EqFlagLabels.lua")
+do
+    check("jump flag nodes are white or red, from every source", EqFlagLabels.classify("eqFlagsWhite") == "white"
+        and EqFlagLabels.classify("eqFlagsRed") == "red" and EqFlagLabels.classify("modernFlagsWhite") == "white"
+        and EqFlagLabels.classify("modernFlagsRed01") == "red" and EqFlagLabels.classify("eqXcFlagWhite") == "white"
+        and EqFlagLabels.classify("eqXcFlagRed") == "red" and EqFlagLabels.classify("eqXcGuide") == nil
+        and EqFlagLabels.classify("flagPole") == nil and EqFlagLabels.classify(nil) == nil)
+    local texts = { eq_flagLeft = "G", eq_flagRight = "D" }
+    check("white flags say left, red flags say right, translated when the text exists",
+        EqFlagLabels.letter("white") == "L" and EqFlagLabels.letter("red") == "R"
+        and EqFlagLabels.letter("white", function(key) return texts[key] end) == "G"
+        and EqFlagLabels.letter("red", function(key) return texts[key] end) == "D"
+        and EqFlagLabels.letter("red", function(key) return "Missing '" .. key .. "'" end) == "R"
+        and EqFlagLabels.letter("red", function() error("no texts") end) == "R")
+    local savedLocalToWorld = localToWorld
+    localToWorld = function(node, x, y, z) return node * 10, 0, z end
+    local placed = EqFlagLabels.positions({ { node = 1, colour = "white", offset = 0.15 }, { node = 2, colour = "red" }, { node = 1, colour = "white", offset = 0.15 } })
+    localToWorld = savedLocalToWorld
+    check("flag positions are read from their nodes, each node once", #placed == 2 and placed[1].x == 10 and placed[1].z == 0.15
+        and placed[2].colour == "red" and placed[2].z == 0)
+    local lift = EqFlagLabels.LIFT
+    local near = EqFlagLabels.near({ { x = 0, y = 0, z = 10 }, { x = 40, y = 0, z = 40 }, { x = 0, y = 0, z = 40 } }, 0, lift, 0, 45)
+    check("labels only near the camera", #near == 2 and near[1].distance == 10 and near[2].flag.z == 40)
+    local high = EqFlagLabels.near({ { x = 0, y = 0, z = 10 } }, 0, 100, 0, 45)
+    check("a camera high above the flags shows no labels", #high == 0)
+    check("labels shrink with distance, whole up close", EqFlagLabels.scale(5) == 1 and EqFlagLabels.scale(EqFlagLabels.FULL_SIZE_RANGE) == 1
+        and EqFlagLabels.scale(30) < 1 and EqFlagLabels.scale(30) > EqFlagLabels.MIN_SCALE
+        and math.abs(EqFlagLabels.scale(EqFlagLabels.RANGE) - EqFlagLabels.MIN_SCALE) < 1e-9
+        and EqFlagLabels.scale(1000) == EqFlagLabels.MIN_SCALE)
+end
 dofile("scripts/facilities/EqPlaceAnywhere.lua")
 check("only our cross country pieces skip the land rule",
     EqPlaceAnywhere.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")

@@ -390,6 +390,8 @@
         <text name="eq_sj_out_refusalsXc" text="Uitgesloten: drie weigeringen bij één hindernis, of vier op het parcours"/>
         <text name="eq_sj_represent" text="Ga terug en spring hindernis %d"/>
         <text name="eq_pop_courseFence" text="Hindernis %d"/>
+        <text name="eq_flagLeft" text="L"/>
+        <text name="eq_flagRight" text="R"/>
         <text name="input_EQ_COURSE_REWIND" text="Terug naar dichtstbijzijnde punt"/>
         <text name="eq_course_rewound" text="Parcours teruggezet naar het dichtstbijzijnde punt: %d hindernissen behouden"/>
         <text name="eq_course_resumed" text="Opnemen vanaf het dichtstbijzijnde punt"/>

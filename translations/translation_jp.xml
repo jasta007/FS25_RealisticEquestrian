@@ -390,6 +390,8 @@
         <text name="eq_sj_out_refusalsXc" text="失格：1つの障害で3回、またはコース全体で4回の拒止"/>
         <text name="eq_sj_represent" text="戻って障害%dを跳んでください"/>
         <text name="eq_pop_courseFence" text="障害%d"/>
+        <text name="eq_flagLeft" text="左"/>
+        <text name="eq_flagRight" text="右"/>
         <text name="input_EQ_COURSE_REWIND" text="最寄りの地点まで戻す"/>
         <text name="eq_course_rewound" text="コースを最寄りの地点まで戻しました：障害%d個を保持"/>
         <text name="eq_course_resumed" text="最寄りの地点から記録中"/>

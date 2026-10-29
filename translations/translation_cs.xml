@@ -390,6 +390,8 @@
         <text name="eq_sj_out_refusalsXc" text="淘汰：在一道障碍拒跳三次，或全程拒跳四次"/>
         <text name="eq_sj_represent" text="返回并跳过第%d道障碍"/>
         <text name="eq_pop_courseFence" text="障碍%d"/>
+        <text name="eq_flagLeft" text="左"/>
+        <text name="eq_flagRight" text="右"/>
         <text name="input_EQ_COURSE_REWIND" text="回退到最近的点"/>
         <text name="eq_course_rewound" text="路线已回退到最近的点：保留%d个障碍"/>
         <text name="eq_course_resumed" text="从最近的点开始录制"/>
