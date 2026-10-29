@@ -34,6 +34,7 @@ dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/training/EqPoles.lua")
+dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
@@ -3635,29 +3636,54 @@ end)()
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
 -- do block: the main chunk is at Lua's 200 locals.
 ;(function()
-    local fall = { y0 = 0.95, restA = 0.05, restB = 0.05, lead = 1, push = 1, length = 3.5 }
-    local y, dz, tilt, still = EqPoles.fallPose(fall, 0)
-    check("a pole starts in its cups", math.abs(y - 0.95) < 1e-9 and dz == 0 and tilt == 0 and not still)
-    y, dz, tilt = EqPoles.fallPose(fall, EqPoles.LAG)
-    check("the leading end drops first", tilt < 0 and y < 0.95, string.format("tilt %.3f", tilt))
-    local _, _, tiltB = EqPoles.fallPose({ y0 = 0.95, restA = 0.05, restB = 0.05, lead = -1, push = 1, length = 3.5 }, EqPoles.LAG)
-    check("the other end can lead", tiltB > 0)
+    local function level(lead, push, restA)
+        return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
+    end
+    local fall = level(1, 1)
+    local pose = EqPoles.fallPose(fall, 0)
+    check("a pole starts in its cups", math.abs(pose.y - 0.95) < 1e-9 and pose.z == 0 and pose.rz == 0 and pose.ry == 0 and not pose.still)
+    pose = EqPoles.fallPose(fall, EqPoles.LAG)
+    check("the leading end drops first", pose.rz < 0 and pose.y < 0.95, string.format("tilt %.3f", pose.rz))
+    check("the other end can lead", EqPoles.fallPose(level(-1, 1), EqPoles.LAG).rz > 0)
     local slide = EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
-    y, dz, tilt, still = EqPoles.fallPose(fall, 3)
-    check("a fallen pole lies flat on the ground", math.abs(y - 0.05) < 1e-9 and math.abs(tilt) < 1e-9 and still)
-    check("it slid the horse's way", math.abs(dz - slide) < 1e-9)
-    local _, back = EqPoles.fallPose({ y0 = 0.95, restA = 0.05, restB = 0.05, lead = 1, push = -1, length = 3.5 }, 3)
-    check("it slides the other way for a horse going the other way", math.abs(back + slide) < 1e-9)
-    local _, _, slope = EqPoles.fallPose({ y0 = 0.95, restA = 0.15, restB = 0.05, lead = 1, push = 1, length = 3.5 }, 3)
-    check("on a slope it lies along the ground", math.abs(slope - math.asin(0.1 / 3.5)) < 1e-9)
+    pose = EqPoles.fallPose(fall, 3)
+    check("a fallen pole lies flat on the ground", math.abs(pose.y - 0.05) < 1e-9 and math.abs(pose.rz) < 1e-9 and pose.still)
+    check("it slid the horse's way", math.abs(pose.z - slide) < 1e-9)
+    check("it slides the other way for a horse going the other way", math.abs(EqPoles.fallPose(level(1, -1), 3).z + slide) < 1e-9)
+    check("on a slope it lies along the ground", math.abs(EqPoles.fallPose(level(1, 1, 0.15), 3).rz - math.atan2(0.1, 3.5)) < 1e-9)
     local frames, last, lowest = 0, 0.95, 0.95
     for t = 0, 2, 1 / 60 do
-        local fy = EqPoles.fallPose(fall, t)
+        local fy = EqPoles.fallPose(fall, t).y
         lowest = math.min(lowest, fy)
         if fy > last + 1e-9 then frames = frames + 1 end
         last = fy
     end
     check("a falling pole never bounces up or goes under the ground", frames == 0 and lowest >= 0.05 - 1e-9)
+    local cross = { a = { 1.7, 0.73, -0.06 }, b = { -1.7, 0.25, -0.06 }, restA = 0.05, restB = 0.05, lead = 1, push = 1 }
+    pose = EqPoles.fallPose(cross, 0)
+    check("a crossrail's pole starts tilted in its cups", math.abs(pose.rz - math.atan2(0.48, 3.4)) < 1e-9 and math.abs(pose.y - 0.49) < 1e-9)
+    pose = EqPoles.fallPose(cross, 3)
+    check("and lies flat once down", math.abs(pose.rz) < 1e-9 and pose.still)
+    local fan = { a = { 1.68, 0.95, 0.7 }, b = { -1.68, 0.95, 0.055 }, restA = 0.05, restB = 0.05, lead = -1, push = -1 }
+    pose = EqPoles.fallPose(fan, 0)
+    check("a fan's pole starts turned", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and pose.ry < 0)
+    pose = EqPoles.fallPose(fan, 3)
+    check("and stays turned as it lies", math.abs(pose.ry - math.atan2(-0.645, 3.36)) < 1e-9 and math.abs(pose.z - (0.3775 - slide)) < 1e-9)
+
+    -- The shop's colour options: the same list, in the same order, as the generator writes.
+    local source = io.open("art/source/show_jumps.py"):read("*a")
+    local listed, same = 0, true
+    for name, r, g, b in source:gmatch('%("(%w+)", %(([%d.]+), ([%d.]+), ([%d.]+)%)%)') do
+        listed = listed + 1
+        local entry = EqJumpColours.LIST[listed]
+        if entry == nil or entry[1] ~= name or math.abs(entry[2] - tonumber(r)) > 1e-9
+            or math.abs(entry[3] - tonumber(g)) > 1e-9 or math.abs(entry[4] - tonumber(b)) > 1e-9 then same = false end
+    end
+    check("jump colours match the generator's list", same and listed == #EqJumpColours.LIST, listed .. " listed")
+    local red = EqJumpColours.colour(3)
+    check("an option's index gives its colour", red ~= nil and red[1] == 0.55 and EqJumpColours.colour(99) == nil and EqJumpColours.colour(nil) == nil)
+    check("a jump's colour key changes with its options",
+        EqJumpColours.key({ eqPoleColour = 3 }) ~= EqJumpColours.key({ eqPoleColour = 4 }) and EqJumpColours.key(nil) == EqJumpColours.key({}))
 
     local down = { state = EqPoles.DOWN, downAt = 1000 }
     check("a dropped pole stays down a while", not EqPoles.mayReset(down, 1000 + EqPoles.RESET_MS - 1, false, false))

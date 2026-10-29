@@ -651,6 +651,32 @@
         <text name="eq_shop_xcLogPile" text="Tas de rondins"/>
         <text name="eq_shop_showJumpUpright" text="Obstacle : Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstacle : Oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Obstacle : Croisillon"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Obstacle : Oxer montant"/>
+        <text name="eq_shop_showJumpTripleBar" text="Obstacle : Triple barre"/>
+        <text name="eq_shop_showJumpHogsback" text="Obstacle : Dos d'âne"/>
+        <text name="eq_shop_showJumpFan2" text="Obstacle : Éventail à 2 barres"/>
+        <text name="eq_shop_showJumpFan3" text="Obstacle : Éventail à 3 barres"/>
+        <text name="eq_shop_showJumpLiverpool" text="Obstacle : Liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Obstacle : Cavaletti"/>
+        <text name="eq_config_poleColour" text="Couleur des barres"/>
+        <text name="eq_config_wingColour" text="Couleur des chandeliers"/>
+        <text name="eq_colour_white" text="Blanc"/>
+        <text name="eq_colour_cream" text="Crème"/>
+        <text name="eq_colour_red" text="Rouge"/>
+        <text name="eq_colour_burgundy" text="Bordeaux"/>
+        <text name="eq_colour_orange" text="Orange"/>
+        <text name="eq_colour_yellow" text="Jaune"/>
+        <text name="eq_colour_lime" text="Vert citron"/>
+        <text name="eq_colour_green" text="Vert"/>
+        <text name="eq_colour_darkGreen" text="Vert foncé"/>
+        <text name="eq_colour_skyBlue" text="Bleu ciel"/>
+        <text name="eq_colour_blue" text="Bleu"/>
+        <text name="eq_colour_navy" text="Bleu marine"/>
+        <text name="eq_colour_purple" text="Violet"/>
+        <text name="eq_colour_pink" text="Rose"/>
+        <text name="eq_colour_grey" text="Gris"/>
+        <text name="eq_colour_black" text="Noir"/>
         <text name="eq_shop_showJump_function" text="Un obstacle de saut dont les barres tombent quand votre cheval les touche et sont remises après le parcours, ou dès que vous vous éloignez."/>
         <text name="eq_shop_xcDropWall08" text="Mur de descente (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Mur de descente (1,2 m)"/>

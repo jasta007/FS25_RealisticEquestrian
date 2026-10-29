@@ -48,6 +48,32 @@
         <text name="eq_shop_xcLogPile" text="Stos bali"/>
         <text name="eq_shop_showJumpUpright" text="Przeszkoda: stacjonata"/>
         <text name="eq_shop_showJumpOxer" text="Przeszkoda: okser"/>
+        <text name="eq_shop_showJumpCrossrail" text="Przeszkoda: krzyżak"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Przeszkoda: okser wznoszący"/>
+        <text name="eq_shop_showJumpTripleBar" text="Przeszkoda: triplebarre"/>
+        <text name="eq_shop_showJumpHogsback" text="Przeszkoda: hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Przeszkoda: wachlarz z 2 drągami"/>
+        <text name="eq_shop_showJumpFan3" text="Przeszkoda: wachlarz z 3 drągami"/>
+        <text name="eq_shop_showJumpLiverpool" text="Przeszkoda: rów z wodą"/>
+        <text name="eq_shop_showJumpCavaletti" text="Przeszkoda: cavaletti"/>
+        <text name="eq_config_poleColour" text="Kolor drągów"/>
+        <text name="eq_config_wingColour" text="Kolor skrzydeł"/>
+        <text name="eq_colour_white" text="Biały"/>
+        <text name="eq_colour_cream" text="Kremowy"/>
+        <text name="eq_colour_red" text="Czerwony"/>
+        <text name="eq_colour_burgundy" text="Bordowy"/>
+        <text name="eq_colour_orange" text="Pomarańczowy"/>
+        <text name="eq_colour_yellow" text="Żółty"/>
+        <text name="eq_colour_lime" text="Limonkowy"/>
+        <text name="eq_colour_green" text="Zielony"/>
+        <text name="eq_colour_darkGreen" text="Ciemnozielony"/>
+        <text name="eq_colour_skyBlue" text="Błękitny"/>
+        <text name="eq_colour_blue" text="Niebieski"/>
+        <text name="eq_colour_navy" text="Granatowy"/>
+        <text name="eq_colour_purple" text="Fioletowy"/>
+        <text name="eq_colour_pink" text="Różowy"/>
+        <text name="eq_colour_grey" text="Szary"/>
+        <text name="eq_colour_black" text="Czarny"/>
         <text name="eq_shop_showJump_function" text="Przeszkoda skokowa, której drągi spadają, gdy koń je zahaczy, i wracają na miejsce po przejeździe albo gdy odjedziesz."/>
         <text name="eq_shop_xcDropWall08" text="Ściana uskoku (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Ściana uskoku (1,2 m)"/>

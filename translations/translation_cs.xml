@@ -48,6 +48,32 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障碍: 垂直障碍"/>
         <text name="eq_shop_showJumpOxer" text="障碍: 双横木"/>
+        <text name="eq_shop_showJumpCrossrail" text="障碍: 交叉杆"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="障碍: 上升双横木"/>
+        <text name="eq_shop_showJumpTripleBar" text="障碍: 三横木"/>
+        <text name="eq_shop_showJumpHogsback" text="障碍: 猪背障碍"/>
+        <text name="eq_shop_showJumpFan2" text="障碍: 双杆扇形"/>
+        <text name="eq_shop_showJumpFan3" text="障碍: 三杆扇形"/>
+        <text name="eq_shop_showJumpLiverpool" text="障碍: 利物浦水障"/>
+        <text name="eq_shop_showJumpCavaletti" text="障碍: 地杆"/>
+        <text name="eq_config_poleColour" text="横杆颜色"/>
+        <text name="eq_config_wingColour" text="侧翼颜色"/>
+        <text name="eq_colour_white" text="白色"/>
+        <text name="eq_colour_cream" text="奶油色"/>
+        <text name="eq_colour_red" text="红色"/>
+        <text name="eq_colour_burgundy" text="酒红色"/>
+        <text name="eq_colour_orange" text="橙色"/>
+        <text name="eq_colour_yellow" text="黄色"/>
+        <text name="eq_colour_lime" text="青柠色"/>
+        <text name="eq_colour_green" text="绿色"/>
+        <text name="eq_colour_darkGreen" text="深绿色"/>
+        <text name="eq_colour_skyBlue" text="天蓝色"/>
+        <text name="eq_colour_blue" text="蓝色"/>
+        <text name="eq_colour_navy" text="海军蓝"/>
+        <text name="eq_colour_purple" text="紫色"/>
+        <text name="eq_colour_pink" text="粉色"/>
+        <text name="eq_colour_grey" text="灰色"/>
+        <text name="eq_colour_black" text="黑色"/>
         <text name="eq_shop_showJump_function" text="马碰到时横木会掉落的障碍。跑完路线后或离开时，横木会放回原位。"/>
         <text name="eq_shop_xcDropWall08" text="落差墙（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="落差墙（1.2 m）"/>

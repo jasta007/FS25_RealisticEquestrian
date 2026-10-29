@@ -48,6 +48,32 @@
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
         <text name="eq_shop_showJumpUpright" text="Springhindernis: steilsprong"/>
         <text name="eq_shop_showJumpOxer" text="Springhindernis: oxer"/>
+        <text name="eq_shop_showJumpCrossrail" text="Springhindernis: kruis"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Springhindernis: oplopende oxer"/>
+        <text name="eq_shop_showJumpTripleBar" text="Springhindernis: triplebarre"/>
+        <text name="eq_shop_showJumpHogsback" text="Springhindernis: hogsback"/>
+        <text name="eq_shop_showJumpFan2" text="Springhindernis: waaier met 2 balken"/>
+        <text name="eq_shop_showJumpFan3" text="Springhindernis: waaier met 3 balken"/>
+        <text name="eq_shop_showJumpLiverpool" text="Springhindernis: liverpool"/>
+        <text name="eq_shop_showJumpCavaletti" text="Springhindernis: cavaletti"/>
+        <text name="eq_config_poleColour" text="Kleur balken"/>
+        <text name="eq_config_wingColour" text="Kleur vleugels"/>
+        <text name="eq_colour_white" text="Wit"/>
+        <text name="eq_colour_cream" text="Crème"/>
+        <text name="eq_colour_red" text="Rood"/>
+        <text name="eq_colour_burgundy" text="Bordeaux"/>
+        <text name="eq_colour_orange" text="Oranje"/>
+        <text name="eq_colour_yellow" text="Geel"/>
+        <text name="eq_colour_lime" text="Limoen"/>
+        <text name="eq_colour_green" text="Groen"/>
+        <text name="eq_colour_darkGreen" text="Donkergroen"/>
+        <text name="eq_colour_skyBlue" text="Hemelsblauw"/>
+        <text name="eq_colour_blue" text="Blauw"/>
+        <text name="eq_colour_navy" text="Marineblauw"/>
+        <text name="eq_colour_purple" text="Paars"/>
+        <text name="eq_colour_pink" text="Roze"/>
+        <text name="eq_colour_grey" text="Grijs"/>
+        <text name="eq_colour_black" text="Zwart"/>
         <text name="eq_shop_showJump_function" text="Een springhindernis waarvan de balken vallen als je paard ze raakt en na de ronde, of zodra je wegrijdt, weer worden opgelegd."/>
         <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Afsprongmuur (1,2 m)"/>

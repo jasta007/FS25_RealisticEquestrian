@@ -27,6 +27,7 @@ local Log = EqLog
 -- Placeables whose xml path has this in it carry falling poles.
 EqPoles.FOLDER = "placeables/showjumps/"
 EqPoles.PREFIX = "eqpole"
+EqPoles.END = "eqEnd"
 -- From art/source/show_jumps.py: POLE_LENGTH and POLE_R.
 EqPoles.LENGTH = 3.5
 EqPoles.RADIUS = 0.05
@@ -75,28 +76,34 @@ end
 
 
 --- Where a falling pole is, t seconds after it was knocked. Pure, for the tests.
---- @param fall table { y0 = the pole's middle at rest in its cups, restA/restB = its middle's
----   height lying on the ground under its +x/-x end, lead = 1 when the +x end goes first else -1,
----   push = 1 to slide towards +z else -1, length }
+--- @param fall table { a = { x, y, z } its +x end in its cups, b = { x, y, z } its -x end (in the
+---   jump's space: a crossrail's ends are at different heights, a fan's at different z),
+---   restA/restB = the height its middle lies at on the ground under each end, lead = 1 when the
+---   +x end goes first else -1, push = 1 to slide towards +z else -1 }
 --- @param t number seconds
---- @return number y of the middle, number z offset, number tilt (radians about z, +x end up),
----   boolean true once it lies still
+--- @return table pose { x, y, z of its middle, ry = turn about y (radians, +x end towards -z),
+---   rz = tilt about z (+x end up), still = true once it lies still }
 function EqPoles.fallPose(fall, t)
-    local function endAt(isLead, rest)
+    local function endAt(isLead, y0, rest)
         local te = isLead and t or t - EqPoles.LAG
-        if te <= 0 then return fall.y0, false end
-        local y = fall.y0 - 0.5 * EqPoles.GRAVITY * te * te
+        if te <= 0 then return y0, y0 <= rest end
+        local y = y0 - 0.5 * EqPoles.GRAVITY * te * te
         if y <= rest then return rest, true end
         return y, false
     end
-    local a, aDown = endAt(fall.lead > 0, fall.restA)
-    local b, bDown = endAt(fall.lead < 0, fall.restB)
+    local a, b = fall.a, fall.b
+    local ya, aDown = endAt(fall.lead > 0, a[2], fall.restA)
+    local yb, bDown = endAt(fall.lead < 0, b[2], fall.restB)
     local stopAt = EqPoles.PUSH / EqPoles.PUSH_DRAG
     local ts = math.min(math.max(t, 0), stopAt)
     local dz = fall.push * (EqPoles.PUSH * ts - 0.5 * EqPoles.PUSH_DRAG * ts * ts)
-    local length = fall.length or EqPoles.LENGTH
-    local tilt = math.asin(math.max(-1, math.min(1, (a - b) / length)))
-    return (a + b) / 2, dz, tilt, aDown and bDown and t >= stopAt
+    local ax, az, bx, bz = a[1], a[3] + dz, b[1], b[3] + dz
+    local horizontal = math.sqrt((ax - bx) ^ 2 + (az - bz) ^ 2)
+    return {
+        x = (ax + bx) / 2, y = (ya + yb) / 2, z = (az + bz) / 2,
+        ry = math.atan2(-(az - bz), ax - bx), rz = math.atan2(ya - yb, horizontal),
+        still = aDown and bDown and t >= stopAt,
+    }
 end
 
 
@@ -164,9 +171,12 @@ local function polesOf(placeable)
         local x, y, z = getTranslation(node)
         local rx, ry, rz = getRotation(node)
         local jump = getParent(node)
-        local pole = { node = node, root = jump, placeableRoot = root, state = EqPoles.UP, home = { x, y, z, rx, ry, rz }, cols = {} }
+        local pole = { node = node, root = jump, placeableRoot = root, state = EqPoles.UP, home = { x, y, z, rx, ry, rz }, cols = {},
+            half = EqPoles.LENGTH / 2 }
         for k = 0, getNumOfChildren(node) - 1 do
             local child = getChildAt(node, k)
+            -- A marker at the pole's +x end says how long it is (fans' poles are longer).
+            if getName(child) == EqPoles.END then pole.half = math.abs(getTranslation(child)) end
             local kind = getRigidBodyType ~= nil and getRigidBodyType(child) or nil
             if kind ~= nil and kind ~= noneType() and kind ~= "NoRigidBody" then
                 table.insert(pole.cols, { node = child, kind = kind })
@@ -198,6 +208,7 @@ function EqPoles.scan()
     end
     for _, placeable in ipairs(system.placeables) do
         if placeable.rootNode ~= nil and EqPoles.isOurs(placeable.configFileName) then
+            if EqJumpColours ~= nil then EqLog.try("EqPoles.scan colours", EqJumpColours.apply, placeable) end
             local ok, poles = EqLog.try("EqPoles.scan polesOf", polesOf, placeable)
             if ok and #poles > 0 then table.insert(list, { placeable = placeable, root = placeable.rootNode, poles = poles }) end
         end
@@ -262,13 +273,16 @@ function EqPoles.knock(pole, dirX, dirZ, hitX)
     end
     local lead = (hitX or 0) >= 0 and 1 or -1
     if hitX == nil then lead = math.random() < 0.5 and 1 or -1 end
-    local home = pole.home
-    local half = EqPoles.LENGTH / 2
+    -- Its ends where they are now, in the jump's space: the pole may be tilted (a crossrail) or
+    -- turned (a fan).
+    local half = pole.half or EqPoles.LENGTH / 2
+    local ax, ay, az = localToLocal(pole.node, root, half, 0, 0)
+    local bx, by, bz = localToLocal(pole.node, root, -half, 0, 0)
     local slide = push * EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
     pole.fall = {
-        y0 = home[2], lead = lead, push = push, length = EqPoles.LENGTH,
-        restA = groundIn(root, home[1] + half, home[3] + slide) + EqPoles.RADIUS,
-        restB = groundIn(root, home[1] - half, home[3] + slide) + EqPoles.RADIUS,
+        a = { ax, ay, az }, b = { bx, by, bz }, lead = lead, push = push,
+        restA = groundIn(root, ax, az + slide) + EqPoles.RADIUS,
+        restB = groundIn(root, bx, bz + slide) + EqPoles.RADIUS,
     }
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then EqLog.try("EqPoles.knock setRigidBodyType", setRigidBodyType, col.node, noneType()) end
@@ -468,11 +482,10 @@ function EqPoles.update()
         for _, pole in ipairs(jump.poles) do
             if pole.state == EqPoles.FALLING and exists(pole.node) then
                 pole.t = pole.t + dt / 1000
-                local y, dz, tilt, still = EqPoles.fallPose(pole.fall, pole.t)
-                local h = pole.home
-                setTranslation(pole.node, h[1], y, h[3] + dz)
-                setRotation(pole.node, h[4], h[5], h[6] + tilt)
-                if still then pole.state, pole.downAt = EqPoles.DOWN, now end
+                local pose = EqPoles.fallPose(pole.fall, pole.t)
+                setTranslation(pole.node, pose.x, pose.y, pose.z)
+                setRotation(pole.node, 0, pose.ry, pose.rz)
+                if pose.still then pole.state, pole.downAt = EqPoles.DOWN, now end
             elseif pole.state == EqPoles.DOWN then
                 if busy == nil then busy = roundBusy() end
                 if near == nil then near = riderNear(jump.root, now) end

@@ -48,6 +48,32 @@
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
         <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
         <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJumpCrossrail" text="Препятствие: крестовина"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Препятствие: восходящий оксер"/>
+        <text name="eq_shop_showJumpTripleBar" text="Препятствие: тройная жердь"/>
+        <text name="eq_shop_showJumpHogsback" text="Препятствие: хогсбэк"/>
+        <text name="eq_shop_showJumpFan2" text="Препятствие: веер из 2 жердей"/>
+        <text name="eq_shop_showJumpFan3" text="Препятствие: веер из 3 жердей"/>
+        <text name="eq_shop_showJumpLiverpool" text="Препятствие: ливерпуль"/>
+        <text name="eq_shop_showJumpCavaletti" text="Препятствие: кавалетти"/>
+        <text name="eq_config_poleColour" text="Цвет жердей"/>
+        <text name="eq_config_wingColour" text="Цвет крыльев"/>
+        <text name="eq_colour_white" text="Белый"/>
+        <text name="eq_colour_cream" text="Кремовый"/>
+        <text name="eq_colour_red" text="Красный"/>
+        <text name="eq_colour_burgundy" text="Бордовый"/>
+        <text name="eq_colour_orange" text="Оранжевый"/>
+        <text name="eq_colour_yellow" text="Жёлтый"/>
+        <text name="eq_colour_lime" text="Лаймовый"/>
+        <text name="eq_colour_green" text="Зелёный"/>
+        <text name="eq_colour_darkGreen" text="Тёмно-зелёный"/>
+        <text name="eq_colour_skyBlue" text="Голубой"/>
+        <text name="eq_colour_blue" text="Синий"/>
+        <text name="eq_colour_navy" text="Тёмно-синий"/>
+        <text name="eq_colour_purple" text="Фиолетовый"/>
+        <text name="eq_colour_pink" text="Розовый"/>
+        <text name="eq_colour_grey" text="Серый"/>
+        <text name="eq_colour_black" text="Чёрный"/>
         <text name="eq_shop_showJump_function" text="Конкурное препятствие, жерди которого падают, когда лошадь их задевает, и возвращаются на место после маршрута или когда вы уезжаете."/>
         <text name="eq_shop_xcDropWall08" text="Стенка спуска (0,8 м)"/>
         <text name="eq_shop_xcDropWall12" text="Стенка спуска (1,2 м)"/>

@@ -48,6 +48,32 @@
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
         <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
         <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJumpCrossrail" text="障害: クロスバー"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="障害: 上昇オクサー"/>
+        <text name="eq_shop_showJumpTripleBar" text="障害: トリプルバー"/>
+        <text name="eq_shop_showJumpHogsback" text="障害: ホッグスバック"/>
+        <text name="eq_shop_showJumpFan2" text="障害: 2本扇形"/>
+        <text name="eq_shop_showJumpFan3" text="障害: 3本扇形"/>
+        <text name="eq_shop_showJumpLiverpool" text="障害: リバプール"/>
+        <text name="eq_shop_showJumpCavaletti" text="障害: キャバレッティ"/>
+        <text name="eq_config_poleColour" text="バーの色"/>
+        <text name="eq_config_wingColour" text="ウィングの色"/>
+        <text name="eq_colour_white" text="白"/>
+        <text name="eq_colour_cream" text="クリーム"/>
+        <text name="eq_colour_red" text="赤"/>
+        <text name="eq_colour_burgundy" text="ワインレッド"/>
+        <text name="eq_colour_orange" text="オレンジ"/>
+        <text name="eq_colour_yellow" text="黄"/>
+        <text name="eq_colour_lime" text="ライム"/>
+        <text name="eq_colour_green" text="緑"/>
+        <text name="eq_colour_darkGreen" text="深緑"/>
+        <text name="eq_colour_skyBlue" text="空色"/>
+        <text name="eq_colour_blue" text="青"/>
+        <text name="eq_colour_navy" text="紺"/>
+        <text name="eq_colour_purple" text="紫"/>
+        <text name="eq_colour_pink" text="ピンク"/>
+        <text name="eq_colour_grey" text="灰色"/>
+        <text name="eq_colour_black" text="黒"/>
         <text name="eq_shop_showJump_function" text="馬が触れるとバーが落ちる障害。走行後、または離れるとバーは元に戻ります。"/>
         <text name="eq_shop_xcDropWall08" text="ドロップ壁（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="ドロップ壁（1.2 m）"/>

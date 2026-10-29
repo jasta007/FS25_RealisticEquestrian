@@ -29,4 +29,47 @@
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- 1.00 m high, 1.10 m spread; jumped along z, red flag at +x. Poles eqPole1.. fall (EqPoles). -->
     </placement>
+
+    <eqPoleColour>
+        <eqPoleColourConfigurations>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_white" color="0.8 0.8 0.78" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_cream" color="0.72 0.62 0.42" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_red" color="0.55 0.02 0.02" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_burgundy" color="0.22 0.01 0.02" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_orange" color="0.8 0.22 0.02" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_yellow" color="0.85 0.6 0.03" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_lime" color="0.3 0.55 0.04" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_green" color="0.04 0.3 0.06" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_darkGreen" color="0.01 0.09 0.03" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_skyBlue" color="0.15 0.42 0.75" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_blue" color="0.02 0.1 0.5" price="0" isDefault="true"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_navy" color="0.005 0.02 0.1" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_purple" color="0.18 0.04 0.42" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_pink" color="0.8 0.22 0.38" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_grey" color="0.2 0.2 0.2" price="0"/>
+            <eqPoleColourConfiguration name="$l10n_eq_colour_black" color="0.015 0.015 0.015" price="0"/>
+        </eqPoleColourConfigurations>
+    </eqPoleColour>
+
+    <eqWingColour>
+        <eqWingColourConfigurations>
+            <eqWingColourConfiguration name="$l10n_eq_colour_white" color="0.8 0.8 0.78" price="0" isDefault="true"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_cream" color="0.72 0.62 0.42" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_red" color="0.55 0.02 0.02" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_burgundy" color="0.22 0.01 0.02" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_orange" color="0.8 0.22 0.02" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_yellow" color="0.85 0.6 0.03" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_lime" color="0.3 0.55 0.04" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_green" color="0.04 0.3 0.06" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_darkGreen" color="0.01 0.09 0.03" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_skyBlue" color="0.15 0.42 0.75" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_blue" color="0.02 0.1 0.5" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_navy" color="0.005 0.02 0.1" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_purple" color="0.18 0.04 0.42" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_pink" color="0.8 0.22 0.38" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_grey" color="0.2 0.2 0.2" price="0"/>
+            <eqWingColourConfiguration name="$l10n_eq_colour_black" color="0.015 0.015 0.015" price="0"/>
+        </eqWingColourConfigurations>
+    </eqWingColour>
+
 </placeable>
