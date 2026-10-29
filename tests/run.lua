@@ -583,6 +583,35 @@ do
         unfit < average and average < fit and average > 10 and average < 22 and fit < 30,
         string.format("stamina 10 %.0f s, 50 %.0f s, 90 %.0f s", unfit, average, fit))
 
+    local function pushFrom(value, stamina)
+        local p, t = E.new(), 0
+        p.value = value
+        E.step(p, "gallop", 0.001, stamina)
+        while p.lock == nil and t < 600000 do
+            E.step(p, "gallop", 50, stamina)
+            t = t + 50
+        end
+        return t / 1000
+    end
+    local fromEmpty = E.new()
+    check("pushSecondsLeft from empty matches a real Push", near(E.pushSecondsLeft(fromEmpty, 50), average, 0.1),
+        string.format("%.2f s vs %.2f s", E.pushSecondsLeft(fromEmpty, 50), average))
+    for _, start in ipairs({ 40, 70, 90 }) do
+        for _, stamina in ipairs({ 10, 90 }) do
+            local mid = E.new()
+            mid.value = start
+            check(string.format("pushSecondsLeft from %d%% at stamina %d matches a real Push", start, stamina),
+                near(E.pushSecondsLeft(mid, stamina), pushFrom(start, stamina), 0.1),
+                string.format("%.2f s vs %.2f s", E.pushSecondsLeft(mid, stamina), pushFrom(start, stamina)))
+        end
+    end
+    local full = E.new()
+    full.value = E.LINE
+    check("no Push left at the line", E.pushSecondsLeft(full, 50) == 0)
+    local lower, higher = E.new(), E.new()
+    lower.value, higher.value = 40, 60
+    check("less Push is left higher up the bar", E.pushSecondsLeft(higher, 50) < E.pushSecondsLeft(lower, 50))
+
     local blown = E.new()
     local events = {}
     while blown.lock == nil and #events == 0 do events = ride(blown, "gallop", 50) end

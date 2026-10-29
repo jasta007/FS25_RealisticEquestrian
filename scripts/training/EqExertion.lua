@@ -207,6 +207,21 @@ function EqExertion.rate(ex, gait, stamina, speed)
 end
 
 
+--- How many seconds of Pushing are left before the horse is Fatigued, from where the bar is now
+--- (the rise speeds up near the top, so this is the true time, not the distance left).
+--- @param ex table
+--- @param stamina number|nil trained stamina
+--- @return number seconds
+function EqExertion.pushSecondsLeft(ex, stamina)
+    local share = math.min(math.max(ex.value / EqExertion.LINE, 0), 1)
+    local perSecond = EqExertion.PUSH_RISE * byStat(EqExertion.PUSH_STAMINA, stamina) / EqExertion.LINE
+    local climb = EqExertion.PUSH_CLIMB
+    if climb <= 0 then return (1 - share) / perSecond end
+    local root = math.sqrt(climb)
+    return (math.atan(root) - math.atan(root * share)) / (root * perSecond)
+end
+
+
 --- One frame.
 --- @param ex table
 --- @param gait string the horse's gait this frame (reverse, halt, walk, trot, canter or gallop)
