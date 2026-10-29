@@ -1661,8 +1661,8 @@ end)()
 
     -- Our show jumps: a pole falling is the rail, once per fence (James, 2026-10-29).
     round = EqShowJumping.newRound(course)
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(39.5)
     check("a pole falling just before the line is a rail at that fence",
@@ -1683,8 +1683,8 @@ end)()
         and EqShowJumping.fenceOfPole({ course = course, next = 2, pending = { index = 1 } }, 0, 41) == 1)
     round = EqShowJumping.newRound(course)
     round.xc = true
-    z = 20.25
-    EqShowJumping.step(round, { px = 0, pz = 19.75, x = 0, z = 20.25, dt = 100 })
+    z = 25.25
+    EqShowJumping.step(round, { px = 0, pz = 24.75, x = 0, z = 25.25, dt = 100 })
     wait(3000)
     ride(39.5)
     check("cross country has no rails from poles", EqShowJumping.step(round, { px = 0, pz = 39.75, x = 0, z = 39.75, dt = 100,
