@@ -594,8 +594,12 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   real faults and time. In an arena big enough, the dressage test is the rating's length (15,
   20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
   gets one go at each phase, and later rounds are practice. Phases you don't ride are
-  simulated. A one-phase event with a ridden round is scored in penalties like eventing, and
-  your round is placed against the simulated field. Coming up to the start line on an entered
+  simulated. A one-phase event with a ridden round is scored in penalties like eventing.
+  A show jumping or cross country round is not put straight against the simulated rivals: it is
+  graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
+  course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
+  of your own horse it gets, from its best to its worst. The horse's stats still decide most;
+  your riding decides its day. A ridden dressage test counts its real faults. Coming up to the start line on an entered
   horse, a gold announcement says whether this round counts, is practice (phase already
   ridden) or the course is too small; the finish says what was kept and when results come.
 

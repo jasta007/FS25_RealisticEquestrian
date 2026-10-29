@@ -557,7 +557,7 @@ function EqHostManager.onRoundDone(vehicle, course, sj)
             EqCompetitionManager.eventTitle(event)))
         return
     end
-    keepRidden(event, horseId, phase, EqHosting.roundSheet(sj.result, sj.refusals))
+    keepRidden(event, horseId, phase, EqHosting.roundSheet(sj.result, sj.refusals, sj.allowed))
 end
 
 
@@ -616,6 +616,7 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
             xmlFile:setInt(rideKey .. "#refusals", sheet.refusals or 0)
             xmlFile:setFloat(rideKey .. "#time", sheet.time or 0)
             if sheet.eliminated then xmlFile:setBool(rideKey .. "#eliminated", true) end
+            if sheet.grade ~= nil then xmlFile:setFloat(rideKey .. "#grade", sheet.grade) end
             i = i + 1
         end
     end
@@ -642,7 +643,8 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
             hosted.ridden[horseId] = hosted.ridden[horseId] or {}
             hosted.ridden[horseId][phase] = { penalties = xmlFile:getFloat(rideKey .. "#penalties", 0),
                 down = xmlFile:getInt(rideKey .. "#down", 0), refusals = xmlFile:getInt(rideKey .. "#refusals", 0),
-                time = xmlFile:getFloat(rideKey .. "#time", 0), eliminated = xmlFile:getBool(rideKey .. "#eliminated", false) or nil }
+                time = xmlFile:getFloat(rideKey .. "#time", 0), eliminated = xmlFile:getBool(rideKey .. "#eliminated", false) or nil,
+                grade = xmlFile:getFloat(rideKey .. "#grade") }
         end
         i = i + 1
     end

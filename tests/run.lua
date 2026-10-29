@@ -3772,6 +3772,33 @@ end)()
     check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
         and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
 
+    -- Graded rounds: the ride picks where in its own range the horse lands.
+    check("ride grade: clear inside the time is perfect", EqHosting.rideGrade("showJumping", 0, 40, 41) == 1)
+    local slow = EqHosting.rideGrade("showJumping", 0, 67.3, 41)
+    check("ride grade: very slow costs most of the time part", slow > 0.41 and slow < 0.44, string.format("%.3f", slow))
+    check("ride grade: rails cost more than a little time", EqHosting.rideGrade("showJumping", 8, 40, 41)
+        < EqHosting.rideGrade("showJumping", 0, 45, 41))
+    check("ride grade: a cross country refusal is about one rail's worth less",
+        EqHosting.rideGrade("crossCountry", 20, 100, 120) > EqHosting.rideGrade("showJumping", 12, 40, 41))
+    local graded = EqHosting.roundSheet({ seconds = 50, faults = 4, timeFaults = 9, total = 13 }, 0, 41)
+    check("ride grade: kept on the sheet", graded.grade ~= nil and graded.grade < 1 and graded.penalties == 13)
+    local function meanPlace(grade, rating)
+        local sum = 0
+        for i = 1, 200 do
+            local ev = { discipline = "showJumping", tier = "novice", prize = 1000,
+                hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0, grade = grade } } } } }
+            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = rating, condition = 1, stats = stats } },
+                EqRandom.new("graded " .. i), 8)) do
+                if r.key == "me" then sum = sum + r.place end
+            end
+        end
+        return sum / 200
+    end
+    local good, bad = meanPlace(1, 45), meanPlace(0.1, 45)
+    check("ride grade: a good ride places better than a poor one", good + 1 < bad, string.format("%.2f vs %.2f", good, bad))
+    local weakClear = meanPlace(1, 10)
+    check("ride grade: a weak horse ridden clear still doesn't win every time", weakClear > 1.5, string.format("%.2f", weakClear))
+
     -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
     local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }
     local order = EqSponsors.order({ CHARLIE = 3, ECHO = 5, BRAVO = 3 }, names, 1)
