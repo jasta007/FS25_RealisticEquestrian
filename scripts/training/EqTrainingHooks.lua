@@ -656,7 +656,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
     local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
     if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
-    if routineShown() then
+    local coursing = EqCourseHooks.isBusy()
+    if routineShown() and not coursing then
         -- Near dressage markers the routine rides between them (EqDressage).
         local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
         local event = EqTraining.routineStep(sheet, gait, steerInput(spec), dt, worn, math.random, okCourse and course or nil)
@@ -669,7 +670,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             Log:info("Dressage routine: %s x%d, now %s%s", event, sheet.routine.mult, tostring(sheet.routine.request),
                 task ~= nil and task.marker ~= nil and string.format(" %s to %s", task.gait, task.marker.letter) or "")
         end
-    elseif EqTraining.breakRoutine(sheet) then
+    elseif EqTraining.breakRoutine(sheet) and not coursing then
         EqTrainingHud.pop("routineLost")
     end
 

@@ -350,6 +350,7 @@
         <text name="eq_sj_clearPop" text="Fehlerfrei!"/>
         <text name="eq_sj_faultsPop" text="%s Fehler"/>
         <text name="eq_sj_retired" text="Springrunde abgebrochen"/>
+        <text name="eq_xc_retired" text="Geländeritt abgebrochen"/>
         <text name="eq_sj_startLine" text="Startlinie"/>
         <text name="eq_sj_finishLine" text="Ziellinie"/>
         <text name="eq_sj_fenceRow" text="Hindernis %d von %d"/>

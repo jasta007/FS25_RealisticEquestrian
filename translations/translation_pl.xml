@@ -349,6 +349,7 @@
         <text name="eq_sj_clearPop" text="Czysty przejazd!"/>
         <text name="eq_sj_faultsPop" text="Punkty karne: %s"/>
         <text name="eq_sj_retired" text="Przejazd przerwany"/>
+        <text name="eq_xc_retired" text="Przejazd crossowy przerwany"/>
         <text name="eq_sj_startLine" text="Linia startu"/>
         <text name="eq_sj_finishLine" text="Linia mety"/>
         <text name="eq_sj_fenceRow" text="Przeszkoda %d z %d"/>

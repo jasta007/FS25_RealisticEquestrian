@@ -588,7 +588,9 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
             elseif routine.clock > routine.bonus.deadline then
                 routine.bonus = nil
             end
-        elseif routine.preview == nil then
+        elseif routine.preview == nil and not task.opening then
+            -- No quick changes on the way in to A or down to X: riding up past the arena's
+            -- letters showed "Change: Canter" before the test began (James, 2026-10-28).
             for _, marker in ipairs(course.markers) do
                 if not same(marker, task.marker) and not same(marker, routine.from)
                     and distance(course.x, course.z, marker.x, marker.z) <= EqDressage.PASS_RADIUS then

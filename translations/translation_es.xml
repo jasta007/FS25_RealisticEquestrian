@@ -689,6 +689,7 @@
         <text name="eq_sj_clearPop" text="¡Sin faltas!"/>
         <text name="eq_sj_faultsPop" text="%s faltas"/>
         <text name="eq_sj_retired" text="Recorrido abandonado"/>
+        <text name="eq_xc_retired" text="Recorrido de cross abandonado"/>
         <text name="eq_sj_startLine" text="Línea de salida"/>
         <text name="eq_sj_finishLine" text="Línea de meta"/>
         <text name="eq_sj_fenceRow" text="Obstáculo %d de %d"/>
