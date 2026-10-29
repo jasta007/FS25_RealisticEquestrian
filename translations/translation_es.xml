@@ -824,5 +824,8 @@
         <text name="rl_messageTitle_eqHosting" text="Organización"/>
         <text name="eq_settings_hostInterval" text="Meses entre concursos propios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Cuántos meses tras el mes de tu último concurso organizado hasta poder organizar otro."/>
+        <text name="eq_host_warning" text="A tu %s le falta: %s. Soluciónalo hoy o el concurso se cancelará mañana."/>
+        <text name="eq_host_cancelled" text="Tu %s se canceló, seguía faltando: %s. Tu reputación como organizador se resiente."/>
+        <text name="eq_host_done" text="Tu %s ha terminado: vinieron %d caballos visitantes. Ingresos %s (%s de inscripciones, %s de taquilla), popularidad %d."/>
     </texts>
 </l10n>

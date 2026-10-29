@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="主办"/>
         <text name="eq_settings_hostInterval" text="主办比赛间隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="从你上次主办比赛的月份起，需要多少个月才能再次主办。"/>
+        <text name="eq_host_warning" text="你的%s缺少：%s。今天解决，否则明天比赛将被取消。"/>
+        <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主办声誉受损。"/>
+        <text name="eq_host_done" text="你的%s已结束：来了%d匹来访马。收入 %s（报名费 %s，门票 %s），人气 %d。"/>
     </texts>
 </l10n>

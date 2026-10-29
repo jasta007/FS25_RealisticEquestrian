@@ -824,5 +824,8 @@
         <text name="rl_messageTitle_eqHosting" text="Ausrichten"/>
         <text name="eq_settings_hostInterval" text="Monate zwischen eigenen Turnieren"/>
         <text name="eq_settings_hostInterval_tooltip" text="Wie viele Monate nach dem Monat deines letzten eigenen Turniers du ein weiteres ausrichten kannst."/>
+        <text name="eq_host_warning" text="Deinem Turnier %s fehlt: %s. Kümmere dich heute darum, sonst wird es morgen abgesagt."/>
+        <text name="eq_host_cancelled" text="Dein Turnier %s wurde abgesagt, es fehlte weiter: %s. Dein Ruf als Ausrichter leidet."/>
+        <text name="eq_host_done" text="Dein Turnier %s ist vorbei: %d Gastpferde kamen. Einnahmen %s (%s Startgelder, %s Eintritt), Beliebtheit %d."/>
     </texts>
 </l10n>

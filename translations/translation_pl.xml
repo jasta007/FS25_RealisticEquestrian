@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Organizacja"/>
         <text name="eq_settings_hostInterval" text="Miesiące między własnymi zawodami"/>
         <text name="eq_settings_hostInterval_tooltip" text="Ile miesięcy po miesiącu ostatnich własnych zawodów musi minąć, zanim zorganizujesz kolejne."/>
+        <text name="eq_host_warning" text="Twoim zawodom %s brakuje: %s. Napraw to dziś, inaczej jutro zostaną odwołane."/>
+        <text name="eq_host_cancelled" text="Twoje zawody %s zostały odwołane, nadal brakowało: %s. Cierpi twoja reputacja organizatora."/>
+        <text name="eq_host_done" text="Twoje zawody %s się zakończyły: przyjechało %d koni gości. Wpływy %s (%s wpisowe, %s bilety), popularność %d."/>
     </texts>
 </l10n>

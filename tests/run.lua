@@ -3845,6 +3845,17 @@ end)()
     check("host booking: refund half two months ahead", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 10) == 10000)
     check("host booking: no refund the month before", EqHostManager.refundFor({ month = 12, setupFee = 20000 }, 11) == 0)
 
+    -- The event month: a day's feed, and the checks a running event can fail.
+    check("host month: a day's feed for the visitors", EqHostManager.dailyFeed(3000, 14, 3) == 14000)
+    check("host month: no visitors eat nothing", EqHostManager.dailyFeed(3000, 0, 3) == 0)
+    local short = EqHosting.check(host, "dressage", "novice", { courses = {}, arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 100 })
+    local failed = EqHostManager.failedChecks(short, true)
+    local hasFeed = false
+    for _, id in ipairs(failed) do if id == "feed" then hasFeed = true end end
+    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "arena" and not hasFeed)
+    local all = EqHostManager.failedChecks(short, false)
+    check("host month: the opening check counts the feed", all[#all] == "feed")
+
     EqHostManager.reset()
     EqHostManager.bookings[3] = { type = "eventing", rating = "championship", month = 15, setupFee = 120000, previousLast = 4 }
     EqHostManager.lastMonth[3] = 15

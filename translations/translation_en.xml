@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Hosting"/>
         <text name="eq_settings_hostInterval" text="Months between hosted events"/>
         <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
+        <text name="eq_host_warning" text="Your %s is short of: %s. Sort it out today or the event is cancelled tomorrow."/>
+        <text name="eq_host_cancelled" text="Your %s was cancelled, still short of: %s. Your hosting reputation suffers."/>
+        <text name="eq_host_done" text="Your %s is over: %d visiting horses came. Takings %s (%s entries, %s gate), popularity %d."/>
     </texts>
 </l10n>

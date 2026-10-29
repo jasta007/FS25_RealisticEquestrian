@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Organiseren"/>
         <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
         <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
+        <text name="eq_host_warning" text="Je %s komt tekort: %s. Los het vandaag op, anders wordt de wedstrijd morgen geannuleerd."/>
+        <text name="eq_host_cancelled" text="Je %s is geannuleerd, nog steeds tekort: %s. Je reputatie als organisator lijdt eronder."/>
+        <text name="eq_host_done" text="Je %s is voorbij: er kwamen %d gastpaarden. Opbrengst %s (%s inschrijvingen, %s entree), populariteit %d."/>
     </texts>
 </l10n>

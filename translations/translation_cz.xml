@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Pořádání"/>
         <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
         <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
+        <text name="eq_host_warning" text="Tvému závodu %s chybí: %s. Vyřeš to dnes, jinak bude zítra zrušen."/>
+        <text name="eq_host_cancelled" text="Tvůj závod %s byl zrušen, stále chybělo: %s. Tvoje pověst pořadatele utrpí."/>
+        <text name="eq_host_done" text="Tvůj závod %s skončil: přijelo %d hostujících koní. Tržby %s (%s startovné, %s vstupné), oblíbenost %d."/>
     </texts>
 </l10n>

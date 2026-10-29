@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Organização"/>
         <text name="eq_settings_hostInterval" text="Meses entre eventos próprios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quantos meses após o mês do seu último evento organizado até poder organizar outro."/>
+        <text name="eq_host_warning" text="Falta ao seu %s: %s. Resolva hoje ou o evento será cancelado amanhã."/>
+        <text name="eq_host_cancelled" text="Seu %s foi cancelado, ainda faltava: %s. Sua reputação como organizador é prejudicada."/>
+        <text name="eq_host_done" text="Seu %s terminou: vieram %d cavalos visitantes. Receita %s (%s de inscrições, %s de bilheteria), popularidade %d."/>
     </texts>
 </l10n>

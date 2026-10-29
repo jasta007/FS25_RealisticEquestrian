@@ -822,5 +822,8 @@
         <text name="rl_messageTitle_eqHosting" text="Проведение"/>
         <text name="eq_settings_hostInterval" text="Месяцев между своими соревнованиями"/>
         <text name="eq_settings_hostInterval_tooltip" text="Сколько месяцев после месяца вашего последнего соревнования должно пройти до следующего."/>
+        <text name="eq_host_warning" text="Для соревнования «%s» не хватает: %s. Исправьте сегодня, иначе завтра оно будет отменено."/>
+        <text name="eq_host_cancelled" text="Соревнование «%s» отменено, по-прежнему не хватало: %s. Ваша репутация организатора страдает."/>
+        <text name="eq_host_done" text="Соревнование «%s» завершено: приехало гостевых лошадей: %d. Доход %s (%s взносы, %s билеты), популярность %d."/>
     </texts>
 </l10n>

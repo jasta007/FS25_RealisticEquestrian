@@ -235,6 +235,52 @@ function EqHostVenue.feed(farmId)
 end
 
 
+--- Take horse feed from the farm: its silos first, then its horse troughs.
+--- @param farmId number
+--- @param litres number
+--- @return number taken litres actually taken
+function EqHostVenue.takeFeed(farmId, litres)
+    local types = EqHostVenue.feedTypes()
+    local indices = {}
+    for index in pairs(types) do table.insert(indices, index) end
+    table.sort(indices)
+    local left, seen = litres, {}
+    local pens = {}
+    for _, placeable in ipairs(placeables()) do
+        if ownerOf(placeable) == farmId then
+            if isHorsePen(placeable) and placeable.spec_husbandryFood ~= nil then table.insert(pens, placeable) end
+            for _, storage in ipairs(storagesOf(placeable)) do
+                if left > 0 and not seen[storage] and storage.getFillLevel ~= nil and storage.setFillLevel ~= nil then
+                    seen[storage] = true
+                    for _, index in ipairs(indices) do
+                        local ok, level = EqLog.try("EqHostVenue.takeFeed getFillLevel", storage.getFillLevel, storage, index)
+                        if left > 0 and ok and type(level) == "number" and level > 0 then
+                            local take = math.min(level, left)
+                            if EqLog.try("EqHostVenue.takeFeed setFillLevel", storage.setFillLevel, storage, level - take, index) then
+                                left = left - take
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    -- Troughs: the base game's addFood takes a negative amount and stops at empty.
+    for _, pen in ipairs(pens) do
+        local spec = pen.spec_husbandryFood
+        for _, index in ipairs(indices) do
+            local level = spec.fillLevels ~= nil and spec.fillLevels[index] or nil
+            if left > 0 and type(level) == "number" and level > 0 and pen.addFood ~= nil then
+                EqLog.try("EqHostVenue.takeFeed addFood", pen.addFood, pen, farmId, -math.min(level, left), index, nil, nil, nil)
+                local after = spec.fillLevels[index] or level
+                left = left - math.max(0, level - after)
+            end
+        end
+    end
+    return litres - left
+end
+
+
 --- @return number litres a visiting horse eats in a month (RLRM's food curve is a month's ration)
 function EqHostVenue.feedPerHorse()
     local system = g_currentMission ~= nil and g_currentMission.animalSystem or nil

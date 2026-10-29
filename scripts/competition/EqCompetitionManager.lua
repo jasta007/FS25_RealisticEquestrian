@@ -943,7 +943,10 @@ function EqCompetitionManager.turnOver(kind, month)
     for _, id in ipairs(ids) do
         local event = EqCompetitionManager.events[id]
         EqCompetitionManager.events[id] = nil
+        -- A hosted event's turnout is settled first (it sets the field), its takings paid after.
+        if event.hosted ~= nil and EqHostManager ~= nil then EqHostManager.beforeResolve(event) end
         EqCompetitionManager.resolve(event, horses, month)
+        if event.hosted ~= nil and EqHostManager ~= nil then EqHostManager.afterResolve(event) end
     end
 
     EqCompetitionManager.openRound(kind)
@@ -953,6 +956,7 @@ end
 
 function EqCompetitionManager.onDayChanged()
     EqCompetitionManager.dailyCare(indexHorses())
+    if EqHostManager ~= nil then EqHostManager.onDayChanged() end
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND, EqCompetitionManager.endedMonth())
     end
@@ -1334,6 +1338,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
         if event.hosted ~= nil then
             xmlFile:setInt(eventKey .. ".hosted#farmId", event.hosted.farmId)
             xmlFile:setString(eventKey .. ".hosted#rating", event.hosted.rating)
+            if EqHostManager ~= nil then EqHostManager.saveEventState(xmlFile, eventKey .. ".hosted", event.hosted) end
         end
         for j, entry in ipairs(event.entries) do
             local entryKey = string.format("%s.entry(%d)", eventKey, j - 1)
@@ -1422,6 +1427,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
         if xmlFile:hasProperty(eventKey .. ".hosted") then
             event.hosted = { farmId = xmlFile:getInt(eventKey .. ".hosted#farmId", 1),
                 rating = xmlFile:getString(eventKey .. ".hosted#rating", "") }
+            if EqHostManager ~= nil then EqHostManager.loadEventState(xmlFile, eventKey .. ".hosted", event.hosted) end
         end
         local j = 0
         while true do
