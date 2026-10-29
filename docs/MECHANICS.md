@@ -603,7 +603,8 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   horse, a gold announcement says whether this round counts, is practice (phase already
   ridden) or the course is too small; the finish says what was kept and when results come.
 
-Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement.
+Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
+`eqHostWait` (testing) ends the wait before you can host again.
 
 ## Buying horses
 

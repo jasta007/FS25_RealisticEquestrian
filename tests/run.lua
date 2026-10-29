@@ -3826,5 +3826,18 @@ end)()
     EqHostManager.reset()
 end)()
 
+;(function()
+    EqHostManager.reset()
+    EqHostManager.lastMonth[3] = 15
+    EqHostManager.bookings[3] = { type = "dressage", rating = "novice", month = 15, previousLast = 9 }
+    check("host wait: clearing reports a wait", EqHostManager.clearWait(3) == true)
+    check("host wait: last month and booking's previous month forgotten",
+        EqHostManager.lastMonth[3] == nil and EqHostManager.bookings[3].previousLast == nil)
+    check("host wait: any month free after clearing", #EqHostManager.choices(16, EqHostManager.lastMonth[3], 6) > 0
+        and EqHostManager.choices(16, EqHostManager.lastMonth[3], 6)[1] == 17)
+    check("host wait: nothing to clear twice", EqHostManager.clearWait(3) == false)
+    EqHostManager.reset()
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

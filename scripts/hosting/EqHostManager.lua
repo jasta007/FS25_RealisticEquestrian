@@ -185,6 +185,19 @@ function EqHostManager.book(farmId, typeName, ratingName, month)
 end
 
 
+--- Testing (eqHostWait): forget the farm's last hosted month, so the wait between events is over.
+--- A booking still waiting for its month stays booked.
+--- @param farmId number
+--- @return boolean true when there was a wait to clear
+function EqHostManager.clearWait(farmId)
+    local booking = EqHostManager.bookings[farmId]
+    local had = EqHostManager.lastMonth[farmId] ~= nil
+    EqHostManager.lastMonth[farmId] = nil
+    if booking ~= nil then booking.previousLast = nil end
+    return had
+end
+
+
 --- Cancel a farm's booking before its month starts.
 --- @param farmId number
 --- @return boolean ok
