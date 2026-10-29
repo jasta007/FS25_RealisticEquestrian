@@ -249,8 +249,23 @@ can start.
 
 #### Falling poles
 
-The shop's own show jumps (Show Jump: Upright, 1.00 m, and Show Jump: Oxer, 0.95 m front and 1.00 m
-back, 1.1 m spread) have poles that fall. The stands and wings never move. When the horse's legs
+The shop's own show jumps have poles that fall:
+
+| Jump | Top | Spread | Poles | Wings |
+|---|---|---|---|---|
+| Upright | 1.00 m | - | 3 | Picket fence |
+| Oxer | 1.00 m | 1.1 m | 2 front, 1 back | Fan panel |
+| Crossrail | 0.78 m at the ends | - | 2 crossed | Rustic logs |
+| Ascending Oxer | 1.05 m | 1.2 m | 2 front, 2 back (higher) | Sloping ladder |
+| Triple Bar | 1.10 m | 1.8 m | 1 per row, rising | Pillars |
+| Hogsback | 1.10 m (middle) | 1.6 m | 1 per row, middle highest | Fan panel |
+| 2 Pole Fan | 1.00 m | 1.4 m at the wide end | 2 from one stand | Sloping ladder |
+| 3 Pole Fan | 1.00 m | 1.8 m at the wide end | 3 from one stand | Pillars |
+| Liverpool | 1.00 m | - | 2, over a water tray | Picket fence |
+| Cavaletti | 0.47 m | - | 1 on wooden X ends | None |
+
+Each has a Pole colour option in the shop (the poles' coloured bands, stand tops and trim) and,
+with wings, a Wing colour option, from 16 colours. The stands and wings never move. When the horse's legs
 clip a pole in the air, that pole drops at once; any other rail over one of these jumps (it hit
 the jump hard or landed on it) drops the highest pole still up, and running into the jump without
 jumping knocks the top pole of the row it ran into. The fall is animated, not physics:
