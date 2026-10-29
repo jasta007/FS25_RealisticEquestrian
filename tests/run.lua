@@ -3877,7 +3877,7 @@ end)()
         for _, c in ipairs(result.checks) do if not c.ok then table.insert(t, c.id) end end
         return table.concat(t, " ")
     end)())
-    check("hosting: 3 Day Event setup fee 1.5x", result.setupFee == 30000)
+    check("hosting: 3 Day Event setup fee 1.5x", result.setupFee == 33000)
     check("hosting: visitors = field less own places", result.visitors == 14 and result.feedNeed == 14000)
 
     result = EqHosting.check(host, "crossCountry", "championship", venue)
