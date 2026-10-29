@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d of %d visiting horses"/>
         <text name="eq_host_takingsLine" text="%s entries, %s gate"/>
         <text name="eq_host_monthsAhead" text="in %d months"/>
+        <text name="eq_host_monthNow" text="now"/>
         <text name="eq_host_yourFarm" text="Your Farm"/>
         <text name="eq_host_opened" text="Your %s has started. Enter your horses on the Events tab; results come at the end of the month."/>
         <text name="eq_host_book_noConfig" text="Hosting is not available: the hosting rules did not load."/>

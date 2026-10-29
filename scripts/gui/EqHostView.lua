@@ -109,7 +109,9 @@ function EqHostView.monthOptions(months)
     for _, month in ipairs(months) do
         local ahead = month - now
         local key = ahead == 1 and "eq_host_monthOption1" or "eq_host_monthOption"
-        table.insert(texts, string.format(g_i18n:getText(key), EqHostManager.monthText(month), ahead))
+        local text, named = EqHostManager.monthText(month)
+        -- Without a month's name the text already says "in N months": don't say it twice.
+        table.insert(texts, named and string.format(g_i18n:getText(key), text, ahead) or text)
     end
     return texts
 end

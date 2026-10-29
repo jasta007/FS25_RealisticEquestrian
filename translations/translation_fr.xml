@@ -791,6 +791,7 @@
         <text name="eq_host_visitors" text="%d chevaux invités sur %d"/>
         <text name="eq_host_takingsLine" text="%s d'engagements, %s d'entrées"/>
         <text name="eq_host_monthsAhead" text="dans %d mois"/>
+        <text name="eq_host_monthNow" text="maintenant"/>
         <text name="eq_host_yourFarm" text="Votre ferme"/>
         <text name="eq_host_opened" text="Votre %s a commencé. Engagez vos chevaux dans l'onglet Concours ; résultats à la fin du mois."/>
         <text name="eq_host_book_noConfig" text="Organisation indisponible : les règles d'organisation ne se sont pas chargées."/>

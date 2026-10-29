@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d su %d cavalli ospiti"/>
         <text name="eq_host_takingsLine" text="%s iscrizioni, %s biglietti"/>
         <text name="eq_host_monthsAhead" text="tra %d mesi"/>
+        <text name="eq_host_monthNow" text="adesso"/>
         <text name="eq_host_yourFarm" text="La tua fattoria"/>
         <text name="eq_host_opened" text="La tua gara %s è iniziata. Iscrivi i cavalli nella scheda Gare; i risultati arrivano a fine mese."/>
         <text name="eq_host_book_noConfig" text="Organizzazione non disponibile: le regole non sono state caricate."/>

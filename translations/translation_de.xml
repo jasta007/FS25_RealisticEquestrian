@@ -791,6 +791,7 @@
         <text name="eq_host_visitors" text="%d von %d Gastpferden"/>
         <text name="eq_host_takingsLine" text="%s Startgelder, %s Eintritt"/>
         <text name="eq_host_monthsAhead" text="in %d Monaten"/>
+        <text name="eq_host_monthNow" text="jetzt"/>
         <text name="eq_host_yourFarm" text="Dein Hof"/>
         <text name="eq_host_opened" text="Dein Turnier %s hat begonnen. Melde deine Pferde im Tab Turniere an; die Ergebnisse gibt es am Monatsende."/>
         <text name="eq_host_book_noConfig" text="Ausrichten ist nicht verfügbar: die Regeln dafür wurden nicht geladen."/>

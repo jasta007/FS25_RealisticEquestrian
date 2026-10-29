@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d / %d 匹来访马"/>
         <text name="eq_host_takingsLine" text="报名费 %s，门票 %s"/>
         <text name="eq_host_monthsAhead" text="%d个月后"/>
+        <text name="eq_host_monthNow" text="本月"/>
         <text name="eq_host_yourFarm" text="你的农场"/>
         <text name="eq_host_opened" text="你的%s已开始。在比赛标签页为你的马报名；结果在月底公布。"/>
         <text name="eq_host_book_noConfig" text="无法主办：主办规则未能加载。"/>

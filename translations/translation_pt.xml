@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d de %d cavalos visitantes"/>
         <text name="eq_host_takingsLine" text="%s de inscrições, %s de bilheteria"/>
         <text name="eq_host_monthsAhead" text="em %d meses"/>
+        <text name="eq_host_monthNow" text="agora"/>
         <text name="eq_host_yourFarm" text="Sua fazenda"/>
         <text name="eq_host_opened" text="Seu %s começou. Inscreva seus cavalos na aba Eventos; os resultados saem no fim do mês."/>
         <text name="eq_host_book_noConfig" text="Não é possível organizar: as regras de organização não carregaram."/>

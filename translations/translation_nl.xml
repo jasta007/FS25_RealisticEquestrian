@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d van %d gastpaarden"/>
         <text name="eq_host_takingsLine" text="%s inschrijvingen, %s entree"/>
         <text name="eq_host_monthsAhead" text="over %d maanden"/>
+        <text name="eq_host_monthNow" text="nu"/>
         <text name="eq_host_yourFarm" text="Jouw boerderij"/>
         <text name="eq_host_opened" text="Jouw %s is begonnen. Schrijf je paarden in op het tabblad Wedstrijden; uitslagen aan het eind van de maand."/>
         <text name="eq_host_book_noConfig" text="Organiseren is niet beschikbaar: de regels zijn niet geladen."/>

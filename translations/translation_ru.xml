@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d из %d гостевых лошадей"/>
         <text name="eq_host_takingsLine" text="%s взносы, %s билеты"/>
         <text name="eq_host_monthsAhead" text="через %d мес."/>
+        <text name="eq_host_monthNow" text="сейчас"/>
         <text name="eq_host_yourFarm" text="Ваша ферма"/>
         <text name="eq_host_opened" text="Ваше соревнование «%s» началось. Заявите лошадей на вкладке «Соревнования»; итоги в конце месяца."/>
         <text name="eq_host_book_noConfig" text="Проведение недоступно: правила проведения не загрузились."/>

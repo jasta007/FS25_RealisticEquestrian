@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d z %d hostujících koní"/>
         <text name="eq_host_takingsLine" text="%s startovné, %s vstupné"/>
         <text name="eq_host_monthsAhead" text="za %d měs."/>
+        <text name="eq_host_monthNow" text="nyní"/>
         <text name="eq_host_yourFarm" text="Tvoje farma"/>
         <text name="eq_host_opened" text="Tvůj závod %s začal. Přihlas koně na záložce Závody; výsledky budou na konci měsíce."/>
         <text name="eq_host_book_noConfig" text="Pořádání není dostupné: pravidla se nenačetla."/>

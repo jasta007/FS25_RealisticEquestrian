@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="来場馬 %d / %d 頭"/>
         <text name="eq_host_takingsLine" text="エントリー料 %s、入場料 %s"/>
         <text name="eq_host_monthsAhead" text="%dか月後"/>
+        <text name="eq_host_monthNow" text="今月"/>
         <text name="eq_host_yourFarm" text="あなたの牧場"/>
         <text name="eq_host_opened" text="あなたの%sが始まりました。大会タブで馬をエントリーしてください。結果は月末に出ます。"/>
         <text name="eq_host_book_noConfig" text="主催できません：主催ルールを読み込めませんでした。"/>

@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d / %d 匹來訪馬"/>
         <text name="eq_host_takingsLine" text="報名費 %s，門票 %s"/>
         <text name="eq_host_monthsAhead" text="%d個月後"/>
+        <text name="eq_host_monthNow" text="本月"/>
         <text name="eq_host_yourFarm" text="你的農場"/>
         <text name="eq_host_opened" text="你的%s已開始。在比賽標籤頁為你的馬報名；結果在月底公佈。"/>
         <text name="eq_host_book_noConfig" text="無法主辦：主辦規則未能載入。"/>

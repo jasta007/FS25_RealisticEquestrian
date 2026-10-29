@@ -789,6 +789,7 @@
         <text name="eq_host_visitors" text="%d z %d koni gości"/>
         <text name="eq_host_takingsLine" text="%s wpisowe, %s bilety"/>
         <text name="eq_host_monthsAhead" text="za %d mies."/>
+        <text name="eq_host_monthNow" text="teraz"/>
         <text name="eq_host_yourFarm" text="Twoje gospodarstwo"/>
         <text name="eq_host_opened" text="Twoje zawody %s się rozpoczęły. Zgłoś konie w zakładce Zawody; wyniki pod koniec miesiąca."/>
         <text name="eq_host_book_noConfig" text="Organizacja niedostępna: zasady organizacji się nie wczytały."/>

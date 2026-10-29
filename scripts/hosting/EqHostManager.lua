@@ -100,16 +100,21 @@ end
 
 --- @param month number a month as EqCompetitionManager.month counts them
 --- @return string text the calendar month's name, such as "July"
+--- @return boolean named true when it is a month's name, false for the "in N months" fallback
 function EqHostManager.monthText(month)
     local now = EqCompetitionManager.month or 0
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
     local period = environment ~= nil and environment.currentPeriod or nil
-    if period ~= nil and g_i18n.formatPeriod ~= nil then
+    -- The game's own I18N, not our proxy: through the proxy formatPeriod overflowed the stack
+    -- with another mod's getText hook (FS25_BankCredit, James's log 2026-10-29).
+    local i18n = EqI18N.globalI18N()
+    if period ~= nil and i18n ~= nil and i18n.formatPeriod ~= nil then
         local target = ((period - 1 + month - now) % 12) + 1
-        local ok, text = EqLog.try("EqHostManager.monthText formatPeriod", g_i18n.formatPeriod, g_i18n, target, false)
-        if ok and type(text) == "string" and text ~= "" then return text end
+        local ok, text = EqLog.try("EqHostManager.monthText formatPeriod", i18n.formatPeriod, i18n, target, false)
+        if ok and type(text) == "string" and text ~= "" then return text, true end
     end
-    return string.format(g_i18n:getText("eq_host_monthsAhead"), month - now)
+    if month == now then return g_i18n:getText("eq_host_monthNow"), false end
+    return string.format(g_i18n:getText("eq_host_monthsAhead"), month - now), false
 end
 
 

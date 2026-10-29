@@ -3837,6 +3837,23 @@ end)()
     check("host wait: any month free after clearing", #EqHostManager.choices(16, EqHostManager.lastMonth[3], 6) > 0
         and EqHostManager.choices(16, EqHostManager.lastMonth[3], 6)[1] == 17)
     check("host wait: nothing to clear twice", EqHostManager.clearWait(3) == false)
+
+    -- Month names come from the game's own I18N (through our proxy another mod's hook overflowed).
+    local savedManager = EqCompetitionManager
+    EqCompetitionManager = EqCompetitionManager or {}
+    local savedMission, savedGlobal, savedMonth = g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month
+    EqCompetitionManager.month = 10
+    g_currentMission = { environment = { currentPeriod = 11 } }
+    EqI18N.globalI18N = function() return { formatPeriod = function(_, period) return "P" .. period end } end
+    local text, named = EqHostManager.monthText(12)
+    check("host month: named by the game's period", text == "P1" and named == true, tostring(text))
+    EqI18N.globalI18N = function() return { formatPeriod = function() error("stack overflow") end } end
+    text, named = EqHostManager.monthText(12)
+    local nowText = EqHostManager.monthText(10)
+    check("host month: falls back to months ahead, and now", named == false and text ~= nowText
+        and nowText == g_i18n:getText("eq_host_monthNow"), tostring(text) .. " / " .. tostring(nowText))
+    g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
+    EqCompetitionManager = savedManager
     EqHostManager.reset()
 end)()
 
