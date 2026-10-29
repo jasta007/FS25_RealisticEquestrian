@@ -25,18 +25,20 @@ SPACING = 6.0           # jumps stand this far apart along X in the scene, for l
 BOARD = (2.0, 1.6)      # metres one plank texture covers: along the grain (u), across the 8 boards (v)
 ROUND_V = 1.5           # metres of round wood one peeled/dark texture covers along it
 
-CORNER_LENGTH = 2.8     # along X, apex at +X
-CORNER_TIP = 0.175      # half the width of the cut-off apex
-CORNER_HALF_ANGLE = 20  # degrees each arm turns away from the flag line (a 40 degree corner)
+CORNER_LENGTH = 4.4     # along X, apex at +X
+CORNER_TIP = 0.2        # half the width of the cut-off apex
+CORNER_TIP_X = 0.5      # where the apex is: the flags bracket only the narrow end (James: take it
+                        # at the narrow end or get into trouble), the wide end runs on past the white flag
+CORNER_HALF_ANGLE = 30  # degrees each arm turns away from the flag line (a 60 degree corner)
 FLAG_GAP = 0.45         # flags stand this far past the ends
 
 JUMPS = [
-    {"name": "xcCornerPlank", "kind": "cornerPlank", "height": 0.90},
-    {"name": "xcCornerLog", "kind": "cornerLog", "height": 1.00},
-    {"name": "xcRollTopQuarter", "kind": "rollQuarter", "height": 0.90, "length": 3.0},
-    {"name": "xcRollTopHalf", "kind": "rollHalf", "height": 0.80, "length": 2.8},
-    {"name": "xcTable", "kind": "table", "height": 1.00, "length": 3.0, "depth": 1.5},
-    {"name": "xcBigLog", "kind": "bigLog", "height": 0.85, "length": 4.2},
+    {"name": "xcCornerPlank", "kind": "cornerPlank", "height": 1.10},
+    {"name": "xcCornerLog", "kind": "cornerLog", "height": 1.15},
+    {"name": "xcRollTopQuarter", "kind": "rollQuarter", "height": 1.00, "length": 3.4},
+    {"name": "xcRollTopHalf", "kind": "rollHalf", "height": 0.95, "length": 3.2},
+    {"name": "xcTable", "kind": "table", "height": 1.15, "length": 3.6, "depth": 2.2},
+    {"name": "xcBigLog", "kind": "bigLog", "height": 1.15, "length": 5.6},
 ]
 
 
@@ -265,10 +267,10 @@ def profile_prism(part, profile, x0, x1):
 # The jumps
 
 def corner_outline():
-    """The corner seen from above: apex (cut off) at +X, the arms opening towards -X."""
-    half = CORNER_LENGTH / 2
+    """The corner seen from above: apex (cut off) at CORNER_TIP_X, the arms opening towards -X."""
+    far = CORNER_TIP_X - CORNER_LENGTH
     wide = CORNER_TIP + CORNER_LENGTH * math.tan(math.radians(CORNER_HALF_ANGLE))
-    return [(half, -CORNER_TIP), (half, CORNER_TIP), (-half, wide), (-half, -wide)]
+    return [(CORNER_TIP_X, -CORNER_TIP), (CORNER_TIP_X, CORNER_TIP), (far, wide), (far, -wide)]
 
 
 def corner_plank(jump):
@@ -285,7 +287,7 @@ def corner_plank(jump):
     cap(deck, lid, h - trim, down=True)
     col = Part(None)
     prism(col, offset(outline, 0.08), 0.0, h)
-    return {"boards": boards, "deck": deck}, col, CORNER_LENGTH / 2 + FLAG_GAP
+    return {"boards": boards, "deck": deck}, col, CORNER_TIP_X + FLAG_GAP
 
 
 def corner_log(jump):
@@ -322,7 +324,7 @@ def corner_log(jump):
         log_between(logs, ends, (p[0], p[1], h - 0.12 + rail), (q[0], q[1], h - 0.12 + rail), rail, seed=seed)
     col = Part(None)
     prism(col, offset(outline, 0.1), 0.0, h)
-    return {"logs": logs, "logsB": logs_b, "ends": ends, "deck": deck}, col, CORNER_LENGTH / 2 + FLAG_GAP
+    return {"logs": logs, "logsB": logs_b, "ends": ends, "deck": deck}, col, CORNER_TIP_X + FLAG_GAP
 
 
 def roll_logs(jump, centre_y, a0, a1, r, material, rng):
@@ -430,12 +432,12 @@ def table(jump):
     for i, (x, y) in enumerate(outline):
         post(posts, ends, x + (r * 0.4 if x > 0 else -r * 0.4), y + (r * 0.4 if y > 0 else -r * 0.4), -0.05, h + 0.06, r, seed=i)
     # the sponsor board: a stained backing a little proud of the face, the logo panel on it
-    bw, bh, bz = 1.7, 0.66, 0.16
+    bw, bh, bz = 2.1, 0.81, 0.18
     board = [(bw / 2, -hy - 0.04), (bw / 2, -hy), (-bw / 2, -hy), (-bw / 2, -hy - 0.04)]
     walls(deck, board, board, bz, bz + bh, boards=False)
     cap(deck, board, bz + bh)
     sponsor = Part("eqSponsor1")
-    lw, lh, ly = 1.6, 0.6, -hy - 0.042
+    lw, lh, ly = 2.0, 0.75, -hy - 0.042
     lz = bz + (bh - lh) / 2
     sponsor.face([((-lw / 2, ly, lz), (0, 0)), ((lw / 2, ly, lz), (1, 0)), ((lw / 2, ly, lz + lh), (1, 1)), ((-lw / 2, ly, lz + lh), (0, 1))],
                  (0.0, 0.0, lz + lh / 2))
@@ -488,7 +490,8 @@ def big_log(jump):
         for k in range(sides):
             ends.face([((x, cy, cz), (0.5, 0.5)), rim[k], rim[k + 1]], (x + (1 if flip else -1), cy, cz))
     # two sawn-off branches, both leaning towards the far end like the tree grew
-    for t, a, br, bl in ((0.63, math.radians(55), 0.075, 0.16), (0.27, math.radians(-25), 0.05, 0.10)):
+    grow = r0 / 0.465   # the stubs were sized on a 0.85 m log
+    for t, a, br, bl in ((0.63, math.radians(55), 0.075 * grow, 0.16 * grow), (0.27, math.radians(-25), 0.05 * grow, 0.10 * grow)):
         cy, cz = centre(t)
         rr = radius(a, t) * 0.92
         out = (0.0, math.cos(a), math.sin(a))

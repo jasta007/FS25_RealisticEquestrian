@@ -467,8 +467,9 @@ The line was once a bar at 0.6, 0.9 or 1.2 m; a saved 0.9 m bar becomes the line
 1.2 m one may be dropped when the game loads (the flags still pair without it). The cross country pieces
 (flags, log piles, drop walls) can be placed on land you don't own (`EqPlaceAnywhere` lets their
 land ownership error through; other placement errors still apply). The shop's log piles (0.71 m and 1.00 m) are solid fences with their own pair of flags.
-The corners (planks 0.90 m, logs 1.00 m), the quarter and half roll tops (0.90 m and 0.80 m), the
-table (1.00 m) and the big log (0.85 m) are solid fences with their own flags too, modelled in Blender
+The corners (planks 1.10 m, logs 1.15 m, a 60 degree angle with the flags only round the narrow
+end), the quarter and half roll tops (1.00 m and 0.95 m), the table (1.15 m, a 2.2 m deep top) and
+the big log (1.15 m) are solid fences with their own flags too, modelled in Blender
 (`art/source/blender/xc_blender.py`, turned into game files by `art/source/xc_import.py`). A corner's
 **Corner** choice in the shop puts its point on your right (red flag at the point, the default) or on
 your left (the flags swap places, so the same corner is jumped the other way round).

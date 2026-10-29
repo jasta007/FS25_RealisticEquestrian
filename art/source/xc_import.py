@@ -33,12 +33,12 @@ ME = "art/source/xc_import.py"
 
 # name, price, the flags' distance from the middle (as in xc_blender.py), height, Corner choice
 JUMPS = [
-    {"name": "xcCornerPlank", "price": 1400, "flag_x": 1.85, "height": 0.90, "corner": True},
-    {"name": "xcCornerLog", "price": 1500, "flag_x": 1.85, "height": 1.00, "corner": True},
-    {"name": "xcRollTopQuarter", "price": 1100, "flag_x": 1.80, "height": 0.90, "corner": False},
-    {"name": "xcRollTopHalf", "price": 1000, "flag_x": 1.70, "height": 0.80, "corner": False},
-    {"name": "xcTable", "price": 1600, "flag_x": 1.95, "height": 1.00, "corner": False},
-    {"name": "xcBigLog", "price": 900, "flag_x": 2.40, "height": 0.85, "corner": False},
+    {"name": "xcCornerPlank", "price": 1400, "flag_x": 0.95, "height": 1.10, "corner": True},
+    {"name": "xcCornerLog", "price": 1500, "flag_x": 0.95, "height": 1.15, "corner": True},
+    {"name": "xcRollTopQuarter", "price": 1100, "flag_x": 2.00, "height": 1.00, "corner": False},
+    {"name": "xcRollTopHalf", "price": 1000, "flag_x": 1.90, "height": 0.95, "corner": False},
+    {"name": "xcTable", "price": 1600, "flag_x": 2.25, "height": 1.15, "corner": False},
+    {"name": "xcBigLog", "price": 900, "flag_x": 3.10, "height": 1.15, "corner": False},
 ]
 
 CORNER_CONFIG = """

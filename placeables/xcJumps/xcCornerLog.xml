@@ -28,7 +28,7 @@
     </base>
 
     <placement useRandomYRotation="false" useManualYRotation="true">
-        <!-- 1.00 m high; jumped along z, red flag at +x. -->
+        <!-- 1.15 m high; jumped along z, red flag at +x. -->
     </placement>
 
     <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
