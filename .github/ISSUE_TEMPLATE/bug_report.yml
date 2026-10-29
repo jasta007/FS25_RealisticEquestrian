@@ -1,0 +1,66 @@
+name: Bug report
+description: Something in Realistic Equestrian isn't working
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! The game's log is the most useful thing you can send.
+        Play until the problem happens, quit the game, then attach `log.txt` from
+        `C:\Users\<your name>\Documents\My Games\FarmingSimulator2025\log.txt`
+        (drag the file into the box below).
+  - type: input
+    id: version
+    attributes:
+      label: Mod version
+      description: Shown in the mod list in game, or in the zip name you downloaded.
+      placeholder: e.g. 0.5.0.0
+    validations:
+      required: true
+  - type: input
+    id: rlrm
+    attributes:
+      label: Realistic Livestock RM version
+      placeholder: e.g. 1.4.1.0
+  - type: input
+    id: map
+    attributes:
+      label: Map
+      placeholder: e.g. Riverbend Springs
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Single player or multiplayer?
+      options:
+        - Single player
+        - Multiplayer (host)
+        - Multiplayer (joined someone else)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Ride a horse into the arena
+        2. Press Ctrl+J
+        3. ...
+  - type: textarea
+    id: log
+    attributes:
+      label: log.txt
+      description: Drag `log.txt` here. Please attach it from the session where the bug happened.
+    validations:
+      required: true
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: Other mods you have active, especially horse, animal or building mods. The list is also near the top of log.txt.

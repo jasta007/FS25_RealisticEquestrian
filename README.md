@@ -27,6 +27,7 @@ uses its genetics, health and fitness.
 - [Getting started](#getting-started)
 - [Compatibility](#compatibility)
 - [Known issues](#known-issues)
+- [Reporting a bug](#reporting-a-bug)
 - [Planned features](#planned-features)
 - [Console commands](#console-commands)
 - [A note on AI](#a-note-on-ai)
@@ -251,7 +252,15 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 - **A horse away at an event isn't in your pasture**, so you can't see or ride it until its result
   is in. A horse delivered by Manual Transport needs a free place in one of your pastures.
 - **Early release.** Most features have had little time in game yet. Bug reports with your
-  `log.txt` are very welcome on the issues page.
+  `log.txt` are very welcome (see below).
+
+## Reporting a bug
+
+Play until the problem happens, quit the game, then send `log.txt` from
+`C:\Users\<your name>\Documents\My Games\FarmingSimulator2025\`. Post it on the
+[itch.io community board](https://jasta007.itch.io/realistic-equestrian/community) or open a
+[GitHub issue](https://github.com/jasta007/fs25_realisticequestrian/issues/new/choose), and say
+which mod version, map and other mods you use.
 
 ## Planned features
 
