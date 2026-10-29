@@ -23,8 +23,9 @@ EqFlagLabels.LIFT = 2.1
 EqFlagLabels.RANGE = 45
 EqFlagLabels.FULL_SIZE_RANGE = 15
 EqFlagLabels.MIN_SCALE = 0.5
--- Flags are found again this often while labels show.
-EqFlagLabels.SCAN_MS = 1000
+-- Flags are found again this often while labels show (placed pieces; the piece in the
+-- construction brush is found every frame).
+EqFlagLabels.SCAN_MS = 500
 -- How deep and how many nodes are searched under one placeable for flag nodes.
 EqFlagLabels.DEPTH = 6
 EqFlagLabels.MAX_NODES = 3000
@@ -37,6 +38,8 @@ EqFlagLabels.labels = {}
 EqFlagLabels.scannedAt = nil
 EqFlagLabels.drawnAt = nil
 EqFlagLabels.failed = false
+-- Brush kinds whose fields have been logged (to learn where previews keep their nodes).
+EqFlagLabels.brushLogged = {}
 -- Flag nodes found under each (non fence) placeable, found once: placeables don't change.
 EqFlagLabels.cache = setmetatable({}, { __mode = "k" })
 
@@ -99,17 +102,20 @@ end
 
 --- Flag nodes under one placeable's root, depth and count limited.
 --- @param root number
+--- @param maxDepth number|nil DEPTH when nil
+--- @param maxNodes number|nil MAX_NODES when nil
 --- @return table list of { node, colour }
-local function findFlagNodes(root)
+local function findFlagNodes(root, maxDepth, maxNodes)
+    maxDepth, maxNodes = maxDepth or EqFlagLabels.DEPTH, maxNodes or EqFlagLabels.MAX_NODES
     local found, stack, seen = {}, { { root, 0 } }, 0
-    while #stack > 0 and seen < EqFlagLabels.MAX_NODES do
+    while #stack > 0 and seen < maxNodes do
         local entry = table.remove(stack)
         local node, depth = entry[1], entry[2]
         seen = seen + 1
         local colour = EqFlagLabels.classify(getName(node))
         if colour ~= nil then
             table.insert(found, { node = node, colour = colour })
-        elseif depth < EqFlagLabels.DEPTH then
+        elseif depth < maxDepth then
             for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, { getChildAt(node, i), depth + 1 }) end
         end
     end
@@ -117,13 +123,12 @@ local function findFlagNodes(root)
 end
 
 
---- Every flag on the map with its world position.
---- @return table list of { colour, x, y, z }
+--- Every flag node on the map. Positions are read each frame, so moved pieces keep their letters.
+--- @return table list of { node, colour, offset } (offset: along the node's z to the flag)
 function EqFlagLabels.scan()
     local flags = {}
     for _, flag in ipairs((EqXcFlags.scan())) do
-        local x, y, z = localToWorld(flag.node, 0, 0, EqXcFlags.POST / 2)
-        table.insert(flags, { colour = flag.colour, x = x, y = y, z = z })
+        table.insert(flags, { node = flag.node, colour = flag.colour, offset = EqXcFlags.POST / 2 })
     end
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return flags end
@@ -134,15 +139,72 @@ function EqFlagLabels.scan()
                 nodes = findFlagNodes(placeable.rootNode)
                 EqFlagLabels.cache[placeable] = nodes
             end
-            for _, entry in ipairs(nodes) do
-                if entityExists == nil or entityExists(entry.node) then
-                    local x, y, z = getWorldTranslation(entry.node)
-                    table.insert(flags, { colour = entry.colour, x = x, y = y, z = z })
-                end
-            end
+            for _, entry in ipairs(nodes) do table.insert(flags, entry) end
         end
     end
     return flags
+end
+
+
+--- The construction screen's brush, if one is in hand.
+--- @return table|nil
+function EqFlagLabels.brush()
+    local gui = g_gui ~= nil and g_gui.currentGui or nil
+    local target = gui ~= nil and gui.target or nil
+    return target ~= nil and type(target.brush) == "table" and target.brush or nil
+end
+
+
+--- Flags on the piece being dragged before it is placed: the brush's preview placeable.
+--- Searched every frame (a preview is a few nodes) and logs the brush's fields once.
+--- @return table list as scan()
+function EqFlagLabels.previewFlags()
+    local brush = EqFlagLabels.brush()
+    if brush == nil then return {} end
+    local kind = getmetatable(brush) or brush
+    if not EqFlagLabels.brushLogged[kind] then
+        EqFlagLabels.brushLogged[kind] = true
+        local keys = {}
+        for key, value in pairs(brush) do table.insert(keys, tostring(key) .. ":" .. type(value)) end
+        table.sort(keys)
+        Log:info("EqFlagLabels: brush fields %s", table.concat(keys, " "))
+    end
+    local flags = {}
+    local preview = type(brush.placeable) == "table" and brush.placeable.rootNode or nil
+    if preview ~= nil and preview ~= 0 then
+        for _, entry in ipairs(findFlagNodes(preview)) do table.insert(flags, entry) end
+    end
+    return flags
+end
+
+
+--- The flag fence the construction brush is drawing, whose segments may not be in the
+--- placeable list yet. Searched like EqXcFlags.scan: fences can hold thousands of nodes.
+--- @return table list as scan()
+function EqFlagLabels.brushFenceFlags()
+    local brush = EqFlagLabels.brush()
+    local fence = brush ~= nil and type(brush.fencePlaceable) == "table" and brush.fencePlaceable or nil
+    if fence == nil or fence.rootNode == nil or not EqXcFlags.isFlagFence(fence.configFileName) then return {} end
+    local flags = {}
+    for _, entry in ipairs(findFlagNodes(fence.rootNode, math.huge, EqXcFlags.MAX_NODES)) do
+        table.insert(flags, { node = entry.node, colour = entry.colour, offset = EqXcFlags.POST / 2 })
+    end
+    return flags
+end
+
+
+--- @param entries table list as scan()
+--- @return table list of { colour, x, y, z }, each node once
+function EqFlagLabels.positions(entries)
+    local out, seen = {}, {}
+    for _, entry in ipairs(entries) do
+        if not seen[entry.node] and (entityExists == nil or entityExists(entry.node)) then
+            seen[entry.node] = true
+            local x, y, z = localToWorld(entry.node, 0, 0, entry.offset or 0)
+            table.insert(out, { colour = entry.colour, x = x, y = y, z = z })
+        end
+    end
+    return out
 end
 
 
@@ -167,15 +229,23 @@ function EqFlagLabels.draw()
         local due = EqFlagLabels.scannedAt == nil or now - EqFlagLabels.scannedAt >= EqFlagLabels.SCAN_MS or now < EqFlagLabels.scannedAt
         if due then
             EqFlagLabels.labels = EqFlagLabels.scan()
+            if EqXcFlags.inConstruction() then
+                for _, entry in ipairs(EqFlagLabels.brushFenceFlags()) do table.insert(EqFlagLabels.labels, entry) end
+            end
             EqFlagLabels.scannedAt = now
         end
         local cx, cy, cz = cameraPosition()
         if cx == nil then return end
+        local entries = {}
+        for _, entry in ipairs(EqFlagLabels.labels) do table.insert(entries, entry) end
+        if EqXcFlags.inConstruction() then
+            for _, entry in ipairs(EqFlagLabels.previewFlags()) do table.insert(entries, entry) end
+        end
         local getText = g_i18n ~= nil and function(key) return g_i18n:getText(key) end or nil
         local size = getCorrectTextSize ~= nil and getCorrectTextSize(EqFlagLabels.TEXT_SIZE) or EqFlagLabels.TEXT_SIZE
         setTextAlignment(RenderText.ALIGN_CENTER)
         setTextBold(true)
-        for _, entry in ipairs(EqFlagLabels.near(EqFlagLabels.labels, cx, cy, cz, EqFlagLabels.RANGE)) do
+        for _, entry in ipairs(EqFlagLabels.near(EqFlagLabels.positions(entries), cx, cy, cz, EqFlagLabels.RANGE)) do
             local flag, textSize = entry.flag, size * EqFlagLabels.scale(entry.distance)
             local sx, sy, sz = project(flag.x, flag.y + EqFlagLabels.LIFT, flag.z)
             if sx ~= nil and sx > -0.1 and sx < 1.1 and sy > -0.1 and sy < 1.1 and sz <= 1 then
