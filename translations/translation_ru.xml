@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Стенка спуска (0,8 м)"/>
         <text name="eq_shop_xcDropWall12" text="Стенка спуска (1,2 м)"/>
         <text name="eq_shop_xcDropWall16" text="Стенка спуска (1,6 м)"/>
+        <text name="eq_shop_xcCornerPlank" text="Угол (доски)"/>
+        <text name="eq_shop_xcCornerLog" text="Угол (брёвна)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Ролл-топ (четверть)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Ролл-топ (половина)"/>
+        <text name="eq_shop_xcTable" text="Стол"/>
+        <text name="eq_shop_xcBigLog" text="Большое бревно"/>
+        <text name="eq_config_corner" text="Угол"/>
+        <text name="eq_config_cornerRight" text="Острие справа"/>
+        <text name="eq_config_cornerLeft" text="Острие слева"/>
         <text name="eq_shop_xcDrop_function" text="Дощатая стенка для спуска на кроссе. Насыпьте склон, поставьте её наверху краем к обрыву, и боковые стенки скроют крутой склон."/>
         <text name="eq_shop_xcJump_function" text="Препятствие кросса. Красный и белый флажки показывают, где прыгать."/>
         <text name="eq_shop_xcHidden_function" text="Исчезает вне строительства, редактирования маршрута и заездов, если не куплен с «Исчезающий: Нет»."/>

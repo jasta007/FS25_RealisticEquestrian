@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Ściana uskoku (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Ściana uskoku (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Ściana uskoku (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Narożnik (deski)"/>
+        <text name="eq_shop_xcCornerLog" text="Narożnik (bale)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (ćwierć)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (pół)"/>
+        <text name="eq_shop_xcTable" text="Stół"/>
+        <text name="eq_shop_xcBigLog" text="Duża kłoda"/>
+        <text name="eq_config_corner" text="Narożnik"/>
+        <text name="eq_config_cornerRight" text="Szpic w prawo"/>
+        <text name="eq_config_cornerLeft" text="Szpic w lewo"/>
         <text name="eq_shop_xcDrop_function" text="Ściana z desek na uskok crossowy. Uformuj skarpę, postaw ścianę na górze krawędzią przy brzegu, a jej boki ukryją stromy stok."/>
         <text name="eq_shop_xcJump_function" text="Przeszkoda crossowa. Czerwona i biała flaga pokazują, gdzie skakać."/>
         <text name="eq_shop_xcHidden_function" text="Znika poza budową, edycją trasy i przejazdami, chyba że kupiona z opcją Znikająca: Nie."/>

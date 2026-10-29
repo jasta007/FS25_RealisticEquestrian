@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Muro di discesa (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Muro di discesa (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Muro di discesa (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Angolo (assi)"/>
+        <text name="eq_shop_xcCornerLog" text="Angolo (tronchi)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (quarto)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (mezzo)"/>
+        <text name="eq_shop_xcTable" text="Tavolo"/>
+        <text name="eq_shop_xcBigLog" text="Tronco grande"/>
+        <text name="eq_config_corner" text="Angolo"/>
+        <text name="eq_config_cornerRight" text="Punta a destra"/>
+        <text name="eq_config_cornerLeft" text="Punta a sinistra"/>
         <text name="eq_shop_xcDrop_function" text="Un muro di assi per una discesa da cross. Modella una scarpata, posizionalo in cima con il bordo sul ciglio, e le pareti laterali nascondono il pendio ripido."/>
         <text name="eq_shop_xcJump_function" text="Un ostacolo da cross. Le bandierine rossa e bianca indicano dove saltare."/>
         <text name="eq_shop_xcHidden_function" text="Scompare fuori da costruzione, modifica percorso e manche, a meno che non sia acquistato con Scompare: No."/>

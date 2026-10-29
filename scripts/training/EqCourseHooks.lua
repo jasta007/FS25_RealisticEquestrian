@@ -272,6 +272,11 @@ local function listXcFences()
         local placeable = entry.placeable
         if entry.kind == "xcFence" and placeable.rootNode ~= nil
             and not string.find(tostring(placeable.configFileName):lower(), "xcdropwall", 1, true) then
+            -- A corner bought Point left has its flags swapped; measure its ends again if that just happened.
+            if EqXcCorners ~= nil then
+                local ok, moved = EqLog.try("EqCourseHooks.listXcFences corner", EqXcCorners.apply, placeable)
+                if ok and moved then endsCache[placeable.rootNode] = nil end
+            end
             addJump(list, placeable.rootNode, placeable)
         end
     end

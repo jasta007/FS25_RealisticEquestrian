@@ -681,6 +681,15 @@
         <text name="eq_shop_xcDropWall08" text="Mur de descente (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Mur de descente (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Mur de descente (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Coin (planches)"/>
+        <text name="eq_shop_xcCornerLog" text="Coin (rondins)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (quart)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (demi)"/>
+        <text name="eq_shop_xcTable" text="Table"/>
+        <text name="eq_shop_xcBigLog" text="Gros tronc"/>
+        <text name="eq_config_corner" text="Coin"/>
+        <text name="eq_config_cornerRight" text="Pointe à droite"/>
+        <text name="eq_config_cornerLeft" text="Pointe à gauche"/>
         <text name="eq_shop_xcDrop_function" text="Un mur en planches pour une descente de cross. Sculptez un talus, posez le mur sur le dessus avec le rebord au bord ; ses murs latéraux cachent la pente raide."/>
         <text name="eq_shop_xcJump_function" text="Un obstacle de cross. Ses drapeaux rouge et blanc indiquent où sauter."/>
         <text name="eq_shop_xcHidden_function" text="Disparaît hors construction, édition de parcours et manches, sauf si acheté avec Disparaît : Non."/>

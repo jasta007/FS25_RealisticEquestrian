@@ -247,17 +247,107 @@ def plank_texture(path, normal_path, size=512):
     return np.clip(rgb, 0, 255).astype(np.uint8)
 
 
-def peeled_texture(path, size=256):
+def peeled_texture(path, size=256, seed=37, colour=(214, 178, 128), contrast=0.07):
     """Peeled softwood for posts and rails: pale, streaked along the grain (v), with a few strips
-    of bark left on."""
-    rng = np.random.default_rng(37)
+    of bark left on. Another seed, colour and contrast give a second log's wood."""
+    rng = np.random.default_rng(seed)
     streaks = periodic_noise(size, rng, 1.5, 40) * 0.6 + periodic_noise(size, rng, 6, 80) * 0.4
-    light = 0.82 + 0.07 * streaks
-    rgb = light[..., None] * np.array([214, 178, 128])
+    light = 0.82 + contrast * streaks
+    rgb = light[..., None] * np.array(colour)
     bark = np.clip((periodic_noise(size, rng, 10, 60) - 1.6) * 3, 0, 1)
     rgb = rgb * (1 - bark[..., None]) + np.array([92, 74, 56]) * bark[..., None]
     save_dds(rgb, path)
     return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def stain_texture(path, normal_path, size=512):
+    """Eight boards painted with a brown wood stain (the plank corner's deck and trim): the grain
+    shows through, the stain wears pale along the boards' edges, dark gaps between boards."""
+    rng = np.random.default_rng(43)
+    boards = 8
+    row = (np.arange(size)[:, None] + 0.5) / size * boards
+    board = np.floor(row).astype(int) % boards
+    within = row - np.floor(row)
+    grain = periodic_noise(size, rng, 50, 1.0) * 0.6 + periodic_noise(size, rng, 140, 3) * 0.4
+    shade = rng.uniform(-0.05, 0.05, boards)[board]
+    gap = np.clip(1 - np.minimum(within, 1 - within) / 0.03, 0, 1)
+    edge = np.clip(1 - np.minimum(within, 1 - within) / 0.12, 0, 1) * np.clip(periodic_noise(size, rng, 20, 4) + 0.3, 0, 1)
+    light = 0.80 + 0.07 * grain + shade - 0.6 * gap
+    colour = np.array([118, 80, 62]) * (1 - 0.3 * edge[..., None]) + np.array([150, 128, 112]) * 0.3 * edge[..., None]
+    rgb = np.clip(light, 0.1, 1.1)[..., None] * colour
+    save_dds(rgb, path)
+    normal_map(0.04 * grain - gap, normal_path, strength=2.5)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def dark_wood_texture(path, size=256):
+    """Round wood treated almost black (the half roll top): streaked along the grain (v), a little
+    sheen of brown where the treatment has worn."""
+    rng = np.random.default_rng(47)
+    streaks = periodic_noise(size, rng, 1.5, 40) * 0.6 + periodic_noise(size, rng, 6, 80) * 0.4
+    worn = np.clip(periodic_noise(size, rng, 12, 50) - 0.8, 0, 1)
+    light = 0.85 + 0.12 * streaks
+    rgb = light[..., None] * (np.array([46, 38, 32]) * (1 - worn[..., None]) + np.array([92, 70, 52]) * worn[..., None])
+    save_dds(rgb, path)
+    return np.clip(rgb, 0, 255).astype(np.uint8)
+
+
+def big_log_texture(path, size=1024):
+    """The whole of the big log's skin in one image (James, 2026-10-29: the tiling wood looked
+    too procedural on one big trunk): u once round it (top at 0.25, underside at 0.75), v from
+    one end to the other. Weathered peeled wood with long wandering cracks, knots with the grain
+    swirling round them, a knothole, a strip of bark left on, sun-bleached on top and damp, dirty
+    and mossy underneath, greyer towards one end."""
+    rng = np.random.default_rng(61)
+    u = (np.arange(size)[None, :] + 0.5) / size
+    v = (np.arange(size)[:, None] + 0.5) / size
+    wander = periodic_noise(size, rng, 30, 160) * 0.012
+    uu = (u + wander) % 1.0
+    # knots: the grain bends round them, a dark core with rings
+    knots = [(0.18, 0.22, 0.020), (0.33, 0.58, 0.028), (0.47, 0.81, 0.016), (0.62, 0.35, 0.022), (0.08, 0.66, 0.014)]
+    bend = np.zeros((size, size))
+    core = np.zeros((size, size))
+    for ku, kv, kr in knots:
+        du = (uu - ku + 0.5) % 1.0 - 0.5
+        dv = (v - kv) * 4.2 / 2.9          # metres along over metres round, so knots come out round
+        d = np.sqrt(du ** 2 + dv ** 2)
+        bend += kr * 1.6 * np.exp(-(d / (kr * 3)) ** 2) * np.sign(du)
+        core = np.maximum(core, np.clip(1 - d / kr, 0, 1))
+        core = np.maximum(core, 0.22 * np.clip(1 - np.abs(d - kr * 1.8) / (kr * 0.6), 0, 1))
+    ug = (uu + bend) % 1.0
+    grain = np.sin(ug * 2 * math.pi * 70 + periodic_noise(size, rng, 6, 60) * 1.5)
+    streaks = periodic_noise(size, rng, 1.5, 50) * 0.6 + periodic_noise(size, rng, 8, 120) * 0.4
+    light = 0.80 + 0.05 * grain + 0.07 * streaks
+    # cracks (checks): dark, wandering along the log, wider in the middle of their length
+    for cu, v0, v1, w in ((0.24, 0.05, 0.62, 0.0035), (0.29, 0.40, 0.95, 0.0025), (0.12, 0.30, 0.55, 0.002),
+                          (0.40, 0.10, 0.38, 0.002), (0.55, 0.55, 0.92, 0.0018), (0.95, 0.20, 0.48, 0.0015)):
+        path_u = cu + periodic_noise(size, rng, 1, 140)[:, :1] * 0.004 + 0.01 * np.sin(v * 9 + cu * 20)
+        along = np.clip((v - v0) / (v1 - v0), 0, 1)
+        width = 1.7 * w * np.sin(math.pi * along) ** 0.6 * ((v > v0) & (v < v1))
+        dist = np.abs((uu - path_u + 0.5) % 1.0 - 0.5)
+        light -= 0.55 * np.clip(1 - dist / np.maximum(width, 1e-6), 0, 1)
+        light += 0.06 * np.clip(1 - dist / np.maximum(width * 3, 1e-6), 0, 1) * (dist > width)  # pale edges
+    # the knothole: a deep dark hollow in the biggest knot
+    du = (uu - 0.33 + 0.5) % 1.0 - 0.5
+    hole = np.clip(1 - np.sqrt(du ** 2 + ((v - 0.58) * 1.45) ** 2) / 0.016, 0, 1)
+    light = light * (1 - 0.5 * core) - 0.55 * np.clip(hole * 2, 0, 1)
+    colour = np.array([200, 172, 132], dtype=float)
+    # sun-bleached top, greyer towards the v = 1 end
+    top = np.exp(-(((u - 0.25 + 0.5) % 1.0 - 0.5) / 0.18) ** 2)
+    grey = np.clip(v * 0.9 - 0.2 + periodic_noise(size, rng, 40, 40) * 0.15, 0, 1) * 0.6 + top * 0.35
+    rgb = light[..., None] * (colour * (1 - grey[..., None]) + np.array([168, 162, 150]) * grey[..., None])
+    # underneath: damp, dirt and moss where it lies on the ground
+    under = np.exp(-(((u - 0.75 + 0.5) % 1.0 - 0.5) / 0.12) ** 2)
+    damp = np.clip(under * 1.3 + periodic_noise(size, rng, 20, 30) * 0.25 - 0.35, 0, 1)
+    rgb = rgb * (1 - 0.45 * damp[..., None]) + np.array([70, 72, 40]) * 0.45 * damp[..., None]
+    moss = np.clip((periodic_noise(size, rng, 10, 14) - 0.6) * 2, 0, 1) * damp
+    rgb = rgb * (1 - moss[..., None] * 0.7) + np.array([84, 110, 44]) * moss[..., None] * 0.7
+    # a strip of bark left on, low on one side
+    bark = np.clip((periodic_noise(size, rng, 12, 60) - 0.9) * 3, 0, 1) * np.exp(-(((u - 0.62 + 0.5) % 1.0 - 0.5) / 0.05) ** 2)
+    rgb = rgb * (1 - bark[..., None]) + np.array([86, 68, 52]) * (0.8 + 0.2 * streaks[..., None]) * bark[..., None]
+    rgb = np.clip(rgb, 0, 255)
+    save_dds(rgb, path)
+    return rgb.astype(np.uint8)
 
 
 # One row of four cells: red flag, white flag, pole, gold (the height guide).
@@ -775,6 +865,10 @@ MATERIALS = [
     ("xcLogEnd", "xcLogEnd_diffuse.dds", None, False),
     ("xcPlanks", "xcPlanks_diffuse.dds", "xcPlanks_normal.dds", False),
     ("xcPeeled", "xcPeeled_diffuse.dds", None, False),
+    ("xcPeeledB", "xcPeeledB_diffuse.dds", None, False),
+    ("xcStain", "xcStain_diffuse.dds", "xcStain_normal.dds", False),
+    ("xcDark", "xcDark_diffuse.dds", None, False),
+    ("xcBigLog", "xcBigLog_diffuse.dds", None, False),
     ("xcFlags", "xcFlags_diffuse.dds", None, False),
     ("xcGuideGold", "xcFlags_diffuse.dds", None, True),
 ]
@@ -1017,9 +1111,10 @@ def write_flag_fence_xml(path, posts, bars):
         f.write(text)
 
 
-def write_xml(name, price, note, path):
+def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py"):
+    """extra: more configuration blocks, before the end."""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!-- Made by art/source/xc_jumps.py: change that and run it again rather than editing this. -->
+<!-- Made by {made_by}: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
     <storeData>
         <name>$l10n_eq_shop_{name}</name>
@@ -1059,7 +1154,7 @@ def write_xml(name, price, note, path):
             <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
         </eqAlwaysVisibleConfigurations>
     </eqAlwaysVisible>
-</placeable>
+{extra}</placeable>
 """
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)

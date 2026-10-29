@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Seskoková stěna (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Seskoková stěna (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Seskoková stěna (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Roh (prkna)"/>
+        <text name="eq_shop_xcCornerLog" text="Roh (klády)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (čtvrtina)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (polovina)"/>
+        <text name="eq_shop_xcTable" text="Stůl"/>
+        <text name="eq_shop_xcBigLog" text="Velká kláda"/>
+        <text name="eq_config_corner" text="Roh"/>
+        <text name="eq_config_cornerRight" text="Špička vpravo"/>
+        <text name="eq_config_cornerLeft" text="Špička vlevo"/>
         <text name="eq_shop_xcDrop_function" text="Prkenná stěna pro terénní seskok. Vytvarujte val, postavte ji nahoru hranou k okraji a její boční stěny skryjí prudký svah."/>
         <text name="eq_shop_xcJump_function" text="Terénní skok. Červený a bílý praporek ukazují, kde skákat."/>
         <text name="eq_shop_xcHidden_function" text="Mizí mimo stavbu, úpravu trati a jízdy, pokud nebyla koupena s volbou Mizející: Ne."/>

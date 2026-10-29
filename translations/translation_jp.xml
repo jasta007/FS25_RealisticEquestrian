@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="ドロップ壁（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="ドロップ壁（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="ドロップ壁（1.6 m）"/>
+        <text name="eq_shop_xcCornerPlank" text="コーナー（板）"/>
+        <text name="eq_shop_xcCornerLog" text="コーナー（丸太）"/>
+        <text name="eq_shop_xcRollTopQuarter" text="ロールトップ（四分円）"/>
+        <text name="eq_shop_xcRollTopHalf" text="ロールトップ（半円）"/>
+        <text name="eq_shop_xcTable" text="テーブル"/>
+        <text name="eq_shop_xcBigLog" text="大丸太"/>
+        <text name="eq_config_corner" text="コーナー"/>
+        <text name="eq_config_cornerRight" text="先端が右"/>
+        <text name="eq_config_cornerLeft" text="先端が左"/>
         <text name="eq_shop_xcDrop_function" text="クロスカントリーの段差用の板壁。土手を作り、縁を端に合わせて上に置くと、側壁が急斜面を隠します。"/>
         <text name="eq_shop_xcJump_function" text="クロスカントリー障害。赤旗と白旗が跳ぶ場所を示します。"/>
         <text name="eq_shop_xcHidden_function" text="「消える：いいえ」で購入しない限り、建設モード、コース編集、走行以外では消えます。"/>

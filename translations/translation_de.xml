@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Absprungwand (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Absprungwand (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Ecke (Bretter)"/>
+        <text name="eq_shop_xcCornerLog" text="Ecke (Stämme)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Rolltop (Viertel)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Rolltop (halb)"/>
+        <text name="eq_shop_xcTable" text="Tisch"/>
+        <text name="eq_shop_xcBigLog" text="Großer Baumstamm"/>
+        <text name="eq_config_corner" text="Ecke"/>
+        <text name="eq_config_cornerRight" text="Spitze rechts"/>
+        <text name="eq_config_cornerLeft" text="Spitze links"/>
         <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
         <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
         <text name="eq_shop_xcHidden_function" text="Verschwindet außerhalb des Baumodus, der Parcoursbearbeitung und von Ritten, außer mit Verschwindend: Nein gekauft."/>

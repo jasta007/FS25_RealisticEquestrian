@@ -1,6 +1,7 @@
 --[[
     EqSponsors.lua
-    Sponsor boards on our bleachers (placeables/bleachers/, art/source/bleachers.py): each board's
+    Sponsor boards on our bleachers (placeables/bleachers/, art/source/bleachers.py) and on the
+    cross country table's front (James, 2026-10-29): each board's
     face, a shape named "eqSponsor_<n>", shows a brand logo from the game itself, read at run
     time and never shipped (James, 2026-10-28: the game is full of sponsors, use them).
 
@@ -18,7 +19,8 @@ local Log = EqLog
 
 -- Bleachers are looked for this often (newly placed ones too).
 EqSponsors.SCAN_MS = 2000
-EqSponsors.XML = "placeables/bleachers/"
+-- Our placeables with sponsor boards: the bleachers and the cross country table's front board.
+EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable" }
 EqSponsors.NODE = "^eqSponsor_(%d+)$"
 -- Brands never shown: the game's placeholder.
 EqSponsors.SKIP = { NONE = true }
@@ -55,10 +57,14 @@ end
 
 
 --- @param filename string|nil
---- @return boolean true for one of our bleachers
+--- @return boolean true for one of our bleachers (or another piece with sponsor boards)
 function EqSponsors.isBleacherXml(filename)
     if type(filename) ~= "string" then return false end
-    return string.find(string.lower(string.gsub(filename, "\\", "/")), EqSponsors.XML, 1, true) ~= nil
+    local path = string.lower(string.gsub(filename, "\\", "/"))
+    for _, prefix in ipairs(EqSponsors.XMLS) do
+        if string.find(path, prefix, 1, true) ~= nil then return true end
+    end
+    return false
 end
 
 

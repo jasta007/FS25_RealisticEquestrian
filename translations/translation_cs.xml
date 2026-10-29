@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="落差墙（0.8 m）"/>
         <text name="eq_shop_xcDropWall12" text="落差墙（1.2 m）"/>
         <text name="eq_shop_xcDropWall16" text="落差墙（1.6 m）"/>
+        <text name="eq_shop_xcCornerPlank" text="角障碍（木板）"/>
+        <text name="eq_shop_xcCornerLog" text="角障碍（原木）"/>
+        <text name="eq_shop_xcRollTopQuarter" text="圆顶障碍（四分之一）"/>
+        <text name="eq_shop_xcRollTopHalf" text="圆顶障碍（半圆）"/>
+        <text name="eq_shop_xcTable" text="桌形障碍"/>
+        <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_config_corner" text="角障碍"/>
+        <text name="eq_config_cornerRight" text="尖端在右"/>
+        <text name="eq_config_cornerLeft" text="尖端在左"/>
         <text name="eq_shop_xcDrop_function" text="用于越野落差障碍的木板墙。塑造一道土坡，把它放在坡顶并让边缘对齐坡沿，侧墙会遮住陡坡。"/>
         <text name="eq_shop_xcJump_function" text="越野障碍。红旗和白旗标出跳跃的位置。"/>
         <text name="eq_shop_xcHidden_function" text="除非购买时选择“消失：否”，否则在建造、路线编辑和比赛之外会消失。"/>

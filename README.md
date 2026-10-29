@@ -90,8 +90,8 @@ uses its genetics, health and fitness.
 - Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
   inside one speeds your riding up much more.
 - They also give a small edge on the day in matching events (a jump course helps show jumping).
-- Cross country flags mark any obstacle as a cross country fence; the shop also sells log piles and
-  drop walls. They stay hidden outside construction, course editing and rounds (set
+- Cross country flags mark any obstacle as a cross country fence; the shop also sells log piles,
+  drop walls, corners (point left or right), roll tops, a table and a big log. They stay hidden outside construction, course editing and rounds (set
   **Disappearing** in the shop: on by default for cross country pieces, off for show jumps), and road traffic stops during a cross country round.
 - Ten show jumps of our own (upright, oxers, crossrail, triple bar, hogsback, fans, liverpool, cavaletti) in
   colours you pick in the shop drop a pole when your horse hits it, and put it back after the round or once you ride away.

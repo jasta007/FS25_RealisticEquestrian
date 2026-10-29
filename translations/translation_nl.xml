@@ -78,6 +78,15 @@
         <text name="eq_shop_xcDropWall08" text="Afsprongmuur (0,8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Afsprongmuur (1,2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Afsprongmuur (1,6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Hoek (planken)"/>
+        <text name="eq_shop_xcCornerLog" text="Hoek (stammen)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll top (kwart)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll top (half)"/>
+        <text name="eq_shop_xcTable" text="Tafel"/>
+        <text name="eq_shop_xcBigLog" text="Grote boomstam"/>
+        <text name="eq_config_corner" text="Hoek"/>
+        <text name="eq_config_cornerRight" text="Punt rechts"/>
+        <text name="eq_config_cornerLeft" text="Punt links"/>
         <text name="eq_shop_xcDrop_function" text="Een plankenmuur voor een afsprong op de cross. Vorm een talud, zet de muur bovenop met de rand aan de afgrond, en de zijwanden verbergen de steile helling."/>
         <text name="eq_shop_xcJump_function" text="Een crosshindernis. De rode en witte vlag geven aan waar je springt."/>
         <text name="eq_shop_xcHidden_function" text="Verdwijnt buiten bouwen, parcours bewerken en rondes, tenzij gekocht met Verdwijnt: Nee."/>

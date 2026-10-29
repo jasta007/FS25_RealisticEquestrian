@@ -2447,6 +2447,31 @@ do
         and math.abs(EqFlagLabels.scale(EqFlagLabels.RANGE) - EqFlagLabels.MIN_SCALE) < 1e-9
         and EqFlagLabels.scale(1000) == EqFlagLabels.MIN_SCALE)
 end
+dofile("scripts/facilities/EqXcCorners.lua")
+do
+    check("the corners are found by their xml", EqXcCorners.isCorner("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcCornerLog.xml")
+        and EqXcCorners.isCorner(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcCornerPlank.xml")
+        and not EqXcCorners.isCorner(modsDir .. "FS25_RealisticEquestrian/placeables/xcJumps/xcTable.xml")
+        and not EqXcCorners.isCorner(modsDir .. "FS25_OtherMod/placeables/xcJumps/xcCornerLog.xml") and not EqXcCorners.isCorner(nil))
+    local rx, rry, wx, wry = EqXcCorners.flagPlaces(nil, 1.85)
+    local lx, lry, lwx, lwry = EqXcCorners.flagPlaces(EqXcCorners.LEFT, -1.85)
+    check("Point right keeps red at the point (+x), Point left swaps the flags and turns them round",
+        rx == 1.85 and rry == 0 and wx == -1.85 and wry == 0 and EqXcCorners.flagPlaces(EqXcCorners.RIGHT, 1.85) == 1.85
+        and lx == -1.85 and lwx == 1.85 and math.abs(lry - math.pi) < 1e-9 and math.abs(lwry - math.pi) < 1e-9)
+    local en = io.open("translations/translation_en.xml"):read("*a")
+    for _, name in ipairs({ "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
+        local xml = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
+        local i3d = io.open("placeables/xcJumps/" .. name .. ".i3d"):read("*a")
+        local corner = name:find("Corner", 1, true) ~= nil
+        check(name .. " has flag groups holding their flags, collision" .. (corner and " and the Corner choice" or ""),
+            i3d:find('<TransformGroup name="eqFlagsRed" translation="[%d.]+ 0 0"') ~= nil
+            and i3d:find('<TransformGroup name="eqFlagsWhite" translation="%-[%d.]+ 0 0"') ~= nil
+            and i3d:find('name="pennantRed"', 1, true) ~= nil and i3d:find('name="col"', 1, true) ~= nil
+            and (xml:find("<eqCornerSide>", 1, true) ~= nil) == corner)
+    end
+    check("the Corner choice has its texts", en:find('name="eq_config_corner"', 1, true) ~= nil
+        and en:find('name="eq_config_cornerRight"', 1, true) ~= nil and en:find('name="eq_config_cornerLeft"', 1, true) ~= nil)
+end
 dofile("scripts/facilities/EqPlaceAnywhere.lua")
 check("only our cross country pieces skip the land rule",
     EqPlaceAnywhere.isOurs("C:\\mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\courseFlags.xml")
@@ -2498,7 +2523,8 @@ do
         EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
         and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
         and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
-    for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16" }) do
+    for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16",
+        "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
         local choices = select(2, text:gsub("<eqAlwaysVisibleConfiguration ", ""))
         check(name .. " offers Disappearing, Yes first", choices == 2
@@ -3965,6 +3991,8 @@ end)()
     check("sponsors: the same order for the same farm", table.concat(order, " ") == table.concat(again, " "))
     for _, name in ipairs(order) do check("sponsors: the placeholder brand is never shown", name ~= "NONE") end
     check("sponsors: our bleachers are known", EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\bleachers\\bleachers5x10.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcTable.xml")
+        and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcBigLog.xml")
         and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
     check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
 

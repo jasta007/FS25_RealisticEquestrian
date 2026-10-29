@@ -76,6 +76,15 @@
         <text name="eq_shop_xcDropWall08" text="Drop Wall (0.8 m)"/>
         <text name="eq_shop_xcDropWall12" text="Drop Wall (1.2 m)"/>
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
+        <text name="eq_shop_xcCornerPlank" text="Corner (planks)"/>
+        <text name="eq_shop_xcCornerLog" text="Corner (logs)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Roll Top (quarter)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Roll Top (half)"/>
+        <text name="eq_shop_xcTable" text="Table"/>
+        <text name="eq_shop_xcBigLog" text="Big Log"/>
+        <text name="eq_config_corner" text="Corner"/>
+        <text name="eq_config_cornerRight" text="Point right"/>
+        <text name="eq_config_cornerLeft" text="Point left"/>
         <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
         <text name="eq_shop_xcHidden_function" text="Disappears outside construction, course editing and rounds unless bought with Disappearing: No."/>
