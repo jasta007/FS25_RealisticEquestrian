@@ -63,13 +63,22 @@ function EqXcCorners.registerConfiguration()
 end
 
 
---- The flag groups right under a placeable's root.
+EqXcCorners.DEPTH = 3
+
+
+--- The flag groups under a placeable's root. They sit under the i3d's own top node, a level
+--- below the root (looking only right under it found nothing, so Point left did nothing).
 local function flagGroups(root)
     local red, white
-    for i = 0, getNumOfChildren(root) - 1 do
-        local child = getChildAt(root, i)
-        local name = getName(child)
-        if name == "eqFlagsRed" then red = child elseif name == "eqFlagsWhite" then white = child end
+    local stack = { { root, 0 } }
+    while #stack > 0 and (red == nil or white == nil) do
+        local node, depth = stack[#stack][1], stack[#stack][2]
+        stack[#stack] = nil
+        local name = getName(node)
+        if name == "eqFlagsRed" then red = node elseif name == "eqFlagsWhite" then white = node
+        elseif depth < EqXcCorners.DEPTH then
+            for i = 0, getNumOfChildren(node) - 1 do stack[#stack + 1] = { getChildAt(node, i), depth + 1 } end
+        end
     end
     return red, white
 end
@@ -83,7 +92,13 @@ function EqXcCorners.apply(placeable)
     local side = placeable.configurations ~= nil and placeable.configurations[EqXcCorners.CONFIG] or nil
     if placeable.eqCornerSide == side then return false end
     local red, white = flagGroups(placeable.rootNode)
-    if red == nil or white == nil then return false end
+    if red == nil or white == nil then
+        if not placeable.eqCornerMissing then
+            placeable.eqCornerMissing = true
+            Log:warning("EqXcCorners: no flag groups found on %s", tostring(placeable.configFileName))
+        end
+        return false
+    end
     placeable.eqCornerSide = side
     local rx, ry, rz = getTranslation(red)
     local redX, redRy, whiteX, whiteRy = EqXcCorners.flagPlaces(side, rx)
@@ -92,6 +107,7 @@ function EqXcCorners.apply(placeable)
     setRotation(red, 0, redRy, 0)
     setTranslation(white, whiteX, wy, wz)
     setRotation(white, 0, whiteRy, 0)
+    Log:info("EqXcCorners: corner flags set to %s", side == EqXcCorners.LEFT and "Point left" or "Point right")
     return true
 end
 

@@ -2470,11 +2470,12 @@ do
             and (xml:find("<eqCornerSide>", 1, true) ~= nil) == corner)
     end
     -- the placed corners are looked over each second (onPostLoad never came for the choice in game)
-    local nodes = { root = { "red", "white" }, red = { x = 2.45, ry = 0 }, white = { x = -2.45, ry = 0 } }
+    -- the flags sit under the i3d's top node, a level below the placeable's root
+    local nodes = { root = { "top" }, top = { "red", "white" }, red = { x = 2.45, ry = 0 }, white = { x = -2.45, ry = 0 } }
     local saved = { getNumOfChildren, getChildAt, getName, getTranslation, setTranslation, setRotation, g_currentMission, g_time, g_gui }
-    getNumOfChildren = function(n) return n == "root" and 2 or 0 end
+    getNumOfChildren = function(n) return (n == "root" and 1) or (n == "top" and 2) or 0 end
     getChildAt = function(n, i) return nodes[n][i + 1] end
-    getName = function(n) return n == "red" and "eqFlagsRed" or "eqFlagsWhite" end
+    getName = function(n) return ({ red = "eqFlagsRed", white = "eqFlagsWhite" })[n] or n end
     getTranslation = function(n) return nodes[n].x, 0, 0 end
     setTranslation = function(n, x) nodes[n].x = x end
     setRotation = function(n, _, ry) nodes[n].ry = ry end
