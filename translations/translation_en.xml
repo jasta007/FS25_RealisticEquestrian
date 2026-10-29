@@ -15,8 +15,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="You lose your multiplier if you speed up into a canter or gallop, collide with an obstacle or miss the next manoeuvre. From x4 you must also hold your pace between commands. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control. Start a routine by moving into a walk and holding that pace for a short interval. The training program will then ask you for a new manoeuvre to hold. Achieve it within a few seconds to keep the combo going."/>
+        <text name="eq_help_temperament_2" text="Too many faults, such as galloping or leaving the arena, end the test; finish it for a big Temperament boost. Away from an arena, walking and backing up still train a little Temperament. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
+        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. Ride up to it and a test starts, asking you to ride to the letters at set gaits, halt, rein back and circle. Follow each command in time to raise your multiplier."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
@@ -78,9 +78,10 @@
         <text name="eq_shop_xcDropWall16" text="Drop Wall (1.6 m)"/>
         <text name="eq_shop_xcDrop_function" text="A plank wall for a cross country drop. Sculpt a bank, place it on the top with the lip at the edge, and its side walls hide the steep slope."/>
         <text name="eq_shop_xcJump_function" text="A cross country fence. Its red and white flags mark where to jump."/>
-        <text name="eq_shop_xcHidden_function" text="Hidden outside construction, course editing and cross country rounds, unless bought Always visible."/>
+        <text name="eq_shop_xcHidden_function" text="Disappears outside construction, course editing and rounds unless bought with Disappearing: No."/>
+        <text name="eq_shop_showJumpHidden_function" text="Bought with Disappearing: Yes, it disappears outside construction, course editing and rounds."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Hidden outside construction, course editing and rounds."/>
-        <text name="eq_config_alwaysVisible" text="Always visible"/>
+        <text name="eq_config_disappearing" text="Disappearing"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Walk"/>
         <text name="eq_dressage_gait_trot" text="Trot"/>
@@ -96,13 +97,13 @@
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>
-        <text name="eq_train_routine_none" text="Walk to start a routine"/>
+        <text name="eq_train_routine_none" text="Ride to a dressage arena to start a test"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
         <text name="eq_train_combo" text="Jump combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament starts by holding a walk for a short time, then following instructions to build its combo meter. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament by riding a test in a dressage arena. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Hire grooms and trainers on the Staff tab to train your horses each day. The game&apos;s animal staff and RLRM&apos;s Herdsman only keep them ticking over."/>
         <text name="eq_form_title" text="Peak form"/>
         <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
@@ -349,7 +350,7 @@
         <text name="eq_course_recordAction" text="New show jumping course"/>
         <text name="eq_course_started" text="Recording %s: ride through the jumps in order. Placed obstacles from Realistic Equestrian have no collision while you edit; other obstacles stay solid"/>
         <text name="eq_course_noJumps" text="Recording a course, but there are no show jumps on the map yet"/>
-        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps"/>
+        <text name="eq_course_tooFew" text="Course not saved: ride through at least %d show jumps, or press Ctrl+Backspace to cancel"/>
         <text name="eq_course_saved" text="Saved %s: %d fences, %.0f m"/>
         <text name="eq_course_cancelled" text="Editing stopped: you left the horse before the course had enough fences to save"/>
         <text name="eq_course_leftSaved" text="Course saved as you left the horse: press Ctrl+J near it to edit, then Ctrl+K to record on from the nearest point"/>
@@ -396,6 +397,10 @@
         <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
+        <text name="eq_course_cancelAction" text="Cancel new course"/>
+        <text name="eq_course_discardAction" text="Discard changes to %s"/>
+        <text name="eq_course_newCancelled" text="Cancelled: %s was not saved"/>
+        <text name="eq_course_changesDiscarded" text="Changes to %s discarded: the saved course is as it was"/>
         <text name="eq_course_editAction" text="Edit %s"/>
         <text name="eq_course_doneAction" text="Finish editing course"/>
         <text name="eq_course_saveAction" text="Save course and finish"/>

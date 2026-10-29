@@ -1051,11 +1051,12 @@ def write_xml(name, price, note, path):
         <!-- {note} -->
     </placement>
 
-    <!-- Always visible: No hides the piece outside construction, course editing and rounds (EqXcHide). -->
+    <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
+         and rounds (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". -->
     <eqAlwaysVisible>
         <eqAlwaysVisibleConfigurations>
-            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
             <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
         </eqAlwaysVisibleConfigurations>
     </eqAlwaysVisible>
 </placeable>

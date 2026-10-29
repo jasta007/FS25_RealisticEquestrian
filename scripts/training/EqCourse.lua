@@ -394,11 +394,12 @@ end
 --- @param x number
 --- @param z number
 --- @param radius number
+--- @param kind string|nil only courses of this kind, nil for any
 --- @return table|nil, number|nil the nearest saved course within radius, and its index
-function EqCourse.nearest(x, z, radius)
+function EqCourse.nearest(x, z, radius, kind)
     local best, bestIndex, bestDistance = nil, nil, radius
     for i, course in ipairs(EqCourse.list) do
-        local d = EqCourse.distanceTo(course, x, z)
+        local d = (kind == nil or (course.kind or EqCourse.SHOW_JUMPING) == kind) and EqCourse.distanceTo(course, x, z) or math.huge
         if d <= bestDistance then best, bestIndex, bestDistance = course, i, d end
     end
     return best, bestIndex

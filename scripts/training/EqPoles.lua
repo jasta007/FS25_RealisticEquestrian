@@ -311,6 +311,8 @@ function EqPoles.raise(pole)
     -- While a course is edited the jump's collision is off (EqCourseHooks): hand the pole's to
     -- the editor, which gives it all back when editing ends.
     local taken = EqCourseHooks ~= nil and EqCourseHooks.bodies ~= nil and EqCourseHooks.bodies[pole.placeableRoot] or nil
+    -- A jump hidden as Disappearing (EqXcHide) keeps it until it shows again.
+    if taken == nil and EqXcHide ~= nil then taken = EqXcHide.heldBodies(pole.placeableRoot) end
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then
             if taken ~= nil then

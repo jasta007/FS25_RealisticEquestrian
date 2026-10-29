@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="訓練檢視：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="如果你加速到跑步或襲步、撞上障礙物或錯過下一個動作，就會失去倍率。從x4開始，你還必須在指令之間保持步法。給馬喂胡蘿蔔等零食也是提升性情的好方法。"/>
-        <text name="eq_help_temperament_1" text="性情訓練就是教會你的馬服從控制。轉為慢步並保持一小段時間即可開始一套動作。訓練程式隨後會要求你保持一個新動作。在幾秒內完成即可延續連擊。"/>
+        <text name="eq_help_temperament_2" text="失誤過多（例如襲步或離開場地）會結束這套動作；完成它可大幅提升氣質。在場地之外，慢步和後退仍能少量訓練氣質。餵紅蘿蔔等零食也是提升氣質的好方法。"/>
+        <text name="eq_help_temperament_1" text="氣質訓練是教會馬匹服從控制，需要一個盛裝舞步場地：在商店購買一個，或擺放盛裝舞步字母標記。騎到場地旁就會開始一套動作，要求你以指定步法前往字母、停止、後退和打圈。及時完成每個指令即可提高倍率。"/>
         <text name="eq_help_temperament_title" text="訓練：性情"/>
         <text name="eq_help_agility_2" text="如果你沒能及時跳過新的障礙物或速度掉得太多，就會失去倍率。沒有障礙物的跳躍也有一點訓練效果，但不會提高倍率。"/>
         <text name="eq_help_agility_1" text="敏捷主要靠跨越障礙訓練，不過在各種步法之間切換也能獲得少許提升。跳過障礙物來積累敏捷訓練倍率，倍率會在十秒後消退，撞到障礙物則會更早消退。"/>
@@ -80,9 +80,10 @@
         <text name="eq_shop_xcDropWall16" text="落差牆（1.6 m）"/>
         <text name="eq_shop_xcDrop_function" text="用於越野落差障礙的木板牆。塑造一道土坡，把它放在坡頂並讓邊緣對齊坡沿，側牆會遮住陡坡。"/>
         <text name="eq_shop_xcJump_function" text="越野障礙。紅旗和白旗標出跳躍的位置。"/>
-        <text name="eq_shop_xcHidden_function" text="除非以“始終可見”購買，否則在建造模式、路線編輯和越野賽之外隱藏。"/>
+        <text name="eq_shop_xcHidden_function" text="除非購買時選擇「消失：否」，否則在建造、路線編輯和比賽之外會消失。"/>
+        <text name="eq_shop_showJumpHidden_function" text="購買時選擇「消失：是」，它會在建造、路線編輯和比賽之外消失。"/>
         <text name="eq_shop_xcFlagsHidden_function" text="在建造模式、路線編輯和比賽之外隱藏。"/>
-        <text name="eq_config_alwaysVisible" text="始終可見"/>
+        <text name="eq_config_disappearing" text="消失"/>
         <text name="eq_dressage_go" text="%s：%s"/>
         <text name="eq_dressage_gait_walk" text="慢步"/>
         <text name="eq_dressage_gait_trot" text="快步"/>
@@ -98,13 +99,13 @@
         <text name="eq_dressage_next" text="下一個：%s"/>
         <text name="eq_dressage_stand" text="立定"/>
         <text name="eq_dressage_marker" text="標記 %s"/>
-        <text name="eq_train_routine_none" text="慢步開始一套動作"/>
+        <text name="eq_train_routine_none" text="前往盛裝舞步場地開始一套動作"/>
         <text name="eq_train_routine" text="動作 x%d"/>
         <text name="eq_train_combo_none" text="跳過障礙開始連擊"/>
         <text name="eq_train_combo" text="跳躍連擊 x%d"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷透過跳越障礙來積累連擊槽進行訓練；性情則先保持一小段時間的慢步，再按指令行動來積累它的連擊槽。耐力和速度透過正確地襲步來訓練：襲步時按H瞭解方法。"/>
+        <text name="eq_help_freestyle_2" text="敏捷透過跳越障礙累積連擊條來訓練，氣質透過在盛裝舞步場地完成一套動作來訓練。耐力和速度透過良好的襲步來訓練：襲步時按 H 了解方法。"/>
         <text name="eq_help_freestyle_3" text="不想自己騎？在員工標籤頁僱用馬伕和教練，每天替你訓練馬匹。遊戲自帶的動物員工和RLRM的Herdsman只能讓它們維持狀態。"/>
         <text name="eq_form_title" text="巔峰狀態"/>
         <text name="eq_help_freestyle_4" text="賽前騎一騎！你用小遊戲訓練的每項屬性，都會讓馬在本月的比賽中進入巔峰狀態，每項最多+8。多天的訓練不會疊加：只計算本月最好的一次訓練。"/>
@@ -350,7 +351,7 @@
         <text name="eq_course_recordAction" text="新場地障礙路線"/>
         <text name="eq_course_started" text="正在錄製%s：按順序穿過各個障礙。編輯時，Realistic Equestrian放置的障礙物沒有碰撞；其他障礙物仍是實體"/>
         <text name="eq_course_noJumps" text="正在錄製路線，但地圖上還沒有場地障礙"/>
-        <text name="eq_course_tooFew" text="路線未儲存：至少穿過%d個場地障礙"/>
+        <text name="eq_course_tooFew" text="路線未儲存：至少穿過%d個場地障礙，或按 Ctrl+Backspace 取消"/>
         <text name="eq_course_saved" text="已儲存%s：%d個障礙，%.0f米"/>
         <text name="eq_course_cancelled" text="已停止編輯：路線障礙數量足夠儲存之前你下了馬"/>
         <text name="eq_course_leftSaved" text="下馬時已儲存路線：在附近按Ctrl+J編輯，再按Ctrl+K從最近的點繼續錄製"/>
@@ -397,6 +398,10 @@
         <text name="eq_course_deleteAsk" text="刪除%s（%d個障礙，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="刪除路線"/>
         <text name="eq_course_deleteAction" text="刪除%s"/>
+        <text name="eq_course_cancelAction" text="取消新路線"/>
+        <text name="eq_course_discardAction" text="放棄對%s的修改"/>
+        <text name="eq_course_newCancelled" text="已取消：%s未儲存"/>
+        <text name="eq_course_changesDiscarded" text="已放棄對%s的修改：已儲存的路線保持不變"/>
         <text name="eq_course_editAction" text="編輯%s"/>
         <text name="eq_course_doneAction" text="完成路線編輯"/>
         <text name="eq_course_saveAction" text="儲存路線並完成"/>

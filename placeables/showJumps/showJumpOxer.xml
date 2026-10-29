@@ -5,6 +5,7 @@
         <name>$l10n_eq_shop_showJumpOxer</name>
         <functions>
             <function>$l10n_eq_shop_showJump_function</function>
+            <function>$l10n_eq_shop_showJumpHidden_function</function>
         </functions>
         <image>placeables/showJumps/store_showJumpOxer.dds</image>
         <price>700</price>
@@ -29,6 +30,15 @@
     <placement useRandomYRotation="false" useManualYRotation="true">
         <!-- 1.00 m high, 1.10 m spread; jumped along z, red flag at +x. Poles eqPole1.. fall (EqPoles). -->
     </placement>
+
+    <!-- Disappearing: No (the first, default) keeps the jump in the world; Yes hides it outside
+         construction, course editing and rounds, like the cross country pieces (EqXcHide). -->
+    <eqDisappearing>
+        <eqDisappearingConfigurations>
+            <eqDisappearingConfiguration name="$l10n_ui_no" price="0"/>
+            <eqDisappearingConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqDisappearingConfigurations>
+    </eqDisappearing>
 
     <eqPoleColour>
         <eqPoleColourConfigurations>
@@ -71,5 +81,4 @@
             <eqWingColourConfiguration name="$l10n_eq_colour_black" price="0"/>
         </eqWingColourConfigurations>
     </eqWingColour>
-
 </placeable>

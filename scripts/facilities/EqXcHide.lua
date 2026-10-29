@@ -7,13 +7,17 @@
     - in construction mode, with collision, so they can be picked, moved and sold;
     - while a course is edited, seen but ridden through (the course editor takes show jumps'
       collision off for the same reason);
-    - in a round, from the start line's approach (SHOW_NEAR) to the end, with collision; the flag
-      fence only seen, so its flags and guide line never stop a horse or count as hitting a
-      fence: faults come from the jump itself (James, 2026-10-28).
+    - in a round, from its countdown (the horse right at the start line) to the result, with
+      collision; the flag fence only seen, so its flags and guide line never stop a horse or count
+      as hitting a fence: faults come from the jump itself (James, 2026-10-28). Not before: riding
+      past a start line no longer makes a course pop up (James, 2026-10-29).
 
-    A log pile or drop wall bought with the "Always visible" configuration (EqXcHide.CONFIG, No by
-    default) is left alone; the flag fence has no such choice and always hides (James). Everything
-    is left alone in multiplayer, where rounds don't run yet and collision is the server's. Show jumps are never touched: they are mostly other mods' (James).
+    Each piece has a "Disappearing" shop configuration. Log piles and drop walls disappear by
+    default (stored as EqXcHide.CONFIG, eqAlwaysVisible: 1 = disappearing, 2 = always visible, as
+    saved before it was renamed); our show jumps stay by default (DISAPPEAR_CONFIG, 1 = No, 2 =
+    Yes). The flag fence has no choice and always hides (James). Everything is left alone in
+    multiplayer, where rounds don't run yet and collision is the server's. Other mods' show jumps
+    are never touched.
 
     A vehicle parked on a hidden piece can be thrown when its collision comes back. James is
     fine with that: the game's reset handles it.
@@ -29,11 +33,12 @@ EqXcHide = {}
 
 local Log = EqLog
 
--- The placeable configuration: 1 = No (hidden outside rounds), 2 = Yes (always visible).
+-- Cross country pieces' configuration: 1 = Disappearing: Yes (hidden outside rounds), 2 = No.
 EqXcHide.CONFIG = "eqAlwaysVisible"
 EqXcHide.ALWAYS = 2
--- Pieces show once the rider is this near the start line before a round (metres).
-EqXcHide.SHOW_NEAR = 60
+-- Our show jumps' configuration: 1 = Disappearing: No, 2 = Yes.
+EqXcHide.DISAPPEAR_CONFIG = "eqDisappearing"
+EqXcHide.DISAPPEAR = 2
 -- Pieces are listed again this often, to catch newly placed ones.
 EqXcHide.SCAN_MS = 1000
 -- Most nodes searched under one piece (a long flag fence has many).
@@ -44,11 +49,13 @@ EqXcHide.SHOWN, EqXcHide.GHOST, EqXcHide.HIDDEN = "shown", "ghost", "hidden"
 
 EqXcHide.mode = nil
 EqXcHide.scannedAt = nil
+-- Pieces put in a mode, by root node.
+EqXcHide.byRoot = {}
 EqXcHide.trafficOff = false
 EqXcHide.loggedTraffic = false
 
 
---- What every piece without the "Always visible" configuration should be now.
+--- What every disappearing piece should be now.
 --- @param state table { construction, editing, round, multiplayer }
 --- @return string EqXcHide.SHOWN, GHOST or HIDDEN
 function EqXcHide.wantMode(state)
@@ -71,15 +78,11 @@ function EqXcHide.modeFor(mode, flagFence, state)
 end
 
 
---- Is a round on, as far as showing the pieces goes: from SHOW_NEAR before the start line to
---- the result.
+--- Is a round on, as far as showing the pieces goes: from its countdown to the result.
 --- @param sjState string|nil the round's EqShowJumping state, nil for no round
---- @param startDistance number|nil metres from the rider to the start line
 --- @return boolean
-function EqXcHide.roundShows(sjState, startDistance)
-    if sjState == nil then return false end
-    if sjState ~= "approach" then return true end
-    return startDistance ~= nil and startDistance <= EqXcHide.SHOW_NEAR
+function EqXcHide.roundShows(sjState)
+    return sjState ~= nil and sjState ~= "approach"
 end
 
 
@@ -95,9 +98,22 @@ end
 
 
 --- @param configurations table|nil a placeable's configurations (name -> index)
---- @return boolean true when bought "Always visible"
+--- @return boolean true when a cross country piece was bought Disappearing: No (always visible)
 function EqXcHide.isAlwaysVisible(configurations)
     return type(configurations) == "table" and configurations[EqXcHide.CONFIG] == EqXcHide.ALWAYS
+end
+
+
+--- @param configFileName string|nil
+--- @param configurations table|nil
+--- @return boolean true for a piece EqXcHide hides: the flag fence always, a cross country piece
+--- unless bought Disappearing: No, one of our show jumps only if bought Disappearing: Yes
+function EqXcHide.disappears(configFileName, configurations)
+    if EqXcFlags.isFlagFence(configFileName) then return true end
+    if EqPoles.isOurs(configFileName) then
+        return type(configurations) == "table" and configurations[EqXcHide.DISAPPEAR_CONFIG] == EqXcHide.DISAPPEAR
+    end
+    return not EqXcHide.isAlwaysVisible(configurations)
 end
 
 
@@ -110,22 +126,24 @@ function EqXcHide.registerConfiguration()
         Log:warning("EqXcHide: no placeable configurations, cross country pieces can't be made always visible")
         return
     end
-    if manager.configurations ~= nil and manager.configurations[EqXcHide.CONFIG] ~= nil then return end
-    local title = "Always visible"
-    if g_i18n ~= nil and g_i18n:hasText("eq_config_alwaysVisible") then title = g_i18n:getText("eq_config_alwaysVisible") end
-    manager:addConfigurationType(EqXcHide.CONFIG, title, EqXcHide.CONFIG, PlaceableConfigurationItem)
+    local title = "Disappearing"
+    if g_i18n ~= nil and g_i18n:hasText("eq_config_disappearing") then title = g_i18n:getText("eq_config_disappearing") end
+    for _, name in ipairs({ EqXcHide.CONFIG, EqXcHide.DISAPPEAR_CONFIG }) do
+        if manager.configurations == nil or manager.configurations[name] == nil then
+            manager:addConfigurationType(name, title, name, PlaceableConfigurationItem)
+        end
+    end
 end
 
 
---- @return table the cross country pieces EqXcHide looks after (Always visible ones left out)
+--- @return table the pieces EqXcHide looks after (disappearing ones)
 function EqXcHide.pieces()
     local list = {}
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
-        -- The flag fence always hides (James): Always visible is for the solid pieces.
-        if placeable.rootNode ~= nil and EqPlaceAnywhere.isOurs(placeable.configFileName)
-            and (EqXcFlags.isFlagFence(placeable.configFileName) or not EqXcHide.isAlwaysVisible(placeable.configurations)) then
+        if placeable.rootNode ~= nil and (EqPlaceAnywhere.isOurs(placeable.configFileName) or EqPoles.isOurs(placeable.configFileName))
+            and EqXcHide.disappears(placeable.configFileName, placeable.configurations) then
             table.insert(list, placeable)
         end
     end
@@ -180,6 +198,19 @@ function EqXcHide.apply(placeable, mode)
     end
     setVisibility(placeable.rootNode, mode ~= EqXcHide.HIDDEN)
     placeable.eqXcMode = mode
+    EqXcHide.byRoot[placeable.rootNode] = placeable
+end
+
+
+--- Where a piece keeps the collision it took, while it is hidden or ghost: a show jump pole put
+--- back up then hands its collision over here instead of turning it on (EqPoles.raise).
+--- @param root number a placeable's root node
+--- @return table|nil the list to add { node, kind } to, nil when the piece has its collision
+function EqXcHide.heldBodies(root)
+    local placeable = EqXcHide.byRoot[root]
+    if placeable == nil or placeable.eqXcMode == nil or placeable.eqXcMode == EqXcHide.SHOWN then return nil end
+    placeable.eqXcBodies = placeable.eqXcBodies or {}
+    return placeable.eqXcBodies
 end
 
 
@@ -233,11 +264,11 @@ end
 --- Each frame: follow construction mode, course editing and rounds at once, and put newly
 --- placed pieces in the mode every SCAN_MS.
 function EqXcHide.update()
-    local kind, sjState, distance = roundState()
+    local kind, sjState = roundState()
     local state = {
         construction = EqXcFlags.inConstruction(),
         editing = EqCourseHooks ~= nil and EqCourseHooks.editing ~= nil,
-        round = EqXcHide.roundShows(sjState, distance),
+        round = EqXcHide.roundShows(sjState),
         multiplayer = isMultiplayer(),
     }
     local mode = EqXcHide.wantMode(state)
@@ -261,7 +292,7 @@ end
 --- Leaving the game puts traffic back. Pieces need nothing: only their live nodes change.
 function EqXcHide.reset()
     EqXcHide.setTrafficOff(false)
-    EqXcHide.mode, EqXcHide.scannedAt = nil, nil
+    EqXcHide.mode, EqXcHide.scannedAt, EqXcHide.byRoot = nil, nil, {}
 end
 
 

@@ -18,8 +18,8 @@
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_temperament_2" text="Sie verlieren den Multiplikator, wenn Sie in Galopp oder Renngalopp beschleunigen, gegen ein Hindernis stoßen oder die nächste Bewegung verpassen. Ab x4 müssen Sie außerdem Ihr Tempo zwischen den Anweisungen halten. Leckerlis wie Karotten im Futter sind ebenfalls eine gute Möglichkeit, das Temperament zu verbessern."/>
-        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt Ihr Pferd Gehorsam. Beginnen Sie eine Lektion, indem Sie in den Schritt wechseln und das Tempo kurz halten. Das Trainingsprogramm verlangt dann eine neue Bewegung, die Sie halten sollen. Führen Sie sie innerhalb weniger Sekunden aus, damit die Kombo weiterläuft."/>
+        <text name="eq_help_temperament_2" text="Zu viele Fehler, etwa Galopp oder das Verlassen des Vierecks, beenden die Aufgabe; reitest du sie zu Ende, gibt es einen großen Temperament-Bonus. Außerhalb eines Vierecks trainieren Schritt und Rückwärtsrichten weiterhin etwas Temperament. Leckerlis wie Karotten sind ebenfalls eine tolle Möglichkeit, das Temperament zu verbessern."/>
+        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt dein Pferd Gehorsam, und dafür brauchst du ein Dressurviereck: Kauf eines im Shop oder stell Dressurbuchstaben auf. Reite hin, und eine Aufgabe beginnt: Reite in vorgegebenen Gangarten zu den Buchstaben, halte, richte rückwärts und reite Volten. Erfülle jede Anweisung rechtzeitig, um deinen Multiplikator zu steigern."/>
         <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern oder zu viel Tempo verlieren. Ein Sprung ohne Hindernis bringt etwas Training, erhöht den Multiplikator aber nicht."/>
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
@@ -80,9 +80,10 @@
         <text name="eq_shop_xcDropWall16" text="Absprungwand (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Eine Bohlenwand für einen Tiefsprung im Gelände. Einen Wall formen, die Wand oben mit der Kante am Rand platzieren; die Seitenwände verdecken den steilen Hang."/>
         <text name="eq_shop_xcJump_function" text="Ein Geländehindernis. Die rote und die weiße Flagge markieren, wo gesprungen wird."/>
-        <text name="eq_shop_xcHidden_function" text="Außerhalb des Baumodus, der Parcoursbearbeitung und von Geländeritten ausgeblendet, außer mit Immer sichtbar gekauft."/>
+        <text name="eq_shop_xcHidden_function" text="Verschwindet außerhalb des Baumodus, der Parcoursbearbeitung und von Ritten, außer mit Verschwindend: Nein gekauft."/>
+        <text name="eq_shop_showJumpHidden_function" text="Mit Verschwindend: Ja gekauft, verschwindet es außerhalb des Baumodus, der Parcoursbearbeitung und von Ritten."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Außerhalb des Baumodus, der Parcoursbearbeitung und von Ritten ausgeblendet."/>
-        <text name="eq_config_alwaysVisible" text="Immer sichtbar"/>
+        <text name="eq_config_disappearing" text="Verschwindend"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Schritt"/>
         <text name="eq_dressage_gait_trot" text="Trab"/>
@@ -98,13 +99,13 @@
         <text name="eq_dressage_next" text="Als Nächstes: %s"/>
         <text name="eq_dressage_stand" text="Stehen"/>
         <text name="eq_dressage_marker" text="Punkt %s"/>
-        <text name="eq_train_routine_none" text="Schritt reiten, um eine Lektion zu beginnen"/>
+        <text name="eq_train_routine_none" text="Zu einem Dressurviereck reiten, um eine Aufgabe zu beginnen"/>
         <text name="eq_train_routine" text="Lektion x%d"/>
         <text name="eq_train_combo_none" text="Für eine Kombo einen Sprung meistern"/>
         <text name="eq_train_combo" text="Sprung-Kombo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
-        <text name="eq_help_freestyle_2" text="Wendigkeit trainieren Sie, indem Sie über Hindernisse springen und so eine Kombo aufbauen, und Temperament beginnt, wenn Sie kurz im Schritt bleiben und dann Anweisungen folgen, um seine Kombo aufzubauen. Ausdauer und Schnelligkeit trainieren Sie, indem Sie den Renngalopp gut reiten: Drücken Sie im Renngalopp H, um zu erfahren, wie."/>
+        <text name="eq_help_freestyle_2" text="Beweglichkeit trainierst du, indem du Hindernisse springst und einen Kombo-Zähler aufbaust, Temperament mit einer Aufgabe im Dressurviereck. Ausdauer und Tempo trainierst du durch gutes Galoppieren: Drücke im Galopp H, um zu erfahren, wie."/>
         <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Stellen Sie im Reiter Personal Pferdepfleger und Trainer ein, die Ihre Pferde jeden Tag trainieren. Tierpfleger und der Herdsman von RLRM halten sie nur in Bewegung."/>
         <text name="eq_form_title" text="Topform"/>
         <text name="eq_help_freestyle_4" text="Reiten Sie vor einem Wettbewerb! Jeder Wert, den Sie mit seinem Minispiel trainieren, bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform, bis zu +8 pro Wert. Mehrere Tage addieren sich nicht: Ihre beste Einheit des Monats zählt."/>
@@ -351,7 +352,7 @@
         <text name="eq_course_recordAction" text="Neuer Springparcours"/>
         <text name="eq_course_started" text="%s wird aufgezeichnet: durch die Hindernisse in der richtigen Reihenfolge reiten. Platzierte Hindernisse von Realistic Equestrian haben beim Bearbeiten keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="eq_course_noJumps" text="Parcours wird aufgezeichnet, aber auf der Karte stehen noch keine Springhindernisse"/>
-        <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten"/>
+        <text name="eq_course_tooFew" text="Parcours nicht gespeichert: durch mindestens %d Springhindernisse reiten, oder Strg+Rücktaste zum Abbrechen"/>
         <text name="eq_course_saved" text="%s gespeichert: %d Hindernisse, %.0f m"/>
         <text name="eq_course_cancelled" text="Bearbeitung beendet: Sie haben das Pferd verlassen, bevor der Parcours genug Hindernisse zum Speichern hatte"/>
         <text name="eq_course_leftSaved" text="Parcours beim Absteigen gespeichert: in der Nähe Strg+J zum Bearbeiten, dann Strg+K, um ab dem nächsten Punkt weiter aufzuzeichnen"/>
@@ -398,6 +399,10 @@
         <text name="eq_course_deleteAsk" text="%s mit %d Hindernissen auf %.0f m löschen?"/>
         <text name="eq_course_deleteTitle" text="Parcours löschen"/>
         <text name="eq_course_deleteAction" text="%s löschen"/>
+        <text name="eq_course_cancelAction" text="Neuen Parcours abbrechen"/>
+        <text name="eq_course_discardAction" text="Änderungen an %s verwerfen"/>
+        <text name="eq_course_newCancelled" text="Abgebrochen: %s wurde nicht gespeichert"/>
+        <text name="eq_course_changesDiscarded" text="Änderungen an %s verworfen: der gespeicherte Parcours bleibt unverändert"/>
         <text name="eq_course_editAction" text="%s bearbeiten"/>
         <text name="eq_course_doneAction" text="Bearbeitung beenden"/>
         <text name="eq_course_saveAction" text="Parcours speichern und beenden"/>

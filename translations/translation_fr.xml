@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vue d'entraînement : %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Vous perdez le multiplicateur si vous passez au galop ou au grand galop, heurtez un obstacle ou manquez la figure suivante. À partir de x4, vous devez aussi garder votre allure entre les ordres. Donner des friandises comme des carottes à vos chevaux améliore aussi beaucoup le Tempérament."/>
-        <text name="eq_help_temperament_1" text="L'entraînement du Tempérament consiste à apprendre le contrôle à votre cheval. Commencez une reprise en passant au pas et en gardant cette allure un court instant. Le programme vous demande alors une nouvelle figure à tenir. Réussissez-la en quelques secondes pour prolonger le combo."/>
+        <text name="eq_help_temperament_2" text="Trop de fautes, comme galoper ou sortir de la carrière, mettent fin à la reprise ; terminez-la pour un gros bonus de tempérament. Hors d&apos;une carrière, le pas et le reculer entraînent encore un peu le tempérament. Donner des friandises comme des carottes est aussi un excellent moyen d&apos;améliorer le tempérament."/>
+        <text name="eq_help_temperament_1" text="L&apos;entraînement du tempérament apprend la maîtrise à votre cheval, et il faut une carrière de dressage : achetez-en une en boutique ou installez des lettres de dressage. Approchez-vous et une reprise commence : rejoignez les lettres aux allures demandées, arrêtez, reculez et faites des cercles. Suivez chaque consigne à temps pour augmenter votre multiplicateur."/>
         <text name="eq_help_temperament_title" text="Entraînement : Tempérament"/>
         <text name="eq_help_agility_2" text="Vous perdez le multiplicateur si vous ne franchissez pas un nouvel obstacle à temps ou perdez trop de vitesse. Sauter sans obstacle entraîne un peu, mais n'augmente pas le multiplicateur."/>
         <text name="eq_help_agility_1" text="L'Agilité, c'est surtout franchir des sauts, même si passer d'une allure à l'autre aide un peu. Franchissez des obstacles pour monter un multiplicateur d'Agilité, qui retombe après dix secondes, ou plus tôt si vous touchez un obstacle."/>
@@ -57,13 +57,13 @@
         <text name="eq_dressage_next" text="Suivant : %s"/>
         <text name="eq_dressage_stand" text="Arrêt"/>
         <text name="eq_dressage_marker" text="Lettre %s"/>
-        <text name="eq_train_routine_none" text="Passez au pas pour commencer une reprise"/>
+        <text name="eq_train_routine_none" text="Allez à une carrière de dressage pour commencer une reprise"/>
         <text name="eq_train_routine" text="Reprise x%d"/>
         <text name="eq_train_combo_none" text="Franchissez un saut pour lancer un combo"/>
         <text name="eq_train_combo" text="Combo de sauts x%d"/>
         <text name="eq_train_view_temperament" text="Tempérament"/>
         <text name="eq_train_view_agility" text="Agilité"/>
-        <text name="eq_help_freestyle_2" text="L'Agilité s'entraîne en sautant des obstacles pour remplir une jauge de combo. Le Tempérament commence par un pas tenu un court instant, puis il faut suivre les ordres pour remplir sa jauge. L'Endurance et la Vitesse s'entraînent en galopant bien : appuyez sur H au grand galop pour apprendre comment."/>
+        <text name="eq_help_freestyle_2" text="L&apos;agilité s&apos;entraîne en sautant des obstacles pour remplir une jauge de combo, et le tempérament en montant une reprise dans une carrière de dressage. L&apos;endurance et la vitesse s&apos;entraînent en galopant bien : appuyez sur H au galop pour savoir comment."/>
         <text name="eq_help_freestyle_3" text="Vous préférez ne pas monter ? Embauchez des palefreniers et des entraîneurs dans l&apos;onglet Personnel pour entraîner vos chevaux chaque jour. Les ouvriers animaliers et l&apos;Éleveur de RLRM ne font que les garder actifs."/>
         <text name="eq_form_title" text="Pic de forme"/>
         <text name="eq_help_freestyle_4" text="Montez avant une compétition ! Chaque compétence entraînée avec son mini-jeu met votre cheval en Pic de forme pour les épreuves du mois, jusqu'à +8 par compétence. Cela ne s'additionne pas sur plusieurs jours : votre meilleure séance du mois compte."/>
@@ -683,14 +683,15 @@
         <text name="eq_shop_xcDropWall16" text="Mur de descente (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un mur en planches pour une descente de cross. Sculptez un talus, posez le mur sur le dessus avec le rebord au bord ; ses murs latéraux cachent la pente raide."/>
         <text name="eq_shop_xcJump_function" text="Un obstacle de cross. Ses drapeaux rouge et blanc indiquent où sauter."/>
-        <text name="eq_shop_xcHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours de cross, sauf si acheté Toujours visible."/>
+        <text name="eq_shop_xcHidden_function" text="Disparaît hors construction, édition de parcours et manches, sauf si acheté avec Disparaît : Non."/>
+        <text name="eq_shop_showJumpHidden_function" text="Acheté avec Disparaît : Oui, il disparaît hors construction, édition de parcours et manches."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Masqué hors du mode construction, de la modification de parcours et des parcours."/>
-        <text name="eq_config_alwaysVisible" text="Toujours visible"/>
+        <text name="eq_config_disappearing" text="Disparaît"/>
         <text name="input_EQ_COURSE_RECORD" text="Enregistrer ou modifier un parcours d'obstacles"/>
         <text name="eq_course_recordAction" text="Nouveau parcours de saut d&apos;obstacles"/>
         <text name="eq_course_started" text="Enregistrement de %s : passez dans les obstacles dans l&apos;ordre. Les obstacles posés de Realistic Equestrian n&apos;ont pas de collision pendant l&apos;édition ; les autres restent solides"/>
         <text name="eq_course_noJumps" text="Enregistrement du parcours, mais il n'y a encore aucun obstacle sur la carte"/>
-        <text name="eq_course_tooFew" text="Parcours non sauvegardé : passez dans au moins %d obstacles de saut"/>
+        <text name="eq_course_tooFew" text="Parcours non sauvegardé : passez dans au moins %d obstacles de saut, ou Ctrl+Retour arrière pour annuler"/>
         <text name="eq_course_saved" text="%s sauvegardé : %d obstacles, %.0f m"/>
         <text name="eq_course_cancelled" text="Édition arrêtée : vous êtes descendu du cheval avant que le parcours ait assez d&apos;obstacles pour être sauvegardé"/>
         <text name="eq_course_leftSaved" text="Parcours sauvegardé en descendant du cheval : appuyez sur Ctrl+J à proximité pour le modifier, puis Ctrl+K pour reprendre depuis le point le plus proche"/>
@@ -737,6 +738,10 @@
         <text name="eq_course_deleteAsk" text="Supprimer %s avec %d obstacles sur %.0f m ?"/>
         <text name="eq_course_deleteTitle" text="Supprimer le parcours"/>
         <text name="eq_course_deleteAction" text="Supprimer %s"/>
+        <text name="eq_course_cancelAction" text="Annuler le nouveau parcours"/>
+        <text name="eq_course_discardAction" text="Abandonner les modifications de %s"/>
+        <text name="eq_course_newCancelled" text="Annulé : %s n&apos;a pas été sauvegardé"/>
+        <text name="eq_course_changesDiscarded" text="Modifications de %s abandonnées : le parcours sauvegardé reste tel quel"/>
         <text name="eq_course_editAction" text="Modifier %s"/>
         <text name="eq_course_doneAction" text="Terminer l&apos;édition du parcours"/>
         <text name="eq_course_saveAction" text="Sauvegarder le parcours et terminer"/>

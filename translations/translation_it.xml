@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista allenamento: %s"/>
         <text name="eq_train_view_freestyle" text="Libero"/>
-        <text name="eq_help_temperament_2" text="Perdi il moltiplicatore se acceleri al galoppo o al galoppo pieno, urti un ostacolo o manchi la manovra successiva. Da x4 devi anche mantenere l'andatura tra un comando e l'altro. Dare ai cavalli premi come le carote è anche un ottimo modo per migliorare il Temperamento."/>
-        <text name="eq_help_temperament_1" text="L'allenamento del Temperamento serve a insegnare il controllo al cavallo. Inizia una ripresa passando al passo e mantenendolo per un breve intervallo. Il programma ti chiederà poi una nuova manovra da mantenere. Eseguila entro pochi secondi per continuare la combo."/>
+        <text name="eq_help_temperament_2" text="Troppi errori, come galoppare o uscire dal rettangolo, chiudono la ripresa; completala per un grande bonus di temperamento. Lontano da un rettangolo, il passo e l&apos;indietreggiare allenano ancora un po&apos; il temperamento. Dare premi come le carote è anche un ottimo modo per migliorare il temperamento."/>
+        <text name="eq_help_temperament_1" text="L&apos;allenamento del temperamento insegna al cavallo il controllo e richiede un rettangolo da dressage: comprane uno nel negozio o posiziona le lettere da dressage. Avvicinati e inizia una ripresa che ti chiede di raggiungere le lettere alle andature indicate, fermarti, indietreggiare e fare circoli. Esegui ogni comando in tempo per aumentare il moltiplicatore."/>
         <text name="eq_help_temperament_title" text="Allenamento: Temperamento"/>
         <text name="eq_help_agility_2" text="Perdi il moltiplicatore se non superi un nuovo ostacolo in tempo o perdi troppa velocità. Saltare senza ostacolo allena un po', ma non aumenta il moltiplicatore."/>
         <text name="eq_help_agility_1" text="L'Agilità si allena soprattutto superando ostacoli, anche se alternare le andature aiuta un po'. Supera ostacoli per costruire un moltiplicatore di allenamento dell'Agilità, che svanisce dopo dieci secondi, o prima se urti un ostacolo."/>
@@ -80,9 +80,10 @@
         <text name="eq_shop_xcDropWall16" text="Muro di discesa (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un muro di assi per una discesa da cross. Modella una scarpata, posizionalo in cima con il bordo sul ciglio, e le pareti laterali nascondono il pendio ripido."/>
         <text name="eq_shop_xcJump_function" text="Un ostacolo da cross. Le bandierine rossa e bianca indicano dove saltare."/>
-        <text name="eq_shop_xcHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove di cross, a meno che non sia acquistato come Sempre visibile."/>
+        <text name="eq_shop_xcHidden_function" text="Scompare fuori da costruzione, modifica percorso e manche, a meno che non sia acquistato con Scompare: No."/>
+        <text name="eq_shop_showJumpHidden_function" text="Acquistato con Scompare: Sì, scompare fuori da costruzione, modifica percorso e manche."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Nascosto fuori dalla modalità costruzione, dalla modifica dei percorsi e dalle prove."/>
-        <text name="eq_config_alwaysVisible" text="Sempre visibile"/>
+        <text name="eq_config_disappearing" text="Scompare"/>
         <text name="eq_dressage_go" text="%s: %s"/>
         <text name="eq_dressage_gait_walk" text="Passo"/>
         <text name="eq_dressage_gait_trot" text="Trotto"/>
@@ -98,13 +99,13 @@
         <text name="eq_dressage_next" text="Prossimo: %s"/>
         <text name="eq_dressage_stand" text="Alt"/>
         <text name="eq_dressage_marker" text="Lettera %s"/>
-        <text name="eq_train_routine_none" text="Vai al passo per iniziare una ripresa"/>
+        <text name="eq_train_routine_none" text="Vai a un rettangolo da dressage per iniziare una ripresa"/>
         <text name="eq_train_routine" text="Ripresa x%d"/>
         <text name="eq_train_combo_none" text="Supera un ostacolo per iniziare una combo"/>
         <text name="eq_train_combo" text="Combo salti x%d"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilità"/>
-        <text name="eq_help_freestyle_2" text="L'Agilità si allena saltando ostacoli per riempire un indicatore combo, e il Temperamento inizia mantenendo il passo per un breve tempo, poi seguendo le istruzioni per riempire il suo indicatore combo. Resistenza e Velocità si allenano galoppando bene: premi H durante il galoppo pieno per imparare come."/>
+        <text name="eq_help_freestyle_2" text="L&apos;agilità si allena saltando ostacoli per riempire un indicatore di combo, il temperamento con una ripresa in un rettangolo da dressage. Resistenza e velocità si allenano galoppando bene: premi H al galoppo per scoprire come."/>
         <text name="eq_help_freestyle_3" text="Preferisci non cavalcare? Assumi stallieri e istruttori nella scheda Personale per allenare i cavalli ogni giorno. Gli addetti agli animali del gioco e l'Herdsman di RLRM li mantengono solo in esercizio."/>
         <text name="eq_form_title" text="Forma ottimale"/>
         <text name="eq_help_freestyle_4" text="Cavalca prima di una gara! Ogni caratteristica che alleni con il suo minigioco mette il cavallo in Forma ottimale per le gare di questo mese, fino a +8 per caratteristica. Non si somma su più giorni: conta la tua migliore sessione del mese."/>
@@ -350,7 +351,7 @@
         <text name="eq_course_recordAction" text="Nuovo percorso di salto"/>
         <text name="eq_course_started" text="Registrazione di %s: passa sugli ostacoli in ordine. Gli ostacoli piazzati di Realistic Equestrian non hanno collisioni mentre modifichi; gli altri restano solidi"/>
         <text name="eq_course_noJumps" text="Registrazione di un percorso, ma sulla mappa non ci sono ancora ostacoli da salto"/>
-        <text name="eq_course_tooFew" text="Percorso non salvato: passa su almeno %d ostacoli da salto"/>
+        <text name="eq_course_tooFew" text="Percorso non salvato: passa su almeno %d ostacoli da salto, oppure premi Ctrl+Backspace per annullare"/>
         <text name="eq_course_saved" text="%s salvato: %d ostacoli, %.0f m"/>
         <text name="eq_course_cancelled" text="Modifica interrotta: sei sceso da cavallo prima che il percorso avesse abbastanza ostacoli per salvarlo"/>
         <text name="eq_course_leftSaved" text="Percorso salvato quando sei sceso da cavallo: premi Ctrl+J vicino a esso per modificarlo, poi Ctrl+K per registrare dal punto più vicino"/>
@@ -397,6 +398,10 @@
         <text name="eq_course_deleteAsk" text="Eliminare %s con %d ostacoli su %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Elimina percorso"/>
         <text name="eq_course_deleteAction" text="Elimina %s"/>
+        <text name="eq_course_cancelAction" text="Annulla nuovo percorso"/>
+        <text name="eq_course_discardAction" text="Scarta le modifiche a %s"/>
+        <text name="eq_course_newCancelled" text="Annullato: %s non è stato salvato"/>
+        <text name="eq_course_changesDiscarded" text="Modifiche a %s scartate: il percorso salvato resta com&apos;era"/>
         <text name="eq_course_editAction" text="Modifica %s"/>
         <text name="eq_course_doneAction" text="Termina modifica del percorso"/>
         <text name="eq_course_saveAction" text="Salva percorso e termina"/>

@@ -93,40 +93,16 @@ EqTraining.COMBO_LOCK_MS = 2500
 EqTraining.COMBO_KNOCK_SECONDS = 3
 EqTraining.COMBO_KNOCK_GAP_MS = 3000
 
--- TEMPERAMENT: a routine. Walk for ROUTINE_START_MS to start one; then every ROUTINE_GAP_MS
--- (a random time in the range) the rider is asked for a new movement and has ROUTINE_REACT_MS
--- to start it. Each one done raises the multiplier, up to ROUTINE_MAX; a miss, a canter, a gallop
--- or a jump ends the routine. Temperament builds at TEMPERAMENT_RATE per second for each step
--- of multiplier above x1. Gaits and turns are judged apart: a rider must steer round things
--- whatever the routine asks, so a gait request ignores steering and a turn request (holding
--- the left or right key for ROUTINE_STEER_MS) takes any gait short of a canter.
-EqTraining.ROUTINE_START_MS = 2000
-EqTraining.ROUTINE_STEER_MS = 300
-EqTraining.ROUTINE_GAP_MS = { 5000, 8000 }
-EqTraining.ROUTINE_TURN_GAP_MS = { 3000, 4000 }
-EqTraining.ROUTINE_REACT_MS = 3000
-EqTraining.ROUTINE_SHOW_MS = 1500
--- After a full stop the next request comes sooner (James: waiting at a halt was boring).
-EqTraining.ROUTINE_HALT_GAP_MS = { 2500, 4000 }
--- The routine gets more stressful as its multiplier climbs: for each step above x1, gaps
--- between requests shrink by ROUTINE_GAP_PRESSURE and the time to react by ROUTINE_REACT_PRESSURE
--- (at x5: gaps 72%, 2.2 s to react; at x8: gaps 51%, 1.5 s).
+-- TEMPERAMENT: focused work is a dressage test, ridden round markers (EqDressage): one of our
+-- arenas, or Riding Hall's letter boards. It starts only when the rider comes to the markers
+-- (EqDressage.ARENA_NEAR), never just from walking somewhere: the old free routine, which gave
+-- orders whenever the horse walked for a moment, is gone (James, 2026-10-29: "nasty"; the arena
+-- is opt in). Each command done raises the multiplier, up to ROUTINE_MAX, and temperament builds
+-- at TEMPERAMENT_RATE per second for each step above x1. Walking and backing up still train a
+-- little temperament anywhere (GAIT_GAINS).
 -- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
 EqTraining.ROUTINE_MAX = 8
-EqTraining.ROUTINE_GAP_PRESSURE = 0.07
-EqTraining.ROUTINE_REACT_PRESSURE = 0.07
--- From ROUTINE_STEADY_FROM the horse must also hold its pace between requests: changing gait
--- unasked for ROUTINE_DRIFT_MS breaks the routine. On the way to a requested gait the ones in
--- between (a trot passes through a walk to stop) are fine, and so is any gait during a turn.
-EqTraining.ROUTINE_STEADY_FROM = 4
-EqTraining.ROUTINE_DRIFT_MS = 600
--- The routine's gaits, slowest first: a change between two passes through those in between.
-EqTraining.ROUTINE_PACE = { reverse = 1, halt = 2, walk = 3, trot = 4 }
-EqTraining.ROUTINE_MOVES = { "walk", "trot", "halt", "reverse", "left", "right" }
 EqTraining.TEMPERAMENT_RATE = 0.0022
--- Near dressage markers the routine is ridden between them (EqDressage). Without a course
--- (James, 2026-10-27) it falls back to the free routine above, which trains at this share.
-EqTraining.FREE_ROUTINE_SHARE = 0.6
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -185,7 +161,7 @@ function EqTraining.newSheet()
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         stamina = { mult = 1, breath = 1 }, sprint = { ms = 0 },
         combo = { count = 0, timer = 0, best = 0 },
-        routine = { active = false, mult = 0, clock = 0, walkMs = 0, current = nil, request = nil, deadline = 0, nextAt = 0 } }
+        routine = { active = false, mult = 0, clock = 0, current = nil, request = nil, deadline = 0 } }
 end
 
 
@@ -282,33 +258,13 @@ end
 
 --- @param range table { min, max } milliseconds
 --- @param rng function (n) -> 1..n
-local function randomGap(range, rng)
-    local steps = math.floor((range[2] - range[1]) / 500)
-    return range[1] + (rng(steps + 1) - 1) * 500
-end
-
-
---- Movements the routine may ask for next: never the one being done, and never straight from
---- a trot to backing up or back (the horse has to stop or walk in between).
---- @param current string|nil
---- @return table moves
-function EqTraining.routineChoices(current)
-    local moves = {}
-    for _, move in ipairs(EqTraining.ROUTINE_MOVES) do
-        local blocked = move == current or (current == "trot" and move == "reverse") or (current == "reverse" and move == "trot")
-        if not blocked then table.insert(moves, move) end
-    end
-    return moves
-end
-
-
 --- End the temperament routine.
 --- @param sheet table
 --- @return boolean true when one was running
 function EqTraining.breakRoutine(sheet)
     local routine = sheet.routine
     local was = routine.active
-    routine.active, routine.mult, routine.request, routine.walkMs, routine.current = false, 0, nil, 0, nil
+    routine.active, routine.mult, routine.request, routine.current = false, 0, nil, nil
     routine.shown = nil
     routine.steerMs, routine.driftMs = 0, 0
     routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
@@ -316,22 +272,7 @@ function EqTraining.breakRoutine(sheet)
 end
 
 
---- Whether a gait is one the routine allows right now, at a multiplier that asks for a steady pace.
---- @param routine table
---- @param move string
---- @return boolean
-local function steadyPace(routine, move)
-    local request = routine.request
-    if request == "left" or request == "right" then return true end
-    local pace, from = EqTraining.ROUTINE_PACE[move], EqTraining.ROUTINE_PACE[routine.current]
-    if pace == nil or from == nil then return true end
-    local to = from
-    if request ~= nil and EqTraining.ROUTINE_PACE[request] ~= nil then to = EqTraining.ROUTINE_PACE[request] end
-    return pace >= math.min(from, to) and pace <= math.max(from, to)
-end
-
-
---- One frame of the temperament routine.
+--- One frame of the temperament routine: the dressage test round the markers near the horse.
 --- @param sheet table
 --- @param move string walk, trot, halt, reverse, canter, gallop, or fast (canter or gallop)
 --- @param steer string|nil left or right while the rider holds that steering key
@@ -339,116 +280,44 @@ end
 --- @param worn boolean true when the riding bar is full: the routine runs, nothing trains
 --- @param rng function (n) -> 1..n
 --- @param course table|nil { x, z, markers } dressage markers round the horse (EqDressage)
---- @return string|nil event "start", "request", "done", "bonus", "lost", or nil
+--- @return string|nil event "start", "request", "done", "bonus", "fault", "test", "lost", or nil
 function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
     local routine = sheet.routine
     routine.clock = routine.clock + dt
     sheet.quality.temperament = routine.active and (routine.mult - 1) / (EqTraining.ROUTINE_MAX - 1) or 0
 
-    -- Round the markers: a canter is one of the gaits asked for.
-    if routine.active and routine.kind == "markers" then
-        if course ~= nil then
-            local event = EqDressage.step(sheet, move, steer, dt, rng, course)
-            if event == "test" then
-                -- An arena test ridden to the end: a big payoff at once, then a rest.
-                if not worn then
-                    sheet.focused.temperament = sheet.focused.temperament
-                        + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
-                end
-                EqTraining.breakRoutine(sheet)
-                routine.restUntil = routine.clock + EqDressage.TEST_REST_MS
-                return "test"
+    if routine.active then
+        -- Away from the markers: the test is over.
+        if course == nil then return EqTraining.breakRoutine(sheet) and "lost" or nil end
+        local event = EqDressage.step(sheet, move, steer, dt, rng, course)
+        if event == "test" then
+            -- An arena test ridden to the end: a big payoff at once, then a rest.
+            if not worn then
+                sheet.focused.temperament = sheet.focused.temperament
+                    + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
             end
-            if routine.active then EqTraining.routineTrain(sheet, worn, dt, 1) end
-            return event
+            EqTraining.breakRoutine(sheet)
+            routine.restUntil = routine.clock + EqDressage.TEST_REST_MS
+            return "test"
         end
-        -- Off the course: carry on with the free routine from here.
-        routine.kind, routine.task, routine.preview, routine.bonus, routine.pending = "free", nil, nil, nil, nil
-        routine.request, routine.current = nil, EqTraining.ROUTINE_PACE[move] ~= nil and move or "walk"
-        routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
-    end
-
-    routine.steerMs = steer ~= nil and steer == routine.steerSide and (routine.steerMs or 0) + dt or 0
-    routine.steerSide = steer
-    local resting = routine.clock < (routine.restUntil or 0)
-    -- Coming up to one of our arenas starts its test at once, at any pace short of a gallop,
-    -- and takes over from a free routine (keeping its multiplier).
-    if (not routine.active or routine.kind == "free") and not resting and course ~= nil and move ~= "gallop"
-        and move ~= "fast" and EqDressage.nearArena(course) then
-        if not routine.active then routine.mult = 1 end
-        routine.active, routine.current = true, "walk"
-        routine.request, routine.nextAt, routine.pending = nil, nil, nil
-        EqDressage.start(routine, course, rng)
-        return "start"
-    end
-    if move == "fast" or move == "canter" or move == "gallop" then
-        return EqTraining.breakRoutine(sheet) and "lost" or nil
-    end
-
-    if not routine.active then
-        routine.walkMs = move == "walk" and not resting and routine.walkMs + dt or 0
-        if routine.walkMs < EqTraining.ROUTINE_START_MS then return nil end
-        routine.active, routine.mult, routine.current = true, 1, "walk"
-        -- An arena's markers alone are only ridden as its test, from close by (ARENA_NEAR).
-        if course ~= nil and not EqDressage.arenaOnly(course) then
-            EqDressage.start(routine, course, rng)
+        if routine.active then
+            EqTraining.routineTrain(sheet, worn, dt)
         else
-            routine.kind = "free"
-            routine.nextAt = routine.clock + randomGap(EqTraining.ROUTINE_GAP_MS, rng)
+            -- Broken: a moment's pause before the markers start a new one.
+            routine.restUntil = routine.clock + EqDressage.BREAK_REST_MS
         end
+        return event
+    end
+
+    -- Coming up to the markers starts a test at once, at any pace short of a gallop.
+    local resting = routine.clock < (routine.restUntil or 0)
+    if not resting and course ~= nil and move ~= "gallop" and move ~= "fast" and EqDressage.atMarkers(course) then
+        routine.active, routine.mult, routine.current = true, 1, "walk"
+        routine.request, routine.pending = nil, nil
+        EqDressage.start(routine, course, rng)
         return "start"
     end
-
-    local event = nil
-    if routine.request ~= nil then
-        local turned = routine.request == "left" or routine.request == "right"
-        local done = move == routine.request
-        if turned then done = steer == routine.request and routine.steerMs >= EqTraining.ROUTINE_STEER_MS end
-        if done then
-            routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
-            if not turned then routine.current = move end
-            routine.driftMs = 0
-            routine.request = nil
-            local range = turned and EqTraining.ROUTINE_TURN_GAP_MS or move == "halt" and EqTraining.ROUTINE_HALT_GAP_MS
-                or EqTraining.ROUTINE_GAP_MS
-            routine.nextAt = routine.clock + randomGap(range, rng) * (1 - EqTraining.ROUTINE_GAP_PRESSURE * (routine.mult - 1))
-            event = "done"
-        elseif routine.clock > routine.deadline then
-            EqTraining.breakRoutine(sheet)
-            return "lost"
-        end
-    elseif routine.clock >= routine.nextAt and course ~= nil then
-        -- Markers came in sight: the next command sends the horse to one.
-        EqDressage.start(routine, course, rng)
-        return "request"
-    elseif routine.clock >= routine.nextAt then
-        local choices = EqTraining.routineChoices(routine.current)
-        routine.request = choices[rng(#choices)]
-        routine.reactMs = EqTraining.ROUTINE_REACT_MS * (1 - EqTraining.ROUTINE_REACT_PRESSURE * (routine.mult - 1))
-        routine.deadline = routine.clock + routine.reactMs
-        -- The command stays on screen a moment even if the horse is already doing it.
-        routine.shown, routine.shownUntil = routine.request, routine.clock + EqTraining.ROUTINE_SHOW_MS
-        -- A turn counts once its key has been held this long after the request shows.
-        routine.steerMs = 0
-        event = "request"
-    end
-
-    if routine.active and (routine.request == "left" or routine.request == "right") and EqTraining.ROUTINE_PACE[move] ~= nil then
-        -- Any pace will do for a turn, and the one it ends at is the pace to hold.
-        routine.current = move
-    end
-    if routine.active and routine.mult >= EqTraining.ROUTINE_STEADY_FROM and not steadyPace(routine, move) then
-        routine.driftMs = (routine.driftMs or 0) + dt
-        if routine.driftMs >= EqTraining.ROUTINE_DRIFT_MS then
-            EqTraining.breakRoutine(sheet)
-            return "lost"
-        end
-    else
-        routine.driftMs = 0
-    end
-
-    EqTraining.routineTrain(sheet, worn, dt, EqTraining.FREE_ROUTINE_SHARE)
-    return event
+    return nil
 end
 
 
@@ -540,11 +409,10 @@ end
 --- @param sheet table
 --- @param worn boolean
 --- @param dt number milliseconds
---- @param share number FREE_ROUTINE_SHARE for the free routine, 1 round markers
-function EqTraining.routineTrain(sheet, worn, dt, share)
+function EqTraining.routineTrain(sheet, worn, dt)
     local routine = sheet.routine
     if not worn and routine.mult > 1 then
-        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * share * (routine.mult - 1) * dt / 1000
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
     end
 end
 

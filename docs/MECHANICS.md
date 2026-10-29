@@ -151,22 +151,19 @@ a fence.
 
 ### Temperament
 
-Temperament comes from a routine: walk to start one, then do each movement asked for (walk, trot,
-stop, back up, turn left, turn right) within 3 seconds, for x2 up to x8. Each step up brings the
-requests quicker and gives less time to react (1.5 seconds at x8), and from x4 the horse must hold
-its pace between requests: changing gait unasked breaks the routine (passing through a walk on the
-way to a requested stop is fine). A canter, gallop, jump or a missed request breaks it. Steer freely: a turn request only needs the left or right key held for a
-moment, at any pace from backing up to a trot, and the other requests ignore steering. Requests
-show in the Freestyle, Temperament and Condensed views.
-
-Without dressage markers nearby, that routine trains at 60% of the rate. Near dressage markers (at
-least three within 100 m, chained 60 m from each other, not all in a line) the routine rides
-between them instead, at the full rate. Markers are the shop's dressage arenas (15x30, 20x40 and
+Temperament's focused training is a dressage routine, and it needs dressage markers: nothing starts
+from just walking about (the old free routine that gave orders whenever the horse walked for a
+moment is gone, James 2026-10-29). Walking and backing up still train a little temperament
+anywhere. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
+chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
+between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
 no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
 test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
 commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
-and the next test can start 20 s later. Commands get 20% more time than below, and walks are only
+and the next test can start 20 s later (5 s after one broken by faults). If a course's start line is
+nearer than the markers, the course's hint shows instead; a routine under way keeps the courses
+quiet until it ends. Commands get 20% more time than below, and walks are only
 asked for to markers within 12 m:
 
 - Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
@@ -200,10 +197,10 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 | Key | Not editing | Editing |
 | --- | --- | --- |
-| Ctrl+J | Record a new show jumping course, or edit the course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
-| Ctrl+E | Record a new cross country (eventing) course | As Ctrl+J |
+| Ctrl+J | Record a new show jumping course, or edit the show jumping course within 40 m | Save (if recording) and finish: the line goes and the jumps get their collision back |
+| Ctrl+E | Record a new cross country (eventing) course, or edit the cross country course within 40 m | As Ctrl+J |
 | Ctrl+K | | Drop everything after the nearest recorded point and record on from it |
-| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | |
+| Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | Cancel: a new course is dropped unsaved; on a saved course, changes since its last save are thrown away |
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
 white flag (the fence runs between them) and log piles. Drop walls are not fences of their own:
@@ -228,12 +225,16 @@ works in single player for now.
 
 #### The timed round
 
-Out of edit mode, within 40 m of a saved course you are asked to "Move to the start line to begin
-Show Jumping". The start line stands on the route 12 m before fence 1 and the finish line 12 m after
-the last fence; both are drawn in gold while they matter, so no objects are needed and a course
-can be dressed however you like. Within 12 m behind the start line a 3, 2, 1
+Out of edit mode, the course whose start line is nearest (within 60 m) is the one you can ride.
+Beyond 30 m only a map tag points to its start line. Within 30 m the start line glows gold and you
+are asked to "Move to the start line to begin Show Jumping" beside the panel; nothing else of the
+course shows yet. The start line stands on the route 12 m before fence 1 and the finish line 12 m
+after the last fence, so no objects are needed and a course can be dressed however you like. Within
+4 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
-clock starts as you do. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 3 m of where it was recorded, so a jump replaced or nudged since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
+clock starts as you do. From the countdown on the round has the screen to itself: no other
+course, start line or dressage routine cuts in, and the course keys hide, until the result is
+shown, you get off or switch horse, or you ride 100 m away from the course. Thin glowing gold poles stand at the next fence's flags (up to the bottom of the pennants), its number beside it (no bar: the fence is judged by the jump itself), and the way to it is drawn in gold. As a round is offered each fence moves onto the jump standing within 3 m of where it was recorded, so a jump replaced or nudged since keeps its course. Fences count whichever way you jump them; another fence of the course jumped the recorded way out of order eliminates.
 
 | Fault | Penalty |
 | --- | --- |
@@ -463,13 +464,15 @@ triangle side walls hide the steep sculpted slope. A plank deck covers the top, 
 needn't be flat. The terrain is not levelled. The face, deck and side walls are solid: the horse
 rides over the deck and drops off the lip.
 
-Hidden pieces: the cross country pieces (flags, log piles, drop walls) are hidden with no collision
-while you just ride or drive around, so a course can cross the map without leaving flags and logs
-everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell), while
-a course is edited (seen but ridden through), and in a round from 60 m before the start line to the
-result (with collision, except the flag fence, which is only seen). Buy a log pile or drop wall with the shop's **Always visible: Yes**
-configuration to keep it in the world all the time; the flags always hide. In multiplayer they
-always show. Show jumps are never hidden. A vehicle left on a hidden piece can be thrown when its
+Disappearing pieces: the cross country pieces (flags, log piles, drop walls) disappear, with no
+collision, while you just ride or drive around, so a course can cross the map without leaving flags
+and logs everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell),
+while a course is edited (seen but ridden through), and in a round from its countdown (right at the
+start line) to the result (with collision, except the flag fence, which is only seen); riding past a
+start line shows nothing. Every piece has a **Disappearing** shop configuration: Yes by default on
+log piles and drop walls, No by default on the shop's show jumps (Yes makes them disappear the same
+way). The flags always disappear. In multiplayer everything always shows. Other mods' show jumps are
+never hidden. A vehicle left on a hidden piece can be thrown when its
 collision comes back. Road traffic is switched
 off from crossing a cross country round's start line to its finish and back on after (the savegame's traffic
 setting is not changed).

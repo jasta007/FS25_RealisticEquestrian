@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista de entrenamiento: %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Pierdes el multiplicador si aceleras a galope, chocas con un obstáculo o fallas la siguiente maniobra. A partir de x4 también debes mantener el aire entre órdenes. Dar golosinas como zanahorias a tus caballos también mejora mucho el Temperamento."/>
-        <text name="eq_help_temperament_1" text="Entrenar el Temperamento consiste en enseñar control a tu caballo. Empieza una rutina pasando al paso y manteniéndolo un momento. El programa te pedirá entonces una nueva maniobra que mantener. Consíguela en pocos segundos para seguir con el combo."/>
+        <text name="eq_help_temperament_2" text="Demasiadas faltas, como galopar o salir de la pista, terminan la prueba; acábala para un gran impulso de temperamento. Fuera de una pista, caminar al paso y retroceder siguen entrenando algo de temperamento. Dar premios como zanahorias también es una gran forma de mejorar el temperamento."/>
+        <text name="eq_help_temperament_1" text="El entrenamiento de temperamento enseña control a tu caballo y necesita una pista de doma: compra una en la tienda o coloca letras de doma. Acércate y empieza una prueba que te pide ir a las letras a ciertos aires, parar, retroceder y hacer círculos. Cumple cada orden a tiempo para subir tu multiplicador."/>
         <text name="eq_help_temperament_title" text="Entrenamiento: Temperamento"/>
         <text name="eq_help_agility_2" text="Pierdes el multiplicador si no superas un nuevo obstáculo a tiempo o pierdes demasiada velocidad. Saltar sin obstáculo entrena algo, pero no sube el multiplicador."/>
         <text name="eq_help_agility_1" text="La Agilidad se basa en superar saltos, aunque cambiar de aire también ayuda un poco. Supera obstáculos para crear un multiplicador de Agilidad, que se desvanece a los diez segundos, o antes si golpeas un obstáculo."/>
@@ -57,13 +57,13 @@
         <text name="eq_dressage_next" text="Siguiente: %s"/>
         <text name="eq_dressage_stand" text="Parada"/>
         <text name="eq_dressage_marker" text="Letra %s"/>
-        <text name="eq_train_routine_none" text="Pasa al paso para empezar una rutina"/>
+        <text name="eq_train_routine_none" text="Ve a una pista de doma para empezar una prueba"/>
         <text name="eq_train_routine" text="Rutina x%d"/>
         <text name="eq_train_combo_none" text="Supera un salto para empezar un combo"/>
         <text name="eq_train_combo" text="Combo de saltos x%d"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilidad"/>
-        <text name="eq_help_freestyle_2" text="La Agilidad se entrena saltando obstáculos para llenar un medidor de combo, y el Temperamento empieza manteniendo el paso un momento y luego siguiendo órdenes para llenar el suyo. La Resistencia y la Velocidad se entrenan galopando bien: pulsa H mientras galopas para aprender cómo."/>
+        <text name="eq_help_freestyle_2" text="La agilidad se entrena saltando obstáculos para llenar un medidor de combo, y el temperamento haciendo una prueba en una pista de doma. La resistencia y la velocidad se entrenan galopando bien: pulsa H al galope para saber cómo."/>
         <text name="eq_help_freestyle_3" text="¿Prefieres no montar? Contrata mozos y entrenadores en la pestaña Personal para entrenar tus caballos cada día. Los trabajadores de animales y el Pastor de RLRM solo los mantienen activos."/>
         <text name="eq_form_title" text="Mejor forma"/>
         <text name="eq_help_freestyle_4" text="¡Monta antes de una competición! Cada habilidad que entrenas con su minijuego pone a tu caballo en Mejor forma para las pruebas de este mes, hasta +8 por habilidad. No se acumula en varios días: cuenta tu mejor sesión del mes."/>
@@ -683,14 +683,15 @@
         <text name="eq_shop_xcDropWall16" text="Muro de bajada (1,6 m)"/>
         <text name="eq_shop_xcDrop_function" text="Un muro de tablones para una bajada de cross. Esculpe un talud, coloca el muro arriba con el borde en el filo; sus muros laterales tapan la pendiente empinada."/>
         <text name="eq_shop_xcJump_function" text="Un obstáculo de cross. Sus banderas roja y blanca marcan dónde saltar."/>
-        <text name="eq_shop_xcHidden_function" text="Oculto fuera del modo construcción, la edición de recorridos y los recorridos de cross, salvo si se compra Siempre visible."/>
+        <text name="eq_shop_xcHidden_function" text="Desaparece fuera de construcción, edición de recorridos y mangas, salvo si se compra con Desaparece: No."/>
+        <text name="eq_shop_showJumpHidden_function" text="Comprado con Desaparece: Sí, desaparece fuera de construcción, edición de recorridos y mangas."/>
         <text name="eq_shop_xcFlagsHidden_function" text="Oculto fuera del modo construcción, la edición de recorridos y los recorridos."/>
-        <text name="eq_config_alwaysVisible" text="Siempre visible"/>
+        <text name="eq_config_disappearing" text="Desaparece"/>
         <text name="input_EQ_COURSE_RECORD" text="Grabar o editar recorrido de salto"/>
         <text name="eq_course_recordAction" text="Nuevo recorrido de salto"/>
         <text name="eq_course_started" text="Grabando %s: pasa por los obstáculos en orden. Los obstáculos colocados de Realistic Equestrian no tienen colisión mientras editas; los demás siguen siendo sólidos"/>
         <text name="eq_course_noJumps" text="Grabando recorrido, pero aún no hay obstáculos de salto en el mapa"/>
-        <text name="eq_course_tooFew" text="Recorrido no guardado: pasa por al menos %d obstáculos de salto"/>
+        <text name="eq_course_tooFew" text="Recorrido no guardado: pasa por al menos %d obstáculos de salto, o pulsa Ctrl+Retroceso para cancelar"/>
         <text name="eq_course_saved" text="%s guardado: %d obstáculos, %.0f m"/>
         <text name="eq_course_cancelled" text="Edición detenida: te bajaste del caballo antes de que el recorrido tuviera suficientes obstáculos para guardarlo"/>
         <text name="eq_course_leftSaved" text="Recorrido guardado al bajarte del caballo: pulsa Ctrl+J cerca para editarlo y luego Ctrl+K para seguir grabando desde el punto más cercano"/>
@@ -737,6 +738,10 @@
         <text name="eq_course_deleteAsk" text="¿Borrar %s con %d obstáculos en %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Borrar recorrido"/>
         <text name="eq_course_deleteAction" text="Borrar %s"/>
+        <text name="eq_course_cancelAction" text="Cancelar recorrido nuevo"/>
+        <text name="eq_course_discardAction" text="Descartar cambios en %s"/>
+        <text name="eq_course_newCancelled" text="Cancelado: %s no se ha guardado"/>
+        <text name="eq_course_changesDiscarded" text="Cambios en %s descartados: el recorrido guardado queda como estaba"/>
         <text name="eq_course_editAction" text="Editar %s"/>
         <text name="eq_course_doneAction" text="Terminar de editar el recorrido"/>
         <text name="eq_course_saveAction" text="Guardar recorrido y terminar"/>

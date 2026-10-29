@@ -30,6 +30,15 @@
         <!-- 1.10 m high, 1.60 m spread; jumped along z, red flag at +x. Poles eqPole1.. fall (EqPoles). -->
     </placement>
 
+    <!-- Disappearing: No (the first, default) keeps the jump in the world; Yes hides it outside
+         construction, course editing and rounds, like the cross country pieces (EqXcHide). -->
+    <eqDisappearing>
+        <eqDisappearingConfigurations>
+            <eqDisappearingConfiguration name="$l10n_ui_no" price="0"/>
+            <eqDisappearingConfiguration name="$l10n_ui_yes" price="0"/>
+        </eqDisappearingConfigurations>
+    </eqDisappearing>
+
     <eqPoleColour>
         <eqPoleColourConfigurations>
             <eqPoleColourConfiguration name="$l10n_eq_colour_white" price="0"/>

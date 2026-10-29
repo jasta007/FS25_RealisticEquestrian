@@ -24,10 +24,11 @@
 
 EqShowJumping = {}
 
--- The countdown starts within this many metres behind the start line, and stops if the horse
--- wanders off beyond READY_RADIUS * READY_LEAVE.
-EqShowJumping.READY_RADIUS = 12
-EqShowJumping.READY_LEAVE = 1.5
+-- The countdown starts within this many metres behind the start line (12 m started it from
+-- too far off, James 2026-10-29), and stops if the horse wanders off beyond
+-- READY_RADIUS * READY_LEAVE.
+EqShowJumping.READY_RADIUS = 4
+EqShowJumping.READY_LEAVE = 3
 EqShowJumping.COUNT_MS = 3000
 -- After "Go!" the horse has this long to cross the start line.
 EqShowJumping.GO_MS = 45000
@@ -156,6 +157,25 @@ function EqShowJumping.timeAllowed(course)
     local metres = pathBetween(course.points, from, to) + 2 * EqShowJumping.LINE_OFFSET
     local speed = course.kind == EqCourse.CROSS_COUNTRY and EqShowJumping.TIME_SPEED_XC or EqShowJumping.TIME_SPEED
     return math.max(EqShowJumping.MIN_TIME, math.ceil(metres / speed))
+end
+
+
+--- The course whose start line is nearest a point, among those with enough fences for a round.
+--- @param courses table EqCourse.list
+--- @param x number
+--- @param z number
+--- @param radius number metres
+--- @return table|nil course, number|nil metres to its start line
+function EqShowJumping.nearestStart(courses, x, z, radius)
+    local best, bestDistance = nil, radius
+    for _, course in ipairs(courses) do
+        if #course.jumps >= EqCourse.MIN_JUMPS and #course.points >= 2 then
+            local start = EqShowJumping.startFromPath(course)
+            local d = math.sqrt((start.x - x) ^ 2 + (start.z - z) ^ 2)
+            if d <= bestDistance then best, bestDistance = course, d end
+        end
+    end
+    return best, best ~= nil and bestDistance or nil
 end
 
 
