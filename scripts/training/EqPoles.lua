@@ -118,32 +118,53 @@ function EqPoles.isOurs(configFileName)
 end
 
 
+-- How deep under the placeable's root node poles are looked for: its rootNode is the i3d file's
+-- root, so the jump's own transform group is one down and its poles two.
+EqPoles.DEPTH = 4
+
+
+--- The pole groups under a node.
+--- @param root number
+--- @return table nodes
+local function findPoles(root)
+    local found, stack = {}, { { root, 0 } }
+    while #stack > 0 do
+        local entry = table.remove(stack)
+        local node, depth = entry[1], entry[2]
+        if node ~= root and string.find(string.lower(getName(node)), EqPoles.PREFIX, 1, true) == 1 then
+            table.insert(found, node)
+        elseif depth < EqPoles.DEPTH then
+            for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, { getChildAt(node, i), depth + 1 }) end
+        end
+    end
+    return found
+end
+
+
 --- The poles of one of our jumps, found once.
 --- @param placeable table
 --- @return table poles
 local function polesOf(placeable)
     if placeable.eqPoles ~= nil then return placeable.eqPoles end
     local root, poles = placeable.rootNode, {}
-    for i = 0, getNumOfChildren(root) - 1 do
-        local node = getChildAt(root, i)
-        if string.find(string.lower(getName(node)), EqPoles.PREFIX, 1, true) == 1 then
-            local x, y, z = getTranslation(node)
-            local rx, ry, rz = getRotation(node)
-            local pole = { node = node, root = root, state = EqPoles.UP, home = { x, y, z, rx, ry, rz }, cols = {} }
-            for k = 0, getNumOfChildren(node) - 1 do
-                local child = getChildAt(node, k)
-                local kind = getRigidBodyType ~= nil and getRigidBodyType(child) or nil
-                if kind ~= nil and kind ~= noneType() and kind ~= "NoRigidBody" then
-                    table.insert(pole.cols, { node = child, kind = kind })
-                elseif string.find(string.lower(getName(child)), "col", 1, true) ~= nil then
-                    -- Collision already off (the course editor took it): it was static in the i3d.
-                    table.insert(pole.cols, { node = child, kind = staticType() })
-                end
-                EqPoles.byNode[child] = pole
+    for _, node in ipairs(findPoles(root)) do
+        local x, y, z = getTranslation(node)
+        local rx, ry, rz = getRotation(node)
+        local jump = getParent(node)
+        local pole = { node = node, root = jump, placeableRoot = root, state = EqPoles.UP, home = { x, y, z, rx, ry, rz }, cols = {} }
+        for k = 0, getNumOfChildren(node) - 1 do
+            local child = getChildAt(node, k)
+            local kind = getRigidBodyType ~= nil and getRigidBodyType(child) or nil
+            if kind ~= nil and kind ~= noneType() and kind ~= "NoRigidBody" then
+                table.insert(pole.cols, { node = child, kind = kind })
+            elseif string.find(string.lower(getName(child)), "col", 1, true) ~= nil then
+                -- Collision already off (the course editor took it): it was static in the i3d.
+                table.insert(pole.cols, { node = child, kind = staticType() })
             end
-            EqPoles.byNode[node] = pole
-            table.insert(poles, pole)
+            EqPoles.byNode[child] = pole
         end
+        EqPoles.byNode[node] = pole
+        table.insert(poles, pole)
     end
     -- Highest last: a rail with no pole named drops the highest one still up.
     table.sort(poles, function(p, q) return p.home[2] < q.home[2] end)
@@ -231,7 +252,7 @@ function EqPoles.raise(pole)
     setRotation(pole.node, h[4], h[5], h[6])
     -- While a course is edited the jump's collision is off (EqCourseHooks): hand the pole's to
     -- the editor, which gives it all back when editing ends.
-    local taken = EqCourseHooks ~= nil and EqCourseHooks.bodies ~= nil and EqCourseHooks.bodies[pole.root] or nil
+    local taken = EqCourseHooks ~= nil and EqCourseHooks.bodies ~= nil and EqCourseHooks.bodies[pole.placeableRoot] or nil
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then
             if taken ~= nil then

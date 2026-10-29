@@ -66,8 +66,11 @@ PALETTE = [("white", (240, 240, 236)), ("red", (196, 30, 36)), ("blue", (28, 70,
 # ---------------------------------------------------------------------------------------------
 # Textures
 
+PALETTE_CELLS = 8       # cells across the palette texture (a power of two wide); the spare ones white
+
+
 def palette_texture(path, cell=16):
-    img = Image.new("RGB", (cell * len(PALETTE), cell))
+    img = Image.new("RGB", (cell * PALETTE_CELLS, cell), dict(PALETTE)["white"])
     draw = ImageDraw.Draw(img)
     for i, (_, colour) in enumerate(PALETTE):
         draw.rectangle([i * cell, 0, (i + 1) * cell - 1, cell - 1], fill=colour)
@@ -78,13 +81,16 @@ def palette_texture(path, cell=16):
 def pal(name):
     """The middle of a palette cell."""
     index = [p[0] for p in PALETTE].index(name)
-    return (index + 0.5) / len(PALETTE), 0.5
+    return (index + 0.5) / PALETTE_CELLS, 0.5
+
+
+POLE_TILE = 2.0         # metres of pole one pole texture covers (8 bands: 128 px, a power of two)
 
 
 def pole_texture(colour, path):
-    """Bands along v: round_rail runs v once every 1.5 m, so six BAND-long bands fill it."""
+    """Bands along v, POLE_TILE metres of them (pole_mesh rescales round_rail's v to match)."""
     rgb = dict(PALETTE)[colour]
-    bands = round(1.5 / BAND)
+    bands = round(POLE_TILE / BAND)
     img = Image.new("RGB", (8, 16 * bands))
     draw = ImageDraw.Draw(img)
     for i in range(bands):
@@ -110,6 +116,8 @@ def pole_mesh():
     """One pole along x round its middle, with white end caps."""
     mesh, ends = Mesh(), Mesh()
     round_rail(mesh, ends, (-POLE_LENGTH / 2, 0.0, 0.0), (POLE_LENGTH / 2, 0.0, 0.0), POLE_R, sides=16)
+    # round_rail runs v once every 1.5 m; the pole texture covers POLE_TILE
+    mesh.verts = [(p, n, (uv[0], uv[1] * 1.5 / POLE_TILE)) for p, n, uv in mesh.verts]
     # the caps are plain white, from the palette
     ends.verts = [(p, n, pal("white")) for p, n, _ in ends.verts]
     return mesh, ends
