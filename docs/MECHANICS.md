@@ -628,6 +628,13 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
   how many visitors came (the field is them plus your two places). Their entry fees and the gate
   are paid to you, and your reputation rises 8 (from -25 up to 20).
+- **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
+  on a course that meets the rating, is that horse's show jumping or cross country, with its
+  real faults and time. In an arena big enough, the dressage test is the rating's length (15,
+  20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
+  gets one go at each phase, and later rounds are practice. Phases you don't ride are
+  simulated. A one-phase event with a ridden round is scored in penalties like eventing, and
+  your round is placed against the simulated field.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement.
 

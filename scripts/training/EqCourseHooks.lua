@@ -957,6 +957,8 @@ local function announce(round, event)
             or text(why == "refusals" and sj.xc and "eq_sj_out_refusalsXc" or "eq_sj_out_" .. why)
         notify(message)
         EqTrainingHud.pop("showJumping", text("eq_sj_eliminated"))
+        -- In your own event this round may be the horse's phase.
+        if EqHostManager ~= nil then EqLog.try("EqCourseHooks hosted round", EqHostManager.onRoundDone, round.vehicle, round.course, sj) end
     elseif event == "finished" then
         local result = sj.result
         local effort = EqShowJumping.payoff(result)
@@ -967,6 +969,7 @@ local function announce(round, event)
             or string.format(text("eq_sj_faults"), faultsText(result.total), secondsText(result.seconds))
         notify(message)
         EqTrainingHud.pop("showJumping", result.clear and text("eq_sj_clearPop") or string.format(text("eq_sj_faultsPop"), faultsText(result.total)))
+        if EqHostManager ~= nil then EqLog.try("EqCourseHooks hosted round", EqHostManager.onRoundDone, round.vehicle, round.course, sj) end
     end
 end
 

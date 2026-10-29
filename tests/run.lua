@@ -3856,6 +3856,43 @@ end)()
     local all = EqHostManager.failedChecks(short, false)
     check("host month: the opening check counts the feed", all[#all] == "feed")
 
+    -- Ridden rounds in your own event.
+    local novice = host.ratingByName.novice
+    check("ridden: a course with enough jumps qualifies", EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 6 })
+        and not EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 5 })
+        and not EqHosting.courseQualifies(novice, "showJumping", { kind = "crossCountry", jumps = 30, length = 4000 }))
+    check("ridden: cross country needs length and jumps", EqHosting.courseQualifies(novice, "crossCountry", { kind = "crossCountry", jumps = 20, length = 1000 })
+        and not EqHosting.courseQualifies(novice, "crossCountry", { kind = "crossCountry", jumps = 25, length = 900 }))
+    local sheet = EqHosting.roundSheet({ faults = 8, timeFaults = 2, total = 10 }, 1)
+    check("ridden: show jumping sheet splits rails and refusals", sheet.penalties == 10 and sheet.down == 1 and sheet.refusals == 1 and sheet.time == 2)
+    sheet = EqHosting.roundSheet({ faults = 20, timeFaults = 1.2, total = 21.2, xc = true }, 1)
+    check("ridden: cross country sheet", sheet.penalties == 21.2 and sheet.down == 0 and sheet.refusals == 1)
+    check("ridden: eliminated round", EqHosting.roundSheet({ eliminated = "refusals" }, 2).eliminated == true)
+    check("ridden: dressage marks per fault", EqHosting.testSheet(2, false).penalties == 34 and EqHosting.testSheet(3, true).eliminated)
+    local rode = { h = { dressage = { penalties = 22 }, showJumping = { penalties = 0 } } }
+    check("ridden: some phases leave it to the simulation", EqHosting.riddenFate(rode, "h", "eventing") == nil
+        and EqHosting.riddenFate(rode, "h", "showJumping") == "finished" and EqHosting.riddenFate(rode, "x", "dressage") == nil)
+    rode.h.crossCountry = { eliminated = true, penalties = 0 }
+    check("ridden: an eliminated phase is out", EqHosting.riddenFate(rode, "h", "eventing") == "eliminated")
+
+    -- A weak horse ridden clear beats every rival with penalties.
+    local better, worse, mineSj = 0, 0, nil
+    for i = 1, 50 do
+        local hostedEvent = { discipline = "showJumping", tier = "novice", prize = 1000,
+            hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0 } } } } }
+        local field = EqCompetition.run(hostedEvent, config, { { key = "me", rating = 15, condition = 1, stats = stats } }, EqRandom.new("ridden " .. i), 8)
+        for _, r in ipairs(field) do
+            if r.key == "me" then mineSj = r end
+        end
+        for _, r in ipairs(field) do
+            if r.key ~= "me" and r.run.penalties > 0 then
+                if r.place > mineSj.place then better = better + 1 else worse = worse + 1 end
+            end
+        end
+    end
+    check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
+        and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
+
     EqHostManager.reset()
     EqHostManager.bookings[3] = { type = "eventing", rating = "championship", month = 15, setupFee = 120000, previousLast = 4 }
     EqHostManager.lastMonth[3] = 15

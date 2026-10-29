@@ -825,5 +825,9 @@
         <text name="eq_host_warning" text="Tvému závodu %s chybí: %s. Vyřeš to dnes, jinak bude zítra zrušen."/>
         <text name="eq_host_cancelled" text="Tvůj závod %s byl zrušen, stále chybělo: %s. Tvoje pověst pořadatele utrpí."/>
         <text name="eq_host_done" text="Tvůj závod %s skončil: přijelo %d hostujících koní. Tržby %s (%s startovné, %s vstupné), oblíbenost %d."/>
+        <text name="eq_host_ride_counted" text="%s započítán do %s: %s trestných bodů."/>
+        <text name="eq_host_ride_out" text="%s započítán do %s: vyloučen."/>
+        <text name="eq_host_ride_already" text="%s tohoto koně pro %s už je odjetý; tohle je trénink."/>
+        <text name="eq_host_ride_small" text="Tato trať je pro %s příliš malá, jízda je trénink."/>
     </texts>
 </l10n>

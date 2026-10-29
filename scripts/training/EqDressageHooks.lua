@@ -181,9 +181,17 @@ function EqDressageHooks.courseFor(vehicle, spec)
             Log:info("Dressage course: %s", markers ~= nil and string.format("%d markers", #markers) or "none near")
         end
         spec.eqCourse = markers
+        -- Entered in your own running event: the test there is the competition's length.
+        spec.eqTestMoves = nil
+        if markers ~= nil and EqHostManager ~= nil then
+            local ok, moves = EqLog.try("EqDressageHooks testMovesFor", function()
+                return EqHostManager.testMovesFor(EqHostManager.horseIdOf(vehicle), markers)
+            end)
+            if ok then spec.eqTestMoves = moves end
+        end
     end
     if spec.eqCourse == nil then return nil end
-    return { x = x, z = z, markers = spec.eqCourse }
+    return { x = x, z = z, markers = spec.eqCourse, testMoves = spec.eqTestMoves }
 end
 
 

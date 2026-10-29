@@ -38,6 +38,7 @@ EqMessages.TYPES = {
     EQ_HOST_WARNING = { title = "eqHosting", severity = "WARNING" },
     EQ_HOST_CANCELLED = { title = "eqHosting", severity = "WARNING" },
     EQ_HOST_DONE = { title = "eqHosting", severity = "SUCCESS" },
+    EQ_HOST_RIDDEN = { title = "eqHosting", severity = "INFO" },
 }
 
 -- The one body template, and the texts RLRM looks up without our mod name.

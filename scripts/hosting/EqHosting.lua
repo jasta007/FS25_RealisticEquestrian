@@ -430,3 +430,102 @@ function EqHosting.takings(config, typeName, rating, popularity, seating)
     return { visitors = visitors, competitors = competitors, entryFee = entryFee, entries = entries, gate = gate,
         total = entries + gate }
 end
+
+
+-- RIDDEN ROUNDS
+-- While your event runs, a round you ride on a course that qualifies for it, or the dressage
+-- test in an arena that does, is that horse's phase: its real penalties are placed against the
+-- simulated field, once per horse and phase. Dressage marks are DRESSAGE_BASE (a winning test)
+-- and DRESSAGE_FAULT for each fault; the test's third fault eliminates.
+
+EqHosting.DRESSAGE_BASE = 22
+EqHosting.DRESSAGE_FAULT = 6
+-- Show jumping faults per rail down or refusal (EqShowJumping counts them together).
+EqHosting.SJ_FAULT = 4
+
+--- Does a recorded course qualify for a phase at this rating?
+--- @param rating table
+--- @param phase string "showJumping" or "crossCountry"
+--- @param course table { kind ("showJumping"/"crossCountry"), jumps (count), length (m) }
+--- @return boolean
+function EqHosting.courseQualifies(rating, phase, course)
+    if course.kind ~= phase then return false end
+    if phase == "crossCountry" then
+        return course.jumps >= rating.xcJumps and (course.length or 0) >= rating.xcLength
+    end
+    return course.jumps >= rating.showJumps
+end
+
+
+--- The phases an event type is ridden in.
+--- @param typeName string
+--- @return table phase names
+function EqHosting.phasesOf(typeName)
+    if typeName == EqHosting.EVENTING then return { "dressage", "showJumping", "crossCountry" } end
+    return { typeName }
+end
+
+
+--- A ridden show jumping or cross country round as a phase sheet.
+--- @param result table EqShowJumping round.result
+--- @param refusals number refusals and run-outs in the round
+--- @return table sheet { penalties, down, refusals, time, eliminated }
+function EqHosting.roundSheet(result, refusals)
+    if result.eliminated ~= nil then return { penalties = 0, down = 0, refusals = refusals or 0, time = 0, eliminated = true } end
+    local time = math.floor((result.timeFaults or 0) * 10 + 0.5) / 10
+    local down = 0
+    if not result.xc then down = math.max(0, math.floor(((result.faults or 0) - (refusals or 0) * EqHosting.SJ_FAULT) / EqHosting.SJ_FAULT + 0.5)) end
+    return { penalties = math.floor((result.total or 0) * 10 + 0.5) / 10, down = down, refusals = refusals or 0, time = time }
+end
+
+
+--- A ridden dressage test as a phase sheet.
+--- @param faults number
+--- @param lost boolean the test ended on its last fault
+--- @return table sheet
+function EqHosting.testSheet(faults, lost)
+    if lost then return { penalties = 0, down = 0, refusals = 0, time = 0, eliminated = true } end
+    return { penalties = EqHosting.DRESSAGE_BASE + EqHosting.DRESSAGE_FAULT * (faults or 0), down = 0, refusals = 0, time = 0 }
+end
+
+
+--- What the ridden phases decide about a horse's elimination.
+--- @param ridden table|nil horseId -> phase -> sheet
+--- @param horseId string
+--- @param typeName string the event type
+--- @return string|nil "eliminated" when a ridden phase eliminated it, "finished" when every
+---     phase was ridden and finished, nil to leave it to the simulation
+function EqHosting.riddenFate(ridden, horseId, typeName)
+    local mine = ridden ~= nil and ridden[horseId] or nil
+    if mine == nil then return nil end
+    local all = true
+    for _, phase in ipairs(EqHosting.phasesOf(typeName)) do
+        local sheet = mine[phase]
+        if sheet ~= nil and sheet.eliminated then return "eliminated" end
+        if sheet == nil then all = false end
+    end
+    return all and "finished" or nil
+end
+
+
+--- Put ridden phases in place of the simulated ones and total them again. The runners must be
+--- scored already (EqPerformance.scorePenalties).
+--- @param runners table list of { key, run = { phases = { { name, sheet } } } }
+--- @param ridden table horseId -> phase -> sheet
+function EqHosting.applyRidden(runners, ridden)
+    for _, runner in ipairs(runners) do
+        local mine = runner.key ~= nil and ridden[runner.key] or nil
+        if mine ~= nil and runner.run.phases ~= nil then
+            local total = 0
+            for _, phase in ipairs(runner.run.phases) do
+                local sheet = mine[phase.name]
+                if sheet ~= nil and not sheet.eliminated then
+                    phase.sheet = { penalties = sheet.penalties, down = sheet.down or 0, refusals = sheet.refusals or 0,
+                        time = sheet.time or 0, ridden = true }
+                end
+                total = total + phase.sheet.penalties
+            end
+            runner.run.penalties = math.floor(total * 10 + 0.5) / 10
+        end
+    end
+end

@@ -827,5 +827,9 @@
         <text name="eq_host_warning" text="Il manque à votre %s : %s. Réglez-le aujourd'hui ou le concours sera annulé demain."/>
         <text name="eq_host_cancelled" text="Votre %s a été annulé, il manquait toujours : %s. Votre réputation d'organisateur en souffre."/>
         <text name="eq_host_done" text="Votre %s est terminé : %d chevaux invités sont venus. Recettes %s (%s d'engagements, %s d'entrées), popularité %d."/>
+        <text name="eq_host_ride_counted" text="%s compté pour %s : %s pénalités."/>
+        <text name="eq_host_ride_out" text="%s compté pour %s : éliminé."/>
+        <text name="eq_host_ride_already" text="Le %s de ce cheval pour %s est déjà monté ; celui-ci est un entraînement."/>
+        <text name="eq_host_ride_small" text="Ce parcours est trop petit pour %s, ce tour est un entraînement."/>
     </texts>
 </l10n>
