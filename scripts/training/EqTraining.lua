@@ -268,6 +268,7 @@ function EqTraining.breakRoutine(sheet)
     routine.shown = nil
     routine.steerMs, routine.driftMs = 0, 0
     routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
+    routine.path, routine.competing = nil, nil
     return was
 end
 
@@ -291,10 +292,11 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
         if course == nil then return EqTraining.breakRoutine(sheet) and "lost" or nil end
         local event = EqDressage.step(sheet, move, steer, dt, rng, course)
         if event == "test" then
-            -- An arena test ridden to the end: a big payoff at once, then a rest.
+            -- An arena test ridden to the end: a big payoff at once, by its score, then a rest.
             if not worn then
+                local share = routine.path ~= nil and EqDressagePath.payoffShare(routine.path.percent) or 1
                 sheet.focused.temperament = sheet.focused.temperament
-                    + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS
+                    + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS * share
             end
             EqTraining.breakRoutine(sheet)
             routine.restUntil = routine.clock + EqDressage.TEST_REST_MS

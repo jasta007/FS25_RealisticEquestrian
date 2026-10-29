@@ -15,8 +15,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="Too many faults, such as galloping or leaving the arena, end the test; finish it for a big Temperament boost. Away from an arena, walking and backing up still train a little Temperament. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. Ride up to it and a test starts, asking you to ride to the letters at set gaits, halt, rein back and circle. Follow each command in time to raise your multiplier."/>
+        <text name="eq_help_temperament_2" text="Three errors of course (losing the line, leaving the arena or standing still) end the test; finish it for a Temperament boost that grows with your score. A calmer horse sees more of the line ahead and gets more warning of changes. Riding Hall markers give the older routine of legs between letters. Away from an arena, walking and backing up still train a little Temperament, and treats like carrots help too."/>
+        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. In a shop arena, ride to A and a test of figures starts: circles, diagonals, serpentines and more, drawn as a gold line on the ground. Stay on the line and change gait or halt where you are told; each movement is marked out of 10."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
@@ -106,6 +106,26 @@
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>
+        <text name="eq_fig_enter" text="Enter at %s, halt at %s"/>
+        <text name="eq_fig_trackLeft" text="Proceed, track left at %s"/>
+        <text name="eq_fig_trackRight" text="Proceed, track right at %s"/>
+        <text name="eq_fig_circle" text="%d m circle at %s"/>
+        <text name="eq_fig_longDiagonal" text="Change rein %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Change rein %s-%s"/>
+        <text name="eq_fig_across" text="Across the arena %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Half volte at %s"/>
+        <text name="eq_fig_centreLeft" text="Centre line at %s, track left at %s"/>
+        <text name="eq_fig_centreRight" text="Centre line at %s, track right at %s"/>
+        <text name="eq_fig_serpentine" text="Serpentine, %d loops, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="%d m loop %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Change rein through the circle at %s"/>
+        <text name="eq_fig_eight" text="Figure of eight from %s"/>
+        <text name="eq_fig_final" text="Centre line at %s, halt at %s"/>
+        <text name="eq_dressage_haltAt" text="Halt at %s"/>
+        <text name="eq_dressage_line" text="Back on the line!"/>
+        <text name="eq_dressage_mark" text="Last mark: %s"/>
+        <text name="eq_pop_routineError" text="Error of course %d/%d"/>
+        <text name="eq_pop_routineScore" text="Test complete: %s%%"/>
         <text name="eq_train_routine_none" text="Ride to a dressage arena to start a test"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>

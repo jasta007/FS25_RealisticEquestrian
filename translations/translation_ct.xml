@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="訓練檢視：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="失誤過多（例如襲步或離開場地）會結束這套動作；完成它可大幅提升氣質。在場地之外，慢步和後退仍能少量訓練氣質。餵紅蘿蔔等零食也是提升氣質的好方法。"/>
-        <text name="eq_help_temperament_1" text="氣質訓練是教會馬匹服從控制，需要一個盛裝舞步場地：在商店購買一個，或擺放盛裝舞步字母標記。騎到場地旁就會開始一套動作，要求你以指定步法前往字母、停止、後退和打圈。及時完成每個指令即可提高倍率。"/>
+        <text name="eq_help_temperament_2" text="三次路線錯誤（偏離線條、離開場地或原地不動）會結束測驗；騎完全程可獲得隨得分增長的氣質加成。更沉穩的馬能看到更遠的線條，並更早得到變換提示。Riding Hall 字母使用舊的字母間路段動作。在場地之外，慢步和後退仍能訓練一點氣質，紅蘿蔔等零食也有幫助。"/>
+        <text name="eq_help_temperament_1" text="氣質訓練教你的馬服從控制，需要一個盛裝舞步場地：在商店購買，或擺放盛裝舞步字母。在商店的場地中騎到A，圖形測驗就會開始：圓圈、對角線、蛇形線等，以金色線條畫在地面上。沿線騎行，並在指定位置變換步法或立定；每個動作滿分10分。"/>
         <text name="eq_help_temperament_title" text="訓練：性情"/>
         <text name="eq_help_agility_2" text="如果你沒能及時跳過新的障礙物或速度掉得太多，就會失去倍率。沒有障礙物的跳躍也有一點訓練效果，但不會提高倍率。"/>
         <text name="eq_help_agility_1" text="敏捷主要靠跨越障礙訓練，不過在各種步法之間切換也能獲得少許提升。跳過障礙物來積累敏捷訓練倍率，倍率會在十秒後消退，撞到障礙物則會更早消退。"/>
@@ -108,6 +108,26 @@
         <text name="eq_dressage_next" text="下一個：%s"/>
         <text name="eq_dressage_stand" text="立定"/>
         <text name="eq_dressage_marker" text="標記 %s"/>
+        <text name="eq_fig_enter" text="從%s進場，在%s立定"/>
+        <text name="eq_fig_trackLeft" text="繼續，在%s左手"/>
+        <text name="eq_fig_trackRight" text="繼續，在%s右手"/>
+        <text name="eq_fig_circle" text="%d公尺圓圈，在%s"/>
+        <text name="eq_fig_longDiagonal" text="換手 %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="換手 %s-%s"/>
+        <text name="eq_fig_across" text="橫穿場地 %s-%s"/>
+        <text name="eq_fig_halfVolte" text="在%s半圈"/>
+        <text name="eq_fig_centreLeft" text="在%s上中線，在%s左手"/>
+        <text name="eq_fig_centreRight" text="在%s上中線，在%s右手"/>
+        <text name="eq_fig_serpentine" text="蛇形線，%d個彎，%s-%s"/>
+        <text name="eq_fig_shallowLoop" text="%d公尺淺彎 %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="在%s通過圓圈換手"/>
+        <text name="eq_fig_eight" text="從%s做8字"/>
+        <text name="eq_fig_final" text="在%s上中線，在%s立定"/>
+        <text name="eq_dressage_haltAt" text="在%s立定"/>
+        <text name="eq_dressage_line" text="回到線上！"/>
+        <text name="eq_dressage_mark" text="上一項得分：%s"/>
+        <text name="eq_pop_routineError" text="路線錯誤 %d/%d"/>
+        <text name="eq_pop_routineScore" text="測驗完成：%s%%"/>
         <text name="eq_train_routine_none" text="前往盛裝舞步場地開始一套動作"/>
         <text name="eq_train_routine" text="動作 x%d"/>
         <text name="eq_train_combo_none" text="跳過障礙開始連擊"/>

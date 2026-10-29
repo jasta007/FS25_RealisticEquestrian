@@ -119,6 +119,23 @@ function EqCourseGlow.bar(ax, ay, az, bx, by, bz)
 end
 
 
+--- A flat strip from a to b, width across and thick high: the dressage test's line on the
+--- ground (EqDressageHooks.drawPath).
+--- @return boolean false when the glow can't be drawn
+function EqCourseGlow.strip(ax, ay, az, bx, by, bz, width, thick)
+    if not ensureLoaded() then return false end
+    local dx, dy, dz = bx - ax, by - ay, bz - az
+    local length = math.sqrt(dx * dx + dy * dy + dz * dz)
+    if length < 0.01 then return true end
+    local node = take("bar")
+    setTranslation(node, ax, ay, az)
+    setDirection(node, dx / length, dy / length, dz / length, 0, 1, 0)
+    setScale(node, width, thick, length)
+    EqCourseGlow.drawnAt = g_time or 0
+    return true
+end
+
+
 --- Hide what this frame did not use.
 function EqCourseGlow.finish()
     for kind, pool in pairs(EqCourseGlow.pools) do

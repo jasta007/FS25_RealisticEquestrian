@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista de entrenamiento: %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Demasiadas faltas, como galopar o salir de la pista, terminan la prueba; acábala para un gran impulso de temperamento. Fuera de una pista, caminar al paso y retroceder siguen entrenando algo de temperamento. Dar premios como zanahorias también es una gran forma de mejorar el temperamento."/>
-        <text name="eq_help_temperament_1" text="El entrenamiento de temperamento enseña control a tu caballo y necesita una pista de doma: compra una en la tienda o coloca letras de doma. Acércate y empieza una prueba que te pide ir a las letras a ciertos aires, parar, retroceder y hacer círculos. Cumple cada orden a tiempo para subir tu multiplicador."/>
+        <text name="eq_help_temperament_2" text="Tres errores de recorrido (perder la línea, salir de la pista o quedarse parado) terminan la prueba; termínala para un impulso de temperamento que crece con tu nota. Un caballo más tranquilo ve más línea por delante y recibe más aviso de los cambios. Las letras de Riding Hall dan la rutina antigua de tramos entre letras. Fuera de una pista, el paso y el paso atrás siguen entrenando algo de temperamento, y las golosinas como las zanahorias también ayudan."/>
+        <text name="eq_help_temperament_1" text="El entrenamiento de temperamento enseña control a tu caballo y necesita una pista de doma: compra una en la tienda o coloca letras de doma. En una pista de la tienda, ve hasta A y empieza una prueba de figuras: círculos, diagonales, serpentinas y más, dibujadas como una línea dorada en el suelo. Sigue la línea y cambia de aire o haz parada donde se indique; cada movimiento se puntúa sobre 10."/>
         <text name="eq_help_temperament_title" text="Entrenamiento: Temperamento"/>
         <text name="eq_help_agility_2" text="Pierdes el multiplicador si no superas un nuevo obstáculo a tiempo o pierdes demasiada velocidad. Saltar sin obstáculo entrena algo, pero no sube el multiplicador."/>
         <text name="eq_help_agility_1" text="La Agilidad se basa en superar saltos, aunque cambiar de aire también ayuda un poco. Supera obstáculos para crear un multiplicador de Agilidad, que se desvanece a los diez segundos, o antes si golpeas un obstáculo."/>
@@ -57,6 +57,26 @@
         <text name="eq_dressage_next" text="Siguiente: %s"/>
         <text name="eq_dressage_stand" text="Parada"/>
         <text name="eq_dressage_marker" text="Letra %s"/>
+        <text name="eq_fig_enter" text="Entrada por %s, parada en %s"/>
+        <text name="eq_fig_trackLeft" text="Continuar, pista a mano izquierda en %s"/>
+        <text name="eq_fig_trackRight" text="Continuar, pista a mano derecha en %s"/>
+        <text name="eq_fig_circle" text="Círculo de %d m en %s"/>
+        <text name="eq_fig_longDiagonal" text="Cambio de mano %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Cambio de mano %s-%s"/>
+        <text name="eq_fig_across" text="Atravesar la pista %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Media vuelta en %s"/>
+        <text name="eq_fig_centreLeft" text="Línea central en %s, pista a mano izquierda en %s"/>
+        <text name="eq_fig_centreRight" text="Línea central en %s, pista a mano derecha en %s"/>
+        <text name="eq_fig_serpentine" text="Serpentina de %d bucles, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Bucle de %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Cambio de mano por el círculo en %s"/>
+        <text name="eq_fig_eight" text="Ocho desde %s"/>
+        <text name="eq_fig_final" text="Línea central en %s, parada en %s"/>
+        <text name="eq_dressage_haltAt" text="Parada en %s"/>
+        <text name="eq_dressage_line" text="¡Vuelve a la línea!"/>
+        <text name="eq_dressage_mark" text="Última nota: %s"/>
+        <text name="eq_pop_routineError" text="Error de recorrido %d/%d"/>
+        <text name="eq_pop_routineScore" text="Prueba completada: %s%%"/>
         <text name="eq_train_routine_none" text="Ve a una pista de doma para empezar una prueba"/>
         <text name="eq_train_routine" text="Rutina x%d"/>
         <text name="eq_train_combo_none" text="Supera un salto para empezar un combo"/>

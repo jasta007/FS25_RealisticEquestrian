@@ -181,17 +181,81 @@ function EqDressageHooks.courseFor(vehicle, spec)
             Log:info("Dressage course: %s", markers ~= nil and string.format("%d markers", #markers) or "none near")
         end
         spec.eqCourse = markers
-        -- Entered in your own running event: the test there is the competition's length.
-        spec.eqTestMoves = nil
+        -- In the month of your own event the arena rides its fixed test, which counts for a
+        -- horse entered in it (EqHostManager.dressageTestFor).
+        spec.eqTest = nil
         if markers ~= nil and EqHostManager ~= nil then
-            local ok, moves = EqLog.try("EqDressageHooks testMovesFor", function()
-                return EqHostManager.testMovesFor(EqHostManager.horseIdOf(vehicle), markers)
+            local ok, test = EqLog.try("EqDressageHooks dressageTestFor", function()
+                return EqHostManager.dressageTestFor(EqHostManager.horseIdOf(vehicle), markers)
             end)
-            if ok then spec.eqTestMoves = moves end
+            if ok then spec.eqTest = test end
         end
+        -- The horse's temperament: how far ahead it sees the line, and how soon changes show.
+        local record = spec.cluster ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
+        spec.eqTemperament = record ~= nil and record.trained ~= nil and record.trained.temperament or nil
     end
     if spec.eqCourse == nil then return nil end
-    return { x = x, z = z, markers = spec.eqCourse, testMoves = spec.eqTestMoves }
+    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament }
+end
+
+
+-- The test's line on the ground (EqDressagePath): a thin gold strip, lifted off the ground.
+EqDressageHooks.STRIP_WIDTH = 0.25
+EqDressageHooks.STRIP_THICK = 0.03
+EqDressageHooks.STRIP_LIFT = 0.03
+-- A gold pole stands where a change or halt is coming, and where the test begins.
+EqDressageHooks.POLE_HEIGHT = 1.2
+-- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
+EqDressageHooks.pathRun = nil
+EqDressageHooks.pathAt = nil
+
+
+--- @return number the ground's height under a path point (worked out once)
+local function pointY(frame, p)
+    if p.wy == nil then
+        p.wx, p.wz = EqDressagePath.toWorld(frame, p.x, p.y)
+        local terrain = g_currentMission ~= nil and g_currentMission.terrainRootNode or nil
+        p.wy = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, p.wx, 0, p.wz) or 0
+    end
+    return p.wy
+end
+
+
+--- Draw the test's line ahead of the horse, from EqCourseHooks.onDraw between the course glow's
+--- begin and finish: as far ahead as the horse's temperament lets it see, and a pole at the
+--- change or halt coming up once it is near enough to show.
+--- @param vehicle table the ridden horse
+function EqDressageHooks.drawPath(vehicle)
+    local run = EqDressageHooks.pathRun
+    local now = g_time or 0
+    if run == nil or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then return end
+    local pts, frame = run.test.pts, run.frame
+    local first = run.started and run.i or 1
+    local reach = pts[first].s + run.look
+    local lift, width, thick = EqDressageHooks.STRIP_LIFT, EqDressageHooks.STRIP_WIDTH, EqDressageHooks.STRIP_THICK
+    local i = first
+    while i < #pts and pts[i].s < reach do
+        local j = math.min(i + 2, #pts)
+        local a, b = pts[i], pts[j]
+        local ay, by = pointY(frame, a), pointY(frame, b)
+        if not EqCourseGlow.strip(a.wx, ay + lift, a.wz, b.wx, by + lift, b.wz, width, thick) then return end
+        i = j
+    end
+    if not run.started then
+        local p = pts[1]
+        EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)
+        return
+    end
+    local event = EqDressagePath.upcoming(run)
+    if event ~= nil then
+        for k = run.i, #pts do
+            if pts[k].s >= event.s or k == #pts then
+                local y = pointY(frame, pts[k])
+                EqCourseGlow.pole(pts[k].wx, y, pts[k].wz, EqDressageHooks.POLE_HEIGHT)
+                break
+            end
+        end
+    end
 end
 
 

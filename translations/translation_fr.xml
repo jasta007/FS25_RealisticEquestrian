@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vue d'entraînement : %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Trop de fautes, comme galoper ou sortir de la carrière, mettent fin à la reprise ; terminez-la pour un gros bonus de tempérament. Hors d&apos;une carrière, le pas et le reculer entraînent encore un peu le tempérament. Donner des friandises comme des carottes est aussi un excellent moyen d&apos;améliorer le tempérament."/>
-        <text name="eq_help_temperament_1" text="L&apos;entraînement du tempérament apprend la maîtrise à votre cheval, et il faut une carrière de dressage : achetez-en une en boutique ou installez des lettres de dressage. Approchez-vous et une reprise commence : rejoignez les lettres aux allures demandées, arrêtez, reculez et faites des cercles. Suivez chaque consigne à temps pour augmenter votre multiplicateur."/>
+        <text name="eq_help_temperament_2" text="Trois erreurs de parcours (ligne perdue, sortie de la carrière ou arrêt sur place) terminent la reprise ; finissez-la pour un bonus de tempérament qui grandit avec votre note. Un cheval plus calme voit la ligne plus loin et est prévenu plus tôt des changements. Les lettres de Riding Hall donnent l'ancienne routine de trajets entre les lettres. Hors d'une carrière, le pas et le reculer entraînent toujours un peu le tempérament, et les friandises comme les carottes aident aussi."/>
+        <text name="eq_help_temperament_1" text="L'entraînement du tempérament apprend le contrôle à votre cheval, et il lui faut une carrière de dressage : achetez-en une dans la boutique ou placez des lettres de dressage. Dans une carrière de la boutique, allez en A et une reprise de figures commence : cercles, diagonales, serpentines et plus, tracés en ligne dorée au sol. Restez sur la ligne et changez d'allure ou arrêtez-vous là où c'est demandé ; chaque mouvement est noté sur 10."/>
         <text name="eq_help_temperament_title" text="Entraînement : Tempérament"/>
         <text name="eq_help_agility_2" text="Vous perdez le multiplicateur si vous ne franchissez pas un nouvel obstacle à temps ou perdez trop de vitesse. Sauter sans obstacle entraîne un peu, mais n'augmente pas le multiplicateur."/>
         <text name="eq_help_agility_1" text="L'Agilité, c'est surtout franchir des sauts, même si passer d'une allure à l'autre aide un peu. Franchissez des obstacles pour monter un multiplicateur d'Agilité, qui retombe après dix secondes, ou plus tôt si vous touchez un obstacle."/>
@@ -57,6 +57,26 @@
         <text name="eq_dressage_next" text="Suivant : %s"/>
         <text name="eq_dressage_stand" text="Arrêt"/>
         <text name="eq_dressage_marker" text="Lettre %s"/>
+        <text name="eq_fig_enter" text="Entrée en %s, arrêt en %s"/>
+        <text name="eq_fig_trackLeft" text="Rompre au trot, piste à main gauche en %s"/>
+        <text name="eq_fig_trackRight" text="Rompre au trot, piste à main droite en %s"/>
+        <text name="eq_fig_circle" text="Cercle de %d m en %s"/>
+        <text name="eq_fig_longDiagonal" text="Changement de main %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Changement de main %s-%s"/>
+        <text name="eq_fig_across" text="Traverser le manège %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Demi-volte en %s"/>
+        <text name="eq_fig_centreLeft" text="Ligne du milieu en %s, piste à main gauche en %s"/>
+        <text name="eq_fig_centreRight" text="Ligne du milieu en %s, piste à main droite en %s"/>
+        <text name="eq_fig_serpentine" text="Serpentine de %d boucles, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Boucle de %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Changement de main dans le cercle en %s"/>
+        <text name="eq_fig_eight" text="Huit de chiffre depuis %s"/>
+        <text name="eq_fig_final" text="Ligne du milieu en %s, arrêt en %s"/>
+        <text name="eq_dressage_haltAt" text="Arrêt en %s"/>
+        <text name="eq_dressage_line" text="Revenez sur la ligne !"/>
+        <text name="eq_dressage_mark" text="Dernière note : %s"/>
+        <text name="eq_pop_routineError" text="Erreur de parcours %d/%d"/>
+        <text name="eq_pop_routineScore" text="Reprise terminée : %s%%"/>
         <text name="eq_train_routine_none" text="Allez à une carrière de dressage pour commencer une reprise"/>
         <text name="eq_train_routine" text="Reprise x%d"/>
         <text name="eq_train_combo_none" text="Franchissez un saut pour lancer un combo"/>

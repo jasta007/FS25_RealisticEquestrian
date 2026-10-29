@@ -785,6 +785,11 @@ function EqCourseHooks.onDraw(vehicle)
     if editing == nil then
         EqCourseGlow.begin()
         EqCourseHooks.roundDraw(vehicle)
+        -- A dressage test's line on the ground uses the same glow (EqDressageHooks).
+        -- One failure stops it for the game, not a warning every frame.
+        if not EqDressageHooks.drawFailed and not EqLog.try("EqCourseHooks.onDraw dressage line", EqDressageHooks.drawPath, vehicle) then
+            EqDressageHooks.drawFailed = true
+        end
         EqCourseGlow.finish()
         return
     end

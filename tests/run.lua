@@ -17,6 +17,7 @@ dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
+dofile("scripts/training/EqDressagePath.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
@@ -3634,28 +3635,16 @@ end)()
     for _ = 1, 100 do EqTraining.routineStep(far, "walk", nil, 50, false, one, { x = 12 + EqDressage.ARENA_NEAR + 40, z = 3, markers = course }) end
     check("walking with markers in sight but not near them starts nothing", not far.routine.active)
 
-    -- In one of our arenas the routine opens at X with a halt.
+    -- In one of our arenas the routine is a test of figures (EqDressagePath).
     local ours = {}
     for _, m in ipairs(course) do ours[#ours + 1] = { letter = m.letter, x = m.x, z = m.z, arena = true } end
-    local opening = EqTraining.newSheet()
     local at = { x = 12, z = 8, markers = ours }
-    for _ = 1, 50 do EqTraining.routineStep(opening, "walk", nil, 50, false, one, at) end
-    local o = opening.routine
-    check("in our arenas the first leg goes to A", o.kind == "markers" and o.task.opening == "A" and o.task.marker.letter == "A")
-    local toX = EqDressage.plan(o, { x = 10, z = 0, markers = ours }, "go", one)
-    check("then a trot down the centre line to X", toX.marker.letter == "X" and toX.gait == "trot")
-    o.task = toX
-    check("and a halt at X", EqDressage.plan(o, { x = 10, z = 20, markers = ours }, "go", one).kind == "halt")
-    check("a horse at A already goes straight to X", EqDressage.openingLeg({ x = 10, z = 1, markers = ours }).opening == "X")
-    local toA = EqDressage.openingLeg(at)
-    check("the first trip to A is a trot, untimed", toA.gait == "trot" and toA.untimed)
-    local side = EqTraining.newSheet()
-    EqTraining.routineStep(side, "trot", nil, 50, false, one, { x = -2, z = 20, markers = ours })
-    for _, z in ipairs({ 20, 34, 6 }) do EqTraining.routineStep(side, "trot", nil, 50, false, one, { x = 0, z = z, markers = ours }) end
-    check("riding past the letters on the way to A asks for no gait change", side.routine.task.opening == "A" and side.routine.bonus == nil)
     local near = EqTraining.newSheet()
     EqTraining.routineStep(near, "trot", nil, 50, false, one, at)
-    check("coming up to our arena starts its test at once", near.routine.active and near.routine.task.opening == "A")
+    check("coming up to our arena starts its test at once", near.routine.active and near.routine.kind == "path"
+        and near.routine.path ~= nil and not near.routine.path.started)
+    for _ = 1, 100 do EqTraining.routineStep(near, "walk", nil, 50, false, one, at) end
+    check("the test waits at A, untimed, without faults", near.routine.active and not near.routine.path.started and near.routine.path.errors == 0)
     -- Far from our arena (past C at the far end): no test, and no "Move to A" from 80 m off.
     local beyond = { x = 10, z = 40 + 50, markers = ours }
     check("not near an arena 50 m past its end", not EqDressage.nearArena(beyond))
@@ -3664,7 +3653,7 @@ end)()
     for _ = 1, 50 do EqTraining.routineStep(away, "walk", nil, 50, false, one, beyond) end
     check("walking far from our arena starts nothing", not away.routine.active)
     for _ = 1, 3 do EqTraining.routineStep(away, "walk", nil, 50, false, one, at) end
-    check("riding up to the arena starts the test", away.routine.kind == "markers" and away.routine.task.opening == "A")
+    check("riding up to the arena starts the test", away.routine.kind == "path")
     check("the test starts from the arena's distance", EqDressage.startDistance(at) == 0 and EqDressage.startDistance(beyond) > EqDressage.ARENA_NEAR
         and EqDressage.atMarkers(at) and not EqDressage.atMarkers(beyond))
     local walks = 0
@@ -3683,67 +3672,154 @@ end)()
     local bounds = EqDressage.arenaBounds({ markers = ours }, ours[10])
     check("an arena's bounds come from its letters", bounds ~= nil and EqDressage.inArena(bounds, 10, 20)
         and EqDressage.inArena(bounds, 0.5, 39) and not EqDressage.inArena(bounds, -5, 20) and not EqDressage.inArena(bounds, 10, 45))
-    local out = EqTraining.newSheet()
-    local inside = { x = 10, z = 1, markers = ours }
-    EqTraining.routineStep(out, "walk", nil, 50, false, one, inside)
-    out.routine.task.opening = nil -- past X: the test proper
-    local outside = { x = -10, z = 20, markers = ours }
-    local outEvents = {}
-    for _ = 1, 70 do
-        local e = EqTraining.routineStep(out, "walk", nil, 50, false, one, outside)
-        if e then outEvents[e] = (outEvents[e] or 0) + 1 end
-    end
-    local entering = EqTraining.newSheet()
-    local enterEvents = {}
-    for _ = 1, 100 do
-        local e = EqTraining.routineStep(entering, "trot", nil, 50, false, one, { x = 10, z = -6, markers = ours })
-        if e then enterEvents[e] = (enterEvents[e] or 0) + 1 end
-    end
-    check("no arena faults on the way in to A", entering.routine.active and (enterEvents.fault or 0) == 0)
-    check("leaving the arena is a fault after a few seconds", out.routine.active and outEvents.fault == 1 and out.routine.faults == 1,
-        string.format("faults %s", tostring(out.routine.faults)))
     check("a change from a walk to a canter is a flying change", EqDressage.changeKey({ gait = "canter", from = "walk" }) == "eq_dressage_flying"
         and EqDressage.changeKey({ gait = "trot", from = "walk" }) == "eq_dressage_change"
         and EqDressage.changeKey({ gait = "walk", from = "canter" }) == "eq_dressage_change")
 
-    -- Ride a whole arena test: it ends at X with a halt and a big payoff.
-    seed = 11
-    local tested = EqTraining.newSheet()
-    local tx, tz = 12, 3
-    local spin = 0
-    local finished, before = false, 0
-    for _ = 1, 20000 do
-        local r2 = tested.routine
-        local task, move, steer = r2.task, "walk", nil
-        if task ~= nil then
-            if task.kind == "go" then
-                move = r2.bonus ~= nil and r2.bonus.gait or task.gait
-                local dx, dz = task.marker.x - tx, task.marker.z - tz
-                local d = math.sqrt(dx * dx + dz * dz)
-                local stepLen = math.min(d, SPEED[move] * 0.05)
-                if d > 0 then tx, tz = tx + dx / d * stepLen, tz + dz / d * stepLen end
-            elseif task.kind == "reverse" then move = "reverse"
-            elseif task.kind == "turn" then move, steer = "halt", task.side
-            elseif task.kind == "circle" then
-                move, steer = "walk", task.side
-                spin = spin + 0.03
-                tx, tz = tx + math.sin(spin) * 0.09, tz + math.cos(spin) * 0.09
-            else move = "halt" end
+    check("Riding Hall markers ride legs, not figures", (function()
+        local legs = EqTraining.newSheet()
+        EqTraining.routineStep(legs, "walk", nil, 50, false, one, here)
+        return legs.routine.kind == "markers" and legs.routine.path == nil
+    end)())
+end)()
+
+-- Dressage tests of figures (EqDressagePath) in the shop's three arenas.
+;(function()
+    local SHOP = {
+        { 15, 30, { { "K", 4.5 }, { "E", 15 }, { "H", 25.5 } }, { { "F", 4.5 }, { "B", 15 }, { "M", 25.5 } }, { { "D", 4.5 }, { "X", 15 }, { "G", 25.5 } } },
+        { 20, 40, { { "K", 6 }, { "E", 20 }, { "H", 34 } }, { { "F", 6 }, { "B", 20 }, { "M", 34 } }, { { "D", 6 }, { "X", 20 }, { "G", 34 } } },
+        { 20, 60, { { "K", 6 }, { "V", 18 }, { "E", 30 }, { "S", 42 }, { "H", 54 } }, { { "F", 6 }, { "P", 18 }, { "B", 30 }, { "R", 42 }, { "M", 54 } },
+            { { "D", 6 }, { "L", 18 }, { "X", 30 }, { "I", 42 }, { "G", 54 } } },
+    }
+    -- As art/source/dressage_arenas.py lays them out (A at +z), turned and moved on the map.
+    local function shopMarkers(arena, ox, oz, angle)
+        local w, l = arena[1], arena[2]
+        local out, list = w / 2 + 0.6, {}
+        local c, sn = math.cos(angle), math.sin(angle)
+        local function add(letter, x, z)
+            table.insert(list, { letter = letter, x = ox + x * c - z * sn, z = oz + x * sn + z * c, arena = true, arenaId = 7 })
         end
-        before = tested.focused.temperament
-        if EqTraining.routineStep(tested, move, steer, 50, false, rng, { x = tx, z = tz, markers = ours }) == "test" then
-            finished = true
-            break
-        end
+        add("A", 0, l / 2 + 0.6)
+        add("C", 0, -l / 2 - 0.6)
+        for _, p in ipairs(arena[3]) do add(p[1], -out, l / 2 - p[2]) end
+        for _, p in ipairs(arena[4]) do add(p[1], out, l / 2 - p[2]) end
+        for _, p in ipairs(arena[5]) do add(p[1], 0, l / 2 - p[2]) end
+        return list
     end
-    check("a whole arena test ends in a halt at X", finished and math.abs(tx - 10) < 4 and math.abs(tz - 20) < 4,
-        string.format("at %.1f, %.1f", tx, tz))
-    check("finishing pays a big bonus and rests", tested.focused.temperament - before
-        >= EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS * 0.99
-        and not tested.routine.active)
-    EqTraining.routineStep(tested, "walk", nil, 50, false, one, { x = tx, z = tz, markers = ours })
-    check("no new test straight after", not tested.routine.active)
-    check("Riding Hall markers open with an ordinary leg", EqDressage.openingLeg(here) == nil)
+    local function xOf(markers)
+        for _, m in ipairs(markers) do if m.letter == "X" then return m end end
+    end
+    local SPEED = { walk = 1.6, trot = 3.2, canter = 5 }
+    -- A rider who follows the line, wobbling off it by up to `wobble` metres, and changes `late`
+    -- metres after each point.
+    local function ride(test, frame, wobble, late)
+        local run = EqDressagePath.newRun(test, 50)
+        local pts, s, gait, ev, holdUntil, t = test.pts, 0, "trot", 1, nil, 0
+        local k = 2
+        for _ = 1, 100000 do
+            t = t + 33
+            local e = test.events[ev]
+            local move = gait
+            if holdUntil ~= nil then
+                move = "halt"
+                if t >= holdUntil then holdUntil, gait, ev = nil, e.gait, ev + 1 end
+            elseif e ~= nil and s >= e.s + late then
+                if e.kind == "halt" then holdUntil, move = t + 2600, "halt" else gait, move, ev = e.gait, e.gait, ev + 1 end
+            end
+            if move ~= "halt" then s = s + SPEED[move] * 0.033 end
+            while k < #pts and pts[k].s < s do k = k + 1 end
+            local a, b = pts[k - 1], pts[k]
+            local f = math.min(1, math.max(0, (s - a.s) / math.max(0.001, b.s - a.s)))
+            local dx, dy = b.x - a.x, b.y - a.y
+            local len = math.max(0.001, math.sqrt(dx * dx + dy * dy))
+            local off = wobble * math.sin(s / 6)
+            local wx, wz = EqDressagePath.toWorld(frame, a.x + dx * f + dy / len * off, a.y + dy * f - dx / len * off)
+            local event = EqDressagePath.step(run, move, wx, wz, 33)
+            if event == "test" or event == "lost" then return run, event end
+        end
+        return run, "timeout"
+    end
+
+    for n, arena in ipairs(SHOP) do
+        local name = arena[1] .. "x" .. arena[2]
+        local markers = shopMarkers(arena, 300 * n, -50, 0.4 * n)
+        local frame = EqDressagePath.frameFor(markers, xOf(markers))
+        check(name .. ": the arena's frame comes from its letters", frame ~= nil and math.abs(frame.halfW - arena[1] / 2) < 0.01
+            and math.abs(frame.halfL - arena[2] / 2) < 0.01)
+        local library = EqDressagePath.library(frame)
+        local keys = {}
+        for _, figure in ipairs(library) do keys[figure.key] = true end
+        check(name .. ": circles, diagonals, serpentines, loops and figures of eight fit", keys.circle and keys.longDiagonal
+            and keys.shortDiagonal and keys.serpentine and keys.shallowLoop and keys.eight and keys.across and keys.centre)
+        local x, y = EqDressagePath.toLocal(frame, xOf(markers).x, xOf(markers).z)
+        check(name .. ": X is the arena's middle", math.abs(x) < 1e-6 and math.abs(y) < 1e-6)
+        local gaps, outs, unsorted, walks, finals = 0, 0, 0, 0, 0
+        for seed = 1, 30 do
+            local rolls = EqRandom.new(seed)
+            local test = EqDressagePath.build(frame, 6, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
+            for i = 2, #test.pts do
+                local p, q = test.pts[i - 1], test.pts[i]
+                if math.sqrt((p.x - q.x) ^ 2 + (p.y - q.y) ^ 2) > 1.2 then gaps = gaps + 1 end
+                if q.s > 3 and (math.abs(q.x) > frame.halfW - 0.5 or math.abs(q.y) > frame.halfL - 0.5) then outs = outs + 1 end
+            end
+            local walkFrom = nil
+            for i, e in ipairs(test.events) do
+                if i > 1 and e.s < test.events[i - 1].s then unsorted = unsorted + 1 end
+                if walkFrom ~= nil and e.s - walkFrom > EqDressagePath.WALK_MAX + 0.01 then walks = walks + 1 end
+                walkFrom = e.gait == "walk" and e.s or nil
+            end
+            local last = test.events[#test.events]
+            if last.kind == "halt" and last.final and #test.moves == 9 then finals = finals + 1 end
+        end
+        check(name .. ": a test's line has no gaps", gaps == 0, tostring(gaps))
+        check(name .. ": a test's line stays inside the rail", outs == 0, tostring(outs))
+        check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0)
+        check(name .. ": every test opens and ends at X, with its figures between", finals == 30, tostring(finals))
+
+        local rolls = EqRandom.new(5)
+        local test = EqDressagePath.build(frame, 6, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
+        local run, event = ride(test, frame, 0, 0)
+        check(name .. ": a rider on the line, on time, scores 100%", event == "test" and run.percent == 100 and run.errors == 0,
+            string.format("%s %s%%", event, tostring(run.percent)))
+        run, event = ride(test, frame, 2, 0)
+        check(name .. ": wandering 2 m either side scores much less", event == "test" and run.percent < 85 and run.percent > 40,
+            string.format("%s %s%%", event, tostring(run.percent)))
+        run, event = ride(test, frame, 0, 6)
+        check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 80,
+            string.format("%s %s%%", event, tostring(run.percent)))
+    end
+
+    -- The same seed rides the same test; a horse that stops on the line is eliminated.
+    local markers = shopMarkers(SHOP[2], 0, 0, 0)
+    local frame = EqDressagePath.frameFor(markers, xOf(markers))
+    local function seeded(seed)
+        local rolls = EqRandom.new(seed)
+        return function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end
+    end
+    local one, two = EqDressagePath.build(frame, 8, seeded("dressage 4 novice")), EqDressagePath.build(frame, 8, seeded("dressage 4 novice"))
+    local same = #one.pts == #two.pts and #one.events == #two.events
+    for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end
+    check("a hosted event's seed rides the same test every time", same and one.length == two.length)
+    local stuck = EqDressagePath.newRun(one, 50)
+    local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)
+    local events = {}
+    for _ = 1, 2000 do
+        local e = EqDressagePath.step(stuck, "halt", sx, sz, 50)
+        if e ~= nil then events[e] = (events[e] or 0) + 1 end
+        if e == "lost" then break end
+    end
+    check("standing still is an error of course, and the third eliminates", events.begin == 1 and events.fault == 2 and events.lost == 1
+        and stuck.eliminated)
+    check("a temperamental horse sees less of the line and less warning", EqDressagePath.newRun(one, 10).look < EqDressagePath.newRun(one, 90).look
+        and EqDressagePath.newRun(one, 10).warn < EqDressagePath.newRun(one, 90).warn)
+    check("a hosted test's length: 15, 20, 25 make 6, 8, 10 figures", EqDressagePath.figuresFor(15) == 6 and EqDressagePath.figuresFor(20) == 8
+        and EqDressagePath.figuresFor(25) == 10 and EqDressagePath.figuresFor(nil) == EqDressagePath.TRAINING_FIGURES)
+    check("the test's payoff grows with its score", EqDressagePath.payoffShare(70) == 1 and EqDressagePath.payoffShare(30) == EqDressagePath.PAYOFF_MIN
+        and EqDressagePath.payoffShare(55) > EqDressagePath.PAYOFF_MIN and EqDressagePath.payoffShare(55) < 1)
+    check("marks: 10 on the line, less off it and at the wrong gait", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0 }) == 10
+        and EqDressagePath.markOf({ devSum = 20, len = 10, wrongMs = 0, pen = 0 }) == 5
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 4000, pen = 1 }) == 7)
+    check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
 end)()
 
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
@@ -3952,7 +4028,8 @@ end)()
     sheet = EqHosting.roundSheet({ faults = 20, timeFaults = 1.2, total = 21.2, xc = true }, 1)
     check("ridden: cross country sheet", sheet.penalties == 21.2 and sheet.down == 0 and sheet.refusals == 1)
     check("ridden: eliminated round", EqHosting.roundSheet({ eliminated = "refusals" }, 2).eliminated == true)
-    check("ridden: dressage marks per fault", EqHosting.testSheet(2, false).penalties == 34 and EqHosting.testSheet(3, true).eliminated)
+    check("ridden: dressage penalties are 100 less the test's percentage", EqHosting.testSheet(72.5, false).penalties == 27.5
+        and EqHosting.testSheet(60, true).eliminated and EqHosting.testSheet(nil, false).eliminated)
     local rode = { h = { dressage = { penalties = 22 }, showJumping = { penalties = 0 } } }
     check("ridden: some phases leave it to the simulation", EqHosting.riddenFate(rode, "h", "eventing") == nil
         and EqHosting.riddenFate(rode, "h", "showJumping") == "finished" and EqHosting.riddenFate(rode, "x", "dressage") == nil)

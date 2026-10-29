@@ -241,6 +241,7 @@ EqTrainingHud.view = nil
 EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament", routineTest = "temperament", routineFault = "temperament",
+    routineMark = "temperament", routineError = "temperament", routineScore = "temperament",
 }
 -- The gallop's news (EqExertion) belongs to no stat: it always shows in the middle, in status
 -- colours (white good, red bad, grey idle).
@@ -283,6 +284,13 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = g_i18n:getText(pop[1]), EqTrainingHud.COLOR[pop[2]], pop[3]
     elseif kind == "routineFault" then
         text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
+    elseif kind == "routineMark" then
+        -- A dressage test's movement marked out of 10 (EqDressagePath).
+        text, color, big = string.format("%.1f", mult), EqTrainingHud.COLOR.white, 2
+    elseif kind == "routineError" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_routineError"), mult, EqDressagePath.ERRORS), EqTrainingHud.COLOR.grey, 2
+    elseif kind == "routineScore" then
+        text, color, big = string.format(g_i18n:getText("eq_pop_routineScore"), string.format("%.1f", mult or 0)), EqTrainingHud.COLOR.white, 4
     elseif kind == "routineTest" then
         text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
     elseif kind == "courseFence" then

@@ -160,13 +160,49 @@ anywhere. A routine starts when you ride within 12 m of the markers (at least th
 chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
 between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
-no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
-commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
-and the next test can start 20 s later (5 s after one broken by faults). If a course's start line is
-nearer than the markers, the course's hint shows instead; a routine under way keeps the courses
-quiet until it ends. Commands get 20% more time than below, and walks are only
-asked for to markers within 12 m:
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. If a course's
+start line is nearer than the markers, the course's hint shows instead; a routine under way keeps
+the courses quiet until it ends.
+
+**Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
+rail, not of any letter) shows "Move to A to begin a Dressage Routine" (no time limit) and a gold
+line on the ground from just outside A. The test is a chain of figures drawn on the ground as a
+gold line, and it is scored on how closely the horse follows it:
+
+- It opens down the centre line from A with a halt at X, then proceeds to track left or right at
+  C. Then come the figures (5 in training), and it ends down the centre line from A to a halt at X.
+- Figures: 20 m circles at A, C, E and B (15 m in the 15 m wide arena), 10 m voltes at the side
+  letters, changes of rein on the long (F-X-H) and short (F-E) diagonals, half voltes, across the
+  arena (half school or change of rein), centre lines, serpentines of 3 to 5 loops, a shallow loop
+  (5 m, 3 m in the small arena), change of rein through the circle and a figure of eight. Each is
+  built for one end and side and mirrored, and they only chain on the same rein: the track between
+  them ("go large") joins the end of one to the start of the next. Nothing is tighter than a 3.5 m
+  radius (the horse's turn) except the 15x30's turns onto the centre line.
+- Gait changes sit at letters on the track and at set points in a figure (X on a diagonal, half
+  way round a circle, where a serpentine crosses the centre line). Walks are never longer than
+  30 m. Some centre lines have a halt at X: stand 2.5 s, then trot on.
+- The horse's temperament (0 to 100) sets how much of the line shows ahead (8 to 30 m), how early a
+  change or halt shows in the middle of the screen with a gold pole on the line (3 to 12 m before
+  it), and the window that counts as on time (1.5 to 3.5 m either side). The panel shows the
+  current movement ("20 m circle at B", 3/9), the last mark and the running percentage.
+- Each movement (a figure with the track before it) is marked 0 to 10 in halves: off the line
+  costs 3 a metre past an average of 0.3 m, the wrong gait 0.5 a second (at most 5), a change
+  out of its window 0.6 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
+  through a halt 4.
+- **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
+  arena (0.5 m past the rail) for 3 s, or no headway for 10 s. The line picks up again at the
+  nearest point up to 40 m on. The third error eliminates.
+- The test's score is its marks as a percentage. Each movement marked 6.5 or better raises the
+  multiplier one step, below 4 drops it one; an error drops it two. Finishing pays up to a minute
+  of x8 temperament training at once, all of it at 70% and over, a fifth of it at 40% or under,
+  and the next test can start 20 s later (5 s after an elimination).
+- In the month of your own event with a dressage phase, every shop arena rides that event's fixed
+  test (the same figures for every horse, from the event's seed); other months are random. It
+  counts for an entered horse in an arena big enough for the rating (see Hosting).
+
+**Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
+and walks are only asked for to markers within 12 m:
 
 - Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
   canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
@@ -183,7 +219,6 @@ asked for to markers within 12 m:
 - At a marker the next command can be a circle (steer one way at a walk or trot until the horse
   has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
   seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
-- In a shop arena, once past X, leaving it (a metre past its letters) for 3 seconds is a fault.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
@@ -643,15 +678,16 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   one's winners, turnout, takings against the setup fee, and how your horses did.
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
-  real faults and time. In an arena big enough, the dressage test is the rating's length (15,
-  20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
+  real faults and time. In an arena big enough, the dressage test is the event's fixed test of
+  6, 8 or 10 figures by rating and scores 100 less its percentage in penalties (a 72% test is
+  28); a third error of course eliminates. Each horse
   gets one go at each phase, and later rounds are practice. Phases you don't ride are
   simulated. A one-phase event with a ridden round is scored in penalties like eventing.
   A show jumping or cross country round is not put straight against the simulated rivals: it is
   graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
   course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
   of your own horse it gets, from its best to its worst. The horse's stats still decide most;
-  your riding decides its day. A ridden dressage test counts its real faults. Coming up to the start line on an entered
+  your riding decides its day. A ridden dressage test counts its real score. Coming up to the start line on an entered
   horse, a gold announcement says whether this round counts, is practice (phase already
   ridden) or the course is too small; the finish says what was kept and when results come.
 

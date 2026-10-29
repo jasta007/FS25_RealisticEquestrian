@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
         <text name="eq_train_view_freestyle" text="Vrij"/>
-        <text name="eq_help_temperament_2" text="Te veel fouten, zoals galopperen of de baan verlaten, beëindigen de proef; rijd hem uit voor een flinke temperamentboost. Buiten een rijbaan trainen stappen en achterwaarts gaan nog steeds een beetje temperament. Traktaties zoals wortels zijn ook een prima manier om temperament te verbeteren."/>
-        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd erheen en er begint een proef die je naar de letters stuurt in vaste gangen, laat halthouden, achterwaarts gaan en volte rijden. Voer elke opdracht op tijd uit om je vermenigvuldiger te verhogen."/>
+        <text name="eq_help_temperament_2" text="Drie fouten in de proef (de lijn kwijt, de baan uit of stilstaan) beëindigen de proef; rijd hem uit voor een temperamentbonus die meegroeit met je score. Een rustiger paard ziet meer van de lijn vooruit en krijgt eerder te zien wanneer er gewisseld wordt. Riding Hall-letters geven de oudere oefening met stukken tussen de letters. Buiten een baan trainen stappen en achterwaarts gaan nog een beetje temperament, en snoepjes zoals wortels helpen ook."/>
+        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd in een winkelbaan naar A en een proef met figuren begint: volten, diagonalen, slangenvolten en meer, als gouden lijn op de grond getekend. Blijf op de lijn en wissel van gang of houd halt waar het gevraagd wordt; elke oefening krijgt een cijfer tot 10."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
         <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
@@ -108,6 +108,26 @@
         <text name="eq_dressage_next" text="Volgende: %s"/>
         <text name="eq_dressage_stand" text="Halt"/>
         <text name="eq_dressage_marker" text="Letter %s"/>
+        <text name="eq_fig_enter" text="Binnenkomen bij %s, halthouden bij %s"/>
+        <text name="eq_fig_trackLeft" text="Verder, linkerhand bij %s"/>
+        <text name="eq_fig_trackRight" text="Verder, rechterhand bij %s"/>
+        <text name="eq_fig_circle" text="Volte van %d m bij %s"/>
+        <text name="eq_fig_longDiagonal" text="Van hand veranderen %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Van hand veranderen %s-%s"/>
+        <text name="eq_fig_across" text="Dwars door de baan %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Halve volte bij %s"/>
+        <text name="eq_fig_centreLeft" text="Middenlijn bij %s, linkerhand bij %s"/>
+        <text name="eq_fig_centreRight" text="Middenlijn bij %s, rechterhand bij %s"/>
+        <text name="eq_fig_serpentine" text="Slangenvolte, %d bogen, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Boog van %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Door de volte van hand veranderen bij %s"/>
+        <text name="eq_fig_eight" text="Acht vanaf %s"/>
+        <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
+        <text name="eq_dressage_haltAt" text="Halt bij %s"/>
+        <text name="eq_dressage_line" text="Terug op de lijn!"/>
+        <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
+        <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
+        <text name="eq_pop_routineScore" text="Proef voltooid: %s%%"/>
         <text name="eq_train_routine_none" text="Rijd naar een dressuurrijbaan om een proef te beginnen"/>
         <text name="eq_train_routine" text="Proef x%d"/>
         <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>
