@@ -90,9 +90,6 @@ EqCourseHooks.NUMBER_ASIDE = 1.5
 --- (anywhere near a big cross country course was too far), beside the panel: the middle is for
 --- alerts (James, 2026-10-27).
 EqCourseHooks.BEGIN_NEAR = 30
--- The start line is tagged on the map only until the horse is this close: the game draws its
--- own pin on the tag, and inside BEGIN_NEAR the glowing line does that job (James, 2026-10-29).
-EqCourseHooks.TAG_CLOSE = EqCourseHooks.BEGIN_NEAR
 -- A course saved before fence points were kept: a fence's point is the first one within this
 -- many metres of it.
 EqCourseHooks.PASS_NEAR = 6
@@ -1081,30 +1078,6 @@ function drawBand(way, x, z)
         end
         drawLine(band, EqCourseHooks.ROUND_COLOR, x, z)
     end
-end
-
-
---- Where the round tags the map: the start line until the clock runs, then the next fence.
---- @return table|nil { x, z }, string|nil its name
-function EqCourseHooks.tagTarget()
-    local round = EqCourseHooks.round
-    if round == nil then return nil, nil end
-    local sj = round.sj
-    if sj.state == "approach" or sj.state == "go" then
-        -- Up close the glowing start line shows the way, not the game's pin on top of it.
-        local last = round.last
-        if last ~= nil then
-            local dx, dz = last[1] - sj.start.x, last[2] - sj.start.z
-            if dx * dx + dz * dz < EqCourseHooks.TAG_CLOSE ^ 2 then return nil, nil end
-        end
-        return sj.start, text("eq_sj_startLine")
-    end
-    if sj.state == "running" then
-        -- No tag on the fences: the game draws it right in front of the jump (James, 2026-10-27).
-        -- The label over the next fence and the way to it show where to go.
-        if round.course.jumps[sj.next] == nil and sj.finish ~= nil then return sj.finish, text("eq_sj_finishLine") end
-    end
-    return nil, nil
 end
 
 

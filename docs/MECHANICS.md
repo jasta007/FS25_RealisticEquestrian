@@ -228,7 +228,7 @@ works in single player for now.
 #### The timed round
 
 Out of edit mode, the course whose start line is nearest (within 60 m) is the one you can ride.
-Beyond 30 m only a map tag points to its start line. Within 30 m the start line glows gold and you
+Within 30 m the start line glows gold and you
 are asked to "Move to the start line to begin Show Jumping" beside the panel; nothing else of the
 course shows yet. The start line stands on the route 12 m before fence 1 and the finish line 12 m
 after the last fence, so no objects are needed and a course can be dressed however you like. Within

@@ -1401,12 +1401,11 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
 
     local routine = sheet.routine
     local onCourse = routineShown() and routine.active and routine.kind == "markers"
-    -- The dressage test tags its next marker, else a show jumping round its next fence.
-    if onCourse then
-        EqDressageHooks.setTag(routine.task ~= nil and routine.task.marker or nil)
-    else
-        EqDressageHooks.setTag(EqCourseHooks.tagTarget())
-    end
+    -- The dressage test tags its next marker. A course's start line gets no tag: it came and went
+    -- at 30 m from the line, and each time the map drew the hotspot let go for a moment and broke
+    -- the HUD's draw ("PlaceableHotspot.lua:225: attempt to index nil with 'width'", James's log
+    -- 2026-10-29, a burst after each "round on"). The glowing line and the hint show the way.
+    EqDressageHooks.setTag(onCourse and routine.task ~= nil and routine.task.marker or nil)
     -- A finished show jumping round pays agility training, unless the horse is worn out.
     local roundEffort = EqCourseHooks.takePayoff()
     if roundEffort > 0 and not isTired(spec.cluster) then sheet.focused.agility = sheet.focused.agility + roundEffort end
