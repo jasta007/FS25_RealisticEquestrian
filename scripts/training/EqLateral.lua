@@ -41,6 +41,10 @@ EqLateral.TILT = 0.3
 -- positive), and how fast it springs back once the button is let go.
 EqLateral.BEND_SCALE = 2
 EqLateral.BEND_BACK_MS = 300
+-- While the bend is held the camera eases round to the way the horse is going (James,
+-- 2026-10-30: bending took the mouse away from the camera, so he lost sight of where he went):
+-- the share of the gap closed each SNAP_MS. Up and down stays on the mouse.
+EqLateral.SNAP_MS = 250
 -- The bend's share of the animation's left-right weight.
 EqLateral.BEND_TILT = 0.8
 -- The local rider's bend, and the horse it is on.
@@ -157,10 +161,34 @@ function EqLateral.onLook(inputValue, isMouse, horizontal)
     local vehicle = EqLateral.vehicle
     if not isMouse or vehicle == nil or not rightHeld() then return false end
     if vehicle.getIsEntered ~= nil and not vehicle:getIsEntered() then return false end
-    if horizontal then
-        EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + inputValue * 0.001 * 16.666 * EqLateral.BEND_SCALE))
-    end
+    if not horizontal then return false end
+    EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + inputValue * 0.001 * 16.666 * EqLateral.BEND_SCALE))
     return true
+end
+
+
+--- The camera's turn after a frame (pure): eased the short way towards the way the horse is
+--- going, which is off its heading by the drift (looking right lowers the camera's rotY).
+--- @param rotY number the camera's turn now
+--- @param origRotY number its turn facing the horse's heading
+--- @param lateral number -1..1 eased drift, right positive
+--- @param dt number ms
+--- @return number
+function EqLateral.snap(rotY, origRotY, lateral, dt)
+    local want = origRotY - math.atan(lateral * EqLateral.SHARE)
+    local diff = (want - rotY + math.pi) % (2 * math.pi) - math.pi
+    return rotY + diff * math.min(1, dt / EqLateral.SNAP_MS)
+end
+
+
+--- While the bend is held, the rider's camera eases round to the way the horse is going.
+local function snapCamera(vehicle, dt)
+    if vehicle ~= EqLateral.vehicle or not rightHeld() then return end
+    local enterable = vehicle.spec_enterable
+    local camera = enterable ~= nil and enterable.activeCamera or nil
+    if camera == nil or not camera.isRotatable or type(camera.rotY) ~= "number" or type(camera.origRotY) ~= "number" then return end
+    local spec = vehicle.spec_rideable
+    camera.rotY = EqLateral.snap(camera.rotY, camera.origRotY, spec ~= nil and spec.eqLateral or 0, dt)
 end
 
 
@@ -292,6 +320,7 @@ function EqLateral.install()
     if type(Rideable.updateAnimation) == "function" then
         Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
             if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral tilt", tilt, self) then EqLateral.failed = true end
+            if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral camera", snapCamera, self, dt) then EqLateral.failed = true end
             -- On the spot the animation sees the gait's speed, not the horse's (near nothing).
             local spec = self.spec_rideable
             local collect = spec ~= nil and spec.eqCollect or 0

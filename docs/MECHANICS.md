@@ -169,7 +169,8 @@ horse drifts that way at half its forward speed while still facing forwards, its
 way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
 to adjust the line, then hold it again. Holding the right mouse button and dragging left or right
 bends the head that way (the turn animation only, no turn and no camera move); it springs back in
-0.3 s once the button is let go. Together they make the movements: shoulder-in = bend alone along
+0.3 s once the button is let go. While the button is held the camera eases round to the way the
+horse is going (its heading, turned by the drift) and the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
 body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
 goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
