@@ -19,6 +19,7 @@ dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
 dofile("scripts/training/EqCourseGlow.lua")
+dofile("scripts/training/EqLateral.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
@@ -3684,6 +3685,22 @@ end)()
     end)())
 end)()
 
+-- Lateral work (EqLateral): Shift + A/D drifts sideways, facing forwards.
+;(function()
+    check("lateral work needs Shift, one side and a riding gait", EqLateral.side(true, false, true, true) == 1
+        and EqLateral.side(true, true, false, true) == -1 and EqLateral.side(false, false, true, true) == 0
+        and EqLateral.side(true, true, true, true) == 0 and EqLateral.side(true, false, true, false) == 0)
+    local eased = EqLateral.ease(0, 1, EqLateral.RAMP_MS / 2)
+    check("lateral work eases in", math.abs(eased - 0.5) < 1e-9 and EqLateral.ease(eased, 0, EqLateral.RAMP_MS) == 0)
+    -- Facing +z (turn angle 0) the rider's right is -x, facing +x (pi/2) it is +z: the dressage
+    -- frame's right (-uz, ux).
+    local dx, dz = EqLateral.move(1, 4, 0, 1000)
+    local ex, ez = EqLateral.move(1, 4, math.pi / 2, 1000)
+    check("drifting right moves to the rider's right", math.abs(dx + 2) < 1e-9 and math.abs(dz) < 1e-9
+        and math.abs(ex) < 1e-9 and math.abs(ez - 2) < 1e-9)
+end)()
+
+
 -- Path guides (EqCourseGlow.pieces): pieces a step apart with gaps, held still as the path is cut.
 ;(function()
     local line = { { x = 0, y = 0, z = 0 }, { x = 3.2, y = 0, z = 0 }, { x = 3.2, y = 0, z = 5 } }
@@ -3742,19 +3759,25 @@ end)()
     -- metres after each point.
     local function ride(test, frame, wobble, late)
         local run = EqDressagePath.newRun(test, 50)
-        local pts, s, gait, ev, holdUntil, t = test.pts, 0, "trot", 1, nil, 0
+        local pts, s, gait, ev, holdUntil, t, backUntil = test.pts, 0, "trot", 1, nil, 0, nil
         local k = 2
         for _ = 1, 100000 do
             t = t + 33
             local e = test.events[ev]
             local move = gait
-            if holdUntil ~= nil then
+            if backUntil ~= nil then
+                move = "reverse"
+                if t >= backUntil then backUntil, gait, ev = nil, e.gait, ev + 1 end
+            elseif holdUntil ~= nil then
                 move = "halt"
-                if t >= holdUntil then holdUntil, gait, ev = nil, e.gait, ev + 1 end
+                if t >= holdUntil then
+                    holdUntil = nil
+                    if e.reinBack then backUntil = t + EqDressagePath.REIN_BACK_MS + 200 else gait, ev = e.gait, ev + 1 end
+                end
             elseif e ~= nil and s >= e.s + late then
                 if e.kind == "halt" then holdUntil, move = t + 2600, "halt" else gait, move, ev = e.gait, e.gait, ev + 1 end
             end
-            if move ~= "halt" then s = s + SPEED[move] * 0.033 end
+            if move == "reverse" then s = s - 0.5 * 0.033 elseif move ~= "halt" then s = s + SPEED[move] * 0.033 end
             while k < #pts and pts[k].s < s do k = k + 1 end
             local a, b = pts[k - 1], pts[k]
             local f = math.min(1, math.max(0, (s - a.s) / math.max(0.001, b.s - a.s)))
@@ -3822,11 +3845,11 @@ end)()
         local run, event = ride(test, frame, 0, 0)
         check(name .. ": a rider on the line, on time, scores 100%", event == "test" and run.percent == 100 and run.errors == 0,
             string.format("%s %s%%", event, tostring(run.percent)))
-        run, event = ride(test, frame, 2, 0)
-        check(name .. ": wandering 2 m either side scores much less", event == "test" and run.percent < 85 and run.percent > 40,
+        run, event = ride(test, frame, 1, 0)
+        check(name .. ": wandering 1 m either side scores much less", event == "test" and run.percent < 70 and run.percent > 20,
             string.format("%s %s%%", event, tostring(run.percent)))
         run, event = ride(test, frame, 0, 6)
-        check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 65,
+        check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 50,
             string.format("%s %s%%", event, tostring(run.percent)))
     end
 
@@ -3858,7 +3881,8 @@ end)()
     check("the test's payoff grows with its score", EqDressagePath.payoffShare(70) == 1 and EqDressagePath.payoffShare(30) == EqDressagePath.PAYOFF_MIN
         and EqDressagePath.payoffShare(55) > EqDressagePath.PAYOFF_MIN and EqDressagePath.payoffShare(55) < 1)
     check("marks: 10 on the line, less off it and at the wrong gait", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0 }) == 10
-        and EqDressagePath.markOf({ devSum = 20, len = 10, wrongMs = 0, pen = 0 }) == 5
+        -- 0.4 m off on average is a 6 (James 2026-10-30: 0.3-0.4 m was scoring 8s and 9s).
+        and EqDressagePath.markOf({ devSum = 4, len = 10, wrongMs = 0, pen = 0 }) == 6
         and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 4000, pen = 1 }) == 7)
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
 end)()

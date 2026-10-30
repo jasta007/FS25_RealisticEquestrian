@@ -161,7 +161,7 @@ end
 --- @param points table
 --- @param from number|nil metres along the path where the first piece starts (keeps pieces
 --- still on the ground as the path is cut shorter in front of the horse)
---- @return table pieces { ax, ay, az, bx, by, bz }
+--- @return table pieces { ax, ay, az, bx, by, bz, s = metres along the path where it starts }
 function EqCourseGlow.pieces(points, from, nearX, nearZ, radius)
     local list = {}
     local step, gap = EqCourseGlow.SEGMENT, EqCourseGlow.GAP
@@ -183,7 +183,7 @@ function EqCourseGlow.pieces(points, from, nearX, nearZ, radius)
                 local f = (step - gap) / step
                 local bx, by, bz = cut.x + (x - cut.x) * f, cut.y + (y - cut.y) * f, cut.z + (z - cut.z) * f
                 if radius2 == nil or (bx - nearX) ^ 2 + (bz - nearZ) ^ 2 <= radius2 then
-                    table.insert(list, { cut.x, cut.y, cut.z, bx, by, bz })
+                    table.insert(list, { cut.x, cut.y, cut.z, bx, by, bz, s = (from or 0) + cut.s })
                 end
             end
             cut = { x = x, y = y, z = z, s = nextCut }
@@ -196,7 +196,8 @@ function EqCourseGlow.pieces(points, from, nearX, nearZ, radius)
     if cut ~= nil and last ~= nil and s - cut.s > gap then
         local f = (s - cut.s - gap) / (s - cut.s)
         local ly = last.y or 0
-        table.insert(list, { cut.x, cut.y, cut.z, cut.x + (last.x - cut.x) * f, cut.y + (ly - cut.y) * f, cut.z + (last.z - cut.z) * f })
+        table.insert(list, { cut.x, cut.y, cut.z, cut.x + (last.x - cut.x) * f, cut.y + (ly - cut.y) * f, cut.z + (last.z - cut.z) * f,
+            s = (from or 0) + cut.s })
     end
     return list
 end
@@ -204,7 +205,8 @@ end
 
 --- A path guide on the ground: flat strips with gaps between them (pieces).
 --- @param points table { x, y, z } on the ground
---- @param colour string|nil one of COLOURS, gold when nil
+--- @param colour string|function|nil one of COLOURS, gold when nil, or a function(s) giving
+--- each piece's colour from the metres along the path where it starts
 --- @param from number|nil see pieces
 --- @return boolean false when the glow can't be drawn
 function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius)
@@ -213,7 +215,9 @@ function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius)
     for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius)) do
         if (EqCourseGlow.pieceCount or 0) >= EqCourseGlow.MAX_PIECES then break end
         EqCourseGlow.pieceCount = (EqCourseGlow.pieceCount or 0) + 1
-        EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, colour)
+        local c = colour
+        if type(colour) == "function" then c = colour(p.s) end
+        EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
     end
     return true
 end

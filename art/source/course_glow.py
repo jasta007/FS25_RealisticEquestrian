@@ -28,6 +28,9 @@ SIDES = 12
 # The bar again in these colours (EqCourseGlow.COLOURS), sharing its shape.
 COLOURS = [("green", (0.25, 1.0, 0.3)), ("lime", (0.65, 1.0, 0.2)), ("yellow", (1.0, 0.9, 0.15)), ("orange", (1.0, 0.55, 0.1)),
            ("red", (1.0, 0.2, 0.15)), ("cyan", (0.2, 0.9, 1.0)), ("white", (1.0, 1.0, 1.0))]
+# The coloured bars are brighter than the gold (James, 2026-10-30).
+COLOUR_ALPHA = 0.45
+COLOUR_GLOW = 0.9
 
 
 def fmt(values):
@@ -110,8 +113,8 @@ def main():
         'specularColor="0 0 0" alphaBlending="true"/>',
     ]
     for k, (name, col) in enumerate(COLOURS):
-        lines.append(f'    <Material name="courseGlow_{name}" materialId="{10 + k}" diffuseColor="{fmt(col)} {ALPHA}" '
-                     f'emissiveColor="{fmt(v * GLOW for v in col)} 1" specularColor="0 0 0" alphaBlending="true"/>')
+        lines.append(f'    <Material name="courseGlow_{name}" materialId="{10 + k}" diffuseColor="{fmt(col)} {COLOUR_ALPHA}" '
+                     f'emissiveColor="{fmt(v * COLOUR_GLOW for v in col)} 1" specularColor="0 0 0" alphaBlending="true"/>')
     lines += [
         "  </Materials>",
         "  <Shapes>",

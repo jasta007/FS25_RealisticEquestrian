@@ -60,15 +60,17 @@ EqDressagePath.CONNECT_GOOD = 15
 -- circles and canter circles, never one in another gait). How often each gait and figure comes.
 EqDressagePath.GAITS = { "walk", "trot", "canter" }
 EqDressagePath.GAIT_WEIGHTS = { walk = 2, trot = 5, canter = 3 }
-EqDressagePath.FIGURE_WEIGHTS = { circle = 1, longDiagonal = 2, shortDiagonal = 1.5, halfVolte = 1.5, across = 1, acrossChange = 1,
-    centre = 1.5, serpentine = 2, shallowLoop = 1.5, throughCircle = 1.5, eight = 2 }
+-- Short figures come more often than long ones (James 2026-10-30: long figures felt like one
+-- big line, nothing new for a while).
+EqDressagePath.FIGURE_WEIGHTS = { circle = 1.5, longDiagonal = 1.5, shortDiagonal = 1.5, halfVolte = 2, across = 1.5, acrossChange = 1.5,
+    centre = 1.5, serpentine = 0.8, shallowLoop = 1.2, throughCircle = 1.2, eight = 0.8 }
 -- Chances in 100: on the track before a figure, a stretch at another gait between two letters
 -- (INTERLUDES: which gait, by the gait the horse is in), else a halt at a letter; a change down
 -- inside a figure (DOWN); a halt at X on a centre line.
-EqDressagePath.INTERLUDE = 45
+EqDressagePath.INTERLUDE = 55
 EqDressagePath.INTERLUDES = { walk = { { "trot", 1 } }, trot = { { "canter", 3 }, { "walk", 1 } }, canter = { { "trot", 1 } } }
-EqDressagePath.HALT_TRACK = 20
-EqDressagePath.CHANGE_INSIDE = 35
+EqDressagePath.HALT_TRACK = 30
+EqDressagePath.CHANGE_INSIDE = 55
 EqDressagePath.DOWN = { canter = "trot", trot = "walk" }
 EqDressagePath.HALT_CHANCE = 60
 -- Changes this far apart at least; a walk no longer than WALK_MAX (long walks are dull, James).
@@ -78,6 +80,14 @@ EqDressagePath.CANTER_SPAN = 15
 EqDressagePath.WALK_MAX = 30
 -- After a halt: stand this long, then go on at this gait.
 EqDressagePath.HOLD_MS = 2500
+-- Some halts (not the last) go on into a rein back: back up for REIN_BACK_MS, told only once the
+-- halt is held. Moving off before it is done costs up to REIN_BACK_SHORT; not starting it within
+-- REIN_BACK_WAIT_MS costs REIN_BACK_MISSED.
+EqDressagePath.REIN_BACK_CHANCE = 40
+EqDressagePath.REIN_BACK_MS = 2000
+EqDressagePath.REIN_BACK_SHORT = 2
+EqDressagePath.REIN_BACK_WAIT_MS = 5000
+EqDressagePath.REIN_BACK_MISSED = 3
 EqDressagePath.PROCEED = "trot"
 
 -- What the horse's temperament (0..100) buys: metres of line shown ahead, metres of warning
@@ -96,14 +106,15 @@ EqDressagePath.REJOIN_DIST = 1
 EqDressagePath.REJOIN_AHEAD = 15
 EqDressagePath.SKIP_DEV = 3
 
--- Marks. Off the line: nothing for the first DEV_FREE metres on average, then DEV_PER_M a metre.
-EqDressagePath.DEV_FREE = 0.3
-EqDressagePath.DEV_PER_M = 3
+-- Marks. Off the line: nothing for the first DEV_FREE metres on average, then DEV_PER_M a metre
+-- (James 2026-10-30: 0.3 to 0.4 m off on average scored 8s and 9s for a test worth about 60%).
+EqDressagePath.DEV_FREE = 0.05
+EqDressagePath.DEV_PER_M = 12
 -- At the wrong gait: this much a second, at most WRONG_MAX a movement.
 EqDressagePath.WRONG_PER_S = 0.5
 EqDressagePath.WRONG_MAX = 5
 -- A change out of its window: this much a metre beyond it, at most CHANGE_MAX (also a missed one).
-EqDressagePath.CHANGE_PER_M = 0.6
+EqDressagePath.CHANGE_PER_M = 0.8
 EqDressagePath.CHANGE_MAX = 3
 -- A change counts within WARN metres before its point; missed MISS metres after it.
 EqDressagePath.MISS = 10
@@ -803,7 +814,8 @@ function EqDressagePath.build(frame, figures, rng)
         return true
     end
     local function halt(s, letter, m, final, after)
-        table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final })
+        local back = not final and rng(100) <= EqDressagePath.REIN_BACK_CHANCE or nil
+        table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final, reinBack = back })
         gait, lastChange = after, s
         walkFrom = after == "walk" and s or nil
     end
@@ -1004,7 +1016,7 @@ function EqDressagePath.newRun(test, temperament)
     local t = (temperament or 50) / 100
     local run = { test = test, frame = test.frame, i = 1, s = 0, ev = 1, gait = EqDressagePath.PROCEED, started = false,
         look = lerp(EqDressagePath.LOOK, t), warn = lerp(EqDressagePath.WARN, t), tolerance = lerp(EqDressagePath.TOLERANCE, t),
-        cur = 1, marks = {}, acc = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0 }
+        cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0 }
     for m = 1, #test.moves do run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0 } end
     -- Out of the arena counts once the path is inside the rail.
     run.inFrom = 0
@@ -1095,9 +1107,24 @@ end
 --- The nearest path point to (x, y) from index a to b.
 local function nearest(pts, a, b, x, y)
     local best, bestD = a, math.huge
-    for i = math.max(1, a), math.min(#pts, b) do
+    local from, to = math.max(1, a), math.min(#pts, b)
+    for i = from, to do
         local d = (pts[i].x - x) ^ 2 + (pts[i].y - y) ^ 2
         if d < bestD then best, bestD = i, d end
+    end
+    -- How far off: to the line itself either side of the nearest point, not to the point (the
+    -- points are STEP apart, so on the line was up to a quarter metre "off").
+    local p = pts[best]
+    for _, q in ipairs({ pts[best - 1], pts[best + 1] }) do
+        if q ~= nil then
+            local dx, dy = q.x - p.x, q.y - p.y
+            local len2 = dx * dx + dy * dy
+            if len2 > 1e-9 then
+                local t = math.max(0, math.min(1, ((x - p.x) * dx + (y - p.y) * dy) / len2))
+                local d = (p.x + dx * t - x) ^ 2 + (p.y + dy * t - y) ^ 2
+                if d < bestD then bestD = d end
+            end
+        end
     end
     return best, math.sqrt(bestD)
 end
@@ -1177,7 +1204,10 @@ function EqDressagePath.step(run, move, wx, wz, dt)
         for k = i0 + 1, j do
             local acc = run.acc[pts[k].m]
             local step = pts[k].s - pts[k - 1].s
-            acc.devSum = acc.devSum + step * (skipped > 0 and EqDressagePath.SKIP_DEV or dev)
+            local d = skipped > 0 and EqDressagePath.SKIP_DEV or dev
+            acc.devSum = acc.devSum + step * d
+            -- How far off each point was ridden: the line behind the horse is coloured by it.
+            run.devAt[k] = d
             acc.len = acc.len + step
         end
         run.i, run.s = j, pts[j].s
@@ -1189,6 +1219,30 @@ function EqDressagePath.step(run, move, wx, wz, dt)
     local events = test.events
     local next = events[run.ev]
 
+    -- A rein back after a halt: back up for REIN_BACK_MS, then go on.
+    if run.back ~= nil then
+        run.stallMs = 0
+        local back = run.back
+        if move == "reverse" then
+            back.ms = back.ms + dt
+        elseif back.ms > 0 and move ~= "halt" or back.ms == 0 and run.clock - back.from > EqDressagePath.REIN_BACK_WAIT_MS then
+            -- Moved off too soon, or never backed up.
+            local short = back.ms == 0 and EqDressagePath.REIN_BACK_MISSED
+                or EqDressagePath.REIN_BACK_SHORT * (1 - back.ms / EqDressagePath.REIN_BACK_MS)
+            addPen(run, back.event.m, short)
+            back.ms = EqDressagePath.REIN_BACK_MS
+        end
+        if back.ms >= EqDressagePath.REIN_BACK_MS then
+            run.back, run.ev = nil, run.ev + 1
+            run.gait = back.event.gait
+            run.proceedMs = run.clock
+            -- Wherever the horse backed to, carry on from the nearest point.
+            run.lastX, run.lastY = x, y
+            return "request"
+        end
+        return event
+    end
+
     -- A halt held: stand still for HOLD_MS, then go on (or the test is over).
     if run.hold ~= nil then
         run.stallMs = 0
@@ -1198,6 +1252,11 @@ function EqDressagePath.step(run, move, wx, wz, dt)
         end
         if run.clock >= run.hold.untilMs or run.hold.moved then
             local done = run.hold.event
+            if done.reinBack and not run.hold.moved then
+                run.hold = nil
+                run.back = { event = done, ms = 0, from = run.clock }
+                return "request"
+            end
             run.hold, run.ev = nil, run.ev + 1
             run.gait = done.gait
             if done.final then

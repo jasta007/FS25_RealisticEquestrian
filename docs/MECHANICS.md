@@ -164,11 +164,18 @@ no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes
 start line is nearer than the markers, the course's hint shows instead; a routine under way keeps
 the courses quiet until it ends.
 
+**Lateral work** (James, 2026-10-30): hold Shift and press A or D at a walk, trot or canter and the
+horse drifts that way at half its forward speed while still facing forwards, its head tilted the
+way it goes, like a half pass (no new animations: strafing). It doesn't turn while Shift is held.
+Single player for now (the keys are read on the rider's machine).
+
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
 rail, not of any letter) shows "Move to A to begin a Dressage Routine" (no time limit) and a gold
 line on the ground from just outside A. The test is a chain of figures drawn on the ground as a
-line of short glowing pieces (gold until it begins, then green, lime, yellow, orange or red as the
-horse is up to 0.5, 1, 1.6, 2.4 m or further off it), and it is scored on how closely the horse follows it.
+line of short glowing pieces, and it is scored on how closely the horse follows it. The line is gold
+until the test begins, then white ahead; within 2 m of the horse it turns green, lime, yellow,
+orange or red as the horse is up to 0.5, 1, 1.6, 2.4 m or further off it now, and the pieces up to
+3 m behind keep the colour of how they were ridden (James, 2026-10-30).
 Every path guide (a round's way to the next fence, course recording and editing) uses the same
 pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends:
 
@@ -183,22 +190,27 @@ pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends:
   walk, 4 m at a trot and 7 m at a canter (3, 3 and 6 in the 15x30), and the track's corners
   between figures are sized for the gait ridden on them, so a sudden big circle often means a
   canter is coming. Each figure is built for one end and side and mirrored, and they only chain
-  on the same rein; nearby figures are likelier, so the track between them ("go large") is short.
+  on the same rein; nearby figures are likelier, so the track between them ("go large") is short,
+and short figures likelier than serpentines and figures of eight. Each movement's name shows in
+the middle of the screen for 2.5 s as it starts.
 - **Changes** to a figure's gait come on the track at the last letter before it (the first
   letter when trotting on from a walk), or 4 m before the figure with no letter there; one gait
   at a time, never walk to canter. Inside a figure only a change down comes (X on a diagonal,
-  half way round a circle), and never one closer than 15 m to the last. On the track between
-  figures: 45% of the time a stretch at another gait between two letters (a canter along one long
-  side for 15 m or more, a walk of 10 to 30 m, a trot from a walk or canter), else 20% a halt at
-  a letter. Centre lines have a halt at X 60% of the time: stand 2.5 s, then go on (at a trot
-  after a walk). A walking figure never follows another.
+  half way round a circle; 55% of figures that have such a point), and never one closer than 15 m
+  to the last. On the track between figures: 55% of the time a stretch at another gait between two
+  letters (a canter along one long side for 15 m or more, a walk of 10 to 30 m, a trot from a walk
+  or canter), else 30% a halt at a letter. Centre lines have a halt at X 60% of the time: stand
+  2.5 s, then go on (at a trot after a walk). A walking figure never follows another.
+- **Rein back:** 40% of halts (not the last) go on into "Rein back!" once the halt is held: back
+  up for 2 s, then go on. Moving off sooner costs up to 2, not backing up within 5 s costs 3.
 - The horse's temperament (0 to 100) sets how much of the line shows ahead (8 to 30 m), how early a
   change or halt shows in the middle of the screen with a gold pole on the line (3 to 12 m before
   it), and the window that counts as on time (1.5 to 3.5 m either side). The panel shows the
   current movement ("20 m circle at B", 3/9), the last mark and the running percentage.
 - Each movement (a figure with the track before it) is marked 0 to 10 in halves: off the line
-  costs 3 a metre past an average of 0.3 m, the wrong gait 0.5 a second (at most 5), a change
-  out of its window 0.6 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  (measured to the line, not its points) costs 12 a metre past an average of 0.05 m, so 0.3 m off
+  is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
+  60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the

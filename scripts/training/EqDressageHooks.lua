@@ -204,6 +204,35 @@ end
 -- doesn't flicker.
 EqDressageHooks.SHADE_MS = 400
 EqDressageHooks.shownDev = nil
+-- James 2026-10-30: white ahead, coloured as the horse reaches it (within NEAR metres, by how
+-- far off it is now), and the pieces up to BEHIND metres behind keep the colour they were ridden.
+EqDressageHooks.NEAR = 2
+EqDressageHooks.BEHIND = 3
+
+
+--- Each piece's colour along the line (pure): behind the horse by how far off its points were
+--- ridden, near it by now, white further on.
+--- @param run table EqDressagePath run
+--- @param from number index of the first point drawn
+--- @param now string the colour for the pieces the horse is on
+--- @return function (s) -> colour
+function EqDressageHooks.colourAlong(run, from, now)
+    local pts = run.test.pts
+    return function(s)
+        local here = run.s
+        if s + 1 <= here then
+            -- Behind: the worst of the points in the piece.
+            local worst = nil
+            for k = from, run.i do
+                if pts[k].s >= s and pts[k].s < s + 1 and run.devAt[k] ~= nil then worst = math.max(worst or 0, run.devAt[k]) end
+            end
+            return worst ~= nil and EqDressagePath.colourFor(worst) or now
+        elseif s <= here + EqDressageHooks.NEAR then
+            return now
+        end
+        return "white"
+    end
+end
 -- A gold pole stands where a change or halt is coming, and where the test begins.
 EqDressageHooks.POLE_HEIGHT = 1.2
 -- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
@@ -233,8 +262,11 @@ function EqDressageHooks.drawPath(vehicle)
     local pts, frame = run.test.pts, run.frame
     local first = run.started and run.i or 1
     local reach = pts[first].s + run.look
+    -- A few pieces behind the horse too, coloured by how they were ridden.
+    local back = first
+    while back > 1 and pts[first].s - pts[back].s < EqDressageHooks.BEHIND do back = back - 1 end
     local line = {}
-    for i = first, #pts do
+    for i = back, #pts do
         local p = pts[i]
         local y = pointY(frame, p)
         table.insert(line, { x = p.wx, y = y, z = p.wz })
@@ -246,12 +278,12 @@ function EqDressageHooks.drawPath(vehicle)
         local dev = run.dev or 0
         local shown = EqDressageHooks.shownDev or dev
         EqDressageHooks.shownDev = shown + (dev - shown) * math.min(1, dt / EqDressageHooks.SHADE_MS)
-        colour = EqDressagePath.colourFor(EqDressageHooks.shownDev)
+        colour = EqDressageHooks.colourAlong(run, back, EqDressagePath.colourFor(EqDressageHooks.shownDev))
     else
         EqDressageHooks.shownDev = nil
     end
     EqDressageHooks.drawnAt = now
-    if not EqCourseGlow.path(line, colour, pts[first].s) then return end
+    if not EqCourseGlow.path(line, colour, pts[back].s) then return end
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)

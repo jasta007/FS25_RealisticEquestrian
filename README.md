@@ -56,7 +56,8 @@ uses its genetics, health and fitness.
     Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** ride up to a dressage arena and ride its test: figures drawn as a line on
-    the ground (green to red by how close you are), each marked out of 10 for staying on the line and timing changes and halts. The
+    the ground (green to red by how close you are), each marked out of 10 for staying on the line
+    and timing changes, halts and rein backs. **Shift + A/D** drifts sideways (a half pass). The
     shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
 - **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
   again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
