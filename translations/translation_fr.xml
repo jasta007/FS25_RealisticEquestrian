@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Reprise commencée"/>
         <text name="eq_pop_routineFault" text="Faute %d/%d"/>
         <text name="eq_pop_routineTest" text="Reprise terminée !"/>
-        <text name="eq_pop_routineLost" text="Reprise interrompue"/>
+        <text name="eq_pop_routineLost" text="Dressage annulé"/>
         <text name="eq_pop_comboLost" text="Combo perdu"/>
         <text name="eq_pop_knock" text="-%d s !"/>
         <text name="eq_pop_clear" text="Sans faute !"/>

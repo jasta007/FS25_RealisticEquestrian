@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="动作开始"/>
         <text name="eq_pop_routineFault" text="失误 %d/%d"/>
         <text name="eq_pop_routineTest" text="测试完成！"/>
-        <text name="eq_pop_routineLost" text="动作中断"/>
+        <text name="eq_pop_routineLost" text="盛装舞步已取消"/>
         <text name="eq_pop_comboLost" text="连击中断"/>
         <text name="eq_pop_knock" text="-%d秒！"/>
         <text name="eq_pop_clear" text="无失误！"/>

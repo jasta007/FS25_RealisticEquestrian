@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Программа начата"/>
         <text name="eq_pop_routineFault" text="Ошибка %d/%d"/>
         <text name="eq_pop_routineTest" text="Езда завершена!"/>
-        <text name="eq_pop_routineLost" text="Программа прервана"/>
+        <text name="eq_pop_routineLost" text="Выездка отменена"/>
         <text name="eq_pop_comboLost" text="Комбо потеряно"/>
         <text name="eq_pop_knock" text="-%d с!"/>
         <text name="eq_pop_clear" text="Чисто!"/>

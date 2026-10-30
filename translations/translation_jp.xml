@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="演技開始"/>
         <text name="eq_pop_routineFault" text="ミス %d/%d"/>
         <text name="eq_pop_routineTest" text="演技完了！"/>
-        <text name="eq_pop_routineLost" text="演技中断"/>
+        <text name="eq_pop_routineLost" text="馬場馬術中止"/>
         <text name="eq_pop_comboLost" text="コンボ終了"/>
         <text name="eq_pop_knock" text="-%d秒！"/>
         <text name="eq_pop_clear" text="クリア！"/>

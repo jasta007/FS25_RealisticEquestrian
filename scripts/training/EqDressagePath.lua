@@ -1341,6 +1341,12 @@ end
 --- An error of course: a penalty, and the line picks up at the nearest point ahead.
 --- @return string "fault" or "lost"
 local function errorOfCourse(run, x, y)
+    -- Still on the entry: the rider crossed A and rode off, so the test is cancelled, not
+    -- faulted three times (James, 2026-10-30).
+    if run.cur == 1 then
+        run.cancelled = true
+        return "lost"
+    end
     run.errors = run.errors + 1
     addPen(run, run.cur, EqDressagePath.ERROR_PEN)
     run.lostMs, run.outMs, run.stallMs = 0, 0, 0

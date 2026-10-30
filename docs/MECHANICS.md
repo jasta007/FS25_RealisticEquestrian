@@ -263,6 +263,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
   takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
   more than 2 m off the line (riding away from a test must not hold the horse back).
+- **Leaving on the entry** (crossing A, then riding off before the first movement is done) cancels
+  the test at once: "Dressage cancelled", no errors.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
   arena (0.5 m past the rail) for 3 s, or no headway for 10 s. The line picks up again at the
   nearest point up to 40 m on. The third error eliminates.

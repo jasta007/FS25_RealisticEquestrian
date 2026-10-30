@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
         <text name="eq_pop_routineFault" text="Fehler %d/%d"/>
         <text name="eq_pop_routineTest" text="Aufgabe beendet!"/>
-        <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
+        <text name="eq_pop_routineLost" text="Dressur abgebrochen"/>
         <text name="eq_pop_comboLost" text="Kombo verloren"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Geschafft!"/>

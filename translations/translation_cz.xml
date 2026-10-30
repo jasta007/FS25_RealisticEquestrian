@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Úloha zahájena"/>
         <text name="eq_pop_routineFault" text="Chyba %d/%d"/>
         <text name="eq_pop_routineTest" text="Úloha dokončena!"/>
-        <text name="eq_pop_routineLost" text="Úloha přerušena"/>
+        <text name="eq_pop_routineLost" text="Drezura zrušena"/>
         <text name="eq_pop_comboLost" text="Combo ztraceno"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Čistě!"/>

@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Program rozpoczęty"/>
         <text name="eq_pop_routineFault" text="Błąd %d/%d"/>
         <text name="eq_pop_routineTest" text="Czworobok ukończony!"/>
-        <text name="eq_pop_routineLost" text="Program przerwany"/>
+        <text name="eq_pop_routineLost" text="Ujeżdżenie przerwane"/>
         <text name="eq_pop_comboLost" text="Combo utracone"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Czysto!"/>

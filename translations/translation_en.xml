@@ -24,7 +24,7 @@
         <text name="eq_pop_routineStart" text="Routine started"/>
         <text name="eq_pop_routineFault" text="Fault %d/%d"/>
         <text name="eq_pop_routineTest" text="Test complete!"/>
-        <text name="eq_pop_routineLost" text="Routine broken"/>
+        <text name="eq_pop_routineLost" text="Dressage cancelled"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Clear!"/>

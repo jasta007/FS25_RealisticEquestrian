@@ -4031,7 +4031,18 @@ end)()
         if e ~= nil then events[e] = (events[e] or 0) + 1 end
         if e == "lost" then break end
     end
-    check("standing still is an error of course, and the third eliminates", events.begin == 1 and events.fault == 2 and events.lost == 1
+    check("leaving on the entry cancels the test at once", events.begin == 1 and events.fault == nil and events.lost == 1
+        and stuck.cancelled and not stuck.eliminated)
+    stuck = EqDressagePath.newRun(one, 50)
+    EqDressagePath.step(stuck, "halt", sx, sz, 50)
+    stuck.cur = 2
+    events = {}
+    for _ = 1, 2000 do
+        local e = EqDressagePath.step(stuck, "halt", sx, sz, 50)
+        if e ~= nil then events[e] = (events[e] or 0) + 1 end
+        if e == "lost" then break end
+    end
+    check("standing still is an error of course, and the third eliminates", events.fault == 2 and events.lost == 1
         and stuck.eliminated)
     check("a temperamental horse sees less of the line and less warning", EqDressagePath.newRun(one, 10).look < EqDressagePath.newRun(one, 90).look
         and EqDressagePath.newRun(one, 10).warn < EqDressagePath.newRun(one, 90).warn)

@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Rotina iniciada"/>
         <text name="eq_pop_routineFault" text="Falta %d/%d"/>
         <text name="eq_pop_routineTest" text="Prova concluída!"/>
-        <text name="eq_pop_routineLost" text="Rotina interrompida"/>
+        <text name="eq_pop_routineLost" text="Adestramento cancelado"/>
         <text name="eq_pop_comboLost" text="Combo perdido"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Limpo!"/>
