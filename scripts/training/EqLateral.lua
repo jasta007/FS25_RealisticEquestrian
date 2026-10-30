@@ -77,6 +77,10 @@ EqLateral.SPOT_TURN = { WALK = 1, TROT = 1, CANTER = 1 }
 -- off the ground the base game plays a jump or landing.
 EqLateral.SPOT_SHOW = 0.6
 EqLateral.SPOT_CREEP = { WALK = 0, TROT = 0.08, CANTER = 0.15 }
+-- Ctrl + W (James, 2026-10-30): collected but going forward, a passage at a trot (the trot's
+-- animation at the walk's top speed) and a collected canter (half way between the walk's and
+-- the trot's), eased in and out over COLLECT_MS. W doesn't change gait while Ctrl is held.
+EqLateral.PASSAGE = { TROT = 0, CANTER = 0.5 }
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
 
@@ -182,11 +186,31 @@ function EqLateral.gaitName(spec)
 end
 
 
+--- The base game's top speeds by gait name.
+function EqLateral.tops(spec)
+    local types, tops = Rideable ~= nil and Rideable.GAITTYPES or nil, spec.topSpeeds
+    if types == nil or tops == nil then return nil end
+    return { WALK = tops[types.WALK], TROT = tops[types.TROT], CANTER = tops[types.CANTER] }
+end
+
+
 --- The share of the forward move kept on the spot (pure).
 --- @param collect number 0..1
 --- @param gait string|nil gait name
-function EqLateral.keep(collect, gait)
-    return 1 - collect * (1 - (EqLateral.SPOT_CREEP[gait or ""] or 0))
+function EqLateral.keep(collect, gait, creep)
+    return 1 - collect * (1 - (creep or EqLateral.SPOT_CREEP[gait or ""] or 0))
+end
+
+
+--- The share of the gait's speed kept in a passage or collected canter (pure): the walk's top
+--- speed, or PASSAGE of the way from it to the trot's.
+--- @param gait string|nil gait name
+--- @param tops table|nil topSpeeds by gait name { WALK, TROT, CANTER }
+--- @return number|nil nil when there is none at this gait
+function EqLateral.passageShare(gait, tops)
+    local towards = EqLateral.PASSAGE[gait or ""]
+    if towards == nil or tops == nil or tops.WALK == nil or tops.TROT == nil or (tops[gait] or 0) <= 0 then return nil end
+    return math.min(1, (tops.WALK + (tops.TROT - tops.WALK) * towards) / tops[gait])
 end
 
 
@@ -344,6 +368,16 @@ local function before(vehicle, dt)
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)
+    -- Ctrl + W: forward in a passage or collected canter; else creeping on the spot.
+    local gait = EqLateral.gaitName(spec)
+    local creep = EqLateral.SPOT_CREEP[gait or ""] or 0
+    local passage = nil
+    if spot and key("KEY_w") then passage = EqLateral.passageShare(gait, EqLateral.tops(spec)) end
+    spec.eqCreep = EqLateral.towards(spec.eqCreep or creep, passage or creep, dt, EqLateral.COLLECT_MS)
+    if (passage ~= nil) ~= (spec.eqPassage == true) then
+        spec.eqPassage = passage ~= nil
+        Log:info("Lateral work: %s", passage ~= nil and (gait == "TROT" and "passage" or "collected canter") or "collected")
+    end
     if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
     -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
     -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster.
@@ -378,7 +412,7 @@ local function sidewaysMove(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
     local pullX, pullZ = spec ~= nil and spec.eqPullX or 0, spec ~= nil and spec.eqPullZ or 0
-    local keep = spec ~= nil and EqLateral.keep(spec.eqCollect or 0, (EqLateral.gaitName(spec))) or 1
+    local keep = spec ~= nil and EqLateral.keep(spec.eqCollect or 0, (EqLateral.gaitName(spec)), spec.eqCreep) or 1
     if amount == 0 and pullX == 0 and pullZ == 0 and keep == 1 or type(spec.currentTurnAngle) ~= "number" then return nil end
     local base = vehicle.moveCCT
     if base == nil then
@@ -479,6 +513,16 @@ function EqLateral.install()
             self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth
             if not result[1] then error(result[2], 0) end
             return unpack(result, 2)
+        end)
+    end
+    -- W doesn't raise the gait while Ctrl is held: Ctrl + W is a passage or collected canter.
+    if type(Rideable.actionEventAccelerate) == "function" then
+        Rideable.actionEventAccelerate = Utils.overwrittenFunction(Rideable.actionEventAccelerate, function(self, superFunc, ...)
+            if EqMain.isActive and not EqLateral.failed and (key("KEY_lctrl") or key("KEY_rctrl"))
+                and self.getIsEntered ~= nil and self:getIsEntered() then
+                return
+            end
+            return superFunc(self, ...)
         end)
     end
     -- The mouse look goes to the head bend while the right button is held on a horse.

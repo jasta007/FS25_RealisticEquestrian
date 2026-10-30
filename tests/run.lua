@@ -3737,6 +3737,11 @@ end)()
         and math.abs(EqLateral.turnSpeedToward(-1, 1, 100) - (-1 + EqLateral.TURN_ACCEL * 0.1)) < 1e-9
         and EqLateral.turnSpeedToward(0.9, 1, 1000) == 1
         and math.abs(EqLateral.towards(0, 1, EqLateral.HEAD_MS / 2, EqLateral.HEAD_MS) - 0.5) < 1e-9)
+    -- Ctrl + W: a passage at the walk's top speed, a collected canter between walk and trot.
+    local tops = { WALK = 1.5, TROT = 3, CANTER = 5 }
+    check("Ctrl + W is a passage at a walk's speed, a collected canter a little faster", EqLateral.passageShare("TROT", tops) == 0.5
+        and math.abs(EqLateral.passageShare("CANTER", tops) * 5 - 2.25) < 1e-9 and EqLateral.passageShare("WALK", tops) == nil
+        and math.abs(EqLateral.keep(1, "TROT", 0.5) - 0.5) < 1e-9)
     -- Ctrl collects to the spot and eases back; Ctrl + A turns left (positive), D right.
     local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
     check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9

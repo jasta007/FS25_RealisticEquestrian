@@ -188,7 +188,10 @@ it on the spot at the usual turn rate, so a walk or canter turned on the spot is
 Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
-slide less. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
+slide less. **Ctrl + W** goes forward collected instead (James, 2026-10-30): at a trot a
+**passage** (the trot's animation at the walk's top speed), at a canter a collected canter (half
+way between the walk's and the trot's top speed); W doesn't change gait while Ctrl is held, and
+letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
 Started near the gold pole (marked like a halt); letting go early (off the spot for 0.7 s) costs
