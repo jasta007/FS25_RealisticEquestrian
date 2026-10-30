@@ -3724,8 +3724,9 @@ end)()
         and EqLateral.keep(1, "WALK") == 0)
     check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
         and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
-    check("Ctrl + A/D turns on the spot", EqLateral.spotSteer(true, false) > 0 and EqLateral.spotSteer(false, true) < 0
-        and EqLateral.spotSteer(true, true) == 0 and EqLateral.spotSteer(false, false) == 0)
+    check("Ctrl + A/D turns on the spot at a trot or canter, not a walk", EqLateral.spotSteer(true, false, "TROT") > 0
+        and EqLateral.spotSteer(false, true, "CANTER") < 0 and EqLateral.spotSteer(true, false, "WALK") == 0
+        and EqLateral.spotSteer(true, true, "TROT") == 0 and EqLateral.spotSteer(false, false, "TROT") == 0)
     check("the body turns towards the asked angle, the short way", math.abs(turned - 0.5) < 1e-9
         and math.abs(wrapped - (-3 + 2 * math.pi)) < 1e-9)
 end)()

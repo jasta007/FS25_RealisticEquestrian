@@ -51,9 +51,10 @@ EqLateral.BEND_TILT = 0.8
 EqLateral.bend = 0
 EqLateral.vehicle = nil
 -- Collecting on the spot (Ctrl): how fast the forward move eases out and back in, and the turn
--- with Ctrl + A/D as a share of the base game's.
+-- with Ctrl + A/D as a share of the base game's, only at a trot (piaffe) or canter (pirouette):
+-- at a walk Ctrl just stops the horse (James, 2026-10-30).
 EqLateral.COLLECT_MS = 600
-EqLateral.SPOT_TURN = 0.5
+EqLateral.SPOT_TURN = { TROT = 1, CANTER = 1 }
 -- On the spot (James, 2026-10-30: the hooves slid): the animation is shown a slower speed, this
 -- share of the way from the gait below's top speed to the gait's, and the horse still creeps
 -- forward at this share of its speed, a little at a piaffe and a bit more at a canter. No lift:
@@ -139,10 +140,12 @@ end
 
 --- The turn on the spot asked for (pure): A turns left (the base game's axisSteer is positive
 --- to the left).
---- @return number 1, -1 or 0, times SPOT_TURN
-function EqLateral.spotSteer(left, right)
+--- @param gait string|nil gait name
+--- @return number 1, -1 or 0, times the gait's SPOT_TURN
+function EqLateral.spotSteer(left, right, gait)
+    local turn = EqLateral.SPOT_TURN[gait or ""] or 0
     if left == right then return 0 end
-    return (left and 1 or -1) * EqLateral.SPOT_TURN
+    return (left and 1 or -1) * turn
 end
 
 
@@ -276,7 +279,7 @@ local function before(vehicle, dt)
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)
     if side ~= 0 then spec.inputValues.axisSteer = 0 end
-    if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d")) end
+    if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
     if spot ~= (spec.eqSpot == true) then
         spec.eqSpot = spot
         Log:info("Lateral work: %s", spot and "on the spot" or "moving on")
