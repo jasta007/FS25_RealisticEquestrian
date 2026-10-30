@@ -14,6 +14,7 @@ dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
+dofile("scripts/training/EqJump.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
@@ -4061,6 +4062,55 @@ end)()
     g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
     EqCompetitionManager = savedManager
     EqHostManager.reset()
+end)()
+
+-- JUMPS: gravity, the push-off and the collected jump (EqJump).
+;(function()
+    local J = EqJump
+    check("jump: rising pull on the ground and going up", J.gravity(3, false) == -J.GRAVITY * J.RISE_SHARE
+        and J.gravity(-1, true) == -J.GRAVITY * J.RISE_SHARE)
+    check("jump: falling pulls harder", J.gravity(-1, false) == -J.GRAVITY * J.FALL_SHARE and J.FALL_SHARE > J.RISE_SHARE)
+    local g = J.gravity(0, true)
+    local v = J.launchSpeed(1.6, g)
+    check("jump: launch speed reaches the height", math.abs(v * v / (2 * math.abs(g)) - 1.6) < 1e-9)
+    local before = 2 * math.sqrt(2 * 1.85 / (9.81 * 1.65))
+    local after = J.airtime(2 * 0.925 * J.HEIGHT_SHARE)
+    check("jump: a mid-agility gallop jump is shorter in the air than before", after < before * 0.85,
+        string.format("%.2f s vs %.2f s", after, before))
+
+    -- Push-off: a small lift, then the rest of the jump's lift.
+    local launch = J.newLaunch(v, 10, false, nil, 1000)
+    local speedY, cap = J.step(launch, 1016, 16, g)
+    check("jump: push-off lifts slowly first", math.abs(speedY - (J.PUSH_SPEED - g * 0.016)) < 1e-9 and cap == nil
+        and not launch.launched)
+    local now = 1016
+    while not launch.launched do
+        now = now + 16
+        speedY = J.step(launch, now, 16, g)
+    end
+    check("jump: launches once the push-off is over", now - 1000 >= J.PUSH_MS and now - 1000 < J.PUSH_MS + 16)
+    local up = speedY + g * 0.016
+    check("jump: apex still the jump's height", math.abs(launch.rise + up * up / (2 * math.abs(g)) - 1.6) < 1e-6,
+        string.format("rise %.3f", launch.rise))
+    check("jump: nothing more to set after the launch", J.step(launch, now + 16, 16, g) == nil)
+
+    -- Collected: Ctrl held or just let go.
+    check("collected: Ctrl held", J.isCollected(true, nil, 0))
+    check("collected: Ctrl just let go", J.isCollected(false, 1000, 1000 + J.COLLECT_WINDOW_MS))
+    check("collected: Ctrl too long ago", not J.isCollected(false, 1000, 1001 + J.COLLECT_WINDOW_MS)
+        and not J.isCollected(false, nil, 5000))
+    local collected = J.newLaunch(v, 10, true, 7, 0)
+    local _, half = J.step(collected, J.COLLECT_PUSH_MS / 2, 16, g)
+    check("collected: slows over the gather", math.abs(half - (10 + (10 * J.COLLECT_SPEED_SHARE - 10) / 2)) < 1e-9)
+    local _, slow = J.step(collected, J.COLLECT_PUSH_MS + 100, 16, g)
+    check("collected: stays slow in the air", slow == 10 * J.COLLECT_SPEED_SHARE and collected.speedY == 7)
+
+    -- Console tuning.
+    local was = J.FALL_SHARE
+    local ok = J.set("fall", 99)
+    check("jump tuning: clamped to its limits", ok and J.FALL_SHARE == 6)
+    check("jump tuning: unknown and missing values refused", not J.set("wobble", 1) and not J.set("fall", nil))
+    J.FALL_SHARE = was
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

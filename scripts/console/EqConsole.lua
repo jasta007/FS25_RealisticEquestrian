@@ -668,6 +668,22 @@ function EqConsole:consoleStats(...)
 end
 
 
+--- eqJump [setting value ...]: testing, shows or changes EqJump's numbers until the game restarts.
+function EqConsole:consoleJump(...)
+    local args = { ... }
+    local lines = {}
+    for i = 1, #args - 1, 2 do
+        local _, message = EqJump.set(string.lower(args[i]), tonumber(args[i + 1]))
+        table.insert(lines, message)
+    end
+    if #args % 2 == 1 then table.insert(lines, "Settings go in pairs: eqJump fall 3 push 200") end
+    table.insert(lines, "Jump: " .. EqJump.describe())
+    table.insert(lines, string.format("A gallop jump at agility 50 is about %.2f s in the air",
+        EqJump.airtime(2 * EqTraining.handling(nil, 50).jump * EqJump.HEIGHT_SHARE)))
+    return table.concat(lines, "\n")
+end
+
+
 --- eqDirt <horse> <0-100>: testing, sets a horse's dirt (RLRM shows Cleanliness = 100 - dirt).
 function EqConsole:consoleDirt(...)
     if g_currentMission == nil then return "No mission loaded" end
@@ -862,6 +878,7 @@ function EqConsole.register()
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
+    addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
