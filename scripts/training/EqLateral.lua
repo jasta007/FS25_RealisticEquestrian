@@ -309,7 +309,7 @@ function EqLateral.snap(rotY, viewAngle, turnAngle, lateral, dt)
 end
 
 
---- While the bend is held, the rider's camera eases round to the way the horse is going.
+--- While the right button is held, the rider's camera eases round to the way the body faces.
 local function snapCamera(vehicle, dt)
     if vehicle ~= EqLateral.vehicle or not rightHeld() then return end
     local enterable = vehicle.spec_enterable
@@ -326,7 +326,9 @@ local function snapCamera(vehicle, dt)
         Log:info("Lateral work: camera %.0f deg off the heading as it starts following",
             math.deg((view - spec.currentTurnAngle + math.pi) % (2 * math.pi) - math.pi))
     end
-    camera.rotY = EqLateral.snap(camera.rotY, view, spec.currentTurnAngle, spec.eqLateral or 0, dt)
+    -- The way the body faces, not the drift (James, 2026-10-30: following the strafe felt wrong,
+    -- and a half pass looked odd).
+    camera.rotY = EqLateral.snap(camera.rotY, view, spec.currentTurnAngle, 0, dt)
 end
 
 

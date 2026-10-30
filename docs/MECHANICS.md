@@ -177,7 +177,7 @@ only); the bend springs back in 0.3 s once let go. The head eases to the turn as
 following the turn frame by frame, slower towards full lock. Every ridden horse swings from one
 lock to the other faster than the base game (3 rad/s² more turn acceleration: James found it
 spongey, a canter serpentine impossible). While the button is
-held the camera eases round to the way the horse is going (its heading, turned by the drift) and
+held the camera eases round to the way the horse's body faces (not the drift) and
 the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
 body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
