@@ -3859,7 +3859,7 @@ end)()
     local SPEED = { walk = 1.6, trot = 3.2, canter = 5 }
     -- A rider who follows the line, wobbling off it by up to `wobble` metres, and changes `late`
     -- metres after each point.
-    local function ride(test, frame, wobble, late, ctrlHalts)
+    local function ride(test, frame, wobble, late)
         local run = EqDressagePath.newRun(test, 50)
         local pts, s, gait, ev, holdUntil, t, backUntil = test.pts, 0, "trot", 1, nil, 0, nil
         local k = 2
@@ -3882,8 +3882,6 @@ end)()
                 if t >= backUntil then backUntil, gait, ev = nil, e.gait, ev + 1 end
             elseif holdUntil ~= nil then
                 move = "halt"
-                -- Stopped with Ctrl instead: still the gait, on the spot.
-                if ctrlHalts then move, look = gait, { dirX = 0, dirZ = 1, spot = true } end
                 if t >= holdUntil then
                     holdUntil = nil
                     if e.reinBack then backUntil = t + EqDressagePath.REIN_BACK_MS + 200 else gait, ev = e.gait, ev + 1 end
@@ -3891,13 +3889,12 @@ end)()
             elseif e ~= nil and s >= e.s + late then
                 if e.kind == "halt" then
                     holdUntil, move = t + 2600, "halt"
-                    if ctrlHalts then move, look = gait, { dirX = 0, dirZ = 1, spot = true } end
                 elseif e.kind == "spot" then
                     spotting, turned = { style = e.style, turn = e.turn, untilT = t + EqDressagePath.SPOT_MS + 300 }, 0
                     look = { dirX = 0, dirZ = 1, spot = true }
                 else gait, move, ev = e.gait, e.gait, ev + 1 end
             end
-            if move == "reverse" then s = s - 0.5 * 0.033 elseif move ~= "halt" and look == nil and holdUntil == nil then s = s + SPEED[move] * 0.033 end
+            if move == "reverse" then s = s - 0.5 * 0.033 elseif move ~= "halt" and look == nil then s = s + SPEED[move] * 0.033 end
             while k < #pts and pts[k].s < s do k = k + 1 end
             local a, b = pts[k - 1], pts[k]
             local f = math.min(1, math.max(0, (s - a.s) / math.max(0.001, b.s - a.s)))
@@ -4007,9 +4004,6 @@ end)()
                 break
             end
         end
-        run, event = ride(test, frame, 0, 0, true)
-        check(name .. ": halts made with Ctrl on the spot count as halts", event == "test" and run.percent == 100,
-            string.format("%s %s%%", event, tostring(run.percent)))
         run, event = ride(test, frame, 1, 0)
         check(name .. ": wandering 1 m either side scores much less", event == "test" and run.percent < 70 and run.percent > 20,
             string.format("%s %s%%", event, tostring(run.percent)))

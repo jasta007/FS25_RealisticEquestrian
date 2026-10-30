@@ -1365,12 +1365,6 @@ end
 --- positive } for lateral work; nil leaves sections unjudged
 function EqDressagePath.step(run, move, wx, wz, dt, look)
     local test, pts = run.test, run.test.pts
-    -- Stopped with Ctrl (on the spot) where a halt is asked or held counts as a halt (James's
-    -- log, 2026-10-30: both tests' final halts scored 1.5 after stopping that way).
-    local asked = test.events[run.ev]
-    if look ~= nil and look.spot and (run.hold ~= nil or asked ~= nil and asked.kind == "halt" and asked.s - run.s <= run.warn) then
-        move = "halt"
-    end
     local x, y = EqDressagePath.toLocal(run.frame, wx, wz)
     run.clock = run.clock + dt
 

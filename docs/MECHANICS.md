@@ -247,7 +247,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4.
-- A halt made by stopping with Ctrl (on the spot) counts as a halt.
+- A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
