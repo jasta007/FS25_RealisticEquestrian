@@ -313,7 +313,7 @@ function EqTrainingHud.pop(kind, mult)
     -- In Condensed all of it does, as the only text on screen.
     local side = view == "condensed" or kind == "speedBank" or (stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat))
     if side then
-        if stat ~= nil then text = string.format("%s: %s", g_i18n:getText("eq_stat_short_" .. stat), text) end
+        if stat ~= nil then text = string.format("%s: %s", g_i18n:getText("eq_stat_" .. stat), text) end
         EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
         return
     end

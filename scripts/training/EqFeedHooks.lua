@@ -218,7 +218,7 @@ function EqFeedHooks.buildFoodRows(placeable, infos)
 end
 
 
---- "Feed: Spd +35% Tem +35%", or nil when the feed gives nothing.
+--- "Feed: Speed +35%, Temperament +35%", or nil when the feed gives nothing.
 --- @param boost table stat -> share
 --- @return string|nil
 function EqFeedHooks.formatBoost(boost)
@@ -226,11 +226,11 @@ function EqFeedHooks.formatBoost(boost)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
         local percent = math.floor((boost[stat] or 0) * 100 + 0.5)
         if percent > 0 then
-            table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_short_" .. stat), percent))
+            table.insert(parts, string.format("%s +%d%%", g_i18n:getText("eq_stat_" .. stat), percent))
         end
     end
     if #parts == 0 then return nil end
-    return g_i18n:getText("eq_feed_boost") .. ": " .. table.concat(parts, " ")
+    return g_i18n:getText("eq_feed_boost") .. ": " .. table.concat(parts, ", ")
 end
 
 
