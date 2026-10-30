@@ -6,8 +6,9 @@
 
     The base game moves a ridden horse in Rideable:updateKinematic (server): it turns by
     maxTurnSpeed * axisSteer and moves the character controller (moveCCT) along its heading.
-    While Shift is held the steer goes to zero for that frame, and a sideways move is added
-    after it. Rideable:updateAnimation eases the tilt (smoothedLeftRightWeight) back towards
+    While Shift is held the steer goes to zero for that frame, and the sideways move is added to
+    that same moveCCT call (a second call replaced the first: the horse moved too little, the
+    base game's stuck check halted it and it lurched, "almost like bucking", James 2026-10-30). Rideable:updateAnimation eases the tilt (smoothedLeftRightWeight) back towards
     the turn it sees; it is set each frame first, so the tilt holds.
 
     Keys are read on this machine, so it works for the local rider (single player for now).
@@ -23,7 +24,7 @@ local Log = EqLog
 -- and out over RAMP_MS, and the head's tilt (the animation's left-right weight, -1..1).
 EqLateral.SHARE = 0.5
 EqLateral.RAMP_MS = 400
-EqLateral.TILT = 0.6
+EqLateral.TILT = 0.3
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
 
@@ -100,20 +101,25 @@ local function before(vehicle, dt)
 end
 
 
---- After the base game's move: the sideways step.
-local function after(vehicle, dt)
+--- The base game's moveCCT for this frame, with the sideways step added to its move.
+--- @return function|nil
+local function sidewaysMove(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
-    if amount == 0 or type(spec.currentTurnAngle) ~= "number" then return end
-    if vehicle.moveCCT == nil then
+    if amount == 0 or type(spec.currentTurnAngle) ~= "number" then return nil end
+    local base = vehicle.moveCCT
+    if base == nil then
         if not EqLateral.warned then
             EqLateral.warned = true
             Log:warning("Lateral work: no moveCCT on the horse, sideways moves are off")
         end
-        return
+        return nil
     end
-    local dx, dz = EqLateral.move(amount, spec.currentSpeed or 0, spec.currentTurnAngle, dt)
-    if math.abs(dx) + math.abs(dz) > 1e-5 then vehicle:moveCCT(dx, 0, dz, true) end
+    return function(self, moveX, moveY, moveZ, ...)
+        -- The heading and speed the base game just worked out for this frame.
+        local dx, dz = EqLateral.move(amount, spec.currentSpeed or 0, spec.currentTurnAngle, dt)
+        return base(self, moveX + dx, moveY, moveZ + dz, ...)
+    end
 end
 
 
@@ -144,9 +150,16 @@ function EqLateral.install()
         if not EqMain.isActive or EqLateral.failed then return superFunc(self, dt) end
         -- One failure turns it off for the game, not an error every frame.
         if not EqLog.try("EqLateral before", before, self, dt) then EqLateral.failed = true end
-        local result = superFunc(self, dt)
-        if not EqLateral.failed and not EqLog.try("EqLateral after", after, self, dt) then EqLateral.failed = true end
-        return result
+        local ok, move = EqLog.try("EqLateral move", sidewaysMove, self, dt)
+        if not ok then EqLateral.failed = true end
+        if move == nil then return superFunc(self, dt) end
+        -- Only for this call: the move made inside it carries the sideways step.
+        local own = rawget(self, "moveCCT")
+        self.moveCCT = move
+        local result = { pcall(superFunc, self, dt) }
+        self.moveCCT = own
+        if not result[1] then error(result[2], 0) end
+        return unpack(result, 2)
     end)
     if type(Rideable.updateAnimation) == "function" then
         Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
