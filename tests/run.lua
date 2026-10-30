@@ -3708,6 +3708,12 @@ end)()
     -- Stickiness turns the body at most rate rad/s, the short way round.
     local turned = EqLateral.turnToward(0, 1, 0.5, 1000)
     local wrapped = EqLateral.turnToward(3, -3, 10, 1000)
+    -- Ctrl collects to the spot and eases back; Ctrl + A turns left (positive), D right.
+    local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
+    check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9
+        and EqLateral.collect(1, true, 100) == 1 and EqLateral.collect(held, false, EqLateral.COLLECT_MS) == 0)
+    check("Ctrl + A/D turns on the spot", EqLateral.spotSteer(true, false) > 0 and EqLateral.spotSteer(false, true) < 0
+        and EqLateral.spotSteer(true, true) == 0 and EqLateral.spotSteer(false, false) == 0)
     check("the body turns towards the asked angle, the short way", math.abs(turned - 0.5) < 1e-9
         and math.abs(wrapped - (-3 + 2 * math.pi)) < 1e-9)
 end)()

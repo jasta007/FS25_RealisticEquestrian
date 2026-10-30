@@ -173,6 +173,10 @@ bends the head that way (the turn animation only, no turn and no camera move); i
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
 body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
 goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
+Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
+the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
+it on the spot at half the usual turn, so a canter turned on the spot is a pirouette. Let go and it
+moves on at the gait. Not yet asked for in tests.
 Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its

@@ -17,6 +17,12 @@
     sideways drift it makes the lateral movements: shoulder-in (bend alone), half pass (drift
     with the head bent the way it goes), and so on (EqDressagePath scores them in a test).
 
+    Holding Ctrl collects the horse to a stop while it keeps the gait's animation (James,
+    2026-10-30): trotting on the spot is a piaffe, cantering on the spot turned with Ctrl + A/D a
+    pirouette. The base game still works out the gait's speed; the move made is cut to nothing
+    (and the stuck check's record of it with it, or it would halt the horse), and the animation is
+    shown the gait's speed instead of the horse's real one.
+
     Keys are read on this machine, so it works for the local rider (single player for now).
 
     Part of Realistic Equestrian by Jasta007.
@@ -40,6 +46,10 @@ EqLateral.BEND_TILT = 0.8
 -- The local rider's bend, and the horse it is on.
 EqLateral.bend = 0
 EqLateral.vehicle = nil
+-- Collecting on the spot (Ctrl): how fast the forward move eases out and back in, and the turn
+-- with Ctrl + A/D as a share of the base game's.
+EqLateral.COLLECT_MS = 600
+EqLateral.SPOT_TURN = 0.5
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
 
@@ -117,6 +127,23 @@ function EqLateral.turnToward(angle, want, rate, dt)
 end
 
 
+--- The turn on the spot asked for (pure): A turns left (the base game's axisSteer is positive
+--- to the left).
+--- @return number 1, -1 or 0, times SPOT_TURN
+function EqLateral.spotSteer(left, right)
+    if left == right then return 0 end
+    return (left and 1 or -1) * EqLateral.SPOT_TURN
+end
+
+
+--- How collected the horse is after a frame (pure): 0 moving on, 1 on the spot.
+function EqLateral.collect(current, wanted, dt)
+    local step = dt / EqLateral.COLLECT_MS
+    if wanted then return math.min(1, current + step) end
+    return math.max(0, current - step)
+end
+
+
 --- @return boolean the right mouse button is held
 local function rightHeld()
     return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
@@ -154,19 +181,28 @@ local function before(vehicle, dt)
     local spec = vehicle.spec_rideable
     if spec == nil or spec.inputValues == nil then return end
     local entered = vehicle.getIsEntered ~= nil and vehicle:getIsEntered()
-    local side = 0
+    local side, spot = 0, false
     if entered then
         EqLateral.vehicle = vehicle
         EqLateral.bend = EqLateral.relax(EqLateral.bend, rightHeld(), dt)
-        side = EqLateral.side(key("KEY_lshift") or key("KEY_rshift"), key("KEY_a"), key("KEY_d"), gaitOk(spec))
+        spot = (key("KEY_lctrl") or key("KEY_rctrl")) and gaitOk(spec)
+        if not spot then
+            side = EqLateral.side(key("KEY_lshift") or key("KEY_rshift"), key("KEY_a"), key("KEY_d"), gaitOk(spec))
+        end
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
+    spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)
     if side ~= 0 then spec.inputValues.axisSteer = 0 end
+    if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d")) end
+    if spot ~= (spec.eqSpot == true) then
+        spec.eqSpot = spot
+        Log:info("Lateral work: %s", spot and "on the spot" or "moving on")
+    end
     -- Temperament's stickiness in a dressage test (EqDressageHooks.assist): a pull onto the line,
     -- added to this frame's move, and the body eased towards the angle a lateral section asks for.
     spec.eqPullX, spec.eqPullZ = 0, 0
     local assist = EqDressageHooks ~= nil and EqDressageHooks.assist or nil
-    if entered and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
+    if entered and not spot and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
         local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt)
         spec.eqPullX, spec.eqPullZ = pullX, pullZ
         if wantX ~= nil and rate > 0 and type(spec.currentTurnAngle) == "number" then
@@ -186,7 +222,8 @@ local function sidewaysMove(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
     local pullX, pullZ = spec ~= nil and spec.eqPullX or 0, spec ~= nil and spec.eqPullZ or 0
-    if amount == 0 and pullX == 0 and pullZ == 0 or type(spec.currentTurnAngle) ~= "number" then return nil end
+    local keep = 1 - (spec ~= nil and spec.eqCollect or 0)
+    if amount == 0 and pullX == 0 and pullZ == 0 and keep == 1 or type(spec.currentTurnAngle) ~= "number" then return nil end
     local base = vehicle.moveCCT
     if base == nil then
         if not EqLateral.warned then
@@ -198,7 +235,8 @@ local function sidewaysMove(vehicle, dt)
     return function(self, moveX, moveY, moveZ, ...)
         -- The heading and speed the base game just worked out for this frame.
         local dx, dz = EqLateral.move(amount, spec.currentSpeed or 0, spec.currentTurnAngle, dt)
-        return base(self, moveX + dx + pullX, moveY, moveZ + dz + pullZ, ...)
+        spec.eqMoveKeep = keep
+        return base(self, moveX * keep + dx + pullX, moveY, moveZ * keep + dz + pullZ, ...)
     end
 end
 
@@ -237,15 +275,37 @@ function EqLateral.install()
         -- Only for this call: the move made inside it carries the sideways step.
         local own = rawget(self, "moveCCT")
         self.moveCCT = move
+        local spec = self.spec_rideable
+        spec.eqMoveKeep = nil
+        local queued = spec.cctMoveQueue ~= nil and #spec.cctMoveQueue or nil
         local result = { pcall(superFunc, self, dt) }
         self.moveCCT = own
         if not result[1] then error(result[2], 0) end
+        -- On the spot, the stuck check expects only the forward move actually made.
+        local keep = spec.eqMoveKeep
+        local entry = queued ~= nil and spec.cctMoveQueue[queued + 1] or nil
+        if keep ~= nil and keep < 1 and entry ~= nil then
+            entry.moveX, entry.moveZ = (entry.moveX or 0) * keep, (entry.moveZ or 0) * keep
+        end
         return unpack(result, 2)
     end)
     if type(Rideable.updateAnimation) == "function" then
         Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
             if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral tilt", tilt, self) then EqLateral.failed = true end
-            return superFunc(self, dt)
+            -- On the spot the animation sees the gait's speed, not the horse's (near nothing).
+            local spec = self.spec_rideable
+            local collect = spec ~= nil and spec.eqCollect or 0
+            if collect <= 0 or EqLateral.failed or type(spec.currentSpeed) ~= "number" or type(self.lastSignedSpeedReal) ~= "number" then
+                return superFunc(self, dt)
+            end
+            local real, smooth = self.lastSignedSpeedReal, self.lastSignedSpeed
+            local shown = spec.currentSpeed / 1000
+            self.lastSignedSpeedReal = math.max(real, shown)
+            if type(smooth) == "number" then self.lastSignedSpeed = math.max(smooth, shown) end
+            local result = { pcall(superFunc, self, dt) }
+            self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth
+            if not result[1] then error(result[2], 0) end
+            return unpack(result, 2)
         end)
     end
     -- The mouse look goes to the head bend while the right button is held on a horse.
@@ -262,5 +322,5 @@ function EqLateral.install()
             end
         end
     end
-    Log:info("Lateral work: Shift + A/D at a walk, trot or canter; right mouse drag bends the head")
+    Log:info("Lateral work: Shift + A/D at a walk, trot or canter; right mouse drag bends the head; Ctrl on the spot")
 end
