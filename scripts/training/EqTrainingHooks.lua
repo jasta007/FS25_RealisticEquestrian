@@ -969,7 +969,9 @@ function EqTrainingHooks.startLaunch(spec)
         local gallop = spec.eqGallopJumpHeight or spec.jumpHeight or 2
         collectedSpeedY = EqJump.launchSpeed(gallop * EqJump.COLLECT_HEIGHT_SHARE, spec.gravity or -EqJump.GRAVITY)
     end
-    spec.eqLaunch = EqJump.newLaunch(spec.currentSpeedY, math.abs(spec.currentSpeed or 0), collected, collectedSpeedY, now)
+    local trot = Rideable.GAITTYPES ~= nil and type(spec.topSpeeds) == "table" and spec.topSpeeds[Rideable.GAITTYPES.TROT] or nil
+    spec.eqLaunch = EqJump.newLaunch(spec.currentSpeedY, math.abs(spec.currentSpeed or 0), collected, collectedSpeedY, now,
+        type(trot) == "number" and trot or nil)
     if collected then spec.eqCtrlAt = nil end
     spec.eqJumpTraces = (spec.eqJumpTraces or 0) + 1
     spec.eqLaunch.trace = spec.eqJumpTraces <= EqTrainingHooks.JUMP_TRACE_COUNT
@@ -978,6 +980,8 @@ function EqTrainingHooks.startLaunch(spec)
             collected and "collected" or "normal", spec.currentSpeedY, spec.eqLaunch.speedY, spec.eqLaunch.pushMs,
             EqJump.PUSH_SPEED, math.abs(spec.currentSpeed or 0),
             collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
+        Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
+            spec.eqLaunch.targetSpeed or math.abs(spec.currentSpeed or 0)))
     end
     if not spec.eqLaunch.launched then spec.currentSpeedY = EqJump.PUSH_SPEED end
 end

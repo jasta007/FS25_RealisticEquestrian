@@ -298,8 +298,8 @@ before, so a gallop jump is about 0.75 s in the air (it was nearly 1 s) and does
 top. Pressing jump first lifts the horse only a few centimetres for 0.18 s, so its push-off
 animation plays near the ground, and then launches it. A **collected jump**: hold Ctrl (or let
 go of it less than half a second before) and press jump. The horse gathers itself over 0.26 s,
-dropping to half its speed, then jumps about as high as a gallop jump over a much shorter
-distance. The `eqJump` console command shows and changes these numbers until the game restarts.
+slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
+distance. Take-off is about 38 degrees from a gallop, 56 from a canter and 70 collected. The `eqJump` console command shows and changes these numbers until the game restarts.
 
 ### Staff, age and metabolism
 

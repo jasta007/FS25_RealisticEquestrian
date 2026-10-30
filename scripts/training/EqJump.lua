@@ -14,8 +14,12 @@
       jump's lift.
     - Collected jump (James): press Ctrl just before the jump (held, or let go no more than
       COLLECT_WINDOW_MS before) for a short, steep jump. The horse gathers itself over
-      COLLECT_PUSH_MS, slowing to COLLECT_SPEED_SHARE of its speed, and jumps
+      COLLECT_PUSH_MS, slowing to about a trot (COLLECT_TROT_SHARE of the trot's top speed, or
+      COLLECT_SPEED_SHARE of its speed when that is slower), and jumps
       COLLECT_HEIGHT_SHARE as high as a gallop jump, staying that slow until it lands.
+
+    Take-off angles at agility 50 (James, 2026-10-30: gallop 30-40 degrees for distance, canter
+    45-60, collected 65-80): gallop about 38, canter about 56, collected about 70.
 
     The numbers can be changed in game with the eqJump console command, until the game restarts.
 ]]
@@ -31,6 +35,7 @@ EqJump.PUSH_SPEED = 0.5
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
 EqJump.COLLECT_SPEED_SHARE = 0.5
+EqJump.COLLECT_TROT_SHARE = 0.9
 EqJump.COLLECT_HEIGHT_SHARE = 1.05
 
 -- What the eqJump console command may change: its short name, the field, and limits.
@@ -43,6 +48,7 @@ EqJump.TUNABLE = {
     { name = "window", key = "COLLECT_WINDOW_MS", min = 0, max = 2000 },
     { name = "cpush", key = "COLLECT_PUSH_MS", min = 0, max = 800 },
     { name = "cspeed", key = "COLLECT_SPEED_SHARE", min = 0.1, max = 1 },
+    { name = "ctrot", key = "COLLECT_TROT_SHARE", min = 0.2, max = 3 },
     { name = "cheight", key = "COLLECT_HEIGHT_SHARE", min = 0.4, max = 2 },
 }
 
@@ -93,19 +99,37 @@ end
 --- @param collected boolean
 --- @param collectedSpeedY number|nil launch speed for a collected jump
 --- @param now number ms
+--- @param trotSpeed number|nil the horse's trot top speed, m/s (a collected jump slows to about it)
 --- @return table launch
-function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now)
+function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSpeed)
     local push = collected and EqJump.COLLECT_PUSH_MS or EqJump.PUSH_MS
     return {
         speedY = collected and collectedSpeedY or speedY,
         startSpeed = speed,
-        targetSpeed = collected and speed * EqJump.COLLECT_SPEED_SHARE or nil,
+        targetSpeed = collected and EqJump.collectedSpeed(speed, trotSpeed) or nil,
         collected = collected,
         startedAt = now,
         pushMs = push,
         rise = 0,
         launched = push <= 0,
     }
+end
+
+
+--- The speed a collected jump slows to (pure): about a trot, never faster than the horse was going.
+--- @param speed number forward speed at take-off, m/s
+--- @param trotSpeed number|nil
+--- @return number m/s
+function EqJump.collectedSpeed(speed, trotSpeed)
+    local target = speed * EqJump.COLLECT_SPEED_SHARE
+    if trotSpeed ~= nil and trotSpeed > 0 then target = math.min(speed, trotSpeed * EqJump.COLLECT_TROT_SHARE) end
+    return target
+end
+
+
+--- Take-off angle above the ground in degrees (pure).
+function EqJump.angle(speedY, speed)
+    return math.deg(math.atan2(speedY, math.max(0, speed)))
 end
 
 

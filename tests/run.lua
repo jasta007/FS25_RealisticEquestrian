@@ -4105,6 +4105,17 @@ end)()
     local _, slow = J.step(collected, J.COLLECT_PUSH_MS + 100, 16, g)
     check("collected: stays slow in the air", slow == 10 * J.COLLECT_SPEED_SHARE and collected.speedY == 7)
 
+    check("collected: slows to about a trot", J.collectedSpeed(10, 3) == 3 * J.COLLECT_TROT_SHARE
+        and J.collectedSpeed(2, 3) == 2 and J.collectedSpeed(10, nil) == 10 * J.COLLECT_SPEED_SHARE)
+    -- James's angles: gallop 30-40 degrees, canter 45-60, collected 65-80 (agility 50, base speeds 10/5/3).
+    local gallopH = 2 * 0.925 * J.HEIGHT_SHARE
+    local function angleAt(height, speed) return J.angle(J.launchSpeed(height, g), speed) end
+    local gallopA, canterA = angleAt(gallopH, 10.3), angleAt(gallopH * 1.8 * 0.5, 5.15)
+    local collectA = angleAt(gallopH * J.COLLECT_HEIGHT_SHARE, J.collectedSpeed(5.15, 3.1))
+    check("jump angles: gallop 30-40, canter 45-60, collected 65-80", gallopA >= 30 and gallopA <= 40
+        and canterA >= 45 and canterA <= 60 and collectA >= 65 and collectA <= 80,
+        string.format("%.0f / %.0f / %.0f", gallopA, canterA, collectA))
+
     -- Console tuning.
     local was = J.FALL_SHARE
     local ok = J.set("fall", 99)
