@@ -163,8 +163,10 @@ end
 --- still on the ground as the path is cut shorter in front of the horse)
 --- @param breaks table|nil sorted metres along the path (same count as from) where the pieces
 --- start afresh: a dressage test's changes, so a gait's dashes begin right at its change
+--- @param stepAt function|nil function(s) giving the spacing from a break at s on (the
+--- dressage line's dashes by gait), SEGMENT when nil
 --- @return table pieces { ax, ay, az, bx, by, bz, s = metres along the path where it starts }
-function EqCourseGlow.pieces(points, from, nearX, nearZ, radius, breaks)
+function EqCourseGlow.pieces(points, from, nearX, nearZ, radius, breaks, stepAt)
     local list = {}
     local step, gap = EqCourseGlow.SEGMENT, EqCourseGlow.GAP
     local radius2 = radius ~= nil and radius * radius or nil
@@ -176,7 +178,8 @@ function EqCourseGlow.pieces(points, from, nearX, nearZ, radius, breaks)
         for _, b in ipairs(breaks) do
             if b <= c + 1e-9 then anchor = b else break end
         end
-        local n = anchor + (math.floor((c - anchor) / step + 1e-9) + 1) * step
+        local st = stepAt ~= nil and stepAt(anchor) or step
+        local n = anchor + (math.floor((c - anchor) / st + 1e-9) + 1) * st
         for _, b in ipairs(breaks) do
             if b > c + 1e-9 and b < n - 1e-9 then return b end
         end
@@ -221,7 +224,7 @@ end
 --- @param colour string|function|nil one of COLOURS, gold when nil, or a function(s) giving
 --- each piece's colour from the metres along the path where it starts
 --- @param from number|nil see pieces
---- @param style table|nil { breaks = see pieces, length = function(s) giving a piece's length
+--- @param style table|nil { breaks = see pieces, step = see pieces' stepAt, length = function(s) giving a piece's length
 --- (the dressage line's dashes by gait), shape = function(s) giving a world heading (dirX,
 --- dirZ) and a bend (-1..1, right positive) for a piece drawn as a horse's body instead }
 --- @return boolean false when the glow can't be drawn
@@ -229,7 +232,7 @@ function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius, style)
     if not ensureLoaded() then return false end
     style = style or {}
     local lift = EqCourseGlow.PATH_LIFT
-    for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius, style.breaks)) do
+    for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius, style.breaks, style.step)) do
         if (EqCourseGlow.pieceCount or 0) >= EqCourseGlow.MAX_PIECES then break end
         EqCourseGlow.pieceCount = (EqCourseGlow.pieceCount or 0) + 1
         local c = colour
@@ -286,6 +289,58 @@ function EqCourseGlow.body(piece, dirX, dirZ, bend)
     local hz = dirZ * math.cos(turn) + dirX * math.sin(turn)
     local head = size * EqCourseGlow.HEAD
     return { { ax, my, az, bx, my, bz }, { bx, my, bz, bx + hx * head, my, bz + hz * head } }
+end
+
+
+-- Symbols on a dressage line (James, 2026-10-30: halts and movements on the spot gave no idea
+-- what was coming): a bar across the line for a halt, two for a piaffe, and for a pirouette a
+-- ring round the point with an arrowhead the way to turn.
+EqCourseGlow.SYMBOL = { bar = 1.4, piaffeBar = 1.0, piaffeGap = 0.35, ring = 1.1, ringPieces = 12, arrow = 0.45 }
+
+
+--- The strips for a symbol at a point on the line (pure): { ax, ay, az, bx, by, bz } each.
+--- @param kind string halt, piaffe or pirouette
+--- @param dirX number the line's heading there (world, dir = sin, cos of a heading)
+--- @param dirZ number
+--- @param turn number|nil pirouette: 1 left (the heading growing), -1 right
+--- @return table
+function EqCourseGlow.symbol(kind, x, y, z, dirX, dirZ, turn)
+    local len = math.sqrt(dirX * dirX + dirZ * dirZ)
+    if len < 1e-6 then return {} end
+    dirX, dirZ = dirX / len, dirZ / len
+    -- The line's right: (-z, x).
+    local rx, rz = -dirZ, dirX
+    local S = EqCourseGlow.SYMBOL
+    local function across(cx, cz, width)
+        return { cx - rx * width / 2, y, cz - rz * width / 2, cx + rx * width / 2, y, cz + rz * width / 2 }
+    end
+    if kind == "halt" then return { across(x, z, S.bar) } end
+    if kind == "piaffe" then
+        return { across(x - dirX * S.piaffeGap / 2, z - dirZ * S.piaffeGap / 2, S.piaffeBar),
+            across(x + dirX * S.piaffeGap / 2, z + dirZ * S.piaffeGap / 2, S.piaffeBar) }
+    end
+    if kind ~= "pirouette" then return {} end
+    turn = turn or 1
+    local list = {}
+    local a0 = math.atan2(dirX, dirZ)
+    local step = 2 * math.pi / S.ringPieces
+    local function at(a) return x + math.sin(a) * S.ring, z + math.cos(a) * S.ring end
+    -- Round from in front of the horse the way it turns, leaving a gap for the arrowhead.
+    for k = 0, S.ringPieces - 2 do
+        local ax, az = at(a0 + turn * (k + 0.15) * step)
+        local bx, bz = at(a0 + turn * (k + 0.85) * step)
+        table.insert(list, { ax, y, az, bx, y, bz })
+    end
+    local endA = a0 + turn * (S.ringPieces - 1.15) * step
+    local tx, tz = at(endA)
+    -- The ring's way round there, and the arrowhead's two barbs pointing along it.
+    local gx, gz = math.cos(endA) * turn, -math.sin(endA) * turn
+    for _, side in ipairs({ 1, -1 }) do
+        local c, sn = math.cos(math.rad(150) * side), math.sin(math.rad(150) * side)
+        local bx, bz = gx * c - gz * sn, gz * c + gx * sn
+        table.insert(list, { tx, y, tz, tx + bx * S.arrow, y, tz + bz * S.arrow })
+    end
+    return list
 end
 
 

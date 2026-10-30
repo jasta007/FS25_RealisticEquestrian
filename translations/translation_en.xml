@@ -133,10 +133,12 @@
         <text name="eq_lat_keys" text="Shift + A/D: drift sideways. Shift + right mouse drag: bend the head."/>
         <text name="eq_fig_final" text="Centre line at %s, halt at %s"/>
         <text name="eq_dressage_haltAt" text="Halt at %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piaffe at %s (hold Ctrl)"/>
-        <text name="eq_dressage_pirouetteAt" text="Pirouette %s at %s (Ctrl + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piaffe! Hold Ctrl"/>
-        <text name="eq_dressage_pirouette" text="Pirouette %s! Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) at %s: hold Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Left Pirouette (%s) at %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Right Pirouette (%s) at %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Hold Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Left Pirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Right Pirouette (%s)! Ctrl + D"/>
         <text name="eq_dressage_line" text="Back on the line!"/>
         <text name="eq_dressage_mark" text="Last mark: %s"/>
         <text name="eq_pop_routineError" text="Error of course %d/%d"/>

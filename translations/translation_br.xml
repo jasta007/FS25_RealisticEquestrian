@@ -135,10 +135,12 @@
         <text name="eq_lat_keys" text="Shift + A/D: deslocar de lado. Shift + botão direito e arraste: flexionar a cabeça."/>
         <text name="eq_fig_final" text="Linha central em %s, parada em %s"/>
         <text name="eq_dressage_haltAt" text="Parada em %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piaffe em %s (segure Ctrl)"/>
-        <text name="eq_dressage_pirouetteAt" text="Pirueta para a %s em %s (Ctrl + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piaffe! Segure Ctrl"/>
-        <text name="eq_dressage_pirouette" text="Pirueta para a %s! Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) em %s: segure Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Pirueta à direita (%s) em %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Segure Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Pirueta à esquerda (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Pirueta à direita (%s)! Ctrl + D"/>
         <text name="eq_dressage_line" text="Volte para a linha!"/>
         <text name="eq_dressage_mark" text="Última nota: %s"/>
         <text name="eq_pop_routineError" text="Erro de percurso %d/%d"/>

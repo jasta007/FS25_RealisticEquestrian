@@ -169,8 +169,9 @@ horse drifts that way at half its forward speed while still facing forwards, its
 way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
 to adjust the line, then hold it again. **Mouse steering** (James, 2026-10-30: a canter circle
 wider than the full key turn was jerky to hold): hold the right mouse button and move the mouse
-left or right to set the turn like a wheel (A or D still steer while pressed); it goes straight
-once the button is let go. **Shift + right mouse button** and dragging bends the head instead
+left or right to set the turn like a wheel (A or D still steer while pressed), with a dead zone
+of 15% in the middle so going straight is easy; it goes straight once the button is let go. The
+head eases to the turn asked (0.35 s) rather than following the turn frame by frame. **Shift + right mouse button** and dragging bends the head instead
 (the turn animation only, no turn); it springs back in 0.3 s once let go. While the button is
 held the camera eases round to the way the horse is going (its heading, turned by the drift) and
 the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
@@ -186,7 +187,10 @@ top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a can
 slide less. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
-Started near the gold pole (marked like a halt); letting go early costs up to 3, riding past 3.
+Started near the gold pole (marked like a halt); letting go early (off the spot for 0.7 s) costs
+up to 3, riding past 3. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
+(Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
+two for a piaffe, a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
@@ -198,8 +202,8 @@ orange or red as the horse is up to 0.5, 1, 1.6, 2.4 m or further off it now, an
 3 m behind keep the colour of how they were ridden (James, 2026-10-30).
 Every path guide (a round's way to the next fence, course recording and editing) uses the same
 pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends. On the dressage line the
-dashes show the gait asked (James, 2026-10-30): 0.25 m at a walk, 0.45 m at a trot, 0.7 m at a
-canter, and they start afresh exactly at each change or halt, so the change is where the dash
+dashes show the gait asked like its stride (James, 2026-10-30): 0.2 m dashes 0.6 m apart at a
+walk, 0.45 m 1.1 m apart at a trot, 0.9 m 1.9 m apart at a canter, and they start afresh exactly at each change or halt, so the change is where the dash
 length changes. Where a gait's track meets another's in a corner the line eases across over 5 m:
 
 - It opens down the centre line from A with a halt at X, then proceeds to track left or right at

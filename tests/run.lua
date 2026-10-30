@@ -3730,6 +3730,10 @@ end)()
     check("the right button steers with the mouse, Shift + right button bends the head", steered < 0 and bentBy == 0
         and EqLateral.bend > 0 and EqLateral.steer == steered and passes == false)
     Input, EqLateral.vehicle, EqLateral.steer, EqLateral.bend = saved, nil, 0, 0
+    -- Mouse steering: nothing in the dead zone, full turn at the end; the head eased to it.
+    check("mouse steering has a dead zone in the middle", EqLateral.deadZone(EqLateral.DEAD_ZONE * 0.9) == 0
+        and EqLateral.deadZone(1) == 1 and EqLateral.deadZone(-1) == -1 and EqLateral.deadZone(0.6) > 0.5
+        and math.abs(EqLateral.towards(0, 1, EqLateral.HEAD_MS / 2, EqLateral.HEAD_MS) - 0.5) < 1e-9)
     -- Ctrl collects to the spot and eases back; Ctrl + A turns left (positive), D right.
     local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
     check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9
@@ -3761,6 +3765,23 @@ end)()
     local h = bent[2]
     check("the dash's front turns to the bend side, joined to it", #bent == 2 and h ~= nil and h[4] < h[1] and h[6] > h[3]
         and h[1] == bent[1][4] and h[3] == bent[1][6])
+end)()
+
+
+-- Symbols on the dressage line: a bar across for a halt, two for a piaffe, a ring with an
+-- arrowhead for a pirouette (facing +z the line's right is -x).
+;(function()
+    local halt = EqCourseGlow.symbol("halt", 0, 0, 0, 0, 1)
+    local piaffe = EqCourseGlow.symbol("piaffe", 0, 0, 0, 0, 1)
+    local left = EqCourseGlow.symbol("pirouette", 0, 0, 0, 0, 1, 1)
+    local right = EqCourseGlow.symbol("pirouette", 0, 0, 0, 0, 1, -1)
+    check("a halt is a bar across the line", #halt == 1 and math.abs(halt[1][3] - halt[1][6]) < 1e-9
+        and math.abs(math.abs(halt[1][4] - halt[1][1]) - EqCourseGlow.SYMBOL.bar) < 1e-9)
+    check("a piaffe is two bars across", #piaffe == 2 and piaffe[1][3] < 0 and piaffe[2][3] > 0)
+    local ring = EqCourseGlow.SYMBOL.ringPieces - 1
+    -- Turning left (the heading growing) goes round towards +x first; right towards -x.
+    check("a pirouette is a ring round the point, starting off the way to turn", #left == ring + 2 and #right == ring + 2
+        and left[1][4] > 0 and right[1][4] < 0 and math.abs(math.sqrt(left[3][1] ^ 2 + left[3][3] ^ 2) - EqCourseGlow.SYMBOL.ring) < 1e-9)
 end)()
 
 

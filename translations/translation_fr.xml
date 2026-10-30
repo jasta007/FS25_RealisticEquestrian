@@ -84,10 +84,12 @@
         <text name="eq_lat_keys" text="Maj + A/D : se décaler sur le côté. Maj + clic droit et glisser : plier la tête."/>
         <text name="eq_fig_final" text="Ligne du milieu en %s, arrêt en %s"/>
         <text name="eq_dressage_haltAt" text="Arrêt en %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piaffer à %s (maintenir Ctrl)"/>
-        <text name="eq_dressage_pirouetteAt" text="Pirouette à %s à %s (Ctrl + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piaffer ! Maintenez Ctrl"/>
-        <text name="eq_dressage_pirouette" text="Pirouette à %s ! Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffer (%s) à %s : maintenir Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Pirouette à gauche (%s) à %s : Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Pirouette à droite (%s) à %s : Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffer (%s) ! Maintenez Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Pirouette à gauche (%s) ! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Pirouette à droite (%s) ! Ctrl + D"/>
         <text name="eq_dressage_line" text="Revenez sur la ligne !"/>
         <text name="eq_dressage_mark" text="Dernière note : %s"/>
         <text name="eq_pop_routineError" text="Erreur de parcours %d/%d"/>

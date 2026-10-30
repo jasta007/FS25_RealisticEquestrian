@@ -329,7 +329,8 @@ function EqDressageHooks.drawPath(vehicle)
     end
     EqDressageHooks.drawnAt = now
     local style = { breaks = EqDressagePath.breaks(run.test), shape = EqDressageHooks.bodyAlong(run),
-        length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(run.test, s + 1e-6)] end }
+        length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(run.test, s + 1e-6)] end,
+        step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(run.test, s + 1e-6)] end }
     if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, style) then return end
     if not run.started then
         local p = pts[1]
@@ -345,6 +346,30 @@ function EqDressageHooks.drawPath(vehicle)
                 break
             end
         end
+    end
+    -- Halts and movements on the spot ahead (and the one under way) drawn as symbols on the line.
+    local current = run.spot ~= nil and run.spot.event or (run.hold ~= nil and run.hold.event or nil)
+    for _, e in ipairs(run.test.events) do
+        local ahead = e.s >= run.s and e.s <= reach
+        if (e.kind == "halt" or e.kind == "spot") and (ahead or e == current) then
+            EqDressageHooks.drawSymbol(run, e)
+        end
+    end
+end
+
+
+--- One event's symbol at its point on the line, in gold.
+function EqDressageHooks.drawSymbol(run, e)
+    local pts, frame = run.test.pts, run.frame
+    local k = 2
+    while k < #pts and pts[k].s < e.s do k = k + 1 end
+    local a, b = pts[k - 1], pts[k]
+    pointY(frame, a)
+    local y = pointY(frame, b) + EqCourseGlow.PATH_LIFT
+    local dirX, dirZ = b.wx - a.wx, b.wz - a.wz
+    local kind = e.kind == "spot" and e.style or "halt"
+    for _, strip in ipairs(EqCourseGlow.symbol(kind, b.wx, y, b.wz, dirX, dirZ, e.turn)) do
+        EqCourseGlow.strip(strip[1], strip[2], strip[3], strip[4], strip[5], strip[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, nil)
     end
 end
 

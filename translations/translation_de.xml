@@ -135,10 +135,12 @@
         <text name="eq_lat_keys" text="Umschalt + A/D: seitwärts treten. Umschalt + rechte Maustaste ziehen: Kopf stellen."/>
         <text name="eq_fig_final" text="Bei %s auf die Mittellinie, Halten bei %s"/>
         <text name="eq_dressage_haltAt" text="Halten bei %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piaffe bei %s (Strg halten)"/>
-        <text name="eq_dressage_pirouetteAt" text="Pirouette %s bei %s (Strg + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piaffe! Strg halten"/>
-        <text name="eq_dressage_pirouette" text="Pirouette %s! Strg + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bei %s: Strg halten"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bei %s: Strg + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bei %s: Strg + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Strg halten"/>
+        <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Strg + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Strg + D"/>
         <text name="eq_dressage_line" text="Zurück auf die Linie!"/>
         <text name="eq_dressage_mark" text="Letzte Note: %s"/>
         <text name="eq_pop_routineError" text="Verritten %d/%d"/>

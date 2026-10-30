@@ -135,10 +135,12 @@
         <text name="eq_lat_keys" text="Shift + A/D: pohyb do strany. Shift + pravé tlačítko myši a táhnout: ohnutí hlavy."/>
         <text name="eq_fig_final" text="Střední čára v %s, zastavení v %s"/>
         <text name="eq_dressage_haltAt" text="Zastavení v %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piafa u %s (držte Ctrl)"/>
-        <text name="eq_dressage_pirouetteAt" text="Piruet %s u %s (Ctrl + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piafa! Držte Ctrl"/>
-        <text name="eq_dressage_pirouette" text="Piruet %s! Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piafa (%s) u %s: držte Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piruet vlevo (%s) u %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piruet vpravo (%s) u %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piafa (%s)! Držte Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piruet vlevo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piruet vpravo (%s)! Ctrl + D"/>
         <text name="eq_dressage_line" text="Zpět na čáru!"/>
         <text name="eq_dressage_mark" text="Poslední známka: %s"/>
         <text name="eq_pop_routineError" text="Chyba v úloze %d/%d"/>

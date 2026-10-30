@@ -135,10 +135,12 @@
         <text name="eq_lat_keys" text="Shift + A/D: ruch w bok. Shift + prawy przycisk myszy i przeciągnij: zgięcie głowy."/>
         <text name="eq_fig_final" text="Linia środkowa w %s, zatrzymanie w %s"/>
         <text name="eq_dressage_haltAt" text="Zatrzymanie w %s"/>
-        <text name="eq_dressage_piaffeAt" text="Piaff przy %s (przytrzymaj Ctrl)"/>
-        <text name="eq_dressage_pirouetteAt" text="Piruet w %s przy %s (Ctrl + %s)"/>
-        <text name="eq_dressage_piaffe" text="Piaff! Przytrzymaj Ctrl"/>
-        <text name="eq_dressage_pirouette" text="Piruet w %s! Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaff (%s) przy %s: przytrzymaj Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piruet w lewo (%s) przy %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piruet w prawo (%s) przy %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaff (%s)! Przytrzymaj Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piruet w lewo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piruet w prawo (%s)! Ctrl + D"/>
         <text name="eq_dressage_line" text="Wróć na linię!"/>
         <text name="eq_dressage_mark" text="Ostatnia ocena: %s"/>
         <text name="eq_pop_routineError" text="Błąd trasy %d/%d"/>

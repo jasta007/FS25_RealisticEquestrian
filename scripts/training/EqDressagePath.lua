@@ -163,6 +163,9 @@ EqDressagePath.SPOT_MS = 4000
 EqDressagePath.SPOT_TURN = math.rad(20)
 EqDressagePath.SPOT_SHORT = 3
 EqDressagePath.SPOT_MISSED = 3
+-- Off the spot this long before it counts as let go (James, 2026-10-30: a pirouette ended a third
+-- of the way round).
+EqDressagePath.SPOT_GRACE_MS = 700
 -- Errors of course: further than LOST_DEV off the line for LOST_MS, out of the arena for OUT_MS
 -- (OUT_MARGIN past the rail), or no headway for STALL_MS. Each costs ERROR_PEN on the movement;
 -- ERRORS eliminate. The line then picks up at the nearest point up to SNAP_AHEAD on.
@@ -1436,6 +1439,7 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         local spot, done = run.spot, false
         local on = look ~= nil and look.spot and EqDressagePath.matches(move, spot.event.gait)
         if on then
+            spot.offMs = 0
             spot.ms = spot.ms + dt
             if spot.event.style == "pirouette" then
                 local a = math.atan2(look.dirX, look.dirZ)
@@ -1447,9 +1451,13 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                 done = spot.ms >= EqDressagePath.SPOT_MS
             end
         else
-            -- Let go early: marks off by how much was left.
-            addPen(run, spot.event.m, EqDressagePath.SPOT_SHORT * (1 - EqDressagePath.spotShare(spot)))
-            done = true
+            spot.offMs = (spot.offMs or 0) + dt
+            if look ~= nil then spot.lastA = math.atan2(look.dirX, look.dirZ) end
+            if spot.offMs >= EqDressagePath.SPOT_GRACE_MS then
+                -- Let go early: marks off by how much was left.
+                addPen(run, spot.event.m, EqDressagePath.SPOT_SHORT * (1 - EqDressagePath.spotShare(spot)))
+                done = true
+            end
         end
         if done then
             run.spot, run.ev = nil, run.ev + 1
@@ -1585,9 +1593,11 @@ end
 
 --- What to show next: the change or halt coming up, once it is within warning.
 --- @return table|nil event { s, kind, gait, letter }, number metres to it
--- The line's dashes by gait (James, 2026-10-30: show where a change is due): metres long, the
--- longer the stride. Each gait's dashes start right at its change (EqCourseGlow.pieces breaks).
-EqDressagePath.DASH = { walk = 0.25, trot = 0.45, canter = 0.7, halt = 0.15 }
+-- The line's dashes by gait (James, 2026-10-30: show where a change is due; lengths alone were
+-- hard to tell apart and a canter should look wider apart): DASH metres long, DASH_STEP apart,
+-- like the stride. Each gait's dashes start right at its change (EqCourseGlow.pieces breaks).
+EqDressagePath.DASH = { walk = 0.2, trot = 0.45, canter = 0.9, halt = 0.2 }
+EqDressagePath.DASH_STEP = { walk = 0.6, trot = 1.1, canter = 1.9, halt = 0.6 }
 
 
 --- The gait asked for at metres s along a test (pure): from the last change or halt before it.

@@ -44,8 +44,15 @@ EqLateral.BEND_BACK_MS = 300
 -- Mouse steering (James, 2026-10-30): the right button held without Shift steers with the mouse,
 -- left and right setting the turn (-1..1, left positive as the base game's axisSteer) like a
 -- wheel, back to straight once the button is let go. Shift + right button bends the head.
-EqLateral.STEER_SCALE = 1.5
+-- (James: too little turn for the mouse moved, and hard to keep straight: x3, and a dead zone
+-- in the middle the turn starts from, with the head eased to the turn so it doesn't jerk.)
+EqLateral.STEER_SCALE = 4.5
+EqLateral.DEAD_ZONE = 0.15
+EqLateral.STEER_TILT = 0.9
+EqLateral.HEAD_MS = 350
+EqLateral.BEND_EASE_MS = 120
 EqLateral.steer = 0
+EqLateral.head = 0
 -- While the bend is held the camera eases round to the way the horse is going (James,
 -- 2026-10-30: bending took the mouse away from the camera, so he lost sight of where he went):
 -- the share of the gap closed each SNAP_MS. Up and down stays on the mouse.
@@ -198,6 +205,22 @@ function EqLateral.collect(current, wanted, dt)
 end
 
 
+--- The turn from the mouse's steer (pure): nothing in the dead zone, then the rest of the way.
+--- @param steer number -1..1
+--- @return number -1..1
+function EqLateral.deadZone(steer)
+    local a = math.abs(steer)
+    if a <= EqLateral.DEAD_ZONE then return 0 end
+    return (steer > 0 and 1 or -1) * (a - EqLateral.DEAD_ZONE) / (1 - EqLateral.DEAD_ZONE)
+end
+
+
+--- A value eased towards a target over ms (pure).
+function EqLateral.towards(value, target, dt, ms)
+    return value + (target - value) * math.min(1, dt / ms)
+end
+
+
 --- @return boolean the right mouse button is held
 local function rightHeld()
     return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
@@ -294,8 +317,9 @@ local function before(vehicle, dt)
             side = EqLateral.side(shift, key("KEY_a"), key("KEY_d"), gaitOk(spec))
         end
         -- Mouse steering, unless A or D steers.
-        if held and not shift and not spot and EqLateral.steer ~= 0 and not key("KEY_a") and not key("KEY_d") then
-            spec.inputValues.axisSteer = EqLateral.steer
+        EqLateral.steering = held and not shift and not spot and not key("KEY_a") and not key("KEY_d")
+        if EqLateral.steering then
+            spec.inputValues.axisSteer = EqLateral.deadZone(EqLateral.steer)
         end
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
@@ -351,12 +375,25 @@ end
 
 --- Before the base game's animation update: tilt the head the way the horse drifts (left is
 --- positive, as turning left is).
-local function tilt(vehicle)
+local function tilt(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
     local bend = vehicle == EqLateral.vehicle and EqLateral.bend or 0
-    if amount == 0 and bend == 0 or type(spec.smoothedLeftRightWeight) ~= "number" then return end
-    spec.smoothedLeftRightWeight = EqLateral.weight(amount, bend)
+    -- Mouse steering: the head eased to the turn asked, not the base game's frame-to-frame turn
+    -- (James: jerky, at times snapping from full left to full right).
+    if vehicle == EqLateral.vehicle and EqLateral.steering and amount == 0 and bend == 0 and type(spec.smoothedLeftRightWeight) == "number" then
+        EqLateral.head = EqLateral.towards(EqLateral.head, EqLateral.deadZone(EqLateral.steer) * EqLateral.STEER_TILT, dt, EqLateral.HEAD_MS)
+        spec.smoothedLeftRightWeight = EqLateral.head
+        return
+    end
+    if type(spec.smoothedLeftRightWeight) ~= "number" then return end
+    if amount == 0 and bend == 0 then
+        if vehicle == EqLateral.vehicle then EqLateral.head = spec.smoothedLeftRightWeight end
+        return
+    end
+    -- Eased a little too: the mouse's bend comes in bursts.
+    EqLateral.head = EqLateral.towards(EqLateral.head, EqLateral.weight(amount, bend), dt, EqLateral.BEND_EASE_MS)
+    spec.smoothedLeftRightWeight = EqLateral.head
 end
 
 
@@ -399,7 +436,7 @@ function EqLateral.install()
     end)
     if type(Rideable.updateAnimation) == "function" then
         Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
-            if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral tilt", tilt, self) then EqLateral.failed = true end
+            if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral tilt", tilt, self, dt) then EqLateral.failed = true end
             if EqMain.isActive and not EqLateral.failed and not EqLog.try("EqLateral camera", snapCamera, self, dt) then EqLateral.failed = true end
             -- On the spot the animation sees the gait's speed, not the horse's (near nothing).
             local spec = self.spec_rideable

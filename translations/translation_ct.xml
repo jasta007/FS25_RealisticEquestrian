@@ -135,10 +135,12 @@
         <text name="eq_lat_keys" text="Shift + A/D：側向移動。Shift + 滑鼠右鍵拖曳：彎曲馬頭。"/>
         <text name="eq_fig_final" text="在%s上中線，在%s立定"/>
         <text name="eq_dressage_haltAt" text="在%s立定"/>
-        <text name="eq_dressage_piaffeAt" text="在%s原地踏步（按住Ctrl）"/>
-        <text name="eq_dressage_pirouetteAt" text="向%s定後肢旋轉，在%s（Ctrl + %s）"/>
-        <text name="eq_dressage_piaffe" text="原地踏步！按住Ctrl"/>
-        <text name="eq_dressage_pirouette" text="向%s定後肢旋轉！Ctrl + %s"/>
+        <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="向左定後肢旋轉（%s）在%s：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="向右定後肢旋轉（%s）在%s：Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="原地踏步（%s）！按住Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="向左定後肢旋轉（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="向右定後肢旋轉（%s）！Ctrl + D"/>
         <text name="eq_dressage_line" text="回到線上！"/>
         <text name="eq_dressage_mark" text="上一項得分：%s"/>
         <text name="eq_pop_routineError" text="路線錯誤 %d/%d"/>
