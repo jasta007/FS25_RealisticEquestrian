@@ -54,6 +54,12 @@ EqLateral.vehicle = nil
 -- with Ctrl + A/D as a share of the base game's.
 EqLateral.COLLECT_MS = 600
 EqLateral.SPOT_TURN = 0.5
+-- On the spot (James, 2026-10-30: the hooves slid): the animation is shown a slower speed, this
+-- share of the way from the gait below's top speed to the gait's, and the horse still creeps
+-- forward at this share of its speed, a little at a piaffe and a bit more at a canter. No lift:
+-- off the ground the base game plays a jump or landing.
+EqLateral.SPOT_SHOW = 0.6
+EqLateral.SPOT_CREEP = { WALK = 0, TROT = 0.08, CANTER = 0.15 }
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
 
@@ -137,6 +143,42 @@ end
 function EqLateral.spotSteer(left, right)
     if left == right then return 0 end
     return (left and 1 or -1) * EqLateral.SPOT_TURN
+end
+
+
+--- The gait's name (WALK, TROT, CANTER) and the top speed of the gait below it (pure).
+--- @return string|nil, number
+function EqLateral.gaitName(spec)
+    local types, tops = Rideable ~= nil and Rideable.GAITTYPES or nil, spec.topSpeeds
+    local gait = spec.inputValues ~= nil and spec.inputValues.currentGait or nil
+    if types == nil or tops == nil or gait == nil then return nil, 0 end
+    local below = { TROT = "WALK", CANTER = "TROT" }
+    for name in pairs(EqLateral.GAITS) do
+        if types[name] == gait then
+            local lower = below[name] ~= nil and tops[types[below[name]]] or 0
+            return name, type(lower) == "number" and lower or 0
+        end
+    end
+    return nil, 0
+end
+
+
+--- The share of the forward move kept on the spot (pure).
+--- @param collect number 0..1
+--- @param gait string|nil gait name
+function EqLateral.keep(collect, gait)
+    return 1 - collect * (1 - (EqLateral.SPOT_CREEP[gait or ""] or 0))
+end
+
+
+--- The speed the animation is shown on the spot (pure): eased from the real one to a slower
+--- one that still reads as the gait.
+--- @param speed number the gait's speed the base game worked out, m/s
+--- @param lower number the gait below's top speed
+--- @param collect number 0..1
+function EqLateral.shownSpeed(speed, lower, collect)
+    local slow = lower + (speed - lower) * EqLateral.SPOT_SHOW
+    return speed + (math.min(speed, slow) - speed) * collect
 end
 
 
@@ -263,7 +305,7 @@ local function sidewaysMove(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
     local pullX, pullZ = spec ~= nil and spec.eqPullX or 0, spec ~= nil and spec.eqPullZ or 0
-    local keep = 1 - (spec ~= nil and spec.eqCollect or 0)
+    local keep = spec ~= nil and EqLateral.keep(spec.eqCollect or 0, (EqLateral.gaitName(spec))) or 1
     if amount == 0 and pullX == 0 and pullZ == 0 and keep == 1 or type(spec.currentTurnAngle) ~= "number" then return nil end
     local base = vehicle.moveCCT
     if base == nil then
@@ -341,7 +383,8 @@ function EqLateral.install()
                 return superFunc(self, dt)
             end
             local real, smooth = self.lastSignedSpeedReal, self.lastSignedSpeed
-            local shown = spec.currentSpeed / 1000
+            local _, lower = EqLateral.gaitName(spec)
+            local shown = EqLateral.shownSpeed(spec.currentSpeed, lower, collect) / 1000
             self.lastSignedSpeedReal = math.max(real, shown)
             if type(smooth) == "number" then self.lastSignedSpeed = math.max(smooth, shown) end
             local result = { pcall(superFunc, self, dt) }

@@ -3719,6 +3719,11 @@ end)()
     local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
     check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9
         and EqLateral.collect(1, true, 100) == 1 and EqLateral.collect(held, false, EqLateral.COLLECT_MS) == 0)
+    check("on the spot the horse creeps a little, more at a canter", EqLateral.keep(0, "TROT") == 1
+        and math.abs(EqLateral.keep(1, "TROT") - 0.08) < 1e-9 and EqLateral.keep(1, "CANTER") > EqLateral.keep(1, "TROT")
+        and EqLateral.keep(1, "WALK") == 0)
+    check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
+        and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
     check("Ctrl + A/D turns on the spot", EqLateral.spotSteer(true, false) > 0 and EqLateral.spotSteer(false, true) < 0
         and EqLateral.spotSteer(true, true) == 0 and EqLateral.spotSteer(false, false) == 0)
     check("the body turns towards the asked angle, the short way", math.abs(turned - 0.5) < 1e-9
