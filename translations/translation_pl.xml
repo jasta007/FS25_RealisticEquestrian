@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s"/>
         <text name="eq_lat_left" text="lewo"/>
         <text name="eq_lat_right" text="prawo"/>
-        <text name="eq_lat_keys" text="Shift + A/D: ruch w bok. Shift + prawy przycisk myszy i przeciągnij: zgięcie głowy."/>
+        <text name="eq_lat_keys" text="Prawy przycisk myszy: skręcanie myszą, A/D ruch w bok, Shift trzyma kierunek, a mysz zgina głowę."/>
         <text name="eq_fig_final" text="Linia środkowa w %s, zatrzymanie w %s"/>
         <text name="eq_dressage_haltAt" text="Zatrzymanie w %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaff (%s) przy %s: przytrzymaj Ctrl"/>

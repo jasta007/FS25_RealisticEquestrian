@@ -169,10 +169,14 @@ horse drifts that way at half its forward speed while still facing forwards, its
 way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
 to adjust the line, then hold it again. **Mouse steering** (James, 2026-10-30: a canter circle
 wider than the full key turn was jerky to hold): hold the right mouse button and move the mouse
-left or right to set the turn like a wheel (A or D still steer while pressed), with a dead zone
-of 15% in the middle so going straight is easy; it goes straight once the button is let go. The
-head eases to the turn asked (0.35 s) rather than following the turn frame by frame. **Shift + right mouse button** and dragging bends the head instead
-(the turn animation only, no turn); it springs back in 0.3 s once let go. While the button is
+left or right to set the turn like a wheel, with a dead zone of 25% in the middle so going
+straight is easy and the turn growing gently past it (power 1.5); it goes straight once the
+button is let go. While steering with the mouse, A and D strafe without Shift, and holding
+**Shift** holds the heading (no turn) while the mouse bends the head instead (the turn animation
+only); the bend springs back in 0.3 s once let go. The head eases to the turn asked rather than
+following the turn frame by frame, slower towards full lock. Every ridden horse swings from one
+lock to the other faster than the base game (3 rad/s² more turn acceleration: James found it
+spongey, a canter serpentine impossible). While the button is
 held the camera eases round to the way the horse is going (its heading, turned by the drift) and
 the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
@@ -218,8 +222,8 @@ length changes. Where a gait's track meets another's in a corner the line eases 
   between figures are sized for the gait ridden on them, so a sudden big circle often means a
   canter is coming. Each figure is built for one end and side and mirrored, and they only chain
   on the same rein; nearby figures are likelier, so the track between them ("go large") is short,
-and short figures likelier than serpentines and figures of eight. Each movement's name shows in
-the middle of the screen for 2.5 s as it starts.
+and short figures likelier than serpentines and figures of eight. Each movement's name shows on
+the panel; the middle of the screen is for orders (changes, halts, movements).
 - **Changes** to a figure's gait come on the track at the last letter before it (the first
   letter when trotting on from a walk), or 4 m before the figure with no letter there; one gait
   at a time, never walk to canter. Inside a figure only a change down comes (X on a diagonal,
@@ -240,6 +244,7 @@ the middle of the screen for 2.5 s as it starts.
   60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4.
+- A halt made by stopping with Ctrl (on the spot) counts as a halt.
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
@@ -247,7 +252,7 @@ the middle of the screen for 2.5 s as it starts.
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, their front
   third bent to the bend side. From 1 m into each section the body must face within 12 degrees of the asked angle
-  (0.6 a second off, at most 3) and the head be bent at least 0.3 the asked way (0.5 a second,
+  (0.6 a second off, at most 3; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.5 a second,
   at most 2).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside

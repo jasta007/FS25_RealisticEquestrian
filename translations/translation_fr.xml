@@ -81,7 +81,7 @@
         <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s"/>
         <text name="eq_lat_left" text="gauche"/>
         <text name="eq_lat_right" text="droite"/>
-        <text name="eq_lat_keys" text="Maj + A/D : se décaler sur le côté. Maj + clic droit et glisser : plier la tête."/>
+        <text name="eq_lat_keys" text="Clic droit maintenu : diriger à la souris, A/D se décaler, Maj garde le cap et la souris plie la tête."/>
         <text name="eq_fig_final" text="Ligne du milieu en %s, arrêt en %s"/>
         <text name="eq_dressage_haltAt" text="Arrêt en %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffer (%s) à %s : maintenir Ctrl"/>

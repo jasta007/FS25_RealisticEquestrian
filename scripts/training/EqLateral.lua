@@ -47,7 +47,11 @@ EqLateral.BEND_BACK_MS = 300
 -- (James: too little turn for the mouse moved, and hard to keep straight: x3, and a dead zone
 -- in the middle the turn starts from, with the head eased to the turn so it doesn't jerk.)
 EqLateral.STEER_SCALE = 4.5
-EqLateral.DEAD_ZONE = 0.15
+EqLateral.DEAD_ZONE = 0.25
+-- Past the dead zone the turn grows gently first (power STEER_CURVE), finer near straight.
+EqLateral.STEER_CURVE = 1.5
+-- Extra turn acceleration, rad/s², on top of the base game's 0.8 to 1.2.
+EqLateral.TURN_ACCEL = 3
 EqLateral.STEER_TILT = 0.9
 EqLateral.HEAD_MS = 350
 EqLateral.BEND_EASE_MS = 120
@@ -215,6 +219,19 @@ function EqLateral.deadZone(steer)
 end
 
 
+--- The turn for a steer past the dead zone (pure): gentle near straight, full at the end.
+function EqLateral.curve(steer)
+    return (steer < 0 and -1 or 1) * math.abs(steer) ^ EqLateral.STEER_CURVE
+end
+
+
+--- The turn speed after a frame's extra easing towards what is asked (pure).
+function EqLateral.turnSpeedToward(current, desired, dt)
+    local step = EqLateral.TURN_ACCEL * dt / 1000
+    return current + math.max(-step, math.min(step, desired - current))
+end
+
+
 --- A value eased towards a target over ms (pure).
 function EqLateral.towards(value, target, dt, ms)
     return value + (target - value) * math.min(1, dt / ms)
@@ -311,21 +328,28 @@ local function before(vehicle, dt)
         EqLateral.vehicle = vehicle
         local held, shift = rightHeld(), shiftHeld()
         EqLateral.bend = EqLateral.relax(EqLateral.bend, held and shift, dt)
-        EqLateral.steer = EqLateral.relax(EqLateral.steer, held and not shift, dt)
+        EqLateral.steer = EqLateral.relax(EqLateral.steer, held, dt)
         spot = (key("KEY_lctrl") or key("KEY_rctrl")) and gaitOk(spec)
+        -- Mouse steering (James, 2026-10-30): A and D strafe without Shift, and Shift holds the
+        -- heading (no turn) while the mouse bends the head. On the keyboard Shift + A/D strafes.
         if not spot then
-            side = EqLateral.side(shift, key("KEY_a"), key("KEY_d"), gaitOk(spec))
+            side = EqLateral.side(shift or held, key("KEY_a"), key("KEY_d"), gaitOk(spec))
         end
-        -- Mouse steering, unless A or D steers.
-        EqLateral.steering = held and not shift and not spot and not key("KEY_a") and not key("KEY_d")
-        if EqLateral.steering then
-            spec.inputValues.axisSteer = EqLateral.deadZone(EqLateral.steer)
+        EqLateral.steering = held and not shift and not spot
+        if held and not spot then
+            spec.inputValues.axisSteer = shift and 0 or EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
+        elseif side ~= 0 then
+            spec.inputValues.axisSteer = 0
         end
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)
-    if side ~= 0 then spec.inputValues.axisSteer = 0 end
     if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
+    -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
+    -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster.
+    if entered and spec.isOnGround ~= false and type(spec.currentTurnSpeed) == "number" and type(spec.maxTurnSpeed) == "number" then
+        spec.currentTurnSpeed = EqLateral.turnSpeedToward(spec.currentTurnSpeed, spec.maxTurnSpeed * (spec.inputValues.axisSteer or 0), dt)
+    end
     if spot ~= (spec.eqSpot == true) then
         spec.eqSpot = spot
         Log:info("Lateral work: %s", spot and "on the spot" or "moving on")
@@ -382,7 +406,9 @@ local function tilt(vehicle, dt)
     -- Mouse steering: the head eased to the turn asked, not the base game's frame-to-frame turn
     -- (James: jerky, at times snapping from full left to full right).
     if vehicle == EqLateral.vehicle and EqLateral.steering and amount == 0 and bend == 0 and type(spec.smoothedLeftRightWeight) == "number" then
-        EqLateral.head = EqLateral.towards(EqLateral.head, EqLateral.deadZone(EqLateral.steer) * EqLateral.STEER_TILT, dt, EqLateral.HEAD_MS)
+        -- Slower towards full lock, so the neck doesn't race ahead of the body.
+        local target = EqLateral.curve(EqLateral.deadZone(EqLateral.steer)) * EqLateral.STEER_TILT
+        EqLateral.head = EqLateral.towards(EqLateral.head, target, dt, EqLateral.HEAD_MS * (1 + math.abs(target)))
         spec.smoothedLeftRightWeight = EqLateral.head
         return
     end

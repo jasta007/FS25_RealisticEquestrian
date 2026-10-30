@@ -81,7 +81,7 @@
         <text name="eq_lat_legYieldRail" text="Cesión por la pista: hacia la %s"/>
         <text name="eq_lat_left" text="izquierda"/>
         <text name="eq_lat_right" text="derecha"/>
-        <text name="eq_lat_keys" text="Mayús + A/D: desplazarse de lado. Mayús + botón derecho y arrastrar: flexionar la cabeza."/>
+        <text name="eq_lat_keys" text="Botón derecho pulsado: dirigir con el ratón, A/D desplazarse de lado, Mayús mantiene el rumbo y el ratón flexiona la cabeza."/>
         <text name="eq_fig_final" text="Línea central en %s, parada en %s"/>
         <text name="eq_dressage_haltAt" text="Parada en %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) en %s: mantén Ctrl"/>

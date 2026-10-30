@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s"/>
         <text name="eq_lat_left" text="влево"/>
         <text name="eq_lat_right" text="вправо"/>
-        <text name="eq_lat_keys" text="Shift + A/D: боковое движение. Shift + правая кнопка мыши, тянуть: сгибание головы."/>
+        <text name="eq_lat_keys" text="Правая кнопка мыши: руление мышью, A/D боковое движение, Shift держит направление, а мышь сгибает голову."/>
         <text name="eq_fig_final" text="Средняя линия от %s, остановка у %s"/>
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
         <text name="eq_dressage_piaffeAt" text="Пиаффе (%s) у %s: удерживайте Ctrl"/>

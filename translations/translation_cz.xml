@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Ustupování podél stěny: %s"/>
         <text name="eq_lat_left" text="vlevo"/>
         <text name="eq_lat_right" text="vpravo"/>
-        <text name="eq_lat_keys" text="Shift + A/D: pohyb do strany. Shift + pravé tlačítko myši a táhnout: ohnutí hlavy."/>
+        <text name="eq_lat_keys" text="Pravé tlačítko myši: řízení myší, A/D pohyb do strany, Shift drží směr a myš ohýbá hlavu."/>
         <text name="eq_fig_final" text="Střední čára v %s, zastavení v %s"/>
         <text name="eq_dressage_haltAt" text="Zastavení v %s"/>
         <text name="eq_dressage_piaffeAt" text="Piafa (%s) u %s: držte Ctrl"/>

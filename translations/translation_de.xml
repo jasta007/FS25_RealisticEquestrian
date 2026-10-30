@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s"/>
         <text name="eq_lat_left" text="links"/>
         <text name="eq_lat_right" text="rechts"/>
-        <text name="eq_lat_keys" text="Umschalt + A/D: seitwärts treten. Umschalt + rechte Maustaste ziehen: Kopf stellen."/>
+        <text name="eq_lat_keys" text="Rechte Maustaste halten: mit der Maus lenken, A/D seitwärts, Umschalt hält die Richtung und die Maus stellt den Kopf."/>
         <text name="eq_fig_final" text="Bei %s auf die Mittellinie, Halten bei %s"/>
         <text name="eq_dressage_haltAt" text="Halten bei %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bei %s: Strg halten"/>

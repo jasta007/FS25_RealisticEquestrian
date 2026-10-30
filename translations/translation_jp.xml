@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="壁沿いの斜横歩: %sへ"/>
         <text name="eq_lat_left" text="左"/>
         <text name="eq_lat_right" text="右"/>
-        <text name="eq_lat_keys" text="Shift + A/D: 横へ移動。Shift + 右クリックでドラッグ: 頭を曲げる。"/>
+        <text name="eq_lat_keys" text="右クリック長押し：マウスで操舵、A/Dで横へ移動、Shiftで向きを保ちマウスで頭を曲げる。"/>
         <text name="eq_fig_final" text="%sで中央線、%sで停止"/>
         <text name="eq_dressage_haltAt" text="%sで停止"/>
         <text name="eq_dressage_piaffeAt" text="ピアッフェ（%s）%sで：Ctrlを押し続ける"/>

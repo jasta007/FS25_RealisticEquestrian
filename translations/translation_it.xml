@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Cessione lungo la pista: verso %s"/>
         <text name="eq_lat_left" text="sinistra"/>
         <text name="eq_lat_right" text="destra"/>
-        <text name="eq_lat_keys" text="Maiusc + A/D: spostarsi di lato. Maiusc + tasto destro e trascina: flettere la testa."/>
+        <text name="eq_lat_keys" text="Tasto destro premuto: sterzare col mouse, A/D spostarsi di lato, Maiusc tiene la direzione e il mouse flette la testa."/>
         <text name="eq_fig_final" text="Linea centrale in %s, alt in %s"/>
         <text name="eq_dressage_haltAt" text="Alt in %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) a %s: tieni Ctrl"/>

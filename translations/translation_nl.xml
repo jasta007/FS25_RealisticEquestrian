@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
         <text name="eq_lat_left" text="links"/>
         <text name="eq_lat_right" text="rechts"/>
-        <text name="eq_lat_keys" text="Shift + A/D: zijwaarts. Shift + rechtermuisknop slepen: hoofd stellen."/>
+        <text name="eq_lat_keys" text="Rechtermuisknop vast: sturen met de muis, A/D zijwaarts, Shift houdt de richting en de muis stelt het hoofd."/>
         <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bij %s: Ctrl ingedrukt"/>

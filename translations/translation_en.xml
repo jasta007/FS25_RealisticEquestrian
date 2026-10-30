@@ -130,7 +130,7 @@
         <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s"/>
         <text name="eq_lat_left" text="left"/>
         <text name="eq_lat_right" text="right"/>
-        <text name="eq_lat_keys" text="Shift + A/D: drift sideways. Shift + right mouse drag: bend the head."/>
+        <text name="eq_lat_keys" text="Hold right mouse: steer with the mouse, A/D drift sideways, Shift holds the heading and the mouse bends the head."/>
         <text name="eq_fig_final" text="Centre line at %s, halt at %s"/>
         <text name="eq_dressage_haltAt" text="Halt at %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) at %s: hold Ctrl"/>

@@ -132,7 +132,7 @@
         <text name="eq_lat_legYieldRail" text="沿牆腿部讓步：向%s移動"/>
         <text name="eq_lat_left" text="左"/>
         <text name="eq_lat_right" text="右"/>
-        <text name="eq_lat_keys" text="Shift + A/D：側向移動。Shift + 滑鼠右鍵拖曳：彎曲馬頭。"/>
+        <text name="eq_lat_keys" text="按住滑鼠右鍵：用滑鼠轉向，A/D側向移動，Shift保持方向，滑鼠彎曲馬頭。"/>
         <text name="eq_fig_final" text="在%s上中線，在%s立定"/>
         <text name="eq_dressage_haltAt" text="在%s立定"/>
         <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>

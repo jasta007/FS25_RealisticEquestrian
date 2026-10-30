@@ -125,6 +125,9 @@ EqDressagePath.BEND_MIN = 0.3
 EqDressagePath.BEND_PER_S = 0.5
 EqDressagePath.BEND_MAX = 2
 EqDressagePath.SECTION_GRACE = 1
+-- Off the line in a lateral section: this much more is free (James, 2026-10-30: a leg yield he
+-- thought went well scored 2.5, 0.59 m off on average).
+EqDressagePath.LATERAL_FREE = 0.3
 -- Temperament's stickiness (James 2026-10-30): a pull back onto the line, a share of how far off
 -- the horse is each second (0 at temperament 0 up to STICK_PULL at 100; STICK_FREE of it outside
 -- lateral work), and a turn towards the body angle a section asks for, up to STICK_TURN rad/s.
@@ -1362,6 +1365,12 @@ end
 --- positive } for lateral work; nil leaves sections unjudged
 function EqDressagePath.step(run, move, wx, wz, dt, look)
     local test, pts = run.test, run.test.pts
+    -- Stopped with Ctrl (on the spot) where a halt is asked or held counts as a halt (James's
+    -- log, 2026-10-30: both tests' final halts scored 1.5 after stopping that way).
+    local asked = test.events[run.ev]
+    if look ~= nil and look.spot and (run.hold ~= nil or asked ~= nil and asked.kind == "halt" and asked.s - run.s <= run.warn) then
+        move = "halt"
+    end
     local x, y = EqDressagePath.toLocal(run.frame, wx, wz)
     run.clock = run.clock + dt
 
@@ -1395,6 +1404,8 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
             local acc = run.acc[pts[k].m]
             local step = pts[k].s - pts[k - 1].s
             local d = skipped > 0 and EqDressagePath.SKIP_DEV or dev
+            -- Lateral work is harder to keep on the line: LATERAL_FREE metres more are free.
+            if skipped == 0 and EqDressagePath.sectionAtS(test, pts[k].s) ~= nil then d = math.max(0, d - EqDressagePath.LATERAL_FREE) end
             acc.devSum = acc.devSum + step * d
             -- How far off each point was ridden: the line behind the horse is coloured by it.
             run.devAt[k] = d
@@ -1619,6 +1630,15 @@ function EqDressagePath.breaks(test)
         for _, e in ipairs(test.events) do table.insert(test.breaks, e.s) end
     end
     return test.breaks
+end
+
+
+--- The lateral section at metres s along a test (pure), or nil.
+function EqDressagePath.sectionAtS(test, s)
+    for _, sec in ipairs(test.sections or {}) do
+        if s >= sec.s0 and s < sec.s1 then return sec end
+    end
+    return nil
 end
 
 

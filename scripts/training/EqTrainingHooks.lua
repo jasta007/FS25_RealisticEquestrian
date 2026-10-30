@@ -1124,9 +1124,6 @@ local function dressageRows(rows, routine, vehicle)
 end
 
 
--- How long a new movement's name shows in the middle as it starts.
-EqTrainingHooks.TELL_MS = 2500
-
 
 --- A test movement's name: "20 m circle at B", "Change rein F-X-H".
 --- @param move table EqDressagePath test move { key, labels, size, loops, turn }
@@ -1196,11 +1193,9 @@ local function pathRows(rows, routine)
         EqTrainingHud.drawPanelNote(string.format(g_i18n:getText("eq_dressage_begin"), "A"), color, true)
         return
     end
-    -- The movement the horse is riding now; each new one is told in the middle for a moment
-    -- (James 2026-10-30: it felt like one big line, with no sense of going from one to the next).
+    -- The movement the horse is riding now, on the panel only (James 2026-10-30: the line on the
+    -- ground is enough to follow; the middle is for orders, changes and movements).
     local m = math.min(run.test.pts[run.i].m or run.cur, #moves)
-    if run.toldM ~= m then run.toldM, run.toldAt = m, run.clock end
-    local telling = run.clock - (run.toldAt or 0) < EqTrainingHooks.TELL_MS
     table.insert(rows, { left = figureText(moves[m]), leftColor = color, right = string.format("%d/%d", m, #moves), rightColor = COLOR.grey })
     if run.lastMark ~= nil then
         table.insert(rows, { left = string.format(g_i18n:getText("eq_dressage_mark"), string.format("%.1f", run.lastMark)), leftColor = COLOR.grey })
@@ -1235,8 +1230,6 @@ local function pathRows(rows, routine)
             local wrong = inside and (run.angleWrong or run.bendWrong)
             local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
             EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
-        elseif telling then
-            EqTrainingHud.drawPrompt(figureText(moves[m]), nil, color)
         elseif run.proceedMs ~= nil and run.clock - run.proceedMs < 2500 then
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_change"), g_i18n:getText("eq_dressage_gait_" .. run.gait)), nil, color)
         end
