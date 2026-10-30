@@ -176,8 +176,8 @@ body about 27 degrees off the rail, then drift; half pass = drift with the head 
 goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
 the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
-it on the spot at the usual turn rate at a trot or canter, so a canter turned on the spot is a
-pirouette. At a walk Ctrl only stops the horse, without turning, for a precise halt. Let go and it
+it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
+Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
 slide less. Not yet asked for in tests.

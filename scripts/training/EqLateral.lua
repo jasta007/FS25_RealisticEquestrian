@@ -51,10 +51,10 @@ EqLateral.BEND_TILT = 0.8
 EqLateral.bend = 0
 EqLateral.vehicle = nil
 -- Collecting on the spot (Ctrl): how fast the forward move eases out and back in, and the turn
--- with Ctrl + A/D as a share of the base game's, only at a trot (piaffe) or canter (pirouette):
--- at a walk Ctrl just stops the horse (James, 2026-10-30).
+-- with Ctrl + A/D as a share of the base game's: piaffe (trot), pirouettes at a walk or canter
+-- (James, 2026-10-30).
 EqLateral.COLLECT_MS = 600
-EqLateral.SPOT_TURN = { TROT = 1, CANTER = 1 }
+EqLateral.SPOT_TURN = { WALK = 1, TROT = 1, CANTER = 1 }
 -- On the spot (James, 2026-10-30: the hooves slid): the animation is shown a slower speed, this
 -- share of the way from the gait below's top speed to the gait's, and the horse still creeps
 -- forward at this share of its speed, a little at a piaffe and a bit more at a canter. No lift:
