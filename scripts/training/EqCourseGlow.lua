@@ -208,8 +208,10 @@ end
 --- @param colour string|function|nil one of COLOURS, gold when nil, or a function(s) giving
 --- each piece's colour from the metres along the path where it starts
 --- @param from number|nil see pieces
+--- @param shape function|nil function(s) giving a world heading (dirX, dirZ) and a bend (-1..1,
+--- right positive) for a piece that shows a horse's body there instead of the line, or nil
 --- @return boolean false when the glow can't be drawn
-function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius)
+function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius, shape)
     if not ensureLoaded() then return false end
     local lift = EqCourseGlow.PATH_LIFT
     for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius)) do
@@ -217,9 +219,53 @@ function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius)
         EqCourseGlow.pieceCount = (EqCourseGlow.pieceCount or 0) + 1
         local c = colour
         if type(colour) == "function" then c = colour(p.s) end
-        EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
+        local dirX, dirZ, bend = nil, nil, 0
+        if shape ~= nil then dirX, dirZ, bend = shape(p.s) end
+        if dirX ~= nil then
+            for _, b in ipairs(EqCourseGlow.body(p, dirX, dirZ, bend or 0)) do
+                EqCourseGlow.strip(b[1], b[2] + lift, b[3], b[4], b[5] + lift, b[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
+            end
+        else
+            EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
+        end
     end
     return true
+end
+
+
+-- A piece showing a horse's body (James, 2026-10-30: the lateral words were unreadable in the
+-- heat of the moment; dashes facing the way the horse should face, like a dressage diagram):
+-- BODY metres long facing the heading, centred on the piece, and a HEAD piece in front of it
+-- turned HEAD_TURN radians at full bend.
+EqCourseGlow.BODY = 0.55
+EqCourseGlow.HEAD = 0.3
+EqCourseGlow.HEAD_TURN = math.rad(40)
+
+
+--- The strips for a piece drawn as a horse's body (pure): { ax, ay, az, bx, by, bz } each.
+--- @param piece table { ax, ay, az, bx, by, bz }
+--- @param dirX number world heading
+--- @param dirZ number
+--- @param bend number -1..1, right positive (the right of a heading (x, z) is (-z, x))
+--- @return table
+function EqCourseGlow.body(piece, dirX, dirZ, bend)
+    local len = math.sqrt(dirX * dirX + dirZ * dirZ)
+    if len < 1e-6 then return { piece } end
+    dirX, dirZ = dirX / len, dirZ / len
+    local mx, my, mz = (piece[1] + piece[4]) / 2, (piece[2] + piece[5]) / 2, (piece[3] + piece[6]) / 2
+    local half = EqCourseGlow.BODY / 2
+    local ax, az = mx - dirX * half, mz - dirZ * half
+    local bx, bz = mx + dirX * half, mz + dirZ * half
+    local list = { { ax, my, az, bx, my, bz } }
+    if bend ~= 0 then
+        local turn = EqCourseGlow.HEAD_TURN * math.max(-1, math.min(1, bend))
+        local hx = dirX * math.cos(turn) - dirZ * math.sin(turn)
+        local hz = dirZ * math.cos(turn) + dirX * math.sin(turn)
+        local gap = 0.08
+        local sx, sz = bx + hx * gap, bz + hz * gap
+        table.insert(list, { sx, my, sz, sx + hx * EqCourseGlow.HEAD, my, sz + hz * EqCourseGlow.HEAD })
+    end
+    return list
 end
 
 

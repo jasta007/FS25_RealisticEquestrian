@@ -193,6 +193,24 @@ function EqLateral.collect(current, wanted, dt)
 end
 
 
+--- Turning with the bend held (pure; James, 2026-10-30: a canter circle bigger than the full turn
+--- was jerky to hold). With the right button down while turning, the head starts bent fully into
+--- the turn and the turn is cut by how much of that bend is left: drag back to turn less, never
+--- more. The head also starts bent into the turn when the button goes down or the turn begins
+--- with the head near straight.
+--- @param bend number -1..1 right positive
+--- @param steer number the base game's axisSteer (left positive)
+--- @param fresh boolean the button just went down, or the turn just began
+--- @return number bend, number steer
+function EqLateral.reined(bend, steer, fresh)
+    if steer == 0 then return bend, steer end
+    local into = steer > 0 and -1 or 1
+    if fresh and math.abs(bend) < 0.05 or fresh and bend * into < 0 then bend = into end
+    local share = math.max(0, math.min(1, bend * into))
+    return bend, steer * share
+end
+
+
 --- @return boolean the right mouse button is held
 local function rightHeld()
     return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
@@ -270,11 +288,19 @@ local function before(vehicle, dt)
     local side, spot = 0, false
     if entered then
         EqLateral.vehicle = vehicle
-        EqLateral.bend = EqLateral.relax(EqLateral.bend, rightHeld(), dt)
+        local held = rightHeld()
+        EqLateral.bend = EqLateral.relax(EqLateral.bend, held, dt)
         spot = (key("KEY_lctrl") or key("KEY_rctrl")) and gaitOk(spec)
         if not spot then
             side = EqLateral.side(key("KEY_lshift") or key("KEY_rshift"), key("KEY_a"), key("KEY_d"), gaitOk(spec))
         end
+        -- The bend held while turning reins the turn in (not while drifting or on the spot).
+        local steer = spec.inputValues.axisSteer or 0
+        if held and side == 0 and not spot then
+            local fresh = not EqLateral.wasHeld or (spec.eqSteerWas or 0) == 0
+            EqLateral.bend, spec.inputValues.axisSteer = EqLateral.reined(EqLateral.bend, steer, fresh)
+        end
+        EqLateral.wasHeld, spec.eqSteerWas = held, steer
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)

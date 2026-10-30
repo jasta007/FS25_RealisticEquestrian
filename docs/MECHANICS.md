@@ -170,7 +170,10 @@ way it goes (no new animations: strafing). It doesn't turn while Shift is held; 
 to adjust the line, then hold it again. Holding the right mouse button and dragging left or right
 bends the head that way (the turn animation only, no turn and no camera move); it springs back in
 0.3 s once the button is let go. While the button is held the camera eases round to the way the
-horse is going (its heading, turned by the drift) and the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
+horse is going (its heading, turned by the drift) and the mouse still looks up and down.
+Pressing the right button while turning (A/D, no Shift) starts the head bent fully into the turn;
+dragging back towards straight turns less, never more (James, 2026-10-30: a canter circle wider
+than the full turn was jerky to hold). Together they make the movements: shoulder-in = bend alone along
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
 body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
 goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
@@ -231,7 +234,9 @@ the middle of the screen for 2.5 s as it starts.
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
-  panel. From 1 m into each section the body must face within 12 degrees of the asked angle
+  panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
+  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, with a short
+  head piece turned to the bend side. From 1 m into each section the body must face within 12 degrees of the asked angle
   (0.6 a second off, at most 3) and the head be bent at least 0.3 the asked way (0.5 a second,
   at most 2).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back

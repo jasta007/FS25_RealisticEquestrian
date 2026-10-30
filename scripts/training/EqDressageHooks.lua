@@ -236,6 +236,28 @@ function EqDressageHooks.colourAlong(run, from, now)
         return "white"
     end
 end
+--- The lateral section at metres s along a test (pure), or nil.
+function EqDressageHooks.sectionAt(run, s)
+    for _, sec in ipairs(run.test.sections or {}) do
+        if s >= sec.s0 and s < sec.s1 then return sec end
+    end
+    return nil
+end
+
+
+--- A lateral section's pieces show the horse's body: facing the way it should face, the head
+--- bent the way asked (EqCourseGlow.body), cyan ahead where the line is otherwise white.
+--- @return function(s) for EqCourseGlow.path's shape
+function EqDressageHooks.bodyAlong(run)
+    local frame = run.frame
+    return function(s)
+        local sec = EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2)
+        if sec == nil then return nil end
+        return sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz, sec.bend or 0
+    end
+end
+
+
 -- A gold pole stands where a change or halt is coming, and where the test begins.
 EqDressageHooks.POLE_HEIGHT = 1.2
 -- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
@@ -293,12 +315,17 @@ function EqDressageHooks.drawPath(vehicle)
         local dev = run.dev or 0
         local shown = EqDressageHooks.shownDev or dev
         EqDressageHooks.shownDev = shown + (dev - shown) * math.min(1, dt / EqDressageHooks.SHADE_MS)
-        colour = EqDressageHooks.colourAlong(run, back, EqDressagePath.colourFor(EqDressageHooks.shownDev))
+        local along = EqDressageHooks.colourAlong(run, back, EqDressagePath.colourFor(EqDressageHooks.shownDev))
+        colour = function(s)
+            local c = along(s)
+            if c == "white" and EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2) ~= nil then return "cyan" end
+            return c
+        end
     else
         EqDressageHooks.shownDev = nil
     end
     EqDressageHooks.drawnAt = now
-    if not EqCourseGlow.path(line, colour, pts[back].s) then return end
+    if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, EqDressageHooks.bodyAlong(run)) then return end
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)

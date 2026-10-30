@@ -3715,6 +3715,13 @@ end)()
     local camWrapped = EqLateral.snap(5, 2 * math.pi - 0.2, 0, 0, EqLateral.SNAP_MS)
     check("the camera eases to the way the horse goes", math.abs(cam - 0.5) < 1e-9
         and math.abs(drifted + math.atan(EqLateral.SHARE)) < 1e-9 and math.abs(camWrapped - 5.2) < 1e-9)
+    -- The bend held while turning: starts fully into the turn, dragging back turns less, never more.
+    local b1, s1 = EqLateral.reined(0, 1, true)
+    local b2, s2 = EqLateral.reined(-0.4, 1, false)
+    local b3, s3 = EqLateral.reined(0.5, 1, false)
+    local b4, s4 = EqLateral.reined(0.3, 0, true)
+    check("the held bend reins the turn in", b1 == -1 and s1 == 1 and b2 == -0.4 and math.abs(s2 - 0.4) < 1e-9
+        and b3 == 0.5 and s3 == 0 and b4 == 0.3 and s4 == 0 and select(2, EqLateral.reined(-1, -1, true)) == -1)
     -- Ctrl collects to the spot and eases back; Ctrl + A turns left (positive), D right.
     local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
     check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9
@@ -3730,6 +3737,20 @@ end)()
         and EqLateral.spotSteer(true, true, "TROT") == 0 and EqLateral.spotSteer(false, false, "TROT") == 0)
     check("the body turns towards the asked angle, the short way", math.abs(turned - 0.5) < 1e-9
         and math.abs(wrapped - (-3 + 2 * math.pi)) < 1e-9)
+end)()
+
+
+-- Lateral pieces show the horse's body: facing the heading across a diagonal line, the head turned
+-- to the bend side (facing +z, the right is -x).
+;(function()
+    local piece = { 0, 0, 0, 0.5, 0, 0.5 }
+    local straight = EqCourseGlow.body(piece, 0, 1, 0)
+    local bent = EqCourseGlow.body(piece, 0, 1, 1)
+    local b = straight[1]
+    check("a lateral piece faces the heading, centred on the line", #straight == 1 and math.abs(b[1] - 0.25) < 1e-9
+        and math.abs(b[4] - 0.25) < 1e-9 and math.abs(b[6] - b[3] - EqCourseGlow.BODY) < 1e-9)
+    local h = bent[2]
+    check("the head piece turns to the bend side", #bent == 2 and h ~= nil and h[4] < h[1] and h[6] > h[3])
 end)()
 
 
