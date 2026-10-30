@@ -195,7 +195,8 @@ letting go of W goes back to the spot. Tests ask for them at letters on the trac
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
 Started near the gold pole (marked like a halt); letting go early (off the spot for 0.7 s) costs
-up to 3, riding past 3. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
+up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
+each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
 two for a piaffe, a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
@@ -260,7 +261,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
   lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
-  takes less effort to hold. None at temperament 0, and none during a halt or rein back.
+  takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
+  more than 2 m off the line (riding away from a test must not hold the horse back).
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
   arena (0.5 m past the rail) for 3 s, or no headway for 10 s. The line picks up again at the
   nearest point up to 40 m on. The third error eliminates.

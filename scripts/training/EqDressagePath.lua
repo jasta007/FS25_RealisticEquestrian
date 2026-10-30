@@ -138,6 +138,9 @@ EqDressagePath.KINK = math.rad(50)
 EqDressagePath.BLEND = 5
 EqDressagePath.STICK_FREE = 0.3
 EqDressagePath.STICK_TURN = 0.5
+-- Further off the line than this (metres) there is no pull: a rider leaving the test was held
+-- back so hard the base game took it for a crash and stopped the horse (James, 2026-10-30).
+EqDressagePath.STICK_RANGE = 2
 
 -- Marks. Off the line: nothing for the first DEV_FREE metres on average, then DEV_PER_M a metre
 -- (James 2026-10-30: 0.3 to 0.4 m off on average scored 8s and 9s for a test worth about 60%).
@@ -164,8 +167,14 @@ EqDressagePath.HALT_PASS = 5
 -- of it will do); let go early costs up to SPOT_SHORT, riding past SPOT_MISSED.
 EqDressagePath.SPOT_MS = 4000
 EqDressagePath.SPOT_TURN = math.rad(20)
-EqDressagePath.SPOT_SHORT = 3
-EqDressagePath.SPOT_MISSED = 3
+-- (James, 2026-10-30: a piaffe he stopped for first, then fumbled into, still scored a 7.)
+-- Stopping when one is coming costs SPOT_STOP, and every second off the asked gait on the way in
+-- SPOT_WRONG_PER_S (at most SPOT_WRONG_MAX).
+EqDressagePath.SPOT_SHORT = 5
+EqDressagePath.SPOT_MISSED = 5
+EqDressagePath.SPOT_STOP = 2
+EqDressagePath.SPOT_WRONG_PER_S = 1
+EqDressagePath.SPOT_WRONG_MAX = 3
 -- Off the spot this long before it counts as let go (James, 2026-10-30: a pirouette ended a third
 -- of the way round).
 EqDressagePath.SPOT_GRACE_MS = 700
@@ -1206,6 +1215,8 @@ function EqDressagePath.newRun(test, temperament)
         look = lerp(EqDressagePath.LOOK, t), warn = lerp(EqDressagePath.WARN, t), tolerance = lerp(EqDressagePath.TOLERANCE, t),
         cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0,
         temper = t, sec = 1 }
+    -- Events live on the test, which a new run reuses.
+    for _, e in ipairs(test.events) do e.shown, e.stopped, e.wrongMs = nil, nil, nil end
     for m = 1, #test.moves do run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0 } end
     -- Out of the arena counts once the path is inside the rail.
     run.inFrom = 0
@@ -1533,6 +1544,18 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                     end
                 end
             elseif next.kind == "spot" then
+                -- On the way in: keep the asked gait, don't stop first.
+                if not EqDressagePath.matches(move, next.gait) then
+                    if move == "halt" and not next.stopped then
+                        next.stopped = true
+                        addPen(run, next.m, EqDressagePath.SPOT_STOP)
+                    end
+                    local before = next.wrongMs or 0
+                    next.wrongMs = before + dt
+                    local pen = math.min(EqDressagePath.SPOT_WRONG_MAX, next.wrongMs / 1000 * EqDressagePath.SPOT_WRONG_PER_S)
+                        - math.min(EqDressagePath.SPOT_WRONG_MAX, before / 1000 * EqDressagePath.SPOT_WRONG_PER_S)
+                    if pen > 0 then addPen(run, next.m, pen) end
+                end
                 if look ~= nil and look.spot and EqDressagePath.matches(move, next.gait) then
                     local hx, hy = pts[run.i].x, pts[run.i].y
                     for k = run.i, #pts do
@@ -1689,6 +1712,7 @@ function EqDressagePath.assist(run, wx, wz, lateral, dt)
         local t = math.max(0, math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / len2))
         px, py = a.x + dx * t, a.y + dy * t
     end
+    if (px - x) ^ 2 + (py - y) ^ 2 > EqDressagePath.STICK_RANGE ^ 2 then return 0, 0, nil, nil, 0 end
     local sec, inside = EqDressagePath.section(run)
     if not inside then sec = nil end
     local share = EqDressagePath.STICK_PULL * run.temper * ((lateral or sec ~= nil) and 1 or EqDressagePath.STICK_FREE)

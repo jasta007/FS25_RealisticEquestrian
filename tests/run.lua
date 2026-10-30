@@ -4074,6 +4074,10 @@ end)()
         run.temper = 0
         local cx, cz = EqDressagePath.assist(run, wx, wz, true, 1000)
         check("a horse with no temperament gets no pull", math.abs(cx) + math.abs(cz) < 1e-9)
+        run.temper = 1
+        local fx, fz = EqDressagePath.toWorld(frame, p.x + EqDressagePath.STICK_RANGE + 3, p.y)
+        local gx, gz = EqDressagePath.assist(run, fx, fz, true, 1000)
+        check("a horse ridden away from the line is not held back", math.abs(gx) + math.abs(gz) < 1e-9)
     end
 
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
