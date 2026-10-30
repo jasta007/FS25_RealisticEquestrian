@@ -132,9 +132,13 @@
         <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s"/>
         <text name="eq_lat_left" text="влево"/>
         <text name="eq_lat_right" text="вправо"/>
-        <text name="eq_lat_keys" text="Shift + A/D: боковое движение. Удерживайте правую кнопку мыши и тяните: сгибание головы."/>
+        <text name="eq_lat_keys" text="Shift + A/D: боковое движение. Shift + правая кнопка мыши, тянуть: сгибание головы."/>
         <text name="eq_fig_final" text="Средняя линия от %s, остановка у %s"/>
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
+        <text name="eq_dressage_piaffeAt" text="Пиаффе у %s (удерживайте Ctrl)"/>
+        <text name="eq_dressage_pirouetteAt" text="Пируэт %s у %s (Ctrl + %s)"/>
+        <text name="eq_dressage_piaffe" text="Пиаффе! Удерживайте Ctrl"/>
+        <text name="eq_dressage_pirouette" text="Пируэт %s! Ctrl + %s"/>
         <text name="eq_dressage_line" text="Вернитесь на линию!"/>
         <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
         <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>

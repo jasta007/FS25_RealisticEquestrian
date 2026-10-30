@@ -161,43 +161,56 @@ end
 --- @param points table
 --- @param from number|nil metres along the path where the first piece starts (keeps pieces
 --- still on the ground as the path is cut shorter in front of the horse)
+--- @param breaks table|nil sorted metres along the path (same count as from) where the pieces
+--- start afresh: a dressage test's changes, so a gait's dashes begin right at its change
 --- @return table pieces { ax, ay, az, bx, by, bz, s = metres along the path where it starts }
-function EqCourseGlow.pieces(points, from, nearX, nearZ, radius)
+function EqCourseGlow.pieces(points, from, nearX, nearZ, radius, breaks)
     local list = {}
     local step, gap = EqCourseGlow.SEGMENT, EqCourseGlow.GAP
     local radius2 = radius ~= nil and radius * radius or nil
-    -- Walk the line, cutting it at whole steps from its start.
-    local s = 0
-    local nextCut = from ~= nil and (math.ceil(from / step - 1e-9) * step - from) or 0
-    local cut = nil
-    local function at(a, b, t)
-        return a.x + (b.x - a.x) * t, (a.y or 0) + ((b.y or 0) - (a.y or 0)) * t, a.z + (b.z - a.z) * t
+    local base = from or 0
+    breaks = breaks or {}
+    -- The cut after metre c: whole steps from the last break (or the start), or the next break.
+    local function nextAfter(c)
+        local anchor = 0
+        for _, b in ipairs(breaks) do
+            if b <= c + 1e-9 then anchor = b else break end
+        end
+        local n = anchor + (math.floor((c - anchor) / step + 1e-9) + 1) * step
+        for _, b in ipairs(breaks) do
+            if b > c + 1e-9 and b < n - 1e-9 then return b end
+        end
+        return n
     end
+    -- Metres along the points, and a point at any of them.
+    local at = { 0 }
     for i = 2, #points do
         local a, b = points[i - 1], points[i]
-        local d = math.sqrt((b.x - a.x) ^ 2 + (b.z - a.z) ^ 2)
-        while d > 1e-6 and nextCut <= s + d do
-            local x, y, z = at(a, b, (nextCut - s) / d)
-            if cut ~= nil and nextCut - cut.s >= step - 1e-6 then
-                -- The piece from the last cut, ending GAP short of this one.
-                local f = (step - gap) / step
-                local bx, by, bz = cut.x + (x - cut.x) * f, cut.y + (y - cut.y) * f, cut.z + (z - cut.z) * f
-                if radius2 == nil or (bx - nearX) ^ 2 + (bz - nearZ) ^ 2 <= radius2 then
-                    table.insert(list, { cut.x, cut.y, cut.z, bx, by, bz, s = (from or 0) + cut.s })
-                end
-            end
-            cut = { x = x, y = y, z = z, s = nextCut }
-            nextCut = nextCut + step
-        end
-        s = s + d
+        at[i] = at[i - 1] + math.sqrt((b.x - a.x) ^ 2 + (b.z - a.z) ^ 2)
     end
-    -- What is left past the last cut, if it is more than a gap.
-    local last = points[#points]
-    if cut ~= nil and last ~= nil and s - cut.s > gap then
-        local f = (s - cut.s - gap) / (s - cut.s)
-        local ly = last.y or 0
-        table.insert(list, { cut.x, cut.y, cut.z, cut.x + (last.x - cut.x) * f, cut.y + (ly - cut.y) * f, cut.z + (last.z - cut.z) * f,
-            s = (from or 0) + cut.s })
+    local total = at[#points] or 0
+    local k = 2
+    local function point(d)
+        while k < #points and at[k] < d do k = k + 1 end
+        while k > 2 and at[k - 1] > d do k = k - 1 end
+        local a, b = points[k - 1], points[k]
+        local t = at[k] - at[k - 1] > 1e-9 and (d - at[k - 1]) / (at[k] - at[k - 1]) or 0
+        t = math.max(0, math.min(1, t))
+        return a.x + (b.x - a.x) * t, (a.y or 0) + ((b.y or 0) - (a.y or 0)) * t, a.z + (b.z - a.z) * t
+    end
+    if #points < 2 then return list end
+    local c = nextAfter(base - 1e-6)
+    while c - base <= total do
+        local n = nextAfter(c)
+        local stop = math.min(n, base + total) - gap
+        if stop > c + 1e-6 then
+            local ax, ay, az = point(c - base)
+            local bx, by, bz = point(stop - base)
+            if radius2 == nil or (bx - nearX) ^ 2 + (bz - nearZ) ^ 2 <= radius2 then
+                table.insert(list, { ax, ay, az, bx, by, bz, s = c })
+            end
+        end
+        c = n
     end
     return list
 end
@@ -208,38 +221,47 @@ end
 --- @param colour string|function|nil one of COLOURS, gold when nil, or a function(s) giving
 --- each piece's colour from the metres along the path where it starts
 --- @param from number|nil see pieces
---- @param shape function|nil function(s) giving a world heading (dirX, dirZ) and a bend (-1..1,
---- right positive) for a piece that shows a horse's body there instead of the line, or nil
+--- @param style table|nil { breaks = see pieces, length = function(s) giving a piece's length
+--- (the dressage line's dashes by gait), shape = function(s) giving a world heading (dirX,
+--- dirZ) and a bend (-1..1, right positive) for a piece drawn as a horse's body instead }
 --- @return boolean false when the glow can't be drawn
-function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius, shape)
+function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius, style)
     if not ensureLoaded() then return false end
+    style = style or {}
     local lift = EqCourseGlow.PATH_LIFT
-    for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius)) do
+    for _, p in ipairs(EqCourseGlow.pieces(points, from, nearX, nearZ, radius, style.breaks)) do
         if (EqCourseGlow.pieceCount or 0) >= EqCourseGlow.MAX_PIECES then break end
         EqCourseGlow.pieceCount = (EqCourseGlow.pieceCount or 0) + 1
         local c = colour
         if type(colour) == "function" then c = colour(p.s) end
+        if style.length ~= nil then p = EqCourseGlow.shorten(p, style.length(p.s)) end
         local dirX, dirZ, bend = nil, nil, 0
-        if shape ~= nil then dirX, dirZ, bend = shape(p.s) end
-        if dirX ~= nil then
-            for _, b in ipairs(EqCourseGlow.body(p, dirX, dirZ, bend or 0)) do
-                EqCourseGlow.strip(b[1], b[2] + lift, b[3], b[4], b[5] + lift, b[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
-            end
-        else
-            EqCourseGlow.strip(p[1], p[2] + lift, p[3], p[4], p[5] + lift, p[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
+        if style.shape ~= nil then dirX, dirZ, bend = style.shape(p.s) end
+        local strips = dirX ~= nil and EqCourseGlow.body(p, dirX, dirZ, bend or 0) or { p }
+        for _, b in ipairs(strips) do
+            EqCourseGlow.strip(b[1], b[2] + lift, b[3], b[4], b[5] + lift, b[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
         end
     end
     return true
 end
 
 
+--- A piece cut to at most length metres from its start (pure).
+function EqCourseGlow.shorten(piece, length)
+    local dx, dy, dz = piece[4] - piece[1], piece[5] - piece[2], piece[6] - piece[3]
+    local d = math.sqrt(dx * dx + dy * dy + dz * dz)
+    if length == nil or d <= length or d < 1e-9 then return piece end
+    local f = length / d
+    return { piece[1], piece[2], piece[3], piece[1] + dx * f, piece[2] + dy * f, piece[3] + dz * f, s = piece.s }
+end
+
+
 -- A piece showing a horse's body (James, 2026-10-30: the lateral words were unreadable in the
--- heat of the moment; dashes facing the way the horse should face, like a dressage diagram):
--- BODY metres long facing the heading, centred on the piece, and a HEAD piece in front of it
--- turned HEAD_TURN radians at full bend.
-EqCourseGlow.BODY = 0.55
-EqCourseGlow.HEAD = 0.3
-EqCourseGlow.HEAD_TURN = math.rad(40)
+-- heat of the moment, and a separate head piece too busy): one dash as long as the piece, facing
+-- the way the horse should face and centred on it, its front HEAD share turned HEAD_TURN radians
+-- to the bend side at full bend, so it reads as one bent dash.
+EqCourseGlow.HEAD = 0.35
+EqCourseGlow.HEAD_TURN = math.rad(35)
 
 
 --- The strips for a piece drawn as a horse's body (pure): { ax, ay, az, bx, by, bz } each.
@@ -252,20 +274,18 @@ function EqCourseGlow.body(piece, dirX, dirZ, bend)
     local len = math.sqrt(dirX * dirX + dirZ * dirZ)
     if len < 1e-6 then return { piece } end
     dirX, dirZ = dirX / len, dirZ / len
+    local size = math.sqrt((piece[4] - piece[1]) ^ 2 + (piece[6] - piece[3]) ^ 2)
     local mx, my, mz = (piece[1] + piece[4]) / 2, (piece[2] + piece[5]) / 2, (piece[3] + piece[6]) / 2
-    local half = EqCourseGlow.BODY / 2
+    local half = size / 2
     local ax, az = mx - dirX * half, mz - dirZ * half
-    local bx, bz = mx + dirX * half, mz + dirZ * half
-    local list = { { ax, my, az, bx, my, bz } }
-    if bend ~= 0 then
-        local turn = EqCourseGlow.HEAD_TURN * math.max(-1, math.min(1, bend))
-        local hx = dirX * math.cos(turn) - dirZ * math.sin(turn)
-        local hz = dirZ * math.cos(turn) + dirX * math.sin(turn)
-        local gap = 0.08
-        local sx, sz = bx + hx * gap, bz + hz * gap
-        table.insert(list, { sx, my, sz, sx + hx * EqCourseGlow.HEAD, my, sz + hz * EqCourseGlow.HEAD })
-    end
-    return list
+    if bend == 0 then return { { ax, my, az, mx + dirX * half, my, mz + dirZ * half } } end
+    local back = size * (1 - EqCourseGlow.HEAD)
+    local bx, bz = ax + dirX * back, az + dirZ * back
+    local turn = EqCourseGlow.HEAD_TURN * math.max(-1, math.min(1, bend))
+    local hx = dirX * math.cos(turn) - dirZ * math.sin(turn)
+    local hz = dirZ * math.cos(turn) + dirX * math.sin(turn)
+    local head = size * EqCourseGlow.HEAD
+    return { { ax, my, az, bx, my, bz }, { bx, my, bz, bx + hx * head, my, bz + hz * head } }
 end
 
 

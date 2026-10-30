@@ -1156,6 +1156,12 @@ end
 --- @return string
 local function pathEventText(event)
     if event.kind == "halt" then return string.format(g_i18n:getText("eq_dressage_haltAt"), event.letter or "X") end
+    if event.kind == "spot" then
+        if event.style == "piaffe" then return string.format(g_i18n:getText("eq_dressage_piaffeAt"), event.letter or "X") end
+        local left = (event.turn or 1) > 0
+        return string.format(g_i18n:getText("eq_dressage_pirouetteAt"), g_i18n:getText(left and "eq_lat_left" or "eq_lat_right"),
+            event.letter or "X", left and "A" or "D")
+    end
     local gait = g_i18n:getText("eq_dressage_gait_" .. event.gait)
     if event.letter ~= nil then return string.format(g_i18n:getText("eq_dressage_go"), gait, event.letter) end
     return string.format(g_i18n:getText("eq_dressage_change"), gait)
@@ -1205,6 +1211,15 @@ local function pathRows(rows, routine)
         EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_line"), 1 - run.lostMs / EqDressagePath.LOST_MS, COLOR.red or color)
     elseif run.back ~= nil then
         EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_reinBack"), 1 - run.back.ms / EqDressagePath.REIN_BACK_MS, color)
+    elseif run.spot ~= nil then
+        -- On the spot: a piaffe held, a pirouette turned, the bar filling as it goes.
+        local event = run.spot.event
+        local text = g_i18n:getText("eq_dressage_piaffe")
+        if event.style == "pirouette" then
+            local left = (event.turn or 1) > 0
+            text = string.format(g_i18n:getText("eq_dressage_pirouette"), g_i18n:getText(left and "eq_lat_left" or "eq_lat_right"), left and "A" or "D")
+        end
+        EqTrainingHud.drawPrompt(text, 1 - EqDressagePath.spotShare(run.spot), color)
     elseif run.hold ~= nil then
         EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_stand"), math.max(0, run.hold.untilMs - run.clock) / EqDressagePath.HOLD_MS, color)
     else

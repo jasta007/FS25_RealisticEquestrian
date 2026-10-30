@@ -167,13 +167,13 @@ the courses quiet until it ends.
 **Lateral work** (James, 2026-10-30): hold Shift and press A or D at a walk, trot or canter and the
 horse drifts that way at half its forward speed while still facing forwards, its head tilted the
 way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
-to adjust the line, then hold it again. Holding the right mouse button and dragging left or right
-bends the head that way (the turn animation only, no turn and no camera move); it springs back in
-0.3 s once the button is let go. While the button is held the camera eases round to the way the
-horse is going (its heading, turned by the drift) and the mouse still looks up and down.
-Pressing the right button while turning (A/D, no Shift) starts the head bent fully into the turn;
-dragging back towards straight turns less, never more (James, 2026-10-30: a canter circle wider
-than the full turn was jerky to hold). Together they make the movements: shoulder-in = bend alone along
+to adjust the line, then hold it again. **Mouse steering** (James, 2026-10-30: a canter circle
+wider than the full key turn was jerky to hold): hold the right mouse button and move the mouse
+left or right to set the turn like a wheel (A or D still steer while pressed); it goes straight
+once the button is let go. **Shift + right mouse button** and dragging bends the head instead
+(the turn animation only, no turn); it springs back in 0.3 s once let go. While the button is
+held the camera eases round to the way the horse is going (its heading, turned by the drift) and
+the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
 the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
 body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
 goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
@@ -183,7 +183,10 @@ it on the spot at the usual turn rate, so a walk or canter turned on the spot is
 Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
-slide less. Not yet asked for in tests.
+slide less. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
+4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
+arena), 15% of the time between figures and in 40% of canters or walks between two letters.
+Started near the gold pole (marked like a halt); letting go early costs up to 3, riding past 3.
 Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
@@ -194,7 +197,10 @@ until the test begins, then white ahead; within 2 m of the horse it turns green,
 orange or red as the horse is up to 0.5, 1, 1.6, 2.4 m or further off it now, and the pieces up to
 3 m behind keep the colour of how they were ridden (James, 2026-10-30).
 Every path guide (a round's way to the next fence, course recording and editing) uses the same
-pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends:
+pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends. On the dressage line the
+dashes show the gait asked (James, 2026-10-30): 0.25 m at a walk, 0.45 m at a trot, 0.7 m at a
+canter, and they start afresh exactly at each change or halt, so the change is where the dash
+length changes. Where a gait's track meets another's in a corner the line eases across over 5 m:
 
 - It opens down the centre line from A with a halt at X, then proceeds to track left or right at
   C. Then come the figures (7 in training), and it ends down the centre line from A to a halt at X.
@@ -235,8 +241,8 @@ the middle of the screen for 2.5 s as it starts.
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
-  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, with a short
-  head piece turned to the bend side. From 1 m into each section the body must face within 12 degrees of the asked angle
+  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, their front
+  third bent to the bend side. From 1 m into each section the body must face within 12 degrees of the asked angle
   (0.6 a second off, at most 3) and the head be bent at least 0.3 the asked way (0.5 a second,
   at most 2).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back

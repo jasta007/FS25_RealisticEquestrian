@@ -3715,13 +3715,21 @@ end)()
     local camWrapped = EqLateral.snap(5, 2 * math.pi - 0.2, 0, 0, EqLateral.SNAP_MS)
     check("the camera eases to the way the horse goes", math.abs(cam - 0.5) < 1e-9
         and math.abs(drifted + math.atan(EqLateral.SHARE)) < 1e-9 and math.abs(camWrapped - 5.2) < 1e-9)
-    -- The bend held while turning: starts fully into the turn, dragging back turns less, never more.
-    local b1, s1 = EqLateral.reined(0, 1, true)
-    local b2, s2 = EqLateral.reined(-0.4, 1, false)
-    local b3, s3 = EqLateral.reined(0.5, 1, false)
-    local b4, s4 = EqLateral.reined(0.3, 0, true)
-    check("the held bend reins the turn in", b1 == -1 and s1 == 1 and b2 == -0.4 and math.abs(s2 - 0.4) < 1e-9
-        and b3 == 0.5 and s3 == 0 and b4 == 0.3 and s4 == 0 and select(2, EqLateral.reined(-1, -1, true)) == -1)
+    -- Mouse steering: the right button (no Shift) steers like a wheel, Shift + right bends the head.
+    local saved = Input
+    local down = { KEY_lshift = false }
+    Input = { KEY_lshift = 1, KEY_rshift = 2, MOUSE_BUTTON_RIGHT = 3,
+        isKeyPressed = function(k) return k == 1 and down.KEY_lshift end,
+        isMouseButtonPressed = function(b) return b == 3 end }
+    EqLateral.vehicle, EqLateral.steer, EqLateral.bend = { getIsEntered = function() return true end }, 0, 0
+    EqLateral.onLook(30, true, true)
+    local steered, bentBy = EqLateral.steer, EqLateral.bend
+    down.KEY_lshift = true
+    EqLateral.onLook(30, true, true)
+    local passes = EqLateral.onLook(30, true, false)
+    check("the right button steers with the mouse, Shift + right button bends the head", steered < 0 and bentBy == 0
+        and EqLateral.bend > 0 and EqLateral.steer == steered and passes == false)
+    Input, EqLateral.vehicle, EqLateral.steer, EqLateral.bend = saved, nil, 0, 0
     -- Ctrl collects to the spot and eases back; Ctrl + A turns left (positive), D right.
     local held = EqLateral.collect(0, true, EqLateral.COLLECT_MS / 2)
     check("Ctrl collects the horse on the spot and lets it go", math.abs(held - 0.5) < 1e-9
@@ -3744,13 +3752,15 @@ end)()
 -- to the bend side (facing +z, the right is -x).
 ;(function()
     local piece = { 0, 0, 0, 0.5, 0, 0.5 }
+    local size = math.sqrt(0.5)
     local straight = EqCourseGlow.body(piece, 0, 1, 0)
     local bent = EqCourseGlow.body(piece, 0, 1, 1)
     local b = straight[1]
     check("a lateral piece faces the heading, centred on the line", #straight == 1 and math.abs(b[1] - 0.25) < 1e-9
-        and math.abs(b[4] - 0.25) < 1e-9 and math.abs(b[6] - b[3] - EqCourseGlow.BODY) < 1e-9)
+        and math.abs(b[4] - 0.25) < 1e-9 and math.abs(b[6] - b[3] - size) < 1e-9)
     local h = bent[2]
-    check("the head piece turns to the bend side", #bent == 2 and h ~= nil and h[4] < h[1] and h[6] > h[3])
+    check("the dash's front turns to the bend side, joined to it", #bent == 2 and h ~= nil and h[4] < h[1] and h[6] > h[3]
+        and h[1] == bent[1][4] and h[3] == bent[1][6])
 end)()
 
 
@@ -3774,6 +3784,16 @@ end)()
     check("a path guide's pieces stay put as the line ahead is cut shorter", #cut >= 2 and math.abs(cut[1][1] - 1) < 1e-6
         and math.abs(cut[2][1] - 2) < 1e-6)
     check("only the pieces near the horse are drawn", #EqCourseGlow.pieces(line, nil, 0, 0, 2) == 2)
+    -- A break (a dressage change) starts the pieces afresh right there, and stays put as the line is cut.
+    local broken = EqCourseGlow.pieces({ { x = 0, y = 0, z = 0 }, { x = 4, y = 0, z = 0 } }, nil, nil, nil, nil, { 1.5 })
+    local starts = {}
+    for _, p in ipairs(broken) do table.insert(starts, p.s) end
+    check("a gait's dashes start right at its change", table.concat(starts, " ") == "0 1 1.5 2.5 3.5", table.concat(starts, " "))
+    local shorter = EqCourseGlow.pieces({ { x = 0.6, y = 0, z = 0 }, { x = 4, y = 0, z = 0 } }, 0.6, nil, nil, nil, { 1.5 })
+    check("dashes after a change stay put as the line is cut", shorter[1] ~= nil and shorter[1].s == 1 and shorter[2].s == 1.5
+        and math.abs(shorter[2][1] - 1.5) < 1e-9)
+    local short = EqCourseGlow.shorten({ 0, 0, 0, 1, 0, 0, s = 3 }, 0.3)
+    check("a dash can be cut shorter", math.abs(short[4] - 0.3) < 1e-9 and short.s == 3)
     check("the dressage line goes green to red as the horse wanders off it", EqDressagePath.colourFor(0.2) == "green"
         and EqDressagePath.colourFor(1.3) == "yellow" and EqDressagePath.colourFor(5) == "red")
 end)()
@@ -3814,11 +3834,21 @@ end)()
         local run = EqDressagePath.newRun(test, 50)
         local pts, s, gait, ev, holdUntil, t, backUntil = test.pts, 0, "trot", 1, nil, 0, nil
         local k = 2
+        local spotting, turned, look = nil, 0, nil
         for _ = 1, 100000 do
             t = t + 33
             local e = test.events[ev]
             local move = gait
-            if backUntil ~= nil then
+            look = nil
+            if spotting ~= nil then
+                -- On the spot (Ctrl): a piaffe held, a pirouette turned round at 1.5 rad/s.
+                local a = turned * spotting.turn
+                look = { dirX = math.sin(a), dirZ = math.cos(a), spot = true }
+                if spotting.style == "pirouette" then turned = turned + 1.5 * 0.033 end
+                if spotting.style == "pirouette" and turned > 2 * math.pi + 0.1 or spotting.style == "piaffe" and t >= spotting.untilT then
+                    spotting, ev = nil, ev + 1
+                end
+            elseif backUntil ~= nil then
                 move = "reverse"
                 if t >= backUntil then backUntil, gait, ev = nil, e.gait, ev + 1 end
             elseif holdUntil ~= nil then
@@ -3828,9 +3858,13 @@ end)()
                     if e.reinBack then backUntil = t + EqDressagePath.REIN_BACK_MS + 200 else gait, ev = e.gait, ev + 1 end
                 end
             elseif e ~= nil and s >= e.s + late then
-                if e.kind == "halt" then holdUntil, move = t + 2600, "halt" else gait, move, ev = e.gait, e.gait, ev + 1 end
+                if e.kind == "halt" then holdUntil, move = t + 2600, "halt"
+                elseif e.kind == "spot" then
+                    spotting, turned = { style = e.style, turn = e.turn, untilT = t + EqDressagePath.SPOT_MS + 300 }, 0
+                    look = { dirX = 0, dirZ = 1, spot = true }
+                else gait, move, ev = e.gait, e.gait, ev + 1 end
             end
-            if move == "reverse" then s = s - 0.5 * 0.033 elseif move ~= "halt" then s = s + SPEED[move] * 0.033 end
+            if move == "reverse" then s = s - 0.5 * 0.033 elseif move ~= "halt" and look == nil then s = s + SPEED[move] * 0.033 end
             while k < #pts and pts[k].s < s do k = k + 1 end
             local a, b = pts[k - 1], pts[k]
             local f = math.min(1, math.max(0, (s - a.s) / math.max(0.001, b.s - a.s)))
@@ -3838,7 +3872,7 @@ end)()
             local len = math.max(0.001, math.sqrt(dx * dx + dy * dy))
             local off = wobble * math.sin(s / 6)
             local wx, wz = EqDressagePath.toWorld(frame, a.x + dx * f + dy / len * off, a.y + dy * f - dx / len * off)
-            local event = EqDressagePath.step(run, move, wx, wz, 33)
+            local event = EqDressagePath.step(run, move, wx, wz, 33, look)
             if event == "test" or event == "lost" then return run, event end
         end
         return run, "timeout"
@@ -3867,16 +3901,33 @@ end)()
             and keys.shortDiagonal and keys.serpentine and keys.shallowLoop and keys.eight and keys.across and keys.centre)
         local x, y = EqDressagePath.toLocal(frame, xOf(markers).x, xOf(markers).z)
         check(name .. ": X is the arena's middle", math.abs(x) < 1e-6 and math.abs(y) < 1e-6)
-        local gaps, outs, unsorted, walks, finals, jumps = 0, 0, 0, 0, 0, 0
+        local gaps, outs, unsorted, walks, finals, jumps, kinks = 0, 0, 0, 0, 0, 0, 0
+        local spots = { piaffe = 0, pirouette = 0 }
         for seed = 1, 30 do
             local rolls = EqRandom.new(seed)
             local test = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end)
+            -- No sudden bends where the line goes from one gait's track to another's (James's
+            -- screenshot, 2026-10-30): lateral figures' diagonals are left out.
+            for i = 3, #test.pts do
+                local a, b, c = test.pts[i - 2], test.pts[i - 1], test.pts[i]
+                local move = test.moves[b.m]
+                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn")
+                local ux, uy, vx, vy = b.x - a.x, b.y - a.y, c.x - b.x, c.y - b.y
+                local lu, lv = math.sqrt(ux * ux + uy * uy), math.sqrt(vx * vx + vy * vy)
+                if not lateral and lu > 0.2 and lv > 0.2 then
+                    local turn = math.abs(math.atan2(ux * vy - uy * vx, ux * vx + uy * vy))
+                    if turn > math.rad(30) then kinks = kinks + 1 end
+                end
+            end
             for i = 2, #test.pts do
                 local p, q = test.pts[i - 1], test.pts[i]
                 if math.sqrt((p.x - q.x) ^ 2 + (p.y - q.y) ^ 2) > 1.2 then gaps = gaps + 1 end
                 if q.s > 3 and (math.abs(q.x) > frame.halfW - 0.5 or math.abs(q.y) > frame.halfL - 0.5) then outs = outs + 1 end
             end
             local walkFrom, gait = nil, EqDressagePath.PROCEED
+            for _, e in ipairs(test.events) do
+                if e.kind == "spot" then spots[e.style] = spots[e.style] + 1 end
+            end
             for i, e in ipairs(test.events) do
                 if i > 1 and e.s < test.events[i - 1].s then unsorted = unsorted + 1 end
                 if walkFrom ~= nil and e.s - walkFrom > WALK_LONGEST then walks = walks + 1 end
@@ -3889,6 +3940,16 @@ end)()
             if last.kind == "halt" and last.final and #test.moves == EqDressagePath.TRAINING_FIGURES + 3 then finals = finals + 1 end
         end
         check(name .. ": a test's line has no gaps", gaps == 0, tostring(gaps))
+        check(name .. ": a test's line has no kinks", kinks == 0, tostring(kinks))
+        local dashRolls = EqRandom.new(3)
+        local lastTest = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(dashRolls:next() * k)) end)
+        local firstChange = nil
+        for _, e in ipairs(lastTest.events) do if e.kind == "change" then firstChange = e break end end
+        check(name .. ": the line's dashes follow the gait asked, starting afresh at each change", firstChange ~= nil
+            and EqDressagePath.gaitAt(lastTest, firstChange.s) == firstChange.gait
+            and EqDressagePath.gaitAt(lastTest, firstChange.s - 0.01) ~= firstChange.gait
+            and #EqDressagePath.breaks(lastTest) == #lastTest.events and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
+        check(name .. ": tests ask for piaffes and pirouettes", spots.piaffe > 0 and spots.pirouette > 0, spots.piaffe .. " " .. spots.pirouette)
         check(name .. ": a test's line stays inside the rail", outs == 0, tostring(outs))
         check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0, unsorted .. " " .. walks)
         check(name .. ": a change is one gait at a time", jumps == 0, tostring(jumps))
@@ -3899,6 +3960,20 @@ end)()
         local run, event = ride(test, frame, 0, 0)
         check(name .. ": a rider on the line, on time, scores 100%", event == "test" and run.percent == 100 and run.errors == 0,
             string.format("%s %s%%", event, tostring(run.percent)))
+        -- A test with a piaffe or pirouette in it, ridden on the spot as asked, still scores 100%;
+        -- riding straight past them costs marks.
+        for seed = 1, 40 do
+            local spotRolls = EqRandom.new(seed)
+            local spotTest = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(spotRolls:next() * k)) end)
+            local styles = {}
+            for _, e in ipairs(spotTest.events) do if e.kind == "spot" then styles[e.style] = true end end
+            if styles.pirouette or styles.piaffe then
+                local spotRun, spotEvent = ride(spotTest, frame, 0, 0)
+                check(name .. ": piaffes and pirouettes ridden on the spot score 100%", spotEvent == "test" and spotRun.percent == 100,
+                    string.format("seed %d %s %s%%", seed, spotEvent, tostring(spotRun.percent)))
+                break
+            end
+        end
         run, event = ride(test, frame, 1, 0)
         check(name .. ": wandering 1 m either side scores much less", event == "test" and run.percent < 70 and run.percent > 20,
             string.format("%s %s%%", event, tostring(run.percent)))

@@ -70,6 +70,11 @@ EqDressagePath.FIGURE_WEIGHTS = { circle = 1.5, longDiagonal = 1.5, shortDiagona
 EqDressagePath.INTERLUDE = 55
 EqDressagePath.INTERLUDES = { walk = { { "trot", 1 } }, trot = { { "canter", 3 }, { "walk", 1 } }, canter = { { "trot", 1 } } }
 EqDressagePath.HALT_TRACK = 30
+-- Else this % of the time on the track, movement on the spot at a letter (James, 2026-10-30):
+-- a piaffe at a trot, a pirouette at a walk or canter; and this % of canters and walks between
+-- two letters have a pirouette at a letter between them.
+EqDressagePath.SPOT_TRACK = 15
+EqDressagePath.SPOT_INTERLUDE = 40
 EqDressagePath.CHANGE_INSIDE = 55
 EqDressagePath.DOWN = { canter = "trot", trot = "walk" }
 EqDressagePath.HALT_CHANCE = 60
@@ -124,6 +129,10 @@ EqDressagePath.SECTION_GRACE = 1
 -- the horse is each second (0 at temperament 0 up to STICK_PULL at 100; STICK_FREE of it outside
 -- lateral work), and a turn towards the body angle a section asks for, up to STICK_TURN rad/s.
 EqDressagePath.STICK_PULL = 0.8
+-- A bend sharper than this (radians) where pieces of line join is smoothed out of the line.
+EqDressagePath.KINK = math.rad(50)
+-- Metres over which the line eases from one gait's track to another's in a corner.
+EqDressagePath.BLEND = 5
 EqDressagePath.STICK_FREE = 0.3
 EqDressagePath.STICK_TURN = 0.5
 
@@ -147,6 +156,13 @@ EqDressagePath.HALT_MAX = 3
 EqDressagePath.HALT_MOVED = 1
 EqDressagePath.HALT_MISSED = 4
 EqDressagePath.HALT_PASS = 5
+-- On the spot (Ctrl, EqLateral): started near its point like a halt (the same marks off), a
+-- piaffe held SPOT_MS, a pirouette turned a full circle the way asked (SPOT_TURN radians short
+-- of it will do); let go early costs up to SPOT_SHORT, riding past SPOT_MISSED.
+EqDressagePath.SPOT_MS = 4000
+EqDressagePath.SPOT_TURN = math.rad(20)
+EqDressagePath.SPOT_SHORT = 3
+EqDressagePath.SPOT_MISSED = 3
 -- Errors of course: further than LOST_DEV off the line for LOST_MS, out of the arena for OUT_MS
 -- (OUT_MARGIN past the rail), or no headway for STALL_MS. Each costs ERROR_PEN on the movement;
 -- ERRORS eliminate. The line then picks up at the nearest point up to SNAP_AHEAD on.
@@ -839,13 +855,27 @@ end
 --- Add points to a test's path, all in movement m.
 local function append(test, pts, m)
     local path = test.pts
+    local popped = 0
     for _, p in ipairs(pts) do
+        -- Where two pieces of line join (the track and a figure, two gaits' tracks), the
+        -- nearest point can sit a little behind or beside the horse: a sudden bend or step back
+        -- (James's screenshot, 2026-10-30). Drop the points that make one.
+        while #path >= 2 and popped < 4 do
+            local a, b = path[#path - 1], path[#path]
+            local ux, uy, vx, vy = b.x - a.x, b.y - a.y, p.x - b.x, p.y - b.y
+            local turn = math.abs(math.atan2(ux * vy - uy * vx, ux * vx + uy * vy))
+            local gap = math.sqrt((p.x - a.x) ^ 2 + (p.y - a.y) ^ 2)
+            if turn <= EqDressagePath.KINK or gap > 1.2 then break end
+            table.remove(path)
+            popped = popped + 1
+        end
         local last = path[#path]
         local d = last ~= nil and math.sqrt((p.x - last.x) ^ 2 + (p.y - last.y) ^ 2) or 0
         if last == nil or d > 0.05 then
             table.insert(path, { x = p.x, y = p.y, s = (last ~= nil and last.s or 0) + d, m = m })
         end
     end
+    return popped
 end
 
 
@@ -924,6 +954,13 @@ function EqDressagePath.build(frame, figures, rng)
         gait, lastChange = after, s
         walkFrom = after == "walk" and s or nil
     end
+    --- A piaffe (trot) or pirouette (walk, canter) at a letter, turning into the arena.
+    local function spot(s, letter, m, turn)
+        if s < lastChange + EqDressagePath.CHANGE_GAP then return end
+        local style = gait == "trot" and "piaffe" or "pirouette"
+        table.insert(events, { s = s, kind = "spot", style = style, gait = gait, letter = letter, m = m, turn = turn })
+        lastChange = s
+    end
 
     -- The opening: from outside A down the centre line, halt at X, track left or right at C.
     local turn = rng(2) == 1 and 1 or -1
@@ -946,6 +983,27 @@ function EqDressagePath.build(frame, figures, rng)
         local t = byGait[gait].pts
         local here = test.pts[#test.pts]
         local run = trackRun(t, onTrack(t, here.x, here.y), onTrack(t, x, y), rein)
+        -- Just after a change in a corner the horse is on the last gait's track, whose corner is
+        -- sized differently: ease across to this one over BLEND metres, not a sudden step.
+        local _, off = onTrack(t, here.x, here.y)
+        if off > 0.1 then
+            local from, fromOff = nil, off
+            for _, other in pairs(byGait) do
+                local _, d = onTrack(other.pts, here.x, here.y)
+                if d < fromOff then from, fromOff = other.pts, d end
+            end
+            if from ~= nil then
+                local d = 0
+                for k, p in ipairs(run) do
+                    if k > 1 then d = d + math.sqrt((p.x - run[k - 1].x) ^ 2 + (p.y - run[k - 1].y) ^ 2) end
+                    if d >= EqDressagePath.BLEND then break end
+                    local q = from[onTrack(from, p.x, p.y)]
+                    local w = 1 - d / EqDressagePath.BLEND
+                    w = w * w * (3 - 2 * w)
+                    run[k] = { x = p.x + (q.x - p.x) * w, y = p.y + (q.y - p.y) * w }
+                end
+            end
+        end
         append(test, run, m)
     end
 
@@ -1018,6 +1076,17 @@ function EqDressagePath.build(frame, figures, rng)
                 local back = gait
                 track(from.x, from.y, m)
                 change(test.pts[#test.pts].s, other, from.letter, m)
+                -- A pirouette at a letter on the way, now and then.
+                local between = {}
+                for _, l in ipairs(usable) do
+                    if l.d > from.d + 5 and l.d < to.d - 5 then table.insert(between, l) end
+                end
+                if other ~= "trot" and #between > 0 and rng(100) <= EqDressagePath.SPOT_INTERLUDE then
+                    local at = between[rng(#between)]
+                    track(at.x, at.y, m)
+                    lastChange = lastChange - EqDressagePath.CHANGE_GAP
+                    spot(test.pts[#test.pts].s, at.letter, m, rein)
+                end
                 track(to.x, to.y, m)
                 change(test.pts[#test.pts].s, back, to.letter, m, true)
             end
@@ -1027,6 +1096,10 @@ function EqDressagePath.build(frame, figures, rng)
             if test.pts[#test.pts].s >= lastChange + EqDressagePath.CHANGE_GAP then
                 halt(test.pts[#test.pts].s, at.letter, m, false, gait)
             end
+        elseif #usable >= 1 and roll <= EqDressagePath.INTERLUDE + EqDressagePath.HALT_TRACK + EqDressagePath.SPOT_TRACK then
+            local at = usable[rng(#usable)]
+            track(at.x, at.y, m)
+            spot(test.pts[#test.pts].s, at.letter, m, rein)
         end
         track(entry.x, entry.y, m)
     end
@@ -1035,7 +1108,7 @@ function EqDressagePath.build(frame, figures, rng)
         local move = test.moves[m]
         connect(figure.pts[1], figure.gait, m)
         local figStart = #test.pts
-        append(test, figure.pts, m)
+        figStart = figStart - append(test, figure.pts, m)
         local function sAt(i) return test.pts[math.min(figStart + i - 1, #test.pts)].s end
         for _, sec in ipairs(figure.sections or {}) do
             table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = figure.key, hx = sec.hx, hy = sec.hy,
@@ -1269,7 +1342,7 @@ local function errorOfCourse(run, x, y)
         run.gait = events[run.ev].gait
         run.ev = run.ev + 1
     end
-    run.hold = nil
+    run.hold, run.spot = nil, nil
     return "fault"
 end
 
@@ -1357,6 +1430,36 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         return event
     end
 
+    -- On the spot: a piaffe held, or a pirouette turned round, then go on.
+    if run.spot ~= nil then
+        run.stallMs = 0
+        local spot, done = run.spot, false
+        local on = look ~= nil and look.spot and EqDressagePath.matches(move, spot.event.gait)
+        if on then
+            spot.ms = spot.ms + dt
+            if spot.event.style == "pirouette" then
+                local a = math.atan2(look.dirX, look.dirZ)
+                local d = (a - spot.lastA + math.pi) % (2 * math.pi) - math.pi
+                spot.lastA = a
+                spot.turned = spot.turned + d * spot.event.turn
+                done = spot.turned >= 2 * math.pi - EqDressagePath.SPOT_TURN
+            else
+                done = spot.ms >= EqDressagePath.SPOT_MS
+            end
+        else
+            -- Let go early: marks off by how much was left.
+            addPen(run, spot.event.m, EqDressagePath.SPOT_SHORT * (1 - EqDressagePath.spotShare(spot)))
+            done = true
+        end
+        if done then
+            run.spot, run.ev = nil, run.ev + 1
+            run.proceedMs = run.clock
+            run.lastX, run.lastY = x, y
+            return "request"
+        end
+        return event
+    end
+
     -- A halt held: stand still for HOLD_MS, then go on (or the test is over).
     if run.hold ~= nil then
         run.stallMs = 0
@@ -1416,6 +1519,23 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                         return "test"
                     end
                 end
+            elseif next.kind == "spot" then
+                if look ~= nil and look.spot and EqDressagePath.matches(move, next.gait) then
+                    local hx, hy = pts[run.i].x, pts[run.i].y
+                    for k = run.i, #pts do
+                        if pts[k].s >= next.s then
+                            hx, hy = pts[k].x, pts[k].y
+                            break
+                        end
+                    end
+                    local err = math.sqrt((hx - x) ^ 2 + (hy - y) ^ 2)
+                    addPen(run, next.m, math.min(EqDressagePath.HALT_MAX, math.max(0, err - EqDressagePath.HALT_FREE) * EqDressagePath.HALT_PER_M))
+                    run.spot = { event = next, ms = 0, turned = 0, lastA = math.atan2(look.dirX, look.dirZ) }
+                    return event
+                elseif -dist >= EqDressagePath.HALT_PASS then
+                    addPen(run, next.m, EqDressagePath.SPOT_MISSED)
+                    run.ev = run.ev + 1
+                end
             elseif EqDressagePath.matches(move, next.gait) then
                 local err = math.abs(dist)
                 addPen(run, next.m, math.min(EqDressagePath.CHANGE_MAX, math.max(0, err - run.tolerance) * EqDressagePath.CHANGE_PER_M))
@@ -1465,6 +1585,42 @@ end
 
 --- What to show next: the change or halt coming up, once it is within warning.
 --- @return table|nil event { s, kind, gait, letter }, number metres to it
+-- The line's dashes by gait (James, 2026-10-30: show where a change is due): metres long, the
+-- longer the stride. Each gait's dashes start right at its change (EqCourseGlow.pieces breaks).
+EqDressagePath.DASH = { walk = 0.25, trot = 0.45, canter = 0.7, halt = 0.15 }
+
+
+--- The gait asked for at metres s along a test (pure): from the last change or halt before it.
+--- @return string walk, trot, canter or halt
+function EqDressagePath.gaitAt(test, s)
+    local gait = EqDressagePath.PROCEED
+    for _, e in ipairs(test.events) do
+        if e.s > s then break end
+        gait = e.gait or gait
+    end
+    return gait
+end
+
+
+--- Where the line's dashes start afresh (pure): every change and halt, in order.
+function EqDressagePath.breaks(test)
+    if test.breaks == nil then
+        test.breaks = {}
+        for _, e in ipairs(test.events) do table.insert(test.breaks, e.s) end
+    end
+    return test.breaks
+end
+
+
+--- How much of a movement on the spot is done (pure): 0..1.
+function EqDressagePath.spotShare(spot)
+    if spot.event.style == "pirouette" then
+        return math.max(0, math.min(1, spot.turned / (2 * math.pi - EqDressagePath.SPOT_TURN)))
+    end
+    return math.min(1, spot.ms / EqDressagePath.SPOT_MS)
+end
+
+
 --- The lateral section the horse is in, or the next one within warning (pure).
 --- @return table|nil section { s0, s1, m, kind, hx, hy, bend, drift }, boolean true once in it
 function EqDressagePath.section(run)
@@ -1496,7 +1652,7 @@ end
 --- @param dt number ms
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate rad/s
 function EqDressagePath.assist(run, wx, wz, lateral, dt)
-    if not run.started or run.hold ~= nil or run.back ~= nil then return 0, 0, nil, nil, 0 end
+    if not run.started or run.hold ~= nil or run.back ~= nil or run.spot ~= nil then return 0, 0, nil, nil, 0 end
     local pts, frame = run.test.pts, run.frame
     local x, y = EqDressagePath.toLocal(frame, wx, wz)
     local i = run.i
@@ -1523,7 +1679,7 @@ end
 
 function EqDressagePath.upcoming(run)
     local next = run.test.events[run.ev]
-    if next == nil or run.hold ~= nil then return nil end
+    if next == nil or run.hold ~= nil or run.spot ~= nil then return nil end
     local dist = next.s - run.s
     if dist > run.warn then return nil end
     return next, dist

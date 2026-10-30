@@ -132,9 +132,13 @@
         <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
         <text name="eq_lat_left" text="links"/>
         <text name="eq_lat_right" text="rechts"/>
-        <text name="eq_lat_keys" text="Shift + A/D: zijwaarts. Rechtermuisknop vasthouden en slepen: hoofd stellen."/>
+        <text name="eq_lat_keys" text="Shift + A/D: zijwaarts. Shift + rechtermuisknop slepen: hoofd stellen."/>
         <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe bij %s (Ctrl ingedrukt)"/>
+        <text name="eq_dressage_pirouetteAt" text="Pirouette naar %s bij %s (Ctrl + %s)"/>
+        <text name="eq_dressage_piaffe" text="Piaffe! Houd Ctrl ingedrukt"/>
+        <text name="eq_dressage_pirouette" text="Pirouette naar %s! Ctrl + %s"/>
         <text name="eq_dressage_line" text="Terug op de lijn!"/>
         <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
         <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>

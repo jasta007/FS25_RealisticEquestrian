@@ -198,7 +198,10 @@ function EqDressageHooks.courseFor(vehicle, spec)
     -- The way the horse faces and its head bend, for lateral work (EqLateral).
     local dirX, _, dirZ = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
     local bend = EqLateral ~= nil and EqLateral.vehicle == vehicle and EqLateral.bend or 0
-    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ, bend = bend }
+    -- On the spot (Ctrl) for a piaffe or pirouette.
+    local spot = (spec.eqCollect or 0) >= 0.8
+    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ,
+        bend = bend, spot = spot }
 end
 
 
@@ -325,7 +328,9 @@ function EqDressageHooks.drawPath(vehicle)
         EqDressageHooks.shownDev = nil
     end
     EqDressageHooks.drawnAt = now
-    if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, EqDressageHooks.bodyAlong(run)) then return end
+    local style = { breaks = EqDressagePath.breaks(run.test), shape = EqDressageHooks.bodyAlong(run),
+        length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(run.test, s + 1e-6)] end }
+    if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, style) then return end
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)

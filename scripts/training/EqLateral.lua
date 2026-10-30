@@ -41,6 +41,11 @@ EqLateral.TILT = 0.3
 -- positive), and how fast it springs back once the button is let go.
 EqLateral.BEND_SCALE = 2
 EqLateral.BEND_BACK_MS = 300
+-- Mouse steering (James, 2026-10-30): the right button held without Shift steers with the mouse,
+-- left and right setting the turn (-1..1, left positive as the base game's axisSteer) like a
+-- wheel, back to straight once the button is let go. Shift + right button bends the head.
+EqLateral.STEER_SCALE = 1.5
+EqLateral.steer = 0
 -- While the bend is held the camera eases round to the way the horse is going (James,
 -- 2026-10-30: bending took the mouse away from the camera, so he lost sight of where he went):
 -- the share of the gap closed each SNAP_MS. Up and down stays on the mouse.
@@ -193,28 +198,16 @@ function EqLateral.collect(current, wanted, dt)
 end
 
 
---- Turning with the bend held (pure; James, 2026-10-30: a canter circle bigger than the full turn
---- was jerky to hold). With the right button down while turning, the head starts bent fully into
---- the turn and the turn is cut by how much of that bend is left: drag back to turn less, never
---- more. The head also starts bent into the turn when the button goes down or the turn begins
---- with the head near straight.
---- @param bend number -1..1 right positive
---- @param steer number the base game's axisSteer (left positive)
---- @param fresh boolean the button just went down, or the turn just began
---- @return number bend, number steer
-function EqLateral.reined(bend, steer, fresh)
-    if steer == 0 then return bend, steer end
-    local into = steer > 0 and -1 or 1
-    if fresh and math.abs(bend) < 0.05 or fresh and bend * into < 0 then bend = into end
-    local share = math.max(0, math.min(1, bend * into))
-    return bend, steer * share
-end
-
-
 --- @return boolean the right mouse button is held
 local function rightHeld()
     return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
         and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_RIGHT) == true
+end
+
+
+--- @return boolean Shift is held
+local function shiftHeld()
+    return key("KEY_lshift") or key("KEY_rshift")
 end
 
 
@@ -225,7 +218,12 @@ function EqLateral.onLook(inputValue, isMouse, horizontal)
     if not isMouse or vehicle == nil or not rightHeld() then return false end
     if vehicle.getIsEntered ~= nil and not vehicle:getIsEntered() then return false end
     if not horizontal then return false end
-    EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + inputValue * 0.001 * 16.666 * EqLateral.BEND_SCALE))
+    local turn = inputValue * 0.001 * 16.666
+    if shiftHeld() then
+        EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + turn * EqLateral.BEND_SCALE))
+    else
+        EqLateral.steer = math.max(-1, math.min(1, EqLateral.steer - turn * EqLateral.STEER_SCALE))
+    end
     return true
 end
 
@@ -288,19 +286,17 @@ local function before(vehicle, dt)
     local side, spot = 0, false
     if entered then
         EqLateral.vehicle = vehicle
-        local held = rightHeld()
-        EqLateral.bend = EqLateral.relax(EqLateral.bend, held, dt)
+        local held, shift = rightHeld(), shiftHeld()
+        EqLateral.bend = EqLateral.relax(EqLateral.bend, held and shift, dt)
+        EqLateral.steer = EqLateral.relax(EqLateral.steer, held and not shift, dt)
         spot = (key("KEY_lctrl") or key("KEY_rctrl")) and gaitOk(spec)
         if not spot then
-            side = EqLateral.side(key("KEY_lshift") or key("KEY_rshift"), key("KEY_a"), key("KEY_d"), gaitOk(spec))
+            side = EqLateral.side(shift, key("KEY_a"), key("KEY_d"), gaitOk(spec))
         end
-        -- The bend held while turning reins the turn in (not while drifting or on the spot).
-        local steer = spec.inputValues.axisSteer or 0
-        if held and side == 0 and not spot then
-            local fresh = not EqLateral.wasHeld or (spec.eqSteerWas or 0) == 0
-            EqLateral.bend, spec.inputValues.axisSteer = EqLateral.reined(EqLateral.bend, steer, fresh)
+        -- Mouse steering, unless A or D steers.
+        if held and not shift and not spot and EqLateral.steer ~= 0 and not key("KEY_a") and not key("KEY_d") then
+            spec.inputValues.axisSteer = EqLateral.steer
         end
-        EqLateral.wasHeld, spec.eqSteerWas = held, steer
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     spec.eqCollect = EqLateral.collect(spec.eqCollect or 0, spot, dt)

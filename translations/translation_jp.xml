@@ -132,9 +132,13 @@
         <text name="eq_lat_legYieldRail" text="壁沿いの斜横歩: %sへ"/>
         <text name="eq_lat_left" text="左"/>
         <text name="eq_lat_right" text="右"/>
-        <text name="eq_lat_keys" text="Shift + A/D: 横へ移動。右クリックを押したままドラッグ: 頭を曲げる。"/>
+        <text name="eq_lat_keys" text="Shift + A/D: 横へ移動。Shift + 右クリックでドラッグ: 頭を曲げる。"/>
         <text name="eq_fig_final" text="%sで中央線、%sで停止"/>
         <text name="eq_dressage_haltAt" text="%sで停止"/>
+        <text name="eq_dressage_piaffeAt" text="%sでピアッフェ（Ctrlを押し続ける）"/>
+        <text name="eq_dressage_pirouetteAt" text="%sへピルエット、%sで（Ctrl + %s）"/>
+        <text name="eq_dressage_piaffe" text="ピアッフェ！Ctrlを押し続ける"/>
+        <text name="eq_dressage_pirouette" text="%sへピルエット！Ctrl + %s"/>
         <text name="eq_dressage_line" text="ラインに戻れ！"/>
         <text name="eq_dressage_mark" text="前回の得点：%s"/>
         <text name="eq_pop_routineError" text="経路違反 %d/%d"/>
