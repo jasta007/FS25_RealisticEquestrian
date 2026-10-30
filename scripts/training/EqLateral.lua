@@ -167,16 +167,19 @@ function EqLateral.onLook(inputValue, isMouse, horizontal)
 end
 
 
---- The camera's turn after a frame (pure): eased the short way towards the way the horse is
---- going, which is off its heading by the drift (looking right lowers the camera's rotY).
+--- The camera's turn after a frame (pure). The horse's camera hangs off its head (James,
+--- 2026-10-30: it lined up with the bent head), so its rotY is not measured from the heading:
+--- it is turned by however far the view is off the way the horse goes, in the world, eased.
+--- Angles are world headings (dir = sin, cos); a camera turn adds to the heading it faces.
 --- @param rotY number the camera's turn now
---- @param origRotY number its turn facing the horse's heading
---- @param lateral number -1..1 eased drift, right positive
+--- @param viewAngle number the heading the camera looks along now
+--- @param turnAngle number the horse's heading
+--- @param lateral number -1..1 eased drift, right positive (the right is the lower heading)
 --- @param dt number ms
 --- @return number
-function EqLateral.snap(rotY, origRotY, lateral, dt)
-    local want = origRotY - math.atan(lateral * EqLateral.SHARE)
-    local diff = (want - rotY + math.pi) % (2 * math.pi) - math.pi
+function EqLateral.snap(rotY, viewAngle, turnAngle, lateral, dt)
+    local want = turnAngle - math.atan(lateral * EqLateral.SHARE)
+    local diff = (want - viewAngle + math.pi) % (2 * math.pi) - math.pi
     return rotY + diff * math.min(1, dt / EqLateral.SNAP_MS)
 end
 
@@ -186,9 +189,19 @@ local function snapCamera(vehicle, dt)
     if vehicle ~= EqLateral.vehicle or not rightHeld() then return end
     local enterable = vehicle.spec_enterable
     local camera = enterable ~= nil and enterable.activeCamera or nil
-    if camera == nil or not camera.isRotatable or type(camera.rotY) ~= "number" or type(camera.origRotY) ~= "number" then return end
     local spec = vehicle.spec_rideable
-    camera.rotY = EqLateral.snap(camera.rotY, camera.origRotY, spec ~= nil and spec.eqLateral or 0, dt)
+    if camera == nil or not camera.isRotatable or type(camera.rotY) ~= "number" or camera.cameraNode == nil
+        or spec == nil or type(spec.currentTurnAngle) ~= "number" then return end
+    -- A camera looks along its -z.
+    local vx, _, vz = localDirectionToWorld(camera.cameraNode, 0, 0, -1)
+    if vx * vx + vz * vz < 1e-6 then return end
+    local view = math.atan2(vx, vz)
+    if not EqLateral.snapLogged then
+        EqLateral.snapLogged = true
+        Log:info("Lateral work: camera %.0f deg off the heading as it starts following",
+            math.deg((view - spec.currentTurnAngle + math.pi) % (2 * math.pi) - math.pi))
+    end
+    camera.rotY = EqLateral.snap(camera.rotY, view, spec.currentTurnAngle, spec.eqLateral or 0, dt)
 end
 
 
