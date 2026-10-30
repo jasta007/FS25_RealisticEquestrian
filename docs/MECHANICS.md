@@ -166,8 +166,14 @@ the courses quiet until it ends.
 
 **Lateral work** (James, 2026-10-30): hold Shift and press A or D at a walk, trot or canter and the
 horse drifts that way at half its forward speed while still facing forwards, its head tilted the
-way it goes, like a half pass (no new animations: strafing). It doesn't turn while Shift is held.
-Single player for now (the keys are read on the rider's machine).
+way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
+to adjust the line, then hold it again. Holding the right mouse button and dragging left or right
+bends the head that way (the turn animation only, no turn and no camera move); it springs back in
+0.3 s once the button is let go. Together they make the movements: shoulder-in = bend alone along
+the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
+body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
+goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
+Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
 rail, not of any letter) shows "Move to A to begin a Dressage Routine" (no time limit) and a gold
@@ -213,6 +219,17 @@ the middle of the screen for 2.5 s as it starts.
   60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4.
+- **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
+  canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
+  shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
+  ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
+  panel. From 1 m into each section the body must face within 12 degrees of the asked angle
+  (0.6 a second off, at most 3) and the head be bent at least 0.3 the asked way (0.5 a second,
+  at most 2).
+- **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
+  onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
+  lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
+  takes less effort to hold. None at temperament 0, and none during a halt or rein back.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
   arena (0.5 m past the rail) for 3 s, or no headway for 10 s. The line picks up again at the
   nearest point up to 40 m on. The third error eliminates.

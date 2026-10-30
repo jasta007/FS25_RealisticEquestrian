@@ -106,6 +106,27 @@ EqDressagePath.REJOIN_DIST = 1
 EqDressagePath.REJOIN_AHEAD = 15
 EqDressagePath.SKIP_DEV = 3
 
+-- Lateral work (EqLateral, James 2026-10-30): the sideways drift is DRIFT of the forward speed
+-- (EqLateral.SHARE). In a lateral section the horse's body must face within ANGLE_FREE (radians)
+-- of the way asked, else ANGLE_PER_S a second (at most ANGLE_MAX); a bend asked for must be at
+-- least BEND_MIN that way, else BEND_PER_S a second (at most BEND_MAX). The first SECTION_GRACE
+-- metres of a section are not judged (setting up).
+EqDressagePath.DRIFT = 0.5
+EqDressagePath.LATERAL_IN = { [true] = 4, [false] = 3 }
+EqDressagePath.ANGLE_FREE = math.rad(12)
+EqDressagePath.ANGLE_PER_S = 0.6
+EqDressagePath.ANGLE_MAX = 3
+EqDressagePath.BEND_MIN = 0.3
+EqDressagePath.BEND_PER_S = 0.5
+EqDressagePath.BEND_MAX = 2
+EqDressagePath.SECTION_GRACE = 1
+-- Temperament's stickiness (James 2026-10-30): a pull back onto the line, a share of how far off
+-- the horse is each second (0 at temperament 0 up to STICK_PULL at 100; STICK_FREE of it outside
+-- lateral work), and a turn towards the body angle a section asks for, up to STICK_TURN rad/s.
+EqDressagePath.STICK_PULL = 0.8
+EqDressagePath.STICK_FREE = 0.3
+EqDressagePath.STICK_TURN = 0.5
+
 -- Marks. Off the line: nothing for the first DEV_FREE metres on average, then DEV_PER_M a metre
 -- (James 2026-10-30: 0.3 to 0.4 m off on average scored 8s and 9s for a test worth about 60%).
 EqDressagePath.DEV_FREE = 0.05
@@ -629,11 +650,87 @@ FIGURES.eight = function(g, frame, gait)
 end
 
 
+-- LATERAL WORK (James 2026-10-30): with Shift + A/D the horse drifts sideways facing forwards
+-- (EqLateral), and a right mouse drag bends its head. Each builds a figure whose sections ask for a
+-- body angle (hx, hy: the way the horse faces, local) and a bend (1 right, -1 left, nil any).
+
+
+--- In off the track and back, drifting with the body straight up the arena: leg yield (bend away
+--- from the drift) or half pass (bend into it).
+local function inAndBack(g, gait, key, bendIn)
+    local d = EqDressagePath.LATERAL_IN[g.wt >= 8]
+    local run = d / EqDressagePath.DRIFT
+    local straight = g.straight[gait]
+    local total = 2 + run + 3 + run + 2
+    local list = {}
+    for _, y in ipairs(g.sides) do
+        -- A letter just into the corner is still on the track (within half a metre).
+        if y >= -straight - 1 and y + total <= straight + 1 then
+            local pen = newPen(g.wt, y, 0, 1)
+            forward(pen, 2)
+            local a = #pen.pts
+            lineTo(pen, g.wt - d, pen.y + run)
+            local b = #pen.pts
+            lineTo(pen, g.wt - d, pen.y + 3)
+            local c = #pen.pts
+            lineTo(pen, g.wt, pen.y + run)
+            local e = #pen.pts
+            lineTo(pen, g.wt, pen.y + 2)
+            -- In is to the rider's left here (facing +y on the right side).
+            table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y } }, marks = {}, lateral = true,
+                sections = { { from = a, to = b, hx = 0, hy = 1, bend = bendIn, drift = -1 },
+                    { from = c, to = e, hx = 0, hy = 1, bend = -bendIn, drift = 1 } } })
+        end
+    end
+    return list
+end
+
+
+--- Leg yield off the track and back: walk or trot, bent away from the drift.
+FIGURES.legYield = function(g, frame, gait)
+    if gait == "canter" then return {} end
+    return inAndBack(g, gait, "legYield", 1)
+end
+
+
+--- Half pass off the track and back: trot, or canter in a 20 m wide arena; bent into the drift.
+FIGURES.halfPass = function(g, frame, gait)
+    if gait == "walk" or gait == "canter" and g.wt < 8 then return {} end
+    return inAndBack(g, gait, "halfPass", -1)
+end
+
+
+--- Along the rail between two side letters: shoulder-in (straight, head bent in) or leg yield
+--- along the rail (the body turned in by the drift's angle, drifting to the rail). Walk or trot.
+local function alongRail(g, gait, key)
+    if gait == "canter" then return {} end
+    local straight, list = g.straight[gait], {}
+    local angle = math.atan(EqDressagePath.DRIFT)
+    for k = 1, #g.sides - 1 do
+        local y0, y1 = g.sides[k], g.sides[k + 1]
+        if y0 >= -straight - 1 and y1 <= straight + 1 and y1 - y0 >= 10 then
+            local pen = newPen(g.wt, y0, 0, 1)
+            lineTo(pen, g.wt, y1)
+            local section = key == "shoulderIn" and { from = 1, to = #pen.pts, hx = 0, hy = 1, bend = -1, drift = 0 }
+                or { from = 1, to = #pen.pts, hx = -math.sin(angle), hy = math.cos(angle), drift = 1 }
+            table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y0 }, { g.wt, y1 } }, marks = {}, lateral = true,
+                sections = { section } })
+        end
+    end
+    return list
+end
+
+
+FIGURES.shoulderIn = function(g, frame, gait) return alongRail(g, gait, "shoulderIn") end
+FIGURES.legYieldRail = function(g, frame, gait) return alongRail(g, gait, "legYieldRail") end
+
+
 -- For the tests.
 EqDressagePath.FIGURES = FIGURES
 
 
-EqDressagePath.FIGURE_ORDER = { "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "serpentine",
+EqDressagePath.FIGURE_ORDER = { "legYield", "halfPass", "shoulderIn", "legYieldRail",
+    "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "serpentine",
     "shallowLoop", "throughCircle", "eight" }
 
 
@@ -678,7 +775,8 @@ function EqDressagePath.library(frame)
             local track = byGait[gait].pts
             for _, figure in ipairs(FIGURES[name](g, frame, gait)) do
                 local weight = EqDressagePath.FIGURE_WEIGHTS[figure.key] or 1
-                if EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
+                -- Lateral work drifts without turning: its kinks are not turns.
+                if figure.lateral or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
                     for _, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
                         local sx, sy = mirror[1], mirror[2]
                         local pts = {}
@@ -689,11 +787,18 @@ function EqDressagePath.library(frame)
                         if n >= 3 and entryD < 0.5 and exitD < 0.5 then
                             local labels = {}
                             for i, l in ipairs(figure.labels) do labels[i] = letterAt(frame, l[1] * sx, l[2] * sy) end
+                            -- A mirror swaps left and right once (twice is none).
+                            local sections = nil
+                            for _, sec in ipairs(figure.sections or {}) do
+                                sections = sections or {}
+                                table.insert(sections, { from = sec.from, to = sec.to, hx = sec.hx * sx, hy = sec.hy * sy,
+                                    bend = sec.bend ~= nil and sec.bend * sx * sy or nil, drift = sec.drift * sx * sy })
+                            end
                             table.insert(list, {
                                 key = figure.key, gait = gait, weight = weight * EqDressagePath.GAIT_WEIGHTS[gait],
                                 size = figure.size, loops = figure.loops, labels = labels,
                                 turn = figure.turn ~= nil and figure.turn * sx * sy or nil,
-                                pts = pts, marks = figure.marks, haltAt = figure.haltAt,
+                                pts = pts, marks = figure.marks, haltAt = figure.haltAt, sections = sections,
                                 entry = entry, entryRein = reinAt(track, entry, pts[2].x - pts[1].x, pts[2].y - pts[1].y),
                                 exitRein = reinAt(track, exit, pts[n].x - pts[n - 1].x, pts[n].y - pts[n - 1].y),
                                 fromA = pts[1].y < 0,
@@ -801,7 +906,7 @@ end
 --- @return table test { pts = { x, y, s, m }, moves = { s0, s1, key, ... }, events = { s, kind, gait, letter, m }, length, frame }
 function EqDressagePath.build(frame, figures, rng)
     local library, byGait, g = EqDressagePath.library(frame)
-    local test = { pts = {}, moves = {}, events = {}, frame = frame, g = g }
+    local test = { pts = {}, moves = {}, events = {}, sections = {}, frame = frame, g = g }
     local events = test.events
 
     -- Changes: never closer than CHANGE_GAP to the last one (unless forced), and walks kept short.
@@ -932,6 +1037,10 @@ function EqDressagePath.build(frame, figures, rng)
         local figStart = #test.pts
         append(test, figure.pts, m)
         local function sAt(i) return test.pts[math.min(figStart + i - 1, #test.pts)].s end
+        for _, sec in ipairs(figure.sections or {}) do
+            table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = figure.key, hx = sec.hx, hy = sec.hy,
+                bend = sec.bend, drift = sec.drift })
+        end
         -- A walk down the centre line trots on from X: halt, proceed at a trot.
         local after = figure.gait == "walk" and "trot" or figure.gait
         if figure.haltAt ~= nil and rng(100) <= EqDressagePath.HALT_CHANCE then
@@ -1016,8 +1125,9 @@ function EqDressagePath.newRun(test, temperament)
     local t = (temperament or 50) / 100
     local run = { test = test, frame = test.frame, i = 1, s = 0, ev = 1, gait = EqDressagePath.PROCEED, started = false,
         look = lerp(EqDressagePath.LOOK, t), warn = lerp(EqDressagePath.WARN, t), tolerance = lerp(EqDressagePath.TOLERANCE, t),
-        cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0 }
-    for m = 1, #test.moves do run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0 } end
+        cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0,
+        temper = t, sec = 1 }
+    for m = 1, #test.moves do run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0 } end
     -- Out of the arena counts once the path is inside the rail.
     run.inFrom = 0
     for _, p in ipairs(test.pts) do
@@ -1044,6 +1154,8 @@ function EqDressagePath.markOf(acc)
     local mean = acc.len > 0 and acc.devSum / acc.len or 0
     local mark = 10 - math.max(0, mean - EqDressagePath.DEV_FREE) * EqDressagePath.DEV_PER_M
         - math.min(EqDressagePath.WRONG_MAX, acc.wrongMs / 1000 * EqDressagePath.WRONG_PER_S) - acc.pen
+        - math.min(EqDressagePath.ANGLE_MAX, (acc.angleMs or 0) / 1000 * EqDressagePath.ANGLE_PER_S)
+        - math.min(EqDressagePath.BEND_MAX, (acc.bendMs or 0) / 1000 * EqDressagePath.BEND_PER_S)
     return math.max(0, math.min(10, math.floor(mark * 2 + 0.5) / 2))
 end
 
@@ -1094,8 +1206,8 @@ local function closeTo(run, m)
             run.lastMark, run.lastMove = run.marks[run.cur], run.cur
             -- Why: for the log.
             local move = run.test.moves[run.cur]
-            run.lastDetail = string.format("%s, off the line %.1f m on average, wrong gait %.1f s, timing and halts -%.1f",
-                move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen)
+            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s",
+                move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -1170,7 +1282,9 @@ end
 --- @param dt number milliseconds
 --- @return string|nil event "begin", "request" (a change or halt is near), "done" (a movement
 ---     marked: run.lastMark), "fault" (an error of course), "test" (finished: run.percent) or "lost"
-function EqDressagePath.step(run, move, wx, wz, dt)
+--- @param look table|nil { dirX, dirZ = the horse's facing in the world, bend = -1..1 right
+--- positive } for lateral work; nil leaves sections unjudged
+function EqDressagePath.step(run, move, wx, wz, dt, look)
     local test, pts = run.test, run.test.pts
     local x, y = EqDressagePath.toLocal(run.frame, wx, wz)
     run.clock = run.clock + dt
@@ -1313,6 +1427,22 @@ function EqDressagePath.step(run, move, wx, wz, dt)
         end
     end
 
+    -- Lateral work: the body's angle and the bend in a section.
+    -- run.angleWrong / run.bendWrong say what is off this frame, for the prompt's colour.
+    local sec = EqDressagePath.section(run)
+    run.angleWrong, run.bendWrong = false, false
+    if sec ~= nil and look ~= nil and run.s >= sec.s0 + EqDressagePath.SECTION_GRACE then
+        local acc = run.acc[math.min(sec.m, #test.moves)]
+        if EqDressagePath.angleOff(run.frame, sec, look.dirX, look.dirZ) > EqDressagePath.ANGLE_FREE then
+            acc.angleMs = acc.angleMs + dt
+            run.angleWrong = true
+        end
+        if sec.bend ~= nil and (look.bend or 0) * sec.bend < EqDressagePath.BEND_MIN then
+            acc.bendMs = acc.bendMs + dt
+            run.bendWrong = true
+        end
+    end
+
     -- At the wrong gait, once settled after the last change or halt.
     local settling = run.proceedMs ~= nil and run.clock - run.proceedMs < 3000
     if not free and not settling and not EqDressagePath.matches(move, run.gait) then
@@ -1335,6 +1465,62 @@ end
 
 --- What to show next: the change or halt coming up, once it is within warning.
 --- @return table|nil event { s, kind, gait, letter }, number metres to it
+--- The lateral section the horse is in, or the next one within warning (pure).
+--- @return table|nil section { s0, s1, m, kind, hx, hy, bend, drift }, boolean true once in it
+function EqDressagePath.section(run)
+    local sections = run.test.sections or {}
+    while sections[run.sec] ~= nil and sections[run.sec].s1 < run.s do run.sec = run.sec + 1 end
+    local sec = sections[run.sec]
+    if sec == nil or sec.s0 - run.s > run.warn then return nil, false end
+    return sec, run.s >= sec.s0
+end
+
+
+--- How far the horse's body faces off what a section asks (radians, pure).
+--- @param dirX number the horse's facing in the world
+--- @param dirZ number
+function EqDressagePath.angleOff(frame, sec, dirX, dirZ)
+    local hx, hy = dirX * frame.vx + dirZ * frame.vz, dirX * frame.ux + dirZ * frame.uz
+    local cross = hx * sec.hy - hy * sec.hx
+    local dot = hx * sec.hx + hy * sec.hy
+    return math.abs(math.atan2(cross, dot))
+end
+
+
+--- Temperament's stickiness (pure): a pull back onto the line this frame (world metres) and,
+--- in a lateral section, the world heading (dirX, dirZ) to ease the body towards and how fast.
+--- @param run table
+--- @param wx number the horse's position
+--- @param wz number
+--- @param lateral boolean drifting sideways now
+--- @param dt number ms
+--- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate rad/s
+function EqDressagePath.assist(run, wx, wz, lateral, dt)
+    if not run.started or run.hold ~= nil or run.back ~= nil then return 0, 0, nil, nil, 0 end
+    local pts, frame = run.test.pts, run.frame
+    local x, y = EqDressagePath.toLocal(frame, wx, wz)
+    local i = run.i
+    local a, b = pts[math.max(1, i - 1)], pts[math.min(#pts, i + 1)]
+    -- The nearest point of the line by the horse.
+    local px, py = pts[i].x, pts[i].y
+    local dx, dy = b.x - a.x, b.y - a.y
+    local len2 = dx * dx + dy * dy
+    if len2 > 1e-9 then
+        local t = math.max(0, math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / len2))
+        px, py = a.x + dx * t, a.y + dy * t
+    end
+    local sec, inside = EqDressagePath.section(run)
+    if not inside then sec = nil end
+    local share = EqDressagePath.STICK_PULL * run.temper * ((lateral or sec ~= nil) and 1 or EqDressagePath.STICK_FREE)
+    local k = math.min(1, share * dt / 1000)
+    local ox, oy = (px - x) * k, (py - y) * k
+    local pullX, pullZ = ox * frame.vx + oy * frame.ux, ox * frame.vz + oy * frame.uz
+    if sec == nil then return pullX, pullZ, nil, nil, 0 end
+    local wantX, wantZ = sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz
+    return pullX, pullZ, wantX, wantZ, EqDressagePath.STICK_TURN * run.temper
+end
+
+
 function EqDressagePath.upcoming(run)
     local next = run.test.events[run.ev]
     if next == nil or run.hold ~= nil then return nil end

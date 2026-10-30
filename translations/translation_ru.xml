@@ -122,6 +122,17 @@
         <text name="eq_fig_shallowLoop" text="Петля %d м %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Смена направления через вольт у %s"/>
         <text name="eq_fig_eight" text="Восьмёрка от %s"/>
+        <text name="eq_fig_legYield" text="Уступка шенкелю от %s и обратно"/>
+        <text name="eq_fig_halfPass" text="Принимание от %s и обратно"/>
+        <text name="eq_fig_shoulderIn" text="Плечо внутрь %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Уступка шенкелю вдоль стенки %s-%s"/>
+        <text name="eq_lat_legYield" text="Уступка шенкелю: %s, сгибание %s"/>
+        <text name="eq_lat_halfPass" text="Принимание: %s, сгибание %s"/>
+        <text name="eq_lat_shoulderIn" text="Плечо внутрь: сгибание %s"/>
+        <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s"/>
+        <text name="eq_lat_left" text="влево"/>
+        <text name="eq_lat_right" text="вправо"/>
+        <text name="eq_lat_keys" text="Shift + A/D: боковое движение. Удерживайте правую кнопку мыши и тяните: сгибание головы."/>
         <text name="eq_fig_final" text="Средняя линия от %s, остановка у %s"/>
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
         <text name="eq_dressage_line" text="Вернитесь на линию!"/>

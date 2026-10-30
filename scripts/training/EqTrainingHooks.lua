@@ -1162,6 +1162,18 @@ local function pathEventText(event)
 end
 
 
+--- What a lateral section asks: "Leg yield: drift left, bend right".
+--- @param sec table EqDressagePath test section { kind, drift, bend }
+--- @return string
+local function sectionText(sec)
+    local function side(v) return g_i18n:getText((v or 0) > 0 and "eq_lat_right" or "eq_lat_left") end
+    local key = "eq_lat_" .. sec.kind
+    if sec.kind == "shoulderIn" then return string.format(g_i18n:getText(key), side(sec.bend)) end
+    if sec.kind == "legYieldRail" then return string.format(g_i18n:getText(key), side(sec.drift)) end
+    return string.format(g_i18n:getText(key), side(sec.drift), side(sec.bend))
+end
+
+
 --- A test of figures (EqDressagePath): the movement and score by the panel, and only what to do
 --- now in the middle (changes, halts, getting back on the line or into the arena).
 --- @param rows table panel rows to add to
@@ -1197,8 +1209,18 @@ local function pathRows(rows, routine)
         EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_stand"), math.max(0, run.hold.untilMs - run.clock) / EqDressagePath.HOLD_MS, color)
     else
         local event, dist = EqDressagePath.upcoming(run)
+        local sec, inside = EqDressagePath.section(run)
+        if sec ~= nil then
+            -- The keys beside the panel while lateral work is asked for or coming up.
+            EqTrainingHud.drawPanelNote(g_i18n:getText("eq_lat_keys"), COLOR.grey or color, true)
+        end
         if event ~= nil then
             EqTrainingHud.drawPrompt(pathEventText(event), math.max(0, math.min(1, dist / run.warn)), color)
+        elseif sec ~= nil then
+            -- Red while the body's angle or the bend is off (a mark lost each second of it).
+            local wrong = inside and (run.angleWrong or run.bendWrong)
+            local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
+            EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
         elseif telling then
             EqTrainingHud.drawPrompt(figureText(moves[m]), nil, color)
         elseif run.proceedMs ~= nil and run.clock - run.proceedMs < 2500 then

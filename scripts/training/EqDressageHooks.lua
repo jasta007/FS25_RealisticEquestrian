@@ -195,7 +195,10 @@ function EqDressageHooks.courseFor(vehicle, spec)
         spec.eqTemperament = record ~= nil and record.trained ~= nil and record.trained.temperament or nil
     end
     if spec.eqCourse == nil then return nil end
-    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament }
+    -- The way the horse faces and its head bend, for lateral work (EqLateral).
+    local dirX, _, dirZ = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
+    local bend = EqLateral ~= nil and EqLateral.vehicle == vehicle and EqLateral.bend or 0
+    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ, bend = bend }
 end
 
 
@@ -248,6 +251,18 @@ local function pointY(frame, p)
         p.wy = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, p.wx, 0, p.wz) or 0
     end
     return p.wy
+end
+
+
+--- Temperament's stickiness for EqLateral: the pull back onto the test's line and the body angle
+--- a lateral section asks for, while a test is on (EqDressagePath.assist).
+--- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate
+function EqDressageHooks.assist(vehicle, lateral, dt)
+    local run = EqDressageHooks.pathRun
+    local now = g_time or 0
+    if run == nil or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then return 0, 0, nil, nil, 0 end
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    return EqDressagePath.assist(run, x, z, lateral, dt)
 end
 
 

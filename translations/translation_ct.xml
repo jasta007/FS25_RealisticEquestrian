@@ -122,6 +122,17 @@
         <text name="eq_fig_shallowLoop" text="%d公尺淺彎 %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="在%s通過圓圈換手"/>
         <text name="eq_fig_eight" text="從%s做8字"/>
+        <text name="eq_fig_legYield" text="從%s開始腿部讓步並返回"/>
+        <text name="eq_fig_halfPass" text="從%s開始斜橫步並返回"/>
+        <text name="eq_fig_shoulderIn" text="肩向內 %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="沿牆腿部讓步 %s-%s"/>
+        <text name="eq_lat_legYield" text="腿部讓步：向%s移動，向%s彎曲"/>
+        <text name="eq_lat_halfPass" text="斜橫步：向%s移動，向%s彎曲"/>
+        <text name="eq_lat_shoulderIn" text="肩向內：向%s彎曲"/>
+        <text name="eq_lat_legYieldRail" text="沿牆腿部讓步：向%s移動"/>
+        <text name="eq_lat_left" text="左"/>
+        <text name="eq_lat_right" text="右"/>
+        <text name="eq_lat_keys" text="Shift + A/D：側向移動。按住滑鼠右鍵拖曳：彎曲馬頭。"/>
         <text name="eq_fig_final" text="在%s上中線，在%s立定"/>
         <text name="eq_dressage_haltAt" text="在%s立定"/>
         <text name="eq_dressage_line" text="回到線上！"/>

@@ -122,6 +122,17 @@
         <text name="eq_fig_shallowLoop" text="Boog van %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Door de volte van hand veranderen bij %s"/>
         <text name="eq_fig_eight" text="Acht vanaf %s"/>
+        <text name="eq_fig_legYield" text="Wijken voor de kuit vanaf %s en terug"/>
+        <text name="eq_fig_halfPass" text="Appuyement vanaf %s en terug"/>
+        <text name="eq_fig_shoulderIn" text="Schouder binnenwaarts %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Wijken langs de baan %s-%s"/>
+        <text name="eq_lat_legYield" text="Wijken: naar %s, stelling %s"/>
+        <text name="eq_lat_halfPass" text="Appuyement: naar %s, stelling %s"/>
+        <text name="eq_lat_shoulderIn" text="Schouder binnenwaarts: stelling %s"/>
+        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
+        <text name="eq_lat_left" text="links"/>
+        <text name="eq_lat_right" text="rechts"/>
+        <text name="eq_lat_keys" text="Shift + A/D: zijwaarts. Rechtermuisknop vasthouden en slepen: hoofd stellen."/>
         <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
         <text name="eq_dressage_line" text="Terug op de lijn!"/>

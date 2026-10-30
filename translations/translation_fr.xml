@@ -71,6 +71,17 @@
         <text name="eq_fig_shallowLoop" text="Boucle de %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Changement de main dans le cercle en %s"/>
         <text name="eq_fig_eight" text="Huit de chiffre depuis %s"/>
+        <text name="eq_fig_legYield" text="Cession à la jambe depuis %s et retour"/>
+        <text name="eq_fig_halfPass" text="Appuyer depuis %s et retour"/>
+        <text name="eq_fig_shoulderIn" text="Épaule en dedans %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Cession à la jambe le long de la piste %s-%s"/>
+        <text name="eq_lat_legYield" text="Cession à la jambe : vers la %s, pli à %s"/>
+        <text name="eq_lat_halfPass" text="Appuyer : vers la %s, pli à %s"/>
+        <text name="eq_lat_shoulderIn" text="Épaule en dedans : pli à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s"/>
+        <text name="eq_lat_left" text="gauche"/>
+        <text name="eq_lat_right" text="droite"/>
+        <text name="eq_lat_keys" text="Maj + A/D : se décaler sur le côté. Maintenir le clic droit et glisser : plier la tête."/>
         <text name="eq_fig_final" text="Ligne du milieu en %s, arrêt en %s"/>
         <text name="eq_dressage_haltAt" text="Arrêt en %s"/>
         <text name="eq_dressage_line" text="Revenez sur la ligne !"/>

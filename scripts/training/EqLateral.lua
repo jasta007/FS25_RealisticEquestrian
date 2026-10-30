@@ -11,6 +11,12 @@
     base game's stuck check halted it and it lurched, "almost like bucking", James 2026-10-30). Rideable:updateAnimation eases the tilt (smoothedLeftRightWeight) back towards
     the turn it sees; it is set each frame first, so the tilt holds.
 
+    Holding the right mouse button and moving the mouse left or right bends the horse's head
+    that way (James, 2026-10-30), with no turn and no camera move: the mouse's look input goes to
+    the bend instead while the button is held, and the bend springs back on release. With the
+    sideways drift it makes the lateral movements: shoulder-in (bend alone), half pass (drift
+    with the head bent the way it goes), and so on (EqDressagePath scores them in a test).
+
     Keys are read on this machine, so it works for the local rider (single player for now).
 
     Part of Realistic Equestrian by Jasta007.
@@ -25,6 +31,15 @@ local Log = EqLog
 EqLateral.SHARE = 0.5
 EqLateral.RAMP_MS = 400
 EqLateral.TILT = 0.3
+-- The head bend: mouse look input (radians the camera would have turned) to bend (-1..1, right
+-- positive), and how fast it springs back once the button is let go.
+EqLateral.BEND_SCALE = 2
+EqLateral.BEND_BACK_MS = 300
+-- The bend's share of the animation's left-right weight.
+EqLateral.BEND_TILT = 0.8
+-- The local rider's bend, and the horse it is on.
+EqLateral.bend = 0
+EqLateral.vehicle = nil
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
 
@@ -71,6 +86,57 @@ local function key(name)
 end
 
 
+--- The bend after a frame (pure): eased back to straight when the button is up.
+--- @param bend number -1..1
+--- @param held boolean right mouse button held
+--- @param dt number ms
+--- @return number
+function EqLateral.relax(bend, held, dt)
+    if held then return bend end
+    local step = dt / EqLateral.BEND_BACK_MS
+    if bend > 0 then return math.max(0, bend - step) end
+    return math.min(0, bend + step)
+end
+
+
+--- The left-right weight the animation shows (pure): the drift's tilt and the head bend
+--- (left positive, as turning left is).
+--- @param lateral number -1..1 eased drift, right positive
+--- @param bend number -1..1 right positive
+--- @return number
+function EqLateral.weight(lateral, bend)
+    return math.max(-1, math.min(1, -lateral * EqLateral.TILT - bend * EqLateral.BEND_TILT))
+end
+
+
+--- A heading turned towards another by at most rate rad/s (pure).
+function EqLateral.turnToward(angle, want, rate, dt)
+    local diff = (want - angle + math.pi) % (2 * math.pi) - math.pi
+    local step = rate * dt / 1000
+    return angle + math.max(-step, math.min(step, diff))
+end
+
+
+--- @return boolean the right mouse button is held
+local function rightHeld()
+    return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
+        and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_RIGHT) == true
+end
+
+
+--- The camera's mouse look while riding with the right button held: it bends the head instead.
+--- @return boolean true when the input was used for the bend
+function EqLateral.onLook(inputValue, isMouse, horizontal)
+    local vehicle = EqLateral.vehicle
+    if not isMouse or vehicle == nil or not rightHeld() then return false end
+    if vehicle.getIsEntered ~= nil and not vehicle:getIsEntered() then return false end
+    if horizontal then
+        EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + inputValue * 0.001 * 16.666 * EqLateral.BEND_SCALE))
+    end
+    return true
+end
+
+
 --- @return boolean the gait is one lateral work is ridden at
 local function gaitOk(spec)
     local types = Rideable.GAITTYPES
@@ -90,10 +156,23 @@ local function before(vehicle, dt)
     local entered = vehicle.getIsEntered ~= nil and vehicle:getIsEntered()
     local side = 0
     if entered then
+        EqLateral.vehicle = vehicle
+        EqLateral.bend = EqLateral.relax(EqLateral.bend, rightHeld(), dt)
         side = EqLateral.side(key("KEY_lshift") or key("KEY_rshift"), key("KEY_a"), key("KEY_d"), gaitOk(spec))
     end
     spec.eqLateral = EqLateral.ease(spec.eqLateral or 0, side, dt)
     if side ~= 0 then spec.inputValues.axisSteer = 0 end
+    -- Temperament's stickiness in a dressage test (EqDressageHooks.assist): a pull onto the line,
+    -- added to this frame's move, and the body eased towards the angle a lateral section asks for.
+    spec.eqPullX, spec.eqPullZ = 0, 0
+    local assist = EqDressageHooks ~= nil and EqDressageHooks.assist or nil
+    if entered and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
+        local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt)
+        spec.eqPullX, spec.eqPullZ = pullX, pullZ
+        if wantX ~= nil and rate > 0 and type(spec.currentTurnAngle) == "number" then
+            spec.currentTurnAngle = EqLateral.turnToward(spec.currentTurnAngle, math.atan2(wantX, wantZ), rate, dt)
+        end
+    end
     if side ~= (spec.eqLateralSide or 0) then
         spec.eqLateralSide = side
         Log:info("Lateral work: %s", side == 0 and "straight on" or (side > 0 and "drifting right" or "drifting left"))
@@ -106,7 +185,8 @@ end
 local function sidewaysMove(vehicle, dt)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
-    if amount == 0 or type(spec.currentTurnAngle) ~= "number" then return nil end
+    local pullX, pullZ = spec ~= nil and spec.eqPullX or 0, spec ~= nil and spec.eqPullZ or 0
+    if amount == 0 and pullX == 0 and pullZ == 0 or type(spec.currentTurnAngle) ~= "number" then return nil end
     local base = vehicle.moveCCT
     if base == nil then
         if not EqLateral.warned then
@@ -118,7 +198,7 @@ local function sidewaysMove(vehicle, dt)
     return function(self, moveX, moveY, moveZ, ...)
         -- The heading and speed the base game just worked out for this frame.
         local dx, dz = EqLateral.move(amount, spec.currentSpeed or 0, spec.currentTurnAngle, dt)
-        return base(self, moveX + dx, moveY, moveZ + dz, ...)
+        return base(self, moveX + dx + pullX, moveY, moveZ + dz + pullZ, ...)
     end
 end
 
@@ -128,8 +208,9 @@ end
 local function tilt(vehicle)
     local spec = vehicle.spec_rideable
     local amount = spec ~= nil and spec.eqLateral or 0
-    if amount == 0 or type(spec.smoothedLeftRightWeight) ~= "number" then return end
-    spec.smoothedLeftRightWeight = -amount * EqLateral.TILT
+    local bend = vehicle == EqLateral.vehicle and EqLateral.bend or 0
+    if amount == 0 and bend == 0 or type(spec.smoothedLeftRightWeight) ~= "number" then return end
+    spec.smoothedLeftRightWeight = EqLateral.weight(amount, bend)
 end
 
 
@@ -167,5 +248,19 @@ function EqLateral.install()
             return superFunc(self, dt)
         end)
     end
-    Log:info("Lateral work: Shift + A/D at a walk, trot or canter")
+    -- The mouse look goes to the head bend while the right button is held on a horse.
+    if VehicleCamera ~= nil then
+        for name, horizontal in pairs({ actionEventLookLeftRight = true, actionEventLookUpDown = false }) do
+            if type(VehicleCamera[name]) == "function" then
+                VehicleCamera[name] = Utils.overwrittenFunction(VehicleCamera[name], function(self, superFunc, actionName, inputValue, callbackState, isAnalog, isMouse, ...)
+                    if EqMain.isActive and not EqLateral.failed then
+                        local ok, used = EqLog.try("EqLateral look", EqLateral.onLook, inputValue, isMouse, horizontal)
+                        if not ok then EqLateral.failed = true elseif used then return end
+                    end
+                    return superFunc(self, actionName, inputValue, callbackState, isAnalog, isMouse, ...)
+                end)
+            end
+        end
+    end
+    Log:info("Lateral work: Shift + A/D at a walk, trot or canter; right mouse drag bends the head")
 end

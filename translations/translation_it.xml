@@ -122,6 +122,17 @@
         <text name="eq_fig_shallowLoop" text="Ansa di %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Cambiamento di mano nel circolo in %s"/>
         <text name="eq_fig_eight" text="Otto da %s"/>
+        <text name="eq_fig_legYield" text="Cessione alla gamba da %s e ritorno"/>
+        <text name="eq_fig_halfPass" text="Appoggiata da %s e ritorno"/>
+        <text name="eq_fig_shoulderIn" text="Spalla in dentro %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Cessione alla gamba lungo la pista %s-%s"/>
+        <text name="eq_lat_legYield" text="Cessione alla gamba: verso %s, flessione a %s"/>
+        <text name="eq_lat_halfPass" text="Appoggiata: verso %s, flessione a %s"/>
+        <text name="eq_lat_shoulderIn" text="Spalla in dentro: flessione a %s"/>
+        <text name="eq_lat_legYieldRail" text="Cessione lungo la pista: verso %s"/>
+        <text name="eq_lat_left" text="sinistra"/>
+        <text name="eq_lat_right" text="destra"/>
+        <text name="eq_lat_keys" text="Maiusc + A/D: spostarsi di lato. Tieni premuto il tasto destro e trascina: flettere la testa."/>
         <text name="eq_fig_final" text="Linea centrale in %s, alt in %s"/>
         <text name="eq_dressage_haltAt" text="Alt in %s"/>
         <text name="eq_dressage_line" text="Torna sulla linea!"/>

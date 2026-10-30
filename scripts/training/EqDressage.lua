@@ -488,7 +488,8 @@ end
 local function pathStep(sheet, move, dt, course)
     local routine = sheet.routine
     local run = routine.path
-    local event = EqDressagePath.step(run, move, course.x, course.z, dt)
+    -- The course carries the horse's facing and head bend for lateral work.
+    local event = EqDressagePath.step(run, move, course.x, course.z, dt, course.dirX ~= nil and course or nil)
     if event == "done" then
         if run.lastMark >= EqDressagePath.MULT_UP then
             routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)

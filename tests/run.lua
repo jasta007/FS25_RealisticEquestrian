@@ -3698,6 +3698,18 @@ end)()
     local ex, ez = EqLateral.move(1, 4, math.pi / 2, 1000)
     check("drifting right moves to the rider's right", math.abs(dx + 2) < 1e-9 and math.abs(dz) < 1e-9
         and math.abs(ex) < 1e-9 and math.abs(ez - 2) < 1e-9)
+    -- The head bend holds while the button is held and springs back once let go.
+    check("the head bend holds, then springs back", EqLateral.relax(0.6, true, 1000) == 0.6
+        and math.abs(EqLateral.relax(0.6, false, EqLateral.BEND_BACK_MS / 2) - 0.1) < 1e-9
+        and EqLateral.relax(-0.6, false, EqLateral.BEND_BACK_MS) == 0)
+    -- Left is positive in the animation: drifting or bending right tilts it negative, clamped.
+    check("the tilt follows the drift and the bend", EqLateral.weight(1, 0) < 0 and EqLateral.weight(0, -1) > 0
+        and EqLateral.weight(1, 1) >= -1 and EqLateral.weight(0, 0) == 0)
+    -- Stickiness turns the body at most rate rad/s, the short way round.
+    local turned = EqLateral.turnToward(0, 1, 0.5, 1000)
+    local wrapped = EqLateral.turnToward(3, -3, 10, 1000)
+    check("the body turns towards the asked angle, the short way", math.abs(turned - 0.5) < 1e-9
+        and math.abs(wrapped - (-3 + 2 * math.pi)) < 1e-9)
 end)()
 
 
@@ -3801,7 +3813,8 @@ end)()
         local keys, tight, canters = {}, 0, {}
         for _, figure in ipairs(library) do
             keys[figure.key] = true
-            if EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
+            -- Lateral work drifts without turning, so its kinks are not turns.
+            if figure.sections == nil and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
             if figure.gait == "canter" then canters[figure.key] = true end
         end
         -- Each figure is ridden at one gait, its turns sized for it (James 2026-10-29); a
@@ -3884,6 +3897,39 @@ end)()
         -- 0.4 m off on average is a 6 (James 2026-10-30: 0.3-0.4 m was scoring 8s and 9s).
         and EqDressagePath.markOf({ devSum = 4, len = 10, wrongMs = 0, pen = 0 }) == 6
         and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 4000, pen = 1 }) == 7)
+    -- Lateral work (James 2026-10-30): sections judge the body's angle and the head bend.
+    local library = EqDressagePath.library(frame)
+    local lateral = {}
+    for _, figure in ipairs(library) do
+        if figure.sections ~= nil then lateral[figure.key .. (figure.sections[1].bend == 1 and "R" or figure.sections[1].bend == -1 and "L" or "")] = true end
+    end
+    check("leg yields, half passes and shoulder-ins are in the library, bent both ways", lateral.legYieldL and lateral.legYieldR
+        and lateral.halfPassL and lateral.halfPassR and lateral.shoulderInL and lateral.shoulderInR and lateral.legYieldRail)
+    local found = nil
+    for seed = 1, 60 do
+        local t = EqDressagePath.build(frame, 10, seeded("lateral " .. seed))
+        if #t.sections > 0 then found = t break end
+    end
+    check("tests have lateral sections", found ~= nil)
+    if found ~= nil then
+        local sec = found.sections[1]
+        local run = EqDressagePath.newRun(found, 100)
+        run.started, run.s, run.sec = true, sec.s0 + 2, 1
+        local wantX, wantZ = sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz
+        check("a body facing the way the section asks is on", EqDressagePath.angleOff(frame, sec, wantX, wantZ) < 1e-6
+            and EqDressagePath.angleOff(frame, sec, -wantX, -wantZ) > 3)
+        -- Off the line to its side: the assist pulls back towards it, harder with temperament.
+        for k, p in ipairs(found.pts) do if p.s >= run.s then run.i = k break end end
+        local p = found.pts[run.i]
+        local wx, wz = EqDressagePath.toWorld(frame, p.x + 1, p.y)
+        local dx, dz, hx = EqDressagePath.assist(run, wx, wz, true, 1000)
+        local lx = dx * frame.vx + dz * frame.vz
+        check("a calm horse is pulled back onto the line and into the asked angle", lx < -0.5 and hx ~= nil)
+        run.temper = 0
+        local cx, cz = EqDressagePath.assist(run, wx, wz, true, 1000)
+        check("a horse with no temperament gets no pull", math.abs(cx) + math.abs(cz) < 1e-9)
+    end
+
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
 end)()
 
