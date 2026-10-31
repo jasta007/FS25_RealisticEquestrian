@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Visão de treino: %s"/>
         <text name="eq_train_view_freestyle" text="Livre"/>
-        <text name="eq_help_temperament_2" text="Faltas demais, como galopar ou sair da pista, encerram a rotina; termine-a para um grande bônus de temperamento. Fora de uma pista, andar a passo e recuar ainda treinam um pouco de temperamento. Dar petiscos como cenouras também é ótimo para melhorar o temperamento."/>
-        <text name="eq_help_temperament_1" text="O treino de temperamento ensina controle ao seu cavalo e precisa de uma pista de adestramento: compre uma na loja ou posicione letras de adestramento. Aproxime-se e uma rotina começa, pedindo que você vá até as letras nas andaduras indicadas, pare, recue e faça círculos. Cumpra cada comando a tempo para aumentar seu multiplicador."/>
+        <text name="eq_help_temperament_2" text="Três erros de percurso (perder a linha, sair da pista ou ficar parado) encerram a prova; termine-a para um bônus de temperamento que cresce com sua nota. Um cavalo mais calmo vê mais da linha à frente e recebe mais aviso das mudanças. As letras do Riding Hall dão a rotina antiga de trechos entre letras. Fora de uma pista, o passo e o recuar ainda treinam um pouco de temperamento, e petiscos como cenouras também ajudam."/>
+        <text name="eq_help_temperament_1" text="O treino de temperamento ensina controle ao seu cavalo e precisa de uma pista de adestramento: compre uma na loja ou coloque letras de adestramento. Numa pista da loja, vá até A e começa uma prova de figuras: círculos, diagonais, serpentinas e mais, desenhadas como uma linha dourada no chão. Fique na linha e mude de andamento ou pare onde for pedido; cada movimento recebe nota até 10."/>
         <text name="eq_help_temperament_title" text="Treino: Temperamento"/>
         <text name="eq_help_agility_2" text="Você perde o multiplicador se não saltar um novo obstáculo a tempo ou perder velocidade demais. Saltar sem obstáculo dá algum treino, mas não aumenta o multiplicador."/>
         <text name="eq_help_agility_1" text="Agilidade é saltar obstáculos, embora alternar entre os andamentos também ajude um pouco. Salte obstáculos para formar um multiplicador de treino de Agilidade, que some após dez segundos, ou antes se você bater em um obstáculo."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Rotina iniciada"/>
         <text name="eq_pop_routineFault" text="Falta %d/%d"/>
         <text name="eq_pop_routineTest" text="Prova concluída!"/>
-        <text name="eq_pop_routineLost" text="Rotina interrompida"/>
+        <text name="eq_pop_routineLost" text="Adestramento cancelado"/>
         <text name="eq_pop_comboLost" text="Combo perdido"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Limpo!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Trote"/>
         <text name="eq_dressage_gait_canter" text="Galope"/>
         <text name="eq_dressage_change" text="Mudança: %s"/>
+        <text name="eq_dressage_gaitChange" text="Mudança de andamento"/>
+        <text name="eq_dressage_gaitChangeAt" text="Mudança de andamento em %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Troca de pé: %s"/>
         <text name="eq_dressage_begin" text="Vá até %s para iniciar uma rotina de adestramento"/>
+        <text name="eq_dressage_enter" text="Vai! Entre em %s"/>
         <text name="eq_dressage_reinBack" text="Recuar!"/>
         <text name="eq_dressage_backwards" text="Ande para trás"/>
         <text name="eq_dressage_circle_left" text="Círculo à esquerda"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Próximo: %s"/>
         <text name="eq_dressage_stand" text="Parado"/>
         <text name="eq_dressage_marker" text="Letra %s"/>
+        <text name="eq_fig_enter" text="Entrada em %s, parada em %s"/>
+        <text name="eq_fig_trackLeft" text="Prosseguir, pista à mão esquerda em %s"/>
+        <text name="eq_fig_trackRight" text="Prosseguir, pista à mão direita em %s"/>
+        <text name="eq_fig_circle" text="Círculo de %d m em %s"/>
+        <text name="eq_fig_longDiagonal" text="Mudança de mão %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Mudança de mão %s-%s"/>
+        <text name="eq_fig_across" text="Atravessar a pista %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Meia volta em %s"/>
+        <text name="eq_fig_centreLeft" text="Linha central em %s, pista à mão esquerda em %s"/>
+        <text name="eq_fig_centreRight" text="Linha central em %s, pista à mão direita em %s"/>
+        <text name="eq_fig_serpentine" text="Serpentina de %d laços, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Laço de %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Mudança de mão pelo círculo em %s"/>
+        <text name="eq_fig_eight" text="Meio oito %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Linha central em %s, em X virar para %s"/>
+        <text name="eq_fig_centreFromX" text="Em %s virar para X, linha central até %s"/>
+        <text name="eq_fig_halfPassCentre" text="Apoiar de %s até a linha central, até %s"/>
+        <text name="eq_fig_legYieldCentre" text="Linha central em %s, cessão à perna até %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage na diagonal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Cessão à perna a partir de %s e volta"/>
+        <text name="eq_fig_halfPass" text="Apoiar a partir de %s e volta"/>
+        <text name="eq_fig_shoulderIn" text="Espádua a dentro %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Cessão à perna pela pista %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (garupa a dentro) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (garupa a fora) %s-%s"/>
+        <text name="eq_lat_legYield" text="Cessão à perna: para a %s"/>
+        <text name="eq_lat_halfPass" text="Apoiar: para a %s, flexão à %s"/>
+        <text name="eq_lat_shoulderIn" text="Espádua a dentro: para a %s, flexão à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cessão pela pista: para a %s"/>
+        <text name="eq_lat_travers" text="Travers: para a %s, flexão à %s"/>
+        <text name="eq_lat_renvers" text="Renvers: para a %s, flexão à %s"/>
+        <text name="eq_lat_left" text="esquerda"/>
+        <text name="eq_lat_right" text="direita"/>
+        <text name="eq_lat_keys" text="Segure o botão direito: conduzir com o mouse, A/D deslocar de lado, Shift mantém o rumo e o mouse flexiona a cabeça."/>
+        <text name="eq_fig_final" text="Linha central em %s, parada em %s"/>
+        <text name="eq_dressage_haltAt" text="Parada em %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) em %s: segure Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Pirueta à direita (%s) em %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Segure Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Pirueta à esquerda (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Pirueta à direita (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Volte para a linha!"/>
+        <text name="eq_dressage_mark" text="Última nota: %s"/>
+        <text name="eq_pop_routineError" text="Erro de percurso %d/%d"/>
+        <text name="eq_pop_routineScore" text="Prova concluída: %s%%"/>
         <text name="eq_train_routine_none" text="Vá até uma pista de adestramento para iniciar uma rotina"/>
         <text name="eq_train_routine" text="Rotina x%d"/>
         <text name="eq_train_combo_none" text="Salte um obstáculo para iniciar um combo"/>

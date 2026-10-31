@@ -56,8 +56,10 @@ uses its genetics, health and fitness.
     Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
     Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** ride up to a dressage arena and follow its test ("Trot: B") to build a combo, up
-    to x8. The shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
+  - **Temperament:** ride up to a dressage arena and ride its test: figures drawn as a line on
+    the ground (green to red by how close you are), each marked out of 10 for staying on the line
+    and timing changes, halts and rein backs. Right mouse drag steers (A/D then strafe, Shift holds the heading and bends the head), **Shift + A/D** drifts sideways on the keyboard, for leg yields, half passes, shoulder-in, travers and renvers; **Ctrl** (+ A/D) for piaffes and pirouettes, Ctrl + W for a passage. The
+    shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
 - **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
   again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.

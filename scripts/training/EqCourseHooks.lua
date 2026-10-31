@@ -757,6 +757,16 @@ local function drawLine(points, color, x, z)
 end
 
 
+--- A path guide: the glow's pieces on the ground (EqCourseGlow.path), debug lines without it.
+--- @param points table { x, y, z }
+--- @param colour string|nil the glow's colour, gold when nil
+--- @param color table the debug line's
+local function drawGuide(points, colour, color, x, z)
+    if EqCourseGlow.path(points, colour, nil, x, z, EqCourseHooks.DRAW_RADIUS) then return end
+    drawLine(points, color, x, z)
+end
+
+
 --- Fence numbers over the jumps of a course (one label per jump, "3, 10" when ridden twice).
 --- @param jumps table
 --- @param labels table|nil { x, z, text } to draw instead
@@ -785,27 +795,34 @@ function EqCourseHooks.onDraw(vehicle)
     if editing == nil then
         EqCourseGlow.begin()
         EqCourseHooks.roundDraw(vehicle)
+        -- A dressage test's line on the ground uses the same glow (EqDressageHooks).
+        -- One failure stops it for the game, not a warning every frame.
+        if not EqDressageHooks.drawFailed and not EqLog.try("EqCourseHooks.onDraw dressage line", EqDressageHooks.drawPath, vehicle) then
+            EqDressageHooks.drawFailed = true
+        end
         EqCourseGlow.finish()
         return
     end
     if editing.vehicle ~= vehicle then return end
     editing.seenAt = g_time or 0
     step(editing, vehicle)
+    EqCourseGlow.begin()
 
     local x, y, z = getWorldTranslation(vehicle.rootNode)
     local course = editing.course
     if editing.recording then
-        drawLine(course.points, EqCourseHooks.TRAIL_COLOR, x, z)
+        drawGuide(course.points, "orange", EqCourseHooks.TRAIL_COLOR, x, z)
     else
         if editing.smoothed == nil or editing.smoothedFrom ~= course then
             editing.smoothed, editing.smoothedFrom = EqCourse.smooth(course.points), course
         end
-        drawLine(editing.smoothed, EqCourseHooks.LINE_COLOR, x, z)
+        drawGuide(editing.smoothed, "cyan", EqCourseHooks.LINE_COLOR, x, z)
     end
     drawNumbers(course.jumps)
     -- Where the rewind key would go back to.
     local nearest = course.points[EqCourse.nearestPoint(course, x, z)]
-    drawLine({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, EqCourseHooks.NEAREST_COLOR, x, z)
+    drawGuide({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, "white", EqCourseHooks.NEAREST_COLOR, x, z)
+    EqCourseGlow.finish()
     local key = editing.recording and "eq_course_recording" or "eq_course_editing"
     -- Beside the panel, not in the middle: the middle is for alerts.
     EqTrainingHud.drawPanelNote(string.format(text(key), editing.name, #course.jumps, course.length), EqTrainingHud.STAT_COLOR.agility, true)
@@ -1062,10 +1079,11 @@ local function drawWay(round, from, to, x, z, short)
 end
 
 
---- A gold band along a list of points.
+--- A gold band along a list of points: the glow's path guide, or debug lines side by side.
 --- @param way table points { x, y, z }
 function drawBand(way, x, z)
     if #way < 2 then return end
+    if EqCourseGlow.path(way, nil, nil, x, z, EqCourseHooks.DRAW_RADIUS) then return end
     for _, offset in ipairs(EqCourseHooks.BAND) do
         local band = {}
         for i, p in ipairs(way) do

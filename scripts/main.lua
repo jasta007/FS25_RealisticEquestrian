@@ -31,6 +31,7 @@ source(modDirectory .. "scripts/core/EqRegistry.lua")
 source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqExertion.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqDressagePath.lua")
 source(modDirectory .. "scripts/training/EqDressage.lua")
 source(modDirectory .. "scripts/training/EqDressageHooks.lua")
 source(modDirectory .. "scripts/training/EqCourse.lua")
@@ -40,6 +41,7 @@ source(modDirectory .. "scripts/training/EqCourseHooks.lua")
 source(modDirectory .. "scripts/training/EqPoles.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
+source(modDirectory .. "scripts/training/EqLateral.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
 source(modDirectory .. "scripts/staff/EqStaffNames.lua")
@@ -262,6 +264,7 @@ end
 -- Rideable's functions are copied into vehicle types when types are validated, so they are
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
+EqLateral.install()
 -- Loading triggers are created as the map loads, so the probe starts listening now.
 guarded("probe hook", EqProbe.install)
 
