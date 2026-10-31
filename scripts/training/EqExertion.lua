@@ -8,7 +8,9 @@
       stat. Exertion rises, faster the higher it is, more slowly for a horse with more Stamina.
     - Recovering: S from Pushing. A slower gallop that brings exertion back down to empty, and
       stays a gallop until the rider asks for a canter.
-    - Sprinting: tap W quickly SPRINT_TAPS times while galloping, and keep tapping. Much faster;
+    - Sprinting: tap the sprint key (EQ_SPRINT, left mouse button) quickly SPRINT_TAPS times
+      while galloping, and keep tapping (James, 2026-10-31: W taps made it impossible to steer
+      and Sprint at once; W and S still change gait). Much faster;
       exertion rises slowly at first and ever faster, so taking it as high as possible without
       crossing the line is the skill. Quick taps slow the rise for a while. Ending a Sprint goes to
       Recovering. Only a Sprint may go past the Fatigued line, into a last gasp that ends at
@@ -64,7 +66,7 @@ EqExertion.SPRINT_SPEED = { 1.3, 0.75 }
 -- Gallop top speed by pace, on top of the Speed stat's handling (EqTraining.handling).
 EqExertion.GALLOP_SHARE = { recover = 0.8, push = 1, sprint = 1.25 }
 
--- Sprint: SPRINT_TAPS presses of W, each within SPRINT_TAP_GAP_MS of the last, start it. It
+-- Sprint: SPRINT_TAPS taps of the sprint key, each within SPRINT_TAP_GAP_MS of the last, start it. It
 -- ends when no tap comes for SPRINT_KEEP_MS. Taps ease the rise by up to SPRINT_TAP_EASE: fully
 -- at a tap every SPRINT_FAST_TAP_MS, not at all from SPRINT_SLOW_TAP_MS, and less as the Sprint
 -- goes on, to nothing after SPRINT_EASE_MS.
@@ -156,8 +158,28 @@ local function endSprint(ex)
 end
 
 
+--- The rider tapped the sprint key (left mouse button by default).
 --- @param ex table
---- @return boolean true when taps of W would start a Sprint
+--- @return string|nil event "sprint" (one started) or "tap" (during a Sprint)
+function EqExertion.sprintTap(ex)
+    local now = ex.clock
+    if ex.mode == nil then return nil end
+    if ex.mode == "sprint" then
+        ex.tapGap, ex.tapAt = now - ex.tapAt, now
+        return "tap"
+    end
+    ex.taps = now - ex.tapAt <= EqExertion.SPRINT_TAP_GAP_MS and ex.taps + 1 or 1
+    ex.tapAt = now
+    if ex.taps >= EqExertion.SPRINT_TAPS and not ex.sprinted then
+        ex.mode, ex.sprintMs, ex.tapGap, ex.taps = "sprint", 0, nil, 0
+        return "sprint"
+    end
+    return nil
+end
+
+
+--- @param ex table
+--- @return boolean true when taps of the sprint key would start a Sprint
 function EqExertion.canSprint(ex)
     return (ex.mode == "push" or ex.mode == "recover") and not ex.sprinted
 end
@@ -280,24 +302,13 @@ end
 
 
 --- The rider pressed W (forward) or S (back). Call before the base game acts on the key.
+--- W only pushes on from Recovering; Sprinting has its own key (sprintTap).
 --- @param ex table
 --- @param key string "forward" or "back"
---- @return string|nil event "push", "recover", "sprint", "tap" (during a Sprint), "spent" or
----     "canter" (a canter is allowed now)
+--- @return string|nil event "push", "recover", "spent" or "canter" (a canter is allowed now)
 function EqExertion.press(ex, key)
     local now = ex.clock
     if key == "forward" then
-        if ex.mode == nil then return nil end
-        if ex.mode == "sprint" then
-            ex.tapGap, ex.tapAt = now - ex.tapAt, now
-            return "tap"
-        end
-        ex.taps = now - ex.tapAt <= EqExertion.SPRINT_TAP_GAP_MS and ex.taps + 1 or 1
-        ex.tapAt = now
-        if ex.taps >= EqExertion.SPRINT_TAPS and not ex.sprinted then
-            ex.mode, ex.sprintMs, ex.tapGap, ex.taps = "sprint", 0, nil, 0
-            return "sprint"
-        end
         if ex.mode == "recover" then
             ex.mode = "push"
             return "push"

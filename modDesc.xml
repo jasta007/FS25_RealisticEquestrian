@@ -122,6 +122,7 @@ Por Jasta007.]]>
         <action name="EQ_DELIVER"/>
         <action name="EQ_TRAINING_VIEW"/>
         <action name="EQ_TRAINING_HELP"/>
+        <action name="EQ_SPRINT"/>
         <action name="EQ_HORSE_ROLE"/>
         <action name="EQ_COURSE_RECORD"/>
         <action name="EQ_COURSE_RECORD_XC"/>
@@ -147,6 +148,9 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_HELP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_h" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_SPRINT">
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" index="3"/>
         </actionBinding>
         <actionBinding action="EQ_HORSE_ROLE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>

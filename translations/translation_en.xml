@@ -205,6 +205,7 @@
         <text name="eq_help_close" text="Click to close"/>
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Training help"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Riding bar full: no more training today"/>
         <text name="eq_ex_push" text="Pushing"/>
         <text name="eq_ex_recover" text="Recovering"/>
@@ -217,7 +218,7 @@
         <text name="eq_ex_walk" text="Walk"/>
         <text name="eq_ex_halt" text="Standing"/>
         <text name="eq_ex_reverse" text="Backing up"/>
-        <text name="eq_ex_prompt_tap" text="Keep tapping W!"/>
+        <text name="eq_ex_prompt_tap" text="Keep clicking!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint over"/>
         <text name="eq_pop_ex_blown" text="Fatigued!"/>
@@ -226,9 +227,9 @@
         <text name="eq_help_gallop_title" text="Galloping"/>
         <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
         <text name="eq_help_gallop_2" text="If the bar reaches the red Fatigued section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
-        <text name="eq_help_gallop_3" text="Tap W continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
+        <text name="eq_help_gallop_3" text="Tap the left mouse button continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
         <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends past the line. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. Pushing raises it, faster near the top. Recovering in the middle third of the bar lets your horse get its breath back and keeps most of the multiplier, while the top and bottom thirds lose it quickly, and a horse that never gets its breath back gains much more slowly. Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
-        <text name="eq_ex_hint_sprint" text="Continually tap W to sprint"/>
+        <text name="eq_ex_hint_sprint" text="Continually left click to sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
         <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
         <text name="eq_ex_hint_canterOne" text="S: canter"/>
@@ -247,7 +248,7 @@
         <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina multiplier, up to x5. Pushing raises it, and the closer you get to the line the faster it climbs. Recovering lowers it: quickly from the top third of the bar, slowly in the middle third, quickly again in the bottom third."/>
         <text name="eq_help_stamina_2" text="So push close to the line, ease off into the middle of the bar and let your horse get its breath back there for a while, then push again. Bouncing between Push and Recover near the top tires your horse without raising the multiplier, and Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
-        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap W continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
+        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap the left mouse button continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
         <text name="eq_help_speed_2" text="A Sprint that ends past the line is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
         <text name="eq_train_speedMult" text="Speed x%.1f"/>
         <text name="eq_train_staminaMult" text="Stamina x%.1f"/>

@@ -990,6 +990,44 @@ function EqTrainingHooks.onGaitKey(vehicle, key, source)
 end
 
 
+--- The sprint key (EQ_SPRINT, left mouse button by default): taps start and keep up a Sprint,
+--- so the rider can steer with A/D while sprinting (James, 2026-10-31). A click that turns a
+--- help popup's page is not a sprint tap. The left button is also polled (pollSprintButton)
+--- until the action has been seen to fire, in case the binding never reaches us.
+--- @param vehicle table
+--- @param source string what saw it, for the log
+function EqTrainingHooks.onSprintAction(vehicle, source)
+    if source == "sprint action" then EqTrainingHooks.sprintActionSeen = true end
+    local now = g_time or 0
+    local last = EqTrainingHooks.sprintAt
+    EqTrainingHooks.sprintAt = now
+    if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
+    if EqTrainingHud.isHelpShowing() then return end
+    local spec = vehicle.spec_rideable
+    local id = spec ~= nil and getRiddenId(spec) or nil
+    local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
+    if sheet == nil then return end
+    local event = EqExertion.sprintTap(sheet.exertion)
+    if event ~= nil and event ~= "tap" then
+        Log:info("Gallop key: sprint from %s", source)
+        EqTrainingHooks.onExertionEvent(event, sheet.exertion)
+    end
+end
+
+
+--- The left mouse button itself, polled while drawing until the sprint action is seen to fire.
+--- Only a fresh press counts.
+--- @param vehicle table
+local function pollSprintButton(vehicle)
+    if EqTrainingHooks.sprintActionSeen then return end
+    if g_gui ~= nil and g_gui:getIsGuiVisible() then return end
+    if Input == nil or Input.isMouseButtonPressed == nil or Input.MOUSE_BUTTON_LEFT == nil then return end
+    local down = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) == true
+    if down and not EqTrainingHooks.lmbWasDown then EqTrainingHooks.onSprintAction(vehicle, "left mouse button") end
+    EqTrainingHooks.lmbWasDown = down
+end
+
+
 -- Wrapped round the base game's forward and back key actions: the press picks the gallop's pace
 -- first (beforeGaitAction), then the base game changes gait, and keepGait undoes a change that
 -- isn't allowed (afterGaitAction).
@@ -1278,6 +1316,14 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         if helpId ~= nil then
             g_inputBinding:setActionEventText(helpId, g_i18n:getText("input_EQ_TRAINING_HELP"))
             g_inputBinding:setActionEventTextPriority(helpId, GS_PRIO_LOW)
+        end
+    end
+    if InputAction.EQ_SPRINT ~= nil then
+        local _, sprintId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_SPRINT, vehicle,
+            function() EqTrainingHooks.onSprintAction(vehicle, "sprint action") end, false, true, false, true, nil)
+        if sprintId ~= nil then
+            g_inputBinding:setActionEventText(sprintId, g_i18n:getText("input_EQ_SPRINT"))
+            g_inputBinding:setActionEventTextVisibility(sprintId, false)
         end
     end
 end
@@ -1648,7 +1694,7 @@ end
 
 --- The middle of the screen: keep tapping during a Sprint, ease off near the line.
 --- @param ex table
--- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
+-- For this long after a Sprint starts the middle says "Keep tapping!"; then just its bar.
 EqTrainingHooks.SPRINT_INTRO_MS = 1250
 -- A Sprint climbs fast, so its warnings come early (James): a yellow "Tiring..." from
 -- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns by time
@@ -1730,6 +1776,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
     pollGaitKeys(vehicle)
+    pollSprintButton(vehicle)
 
     local view = EqTrainingHooks.getView()
     local hudHidden = EqTrainingHud.gameHudHidden()

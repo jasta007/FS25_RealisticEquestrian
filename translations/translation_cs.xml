@@ -207,6 +207,7 @@
         <text name="eq_help_close" text="点击关闭"/>
         <text name="eq_help_next" text="点击继续（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="训练帮助"/>
+        <text name="input_EQ_SPRINT" text="冲刺"/>
         <text name="eq_train_worn" text="骑乘条已满：今天无法再训练"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢复"/>
@@ -219,7 +220,7 @@
         <text name="eq_ex_walk" text="慢步"/>
         <text name="eq_ex_halt" text="站立"/>
         <text name="eq_ex_reverse" text="后退"/>
-        <text name="eq_ex_prompt_tap" text="继续连按W！"/>
+        <text name="eq_ex_prompt_tap" text="继续连点！"/>
         <text name="eq_pop_ex_sprint" text="冲刺！"/>
         <text name="eq_pop_ex_sprintOver" text="冲刺结束"/>
         <text name="eq_pop_ex_blown" text="疲劳！"/>
@@ -228,9 +229,9 @@
         <text name="eq_help_gallop_title" text="袭步"/>
         <text name="eq_help_gallop_1" text="你的马有三种袭步节奏。在跑步中按W开始加力：速度快，但体力消耗条会上涨，而且越高涨得越快。按S恢复：较慢的袭步，在继续袭步的同时降低消耗，在消耗条的上三分之一和下三分之一降得快，中间降得慢。再按W继续加力。状态越好的马疲劳得越慢，恢复得越快。"/>
         <text name="eq_help_gallop_2" text="如果加力时消耗条到达红色的疲劳区，马会降为跑步，在消耗条清空前无法再袭步。想自己降为跑步，可在消耗条为空时于恢复中按一次S，或随时连按两次S。"/>
-        <text name="eq_help_gallop_3" text="袭步时连续按W进行冲刺：速度快得多，消耗条起初涨得慢，然后越来越快，所以要在线前停下。冲刺结束后转为恢复，消耗条清空前不能再次冲刺。只有冲刺能越过疲劳线，用于冲向终点的最后发力，但在那里结束的冲刺会让马力竭，回到线下之前恢复得非常慢。"/>
+        <text name="eq_help_gallop_3" text="袭步时连续点击鼠标左键进行冲刺：速度快得多，消耗条起初涨得慢，然后越来越快，所以要在线前停下。冲刺结束后转为恢复，消耗条清空前不能再次冲刺。只有冲刺能越过疲劳线，用于冲向终点的最后发力，但在那里结束的冲刺会让马力竭，回到线下之前恢复得非常慢。"/>
         <text name="eq_help_gallop_4" text="训练：冲刺训练速度，结束前把消耗条推得越高，价值越大：到线的一半时x2，紧贴线下最高x10，但越线后结束只有x1。加力和恢复按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近顶部提高越快。在消耗条中间三分之一恢复能让马喘口气，并保留大部分倍率，而上下三分之一会让倍率迅速流失，一直不喘气的马进步会慢得多。疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
-        <text name="eq_ex_hint_sprint" text="连续按W冲刺"/>
+        <text name="eq_ex_hint_sprint" text="连续点击左键冲刺"/>
         <text name="eq_ex_hint_sprintRest" text="冲刺：先恢复到清空"/>
         <text name="eq_ex_hint_locked" text="跑步直到消耗条清空"/>
         <text name="eq_ex_hint_canterOne" text="S：跑步"/>
@@ -249,7 +250,7 @@
         <text name="eq_help_stamina_1" text="袭步中加力和恢复时会按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近线涨得越快。恢复会降低倍率：在消耗条上三分之一降得快，中间三分之一降得慢，下三分之一又降得快。"/>
         <text name="eq_help_stamina_2" text="所以要加力到接近线，再放缓到消耗条中间，让马在那里喘一会儿气，然后再次加力。在顶部附近反复切换加力和恢复只会让马疲劳而不提高倍率，疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
         <text name="eq_help_speed_title" text="训练：速度"/>
-        <text name="eq_help_speed_1" text="速度在冲刺时训练：袭步时连续按W。冲刺的每一秒都算数，结束时会乘以你把消耗条推到的高度：到线的一半时x2，紧贴线下最高x10。"/>
+        <text name="eq_help_speed_1" text="速度在冲刺时训练：袭步时连续点击鼠标左键。冲刺的每一秒都算数，结束时会乘以你把消耗条推到的高度：到线的一半时x2，紧贴线下最高x10。"/>
         <text name="eq_help_speed_2" text="越线后结束的冲刺只值x1，所以要在线前停止连按（或按S）。冲刺后，马必须恢复到消耗条清空才能再次冲刺。"/>
         <text name="eq_train_speedMult" text="速度 x%.1f"/>
         <text name="eq_train_staminaMult" text="耐力 x%.1f"/>

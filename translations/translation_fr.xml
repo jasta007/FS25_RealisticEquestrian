@@ -156,6 +156,7 @@
         <text name="eq_help_close" text="Cliquez pour fermer"/>
         <text name="eq_help_next" text="Cliquez pour continuer (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Aide à l'entraînement"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Barre d'équitation pleine : plus d'entraînement aujourd'hui"/>
         <text name="eq_ex_push" text="Effort"/>
         <text name="eq_ex_recover" text="Récupération"/>
@@ -168,7 +169,7 @@
         <text name="eq_ex_walk" text="Pas"/>
         <text name="eq_ex_halt" text="Arrêt"/>
         <text name="eq_ex_reverse" text="Reculer"/>
-        <text name="eq_ex_prompt_tap" text="Continuez à taper W !"/>
+        <text name="eq_ex_prompt_tap" text="Continuez à cliquer !"/>
         <text name="eq_pop_ex_sprint" text="SPRINT !"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint terminé"/>
         <text name="eq_pop_ex_blown" text="Fatigué !"/>
@@ -177,9 +178,9 @@
         <text name="eq_help_gallop_title" text="Le grand galop"/>
         <text name="eq_help_gallop_1" text="Votre cheval a trois vitesses de grand galop. Appuyez sur W depuis le galop pour passer en Effort : rapide, mais la barre d'effort se remplit, et d'autant plus vite qu'elle est haute. Appuyez sur S pour Récupérer : un grand galop plus lent qui fait redescendre l'effort sans cesser de galoper, vite dans le tiers haut et le tiers bas de la barre, lentement au milieu. Appuyez de nouveau sur W pour relancer. Un cheval plus en forme se fatigue moins vite et récupère plus vite."/>
         <text name="eq_help_gallop_2" text="Si la barre atteint la zone rouge Fatigué pendant l'Effort, votre cheval repasse au galop et ne peut plus partir au grand galop avant que la barre soit vide. Pour repasser vous-même au galop, appuyez une fois sur S en Récupération avec la barre vide, ou tapez deux fois sur S à tout moment."/>
-        <text name="eq_help_gallop_3" text="Tapez W sans arrêt au grand galop pour Sprinter : bien plus rapide, et la barre se remplit lentement au début, puis de plus en plus vite, alors arrêtez-vous avant la ligne. La fin d'un Sprint repasse en Récupération, et pas de nouveau Sprint avant que la barre soit vide. Seul un Sprint peut dépasser la ligne Fatigué, pour un dernier effort jusqu'à l'arrivée, mais un Sprint qui finit au-delà laisse votre cheval Essoufflé, et il récupère très lentement jusqu'à repasser sous la ligne."/>
+        <text name="eq_help_gallop_3" text="Cliquez sans arrêt (clic gauche) au grand galop pour Sprinter : bien plus rapide, et la barre se remplit lentement au début, puis de plus en plus vite, alors arrêtez-vous avant la ligne. La fin d'un Sprint repasse en Récupération, et pas de nouveau Sprint avant que la barre soit vide. Seul un Sprint peut dépasser la ligne Fatigué, pour un dernier effort jusqu'à l'arrivée, mais un Sprint qui finit au-delà laisse votre cheval Essoufflé, et il récupère très lentement jusqu'à repasser sous la ligne."/>
         <text name="eq_help_gallop_4" text="Entraînement : un Sprint entraîne la Vitesse, et plus il fait monter la barre avant de finir, plus il rapporte : x2 à mi-chemin de la ligne, jusqu'à x10 juste avant, mais seulement x1 s'il finit au-delà. L'Effort et la Récupération entraînent l'Endurance au multiplicateur d'Endurance, jusqu'à x5. L'Effort l'augmente, plus vite près du haut. Récupérer dans le tiers central de la barre permet au cheval de reprendre son souffle en gardant l'essentiel du multiplicateur, alors que les tiers haut et bas le font vite chuter, et un cheval qui ne reprend jamais son souffle progresse bien plus lentement. Fatigué ou Essoufflé le ramène à x1 et arrête l'entraînement d'Endurance jusqu'à ce que la barre soit vide."/>
-        <text name="eq_ex_hint_sprint" text="Tapez W sans arrêt pour sprinter"/>
+        <text name="eq_ex_hint_sprint" text="Cliquez sans arrêt (clic gauche) pour sprinter"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint : récupérez d'abord jusqu'à vide"/>
         <text name="eq_ex_hint_locked" text="Galop jusqu'à barre vide"/>
         <text name="eq_ex_hint_canterOne" text="S : galop"/>
@@ -198,7 +199,7 @@
         <text name="eq_help_stamina_1" text="L'Endurance s'entraîne en Effort et en Récupération au grand galop, au multiplicateur d'Endurance, jusqu'à x5. L'Effort l'augmente, et plus vous approchez de la ligne, plus il monte vite. La Récupération le fait baisser : vite dans le tiers haut de la barre, lentement dans le tiers central, de nouveau vite dans le tiers bas."/>
         <text name="eq_help_stamina_2" text="Poussez donc près de la ligne, relâchez jusqu'au milieu de la barre et laissez votre cheval y reprendre son souffle un moment, puis poussez à nouveau. Alterner Effort et Récupération près du haut fatigue le cheval sans faire monter le multiplicateur, et Fatigué ou Essoufflé le ramène à x1 et arrête l'entraînement d'Endurance jusqu'à ce que la barre soit vide."/>
         <text name="eq_help_speed_title" text="Entraînement : Vitesse"/>
-        <text name="eq_help_speed_1" text="La Vitesse s'entraîne en Sprint : tapez W sans arrêt au grand galop. Chaque seconde de Sprint compte, et à la fin elle est multipliée selon la hauteur atteinte par la barre : x2 à mi-chemin de la ligne, jusqu'à x10 juste avant."/>
+        <text name="eq_help_speed_1" text="La Vitesse s'entraîne en Sprint : cliquez sans arrêt (clic gauche) au grand galop. Chaque seconde de Sprint compte, et à la fin elle est multipliée selon la hauteur atteinte par la barre : x2 à mi-chemin de la ligne, jusqu'à x10 juste avant."/>
         <text name="eq_help_speed_2" text="Un Sprint qui finit au-delà de la ligne ne vaut que x1, alors arrêtez de taper (ou appuyez sur S) avant la ligne. Après un Sprint, votre cheval doit récupérer jusqu'à barre vide avant de pouvoir sprinter à nouveau."/>
         <text name="eq_train_speedMult" text="Vitesse x%.1f"/>
         <text name="eq_train_staminaMult" text="Endurance x%.1f"/>
