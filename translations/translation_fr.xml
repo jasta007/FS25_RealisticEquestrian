@@ -88,10 +88,10 @@
         <text name="eq_fig_legYieldRail" text="Cession à la jambe le long de la piste %s-%s"/>
         <text name="eq_fig_travers" text="Tête au mur (travers) %s-%s"/>
         <text name="eq_fig_renvers" text="Croupe au mur (renvers) %s-%s"/>
-        <text name="eq_lat_legYield" text="Cession à la jambe : vers la %s, pli à %s"/>
+        <text name="eq_lat_legYield" text="Cession à la jambe : vers la %s"/>
         <text name="eq_lat_halfPass" text="Appuyer : vers la %s, pli à %s"/>
         <text name="eq_lat_shoulderIn" text="Épaule en dedans : vers la %s, pli à %s"/>
-        <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s, pli à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s"/>
         <text name="eq_lat_travers" text="Tête au mur : vers la %s, pli à %s"/>
         <text name="eq_lat_renvers" text="Croupe au mur : vers la %s, pli à %s"/>
         <text name="eq_lat_left" text="gauche"/>

@@ -231,7 +231,10 @@ EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growM
 -- ahead (0.17 never showed in game, under the game's own bottom layer it seems);
 -- coloured by the mark (MARK_COLOURS: red to green), held a little longer, and with
 -- a gold flourish either side at FLOURISH or better.
-EqTrainingHud.MARK = { y = 0.3, holdMs = 1300, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+-- A mark has its own place, so no other pop can cut it short (James, 2026-10-31: some marks
+-- showed far too briefly); one that comes while another is up waits until that one has shown
+-- for minMs.
+EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
 EqTrainingHud.MARK_COLOURS = { { 0, { 0.9, 0.2, 0.2, 1 } }, { 3, { 0.9, 0.2, 0.2, 1 } }, { 5, { 1, 0.55, 0.1, 1 } },
     { 7, { 1, 0.9, 0.2, 1 } }, { 8.5, { 0.35, 0.9, 0.35, 1 } }, { 10, { 0.35, 0.9, 0.35, 1 } } }
 
@@ -370,12 +373,21 @@ function EqTrainingHud.pop(kind, mult)
         EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
         return
     end
-    EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
     if kind == "routineMark" then
         local m = EqTrainingHud.MARK
-        EqTrainingHud.popState.y, EqTrainingHud.popState.holdMs = m.y, m.holdMs
-        EqTrainingHud.popState.flourish = (mult or 0) >= m.flourish
+        local state = { text = text, color = color, big = big, y = m.y, holdMs = m.holdMs, flourish = (mult or 0) >= m.flourish }
+        local now = g_time or 0
+        local shown = EqTrainingHud.markState
+        if shown ~= nil and now - shown.at < m.minMs then
+            state.at = shown.at + m.minMs
+            EqTrainingHud.markNext = state
+        else
+            state.at = now
+            EqTrainingHud.markState, EqTrainingHud.markNext = state, nil
+        end
+        return
     end
+    EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
 end
 
 
@@ -428,19 +440,13 @@ local function drawAnnounce()
 end
 
 
---- Draw the current burst, growing in, holding and fading out.
-function EqTrainingHud.drawPops()
-    drawSidePop()
-    drawAnnounce()
-    local state = EqTrainingHud.popState
-    if state == nil then return end
+--- Draw a burst, growing in, holding and fading out.
+--- @return boolean false once it is over
+local function drawBurst(state)
     local p = EqTrainingHud.POP
     local age = (g_time or 0) - state.at
     local hold = state.holdMs or p.holdMs
-    if age > p.growMs + hold + p.fadeMs then
-        EqTrainingHud.popState = nil
-        return
-    end
+    if age > p.growMs + hold + p.fadeMs then return false end
     local grow = math.min(1, age / p.growMs)
     -- Overshoot a little as it grows in, for some bounce.
     local scale = grow < 1 and grow * 1.25 or 1 + 0.25 * math.max(0, 1 - (age - p.growMs) / 120)
@@ -463,6 +469,20 @@ function EqTrainingHud.drawPops()
         end
     end
     resetText()
+    return true
+end
+
+
+--- Draw the current burst and the last mark.
+function EqTrainingHud.drawPops()
+    drawSidePop()
+    drawAnnounce()
+    local next = EqTrainingHud.markNext
+    if next ~= nil and (g_time or 0) >= next.at then
+        EqTrainingHud.markState, EqTrainingHud.markNext = next, nil
+    end
+    if EqTrainingHud.popState ~= nil and not drawBurst(EqTrainingHud.popState) then EqTrainingHud.popState = nil end
+    if EqTrainingHud.markState ~= nil and not drawBurst(EqTrainingHud.markState) then EqTrainingHud.markState = nil end
 end
 
 

@@ -183,11 +183,11 @@ from 85% (James: slight turns felt slow with none under 40%), only while easing 
 (temperament's stickiness) only works in a started dressage test. While the button is
 held the camera eases round to the way the horse's body faces (not the drift) and
 the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real
-names, each with a bend): leg yield across the arena = drift, head bent away from it; half pass =
+names): leg yield = drift with no bend asked (a leg yield asks for none); half pass =
 drift with the head bent the way it goes. Along the rail the body turns about 27 degrees off it
 and drifts to stay on it: forehand in and bent away from the way it goes is a shoulder-in,
 forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
-it goes a travers (haunches in), head to the rail and bent away a leg yield along the rail.
+it goes a travers (haunches in), head to the rail with no bend a leg yield along the rail.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
 the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
 it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
@@ -267,7 +267,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
   down to X) only loses half of all that. Each mark pops up below the horse, red through orange
-  and yellow to green, with gold flourishes at 9 or better.
+  and yellow to green, with gold flourishes at 9 or better. It has its own place, so no other pop
+  cuts it short, and shows for 1.8 s; a mark that comes sooner waits until the last has shown
+  for 1.5 s (James, 2026-10-31).
 - A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30). Backing up
   counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or

@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="沿牆腿部讓步 %s-%s"/>
         <text name="eq_fig_travers" text="腰向內 %s-%s"/>
         <text name="eq_fig_renvers" text="腰向外 %s-%s"/>
-        <text name="eq_lat_legYield" text="腿部讓步：向%s移動，向%s彎曲"/>
+        <text name="eq_lat_legYield" text="腿部讓步：向%s移動"/>
         <text name="eq_lat_halfPass" text="斜橫步：向%s移動，向%s彎曲"/>
         <text name="eq_lat_shoulderIn" text="肩向內：向%s移動，向%s彎曲"/>
-        <text name="eq_lat_legYieldRail" text="沿牆腿部讓步：向%s移動，向%s彎曲"/>
+        <text name="eq_lat_legYieldRail" text="沿牆腿部讓步：向%s移動"/>
         <text name="eq_lat_travers" text="腰向內：向%s移動，向%s彎曲"/>
         <text name="eq_lat_renvers" text="腰向外：向%s移動，向%s彎曲"/>
         <text name="eq_lat_left" text="左"/>

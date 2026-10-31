@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="Cessão à perna pela pista %s-%s"/>
         <text name="eq_fig_travers" text="Travers (garupa a dentro) %s-%s"/>
         <text name="eq_fig_renvers" text="Renvers (garupa a fora) %s-%s"/>
-        <text name="eq_lat_legYield" text="Cessão à perna: para a %s, flexão à %s"/>
+        <text name="eq_lat_legYield" text="Cessão à perna: para a %s"/>
         <text name="eq_lat_halfPass" text="Apoiar: para a %s, flexão à %s"/>
         <text name="eq_lat_shoulderIn" text="Espádua a dentro: para a %s, flexão à %s"/>
-        <text name="eq_lat_legYieldRail" text="Cessão pela pista: para a %s, flexão à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cessão pela pista: para a %s"/>
         <text name="eq_lat_travers" text="Travers: para a %s, flexão à %s"/>
         <text name="eq_lat_renvers" text="Renvers: para a %s, flexão à %s"/>
         <text name="eq_lat_left" text="esquerda"/>

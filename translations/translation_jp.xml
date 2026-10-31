@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="壁沿いの斜横歩 %s-%s"/>
         <text name="eq_fig_travers" text="トラヴェルス（腰を内へ） %s-%s"/>
         <text name="eq_fig_renvers" text="レンフェルス（腰を外へ） %s-%s"/>
-        <text name="eq_lat_legYield" text="斜横歩: %sへ、屈曲 %s"/>
+        <text name="eq_lat_legYield" text="斜横歩: %sへ"/>
         <text name="eq_lat_halfPass" text="ハーフパス: %sへ、屈曲 %s"/>
         <text name="eq_lat_shoulderIn" text="ショルダーイン: %sへ、屈曲 %s"/>
-        <text name="eq_lat_legYieldRail" text="壁沿いの斜横歩: %sへ、屈曲 %s"/>
+        <text name="eq_lat_legYieldRail" text="壁沿いの斜横歩: %sへ"/>
         <text name="eq_lat_travers" text="トラヴェルス: %sへ、屈曲 %s"/>
         <text name="eq_lat_renvers" text="レンフェルス: %sへ、屈曲 %s"/>
         <text name="eq_lat_left" text="左"/>
