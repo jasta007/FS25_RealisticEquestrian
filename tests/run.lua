@@ -4083,6 +4083,9 @@ end)()
     J.CLOSE_MODE = 3
     check("jump pose: landing pose once falling faster than CLOSE_FALL_SPEED (mode 3)", not J.closeToGround(false, 3)
         and not J.closeToGround(false, -J.CLOSE_FALL_SPEED / 2) and J.closeToGround(false, -J.CLOSE_FALL_SPEED - 0.1))
+    check("jump pose: off a high drop the landing pose waits till CLOSE_LEAD_S from the ground",
+        J.closeToGround(false, -2, J.CLOSE_DROP_M) and not J.closeToGround(false, -2, 3)
+        and J.closeToGround(false, -6, 6 * J.CLOSE_LEAD_S - 0.01) and J.closeToGround(false, -2, nil))
     local carried = J.newLaunch(7, 5, false, nil, 0, nil, "canter")
     check("carry: none before the launch", J.carrySpeed(carried, 0) == nil)
     carried.launched, carried.launchedAt = true, 1000

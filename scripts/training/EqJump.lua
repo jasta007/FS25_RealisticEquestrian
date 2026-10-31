@@ -40,6 +40,11 @@ EqJump.FALL_MAX = 7
 -- passes CLOSE_FALL_SPEED (James: the landing clip played a bit late).
 EqJump.CLOSE_MODE = 3
 EqJump.CLOSE_FALL_SPEED = 1
+-- ...but higher than CLOSE_DROP_M off the ground, no sooner than CLOSE_LEAD_S seconds from it at
+-- the speed it falls: off a high wall the landing clip played out mid-air and began again on
+-- touching down (James, 2026-10-31). An ordinary jump stays lower and is unchanged.
+EqJump.CLOSE_DROP_M = 1.6
+EqJump.CLOSE_LEAD_S = 0.3
 -- The quicker jump covered too little ground to clear things (James): a jump carries a share of
 -- its take-off speed through the air, eased in over CARRY_EASE_MS. Not at a gallop (James: 1.25
 -- there snapped the horse forwards into "hyper speed"), nor once the rider asks for a slower gait
@@ -95,6 +100,8 @@ EqJump.TUNABLE = {
     { name = "blend", key = "BLEND_SPEED", min = 0.1, max = 10 },
     { name = "close", key = "CLOSE_MODE", min = 0, max = 3 },
     { name = "closefall", key = "CLOSE_FALL_SPEED", min = 0, max = 10 },
+    { name = "closedrop", key = "CLOSE_DROP_M", min = 0, max = 10 },
+    { name = "closelead", key = "CLOSE_LEAD_S", min = 0, max = 2 },
     { name = "carry", key = "AIR_CARRY", min = 0.5, max = 2.5 },
     { name = "gcarry", key = "GALLOP_CARRY", min = 0.5, max = 2.5 },
     { name = "tcarry", key = "TROT_CARRY", min = 0.5, max = 3 },
@@ -221,11 +228,14 @@ end
 --- What the animation is told about being close to the ground in a jump (pure).
 --- @param baseClose boolean the base game's own answer
 --- @param speedY number m/s
+--- @param groundDistance number|nil metres down to the ground, nil when not known
 --- @return boolean
-function EqJump.closeToGround(baseClose, speedY)
+function EqJump.closeToGround(baseClose, speedY, groundDistance)
     local mode = math.floor(EqJump.CLOSE_MODE + 0.5)
     if mode == 2 or (mode == 1 and speedY > 0) then return true end
-    if mode == 3 and speedY < -EqJump.CLOSE_FALL_SPEED then return true end
+    if mode == 3 and speedY < -EqJump.CLOSE_FALL_SPEED
+        and (groundDistance == nil or groundDistance <= EqJump.CLOSE_DROP_M
+            or groundDistance / -speedY <= EqJump.CLOSE_LEAD_S) then return true end
     return baseClose
 end
 

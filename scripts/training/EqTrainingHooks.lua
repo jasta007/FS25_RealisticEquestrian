@@ -704,6 +704,11 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         local handling = EqTraining.handling(record ~= nil and record.trained.speed or nil, record ~= nil and record.trained.agility or nil)
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn * (airborne and EqTrainingHooks.AIR_TURN_SHARE or 1)
     end
+    -- After a drop, does the horse leave the ground again (a bounce that replays the landing)?
+    if airborne and spec.eqAirborne == false and spec.eqDropLandedAt ~= nil and (g_time or 0) - spec.eqDropLandedAt < 1500 then
+        Log:info("Jump: off the ground again %d ms after landing a drop", (g_time or 0) - spec.eqDropLandedAt)
+        spec.eqDropLandedAt = nil
+    end
     spec.eqAirborne = airborne
     EqExertion.setAir(sheet.exertion, airborne)
     if airborne then
@@ -1106,9 +1111,9 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
         local params = spec.animationParameters or {}
         local vertical = params.verticalVelocity ~= nil and tonumber(params.verticalVelocity.value) or nil
         if vertical ~= nil and vertical < (launch.lowestVertical or math.huge) then launch.lowestVertical = vertical end
-        if spec.isCloseToGround and launch.closeAt == nil and launch.launched and (spec.currentSpeedY or 0) < 0 then
-            launch.closeAt = now
-        end
+    end
+    if spec.isCloseToGround and launch.closeAt == nil and launch.launched and (spec.currentSpeedY or 0) < 0 then
+        launch.closeAt = now
     end
     local wasLaunched = launch.launched
     local speedY, cap = EqJump.step(launch, now, dt, spec.gravity or -EqJump.GRAVITY)
@@ -1125,10 +1130,14 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
     end
     -- Done once it has launched and come back down (or a collected jump's slow stays on till then).
     if launch.launched and spec.isOnGround ~= false and now - launch.startedAt > launch.pushMs + 200 then
-        if launch.trace then
-            Log:info("Jump: landed after %d ms, close to the ground %s ms before, fastest fall the animation saw %s m/s",
+        local drop = (launch.highest or 0) > EqJump.CLOSE_DROP_M
+        if launch.trace or drop then
+            Log:info("Jump: landed after %d ms, close to the ground %s ms before, fastest fall the animation saw %s m/s, "
+                .. "highest above the ground %.1f m%s",
                 now - launch.startedAt, launch.closeAt ~= nil and tostring(math.floor(now - launch.closeAt)) or "?",
-                launch.lowestVertical ~= nil and string.format("%.1f", launch.lowestVertical) or "?")
+                launch.lowestVertical ~= nil and string.format("%.1f", launch.lowestVertical) or "?",
+                launch.highest or 0, drop and " (a drop)" or "")
+            spec.eqDropLandedAt = drop and now or nil
         end
         spec.eqLaunch = nil
     end
@@ -1720,7 +1729,11 @@ function EqTrainingHooks.installRideable(guarded)
             local spec = self.spec_rideable
             if not EqMain.isActive or spec == nil or spec.eqLaunch == nil or spec.isOnGround ~= false then return end
             guarded("jump pose", function()
-                spec.isCloseToGround = EqJump.closeToGround(spec.isCloseToGround == true, spec.currentSpeedY or 0)
+                local ground = spec.groundRaycastResult
+                local distance = ground ~= nil and type(ground.distance) == "number" and ground.distance or nil
+                spec.isCloseToGround = EqJump.closeToGround(spec.isCloseToGround == true, spec.currentSpeedY or 0, distance)
+                local launch = spec.eqLaunch
+                if distance ~= nil and distance > (launch.highest or 0) then launch.highest = distance end
             end)
         end)
     end
