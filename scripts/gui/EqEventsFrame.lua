@@ -759,6 +759,28 @@ local function showLogo(bitmap, brandName)
 end
 
 
+--- Split a text into lines that fit a Text element's width, at spaces.
+--- @param element table|nil Text
+--- @param text string
+--- @return table lines
+function EqEventsFrame.wrap(element, text)
+    local width = element ~= nil and (element.absSize ~= nil and element.absSize[1] or element.size ~= nil and element.size[1]) or nil
+    if element == nil or width == nil or getTextWidth == nil or element.textSize == nil then return { text } end
+    local lines, current = {}, ""
+    for word in string.gmatch(text, "%S+") do
+        local candidate = current == "" and word or (current .. " " .. word)
+        if current ~= "" and getTextWidth(element.textSize, candidate) > width then
+            table.insert(lines, current)
+            current = word
+        else
+            current = candidate
+        end
+    end
+    if current ~= "" then table.insert(lines, current) end
+    return lines
+end
+
+
 --- The selected sponsor's logo, name, size and terms, coloured where the farm meets them.
 function EqEventsFrame:updateSponsorPanel()
     if self.sponsorPanel == nil then return end
@@ -775,7 +797,16 @@ function EqEventsFrame:updateSponsorPanel()
     showLogo(self.sponsorLogo, row.offer.brand)
     setText(self.sponsorName, row.title)
     setText(self.sponsorSize, row.contract and string.format(g_i18n:getText("eq_sponsor_yourSponsor"), row.size) or row.size)
-    for i = 1, #(self.sponsorLabel or {}) do
+    -- The notes follow the last row across the full width, after a blank row, wrapped by hand
+    -- (James, 2026-10-31: a separate block sat too low and overlapped the buttons).
+    local rowCount = #(self.sponsorLabel or {})
+    local wideStart = #lines + 2
+    local wide = {}
+    local wrapElement = self.sponsorWide ~= nil and self.sponsorWide[1] or nil
+    for _, note in ipairs(EqSponsorView.noteLines(row, clashes or {}, rowCount - wideStart - 1)) do
+        for _, part in ipairs(EqEventsFrame.wrap(wrapElement, note)) do table.insert(wide, part) end
+    end
+    for i = 1, rowCount do
         local line = lines[i]
         local value = self.sponsorValue ~= nil and self.sponsorValue[i] or nil
         keepDefaultColor(value)
@@ -783,9 +814,9 @@ function EqEventsFrame:updateSponsorPanel()
         if line ~= nil and line.ok ~= nil then color = wordColor(EqEventsFrame.RISK_COLORS, line.ok and "low" or "risky") end
         setText(self.sponsorLabel[i], line ~= nil and line.label or "")
         setText(value, line ~= nil and line.value or "", color)
+        local wideText = i >= wideStart and wide[i - wideStart + 1] or nil
+        if self.sponsorWide ~= nil then setText(self.sponsorWide[i], wideText or "") end
     end
-    local notes = EqSponsorView.noteLines(row, clashes or {}, #(self.sponsorNote or {}))
-    for i = 1, #(self.sponsorNote or {}) do setText(self.sponsorNote[i], notes[i] or "") end
     local speciality = EqSponsorView.speciality(row.offer.brand, #(self.sponsorSpeciality or {}))
     for i = 1, #(self.sponsorSpeciality or {}) do setText(self.sponsorSpeciality[i], speciality[i] or "") end
 end

@@ -357,18 +357,31 @@
         </GuiElement>
 
         <!-- The selected sponsor's speciality: its five shop categories with the most machines -->
-        <GuiElement profile="rlMenu_container" id="sponsorSpecialityBox" position="20px -660px" size="1000px 210px" visible="false">
-            <Text profile="rlMenu_tableHeaderLeftAligned" position="10px 0px" size="980px 40px" text="$l10n_eq_sponsor_label_speciality"/>
-            <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px -38px"/>
-            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px -50px" size="980px 30px" id="sponsorSpeciality[1]" textLayoutMode="scrolling"/>
-            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px -82px" size="980px 30px" id="sponsorSpeciality[2]" textLayoutMode="scrolling"/>
-            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px -114px" size="980px 30px" id="sponsorSpeciality[3]" textLayoutMode="scrolling"/>
-            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px -146px" size="980px 30px" id="sponsorSpeciality[4]" textLayoutMode="scrolling"/>
-            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px -178px" size="980px 30px" id="sponsorSpeciality[5]" textLayoutMode="scrolling"/>
+        <GuiElement profile="rlMenu_container" id="sponsorSpecialityBox" position="20px -655px" size="1000px 190px" visible="false">
+            <GuiElement profile="rlMenu_container" position="0px 0px" size="1000px 40px">
+                <Text profile="rlMenu_tableHeaderLeftAligned" position="10px 0px" size="980px 40px" text="$l10n_eq_sponsor_label_speciality"/>
+                <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -44px" size="1000px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 28px" id="sponsorSpeciality[1]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -72px" size="1000px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 28px" id="sponsorSpeciality[2]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -100px" size="1000px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 28px" id="sponsorSpeciality[3]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -128px" size="1000px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 28px" id="sponsorSpeciality[4]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -156px" size="1000px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="980px 28px" id="sponsorSpeciality[5]" textLayoutMode="scrolling"/>
+            </GuiElement>
         </GuiElement>
 
         <!-- The selected sponsor: its logo (from the game's brands, set by EqEventsFrame), name
-             and size beside it, then label left, value at 200px -->
+             and size beside it, then label left, value at 200px; the notes (what signing needs,
+             the rival machines to sell) follow the last row across the full width -->
         <GuiElement profile="rlMenu_container" id="sponsorPanel" position="1070px -120px" size="490px 750px" visible="false">
             <Bitmap profile="eq_sponsorLogo" id="sponsorLogo" position="0px 0px" size="128px 64px"/>
             <GuiElement profile="rlMenu_container" position="138px 0px" size="352px 36px">
@@ -377,73 +390,105 @@
             <GuiElement profile="rlMenu_container" position="138px -36px" size="352px 28px">
                 <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="352px 28px" id="sponsorSize" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -74px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[1]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[1]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -74px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[1]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[1]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[1]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -108px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[2]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[2]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -104px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[2]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[2]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[2]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -142px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[3]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[3]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -134px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[3]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[3]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[3]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -176px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[4]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[4]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -164px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[4]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[4]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[4]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -210px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[5]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[5]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -194px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[5]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[5]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[5]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -244px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[6]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[6]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -224px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[6]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[6]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[6]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -278px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[7]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[7]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -254px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[7]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[7]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[7]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -312px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[8]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[8]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -284px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[8]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[8]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[8]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -346px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[9]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[9]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -314px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[9]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[9]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[9]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -380px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[10]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[10]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -344px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[10]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[10]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[10]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -414px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[11]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[11]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -374px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[11]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[11]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[11]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -448px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[12]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[12]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -404px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[12]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[12]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[12]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -482px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[13]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[13]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -434px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[13]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[13]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[13]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -516px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="sponsorLabel[14]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="sponsorValue[14]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -464px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[14]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[14]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[14]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <!-- What signing needs, and the rival machines to sell first, one a line -->
-            <GuiElement profile="rlMenu_container" position="0px -556px" size="490px 236px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 50px" id="sponsorNote[1]"
-                      textVerticalAlignment="top" textMaxWidth="490px" textMaxNumLines="2" textLayoutMode="truncate"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -54px" size="490px 50px" id="sponsorNote[2]"
-                      textVerticalAlignment="top" textMaxWidth="490px" textMaxNumLines="2" textLayoutMode="truncate"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -108px" size="490px 26px" id="sponsorNote[3]" textBold="true" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -134px" size="490px 26px" id="sponsorNote[4]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -160px" size="490px 26px" id="sponsorNote[5]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -186px" size="490px 26px" id="sponsorNote[6]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px -212px" size="490px 26px" id="sponsorNote[7]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -494px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[15]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[15]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[15]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -524px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[16]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[16]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[16]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -554px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[17]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[17]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[17]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -584px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[18]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[18]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[18]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -614px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[19]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[19]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[19]" textLayoutMode="scrolling"/>
+            </GuiElement>
+            <GuiElement profile="rlMenu_container" position="0px -644px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="sponsorLabel[20]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="sponsorValue[20]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="490px 28px" id="sponsorWide[20]" textLayoutMode="scrolling"/>
             </GuiElement>
         </GuiElement>
 
