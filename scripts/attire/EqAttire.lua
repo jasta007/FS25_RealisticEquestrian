@@ -57,6 +57,9 @@ EqAttire.HAT = {
     male = { up = 0.10, forward = -0.005, side = 0, tilt = 0, scale = 1 },
 }
 EqAttire.HAT_NODE = "eqHatFit"
+-- eqUvGrid's test texture (art/source/uv_grid.py) and the slot it is on, if any.
+EqAttire.UV_GRID = "data/attire/uvGrid_diffuse.dds"
+EqAttire.uvGridSlot = nil
 
 -- The boots' pieces and the bones they go on. A shaft stands from the ankle (the foot bone's
 -- origin) towards the knee (the shin bone's), each foot keeps the shaft's turn at dressing time.
@@ -486,6 +489,11 @@ function EqAttire.dress(model, style)
             local colour = EqAttire.pickColour(swap.colours, index)
             if colour ~= nil then setColours(model[slot.node], colour) end
         end
+        if EqAttire.uvGridSlot == slot.config then
+            -- eqUvGrid: the labelled grid in white light, to see where the texture lands.
+            swapMaps(model[slot.node], { diffuse = EqAttire.resolve(EqAttire.UV_GRID, EqAttire.modDirectory), key = "uvGrid" })
+            setColours(model[slot.node], { primary = { 1, 1, 1, 1 }, secondary = { 1, 1, 1, 1 } })
+        end
     end
 end
 
@@ -537,6 +545,16 @@ function EqAttire:consoleBootFit(width, raise, drop, lean, back)
 end
 
 
+--- eqUvGrid [bottom|top|gloves|footwear|headgear|off]: put a labelled grid on one slot's item as
+--- its texture, from the next dressing (re-pick the item in the wardrobe), to map its layout.
+function EqAttire:consoleUvGrid(slot)
+    local slots = { bottom = true, top = true, gloves = true, footwear = true, headgear = true }
+    EqAttire.uvGridSlot = slots[slot] and slot or nil
+    if EqAttire.uvGridSlot == nil then return "UV grid off (re-pick the item to put its texture back)" end
+    return string.format("UV grid on the %s item: open the wardrobe and pick it again", EqAttire.uvGridSlot)
+end
+
+
 --- @param guarded function main.lua's error guard
 --- @param modDirectory string
 function EqAttire.install(guarded, modDirectory)
@@ -556,6 +574,7 @@ function EqAttire.install(guarded, modDirectory)
         end)
     end
     addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back]", "consoleBootFit", EqAttire)
+    addConsoleCommand("eqUvGrid", "Shows a labelled test grid on a worn item: eqUvGrid [bottom|top|gloves|footwear|headgear|off]", "consoleUvGrid", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)

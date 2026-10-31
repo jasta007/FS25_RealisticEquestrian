@@ -781,5 +781,9 @@ boots are our own models; the rest are base-game meshes:
   picked colour.
 - **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
 
+`eqUvGrid [slot|off]` puts a labelled 8 x 8 grid (art/source/uv_grid.py) on the worn item of
+that slot as its texture, lit white, from the next dressing: screenshots show which squares land
+where, for painting our own masks on base-game clothes we can't open (the breeches' upper seat).
+
 The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
 keep the game's icon).
