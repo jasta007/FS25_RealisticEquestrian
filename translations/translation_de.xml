@@ -125,15 +125,26 @@
         <text name="eq_fig_serpentine" text="Schlangenlinie, %d Bögen, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="%d-m-Schlangenlinie %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Aus dem Zirkel wechseln bei %s"/>
-        <text name="eq_fig_eight" text="Achterfigur ab %s"/>
+        <text name="eq_fig_eight" text="Halbe Acht %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Bei %s auf die Mittellinie, bei X Richtung %s"/>
+        <text name="eq_fig_centreFromX" text="Bei %s Richtung X, Mittellinie bis %s"/>
+        <text name="eq_fig_halfPassCentre" text="Traversale von %s zur Mittellinie, weiter bis %s"/>
+        <text name="eq_fig_legYieldCentre" text="Bei %s auf die Mittellinie, Schenkelweichen bis %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage auf der Diagonale %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Strg + W"/>
         <text name="eq_fig_legYield" text="Schenkelweichen ab %s und zurück"/>
         <text name="eq_fig_halfPass" text="Traversale ab %s und zurück"/>
         <text name="eq_fig_shoulderIn" text="Schulterherein %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Schenkelweichen an der Bande %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (Kruppeherein) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (Kruppeheraus) %s-%s"/>
         <text name="eq_lat_legYield" text="Schenkelweichen: nach %s, Stellung %s"/>
         <text name="eq_lat_halfPass" text="Traversale: nach %s, Stellung %s"/>
-        <text name="eq_lat_shoulderIn" text="Schulterherein: Stellung %s"/>
-        <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s"/>
+        <text name="eq_lat_shoulderIn" text="Schulterherein: nach %s, Stellung %s"/>
+        <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s, Stellung %s"/>
+        <text name="eq_lat_travers" text="Travers: nach %s, Stellung %s"/>
+        <text name="eq_lat_renvers" text="Renvers: nach %s, Stellung %s"/>
         <text name="eq_lat_left" text="links"/>
         <text name="eq_lat_right" text="rechts"/>
         <text name="eq_lat_keys" text="Rechte Maustaste halten: mit der Maus lenken, A/D seitwärts, Umschalt hält die Richtung und die Maus stellt den Kopf."/>

@@ -125,15 +125,26 @@
         <text name="eq_fig_serpentine" text="Wężyk, %d łuki, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="Łuk %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Zmiana kierunku przez koło w %s"/>
-        <text name="eq_fig_eight" text="Ósemka od %s"/>
+        <text name="eq_fig_eight" text="Pół ósemki %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Linia środkowa w %s, w X skręt do %s"/>
+        <text name="eq_fig_centreFromX" text="W %s skręt do X, linią środkową do %s"/>
+        <text name="eq_fig_halfPassCentre" text="Ciąg od %s do linii środkowej, dalej do %s"/>
+        <text name="eq_fig_legYieldCentre" text="Linia środkowa w %s, ustępowanie od łydki do %s"/>
+        <text name="eq_fig_passageRail" text="Pasaż %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Pasaż po przekątnej %s-%s"/>
+        <text name="eq_dressage_passage" text="Pasaż: Ctrl + W"/>
         <text name="eq_fig_legYield" text="Ustępowanie od łydki od %s i z powrotem"/>
         <text name="eq_fig_halfPass" text="Ciąg od %s i z powrotem"/>
         <text name="eq_fig_shoulderIn" text="Łopatka do wewnątrz %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Ustępowanie od łydki wzdłuż ściany %s-%s"/>
+        <text name="eq_fig_travers" text="Trawers (zad do wewnątrz) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renwers (zad na zewnątrz) %s-%s"/>
         <text name="eq_lat_legYield" text="Ustępowanie: w %s, zgięcie w %s"/>
         <text name="eq_lat_halfPass" text="Ciąg: w %s, zgięcie w %s"/>
-        <text name="eq_lat_shoulderIn" text="Łopatka do wewnątrz: zgięcie w %s"/>
-        <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s"/>
+        <text name="eq_lat_shoulderIn" text="Łopatka do wewnątrz: w %s, zgięcie w %s"/>
+        <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s, zgięcie w %s"/>
+        <text name="eq_lat_travers" text="Trawers: w %s, zgięcie w %s"/>
+        <text name="eq_lat_renvers" text="Renwers: w %s, zgięcie w %s"/>
         <text name="eq_lat_left" text="lewo"/>
         <text name="eq_lat_right" text="prawo"/>
         <text name="eq_lat_keys" text="Prawy przycisk myszy: skręcanie myszą, A/D ruch w bok, Shift trzyma kierunek, a mysz zgina głowę."/>

@@ -74,15 +74,26 @@
         <text name="eq_fig_serpentine" text="Serpentine de %d boucles, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="Boucle de %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Changement de main dans le cercle en %s"/>
-        <text name="eq_fig_eight" text="Huit de chiffre depuis %s"/>
+        <text name="eq_fig_eight" text="Demi huit de chiffre %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Ligne du milieu en %s, en X tourner vers %s"/>
+        <text name="eq_fig_centreFromX" text="En %s tourner vers X, ligne du milieu jusqu'en %s"/>
+        <text name="eq_fig_halfPassCentre" text="Appuyer de %s à la ligne du milieu, jusqu'en %s"/>
+        <text name="eq_fig_legYieldCentre" text="Ligne du milieu en %s, cession à la jambe jusqu'en %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage sur la diagonale %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage : Ctrl + W"/>
         <text name="eq_fig_legYield" text="Cession à la jambe depuis %s et retour"/>
         <text name="eq_fig_halfPass" text="Appuyer depuis %s et retour"/>
         <text name="eq_fig_shoulderIn" text="Épaule en dedans %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Cession à la jambe le long de la piste %s-%s"/>
+        <text name="eq_fig_travers" text="Tête au mur (travers) %s-%s"/>
+        <text name="eq_fig_renvers" text="Croupe au mur (renvers) %s-%s"/>
         <text name="eq_lat_legYield" text="Cession à la jambe : vers la %s, pli à %s"/>
         <text name="eq_lat_halfPass" text="Appuyer : vers la %s, pli à %s"/>
-        <text name="eq_lat_shoulderIn" text="Épaule en dedans : pli à %s"/>
-        <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s"/>
+        <text name="eq_lat_shoulderIn" text="Épaule en dedans : vers la %s, pli à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cession le long de la piste : vers la %s, pli à %s"/>
+        <text name="eq_lat_travers" text="Tête au mur : vers la %s, pli à %s"/>
+        <text name="eq_lat_renvers" text="Croupe au mur : vers la %s, pli à %s"/>
         <text name="eq_lat_left" text="gauche"/>
         <text name="eq_lat_right" text="droite"/>
         <text name="eq_lat_keys" text="Clic droit maintenu : diriger à la souris, A/D se décaler, Maj garde le cap et la souris plie la tête."/>

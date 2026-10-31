@@ -125,15 +125,26 @@
         <text name="eq_fig_serpentine" text="Серпантин, %d петли, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="Петля %d м %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Смена направления через вольт у %s"/>
-        <text name="eq_fig_eight" text="Восьмёрка от %s"/>
+        <text name="eq_fig_eight" text="Половина восьмёрки %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Средняя линия от %s, у X поворот к %s"/>
+        <text name="eq_fig_centreFromX" text="У %s поворот к X, по средней линии до %s"/>
+        <text name="eq_fig_halfPassCentre" text="Принимание от %s к средней линии, дальше до %s"/>
+        <text name="eq_fig_legYieldCentre" text="Средняя линия от %s, уступка шенкелю к %s"/>
+        <text name="eq_fig_passageRail" text="Пассаж %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Пассаж по диагонали %s-%s"/>
+        <text name="eq_dressage_passage" text="Пассаж: Ctrl + W"/>
         <text name="eq_fig_legYield" text="Уступка шенкелю от %s и обратно"/>
         <text name="eq_fig_halfPass" text="Принимание от %s и обратно"/>
         <text name="eq_fig_shoulderIn" text="Плечо внутрь %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Уступка шенкелю вдоль стенки %s-%s"/>
+        <text name="eq_fig_travers" text="Траверс (круп внутрь) %s-%s"/>
+        <text name="eq_fig_renvers" text="Ренверс (круп наружу) %s-%s"/>
         <text name="eq_lat_legYield" text="Уступка шенкелю: %s, сгибание %s"/>
         <text name="eq_lat_halfPass" text="Принимание: %s, сгибание %s"/>
-        <text name="eq_lat_shoulderIn" text="Плечо внутрь: сгибание %s"/>
-        <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s"/>
+        <text name="eq_lat_shoulderIn" text="Плечо внутрь: %s, сгибание %s"/>
+        <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s, сгибание %s"/>
+        <text name="eq_lat_travers" text="Траверс: %s, сгибание %s"/>
+        <text name="eq_lat_renvers" text="Ренверс: %s, сгибание %s"/>
         <text name="eq_lat_left" text="влево"/>
         <text name="eq_lat_right" text="вправо"/>
         <text name="eq_lat_keys" text="Правая кнопка мыши: руление мышью, A/D боковое движение, Shift держит направление, а мышь сгибает голову."/>

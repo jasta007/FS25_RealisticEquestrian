@@ -1175,8 +1175,6 @@ end
 local function sectionText(sec)
     local function side(v) return g_i18n:getText((v or 0) > 0 and "eq_lat_right" or "eq_lat_left") end
     local key = "eq_lat_" .. sec.kind
-    if sec.kind == "shoulderIn" then return string.format(g_i18n:getText(key), side(sec.bend)) end
-    if sec.kind == "legYieldRail" then return string.format(g_i18n:getText(key), side(sec.drift)) end
     return string.format(g_i18n:getText(key), side(sec.drift), side(sec.bend))
 end
 
@@ -1231,6 +1229,7 @@ local function pathRows(rows, routine)
     else
         local event, dist = EqDressagePath.upcoming(run)
         local sec, inside = EqDressagePath.section(run)
+        local pass, inPass = EqDressagePath.passage(run)
         if sec ~= nil then
             -- The keys beside the panel while lateral work is asked for or coming up.
             EqTrainingHud.drawPanelNote(g_i18n:getText("eq_lat_keys"), COLOR.grey or color, true)
@@ -1253,6 +1252,10 @@ local function pathRows(rows, routine)
             local wrong = inside and (run.angleWrong or run.bendWrong)
             local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
             EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
+        elseif pass ~= nil then
+            -- "Passage: Ctrl + W", red while not collected in it.
+            local share = not inPass and math.max(0, math.min(1, (pass.s0 - run.s) / run.warn)) or nil
+            EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_passage"), share, run.passageWrong and (COLOR.red or color) or color)
         elseif run.stallMs >= EqDressagePath.STALL_TELL_MS then
             -- Standing still with nothing to do: say which gait to go on in ("Trot!").
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)),
