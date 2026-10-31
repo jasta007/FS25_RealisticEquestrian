@@ -155,10 +155,10 @@ end
 
 
 --- @param farmId number
---- @return string|nil brand the farm's sponsor
-local function sponsorOf(farmId)
-    local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
-    return contract ~= nil and contract.brand or nil
+--- @return table brands the farm's sponsors, the lead first (empty for none)
+local function sponsorsOf(farmId)
+    if EqSponsorManager == nil or EqSponsorManager.sponsorBrands == nil then return {} end
+    return EqSponsorManager.sponsorBrands(farmId)
 end
 
 
@@ -188,9 +188,13 @@ function EqSponsors.update()
             if not placeable.eqSponsored then
                 placeable.eqSponsored = true
                 if byName == nil then byName, names = brands() end
-                local sponsor = sponsorOf(farmId)
-                if sponsor ~= nil and byName[sponsor] ~= nil then
-                    sponsors = { sponsor }
+                -- The farm's sponsors take turns on the boards; with none, the brands it owns most.
+                local signed = {}
+                for _, brand in ipairs(sponsorsOf(farmId)) do
+                    if byName[brand] ~= nil then table.insert(signed, brand) end
+                end
+                if #signed > 0 then
+                    sponsors = signed
                 else
                     sponsors = sponsors or EqSponsors.order(ownedCounts(farmId), names, farmId)
                 end

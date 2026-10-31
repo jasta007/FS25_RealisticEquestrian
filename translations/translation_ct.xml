@@ -1023,6 +1023,12 @@
         <text name="eq_sponsor_eligible_no" text="不符合條件"/>
         <text name="eq_sponsor_eligible_taken" text="已有贊助商"/>
         <text name="eq_sponsor_eligible_yours" text="你的贊助商"/>
+        <text name="eq_sponsor_eligible_exclusive" text="僅限獨家"/>
+        <text name="eq_sponsor_eligible_full" text="贊助商已滿"/>
+        <text name="eq_sponsor_eligible_overlap" text="專長相同"/>
+        <text name="eq_sponsor_exclusive_yes" text="獨家"/>
+        <text name="eq_sponsor_exclusive_no" text="非獨家"/>
+        <text name="eq_sponsor_overlapLine" text="與%s衝突：%s"/>
         <text name="eq_sponsor_label_speciality" text="專長"/>
         <text name="eq_sponsor_feePerEvent" text="每場賽事%s"/>
         <text name="eq_sponsor_targetPopularity" text="人氣%d"/>

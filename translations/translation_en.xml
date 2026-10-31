@@ -1023,6 +1023,12 @@
         <text name="eq_sponsor_eligible_no" text="Not eligible"/>
         <text name="eq_sponsor_eligible_taken" text="Have a sponsor"/>
         <text name="eq_sponsor_eligible_yours" text="Your sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Exclusive only"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors full"/>
+        <text name="eq_sponsor_eligible_overlap" text="Same speciality"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusive"/>
+        <text name="eq_sponsor_exclusive_no" text="Non-exclusive"/>
+        <text name="eq_sponsor_overlapLine" text="Clashes with %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Speciality"/>
         <text name="eq_sponsor_feePerEvent" text="%s per event"/>
         <text name="eq_sponsor_targetPopularity" text="Popularity %d"/>

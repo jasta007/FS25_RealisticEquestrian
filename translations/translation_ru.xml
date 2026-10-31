@@ -1023,6 +1023,12 @@
         <text name="eq_sponsor_eligible_no" text="Не подходит"/>
         <text name="eq_sponsor_eligible_taken" text="Уже есть спонсор"/>
         <text name="eq_sponsor_eligible_yours" text="Ваш спонсор"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Только эксклюзивно"/>
+        <text name="eq_sponsor_eligible_full" text="Спонсоров достаточно"/>
+        <text name="eq_sponsor_eligible_overlap" text="Та же специализация"/>
+        <text name="eq_sponsor_exclusive_yes" text="Эксклюзивный"/>
+        <text name="eq_sponsor_exclusive_no" text="Неэксклюзивный"/>
+        <text name="eq_sponsor_overlapLine" text="Пересекается с %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Специализация"/>
         <text name="eq_sponsor_feePerEvent" text="%s за соревнование"/>
         <text name="eq_sponsor_targetPopularity" text="Популярность %d"/>

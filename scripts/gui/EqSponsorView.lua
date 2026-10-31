@@ -44,12 +44,15 @@ function EqSponsorView.rows(farmId)
         else
             local checks = EqSponsorManager.checksFor(farmId, offer)
             eligible = checks.ok
-            local exclusive = nil
-            for _, check in ipairs(checks) do
-                if check.id == "exclusive" then exclusive = check end
-            end
-            if exclusive ~= nil and not exclusive.ok then
-                eligibility = g_i18n:getText("eq_sponsor_eligible_taken")
+            local byId = {}
+            for _, check in ipairs(checks) do byId[check.id] = check end
+            -- What the farm's other sponsors stop, before what the farm could fix itself.
+            if byId.exclusive ~= nil and not byId.exclusive.ok then
+                eligibility = g_i18n:getText(offer.exclusive and "eq_sponsor_eligible_exclusive" or "eq_sponsor_eligible_taken")
+            elseif byId.slots ~= nil and not byId.slots.ok then
+                eligibility = g_i18n:getText("eq_sponsor_eligible_full")
+            elseif byId.overlap ~= nil and not byId.overlap.ok then
+                eligibility = g_i18n:getText("eq_sponsor_eligible_overlap")
             else
                 eligibility = g_i18n:getText(checks.ok and "eq_sponsor_eligible_yes" or "eq_sponsor_eligible_no")
             end
@@ -59,9 +62,14 @@ function EqSponsorView.rows(farmId)
             years = years, fee = money(offer.fee), eligibility = eligibility, eligible = eligible,
             speciality = table.concat(EqSponsorView.speciality(offer.brand, 3), ", ") })
     end
-    local contract = EqSponsorManager.contracts[farmId]
-    if contract ~= nil then add(contract, true) end
-    for _, offer in ipairs(EqSponsorManager.openOffers(farmId)) do add(offer, false) end
+    for _, brand in ipairs(EqSponsorManager.sponsorBrands(farmId)) do
+        local contract = EqSponsorManager.contractOf(farmId, brand)
+        if contract ~= nil then add(contract, true) end
+    end
+    -- A sponsor already signed is not offered again until its contract ends.
+    for _, offer in ipairs(EqSponsorManager.openOffers(farmId)) do
+        if EqSponsorManager.contractOf(farmId, offer.brand) == nil then add(offer, false) end
+    end
     return rows
 end
 
@@ -114,6 +122,14 @@ function EqSponsorView.panelLines(farmId, row)
     for _, check in ipairs(checks) do byId[check.id] = check end
 
     add("fee", string.format(g_i18n:getText("eq_sponsor_feePerEvent"), money(offer.fee)))
+    -- For an offer, the farm's sponsors it would share a shop category with (James, 2026-10-31).
+    local overlap = byId.overlap
+    if not row.contract and overlap ~= nil and not overlap.ok then
+        for _, clash in ipairs(overlap.brands or {}) do
+            add(nil, string.format(g_i18n:getText("eq_sponsor_overlapLine"), EqSponsorManager.brandTitle(clash.brand),
+                table.concat(EqSponsorView.categoryTitles(clash.categories, 2), ", ")), false)
+        end
+    end
     add(nil, EqSponsorView.backsText(offer))
     add("popularity", string.format("%+d", offer.popularity or 0))
     add("target", string.format(g_i18n:getText("eq_sponsor_targetPopularity"), offer.target or 0))
@@ -141,12 +157,23 @@ function EqSponsorView.panelLines(farmId, row)
             add("missed", string.format(g_i18n:getText("eq_sponsor_missedLine"), offer.misses, percent(offer.feeFactor or 1)), false)
         end
         add("paid", money(offer.paid))
-        local cost = EqSponsorManager.cancelCost(farmId)
+        local cost = EqSponsorManager.cancelCost(farmId, offer.brand)
         add("cancel", money(cost))
     else
         add("years", yearsText(offer.years or 1))
     end
     return lines, row.contract and {} or clashes
+end
+
+
+--- The line under the sponsor's name: exclusive or not, and "Your sponsor" for a contract.
+--- @param row table|nil
+--- @return string
+function EqSponsorView.headerText(row)
+    if row == nil then return "" end
+    local text = g_i18n:getText(row.offer.exclusive and "eq_sponsor_exclusive_yes" or "eq_sponsor_exclusive_no")
+    if row.contract then text = g_i18n:getText("eq_sponsor_eligible_yours") .. ", " .. text end
+    return text
 end
 
 
@@ -193,6 +220,20 @@ function EqSponsorView.noteLines(row, clashes, maxLines)
         end
     end
     return lines
+end
+
+
+--- @param names table shop category names
+--- @param count number|nil the most to give
+--- @return table titles the categories as the shop shows them
+function EqSponsorView.categoryTitles(names, count)
+    local titles = {}
+    for i, name in ipairs(names or {}) do
+        if count ~= nil and i > count then break end
+        local category = g_storeManager ~= nil and g_storeManager:getCategoryByName(name) or nil
+        table.insert(titles, category ~= nil and category.title ~= nil and category.title ~= "" and category.title or name)
+    end
+    return titles
 end
 
 

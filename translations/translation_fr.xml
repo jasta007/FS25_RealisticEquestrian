@@ -1025,6 +1025,12 @@
         <text name="eq_sponsor_eligible_no" text="Non éligible"/>
         <text name="eq_sponsor_eligible_taken" text="Déjà un sponsor"/>
         <text name="eq_sponsor_eligible_yours" text="Votre sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Exclusif seulement"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors au complet"/>
+        <text name="eq_sponsor_eligible_overlap" text="Même spécialité"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusif"/>
+        <text name="eq_sponsor_exclusive_no" text="Non exclusif"/>
+        <text name="eq_sponsor_overlapLine" text="Conflit avec %s : %s"/>
         <text name="eq_sponsor_label_speciality" text="Spécialité"/>
         <text name="eq_sponsor_feePerEvent" text="%s par concours"/>
         <text name="eq_sponsor_targetPopularity" text="Popularité %d"/>

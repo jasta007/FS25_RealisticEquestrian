@@ -1023,6 +1023,12 @@
         <text name="eq_sponsor_eligible_no" text="Niet geschikt"/>
         <text name="eq_sponsor_eligible_taken" text="Al een sponsor"/>
         <text name="eq_sponsor_eligible_yours" text="Je sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Alleen exclusief"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors vol"/>
+        <text name="eq_sponsor_eligible_overlap" text="Zelfde specialiteit"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusief"/>
+        <text name="eq_sponsor_exclusive_no" text="Niet exclusief"/>
+        <text name="eq_sponsor_overlapLine" text="Botst met %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Specialiteit"/>
         <text name="eq_sponsor_feePerEvent" text="%s per wedstrijd"/>
         <text name="eq_sponsor_targetPopularity" text="Populariteit %d"/>

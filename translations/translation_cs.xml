@@ -1023,6 +1023,12 @@
         <text name="eq_sponsor_eligible_no" text="不符合条件"/>
         <text name="eq_sponsor_eligible_taken" text="已有赞助商"/>
         <text name="eq_sponsor_eligible_yours" text="你的赞助商"/>
+        <text name="eq_sponsor_eligible_exclusive" text="仅限独家"/>
+        <text name="eq_sponsor_eligible_full" text="赞助商已满"/>
+        <text name="eq_sponsor_eligible_overlap" text="专长相同"/>
+        <text name="eq_sponsor_exclusive_yes" text="独家"/>
+        <text name="eq_sponsor_exclusive_no" text="非独家"/>
+        <text name="eq_sponsor_overlapLine" text="与%s冲突：%s"/>
         <text name="eq_sponsor_label_speciality" text="专长"/>
         <text name="eq_sponsor_feePerEvent" text="每场赛事%s"/>
         <text name="eq_sponsor_targetPopularity" text="人气%d"/>
