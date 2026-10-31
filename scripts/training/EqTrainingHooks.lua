@@ -1627,6 +1627,18 @@ function EqTrainingHooks.installRideable(guarded)
         guarded("riding tracker", function() EqTrainingHooks.onUpdateRiding(self, dt) end)
     end)
 
+    -- The pose the animation picks in a jump (EqJump.closeToGround): the base game works out
+    -- isCloseToGround just before this.
+    if Rideable.updateAnimation ~= nil then
+        Rideable.updateAnimation = Utils.prependedFunction(Rideable.updateAnimation, function(self)
+            local spec = self.spec_rideable
+            if not EqMain.isActive or spec == nil or spec.eqLaunch == nil or spec.isOnGround ~= false then return end
+            guarded("jump pose", function()
+                spec.isCloseToGround = EqJump.closeToGround(spec.isCloseToGround == true, spec.currentSpeedY or 0)
+            end)
+        end)
+    end
+
     Rideable.jump = Utils.appendedFunction(Rideable.jump, function(self)
         if not EqMain.isActive or not self.isServer then return end
         guarded("jump tracker", function() EqTrainingHooks.onJump(self) end)

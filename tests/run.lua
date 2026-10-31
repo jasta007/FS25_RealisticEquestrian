@@ -4067,9 +4067,18 @@ end)()
 -- JUMPS: gravity, the push-off and the collected jump (EqJump).
 ;(function()
     local J = EqJump
-    check("jump: rising pull on the ground and going up", J.gravity(3, false) == -J.GRAVITY * J.RISE_SHARE
-        and J.gravity(-1, true) == -J.GRAVITY * J.RISE_SHARE)
-    check("jump: falling pulls harder", J.gravity(-1, false) == -J.GRAVITY * J.FALL_SHARE and J.FALL_SHARE > J.RISE_SHARE)
+    check("jump: rising pull on the ground and going up", J.gravity(-1, true) == -J.GRAVITY * J.RISE_SHARE
+        and J.gravity(J.BLEND_SPEED + 1, false) == -J.GRAVITY * J.RISE_SHARE)
+    local prev, smooth = nil, true
+    for vy = J.BLEND_SPEED + 1, -J.FALL_MAX - 1, -0.05 do
+        local pull = J.gravity(vy, false)
+        if prev ~= nil and math.abs(pull - prev) > 0.6 then smooth = false end
+        prev = pull
+    end
+    check("jump: the pull changes smoothly over the top and fades to FALL_MAX", smooth
+        and J.gravity(-J.FALL_MAX, false) == 0 and J.FALL_SHARE > J.RISE_SHARE)
+    check("jump pose: close to the ground held while rising (mode 1)", J.closeToGround(false, 3)
+        and not J.closeToGround(false, -1) and J.closeToGround(true, -1))
     local g = J.gravity(0, true)
     local v = J.launchSpeed(1.6, g)
     check("jump: launch speed reaches the height", math.abs(v * v / (2 * math.abs(g)) - 1.6) < 1e-9)

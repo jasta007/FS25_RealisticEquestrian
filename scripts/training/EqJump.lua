@@ -7,9 +7,9 @@
       spec_rideable.gravity, 9.81 m/s2, and launches a jump at sqrt(2 g jumpHeight). We set that
       field to RISE_SHARE times as hard on the ground and on the way up, so the launch still
       reaches jumpHeight but sooner, and FALL_SHARE times on the way down, so the horse doesn't
-      hang at the top and comes down quickly. HEIGHT_SHARE lowers every jump a little. The fall is
-      held to FALL_MAX m/s (James, 2026-10-31: a jolt on landing, a few frames of a falling clip):
-      the base game's jump lands at about 6.4 m/s, and the horse's animation was made for that.
+      hang at the top and comes down quickly. HEIGHT_SHARE lowers every jump a little. The pull
+      changes smoothly over the top, and fades as the fall nears FALL_MAX m/s (the base game's jump
+      lands at about 6.4 m/s): any sudden change in it showed as a stutter in the air (2026-10-31).
     - Push-off (James: the horse rose before its push-off animation, which then played in the
       air). On the jump key the horse first lifts only a hand's breadth, at PUSH_SPEED for
       PUSH_MS, so the push-off plays near the ground, and then launches with what is left of the
@@ -29,9 +29,15 @@
 EqJump = {}
 
 EqJump.GRAVITY = 9.81
-EqJump.RISE_SHARE = 2.1
-EqJump.FALL_SHARE = 2.7
-EqJump.FALL_MAX = 6
+EqJump.RISE_SHARE = 2.3
+EqJump.FALL_SHARE = 2.6
+EqJump.BLEND_SPEED = 3
+EqJump.FALL_MAX = 7
+-- The horse's animation changes pose by spec.isCloseToGround (the hooves under 1.25 m): our lower
+-- jumps only just pop over that line, flashing the in-air pose between launch and landing
+-- (James, 2026-10-31). CLOSE_MODE 0 leaves it to the base game, 1 keeps it on while rising (the
+-- launch pose holds to the top), 2 keeps it on for the whole jump.
+EqJump.CLOSE_MODE = 1
 EqJump.HEIGHT_SHARE = 0.88
 EqJump.PUSH_MS = 180
 EqJump.PUSH_SPEED = 0.5
@@ -46,6 +52,8 @@ EqJump.TUNABLE = {
     { name = "rise", key = "RISE_SHARE", min = 1, max = 5 },
     { name = "fall", key = "FALL_SHARE", min = 1, max = 6 },
     { name = "fallmax", key = "FALL_MAX", min = 2, max = 30 },
+    { name = "blend", key = "BLEND_SPEED", min = 0.1, max = 10 },
+    { name = "close", key = "CLOSE_MODE", min = 0, max = 2 },
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
     { name = "lift", key = "PUSH_SPEED", min = 0, max = 3 },
@@ -62,7 +70,17 @@ EqJump.TUNABLE = {
 --- @param onGround boolean
 --- @return number gravity, negative
 function EqJump.gravity(speedY, onGround)
-    local share = (not onGround and speedY < 0) and EqJump.FALL_SHARE or EqJump.RISE_SHARE
+    if onGround then return -EqJump.GRAVITY * EqJump.RISE_SHARE end
+    -- From RISE_SHARE to FALL_SHARE smoothly across the top of the jump (James, 2026-10-31: a
+    -- one-frame switch at the top was a mid-air stutter), between BLEND_SPEED up and down.
+    local t = math.max(0, math.min(1, (EqJump.BLEND_SPEED - speedY) / (2 * EqJump.BLEND_SPEED)))
+    t = t * t * (3 - 2 * t)
+    local share = EqJump.RISE_SHARE + (EqJump.FALL_SHARE - EqJump.RISE_SHARE) * t
+    -- Easing into FALL_MAX rather than stopping at it: the pull fades as the fall nears it.
+    if speedY < 0 then
+        local k = math.min(1, -speedY / EqJump.FALL_MAX)
+        share = share * (1 - k * k)
+    end
     return -EqJump.GRAVITY * share
 end
 
@@ -82,6 +100,17 @@ function EqJump.fallCap(speedY, onGround, gravity, dt)
 end
 
 
+--- What the animation is told about being close to the ground in a jump (pure).
+--- @param baseClose boolean the base game's own answer
+--- @param speedY number m/s
+--- @return boolean
+function EqJump.closeToGround(baseClose, speedY)
+    local mode = math.floor(EqJump.CLOSE_MODE + 0.5)
+    if mode == 2 or (mode == 1 and speedY > 0) then return true end
+    return baseClose
+end
+
+
 --- The vertical speed that reaches a height under a pull (pure).
 --- @param height number metres
 --- @param gravity number m/s2, either sign
@@ -95,12 +124,16 @@ end
 --- @param height number metres
 --- @return number seconds
 function EqJump.airtime(height)
-    local up = math.sqrt(2 * height / (EqJump.GRAVITY * EqJump.RISE_SHARE))
-    local fall = EqJump.GRAVITY * EqJump.FALL_SHARE
-    -- Speeding up to FALL_MAX, then falling the rest of the way at it.
-    local capDrop = EqJump.FALL_MAX * EqJump.FALL_MAX / (2 * fall)
-    if height <= capDrop then return up + math.sqrt(2 * height / fall) end
-    return up + EqJump.FALL_MAX / fall + (height - capDrop) / EqJump.FALL_MAX
+    -- Stepped through in 5 ms frames, as the game would.
+    local dt, y, t = 0.005, 0, 0
+    local v = EqJump.launchSpeed(height, EqJump.gravity(0, true))
+    repeat
+        local capped = EqJump.fallCap(v, false, EqJump.gravity(v, false), dt * 1000)
+        if capped ~= nil then v = capped end
+        v = v + EqJump.gravity(v, false) * dt
+        y, t = y + v * dt, t + dt
+    until y <= 0 or t > 10
+    return t
 end
 
 
