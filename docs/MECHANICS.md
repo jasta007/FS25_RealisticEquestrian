@@ -773,7 +773,7 @@ boots are our own models; the rest are base-game meshes:
   white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
   saddle, as it does with the game's own clothes.
 - **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
-  (rows 1 to about 2.4 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
+  (rows 1 to about 1.55 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
   through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
 - **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
   in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
