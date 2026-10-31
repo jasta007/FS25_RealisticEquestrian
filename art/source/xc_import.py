@@ -210,8 +210,7 @@ def main():
                      extra=CORNER_CONFIG if jump["corner"] else "", made_by=f"{ME} from art/source/models/{name}.obj")
         meshes = [(flipped_v(mesh), pixels[material]) for _, mesh, material in shapes]
         meshes += [(moved(red, jump["flag_x"]), pixels["xcFlags"]), (moved(white, -jump["flag_x"]), pixels["xcFlags"])]
-        xc.store_image(meshes, f"{jump['height']:.2f} m", os.path.join(xc.OUT, "store_" + name + ".dds"), preview_dir,
-                       yaw=-30, pitch=20)
+        xc.store_image(meshes, os.path.join(xc.OUT, "store_" + name + ".dds"), preview_dir)
         print(name, sum(len(m.tris) for _, m, _ in shapes), "triangles,", len(col.tris), "collision")
 
 

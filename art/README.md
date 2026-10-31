@@ -25,8 +25,11 @@ logs with knots, branch stubs and leaning sawn ends; inline geometry, one invisi
 prism with Riding Hall 2k26's jump collision filter), the cross country flags (`courseFlags`, a newFence: a white and a red flag post, a thin pole with
 a pennant wrapped round it, and gold height bars for 0.6, 0.9 and 1.2 m that `EqXcFlags` shows only
 in construction mode) and the drop walls (painted planks and peeled posts, a
-half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes; PNG copies
-go to `art/previews/` (not in the mod). Change the script and run it again rather than editing those files.
+half-round log on the lip, triangle side walls, a plank deck on top; collision on the face, deck and sides). The shop images are small software renders of the meshes, like the game's own: the
+object at a three-quarter angle on a transparent background, no text. PNG copies go to
+`art/previews/` (not in the mod). `source/store_icons.py` remakes only the shop images of the jumps
+and bleachers (the generators would also overwrite the GIANTS Editor re-saved .i3d files); the
+dressage arenas keep a top-down plan. Change the script and run it again rather than editing those files.
 
 `source/bleachers.py` builds the bleachers in `placeables/bleachers/` (3 rows x 6 m, 5 x 10 m and
 8 x 16 m): a stepped steel frame with aluminium benches and a back rail, and a row of sponsor

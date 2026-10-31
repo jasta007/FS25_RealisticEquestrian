@@ -278,8 +278,7 @@ def main():
         write_xml(size, os.path.join(OUT, name + ".xml"))
         # our preview renderer reads v from the top of the image, GIANTS from the bottom
         store_image([(frame, atlas_rgb[::-1])] + [(logo, sponsor_rgb[::-1]) for logo in logos],
-                    f"{size['rows']} rows, {size['length']} m", os.path.join(OUT, "store_" + name + ".dds"),
-                    preview_dir, yaw=-150, pitch=18)
+                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
         print(name, len(frame.tris) + sum(len(m.tris) for m in logos), "triangles,", len(logos), "sponsor boards")
 
 
