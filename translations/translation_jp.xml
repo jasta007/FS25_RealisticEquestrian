@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
         <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
         <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJumpWall" text="障害: スポンサーウォール"/>
+        <text name="eq_shop_showJumpWall_function" text="スポンサーのロゴ入りの見せ場の壁。馬が当たると上のブロックが落ち、走行後に元に戻ります。"/>
         <text name="eq_shop_showJumpCrossrail" text="障害: クロスバー"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障害: 上昇オクサー"/>
         <text name="eq_shop_showJumpTripleBar" text="障害: トリプルバー"/>

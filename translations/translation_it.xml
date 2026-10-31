@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Catasta di tronchi"/>
         <text name="eq_shop_showJumpUpright" text="Ostacolo: Verticale"/>
         <text name="eq_shop_showJumpOxer" text="Ostacolo: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Ostacolo: Muro sponsor"/>
+        <text name="eq_shop_showJumpWall_function" text="Un muro scenografico con il logo del tuo sponsor. I blocchi in alto cadono quando il cavallo li tocca e tornano su dopo il percorso."/>
         <text name="eq_shop_showJumpCrossrail" text="Ostacolo: Croce"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Ostacolo: Oxer ascendente"/>
         <text name="eq_shop_showJumpTripleBar" text="Ostacolo: Triplice"/>

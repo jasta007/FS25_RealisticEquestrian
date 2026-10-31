@@ -705,6 +705,8 @@
         <text name="eq_shop_xcLogPile" text="Tas de rondins"/>
         <text name="eq_shop_showJumpUpright" text="Obstacle : Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstacle : Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Obstacle : Mur sponsor"/>
+        <text name="eq_shop_showJumpWall_function" text="Un mur de prestige au logo de votre sponsor. Les blocs du haut tombent quand votre cheval les touche et sont remis après le parcours."/>
         <text name="eq_shop_showJumpCrossrail" text="Obstacle : Croisillon"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Obstacle : Oxer montant"/>
         <text name="eq_shop_showJumpTripleBar" text="Obstacle : Triple barre"/>

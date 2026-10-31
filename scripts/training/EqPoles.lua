@@ -29,6 +29,11 @@ local Log = EqLog
 EqPoles.FOLDER = "placeables/showjumps/"
 EqPoles.PREFIX = "eqpole"
 EqPoles.END = "eqEnd"
+-- A block (the wall's top row, James 2026-10-31) instead of a round pole: a marker at
+-- (0, half height, half depth) under its group. Blocks tip off the wall's top and tumble down.
+EqPoles.BLOCK = "eqBlock"
+EqPoles.BLOCK_SPEED = 1.6    -- m/s it slides off the wall, tipping over the edge
+EqPoles.BLOCK_TIP = 0.25     -- seconds before it clears the wall under it and drops
 -- From art/source/show_jumps.py: POLE_LENGTH and POLE_R.
 EqPoles.LENGTH = 3.5
 EqPoles.RADIUS = 0.05
@@ -100,6 +105,7 @@ end
 --- @return table pose { x, y, z of its middle, ry = turn about y (radians, +x end towards -z),
 ---   rz = tilt about z (+x end up), still = true once it lies still }
 function EqPoles.fallPose(fall, t)
+    if fall.block then return EqPoles.blockPose(fall, t) end
     local function endAt(isLead, y0, rest)
         local te = isLead and t or t - EqPoles.LAG
         if te <= 0 then return y0, y0 <= rest end
@@ -119,6 +125,33 @@ function EqPoles.fallPose(fall, t)
         x = (ax + bx) / 2, y = (ya + yb) / 2, z = (az + bz) / 2,
         ry = math.atan2(-(az - bz), ax - bx), rz = math.atan2(ya - yb, horizontal),
         still = aDown and bDown and t >= stopAt,
+    }
+end
+
+
+--- Where a falling block is t seconds after it was knocked: it slides off the wall's top the way
+--- it was pushed, drops once clear of the wall under it, tumbling a quarter turn forward, and lies
+--- where it lands (a square block lies the same height on any side). Pure, for the tests.
+--- @param fall table as fallPose's, with block = true and push = +-1
+--- @param t number seconds
+--- @return table pose as fallPose's, plus rx = its tumble about x (radians)
+function EqPoles.blockPose(fall, t)
+    t = math.max(t, 0)
+    local a, b = fall.a, fall.b
+    local y0 = (a[2] + b[2]) / 2
+    local rest = math.min(y0, (fall.restA + fall.restB) / 2)
+    local tip = EqPoles.BLOCK_TIP
+    local drop = math.sqrt(2 * (y0 - rest) / EqPoles.GRAVITY)
+    local stopAt = tip + drop
+    local tm = math.min(t, stopAt)
+    local y = y0
+    if tm > tip then y = math.max(rest, y0 - 0.5 * EqPoles.GRAVITY * (tm - tip) ^ 2) end
+    local dz = fall.push * EqPoles.BLOCK_SPEED * tm
+    local share = stopAt > 0 and tm / stopAt or 1
+    return {
+        x = (a[1] + b[1]) / 2, y = y, z = (a[3] + b[3]) / 2 + dz,
+        ry = math.atan2(-(a[3] - b[3]), a[1] - b[1]), rz = 0, rx = fall.push * share * math.pi / 2,
+        still = t >= stopAt,
     }
 end
 
@@ -193,6 +226,10 @@ local function polesOf(placeable)
             local child = getChildAt(node, k)
             -- A marker at the pole's +x end says how long it is (fans' poles are longer).
             if getName(child) == EqPoles.END then pole.half = math.abs(getTranslation(child)) end
+            if getName(child) == EqPoles.BLOCK then
+                local _, by, bz = getTranslation(child)
+                pole.block, pole.radius, pole.depth = true, math.abs(by), math.abs(bz)
+            end
             local kind = getRigidBodyType ~= nil and getRigidBodyType(child) or nil
             if kind ~= nil and kind ~= noneType() and kind ~= "NoRigidBody" then
                 table.insert(pole.cols, { node = child, kind = kind })
@@ -297,10 +334,12 @@ function EqPoles.knock(pole, dirX, dirZ, hitX, noRail)
     local ax, ay, az = localToLocal(pole.node, root, half, 0, 0)
     local bx, by, bz = localToLocal(pole.node, root, -half, 0, 0)
     local slide = push * EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
+    if pole.block then slide = push * EqPoles.BLOCK_SPEED * (EqPoles.BLOCK_TIP + 0.4) end
+    local radius = pole.radius or EqPoles.RADIUS
     pole.fall = {
-        a = { ax, ay, az }, b = { bx, by, bz }, lead = lead, push = push,
-        restA = groundIn(root, ax, az + slide) + EqPoles.RADIUS,
-        restB = groundIn(root, bx, bz + slide) + EqPoles.RADIUS,
+        a = { ax, ay, az }, b = { bx, by, bz }, lead = lead, push = push, block = pole.block,
+        restA = groundIn(root, ax, az + slide) + radius,
+        restB = groundIn(root, bx, bz + slide) + radius,
     }
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then EqLog.try("EqPoles.knock setRigidBodyType", setRigidBodyType, col.node, noneType()) end
@@ -425,8 +464,10 @@ end
 --- @param hoofY number
 --- @param reach number|nil LEG_REACH
 --- @return boolean, number|nil t along the pole from a (0) to b (1)
-function EqPoles.legThrough(a, b, p, q, hoofY, reach)
+function EqPoles.legThrough(a, b, p, q, hoofY, reach, radius, depth)
     reach = reach or EqPoles.LEG_REACH
+    radius = radius or EqPoles.RADIUS
+    depth = depth or radius
     local ux, uz = b[1] - a[1], b[3] - a[3]
     local length = math.sqrt(ux * ux + uz * uz)
     if length < 1e-6 then return false end
@@ -435,7 +476,7 @@ function EqPoles.legThrough(a, b, p, q, hoofY, reach)
     local dp = (p[1] - a[1]) * nx + (p[2] - a[3]) * nz
     local dq = q ~= nil and (q[1] - a[1]) * nx + (q[2] - a[3]) * nz or dp
     local crossing = (dp <= 0 and dq >= 0) or (dp >= 0 and dq <= 0)
-    if not crossing and math.abs(dp) > EqPoles.RADIUS + reach then return false end
+    if not crossing and math.abs(dp) > depth + reach then return false end
     local cx, cz = p[1], p[2]
     if crossing and q ~= nil and dq ~= dp then
         local k = dq / (dq - dp)
@@ -443,7 +484,7 @@ function EqPoles.legThrough(a, b, p, q, hoofY, reach)
     end
     local t = ((cx - a[1]) * ux + (cz - a[3]) * uz) / length
     if t < 0 or t > 1 then return false end
-    local top = a[2] + (b[2] - a[2]) * t + EqPoles.RADIUS
+    local top = a[2] + (b[2] - a[2]) * t + radius
     return hoofY < top, t
 end
 
@@ -514,7 +555,7 @@ function EqPoles.flyThrough(vehicle)
         elseif pole.ghostAt ~= nil then
             pole.ghostAt = now
         end
-        local top = pole.home[2] + EqPoles.RADIUS
+        local top = pole.home[2] + (pole.radius or EqPoles.RADIUS)
         if over and (height == nil or top > height) then height = top end
         if pole.ghostAt ~= nil and pole.state == EqPoles.UP then
             local half = pole.half or EqPoles.LENGTH / 2
@@ -522,7 +563,7 @@ function EqPoles.flyThrough(vehicle)
             local bx, by, bz = localToWorld(pole.node, -half, 0, 0)
             for i, leg in ipairs(legs) do
                 local through, t = EqPoles.legThrough({ ax, ay, az }, { bx, by, bz }, leg, before ~= nil and before[i] or nil,
-                    math.min(hoofY, lastY))
+                    math.min(hoofY, lastY), nil, pole.radius, pole.depth)
                 if through then
                     -- The end nearer where it was hit goes first: +x is end a.
                     if EqPoles.knock(pole, dx, dz, t < 0.5 and half or -half) then fell = true end
@@ -564,15 +605,22 @@ end
 --- nearest it (an oxer's front row from the front). Pure, for the tests.
 --- @param poles table { state, home = { x, y, z } }
 --- @param lz number the horse's front, along the jump's z
+--- @param lx number|nil the horse, along the jump's x (picks among blocks the same height)
 --- @return table|nil pole
-function EqPoles.crashPole(poles, lz)
+function EqPoles.crashPole(poles, lz, lx)
     local row = nil
     for _, pole in ipairs(poles) do
         if pole.state == EqPoles.UP and (row == nil or math.abs(pole.home[3] - lz) < math.abs(row - lz)) then row = pole.home[3] end
     end
     local best = nil
     for _, pole in ipairs(poles) do
-        if pole.state == EqPoles.UP and pole.home[3] == row and (best == nil or pole.home[2] > best.home[2]) then best = pole end
+        if pole.state == EqPoles.UP and pole.home[3] == row then
+            -- the highest; among a row of blocks the same height, the one in the horse's way
+            if best == nil or pole.home[2] > best.home[2]
+                or (lx ~= nil and pole.home[2] == best.home[2] and math.abs(pole.home[1] - lx) < math.abs(best.home[1] - lx)) then
+                best = pole
+            end
+        end
     end
     return best
 end
@@ -591,7 +639,7 @@ function EqPoles.onCrash(vehicle, refusal)
         if first ~= nil and exists(first.root) then
             local lx, _, lz = worldToLocal(first.root, x, 0, z)
             if math.abs(lx) <= EqPoles.LENGTH / 2 then
-                local pole = EqPoles.crashPole(jump.poles, lz)
+                local pole = EqPoles.crashPole(jump.poles, lz, lx)
                 if pole ~= nil and math.abs(pole.home[3] - lz) <= EqPoles.CRASH_REACH then
                     Log:info("Poles: ran into %s", getName(pole.node))
                     return EqPoles.knock(pole, dx, dz, nil, refusal)
@@ -668,7 +716,7 @@ function EqPoles.update()
                 pole.t = pole.t + dt / 1000
                 local pose = EqPoles.fallPose(pole.fall, pole.t)
                 setTranslation(pole.node, pose.x, pose.y, pose.z)
-                setRotation(pole.node, 0, pose.ry, pose.rz)
+                setRotation(pole.node, pose.rx or 0, pose.ry, pose.rz)
                 if pose.still then pole.state, pole.downAt = EqPoles.DOWN, now end
             elseif pole.state == EqPoles.DOWN then
                 if busy == nil then busy = roundBusy() end

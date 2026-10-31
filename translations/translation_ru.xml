@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
         <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
         <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJumpWall" text="Препятствие: спонсорская стенка"/>
+        <text name="eq_shop_showJumpWall_function" text="Эффектная стенка с логотипом вашего спонсора. Верхние блоки падают, если лошадь их задевает, и возвращаются после маршрута."/>
         <text name="eq_shop_showJumpCrossrail" text="Препятствие: крестовина"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Препятствие: восходящий оксер"/>
         <text name="eq_shop_showJumpTripleBar" text="Препятствие: тройная жердь"/>

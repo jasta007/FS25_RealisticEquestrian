@@ -23,8 +23,9 @@ EqSponsors.SCAN_MS = 2000
 -- Our placeables with sponsor boards: the bleachers and the cross country table's front board.
 EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable", "placeables/xcjumps/xccornerplank",
     "placeables/xcjumps/xcdropwall16", "placeables/showjumps/" }
--- A board's face; "eqSponsor_<n>b" is the same board's back (show jump boards seen both ways).
-EqSponsors.NODE = "^eqSponsor_(%d+)b?$"
+-- A board's face; "eqSponsor_<n>b" is the same board's back (show jump boards seen both ways) and
+-- "eqSponsor_<n>f<k>" a piece of it (the wall's logo, cut along its falling blocks).
+EqSponsors.NODE = "^eqSponsor_(%d+)b?f?%d*$"
 -- Boards under this group count only when the jump's Sponsor boards choice is bought (EqSponsorBoards).
 EqSponsors.OPTIONAL = "eqSponsorOn"
 -- Brands never shown: the game's placeholder.
@@ -246,6 +247,7 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/xcjumps/xctable.xml"] = 1,
     ["placeables/xcjumps/xccornerplank.xml"] = 2,
     ["placeables/xcjumps/xcdropwall16.xml"] = 1,
+    ["placeables/showjumps/showjumpwall.xml"] = 2,
 }
 -- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says
 -- what they would add, after the jump's own lines.

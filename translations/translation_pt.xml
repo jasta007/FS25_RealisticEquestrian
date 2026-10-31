@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Pilha de troncos"/>
         <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Obstáculo: Muro do patrocinador"/>
+        <text name="eq_shop_showJumpWall_function" text="Um muro de destaque com o logótipo do seu patrocinador. Os blocos de cima caem se o cavalo lhes tocar e voltam ao lugar após o percurso."/>
         <text name="eq_shop_showJumpCrossrail" text="Obstáculo: Cruzado"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Obstáculo: Oxer ascendente"/>
         <text name="eq_shop_showJumpTripleBar" text="Obstáculo: Triplo"/>

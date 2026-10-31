@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Holzstapel"/>
         <text name="eq_shop_showJumpUpright" text="Springhindernis: Steilsprung"/>
         <text name="eq_shop_showJumpOxer" text="Springhindernis: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Springhindernis: Sponsorenmauer"/>
+        <text name="eq_shop_showJumpWall_function" text="Eine Prunkmauer mit dem Logo Ihres Sponsors. Die oberen Steine fallen, wenn Ihr Pferd sie berührt, und werden nach der Runde wieder aufgesetzt."/>
         <text name="eq_shop_showJumpCrossrail" text="Springhindernis: Kreuz"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Springhindernis: Aufsteigender Oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Springhindernis: Triplebarre"/>

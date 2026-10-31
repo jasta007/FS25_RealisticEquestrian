@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Stos bali"/>
         <text name="eq_shop_showJumpUpright" text="Przeszkoda: stacjonata"/>
         <text name="eq_shop_showJumpOxer" text="Przeszkoda: okser"/>
+        <text name="eq_shop_showJumpWall" text="Przeszkoda: mur sponsora"/>
+        <text name="eq_shop_showJumpWall_function" text="Efektowny mur z logo sponsora. Górne bloki spadają, gdy koń je trąci, i wracają na miejsce po przejeździe."/>
         <text name="eq_shop_showJumpCrossrail" text="Przeszkoda: krzyżak"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Przeszkoda: okser wznoszący"/>
         <text name="eq_shop_showJumpTripleBar" text="Przeszkoda: triplebarre"/>

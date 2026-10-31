@@ -1,6 +1,6 @@
 --[[
     EqSponsorBoards.lua
-    The Sponsor boards choice on six of our show jumps (James, 2026-10-31): bought with Yes, the
+    The Sponsor boards choice on six of our show jumps (the wall, a showpiece, always has its boards) (James, 2026-10-31): bought with Yes, the
     jump's sponsor parts show (the transform group "eqSponsorOn": a sign on each pillar, a board
     in place of a fan, an oval on a picket wing, the logo in a liverpool's water) and the parts
     they replace hide ("eqSponsorOff"). Their faces, "eqSponsor_<n>", are boards like any other
@@ -57,15 +57,24 @@ EqSponsorBoards.COLOURS = {
 }
 
 
---- @param filename string|nil
---- @return boolean true for one of our jumps with the Sponsor boards choice. Pure.
-function EqSponsorBoards.isJump(filename)
+-- Showpiece jumps whose sponsor boards are always there (no choice): the wall.
+EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml" }
+
+
+local function endsWith(filename, list)
     if type(filename) ~= "string" then return false end
     local path = string.lower(string.gsub(filename, "\\", "/"))
-    for _, suffix in ipairs(EqSponsorBoards.JUMPS) do
+    for _, suffix in ipairs(list) do
         if string.sub(path, -#suffix) == suffix then return true end
     end
     return false
+end
+
+
+--- @param filename string|nil
+--- @return boolean true for one of our jumps with sponsor boards, by choice or always. Pure.
+function EqSponsorBoards.isJump(filename)
+    return endsWith(filename, EqSponsorBoards.JUMPS) or endsWith(filename, EqSponsorBoards.ALWAYS)
 end
 
 
@@ -74,6 +83,7 @@ end
 --- choice. Pieces whose boards are always there have no choice, and nil means not a jump of ours.
 function EqSponsorBoards.isOn(placeable)
     if type(placeable) ~= "table" then return false end
+    if endsWith(placeable.configFileName, EqSponsorBoards.ALWAYS) then return true end
     local configurations = placeable.configurations
     return type(configurations) == "table" and configurations[EqSponsorBoards.CONFIG] == EqSponsorBoards.YES
 end

@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
         <text name="eq_shop_showJumpUpright" text="Překážka: kolmý skok"/>
         <text name="eq_shop_showJumpOxer" text="Překážka: oxer"/>
+        <text name="eq_shop_showJumpWall" text="Překážka: sponzorská zeď"/>
+        <text name="eq_shop_showJumpWall_function" text="Okázalá zeď s logem tvého sponzora. Horní bloky spadnou, když do nich kůň narazí, a po parkuru se vrátí na místo."/>
         <text name="eq_shop_showJumpCrossrail" text="Překážka: křížek"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Překážka: stoupající oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Překážka: triplebarre"/>

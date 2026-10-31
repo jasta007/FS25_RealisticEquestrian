@@ -705,6 +705,8 @@
         <text name="eq_shop_xcLogPile" text="Pila de troncos"/>
         <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Obstáculo: Muro del patrocinador"/>
+        <text name="eq_shop_showJumpWall_function" text="Un muro de exhibición con el logo de tu patrocinador. Los bloques de arriba caen si tu caballo los toca y se recolocan tras el recorrido."/>
         <text name="eq_shop_showJumpCrossrail" text="Obstáculo: Cruzada"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Obstáculo: Oxer ascendente"/>
         <text name="eq_shop_showJumpTripleBar" text="Obstáculo: Triple barra"/>

@@ -125,6 +125,7 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/showJumps/showJumpFan3.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpLiverpool.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCavaletti.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpWall.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers3x6.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers5x10.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers8x16.xml"/>

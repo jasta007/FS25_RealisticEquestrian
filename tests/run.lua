@@ -4885,8 +4885,36 @@ end)()
         and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall16.xml")
         and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall12.xml")
         and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
-    check("sponsor boards: a board's back is the same board", string.match("eqSponsor_2b", EqSponsors.NODE) == "2"
-        and string.match("eqSponsor_12", EqSponsors.NODE) == "12" and string.match("eqSponsor_2c", EqSponsors.NODE) == nil)
+    check("sponsor boards: a board's back and pieces are the same board", string.match("eqSponsor_2b", EqSponsors.NODE) == "2"
+        and string.match("eqSponsor_12", EqSponsors.NODE) == "12" and string.match("eqSponsor_2c", EqSponsors.NODE) == nil
+        and string.match("eqSponsor_1f3", EqSponsors.NODE) == "1" and string.match("eqSponsor_2f12", EqSponsors.NODE) == "2")
+    -- The wall (James, 2026-10-31): two boards (front, back) cut along its five falling blocks.
+    do
+        local text = io.open("placeables/showJumps/showJumpWall.i3d"):read("*a")
+        local numbers, pieces = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)f?%d*"') do numbers[n] = true; pieces = pieces + 1 end
+        local blocks = 0
+        for _ in text:gmatch('name="eqBlock"') do blocks = blocks + 1 end
+        check("sponsor wall: two boards in pieces, five blocks", numbers["1"] and numbers["2"] and pieces == 12 and blocks == 5,
+            pieces .. " pieces " .. blocks .. " blocks")
+        check("sponsor wall: always has its boards", EqSponsorBoards.isOn({ configFileName = "x/placeables/showJumps/showJumpWall.xml" }))
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        check("sponsor wall: in the shop", modDesc:find("placeables/showJumps/showJumpWall.xml", 1, true) ~= nil)
+        local fall = { a = { 0.35, 1.0, 0 }, b = { -0.35, 1.0, 0 }, restA = 0.2, restB = 0.2, push = 1, block = true }
+        local p0 = EqPoles.blockPose(fall, 0.1)
+        check("a knocked block slides off the wall before it drops", p0.y == 1.0 and p0.z > 0 and p0.rx > 0)
+        local p1 = EqPoles.fallPose(fall, 5)
+        check("and lies a quarter turn over on the ground", p1.still and math.abs(p1.y - 0.2) < 1e-9
+            and math.abs(p1.rx - math.pi / 2) < 1e-9 and p1.z > 0.6)
+        local back = EqPoles.blockPose({ a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = -1, block = true }, 5)
+        check("pushed from behind it goes the other way", back.z < -0.6 and back.rx < 0)
+        local row = { { state = EqPoles.UP, home = { -1.4, 1.0, 0 } }, { state = EqPoles.UP, home = { 0, 1.0, 0 } }, { state = EqPoles.UP, home = { 1.4, 1.0, 0 } } }
+        check("running into the wall knocks the block in the horse's way", EqPoles.crashPole(row, 0.3, 1.2) == row[3]
+            and EqPoles.crashPole(row, 0.3, -0.1) == row[2])
+        check("a leg under a block's top knocks it, over it doesn't",
+            EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.15, nil, 0.2, 0.2)
+            and not EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.25, nil, 0.2, 0.2))
+    end
 
     -- Every board-carrying piece's i3d has the boards the shop line counts (front faces by number).
     local function boardNumbers(path)

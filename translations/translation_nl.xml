@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
         <text name="eq_shop_showJumpUpright" text="Springhindernis: steilsprong"/>
         <text name="eq_shop_showJumpOxer" text="Springhindernis: oxer"/>
+        <text name="eq_shop_showJumpWall" text="Springhindernis: sponsormuur"/>
+        <text name="eq_shop_showJumpWall_function" text="Een pronkmuur met het logo van je sponsor. De bovenste blokken vallen als je paard ze raakt en gaan na de ronde weer terug."/>
         <text name="eq_shop_showJumpCrossrail" text="Springhindernis: kruis"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Springhindernis: oplopende oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Springhindernis: triplebarre"/>

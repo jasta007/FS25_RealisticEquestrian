@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障碍: 垂直障碍"/>
         <text name="eq_shop_showJumpOxer" text="障碍: 双横木"/>
+        <text name="eq_shop_showJumpWall" text="障碍: 赞助商砖墙"/>
+        <text name="eq_shop_showJumpWall_function" text="印有赞助商标志的展示砖墙。马碰到时顶部砖块会掉落，比赛结束后复原。"/>
         <text name="eq_shop_showJumpCrossrail" text="障碍: 交叉杆"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障碍: 上升双横木"/>
         <text name="eq_shop_showJumpTripleBar" text="障碍: 三横木"/>
