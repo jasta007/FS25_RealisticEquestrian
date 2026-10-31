@@ -889,9 +889,16 @@ end
 
 --- The sprint key (EQ_SPRINT, left mouse button by default): taps start and keep up a Sprint,
 --- so the rider can steer with A/D while sprinting (James, 2026-10-31). A click that turns a
---- help popup's page is not a sprint tap.
+--- help popup's page is not a sprint tap. The left button is also polled (pollSprintButton)
+--- until the action has been seen to fire, in case the binding never reaches us.
 --- @param vehicle table
-function EqTrainingHooks.onSprintAction(vehicle)
+--- @param source string what saw it, for the log
+function EqTrainingHooks.onSprintAction(vehicle, source)
+    if source == "sprint action" then EqTrainingHooks.sprintActionSeen = true end
+    local now = g_time or 0
+    local last = EqTrainingHooks.sprintAt
+    EqTrainingHooks.sprintAt = now
+    if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
     if EqTrainingHud.isHelpShowing() then return end
     local spec = vehicle.spec_rideable
     local id = spec ~= nil and getRiddenId(spec) or nil
@@ -899,9 +906,22 @@ function EqTrainingHooks.onSprintAction(vehicle)
     if sheet == nil then return end
     local event = EqExertion.sprintTap(sheet.exertion)
     if event ~= nil and event ~= "tap" then
-        Log:info("Gallop key: sprint")
+        Log:info("Gallop key: sprint from %s", source)
         EqTrainingHooks.onExertionEvent(event, sheet.exertion)
     end
+end
+
+
+--- The left mouse button itself, polled while drawing until the sprint action is seen to fire.
+--- Only a fresh press counts.
+--- @param vehicle table
+local function pollSprintButton(vehicle)
+    if EqTrainingHooks.sprintActionSeen then return end
+    if g_gui ~= nil and g_gui:getIsGuiVisible() then return end
+    if Input == nil or Input.isMouseButtonPressed == nil or Input.MOUSE_BUTTON_LEFT == nil then return end
+    local down = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) == true
+    if down and not EqTrainingHooks.lmbWasDown then EqTrainingHooks.onSprintAction(vehicle, "left mouse button") end
+    EqTrainingHooks.lmbWasDown = down
 end
 
 
@@ -1066,7 +1086,7 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
     end
     if InputAction.EQ_SPRINT ~= nil then
         local _, sprintId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_SPRINT, vehicle,
-            function() EqTrainingHooks.onSprintAction(vehicle) end, false, true, false, true, nil)
+            function() EqTrainingHooks.onSprintAction(vehicle, "sprint action") end, false, true, false, true, nil)
         if sprintId ~= nil then
             g_inputBinding:setActionEventText(sprintId, g_i18n:getText("input_EQ_SPRINT"))
             g_inputBinding:setActionEventTextVisibility(sprintId, false)
@@ -1385,6 +1405,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
     pollGaitKeys(vehicle)
+    pollSprintButton(vehicle)
 
     local view = EqTrainingHooks.getView()
     -- A first ride starts with the welcome; the view's help follows once it closes.

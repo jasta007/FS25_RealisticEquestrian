@@ -140,7 +140,7 @@ Por Jasta007.]]>
             <binding device="KB_MOUSE_DEFAULT" input="KEY_h" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_SPRINT">
-            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" index="3"/>
         </actionBinding>
         <actionBinding action="EQ_HORSE_ROLE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
