@@ -64,8 +64,8 @@ EqAttire.uvGridSlot = nil
 -- The boots' pieces and the bones they go on. A shaft stands from the ankle (the foot bone's
 -- origin) towards the knee (the shin bone's), each foot keeps the shaft's turn at dressing time.
 EqAttire.BOOTS = {
-    { side = "L", shin = "LeftLeg", foot = "LeftFoot", toe = "LeftToeBase" },
-    { side = "R", shin = "RightLeg", foot = "RightFoot", toe = "RightToeBase" },
+    { side = "L", shin = "LeftLeg", foot = "LeftFoot", toe = "LeftToeBase", out = 1 },
+    { side = "R", shin = "RightLeg", foot = "RightFoot", toe = "RightToeBase", out = -1 },
 }
 -- The boot model's shaft from the ankle to its top, and how far below the knee it should end.
 EqAttire.BOOT_SHAFT = 0.43
@@ -74,15 +74,17 @@ EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
 -- The shafts' girth on top of that (the model already widens up the calf), and how far the
 -- whole boot sits above the ankle bone (the model's ankle is higher than the rig's). eqBootFit
 -- tunes both.
-EqAttire.BOOT_WIDTH = 1.0
+EqAttire.BOOT_WIDTH = 1.15
 EqAttire.BOOT_RAISE = 0.03
 -- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
 EqAttire.BOOT_TOE_DROP = 14
 -- The shaft leans back from the ankle (degrees) and moves back (metres), for the calf.
 EqAttire.BOOT_LEAN = 7
-EqAttire.BOOT_BACK = 0
+EqAttire.BOOT_BACK = -0.01
+-- The shaft tops lean outwards, away from each other, seen from the front (degrees).
+EqAttire.BOOT_SPLAY = 3
 -- Which of the shaft's calf shapes (eqCalf1..n, art/source/riding_boots.py CALF_SHAPES) shows.
-EqAttire.BOOT_CALF = 2
+EqAttire.BOOT_CALF = 5
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })
 
@@ -332,6 +334,16 @@ function EqAttire.lean(fx, fy, fz, ux, uy, uz, degrees)
 end
 
 
+--- Up tilted towards the character's left (x = up cross forward) about forward, by degrees;
+--- negative tilts right. Pure.
+--- @return number, number, number up xyz
+function EqAttire.splay(fx, fy, fz, ux, uy, uz, degrees)
+    local lx, ly, lz = uy * fz - uz * fy, uz * fx - ux * fz, ux * fy - uy * fx
+    local c, s = math.cos(math.rad(degrees or 0)), math.sin(math.rad(degrees or 0))
+    return c * ux + s * lx, c * uy + s * ly, c * uz + s * lz
+end
+
+
 --- A node under another by name.
 local function findNamed(node, name)
     if node == nil or node == 0 or not entityExists(node) then return nil end
@@ -435,6 +447,7 @@ function EqAttire.fitBoots(model, item)
                 if flength < 1e-6 then fx, fy, fz, flength = 0, 0, 1, 1 end
                 fx, fy, fz = fx / flength, fy / flength, fz / flength
                 fx, fy, fz, ux, uy, uz = EqAttire.lean(fx, fy, fz, ux, uy, uz, EqAttire.BOOT_LEAN)
+                ux, uy, uz = EqAttire.splay(fx, fy, fz, ux, uy, uz, EqAttire.BOOT_SPLAY * boot.out)
                 local scale = EqAttire.bootScale(length)
                 local raise, back = EqAttire.BOOT_RAISE, EqAttire.BOOT_BACK
                 link(shin, shaft)
@@ -538,12 +551,13 @@ end
 
 --- eqBootFit [width] [raise] [toeDrop]: the tall boots' shaft girth, height above the ankle and
 --- foot angle; applies the next time a character is dressed (open the wardrobe, or remount).
-function EqAttire:consoleBootFit(width, raise, drop, lean, back)
+function EqAttire:consoleBootFit(width, raise, drop, lean, back, splay)
     EqAttire.BOOT_WIDTH = math.max(0.8, math.min(2, tonumber(width) or EqAttire.BOOT_WIDTH))
     EqAttire.BOOT_RAISE = math.max(-0.1, math.min(0.15, tonumber(raise) or EqAttire.BOOT_RAISE))
     EqAttire.BOOT_TOE_DROP = math.max(-30, math.min(60, tonumber(drop) or EqAttire.BOOT_TOE_DROP))
     EqAttire.BOOT_LEAN = math.max(-20, math.min(20, tonumber(lean) or EqAttire.BOOT_LEAN))
     EqAttire.BOOT_BACK = math.max(-0.1, math.min(0.1, tonumber(back) or EqAttire.BOOT_BACK))
+    EqAttire.BOOT_SPLAY = math.max(-15, math.min(15, tonumber(splay) or EqAttire.BOOT_SPLAY))
     for model in pairs(EqAttire.booted) do
         for _, node in ipairs(model.eqBootNodes or {}) do
             if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then
@@ -552,9 +566,9 @@ function EqAttire:consoleBootFit(width, raise, drop, lean, back)
             end
         end
     end
-    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg, lean %.1f deg, back %.3f m (next dressing)\n"
-        .. "eqBootFit width raise toeDrop lean back", EqAttire.BOOT_WIDTH, EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP,
-        EqAttire.BOOT_LEAN, EqAttire.BOOT_BACK)
+    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg, lean %.1f deg, back %.3f m, "
+        .. "splay %.1f deg (next dressing)\neqBootFit width raise toeDrop lean back splay", EqAttire.BOOT_WIDTH,
+        EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP, EqAttire.BOOT_LEAN, EqAttire.BOOT_BACK, EqAttire.BOOT_SPLAY)
 end
 
 
@@ -566,8 +580,9 @@ function EqAttire:consoleBootCalf(n)
             if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then showCalf(node) end
         end
     end
-    local shapes = { "1.40 wide 1.30 deep", "1.55 wide 1.30 deep", "1.70 wide 1.30 deep", "1.85 wide 1.30 deep",
-        "1.40 wide 1.45 deep", "1.55 wide 1.45 deep", "1.70 wide 1.45 deep", "1.85 wide 1.45 deep" }
+    local shapes = { "1.40 wide 1.30 deep", "1.55 wide 1.30 deep", "1.40 wide 1.45 deep, even taper, full higher",
+        "1.30 wide 1.55 deep", "1.40 wide 1.45 deep", "1.55 wide 1.45 deep", "1.40 wide 1.45 deep, full lower",
+        "1.30 wide 1.45 deep" }
     return string.format("Riding boots: calf shape %d (%s at the top)", EqAttire.BOOT_CALF, shapes[EqAttire.BOOT_CALF])
 end
 
@@ -600,7 +615,7 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
-    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back]", "consoleBootFit", EqAttire)
+    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]", "consoleBootFit", EqAttire)
     addConsoleCommand("eqBootCalf", "Picks the tall riding boots' calf shape: eqBootCalf [1-8]", "consoleBootCalf", EqAttire)
     addConsoleCommand("eqUvGrid", "Shows a labelled test grid on a worn item: eqUvGrid [bottom|top|gloves|footwear|headgear|off]", "consoleUvGrid", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)

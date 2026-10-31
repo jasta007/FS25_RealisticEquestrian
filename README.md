@@ -286,9 +286,9 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
-| `eqBootFit [width] [raise] [toeDrop] [lean] [back]` | Fits the tall riding boots: shaft width (1.0), metres above the ankle (0.03), foot angle (14), shaft lean back (7), shaft back (0) |
+| `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` | Fits the tall riding boots: shaft width (1.15), metres above the ankle (0.03), foot angle (14), shaft lean back (7), shaft back (-0.01), tops leaning out (3) |
 | `eqHatFit [female\|male] [up] [forward] [side] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
-| `eqBootCalf [1-8]` | Picks the tall riding boots' calf shape live (test build: top width 1.4/1.55/1.7/1.85, depth 1.3 for 1-4 and 1.45 for 5-8) |
+| `eqBootCalf [1-8]` | Picks the tall riding boots' calf shape live (test build, 5 is the default; the console says each one's size) |
 | `eqUvGrid [bottom\|top\|gloves\|footwear\|headgear\|off]` | Shows a labelled test grid as a worn item's texture (re-pick it in the wardrobe), to map where its texture lands |
 
 Testing commands, for checking the mod works rather than for play:

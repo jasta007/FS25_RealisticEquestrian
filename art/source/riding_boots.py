@@ -45,8 +45,10 @@ CALF = (0.18, 0.45)  # heights above the sole where the widening starts and is f
 CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
 # Calf shapes to try live (eqBootCalf 1-8, James 2026-10-31): (top width, top depth). Each shaft
 # group holds all of them as eqCalf1..8 and EqAttire shows one. Once picked, keep only that one.
-CALF_SHAPES = [(1.4, 1.3), (1.55, 1.3), (1.7, 1.3), (1.85, 1.3),
-               (1.4, 1.45), (1.55, 1.45), (1.7, 1.45), (1.85, 1.45)]
+# (top width, top depth, height where full, ease). Round 2 (James: 5 "SO close" with eqBootFit
+# width 1.15; 3, 4, 7, 8 far too chunky): kept 1, 2, 5, 6, new ones around 5.
+CALF_SHAPES = [(1.4, 1.3, 0.45, 2), (1.55, 1.3, 0.45, 2), (1.4, 1.45, 0.50, 1), (1.3, 1.55, 0.45, 2),
+               (1.4, 1.45, 0.45, 2), (1.55, 1.45, 0.45, 2), (1.4, 1.45, 0.38, 2), (1.3, 1.45, 0.45, 2)]
 CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.055
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
@@ -85,11 +87,12 @@ def read(path):
     return verts, tris
 
 
-def calf(position, normal, width=CALF_WIDTH, depth=CALF_DEPTH):
-    """A shaft vertex widened for the calf at its height."""
+def calf(position, normal, width=CALF_WIDTH, depth=CALF_DEPTH, full=CALF[1], ease=2):
+    """A shaft vertex widened for the calf at its height: none at CALF[0], all of it from full up,
+    ease 2 putting most of it low (1 is even)."""
     (x, y, z), (nx, ny, nz) = position, normal
-    t = min(1.0, max(0.0, (y - CALF[0]) / (CALF[1] - CALF[0])))
-    t = 1 - (1 - t) ** 2
+    t = min(1.0, max(0.0, (y - CALF[0]) / (full - CALF[0])))
+    t = 1 - (1 - t) ** ease
     sx, sz = 1 + (width - 1) * t, 1 + (depth - 1) * t
     x = CALF_CENTRE_X + (x - CALF_CENTRE_X) * sx
     z = SHIN_FRONT_Z + (z - SHIN_FRONT_Z) * sz
@@ -157,8 +160,8 @@ def main():
     groups = []  # (group name, [(shape name, mesh)])
     for side, mirror in (("L", False), ("R", True)):
         shafts = []
-        for n, (width, depth) in enumerate(CALF_SHAPES):
-            shape = lambda p, q, w=width, d=depth: calf(p, q, w, d)  # noqa: E731
+        for n, (width, depth, full, ease) in enumerate(CALF_SHAPES):
+            shape = lambda p, q, w=width, d=depth, f=full, e=ease: calf(p, q, w, d, f, e)  # noqa: E731
             shafts.append((f"eqCalf{n + 1}", piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP,
                                                   ANKLE, mirror, shape)))
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
