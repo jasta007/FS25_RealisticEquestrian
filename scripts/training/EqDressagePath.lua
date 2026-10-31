@@ -159,6 +159,8 @@ EqDressagePath.BLEND = 5
 -- A player's own test can put a change of gait anywhere, often just out of a halt in a corner:
 -- ease over longer there (James 2026-10-31: a halt then a change looked weird).
 EqDressagePath.BLEND_PLAN = 12
+-- A player's test changing gait this soon after a halt moves off from the halt in the new gait.
+EqDressagePath.MOVE_OFF = 16
 EqDressagePath.STICK_FREE = 0.3
 EqDressagePath.STICK_TURN = 0.5
 -- Further off the line than this (metres) there is no pull: a rider leaving the test was held
@@ -1043,6 +1045,15 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     local gait, lastChange, walkFrom = EqDressagePath.PROCEED, 0, nil
     local function change(s, newGait, letter, m, forced)
         if newGait == gait or (not forced and s < lastChange + EqDressagePath.CHANGE_GAP) then return false end
+        -- A player's test moving off from a halt at another gait: a halted horse has no gait to
+        -- change, so it moves off in the new one (James 2026-10-31: "Gait change" after a halt,
+        -- with a step of the old gait first).
+        local last = events[#events]
+        if plan ~= nil and last ~= nil and last.kind == "halt" and not last.final and s - last.s <= EqDressagePath.MOVE_OFF then
+            last.gait, gait = newGait, newGait
+            walkFrom = newGait == "walk" and last.s or nil
+            return true
+        end
         table.insert(events, { s = s, kind = "change", gait = newGait, letter = letter, m = m })
         gait, lastChange = newGait, s
         walkFrom = newGait == "walk" and s or nil

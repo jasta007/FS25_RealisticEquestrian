@@ -4117,8 +4117,10 @@ end)()
                 end
             end
             local _, built = EqDressageTests.finished(roam)
-            local walkFrom = nil
-            for _, e in ipairs(built ~= nil and built.events or {}) do
+            local walkFrom, haltThenChange = nil, 0
+            for k, e in ipairs(built ~= nil and built.events or {}) do
+                local before = built.events[k - 1]
+                if e.kind == "change" and before ~= nil and before.kind == "halt" and not before.final and e.s - before.s <= EqDressagePath.MOVE_OFF then haltThenChange = haltThenChange + 1 end
                 if (e.kind == "change" or e.kind == "halt") and walkFrom ~= nil then
                     if e.s - walkFrom > EqDressagePath.WALK_MAX + 12 then longWalk = longWalk + 1 end
                     walkFrom = nil
@@ -4128,6 +4130,8 @@ end)()
             check(name .. ": lateral work is on offer at every gait", lateralMissing == 0 and picks > 10,
                 string.format("missing %d, %d picks", lateralMissing, picks))
             check(name .. ": walks in a player's test stay short", longWalk == 0, string.format("%d long walks", longWalk))
+            check(name .. ": a halt moves off in the next gait, no change straight after it", haltThenChange == 0,
+                string.format("%d changes after a halt", haltThenChange))
         end
         -- Next and back round the ends.
         local count = #EqDressageTests.view(ed)
