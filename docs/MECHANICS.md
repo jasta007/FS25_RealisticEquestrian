@@ -532,7 +532,7 @@ for now in multiplayer.
   and one broker.
 - **Skills.** Everyone has ten skills from 0 to 100: the four stats, the four event types,
   Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
-  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%). Other skills are
+  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%; only one main skill, picked at random, reaches 90-100, the rest stay 80-89). Other skills are
   0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
 - **Wages.** Per day, by job (groom 200, trainer 450, vet 600, broker 400) times the grade
   (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
