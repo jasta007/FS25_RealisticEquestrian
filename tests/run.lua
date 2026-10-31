@@ -40,6 +40,7 @@ for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] 
 dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
+dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
@@ -4874,6 +4875,56 @@ end)()
         and J.aim({ { ax = 1, az = 8, bx = 1.5, bz = 12 } }, 100) == 0)
     local nearest = J.jumpAhead({ { ax = -2, az = 15, bx = 2, bz = 15 }, { ax = -2, az = 6, bx = 2, bz = 6 } })
     check("aim: the nearest jump ahead counts", nearest ~= nil and nearest.az == 6)
+-- Dressage outfit: which player styles get it, and where its files load from.
+;
+(function()
+    check("attire: female and male base styles", EqAttire.bodyOf("dataS/character/playerF/playerF.xml") == "female"
+        and EqAttire.bodyOf("C:\\game\\dataS\\character\\playerM\\playerM.xml") == "male")
+    check("attire: other mods' player models left alone", EqAttire.bodyOf("mods/x/character/playerM_bmp.xml") == nil
+        and EqAttire.bodyOf(nil) == nil)
+    local dir = "C:/mods/FS25_RealisticEquestrian/"
+    check("attire: the game's files lose the $", EqAttire.resolve("$dataS/character/playerF/pants/botEquestrian.i3d", dir)
+        == "dataS/character/playerF/pants/botEquestrian.i3d" and EqAttire.resolve("$data/x.dds", dir) == "data/x.dds")
+    check("attire: already resolved game paths kept", EqAttire.resolve("dataS/character/a.i3d", dir) == "dataS/character/a.i3d")
+    check("attire: our files under the mod", EqAttire.resolve("data/attire/plainCloth_diffuse.dds", dir)
+        == dir .. "data/attire/plainCloth_diffuse.dds" and EqAttire.resolve(dir .. "a.dds", dir) == dir .. "a.dds")
+    check("attire: nothing to resolve", EqAttire.resolve(nil, dir) == nil and EqAttire.resolve("", dir) == nil)
+    local fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(0)
+    check("attire: an untilted hat faces forward and stands up", fx == 0 and fy == 0 and fz == 1 and ux == 0 and uy == 1 and uz == 0)
+    check("attire: boots sized to end below the knee", math.abs(EqAttire.bootScale(0.47) - 1) < 1e-9
+        and EqAttire.bootScale(0.2) == EqAttire.BOOT_SCALE_MIN and EqAttire.bootScale(1) == EqAttire.BOOT_SCALE_MAX
+        and EqAttire.bootScale(nil) == 1 and EqAttire.bootScale(0) == 1)
+    fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(30)
+    check("attire: a tilted hat leans its top back, axes square", uz < 0 and fy > 0
+        and math.abs(fx * ux + fy * uy + fz * uz) < 1e-9 and math.abs(fy * fy + fz * fz - 1) < 1e-9)
+    -- A head joint whose up is its +x and forward its -y, seen while the head is nodded and turned.
+    local hux, huy, huz, hfx, hfy, hfz, hlx, hly, hlz = EqAttire.headAxes(0.9, 0.3, -0.2, 0.25, -0.85, 0.3)
+    check("attire: hat axes snap to the head joint's own, whatever its pose",
+        hux == 1 and huy == 0 and huz == 0 and hfx == 0 and hfy == -1 and hfz == 0 and hlx == 0 and hly == 0 and hlz == -1)
+    local ax2 = { EqAttire.headAxes(0.6, 0.6, 0, 0.7, 0.7, 0.1) }
+    check("attire: hat forward never the same axis as up", math.abs(ax2[1] * ax2[4] + ax2[2] * ax2[5] + ax2[3] * ax2[6]) < 1e-9)
+    local dx, dy, dz, vx, vy, vz = EqAttire.footAxes(0, -0.5, 0.866, 2, 0, 0, 30)
+    check("attire: boot foot laid level along a toe line 30 deg down",
+        math.abs(dx) < 1e-4 and math.abs(dy) < 1e-4 and math.abs(dz - 1) < 1e-4 and math.abs(vy - 1) < 1e-4 and math.abs(vz) < 1e-4)
+    local lfx, lfy, lfz, lux, luy, luz = EqAttire.lean(0, 0, 1, 0, 1, 0, 90)
+    check("attire: a leaning shaft tips its top back", math.abs(lfy - 1) < 1e-9 and math.abs(luz + 1) < 1e-9
+        and math.abs(lfx) < 1e-9 and math.abs(lux) < 1e-9)
+    local sux, suy, suz = EqAttire.splay(0, 0, 1, 0, 1, 0, 90)
+    check("attire: a splayed shaft tips its top to the character's left", math.abs(sux - 1) < 1e-9 and math.abs(suy) < 1e-9)
+    sux = EqAttire.splay(0, 0, 1, 0, 1, 0, -3)
+    check("attire: negative splay tips right", sux < 0)
+    check("attire: riding boots in every colour", EqAttire.isRidingBoots("eqRidingBoots")
+        and EqAttire.isRidingBoots("eqRidingBootsRedBrown") and not EqAttire.isRidingBoots("eqDressageBoots")
+        and not EqAttire.isRidingBoots(nil))
+    local navy = EqAttire.parseColour("0.008 0.011 0.035 1")
+    check("attire: colours read from the xml", navy ~= nil and navy[3] == 0.035 and navy[4] == 1
+        and EqAttire.parseColour("1 1 1")[4] == 1 and EqAttire.parseColour("1 x") == nil and EqAttire.parseColour(nil) == nil)
+    local list = { { primary = "a" }, { primary = "b" } }
+    check("attire: picked colour, first when unknown", EqAttire.pickColour(list, 2).primary == "b"
+        and EqAttire.pickColour(list, 9).primary == "a" and EqAttire.pickColour(list, nil).primary == "a"
+        and EqAttire.pickColour({}, 1) == nil)
+    check("attire: no toe line, no foot axes", EqAttire.footAxes(0, 0, 0, 1, 0, 0, 25) == nil
+        and EqAttire.footAxes(1, 0, 0, 1, 0, 0, 25) == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

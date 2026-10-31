@@ -935,3 +935,50 @@ horse is never touched.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
   fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.
 
+
+## Dressage outfit
+
+Extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
+boots are our own models; the rest are base-game meshes:
+
+- **Top hat** in black silk, tall or short (the short one is the same hat with the crown's sides
+  squashed, 12 cm instead of 16 cm, like a dressage hat that's a safety helmet too). It hangs off the head's attach point and is set along the head
+  joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
+  the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
+  (defaults 0.085 m up and 0.003 m forward of the head joint, tilted back 15 degrees, size 0.98, James's fit for both bodies; female and male
+  heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
+
+- **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
+  in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
+  rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
+  bones when the character is dressed. The foot lies along the line from the foot bone to the toe
+  bone, turned up 14 degrees, so it follows the foot even when dressed in the saddle. They're
+  sized to end 4 cm below the knee (0.85x to 1.15x) and sit 3 cm above the ankle bone. The shaft
+  widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.45x front to back
+  (growing backwards from the shin, most of it low on the calf) at its top, all
+  1.18x on top, leans back 6.7 degrees from the ankle and 2 degrees outwards (James's fit,
+  2026-10-31).
+  `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` tunes them, not saved; all but width apply
+  at the next dressing. The i3d keeps an empty first child, as the game
+  expects one after taking a geo item out of its file.
+- **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
+  white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
+  saddle, as it does with the game's own clothes.
+- **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
+  (rows 1 to about 1.55 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
+  through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
+- **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
+  in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
+  loses the wardrobe's colours (the fabric back went white).
+- **Jacket** (the tweed sports jacket) with a white shirt in black, navy, charcoal, dark green or
+  burgundy. Its tweed texture and weave (normal map) are swapped for plain, flat ones each time a
+  character is dressed, and its colours (colorScaleR/G) are set again from its own list and the
+  picked colour.
+- **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
+
+`eqUvGrid [slot|off]` puts a labelled 8 x 8 grid (art/source/uv_grid.py) on the worn item of
+that slot as its texture, lit white, from the next dressing: screenshots show which squares land
+where, for painting our own masks on base-game clothes we can't open (the breeches' upper seat).
+
+The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
+keep the game's icon).

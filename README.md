@@ -162,6 +162,10 @@ uses its genetics, health and fitness.
   on your farm you find out whether you got a bargain or were misled.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
+### Dressage outfit
+- The wardrobe has a dressage outfit: a tall or short top hat, breeches and riding gloves in one solid colour,
+  a plain dark jacket with a white shirt, and tall or short black boots.
+
 ### Settings
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
@@ -295,6 +299,9 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
+| `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` | Fits the tall riding boots: shaft width (1.18), metres above the ankle (0.03), foot angle (14), shaft lean back (6.7), shaft back (-0.012), tops leaning out (2) |
+| `eqHatFit [female\|male] [up] [forward] [side] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
+| `eqUvGrid [bottom\|top\|gloves\|footwear\|headgear\|off]` | Shows a labelled test grid as a worn item's texture (re-pick it in the wardrobe), to map where its texture lands |
 
 Testing commands, for checking the mod works rather than for play:
 
@@ -330,10 +337,13 @@ James
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
 - Staff portraits: [kawsar4404](https://depositphotos.com/portfolio-41609378.html) on
   Depositphotos, licensed for this mod.
+- Top hat and riding boots: royalty-free store models, licensed for this mod (resized and
+  converted).
 
 Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as long as you
 credit the original, keep your version under the same licence, and don't sell it or use it
 commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
-covered by that licence: don't reuse them outside this mod.
+covered by that licence: don't reuse them outside this mod. The same goes for the top hat
+and riding boots (`data/attire/topHat.i3d`, `data/attire/shortTopHat.i3d`, `data/attire/ridingBoots*`).
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).
