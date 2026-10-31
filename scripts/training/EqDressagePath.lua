@@ -121,12 +121,22 @@ EqDressagePath.SKIP_DEV = 3
 -- metres of a section are not judged (setting up).
 EqDressagePath.DRIFT = 0.5
 EqDressagePath.LATERAL_IN = { [true] = 4, [false] = 3 }
-EqDressagePath.ANGLE_FREE = math.rad(12)
-EqDressagePath.ANGLE_PER_S = 0.6
-EqDressagePath.ANGLE_MAX = 3
+-- (James, 2026-10-31: the horse's form weighed more than being wildly off the line, a lateral
+-- half way off scored 8 and a nice one 6.5: form halved, and FAR_* below.)
+EqDressagePath.ANGLE_FREE = math.rad(15)
+EqDressagePath.ANGLE_PER_S = 0.3
+EqDressagePath.ANGLE_MAX = 2
 EqDressagePath.BEND_MIN = 0.3
-EqDressagePath.BEND_PER_S = 0.5
-EqDressagePath.BEND_MAX = 2
+EqDressagePath.BEND_PER_S = 0.25
+EqDressagePath.BEND_MAX = 1
+-- Ridden further than FAR_DEV metres off the line: FAR_PER_M off for each metre of line ridden
+-- like that, at most FAR_MAX, on top of the average.
+EqDressagePath.FAR_DEV = 1
+EqDressagePath.FAR_PER_M = 0.4
+EqDressagePath.FAR_MAX = 4
+-- The opening (in at A, down to X) is marked, but only this share of what it loses counts:
+-- getting into the arena right is confusing at first (James, 2026-10-31: 1s on the entry).
+EqDressagePath.OPENING_SHARE = 0.5
 EqDressagePath.SECTION_GRACE = 1
 -- Off the line in a lateral section: this much more is free (James, 2026-10-30: a leg yield he
 -- thought went well scored 2.5, 0.59 m off on average).
@@ -1264,7 +1274,9 @@ function EqDressagePath.newRun(test, temperament)
         temper = t, sec = 1 }
     -- Events live on the test, which a new run reuses.
     for _, e in ipairs(test.events) do e.shown, e.stopped, e.wrongMs = nil, nil, nil end
-    for m = 1, #test.moves do run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0 } end
+    for m = 1, #test.moves do
+        run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0, opening = test.moves[m].key == "enter" }
+    end
     -- Out of the arena counts once the path is inside the rail.
     run.inFrom = 0
     for _, p in ipairs(test.pts) do
@@ -1293,6 +1305,8 @@ function EqDressagePath.markOf(acc)
         - math.min(EqDressagePath.WRONG_MAX, acc.wrongMs / 1000 * EqDressagePath.WRONG_PER_S) - acc.pen
         - math.min(EqDressagePath.ANGLE_MAX, (acc.angleMs or 0) / 1000 * EqDressagePath.ANGLE_PER_S)
         - math.min(EqDressagePath.BEND_MAX, (acc.bendMs or 0) / 1000 * EqDressagePath.BEND_PER_S)
+        - math.min(EqDressagePath.FAR_MAX, (acc.farLen or 0) * EqDressagePath.FAR_PER_M)
+    if acc.opening then mark = 10 - (10 - mark) * EqDressagePath.OPENING_SHARE end
     return math.max(0, math.min(10, math.floor(mark * 2 + 0.5) / 2))
 end
 
@@ -1343,8 +1357,9 @@ local function closeTo(run, m)
             run.lastMark, run.lastMove = run.marks[run.cur], run.cur
             -- Why: for the log.
             local move = run.test.moves[run.cur]
-            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s",
-                move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000)
+            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m",
+                move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
+                acc.farLen or 0)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -1468,6 +1483,7 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
             -- Lateral work is harder to keep on the line: LATERAL_FREE metres more are free.
             if skipped == 0 and EqDressagePath.sectionAtS(test, pts[k].s) ~= nil then d = math.max(0, d - EqDressagePath.LATERAL_FREE) end
             acc.devSum = acc.devSum + step * d
+            if d > EqDressagePath.FAR_DEV then acc.farLen = (acc.farLen or 0) + step end
             -- How far off each point was ridden: the line behind the horse is coloured by it.
             run.devAt[k] = d
             acc.len = acc.len + step

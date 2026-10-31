@@ -211,7 +211,7 @@ orange or red as the horse is up to 0.5, 1, 1.6, 2.4 m or further off it now, an
 Every path guide (a round's way to the next fence, course recording and editing) uses the same
 pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends. On the dressage line the
 dashes show the gait asked like its stride (James, 2026-10-30): 0.2 m dashes 0.6 m apart at a
-walk, 0.45 m 1.1 m apart at a trot, 0.9 m 1.9 m apart at a canter, and they start afresh exactly at each change or halt, so the change is where the dash
+walk, 0.45 m 1.1 m apart at a trot, 0.9 m 1.9 m apart at a canter and pointed like an arrow (James, 2026-10-31), and they start afresh exactly at each change or halt, so the change is where the dash
 length changes. Where a gait's track meets another's in a corner the line eases across over 5 m:
 
 - It opens down the centre line from A with a halt at X, then proceeds to track left or right at
@@ -250,7 +250,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
   60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
-  through a halt 4.
+  through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
+  (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
+  down to X) only loses half of all that. Each mark pops up low on the screen, red through orange
+  and yellow to green, with gold flourishes at 9 or better.
 - A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
@@ -259,9 +262,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
   smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
-  horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 12 degrees of the asked angle
-  (0.6 a second off, at most 3; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.5 a second,
-  at most 2).
+  horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 15 degrees of the asked angle
+  (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
+  at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
   lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it

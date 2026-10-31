@@ -227,6 +227,31 @@ EqTrainingHud.MULT_COLORS = {
     { 1, 0.25, 0.3, 1 },
 }
 EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growMs = 150, holdMs = 700, fadeMs = 500 }
+-- A dressage movement's mark (James, 2026-10-31): low on the screen, where it doesn't cover the
+-- line ahead, coloured by the mark (MARK_COLOURS: red to green), held a little longer, and with
+-- a gold flourish either side at FLOURISH or better.
+EqTrainingHud.MARK = { y = 0.17, holdMs = 1300, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+EqTrainingHud.MARK_COLOURS = { { 0, { 0.9, 0.2, 0.2, 1 } }, { 3, { 0.9, 0.2, 0.2, 1 } }, { 5, { 1, 0.55, 0.1, 1 } },
+    { 7, { 1, 0.9, 0.2, 1 } }, { 8.5, { 0.35, 0.9, 0.35, 1 } }, { 10, { 0.35, 0.9, 0.35, 1 } } }
+
+
+--- The colour of a mark out of 10 (pure): red up to 3, orange at 5, yellow at 7, green from 8.5.
+--- @param mark number
+--- @return table colour
+function EqTrainingHud.markColour(mark)
+    local stops = EqTrainingHud.MARK_COLOURS
+    mark = math.max(stops[1][1], math.min(stops[#stops][1], mark or 0))
+    for i = 2, #stops do
+        local a, b = stops[i - 1], stops[i]
+        if mark <= b[1] then
+            local t = b[1] > a[1] and (mark - a[1]) / (b[1] - a[1]) or 1
+            local c = {}
+            for k = 1, 4 do c[k] = a[2][k] + (b[2][k] - a[2][k]) * t end
+            return c
+        end
+    end
+    return stops[#stops][2]
+end
 EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.021, barWidth = 0.12, barHeight = 0.006 }
 -- An arrow after a prompt (James, 2026-10-31: "Gait change" with an up or down arrow, then
 -- "Trot!", so the gait word doesn't trigger the key early): drawn as rows, no font glyph needed.
@@ -311,7 +336,7 @@ function EqTrainingHud.pop(kind, mult)
         text, color, big = string.format(g_i18n:getText("eq_pop_routineFault"), mult, EqDressage.FAULTS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineMark" then
         -- A dressage test's movement marked out of 10 (EqDressagePath).
-        text, color, big = string.format("%.1f", mult), EqTrainingHud.COLOR.white, 2
+        text, color, big = string.format("%.1f", mult), EqTrainingHud.markColour(mult), 2
     elseif kind == "routineError" then
         text, color, big = string.format(g_i18n:getText("eq_pop_routineError"), mult, EqDressagePath.ERRORS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineScore" then
@@ -331,7 +356,7 @@ function EqTrainingHud.pop(kind, mult)
     end
     local stat = EqTrainingHud.POP_STAT[kind]
     -- Every pop, good news or a setback, is in its stat's colour.
-    if stat ~= nil then color = EqTrainingHud.STAT_COLOR[stat] end
+    if stat ~= nil and kind ~= "routineMark" then color = EqTrainingHud.STAT_COLOR[stat] end
     -- In a focused view, news about another stat goes in a small line above the panel instead.
     local view = EqTrainingHud.view
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
@@ -343,6 +368,11 @@ function EqTrainingHud.pop(kind, mult)
         return
     end
     EqTrainingHud.popState = { text = text, color = color, big = big, at = g_time or 0 }
+    if kind == "routineMark" then
+        local m = EqTrainingHud.MARK
+        EqTrainingHud.popState.y, EqTrainingHud.popState.holdMs = m.y, m.holdMs
+        EqTrainingHud.popState.flourish = (mult or 0) >= m.flourish
+    end
 end
 
 
@@ -403,17 +433,32 @@ function EqTrainingHud.drawPops()
     if state == nil then return end
     local p = EqTrainingHud.POP
     local age = (g_time or 0) - state.at
-    if age > p.growMs + p.holdMs + p.fadeMs then
+    local hold = state.holdMs or p.holdMs
+    if age > p.growMs + hold + p.fadeMs then
         EqTrainingHud.popState = nil
         return
     end
     local grow = math.min(1, age / p.growMs)
     -- Overshoot a little as it grows in, for some bounce.
     local scale = grow < 1 and grow * 1.25 or 1 + 0.25 * math.max(0, 1 - (age - p.growMs) / 120)
-    local alpha = age < p.growMs + p.holdMs and 1 or 1 - (age - p.growMs - p.holdMs) / p.fadeMs
+    local alpha = age < p.growMs + hold and 1 or 1 - (age - p.growMs - hold) / p.fadeMs
     local size = (p.size + p.sizePerMult * (state.big - 1)) * scale
     local c = state.color
-    shadowText(state.text, p.x, p.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    local y = state.y or p.y
+    shadowText(state.text, p.x, y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    if state.flourish then
+        -- Gold bars either side that sweep out as it lands.
+        local m = EqTrainingHud.MARK
+        setTextBold(true)
+        local half = getTextWidth(size, state.text) / 2 + m.barGap
+        local width = m.barWidth * math.min(1, age / (p.growMs * 2))
+        local gold = { EqTrainingHud.GOLD[1], EqTrainingHud.GOLD[2], EqTrainingHud.GOLD[3], alpha }
+        for _, row in ipairs({ 0.25, 0.55 }) do
+            local w = width * (row == 0.25 and 1 or 0.7)
+            fill(p.x + half, y + size * row, w, m.barHeight, gold)
+            fill(p.x - half - w, y + size * row, w, m.barHeight, gold)
+        end
+    end
     resetText()
 end
 
