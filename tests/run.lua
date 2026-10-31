@@ -4385,8 +4385,16 @@ end)()
     for _, figure in ipairs(library) do
         if figure.sections ~= nil then lateral[figure.key .. (figure.sections[1].bend == 1 and "R" or figure.sections[1].bend == -1 and "L" or "")] = true end
     end
-    check("leg yields, half passes and shoulder-ins are in the library, bent both ways", lateral.legYieldL and lateral.legYieldR
-        and lateral.halfPassL and lateral.halfPassR and lateral.shoulderInL and lateral.shoulderInR and lateral.legYieldRailL and lateral.renversR and lateral.traversL)
+    -- Leg yields ask for no bend (James, 2026-10-31); the rest are bent both ways.
+    local legBent = false
+    for _, figure in ipairs(library) do
+        for _, sec in ipairs(figure.sections or {}) do
+            if (figure.key == "legYield" or figure.key == "legYieldRail" or figure.key == "legYieldCentre") and sec.bend ~= nil then legBent = true end
+        end
+    end
+    check("leg yields, half passes and shoulder-ins are in the library, bent both ways but leg yields not at all", lateral.legYield
+        and lateral.halfPassL and lateral.halfPassR and lateral.shoulderInL and lateral.shoulderInR and lateral.legYieldRail and lateral.renversR
+        and lateral.traversL and not legBent)
     local found = nil
     for seed = 1, 60 do
         local t = EqDressagePath.build(frame, 10, seeded("lateral " .. seed))

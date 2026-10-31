@@ -137,10 +137,10 @@
         <text name="eq_fig_legYieldRail" text="Leg yield along the rail %s-%s"/>
         <text name="eq_fig_travers" text="Travers (haunches in) %s-%s"/>
         <text name="eq_fig_renvers" text="Renvers (haunches out) %s-%s"/>
-        <text name="eq_lat_legYield" text="Leg yield: drift %s, bend %s"/>
+        <text name="eq_lat_legYield" text="Leg yield: drift %s"/>
         <text name="eq_lat_halfPass" text="Half pass: drift %s, bend %s"/>
         <text name="eq_lat_shoulderIn" text="Shoulder-in: drift %s, bend %s"/>
-        <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s, bend %s"/>
+        <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s"/>
         <text name="eq_lat_travers" text="Travers: drift %s, bend %s"/>
         <text name="eq_lat_renvers" text="Renvers: drift %s, bend %s"/>
         <text name="eq_lat_left" text="left"/>

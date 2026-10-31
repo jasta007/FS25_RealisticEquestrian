@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="Schenkelweichen an der Bande %s-%s"/>
         <text name="eq_fig_travers" text="Travers (Kruppeherein) %s-%s"/>
         <text name="eq_fig_renvers" text="Renvers (Kruppeheraus) %s-%s"/>
-        <text name="eq_lat_legYield" text="Schenkelweichen: nach %s, Stellung %s"/>
+        <text name="eq_lat_legYield" text="Schenkelweichen: nach %s"/>
         <text name="eq_lat_halfPass" text="Traversale: nach %s, Stellung %s"/>
         <text name="eq_lat_shoulderIn" text="Schulterherein: nach %s, Stellung %s"/>
-        <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s, Stellung %s"/>
+        <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s"/>
         <text name="eq_lat_travers" text="Travers: nach %s, Stellung %s"/>
         <text name="eq_lat_renvers" text="Renvers: nach %s, Stellung %s"/>
         <text name="eq_lat_left" text="links"/>

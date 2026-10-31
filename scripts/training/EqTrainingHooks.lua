@@ -1183,6 +1183,8 @@ end
 local function sectionText(sec)
     local function side(v) return g_i18n:getText((v or 0) > 0 and "eq_lat_right" or "eq_lat_left") end
     local key = "eq_lat_" .. sec.kind
+    -- Leg yields ask for no bend: "Leg yield: drift left".
+    if sec.bend == nil then return string.format(g_i18n:getText(key), side(sec.drift)) end
     return string.format(g_i18n:getText(key), side(sec.drift), side(sec.bend))
 end
 

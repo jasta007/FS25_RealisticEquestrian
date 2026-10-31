@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="Wijken langs de baan %s-%s"/>
         <text name="eq_fig_travers" text="Travers (kroep binnenwaarts) %s-%s"/>
         <text name="eq_fig_renvers" text="Renvers (kroep buitenwaarts) %s-%s"/>
-        <text name="eq_lat_legYield" text="Wijken: naar %s, stelling %s"/>
+        <text name="eq_lat_legYield" text="Wijken: naar %s"/>
         <text name="eq_lat_halfPass" text="Appuyement: naar %s, stelling %s"/>
         <text name="eq_lat_shoulderIn" text="Schouder binnenwaarts: naar %s, stelling %s"/>
-        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s, stelling %s"/>
+        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
         <text name="eq_lat_travers" text="Travers: naar %s, stelling %s"/>
         <text name="eq_lat_renvers" text="Renvers: naar %s, stelling %s"/>
         <text name="eq_lat_left" text="links"/>

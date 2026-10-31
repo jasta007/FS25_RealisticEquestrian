@@ -820,17 +820,18 @@ local function inAndBack(g, gait, key, bendIn)
             -- In is to the rider's left here (facing +y on the right side).
             table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y } }, marks = {}, lateral = true,
                 sections = { { from = a, to = b, hx = 0, hy = 1, bend = bendIn, drift = -1 },
-                    { from = c, to = e, hx = 0, hy = 1, bend = -bendIn, drift = 1 } } })
+                    { from = c, to = e, hx = 0, hy = 1, bend = bendIn ~= nil and -bendIn or nil, drift = 1 } } })
         end
     end
     return list
 end
 
 
---- Leg yield off the track and back: walk or trot, bent away from the drift.
+--- Leg yield off the track and back: walk or trot, no bend asked (James, 2026-10-31: a leg
+--- yield by definition asks for no bend in the neck).
 FIGURES.legYield = function(g, frame, gait)
     if gait == "canter" then return {} end
-    return inAndBack(g, gait, "legYield", 1)
+    return inAndBack(g, gait, "legYield", nil)
 end
 
 
@@ -844,10 +845,10 @@ end
 --- Along the rail between two side letters, the body turned the drift's angle off the rail
 --- (James, 2026-10-31: real names, a bend in each): shoulder-in (forehand in, bent away from the
 --- way it goes), renvers (forehand in, bent the way it goes), travers (haunches in: head to the
---- rail, bent the way it goes) and leg yield along the rail (head to the rail, bent away from
---- the way it goes). Walk or trot.
+--- rail, bent the way it goes) and leg yield along the rail (head to the rail, no bend). Walk
+--- or trot.
 local RAIL = { shoulderIn = { side = -1, bend = -1 }, renvers = { side = -1, bend = 1 }, travers = { side = 1, bend = -1 },
-    legYieldRail = { side = 1, bend = 1 } }
+    legYieldRail = { side = 1, bend = nil } }
 local function alongRail(g, gait, key)
     if gait == "canter" then return {} end
     local straight, list = g.straight[gait], {}
@@ -909,7 +910,7 @@ local function lateralCentre(g, gait, key)
                 pen.hx, pen.hy = 0, 1
                 forward(pen, 2)
                 table.insert(list, { key = key, pts = pen.pts, labels = { { 0, -g.lt }, { g.wt, y } }, marks = {}, lateral = true,
-                    sections = { { from = s0, to = s1, hx = 0, hy = 1, bend = -1, drift = 1, kind = "legYield" } } })
+                    sections = { { from = s0, to = s1, hx = 0, hy = 1, drift = 1, kind = "legYield" } } })
             end
         end
     end

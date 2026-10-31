@@ -139,10 +139,10 @@
         <text name="eq_fig_legYieldRail" text="Ustępowanie od łydki wzdłuż ściany %s-%s"/>
         <text name="eq_fig_travers" text="Trawers (zad do wewnątrz) %s-%s"/>
         <text name="eq_fig_renvers" text="Renwers (zad na zewnątrz) %s-%s"/>
-        <text name="eq_lat_legYield" text="Ustępowanie: w %s, zgięcie w %s"/>
+        <text name="eq_lat_legYield" text="Ustępowanie: w %s"/>
         <text name="eq_lat_halfPass" text="Ciąg: w %s, zgięcie w %s"/>
         <text name="eq_lat_shoulderIn" text="Łopatka do wewnątrz: w %s, zgięcie w %s"/>
-        <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s, zgięcie w %s"/>
+        <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s"/>
         <text name="eq_lat_travers" text="Trawers: w %s, zgięcie w %s"/>
         <text name="eq_lat_renvers" text="Renwers: w %s, zgięcie w %s"/>
         <text name="eq_lat_left" text="lewo"/>
