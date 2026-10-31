@@ -43,6 +43,10 @@ LINING = (90, 130)  # luminance where the leather fades into the lining
 # fills out quickly above the ankle. Depth grows backwards from the shin.
 CALF = (0.18, 0.45)  # heights above the sole where the widening starts and is full
 CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
+# Calf shapes to try live (eqBootCalf 1-8, James 2026-10-31): (top width, top depth). Each shaft
+# group holds all of them as eqCalf1..8 and EqAttire shows one. Once picked, keep only that one.
+CALF_SHAPES = [(1.4, 1.3), (1.55, 1.3), (1.7, 1.3), (1.85, 1.3),
+               (1.4, 1.45), (1.55, 1.45), (1.7, 1.45), (1.85, 1.45)]
 CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.055
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
@@ -81,12 +85,12 @@ def read(path):
     return verts, tris
 
 
-def calf(position, normal):
+def calf(position, normal, width=CALF_WIDTH, depth=CALF_DEPTH):
     """A shaft vertex widened for the calf at its height."""
     (x, y, z), (nx, ny, nz) = position, normal
     t = min(1.0, max(0.0, (y - CALF[0]) / (CALF[1] - CALF[0])))
     t = 1 - (1 - t) ** 2
-    sx, sz = 1 + (CALF_WIDTH - 1) * t, 1 + (CALF_DEPTH - 1) * t
+    sx, sz = 1 + (width - 1) * t, 1 + (depth - 1) * t
     x = CALF_CENTRE_X + (x - CALF_CENTRE_X) * sx
     z = SHIN_FRONT_Z + (z - SHIN_FRONT_Z) * sz
     nx, nz = nx / sx, nz / sz
@@ -150,11 +154,16 @@ def icon(verts, tris, diffuse, path):
 def main():
     verts, tris = read(os.path.join(PRIVATE, "ridingBoot.obj"))
     # The OBJ's v runs from the bottom like GIANTS'; flip it if the textures come out upside down.
-    shapes = []
+    groups = []  # (group name, [(shape name, mesh)])
     for side, mirror in (("L", False), ("R", True)):
-        shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror, calf)
+        shafts = []
+        for n, (width, depth) in enumerate(CALF_SHAPES):
+            shape = lambda p, q, w=width, d=depth: calf(p, q, w, d)  # noqa: E731
+            shafts.append((f"eqCalf{n + 1}", piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP,
+                                                  ANKLE, mirror, shape)))
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
-        shapes += [("eqBootShaft" + side, shaft), ("eqBootFoot" + side, foot)]
+        groups += [("eqBootShaft" + side, shafts), ("eqBootFoot" + side, [("eqBootFoot" + side + "Shape", foot)])]
+    shapes = [(group + "_" + name, mesh) for group, members in groups for name, mesh in members]
     for name, diffuse in textures().items():
         icon(verts, tris, diffuse, os.path.join(OUT, f"ridingBoots{'_' + name if name else ''}_icon.dds"))
 
@@ -185,13 +194,17 @@ def main():
     lines += ["  </Shapes>", "  <Scene>", '    <TransformGroup name="eqBootSkeleton" nodeId="1"/>',
               '    <TransformGroup name="eqRidingBoots" nodeId="2">']
     node_id = 3
-    # Each piece is a group (moved onto its bone, origin at the ankle) holding its shape.
-    for i, (name, _) in enumerate(shapes):
-        lines.append(f'      <TransformGroup name="{name}" nodeId="{node_id}">')
-        lines.append(f'        <Shape name="{name}Shape" shapeId="{i + 1}" clipDistance="150" nodeId="{node_id + 1}" '
-                     'materialIds="1" castsShadows="true" receiveShadows="true"/>')
+    # Each piece is a group (moved onto its bone, origin at the ankle) holding its shape(s).
+    shape_id = 1
+    for group, members in groups:
+        lines.append(f'      <TransformGroup name="{group}" nodeId="{node_id}">')
+        node_id += 1
+        for name, _ in members:
+            lines.append(f'        <Shape name="{name}" shapeId="{shape_id}" clipDistance="150" nodeId="{node_id}" '
+                         'materialIds="1" castsShadows="true" receiveShadows="true"/>')
+            node_id += 1
+            shape_id += 1
         lines.append("      </TransformGroup>")
-        node_id += 2
     lines += ["    </TransformGroup>", "  </Scene>", "</i3D>"]
     path = os.path.join(OUT, "ridingBoots.i3d")
     with open(path, "w", encoding="iso-8859-1", newline="\n") as f:
