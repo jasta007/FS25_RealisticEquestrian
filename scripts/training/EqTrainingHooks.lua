@@ -531,6 +531,15 @@ EqTrainingHooks.AIM_LIST_RADIUS = 45
 --- ghosted outside a round), listed again every AIM_LIST_MS.
 --- @return table { x, z, ax, az, bx, bz }
 local function aimJumps()
+    -- In a round only its next fence counts (James, 2026-10-31: it pulled him toward another jump).
+    local round = EqCourseHooks ~= nil and EqCourseHooks.round or nil
+    local sj = round ~= nil and round.sj or nil
+    if sj ~= nil and (sj.state == "countdown" or sj.state == "go" or sj.state == "running") then
+        local jumps = round.course ~= nil and round.course.jumps or nil
+        local fence = jumps ~= nil and jumps[sj.state == "running" and (sj.next or 1) or 1] or nil
+        if fence ~= nil and fence.ax ~= nil and fence.bx ~= nil then return { fence } end
+        return {}
+    end
     local now = g_time or 0
     local cache = EqTrainingHooks.aimCache
     if cache ~= nil and now - cache.at < EqTrainingHooks.AIM_LIST_MS and now >= cache.at then return cache.list end
