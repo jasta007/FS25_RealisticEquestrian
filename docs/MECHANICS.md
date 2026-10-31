@@ -744,3 +744,12 @@ horse is never touched.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
   fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.
 
+
+## Hidden HUD (filming)
+
+- When the game's HUD is hidden (the `gsHudVisibility` console command, or a HUD hider mod),
+  everything the mod draws goes with it: the riding panel, centre alerts and prompts, help and
+  welcome popups, course glow poles and lines, fence numbers, XC guide lines and L/R flag labels
+  while riding. Construction mode keeps its guides and labels.
+- Riding keeps working underneath: gait keys, training, rounds and course recording carry on, and
+  the screens come back as they are when the HUD returns.

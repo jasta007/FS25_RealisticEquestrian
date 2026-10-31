@@ -94,6 +94,8 @@ end
 --- @return boolean false when the glow can't be drawn
 function EqCourseGlow.pole(x, y, z, height)
     if not ensureLoaded() then return false end
+    -- Hidden HUD: shown as drawn, so no debug line stands in, and finish() hides the pool.
+    if EqTrainingHud.gameHudHidden() then return true end
     local node = take("pole")
     setTranslation(node, x, y, z)
     setRotation(node, 0, 0, 0)
@@ -107,6 +109,7 @@ end
 --- @return boolean false when the glow can't be drawn
 function EqCourseGlow.bar(ax, ay, az, bx, by, bz)
     if not ensureLoaded() then return false end
+    if EqTrainingHud.gameHudHidden() then return true end
     local dx, dy, dz = bx - ax, by - ay, bz - az
     local length = math.sqrt(dx * dx + dy * dy + dz * dz)
     if length < 0.01 then return true end

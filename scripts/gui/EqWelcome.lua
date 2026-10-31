@@ -152,7 +152,7 @@ end
 --- Appended to the mission's draw: the welcome near a horse pen, and any popup showing out in
 --- the world (the riding draw shows the same popup; it only draws once a frame).
 function EqWelcome.onMissionDraw()
-    if not EqMain.isActive or (g_gui ~= nil and g_gui:getIsGuiVisible()) then return end
+    if not EqMain.isActive or (g_gui ~= nil and g_gui:getIsGuiVisible()) or EqTrainingHud.gameHudHidden() then return end
     if not EqTrainingHud.isHelpShowing() and not EqWelcome.hasSeen("welcome") then
         local now = g_time or 0
         if EqWelcome.checkedAt == nil or now - EqWelcome.checkedAt >= EqWelcome.CHECK_INTERVAL_MS then

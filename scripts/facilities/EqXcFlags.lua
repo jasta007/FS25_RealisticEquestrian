@@ -161,7 +161,9 @@ end
 --- guide lines every SCAN_MS.
 function EqXcFlags.update()
     local now = g_time or 0
-    local shown = EqXcFlags.wantGuides(EqXcFlags.inConstruction(), EqXcFlags.editing)
+    -- Riding with the HUD hidden (filming): the guide lines go too. Construction keeps them.
+    local editing = EqXcFlags.editing and not EqTrainingHud.gameHudHidden()
+    local shown = EqXcFlags.wantGuides(EqXcFlags.inConstruction(), editing)
     local due = EqXcFlags.scannedAt == nil or now - EqXcFlags.scannedAt >= EqXcFlags.SCAN_MS or now < EqXcFlags.scannedAt
     if shown ~= EqXcFlags.shown or due then
         local count = EqXcFlags.applyGuides(shown)

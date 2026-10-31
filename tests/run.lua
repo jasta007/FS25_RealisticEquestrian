@@ -3474,6 +3474,19 @@ end)()
     check("Japanese wraps between characters", #japanese == 3 and japanese[1] == "馬に鍛えるスキルと出", table.concat(japanese, "|"))
     local mixed = EqTrainingHud.wrap("すべてRealistic Livestockメニュー", 1, 13)
     check("a Latin name inside Japanese stays whole", mixed[1] == "すべてRealistic" and mixed[2] == "Livestockメニュー", table.concat(mixed, "|"))
+    -- Hidden game HUD (filming): the method wins, the field is the fallback, no HUD means shown.
+    local oldMission = g_currentMission
+    g_currentMission = nil
+    check("no mission: HUD not hidden", not EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() return false end } }
+    check("HUD hidden through getIsVisible", EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() return true end, isVisible = false } }
+    check("getIsVisible true wins over the field", not EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { isVisible = false } }
+    check("HUD hidden through the isVisible field", EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() error("broken") end } }
+    check("a broken getIsVisible counts as shown", not EqTrainingHud.gameHudHidden())
+    g_currentMission = oldMission
     setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 
