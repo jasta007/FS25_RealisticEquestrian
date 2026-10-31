@@ -40,9 +40,14 @@ EqJump.FALL_MAX = 7
 -- passes CLOSE_FALL_SPEED (James: the landing clip played a bit late).
 EqJump.CLOSE_MODE = 3
 EqJump.CLOSE_FALL_SPEED = 1
--- The quicker jump covered too little ground to clear things (James): a normal jump carries
--- AIR_CARRY times its take-off speed through the air. Not a collected jump.
-EqJump.AIR_CARRY = 1.25
+-- The quicker jump covered too little ground to clear things (James): a jump carries a share of
+-- its take-off speed through the air, eased in over CARRY_EASE_MS. Not at a gallop (James: 1.25
+-- there snapped the horse forwards into "hyper speed"), nor once the rider asks for a slower gait
+-- (it ran on at a gallop for steps after landing), nor in a Ctrl jump.
+EqJump.AIR_CARRY = 1.45
+EqJump.GALLOP_CARRY = 1
+EqJump.TROT_CARRY = 1.8
+EqJump.CARRY_EASE_MS = 250
 EqJump.HEIGHT_SHARE = 0.88
 -- James, 2026-10-31: the push-off's small lift starts the launch clip while the hind legs are
 -- still on the ground, but the clip must last until the top of the climb or it restarts (a
@@ -57,6 +62,8 @@ EqJump.COLLECT_PUSH_MS = 260
 -- game allows jumps only from a canter) is a collected jump. It is slow already, so its gather
 -- on the ground is only TROT_PUSH_MS.
 EqJump.TROT_PUSH_MS = 80
+-- ...and lower than the Ctrl jump, but longer (James): TROT_HEIGHT_SHARE of a gallop jump.
+EqJump.TROT_HEIGHT_SHARE = 0.8
 -- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
 EqJump.COLLECT_LIFT = 0
 EqJump.COLLECT_SPEED_SHARE = 0.5
@@ -71,7 +78,10 @@ EqJump.TUNABLE = {
     { name = "blend", key = "BLEND_SPEED", min = 0.1, max = 10 },
     { name = "close", key = "CLOSE_MODE", min = 0, max = 3 },
     { name = "closefall", key = "CLOSE_FALL_SPEED", min = 0, max = 10 },
-    { name = "carry", key = "AIR_CARRY", min = 0.5, max = 2 },
+    { name = "carry", key = "AIR_CARRY", min = 0.5, max = 2.5 },
+    { name = "gcarry", key = "GALLOP_CARRY", min = 0.5, max = 2.5 },
+    { name = "tcarry", key = "TROT_CARRY", min = 0.5, max = 3 },
+    { name = "theight", key = "TROT_HEIGHT_SHARE", min = 0.3, max = 2 },
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
     { name = "gpush", key = "GALLOP_PUSH_MS", min = 0, max = 600 },
@@ -135,10 +145,16 @@ end
 
 --- The least forward speed a jump in the air keeps (pure), nil for no floor.
 --- @param launch table from newLaunch
+--- @param now number ms
+--- @param gaitTop number|nil top speed of the gait the rider now asks for, m/s
 --- @return number|nil m/s
-function EqJump.carrySpeed(launch)
-    if launch.collected or not launch.launched then return nil end
-    return launch.startSpeed * EqJump.AIR_CARRY
+function EqJump.carrySpeed(launch, now, gaitTop)
+    if not launch.launched or (launch.collected and not launch.trot) then return nil end
+    if gaitTop ~= nil and gaitTop < launch.startSpeed * 0.95 then return nil end
+    local carry = EqJump.AIR_CARRY
+    if launch.trot then carry = EqJump.TROT_CARRY elseif launch.gait == "gallop" then carry = EqJump.GALLOP_CARRY end
+    local t = EqJump.CARRY_EASE_MS > 0 and math.min(1, math.max(0, (now - (launch.launchedAt or now)) / EqJump.CARRY_EASE_MS)) or 1
+    return launch.startSpeed * (1 + (carry - 1) * t)
 end
 
 
@@ -199,13 +215,17 @@ function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSp
     return {
         speedY = collected and collectedSpeedY or speedY,
         startSpeed = speed,
-        targetSpeed = collected and EqJump.collectedSpeed(speed, trotSpeed) or nil,
+        -- A trot jump keeps its pace (it carries, see carrySpeed); a Ctrl jump slows to about a trot.
+        targetSpeed = (collected and gait ~= "trot") and EqJump.collectedSpeed(speed, trotSpeed) or nil,
         collected = collected,
+        trot = collected and gait == "trot",
+        gait = gait,
         startedAt = now,
         pushMs = push,
         lift = collected and EqJump.COLLECT_LIFT or EqJump.PUSH_SPEED,
         rise = 0,
         launched = push <= 0,
+        launchedAt = push <= 0 and now or nil,
     }
 end
 
@@ -247,7 +267,7 @@ function EqJump.step(launch, now, dt, gravity)
         -- The base game adds this frame's gravity before it moves the horse: lift by that much more.
         return launch.lift - gravity * dt / 1000, cap
     end
-    launch.launched = true
+    launch.launched, launch.launchedAt = true, now
     local left = launch.speedY * launch.speedY - 2 * math.abs(gravity) * launch.rise
     return math.sqrt(math.max(0, left)) - gravity * dt / 1000, cap
 end

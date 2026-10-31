@@ -967,7 +967,8 @@ function EqTrainingHooks.startLaunch(spec)
     local collectedSpeedY = nil
     if collected then
         local gallop = spec.eqGallopJumpHeight or spec.jumpHeight or 2
-        collectedSpeedY = EqJump.launchSpeed(gallop * EqJump.COLLECT_HEIGHT_SHARE, spec.gravity or -EqJump.GRAVITY)
+        local share = spec.eqLastGait == "trot" and EqJump.TROT_HEIGHT_SHARE or EqJump.COLLECT_HEIGHT_SHARE
+        collectedSpeedY = EqJump.launchSpeed(gallop * share, spec.gravity or -EqJump.GRAVITY)
     end
     local trot = Rideable.GAITTYPES ~= nil and type(spec.topSpeeds) == "table" and spec.topSpeeds[Rideable.GAITTYPES.TROT] or nil
     spec.eqLaunch = EqJump.newLaunch(spec.currentSpeedY, math.abs(spec.currentSpeed or 0), collected, collectedSpeedY, now,
@@ -981,7 +982,8 @@ function EqTrainingHooks.startLaunch(spec)
             spec.eqLaunch.lift, math.abs(spec.currentSpeed or 0),
             collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
         Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
-            spec.eqLaunch.targetSpeed or math.abs(spec.currentSpeed or 0) * EqJump.AIR_CARRY))
+            spec.eqLaunch.targetSpeed or EqJump.carrySpeed({ launched = true, collected = spec.eqLaunch.collected,
+                trot = spec.eqLaunch.trot, gait = spec.eqLaunch.gait, startSpeed = math.abs(spec.currentSpeed or 0) }, 0, nil) or 0))
     end
     if not spec.eqLaunch.launched then spec.currentSpeedY = spec.eqLaunch.lift end
 end
@@ -1033,7 +1035,8 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
     local speedY, cap = EqJump.step(launch, now, dt, spec.gravity or -EqJump.GRAVITY)
     if speedY ~= nil then spec.currentSpeedY = speedY end
     if cap ~= nil and type(spec.currentSpeed) == "number" and spec.currentSpeed > cap then spec.currentSpeed = cap end
-    local carry = EqJump.carrySpeed(launch)
+    local gaitTop = type(spec.topSpeeds) == "table" and spec.inputValues ~= nil and spec.topSpeeds[spec.inputValues.currentGait] or nil
+    local carry = EqJump.carrySpeed(launch, now, type(gaitTop) == "number" and gaitTop or nil)
     if carry ~= nil and spec.isOnGround == false and type(spec.currentSpeed) == "number" and spec.currentSpeed < carry then
         spec.currentSpeed = carry
     end
