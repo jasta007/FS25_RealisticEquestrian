@@ -682,7 +682,22 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- combo goes and nothing trains (James, 2026-10-27: a test ran on, faulting, while he was
     -- on another horse).
     if vehicle.getIsControlled ~= nil and not vehicle:getIsControlled() then
-        if spec.eqBaseGravity ~= nil then spec.gravity = spec.eqBaseGravity end
+        -- Left in the air, our pull stays on until it lands: the jump's lift was worked out for it,
+        -- and the base game's weaker pull sent a horse left mid-jump sky high (James, 2026-10-31).
+        if spec.eqBaseGravity ~= nil then
+            if spec.isOnGround == false and type(spec.currentSpeedY) == "number" then
+                spec.gravity = EqJump.gravity(spec.currentSpeedY, false)
+                local capped = EqJump.fallCap(spec.currentSpeedY, false, spec.gravity, dt)
+                if capped ~= nil then spec.currentSpeedY = capped end
+                if not spec.eqLeftInAir then
+                    spec.eqLeftInAir = true
+                    Log:info("Jump: rider left in the air (rising at %.1f m/s), our pull kept till it lands", spec.currentSpeedY)
+                end
+            else
+                spec.gravity = spec.eqBaseGravity
+                spec.eqLeftInAir = nil
+            end
+        end
         spec.eqLaunch = nil
         local ended = EqTraining.breakRoutine(sheet)
         if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
