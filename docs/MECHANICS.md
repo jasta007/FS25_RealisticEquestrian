@@ -297,11 +297,11 @@ Jumps rise under 3.5 times normal gravity and come down under 3 times, about 12%
 before, so a gallop jump is about 0.7 s in the air (it was nearly 1 s) and doesn't hang at the
 top. The pull changes smoothly over the top and eases off as the fall nears 7 m/s, near the base
 game's landing speed: any sudden change showed as a stutter in the animation. The jump starts with a small lift for
-0.08 s at a canter (0.14 s at a gallop) so the push-off animation begins on the ground, and the
+0.08 s at a canter (0.12 s at a gallop) so the push-off animation begins on the ground, and the
 horse carries 1.25 times its take-off speed through the air so it still covers ground. A **collected jump**: hold Ctrl (or let
 go of it less than half a second before) and press jump. The horse gathers itself on the ground over 0.26 s,
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
-distance. Take-off is about 39 degrees from a gallop, 55 from a canter and 76 collected. The `eqJump` console command shows and changes these numbers until the game restarts.
+distance. Take-off is about 39 degrees from a gallop, 55 from a canter and 72 collected. The `eqJump` console command shows and changes these numbers until the game restarts.
 
 ### Staff, age and metabolism
 

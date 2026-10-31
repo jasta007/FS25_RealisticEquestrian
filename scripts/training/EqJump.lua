@@ -47,16 +47,16 @@ EqJump.HEIGHT_SHARE = 0.88
 -- James, 2026-10-31: the push-off's small lift starts the launch clip while the hind legs are
 -- still on the ground, but the clip must last until the top of the climb or it restarts (a
 -- mid-air stutter), so the climb is quick (RISE_SHARE). James found 80 ms at 0.5 m/s smooth at a
--- canter; the gallop's longer clip takes GALLOP_PUSH_MS.
+-- canter and 120 ms at a gallop (140 hinted at a stutter).
 EqJump.PUSH_MS = 80
-EqJump.GALLOP_PUSH_MS = 140
+EqJump.GALLOP_PUSH_MS = 120
 EqJump.PUSH_SPEED = 0.5
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
 -- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
 EqJump.COLLECT_LIFT = 0
 EqJump.COLLECT_SPEED_SHARE = 0.5
-EqJump.COLLECT_TROT_SHARE = 0.9
+EqJump.COLLECT_TROT_SHARE = 1.15
 EqJump.COLLECT_HEIGHT_SHARE = 1.05
 
 -- What the eqJump console command may change: its short name, the field, and limits.
