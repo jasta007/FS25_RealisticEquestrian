@@ -134,6 +134,9 @@ Por Jasta007.]]>
         <action name="EQ_DT_MODE"/>
         <action name="EQ_DT_ACCEPT"/>
         <action name="EQ_DT_UNDO"/>
+        <action name="EQ_DT_PREV_LETTER"/>
+        <action name="EQ_DT_NEXT_LETTER"/>
+        <action name="EQ_DT_GAIT"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -180,6 +183,15 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_DT_UNDO">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_backspace" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_PREV_LETTER">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_n" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_NEXT_LETTER">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_m" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_GAIT">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

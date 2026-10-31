@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Pirouette at %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: build your own dressage test for this arena"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: edit this arena's dressage test"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Previous letter"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Next letter"/>
+        <text name="input_EQ_DT_GAIT" text="Figure gait"/>
+        <text name="eq_dt_gaitAction" text="Figures at: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Left pirouette at %s"/>
+        <text name="eq_fig_pirouetteRight" text="Right pirouette at %s"/>
     </texts>
 </l10n>

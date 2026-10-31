@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Pirueta em %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: monte sua própria prova de adestramento para esta pista"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: editar a prova de adestramento desta pista"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Letra anterior"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Próxima letra"/>
+        <text name="input_EQ_DT_GAIT" text="Andamento das figuras"/>
+        <text name="eq_dt_gaitAction" text="Figuras a: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirueta à esquerda em %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirueta à direita em %s"/>
     </texts>
 </l10n>

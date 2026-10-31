@@ -278,13 +278,19 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 
 **Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
 the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
-top. The opening, A down the centre line to a halt at X, shows in white and the option for the next
-step in cyan, drawn from where the test has got to (a pole marks its start):
+top. The last step kept (at first the opening, A down the centre line to a halt at X) shows in white
+and the option for the next step in cyan, drawn from where the test has got to (a pole marks its
+start). Placeables standing over the arena, such as a riding hall, are hidden while the camera is up.
 
 - **N** / **M** step back and on through the options, nearest first. **R** picks one at random (and
   rolls again what is left to chance inside it, such as a halt at X on a centre line).
-- **F** swaps between figures and movements on the spot at the letters ahead: a halt or a halt and
-  rein back (walk or trot), a piaffe (trot), a pirouette (walk or canter).
+- **G** picks the gait of the figures on show (walk, trot, canter). The horse changes to it at the
+  letter before the figure; any gait can follow any other.
+- **F** swaps between figures and movements on the spot. There **N** / **M** step through the
+  movements at one letter (halt, halt and rein back, piaffe, left and right pirouette) and
+  **Shift+N** / **Shift+M** move it to the letter before or after. A piaffe is ridden from a trot,
+  a pirouette from a walk or canter (from a trot the horse walks first): the change comes a few
+  metres before the letter.
 - **Enter** keeps the option; the next options come from its end. **Backspace** takes the last step
   back off. The first step also picks whether the test tracks left or right at C.
 - **Ctrl+L** again saves, adding the final centre line from A to a halt at X. Undoing every step and

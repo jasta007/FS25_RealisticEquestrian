@@ -935,5 +935,11 @@
         <text name="eq_fig_pirouette" text="Pirouette bei %s"/>
         <text name="eq_dt_hintNew" text="Strg+L: eigene Dressuraufgabe für dieses Viereck erstellen"/>
         <text name="eq_dt_hintEdit" text="Strg+L: Dressuraufgabe dieses Vierecks bearbeiten"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Vorheriger Buchstabe"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Nächster Buchstabe"/>
+        <text name="input_EQ_DT_GAIT" text="Gangart der Figuren"/>
+        <text name="eq_dt_gaitAction" text="Figuren im: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Linkspirouette bei %s"/>
+        <text name="eq_fig_pirouetteRight" text="Rechtspirouette bei %s"/>
     </texts>
 </l10n>

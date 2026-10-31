@@ -58,6 +58,8 @@ EqDressagePath.CONNECT_MIN = 3
 EqDressagePath.CONNECT_GOOD = 15
 -- A movement on the spot in the editor goes at one of the letters this share of a lap ahead.
 EqDressagePath.SPOT_REACH = 0.75
+-- The movements on the spot the editor offers at a letter, in the order N and M step through them.
+EqDressagePath.SPOT_STYLES = { "halt", "reinBack", "piaffe", "pirouetteLeft", "pirouetteRight" }
 -- Every figure is ridden at one gait, built for it (James 2026-10-29: trot circles, walk
 -- circles and canter circles, never one in another gait). How often each gait and figure comes.
 EqDressagePath.GAITS = { "walk", "trot", "canter" }
@@ -995,9 +997,9 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         walkFrom = after == "walk" and s or nil
     end
     --- A piaffe (trot) or pirouette (walk, canter) at a letter, turning into the arena.
-    local function spot(s, letter, m, turn)
+    local function spot(s, letter, m, turn, style)
         if s < lastChange + EqDressagePath.CHANGE_GAP then return end
-        local style = gait == "trot" and "piaffe" or "pirouette"
+        style = style or (gait == "trot" and "piaffe" or "pirouette")
         table.insert(events, { s = s, kind = "spot", style = style, gait = gait, letter = letter, m = m, turn = turn })
         lastChange = s
     end
@@ -1190,7 +1192,9 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             -- walking figure at a time.
             local step = figure.gait == gait or (figure.gait == "trot" or gait == "trot")
             if figure.gait == "walk" and gait == "walk" then step = false end
-            if figure.entryRein == rein and figure.key ~= lastKey and step then
+            -- The player's own test may go from any gait to any other, and repeat a figure.
+            if plan ~= nil then step = true end
+            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 if d >= least and d <= t.length * 0.6 then
@@ -1224,39 +1228,49 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         return list
     end
 
-    --- The movements on the spot the horse can do at its gait: a halt (or a halt and rein back)
-    --- from a walk or trot, a piaffe from a trot, a pirouette from a walk or canter.
-    local function spotStyles()
-        local list = {}
-        if gait ~= "canter" then
-            table.insert(list, "halt")
-            table.insert(list, "reinBack")
-        end
-        table.insert(list, gait == "trot" and "piaffe" or "pirouette")
-        return list
+    --- The movements on the spot a player can put at a letter, and the gait each is ridden from:
+    --- a halt or a halt and rein back from any gait, a piaffe from a trot, a pirouette either
+    --- way from a walk or canter (from a trot it comes down to a walk first). The horse changes
+    --- to that gait on the way to the letter. "pirouette" (older saves) turns with the rein.
+    local function spotGait(style)
+        if style == "piaffe" then return "trot" end
+        if style == "pirouette" or style == "pirouetteLeft" or style == "pirouetteRight" then return gait == "canter" and "canter" or "walk" end
+        return gait
     end
 
     --- A player's step on the spot: ride the track to its letter and do it there.
-    --- @return boolean done false when it doesn't fit (wrong gait, letter not ahead)
+    --- @return boolean done false when it doesn't fit (letter not ahead)
     local function addSpot(step)
-        local ok = false
-        for _, style in ipairs(spotStyles()) do ok = ok or style == step.style end
-        if not ok then return false end
+        local known = false
+        for _, style in ipairs(EqDressagePath.SPOT_STYLES) do known = known or style == step.style end
+        if not known and step.style ~= "pirouette" then return false end
         local at = nil
         for _, l in ipairs(lettersAhead()) do
             if at == nil and l.letter == step.letter then at = l end
         end
         if at == nil then return false end
         local m = #test.moves + 1
-        local move = { s0 = test.pts[#test.pts].s, key = step.style, labels = { step.letter }, gait = gait }
+        local need = spotGait(step.style)
+        local move = { s0 = test.pts[#test.pts].s, key = step.style, labels = { step.letter }, gait = need }
         table.insert(test.moves, move)
+        if need ~= gait then
+            -- Change a few metres before the letter.
+            local t = byGait[gait].pts
+            local here = test.pts[#test.pts]
+            local run = trackRun(t, onTrack(t, here.x, here.y), onTrack(t, at.x, at.y), rein)
+            local k = math.max(1, #run - math.floor(EqDressagePath.CHANGE_LEAD / EqDressagePath.STEP))
+            for i = 1, k do append(test, { run[i] }, m) end
+            change(test.pts[#test.pts].s, need, nil, m, true)
+        end
         track(at.x, at.y, m)
         local s = test.pts[#test.pts].s
         if step.style == "halt" or step.style == "reinBack" then
             halt(s, step.letter, m, false, gait, step.style == "reinBack")
         else
             lastChange = -math.huge
-            spot(s, step.letter, m, rein)
+            local turn = rein
+            if step.style == "pirouetteLeft" then turn = 1 elseif step.style == "pirouetteRight" then turn = -1 end
+            spot(s, step.letter, m, turn, step.style == "piaffe" and "piaffe" or "pirouette")
         end
         move.s1 = s
         lastKey = step.style
@@ -1306,8 +1320,8 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             return a.id < b.id
         end)
         for _, l in ipairs(lettersAhead()) do
-            for _, style in ipairs(spotStyles()) do
-                table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = gait, weight = 1, d = l.d })
+            for _, style in ipairs(EqDressagePath.SPOT_STYLES) do
+                table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = spotGait(style), weight = 1, d = l.d })
             end
         end
         test.options = { figure = figureOptions, spot = spotOptions }

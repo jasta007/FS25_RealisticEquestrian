@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="在%s定后肢旋转"/>
         <text name="eq_dt_hintNew" text="Ctrl+L：为此场地编排自己的盛装舞步路线"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L：编辑此场地的盛装舞步路线"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="上一个字母"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="下一个字母"/>
+        <text name="input_EQ_DT_GAIT" text="图形步法"/>
+        <text name="eq_dt_gaitAction" text="图形步法：%s"/>
+        <text name="eq_fig_pirouetteLeft" text="在%s向左定后肢旋转"/>
+        <text name="eq_fig_pirouetteRight" text="在%s向右定后肢旋转"/>
     </texts>
 </l10n>

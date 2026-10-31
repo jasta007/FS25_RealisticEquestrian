@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Piroetta in %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: crea la tua ripresa di dressage per questo rettangolo"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: modifica la ripresa di dressage di questo rettangolo"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Lettera precedente"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Lettera successiva"/>
+        <text name="input_EQ_DT_GAIT" text="Andatura delle figure"/>
+        <text name="eq_dt_gaitAction" text="Figure al: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Piroetta a sinistra in %s"/>
+        <text name="eq_fig_pirouetteRight" text="Piroetta a destra in %s"/>
     </texts>
 </l10n>

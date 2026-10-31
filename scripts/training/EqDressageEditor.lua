@@ -4,18 +4,23 @@
 
     Near one of our arenas the test key (EQ_DRESSAGE_TEST, Ctrl+L) starts a new test or edits the
     arena's saved one. The horse stands still and the camera looks straight down on the arena,
-    C at the top. The opening (A to a halt at X) shows in white, and the option for the next step
-    in cyan from where the test has got to:
+    C at the top. The last step kept (the opening, A to a halt at X, at first) shows in white, and
+    the option for the next step in cyan from where the test has got to. (James 2026-10-31 asked
+    for the last step at half opacity; the glow has no opacity, so it is white.)
     - N and M (EQ_DT_PREV, EQ_DT_NEXT) step through the options, nearest first.
+    - G (EQ_DT_GAIT) picks the gait of the figures on show, round walk, trot and canter; the
+      horse changes to it at the letter before the figure.
     - R (EQ_DT_RANDOM) picks one at random.
-    - F (EQ_DT_MODE) swaps between figures and movements on the spot at the letters ahead (a halt,
-      a halt and rein back, a piaffe or a pirouette).
+    - F (EQ_DT_MODE) swaps between figures and movements on the spot. On the spot N and M step
+      through the movements at a letter (halt, halt and rein back, piaffe, pirouette left and
+      right) and Shift+N / Shift+M (EQ_DT_PREV_LETTER, EQ_DT_NEXT_LETTER) move it to another letter.
     - Enter (EQ_DT_ACCEPT) keeps it; the next options come from its end.
     - Backspace (EQ_DT_UNDO) takes the last step kept back off.
     - The test key again saves: the final centre line to a halt at X is added. A test with every
       step undone deletes the arena's test.
     - The course delete key (Ctrl+Backspace, EqCourseHooks) cancels without saving.
     Getting off the horse saves what was kept, like recording a course.
+    While the camera is up, placeables standing over the arena (a riding hall's roof) are hidden.
 
     The editor keys are only live while editing. The editor runs where the rider is, so it is
     single player for now, like the course editor.
@@ -34,6 +39,8 @@ EqDressageEditor.STALE_MS = 1500
 EqDressageEditor.CAMERA_FOV = 60
 EqDressageEditor.CAMERA_MARGIN = 6
 EqDressageEditor.CAMERA_FAILED = false
+-- Placeables whose middle is within this many metres of the arena are hidden while the camera is up.
+EqDressageEditor.HIDE_MARGIN = 15
 
 EqDressageEditor.active = nil
 
@@ -121,10 +128,37 @@ function EqDressageEditor.cameraOn(active)
         g_cameraManager:setActiveCamera(camera)
         active.camera = camera
     end)
+    if ok then EqLog.try("EqDressageEditor.hideOver", EqDressageEditor.hideOver, active) end
     if not ok then
         EqDressageEditor.CAMERA_FAILED = true
         Log:warning("Dressage test editor: no camera over the arena (%s)", tostring(err))
     end
+end
+
+
+--- Placeables standing on or over the arena (other than our own arenas and the dressage boards)
+--- are hidden while the camera is up, so a riding hall's roof doesn't block the view
+--- (James 2026-10-31). Map buildings can't be hidden.
+--- @param active table
+function EqDressageEditor.hideOver(active)
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    if system == nil or system.placeables == nil then return end
+    local frame, margin = active.frame, EqDressageEditor.HIDE_MARGIN
+    active.hidden = {}
+    for _, placeable in ipairs(system.placeables) do
+        local root = placeable.rootNode
+        local file = placeable.configFileName
+        local skip = root == nil or EqDressage.isArenaXml(file) or EqDressage.isMarkerXml(file)
+        if not skip and getVisibility(root) then
+            local x, _, z = getWorldTranslation(root)
+            local lx, ly = EqDressagePath.toLocal(frame, x, z)
+            if math.abs(lx) <= frame.halfW + margin and math.abs(ly) <= frame.halfL + margin then
+                setVisibility(root, false)
+                table.insert(active.hidden, root)
+            end
+        end
+    end
+    if #active.hidden > 0 then Log:info("Dressage test editor: %d placeable(s) over the arena hidden", #active.hidden) end
 end
 
 
@@ -143,6 +177,10 @@ function EqDressageEditor.cameraOff(active)
     end
     g_cameraManager:removeCamera(camera)
     delete(camera)
+    for _, node in ipairs(active.hidden or {}) do
+        if entityExists == nil or entityExists(node) then EqLog.try("EqDressageEditor.cameraOff show", setVisibility, node, true) end
+    end
+    active.hidden = nil
 end
 
 
@@ -221,8 +259,18 @@ local function ctrlHeld()
 end
 
 
-function EqDressageEditor.onPrev(vehicle) withEditor(vehicle, EqDressageTests.cycle, -1) end
-function EqDressageEditor.onNext(vehicle) withEditor(vehicle, EqDressageTests.cycle, 1) end
+local function shiftHeld()
+    if Input == nil or Input.isKeyPressed == nil then return false end
+    return (Input.KEY_lshift ~= nil and Input.isKeyPressed(Input.KEY_lshift)) or (Input.KEY_rshift ~= nil and Input.isKeyPressed(Input.KEY_rshift))
+end
+
+
+-- Shift+N/M is the letter, not the option.
+function EqDressageEditor.onPrev(vehicle) if not shiftHeld() then withEditor(vehicle, EqDressageTests.cycle, -1) end end
+function EqDressageEditor.onNext(vehicle) if not shiftHeld() then withEditor(vehicle, EqDressageTests.cycle, 1) end end
+function EqDressageEditor.onPrevLetter(vehicle) withEditor(vehicle, EqDressageTests.cycleLetter, -1) end
+function EqDressageEditor.onNextLetter(vehicle) withEditor(vehicle, EqDressageTests.cycleLetter, 1) end
+function EqDressageEditor.onGait(vehicle) withEditor(vehicle, EqDressageTests.cycleGait) end
 function EqDressageEditor.onRandom(vehicle) withEditor(vehicle, EqDressageTests.random) end
 function EqDressageEditor.onMode(vehicle) withEditor(vehicle, EqDressageTests.toggle) end
 function EqDressageEditor.onAccept(vehicle) withEditor(vehicle, EqDressageTests.accept) end
@@ -240,6 +288,9 @@ local ACTIONS = {
     { field = "eqDtTestEventId", action = "EQ_DRESSAGE_TEST", handler = "onTestAction" },
     { field = "eqDtPrevEventId", action = "EQ_DT_PREV", handler = "onPrev", editor = true },
     { field = "eqDtNextEventId", action = "EQ_DT_NEXT", handler = "onNext", editor = true },
+    { field = "eqDtPrevLetterEventId", action = "EQ_DT_PREV_LETTER", handler = "onPrevLetter", editor = true, spot = true },
+    { field = "eqDtNextLetterEventId", action = "EQ_DT_NEXT_LETTER", handler = "onNextLetter", editor = true, spot = true },
+    { field = "eqDtGaitEventId", action = "EQ_DT_GAIT", handler = "onGait", editor = true },
     { field = "eqDtRandomEventId", action = "EQ_DT_RANDOM", handler = "onRandom", editor = true },
     { field = "eqDtModeEventId", action = "EQ_DT_MODE", handler = "onMode", editor = true },
     { field = "eqDtAcceptEventId", action = "EQ_DT_ACCEPT", handler = "onAccept", editor = true },
@@ -291,9 +342,13 @@ function EqDressageEditor.updateActions(vehicle)
     else
         testText = text("eq_dt_newAction")
     end
-    local modeText = ""
-    if mine then modeText = text(active.ed.mode == "figure" and "eq_dt_modeSpot" or "eq_dt_modeFigure") end
-    local state = string.format("%s|%s|%s|%s", testText, modeText, tostring(mine), tostring(spec.eqDtCanStart))
+    local modeText, gaitText, spotMode = "", "", false
+    if mine then
+        modeText = text(active.ed.mode == "figure" and "eq_dt_modeSpot" or "eq_dt_modeFigure")
+        gaitText = string.format(text("eq_dt_gaitAction"), text("eq_dressage_gait_" .. EqDressageTests.gaitOf(active.ed)))
+        spotMode = active.ed.mode == "spot"
+    end
+    local state = string.format("%s|%s|%s|%s|%s|%s", testText, modeText, gaitText, tostring(spotMode), tostring(mine), tostring(spec.eqDtCanStart))
     if spec.eqDtShown == state then return end
     spec.eqDtShown = state
     local binding = g_inputBinding
@@ -301,10 +356,12 @@ function EqDressageEditor.updateActions(vehicle)
         local id = spec[entry.field]
         if id ~= nil then
             local live = entry.editor and mine or (not entry.editor and (mine or spec.eqDtCanStart == true))
+            if entry.spot then live = live and spotMode end
             binding:setActionEventActive(id, live)
             binding:setActionEventTextVisibility(id, live)
             if entry.action == "EQ_DRESSAGE_TEST" then binding:setActionEventText(id, testText) end
             if entry.action == "EQ_DT_MODE" and mine then binding:setActionEventText(id, modeText) end
+            if entry.action == "EQ_DT_GAIT" and mine then binding:setActionEventText(id, gaitText) end
         end
     end
 end
@@ -352,23 +409,24 @@ function EqDressageEditor.draw(vehicle)
     local ed, frame = active.ed, active.frame
     local test = EqDressageTests.preview(ed)
     if test ~= nil then
-        local opening, option = {}, {}
+        -- The last step kept (the opening on the first step), and the option from its end.
+        local last, option = {}, {}
         for _, p in ipairs(test.pts) do
             local y = pointY(frame, p)
             local point = { x = p.wx, y = y, z = p.wz }
-            if p.s <= test.fromS then table.insert(opening, point) end
+            if p.s >= test.lastS and p.s <= test.fromS then table.insert(last, point) end
             if p.s >= test.fromS then table.insert(option, point) end
         end
         local style = { length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
             step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end }
-        if #ed.plan.steps == 0 and #opening >= 2 then EqCourseGlow.path(opening, "white", 0, nil, nil, nil, style) end
+        if #last >= 2 then EqCourseGlow.path(last, "white", test.lastS, nil, nil, nil, style) end
         if #option >= 2 then EqCourseGlow.path(option, "cyan", test.fromS, nil, nil, nil, style) end
         -- Where the option starts, and its halts and movements on the spot.
         local start = option[1]
         if start ~= nil then EqCourseGlow.pole(start.x, start.y, start.z, EqDressageEditor.POLE_HEIGHT) end
         local run = { test = test, frame = frame }
         for _, e in ipairs(test.events) do
-            if (e.kind == "halt" or e.kind == "spot") and (e.s >= test.fromS or #ed.plan.steps == 0) then EqDressageHooks.drawSymbol(run, e) end
+            if (e.kind == "halt" or e.kind == "spot") and e.s >= test.lastS then EqDressageHooks.drawSymbol(run, e) end
         end
     end
 

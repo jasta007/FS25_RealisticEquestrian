@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="%sでピルエット"/>
         <text name="eq_dt_hintNew" text="Ctrl+L：このアリーナの馬場馬術の経路を自分で作る"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L：このアリーナの馬場馬術の経路を編集"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="前の文字"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="次の文字"/>
+        <text name="input_EQ_DT_GAIT" text="図形の歩法"/>
+        <text name="eq_dt_gaitAction" text="図形の歩法：%s"/>
+        <text name="eq_fig_pirouetteLeft" text="%sで左ピルエット"/>
+        <text name="eq_fig_pirouetteRight" text="%sで右ピルエット"/>
     </texts>
 </l10n>

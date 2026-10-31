@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Piruet w %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: ułóż własny program ujeżdżenia dla tego czworoboku"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: edytuj program ujeżdżenia tego czworoboku"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Poprzednia litera"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Następna litera"/>
+        <text name="input_EQ_DT_GAIT" text="Chód figur"/>
+        <text name="eq_dt_gaitAction" text="Figury w: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Piruet w lewo w %s"/>
+        <text name="eq_fig_pirouetteRight" text="Piruet w prawo w %s"/>
     </texts>
 </l10n>

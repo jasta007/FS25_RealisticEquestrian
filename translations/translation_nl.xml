@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Pirouette bij %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: maak je eigen dressuurproef voor deze bak"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: bewerk de dressuurproef van deze bak"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Vorige letter"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Volgende letter"/>
+        <text name="input_EQ_DT_GAIT" text="Gang van de figuren"/>
+        <text name="eq_dt_gaitAction" text="Figuren in: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirouette linksom bij %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirouette rechtsom bij %s"/>
     </texts>
 </l10n>

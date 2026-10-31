@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Pirueta v %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: sestavte vlastní drezurní úlohu pro tuto jízdárnu"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: upravit drezurní úlohu této jízdárny"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Předchozí písmeno"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Další písmeno"/>
+        <text name="input_EQ_DT_GAIT" text="Chod cviků"/>
+        <text name="eq_dt_gaitAction" text="Cviky v: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirueta vlevo v %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirueta vpravo v %s"/>
     </texts>
 </l10n>

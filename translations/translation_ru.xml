@@ -933,5 +933,11 @@
         <text name="eq_fig_pirouette" text="Пируэт у %s"/>
         <text name="eq_dt_hintNew" text="Ctrl+L: составить свою езду по выездке для этого плаца"/>
         <text name="eq_dt_hintEdit" text="Ctrl+L: изменить езду по выездке этого плаца"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Предыдущая буква"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Следующая буква"/>
+        <text name="input_EQ_DT_GAIT" text="Аллюр фигур"/>
+        <text name="eq_dt_gaitAction" text="Фигуры: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Пируэт налево у %s"/>
+        <text name="eq_fig_pirouetteRight" text="Пируэт направо у %s"/>
     </texts>
 </l10n>

@@ -4039,11 +4039,38 @@ end)()
         check(name .. ": the first preview shows the opening and the option from its end", preview ~= nil and preview.fromS > 10
             and preview.length > preview.fromS and preview.moves[1].key == "enter")
         -- Next and back round the ends.
-        local count = #ed.options.figure
+        local count = #EqDressageTests.view(ed)
         EqDressageTests.cycle(ed, -1)
         local wrapped = ed.index == count
         EqDressageTests.cycle(ed, 1)
-        check(name .. ": N and M step round the options", wrapped and ed.index == 1)
+        check(name .. ": N and M step round the options", wrapped and ed.index == 1 and count > 0)
+        -- Figures show at one gait at a time; G goes round walk, trot, canter.
+        local oneGait = true
+        for _, option in ipairs((EqDressageTests.view(ed))) do oneGait = oneGait and option.figure.gait == "trot" end
+        EqDressageTests.cycleGait(ed)
+        local canters = EqDressageTests.view(ed)
+        local allCanter = #canters > 0
+        for _, option in ipairs(canters) do allCanter = allCanter and option.figure.gait == "canter" end
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        check(name .. ": figures show at the gait picked with G", oneGait and allCanter and EqDressageTests.gaitOf(ed) == "trot")
+        -- On the spot: N and M go through every movement at one letter, Shift+N/M through the letters.
+        EqDressageTests.toggle(ed)
+        local styles, letter = {}, EqDressageTests.current(ed).letter
+        for _ = 1, #EqDressagePath.SPOT_STYLES do
+            local option = EqDressageTests.current(ed)
+            styles[option.style] = option.letter == letter
+            EqDressageTests.cycle(ed, 1)
+        end
+        local all = true
+        for _, style in ipairs(EqDressagePath.SPOT_STYLES) do all = all and styles[style] == true end
+        EqDressageTests.cycle(ed, 2)
+        local style = EqDressageTests.current(ed).style
+        EqDressageTests.cycleLetter(ed, 1)
+        local moved = EqDressageTests.current(ed)
+        check(name .. ": on the spot N/M go through every movement at a letter, Shift moves the letter", all
+            and moved.style == style and (moved.letter ~= letter or moved.turn ~= nil), tostring(letter))
+        EqDressageTests.toggle(ed)
         -- Six figures (random), a halt and a piaffe or pirouette on the spot, one undone.
         local kept = {}
         for i = 1, 8 do
@@ -4064,7 +4091,7 @@ end)()
         local plan, built = EqDressageTests.finished(ed)
         local spots, last = 0, built ~= nil and built.events[#built.events] or nil
         for _, move in ipairs(built ~= nil and built.moves or {}) do
-            if move.key == "halt" or move.key == "reinBack" or move.key == "piaffe" or move.key == "pirouette" then spots = spots + 1 end
+            if move.key == "halt" or move.key == "reinBack" or move.key == "piaffe" or move.key:sub(1, 9) == "pirouette" then spots = spots + 1 end
         end
         check(name .. ": saving adds the final centre line to a halt at X", plan ~= nil and built.steps == #plan.steps and built.broken == nil
             and built.moves[#built.moves].key == "final" and last.final and #built.moves == #plan.steps + 3 and spots >= 1,
@@ -4101,6 +4128,19 @@ end)()
     -- A step that no longer fits (the arena's size changed) ends the plan there.
     local broken = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 3, steps = { { kind = "figure", id = "nothing/trot/1/1", seed = 1 } } })
     check("a saved step that no longer fits is left out", broken.broken == 1 and broken.moves[#broken.moves].key == "final")
+    -- On the spot from the wrong gait: the horse changes before the letter; pirouettes either way.
+    local base = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 2, steps = {} }, true)
+    local letterAt = base.options.spot[1].letter
+    local function spotTest(style)
+        return EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 2, steps = { { kind = "spot", style = style, letter = letterAt, seed = 1 } } }, true)
+    end
+    local function eventOf(test, kind)
+        for _, e in ipairs(test.events) do if e.kind == kind and e.m == 3 then return e end end
+    end
+    local right, left = eventOf(spotTest("pirouetteRight"), "spot"), eventOf(spotTest("pirouetteLeft"), "spot")
+    local toWalk = eventOf(spotTest("pirouetteRight"), "change")
+    check("a pirouette either way, from a trot via a walk", right ~= nil and right.turn == -1 and left.turn == 1 and right.gait == "walk"
+        and toWalk ~= nil and toWalk.gait == "walk" and toWalk.s < right.s)
     check("an empty saved test reads as none", EqDressageTests.decode("1 5") == nil and EqDressageTests.decode(nil) == nil)
     local stuck = EqDressagePath.newRun(one, 50)
     local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)

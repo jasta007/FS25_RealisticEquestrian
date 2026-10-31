@@ -153,17 +153,59 @@ local function copyPlan(plan)
 end
 
 
+EqDressageTests.GAITS = { "walk", "trot", "canter" }
+
+
 --- Start editing an arena's test: a new one, or the saved one carried on from its last step.
 --- @param frame table
 --- @param plan table|nil the saved test
 --- @param rng function (n) -> 1..n
 --- @return table editor
 function EqDressageTests.newEditor(frame, plan, rng)
-    local ed = { frame = frame, plan = copyPlan(plan), rng = rng, mode = "figure", index = 1, saved = plan ~= nil }
+    local ed = { frame = frame, plan = copyPlan(plan), rng = rng, mode = "figure", index = 1, group = 1, saved = plan ~= nil }
     ed.plan.seed = ed.plan.seed or rng(EqDressageTests.SEED_MAX)
     ed.seed = rng(EqDressageTests.SEED_MAX)
     EqDressageTests.refresh(ed)
     return ed
+end
+
+
+--- The gait the figures on show are ridden at: the one the player picked (G), else the gait the
+--- test has got to.
+--- @param ed table
+--- @return string gait
+function EqDressageTests.gaitOf(ed)
+    return ed.gait or (ed.base ~= nil and ed.base.gait) or "trot"
+end
+
+
+--- The options on show now. Figures: those at the gait on show. On the spot: the movements at
+--- one letter (ed.group), so N and M step through the movements and Shift+N/M through the letters.
+--- @param ed table
+--- @return table list, table groups { key } for the spot mode's letters
+function EqDressageTests.view(ed)
+    local list, groups = {}, {}
+    if ed.mode == "figure" then
+        local gait = EqDressageTests.gaitOf(ed)
+        for _, option in ipairs(ed.options.figure) do
+            if option.figure.gait == gait then table.insert(list, option) end
+        end
+        return list, groups
+    end
+    local seen = {}
+    for _, option in ipairs(ed.options.spot) do
+        local key = string.format("%d %s %.1f", option.turn or 0, option.letter, option.d or 0)
+        if not seen[key] then
+            seen[key] = true
+            table.insert(groups, key)
+        end
+        option.group = #groups
+    end
+    local group = math.max(1, math.min(ed.group or 1, #groups))
+    for _, option in ipairs(ed.options.spot) do
+        if option.group == group then table.insert(list, option) end
+    end
+    return list, groups
 end
 
 
@@ -191,7 +233,10 @@ function EqDressageTests.refresh(ed)
     end
     ed.options = options
     if #options[ed.mode] == 0 then ed.mode = ed.mode == "figure" and "spot" or "figure" end
-    ed.index = math.max(1, math.min(ed.index, #options[ed.mode]))
+    local list, groups = EqDressageTests.view(ed)
+    ed.group = math.max(1, math.min(ed.group or 1, math.max(1, #groups)))
+    list = EqDressageTests.view(ed)
+    ed.index = math.max(1, math.min(ed.index, #list))
     ed.preview = nil
 end
 
@@ -199,42 +244,84 @@ end
 --- @param ed table
 --- @return table|nil option the one showing, number index, number count
 function EqDressageTests.current(ed)
-    local list = ed.options[ed.mode]
+    local list = EqDressageTests.view(ed)
     return list[ed.index], ed.index, #list
 end
 
 
---- Step through the options (N back, M on), round at the ends.
+--- Step through the options on show (N back, M on), round at the ends.
 --- @param ed table
 --- @param delta number
 function EqDressageTests.cycle(ed, delta)
-    local n = #ed.options[ed.mode]
+    local n = #EqDressageTests.view(ed)
     if n == 0 then return end
     ed.index = (ed.index - 1 + delta) % n + 1
     ed.preview = nil
 end
 
 
+--- On the spot: the same movement at the letter before or after (Shift+N, Shift+M).
+--- @param ed table
+--- @param delta number
+function EqDressageTests.cycleLetter(ed, delta)
+    if ed.mode ~= "spot" then return end
+    local option = EqDressageTests.current(ed)
+    local _, groups = EqDressageTests.view(ed)
+    if #groups == 0 then return end
+    ed.group = (ed.group - 1 + delta) % #groups + 1
+    ed.index = 1
+    for i, other in ipairs((EqDressageTests.view(ed))) do
+        if option ~= nil and other.style == option.style then ed.index = i end
+    end
+    ed.preview = nil
+end
+
+
+--- The gait the figures are shown at, round walk, trot, canter (G).
+--- @param ed table
+function EqDressageTests.cycleGait(ed)
+    local gait = EqDressageTests.gaitOf(ed)
+    for i, g in ipairs(EqDressageTests.GAITS) do
+        if g == gait then
+            ed.gait = EqDressageTests.GAITS[i % #EqDressageTests.GAITS + 1]
+            break
+        end
+    end
+    ed.mode, ed.index, ed.preview = "figure", 1, nil
+end
+
+
 --- A random option, weighted like a random test's figures, and a new roll for what is left to
---- chance inside it.
+--- chance inside it. Figures at the gait on show; on the spot, any movement at any letter.
 --- @param ed table
 function EqDressageTests.random(ed)
-    local list = ed.options[ed.mode]
+    local list = ed.mode == "figure" and EqDressageTests.view(ed) or ed.options.spot
     if #list == 0 then return end
+    local showing = EqDressageTests.current(ed)
     local total = 0
     for _, option in ipairs(list) do total = total + (option.weight or 1) end
     local roll = (ed.rng(1000) - 0.5) / 1000 * total
-    local pick = #list
-    for i, option in ipairs(list) do
+    local pick = list[#list]
+    for _, option in ipairs(list) do
         roll = roll - (option.weight or 1)
         if roll <= 0 then
-            pick = i
+            pick = option
             break
         end
     end
     -- Not the one already showing, when there is a choice.
-    if pick == ed.index and #list > 1 then pick = pick % #list + 1 end
-    ed.index = pick
+    if pick == showing and #list > 1 then
+        for i, option in ipairs(list) do
+            if option == pick then
+                pick = list[i % #list + 1]
+                break
+            end
+        end
+    end
+    if ed.mode == "spot" then ed.group = pick.group or 1 end
+    for i, option in ipairs((EqDressageTests.view(ed))) do
+        if option == pick then ed.index = i end
+    end
     ed.seed = ed.rng(EqDressageTests.SEED_MAX)
     ed.preview = nil
 end
@@ -245,7 +332,7 @@ end
 function EqDressageTests.toggle(ed)
     local other = ed.mode == "figure" and "spot" or "figure"
     if #ed.options[other] == 0 then return false end
-    ed.mode, ed.index, ed.preview = other, 1, nil
+    ed.mode, ed.index, ed.group, ed.preview = other, 1, 1, nil
     return true
 end
 
@@ -260,7 +347,7 @@ end
 
 
 --- The test with the option showing as its next step, for drawing. preview.fromS is where the
---- option starts (the end of the last step kept).
+--- option starts (the end of the last step kept), preview.lastS where that last step started.
 --- @param ed table
 --- @return table|nil test
 function EqDressageTests.preview(ed)
@@ -272,6 +359,9 @@ function EqDressageTests.preview(ed)
     table.insert(steps, stepOf(option, ed.seed))
     local test = EqDressagePath.build(ed.frame, nil, nil, { turn = option.turn, seed = ed.plan.seed, steps = steps }, true)
     test.fromS = test.moves[#test.moves].s0
+    -- The step before: the last one kept, or the opening (both its movements) on the first.
+    local before = #ed.plan.steps > 0 and test.moves[#test.moves - 1] or test.moves[1]
+    test.lastS = before ~= nil and before.s0 or 0
     ed.preview = test
     return test
 end
@@ -287,7 +377,8 @@ function EqDressageTests.accept(ed)
     ed.plan.turn = option.turn
     table.insert(ed.plan.steps, step)
     ed.seed = ed.rng(EqDressageTests.SEED_MAX)
-    ed.mode, ed.index = "figure", 1
+    -- The figures go on at the gait the test is now in, unless the player picks another.
+    ed.mode, ed.index, ed.group, ed.gait = "figure", 1, 1, nil
     EqDressageTests.refresh(ed)
     return step
 end
@@ -300,16 +391,24 @@ function EqDressageTests.undo(ed)
     local step = table.remove(ed.plan.steps)
     if step == nil then return false end
     ed.seed = step.seed
-    ed.mode = step.kind == "spot" and "spot" or "figure"
-    ed.index = 1
+    ed.mode, ed.index, ed.group, ed.gait = step.kind == "spot" and "spot" or "figure", 1, 1, nil
     EqDressageTests.refresh(ed)
-    for i, option in ipairs(ed.options[ed.mode]) do
-        if (option.kind == "figure" and option.id == step.id) or (option.kind == "spot" and option.style == step.style and option.letter == step.letter) then
-            if #ed.plan.steps > 0 or option.turn == ed.plan.turn then
-                ed.index = i
-                break
-            end
+    local function matches(option)
+        if #ed.plan.steps == 0 and option.turn ~= ed.plan.turn then return false end
+        if option.kind == "figure" then return option.id == step.id end
+        return option.style == step.style and option.letter == step.letter
+    end
+    if ed.mode == "figure" then
+        for _, option in ipairs(ed.options.figure) do
+            if matches(option) then ed.gait = option.figure.gait end
         end
+    else
+        for _, option in ipairs(ed.options.spot) do
+            if matches(option) then ed.group = option.group or 1 end
+        end
+    end
+    for i, option in ipairs((EqDressageTests.view(ed))) do
+        if matches(option) then ed.index = i end
     end
     if #ed.plan.steps == 0 then ed.plan.turn = nil end
     return true
