@@ -196,6 +196,23 @@ end
 
 
 --- @param farmId number
+--- @return table brands the farm's signed sponsors, the lead first (empty for none): one contract
+--- per farm now, a list of them once several sponsors at once (PR #137) are in
+function EqSponsors.signedBrands(farmId)
+    if EqSponsorManager == nil then return {} end
+    if EqSponsorManager.sponsorBrands ~= nil then return EqSponsorManager.sponsorBrands(farmId) or {} end
+    local contracts = EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
+    if type(contracts) ~= "table" then return {} end
+    if contracts.brand ~= nil then return { contracts.brand } end
+    local list = {}
+    for _, contract in ipairs(contracts) do
+        if type(contract) == "table" and contract.brand ~= nil then table.insert(list, contract.brand) end
+    end
+    return list
+end
+
+
+--- @param farmId number
 --- @return number boards sponsor boards on the farm's placeables, anywhere on the map (rope
 --- signs as a fraction)
 function EqSponsors.countBoards(farmId)
@@ -212,9 +229,8 @@ function EqSponsors.countBoards(farmId)
             end
         end
     end
-    -- and the sponsor's machines parked on the farm's plinths (EqPlinths)
-    local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
-    local machines = EqPlinths ~= nil and contract ~= nil and EqPlinths.count(farmId, contract.brand) or 0
+    -- and the sponsors' machines parked on the farm's plinths (EqPlinths)
+    local machines = EqPlinths ~= nil and EqPlinths.count(farmId, EqSponsors.signedBrands(farmId)) or 0
     return EqSponsors.total(count, signs) + machines
 end
 

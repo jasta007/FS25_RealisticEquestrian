@@ -5006,6 +5006,14 @@ end)()
             and EqPlinths.best(decks, { { [a] = { 0, 1.6, 4.5 } }, { [a] = { 0, 1.6, -4.5 } }, { [a] = { 0, 0.1, 0.5 } } }) == 6
             and EqPlinths.best(decks, { { [b] = { 0, 1.0, 6.85 } } }) == 0)
         check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
+        do
+            local saved = EqSponsorManager
+            EqSponsorManager = { contracts = { [1] = { brand = "FENDT" }, [2] = { { brand = "CLAAS" }, { brand = "KUHN" } } } }
+            local one, many, none = EqSponsors.signedBrands(1), EqSponsors.signedBrands(2), EqSponsors.signedBrands(3)
+            EqSponsorManager = saved
+            check("plinths: one sponsor or several (PR #137), every sponsor's machines count", one[1] == "FENDT" and #one == 1
+                and many[1] == "CLAAS" and many[2] == "KUHN" and #none == 0)
+        end
         local modDesc = io.open("modDesc.xml"):read("*a")
         for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump", "plinthTurntable" }) do
             local path = "placeables/sponsorPlinths/" .. n

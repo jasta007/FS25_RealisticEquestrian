@@ -129,10 +129,13 @@ end
 
 
 --- @param farmId number
---- @param brand string|nil the farm's sponsor
---- @return number boards the sponsor's machines on the farm's plinths are worth
-function EqPlinths.count(farmId, brand)
-    if brand == nil or g_currentMission == nil then return 0 end
+--- @param brands table|string|nil the farm's sponsors (a list, or one brand)
+--- @return number boards the sponsors' machines on the farm's plinths are worth
+function EqPlinths.count(farmId, brands)
+    if type(brands) == "string" then brands = { brands } end
+    if type(brands) ~= "table" or next(brands) == nil or g_currentMission == nil then return 0 end
+    local signed = {}
+    for _, name in ipairs(brands) do signed[name] = true end
     local placeables = g_currentMission.placeableSystem ~= nil and g_currentMission.placeableSystem.placeables or {}
     local decks, plinths = {}, {}
     for _, placeable in ipairs(placeables) do
@@ -148,7 +151,7 @@ function EqPlinths.count(farmId, brand)
     local machines = {}
     for _, vehicle in ipairs(vehicles) do
         local owner = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
-        if owner == farmId and not borrowed(vehicle) and brandOf(vehicle) == brand then
+        if owner == farmId and not borrowed(vehicle) and signed[brandOf(vehicle) or ""] then
             local wx, wy, wz = EqPlinths.footprint(vehicle)
             if wx ~= nil then
                 local machine = {}

@@ -314,8 +314,8 @@ function EqSponsorBoards.colourFor(placeable)
     if not EqSponsorBoards.isJump(placeable and placeable.configFileName) or not EqSponsorBoards.isOn(placeable) then return nil, nil end
     local farmId = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
     if farmId == nil and g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then farmId = g_currentMission:getFarmId() end
-    local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
-    local brand = contract ~= nil and contract.brand or nil
+    -- the lead sponsor's colour when there are several
+    local brand = EqSponsors ~= nil and EqSponsors.signedBrands ~= nil and farmId ~= nil and EqSponsors.signedBrands(farmId)[1] or nil
     local colour = EqSponsorBoards.brandColour(brand)
     return colour, colour ~= nil and brand or nil
 end
