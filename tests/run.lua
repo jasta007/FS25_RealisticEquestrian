@@ -4047,22 +4047,42 @@ end)()
         -- Figures show at one gait at a time; G goes round walk, trot, canter.
         local oneGait = true
         for _, option in ipairs((EqDressageTests.view(ed))) do oneGait = oneGait and option.figure.gait == "trot" end
+        local trotShown = EqDressageTests.current(ed)
         EqDressageTests.cycleGait(ed)
+        local canterShown = EqDressageTests.current(ed)
         local canters = EqDressageTests.view(ed)
         local allCanter = #canters > 0
         for _, option in ipairs(canters) do allCanter = allCanter and option.figure.gait == "canter" end
         EqDressageTests.cycleGait(ed)
         EqDressageTests.cycleGait(ed)
         check(name .. ": figures show at the gait picked with G", oneGait and allCanter and EqDressageTests.gaitOf(ed) == "trot")
+        check(name .. ": G keeps the same kind of figure when it has one at the new gait", canterShown ~= nil
+            and (canterShown.figure.key == trotShown.figure.key or not (function()
+                for _, o in ipairs(canters) do if o.figure.key == trotShown.figure.key then return true end end
+                return false
+            end)()), trotShown.id .. " -> " .. tostring(canterShown and canterShown.id))
+        -- ...and round all three back to the trot, the very same one.
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        local back = EqDressageTests.current(ed)
+        check(name .. ": G round to the same gait comes back to the same figure", back ~= nil and back.id == trotShown.id,
+            trotShown.id .. " -> " .. tostring(back and back.id))
         -- On the spot: N and M go through every movement at one letter, Shift+N/M through the letters.
         EqDressageTests.toggle(ed)
         local styles, letter = {}, EqDressageTests.current(ed).letter
-        for _ = 1, #EqDressagePath.SPOT_STYLES do
-            local option = EqDressageTests.current(ed)
-            styles[option.style] = option.letter == letter
-            EqDressageTests.cycle(ed, 1)
+        for _ = 1, 3 do
+            for _ = 1, #EqDressageTests.view(ed) do
+                local option = EqDressageTests.current(ed)
+                styles[option.style] = (styles[option.style] ~= false) and option.letter == letter
+                    and (option.style ~= "piaffe" or option.gait == "trot") and (option.style:sub(1, 9) ~= "pirouette" or option.gait ~= "trot")
+                EqDressageTests.cycle(ed, 1)
+            end
+            -- G on the spot stays on the spot, with the movements ridden from the new gait.
+            EqDressageTests.cycleGait(ed)
+            styles.stayed = styles.stayed ~= false and ed.mode == "spot"
         end
-        local all = true
+        local all = styles.stayed
         for _, style in ipairs(EqDressagePath.SPOT_STYLES) do all = all and styles[style] == true end
         EqDressageTests.cycle(ed, 2)
         local style = EqDressageTests.current(ed).style

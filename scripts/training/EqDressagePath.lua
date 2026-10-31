@@ -1228,14 +1228,22 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         return list
     end
 
-    --- The movements on the spot a player can put at a letter, and the gait each is ridden from:
+    --- The movements on the spot a player can put at a letter, and the gaits each is ridden from:
     --- a halt or a halt and rein back from any gait, a piaffe from a trot, a pirouette either
-    --- way from a walk or canter (from a trot it comes down to a walk first). The horse changes
-    --- to that gait on the way to the letter. "pirouette" (older saves) turns with the rein.
-    local function spotGait(style)
-        if style == "piaffe" then return "trot" end
-        if style == "pirouette" or style == "pirouetteLeft" or style == "pirouetteRight" then return gait == "canter" and "canter" or "walk" end
-        return gait
+    --- way from a walk or canter. The horse changes to that gait on the way to the letter.
+    --- "pirouette" (older saves) turns with the rein.
+    local function spotGaits(style)
+        if style == "piaffe" then return { trot = true } end
+        if style == "pirouette" or style == "pirouetteLeft" or style == "pirouetteRight" then return { walk = true, canter = true } end
+        return { walk = true, trot = true, canter = true }
+    end
+    --- The gait a movement is ridden from: the one asked for, else the gait the horse is in, else
+    --- (a pirouette from a trot) a walk.
+    local function spotGait(style, wanted)
+        local ok = spotGaits(style)
+        if wanted ~= nil and ok[wanted] then return wanted end
+        if ok[gait] then return gait end
+        return style == "piaffe" and "trot" or "walk"
     end
 
     --- A player's step on the spot: ride the track to its letter and do it there.
@@ -1250,7 +1258,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         end
         if at == nil then return false end
         local m = #test.moves + 1
-        local need = spotGait(step.style)
+        local need = spotGait(step.style, step.gait)
         local move = { s0 = test.pts[#test.pts].s, key = step.style, labels = { step.letter }, gait = need }
         table.insert(test.moves, move)
         if need ~= gait then
@@ -1320,8 +1328,12 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             return a.id < b.id
         end)
         for _, l in ipairs(lettersAhead()) do
-            for _, style in ipairs(EqDressagePath.SPOT_STYLES) do
-                table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = spotGait(style), weight = 1, d = l.d })
+            for _, spotAt in ipairs(EqDressagePath.GAITS) do
+                for _, style in ipairs(EqDressagePath.SPOT_STYLES) do
+                    if spotGaits(style)[spotAt] then
+                        table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = spotAt, weight = 1, d = l.d })
+                    end
+                end
             end
         end
         test.options = { figure = figureOptions, spot = spotOptions }

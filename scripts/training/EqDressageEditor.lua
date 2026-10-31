@@ -4,9 +4,8 @@
 
     Near one of our arenas the test key (EQ_DRESSAGE_TEST, Ctrl+L) starts a new test or edits the
     arena's saved one. The horse stands still and the camera looks straight down on the arena,
-    C at the top. The last step kept (the opening, A to a halt at X, at first) shows in white, and
-    the option for the next step in cyan from where the test has got to. (James 2026-10-31 asked
-    for the last step at half opacity; the glow has no opacity, so it is white.)
+    C at the top. The last step kept (the opening, A to a halt at X, at first) shows in faint grey,
+    and the option for the next step in cyan from where the test has got to.
     - N and M (EQ_DT_PREV, EQ_DT_NEXT) step through the options, nearest first.
     - G (EQ_DT_GAIT) picks the gait of the figures on show, round walk, trot and canter; the
       horse changes to it at the letter before the figure.
@@ -419,7 +418,7 @@ function EqDressageEditor.draw(vehicle)
         end
         local style = { length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
             step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end }
-        if #last >= 2 then EqCourseGlow.path(last, "white", test.lastS, nil, nil, nil, style) end
+        if #last >= 2 then EqCourseGlow.path(last, "grey", test.lastS, nil, nil, nil, style) end
         if #option >= 2 then EqCourseGlow.path(option, "cyan", test.fromS, nil, nil, nil, style) end
         -- Where the option starts, and its halts and movements on the spot.
         local start = option[1]
