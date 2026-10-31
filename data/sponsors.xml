@@ -32,7 +32,9 @@
                         its yearly popularity target before strictness, and the event rating it
                         sponsors from (minRating), with a share of the fee at the rating below
                         (lowerShare, 0 for none) and the lowest rating that share is paid at
-                        (lowerRating)
+                        (lowerRating), and the fewest shop machines a brand needs for that size
+                        (minItems: a brand short of it drops to a smaller size, and one short of
+                        every size is never a sponsor)
 
     strictness          each offer rolls a strictness from 0 (Relaxed) to 1 (Hard bargain); every
                         term and reward runs from its "relaxed" value to its "strict" one, then
@@ -72,9 +74,9 @@
     </priceBands>
 
     <sizes>
-        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate"/>
-        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate"/>
-        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"/>
+        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15"/>
+        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"/>
+        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"/>
     </sizes>
 
     <strictness wobble="0.1">

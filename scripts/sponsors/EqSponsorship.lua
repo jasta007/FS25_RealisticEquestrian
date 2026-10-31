@@ -75,6 +75,7 @@ function EqSponsorship.read(xmlFile)
             minRating = xmlFile:getString(key .. "#minRating", "novice"),
             lowerShare = xmlFile:getFloat(key .. "#lowerShare", 0),
             lowerRating = xmlFile:getString(key .. "#lowerRating"),
+            minItems = xmlFile:getInt(key .. "#minItems", 0),
         }
         table.insert(config.sizes, size)
         config.sizeByName[size.name] = size
@@ -168,8 +169,17 @@ end
 --- @param profiles table from EqSponsorship.profiles
 --- @return table ranked list of profiles, biggest first, each with .size and .rank
 function EqSponsorship.rank(config, profiles)
+    -- A brand with fewer machines than the smallest size asks for is no sponsor at all (James,
+    -- 2026-10-31: one tree cutter nobody buys is not a sponsor).
+    local fewest = nil
+    for _, size in ipairs(config.sizes) do
+        if fewest == nil or size.minItems < fewest then fewest = size.minItems end
+    end
     local ranked = {}
-    for _, profile in pairs(profiles) do table.insert(ranked, profile) end
+    for _, profile in pairs(profiles) do
+        profile.size, profile.rank = nil, nil
+        if profile.items >= (fewest or 0) then table.insert(ranked, profile) end
+    end
     table.sort(ranked, function(a, b)
         if a.categories ~= b.categories then return a.categories > b.categories end
         if a.bands ~= b.bands then return a.bands > b.bands end
@@ -187,7 +197,10 @@ function EqSponsorship.rank(config, profiles)
     for i, profile in ipairs(ranked) do
         while sizeIndex < #config.sizes and i > limits[sizeIndex] do sizeIndex = sizeIndex + 1 end
         profile.rank = i
-        profile.size = config.sizes[sizeIndex] ~= nil and config.sizes[sizeIndex].name or "small"
+        -- Too few machines for its place: down to the biggest size it has enough for.
+        local index = sizeIndex
+        while index < #config.sizes and profile.items < config.sizes[index].minItems do index = index + 1 end
+        profile.size = config.sizes[index] ~= nil and config.sizes[index].name or "small"
     end
     return ranked
 end

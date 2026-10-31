@@ -4568,29 +4568,38 @@ end)()
     check("sponsors: price bands", EqSponsorship.bandOf(sp, 5000) == 1 and EqSponsorship.bandOf(sp, 50000) == 3
         and EqSponsorship.bandOf(sp, 5000000) == #sp.bands + 1)
 
-    -- A made-up shop: brand A is everywhere, B in two categories, C one, D one cheap thing.
+    -- A made-up shop: A everywhere, B in two categories, C one, D and E too few machines.
     local items = {}
     local function add(brand, category, price) table.insert(items, { brand = brand, categories = { category }, price = price, name = brand .. category .. price }) end
     for i, category in ipairs({ "tractorsL", "tractorsM", "harvesters", "plows", "trailers" }) do
         add("A", category, 20000 * i)
         add("A", category, 260000)
+        add("A", category, 500000)
     end
     add("B", "tractorsM", 260000); add("B", "trailers", 30000)
-    add("C", "plows", 8000); add("C", "plows", 9000)
-    add("D", "plows", 4000)
+    for i = 1, 6 do add("B", "trailers", 30000 + i * 1000) end
+    add("C", "plows", 8000); add("C", "plows", 9000); add("C", "plows", 9500)
+    add("D", "plows", 4000); add("D", "plows", 750000)
+    add("E", "forestry", 750000)
     add("LIZARD", "tractorsL", 1000); add("LIZARD", "plows", 2000)
     local profiles = EqSponsorship.profiles(sp, items)
     check("sponsors: Lizard left out of the shop", profiles.LIZARD == nil)
-    check("sponsors: profile counts categories, bands, machines", profiles.A.categories == 5 and profiles.A.items == 10
-        and profiles.B.categories == 2 and profiles.C.items == 2 and profiles.C.bands == 1)
+    check("sponsors: profile counts categories, bands, machines", profiles.A.categories == 5 and profiles.A.items == 15
+        and profiles.B.categories == 2 and profiles.C.items == 3 and profiles.C.bands == 1)
     local ranked = EqSponsorship.rank(sp, profiles)
+    check("sponsors: brands with under 3 machines are no sponsors", #ranked == 3 and profiles.D.size == nil and profiles.E.size == nil)
     check("sponsors: ranked by categories, then bands, then machines", ranked[1].brand == "A" and ranked[2].brand == "B"
-        and ranked[3].brand == "C" and ranked[4].brand == "D")
-    check("sponsors: biggest brand is big, smallest small", ranked[1].size == "big" and ranked[4].size == "small")
+        and ranked[3].brand == "C")
+    check("sponsors: biggest brand is big, smallest small", ranked[1].size == "big" and ranked[3].size == "small")
+    check("sponsors: too few machines for its place drops a size", (function()
+        local few = EqSponsorship.rank(sp, { X = { brand = "X", categories = 9, bands = 3, items = 4, byCategory = {} },
+            Y = { brand = "Y", categories = 1, bands = 1, items = 3, byCategory = {} } })
+        return few[1].brand == "X" and few[1].size == "small"
+    end)())
 
     local offers = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
     local again = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
-    check("sponsors: never more offers than brands", #offers == 4)
+    check("sponsors: never more offers than brands", #offers == 3)
     local same = #offers == #again
     for i, offer in ipairs(offers) do
         same = same and again[i].brand == offer.brand and again[i].fee == offer.fee and again[i].strictness == offer.strictness
@@ -4628,7 +4637,7 @@ end)()
         { brand = "C", categories = { "balers" }, price = 50000 } }
     local clashes = EqSponsorship.clashes(offer, profiles.A, owned)
     check("sponsors: a rival machine near a sponsor price clashes", #clashes == 1 and clashes[1].name == "Big B")
-    owned[2].price = 400000
+    owned[2].price = 120000
     check("sponsors: outside the window, no clash", #EqSponsorship.clashes(offer, profiles.A, owned) == 0)
     owned[2].price = 300000
     local checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 0 })

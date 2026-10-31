@@ -250,6 +250,23 @@ function EqSponsorManager.offersFor(farmId)
         record.madeMonth = madeMonth
         if #record.list == 0 then record.retried = true end
     end
+    -- Offers saved under older rules (a brand too small to sponsor now, or another size) are made
+    -- again once a session, keeping when they first came.
+    local shop = EqSponsorManager.shop
+    if record ~= nil and shop ~= nil and not record.checked and record.year == EqSponsorManager.year() then
+        record.checked = true
+        local stale = false
+        for _, offer in ipairs(record.list) do
+            local profile = shop.profiles[offer.brand]
+            if profile == nil or profile.size ~= offer.size then stale = true end
+        end
+        if stale then
+            local madeMonth = record.madeMonth
+            record = EqSponsorManager.makeOffers(farmId)
+            record.madeMonth = madeMonth
+            record.checked = true
+        end
+    end
     return record or EqSponsorManager.makeOffers(farmId)
 end
 

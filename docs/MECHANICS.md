@@ -858,7 +858,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Who:** every sponsor is a brand from your own shop, mods included; no brand is named in the
   mod. Brands are sized by how many shop categories they make machines in, then how many price
   bands those span, then how many machines: the top 15% are **big**, the next 35% **moderate**,
-  the rest **small**. The game's own Lizard brand is left out.
+  the rest **small**. A brand needs at least 3 machines to sponsor at all, 8 to be moderate and
+  15 to be big; short of that it drops a size. The game's own Lizard brand is left out.
 - **When:** offers come at the start of each year (and at once in a save that has none yet): up
   to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year). One sponsor at a time.
 - **The deal:** each offer rolls a strictness, shown as **Relaxed**, **Fair**, **Demanding** or
