@@ -293,10 +293,11 @@ bar, and takes effect the moment the horse lands. A gallop jump from the bottom 
 on landing if exertion is down to the canter line, within 1.5 s. In the air the horse also turns
 on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
-Jumps rise under 2.1 times normal gravity and come down under 2.7 times, about 12% lower than
+Jumps rise under 2.3 times normal gravity and come down under 2.6 times, about 12% lower than
 before, so a gallop jump is about 0.8 s in the air (it was nearly 1 s) and doesn't hang at the
-top. The fall is held to 6 m/s, the base game's landing speed, so the landing animation lines up. A **collected jump**: hold Ctrl (or let
-go of it less than half a second before) and press jump. The horse gathers itself over 0.26 s,
+top. The pull changes smoothly over the top and eases off as the fall nears 7 m/s, near the base
+game's landing speed: any sudden change showed as a stutter in the animation. A **collected jump**: hold Ctrl (or let
+go of it less than half a second before) and press jump. The horse gathers itself on the ground over 0.26 s,
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
 distance. Take-off is about 38 degrees from a gallop, 56 from a canter and 70 collected. The `eqJump` console command shows and changes these numbers until the game restarts.
 
