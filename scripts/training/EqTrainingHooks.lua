@@ -1054,14 +1054,6 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
     end
-    if InputAction.EQ_SPRINT ~= nil then
-        local _, sprintId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_SPRINT, vehicle,
-            function() EqTrainingHooks.onSprintAction(vehicle) end, false, true, false, true, nil)
-        if sprintId ~= nil then
-            g_inputBinding:setActionEventText(sprintId, g_i18n:getText("input_EQ_SPRINT"))
-            g_inputBinding:setActionEventTextVisibility(sprintId, false)
-        end
-    end
     -- Show jumping course keys (EqCourseHooks).
     EqCourseHooks.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
@@ -1070,6 +1062,14 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         if helpId ~= nil then
             g_inputBinding:setActionEventText(helpId, g_i18n:getText("input_EQ_TRAINING_HELP"))
             g_inputBinding:setActionEventTextPriority(helpId, GS_PRIO_LOW)
+        end
+    end
+    if InputAction.EQ_SPRINT ~= nil then
+        local _, sprintId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_SPRINT, vehicle,
+            function() EqTrainingHooks.onSprintAction(vehicle) end, false, true, false, true, nil)
+        if sprintId ~= nil then
+            g_inputBinding:setActionEventText(sprintId, g_i18n:getText("input_EQ_SPRINT"))
+            g_inputBinding:setActionEventTextVisibility(sprintId, false)
         end
     end
 end
