@@ -47,7 +47,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="3" cancelShare="0.15" missFactor="0.75" missesToLeave="2" signsMin="1">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" signsMin="1">
     <categoryTypes>
         <type name="VEHICLE"/>
         <type name="TOOL"/>

@@ -860,7 +860,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   bands those span, then how many machines: the top 15% are **big**, the next 35% **moderate**,
   the rest **small**. The game's own Lizard brand is left out.
 - **When:** offers come at the start of each year (and at once in a save that has none yet): up
-  to 3 big, 4 moderate and 5 small, open for 3 months. One sponsor at a time.
+  to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year). One sponsor at a time.
 - **The deal:** each offer rolls a strictness, shown as **Relaxed**, **Fair**, **Demanding** or
   **Hard bargain**. Stricter deals ask more and pay more:
 

@@ -32,7 +32,7 @@ EqSponsorship.SIZES = { "big", "moderate", "small" }
 --- @return table config
 function EqSponsorship.read(xmlFile)
     local config = {
-        offerMonths = xmlFile:getInt("sponsors#offerMonths", 3),
+        offerMonths = xmlFile:getInt("sponsors#offerMonths", 6),
         cancelShare = xmlFile:getFloat("sponsors#cancelShare", 0.15),
         missFactor = xmlFile:getFloat("sponsors#missFactor", 0.75),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
