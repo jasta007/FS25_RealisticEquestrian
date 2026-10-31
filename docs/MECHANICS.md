@@ -923,8 +923,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive straight over; one
   board both sides), the stone **Display Ramp** (5,000) and **Large Display Ramp** (7,500; the
   machine parked nose up, the board on the high front) and the **Product Jump** (12,000; two banks
-  with a slot between: three places for machines, or a cross country jump over whatever stands in
-  the slot; 2 boards). A machine of your sponsor's brand (owned or leased, not borrowed for a
+  2 m up with a slot between: three places for machines, or a cross country jump over whatever
+  stands in the slot, high enough that the horse never comes near it; no flags of its own, set
+  course flags to ride it; 2 boards). A machine of your sponsor's brand (owned or leased, not borrowed for a
   contract) standing on a deck counts as **2 boards**; each deck takes one machine. The drop
   walls' decks count too, and a drop wall with any machine on its deck never hides.
 - **Turntable** (25,000): a round stone plinth with a ramp at the back; its disc turns once every

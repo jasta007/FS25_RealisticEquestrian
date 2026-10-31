@@ -9,7 +9,9 @@ a plinth's deck counts (EqPlinths); each plinth also carries sponsor boards.
   slope, the board on the high front face; for smaller and bigger machines.
 - plinthProductJump: two stone banks, each a ramp up to a flat top, with a slot between them. Three
   places for machines (each bank's top and the slot), or a cross country jump: up one ramp, over
-  whatever stands in the slot, down the other. Its flags stand at the slot's ends.
+  whatever stands in the slot, down the other. The banks are 2 m up so a horse never comes near
+  the machine in the slot (James: we REALLY don't want it knocked); no flags of its own, the
+  player sets course flags where they want it ridden.
 - plinthTurntable: a round stone plinth with a ramp at the back and a disc that turns very
   slowly (node "eqTurntableDisc"); a machine left on the disc is held on it and turned with it
   (EqTurntable). The board bends round the front.
@@ -58,7 +60,7 @@ PLINTHS = [
     {"name": "plinthTurntable", "price": 25000, "colour": "navy"},
 ]
 DRIVE = {"half_x": 1.6, "half_deck": 3.0, "ramp": 3.5, "height": 0.75}
-PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 4.0, "ramp": 4.0, "height": 1.0}
+PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 4.0, "ramp": 7.5, "height": 2.0}
 TURNTABLE = {"radius": 3.5, "disc": 3.0, "height": 0.7, "ramp": 3.5, "ramp_half": 1.6, "sides": 48}
 DISC = "eqTurntableDisc"     # the node EqTurntable turns
 
@@ -225,7 +227,7 @@ def ramp(size):
 
 
 def product():
-    stone, paint, white, col, logos, flags = Mesh(), Mesh(), Mesh(), Mesh(), {}, Mesh()
+    stone, paint, white, col, logos = Mesh(), Mesh(), Mesh(), Mesh(), {}
     hx, slot, top, r, h = PRODUCT["half_x"], PRODUCT["slot"], PRODUCT["top"], PRODUCT["ramp"], PRODUCT["height"]
     for sign, number in ((1, 1), (-1, 2)):
         z0, z1, z2 = sign * slot, sign * (slot + top), sign * (slot + top + r)
@@ -240,9 +242,7 @@ def product():
         # the take-off and landing edges over the slot
         prism(paint, [(-hx, h - 0.04), (hx, h - 0.04), (hx, h + COPING[1]), (-hx, h + COPING[1])],
                  (0.0, 0.0, z0 - (COPING[0] if sign > 0 else 0) + (0.02 if sign > 0 else -0.02)), (1, 0, 0), (0, 1, 0), (0, 0, 1), COPING[0])
-    # flags at the slot's ends: the line ridden over is across the slot's middle
-    _, feet = xc.flag_posts(hx + 0.45, h, flags)
-    return {"stone": stone, "paint": paint, "white": white, "flags": flags}, logos, col, feet
+    return {"stone": stone, "paint": paint, "white": white}, logos, col, {}
 
 
 def circle(radius, sides, start=0.0):
@@ -436,7 +436,7 @@ def main(names=()):
             continue
         statics, logos, col, feet = builders[name]()
         write_i3d(name, plinth["colour"], os.path.join(OUT, name + ".i3d"), statics, logos, col, feet)
-        write_xml(plinth, os.path.join(OUT, name + ".xml"), bool(feet))
+        write_xml(plinth, os.path.join(OUT, name + ".xml"), name == "plinthProductJump")
 
         def flip(mesh):
             out = Mesh()

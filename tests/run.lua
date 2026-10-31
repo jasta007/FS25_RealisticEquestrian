@@ -5002,9 +5002,9 @@ end)()
         local a, b = { k = 1 }, { k = 2 }
         local decks = { { area = jump[1], key = a }, { area = jump[2], key = a }, { area = jump[3], key = a } }
         check("plinths: each machine counts once, each deck once",
-            EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, 3.5 } }, { [a] = { 0, 0, 0 } } }) == 4
-            and EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, -3.6 } }, { [a] = { 0, 0.1, 0.5 } } }) == 6
-            and EqPlinths.best(decks, { { [b] = { 0, 1.0, 3.6 } } }) == 0)
+            EqPlinths.best(decks, { { [a] = { 0, 2.0, 3.6 } }, { [a] = { 0, 2.0, 3.5 } }, { [a] = { 0, 0, 0 } } }) == 4
+            and EqPlinths.best(decks, { { [a] = { 0, 2.0, 3.6 } }, { [a] = { 0, 2.0, -3.6 } }, { [a] = { 0, 0.1, 0.5 } } }) == 6
+            and EqPlinths.best(decks, { { [b] = { 0, 2.0, 3.6 } } }) == 0)
         check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
         local modDesc = io.open("modDesc.xml"):read("*a")
         for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump", "plinthTurntable" }) do
@@ -5031,8 +5031,8 @@ end)()
             and EqTurntable.TURN_MS >= 60000)
         check("turntable: its disc is a node of its own", io.open("placeables/sponsorPlinths/plinthTurntable.i3d"):read("*a")
             :find('<TransformGroup name="' .. EqTurntable.DISC .. '"', 1, true) ~= nil)
-        check("plinths: the product jump is a fence with flags",
-            io.open("placeables/sponsorPlinths/plinthProductJump.i3d"):read("*a"):find('name="eqFlagsRed"', 1, true) ~= nil)
+        check("plinths: the product jump has no flags of its own (players set them) and stands 2 m up",
+            io.open("placeables/sponsorPlinths/plinthProductJump.i3d"):read("*a"):find('eqFlags', 1, true) == nil and jump[1].y >= 2)
     end
 
     -- Sponsor colours: the brand's most colourful paint, our list, else none.
