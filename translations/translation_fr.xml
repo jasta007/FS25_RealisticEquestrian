@@ -109,6 +109,7 @@
         <text name="eq_dressage_mark" text="Dernière note : %s"/>
         <text name="eq_pop_routineError" text="Erreur de parcours %d/%d"/>
         <text name="eq_pop_routineScore" text="Reprise terminée : %s%%"/>
+        <text name="eq_pop_testComplete" text="Reprise terminée"/>
         <text name="eq_train_routine_none" text="Allez à une carrière de dressage pour commencer une reprise"/>
         <text name="eq_train_routine" text="Reprise x%d"/>
         <text name="eq_train_combo_none" text="Franchissez un saut pour lancer un combo"/>

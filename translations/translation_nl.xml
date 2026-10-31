@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
         <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
         <text name="eq_pop_routineScore" text="Proef voltooid: %s%%"/>
+        <text name="eq_pop_testComplete" text="Proef voltooid"/>
         <text name="eq_train_routine_none" text="Rijd naar een dressuurrijbaan om een proef te beginnen"/>
         <text name="eq_train_routine" text="Proef x%d"/>
         <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>

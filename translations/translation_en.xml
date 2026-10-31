@@ -158,6 +158,7 @@
         <text name="eq_dressage_mark" text="Last mark: %s"/>
         <text name="eq_pop_routineError" text="Error of course %d/%d"/>
         <text name="eq_pop_routineScore" text="Test complete: %s%%"/>
+        <text name="eq_pop_testComplete" text="Test complete"/>
         <text name="eq_train_routine_none" text="Ride to a dressage arena to start a test"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>

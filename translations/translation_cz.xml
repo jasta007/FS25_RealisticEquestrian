@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="Poslední známka: %s"/>
         <text name="eq_pop_routineError" text="Chyba v úloze %d/%d"/>
         <text name="eq_pop_routineScore" text="Úloha dokončena: %s%%"/>
+        <text name="eq_pop_testComplete" text="Úloha dokončena"/>
         <text name="eq_train_routine_none" text="Jeďte k drezurnímu obdélníku a zahajte úlohu"/>
         <text name="eq_train_routine" text="Úloha x%d"/>
         <text name="eq_train_combo_none" text="Překonejte překážku a začněte combo"/>

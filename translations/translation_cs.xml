@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="上一项得分：%s"/>
         <text name="eq_pop_routineError" text="路线错误 %d/%d"/>
         <text name="eq_pop_routineScore" text="测试完成：%s%%"/>
+        <text name="eq_pop_testComplete" text="测试完成"/>
         <text name="eq_train_routine_none" text="前往盛装舞步场地开始一套动作"/>
         <text name="eq_train_routine" text="动作 x%d"/>
         <text name="eq_train_combo_none" text="跳过障碍开始连击"/>

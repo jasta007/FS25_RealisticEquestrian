@@ -304,7 +304,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   arena (0.5 m past the rail) for 3 s. Standing still is not an error: after 3 s the gait asked
   shows ("Trot!"), it costs as the wrong gait, and 30 s of it cancels the test. The line picks up again at the
   nearest point up to 40 m on. The third error eliminates.
-- The test's score is its marks as a percentage. Each movement marked 6.5 or better raises the
+- The test's score is its marks as a percentage, shown big in the middle of the screen at the end in any
+  view ("Test complete" in gold over it, coloured like a mark, gold bars sweeping out, 5 s). Each movement marked 6.5 or better raises the
   multiplier one step, below 4 drops it one; an error drops it two. Finishing pays up to a minute
   of x8 temperament training at once, all of it at 70% and over, a fifth of it at 40% or under,
   and the next test can start 20 s later (5 s after an elimination).

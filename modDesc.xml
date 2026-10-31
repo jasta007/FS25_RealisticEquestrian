@@ -16,7 +16,7 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
 Changelog 0.7.0.0:
-- Dressage tests are figures drawn on the ground, each marked out of 10
+- Dressage tests are figures drawn on the ground, each marked out of 10, with a big final score
 - Lateral work, piaffe, passage and pirouettes; right mouse drag steers
 - Build your own dressage test for each shop arena (Ctrl+L)
 - Jumps feel less floaty; jump from a trot (or Ctrl + Space) for a collected jump
@@ -37,7 +37,7 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
 Änderungen 0.7.0.0:
-- Dressurprüfungen sind Figuren, die auf den Boden gezeichnet und jeweils mit 0 bis 10 benotet werden
+- Dressurprüfungen sind Figuren, die auf den Boden gezeichnet und jeweils mit 0 bis 10 benotet werden, mit großer Endnote
 - Seitengänge, Piaffe, Passage und Pirouetten; Ziehen mit der rechten Maustaste lenkt
 - Eigene Dressurprüfung für jedes Viereck aus dem Shop bauen (Strg+L)
 - Sprünge wirken weniger schwebend; aus dem Trab (oder Strg + Leertaste) gibt es einen versammelten Sprung
@@ -58,7 +58,7 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
 Changements 0.7.0.0 :
-- Les reprises de dressage sont des figures tracées au sol, chacune notée sur 10
+- Les reprises de dressage sont des figures tracées au sol, chacune notée sur 10, avec un grand score final
 - Travail latéral, piaffer, passage et pirouettes ; glisser avec le clic droit pour diriger
 - Créez votre propre reprise pour chaque carrière de la boutique (Ctrl+L)
 - Des sauts moins flottants ; sauter depuis le trot (ou Ctrl + Espace) pour un saut rassemblé
@@ -79,7 +79,7 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
 Cambios 0.7.0.0:
-- Las pruebas de doma son figuras dibujadas en el suelo, cada una puntuada sobre 10
+- Las pruebas de doma son figuras dibujadas en el suelo, cada una puntuada sobre 10, con una gran nota final
 - Trabajo lateral, piaffe, passage y piruetas; arrastrar con el botón derecho para dirigir
 - Crea tu propia prueba de doma para cada pista de la tienda (Ctrl+L)
 - Saltos menos flotantes; salta desde el trote (o Ctrl + Espacio) para un salto reunido

@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
         <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>
         <text name="eq_pop_routineScore" text="Езда завершена: %s%%"/>
+        <text name="eq_pop_testComplete" text="Езда завершена"/>
         <text name="eq_train_routine_none" text="Подъедьте к манежу для выездки, чтобы начать программу"/>
         <text name="eq_train_routine" text="Программа x%d"/>
         <text name="eq_train_combo_none" text="Возьмите препятствие, чтобы начать комбо"/>

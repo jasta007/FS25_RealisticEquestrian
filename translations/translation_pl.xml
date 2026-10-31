@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="Ostatnia ocena: %s"/>
         <text name="eq_pop_routineError" text="Błąd trasy %d/%d"/>
         <text name="eq_pop_routineScore" text="Program ukończony: %s%%"/>
+        <text name="eq_pop_testComplete" text="Program ukończony"/>
         <text name="eq_train_routine_none" text="Podjedź na czworobok ujeżdżeniowy, aby rozpocząć program"/>
         <text name="eq_train_routine" text="Program x%d"/>
         <text name="eq_train_combo_none" text="Pokonaj przeszkodę, aby rozpocząć combo"/>
