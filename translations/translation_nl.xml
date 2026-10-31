@@ -1031,7 +1031,6 @@
         <text name="eq_sponsor_eligible_taken" text="Al een sponsor"/>
         <text name="eq_sponsor_eligible_yours" text="Je sponsor"/>
         <text name="eq_sponsor_label_speciality" text="Specialiteit"/>
-        <text name="eq_sponsor_specialityLine" text="%s (%d machines)"/>
         <text name="eq_sponsor_feePerEvent" text="%s per wedstrijd"/>
         <text name="eq_sponsor_targetPopularity" text="Populariteit %d"/>
         <text name="eq_sponsor_targetRating" text="Wedstrijd %s of hoger"/>

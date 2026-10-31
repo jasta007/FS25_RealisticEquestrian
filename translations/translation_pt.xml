@@ -1031,7 +1031,6 @@
         <text name="eq_sponsor_eligible_taken" text="Já tem patrocinador"/>
         <text name="eq_sponsor_eligible_yours" text="O seu patrocinador"/>
         <text name="eq_sponsor_label_speciality" text="Especialidade"/>
-        <text name="eq_sponsor_specialityLine" text="%s (%d máquinas)"/>
         <text name="eq_sponsor_feePerEvent" text="%s por evento"/>
         <text name="eq_sponsor_targetPopularity" text="Popularidade %d"/>
         <text name="eq_sponsor_targetRating" text="Evento %s ou acima"/>

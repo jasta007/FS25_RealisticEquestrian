@@ -1031,7 +1031,6 @@
         <text name="eq_sponsor_eligible_taken" text="スポンサー契約中"/>
         <text name="eq_sponsor_eligible_yours" text="あなたのスポンサー"/>
         <text name="eq_sponsor_label_speciality" text="得意分野"/>
-        <text name="eq_sponsor_specialityLine" text="%s（%d台）"/>
         <text name="eq_sponsor_feePerEvent" text="大会ごと%s"/>
         <text name="eq_sponsor_targetPopularity" text="人気度%d"/>
         <text name="eq_sponsor_targetRating" text="%s以上の大会"/>

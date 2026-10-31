@@ -881,8 +881,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
 - The table shows each sponsor's logo, deal, contract, **Eligibility** and fee; the panel adds its
-  terms and the rival machines to sell, and under the table its **Speciality**, the five shop
-  subcategories it has the most machines in. Window and discounts are on 5% steps. **Show in
+  terms, its **Speciality** (the three shop subcategories it has the most machines in) and the
+  rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
   don't count), no rival machine inside the price window (sell it or return the lease first; the

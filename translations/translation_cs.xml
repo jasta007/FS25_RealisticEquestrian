@@ -1031,7 +1031,6 @@
         <text name="eq_sponsor_eligible_taken" text="已有赞助商"/>
         <text name="eq_sponsor_eligible_yours" text="你的赞助商"/>
         <text name="eq_sponsor_label_speciality" text="专长"/>
-        <text name="eq_sponsor_specialityLine" text="%s（%d台机械）"/>
         <text name="eq_sponsor_feePerEvent" text="每场赛事%s"/>
         <text name="eq_sponsor_targetPopularity" text="人气%d"/>
         <text name="eq_sponsor_targetRating" text="%s或更高级别的赛事"/>

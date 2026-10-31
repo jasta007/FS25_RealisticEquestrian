@@ -1031,7 +1031,6 @@
         <text name="eq_sponsor_eligible_taken" text="Уже есть спонсор"/>
         <text name="eq_sponsor_eligible_yours" text="Ваш спонсор"/>
         <text name="eq_sponsor_label_speciality" text="Специализация"/>
-        <text name="eq_sponsor_specialityLine" text="%s (машин: %d)"/>
         <text name="eq_sponsor_feePerEvent" text="%s за соревнование"/>
         <text name="eq_sponsor_targetPopularity" text="Популярность %d"/>
         <text name="eq_sponsor_targetRating" text="Соревнование уровня %s или выше"/>

@@ -1033,7 +1033,6 @@
         <text name="eq_sponsor_eligible_taken" text="Bereits ein Sponsor"/>
         <text name="eq_sponsor_eligible_yours" text="Ihr Sponsor"/>
         <text name="eq_sponsor_label_speciality" text="Spezialgebiet"/>
-        <text name="eq_sponsor_specialityLine" text="%s (%d Maschinen)"/>
         <text name="eq_sponsor_feePerEvent" text="%s je Turnier"/>
         <text name="eq_sponsor_targetPopularity" text="Beliebtheit %d"/>
         <text name="eq_sponsor_targetRating" text="Turnier ab %s"/>

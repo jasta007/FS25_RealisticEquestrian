@@ -363,10 +363,7 @@ function EqEventsFrame:refresh()
     for _, element in ipairs({ self.sponsorHeader, self.sponsorBox }) do
         show(element, isSponsors)
     end
-    if not isSponsors then
-        show(self.sponsorPanel, false)
-        show(self.sponsorSpecialityBox, false)
-    end
+    if not isSponsors then show(self.sponsorPanel, false) end
     for _, element in ipairs({ self.hostHeader, self.hostBox, self.hostChecksHeader, self.hostChecksBox }) do
         show(element, isHost)
     end
@@ -787,7 +784,6 @@ function EqEventsFrame:updateSponsorPanel()
     local row = self:selectedSponsorRow()
     local show = self.mode == EqEventsFrame.MODE_SPONSORS and self.isReady and row ~= nil
     self.sponsorPanel:setVisible(show)
-    if self.sponsorSpecialityBox ~= nil then self.sponsorSpecialityBox:setVisible(show) end
     if not show then return end
     local ok, lines, clashes = pcall(EqSponsorView.panelLines, farmId(), row)
     if not ok then
@@ -817,8 +813,6 @@ function EqEventsFrame:updateSponsorPanel()
         local wideText = i >= wideStart and wide[i - wideStart + 1] or nil
         if self.sponsorWide ~= nil then setText(self.sponsorWide[i], wideText or "") end
     end
-    local speciality = EqSponsorView.speciality(row.offer.brand, #(self.sponsorSpeciality or {}))
-    for i = 1, #(self.sponsorSpeciality or {}) do setText(self.sponsorSpeciality[i], speciality[i] or "") end
 end
 
 

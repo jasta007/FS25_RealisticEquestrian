@@ -113,6 +113,7 @@ function EqSponsorView.panelLines(farmId, row)
     for _, check in ipairs(checks) do byId[check.id] = check end
 
     add("deal", g_i18n:getText("eq_sponsor_word_" .. (offer.word or "fair")))
+    add("speciality", table.concat(EqSponsorView.speciality(offer.brand, 3), ", "))
     add("fee", string.format(g_i18n:getText("eq_sponsor_feePerEvent"), money(offer.fee)))
     add(nil, EqSponsorView.backsText(offer))
     add("popularity", string.format("%+d", offer.popularity or 0))
@@ -180,7 +181,7 @@ function EqSponsorView.noteLines(row, clashes, maxLines)
 end
 
 
---- The sponsor's speciality: its shop categories with the most machines, biggest first.
+--- The sponsor's speciality: its shop categories with the most machines, biggest first, by title.
 --- @param brand string
 --- @param count number how many
 --- @return table titles
@@ -197,7 +198,7 @@ function EqSponsorView.speciality(brand, count)
     for i = 1, math.min(count, #list) do
         local category = g_storeManager ~= nil and g_storeManager:getCategoryByName(list[i].name) or nil
         local title = category ~= nil and category.title ~= nil and category.title ~= "" and category.title or list[i].name
-        table.insert(titles, string.format(g_i18n:getText("eq_sponsor_specialityLine"), title, list[i].count))
+        table.insert(titles, title)
     end
     return titles
 end
