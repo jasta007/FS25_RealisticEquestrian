@@ -3491,7 +3491,7 @@ end)()
     check("marks go red to orange to yellow to green", red[1] > red[2] * 3 and mid[1] > 0.9 and mid[2] > 0.6 and mid[2] < 0.9
         and green[2] > green[1] * 2)
     check("a gait change arrow points up or down, head wider than its stem", upTip.y > upWide.y and downTip.y < downWide.y
-        and upWide.w == 1 and #EqTrainingHud.arrowRows(true) == EqTrainingHud.ARROW.rows)
+        and upWide.w == 1 and #EqTrainingHud.arrowRows(true) == EqTrainingHud.ARROW.rows and #EqTrainingHud.arrowRows(true, 30) == 30)
     setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 

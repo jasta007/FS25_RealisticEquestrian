@@ -263,10 +263,12 @@ EqTrainingHud.ARROW = { height = 0.8, width = 0.75, gap = 0.4, rows = 9, head = 
 --- The rows of an arrow (pure), each { y, h, w } as shares of its height and width, y from the
 --- bottom: a pointed head over a narrower stem.
 --- @param up boolean
+--- @param n number|nil how many rows (ARROW.rows when nil)
 --- @return table rows
-function EqTrainingHud.arrowRows(up)
+function EqTrainingHud.arrowRows(up, n)
     local a = EqTrainingHud.ARROW
-    local rows, n = {}, a.rows
+    local rows = {}
+    n = n or a.rows
     local headRows = math.max(2, math.floor(n * a.head + 0.5))
     local h = 1 / n
     for i = 1, n do
@@ -477,10 +479,12 @@ function EqTrainingHud.drawPrompt(value, share, color, arrow)
         local height = p.size * EqTrainingHud.ARROW.height
         local width = height * EqTrainingHud.ARROW.width / (g_screenAspectRatio or 16 / 9)
         local x = p.x + getTextWidth(p.size, value) / 2 + p.size * EqTrainingHud.ARROW.gap
+        -- One row per pixel of its height, so the head is smooth, not stepped (James, 2026-10-31).
+        local rows = math.max(EqTrainingHud.ARROW.rows, math.floor(height * (g_screenHeight or 1080) + 0.5))
         local off = p.size * EqTrainingHud.SHADOW.share
         local shade = { 0, 0, 0, (color[4] or 1) * EqTrainingHud.SHADOW.alpha }
         for _, pass in ipairs({ { off, -off, shade }, { 0, 0, color } }) do
-            for _, r in ipairs(EqTrainingHud.arrowRows(arrow > 0)) do
+            for _, r in ipairs(EqTrainingHud.arrowRows(arrow > 0, rows)) do
                 fill(x + pass[1] + width * (1 - r.w) / 2, p.y + pass[2] + height * r.y, width * r.w, height * r.h + 1e-4, pass[3])
             end
         end
