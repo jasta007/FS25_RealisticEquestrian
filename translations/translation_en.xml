@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Seating for the events you host: counts within 60 m of a course or dressage arena."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponsor boards in front show the brands of your machines."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="New, edit or save dressage test"/>
+        <text name="input_EQ_DT_PREV" text="Previous option"/>
+        <text name="input_EQ_DT_NEXT" text="Next option"/>
+        <text name="input_EQ_DT_RANDOM" text="Random option"/>
+        <text name="input_EQ_DT_MODE" text="Figures or movements on the spot"/>
+        <text name="input_EQ_DT_ACCEPT" text="Keep this step"/>
+        <text name="input_EQ_DT_UNDO" text="Undo last step"/>
+        <text name="eq_dt_newAction" text="New dressage test"/>
+        <text name="eq_dt_editAction" text="Edit dressage test"/>
+        <text name="eq_dt_saveAction" text="Save dressage test"/>
+        <text name="eq_dt_cancelAction" text="Cancel dressage test"/>
+        <text name="eq_dt_modeSpot" text="Show movements on the spot"/>
+        <text name="eq_dt_modeFigure" text="Show figures"/>
+        <text name="eq_dt_new" text="New dressage test: step %d"/>
+        <text name="eq_dt_editing" text="Editing dressage test: step %d"/>
+        <text name="eq_dt_figure" text="Figure"/>
+        <text name="eq_dt_spot" text="On the spot"/>
+        <text name="eq_dt_noOptions" text="Nothing fits here: undo or save"/>
+        <text name="eq_dt_saved" text="Dressage test saved: %d movements"/>
+        <text name="eq_dt_deleted" text="Dressage test deleted: this arena rides random tests again"/>
+        <text name="eq_dt_cancelled" text="Dressage test not saved"/>
+        <text name="eq_fig_halt" text="Halt at %s"/>
+        <text name="eq_fig_reinBack" text="Halt at %s, rein back"/>
+        <text name="eq_fig_piaffe" text="Piaffe at %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette at %s"/>
     </texts>
 </l10n>

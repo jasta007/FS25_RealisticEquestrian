@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="看台 8排，16 米"/>
         <text name="eq_shop_bleachers_function" text="你主办比赛的观众座位：在赛道或盛装舞步场地60米内计入。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前方的赞助商广告牌显示你的机械品牌。"/>
+        <text name="input_EQ_DRESSAGE_TEST" text="盛装舞步路线：新建、编辑或保存"/>
+        <text name="input_EQ_DT_PREV" text="上一个选项"/>
+        <text name="input_EQ_DT_NEXT" text="下一个选项"/>
+        <text name="input_EQ_DT_RANDOM" text="随机选项"/>
+        <text name="input_EQ_DT_MODE" text="图形或原地动作"/>
+        <text name="input_EQ_DT_ACCEPT" text="保留这一步"/>
+        <text name="input_EQ_DT_UNDO" text="撤销上一步"/>
+        <text name="eq_dt_newAction" text="新的盛装舞步路线"/>
+        <text name="eq_dt_editAction" text="编辑盛装舞步路线"/>
+        <text name="eq_dt_saveAction" text="保存盛装舞步路线"/>
+        <text name="eq_dt_cancelAction" text="取消盛装舞步路线"/>
+        <text name="eq_dt_modeSpot" text="显示原地动作"/>
+        <text name="eq_dt_modeFigure" text="显示图形"/>
+        <text name="eq_dt_new" text="新的盛装舞步路线：第%d步"/>
+        <text name="eq_dt_editing" text="编辑盛装舞步路线：第%d步"/>
+        <text name="eq_dt_figure" text="图形"/>
+        <text name="eq_dt_spot" text="原地"/>
+        <text name="eq_dt_noOptions" text="这里没有合适的：撤销或保存"/>
+        <text name="eq_dt_saved" text="盛装舞步路线已保存：%d个动作"/>
+        <text name="eq_dt_deleted" text="盛装舞步路线已删除：此场地重新使用随机路线"/>
+        <text name="eq_dt_cancelled" text="盛装舞步路线未保存"/>
+        <text name="eq_fig_halt" text="在%s立定"/>
+        <text name="eq_fig_reinBack" text="在%s立定，后退"/>
+        <text name="eq_fig_piaffe" text="在%s原地踏步"/>
+        <text name="eq_fig_pirouette" text="在%s定后肢旋转"/>
     </texts>
 </l10n>

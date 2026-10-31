@@ -588,6 +588,11 @@ end
 --- @param vehicle table
 function EqCourseHooks.onDeleteAction(vehicle)
     if vehicle.rootNode == nil then return end
+    -- Editing a dressage test: the same key cancels it (EqDressageEditor).
+    if EqDressageEditor.isEditing() then
+        if EqDressageEditor.holds(vehicle) then EqDressageEditor.onCancel() end
+        return
+    end
     local editing = EqCourseHooks.editing
     if editing ~= nil then
         if editing.vehicle == vehicle and discardable(editing) then
@@ -674,7 +679,9 @@ function EqCourseHooks.updateActions(vehicle)
     end
     local xcText = nearXc ~= nil and string.format(text("eq_course_editAction"), nearXc.name) or text("eq_course_recordXcAction")
     local cancel = mine and discardable(editing)
-    local state = string.format("%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle), tostring(busy), tostring(cancel))
+    local dressageEditing = EqDressageEditor.holds(vehicle)
+    local state = string.format("%s|%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle),
+        tostring(busy), tostring(cancel), tostring(dressageEditing))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
@@ -692,13 +699,15 @@ function EqCourseHooks.updateActions(vehicle)
     end
     if spec.eqDeleteEventId ~= nil then
         local deleteText = ""
-        if cancel then
+        if dressageEditing then
+            deleteText = text("eq_dt_cancelAction")
+        elseif cancel then
             deleteText = editing.index == nil and text("eq_course_cancelAction") or string.format(text("eq_course_discardAction"), editing.name)
         elseif near ~= nil then
             deleteText = string.format(text("eq_course_deleteAction"), near.name)
         end
         binding:setActionEventText(spec.eqDeleteEventId, deleteText)
-        binding:setActionEventTextVisibility(spec.eqDeleteEventId, cancel or near ~= nil)
+        binding:setActionEventTextVisibility(spec.eqDeleteEventId, dressageEditing or cancel or near ~= nil)
     end
 end
 
@@ -792,6 +801,13 @@ function EqCourseHooks.onDraw(vehicle)
     if vehicle.rootNode == nil then return end
     EqCourseHooks.updateActions(vehicle)
     local editing = EqCourseHooks.editing
+    if editing == nil and EqDressageEditor.isEditing() then
+        -- Editing a dressage test: only its option shows (EqDressageEditor).
+        EqCourseGlow.begin()
+        if not EqLog.try("EqCourseHooks.onDraw dressage editor", EqDressageEditor.draw, vehicle) then EqDressageEditor.finish(true, true) end
+        EqCourseGlow.finish()
+        return
+    end
     if editing == nil then
         EqCourseGlow.begin()
         EqCourseHooks.roundDraw(vehicle)

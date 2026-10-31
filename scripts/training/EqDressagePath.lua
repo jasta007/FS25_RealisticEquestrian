@@ -56,6 +56,8 @@ EqDressagePath.TRAINING_FIGURES = 7
 -- The track between figures: at least this long, and preferably no longer than CONNECT_GOOD.
 EqDressagePath.CONNECT_MIN = 3
 EqDressagePath.CONNECT_GOOD = 15
+-- A movement on the spot in the editor goes at one of the letters this share of a lap ahead.
+EqDressagePath.SPOT_REACH = 0.75
 -- Every figure is ridden at one gait, built for it (James 2026-10-29: trot circles, walk
 -- circles and canter circles, never one in another gait). How often each gait and figure comes.
 EqDressagePath.GAITS = { "walk", "trot", "canter" }
@@ -798,17 +800,19 @@ end
 --- @param frame table from frameFor
 --- @return table figures, table tracks gait -> { pts, length }, table g
 function EqDressagePath.library(frame)
+    -- An arena's library doesn't change: the test editor builds a test for every option it shows.
+    if frame.library ~= nil then return frame.library[1], frame.library[2], frame.library[3] end
     local g = geometry(frame)
     local byGait = tracks(g)
     local list = {}
     for _, name in ipairs(EqDressagePath.FIGURE_ORDER) do
         for _, gait in ipairs(EqDressagePath.GAITS) do
             local track = byGait[gait].pts
-            for _, figure in ipairs(FIGURES[name](g, frame, gait)) do
+            for k, figure in ipairs(FIGURES[name](g, frame, gait)) do
                 local weight = EqDressagePath.FIGURE_WEIGHTS[figure.key] or 1
                 -- Lateral work drifts without turning: its kinks are not turns.
                 if figure.lateral or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
-                    for _, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
+                    for mi, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
                         local sx, sy = mirror[1], mirror[2]
                         local pts = {}
                         for i, p in ipairs(figure.pts) do pts[i] = { x = p.x * sx, y = p.y * sy } end
@@ -826,6 +830,8 @@ function EqDressagePath.library(frame)
                                     bend = sec.bend ~= nil and sec.bend * sx * sy or nil, drift = sec.drift * sx * sy })
                             end
                             table.insert(list, {
+                                -- Saved in a player's own test (EqDressageTests): the same figure on every load.
+                                id = string.format("%s/%s/%d/%d", name, gait, k, mi),
                                 key = figure.key, gait = gait, weight = weight * EqDressagePath.GAIT_WEIGHTS[gait],
                                 size = figure.size, loops = figure.loops, labels = labels,
                                 turn = figure.turn ~= nil and figure.turn * sx * sy or nil,
@@ -840,6 +846,7 @@ function EqDressagePath.library(frame)
             end
         end
     end
+    frame.library = { list, byGait, g }
     return list, byGait, g
 end
 
@@ -944,13 +951,30 @@ function EqDressagePath.figuresFor(moves)
 end
 
 
+--- @param seed number|string|nil
+--- @return function rng (n) -> 1..n, the same rolls every time for the same seed
+local function seededRng(seed)
+    local random = EqRandom.new(seed or 1)
+    return function(n) return math.min(n, 1 + math.floor(random:next() * n)) end
+end
+EqDressagePath.seededRng = seededRng
+
+
 --- Build a test for an arena.
+--- A plan is a test the player put together in the editor (EqDressageTests, James 2026-10-31):
+--- its steps are ridden in order instead of random picks, with nothing random between them.
+--- Each step has its own seed for what is still left to chance inside a figure (a halt at X on
+--- a centre line), so a saved plan rides the same test every time. A step that no longer fits
+--- (the arena changed size) ends the plan there: test.broken is its number.
 --- @param frame table from frameFor
---- @param figures number how many figures between the opening and the final centre line
---- @param rng function (n) -> 1..n; a seeded one rides the same test every time
+--- @param figures number how many figures between the opening and the final centre line (no plan)
+--- @param rng function (n) -> 1..n; a seeded one rides the same test every time (no plan)
+--- @param plan table|nil { turn = 1|-1, seed, steps = { { kind = "figure", id, seed } | { kind = "spot", style, letter, seed } } }
+--- @param open boolean|nil true for the editor: stop before the final centre line, with test.options
 --- @return table test { pts = { x, y, s, m }, moves = { s0, s1, key, ... }, events = { s, kind, gait, letter, m }, length, frame }
-function EqDressagePath.build(frame, figures, rng)
+function EqDressagePath.build(frame, figures, rng, plan, open)
     local library, byGait, g = EqDressagePath.library(frame)
+    if plan ~= nil then rng = seededRng(plan.seed) end
     local test = { pts = {}, moves = {}, events = {}, sections = {}, frame = frame, g = g }
     local events = test.events
 
@@ -963,8 +987,9 @@ function EqDressagePath.build(frame, figures, rng)
         walkFrom = newGait == "walk" and s or nil
         return true
     end
-    local function halt(s, letter, m, final, after)
+    local function halt(s, letter, m, final, after, reinBack)
         local back = not final and rng(100) <= EqDressagePath.REIN_BACK_CHANCE or nil
+        if reinBack ~= nil then back = reinBack or nil end
         table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final, reinBack = back })
         gait, lastChange = after, s
         walkFrom = after == "walk" and s or nil
@@ -978,7 +1003,7 @@ function EqDressagePath.build(frame, figures, rng)
     end
 
     -- The opening: from outside A down the centre line, halt at X, track left or right at C.
-    local turn = rng(2) == 1 and 1 or -1
+    local turn = plan ~= nil and plan.turn or (rng(2) == 1 and 1 or -1)
     local opening, xIndex = centreLine(g, frame, turn, true, "trot")
     local enter = { s0 = 0, key = "enter", labels = { "A", "X" } }
     table.insert(test.moves, enter)
@@ -1066,6 +1091,11 @@ function EqDressagePath.build(frame, figures, rng)
             track(entry.x, entry.y, m)
             return
         end
+        -- The player's own test rides only what they picked.
+        if plan ~= nil then
+            track(entry.x, entry.y, m)
+            return
+        end
         local roll = rng(100)
         if #usable >= 2 and length >= 20 and roll <= EqDressagePath.INTERLUDE then
             -- A stretch at another gait between two letters, then back: a canter only along
@@ -1149,8 +1179,9 @@ function EqDressagePath.build(frame, figures, rng)
         rein = figure.exitRein
     end
 
-    for _ = 1, figures do
-        local choices = {}
+    --- The figures that can come next: { figure, weight, d = metres of track to its start }.
+    local function choices()
+        local list = {}
         local here = test.pts[#test.pts]
         local t = byGait[gait]
         local from = onTrack(t.pts, here.x, here.y)
@@ -1164,17 +1195,124 @@ function EqDressagePath.build(frame, figures, rng)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 if d >= least and d <= t.length * 0.6 then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
-                    table.insert(choices, { figure, figure.weight * near })
+                    table.insert(list, { figure, figure.weight * near, d = d })
                 end
             end
         end
-        local figure = pick(choices, rng)
-        if figure == nil then break end
+        return list
+    end
+
+    local function addFigure(figure)
         local m = #test.moves + 1
         table.insert(test.moves, { s0 = test.pts[#test.pts].s, key = figure.key, size = figure.size, loops = figure.loops,
             turn = figure.turn, labels = figure.labels, gait = figure.gait })
         ride(figure, m)
         lastKey = figure.key
+    end
+
+    --- The letters ahead on the track (most of a lap), with metres to each.
+    local function lettersAhead()
+        local t = byGait[gait].pts
+        local here = test.pts[#test.pts]
+        local i = onTrack(t, here.x, here.y)
+        local behind = t[(i - 1 - rein * 2) % #t + 1]
+        local letters, length = letterRun(behind.x, behind.y)
+        local list = {}
+        for _, l in ipairs(letters) do
+            if l.d >= EqDressagePath.CONNECT_MIN and l.d <= length * EqDressagePath.SPOT_REACH then table.insert(list, l) end
+        end
+        return list
+    end
+
+    --- The movements on the spot the horse can do at its gait: a halt (or a halt and rein back)
+    --- from a walk or trot, a piaffe from a trot, a pirouette from a walk or canter.
+    local function spotStyles()
+        local list = {}
+        if gait ~= "canter" then
+            table.insert(list, "halt")
+            table.insert(list, "reinBack")
+        end
+        table.insert(list, gait == "trot" and "piaffe" or "pirouette")
+        return list
+    end
+
+    --- A player's step on the spot: ride the track to its letter and do it there.
+    --- @return boolean done false when it doesn't fit (wrong gait, letter not ahead)
+    local function addSpot(step)
+        local ok = false
+        for _, style in ipairs(spotStyles()) do ok = ok or style == step.style end
+        if not ok then return false end
+        local at = nil
+        for _, l in ipairs(lettersAhead()) do
+            if at == nil and l.letter == step.letter then at = l end
+        end
+        if at == nil then return false end
+        local m = #test.moves + 1
+        local move = { s0 = test.pts[#test.pts].s, key = step.style, labels = { step.letter }, gait = gait }
+        table.insert(test.moves, move)
+        track(at.x, at.y, m)
+        local s = test.pts[#test.pts].s
+        if step.style == "halt" or step.style == "reinBack" then
+            halt(s, step.letter, m, false, gait, step.style == "reinBack")
+        else
+            lastChange = -math.huge
+            spot(s, step.letter, m, rein)
+        end
+        move.s1 = s
+        lastKey = step.style
+        return true
+    end
+
+    if plan == nil then
+        for _ = 1, figures do
+            local figure = pick(choices(), rng)
+            if figure == nil then break end
+            addFigure(figure)
+        end
+    else
+        test.steps = 0
+        for n, step in ipairs(plan.steps or {}) do
+            rng = seededRng(step.seed)
+            local done = false
+            if step.kind == "spot" then
+                done = addSpot(step)
+            else
+                for _, c in ipairs(choices()) do
+                    if not done and c[1].id == step.id then
+                        addFigure(c[1])
+                        done = true
+                    end
+                end
+            end
+            if not done then
+                test.broken = n
+                break
+            end
+            test.steps = n
+        end
+    end
+
+    -- The editor's options for the next step, nearest first: figures, then movements on the
+    -- spot at the letters ahead.
+    if open then
+        test.length = test.pts[#test.pts].s
+        test.gait, test.rein = gait, rein
+        local figureOptions, spotOptions = {}, {}
+        for _, c in ipairs(choices()) do
+            table.insert(figureOptions, { kind = "figure", id = c[1].id, figure = c[1], weight = c[2], d = c.d })
+        end
+        table.sort(figureOptions, function(a, b)
+            if math.abs(a.d - b.d) > 0.01 then return a.d < b.d end
+            return a.id < b.id
+        end)
+        for _, l in ipairs(lettersAhead()) do
+            for _, style in ipairs(spotStyles()) do
+                table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = gait, weight = 1, d = l.d })
+            end
+        end
+        test.options = { figure = figureOptions, spot = spotOptions }
+        table.sort(events, function(a, b) return a.s < b.s end)
+        return test
     end
 
     -- The finish: down the centre line from A at a trot, halt at X (the path goes on a little past it).

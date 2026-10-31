@@ -18,6 +18,7 @@ dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
+dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
 dofile("scripts/training/EqLateral.lua")
 dofile("scripts/training/EqDressage.lua")
@@ -4023,6 +4024,84 @@ end)()
     local same = #one.pts == #two.pts and #one.events == #two.events
     for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end
     check("a hosted event's seed rides the same test every time", same and one.length == two.length)
+
+    -- The player's own tests (EqDressageTests, James 2026-10-31): built step by step in the editor.
+    for _, arena in ipairs(SHOP) do
+        local name = arena[1] .. "x" .. arena[2] .. " own test"
+        local ownMarkers = shopMarkers(arena, 40, -12, 0.7)
+        local ownFrame = EqDressagePath.frameFor(ownMarkers, xOf(ownMarkers))
+        local ed = EqDressageTests.newEditor(ownFrame, nil, seeded("editor " .. name))
+        local turns = {}
+        for _, option in ipairs(ed.options.figure) do turns[option.turn] = true end
+        check(name .. ": the first step offers figures tracking left and right at C", turns[1] and turns[-1] and #ed.options.spot > 0,
+            string.format("%d figures, %d on the spot", #ed.options.figure, #ed.options.spot))
+        local preview = EqDressageTests.preview(ed)
+        check(name .. ": the first preview shows the opening and the option from its end", preview ~= nil and preview.fromS > 10
+            and preview.length > preview.fromS and preview.moves[1].key == "enter")
+        -- Next and back round the ends.
+        local count = #ed.options.figure
+        EqDressageTests.cycle(ed, -1)
+        local wrapped = ed.index == count
+        EqDressageTests.cycle(ed, 1)
+        check(name .. ": N and M step round the options", wrapped and ed.index == 1)
+        -- Six figures (random), a halt and a piaffe or pirouette on the spot, one undone.
+        local kept = {}
+        for i = 1, 8 do
+            if i == 3 or i == 6 then
+                if not EqDressageTests.toggle(ed) then break end
+            end
+            EqDressageTests.random(ed)
+            local step = EqDressageTests.accept(ed)
+            if step == nil then break end
+            table.insert(kept, step)
+        end
+        local before = #ed.plan.steps
+        local undone = ed.plan.steps[before]
+        EqDressageTests.undo(ed)
+        local shown = EqDressageTests.current(ed)
+        check(name .. ": undo takes the last step back and shows it again", #ed.plan.steps == before - 1 and shown ~= nil
+            and (shown.id == undone.id or shown.style == undone.style), string.format("%d steps", before))
+        local plan, built = EqDressageTests.finished(ed)
+        local spots, last = 0, built ~= nil and built.events[#built.events] or nil
+        for _, move in ipairs(built ~= nil and built.moves or {}) do
+            if move.key == "halt" or move.key == "reinBack" or move.key == "piaffe" or move.key == "pirouette" then spots = spots + 1 end
+        end
+        check(name .. ": saving adds the final centre line to a halt at X", plan ~= nil and built.steps == #plan.steps and built.broken == nil
+            and built.moves[#built.moves].key == "final" and last.final and #built.moves == #plan.steps + 3 and spots >= 1,
+            string.format("%d steps, %d moves, %d on the spot", plan ~= nil and #plan.steps or 0, built ~= nil and #built.moves or 0, spots))
+        -- Saved, loaded and ridden: the same test every time.
+        local again = EqDressagePath.build(ownFrame, nil, nil, EqDressageTests.decode(EqDressageTests.encode(plan)))
+        local same2 = #again.pts == #built.pts and #again.events == #built.events and again.length == built.length
+        check(name .. ": a saved test reads back and rides the same", same2)
+        local run, event = ride(built, ownFrame, 0, 0)
+        check(name .. ": a rider on the line scores well on the player's test", event == "test" and run.percent >= 80,
+            string.format("%s %s%%", event, tostring(run.percent)))
+        -- Kept with its arena, not another.
+        EqDressageTests.reset()
+        EqDressageTests.set(ownFrame, plan)
+        local otherMarkers = shopMarkers(arena, 140, -12, 0.7)
+        local otherFrame = EqDressagePath.frameFor(otherMarkers, xOf(otherMarkers))
+        check(name .. ": a test belongs to its own arena", EqDressageTests.planFor(ownFrame) == plan and EqDressageTests.planFor(otherFrame) == nil)
+        local store = memoryXML()
+        EqDressageTests.saveToXMLFile(store, "t")
+        EqDressageTests.loadFromXMLFile(store, "t")
+        local loaded = EqDressageTests.planFor(ownFrame)
+        check(name .. ": an arena's test survives a save", #EqDressageTests.list == 1 and loaded ~= nil
+            and EqDressageTests.encode(loaded) == EqDressageTests.encode(plan))
+        plan = loaded
+        -- Editing it carries on from its last step; undoing everything and saving deletes it.
+        local edit = EqDressageTests.newEditor(ownFrame, plan, seeded("edit " .. name))
+        local steps = #edit.plan.steps
+        while EqDressageTests.undo(edit) do end
+        check(name .. ": editing starts from the saved steps, and all undone saves nothing", steps == #plan.steps
+            and EqDressageTests.finished(edit) == nil and edit.plan.turn == nil)
+        EqDressageTests.set(ownFrame, nil)
+        check(name .. ": a deleted test is gone", EqDressageTests.planFor(ownFrame) == nil and #EqDressageTests.list == 0)
+    end
+    -- A step that no longer fits (the arena's size changed) ends the plan there.
+    local broken = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 3, steps = { { kind = "figure", id = "nothing/trot/1/1", seed = 1 } } })
+    check("a saved step that no longer fits is left out", broken.broken == 1 and broken.moves[#broken.moves].key == "final")
+    check("an empty saved test reads as none", EqDressageTests.decode("1 5") == nil and EqDressageTests.decode(nil) == nil)
     local stuck = EqDressagePath.newRun(one, 50)
     local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)
     local events = {}

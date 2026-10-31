@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 file, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Posti a sedere per le gare che organizzi: conta entro 60 m da un percorso o rettangolo da dressage."/>
         <text name="eq_shop_bleachersSponsors_function" text="I pannelli degli sponsor davanti mostrano i marchi dei tuoi mezzi."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nuova ripresa di dressage, modifica o salva"/>
+        <text name="input_EQ_DT_PREV" text="Opzione precedente"/>
+        <text name="input_EQ_DT_NEXT" text="Opzione successiva"/>
+        <text name="input_EQ_DT_RANDOM" text="Opzione a caso"/>
+        <text name="input_EQ_DT_MODE" text="Figure o movimenti sul posto"/>
+        <text name="input_EQ_DT_ACCEPT" text="Tieni questo passo"/>
+        <text name="input_EQ_DT_UNDO" text="Annulla l'ultimo passo"/>
+        <text name="eq_dt_newAction" text="Nuova ripresa di dressage"/>
+        <text name="eq_dt_editAction" text="Modifica ripresa di dressage"/>
+        <text name="eq_dt_saveAction" text="Salva ripresa di dressage"/>
+        <text name="eq_dt_cancelAction" text="Annulla ripresa di dressage"/>
+        <text name="eq_dt_modeSpot" text="Mostra movimenti sul posto"/>
+        <text name="eq_dt_modeFigure" text="Mostra figure"/>
+        <text name="eq_dt_new" text="Nuova ripresa di dressage: passo %d"/>
+        <text name="eq_dt_editing" text="Modifica ripresa di dressage: passo %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="Sul posto"/>
+        <text name="eq_dt_noOptions" text="Qui non sta niente: annulla o salva"/>
+        <text name="eq_dt_saved" text="Ripresa di dressage salvata: %d movimenti"/>
+        <text name="eq_dt_deleted" text="Ripresa di dressage eliminata: questo rettangolo torna a riprese casuali"/>
+        <text name="eq_dt_cancelled" text="Ripresa di dressage non salvata"/>
+        <text name="eq_fig_halt" text="Alt in %s"/>
+        <text name="eq_fig_reinBack" text="Alt in %s, rinculo"/>
+        <text name="eq_fig_piaffe" text="Piaffe in %s"/>
+        <text name="eq_fig_pirouette" text="Piroetta in %s"/>
     </texts>
 </l10n>

@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="Arquibancada 8 fileiras, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Assentos para os eventos que você organiza: conta a até 60 m de um percurso ou pista de adestramento."/>
         <text name="eq_shop_bleachersSponsors_function" text="As placas de patrocinadores na frente mostram as marcas das suas máquinas."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nova prova de adestramento, editar ou salvar"/>
+        <text name="input_EQ_DT_PREV" text="Opção anterior"/>
+        <text name="input_EQ_DT_NEXT" text="Próxima opção"/>
+        <text name="input_EQ_DT_RANDOM" text="Opção aleatória"/>
+        <text name="input_EQ_DT_MODE" text="Figuras ou movimentos no lugar"/>
+        <text name="input_EQ_DT_ACCEPT" text="Manter este passo"/>
+        <text name="input_EQ_DT_UNDO" text="Desfazer o último passo"/>
+        <text name="eq_dt_newAction" text="Nova prova de adestramento"/>
+        <text name="eq_dt_editAction" text="Editar prova de adestramento"/>
+        <text name="eq_dt_saveAction" text="Salvar prova de adestramento"/>
+        <text name="eq_dt_cancelAction" text="Cancelar prova de adestramento"/>
+        <text name="eq_dt_modeSpot" text="Mostrar movimentos no lugar"/>
+        <text name="eq_dt_modeFigure" text="Mostrar figuras"/>
+        <text name="eq_dt_new" text="Nova prova de adestramento: passo %d"/>
+        <text name="eq_dt_editing" text="Editando a prova de adestramento: passo %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="No lugar"/>
+        <text name="eq_dt_noOptions" text="Nada cabe aqui: desfaça ou salve"/>
+        <text name="eq_dt_saved" text="Prova de adestramento salva: %d movimentos"/>
+        <text name="eq_dt_deleted" text="Prova de adestramento apagada: esta pista volta a provas aleatórias"/>
+        <text name="eq_dt_cancelled" text="Prova de adestramento não salva"/>
+        <text name="eq_fig_halt" text="Parada em %s"/>
+        <text name="eq_fig_reinBack" text="Parada em %s, recuar"/>
+        <text name="eq_fig_piaffe" text="Piaffe em %s"/>
+        <text name="eq_fig_pirouette" text="Pirueta em %s"/>
     </texts>
 </l10n>

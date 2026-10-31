@@ -908,5 +908,30 @@
         <text name="eq_shop_bleachers8x16" text="Tribüne 8 Reihen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sitzplätze für Ihre eigenen Turniere: zählt bis 60 m von einem Parcours oder Dressurviereck."/>
         <text name="eq_shop_bleachersSponsors_function" text="Die Sponsorentafeln davor zeigen die Marken Ihrer Maschinen."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Dressuraufgabe neu, bearbeiten oder speichern"/>
+        <text name="input_EQ_DT_PREV" text="Vorherige Option"/>
+        <text name="input_EQ_DT_NEXT" text="Nächste Option"/>
+        <text name="input_EQ_DT_RANDOM" text="Zufällige Option"/>
+        <text name="input_EQ_DT_MODE" text="Hufschlagfiguren oder Lektionen auf der Stelle"/>
+        <text name="input_EQ_DT_ACCEPT" text="Diesen Schritt behalten"/>
+        <text name="input_EQ_DT_UNDO" text="Letzten Schritt rückgängig"/>
+        <text name="eq_dt_newAction" text="Neue Dressuraufgabe"/>
+        <text name="eq_dt_editAction" text="Dressuraufgabe bearbeiten"/>
+        <text name="eq_dt_saveAction" text="Dressuraufgabe speichern"/>
+        <text name="eq_dt_cancelAction" text="Dressuraufgabe abbrechen"/>
+        <text name="eq_dt_modeSpot" text="Lektionen auf der Stelle zeigen"/>
+        <text name="eq_dt_modeFigure" text="Figuren zeigen"/>
+        <text name="eq_dt_new" text="Neue Dressuraufgabe: Schritt %d"/>
+        <text name="eq_dt_editing" text="Dressuraufgabe bearbeiten: Schritt %d"/>
+        <text name="eq_dt_figure" text="Figur"/>
+        <text name="eq_dt_spot" text="Auf der Stelle"/>
+        <text name="eq_dt_noOptions" text="Hier passt nichts: rückgängig machen oder speichern"/>
+        <text name="eq_dt_saved" text="Dressuraufgabe gespeichert: %d Lektionen"/>
+        <text name="eq_dt_deleted" text="Dressuraufgabe gelöscht: dieses Viereck reitet wieder zufällige Aufgaben"/>
+        <text name="eq_dt_cancelled" text="Dressuraufgabe nicht gespeichert"/>
+        <text name="eq_fig_halt" text="Halten bei %s"/>
+        <text name="eq_fig_reinBack" text="Halten bei %s, Rückwärtsrichten"/>
+        <text name="eq_fig_piaffe" text="Piaffe bei %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette bei %s"/>
     </texts>
 </l10n>

@@ -92,6 +92,7 @@ function EqTrainingHooks.reset()
     EqTrainingHooks.showJumpNodes = {}
     EqDressageHooks.reset()
     EqCourseHooks.reset()
+    EqDressageEditor.reset()
     EqPoles.reset()
 end
 
@@ -614,6 +615,11 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
         return
     end
+    -- Editing a dressage test: the horse stands while the rider picks the figures.
+    if EqDressageEditor.holds(vehicle) and spec.inputValues ~= nil and Rideable.GAITTYPES ~= nil then
+        spec.inputValues.currentGait = Rideable.GAITTYPES.STILL or spec.inputValues.currentGait
+        spec.inputValues.axisSteer = 0
+    end
     -- First undo a gait change the exertion system doesn't allow (the base game may have made
     -- it this frame), so the gait below is the one the horse keeps.
     EqTrainingHooks.keepGait(spec, sheet.exertion)
@@ -692,7 +698,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- Getting going again after a crash doesn't drain the combo at the slow-gait rate.
     local comboGait = now < (spec.eqCrashGraceUntil or 0) and "trot" or pace
     if EqTraining.comboTick(sheet, comboGait, dt, spec.eqJump ~= nil) then EqTrainingHud.pop("jumpLost") end
-    local coursing = EqCourseHooks.isBusy()
+    local coursing = EqCourseHooks.isBusy() or EqDressageEditor.isEditing()
     if routineShown() and not coursing then
         -- Near dressage markers the routine rides between them (EqDressage).
         local okCourse, course = EqLog.try("EqTrainingHooks.onUpdateRiding courseFor", EqDressageHooks.courseFor, vehicle, spec)
@@ -735,7 +741,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         EqTrainingHud.pop("routineLost")
     end
     -- A dressage test under way keeps the courses quiet: no start line, hint or countdown.
-    EqCourseHooks.dressageActive = sheet.routine.active
+    EqCourseHooks.dressageActive = sheet.routine.active or EqDressageEditor.isEditing()
     -- Its line on the ground (EqDressageHooks.drawPath).
     EqDressageHooks.pathRun = sheet.routine.active and sheet.routine.kind == "path" and sheet.routine.path or nil
     EqDressageHooks.pathAt = g_time or 0
@@ -1049,8 +1055,9 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
     end
-    -- Show jumping course keys (EqCourseHooks).
+    -- Show jumping course keys (EqCourseHooks), and the dressage test editor's (EqDressageEditor).
     EqCourseHooks.registerActions(vehicle, spec)
+    EqDressageEditor.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)
@@ -1146,6 +1153,7 @@ local function figureText(move)
     end
     return string.format(g_i18n:getText(key), unpack(args))
 end
+EqTrainingHooks.figureText = figureText
 
 
 --- A change or halt as the rider is told it: "Canter: M", "Change: Trot", "Halt at X".
@@ -1486,6 +1494,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     EqTrainingHud.drawHelp()
     -- Editing a show jumping course: recording, its line and the course keys (EqCourseHooks).
     EqCourseHooks.onDraw(vehicle)
+    EqDressageEditor.updateActions(vehicle)
 
     local id = getRiddenId(spec)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil
@@ -1642,6 +1651,8 @@ function EqTrainingHooks.installRideable(guarded)
         if type(Rideable[name]) == "function" then
             Rideable[name] = Utils.overwrittenFunction(Rideable[name], function(self, superFunc, actionName, inputValue, ...)
                 if not EqMain.isActive then return superFunc(self, actionName, inputValue, ...) end
+                -- The horse stands while its rider edits a dressage test (EqDressageEditor).
+                if EqDressageEditor.holds(self) then return end
                 guarded("gallop key", function() EqTrainingHooks.beforeGaitAction(self, key, inputValue) end)
                 local result = superFunc(self, actionName, inputValue, ...)
                 guarded("gallop key", function() EqTrainingHooks.afterGaitAction(self) end)
@@ -1673,6 +1684,7 @@ function EqTrainingHooks.installRideable(guarded)
         if not EqMain.isActive then return end
         guarded("dressage markers", EqDressageHooks.update)
         guarded("course recording", EqCourseHooks.update)
+        guarded("dressage test editor", EqDressageEditor.update)
         guarded("show jump poles", EqPoles.update)
     end)
 end

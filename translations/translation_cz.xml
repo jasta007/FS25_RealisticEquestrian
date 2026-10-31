@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 řad, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sezení pro závody, které pořádáš: počítá se do 60 m od trati nebo drezurního obdélníku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponzorské tabule vpředu ukazují značky tvých strojů."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nová drezurní úloha, upravit nebo uložit"/>
+        <text name="input_EQ_DT_PREV" text="Předchozí možnost"/>
+        <text name="input_EQ_DT_NEXT" text="Další možnost"/>
+        <text name="input_EQ_DT_RANDOM" text="Náhodná možnost"/>
+        <text name="input_EQ_DT_MODE" text="Cviky nebo prvky na místě"/>
+        <text name="input_EQ_DT_ACCEPT" text="Ponechat tento krok"/>
+        <text name="input_EQ_DT_UNDO" text="Vrátit poslední krok"/>
+        <text name="eq_dt_newAction" text="Nová drezurní úloha"/>
+        <text name="eq_dt_editAction" text="Upravit drezurní úlohu"/>
+        <text name="eq_dt_saveAction" text="Uložit drezurní úlohu"/>
+        <text name="eq_dt_cancelAction" text="Zrušit drezurní úlohu"/>
+        <text name="eq_dt_modeSpot" text="Ukázat prvky na místě"/>
+        <text name="eq_dt_modeFigure" text="Ukázat cviky"/>
+        <text name="eq_dt_new" text="Nová drezurní úloha: krok %d"/>
+        <text name="eq_dt_editing" text="Úprava drezurní úlohy: krok %d"/>
+        <text name="eq_dt_figure" text="Cvik"/>
+        <text name="eq_dt_spot" text="Na místě"/>
+        <text name="eq_dt_noOptions" text="Sem nic nepasuje: vraťte krok nebo uložte"/>
+        <text name="eq_dt_saved" text="Drezurní úloha uložena: %d prvků"/>
+        <text name="eq_dt_deleted" text="Drezurní úloha smazána: tato jízdárna jezdí opět náhodné úlohy"/>
+        <text name="eq_dt_cancelled" text="Drezurní úloha neuložena"/>
+        <text name="eq_fig_halt" text="Zastavení v %s"/>
+        <text name="eq_fig_reinBack" text="Zastavení v %s, couvání"/>
+        <text name="eq_fig_piaffe" text="Piafa v %s"/>
+        <text name="eq_fig_pirouette" text="Pirueta v %s"/>
     </texts>
 </l10n>

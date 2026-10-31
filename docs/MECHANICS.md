@@ -276,6 +276,26 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).
 
+**Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
+the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
+top. The opening, A down the centre line to a halt at X, shows in white and the option for the next
+step in cyan, drawn from where the test has got to (a pole marks its start):
+
+- **N** / **M** step back and on through the options, nearest first. **R** picks one at random (and
+  rolls again what is left to chance inside it, such as a halt at X on a centre line).
+- **F** swaps between figures and movements on the spot at the letters ahead: a halt or a halt and
+  rein back (walk or trot), a piaffe (trot), a pirouette (walk or canter).
+- **Enter** keeps the option; the next options come from its end. **Backspace** takes the last step
+  back off. The first step also picks whether the test tracks left or right at C.
+- **Ctrl+L** again saves, adding the final centre line from A to a halt at X. Undoing every step and
+  saving deletes the arena's test. **Ctrl+Backspace** cancels without saving, and getting off the
+  horse saves what was kept.
+- Gait changes come with the figures (at the letter before a figure ridden at another gait), and
+  nothing random is added between the steps: the test rides exactly as drawn, every time.
+- A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it
+  loses the test) and replaces the random tests there, in training and in your own events held
+  there. Riding Hall boards have no editor. Single player only, like courses.
+
 **Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
 and walks are only asked for to markers within 12 m:
 

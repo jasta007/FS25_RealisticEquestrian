@@ -906,5 +906,30 @@
         <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядов, 16 м"/>
         <text name="eq_shop_bleachers_function" text="Места для зрителей на ваших соревнованиях: считается в пределах 60 м от маршрута или манежа для выездки."/>
         <text name="eq_shop_bleachersSponsors_function" text="Спонсорские щиты перед ней показывают марки вашей техники."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Новая езда по выездке, изменить или сохранить"/>
+        <text name="input_EQ_DT_PREV" text="Предыдущий вариант"/>
+        <text name="input_EQ_DT_NEXT" text="Следующий вариант"/>
+        <text name="input_EQ_DT_RANDOM" text="Случайный вариант"/>
+        <text name="input_EQ_DT_MODE" text="Фигуры или элементы на месте"/>
+        <text name="input_EQ_DT_ACCEPT" text="Оставить этот шаг"/>
+        <text name="input_EQ_DT_UNDO" text="Отменить последний шаг"/>
+        <text name="eq_dt_newAction" text="Новая езда по выездке"/>
+        <text name="eq_dt_editAction" text="Изменить езду по выездке"/>
+        <text name="eq_dt_saveAction" text="Сохранить езду по выездке"/>
+        <text name="eq_dt_cancelAction" text="Отменить езду по выездке"/>
+        <text name="eq_dt_modeSpot" text="Показать элементы на месте"/>
+        <text name="eq_dt_modeFigure" text="Показать фигуры"/>
+        <text name="eq_dt_new" text="Новая езда по выездке: шаг %d"/>
+        <text name="eq_dt_editing" text="Изменение езды: шаг %d"/>
+        <text name="eq_dt_figure" text="Фигура"/>
+        <text name="eq_dt_spot" text="На месте"/>
+        <text name="eq_dt_noOptions" text="Здесь ничего не подходит: отмените или сохраните"/>
+        <text name="eq_dt_saved" text="Езда по выездке сохранена: элементов %d"/>
+        <text name="eq_dt_deleted" text="Езда по выездке удалена: на этом плацу снова случайные езды"/>
+        <text name="eq_dt_cancelled" text="Езда по выездке не сохранена"/>
+        <text name="eq_fig_halt" text="Остановка у %s"/>
+        <text name="eq_fig_reinBack" text="Остановка у %s, осаживание"/>
+        <text name="eq_fig_piaffe" text="Пиаффе у %s"/>
+        <text name="eq_fig_pirouette" text="Пируэт у %s"/>
     </texts>
 </l10n>
