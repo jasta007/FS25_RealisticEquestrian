@@ -3752,6 +3752,10 @@ end)()
         and EqLateral.curve(0.5) < 0.5 and EqLateral.curve(-1) == -1 and EqLateral.curve(1) == 1
         and math.abs(EqLateral.turnSpeedToward(-1, 1, 100) - (-1 + EqLateral.TURN_ACCEL * 0.1)) < 1e-9
         and EqLateral.turnSpeedToward(0.9, 1, 1000) == 1
+        -- Only big swings (James, 2026-10-31): small left to small right gets none, lock to lock all of it, less at a gallop.
+        and EqLateral.turnSpeedToward(-0.2, 0.2, 100, 1) == -0.2
+        and math.abs(EqLateral.turnSpeedToward(-1, 1, 100, 1) - (-1 + EqLateral.TURN_ACCEL * 0.1)) < 1e-9
+        and EqLateral.turnSpeedToward(-1, 1, 100, 1, true) < EqLateral.turnSpeedToward(-1, 1, 100, 1)
         and math.abs(EqLateral.towards(0, 1, EqLateral.HEAD_MS / 2, EqLateral.HEAD_MS) - 0.5) < 1e-9)
     -- Ctrl + W: a passage at the walk's top speed, a collected canter between walk and trot.
     local tops = { WALK = 1.5, TROT = 3, CANTER = 5 }

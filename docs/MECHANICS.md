@@ -174,11 +174,12 @@ straight is easy and the turn growing gently past it (power 1.5); it goes straig
 button is let go. While steering with the mouse, A and D strafe without Shift, and holding
 **Shift** holds the heading (no turn) while the mouse bends the head instead (the turn animation
 only); the bend springs back in 0.3 s once let go. The head eases to the turn asked rather than
-following the turn frame by frame, slower towards full lock. In a dressage test or lateral work
-(right mouse held or drifting) the horse swings from one lock to the other faster than the base
-game (3 rad/s² more turn acceleration: James found it spongey, a canter serpentine impossible);
-not elsewhere, since gallops between show jumps went squirrely with it (2026-10-31). The line
-pull (temperament's stickiness) also only works in a started dressage test. While the button is
+following the turn frame by frame, slower towards full lock. Every ridden horse swings from one
+lock to the other faster than the base game (up to 3 rad/s² more turn acceleration: James found
+it spongey, a canter serpentine impossible), but only on big swings (James, 2026-10-31: small
+left to small right went squirrely): none when the new turn is within 0.6 of a full lock of the
+old, all of it from 1.6 (lock to lock is 2), and 40% of that at a gallop. The line pull
+(temperament's stickiness) only works in a started dressage test. While the button is
 held the camera eases round to the way the horse's body faces (not the drift) and
 the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real
 names, each with a bend): leg yield across the arena = drift, head bent away from it; half pass =
