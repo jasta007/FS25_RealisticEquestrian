@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Halt at %s, rein back"/>
         <text name="eq_fig_piaffe" text="Piaffe at %s"/>
         <text name="eq_fig_pirouette" text="Pirouette at %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: build your own dressage test for this arena"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edit this arena's dressage test"/>
     </texts>
 </l10n>

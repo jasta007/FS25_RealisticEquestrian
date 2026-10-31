@@ -1495,6 +1495,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     -- Editing a show jumping course: recording, its line and the course keys (EqCourseHooks).
     EqCourseHooks.onDraw(vehicle)
     EqDressageEditor.updateActions(vehicle)
+    EqDressageEditor.drawHint(vehicle)
 
     local id = getRiddenId(spec)
     local sheet = id ~= nil and EqTrainingHooks.sheets[id] or nil

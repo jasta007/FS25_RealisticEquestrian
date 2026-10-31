@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Halthouden bij %s, achterwaarts"/>
         <text name="eq_fig_piaffe" text="Piaffe bij %s"/>
         <text name="eq_fig_pirouette" text="Pirouette bij %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: maak je eigen dressuurproef voor deze bak"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: bewerk de dressuurproef van deze bak"/>
     </texts>
 </l10n>

@@ -933,5 +933,7 @@
         <text name="eq_fig_reinBack" text="Arrêt en %s, reculer"/>
         <text name="eq_fig_piaffe" text="Piaffer en %s"/>
         <text name="eq_fig_pirouette" text="Pirouette en %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L : créer votre propre reprise de dressage pour cette carrière"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L : modifier la reprise de dressage de cette carrière"/>
     </texts>
 </l10n>

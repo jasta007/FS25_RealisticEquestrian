@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Остановка у %s, осаживание"/>
         <text name="eq_fig_piaffe" text="Пиаффе у %s"/>
         <text name="eq_fig_pirouette" text="Пируэт у %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: составить свою езду по выездке для этого плаца"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: изменить езду по выездке этого плаца"/>
     </texts>
 </l10n>

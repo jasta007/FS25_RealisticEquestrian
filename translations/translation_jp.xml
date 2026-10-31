@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="%sで停止、後退"/>
         <text name="eq_fig_piaffe" text="%sでピアッフェ"/>
         <text name="eq_fig_pirouette" text="%sでピルエット"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L：このアリーナの馬場馬術の経路を自分で作る"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L：このアリーナの馬場馬術の経路を編集"/>
     </texts>
 </l10n>

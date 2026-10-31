@@ -933,5 +933,7 @@
         <text name="eq_fig_reinBack" text="Halten bei %s, Rückwärtsrichten"/>
         <text name="eq_fig_piaffe" text="Piaffe bei %s"/>
         <text name="eq_fig_pirouette" text="Pirouette bei %s"/>
+        <text name="eq_dt_hintNew" text="Strg+L: eigene Dressuraufgabe für dieses Viereck erstellen"/>
+        <text name="eq_dt_hintEdit" text="Strg+L: Dressuraufgabe dieses Vierecks bearbeiten"/>
     </texts>
 </l10n>

@@ -389,6 +389,17 @@ function EqDressageEditor.draw(vehicle)
 end
 
 
+--- Beside the panel near an arena: the key for the editor, which was too easy to miss in the
+--- key list (James 2026-10-31). Called every frame while drawing.
+--- @param vehicle table
+function EqDressageEditor.drawHint(vehicle)
+    local spec = vehicle.spec_rideable
+    if spec == nil or EqDressageEditor.active ~= nil or not spec.eqDtCanStart then return end
+    local key = spec.eqDtHasTest and "eq_dt_hintEdit" or "eq_dt_hintNew"
+    EqTrainingHud.drawPanelNote(text(key), EqTrainingHud.STAT_COLOR.temperament, false)
+end
+
+
 --- Each frame (FSBaseMission.update): the rider got off, so editing ends and what was kept is saved.
 function EqDressageEditor.update()
     local active = EqDressageEditor.active

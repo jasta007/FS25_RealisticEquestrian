@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Zatrzymanie w %s, cofanie"/>
         <text name="eq_fig_piaffe" text="Piaff w %s"/>
         <text name="eq_fig_pirouette" text="Piruet w %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: ułóż własny program ujeżdżenia dla tego czworoboku"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edytuj program ujeżdżenia tego czworoboku"/>
     </texts>
 </l10n>

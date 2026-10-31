@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Parada em %s, recuar"/>
         <text name="eq_fig_piaffe" text="Piaffe em %s"/>
         <text name="eq_fig_pirouette" text="Pirueta em %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: cria a tua própria reprise de dressage para este picadeiro"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: editar a reprise de dressage deste picadeiro"/>
     </texts>
 </l10n>

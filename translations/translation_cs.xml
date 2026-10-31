@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="在%s立定，后退"/>
         <text name="eq_fig_piaffe" text="在%s原地踏步"/>
         <text name="eq_fig_pirouette" text="在%s定后肢旋转"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L：为此场地编排自己的盛装舞步路线"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L：编辑此场地的盛装舞步路线"/>
     </texts>
 </l10n>

@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Alt in %s, rinculo"/>
         <text name="eq_fig_piaffe" text="Piaffe in %s"/>
         <text name="eq_fig_pirouette" text="Piroetta in %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: crea la tua ripresa di dressage per questo rettangolo"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: modifica la ripresa di dressage di questo rettangolo"/>
     </texts>
 </l10n>

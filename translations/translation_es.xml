@@ -933,5 +933,7 @@
         <text name="eq_fig_reinBack" text="Parada en %s, paso atrás"/>
         <text name="eq_fig_piaffe" text="Piaffe en %s"/>
         <text name="eq_fig_pirouette" text="Pirueta en %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: crea tu propia reprise de doma para esta pista"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edita la reprise de doma de esta pista"/>
     </texts>
 </l10n>

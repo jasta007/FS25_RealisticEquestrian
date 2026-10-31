@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Parada em %s, recuar"/>
         <text name="eq_fig_piaffe" text="Piaffe em %s"/>
         <text name="eq_fig_pirouette" text="Pirueta em %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: monte sua própria prova de adestramento para esta pista"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: editar a prova de adestramento desta pista"/>
     </texts>
 </l10n>

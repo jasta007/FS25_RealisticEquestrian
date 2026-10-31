@@ -931,5 +931,7 @@
         <text name="eq_fig_reinBack" text="Zastavení v %s, couvání"/>
         <text name="eq_fig_piaffe" text="Piafa v %s"/>
         <text name="eq_fig_pirouette" text="Pirueta v %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: sestavte vlastní drezurní úlohu pro tuto jízdárnu"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: upravit drezurní úlohu této jízdárny"/>
     </texts>
 </l10n>
