@@ -252,7 +252,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
-  down to X) only loses half of all that. Each mark pops up low on the screen, red through orange
+  down to X) only loses half of all that. Each mark pops up below the horse, red through orange
   and yellow to green, with gold flourishes at 9 or better.
 - A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or

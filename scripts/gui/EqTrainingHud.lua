@@ -227,10 +227,11 @@ EqTrainingHud.MULT_COLORS = {
     { 1, 0.25, 0.3, 1 },
 }
 EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growMs = 150, holdMs = 700, fadeMs = 500 }
--- A dressage movement's mark (James, 2026-10-31): low on the screen, where it doesn't cover the
--- line ahead, coloured by the mark (MARK_COLOURS: red to green), held a little longer, and with
+-- A dressage movement's mark (James, 2026-10-31): below the horse, where it doesn't cover the line
+-- ahead (0.17 never showed in game, under the game's own bottom layer it seems);
+-- coloured by the mark (MARK_COLOURS: red to green), held a little longer, and with
 -- a gold flourish either side at FLOURISH or better.
-EqTrainingHud.MARK = { y = 0.17, holdMs = 1300, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+EqTrainingHud.MARK = { y = 0.3, holdMs = 1300, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
 EqTrainingHud.MARK_COLOURS = { { 0, { 0.9, 0.2, 0.2, 1 } }, { 3, { 0.9, 0.2, 0.2, 1 } }, { 5, { 1, 0.55, 0.1, 1 } },
     { 7, { 1, 0.9, 0.2, 1 } }, { 8.5, { 0.35, 0.9, 0.35, 1 } }, { 10, { 0.35, 0.9, 0.35, 1 } } }
 

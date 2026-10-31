@@ -3798,12 +3798,12 @@ end)()
 end)()
 
 
--- A canter dash is pointed: the dash and two barbs swept back from its front (facing +z).
+-- A canter dash is pointed: a chevron whose arms meet at its front (facing +z).
 ;(function()
     local strips = EqCourseGlow.pointed({ 0, 0, 0, 0, 0, 0.9 })
-    local a, b = strips[2], strips[3]
-    check("a pointed dash has two barbs back from its front, one each side", #strips == 3 and a[3] == 0.9 and b[3] == 0.9
-        and a[6] < 0.9 and b[6] < 0.9 and a[4] * b[4] < 0)
+    local a, b = strips[1], strips[2]
+    check("a canter dash is a chevron: two arms meeting at its front, one each side, overlapping at the tip",
+        #strips == 2 and a[3] > 0.9 and b[3] > 0.9 and a[6] < 0.9 and b[6] < 0.9 and a[4] * b[4] < 0 and a[1] * a[4] < 0)
 end)()
 
 
