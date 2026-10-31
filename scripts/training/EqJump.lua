@@ -53,6 +53,10 @@ EqJump.GALLOP_PUSH_MS = 120
 EqJump.PUSH_SPEED = 0.5
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
+-- A jump from a trot (James, 2026-10-31: simpler than hiding the high jump behind Ctrl; the base
+-- game allows jumps only from a canter) is a collected jump. It is slow already, so its gather
+-- on the ground is only TROT_PUSH_MS.
+EqJump.TROT_PUSH_MS = 80
 -- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
 EqJump.COLLECT_LIFT = 0
 EqJump.COLLECT_SPEED_SHARE = 0.5
@@ -71,6 +75,7 @@ EqJump.TUNABLE = {
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
     { name = "gpush", key = "GALLOP_PUSH_MS", min = 0, max = 600 },
+    { name = "tpush", key = "TROT_PUSH_MS", min = 0, max = 600 },
     { name = "lift", key = "PUSH_SPEED", min = 0, max = 3 },
     { name = "clift", key = "COLLECT_LIFT", min = 0, max = 3 },
     { name = "window", key = "COLLECT_WINDOW_MS", min = 0, max = 2000 },
@@ -163,13 +168,14 @@ function EqJump.airtime(height)
 end
 
 
---- Whether Ctrl asks for a collected jump (pure).
+--- Whether a jump is collected (pure): from a trot, or with Ctrl.
 --- @param ctrlDown boolean Ctrl held now
 --- @param ctrlAt number|nil when Ctrl was last seen held, ms
 --- @param now number ms
+--- @param gait string|nil the gait it took off from
 --- @return boolean
-function EqJump.isCollected(ctrlDown, ctrlAt, now)
-    if ctrlDown then return true end
+function EqJump.isCollected(ctrlDown, ctrlAt, now, gait)
+    if ctrlDown or gait == "trot" then return true end
     return ctrlAt ~= nil and now - ctrlAt <= EqJump.COLLECT_WINDOW_MS
 end
 
@@ -184,7 +190,12 @@ end
 --- @param gait string|nil the gait it took off from ("gallop" takes GALLOP_PUSH_MS)
 --- @return table launch
 function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSpeed, gait)
-    local push = collected and EqJump.COLLECT_PUSH_MS or (gait == "gallop" and EqJump.GALLOP_PUSH_MS or EqJump.PUSH_MS)
+    local push = EqJump.PUSH_MS
+    if collected then
+        push = gait == "trot" and EqJump.TROT_PUSH_MS or EqJump.COLLECT_PUSH_MS
+    elseif gait == "gallop" then
+        push = EqJump.GALLOP_PUSH_MS
+    end
     return {
         speedY = collected and collectedSpeedY or speedY,
         startSpeed = speed,

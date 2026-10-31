@@ -63,8 +63,8 @@ uses its genetics, health and fitness.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
-  Gait keys pressed in the air take effect as the horse lands. Ctrl + Space is a short, steep
-  collected jump.
+  Gait keys pressed in the air take effect as the horse lands. Jumping from a trot (or Ctrl +
+  Space at a canter or gallop) is a short, steep collected jump.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
 - **Staff (new):** hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab

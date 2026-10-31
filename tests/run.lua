@@ -4120,6 +4120,8 @@ end)()
     J.PUSH_MS, J.PUSH_SPEED = savedPush, savedLift
 
     -- Collected: Ctrl held or just let go.
+    check("collected: from a trot", J.isCollected(false, nil, 0, "trot") and not J.isCollected(false, nil, 0, "canter")
+        and J.newLaunch(7, 3, true, 7, 0, 3, "trot").pushMs == J.TROT_PUSH_MS)
     check("collected: Ctrl held", J.isCollected(true, nil, 0))
     check("collected: Ctrl just let go", J.isCollected(false, 1000, 1000 + J.COLLECT_WINDOW_MS))
     check("collected: Ctrl too long ago", not J.isCollected(false, 1000, 1001 + J.COLLECT_WINDOW_MS)

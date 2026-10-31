@@ -963,7 +963,7 @@ function EqTrainingHooks.startLaunch(spec)
     if type(spec.currentSpeedY) ~= "number" then return end
     local now = g_time or 0
     spec.eqJumpAt = now
-    local collected = EqJump.isCollected(ctrlDown(), spec.eqCtrlAt, now)
+    local collected = EqJump.isCollected(ctrlDown(), spec.eqCtrlAt, now, spec.eqLastGait)
     local collectedSpeedY = nil
     if collected then
         local gallop = spec.eqGallopJumpHeight or spec.jumpHeight or 2
@@ -1639,6 +1639,29 @@ function EqTrainingHooks.installRideable(guarded)
             if not EqMain.isActive or spec == nil or spec.eqLaunch == nil or spec.isOnGround ~= false then return end
             guarded("jump pose", function()
                 spec.isCloseToGround = EqJump.closeToGround(spec.isCloseToGround == true, spec.currentSpeedY or 0)
+            end)
+        end)
+    end
+
+    -- Jumps from a trot too (a collected jump, EqJump): the base game allows them from a canter.
+    if Rideable.getIsRideableJumpAllowed ~= nil then
+        Rideable.getIsRideableJumpAllowed = Utils.overwrittenFunction(Rideable.getIsRideableJumpAllowed,
+            function(self, superFunc, allowWhileJump, ...)
+                if superFunc(self, allowWhileJump, ...) then return true end
+                local spec = self.spec_rideable
+                if not EqMain.isActive or spec == nil or self.isBroken or Rideable.GAITTYPES == nil then return false end
+                return spec.inputValues.currentGait == Rideable.GAITTYPES.TROT and (spec.isOnGround or allowWhileJump == true)
+            end)
+    end
+    if Rideable.updateInputText ~= nil then
+        Rideable.updateInputText = Utils.appendedFunction(Rideable.updateInputText, function(self)
+            local spec = self.spec_rideable
+            if not EqMain.isActive or spec == nil or spec.jumpEventId == nil or Rideable.GAITTYPES == nil then return end
+            if spec.inputValues.currentGait ~= Rideable.GAITTYPES.TROT then return end
+            guarded("trot jump key", function()
+                g_inputBinding:setActionEventText(spec.jumpEventId, g_i18n:getText("input_JUMP"))
+                g_inputBinding:setActionEventActive(spec.jumpEventId, true)
+                g_inputBinding:setActionEventTextVisibility(spec.jumpEventId, true)
             end)
         end)
     end
