@@ -27,23 +27,30 @@
 EqJump = {}
 
 EqJump.GRAVITY = 9.81
-EqJump.RISE_SHARE = 2.3
-EqJump.FALL_SHARE = 2.6
+-- James, 2026-10-31, after testing: rise 3.5 and fall 3 at a canter, so the climb ends before
+-- the launch clip does (with the push-off's lift below).
+EqJump.RISE_SHARE = 3.5
+EqJump.FALL_SHARE = 3
 EqJump.BLEND_SPEED = 3
 EqJump.FALL_MAX = 7
 -- The horse's animation changes pose by spec.isCloseToGround (the hooves under 1.25 m): our lower
 -- jumps only just pop over that line, flashing the in-air pose between launch and landing
 -- (James, 2026-10-31). CLOSE_MODE 0 leaves it to the base game, 1 keeps it on while rising (the
--- launch pose holds to the top), 2 keeps it on for the whole jump.
-EqJump.CLOSE_MODE = 0
+-- launch pose holds to the top), 2 keeps it on for the whole jump, 3 turns it on once the fall
+-- passes CLOSE_FALL_SPEED (James: the landing clip played a bit late).
+EqJump.CLOSE_MODE = 3
+EqJump.CLOSE_FALL_SPEED = 1
+-- The quicker jump covered too little ground to clear things (James): a normal jump carries
+-- AIR_CARRY times its take-off speed through the air. Not a collected jump.
+EqJump.AIR_CARRY = 1.25
 EqJump.HEIGHT_SHARE = 0.88
--- James, 2026-10-31: a lift during the push-off started the launch clip early, so it ran out
--- before the top and restarted (a mid-air stutter). The push-off is now a short beat on the
--- ground with no lift (PUSH_SPEED 0) before the launch, as long as each gait's clip allows:
--- James found 80 ms at a canter (PUSH_MS) and 140 ms at a gallop (GALLOP_PUSH_MS) smooth.
+-- James, 2026-10-31: the push-off's small lift starts the launch clip while the hind legs are
+-- still on the ground, but the clip must last until the top of the climb or it restarts (a
+-- mid-air stutter), so the climb is quick (RISE_SHARE). James found 80 ms at 0.5 m/s smooth at a
+-- canter; the gallop's longer clip takes GALLOP_PUSH_MS.
 EqJump.PUSH_MS = 80
 EqJump.GALLOP_PUSH_MS = 140
-EqJump.PUSH_SPEED = 0
+EqJump.PUSH_SPEED = 0.5
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
 -- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
@@ -58,7 +65,9 @@ EqJump.TUNABLE = {
     { name = "fall", key = "FALL_SHARE", min = 1, max = 6 },
     { name = "fallmax", key = "FALL_MAX", min = 2, max = 30 },
     { name = "blend", key = "BLEND_SPEED", min = 0.1, max = 10 },
-    { name = "close", key = "CLOSE_MODE", min = 0, max = 2 },
+    { name = "close", key = "CLOSE_MODE", min = 0, max = 3 },
+    { name = "closefall", key = "CLOSE_FALL_SPEED", min = 0, max = 10 },
+    { name = "carry", key = "AIR_CARRY", min = 0.5, max = 2 },
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
     { name = "gpush", key = "GALLOP_PUSH_MS", min = 0, max = 600 },
@@ -114,7 +123,17 @@ end
 function EqJump.closeToGround(baseClose, speedY)
     local mode = math.floor(EqJump.CLOSE_MODE + 0.5)
     if mode == 2 or (mode == 1 and speedY > 0) then return true end
+    if mode == 3 and speedY < -EqJump.CLOSE_FALL_SPEED then return true end
     return baseClose
+end
+
+
+--- The least forward speed a jump in the air keeps (pure), nil for no floor.
+--- @param launch table from newLaunch
+--- @return number|nil m/s
+function EqJump.carrySpeed(launch)
+    if launch.collected or not launch.launched then return nil end
+    return launch.startSpeed * EqJump.AIR_CARRY
 end
 
 

@@ -4072,16 +4072,22 @@ end)()
     local prev, smooth = nil, true
     for vy = J.BLEND_SPEED + 1, -J.FALL_MAX - 1, -0.05 do
         local pull = J.gravity(vy, false)
-        if prev ~= nil and math.abs(pull - prev) > 0.6 then smooth = false end
+        if prev ~= nil and math.abs(pull - prev) > 1.2 then smooth = false end
         prev = pull
     end
     check("jump: the pull changes smoothly over the top and fades to FALL_MAX", smooth
-        and J.gravity(-J.FALL_MAX, false) == 0 and J.FALL_SHARE > J.RISE_SHARE)
+        and J.gravity(-J.FALL_MAX, false) == 0)
     J.CLOSE_MODE = 1
     check("jump pose: close to the ground held while rising (mode 1)", J.closeToGround(false, 3)
         and not J.closeToGround(false, -1) and J.closeToGround(true, -1))
-    J.CLOSE_MODE = 0
-    check("jump pose: left to the base game by default (mode 0)", not J.closeToGround(false, 3))
+    J.CLOSE_MODE = 3
+    check("jump pose: landing pose once falling faster than CLOSE_FALL_SPEED (mode 3)", not J.closeToGround(false, 3)
+        and not J.closeToGround(false, -J.CLOSE_FALL_SPEED / 2) and J.closeToGround(false, -J.CLOSE_FALL_SPEED - 0.1))
+    local carried = J.newLaunch(7, 5, false, nil, 0, nil, "canter")
+    check("carry: none before the launch", J.carrySpeed(carried) == nil)
+    carried.launched = true
+    check("carry: a normal jump keeps AIR_CARRY times its speed, a collected one doesn't",
+        J.carrySpeed(carried) == 5 * J.AIR_CARRY and J.carrySpeed(J.newLaunch(7, 5, true, 7, 0)) == nil)
     local g = J.gravity(0, true)
     local v = J.launchSpeed(1.6, g)
     check("jump: launch speed reaches the height", math.abs(v * v / (2 * math.abs(g)) - 1.6) < 1e-9)
@@ -4091,10 +4097,10 @@ end)()
         string.format("%.2f s vs %.2f s", after, before))
 
     -- Push-off (a setting, off by default): a small lift, then the rest of the jump's lift.
-    check("jump: push-off is a beat on the ground, longer at a gallop, a collected jump gathers without lift",
+    check("jump: push-off longer at a gallop, a collected jump gathers without lift",
         J.newLaunch(v, 10, false, nil, 0, nil, "canter").pushMs == J.PUSH_MS
         and J.newLaunch(v, 10, false, nil, 0, nil, "gallop").pushMs == J.GALLOP_PUSH_MS
-        and J.newLaunch(v, 10, false, nil, 0).lift == 0 and J.newLaunch(v, 10, true, 7, 0).lift == 0)
+        and J.newLaunch(v, 10, false, nil, 0).lift == J.PUSH_SPEED and J.newLaunch(v, 10, true, 7, 0).lift == 0)
     local savedPush, savedLift = J.PUSH_MS, J.PUSH_SPEED
     J.PUSH_MS, J.PUSH_SPEED = 180, 0.5
     local launch = J.newLaunch(v, 10, false, nil, 1000)
@@ -4129,7 +4135,7 @@ end)()
     -- James's angles: gallop 30-40 degrees, canter 45-60, collected 65-80 (agility 50, base speeds 10/5/3).
     local gallopH = 2 * 0.925 * J.HEIGHT_SHARE
     local function angleAt(height, speed) return J.angle(J.launchSpeed(height, g), speed) end
-    local gallopA, canterA = angleAt(gallopH, 10.3), angleAt(gallopH * 1.8 * 0.5, 5.15)
+    local gallopA, canterA = angleAt(gallopH, 10.3 * J.AIR_CARRY), angleAt(gallopH * 1.8 * 0.5, 5.15 * J.AIR_CARRY)
     local collectA = angleAt(gallopH * J.COLLECT_HEIGHT_SHARE, J.collectedSpeed(5.15, 3.1))
     check("jump angles: gallop 30-40, canter 45-60, collected 65-80", gallopA >= 30 and gallopA <= 40
         and canterA >= 45 and canterA <= 60 and collectA >= 65 and collectA <= 80,

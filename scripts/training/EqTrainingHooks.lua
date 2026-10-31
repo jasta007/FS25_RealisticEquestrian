@@ -981,7 +981,7 @@ function EqTrainingHooks.startLaunch(spec)
             spec.eqLaunch.lift, math.abs(spec.currentSpeed or 0),
             collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
         Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
-            spec.eqLaunch.targetSpeed or math.abs(spec.currentSpeed or 0)))
+            spec.eqLaunch.targetSpeed or math.abs(spec.currentSpeed or 0) * EqJump.AIR_CARRY))
     end
     if not spec.eqLaunch.launched then spec.currentSpeedY = spec.eqLaunch.lift end
 end
@@ -1033,6 +1033,10 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
     local speedY, cap = EqJump.step(launch, now, dt, spec.gravity or -EqJump.GRAVITY)
     if speedY ~= nil then spec.currentSpeedY = speedY end
     if cap ~= nil and type(spec.currentSpeed) == "number" and spec.currentSpeed > cap then spec.currentSpeed = cap end
+    local carry = EqJump.carrySpeed(launch)
+    if carry ~= nil and spec.isOnGround == false and type(spec.currentSpeed) == "number" and spec.currentSpeed < carry then
+        spec.currentSpeed = carry
+    end
     if launch.trace and launch.launched and not wasLaunched then
         Log:info("Jump: launched after %d ms, %.2f m up, horse on the ground %s (%s)", now - launch.startedAt,
             launch.rise, tostring(spec.isOnGround), animationSeen(spec))
