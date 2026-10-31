@@ -746,6 +746,8 @@
         <text name="eq_shop_xcGateArch" text="Arco de salida/meta"/>
         <text name="eq_shop_xcGateSimple" text="Puerta de paso"/>
         <text name="eq_shop_xcGate_function" text="Una puerta para pasar a caballo, no un salto: lo bastante ancha y alta para cualquier caballo, con el logo de tu patrocinador."/>
+        <text name="eq_shop_xcRope" text="Cuerda de marcaje"/>
+        <text name="eq_shop_xcRope_function" text="Una cuerda ligera para marcar el recorrido, sin colisión. Elige cuerda sola o con un pequeño cartel del patrocinador: los carteles aportan solo un poco de marca."/>
         <text name="eq_config_corner" text="Esquina"/>
         <text name="eq_config_cornerRight" text="Punta a la derecha"/>
         <text name="eq_config_cornerLeft" text="Punta a la izquierda"/>

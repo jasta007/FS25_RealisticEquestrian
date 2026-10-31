@@ -895,7 +895,7 @@ function EqConsole:consoleSponsors()
     else
         table.insert(lines, "No sponsor contract")
     end
-    table.insert(lines, string.format("Sponsor boards: %d", EqSponsorManager.boards(farmId)))
+    table.insert(lines, string.format("Sponsor boards: %g", EqSponsorManager.boards(farmId)))
     return table.concat(lines, "\n")
 end
 

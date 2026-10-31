@@ -22,7 +22,12 @@ local Log = EqLog
 EqSponsors.SCAN_MS = 2000
 -- Our placeables with sponsor boards: the bleachers and the cross country table's front board.
 EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable", "placeables/xcjumps/xccornerplank",
-    "placeables/xcjumps/xcdropwall16", "placeables/showjumps/", "placeables/xcjumps/xcgate" }
+    "placeables/xcjumps/xcdropwall16", "placeables/showjumps/", "placeables/xcjumps/xcgate", "placeables/xcjumps/xcrope" }
+-- The rope fence's hanging signs are a TINY bit of branding, so ropes can't be strung everywhere for
+-- it (James, 2026-10-31): each sign counts a tenth of a board, all ropes together one board at most.
+EqSponsors.ROPE = "placeables/xcjumps/xcrope"
+EqSponsors.ROPE_SIGN = 0.1
+EqSponsors.ROPE_CAP = 1
 -- A board's face; "eqSponsor_<n>b" is the same board's back (show jump boards seen both ways) and
 -- "eqSponsor_<n>f<k>" a piece of it (the wall's logo, cut along its falling blocks).
 EqSponsors.NODE = "^eqSponsor_(%d+)b?f?%d*$"
@@ -159,18 +164,54 @@ function EqSponsors.refresh()
 end
 
 
---- @param farmId number
---- @return number boards sponsor boards on the farm's placeables, anywhere on the map
-function EqSponsors.countBoards(farmId)
-    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+--- @param filename string|nil
+--- @return boolean true for the rope fence, whose signs count a little
+function EqSponsors.isRope(filename)
+    if type(filename) ~= "string" then return false end
+    return string.find(string.lower(string.gsub(filename, "\\", "/")), EqSponsors.ROPE, 1, true) ~= nil
+end
+
+
+--- @param boards table board number -> face nodes
+--- @return number signs the front faces (a rope's signs all share one number)
+local function frontFaces(boards)
     local count = 0
-    for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
-        local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
-        if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
-            for _ in pairs(boardsOf(placeable)) do count = count + 1 end
+    for _, nodes in pairs(boards) do
+        for _, node in ipairs(nodes) do
+            local name = getName(node) or ""
+            if string.sub(name, -1) ~= "b" then count = count + 1 end
         end
     end
     return count
+end
+
+
+--- @param boards number whole boards
+--- @param signs number rope signs
+--- @return number the branding they make together
+function EqSponsors.total(boards, signs)
+    return boards + math.min(EqSponsors.ROPE_CAP, signs * EqSponsors.ROPE_SIGN)
+end
+
+
+--- @param farmId number
+--- @return number boards sponsor boards on the farm's placeables, anywhere on the map (rope
+--- signs as a fraction)
+function EqSponsors.countBoards(farmId)
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    local count, signs = 0, 0
+    for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
+        local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
+        if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
+            local boards = boardsOf(placeable)
+            if EqSponsors.isRope(placeable.configFileName) then
+                signs = signs + frontFaces(boards)
+            else
+                for _ in pairs(boards) do count = count + 1 end
+            end
+        end
+    end
+    return EqSponsors.total(count, signs)
 end
 
 
@@ -204,6 +245,12 @@ function EqSponsors.update()
         local offset = 0
         for _, placeable in ipairs(stands) do
             local boards = boardsOf(placeable)
+            if EqSponsors.isRope(placeable.configFileName) then
+                -- a rope grows and loses segments: sign the new ones
+                local faces = 0
+                for _, nodes in pairs(boards) do faces = faces + #nodes end
+                if placeable.eqRopeFaces ~= faces then placeable.eqSponsored, placeable.eqRopeFaces = nil, faces end
+            end
             if not placeable.eqSponsored and next(boards) ~= nil then
                 placeable.eqSponsored = true
                 if byName == nil then byName, names = brands() end

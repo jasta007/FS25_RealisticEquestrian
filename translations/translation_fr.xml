@@ -746,6 +746,8 @@
         <text name="eq_shop_xcGateArch" text="Arche départ/arrivée"/>
         <text name="eq_shop_xcGateSimple" text="Porte de passage"/>
         <text name="eq_shop_xcGate_function" text="Une porte à franchir au pas ou au galop, pas un obstacle : assez large et haute pour tout cheval, au logo de votre sponsor."/>
+        <text name="eq_shop_xcRope" text="Corde de balisage"/>
+        <text name="eq_shop_xcRope_function" text="Une corde légère pour baliser le parcours, sans collision. Choisissez une corde simple ou avec un petit panneau sponsor : les panneaux n'ajoutent qu'un peu de visibilité."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>

@@ -889,7 +889,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
   cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
-  Sponsor boards 2, the liverpool 3, the sponsor wall 2, the arch 3, the ride-through gate 1) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
+  Sponsor boards 2, the liverpool 3, the sponsor wall 2, the arch 3, the ride-through gate 1, each rope sign a tenth, all
+  ropes together 1 at most) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
   game shows only the word. The shop line on those items shows your branding now and with one
   more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
 - **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
@@ -915,6 +916,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   6 m wide, 3.6 m clear, logos across the crossbar and up both towers, 3 boards) and the
   **Ride-Through Gate** (1,200, 4 m wide, 3.4 m clear, one board) to show the way round a course.
   Their banners or board take the Colour bought, or the sponsor's colour.
+- **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
+  collision for horses, hidden like the course flags. Each segment is plain rope or rope with a
+  small hanging sponsor sign; signs are only a tiny bit of branding (above).
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's

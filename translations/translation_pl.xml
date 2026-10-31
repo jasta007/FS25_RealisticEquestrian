@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="Brama startu/mety"/>
         <text name="eq_shop_xcGateSimple" text="Brama przejazdowa"/>
         <text name="eq_shop_xcGate_function" text="Brama do przejazdu, nie przeszkoda: dość szeroka i wysoka dla każdego konia, z logo sponsora."/>
+        <text name="eq_shop_xcRope" text="Lina wyznaczająca"/>
+        <text name="eq_shop_xcRope_function" text="Lekka lina do wyznaczania trasy, bez kolizji. Wybierz zwykłą linę lub linę z małą tabliczką sponsora: tabliczki dają tylko trochę widoczności marki."/>
         <text name="eq_config_corner" text="Narożnik"/>
         <text name="eq_config_cornerRight" text="Szpic w prawo"/>
         <text name="eq_config_cornerLeft" text="Szpic w lewo"/>

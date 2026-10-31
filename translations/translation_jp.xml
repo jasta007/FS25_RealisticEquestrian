@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="スタート/ゴールアーチ"/>
         <text name="eq_shop_xcGateSimple" text="通過ゲート"/>
         <text name="eq_shop_xcGate_function" text="跳ぶ障害ではなく通り抜けるゲート：どの馬でも楽に通れる幅と高さで、スポンサーのロゴ入り。"/>
+        <text name="eq_shop_xcRope" text="ロープマーカー"/>
+        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみか、小さなスポンサー看板付きを選べます。看板のブランド効果はごくわずかです。"/>
         <text name="eq_config_corner" text="コーナー"/>
         <text name="eq_config_cornerRight" text="先端が右"/>
         <text name="eq_config_cornerLeft" text="先端が左"/>

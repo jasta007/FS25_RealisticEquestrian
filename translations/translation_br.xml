@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="Arco de largada/chegada"/>
         <text name="eq_shop_xcGateSimple" text="Portão de passagem"/>
         <text name="eq_shop_xcGate_function" text="Um portão para atravessar, não um salto: largo e alto o bastante para qualquer cavalo, com o logo do seu patrocinador."/>
+        <text name="eq_shop_xcRope" text="Corda de marcação"/>
+        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples ou com uma pequena placa do patrocinador: as placas somam só um pouco de marca."/>
         <text name="eq_config_corner" text="Canto"/>
         <text name="eq_config_cornerRight" text="Ponta à direita"/>
         <text name="eq_config_cornerLeft" text="Ponta à esquerda"/>

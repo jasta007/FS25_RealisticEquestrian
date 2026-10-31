@@ -4968,6 +4968,20 @@ end)()
     check("sponsor boards: bought only with Yes", EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 2 } })
         and not EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 1 } }) and not EqSponsorBoards.isOn({}) and not EqSponsorBoards.isOn(nil))
 
+    -- Rope marker: signs are a tiny bit of branding, capped (James, 2026-10-31).
+    check("rope marker: known, its signs count a tenth each", EqSponsors.isRope("C:\\m\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcRope.xml")
+        and EqSponsors.isBleacherXml("x/placeables/xcJumps/xcRope.xml") and not EqSponsors.isRope("x/placeables/xcJumps/xcTable.xml")
+        and math.abs(EqSponsors.total(2, 3) - 2.3) < 1e-9)
+    check("rope marker: all ropes together give one board at most", EqSponsors.total(0, 40) == 1 and EqSponsors.total(3, 11) == 4)
+    do
+        local rope = io.open("placeables/xcJumps/xcRope.xml"):read("*a")
+        local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
+        check("rope marker: a fence with plain and signed rope, in the shop", rope:find('type="newFence"', 1, true) ~= nil
+            and rope:find('id="ROPE_SIGN"', 1, true) ~= nil and i3d:find('name="eqSponsor_1"', 1, true) ~= nil
+            and i3d:find('name="eqSponsor_1b"', 1, true) ~= nil
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcRope.xml", 1, true) ~= nil)
+    end
+
     -- Sponsor colours: the brand's most colourful paint, our list, else none.
     local paints = { fendtNatureGreen = { 0.05, 0.20, 0.03 }, fendtGrey = { 0.2, 0.2, 0.2 }, ["FENDT_BLACK"] = { 0.01, 0.01, 0.01 },
         claasSeedGreen = { 0.45, 0.55, 0.02 }, deutzFahrGreen = { 0.15, 0.45, 0.05 } }

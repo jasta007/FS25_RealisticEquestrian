@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="起點/終點拱門"/>
         <text name="eq_shop_xcGateSimple" text="通行門"/>
         <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
+        <text name="eq_shop_xcRope" text="繩索標記"/>
+        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>

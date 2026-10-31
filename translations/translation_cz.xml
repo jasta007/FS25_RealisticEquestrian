@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="Startovní/cílový oblouk"/>
         <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
         <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
+        <text name="eq_shop_xcRope" text="Vymezovací lano"/>
+        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano nebo lano s malou cedulkou sponzora: cedulky přidají jen trochu brandingu."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>

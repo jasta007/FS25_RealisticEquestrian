@@ -89,6 +89,8 @@
         <text name="eq_shop_xcGateArch" text="Start-/finishboog"/>
         <text name="eq_shop_xcGateSimple" text="Doorrijpoort"/>
         <text name="eq_shop_xcGate_function" text="Een poort om door te rijden, geen sprong: breed en hoog genoeg voor elk paard, met het logo van je sponsor."/>
+        <text name="eq_shop_xcRope" text="Touwmarkering"/>
+        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw of touw met een klein sponsorbordje: bordjes geven maar een beetje branding."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>

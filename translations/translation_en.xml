@@ -87,6 +87,8 @@
         <text name="eq_shop_xcGateArch" text="Start/Finish Arch"/>
         <text name="eq_shop_xcGateSimple" text="Ride-Through Gate"/>
         <text name="eq_shop_xcGate_function" text="A gate to ride through, not a jump: wide and tall enough for any horse, with your sponsor's logo."/>
+        <text name="eq_shop_xcRope" text="Rope Marker"/>
+        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope or rope with a small hanging sponsor sign: signs add only a little branding."/>
         <text name="eq_config_corner" text="Corner"/>
         <text name="eq_config_cornerRight" text="Point right"/>
         <text name="eq_config_cornerLeft" text="Point left"/>
