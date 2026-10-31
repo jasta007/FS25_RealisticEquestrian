@@ -4077,8 +4077,11 @@ end)()
     end
     check("jump: the pull changes smoothly over the top and fades to FALL_MAX", smooth
         and J.gravity(-J.FALL_MAX, false) == 0 and J.FALL_SHARE > J.RISE_SHARE)
+    J.CLOSE_MODE = 1
     check("jump pose: close to the ground held while rising (mode 1)", J.closeToGround(false, 3)
         and not J.closeToGround(false, -1) and J.closeToGround(true, -1))
+    J.CLOSE_MODE = 0
+    check("jump pose: left to the base game by default (mode 0)", not J.closeToGround(false, 3))
     local g = J.gravity(0, true)
     local v = J.launchSpeed(1.6, g)
     check("jump: launch speed reaches the height", math.abs(v * v / (2 * math.abs(g)) - 1.6) < 1e-9)

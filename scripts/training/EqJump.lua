@@ -37,7 +37,7 @@ EqJump.FALL_MAX = 7
 -- jumps only just pop over that line, flashing the in-air pose between launch and landing
 -- (James, 2026-10-31). CLOSE_MODE 0 leaves it to the base game, 1 keeps it on while rising (the
 -- launch pose holds to the top), 2 keeps it on for the whole jump.
-EqJump.CLOSE_MODE = 1
+EqJump.CLOSE_MODE = 0
 EqJump.HEIGHT_SHARE = 0.88
 EqJump.PUSH_MS = 180
 EqJump.PUSH_SPEED = 0.5
