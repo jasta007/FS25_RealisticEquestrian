@@ -576,23 +576,29 @@ do
     local function tap(sp, n, gap)
         local event
         for i = 1, n do
-            event = E.press(sp, "forward") or event
+            event = E.sprintTap(sp) or event
             if i < n then ride(sp, "gallop", gap) end
         end
         return event
     end
     local slow = E.new()
     ride(slow, "gallop", 1000)
-    check("slow W presses don't Sprint", tap(slow, 4, 600) ~= "sprint" and slow.mode == "push")
+    check("slow sprint taps don't Sprint", tap(slow, 4, 600) ~= "sprint" and slow.mode == "push")
     local sp = E.new()
     ride(sp, "gallop", 1000)
-    check("three quick taps of W Sprint", tap(sp, 3, 150) == "sprint" and sp.mode == "sprint")
+    check("three quick sprint taps Sprint", tap(sp, 3, 150) == "sprint" and sp.mode == "sprint")
     check("Sprint is the fastest pace, Recovering the slowest", E.speedShare(sp) > 1
         and E.GALLOP_SHARE.recover < E.GALLOP_SHARE.push and E.GALLOP_SHARE.push < E.speedShare(sp))
     events = ride(sp, "gallop", 1000)
     check("a Sprint ends when the tapping stops, into Recovering", events[1] == "sprintOver" and sp.mode == "recover")
-    check("no new Sprint until the bar is empty", not E.canSprint(sp) and tap(sp, 3, 150) ~= "sprint" and sp.mode == "push")
-    check("but Pushing is fine", sp.mode == "push")
+    check("no new Sprint until the bar is empty", not E.canSprint(sp) and tap(sp, 3, 150) ~= "sprint" and sp.mode == "recover")
+    check("but Pushing is fine", E.press(sp, "forward") == "push" and sp.mode == "push")
+    check("W never starts a Sprint", (function()
+        local w = E.new()
+        ride(w, "gallop", 1000)
+        for _ = 1, 5 do E.press(w, "forward"); ride(w, "gallop", 100) end
+        return w.mode == "push"
+    end)())
     ride(sp, "canter", 30000)
     ride(sp, "gallop", 100)
     check("an empty bar allows a Sprint again", E.canSprint(sp) and tap(sp, 3, 150) == "sprint")
@@ -609,7 +615,7 @@ do
         f.mode, f.value, f.tapAt = "sprint", 40, 0
         local t = 0
         while f.value < E.LINE and t < 60000 do
-            E.press(f, "forward")
+            E.sprintTap(f)
             ride(f, "gallop", gap)
             t = t + gap
         end
@@ -627,7 +633,7 @@ do
         while t < after do
             s2.value = 0
             ride(s2, "gallop", gap)
-            E.press(s2, "forward")
+            E.sprintTap(s2)
             t = t + gap
         end
         return E.rate(s2, "gallop", 50, 50)
@@ -642,14 +648,14 @@ do
 
     local last = E.new()
     last.mode, last.value = "push", 95
-    E.press(last, "forward")
+    E.sprintTap(last)
     ride(last, "gallop", 100)
-    E.press(last, "forward")
+    E.sprintTap(last)
     ride(last, "gallop", 100)
-    E.press(last, "forward")
+    E.sprintTap(last)
     for _ = 1, 30 do
         ride(last, "gallop", 100)
-        E.press(last, "forward")
+        E.sprintTap(last)
     end
     check("a Sprint goes past the Fatigued line without blowing", last.mode == "sprint" and last.value > E.LINE and last.lock == nil)
     check("the marker runs on into the Fatigued section", E.marker(last, "gallop") > E.BAR.line)
@@ -733,11 +739,11 @@ do
         for _ = 1, ms / 50 do
             local key = policy(ex, sheet)
             if key == "sprint" then
-                for _ = 1, E.SPRINT_TAPS do E.press(ex, "forward") end
+                for _ = 1, E.SPRINT_TAPS do E.sprintTap(ex) end
             elseif key ~= nil then
                 E.press(ex, key)
             end
-            if ex.mode == "sprint" and ex.clock - ex.tapAt > 150 then E.press(ex, "forward") end
+            if ex.mode == "sprint" and ex.clock - ex.tapAt > 150 then E.sprintTap(ex) end
             local gait = ex.lock ~= nil and "canter" or "gallop"
             if E.step(ex, gait, 50) == "blown" then blown = true end
             local mult = T.speedStep(sheet, 50, worn)

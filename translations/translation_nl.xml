@@ -155,6 +155,7 @@
         <text name="eq_help_close" text="Klik om te sluiten"/>
         <text name="eq_help_next" text="Klik om verder te gaan (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshulp"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
         <text name="eq_ex_push" text="Doorzetten"/>
         <text name="eq_ex_recover" text="Herstellen"/>
@@ -167,7 +168,7 @@
         <text name="eq_ex_walk" text="Stap"/>
         <text name="eq_ex_halt" text="Stilstaan"/>
         <text name="eq_ex_reverse" text="Achteruit"/>
-        <text name="eq_ex_prompt_tap" text="Blijf op W tikken!"/>
+        <text name="eq_ex_prompt_tap" text="Blijf klikken!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint voorbij"/>
         <text name="eq_pop_ex_blown" text="Vermoeid!"/>
@@ -176,9 +177,9 @@
         <text name="eq_help_gallop_title" text="Gestrekte galop"/>
         <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo's. Druk vanuit galop op W om te beginnen met Doorzetten: snel, maar de Inspanningsbalk loopt vol, en sneller naarmate hij hoger staat. Druk op S om te Herstellen: een langzamere galop die de inspanning laat zakken terwijl je doorgaloppeert, snel in het bovenste en onderste derde van de balk, langzaam in het midden. Druk weer op W om door te zetten. Een fitter paard wordt langzamer moe en herstelt sneller."/>
         <text name="eq_help_gallop_2" text="Als de balk tijdens Doorzetten het rode deel Vermoeid bereikt, valt je paard terug in galop en kan het niet opnieuw gestrekt galopperen tot de balk leeg is. Om zelf terug te gaan naar galop druk je één keer op S tijdens Herstellen met een lege balk, of tik je op elk moment twee keer op S."/>
-        <text name="eq_help_gallop_3" text="Tik onafgebroken op W tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
+        <text name="eq_help_gallop_3" text="Klik onafgebroken met de linkermuisknop tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
         <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voor hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 vlak ervoor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, sneller bij de top. Herstellen in het middelste derde van de balk laat je paard op adem komen en houdt het grootste deel van de vermenigvuldiger, terwijl het bovenste en onderste derde hem snel verliezen, en een paard dat nooit op adem komt, gaat veel langzamer vooruit. Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
-        <text name="eq_ex_hint_sprint" text="Tik onafgebroken op W om te sprinten"/>
+        <text name="eq_ex_hint_sprint" text="Klik onafgebroken met links om te sprinten"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: eerst herstellen tot leeg"/>
         <text name="eq_ex_hint_locked" text="Galop tot de balk leeg is"/>
         <text name="eq_ex_hint_canterOne" text="S: galop"/>
@@ -197,7 +198,7 @@
         <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, en hoe dichter bij de lijn, hoe sneller hij stijgt. Herstellen verlaagt hem: snel in het bovenste derde van de balk, langzaam in het middelste derde en weer snel in het onderste derde."/>
         <text name="eq_help_stamina_2" text="Zet dus door tot dicht bij de lijn, neem gas terug tot het midden van de balk en laat je paard daar even op adem komen, en zet dan weer door. Heen en weer schakelen tussen Doorzetten en Herstellen bij de top maakt je paard moe zonder de vermenigvuldiger te verhogen, en Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
         <text name="eq_help_speed_title" text="Training: Snelheid"/>
-        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: tik onafgebroken op W tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
+        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: klik onafgebroken met de linkermuisknop tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
         <text name="eq_help_speed_2" text="Een Sprint die voorbij de lijn eindigt is maar x1 waard, dus stop met tikken (of druk op S) voor de lijn. Na een Sprint moet je paard herstellen tot een lege balk voor het weer kan sprinten."/>
         <text name="eq_train_speedMult" text="Snelheid x%.1f"/>
         <text name="eq_train_staminaMult" text="Conditie x%.1f"/>

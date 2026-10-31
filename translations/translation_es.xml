@@ -104,6 +104,7 @@
         <text name="eq_help_close" text="Haz clic para cerrar"/>
         <text name="eq_help_next" text="Haz clic para continuar (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Ayuda de entrenamiento"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Barra de monta llena: no hay más entrenamiento hoy"/>
         <text name="eq_ex_push" text="Esfuerzo"/>
         <text name="eq_ex_recover" text="Recuperando"/>
@@ -116,7 +117,7 @@
         <text name="eq_ex_walk" text="Paso"/>
         <text name="eq_ex_halt" text="Parado"/>
         <text name="eq_ex_reverse" text="Paso atrás"/>
-        <text name="eq_ex_prompt_tap" text="¡Sigue pulsando W!"/>
+        <text name="eq_ex_prompt_tap" text="¡Sigue haciendo clic!"/>
         <text name="eq_pop_ex_sprint" text="¡SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint terminado"/>
         <text name="eq_pop_ex_blown" text="¡Fatigado!"/>
@@ -125,9 +126,9 @@
         <text name="eq_help_gallop_title" text="Galope tendido"/>
         <text name="eq_help_gallop_1" text="Tu caballo tiene tres ritmos de galope tendido. Pulsa W desde el galope para pasar a Esfuerzo: rápido, pero la barra de esfuerzo se llena, y más deprisa cuanto más alta está. Pulsa S para Recuperar: un galope más lento que baja el esfuerzo sin dejar de galopar, rápido en el tercio superior y el tercio inferior de la barra, lento en el centro. Pulsa W otra vez para volver a apretar. Un caballo en mejor forma se cansa más despacio y se recupera antes."/>
         <text name="eq_help_gallop_2" text="Si la barra llega a la zona roja Fatigado mientras estás en Esfuerzo, tu caballo baja a galope y no puede volver al galope tendido hasta que la barra se vacíe. Para bajar tú a galope, pulsa S una vez mientras Recuperas con la barra vacía, o pulsa S dos veces seguidas en cualquier momento."/>
-        <text name="eq_help_gallop_3" text="Pulsa W sin parar al galope tendido para hacer un Sprint: mucho más rápido, y la barra se llena despacio al principio y luego cada vez más deprisa, así que para antes de la línea. Al terminar un Sprint pasas a Recuperar, y no hay nuevo Sprint hasta que la barra se vacíe. Solo un Sprint puede pasar la línea de Fatigado, para un último esfuerzo hasta la meta, pero un Sprint que termina ahí deja a tu caballo Agotado, y se recupera muy despacio hasta volver bajo la línea."/>
+        <text name="eq_help_gallop_3" text="Pulsa el botón izquierdo del ratón sin parar al galope tendido para hacer un Sprint: mucho más rápido, y la barra se llena despacio al principio y luego cada vez más deprisa, así que para antes de la línea. Al terminar un Sprint pasas a Recuperar, y no hay nuevo Sprint hasta que la barra se vacíe. Solo un Sprint puede pasar la línea de Fatigado, para un último esfuerzo hasta la meta, pero un Sprint que termina ahí deja a tu caballo Agotado, y se recupera muy despacio hasta volver bajo la línea."/>
         <text name="eq_help_gallop_4" text="Entrenamiento: un Sprint entrena la Velocidad, y cuanto más suba la barra antes de terminar, más vale: x2 a mitad de camino a la línea, hasta x10 justo antes, pero solo x1 si termina pasada la línea. Esfuerzo y Recuperar entrenan la Resistencia con el multiplicador de Resistencia, hasta x5. El Esfuerzo lo sube, más deprisa cerca de arriba. Recuperar en el tercio central de la barra deja que tu caballo recupere el aliento y conserva casi todo el multiplicador, mientras que los tercios superior e inferior lo hacen caer rápido, y un caballo que nunca recupera el aliento progresa mucho más despacio. Fatigado o Agotado lo baja a x1 y detiene el entrenamiento de Resistencia hasta que la barra se vacíe."/>
-        <text name="eq_ex_hint_sprint" text="Pulsa W sin parar para hacer un sprint"/>
+        <text name="eq_ex_hint_sprint" text="Haz clic izquierdo sin parar para hacer un sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: primero recupera hasta vaciar"/>
         <text name="eq_ex_hint_locked" text="Galope hasta vaciar la barra"/>
         <text name="eq_ex_hint_canterOne" text="S: galope"/>
@@ -146,7 +147,7 @@
         <text name="eq_help_stamina_1" text="La Resistencia se entrena en Esfuerzo y Recuperar al galope tendido, con el multiplicador de Resistencia, hasta x5. El Esfuerzo lo sube, y cuanto más te acerques a la línea, más rápido sube. Recuperar lo baja: rápido en el tercio superior de la barra, despacio en el tercio central y otra vez rápido en el tercio inferior."/>
         <text name="eq_help_stamina_2" text="Así que aprieta hasta cerca de la línea, afloja hasta el centro de la barra y deja que tu caballo recupere el aliento ahí un rato, y luego vuelve a apretar. Alternar Esfuerzo y Recuperar cerca de arriba cansa al caballo sin subir el multiplicador, y Fatigado o Agotado lo baja a x1 y detiene el entrenamiento de Resistencia hasta que la barra se vacíe."/>
         <text name="eq_help_speed_title" text="Entrenamiento: Velocidad"/>
-        <text name="eq_help_speed_1" text="La Velocidad se entrena con Sprints: pulsa W sin parar al galope tendido. Cada segundo de Sprint cuenta, y al terminar se multiplica según lo alto que hayas llevado la barra: x2 a mitad de camino a la línea, hasta x10 justo antes."/>
+        <text name="eq_help_speed_1" text="La Velocidad se entrena con Sprints: pulsa el botón izquierdo del ratón sin parar al galope tendido. Cada segundo de Sprint cuenta, y al terminar se multiplica según lo alto que hayas llevado la barra: x2 a mitad de camino a la línea, hasta x10 justo antes."/>
         <text name="eq_help_speed_2" text="Un Sprint que termina pasada la línea solo vale x1, así que deja de pulsar (o pulsa S) antes de la línea. Tras un Sprint, tu caballo tiene que recuperar hasta vaciar la barra antes de volver a hacer un Sprint."/>
         <text name="eq_train_speedMult" text="Velocidad x%.1f"/>
         <text name="eq_train_staminaMult" text="Resistencia x%.1f"/>

@@ -887,6 +887,24 @@ function EqTrainingHooks.onGaitKey(vehicle, key, source)
 end
 
 
+--- The sprint key (EQ_SPRINT, left mouse button by default): taps start and keep up a Sprint,
+--- so the rider can steer with A/D while sprinting (James, 2026-10-31). A click that turns a
+--- help popup's page is not a sprint tap.
+--- @param vehicle table
+function EqTrainingHooks.onSprintAction(vehicle)
+    if EqTrainingHud.isHelpShowing() then return end
+    local spec = vehicle.spec_rideable
+    local id = spec ~= nil and getRiddenId(spec) or nil
+    local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
+    if sheet == nil then return end
+    local event = EqExertion.sprintTap(sheet.exertion)
+    if event ~= nil and event ~= "tap" then
+        Log:info("Gallop key: sprint")
+        EqTrainingHooks.onExertionEvent(event, sheet.exertion)
+    end
+end
+
+
 -- Wrapped round the base game's forward and back key actions: the press picks the gallop's pace
 -- first (beforeGaitAction), then the base game changes gait, and keepGait undoes a change that
 -- isn't allowed (afterGaitAction).
@@ -1035,6 +1053,14 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
         spec.eqViewEventId = id
         g_inputBinding:setActionEventText(id, viewActionText())
         g_inputBinding:setActionEventTextPriority(id, GS_PRIO_NORMAL)
+    end
+    if InputAction.EQ_SPRINT ~= nil then
+        local _, sprintId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_SPRINT, vehicle,
+            function() EqTrainingHooks.onSprintAction(vehicle) end, false, true, false, true, nil)
+        if sprintId ~= nil then
+            g_inputBinding:setActionEventText(sprintId, g_i18n:getText("input_EQ_SPRINT"))
+            g_inputBinding:setActionEventTextVisibility(sprintId, false)
+        end
     end
     -- Show jumping course keys (EqCourseHooks).
     EqCourseHooks.registerActions(vehicle, spec)
@@ -1277,7 +1303,7 @@ end
 
 --- The middle of the screen: keep tapping during a Sprint, ease off near the line.
 --- @param ex table
--- For this long after a Sprint starts the middle says "Keep tapping W!"; then just its bar.
+-- For this long after a Sprint starts the middle says "Keep tapping!"; then just its bar.
 EqTrainingHooks.SPRINT_INTRO_MS = 1250
 -- A Sprint climbs fast, so its warnings come early (James): a yellow "Tiring..." from
 -- SPRINT_CAREFUL_FROM, a red flashing "Caution" from SPRINT_DANGER_FROM. Pushing warns by time

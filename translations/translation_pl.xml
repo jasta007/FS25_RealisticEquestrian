@@ -155,6 +155,7 @@
         <text name="eq_help_close" text="Kliknij, aby zamknąć"/>
         <text name="eq_help_next" text="Kliknij, aby kontynuować (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Pomoc treningowa"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Pasek jazdy pełny: na dziś koniec treningu"/>
         <text name="eq_ex_push" text="Naciskanie"/>
         <text name="eq_ex_recover" text="Odpoczynek"/>
@@ -167,7 +168,7 @@
         <text name="eq_ex_walk" text="Stęp"/>
         <text name="eq_ex_halt" text="Stoi"/>
         <text name="eq_ex_reverse" text="Cofanie"/>
-        <text name="eq_ex_prompt_tap" text="Stukaj W!"/>
+        <text name="eq_ex_prompt_tap" text="Klikaj!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Koniec sprintu"/>
         <text name="eq_pop_ex_blown" text="Zmęczony!"/>
@@ -176,9 +177,9 @@
         <text name="eq_help_gallop_title" text="Cwał"/>
         <text name="eq_help_gallop_1" text="Twój koń cwałuje w trzech tempach. Naciśnij W z galopu, aby zacząć Naciskać: szybko, ale pasek Wysiłku się zapełnia, i to tym szybciej, im jest wyżej. Naciśnij S, aby Odpocząć: wolniejszy cwał, który obniża wysiłek, gdy dalej cwałujesz, szybko w górnej i dolnej tercji paska, powoli w środkowej. Naciśnij W ponownie, aby znów naciskać. Koń w lepszej formie męczy się wolniej i szybciej odpoczywa."/>
         <text name="eq_help_gallop_2" text="Jeśli podczas Naciskania pasek dojdzie do czerwonej strefy Zmęczony, koń przejdzie do galopu i nie przejdzie znowu do cwału, dopóki pasek się nie opróżni. Aby samemu zwolnić do galopu, naciśnij S raz podczas Odpoczynku z pustym paskiem lub dwa razy S w dowolnej chwili."/>
-        <text name="eq_help_gallop_3" text="Stukaj W bez przerwy podczas cwału, aby Sprintować: dużo szybciej, a pasek zapełnia się najpierw powoli, potem coraz szybciej, więc przestań przed linią. Koniec Sprintu przechodzi w Odpoczynek i nie ma nowego Sprintu, dopóki pasek się nie opróżni. Tylko Sprint może przekroczyć linię Zmęczony, na ostatni zryw do mety, ale Sprint, który się tam kończy, zostawia konia Wyczerpanego, a on odpoczywa bardzo powoli, dopóki nie wróci poniżej linii."/>
+        <text name="eq_help_gallop_3" text="Klikaj lewym przyciskiem myszy bez przerwy podczas cwału, aby Sprintować: dużo szybciej, a pasek zapełnia się najpierw powoli, potem coraz szybciej, więc przestań przed linią. Koniec Sprintu przechodzi w Odpoczynek i nie ma nowego Sprintu, dopóki pasek się nie opróżni. Tylko Sprint może przekroczyć linię Zmęczony, na ostatni zryw do mety, ale Sprint, który się tam kończy, zostawia konia Wyczerpanego, a on odpoczywa bardzo powoli, dopóki nie wróci poniżej linii."/>
         <text name="eq_help_gallop_4" text="Trening: Sprint trenuje Szybkość, a im wyżej podniósł pasek przed końcem, tym więcej jest wart: x2 w połowie drogi do linii, do x10 tuż przed nią, ale tylko x1, jeśli skończy się za linią. Naciskanie i Odpoczynek trenują Wytrzymałość z mnożnikiem Wytrzymałości, do x5. Naciskanie go podnosi, szybciej blisko góry. Odpoczynek w środkowej tercji paska pozwala koniowi złapać oddech i zachowuje większość mnożnika, a górna i dolna tercja szybko go tracą, i koń, który nigdy nie łapie oddechu, zyskuje dużo wolniej. Zmęczony lub Wyczerpany obniża go do x1 i zatrzymuje trening Wytrzymałości, dopóki pasek się nie opróżni."/>
-        <text name="eq_ex_hint_sprint" text="Stukaj W bez przerwy, aby sprintować"/>
+        <text name="eq_ex_hint_sprint" text="Klikaj lewym bez przerwy, aby sprintować"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: najpierw odpocznij do pustego paska"/>
         <text name="eq_ex_hint_locked" text="Galop, aż pasek się opróżni"/>
         <text name="eq_ex_hint_canterOne" text="S: galop"/>
@@ -197,7 +198,7 @@
         <text name="eq_help_stamina_1" text="Wytrzymałość trenuje się podczas Naciskania i Odpoczynku w cwale, z mnożnikiem Wytrzymałości, do x5. Naciskanie go podnosi, a im bliżej linii, tym szybciej rośnie. Odpoczynek go obniża: szybko w górnej tercji paska, powoli w środkowej i znów szybko w dolnej."/>
         <text name="eq_help_stamina_2" text="Naciskaj więc blisko linii, zwolnij do środka paska i daj koniowi złapać tam oddech przez chwilę, potem znów naciskaj. Przeskakiwanie między Naciskaniem a Odpoczynkiem blisko góry męczy konia bez podnoszenia mnożnika, a Zmęczony lub Wyczerpany obniża go do x1 i zatrzymuje trening Wytrzymałości, dopóki pasek się nie opróżni."/>
         <text name="eq_help_speed_title" text="Trening: Szybkość"/>
-        <text name="eq_help_speed_1" text="Szybkość trenuje się podczas Sprintu: stukaj W bez przerwy w cwale. Liczy się każda sekunda Sprintu, a na końcu jest mnożona przez to, jak wysoko podniósł się pasek: x2 w połowie drogi do linii, do x10 tuż przed nią."/>
+        <text name="eq_help_speed_1" text="Szybkość trenuje się podczas Sprintu: klikaj lewym przyciskiem myszy bez przerwy w cwale. Liczy się każda sekunda Sprintu, a na końcu jest mnożona przez to, jak wysoko podniósł się pasek: x2 w połowie drogi do linii, do x10 tuż przed nią."/>
         <text name="eq_help_speed_2" text="Sprint, który kończy się za linią, jest wart tylko x1, więc przestań stukać (lub naciśnij S) przed linią. Po Sprincie koń musi odpocząć do pustego paska, zanim znów zasprintuje."/>
         <text name="eq_train_speedMult" text="Szybkość x%.1f"/>
         <text name="eq_train_staminaMult" text="Wytrzymałość x%.1f"/>

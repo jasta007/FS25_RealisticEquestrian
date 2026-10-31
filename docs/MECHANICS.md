@@ -99,7 +99,7 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
   top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
   quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
-- **Sprinting** (tap W three times quickly while galloping, and keep tapping): 125% of the gallop's
+- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
   speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty

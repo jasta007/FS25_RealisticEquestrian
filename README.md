@@ -51,8 +51,8 @@ uses its genetics, health and fitness.
 ### Training
 - **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
   a view per stat and Condensed (just the bar), and **H** for help.
-  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
-    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap the left mouse button
+    to Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
     Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** ride up to a dressage arena and follow its test ("Trot: B") to build a combo, up
