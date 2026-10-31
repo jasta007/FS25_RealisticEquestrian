@@ -26,7 +26,7 @@
     </Material>
     <Material name="courseGlow_white" materialId="16" diffuseColor="1 1 1 0.45" emissiveColor="0.9 0.9 0.9 1" alphaBlending="true">
     </Material>
-    <Material name="courseGlow_grey" materialId="17" diffuseColor="0.2 0.2 0.2 0.12" emissiveColor="0.04 0.04 0.04 1" alphaBlending="true">
+    <Material name="courseGlow_grey" materialId="17" diffuseColor="0.03 0.03 0.03 0.6" emissiveColor="0 0 0 1" alphaBlending="true">
     </Material>
   </Materials>
 
