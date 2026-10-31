@@ -1,4 +1,4 @@
-"""The dressage top hat (data/attire/topHat.i3d), from the low poly model James bought.
+"""The dressage top hat (data/attire/topHat.i3d) and its short version (shortTopHat.i3d), from the low poly model James bought.
 
 The model's licence allows using and modifying it in the mod but not re-uploading the file, so
 the source OBJ stays out of the repository: put LP_TopHat.obj in art/source/private/ (ignored by
@@ -31,11 +31,28 @@ ICON = "data/attire/topHat_icon.dds"
 # cm -> m and down to real size: crown 39 x 42.6 cm -> about 17.5 x 20.5 cm, 39 cm tall -> 16.4 cm
 # (James, 2026-10-31: "a little bit shorter" than 18.7 cm, longer front to back looked odd).
 SCALE = (0.0045, 0.0042, 0.0048)
+# The short hat (a dressage hat that's a safety helmet too, James 2026-10-31): the same hat with the
+# crown's straight sides squashed. Brim and band (below SHORT[0] m) and the rounded top (above
+# SHORT[1]) keep their shape, the top moves down; SHORT[2] of the sides is kept, 16.4 -> about 12.2 cm, as in his photo.
+SHORT = (0.045, 0.138, 0.55)
+SHORT_OUT = "data/attire/shortTopHat.i3d"
+SHORT_ICON = "data/attire/shortTopHat_icon.dds"
 TEXTURE = "blackSilk_diffuse.dds"
 
 
-def read(path):
-    """One Mesh, scaled, with per corner normals as the OBJ has them."""
+def squash(y, short):
+    """A height on the short hat: the crown's sides between short[0] and short[1] kept short[2]."""
+    low, high, keep = short
+    if y <= low:
+        return y
+    if y <= high:
+        return low + (y - low) * keep
+    return y - (high - low) * (1 - keep)
+
+
+def read(path, short=None):
+    """One Mesh, scaled (and squashed to the short hat if short is given), with per corner
+    normals as the OBJ has them (the squashed sides are upright, so theirs still fit)."""
     positions, normals = [], []
     mesh, seen = xc.Mesh(), {}
     with open(path) as f:
@@ -45,7 +62,8 @@ def read(path):
                 continue
             if parts[0] == "v":
                 x, y, z = (float(v) for v in parts[1:4])
-                positions.append((x * SCALE[0], y * SCALE[1], z * SCALE[2]))
+                y *= SCALE[1]
+                positions.append((x * SCALE[0], squash(y, short) if short else y, z * SCALE[2]))
             elif parts[0] == "vn":
                 normals.append(tuple(float(v) for v in parts[1:4]))
             elif parts[0] == "f":
@@ -66,13 +84,11 @@ def read(path):
     return mesh
 
 
-def main():
-    source = sys.argv[1] if len(sys.argv) > 1 else SOURCE
-    mesh = read(source)
+def write(mesh, name, out, icon):
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
         "",
-        '<i3D name="topHat" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        f'<i3D name="{name}" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         'xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">',
         "  <Asset>",
         '    <Export program="Realistic Equestrian top_hat.py" version="1"/>',
@@ -87,24 +103,30 @@ def main():
         "  </Materials>",
         "  <Shapes>",
     ]
-    lines += xc.shape_lines(mesh, "topHat", 1)
+    lines += xc.shape_lines(mesh, name, 1)
     lines += [
         "  </Shapes>",
         "  <Scene>",
-        '    <TransformGroup name="eqTopHat" nodeId="1">',
+        f'    <TransformGroup name="eq{name[0].upper() + name[1:]}" nodeId="1">',
         '      <TransformGroup name="eqHatFit" nodeId="2">',
-        '        <Shape name="topHat" shapeId="1" clipDistance="150" nodeId="3" materialIds="1" '
+        f'        <Shape name="{name}" shapeId="1" clipDistance="150" nodeId="3" materialIds="1" '
         'castsShadows="true" receiveShadows="true"/>',
         "      </TransformGroup>",
         "    </TransformGroup>",
         "  </Scene>",
         "</i3D>",
     ]
-    with open(OUT, "w", encoding="iso-8859-1", newline="\n") as f:
+    with open(out, "w", encoding="iso-8859-1", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
-    print(f"wrote {OUT}: {len(mesh.verts)} vertices, {len(mesh.tris)} triangles")
-    save_dxt5(attire_render.render([(mesh, (0.018, 0.018, 0.02), 40, 0.25)], pitch=15), ICON)
-    print(f"wrote {ICON}")
+    print(f"wrote {out}: {len(mesh.verts)} vertices, {len(mesh.tris)} triangles")
+    save_dxt5(attire_render.render([(mesh, (0.018, 0.018, 0.02), 40, 0.25)], pitch=15), icon)
+    print(f"wrote {icon}")
+
+
+def main():
+    source = sys.argv[1] if len(sys.argv) > 1 else SOURCE
+    write(read(source), "topHat", OUT, ICON)
+    write(read(source, SHORT), "shortTopHat", SHORT_OUT, SHORT_ICON)
 
 
 if __name__ == "__main__":

@@ -158,7 +158,7 @@ uses its genetics, health and fitness.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
 ### Dressage outfit
-- The wardrobe has a dressage outfit: a top hat, breeches and riding gloves in one solid colour,
+- The wardrobe has a dressage outfit: a tall or short top hat, breeches and riding gloves in one solid colour,
   a plain dark jacket with a white shirt, and tall or short black boots.
 
 ### Settings
@@ -331,6 +331,6 @@ Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as 
 credit the original, keep your version under the same licence, and don't sell it or use it
 commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
 covered by that licence: don't reuse them outside this mod. The same goes for the top hat
-and riding boots (`data/attire/topHat.i3d`, `data/attire/ridingBoots*`).
+and riding boots (`data/attire/topHat.i3d`, `data/attire/shortTopHat.i3d`, `data/attire/ridingBoots*`).
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -10,12 +10,13 @@
     Boots: the Chelsea boots in black leather (eqDiffuse, they have no colour mask).
     Riding boots: our own model (art/source/riding_boots.py), its pieces moved onto the leg bones
     by EqAttire.fitBoots; the browns swap in their own diffuse.
-    Top hat: our own model (art/source/top_hat.py), placed on the head by EqAttire.fitHat.
+    Top hat and short top hat: our own model (art/source/top_hat.py), placed on the head by EqAttire.fitHat.
     Colours are linear, as the shader takes them.
 -->
 <attire>
     <female>
         <headgear name="eqTopHat" filename="data/attire/topHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/topHat_icon.dds"/>
+        <headgear name="eqShortTopHat" filename="data/attire/shortTopHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/shortTopHat_icon.dds"/>
         <bottom name="eqDressageBreeches" filename="$dataS/character/playerF/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breeches_icon.dds">
             <hidesBodypart name="legs"/>
             <colors>
@@ -71,6 +72,7 @@
     </female>
     <male>
         <headgear name="eqTopHat" filename="data/attire/topHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/topHat_icon.dds"/>
+        <headgear name="eqShortTopHat" filename="data/attire/shortTopHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/shortTopHat_icon.dds"/>
         <bottom name="eqDressageBreeches" filename="$dataS/character/playerM/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breeches_icon.dds">
             <hidesBodypart name="legs"/>
             <colors>

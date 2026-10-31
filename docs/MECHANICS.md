@@ -750,7 +750,8 @@ horse is never touched.
 Extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
 boots are our own models; the rest are base-game meshes:
 
-- **Top hat** in black silk. It hangs off the head's attach point and is set along the head
+- **Top hat** in black silk, tall or short (the short one is the same hat with the crown's sides
+  squashed, 12 cm instead of 16 cm, like a dressage hat that's a safety helmet too). It hangs off the head's attach point and is set along the head
   joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
   the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
   (defaults 0.085 m up and 0.003 m forward of the head joint, tilted back 15 degrees, size 0.98, James's fit for both bodies; female and male
