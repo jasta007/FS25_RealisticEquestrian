@@ -330,18 +330,23 @@ def wing_picket(w):
     w.foot(width - 0.20, width + 0.06)
     w.collide(0.0, width, 1.54, -0.06, 0.06)
     if p.sponsor:
-        # a large flattened oval on the front (+z, the way the horse comes), a rim in the pole
-        # colour round a white board, the logo in its middle
-        uc, yc, a, b = (width - 0.09) / 2, 0.70, 0.42, 0.25
+        # a flattened oval board nailed on the front (+z, the way the horse comes), clear of the
+        # stand and the end post and standing proud of both (James, 2026-10-31: the pickets stay
+        # as they are behind it), a rim in the pole colour round a white face, the logo in it
+        uc, yc, a, b = (width - 0.09) / 2, 0.70, 0.33, 0.20
+        front = 0.055   # just in front of the end post's face (0.045) and the stand's (0.05)
         steps = 40
-        for mesh, grow, z1 in ((p.board_paint, 0.03, 0.034), (p.board, 0.0, 0.040)):
+        for mesh, grow, z0, z1 in ((p.board_paint, 0.025, front, front + 0.022), (p.board, 0.0, front, front + 0.028)):
             outline = [(uc + (a + grow) * math.cos(2 * math.pi * k / steps), yc + (b + grow) * math.sin(2 * math.pi * k / steps))
                        for k in range(steps)]
-            w.flat(mesh, outline, 0.0125, z1)
+            w.flat(mesh, outline, z0, z1)
+        # two cleats behind it, nailed to the pickets
+        for u in (uc - a * 0.55, uc + a * 0.55):
+            w.block(p.board_paint, u - 0.03, u + 0.03, yc - b * 0.7, yc + b * 0.7, 0.0125, front)
         # the biggest logo inside the ellipse: its corners on the ellipse
         t = math.atan(a / (LOGO_ASPECT * b))
         lw, lh = 2 * a * math.cos(t) * 0.92, 2 * b * math.sin(t) * 0.92
-        upright_logo(p, w.board, w.x(uc), yc, w.z + 0.0415, 1, lw, lh)
+        upright_logo(p, w.board, w.x(uc), yc, w.z + front + 0.0295, 1, lw, lh)
     return width
 
 
