@@ -87,9 +87,13 @@ end
 
 --- @param vehicle table
 --- @return table|nil frame the arena a test can be edited for now: none while a test, round or
---- course recording is under way
+--- course recording is under way (a test still waiting at its start is fine)
 function EqDressageEditor.startFrame(vehicle)
-    if EqDressageEditor.active ~= nil or EqCourseHooks.isEditing() or EqCourseHooks.dressageActive then return nil end
+    if EqDressageEditor.active ~= nil or EqCourseHooks.isEditing() then return nil end
+    -- A test waiting at its start ("Move to A") can still be swapped for the editor (James
+    -- 2026-10-31: the key hid once that showed); one under way can't.
+    local run = EqDressageHooks.pathRun
+    if EqCourseHooks.dressageActive and (run == nil or run.started) then return nil end
     if EqCourseHooks.isBusy() then return nil end
     local ok, frame = EqLog.try("EqDressageEditor.arenaFrame", EqDressageEditor.arenaFrame, vehicle)
     return ok and frame or nil
@@ -255,7 +259,7 @@ function EqDressageEditor.registerActions(vehicle, spec)
                 function() EqDressageEditor[entry.handler](vehicle) end, false, true, false, true, nil)
             spec[entry.field] = id
             if id ~= nil then
-                g_inputBinding:setActionEventTextPriority(id, entry.editor and GS_PRIO_HIGH or GS_PRIO_LOW)
+                g_inputBinding:setActionEventTextPriority(id, entry.editor and GS_PRIO_HIGH or GS_PRIO_NORMAL)
                 g_inputBinding:setActionEventText(id, text("input_" .. entry.action))
             end
         end
