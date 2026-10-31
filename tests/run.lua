@@ -4562,7 +4562,8 @@ end)()
         and sp.sizeByName.moderate.offers == 4 and sp.sizeByName.small.offers == 5)
     check("sponsors: big contracts always 3 years", sp.sizeByName.big.yearsMin == 3 and sp.sizeByName.big.yearsMax == 3)
     check("sponsors: Lizard and no brand never offered", sp.skipBrands.LIZARD and sp.skipBrands.NONE)
-    check("sponsors: vehicles and tools are machines", sp.categoryTypes.VEHICLE and sp.categoryTypes.TOOL and not sp.categoryTypes.OBJECT)
+    check("sponsors: animals, objects, hand tools and misc are no machines", sp.skipCategoryTypes.ANIMALS and sp.skipCategoryTypes.OBJECTS
+        and sp.skipCategoryTypes.HANDTOOLS and sp.skipCategoryTypes.MISC and not sp.skipCategoryTypes.DRIVABLES)
     check("sponsors: cancel 15%, miss fee 75%, two misses leave", sp.cancelShare == 0.15 and sp.missFactor == 0.75 and sp.missesToLeave == 2)
     check("sponsors: price bands", EqSponsorship.bandOf(sp, 5000) == 1 and EqSponsorship.bandOf(sp, 50000) == 3
         and EqSponsorship.bandOf(sp, 5000000) == #sp.bands + 1)

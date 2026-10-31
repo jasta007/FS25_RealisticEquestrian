@@ -94,7 +94,7 @@ local function machineCategories(storeItem, config, why)
             why.types = why.types or {}
             why.types[kind] = (why.types[kind] or 0) + 1
         end
-        if kind ~= nil and config.categoryTypes[kind] then table.insert(categories, category.name or name) end
+        if kind ~= nil and not config.skipCategoryTypes[kind] then table.insert(categories, category.name or name) end
     end
     if #categories == 0 then return reject("category") end
     return categories

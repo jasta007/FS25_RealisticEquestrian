@@ -37,13 +37,13 @@ function EqSponsorship.read(xmlFile)
         missFactor = xmlFile:getFloat("sponsors#missFactor", 0.75),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
         signsMin = xmlFile:getInt("sponsors#signsMin", 1),
-        categoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
+        skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
     }
     local i = 0
-    while xmlFile:hasProperty(string.format("sponsors.categoryTypes.type(%d)", i)) do
-        local name = xmlFile:getString(string.format("sponsors.categoryTypes.type(%d)#name", i))
-        if name ~= nil then config.categoryTypes[string.upper(name)] = true end
+    while xmlFile:hasProperty(string.format("sponsors.skipCategoryTypes.type(%d)", i)) do
+        local name = xmlFile:getString(string.format("sponsors.skipCategoryTypes.type(%d)#name", i))
+        if name ~= nil then config.skipCategoryTypes[string.upper(name)] = true end
         i = i + 1
     end
     i = 0

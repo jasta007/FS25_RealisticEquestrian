@@ -17,8 +17,9 @@
         missesToLeave   missed targets in a row before the sponsor walks away
         signsMin        sponsor boards the farm needs to sign, and to be paid for an event
 
-    categoryTypes       shop category types whose items count as machines (pallets, bigbags and
-                        placeables don't)
+    skipCategoryTypes   shop category types (the shop's groups, such as DRIVABLES, TRAILERS or
+                        SOIL_PREPARATION) whose items are no machines; every other group counts.
+                        Placeables and hand tools are left out anyway
     skipBrands          brands never offered: the game's "no brand", and Lizard, the game's own
                         brand, which James keeps for a surprise one-off sponsor later
     priceBands          upper edges of the price bands a brand's machines are spread over; the
@@ -48,10 +49,13 @@
     Part of Realistic Equestrian by Jasta007.
 -->
 <sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" signsMin="1">
-    <categoryTypes>
-        <type name="VEHICLE"/>
-        <type name="TOOL"/>
-    </categoryTypes>
+    <skipCategoryTypes>
+        <type name="ANIMALS"/>
+        <type name="OBJECTS"/>
+        <type name="HANDTOOLS"/>
+        <type name="MISC"/>
+        <type name="PLACEABLES"/>
+    </skipCategoryTypes>
 
     <skipBrands>
         <brand name="NONE"/>
