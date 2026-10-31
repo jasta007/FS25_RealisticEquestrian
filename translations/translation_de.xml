@@ -1045,6 +1045,9 @@
         <text name="eq_sponsor_label_likely" text="Voraussichtlich"/>
         <text name="eq_sponsor_likelyLine" text="%s bei %s"/>
         <text name="eq_shop_branding" text="Ihre Werbepräsenz: jetzt %s, damit %s. Mehr Werbepräsenz erhöht, was Ihr Sponsor zahlt."/>
+        <text name="eq_shop_brandingOption" text="Mit Sponsorentafeln, Ihre Werbepräsenz: jetzt %s, damit %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponsorentafeln"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsorentafeln (optional, gegen Aufpreis): Schilder an den Flügeln zeigen das Logo Ihres Sponsors, die Stangen nehmen seine Farbe an."/>
         <text name="eq_sponsor_discount_repaint" text="Lackierung %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparatur %s"/>
         <text name="eq_sponsor_discount_buy" text="Kauf %s"/>

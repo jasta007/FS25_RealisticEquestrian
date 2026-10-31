@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="預計收入"/>
         <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
         <text name="eq_shop_branding" text="你的品牌曝光：目前%s，加上此項為%s。曝光越多，贊助商付得越多。"/>
+        <text name="eq_shop_brandingOption" text="帶贊助商廣告牌時你的品牌曝光：目前%s，加上此項為%s。"/>
+        <text name="eq_config_sponsorBoards" text="贊助商廣告牌"/>
+        <text name="eq_shop_sponsorBoards_function" text="贊助商廣告牌（可選，需額外費用）：翼板上的廣告牌顯示贊助商標誌，橫桿變為贊助商的顏色。"/>
         <text name="eq_sponsor_discount_repaint" text="噴漆 %s"/>
         <text name="eq_sponsor_discount_repair" text="維修 %s"/>
         <text name="eq_sponsor_discount_buy" text="購買 %s"/>

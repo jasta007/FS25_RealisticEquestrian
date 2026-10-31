@@ -10,7 +10,7 @@ Each OBJ object is one shape, named after the part after the jump's name ("xcCor
 made here: a red and a white flag, each a shape under its "eqFlagsRed"/"eqFlagsWhite" transform
 group, red at +x. A corner's Corner choice (EqXcCorners) swaps the two groups' places.
 
-Run from the repository root: python3 art/source/xc_import.py
+Run from the repository root: python3 art/source/xc_import.py [names...] (names: only those jumps)
 
 The game builds no collision from inline geometry, so after running this, re-save the six .i3d
 files in GIANTS Editor (art/source/ge-resave.ps1, from inside PowerShell: & ge-resave.ps1 -Files a,b,c)
@@ -184,14 +184,17 @@ def textures():
         "xcStain": xc.stain_texture(os.path.join(out, "xcStain_diffuse.dds"), os.path.join(out, "xcStain_normal.dds")),
         "xcDark": xc.dark_wood_texture(os.path.join(out, "xcDark_diffuse.dds")),
         "xcBigLog": xc.big_log_texture(os.path.join(out, "xcBigLog_diffuse.dds")),
-        "eqSponsor1": bleachers.sponsor_board(os.path.join(tmp, "s.dds")),
+        "eqSponsor": bleachers.sponsor_board(os.path.join(tmp, "s.dds")),
     }
 
 
-def main():
+def main(names=()):
+    """names: only these jumps (the others' GIANTS Editor re-saved i3ds are left alone)."""
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
     pixels = textures()
     for jump in JUMPS:
+        if names and jump["name"] not in names:
+            continue
         name = jump["name"]
         objects = read_obj(os.path.join(MODELS, name + ".obj"))
         shapes, col = [], None
@@ -209,11 +212,12 @@ def main():
         xc.write_xml(name, jump["price"], note, os.path.join(xc.OUT, name + ".xml"),
                      extra=CORNER_CONFIG if jump["corner"] else "", made_by=f"{ME} from art/source/models/{name}.obj",
                      functions=["eq_shop_signboard_function"] if any(m.startswith("eqSponsor") for _, _, m in shapes) else [])
-        meshes = [(flipped_v(mesh), pixels[material]) for _, mesh, material in shapes]
+        meshes = [(flipped_v(mesh), pixels["eqSponsor" if material.startswith("eqSponsor") else material])
+                  for _, mesh, material in shapes]
         meshes += [(moved(red, jump["flag_x"]), pixels["xcFlags"]), (moved(white, -jump["flag_x"]), pixels["xcFlags"])]
         xc.store_image(meshes, os.path.join(xc.OUT, "store_" + name + ".dds"), preview_dir)
         print(name, sum(len(m.tris) for _, m, _ in shapes), "triangles,", len(col.tris), "collision")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

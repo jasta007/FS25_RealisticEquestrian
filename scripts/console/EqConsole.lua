@@ -848,6 +848,15 @@ function EqConsole:consoleHostWait()
 end
 
 
+--- eqSponsorColours: each brand's colour for show jumps with sponsor boards, and where it came from.
+function EqConsole:consoleSponsorColours()
+    if g_currentMission == nil then return "No mission loaded" end
+    local lines = EqSponsorBoards.report()
+    for _, line in ipairs(lines) do print(line) end
+    return lines[#lines]
+end
+
+
 --- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
 function EqConsole:consoleSponsors()
     if g_currentMission == nil then return "No mission loaded" end
@@ -934,6 +943,7 @@ function EqConsole.register()
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
+    addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -948,7 +958,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqSponsorColours",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

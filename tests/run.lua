@@ -46,6 +46,7 @@ dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
 dofile("scripts/facilities/EqSponsors.lua")
+dofile("scripts/facilities/EqSponsorBoards.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -4879,6 +4880,78 @@ end)()
         and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcTable.xml")
         and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcBigLog.xml")
         and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
+    check("sponsors: the plank corner, big drop wall and show jumps carry boards",
+        EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcCornerPlank.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall16.xml")
+        and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall12.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("sponsor boards: a board's back is the same board", string.match("eqSponsor_2b", EqSponsors.NODE) == "2"
+        and string.match("eqSponsor_12", EqSponsors.NODE) == "12" and string.match("eqSponsor_2c", EqSponsors.NODE) == nil)
+
+    -- Every board-carrying piece's i3d has the boards the shop line counts (front faces by number).
+    local function boardNumbers(path)
+        local f = io.open(path)
+        if f == nil then return -1 end
+        local text = f:read("*a")
+        f:close()
+        local numbers, count = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)b?"') do
+            if not numbers[n] then numbers[n], count = true, count + 1 end
+        end
+        return count, text
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
+        local files = { ["placeables/xcjumps/xctable.xml"] = "placeables/xcJumps/xcTable.i3d",
+            ["placeables/xcjumps/xccornerplank.xml"] = "placeables/xcJumps/xcCornerPlank.i3d",
+            ["placeables/xcjumps/xcdropwall16.xml"] = "placeables/xcJumps/xcDropWall16.i3d" }
+        local file = files[suffix] or ""
+        if file:find("xcJumps") then
+            local count = boardNumbers(file)
+            check("sponsor boards: " .. file .. " has " .. boards, count == boards, tostring(count))
+        end
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_OPTION_BOARDS) do
+        local name = suffix:match("showjumps/(%w+)%.xml$")
+        local real
+        for _, n in ipairs({ "showJumpUpright", "showJumpOxer", "showJumpTripleBar", "showJumpHogsback", "showJumpFan3", "showJumpLiverpool" }) do
+            if n:lower() == name then real = n end
+        end
+        local count, text = boardNumbers("placeables/showJumps/" .. tostring(real) .. ".i3d")
+        check("sponsor boards: " .. tostring(real) .. " has " .. boards .. " boards, hidden until bought",
+            count == boards and text:find('name="eqSponsorOn" visibility="false"', 1, true) ~= nil, tostring(count))
+        local xml = io.open("placeables/showJumps/" .. tostring(real) .. ".xml"):read("*a")
+        check("sponsor boards: " .. tostring(real) .. " offers the choice", xml:find("<eqSponsorBoardsConfiguration", 1, true) ~= nil)
+        check("sponsor boards: " .. tostring(real) .. " is a jump with the choice",
+            EqSponsorBoards.isJump("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\" .. real .. ".xml"))
+    end
+    for _, n in ipairs({ "showJumpCrossrail", "showJumpCavaletti", "showJumpAscendingOxer", "showJumpFan2" }) do
+        local xml = io.open("placeables/showJumps/" .. n .. ".xml"):read("*a")
+        check("sponsor boards: " .. n .. " stays plain", xml:find("eqSponsorBoards", 1, true) == nil
+            and not EqSponsorBoards.isJump("placeables/showJumps/" .. n .. ".xml"))
+    end
+    check("sponsor boards: bought only with Yes", EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 2 } })
+        and not EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 1 } }) and not EqSponsorBoards.isOn({}) and not EqSponsorBoards.isOn(nil))
+
+    -- Sponsor colours: the brand's most colourful paint, our list, else none.
+    local paints = { fendtNatureGreen = { 0.05, 0.20, 0.03 }, fendtGrey = { 0.2, 0.2, 0.2 }, ["FENDT_BLACK"] = { 0.01, 0.01, 0.01 },
+        claasSeedGreen = { 0.45, 0.55, 0.02 }, deutzFahrGreen = { 0.15, 0.45, 0.05 } }
+    local c, from = EqSponsorBoards.pickPaint("FENDT", paints)
+    check("sponsor colours: a brand's own coloured paint", c == paints.fendtNatureGreen and from == "fendtNatureGreen")
+    check("sponsor colours: names match without case or punctuation", EqSponsorBoards.pickPaint("DEUTZFAHR", paints) == paints.deutzFahrGreen)
+    check("sponsor colours: no grey or black, no other brand's", EqSponsorBoards.pickPaint("FENDT", { fendtGrey = { 0.2, 0.2, 0.2 } }) == nil
+        and EqSponsorBoards.pickPaint("KUHN", paints) == nil and EqSponsorBoards.pickPaint("", paints) == nil)
+    check("sponsor colours: read from the shapes the game keeps them in",
+        EqSponsorBoards.readColour("0.1 0.2 0.3")[3] == 0.3 and EqSponsorBoards.readColour({ r = 1, g = 0, b = 0 })[1] == 1
+        and EqSponsorBoards.readColour({ 0.5, 0.5, 0.5, 1 })[2] == 0.5 and EqSponsorBoards.readColour("x") == nil and EqSponsorBoards.readColour(nil) == nil)
+    local lin = EqSponsorBoards.linear({ 255, 128, 0 })
+    check("sponsor colours: our list is made linear", math.abs(lin[1] - 1) < 1e-9 and math.abs(lin[2] - 0.2158605) < 1e-6 and lin[3] == 0)
+    EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
+    local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
+    check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")
+    check("sponsor colours: none for an unknown brand", EqSponsorBoards.brandColour("NOBRANDATALL") == nil and EqSponsorBoards.brandColour(nil) == nil)
+    EqSponsorBoards.paints, EqSponsorBoards.cache = nil, nil
+    check("sponsor colours: plain jumps keep the shop colour",
+        EqSponsorBoards.colourFor({ configFileName = "x/placeables/showJumps/showJumpOxer.xml", configurations = { eqSponsorBoards = 1 } }) == nil)
     check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
 
     EqHostManager.reset()

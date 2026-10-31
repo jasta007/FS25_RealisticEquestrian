@@ -888,7 +888,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   don't count), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
-  cross country table 1) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
+  cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
+  Sponsor boards 2, the liverpool 3) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
   game shows only the word. The shop line on those items shows your branding now and with one
   more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
 - **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
@@ -900,9 +901,16 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   away. A met year puts the fee back to full.
 - **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
 - Discounts and the shop's block on rival machines come in the next update.
+- **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
+  liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
+  fan panels a board in place of the fan, picket wings an oval on the front, and the liverpool's
+  water the logo too. With a signed sponsor their poles and trim take the sponsor's colour: the
+  game's own paint for that brand when it has one, else a short list in the mod, else the colour
+  you bought. The crossrail and cavaletti are training jumps and stay plain.
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
-`eqSponsorNew` (testing) makes a fresh set of offers now.
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
+jump colour and where it came from.
 
 ## Buying horses
 

@@ -1045,6 +1045,9 @@
         <text name="eq_sponsor_label_likely" text="Gain probable"/>
         <text name="eq_sponsor_likelyLine" text="%s en %s"/>
         <text name="eq_shop_branding" text="Votre visibilité : %s maintenant, %s avec ceci. Plus de visibilité augmente ce que paie votre sponsor."/>
+        <text name="eq_shop_brandingOption" text="Avec panneaux sponsor, votre visibilité : %s maintenant, %s avec ceci."/>
+        <text name="eq_config_sponsorBoards" text="Panneaux sponsor"/>
+        <text name="eq_shop_sponsorBoards_function" text="Panneaux sponsor (en option, payant) : des panneaux sur les chandeliers affichent le logo de votre sponsor et les barres prennent sa couleur."/>
         <text name="eq_sponsor_discount_repaint" text="Peinture %s"/>
         <text name="eq_sponsor_discount_repair" text="Réparation %s"/>
         <text name="eq_sponsor_discount_buy" text="Achat %s"/>

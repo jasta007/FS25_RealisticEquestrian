@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Prawdopodobna wypłata"/>
         <text name="eq_sponsor_likelyLine" text="%s przy %s"/>
         <text name="eq_shop_branding" text="Twoja ekspozycja marki: teraz %s, z tym %s. Większa ekspozycja podnosi wypłatę sponsora."/>
+        <text name="eq_shop_brandingOption" text="Z tablicami sponsora, twoja ekspozycja marki: teraz %s, z tym %s."/>
+        <text name="eq_config_sponsorBoards" text="Tablice sponsora"/>
+        <text name="eq_shop_sponsorBoards_function" text="Tablice sponsora (opcjonalnie, za dopłatą): tablice na skrzydłach pokazują logo sponsora, a drągi przyjmują jego kolor."/>
         <text name="eq_sponsor_discount_repaint" text="Lakierowanie %s"/>
         <text name="eq_sponsor_discount_repair" text="Naprawa %s"/>
         <text name="eq_sponsor_discount_buy" text="Zakup %s"/>

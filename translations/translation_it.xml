@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Compenso probabile"/>
         <text name="eq_sponsor_likelyLine" text="%s a %s"/>
         <text name="eq_shop_branding" text="La tua visibilità: %s ora, %s con questo. Più visibilità aumenta quanto paga il tuo sponsor."/>
+        <text name="eq_shop_brandingOption" text="Con cartelli sponsor, la tua visibilità: %s ora, %s con questo."/>
+        <text name="eq_config_sponsorBoards" text="Cartelli sponsor"/>
+        <text name="eq_shop_sponsorBoards_function" text="Cartelli sponsor (opzionali, a pagamento): cartelli sulle ali mostrano il logo del tuo sponsor e le barriere prendono il suo colore."/>
         <text name="eq_sponsor_discount_repaint" text="Verniciatura %s"/>
         <text name="eq_sponsor_discount_repair" text="Riparazione %s"/>
         <text name="eq_sponsor_discount_buy" text="Acquisto %s"/>

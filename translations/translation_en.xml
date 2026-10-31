@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Likely pay"/>
         <text name="eq_sponsor_likelyLine" text="%s at %s"/>
         <text name="eq_shop_branding" text="Your branding: %s now, %s with this. More branding raises what your sponsor pays."/>
+        <text name="eq_shop_brandingOption" text="With sponsor boards, your branding: %s now, %s with this."/>
+        <text name="eq_config_sponsorBoards" text="Sponsor boards"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsor boards (optional, extra cost): signs on the wings show your sponsor's logo and the poles take its colour."/>
         <text name="eq_sponsor_discount_repaint" text="Repaint %s"/>
         <text name="eq_sponsor_discount_repair" text="Repair %s"/>
         <text name="eq_sponsor_discount_buy" text="Buying %s"/>

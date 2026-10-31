@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Pravděpodobná platba"/>
         <text name="eq_sponsor_likelyLine" text="%s u %s"/>
         <text name="eq_shop_branding" text="Tvoje propagace: teď %s, s tímto %s. Více propagace zvýší, kolik sponzor platí."/>
+        <text name="eq_shop_brandingOption" text="Se sponzorskými tabulemi, tvoje propagace: teď %s, s tímto %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponzorské tabule"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponzorské tabule (volitelné, za příplatek): tabule na křídlech ukazují logo tvého sponzora a bariéry dostanou jeho barvu."/>
         <text name="eq_sponsor_discount_repaint" text="Lakování %s"/>
         <text name="eq_sponsor_discount_repair" text="Oprava %s"/>
         <text name="eq_sponsor_discount_buy" text="Nákup %s"/>

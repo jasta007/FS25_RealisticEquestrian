@@ -21,8 +21,12 @@ local Log = EqLog
 -- Bleachers are looked for this often (newly placed ones too).
 EqSponsors.SCAN_MS = 2000
 -- Our placeables with sponsor boards: the bleachers and the cross country table's front board.
-EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable" }
-EqSponsors.NODE = "^eqSponsor_(%d+)$"
+EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable", "placeables/xcjumps/xccornerplank",
+    "placeables/xcjumps/xcdropwall16", "placeables/showjumps/" }
+-- A board's face; "eqSponsor_<n>b" is the same board's back (show jump boards seen both ways).
+EqSponsors.NODE = "^eqSponsor_(%d+)b?$"
+-- Boards under this group count only when the jump's Sponsor boards choice is bought (EqSponsorBoards).
+EqSponsors.OPTIONAL = "eqSponsorOn"
 -- Brands never shown: the game's placeholder.
 EqSponsors.SKIP = { NONE = true }
 
@@ -102,14 +106,31 @@ end
 
 
 --- @param node number
---- @param found table board number -> node, filled in
-local function findBoards(node, found)
+--- @param found table board number -> its face nodes (front, and back if it has one), filled in
+--- @param optional boolean|nil true to count the boards bought as a jump's Sponsor boards choice
+local function findBoards(node, found, optional)
     local count = getNumOfChildren(node)
     for i = 0, count - 1 do
         local child = getChildAt(node, i)
-        local number = string.match(getName(child) or "", EqSponsors.NODE)
-        if number ~= nil then found[tonumber(number)] = child else findBoards(child, found) end
+        local name = getName(child) or ""
+        local number = string.match(name, EqSponsors.NODE)
+        if number ~= nil then
+            number = tonumber(number)
+            found[number] = found[number] or {}
+            table.insert(found[number], child)
+        elseif name ~= EqSponsors.OPTIONAL or optional then
+            findBoards(child, found, optional)
+        end
     end
+end
+
+
+--- @param placeable table
+--- @return table board number -> face nodes: the placeable's boards that are there
+local function boardsOf(placeable)
+    local boards = {}
+    findBoards(placeable.rootNode, boards, EqSponsorBoards ~= nil and EqSponsorBoards.isOn(placeable))
+    return boards
 end
 
 
@@ -145,9 +166,7 @@ function EqSponsors.countBoards(farmId)
     for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
         local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
         if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
-            local boards = {}
-            findBoards(placeable.rootNode, boards)
-            for _ in pairs(boards) do count = count + 1 end
+            for _ in pairs(boardsOf(placeable)) do count = count + 1 end
         end
     end
     return count
@@ -183,9 +202,8 @@ function EqSponsors.update()
         local sponsors = nil
         local offset = 0
         for _, placeable in ipairs(stands) do
-            local boards = {}
-            findBoards(placeable.rootNode, boards)
-            if not placeable.eqSponsored then
+            local boards = boardsOf(placeable)
+            if not placeable.eqSponsored and next(boards) ~= nil then
                 placeable.eqSponsored = true
                 if byName == nil then byName, names = brands() end
                 local sponsor = sponsorOf(farmId)
@@ -195,10 +213,14 @@ function EqSponsors.update()
                     sponsors = sponsors or EqSponsors.order(ownedCounts(farmId), names, farmId)
                 end
                 local shown = 0
-                for number, node in pairs(boards) do
+                for number, nodes in pairs(boards) do
                     local name = #sponsors > 0 and sponsors[(offset + number - 1) % #sponsors + 1] or nil
-                    local ok, done = EqLog.try("EqSponsors logo", showLogo, node, name ~= nil and byName[name] or nil)
-                    if ok and done then shown = shown + 1 end
+                    local any = false
+                    for _, node in ipairs(nodes) do
+                        local ok, done = EqLog.try("EqSponsors logo", showLogo, node, name ~= nil and byName[name] or nil)
+                        if ok and done then any = true end
+                    end
+                    if any then shown = shown + 1 end
                 end
                 if shown == 0 and next(boards) ~= nil and #sponsors > 0 then
                     EqSponsors.failed = true
@@ -207,7 +229,9 @@ function EqSponsors.update()
                 end
                 Log:info("EqSponsors: farm %d's bleacher shows %d sponsor(s)", farmId, shown)
             end
-            offset = offset + #boards
+            local numbers = 0
+            for _ in pairs(boards) do numbers = numbers + 1 end
+            offset = offset + numbers
         end
     end
 end
@@ -220,6 +244,18 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/bleachers/bleachers5x10.xml"] = 5,
     ["placeables/bleachers/bleachers8x16.xml"] = 8,
     ["placeables/xcjumps/xctable.xml"] = 1,
+    ["placeables/xcjumps/xccornerplank.xml"] = 2,
+    ["placeables/xcjumps/xcdropwall16.xml"] = 1,
+}
+-- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says
+-- what they would add, after the jump's own lines.
+EqSponsors.SHOP_OPTION_BOARDS = {
+    ["placeables/showjumps/showjumpupright.xml"] = 2,
+    ["placeables/showjumps/showjumpoxer.xml"] = 2,
+    ["placeables/showjumps/showjumptriplebar.xml"] = 2,
+    ["placeables/showjumps/showjumphogsback.xml"] = 2,
+    ["placeables/showjumps/showjumpfan3.xml"] = 2,
+    ["placeables/showjumps/showjumpliverpool.xml"] = 3,
 }
 EqSponsors.shopItems = nil
 EqSponsors.shopText = nil
@@ -233,6 +269,9 @@ function EqSponsors.shopBoards(filename)
     for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
         if string.sub(path, -#suffix) == suffix then return boards end
     end
+    for suffix, boards in pairs(EqSponsors.SHOP_OPTION_BOARDS) do
+        if string.sub(path, -#suffix) == suffix then return boards, true end
+    end
     return 0
 end
 
@@ -244,8 +283,12 @@ function EqSponsors.updateShopText()
     if EqSponsors.shopItems == nil then
         EqSponsors.shopItems = {}
         for _, storeItem in ipairs(g_storeManager:getItems() or {}) do
-            local boards = EqSponsors.shopBoards(storeItem.xmlFilename)
-            if boards > 0 then table.insert(EqSponsors.shopItems, { item = storeItem, boards = boards }) end
+            local boards, optional = EqSponsors.shopBoards(storeItem.xmlFilename)
+            if boards > 0 then
+                local base = {}
+                for _, line in ipairs(storeItem.functions or {}) do table.insert(base, line) end
+                table.insert(EqSponsors.shopItems, { item = storeItem, boards = boards, optional = optional, base = base })
+            end
         end
     end
     local farmId = g_currentMission:getFarmId()
@@ -254,10 +297,17 @@ function EqSponsors.updateShopText()
     for _, entry in ipairs(EqSponsors.shopItems) do
         local now = EqSponsorView.brandingWord(EqSponsorship.brandingLevel(config, have))
         local with = EqSponsorView.brandingWord(EqSponsorship.brandingLevel(config, have + entry.boards))
-        local text = string.format(g_i18n:getText("eq_shop_branding"), now, with)
+        local text = string.format(g_i18n:getText(entry.optional and "eq_shop_brandingOption" or "eq_shop_branding"), now, with)
         if entry.text ~= text then
             entry.text = text
-            entry.item.functions = { text }
+            if entry.optional then
+                local lines = {}
+                for _, line in ipairs(entry.base) do table.insert(lines, line) end
+                table.insert(lines, text)
+                entry.item.functions = lines
+            else
+                entry.item.functions = { text }
+            end
         end
     end
 end

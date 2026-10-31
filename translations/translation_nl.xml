@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Waarschijnlijke uitbetaling"/>
         <text name="eq_sponsor_likelyLine" text="%s bij %s"/>
         <text name="eq_shop_branding" text="Je zichtbaarheid: nu %s, hiermee %s. Meer zichtbaarheid verhoogt wat je sponsor betaalt."/>
+        <text name="eq_shop_brandingOption" text="Met sponsorborden, je zichtbaarheid: nu %s, hiermee %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponsorborden"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsorborden (optioneel, meerprijs): borden op de vleugels tonen het logo van je sponsor en de balken krijgen zijn kleur."/>
         <text name="eq_sponsor_discount_repaint" text="Spuiten %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparatie %s"/>
         <text name="eq_sponsor_discount_buy" text="Kopen %s"/>

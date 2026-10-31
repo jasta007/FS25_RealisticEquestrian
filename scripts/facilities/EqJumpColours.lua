@@ -112,11 +112,16 @@ end
 function EqJumpColours.apply(placeable)
     if placeable == nil or placeable.rootNode == nil or not EqPoles.isOurs(placeable.configFileName) then return end
     local key = EqJumpColours.key(placeable.configurations)
+    -- a jump with sponsor boards takes its poles' colour from the farm's sponsor (EqSponsorBoards)
+    local sponsorColour, sponsor = nil, nil
+    if EqSponsorBoards ~= nil then sponsorColour, sponsor = EqSponsorBoards.colourFor(placeable) end
+    key = key .. ",sponsor=" .. tostring(sponsor)
     if placeable.eqColourKey == key then return end
     placeable.eqColourKey = key
     if setShaderParameter == nil then return end
     for _, config in ipairs(EqJumpColours.CONFIGS) do
         local colour = EqJumpColours.colour(placeable.configurations ~= nil and placeable.configurations[config.name] or nil)
+        if config.name == "eqPoleColour" and sponsorColour ~= nil then colour = sponsorColour end
         if colour ~= nil then
             for _, node in ipairs(shapesNamed(placeable.rootNode, config.node)) do
                 if getHasShaderParameter == nil or getHasShaderParameter(node, EqJumpColours.PARAMETER) then

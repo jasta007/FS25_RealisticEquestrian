@@ -1043,6 +1043,9 @@
         <text name="eq_sponsor_label_likely" text="Вероятная выплата"/>
         <text name="eq_sponsor_likelyLine" text="%s на уровне %s"/>
         <text name="eq_shop_branding" text="Ваш брендинг: сейчас %s, с этим %s. Больше брендинга — больше платит спонсор."/>
+        <text name="eq_shop_brandingOption" text="Со спонсорскими щитами, ваш брендинг: сейчас %s, с этим %s."/>
+        <text name="eq_config_sponsorBoards" text="Спонсорские щиты"/>
+        <text name="eq_shop_sponsorBoards_function" text="Спонсорские щиты (по желанию, за доплату): щиты на стойках показывают логотип вашего спонсора, а жерди окрашиваются в его цвет."/>
         <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
         <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
         <text name="eq_sponsor_discount_buy" text="Покупка %s"/>
