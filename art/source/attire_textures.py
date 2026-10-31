@@ -11,6 +11,7 @@ import os
 import sys
 
 import numpy as np
+from PIL import Image, ImageFilter
 
 sys.path.insert(0, os.path.dirname(__file__))
 from eqdds import save_dxt1  # noqa: E402
@@ -29,6 +30,28 @@ TEXTURES = {
 }
 SIZE = 16
 
+# The full-seat breeches (botEquestrian): white with a dark upper seat. Mapped with eqUvGrid
+# (James's screenshots, 2026-10-31): the texture wraps round the body with the back seam at its
+# left/right edge, waist at the top. Columns G, H | A, B of the 8 x 8 grid are the seat, rows 1-3
+# its upper part. The dark ends lower at the seam than at the hips, like a real full seat.
+SEAT_SIZE = 512
+SEAT_WIDTH = 2 / 8  # either side of the seam
+SEAT_DEPTH_SEAM, SEAT_DEPTH_HIP = 3.0 / 8, 2.2 / 8
+SEAT_CLOTH, SEAT_DARK = 235, 14
+
+
+def seat():
+    """The full-seat breeches diffuse."""
+    u = (np.arange(SEAT_SIZE) + 0.5) / SEAT_SIZE
+    seam = np.minimum(u, 1 - u)  # distance round the body from the back seam
+    depth = SEAT_DEPTH_SEAM + (SEAT_DEPTH_HIP - SEAT_DEPTH_SEAM) * np.clip(seam / SEAT_WIDTH, 0, 1)
+    v = u[:, None]
+    dark = (seam[None, :] <= SEAT_WIDTH) & (v <= depth[None, :])
+    image = Image.fromarray(np.where(dark, SEAT_DARK, SEAT_CLOTH).astype(np.uint8))
+    # a soft edge, so the panel doesn't look cut out
+    grey = np.asarray(image.filter(ImageFilter.GaussianBlur(1.2)))
+    return np.repeat(grey[:, :, None], 3, axis=2)
+
 
 def main():
     os.makedirs(OUT, exist_ok=True)
@@ -38,6 +61,9 @@ def main():
         path = os.path.join(OUT, name + ".dds")
         save_dxt1(image, path)
         print("wrote", os.path.relpath(path))
+    path = os.path.join(OUT, "breechesSeat_diffuse.dds")
+    save_dxt1(seat(), path)
+    print("wrote", os.path.relpath(path))
 
 
 if __name__ == "__main__":

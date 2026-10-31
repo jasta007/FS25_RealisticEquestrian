@@ -770,8 +770,10 @@ boots are our own models; the rest are base-game meshes:
   expects one after taking a geo item out of its file.
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
-  saddle, as it does with the game's own clothes (the game's two-tone split leaves the upper seat
-  in the second colour, so it can't darken it).
+  saddle, as it does with the game's own clothes.
+- **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
+  (rows 1-3 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam), so the poke-
+  through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
 - **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
   in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
   loses the wardrobe's colours (the fabric back went white).

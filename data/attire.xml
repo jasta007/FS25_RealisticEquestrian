@@ -2,7 +2,8 @@
 <!--
     The dressage outfit (EqAttire.lua): base-game wardrobe items with our own colours, added to
     the female and male player styles. Same attributes as the game's own playerF.xml items.
-    Breeches: both colours the same, so the white inner panel takes the colour too.
+    Breeches: both colours the same, so the white inner panel takes the colour too. Full-seat
+    breeches: a white diffuse with a dark upper seat (mapped with eqUvGrid), colours set again.
     Gloves: black, smooth leather (eqDiffuse, eqNormal); a swapped material loses the wardrobe's
     colours, so the colour is in the texture. Jacket: a white shirt and a plain, smooth cloth
     (eqDiffuse swaps its tweed texture, eqNormal its weave), its colours set again by EqAttire.
@@ -23,6 +24,14 @@
                 <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
                 <color primary="0.020 0.020 0.022 1" secondary="0.020 0.020 0.022 1"/>
                 <color primary="0.008 0.012 0.040 1" secondary="0.008 0.012 0.040 1"/>
+            </colors>
+        </bottom>
+        <bottom name="eqDressageBreechesSeat" filename="$dataS/character/playerF/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breechesSeat_icon.dds" eqDiffuse="data/attire/breechesSeat_diffuse.dds">
+            <hidesBodypart name="legs"/>
+            <colors>
+                <color primary="1 1 1 1" secondary="1 1 1 1"/>
+                <color primary="0.80 0.72 0.55 1" secondary="0.80 0.72 0.55 1"/>
+                <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
             </colors>
         </bottom>
         <gloves name="eqDressageGloves" filename="$dataS/character/playerF/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" iconFilename="data/attire/gloves_icon.dds" eqDiffuse="data/attire/blackLeather_diffuse.dds" eqNormal="data/attire/flat_normal.dds">
@@ -70,6 +79,14 @@
                 <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
                 <color primary="0.020 0.020 0.022 1" secondary="0.020 0.020 0.022 1"/>
                 <color primary="0.008 0.012 0.040 1" secondary="0.008 0.012 0.040 1"/>
+            </colors>
+        </bottom>
+        <bottom name="eqDressageBreechesSeat" filename="$dataS/character/playerM/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breechesSeat_icon.dds" eqDiffuse="data/attire/breechesSeat_diffuse.dds">
+            <hidesBodypart name="legs"/>
+            <colors>
+                <color primary="1 1 1 1" secondary="1 1 1 1"/>
+                <color primary="0.80 0.72 0.55 1" secondary="0.80 0.72 0.55 1"/>
+                <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
             </colors>
         </bottom>
         <gloves name="eqDressageGloves" filename="$dataS/character/playerM/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" iconFilename="data/attire/gloves_icon.dds" eqDiffuse="data/attire/blackLeather_diffuse.dds" eqNormal="data/attire/flat_normal.dds">

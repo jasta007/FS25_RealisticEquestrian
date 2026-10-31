@@ -71,6 +71,11 @@ def main():
     a, alpha = cut("breeches")
     t = np.clip((blur(lum(a), 1.2) - 55) / 85, 0, 1) ** 0.8
     save(150 + 102 * t, alpha, "breeches", 0.99)
+    # the full-seat breeches: the same with a dark band at the top for the seat
+    rows = np.where(alpha.max(axis=1))[0]
+    cut = rows.min() + 0.17 * (rows.max() - rows.min())
+    band = np.clip((cut - np.arange(alpha.shape[0])[:, None]) / 5 + 0.5, 0, 1)
+    save((150 + 102 * t) * (1 - 0.9 * band), alpha, "breechesSeat", 0.99)
 
     a, alpha = cut("gloves")
     # one even black leather: the old fabric panels and highlights flattened (James, 2026-10-31)
