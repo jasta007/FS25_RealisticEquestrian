@@ -744,3 +744,17 @@ horse is never touched.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
   fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.
 
+
+## Dressage outfit
+
+Four extra wardrobe items for female and male characters (data/attire.xml), all base-game meshes:
+
+- **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
+  white: white, cream, grey, black or navy.
+- **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white.
+- **Jacket** (the tweed sports jacket) with a white shirt in black, navy, charcoal, dark green or
+  burgundy. Its tweed texture is swapped for a plain one each time a character is dressed.
+- **Boots** (the Chelsea boots) in black leather, by the same texture swap.
+
+The items sit at the end of each wardrobe list. They use the game's own icons, so the icon shows
+the original colours.

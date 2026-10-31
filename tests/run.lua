@@ -35,6 +35,7 @@ for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] 
 dofile("scripts/competition/EqInjury.lua")
 dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
+dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
@@ -4061,6 +4062,22 @@ end)()
     g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
     EqCompetitionManager = savedManager
     EqHostManager.reset()
+end)()
+
+-- Dressage outfit: which player styles get it, and where its files load from.
+;
+(function()
+    check("attire: female and male base styles", EqAttire.bodyOf("dataS/character/playerF/playerF.xml") == "female"
+        and EqAttire.bodyOf("C:\\game\\dataS\\character\\playerM\\playerM.xml") == "male")
+    check("attire: other mods' player models left alone", EqAttire.bodyOf("mods/x/character/playerM_bmp.xml") == nil
+        and EqAttire.bodyOf(nil) == nil)
+    local dir = "C:/mods/FS25_RealisticEquestrian/"
+    check("attire: the game's files lose the $", EqAttire.resolve("$dataS/character/playerF/pants/botEquestrian.i3d", dir)
+        == "dataS/character/playerF/pants/botEquestrian.i3d" and EqAttire.resolve("$data/x.dds", dir) == "data/x.dds")
+    check("attire: already resolved game paths kept", EqAttire.resolve("dataS/character/a.i3d", dir) == "dataS/character/a.i3d")
+    check("attire: our files under the mod", EqAttire.resolve("data/attire/plainCloth_diffuse.dds", dir)
+        == dir .. "data/attire/plainCloth_diffuse.dds" and EqAttire.resolve(dir .. "a.dds", dir) == dir .. "a.dds")
+    check("attire: nothing to resolve", EqAttire.resolve(nil, dir) == nil and EqAttire.resolve("", dir) == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

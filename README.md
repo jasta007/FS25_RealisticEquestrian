@@ -157,6 +157,10 @@ uses its genetics, health and fitness.
   on your farm you find out whether you got a bargain or were misled.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
+### Dressage outfit
+- The wardrobe has a dressage outfit: breeches and riding gloves in one solid colour, a plain dark
+  jacket with a white shirt, and black boots. They're the game's own clothes, recoloured.
+
 ### Settings
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
 - **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
