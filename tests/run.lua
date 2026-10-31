@@ -4116,6 +4116,15 @@ end)()
         and canterA >= 45 and canterA <= 60 and collectA >= 65 and collectA <= 80,
         string.format("%.0f / %.0f / %.0f", gallopA, canterA, collectA))
 
+    -- The fall is held to FALL_MAX (the base game's landing speed), after this frame's gravity.
+    local fallG = J.gravity(-1, false)
+    check("fall cap: only when it would pass FALL_MAX", J.fallCap(-1, false, fallG, 16) == nil
+        and J.fallCap(-20, true, fallG, 16) == nil)
+    local held = J.fallCap(-20, false, fallG, 16)
+    check("fall cap: lands at FALL_MAX after gravity", math.abs(held + fallG * 0.016 + J.FALL_MAX) < 1e-9)
+    check("fall cap: airtime counts the held fall", J.airtime(1.6) > math.sqrt(2 * 1.6 / (9.81 * J.RISE_SHARE))
+        + math.sqrt(2 * 1.6 / (9.81 * J.FALL_SHARE)))
+
     -- Console tuning.
     local was = J.FALL_SHARE
     local ok = J.set("fall", 99)

@@ -1015,9 +1015,20 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
     if type(spec.gravity) == "number" then
         spec.eqBaseGravity = spec.eqBaseGravity or spec.gravity
         spec.gravity = EqJump.gravity(spec.currentSpeedY, spec.isOnGround ~= false)
+        local capped = EqJump.fallCap(spec.currentSpeedY, spec.isOnGround ~= false, spec.gravity, dt)
+        if capped ~= nil then spec.currentSpeedY = capped end
     end
     local launch = spec.eqLaunch
     if launch == nil then return end
+    if launch.trace then
+        -- What the animation sees on the way down, for the landing line below.
+        local params = spec.animationParameters or {}
+        local vertical = params.verticalVelocity ~= nil and tonumber(params.verticalVelocity.value) or nil
+        if vertical ~= nil and vertical < (launch.lowestVertical or math.huge) then launch.lowestVertical = vertical end
+        if spec.isCloseToGround and launch.closeAt == nil and launch.launched and (spec.currentSpeedY or 0) < 0 then
+            launch.closeAt = now
+        end
+    end
     local wasLaunched = launch.launched
     local speedY, cap = EqJump.step(launch, now, dt, spec.gravity or -EqJump.GRAVITY)
     if speedY ~= nil then spec.currentSpeedY = speedY end
@@ -1028,6 +1039,11 @@ function EqTrainingHooks.stepJump(vehicle, spec, dt)
     end
     -- Done once it has launched and come back down (or a collected jump's slow stays on till then).
     if launch.launched and spec.isOnGround ~= false and now - launch.startedAt > launch.pushMs + 200 then
+        if launch.trace then
+            Log:info("Jump: landed after %d ms, close to the ground %s ms before, fastest fall the animation saw %s m/s",
+                now - launch.startedAt, launch.closeAt ~= nil and tostring(math.floor(now - launch.closeAt)) or "?",
+                launch.lowestVertical ~= nil and string.format("%.1f", launch.lowestVertical) or "?")
+        end
         spec.eqLaunch = nil
     end
 end

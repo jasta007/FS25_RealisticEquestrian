@@ -294,8 +294,8 @@ on landing if exertion is down to the canter line, within 1.5 s. In the air the 
 on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
 Jumps rise under 2.1 times normal gravity and come down under 2.7 times, about 12% lower than
-before, so a gallop jump is about 0.75 s in the air (it was nearly 1 s) and doesn't hang at the
-top. Pressing jump first lifts the horse only a few centimetres for 0.18 s, so its push-off
+before, so a gallop jump is about 0.8 s in the air (it was nearly 1 s) and doesn't hang at the
+top. The fall is held to 6 m/s, the base game's landing speed, so the landing animation lines up. Pressing jump first lifts the horse only a few centimetres for 0.18 s, so its push-off
 animation plays near the ground, and then launches it. A **collected jump**: hold Ctrl (or let
 go of it less than half a second before) and press jump. The horse gathers itself over 0.26 s,
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
