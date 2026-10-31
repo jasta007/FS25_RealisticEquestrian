@@ -604,9 +604,12 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 
 | Rating | Field | Setup fee | Dressage arena | Show jumps | Cross country | Bleachers |
 | --- | --- | --- | --- | --- | --- | --- |
-| Novice | 8 | 5,000 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
-| Intermediate | 16 | 20,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
-| Championship | 32 | 80,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
+| Novice | 8 | 2,500 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
+| Intermediate | 16 | 22,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
+| Championship | 32 | 220,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
+
+A Novice event about breaks even, an Intermediate one pays only when it's popular (85 or more), and a
+Championship loses money unless a sponsor pays for it (sponsors are still to come).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
   **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
