@@ -2,10 +2,10 @@
 <!--
     The dressage outfit (EqAttire.lua): base-game wardrobe items with our own colours, added to
     the female and male player styles. Same attributes as the game's own playerF.xml items.
-    Breeches: both colours the same, so the white inner panel takes the colour too, or white with
-    a dark inner panel (full seat). Gloves: black, smooth leather (eqDiffuse, eqNormal); a
-    swapped material loses the wardrobe's colours, so the colour is in the texture. Jacket: a white
-    shirt and a plain, smooth cloth (eqDiffuse swaps its tweed texture, eqNormal its weave).
+    Breeches: both colours the same, so the white inner panel takes the colour too.
+    Gloves: black, smooth leather (eqDiffuse, eqNormal); a swapped material loses the wardrobe's
+    colours, so the colour is in the texture. Jacket: a white shirt and a plain, smooth cloth
+    (eqDiffuse swaps its tweed texture, eqNormal its weave), its colours set again by EqAttire.
     Boots: the Chelsea boots in black leather (eqDiffuse, they have no colour mask).
     Riding boots: our own model (art/source/riding_boots.py), its pieces moved onto the leg bones
     by EqAttire.fitBoots; the browns swap in their own diffuse.
@@ -19,8 +19,6 @@
             <hidesBodypart name="legs"/>
             <colors>
                 <color primary="1 1 1 1" secondary="1 1 1 1"/>
-                <color primary="1 1 1 1" secondary="0.020 0.020 0.022 1"/>
-                <color primary="1 1 1 1" secondary="0.050 0.028 0.016 1"/>
                 <color primary="0.80 0.72 0.55 1" secondary="0.80 0.72 0.55 1"/>
                 <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
                 <color primary="0.020 0.020 0.022 1" secondary="0.020 0.020 0.022 1"/>
@@ -68,8 +66,6 @@
             <hidesBodypart name="legs"/>
             <colors>
                 <color primary="1 1 1 1" secondary="1 1 1 1"/>
-                <color primary="1 1 1 1" secondary="0.020 0.020 0.022 1"/>
-                <color primary="1 1 1 1" secondary="0.050 0.028 0.016 1"/>
                 <color primary="0.80 0.72 0.55 1" secondary="0.80 0.72 0.55 1"/>
                 <color primary="0.55 0.55 0.55 1" secondary="0.55 0.55 0.55 1"/>
                 <color primary="0.020 0.020 0.022 1" secondary="0.020 0.020 0.022 1"/>

@@ -68,15 +68,15 @@ EqAttire.BOOTS = {
 EqAttire.BOOT_SHAFT = 0.43
 EqAttire.BOOT_KNEE_GAP = 0.04
 EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
--- The shafts' girth on top of that, so calves and breeches don't poke through, and how far the
+-- The shafts' girth on top of that (the model already widens up the calf), and how far the
 -- whole boot sits above the ankle bone (the model's ankle is higher than the rig's). eqBootFit
 -- tunes both.
-EqAttire.BOOT_WIDTH = 1.1
+EqAttire.BOOT_WIDTH = 1.0
 EqAttire.BOOT_RAISE = 0.03
 -- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
-EqAttire.BOOT_TOE_DROP = 15
+EqAttire.BOOT_TOE_DROP = 14
 -- The shaft leans back from the ankle (degrees) and moves back (metres), for the calf.
-EqAttire.BOOT_LEAN = 4
+EqAttire.BOOT_LEAN = 7
 EqAttire.BOOT_BACK = 0
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })

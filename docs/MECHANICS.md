@@ -760,16 +760,18 @@ boots are our own models; the rest are base-game meshes:
   in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
   rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
   bones when the character is dressed. The foot lies along the line from the foot bone to the toe
-  bone, turned up 15 degrees, so it follows the foot even when dressed in the saddle. They're
-  sized to end 4 cm below the knee (0.85x to 1.15x), sit 3 cm above the ankle bone, shafts 1.1x
-  wider and leaning back 4 degrees from the ankle for the calf (James's fit, 2026-10-31).
+  bone, turned up 14 degrees, so it follows the foot even when dressed in the saddle. They're
+  sized to end 4 cm below the knee (0.85x to 1.15x) and sit 3 cm above the ankle bone. The shaft
+  widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.2x front to back
+  (growing backwards from the shin) at its top, and leans back 7 degrees from the ankle (James's
+  fit, 2026-10-31).
   `eqBootFit [width] [raise] [toeDrop] [lean] [back]` tunes them, not saved; all but width apply
   at the next dressing. The i3d keeps an empty first child, as the game
   expects one after taking a geo item out of its file.
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
-  white: white, cream, grey, black or navy; or white with a black or dark brown inner panel (full
-  seat). The seat pokes through the jacket's tails in the saddle, as it does with the game's own
-  clothes; a dark panel hides it if the seat is part of it.
+  white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
+  saddle, as it does with the game's own clothes (the game's two-tone split leaves the upper seat
+  in the second colour, so it can't darken it).
 - **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
   in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
   loses the wardrobe's colours (the fabric back went white).

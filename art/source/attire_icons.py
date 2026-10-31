@@ -73,7 +73,8 @@ def main():
     save(150 + 102 * t, alpha, "breeches", 0.99)
 
     a, alpha = cut("gloves")
-    save(12 + 0.30 * blur(lum(a), 1.0), alpha, "gloves", 1.05)
+    # one even black leather: the old fabric panels and highlights flattened (James, 2026-10-31)
+    save(10 + 0.5 * np.minimum(blur(lum(a), 2.0), 48), alpha, "gloves", 1.0)
 
     a, alpha = cut("jacket")
     r, g, b = a[..., 0], a[..., 1], a[..., 2]

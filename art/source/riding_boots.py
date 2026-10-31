@@ -38,6 +38,11 @@ OVERLAP = 0.025
 DARKEN = 0.45
 DESATURATE = 0.8
 LINING = (90, 130)  # luminance where the leather fades into the lining
+# The shaft widens up the calf (James's fit, 2026-10-31): as it is at the bottom of the calf, up to
+# 1.4x side to side and 1.2x front to back at the top. Depth grows backwards from the shin.
+CALF = (0.18, 0.50)  # heights above the sole where the widening starts and is full
+CALF_WIDTH, CALF_DEPTH = 1.4, 1.2
+CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.055
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
 BROWNS = {"darkBrown": (64, 40, 26), "redBrown": (112, 50, 30)}
@@ -75,8 +80,21 @@ def read(path):
     return verts, tris
 
 
-def piece(verts, tris, keep, origin_y, mirror):
-    """A Mesh of the triangles keep() takes, moved so (0, origin_y, 0) is its origin."""
+def calf(position, normal):
+    """A shaft vertex widened for the calf at its height."""
+    (x, y, z), (nx, ny, nz) = position, normal
+    t = min(1.0, max(0.0, (y - CALF[0]) / (CALF[1] - CALF[0])))
+    sx, sz = 1 + (CALF_WIDTH - 1) * t, 1 + (CALF_DEPTH - 1) * t
+    x = CALF_CENTRE_X + (x - CALF_CENTRE_X) * sx
+    z = SHIN_FRONT_Z + (z - SHIN_FRONT_Z) * sz
+    nx, nz = nx / sx, nz / sz
+    length = (nx * nx + ny * ny + nz * nz) ** 0.5 or 1.0
+    return (x, y, z), (nx / length, ny / length, nz / length)
+
+
+def piece(verts, tris, keep, origin_y, mirror, shape=None):
+    """A Mesh of the triangles keep() takes, moved so (0, origin_y, 0) is its origin, each vertex
+    first through shape() if given."""
     mesh, remap = xc.Mesh(), {}
     for tri in tris:
         ys = [verts[i][0][1] for i in tri]
@@ -85,7 +103,10 @@ def piece(verts, tris, keep, origin_y, mirror):
         out = []
         for i in tri:
             if i not in remap:
-                (x, y, z), (nx, ny, nz), uv = verts[i]
+                position, normal, uv = verts[i]
+                if shape is not None:
+                    position, normal = shape(position, normal)
+                (x, y, z), (nx, ny, nz) = position, normal
                 if mirror:
                     x, nx = -x, -nx
                 remap[i] = mesh.vertex((x, y - origin_y, z), (nx, ny, nz), uv)
@@ -129,7 +150,7 @@ def main():
     # The OBJ's v runs from the bottom like GIANTS'; flip it if the textures come out upside down.
     shapes = []
     for side, mirror in (("L", False), ("R", True)):
-        shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror)
+        shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror, calf)
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
         shapes += [("eqBootShaft" + side, shaft), ("eqBootFoot" + side, foot)]
     for name, diffuse in textures().items():
