@@ -382,8 +382,12 @@ local function before(vehicle, dt)
     end
     if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
     -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
-    -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster.
-    if entered and spec.isOnGround ~= false and type(spec.currentTurnSpeed) == "number" and type(spec.maxTurnSpeed) == "number" then
+    -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster. Only in
+    -- a dressage test or lateral work (James, 2026-10-31: galloping between show jumps went
+    -- squirrely with it).
+    local inTest = EqDressageHooks ~= nil and EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() ~= nil
+    local quick = inTest or side ~= 0 or EqLateral.steering
+    if quick and entered and spec.isOnGround ~= false and type(spec.currentTurnSpeed) == "number" and type(spec.maxTurnSpeed) == "number" then
         spec.currentTurnSpeed = EqLateral.turnSpeedToward(spec.currentTurnSpeed, spec.maxTurnSpeed * (spec.inputValues.axisSteer or 0), dt)
     end
     if spot ~= (spec.eqSpot == true) then
@@ -394,7 +398,7 @@ local function before(vehicle, dt)
     -- added to this frame's move, and the body eased towards the angle a lateral section asks for.
     spec.eqPullX, spec.eqPullZ = 0, 0
     local assist = EqDressageHooks ~= nil and EqDressageHooks.assist or nil
-    if entered and not spot and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
+    if entered and inTest and not spot and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
         local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt)
         spec.eqPullX, spec.eqPullZ = pullX, pullZ
         if wantX ~= nil and rate > 0 and type(spec.currentTurnAngle) == "number" then
