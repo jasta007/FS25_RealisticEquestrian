@@ -57,8 +57,10 @@ EqSponsorBoards.COLOURS = {
 }
 
 
--- Showpiece jumps whose sponsor boards are always there (no choice): the wall.
-EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml" }
+-- Pieces whose sponsor boards are always there (no choice): the wall and the two gates, whose
+-- banners or board take the sponsor's colour.
+EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml", "placeables/xcjumps/xcgatearch.xml",
+    "placeables/xcjumps/xcgatesimple.xml" }
 
 
 local function endsWith(filename, list)

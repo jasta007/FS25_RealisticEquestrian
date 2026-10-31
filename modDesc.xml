@@ -115,6 +115,8 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/xcJumps/xcRollTopHalf.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcTable.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcBigLog.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateArch.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateSimple.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>

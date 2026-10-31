@@ -86,6 +86,9 @@
         <text name="eq_shop_xcRollTopHalf" text="圓頂障礙（半圓）"/>
         <text name="eq_shop_xcTable" text="桌形障礙"/>
         <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_shop_xcGateArch" text="起點/終點拱門"/>
+        <text name="eq_shop_xcGateSimple" text="通行門"/>
+        <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>

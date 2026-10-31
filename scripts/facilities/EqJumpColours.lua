@@ -110,7 +110,10 @@ end
 --- Paint one of our jumps in the colours bought (once per change).
 --- @param placeable table
 function EqJumpColours.apply(placeable)
-    if placeable == nil or placeable.rootNode == nil or not EqPoles.isOurs(placeable.configFileName) then return end
+    if placeable == nil or placeable.rootNode == nil then return end
+    -- our show jumps, and the sponsor gates (painted the same way)
+    if not EqPoles.isOurs(placeable.configFileName)
+        and not (EqSponsorBoards ~= nil and EqSponsorBoards.isJump(placeable.configFileName)) then return end
     local key = EqJumpColours.key(placeable.configurations)
     -- a jump with sponsor boards takes its poles' colour from the farm's sponsor (EqSponsorBoards)
     local sponsorColour, sponsor = nil, nil

@@ -86,6 +86,9 @@
         <text name="eq_shop_xcRollTopHalf" text="Ролл-топ (половина)"/>
         <text name="eq_shop_xcTable" text="Стол"/>
         <text name="eq_shop_xcBigLog" text="Большое бревно"/>
+        <text name="eq_shop_xcGateArch" text="Арка старта/финиша"/>
+        <text name="eq_shop_xcGateSimple" text="Проездные ворота"/>
+        <text name="eq_shop_xcGate_function" text="Ворота для проезда, а не препятствие: достаточно широкие и высокие для любой лошади, с логотипом вашего спонсора."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>

@@ -86,6 +86,9 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (polovina)"/>
         <text name="eq_shop_xcTable" text="Stůl"/>
         <text name="eq_shop_xcBigLog" text="Velká kláda"/>
+        <text name="eq_shop_xcGateArch" text="Startovní/cílový oblouk"/>
+        <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
+        <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>

@@ -4898,6 +4898,12 @@ end)()
         check("sponsor wall: two boards in pieces, five blocks", numbers["1"] and numbers["2"] and pieces == 12 and blocks == 5,
             pieces .. " pieces " .. blocks .. " blocks")
         check("sponsor wall: always has its boards", EqSponsorBoards.isOn({ configFileName = "x/placeables/showJumps/showJumpWall.xml" }))
+        check("sponsor gates: always have their boards, in the shop, no flags (not fences)",
+            EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateArch.xml" })
+            and EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateSimple.xml" })
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcGateSimple.xml", 1, true) ~= nil
+            and io.open("placeables/xcJumps/xcGateArch.i3d"):read("*a"):find("eqFlags", 1, true) == nil
+            and EqSponsors.isBleacherXml("C:/m/FS25_RealisticEquestrian/placeables/xcJumps/xcGateArch.xml"))
         local modDesc = io.open("modDesc.xml"):read("*a")
         check("sponsor wall: in the shop", modDesc:find("placeables/showJumps/showJumpWall.xml", 1, true) ~= nil)
         local fall = { a = { 0.35, 1.0, 0 }, b = { -0.35, 1.0, 0 }, restA = 0.2, restB = 0.2, push = 1, block = true }
@@ -4931,7 +4937,9 @@ end)()
     for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
         local files = { ["placeables/xcjumps/xctable.xml"] = "placeables/xcJumps/xcTable.i3d",
             ["placeables/xcjumps/xccornerplank.xml"] = "placeables/xcJumps/xcCornerPlank.i3d",
-            ["placeables/xcjumps/xcdropwall16.xml"] = "placeables/xcJumps/xcDropWall16.i3d" }
+            ["placeables/xcjumps/xcdropwall16.xml"] = "placeables/xcJumps/xcDropWall16.i3d",
+            ["placeables/xcjumps/xcgatearch.xml"] = "placeables/xcJumps/xcGateArch.i3d",
+            ["placeables/xcjumps/xcgatesimple.xml"] = "placeables/xcJumps/xcGateSimple.i3d" }
         local file = files[suffix] or ""
         if file:find("xcJumps") then
             local count = boardNumbers(file)

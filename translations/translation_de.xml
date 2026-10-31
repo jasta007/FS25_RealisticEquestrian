@@ -86,6 +86,9 @@
         <text name="eq_shop_xcRollTopHalf" text="Rolltop (halb)"/>
         <text name="eq_shop_xcTable" text="Tisch"/>
         <text name="eq_shop_xcBigLog" text="Großer Baumstamm"/>
+        <text name="eq_shop_xcGateArch" text="Start-/Zielbogen"/>
+        <text name="eq_shop_xcGateSimple" text="Durchreitetor"/>
+        <text name="eq_shop_xcGate_function" text="Ein Tor zum Durchreiten, kein Sprung: breit und hoch genug für jedes Pferd, mit dem Logo Ihres Sponsors."/>
         <text name="eq_config_corner" text="Ecke"/>
         <text name="eq_config_cornerRight" text="Spitze rechts"/>
         <text name="eq_config_cornerLeft" text="Spitze links"/>

@@ -743,6 +743,9 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (demi)"/>
         <text name="eq_shop_xcTable" text="Table"/>
         <text name="eq_shop_xcBigLog" text="Gros tronc"/>
+        <text name="eq_shop_xcGateArch" text="Arche départ/arrivée"/>
+        <text name="eq_shop_xcGateSimple" text="Porte de passage"/>
+        <text name="eq_shop_xcGate_function" text="Une porte à franchir au pas ou au galop, pas un obstacle : assez large et haute pour tout cheval, au logo de votre sponsor."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>
