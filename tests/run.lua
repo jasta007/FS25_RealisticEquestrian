@@ -4095,6 +4095,19 @@ end)()
     local dx, dy, dz, vx, vy, vz = EqAttire.footAxes(0, -0.5, 0.866, 2, 0, 0, 30)
     check("attire: boot foot laid level along a toe line 30 deg down",
         math.abs(dx) < 1e-4 and math.abs(dy) < 1e-4 and math.abs(dz - 1) < 1e-4 and math.abs(vy - 1) < 1e-4 and math.abs(vz) < 1e-4)
+    local lfx, lfy, lfz, lux, luy, luz = EqAttire.lean(0, 0, 1, 0, 1, 0, 90)
+    check("attire: a leaning shaft tips its top back", math.abs(lfy - 1) < 1e-9 and math.abs(luz + 1) < 1e-9
+        and math.abs(lfx) < 1e-9 and math.abs(lux) < 1e-9)
+    check("attire: riding boots in every colour", EqAttire.isRidingBoots("eqRidingBoots")
+        and EqAttire.isRidingBoots("eqRidingBootsRedBrown") and not EqAttire.isRidingBoots("eqDressageBoots")
+        and not EqAttire.isRidingBoots(nil))
+    local navy = EqAttire.parseColour("0.008 0.011 0.035 1")
+    check("attire: colours read from the xml", navy ~= nil and navy[3] == 0.035 and navy[4] == 1
+        and EqAttire.parseColour("1 1 1")[4] == 1 and EqAttire.parseColour("1 x") == nil and EqAttire.parseColour(nil) == nil)
+    local list = { { primary = "a" }, { primary = "b" } }
+    check("attire: picked colour, first when unknown", EqAttire.pickColour(list, 2).primary == "b"
+        and EqAttire.pickColour(list, 9).primary == "a" and EqAttire.pickColour(list, nil).primary == "a"
+        and EqAttire.pickColour({}, 1) == nil)
     check("attire: no toe line, no foot axes", EqAttire.footAxes(0, 0, 0, 1, 0, 0, 25) == nil
         and EqAttire.footAxes(1, 0, 0, 1, 0, 0, 25) == nil)
 end)()

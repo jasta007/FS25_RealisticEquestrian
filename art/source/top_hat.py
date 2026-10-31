@@ -28,9 +28,9 @@ from eqdds import save_dxt5  # noqa: E402
 SOURCE = "art/source/private/LP_TopHat.obj"
 OUT = "data/attire/topHat.i3d"
 ICON = "data/attire/topHat_icon.dds"
-# cm -> m and down to real size: crown 39 x 42.6 cm -> about 17.5 x 20.5 cm, 39 cm tall -> 16.4 cm
-# (James, 2026-10-31: "a little bit shorter" than 18.7 cm).
-SCALE = (0.0045, 0.0042, 0.0048)
+# cm -> m and down to real size: crown 39 x 42.6 cm -> about 17.5 x 20.5 cm, 39 cm tall -> 17.9 cm
+# (James, 2026-10-31: shorter than 18.7 cm, then 16.4 cm "a touch longer").
+SCALE = (0.0045, 0.0046, 0.0048)
 TEXTURE = "blackSilk_diffuse.dds"
 
 

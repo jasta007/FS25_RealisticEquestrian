@@ -38,7 +38,9 @@ OVERLAP = 0.025
 DARKEN = 0.45
 DESATURATE = 0.8
 LINING = (90, 130)  # luminance where the leather fades into the lining
-ICON = "ridingBoots_icon.dds"
+# The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
+LEATHER_GREY = 21
+BROWNS = {"darkBrown": (64, 40, 26), "redBrown": (112, 50, 30)}
 
 
 def read(path):
@@ -93,19 +95,25 @@ def piece(verts, tris, keep, origin_y, mirror):
 
 
 def textures():
-    """Write the game's textures; returns the diffuse as 0-1 floats, for the icon."""
+    """Write the game's textures; returns {colour: diffuse as 0-1 floats} for the icons. The black
+    one is the i3d's own, the browns are swapped in by EqAttire (eqDiffuse)."""
     source = np.asarray(Image.open(os.path.join(PRIVATE, "ridingBoot_diffuse.png")).convert("RGB")).astype(np.float32)
     grey = source.mean(axis=2, keepdims=True)
-    black = (grey + (source - grey) * (1 - DESATURATE)) * DARKEN
     lining = np.clip((grey - LINING[0]) / (LINING[1] - LINING[0]), 0, 1)
-    diffuse = np.clip(black * (1 - lining) + source * lining, 0, 255).astype(np.uint8)
-    save_dxt1(diffuse, os.path.join(OUT, "ridingBoots_diffuse.dds"))
+    leathers = {"": (grey + (source - grey) * (1 - DESATURATE)) * DARKEN}
+    for name, colour in BROWNS.items():
+        leathers[name] = grey / LEATHER_GREY * np.array(colour, dtype=np.float32)
+    diffuses = {}
+    for name, leather in leathers.items():
+        diffuse = np.clip(leather * (1 - lining) + source * lining, 0, 255).astype(np.uint8)
+        save_dxt1(diffuse, os.path.join(OUT, f"ridingBoots{'_' + name if name else ''}_diffuse.dds"))
+        diffuses[name] = diffuse.astype(np.float32) / 255
     normal = np.asarray(Image.open(os.path.join(PRIVATE, "ridingBoot_normal.png")).convert("RGB"))
     save_dxt1(normal, os.path.join(OUT, "ridingBoots_normal.dds"))
-    return diffuse.astype(np.float32) / 255
+    return diffuses
 
 
-def icon(verts, tris, diffuse):
+def icon(verts, tris, diffuse, path):
     """The wardrobe icon: the left boot side on, its texture sampled at each vertex (OBJ v runs
     from the bottom, the image from the top)."""
     mesh = xc.Mesh()
@@ -113,7 +121,7 @@ def icon(verts, tris, diffuse):
     h, w = diffuse.shape[:2]
     colours = np.array([diffuse[int((1 - uv[1] % 1) * (h - 1)), int(uv[0] % 1 * (w - 1))] for _, _, uv in verts])
     image = attire_render.render([(mesh, colours ** 2.2 * 1.6, 40, 0.18)], yaw=60, pitch=10)
-    save_dxt5(image, os.path.join(OUT, ICON))
+    save_dxt5(image, path)
 
 
 def main():
@@ -124,7 +132,8 @@ def main():
         shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror)
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
         shapes += [("eqBootShaft" + side, shaft), ("eqBootFoot" + side, foot)]
-    icon(verts, tris, textures())
+    for name, diffuse in textures().items():
+        icon(verts, tris, diffuse, os.path.join(OUT, f"ridingBoots{'_' + name if name else ''}_icon.dds"))
 
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',

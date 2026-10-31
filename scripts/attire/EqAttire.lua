@@ -45,15 +45,16 @@ EqAttire.SLOTS = {
 EqAttire.MAX_ITEMS = 255
 -- Materials looked at per shape (a shape has as many as its mesh's material slots).
 EqAttire.MAX_MATERIALS = 8
--- The character shader's colours (primary, secondary, ...), kept across a material swap.
-EqAttire.COLOUR_PARAMETERS = { "colorScale", "colorScaleR", "colorScaleG", "colorScaleB" }
+-- The character shader's primary and secondary colours. A swapped material loses the ones the
+-- wardrobe set, so ours are set again from the item's own colour list.
+EqAttire.PRIMARY, EqAttire.SECONDARY = "colorScaleR", "colorScaleG"
 
 -- The top hat's place on each body's head, along the character's own axes: metres up, forward
 -- and to the right of the head joint, its tilt back in degrees and a size factor. Set with the
 -- eqHatFit command.
 EqAttire.HAT = {
-    female = { up = 0.09, forward = 0.01, side = 0, tilt = 0, scale = 1 },
-    male = { up = 0.09, forward = 0.01, side = 0, tilt = 0, scale = 1 },
+    female = { up = 0.10, forward = -0.005, side = 0, tilt = 0, scale = 1 },
+    male = { up = 0.10, forward = -0.005, side = 0, tilt = 0, scale = 1 },
 }
 EqAttire.HAT_NODE = "eqHatFit"
 
@@ -70,10 +71,13 @@ EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
 -- The shafts' girth on top of that, so calves and breeches don't poke through, and how far the
 -- whole boot sits above the ankle bone (the model's ankle is higher than the rig's). eqBootFit
 -- tunes both.
-EqAttire.BOOT_WIDTH = 1.3
-EqAttire.BOOT_RAISE = 0.04
+EqAttire.BOOT_WIDTH = 1.1
+EqAttire.BOOT_RAISE = 0.03
 -- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
-EqAttire.BOOT_TOE_DROP = 25
+EqAttire.BOOT_TOE_DROP = 15
+-- The shaft leans back from the ankle (degrees) and moves back (metres), for the calf.
+EqAttire.BOOT_LEAN = 4
+EqAttire.BOOT_BACK = 0
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })
 
@@ -117,6 +121,42 @@ function EqAttire.resolve(path, modDirectory)
 end
 
 
+--- "r g b [a]" as { r, g, b, a }, or nil. Pure.
+--- @param text string|nil
+--- @return table|nil
+function EqAttire.parseColour(text)
+    if type(text) ~= "string" then return nil end
+    local values = {}
+    for number in string.gmatch(text, "[^%s]+") do table.insert(values, tonumber(number)) end
+    if #values < 3 or values[1] == nil or values[2] == nil or values[3] == nil then return nil end
+    return { values[1], values[2], values[3], values[4] or 1 }
+end
+
+
+--- The colour picked for an item from its own list (1-based index, first if out of range). Pure.
+--- @param colours table|nil
+--- @param index number|nil
+--- @return table|nil { primary, secondary }
+function EqAttire.pickColour(colours, index)
+    if colours == nil or #colours == 0 then return nil end
+    return colours[index] or colours[1]
+end
+
+
+--- Set the character shader's colours on every shape under a node that has them.
+local function setColours(node, colour)
+    if node == nil or node == 0 or not entityExists(node) then return end
+    if getHasClassId(node, ClassIds.SHAPE) and getHasShaderParameter(node, EqAttire.PRIMARY) then
+        local p, q = colour.primary, colour.secondary
+        pcall(setShaderParameter, node, EqAttire.PRIMARY, p[1], p[2], p[3], p[4], false)
+        if getHasShaderParameter(node, EqAttire.SECONDARY) then
+            pcall(setShaderParameter, node, EqAttire.SECONDARY, q[1], q[2], q[3], q[4], false)
+        end
+    end
+    for i = 0, getNumOfChildren(node) - 1 do setColours(getChildAt(node, i), colour) end
+end
+
+
 --- @return table|nil the schema for attire.xml
 function EqAttire.getSchema()
     if EqAttire.schema == nil then
@@ -156,10 +196,18 @@ function EqAttire.register(style)
                 local diffuse = xmlFile:getString(key .. "#eqDiffuse")
                 local normal = xmlFile:getString(key .. "#eqNormal")
                 if item.name ~= nil and (diffuse ~= nil or normal ~= nil) then
+                    local colours = {}
+                    for i = 0, EqAttire.MAX_ITEMS - 1 do
+                        local primary = EqAttire.parseColour(xmlFile:getString(string.format("%s.colors.color(%d)#primary", key, i)))
+                        if primary == nil then break end
+                        local secondary = EqAttire.parseColour(xmlFile:getString(string.format("%s.colors.color(%d)#secondary", key, i)))
+                        table.insert(colours, { primary = primary, secondary = secondary or primary })
+                    end
                     EqAttire.swapsByItem[item.name] = {
                         diffuse = EqAttire.resolve(diffuse, EqAttire.modDirectory),
                         normal = EqAttire.resolve(normal, EqAttire.modDirectory),
                         key = tostring(diffuse) .. "|" .. tostring(normal),
+                        colours = colours,
                     }
                 end
                 if item.name ~= nil and item.filename ~= nil and config.itemsByName[item.name] == nil
@@ -209,17 +257,7 @@ local function swapMaps(node, swap)
             local ok, material = pcall(getMaterial, node, index)
             if not ok or material == nil or material == 0 then break end
             local made = swappedMaterial(material, swap)
-            if made ~= nil and made ~= material then
-                -- A new material starts from its own colours; keep the ones the wardrobe set.
-                local colours = {}
-                for _, name in ipairs(EqAttire.COLOUR_PARAMETERS) do
-                    if getHasShaderParameter(node, name) then colours[name] = { getShaderParameter(node, name) } end
-                end
-                pcall(setMaterial, node, made, index)
-                for name, c in pairs(colours) do
-                    pcall(setShaderParameter, node, name, c[1], c[2], c[3], c[4], false)
-                end
-            end
+            if made ~= nil and made ~= material then pcall(setMaterial, node, made, index) end
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do swapMaps(getChildAt(node, i), swap) end
@@ -281,6 +319,14 @@ function EqAttire.footAxes(tx, ty, tz, sx, sy, sz, drop)
 end
 
 
+--- Forward and up tilted back by an angle (the top goes back), both unit. Pure.
+--- @return number, number, number, number, number, number forward xyz, up xyz
+function EqAttire.lean(fx, fy, fz, ux, uy, uz, degrees)
+    local c, s = math.cos(math.rad(degrees or 0)), math.sin(math.rad(degrees or 0))
+    return c * fx + s * ux, c * fy + s * uy, c * fz + s * uz, c * ux - s * fx, c * uy - s * fy, c * uz - s * fz
+end
+
+
 --- A node under another by name.
 local function findNamed(node, name)
     if node == nil or node == 0 or not entityExists(node) then return nil end
@@ -330,6 +376,14 @@ function EqAttire.bootScale(shin)
 end
 
 
+--- Whether a footwear item is one of our riding boots (any colour). Pure.
+--- @param name string|nil
+--- @return boolean
+function EqAttire.isRidingBoots(name)
+    return type(name) == "string" and string.sub(name, 1, 13) == "eqRidingBoots"
+end
+
+
 --- Delete the boot pieces a model wore before.
 local function removeBoots(model)
     for _, node in ipairs(model.eqBootNodes or {}) do
@@ -362,11 +416,15 @@ function EqAttire.fitBoots(model, item)
                 local fx, fy, fz = localDirectionToLocal(reference, shin, 0, 0, 1)
                 local along = fx * ux + fy * uy + fz * uz
                 fx, fy, fz = fx - along * ux, fy - along * uy, fz - along * uz
+                local flength = math.sqrt(fx * fx + fy * fy + fz * fz)
+                if flength < 1e-6 then fx, fy, fz, flength = 0, 0, 1, 1 end
+                fx, fy, fz = fx / flength, fy / flength, fz / flength
+                fx, fy, fz, ux, uy, uz = EqAttire.lean(fx, fy, fz, ux, uy, uz, EqAttire.BOOT_LEAN)
                 local scale = EqAttire.bootScale(length)
-                local raise = EqAttire.BOOT_RAISE
+                local raise, back = EqAttire.BOOT_RAISE, EqAttire.BOOT_BACK
                 link(shin, shaft)
                 setDirection(shaft, fx, fy, fz, ux, uy, uz)
-                setTranslation(shaft, ax + ux * raise, ay + uy * raise, az + uz * raise)
+                setTranslation(shaft, ax + ux * raise - fx * back, ay + uy * raise - fy * back, az + uz * raise - fz * back)
                 setScale(shaft, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
                 -- The foot: along the foot bone towards the toe bone, so it lies on the foot
                 -- however the ankle is bent at dressing time (in the saddle the toes point down).
@@ -411,14 +469,23 @@ function EqAttire.dress(model, style)
     elseif model.eqBootNodes ~= nil then
         -- Still ours if the game kept the item's node; anything else and the old pair goes.
         local footwear = style.configs.footwear ~= nil and style.configs.footwear:getSelectedItem() or nil
-        if footwear == nil or footwear.name ~= "eqRidingBoots" then removeBoots(model) end
+        if footwear == nil or not EqAttire.isRidingBoots(footwear.name) then removeBoots(model) end
     end
     if setMaterialDiffuseMapFromFile == nil then return end
     for _, slot in ipairs(EqAttire.SLOTS) do
         local config = style.configs[slot.config]
         local item = config ~= nil and config:getSelectedItem() or nil
         local swap = item ~= nil and EqAttire.swapsByItem[item.name] or nil
-        if swap ~= nil then swapMaps(model[slot.node], swap) end
+        if swap ~= nil then
+            swapMaps(model[slot.node], swap)
+            -- The riding boots' pieces live on the leg bones now.
+            if slot.config == "footwear" then
+                for _, node in ipairs(model.eqBootNodes or {}) do swapMaps(node, swap) end
+            end
+            local index = config.getSelectedColorIndex ~= nil and config:getSelectedColorIndex() or config.selectedColorIndex
+            local colour = EqAttire.pickColour(swap.colours, index)
+            if colour ~= nil then setColours(model[slot.node], colour) end
+        end
     end
 end
 
@@ -450,10 +517,12 @@ end
 
 --- eqBootFit [width] [raise] [toeDrop]: the tall boots' shaft girth, height above the ankle and
 --- foot angle; applies the next time a character is dressed (open the wardrobe, or remount).
-function EqAttire:consoleBootFit(width, raise, drop)
+function EqAttire:consoleBootFit(width, raise, drop, lean, back)
     EqAttire.BOOT_WIDTH = math.max(0.8, math.min(2, tonumber(width) or EqAttire.BOOT_WIDTH))
     EqAttire.BOOT_RAISE = math.max(-0.1, math.min(0.15, tonumber(raise) or EqAttire.BOOT_RAISE))
     EqAttire.BOOT_TOE_DROP = math.max(-30, math.min(60, tonumber(drop) or EqAttire.BOOT_TOE_DROP))
+    EqAttire.BOOT_LEAN = math.max(-20, math.min(20, tonumber(lean) or EqAttire.BOOT_LEAN))
+    EqAttire.BOOT_BACK = math.max(-0.1, math.min(0.1, tonumber(back) or EqAttire.BOOT_BACK))
     for model in pairs(EqAttire.booted) do
         for _, node in ipairs(model.eqBootNodes or {}) do
             if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then
@@ -462,8 +531,9 @@ function EqAttire:consoleBootFit(width, raise, drop)
             end
         end
     end
-    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg (next dressing)\n"
-        .. "eqBootFit width raise toeDrop", EqAttire.BOOT_WIDTH, EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP)
+    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg, lean %.1f deg, back %.3f m (next dressing)\n"
+        .. "eqBootFit width raise toeDrop lean back", EqAttire.BOOT_WIDTH, EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP,
+        EqAttire.BOOT_LEAN, EqAttire.BOOT_BACK)
 end
 
 
@@ -485,7 +555,7 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
-    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop]", "consoleBootFit", EqAttire)
+    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back]", "consoleBootFit", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)

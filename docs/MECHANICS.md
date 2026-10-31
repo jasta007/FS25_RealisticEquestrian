@@ -747,30 +747,36 @@ horse is never touched.
 
 ## Dressage outfit
 
-Six extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
+Extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
 boots are our own models; the rest are base-game meshes:
 
 - **Top hat** in black silk. It hangs off the head's attach point and is set along the head
   joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
   the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
-  (defaults 0.09 m up and 0.01 m forward of the head joint, no tilt, size 1; female and male
+  (defaults 0.10 m up and 0.005 m back of the head joint, no tilt, size 1; female and male
   heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
 
-- **Tall riding boots** in black leather. Wardrobe clothes bend through skinning to the game's
+- **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
+  in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
   rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
   bones when the character is dressed. The foot lies along the line from the foot bone to the toe
-  bone, turned up 25 degrees, so it follows the foot even when dressed in the saddle. They're
-  sized to end 4 cm below the knee (0.85x to 1.15x), sit 4 cm above the ankle bone, shafts 1.3x
-  wider so calves and breeches stay inside (`eqBootFit [width] [raise] [toeDrop]`, not saved;
-  raise and toe drop apply at the next dressing). The i3d keeps an empty first child, as the game
+  bone, turned up 15 degrees, so it follows the foot even when dressed in the saddle. They're
+  sized to end 4 cm below the knee (0.85x to 1.15x), sit 3 cm above the ankle bone, shafts 1.1x
+  wider and leaning back 4 degrees from the ankle for the calf (James's fit, 2026-10-31).
+  `eqBootFit [width] [raise] [toeDrop] [lean] [back]` tunes them, not saved; all but width apply
+  at the next dressing. The i3d keeps an empty first child, as the game
   expects one after taking a geo item out of its file.
-- **Breeches** (the riding trousers, extent low so the jacket's tails hang over them) with both colours the same, so the inner panel no longer stays
-  white: white, cream, grey, black or navy.
-- **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white, with a
-  plain diffuse and a flat normal map swapped in so they read as smooth leather, not knit.
+- **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
+  white: white, cream, grey, black or navy; or white with a black or dark brown inner panel (full
+  seat). The seat pokes through the jacket's tails in the saddle, as it does with the game's own
+  clothes; a dark panel hides it if the seat is part of it.
+- **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
+  in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
+  loses the wardrobe's colours (the fabric back went white).
 - **Jacket** (the tweed sports jacket) with a white shirt in black, navy, charcoal, dark green or
   burgundy. Its tweed texture and weave (normal map) are swapped for plain, flat ones each time a
-  character is dressed.
+  character is dressed, and its colours (colorScaleR/G) are set again from its own list and the
+  picked colour.
 - **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
 
 The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
