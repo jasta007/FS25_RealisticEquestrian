@@ -176,9 +176,10 @@ button is let go. While steering with the mouse, A and D strafe without Shift, a
 only); the bend springs back in 0.3 s once let go. The head eases to the turn asked rather than
 following the turn frame by frame, slower towards full lock. Every ridden horse swings from one
 lock to the other faster than the base game (up to 3 rad/s² more turn acceleration: James found
-it spongey, a canter serpentine impossible), but only on big swings (James, 2026-10-31: small
-left to small right went squirrely): none when the new turn is within 0.6 of a full lock of the
-old, all of it from 1.6 (lock to lock is 2), and 40% of that at a gallop. The line pull
+it spongey, a canter serpentine impossible), but only to come off a hard turn (James,
+2026-10-31: hard over, the other way did nothing for 2 s, while a slight turn already came back
+quickly and went squirrely with more): none while the turn is under 40% of full lock, all of it
+from 85%, only while easing the turn off, and 40% of that at a gallop. The line pull
 (temperament's stickiness) only works in a started dressage test. While the button is
 held the camera eases round to the way the horse's body faces (not the drift) and
 the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real

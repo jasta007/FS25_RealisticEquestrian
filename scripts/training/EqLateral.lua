@@ -52,12 +52,12 @@ EqLateral.DEAD_ZONE = 0.25
 EqLateral.STEER_CURVE = 1.5
 -- Extra turn acceleration, rad/s², on top of the base game's 0.8 to 1.2.
 EqLateral.TURN_ACCEL = 3
--- Only for big swings (James, 2026-10-31: hard left to hard right was the problem; small left to
--- small right went squirrely with it): none while what is asked is within TURN_SMALL of a full
--- lock from the turn now, all of it from TURN_FULL (lock to lock is 2), and GALLOP_TURN of it at
--- a gallop.
-EqLateral.TURN_SMALL = 0.6
-EqLateral.TURN_FULL = 1.6
+-- Only to come off a hard turn (James, 2026-10-31: hard over, the other way did nothing for 2 s;
+-- a slight turn already came back quickly and went squirrely with more): none while the turn now
+-- is under TURN_SMALL of a full lock, all of it from TURN_FULL, and only while easing it off
+-- (back towards straight); GALLOP_TURN of it at a gallop.
+EqLateral.TURN_SMALL = 0.4
+EqLateral.TURN_FULL = 0.85
 EqLateral.GALLOP_TURN = 0.4
 EqLateral.STEER_TILT = 0.9
 EqLateral.HEAD_MS = 350
@@ -257,13 +257,14 @@ end
 
 
 --- The turn speed after a frame's extra easing towards what is asked (pure).
---- @param maxTurn number|nil full lock's turn speed; with it only big swings are eased faster
+--- @param maxTurn number|nil full lock's turn speed; with it only coming off a hard turn is faster
 --- @param galloping boolean|nil
 function EqLateral.turnSpeedToward(current, desired, dt, maxTurn, galloping)
     local share = 1
     if maxTurn ~= nil and maxTurn > 0 then
-        local swing = math.abs(desired - current) / maxTurn
-        share = math.max(0, math.min(1, (swing - EqLateral.TURN_SMALL) / (EqLateral.TURN_FULL - EqLateral.TURN_SMALL)))
+        local easing = math.abs(desired) < math.abs(current) or desired * current < 0
+        local over = math.abs(current) / maxTurn
+        share = easing and math.max(0, math.min(1, (over - EqLateral.TURN_SMALL) / (EqLateral.TURN_FULL - EqLateral.TURN_SMALL))) or 0
     end
     if galloping then share = share * EqLateral.GALLOP_TURN end
     local step = EqLateral.TURN_ACCEL * share * dt / 1000
@@ -397,8 +398,8 @@ local function before(vehicle, dt)
     end
     if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
     -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
-    -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster, on big
-    -- swings only and less at a gallop.
+    -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster, only
+    -- coming off a hard turn and less at a gallop.
     local inTest = EqDressageHooks ~= nil and EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() ~= nil
     if entered and spec.isOnGround ~= false and type(spec.currentTurnSpeed) == "number" and type(spec.maxTurnSpeed) == "number" then
         local galloping = Rideable ~= nil and Rideable.GAITTYPES ~= nil and spec.inputValues.currentGait == Rideable.GAITTYPES.GALLOP
