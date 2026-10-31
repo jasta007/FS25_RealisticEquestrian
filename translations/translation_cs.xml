@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="训练视图：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="失误过多（例如袭步或离开场地）会结束这套动作；完成它可大幅提升气质。在场地之外，慢步和后退仍能少量训练气质。喂胡萝卜等零食也是提升气质的好方法。"/>
-        <text name="eq_help_temperament_1" text="气质训练是教会马匹服从控制，需要一个盛装舞步场地：在商店购买一个，或摆放盛装舞步字母标记。骑到场地旁就会开始一套动作，要求你以指定步法前往字母、停止、后退和打圈。及时完成每个指令即可提高倍率。"/>
+        <text name="eq_help_temperament_2" text="三次路线错误（偏离线条、离开场地或原地不动）会结束测试；骑完全程可获得随得分增长的气质加成。更沉稳的马能看到更远的线条，并更早得到变换提示。Riding Hall 字母使用旧的字母间路段动作。在场地之外，慢步和后退仍能训练一点气质，胡萝卜等零食也有帮助。"/>
+        <text name="eq_help_temperament_1" text="气质训练教你的马服从控制，需要一个盛装舞步场地：在商店购买，或摆放盛装舞步字母。在商店的场地中骑到A，图形测试就会开始：圆圈、对角线、蛇形线等，以金色线条画在地面上。沿线骑行，并在指定位置变换步法或立定；每个动作满分10分。"/>
         <text name="eq_help_temperament_title" text="训练：性情"/>
         <text name="eq_help_agility_2" text="如果你没能及时跳过新的障碍物或速度掉得太多，就会失去倍率。没有障碍物的跳跃也有一点训练效果，但不会提高倍率。"/>
         <text name="eq_help_agility_1" text="敏捷主要靠跨越障碍训练，不过在各种步法之间切换也能获得少许提升。跳过障碍物来积累敏捷训练倍率，倍率会在十秒后消退，撞到障碍物则会更早消退。"/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="动作开始"/>
         <text name="eq_pop_routineFault" text="失误 %d/%d"/>
         <text name="eq_pop_routineTest" text="测试完成！"/>
-        <text name="eq_pop_routineLost" text="动作中断"/>
+        <text name="eq_pop_routineLost" text="盛装舞步已取消"/>
         <text name="eq_pop_comboLost" text="连击中断"/>
         <text name="eq_pop_knock" text="-%d秒！"/>
         <text name="eq_pop_clear" text="无失误！"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="快步"/>
         <text name="eq_dressage_gait_canter" text="跑步"/>
         <text name="eq_dressage_change" text="变换：%s"/>
+        <text name="eq_dressage_gaitChange" text="变换步法"/>
+        <text name="eq_dressage_gaitChangeAt" text="在 %s 变换步法"/>
+        <text name="eq_dressage_now" text="%s！"/>
         <text name="eq_dressage_flying" text="空中换腿：%s"/>
         <text name="eq_dressage_begin" text="前往%s开始盛装舞步动作"/>
+        <text name="eq_dressage_enter" text="开始！从 %s 进场"/>
         <text name="eq_dressage_reinBack" text="后退！"/>
         <text name="eq_dressage_backwards" text="向后移动"/>
         <text name="eq_dressage_circle_left" text="向左圈乘"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="下一个：%s"/>
         <text name="eq_dressage_stand" text="立定"/>
         <text name="eq_dressage_marker" text="标记 %s"/>
+        <text name="eq_fig_enter" text="从%s进场，在%s立定"/>
+        <text name="eq_fig_trackLeft" text="继续，在%s左手"/>
+        <text name="eq_fig_trackRight" text="继续，在%s右手"/>
+        <text name="eq_fig_circle" text="%d米圆圈，在%s"/>
+        <text name="eq_fig_longDiagonal" text="换手 %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="换手 %s-%s"/>
+        <text name="eq_fig_across" text="横穿场地 %s-%s"/>
+        <text name="eq_fig_halfVolte" text="在%s半圈"/>
+        <text name="eq_fig_centreLeft" text="在%s上中线，在%s左手"/>
+        <text name="eq_fig_centreRight" text="在%s上中线，在%s右手"/>
+        <text name="eq_fig_serpentine" text="蛇形线，%d个弯，%s-%s"/>
+        <text name="eq_fig_shallowLoop" text="%d米浅弯 %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="在%s通过圆圈换手"/>
+        <text name="eq_fig_eight" text="半个8字 %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="在%s上中线，在X转向%s"/>
+        <text name="eq_fig_centreFromX" text="在%s转向X，沿中线到%s"/>
+        <text name="eq_fig_halfPassCentre" text="从%s斜横步到中线，继续到%s"/>
+        <text name="eq_fig_legYieldCentre" text="在%s上中线，腿部让步到%s"/>
+        <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
+        <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="从%s开始腿部让步并返回"/>
+        <text name="eq_fig_halfPass" text="从%s开始斜横步并返回"/>
+        <text name="eq_fig_shoulderIn" text="肩向内 %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="沿墙腿部让步 %s-%s"/>
+        <text name="eq_fig_travers" text="腰向内 %s-%s"/>
+        <text name="eq_fig_renvers" text="腰向外 %s-%s"/>
+        <text name="eq_lat_legYield" text="腿部让步：向%s移动"/>
+        <text name="eq_lat_halfPass" text="斜横步：向%s移动，向%s弯曲"/>
+        <text name="eq_lat_shoulderIn" text="肩向内：向%s移动，向%s弯曲"/>
+        <text name="eq_lat_legYieldRail" text="沿墙腿部让步：向%s移动"/>
+        <text name="eq_lat_travers" text="腰向内：向%s移动，向%s弯曲"/>
+        <text name="eq_lat_renvers" text="腰向外：向%s移动，向%s弯曲"/>
+        <text name="eq_lat_left" text="左"/>
+        <text name="eq_lat_right" text="右"/>
+        <text name="eq_lat_keys" text="按住鼠标右键：用鼠标转向，A/D侧向移动，Shift保持方向，鼠标弯曲马头。"/>
+        <text name="eq_fig_final" text="在%s上中线，在%s立定"/>
+        <text name="eq_dressage_haltAt" text="在%s立定"/>
+        <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="向左定后肢旋转（%s）在%s：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="向右定后肢旋转（%s）在%s：Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="原地踏步（%s）！按住Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="向左定后肢旋转（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="向右定后肢旋转（%s）！Ctrl + D"/>
+        <text name="eq_dressage_line" text="回到线上！"/>
+        <text name="eq_dressage_mark" text="上一项得分：%s"/>
+        <text name="eq_pop_routineError" text="路线错误 %d/%d"/>
+        <text name="eq_pop_routineScore" text="测试完成：%s%%"/>
         <text name="eq_train_routine_none" text="前往盛装舞步场地开始一套动作"/>
         <text name="eq_train_routine" text="动作 x%d"/>
         <text name="eq_train_combo_none" text="跳过障碍开始连击"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="点击关闭"/>
         <text name="eq_help_next" text="点击继续（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="训练帮助"/>
+        <text name="input_EQ_SPRINT" text="冲刺"/>
         <text name="eq_train_worn" text="骑乘条已满：今天无法再训练"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢复"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="慢步"/>
         <text name="eq_ex_halt" text="站立"/>
         <text name="eq_ex_reverse" text="后退"/>
-        <text name="eq_ex_prompt_tap" text="继续连按W！"/>
+        <text name="eq_ex_prompt_tap" text="继续连点！"/>
         <text name="eq_pop_ex_sprint" text="冲刺！"/>
         <text name="eq_pop_ex_sprintOver" text="冲刺结束"/>
         <text name="eq_pop_ex_blown" text="疲劳！"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="袭步"/>
         <text name="eq_help_gallop_1" text="你的马有三种袭步节奏。在跑步中按W开始加力：速度快，但体力消耗条会上涨，而且越高涨得越快。按S恢复：较慢的袭步，在继续袭步的同时降低消耗，在消耗条的上三分之一和下三分之一降得快，中间降得慢。再按W继续加力。状态越好的马疲劳得越慢，恢复得越快。"/>
         <text name="eq_help_gallop_2" text="如果加力时消耗条到达红色的疲劳区，马会降为跑步，在消耗条清空前无法再袭步。想自己降为跑步，可在消耗条为空时于恢复中按一次S，或随时连按两次S。"/>
-        <text name="eq_help_gallop_3" text="袭步时连续按W进行冲刺：速度快得多，消耗条起初涨得慢，然后越来越快，所以要在线前停下。冲刺结束后转为恢复，消耗条清空前不能再次冲刺。只有冲刺能越过疲劳线，用于冲向终点的最后发力，但在那里结束的冲刺会让马力竭，回到线下之前恢复得非常慢。"/>
+        <text name="eq_help_gallop_3" text="袭步时连续点击鼠标左键进行冲刺：速度快得多，消耗条起初涨得慢，然后越来越快，所以要在线前停下。冲刺结束后转为恢复，消耗条清空前不能再次冲刺。只有冲刺能越过疲劳线，用于冲向终点的最后发力，但在那里结束的冲刺会让马力竭，回到线下之前恢复得非常慢。"/>
         <text name="eq_help_gallop_4" text="训练：冲刺训练速度，结束前把消耗条推得越高，价值越大：到线的一半时x2，紧贴线下最高x10，但越线后结束只有x1。加力和恢复按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近顶部提高越快。在消耗条中间三分之一恢复能让马喘口气，并保留大部分倍率，而上下三分之一会让倍率迅速流失，一直不喘气的马进步会慢得多。疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
-        <text name="eq_ex_hint_sprint" text="连续按W冲刺"/>
+        <text name="eq_ex_hint_sprint" text="连续点击左键冲刺"/>
         <text name="eq_ex_hint_sprintRest" text="冲刺：先恢复到清空"/>
         <text name="eq_ex_hint_locked" text="跑步直到消耗条清空"/>
         <text name="eq_ex_hint_canterOne" text="S：跑步"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="袭步中加力和恢复时会按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近线涨得越快。恢复会降低倍率：在消耗条上三分之一降得快，中间三分之一降得慢，下三分之一又降得快。"/>
         <text name="eq_help_stamina_2" text="所以要加力到接近线，再放缓到消耗条中间，让马在那里喘一会儿气，然后再次加力。在顶部附近反复切换加力和恢复只会让马疲劳而不提高倍率，疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
         <text name="eq_help_speed_title" text="训练：速度"/>
-        <text name="eq_help_speed_1" text="速度在冲刺时训练：袭步时连续按W。冲刺的每一秒都算数，结束时会乘以你把消耗条推到的高度：到线的一半时x2，紧贴线下最高x10。"/>
+        <text name="eq_help_speed_1" text="速度在冲刺时训练：袭步时连续点击鼠标左键。冲刺的每一秒都算数，结束时会乘以你把消耗条推到的高度：到线的一半时x2，紧贴线下最高x10。"/>
         <text name="eq_help_speed_2" text="越线后结束的冲刺只值x1，所以要在线前停止连按（或按S）。冲刺后，马必须恢复到消耗条清空才能再次冲刺。"/>
         <text name="eq_train_speedMult" text="速度 x%.1f"/>
         <text name="eq_train_staminaMult" text="耐力 x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="看台 8排，16 米"/>
         <text name="eq_shop_bleachers_function" text="你主办比赛的观众座位：在赛道或盛装舞步场地60米内计入。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前方的赞助商广告牌显示你的机械品牌。"/>
+        <text name="input_EQ_DRESSAGE_TEST" text="盛装舞步路线：新建、编辑或保存"/>
+        <text name="input_EQ_DT_PREV" text="上一个选项"/>
+        <text name="input_EQ_DT_NEXT" text="下一个选项"/>
+        <text name="input_EQ_DT_RANDOM" text="随机选项"/>
+        <text name="input_EQ_DT_MODE" text="图形或原地动作"/>
+        <text name="input_EQ_DT_ACCEPT" text="保留这一步"/>
+        <text name="input_EQ_DT_UNDO" text="撤销上一步"/>
+        <text name="eq_dt_newAction" text="新的盛装舞步路线"/>
+        <text name="eq_dt_editAction" text="编辑盛装舞步路线"/>
+        <text name="eq_dt_saveAction" text="保存盛装舞步路线"/>
+        <text name="eq_dt_cancelAction" text="取消盛装舞步路线"/>
+        <text name="eq_dt_deleteAction" text="删除盛装舞步路线"/>
+        <text name="eq_dt_deleteTitle" text="删除路线"/>
+        <text name="eq_dt_deleteAsk" text="删除此场地的盛装舞步路线（%d步）？将重新使用随机路线。"/>
+        <text name="eq_dt_modeSpot" text="显示原地动作"/>
+        <text name="eq_dt_modeFigure" text="显示图形"/>
+        <text name="eq_dt_new" text="新的盛装舞步路线：第%d步"/>
+        <text name="eq_dt_editing" text="编辑盛装舞步路线：第%d步"/>
+        <text name="eq_dt_figure" text="图形"/>
+        <text name="eq_dt_spot" text="原地"/>
+        <text name="eq_dt_noOptions" text="这里没有合适的：撤销或保存"/>
+        <text name="eq_dt_saved" text="盛装舞步路线已保存：%d个动作"/>
+        <text name="eq_dt_deleted" text="盛装舞步路线已删除：此场地重新使用随机路线"/>
+        <text name="eq_dt_cancelled" text="盛装舞步路线未保存"/>
+        <text name="eq_fig_halt" text="在%s立定"/>
+        <text name="eq_fig_reinBack" text="在%s立定，后退"/>
+        <text name="eq_fig_piaffe" text="在%s原地踏步"/>
+        <text name="eq_fig_pirouette" text="在%s定后肢旋转"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L：为此场地编排自己的盛装舞步路线"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L：编辑此场地的盛装舞步路线"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="上一个字母"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="下一个字母"/>
+        <text name="input_EQ_DT_GAIT" text="图形步法"/>
+        <text name="eq_dt_gaitAction" text="图形步法：%s"/>
+        <text name="eq_fig_pirouetteLeft" text="在%s向左定后肢旋转"/>
+        <text name="eq_fig_pirouetteRight" text="在%s向右定后肢旋转"/>
+        <text name="eq_dt_modeLateral" text="显示侧向运动"/>
+        <text name="eq_dt_lateral" text="侧向"/>
+        <text name="eq_shop_signboard_function" text="增加你举办赛事的赞助收入。"/>
     </texts>
 </l10n>

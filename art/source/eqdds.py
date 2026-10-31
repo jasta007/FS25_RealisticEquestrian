@@ -2,6 +2,7 @@
 
 - 3D textures: DXT1 (BC1) with a full mipmap chain.
 - Shop images: BC7_UNORM in a DX10 header, no mipmaps.
+- Wardrobe icons (see-through): DXT5, no mipmaps.
 
 Needs numpy, Pillow and etcpak (pip install etcpak) for the block compression.
 """
@@ -70,6 +71,17 @@ def save_dxt1(image, path):
         f.write(_header(width, height, len(levels[0]), len(levels), b"DXT1"))
         for data in levels:
             f.write(data)
+
+
+def save_dxt5(image, path):
+    """An image with see-through parts (wardrobe icons): DXT5, one level. BC7 icons came out as
+    "undefined channel count, assuming 3 channels" and lose their alpha."""
+    rgba = _rgba(image)
+    height, width = rgba.shape[:2]
+    data = _blocks(rgba, etcpak.compress_bc3)
+    with open(path, "wb") as f:
+        f.write(_header(width, height, len(data), 1, b"DXT5"))
+        f.write(data)
 
 
 def save_bc7(image, path):

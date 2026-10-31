@@ -588,6 +588,11 @@ end
 --- @param vehicle table
 function EqCourseHooks.onDeleteAction(vehicle)
     if vehicle.rootNode == nil then return end
+    -- Editing a dressage test: the same key cancels it (EqDressageEditor).
+    if EqDressageEditor.isEditing() then
+        if EqDressageEditor.holds(vehicle) then EqDressageEditor.onCancel() end
+        return
+    end
     local editing = EqCourseHooks.editing
     if editing ~= nil then
         if editing.vehicle == vehicle and discardable(editing) then
@@ -596,9 +601,14 @@ function EqCourseHooks.onDeleteAction(vehicle)
         end
         return
     end
-    if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
-    local course, index = EqCourseHooks.nearCourse(vehicle)
-    if course == nil then return end
+    if underWay(EqCourseHooks.round) then return end
+    local course, index = nil, nil
+    if not EqCourseHooks.dressageActive then course, index = EqCourseHooks.nearCourse(vehicle) end
+    if course == nil then
+        -- No course here: the arena's own dressage test, if it has one.
+        EqDressageEditor.onDelete(vehicle)
+        return
+    end
     local question = string.format(text("eq_course_deleteAsk"), course.name, #course.jumps, course.length or 0)
     local function confirmed(yes)
         if not yes or EqCourse.list[index] ~= course then return end
@@ -674,7 +684,11 @@ function EqCourseHooks.updateActions(vehicle)
     end
     local xcText = nearXc ~= nil and string.format(text("eq_course_editAction"), nearXc.name) or text("eq_course_recordXcAction")
     local cancel = mine and discardable(editing)
-    local state = string.format("%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle), tostring(busy), tostring(cancel))
+    local dressageEditing = EqDressageEditor.holds(vehicle)
+    -- The arena's saved dressage test can be deleted with the same key (EqDressageEditor.onDelete).
+    local dressageTest = not dressageEditing and editing == nil and near == nil and spec.eqDtHasTest == true
+    local state = string.format("%s|%s|%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle),
+        tostring(busy), tostring(cancel), tostring(dressageEditing), tostring(dressageTest))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
@@ -692,13 +706,17 @@ function EqCourseHooks.updateActions(vehicle)
     end
     if spec.eqDeleteEventId ~= nil then
         local deleteText = ""
-        if cancel then
+        if dressageEditing then
+            deleteText = text("eq_dt_cancelAction")
+        elseif cancel then
             deleteText = editing.index == nil and text("eq_course_cancelAction") or string.format(text("eq_course_discardAction"), editing.name)
         elseif near ~= nil then
             deleteText = string.format(text("eq_course_deleteAction"), near.name)
+        elseif dressageTest then
+            deleteText = text("eq_dt_deleteAction")
         end
         binding:setActionEventText(spec.eqDeleteEventId, deleteText)
-        binding:setActionEventTextVisibility(spec.eqDeleteEventId, cancel or near ~= nil)
+        binding:setActionEventTextVisibility(spec.eqDeleteEventId, dressageEditing or cancel or near ~= nil or dressageTest)
     end
 end
 
@@ -738,7 +756,7 @@ end
 --- @param x number horse position
 --- @param z number
 local function drawLine(points, color, x, z)
-    if EqCourseHooks.drawFailed or drawDebugLine == nil then return end
+    if EqCourseHooks.drawFailed or drawDebugLine == nil or EqTrainingHud.gameHudHidden() then return end
     local radius2 = EqCourseHooks.DRAW_RADIUS * EqCourseHooks.DRAW_RADIUS
     local lift = EqCourseHooks.LINE_LIFT
     local ok, err = EqLog.try("EqCourseHooks.drawLine", function()
@@ -757,12 +775,23 @@ local function drawLine(points, color, x, z)
 end
 
 
+--- A path guide: the glow's pieces on the ground (EqCourseGlow.path), debug lines without it.
+--- @param points table { x, y, z }
+--- @param colour string|nil the glow's colour, gold when nil
+--- @param color table the debug line's
+local function drawGuide(points, colour, color, x, z)
+    if EqCourseGlow.path(points, colour, nil, x, z, EqCourseHooks.DRAW_RADIUS) then return end
+    drawLine(points, color, x, z)
+end
+
+
 --- Fence numbers over the jumps of a course (one label per jump, "3, 10" when ridden twice).
 --- @param jumps table
 --- @param labels table|nil { x, z, text } to draw instead
 --- @param lift number|nil metres over the ground, NUMBER_LIFT when nil
 local function drawNumbers(jumps, labels, lift)
-    if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
+    if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil
+        or EqTrainingHud.gameHudHidden() then return end
     local ok, err = EqLog.try("EqCourseHooks.drawNumbers", function()
         for _, label in ipairs(labels or EqCourse.labels(jumps)) do
             local y = groundAt(label.x, 0, label.z)
@@ -782,30 +811,44 @@ function EqCourseHooks.onDraw(vehicle)
     if vehicle.rootNode == nil then return end
     EqCourseHooks.updateActions(vehicle)
     local editing = EqCourseHooks.editing
+    if editing == nil and EqDressageEditor.isEditing() then
+        -- Editing a dressage test: only its option shows (EqDressageEditor).
+        EqCourseGlow.begin()
+        if not EqLog.try("EqCourseHooks.onDraw dressage editor", EqDressageEditor.draw, vehicle) then EqDressageEditor.finish(true, true) end
+        EqCourseGlow.finish()
+        return
+    end
     if editing == nil then
         EqCourseGlow.begin()
         EqCourseHooks.roundDraw(vehicle)
+        -- A dressage test's line on the ground uses the same glow (EqDressageHooks).
+        -- One failure stops it for the game, not a warning every frame.
+        if not EqDressageHooks.drawFailed and not EqLog.try("EqCourseHooks.onDraw dressage line", EqDressageHooks.drawPath, vehicle) then
+            EqDressageHooks.drawFailed = true
+        end
         EqCourseGlow.finish()
         return
     end
     if editing.vehicle ~= vehicle then return end
     editing.seenAt = g_time or 0
     step(editing, vehicle)
+    EqCourseGlow.begin()
 
     local x, y, z = getWorldTranslation(vehicle.rootNode)
     local course = editing.course
     if editing.recording then
-        drawLine(course.points, EqCourseHooks.TRAIL_COLOR, x, z)
+        drawGuide(course.points, "orange", EqCourseHooks.TRAIL_COLOR, x, z)
     else
         if editing.smoothed == nil or editing.smoothedFrom ~= course then
             editing.smoothed, editing.smoothedFrom = EqCourse.smooth(course.points), course
         end
-        drawLine(editing.smoothed, EqCourseHooks.LINE_COLOR, x, z)
+        drawGuide(editing.smoothed, "cyan", EqCourseHooks.LINE_COLOR, x, z)
     end
     drawNumbers(course.jumps)
     -- Where the rewind key would go back to.
     local nearest = course.points[EqCourse.nearestPoint(course, x, z)]
-    drawLine({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, EqCourseHooks.NEAREST_COLOR, x, z)
+    drawGuide({ { x = x, y = groundAt(x, y, z), z = z }, nearest }, "white", EqCourseHooks.NEAREST_COLOR, x, z)
+    EqCourseGlow.finish()
     local key = editing.recording and "eq_course_recording" or "eq_course_editing"
     -- Beside the panel, not in the middle: the middle is for alerts.
     EqTrainingHud.drawPanelNote(string.format(text(key), editing.name, #course.jumps, course.length), EqTrainingHud.STAT_COLOR.agility, true)
@@ -1062,10 +1105,11 @@ local function drawWay(round, from, to, x, z, short)
 end
 
 
---- A gold band along a list of points.
+--- A gold band along a list of points: the glow's path guide, or debug lines side by side.
 --- @param way table points { x, y, z }
 function drawBand(way, x, z)
     if #way < 2 then return end
+    if EqCourseGlow.path(way, nil, nil, x, z, EqCourseHooks.DRAW_RADIUS) then return end
     for _, offset in ipairs(EqCourseHooks.BAND) do
         local band = {}
         for i, p in ipairs(way) do

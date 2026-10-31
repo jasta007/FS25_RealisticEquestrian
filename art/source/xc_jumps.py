@@ -785,25 +785,6 @@ def build_drop_wall(wall):
     return planks, wood, ends, col
 
 
-def preview_ground(wall):
-    """Grass for the shop image only: the low ground in front, the bank behind, and either side
-    a ramp rising from the low ground at the face to the top at the wings' far end."""
-    g = Mesh()
-    h = wall["drop"]
-    lip = -DROP_LIP
-    depth = drop_depth(wall)
-    back = lip + depth
-    up = (0.0, 1.0, 0.0)
-    flat = [(0.5, 0.5)] * 4
-    g.quad([(-14, -h, lip - 14), (14, -h, lip - 14), (14, -h, lip), (-14, -h, lip)], up, flat)
-    g.quad([(-14, 0.0, back), (14, 0.0, back), (14, 0.0, back + 12), (-14, 0.0, back + 12)], up, flat)
-    g.quad([(-2, 0.0, lip), (2, 0.0, lip), (2, 0.0, back), (-2, 0.0, back)], up, flat)
-    ramp = norm((0.0, depth, -h))
-    for x0, x1 in ((-14, -2), (2, 14)):
-        g.quad([(x0, -h, lip), (x1, -h, lip), (x1, 0.0, back), (x0, 0.0, back)], ramp, flat)
-    return g
-
-
 def collision(jump):
     """One prism round the pile's outline (seen from the side), as long as the shortest log."""
     d = jump["diameter"]
@@ -1111,8 +1092,8 @@ def write_flag_fence_xml(path, posts, bars):
         f.write(text)
 
 
-def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py"):
-    """extra: more configuration blocks, before the end."""
+def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py", functions=()):
+    """extra: more configuration blocks, before the end; functions: more shop function text keys."""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by {made_by}: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
@@ -1121,7 +1102,7 @@ def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py
         <functions>
             <function>$l10n_eq_shop_{"xcDrop" if "Drop" in name else "xcJump"}_function</function>
             <function>$l10n_eq_shop_xcHidden_function</function>
-        </functions>
+{"".join(f"            <function>$l10n_{key}</function>\n" for key in functions)}        </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
         <dailyUpkeep>0</dailyUpkeep>
@@ -1163,28 +1144,23 @@ def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py
 # ---------------------------------------------------------------------------------------------
 # Shop image: a small software render of the fence itself, three-quarter view.
 
-def render(meshes, size=512, yaw=-35, pitch=18, ss=2, skip_fit=0):
-    """A small z-buffered rasteriser: textured, smooth-shaded triangles, supersampled.
-    meshes: (mesh, texture as an RGB array); the first skip_fit (scenery) are left out of the framing."""
+def render(meshes, size=512, yaw=-40, pitch=26, ss=4):
+    """A small z-buffered rasteriser: textured, smooth-shaded triangles, supersampled, on a
+    transparent background like the game's own shop images.
+    meshes: (mesh, texture as an RGB array)."""
     cy, sy = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
     cp, sp = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
     rot = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
     rot = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ rot
     light = np.array(norm((-0.4, 0.8, 0.5)))
-    pts = np.concatenate([np.array([v[0] for v in m.verts]) for m, _ in meshes[skip_fit:] if m.verts]) @ rot.T
+    pts = np.concatenate([np.array([v[0] for v in m.verts]) for m, _ in meshes if m.verts]) @ rot.T
     span = max(np.ptp(pts[:, 0]), np.ptp(pts[:, 1]))
     w = size * ss
-    scale = w * 0.8 / span
+    scale = w * 0.9 / span
     ox = w / 2 - (pts[:, 0].max() + pts[:, 0].min()) / 2 * scale
-    oy = w * 0.55 + (pts[:, 1].max() + pts[:, 1].min()) / 2 * scale
+    oy = w / 2 + (pts[:, 1].max() + pts[:, 1].min()) / 2 * scale
 
-    sky = np.zeros((w, w, 3))
-    horizon = int(w * 0.42)
-    t = np.arange(w)[:, None] / w
-    sky[:] = np.where(np.arange(w)[:, None, None] < horizon,
-                      np.array([150, 190, 225]) + np.array([60, 40, 20]) * (np.arange(w)[:, None, None] / horizon),
-                      np.array([96, 128, 62]) - np.array([30, 30, 20]) * ((np.arange(w)[:, None, None] - horizon) / (w - horizon)))
-    image = sky
+    image = np.zeros((w, w, 3))
     depth = np.full((w, w), np.inf)
     for mesh, tex in meshes:
         if not mesh.tris:
@@ -1228,15 +1204,18 @@ def render(meshes, size=512, yaw=-35, pitch=18, ss=2, skip_fit=0):
             colour = tex[(v * th).astype(int) % th, (u * tw).astype(int) % tw][..., :3] * shade[..., None]
             region[closer] = -z[closer]
             image[y0:y1, x0:x1][closer] = colour[closer]
-    img = Image.fromarray(np.clip(image, 0, 255).astype(np.uint8), "RGB")
-    return img.resize((size, size), Image.LANCZOS)
+    # box filter the supersamples: colour weighted by coverage, coverage becomes alpha
+    cover = np.isfinite(depth).astype(float)
+    alpha = cover.reshape(size, ss, size, ss).mean(axis=(1, 3))
+    rgb = (image * cover[..., None]).reshape(size, ss, size, ss, 3).sum(axis=(1, 3))
+    rgb /= np.maximum(cover.reshape(size, ss, size, ss).sum(axis=(1, 3)), 1)[..., None]
+    rgba = np.dstack([np.clip(rgb, 0, 255), alpha * 255]).astype(np.uint8)
+    return Image.fromarray(rgba, "RGBA")
 
 
-def store_image(meshes, label, path, preview_dir, **view):
+def store_image(meshes, path, preview_dir, **view):
+    """A shop image like the game's own: the object at a three-quarter angle, no background, no text."""
     img = render(meshes, **view)
-    draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(FONT, 28)
-    draw.text((img.width - 16, img.height - 14), label, font=font, fill=(250, 250, 250), anchor="rd")
     save_bc7(img, path)
     # a PNG copy to look at, kept out of the mod
     os.makedirs(preview_dir, exist_ok=True)
@@ -1260,13 +1239,12 @@ def main():
         depth = jump["rows"][0] * jump["diameter"]
         write_xml(name, jump["price"], f"{height(jump):.2f} m high, {depth:.2f} m deep; jumped along z, red flag at +x.",
                   os.path.join(OUT, name + ".xml"))
-        store_image([(m, rgb) for m, rgb in zip(bark_meshes, bark_rgbs)] + [(ends_mesh, ends), (posts, flags)], f"{height(jump):.2f} m",
+        store_image([(m, rgb) for m, rgb in zip(bark_meshes, bark_rgbs)] + [(ends_mesh, ends), (posts, flags)],
                     os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
         print(name, f"{height(jump):.2f} m high,", len(layout(jump)), "logs,",
               sum(len(m.tris) for m in bark_meshes) + len(ends_mesh.tris) + len(posts.tris), "triangles")
     planks_rgb = plank_texture(os.path.join(OUT, "xcPlanks_diffuse.dds"), os.path.join(OUT, "xcPlanks_normal.dds"))
     peeled_rgb = peeled_texture(os.path.join(OUT, "xcPeeled_diffuse.dds"))
-    grass = np.full((4, 4, 3), (92, 122, 58), dtype=np.uint8)
     for wall in DROP_WALLS:
         name = wall["name"]
         planks, wood, ends_mesh, col = build_drop_wall(wall)
@@ -1274,8 +1252,8 @@ def main():
         write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, {}, col=col)
         write_xml(name, wall["price"], f"A {wall['drop']:.1f} m drop: set the origin on the flat top of a bank, the lip {DROP_LIP:g} m in front of it.",
                   os.path.join(OUT, name + ".xml"))
-        store_image([(preview_ground(wall), grass), (planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
-                    f"{wall['drop']:.1f} m drop", os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-145, pitch=16, skip_fit=1)
+        store_image([(planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
+                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
         print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
     flag_fence(flags, preview_dir)
 
@@ -1292,7 +1270,7 @@ def flag_fence(flags, preview_dir):
         base = len(span.verts)
         span.verts += [((p[0], p[1], p[2] * stretch + dz), n, uv) for p, n, uv in mesh.verts]
         span.tris += [(a + base, b + base, c + base) for a, b, c in mesh.tris]
-    store_image([(span, flags)], "any fence", os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-110, pitch=10)
+    store_image([(span, flags)], os.path.join(OUT, "store_" + FLAG_FENCE + ".dds"), preview_dir, yaw=-55, pitch=18)
     print(FLAG_FENCE, sum(len(m.tris) for m, _ in list(posts.values()) + list(bars.values())), "triangles")
 
 if __name__ == "__main__":

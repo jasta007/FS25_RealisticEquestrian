@@ -15,8 +15,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="Too many faults, such as galloping or leaving the arena, end the test; finish it for a big Temperament boost. Away from an arena, walking and backing up still train a little Temperament. Feeding your horses treats like carrots is also a great way to improve Temperament."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. Ride up to it and a test starts, asking you to ride to the letters at set gaits, halt, rein back and circle. Follow each command in time to raise your multiplier."/>
+        <text name="eq_help_temperament_2" text="Three errors of course (losing the line, leaving the arena or standing still) end the test; finish it for a Temperament boost that grows with your score. A calmer horse sees more of the line ahead and gets more warning of changes. Riding Hall markers give the older routine of legs between letters. Away from an arena, walking and backing up still train a little Temperament, and treats like carrots help too."/>
+        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. In a shop arena, ride to A and a test of figures starts: circles, diagonals, serpentines and more, drawn as a gold line on the ground. Stay on the line and change gait or halt where you are told; each movement is marked out of 10."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
@@ -24,7 +24,7 @@
         <text name="eq_pop_routineStart" text="Routine started"/>
         <text name="eq_pop_routineFault" text="Fault %d/%d"/>
         <text name="eq_pop_routineTest" text="Test complete!"/>
-        <text name="eq_pop_routineLost" text="Routine broken"/>
+        <text name="eq_pop_routineLost" text="Dressage cancelled"/>
         <text name="eq_pop_comboLost" text="Combo lost"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Clear!"/>
@@ -96,8 +96,12 @@
         <text name="eq_dressage_gait_trot" text="Trot"/>
         <text name="eq_dressage_gait_canter" text="Canter"/>
         <text name="eq_dressage_change" text="Change: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gait change"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gait change at %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Flying change: %s"/>
         <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
+        <text name="eq_dressage_enter" text="Go! Enter at %s"/>
         <text name="eq_dressage_reinBack" text="Rein back!"/>
         <text name="eq_dressage_backwards" text="Move backwards"/>
         <text name="eq_dressage_circle_left" text="Circle left"/>
@@ -106,6 +110,54 @@
         <text name="eq_dressage_next" text="Next: %s"/>
         <text name="eq_dressage_stand" text="Stand"/>
         <text name="eq_dressage_marker" text="Marker %s"/>
+        <text name="eq_fig_enter" text="Enter at %s, halt at %s"/>
+        <text name="eq_fig_trackLeft" text="Proceed, track left at %s"/>
+        <text name="eq_fig_trackRight" text="Proceed, track right at %s"/>
+        <text name="eq_fig_circle" text="%d m circle at %s"/>
+        <text name="eq_fig_longDiagonal" text="Change rein %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Change rein %s-%s"/>
+        <text name="eq_fig_across" text="Across the arena %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Half volte at %s"/>
+        <text name="eq_fig_centreLeft" text="Centre line at %s, track left at %s"/>
+        <text name="eq_fig_centreRight" text="Centre line at %s, track right at %s"/>
+        <text name="eq_fig_serpentine" text="Serpentine, %d loops, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="%d m loop %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Change rein through the circle at %s"/>
+        <text name="eq_fig_eight" text="Half figure of eight %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Centre line at %s, at X turn to %s"/>
+        <text name="eq_fig_centreFromX" text="At %s turn to X, centre line to %s"/>
+        <text name="eq_fig_halfPassCentre" text="Half pass %s to the centre line, on to %s"/>
+        <text name="eq_fig_legYieldCentre" text="Centre line at %s, leg yield to %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage on the diagonal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Leg yield from %s and back"/>
+        <text name="eq_fig_halfPass" text="Half pass from %s and back"/>
+        <text name="eq_fig_shoulderIn" text="Shoulder-in %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Leg yield along the rail %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (haunches in) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (haunches out) %s-%s"/>
+        <text name="eq_lat_legYield" text="Leg yield: drift %s"/>
+        <text name="eq_lat_halfPass" text="Half pass: drift %s, bend %s"/>
+        <text name="eq_lat_shoulderIn" text="Shoulder-in: drift %s, bend %s"/>
+        <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s"/>
+        <text name="eq_lat_travers" text="Travers: drift %s, bend %s"/>
+        <text name="eq_lat_renvers" text="Renvers: drift %s, bend %s"/>
+        <text name="eq_lat_left" text="left"/>
+        <text name="eq_lat_right" text="right"/>
+        <text name="eq_lat_keys" text="Hold right mouse: steer with the mouse, A/D drift sideways, Shift holds the heading and the mouse bends the head."/>
+        <text name="eq_fig_final" text="Centre line at %s, halt at %s"/>
+        <text name="eq_dressage_haltAt" text="Halt at %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) at %s: hold Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Left Pirouette (%s) at %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Right Pirouette (%s) at %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Hold Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Left Pirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Right Pirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Back on the line!"/>
+        <text name="eq_dressage_mark" text="Last mark: %s"/>
+        <text name="eq_pop_routineError" text="Error of course %d/%d"/>
+        <text name="eq_pop_routineScore" text="Test complete: %s%%"/>
         <text name="eq_train_routine_none" text="Ride to a dressage arena to start a test"/>
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
@@ -153,6 +205,7 @@
         <text name="eq_help_close" text="Click to close"/>
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Training help"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Riding bar full: no more training today"/>
         <text name="eq_ex_push" text="Pushing"/>
         <text name="eq_ex_recover" text="Recovering"/>
@@ -165,7 +218,7 @@
         <text name="eq_ex_walk" text="Walk"/>
         <text name="eq_ex_halt" text="Standing"/>
         <text name="eq_ex_reverse" text="Backing up"/>
-        <text name="eq_ex_prompt_tap" text="Keep tapping W!"/>
+        <text name="eq_ex_prompt_tap" text="Keep clicking!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint over"/>
         <text name="eq_pop_ex_blown" text="Fatigued!"/>
@@ -174,9 +227,9 @@
         <text name="eq_help_gallop_title" text="Galloping"/>
         <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
         <text name="eq_help_gallop_2" text="If the bar reaches the red Fatigued section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
-        <text name="eq_help_gallop_3" text="Tap W continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
+        <text name="eq_help_gallop_3" text="Tap the left mouse button continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
         <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends past the line. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. Pushing raises it, faster near the top. Recovering in the middle third of the bar lets your horse get its breath back and keeps most of the multiplier, while the top and bottom thirds lose it quickly, and a horse that never gets its breath back gains much more slowly. Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
-        <text name="eq_ex_hint_sprint" text="Continually tap W to sprint"/>
+        <text name="eq_ex_hint_sprint" text="Continually left click to sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
         <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
         <text name="eq_ex_hint_canterOne" text="S: canter"/>
@@ -195,7 +248,7 @@
         <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina multiplier, up to x5. Pushing raises it, and the closer you get to the line the faster it climbs. Recovering lowers it: quickly from the top third of the bar, slowly in the middle third, quickly again in the bottom third."/>
         <text name="eq_help_stamina_2" text="So push close to the line, ease off into the middle of the bar and let your horse get its breath back there for a while, then push again. Bouncing between Push and Recover near the top tires your horse without raising the multiplier, and Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
-        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap W continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
+        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap the left mouse button continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
         <text name="eq_help_speed_2" text="A Sprint that ends past the line is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
         <text name="eq_train_speedMult" text="Speed x%.1f"/>
         <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Seating for the events you host: counts within 60 m of a course or dressage arena."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponsor boards in front show the brands of your machines."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="New, edit or save dressage test"/>
+        <text name="input_EQ_DT_PREV" text="Previous option"/>
+        <text name="input_EQ_DT_NEXT" text="Next option"/>
+        <text name="input_EQ_DT_RANDOM" text="Random option"/>
+        <text name="input_EQ_DT_MODE" text="Figures or movements on the spot"/>
+        <text name="input_EQ_DT_ACCEPT" text="Keep this step"/>
+        <text name="input_EQ_DT_UNDO" text="Undo last step"/>
+        <text name="eq_dt_newAction" text="New dressage test"/>
+        <text name="eq_dt_editAction" text="Edit dressage test"/>
+        <text name="eq_dt_saveAction" text="Save dressage test"/>
+        <text name="eq_dt_cancelAction" text="Cancel dressage test"/>
+        <text name="eq_dt_deleteAction" text="Delete dressage test"/>
+        <text name="eq_dt_deleteTitle" text="Delete dressage test"/>
+        <text name="eq_dt_deleteAsk" text="Delete this arena's dressage test (%d steps)? It will ride random tests again."/>
+        <text name="eq_dt_modeSpot" text="Show movements on the spot"/>
+        <text name="eq_dt_modeFigure" text="Show figures"/>
+        <text name="eq_dt_new" text="New dressage test: step %d"/>
+        <text name="eq_dt_editing" text="Editing dressage test: step %d"/>
+        <text name="eq_dt_figure" text="Figure"/>
+        <text name="eq_dt_spot" text="On the spot"/>
+        <text name="eq_dt_noOptions" text="Nothing fits here: undo or save"/>
+        <text name="eq_dt_saved" text="Dressage test saved: %d movements"/>
+        <text name="eq_dt_deleted" text="Dressage test deleted: this arena rides random tests again"/>
+        <text name="eq_dt_cancelled" text="Dressage test not saved"/>
+        <text name="eq_fig_halt" text="Halt at %s"/>
+        <text name="eq_fig_reinBack" text="Halt at %s, rein back"/>
+        <text name="eq_fig_piaffe" text="Piaffe at %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette at %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: build your own dressage test for this arena"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edit this arena's dressage test"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Previous letter"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Next letter"/>
+        <text name="input_EQ_DT_GAIT" text="Figure gait"/>
+        <text name="eq_dt_gaitAction" text="Figures at: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Left pirouette at %s"/>
+        <text name="eq_fig_pirouetteRight" text="Right pirouette at %s"/>
+        <text name="eq_dt_modeLateral" text="Show lateral work"/>
+        <text name="eq_dt_lateral" text="Lateral"/>
+        <text name="eq_shop_signboard_function" text="Increases the sponsor takings for your events."/>
     </texts>
 </l10n>

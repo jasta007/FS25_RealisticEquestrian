@@ -18,15 +18,15 @@
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_temperament_2" text="Zu viele Fehler, etwa Galopp oder das Verlassen des Vierecks, beenden die Aufgabe; reitest du sie zu Ende, gibt es einen großen Temperament-Bonus. Außerhalb eines Vierecks trainieren Schritt und Rückwärtsrichten weiterhin etwas Temperament. Leckerlis wie Karotten sind ebenfalls eine tolle Möglichkeit, das Temperament zu verbessern."/>
-        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt dein Pferd Gehorsam, und dafür brauchst du ein Dressurviereck: Kauf eines im Shop oder stell Dressurbuchstaben auf. Reite hin, und eine Aufgabe beginnt: Reite in vorgegebenen Gangarten zu den Buchstaben, halte, richte rückwärts und reite Volten. Erfülle jede Anweisung rechtzeitig, um deinen Multiplikator zu steigern."/>
+        <text name="eq_help_temperament_2" text="Dreimal verritten (Linie verloren, Viereck verlassen oder stehen geblieben) beendet die Aufgabe; reitest du sie zu Ende, gibt es einen Temperament-Bonus, der mit deiner Wertung wächst. Ein ruhigeres Pferd sieht mehr von der Linie voraus und wird früher vor Wechseln gewarnt. Riding-Hall-Buchstaben geben die ältere Lektion mit Wegen zwischen den Buchstaben. Außerhalb eines Vierecks trainieren Schritt und Rückwärtsrichten weiterhin etwas Temperament, und Leckerlis wie Karotten helfen ebenfalls."/>
+        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt dein Pferd Gehorsam, und dafür brauchst du ein Dressurviereck: Kauf eines im Shop oder stell Dressurbuchstaben auf. In einem Shop-Viereck reitest du zu A, und eine Aufgabe aus Hufschlagfiguren beginnt: Zirkel, Diagonalen, Schlangenlinien und mehr, als goldene Linie auf den Boden gezeichnet. Bleib auf der Linie und wechsle die Gangart oder halte, wo es verlangt wird; jede Lektion wird mit bis zu 10 benotet."/>
         <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern oder zu viel Tempo verlieren. Ein Sprung ohne Hindernis bringt etwas Training, erhöht den Multiplikator aber nicht."/>
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
         <text name="eq_pop_routineFault" text="Fehler %d/%d"/>
         <text name="eq_pop_routineTest" text="Aufgabe beendet!"/>
-        <text name="eq_pop_routineLost" text="Lektion abgebrochen"/>
+        <text name="eq_pop_routineLost" text="Dressur abgebrochen"/>
         <text name="eq_pop_comboLost" text="Kombo verloren"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Geschafft!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Trab"/>
         <text name="eq_dressage_gait_canter" text="Galopp"/>
         <text name="eq_dressage_change" text="Wechsel: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gangartwechsel"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gangartwechsel bei %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Fliegender Wechsel: %s"/>
         <text name="eq_dressage_begin" text="Zum %s reiten, um eine Dressuraufgabe zu beginnen"/>
+        <text name="eq_dressage_enter" text="Los! Bei %s einreiten"/>
         <text name="eq_dressage_reinBack" text="Rückwärtsrichten!"/>
         <text name="eq_dressage_backwards" text="Rückwärts gehen"/>
         <text name="eq_dressage_circle_left" text="Volte links"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Als Nächstes: %s"/>
         <text name="eq_dressage_stand" text="Stehen"/>
         <text name="eq_dressage_marker" text="Punkt %s"/>
+        <text name="eq_fig_enter" text="Einreiten bei %s, Halten bei %s"/>
+        <text name="eq_fig_trackLeft" text="Antraben, bei %s linke Hand"/>
+        <text name="eq_fig_trackRight" text="Antraben, bei %s rechte Hand"/>
+        <text name="eq_fig_circle" text="%d-m-Zirkel bei %s"/>
+        <text name="eq_fig_longDiagonal" text="Durch die ganze Bahn wechseln %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Durch die halbe Bahn wechseln %s-%s"/>
+        <text name="eq_fig_across" text="Quer durch die Bahn %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Kehrtvolte bei %s"/>
+        <text name="eq_fig_centreLeft" text="Bei %s auf die Mittellinie, bei %s linke Hand"/>
+        <text name="eq_fig_centreRight" text="Bei %s auf die Mittellinie, bei %s rechte Hand"/>
+        <text name="eq_fig_serpentine" text="Schlangenlinie, %d Bögen, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="%d-m-Schlangenlinie %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Aus dem Zirkel wechseln bei %s"/>
+        <text name="eq_fig_eight" text="Halbe Acht %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Bei %s auf die Mittellinie, bei X Richtung %s"/>
+        <text name="eq_fig_centreFromX" text="Bei %s Richtung X, Mittellinie bis %s"/>
+        <text name="eq_fig_halfPassCentre" text="Traversale von %s zur Mittellinie, weiter bis %s"/>
+        <text name="eq_fig_legYieldCentre" text="Bei %s auf die Mittellinie, Schenkelweichen bis %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage auf der Diagonale %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Strg + W"/>
+        <text name="eq_fig_legYield" text="Schenkelweichen ab %s und zurück"/>
+        <text name="eq_fig_halfPass" text="Traversale ab %s und zurück"/>
+        <text name="eq_fig_shoulderIn" text="Schulterherein %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Schenkelweichen an der Bande %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (Kruppeherein) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (Kruppeheraus) %s-%s"/>
+        <text name="eq_lat_legYield" text="Schenkelweichen: nach %s"/>
+        <text name="eq_lat_halfPass" text="Traversale: nach %s, Stellung %s"/>
+        <text name="eq_lat_shoulderIn" text="Schulterherein: nach %s, Stellung %s"/>
+        <text name="eq_lat_legYieldRail" text="Schenkelweichen an der Bande: nach %s"/>
+        <text name="eq_lat_travers" text="Travers: nach %s, Stellung %s"/>
+        <text name="eq_lat_renvers" text="Renvers: nach %s, Stellung %s"/>
+        <text name="eq_lat_left" text="links"/>
+        <text name="eq_lat_right" text="rechts"/>
+        <text name="eq_lat_keys" text="Rechte Maustaste halten: mit der Maus lenken, A/D seitwärts, Umschalt hält die Richtung und die Maus stellt den Kopf."/>
+        <text name="eq_fig_final" text="Bei %s auf die Mittellinie, Halten bei %s"/>
+        <text name="eq_dressage_haltAt" text="Halten bei %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bei %s: Strg halten"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bei %s: Strg + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bei %s: Strg + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Strg halten"/>
+        <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Strg + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Strg + D"/>
+        <text name="eq_dressage_line" text="Zurück auf die Linie!"/>
+        <text name="eq_dressage_mark" text="Letzte Note: %s"/>
+        <text name="eq_pop_routineError" text="Verritten %d/%d"/>
+        <text name="eq_pop_routineScore" text="Aufgabe beendet: %s%%"/>
         <text name="eq_train_routine_none" text="Zu einem Dressurviereck reiten, um eine Aufgabe zu beginnen"/>
         <text name="eq_train_routine" text="Lektion x%d"/>
         <text name="eq_train_combo_none" text="Für eine Kombo einen Sprung meistern"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Klicken zum Schließen"/>
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshilfe"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
         <text name="eq_ex_push" text="Antreiben"/>
         <text name="eq_ex_recover" text="Erholen"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Schritt"/>
         <text name="eq_ex_halt" text="Stillstand"/>
         <text name="eq_ex_reverse" text="Rückwärts"/>
-        <text name="eq_ex_prompt_tap" text="Weiter W tippen!"/>
+        <text name="eq_ex_prompt_tap" text="Weiter klicken!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint vorbei"/>
         <text name="eq_pop_ex_blown" text="Erschöpft!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Renngalopp"/>
         <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Drücken Sie im Galopp W, um mit dem Antreiben zu beginnen: schnell, aber der Anstrengungsbalken füllt sich, und zwar umso schneller, je höher er steht. Drücken Sie S zum Erholen: ein langsamerer Renngalopp, in dem die Anstrengung wieder sinkt, ohne dass Sie den Renngalopp verlassen, schnell im oberen und unteren Drittel des Balkens, langsam im mittleren. Mit W treiben Sie wieder an. Ein fitteres Pferd ermüdet langsamer und erholt sich schneller."/>
         <text name="eq_help_gallop_2" text="Erreicht der Balken beim Antreiben den roten Bereich Erschöpft, fällt Ihr Pferd in den Galopp zurück und kann erst wieder in den Renngalopp, wenn der Balken leer ist. Um selbst in den Galopp zu wechseln, drücken Sie beim Erholen mit leerem Balken einmal S oder jederzeit zweimal schnell S."/>
-        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp ständig W, um zu sprinten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd ausgepumpt und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
+        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp ständig die linke Maustaste, um zu sprinten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd ausgepumpt und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
         <text name="eq_help_gallop_4" text="Training: Ein Sprint trainiert Schnelligkeit, und je höher er den Balken treibt, bevor er endet, desto mehr ist er wert: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor, aber nur x1, wenn er hinter der Linie endet. Antreiben und Erholen trainieren Ausdauer mit dem Ausdauer-Multiplikator, bis zu x5. Antreiben erhöht ihn, oben schneller. Erholen im mittleren Drittel des Balkens lässt Ihr Pferd durchatmen und hält den Multiplikator größtenteils, im oberen und unteren Drittel sinkt er schnell, und ein Pferd, das nie durchatmen kann, legt viel langsamer zu. Erschöpft oder Ausgepumpt setzt ihn auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
-        <text name="eq_ex_hint_sprint" text="Für den Sprint ständig W tippen"/>
+        <text name="eq_ex_hint_sprint" text="Für den Sprint ständig links klicken"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: erst ganz erholen"/>
         <text name="eq_ex_hint_locked" text="Galopp, bis der Balken leer ist"/>
         <text name="eq_ex_hint_canterOne" text="S: Galopp"/>
@@ -202,7 +255,7 @@
         <text name="eq_help_stamina_1" text="Ausdauer trainiert, während Sie im Renngalopp antreiben und erholen, mit dem Ausdauer-Multiplikator, bis zu x5. Antreiben erhöht ihn, und je näher Sie an die Linie kommen, desto schneller steigt er. Erholen senkt ihn: schnell im oberen Drittel des Balkens, langsam im mittleren, wieder schnell im unteren."/>
         <text name="eq_help_stamina_2" text="Treiben Sie also bis nahe an die Linie, erholen Sie sich bis in die Mitte des Balkens und lassen Sie Ihr Pferd dort eine Weile durchatmen, dann treiben Sie wieder an. Ständiges Wechseln zwischen Antreiben und Erholen ganz oben ermüdet Ihr Pferd, ohne den Multiplikator zu erhöhen, und Erschöpft oder Ausgepumpt setzt ihn auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
-        <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig W. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
+        <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig die linke Maustaste. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
         <text name="eq_help_speed_2" text="Ein Sprint, der hinter der Linie endet, zählt nur x1, also hören Sie vor der Linie auf zu tippen (oder drücken Sie S). Nach einem Sprint muss sich Ihr Pferd bis zum leeren Balken erholen, bevor es wieder sprinten kann."/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
@@ -871,5 +924,44 @@
         <text name="eq_shop_bleachers8x16" text="Tribüne 8 Reihen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sitzplätze für Ihre eigenen Turniere: zählt bis 60 m von einem Parcours oder Dressurviereck."/>
         <text name="eq_shop_bleachersSponsors_function" text="Die Sponsorentafeln davor zeigen die Marken Ihrer Maschinen."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Dressuraufgabe neu, bearbeiten oder speichern"/>
+        <text name="input_EQ_DT_PREV" text="Vorherige Option"/>
+        <text name="input_EQ_DT_NEXT" text="Nächste Option"/>
+        <text name="input_EQ_DT_RANDOM" text="Zufällige Option"/>
+        <text name="input_EQ_DT_MODE" text="Hufschlagfiguren oder Lektionen auf der Stelle"/>
+        <text name="input_EQ_DT_ACCEPT" text="Diesen Schritt behalten"/>
+        <text name="input_EQ_DT_UNDO" text="Letzten Schritt rückgängig"/>
+        <text name="eq_dt_newAction" text="Neue Dressuraufgabe"/>
+        <text name="eq_dt_editAction" text="Dressuraufgabe bearbeiten"/>
+        <text name="eq_dt_saveAction" text="Dressuraufgabe speichern"/>
+        <text name="eq_dt_cancelAction" text="Dressuraufgabe abbrechen"/>
+        <text name="eq_dt_deleteAction" text="Dressuraufgabe löschen"/>
+        <text name="eq_dt_deleteTitle" text="Dressuraufgabe löschen"/>
+        <text name="eq_dt_deleteAsk" text="Die Dressuraufgabe dieses Vierecks (%d Schritte) löschen? Es reitet dann wieder zufällige Aufgaben."/>
+        <text name="eq_dt_modeSpot" text="Lektionen auf der Stelle zeigen"/>
+        <text name="eq_dt_modeFigure" text="Figuren zeigen"/>
+        <text name="eq_dt_new" text="Neue Dressuraufgabe: Schritt %d"/>
+        <text name="eq_dt_editing" text="Dressuraufgabe bearbeiten: Schritt %d"/>
+        <text name="eq_dt_figure" text="Figur"/>
+        <text name="eq_dt_spot" text="Auf der Stelle"/>
+        <text name="eq_dt_noOptions" text="Hier passt nichts: rückgängig machen oder speichern"/>
+        <text name="eq_dt_saved" text="Dressuraufgabe gespeichert: %d Lektionen"/>
+        <text name="eq_dt_deleted" text="Dressuraufgabe gelöscht: dieses Viereck reitet wieder zufällige Aufgaben"/>
+        <text name="eq_dt_cancelled" text="Dressuraufgabe nicht gespeichert"/>
+        <text name="eq_fig_halt" text="Halten bei %s"/>
+        <text name="eq_fig_reinBack" text="Halten bei %s, Rückwärtsrichten"/>
+        <text name="eq_fig_piaffe" text="Piaffe bei %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette bei %s"/>
+        <text name="eq_dt_hintNew" text="Strg+L: eigene Dressuraufgabe für dieses Viereck erstellen"/>
+        <text name="eq_dt_hintEdit" text="Strg+L: Dressuraufgabe dieses Vierecks bearbeiten"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Vorheriger Buchstabe"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Nächster Buchstabe"/>
+        <text name="input_EQ_DT_GAIT" text="Gangart der Figuren"/>
+        <text name="eq_dt_gaitAction" text="Figuren im: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Linkspirouette bei %s"/>
+        <text name="eq_fig_pirouetteRight" text="Rechtspirouette bei %s"/>
+        <text name="eq_dt_modeLateral" text="Seitengänge zeigen"/>
+        <text name="eq_dt_lateral" text="Seitengang"/>
+        <text name="eq_shop_signboard_function" text="Erhöht die Sponsoreneinnahmen Ihrer Veranstaltungen."/>
     </texts>
 </l10n>

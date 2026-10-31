@@ -12,6 +12,22 @@
   <Materials>
     <Material name="courseGlow" materialId="5" diffuseColor="1 0.8 0.25098 0.25098" emissiveColor="0.54902 0.439216 0.137255 1" alphaBlending="true">
     </Material>
+    <Material name="courseGlow_green" materialId="10" diffuseColor="0.25 1 0.3 0.45" emissiveColor="0.225 0.9 0.27 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_lime" materialId="11" diffuseColor="0.65 1 0.2 0.45" emissiveColor="0.585 0.9 0.18 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_yellow" materialId="12" diffuseColor="1 0.9 0.15 0.45" emissiveColor="0.9 0.81 0.135 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_orange" materialId="13" diffuseColor="1 0.55 0.1 0.45" emissiveColor="0.9 0.495 0.09 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_red" materialId="14" diffuseColor="1 0.2 0.15 0.45" emissiveColor="0.9 0.18 0.135 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_cyan" materialId="15" diffuseColor="0.2 0.9 1 0.45" emissiveColor="0.18 0.81 0.9 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_white" materialId="16" diffuseColor="1 1 1 0.45" emissiveColor="0.9 0.9 0.9 1" alphaBlending="true">
+    </Material>
+    <Material name="courseGlow_grey" materialId="17" diffuseColor="0.03 0.03 0.03 0.6" emissiveColor="0 0 0 1" alphaBlending="true">
+    </Material>
   </Materials>
 
 
@@ -22,6 +38,14 @@
     <TransformGroup name="courseGlow" nodeId="9">
       <Shape name="glowBar" shapeId="1" clipDistance="300" nodeId="10" castsShadows="false" receiveShadows="false" materialIds="5"/>
       <Shape name="glowPole" shapeId="2" clipDistance="300" nodeId="11" castsShadows="false" receiveShadows="false" materialIds="5"/>
+      <Shape name="glowBar_green" shapeId="1" clipDistance="300" nodeId="20" castsShadows="false" receiveShadows="false" materialIds="10"/>
+      <Shape name="glowBar_lime" shapeId="1" clipDistance="300" nodeId="21" castsShadows="false" receiveShadows="false" materialIds="11"/>
+      <Shape name="glowBar_yellow" shapeId="1" clipDistance="300" nodeId="22" castsShadows="false" receiveShadows="false" materialIds="12"/>
+      <Shape name="glowBar_orange" shapeId="1" clipDistance="300" nodeId="23" castsShadows="false" receiveShadows="false" materialIds="13"/>
+      <Shape name="glowBar_red" shapeId="1" clipDistance="300" nodeId="24" castsShadows="false" receiveShadows="false" materialIds="14"/>
+      <Shape name="glowBar_cyan" shapeId="1" clipDistance="300" nodeId="25" castsShadows="false" receiveShadows="false" materialIds="15"/>
+      <Shape name="glowBar_white" shapeId="1" clipDistance="300" nodeId="26" castsShadows="false" receiveShadows="false" materialIds="16"/>
+      <Shape name="glowBar_grey" shapeId="1" clipDistance="300" nodeId="27" castsShadows="false" receiveShadows="false" materialIds="17"/>
     </TransformGroup>
   </Scene>
 

@@ -435,11 +435,9 @@ end
 -- RIDDEN ROUNDS
 -- While your event runs, a round you ride on a course that qualifies for it, or the dressage
 -- test in an arena that does, is that horse's phase: its real penalties are placed against the
--- simulated field, once per horse and phase. Dressage marks are DRESSAGE_BASE (a winning test)
--- and DRESSAGE_FAULT for each fault; the test's third fault eliminates.
+-- simulated field, once per horse and phase. Dressage penalties are 100 less the test's
+-- percentage (testSheet); the test's third error of course eliminates.
 
-EqHosting.DRESSAGE_BASE = 22
-EqHosting.DRESSAGE_FAULT = 6
 -- Show jumping faults per rail down or refusal (EqShowJumping counts them together).
 EqHosting.SJ_FAULT = 4
 
@@ -522,13 +520,14 @@ function EqHosting.pickDraw(grade, draws, rng)
 end
 
 
---- A ridden dressage test as a phase sheet.
---- @param faults number
---- @param lost boolean the test ended on its last fault
+--- A ridden dressage test as a phase sheet: penalties are 100 less the test's percentage, as in
+--- eventing (EqPerformance's dressage winner, 22, is a 78% test).
+--- @param percent number|nil
+--- @param lost boolean eliminated
 --- @return table sheet
-function EqHosting.testSheet(faults, lost)
-    if lost then return { penalties = 0, down = 0, refusals = 0, time = 0, eliminated = true } end
-    return { penalties = EqHosting.DRESSAGE_BASE + EqHosting.DRESSAGE_FAULT * (faults or 0), down = 0, refusals = 0, time = 0 }
+function EqHosting.testSheet(percent, lost)
+    if lost or percent == nil then return { penalties = 0, down = 0, refusals = 0, time = 0, eliminated = true } end
+    return { penalties = math.floor((100 - percent) * 10 + 0.5) / 10, down = 0, refusals = 0, time = 0 }
 end
 
 

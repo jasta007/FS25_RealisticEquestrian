@@ -99,7 +99,7 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
   top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
   quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
-- **Sprinting** (tap W three times quickly while galloping, and keep tapping): 125% of the gallop's
+- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
   speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
@@ -160,13 +160,190 @@ anywhere. A routine starts when you ride within 12 m of the markers (at least th
 chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
 between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
-no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. In one of the shop arenas the routine is a dressage
-test: coming within 12 m of the arena (of its rail, not of any letter) starts it with "Move to A to begin a Dressage Routine" (no time limit), then trot to X and halt, 15 more
-commands, and a final trot to X and halt. Finishing pays a minute of x8 temperament training at once,
-and the next test can start 20 s later (5 s after one broken by faults). If a course's start line is
-nearer than the markers, the course's hint shows instead; a routine under way keeps the courses
-quiet until it ends. Commands get 20% more time than below, and walks are only
-asked for to markers within 12 m:
+no collision) or Riding Hall 2k26's letter boards, whose collision the mod takes off. If a course's
+start line is nearer than the markers, the course's hint shows instead; a routine under way keeps
+the courses quiet until it ends.
+
+**Lateral work** (James, 2026-10-30): hold Shift and press A or D at a walk, trot or canter and the
+horse drifts that way at half its forward speed while still facing forwards, its head tilted the
+way it goes (no new animations: strafing). It doesn't turn while Shift is held; let go of Shift
+to adjust the line, then hold it again. **Mouse steering** (James, 2026-10-30: a canter circle
+wider than the full key turn was jerky to hold): hold the right mouse button and move the mouse
+left or right to set the turn like a wheel, with a dead zone of 25% in the middle so going
+straight is easy and the turn growing gently past it (power 1.5); it goes straight once the
+button is let go. While steering with the mouse, A and D strafe without Shift, and holding
+**Shift** holds the heading (no turn) while the mouse bends the head instead (the turn animation
+only); the bend springs back in 0.3 s once let go. The head eases to the turn asked rather than
+following the turn frame by frame, slower towards full lock. Every ridden horse swings from one
+lock to the other faster than the base game (up to 3 rad/s² more turn acceleration: James found
+it spongey, a canter serpentine impossible), but only to come off a hard turn (James,
+2026-10-31: hard over, the other way did nothing for 2 s, while a slight turn already came back
+quickly and went squirrely with more): none while the turn is under 15% of full lock, growing to all of it
+from 85% (James: slight turns felt slow with none under 40%), only while easing the turn off, and 40% of that at a gallop. The line pull
+(temperament's stickiness) only works in a started dressage test. While the button is
+held the camera eases round to the way the horse's body faces (not the drift) and
+the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real
+names): leg yield = drift with no bend asked (a leg yield asks for none); half pass =
+drift with the head bent the way it goes. Along the rail the body turns about 27 degrees off it
+and drifts to stay on it: forehand in and bent away from the way it goes is a shoulder-in,
+forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
+it goes a travers (haunches in), head to the rail with no bend a leg yield along the rail.
+Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
+the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
+it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
+Ctrl alone also makes for a precise halt. Let go and it
+moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
+top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
+slide less. **Ctrl + W** goes forward collected instead (James, 2026-10-30): at a trot a
+**passage** (the trot's animation at the walk's top speed), at a canter a collected canter (half
+way between the walk's and the trot's top speed); W doesn't change gait while Ctrl is held, and
+letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
+4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
+arena), 15% of the time between figures and in 40% of canters or walks between two letters.
+Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
+up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
+each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
+(Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
+two for a piaffe, a ring with an arrowhead the way to turn for a pirouette.
+Single player for now (the keys and mouse are read on the rider's machine).
+
+**Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
+rail, not of any letter) shows "Move to A to begin a Dressage Routine" (no time limit) and a gold
+line on the ground from just outside A. The test is a chain of figures drawn on the ground as a
+line of short glowing pieces, and it is scored on how closely the horse follows it. The line is gold
+until the test begins, then white ahead; within 2 m of the horse it turns green, lime, yellow,
+orange or red as the horse is up to 0.5, 1, 1.6, 2.4 m or further off it now, and the pieces up to
+3 m behind keep the colour of how they were ridden (James, 2026-10-30).
+Every path guide (a round's way to the next fence, course recording and editing) uses the same
+pieces, 1 m apart with a 0.3 m gap so they don't overlap at bends. On the dressage line the
+dashes show the gait asked like its stride (James, 2026-10-30): 0.2 m dashes 0.6 m apart at a
+walk, 0.45 m 1.1 m apart at a trot, 0.9 m 1.9 m apart at a canter and pointed like an arrow (James, 2026-10-31), and they start afresh exactly at each change or halt, so the change is where the dash
+length changes. Where a gait's track meets another's in a corner the line eases across over 5 m:
+
+- It opens down the centre line from A with a halt at X, then proceeds to track left or right at
+  C. Then come the figures (7 in training), and it ends down the centre line from A to a halt at X.
+- **Each figure has one gait, and its turns are sized for it** (James, 2026-10-29: a canter asked
+  for just before a tight turn could not follow it). Walk: 8 m voltes, half voltes, across the
+  arena, centre lines, long diagonal (free walk), shallow loop. Trot: everything, with 10 m and
+  15 m voltes, half serpentines, change of rein through the circle. Canter: only the
+  wide ones, 20 m circles (15 m in the 15 m arena), 15 m voltes, the diagonals, a shallow loop
+  (3 m, 2 m in the small arena) and half a figure of eight.
+- **No giant pieces** (James, 2026-10-31): long patterns come in halves that can follow each other
+  but needn't, so there is room for changes, halts and marks between them. A serpentine is two
+  halves of 2 loops (A to E/B, E/B to C), a figure of eight two half S's (A through X to C), and a
+  centre line between figures either "A to X, turn to E/B" or "E/B to X, up to C" (the full
+  centre line only opens and ends the test). Turns are no tighter than 3.5 m radius at a
+  walk, 4 m at a trot and 7 m at a canter (3, 3 and 6 in the 15x30), and the track's corners
+  between figures are sized for the gait ridden on them, so a sudden big circle often means a
+  canter is coming. Each figure is built for one end and side and mirrored, and they only chain
+  on the same rein; nearby figures are likelier, so the track between them ("go large") is short,
+and short figures likelier than serpentines and figures of eight. Each movement's name shows on
+the panel; the middle of the screen is for orders (changes, halts, movements).
+- **Changes** to a figure's gait come on the track at the last letter before it (the first
+  letter when trotting on from a walk), or 4 m before the figure with no letter there; one gait
+  at a time, never walk to canter. Inside a figure only a change down comes (X on a diagonal,
+  half way round a circle; 55% of figures that have such a point), and never one closer than 15 m
+  to the last. On the track between figures: 55% of the time a stretch at another gait between two
+  letters (a canter along one long side for 15 m or more, a walk of 10 to 30 m, a trot from a walk
+  or canter), else 30% a halt at a letter. Centre lines have a halt at X 60% of the time: stand
+  2.5 s, then go on (at a trot after a walk). A walking figure never follows another.
+- **Rein back:** 40% of halts (not the last) go on into "Rein back!" once the halt is held: back
+  up for 2 s, then go on. Moving off sooner costs up to 2, not backing up within 5 s costs 3.
+- The horse's temperament (0 to 100) sets how much of the line shows ahead (8 to 30 m), how early a
+  change or halt shows in the middle of the screen with a gold pole on the line (3 to 12 m before
+  it), and the window that counts as on time (1.5 to 3.5 m either side). A change shows as "Gait
+  change" with an arrow up or down, and only names the gait ("Trot!") once it is due. A halt or a
+  movement on the spot counts from 8 m out whatever the warning, so a clean halt at the gold bar
+  is never taken for the wrong gait. The panel shows the
+  current movement ("20 m circle at B", 3/9), the last mark and the running percentage.
+- Each movement (a figure with the track before it) is marked 0 to 10 in halves: off the line
+  (measured to the line, not its points) costs 12 a metre past an average of 0.05 m, so 0.3 m off
+  is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
+  60%). Figures that only follow the line (circles, diagonals, serpentines, centre lines...) are
+  stricter, 20 a metre past 0.02 m, so 0.1 m off is an 8.5 and 0.15 m a 7.5 (James, 2026-10-31:
+  "pretty hard to not get an 8"); lateral work, passage and movements on the spot keep the
+  gentler rate. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
+  through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
+  (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
+  down to X) only loses half of all that. Each mark pops up below the horse, red through orange
+  and yellow to green, with gold flourishes at 9 or better. It has its own place, so no other pop
+  cuts it short, and shows for 1.8 s; a mark that comes sooner waits until the last has shown
+  for 1.5 s (James, 2026-10-31).
+- A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30). Backing up
+  counts as having stopped (then as moving during the halt).
+- **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
+  canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back; on a
+  diagonal, a half pass from a side letter to the centre line and on up it to C, and a leg yield
+  off the centre line from A to a side letter (James, 2026-10-31: none went across the arena);
+  shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
+  letter gaps (10 to 26 m).
+- **Passage** (James, 2026-10-31): along a long side over one or two letter gaps, or across the
+  long diagonal, at a trot. The prompt says "Passage: Ctrl + W" (red while not collected), the
+  line's dashes come closer together and show cyan ahead; after the first 2 m each second not in
+  passage costs 0.6 (at most 4). No change of gait in the 15 m before it. The middle prompt names what is asked
+  ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
+  panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
+  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
+  smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
+  horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 15 degrees of the asked angle
+  (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
+  at most 1): staying on the line matters more than the form (James, 2026-10-31).
+- **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
+  onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
+  lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
+  takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
+  more than 2 m off the line (riding away from a test must not hold the horse back).
+- **Starting** (James, 2026-10-31): riding within 5 m of the gold pole outside A starts a 3, 2, 1
+  countdown (it starts over if the horse goes 20 m away). Then "Go! Enter at A" and a gold bar
+  across the entrance: nothing is marked until the horse crosses it into the arena, and the line
+  picks up from the nearest point, with 3 s to settle into the opening trot.
+- **Leaving on the entry** (crossing A, then riding off before the first movement is done) cancels
+  the test at once: "Dressage cancelled", no errors.
+- **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
+  arena (0.5 m past the rail) for 3 s. Standing still is not an error: after 3 s the gait asked
+  shows ("Trot!"), it costs as the wrong gait, and 30 s of it cancels the test. The line picks up again at the
+  nearest point up to 40 m on. The third error eliminates.
+- The test's score is its marks as a percentage. Each movement marked 6.5 or better raises the
+  multiplier one step, below 4 drops it one; an error drops it two. Finishing pays up to a minute
+  of x8 temperament training at once, all of it at 70% and over, a fifth of it at 40% or under,
+  and the next test can start 20 s later (5 s after an elimination).
+- In the month of your own event with a dressage phase, every shop arena rides that event's fixed
+  test (the same figures for every horse, from the event's seed); other months are random. It
+  counts for an entered horse in an arena big enough for the rating (see Hosting).
+
+**Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
+the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
+top. The last step kept (at first the opening, A down the centre line to a halt at X) shows in faint grey
+and the option for the next step in cyan, drawn from where the test has got to (a pole marks its
+start). Placeables standing over the arena, such as a riding hall, are hidden while the camera is up.
+
+- **N** / **M** step back and on through the options, nearest first. **R** picks one at random (and
+  rolls again what is left to chance inside it, such as a halt at X on a centre line).
+- **G** picks the gait on show (walk, trot, canter), for figures and movements on the spot alike;
+  N/M, Shift and G keep the same figure or movement where it exists at the new gait. The horse
+  changes to it at the letter before the figure; any gait can follow any other.
+- **F** goes round figures, movements on the spot and lateral work (leg yield, half pass,
+  shoulder-in, leg yield along the rail). On the spot **N** / **M** step through the
+  movements at one letter (halt, halt and rein back, piaffe, left and right pirouette) and
+  **Shift+N** / **Shift+M** move it to the letter before or after. A halt or rein back can come
+  from any gait, a piaffe from a trot, a pirouette from a walk or canter; a change to that gait
+  comes a few metres before the letter.
+- **Enter** keeps the option; the next options come from its end. **Backspace** takes the last step
+  back off. The first step also picks whether the test tracks left or right at C.
+- **Ctrl+L** again saves, adding the final centre line from A to a halt at X. Undoing every step and
+  saving deletes the arena's test. **Ctrl+Backspace** cancels without saving, and getting off the
+  horse saves what was kept. **Ctrl+L** on an arena with a test opens it where it was left.
+- **Ctrl+Backspace** near an arena with a test (and no course) asks, then deletes it, as for
+  courses; the arena rides random tests again.
+- Gait changes come with the figures (at the letter before a figure ridden at another gait), and
+  nothing random is added between the steps: the test rides exactly as drawn, every time.
+- A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it
+  loses the test) and replaces the random tests there, in training and in your own events held
+  there. Riding Hall boards have no editor. Single player only, like courses.
+
+**Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
+and walks are only asked for to markers within 12 m:
 
 - Most commands are legs, such as "Trot: B": ride to that marker at that gait (mostly trot, some
   canter, a walk only nearby). Further markers are likelier, a trot needs 10 m and a canter 18 m. The time for a leg
@@ -183,7 +360,6 @@ asked for to markers within 12 m:
 - At a marker the next command can be a circle (steer one way at a walk or trot until the horse
   has come round), now and then a stop (only at A, C, E, B or X) or, rarely, a rein back for 2.5
   seconds, a stop and a new leg. Turns on the spot are never asked for in a dressage routine.
-- In a shop arena, once past X, leaving it (a metre past its letters) for 3 seconds is a fault.
 - Markers lose their collision while a horse is ridden, so it rides through them; off the horse it
   comes back, so they can be moved or sold.
 
@@ -292,6 +468,17 @@ bar, and takes effect the moment the horse lands. A gallop jump from the bottom 
 (Pushing or Recovering) makes exertion plummet (45 a second) and S queues a canter too: it is made
 on landing if exertion is down to the canter line, within 1.5 s. In the air the horse also turns
 on A and D at 1.2 times its ground turn rate on top of the base game's turning.
+
+Jumps rise under 3.5 times normal gravity and come down under 3 times, about 12% lower than
+before, so a gallop jump is about 0.7 s in the air (it was nearly 1 s) and doesn't hang at the
+top. The pull changes smoothly over the top and eases off as the fall nears 7 m/s, near the base
+game's landing speed: any sudden change showed as a stutter in the animation. The jump starts with a small lift for
+0.08 s at a canter (0.12 s at a gallop) so the push-off animation begins on the ground, and the
+horse carries 1.45 times its take-off speed through the air from a canter (1.8 from a trot, none
+at a gallop or once you ask for a slower gait) so it still covers ground. A **collected jump**: jump from a trot (the base game only jumps from a canter),
+or hold Ctrl (or let go of it less than half a second before) and press jump. From a canter or gallop the horse gathers itself on the ground over 0.26 s (0.08 s from a trot),
+slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
+distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test. The `eqJump` console command shows and changes these numbers until the game restarts.
 
 ### Staff, age and metabolism
 
@@ -604,9 +791,12 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 
 | Rating | Field | Setup fee | Dressage arena | Show jumps | Cross country | Bleachers |
 | --- | --- | --- | --- | --- | --- | --- |
-| Novice | 8 | 5,000 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
-| Intermediate | 16 | 20,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
-| Championship | 32 | 80,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
+| Novice | 8 | 2,500 | 15x30 | 6 | 1000 m, 20 jumps | 0 |
+| Intermediate | 16 | 22,000 | 20x40 | 10 | 2000 m, 30 jumps | 1 |
+| Championship | 32 | 220,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
+
+A Novice event about breaks even, an Intermediate one pays only when it's popular (85 or more), and a
+Championship loses money unless a sponsor pays for it (sponsors are still to come).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
   **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
@@ -643,15 +833,16 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
   one's winners, turnout, takings against the setup fee, and how your horses did.
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
-  real faults and time. In an arena big enough, the dressage test is the rating's length (15,
-  20 or 25 movements) and scores 22 plus 6 for each fault; a third fault eliminates. Each horse
+  real faults and time. In an arena big enough, the dressage test is the event's fixed test of
+  8, 10 or 13 figures by rating and scores 100 less its percentage in penalties (a 72% test is
+  28); a third error of course eliminates. Each horse
   gets one go at each phase, and later rounds are practice. Phases you don't ride are
   simulated. A one-phase event with a ridden round is scored in penalties like eventing.
   A show jumping or cross country round is not put straight against the simulated rivals: it is
   graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
   course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
   of your own horse it gets, from its best to its worst. The horse's stats still decide most;
-  your riding decides its day. A ridden dressage test counts its real faults. Coming up to the start line on an entered
+  your riding decides its day. A ridden dressage test counts its real score. Coming up to the start line on an entered
   horse, a gold announcement says whether this round counts, is practice (phase already
   ridden) or the course is too small; the finish says what was kept and when results come.
 
@@ -744,3 +935,58 @@ horse is never touched.
 - **Forced retirement** is off by default. With `eqSettings forcedRetirement on`, 1 in 10 chip
   fractures and 1 in 4 torn suspensories end a horse's career. `eqSettings injuries off` turns injuries off entirely.
 
+
+## Dressage outfit
+
+Extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
+boots are our own models; the rest are base-game meshes:
+
+- **Top hat** in black silk, tall or short (the short one is the same hat with the crown's sides
+  squashed, 12 cm instead of 16 cm, like a dressage hat that's a safety helmet too). It hangs off the head's attach point and is set along the head
+  joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
+  the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
+  (defaults 0.085 m up and 0.003 m forward of the head joint, tilted back 15 degrees, size 0.98, James's fit for both bodies; female and male
+  heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
+
+- **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
+  in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
+  rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
+  bones when the character is dressed. The foot lies along the line from the foot bone to the toe
+  bone, turned up 14 degrees, so it follows the foot even when dressed in the saddle. They're
+  sized to end 4 cm below the knee (0.85x to 1.15x) and sit 3 cm above the ankle bone. The shaft
+  widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.45x front to back
+  (growing backwards from the shin, most of it low on the calf) at its top, all
+  1.18x on top, leans back 6.7 degrees from the ankle and 2 degrees outwards (James's fit,
+  2026-10-31).
+  `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` tunes them, not saved; all but width apply
+  at the next dressing. The i3d keeps an empty first child, as the game
+  expects one after taking a geo item out of its file.
+- **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
+  white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
+  saddle, as it does with the game's own clothes.
+- **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
+  (rows 1 to about 1.55 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
+  through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
+- **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
+  in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
+  loses the wardrobe's colours (the fabric back went white).
+- **Jacket** (the tweed sports jacket) with a white shirt in black, navy, charcoal, dark green or
+  burgundy. Its tweed texture and weave (normal map) are swapped for plain, flat ones each time a
+  character is dressed, and its colours (colorScaleR/G) are set again from its own list and the
+  picked colour.
+- **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
+
+`eqUvGrid [slot|off]` puts a labelled 8 x 8 grid (art/source/uv_grid.py) on the worn item of
+that slot as its texture, lit white, from the next dressing: screenshots show which squares land
+where, for painting our own masks on base-game clothes we can't open (the breeches' upper seat).
+
+The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
+keep the game's icon).
+## Hidden HUD (filming)
+
+- When the game's HUD is hidden (the `gsHudVisibility` console command, or a HUD hider mod),
+  everything the mod draws goes with it: the riding panel, centre alerts and prompts, help and
+  welcome popups, course glow poles and lines, fence numbers, XC guide lines and L/R flag labels
+  while riding. Construction mode keeps its guides and labels.
+- Riding keeps working underneath: gait keys, training, rounds and course recording carry on, and
+  the screens come back as they are when the HUD returns.

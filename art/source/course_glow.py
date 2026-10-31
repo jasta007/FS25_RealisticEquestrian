@@ -6,6 +6,8 @@ clones its two shapes, scaled and placed per fence.
 - "glowBar": a bar 1 m long along +z from its origin, 1 m across in x and y, centred, for the
   fence line (scaled thin, set along the fence with setDirection).
 - "glowPole": a pole 1 m high up +y from its origin, 1 m across, for the flags.
+- "glowBar_<colour>": the same bar in other colours (green to red, cyan, white), for path
+  guides: a dressage line coloured by how closely it is followed, course editing lines.
 
 One see-through gold material that glows (alpha blended, emissive), no collision, no shadows
 (James, 2026-10-27: poles snapped to the flags and just a glow, the bar thicker but subtle).
@@ -23,6 +25,15 @@ ALPHA = 0.25
 # How strongly it glows: well under full, so it stays subtle (James, 2026-10-27).
 GLOW = 0.55
 SIDES = 12
+# The bar again in these colours (EqCourseGlow.COLOURS), sharing its shape.
+COLOURS = [("green", (0.25, 1.0, 0.3)), ("lime", (0.65, 1.0, 0.2)), ("yellow", (1.0, 0.9, 0.15)), ("orange", (1.0, 0.55, 0.1)),
+           ("red", (1.0, 0.2, 0.15)), ("cyan", (0.2, 0.9, 1.0)), ("white", (1.0, 1.0, 1.0)), ("grey", (0.03, 0.03, 0.03))]
+# The coloured bars are brighter than the gold (James, 2026-10-30).
+COLOUR_ALPHA = 0.45
+COLOUR_GLOW = 0.9
+# Own (alpha, glow): grey is the dressage test editor's last step, nearly black and unlit so it shows on
+# any ground (James, 2026-10-31).
+FAINT = {"grey": (0.6, 0.0)}
 
 
 def fmt(values):
@@ -103,6 +114,12 @@ def main():
         "  <Materials>",
         f'    <Material name="courseGlow" materialId="1" diffuseColor="{fmt(c)} {ALPHA}" emissiveColor="{fmt(v * GLOW for v in c)} 1" '
         'specularColor="0 0 0" alphaBlending="true"/>',
+    ]
+    for k, (name, col) in enumerate(COLOURS):
+        alpha, glow = FAINT.get(name, (COLOUR_ALPHA, COLOUR_GLOW))
+        lines.append(f'    <Material name="courseGlow_{name}" materialId="{10 + k}" diffuseColor="{fmt(col)} {alpha}" '
+                     f'emissiveColor="{fmt(v * glow for v in col)} 1" specularColor="0 0 0" alphaBlending="true"/>')
+    lines += [
         "  </Materials>",
         "  <Shapes>",
     ]
@@ -114,6 +131,11 @@ def main():
         '    <TransformGroup name="courseGlow" nodeId="1">',
         '      <Shape name="glowBar" shapeId="1" nodeId="2" materialIds="1" castsShadows="false" receiveShadows="false" clipDistance="300"/>',
         '      <Shape name="glowPole" shapeId="2" nodeId="3" materialIds="1" castsShadows="false" receiveShadows="false" clipDistance="300"/>',
+    ]
+    for k, (name, _) in enumerate(COLOURS):
+        lines.append(f'      <Shape name="glowBar_{name}" shapeId="1" nodeId="{20 + k}" materialIds="{10 + k}" castsShadows="false" '
+                     'receiveShadows="false" clipDistance="300"/>')
+    lines += [
         "    </TransformGroup>",
         "  </Scene>",
         "</i3D>",

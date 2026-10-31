@@ -27,6 +27,7 @@ uses its genetics, health and fitness.
 - [Getting started](#getting-started)
 - [Compatibility](#compatibility)
 - [Known issues](#known-issues)
+- [Reporting a bug](#reporting-a-bug)
 - [Planned features](#planned-features)
 - [Console commands](#console-commands)
 - [A note on AI](#a-note-on-ai)
@@ -51,19 +52,23 @@ uses its genetics, health and fitness.
 ### Training
 - **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
   a view per stat and Condensed (just the bar), and **H** for help.
-  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap W for a
-    Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
+  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap the left mouse button
+    to Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
     Recovering train Stamina at a multiplier up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** ride up to a dressage arena and follow its test ("Trot: B") to build a combo, up
-    to x8. The shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
+  - **Temperament:** ride up to a dressage arena and ride its test: figures drawn as a line on
+    the ground (green to red by how close you are), each marked out of 10 for staying on the line
+    and timing changes, halts and rein backs. Right mouse drag steers (A/D then strafe, Shift holds the heading and bends the head), **Shift + A/D** drifts sideways on the keyboard, for leg yields, half passes, shoulder-in, travers and renvers; **Ctrl** (+ A/D) for piaffes and pirouettes, Ctrl + W for a passage. The
+    shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
+    **Ctrl+L** in a shop arena builds your own test figure by figure (N/M, G, R, F, Enter, Backspace).
 - **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
   again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
-  Gait keys pressed in the air take effect as the horse lands.
+  Gait keys pressed in the air take effect as the horse lands. Jumping from a trot (or Ctrl +
+  Space at a canter or gallop) is a short, steep collected jump.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
   it is in the pen.
 - **Staff (new):** hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab
@@ -156,6 +161,10 @@ uses its genetics, health and fitness.
 - **The dealer's word may be wrong.** Potential is shown as the dealer's view. After three months
   on your farm you find out whether you got a bargain or were misled.
 - A good horse is an investment: expect a year or more of work before it pays its way.
+
+### Dressage outfit
+- The wardrobe has a dressage outfit: a tall or short top hat, breeches and riding gloves in one solid colour,
+  a plain dark jacket with a white shirt, and tall or short black boots.
 
 ### Settings
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
@@ -256,7 +265,15 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 - **A horse away at an event isn't in your pasture**, so you can't see or ride it until its result
   is in. A horse delivered by Manual Transport needs a free place in one of your pastures.
 - **Early release.** Most features have had little time in game yet. Bug reports with your
-  `log.txt` are very welcome on the issues page.
+  `log.txt` are very welcome (see below).
+
+## Reporting a bug
+
+Play until the problem happens, quit the game, then send `log.txt` from
+`C:\Users\<your name>\Documents\My Games\FarmingSimulator2025\`. Post it on the
+[itch.io community board](https://jasta007.itch.io/realistic-equestrian/community) or open a
+[GitHub issue](https://github.com/jasta007/fs25_realisticequestrian/issues/new/choose), and say
+which mod version, map and other mods you use.
 
 ## Planned features
 
@@ -282,6 +299,9 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
+| `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` | Fits the tall riding boots: shaft width (1.18), metres above the ankle (0.03), foot angle (14), shaft lean back (6.7), shaft back (-0.012), tops leaning out (2) |
+| `eqHatFit [female\|male] [up] [forward] [side] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
+| `eqUvGrid [bottom\|top\|gloves\|footwear\|headgear\|off]` | Shows a labelled test grid as a worn item's texture (re-pick it in the wardrobe), to map where its texture lands |
 
 Testing commands, for checking the mod works rather than for play:
 
@@ -317,10 +337,13 @@ James
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
 - Staff portraits: [kawsar4404](https://depositphotos.com/portfolio-41609378.html) on
   Depositphotos, licensed for this mod.
+- Top hat and riding boots: royalty-free store models, licensed for this mod (resized and
+  converted).
 
 Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as long as you
 credit the original, keep your version under the same licence, and don't sell it or use it
 commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
-covered by that licence: don't reuse them outside this mod.
+covered by that licence: don't reuse them outside this mod. The same goes for the top hat
+and riding boots (`data/attire/topHat.i3d`, `data/attire/shortTopHat.i3d`, `data/attire/ridingBoots*`).
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).

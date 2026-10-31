@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Zobrazení tréninku: %s"/>
         <text name="eq_train_view_freestyle" text="Volný"/>
-        <text name="eq_help_temperament_2" text="Příliš mnoho chyb, třeba cval nebo opuštění obdélníku, úlohu ukončí; dokončete ji a získáte velký bonus k temperamentu. Mimo obdélník krok a couvání stále trochu trénují temperament. Pamlsky jako mrkev jsou také skvělý způsob, jak temperament zlepšit."/>
-        <text name="eq_help_temperament_1" text="Trénink temperamentu učí koně ovladatelnosti a potřebuje drezurní obdélník: kupte ho v obchodě nebo rozmístěte drezurní písmena. Přijeďte k němu a začne úloha: jeďte k písmenům zadaným chodem, zastavujte, couvejte a jezděte kruhy. Plňte každý pokyn včas, abyste zvyšovali násobitel."/>
+        <text name="eq_help_temperament_2" text="Tři chyby v úloze (ztracená čára, opuštění obdélníku nebo stání na místě) úlohu ukončí; dokončete ji pro bonus k temperamentu, který roste s vaším hodnocením. Klidnější kůň vidí čáru dál dopředu a dostane dřív varování před změnami. Písmena z Riding Hall dávají starší úlohu s úseky mezi písmeny. Mimo obdélník krok a couvání stále trochu trénují temperament a pomáhají i pamlsky jako mrkev."/>
+        <text name="eq_help_temperament_1" text="Trénink temperamentu učí koně ovladatelnosti a potřebuje drezurní obdélník: kupte ho v obchodě nebo rozmístěte drezurní písmena. V obdélníku z obchodu dojeďte k A a začne úloha z obrazců: kruhy, diagonály, hadovky a další, nakreslené zlatou čarou na zemi. Držte se čáry a měňte chod nebo zastavte tam, kde je řečeno; každý cvik je hodnocen do 10."/>
         <text name="eq_help_temperament_title" text="Trénink: Temperament"/>
         <text name="eq_help_agility_2" text="Násobič ztratíte, když včas nepřekonáte novou překážku nebo příliš zpomalíte. Skok bez překážky trochu trénuje, ale násobič nezvyšuje."/>
         <text name="eq_help_agility_1" text="Obratnost je hlavně o skákání překážek, i když střídání chodů trochu pomůže. Překonávejte překážky a budujte násobič tréninku Obratnosti, který vyprchá po deseti sekundách, nebo dřív, když do překážky narazíte."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Úloha zahájena"/>
         <text name="eq_pop_routineFault" text="Chyba %d/%d"/>
         <text name="eq_pop_routineTest" text="Úloha dokončena!"/>
-        <text name="eq_pop_routineLost" text="Úloha přerušena"/>
+        <text name="eq_pop_routineLost" text="Drezura zrušena"/>
         <text name="eq_pop_comboLost" text="Combo ztraceno"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Čistě!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Klus"/>
         <text name="eq_dressage_gait_canter" text="Cval"/>
         <text name="eq_dressage_change" text="Změna: %s"/>
+        <text name="eq_dressage_gaitChange" text="Změna chodu"/>
+        <text name="eq_dressage_gaitChangeAt" text="Změna chodu u %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Letmý přeskok: %s"/>
         <text name="eq_dressage_begin" text="Jeďte k %s a zahajte drezurní úlohu"/>
+        <text name="eq_dressage_enter" text="Jeď! Vjeďte u %s"/>
         <text name="eq_dressage_reinBack" text="Couvání!"/>
         <text name="eq_dressage_backwards" text="Couvejte"/>
         <text name="eq_dressage_circle_left" text="Kruh vlevo"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Další: %s"/>
         <text name="eq_dressage_stand" text="Stát"/>
         <text name="eq_dressage_marker" text="Písmeno %s"/>
+        <text name="eq_fig_enter" text="Vjezd v %s, zastavení v %s"/>
+        <text name="eq_fig_trackLeft" text="Dále, levá ruka v %s"/>
+        <text name="eq_fig_trackRight" text="Dále, pravá ruka v %s"/>
+        <text name="eq_fig_circle" text="Kruh %d m v %s"/>
+        <text name="eq_fig_longDiagonal" text="Změna směru %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Změna směru %s-%s"/>
+        <text name="eq_fig_across" text="Napříč jízdárnou %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Půlvolta v %s"/>
+        <text name="eq_fig_centreLeft" text="Střední čára v %s, levá ruka v %s"/>
+        <text name="eq_fig_centreRight" text="Střední čára v %s, pravá ruka v %s"/>
+        <text name="eq_fig_serpentine" text="Hadovka, %d oblouky, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Oblouk %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Změna směru kruhem v %s"/>
+        <text name="eq_fig_eight" text="Polovina osmičky %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Střední čára v %s, v X obrat k %s"/>
+        <text name="eq_fig_centreFromX" text="V %s obrat k X, střední čárou do %s"/>
+        <text name="eq_fig_halfPassCentre" text="Překrok od %s ke střední čáře, dál do %s"/>
+        <text name="eq_fig_legYieldCentre" text="Střední čára v %s, ustupování na holeň k %s"/>
+        <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
+        <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Ustupování na holeň od %s a zpět"/>
+        <text name="eq_fig_halfPass" text="Překrok od %s a zpět"/>
+        <text name="eq_fig_shoulderIn" text="Plec dovnitř %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Ustupování na holeň podél stěny %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (záď dovnitř) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (záď ven) %s-%s"/>
+        <text name="eq_lat_legYield" text="Ustupování na holeň: %s"/>
+        <text name="eq_lat_halfPass" text="Překrok: %s, ohnutí %s"/>
+        <text name="eq_lat_shoulderIn" text="Plec dovnitř: %s, ohnutí %s"/>
+        <text name="eq_lat_legYieldRail" text="Ustupování podél stěny: %s"/>
+        <text name="eq_lat_travers" text="Travers: %s, ohnutí %s"/>
+        <text name="eq_lat_renvers" text="Renvers: %s, ohnutí %s"/>
+        <text name="eq_lat_left" text="vlevo"/>
+        <text name="eq_lat_right" text="vpravo"/>
+        <text name="eq_lat_keys" text="Pravé tlačítko myši: řízení myší, A/D pohyb do strany, Shift drží směr a myš ohýbá hlavu."/>
+        <text name="eq_fig_final" text="Střední čára v %s, zastavení v %s"/>
+        <text name="eq_dressage_haltAt" text="Zastavení v %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piafa (%s) u %s: držte Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piruet vlevo (%s) u %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piruet vpravo (%s) u %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piafa (%s)! Držte Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piruet vlevo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piruet vpravo (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Zpět na čáru!"/>
+        <text name="eq_dressage_mark" text="Poslední známka: %s"/>
+        <text name="eq_pop_routineError" text="Chyba v úloze %d/%d"/>
+        <text name="eq_pop_routineScore" text="Úloha dokončena: %s%%"/>
         <text name="eq_train_routine_none" text="Jeďte k drezurnímu obdélníku a zahajte úlohu"/>
         <text name="eq_train_routine" text="Úloha x%d"/>
         <text name="eq_train_combo_none" text="Překonejte překážku a začněte combo"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Klikněte pro zavření"/>
         <text name="eq_help_next" text="Klikněte pro pokračování (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Nápověda k tréninku"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Ukazatel ježdění plný: dnes už žádný trénink"/>
         <text name="eq_ex_push" text="Tlačení"/>
         <text name="eq_ex_recover" text="Zotavení"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Krok"/>
         <text name="eq_ex_halt" text="Stojí"/>
         <text name="eq_ex_reverse" text="Couvání"/>
-        <text name="eq_ex_prompt_tap" text="Dál ťukejte W!"/>
+        <text name="eq_ex_prompt_tap" text="Dál klikejte!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Konec sprintu"/>
         <text name="eq_pop_ex_blown" text="Unavený!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Trysk"/>
         <text name="eq_help_gallop_1" text="Kůň jde tryskem ve třech tempech. Stiskněte W ze cvalu a začněte Tlačit: rychle, ale ukazatel Námahy se plní, a tím rychleji, čím je výš. Stiskněte S pro Zotavení: pomalejší trysk, který snižuje námahu, zatímco jedete dál, rychle v horní a dolní třetině ukazatele, pomalu uprostřed. Znovu stiskněte W a tlačte dál. Kůň v lepší kondici se unaví pomaleji a zotaví rychleji."/>
         <text name="eq_help_gallop_2" text="Když ukazatel při Tlačení dosáhne červené části Unavený, kůň přejde do cvalu a nemůže znovu do trysku, dokud se ukazatel nevyprázdní. Chcete-li sami zpomalit do cvalu, stiskněte S jednou při Zotavení s prázdným ukazatelem, nebo kdykoli dvakrát ťukněte na S."/>
-        <text name="eq_help_gallop_3" text="Během trysku neustále ťukejte W a Sprintujte: mnohem rychleji, ukazatel se nejdřív plní pomalu, pak čím dál rychleji, takže přestaňte před čárou. Po Sprintu přejdete do Zotavení a nový Sprint není, dokud se ukazatel nevyprázdní. Jen Sprint může překročit čáru Unavený, pro poslední zátah do cíle, ale Sprint, který tam skončí, nechá koně Vyčerpaného a ten se velmi pomalu zotavuje, dokud není zpět pod čárou."/>
+        <text name="eq_help_gallop_3" text="Během trysku neustále klikejte levým tlačítkem myši a Sprintujte: mnohem rychleji, ukazatel se nejdřív plní pomalu, pak čím dál rychleji, takže přestaňte před čárou. Po Sprintu přejdete do Zotavení a nový Sprint není, dokud se ukazatel nevyprázdní. Jen Sprint může překročit čáru Unavený, pro poslední zátah do cíle, ale Sprint, který tam skončí, nechá koně Vyčerpaného a ten se velmi pomalu zotavuje, dokud není zpět pod čárou."/>
         <text name="eq_help_gallop_4" text="Trénink: Sprint trénuje Rychlost, a čím výš dostane ukazatel, než skončí, tím víc má hodnotu: x2 v polovině cesty k čáře, až x10 těsně před ní, ale jen x1, když skončí za čarou. Tlačení a Zotavení trénují Vytrvalost s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, rychleji u vrcholu. Zotavení ve střední třetině ukazatele nechá koně vydechnout a zachová většinu násobiče, zatímco horní a dolní třetina ho rychle ztrácejí, a kůň, který nikdy nevydechne, se zlepšuje mnohem pomaleji. Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
-        <text name="eq_ex_hint_sprint" text="Neustále ťukejte W pro sprint"/>
+        <text name="eq_ex_hint_sprint" text="Neustále klikejte levým pro sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: nejdřív se zotavte do prázdna"/>
         <text name="eq_ex_hint_locked" text="Cval, dokud se ukazatel nevyprázdní"/>
         <text name="eq_ex_hint_canterOne" text="S: cval"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, a čím blíž k čáře, tím rychleji roste. Zotavení ho snižuje: rychle v horní třetině ukazatele, pomalu ve střední a znovu rychle v dolní."/>
         <text name="eq_help_stamina_2" text="Tlačte tedy blízko k čáře, uberte do středu ukazatele a nechte tam koně chvíli vydechnout, pak znovu tlačte. Přeskakování mezi Tlačením a Zotavením u vrcholu koně unavuje bez zvýšení násobiče, a Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
         <text name="eq_help_speed_title" text="Trénink: Rychlost"/>
-        <text name="eq_help_speed_1" text="Rychlost se trénuje při Sprintu: v trysku neustále ťukejte W. Počítá se každá sekunda Sprintu a na konci se vynásobí tím, jak vysoko jste ukazatel dostali: x2 v polovině cesty k čáře, až x10 těsně před ní."/>
+        <text name="eq_help_speed_1" text="Rychlost se trénuje při Sprintu: v trysku neustále klikejte levým tlačítkem myši. Počítá se každá sekunda Sprintu a na konci se vynásobí tím, jak vysoko jste ukazatel dostali: x2 v polovině cesty k čáře, až x10 těsně před ní."/>
         <text name="eq_help_speed_2" text="Sprint, který skončí za čarou, má hodnotu jen x1, takže přestaňte ťukat (nebo stiskněte S) před čarou. Po Sprintu se kůň musí zotavit do prázdného ukazatele, než může znovu sprintovat."/>
         <text name="eq_train_speedMult" text="Rychlost x%.1f"/>
         <text name="eq_train_staminaMult" text="Vytrvalost x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 řad, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sezení pro závody, které pořádáš: počítá se do 60 m od trati nebo drezurního obdélníku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponzorské tabule vpředu ukazují značky tvých strojů."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nová drezurní úloha, upravit nebo uložit"/>
+        <text name="input_EQ_DT_PREV" text="Předchozí možnost"/>
+        <text name="input_EQ_DT_NEXT" text="Další možnost"/>
+        <text name="input_EQ_DT_RANDOM" text="Náhodná možnost"/>
+        <text name="input_EQ_DT_MODE" text="Cviky nebo prvky na místě"/>
+        <text name="input_EQ_DT_ACCEPT" text="Ponechat tento krok"/>
+        <text name="input_EQ_DT_UNDO" text="Vrátit poslední krok"/>
+        <text name="eq_dt_newAction" text="Nová drezurní úloha"/>
+        <text name="eq_dt_editAction" text="Upravit drezurní úlohu"/>
+        <text name="eq_dt_saveAction" text="Uložit drezurní úlohu"/>
+        <text name="eq_dt_cancelAction" text="Zrušit drezurní úlohu"/>
+        <text name="eq_dt_deleteAction" text="Smazat drezurní úlohu"/>
+        <text name="eq_dt_deleteTitle" text="Smazat úlohu"/>
+        <text name="eq_dt_deleteAsk" text="Smazat drezurní úlohu tohoto obdélníku (%d kroků)? Znovu se budou jezdit náhodné úlohy."/>
+        <text name="eq_dt_modeSpot" text="Ukázat prvky na místě"/>
+        <text name="eq_dt_modeFigure" text="Ukázat cviky"/>
+        <text name="eq_dt_new" text="Nová drezurní úloha: krok %d"/>
+        <text name="eq_dt_editing" text="Úprava drezurní úlohy: krok %d"/>
+        <text name="eq_dt_figure" text="Cvik"/>
+        <text name="eq_dt_spot" text="Na místě"/>
+        <text name="eq_dt_noOptions" text="Sem nic nepasuje: vraťte krok nebo uložte"/>
+        <text name="eq_dt_saved" text="Drezurní úloha uložena: %d prvků"/>
+        <text name="eq_dt_deleted" text="Drezurní úloha smazána: tato jízdárna jezdí opět náhodné úlohy"/>
+        <text name="eq_dt_cancelled" text="Drezurní úloha neuložena"/>
+        <text name="eq_fig_halt" text="Zastavení v %s"/>
+        <text name="eq_fig_reinBack" text="Zastavení v %s, couvání"/>
+        <text name="eq_fig_piaffe" text="Piafa v %s"/>
+        <text name="eq_fig_pirouette" text="Pirueta v %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: sestavte vlastní drezurní úlohu pro tuto jízdárnu"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: upravit drezurní úlohu této jízdárny"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Předchozí písmeno"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Další písmeno"/>
+        <text name="input_EQ_DT_GAIT" text="Chod cviků"/>
+        <text name="eq_dt_gaitAction" text="Cviky v: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirueta vlevo v %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirueta vpravo v %s"/>
+        <text name="eq_dt_modeLateral" text="Ukázat boční chody"/>
+        <text name="eq_dt_lateral" text="Boční chod"/>
+        <text name="eq_shop_signboard_function" text="Zvyšuje příjmy od sponzorů z tvých akcí."/>
     </texts>
 </l10n>

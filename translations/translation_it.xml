@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista allenamento: %s"/>
         <text name="eq_train_view_freestyle" text="Libero"/>
-        <text name="eq_help_temperament_2" text="Troppi errori, come galoppare o uscire dal rettangolo, chiudono la ripresa; completala per un grande bonus di temperamento. Lontano da un rettangolo, il passo e l&apos;indietreggiare allenano ancora un po&apos; il temperamento. Dare premi come le carote è anche un ottimo modo per migliorare il temperamento."/>
-        <text name="eq_help_temperament_1" text="L&apos;allenamento del temperamento insegna al cavallo il controllo e richiede un rettangolo da dressage: comprane uno nel negozio o posiziona le lettere da dressage. Avvicinati e inizia una ripresa che ti chiede di raggiungere le lettere alle andature indicate, fermarti, indietreggiare e fare circoli. Esegui ogni comando in tempo per aumentare il moltiplicatore."/>
+        <text name="eq_help_temperament_2" text="Tre errori di percorso (linea persa, uscita dal rettangolo o fermo sul posto) terminano la ripresa; completala per un bonus di temperamento che cresce col punteggio. Un cavallo più calmo vede più linea davanti e riceve più preavviso dei cambi. Le lettere di Riding Hall danno la vecchia routine di tratti tra le lettere. Fuori da un rettangolo, il passo e il rinculo allenano ancora un po' il temperamento, e anche i premietti come le carote aiutano."/>
+        <text name="eq_help_temperament_1" text="L'allenamento del temperamento insegna il controllo al tuo cavallo e richiede un rettangolo da dressage: comprane uno nel negozio o disponi le lettere. In un rettangolo del negozio, vai in A e inizia una ripresa di figure: circoli, diagonali, serpentine e altro, disegnate come una linea dorata a terra. Resta sulla linea e cambia andatura o fermati dove richiesto; ogni movimento ha un voto fino a 10."/>
         <text name="eq_help_temperament_title" text="Allenamento: Temperamento"/>
         <text name="eq_help_agility_2" text="Perdi il moltiplicatore se non superi un nuovo ostacolo in tempo o perdi troppa velocità. Saltare senza ostacolo allena un po', ma non aumenta il moltiplicatore."/>
         <text name="eq_help_agility_1" text="L'Agilità si allena soprattutto superando ostacoli, anche se alternare le andature aiuta un po'. Supera ostacoli per costruire un moltiplicatore di allenamento dell'Agilità, che svanisce dopo dieci secondi, o prima se urti un ostacolo."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Ripresa iniziata"/>
         <text name="eq_pop_routineFault" text="Errore %d/%d"/>
         <text name="eq_pop_routineTest" text="Ripresa completata!"/>
-        <text name="eq_pop_routineLost" text="Ripresa interrotta"/>
+        <text name="eq_pop_routineLost" text="Dressage annullato"/>
         <text name="eq_pop_comboLost" text="Combo persa"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Netto!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Trotto"/>
         <text name="eq_dressage_gait_canter" text="Galoppo"/>
         <text name="eq_dressage_change" text="Cambio: %s"/>
+        <text name="eq_dressage_gaitChange" text="Cambio di andatura"/>
+        <text name="eq_dressage_gaitChangeAt" text="Cambio di andatura in %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Cambio di galoppo in aria: %s"/>
         <text name="eq_dressage_begin" text="Vai a %s per iniziare una ripresa di dressage"/>
+        <text name="eq_dressage_enter" text="Via! Entra in %s"/>
         <text name="eq_dressage_reinBack" text="Rinculo!"/>
         <text name="eq_dressage_backwards" text="Vai all'indietro"/>
         <text name="eq_dressage_circle_left" text="Circolo a sinistra"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Prossimo: %s"/>
         <text name="eq_dressage_stand" text="Alt"/>
         <text name="eq_dressage_marker" text="Lettera %s"/>
+        <text name="eq_fig_enter" text="Entrata in %s, alt in %s"/>
+        <text name="eq_fig_trackLeft" text="Proseguire, a mano sinistra in %s"/>
+        <text name="eq_fig_trackRight" text="Proseguire, a mano destra in %s"/>
+        <text name="eq_fig_circle" text="Circolo di %d m in %s"/>
+        <text name="eq_fig_longDiagonal" text="Cambiamento di mano %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Cambiamento di mano %s-%s"/>
+        <text name="eq_fig_across" text="Attraversare il campo %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Mezza volta in %s"/>
+        <text name="eq_fig_centreLeft" text="Linea centrale in %s, a mano sinistra in %s"/>
+        <text name="eq_fig_centreRight" text="Linea centrale in %s, a mano destra in %s"/>
+        <text name="eq_fig_serpentine" text="Serpentina di %d anse, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Ansa di %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Cambiamento di mano nel circolo in %s"/>
+        <text name="eq_fig_eight" text="Mezzo otto %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Linea centrale in %s, in X girare verso %s"/>
+        <text name="eq_fig_centreFromX" text="In %s girare verso X, linea centrale fino a %s"/>
+        <text name="eq_fig_halfPassCentre" text="Appoggiata da %s alla linea centrale, fino a %s"/>
+        <text name="eq_fig_legYieldCentre" text="Linea centrale in %s, cessione alla gamba fino a %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage sulla diagonale %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Cessione alla gamba da %s e ritorno"/>
+        <text name="eq_fig_halfPass" text="Appoggiata da %s e ritorno"/>
+        <text name="eq_fig_shoulderIn" text="Spalla in dentro %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Cessione alla gamba lungo la pista %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (groppa in dentro) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (groppa in fuori) %s-%s"/>
+        <text name="eq_lat_legYield" text="Cessione alla gamba: verso %s"/>
+        <text name="eq_lat_halfPass" text="Appoggiata: verso %s, flessione a %s"/>
+        <text name="eq_lat_shoulderIn" text="Spalla in dentro: verso %s, flessione a %s"/>
+        <text name="eq_lat_legYieldRail" text="Cessione lungo la pista: verso %s"/>
+        <text name="eq_lat_travers" text="Travers: verso %s, flessione a %s"/>
+        <text name="eq_lat_renvers" text="Renvers: verso %s, flessione a %s"/>
+        <text name="eq_lat_left" text="sinistra"/>
+        <text name="eq_lat_right" text="destra"/>
+        <text name="eq_lat_keys" text="Tasto destro premuto: sterzare col mouse, A/D spostarsi di lato, Maiusc tiene la direzione e il mouse flette la testa."/>
+        <text name="eq_fig_final" text="Linea centrale in %s, alt in %s"/>
+        <text name="eq_dressage_haltAt" text="Alt in %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) a %s: tieni Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piroetta a sinistra (%s) a %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piroetta a destra (%s) a %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Tieni Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piroetta a sinistra (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piroetta a destra (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Torna sulla linea!"/>
+        <text name="eq_dressage_mark" text="Ultimo voto: %s"/>
+        <text name="eq_pop_routineError" text="Errore di percorso %d/%d"/>
+        <text name="eq_pop_routineScore" text="Ripresa completata: %s%%"/>
         <text name="eq_train_routine_none" text="Vai a un rettangolo da dressage per iniziare una ripresa"/>
         <text name="eq_train_routine" text="Ripresa x%d"/>
         <text name="eq_train_combo_none" text="Supera un ostacolo per iniziare una combo"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Clicca per chiudere"/>
         <text name="eq_help_next" text="Clicca per continuare (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Aiuto allenamento"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Barra cavalcata piena: niente più allenamento oggi"/>
         <text name="eq_ex_push" text="Spinta"/>
         <text name="eq_ex_recover" text="Recupero"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Passo"/>
         <text name="eq_ex_halt" text="Fermo"/>
         <text name="eq_ex_reverse" text="Indietro"/>
-        <text name="eq_ex_prompt_tap" text="Continua a premere W!"/>
+        <text name="eq_ex_prompt_tap" text="Continua a cliccare!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint finito"/>
         <text name="eq_pop_ex_blown" text="Affaticato!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Galoppo pieno"/>
         <text name="eq_help_gallop_1" text="Il cavallo galoppa a tre ritmi. Premi W dal galoppo per iniziare la Spinta: veloce, ma la barra dello Sforzo si riempie, e tanto più in fretta quanto più è alta. Premi S per il Recupero: un galoppo più lento che abbassa lo sforzo mentre continui a galoppare, in fretta nel terzo superiore e in quello inferiore della barra, lentamente nel mezzo. Premi di nuovo W per spingere ancora. Un cavallo più in forma si stanca più lentamente e recupera più in fretta."/>
         <text name="eq_help_gallop_2" text="Se la barra raggiunge la zona rossa Affaticato durante la Spinta, il cavallo scende al galoppo e non può galoppare pieno di nuovo finché la barra non si svuota. Per rallentare al galoppo tu stesso, premi S una volta durante il Recupero con la barra vuota, o premi S due volte in qualsiasi momento."/>
-        <text name="eq_help_gallop_3" text="Premi W di continuo durante il galoppo pieno per lo Sprint: molto più veloce, e la barra si riempie piano all'inizio, poi sempre più in fretta, quindi fermati prima della linea. Finito lo Sprint si passa al Recupero, e non c'è un nuovo Sprint finché la barra non si svuota. Solo uno Sprint può superare la linea Affaticato, per un ultimo sforzo verso il traguardo, ma uno Sprint che finisce lì lascia il cavallo Sfinito, e recupera molto lentamente finché non torna sotto la linea."/>
+        <text name="eq_help_gallop_3" text="Premi il tasto sinistro del mouse di continuo durante il galoppo pieno per lo Sprint: molto più veloce, e la barra si riempie piano all'inizio, poi sempre più in fretta, quindi fermati prima della linea. Finito lo Sprint si passa al Recupero, e non c'è un nuovo Sprint finché la barra non si svuota. Solo uno Sprint può superare la linea Affaticato, per un ultimo sforzo verso il traguardo, ma uno Sprint che finisce lì lascia il cavallo Sfinito, e recupera molto lentamente finché non torna sotto la linea."/>
         <text name="eq_help_gallop_4" text="Allenamento: lo Sprint allena la Velocità, e più alto porta la barra prima di finire, più vale: x2 a metà strada dalla linea, fino a x10 appena prima, ma solo x1 se finisce oltre la linea. Spinta e Recupero allenano la Resistenza con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, più in fretta vicino alla cima. Recuperare nel terzo centrale della barra fa riprendere fiato al cavallo e conserva gran parte del moltiplicatore, mentre i terzi superiore e inferiore lo perdono in fretta, e un cavallo che non riprende mai fiato migliora molto più lentamente. Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
-        <text name="eq_ex_hint_sprint" text="Premi W di continuo per lo sprint"/>
+        <text name="eq_ex_hint_sprint" text="Clic sinistro di continuo per lo sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: prima recupera fino a vuoto"/>
         <text name="eq_ex_hint_locked" text="Galoppo finché la barra non è vuota"/>
         <text name="eq_ex_hint_canterOne" text="S: galoppo"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="La Resistenza si allena durante Spinta e Recupero al galoppo pieno, con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, e più ti avvicini alla linea, più sale in fretta. Il Recupero lo abbassa: in fretta nel terzo superiore della barra, lentamente in quello centrale, di nuovo in fretta in quello inferiore."/>
         <text name="eq_help_stamina_2" text="Quindi spingi fin vicino alla linea, rallenta fino al centro della barra e lascia che il cavallo riprenda fiato lì per un po', poi spingi di nuovo. Alternare Spinta e Recupero vicino alla cima stanca il cavallo senza alzare il moltiplicatore, e Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
         <text name="eq_help_speed_title" text="Allenamento: Velocità"/>
-        <text name="eq_help_speed_1" text="La Velocità si allena durante lo Sprint: premi W di continuo al galoppo pieno. Ogni secondo di Sprint conta, e alla fine viene moltiplicato per quanto in alto hai portato la barra: x2 a metà strada dalla linea, fino a x10 appena prima."/>
+        <text name="eq_help_speed_1" text="La Velocità si allena durante lo Sprint: premi il tasto sinistro del mouse di continuo al galoppo pieno. Ogni secondo di Sprint conta, e alla fine viene moltiplicato per quanto in alto hai portato la barra: x2 a metà strada dalla linea, fino a x10 appena prima."/>
         <text name="eq_help_speed_2" text="Uno Sprint che finisce oltre la linea vale solo x1, quindi smetti di premere (o premi S) prima della linea. Dopo uno Sprint il cavallo deve recuperare fino a barra vuota prima di sprintare ancora."/>
         <text name="eq_train_speedMult" text="Velocità x%.1f"/>
         <text name="eq_train_staminaMult" text="Resistenza x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 file, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Posti a sedere per le gare che organizzi: conta entro 60 m da un percorso o rettangolo da dressage."/>
         <text name="eq_shop_bleachersSponsors_function" text="I pannelli degli sponsor davanti mostrano i marchi dei tuoi mezzi."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nuova ripresa di dressage, modifica o salva"/>
+        <text name="input_EQ_DT_PREV" text="Opzione precedente"/>
+        <text name="input_EQ_DT_NEXT" text="Opzione successiva"/>
+        <text name="input_EQ_DT_RANDOM" text="Opzione a caso"/>
+        <text name="input_EQ_DT_MODE" text="Figure o movimenti sul posto"/>
+        <text name="input_EQ_DT_ACCEPT" text="Tieni questo passo"/>
+        <text name="input_EQ_DT_UNDO" text="Annulla l'ultimo passo"/>
+        <text name="eq_dt_newAction" text="Nuova ripresa di dressage"/>
+        <text name="eq_dt_editAction" text="Modifica ripresa di dressage"/>
+        <text name="eq_dt_saveAction" text="Salva ripresa di dressage"/>
+        <text name="eq_dt_cancelAction" text="Annulla ripresa di dressage"/>
+        <text name="eq_dt_deleteAction" text="Elimina ripresa di dressage"/>
+        <text name="eq_dt_deleteTitle" text="Elimina ripresa"/>
+        <text name="eq_dt_deleteAsk" text="Eliminare la ripresa di questo rettangolo (%d passi)? Tornerà a riprese casuali."/>
+        <text name="eq_dt_modeSpot" text="Mostra movimenti sul posto"/>
+        <text name="eq_dt_modeFigure" text="Mostra figure"/>
+        <text name="eq_dt_new" text="Nuova ripresa di dressage: passo %d"/>
+        <text name="eq_dt_editing" text="Modifica ripresa di dressage: passo %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="Sul posto"/>
+        <text name="eq_dt_noOptions" text="Qui non sta niente: annulla o salva"/>
+        <text name="eq_dt_saved" text="Ripresa di dressage salvata: %d movimenti"/>
+        <text name="eq_dt_deleted" text="Ripresa di dressage eliminata: questo rettangolo torna a riprese casuali"/>
+        <text name="eq_dt_cancelled" text="Ripresa di dressage non salvata"/>
+        <text name="eq_fig_halt" text="Alt in %s"/>
+        <text name="eq_fig_reinBack" text="Alt in %s, rinculo"/>
+        <text name="eq_fig_piaffe" text="Piaffe in %s"/>
+        <text name="eq_fig_pirouette" text="Piroetta in %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: crea la tua ripresa di dressage per questo rettangolo"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: modifica la ripresa di dressage di questo rettangolo"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Lettera precedente"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Lettera successiva"/>
+        <text name="input_EQ_DT_GAIT" text="Andatura delle figure"/>
+        <text name="eq_dt_gaitAction" text="Figure al: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Piroetta a sinistra in %s"/>
+        <text name="eq_fig_pirouetteRight" text="Piroetta a destra in %s"/>
+        <text name="eq_dt_modeLateral" text="Mostra lavoro laterale"/>
+        <text name="eq_dt_lateral" text="Laterale"/>
+        <text name="eq_shop_signboard_function" text="Aumenta gli incassi dagli sponsor dei tuoi eventi."/>
     </texts>
 </l10n>

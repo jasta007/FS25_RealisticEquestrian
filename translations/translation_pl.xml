@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Widok treningu: %s"/>
         <text name="eq_train_view_freestyle" text="Swobodny"/>
-        <text name="eq_help_temperament_2" text="Zbyt wiele błędów, np. galop lub wyjazd z czworoboku, kończy program; ukończ go, aby zyskać duży bonus do temperamentu. Poza czworobokiem stęp i cofanie nadal trochę trenują temperament. Przysmaki, takie jak marchewki, to również świetny sposób na poprawę temperamentu."/>
-        <text name="eq_help_temperament_1" text="Trening temperamentu uczy konia posłuszeństwa i wymaga czworoboku ujeżdżeniowego: kup go w sklepie lub ustaw litery ujeżdżeniowe. Podjedź do niego, a rozpocznie się program: jedź do liter wskazanym chodem, zatrzymuj się, cofaj i jeźdź po kole. Wykonuj każde polecenie na czas, aby zwiększać mnożnik."/>
+        <text name="eq_help_temperament_2" text="Trzy błędy trasy (zgubiona linia, wyjazd z czworoboku lub stanie w miejscu) kończą program; ukończ go, by dostać premię do temperamentu rosnącą z oceną. Spokojniejszy koń widzi dalej linię i wcześniej dostaje ostrzeżenie o zmianach. Litery Riding Hall dają dawny program przejazdów między literami. Poza czworobokiem stęp i cofanie nadal trochę trenują temperament, a smakołyki jak marchewki też pomagają."/>
+        <text name="eq_help_temperament_1" text="Trening temperamentu uczy konia posłuszeństwa i wymaga czworoboku do ujeżdżenia: kup go w sklepie lub ustaw litery. W czworoboku ze sklepu podjedź do A, a zacznie się program z figur: koła, przekątne, wężyki i więcej, narysowane złotą linią na ziemi. Trzymaj się linii i zmieniaj chód lub zatrzymuj się tam, gdzie każą; każdy ruch jest oceniany w skali do 10."/>
         <text name="eq_help_temperament_title" text="Trening: Temperament"/>
         <text name="eq_help_agility_2" text="Tracisz mnożnik, jeśli nie pokonasz nowej przeszkody na czas lub stracisz za dużo prędkości. Skoki bez przeszkody dają trochę treningu, ale nie podnoszą mnożnika."/>
         <text name="eq_help_agility_1" text="Zwinność to przede wszystkim pokonywanie przeszkód, choć zmiana chodów też trochę pomaga. Pokonuj przeszkody, aby budować mnożnik treningu Zwinności, który wygasa po dziesięciu sekundach lub wcześniej, jeśli uderzysz w przeszkodę."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Program rozpoczęty"/>
         <text name="eq_pop_routineFault" text="Błąd %d/%d"/>
         <text name="eq_pop_routineTest" text="Czworobok ukończony!"/>
-        <text name="eq_pop_routineLost" text="Program przerwany"/>
+        <text name="eq_pop_routineLost" text="Ujeżdżenie przerwane"/>
         <text name="eq_pop_comboLost" text="Combo utracone"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Czysto!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Kłus"/>
         <text name="eq_dressage_gait_canter" text="Galop"/>
         <text name="eq_dressage_change" text="Zmiana: %s"/>
+        <text name="eq_dressage_gaitChange" text="Zmiana chodu"/>
+        <text name="eq_dressage_gaitChangeAt" text="Zmiana chodu przy %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Lotna zmiana nogi: %s"/>
         <text name="eq_dressage_begin" text="Podjedź do %s, aby rozpocząć program ujeżdżenia"/>
+        <text name="eq_dressage_enter" text="Start! Wjedź przy %s"/>
         <text name="eq_dressage_reinBack" text="Cofanie!"/>
         <text name="eq_dressage_backwards" text="Cofaj się"/>
         <text name="eq_dressage_circle_left" text="Wolta w lewo"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Dalej: %s"/>
         <text name="eq_dressage_stand" text="Stój"/>
         <text name="eq_dressage_marker" text="Litera %s"/>
+        <text name="eq_fig_enter" text="Wjazd w %s, zatrzymanie w %s"/>
+        <text name="eq_fig_trackLeft" text="Dalej, po lewej ręce w %s"/>
+        <text name="eq_fig_trackRight" text="Dalej, po prawej ręce w %s"/>
+        <text name="eq_fig_circle" text="Koło %d m w %s"/>
+        <text name="eq_fig_longDiagonal" text="Zmiana kierunku %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Zmiana kierunku %s-%s"/>
+        <text name="eq_fig_across" text="Przez czworobok %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Półwolta w %s"/>
+        <text name="eq_fig_centreLeft" text="Linia środkowa w %s, po lewej ręce w %s"/>
+        <text name="eq_fig_centreRight" text="Linia środkowa w %s, po prawej ręce w %s"/>
+        <text name="eq_fig_serpentine" text="Wężyk, %d łuki, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Łuk %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Zmiana kierunku przez koło w %s"/>
+        <text name="eq_fig_eight" text="Pół ósemki %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Linia środkowa w %s, w X skręt do %s"/>
+        <text name="eq_fig_centreFromX" text="W %s skręt do X, linią środkową do %s"/>
+        <text name="eq_fig_halfPassCentre" text="Ciąg od %s do linii środkowej, dalej do %s"/>
+        <text name="eq_fig_legYieldCentre" text="Linia środkowa w %s, ustępowanie od łydki do %s"/>
+        <text name="eq_fig_passageRail" text="Pasaż %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Pasaż po przekątnej %s-%s"/>
+        <text name="eq_dressage_passage" text="Pasaż: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Ustępowanie od łydki od %s i z powrotem"/>
+        <text name="eq_fig_halfPass" text="Ciąg od %s i z powrotem"/>
+        <text name="eq_fig_shoulderIn" text="Łopatka do wewnątrz %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Ustępowanie od łydki wzdłuż ściany %s-%s"/>
+        <text name="eq_fig_travers" text="Trawers (zad do wewnątrz) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renwers (zad na zewnątrz) %s-%s"/>
+        <text name="eq_lat_legYield" text="Ustępowanie: w %s"/>
+        <text name="eq_lat_halfPass" text="Ciąg: w %s, zgięcie w %s"/>
+        <text name="eq_lat_shoulderIn" text="Łopatka do wewnątrz: w %s, zgięcie w %s"/>
+        <text name="eq_lat_legYieldRail" text="Ustępowanie wzdłuż ściany: w %s"/>
+        <text name="eq_lat_travers" text="Trawers: w %s, zgięcie w %s"/>
+        <text name="eq_lat_renvers" text="Renwers: w %s, zgięcie w %s"/>
+        <text name="eq_lat_left" text="lewo"/>
+        <text name="eq_lat_right" text="prawo"/>
+        <text name="eq_lat_keys" text="Prawy przycisk myszy: skręcanie myszą, A/D ruch w bok, Shift trzyma kierunek, a mysz zgina głowę."/>
+        <text name="eq_fig_final" text="Linia środkowa w %s, zatrzymanie w %s"/>
+        <text name="eq_dressage_haltAt" text="Zatrzymanie w %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaff (%s) przy %s: przytrzymaj Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piruet w lewo (%s) przy %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piruet w prawo (%s) przy %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaff (%s)! Przytrzymaj Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piruet w lewo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piruet w prawo (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Wróć na linię!"/>
+        <text name="eq_dressage_mark" text="Ostatnia ocena: %s"/>
+        <text name="eq_pop_routineError" text="Błąd trasy %d/%d"/>
+        <text name="eq_pop_routineScore" text="Program ukończony: %s%%"/>
         <text name="eq_train_routine_none" text="Podjedź na czworobok ujeżdżeniowy, aby rozpocząć program"/>
         <text name="eq_train_routine" text="Program x%d"/>
         <text name="eq_train_combo_none" text="Pokonaj przeszkodę, aby rozpocząć combo"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Kliknij, aby zamknąć"/>
         <text name="eq_help_next" text="Kliknij, aby kontynuować (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Pomoc treningowa"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Pasek jazdy pełny: na dziś koniec treningu"/>
         <text name="eq_ex_push" text="Naciskanie"/>
         <text name="eq_ex_recover" text="Odpoczynek"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Stęp"/>
         <text name="eq_ex_halt" text="Stoi"/>
         <text name="eq_ex_reverse" text="Cofanie"/>
-        <text name="eq_ex_prompt_tap" text="Stukaj W!"/>
+        <text name="eq_ex_prompt_tap" text="Klikaj!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Koniec sprintu"/>
         <text name="eq_pop_ex_blown" text="Zmęczony!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Cwał"/>
         <text name="eq_help_gallop_1" text="Twój koń cwałuje w trzech tempach. Naciśnij W z galopu, aby zacząć Naciskać: szybko, ale pasek Wysiłku się zapełnia, i to tym szybciej, im jest wyżej. Naciśnij S, aby Odpocząć: wolniejszy cwał, który obniża wysiłek, gdy dalej cwałujesz, szybko w górnej i dolnej tercji paska, powoli w środkowej. Naciśnij W ponownie, aby znów naciskać. Koń w lepszej formie męczy się wolniej i szybciej odpoczywa."/>
         <text name="eq_help_gallop_2" text="Jeśli podczas Naciskania pasek dojdzie do czerwonej strefy Zmęczony, koń przejdzie do galopu i nie przejdzie znowu do cwału, dopóki pasek się nie opróżni. Aby samemu zwolnić do galopu, naciśnij S raz podczas Odpoczynku z pustym paskiem lub dwa razy S w dowolnej chwili."/>
-        <text name="eq_help_gallop_3" text="Stukaj W bez przerwy podczas cwału, aby Sprintować: dużo szybciej, a pasek zapełnia się najpierw powoli, potem coraz szybciej, więc przestań przed linią. Koniec Sprintu przechodzi w Odpoczynek i nie ma nowego Sprintu, dopóki pasek się nie opróżni. Tylko Sprint może przekroczyć linię Zmęczony, na ostatni zryw do mety, ale Sprint, który się tam kończy, zostawia konia Wyczerpanego, a on odpoczywa bardzo powoli, dopóki nie wróci poniżej linii."/>
+        <text name="eq_help_gallop_3" text="Klikaj lewym przyciskiem myszy bez przerwy podczas cwału, aby Sprintować: dużo szybciej, a pasek zapełnia się najpierw powoli, potem coraz szybciej, więc przestań przed linią. Koniec Sprintu przechodzi w Odpoczynek i nie ma nowego Sprintu, dopóki pasek się nie opróżni. Tylko Sprint może przekroczyć linię Zmęczony, na ostatni zryw do mety, ale Sprint, który się tam kończy, zostawia konia Wyczerpanego, a on odpoczywa bardzo powoli, dopóki nie wróci poniżej linii."/>
         <text name="eq_help_gallop_4" text="Trening: Sprint trenuje Szybkość, a im wyżej podniósł pasek przed końcem, tym więcej jest wart: x2 w połowie drogi do linii, do x10 tuż przed nią, ale tylko x1, jeśli skończy się za linią. Naciskanie i Odpoczynek trenują Wytrzymałość z mnożnikiem Wytrzymałości, do x5. Naciskanie go podnosi, szybciej blisko góry. Odpoczynek w środkowej tercji paska pozwala koniowi złapać oddech i zachowuje większość mnożnika, a górna i dolna tercja szybko go tracą, i koń, który nigdy nie łapie oddechu, zyskuje dużo wolniej. Zmęczony lub Wyczerpany obniża go do x1 i zatrzymuje trening Wytrzymałości, dopóki pasek się nie opróżni."/>
-        <text name="eq_ex_hint_sprint" text="Stukaj W bez przerwy, aby sprintować"/>
+        <text name="eq_ex_hint_sprint" text="Klikaj lewym bez przerwy, aby sprintować"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: najpierw odpocznij do pustego paska"/>
         <text name="eq_ex_hint_locked" text="Galop, aż pasek się opróżni"/>
         <text name="eq_ex_hint_canterOne" text="S: galop"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="Wytrzymałość trenuje się podczas Naciskania i Odpoczynku w cwale, z mnożnikiem Wytrzymałości, do x5. Naciskanie go podnosi, a im bliżej linii, tym szybciej rośnie. Odpoczynek go obniża: szybko w górnej tercji paska, powoli w środkowej i znów szybko w dolnej."/>
         <text name="eq_help_stamina_2" text="Naciskaj więc blisko linii, zwolnij do środka paska i daj koniowi złapać tam oddech przez chwilę, potem znów naciskaj. Przeskakiwanie między Naciskaniem a Odpoczynkiem blisko góry męczy konia bez podnoszenia mnożnika, a Zmęczony lub Wyczerpany obniża go do x1 i zatrzymuje trening Wytrzymałości, dopóki pasek się nie opróżni."/>
         <text name="eq_help_speed_title" text="Trening: Szybkość"/>
-        <text name="eq_help_speed_1" text="Szybkość trenuje się podczas Sprintu: stukaj W bez przerwy w cwale. Liczy się każda sekunda Sprintu, a na końcu jest mnożona przez to, jak wysoko podniósł się pasek: x2 w połowie drogi do linii, do x10 tuż przed nią."/>
+        <text name="eq_help_speed_1" text="Szybkość trenuje się podczas Sprintu: klikaj lewym przyciskiem myszy bez przerwy w cwale. Liczy się każda sekunda Sprintu, a na końcu jest mnożona przez to, jak wysoko podniósł się pasek: x2 w połowie drogi do linii, do x10 tuż przed nią."/>
         <text name="eq_help_speed_2" text="Sprint, który kończy się za linią, jest wart tylko x1, więc przestań stukać (lub naciśnij S) przed linią. Po Sprincie koń musi odpocząć do pustego paska, zanim znów zasprintuje."/>
         <text name="eq_train_speedMult" text="Szybkość x%.1f"/>
         <text name="eq_train_staminaMult" text="Wytrzymałość x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Trybuna 8 rzędów, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Miejsca na organizowane przez ciebie zawody: liczy się do 60 m od trasy lub czworoboku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Tablice sponsorów z przodu pokazują marki twoich maszyn."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nowy program ujeżdżenia, edycja lub zapis"/>
+        <text name="input_EQ_DT_PREV" text="Poprzednia opcja"/>
+        <text name="input_EQ_DT_NEXT" text="Następna opcja"/>
+        <text name="input_EQ_DT_RANDOM" text="Losowa opcja"/>
+        <text name="input_EQ_DT_MODE" text="Figury lub ruchy w miejscu"/>
+        <text name="input_EQ_DT_ACCEPT" text="Zachowaj ten krok"/>
+        <text name="input_EQ_DT_UNDO" text="Cofnij ostatni krok"/>
+        <text name="eq_dt_newAction" text="Nowy program ujeżdżenia"/>
+        <text name="eq_dt_editAction" text="Edytuj program ujeżdżenia"/>
+        <text name="eq_dt_saveAction" text="Zapisz program ujeżdżenia"/>
+        <text name="eq_dt_cancelAction" text="Anuluj program ujeżdżenia"/>
+        <text name="eq_dt_deleteAction" text="Usuń program ujeżdżenia"/>
+        <text name="eq_dt_deleteTitle" text="Usuń program"/>
+        <text name="eq_dt_deleteAsk" text="Usunąć program ujeżdżenia tego czworoboku (%d kroków)? Wrócą losowe programy."/>
+        <text name="eq_dt_modeSpot" text="Pokaż ruchy w miejscu"/>
+        <text name="eq_dt_modeFigure" text="Pokaż figury"/>
+        <text name="eq_dt_new" text="Nowy program ujeżdżenia: krok %d"/>
+        <text name="eq_dt_editing" text="Edycja programu ujeżdżenia: krok %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="W miejscu"/>
+        <text name="eq_dt_noOptions" text="Nic tu nie pasuje: cofnij lub zapisz"/>
+        <text name="eq_dt_saved" text="Program ujeżdżenia zapisany: %d ruchów"/>
+        <text name="eq_dt_deleted" text="Program ujeżdżenia usunięty: ten czworobok znów ma losowe programy"/>
+        <text name="eq_dt_cancelled" text="Program ujeżdżenia nie został zapisany"/>
+        <text name="eq_fig_halt" text="Zatrzymanie w %s"/>
+        <text name="eq_fig_reinBack" text="Zatrzymanie w %s, cofanie"/>
+        <text name="eq_fig_piaffe" text="Piaff w %s"/>
+        <text name="eq_fig_pirouette" text="Piruet w %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: ułóż własny program ujeżdżenia dla tego czworoboku"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edytuj program ujeżdżenia tego czworoboku"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Poprzednia litera"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Następna litera"/>
+        <text name="input_EQ_DT_GAIT" text="Chód figur"/>
+        <text name="eq_dt_gaitAction" text="Figury w: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Piruet w lewo w %s"/>
+        <text name="eq_fig_pirouetteRight" text="Piruet w prawo w %s"/>
+        <text name="eq_dt_modeLateral" text="Pokaż chody boczne"/>
+        <text name="eq_dt_lateral" text="Chód boczny"/>
+        <text name="eq_shop_signboard_function" text="Zwiększa wpływy od sponsorów na twoich zawodach."/>
     </texts>
 </l10n>

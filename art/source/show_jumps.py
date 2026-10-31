@@ -723,8 +723,7 @@ def main():
             paint, white, caps = pole_shapes[round(length, 3)]
             meshes += [(place(paint, mid, rot), paint_rgb), (place(white, mid, rot), white_rgb), (place(caps, mid, rot), white_rgb)]
         top = max(max(a[1], b[1]) for a, b in jump["poles"]) + POLE_R
-        store_image([m for m in meshes if m[0].tris], f"{top:.2f} m", os.path.join(OUT, "store_" + jump["name"] + ".dds"),
-                    preview_dir, yaw=-30, pitch=14)
+        store_image([m for m in meshes if m[0].tris], os.path.join(OUT, "store_" + jump["name"] + ".dds"), preview_dir)
         print(jump["name"], f"{top:.2f} m,", len(jump["poles"]), "poles,", len(parts.cols), "collision boxes")
 
 

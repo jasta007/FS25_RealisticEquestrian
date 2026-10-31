@@ -1,9 +1,13 @@
 --[[
     EqDressage.lua
     The temperament routine ridden round dressage markers: pure functions with no game calls, so
-    they run headless. EqTrainingHooks finds the markers (Riding Hall 2k26's letter boards) and
-    passes them in as a course. A test starts only when the rider comes to the markers
-    (ARENA_NEAR); with none near, there is no routine (James, 2026-10-29).
+    they run headless. EqTrainingHooks finds the markers (Riding Hall 2k26's letter boards, and
+    the letters of our own arenas) and passes them in as a course. A routine starts only when the
+    rider comes to the markers (ARENA_NEAR); with none near, there is no routine (James, 2026-10-29).
+
+    In one of our arenas the routine is a dressage test of figures drawn on the ground
+    (EqDressagePath, James 2026-10-29). Round Riding Hall's boards, which a player can put
+    anywhere, it is the routine of legs below.
 
     A course is every marker linked to the one nearest the horse: the nearest within
     SEARCH_RADIUS, then any within LINK_RADIUS of a marker already in. It needs at least three
@@ -77,13 +81,11 @@ EqDressage.HOLD_MS = { 1500, 3000 }
 EqDressage.REVERSE_MS = 2500
 -- A turn on the spot counts once its steering key is held this long.
 EqDressage.TURN_MS = 600
--- Our arenas (markers with arena set) ride a test: coming within ARENA_NEAR metres of one's rail
--- (not of any letter: from a long arena's far end, "Move to A" showed 84 m off) starts
--- it with "Trot: A", untimed; then down the centre line to X and halt, TEST_MOVES more commands,
--- and a final trot to X and halt. Finishing pays TEST_BONUS_SECONDS of temperament training at
--- the top multiplier at once; after that no new test starts for TEST_REST_MS.
+-- Our arenas (markers with arena set) ride a test (EqDressagePath): coming within ARENA_NEAR
+-- metres of one's rail (not of any letter: from a long arena's far end, "Move to A" showed 84 m
+-- off) starts it. Finishing pays up to TEST_BONUS_SECONDS of temperament training at the top
+-- multiplier at once, by its score; after that no new test starts for TEST_REST_MS.
 EqDressage.ARENA_NEAR = 12
-EqDressage.TEST_MOVES = 15
 EqDressage.TEST_BONUS_SECONDS = 60
 EqDressage.TEST_REST_MS = 20000
 -- A test broken by faults waits this long before the markers start a new one.
@@ -99,9 +101,8 @@ EqDressage.FAULT_DROP = 2
 -- round (radians), within CIRCLE_MS.
 EqDressage.CIRCLE_TURN = math.pi * 2 * 0.9
 EqDressage.CIRCLE_MS = 20000
--- Out of the arena (OUT_MARGIN metres past its letters) for OUT_MS is a fault (James).
+-- An arena's bounds reach OUT_MARGIN metres past its letters.
 EqDressage.OUT_MARGIN = 1
-EqDressage.OUT_MS = 3000
 
 
 --- @return number metres between two points on the ground
@@ -354,37 +355,6 @@ function EqDressage.inArena(bounds, px, pz)
 end
 
 
---- In one of our arenas a routine opens as a dressage test does: ride to A, trot down the centre
---- line to X and halt there (James, 2026-10-27). The arena is the one whose X is nearest.
---- @param course table { x, z, markers }
---- @return table|nil task the leg to A, or straight to X when the horse is at A already
-function EqDressage.openingLeg(course)
-    local x, bestD = nil, nil
-    for _, marker in ipairs(course.markers) do
-        if marker.arena and marker.letter == "X" then
-            local d = distance(course.x, course.z, marker.x, marker.z)
-            if bestD == nil or d < bestD then x, bestD = marker, d end
-        end
-    end
-    if x == nil then return nil end
-    local a, aD = nil, nil
-    for _, marker in ipairs(course.markers) do
-        if marker.arena and marker.letter == "A" then
-            local d = distance(x.x, x.z, marker.x, marker.z)
-            if aD == nil or d < aD then a, aD = marker, d end
-        end
-    end
-    local toX = { kind = "go", gait = "trot", opening = "X", marker = { letter = x.letter, x = x.x, z = x.z },
-        arena = EqDressage.arenaBounds(course, x) }
-    if a == nil or distance(course.x, course.z, a.x, a.z) <= EqDressage.ARRIVE_RADIUS.walk then
-        if bestD < EqDressage.GO_MIN_DISTANCE.trot then toX.gait = "walk" end
-        return toX
-    end
-    return { kind = "go", gait = "trot", opening = "A", untimed = true, marker = { letter = a.letter, x = a.x, z = a.z },
-        nextLeg = toX, arena = toX.arena }
-end
-
-
 --- The command after one is done.
 --- @param routine table
 --- @param course table
@@ -393,19 +363,7 @@ end
 --- @return table task
 function EqDressage.plan(routine, course, done, rng)
     local kind = "go"
-    local task = routine.task
-    local opening = done == "go" and task ~= nil and task.opening or nil
-    if opening == "A" then
-        return task.nextLeg
-    elseif done == "go" and task ~= nil and task.final then
-        return { kind = "halt", final = true }
-    elseif routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) and done ~= "reverse" then
-        -- The test is ridden: finish down the centre line to X and halt.
-        local x = routine.testX
-        return { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
-    elseif opening == "X" then
-        kind = "halt"
-    elseif done == "go" then
+    if done == "go" then
         local at = routine.from ~= nil and routine.from.letter or nil
         local choices = EqDressage.AT_MARKER
         if not EqDressage.HALT_LETTERS[at] then
@@ -473,25 +431,88 @@ local function begin(routine, task, course)
     else
         routine.reactMs = EqDressage.REACT_MS * EqDressage.TIME_FACTOR
     end
-    if task.opening == "X" then routine.testX = task.marker end
     routine.deadline = routine.clock + routine.reactMs
     routine.shown, routine.shownUntil = routine.request, routine.clock + 1500
 end
 
 
---- Start the routine on a course: the first leg is asked for at once.
+--- The X of our arena nearest the horse, or nil.
+--- @param course table { x, z, markers }
+--- @return table|nil marker
+function EqDressage.arenaX(course)
+    local best, bestD = nil, nil
+    for _, marker in ipairs(course.markers) do
+        if marker.arena and marker.letter == "X" then
+            local d = distance(course.x, course.z, marker.x, marker.z)
+            if bestD == nil or d < bestD then best, bestD = marker, d end
+        end
+    end
+    return best
+end
+
+
+--- @param seed number|string
+--- @return function rng (n) -> 1..n, the same rolls every time for the same seed
+local function seeded(seed)
+    local random = EqRandom.new(seed)
+    return function(n) return math.min(n, 1 + math.floor(random:next() * n)) end
+end
+
+
+--- Start the routine on a course. Near one of our arenas it is a test of figures
+--- (EqDressagePath): the arena's own test when the player made one, else a hosted event's fixed
+--- test when course.test says so, else a new one.
+--- Elsewhere the first leg is asked for at once.
 --- @param routine table
---- @param course table
+--- @param course table { x, z, markers, test = { seed, moves, counts }|nil, temperament }
 --- @param rng function
 function EqDressage.start(routine, course, rng)
-    routine.kind, routine.from, routine.lastDone, routine.steps, routine.testX = "markers", nil, nil, 0, nil
-    routine.faults, routine.heading, routine.outMs = 0, nil, 0
-    -- The test opening only close to an arena: from further off, "Move to A" showed 80 m away.
-    local opening = EqDressage.nearArena(course) and EqDressage.openingLeg(course) or nil
-    routine.arena = opening ~= nil and opening.arena or nil
-    -- A competition test in your own event is longer (EqHostManager.testMovesFor).
-    routine.testMoves = opening ~= nil and course.testMoves or nil
-    begin(routine, opening or EqDressage.planLeg(routine, course, rng), course)
+    routine.kind, routine.from, routine.lastDone = "markers", nil, nil
+    routine.faults, routine.heading, routine.path, routine.competing = 0, nil, nil, nil
+    local x = EqDressage.nearArena(course) and EqDressage.arenaX(course) or nil
+    local frame = x ~= nil and EqDressagePath.frameFor(course.markers, x) or nil
+    if frame ~= nil then
+        local fixed = course.test
+        -- The player's own test for this arena (EqDressageTests) rides instead of a random one,
+        -- in training and in your own events.
+        local plan = EqDressageTests ~= nil and EqDressageTests.planFor(frame) or nil
+        local test
+        if plan ~= nil then
+            test = EqDressagePath.build(frame, nil, nil, plan)
+        else
+            test = EqDressagePath.build(frame, EqDressagePath.figuresFor(fixed ~= nil and fixed.moves or nil),
+                fixed ~= nil and seeded(fixed.seed) or rng)
+        end
+        routine.kind, routine.path = "path", EqDressagePath.newRun(test, course.temperament)
+        routine.competing = fixed ~= nil and fixed.counts or nil
+        routine.task, routine.request, routine.preview, routine.bonus = { kind = "path" }, nil, nil, nil
+        return
+    end
+    begin(routine, EqDressage.planLeg(routine, course, rng), course)
+end
+
+
+--- One frame of a test of figures.
+--- @return string|nil event as EqDressage.step's, "test" once it is over
+local function pathStep(sheet, move, dt, course)
+    local routine = sheet.routine
+    local run = routine.path
+    -- The course carries the horse's facing and head bend for lateral work.
+    local event = EqDressagePath.step(run, move, course.x, course.z, dt, course.dirX ~= nil and course or nil)
+    if event == "done" then
+        if run.lastMark >= EqDressagePath.MULT_UP then
+            routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
+        elseif run.lastMark < EqDressagePath.MULT_DOWN then
+            routine.mult = math.max(1, routine.mult - 1)
+        end
+    elseif event == "fault" then
+        routine.faults = run.errors
+        routine.mult = math.max(1, routine.mult - EqDressage.FAULT_DROP)
+    elseif event == "lost" then
+        routine.faults = run.errors
+        EqTraining.breakRoutine(sheet)
+    end
+    return event
 end
 
 
@@ -499,9 +520,6 @@ end
 --- @return string event "done", or "test" when the arena test's final halt is done
 local function finish(routine, course, rng)
     local task = routine.task
-    if task.final and task.kind == "halt" then return "test" end
-    -- The test's count starts once it has halted at X.
-    if routine.testX ~= nil and not task.opening then routine.steps = (routine.steps or 0) + 1 end
     routine.mult = math.min(routine.mult + 1, EqTraining.ROUTINE_MAX)
     routine.lastDone = task.kind
     if task.kind == "go" then
@@ -536,14 +554,7 @@ local function fault(sheet, course, rng)
     end
     routine.mult = math.max(1, routine.mult - EqDressage.FAULT_DROP)
     routine.from = nil
-    -- Keep the test's place: its final legs come back once the count is reached.
-    local nextTask
-    if routine.testX ~= nil and (routine.steps or 0) >= (routine.testMoves or EqDressage.TEST_MOVES) then
-        local x = routine.testX
-        nextTask = { kind = "go", gait = "trot", final = true, marker = { letter = x.letter, x = x.x, z = x.z } }
-    else
-        nextTask = EqDressage.planLeg(routine, course, rng)
-    end
+    local nextTask = EqDressage.planLeg(routine, course, rng)
     routine.pending = nil
     begin(routine, nextTask, course)
     return "fault"
@@ -557,26 +568,16 @@ end
 --- @param dt number milliseconds
 --- @param rng function
 --- @param course table { x, z, markers } the horse's position and the course
---- @return string|nil event "request", "done", "bonus", "fault", "lost" or nil
+--- @return string|nil event "request", "done", "bonus", "fault", "lost", "test" (a test of figures
+---     ridden to the end) or nil
 function EqDressage.step(sheet, move, steer, dt, rng, course)
     local routine = sheet.routine
+    if routine.kind == "path" and routine.path ~= nil then return pathStep(sheet, move, dt, course) end
     local task = routine.task
     if task == nil then
         return EqTraining.breakRoutine(sheet) and "lost" or nil
     end
     routine.taskMs = (routine.taskMs or 0) + dt
-
-    -- Leaving the arena: a few seconds to get back in, then a fault. Not on the way in, to A and
-    -- down to X: A stands outside the rail (James).
-    if routine.arena ~= nil and not task.opening and not EqDressage.inArena(routine.arena, course.x, course.z) then
-        routine.outMs = (routine.outMs or 0) + dt
-        if routine.outMs >= EqDressage.OUT_MS then
-            routine.outMs = 0
-            return fault(sheet, course, rng)
-        end
-    else
-        routine.outMs = 0
-    end
 
     if task.kind == "hold" then
         if move ~= "halt" then
@@ -623,9 +624,7 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
             elseif routine.clock > routine.bonus.deadline then
                 routine.bonus = nil
             end
-        elseif routine.preview == nil and not task.opening then
-            -- No quick changes on the way in to A or down to X: riding up past the arena's
-            -- letters showed "Change: Canter" before the test began (James, 2026-10-28).
+        elseif routine.preview == nil then
             for _, marker in ipairs(course.markers) do
                 if not same(marker, task.marker) and not same(marker, routine.from)
                     and distance(course.x, course.z, marker.x, marker.z) <= EqDressage.PASS_RADIUS then
@@ -652,7 +651,6 @@ function EqDressage.step(sheet, move, steer, dt, rng, course)
 
         -- Settling in, a quick change on the way, or the last stretch to the marker: any gait
         -- short of a gallop. Otherwise the leg's gait.
-        if task.untimed then return event end
         local free = routine.taskMs < EqDressage.REACT_MS or routine.bonus ~= nil or routine.preview ~= nil
         -- A gallop is never asked for.
         local galloping = move == "gallop" or (move == "fast" and gait ~= "canter")

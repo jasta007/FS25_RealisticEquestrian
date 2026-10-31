@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Тем"/>
         <text name="eq_train_viewAction" text="Режим тренировки: %s"/>
         <text name="eq_train_view_freestyle" text="Свободный"/>
-        <text name="eq_help_temperament_2" text="Слишком много ошибок, например галоп или выезд из манежа, завершают программу; пройдите её до конца, чтобы получить большой бонус к темпераменту. Вне манежа шаг и осаживание по-прежнему немного тренируют темперамент. Лакомства вроде моркови тоже отлично улучшают темперамент."/>
-        <text name="eq_help_temperament_1" text="Тренировка темперамента учит лошадь послушанию, и для неё нужен манеж для выездки: купите его в магазине или расставьте буквы для выездки. Подъедьте к нему, и начнётся программа: двигайтесь к буквам заданным аллюром, останавливайтесь, осаживайте и делайте вольты. Выполняйте каждую команду вовремя, чтобы повышать множитель."/>
+        <text name="eq_help_temperament_2" text="Три ошибки схемы (потеря линии, выезд из манежа или остановка на месте) завершают езду; доведите её до конца ради бонуса к темпераменту, растущего с вашей оценкой. Более спокойная лошадь видит линию дальше и раньше получает предупреждение о сменах. Буквы Riding Hall дают прежнюю программу переездов между буквами. Вне манежа шаг и осаживание по-прежнему немного тренируют темперамент, а лакомства вроде моркови тоже помогают."/>
+        <text name="eq_help_temperament_1" text="Тренировка темперамента учит лошадь послушанию, и для неё нужен манеж для выездки: купите его в магазине или расставьте буквы. В манеже из магазина подъедьте к A, и начнётся езда из фигур: вольты, диагонали, серпантины и другие, нарисованные золотой линией на земле. Держитесь линии и меняйте аллюр или останавливайтесь там, где сказано; каждый элемент оценивается из 10."/>
         <text name="eq_help_temperament_title" text="Тренировка: Темперамент"/>
         <text name="eq_help_agility_2" text="Множитель теряется, если не взять новое препятствие вовремя или слишком сильно потерять скорость. Прыжки без препятствия немного тренируют, но не повышают множитель."/>
         <text name="eq_help_agility_1" text="Ловкость — это прыжки через препятствия, хотя смена аллюров тоже немного помогает. Берите препятствия, чтобы набрать множитель Ловкости. Он гаснет через десять секунд или раньше, если задеть препятствие."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Программа начата"/>
         <text name="eq_pop_routineFault" text="Ошибка %d/%d"/>
         <text name="eq_pop_routineTest" text="Езда завершена!"/>
-        <text name="eq_pop_routineLost" text="Программа прервана"/>
+        <text name="eq_pop_routineLost" text="Выездка отменена"/>
         <text name="eq_pop_comboLost" text="Комбо потеряно"/>
         <text name="eq_pop_knock" text="-%d с!"/>
         <text name="eq_pop_clear" text="Чисто!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Рысь"/>
         <text name="eq_dressage_gait_canter" text="Галоп"/>
         <text name="eq_dressage_change" text="Смена: %s"/>
+        <text name="eq_dressage_gaitChange" text="Смена аллюра"/>
+        <text name="eq_dressage_gaitChangeAt" text="Смена аллюра у %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Смена ноги в воздухе: %s"/>
         <text name="eq_dressage_begin" text="Подъедьте к %s, чтобы начать программу выездки"/>
+        <text name="eq_dressage_enter" text="Вперёд! Въезд у %s"/>
         <text name="eq_dressage_reinBack" text="Осаживание!"/>
         <text name="eq_dressage_backwards" text="Двигайтесь назад"/>
         <text name="eq_dressage_circle_left" text="Вольт налево"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Далее: %s"/>
         <text name="eq_dressage_stand" text="Стоять"/>
         <text name="eq_dressage_marker" text="Буква %s"/>
+        <text name="eq_fig_enter" text="Въезд у %s, остановка у %s"/>
+        <text name="eq_fig_trackLeft" text="Дальше, по левой руке у %s"/>
+        <text name="eq_fig_trackRight" text="Дальше, по правой руке у %s"/>
+        <text name="eq_fig_circle" text="Вольт %d м у %s"/>
+        <text name="eq_fig_longDiagonal" text="Смена направления %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Смена направления %s-%s"/>
+        <text name="eq_fig_across" text="Поперёк манежа %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Полувольт у %s"/>
+        <text name="eq_fig_centreLeft" text="Средняя линия от %s, по левой руке у %s"/>
+        <text name="eq_fig_centreRight" text="Средняя линия от %s, по правой руке у %s"/>
+        <text name="eq_fig_serpentine" text="Серпантин, %d петли, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Петля %d м %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Смена направления через вольт у %s"/>
+        <text name="eq_fig_eight" text="Половина восьмёрки %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Средняя линия от %s, у X поворот к %s"/>
+        <text name="eq_fig_centreFromX" text="У %s поворот к X, по средней линии до %s"/>
+        <text name="eq_fig_halfPassCentre" text="Принимание от %s к средней линии, дальше до %s"/>
+        <text name="eq_fig_legYieldCentre" text="Средняя линия от %s, уступка шенкелю к %s"/>
+        <text name="eq_fig_passageRail" text="Пассаж %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Пассаж по диагонали %s-%s"/>
+        <text name="eq_dressage_passage" text="Пассаж: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Уступка шенкелю от %s и обратно"/>
+        <text name="eq_fig_halfPass" text="Принимание от %s и обратно"/>
+        <text name="eq_fig_shoulderIn" text="Плечо внутрь %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Уступка шенкелю вдоль стенки %s-%s"/>
+        <text name="eq_fig_travers" text="Траверс (круп внутрь) %s-%s"/>
+        <text name="eq_fig_renvers" text="Ренверс (круп наружу) %s-%s"/>
+        <text name="eq_lat_legYield" text="Уступка шенкелю: %s"/>
+        <text name="eq_lat_halfPass" text="Принимание: %s, сгибание %s"/>
+        <text name="eq_lat_shoulderIn" text="Плечо внутрь: %s, сгибание %s"/>
+        <text name="eq_lat_legYieldRail" text="Уступка вдоль стенки: %s"/>
+        <text name="eq_lat_travers" text="Траверс: %s, сгибание %s"/>
+        <text name="eq_lat_renvers" text="Ренверс: %s, сгибание %s"/>
+        <text name="eq_lat_left" text="влево"/>
+        <text name="eq_lat_right" text="вправо"/>
+        <text name="eq_lat_keys" text="Правая кнопка мыши: руление мышью, A/D боковое движение, Shift держит направление, а мышь сгибает голову."/>
+        <text name="eq_fig_final" text="Средняя линия от %s, остановка у %s"/>
+        <text name="eq_dressage_haltAt" text="Остановка у %s"/>
+        <text name="eq_dressage_piaffeAt" text="Пиаффе (%s) у %s: удерживайте Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Пируэт влево (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Пируэт вправо (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Пиаффе (%s)! Удерживайте Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Пируэт влево (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Пируэт вправо (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Вернитесь на линию!"/>
+        <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
+        <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>
+        <text name="eq_pop_routineScore" text="Езда завершена: %s%%"/>
         <text name="eq_train_routine_none" text="Подъедьте к манежу для выездки, чтобы начать программу"/>
         <text name="eq_train_routine" text="Программа x%d"/>
         <text name="eq_train_combo_none" text="Возьмите препятствие, чтобы начать комбо"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Нажмите, чтобы закрыть"/>
         <text name="eq_help_next" text="Нажмите, чтобы продолжить (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Помощь по тренировке"/>
+        <text name="input_EQ_SPRINT" text="Спринт"/>
         <text name="eq_train_worn" text="Шкала езды заполнена: на сегодня тренировка окончена"/>
         <text name="eq_ex_push" text="Разгон"/>
         <text name="eq_ex_recover" text="Отдых"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Шаг"/>
         <text name="eq_ex_halt" text="Стоит"/>
         <text name="eq_ex_reverse" text="Назад"/>
-        <text name="eq_ex_prompt_tap" text="Жмите W!"/>
+        <text name="eq_ex_prompt_tap" text="Кликайте!"/>
         <text name="eq_pop_ex_sprint" text="СПРИНТ!"/>
         <text name="eq_pop_ex_sprintOver" text="Спринт окончен"/>
         <text name="eq_pop_ex_blown" text="Утомлена!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Карьер"/>
         <text name="eq_help_gallop_1" text="Лошадь скачет карьером в трёх темпах. Нажмите W на галопе, чтобы начать Разгон: быстро, но шкала Нагрузки растёт, и тем быстрее, чем она выше. Нажмите S для Отдыха: более медленный карьер, при котором нагрузка снижается, пока вы продолжаете скакать; быстро в верхней и нижней трети шкалы, медленно в середине. Нажмите W снова, чтобы продолжить разгон. Более тренированная лошадь устаёт медленнее и восстанавливается быстрее."/>
         <text name="eq_help_gallop_2" text="Если во время Разгона шкала дойдёт до красной зоны «Утомлена», лошадь перейдёт на галоп и не сможет снова пойти карьером, пока шкала не опустеет. Чтобы перейти на галоп самому, нажмите S один раз во время Отдыха с пустой шкалой или дважды нажмите S в любой момент."/>
-        <text name="eq_help_gallop_3" text="Быстро жмите W на карьере для Спринта: намного быстрее, шкала сначала растёт медленно, потом всё быстрее, так что остановитесь до черты. После Спринта начинается Отдых, и нового Спринта не будет, пока шкала не опустеет. Только Спринт может пройти за черту «Утомлена» — для последнего рывка к финишу, но Спринт, закончившийся там, оставляет лошадь выдохшейся, и она очень медленно восстанавливается, пока не вернётся ниже черты."/>
+        <text name="eq_help_gallop_3" text="Быстро кликайте левой кнопкой мыши на карьере для Спринта: намного быстрее, шкала сначала растёт медленно, потом всё быстрее, так что остановитесь до черты. После Спринта начинается Отдых, и нового Спринта не будет, пока шкала не опустеет. Только Спринт может пройти за черту «Утомлена» — для последнего рывка к финишу, но Спринт, закончившийся там, оставляет лошадь выдохшейся, и она очень медленно восстанавливается, пока не вернётся ниже черты."/>
         <text name="eq_help_gallop_4" text="Тренировка: Спринт тренирует Скорость, и чем выше он поднял шкалу до окончания, тем ценнее: x2 на полпути до черты, до x10 прямо перед ней, но только x1, если он закончился за чертой. Разгон и Отдых тренируют Выносливость с множителем Выносливости, до x5. Разгон повышает его, быстрее у верха шкалы. Отдых в средней трети шкалы даёт лошади отдышаться и сохраняет большую часть множителя, а в верхней и нижней трети он быстро теряется, и лошадь, которая никогда не отдыхает, прогрессирует гораздо медленнее. «Утомлена» или «Выдохлась» сбрасывает его до x1 и останавливает тренировку Выносливости, пока шкала не опустеет."/>
-        <text name="eq_ex_hint_sprint" text="Быстро жмите W для спринта"/>
+        <text name="eq_ex_hint_sprint" text="Быстро кликайте левой кнопкой для спринта"/>
         <text name="eq_ex_hint_sprintRest" text="Спринт: сначала отдых до пустой шкалы"/>
         <text name="eq_ex_hint_locked" text="Галоп, пока шкала не опустеет"/>
         <text name="eq_ex_hint_canterOne" text="S: галоп"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="Выносливость тренируется во время Разгона и Отдыха на карьере с множителем Выносливости, до x5. Разгон повышает его, и чем ближе к черте, тем быстрее он растёт. Отдых снижает его: быстро в верхней трети шкалы, медленно в средней и снова быстро в нижней."/>
         <text name="eq_help_stamina_2" text="Поэтому разгоняйтесь почти до черты, сбавьте до середины шкалы и дайте лошади отдышаться там какое-то время, затем снова разгоняйтесь. Частая смена Разгона и Отдыха у верха утомляет лошадь, не повышая множитель, а «Утомлена» или «Выдохлась» сбрасывает его до x1 и останавливает тренировку Выносливости, пока шкала не опустеет."/>
         <text name="eq_help_speed_title" text="Тренировка: Скорость"/>
-        <text name="eq_help_speed_1" text="Скорость тренируется во время Спринта: быстро жмите W на карьере. Каждая секунда Спринта идёт в зачёт, а в конце умножается на высоту шкалы: x2 на полпути до черты, до x10 прямо перед ней."/>
+        <text name="eq_help_speed_1" text="Скорость тренируется во время Спринта: быстро кликайте левой кнопкой мыши на карьере. Каждая секунда Спринта идёт в зачёт, а в конце умножается на высоту шкалы: x2 на полпути до черты, до x10 прямо перед ней."/>
         <text name="eq_help_speed_2" text="Спринт, закончившийся за чертой, стоит только x1, так что перестаньте жать (или нажмите S) до черты. После Спринта лошадь должна отдохнуть до пустой шкалы, прежде чем снова спринтовать."/>
         <text name="eq_train_speedMult" text="Скорость x%.1f"/>
         <text name="eq_train_staminaMult" text="Выносливость x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядов, 16 м"/>
         <text name="eq_shop_bleachers_function" text="Места для зрителей на ваших соревнованиях: считается в пределах 60 м от маршрута или манежа для выездки."/>
         <text name="eq_shop_bleachersSponsors_function" text="Спонсорские щиты перед ней показывают марки вашей техники."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Новая езда по выездке, изменить или сохранить"/>
+        <text name="input_EQ_DT_PREV" text="Предыдущий вариант"/>
+        <text name="input_EQ_DT_NEXT" text="Следующий вариант"/>
+        <text name="input_EQ_DT_RANDOM" text="Случайный вариант"/>
+        <text name="input_EQ_DT_MODE" text="Фигуры или элементы на месте"/>
+        <text name="input_EQ_DT_ACCEPT" text="Оставить этот шаг"/>
+        <text name="input_EQ_DT_UNDO" text="Отменить последний шаг"/>
+        <text name="eq_dt_newAction" text="Новая езда по выездке"/>
+        <text name="eq_dt_editAction" text="Изменить езду по выездке"/>
+        <text name="eq_dt_saveAction" text="Сохранить езду по выездке"/>
+        <text name="eq_dt_cancelAction" text="Отменить езду по выездке"/>
+        <text name="eq_dt_deleteAction" text="Удалить езду по выездке"/>
+        <text name="eq_dt_deleteTitle" text="Удалить езду"/>
+        <text name="eq_dt_deleteAsk" text="Удалить езду этого манежа (%d шагов)? Снова будут случайные езды."/>
+        <text name="eq_dt_modeSpot" text="Показать элементы на месте"/>
+        <text name="eq_dt_modeFigure" text="Показать фигуры"/>
+        <text name="eq_dt_new" text="Новая езда по выездке: шаг %d"/>
+        <text name="eq_dt_editing" text="Изменение езды: шаг %d"/>
+        <text name="eq_dt_figure" text="Фигура"/>
+        <text name="eq_dt_spot" text="На месте"/>
+        <text name="eq_dt_noOptions" text="Здесь ничего не подходит: отмените или сохраните"/>
+        <text name="eq_dt_saved" text="Езда по выездке сохранена: элементов %d"/>
+        <text name="eq_dt_deleted" text="Езда по выездке удалена: на этом плацу снова случайные езды"/>
+        <text name="eq_dt_cancelled" text="Езда по выездке не сохранена"/>
+        <text name="eq_fig_halt" text="Остановка у %s"/>
+        <text name="eq_fig_reinBack" text="Остановка у %s, осаживание"/>
+        <text name="eq_fig_piaffe" text="Пиаффе у %s"/>
+        <text name="eq_fig_pirouette" text="Пируэт у %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: составить свою езду по выездке для этого плаца"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: изменить езду по выездке этого плаца"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Предыдущая буква"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Следующая буква"/>
+        <text name="input_EQ_DT_GAIT" text="Аллюр фигур"/>
+        <text name="eq_dt_gaitAction" text="Фигуры: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Пируэт налево у %s"/>
+        <text name="eq_fig_pirouetteRight" text="Пируэт направо у %s"/>
+        <text name="eq_dt_modeLateral" text="Показать боковые движения"/>
+        <text name="eq_dt_lateral" text="Боковое"/>
+        <text name="eq_shop_signboard_function" text="Увеличивает спонсорские доходы ваших соревнований."/>
     </texts>
 </l10n>

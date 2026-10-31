@@ -181,17 +181,230 @@ function EqDressageHooks.courseFor(vehicle, spec)
             Log:info("Dressage course: %s", markers ~= nil and string.format("%d markers", #markers) or "none near")
         end
         spec.eqCourse = markers
-        -- Entered in your own running event: the test there is the competition's length.
-        spec.eqTestMoves = nil
+        -- In the month of your own event the arena rides its fixed test, which counts for a
+        -- horse entered in it (EqHostManager.dressageTestFor).
+        spec.eqTest = nil
         if markers ~= nil and EqHostManager ~= nil then
-            local ok, moves = EqLog.try("EqDressageHooks testMovesFor", function()
-                return EqHostManager.testMovesFor(EqHostManager.horseIdOf(vehicle), markers)
+            local ok, test = EqLog.try("EqDressageHooks dressageTestFor", function()
+                return EqHostManager.dressageTestFor(EqHostManager.horseIdOf(vehicle), markers)
             end)
-            if ok then spec.eqTestMoves = moves end
+            if ok then spec.eqTest = test end
         end
+        -- The horse's temperament: how far ahead it sees the line, and how soon changes show.
+        local record = spec.cluster ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
+        spec.eqTemperament = record ~= nil and record.trained ~= nil and record.trained.temperament or nil
     end
     if spec.eqCourse == nil then return nil end
-    return { x = x, z = z, markers = spec.eqCourse, testMoves = spec.eqTestMoves }
+    -- The way the horse faces and its head bend, for lateral work (EqLateral).
+    local dirX, _, dirZ = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
+    local bend = EqLateral ~= nil and EqLateral.vehicle == vehicle and EqLateral.bend or 0
+    -- On the spot (Ctrl) for a piaffe or pirouette.
+    local spot = (spec.eqCollect or 0) >= 0.8
+    -- Collected going forward (Ctrl + W) for a passage.
+    local passage = spot and spec.eqPassage == true
+    return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ,
+        bend = bend, spot = spot, passage = passage }
+end
+
+
+-- The test's line on the ground (EqDressagePath) is a path guide (EqCourseGlow.path): gold until
+-- the test begins, then green to red by how far off it the horse is, eased over SHADE_MS so it
+-- doesn't flicker.
+EqDressageHooks.SHADE_MS = 400
+EqDressageHooks.shownDev = nil
+-- James 2026-10-30: white ahead, coloured as the horse reaches it (within NEAR metres, by how
+-- far off it is now), and the pieces up to BEHIND metres behind keep the colour they were ridden.
+EqDressageHooks.NEAR = 2
+EqDressageHooks.BEHIND = 3
+
+
+--- Each piece's colour along the line (pure): behind the horse by how far off its points were
+--- ridden, near it by now, white further on.
+--- @param run table EqDressagePath run
+--- @param from number index of the first point drawn
+--- @param now string the colour for the pieces the horse is on
+--- @return function (s) -> colour
+function EqDressageHooks.colourAlong(run, from, now)
+    local pts = run.test.pts
+    return function(s)
+        local here = run.s
+        if s + 1 <= here then
+            -- Behind: the worst of the points in the piece.
+            local worst = nil
+            for k = from, run.i do
+                if pts[k].s >= s and pts[k].s < s + 1 and run.devAt[k] ~= nil then worst = math.max(worst or 0, run.devAt[k]) end
+            end
+            return worst ~= nil and EqDressagePath.colourFor(worst) or now
+        elseif s <= here + EqDressageHooks.NEAR then
+            return now
+        end
+        return "white"
+    end
+end
+--- The lateral section at metres s along a test (pure), or nil.
+function EqDressageHooks.sectionAt(run, s)
+    for _, sec in ipairs(run.test.sections or {}) do
+        if s >= sec.s0 and s < sec.s1 then return sec end
+    end
+    return nil
+end
+
+
+--- A lateral section's pieces show the horse's body: facing the way it should face, the head
+--- bent the way asked (EqCourseGlow.body), cyan ahead where the line is otherwise white.
+--- @return function(s) for EqCourseGlow.path's shape
+function EqDressageHooks.bodyAlong(run)
+    local frame = run.frame
+    return function(s)
+        local sec = EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2)
+        if sec == nil then return nil end
+        return sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz, sec.bend or 0
+    end
+end
+
+
+-- A gold pole stands where a change or halt is coming, and where the test begins.
+EqDressageHooks.POLE_HEIGHT = 1.2
+-- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
+EqDressageHooks.pathRun = nil
+EqDressageHooks.pathAt = nil
+
+
+--- @return number the ground's height under a path point (worked out once)
+local function pointY(frame, p)
+    if p.wy == nil then
+        p.wx, p.wz = EqDressagePath.toWorld(frame, p.x, p.y)
+        local terrain = g_currentMission ~= nil and g_currentMission.terrainRootNode or nil
+        p.wy = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, p.wx, 0, p.wz) or 0
+    end
+    return p.wy
+end
+
+
+--- @return table|nil the dressage test being ridden now (started, drawn this half second), else
+--- nil: show jumping, cross country and plain riding get no line pull or quicker turns.
+function EqDressageHooks.testOn()
+    local run = EqDressageHooks.pathRun
+    local now = g_time or 0
+    if run == nil or not run.started or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then
+        return nil
+    end
+    return run
+end
+
+
+--- Temperament's stickiness for EqLateral: the pull back onto the test's line and the body angle
+--- a lateral section asks for, while a test is on (EqDressagePath.assist).
+--- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate
+function EqDressageHooks.assist(vehicle, lateral, dt)
+    local run = EqDressageHooks.testOn()
+    if run == nil then return 0, 0, nil, nil, 0 end
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    return EqDressagePath.assist(run, x, z, lateral, dt)
+end
+
+
+--- Draw the test's line ahead of the horse, from EqCourseHooks.onDraw between the course glow's
+--- begin and finish: as far ahead as the horse's temperament lets it see, and a pole at the
+--- change or halt coming up once it is near enough to show.
+--- @param vehicle table the ridden horse
+function EqDressageHooks.drawPath(vehicle)
+    local run = EqDressageHooks.pathRun
+    local now = g_time or 0
+    if run == nil or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then return end
+    local pts, frame = run.test.pts, run.frame
+    local first = run.started and run.i or 1
+    local reach = pts[first].s + run.look
+    -- A few pieces behind the horse too, coloured by how they were ridden.
+    local back = first
+    while back > 1 and pts[first].s - pts[back].s < EqDressageHooks.BEHIND do back = back - 1 end
+    local line = {}
+    for i = back, #pts do
+        local p = pts[i]
+        local y = pointY(frame, p)
+        table.insert(line, { x = p.wx, y = y, z = p.wz })
+        if p.s >= reach then break end
+    end
+    local colour = nil
+    if run.started then
+        local dt = EqDressageHooks.drawnAt ~= nil and math.max(0, now - EqDressageHooks.drawnAt) or 0
+        local dev = run.dev or 0
+        local shown = EqDressageHooks.shownDev or dev
+        EqDressageHooks.shownDev = shown + (dev - shown) * math.min(1, dt / EqDressageHooks.SHADE_MS)
+        local along = EqDressageHooks.colourAlong(run, back, EqDressagePath.colourFor(EqDressageHooks.shownDev))
+        colour = function(s)
+            local c = along(s)
+            if c == "white" and (EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2) ~= nil
+                or EqDressagePath.passageAt(run.test, s + EqCourseGlow.SEGMENT / 2) ~= nil) then return "cyan" end
+            return c
+        end
+    else
+        EqDressageHooks.shownDev = nil
+    end
+    EqDressageHooks.drawnAt = now
+    local style = { breaks = EqDressagePath.breaks(run.test), shape = EqDressageHooks.bodyAlong(run),
+        length = function(s) return EqDressagePath.dashLength(run.test, s) end,
+        step = function(s) return EqDressagePath.dashStep(run.test, s) end,
+        pointed = function(s) return EqDressagePath.gaitAt(run.test, s + 1e-6) == "canter" end }
+    if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, style) then return end
+    if not run.started then
+        local p = pts[1]
+        EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)
+        if run.countMs ~= nil then EqDressageHooks.drawEntrance(run) end
+        return
+    end
+    local event = EqDressagePath.upcoming(run)
+    if event ~= nil then
+        for k = run.i, #pts do
+            if pts[k].s >= event.s or k == #pts then
+                local y = pointY(frame, pts[k])
+                EqCourseGlow.pole(pts[k].wx, y, pts[k].wz, EqDressageHooks.POLE_HEIGHT)
+                break
+            end
+        end
+    end
+    -- Halts and movements on the spot ahead (and the one under way) drawn as symbols on the line.
+    local current = run.spot ~= nil and run.spot.event or (run.hold ~= nil and run.hold.event or nil)
+    for _, e in ipairs(run.test.events) do
+        local ahead = e.s >= run.s and e.s <= reach
+        if (e.kind == "halt" or e.kind == "spot") and (ahead or e == current) then
+            EqDressageHooks.drawSymbol(run, e)
+        end
+    end
+end
+
+
+-- The gold bar across the way in at A, marking where the marks begin (James, 2026-10-31).
+EqDressageHooks.ENTRANCE_WIDTH = 3
+
+
+--- The bar across the arena's entrance at A, in gold.
+function EqDressageHooks.drawEntrance(run)
+    local frame = run.frame
+    local halfW = EqDressageHooks.ENTRANCE_WIDTH / 2
+    local ax, az = EqDressagePath.toWorld(frame, -halfW, -frame.halfL)
+    local bx, bz = EqDressagePath.toWorld(frame, halfW, -frame.halfL)
+    local terrain = g_currentMission ~= nil and g_currentMission.terrainRootNode or nil
+    local ay = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, ax, 0, az) or 0
+    local by = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, bx, 0, bz) or 0
+    EqCourseGlow.strip(ax, ay + EqCourseGlow.PATH_LIFT, az, bx, by + EqCourseGlow.PATH_LIFT, bz, EqCourseGlow.PATH_WIDTH,
+        EqCourseGlow.PATH_THICK, nil)
+end
+
+
+--- One event's symbol at its point on the line, in gold.
+function EqDressageHooks.drawSymbol(run, e)
+    local pts, frame = run.test.pts, run.frame
+    local k = 2
+    while k < #pts and pts[k].s < e.s do k = k + 1 end
+    local a, b = pts[k - 1], pts[k]
+    pointY(frame, a)
+    local y = pointY(frame, b) + EqCourseGlow.PATH_LIFT
+    local dirX, dirZ = b.wx - a.wx, b.wz - a.wz
+    local kind = e.kind == "spot" and e.style or "halt"
+    for _, strip in ipairs(EqCourseGlow.symbol(kind, b.wx, y, b.wz, dirX, dirZ, e.turn)) do
+        EqCourseGlow.strip(strip[1], strip[2], strip[3], strip[4], strip[5], strip[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, nil)
+    end
 end
 
 

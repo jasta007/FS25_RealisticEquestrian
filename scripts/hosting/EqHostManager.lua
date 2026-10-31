@@ -584,34 +584,47 @@ function EqHostManager.onRoundDone(vehicle, course, sj)
 end
 
 
---- How long the dressage test is for this horse here: the rating's length when it is entered
---- in a running hosted event with a dressage phase not yet ridden, and these markers make an
---- arena big enough. nil for the usual test.
---- @param horseId string|nil
+--- The dressage test for an arena in the month of your own event: the event's fixed test,
+--- the same for every horse and every ride (training is random in other months, James
+--- 2026-10-29). It counts for a horse entered in the event that has not ridden its dressage yet,
+--- in an arena big enough for the event's rating. nil when no event of yours with a dressage
+--- phase is on.
+--- @param horseId string|nil the ridden horse
 --- @param markers table the dressage course's markers
---- @return number|nil moves
-function EqHostManager.testMovesFor(horseId, markers)
-    local event = EqHostManager.liveEventFor(horseId)
-    if event == nil or not hasPhase(event, "dressage") then return nil end
-    local rating = ratingOf(event)
-    local ridden = event.hosted.ridden ~= nil and event.hosted.ridden[horseId] or nil
-    if rating == nil or (ridden ~= nil and ridden.dressage ~= nil) then return nil end
-    for _, arena in ipairs(EqHosting.arenasFromMarkers(markers or {})) do
-        if arena.length >= rating.dressageArena then return rating.dressageMoves end
+--- @return table|nil test { seed, moves, counts }
+function EqHostManager.dressageTestFor(horseId, markers)
+    local mine = EqHostManager.liveEventFor(horseId)
+    local event = mine ~= nil and hasPhase(mine, "dressage") and mine or nil
+    if event == nil then
+        for _, other in pairs(EqCompetitionManager.events) do
+            if other.hosted ~= nil and hasPhase(other, "dressage") and (event == nil or other.id < event.id) then event = other end
+        end
     end
-    return nil
+    if event == nil then return nil end
+    local rating = ratingOf(event)
+    if rating == nil then return nil end
+    local counts = false
+    if event == mine then
+        local ridden = event.hosted.ridden ~= nil and event.hosted.ridden[horseId] or nil
+        if ridden == nil or ridden.dressage == nil then
+            for _, arena in ipairs(EqHosting.arenasFromMarkers(markers or {})) do
+                if arena.length >= rating.dressageArena then counts = true end
+            end
+        end
+    end
+    return { seed = string.format("dressage %s %s", tostring(event.id), tostring(event.hosted.rating)), moves = rating.dressageMoves, counts = counts }
 end
 
 
 --- A competition dressage test has ended (EqTrainingHooks).
 --- @param vehicle table
---- @param faults number
---- @param lost boolean ended on its last fault
-function EqHostManager.onTestDone(vehicle, faults, lost)
+--- @param percent number|nil the test's score
+--- @param lost boolean eliminated (three errors of course)
+function EqHostManager.onTestDone(vehicle, percent, lost)
     local horseId = EqHostManager.horseIdOf(vehicle)
     local event = EqHostManager.liveEventFor(horseId)
     if event == nil or not hasPhase(event, "dressage") then return end
-    keepRidden(event, horseId, "dressage", EqHosting.testSheet(faults, lost))
+    keepRidden(event, horseId, "dressage", EqHosting.testSheet(percent, lost))
 end
 
 

@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
         <text name="eq_train_view_freestyle" text="Vrij"/>
-        <text name="eq_help_temperament_2" text="Te veel fouten, zoals galopperen of de baan verlaten, beëindigen de proef; rijd hem uit voor een flinke temperamentboost. Buiten een rijbaan trainen stappen en achterwaarts gaan nog steeds een beetje temperament. Traktaties zoals wortels zijn ook een prima manier om temperament te verbeteren."/>
-        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd erheen en er begint een proef die je naar de letters stuurt in vaste gangen, laat halthouden, achterwaarts gaan en volte rijden. Voer elke opdracht op tijd uit om je vermenigvuldiger te verhogen."/>
+        <text name="eq_help_temperament_2" text="Drie fouten in de proef (de lijn kwijt, de baan uit of stilstaan) beëindigen de proef; rijd hem uit voor een temperamentbonus die meegroeit met je score. Een rustiger paard ziet meer van de lijn vooruit en krijgt eerder te zien wanneer er gewisseld wordt. Riding Hall-letters geven de oudere oefening met stukken tussen de letters. Buiten een baan trainen stappen en achterwaarts gaan nog een beetje temperament, en snoepjes zoals wortels helpen ook."/>
+        <text name="eq_help_temperament_1" text="Temperamenttraining leert je paard beheersing en vraagt om een dressuurrijbaan: koop er een in de winkel of zet dressuurletters neer. Rijd in een winkelbaan naar A en een proef met figuren begint: volten, diagonalen, slangenvolten en meer, als gouden lijn op de grond getekend. Blijf op de lijn en wissel van gang of houd halt waar het gevraagd wordt; elke oefening krijgt een cijfer tot 10."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
         <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
@@ -26,7 +26,7 @@
         <text name="eq_pop_routineStart" text="Proef gestart"/>
         <text name="eq_pop_routineFault" text="Fout %d/%d"/>
         <text name="eq_pop_routineTest" text="Proef voltooid!"/>
-        <text name="eq_pop_routineLost" text="Proef onderbroken"/>
+        <text name="eq_pop_routineLost" text="Dressuur afgebroken"/>
         <text name="eq_pop_comboLost" text="Combo kwijt"/>
         <text name="eq_pop_knock" text="-%d s!"/>
         <text name="eq_pop_clear" text="Foutloos!"/>
@@ -98,8 +98,12 @@
         <text name="eq_dressage_gait_trot" text="Draf"/>
         <text name="eq_dressage_gait_canter" text="Galop"/>
         <text name="eq_dressage_change" text="Wissel: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gangwissel"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gangwissel bij %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Galopwissel: %s"/>
         <text name="eq_dressage_begin" text="Ga naar %s om een dressuurproef te beginnen"/>
+        <text name="eq_dressage_enter" text="Go! Rijd binnen bij %s"/>
         <text name="eq_dressage_reinBack" text="Achterwaarts!"/>
         <text name="eq_dressage_backwards" text="Ga achteruit"/>
         <text name="eq_dressage_circle_left" text="Volte links"/>
@@ -108,6 +112,54 @@
         <text name="eq_dressage_next" text="Volgende: %s"/>
         <text name="eq_dressage_stand" text="Halt"/>
         <text name="eq_dressage_marker" text="Letter %s"/>
+        <text name="eq_fig_enter" text="Binnenkomen bij %s, halthouden bij %s"/>
+        <text name="eq_fig_trackLeft" text="Verder, linkerhand bij %s"/>
+        <text name="eq_fig_trackRight" text="Verder, rechterhand bij %s"/>
+        <text name="eq_fig_circle" text="Volte van %d m bij %s"/>
+        <text name="eq_fig_longDiagonal" text="Van hand veranderen %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Van hand veranderen %s-%s"/>
+        <text name="eq_fig_across" text="Dwars door de baan %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Halve volte bij %s"/>
+        <text name="eq_fig_centreLeft" text="Middenlijn bij %s, linkerhand bij %s"/>
+        <text name="eq_fig_centreRight" text="Middenlijn bij %s, rechterhand bij %s"/>
+        <text name="eq_fig_serpentine" text="Slangenvolte, %d bogen, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Boog van %d m %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Door de volte van hand veranderen bij %s"/>
+        <text name="eq_fig_eight" text="Halve acht %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Middenlijn bij %s, bij X afwenden naar %s"/>
+        <text name="eq_fig_centreFromX" text="Bij %s afwenden naar X, middenlijn tot %s"/>
+        <text name="eq_fig_halfPassCentre" text="Appuyement van %s naar de middenlijn, door tot %s"/>
+        <text name="eq_fig_legYieldCentre" text="Middenlijn bij %s, wijken voor de kuit naar %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage op de diagonaal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_fig_legYield" text="Wijken voor de kuit vanaf %s en terug"/>
+        <text name="eq_fig_halfPass" text="Appuyement vanaf %s en terug"/>
+        <text name="eq_fig_shoulderIn" text="Schouder binnenwaarts %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Wijken langs de baan %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (kroep binnenwaarts) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (kroep buitenwaarts) %s-%s"/>
+        <text name="eq_lat_legYield" text="Wijken: naar %s"/>
+        <text name="eq_lat_halfPass" text="Appuyement: naar %s, stelling %s"/>
+        <text name="eq_lat_shoulderIn" text="Schouder binnenwaarts: naar %s, stelling %s"/>
+        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
+        <text name="eq_lat_travers" text="Travers: naar %s, stelling %s"/>
+        <text name="eq_lat_renvers" text="Renvers: naar %s, stelling %s"/>
+        <text name="eq_lat_left" text="links"/>
+        <text name="eq_lat_right" text="rechts"/>
+        <text name="eq_lat_keys" text="Rechtermuisknop vast: sturen met de muis, A/D zijwaarts, Shift houdt de richting en de muis stelt het hoofd."/>
+        <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
+        <text name="eq_dressage_haltAt" text="Halt bij %s"/>
+        <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bij %s: Ctrl ingedrukt"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bij %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bij %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Piaffe (%s)! Houd Ctrl ingedrukt"/>
+        <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Terug op de lijn!"/>
+        <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
+        <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
+        <text name="eq_pop_routineScore" text="Proef voltooid: %s%%"/>
         <text name="eq_train_routine_none" text="Rijd naar een dressuurrijbaan om een proef te beginnen"/>
         <text name="eq_train_routine" text="Proef x%d"/>
         <text name="eq_train_combo_none" text="Spring een obstakel om een combo te beginnen"/>
@@ -155,6 +207,7 @@
         <text name="eq_help_close" text="Klik om te sluiten"/>
         <text name="eq_help_next" text="Klik om verder te gaan (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshulp"/>
+        <text name="input_EQ_SPRINT" text="Sprint"/>
         <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
         <text name="eq_ex_push" text="Doorzetten"/>
         <text name="eq_ex_recover" text="Herstellen"/>
@@ -167,7 +220,7 @@
         <text name="eq_ex_walk" text="Stap"/>
         <text name="eq_ex_halt" text="Stilstaan"/>
         <text name="eq_ex_reverse" text="Achteruit"/>
-        <text name="eq_ex_prompt_tap" text="Blijf op W tikken!"/>
+        <text name="eq_ex_prompt_tap" text="Blijf klikken!"/>
         <text name="eq_pop_ex_sprint" text="SPRINT!"/>
         <text name="eq_pop_ex_sprintOver" text="Sprint voorbij"/>
         <text name="eq_pop_ex_blown" text="Vermoeid!"/>
@@ -176,9 +229,9 @@
         <text name="eq_help_gallop_title" text="Gestrekte galop"/>
         <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo's. Druk vanuit galop op W om te beginnen met Doorzetten: snel, maar de Inspanningsbalk loopt vol, en sneller naarmate hij hoger staat. Druk op S om te Herstellen: een langzamere galop die de inspanning laat zakken terwijl je doorgaloppeert, snel in het bovenste en onderste derde van de balk, langzaam in het midden. Druk weer op W om door te zetten. Een fitter paard wordt langzamer moe en herstelt sneller."/>
         <text name="eq_help_gallop_2" text="Als de balk tijdens Doorzetten het rode deel Vermoeid bereikt, valt je paard terug in galop en kan het niet opnieuw gestrekt galopperen tot de balk leeg is. Om zelf terug te gaan naar galop druk je één keer op S tijdens Herstellen met een lege balk, of tik je op elk moment twee keer op S."/>
-        <text name="eq_help_gallop_3" text="Tik onafgebroken op W tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
+        <text name="eq_help_gallop_3" text="Klik onafgebroken met de linkermuisknop tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
         <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voor hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 vlak ervoor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, sneller bij de top. Herstellen in het middelste derde van de balk laat je paard op adem komen en houdt het grootste deel van de vermenigvuldiger, terwijl het bovenste en onderste derde hem snel verliezen, en een paard dat nooit op adem komt, gaat veel langzamer vooruit. Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
-        <text name="eq_ex_hint_sprint" text="Tik onafgebroken op W om te sprinten"/>
+        <text name="eq_ex_hint_sprint" text="Klik onafgebroken met links om te sprinten"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: eerst herstellen tot leeg"/>
         <text name="eq_ex_hint_locked" text="Galop tot de balk leeg is"/>
         <text name="eq_ex_hint_canterOne" text="S: galop"/>
@@ -197,7 +250,7 @@
         <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, en hoe dichter bij de lijn, hoe sneller hij stijgt. Herstellen verlaagt hem: snel in het bovenste derde van de balk, langzaam in het middelste derde en weer snel in het onderste derde."/>
         <text name="eq_help_stamina_2" text="Zet dus door tot dicht bij de lijn, neem gas terug tot het midden van de balk en laat je paard daar even op adem komen, en zet dan weer door. Heen en weer schakelen tussen Doorzetten en Herstellen bij de top maakt je paard moe zonder de vermenigvuldiger te verhogen, en Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
         <text name="eq_help_speed_title" text="Training: Snelheid"/>
-        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: tik onafgebroken op W tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
+        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: klik onafgebroken met de linkermuisknop tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
         <text name="eq_help_speed_2" text="Een Sprint die voorbij de lijn eindigt is maar x1 waard, dus stop met tikken (of druk op S) voor de lijn. Na een Sprint moet je paard herstellen tot een lege balk voor het weer kan sprinten."/>
         <text name="eq_train_speedMult" text="Snelheid x%.1f"/>
         <text name="eq_train_staminaMult" text="Conditie x%.1f"/>
@@ -869,5 +922,44 @@
         <text name="eq_shop_bleachers8x16" text="Tribune 8 rijen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Zitplaatsen voor de wedstrijden die je organiseert: telt binnen 60 m van een parcours of dressuurbak."/>
         <text name="eq_shop_bleachersSponsors_function" text="De sponsorborden ervoor tonen de merken van je machines."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nieuwe dressuurproef, bewerken of opslaan"/>
+        <text name="input_EQ_DT_PREV" text="Vorige optie"/>
+        <text name="input_EQ_DT_NEXT" text="Volgende optie"/>
+        <text name="input_EQ_DT_RANDOM" text="Willekeurige optie"/>
+        <text name="input_EQ_DT_MODE" text="Figuren of oefeningen ter plaatse"/>
+        <text name="input_EQ_DT_ACCEPT" text="Deze stap houden"/>
+        <text name="input_EQ_DT_UNDO" text="Laatste stap ongedaan maken"/>
+        <text name="eq_dt_newAction" text="Nieuwe dressuurproef"/>
+        <text name="eq_dt_editAction" text="Dressuurproef bewerken"/>
+        <text name="eq_dt_saveAction" text="Dressuurproef opslaan"/>
+        <text name="eq_dt_cancelAction" text="Dressuurproef annuleren"/>
+        <text name="eq_dt_deleteAction" text="Dressuurproef verwijderen"/>
+        <text name="eq_dt_deleteTitle" text="Dressuurproef verwijderen"/>
+        <text name="eq_dt_deleteAsk" text="De dressuurproef van deze rijbaan (%d stappen) verwijderen? Hij rijdt dan weer willekeurige proeven."/>
+        <text name="eq_dt_modeSpot" text="Oefeningen ter plaatse tonen"/>
+        <text name="eq_dt_modeFigure" text="Figuren tonen"/>
+        <text name="eq_dt_new" text="Nieuwe dressuurproef: stap %d"/>
+        <text name="eq_dt_editing" text="Dressuurproef bewerken: stap %d"/>
+        <text name="eq_dt_figure" text="Figuur"/>
+        <text name="eq_dt_spot" text="Ter plaatse"/>
+        <text name="eq_dt_noOptions" text="Hier past niets: ongedaan maken of opslaan"/>
+        <text name="eq_dt_saved" text="Dressuurproef opgeslagen: %d onderdelen"/>
+        <text name="eq_dt_deleted" text="Dressuurproef verwijderd: deze bak rijdt weer willekeurige proeven"/>
+        <text name="eq_dt_cancelled" text="Dressuurproef niet opgeslagen"/>
+        <text name="eq_fig_halt" text="Halthouden bij %s"/>
+        <text name="eq_fig_reinBack" text="Halthouden bij %s, achterwaarts"/>
+        <text name="eq_fig_piaffe" text="Piaffe bij %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette bij %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: maak je eigen dressuurproef voor deze bak"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: bewerk de dressuurproef van deze bak"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Vorige letter"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Volgende letter"/>
+        <text name="input_EQ_DT_GAIT" text="Gang van de figuren"/>
+        <text name="eq_dt_gaitAction" text="Figuren in: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirouette linksom bij %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirouette rechtsom bij %s"/>
+        <text name="eq_dt_modeLateral" text="Zijgangen tonen"/>
+        <text name="eq_dt_lateral" text="Zijgang"/>
+        <text name="eq_shop_signboard_function" text="Verhoogt de sponsorinkomsten van je evenementen."/>
     </texts>
 </l10n>
