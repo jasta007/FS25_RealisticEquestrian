@@ -522,6 +522,81 @@ function EqTrainingHooks.airTurn(spec, dt)
     end
 end
 
+-- How often the map's jumps are listed again for temperament's aim, ms.
+EqTrainingHooks.AIM_LIST_MS = 2000
+-- Only jumps within this many metres are turned into the horse's space each frame.
+EqTrainingHooks.AIM_LIST_RADIUS = 45
+
+--- The map's show jumps and cross country fences that a horse can jump now (not hidden or
+--- ghosted outside a round), listed again every AIM_LIST_MS.
+--- @return table { x, z, ax, az, bx, bz }
+local function aimJumps()
+    local now = g_time or 0
+    local cache = EqTrainingHooks.aimCache
+    if cache ~= nil and now - cache.at < EqTrainingHooks.AIM_LIST_MS and now >= cache.at then return cache.list end
+    local list = {}
+    if EqCourseHooks ~= nil and EqCourseHooks.listJumps ~= nil then
+        for _, kind in ipairs({ "showJumping", EqCourse.CROSS_COUNTRY }) do
+            local ok, jumps = EqLog.try("EqTrainingHooks.aimJumps listJumps", EqCourseHooks.listJumps,
+                kind ~= "showJumping" and kind or nil)
+            if ok and type(jumps) == "table" then
+                for _, jump in ipairs(jumps) do
+                    local piece = jump.node ~= nil and EqXcHide ~= nil and EqXcHide.byRoot ~= nil and EqXcHide.byRoot[jump.node] or nil
+                    local shown = piece == nil or piece.eqXcMode == nil or piece.eqXcMode == EqXcHide.SHOWN
+                    if shown and jump.node ~= nil and getVisibility ~= nil then shown = getVisibility(jump.node) end
+                    if shown then table.insert(list, jump) end
+                end
+            end
+        end
+    end
+    EqTrainingHooks.aimCache = { at = now, list = list }
+    return list
+end
+
+--- Temperament aims the horse at the middle of the jump ahead when it is pointed off centre
+--- (EqJump.aim). On the ground at a trot, canter or gallop, never in a dressage test.
+--- @param vehicle table
+--- @param spec table spec_rideable
+--- @param record table|nil
+--- @param sheet table
+--- @param gait string
+--- @param dt number ms
+function EqTrainingHooks.aimAtJump(vehicle, spec, record, sheet, gait, dt)
+    if gait ~= "trot" and gait ~= "canter" and gait ~= "gallop" then return end
+    if type(spec.currentTurnAngle) ~= "number" or vehicle.rootNode == nil then return end
+    local routine = sheet.routine
+    if routine ~= nil and routine.active and routine.kind == "markers" then return end
+    local temperament = record ~= nil and record.trained ~= nil and record.trained.temperament or nil
+    if EqJump.aimStrength(temperament) <= 0 then return end
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local radius = EqTrainingHooks.AIM_LIST_RADIUS
+    local near = {}
+    for _, jump in ipairs(aimJumps()) do
+        local jx, jz = jump.x or jump.ax, jump.z or jump.az
+        if math.abs(jx - x) < radius and math.abs(jz - z) < radius then
+            local ax, _, az = worldToLocal(vehicle.rootNode, jump.ax, 0, jump.az)
+            local bx, _, bz = worldToLocal(vehicle.rootNode, jump.bx, 0, jump.bz)
+            table.insert(near, { ax = ax, az = az, bx = bx, bz = bz })
+        end
+    end
+    if #near == 0 then spec.eqAiming = nil return end
+    local values = spec.inputValues or {}
+    local axis = values.axisSteer or 0
+    if axis == 0 then axis = values.axisSteerSend or 0 end
+    if axis == 0 and Input ~= nil and Input.isKeyPressed ~= nil and Input.KEY_a ~= nil and Input.KEY_d ~= nil then
+        axis = (Input.isKeyPressed(Input.KEY_d) and 1 or 0) - (Input.isKeyPressed(Input.KEY_a) and 1 or 0)
+    end
+    local rate, _, offset = EqJump.aim(near, temperament, axis)
+    if rate == 0 then spec.eqAiming = nil return end
+    -- currentTurnAngle grows turning left, as rate does.
+    spec.currentTurnAngle = spec.currentTurnAngle + rate * dt / 1000
+    if not spec.eqAiming then
+        spec.eqAiming = true
+        Log:info("Jump aim: temperament %.0f turns %s toward the middle (offset %.2f of half the jump, %.0f deg/s)",
+            temperament or 50, rate > 0 and "left" or "right", offset or 0, math.deg(math.abs(rate)))
+    end
+end
+
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
 --- @param spec table spec_rideable
@@ -631,7 +706,11 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     end
     spec.eqAirborne = airborne
     EqExertion.setAir(sheet.exertion, airborne)
-    if airborne then EqTrainingHooks.airTurn(spec, dt) end
+    if airborne then
+        EqTrainingHooks.airTurn(spec, dt)
+    else
+        EqLog.try("EqTrainingHooks.aimAtJump", EqTrainingHooks.aimAtJump, vehicle, spec, record, sheet, gait, dt)
+    end
 
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil

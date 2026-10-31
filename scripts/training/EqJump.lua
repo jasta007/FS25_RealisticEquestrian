@@ -70,6 +70,23 @@ EqJump.COLLECT_SPEED_SHARE = 0.5
 EqJump.COLLECT_TROT_SHARE = 1.15
 EqJump.COLLECT_HEIGHT_SHARE = 1.05
 
+-- Temperament aims a horse at the middle of the jump ahead (James, 2026-10-31: near the
+-- middle it goes where it is pointed; off centre a steady horse tries to jump where it scores
+-- rather than run out or shave the end). Only show jumps and cross country fences, never dressage.
+-- Ends of the jump count as -1 and +1: inside AIM_CENTRE nothing happens, the pull is full to
+-- AIM_FULL and fades out by AIM_WIDE (pointing well past the end means the rider is going round).
+EqJump.AIM_CENTRE = 0.45
+EqJump.AIM_FULL = 1.3
+EqJump.AIM_WIDE = 2
+-- Looked for between these distances ahead, approached no more than AIM_ANGLE degrees off square.
+EqJump.AIM_NEAR = 2
+EqJump.AIM_REACH = 18
+EqJump.AIM_ANGLE = 60
+-- From this temperament up, full at 100; turn rate = heading error x AIM_GAIN, at most AIM_RATE rad/s.
+EqJump.AIM_FROM = 50
+EqJump.AIM_GAIN = 2
+EqJump.AIM_RATE = 0.35
+
 -- What the eqJump console command may change: its short name, the field, and limits.
 EqJump.TUNABLE = {
     { name = "rise", key = "RISE_SHARE", min = 1, max = 5 },
@@ -93,7 +110,77 @@ EqJump.TUNABLE = {
     { name = "cspeed", key = "COLLECT_SPEED_SHARE", min = 0.1, max = 1 },
     { name = "ctrot", key = "COLLECT_TROT_SHARE", min = 0.2, max = 3 },
     { name = "cheight", key = "COLLECT_HEIGHT_SHARE", min = 0.4, max = 2 },
+    { name = "aimcentre", key = "AIM_CENTRE", min = 0, max = 1 },
+    { name = "aimwide", key = "AIM_WIDE", min = 1, max = 4 },
+    { name = "aimreach", key = "AIM_REACH", min = 4, max = 40 },
+    { name = "aimfrom", key = "AIM_FROM", min = 0, max = 100 },
+    { name = "aimrate", key = "AIM_RATE", min = 0, max = 2 },
+    { name = "aimgain", key = "AIM_GAIN", min = 0, max = 10 },
 }
+
+
+--- How hard temperament aims (pure): 0 below AIM_FROM, 1 at 100.
+--- @param temperament number|nil
+--- @return number 0..1
+function EqJump.aimStrength(temperament)
+    local from = EqJump.AIM_FROM
+    if from >= 100 then return (temperament or 0) >= 100 and 1 or 0 end
+    return math.max(0, math.min(1, ((temperament or 50) - from) / (100 - from)))
+end
+
+
+--- The jump the horse is heading for (pure), in the horse's own space: it stands at 0,0 facing
+--- +z, +x on its left. Each jump is { ax, az, bx, bz }, its two ends.
+--- @param jumps table
+--- @return table|nil jump, number|nil offset (-1 at a, +1 at b), number|nil distance ahead
+function EqJump.jumpAhead(jumps)
+    local best, bestOffset, bestDistance = nil, nil, nil
+    local square = math.cos(math.rad(EqJump.AIM_ANGLE))
+    for _, jump in ipairs(jumps) do
+        local dx, dz = jump.bx - jump.ax, jump.bz - jump.az
+        local length = math.sqrt(dx * dx + dz * dz)
+        -- across the horse's path, near enough square on
+        if length > 0.1 and math.abs(dx) / length >= square then
+            local p = -jump.ax / dx
+            local distance = jump.az + p * dz
+            local offset = (p - 0.5) * 2
+            if distance >= EqJump.AIM_NEAR and distance <= EqJump.AIM_REACH and math.abs(offset) <= EqJump.AIM_WIDE
+                and (bestDistance == nil or distance < bestDistance) then
+                best, bestOffset, bestDistance = jump, offset, distance
+            end
+        end
+    end
+    return best, bestOffset, bestDistance
+end
+
+
+--- Temperament's turn toward the middle of the jump ahead (pure), in rad/s, positive to the
+--- left. Nothing near the middle, below AIM_FROM, or while the rider steers the other way.
+--- @param jumps table in the horse's space (see jumpAhead)
+--- @param temperament number|nil
+--- @param axis number|nil the rider's steering, right positive
+--- @return number rate, table|nil jump, number|nil offset
+function EqJump.aim(jumps, temperament, axis)
+    local strength = EqJump.aimStrength(temperament)
+    if strength <= 0 then return 0 end
+    local jump, offset = EqJump.jumpAhead(jumps)
+    if jump == nil or math.abs(offset) <= EqJump.AIM_CENTRE then return 0, jump, offset end
+    local wide = math.abs(offset)
+    local fade = 1
+    if wide > EqJump.AIM_FULL then
+        fade = math.max(0, (EqJump.AIM_WIDE - wide) / math.max(0.01, EqJump.AIM_WIDE - EqJump.AIM_FULL))
+    end
+    -- aim just inside the middle band, on the same side
+    local side = offset > 0 and 1 or -1
+    local p = 0.5 + side * EqJump.AIM_CENTRE * 0.25
+    local tx = jump.ax + p * (jump.bx - jump.ax)
+    local tz = jump.az + p * (jump.bz - jump.az)
+    local err = math.atan2(tx, tz)
+    local rate = math.max(-EqJump.AIM_RATE, math.min(EqJump.AIM_RATE, err * EqJump.AIM_GAIN)) * strength * fade
+    -- The rider steering away wins: a rider going round the jump is let go.
+    if axis ~= nil and axis ~= 0 and ((rate > 0 and axis > 0) or (rate < 0 and axis < 0)) then return 0, jump, offset end
+    return rate, jump, offset
+end
 
 
 --- The pull down for this frame (pure), as the base game's signed spec.gravity.

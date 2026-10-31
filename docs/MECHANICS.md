@@ -302,7 +302,7 @@ horse carries 1.45 times its take-off speed through the air from a canter (1.8 f
 at a gallop or once you ask for a slower gait) so it still covers ground. A **collected jump**: jump from a trot (the base game only jumps from a canter),
 or hold Ctrl (or let go of it less than half a second before) and press jump. From a canter or gallop the horse gathers itself on the ground over 0.26 s (0.08 s from a trot),
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
-distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. The `eqJump` console command shows and changes these numbers until the game restarts.
+distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. A steady horse (temperament above 50) aims for the middle of a show jump or cross country fence ahead (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test. The `eqJump` console command shows and changes these numbers until the game restarts.
 
 ### Staff, age and metabolism
 

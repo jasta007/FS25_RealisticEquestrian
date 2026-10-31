@@ -4169,6 +4169,26 @@ end)()
     check("jump tuning: clamped to its limits", ok and J.FALL_SHARE == 6)
     check("jump tuning: unknown and missing values refused", not J.set("wobble", 1) and not J.set("fall", nil))
     J.FALL_SHARE = was
+    -- Temperament's aim: a 4 m jump 10 m ahead, square on; +x is the horse's left.
+    local function jumpAt(centreX) return { { ax = centreX - 2, az = 10, bx = centreX + 2, bz = 10 } } end
+    check("aim: none below AIM_FROM, full at 100", J.aimStrength(J.AIM_FROM - 5) == 0 and J.aimStrength(100) == 1
+        and J.aim(jumpAt(1.6), J.AIM_FROM - 5) == 0)
+    check("aim: pointed near the middle the horse goes where it is pointed", J.aim(jumpAt(0.5), 100) == 0)
+    local _, _, offset = J.aim(jumpAt(1.6), 100)
+    local left = J.aim(jumpAt(1.6), 100)
+    local right = J.aim(jumpAt(-1.6), 100)
+    check("aim: off centre it turns toward the middle", left > 0 and right < 0 and near(left, -right),
+        string.format("left %s right %s offset %s", tostring(left), tostring(right), tostring(offset)))
+    check("aim: at most AIM_RATE, weaker with less temperament", left <= J.AIM_RATE + 1e-9 and J.aim(jumpAt(1.6), 75) < left)
+    check("aim: pointed far past the end it lets the rider go round", J.aim(jumpAt(2 * (J.AIM_WIDE + 0.1)), 100) == 0)
+    check("aim: the rider steering away wins, steering in is fine", J.aim(jumpAt(1.6), 100, 1) == 0
+        and J.aim(jumpAt(1.6), 100, -1) == left)
+    check("aim: jumps behind, too far or side on are left alone",
+        J.aim({ { ax = -0.4, az = -10, bx = 3.6, bz = -10 } }, 100) == 0
+        and J.aim({ { ax = -0.4, az = J.AIM_REACH + 5, bx = 3.6, bz = J.AIM_REACH + 5 } }, 100) == 0
+        and J.aim({ { ax = 1, az = 8, bx = 1.5, bz = 12 } }, 100) == 0)
+    local nearest = J.jumpAhead({ { ax = -2, az = 15, bx = 2, bz = 15 }, { ax = -2, az = 6, bx = 2, bz = 6 } })
+    check("aim: the nearest jump ahead counts", nearest ~= nil and nearest.az == 6)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
