@@ -281,13 +281,24 @@ local function pointY(frame, p)
 end
 
 
+--- @return table|nil the dressage test being ridden now (started, drawn this half second), else
+--- nil: show jumping, cross country and plain riding get no line pull or quicker turns.
+function EqDressageHooks.testOn()
+    local run = EqDressageHooks.pathRun
+    local now = g_time or 0
+    if run == nil or not run.started or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then
+        return nil
+    end
+    return run
+end
+
+
 --- Temperament's stickiness for EqLateral: the pull back onto the test's line and the body angle
 --- a lateral section asks for, while a test is on (EqDressagePath.assist).
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate
 function EqDressageHooks.assist(vehicle, lateral, dt)
-    local run = EqDressageHooks.pathRun
-    local now = g_time or 0
-    if run == nil or EqDressageHooks.pathAt == nil or now - EqDressageHooks.pathAt > 500 or now < EqDressageHooks.pathAt then return 0, 0, nil, nil, 0 end
+    local run = EqDressageHooks.testOn()
+    if run == nil then return 0, 0, nil, nil, 0 end
     local x, _, z = getWorldTranslation(vehicle.rootNode)
     return EqDressagePath.assist(run, x, z, lateral, dt)
 end
