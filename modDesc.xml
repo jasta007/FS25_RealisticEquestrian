@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="115">
     <author>Jasta007</author>
-    <version>0.6.0.0</version>
+    <version>0.7.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -15,12 +15,15 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 0.6.0.0:
-- Host your own events: book a month, ride your own rounds, earn entries and gate takings
-- Our own bleachers with sponsor boards
-- Ten show jumps whose poles fall when hit, in colours you pick
-- Six new cross country jumps: corners, roll tops, a table and a big log
-- L and R over jump flags in construction and course editing
+Changelog 0.7.0.0:
+- Dressage tests are figures drawn on the ground, each marked out of 10
+- Lateral work, piaffe, passage and pirouettes; right mouse drag steers
+- Build your own dressage test for each shop arena (Ctrl+L)
+- Jumps feel less floaty; jump from a trot (or Ctrl + Space) for a collected jump
+- Sprint is now the left mouse button; W and S only change gait
+- Dressage outfit in the wardrobe: top hat, breeches, gloves, jacket and tall boots
+- Our HUD hides when the game HUD is hidden, for filming
+- New shop images, rebalanced hosting setup fees, signboards raise sponsor takings
 
 Made by Jasta007.]]>
         </en>
@@ -33,12 +36,15 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Änderungen 0.6.0.0:
-- Eigene Turniere ausrichten: Monat buchen, eigene Runden reiten, Startgelder und Eintritt einnehmen
-- Eigene Tribünen mit Sponsorentafeln
-- Zehn Springhindernisse, deren Stangen bei Berührung fallen, in Farben Ihrer Wahl
-- Sechs neue Geländehindernisse: Ecken, Rolltops, ein Tisch und ein großer Baumstamm
-- L und R über den Flaggen im Baumodus und beim Bearbeiten von Parcours
+Änderungen 0.7.0.0:
+- Dressurprüfungen sind Figuren, die auf den Boden gezeichnet und jeweils mit 0 bis 10 benotet werden
+- Seitengänge, Piaffe, Passage und Pirouetten; Ziehen mit der rechten Maustaste lenkt
+- Eigene Dressurprüfung für jedes Viereck aus dem Shop bauen (Strg+L)
+- Sprünge wirken weniger schwebend; aus dem Trab (oder Strg + Leertaste) gibt es einen versammelten Sprung
+- Sprint liegt jetzt auf der linken Maustaste; W und S wechseln nur die Gangart
+- Dressur-Outfit in der Garderobe: Zylinder, Reithose, Handschuhe, Jackett und hohe Stiefel
+- Unser HUD verschwindet mit dem Spiel-HUD, zum Filmen
+- Neue Shop-Bilder, neu abgestimmte Ausrichtungsgebühren, Werbetafeln erhöhen die Sponsoreneinnahmen
 
 Von Jasta007.]]>
         </de>
@@ -51,12 +57,15 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changements 0.6.0.0 :
-- Organisez vos propres concours : réservez un mois, montez vos propres tours, encaissez engagements et entrées
-- Nos propres tribunes avec panneaux de sponsors
-- Dix obstacles de saut dont les barres tombent au contact, aux couleurs de votre choix
-- Six nouveaux obstacles de cross : angles, roll tops, une table et un gros tronc
-- L et R au-dessus des drapeaux en construction et en édition de parcours
+Changements 0.7.0.0 :
+- Les reprises de dressage sont des figures tracées au sol, chacune notée sur 10
+- Travail latéral, piaffer, passage et pirouettes ; glisser avec le clic droit pour diriger
+- Créez votre propre reprise pour chaque carrière de la boutique (Ctrl+L)
+- Des sauts moins flottants ; sauter depuis le trot (ou Ctrl + Espace) pour un saut rassemblé
+- Le sprint passe sur le clic gauche ; W et S changent seulement d'allure
+- Tenue de dressage dans la garde-robe : haut-de-forme, culotte, gants, veste et bottes hautes
+- Notre HUD se cache avec celui du jeu, pour filmer
+- Nouvelles images en boutique, frais d'organisation rééquilibrés, panneaux qui augmentent les recettes des sponsors
 
 Par Jasta007.]]>
         </fr>
@@ -69,12 +78,15 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Cambios 0.6.0.0:
-- Organiza tus propios concursos: reserva un mes, monta tus recorridos, cobra inscripciones y taquilla
-- Gradas propias con carteles de patrocinadores
-- Diez obstáculos de salto cuyas barras caen al tocarlas, en los colores que elijas
-- Seis nuevos obstáculos de cross: esquinas, roll tops, una mesa y un gran tronco
-- L y R sobre las banderas en construcción y al editar recorridos
+Cambios 0.7.0.0:
+- Las pruebas de doma son figuras dibujadas en el suelo, cada una puntuada sobre 10
+- Trabajo lateral, piaffe, passage y piruetas; arrastrar con el botón derecho para dirigir
+- Crea tu propia prueba de doma para cada pista de la tienda (Ctrl+L)
+- Saltos menos flotantes; salta desde el trote (o Ctrl + Espacio) para un salto reunido
+- El sprint pasa al botón izquierdo del ratón; W y S solo cambian el aire
+- Traje de doma en el vestuario: sombrero de copa, pantalones, guantes, chaqueta y botas altas
+- Nuestro HUD se oculta con el del juego, para grabar
+- Nuevas imágenes en la tienda, tarifas de organización reequilibradas, carteles que suben los ingresos de patrocinio
 
 Por Jasta007.]]>
         </es>
