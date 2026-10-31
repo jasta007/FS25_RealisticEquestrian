@@ -4104,8 +4104,8 @@ end)()
         if e ~= nil then events[e] = (events[e] or 0) + 1 end
         if e == "lost" then break end
     end
-    check("standing still is an error of course, and the third eliminates", events.fault == 2 and events.lost == 1
-        and stuck.eliminated)
+    check("standing still is no error of course, but 30 s of it cancels the test", events.fault == nil and events.lost == 1
+        and stuck.cancelled and not stuck.eliminated)
     -- A halt made at the gold bar counts however short the horse's warning (James, 2026-10-31).
     local haltEvent = nil
     for _, e in ipairs(one.events) do if e.kind == "halt" then haltEvent = e break end end

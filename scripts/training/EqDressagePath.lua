@@ -204,13 +204,17 @@ EqDressagePath.SPOT_GRACE_MS = 4500
 -- calm-less horse's 3 m warning, went unseen and scored as the wrong gait).
 EqDressagePath.HALT_WINDOW = 8
 -- Errors of course: further than LOST_DEV off the line for LOST_MS, out of the arena for OUT_MS
--- (OUT_MARGIN past the rail), or no headway for STALL_MS. Each costs ERROR_PEN on the movement;
+-- (OUT_MARGIN past the rail). Each costs ERROR_PEN on the movement;
 -- ERRORS eliminate. The line then picks up at the nearest point up to SNAP_AHEAD on.
 EqDressagePath.LOST_DEV = 6
 EqDressagePath.LOST_MS = 4000
 EqDressagePath.OUT_MARGIN = 0.5
 EqDressagePath.OUT_MS = 3000
-EqDressagePath.STALL_MS = 10000
+-- Standing still (no headway) is not an error (James, 2026-10-31: stuck after a halt, unsure
+-- what came next, three errors in 30 s ended the test): after STALL_TELL_MS the gait asked is
+-- shown, the wrong gait costs as usual, and after STALL_MS the test is cancelled.
+EqDressagePath.STALL_TELL_MS = 3000
+EqDressagePath.STALL_MS = 30000
 EqDressagePath.ERROR_PEN = 3
 EqDressagePath.ERRORS = 3
 EqDressagePath.SNAP_AHEAD = 40
@@ -1707,7 +1711,11 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     local out = run.s > run.inFrom and (math.abs(x) > frame.halfW + EqDressagePath.OUT_MARGIN or math.abs(y) > frame.halfL + EqDressagePath.OUT_MARGIN)
     run.outMs = out and run.outMs + dt or 0
     run.stallMs = run.stallMs + dt
-    if run.lostMs >= EqDressagePath.LOST_MS or run.outMs >= EqDressagePath.OUT_MS or run.stallMs >= EqDressagePath.STALL_MS then
+    if run.stallMs >= EqDressagePath.STALL_MS then
+        run.cancelled = true
+        return "lost"
+    end
+    if run.lostMs >= EqDressagePath.LOST_MS or run.outMs >= EqDressagePath.OUT_MS then
         return errorOfCourse(run, x, y)
     end
     return event
