@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Galopwissel: %s"/>
         <text name="eq_dressage_begin" text="Ga naar %s om een dressuurproef te beginnen"/>
+        <text name="eq_dressage_enter" text="Go! Rijd binnen bij %s"/>
         <text name="eq_dressage_reinBack" text="Achterwaarts!"/>
         <text name="eq_dressage_backwards" text="Ga achteruit"/>
         <text name="eq_dressage_circle_left" text="Volte links"/>

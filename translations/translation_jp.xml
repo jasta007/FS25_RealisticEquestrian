@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s！"/>
         <text name="eq_dressage_flying" text="踏歩変換：%s"/>
         <text name="eq_dressage_begin" text="%sへ移動して馬場馬術の演技を開始"/>
+        <text name="eq_dressage_enter" text="スタート！%s から入場"/>
         <text name="eq_dressage_reinBack" text="後退！"/>
         <text name="eq_dressage_backwards" text="後ろへ進む"/>
         <text name="eq_dressage_circle_left" text="左へ輪乗り"/>

@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Cambio di galoppo in aria: %s"/>
         <text name="eq_dressage_begin" text="Vai a %s per iniziare una ripresa di dressage"/>
+        <text name="eq_dressage_enter" text="Via! Entra in %s"/>
         <text name="eq_dressage_reinBack" text="Rinculo!"/>
         <text name="eq_dressage_backwards" text="Vai all'indietro"/>
         <text name="eq_dressage_circle_left" text="Circolo a sinistra"/>

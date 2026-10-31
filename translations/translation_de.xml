@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Fliegender Wechsel: %s"/>
         <text name="eq_dressage_begin" text="Zum %s reiten, um eine Dressuraufgabe zu beginnen"/>
+        <text name="eq_dressage_enter" text="Los! Bei %s einreiten"/>
         <text name="eq_dressage_reinBack" text="Rückwärtsrichten!"/>
         <text name="eq_dressage_backwards" text="Rückwärts gehen"/>
         <text name="eq_dressage_circle_left" text="Volte links"/>

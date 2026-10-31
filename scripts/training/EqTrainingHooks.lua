@@ -1201,8 +1201,16 @@ local function pathRows(rows, routine)
     table.insert(rows, { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color,
         right = marked and string.format("%.1f%%", EqDressagePath.percent(run)) or nil, rightColor = color })
     if not run.started then
-        -- "Move to A to begin": not an alert, so beside the panel, not in the middle.
-        EqTrainingHud.drawPanelNote(string.format(g_i18n:getText("eq_dressage_begin"), "A"), color, true)
+        if run.go then
+            -- Counted down: in through the gold bar at A and the marking starts.
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_enter"), "A"), nil, color)
+        elseif run.countMs ~= nil then
+            local left = math.max(1, math.ceil((EqDressagePath.COUNT_MS - run.countMs) / 1000))
+            EqTrainingHud.drawPrompt(tostring(left), 1 - run.countMs / EqDressagePath.COUNT_MS, color)
+        else
+            -- "Move to A to begin": not an alert, so beside the panel, not in the middle.
+            EqTrainingHud.drawPanelNote(string.format(g_i18n:getText("eq_dressage_begin"), "A"), color, true)
+        end
         return
     end
     -- The movement the horse is riding now, on the panel only (James 2026-10-30: the line on the

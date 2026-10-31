@@ -336,6 +336,7 @@ function EqDressageHooks.drawPath(vehicle)
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)
+        if run.countMs ~= nil then EqDressageHooks.drawEntrance(run) end
         return
     end
     local event = EqDressagePath.upcoming(run)
@@ -356,6 +357,24 @@ function EqDressageHooks.drawPath(vehicle)
             EqDressageHooks.drawSymbol(run, e)
         end
     end
+end
+
+
+-- The gold bar across the way in at A, marking where the marks begin (James, 2026-10-31).
+EqDressageHooks.ENTRANCE_WIDTH = 3
+
+
+--- The bar across the arena's entrance at A, in gold.
+function EqDressageHooks.drawEntrance(run)
+    local frame = run.frame
+    local halfW = EqDressageHooks.ENTRANCE_WIDTH / 2
+    local ax, az = EqDressagePath.toWorld(frame, -halfW, -frame.halfL)
+    local bx, bz = EqDressagePath.toWorld(frame, halfW, -frame.halfL)
+    local terrain = g_currentMission ~= nil and g_currentMission.terrainRootNode or nil
+    local ay = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, ax, 0, az) or 0
+    local by = terrain ~= nil and getTerrainHeightAtWorldPos(terrain, bx, 0, bz) or 0
+    EqCourseGlow.strip(ax, ay + EqCourseGlow.PATH_LIFT, az, bx, by + EqCourseGlow.PATH_LIFT, bz, EqCourseGlow.PATH_WIDTH,
+        EqCourseGlow.PATH_THICK, nil)
 end
 
 

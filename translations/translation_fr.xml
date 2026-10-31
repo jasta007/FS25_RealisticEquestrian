@@ -52,6 +52,7 @@
         <text name="eq_dressage_now" text="%s !"/>
         <text name="eq_dressage_flying" text="Changement de pied : %s"/>
         <text name="eq_dressage_begin" text="Allez en %s pour commencer une reprise de dressage"/>
+        <text name="eq_dressage_enter" text="Allez ! Entrez en %s"/>
         <text name="eq_dressage_reinBack" text="Reculer !"/>
         <text name="eq_dressage_backwards" text="Reculez"/>
         <text name="eq_dressage_circle_left" text="Volte à gauche"/>
