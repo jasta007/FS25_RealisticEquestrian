@@ -119,6 +119,32 @@ local function shadowText(value, x, y, size, color, align, bold)
 end
 
 
+-- The final score's shadow (James 2026-10-31: closer to the text and more blurred): a dark
+-- copy offset by `share` of the size, smudged by copies in rings round it.
+EqTrainingHud.SOFT_SHADOW = { share = 0.03, blur = 0.035, rings = { { 0.5, 8 }, { 1, 12 } }, alpha = 0.75 }
+
+--- Text with a soft, blurred drop shadow, for big text such as the final score.
+local function softShadowText(value, x, y, size, color, align, bold)
+    local s = EqTrainingHud.SOFT_SHADOW
+    local off = size * s.share
+    local aspect = g_screenAspectRatio or 16 / 9
+    local copies = 1
+    for _, ring in ipairs(s.rings) do copies = copies + ring[2] end
+    -- Each copy faint, so together they build up to about alpha where they overlap most.
+    local a = (color[4] or 1) * s.alpha * 2.5 / copies
+    local cx, cy = x + off / aspect, y - off
+    text(value, cx, cy, size, { 0, 0, 0, a }, align, bold)
+    for _, ring in ipairs(s.rings) do
+        local r = size * s.blur * ring[1]
+        for i = 1, ring[2] do
+            local t = 2 * math.pi * i / ring[2]
+            text(value, cx + r * math.cos(t) / aspect, cy + r * math.sin(t), size, { 0, 0, 0, a }, align, bold)
+        end
+    end
+    text(value, x, y, size, color, align, bold)
+end
+
+
 local function resetText()
     setTextAlignment(RenderText.ALIGN_LEFT)
     setTextBold(false)
@@ -524,8 +550,8 @@ local function drawScore()
     local text, c = EqTrainingHud.scoreText(state.percent)
     local size = a.size * scale
     local gold = { EqTrainingHud.GOLD[1], EqTrainingHud.GOLD[2], EqTrainingHud.GOLD[3], alpha }
-    shadowText(g_i18n:getText("eq_pop_testComplete"), a.x, a.y + a.size * 1.05, a.titleSize, gold, RenderText.ALIGN_CENTER, true)
-    shadowText(text, a.x, a.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    softShadowText(g_i18n:getText("eq_pop_testComplete"), a.x, a.y + a.size * 1.05, a.titleSize, gold, RenderText.ALIGN_CENTER, true)
+    softShadowText(text, a.x, a.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
     setTextBold(true)
     local half = getTextWidth(a.size, text) / 2 + a.barGap
     local sweep = math.min(1, age / a.sweepMs)
