@@ -3478,6 +3478,18 @@ end)()
     check("Japanese wraps between characters", #japanese == 3 and japanese[1] == "馬に鍛えるスキルと出", table.concat(japanese, "|"))
     local mixed = EqTrainingHud.wrap("すべてRealistic Livestockメニュー", 1, 13)
     check("a Latin name inside Japanese stays whole", mixed[1] == "すべてRealistic" and mixed[2] == "Livestockメニュー", table.concat(mixed, "|"))
+    local function arrowPoint(rows)
+        local tip, widest = nil, nil
+        for _, r in ipairs(rows) do
+            if tip == nil or r.w < tip.w then tip = r end
+            if widest == nil or r.w > widest.w then widest = r end
+        end
+        return tip, widest
+    end
+    local upTip, upWide = arrowPoint(EqTrainingHud.arrowRows(true))
+    local downTip, downWide = arrowPoint(EqTrainingHud.arrowRows(false))
+    check("a gait change arrow points up or down, head wider than its stem", upTip.y > upWide.y and downTip.y < downWide.y
+        and upWide.w == 1 and #EqTrainingHud.arrowRows(true) == EqTrainingHud.ARROW.rows)
     setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 
@@ -3771,9 +3783,16 @@ end)()
     local b = straight[1]
     check("a lateral piece faces the heading, centred on the line", #straight == 1 and math.abs(b[1] - 0.25) < 1e-9
         and math.abs(b[4] - 0.25) < 1e-9 and math.abs(b[6] - b[3] - size) < 1e-9)
-    local h = bent[2]
-    check("the dash's front turns to the bend side, joined to it", #bent == 2 and h ~= nil and h[4] < h[1] and h[6] > h[3]
-        and h[1] == bent[1][4] and h[3] == bent[1][6])
+    local h = bent[#bent]
+    local joined, curving, lastA = true, true, nil
+    for k, piece in ipairs(bent) do
+        if k > 1 and (piece[1] ~= bent[k - 1][4] or piece[3] ~= bent[k - 1][6]) then joined = false end
+        local a = math.atan2(-(piece[4] - piece[1]), piece[6] - piece[3])
+        if lastA ~= nil and a < lastA then curving = false end
+        lastA = a
+    end
+    check("the dash curves smoothly to the bend side, one joined shape", #bent >= 4 and h[4] < h[1] and h[6] > h[3]
+        and joined and curving)
 end)()
 
 
@@ -3933,6 +3952,7 @@ end)()
         local x, y = EqDressagePath.toLocal(frame, xOf(markers).x, xOf(markers).z)
         check(name .. ": X is the arena's middle", math.abs(x) < 1e-6 and math.abs(y) < 1e-6)
         local gaps, outs, unsorted, walks, finals, jumps, kinks = 0, 0, 0, 0, 0, 0, 0
+        local lateralChanges, softKinks, LATERAL_CLEAR = 0, 0, EqDressagePath.LATERAL_CLEAR
         local spots = { piaffe = 0, pirouette = 0 }
         for seed = 1, 30 do
             local rolls = EqRandom.new(seed)
@@ -3958,6 +3978,21 @@ end)()
             local walkFrom, gait = nil, EqDressagePath.PROCEED
             for _, e in ipairs(test.events) do
                 if e.kind == "spot" then spots[e.style] = spots[e.style] + 1 end
+                -- Lateral work never comes just after a change (James, 2026-10-31).
+                for _, sec in ipairs(test.sections) do
+                    if e.kind == "change" and e.s <= sec.s0 and e.s > sec.s0 - LATERAL_CLEAR then lateralChanges = lateralChanges + 1 end
+                end
+            end
+            for i = 3, #test.pts do
+                local a, b, c = test.pts[i - 2], test.pts[i - 1], test.pts[i]
+                local move = test.moves[b.m]
+                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn")
+                local ux, uy, vx, vy = b.x - a.x, b.y - a.y, c.x - b.x, c.y - b.y
+                local lu, lv = math.sqrt(ux * ux + uy * uy), math.sqrt(vx * vx + vy * vy)
+                if not lateral and lu > 0.2 and lv > 0.2 then
+                    local turn = math.abs(math.atan2(ux * vy - uy * vx, ux * vx + uy * vy))
+                    if turn > math.rad(14) then softKinks = softKinks + 1 end
+                end
             end
             for i, e in ipairs(test.events) do
                 if i > 1 and e.s < test.events[i - 1].s then unsorted = unsorted + 1 end
@@ -3972,6 +4007,8 @@ end)()
         end
         check(name .. ": a test's line has no gaps", gaps == 0, tostring(gaps))
         check(name .. ": a test's line has no kinks", kinks == 0, tostring(kinks))
+        check(name .. ": no lateral work just after a change of gait", lateralChanges == 0, tostring(lateralChanges))
+        check(name .. ": no slight kinks where figures meet the track either", softKinks == 0, tostring(softKinks))
         local dashRolls = EqRandom.new(3)
         local lastTest = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(dashRolls:next() * k)) end)
         local firstChange = nil
@@ -4175,7 +4212,8 @@ end)()
     check("an empty saved test reads as none", EqDressageTests.decode("1 5") == nil and EqDressageTests.decode(nil) == nil)
     local stuck = EqDressagePath.newRun(one, 50)
     local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)
-    local events = {}
+    check("standing by A doesn't start a test", EqDressagePath.step(stuck, "halt", sx, sz, 50) == nil and not stuck.started)
+    local events = { begin = EqDressagePath.step(stuck, "trot", sx, sz, 50) == "begin" and 1 or nil }
     for _ = 1, 2000 do
         local e = EqDressagePath.step(stuck, "halt", sx, sz, 50)
         if e ~= nil then events[e] = (events[e] or 0) + 1 end
@@ -4184,7 +4222,7 @@ end)()
     check("leaving on the entry cancels the test at once", events.begin == 1 and events.fault == nil and events.lost == 1
         and stuck.cancelled and not stuck.eliminated)
     stuck = EqDressagePath.newRun(one, 50)
-    EqDressagePath.step(stuck, "halt", sx, sz, 50)
+    EqDressagePath.step(stuck, "trot", sx, sz, 50)
     stuck.cur = 2
     events = {}
     for _ = 1, 2000 do
@@ -4194,6 +4232,19 @@ end)()
     end
     check("standing still is an error of course, and the third eliminates", events.fault == 2 and events.lost == 1
         and stuck.eliminated)
+    -- A halt made at the gold bar counts however short the horse's warning (James, 2026-10-31).
+    local haltEvent = nil
+    for _, e in ipairs(one.events) do if e.kind == "halt" then haltEvent = e break end end
+    local early = EqDressagePath.newRun(one, 0)
+    early.started = true
+    for k, p in ipairs(one.pts) do if p.s >= haltEvent.s - 6 then early.i, early.s = k, p.s break end end
+    local hp = one.pts[early.i]
+    early.lastX, early.lastY = hp.x, hp.y
+    local hx, hz = EqDressagePath.toWorld(frame, hp.x, hp.y)
+    EqDressagePath.step(early, "halt", hx, hz, 50)
+    check("a halt 6 m early counts as the halt, with 3 m of warning", early.warn < 6 and early.hold ~= nil)
+    check("a pirouette or piaffe gets 4 s to get going before it is given up",
+        EqDressagePath.SPOT_GRACE_MS >= 4000)
     check("a temperamental horse sees less of the line and less warning", EqDressagePath.newRun(one, 10).look < EqDressagePath.newRun(one, 90).look
         and EqDressagePath.newRun(one, 10).warn < EqDressagePath.newRun(one, 90).warn)
     check("a hosted test's length: 15, 20, 25 make 8, 10, 13 figures", EqDressagePath.figuresFor(15) == 8 and EqDressagePath.figuresFor(20) == 10

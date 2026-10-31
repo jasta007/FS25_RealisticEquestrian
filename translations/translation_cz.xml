@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Klus"/>
         <text name="eq_dressage_gait_canter" text="Cval"/>
         <text name="eq_dressage_change" text="Změna: %s"/>
+        <text name="eq_dressage_gaitChange" text="Změna chodu"/>
+        <text name="eq_dressage_gaitChangeAt" text="Změna chodu u %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Letmý přeskok: %s"/>
         <text name="eq_dressage_begin" text="Jeďte k %s a zahajte drezurní úlohu"/>
         <text name="eq_dressage_reinBack" text="Couvání!"/>

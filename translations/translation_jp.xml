@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="速歩"/>
         <text name="eq_dressage_gait_canter" text="駈歩"/>
         <text name="eq_dressage_change" text="変換：%s"/>
+        <text name="eq_dressage_gaitChange" text="歩様変換"/>
+        <text name="eq_dressage_gaitChangeAt" text="%s で歩様変換"/>
+        <text name="eq_dressage_now" text="%s！"/>
         <text name="eq_dressage_flying" text="踏歩変換：%s"/>
         <text name="eq_dressage_begin" text="%sへ移動して馬場馬術の演技を開始"/>
         <text name="eq_dressage_reinBack" text="後退！"/>

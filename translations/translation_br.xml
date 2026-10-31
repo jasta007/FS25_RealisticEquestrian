@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Trote"/>
         <text name="eq_dressage_gait_canter" text="Galope"/>
         <text name="eq_dressage_change" text="Mudança: %s"/>
+        <text name="eq_dressage_gaitChange" text="Mudança de andamento"/>
+        <text name="eq_dressage_gaitChangeAt" text="Mudança de andamento em %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Troca de pé: %s"/>
         <text name="eq_dressage_begin" text="Vá até %s para iniciar uma rotina de adestramento"/>
         <text name="eq_dressage_reinBack" text="Recuar!"/>

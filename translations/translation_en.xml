@@ -96,6 +96,9 @@
         <text name="eq_dressage_gait_trot" text="Trot"/>
         <text name="eq_dressage_gait_canter" text="Canter"/>
         <text name="eq_dressage_change" text="Change: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gait change"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gait change at %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Flying change: %s"/>
         <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
         <text name="eq_dressage_reinBack" text="Rein back!"/>

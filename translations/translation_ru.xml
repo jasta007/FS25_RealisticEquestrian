@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Рысь"/>
         <text name="eq_dressage_gait_canter" text="Галоп"/>
         <text name="eq_dressage_change" text="Смена: %s"/>
+        <text name="eq_dressage_gaitChange" text="Смена аллюра"/>
+        <text name="eq_dressage_gaitChangeAt" text="Смена аллюра у %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Смена ноги в воздухе: %s"/>
         <text name="eq_dressage_begin" text="Подъедьте к %s, чтобы начать программу выездки"/>
         <text name="eq_dressage_reinBack" text="Осаживание!"/>

@@ -261,10 +261,10 @@ end
 
 -- A piece showing a horse's body (James, 2026-10-30: the lateral words were unreadable in the
 -- heat of the moment, and a separate head piece too busy): one dash as long as the piece, facing
--- the way the horse should face and centred on it, its front HEAD share turned HEAD_TURN radians
--- to the bend side at full bend, so it reads as one bent dash.
-EqCourseGlow.HEAD = 0.35
-EqCourseGlow.HEAD_TURN = math.rad(35)
+-- the way the horse should face, curving smoothly to the bend side towards its front, up to
+-- HEAD_TURN radians at full bend.
+EqCourseGlow.HEAD_TURN = math.rad(40)
+EqCourseGlow.BODY_SEGMENTS = 5
 
 
 --- The strips for a piece drawn as a horse's body (pure): { ax, ay, az, bx, by, bz } each.
@@ -282,13 +282,20 @@ function EqCourseGlow.body(piece, dirX, dirZ, bend)
     local half = size / 2
     local ax, az = mx - dirX * half, mz - dirZ * half
     if bend == 0 then return { { ax, my, az, mx + dirX * half, my, mz + dirZ * half } } end
-    local back = size * (1 - EqCourseGlow.HEAD)
-    local bx, bz = ax + dirX * back, az + dirZ * back
+    -- One smooth curve (James, 2026-10-31: a body and a neck as two pieces were hard to read):
+    -- BODY_SEGMENTS joined pieces, each turned a little more towards the front.
     local turn = EqCourseGlow.HEAD_TURN * math.max(-1, math.min(1, bend))
-    local hx = dirX * math.cos(turn) - dirZ * math.sin(turn)
-    local hz = dirZ * math.cos(turn) + dirX * math.sin(turn)
-    local head = size * EqCourseGlow.HEAD
-    return { { ax, my, az, bx, my, bz }, { bx, my, bz, bx + hx * head, my, bz + hz * head } }
+    local n = EqCourseGlow.BODY_SEGMENTS
+    local strips, x, z = {}, ax, az
+    for k = 1, n do
+        local a = turn * ((k - 0.5) / n) ^ 2
+        local hx = dirX * math.cos(a) - dirZ * math.sin(a)
+        local hz = dirZ * math.cos(a) + dirX * math.sin(a)
+        local nx, nz = x + hx * size / n, z + hz * size / n
+        table.insert(strips, { x, my, z, nx, my, nz })
+        x, z = nx, nz
+    end
+    return strips
 end
 
 

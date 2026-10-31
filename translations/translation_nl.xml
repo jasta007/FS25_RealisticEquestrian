@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Draf"/>
         <text name="eq_dressage_gait_canter" text="Galop"/>
         <text name="eq_dressage_change" text="Wissel: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gangwissel"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gangwissel bij %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Galopwissel: %s"/>
         <text name="eq_dressage_begin" text="Ga naar %s om een dressuurproef te beginnen"/>
         <text name="eq_dressage_reinBack" text="Achterwaarts!"/>

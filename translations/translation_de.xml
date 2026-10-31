@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Trab"/>
         <text name="eq_dressage_gait_canter" text="Galopp"/>
         <text name="eq_dressage_change" text="Wechsel: %s"/>
+        <text name="eq_dressage_gaitChange" text="Gangartwechsel"/>
+        <text name="eq_dressage_gaitChangeAt" text="Gangartwechsel bei %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Fliegender Wechsel: %s"/>
         <text name="eq_dressage_begin" text="Zum %s reiten, um eine Dressuraufgabe zu beginnen"/>
         <text name="eq_dressage_reinBack" text="Rückwärtsrichten!"/>

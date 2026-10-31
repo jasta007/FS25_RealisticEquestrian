@@ -194,7 +194,7 @@ way between the walk's and the trot's top speed); W doesn't change gait while Ct
 letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
-Started near the gold pole (marked like a halt); letting go early (off the spot for 0.7 s) costs
+Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
@@ -240,7 +240,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   up for 2 s, then go on. Moving off sooner costs up to 2, not backing up within 5 s costs 3.
 - The horse's temperament (0 to 100) sets how much of the line shows ahead (8 to 30 m), how early a
   change or halt shows in the middle of the screen with a gold pole on the line (3 to 12 m before
-  it), and the window that counts as on time (1.5 to 3.5 m either side). The panel shows the
+  it), and the window that counts as on time (1.5 to 3.5 m either side). A change shows as "Gait
+  change" with an arrow up or down, and only names the gait ("Trot!") once it is due. A halt or a
+  movement on the spot counts from 8 m out whatever the warning, so a clean halt at the gold bar
+  is never taken for the wrong gait. The panel shows the
   current movement ("20 m circle at B", 3/9), the last mark and the running percentage.
 - Each movement (a figure with the track before it) is marked 0 to 10 in halves: off the line
   (measured to the line, not its points) costs 12 a metre past an average of 0.05 m, so 0.3 m off
@@ -254,8 +257,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
-  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, their front
-  third bent to the bend side. From 1 m into each section the body must face within 12 degrees of the asked angle
+  alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
+  smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
+  horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 12 degrees of the asked angle
   (0.6 a second off, at most 3; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.5 a second,
   at most 2).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
@@ -263,6 +267,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
   takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
   more than 2 m off the line (riding away from a test must not hold the horse back).
+- The test starts when the horse crosses within 5 m of its start outside A while moving (standing
+  by A doesn't start it), with 3 s to settle into the opening trot.
 - **Leaving on the entry** (crossing A, then riding off before the first movement is done) cancels
   the test at once: "Dressage cancelled", no errors.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the

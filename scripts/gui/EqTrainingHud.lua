@@ -228,6 +228,31 @@ EqTrainingHud.MULT_COLORS = {
 }
 EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growMs = 150, holdMs = 700, fadeMs = 500 }
 EqTrainingHud.PROMPT = { x = 0.5, y = 0.62, size = 0.021, barWidth = 0.12, barHeight = 0.006 }
+-- An arrow after a prompt (James, 2026-10-31: "Gait change" with an up or down arrow, then
+-- "Trot!", so the gait word doesn't trigger the key early): drawn as rows, no font glyph needed.
+-- Height and gap are shares of the text size, width a share of the height.
+EqTrainingHud.ARROW = { height = 0.8, width = 0.75, gap = 0.4, rows = 9, head = 0.55, stem = 0.34 }
+
+
+--- The rows of an arrow (pure), each { y, h, w } as shares of its height and width, y from the
+--- bottom: a pointed head over a narrower stem.
+--- @param up boolean
+--- @return table rows
+function EqTrainingHud.arrowRows(up)
+    local a = EqTrainingHud.ARROW
+    local rows, n = {}, a.rows
+    local headRows = math.max(2, math.floor(n * a.head + 0.5))
+    local h = 1 / n
+    for i = 1, n do
+        -- k counts from the tip: 1 is the point.
+        local k = n - i + 1
+        local w = k <= headRows and k / headRows or a.stem
+        local y = (i - 1) * h
+        if not up then y = 1 - i * h end
+        table.insert(rows, { y = y, h = h, w = w })
+    end
+    return rows
+end
 EqTrainingHud.popState = nil
 EqTrainingHud.sideState = nil
 -- A big two-line announcement above the pops, for news that should feel like an occasion: a
@@ -397,10 +422,23 @@ end
 --- @param value string
 --- @param share number 0..1 of the time left
 --- @param color table|nil yellow when nil
-function EqTrainingHud.drawPrompt(value, share, color)
+function EqTrainingHud.drawPrompt(value, share, color, arrow)
     local p = EqTrainingHud.PROMPT
     color = color or EqTrainingHud.COLOR.yellow
     shadowText(value, p.x, p.y, p.size, color, RenderText.ALIGN_CENTER, true)
+    if arrow ~= nil then
+        setTextBold(true)
+        local height = p.size * EqTrainingHud.ARROW.height
+        local width = height * EqTrainingHud.ARROW.width / (g_screenAspectRatio or 16 / 9)
+        local x = p.x + getTextWidth(p.size, value) / 2 + p.size * EqTrainingHud.ARROW.gap
+        local off = p.size * EqTrainingHud.SHADOW.share
+        local shade = { 0, 0, 0, (color[4] or 1) * EqTrainingHud.SHADOW.alpha }
+        for _, pass in ipairs({ { off, -off, shade }, { 0, 0, color } }) do
+            for _, r in ipairs(EqTrainingHud.arrowRows(arrow > 0)) do
+                fill(x + pass[1] + width * (1 - r.w) / 2, p.y + pass[2] + height * r.y, width * r.w, height * r.h + 1e-4, pass[3])
+            end
+        end
+    end
     -- No share: an untimed prompt, with no bar under it.
     if share == nil then
         resetText()

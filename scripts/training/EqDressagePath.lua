@@ -50,7 +50,7 @@ EqDressagePath.MIN_RADIUS_SMALL = { walk = 3, trot = 3, canter = 6 }
 EqDressagePath.RADIUS_SPAN = 3
 -- The test starts this far outside A, and the rider begins within START_RADIUS of it.
 EqDressagePath.START_OUT = 2.5
-EqDressagePath.START_RADIUS = 3.5
+EqDressagePath.START_RADIUS = 5
 -- Figures in a test: training, and a hosted event's (EqDressagePath.figuresFor).
 EqDressagePath.TRAINING_FIGURES = 7
 -- The track between figures: at least this long, and preferably no longer than CONNECT_GOOD.
@@ -85,6 +85,9 @@ EqDressagePath.HALT_CHANCE = 60
 -- Changes this far apart at least; a walk no longer than WALK_MAX (long walks are dull, James).
 EqDressagePath.CHANGE_GAP = 15
 EqDressagePath.CHANGE_LEAD = 8
+-- No change of gait this many metres before lateral work, and lateral work only in the gait the
+-- horse is already in (James, 2026-10-31: a change just before it was lost under its prompt).
+EqDressagePath.LATERAL_CLEAR = 15
 EqDressagePath.CANTER_SPAN = 15
 EqDressagePath.WALK_MAX = 30
 -- After a halt: stand this long, then go on at this gait.
@@ -138,6 +141,9 @@ EqDressagePath.LATERAL_FREE = 0.3
 EqDressagePath.STICK_PULL = 0.8
 -- A bend sharper than this (radians) where pieces of line join is smoothed out of the line.
 EqDressagePath.KINK = math.rad(50)
+-- Bends sharper than this (radians, between points STEP apart) left where figures meet the track
+-- are eased out after (James, 2026-10-31: a slight kink from canter to trot in a curve).
+EqDressagePath.SMOOTH = math.rad(12)
 -- Metres over which the line eases from one gait's track to another's in a corner.
 EqDressagePath.BLEND = 5
 EqDressagePath.STICK_FREE = 0.3
@@ -181,7 +187,12 @@ EqDressagePath.SPOT_WRONG_PER_S = 1
 EqDressagePath.SPOT_WRONG_MAX = 3
 -- Off the spot this long before it counts as let go (James, 2026-10-30: a pirouette ended a third
 -- of the way round).
-EqDressagePath.SPOT_GRACE_MS = 700
+-- (James, 2026-10-31: 0.7 s told him to trot on a second after a fumbled start; give 4 to 5 s.)
+EqDressagePath.SPOT_GRACE_MS = 4500
+-- Halts and movements on the spot count from this many metres before their point at least,
+-- however short the horse's warning (James, 2026-10-31: a clean halt at the gold bar, before a
+-- calm-less horse's 3 m warning, went unseen and scored as the wrong gait).
+EqDressagePath.HALT_WINDOW = 8
 -- Errors of course: further than LOST_DEV off the line for LOST_MS, out of the arena for OUT_MS
 -- (OUT_MARGIN past the rail), or no headway for STALL_MS. Each costs ERROR_PEN on the movement;
 -- ERRORS eliminate. The line then picks up at the nearest point up to SNAP_AHEAD on.
@@ -962,6 +973,34 @@ end
 EqDressagePath.seededRng = seededRng
 
 
+local LATERAL_KEYS = { legYield = true, halfPass = true, shoulderIn = true, legYieldRail = true }
+
+--- Ease out the sharp bends where pieces of line meet (pure): each point bent more than SMOOTH
+--- moves towards its neighbours, a few times over. Lateral figures keep their corners, and the
+--- points keep their s (they move centimetres).
+local function smooth(test)
+    local pts = test.pts
+    for _ = 1, 8 do
+        local moved = false
+        for i = 2, #pts - 1 do
+            local a, b, c = pts[i - 1], pts[i], pts[i + 1]
+            local move = test.moves[b.m]
+            if move == nil or not LATERAL_KEYS[move.key] then
+                local ux, uy, vx, vy = b.x - a.x, b.y - a.y, c.x - b.x, c.y - b.y
+                if ux * ux + uy * uy > 0.04 and vx * vx + vy * vy > 0.04 then
+                    local turn = math.abs(math.atan2(ux * vy - uy * vx, ux * vx + uy * vy))
+                    if turn > EqDressagePath.SMOOTH then
+                        b.x, b.y = (a.x + 2 * b.x + c.x) / 4, (a.y + 2 * b.y + c.y) / 4
+                        moved = true
+                    end
+                end
+            end
+        end
+        if not moved then break end
+    end
+end
+
+
 --- Build a test for an arena.
 --- A plan is a test the player put together in the editor (EqDressageTests, James 2026-10-31):
 --- its steps are ridden in order instead of random picks, with nothing random between them.
@@ -1068,7 +1107,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     --- The track to a figure's start, with what happens on the way: the change the figure
     --- needs at the last letter before it, else maybe a canter or walk on a long side, or a
     --- halt at a letter (James 2026-10-29: more to do between the figures).
-    local function connect(entry, figGait, m)
+    local function connect(entry, figGait, m, lateral)
         local letters, length = letterRun(entry.x, entry.y)
         local usable = {}
         for _, l in ipairs(letters) do
@@ -1109,7 +1148,10 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             local function side(l) return math.abs(l.x) > frame.halfW * 0.5 and (l.x > 0 and 1 or -1) or 0 end
             for k = #usable, 2, -1 do
                 local span = usable[k].d - from.d
-                if other == "canter" then
+                -- Back in the figure's gait well before lateral work (James, 2026-10-31).
+                if lateral and length - usable[k].d < EqDressagePath.LATERAL_CLEAR then
+                    -- too near the figure
+                elseif other == "canter" then
                     if side(from) ~= 0 and side(usable[k]) == side(from) and span >= EqDressagePath.CANTER_SPAN then
                         to = usable[k]
                         break
@@ -1153,7 +1195,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
 
     local function ride(figure, m)
         local move = test.moves[m]
-        connect(figure.pts[1], figure.gait, m)
+        connect(figure.pts[1], figure.gait, m, figure.sections ~= nil)
         local figStart = #test.pts
         figStart = figStart - append(test, figure.pts, m)
         local function sAt(i) return test.pts[math.min(figStart + i - 1, #test.pts)].s end
@@ -1194,10 +1236,14 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             if figure.gait == "walk" and gait == "walk" then step = false end
             -- The player's own test may go from any gait to any other, and repeat a figure.
             if plan ~= nil then step = true end
+            -- Lateral work only in the gait the horse is in: a change just before it was missed
+            -- under the lateral prompt (James, 2026-10-31).
+            if figure.sections ~= nil and figure.gait ~= gait then step = false end
             if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
-                if d >= least and d <= t.length * 0.6 then
+                local clear = figure.sections == nil or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
+                if d >= least and d <= t.length * 0.6 and clear then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
                     table.insert(list, { figure, figure.weight * near, d = d })
                 end
@@ -1359,6 +1405,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     test.moves[m].s1 = xs
     test.length = test.pts[#test.pts].s
     table.sort(events, function(a, b) return a.s < b.s end)
+    smooth(test)
     return test
 end
 
@@ -1551,8 +1598,11 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
 
     if not run.started then
         local d = math.sqrt((pts[1].x - x) ^ 2 + (pts[1].y - y) ^ 2)
-        if d > EqDressagePath.START_RADIUS then return nil end
+        -- Standing by A doesn't start it (it used to start, stall and cancel over and over).
+        if d > EqDressagePath.START_RADIUS or move == "halt" then return nil end
         run.started, run.lastX, run.lastY = true, x, y
+        -- A moment to settle into the trot it opens with.
+        run.proceedMs = run.clock
         return "begin"
     end
 
@@ -1685,7 +1735,9 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     local free = false
     if next ~= nil then
         local dist = next.s - run.s
-        if dist <= run.warn then
+        local window = run.warn
+        if next.kind ~= "change" then window = math.max(window, EqDressagePath.HALT_WINDOW) end
+        if dist <= window then
             free = true
             if not next.shown then
                 next.shown = true
