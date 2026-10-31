@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 file, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Posti a sedere per le gare che organizzi: conta entro 60 m da un percorso o rettangolo da dressage."/>
         <text name="eq_shop_bleachersSponsors_function" text="I pannelli degli sponsor davanti mostrano i marchi dei tuoi mezzi."/>
+        <text name="eq_shop_signboard_function" text="Aumenta gli incassi dei biglietti dei tuoi eventi."/>
     </texts>
 </l10n>

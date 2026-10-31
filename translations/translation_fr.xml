@@ -871,5 +871,6 @@
         <text name="eq_shop_bleachers8x16" text="Tribune 8 rangs, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Places assises pour les concours que vous organisez : compte à moins de 60 m d'un parcours ou d'une carrière de dressage."/>
         <text name="eq_shop_bleachersSponsors_function" text="Les panneaux de sponsors devant affichent les marques de vos machines."/>
+        <text name="eq_shop_signboard_function" text="Augmente les recettes des entrées de vos événements."/>
     </texts>
 </l10n>

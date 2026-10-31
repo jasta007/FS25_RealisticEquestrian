@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Trybuna 8 rzędów, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Miejsca na organizowane przez ciebie zawody: liczy się do 60 m od trasy lub czworoboku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Tablice sponsorów z przodu pokazują marki twoich maszyn."/>
+        <text name="eq_shop_signboard_function" text="Zwiększa wpływy z biletów na twoich zawodach."/>
     </texts>
 </l10n>

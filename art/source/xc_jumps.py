@@ -1092,8 +1092,8 @@ def write_flag_fence_xml(path, posts, bars):
         f.write(text)
 
 
-def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py"):
-    """extra: more configuration blocks, before the end."""
+def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py", functions=()):
+    """extra: more configuration blocks, before the end; functions: more shop function text keys."""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by {made_by}: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
@@ -1102,7 +1102,7 @@ def write_xml(name, price, note, path, extra="", made_by="art/source/xc_jumps.py
         <functions>
             <function>$l10n_eq_shop_{"xcDrop" if "Drop" in name else "xcJump"}_function</function>
             <function>$l10n_eq_shop_xcHidden_function</function>
-        </functions>
+{"".join(f"            <function>$l10n_{key}</function>\n" for key in functions)}        </functions>
         <image>placeables/xcJumps/store_{name}.dds</image>
         <price>{price}</price>
         <dailyUpkeep>0</dailyUpkeep>

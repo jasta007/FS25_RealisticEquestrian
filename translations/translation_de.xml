@@ -871,5 +871,6 @@
         <text name="eq_shop_bleachers8x16" text="Tribüne 8 Reihen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sitzplätze für Ihre eigenen Turniere: zählt bis 60 m von einem Parcours oder Dressurviereck."/>
         <text name="eq_shop_bleachersSponsors_function" text="Die Sponsorentafeln davor zeigen die Marken Ihrer Maschinen."/>
+        <text name="eq_shop_signboard_function" text="Erhöht die Zuschauereinnahmen Ihrer Veranstaltungen."/>
     </texts>
 </l10n>

@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Seating for the events you host: counts within 60 m of a course or dressage arena."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponsor boards in front show the brands of your machines."/>
+        <text name="eq_shop_signboard_function" text="Increases the gate takings for your events."/>
     </texts>
 </l10n>

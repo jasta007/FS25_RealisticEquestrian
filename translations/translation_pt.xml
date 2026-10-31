@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Arquibancada 8 fileiras, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Assentos para os eventos que você organiza: conta a até 60 m de um percurso ou pista de adestramento."/>
         <text name="eq_shop_bleachersSponsors_function" text="As placas de patrocinadores na frente mostram as marcas das suas máquinas."/>
+        <text name="eq_shop_signboard_function" text="Aumenta a bilheteria dos seus eventos."/>
     </texts>
 </l10n>

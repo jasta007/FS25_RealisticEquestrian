@@ -236,6 +236,7 @@ def write_xml(size, path):
         <functions>
             <function>$l10n_eq_shop_bleachers_function</function>
             <function>$l10n_eq_shop_bleachersSponsors_function</function>
+            <function>$l10n_eq_shop_signboard_function</function>
         </functions>
         <image>placeables/bleachers/store_{name}.dds</image>
         <price>{size["price"]}</price>

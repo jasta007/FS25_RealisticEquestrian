@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="看臺 8排，16 米"/>
         <text name="eq_shop_bleachers_function" text="你主辦比賽的觀眾座位：在賽道或盛裝舞步場地60米內計入。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前方的贊助商廣告牌顯示你的機械品牌。"/>
+        <text name="eq_shop_signboard_function" text="增加你舉辦賽事的門票收入。"/>
     </texts>
 </l10n>

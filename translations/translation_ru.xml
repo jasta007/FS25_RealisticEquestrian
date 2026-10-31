@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядов, 16 м"/>
         <text name="eq_shop_bleachers_function" text="Места для зрителей на ваших соревнованиях: считается в пределах 60 м от маршрута или манежа для выездки."/>
         <text name="eq_shop_bleachersSponsors_function" text="Спонсорские щиты перед ней показывают марки вашей техники."/>
+        <text name="eq_shop_signboard_function" text="Увеличивает выручку от билетов на ваших соревнованиях."/>
     </texts>
 </l10n>

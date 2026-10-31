@@ -869,5 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="観客席 8列・16 m"/>
         <text name="eq_shop_bleachers_function" text="主催する大会の観客席：コースや馬場から60 m以内で数えられます。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前のスポンサーボードには、所有する機械のブランドが表示されます。"/>
+        <text name="eq_shop_signboard_function" text="主催するイベントの入場料収入が増えます。"/>
     </texts>
 </l10n>
