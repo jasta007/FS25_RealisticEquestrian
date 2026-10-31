@@ -67,43 +67,82 @@ end
 
 --- @param storeItem table
 --- @param config table
+--- @param why table reason -> count, for the log
 --- @return table|nil categories the item's machine categories, nil when it is no machine
-local function machineCategories(storeItem, config)
-    if storeItem == nil or not storeItem.showInStore or storeItem.isBundleItem or (storeItem.price or 0) <= 0 then return nil end
-    if StoreSpecies ~= nil and StoreSpecies.VEHICLE ~= nil and storeItem.species ~= nil and storeItem.species ~= StoreSpecies.VEHICLE then
+local function machineCategories(storeItem, config, why)
+    local function reject(reason)
+        why[reason] = (why[reason] or 0) + 1
         return nil
     end
+    if storeItem == nil then return reject("nil") end
+    if storeItem.isBundleItem then return reject("bundle") end
+    if storeItem.showInStore == false then return reject("hidden") end
+    if (tonumber(storeItem.price) or 0) <= 0 then return reject("noPrice") end
+    -- Placeables and hand tools are no machines; anything else (vehicles) is.
+    if StoreSpecies ~= nil and storeItem.species ~= nil
+        and ((StoreSpecies.PLACEABLE ~= nil and storeItem.species == StoreSpecies.PLACEABLE)
+        or (StoreSpecies.HANDTOOL ~= nil and storeItem.species == StoreSpecies.HANDTOOL)) then
+        return reject("species")
+    end
     local categories = {}
-    for _, name in ipairs(storeItem.categoryNames or { storeItem.categoryName }) do
-        local category = g_storeManager:getCategoryByName(name)
+    local names = storeItem.categoryNames
+    if type(names) ~= "table" or #names == 0 then names = { storeItem.categoryName } end
+    for _, name in ipairs(names) do
+        local category = name ~= nil and g_storeManager:getCategoryByName(name) or nil
         local kind = category ~= nil and category.type ~= nil and string.upper(tostring(category.type)) or nil
+        if kind ~= nil then
+            why.types = why.types or {}
+            why.types[kind] = (why.types[kind] or 0) + 1
+        end
         if kind ~= nil and config.categoryTypes[kind] then table.insert(categories, category.name or name) end
     end
-    return #categories > 0 and categories or nil
+    if #categories == 0 then return reject("category") end
+    return categories
 end
 
 
---- The shop's machines by brand, read once a session.
+--- @param why table from machineCategories
+--- @return string the reasons items were left out, for the log
+local function whyText(why)
+    local parts = {}
+    for reason, count in pairs(why) do
+        if reason ~= "types" then table.insert(parts, string.format("%s %d", reason, count)) end
+    end
+    local types = {}
+    for kind, count in pairs(why.types or {}) do table.insert(types, string.format("%s %d", kind, count)) end
+    table.sort(parts)
+    table.sort(types)
+    return string.format("left out: %s; category types: %s", table.concat(parts, ", "), table.concat(types, ", "))
+end
+
+
+--- The shop's machines by brand, read once a session (again later while it comes up empty).
 --- @return table|nil shop { items, byStoreItem, profiles, ranked }
 function EqSponsorManager.readShop()
     local config = EqSponsorManager.config
     if EqSponsorManager.shop ~= nil or config == nil then return EqSponsorManager.shop end
     if g_storeManager == nil or g_brandManager == nil then return nil end
-    local items, byStoreItem = {}, {}
-    for _, storeItem in ipairs(g_storeManager:getItems() or {}) do
-        local categories = machineCategories(storeItem, config)
+    local all = g_storeManager.getItems ~= nil and g_storeManager:getItems() or g_storeManager.items or {}
+    local items, byStoreItem, why, noBrand = {}, {}, {}, 0
+    for _, storeItem in ipairs(all) do
+        local categories = machineCategories(storeItem, config, why)
         local brand = categories ~= nil and storeItem.brandIndex ~= nil and g_brandManager:getBrandByIndex(storeItem.brandIndex) or nil
         if brand ~= nil and brand.name ~= nil then
             local item = { brand = brand.name, categories = categories, price = storeItem.price, name = storeItem.name }
             table.insert(items, item)
             byStoreItem[storeItem] = item
+        elseif categories ~= nil then
+            noBrand = noBrand + 1
         end
     end
     local profiles = EqSponsorship.profiles(config, items)
     local ranked = EqSponsorship.rank(config, profiles)
-    EqSponsorManager.shop = { items = items, byStoreItem = byStoreItem, profiles = profiles, ranked = ranked }
-    Log:info("EqSponsorManager: %d machines from %d brands in the shop", #items, #ranked)
-    return EqSponsorManager.shop
+    local shop = { items = items, byStoreItem = byStoreItem, profiles = profiles, ranked = ranked }
+    Log:info("EqSponsorManager: %d machines from %d brands in the shop (%d store items, %d without a brand; %s)",
+        #items, #ranked, #all, noBrand, whyText(why))
+    -- An empty shop is read again next time: the store may not be loaded yet.
+    if #ranked > 0 then EqSponsorManager.shop = shop end
+    return shop
 end
 
 
@@ -201,7 +240,17 @@ end
 --- @param farmId number
 --- @return table record the farm's offers, made the first time they are asked for
 function EqSponsorManager.offersFor(farmId)
-    return EqSponsorManager.offers[farmId] or EqSponsorManager.makeOffers(farmId)
+    local record = EqSponsorManager.offers[farmId]
+    -- None at all this year means the shop was read before it was ready (James's log,
+    -- 2026-10-31: 0 machines): try again, keeping when they first came.
+    if record ~= nil and #record.list == 0 and record.year == EqSponsorManager.year()
+        and EqSponsorManager.shop == nil and not record.retried then
+        local madeMonth = record.madeMonth
+        record = EqSponsorManager.makeOffers(farmId)
+        record.madeMonth = madeMonth
+        if #record.list == 0 then record.retried = true end
+    end
+    return record or EqSponsorManager.makeOffers(farmId)
 end
 
 
