@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s！"/>
         <text name="eq_dressage_flying" text="空中換腿：%s"/>
         <text name="eq_dressage_begin" text="前往%s開始盛裝舞步動作"/>
+        <text name="eq_dressage_enter" text="開始！從 %s 進場"/>
         <text name="eq_dressage_reinBack" text="後退！"/>
         <text name="eq_dressage_backwards" text="向後移動"/>
         <text name="eq_dressage_circle_left" text="向左圈乘"/>

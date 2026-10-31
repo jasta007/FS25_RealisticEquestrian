@@ -51,6 +51,10 @@ EqDressagePath.RADIUS_SPAN = 3
 -- The test starts this far outside A, and the rider begins within START_RADIUS of it.
 EqDressagePath.START_OUT = 2.5
 EqDressagePath.START_RADIUS = 5
+-- Then COUNT_MS of countdown, which starts over if the horse goes further than COUNT_RADIUS
+-- metres from it; marking begins as the horse crosses into the arena after it.
+EqDressagePath.COUNT_MS = 3000
+EqDressagePath.COUNT_RADIUS = 20
 -- Figures in a test: training, and a hosted event's (EqDressagePath.figuresFor).
 EqDressagePath.TRAINING_FIGURES = 7
 -- The track between figures: at least this long, and preferably no longer than CONNECT_GOOD.
@@ -1448,10 +1452,27 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     run.clock = run.clock + dt
 
     if not run.started then
+        -- At A: a 3, 2, 1 countdown, then "Go" and nothing is marked until the horse crosses into
+        -- the arena (James, 2026-10-31: marks went for not being precise at A).
         local d = math.sqrt((pts[1].x - x) ^ 2 + (pts[1].y - y) ^ 2)
-        -- Standing by A doesn't start it (it used to start, stall and cancel over and over).
-        if d > EqDressagePath.START_RADIUS or move == "halt" then return nil end
+        if run.countMs == nil then
+            if d > EqDressagePath.START_RADIUS then return nil end
+            run.countMs = 0
+        end
+        if d > EqDressagePath.COUNT_RADIUS then
+            run.countMs, run.go = nil, nil
+            return nil
+        end
+        run.countMs = run.countMs + dt
+        if run.countMs < EqDressagePath.COUNT_MS then return nil end
+        run.go = true
+        if y < -run.frame.halfL or math.abs(x) > run.frame.halfW then return nil end
+        -- In: marks from the nearest point of the opening.
+        local last = 1
+        while last < #pts and pts[last].s < run.inFrom + EqDressagePath.COUNT_RADIUS do last = last + 1 end
+        local j = nearest(pts, 1, last, x, y)
         run.started, run.lastX, run.lastY = true, x, y
+        run.i, run.s = j, pts[j].s
         -- A moment to settle into the trot it opens with.
         run.proceedMs = run.clock
         return "begin"

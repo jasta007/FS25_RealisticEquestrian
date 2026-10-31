@@ -101,6 +101,7 @@
         <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Flying change: %s"/>
         <text name="eq_dressage_begin" text="Move to %s to begin a Dressage Routine"/>
+        <text name="eq_dressage_enter" text="Go! Enter at %s"/>
         <text name="eq_dressage_reinBack" text="Rein back!"/>
         <text name="eq_dressage_backwards" text="Move backwards"/>
         <text name="eq_dressage_circle_left" text="Circle left"/>

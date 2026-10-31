@@ -270,8 +270,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
   takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
   more than 2 m off the line (riding away from a test must not hold the horse back).
-- The test starts when the horse crosses within 5 m of its start outside A while moving (standing
-  by A doesn't start it), with 3 s to settle into the opening trot.
+- **Starting** (James, 2026-10-31): riding within 5 m of the gold pole outside A starts a 3, 2, 1
+  countdown (it starts over if the horse goes 20 m away). Then "Go! Enter at A" and a gold bar
+  across the entrance: nothing is marked until the horse crosses it into the arena, and the line
+  picks up from the nearest point, with 3 s to settle into the opening trot.
 - **Leaving on the entry** (crossing A, then riding off before the first movement is done) cancels
   the test at once: "Dressage cancelled", no errors.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the

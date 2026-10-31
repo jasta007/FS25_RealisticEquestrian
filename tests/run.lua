@@ -4074,17 +4074,29 @@ end)()
     check("a hosted event's seed rides the same test every time", same and one.length == two.length)
     local stuck = EqDressagePath.newRun(one, 50)
     local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)
-    check("standing by A doesn't start a test", EqDressagePath.step(stuck, "halt", sx, sz, 50) == nil and not stuck.started)
-    local events = { begin = EqDressagePath.step(stuck, "trot", sx, sz, 50) == "begin" and 1 or nil }
+    -- At A: 3, 2, 1, then marking starts only on crossing into the arena (James, 2026-10-31).
+    local inside = nil
+    for _, p in ipairs(one.pts) do if p.s >= stuck.inFrom + 2 then inside = p break end end
+    local ix, iz = EqDressagePath.toWorld(frame, inside.x, inside.y)
+    local waited = nil
+    for _ = 1, 100 do waited = EqDressagePath.step(stuck, "halt", sx, sz, 50) or waited end
+    check("waiting at A counts down and says go, but marks nothing until the horse is in", waited == nil and stuck.go
+        and not stuck.started)
+    local events = { begin = EqDressagePath.step(stuck, "trot", ix, iz, 50) == "begin" and 1 or nil }
+    check("crossing into the arena starts the marking from the nearest point", stuck.started and math.abs(stuck.s - inside.s) < 1)
+    local early = EqDressagePath.newRun(one, 50)
+    EqDressagePath.step(early, "trot", sx, sz, 50)
+    check("crossing in before the countdown is over doesn't start it", EqDressagePath.step(early, "trot", ix, iz, 50) == nil
+        and not early.started)
     for _ = 1, 2000 do
-        local e = EqDressagePath.step(stuck, "halt", sx, sz, 50)
+        local e = EqDressagePath.step(stuck, "halt", ix, iz, 50)
         if e ~= nil then events[e] = (events[e] or 0) + 1 end
         if e == "lost" then break end
     end
     check("leaving on the entry cancels the test at once", events.begin == 1 and events.fault == nil and events.lost == 1
         and stuck.cancelled and not stuck.eliminated)
     stuck = EqDressagePath.newRun(one, 50)
-    EqDressagePath.step(stuck, "trot", sx, sz, 50)
+    stuck.started, stuck.lastX, stuck.lastY = true, one.pts[1].x, one.pts[1].y
     stuck.cur = 2
     events = {}
     for _ = 1, 2000 do

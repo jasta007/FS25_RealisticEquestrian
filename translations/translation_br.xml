@@ -103,6 +103,7 @@
         <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Troca de pé: %s"/>
         <text name="eq_dressage_begin" text="Vá até %s para iniciar uma rotina de adestramento"/>
+        <text name="eq_dressage_enter" text="Vai! Entre em %s"/>
         <text name="eq_dressage_reinBack" text="Recuar!"/>
         <text name="eq_dressage_backwards" text="Ande para trás"/>
         <text name="eq_dressage_circle_left" text="Círculo à esquerda"/>
