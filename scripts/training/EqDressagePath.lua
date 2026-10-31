@@ -1621,7 +1621,10 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                 event = event or "request"
             end
             if next.kind == "halt" then
-                if move == "halt" then
+                -- Backing up means the horse stopped first (James, 2026-10-31: one press of S
+                -- too many at a halt backed him up, the halt never counted and the test stalled
+                -- out): it counts as the halt, and moving during it costs as usual.
+                if move == "halt" or move == "reverse" then
                     local hx, hy = pts[run.i].x, pts[run.i].y
                     for k = run.i, #pts do
                         if pts[k].s >= next.s then
