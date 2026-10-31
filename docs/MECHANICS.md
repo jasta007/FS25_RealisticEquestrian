@@ -178,8 +178,8 @@ following the turn frame by frame, slower towards full lock. Every ridden horse 
 lock to the other faster than the base game (up to 3 rad/s² more turn acceleration: James found
 it spongey, a canter serpentine impossible), but only to come off a hard turn (James,
 2026-10-31: hard over, the other way did nothing for 2 s, while a slight turn already came back
-quickly and went squirrely with more): none while the turn is under 40% of full lock, all of it
-from 85%, only while easing the turn off, and 40% of that at a gallop. The line pull
+quickly and went squirrely with more): none while the turn is under 15% of full lock, growing to all of it
+from 85% (James: slight turns felt slow with none under 40%), only while easing the turn off, and 40% of that at a gallop. The line pull
 (temperament's stickiness) only works in a started dressage test. While the button is
 held the camera eases round to the way the horse's body faces (not the drift) and
 the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real

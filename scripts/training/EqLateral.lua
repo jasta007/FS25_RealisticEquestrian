@@ -56,7 +56,7 @@ EqLateral.TURN_ACCEL = 3
 -- a slight turn already came back quickly and went squirrely with more): none while the turn now
 -- is under TURN_SMALL of a full lock, all of it from TURN_FULL, and only while easing it off
 -- (back towards straight); GALLOP_TURN of it at a gallop.
-EqLateral.TURN_SMALL = 0.4
+EqLateral.TURN_SMALL = 0.15
 EqLateral.TURN_FULL = 0.85
 EqLateral.GALLOP_TURN = 0.4
 EqLateral.STEER_TILT = 0.9

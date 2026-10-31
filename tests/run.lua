@@ -3754,7 +3754,7 @@ end)()
         and EqLateral.turnSpeedToward(0.9, 1, 1000) == 1
         -- Only coming off a hard turn (James, 2026-10-31): a slight turn the other way gets none, hard over all
         -- of it, turning harder into it none, less at a gallop.
-        and EqLateral.turnSpeedToward(-0.2, 0.2, 100, 1) == -0.2
+        and EqLateral.turnSpeedToward(-0.1, 0.1, 100, 1) == -0.1
         and math.abs(EqLateral.turnSpeedToward(-1, 1, 100, 1) - (-1 + EqLateral.TURN_ACCEL * 0.1)) < 1e-9
         and EqLateral.turnSpeedToward(-0.5, -1, 100, 1) == -0.5
         and EqLateral.turnSpeedToward(-1, 1, 100, 1, true) < EqLateral.turnSpeedToward(-1, 1, 100, 1)
