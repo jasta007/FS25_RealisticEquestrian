@@ -938,6 +938,14 @@ do
             if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
         end
         if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+        if c.grade == 4 then
+            local stars = 0
+            for _, skill in ipairs(EqStaff.JOBS[c.job].main) do
+                if c.skills[skill] >= 90 then stars = stars + 1 end
+                if c.skills[skill] < 80 then check("legendary main skills stay 80 and up", false, skill) end
+            end
+            if stars ~= 1 then check("a legendary has exactly one main skill at 90+", false, c.job .. " " .. stars) end
+        end
     end
     check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
     check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
