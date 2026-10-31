@@ -207,11 +207,11 @@ def main():
         write_i3d(name, os.path.join(xc.OUT, name + ".i3d"), shapes, col, flags)
         note = f"{jump['height']:.2f} m high; jumped along z, red flag at +x."
         xc.write_xml(name, jump["price"], note, os.path.join(xc.OUT, name + ".xml"),
-                     extra=CORNER_CONFIG if jump["corner"] else "", made_by=f"{ME} from art/source/models/{name}.obj")
+                     extra=CORNER_CONFIG if jump["corner"] else "", made_by=f"{ME} from art/source/models/{name}.obj",
+                     functions=["eq_shop_signboard_function"] if any(m.startswith("eqSponsor") for _, _, m in shapes) else [])
         meshes = [(flipped_v(mesh), pixels[material]) for _, mesh, material in shapes]
         meshes += [(moved(red, jump["flag_x"]), pixels["xcFlags"]), (moved(white, -jump["flag_x"]), pixels["xcFlags"])]
-        xc.store_image(meshes, f"{jump['height']:.2f} m", os.path.join(xc.OUT, "store_" + name + ".dds"), preview_dir,
-                       yaw=-30, pitch=20)
+        xc.store_image(meshes, os.path.join(xc.OUT, "store_" + name + ".dds"), preview_dir)
         print(name, sum(len(m.tris) for _, m, _ in shapes), "triangles,", len(col.tris), "collision")
 
 

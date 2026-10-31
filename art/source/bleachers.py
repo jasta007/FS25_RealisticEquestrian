@@ -236,6 +236,7 @@ def write_xml(size, path):
         <functions>
             <function>$l10n_eq_shop_bleachers_function</function>
             <function>$l10n_eq_shop_bleachersSponsors_function</function>
+            <function>$l10n_eq_shop_signboard_function</function>
         </functions>
         <image>placeables/bleachers/store_{name}.dds</image>
         <price>{size["price"]}</price>
@@ -278,8 +279,7 @@ def main():
         write_xml(size, os.path.join(OUT, name + ".xml"))
         # our preview renderer reads v from the top of the image, GIANTS from the bottom
         store_image([(frame, atlas_rgb[::-1])] + [(logo, sponsor_rgb[::-1]) for logo in logos],
-                    f"{size['rows']} rows, {size['length']} m", os.path.join(OUT, "store_" + name + ".dds"),
-                    preview_dir, yaw=-150, pitch=18)
+                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
         print(name, len(frame.tris) + sum(len(m.tris) for m in logos), "triangles,", len(logos), "sponsor boards")
 
 

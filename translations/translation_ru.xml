@@ -959,5 +959,6 @@
         <text name="eq_fig_pirouetteRight" text="Пируэт направо у %s"/>
         <text name="eq_dt_modeLateral" text="Показать боковые движения"/>
         <text name="eq_dt_lateral" text="Боковое"/>
+        <text name="eq_shop_signboard_function" text="Увеличивает спонсорские доходы ваших соревнований."/>
     </texts>
 </l10n>

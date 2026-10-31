@@ -959,5 +959,6 @@
         <text name="eq_fig_pirouetteRight" text="Pirueta vpravo v %s"/>
         <text name="eq_dt_modeLateral" text="Ukázat boční chody"/>
         <text name="eq_dt_lateral" text="Boční chod"/>
+        <text name="eq_shop_signboard_function" text="Zvyšuje příjmy od sponzorů z tvých akcí."/>
     </texts>
 </l10n>

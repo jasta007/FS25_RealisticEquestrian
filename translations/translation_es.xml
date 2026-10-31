@@ -961,5 +961,6 @@
         <text name="eq_fig_pirouetteRight" text="Pirueta a la derecha en %s"/>
         <text name="eq_dt_modeLateral" text="Mostrar trabajo lateral"/>
         <text name="eq_dt_lateral" text="Lateral"/>
+        <text name="eq_shop_signboard_function" text="Aumenta los ingresos de patrocinio de tus eventos."/>
     </texts>
 </l10n>

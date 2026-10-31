@@ -959,5 +959,6 @@
         <text name="eq_fig_pirouetteRight" text="Piruet w prawo w %s"/>
         <text name="eq_dt_modeLateral" text="Pokaż chody boczne"/>
         <text name="eq_dt_lateral" text="Chód boczny"/>
+        <text name="eq_shop_signboard_function" text="Zwiększa wpływy od sponsorów na twoich zawodach."/>
     </texts>
 </l10n>

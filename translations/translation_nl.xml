@@ -959,5 +959,6 @@
         <text name="eq_fig_pirouetteRight" text="Pirouette rechtsom bij %s"/>
         <text name="eq_dt_modeLateral" text="Zijgangen tonen"/>
         <text name="eq_dt_lateral" text="Zijgang"/>
+        <text name="eq_shop_signboard_function" text="Verhoogt de sponsorinkomsten van je evenementen."/>
     </texts>
 </l10n>

@@ -961,5 +961,6 @@
         <text name="eq_fig_pirouetteRight" text="Rechtspirouette bei %s"/>
         <text name="eq_dt_modeLateral" text="Seitengänge zeigen"/>
         <text name="eq_dt_lateral" text="Seitengang"/>
+        <text name="eq_shop_signboard_function" text="Erhöht die Sponsoreneinnahmen Ihrer Veranstaltungen."/>
     </texts>
 </l10n>

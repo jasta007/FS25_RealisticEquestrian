@@ -959,5 +959,6 @@
         <text name="eq_fig_pirouetteRight" text="在%s向右定后肢旋转"/>
         <text name="eq_dt_modeLateral" text="显示侧向运动"/>
         <text name="eq_dt_lateral" text="侧向"/>
+        <text name="eq_shop_signboard_function" text="增加你举办赛事的赞助收入。"/>
     </texts>
 </l10n>
