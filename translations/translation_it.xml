@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="Salto prodotto"/>
         <text name="eq_shop_plinth_function" text="Parcheggia sopra una macchina della marca del tuo sponsor per più visibilità."/>
         <text name="eq_shop_productJump_function" text="Anche un salto da cross: su per una rampa, oltre lo spazio, giù dall'altra."/>
+        <text name="eq_shop_plinthTurntable" text="Piattaforma girevole"/>
+        <text name="eq_shop_turntable_function" text="Il disco gira lentamente: lasciaci una macchina senza nulla agganciato e girerà con esso. Una macchina del tuo sponsor qui conta di più."/>
         <text name="eq_config_corner" text="Angolo"/>
         <text name="eq_config_cornerRight" text="Punta a destra"/>
         <text name="eq_config_cornerLeft" text="Punta a sinistra"/>

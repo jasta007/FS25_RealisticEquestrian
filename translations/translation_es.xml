@@ -754,6 +754,8 @@
         <text name="eq_shop_plinthProductJump" text="Salto de producto"/>
         <text name="eq_shop_plinth_function" text="Aparca encima una máquina de la marca de tu patrocinador para sumar marca."/>
         <text name="eq_shop_productJump_function" text="También es un salto de cross: sube una rampa, salta el hueco y baja por la otra."/>
+        <text name="eq_shop_plinthTurntable" text="Plataforma giratoria"/>
+        <text name="eq_shop_turntable_function" text="El disco gira despacio: deja encima una máquina sin nada enganchado y girará con él. Una máquina de tu patrocinador cuenta más aquí."/>
         <text name="eq_config_corner" text="Esquina"/>
         <text name="eq_config_cornerRight" text="Punta a la derecha"/>
         <text name="eq_config_cornerLeft" text="Punta a la izquierda"/>

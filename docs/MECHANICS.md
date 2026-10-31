@@ -927,6 +927,11 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   the slot; 2 boards). A machine of your sponsor's brand (owned or leased, not borrowed for a
   contract) standing on a deck counts as **2 boards**; each deck takes one machine. The drop
   walls' decks count too, and a drop wall with any machine on its deck never hides.
+- **Turntable** (25,000): a round stone plinth with a ramp at the back; its disc turns once every
+  two minutes. A machine left on the disc with nobody in it and nothing hitched is, after 3
+  seconds, slid to the middle and held on the disc (out of the physics, like a ferry), turning
+  with it. Getting in, hitching something, or selling either gives it its physics back. A sponsor
+  machine there counts **3 boards**. In multiplayer the disc turns but holds nothing (not tried).
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's

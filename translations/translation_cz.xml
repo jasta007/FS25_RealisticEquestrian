@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="Skok s produktem"/>
         <text name="eq_shop_plinth_function" text="Zaparkuj na něj stroj značky svého sponzora pro další branding."/>
         <text name="eq_shop_productJump_function" text="Také terénní skok: nahoru po jedné rampě, přes mezeru, dolů po druhé."/>
+        <text name="eq_shop_plinthTurntable" text="Otočná plošina"/>
+        <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj bez připojeného nářadí a bude se otáčet s ním. Stroj tvého sponzora se tu počítá víc."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>

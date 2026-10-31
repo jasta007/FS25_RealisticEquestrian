@@ -754,6 +754,8 @@
         <text name="eq_shop_plinthProductJump" text="Obstacle produit"/>
         <text name="eq_shop_plinth_function" text="Garez-y une machine de la marque de votre sponsor pour plus de visibilité."/>
         <text name="eq_shop_productJump_function" text="Aussi un obstacle de cross : montez une rampe, sautez la fosse, descendez l'autre."/>
+        <text name="eq_shop_plinthTurntable" text="Plateau tournant"/>
+        <text name="eq_shop_turntable_function" text="Le plateau tourne lentement : laissez-y une machine sans rien d'attelé et elle tourne avec lui. Une machine de votre sponsor y compte davantage."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>

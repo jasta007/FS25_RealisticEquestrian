@@ -46,6 +46,7 @@ dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
 dofile("scripts/facilities/EqPlinths.lua")
+dofile("scripts/facilities/EqTurntable.lua")
 dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/facilities/EqSponsorBoards.lua")
 dofile("scripts/core/EqHorseRecord.lua")
@@ -5001,12 +5002,12 @@ end)()
         local a, b = { k = 1 }, { k = 2 }
         local decks = { { area = jump[1], key = a }, { area = jump[2], key = a }, { area = jump[3], key = a } }
         check("plinths: each machine counts once, each deck once",
-            EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, 3.5 } }, { [a] = { 0, 0, 0 } } }) == 2
-            and EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, -3.6 } }, { [a] = { 0, 0.1, 0.5 } } }) == 3
+            EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, 3.5 } }, { [a] = { 0, 0, 0 } } }) == 4
+            and EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, -3.6 } }, { [a] = { 0, 0.1, 0.5 } } }) == 6
             and EqPlinths.best(decks, { { [b] = { 0, 1.0, 3.6 } } }) == 0)
         check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
         local modDesc = io.open("modDesc.xml"):read("*a")
-        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump" }) do
+        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump", "plinthTurntable" }) do
             local path = "placeables/sponsorPlinths/" .. n
             local i3d = io.open(path .. ".i3d"):read("*a")
             local numbers, count = {}, 0
@@ -5018,6 +5019,18 @@ end)()
                 and EqSponsorBoards.isOn({ configFileName = path .. ".xml" }) and EqSponsors.isBleacherXml(path .. ".xml")
                 and EqPlinths.areasFor(path .. ".xml") ~= nil, tostring(count))
         end
+        local disc = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthTurntable.xml")[1]
+        check("turntable: a round deck, a machine there worth three boards", EqPlinths.inArea(disc, 2.0, 0.75, -2.0)
+            and not EqPlinths.inArea(disc, 2.5, 0.75, -2.5) and not EqPlinths.inArea(disc, 0, 0.0, 0)
+            and EqPlinths.best({ { area = disc, key = a } }, { { [a] = { 0, 0.75, 0 } } }) == 3)
+        check("turntable: known by its xml", EqTurntable.isTurntable("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthTurntable.xml")
+            and not EqTurntable.isTurntable("x/placeables/sponsorPlinths/plinthDrive.xml"))
+        local quarter = EqTurntable.advance(0, EqTurntable.TURN_MS / 4)
+        check("turntable: one slow turn every two minutes", math.abs(quarter - math.pi / 2) < 1e-9
+            and math.abs(EqTurntable.advance(6.2, EqTurntable.TURN_MS / 4) - (6.2 + math.pi / 2 - 2 * math.pi)) < 1e-9
+            and EqTurntable.TURN_MS >= 60000)
+        check("turntable: its disc is a node of its own", io.open("placeables/sponsorPlinths/plinthTurntable.i3d"):read("*a")
+            :find('<TransformGroup name="' .. EqTurntable.DISC .. '"', 1, true) ~= nil)
         check("plinths: the product jump is a fence with flags",
             io.open("placeables/sponsorPlinths/plinthProductJump.i3d"):read("*a"):find('name="eqFlagsRed"', 1, true) ~= nil)
     end

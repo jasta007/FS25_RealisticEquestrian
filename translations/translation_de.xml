@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="Produkt-Sprung"/>
         <text name="eq_shop_plinth_function" text="Stelle eine Maschine der Marke deines Sponsors darauf ab, um zusätzliches Branding zu erhalten."/>
         <text name="eq_shop_productJump_function" text="Auch ein Geländesprung: eine Rampe hinauf, über die Lücke, die andere hinunter."/>
+        <text name="eq_shop_plinthTurntable" text="Drehteller"/>
+        <text name="eq_shop_turntable_function" text="Die Scheibe dreht sich langsam: Lass eine Maschine ohne Anbaugerät darauf stehen, dann dreht sie sich mit. Eine Maschine deines Sponsors zählt hier mehr."/>
         <text name="eq_config_corner" text="Ecke"/>
         <text name="eq_config_cornerRight" text="Spitze rechts"/>
         <text name="eq_config_cornerLeft" text="Spitze links"/>

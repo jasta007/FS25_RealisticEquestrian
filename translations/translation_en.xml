@@ -95,6 +95,8 @@
         <text name="eq_shop_plinthProductJump" text="Product Jump"/>
         <text name="eq_shop_plinth_function" text="Park a machine of your sponsor's brand on it for extra branding."/>
         <text name="eq_shop_productJump_function" text="Also a cross country jump: up one ramp, over the slot, down the other."/>
+        <text name="eq_shop_plinthTurntable" text="Turntable"/>
+        <text name="eq_shop_turntable_function" text="The disc turns slowly: leave a machine on it with nothing hitched and it turns with the disc. A sponsor's machine on it counts extra."/>
         <text name="eq_config_corner" text="Corner"/>
         <text name="eq_config_cornerRight" text="Point right"/>
         <text name="eq_config_cornerLeft" text="Point left"/>

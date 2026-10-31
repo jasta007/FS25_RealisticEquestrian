@@ -305,6 +305,7 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/sponsorplinths/plinthramp.xml"] = 1,
     ["placeables/sponsorplinths/plinthramplarge.xml"] = 1,
     ["placeables/sponsorplinths/plinthproductjump.xml"] = 2,
+    ["placeables/sponsorplinths/plinthturntable.xml"] = 1,
 }
 -- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says
 -- what they would add, after the jump's own lines.

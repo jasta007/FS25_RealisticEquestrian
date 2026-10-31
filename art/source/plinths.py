@@ -10,6 +10,9 @@ a plinth's deck counts (EqPlinths); each plinth also carries sponsor boards.
 - plinthProductJump: two stone banks, each a ramp up to a flat top, with a slot between them. Three
   places for machines (each bank's top and the slot), or a cross country jump: up one ramp, over
   whatever stands in the slot, down the other. Its flags stand at the slot's ends.
+- plinthTurntable: a round stone plinth with a ramp at the back and a disc that turns very
+  slowly (node "eqTurntableDisc"); a machine left on the disc is held on it and turned with it
+  (EqTurntable). The board bends round the front.
 
 Stone sides (a cut-stone texture painted here) with painted copings along the top edges: the
 Colour bought, or the sponsor's colour (shapes named "eqPaint", EqJumpColours). Logos are shapes
@@ -52,9 +55,12 @@ PLINTHS = [
     {"name": "plinthRamp", "price": 5000, "colour": "green", "size": (3.0, 4.6, 1.2)},
     {"name": "plinthRampLarge", "price": 7500, "colour": "green", "size": (3.8, 6.6, 1.6)},
     {"name": "plinthProductJump", "price": 12000, "colour": "red"},
+    {"name": "plinthTurntable", "price": 25000, "colour": "navy"},
 ]
 DRIVE = {"half_x": 1.6, "half_deck": 3.0, "ramp": 3.5, "height": 0.75}
 PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 4.0, "ramp": 4.0, "height": 1.0}
+TURNTABLE = {"radius": 3.5, "disc": 3.0, "height": 0.7, "ramp": 3.5, "ramp_half": 1.6, "sides": 48}
+DISC = "eqTurntableDisc"     # the node EqTurntable turns
 
 
 def stone_texture(path, size=512):
@@ -239,6 +245,75 @@ def product():
     return {"stone": stone, "paint": paint, "white": white, "flags": flags}, logos, col, feet
 
 
+def circle(radius, sides, start=0.0):
+    return [(radius * math.cos(start + 2 * math.pi * k / sides), radius * math.sin(start + 2 * math.pi * k / sides))
+            for k in range(sides)]
+
+
+def cylinder(mesh, radius, y0, y1, sides, tile=STONE_TILE):
+    """A closed upright cylinder: its outline in (x, z), extruded up."""
+    prism(mesh, circle(radius, sides), (0.0, y0, 0.0), (1, 0, 0), (0, 0, 1), (0, 1, 0), y1 - y0, tile=tile)
+
+
+def turntable():
+    stone, paint, white, col, logos, disc = Mesh(), Mesh(), Mesh(), Mesh(), {}, Mesh()
+    t = TURNTABLE
+    R, r, h, n = t["radius"], t["disc"], t["height"], t["sides"]
+    cylinder(stone, R, 0.0, h, n)
+    cylinder(col, R, 0.0, h + 0.03, n)
+    # a painted collar round the top edge, showing as a ring round the disc
+    cylinder(paint, R + 0.012, h - 0.12, h + 0.02, n)
+    # the disc that turns, a little proud, in its own node
+    cylinder(disc, r, h - 0.02, h + 0.03, n)
+    # the ramp up at the back (+z)
+    hw, length = t["ramp_half"], t["ramp"]
+    z0 = math.sqrt(R * R - hw * hw) - 0.4
+    solid(stone, col, [(z0, 0.0), (R + length, 0.0), (z0, h), ], -hw, hw)
+    for side in (1, -1):
+        coping(paint, [(R - 0.05, h), (R + length, 0.0)], side * (hw - COPING[0] / 2 + 0.02))
+    # a curved board round the front (-z), the logo bent round it in strips
+    width, y0, bh = 2.4, 0.08, h - 0.22
+    steps = 12
+    span = width / R
+    for layer, mesh, out, inset in ((0, paint, 0.04, 0.0), (1, white, 0.046, 0.04)):
+        for k in range(steps):
+            a0 = -span / 2 + span * k / steps
+            a1 = -span / 2 + span * (k + 1) / steps
+            r0, r1 = R + out - 0.04, R + out
+            pts = [(r0 * math.sin(a0), -r0 * math.cos(a0)), (r1 * math.sin(a0), -r1 * math.cos(a0)),
+                   (r1 * math.sin(a1), -r1 * math.cos(a1)), (r0 * math.sin(a1), -r0 * math.cos(a1))]
+            if layer == 1:
+                # the white face sits inside the painted rim
+                trim = inset / R
+                if k == 0:
+                    pts = [(rr * math.sin(a0 + trim), -rr * math.cos(a0 + trim)) if i < 2 else pts[i]
+                           for i, rr in enumerate((r0, r1, r1, r0))]
+                if k == steps - 1:
+                    pts = [(rr * math.sin(a1 - trim), -rr * math.cos(a1 - trim)) if i >= 2 else pts[i]
+                           for i, rr in enumerate((r0, r1, r1, r0))]
+            lo, hi = (y0, y0 + bh) if layer == 0 else (y0 + inset, y0 + bh - inset)
+            prism(mesh, pts, (0.0, lo, 0.0), (1, 0, 0), (0, 0, 1), (0, 1, 0), hi - lo)
+    lh = bh - 0.14
+    lw = min(lh * ASPECT, width - 0.2)
+    lh = lw / ASPECT
+    logo = Mesh()
+    rl = R + 0.048
+    la = lw / rl
+    yc = y0 + bh / 2
+    for k in range(steps):
+        a0 = -la / 2 + la * k / steps
+        a1 = -la / 2 + la * (k + 1) / steps
+        # facing -z from the front: +x is on the left, so u runs from +x (a > 0) to -x
+        u0, u1 = 1 - k / steps, 1 - (k + 1) / steps
+        p0 = (rl * math.sin(a0), -rl * math.cos(a0))
+        p1 = (rl * math.sin(a1), -rl * math.cos(a1))
+        nm = (math.sin((a0 + a1) / 2), 0.0, -math.cos((a0 + a1) / 2))
+        logo.quad([(p0[0], yc - lh / 2, p0[1]), (p1[0], yc - lh / 2, p1[1]), (p1[0], yc + lh / 2, p1[1]), (p0[0], yc + lh / 2, p0[1])],
+                  nm, [(u0, 0), (u1, 0), (u1, 1), (u0, 1)])
+    logos["eqSponsor_1"] = logo
+    return {"stone": stone, "paint": paint, "white": white, "disc": disc}, logos, col, {}
+
+
 def write_i3d(name, colour, path, statics, logos, col, feet):
     files = [sj.SHADER] + list(sj.PAINT_MAPS.values()) + [STONE, LOGO_TEXTURE, FLAGS]
     fid = {f: i + 1 for i, f in enumerate(files)}
@@ -280,7 +355,12 @@ def write_i3d(name, colour, path, statics, logos, col, feet):
     names = {"stone": "stone", "paint": "eqPaint", "white": "boards", "flags": "flags"}
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     for key, mesh in statics.items():
-        if mesh.tris:
+        if mesh.tris and key == "disc":
+            lines.append(f'      <TransformGroup name="{DISC}" nodeId="{nid()}">')
+            lines.append(f'        <Shape name="disc" shapeId="{ids["s_" + key]}" clipDistance="{xc.CLIP * 2}" nodeId="{nid()}" '
+                         f'materialIds="{mat["stone"]}" castsShadows="true" receiveShadows="true"/>')
+            lines.append("      </TransformGroup>")
+        elif mesh.tris:
             lines.append(f'      <Shape name="{names[key]}" shapeId="{ids["s_" + key]}" clipDistance="{xc.CLIP * 2}" nodeId="{nid()}" '
                          f'materialIds="{mat[key]}" castsShadows="true" receiveShadows="true"/>')
     for key in logos:
@@ -300,6 +380,8 @@ def write_i3d(name, colour, path, statics, logos, col, feet):
 def write_xml(plinth, path, jump):
     name = plinth["name"]
     jump_line = "            <function>$l10n_eq_shop_productJump_function</function>\n" if jump else ""
+    if name == "plinthTurntable":
+        jump_line = "            <function>$l10n_eq_shop_turntable_function</function>\n"
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/plinths.py: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
@@ -346,7 +428,8 @@ def main(names=()):
     sponsor = np.asarray(Image.open("placeables/bleachers/bleacherSponsor_diffuse.dds").convert("RGB"), dtype=float)
     flags_rgb = np.asarray(Image.open("placeables/xcJumps/xcFlags_diffuse.dds").convert("RGB"), dtype=float)
     builders = {"plinthDrive": drive, "plinthRamp": lambda: ramp(PLINTHS[1]["size"]),
-                "plinthRampLarge": lambda: ramp(PLINTHS[2]["size"]), "plinthProductJump": product}
+                "plinthRampLarge": lambda: ramp(PLINTHS[2]["size"]), "plinthProductJump": product,
+                "plinthTurntable": turntable}
     for plinth in PLINTHS:
         name = plinth["name"]
         if names and name not in names:
@@ -364,6 +447,8 @@ def main(names=()):
                   (statics["white"], sj.flat(sj.WHITE))]
         if "flags" in statics:
             meshes.append((flip(statics["flags"]), flags_rgb))
+        if "disc" in statics:
+            meshes.append((statics["disc"], stone_rgb))
         meshes += [(flip(m), sponsor) for m in logos.values()]
         store_image([m for m in meshes if m[0].tris], os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-130)
         print(name, len(logos), "logo faces,", len(col.tris), "collision triangles")

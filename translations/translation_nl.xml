@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="Productsprong"/>
         <text name="eq_shop_plinth_function" text="Parkeer er een machine van het merk van je sponsor op voor extra branding."/>
         <text name="eq_shop_productJump_function" text="Ook een crosscountrysprong: een helling op, over de sleuf, de andere af."/>
+        <text name="eq_shop_plinthTurntable" text="Draaiplateau"/>
+        <text name="eq_shop_turntable_function" text="De schijf draait langzaam: laat er een machine zonder aangekoppeld werktuig op staan en die draait mee. Een machine van je sponsor telt hier extra."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>

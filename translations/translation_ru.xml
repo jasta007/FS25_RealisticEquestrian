@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="Продуктовый прыжок"/>
         <text name="eq_shop_plinth_function" text="Поставьте на него технику марки вашего спонсора для дополнительного брендинга."/>
         <text name="eq_shop_productJump_function" text="Также препятствие для кросса: вверх по одной рампе, над проёмом, вниз по другой."/>
+        <text name="eq_shop_plinthTurntable" text="Поворотный подиум"/>
+        <text name="eq_shop_turntable_function" text="Диск медленно вращается: оставьте на нём технику без прицепленного орудия, и она будет вращаться вместе с ним. Техника спонсора здесь засчитывается больше."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>

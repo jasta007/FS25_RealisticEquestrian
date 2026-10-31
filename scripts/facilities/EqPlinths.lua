@@ -8,6 +8,8 @@
         x, y, z   the deck's middle (y its surface there)
         hx, hz    half its size across and along
         slope     how much the surface rises for each metre of z (a display ramp)
+        r         a round deck's radius instead of hx, hz (the turntable)
+        value     boards a machine there is worth, if not MACHINE
 
     A machine counts when the middle of its footprint is over a deck and it stands on it (its
     root, which sits on the ground in every FS25 vehicle, near the surface there). Each deck
@@ -40,6 +42,7 @@ EqPlinths.AREAS = {
         { x = 0, y = 1.0, z = -3.6, hx = 2.0, hz = 2.0, slope = 0 },
         { x = 0, y = 0, z = 0, hx = 2.0, hz = 1.6, slope = 0 },
     },
+    ["placeables/sponsorplinths/plinthturntable.xml"] = { { x = 0, y = 0.73, z = 0, r = 2.9, slope = 0, value = 3 } },
     ["placeables/xcjumps/xcdropwall08.xml"] = drop(2.4),
     ["placeables/xcjumps/xcdropwall12.xml"] = drop(3.0),
     ["placeables/xcjumps/xcdropwall16.xml"] = drop(4.0),
@@ -64,7 +67,11 @@ end
 --- @param z number
 --- @return boolean true when it stands on the deck
 function EqPlinths.inArea(area, x, y, z)
-    if math.abs(x - area.x) > area.hx or math.abs(z - area.z) > area.hz then return false end
+    if area.r ~= nil then
+        if (x - area.x) ^ 2 + (z - area.z) ^ 2 > area.r ^ 2 then return false end
+    elseif math.abs(x - area.x) > area.hx or math.abs(z - area.z) > area.hz then
+        return false
+    end
     local surface = area.y + (area.slope or 0) * (z - area.z)
     local up = y - surface
     return up >= -EqPlinths.BELOW and up <= EqPlinths.ABOVE
@@ -74,7 +81,7 @@ end
 --- Pair machines with decks, each deck one machine and each machine one deck.
 --- @param decks table list of { area, plinth key }
 --- @param machines table list of { x, y, z } per deck's plinth: machines[i][key] = { x, y, z } in its space
---- @return number decks with a machine on them
+--- @return number boards the machines on the decks are worth
 function EqPlinths.best(decks, machines)
     local used, count = {}, 0
     for _, deck in ipairs(decks) do
@@ -82,7 +89,7 @@ function EqPlinths.best(decks, machines)
             local p = not used[i] and machine[deck.key] or nil
             if p ~= nil and EqPlinths.inArea(deck.area, p[1], p[2], p[3]) then
                 used[i] = true
-                count = count + 1
+                count = count + (deck.area.value or EqPlinths.MACHINE)
                 break
             end
         end
@@ -111,7 +118,7 @@ end
 
 --- @param vehicle table
 --- @return number|nil x, y, z the middle of its footprint on the ground, in the world
-local function footprint(vehicle)
+function EqPlinths.footprint(vehicle)
     local node = vehicle.rootNode
     if type(node) ~= "number" or node == 0 then return nil end
     local size = vehicle.size or {}
@@ -140,7 +147,7 @@ function EqPlinths.count(farmId, brand)
     for _, vehicle in ipairs(vehicles) do
         local owner = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
         if owner == farmId and not borrowed(vehicle) and brandOf(vehicle) == brand then
-            local wx, wy, wz = footprint(vehicle)
+            local wx, wy, wz = EqPlinths.footprint(vehicle)
             if wx ~= nil then
                 local machine = {}
                 for _, placeable in ipairs(plinths) do
@@ -151,7 +158,7 @@ function EqPlinths.count(farmId, brand)
             end
         end
     end
-    return EqPlinths.best(decks, machines) * EqPlinths.MACHINE
+    return EqPlinths.best(decks, machines)
 end
 
 
@@ -163,7 +170,7 @@ function EqPlinths.holdsMachine(placeable)
     if areas == nil or type(placeable.rootNode) ~= "number" or placeable.rootNode == 0 or g_currentMission == nil then return false end
     local vehicles = g_currentMission.vehicleSystem ~= nil and g_currentMission.vehicleSystem.vehicles or {}
     for _, vehicle in ipairs(vehicles) do
-        local wx, wy, wz = footprint(vehicle)
+        local wx, wy, wz = EqPlinths.footprint(vehicle)
         if wx ~= nil then
             local x, y, z = worldToLocal(placeable.rootNode, wx, wy, wz)
             for _, area in ipairs(areas) do

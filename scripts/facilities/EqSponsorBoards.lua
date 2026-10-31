@@ -62,7 +62,7 @@ EqSponsorBoards.COLOURS = {
 EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml", "placeables/xcjumps/xcgatearch.xml",
     "placeables/xcjumps/xcgatesimple.xml", "placeables/sponsorplinths/plinthdrive.xml",
     "placeables/sponsorplinths/plinthramp.xml", "placeables/sponsorplinths/plinthramplarge.xml",
-    "placeables/sponsorplinths/plinthproductjump.xml" }
+    "placeables/sponsorplinths/plinthproductjump.xml", "placeables/sponsorplinths/plinthturntable.xml" }
 
 
 local function endsWith(filename, list)

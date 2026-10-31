@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="プロダクトジャンプ"/>
         <text name="eq_shop_plinth_function" text="スポンサーのブランドの機械を載せると、ブランド効果が上がります。"/>
         <text name="eq_shop_productJump_function" text="クロスカントリー障害としても使えます：片側のスロープを上り、溝を越えて反対側を下ります。"/>
+        <text name="eq_shop_plinthTurntable" text="ターンテーブル"/>
+        <text name="eq_shop_turntable_function" text="ディスクはゆっくり回ります。何も連結していない機械を載せたままにすると一緒に回ります。スポンサーの機械はここでより多くカウントされます。"/>
         <text name="eq_config_corner" text="コーナー"/>
         <text name="eq_config_cornerRight" text="先端が右"/>
         <text name="eq_config_cornerLeft" text="先端が左"/>

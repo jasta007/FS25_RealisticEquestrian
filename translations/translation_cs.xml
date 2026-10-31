@@ -97,6 +97,8 @@
         <text name="eq_shop_plinthProductJump" text="产品障碍"/>
         <text name="eq_shop_plinth_function" text="在上面停放赞助商品牌的机器，可获得额外品牌曝光。"/>
         <text name="eq_shop_productJump_function" text="也可作越野障碍：上一侧坡道，越过中间空槽，从另一侧下来。"/>
+        <text name="eq_shop_plinthTurntable" text="旋转展台"/>
+        <text name="eq_shop_turntable_function" text="转盘缓慢旋转：把未挂接任何农具的机器停在上面，它会随转盘一起转动。赞助商的机器在这里计入更多。"/>
         <text name="eq_config_corner" text="角障碍"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>
