@@ -39,9 +39,10 @@ DARKEN = 0.45
 DESATURATE = 0.8
 LINING = (90, 130)  # luminance where the leather fades into the lining
 # The shaft widens up the calf (James's fit, 2026-10-31): as it is at the bottom of the calf, up to
-# 1.4x side to side and 1.2x front to back at the top. Depth grows backwards from the shin.
-CALF = (0.18, 0.50)  # heights above the sole where the widening starts and is full
-CALF_WIDTH, CALF_DEPTH = 1.4, 1.2
+# 1.55x side to side and 1.3x front to back at the top, most of it early (ease out), as a calf
+# fills out quickly above the ankle. Depth grows backwards from the shin.
+CALF = (0.18, 0.45)  # heights above the sole where the widening starts and is full
+CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
 CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.055
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
@@ -84,6 +85,7 @@ def calf(position, normal):
     """A shaft vertex widened for the calf at its height."""
     (x, y, z), (nx, ny, nz) = position, normal
     t = min(1.0, max(0.0, (y - CALF[0]) / (CALF[1] - CALF[0])))
+    t = 1 - (1 - t) ** 2
     sx, sz = 1 + (CALF_WIDTH - 1) * t, 1 + (CALF_DEPTH - 1) * t
     x = CALF_CENTRE_X + (x - CALF_CENTRE_X) * sx
     z = SHIN_FRONT_Z + (z - SHIN_FRONT_Z) * sz

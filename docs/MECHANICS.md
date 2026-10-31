@@ -762,8 +762,8 @@ boots are our own models; the rest are base-game meshes:
   bones when the character is dressed. The foot lies along the line from the foot bone to the toe
   bone, turned up 14 degrees, so it follows the foot even when dressed in the saddle. They're
   sized to end 4 cm below the knee (0.85x to 1.15x) and sit 3 cm above the ankle bone. The shaft
-  widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.2x front to back
-  (growing backwards from the shin) at its top, and leans back 7 degrees from the ankle (James's
+  widens up the calf, from as modelled at its bottom to 1.55x side to side and 1.3x front to back
+  (growing backwards from the shin, most of it low on the calf) at its top, and leans back 7 degrees from the ankle (James's
   fit, 2026-10-31).
   `eqBootFit [width] [raise] [toeDrop] [lean] [back]` tunes them, not saved; all but width apply
   at the next dressing. The i3d keeps an empty first child, as the game
