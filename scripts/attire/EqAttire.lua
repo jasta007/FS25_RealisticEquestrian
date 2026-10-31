@@ -83,8 +83,6 @@ EqAttire.BOOT_LEAN = 7
 EqAttire.BOOT_BACK = -0.01
 -- The shaft tops lean outwards, away from each other, seen from the front (degrees).
 EqAttire.BOOT_SPLAY = 3
--- Which of the shaft's calf shapes (eqCalf1..n, art/source/riding_boots.py CALF_SHAPES) shows.
-EqAttire.BOOT_CALF = 5
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })
 
@@ -401,15 +399,6 @@ function EqAttire.isRidingBoots(name)
 end
 
 
---- Show one calf shape of a shaft, hide the others (a shaft with none named eqCalf is left alone).
-local function showCalf(shaft)
-    for i = 0, getNumOfChildren(shaft) - 1 do
-        local child = getChildAt(shaft, i)
-        local n = tonumber(string.match(getName(child), "^eqCalf(%d+)$"))
-        if n ~= nil then setVisibility(child, n == EqAttire.BOOT_CALF) end
-    end
-end
-
 
 --- Delete the boot pieces a model wore before.
 local function removeBoots(model)
@@ -454,7 +443,6 @@ function EqAttire.fitBoots(model, item)
                 setDirection(shaft, fx, fy, fz, ux, uy, uz)
                 setTranslation(shaft, ax + ux * raise - fx * back, ay + uy * raise - fy * back, az + uz * raise - fz * back)
                 setScale(shaft, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
-                showCalf(shaft)
                 -- The foot: along the foot bone towards the toe bone, so it lies on the foot
                 -- however the ankle is bent at dressing time (in the saddle the toes point down).
                 -- Its own size, the shaft's girth is only for calves.
@@ -572,21 +560,6 @@ function EqAttire:consoleBootFit(width, raise, drop, lean, back, splay)
 end
 
 
---- eqBootCalf [1-8]: which calf shape the tall boots' shafts show, live on every dressed character.
-function EqAttire:consoleBootCalf(n)
-    EqAttire.BOOT_CALF = math.max(1, math.min(8, math.floor(tonumber(n) or EqAttire.BOOT_CALF)))
-    for model in pairs(EqAttire.booted) do
-        for _, node in ipairs(model.eqBootNodes or {}) do
-            if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then showCalf(node) end
-        end
-    end
-    local shapes = { "1.40 wide 1.30 deep", "1.55 wide 1.30 deep", "1.40 wide 1.45 deep, even taper, full higher",
-        "1.30 wide 1.55 deep", "1.40 wide 1.45 deep", "1.55 wide 1.45 deep", "1.40 wide 1.45 deep, full lower",
-        "1.30 wide 1.45 deep" }
-    return string.format("Riding boots: calf shape %d (%s at the top)", EqAttire.BOOT_CALF, shapes[EqAttire.BOOT_CALF])
-end
-
-
 --- eqUvGrid [bottom|top|gloves|footwear|headgear|off]: put a labelled grid on one slot's item as
 --- its texture, from the next dressing (re-pick the item in the wardrobe), to map its layout.
 function EqAttire:consoleUvGrid(slot)
@@ -616,7 +589,6 @@ function EqAttire.install(guarded, modDirectory)
         end)
     end
     addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]", "consoleBootFit", EqAttire)
-    addConsoleCommand("eqBootCalf", "Picks the tall riding boots' calf shape: eqBootCalf [1-8]", "consoleBootCalf", EqAttire)
     addConsoleCommand("eqUvGrid", "Shows a labelled test grid on a worn item: eqUvGrid [bottom|top|gloves|footwear|headgear|off]", "consoleUvGrid", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.

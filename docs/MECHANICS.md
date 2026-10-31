@@ -763,8 +763,7 @@ boots are our own models; the rest are base-game meshes:
   bone, turned up 14 degrees, so it follows the foot even when dressed in the saddle. They're
   sized to end 4 cm below the knee (0.85x to 1.15x) and sit 3 cm above the ankle bone. The shaft
   widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.45x front to back
-  (growing backwards from the shin, most of it low on the calf) at its top (for now the shaft
-  carries 8 calf shapes to pick from live with `eqBootCalf 1-8`, shape 5 being this one), all
+  (growing backwards from the shin, most of it low on the calf) at its top, all
   1.15x on top, leans back 7 degrees from the ankle and 3 degrees outwards (James's fit,
   2026-10-31).
   `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` tunes them, not saved; all but width apply

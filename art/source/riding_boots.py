@@ -39,16 +39,11 @@ DARKEN = 0.45
 DESATURATE = 0.8
 LINING = (90, 130)  # luminance where the leather fades into the lining
 # The shaft widens up the calf (James's fit, 2026-10-31): as it is at the bottom of the calf, up to
-# 1.55x side to side and 1.3x front to back at the top, most of it early (ease out), as a calf
+# 1.4x side to side and 1.45x front to back at the top, most of it early (ease out), as a calf
 # fills out quickly above the ankle. Depth grows backwards from the shin.
 CALF = (0.145, 0.45)  # heights above the sole where the widening starts and is full (0.18 poked through low on the shin)
-CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
-# Calf shapes to try live (eqBootCalf 1-8, James 2026-10-31): (top width, top depth). Each shaft
-# group holds all of them as eqCalf1..8 and EqAttire shows one. Once picked, keep only that one.
-# (top width, top depth, height where full, ease). Round 2 (James: 5 "SO close" with eqBootFit
-# width 1.15; 3, 4, 7, 8 far too chunky): kept 1, 2, 5, 6, new ones around 5.
-CALF_SHAPES = [(1.4, 1.3, 0.45, 2), (1.55, 1.3, 0.45, 2), (1.4, 1.45, 0.50, 1), (1.3, 1.55, 0.45, 2),
-               (1.4, 1.45, 0.45, 2), (1.55, 1.45, 0.45, 2), (1.4, 1.45, 0.38, 2), (1.3, 1.45, 0.45, 2)]
+# Top width and depth: shape 5 of the eight James tried live (2026-10-31), with eqBootFit width 1.15.
+CALF_WIDTH, CALF_DEPTH = 1.4, 1.45
 CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.068  # depth anchor just in front of the shin, so the front gives a little too
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
@@ -159,13 +154,9 @@ def main():
     # The OBJ's v runs from the bottom like GIANTS'; flip it if the textures come out upside down.
     groups = []  # (group name, [(shape name, mesh)])
     for side, mirror in (("L", False), ("R", True)):
-        shafts = []
-        for n, (width, depth, full, ease) in enumerate(CALF_SHAPES):
-            shape = lambda p, q, w=width, d=depth, f=full, e=ease: calf(p, q, w, d, f, e)  # noqa: E731
-            shafts.append((f"eqCalf{n + 1}", piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP,
-                                                  ANKLE, mirror, shape)))
+        shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror, calf)
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
-        groups += [("eqBootShaft" + side, shafts), ("eqBootFoot" + side, [("eqBootFoot" + side + "Shape", foot)])]
+        groups += [("eqBootShaft" + side, [("eqBootShaft" + side + "Shape", shaft)]), ("eqBootFoot" + side, [("eqBootFoot" + side + "Shape", foot)])]
     shapes = [(group + "_" + name, mesh) for group, members in groups for name, mesh in members]
     for name, diffuse in textures().items():
         icon(verts, tris, diffuse, os.path.join(OUT, f"ridingBoots{'_' + name if name else ''}_icon.dds"))
