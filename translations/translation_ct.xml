@@ -921,5 +921,43 @@
         <text name="eq_shop_bleachers8x16" text="看臺 8排，16 米"/>
         <text name="eq_shop_bleachers_function" text="你主辦比賽的觀眾座位：在賽道或盛裝舞步場地60米內計入。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前方的贊助商廣告牌顯示你的機械品牌。"/>
+        <text name="input_EQ_DRESSAGE_TEST" text="盛裝舞步路線：新建、編輯或儲存"/>
+        <text name="input_EQ_DT_PREV" text="上一個選項"/>
+        <text name="input_EQ_DT_NEXT" text="下一個選項"/>
+        <text name="input_EQ_DT_RANDOM" text="隨機選項"/>
+        <text name="input_EQ_DT_MODE" text="圖形或原地動作"/>
+        <text name="input_EQ_DT_ACCEPT" text="保留這一步"/>
+        <text name="input_EQ_DT_UNDO" text="撤銷上一步"/>
+        <text name="eq_dt_newAction" text="新的盛裝舞步路線"/>
+        <text name="eq_dt_editAction" text="編輯盛裝舞步路線"/>
+        <text name="eq_dt_saveAction" text="儲存盛裝舞步路線"/>
+        <text name="eq_dt_cancelAction" text="取消盛裝舞步路線"/>
+        <text name="eq_dt_deleteAction" text="刪除盛裝舞步路線"/>
+        <text name="eq_dt_deleteTitle" text="刪除路線"/>
+        <text name="eq_dt_deleteAsk" text="刪除此場地的盛裝舞步路線（%d步）？將重新使用隨機路線。"/>
+        <text name="eq_dt_modeSpot" text="顯示原地動作"/>
+        <text name="eq_dt_modeFigure" text="顯示圖形"/>
+        <text name="eq_dt_new" text="新的盛裝舞步路線：第%d步"/>
+        <text name="eq_dt_editing" text="編輯盛裝舞步路線：第%d步"/>
+        <text name="eq_dt_figure" text="圖形"/>
+        <text name="eq_dt_spot" text="原地"/>
+        <text name="eq_dt_noOptions" text="這裡沒有合適的：撤銷或儲存"/>
+        <text name="eq_dt_saved" text="盛裝舞步路線已儲存：%d個動作"/>
+        <text name="eq_dt_deleted" text="盛裝舞步路線已刪除：此場地重新使用隨機路線"/>
+        <text name="eq_dt_cancelled" text="盛裝舞步路線未儲存"/>
+        <text name="eq_fig_halt" text="在%s立定"/>
+        <text name="eq_fig_reinBack" text="在%s立定，後退"/>
+        <text name="eq_fig_piaffe" text="在%s原地踏步"/>
+        <text name="eq_fig_pirouette" text="在%s定後肢旋轉"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L：為此場地編排自己的盛裝舞步路線"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L：編輯此場地的盛裝舞步路線"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="上一個字母"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="下一個字母"/>
+        <text name="input_EQ_DT_GAIT" text="圖形步法"/>
+        <text name="eq_dt_gaitAction" text="圖形步法：%s"/>
+        <text name="eq_fig_pirouetteLeft" text="在%s向左定後肢旋轉"/>
+        <text name="eq_fig_pirouetteRight" text="在%s向右定後肢旋轉"/>
+        <text name="eq_dt_modeLateral" text="顯示側向運動"/>
+        <text name="eq_dt_lateral" text="側向"/>
     </texts>
 </l10n>

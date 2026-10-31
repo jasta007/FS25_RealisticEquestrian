@@ -460,7 +460,8 @@ end
 
 
 --- Start the routine on a course. Near one of our arenas it is a test of figures
---- (EqDressagePath): a hosted event's fixed test when course.test says so, else a new one.
+--- (EqDressagePath): the arena's own test when the player made one, else a hosted event's fixed
+--- test when course.test says so, else a new one.
 --- Elsewhere the first leg is asked for at once.
 --- @param routine table
 --- @param course table { x, z, markers, test = { seed, moves, counts }|nil, temperament }
@@ -472,8 +473,16 @@ function EqDressage.start(routine, course, rng)
     local frame = x ~= nil and EqDressagePath.frameFor(course.markers, x) or nil
     if frame ~= nil then
         local fixed = course.test
-        local test = EqDressagePath.build(frame, EqDressagePath.figuresFor(fixed ~= nil and fixed.moves or nil),
-            fixed ~= nil and seeded(fixed.seed) or rng)
+        -- The player's own test for this arena (EqDressageTests) rides instead of a random one,
+        -- in training and in your own events.
+        local plan = EqDressageTests ~= nil and EqDressageTests.planFor(frame) or nil
+        local test
+        if plan ~= nil then
+            test = EqDressagePath.build(frame, nil, nil, plan)
+        else
+            test = EqDressagePath.build(frame, EqDressagePath.figuresFor(fixed ~= nil and fixed.moves or nil),
+                fixed ~= nil and seeded(fixed.seed) or rng)
+        end
         routine.kind, routine.path = "path", EqDressagePath.newRun(test, course.temperament)
         routine.competing = fixed ~= nil and fixed.counts or nil
         routine.task, routine.request, routine.preview, routine.bonus = { kind = "path" }, nil, nil, nil

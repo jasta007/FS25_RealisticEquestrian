@@ -60,6 +60,10 @@ EqDressagePath.TRAINING_FIGURES = 7
 -- The track between figures: at least this long, and preferably no longer than CONNECT_GOOD.
 EqDressagePath.CONNECT_MIN = 3
 EqDressagePath.CONNECT_GOOD = 15
+-- A movement on the spot in the editor goes at one of the letters this share of a lap ahead.
+EqDressagePath.SPOT_REACH = 0.75
+-- The movements on the spot the editor offers at a letter, in the order N and M step through them.
+EqDressagePath.SPOT_STYLES = { "halt", "reinBack", "piaffe", "pirouetteLeft", "pirouetteRight" }
 -- Every figure is ridden at one gait, built for it (James 2026-10-29: trot circles, walk
 -- circles and canter circles, never one in another gait). How often each gait and figure comes.
 EqDressagePath.GAITS = { "walk", "trot", "canter" }
@@ -170,6 +174,11 @@ EqDressagePath.KINK = math.rad(50)
 EqDressagePath.SMOOTH = math.rad(12)
 -- Metres over which the line eases from one gait's track to another's in a corner.
 EqDressagePath.BLEND = 5
+-- A player's own test can put a change of gait anywhere, often just out of a halt in a corner:
+-- ease over longer there (James 2026-10-31: a halt then a change looked weird).
+EqDressagePath.BLEND_PLAN = 12
+-- A player's test changing gait this soon after a halt moves off from the halt in the new gait.
+EqDressagePath.MOVE_OFF = 16
 EqDressagePath.STICK_FREE = 0.3
 EqDressagePath.STICK_TURN = 0.5
 -- Further off the line than this (metres) there is no pull: a rider leaving the test was held
@@ -380,6 +389,13 @@ end
 
 
 --- @return number index of the nearest track point, and how far it is
+--- Metres along a list of points.
+local function pathLength(pts)
+    local d = 0
+    for i = 2, #pts do d = d + math.sqrt((pts[i].x - pts[i - 1].x) ^ 2 + (pts[i].y - pts[i - 1].y) ^ 2) end
+    return d
+end
+
 local function onTrack(track, x, y)
     local best, bestD = 1, math.huge
     for i, p in ipairs(track) do
@@ -990,17 +1006,19 @@ end
 --- @param frame table from frameFor
 --- @return table figures, table tracks gait -> { pts, length }, table g
 function EqDressagePath.library(frame)
+    -- An arena's library doesn't change: the test editor builds a test for every option it shows.
+    if frame.library ~= nil then return frame.library[1], frame.library[2], frame.library[3] end
     local g = geometry(frame)
     local byGait = tracks(g)
     local list = {}
     for _, name in ipairs(EqDressagePath.FIGURE_ORDER) do
         for _, gait in ipairs(EqDressagePath.GAITS) do
             local track = byGait[gait].pts
-            for _, figure in ipairs(FIGURES[name](g, frame, gait)) do
+            for k, figure in ipairs(FIGURES[name](g, frame, gait)) do
                 local weight = EqDressagePath.FIGURE_WEIGHTS[figure.key] or 1
                 -- Lateral work drifts without turning: its kinks are not turns.
                 if figure.lateral or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
-                    for _, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
+                    for mi, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
                         local sx, sy = mirror[1], mirror[2]
                         local pts = {}
                         for i, p in ipairs(figure.pts) do pts[i] = { x = p.x * sx, y = p.y * sy } end
@@ -1018,6 +1036,8 @@ function EqDressagePath.library(frame)
                                     bend = sec.bend ~= nil and sec.bend * sx * sy or nil, drift = sec.drift * sx * sy, kind = sec.kind })
                             end
                             table.insert(list, {
+                                -- Saved in a player's own test (EqDressageTests): the same figure on every load.
+                                id = string.format("%s/%s/%d/%d", name, gait, k, mi),
                                 key = figure.key, gait = gait, weight = weight * EqDressagePath.GAIT_WEIGHTS[gait],
                                 size = figure.size, loops = figure.loops, labels = labels,
                                 turn = figure.turn ~= nil and figure.turn * sx * sy or nil,
@@ -1032,6 +1052,7 @@ function EqDressagePath.library(frame)
             end
         end
     end
+    frame.library = { list, byGait, g }
     return list, byGait, g
 end
 
@@ -1136,6 +1157,15 @@ function EqDressagePath.figuresFor(moves)
 end
 
 
+--- @param seed number|string|nil
+--- @return function rng (n) -> 1..n, the same rolls every time for the same seed
+local function seededRng(seed)
+    local random = EqRandom.new(seed or 1)
+    return function(n) return math.min(n, 1 + math.floor(random:next() * n)) end
+end
+EqDressagePath.seededRng = seededRng
+
+
 -- Figures marked on following the line alone (PLAIN_*): not the opening, lateral work or passage.
 local PLAIN_KEYS = { circle = true, longDiagonal = true, shortDiagonal = true, halfVolte = true, across = true, acrossChange = true,
     centre = true, centreToX = true, centreFromX = true, serpentine = true, shallowLoop = true, throughCircle = true, eight = true,
@@ -1170,12 +1200,20 @@ end
 
 
 --- Build a test for an arena.
+--- A plan is a test the player put together in the editor (EqDressageTests, James 2026-10-31):
+--- its steps are ridden in order instead of random picks, with nothing random between them.
+--- Each step has its own seed for what is still left to chance inside a figure (a halt at X on
+--- a centre line), so a saved plan rides the same test every time. A step that no longer fits
+--- (the arena changed size) ends the plan there: test.broken is its number.
 --- @param frame table from frameFor
---- @param figures number how many figures between the opening and the final centre line
---- @param rng function (n) -> 1..n; a seeded one rides the same test every time
+--- @param figures number how many figures between the opening and the final centre line (no plan)
+--- @param rng function (n) -> 1..n; a seeded one rides the same test every time (no plan)
+--- @param plan table|nil { turn = 1|-1, seed, steps = { { kind = "figure", id, seed } | { kind = "spot", style, letter, seed } } }
+--- @param open boolean|nil true for the editor: stop before the final centre line, with test.options
 --- @return table test { pts = { x, y, s, m }, moves = { s0, s1, key, ... }, events = { s, kind, gait, letter, m }, length, frame }
-function EqDressagePath.build(frame, figures, rng)
+function EqDressagePath.build(frame, figures, rng, plan, open)
     local library, byGait, g = EqDressagePath.library(frame)
+    if plan ~= nil then rng = seededRng(plan.seed) end
     local test = { pts = {}, moves = {}, events = {}, sections = {}, passages = {}, frame = frame, g = g }
     local events = test.events
 
@@ -1183,27 +1221,37 @@ function EqDressagePath.build(frame, figures, rng)
     local gait, lastChange, walkFrom = EqDressagePath.PROCEED, 0, nil
     local function change(s, newGait, letter, m, forced)
         if newGait == gait or (not forced and s < lastChange + EqDressagePath.CHANGE_GAP) then return false end
+        -- A player's test moving off from a halt at another gait: a halted horse has no gait to
+        -- change, so it moves off in the new one (James 2026-10-31: "Gait change" after a halt,
+        -- with a step of the old gait first).
+        local last = events[#events]
+        if plan ~= nil and last ~= nil and last.kind == "halt" and not last.final and s - last.s <= EqDressagePath.MOVE_OFF then
+            last.gait, gait = newGait, newGait
+            walkFrom = newGait == "walk" and last.s or nil
+            return true
+        end
         table.insert(events, { s = s, kind = "change", gait = newGait, letter = letter, m = m })
         gait, lastChange = newGait, s
         walkFrom = newGait == "walk" and s or nil
         return true
     end
-    local function halt(s, letter, m, final, after)
+    local function halt(s, letter, m, final, after, reinBack)
         local back = not final and rng(100) <= EqDressagePath.REIN_BACK_CHANCE or nil
+        if reinBack ~= nil then back = reinBack or nil end
         table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final, reinBack = back })
         gait, lastChange = after, s
         walkFrom = after == "walk" and s or nil
     end
     --- A piaffe (trot) or pirouette (walk, canter) at a letter, turning into the arena.
-    local function spot(s, letter, m, turn)
+    local function spot(s, letter, m, turn, style)
         if s < lastChange + EqDressagePath.CHANGE_GAP then return end
-        local style = gait == "trot" and "piaffe" or "pirouette"
+        style = style or (gait == "trot" and "piaffe" or "pirouette")
         table.insert(events, { s = s, kind = "spot", style = style, gait = gait, letter = letter, m = m, turn = turn })
         lastChange = s
     end
 
     -- The opening: from outside A down the centre line, halt at X, track left or right at C.
-    local turn = rng(2) == 1 and 1 or -1
+    local turn = plan ~= nil and plan.turn or (rng(2) == 1 and 1 or -1)
     local opening, xIndex = centreLine(g, frame, turn, true, "trot")
     local enter = { s0 = 0, key = "enter", labels = { "A", "X" } }
     table.insert(test.moves, enter)
@@ -1226,6 +1274,7 @@ function EqDressagePath.build(frame, figures, rng)
         -- Just after a change in a corner the horse is on the last gait's track, whose corner is
         -- sized differently: ease across to this one over BLEND metres, not a sudden step.
         local _, off = onTrack(t, here.x, here.y)
+        local blend = plan ~= nil and EqDressagePath.BLEND_PLAN or EqDressagePath.BLEND
         if off > 0.1 then
             local from, fromOff = nil, off
             for _, other in pairs(byGait) do
@@ -1236,9 +1285,9 @@ function EqDressagePath.build(frame, figures, rng)
                 local d = 0
                 for k, p in ipairs(run) do
                     if k > 1 then d = d + math.sqrt((p.x - run[k - 1].x) ^ 2 + (p.y - run[k - 1].y) ^ 2) end
-                    if d >= EqDressagePath.BLEND then break end
+                    if d >= blend then break end
                     local q = from[onTrack(from, p.x, p.y)]
-                    local w = 1 - d / EqDressagePath.BLEND
+                    local w = 1 - d / blend
                     w = w * w * (3 - 2 * w)
                     run[k] = { x = p.x + (q.x - p.x) * w, y = p.y + (q.y - p.y) * w }
                 end
@@ -1275,6 +1324,19 @@ function EqDressagePath.build(frame, figures, rng)
         if figGait ~= gait then
             -- Up from a walk at the first letter (walks are kept short), else at the last.
             local at = gait == "walk" and usable[1] or usable[#usable]
+            if lateral and figGait == "walk" then
+                -- Down to a walk for lateral work: CHANGE_LEAD before it (below), so the walk
+                -- stays short.
+                at = nil
+            elseif lateral then
+                -- A player's lateral work at another gait: change LATERAL_CLEAR before it at
+                -- least, right away when no letter is that far back; up from a walk at the first.
+                at = nil
+                for _, l in ipairs(usable) do
+                    if length - l.d >= EqDressagePath.LATERAL_CLEAR and (at == nil or gait ~= "walk") then at = l end
+                end
+                if at == nil then change(test.pts[#test.pts].s, figGait, nil, m, true) end
+            end
             if at ~= nil then
                 track(at.x, at.y, m)
                 change(test.pts[#test.pts].s, figGait, at.letter, m, true)
@@ -1284,10 +1346,16 @@ function EqDressagePath.build(frame, figures, rng)
                 local t = byGait[gait].pts
                 local here = test.pts[#test.pts]
                 local run = trackRun(t, onTrack(t, here.x, here.y), onTrack(t, entry.x, entry.y), rein)
-                local k = math.max(1, #run - math.floor(EqDressagePath.CHANGE_LEAD / 2 / EqDressagePath.STEP))
+                local lead = (lateral and figGait == "walk") and EqDressagePath.CHANGE_LEAD or EqDressagePath.CHANGE_LEAD / 2
+                local k = math.max(1, #run - math.floor(lead / EqDressagePath.STEP))
                 for i = 1, k do append(test, { run[i] }, m) end
                 change(test.pts[#test.pts].s, figGait, nil, m, true)
             end
+            track(entry.x, entry.y, m)
+            return
+        end
+        -- The player's own test rides only what they picked.
+        if plan ~= nil then
             track(entry.x, entry.y, m)
             return
         end
@@ -1366,7 +1434,7 @@ function EqDressagePath.build(frame, figures, rng)
             halt(sAt(figure.haltAt), "X", m, false, after)
         elseif figure.haltAt ~= nil and after ~= figure.gait then
             change(sAt(figure.haltAt), after, "X", m, true)
-        elseif #figure.marks > 0 and rng(100) <= EqDressagePath.CHANGE_INSIDE then
+        elseif #figure.marks > 0 and plan == nil and rng(100) <= EqDressagePath.CHANGE_INSIDE then
             -- Only a change down inside a figure: its turns suit the faster gait.
             local down = EqDressagePath.DOWN[gait]
             local at = sAt(figure.marks[rng(#figure.marks)])
@@ -1380,8 +1448,14 @@ function EqDressagePath.build(frame, figures, rng)
         rein = figure.exitRein
     end
 
-    for _ = 1, figures do
-        local choices = {}
+    --- Metres of walk still to go before a walk is long (WALK_MAX), while walking.
+    local function walkLeft()
+        return EqDressagePath.WALK_MAX - (test.pts[#test.pts].s - (walkFrom or test.pts[#test.pts].s))
+    end
+
+    --- The figures that can come next: { figure, weight, d = metres of track to its start }.
+    local function choices()
+        local list = {}
         local here = test.pts[#test.pts]
         local t = byGait[gait]
         local from = onTrack(t.pts, here.x, here.y)
@@ -1390,27 +1464,172 @@ function EqDressagePath.build(frame, figures, rng)
             -- walking figure at a time.
             local step = figure.gait == gait or (figure.gait == "trot" or gait == "trot")
             if figure.gait == "walk" and gait == "walk" then step = false end
+            -- The player's own test may go from any gait to any other, and repeat a figure.
+            if plan ~= nil then step = true end
             -- Lateral work only in the gait the horse is in: a change just before it was missed
-            -- under the lateral prompt (James, 2026-10-31).
+            -- under the lateral prompt (James, 2026-10-31). A player's own test changes well
+            -- before it instead (connect), so any gait may lead into it there.
             local collected = figure.sections ~= nil or figure.passage ~= nil
-            if collected and figure.gait ~= gait then step = false end
-            if figure.entryRein == rein and figure.key ~= lastKey and step and not figure.finalOnly then
+            if collected and figure.gait ~= gait and plan == nil then step = false end
+            -- All walks short in a player's test (James 2026-10-31: a giant walk path was
+            -- easy to make): the walk to a walking figure and the figure itself.
+            if plan ~= nil and figure.gait == "walk" then
+                figure.length = figure.length or pathLength(figure.pts)
+                if figure.length > EqDressagePath.WALK_MAX then step = false end
+            end
+            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 local clear = not collected or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
-                if d >= least and d <= t.length * 0.6 and clear then
+                if collected and figure.gait ~= gait then
+                    clear = d >= (figure.gait == "walk" and EqDressagePath.CHANGE_LEAD or EqDressagePath.LATERAL_CLEAR) + 2
+                end
+                local walkOk = plan == nil or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
+                if d >= least and d <= t.length * 0.6 and clear and walkOk then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
-                    table.insert(choices, { figure, figure.weight * near })
+                    table.insert(list, { figure, figure.weight * near, d = d })
                 end
             end
         end
-        local figure = pick(choices, rng)
-        if figure == nil then break end
+        return list
+    end
+
+    local function addFigure(figure)
         local m = #test.moves + 1
         table.insert(test.moves, { s0 = test.pts[#test.pts].s, key = figure.key, size = figure.size, loops = figure.loops,
             turn = figure.turn, labels = figure.labels, gait = figure.gait })
         ride(figure, m)
         lastKey = figure.key
+    end
+
+    --- The letters ahead on the track (most of a lap), with metres to each.
+    local function lettersAhead()
+        local t = byGait[gait].pts
+        local here = test.pts[#test.pts]
+        local i = onTrack(t, here.x, here.y)
+        local behind = t[(i - 1 - rein * 2) % #t + 1]
+        local letters, length = letterRun(behind.x, behind.y)
+        local list = {}
+        -- A player's test at a walk stays short (WALK_MAX) on the way to a letter too.
+        local reach = length * EqDressagePath.SPOT_REACH
+        if plan ~= nil and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
+        for _, l in ipairs(letters) do
+            if l.d >= EqDressagePath.CONNECT_MIN and l.d <= reach then table.insert(list, l) end
+        end
+        return list
+    end
+
+    --- The movements on the spot a player can put at a letter, and the gaits each is ridden from:
+    --- a halt or a halt and rein back from any gait, a piaffe from a trot, a pirouette either
+    --- way from a walk or canter. The horse changes to that gait on the way to the letter.
+    --- "pirouette" (older saves) turns with the rein.
+    local function spotGaits(style)
+        if style == "piaffe" then return { trot = true } end
+        if style == "pirouette" or style == "pirouetteLeft" or style == "pirouetteRight" then return { walk = true, canter = true } end
+        return { walk = true, trot = true, canter = true }
+    end
+    --- The gait a movement is ridden from: the one asked for, else the gait the horse is in, else
+    --- (a pirouette from a trot) a walk.
+    local function spotGait(style, wanted)
+        local ok = spotGaits(style)
+        if wanted ~= nil and ok[wanted] then return wanted end
+        if ok[gait] then return gait end
+        return style == "piaffe" and "trot" or "walk"
+    end
+
+    --- A player's step on the spot: ride the track to its letter and do it there.
+    --- @return boolean done false when it doesn't fit (letter not ahead)
+    local function addSpot(step)
+        local known = false
+        for _, style in ipairs(EqDressagePath.SPOT_STYLES) do known = known or style == step.style end
+        if not known and step.style ~= "pirouette" then return false end
+        local at = nil
+        for _, l in ipairs(lettersAhead()) do
+            if at == nil and l.letter == step.letter then at = l end
+        end
+        if at == nil then return false end
+        local m = #test.moves + 1
+        local need = spotGait(step.style, step.gait)
+        local move = { s0 = test.pts[#test.pts].s, key = step.style, labels = { step.letter }, gait = need }
+        table.insert(test.moves, move)
+        if need ~= gait then
+            -- Change a few metres before the letter.
+            local t = byGait[gait].pts
+            local here = test.pts[#test.pts]
+            local run = trackRun(t, onTrack(t, here.x, here.y), onTrack(t, at.x, at.y), rein)
+            local k = math.max(1, #run - math.floor(EqDressagePath.CHANGE_LEAD / EqDressagePath.STEP))
+            for i = 1, k do append(test, { run[i] }, m) end
+            change(test.pts[#test.pts].s, need, nil, m, true)
+        end
+        track(at.x, at.y, m)
+        local s = test.pts[#test.pts].s
+        if step.style == "halt" or step.style == "reinBack" then
+            halt(s, step.letter, m, false, gait, step.style == "reinBack")
+        else
+            lastChange = -math.huge
+            local turn = rein
+            if step.style == "pirouetteLeft" then turn = 1 elseif step.style == "pirouetteRight" then turn = -1 end
+            spot(s, step.letter, m, turn, step.style == "piaffe" and "piaffe" or "pirouette")
+        end
+        move.s1 = s
+        lastKey = step.style
+        return true
+    end
+
+    if plan == nil then
+        for _ = 1, figures do
+            local figure = pick(choices(), rng)
+            if figure == nil then break end
+            addFigure(figure)
+        end
+    else
+        test.steps = 0
+        for n, step in ipairs(plan.steps or {}) do
+            rng = seededRng(step.seed)
+            local done = false
+            if step.kind == "spot" then
+                done = addSpot(step)
+            else
+                for _, c in ipairs(choices()) do
+                    if not done and c[1].id == step.id then
+                        addFigure(c[1])
+                        done = true
+                    end
+                end
+            end
+            if not done then
+                test.broken = n
+                break
+            end
+            test.steps = n
+        end
+    end
+
+    -- The editor's options for the next step, nearest first: figures, then movements on the
+    -- spot at the letters ahead.
+    if open then
+        test.length = test.pts[#test.pts].s
+        test.gait, test.rein = gait, rein
+        local figureOptions, spotOptions = {}, {}
+        for _, c in ipairs(choices()) do
+            table.insert(figureOptions, { kind = "figure", id = c[1].id, figure = c[1], weight = c[2], d = c.d })
+        end
+        table.sort(figureOptions, function(a, b)
+            if math.abs(a.d - b.d) > 0.01 then return a.d < b.d end
+            return a.id < b.id
+        end)
+        for _, l in ipairs(lettersAhead()) do
+            for _, spotAt in ipairs(EqDressagePath.GAITS) do
+                for _, style in ipairs(EqDressagePath.SPOT_STYLES) do
+                    if spotGaits(style)[spotAt] then
+                        table.insert(spotOptions, { kind = "spot", style = style, letter = l.letter, gait = spotAt, weight = 1, d = l.d })
+                    end
+                end
+            end
+        end
+        test.options = { figure = figureOptions, spot = spotOptions }
+        table.sort(events, function(a, b) return a.s < b.s end)
+        return test
     end
 
     -- The finish: down the centre line from A at a trot, halt at X (the path goes on a little past it).
@@ -1918,6 +2137,10 @@ end
 -- like the stride. Each gait's dashes start right at its change (EqCourseGlow.pieces breaks).
 EqDressagePath.DASH = { walk = 0.2, trot = 0.45, canter = 0.9, halt = 0.2 }
 EqDressagePath.DASH_STEP = { walk = 0.6, trot = 1.1, canter = 1.9, halt = 0.6 }
+-- Lateral work's dashes show the horse's body (EqCourseGlow.body): one size at every gait, only
+-- the spacing by gait (James 2026-10-31: trot and walk laterals were too small to read).
+EqDressagePath.LATERAL_DASH = 0.8
+EqDressagePath.LATERAL_STEP = { walk = 1.2, trot = 1.5, canter = 1.9, halt = 1.2 }
 
 
 --- The gait asked for at metres s along a test (pure): from the last change or halt before it.
@@ -1932,11 +2155,16 @@ function EqDressagePath.gaitAt(test, s)
 end
 
 
---- Where the line's dashes start afresh (pure): every change and halt, in order.
+--- Where the line's dashes start afresh (pure): every change and halt, and where lateral work
+--- starts and ends (its spacing differs), in order.
 function EqDressagePath.breaks(test)
     if test.breaks == nil then
         test.breaks = {}
         for _, e in ipairs(test.events) do table.insert(test.breaks, e.s) end
+        for _, sec in ipairs(test.sections or {}) do
+            table.insert(test.breaks, sec.s0)
+            table.insert(test.breaks, sec.s1)
+        end
         for _, p in ipairs(test.passages or {}) do
             table.insert(test.breaks, p.s0)
             table.insert(test.breaks, p.s1)
@@ -1944,6 +2172,22 @@ function EqDressagePath.breaks(test)
         table.sort(test.breaks)
     end
     return test.breaks
+end
+
+
+--- A dash's length at metres s along a test (pure): by gait, one body size in lateral work.
+function EqDressagePath.dashLength(test, s)
+    if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_DASH end
+    return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)]
+end
+
+
+--- The dashes' spacing from metres s along a test (pure): by gait, wider in lateral work.
+function EqDressagePath.dashStep(test, s)
+    local gait = EqDressagePath.gaitAt(test, s + 1e-6)
+    if EqDressagePath.passageAt(test, s + 1e-6) ~= nil then return EqDressagePath.PASSAGE_STEP end
+    if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_STEP[gait] end
+    return EqDressagePath.DASH_STEP[gait]
 end
 
 

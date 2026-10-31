@@ -18,6 +18,7 @@ dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
+dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
 dofile("scripts/training/EqLateral.lua")
 dofile("scripts/training/EqDressage.lua")
@@ -4033,7 +4034,23 @@ end)()
         check(name .. ": the line's dashes follow the gait asked, starting afresh at each change", firstChange ~= nil
             and EqDressagePath.gaitAt(lastTest, firstChange.s) == firstChange.gait
             and EqDressagePath.gaitAt(lastTest, firstChange.s - 0.01) ~= firstChange.gait
-            and #EqDressagePath.breaks(lastTest) == #lastTest.events + 2 * #lastTest.passages and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
+            and #EqDressagePath.breaks(lastTest) == #lastTest.events + 2 * #(lastTest.sections or {}) + 2 * #(lastTest.passages or {})
+            and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
+        -- Lateral work: one body size at every gait, spaced by gait (James 2026-10-31).
+        local withLateral, sec = nil, nil
+        for k = 1, 40 do
+            local rolls = EqRandom.new("lateral dash " .. k)
+            local t = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(n) return math.min(n, 1 + math.floor(rolls:next() * n)) end)
+            if t.sections ~= nil and #t.sections > 0 then withLateral, sec = t, t.sections[1] break end
+        end
+        check(name .. ": a training test with lateral work turns up", sec ~= nil)
+        if sec ~= nil then
+            lastTest = withLateral
+            local mid = (sec.s0 + sec.s1) / 2
+            check(name .. ": lateral dashes are one body size, spaced by gait", EqDressagePath.dashLength(lastTest, mid) == EqDressagePath.LATERAL_DASH
+                and EqDressagePath.dashStep(lastTest, mid) == EqDressagePath.LATERAL_STEP[EqDressagePath.gaitAt(lastTest, mid)]
+                and EqDressagePath.LATERAL_STEP.walk > EqDressagePath.LATERAL_DASH)
+        end
         check(name .. ": tests ask for piaffes and pirouettes", spots.piaffe > 0 and spots.pirouette > 0, spots.piaffe .. " " .. spots.pirouette)
         check(name .. ": a test's line stays inside the rail", outs == 0, tostring(outs))
         check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0, unsorted .. " " .. walks)
@@ -4078,6 +4095,185 @@ end)()
     local same = #one.pts == #two.pts and #one.events == #two.events
     for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end
     check("a hosted event's seed rides the same test every time", same and one.length == two.length)
+
+    -- The player's own tests (EqDressageTests, James 2026-10-31): built step by step in the editor.
+    for _, arena in ipairs(SHOP) do
+        local name = arena[1] .. "x" .. arena[2] .. " own test"
+        local ownMarkers = shopMarkers(arena, 40, -12, 0.7)
+        local ownFrame = EqDressagePath.frameFor(ownMarkers, xOf(ownMarkers))
+        local ed = EqDressageTests.newEditor(ownFrame, nil, seeded("editor " .. name))
+        local turns = {}
+        for _, option in ipairs(ed.options.figure) do turns[option.turn] = true end
+        check(name .. ": the first step offers figures tracking left and right at C", turns[1] and turns[-1] and #ed.options.spot > 0,
+            string.format("%d figures, %d on the spot", #ed.options.figure, #ed.options.spot))
+        local preview = EqDressageTests.preview(ed)
+        check(name .. ": the first preview shows the opening and the option from its end", preview ~= nil and preview.fromS > 10
+            and preview.length > preview.fromS and preview.moves[1].key == "enter")
+        -- Built at random across all three modes (James 2026-10-31): walks stay short, and lateral
+        -- work is on offer whatever gait the horse is in.
+        for round = 1, 3 do
+            local roam = EqDressageTests.newEditor(ownFrame, nil, seeded("roam " .. round .. " " .. name))
+            local lateralMissing, longWalk, picks = 0, 0, 0
+            for k = 1, 24 do
+                roam.mode = EqDressageTests.MODES[k % 3 + 1]
+                if roam.mode == "lateral" and #EqDressageTests.view(roam) == 0 then lateralMissing = lateralMissing + 1 end
+                if #EqDressageTests.view(roam) > 0 or roam.mode == "spot" then
+                    EqDressageTests.random(roam)
+                    if EqDressageTests.accept(roam) ~= nil then picks = picks + 1 end
+                end
+            end
+            local _, built = EqDressageTests.finished(roam)
+            local walkFrom, haltThenChange = nil, 0
+            for k, e in ipairs(built ~= nil and built.events or {}) do
+                local before = built.events[k - 1]
+                if e.kind == "change" and before ~= nil and before.kind == "halt" and not before.final and e.s - before.s <= EqDressagePath.MOVE_OFF then haltThenChange = haltThenChange + 1 end
+                if (e.kind == "change" or e.kind == "halt") and walkFrom ~= nil then
+                    if e.s - walkFrom > EqDressagePath.WALK_MAX + 12 then longWalk = longWalk + 1 end
+                    walkFrom = nil
+                end
+                if (e.kind == "change" or e.kind == "halt") and e.gait == "walk" then walkFrom = e.s end
+            end
+            check(name .. ": lateral work is on offer at every gait", lateralMissing == 0 and picks > 10,
+                string.format("missing %d, %d picks", lateralMissing, picks))
+            check(name .. ": walks in a player's test stay short", longWalk == 0, string.format("%d long walks", longWalk))
+            check(name .. ": a halt moves off in the next gait, no change straight after it", haltThenChange == 0,
+                string.format("%d changes after a halt", haltThenChange))
+        end
+        -- Next and back round the ends.
+        local count = #EqDressageTests.view(ed)
+        EqDressageTests.cycle(ed, -1)
+        local wrapped = ed.index == count
+        EqDressageTests.cycle(ed, 1)
+        check(name .. ": N and M step round the options", wrapped and ed.index == 1 and count > 0)
+        -- Figures show at one gait at a time; G goes round walk, trot, canter.
+        local oneGait = true
+        for _, option in ipairs((EqDressageTests.view(ed))) do oneGait = oneGait and option.figure.gait == "trot" end
+        local trotShown = EqDressageTests.current(ed)
+        EqDressageTests.cycleGait(ed)
+        local canterShown = EqDressageTests.current(ed)
+        local canters = EqDressageTests.view(ed)
+        local allCanter = #canters > 0
+        for _, option in ipairs(canters) do allCanter = allCanter and option.figure.gait == "canter" end
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        check(name .. ": figures show at the gait picked with G", oneGait and allCanter and EqDressageTests.gaitOf(ed) == "trot")
+        check(name .. ": G keeps the same kind of figure when it has one at the new gait", canterShown ~= nil
+            and (canterShown.figure.key == trotShown.figure.key or not (function()
+                for _, o in ipairs(canters) do if o.figure.key == trotShown.figure.key then return true end end
+                return false
+            end)()), trotShown.id .. " -> " .. tostring(canterShown and canterShown.id))
+        -- ...and round all three back to the trot, the very same one.
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        EqDressageTests.cycleGait(ed)
+        local back = EqDressageTests.current(ed)
+        check(name .. ": G round to the same gait comes back to the same figure", back ~= nil and back.id == trotShown.id,
+            trotShown.id .. " -> " .. tostring(back and back.id))
+        -- F goes round figures, on the spot and lateral work; lateral options are only lateral work.
+        local modes = { ed.mode }
+        for _ = 1, 3 do
+            EqDressageTests.toggle(ed)
+            table.insert(modes, ed.mode)
+        end
+        local lateralOk = #ed.options.lateral > 0
+        for _, option in ipairs(ed.options.lateral) do lateralOk = lateralOk and option.figure.sections ~= nil end
+        for _, option in ipairs(ed.options.figure) do lateralOk = lateralOk and option.figure.sections == nil end
+        check(name .. ": F goes round figures, on the spot and lateral work", modes[1] == "figure" and modes[2] == "spot"
+            and modes[3] == "lateral" and modes[4] == "figure" and lateralOk, table.concat(modes, " "))
+        -- On the spot: N and M go through every movement at one letter, Shift+N/M through the letters.
+        EqDressageTests.toggle(ed)
+        local styles, letter = {}, EqDressageTests.current(ed).letter
+        for _ = 1, 3 do
+            for _ = 1, #EqDressageTests.view(ed) do
+                local option = EqDressageTests.current(ed)
+                styles[option.style] = (styles[option.style] ~= false) and option.letter == letter
+                    and (option.style ~= "piaffe" or option.gait == "trot") and (option.style:sub(1, 9) ~= "pirouette" or option.gait ~= "trot")
+                EqDressageTests.cycle(ed, 1)
+            end
+            -- G on the spot stays on the spot, with the movements ridden from the new gait.
+            EqDressageTests.cycleGait(ed)
+            styles.stayed = styles.stayed ~= false and ed.mode == "spot"
+        end
+        local all = styles.stayed
+        for _, style in ipairs(EqDressagePath.SPOT_STYLES) do all = all and styles[style] == true end
+        EqDressageTests.cycle(ed, 2)
+        local style = EqDressageTests.current(ed).style
+        EqDressageTests.cycleLetter(ed, 1)
+        local moved = EqDressageTests.current(ed)
+        check(name .. ": on the spot N/M go through every movement at a letter, Shift moves the letter", all
+            and moved.style == style and (moved.letter ~= letter or moved.turn ~= nil), tostring(letter))
+        EqDressageTests.toggle(ed)
+        -- Six figures (random), a halt and a piaffe or pirouette on the spot, one undone.
+        local kept = {}
+        for i = 1, 8 do
+            if i == 3 or i == 6 then
+                if not EqDressageTests.toggle(ed) then break end
+            end
+            EqDressageTests.random(ed)
+            local step = EqDressageTests.accept(ed)
+            if step == nil then break end
+            table.insert(kept, step)
+        end
+        local before = #ed.plan.steps
+        local undone = ed.plan.steps[before]
+        EqDressageTests.undo(ed)
+        local shown = EqDressageTests.current(ed)
+        check(name .. ": undo takes the last step back and shows it again", #ed.plan.steps == before - 1 and shown ~= nil
+            and (shown.id == undone.id or shown.style == undone.style), string.format("%d steps", before))
+        local plan, built = EqDressageTests.finished(ed)
+        local spots, last = 0, built ~= nil and built.events[#built.events] or nil
+        for _, move in ipairs(built ~= nil and built.moves or {}) do
+            if move.key == "halt" or move.key == "reinBack" or move.key == "piaffe" or move.key:sub(1, 9) == "pirouette" then spots = spots + 1 end
+        end
+        check(name .. ": saving adds the final centre line to a halt at X", plan ~= nil and built.steps == #plan.steps and built.broken == nil
+            and built.moves[#built.moves].key == "final" and last.final and #built.moves == #plan.steps + 3 and spots >= 1,
+            string.format("%d steps, %d moves, %d on the spot", plan ~= nil and #plan.steps or 0, built ~= nil and #built.moves or 0, spots))
+        -- Saved, loaded and ridden: the same test every time.
+        local again = EqDressagePath.build(ownFrame, nil, nil, EqDressageTests.decode(EqDressageTests.encode(plan)))
+        local same2 = #again.pts == #built.pts and #again.events == #built.events and again.length == built.length
+        check(name .. ": a saved test reads back and rides the same", same2)
+        local run, event = ride(built, ownFrame, 0, 0)
+        check(name .. ": a rider on the line scores well on the player's test", event == "test" and run.percent >= 80,
+            string.format("%s %s%%", event, tostring(run.percent)))
+        -- Kept with its arena, not another.
+        EqDressageTests.reset()
+        EqDressageTests.set(ownFrame, plan)
+        local otherMarkers = shopMarkers(arena, 140, -12, 0.7)
+        local otherFrame = EqDressagePath.frameFor(otherMarkers, xOf(otherMarkers))
+        check(name .. ": a test belongs to its own arena", EqDressageTests.planFor(ownFrame) == plan and EqDressageTests.planFor(otherFrame) == nil)
+        local store = memoryXML()
+        EqDressageTests.saveToXMLFile(store, "t")
+        EqDressageTests.loadFromXMLFile(store, "t")
+        local loaded = EqDressageTests.planFor(ownFrame)
+        check(name .. ": an arena's test survives a save", #EqDressageTests.list == 1 and loaded ~= nil
+            and EqDressageTests.encode(loaded) == EqDressageTests.encode(plan))
+        plan = loaded
+        -- Editing it carries on from its last step; undoing everything and saving deletes it.
+        local edit = EqDressageTests.newEditor(ownFrame, plan, seeded("edit " .. name))
+        local steps = #edit.plan.steps
+        while EqDressageTests.undo(edit) do end
+        check(name .. ": editing starts from the saved steps, and all undone saves nothing", steps == #plan.steps
+            and EqDressageTests.finished(edit) == nil and edit.plan.turn == nil)
+        EqDressageTests.set(ownFrame, nil)
+        check(name .. ": a deleted test is gone", EqDressageTests.planFor(ownFrame) == nil and #EqDressageTests.list == 0)
+    end
+    -- A step that no longer fits (the arena's size changed) ends the plan there.
+    local broken = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 3, steps = { { kind = "figure", id = "nothing/trot/1/1", seed = 1 } } })
+    check("a saved step that no longer fits is left out", broken.broken == 1 and broken.moves[#broken.moves].key == "final")
+    -- On the spot from the wrong gait: the horse changes before the letter; pirouettes either way.
+    local base = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 2, steps = {} }, true)
+    local letterAt = base.options.spot[1].letter
+    local function spotTest(style)
+        return EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 2, steps = { { kind = "spot", style = style, letter = letterAt, seed = 1 } } }, true)
+    end
+    local function eventOf(test, kind)
+        for _, e in ipairs(test.events) do if e.kind == kind and e.m == 3 then return e end end
+    end
+    local right, left = eventOf(spotTest("pirouetteRight"), "spot"), eventOf(spotTest("pirouetteLeft"), "spot")
+    local toWalk = eventOf(spotTest("pirouetteRight"), "change")
+    check("a pirouette either way, from a trot via a walk", right ~= nil and right.turn == -1 and left.turn == 1 and right.gait == "walk"
+        and toWalk ~= nil and toWalk.gait == "walk" and toWalk.s < right.s)
+    check("an empty saved test reads as none", EqDressageTests.decode("1 5") == nil and EqDressageTests.decode(nil) == nil)
     local stuck = EqDressagePath.newRun(one, 50)
     local sx, sz = EqDressagePath.toWorld(frame, one.pts[1].x, one.pts[1].y)
     -- At A: 3, 2, 1, then marking starts only on crossing into the arena (James, 2026-10-31).

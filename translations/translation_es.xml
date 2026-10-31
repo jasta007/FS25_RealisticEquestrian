@@ -923,5 +923,43 @@
         <text name="eq_shop_bleachers8x16" text="Gradas 8 filas, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Asientos para los concursos que organizas: cuentan a menos de 60 m de un recorrido o pista de doma."/>
         <text name="eq_shop_bleachersSponsors_function" text="Los carteles de patrocinadores delante muestran las marcas de tus máquinas."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nueva reprise de doma, editar o guardar"/>
+        <text name="input_EQ_DT_PREV" text="Opción anterior"/>
+        <text name="input_EQ_DT_NEXT" text="Opción siguiente"/>
+        <text name="input_EQ_DT_RANDOM" text="Opción al azar"/>
+        <text name="input_EQ_DT_MODE" text="Figuras o movimientos en el sitio"/>
+        <text name="input_EQ_DT_ACCEPT" text="Mantener este paso"/>
+        <text name="input_EQ_DT_UNDO" text="Deshacer el último paso"/>
+        <text name="eq_dt_newAction" text="Nueva reprise de doma"/>
+        <text name="eq_dt_editAction" text="Editar la reprise de doma"/>
+        <text name="eq_dt_saveAction" text="Guardar la reprise de doma"/>
+        <text name="eq_dt_cancelAction" text="Cancelar la reprise de doma"/>
+        <text name="eq_dt_deleteAction" text="Borrar la reprise de doma"/>
+        <text name="eq_dt_deleteTitle" text="Borrar la reprise"/>
+        <text name="eq_dt_deleteAsk" text="¿Borrar la reprise de esta pista (%d pasos)? Volverá a tener reprises aleatorias."/>
+        <text name="eq_dt_modeSpot" text="Mostrar movimientos en el sitio"/>
+        <text name="eq_dt_modeFigure" text="Mostrar figuras"/>
+        <text name="eq_dt_new" text="Nueva reprise de doma: paso %d"/>
+        <text name="eq_dt_editing" text="Editando la reprise de doma: paso %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="En el sitio"/>
+        <text name="eq_dt_noOptions" text="Aquí no cabe nada: deshaz o guarda"/>
+        <text name="eq_dt_saved" text="Reprise de doma guardada: %d movimientos"/>
+        <text name="eq_dt_deleted" text="Reprise de doma borrada: esta pista vuelve a reprises al azar"/>
+        <text name="eq_dt_cancelled" text="Reprise de doma no guardada"/>
+        <text name="eq_fig_halt" text="Parada en %s"/>
+        <text name="eq_fig_reinBack" text="Parada en %s, paso atrás"/>
+        <text name="eq_fig_piaffe" text="Piaffe en %s"/>
+        <text name="eq_fig_pirouette" text="Pirueta en %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: crea tu propia reprise de doma para esta pista"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edita la reprise de doma de esta pista"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Letra anterior"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Letra siguiente"/>
+        <text name="input_EQ_DT_GAIT" text="Aire de las figuras"/>
+        <text name="eq_dt_gaitAction" text="Figuras al: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirueta a la izquierda en %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirueta a la derecha en %s"/>
+        <text name="eq_dt_modeLateral" text="Mostrar trabajo lateral"/>
+        <text name="eq_dt_lateral" text="Lateral"/>
     </texts>
 </l10n>

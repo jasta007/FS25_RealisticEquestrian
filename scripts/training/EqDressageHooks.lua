@@ -343,11 +343,8 @@ function EqDressageHooks.drawPath(vehicle)
     end
     EqDressageHooks.drawnAt = now
     local style = { breaks = EqDressagePath.breaks(run.test), shape = EqDressageHooks.bodyAlong(run),
-        length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(run.test, s + 1e-6)] end,
-        step = function(s)
-            if EqDressagePath.passageAt(run.test, s + 1e-6) ~= nil then return EqDressagePath.PASSAGE_STEP end
-            return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(run.test, s + 1e-6)]
-        end,
+        length = function(s) return EqDressagePath.dashLength(run.test, s) end,
+        step = function(s) return EqDressagePath.dashStep(run.test, s) end,
         pointed = function(s) return EqDressagePath.gaitAt(run.test, s + 1e-6) == "canter" end }
     if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, style) then return end
     if not run.started then

@@ -312,6 +312,36 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).
 
+**Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
+the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
+top. The last step kept (at first the opening, A down the centre line to a halt at X) shows in faint grey
+and the option for the next step in cyan, drawn from where the test has got to (a pole marks its
+start). Placeables standing over the arena, such as a riding hall, are hidden while the camera is up.
+
+- **N** / **M** step back and on through the options, nearest first. **R** picks one at random (and
+  rolls again what is left to chance inside it, such as a halt at X on a centre line).
+- **G** picks the gait on show (walk, trot, canter), for figures and movements on the spot alike;
+  N/M, Shift and G keep the same figure or movement where it exists at the new gait. The horse
+  changes to it at the letter before the figure; any gait can follow any other.
+- **F** goes round figures, movements on the spot and lateral work (leg yield, half pass,
+  shoulder-in, leg yield along the rail). On the spot **N** / **M** step through the
+  movements at one letter (halt, halt and rein back, piaffe, left and right pirouette) and
+  **Shift+N** / **Shift+M** move it to the letter before or after. A halt or rein back can come
+  from any gait, a piaffe from a trot, a pirouette from a walk or canter; a change to that gait
+  comes a few metres before the letter.
+- **Enter** keeps the option; the next options come from its end. **Backspace** takes the last step
+  back off. The first step also picks whether the test tracks left or right at C.
+- **Ctrl+L** again saves, adding the final centre line from A to a halt at X. Undoing every step and
+  saving deletes the arena's test. **Ctrl+Backspace** cancels without saving, and getting off the
+  horse saves what was kept. **Ctrl+L** on an arena with a test opens it where it was left.
+- **Ctrl+Backspace** near an arena with a test (and no course) asks, then deletes it, as for
+  courses; the arena rides random tests again.
+- Gait changes come with the figures (at the letter before a figure ridden at another gait), and
+  nothing random is added between the steps: the test rides exactly as drawn, every time.
+- A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it
+  loses the test) and replaces the random tests there, in training and in your own events held
+  there. Riding Hall boards have no editor. Single player only, like courses.
+
 **Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
 and walks are only asked for to markers within 12 m:
 

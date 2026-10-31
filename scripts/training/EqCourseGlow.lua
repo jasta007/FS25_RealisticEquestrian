@@ -29,7 +29,7 @@ EqCourseGlow.modDirectory = g_currentModDirectory
 EqCourseGlow.templates = nil
 EqCourseGlow.failed = false
 -- The bar in other colours (glowBar_<colour>), for path guides; gold is the plain bar.
-EqCourseGlow.COLOURS = { "green", "lime", "yellow", "orange", "red", "cyan", "white" }
+EqCourseGlow.COLOURS = { "green", "lime", "yellow", "orange", "red", "cyan", "white", "grey" }
 -- A path guide (James, 2026-10-29): pieces SEGMENT metres apart along the path, each GAP short
 -- of the next so they don't overlap at the bends (a dashed look).
 EqCourseGlow.SEGMENT = 1

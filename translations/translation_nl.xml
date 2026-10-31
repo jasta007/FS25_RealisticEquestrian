@@ -921,5 +921,43 @@
         <text name="eq_shop_bleachers8x16" text="Tribune 8 rijen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Zitplaatsen voor de wedstrijden die je organiseert: telt binnen 60 m van een parcours of dressuurbak."/>
         <text name="eq_shop_bleachersSponsors_function" text="De sponsorborden ervoor tonen de merken van je machines."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nieuwe dressuurproef, bewerken of opslaan"/>
+        <text name="input_EQ_DT_PREV" text="Vorige optie"/>
+        <text name="input_EQ_DT_NEXT" text="Volgende optie"/>
+        <text name="input_EQ_DT_RANDOM" text="Willekeurige optie"/>
+        <text name="input_EQ_DT_MODE" text="Figuren of oefeningen ter plaatse"/>
+        <text name="input_EQ_DT_ACCEPT" text="Deze stap houden"/>
+        <text name="input_EQ_DT_UNDO" text="Laatste stap ongedaan maken"/>
+        <text name="eq_dt_newAction" text="Nieuwe dressuurproef"/>
+        <text name="eq_dt_editAction" text="Dressuurproef bewerken"/>
+        <text name="eq_dt_saveAction" text="Dressuurproef opslaan"/>
+        <text name="eq_dt_cancelAction" text="Dressuurproef annuleren"/>
+        <text name="eq_dt_deleteAction" text="Dressuurproef verwijderen"/>
+        <text name="eq_dt_deleteTitle" text="Dressuurproef verwijderen"/>
+        <text name="eq_dt_deleteAsk" text="De dressuurproef van deze rijbaan (%d stappen) verwijderen? Hij rijdt dan weer willekeurige proeven."/>
+        <text name="eq_dt_modeSpot" text="Oefeningen ter plaatse tonen"/>
+        <text name="eq_dt_modeFigure" text="Figuren tonen"/>
+        <text name="eq_dt_new" text="Nieuwe dressuurproef: stap %d"/>
+        <text name="eq_dt_editing" text="Dressuurproef bewerken: stap %d"/>
+        <text name="eq_dt_figure" text="Figuur"/>
+        <text name="eq_dt_spot" text="Ter plaatse"/>
+        <text name="eq_dt_noOptions" text="Hier past niets: ongedaan maken of opslaan"/>
+        <text name="eq_dt_saved" text="Dressuurproef opgeslagen: %d onderdelen"/>
+        <text name="eq_dt_deleted" text="Dressuurproef verwijderd: deze bak rijdt weer willekeurige proeven"/>
+        <text name="eq_dt_cancelled" text="Dressuurproef niet opgeslagen"/>
+        <text name="eq_fig_halt" text="Halthouden bij %s"/>
+        <text name="eq_fig_reinBack" text="Halthouden bij %s, achterwaarts"/>
+        <text name="eq_fig_piaffe" text="Piaffe bij %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette bij %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: maak je eigen dressuurproef voor deze bak"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: bewerk de dressuurproef van deze bak"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Vorige letter"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Volgende letter"/>
+        <text name="input_EQ_DT_GAIT" text="Gang van de figuren"/>
+        <text name="eq_dt_gaitAction" text="Figuren in: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirouette linksom bij %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirouette rechtsom bij %s"/>
+        <text name="eq_dt_modeLateral" text="Zijgangen tonen"/>
+        <text name="eq_dt_lateral" text="Zijgang"/>
     </texts>
 </l10n>

@@ -923,5 +923,43 @@
         <text name="eq_shop_bleachers8x16" text="Tribune 8 rangs, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Places assises pour les concours que vous organisez : compte à moins de 60 m d'un parcours ou d'une carrière de dressage."/>
         <text name="eq_shop_bleachersSponsors_function" text="Les panneaux de sponsors devant affichent les marques de vos machines."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nouvelle reprise de dressage, modifier ou enregistrer"/>
+        <text name="input_EQ_DT_PREV" text="Option précédente"/>
+        <text name="input_EQ_DT_NEXT" text="Option suivante"/>
+        <text name="input_EQ_DT_RANDOM" text="Option au hasard"/>
+        <text name="input_EQ_DT_MODE" text="Figures ou mouvements sur place"/>
+        <text name="input_EQ_DT_ACCEPT" text="Garder cette étape"/>
+        <text name="input_EQ_DT_UNDO" text="Annuler la dernière étape"/>
+        <text name="eq_dt_newAction" text="Nouvelle reprise de dressage"/>
+        <text name="eq_dt_editAction" text="Modifier la reprise de dressage"/>
+        <text name="eq_dt_saveAction" text="Enregistrer la reprise de dressage"/>
+        <text name="eq_dt_cancelAction" text="Annuler la reprise de dressage"/>
+        <text name="eq_dt_deleteAction" text="Supprimer la reprise de dressage"/>
+        <text name="eq_dt_deleteTitle" text="Supprimer la reprise"/>
+        <text name="eq_dt_deleteAsk" text="Supprimer la reprise de cette carrière (%d étapes) ? Elle reprendra des reprises aléatoires."/>
+        <text name="eq_dt_modeSpot" text="Afficher les mouvements sur place"/>
+        <text name="eq_dt_modeFigure" text="Afficher les figures"/>
+        <text name="eq_dt_new" text="Nouvelle reprise de dressage : étape %d"/>
+        <text name="eq_dt_editing" text="Modification de la reprise : étape %d"/>
+        <text name="eq_dt_figure" text="Figure"/>
+        <text name="eq_dt_spot" text="Sur place"/>
+        <text name="eq_dt_noOptions" text="Rien ne convient ici : annulez ou enregistrez"/>
+        <text name="eq_dt_saved" text="Reprise de dressage enregistrée : %d mouvements"/>
+        <text name="eq_dt_deleted" text="Reprise de dressage supprimée : cette carrière reprend des reprises au hasard"/>
+        <text name="eq_dt_cancelled" text="Reprise de dressage non enregistrée"/>
+        <text name="eq_fig_halt" text="Arrêt en %s"/>
+        <text name="eq_fig_reinBack" text="Arrêt en %s, reculer"/>
+        <text name="eq_fig_piaffe" text="Piaffer en %s"/>
+        <text name="eq_fig_pirouette" text="Pirouette en %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L : créer votre propre reprise de dressage pour cette carrière"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L : modifier la reprise de dressage de cette carrière"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Lettre précédente"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Lettre suivante"/>
+        <text name="input_EQ_DT_GAIT" text="Allure des figures"/>
+        <text name="eq_dt_gaitAction" text="Figures au : %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Pirouette à gauche en %s"/>
+        <text name="eq_fig_pirouetteRight" text="Pirouette à droite en %s"/>
+        <text name="eq_dt_modeLateral" text="Afficher les déplacements latéraux"/>
+        <text name="eq_dt_lateral" text="Latéral"/>
     </texts>
 </l10n>

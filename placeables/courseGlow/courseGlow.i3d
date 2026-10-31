@@ -26,6 +26,8 @@
     </Material>
     <Material name="courseGlow_white" materialId="16" diffuseColor="1 1 1 0.45" emissiveColor="0.9 0.9 0.9 1" alphaBlending="true">
     </Material>
+    <Material name="courseGlow_grey" materialId="17" diffuseColor="0.03 0.03 0.03 0.6" emissiveColor="0 0 0 1" alphaBlending="true">
+    </Material>
   </Materials>
 
 
@@ -43,6 +45,7 @@
       <Shape name="glowBar_red" shapeId="1" clipDistance="300" nodeId="24" castsShadows="false" receiveShadows="false" materialIds="14"/>
       <Shape name="glowBar_cyan" shapeId="1" clipDistance="300" nodeId="25" castsShadows="false" receiveShadows="false" materialIds="15"/>
       <Shape name="glowBar_white" shapeId="1" clipDistance="300" nodeId="26" castsShadows="false" receiveShadows="false" materialIds="16"/>
+      <Shape name="glowBar_grey" shapeId="1" clipDistance="300" nodeId="27" castsShadows="false" receiveShadows="false" materialIds="17"/>
     </TransformGroup>
   </Scene>
 

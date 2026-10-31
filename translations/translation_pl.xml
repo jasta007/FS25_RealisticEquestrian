@@ -921,5 +921,43 @@
         <text name="eq_shop_bleachers8x16" text="Trybuna 8 rzędów, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Miejsca na organizowane przez ciebie zawody: liczy się do 60 m od trasy lub czworoboku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Tablice sponsorów z przodu pokazują marki twoich maszyn."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Nowy program ujeżdżenia, edycja lub zapis"/>
+        <text name="input_EQ_DT_PREV" text="Poprzednia opcja"/>
+        <text name="input_EQ_DT_NEXT" text="Następna opcja"/>
+        <text name="input_EQ_DT_RANDOM" text="Losowa opcja"/>
+        <text name="input_EQ_DT_MODE" text="Figury lub ruchy w miejscu"/>
+        <text name="input_EQ_DT_ACCEPT" text="Zachowaj ten krok"/>
+        <text name="input_EQ_DT_UNDO" text="Cofnij ostatni krok"/>
+        <text name="eq_dt_newAction" text="Nowy program ujeżdżenia"/>
+        <text name="eq_dt_editAction" text="Edytuj program ujeżdżenia"/>
+        <text name="eq_dt_saveAction" text="Zapisz program ujeżdżenia"/>
+        <text name="eq_dt_cancelAction" text="Anuluj program ujeżdżenia"/>
+        <text name="eq_dt_deleteAction" text="Usuń program ujeżdżenia"/>
+        <text name="eq_dt_deleteTitle" text="Usuń program"/>
+        <text name="eq_dt_deleteAsk" text="Usunąć program ujeżdżenia tego czworoboku (%d kroków)? Wrócą losowe programy."/>
+        <text name="eq_dt_modeSpot" text="Pokaż ruchy w miejscu"/>
+        <text name="eq_dt_modeFigure" text="Pokaż figury"/>
+        <text name="eq_dt_new" text="Nowy program ujeżdżenia: krok %d"/>
+        <text name="eq_dt_editing" text="Edycja programu ujeżdżenia: krok %d"/>
+        <text name="eq_dt_figure" text="Figura"/>
+        <text name="eq_dt_spot" text="W miejscu"/>
+        <text name="eq_dt_noOptions" text="Nic tu nie pasuje: cofnij lub zapisz"/>
+        <text name="eq_dt_saved" text="Program ujeżdżenia zapisany: %d ruchów"/>
+        <text name="eq_dt_deleted" text="Program ujeżdżenia usunięty: ten czworobok znów ma losowe programy"/>
+        <text name="eq_dt_cancelled" text="Program ujeżdżenia nie został zapisany"/>
+        <text name="eq_fig_halt" text="Zatrzymanie w %s"/>
+        <text name="eq_fig_reinBack" text="Zatrzymanie w %s, cofanie"/>
+        <text name="eq_fig_piaffe" text="Piaff w %s"/>
+        <text name="eq_fig_pirouette" text="Piruet w %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: ułóż własny program ujeżdżenia dla tego czworoboku"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: edytuj program ujeżdżenia tego czworoboku"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Poprzednia litera"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Następna litera"/>
+        <text name="input_EQ_DT_GAIT" text="Chód figur"/>
+        <text name="eq_dt_gaitAction" text="Figury w: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Piruet w lewo w %s"/>
+        <text name="eq_fig_pirouetteRight" text="Piruet w prawo w %s"/>
+        <text name="eq_dt_modeLateral" text="Pokaż chody boczne"/>
+        <text name="eq_dt_lateral" text="Chód boczny"/>
     </texts>
 </l10n>

@@ -921,5 +921,43 @@
         <text name="eq_shop_bleachers8x16" text="観客席 8列・16 m"/>
         <text name="eq_shop_bleachers_function" text="主催する大会の観客席：コースや馬場から60 m以内で数えられます。"/>
         <text name="eq_shop_bleachersSponsors_function" text="前のスポンサーボードには、所有する機械のブランドが表示されます。"/>
+        <text name="input_EQ_DRESSAGE_TEST" text="馬場馬術の経路：新規・編集・保存"/>
+        <text name="input_EQ_DT_PREV" text="前の候補"/>
+        <text name="input_EQ_DT_NEXT" text="次の候補"/>
+        <text name="input_EQ_DT_RANDOM" text="ランダムな候補"/>
+        <text name="input_EQ_DT_MODE" text="図形またはその場の運動"/>
+        <text name="input_EQ_DT_ACCEPT" text="このステップを残す"/>
+        <text name="input_EQ_DT_UNDO" text="最後のステップを取り消す"/>
+        <text name="eq_dt_newAction" text="新しい馬場馬術の経路"/>
+        <text name="eq_dt_editAction" text="馬場馬術の経路を編集"/>
+        <text name="eq_dt_saveAction" text="馬場馬術の経路を保存"/>
+        <text name="eq_dt_cancelAction" text="馬場馬術の経路をキャンセル"/>
+        <text name="eq_dt_deleteAction" text="馬場馬術の経路を削除"/>
+        <text name="eq_dt_deleteTitle" text="経路を削除"/>
+        <text name="eq_dt_deleteAsk" text="このアリーナの馬場馬術の経路（%dステップ）を削除しますか？再びランダムな経路になります。"/>
+        <text name="eq_dt_modeSpot" text="その場の運動を表示"/>
+        <text name="eq_dt_modeFigure" text="図形を表示"/>
+        <text name="eq_dt_new" text="新しい馬場馬術の経路：ステップ%d"/>
+        <text name="eq_dt_editing" text="経路を編集中：ステップ%d"/>
+        <text name="eq_dt_figure" text="図形"/>
+        <text name="eq_dt_spot" text="その場"/>
+        <text name="eq_dt_noOptions" text="ここに合うものがありません：取り消すか保存してください"/>
+        <text name="eq_dt_saved" text="馬場馬術の経路を保存しました：%d運動"/>
+        <text name="eq_dt_deleted" text="馬場馬術の経路を削除しました：このアリーナは再びランダムな経路になります"/>
+        <text name="eq_dt_cancelled" text="馬場馬術の経路は保存されませんでした"/>
+        <text name="eq_fig_halt" text="%sで停止"/>
+        <text name="eq_fig_reinBack" text="%sで停止、後退"/>
+        <text name="eq_fig_piaffe" text="%sでピアッフェ"/>
+        <text name="eq_fig_pirouette" text="%sでピルエット"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L：このアリーナの馬場馬術の経路を自分で作る"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L：このアリーナの馬場馬術の経路を編集"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="前の文字"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="次の文字"/>
+        <text name="input_EQ_DT_GAIT" text="図形の歩法"/>
+        <text name="eq_dt_gaitAction" text="図形の歩法：%s"/>
+        <text name="eq_fig_pirouetteLeft" text="%sで左ピルエット"/>
+        <text name="eq_fig_pirouetteRight" text="%sで右ピルエット"/>
+        <text name="eq_dt_modeLateral" text="側方運動を表示"/>
+        <text name="eq_dt_lateral" text="側方運動"/>
     </texts>
 </l10n>

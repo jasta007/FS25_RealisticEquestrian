@@ -368,6 +368,9 @@ function EqTrainingHud.pop(kind, mult)
     -- In Freestyle the middle of the screen is only for what to press now, so all news goes there.
     -- In Condensed all of it does, as the only text on screen.
     local side = view == "condensed" or kind == "speedBank" or (stat ~= nil and view ~= nil and (view == "freestyle" or view ~= stat))
+    -- A dressage mark always shows low in the middle, whatever the view (James 2026-10-31: in
+    -- other views it went to the small line above the panel and seemed not to show at all).
+    if kind == "routineMark" then side = false end
     if side then
         if stat ~= nil then text = string.format("%s: %s", g_i18n:getText("eq_stat_" .. stat), text) end
         EqTrainingHud.sideState = { text = text, color = color, at = g_time or 0 }
