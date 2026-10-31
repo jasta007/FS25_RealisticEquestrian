@@ -4091,10 +4091,12 @@ end)()
         string.format("%.2f s vs %.2f s", after, before))
 
     -- Push-off (a setting, off by default): a small lift, then the rest of the jump's lift.
-    check("jump: no push-off by default, a collected jump gathers without lift",
-        J.newLaunch(v, 10, false, nil, 0).launched and J.newLaunch(v, 10, true, 7, 0).lift == 0)
-    local savedPush = J.PUSH_MS
-    J.PUSH_MS = 180
+    check("jump: push-off is a beat on the ground, longer at a gallop, a collected jump gathers without lift",
+        J.newLaunch(v, 10, false, nil, 0, nil, "canter").pushMs == J.PUSH_MS
+        and J.newLaunch(v, 10, false, nil, 0, nil, "gallop").pushMs == J.GALLOP_PUSH_MS
+        and J.newLaunch(v, 10, false, nil, 0).lift == 0 and J.newLaunch(v, 10, true, 7, 0).lift == 0)
+    local savedPush, savedLift = J.PUSH_MS, J.PUSH_SPEED
+    J.PUSH_MS, J.PUSH_SPEED = 180, 0.5
     local launch = J.newLaunch(v, 10, false, nil, 1000)
     local speedY, cap = J.step(launch, 1016, 16, g)
     check("jump: push-off lifts slowly first", math.abs(speedY - (J.PUSH_SPEED - g * 0.016)) < 1e-9 and cap == nil
@@ -4109,7 +4111,7 @@ end)()
     check("jump: apex still the jump's height", math.abs(launch.rise + up * up / (2 * math.abs(g)) - 1.6) < 1e-6,
         string.format("rise %.3f", launch.rise))
     check("jump: nothing more to set after the launch", J.step(launch, now + 16, 16, g) == nil)
-    J.PUSH_MS = savedPush
+    J.PUSH_MS, J.PUSH_SPEED = savedPush, savedLift
 
     -- Collected: Ctrl held or just let go.
     check("collected: Ctrl held", J.isCollected(true, nil, 0))

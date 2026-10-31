@@ -10,9 +10,8 @@
       hang at the top and comes down quickly. HEIGHT_SHARE lowers every jump a little. The pull
       changes smoothly over the top, and fades as the fall nears FALL_MAX m/s (the base game's jump
       lands at about 6.4 m/s): any sudden change in it showed as a stutter in the air (2026-10-31).
-    - Push-off (a setting, off by default): the horse first lifts a hand's breadth, at PUSH_SPEED
-      for PUSH_MS, then launches with what is left of the jump's lift. It made the launch clip
-      run out before the top and restart (a mid-air stutter), so the launch is straight away.
+    - Push-off: a beat on the ground (PUSH_MS, GALLOP_PUSH_MS) before the launch. A lift during it
+      (PUSH_SPEED) made the launch clip run out before the top and restart, so it is off.
     - Collected jump (James): press Ctrl just before the jump (held, or let go no more than
       COLLECT_WINDOW_MS before) for a short, steep jump. The horse gathers itself over
       COLLECT_PUSH_MS, slowing to about a trot (COLLECT_TROT_SHARE of the trot's top speed, or
@@ -38,10 +37,13 @@ EqJump.FALL_MAX = 7
 -- launch pose holds to the top), 2 keeps it on for the whole jump.
 EqJump.CLOSE_MODE = 0
 EqJump.HEIGHT_SHARE = 0.88
--- James, 2026-10-31: with a push-off the launch clip ran out before the top of the climb and
--- restarted for a moment (a mid-air stutter); none at all (0) was smooth. Kept as a setting.
-EqJump.PUSH_MS = 0
-EqJump.PUSH_SPEED = 0.5
+-- James, 2026-10-31: a lift during the push-off started the launch clip early, so it ran out
+-- before the top and restarted (a mid-air stutter). The push-off is now a short beat on the
+-- ground with no lift (PUSH_SPEED 0) before the launch, as long as each gait's clip allows:
+-- James found 80 ms at a canter (PUSH_MS) and 140 ms at a gallop (GALLOP_PUSH_MS) smooth.
+EqJump.PUSH_MS = 80
+EqJump.GALLOP_PUSH_MS = 140
+EqJump.PUSH_SPEED = 0
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
 -- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
@@ -59,6 +61,7 @@ EqJump.TUNABLE = {
     { name = "close", key = "CLOSE_MODE", min = 0, max = 2 },
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
+    { name = "gpush", key = "GALLOP_PUSH_MS", min = 0, max = 600 },
     { name = "lift", key = "PUSH_SPEED", min = 0, max = 3 },
     { name = "clift", key = "COLLECT_LIFT", min = 0, max = 3 },
     { name = "window", key = "COLLECT_WINDOW_MS", min = 0, max = 2000 },
@@ -159,9 +162,10 @@ end
 --- @param collectedSpeedY number|nil launch speed for a collected jump
 --- @param now number ms
 --- @param trotSpeed number|nil the horse's trot top speed, m/s (a collected jump slows to about it)
+--- @param gait string|nil the gait it took off from ("gallop" takes GALLOP_PUSH_MS)
 --- @return table launch
-function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSpeed)
-    local push = collected and EqJump.COLLECT_PUSH_MS or EqJump.PUSH_MS
+function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSpeed, gait)
+    local push = collected and EqJump.COLLECT_PUSH_MS or (gait == "gallop" and EqJump.GALLOP_PUSH_MS or EqJump.PUSH_MS)
     return {
         speedY = collected and collectedSpeedY or speedY,
         startSpeed = speed,

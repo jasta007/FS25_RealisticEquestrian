@@ -971,7 +971,7 @@ function EqTrainingHooks.startLaunch(spec)
     end
     local trot = Rideable.GAITTYPES ~= nil and type(spec.topSpeeds) == "table" and spec.topSpeeds[Rideable.GAITTYPES.TROT] or nil
     spec.eqLaunch = EqJump.newLaunch(spec.currentSpeedY, math.abs(spec.currentSpeed or 0), collected, collectedSpeedY, now,
-        type(trot) == "number" and trot or nil)
+        type(trot) == "number" and trot or nil, spec.eqLastGait)
     if collected then spec.eqCtrlAt = nil end
     spec.eqJumpTraces = (spec.eqJumpTraces or 0) + 1
     spec.eqLaunch.trace = spec.eqJumpTraces <= EqTrainingHooks.JUMP_TRACE_COUNT
