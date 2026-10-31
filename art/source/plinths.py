@@ -7,7 +7,7 @@ a plinth's deck counts (EqPlinths); each plinth also carries sponsor boards.
   never has to be backed up anything; a board on each side.
 - plinthRamp / plinthRampLarge: a solid stone display ramp, the machine parked nose up on the
   slope, the board on the high front face; for smaller and bigger machines.
-- plinthProductJump: two stone banks, each a ramp up to a flat top, with a slot between them. Three
+- plinthProductJump: two stone banks, each mostly ramp up to a short flat top, with a slot between them. Three
   places for machines (each bank's top and the slot), or a cross country jump: up one ramp, over
   whatever stands in the slot, down the other. The banks are 2 m up so a horse never comes near
   the machine in the slot (James: we REALLY don't want it knocked); no flags of its own, the
@@ -60,7 +60,7 @@ PLINTHS = [
     {"name": "plinthTurntable", "price": 25000, "colour": "navy"},
 ]
 DRIVE = {"half_x": 1.6, "half_deck": 3.0, "ramp": 3.5, "height": 0.75}
-PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 4.0, "ramp": 7.5, "height": 2.0}
+PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 1.5, "ramp": 7.5, "height": 2.0}
 TURNTABLE = {"radius": 3.5, "disc": 3.0, "height": 0.7, "ramp": 3.5, "ramp_half": 1.6, "sides": 48}
 DISC = "eqTurntableDisc"     # the node EqTurntable turns
 
@@ -238,7 +238,8 @@ def product():
         for side in (1, -1):
             coping(paint, [(z0, h), (z1, h), (z2, 0.0)] if sign > 0 else [(z2, 0.0), (z1, h), (z0, h)],
                    side * (hx - COPING[0] / 2 + 0.02))
-            board(white, paint, logos, number, side * hx, sign * (slot + top / 2), 0.1, top - 0.6, h - 0.22, side)
+            # the board low on the side, from the slot back under the start of the ramp
+            board(white, paint, logos, number, side * hx, sign * (slot + 1.6), 0.12, 3.0, 1.1, side)
         # the take-off and landing edges over the slot
         prism(paint, [(-hx, h - 0.04), (hx, h - 0.04), (hx, h + COPING[1]), (-hx, h + COPING[1])],
                  (0.0, 0.0, z0 - (COPING[0] if sign > 0 else 0) + (0.02 if sign > 0 else -0.02)), (1, 0, 0), (0, 1, 0), (0, 0, 1), COPING[0])

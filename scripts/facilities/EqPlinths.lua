@@ -38,8 +38,10 @@ EqPlinths.AREAS = {
     ["placeables/sponsorplinths/plinthramp.xml"] = { { x = 0, y = 0.6, z = 0, hx = 1.5, hz = 2.0, slope = -1.2 / 4.6 } },
     ["placeables/sponsorplinths/plinthramplarge.xml"] = { { x = 0, y = 0.8, z = 0, hx = 1.9, hz = 3.0, slope = -1.6 / 6.6 } },
     ["placeables/sponsorplinths/plinthproductjump.xml"] = {
-        { x = 0, y = 2.0, z = 3.6, hx = 2.0, hz = 2.0, slope = 0 },
-        { x = 0, y = 2.0, z = -3.6, hx = 2.0, hz = 2.0, slope = 0 },
+        -- each bank mostly ramp (from 3.1 m to 10.6 m out, 2 m high at the top): the machine
+        -- stands on the slope, nose up to the short flat top
+        { x = 0, y = 1.0, z = 6.85, hx = 2.0, hz = 4.25, slope = -2.0 / 7.5 },
+        { x = 0, y = 1.0, z = -6.85, hx = 2.0, hz = 4.25, slope = 2.0 / 7.5 },
         { x = 0, y = 0, z = 0, hx = 2.0, hz = 1.6, slope = 0 },
     },
     ["placeables/sponsorplinths/plinthturntable.xml"] = { { x = 0, y = 0.73, z = 0, r = 2.9, slope = 0, value = 3 } },
