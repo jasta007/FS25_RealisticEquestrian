@@ -4313,6 +4313,13 @@ end)()
     local hx, hz = EqDressagePath.toWorld(frame, hp.x, hp.y)
     EqDressagePath.step(early, "halt", hx, hz, 50)
     check("a halt 6 m early counts as the halt, with 3 m of warning", early.warn < 6 and early.hold ~= nil)
+    local backed = EqDressagePath.newRun(one, 50)
+    backed.started, backed.i, backed.s, backed.lastX, backed.lastY = true, early.i, early.s, hp.x, hp.y
+    EqDressagePath.step(backed, "reverse", hx, hz, 50)
+    local held = backed.hold ~= nil
+    EqDressagePath.step(backed, "reverse", hx, hz, 50)
+    check("backing up at a halt counts as the halt, then as moving during it", held and backed.hold == nil and backed.ev > early.ev - 0
+        and backed.acc[haltEvent.m].pen >= EqDressagePath.HALT_MOVED)
     -- Way off the line for a stretch costs more than the horse's form (James, 2026-10-31).
     local base = { devSum = 0, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0 }
     local far = { devSum = 0.5 * 20, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 8 }

@@ -254,7 +254,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
   down to X) only loses half of all that. Each mark pops up below the horse, red through orange
   and yellow to green, with gold flourishes at 9 or better.
-- A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30).
+- A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30). Backing up
+  counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
   shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
