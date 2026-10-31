@@ -264,13 +264,15 @@ function EqCourseGlow.shorten(piece, length)
 end
 
 
--- A pointed dash (James, 2026-10-31: canter and trot dashes looked alike): the dash with two
--- barbs POINT_BARB metres long swept back POINT_ANGLE radians from its front, like an arrow.
-EqCourseGlow.POINT_BARB = 0.35
-EqCourseGlow.POINT_ANGLE = math.rad(35)
+-- A pointed dash (James, 2026-10-31: canter and trot dashes looked alike; a dash with barbs read
+-- as a dash with a chunk out of it): a chevron, two arms POINT_ARM metres long meeting at the
+-- piece's front, each swept back POINT_ANGLE radians and run on past the tip by half the strip's
+-- width so they overlap in a clean point.
+EqCourseGlow.POINT_ARM = 0.7
+EqCourseGlow.POINT_ANGLE = math.rad(42)
 
 
---- The strips for a pointed dash (pure): the shaft and two barbs from its front end.
+--- The strips for a pointed dash (pure): two arms meeting at the piece's front.
 --- @param piece table { ax, ay, az, bx, by, bz }
 --- @return table
 function EqCourseGlow.pointed(piece)
@@ -278,14 +280,15 @@ function EqCourseGlow.pointed(piece)
     local len = math.sqrt(dx * dx + dz * dz)
     if len < 1e-6 then return { piece } end
     dx, dz = dx / len, dz / len
-    local strips = { piece }
     local c, sn = math.cos(EqCourseGlow.POINT_ANGLE), math.sin(EqCourseGlow.POINT_ANGLE)
-    local barb = math.min(EqCourseGlow.POINT_BARB, len * 0.6)
+    local over = EqCourseGlow.PATH_WIDTH / 2
+    local strips = {}
     for _, side in ipairs({ 1, -1 }) do
         -- Back along the dash, turned to one side: rotate -dir by the angle.
         local bx = -dx * c + dz * sn * side
         local bz = -dz * c - dx * sn * side
-        table.insert(strips, { piece[4], piece[5], piece[6], piece[4] + bx * barb, piece[5], piece[6] + bz * barb })
+        table.insert(strips, { piece[4] - bx * over, piece[5], piece[6] - bz * over,
+            piece[4] + bx * EqCourseGlow.POINT_ARM, piece[5], piece[6] + bz * EqCourseGlow.POINT_ARM })
     end
     return strips
 end
