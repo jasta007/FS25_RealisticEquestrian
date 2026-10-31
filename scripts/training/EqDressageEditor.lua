@@ -432,6 +432,10 @@ function EqDressageEditor.optionText(option)
 end
 
 
+-- Metres the option is drawn above the last step.
+EqDressageEditor.OPTION_LIFT = 0.04
+
+
 --- Draw the option showing (cyan) and, on the first step, the opening (white), from
 --- EqCourseHooks.onDraw between the course glow's begin and finish; the editor's notes beside
 --- the panel.
@@ -449,7 +453,9 @@ function EqDressageEditor.draw(vehicle)
             local y = pointY(frame, p)
             local point = { x = p.wx, y = y, z = p.wz }
             if p.s >= test.lastS and p.s <= test.fromS then table.insert(last, point) end
-            if p.s >= test.fromS then table.insert(option, point) end
+            -- The option a little higher than the last step, so it draws over it from above
+            -- (James 2026-10-31: white under the black where they cross).
+            if p.s >= test.fromS then table.insert(option, { x = p.wx, y = y + EqDressageEditor.OPTION_LIFT, z = p.wz }) end
         end
         -- Drawn as a ride draws it: lateral work shows the horse's body (James 2026-10-31: the
         -- planned lateral didn't look like one).
