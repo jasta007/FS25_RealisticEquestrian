@@ -939,5 +939,7 @@
         <text name="eq_dt_gaitAction" text="Фигуры: %s"/>
         <text name="eq_fig_pirouetteLeft" text="Пируэт налево у %s"/>
         <text name="eq_fig_pirouetteRight" text="Пируэт направо у %s"/>
+        <text name="eq_dt_modeLateral" text="Показать боковые движения"/>
+        <text name="eq_dt_lateral" text="Боковое"/>
     </texts>
 </l10n>

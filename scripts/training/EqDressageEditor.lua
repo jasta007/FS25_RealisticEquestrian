@@ -10,7 +10,8 @@
     - G (EQ_DT_GAIT) picks the gait of the figures on show, round walk, trot and canter; the
       horse changes to it at the letter before the figure.
     - R (EQ_DT_RANDOM) picks one at random.
-    - F (EQ_DT_MODE) swaps between figures and movements on the spot. On the spot N and M step
+    - F (EQ_DT_MODE) goes round figures, movements on the spot and lateral work (leg yield, half
+      pass, shoulder-in). On the spot N and M step
       through the movements at a letter (halt, halt and rein back, piaffe, pirouette left and
       right) and Shift+N / Shift+M (EQ_DT_PREV_LETTER, EQ_DT_NEXT_LETTER) move it to another letter.
     - Enter (EQ_DT_ACCEPT) keeps it; the next options come from its end.
@@ -343,7 +344,8 @@ function EqDressageEditor.updateActions(vehicle)
     end
     local modeText, gaitText, spotMode = "", "", false
     if mine then
-        modeText = text(active.ed.mode == "figure" and "eq_dt_modeSpot" or "eq_dt_modeFigure")
+        local nextMode = { figure = "eq_dt_modeSpot", spot = "eq_dt_modeLateral", lateral = "eq_dt_modeFigure" }
+        modeText = text(nextMode[active.ed.mode] or "eq_dt_modeFigure")
         gaitText = string.format(text("eq_dt_gaitAction"), text("eq_dressage_gait_" .. EqDressageTests.gaitOf(active.ed)))
         spotMode = active.ed.mode == "spot"
     end
@@ -434,7 +436,7 @@ function EqDressageEditor.draw(vehicle)
     local title = string.format(text(ed.saved and "eq_dt_editing" or "eq_dt_new"), #ed.plan.steps + 1)
     EqTrainingHud.drawPanelNote(title, EqTrainingHud.STAT_COLOR.temperament, true)
     if option ~= nil then
-        local kind = text(ed.mode == "figure" and "eq_dt_figure" or "eq_dt_spot")
+        local kind = text(({ figure = "eq_dt_figure", spot = "eq_dt_spot", lateral = "eq_dt_lateral" })[ed.mode] or "eq_dt_figure")
         local name = EqDressageEditor.optionText(option)
         -- The first step also picks the way the test tracks at C.
         if #ed.plan.steps == 0 and test ~= nil and test.moves[2] ~= nil then name = EqTrainingHooks.figureText(test.moves[2]) .. ", " .. name end

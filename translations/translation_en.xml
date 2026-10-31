@@ -939,5 +939,7 @@
         <text name="eq_dt_gaitAction" text="Figures at: %s"/>
         <text name="eq_fig_pirouetteLeft" text="Left pirouette at %s"/>
         <text name="eq_fig_pirouetteRight" text="Right pirouette at %s"/>
+        <text name="eq_dt_modeLateral" text="Show lateral work"/>
+        <text name="eq_dt_lateral" text="Lateral"/>
     </texts>
 </l10n>

@@ -941,5 +941,7 @@
         <text name="eq_dt_gaitAction" text="Figuren im: %s"/>
         <text name="eq_fig_pirouetteLeft" text="Linkspirouette bei %s"/>
         <text name="eq_fig_pirouetteRight" text="Rechtspirouette bei %s"/>
+        <text name="eq_dt_modeLateral" text="Seitengänge zeigen"/>
+        <text name="eq_dt_lateral" text="Seitengang"/>
     </texts>
 </l10n>

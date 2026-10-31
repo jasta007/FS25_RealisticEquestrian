@@ -4068,6 +4068,17 @@ end)()
         local back = EqDressageTests.current(ed)
         check(name .. ": G round to the same gait comes back to the same figure", back ~= nil and back.id == trotShown.id,
             trotShown.id .. " -> " .. tostring(back and back.id))
+        -- F goes round figures, on the spot and lateral work; lateral options are only lateral work.
+        local modes = { ed.mode }
+        for _ = 1, 3 do
+            EqDressageTests.toggle(ed)
+            table.insert(modes, ed.mode)
+        end
+        local lateralOk = #ed.options.lateral > 0
+        for _, option in ipairs(ed.options.lateral) do lateralOk = lateralOk and option.figure.sections ~= nil end
+        for _, option in ipairs(ed.options.figure) do lateralOk = lateralOk and option.figure.sections == nil end
+        check(name .. ": F goes round figures, on the spot and lateral work", modes[1] == "figure" and modes[2] == "spot"
+            and modes[3] == "lateral" and modes[4] == "figure" and lateralOk, table.concat(modes, " "))
         -- On the spot: N and M go through every movement at one letter, Shift+N/M through the letters.
         EqDressageTests.toggle(ed)
         local styles, letter = {}, EqDressageTests.current(ed).letter

@@ -939,5 +939,7 @@
         <text name="eq_dt_gaitAction" text="Cviky v: %s"/>
         <text name="eq_fig_pirouetteLeft" text="Pirueta vlevo v %s"/>
         <text name="eq_fig_pirouetteRight" text="Pirueta vpravo v %s"/>
+        <text name="eq_dt_modeLateral" text="Ukázat boční chody"/>
+        <text name="eq_dt_lateral" text="Boční chod"/>
     </texts>
 </l10n>

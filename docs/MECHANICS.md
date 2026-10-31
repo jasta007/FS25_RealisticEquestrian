@@ -287,7 +287,8 @@ start). Placeables standing over the arena, such as a riding hall, are hidden wh
 - **G** picks the gait on show (walk, trot, canter), for figures and movements on the spot alike;
   N/M, Shift and G keep the same figure or movement where it exists at the new gait. The horse
   changes to it at the letter before the figure; any gait can follow any other.
-- **F** swaps between figures and movements on the spot. There **N** / **M** step through the
+- **F** goes round figures, movements on the spot and lateral work (leg yield, half pass,
+  shoulder-in, leg yield along the rail). On the spot **N** / **M** step through the
   movements at one letter (halt, halt and rein back, piaffe, left and right pirouette) and
   **Shift+N** / **Shift+M** move it to the letter before or after. A halt or rein back can come
   from any gait, a piaffe from a trot, a pirouette from a walk or canter; a change to that gait

@@ -154,6 +154,8 @@ end
 
 
 EqDressageTests.GAITS = { "walk", "trot", "canter" }
+-- The editor's modes, in the order F goes round them.
+EqDressageTests.MODES = { "figure", "spot", "lateral" }
 
 
 --- Start editing an arena's test: a new one, or the saved one carried on from its last step.
@@ -186,9 +188,9 @@ end
 --- @return table list, table groups { key } for the spot mode's letters
 function EqDressageTests.view(ed)
     local list, groups = {}, {}
-    if ed.mode == "figure" then
+    if ed.mode ~= "spot" then
         local gait = EqDressageTests.gaitOf(ed)
-        for _, option in ipairs(ed.options.figure) do
+        for _, option in ipairs(ed.options[ed.mode]) do
             if option.figure.gait == gait then table.insert(list, option) end
         end
         return list, groups
@@ -217,7 +219,8 @@ end
 function EqDressageTests.refresh(ed)
     local plan = ed.plan
     local turns = (#plan.steps == 0) and { 1, -1 } or { plan.turn }
-    local options = { figure = {}, spot = {} }
+    -- Lateral work (leg yield, half pass, shoulder-in) is a mode of its own (James 2026-10-31).
+    local options = { figure = {}, spot = {}, lateral = {} }
     for _, turn in ipairs(turns) do
         local test = EqDressagePath.build(ed.frame, nil, nil, { turn = turn, seed = plan.seed, steps = plan.steps }, true)
         if test.broken ~= nil then
@@ -228,13 +231,19 @@ function EqDressageTests.refresh(ed)
         for _, mode in ipairs({ "figure", "spot" }) do
             for _, option in ipairs(test.options[mode]) do
                 option.turn = turn
-                table.insert(options[mode], option)
+                local into = mode
+                if mode == "figure" and option.figure.sections ~= nil then into = "lateral" end
+                table.insert(options[into], option)
             end
         end
         if turn == turns[1] then ed.base = test end
     end
     ed.options = options
-    if #options[ed.mode] == 0 then ed.mode = ed.mode == "figure" and "spot" or "figure" end
+    if #options[ed.mode] == 0 then
+        for _, mode in ipairs(EqDressageTests.MODES) do
+            if #options[ed.mode] == 0 then ed.mode = mode end
+        end
+    end
     local list, groups = EqDressageTests.view(ed)
     ed.group = math.max(1, math.min(ed.group or 1, math.max(1, #groups)))
     list = EqDressageTests.view(ed)
@@ -284,7 +293,7 @@ end
 function EqDressageTests.cycleGait(ed)
     -- The figure picked before G was first pressed, so going round the gaits comes back to it
     -- even past a gait that has no such figure.
-    ed.anchor = ed.anchor or (ed.mode == "figure" and EqDressageTests.current(ed) or nil)
+    ed.anchor = ed.anchor or (ed.mode ~= "spot" and EqDressageTests.current(ed) or nil)
     ed.spotAnchor = ed.spotAnchor or (ed.mode == "spot" and EqDressageTests.current(ed) or nil)
     local showing = ed.anchor
     local gait = EqDressageTests.gaitOf(ed)
@@ -327,7 +336,7 @@ end
 --- chance inside it. Figures at the gait on show; on the spot, any movement at any letter.
 --- @param ed table
 function EqDressageTests.random(ed)
-    local list = ed.mode == "figure" and EqDressageTests.view(ed) or ed.options.spot
+    local list = ed.mode ~= "spot" and EqDressageTests.view(ed) or ed.options.spot
     if #list == 0 then return end
     local showing = EqDressageTests.current(ed)
     local total = 0
@@ -362,8 +371,17 @@ end
 --- Swap between figures and movements on the spot.
 --- @param ed table
 function EqDressageTests.toggle(ed)
-    local other = ed.mode == "figure" and "spot" or "figure"
-    if #ed.options[other] == 0 then return false end
+    -- Round figures, on the spot and lateral work (F), past any with nothing to offer.
+    local other = nil
+    for i, mode in ipairs(EqDressageTests.MODES) do
+        if mode == ed.mode then
+            for k = 1, #EqDressageTests.MODES - 1 do
+                local candidate = EqDressageTests.MODES[(i - 1 + k) % #EqDressageTests.MODES + 1]
+                if other == nil and #ed.options[candidate] > 0 then other = candidate end
+            end
+        end
+    end
+    if other == nil then return false end
     ed.mode, ed.index, ed.group, ed.preview, ed.anchor, ed.spotAnchor = other, 1, 1, nil, nil, nil
     return true
 end
@@ -430,9 +448,11 @@ function EqDressageTests.undo(ed)
         if option.kind == "figure" then return option.id == step.id end
         return option.style == step.style and option.letter == step.letter and (step.gait == nil or option.gait == step.gait)
     end
-    if ed.mode == "figure" then
-        for _, option in ipairs(ed.options.figure) do
-            if matches(option) then ed.gait = option.figure.gait end
+    if ed.mode ~= "spot" then
+        for _, mode in ipairs({ "figure", "lateral" }) do
+            for _, option in ipairs(ed.options[mode]) do
+                if matches(option) then ed.gait, ed.mode = option.figure.gait, mode end
+            end
         end
     else
         for _, option in ipairs(ed.options.spot) do

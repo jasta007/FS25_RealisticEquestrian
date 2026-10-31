@@ -939,5 +939,7 @@
         <text name="eq_dt_gaitAction" text="Figury w: %s"/>
         <text name="eq_fig_pirouetteLeft" text="Piruet w lewo w %s"/>
         <text name="eq_fig_pirouetteRight" text="Piruet w prawo w %s"/>
+        <text name="eq_dt_modeLateral" text="Pokaż chody boczne"/>
+        <text name="eq_dt_lateral" text="Chód boczny"/>
     </texts>
 </l10n>

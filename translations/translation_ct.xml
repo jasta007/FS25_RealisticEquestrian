@@ -939,5 +939,7 @@
         <text name="eq_dt_gaitAction" text="圖形步法：%s"/>
         <text name="eq_fig_pirouetteLeft" text="在%s向左定後肢旋轉"/>
         <text name="eq_fig_pirouetteRight" text="在%s向右定後肢旋轉"/>
+        <text name="eq_dt_modeLateral" text="顯示側向運動"/>
+        <text name="eq_dt_lateral" text="側向"/>
     </texts>
 </l10n>
