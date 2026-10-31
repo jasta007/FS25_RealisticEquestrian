@@ -962,5 +962,80 @@
         <text name="eq_dt_modeLateral" text="显示侧向运动"/>
         <text name="eq_dt_lateral" text="侧向"/>
         <text name="eq_shop_signboard_function" text="增加你举办赛事的赞助收入。"/>
+        <text name="eq_ui_tab_sponsors" text="赞助商"/>
+        <text name="eq_money_sponsorship" text="赞助"/>
+        <text name="rl_messageTitle_eqSponsor" text="赞助商"/>
+        <text name="eq_host_report_sponsor" text="赞助商：%s，支付 %s。"/>
+        <text name="eq_sponsor_eventName" text="%s %s经典赛"/>
+        <text name="eq_sponsor_col_sponsor" text="赞助商"/>
+        <text name="eq_sponsor_col_size" text="规模"/>
+        <text name="eq_sponsor_col_deal" text="条件"/>
+        <text name="eq_sponsor_col_contract" text="合同"/>
+        <text name="eq_sponsor_col_fee" text="每场赛事金额"/>
+        <text name="eq_sponsor_size_big" text="大型"/>
+        <text name="eq_sponsor_size_moderate" text="中型"/>
+        <text name="eq_sponsor_size_small" text="小型"/>
+        <text name="eq_sponsor_word_relaxed" text="宽松"/>
+        <text name="eq_sponsor_word_fair" text="公平"/>
+        <text name="eq_sponsor_word_demanding" text="严格"/>
+        <text name="eq_sponsor_word_hardBargain" text="难缠的谈判者"/>
+        <text name="eq_sponsor_year1" text="%d年"/>
+        <text name="eq_sponsor_years" text="%d年"/>
+        <text name="eq_sponsor_yoursLeft" text="你的，剩余%s"/>
+        <text name="eq_sponsor_yourSponsor" text="你的赞助商（%s）"/>
+        <text name="eq_sponsor_backs_all" text="所有赛事"/>
+        <text name="eq_sponsor_backs_from" text="%s及以上"/>
+        <text name="eq_sponsor_backs_lower" text="%s（%s，%s级别）"/>
+        <text name="eq_sponsor_target" text="%s或更高级别的赛事，人气%d"/>
+        <text name="eq_sponsor_targetTop3" text="，并进入前三名"/>
+        <text name="eq_sponsor_label_deal" text="条件"/>
+        <text name="eq_sponsor_label_fee" text="金额"/>
+        <text name="eq_sponsor_label_popularity" text="人气"/>
+        <text name="eq_sponsor_label_target" text="年度目标"/>
+        <text name="eq_sponsor_label_boards" text="赞助商广告牌"/>
+        <text name="eq_sponsor_label_machines" text="其机械"/>
+        <text name="eq_sponsor_label_rivals" text="竞争品牌机械"/>
+        <text name="eq_sponsor_label_discounts" text="折扣"/>
+        <text name="eq_sponsor_label_ends" text="结束"/>
+        <text name="eq_sponsor_label_thisYear" text="今年"/>
+        <text name="eq_sponsor_label_missed" text="未达成目标"/>
+        <text name="eq_sponsor_label_paid" text="已支付"/>
+        <text name="eq_sponsor_label_cancel" text="解约费用"/>
+        <text name="eq_sponsor_label_years" text="合同"/>
+        <text name="eq_sponsor_label_status" text="状态"/>
+        <text name="eq_sponsor_feeLine" text="每场赛事%s，%s"/>
+        <text name="eq_sponsor_boardsLine" text="已放置%d，全额需要%d"/>
+        <text name="eq_sponsor_machinesLine" text="你拥有%d，要求%d（%d个类别）"/>
+        <text name="eq_sponsor_rivalsNone" text="没有价格在其%s以内的"/>
+        <text name="eq_sponsor_rivalsSome" text="需出售%d台，价格在其%s以内"/>
+        <text name="eq_sponsor_discountsLine" text="喷漆%s，维修%s，购买%s"/>
+        <text name="eq_sponsor_yearMet" text="目标已达成"/>
+        <text name="eq_sponsor_yearOpen" text="目标截止%s"/>
+        <text name="eq_sponsor_missedLine" text="连续%d次，金额为%s"/>
+        <text name="eq_sponsor_status_taken" text="你已经有赞助商了"/>
+        <text name="eq_sponsor_status_ready" text="可以签约"/>
+        <text name="eq_sponsor_status_notReady" text="尚未满足条件"/>
+        <text name="eq_sponsor_clashes" text="请先出售或归还：%s"/>
+        <text name="eq_sponsor_summaryOpen" text="报价有效至%s。一次只能有一个赞助商：拥有其机械，不持有价格接近的竞争品牌机械，并放置一块赞助商广告牌。"/>
+        <text name="eq_sponsor_summaryClosed" text="今年的报价已结束。新的赞助商将在明年年初到来。"/>
+        <text name="eq_sponsor_noConfig" text="无法加载赞助商。"/>
+        <text name="eq_sponsor_noOffers" text="目前没有赞助商报价。每年年初会有新的报价。"/>
+        <text name="eq_sponsor_sign_gone" text="该报价已不存在。"/>
+        <text name="eq_sponsor_sign_notReady" text="你尚未满足该赞助商的条件。"/>
+        <text name="eq_sponsor_signed" text="%s现在是你的赞助商，为期%d年。"/>
+        <text name="eq_sponsor_cancel_none" text="你没有赞助商。"/>
+        <text name="eq_sponsor_cancelled" text="你与%s的合同已解除。解约花费了%s。"/>
+        <text name="eq_sponsor_paid" text="%s支付了%s（%s）。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%s未支付任何费用（%s）：没有放置赞助商广告牌。"/>
+        <text name="eq_sponsor_unpaid_machines" text="%s未支付任何费用（%s）：你拥有的其机械不够。"/>
+        <text name="eq_sponsor_targetMet" text="%s：今年的目标已达成。"/>
+        <text name="eq_sponsor_leaves" text="%s因未达成目标而离开。"/>
+        <text name="eq_sponsor_missed" text="%s：今年的目标未达成。明年的金额降至%d%%。"/>
+        <text name="eq_sponsor_finished" text="你与%s的合同已结束。共支付%s。"/>
+        <text name="eq_sponsor_newOffers" text="新的一年：%d个赞助商想支持你的赛事。请查看赛事 &gt; 赞助商。"/>
+        <text name="eq_sponsor_button_sign" text="签约"/>
+        <text name="eq_sponsor_button_cancel" text="解除合同"/>
+        <text name="eq_sponsor_sign_confirm" text="与%s签约%d年？提前解约需支付费用。"/>
+        <text name="eq_sponsor_cancel_confirm" text="解除与%s的合同？费用为%s。"/>
     </texts>
 </l10n>

@@ -124,6 +124,8 @@ uses its genetics, health and fitness.
   Event at your farm (Novice, Intermediate or Championship) if your courses, arenas, stables and
   feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
   their rounds yourself if you like.
+- **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
+  deals to hard bargains. Sign one on the **Sponsors** tab for a fee per event and extra popularity.
 
 ### Getting there
 - **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or

@@ -44,6 +44,7 @@ dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/sponsors/EqSponsorship.lua")
 dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
@@ -4550,6 +4551,118 @@ end)()
     local low = { 1.7, 0.73, 0 }
     check("a crossrail's low end is lower", EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { -1.5, 0.1 }, { -1.5, -0.1 }, 0.45) == false
         and EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { 1.5, 0.1 }, { 1.5, -0.1 }, 0.45))
+end)()
+
+-- Sponsors for hosted events: data/sponsors.xml, brand sizes, offers, terms, fees and contracts.
+;(function()
+    local sp = EqSponsorship.read(TestXML.load("data/sponsors.xml"))
+    check("sponsors: three sizes, shares add to 1", #sp.sizes == 3
+        and math.abs(sp.sizes[1].share + sp.sizes[2].share + sp.sizes[3].share - 1) < 1e-9)
+    check("sponsors: 12 offers a year (3 big, 4 moderate, 5 small)", sp.sizeByName.big.offers == 3
+        and sp.sizeByName.moderate.offers == 4 and sp.sizeByName.small.offers == 5)
+    check("sponsors: big contracts always 3 years", sp.sizeByName.big.yearsMin == 3 and sp.sizeByName.big.yearsMax == 3)
+    check("sponsors: Lizard and no brand never offered", sp.skipBrands.LIZARD and sp.skipBrands.NONE)
+    check("sponsors: vehicles and tools are machines", sp.categoryTypes.VEHICLE and sp.categoryTypes.TOOL and not sp.categoryTypes.OBJECT)
+    check("sponsors: cancel 15%, miss fee 75%, two misses leave", sp.cancelShare == 0.15 and sp.missFactor == 0.75 and sp.missesToLeave == 2)
+    check("sponsors: price bands", EqSponsorship.bandOf(sp, 5000) == 1 and EqSponsorship.bandOf(sp, 50000) == 3
+        and EqSponsorship.bandOf(sp, 5000000) == #sp.bands + 1)
+
+    -- A made-up shop: brand A is everywhere, B in two categories, C one, D one cheap thing.
+    local items = {}
+    local function add(brand, category, price) table.insert(items, { brand = brand, categories = { category }, price = price, name = brand .. category .. price }) end
+    for i, category in ipairs({ "tractorsL", "tractorsM", "harvesters", "plows", "trailers" }) do
+        add("A", category, 20000 * i)
+        add("A", category, 260000)
+    end
+    add("B", "tractorsM", 260000); add("B", "trailers", 30000)
+    add("C", "plows", 8000); add("C", "plows", 9000)
+    add("D", "plows", 4000)
+    add("LIZARD", "tractorsL", 1000); add("LIZARD", "plows", 2000)
+    local profiles = EqSponsorship.profiles(sp, items)
+    check("sponsors: Lizard left out of the shop", profiles.LIZARD == nil)
+    check("sponsors: profile counts categories, bands, machines", profiles.A.categories == 5 and profiles.A.items == 10
+        and profiles.B.categories == 2 and profiles.C.items == 2 and profiles.C.bands == 1)
+    local ranked = EqSponsorship.rank(sp, profiles)
+    check("sponsors: ranked by categories, then bands, then machines", ranked[1].brand == "A" and ranked[2].brand == "B"
+        and ranked[3].brand == "C" and ranked[4].brand == "D")
+    check("sponsors: biggest brand is big, smallest small", ranked[1].size == "big" and ranked[4].size == "small")
+
+    local offers = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
+    local again = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
+    check("sponsors: never more offers than brands", #offers == 4)
+    local same = #offers == #again
+    for i, offer in ipairs(offers) do
+        same = same and again[i].brand == offer.brand and again[i].fee == offer.fee and again[i].strictness == offer.strictness
+    end
+    check("sponsors: same seed, same offers", same)
+    local seen, sane = {}, true
+    for _, offer in ipairs(offers) do
+        if seen[offer.brand] then sane = false end
+        seen[offer.brand] = true
+        local size = sp.sizeByName[offer.size]
+        if offer.years < size.yearsMin or offer.years > size.yearsMax or offer.fee <= 0 or offer.fee % 500 ~= 0
+            or offer.machines < 1 or offer.window <= 0 or offer.signsFull < sp.signsMin then sane = false end
+    end
+    check("sponsors: offers are sane, each brand once", sane)
+
+    -- Strictness: hard bargains ask more and give more.
+    local relaxedFee, strictFee = EqSponsorship.term(sp, "fee", 0), EqSponsorship.term(sp, "fee", 1)
+    check("sponsors: strict deals pay more (80% to 130%)", math.abs(relaxedFee - 0.8) < 1e-9 and math.abs(strictFee - 1.3) < 1e-9)
+    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "categoriesPerMachine", 1) < EqSponsorship.term(sp, "categoriesPerMachine", 0))
+    check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
+        and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
+    check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
+
+    -- Competitor clause: B's 260k tractor sits within 30% of A's 260k tractor.
+    local offer = { brand = "A", size = "big", window = 0.3, machines = 2, fee = 150000, signsFull = 4, popularity = 10, target = 70, years = 3 }
+    local owned = { { brand = "A", categories = { "tractorsL" }, price = 20000 }, { brand = "B", categories = { "tractorsM" }, price = 300000, name = "Big B" },
+        { brand = "C", categories = { "balers" }, price = 50000 } }
+    local clashes = EqSponsorship.clashes(offer, profiles.A, owned)
+    check("sponsors: a rival machine near a sponsor price clashes", #clashes == 1 and clashes[1].name == "Big B")
+    owned[2].price = 400000
+    check("sponsors: outside the window, no clash", #EqSponsorship.clashes(offer, profiles.A, owned) == 0)
+    owned[2].price = 300000
+    local checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 0 })
+    check("sponsors: can't sign with a rival, too few machines and no board", not checks.ok)
+    owned[2] = { brand = "A", categories = { "plows" }, price = 60000 }
+    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1 })
+    check("sponsors: two of theirs, no rivals, one board: can sign", checks.ok)
+    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1, contract = {} })
+    check("sponsors: one sponsor at a time", not checks.ok)
+
+    local order = { novice = 1, intermediate = 2, championship = 3 }
+    check("sponsors: big pays full at Championship, 25% at Intermediate, none at Novice",
+        EqSponsorship.feeShare(sp, offer, "championship", order) == 1 and EqSponsorship.feeShare(sp, offer, "intermediate", order) == 0.25
+        and EqSponsorship.feeShare(sp, offer, "novice", order) == 0)
+    check("sponsors: moderate from Intermediate, small everything",
+        EqSponsorship.feeShare(sp, { size = "moderate" }, "novice", order) == 0 and EqSponsorship.feeShare(sp, { size = "moderate" }, "intermediate", order) == 1
+        and EqSponsorship.feeShare(sp, { size = "small" }, "novice", order) == 1)
+    check("sponsors: boards from half up to full", EqSponsorship.boardsFactor(offer, 0, 1) == 0 and EqSponsorship.boardsFactor(offer, 2, 1) == 0.75
+        and EqSponsorship.boardsFactor(offer, 9, 1) == 1)
+    local contract = EqSponsorship.contractFrom(offer, 24)
+    check("sponsors: contract runs its years", contract.endMonth == 60 and contract.yearEnd == 36 and contract.feeFactor == 1 and offer.endMonth == nil)
+    check("sponsors: event fee", EqSponsorship.eventFee(sp, contract, "championship", order, 4, true) == 150000
+        and EqSponsorship.eventFee(sp, contract, "intermediate", order, 4, true) == 37500
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 2, true) == 112500)
+    check("sponsors: no fee reasons", select(2, EqSponsorship.eventFee(sp, contract, "novice", order, 4, true)) == "rating"
+        and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 4, false)) == "machines"
+        and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 0, true)) == "boards")
+    check("sponsors: yearly target", EqSponsorship.meetsTarget(sp, contract, "intermediate", order, 70, nil)
+        and not EqSponsorship.meetsTarget(sp, contract, "intermediate", order, 69, nil)
+        and not EqSponsorship.meetsTarget(sp, contract, "novice", order, 90, nil))
+    contract.top3 = true
+    check("sponsors: strict targets need a top 3", not EqSponsorship.meetsTarget(sp, contract, "championship", order, 80, 4)
+        and EqSponsorship.meetsTarget(sp, contract, "championship", order, 80, 3))
+    contract.met = false
+    check("sponsors: a miss cuts next year's fee", EqSponsorship.closeYear(sp, contract) == false and contract.feeFactor == 0.75
+        and contract.misses == 1)
+    check("sponsors: missed fee", EqSponsorship.eventFee(sp, contract, "championship", order, 4, true) == 112500)
+    check("sponsors: two misses and it leaves", EqSponsorship.closeYear(sp, contract) == true)
+    contract.misses, contract.met = 1, true
+    check("sponsors: a met year resets", EqSponsorship.closeYear(sp, contract) == false and contract.misses == 0 and contract.feeFactor == 1)
+    local cost, yearsLeft = EqSponsorship.cancelCost(sp, { fee = 150000, endMonth = 42 }, 24)
+    check("sponsors: cancel 18 months early costs 2 years at 15%", cost == 45000 and yearsLeft == 2)
+    check("sponsors: cancelling at the end costs nothing", EqSponsorship.cancelCost(sp, { fee = 150000, endMonth = 24 }, 24) == 0)
 end)()
 
 -- Hosting your own event: data/hosting.xml, the requirement checks, popularity and takings.

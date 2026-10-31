@@ -8,6 +8,8 @@
       result lines open this tab on their horse (EqMessagesLink).
     - Host: every event the farm could host (EqHostView) on the left, the selected one's
       requirements on the right and the farm's booking under them, with Book and Cancel.
+    - Sponsors: the farm's sponsor and this year's offers (EqSponsorView) on the left, the
+      selected one's logo, demands and rewards on the right, with Sign and Cancel contract.
 
     The tab is added from our side: EqEventsFrame.install appends to RLMenu:setupMenuPages, so
     once RLRM has registered its own pages we load our frame and register it as one more page,
@@ -30,6 +32,7 @@ EqEventsFrame.ICON_SLICE = "eqMenu.events"
 EqEventsFrame.MODE_EVENTS = "events"
 EqEventsFrame.MODE_RESULTS = "results"
 EqEventsFrame.MODE_HOST = "host"
+EqEventsFrame.MODE_SPONSORS = "sponsors"
 
 -- RLRM genetics bands whose colours the Success and Training words borrow.
 EqEventsFrame.SUCCESS_COLORS = {
@@ -62,6 +65,8 @@ function EqEventsFrame.new()
     self.resultRows = {}
     self.hostRows = {}
     self.hostCheckRows = {}
+    self.sponsorRows = {}
+    self.selectedSponsorIndex = nil
     self.selectedHostIndex = nil
     self.hostMonthIndex = 1
     self.selectedEventId = nil
@@ -94,6 +99,16 @@ function EqEventsFrame.new()
         text = g_i18n:getText("eq_host_button_cancel"),
         callback = function() self:onClickCancelBooking() end,
     }
+    self.signButtonInfo = {
+        inputAction = InputAction.MENU_ACCEPT,
+        text = g_i18n:getText("eq_sponsor_button_sign"),
+        callback = function() self:onClickSignSponsor() end,
+    }
+    self.cancelSponsorButtonInfo = {
+        inputAction = InputAction.MENU_EXTRA_2,
+        text = g_i18n:getText("eq_sponsor_button_cancel"),
+        callback = function() self:onClickCancelSponsor() end,
+    }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
         text = g_i18n:getText("eq_ui_tab_results"),
@@ -106,7 +121,7 @@ end
 
 function EqEventsFrame:onGuiSetupFinished()
     EqEventsFrame:superClass().onGuiSetupFinished(self)
-    for _, list in ipairs({ self.eventsList, self.horsesList, self.resultsList, self.hostList, self.hostChecksList }) do
+    for _, list in ipairs({ self.eventsList, self.horsesList, self.resultsList, self.hostList, self.hostChecksList, self.sponsorList }) do
         if list ~= nil then
             list:setDataSource(self)
             list:setDelegate(self)
@@ -221,7 +236,8 @@ end
 
 -- TABS (the same profiles and wiring as RLRM's Settings page)
 
-EqEventsFrame.TAB_MODES = { EqEventsFrame.MODE_EVENTS, EqEventsFrame.MODE_RESULTS, EqEventsFrame.MODE_HOST }
+EqEventsFrame.TAB_MODES = { EqEventsFrame.MODE_EVENTS, EqEventsFrame.MODE_RESULTS, EqEventsFrame.MODE_HOST,
+    EqEventsFrame.MODE_SPONSORS }
 
 
 --- @param mode string
@@ -301,10 +317,16 @@ function EqEventsFrame:onClickHostTab()
 end
 
 
+function EqEventsFrame:onClickSponsorsTab()
+    self:showMode(EqEventsFrame.MODE_SPONSORS)
+end
+
+
 --- Focus the list the current tab starts on.
 function EqEventsFrame:focusMode()
     local list = self.mode == EqEventsFrame.MODE_EVENTS and self.eventsList
-        or self.mode == EqEventsFrame.MODE_HOST and self.hostList or self.horsesList
+        or self.mode == EqEventsFrame.MODE_HOST and self.hostList
+        or self.mode == EqEventsFrame.MODE_SPONSORS and self.sponsorList or self.horsesList
     if list ~= nil then FocusManager:setFocus(list) end
 end
 
@@ -323,6 +345,7 @@ function EqEventsFrame:refresh()
     local isEvents = self.mode == EqEventsFrame.MODE_EVENTS
     local isResults = self.mode == EqEventsFrame.MODE_RESULTS
     local isHost = self.mode == EqEventsFrame.MODE_HOST
+    local isSponsors = self.mode == EqEventsFrame.MODE_SPONSORS
     self.eventRows = ok and EqEventsView.eventRows(farmId()) or {}
 
     show(self.eventsHeader, isEvents)
@@ -331,7 +354,11 @@ function EqEventsFrame:refresh()
     show(self.resultsHeader, isResults)
     show(self.resultsBox, isResults)
     show(self.resultHorsesHeader, isResults)
-    show(self.horsesBox, not isHost)
+    show(self.horsesBox, not isHost and not isSponsors)
+    for _, element in ipairs({ self.sponsorHeader, self.sponsorBox }) do
+        show(element, isSponsors)
+    end
+    if not isSponsors then show(self.sponsorPanel, false) end
     for _, element in ipairs({ self.hostHeader, self.hostBox, self.hostChecksHeader, self.hostChecksBox }) do
         show(element, isHost)
     end
@@ -342,7 +369,7 @@ function EqEventsFrame:refresh()
     end
 
     self.eventsList:reloadData()
-    if isHost then
+    if isHost or isSponsors then
         self.horseRows = {}
         self.resultRows = {}
         self.horsesList:reloadData()
@@ -351,7 +378,7 @@ function EqEventsFrame:refresh()
         self.horsesEmptyState:setVisible(false)
         self:updateHorsePanel()
         self:updateCareerPanel()
-        self:refreshHost()
+        if isHost then self:refreshHost() else self:refreshSponsors() end
     elseif isEvents then
         self.resultRows = {}
         self.resultsList:reloadData()
@@ -374,6 +401,12 @@ function EqEventsFrame:refresh()
         empty = g_i18n:getText("eq_ui_noEvents")
     elseif isHost then
         if #self.hostRows == 0 then empty = g_i18n:getText("eq_host_book_noConfig") end
+    elseif isSponsors then
+        if EqSponsorManager.config == nil then
+            empty = g_i18n:getText("eq_sponsor_noConfig")
+        elseif #self.sponsorRows == 0 then
+            empty = g_i18n:getText("eq_sponsor_noOffers")
+        end
     elseif isResults then
         local horse = self.selectedHorseIndex ~= nil and self.horseRows[self.selectedHorseIndex] or nil
         if horse == nil then
@@ -454,6 +487,42 @@ function EqEventsFrame:refreshHost()
 end
 
 
+--- The Sponsors tab: the farm's sponsor first, then this year's open offers.
+function EqEventsFrame:refreshSponsors()
+    local selected = self.selectedSponsorIndex ~= nil and self.sponsorRows[self.selectedSponsorIndex] or nil
+    self.sponsorRows = {}
+    if self.isReady then
+        local ok, rows = pcall(EqSponsorView.rows, farmId())
+        if ok then
+            self.sponsorRows = rows
+        else
+            Log:warning("EqEventsFrame: sponsor rows failed: %s", tostring(rows))
+        end
+    end
+    self.sponsorList:reloadData()
+    local selectIndex = #self.sponsorRows > 0 and 1 or nil
+    for i, row in ipairs(self.sponsorRows) do
+        if selected ~= nil and row.offer == selected.offer then selectIndex = i end
+    end
+    if selectIndex ~= nil then self.sponsorList:setSelectedIndex(selectIndex) end
+    self:selectSponsor(selectIndex)
+end
+
+
+--- @param index number|nil the row on the Sponsors tab
+function EqEventsFrame:selectSponsor(index)
+    self.selectedSponsorIndex = index
+    self:updateSponsorPanel()
+    self:updateSummary()
+end
+
+
+--- @return table|nil row the selected sponsor row
+function EqEventsFrame:selectedSponsorRow()
+    return self.selectedSponsorIndex ~= nil and self.sponsorRows[self.selectedSponsorIndex] or nil
+end
+
+
 --- @return table months the farm could book now, soonest first
 function EqEventsFrame:hostMonths()
     if not self.isReady then return {} end
@@ -501,6 +570,8 @@ function EqEventsFrame:updateSummary()
         text = self.message
     elseif self.mode == EqEventsFrame.MODE_RESULTS then
         text = string.format(g_i18n:getText("eq_ui_summary_results"), EqHorseRecord.RESULTS_KEPT)
+    elseif self.mode == EqEventsFrame.MODE_SPONSORS then
+        if self.isReady and EqSponsorManager.config ~= nil then text = EqSponsorView.summary(farmId()) end
     elseif self.mode == EqEventsFrame.MODE_HOST then
         local row = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
         if row ~= nil then
@@ -532,7 +603,8 @@ function EqEventsFrame:nextMode()
 end
 
 
-local TAB_TEXTS = { events = "eq_ui_tab_upcoming", results = "eq_ui_tab_results", host = "eq_ui_tab_host" }
+local TAB_TEXTS = { events = "eq_ui_tab_upcoming", results = "eq_ui_tab_results", host = "eq_ui_tab_host",
+    sponsors = "eq_ui_tab_sponsors" }
 
 
 function EqEventsFrame:updateButtons()
@@ -541,6 +613,10 @@ function EqEventsFrame:updateButtons()
 
     if self.mode == EqEventsFrame.MODE_HOST then
         self:addHostButtons()
+        self:setMenuButtonInfoDirty()
+        return
+    elseif self.mode == EqEventsFrame.MODE_SPONSORS then
+        self:addSponsorButtons()
         self:setMenuButtonInfoDirty()
         return
     end
@@ -578,6 +654,18 @@ function EqEventsFrame:addHostButtons()
     self.bookButtonInfo.text = string.format(g_i18n:getText("eq_host_button_book"),
         EqHostManager.monthText(months[self.hostMonthIndex]))
     table.insert(self.menuButtonInfo, self.bookButtonInfo)
+end
+
+
+--- Sign on the selected offer, or Cancel contract on the farm's sponsor.
+function EqEventsFrame:addSponsorButtons()
+    local row = self:selectedSponsorRow()
+    if not self.isReady or row == nil then return end
+    if row.contract then
+        table.insert(self.menuButtonInfo, self.cancelSponsorButtonInfo)
+    else
+        table.insert(self.menuButtonInfo, self.signButtonInfo)
+    end
 end
 
 
@@ -638,6 +726,55 @@ function EqEventsFrame:updateHostPanel()
         -- overflows (James's log 2026-10-29, month names falling back to "now").
         self.hostMonthOption:setState(self.hostMonthIndex, false)
     end
+end
+
+
+--- Show a brand's logo in the panel, or hide it when the brand has none we can draw.
+--- @param bitmap table|nil Bitmap
+--- @param brandName string|nil
+local function showLogo(bitmap, brandName)
+    if bitmap == nil then return end
+    local brand = EqSponsorManager.brand(brandName)
+    local image = brand ~= nil and brand.image or nil
+    if image == nil or image == "" or bitmap.setImageFilename == nil then
+        bitmap:setVisible(false)
+        return
+    end
+    local ok = pcall(function()
+        if bitmap.eqLogo ~= image then
+            bitmap:setImageFilename(image)
+            bitmap.eqLogo = image
+        end
+    end)
+    bitmap:setVisible(ok)
+end
+
+
+--- The selected sponsor's logo, name, size and terms, coloured where the farm meets them.
+function EqEventsFrame:updateSponsorPanel()
+    if self.sponsorPanel == nil then return end
+    local row = self:selectedSponsorRow()
+    local show = self.mode == EqEventsFrame.MODE_SPONSORS and self.isReady and row ~= nil
+    self.sponsorPanel:setVisible(show)
+    if not show then return end
+    local ok, lines, clashes = pcall(EqSponsorView.panelLines, farmId(), row)
+    if not ok then
+        Log:warning("EqEventsFrame: sponsor panel failed: %s", tostring(lines))
+        lines, clashes = {}, {}
+    end
+    showLogo(self.sponsorLogo, row.offer.brand)
+    setText(self.sponsorName, row.title)
+    setText(self.sponsorSize, row.contract and string.format(g_i18n:getText("eq_sponsor_yourSponsor"), row.size) or row.size)
+    for i = 1, #(self.sponsorLabel or {}) do
+        local line = lines[i]
+        local value = self.sponsorValue ~= nil and self.sponsorValue[i] or nil
+        keepDefaultColor(value)
+        local color = nil
+        if line ~= nil and line.ok ~= nil then color = wordColor(EqEventsFrame.RISK_COLORS, line.ok and "low" or "risky") end
+        setText(self.sponsorLabel[i], line ~= nil and line.label or "")
+        setText(value, line ~= nil and line.value or "", color)
+    end
+    setText(self.sponsorNote, EqSponsorView.clashText(clashes or {}))
 end
 
 
@@ -719,6 +856,7 @@ end
 function EqEventsFrame:getNumberOfItemsInSection(list, _section)
     if list == self.hostList then return #self.hostRows end
     if list == self.hostChecksList then return #self.hostCheckRows end
+    if list == self.sponsorList then return #self.sponsorRows end
     if list == self.eventsList then return #self.eventRows end
     if list == self.horsesList then return #self.horseRows end
     if list == self.resultsList then return #self.resultRows end
@@ -791,6 +929,15 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         setCell(cell, "setup", row.setup)
         setCell(cell, "takings", row.takingsText)
         return
+    elseif list == self.sponsorList then
+        local row = self.sponsorRows[index]
+        if row == nil then return end
+        setCell(cell, "title", row.title)
+        setCell(cell, "size", row.size)
+        setCell(cell, "deal", row.deal)
+        setCell(cell, "years", row.years)
+        setCell(cell, "fee", row.fee)
+        return
     elseif list == self.hostChecksList then
         local row = self.hostCheckRows[index]
         if row == nil then return end
@@ -856,6 +1003,14 @@ function EqEventsFrame:onListSelectionChanged(list, _section, index)
         self:updateButtons()
         return
     elseif list == self.hostChecksList then
+        return
+    elseif list == self.sponsorList then
+        if self.mode ~= EqEventsFrame.MODE_SPONSORS then return end
+        if index ~= self.selectedSponsorIndex then
+            self.message = nil
+            self:selectSponsor(index)
+        end
+        self:updateButtons()
         return
     end
     if list == self.eventsList then
@@ -926,6 +1081,38 @@ function EqEventsFrame:onClickCancelBooking()
             self:refresh()
         end
     end, self, question, g_i18n:getText("eq_host_button_cancel"))
+end
+
+
+function EqEventsFrame:onClickSignSponsor()
+    local row = self:selectedSponsorRow()
+    if row == nil or row.contract then return end
+    local offer = row.offer
+    local question = string.format(g_i18n:getText("eq_sponsor_sign_confirm"), row.title, offer.years or 1)
+    YesNoDialog.show(function(_, yes)
+        if yes then
+            local _, text = EqSponsorManager.sign(farmId(), offer)
+            self.message = text
+            self.selectedSponsorIndex = 1
+            self:refresh()
+        end
+    end, self, question, g_i18n:getText("eq_sponsor_button_sign"))
+end
+
+
+function EqEventsFrame:onClickCancelSponsor()
+    local contract = EqSponsorManager.contracts[farmId()]
+    if contract == nil then return end
+    local cost = EqSponsorManager.cancelCost(farmId())
+    local question = string.format(g_i18n:getText("eq_sponsor_cancel_confirm"), EqSponsorManager.brandTitle(contract.brand),
+        g_i18n:formatMoney(cost, 0, true, true))
+    YesNoDialog.show(function(_, yes)
+        if yes then
+            local _, text = EqSponsorManager.cancel(farmId())
+            self.message = text
+            self:refresh()
+        end
+    end, self, question, g_i18n:getText("eq_sponsor_button_cancel"))
 end
 
 

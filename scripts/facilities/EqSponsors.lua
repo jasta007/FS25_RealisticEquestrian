@@ -6,7 +6,8 @@
     time and never shipped (James, 2026-10-28: the game is full of sponsors, use them).
 
     A farm's sponsors are the brands of the machines it owns, most first, then the rest of the
-    game's brands in an order fixed for the farm. Each bleacher carries on down the list where the
+    game's brands in an order fixed for the farm. A farm with a sponsor (EqSponsorManager) shows
+    that sponsor on every board, and its boards count towards the sponsor's fee. Each bleacher carries on down the list where the
     one before stopped, so neighbouring stands show different logos. Boards are set once, when a
     bleacher is first seen; a board whose logo can't be loaded keeps our own.
 
@@ -127,6 +128,40 @@ local function showLogo(node, brand)
 end
 
 
+--- Every board is set again on the next scan: a farm's sponsor has changed.
+function EqSponsors.refresh()
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    for _, placeable in ipairs(system ~= nil and system.placeables or {}) do placeable.eqSponsored = nil end
+    EqSponsors.scannedAt = nil
+    EqSponsors.failed = false
+end
+
+
+--- @param farmId number
+--- @return number boards sponsor boards on the farm's placeables, anywhere on the map
+function EqSponsors.countBoards(farmId)
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    local count = 0
+    for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
+        local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
+        if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
+            local boards = {}
+            findBoards(placeable.rootNode, boards)
+            for _ in pairs(boards) do count = count + 1 end
+        end
+    end
+    return count
+end
+
+
+--- @param farmId number
+--- @return string|nil brand the farm's sponsor
+local function sponsorOf(farmId)
+    local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
+    return contract ~= nil and contract.brand or nil
+end
+
+
 --- Set the boards of every bleacher not done yet.
 function EqSponsors.update()
     if EqSponsors.failed then return end
@@ -152,7 +187,12 @@ function EqSponsors.update()
             if not placeable.eqSponsored then
                 placeable.eqSponsored = true
                 if byName == nil then byName, names = brands() end
-                sponsors = sponsors or EqSponsors.order(ownedCounts(farmId), names, farmId)
+                local sponsor = sponsorOf(farmId)
+                if sponsor ~= nil and byName[sponsor] ~= nil then
+                    sponsors = { sponsor }
+                else
+                    sponsors = sponsors or EqSponsors.order(ownedCounts(farmId), names, farmId)
+                end
                 local shown = 0
                 for number, node in pairs(boards) do
                     local name = #sponsors > 0 and sponsors[(offset + number - 1) % #sponsors + 1] or nil

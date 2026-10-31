@@ -962,5 +962,80 @@
         <text name="eq_dt_modeLateral" text="Показать боковые движения"/>
         <text name="eq_dt_lateral" text="Боковое"/>
         <text name="eq_shop_signboard_function" text="Увеличивает спонсорские доходы ваших соревнований."/>
+        <text name="eq_ui_tab_sponsors" text="Спонсоры"/>
+        <text name="eq_money_sponsorship" text="Спонсорство"/>
+        <text name="rl_messageTitle_eqSponsor" text="Спонсоры"/>
+        <text name="eq_host_report_sponsor" text="Спонсор: %s, выплачено %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Спонсор"/>
+        <text name="eq_sponsor_col_size" text="Размер"/>
+        <text name="eq_sponsor_col_deal" text="Условия"/>
+        <text name="eq_sponsor_col_contract" text="Контракт"/>
+        <text name="eq_sponsor_col_fee" text="Выплата за соревнование"/>
+        <text name="eq_sponsor_size_big" text="Крупный"/>
+        <text name="eq_sponsor_size_moderate" text="Средний"/>
+        <text name="eq_sponsor_size_small" text="Малый"/>
+        <text name="eq_sponsor_word_relaxed" text="Мягкие"/>
+        <text name="eq_sponsor_word_fair" text="Честные"/>
+        <text name="eq_sponsor_word_demanding" text="Строгие"/>
+        <text name="eq_sponsor_word_hardBargain" text="Жёсткий торг"/>
+        <text name="eq_sponsor_year1" text="%d год"/>
+        <text name="eq_sponsor_years" text="%d г."/>
+        <text name="eq_sponsor_yoursLeft" text="Ваш, осталось %s"/>
+        <text name="eq_sponsor_yourSponsor" text="Ваш спонсор (%s)"/>
+        <text name="eq_sponsor_backs_all" text="Все соревнования"/>
+        <text name="eq_sponsor_backs_from" text="%s и выше"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s на уровне %s)"/>
+        <text name="eq_sponsor_target" text="Соревнование уровня %s или выше с популярностью %d"/>
+        <text name="eq_sponsor_targetTop3" text=", с местом в тройке"/>
+        <text name="eq_sponsor_label_deal" text="Условия"/>
+        <text name="eq_sponsor_label_fee" text="Выплата"/>
+        <text name="eq_sponsor_label_popularity" text="Популярность"/>
+        <text name="eq_sponsor_label_target" text="Годовая цель"/>
+        <text name="eq_sponsor_label_boards" text="Спонсорские щиты"/>
+        <text name="eq_sponsor_label_machines" text="Их техника"/>
+        <text name="eq_sponsor_label_rivals" text="Техника конкурентов"/>
+        <text name="eq_sponsor_label_discounts" text="Скидки"/>
+        <text name="eq_sponsor_label_ends" text="Окончание"/>
+        <text name="eq_sponsor_label_thisYear" text="В этом году"/>
+        <text name="eq_sponsor_label_missed" text="Пропущенные цели"/>
+        <text name="eq_sponsor_label_paid" text="Выплачено"/>
+        <text name="eq_sponsor_label_cancel" text="Цена расторжения"/>
+        <text name="eq_sponsor_label_years" text="Контракт"/>
+        <text name="eq_sponsor_label_status" text="Статус"/>
+        <text name="eq_sponsor_feeLine" text="%s за соревнование, %s"/>
+        <text name="eq_sponsor_boardsLine" text="Установлено %d, для полной выплаты %d"/>
+        <text name="eq_sponsor_machinesLine" text="У вас %d, нужно %d (%d категорий)"/>
+        <text name="eq_sponsor_rivalsNone" text="Нет в пределах %s от их цен"/>
+        <text name="eq_sponsor_rivalsSome" text="Продать %d, в пределах %s от их цен"/>
+        <text name="eq_sponsor_discountsLine" text="Покраска %s, ремонт %s, покупка %s"/>
+        <text name="eq_sponsor_yearMet" text="Цель выполнена"/>
+        <text name="eq_sponsor_yearOpen" text="Цель открыта до %s"/>
+        <text name="eq_sponsor_missedLine" text="%d подряд, выплата %s"/>
+        <text name="eq_sponsor_status_taken" text="У вас уже есть спонсор"/>
+        <text name="eq_sponsor_status_ready" text="Можно подписать"/>
+        <text name="eq_sponsor_status_notReady" text="Пока нельзя"/>
+        <text name="eq_sponsor_clashes" text="Сначала продайте или верните: %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Предложения действуют до %s. Один спонсор за раз: нужна его техника, никакой техники конкурентов близко к его ценам и установленный спонсорский щит."/>
+        <text name="eq_sponsor_summaryClosed" text="Предложения этого года закончились. Новые спонсоры придут в начале следующего года."/>
+        <text name="eq_sponsor_noConfig" text="Не удалось загрузить спонсоров."/>
+        <text name="eq_sponsor_noOffers" text="Сейчас нет предложений спонсоров. Новые приходят в начале каждого года."/>
+        <text name="eq_sponsor_sign_gone" text="Это предложение больше недоступно."/>
+        <text name="eq_sponsor_sign_notReady" text="Вы пока не выполняете условия этого спонсора."/>
+        <text name="eq_sponsor_signed" text="%s теперь ваш спонсор, лет: %d."/>
+        <text name="eq_sponsor_cancel_none" text="У вас нет спонсора."/>
+        <text name="eq_sponsor_cancelled" text="Ваш контракт с %s расторгнут. Расторжение стоило %s."/>
+        <text name="eq_sponsor_paid" text="%s выплатил %s за %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s ничего не выплатил за %s: нет установленных спонсорских щитов."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s ничего не выплатил за %s: у вас мало его техники."/>
+        <text name="eq_sponsor_targetMet" text="%s: цель этого года выполнена."/>
+        <text name="eq_sponsor_leaves" text="%s ушёл после пропущенных целей."/>
+        <text name="eq_sponsor_missed" text="%s: цель этого года не выполнена. Выплата в следующем году снижена до %d%%."/>
+        <text name="eq_sponsor_finished" text="Ваш контракт с %s завершён. Всего выплачено %s."/>
+        <text name="eq_sponsor_newOffers" text="Новый год: спонсоров, готовых поддержать ваши соревнования: %d. См. Соревнования, Спонсоры."/>
+        <text name="eq_sponsor_button_sign" text="Подписать"/>
+        <text name="eq_sponsor_button_cancel" text="Расторгнуть контракт"/>
+        <text name="eq_sponsor_sign_confirm" text="Подписать с %s, лет: %d? Досрочное расторжение стоит денег."/>
+        <text name="eq_sponsor_cancel_confirm" text="Расторгнуть контракт с %s? Это стоит %s."/>
     </texts>
 </l10n>

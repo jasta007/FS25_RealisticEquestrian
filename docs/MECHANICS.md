@@ -797,7 +797,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 | Championship | 32 | 220,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
 
 A Novice event about breaks even, an Intermediate one pays only when it's popular (85 or more), and a
-Championship loses money unless a sponsor pays for it (sponsors are still to come).
+Championship loses money unless a sponsor pays for it (see Sponsors below).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
   **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
@@ -849,6 +849,51 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again.
+
+### Sponsors
+
+The Events tab's fourth tab, **Sponsors**, shows your sponsor and this year's offers (the rules
+are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
+
+- **Who:** every sponsor is a brand from your own shop, mods included; no brand is named in the
+  mod. Brands are sized by how many shop categories they make machines in, then how many price
+  bands those span, then how many machines: the top 15% are **big**, the next 35% **moderate**,
+  the rest **small**. The game's own Lizard brand is left out.
+- **When:** offers come at the start of each year (and at once in a save that has none yet): up
+  to 3 big, 4 moderate and 5 small, open for 3 months. One sponsor at a time.
+- **The deal:** each offer rolls a strictness, shown as **Relaxed**, **Fair**, **Demanding** or
+  **Hard bargain**. Stricter deals ask more and pay more:
+
+| Term | Relaxed | Hard bargain |
+| --- | --- | --- |
+| Their machines to own | 1 per 4 categories they make | 1 per 2 |
+| No rival machine priced within | 20% of one of theirs (same category) | 60% |
+| Yearly popularity target | size target -10 | +10, and a top 3 finish |
+| Sponsor boards for the full fee | 2 | 8 |
+| Fee | 80% | 130% |
+| Repaint / repair / buying discount | 35% / 15% / 5% | 65% / 35% / 20% |
+
+| Size | Fee per event | Pays at | Popularity | Target | Contract |
+| --- | --- | --- | --- | --- | --- |
+| Big | 120,000-180,000 | Championship, 25% at Intermediate | +10 | 70 | 3 years |
+| Moderate | 25,000-40,000 | Intermediate and Championship | +6 | 55 | 1-2 years |
+| Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
+
+- **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
+  don't count), no rival machine inside the price window (sell it or return the lease first; the
+  panel lists them), and at least one sponsor board on show.
+- **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
+  Classic"), gain its popularity, and pay its fee when the results come in: half the fee with one
+  board, rising to the full fee at the offer's board count. No fee if you no longer own enough of
+  their machines or have no board up.
+- **The yearly target:** each contract year, host at least one event the sponsor backs at the
+  target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
+  away. A met year puts the fee back to full.
+- **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
+- Discounts and the shop's block on rival machines come in the next update.
+
+Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
+`eqSponsorNew` (testing) makes a fresh set of offers now.
 
 ## Buying horses
 

@@ -962,5 +962,80 @@
         <text name="eq_dt_modeLateral" text="Pokaż chody boczne"/>
         <text name="eq_dt_lateral" text="Chód boczny"/>
         <text name="eq_shop_signboard_function" text="Zwiększa wpływy od sponsorów na twoich zawodach."/>
+        <text name="eq_ui_tab_sponsors" text="Sponsorzy"/>
+        <text name="eq_money_sponsorship" text="Sponsoring"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponsorzy"/>
+        <text name="eq_host_report_sponsor" text="Sponsor: %s, zapłacił %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
+        <text name="eq_sponsor_col_size" text="Wielkość"/>
+        <text name="eq_sponsor_col_deal" text="Warunki"/>
+        <text name="eq_sponsor_col_contract" text="Umowa"/>
+        <text name="eq_sponsor_col_fee" text="Kwota za zawody"/>
+        <text name="eq_sponsor_size_big" text="Duży"/>
+        <text name="eq_sponsor_size_moderate" text="Średni"/>
+        <text name="eq_sponsor_size_small" text="Mały"/>
+        <text name="eq_sponsor_word_relaxed" text="Łagodne"/>
+        <text name="eq_sponsor_word_fair" text="Uczciwe"/>
+        <text name="eq_sponsor_word_demanding" text="Wymagające"/>
+        <text name="eq_sponsor_word_hardBargain" text="Twardy negocjator"/>
+        <text name="eq_sponsor_year1" text="%d rok"/>
+        <text name="eq_sponsor_years" text="%d lat(a)"/>
+        <text name="eq_sponsor_yoursLeft" text="Twój, zostało %s"/>
+        <text name="eq_sponsor_yourSponsor" text="Twój sponsor (%s)"/>
+        <text name="eq_sponsor_backs_all" text="Wszystkie zawody"/>
+        <text name="eq_sponsor_backs_from" text="%s i wyżej"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s przy %s)"/>
+        <text name="eq_sponsor_target" text="Zawody %s lub wyżej z popularnością %d"/>
+        <text name="eq_sponsor_targetTop3" text=", z miejscem w pierwszej trójce"/>
+        <text name="eq_sponsor_label_deal" text="Warunki"/>
+        <text name="eq_sponsor_label_fee" text="Kwota"/>
+        <text name="eq_sponsor_label_popularity" text="Popularność"/>
+        <text name="eq_sponsor_label_target" text="Cel roczny"/>
+        <text name="eq_sponsor_label_boards" text="Tablice sponsorskie"/>
+        <text name="eq_sponsor_label_machines" text="Ich maszyny"/>
+        <text name="eq_sponsor_label_rivals" text="Maszyny konkurencji"/>
+        <text name="eq_sponsor_label_discounts" text="Rabaty"/>
+        <text name="eq_sponsor_label_ends" text="Koniec"/>
+        <text name="eq_sponsor_label_thisYear" text="Ten rok"/>
+        <text name="eq_sponsor_label_missed" text="Nietrafione cele"/>
+        <text name="eq_sponsor_label_paid" text="Wypłacono dotąd"/>
+        <text name="eq_sponsor_label_cancel" text="Koszt zerwania"/>
+        <text name="eq_sponsor_label_years" text="Umowa"/>
+        <text name="eq_sponsor_label_status" text="Stan"/>
+        <text name="eq_sponsor_feeLine" text="%s za zawody, %s"/>
+        <text name="eq_sponsor_boardsLine" text="Ustawione %d, %d dla pełnej kwoty"/>
+        <text name="eq_sponsor_machinesLine" text="Masz %d, chcą %d (%d kategorii)"/>
+        <text name="eq_sponsor_rivalsNone" text="Brak w granicach %s ich cen"/>
+        <text name="eq_sponsor_rivalsSome" text="%d do sprzedania, w granicach %s ich cen"/>
+        <text name="eq_sponsor_discountsLine" text="Lakierowanie %s, naprawa %s, zakup %s"/>
+        <text name="eq_sponsor_yearMet" text="Cel osiągnięty"/>
+        <text name="eq_sponsor_yearOpen" text="Cel otwarty do %s"/>
+        <text name="eq_sponsor_missedLine" text="%d z rzędu, kwota %s"/>
+        <text name="eq_sponsor_status_taken" text="Masz już sponsora"/>
+        <text name="eq_sponsor_status_ready" text="Gotowe do podpisania"/>
+        <text name="eq_sponsor_status_notReady" text="Jeszcze niegotowe"/>
+        <text name="eq_sponsor_clashes" text="Najpierw sprzedaj lub zwróć: %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Oferty są otwarte do %s. Jeden sponsor naraz: miej jego maszyny, żadnych maszyn konkurencji blisko jego cen i ustawioną tablicę sponsorską."/>
+        <text name="eq_sponsor_summaryClosed" text="Tegoroczne oferty minęły. Nowi sponsorzy przyjdą na początku przyszłego roku."/>
+        <text name="eq_sponsor_noConfig" text="Nie udało się wczytać sponsorów."/>
+        <text name="eq_sponsor_noOffers" text="Teraz brak ofert sponsorskich. Nowe przychodzą na początku każdego roku."/>
+        <text name="eq_sponsor_sign_gone" text="Ta oferta już nie jest dostępna."/>
+        <text name="eq_sponsor_sign_notReady" text="Nie spełniasz jeszcze warunków tego sponsora."/>
+        <text name="eq_sponsor_signed" text="%s jest teraz twoim sponsorem, lata: %d."/>
+        <text name="eq_sponsor_cancel_none" text="Nie masz sponsora."/>
+        <text name="eq_sponsor_cancelled" text="Twoja umowa z %s została zerwana. Zerwanie kosztowało %s."/>
+        <text name="eq_sponsor_paid" text="%s zapłacił %s za %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s nic nie zapłacił za %s: brak ustawionych tablic sponsorskich."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s nic nie zapłacił za %s: masz za mało jego maszyn."/>
+        <text name="eq_sponsor_targetMet" text="%s: tegoroczny cel osiągnięty."/>
+        <text name="eq_sponsor_leaves" text="%s odszedł po nietrafionych celach."/>
+        <text name="eq_sponsor_missed" text="%s: tegoroczny cel nie został osiągnięty. Kwota w przyszłym roku spada do %d%%."/>
+        <text name="eq_sponsor_finished" text="Twoja umowa z %s się zakończyła. Łącznie wypłacono %s."/>
+        <text name="eq_sponsor_newOffers" text="Nowy rok: sponsorzy chętni wspierać twoje zawody: %d. Zobacz Zawody, Sponsorzy."/>
+        <text name="eq_sponsor_button_sign" text="Podpisz"/>
+        <text name="eq_sponsor_button_cancel" text="Zerwij umowę"/>
+        <text name="eq_sponsor_sign_confirm" text="Podpisać z %s, lata: %d? Wcześniejsze zerwanie kosztuje."/>
+        <text name="eq_sponsor_cancel_confirm" text="Zerwać umowę z %s? Kosztuje to %s."/>
     </texts>
 </l10n>
