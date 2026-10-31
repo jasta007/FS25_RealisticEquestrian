@@ -522,44 +522,22 @@ function EqTrainingHooks.airTurn(spec, dt)
     end
 end
 
--- How often the map's jumps are listed again for temperament's aim, ms.
-EqTrainingHooks.AIM_LIST_MS = 2000
 -- Only jumps within this many metres are turned into the horse's space each frame.
 EqTrainingHooks.AIM_LIST_RADIUS = 45
 
---- The map's show jumps and cross country fences that a horse can jump now (not hidden or
---- ghosted outside a round), listed again every AIM_LIST_MS.
---- @return table { x, z, ax, az, bx, bz }
+--- The jump temperament aims for: a round's next fence (fence 1 in its countdown), and nothing
+--- outside a round (James, 2026-10-31: hard to tell what you're aiming for otherwise, and it
+--- pulled him toward another jump).
+--- @return table { fence } or {}
 local function aimJumps()
-    -- In a round only its next fence counts (James, 2026-10-31: it pulled him toward another jump).
     local round = EqCourseHooks ~= nil and EqCourseHooks.round or nil
     local sj = round ~= nil and round.sj or nil
     if sj ~= nil and (sj.state == "countdown" or sj.state == "go" or sj.state == "running") then
         local jumps = round.course ~= nil and round.course.jumps or nil
         local fence = jumps ~= nil and jumps[sj.state == "running" and (sj.next or 1) or 1] or nil
         if fence ~= nil and fence.ax ~= nil and fence.bx ~= nil then return { fence } end
-        return {}
     end
-    local now = g_time or 0
-    local cache = EqTrainingHooks.aimCache
-    if cache ~= nil and now - cache.at < EqTrainingHooks.AIM_LIST_MS and now >= cache.at then return cache.list end
-    local list = {}
-    if EqCourseHooks ~= nil and EqCourseHooks.listJumps ~= nil then
-        for _, kind in ipairs({ "showJumping", EqCourse.CROSS_COUNTRY }) do
-            local ok, jumps = EqLog.try("EqTrainingHooks.aimJumps listJumps", EqCourseHooks.listJumps,
-                kind ~= "showJumping" and kind or nil)
-            if ok and type(jumps) == "table" then
-                for _, jump in ipairs(jumps) do
-                    local piece = jump.node ~= nil and EqXcHide ~= nil and EqXcHide.byRoot ~= nil and EqXcHide.byRoot[jump.node] or nil
-                    local shown = piece == nil or piece.eqXcMode == nil or piece.eqXcMode == EqXcHide.SHOWN
-                    if shown and jump.node ~= nil and getVisibility ~= nil then shown = getVisibility(jump.node) end
-                    if shown then table.insert(list, jump) end
-                end
-            end
-        end
-    end
-    EqTrainingHooks.aimCache = { at = now, list = list }
-    return list
+    return {}
 end
 
 --- Temperament aims the horse at the middle of the jump ahead when it is pointed off centre
