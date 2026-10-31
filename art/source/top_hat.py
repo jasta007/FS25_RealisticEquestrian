@@ -21,12 +21,16 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+import attire_render  # noqa: E402
 import xc_jumps as xc  # noqa: E402
+from eqdds import save_dxt5  # noqa: E402
 
 SOURCE = "art/source/private/LP_TopHat.obj"
 OUT = "data/attire/topHat.i3d"
-# cm -> m and down to real size: crown 39 x 42.6 cm -> about 17.5 x 20.5 cm, 39 cm tall -> 18.7 cm.
-SCALE = (0.0045, 0.0048, 0.0048)
+ICON = "data/attire/topHat_icon.dds"
+# cm -> m and down to real size: crown 39 x 42.6 cm -> about 17.5 x 20.5 cm, 39 cm tall -> 16.4 cm
+# (James, 2026-10-31: "a little bit shorter" than 18.7 cm).
+SCALE = (0.0045, 0.0042, 0.0048)
 TEXTURE = "blackSilk_diffuse.dds"
 
 
@@ -99,6 +103,8 @@ def main():
     with open(OUT, "w", encoding="iso-8859-1", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
     print(f"wrote {OUT}: {len(mesh.verts)} vertices, {len(mesh.tris)} triangles")
+    save_dxt5(attire_render.render([(mesh, (0.018, 0.018, 0.02), 40, 0.25)], pitch=15), ICON)
+    print(f"wrote {ICON}")
 
 
 if __name__ == "__main__":

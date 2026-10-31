@@ -747,19 +747,25 @@ horse is never touched.
 
 ## Dressage outfit
 
-Five extra wardrobe items for female and male characters (data/attire.xml). The top hat is our
-own model; the rest are base-game meshes:
+Six extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
+boots are our own models; the rest are base-game meshes:
 
 - **Top hat** in black silk. It hangs off the head's attach point and is turned upright to face
-  the way the character faces when dressed. `eqHatFit [up] [forward] [tilt] [scale]` moves it
-  (defaults 0.10 m up and 0.01 m forward of the head joint, no tilt, size 1); not saved.
+  the way the character faces when dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
+  (defaults 0.09 m up and 0.01 m forward of the head joint, no tilt, size 1; female and male
+  heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
 
+- **Tall riding boots** in black leather. Wardrobe clothes bend through skinning to the game's
+  rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
+  bones when the character is dressed. They're sized to end 4 cm below the knee (0.85x to 1.15x).
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy.
-- **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white.
+- **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white, with a
+  plain diffuse and a flat normal map swapped in so they read as smooth leather, not knit.
 - **Jacket** (the tweed sports jacket) with a white shirt in black, navy, charcoal, dark green or
-  burgundy. Its tweed texture is swapped for a plain one each time a character is dressed.
-- **Boots** (the Chelsea boots) in black leather, by the same texture swap.
+  burgundy. Its tweed texture and weave (normal map) are swapped for plain, flat ones each time a
+  character is dressed.
+- **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
 
-The items sit at the end of each wardrobe list. Apart from the top hat they use the game's own
-icons, so the icon shows the original colours.
+The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
+keep the game's icon).

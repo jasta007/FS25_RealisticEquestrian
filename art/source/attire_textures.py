@@ -13,7 +13,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from eqdds import save_bc7, save_dxt1  # noqa: E402
+from eqdds import save_dxt1, save_dxt5  # noqa: E402
 from PIL import Image, ImageDraw  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "data", "attire")
@@ -25,31 +25,34 @@ TEXTURES = {
     "blackLeather_diffuse": (24, 22, 22),
     # the top hat (top_hat.py): a black silk hat has no colour mask either
     "blackSilk_diffuse": (16, 16, 18),
+    # a flat normal map: takes the tweed's weave and the gloves' knit off their shapes
+    "flat_normal": (128, 128, 255),
 }
 SIZE = 16
 
 
-def hat_icon(path, size=256):
-    """The top hat's wardrobe icon: a black silk hat drawn flat, lit from the left."""
+def boots_icon(path, size=256):
+    """The riding boots' wardrobe icon: a pair of tall black boots side on, lit from the left."""
     scale = 4
     s = size * scale
     image = Image.new("RGBA", (s, s), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    cx = s // 2
-    crown_w, crown_top, crown_bottom = int(s * 0.34), int(s * 0.16), int(s * 0.70)
-    brim_w, brim_h = int(s * 0.80), int(s * 0.16)
-    # brim back half, crown, band, brim front half, each in vertical stripes for a sheen
-    draw.ellipse((cx - brim_w // 2, crown_bottom - brim_h // 2, cx + brim_w // 2, crown_bottom + brim_h // 2), fill=(22, 22, 26, 255))
-    for x in range(cx - crown_w // 2, cx + crown_w // 2):
-        t = (x - (cx - crown_w // 2)) / crown_w
-        shade = int(22 + 70 * max(0.0, 1 - abs(t - 0.3) * 3.2))
-        draw.line((x, crown_top, x, crown_bottom), fill=(shade, shade, shade + 4, 255))
-        band = int(12 + 25 * max(0.0, 1 - abs(t - 0.3) * 3.2))
-        draw.line((x, crown_bottom - int(s * 0.10), x, crown_bottom - int(s * 0.02)), fill=(band, band, band + 2, 255))
-    draw.ellipse((cx - crown_w // 2, crown_top - int(s * 0.04), cx + crown_w // 2, crown_top + int(s * 0.04)), fill=(40, 40, 46, 255))
-    draw.chord((cx - brim_w // 2, crown_bottom - brim_h // 2, cx + brim_w // 2, crown_bottom + brim_h // 2), 0, 180, fill=(30, 30, 35, 255))
+
+    def boot(x0, shade):
+        top, ankle, sole = int(s * 0.10), int(s * 0.70), int(s * 0.86)
+        w = int(s * 0.13)
+        toe = x0 + int(s * 0.30)
+        dark = (shade, shade, shade + 3, 255)
+        draw.polygon([(x0, top), (x0 + w, top - int(s * 0.03)), (x0 + w, ankle), (toe, ankle + int(s * 0.06)),
+                      (toe + int(s * 0.02), sole), (x0, sole)], fill=dark)
+        draw.rectangle((x0, sole - int(s * 0.025), toe + int(s * 0.02), sole), fill=(8, 8, 10, 255))
+        for x in range(x0 + int(w * 0.15), x0 + int(w * 0.45)):
+            draw.line((x, top + int(s * 0.02), x, ankle), fill=(shade + 30, shade + 30, shade + 34, 255))
+
+    boot(int(s * 0.06), 24)
+    boot(int(s * 0.40), 34)
     image = image.resize((size, size), Image.LANCZOS)
-    save_bc7(image, path)
+    save_dxt5(image, path)
 
 
 def main():
@@ -60,9 +63,10 @@ def main():
         path = os.path.join(OUT, name + ".dds")
         save_dxt1(image, path)
         print("wrote", os.path.relpath(path))
-    path = os.path.join(OUT, "topHat_icon.dds")
-    hat_icon(path)
-    print("wrote", os.path.relpath(path))
+    for name, draw in (("ridingBoots_icon", boots_icon),):
+        path = os.path.join(OUT, name + ".dds")
+        draw(path)
+        print("wrote", os.path.relpath(path))
 
 
 if __name__ == "__main__":

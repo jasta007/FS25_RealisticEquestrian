@@ -3,7 +3,8 @@
     The dressage outfit (EqAttire.lua): base-game wardrobe items with our own colours, added to
     the female and male player styles. Same attributes as the game's own playerF.xml items.
     Breeches, gloves: both colours the same, so the white inner panel and fabric back take the
-    colour too. Jacket: a white shirt and a plain cloth (eqDiffuse swaps its tweed texture).
+    colour too; the gloves also get a plain, smooth leather (eqDiffuse, eqNormal). Jacket: a white
+    shirt and a plain, smooth cloth (eqDiffuse swaps its tweed texture, eqNormal its weave).
     Boots: the Chelsea boots in black leather (eqDiffuse, they have no colour mask).
     Top hat: our own model (art/source/top_hat.py), placed on the head by EqAttire.fitHat.
     Colours are linear, as the shader takes them.
@@ -11,7 +12,7 @@
 <attire>
     <female>
         <headgear name="eqTopHat" filename="data/attire/topHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/topHat_icon.dds"/>
-        <bottom name="eqDressageBreeches" filename="$dataS/character/playerF/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerF/pants/botEquestrian.png">
+        <bottom name="eqDressageBreeches" filename="$dataS/character/playerF/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breeches_icon.dds">
             <hidesBodypart name="legs"/>
             <colors>
                 <color primary="1 1 1 1" secondary="1 1 1 1"/>
@@ -21,7 +22,7 @@
                 <color primary="0.008 0.012 0.040 1" secondary="0.008 0.012 0.040 1"/>
             </colors>
         </bottom>
-        <gloves name="eqDressageGloves" filename="$dataS/character/playerF/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerF/gloves/glovesMechanic.png">
+        <gloves name="eqDressageGloves" filename="$dataS/character/playerF/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/gloves_icon.dds" eqDiffuse="data/attire/plainCloth_diffuse.dds" eqNormal="data/attire/flat_normal.dds">
             <hidesBodypart name="hands"/>
             <colors>
                 <color primary="0.018 0.018 0.020 1" secondary="0.018 0.018 0.020 1"/>
@@ -30,7 +31,7 @@
                 <color primary="0.85 0.85 0.83 1" secondary="0.85 0.85 0.83 1"/>
             </colors>
         </gloves>
-        <top name="eqDressageJacket" filename="$dataS/character/playerF/jacket/tweedSportsJacket.i3d" node="1|0|0" attachPoint="geo" beltHidden="true" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerF/jacket/tweedSportsJacket.png" eqDiffuse="data/attire/plainCloth_diffuse.dds">
+        <top name="eqDressageJacket" filename="$dataS/character/playerF/jacket/tweedSportsJacket.i3d" node="1|0|0" attachPoint="geo" beltHidden="true" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/jacket_icon.dds" eqDiffuse="data/attire/plainCloth_diffuse.dds" eqNormal="data/attire/flat_normal.dds">
             <hidesBodypart name="body"/>
             <hidesBodypart name="shoulders"/>
             <hidesBodypart name="armsUpper"/>
@@ -52,7 +53,7 @@
     </female>
     <male>
         <headgear name="eqTopHat" filename="data/attire/topHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/topHat_icon.dds"/>
-        <bottom name="eqDressageBreeches" filename="$dataS/character/playerM/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerM/pants/botEquestrian.png">
+        <bottom name="eqDressageBreeches" filename="$dataS/character/playerM/pants/botEquestrian.i3d" node="1|0|0" attachPoint="geo" extent="high" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/breeches_icon.dds">
             <hidesBodypart name="legs"/>
             <colors>
                 <color primary="1 1 1 1" secondary="1 1 1 1"/>
@@ -62,7 +63,7 @@
                 <color primary="0.008 0.012 0.040 1" secondary="0.008 0.012 0.040 1"/>
             </colors>
         </bottom>
-        <gloves name="eqDressageGloves" filename="$dataS/character/playerM/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerM/gloves/glovesMechanic.png">
+        <gloves name="eqDressageGloves" filename="$dataS/character/playerM/gloves/glovesMechanic.i3d" node="1|0|0" attachPoint="geo" extent="over" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/gloves_icon.dds" eqDiffuse="data/attire/plainCloth_diffuse.dds" eqNormal="data/attire/flat_normal.dds">
             <hidesBodypart name="hands"/>
             <colors>
                 <color primary="0.018 0.018 0.020 1" secondary="0.018 0.018 0.020 1"/>
@@ -71,7 +72,7 @@
                 <color primary="0.85 0.85 0.83 1" secondary="0.85 0.85 0.83 1"/>
             </colors>
         </gloves>
-        <top name="eqDressageJacket" filename="$dataS/character/playerM/jacket/tweedSportsJacket.i3d" node="1|0|0" attachPoint="geo" beltHidden="true" colorable="2" defaultPrimaryIndex="1" iconFilename="$dataS/character/playerM/jacket/tweedSportsJacket.png" eqDiffuse="data/attire/plainCloth_diffuse.dds">
+        <top name="eqDressageJacket" filename="$dataS/character/playerM/jacket/tweedSportsJacket.i3d" node="1|0|0" attachPoint="geo" beltHidden="true" colorable="2" defaultPrimaryIndex="1" iconFilename="data/attire/jacket_icon.dds" eqDiffuse="data/attire/plainCloth_diffuse.dds" eqNormal="data/attire/flat_normal.dds">
             <hidesBodypart name="body"/>
             <hidesBodypart name="shoulders"/>
             <hidesBodypart name="armsUpper"/>
