@@ -10,10 +10,9 @@
       hang at the top and comes down quickly. HEIGHT_SHARE lowers every jump a little. The pull
       changes smoothly over the top, and fades as the fall nears FALL_MAX m/s (the base game's jump
       lands at about 6.4 m/s): any sudden change in it showed as a stutter in the air (2026-10-31).
-    - Push-off (James: the horse rose before its push-off animation, which then played in the
-      air). On the jump key the horse first lifts only a hand's breadth, at PUSH_SPEED for
-      PUSH_MS, so the push-off plays near the ground, and then launches with what is left of the
-      jump's lift.
+    - Push-off (a setting, off by default): the horse first lifts a hand's breadth, at PUSH_SPEED
+      for PUSH_MS, then launches with what is left of the jump's lift. It made the launch clip
+      run out before the top and restart (a mid-air stutter), so the launch is straight away.
     - Collected jump (James): press Ctrl just before the jump (held, or let go no more than
       COLLECT_WINDOW_MS before) for a short, steep jump. The horse gathers itself over
       COLLECT_PUSH_MS, slowing to about a trot (COLLECT_TROT_SHARE of the trot's top speed, or
@@ -39,10 +38,14 @@ EqJump.FALL_MAX = 7
 -- launch pose holds to the top), 2 keeps it on for the whole jump.
 EqJump.CLOSE_MODE = 0
 EqJump.HEIGHT_SHARE = 0.88
-EqJump.PUSH_MS = 180
+-- James, 2026-10-31: with a push-off the launch clip ran out before the top of the climb and
+-- restarted for a moment (a mid-air stutter); none at all (0) was smooth. Kept as a setting.
+EqJump.PUSH_MS = 0
 EqJump.PUSH_SPEED = 0.5
 EqJump.COLLECT_WINDOW_MS = 500
 EqJump.COLLECT_PUSH_MS = 260
+-- A collected jump gathers on the ground: no lift while it slows, so its launch clip starts at the launch.
+EqJump.COLLECT_LIFT = 0
 EqJump.COLLECT_SPEED_SHARE = 0.5
 EqJump.COLLECT_TROT_SHARE = 0.9
 EqJump.COLLECT_HEIGHT_SHARE = 1.05
@@ -57,6 +60,7 @@ EqJump.TUNABLE = {
     { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
     { name = "push", key = "PUSH_MS", min = 0, max = 600 },
     { name = "lift", key = "PUSH_SPEED", min = 0, max = 3 },
+    { name = "clift", key = "COLLECT_LIFT", min = 0, max = 3 },
     { name = "window", key = "COLLECT_WINDOW_MS", min = 0, max = 2000 },
     { name = "cpush", key = "COLLECT_PUSH_MS", min = 0, max = 800 },
     { name = "cspeed", key = "COLLECT_SPEED_SHARE", min = 0.1, max = 1 },
@@ -165,6 +169,7 @@ function EqJump.newLaunch(speedY, speed, collected, collectedSpeedY, now, trotSp
         collected = collected,
         startedAt = now,
         pushMs = push,
+        lift = collected and EqJump.COLLECT_LIFT or EqJump.PUSH_SPEED,
         rise = 0,
         launched = push <= 0,
     }
@@ -204,9 +209,9 @@ function EqJump.step(launch, now, dt, gravity)
     end
     if launch.launched then return nil, cap end
     if elapsed < launch.pushMs then
-        launch.rise = launch.rise + EqJump.PUSH_SPEED * dt / 1000
+        launch.rise = launch.rise + launch.lift * dt / 1000
         -- The base game adds this frame's gravity before it moves the horse: lift by that much more.
-        return EqJump.PUSH_SPEED - gravity * dt / 1000, cap
+        return launch.lift - gravity * dt / 1000, cap
     end
     launch.launched = true
     local left = launch.speedY * launch.speedY - 2 * math.abs(gravity) * launch.rise

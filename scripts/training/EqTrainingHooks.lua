@@ -978,12 +978,12 @@ function EqTrainingHooks.startLaunch(spec)
     if spec.eqLaunch.trace then
         Log:info("Jump: %s, base lift %.2f m/s, launch %.2f m/s after a %d ms push-off at %.2f m/s, speed %.1f%s (%s)",
             collected and "collected" or "normal", spec.currentSpeedY, spec.eqLaunch.speedY, spec.eqLaunch.pushMs,
-            EqJump.PUSH_SPEED, math.abs(spec.currentSpeed or 0),
+            spec.eqLaunch.lift, math.abs(spec.currentSpeed or 0),
             collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
         Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
             spec.eqLaunch.targetSpeed or math.abs(spec.currentSpeed or 0)))
     end
-    if not spec.eqLaunch.launched then spec.currentSpeedY = EqJump.PUSH_SPEED end
+    if not spec.eqLaunch.launched then spec.currentSpeedY = spec.eqLaunch.lift end
 end
 
 
