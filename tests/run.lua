@@ -4028,7 +4028,23 @@ end)()
         check(name .. ": the line's dashes follow the gait asked, starting afresh at each change", firstChange ~= nil
             and EqDressagePath.gaitAt(lastTest, firstChange.s) == firstChange.gait
             and EqDressagePath.gaitAt(lastTest, firstChange.s - 0.01) ~= firstChange.gait
-            and #EqDressagePath.breaks(lastTest) == #lastTest.events and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
+            and #EqDressagePath.breaks(lastTest) == #lastTest.events + 2 * #(lastTest.sections or {})
+            and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
+        -- Lateral work: one body size at every gait, spaced by gait (James 2026-10-31).
+        local withLateral, sec = nil, nil
+        for k = 1, 40 do
+            local rolls = EqRandom.new("lateral dash " .. k)
+            local t = EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(n) return math.min(n, 1 + math.floor(rolls:next() * n)) end)
+            if t.sections ~= nil and #t.sections > 0 then withLateral, sec = t, t.sections[1] break end
+        end
+        check(name .. ": a training test with lateral work turns up", sec ~= nil)
+        if sec ~= nil then
+            lastTest = withLateral
+            local mid = (sec.s0 + sec.s1) / 2
+            check(name .. ": lateral dashes are one body size, spaced by gait", EqDressagePath.dashLength(lastTest, mid) == EqDressagePath.LATERAL_DASH
+                and EqDressagePath.dashStep(lastTest, mid) == EqDressagePath.LATERAL_STEP[EqDressagePath.gaitAt(lastTest, mid)]
+                and EqDressagePath.LATERAL_STEP.walk > EqDressagePath.LATERAL_DASH)
+        end
         check(name .. ": tests ask for piaffes and pirouettes", spots.piaffe > 0 and spots.pirouette > 0, spots.piaffe .. " " .. spots.pirouette)
         check(name .. ": a test's line stays inside the rail", outs == 0, tostring(outs))
         check(name .. ": changes come in order and walks are short", unsorted == 0 and walks == 0, unsorted .. " " .. walks)

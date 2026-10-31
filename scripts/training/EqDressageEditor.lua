@@ -460,8 +460,8 @@ function EqDressageEditor.draw(vehicle)
         -- Drawn as a ride draws it: lateral work shows the horse's body (James 2026-10-31: the
         -- planned lateral didn't look like one).
         local style = { breaks = EqDressagePath.breaks(test), shape = EqDressageHooks.bodyAlong({ test = test, frame = frame }),
-            length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
-            step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end,
+            length = function(s) return EqDressagePath.dashLength(test, s) end,
+            step = function(s) return EqDressagePath.dashStep(test, s) end,
             pointed = function(s) return EqDressagePath.gaitAt(test, s + 1e-6) == "canter" end }
         if #last >= 2 then EqCourseGlow.path(last, "grey", test.lastS, nil, nil, nil, style) end
         if #option >= 2 then EqCourseGlow.path(option, "cyan", test.fromS, nil, nil, nil, style) end

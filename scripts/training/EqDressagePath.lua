@@ -1908,6 +1908,10 @@ end
 -- like the stride. Each gait's dashes start right at its change (EqCourseGlow.pieces breaks).
 EqDressagePath.DASH = { walk = 0.2, trot = 0.45, canter = 0.9, halt = 0.2 }
 EqDressagePath.DASH_STEP = { walk = 0.6, trot = 1.1, canter = 1.9, halt = 0.6 }
+-- Lateral work's dashes show the horse's body (EqCourseGlow.body): one size at every gait, only
+-- the spacing by gait (James 2026-10-31: trot and walk laterals were too small to read).
+EqDressagePath.LATERAL_DASH = 0.8
+EqDressagePath.LATERAL_STEP = { walk = 1.2, trot = 1.5, canter = 1.9, halt = 1.2 }
 
 
 --- The gait asked for at metres s along a test (pure): from the last change or halt before it.
@@ -1922,13 +1926,34 @@ function EqDressagePath.gaitAt(test, s)
 end
 
 
---- Where the line's dashes start afresh (pure): every change and halt, in order.
+--- Where the line's dashes start afresh (pure): every change and halt, and where lateral work
+--- starts and ends (its spacing differs), in order.
 function EqDressagePath.breaks(test)
     if test.breaks == nil then
         test.breaks = {}
         for _, e in ipairs(test.events) do table.insert(test.breaks, e.s) end
+        for _, sec in ipairs(test.sections or {}) do
+            table.insert(test.breaks, sec.s0)
+            table.insert(test.breaks, sec.s1)
+        end
+        table.sort(test.breaks)
     end
     return test.breaks
+end
+
+
+--- A dash's length at metres s along a test (pure): by gait, one body size in lateral work.
+function EqDressagePath.dashLength(test, s)
+    if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_DASH end
+    return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)]
+end
+
+
+--- The dashes' spacing from metres s along a test (pure): by gait, wider in lateral work.
+function EqDressagePath.dashStep(test, s)
+    local gait = EqDressagePath.gaitAt(test, s + 1e-6)
+    if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_STEP[gait] end
+    return EqDressagePath.DASH_STEP[gait]
 end
 
 
