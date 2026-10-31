@@ -422,7 +422,8 @@ function EqDressageEditor.draw(vehicle)
         -- planned lateral didn't look like one).
         local style = { breaks = EqDressagePath.breaks(test), shape = EqDressageHooks.bodyAlong({ test = test, frame = frame }),
             length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
-            step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end }
+            step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end,
+            pointed = function(s) return EqDressagePath.gaitAt(test, s + 1e-6) == "canter" end }
         if #last >= 2 then EqCourseGlow.path(last, "grey", test.lastS, nil, nil, nil, style) end
         if #option >= 2 then EqCourseGlow.path(option, "cyan", test.fromS, nil, nil, nil, style) end
         -- Where the option starts, and its halts and movements on the spot.
