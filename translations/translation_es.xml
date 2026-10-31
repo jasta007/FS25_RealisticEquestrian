@@ -871,6 +871,6 @@
         <text name="eq_shop_bleachers8x16" text="Gradas 8 filas, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Asientos para los concursos que organizas: cuentan a menos de 60 m de un recorrido o pista de doma."/>
         <text name="eq_shop_bleachersSponsors_function" text="Los carteles de patrocinadores delante muestran las marcas de tus máquinas."/>
-        <text name="eq_shop_signboard_function" text="Aumenta la recaudación de taquilla de tus eventos."/>
+        <text name="eq_shop_signboard_function" text="Aumenta los ingresos de patrocinio de tus eventos."/>
     </texts>
 </l10n>

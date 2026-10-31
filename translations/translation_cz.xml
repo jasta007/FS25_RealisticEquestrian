@@ -869,6 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Tribuna 8 řad, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Sezení pro závody, které pořádáš: počítá se do 60 m od trati nebo drezurního obdélníku."/>
         <text name="eq_shop_bleachersSponsors_function" text="Sponzorské tabule vpředu ukazují značky tvých strojů."/>
-        <text name="eq_shop_signboard_function" text="Zvyšuje vstupné z tvých akcí."/>
+        <text name="eq_shop_signboard_function" text="Zvyšuje příjmy od sponzorů z tvých akcí."/>
     </texts>
 </l10n>

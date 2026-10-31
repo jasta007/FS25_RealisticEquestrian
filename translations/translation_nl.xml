@@ -869,6 +869,6 @@
         <text name="eq_shop_bleachers8x16" text="Tribune 8 rijen, 16 m"/>
         <text name="eq_shop_bleachers_function" text="Zitplaatsen voor de wedstrijden die je organiseert: telt binnen 60 m van een parcours of dressuurbak."/>
         <text name="eq_shop_bleachersSponsors_function" text="De sponsorborden ervoor tonen de merken van je machines."/>
-        <text name="eq_shop_signboard_function" text="Verhoogt de entreegelden van je evenementen."/>
+        <text name="eq_shop_signboard_function" text="Verhoogt de sponsorinkomsten van je evenementen."/>
     </texts>
 </l10n>
