@@ -36,7 +36,7 @@ function EqSponsorship.read(xmlFile)
         cancelShare = xmlFile:getFloat("sponsors#cancelShare", 0.15),
         missFactor = xmlFile:getFloat("sponsors#missFactor", 0.75),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
-        signsMin = xmlFile:getInt("sponsors#signsMin", 1),
+        branding = {},
         machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
@@ -81,6 +81,17 @@ function EqSponsorship.read(xmlFile)
         config.sizeByName[size.name] = size
         i = i + 1
     end
+    -- Branding levels (James, 2026-10-31): sponsor boards on the farm's placeables make Low,
+    -- Medium or High branding; the player sees the word, never the board count.
+    i = 0
+    while true do
+        local key = string.format("sponsors.branding.level(%d)", i)
+        if not xmlFile:hasProperty(key) then break end
+        table.insert(config.branding, { name = xmlFile:getString(key .. "#name", "low"), boards = xmlFile:getInt(key .. "#boards", 1),
+            pay = xmlFile:getFloat(key .. "#pay", 1) })
+        i = i + 1
+    end
+    table.sort(config.branding, function(a, b) return a.boards < b.boards end)
     i = 0
     while true do
         local key = string.format("sponsors.strictness.word(%d)", i)
@@ -281,7 +292,7 @@ function EqSponsorship.makeOffer(config, profile, rng)
         popularity = size.popularity,
         target = math.min(100, math.max(0, math.floor(size.target + EqSponsorship.term(config, "target", strictness, rng) + 0.5))),
         top3 = top3,
-        signsFull = math.max(config.signsMin, math.floor(EqSponsorship.term(config, "signsFull", strictness, rng) + 0.5)),
+        brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", strictness, rng)),
         categories = profile.categories,
         perMachine = perMachine,
         machines = EqSponsorship.machinesNeeded(profile.categories, perMachine, config.machinesMax),
@@ -368,7 +379,8 @@ function EqSponsorship.signChecks(config, offer, state)
     add("machines", mine >= offer.machines, mine, offer.machines)
     local clashes = EqSponsorship.clashes(offer, state.profile, state.owned or {})
     add("rivals", #clashes == 0, #clashes, 0)
-    add("boards", (state.boards or 0) >= config.signsMin, state.boards or 0, config.signsMin)
+    local level = EqSponsorship.brandingLevel(config, state.boards or 0)
+    add("branding", level >= (offer.brandingNeed or 1), level, offer.brandingNeed or 1)
     add("exclusive", state.contract == nil, state.contract ~= nil and 1 or 0, 0)
     checks.ok = allOk
     return checks, clashes
@@ -399,14 +411,34 @@ function EqSponsorship.feeShare(config, offer, ratingName, ratingOrder)
 end
 
 
+--- @param config table
+--- @param boards number sponsor boards on the farm's placeables
+--- @return number level 0 for none, then the index of the highest branding level reached
+function EqSponsorship.brandingLevel(config, boards)
+    local level = 0
+    for i, entry in ipairs(config.branding) do
+        if (boards or 0) >= entry.boards then level = i end
+    end
+    return level
+end
+
+
+--- @param config table
+--- @param value number a level from the strictness term, 1 (Low) up
+--- @return number level the branding an offer requires, 1 .. the number of levels
+function EqSponsorship.brandingNeed(config, value)
+    return math.max(1, math.min(#config.branding, math.floor((value or 1) + 0.5)))
+end
+
+
+--- @param config table
 --- @param offer table
---- @param boards number sponsor boards on show
---- @param signsMin number
---- @return number factor 0 below signsMin, then from half up to 1 at offer.signsFull
-function EqSponsorship.boardsFactor(offer, boards, signsMin)
-    if (boards or 0) < math.max(1, signsMin or 1) then return 0 end
-    local full = math.max(1, offer.signsFull or 1)
-    return 0.5 + 0.5 * math.min(1, boards / full)
+--- @param boards number
+--- @return number factor 0 below the offer's required branding, else the reached level's pay share
+function EqSponsorship.brandingFactor(config, offer, boards)
+    local level = EqSponsorship.brandingLevel(config, boards)
+    if level < (offer.brandingNeed or 1) or level == 0 then return 0 end
+    return config.branding[level].pay
 end
 
 
@@ -423,7 +455,7 @@ function EqSponsorship.eventFee(config, contract, ratingName, ratingOrder, board
     local share = EqSponsorship.feeShare(config, contract, ratingName, ratingOrder)
     if share <= 0 then return 0, "rating" end
     if not machinesOk then return 0, "machines" end
-    local factor = EqSponsorship.boardsFactor(contract, boards, config.signsMin)
+    local factor = EqSponsorship.brandingFactor(config, contract, boards)
     if factor <= 0 then return 0, "boards" end
     return roundTo(contract.fee * share * factor * (contract.feeFactor or 1), 100), nil
 end
@@ -498,7 +530,7 @@ end
 
 
 -- Offer and contract fields kept in the save.
-EqSponsorship.NUMBER_FIELDS = { "strictness", "years", "fee", "popularity", "target", "signsFull", "categories", "perMachine",
+EqSponsorship.NUMBER_FIELDS = { "strictness", "years", "fee", "popularity", "target", "brandingNeed", "categories", "perMachine",
     "machines", "window", "repair", "repaint", "purchase", "signedMonth", "endMonth", "yearEnd", "misses", "feeFactor", "paid" }
 EqSponsorship.STRING_FIELDS = { "brand", "size", "word" }
 EqSponsorship.BOOL_FIELDS = { "top3", "met" }
@@ -527,6 +559,9 @@ end
 --- @return table offer
 function EqSponsorship.tidy(config, offer)
     if config ~= nil and offer.machines ~= nil then offer.machines = math.min(offer.machines, config.machinesMax) end
+    if config ~= nil and offer.brandingNeed == nil then
+        offer.brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", offer.strictness or 0))
+    end
     for _, name in ipairs({ "window", "repair", "repaint", "purchase" }) do
         if offer[name] ~= nil then offer[name] = EqSponsorship.round5(offer[name]) end
     end

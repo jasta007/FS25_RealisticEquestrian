@@ -119,10 +119,16 @@ function EqSponsorView.panelLines(farmId, row)
     add("popularity", string.format("%+d", offer.popularity or 0))
     add("target", string.format(g_i18n:getText("eq_sponsor_targetPopularity"), offer.target or 0))
     add(nil, EqSponsorView.targetRatingText(offer))
-    local boards = byId.boards
-    add("boards", string.format(g_i18n:getText("eq_sponsor_boardsLine"), boards.have, offer.signsFull or 1), boards.ok)
+    local branding = byId.branding
+    add("branding", string.format(g_i18n:getText("eq_sponsor_brandingLine"), EqSponsorView.brandingWord(branding.have),
+        EqSponsorView.brandingWord(branding.need)), branding.ok)
     local machines = byId.machines
     add("machines", string.format(g_i18n:getText("eq_sponsor_haveOf"), machines.have, machines.need), machines.ok)
+    local likely = EqSponsorManager.likelyPay(farmId, offer)
+    for i, entry in ipairs(likely) do
+        add(i == 1 and "likely" or nil, string.format(g_i18n:getText("eq_sponsor_likelyLine"), money(entry.fee), ratingTitle(entry.rating)),
+            entry.fee > 0)
+    end
     add("discounts", string.format(g_i18n:getText("eq_sponsor_discountsLine"), percent(offer.repaint), percent(offer.repair), percent(offer.purchase)))
 
     if row.contract then
@@ -140,6 +146,14 @@ function EqSponsorView.panelLines(farmId, row)
         add("years", yearsText(offer.years or 1))
     end
     return lines, row.contract and {} or clashes
+end
+
+
+--- @param level number 0 for none, then the branding level's index
+--- @return string the level's word: None, Low, Medium, High
+function EqSponsorView.brandingWord(level)
+    local entry = EqSponsorManager.config ~= nil and EqSponsorManager.config.branding[level] or nil
+    return g_i18n:getText("eq_sponsor_branding_" .. (entry ~= nil and entry.name or "none"))
 end
 
 

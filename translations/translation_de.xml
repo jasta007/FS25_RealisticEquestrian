@@ -972,7 +972,7 @@
         <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
         <text name="eq_sponsor_col_deal" text="Konditionen"/>
         <text name="eq_sponsor_col_contract" text="Vertrag"/>
-        <text name="eq_sponsor_col_fee" text="Betrag je Turnier"/>
+        <text name="eq_sponsor_col_fee" text="Zahlt Ihnen"/>
         <text name="eq_sponsor_size_big" text="Groß"/>
         <text name="eq_sponsor_size_moderate" text="Mittel"/>
         <text name="eq_sponsor_size_small" text="Klein"/>
@@ -989,10 +989,9 @@
         <text name="eq_sponsor_backs_lower" text="%s (%s bei %s)"/>
         <text name="eq_sponsor_targetTop3" text=", mit einer Top-3-Platzierung"/>
         <text name="eq_sponsor_label_deal" text="Konditionen"/>
-        <text name="eq_sponsor_label_fee" text="Betrag"/>
+        <text name="eq_sponsor_label_fee" text="Zahlt Ihnen"/>
         <text name="eq_sponsor_label_popularity" text="Beliebtheit"/>
         <text name="eq_sponsor_label_target" text="Jahresziel"/>
-        <text name="eq_sponsor_label_boards" text="Sponsorentafeln"/>
         <text name="eq_sponsor_label_machines" text="Ihre Maschinen"/>
         <text name="eq_sponsor_label_discounts" text="Rabatte"/>
         <text name="eq_sponsor_label_ends" text="Endet"/>
@@ -1001,12 +1000,11 @@
         <text name="eq_sponsor_label_paid" text="Bisher gezahlt"/>
         <text name="eq_sponsor_label_cancel" text="Kündigungskosten"/>
         <text name="eq_sponsor_label_years" text="Vertrag"/>
-        <text name="eq_sponsor_boardsLine" text="%d aufgestellt, %d für den vollen Betrag"/>
         <text name="eq_sponsor_discountsLine" text="Lackierung %s, Reparatur %s, Kauf %s"/>
         <text name="eq_sponsor_yearMet" text="Ziel erreicht"/>
         <text name="eq_sponsor_yearOpen" text="Ziel offen bis %s"/>
         <text name="eq_sponsor_missedLine" text="%d in Folge, Betrag bei %s"/>
-        <text name="eq_sponsor_summaryOpen" text="Angebote gelten bis %s. Ein Sponsor gleichzeitig: Sie brauchen seine Maschinen, keine Konkurrenzmaschinen nahe seiner Preise und eine aufgestellte Sponsorentafel."/>
+        <text name="eq_sponsor_summaryOpen" text="Angebote gelten bis %s. Ein Sponsor gleichzeitig: seine Geräte besitzen, keine Konkurrenzmaschinen nahe seiner Preise und genug Werbepräsenz."/>
         <text name="eq_sponsor_summaryClosed" text="Die Angebote dieses Jahres sind weg. Neue Sponsoren kommen zu Beginn des nächsten Jahres."/>
         <text name="eq_sponsor_noConfig" text="Sponsoren konnten nicht geladen werden."/>
         <text name="eq_sponsor_noOffers" text="Gerade keine Sponsorenangebote. Neue kommen zu Beginn jedes Jahres."/>
@@ -1016,7 +1014,7 @@
         <text name="eq_sponsor_cancel_none" text="Sie haben keinen Sponsor."/>
         <text name="eq_sponsor_cancelled" text="Ihr Vertrag mit %s ist gekündigt. Die Kündigung kostete %s."/>
         <text name="eq_sponsor_paid" text="%s zahlte %s für %s."/>
-        <text name="eq_sponsor_unpaid_boards" text="%s zahlte nichts für %s: keine Sponsorentafeln aufgestellt."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s zahlte nichts für %s: Ihre Werbepräsenz ist zu niedrig."/>
         <text name="eq_sponsor_unpaid_machines" text="%s zahlte nichts für %s: Sie besitzen nicht genug seiner Maschinen."/>
         <text name="eq_sponsor_targetMet" text="%s: Das Jahresziel ist erreicht."/>
         <text name="eq_sponsor_leaves" text="%s hat sich nach verfehlten Zielen zurückgezogen."/>
@@ -1043,5 +1041,14 @@
         <text name="eq_sponsor_sellFirst" text="Vor der Bewerbung verkaufen oder zurückgeben:"/>
         <text name="eq_sponsor_sellMore" text="...und %d weitere"/>
         <text name="eq_sponsor_button_shop" text="Im Shop zeigen"/>
+        <text name="eq_sponsor_label_branding" text="Werbepräsenz"/>
+        <text name="eq_sponsor_brandingLine" text="%s (gefordert: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Keine"/>
+        <text name="eq_sponsor_branding_low" text="Niedrig"/>
+        <text name="eq_sponsor_branding_medium" text="Mittel"/>
+        <text name="eq_sponsor_branding_high" text="Hoch"/>
+        <text name="eq_sponsor_label_likely" text="Voraussichtlich"/>
+        <text name="eq_sponsor_likelyLine" text="%s bei %s"/>
+        <text name="eq_shop_branding" text="Ihre Werbepräsenz: jetzt %s, damit %s. Mehr Werbepräsenz erhöht, was Ihr Sponsor zahlt."/>
     </texts>
 </l10n>

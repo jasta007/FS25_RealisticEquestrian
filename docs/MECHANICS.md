@@ -870,7 +870,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (never more than 5) |
 | No rival machine priced within | 20% of one of theirs (same category) | 60% |
 | Yearly popularity target | size target -10 | +10, and a top 3 finish |
-| Sponsor boards for the full fee | 2 | 8 |
+| Branding required | Low | High |
 | Fee | 80% | 130% |
 | Repaint / repair / buying discount | 35% / 15% / 5% | 65% / 35% / 20% |
 
@@ -886,11 +886,15 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
   don't count), no rival machine inside the price window (sell it or return the lease first; the
-  panel lists them), and at least one sponsor board on show.
+  panel lists them), and the branding the offer asks for.
+- **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
+  cross country table 1) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
+  game shows only the word. The shop line on those items shows your branding now and with one
+  more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
 - **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
-  Classic"), gain its popularity, and pay its fee when the results come in: half the fee with one
-  board, rising to the full fee at the offer's board count. No fee if you no longer own enough of
-  their machines or have no board up.
+  Classic"), gain its popularity, and pay its fee when the results come in: half at Low branding,
+  75% at Medium, the full fee at High. No fee below the offer's required branding or if you no
+  longer own enough of their machines.
 - **The yearly target:** each contract year, host at least one event the sponsor backs at the
   target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
   away. A met year puts the fee back to full.

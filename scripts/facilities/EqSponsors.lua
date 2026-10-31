@@ -168,6 +168,7 @@ function EqSponsors.update()
     local now = g_time or 0
     if EqSponsors.scannedAt ~= nil and now - EqSponsors.scannedAt < EqSponsors.SCAN_MS and now >= EqSponsors.scannedAt then return end
     EqSponsors.scannedAt = now
+    EqLog.try("EqSponsors shop text", EqSponsors.updateShopText)
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     local byFarm = {}
     for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
@@ -212,6 +213,56 @@ function EqSponsors.update()
 end
 
 
+-- Sponsor boards on each of our shop items (matched by the end of the xml path), for the shop
+-- line that shows the farm's branding now and with one more (James, 2026-10-31).
+EqSponsors.SHOP_BOARDS = {
+    ["placeables/bleachers/bleachers3x6.xml"] = 3,
+    ["placeables/bleachers/bleachers5x10.xml"] = 5,
+    ["placeables/bleachers/bleachers8x16.xml"] = 8,
+    ["placeables/xcjumps/xctable.xml"] = 1,
+}
+EqSponsors.shopItems = nil
+EqSponsors.shopText = nil
+
+
+--- @param filename string|nil
+--- @return number boards an item of ours carries, 0 for any other
+function EqSponsors.shopBoards(filename)
+    if type(filename) ~= "string" then return 0 end
+    local path = string.lower(string.gsub(filename, "\\", "/"))
+    for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
+        if string.sub(path, -#suffix) == suffix then return boards end
+    end
+    return 0
+end
+
+
+--- Keep the shop's function line on our boarded items up to date: the farm's branding now and
+--- with that item bought. Cheap; runs with the board scan.
+function EqSponsors.updateShopText()
+    if g_storeManager == nil or g_currentMission == nil or EqSponsorManager == nil or EqSponsorManager.config == nil then return end
+    if EqSponsors.shopItems == nil then
+        EqSponsors.shopItems = {}
+        for _, storeItem in ipairs(g_storeManager:getItems() or {}) do
+            local boards = EqSponsors.shopBoards(storeItem.xmlFilename)
+            if boards > 0 then table.insert(EqSponsors.shopItems, { item = storeItem, boards = boards }) end
+        end
+    end
+    local farmId = g_currentMission:getFarmId()
+    local have = EqSponsors.countBoards(farmId)
+    local config = EqSponsorManager.config
+    for _, entry in ipairs(EqSponsors.shopItems) do
+        local now = EqSponsorView.brandingWord(EqSponsorship.brandingLevel(config, have))
+        local with = EqSponsorView.brandingWord(EqSponsorship.brandingLevel(config, have + entry.boards))
+        local text = string.format(g_i18n:getText("eq_shop_branding"), now, with)
+        if entry.text ~= text then
+            entry.text = text
+            entry.item.functions = { text }
+        end
+    end
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqSponsors.install(guarded)
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
@@ -219,6 +270,6 @@ function EqSponsors.install(guarded)
         guarded("sponsor boards", EqSponsors.update)
     end)
     FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, function()
-        EqSponsors.scannedAt, EqSponsors.failed = nil, false
+        EqSponsors.scannedAt, EqSponsors.failed, EqSponsors.shopItems = nil, false, nil
     end)
 end

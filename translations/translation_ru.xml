@@ -970,7 +970,7 @@
         <text name="eq_sponsor_col_sponsor" text="Спонсор"/>
         <text name="eq_sponsor_col_deal" text="Условия"/>
         <text name="eq_sponsor_col_contract" text="Контракт"/>
-        <text name="eq_sponsor_col_fee" text="Выплата за соревнование"/>
+        <text name="eq_sponsor_col_fee" text="Платит вам"/>
         <text name="eq_sponsor_size_big" text="Крупный"/>
         <text name="eq_sponsor_size_moderate" text="Средний"/>
         <text name="eq_sponsor_size_small" text="Малый"/>
@@ -987,10 +987,9 @@
         <text name="eq_sponsor_backs_lower" text="%s (%s на уровне %s)"/>
         <text name="eq_sponsor_targetTop3" text=", с местом в тройке"/>
         <text name="eq_sponsor_label_deal" text="Условия"/>
-        <text name="eq_sponsor_label_fee" text="Выплата"/>
+        <text name="eq_sponsor_label_fee" text="Платит вам"/>
         <text name="eq_sponsor_label_popularity" text="Популярность"/>
         <text name="eq_sponsor_label_target" text="Годовая цель"/>
-        <text name="eq_sponsor_label_boards" text="Спонсорские щиты"/>
         <text name="eq_sponsor_label_machines" text="Их техника"/>
         <text name="eq_sponsor_label_discounts" text="Скидки"/>
         <text name="eq_sponsor_label_ends" text="Окончание"/>
@@ -999,12 +998,11 @@
         <text name="eq_sponsor_label_paid" text="Выплачено"/>
         <text name="eq_sponsor_label_cancel" text="Цена расторжения"/>
         <text name="eq_sponsor_label_years" text="Контракт"/>
-        <text name="eq_sponsor_boardsLine" text="Установлено %d, для полной выплаты %d"/>
         <text name="eq_sponsor_discountsLine" text="Покраска %s, ремонт %s, покупка %s"/>
         <text name="eq_sponsor_yearMet" text="Цель выполнена"/>
         <text name="eq_sponsor_yearOpen" text="Цель открыта до %s"/>
         <text name="eq_sponsor_missedLine" text="%d подряд, выплата %s"/>
-        <text name="eq_sponsor_summaryOpen" text="Предложения действуют до %s. Один спонсор за раз: нужна его техника, никакой техники конкурентов близко к его ценам и установленный спонсорский щит."/>
+        <text name="eq_sponsor_summaryOpen" text="Предложения действуют до %s. Один спонсор за раз: его техника, никакой техники конкурентов близко к его ценам и достаточный брендинг."/>
         <text name="eq_sponsor_summaryClosed" text="Предложения этого года закончились. Новые спонсоры придут в начале следующего года."/>
         <text name="eq_sponsor_noConfig" text="Не удалось загрузить спонсоров."/>
         <text name="eq_sponsor_noOffers" text="Сейчас нет предложений спонсоров. Новые приходят в начале каждого года."/>
@@ -1014,7 +1012,7 @@
         <text name="eq_sponsor_cancel_none" text="У вас нет спонсора."/>
         <text name="eq_sponsor_cancelled" text="Ваш контракт с %s расторгнут. Расторжение стоило %s."/>
         <text name="eq_sponsor_paid" text="%s выплатил %s за %s."/>
-        <text name="eq_sponsor_unpaid_boards" text="%s ничего не выплатил за %s: нет установленных спонсорских щитов."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s ничего не выплатил за %s: слишком низкий брендинг."/>
         <text name="eq_sponsor_unpaid_machines" text="%s ничего не выплатил за %s: у вас мало его техники."/>
         <text name="eq_sponsor_targetMet" text="%s: цель этого года выполнена."/>
         <text name="eq_sponsor_leaves" text="%s ушёл после пропущенных целей."/>
@@ -1041,5 +1039,14 @@
         <text name="eq_sponsor_sellFirst" text="Продайте или верните перед подачей заявки:"/>
         <text name="eq_sponsor_sellMore" text="...и ещё %d"/>
         <text name="eq_sponsor_button_shop" text="Показать в магазине"/>
+        <text name="eq_sponsor_label_branding" text="Брендинг"/>
+        <text name="eq_sponsor_brandingLine" text="%s (нужно: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Нет"/>
+        <text name="eq_sponsor_branding_low" text="Низкий"/>
+        <text name="eq_sponsor_branding_medium" text="Средний"/>
+        <text name="eq_sponsor_branding_high" text="Высокий"/>
+        <text name="eq_sponsor_label_likely" text="Вероятная выплата"/>
+        <text name="eq_sponsor_likelyLine" text="%s на уровне %s"/>
+        <text name="eq_shop_branding" text="Ваш брендинг: сейчас %s, с этим %s. Больше брендинга — больше платит спонсор."/>
     </texts>
 </l10n>

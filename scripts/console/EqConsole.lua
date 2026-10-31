@@ -872,9 +872,9 @@ function EqConsole:consoleSponsors()
         EqSponsorManager.offersOpen(farmId) and "open" or "gone"))
     for i, offer in ipairs(record.list) do
         local checks = EqSponsorManager.checksFor(farmId, offer)
-        table.insert(lines, string.format("  %d. %s %s %s, %d year(s), fee %d, +%d popularity, target %d%s, own %d, window %d%%, boards %d, discounts %d/%d/%d%% (%s)",
+        table.insert(lines, string.format("  %d. %s %s %s, %d year(s), fee %d, +%d popularity, target %d%s, own %d, window %d%%, branding %d, discounts %d/%d/%d%% (%s)",
             i, EqSponsorManager.brandTitle(offer.brand), offer.size, offer.word, offer.years, offer.fee, offer.popularity, offer.target,
-            offer.top3 and " top 3" or "", offer.machines, math.floor(offer.window * 100 + 0.5), offer.signsFull,
+            offer.top3 and " top 3" or "", offer.machines, math.floor(offer.window * 100 + 0.5), offer.brandingNeed or 0,
             math.floor(offer.repaint * 100 + 0.5), math.floor(offer.repair * 100 + 0.5), math.floor(offer.purchase * 100 + 0.5),
             checks.ok and "can sign" or "can't sign"))
     end

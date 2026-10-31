@@ -970,7 +970,7 @@
         <text name="eq_sponsor_col_sponsor" text="Sponzor"/>
         <text name="eq_sponsor_col_deal" text="Podmínky"/>
         <text name="eq_sponsor_col_contract" text="Smlouva"/>
-        <text name="eq_sponsor_col_fee" text="Částka za závod"/>
+        <text name="eq_sponsor_col_fee" text="Platí tobě"/>
         <text name="eq_sponsor_size_big" text="Velký"/>
         <text name="eq_sponsor_size_moderate" text="Střední"/>
         <text name="eq_sponsor_size_small" text="Malý"/>
@@ -987,10 +987,9 @@
         <text name="eq_sponsor_backs_lower" text="%s (%s u %s)"/>
         <text name="eq_sponsor_targetTop3" text=", s umístěním v první trojce"/>
         <text name="eq_sponsor_label_deal" text="Podmínky"/>
-        <text name="eq_sponsor_label_fee" text="Částka"/>
+        <text name="eq_sponsor_label_fee" text="Platí tobě"/>
         <text name="eq_sponsor_label_popularity" text="Popularita"/>
         <text name="eq_sponsor_label_target" text="Roční cíl"/>
-        <text name="eq_sponsor_label_boards" text="Sponzorské tabule"/>
         <text name="eq_sponsor_label_machines" text="Jejich stroje"/>
         <text name="eq_sponsor_label_discounts" text="Slevy"/>
         <text name="eq_sponsor_label_ends" text="Končí"/>
@@ -999,12 +998,11 @@
         <text name="eq_sponsor_label_paid" text="Zatím vyplaceno"/>
         <text name="eq_sponsor_label_cancel" text="Cena výpovědi"/>
         <text name="eq_sponsor_label_years" text="Smlouva"/>
-        <text name="eq_sponsor_boardsLine" text="Vystaveno %d, %d pro plnou částku"/>
         <text name="eq_sponsor_discountsLine" text="Lakování %s, oprava %s, nákup %s"/>
         <text name="eq_sponsor_yearMet" text="Cíl splněn"/>
         <text name="eq_sponsor_yearOpen" text="Cíl otevřen do %s"/>
         <text name="eq_sponsor_missedLine" text="%d v řadě, částka na %s"/>
-        <text name="eq_sponsor_summaryOpen" text="Nabídky platí do %s. Jeden sponzor naráz: měj jeho stroje, žádné konkurenční stroje blízko jeho cen a vystavenou sponzorskou tabuli."/>
+        <text name="eq_sponsor_summaryOpen" text="Nabídky platí do %s. Jeden sponzor naráz: měj jeho vybavení, žádné konkurenční stroje blízko jeho cen a dost propagace."/>
         <text name="eq_sponsor_summaryClosed" text="Letošní nabídky jsou pryč. Noví sponzoři přijdou na začátku příštího roku."/>
         <text name="eq_sponsor_noConfig" text="Sponzory se nepodařilo načíst."/>
         <text name="eq_sponsor_noOffers" text="Teď nejsou žádné nabídky sponzorů. Nové přicházejí na začátku každého roku."/>
@@ -1014,7 +1012,7 @@
         <text name="eq_sponsor_cancel_none" text="Nemáš sponzora."/>
         <text name="eq_sponsor_cancelled" text="Tvoje smlouva s %s je vypovězena. Výpověď stála %s."/>
         <text name="eq_sponsor_paid" text="%s zaplatil %s za %s."/>
-        <text name="eq_sponsor_unpaid_boards" text="%s za %s nic nezaplatil: nejsou vystaveny sponzorské tabule."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s za %s nic nezaplatil: tvoje propagace je příliš nízká."/>
         <text name="eq_sponsor_unpaid_machines" text="%s za %s nic nezaplatil: nemáš dost jeho strojů."/>
         <text name="eq_sponsor_targetMet" text="%s: letošní cíl je splněn."/>
         <text name="eq_sponsor_leaves" text="%s odešel po zmeškaných cílech."/>
@@ -1041,5 +1039,14 @@
         <text name="eq_sponsor_sellFirst" text="Před podáním žádosti prodej nebo vrať:"/>
         <text name="eq_sponsor_sellMore" text="...a dalších %d"/>
         <text name="eq_sponsor_button_shop" text="Zobrazit v obchodě"/>
+        <text name="eq_sponsor_label_branding" text="Propagace značky"/>
+        <text name="eq_sponsor_brandingLine" text="%s (požadováno: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Žádná"/>
+        <text name="eq_sponsor_branding_low" text="Nízká"/>
+        <text name="eq_sponsor_branding_medium" text="Střední"/>
+        <text name="eq_sponsor_branding_high" text="Vysoká"/>
+        <text name="eq_sponsor_label_likely" text="Pravděpodobná platba"/>
+        <text name="eq_sponsor_likelyLine" text="%s u %s"/>
+        <text name="eq_shop_branding" text="Tvoje propagace: teď %s, s tímto %s. Více propagace zvýší, kolik sponzor platí."/>
     </texts>
 </l10n>

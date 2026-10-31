@@ -970,7 +970,7 @@
         <text name="eq_sponsor_col_sponsor" text="贊助商"/>
         <text name="eq_sponsor_col_deal" text="條件"/>
         <text name="eq_sponsor_col_contract" text="合約"/>
-        <text name="eq_sponsor_col_fee" text="每場賽事金額"/>
+        <text name="eq_sponsor_col_fee" text="付給你"/>
         <text name="eq_sponsor_size_big" text="大型"/>
         <text name="eq_sponsor_size_moderate" text="中型"/>
         <text name="eq_sponsor_size_small" text="小型"/>
@@ -987,10 +987,9 @@
         <text name="eq_sponsor_backs_lower" text="%s（%s，%s級別）"/>
         <text name="eq_sponsor_targetTop3" text="，並進入前三名"/>
         <text name="eq_sponsor_label_deal" text="條件"/>
-        <text name="eq_sponsor_label_fee" text="金額"/>
+        <text name="eq_sponsor_label_fee" text="付給你"/>
         <text name="eq_sponsor_label_popularity" text="人氣"/>
         <text name="eq_sponsor_label_target" text="年度目標"/>
-        <text name="eq_sponsor_label_boards" text="贊助商廣告牌"/>
         <text name="eq_sponsor_label_machines" text="其機械"/>
         <text name="eq_sponsor_label_discounts" text="折扣"/>
         <text name="eq_sponsor_label_ends" text="結束"/>
@@ -999,12 +998,11 @@
         <text name="eq_sponsor_label_paid" text="已支付"/>
         <text name="eq_sponsor_label_cancel" text="解約費用"/>
         <text name="eq_sponsor_label_years" text="合約"/>
-        <text name="eq_sponsor_boardsLine" text="已放置%d，全額需要%d"/>
         <text name="eq_sponsor_discountsLine" text="噴漆%s，維修%s，購買%s"/>
         <text name="eq_sponsor_yearMet" text="目標已達成"/>
         <text name="eq_sponsor_yearOpen" text="目標截止%s"/>
         <text name="eq_sponsor_missedLine" text="連續%d次，金額為%s"/>
-        <text name="eq_sponsor_summaryOpen" text="報價有效至%s。一次只能有一個贊助商：擁有其機械，不持有價格接近的競爭品牌機械，並放置一塊贊助商廣告牌。"/>
+        <text name="eq_sponsor_summaryOpen" text="報價有效至%s。一次只能有一個贊助商：擁有其設備，不持有價格接近的競爭品牌機械，並有足夠的品牌曝光。"/>
         <text name="eq_sponsor_summaryClosed" text="今年的報價已結束。新的贊助商將在明年年初到來。"/>
         <text name="eq_sponsor_noConfig" text="無法加載贊助商。"/>
         <text name="eq_sponsor_noOffers" text="目前沒有贊助商報價。每年年初會有新的報價。"/>
@@ -1014,7 +1012,7 @@
         <text name="eq_sponsor_cancel_none" text="你沒有贊助商。"/>
         <text name="eq_sponsor_cancelled" text="你與%s的合約已解除。解約花費了%s。"/>
         <text name="eq_sponsor_paid" text="%s支付了%s（%s）。"/>
-        <text name="eq_sponsor_unpaid_boards" text="%s未支付任何費用（%s）：沒有放置贊助商廣告牌。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%s沒有為%s支付任何費用：你的品牌曝光太低。"/>
         <text name="eq_sponsor_unpaid_machines" text="%s未支付任何費用（%s）：你擁有的其機械不够。"/>
         <text name="eq_sponsor_targetMet" text="%s：今年的目標已達成。"/>
         <text name="eq_sponsor_leaves" text="%s因未達成目標而離開。"/>
@@ -1041,5 +1039,14 @@
         <text name="eq_sponsor_sellFirst" text="申請前請出售或歸還以下機械："/>
         <text name="eq_sponsor_sellMore" text="……還有%d台"/>
         <text name="eq_sponsor_button_shop" text="在商店中查看"/>
+        <text name="eq_sponsor_label_branding" text="品牌曝光"/>
+        <text name="eq_sponsor_brandingLine" text="%s（要求：%s）"/>
+        <text name="eq_sponsor_branding_none" text="無"/>
+        <text name="eq_sponsor_branding_low" text="低"/>
+        <text name="eq_sponsor_branding_medium" text="中"/>
+        <text name="eq_sponsor_branding_high" text="高"/>
+        <text name="eq_sponsor_label_likely" text="預計收入"/>
+        <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
+        <text name="eq_shop_branding" text="你的品牌曝光：目前%s，加上此項為%s。曝光越多，贊助商付得越多。"/>
     </texts>
 </l10n>

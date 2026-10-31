@@ -12,7 +12,7 @@
     - A farm signs one offer at a time, from the Events page's Sponsors tab, once it meets its
       terms. The contract then runs its years: each hosted event at a rating the sponsor backs is
       named after it, gains its popularity, and pays its fee when the results come in, if the
-      farm still owns enough of its machines and has sponsor boards on show.
+      farm still owns enough of its machines and has the branding (sponsor boards) it asks for.
     - Each contract year ends with its target checked; a miss cuts next year's fee, two in a row
       end the contract. Cancelling early costs a share of a fee for each year left.
 
@@ -203,6 +203,29 @@ end
 
 
 -- OFFERS
+
+--- What an offer or contract would pay the farm for one event at each rating it backs, with
+--- the farm's branding and machines as they are now.
+--- @param farmId number
+--- @param offer table
+--- @return table list of { rating (name), fee }, highest rating first
+function EqSponsorManager.likelyPay(farmId, offer)
+    local config = EqSponsorManager.config
+    local list = {}
+    if config == nil or EqHostVenue == nil or EqHostVenue.config == nil then return list end
+    local order = EqSponsorManager.ratingOrder()
+    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId)) >= (offer.machines or 1)
+    local boards = EqSponsorManager.boards(farmId)
+    local ratings = EqHostVenue.config.ratings
+    for i = #ratings, 1, -1 do
+        local rating = ratings[i].name
+        if EqSponsorship.feeShare(config, offer, rating, order) > 0 then
+            table.insert(list, { rating = rating, fee = (EqSponsorship.eventFee(config, offer, rating, order, boards, machinesOk)) })
+        end
+    end
+    return list
+end
+
 
 --- @return number year the game's year
 function EqSponsorManager.year()
