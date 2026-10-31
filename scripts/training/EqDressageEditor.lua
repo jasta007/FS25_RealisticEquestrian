@@ -418,7 +418,10 @@ function EqDressageEditor.draw(vehicle)
             if p.s >= test.lastS and p.s <= test.fromS then table.insert(last, point) end
             if p.s >= test.fromS then table.insert(option, point) end
         end
-        local style = { length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
+        -- Drawn as a ride draws it: lateral work shows the horse's body (James 2026-10-31: the
+        -- planned lateral didn't look like one).
+        local style = { breaks = EqDressagePath.breaks(test), shape = EqDressageHooks.bodyAlong({ test = test, frame = frame }),
+            length = function(s) return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)] end,
             step = function(s) return EqDressagePath.DASH_STEP[EqDressagePath.gaitAt(test, s + 1e-6)] end }
         if #last >= 2 then EqCourseGlow.path(last, "grey", test.lastS, nil, nil, nil, style) end
         if #option >= 2 then EqCourseGlow.path(option, "cyan", test.fromS, nil, nil, nil, style) end

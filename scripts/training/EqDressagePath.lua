@@ -146,6 +146,9 @@ EqDressagePath.KINK = math.rad(50)
 EqDressagePath.SMOOTH = math.rad(12)
 -- Metres over which the line eases from one gait's track to another's in a corner.
 EqDressagePath.BLEND = 5
+-- A player's own test can put a change of gait anywhere, often just out of a halt in a corner:
+-- ease over longer there (James 2026-10-31: a halt then a change looked weird).
+EqDressagePath.BLEND_PLAN = 12
 EqDressagePath.STICK_FREE = 0.3
 EqDressagePath.STICK_TURN = 0.5
 -- Further off the line than this (metres) there is no pull: a rider leaving the test was held
@@ -352,6 +355,13 @@ end
 
 
 --- @return number index of the nearest track point, and how far it is
+--- Metres along a list of points.
+local function pathLength(pts)
+    local d = 0
+    for i = 2, #pts do d = d + math.sqrt((pts[i].x - pts[i - 1].x) ^ 2 + (pts[i].y - pts[i - 1].y) ^ 2) end
+    return d
+end
+
 local function onTrack(track, x, y)
     local best, bestD = 1, math.huge
     for i, p in ipairs(track) do
@@ -1067,6 +1077,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         -- Just after a change in a corner the horse is on the last gait's track, whose corner is
         -- sized differently: ease across to this one over BLEND metres, not a sudden step.
         local _, off = onTrack(t, here.x, here.y)
+        local blend = plan ~= nil and EqDressagePath.BLEND_PLAN or EqDressagePath.BLEND
         if off > 0.1 then
             local from, fromOff = nil, off
             for _, other in pairs(byGait) do
@@ -1077,9 +1088,9 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
                 local d = 0
                 for k, p in ipairs(run) do
                     if k > 1 then d = d + math.sqrt((p.x - run[k - 1].x) ^ 2 + (p.y - run[k - 1].y) ^ 2) end
-                    if d >= EqDressagePath.BLEND then break end
+                    if d >= blend then break end
                     local q = from[onTrack(from, p.x, p.y)]
-                    local w = 1 - d / EqDressagePath.BLEND
+                    local w = 1 - d / blend
                     w = w * w * (3 - 2 * w)
                     run[k] = { x = p.x + (q.x - p.x) * w, y = p.y + (q.y - p.y) * w }
                 end
@@ -1116,6 +1127,19 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         if figGait ~= gait then
             -- Up from a walk at the first letter (walks are kept short), else at the last.
             local at = gait == "walk" and usable[1] or usable[#usable]
+            if lateral and figGait == "walk" then
+                -- Down to a walk for lateral work: CHANGE_LEAD before it (below), so the walk
+                -- stays short.
+                at = nil
+            elseif lateral then
+                -- A player's lateral work at another gait: change LATERAL_CLEAR before it at
+                -- least, right away when no letter is that far back; up from a walk at the first.
+                at = nil
+                for _, l in ipairs(usable) do
+                    if length - l.d >= EqDressagePath.LATERAL_CLEAR and (at == nil or gait ~= "walk") then at = l end
+                end
+                if at == nil then change(test.pts[#test.pts].s, figGait, nil, m, true) end
+            end
             if at ~= nil then
                 track(at.x, at.y, m)
                 change(test.pts[#test.pts].s, figGait, at.letter, m, true)
@@ -1125,7 +1149,8 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
                 local t = byGait[gait].pts
                 local here = test.pts[#test.pts]
                 local run = trackRun(t, onTrack(t, here.x, here.y), onTrack(t, entry.x, entry.y), rein)
-                local k = math.max(1, #run - math.floor(EqDressagePath.CHANGE_LEAD / 2 / EqDressagePath.STEP))
+                local lead = (lateral and figGait == "walk") and EqDressagePath.CHANGE_LEAD or EqDressagePath.CHANGE_LEAD / 2
+                local k = math.max(1, #run - math.floor(lead / EqDressagePath.STEP))
                 for i = 1, k do append(test, { run[i] }, m) end
                 change(test.pts[#test.pts].s, figGait, nil, m, true)
             end
@@ -1209,7 +1234,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             halt(sAt(figure.haltAt), "X", m, false, after)
         elseif figure.haltAt ~= nil and after ~= figure.gait then
             change(sAt(figure.haltAt), after, "X", m, true)
-        elseif #figure.marks > 0 and rng(100) <= EqDressagePath.CHANGE_INSIDE then
+        elseif #figure.marks > 0 and plan == nil and rng(100) <= EqDressagePath.CHANGE_INSIDE then
             -- Only a change down inside a figure: its turns suit the faster gait.
             local down = EqDressagePath.DOWN[gait]
             local at = sAt(figure.marks[rng(#figure.marks)])
@@ -1221,6 +1246,11 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         end
         move.s1 = test.pts[#test.pts].s
         rein = figure.exitRein
+    end
+
+    --- Metres of walk still to go before a walk is long (WALK_MAX), while walking.
+    local function walkLeft()
+        return EqDressagePath.WALK_MAX - (test.pts[#test.pts].s - (walkFrom or test.pts[#test.pts].s))
     end
 
     --- The figures that can come next: { figure, weight, d = metres of track to its start }.
@@ -1237,13 +1267,24 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             -- The player's own test may go from any gait to any other, and repeat a figure.
             if plan ~= nil then step = true end
             -- Lateral work only in the gait the horse is in: a change just before it was missed
-            -- under the lateral prompt (James, 2026-10-31).
-            if figure.sections ~= nil and figure.gait ~= gait then step = false end
+            -- under the lateral prompt (James, 2026-10-31). A player's own test changes well
+            -- before it instead (connect), so any gait may lead into it there.
+            if figure.sections ~= nil and figure.gait ~= gait and plan == nil then step = false end
+            -- All walks short in a player's test (James 2026-10-31: a giant walk path was
+            -- easy to make): the walk to a walking figure and the figure itself.
+            if plan ~= nil and figure.gait == "walk" then
+                figure.length = figure.length or pathLength(figure.pts)
+                if figure.length > EqDressagePath.WALK_MAX then step = false end
+            end
             if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 local clear = figure.sections == nil or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
-                if d >= least and d <= t.length * 0.6 and clear then
+                if figure.sections ~= nil and figure.gait ~= gait then
+                    clear = d >= (figure.gait == "walk" and EqDressagePath.CHANGE_LEAD or EqDressagePath.LATERAL_CLEAR) + 2
+                end
+                local walkOk = plan == nil or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
+                if d >= least and d <= t.length * 0.6 and clear and walkOk then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
                     table.insert(list, { figure, figure.weight * near, d = d })
                 end
@@ -1268,8 +1309,11 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         local behind = t[(i - 1 - rein * 2) % #t + 1]
         local letters, length = letterRun(behind.x, behind.y)
         local list = {}
+        -- A player's test at a walk stays short (WALK_MAX) on the way to a letter too.
+        local reach = length * EqDressagePath.SPOT_REACH
+        if plan ~= nil and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
         for _, l in ipairs(letters) do
-            if l.d >= EqDressagePath.CONNECT_MIN and l.d <= length * EqDressagePath.SPOT_REACH then table.insert(list, l) end
+            if l.d >= EqDressagePath.CONNECT_MIN and l.d <= reach then table.insert(list, l) end
         end
         return list
     end

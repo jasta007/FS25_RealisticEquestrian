@@ -181,7 +181,8 @@ function EqDressageTests.gaitOf(ed)
 end
 
 
---- The options on show now, all at the gait on show (G). Figures: every figure. On the spot: the
+--- The options on show now, all at the gait on show (G). Figures: every figure. Lateral work:
+--- all of it at any gait (the horse changes to its gait well before). On the spot: the
 --- movements at one letter (ed.group), so N and M step through the movements and Shift+N/M
 --- through the letters.
 --- @param ed table
@@ -191,7 +192,7 @@ function EqDressageTests.view(ed)
     if ed.mode ~= "spot" then
         local gait = EqDressageTests.gaitOf(ed)
         for _, option in ipairs(ed.options[ed.mode]) do
-            if option.figure.gait == gait then table.insert(list, option) end
+            if ed.mode == "lateral" or option.figure.gait == gait then table.insert(list, option) end
         end
         return list, groups
     end

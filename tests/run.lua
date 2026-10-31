@@ -4075,6 +4075,32 @@ end)()
         local preview = EqDressageTests.preview(ed)
         check(name .. ": the first preview shows the opening and the option from its end", preview ~= nil and preview.fromS > 10
             and preview.length > preview.fromS and preview.moves[1].key == "enter")
+        -- Built at random across all three modes (James 2026-10-31): walks stay short, and lateral
+        -- work is on offer whatever gait the horse is in.
+        for round = 1, 3 do
+            local roam = EqDressageTests.newEditor(ownFrame, nil, seeded("roam " .. round .. " " .. name))
+            local lateralMissing, longWalk, picks = 0, 0, 0
+            for k = 1, 24 do
+                roam.mode = EqDressageTests.MODES[k % 3 + 1]
+                if roam.mode == "lateral" and #EqDressageTests.view(roam) == 0 then lateralMissing = lateralMissing + 1 end
+                if #EqDressageTests.view(roam) > 0 or roam.mode == "spot" then
+                    EqDressageTests.random(roam)
+                    if EqDressageTests.accept(roam) ~= nil then picks = picks + 1 end
+                end
+            end
+            local _, built = EqDressageTests.finished(roam)
+            local walkFrom = nil
+            for _, e in ipairs(built ~= nil and built.events or {}) do
+                if (e.kind == "change" or e.kind == "halt") and walkFrom ~= nil then
+                    if e.s - walkFrom > EqDressagePath.WALK_MAX + 12 then longWalk = longWalk + 1 end
+                    walkFrom = nil
+                end
+                if (e.kind == "change" or e.kind == "halt") and e.gait == "walk" then walkFrom = e.s end
+            end
+            check(name .. ": lateral work is on offer at every gait", lateralMissing == 0 and picks > 10,
+                string.format("missing %d, %d picks", lateralMissing, picks))
+            check(name .. ": walks in a player's test stay short", longWalk == 0, string.format("%d long walks", longWalk))
+        end
         -- Next and back round the ends.
         local count = #EqDressageTests.view(ed)
         EqDressageTests.cycle(ed, -1)
