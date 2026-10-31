@@ -240,7 +240,12 @@ function EqCourseGlow.path(points, colour, from, nearX, nearZ, radius, style)
         if style.length ~= nil then p = EqCourseGlow.shorten(p, style.length(p.s)) end
         local dirX, dirZ, bend = nil, nil, 0
         if style.shape ~= nil then dirX, dirZ, bend = style.shape(p.s) end
-        local strips = dirX ~= nil and EqCourseGlow.body(p, dirX, dirZ, bend or 0) or { p }
+        local strips = { p }
+        if dirX ~= nil then
+            strips = EqCourseGlow.body(p, dirX, dirZ, bend or 0)
+        elseif style.pointed ~= nil and style.pointed(p.s) then
+            strips = EqCourseGlow.pointed(p)
+        end
         for _, b in ipairs(strips) do
             EqCourseGlow.strip(b[1], b[2] + lift, b[3], b[4], b[5] + lift, b[6], EqCourseGlow.PATH_WIDTH, EqCourseGlow.PATH_THICK, c)
         end
@@ -256,6 +261,33 @@ function EqCourseGlow.shorten(piece, length)
     if length == nil or d <= length or d < 1e-9 then return piece end
     local f = length / d
     return { piece[1], piece[2], piece[3], piece[1] + dx * f, piece[2] + dy * f, piece[3] + dz * f, s = piece.s }
+end
+
+
+-- A pointed dash (James, 2026-10-31: canter and trot dashes looked alike): the dash with two
+-- barbs POINT_BARB metres long swept back POINT_ANGLE radians from its front, like an arrow.
+EqCourseGlow.POINT_BARB = 0.35
+EqCourseGlow.POINT_ANGLE = math.rad(35)
+
+
+--- The strips for a pointed dash (pure): the shaft and two barbs from its front end.
+--- @param piece table { ax, ay, az, bx, by, bz }
+--- @return table
+function EqCourseGlow.pointed(piece)
+    local dx, dz = piece[4] - piece[1], piece[6] - piece[3]
+    local len = math.sqrt(dx * dx + dz * dz)
+    if len < 1e-6 then return { piece } end
+    dx, dz = dx / len, dz / len
+    local strips = { piece }
+    local c, sn = math.cos(EqCourseGlow.POINT_ANGLE), math.sin(EqCourseGlow.POINT_ANGLE)
+    local barb = math.min(EqCourseGlow.POINT_BARB, len * 0.6)
+    for _, side in ipairs({ 1, -1 }) do
+        -- Back along the dash, turned to one side: rotate -dir by the angle.
+        local bx = -dx * c + dz * sn * side
+        local bz = -dz * c - dx * sn * side
+        table.insert(strips, { piece[4], piece[5], piece[6], piece[4] + bx * barb, piece[5], piece[6] + bz * barb })
+    end
+    return strips
 end
 
 

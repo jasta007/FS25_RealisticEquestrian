@@ -3488,6 +3488,9 @@ end)()
     end
     local upTip, upWide = arrowPoint(EqTrainingHud.arrowRows(true))
     local downTip, downWide = arrowPoint(EqTrainingHud.arrowRows(false))
+    local red, mid, green = EqTrainingHud.markColour(1), EqTrainingHud.markColour(6), EqTrainingHud.markColour(9.5)
+    check("marks go red to orange to yellow to green", red[1] > red[2] * 3 and mid[1] > 0.9 and mid[2] > 0.6 and mid[2] < 0.9
+        and green[2] > green[1] * 2)
     check("a gait change arrow points up or down, head wider than its stem", upTip.y > upWide.y and downTip.y < downWide.y
         and upWide.w == 1 and #EqTrainingHud.arrowRows(true) == EqTrainingHud.ARROW.rows)
     setTextBold, getTextWidth = oldBold, oldWidth
@@ -3793,6 +3796,15 @@ end)()
     end
     check("the dash curves smoothly to the bend side, one joined shape", #bent >= 4 and h[4] < h[1] and h[6] > h[3]
         and joined and curving)
+end)()
+
+
+-- A canter dash is pointed: the dash and two barbs swept back from its front (facing +z).
+;(function()
+    local strips = EqCourseGlow.pointed({ 0, 0, 0, 0, 0, 0.9 })
+    local a, b = strips[2], strips[3]
+    check("a pointed dash has two barbs back from its front, one each side", #strips == 3 and a[3] == 0.9 and b[3] == 0.9
+        and a[6] < 0.9 and b[6] < 0.9 and a[4] * b[4] < 0)
 end)()
 
 
@@ -4269,6 +4281,15 @@ end)()
     local hx, hz = EqDressagePath.toWorld(frame, hp.x, hp.y)
     EqDressagePath.step(early, "halt", hx, hz, 50)
     check("a halt 6 m early counts as the halt, with 3 m of warning", early.warn < 6 and early.hold ~= nil)
+    -- Way off the line for a stretch costs more than the horse's form (James, 2026-10-31).
+    local base = { devSum = 0, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0 }
+    local far = { devSum = 0.5 * 20, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 8 }
+    local formOff = { devSum = 0.1 * 20, len = 20, wrongMs = 0, pen = 0, angleMs = 3000, bendMs = 3000, farLen = 0 }
+    check("half a lateral way off the line marks lower than a neat one with the form a little off",
+        EqDressagePath.markOf(far) <= 3 and EqDressagePath.markOf(formOff) >= 7 and EqDressagePath.markOf(base) == 10,
+        EqDressagePath.markOf(far) .. " " .. EqDressagePath.markOf(formOff))
+    local entry = { devSum = 0, len = 20, wrongMs = 8000, pen = 0, angleMs = 0, bendMs = 0, farLen = 0, opening = true }
+    check("the opening is marked gently: 8 s at the wrong gait loses 2, not 4", EqDressagePath.markOf(entry) == 8)
     check("a pirouette or piaffe gets 4 s to get going before it is given up",
         EqDressagePath.SPOT_GRACE_MS >= 4000)
     check("a temperamental horse sees less of the line and less warning", EqDressagePath.newRun(one, 10).look < EqDressagePath.newRun(one, 90).look
