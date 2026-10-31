@@ -6,6 +6,8 @@
     colour too; the gloves also get a plain, smooth leather (eqDiffuse, eqNormal). Jacket: a white
     shirt and a plain, smooth cloth (eqDiffuse swaps its tweed texture, eqNormal its weave).
     Boots: the Chelsea boots in black leather (eqDiffuse, they have no colour mask).
+    Riding boots: our own model (art/source/riding_boots.py), its pieces moved onto the leg bones
+    by EqAttire.fitBoots.
     Top hat: our own model (art/source/top_hat.py), placed on the head by EqAttire.fitHat.
     Colours are linear, as the shader takes them.
 -->
@@ -50,6 +52,10 @@
             <hidesBodypart name="feet"/>
             <hidesBodypart name="socks"/>
         </footwear>
+        <footwear name="eqRidingBoots" filename="data/attire/ridingBoots.i3d" node="0" attachPoint="geo" extent="low" iconFilename="data/attire/ridingBoots_icon.dds">
+            <hidesBodypart name="feet"/>
+            <hidesBodypart name="socks"/>
+        </footwear>
     </female>
     <male>
         <headgear name="eqTopHat" filename="data/attire/topHat.i3d" node="0" attachPoint="head" iconFilename="data/attire/topHat_icon.dds"/>
@@ -88,6 +94,10 @@
             </colors>
         </top>
         <footwear name="eqDressageBoots" filename="$dataS/character/playerM/shoes/leatherChelsea01.i3d" node="1|0|0" attachPoint="geo" extent="low" iconFilename="$dataS/character/playerM/shoes/leatherChelsea01.png" eqDiffuse="data/attire/blackLeather_diffuse.dds">
+            <hidesBodypart name="feet"/>
+            <hidesBodypart name="socks"/>
+        </footwear>
+        <footwear name="eqRidingBoots" filename="data/attire/ridingBoots.i3d" node="0" attachPoint="geo" extent="low" iconFilename="data/attire/ridingBoots_icon.dds">
             <hidesBodypart name="feet"/>
             <hidesBodypart name="socks"/>
         </footwear>

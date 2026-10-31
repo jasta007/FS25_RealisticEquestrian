@@ -286,6 +286,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
+| `eqBootFit [width]` | Sets the tall riding boots' shaft width (1.05 by default) |
 | `eqHatFit [female\|male] [up] [forward] [side] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
 
 Testing commands, for checking the mod works rather than for play:

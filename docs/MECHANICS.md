@@ -757,7 +757,8 @@ boots are our own models; the rest are base-game meshes:
 
 - **Tall riding boots** in black leather. Wardrobe clothes bend through skinning to the game's
   rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
-  bones when the character is dressed. They're sized to end 4 cm below the knee (0.85x to 1.15x).
+  bones when the character is dressed. They're sized to end 4 cm below the knee (0.85x to 1.15x),
+  shafts 1.05x wider so calves stay inside (`eqBootFit [width]`, not saved).
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy.
 - **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white, with a

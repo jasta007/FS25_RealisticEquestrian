@@ -65,6 +65,10 @@ EqAttire.BOOTS = {
 EqAttire.BOOT_SHAFT = 0.43
 EqAttire.BOOT_KNEE_GAP = 0.04
 EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
+-- The shafts' girth on top of that, so calves don't poke through (eqBootFit tunes it).
+EqAttire.BOOT_WIDTH = 1.05
+-- dressed models wearing our boots (weak, models come and go), for eqBootFit
+EqAttire.booted = setmetatable({}, { __mode = "k" })
 
 EqAttire.modDirectory = nil
 EqAttire.schema = nil
@@ -291,8 +295,9 @@ function EqAttire.fitBoots(model, item)
                 link(shin, shaft)
                 setDirection(shaft, fx, fy, fz, ux, uy, uz)
                 setTranslation(shaft, ax, ay, az)
-                setScale(shaft, scale, scale, scale)
-                -- The foot: where the shaft is now, then it turns with the ankle.
+                setScale(shaft, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
+                -- The foot: where the shaft is now, then it turns with the ankle. Its own size,
+                -- the shaft's girth is only for calves.
                 local px, py, pz = localToLocal(shaft, ankle, 0, 0, 0)
                 local dx, dy, dz = localDirectionToLocal(shaft, ankle, 0, 0, 1)
                 local vx, vy, vz = localDirectionToLocal(shaft, ankle, 0, 1, 0)
@@ -308,6 +313,7 @@ function EqAttire.fitBoots(model, item)
     if #nodes > 0 then
         removeBoots(model)
         model.eqBootNodes = nodes
+        EqAttire.booted[model] = true
     end
 end
 
@@ -362,6 +368,21 @@ function EqAttire:consoleHatFit(...)
 end
 
 
+--- eqBootFit [width]: the tall boots' shaft girth, on every dressed character.
+function EqAttire:consoleBootFit(width)
+    EqAttire.BOOT_WIDTH = math.max(0.8, math.min(1.5, tonumber(width) or EqAttire.BOOT_WIDTH))
+    for model in pairs(EqAttire.booted) do
+        for _, node in ipairs(model.eqBootNodes or {}) do
+            if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then
+                local _, scale = getScale(node)
+                setScale(node, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
+            end
+        end
+    end
+    return string.format("Riding boots: shaft width %.2f (eqBootFit width)", EqAttire.BOOT_WIDTH)
+end
+
+
 --- @param guarded function main.lua's error guard
 --- @param modDirectory string
 function EqAttire.install(guarded, modDirectory)
@@ -380,6 +401,7 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
+    addConsoleCommand("eqBootFit", "Sets the tall riding boots' shaft width: eqBootFit [width]", "consoleBootFit", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)

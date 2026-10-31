@@ -13,8 +13,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from eqdds import save_dxt1, save_dxt5  # noqa: E402
-from PIL import Image, ImageDraw  # noqa: E402
+from eqdds import save_dxt1  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "data", "attire")
 
@@ -31,30 +30,6 @@ TEXTURES = {
 SIZE = 16
 
 
-def boots_icon(path, size=256):
-    """The riding boots' wardrobe icon: a pair of tall black boots side on, lit from the left."""
-    scale = 4
-    s = size * scale
-    image = Image.new("RGBA", (s, s), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(image)
-
-    def boot(x0, shade):
-        top, ankle, sole = int(s * 0.10), int(s * 0.70), int(s * 0.86)
-        w = int(s * 0.13)
-        toe = x0 + int(s * 0.30)
-        dark = (shade, shade, shade + 3, 255)
-        draw.polygon([(x0, top), (x0 + w, top - int(s * 0.03)), (x0 + w, ankle), (toe, ankle + int(s * 0.06)),
-                      (toe + int(s * 0.02), sole), (x0, sole)], fill=dark)
-        draw.rectangle((x0, sole - int(s * 0.025), toe + int(s * 0.02), sole), fill=(8, 8, 10, 255))
-        for x in range(x0 + int(w * 0.15), x0 + int(w * 0.45)):
-            draw.line((x, top + int(s * 0.02), x, ankle), fill=(shade + 30, shade + 30, shade + 34, 255))
-
-    boot(int(s * 0.06), 24)
-    boot(int(s * 0.40), 34)
-    image = image.resize((size, size), Image.LANCZOS)
-    save_dxt5(image, path)
-
-
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, colour in TEXTURES.items():
@@ -62,10 +37,6 @@ def main():
         image[:, :] = colour
         path = os.path.join(OUT, name + ".dds")
         save_dxt1(image, path)
-        print("wrote", os.path.relpath(path))
-    for name, draw in (("ridingBoots_icon", boots_icon),):
-        path = os.path.join(OUT, name + ".dds")
-        draw(path)
         print("wrote", os.path.relpath(path))
 
 

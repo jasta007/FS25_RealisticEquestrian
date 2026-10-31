@@ -9,8 +9,8 @@ from PIL import Image
 
 
 def render(meshes, size=256, yaw=35.0, pitch=-12.0, supersample=3):
-    """meshes: [(Mesh, base rgb 0-1, shininess, spec strength)]. Returns an RGBA Pillow image,
-    the model filling about 85% of it."""
+    """meshes: [(Mesh, base rgb 0-1 or one per vertex, shininess, spec strength)]. Returns an
+    RGBA Pillow image, the model filling about 85% of it."""
     s = size * supersample
     cy, sy = np.cos(np.radians(yaw)), np.sin(np.radians(yaw))
     cp, sp = np.cos(np.radians(pitch)), np.sin(np.radians(pitch))
@@ -42,7 +42,8 @@ def render(meshes, size=256, yaw=35.0, pitch=-12.0, supersample=3):
         diffuse = np.clip(nn @ light, 0, 1)
         specular = np.clip(nn @ half, 0, 1) ** shine
         rim = np.clip(1 - np.abs(nn[:, 2]), 0, 1) ** 3
-        shade = colour[None, :] * (0.25 + 0.75 * diffuse[:, None]) + spec * specular[:, None] + 0.08 * rim[:, None]
+        base = colour if colour.ndim == 2 else colour[None, :]
+        shade = base * (0.25 + 0.75 * diffuse[:, None]) + spec * specular[:, None] + 0.08 * rim[:, None]
         for a, b, c in tris:
             xs, ys = sx[[a, b, c]], sy_[[a, b, c]]
             x0, x1 = max(int(xs.min()), 0), min(int(xs.max()) + 1, s - 1)

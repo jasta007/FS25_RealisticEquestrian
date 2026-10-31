@@ -23,8 +23,9 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(__file__))
+import attire_render  # noqa: E402
 import xc_jumps as xc  # noqa: E402
-from eqdds import save_dxt1  # noqa: E402
+from eqdds import save_dxt1, save_dxt5  # noqa: E402
 
 PRIVATE = "art/source/private"
 OUT = "data/attire"
@@ -32,9 +33,12 @@ OUT = "data/attire"
 ANKLE = 0.12
 # Triangles this far either side of the cut go in both pieces.
 OVERLAP = 0.025
-# The model's "black" is a very dark brown; take it to black leather, keeping its detail.
+# The model's "black" is a very dark brown; take it to black leather, keeping its detail. Only the
+# dark leather: the tan lining inside the top stays as it is.
 DARKEN = 0.45
 DESATURATE = 0.8
+LINING = (90, 130)  # luminance where the leather fades into the lining
+ICON = "ridingBoots_icon.dds"
 
 
 def read(path):
@@ -89,12 +93,27 @@ def piece(verts, tris, keep, origin_y, mirror):
 
 
 def textures():
-    diffuse = np.asarray(Image.open(os.path.join(PRIVATE, "ridingBoot_diffuse.png")).convert("RGB")).astype(np.float32)
-    grey = diffuse.mean(axis=2, keepdims=True)
-    diffuse = (grey + (diffuse - grey) * (1 - DESATURATE)) * DARKEN
-    save_dxt1(np.clip(diffuse, 0, 255).astype(np.uint8), os.path.join(OUT, "ridingBoots_diffuse.dds"))
+    """Write the game's textures; returns the diffuse as 0-1 floats, for the icon."""
+    source = np.asarray(Image.open(os.path.join(PRIVATE, "ridingBoot_diffuse.png")).convert("RGB")).astype(np.float32)
+    grey = source.mean(axis=2, keepdims=True)
+    black = (grey + (source - grey) * (1 - DESATURATE)) * DARKEN
+    lining = np.clip((grey - LINING[0]) / (LINING[1] - LINING[0]), 0, 1)
+    diffuse = np.clip(black * (1 - lining) + source * lining, 0, 255).astype(np.uint8)
+    save_dxt1(diffuse, os.path.join(OUT, "ridingBoots_diffuse.dds"))
     normal = np.asarray(Image.open(os.path.join(PRIVATE, "ridingBoot_normal.png")).convert("RGB"))
     save_dxt1(normal, os.path.join(OUT, "ridingBoots_normal.dds"))
+    return diffuse.astype(np.float32) / 255
+
+
+def icon(verts, tris, diffuse):
+    """The wardrobe icon: the left boot side on, its texture sampled at each vertex (OBJ v runs
+    from the bottom, the image from the top)."""
+    mesh = xc.Mesh()
+    mesh.verts, mesh.tris = verts, tris
+    h, w = diffuse.shape[:2]
+    colours = np.array([diffuse[int((1 - uv[1] % 1) * (h - 1)), int(uv[0] % 1 * (w - 1))] for _, _, uv in verts])
+    image = attire_render.render([(mesh, colours ** 2.2 * 1.6, 40, 0.18)], yaw=60, pitch=10)
+    save_dxt5(image, os.path.join(OUT, ICON))
 
 
 def main():
@@ -105,7 +124,7 @@ def main():
         shaft = piece(verts, tris, lambda lo, hi: hi > ANKLE + OVERLAP or lo > ANKLE - OVERLAP, ANKLE, mirror)
         foot = piece(verts, tris, lambda lo, hi: lo < ANKLE + OVERLAP, ANKLE, mirror)
         shapes += [("eqBootShaft" + side, shaft), ("eqBootFoot" + side, foot)]
-    textures()
+    icon(verts, tris, textures())
 
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
