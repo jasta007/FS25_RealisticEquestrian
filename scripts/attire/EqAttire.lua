@@ -13,6 +13,10 @@
     names one of our flat textures (art/source/attire_textures.py), swapped onto its shapes'
     materials each time a player model is dressed from its style.
 
+    The top hat is our own model (art/source/top_hat.py). It hangs off the head's attach point,
+    whose axes are the rig's, so once dressed its "eqHatFit" group is turned upright and to the
+    front from the character's root and placed by EqAttire.HAT (eqHatFit tunes it in game).
+
     Part of Realistic Equestrian by Jasta007.
 ]]
 
@@ -36,12 +40,19 @@ EqAttire.MAX_ITEMS = 255
 -- Materials looked at per shape (a shape has as many as its mesh's material slots).
 EqAttire.MAX_MATERIALS = 8
 
+-- The top hat's place on the head, along the character's own axes: metres up and forward from
+-- the head joint, its tilt back in degrees and a size factor. Set with the eqHatFit command.
+EqAttire.HAT = { up = 0.10, forward = 0.01, tilt = 0, scale = 1 }
+EqAttire.HAT_NODE = "eqHatFit"
+
 EqAttire.modDirectory = nil
 EqAttire.schema = nil
 -- item name -> absolute path of the diffuse map swapped onto it
 EqAttire.diffuseByItem = {}
 -- original material id .. "|" .. path -> the material made from it
 EqAttire.materials = {}
+-- fitted hat node -> its model, to refit after eqHatFit (weak, models come and go)
+EqAttire.hats = setmetatable({}, { __mode = "k" })
 
 
 --- The attire.xml section for a player style's xml file, or nil for styles we leave alone
@@ -161,11 +172,52 @@ local function swapDiffuse(node, path)
 end
 
 
+--- The hat's direction and up, along the character's axes, for a tilt back in degrees. Pure.
+--- @param tilt number
+--- @return number, number, number, number, number, number forward xyz, up xyz
+function EqAttire.hatAxes(tilt)
+    local t = math.rad(tilt or 0)
+    return 0, math.sin(t), math.cos(t), 0, math.cos(t), -math.sin(t)
+end
+
+
+--- A node under another by name.
+local function findNamed(node, name)
+    if node == nil or node == 0 or not entityExists(node) then return nil end
+    if getName(node) == name then return node end
+    for i = 0, getNumOfChildren(node) - 1 do
+        local found = findNamed(getChildAt(node, i), name)
+        if found ~= nil then return found end
+    end
+    return nil
+end
+
+
+--- Sit the top hat upright on the head, facing the way the character faces.
+--- @param model table HumanModel
+--- @param fit number the hat's eqHatFit node
+function EqAttire.fitHat(model, fit)
+    local reference = model.rootNode
+    local parent = getParent(fit)
+    if reference == nil or reference == 0 or parent == nil or parent == 0 then return end
+    local hat = EqAttire.HAT
+    local fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(hat.tilt)
+    fx, fy, fz = localDirectionToLocal(reference, parent, fx, fy, fz)
+    ux, uy, uz = localDirectionToLocal(reference, parent, ux, uy, uz)
+    setDirection(fit, fx, fy, fz, ux, uy, uz)
+    setTranslation(fit, localDirectionToLocal(reference, parent, 0, hat.up, hat.forward))
+    setScale(fit, hat.scale, hat.scale, hat.scale)
+    EqAttire.hats[fit] = model
+end
+
+
 --- Swap our diffuse maps onto a model's items that name one.
 --- @param model table HumanModel
 --- @param style table PlayerStyle
 function EqAttire.dress(model, style)
-    if model == nil or style == nil or style.configs == nil or next(EqAttire.diffuseByItem) == nil then return end
+    if model == nil or style == nil or style.configs == nil then return end
+    local hat = findNamed(model.headgearNode, EqAttire.HAT_NODE)
+    if hat ~= nil then EqAttire.fitHat(model, hat) end
     if setMaterialDiffuseMapFromFile == nil then return end
     for _, slot in ipairs(EqAttire.SLOTS) do
         local config = style.configs[slot.config]
@@ -173,6 +225,21 @@ function EqAttire.dress(model, style)
         local path = item ~= nil and EqAttire.diffuseByItem[item.name] or nil
         if path ~= nil then swapDiffuse(model[slot.node], path) end
     end
+end
+
+
+--- eqHatFit [up] [forward] [tilt] [scale]: move the top hat on every dressed character.
+function EqAttire:consoleHatFit(up, forward, tilt, scale)
+    local hat = EqAttire.HAT
+    hat.up = tonumber(up) or hat.up
+    hat.forward = tonumber(forward) or hat.forward
+    hat.tilt = tonumber(tilt) or hat.tilt
+    hat.scale = math.max(0.5, math.min(2, tonumber(scale) or hat.scale))
+    for fit, model in pairs(EqAttire.hats) do
+        if entityExists(fit) then EqAttire.fitHat(model, fit) else EqAttire.hats[fit] = nil end
+    end
+    return string.format("Top hat: up %.3f m, forward %.3f m, tilt %.1f deg, scale %.2f (eqHatFit up forward tilt scale)",
+        hat.up, hat.forward, hat.tilt, hat.scale)
 end
 
 
@@ -194,6 +261,7 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
+    addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [up] [forward] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)
     addModEventListener({ loadMap = function() guarded("attire items", EqAttire.registerAll) end })

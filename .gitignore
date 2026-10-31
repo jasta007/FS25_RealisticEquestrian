@@ -1,3 +1,4 @@
 *.zip
 art/previews/
 __pycache__/
+art/source/private/

@@ -158,8 +158,8 @@ uses its genetics, health and fitness.
 - A good horse is an investment: expect a year or more of work before it pays its way.
 
 ### Dressage outfit
-- The wardrobe has a dressage outfit: breeches and riding gloves in one solid colour, a plain dark
-  jacket with a white shirt, and black boots. They're the game's own clothes, recoloured.
+- The wardrobe has a dressage outfit: a top hat, breeches and riding gloves in one solid colour,
+  a plain dark jacket with a white shirt, and black boots.
 
 ### Settings
 Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
@@ -286,6 +286,7 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
 | `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
+| `eqHatFit [up] [forward] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
 
 Testing commands, for checking the mod works rather than for play:
 
@@ -321,10 +322,12 @@ James
   Harness* (1843), public domain. Lettering in Playfair Display SC (SIL Open Font License).
 - Staff portraits: [kawsar4404](https://depositphotos.com/portfolio-41609378.html) on
   Depositphotos, licensed for this mod.
+- Top hat: a royalty-free store model, licensed for this mod (resized and converted).
 
 Licensed under [CC BY-NC-SA 4.0](LICENSE). You can share and change the mod, as long as you
 credit the original, keep your version under the same licence, and don't sell it or use it
 commercially. The staff portraits (`gui/eqStaffFaces.dds`) are licensed stock art and not
-covered by that licence: don't reuse them outside this mod.
+covered by that licence: don't reuse them outside this mod. The same goes for the top hat
+(`data/attire/topHat.i3d`).
 
 Want to help or build your own copy? See [CONTRIBUTING.md](CONTRIBUTING.md).

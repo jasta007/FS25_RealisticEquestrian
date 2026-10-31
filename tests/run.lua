@@ -4078,6 +4078,11 @@ end)()
     check("attire: our files under the mod", EqAttire.resolve("data/attire/plainCloth_diffuse.dds", dir)
         == dir .. "data/attire/plainCloth_diffuse.dds" and EqAttire.resolve(dir .. "a.dds", dir) == dir .. "a.dds")
     check("attire: nothing to resolve", EqAttire.resolve(nil, dir) == nil and EqAttire.resolve("", dir) == nil)
+    local fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(0)
+    check("attire: an untilted hat faces forward and stands up", fx == 0 and fy == 0 and fz == 1 and ux == 0 and uy == 1 and uz == 0)
+    fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(30)
+    check("attire: a tilted hat leans its top back, axes square", uz < 0 and fy > 0
+        and math.abs(fx * ux + fy * uy + fz * uz) < 1e-9 and math.abs(fy * fy + fz * fz - 1) < 1e-9)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

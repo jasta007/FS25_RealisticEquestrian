@@ -747,7 +747,12 @@ horse is never touched.
 
 ## Dressage outfit
 
-Four extra wardrobe items for female and male characters (data/attire.xml), all base-game meshes:
+Five extra wardrobe items for female and male characters (data/attire.xml). The top hat is our
+own model; the rest are base-game meshes:
+
+- **Top hat** in black silk. It hangs off the head's attach point and is turned upright to face
+  the way the character faces when dressed. `eqHatFit [up] [forward] [tilt] [scale]` moves it
+  (defaults 0.10 m up and 0.01 m forward of the head joint, no tilt, size 1); not saved.
 
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy.
@@ -756,5 +761,5 @@ Four extra wardrobe items for female and male characters (data/attire.xml), all 
   burgundy. Its tweed texture is swapped for a plain one each time a character is dressed.
 - **Boots** (the Chelsea boots) in black leather, by the same texture swap.
 
-The items sit at the end of each wardrobe list. They use the game's own icons, so the icon shows
-the original colours.
+The items sit at the end of each wardrobe list. Apart from the top hat they use the game's own
+icons, so the icon shows the original colours.
