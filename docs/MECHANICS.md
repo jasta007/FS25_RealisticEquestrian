@@ -750,16 +750,21 @@ horse is never touched.
 Six extra wardrobe items for female and male characters (data/attire.xml). The top hat and tall
 boots are our own models; the rest are base-game meshes:
 
-- **Top hat** in black silk. It hangs off the head's attach point and is turned upright to face
-  the way the character faces when dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
+- **Top hat** in black silk. It hangs off the head's attach point and is set along the head
+  joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
+  the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
   (defaults 0.09 m up and 0.01 m forward of the head joint, no tilt, size 1; female and male
   heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
 
 - **Tall riding boots** in black leather. Wardrobe clothes bend through skinning to the game's
   rig, which can't be shipped, so each boot is a shaft and a foot moved onto the shin and foot
-  bones when the character is dressed. They're sized to end 4 cm below the knee (0.85x to 1.15x),
-  shafts 1.05x wider so calves stay inside (`eqBootFit [width]`, not saved).
-- **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
+  bones when the character is dressed. The foot lies along the line from the foot bone to the toe
+  bone, turned up 25 degrees, so it follows the foot even when dressed in the saddle. They're
+  sized to end 4 cm below the knee (0.85x to 1.15x), sit 4 cm above the ankle bone, shafts 1.3x
+  wider so calves and breeches stay inside (`eqBootFit [width] [raise] [toeDrop]`, not saved;
+  raise and toe drop apply at the next dressing). The i3d keeps an empty first child, as the game
+  expects one after taking a geo item out of its file.
+- **Breeches** (the riding trousers, extent low so the jacket's tails hang over them) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy.
 - **Riding gloves** (the mechanic gloves) in one colour: black, dark brown, brown or white, with a
   plain diffuse and a flat normal map swapped in so they read as smooth leather, not knit.

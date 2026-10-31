@@ -26091,18 +26091,19 @@
     </IndexedTriangleSet>
   </Shapes>
   <Scene>
-    <TransformGroup name="eqRidingBoots" nodeId="1">
-      <TransformGroup name="eqBootShaftL" nodeId="2">
-        <Shape name="eqBootShaftLShape" shapeId="1" clipDistance="150" nodeId="3" materialIds="1" castsShadows="true" receiveShadows="true"/>
+    <TransformGroup name="eqBootSkeleton" nodeId="1"/>
+    <TransformGroup name="eqRidingBoots" nodeId="2">
+      <TransformGroup name="eqBootShaftL" nodeId="3">
+        <Shape name="eqBootShaftLShape" shapeId="1" clipDistance="150" nodeId="4" materialIds="1" castsShadows="true" receiveShadows="true"/>
       </TransformGroup>
-      <TransformGroup name="eqBootFootL" nodeId="4">
-        <Shape name="eqBootFootLShape" shapeId="2" clipDistance="150" nodeId="5" materialIds="1" castsShadows="true" receiveShadows="true"/>
+      <TransformGroup name="eqBootFootL" nodeId="5">
+        <Shape name="eqBootFootLShape" shapeId="2" clipDistance="150" nodeId="6" materialIds="1" castsShadows="true" receiveShadows="true"/>
       </TransformGroup>
-      <TransformGroup name="eqBootShaftR" nodeId="6">
-        <Shape name="eqBootShaftRShape" shapeId="3" clipDistance="150" nodeId="7" materialIds="1" castsShadows="true" receiveShadows="true"/>
+      <TransformGroup name="eqBootShaftR" nodeId="7">
+        <Shape name="eqBootShaftRShape" shapeId="3" clipDistance="150" nodeId="8" materialIds="1" castsShadows="true" receiveShadows="true"/>
       </TransformGroup>
-      <TransformGroup name="eqBootFootR" nodeId="8">
-        <Shape name="eqBootFootRShape" shapeId="4" clipDistance="150" nodeId="9" materialIds="1" castsShadows="true" receiveShadows="true"/>
+      <TransformGroup name="eqBootFootR" nodeId="9">
+        <Shape name="eqBootFootRShape" shapeId="4" clipDistance="150" nodeId="10" materialIds="1" castsShadows="true" receiveShadows="true"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>

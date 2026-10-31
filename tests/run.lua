@@ -4086,6 +4086,17 @@ end)()
     fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(30)
     check("attire: a tilted hat leans its top back, axes square", uz < 0 and fy > 0
         and math.abs(fx * ux + fy * uy + fz * uz) < 1e-9 and math.abs(fy * fy + fz * fz - 1) < 1e-9)
+    -- A head joint whose up is its +x and forward its -y, seen while the head is nodded and turned.
+    local hux, huy, huz, hfx, hfy, hfz, hlx, hly, hlz = EqAttire.headAxes(0.9, 0.3, -0.2, 0.25, -0.85, 0.3)
+    check("attire: hat axes snap to the head joint's own, whatever its pose",
+        hux == 1 and huy == 0 and huz == 0 and hfx == 0 and hfy == -1 and hfz == 0 and hlx == 0 and hly == 0 and hlz == -1)
+    local ax2 = { EqAttire.headAxes(0.6, 0.6, 0, 0.7, 0.7, 0.1) }
+    check("attire: hat forward never the same axis as up", math.abs(ax2[1] * ax2[4] + ax2[2] * ax2[5] + ax2[3] * ax2[6]) < 1e-9)
+    local dx, dy, dz, vx, vy, vz = EqAttire.footAxes(0, -0.5, 0.866, 2, 0, 0, 30)
+    check("attire: boot foot laid level along a toe line 30 deg down",
+        math.abs(dx) < 1e-4 and math.abs(dy) < 1e-4 and math.abs(dz - 1) < 1e-4 and math.abs(vy - 1) < 1e-4 and math.abs(vz) < 1e-4)
+    check("attire: no toe line, no foot axes", EqAttire.footAxes(0, 0, 0, 1, 0, 0, 25) == nil
+        and EqAttire.footAxes(1, 0, 0, 1, 0, 0, 25) == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

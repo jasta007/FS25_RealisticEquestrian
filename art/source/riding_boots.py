@@ -148,8 +148,11 @@ def main():
     ]
     for i, (name, mesh) in enumerate(shapes):
         lines += xc.shape_lines(mesh, name, i + 1)
-    lines += ["  </Shapes>", "  <Scene>", '    <TransformGroup name="eqRidingBoots" nodeId="1">']
-    node_id = 2
+    # The game takes the item (node="1") out of the file and then still expects a first child, as
+    # its own clothes have their skeleton there: an empty group keeps that place.
+    lines += ["  </Shapes>", "  <Scene>", '    <TransformGroup name="eqBootSkeleton" nodeId="1"/>',
+              '    <TransformGroup name="eqRidingBoots" nodeId="2">']
+    node_id = 3
     # Each piece is a group (moved onto its bone, origin at the ankle) holding its shape.
     for i, (name, _) in enumerate(shapes):
         lines.append(f'      <TransformGroup name="{name}" nodeId="{node_id}">')

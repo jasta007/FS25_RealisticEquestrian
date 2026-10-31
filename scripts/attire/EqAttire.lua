@@ -45,6 +45,8 @@ EqAttire.SLOTS = {
 EqAttire.MAX_ITEMS = 255
 -- Materials looked at per shape (a shape has as many as its mesh's material slots).
 EqAttire.MAX_MATERIALS = 8
+-- The character shader's colours (primary, secondary, ...), kept across a material swap.
+EqAttire.COLOUR_PARAMETERS = { "colorScale", "colorScaleR", "colorScaleG", "colorScaleB" }
 
 -- The top hat's place on each body's head, along the character's own axes: metres up, forward
 -- and to the right of the head joint, its tilt back in degrees and a size factor. Set with the
@@ -58,15 +60,20 @@ EqAttire.HAT_NODE = "eqHatFit"
 -- The boots' pieces and the bones they go on. A shaft stands from the ankle (the foot bone's
 -- origin) towards the knee (the shin bone's), each foot keeps the shaft's turn at dressing time.
 EqAttire.BOOTS = {
-    { side = "L", shin = "LeftLeg", foot = "LeftFoot" },
-    { side = "R", shin = "RightLeg", foot = "RightFoot" },
+    { side = "L", shin = "LeftLeg", foot = "LeftFoot", toe = "LeftToeBase" },
+    { side = "R", shin = "RightLeg", foot = "RightFoot", toe = "RightToeBase" },
 }
 -- The boot model's shaft from the ankle to its top, and how far below the knee it should end.
 EqAttire.BOOT_SHAFT = 0.43
 EqAttire.BOOT_KNEE_GAP = 0.04
 EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
--- The shafts' girth on top of that, so calves don't poke through (eqBootFit tunes it).
-EqAttire.BOOT_WIDTH = 1.05
+-- The shafts' girth on top of that, so calves and breeches don't poke through, and how far the
+-- whole boot sits above the ankle bone (the model's ankle is higher than the rig's). eqBootFit
+-- tunes both.
+EqAttire.BOOT_WIDTH = 1.3
+EqAttire.BOOT_RAISE = 0.04
+-- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
+EqAttire.BOOT_TOE_DROP = 25
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })
 
@@ -202,7 +209,17 @@ local function swapMaps(node, swap)
             local ok, material = pcall(getMaterial, node, index)
             if not ok or material == nil or material == 0 then break end
             local made = swappedMaterial(material, swap)
-            if made ~= nil and made ~= material then pcall(setMaterial, node, made, index) end
+            if made ~= nil and made ~= material then
+                -- A new material starts from its own colours; keep the ones the wardrobe set.
+                local colours = {}
+                for _, name in ipairs(EqAttire.COLOUR_PARAMETERS) do
+                    if getHasShaderParameter(node, name) then colours[name] = { getShaderParameter(node, name) } end
+                end
+                pcall(setMaterial, node, made, index)
+                for name, c in pairs(colours) do
+                    pcall(setShaderParameter, node, name, c[1], c[2], c[3], c[4], false)
+                end
+            end
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do swapMaps(getChildAt(node, i), swap) end
@@ -218,6 +235,52 @@ function EqAttire.hatAxes(tilt)
 end
 
 
+--- The nearest of the six axes to a direction, as a unit vector. Pure.
+local function nearestAxis(x, y, z, skip)
+    local best, bx, by, bz = -1, 0, 1, 0
+    for _, axis in ipairs({ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } }) do
+        local dot = x * axis[1] + y * axis[2] + z * axis[3]
+        local sign = dot < 0 and -1 or 1
+        local ax, ay, az = axis[1] * sign, axis[2] * sign, axis[3] * sign
+        local skipped = skip ~= nil and math.abs(ax * skip[1] + ay * skip[2] + az * skip[3]) > 0.5
+        if not skipped and math.abs(dot) > best then best, bx, by, bz = math.abs(dot), ax, ay, az end
+    end
+    return bx, by, bz
+end
+
+
+--- The head joint's own up, forward and left axes, from the character's up and forward seen
+--- from it. The rig's joints sit square to the body, so the nearest axes are the ones it has
+--- at rest, whichever way the head happens to be turned at dressing time. Pure.
+--- @return number, number, number, number, number, number, number, number, number up, forward, left
+function EqAttire.headAxes(ux, uy, uz, fx, fy, fz)
+    ux, uy, uz = nearestAxis(ux, uy, uz)
+    fx, fy, fz = nearestAxis(fx, fy, fz, { ux, uy, uz })
+    -- x = y cross z
+    return ux, uy, uz, fx, fy, fz, uy * fz - uz * fy, uz * fx - ux * fz, ux * fy - uy * fx
+end
+
+
+--- The boot foot's forward and up on the foot bone: the line to the toe bone, turned up by
+--- the drop about the side axis. Pure.
+--- @param tx number toe direction, any length
+--- @param sx number the character's left, any length
+--- @param drop number degrees
+--- @return number|nil, number, number, number, number, number forward xyz, up xyz (nil if no toe line)
+function EqAttire.footAxes(tx, ty, tz, sx, sy, sz, drop)
+    local length = math.sqrt(tx * tx + ty * ty + tz * tz)
+    if length < 1e-6 then return nil end
+    tx, ty, tz = tx / length, ty / length, tz / length
+    -- up = forward cross left (z cross x = y)
+    local ux, uy, uz = ty * sz - tz * sy, tz * sx - tx * sz, tx * sy - ty * sx
+    length = math.sqrt(ux * ux + uy * uy + uz * uz)
+    if length < 1e-6 then return nil end
+    ux, uy, uz = ux / length, uy / length, uz / length
+    local c, s = math.cos(math.rad(drop or 0)), math.sin(math.rad(drop or 0))
+    return c * tx + s * ux, c * ty + s * uy, c * tz + s * uz, c * ux - s * tx, c * uy - s * ty, c * uz - s * tz
+end
+
+
 --- A node under another by name.
 local function findNamed(node, name)
     if node == nil or node == 0 or not entityExists(node) then return nil end
@@ -230,7 +293,8 @@ local function findNamed(node, name)
 end
 
 
---- Sit the top hat upright on the head, facing the way the character faces.
+--- Sit the top hat upright on the head, facing the way the character faces. The offsets are
+--- along the head joint's own axes, so the hat stays put wherever the head turns.
 --- @param model table HumanModel
 --- @param fit number the hat's eqHatFit node
 --- @param body string "female" or "male"
@@ -239,12 +303,18 @@ function EqAttire.fitHat(model, fit, body)
     local parent = getParent(fit)
     if reference == nil or reference == 0 or parent == nil or parent == 0 then return end
     local hat = EqAttire.HAT[body] or EqAttire.HAT.female
-    local fx, fy, fz, ux, uy, uz = EqAttire.hatAxes(hat.tilt)
-    fx, fy, fz = localDirectionToLocal(reference, parent, fx, fy, fz)
-    ux, uy, uz = localDirectionToLocal(reference, parent, ux, uy, uz)
-    setDirection(fit, fx, fy, fz, ux, uy, uz)
+    local ux, uy, uz = localDirectionToLocal(reference, parent, 0, 1, 0)
+    local fx, fy, fz = localDirectionToLocal(reference, parent, 0, 0, 1)
+    local lx, ly, lz
+    ux, uy, uz, fx, fy, fz, lx, ly, lz = EqAttire.headAxes(ux, uy, uz, fx, fy, fz)
+    -- The hat's own axes along the head's: (left, up, forward) per component.
+    local function along(x, y, z) return x * lx + y * ux + z * fx, x * ly + y * uy + z * fy, x * lz + y * uz + z * fz end
+    local hfx, hfy, hfz, hux, huy, huz = EqAttire.hatAxes(hat.tilt)
+    local dx, dy, dz = along(hfx, hfy, hfz)
+    local vx, vy, vz = along(hux, huy, huz)
+    setDirection(fit, dx, dy, dz, vx, vy, vz)
     -- The character's right is its -x (it faces +z).
-    setTranslation(fit, localDirectionToLocal(reference, parent, -hat.side, hat.up, hat.forward))
+    setTranslation(fit, along(-hat.side, hat.up, hat.forward))
     setScale(fit, hat.scale, hat.scale, hat.scale)
     EqAttire.hats[fit] = { model = model, body = body }
 end
@@ -282,6 +352,7 @@ function EqAttire.fitBoots(model, item)
         local foot = findNamed(item, "eqBootFoot" .. boot.side)
         local shin = findNamed(skeleton, boot.shin)
         local ankle = findNamed(skeleton, boot.foot)
+        local toe = findNamed(skeleton, boot.toe)
         if shaft ~= nil and foot ~= nil and shin ~= nil and ankle ~= nil then
             -- The shaft: up from the ankle towards the knee, its toe the way the character faces.
             local ax, ay, az = localToLocal(ankle, shin, 0, 0, 0)
@@ -292,18 +363,27 @@ function EqAttire.fitBoots(model, item)
                 local along = fx * ux + fy * uy + fz * uz
                 fx, fy, fz = fx - along * ux, fy - along * uy, fz - along * uz
                 local scale = EqAttire.bootScale(length)
+                local raise = EqAttire.BOOT_RAISE
                 link(shin, shaft)
                 setDirection(shaft, fx, fy, fz, ux, uy, uz)
-                setTranslation(shaft, ax, ay, az)
+                setTranslation(shaft, ax + ux * raise, ay + uy * raise, az + uz * raise)
                 setScale(shaft, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
-                -- The foot: where the shaft is now, then it turns with the ankle. Its own size,
-                -- the shaft's girth is only for calves.
-                local px, py, pz = localToLocal(shaft, ankle, 0, 0, 0)
-                local dx, dy, dz = localDirectionToLocal(shaft, ankle, 0, 0, 1)
-                local vx, vy, vz = localDirectionToLocal(shaft, ankle, 0, 1, 0)
+                -- The foot: along the foot bone towards the toe bone, so it lies on the foot
+                -- however the ankle is bent at dressing time (in the saddle the toes point down).
+                -- Its own size, the shaft's girth is only for calves.
+                local dx, dy, dz, vx, vy, vz
+                if toe ~= nil then
+                    local tx, ty, tz = localToLocal(toe, ankle, 0, 0, 0)
+                    local sx, sy, sz = localDirectionToLocal(reference, ankle, 1, 0, 0)
+                    dx, dy, dz, vx, vy, vz = EqAttire.footAxes(tx, ty, tz, sx, sy, sz, EqAttire.BOOT_TOE_DROP)
+                end
+                if dx == nil then
+                    dx, dy, dz = localDirectionToLocal(shaft, ankle, 0, 0, 1)
+                    vx, vy, vz = localDirectionToLocal(shaft, ankle, 0, 1, 0)
+                end
                 link(ankle, foot)
                 setDirection(foot, dx, dy, dz, vx, vy, vz)
-                setTranslation(foot, px, py, pz)
+                setTranslation(foot, vx * raise, vy * raise, vz * raise)
                 setScale(foot, scale, scale, scale)
                 table.insert(nodes, shaft)
                 table.insert(nodes, foot)
@@ -368,9 +448,12 @@ function EqAttire:consoleHatFit(...)
 end
 
 
---- eqBootFit [width]: the tall boots' shaft girth, on every dressed character.
-function EqAttire:consoleBootFit(width)
-    EqAttire.BOOT_WIDTH = math.max(0.8, math.min(1.5, tonumber(width) or EqAttire.BOOT_WIDTH))
+--- eqBootFit [width] [raise] [toeDrop]: the tall boots' shaft girth, height above the ankle and
+--- foot angle; applies the next time a character is dressed (open the wardrobe, or remount).
+function EqAttire:consoleBootFit(width, raise, drop)
+    EqAttire.BOOT_WIDTH = math.max(0.8, math.min(2, tonumber(width) or EqAttire.BOOT_WIDTH))
+    EqAttire.BOOT_RAISE = math.max(-0.1, math.min(0.15, tonumber(raise) or EqAttire.BOOT_RAISE))
+    EqAttire.BOOT_TOE_DROP = math.max(-30, math.min(60, tonumber(drop) or EqAttire.BOOT_TOE_DROP))
     for model in pairs(EqAttire.booted) do
         for _, node in ipairs(model.eqBootNodes or {}) do
             if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then
@@ -379,7 +462,8 @@ function EqAttire:consoleBootFit(width)
             end
         end
     end
-    return string.format("Riding boots: shaft width %.2f (eqBootFit width)", EqAttire.BOOT_WIDTH)
+    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg (next dressing)\n"
+        .. "eqBootFit width raise toeDrop", EqAttire.BOOT_WIDTH, EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP)
 end
 
 
@@ -401,7 +485,7 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
-    addConsoleCommand("eqBootFit", "Sets the tall riding boots' shaft width: eqBootFit [width]", "consoleBootFit", EqAttire)
+    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop]", "consoleBootFit", EqAttire)
     addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)
