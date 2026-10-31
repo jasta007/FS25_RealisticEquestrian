@@ -528,13 +528,14 @@ function EqSponsorManager.loadFromXMLFile(xmlFile, key)
                 local o = 0
                 while xmlFile:hasProperty(string.format("%s.offers.offer(%d)", farmKey, o)) do
                     local offer = EqSponsorship.loadOffer(xmlFile, string.format("%s.offers.offer(%d)", farmKey, o))
-                    if offer ~= nil then table.insert(record.list, offer) end
+                    if offer ~= nil then table.insert(record.list, EqSponsorship.tidy(EqSponsorManager.config, offer)) end
                     o = o + 1
                 end
                 EqSponsorManager.offers[farmId] = record
             end
             if xmlFile:hasProperty(farmKey .. ".contract") then
-                EqSponsorManager.contracts[farmId] = EqSponsorship.loadOffer(xmlFile, farmKey .. ".contract")
+                local contract = EqSponsorship.loadOffer(xmlFile, farmKey .. ".contract")
+                EqSponsorManager.contracts[farmId] = contract ~= nil and EqSponsorship.tidy(EqSponsorManager.config, contract) or nil
             end
         end
         i = i + 1

@@ -109,6 +109,11 @@ function EqEventsFrame.new()
         text = g_i18n:getText("eq_sponsor_button_cancel"),
         callback = function() self:onClickCancelSponsor() end,
     }
+    self.sponsorShopButtonInfo = {
+        inputAction = InputAction.MENU_ACTIVATE,
+        text = g_i18n:getText("eq_sponsor_button_shop"),
+        callback = function() self:onClickSponsorShop() end,
+    }
     self.toggleButtonInfo = {
         inputAction = InputAction.MENU_EXTRA_1,
         text = g_i18n:getText("eq_ui_tab_results"),
@@ -358,7 +363,10 @@ function EqEventsFrame:refresh()
     for _, element in ipairs({ self.sponsorHeader, self.sponsorBox }) do
         show(element, isSponsors)
     end
-    if not isSponsors then show(self.sponsorPanel, false) end
+    if not isSponsors then
+        show(self.sponsorPanel, false)
+        show(self.sponsorSpecialityBox, false)
+    end
     for _, element in ipairs({ self.hostHeader, self.hostBox, self.hostChecksHeader, self.hostChecksBox }) do
         show(element, isHost)
     end
@@ -666,6 +674,7 @@ function EqEventsFrame:addSponsorButtons()
     else
         table.insert(self.menuButtonInfo, self.signButtonInfo)
     end
+    table.insert(self.menuButtonInfo, self.sponsorShopButtonInfo)
 end
 
 
@@ -756,6 +765,7 @@ function EqEventsFrame:updateSponsorPanel()
     local row = self:selectedSponsorRow()
     local show = self.mode == EqEventsFrame.MODE_SPONSORS and self.isReady and row ~= nil
     self.sponsorPanel:setVisible(show)
+    if self.sponsorSpecialityBox ~= nil then self.sponsorSpecialityBox:setVisible(show) end
     if not show then return end
     local ok, lines, clashes = pcall(EqSponsorView.panelLines, farmId(), row)
     if not ok then
@@ -774,7 +784,10 @@ function EqEventsFrame:updateSponsorPanel()
         setText(self.sponsorLabel[i], line ~= nil and line.label or "")
         setText(value, line ~= nil and line.value or "", color)
     end
-    setText(self.sponsorNote, EqSponsorView.clashText(clashes or {}))
+    local notes = EqSponsorView.noteLines(row, clashes or {}, #(self.sponsorNote or {}))
+    for i = 1, #(self.sponsorNote or {}) do setText(self.sponsorNote[i], notes[i] or "") end
+    local speciality = EqSponsorView.speciality(row.offer.brand, #(self.sponsorSpeciality or {}))
+    for i = 1, #(self.sponsorSpeciality or {}) do setText(self.sponsorSpeciality[i], speciality[i] or "") end
 end
 
 
@@ -932,10 +945,14 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
     elseif list == self.sponsorList then
         local row = self.sponsorRows[index]
         if row == nil then return end
+        showLogo(cell:getAttribute("logo"), row.brand)
         setCell(cell, "title", row.title)
-        setCell(cell, "size", row.size)
         setCell(cell, "deal", row.deal)
         setCell(cell, "years", row.years)
+        local eligibility = cell:getAttribute("eligibility")
+        keepDefaultColor(eligibility)
+        local color = row.eligible ~= nil and wordColor(EqEventsFrame.RISK_COLORS, row.eligible and "low" or "risky") or nil
+        setText(eligibility, row.eligibility, color)
         setCell(cell, "fee", row.fee)
         return
     elseif list == self.hostChecksList then
@@ -1097,6 +1114,24 @@ function EqEventsFrame:onClickSignSponsor()
             self:refresh()
         end
     end, self, question, g_i18n:getText("eq_sponsor_button_sign"))
+end
+
+
+--- Open the shop on the selected sponsor's brand page. The shop's own brand click is used when
+--- it is there; otherwise the shop just opens.
+function EqEventsFrame:onClickSponsorShop()
+    local row = self:selectedSponsorRow()
+    local brand = row ~= nil and EqSponsorManager.brand(row.brand) or nil
+    if brand == nil or g_gui == nil then return end
+    g_gui:showGui("ShopMenu")
+    local shop = g_shopMenu
+    if shop == nil and g_gui.screenControllers ~= nil and ShopMenu ~= nil then shop = g_gui.screenControllers[ShopMenu] end
+    if shop == nil or shop.onClickBrand == nil then
+        Log:info("EqEventsFrame: shop opened, but it has no brand page to open for %s", tostring(row.brand))
+        return
+    end
+    local ok, err = pcall(shop.onClickBrand, shop, brand.index, nil, brand.title, brand.title)
+    if not ok then Log:warning("EqEventsFrame: shop brand page for %s failed: %s", tostring(row.brand), tostring(err)) end
 end
 
 

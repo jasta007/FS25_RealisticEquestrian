@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="Sponsor: %s, pagato %s."/>
         <text name="eq_sponsor_eventName" text="%s %s Classic"/>
         <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
-        <text name="eq_sponsor_col_size" text="Dimensione"/>
         <text name="eq_sponsor_col_deal" text="Condizioni"/>
         <text name="eq_sponsor_col_contract" text="Contratto"/>
         <text name="eq_sponsor_col_fee" text="Compenso per gara"/>
@@ -986,7 +985,6 @@
         <text name="eq_sponsor_backs_all" text="Tutte le gare"/>
         <text name="eq_sponsor_backs_from" text="%s e superiori"/>
         <text name="eq_sponsor_backs_lower" text="%s (%s a %s)"/>
-        <text name="eq_sponsor_target" text="Una gara %s o superiore con popolarità %d"/>
         <text name="eq_sponsor_targetTop3" text=", con un piazzamento tra i primi 3"/>
         <text name="eq_sponsor_label_deal" text="Condizioni"/>
         <text name="eq_sponsor_label_fee" text="Compenso"/>
@@ -994,7 +992,6 @@
         <text name="eq_sponsor_label_target" text="Obiettivo annuale"/>
         <text name="eq_sponsor_label_boards" text="Cartelloni sponsor"/>
         <text name="eq_sponsor_label_machines" text="Le loro macchine"/>
-        <text name="eq_sponsor_label_rivals" text="Macchine rivali"/>
         <text name="eq_sponsor_label_discounts" text="Sconti"/>
         <text name="eq_sponsor_label_ends" text="Scade"/>
         <text name="eq_sponsor_label_thisYear" text="Quest'anno"/>
@@ -1002,20 +999,11 @@
         <text name="eq_sponsor_label_paid" text="Pagato finora"/>
         <text name="eq_sponsor_label_cancel" text="Costo di disdetta"/>
         <text name="eq_sponsor_label_years" text="Contratto"/>
-        <text name="eq_sponsor_label_status" text="Stato"/>
-        <text name="eq_sponsor_feeLine" text="%s per gara, %s"/>
         <text name="eq_sponsor_boardsLine" text="%d esposti, %d per il compenso pieno"/>
-        <text name="eq_sponsor_machinesLine" text="Ne hai %d, ne vogliono %d (%d categorie)"/>
-        <text name="eq_sponsor_rivalsNone" text="Nessuna entro il %s dei loro prezzi"/>
-        <text name="eq_sponsor_rivalsSome" text="%d da vendere, entro il %s dei loro prezzi"/>
         <text name="eq_sponsor_discountsLine" text="Verniciatura %s, riparazione %s, acquisto %s"/>
         <text name="eq_sponsor_yearMet" text="Obiettivo raggiunto"/>
         <text name="eq_sponsor_yearOpen" text="Obiettivo aperto fino a %s"/>
         <text name="eq_sponsor_missedLine" text="%d di fila, compenso al %s"/>
-        <text name="eq_sponsor_status_taken" text="Hai già uno sponsor"/>
-        <text name="eq_sponsor_status_ready" text="Pronto da firmare"/>
-        <text name="eq_sponsor_status_notReady" text="Non ancora pronto"/>
-        <text name="eq_sponsor_clashes" text="Vendi o restituisci prima: %s"/>
         <text name="eq_sponsor_summaryOpen" text="Le offerte restano aperte fino a %s. Uno sponsor alla volta: possiedi le sue macchine, nessuna macchina rivale vicina ai suoi prezzi e un cartellone sponsor esposto."/>
         <text name="eq_sponsor_summaryClosed" text="Le offerte di quest'anno sono finite. Nuovi sponsor arrivano all'inizio del prossimo anno."/>
         <text name="eq_sponsor_noConfig" text="Impossibile caricare gli sponsor."/>
@@ -1037,5 +1025,22 @@
         <text name="eq_sponsor_button_cancel" text="Disdici contratto"/>
         <text name="eq_sponsor_sign_confirm" text="Firmare con %s per %d anno/i? Disdire prima costa una penale."/>
         <text name="eq_sponsor_cancel_confirm" text="Disdire il contratto con %s? Costa %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Idoneità"/>
+        <text name="eq_sponsor_eligible_yes" text="Idoneo"/>
+        <text name="eq_sponsor_eligible_no" text="Non idoneo"/>
+        <text name="eq_sponsor_eligible_taken" text="Hai già uno sponsor"/>
+        <text name="eq_sponsor_eligible_yours" text="Il tuo sponsor"/>
+        <text name="eq_sponsor_label_speciality" text="Specialità"/>
+        <text name="eq_sponsor_specialityLine" text="%s (%d macchine)"/>
+        <text name="eq_sponsor_feePerEvent" text="%s per gara"/>
+        <text name="eq_sponsor_targetPopularity" text="Popolarità %d"/>
+        <text name="eq_sponsor_targetRating" text="Gara %s o superiore"/>
+        <text name="eq_sponsor_haveOf" text="Ne hai %d su %d"/>
+        <text name="eq_sponsor_mustOwn" text="Devi possedere %d loro attrezzature prima di candidarti."/>
+        <text name="eq_sponsor_mustKeep" text="Devi tenere %d loro attrezzature per essere pagato."/>
+        <text name="eq_sponsor_noRivals" text="Non puoi possedere macchine entro il %s del prezzo della loro offerta concorrente."/>
+        <text name="eq_sponsor_sellFirst" text="Vendi o restituisci prima di candidarti:"/>
+        <text name="eq_sponsor_sellMore" text="...e altri %d"/>
+        <text name="eq_sponsor_button_shop" text="Mostra nel negozio"/>
     </texts>
 </l10n>

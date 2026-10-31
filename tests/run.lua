@@ -4602,7 +4602,8 @@ end)()
         seen[offer.brand] = true
         local size = sp.sizeByName[offer.size]
         if offer.years < size.yearsMin or offer.years > size.yearsMax or offer.fee <= 0 or offer.fee % 500 ~= 0
-            or offer.machines < 1 or offer.window <= 0 or offer.signsFull < sp.signsMin then sane = false end
+            or offer.machines < 1 or offer.machines > sp.machinesMax or offer.window <= 0 or offer.signsFull < sp.signsMin
+            or math.abs(offer.window * 20 - math.floor(offer.window * 20 + 0.5)) > 1e-9 then sane = false end
     end
     check("sponsors: offers are sane, each brand once", sane)
 
@@ -4613,6 +4614,13 @@ end)()
     check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
         and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
     check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
+    check("sponsors: never more than 5 machines to own (22 categories)", sp.machinesMax == 5
+        and EqSponsorship.machinesNeeded(22, 2, sp.machinesMax) == 5)
+    check("sponsors: shares on 5% steps", EqSponsorship.round5(0.37) == 0.35 and EqSponsorship.round5(0.38) == 0.4
+        and EqSponsorship.round5(0.6) == 0.6)
+    local old = EqSponsorship.tidy(sp, { machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07 })
+    check("sponsors: old saved offers tidied", old.machines == 5 and old.window == 0.45 and old.repair == 0.2
+        and old.repaint == 0.5 and old.purchase == 0.05)
 
     -- Competitor clause: B's 260k tractor sits within 30% of A's 260k tractor.
     local offer = { brand = "A", size = "big", window = 0.3, machines = 2, fee = 150000, signsFull = 4, popularity = 10, target = 70, years = 3 }

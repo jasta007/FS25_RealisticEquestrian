@@ -16,6 +16,7 @@
         missFactor      the fee for the next contract year after a missed yearly target
         missesToLeave   missed targets in a row before the sponsor walks away
         signsMin        sponsor boards the farm needs to sign, and to be paid for an event
+        machinesMax     the most of its machines a sponsor asks the farm to own
 
     skipCategoryTypes   shop category types (the shop's groups, such as DRIVABLES, TRAILERS or
                         SOIL_PREPARATION) whose items are no machines; every other group counts.
@@ -48,7 +49,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" signsMin="1">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" signsMin="1" machinesMax="5">
     <skipCategoryTypes>
         <type name="ANIMALS"/>
         <type name="OBJECTS"/>

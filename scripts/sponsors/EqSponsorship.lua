@@ -37,6 +37,7 @@ function EqSponsorship.read(xmlFile)
         missFactor = xmlFile:getFloat("sponsors#missFactor", 0.75),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
         signsMin = xmlFile:getInt("sponsors#signsMin", 1),
+        machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
     }
@@ -221,9 +222,19 @@ end
 
 --- @param categories number how many categories the sponsor makes
 --- @param perMachine number categories per machine to own
+--- @param max number|nil the most a sponsor asks for (James 2026-10-31: about 5)
 --- @return number machines of the sponsor's to own
-function EqSponsorship.machinesNeeded(categories, perMachine)
-    return math.max(1, math.ceil((categories or 1) / math.max(1, perMachine or 3)))
+function EqSponsorship.machinesNeeded(categories, perMachine, max)
+    local needed = math.max(1, math.ceil((categories or 1) / math.max(1, perMachine or 3)))
+    if max ~= nil and max > 0 then needed = math.min(needed, max) end
+    return needed
+end
+
+
+--- @param share number
+--- @return number the share rounded to the nearest 5% (James 2026-10-31)
+function EqSponsorship.round5(share)
+    return math.floor(share * 20 + 0.5) / 20
 end
 
 
@@ -260,11 +271,11 @@ function EqSponsorship.makeOffer(config, profile, rng)
         signsFull = math.max(config.signsMin, math.floor(EqSponsorship.term(config, "signsFull", strictness, rng) + 0.5)),
         categories = profile.categories,
         perMachine = perMachine,
-        machines = EqSponsorship.machinesNeeded(profile.categories, perMachine),
-        window = math.floor(EqSponsorship.term(config, "window", strictness, rng) * 100 + 0.5) / 100,
-        repair = math.floor(EqSponsorship.term(config, "repair", strictness, rng) * 100 + 0.5) / 100,
-        repaint = math.floor(EqSponsorship.term(config, "repaint", strictness, rng) * 100 + 0.5) / 100,
-        purchase = math.floor(EqSponsorship.term(config, "purchase", strictness, rng) * 100 + 0.5) / 100,
+        machines = EqSponsorship.machinesNeeded(profile.categories, perMachine, config.machinesMax),
+        window = EqSponsorship.round5(EqSponsorship.term(config, "window", strictness, rng)),
+        repair = EqSponsorship.round5(EqSponsorship.term(config, "repair", strictness, rng)),
+        repaint = EqSponsorship.round5(EqSponsorship.term(config, "repaint", strictness, rng)),
+        purchase = EqSponsorship.round5(EqSponsorship.term(config, "purchase", strictness, rng)),
     }
 end
 
@@ -493,6 +504,20 @@ function EqSponsorship.saveOffer(xmlFile, key, offer)
     for _, name in ipairs(EqSponsorship.BOOL_FIELDS) do
         if offer[name] then xmlFile:setBool(key .. "#" .. name, true) end
     end
+end
+
+
+--- Bring an offer saved by an older version up to today's rules: at most machinesMax machines,
+--- shares on 5% steps. Pure: changes the offer.
+--- @param config table|nil
+--- @param offer table
+--- @return table offer
+function EqSponsorship.tidy(config, offer)
+    if config ~= nil and offer.machines ~= nil then offer.machines = math.min(offer.machines, config.machinesMax) end
+    for _, name in ipairs({ "window", "repair", "repaint", "purchase" }) do
+        if offer[name] ~= nil then offer[name] = EqSponsorship.round5(offer[name]) end
+    end
+    return offer
 end
 
 

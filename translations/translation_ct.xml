@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="贊助商：%s，支付 %s。"/>
         <text name="eq_sponsor_eventName" text="%s %s經典賽"/>
         <text name="eq_sponsor_col_sponsor" text="贊助商"/>
-        <text name="eq_sponsor_col_size" text="規模"/>
         <text name="eq_sponsor_col_deal" text="條件"/>
         <text name="eq_sponsor_col_contract" text="合約"/>
         <text name="eq_sponsor_col_fee" text="每場賽事金額"/>
@@ -986,7 +985,6 @@
         <text name="eq_sponsor_backs_all" text="所有賽事"/>
         <text name="eq_sponsor_backs_from" text="%s及以上"/>
         <text name="eq_sponsor_backs_lower" text="%s（%s，%s級別）"/>
-        <text name="eq_sponsor_target" text="%s或更高級別的賽事，人氣%d"/>
         <text name="eq_sponsor_targetTop3" text="，並進入前三名"/>
         <text name="eq_sponsor_label_deal" text="條件"/>
         <text name="eq_sponsor_label_fee" text="金額"/>
@@ -994,7 +992,6 @@
         <text name="eq_sponsor_label_target" text="年度目標"/>
         <text name="eq_sponsor_label_boards" text="贊助商廣告牌"/>
         <text name="eq_sponsor_label_machines" text="其機械"/>
-        <text name="eq_sponsor_label_rivals" text="競爭品牌機械"/>
         <text name="eq_sponsor_label_discounts" text="折扣"/>
         <text name="eq_sponsor_label_ends" text="結束"/>
         <text name="eq_sponsor_label_thisYear" text="今年"/>
@@ -1002,20 +999,11 @@
         <text name="eq_sponsor_label_paid" text="已支付"/>
         <text name="eq_sponsor_label_cancel" text="解約費用"/>
         <text name="eq_sponsor_label_years" text="合約"/>
-        <text name="eq_sponsor_label_status" text="状態"/>
-        <text name="eq_sponsor_feeLine" text="每場賽事%s，%s"/>
         <text name="eq_sponsor_boardsLine" text="已放置%d，全額需要%d"/>
-        <text name="eq_sponsor_machinesLine" text="你擁有%d，要求%d（%d個類別）"/>
-        <text name="eq_sponsor_rivalsNone" text="沒有價格在其%s以內的"/>
-        <text name="eq_sponsor_rivalsSome" text="需出售%d台，價格在其%s以內"/>
         <text name="eq_sponsor_discountsLine" text="噴漆%s，維修%s，購買%s"/>
         <text name="eq_sponsor_yearMet" text="目標已達成"/>
         <text name="eq_sponsor_yearOpen" text="目標截止%s"/>
         <text name="eq_sponsor_missedLine" text="連續%d次，金額為%s"/>
-        <text name="eq_sponsor_status_taken" text="你已經有贊助商了"/>
-        <text name="eq_sponsor_status_ready" text="可以簽約"/>
-        <text name="eq_sponsor_status_notReady" text="尚未滿足條件"/>
-        <text name="eq_sponsor_clashes" text="請先出售或歸還：%s"/>
         <text name="eq_sponsor_summaryOpen" text="報價有效至%s。一次只能有一個贊助商：擁有其機械，不持有價格接近的競爭品牌機械，並放置一塊贊助商廣告牌。"/>
         <text name="eq_sponsor_summaryClosed" text="今年的報價已結束。新的贊助商將在明年年初到來。"/>
         <text name="eq_sponsor_noConfig" text="無法加載贊助商。"/>
@@ -1037,5 +1025,22 @@
         <text name="eq_sponsor_button_cancel" text="解除合約"/>
         <text name="eq_sponsor_sign_confirm" text="與%s簽約%d年？提前解約需支付費用。"/>
         <text name="eq_sponsor_cancel_confirm" text="解除與%s的合約？費用為%s。"/>
+        <text name="eq_sponsor_col_eligibility" text="資格"/>
+        <text name="eq_sponsor_eligible_yes" text="符合條件"/>
+        <text name="eq_sponsor_eligible_no" text="不符合條件"/>
+        <text name="eq_sponsor_eligible_taken" text="已有贊助商"/>
+        <text name="eq_sponsor_eligible_yours" text="你的贊助商"/>
+        <text name="eq_sponsor_label_speciality" text="專長"/>
+        <text name="eq_sponsor_specialityLine" text="%s（%d台機械）"/>
+        <text name="eq_sponsor_feePerEvent" text="每場賽事%s"/>
+        <text name="eq_sponsor_targetPopularity" text="人氣%d"/>
+        <text name="eq_sponsor_targetRating" text="%s或更高級別的賽事"/>
+        <text name="eq_sponsor_haveOf" text="你擁有%d／需要%d"/>
+        <text name="eq_sponsor_mustOwn" text="申請前你必須擁有其%d台設備。"/>
+        <text name="eq_sponsor_mustKeep" text="你必須保留其%d台設備才能獲得付款。"/>
+        <text name="eq_sponsor_noRivals" text="你不能擁有價格在其競爭產品%s以內的機械。"/>
+        <text name="eq_sponsor_sellFirst" text="申請前請出售或歸還以下機械："/>
+        <text name="eq_sponsor_sellMore" text="……還有%d台"/>
+        <text name="eq_sponsor_button_shop" text="在商店中查看"/>
     </texts>
 </l10n>
