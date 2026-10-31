@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Изменить езду по выездке"/>
         <text name="eq_dt_saveAction" text="Сохранить езду по выездке"/>
         <text name="eq_dt_cancelAction" text="Отменить езду по выездке"/>
+        <text name="eq_dt_deleteAction" text="Удалить езду по выездке"/>
+        <text name="eq_dt_deleteTitle" text="Удалить езду"/>
+        <text name="eq_dt_deleteAsk" text="Удалить езду этого манежа (%d шагов)? Снова будут случайные езды."/>
         <text name="eq_dt_modeSpot" text="Показать элементы на месте"/>
         <text name="eq_dt_modeFigure" text="Показать фигуры"/>
         <text name="eq_dt_new" text="Новая езда по выездке: шаг %d"/>

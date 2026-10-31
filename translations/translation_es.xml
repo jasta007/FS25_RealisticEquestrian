@@ -922,6 +922,9 @@
         <text name="eq_dt_editAction" text="Editar la reprise de doma"/>
         <text name="eq_dt_saveAction" text="Guardar la reprise de doma"/>
         <text name="eq_dt_cancelAction" text="Cancelar la reprise de doma"/>
+        <text name="eq_dt_deleteAction" text="Borrar la reprise de doma"/>
+        <text name="eq_dt_deleteTitle" text="Borrar la reprise"/>
+        <text name="eq_dt_deleteAsk" text="¿Borrar la reprise de esta pista (%d pasos)? Volverá a tener reprises aleatorias."/>
         <text name="eq_dt_modeSpot" text="Mostrar movimientos en el sitio"/>
         <text name="eq_dt_modeFigure" text="Mostrar figuras"/>
         <text name="eq_dt_new" text="Nueva reprise de doma: paso %d"/>

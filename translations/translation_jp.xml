@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="馬場馬術の経路を編集"/>
         <text name="eq_dt_saveAction" text="馬場馬術の経路を保存"/>
         <text name="eq_dt_cancelAction" text="馬場馬術の経路をキャンセル"/>
+        <text name="eq_dt_deleteAction" text="馬場馬術の経路を削除"/>
+        <text name="eq_dt_deleteTitle" text="経路を削除"/>
+        <text name="eq_dt_deleteAsk" text="このアリーナの馬場馬術の経路（%dステップ）を削除しますか？再びランダムな経路になります。"/>
         <text name="eq_dt_modeSpot" text="その場の運動を表示"/>
         <text name="eq_dt_modeFigure" text="図形を表示"/>
         <text name="eq_dt_new" text="新しい馬場馬術の経路：ステップ%d"/>

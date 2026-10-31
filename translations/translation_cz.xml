@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Upravit drezurní úlohu"/>
         <text name="eq_dt_saveAction" text="Uložit drezurní úlohu"/>
         <text name="eq_dt_cancelAction" text="Zrušit drezurní úlohu"/>
+        <text name="eq_dt_deleteAction" text="Smazat drezurní úlohu"/>
+        <text name="eq_dt_deleteTitle" text="Smazat úlohu"/>
+        <text name="eq_dt_deleteAsk" text="Smazat drezurní úlohu tohoto obdélníku (%d kroků)? Znovu se budou jezdit náhodné úlohy."/>
         <text name="eq_dt_modeSpot" text="Ukázat prvky na místě"/>
         <text name="eq_dt_modeFigure" text="Ukázat cviky"/>
         <text name="eq_dt_new" text="Nová drezurní úloha: krok %d"/>

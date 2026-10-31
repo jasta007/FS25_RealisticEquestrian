@@ -601,9 +601,14 @@ function EqCourseHooks.onDeleteAction(vehicle)
         end
         return
     end
-    if underWay(EqCourseHooks.round) or EqCourseHooks.dressageActive then return end
-    local course, index = EqCourseHooks.nearCourse(vehicle)
-    if course == nil then return end
+    if underWay(EqCourseHooks.round) then return end
+    local course, index = nil, nil
+    if not EqCourseHooks.dressageActive then course, index = EqCourseHooks.nearCourse(vehicle) end
+    if course == nil then
+        -- No course here: the arena's own dressage test, if it has one.
+        EqDressageEditor.onDelete(vehicle)
+        return
+    end
     local question = string.format(text("eq_course_deleteAsk"), course.name, #course.jumps, course.length or 0)
     local function confirmed(yes)
         if not yes or EqCourse.list[index] ~= course then return end
@@ -680,8 +685,10 @@ function EqCourseHooks.updateActions(vehicle)
     local xcText = nearXc ~= nil and string.format(text("eq_course_editAction"), nearXc.name) or text("eq_course_recordXcAction")
     local cancel = mine and discardable(editing)
     local dressageEditing = EqDressageEditor.holds(vehicle)
-    local state = string.format("%s|%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle),
-        tostring(busy), tostring(cancel), tostring(dressageEditing))
+    -- The arena's saved dressage test can be deleted with the same key (EqDressageEditor.onDelete).
+    local dressageTest = not dressageEditing and editing == nil and near == nil and spec.eqDtHasTest == true
+    local state = string.format("%s|%s|%s|%s|%s|%s|%s|%s|%s", recordText, xcText, tostring(mine), tostring(near ~= nil and near.name), tostring(idle),
+        tostring(busy), tostring(cancel), tostring(dressageEditing), tostring(dressageTest))
     if spec.eqCourseShown == state then return end
     spec.eqCourseShown = state
     local binding = g_inputBinding
@@ -705,9 +712,11 @@ function EqCourseHooks.updateActions(vehicle)
             deleteText = editing.index == nil and text("eq_course_cancelAction") or string.format(text("eq_course_discardAction"), editing.name)
         elseif near ~= nil then
             deleteText = string.format(text("eq_course_deleteAction"), near.name)
+        elseif dressageTest then
+            deleteText = text("eq_dt_deleteAction")
         end
         binding:setActionEventText(spec.eqDeleteEventId, deleteText)
-        binding:setActionEventTextVisibility(spec.eqDeleteEventId, dressageEditing or cancel or near ~= nil)
+        binding:setActionEventTextVisibility(spec.eqDeleteEventId, dressageEditing or cancel or near ~= nil or dressageTest)
     end
 end
 

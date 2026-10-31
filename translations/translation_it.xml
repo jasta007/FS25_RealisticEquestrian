@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Modifica ripresa di dressage"/>
         <text name="eq_dt_saveAction" text="Salva ripresa di dressage"/>
         <text name="eq_dt_cancelAction" text="Annulla ripresa di dressage"/>
+        <text name="eq_dt_deleteAction" text="Elimina ripresa di dressage"/>
+        <text name="eq_dt_deleteTitle" text="Elimina ripresa"/>
+        <text name="eq_dt_deleteAsk" text="Eliminare la ripresa di questo rettangolo (%d passi)? Tornerà a riprese casuali."/>
         <text name="eq_dt_modeSpot" text="Mostra movimenti sul posto"/>
         <text name="eq_dt_modeFigure" text="Mostra figure"/>
         <text name="eq_dt_new" text="Nuova ripresa di dressage: passo %d"/>

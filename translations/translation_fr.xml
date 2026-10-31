@@ -922,6 +922,9 @@
         <text name="eq_dt_editAction" text="Modifier la reprise de dressage"/>
         <text name="eq_dt_saveAction" text="Enregistrer la reprise de dressage"/>
         <text name="eq_dt_cancelAction" text="Annuler la reprise de dressage"/>
+        <text name="eq_dt_deleteAction" text="Supprimer la reprise de dressage"/>
+        <text name="eq_dt_deleteTitle" text="Supprimer la reprise"/>
+        <text name="eq_dt_deleteAsk" text="Supprimer la reprise de cette carrière (%d étapes) ? Elle reprendra des reprises aléatoires."/>
         <text name="eq_dt_modeSpot" text="Afficher les mouvements sur place"/>
         <text name="eq_dt_modeFigure" text="Afficher les figures"/>
         <text name="eq_dt_new" text="Nouvelle reprise de dressage : étape %d"/>

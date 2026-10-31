@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Editar prova de adestramento"/>
         <text name="eq_dt_saveAction" text="Salvar prova de adestramento"/>
         <text name="eq_dt_cancelAction" text="Cancelar prova de adestramento"/>
+        <text name="eq_dt_deleteAction" text="Excluir prova de adestramento"/>
+        <text name="eq_dt_deleteTitle" text="Excluir prova"/>
+        <text name="eq_dt_deleteAsk" text="Excluir a prova desta pista (%d passos)? Ela voltará a ter provas aleatórias."/>
         <text name="eq_dt_modeSpot" text="Mostrar movimentos no lugar"/>
         <text name="eq_dt_modeFigure" text="Mostrar figuras"/>
         <text name="eq_dt_new" text="Nova prova de adestramento: passo %d"/>

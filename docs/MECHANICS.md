@@ -306,7 +306,9 @@ start). Placeables standing over the arena, such as a riding hall, are hidden wh
   back off. The first step also picks whether the test tracks left or right at C.
 - **Ctrl+L** again saves, adding the final centre line from A to a halt at X. Undoing every step and
   saving deletes the arena's test. **Ctrl+Backspace** cancels without saving, and getting off the
-  horse saves what was kept.
+  horse saves what was kept. **Ctrl+L** on an arena with a test opens it where it was left.
+- **Ctrl+Backspace** near an arena with a test (and no course) asks, then deletes it, as for
+  courses; the arena rides random tests again.
 - Gait changes come with the figures (at the letter before a figure ridden at another gait), and
   nothing random is added between the steps: the test rides exactly as drawn, every time.
 - A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it

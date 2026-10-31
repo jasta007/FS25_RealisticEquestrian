@@ -238,6 +238,39 @@ function EqDressageEditor.onTestAction(vehicle)
 end
 
 
+--- The delete key near an arena with a saved test and no course (from
+--- EqCourseHooks.onDeleteAction): ask, then delete the test, as courses are deleted (James
+--- 2026-10-31).
+--- @param vehicle table
+function EqDressageEditor.onDelete(vehicle)
+    local frame = EqDressageEditor.startFrame(vehicle)
+    local plan = frame ~= nil and EqDressageTests.planFor(frame) or nil
+    if plan == nil then return end
+    local question = string.format(text("eq_dt_deleteAsk"), #plan.steps)
+    local function confirmed(yes)
+        if not yes or EqDressageTests.planFor(frame) ~= plan then return end
+        EqDressageTests.set(frame, nil)
+        notify(text("eq_dt_deleted"))
+        local spec = vehicle.spec_rideable
+        if spec ~= nil then spec.eqDtCheckedAt = nil end
+    end
+    if YesNoDialog ~= nil and YesNoDialog.show ~= nil then
+        YesNoDialog.show(confirmed, nil, question, text("eq_dt_deleteTitle"), nil, nil,
+            DialogElement ~= nil and DialogElement.TYPE_QUESTION or nil)
+    else
+        -- No dialog: a second press within 3 seconds deletes.
+        local now = g_time or 0
+        if EqDressageEditor.deleteArmed == plan and now - (EqDressageEditor.deleteArmedAt or 0) < 3000 then
+            EqDressageEditor.deleteArmed = nil
+            confirmed(true)
+        else
+            EqDressageEditor.deleteArmed, EqDressageEditor.deleteArmedAt = plan, now
+            notify(question)
+        end
+    end
+end
+
+
 --- Ctrl+Backspace while editing (from EqCourseHooks.onDeleteAction).
 function EqDressageEditor.onCancel()
     EqDressageEditor.finish(false)

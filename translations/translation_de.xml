@@ -922,6 +922,9 @@
         <text name="eq_dt_editAction" text="Dressuraufgabe bearbeiten"/>
         <text name="eq_dt_saveAction" text="Dressuraufgabe speichern"/>
         <text name="eq_dt_cancelAction" text="Dressuraufgabe abbrechen"/>
+        <text name="eq_dt_deleteAction" text="Dressuraufgabe löschen"/>
+        <text name="eq_dt_deleteTitle" text="Dressuraufgabe löschen"/>
+        <text name="eq_dt_deleteAsk" text="Die Dressuraufgabe dieses Vierecks (%d Schritte) löschen? Es reitet dann wieder zufällige Aufgaben."/>
         <text name="eq_dt_modeSpot" text="Lektionen auf der Stelle zeigen"/>
         <text name="eq_dt_modeFigure" text="Figuren zeigen"/>
         <text name="eq_dt_new" text="Neue Dressuraufgabe: Schritt %d"/>

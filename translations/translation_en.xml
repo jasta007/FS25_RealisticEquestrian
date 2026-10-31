@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Edit dressage test"/>
         <text name="eq_dt_saveAction" text="Save dressage test"/>
         <text name="eq_dt_cancelAction" text="Cancel dressage test"/>
+        <text name="eq_dt_deleteAction" text="Delete dressage test"/>
+        <text name="eq_dt_deleteTitle" text="Delete dressage test"/>
+        <text name="eq_dt_deleteAsk" text="Delete this arena's dressage test (%d steps)? It will ride random tests again."/>
         <text name="eq_dt_modeSpot" text="Show movements on the spot"/>
         <text name="eq_dt_modeFigure" text="Show figures"/>
         <text name="eq_dt_new" text="New dressage test: step %d"/>

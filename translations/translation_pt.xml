@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Editar reprise de dressage"/>
         <text name="eq_dt_saveAction" text="Guardar reprise de dressage"/>
         <text name="eq_dt_cancelAction" text="Cancelar reprise de dressage"/>
+        <text name="eq_dt_deleteAction" text="Apagar reprise de dressage"/>
+        <text name="eq_dt_deleteTitle" text="Apagar reprise"/>
+        <text name="eq_dt_deleteAsk" text="Apagar a reprise deste picadeiro (%d passos)? Voltará a ter reprises aleatórias."/>
         <text name="eq_dt_modeSpot" text="Mostrar movimentos no lugar"/>
         <text name="eq_dt_modeFigure" text="Mostrar figuras"/>
         <text name="eq_dt_new" text="Nova reprise de dressage: passo %d"/>

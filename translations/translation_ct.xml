@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="編輯盛裝舞步路線"/>
         <text name="eq_dt_saveAction" text="儲存盛裝舞步路線"/>
         <text name="eq_dt_cancelAction" text="取消盛裝舞步路線"/>
+        <text name="eq_dt_deleteAction" text="刪除盛裝舞步路線"/>
+        <text name="eq_dt_deleteTitle" text="刪除路線"/>
+        <text name="eq_dt_deleteAsk" text="刪除此場地的盛裝舞步路線（%d步）？將重新使用隨機路線。"/>
         <text name="eq_dt_modeSpot" text="顯示原地動作"/>
         <text name="eq_dt_modeFigure" text="顯示圖形"/>
         <text name="eq_dt_new" text="新的盛裝舞步路線：第%d步"/>

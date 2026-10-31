@@ -920,6 +920,9 @@
         <text name="eq_dt_editAction" text="Edytuj program ujeżdżenia"/>
         <text name="eq_dt_saveAction" text="Zapisz program ujeżdżenia"/>
         <text name="eq_dt_cancelAction" text="Anuluj program ujeżdżenia"/>
+        <text name="eq_dt_deleteAction" text="Usuń program ujeżdżenia"/>
+        <text name="eq_dt_deleteTitle" text="Usuń program"/>
+        <text name="eq_dt_deleteAsk" text="Usunąć program ujeżdżenia tego czworoboku (%d kroków)? Wrócą losowe programy."/>
         <text name="eq_dt_modeSpot" text="Pokaż ruchy w miejscu"/>
         <text name="eq_dt_modeFigure" text="Pokaż figury"/>
         <text name="eq_dt_new" text="Nowy program ujeżdżenia: krok %d"/>
