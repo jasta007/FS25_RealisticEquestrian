@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="快步"/>
         <text name="eq_dressage_gait_canter" text="跑步"/>
         <text name="eq_dressage_change" text="变换：%s"/>
+        <text name="eq_dressage_gaitChange" text="变换步法"/>
+        <text name="eq_dressage_gaitChangeAt" text="在 %s 变换步法"/>
+        <text name="eq_dressage_now" text="%s！"/>
         <text name="eq_dressage_flying" text="空中换腿：%s"/>
         <text name="eq_dressage_begin" text="前往%s开始盛装舞步动作"/>
         <text name="eq_dressage_reinBack" text="后退！"/>

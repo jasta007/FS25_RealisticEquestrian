@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Trotto"/>
         <text name="eq_dressage_gait_canter" text="Galoppo"/>
         <text name="eq_dressage_change" text="Cambio: %s"/>
+        <text name="eq_dressage_gaitChange" text="Cambio di andatura"/>
+        <text name="eq_dressage_gaitChangeAt" text="Cambio di andatura in %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Cambio di galoppo in aria: %s"/>
         <text name="eq_dressage_begin" text="Vai a %s per iniziare una ripresa di dressage"/>
         <text name="eq_dressage_reinBack" text="Rinculo!"/>

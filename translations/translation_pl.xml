@@ -98,6 +98,9 @@
         <text name="eq_dressage_gait_trot" text="Kłus"/>
         <text name="eq_dressage_gait_canter" text="Galop"/>
         <text name="eq_dressage_change" text="Zmiana: %s"/>
+        <text name="eq_dressage_gaitChange" text="Zmiana chodu"/>
+        <text name="eq_dressage_gaitChangeAt" text="Zmiana chodu przy %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
         <text name="eq_dressage_flying" text="Lotna zmiana nogi: %s"/>
         <text name="eq_dressage_begin" text="Podjedź do %s, aby rozpocząć program ujeżdżenia"/>
         <text name="eq_dressage_reinBack" text="Cofanie!"/>

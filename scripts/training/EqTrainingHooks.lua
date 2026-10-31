@@ -1151,6 +1151,10 @@ end
 --- A change or halt as the rider is told it: "Canter: M", "Change: Trot", "Halt at X".
 --- @param event table EqDressagePath test event
 --- @return string
+-- Slow to fast, for the arrow on a coming change of gait.
+local GAIT_RANK = { halt = 0, walk = 1, trot = 2, canter = 3 }
+
+
 local function pathEventText(event)
     if event.kind == "halt" then return string.format(g_i18n:getText("eq_dressage_haltAt"), event.letter or "X") end
     if event.kind == "spot" then
@@ -1223,7 +1227,18 @@ local function pathRows(rows, routine)
             -- The keys beside the panel while lateral work is asked for or coming up.
             EqTrainingHud.drawPanelNote(g_i18n:getText("eq_lat_keys"), COLOR.grey or color, true)
         end
-        if event ~= nil then
+        if event ~= nil and event.kind == "change" then
+            -- "Gait change" and an arrow up or down while it comes, then "Trot!" once it is due
+            -- (James, 2026-10-31: the gait's name straight away made him press it early).
+            local share = math.max(0, math.min(1, dist / run.warn))
+            if dist > run.tolerance then
+                local key = event.letter ~= nil and "eq_dressage_gaitChangeAt" or "eq_dressage_gaitChange"
+                local up = (GAIT_RANK[event.gait] or 0) > (GAIT_RANK[run.gait] or 0)
+                EqTrainingHud.drawPrompt(string.format(g_i18n:getText(key), event.letter or ""), share, color, up and 1 or -1)
+            else
+                EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. event.gait)), share, color)
+            end
+        elseif event ~= nil then
             EqTrainingHud.drawPrompt(pathEventText(event), math.max(0, math.min(1, dist / run.warn)), color)
         elseif sec ~= nil then
             -- Red while the body's angle or the bend is off (a mark lost each second of it).

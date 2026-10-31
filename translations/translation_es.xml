@@ -47,6 +47,9 @@
         <text name="eq_dressage_gait_trot" text="Trote"/>
         <text name="eq_dressage_gait_canter" text="Galope"/>
         <text name="eq_dressage_change" text="Cambio: %s"/>
+        <text name="eq_dressage_gaitChange" text="Cambio de aire"/>
+        <text name="eq_dressage_gaitChangeAt" text="Cambio de aire en %s"/>
+        <text name="eq_dressage_now" text="¡%s!"/>
         <text name="eq_dressage_flying" text="Cambio de pie: %s"/>
         <text name="eq_dressage_begin" text="Ve a %s para empezar una rutina de doma"/>
         <text name="eq_dressage_reinBack" text="¡Paso atrás!"/>
