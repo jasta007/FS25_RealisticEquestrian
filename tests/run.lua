@@ -14,6 +14,7 @@ dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
+dofile("scripts/training/EqJump.lua")
 dofile("scripts/training/EqTraining.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
@@ -4743,6 +4744,136 @@ end)()
     g_currentMission, EqI18N.globalI18N, EqCompetitionManager.month = savedMission, savedGlobal, savedMonth
     EqCompetitionManager = savedManager
     EqHostManager.reset()
+end)()
+
+-- JUMPS: gravity, the push-off and the collected jump (EqJump).
+;(function()
+    local J = EqJump
+    check("jump: rising pull on the ground and going up", J.gravity(-1, true) == -J.GRAVITY * J.RISE_SHARE
+        and J.gravity(J.BLEND_SPEED + 1, false) == -J.GRAVITY * J.RISE_SHARE)
+    local prev, smooth = nil, true
+    for vy = J.BLEND_SPEED + 1, -J.FALL_MAX - 1, -0.05 do
+        local pull = J.gravity(vy, false)
+        if prev ~= nil and math.abs(pull - prev) > 1.2 then smooth = false end
+        prev = pull
+    end
+    check("jump: the pull changes smoothly over the top and fades to FALL_MAX", smooth
+        and J.gravity(-J.FALL_MAX, false) == 0)
+    J.CLOSE_MODE = 1
+    check("jump pose: close to the ground held while rising (mode 1)", J.closeToGround(false, 3)
+        and not J.closeToGround(false, -1) and J.closeToGround(true, -1))
+    J.CLOSE_MODE = 3
+    check("jump pose: landing pose once falling faster than CLOSE_FALL_SPEED (mode 3)", not J.closeToGround(false, 3)
+        and not J.closeToGround(false, -J.CLOSE_FALL_SPEED / 2) and J.closeToGround(false, -J.CLOSE_FALL_SPEED - 0.1))
+    check("jump pose: off a high drop the landing pose waits till CLOSE_LEAD_S from the ground",
+        J.closeToGround(false, -2, J.CLOSE_DROP_M) and not J.closeToGround(false, -2, 3)
+        and J.closeToGround(false, -6, 6 * J.CLOSE_LEAD_S - 0.01) and J.closeToGround(false, -2, nil))
+    local carried = J.newLaunch(7, 5, false, nil, 0, nil, "canter")
+    check("carry: none before the launch", J.carrySpeed(carried, 0) == nil)
+    carried.launched, carried.launchedAt = true, 1000
+    check("carry: eased in, then AIR_CARRY times the take-off speed at a canter",
+        J.carrySpeed(carried, 1000) == 5 and math.abs(J.carrySpeed(carried, 1000 + J.CARRY_EASE_MS) - 5 * J.AIR_CARRY) < 1e-9)
+    check("carry: dropped once the rider asks for a slower gait", J.carrySpeed(carried, 5000, 3) == nil
+        and J.carrySpeed(carried, 5000, 6) ~= nil)
+    local gallopJump = J.newLaunch(7, 11, false, nil, 0, nil, "gallop")
+    gallopJump.launched, gallopJump.launchedAt = true, 0
+    local ctrlJump = J.newLaunch(7, 5, true, 7, 0, 3, "canter")
+    ctrlJump.launched = true
+    local trotJump = J.newLaunch(7, 3, true, 7, 0, 3, "trot")
+    trotJump.launched, trotJump.launchedAt = true, 0
+    check("carry: gallop GALLOP_CARRY, trot TROT_CARRY and keeps its pace, none in a Ctrl jump",
+        J.carrySpeed(gallopJump, 5000) == 11 * J.GALLOP_CARRY and J.carrySpeed(ctrlJump, 5000) == nil
+        and math.abs(J.carrySpeed(trotJump, 5000) - 3 * J.TROT_CARRY) < 1e-9 and trotJump.targetSpeed == nil)
+    local g = J.gravity(0, true)
+    local v = J.launchSpeed(1.6, g)
+    check("jump: launch speed reaches the height", math.abs(v * v / (2 * math.abs(g)) - 1.6) < 1e-9)
+    local before = 2 * math.sqrt(2 * 1.85 / (9.81 * 1.65))
+    local after = J.airtime(2 * 0.925 * J.HEIGHT_SHARE)
+    check("jump: a mid-agility gallop jump is shorter in the air than before", after < before * 0.85,
+        string.format("%.2f s vs %.2f s", after, before))
+
+    -- Push-off (a setting, off by default): a small lift, then the rest of the jump's lift.
+    check("jump: push-off longer at a gallop, a collected jump gathers without lift",
+        J.newLaunch(v, 10, false, nil, 0, nil, "canter").pushMs == J.PUSH_MS
+        and J.newLaunch(v, 10, false, nil, 0, nil, "gallop").pushMs == J.GALLOP_PUSH_MS
+        and J.newLaunch(v, 10, false, nil, 0).lift == J.PUSH_SPEED and J.newLaunch(v, 10, true, 7, 0).lift == 0)
+    local savedPush, savedLift = J.PUSH_MS, J.PUSH_SPEED
+    J.PUSH_MS, J.PUSH_SPEED = 180, 0.5
+    local launch = J.newLaunch(v, 10, false, nil, 1000)
+    local speedY, cap = J.step(launch, 1016, 16, g)
+    check("jump: push-off lifts slowly first", math.abs(speedY - (J.PUSH_SPEED - g * 0.016)) < 1e-9 and cap == nil
+        and not launch.launched)
+    local now = 1016
+    while not launch.launched do
+        now = now + 16
+        speedY = J.step(launch, now, 16, g)
+    end
+    check("jump: launches once the push-off is over", now - 1000 >= J.PUSH_MS and now - 1000 < J.PUSH_MS + 16)
+    local up = speedY + g * 0.016
+    check("jump: apex still the jump's height", math.abs(launch.rise + up * up / (2 * math.abs(g)) - 1.6) < 1e-6,
+        string.format("rise %.3f", launch.rise))
+    check("jump: nothing more to set after the launch", J.step(launch, now + 16, 16, g) == nil)
+    J.PUSH_MS, J.PUSH_SPEED = savedPush, savedLift
+
+    -- Collected: Ctrl held or just let go.
+    check("collected: from a trot", J.isCollected(false, nil, 0, "trot") and not J.isCollected(false, nil, 0, "canter")
+        and J.newLaunch(7, 3, true, 7, 0, 3, "trot").pushMs == J.TROT_PUSH_MS)
+    check("collected: Ctrl held", J.isCollected(true, nil, 0))
+    check("collected: Ctrl just let go", J.isCollected(false, 1000, 1000 + J.COLLECT_WINDOW_MS))
+    check("collected: Ctrl too long ago", not J.isCollected(false, 1000, 1001 + J.COLLECT_WINDOW_MS)
+        and not J.isCollected(false, nil, 5000))
+    local collected = J.newLaunch(v, 10, true, 7, 0)
+    local _, half = J.step(collected, J.COLLECT_PUSH_MS / 2, 16, g)
+    check("collected: slows over the gather", math.abs(half - (10 + (10 * J.COLLECT_SPEED_SHARE - 10) / 2)) < 1e-9)
+    local _, slow = J.step(collected, J.COLLECT_PUSH_MS + 100, 16, g)
+    check("collected: stays slow in the air", slow == 10 * J.COLLECT_SPEED_SHARE and collected.speedY == 7)
+
+    check("collected: slows to about a trot", J.collectedSpeed(10, 3) == 3 * J.COLLECT_TROT_SHARE
+        and J.collectedSpeed(2, 3) == 2 and J.collectedSpeed(10, nil) == 10 * J.COLLECT_SPEED_SHARE)
+    -- James's angles: gallop 30-40 degrees, canter 45-60, collected 65-80 (agility 50, base speeds 10/5/3).
+    local gallopH = 2 * 0.925 * J.HEIGHT_SHARE
+    local function angleAt(height, speed) return J.angle(J.launchSpeed(height, g), speed) end
+    local gallopA, canterA = angleAt(gallopH, 10.3 * J.GALLOP_CARRY), angleAt(gallopH * 1.8 * 0.5, 5.15 * J.AIR_CARRY)
+    local collectA = angleAt(gallopH * J.COLLECT_HEIGHT_SHARE, J.collectedSpeed(5.15, 3.1))
+    check("jump angles: gallop 30-48 (no carry since James found it snapped), canter 45-60, collected 65-80", gallopA >= 30 and gallopA <= 48
+        and canterA >= 45 and canterA <= 60 and collectA >= 65 and collectA <= 80,
+        string.format("%.0f / %.0f / %.0f", gallopA, canterA, collectA))
+
+    -- The fall is held to FALL_MAX (the base game's landing speed), after this frame's gravity.
+    local fallG = J.gravity(-1, false)
+    check("fall cap: only when it would pass FALL_MAX", J.fallCap(-1, false, fallG, 16) == nil
+        and J.fallCap(-20, true, fallG, 16) == nil)
+    local held = J.fallCap(-20, false, fallG, 16)
+    check("fall cap: lands at FALL_MAX after gravity", math.abs(held + fallG * 0.016 + J.FALL_MAX) < 1e-9)
+    check("fall cap: airtime counts the held fall", J.airtime(1.6) > math.sqrt(2 * 1.6 / (9.81 * J.RISE_SHARE))
+        + math.sqrt(2 * 1.6 / (9.81 * J.FALL_SHARE)))
+
+    -- Console tuning.
+    local was = J.FALL_SHARE
+    local ok = J.set("fall", 99)
+    check("jump tuning: clamped to its limits", ok and J.FALL_SHARE == 6)
+    check("jump tuning: unknown and missing values refused", not J.set("wobble", 1) and not J.set("fall", nil))
+    J.FALL_SHARE = was
+    -- Temperament's aim: a 4 m jump 10 m ahead, square on; +x is the horse's left.
+    local function jumpAt(centreX) return { { ax = centreX - 2, az = 10, bx = centreX + 2, bz = 10 } } end
+    check("aim: none below AIM_FROM, full at 100", J.aimStrength(J.AIM_FROM - 5) == 0 and J.aimStrength(100) == 1
+        and J.aim(jumpAt(1.6), J.AIM_FROM - 5) == 0)
+    check("aim: pointed near the middle the horse goes where it is pointed", J.aim(jumpAt(0.5), 100) == 0)
+    local _, _, offset = J.aim(jumpAt(1.6), 100)
+    local left = J.aim(jumpAt(1.6), 100)
+    local right = J.aim(jumpAt(-1.6), 100)
+    check("aim: off centre it turns toward the middle", left > 0 and right < 0 and near(left, -right),
+        string.format("left %s right %s offset %s", tostring(left), tostring(right), tostring(offset)))
+    check("aim: at most AIM_RATE, weaker with less temperament", left <= J.AIM_RATE + 1e-9 and J.aim(jumpAt(1.6), 75) < left)
+    check("aim: pointed far past the end it lets the rider go round", J.aim(jumpAt(2 * (J.AIM_WIDE + 0.1)), 100) == 0)
+    check("aim: the rider steering away wins, steering in is fine", J.aim(jumpAt(1.6), 100, 1) == 0
+        and J.aim(jumpAt(1.6), 100, -1) == left)
+    check("aim: jumps behind, too far or side on are left alone",
+        J.aim({ { ax = -0.4, az = -10, bx = 3.6, bz = -10 } }, 100) == 0
+        and J.aim({ { ax = -0.4, az = J.AIM_REACH + 5, bx = 3.6, bz = J.AIM_REACH + 5 } }, 100) == 0
+        and J.aim({ { ax = 1, az = 8, bx = 1.5, bz = 12 } }, 100) == 0)
+    local nearest = J.jumpAhead({ { ax = -2, az = 15, bx = 2, bz = 15 }, { ax = -2, az = 6, bx = 2, bz = 6 } })
+    check("aim: the nearest jump ahead counts", nearest ~= nil and nearest.az == 6)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

@@ -469,6 +469,17 @@ bar, and takes effect the moment the horse lands. A gallop jump from the bottom 
 on landing if exertion is down to the canter line, within 1.5 s. In the air the horse also turns
 on A and D at 1.2 times its ground turn rate on top of the base game's turning.
 
+Jumps rise under 3.5 times normal gravity and come down under 3 times, about 12% lower than
+before, so a gallop jump is about 0.7 s in the air (it was nearly 1 s) and doesn't hang at the
+top. The pull changes smoothly over the top and eases off as the fall nears 7 m/s, near the base
+game's landing speed: any sudden change showed as a stutter in the animation. The jump starts with a small lift for
+0.08 s at a canter (0.12 s at a gallop) so the push-off animation begins on the ground, and the
+horse carries 1.45 times its take-off speed through the air from a canter (1.8 from a trot, none
+at a gallop or once you ask for a slower gait) so it still covers ground. A **collected jump**: jump from a trot (the base game only jumps from a canter),
+or hold Ctrl (or let go of it less than half a second before) and press jump. From a canter or gallop the horse gathers itself on the ground over 0.26 s (0.08 s from a trot),
+slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
+distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test. The `eqJump` console command shows and changes these numbers until the game restarts.
+
 ### Staff, age and metabolism
 
 - **Helpers** (the base game's Animal Workers with Riding turned on for a horse pen, or RLRM's

@@ -493,15 +493,11 @@ end
 -- switching between canter and gallop is quicker. On top of that the horse's stats change how
 -- it rides (EqTraining.handling): speed sets its top speeds, agility its jump and turn rate,
 -- temperament its acceleration and how long it stands after a crash.
-EqTrainingHooks.CANTER_JUMP_SHARE = 1.65
+-- Raised from 1.65 when every jump was lowered (EqJump.HEIGHT_SHARE), so the canter, the show
+-- jumping gait, loses less height than the gallop.
+EqTrainingHooks.CANTER_JUMP_SHARE = 1.8
 EqTrainingHooks.ACCELERATION_SHARE = 1.6
--- The base game launches a jump at sqrt(2 g jumpHeight) up (spec_rideable.currentSpeedY, 6.4 m/s
--- for 2.1 m) and lets it fall at 9.81 m/s2: 1.3 s in the air, 16 m long at 12 m/s, so a jump
--- floats. We pull a horse in the air down GRAVITY_SHARE times as hard, and raise jumpHeight by
--- the same share so it still reaches the same height: the jump takes 1/sqrt(GRAVITY_SHARE) as long.
--- James found 2 great but asked for a touch more float: 1.65 is 10% longer in the air.
-EqTrainingHooks.GRAVITY = 9.81
-EqTrainingHooks.GRAVITY_SHARE = 1.65
+-- Gravity, the push-off before a jump and the collected (Ctrl) jump: EqJump.
 -- A real horse picks where to land: in the air it turns this many times as fast as on the ground.
 EqTrainingHooks.AIR_TURN_SHARE = 1.6
 -- The base game hardly turns a horse in the air however fast it may (James, 2026-10-27: still
@@ -527,6 +523,68 @@ function EqTrainingHooks.airTurn(spec, dt)
     end
 end
 
+-- Only jumps within this many metres are turned into the horse's space each frame.
+EqTrainingHooks.AIM_LIST_RADIUS = 45
+
+--- The jump temperament aims for: a round's next fence (fence 1 in its countdown), and nothing
+--- outside a round (James, 2026-10-31: hard to tell what you're aiming for otherwise, and it
+--- pulled him toward another jump).
+--- @return table { fence } or {}
+local function aimJumps()
+    local round = EqCourseHooks ~= nil and EqCourseHooks.round or nil
+    local sj = round ~= nil and round.sj or nil
+    if sj ~= nil and (sj.state == "countdown" or sj.state == "go" or sj.state == "running") then
+        local jumps = round.course ~= nil and round.course.jumps or nil
+        local fence = jumps ~= nil and jumps[sj.state == "running" and (sj.next or 1) or 1] or nil
+        if fence ~= nil and fence.ax ~= nil and fence.bx ~= nil then return { fence } end
+    end
+    return {}
+end
+
+--- Temperament aims the horse at the middle of the jump ahead when it is pointed off centre
+--- (EqJump.aim). On the ground at a trot, canter or gallop, never in a dressage test.
+--- @param vehicle table
+--- @param spec table spec_rideable
+--- @param record table|nil
+--- @param sheet table
+--- @param gait string
+--- @param dt number ms
+function EqTrainingHooks.aimAtJump(vehicle, spec, record, sheet, gait, dt)
+    if gait ~= "trot" and gait ~= "canter" and gait ~= "gallop" then return end
+    if type(spec.currentTurnAngle) ~= "number" or vehicle.rootNode == nil then return end
+    local routine = sheet.routine
+    if routine ~= nil and routine.active and routine.kind == "markers" then return end
+    local temperament = record ~= nil and record.trained ~= nil and record.trained.temperament or nil
+    if EqJump.aimStrength(temperament) <= 0 then return end
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local radius = EqTrainingHooks.AIM_LIST_RADIUS
+    local near = {}
+    for _, jump in ipairs(aimJumps()) do
+        local jx, jz = jump.x or jump.ax, jump.z or jump.az
+        if math.abs(jx - x) < radius and math.abs(jz - z) < radius then
+            local ax, _, az = worldToLocal(vehicle.rootNode, jump.ax, 0, jump.az)
+            local bx, _, bz = worldToLocal(vehicle.rootNode, jump.bx, 0, jump.bz)
+            table.insert(near, { ax = ax, az = az, bx = bx, bz = bz })
+        end
+    end
+    if #near == 0 then spec.eqAiming = nil return end
+    local values = spec.inputValues or {}
+    local axis = values.axisSteer or 0
+    if axis == 0 then axis = values.axisSteerSend or 0 end
+    if axis == 0 and Input ~= nil and Input.isKeyPressed ~= nil and Input.KEY_a ~= nil and Input.KEY_d ~= nil then
+        axis = (Input.isKeyPressed(Input.KEY_d) and 1 or 0) - (Input.isKeyPressed(Input.KEY_a) and 1 or 0)
+    end
+    local rate, _, offset = EqJump.aim(near, temperament, axis)
+    if rate == 0 then spec.eqAiming = nil return end
+    -- currentTurnAngle grows turning left, as rate does.
+    spec.currentTurnAngle = spec.currentTurnAngle + rate * dt / 1000
+    if not spec.eqAiming then
+        spec.eqAiming = true
+        Log:info("Jump aim: temperament %.0f turns %s toward the middle (offset %.2f of half the jump, %.0f deg/s)",
+            temperament or 50, rate > 0 and "left" or "right", offset or 0, math.deg(math.abs(rate)))
+    end
+end
+
 --- Set the base game's jump height, acceleration, top speeds and turn rate for the gait and
 --- the horse, before it jumps. The base values are kept on the spec the first time.
 --- @param spec table spec_rideable
@@ -538,8 +596,9 @@ local function tuneRiding(spec, gait, record, sheet)
     local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
     if type(spec.jumpHeight) == "number" then
         spec.eqBaseJumpHeight = spec.eqBaseJumpHeight or spec.jumpHeight
-        spec.jumpHeight = spec.eqBaseJumpHeight * handling.jump * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
-            * EqTrainingHooks.GRAVITY_SHARE
+        -- The gallop's jump, which a collected jump is measured against.
+        spec.eqGallopJumpHeight = spec.eqBaseJumpHeight * handling.jump * EqJump.HEIGHT_SHARE
+        spec.jumpHeight = spec.eqGallopJumpHeight * (gait == "canter" and EqTrainingHooks.CANTER_JUMP_SHARE or 1)
     end
     if type(spec.maxAcceleration) == "number" then
         spec.eqBaseAcceleration = spec.eqBaseAcceleration or spec.maxAcceleration
@@ -611,6 +670,23 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- combo goes and nothing trains (James, 2026-10-27: a test ran on, faulting, while he was
     -- on another horse).
     if vehicle.getIsControlled ~= nil and not vehicle:getIsControlled() then
+        -- Left in the air, our pull stays on until it lands: the jump's lift was worked out for it,
+        -- and the base game's weaker pull sent a horse left mid-jump sky high (James, 2026-10-31).
+        if spec.eqBaseGravity ~= nil then
+            if spec.isOnGround == false and type(spec.currentSpeedY) == "number" then
+                spec.gravity = EqJump.gravity(spec.currentSpeedY, false)
+                local capped = EqJump.fallCap(spec.currentSpeedY, false, spec.gravity, dt)
+                if capped ~= nil then spec.currentSpeedY = capped end
+                if not spec.eqLeftInAir then
+                    spec.eqLeftInAir = true
+                    Log:info("Jump: rider left in the air (rising at %.1f m/s), our pull kept till it lands", spec.currentSpeedY)
+                end
+            else
+                spec.gravity = spec.eqBaseGravity
+                spec.eqLeftInAir = nil
+            end
+        end
+        spec.eqLaunch = nil
         local ended = EqTraining.breakRoutine(sheet)
         if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
         return
@@ -628,18 +704,26 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     if gait == nil or math.abs(spec.currentSpeed or 0) < 0.05 then gait = "halt" end
     -- Not while airborne, so the lift a jump started with stays put.
     if spec.eqJump == nil then tuneRiding(spec, gait, record, sheet) end
-    -- In the air: an extra pull down (see GRAVITY_SHARE) and snappier turning (AIR_TURN_SHARE).
+    -- A harder pull down (EqJump.gravity), the push-off and a collected jump's gather (EqJump.step),
+    -- and snappier turning in the air (AIR_TURN_SHARE).
     local airborne = spec.isOnGround == false
-    if airborne and type(spec.currentSpeedY) == "number" then
-        spec.currentSpeedY = spec.currentSpeedY - EqTrainingHooks.GRAVITY * (EqTrainingHooks.GRAVITY_SHARE - 1) * dt / 1000
-    end
+    EqTrainingHooks.stepJump(vehicle, spec, dt)
     if spec.eqBaseTurnSpeed ~= nil and airborne ~= spec.eqAirborne then
         local handling = EqTraining.handling(record ~= nil and record.trained.speed or nil, record ~= nil and record.trained.agility or nil)
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn * (airborne and EqTrainingHooks.AIR_TURN_SHARE or 1)
     end
+    -- After a drop, does the horse leave the ground again (a bounce that replays the landing)?
+    if airborne and spec.eqAirborne == false and spec.eqDropLandedAt ~= nil and (g_time or 0) - spec.eqDropLandedAt < 1500 then
+        Log:info("Jump: off the ground again %d ms after landing a drop", (g_time or 0) - spec.eqDropLandedAt)
+        spec.eqDropLandedAt = nil
+    end
     spec.eqAirborne = airborne
     EqExertion.setAir(sheet.exertion, airborne)
-    if airborne then EqTrainingHooks.airTurn(spec, dt) end
+    if airborne then
+        EqTrainingHooks.airTurn(spec, dt)
+    else
+        EqLog.try("EqTrainingHooks.aimAtJump", EqTrainingHooks.aimAtJump, vehicle, spec, record, sheet, gait, dt)
+    end
 
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil
@@ -952,6 +1036,135 @@ local function pollGaitKeys(vehicle)
 end
 
 
+--- @return boolean either Ctrl key held
+local function ctrlDown()
+    if Input == nil or Input.isKeyPressed == nil then return false end
+    return (Input.KEY_lctrl ~= nil and Input.isKeyPressed(Input.KEY_lctrl) == true)
+        or (Input.KEY_rctrl ~= nil and Input.isKeyPressed(Input.KEY_rctrl) == true)
+end
+
+
+-- Jumps logged with what the horse's animation was given, so James can see what starts the
+-- push-off clip (the animation reads the vertical speed and the ground flag, nothing else).
+EqTrainingHooks.JUMP_TRACE_COUNT = 6
+-- If the jump key doesn't reach the base game while Ctrl is held, Space is read from the key and
+-- the jump started by us, when none started this long after the press.
+EqTrainingHooks.CTRL_SPACE_WAIT_MS = 120
+
+--- @return string what the animation sees: ground flag and vertical speed
+local function animationSeen(spec)
+    local params = spec.animationParameters or {}
+    local ground = params.onGround ~= nil and tostring(params.onGround.value) or "?"
+    local vertical = params.verticalVelocity ~= nil and tonumber(params.verticalVelocity.value) or nil
+    return string.format("anim onGround %s, verticalVelocity %s", ground,
+        vertical ~= nil and string.format("%.2f", vertical) or "?")
+end
+
+
+--- Turn the base game's jump into a push-off and a launch (EqJump.newLaunch). Called from onJump,
+--- after the base game set the launch speed.
+--- @param spec table spec_rideable
+function EqTrainingHooks.startLaunch(spec)
+    if type(spec.currentSpeedY) ~= "number" then return end
+    local now = g_time or 0
+    spec.eqJumpAt = now
+    local collected = EqJump.isCollected(ctrlDown(), spec.eqCtrlAt, now, spec.eqLastGait)
+    local collectedSpeedY = nil
+    if collected then
+        local gallop = spec.eqGallopJumpHeight or spec.jumpHeight or 2
+        local share = spec.eqLastGait == "trot" and EqJump.TROT_HEIGHT_SHARE or EqJump.COLLECT_HEIGHT_SHARE
+        collectedSpeedY = EqJump.launchSpeed(gallop * share, spec.gravity or -EqJump.GRAVITY)
+    end
+    local trot = Rideable.GAITTYPES ~= nil and type(spec.topSpeeds) == "table" and spec.topSpeeds[Rideable.GAITTYPES.TROT] or nil
+    spec.eqLaunch = EqJump.newLaunch(spec.currentSpeedY, math.abs(spec.currentSpeed or 0), collected, collectedSpeedY, now,
+        type(trot) == "number" and trot or nil, spec.eqLastGait)
+    if collected then spec.eqCtrlAt = nil end
+    spec.eqJumpTraces = (spec.eqJumpTraces or 0) + 1
+    spec.eqLaunch.trace = spec.eqJumpTraces <= EqTrainingHooks.JUMP_TRACE_COUNT
+    if spec.eqLaunch.trace then
+        Log:info("Jump: %s, base lift %.2f m/s, launch %.2f m/s after a %d ms push-off at %.2f m/s, speed %.1f%s (%s)",
+            collected and "collected" or "normal", spec.currentSpeedY, spec.eqLaunch.speedY, spec.eqLaunch.pushMs,
+            spec.eqLaunch.lift, math.abs(spec.currentSpeed or 0),
+            collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
+        Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
+            spec.eqLaunch.targetSpeed or EqJump.carrySpeed({ launched = true, collected = spec.eqLaunch.collected,
+                trot = spec.eqLaunch.trot, gait = spec.eqLaunch.gait, startSpeed = math.abs(spec.currentSpeed or 0) }, 0, nil) or 0))
+    end
+    if not spec.eqLaunch.launched then spec.currentSpeedY = spec.eqLaunch.lift end
+end
+
+
+--- Each ridden frame: gravity, the take-off in progress, and Ctrl + Space read from the keys.
+--- @param vehicle table
+--- @param spec table spec_rideable
+--- @param dt number ms
+function EqTrainingHooks.stepJump(vehicle, spec, dt)
+    local now = g_time or 0
+    local ctrl = ctrlDown()
+    if ctrl then spec.eqCtrlAt = now end
+    -- Ctrl + Space read from the keys (only if the jump key didn't fire, see CTRL_SPACE_WAIT_MS).
+    local space = Input ~= nil and Input.isKeyPressed ~= nil and Input.KEY_space ~= nil and Input.isKeyPressed(Input.KEY_space) == true
+    if space and ctrl and not spec.eqSpaceWasDown then spec.eqCtrlSpaceAt = now end
+    spec.eqSpaceWasDown = space
+    if spec.eqCtrlSpaceAt ~= nil and now - spec.eqCtrlSpaceAt >= EqTrainingHooks.CTRL_SPACE_WAIT_MS then
+        local pressed = spec.eqCtrlSpaceAt
+        spec.eqCtrlSpaceAt = nil
+        local entered = vehicle.getIsEntered == nil or vehicle:getIsEntered()
+        if entered and (spec.eqJumpAt or -math.huge) < pressed and vehicle.getIsRideableJumpAllowed ~= nil
+            and vehicle:getIsRideableJumpAllowed() then
+            Log:info("Jump: Ctrl + Space read from the keys (the jump key didn't fire with Ctrl held)")
+            spec.eqCtrlAt = now
+            vehicle:jump()
+        end
+    end
+
+    if type(spec.currentSpeedY) ~= "number" then return end
+    if type(spec.gravity) == "number" then
+        spec.eqBaseGravity = spec.eqBaseGravity or spec.gravity
+        spec.gravity = EqJump.gravity(spec.currentSpeedY, spec.isOnGround ~= false)
+        local capped = EqJump.fallCap(spec.currentSpeedY, spec.isOnGround ~= false, spec.gravity, dt)
+        if capped ~= nil then spec.currentSpeedY = capped end
+    end
+    local launch = spec.eqLaunch
+    if launch == nil then return end
+    if launch.trace then
+        -- What the animation sees on the way down, for the landing line below.
+        local params = spec.animationParameters or {}
+        local vertical = params.verticalVelocity ~= nil and tonumber(params.verticalVelocity.value) or nil
+        if vertical ~= nil and vertical < (launch.lowestVertical or math.huge) then launch.lowestVertical = vertical end
+    end
+    if spec.isCloseToGround and launch.closeAt == nil and launch.launched and (spec.currentSpeedY or 0) < 0 then
+        launch.closeAt = now
+    end
+    local wasLaunched = launch.launched
+    local speedY, cap = EqJump.step(launch, now, dt, spec.gravity or -EqJump.GRAVITY)
+    if speedY ~= nil then spec.currentSpeedY = speedY end
+    if cap ~= nil and type(spec.currentSpeed) == "number" and spec.currentSpeed > cap then spec.currentSpeed = cap end
+    local gaitTop = type(spec.topSpeeds) == "table" and spec.inputValues ~= nil and spec.topSpeeds[spec.inputValues.currentGait] or nil
+    local carry = EqJump.carrySpeed(launch, now, type(gaitTop) == "number" and gaitTop or nil)
+    if carry ~= nil and spec.isOnGround == false and type(spec.currentSpeed) == "number" and spec.currentSpeed < carry then
+        spec.currentSpeed = carry
+    end
+    if launch.trace and launch.launched and not wasLaunched then
+        Log:info("Jump: launched after %d ms, %.2f m up, horse on the ground %s (%s)", now - launch.startedAt,
+            launch.rise, tostring(spec.isOnGround), animationSeen(spec))
+    end
+    -- Done once it has launched and come back down (or a collected jump's slow stays on till then).
+    if launch.launched and spec.isOnGround ~= false and now - launch.startedAt > launch.pushMs + 200 then
+        local drop = (launch.highest or 0) > EqJump.CLOSE_DROP_M
+        if launch.trace or drop then
+            Log:info("Jump: landed after %d ms, close to the ground %s ms before, fastest fall the animation saw %s m/s, "
+                .. "highest above the ground %.1f m%s",
+                now - launch.startedAt, launch.closeAt ~= nil and tostring(math.floor(now - launch.closeAt)) or "?",
+                launch.lowestVertical ~= nil and string.format("%.1f", launch.lowestVertical) or "?",
+                launch.highest or 0, drop and " (a drop)" or "")
+            spec.eqDropLandedAt = drop and now or nil
+        end
+        spec.eqLaunch = nil
+    end
+end
+
+
 --- Appended to Rideable:jump (the server branch: in multiplayer a client's JumpEvent calls it
 --- on the server). The jump is judged in the air by trackJump; any jump ends a routine, but the
 --- gallop keeps its pace through it (paceGait).
@@ -973,6 +1186,7 @@ function EqTrainingHooks.onJump(vehicle)
     if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
+    EqTrainingHooks.startLaunch(spec)
     EqLog.try("EqTrainingHooks.onJump logRideableFields", logRideableFields, spec)
 end
 
@@ -1672,6 +1886,45 @@ function EqTrainingHooks.installRideable(guarded)
         if not EqMain.isActive or not self.isServer then return end
         guarded("riding tracker", function() EqTrainingHooks.onUpdateRiding(self, dt) end)
     end)
+
+    -- The pose the animation picks in a jump (EqJump.closeToGround): the base game works out
+    -- isCloseToGround just before this.
+    if Rideable.updateAnimation ~= nil then
+        Rideable.updateAnimation = Utils.prependedFunction(Rideable.updateAnimation, function(self)
+            local spec = self.spec_rideable
+            if not EqMain.isActive or spec == nil or spec.eqLaunch == nil or spec.isOnGround ~= false then return end
+            guarded("jump pose", function()
+                local ground = spec.groundRaycastResult
+                local distance = ground ~= nil and type(ground.distance) == "number" and ground.distance or nil
+                spec.isCloseToGround = EqJump.closeToGround(spec.isCloseToGround == true, spec.currentSpeedY or 0, distance)
+                local launch = spec.eqLaunch
+                if distance ~= nil and distance > (launch.highest or 0) then launch.highest = distance end
+            end)
+        end)
+    end
+
+    -- Jumps from a trot too (a collected jump, EqJump): the base game allows them from a canter.
+    if Rideable.getIsRideableJumpAllowed ~= nil then
+        Rideable.getIsRideableJumpAllowed = Utils.overwrittenFunction(Rideable.getIsRideableJumpAllowed,
+            function(self, superFunc, allowWhileJump, ...)
+                if superFunc(self, allowWhileJump, ...) then return true end
+                local spec = self.spec_rideable
+                if not EqMain.isActive or spec == nil or self.isBroken or Rideable.GAITTYPES == nil then return false end
+                return spec.inputValues.currentGait == Rideable.GAITTYPES.TROT and (spec.isOnGround or allowWhileJump == true)
+            end)
+    end
+    if Rideable.updateInputText ~= nil then
+        Rideable.updateInputText = Utils.appendedFunction(Rideable.updateInputText, function(self)
+            local spec = self.spec_rideable
+            if not EqMain.isActive or spec == nil or spec.jumpEventId == nil or Rideable.GAITTYPES == nil then return end
+            if spec.inputValues.currentGait ~= Rideable.GAITTYPES.TROT then return end
+            guarded("trot jump key", function()
+                g_inputBinding:setActionEventText(spec.jumpEventId, g_i18n:getText("input_JUMP"))
+                g_inputBinding:setActionEventActive(spec.jumpEventId, true)
+                g_inputBinding:setActionEventTextVisibility(spec.jumpEventId, true)
+            end)
+        end)
+    end
 
     Rideable.jump = Utils.appendedFunction(Rideable.jump, function(self)
         if not EqMain.isActive or not self.isServer then return end
