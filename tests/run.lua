@@ -4278,6 +4278,15 @@ end)()
         EqDressageTests.set(ownFrame, nil)
         check(name .. ": a deleted test is gone", EqDressageTests.planFor(ownFrame) == nil and #EqDressageTests.list == 0)
     end
+    -- A player's test opens with a plain halt at X, never a rein back (James 2026-10-31).
+    local plainOpening = true
+    for seed = 1, 200 do
+        local own = EqDressagePath.build(frame, nil, nil, { turn = seed % 2 == 0 and 1 or -1, seed = seed, steps = {} })
+        for _, e in ipairs(own.events) do
+            if e.kind == "halt" and e.letter == "X" and not e.final and e.reinBack then plainOpening = false end
+        end
+    end
+    check("own test: no rein back at the opening halt", plainOpening)
     -- A step that no longer fits (the arena's size changed) ends the plan there.
     local broken = EqDressagePath.build(frame, nil, nil, { turn = 1, seed = 3, steps = { { kind = "figure", id = "nothing/trot/1/1", seed = 1 } } })
     check("a saved step that no longer fits is left out", broken.broken == 1 and broken.moves[#broken.moves].key == "final")

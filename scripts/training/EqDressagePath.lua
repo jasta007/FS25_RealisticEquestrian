@@ -1257,7 +1257,11 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     table.insert(test.moves, enter)
     for i = 1, xIndex do append(test, { opening[i] }, 1) end
     enter.s1 = test.pts[#test.pts].s
-    halt(enter.s1, "X", 1, false, "trot")
+    -- A player's test opens with a plain halt at X, as the editor shows it (James 2026-10-31: his
+    -- test asked for a rein back at X). The roll still happens, so the seeded draws after it stay put.
+    local openingBack = nil
+    if plan ~= nil then openingBack = false end
+    halt(enter.s1, "X", 1, false, "trot", openingBack)
     local proceed = { s0 = enter.s1, key = "proceed", turn = turn, labels = { "C" } }
     table.insert(test.moves, proceed)
     for i = xIndex + 1, #opening do append(test, { opening[i] }, 2) end
