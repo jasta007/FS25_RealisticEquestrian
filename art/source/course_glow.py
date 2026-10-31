@@ -27,12 +27,12 @@ GLOW = 0.55
 SIDES = 12
 # The bar again in these colours (EqCourseGlow.COLOURS), sharing its shape.
 COLOURS = [("green", (0.25, 1.0, 0.3)), ("lime", (0.65, 1.0, 0.2)), ("yellow", (1.0, 0.9, 0.15)), ("orange", (1.0, 0.55, 0.1)),
-           ("red", (1.0, 0.2, 0.15)), ("cyan", (0.2, 0.9, 1.0)), ("white", (1.0, 1.0, 1.0)), ("grey", (0.6, 0.6, 0.6))]
+           ("red", (1.0, 0.2, 0.15)), ("cyan", (0.2, 0.9, 1.0)), ("white", (1.0, 1.0, 1.0)), ("grey", (0.2, 0.2, 0.2))]
 # The coloured bars are brighter than the gold (James, 2026-10-30).
 COLOUR_ALPHA = 0.45
 COLOUR_GLOW = 0.9
 # Faint colours: (alpha, glow) instead. Grey is the dressage test editor's last step (James, 2026-10-31).
-FAINT = {"grey": (0.2, 0.3)}
+FAINT = {"grey": (0.12, 0.2)}
 
 
 def fmt(values):
