@@ -32,11 +32,11 @@ SIZE = 16
 
 # The full-seat breeches (botEquestrian): white with a dark upper seat. Mapped with eqUvGrid
 # (James's screenshots, 2026-10-31): the texture wraps round the body with the back seam at its
-# left/right edge, waist at the top. Columns G, H | A, B of the 8 x 8 grid are the seat, rows 1-3
+# left/right edge, waist at the top. Columns G, H | A, B of the 8 x 8 grid are the seat, rows 1-2.4
 # its upper part. The dark ends lower at the seam than at the hips, like a real full seat.
 SEAT_SIZE = 512
 SEAT_WIDTH = 2 / 8  # either side of the seam
-SEAT_DEPTH_SEAM, SEAT_DEPTH_HIP = 3.0 / 8, 2.2 / 8
+SEAT_DEPTH_SEAM, SEAT_DEPTH_HIP = 2.4 / 8, 1.9 / 8  # James: 3.0 / 2.2 went too far down
 SEAT_CLOTH, SEAT_DARK = 235, 14
 
 
