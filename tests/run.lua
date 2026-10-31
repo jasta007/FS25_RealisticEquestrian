@@ -4623,11 +4623,14 @@ end)()
     check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
         and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
     check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
+    check("sponsors: machines to own capped by size: small 1, moderate 3, big 5",
+        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 3
+        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 5)
     check("sponsors: never more than 5 machines to own (22 categories)", sp.machinesMax == 5
         and EqSponsorship.machinesNeeded(22, 2, sp.machinesMax) == 5)
     check("sponsors: shares on 5% steps", EqSponsorship.round5(0.37) == 0.35 and EqSponsorship.round5(0.38) == 0.4
         and EqSponsorship.round5(0.6) == 0.6)
-    local old = EqSponsorship.tidy(sp, { machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07, strictness = 1 })
+    local old = EqSponsorship.tidy(sp, { size = "big", machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07, strictness = 1 })
     check("sponsors: old saved offers tidied", old.machines == 5 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
         and old.repaint == 0.5 and old.purchase == 0.05)
 

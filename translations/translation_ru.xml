@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="Спонсор: %s, выплачено %s."/>
         <text name="eq_sponsor_eventName" text="%s %s Classic"/>
         <text name="eq_sponsor_col_sponsor" text="Спонсор"/>
-        <text name="eq_sponsor_col_deal" text="Условия"/>
         <text name="eq_sponsor_col_contract" text="Контракт"/>
         <text name="eq_sponsor_col_fee" text="Платит вам"/>
         <text name="eq_sponsor_size_big" text="Крупный"/>
@@ -980,13 +979,10 @@
         <text name="eq_sponsor_word_hardBargain" text="Жёсткий торг"/>
         <text name="eq_sponsor_year1" text="%d год"/>
         <text name="eq_sponsor_years" text="%d г."/>
-        <text name="eq_sponsor_yoursLeft" text="Ваш, осталось %s"/>
-        <text name="eq_sponsor_yourSponsor" text="Ваш спонсор (%s)"/>
         <text name="eq_sponsor_backs_all" text="Все соревнования"/>
         <text name="eq_sponsor_backs_from" text="%s и выше"/>
         <text name="eq_sponsor_backs_lower" text="%s (%s на уровне %s)"/>
         <text name="eq_sponsor_targetTop3" text=", с местом в тройке"/>
-        <text name="eq_sponsor_label_deal" text="Условия"/>
         <text name="eq_sponsor_label_fee" text="Платит вам"/>
         <text name="eq_sponsor_label_popularity" text="Популярность"/>
         <text name="eq_sponsor_label_target" text="Годовая цель"/>
@@ -998,7 +994,6 @@
         <text name="eq_sponsor_label_paid" text="Выплачено"/>
         <text name="eq_sponsor_label_cancel" text="Цена расторжения"/>
         <text name="eq_sponsor_label_years" text="Контракт"/>
-        <text name="eq_sponsor_discountsLine" text="Покраска %s, ремонт %s, покупка %s"/>
         <text name="eq_sponsor_yearMet" text="Цель выполнена"/>
         <text name="eq_sponsor_yearOpen" text="Цель открыта до %s"/>
         <text name="eq_sponsor_missedLine" text="%d подряд, выплата %s"/>
@@ -1035,7 +1030,7 @@
         <text name="eq_sponsor_haveOf" text="У вас %d из %d"/>
         <text name="eq_sponsor_mustOwn" text="Перед подачей заявки нужно владеть их техникой: %d шт."/>
         <text name="eq_sponsor_mustKeep" text="Чтобы получать выплаты, сохраните их технику: %d шт."/>
-        <text name="eq_sponsor_noRivals" text="Нельзя владеть техникой, цена которой в пределах %s от их конкурирующего предложения."/>
+        <text name="eq_sponsor_noRivals" text="Нельзя владеть техникой, цена которой в пределах %s от их продукта."/>
         <text name="eq_sponsor_sellFirst" text="Продайте или верните перед подачей заявки:"/>
         <text name="eq_sponsor_sellMore" text="...и ещё %d"/>
         <text name="eq_sponsor_button_shop" text="Показать в магазине"/>
@@ -1048,5 +1043,8 @@
         <text name="eq_sponsor_label_likely" text="Вероятная выплата"/>
         <text name="eq_sponsor_likelyLine" text="%s на уровне %s"/>
         <text name="eq_shop_branding" text="Ваш брендинг: сейчас %s, с этим %s. Больше брендинга — больше платит спонсор."/>
+        <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
+        <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
+        <text name="eq_sponsor_discount_buy" text="Покупка %s"/>
     </texts>
 </l10n>

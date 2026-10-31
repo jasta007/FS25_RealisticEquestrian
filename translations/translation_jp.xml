@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="スポンサー：%s、支払い %s"/>
         <text name="eq_sponsor_eventName" text="%s %sクラシック"/>
         <text name="eq_sponsor_col_sponsor" text="スポンサー"/>
-        <text name="eq_sponsor_col_deal" text="条件"/>
         <text name="eq_sponsor_col_contract" text="契約"/>
         <text name="eq_sponsor_col_fee" text="受取額"/>
         <text name="eq_sponsor_size_big" text="大"/>
@@ -980,13 +979,10 @@
         <text name="eq_sponsor_word_hardBargain" text="手強い交渉相手"/>
         <text name="eq_sponsor_year1" text="%d年"/>
         <text name="eq_sponsor_years" text="%d年"/>
-        <text name="eq_sponsor_yoursLeft" text="契約中、残り%s"/>
-        <text name="eq_sponsor_yourSponsor" text="あなたのスポンサー（%s）"/>
         <text name="eq_sponsor_backs_all" text="すべての大会"/>
         <text name="eq_sponsor_backs_from" text="%s以上"/>
         <text name="eq_sponsor_backs_lower" text="%s（%sで%s）"/>
         <text name="eq_sponsor_targetTop3" text="、3位以内の成績で"/>
-        <text name="eq_sponsor_label_deal" text="条件"/>
         <text name="eq_sponsor_label_fee" text="受取額"/>
         <text name="eq_sponsor_label_popularity" text="人気度"/>
         <text name="eq_sponsor_label_target" text="年間目標"/>
@@ -998,7 +994,6 @@
         <text name="eq_sponsor_label_paid" text="これまでの支払い"/>
         <text name="eq_sponsor_label_cancel" text="解約費用"/>
         <text name="eq_sponsor_label_years" text="契約"/>
-        <text name="eq_sponsor_discountsLine" text="塗装%s、修理%s、購入%s"/>
         <text name="eq_sponsor_yearMet" text="目標達成"/>
         <text name="eq_sponsor_yearOpen" text="目標は%sまで"/>
         <text name="eq_sponsor_missedLine" text="%d回連続、金額は%s"/>
@@ -1035,7 +1030,7 @@
         <text name="eq_sponsor_haveOf" text="所有%d／必要%d"/>
         <text name="eq_sponsor_mustOwn" text="申し込む前に相手の機材を%d台所有する必要があります。"/>
         <text name="eq_sponsor_mustKeep" text="支払いを受けるには相手の機材を%d台保持する必要があります。"/>
-        <text name="eq_sponsor_noRivals" text="競合製品の価格の%s以内の機械は所有できません。"/>
+        <text name="eq_sponsor_noRivals" text="相手の製品の価格の%s以内の機械は所有できません。"/>
         <text name="eq_sponsor_sellFirst" text="申し込む前に次を売却または返却してください："/>
         <text name="eq_sponsor_sellMore" text="…ほか%d台"/>
         <text name="eq_sponsor_button_shop" text="ショップで表示"/>
@@ -1048,5 +1043,8 @@
         <text name="eq_sponsor_label_likely" text="見込み支払い"/>
         <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
         <text name="eq_shop_branding" text="ブランド露出：現在%s、これを加えると%s。露出が多いほどスポンサーの支払いが増えます。"/>
+        <text name="eq_sponsor_discount_repaint" text="塗装 %s"/>
+        <text name="eq_sponsor_discount_repair" text="修理 %s"/>
+        <text name="eq_sponsor_discount_buy" text="購入 %s"/>
     </texts>
 </l10n>

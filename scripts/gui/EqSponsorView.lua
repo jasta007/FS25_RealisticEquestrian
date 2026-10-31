@@ -39,7 +39,7 @@ function EqSponsorView.rows(farmId)
         local eligibility, eligible
         if isContract then
             local monthsLeft = math.max(0, (offer.endMonth or 0) - (EqCompetitionManager.month or 0))
-            years = string.format(g_i18n:getText("eq_sponsor_yoursLeft"), yearsText(math.max(1, math.ceil(monthsLeft / 12))))
+            years = yearsText(math.max(1, math.ceil(monthsLeft / 12)))
             eligibility = g_i18n:getText("eq_sponsor_eligible_yours")
         else
             local checks = EqSponsorManager.checksFor(farmId, offer)
@@ -56,7 +56,8 @@ function EqSponsorView.rows(farmId)
         end
         table.insert(rows, { offer = offer, contract = isContract, brand = offer.brand, title = EqSponsorManager.brandTitle(offer.brand),
             size = g_i18n:getText("eq_sponsor_size_" .. offer.size), deal = g_i18n:getText("eq_sponsor_word_" .. (offer.word or "fair")),
-            years = years, fee = money(offer.fee), eligibility = eligibility, eligible = eligible })
+            years = years, fee = money(offer.fee), eligibility = eligibility, eligible = eligible,
+            speciality = table.concat(EqSponsorView.speciality(offer.brand, 3), ", ") })
     end
     local contract = EqSponsorManager.contracts[farmId]
     if contract ~= nil then add(contract, true) end
@@ -112,8 +113,6 @@ function EqSponsorView.panelLines(farmId, row)
     local byId = {}
     for _, check in ipairs(checks) do byId[check.id] = check end
 
-    add("deal", g_i18n:getText("eq_sponsor_word_" .. (offer.word or "fair")))
-    add("speciality", table.concat(EqSponsorView.speciality(offer.brand, 3), ", "))
     add("fee", string.format(g_i18n:getText("eq_sponsor_feePerEvent"), money(offer.fee)))
     add(nil, EqSponsorView.backsText(offer))
     add("popularity", string.format("%+d", offer.popularity or 0))
@@ -129,7 +128,9 @@ function EqSponsorView.panelLines(farmId, row)
         add(i == 1 and "likely" or nil, string.format(g_i18n:getText("eq_sponsor_likelyLine"), money(entry.fee), ratingTitle(entry.rating)),
             entry.fee > 0)
     end
-    add("discounts", string.format(g_i18n:getText("eq_sponsor_discountsLine"), percent(offer.repaint), percent(offer.repair), percent(offer.purchase)))
+    add("discounts", string.format(g_i18n:getText("eq_sponsor_discount_repaint"), percent(offer.repaint)))
+    add(nil, string.format(g_i18n:getText("eq_sponsor_discount_repair"), percent(offer.repair)))
+    add(nil, string.format(g_i18n:getText("eq_sponsor_discount_buy"), percent(offer.purchase)))
 
     if row.contract then
         add("ends", EqHostManager.monthText(offer.endMonth or 0))

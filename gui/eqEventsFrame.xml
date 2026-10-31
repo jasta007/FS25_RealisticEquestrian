@@ -332,11 +332,11 @@
         <!-- Sponsors: your sponsor and this year's offers left; the selected one's logo, terms and
              what stops you signing on the right -->
         <GuiElement profile="rlMenu_container" id="sponsorHeader" position="20px -120px" size="1000px 40px" visible="false">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="100px 0px" size="230px 40px" text="$l10n_eq_sponsor_col_sponsor"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="340px 0px" size="130px 40px" text="$l10n_eq_sponsor_col_deal"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="480px 0px" size="160px 40px" text="$l10n_eq_sponsor_col_contract"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="650px 0px" size="170px 40px" text="$l10n_eq_sponsor_col_eligibility"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="830px 0px" size="160px 40px" text="$l10n_eq_sponsor_col_fee"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="100px 0px" size="190px 40px" text="$l10n_eq_sponsor_col_sponsor"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="300px 0px" size="300px 40px" text="$l10n_eq_sponsor_label_speciality"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="610px 0px" size="120px 40px" text="$l10n_eq_sponsor_col_contract"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="740px 0px" size="130px 40px" text="$l10n_eq_sponsor_col_eligibility"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="870px 0px" size="120px 40px" text="$l10n_eq_sponsor_col_fee"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </GuiElement>
 
@@ -344,11 +344,11 @@
             <SmoothList profile="rlMenu_tableList" id="sponsorList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="sponsorRowTemplate" size="1000px 48px">
                     <Bitmap profile="eq_sponsorLogo" position="10px -4px" size="80px 40px" name="logo"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="100px 0px" size="230px 48px" name="title" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="340px 0px" size="130px 48px" name="deal" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="480px 0px" size="160px 48px" name="years" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="650px 0px" size="170px 48px" name="eligibility" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="830px 0px" size="160px 48px" name="fee"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="100px 0px" size="190px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="300px 0px" size="300px 48px" name="speciality" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="610px 0px" size="120px 48px" name="years" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="740px 0px" size="130px 48px" name="eligibility" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="870px 0px" size="120px 48px" name="fee"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">

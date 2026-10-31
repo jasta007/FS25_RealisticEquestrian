@@ -15,7 +15,8 @@
                         (a part year counts as a whole)
         missFactor      the fee for the next contract year after a missed yearly target
         missesToLeave   missed targets in a row before the sponsor walks away
-        machinesMax     the most of its machines a sponsor asks the farm to own
+        machinesMax     the most of its machines any sponsor asks the farm to own (each size
+                        has its own, lower or equal)
 
     skipCategoryTypes   shop category types (the shop's groups, such as DRIVABLES, TRAILERS or
                         SOIL_PREPARATION) whose items are no machines; every other group counts.
@@ -74,9 +75,9 @@
     </priceBands>
 
     <sizes>
-        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15"/>
-        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"/>
-        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"/>
+        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5"/>
+        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3"/>
+        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  machinesMax="1"/>
     </sizes>
 
     <!-- Branding (James, 2026-10-31): sponsor boards on the farm's placeables, anywhere, make a

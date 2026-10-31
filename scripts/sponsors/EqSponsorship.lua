@@ -76,6 +76,7 @@ function EqSponsorship.read(xmlFile)
             lowerShare = xmlFile:getFloat(key .. "#lowerShare", 0),
             lowerRating = xmlFile:getString(key .. "#lowerRating"),
             minItems = xmlFile:getInt(key .. "#minItems", 0),
+            machinesMax = xmlFile:getInt(key .. "#machinesMax", 0),
         }
         table.insert(config.sizes, size)
         config.sizeByName[size.name] = size
@@ -255,6 +256,17 @@ function EqSponsorship.machinesNeeded(categories, perMachine, max)
 end
 
 
+--- @param config table
+--- @param size table|nil a sponsor size
+--- @return number the most machines a sponsor of that size asks for (James, 2026-10-31: a
+---     moderate brand with 13 products asking for 5 is too much)
+function EqSponsorship.machinesMaxFor(config, size)
+    local max = config.machinesMax
+    if size ~= nil and size.machinesMax > 0 then max = math.min(max, size.machinesMax) end
+    return max
+end
+
+
 --- @param share number
 --- @return number the share rounded to the nearest 5% (James 2026-10-31)
 function EqSponsorship.round5(share)
@@ -295,7 +307,7 @@ function EqSponsorship.makeOffer(config, profile, rng)
         brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", strictness, rng)),
         categories = profile.categories,
         perMachine = perMachine,
-        machines = EqSponsorship.machinesNeeded(profile.categories, perMachine, config.machinesMax),
+        machines = EqSponsorship.machinesNeeded(profile.categories, perMachine, EqSponsorship.machinesMaxFor(config, size)),
         window = EqSponsorship.round5(EqSponsorship.term(config, "window", strictness, rng)),
         repair = EqSponsorship.round5(EqSponsorship.term(config, "repair", strictness, rng)),
         repaint = EqSponsorship.round5(EqSponsorship.term(config, "repaint", strictness, rng)),
@@ -558,7 +570,9 @@ end
 --- @param offer table
 --- @return table offer
 function EqSponsorship.tidy(config, offer)
-    if config ~= nil and offer.machines ~= nil then offer.machines = math.min(offer.machines, config.machinesMax) end
+    if config ~= nil and offer.machines ~= nil then
+        offer.machines = math.min(offer.machines, EqSponsorship.machinesMaxFor(config, config.sizeByName[offer.size]))
+    end
     if config ~= nil and offer.brandingNeed == nil then
         offer.brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", offer.strictness or 0))
     end

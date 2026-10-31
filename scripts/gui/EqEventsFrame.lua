@@ -792,7 +792,7 @@ function EqEventsFrame:updateSponsorPanel()
     end
     showLogo(self.sponsorLogo, row.offer.brand)
     setText(self.sponsorName, row.title)
-    setText(self.sponsorSize, row.contract and string.format(g_i18n:getText("eq_sponsor_yourSponsor"), row.size) or row.size)
+    setText(self.sponsorSize, row.contract and g_i18n:getText("eq_sponsor_eligible_yours") or "")
     -- The notes follow the last row across the full width, after a blank row, wrapped by hand
     -- (James, 2026-10-31: a separate block sat too low and overlapped the buttons).
     local rowCount = #(self.sponsorLabel or {})
@@ -972,7 +972,7 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         if row == nil then return end
         showLogo(cell:getAttribute("logo"), row.brand)
         setCell(cell, "title", row.title)
-        setCell(cell, "deal", row.deal)
+        setCell(cell, "speciality", row.speciality)
         setCell(cell, "years", row.years)
         local eligibility = cell:getAttribute("eligibility")
         keepDefaultColor(eligibility)

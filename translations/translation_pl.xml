@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="Sponsor: %s, zapłacił %s."/>
         <text name="eq_sponsor_eventName" text="%s %s Classic"/>
         <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
-        <text name="eq_sponsor_col_deal" text="Warunki"/>
         <text name="eq_sponsor_col_contract" text="Umowa"/>
         <text name="eq_sponsor_col_fee" text="Płaci tobie"/>
         <text name="eq_sponsor_size_big" text="Duży"/>
@@ -980,13 +979,10 @@
         <text name="eq_sponsor_word_hardBargain" text="Twardy negocjator"/>
         <text name="eq_sponsor_year1" text="%d rok"/>
         <text name="eq_sponsor_years" text="%d lat(a)"/>
-        <text name="eq_sponsor_yoursLeft" text="Twój, zostało %s"/>
-        <text name="eq_sponsor_yourSponsor" text="Twój sponsor (%s)"/>
         <text name="eq_sponsor_backs_all" text="Wszystkie zawody"/>
         <text name="eq_sponsor_backs_from" text="%s i wyżej"/>
         <text name="eq_sponsor_backs_lower" text="%s (%s przy %s)"/>
         <text name="eq_sponsor_targetTop3" text=", z miejscem w pierwszej trójce"/>
-        <text name="eq_sponsor_label_deal" text="Warunki"/>
         <text name="eq_sponsor_label_fee" text="Płaci tobie"/>
         <text name="eq_sponsor_label_popularity" text="Popularność"/>
         <text name="eq_sponsor_label_target" text="Cel roczny"/>
@@ -998,7 +994,6 @@
         <text name="eq_sponsor_label_paid" text="Wypłacono dotąd"/>
         <text name="eq_sponsor_label_cancel" text="Koszt zerwania"/>
         <text name="eq_sponsor_label_years" text="Umowa"/>
-        <text name="eq_sponsor_discountsLine" text="Lakierowanie %s, naprawa %s, zakup %s"/>
         <text name="eq_sponsor_yearMet" text="Cel osiągnięty"/>
         <text name="eq_sponsor_yearOpen" text="Cel otwarty do %s"/>
         <text name="eq_sponsor_missedLine" text="%d z rzędu, kwota %s"/>
@@ -1035,7 +1030,7 @@
         <text name="eq_sponsor_haveOf" text="Masz %d z %d"/>
         <text name="eq_sponsor_mustOwn" text="Przed złożeniem wniosku musisz mieć ich sprzęt: %d szt."/>
         <text name="eq_sponsor_mustKeep" text="Aby dostawać wypłaty, zachowaj ich sprzęt: %d szt."/>
-        <text name="eq_sponsor_noRivals" text="Nie możesz mieć maszyn w cenie w granicach %s ich konkurencyjnej oferty."/>
+        <text name="eq_sponsor_noRivals" text="Nie możesz mieć maszyn w cenie w granicach %s ich produktu."/>
         <text name="eq_sponsor_sellFirst" text="Przed złożeniem wniosku sprzedaj lub zwróć:"/>
         <text name="eq_sponsor_sellMore" text="...i jeszcze %d"/>
         <text name="eq_sponsor_button_shop" text="Pokaż w sklepie"/>
@@ -1048,5 +1043,8 @@
         <text name="eq_sponsor_label_likely" text="Prawdopodobna wypłata"/>
         <text name="eq_sponsor_likelyLine" text="%s przy %s"/>
         <text name="eq_shop_branding" text="Twoja ekspozycja marki: teraz %s, z tym %s. Większa ekspozycja podnosi wypłatę sponsora."/>
+        <text name="eq_sponsor_discount_repaint" text="Lakierowanie %s"/>
+        <text name="eq_sponsor_discount_repair" text="Naprawa %s"/>
+        <text name="eq_sponsor_discount_buy" text="Zakup %s"/>
     </texts>
 </l10n>

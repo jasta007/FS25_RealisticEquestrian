@@ -968,7 +968,6 @@
         <text name="eq_host_report_sponsor" text="Sponsor: %s, paid %s."/>
         <text name="eq_sponsor_eventName" text="%s %s Classic"/>
         <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
-        <text name="eq_sponsor_col_deal" text="Deal"/>
         <text name="eq_sponsor_col_contract" text="Contract"/>
         <text name="eq_sponsor_col_fee" text="Pays you"/>
         <text name="eq_sponsor_size_big" text="Big"/>
@@ -980,13 +979,10 @@
         <text name="eq_sponsor_word_hardBargain" text="Hard bargain"/>
         <text name="eq_sponsor_year1" text="%d year"/>
         <text name="eq_sponsor_years" text="%d years"/>
-        <text name="eq_sponsor_yoursLeft" text="Yours, %s left"/>
-        <text name="eq_sponsor_yourSponsor" text="Your sponsor (%s)"/>
         <text name="eq_sponsor_backs_all" text="Every event"/>
         <text name="eq_sponsor_backs_from" text="%s and up"/>
         <text name="eq_sponsor_backs_lower" text="%s (%s at %s)"/>
         <text name="eq_sponsor_targetTop3" text=", with a top 3 finish"/>
-        <text name="eq_sponsor_label_deal" text="Deal"/>
         <text name="eq_sponsor_label_fee" text="Pays you"/>
         <text name="eq_sponsor_label_popularity" text="Popularity"/>
         <text name="eq_sponsor_label_target" text="Yearly target"/>
@@ -998,7 +994,6 @@
         <text name="eq_sponsor_label_paid" text="Paid so far"/>
         <text name="eq_sponsor_label_cancel" text="Cancel cost"/>
         <text name="eq_sponsor_label_years" text="Contract"/>
-        <text name="eq_sponsor_discountsLine" text="Repaint %s, repair %s, buy %s"/>
         <text name="eq_sponsor_yearMet" text="Target met"/>
         <text name="eq_sponsor_yearOpen" text="Target open until %s"/>
         <text name="eq_sponsor_missedLine" text="%d in a row, fee at %s"/>
@@ -1035,7 +1030,7 @@
         <text name="eq_sponsor_haveOf" text="You have %d of %d"/>
         <text name="eq_sponsor_mustOwn" text="You must own %d pieces of their equipment before applying."/>
         <text name="eq_sponsor_mustKeep" text="You must keep %d pieces of their equipment to be paid."/>
-        <text name="eq_sponsor_noRivals" text="You cannot own machinery within %s of the cost of their competing offering."/>
+        <text name="eq_sponsor_noRivals" text="You cannot own machinery within %s of the cost of their product."/>
         <text name="eq_sponsor_sellFirst" text="Sell or return the following before applying:"/>
         <text name="eq_sponsor_sellMore" text="...and %d more"/>
         <text name="eq_sponsor_button_shop" text="Show in shop"/>
@@ -1048,5 +1043,8 @@
         <text name="eq_sponsor_label_likely" text="Likely pay"/>
         <text name="eq_sponsor_likelyLine" text="%s at %s"/>
         <text name="eq_shop_branding" text="Your branding: %s now, %s with this. More branding raises what your sponsor pays."/>
+        <text name="eq_sponsor_discount_repaint" text="Repaint %s"/>
+        <text name="eq_sponsor_discount_repair" text="Repair %s"/>
+        <text name="eq_sponsor_discount_buy" text="Buying %s"/>
     </texts>
 </l10n>

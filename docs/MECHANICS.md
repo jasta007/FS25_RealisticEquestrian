@@ -862,12 +862,12 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   15 to be big; short of that it drops a size. The game's own Lizard brand is left out.
 - **When:** offers come at the start of each year (and at once in a save that has none yet): up
   to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year). One sponsor at a time.
-- **The deal:** each offer rolls a strictness, shown as **Relaxed**, **Fair**, **Demanding** or
-  **Hard bargain**. Stricter deals ask more and pay more:
+- **The deal:** each offer rolls a strictness from relaxed to hard bargain (not shown by name;
+  the terms tell it). Stricter deals ask more and pay more:
 
 | Term | Relaxed | Hard bargain |
 | --- | --- | --- |
-| Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (never more than 5) |
+| Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (at most 1 for small, 3 moderate, 5 big) |
 | No rival machine priced within | 20% of one of theirs (same category) | 60% |
 | Yearly popularity target | size target -10 | +10, and a top 3 finish |
 | Branding required | Low | High |
@@ -880,9 +880,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Moderate | 25,000-40,000 | Intermediate and Championship | +6 | 55 | 1-2 years |
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
-- The table shows each sponsor's logo, deal, contract, **Eligibility** and fee; the panel adds its
-  terms, its **Speciality** (the three shop subcategories it has the most machines in) and the
-  rival machines to sell. Window and discounts are on 5% steps. **Show in
+- The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
+  most machines in), contract, **Eligibility** and what it pays you; the panel adds its terms and
+  the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
   don't count), no rival machine inside the price window (sell it or return the lease first; the
