@@ -39,6 +39,11 @@ EqMessages.TYPES = {
     EQ_HOST_CANCELLED = { title = "eqHosting", severity = "WARNING" },
     EQ_HOST_DONE = { title = "eqHosting", severity = "SUCCESS" },
     EQ_HOST_RIDDEN = { title = "eqHosting", severity = "INFO" },
+    EQ_SPONSOR_OFFERS = { title = "eqSponsor", severity = "INFO" },
+    EQ_SPONSOR_SIGNED = { title = "eqSponsor", severity = "SUCCESS" },
+    EQ_SPONSOR_PAID = { title = "eqSponsor", severity = "SUCCESS" },
+    EQ_SPONSOR_WARNING = { title = "eqSponsor", severity = "WARNING" },
+    EQ_SPONSOR_ENDED = { title = "eqSponsor", severity = "NOTICE" },
 }
 
 -- The one body template, and the texts RLRM looks up without our mod name.
@@ -51,6 +56,7 @@ EqMessages.TEXT_KEYS = {
     "rl_messageTitle_eqDealer",
     "rl_messageTitle_eqTransport",
     "rl_messageTitle_eqHosting",
+    "rl_messageTitle_eqSponsor",
 }
 
 EqMessages.isInstalled = false

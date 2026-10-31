@@ -285,6 +285,7 @@ function EqRegistry.saveToDirectory(directory)
     EqDressageTests.saveToXMLFile(xmlFile, "rlEquestrian.dressageTests")
     EqStaffManager.saveToXMLFile(xmlFile, "rlEquestrian.staff")
     EqHostManager.saveToXMLFile(xmlFile, "rlEquestrian.hosting")
+    EqSponsorManager.saveToXMLFile(xmlFile, "rlEquestrian.sponsors")
 
     xmlFile:save()
     xmlFile:delete()
@@ -301,6 +302,7 @@ function EqRegistry.loadFromDirectory(directory)
         EqDressageTests.loadFromXMLFile(nil, "rlEquestrian.dressageTests")
         EqStaffManager.loadFromXMLFile(nil, "rlEquestrian.staff")
         EqHostManager.loadFromXMLFile(nil, "rlEquestrian.hosting")
+        EqSponsorManager.loadFromXMLFile(nil, "rlEquestrian.sponsors")
         return
     end
 
@@ -312,6 +314,7 @@ function EqRegistry.loadFromDirectory(directory)
         EqDressageTests.loadFromXMLFile(nil, "rlEquestrian.dressageTests")
         EqStaffManager.loadFromXMLFile(nil, "rlEquestrian.staff")
         EqHostManager.loadFromXMLFile(nil, "rlEquestrian.hosting")
+        EqSponsorManager.loadFromXMLFile(nil, "rlEquestrian.sponsors")
         return
     end
 
@@ -338,6 +341,7 @@ function EqRegistry.loadFromDirectory(directory)
     EqDressageTests.loadFromXMLFile(xmlFile, "rlEquestrian.dressageTests")
     EqStaffManager.loadFromXMLFile(xmlFile, "rlEquestrian.staff")
     EqHostManager.loadFromXMLFile(xmlFile, "rlEquestrian.hosting")
+    EqSponsorManager.loadFromXMLFile(xmlFile, "rlEquestrian.sponsors")
     if #EqCourse.list > 0 then Log:info("EqRegistry: loaded %d show jumping course(s)", #EqCourse.list) end
 
     xmlFile:delete()

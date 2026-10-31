@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    Sponsors for the events you host (James, 2026-10-29): who offers, what they ask and what they
+    pay. Read by EqSponsorship; balance changes need no code.
+
+    Every sponsor is a brand from the player's own shop, read when the game runs: no brand is
+    named here except the ones left out below. A brand's size comes from what it sells:
+    first how many shop categories it has machines in, then how many price bands they span, then
+    how many machines. So a brand can be small in one game and big in another with mods.
+
+    sponsors
+        offerMonths     offers stay this many months after the start of the year (or after they
+                        first appear in a save), then go until next year
+        cancelShare     cancelling early costs this share of one event's fee for each year left
+                        (a part year counts as a whole)
+        missFactor      the fee for the next contract year after a missed yearly target
+        missesToLeave   missed targets in a row before the sponsor walks away
+        machinesMax     the most of its machines any sponsor asks the farm to own (each size
+                        has its own, lower or equal)
+
+    skipCategoryTypes   shop category types (the shop's groups, such as DRIVABLES, TRAILERS or
+                        SOIL_PREPARATION) whose items are no machines; every other group counts.
+                        Placeables and hand tools are left out anyway
+    skipBrands          brands never offered: the game's "no brand", and Lizard, the game's own
+                        brand, which James keeps for a surprise one-off sponsor later
+    priceBands          upper edges of the price bands a brand's machines are spread over; the
+                        last band has no top
+
+    size                name (small, moderate, big), share of the brands ranked by size, offers
+                        made each year, contract years (min to max), fee per event (min to max
+                        before strictness), popularity points it brings to a sponsored event,
+                        its yearly popularity target before strictness, and the event rating it
+                        sponsors from (minRating), with a share of the fee at the rating below
+                        (lowerShare, 0 for none) and the lowest rating that share is paid at
+                        (lowerRating), and the fewest shop machines a brand needs for that size
+                        (minItems: a brand short of it drops to a smaller size, and one short of
+                        every size is never a sponsor)
+
+    strictness          each offer rolls a strictness from 0 (Relaxed) to 1 (Hard bargain); every
+                        term and reward runs from its "relaxed" value to its "strict" one, then
+                        a small wobble (+- wobble, a share) keeps two offers apart
+        word            the deal words, by strictness (from = the lowest strictness for that word)
+        categoriesPerMachine   one of the sponsor's machines to own for this many categories it makes
+        window          competitor clause: another brand's machine in a category the sponsor
+                        makes, priced within this share of one of the sponsor's machines there
+        target          added to the size's popularity target
+        top3            from this strictness the yearly target also needs a top 3 finish
+        branding        the branding level an offer requires to sign and be paid (1 Low, 2 Medium,
+                        3 High), rounded
+        fee             multiplies the size's fee
+        repair, repaint, purchase   discounts on the sponsor's machines
+
+    Part of Realistic Equestrian by Jasta007.
+-->
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5">
+    <skipCategoryTypes>
+        <type name="ANIMALS"/>
+        <type name="OBJECTS"/>
+        <type name="HANDTOOLS"/>
+        <type name="MISC"/>
+        <type name="PLACEABLES"/>
+    </skipCategoryTypes>
+
+    <skipBrands>
+        <brand name="NONE"/>
+        <brand name="LIZARD"/>
+    </skipBrands>
+
+    <priceBands>
+        <band max="10000"/>
+        <band max="30000"/>
+        <band max="100000"/>
+        <band max="300000"/>
+        <band max="1000000"/>
+    </priceBands>
+
+    <sizes>
+        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5"/>
+        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3"/>
+        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  machinesMax="1"/>
+    </sizes>
+
+    <!-- Branding (James, 2026-10-31): sponsor boards on the farm's placeables, anywhere, make a
+         level; the player sees only the word. Below an offer's required level it can't be signed
+         and pays nothing; at or above it pays this share of the fee (the full fee at High). -->
+    <branding>
+        <level name="low"    boards="1"  pay="0.5"/>
+        <level name="medium" boards="5"  pay="0.75"/>
+        <level name="high"   boards="10" pay="1"/>
+    </branding>
+
+    <strictness wobble="0.1">
+        <word name="relaxed"     from="0"/>
+        <word name="fair"        from="0.25"/>
+        <word name="demanding"   from="0.5"/>
+        <word name="hardBargain" from="0.75"/>
+        <term name="categoriesPerMachine" relaxed="4"    strict="2"/>
+        <term name="window"               relaxed="0.2"  strict="0.6"/>
+        <term name="target"               relaxed="-10"  strict="10"/>
+        <term name="top3"                 from="0.75"/>
+        <term name="branding"             relaxed="1"    strict="3"/>
+        <term name="fee"                  relaxed="0.8"  strict="1.3"/>
+        <term name="repair"               relaxed="0.15" strict="0.35"/>
+        <term name="repaint"              relaxed="0.35" strict="0.65"/>
+        <term name="purchase"             relaxed="0.05" strict="0.2"/>
+    </strictness>
+</sponsors>

@@ -243,6 +243,8 @@ function EqHostManager.onMonthStarted(month)
         local event = EqCompetitionManager.openHosted(farmId, booking.type, booking.rating, EqHostManager.venueName(farmId))
         if event ~= nil then
             event.hosted.setupFee = booking.setupFee
+            -- A sponsor that backs the rating names the event and draws a crowd (EqSponsorManager).
+            if EqSponsorManager ~= nil then EqSponsorManager.onEventOpened(event) end
             tell(farmId, "EQ_HOST_OPENED", string.format(g_i18n:getText("eq_host_opened"), EqCompetitionManager.eventTitle(event)))
             if EqHostVenue.config ~= nil then EqHostManager.startMonth(event) end
         end
@@ -301,7 +303,7 @@ local function assess(event, star)
     local venue = EqHostVenue.read(hosted.farmId)
     local result = EqHosting.check(config, event.discipline, hosted.rating, venue)
     local context = { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[hosted.farmId] or 0,
-        star = star, winter = isWinter() }
+        star = star, winter = isWinter(), sponsor = hosted.sponsorPopularity }
     local score = EqHosting.popularity(config, event.discipline, result, context)
     local takings = EqHosting.takings(config, event.discipline, config.ratingByName[hosted.rating], score, result.seatingTotal)
     return result, score, takings, venue
@@ -417,7 +419,7 @@ function EqHostManager.report(event, day)
     for _, placing in ipairs(result.placings or {}) do
         table.insert(mine, { name = placing.name, place = placing.place or 0, status = placing.status })
     end
-    return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue,
+    return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue, sponsor = hosted.sponsor,
         field = result.field or 0, competitors = takings.competitors or 0, visitors = takings.visitors or 0,
         popularity = hosted.popularity or 0, entries = takings.entries or 0, gate = takings.gate or 0,
         total = takings.total or 0, setupFee = hosted.setupFee or 0, feed = hosted.feedEaten or 0, podium = result.podium or {}, mine = mine }
@@ -435,14 +437,16 @@ function EqHostManager.keepReport(farmId, report)
 end
 
 
---- Pay the takings and raise the farm's reputation.
+--- Pay the takings (and the sponsor's fee) and raise the farm's reputation.
 --- @param event table
 function EqHostManager.afterResolve(event)
     local hosted = event.hosted
     local takings = hosted.takings
     if takings == nil then return end
     local environment = g_currentMission.environment
-    EqHostManager.keepReport(hosted.farmId, EqHostManager.report(event, environment ~= nil and environment.currentMonotonicDay or 0))
+    local report = EqHostManager.report(event, environment ~= nil and environment.currentMonotonicDay or 0)
+    if EqSponsorManager ~= nil then EqLog.try("EqSponsorManager.afterEvent", EqSponsorManager.afterEvent, event, report) end
+    EqHostManager.keepReport(hosted.farmId, report)
     if takings.total > 0 then
         g_currentMission:addMoney(takings.total, hosted.farmId, MoneyType.EQ_HOSTING or MoneyType.OTHER, true, true)
     end
@@ -640,6 +644,9 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.feedEaten ~= nil then xmlFile:setFloat(key .. "#feedEaten", hosted.feedEaten) end
     if hosted.feedDaily ~= nil then xmlFile:setFloat(key .. "#feedDaily", hosted.feedDaily) end
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
+    if hosted.sponsor ~= nil then xmlFile:setString(key .. "#sponsor", hosted.sponsor) end
+    if hosted.sponsorBrand ~= nil then xmlFile:setString(key .. "#sponsorBrand", hosted.sponsorBrand) end
+    if hosted.sponsorPopularity ~= nil then xmlFile:setInt(key .. "#sponsorPopularity", hosted.sponsorPopularity) end
     local horseIds = {}
     for horseId in pairs(hosted.ridden or {}) do table.insert(horseIds, horseId) end
     table.sort(horseIds)
@@ -673,6 +680,9 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.feedEaten = xmlFile:getFloat(key .. "#feedEaten")
     hosted.feedDaily = xmlFile:getFloat(key .. "#feedDaily")
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
+    hosted.sponsor = xmlFile:getString(key .. "#sponsor")
+    hosted.sponsorBrand = xmlFile:getString(key .. "#sponsorBrand")
+    hosted.sponsorPopularity = xmlFile:getInt(key .. "#sponsorPopularity")
     local i = 0
     while true do
         local rideKey = string.format("%s.ridden(%d)", key, i)
@@ -727,8 +737,8 @@ end
 
 
 local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity" }
-local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed" }
-local REPORT_STRINGS = { "discipline", "rating", "venue" }
+local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed", "sponsorFee" }
+local REPORT_STRINGS = { "discipline", "rating", "venue", "sponsor" }
 
 
 --- @param xmlFile table
@@ -737,7 +747,9 @@ local REPORT_STRINGS = { "discipline", "rating", "venue" }
 function EqHostManager.saveReport(xmlFile, key, report)
     for _, name in ipairs(REPORT_INTS) do xmlFile:setInt(key .. "#" .. name, report[name] or 0) end
     for _, name in ipairs(REPORT_FLOATS) do xmlFile:setFloat(key .. "#" .. name, report[name] or 0) end
-    for _, name in ipairs(REPORT_STRINGS) do xmlFile:setString(key .. "#" .. name, report[name] or "") end
+    for _, name in ipairs(REPORT_STRINGS) do
+        if report[name] ~= nil then xmlFile:setString(key .. "#" .. name, report[name]) end
+    end
     for i, name in ipairs(report.podium or {}) do xmlFile:setString(string.format("%s.podium(%d)#name", key, i - 1), name) end
     for i, horse in ipairs(report.mine or {}) do
         local horseKey = string.format("%s.horse(%d)", key, i - 1)
@@ -755,7 +767,7 @@ function EqHostManager.loadReport(xmlFile, key)
     local report = { podium = {}, mine = {} }
     for _, name in ipairs(REPORT_INTS) do report[name] = xmlFile:getInt(key .. "#" .. name, 0) end
     for _, name in ipairs(REPORT_FLOATS) do report[name] = xmlFile:getFloat(key .. "#" .. name, 0) end
-    for _, name in ipairs(REPORT_STRINGS) do report[name] = xmlFile:getString(key .. "#" .. name, "") end
+    for _, name in ipairs(REPORT_STRINGS) do report[name] = xmlFile:getString(key .. "#" .. name) end
     local i = 0
     while xmlFile:hasProperty(string.format("%s.podium(%d)", key, i)) do
         table.insert(report.podium, xmlFile:getString(string.format("%s.podium(%d)#name", key, i), "?"))
