@@ -41,7 +41,7 @@ LINING = (90, 130)  # luminance where the leather fades into the lining
 # The shaft widens up the calf (James's fit, 2026-10-31): as it is at the bottom of the calf, up to
 # 1.55x side to side and 1.3x front to back at the top, most of it early (ease out), as a calf
 # fills out quickly above the ankle. Depth grows backwards from the shin.
-CALF = (0.18, 0.45)  # heights above the sole where the widening starts and is full
+CALF = (0.145, 0.45)  # heights above the sole where the widening starts and is full (0.18 poked through low on the shin)
 CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
 # Calf shapes to try live (eqBootCalf 1-8, James 2026-10-31): (top width, top depth). Each shaft
 # group holds all of them as eqCalf1..8 and EqAttire shows one. Once picked, keep only that one.
@@ -49,7 +49,7 @@ CALF_WIDTH, CALF_DEPTH = 1.55, 1.3
 # width 1.15; 3, 4, 7, 8 far too chunky): kept 1, 2, 5, 6, new ones around 5.
 CALF_SHAPES = [(1.4, 1.3, 0.45, 2), (1.55, 1.3, 0.45, 2), (1.4, 1.45, 0.50, 1), (1.3, 1.55, 0.45, 2),
                (1.4, 1.45, 0.45, 2), (1.55, 1.45, 0.45, 2), (1.4, 1.45, 0.38, 2), (1.3, 1.45, 0.45, 2)]
-CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.055
+CALF_CENTRE_X, SHIN_FRONT_Z = 0.003, 0.068  # depth anchor just in front of the shin, so the front gives a little too
 # The brown boots: the leather's detail (its brightness against the average) on a brown, sRGB.
 LEATHER_GREY = 21
 BROWNS = {"darkBrown": (64, 40, 26), "redBrown": (112, 50, 30)}
