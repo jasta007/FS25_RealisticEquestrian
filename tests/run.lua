@@ -3495,6 +3495,19 @@ end)()
         and green[2] > green[1] * 2)
     check("a gait change arrow points up or down, head wider than its stem", upTip.y > upWide.y and downTip.y < downWide.y
         and upWide.w == 1 and #EqTrainingHud.arrowRows(true) == EqTrainingHud.ARROW.rows and #EqTrainingHud.arrowRows(true, 30) == 30)
+    -- Hidden game HUD (filming): the method wins, the field is the fallback, no HUD means shown.
+    local oldMission = g_currentMission
+    g_currentMission = nil
+    check("no mission: HUD not hidden", not EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() return false end } }
+    check("HUD hidden through getIsVisible", EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() return true end, isVisible = false } }
+    check("getIsVisible true wins over the field", not EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { isVisible = false } }
+    check("HUD hidden through the isVisible field", EqTrainingHud.gameHudHidden())
+    g_currentMission = { hud = { getIsVisible = function() error("broken") end } }
+    check("a broken getIsVisible counts as shown", not EqTrainingHud.gameHudHidden())
+    g_currentMission = oldMission
     setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 

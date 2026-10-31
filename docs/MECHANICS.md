@@ -982,3 +982,11 @@ where, for painting our own masks on base-game clothes we can't open (the breech
 
 The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
 keep the game's icon).
+## Hidden HUD (filming)
+
+- When the game's HUD is hidden (the `gsHudVisibility` console command, or a HUD hider mod),
+  everything the mod draws goes with it: the riding panel, centre alerts and prompts, help and
+  welcome popups, course glow poles and lines, fence numbers, XC guide lines and L/R flag labels
+  while riding. Construction mode keeps its guides and labels.
+- Riding keeps working underneath: gait keys, training, rounds and course recording carry on, and
+  the screens come back as they are when the HUD returns.

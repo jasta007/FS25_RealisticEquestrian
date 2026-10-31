@@ -756,7 +756,7 @@ end
 --- @param x number horse position
 --- @param z number
 local function drawLine(points, color, x, z)
-    if EqCourseHooks.drawFailed or drawDebugLine == nil then return end
+    if EqCourseHooks.drawFailed or drawDebugLine == nil or EqTrainingHud.gameHudHidden() then return end
     local radius2 = EqCourseHooks.DRAW_RADIUS * EqCourseHooks.DRAW_RADIUS
     local lift = EqCourseHooks.LINE_LIFT
     local ok, err = EqLog.try("EqCourseHooks.drawLine", function()
@@ -790,7 +790,8 @@ end
 --- @param labels table|nil { x, z, text } to draw instead
 --- @param lift number|nil metres over the ground, NUMBER_LIFT when nil
 local function drawNumbers(jumps, labels, lift)
-    if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil then return end
+    if EqCourseHooks.textFailed or Utils == nil or Utils.renderTextAtWorldPosition == nil
+        or EqTrainingHud.gameHudHidden() then return end
     local ok, err = EqLog.try("EqCourseHooks.drawNumbers", function()
         for _, label in ipairs(labels or EqCourse.labels(jumps)) do
             local y = groundAt(label.x, 0, label.z)

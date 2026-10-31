@@ -1732,8 +1732,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     pollGaitKeys(vehicle)
 
     local view = EqTrainingHooks.getView()
-    -- A first ride starts with the welcome; the view's help follows once it closes.
-    if EqTrainingHooks.HELP_PAGES[view] ~= nil and not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide()
+    local hudHidden = EqTrainingHud.gameHudHidden()
+    -- A first ride starts with the welcome; the view's help follows once it closes. Not while the
+    -- HUD is hidden: nobody could read it.
+    if not hudHidden and EqTrainingHooks.HELP_PAGES[view] ~= nil and not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide()
         and not EqTrainingHud.hasSeen(view) then
         EqTrainingHooks.showHelp(view)
     end
@@ -1756,7 +1758,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     local stamina = record ~= nil and record.trained.stamina or nil
     for _, row in ipairs(exertionRows(spec, sheet, view, stamina)) do table.insert(rows, row) end
     exertionPrompt(ex, condensed, stamina)
-    if EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
+    if not hudHidden and EqExertion.isGalloping(ex) and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("gallop") then
         EqTrainingHud.markSeen("gallop")
         EqTrainingHooks.showHelp("gallop")
     end
@@ -1960,10 +1962,21 @@ function EqTrainingHooks.installRideable(guarded)
         Log:warning("EqTrainingHooks: Rideable.onRegisterActionEvents missing; no training view key")
     end
 
+    -- The riding draw also runs the gait keys, rounds and course recording. While the HUD is
+    -- hidden the game may stop calling the vehicle's draw, so then the same work runs from the
+    -- update instead, with nothing drawn (EqTrainingHud.gameHudHidden), and rounds keep going.
     Rideable.onDraw = Utils.appendedFunction(Rideable.onDraw, function(self, isActiveForInput, isActiveForInputIgnoreSelection)
-        if not EqMain.isActive then return end
+        if not EqMain.isActive or EqTrainingHud.gameHudHidden() then return end
         guarded("training overlay", function() EqTrainingHooks.onDraw(self, isActiveForInputIgnoreSelection) end)
     end)
+    if Rideable.onUpdate ~= nil then
+        Rideable.onUpdate = Utils.appendedFunction(Rideable.onUpdate, function(self, dt, isActiveForInput, isActiveForInputIgnoreSelection)
+            if not EqMain.isActive or not self.isClient or not EqTrainingHud.gameHudHidden() then return end
+            guarded("training overlay (HUD hidden)", function() EqTrainingHooks.onDraw(self, isActiveForInputIgnoreSelection) end)
+        end)
+    else
+        Log:warning("EqTrainingHooks: Rideable.onUpdate missing; rounds may stop while the HUD is hidden")
+    end
     -- Dressage markers lose their collision as they are found; the tag comes down once nobody
     -- rides to it.
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()

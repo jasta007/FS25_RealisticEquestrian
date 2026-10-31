@@ -96,7 +96,8 @@ end
 
 --- @return boolean true while the labels should be seen
 function EqFlagLabels.wanted()
-    return EqXcFlags.wantGuides(EqXcFlags.inConstruction(), EqXcFlags.editing)
+    local editing = EqXcFlags.editing and not EqTrainingHud.gameHudHidden()
+    return EqXcFlags.wantGuides(EqXcFlags.inConstruction(), editing)
 end
 
 

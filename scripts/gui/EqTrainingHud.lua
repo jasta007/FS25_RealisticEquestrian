@@ -51,6 +51,21 @@ EqTrainingHud.place = nil        -- where the popups showing belong: nil (the wo
 EqTrainingHud.drawnAt = nil      -- g_time of the last draw: the riding and world draws share one popup
 
 
+--- True while the player has hidden the game's HUD (the gsHudVisibility console command, or a
+--- HUD hider mod calling hud:consoleCommandToggleVisibility) to film or take screenshots. All
+--- our screen text, popups, glow lines and labels stay hidden with it (James, 2026-10-31).
+--- @return boolean
+function EqTrainingHud.gameHudHidden()
+    local hud = g_currentMission ~= nil and g_currentMission.hud or nil
+    if type(hud) ~= "table" then return false end
+    if hud.getIsVisible ~= nil then
+        local ok, visible = pcall(hud.getIsVisible, hud)
+        if ok and visible ~= nil then return visible == false end
+    end
+    return hud.isVisible == false
+end
+
+
 --- @return table overlay one white pixel, made on first use
 local function pixel()
     if EqTrainingHud.overlay == nil then
@@ -66,7 +81,7 @@ end
 --- @param height number
 --- @param color table
 local function fill(x, y, width, height, color)
-    if width <= 0 or height <= 0 then return end
+    if width <= 0 or height <= 0 or EqTrainingHud.gameHudHidden() then return end
     local overlay = pixel()
     overlay:setPosition(x, y)
     overlay:setDimension(width, height)
@@ -83,6 +98,7 @@ end
 --- @param align number|nil RenderText alignment, left when nil
 --- @param bold boolean|nil
 local function text(value, x, y, size, color, align, bold)
+    if EqTrainingHud.gameHudHidden() then return end
     setTextAlignment(align or RenderText.ALIGN_LEFT)
     setTextBold(bold == true)
     setTextColor(color[1], color[2], color[3], color[4])
@@ -698,6 +714,8 @@ end
 --- @param place string|nil "menu" or "dialog" when called from RLRM's menu or Diseases dialog
 function EqTrainingHud.drawHelp(place)
     if EqTrainingHud.pages == nil then return end
+    -- A world popup waits while the HUD is hidden (menus keep theirs: the game shows menus anyway).
+    if place == nil and EqTrainingHud.gameHudHidden() then return end
     local guiOpen = g_gui ~= nil and g_gui:getIsGuiVisible()
     if EqTrainingHud.place ~= place or (place == nil and guiOpen) then
         -- A menu's popups go with the menu; world popups wait until every menu is closed.
