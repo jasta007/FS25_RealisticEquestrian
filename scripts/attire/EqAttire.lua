@@ -79,10 +79,10 @@ EqAttire.BOOT_RAISE = 0.03
 -- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
 EqAttire.BOOT_TOE_DROP = 14
 -- The shaft leans back from the ankle (degrees) and moves back (metres), for the calf.
-EqAttire.BOOT_LEAN = 6.8
+EqAttire.BOOT_LEAN = 6.7
 EqAttire.BOOT_BACK = -0.012
 -- The shaft tops lean outwards, away from each other, seen from the front (degrees).
-EqAttire.BOOT_SPLAY = 1.9
+EqAttire.BOOT_SPLAY = 2
 -- dressed models wearing our boots (weak, models come and go), for eqBootFit
 EqAttire.booted = setmetatable({}, { __mode = "k" })
 
