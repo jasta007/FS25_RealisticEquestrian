@@ -53,8 +53,8 @@ EqAttire.PRIMARY, EqAttire.SECONDARY = "colorScaleR", "colorScaleG"
 -- and to the right of the head joint, its tilt back in degrees and a size factor. Set with the
 -- eqHatFit command.
 EqAttire.HAT = {
-    female = { up = 0.10, forward = -0.005, side = 0, tilt = 0, scale = 1 },
-    male = { up = 0.10, forward = -0.005, side = 0, tilt = 0, scale = 1 },
+    female = { up = 0.107, forward = -0.002, side = 0, tilt = 0, scale = 1 },
+    male = { up = 0.107, forward = -0.002, side = 0, tilt = 0, scale = 1 },
 }
 EqAttire.HAT_NODE = "eqHatFit"
 -- eqUvGrid's test texture (art/source/uv_grid.py) and the slot it is on, if any.

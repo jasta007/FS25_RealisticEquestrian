@@ -753,7 +753,7 @@ boots are our own models; the rest are base-game meshes:
 - **Top hat** in black silk. It hangs off the head's attach point and is set along the head
   joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
   the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
-  (defaults 0.10 m up and 0.005 m back of the head joint, no tilt, size 1; female and male
+  (defaults 0.107 m up and 0.002 m back of the head joint, no tilt, size 1; female and male
   heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
 
 - **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
