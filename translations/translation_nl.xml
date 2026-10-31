@@ -125,15 +125,26 @@
         <text name="eq_fig_serpentine" text="Slangenvolte, %d bogen, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="Boog van %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Door de volte van hand veranderen bij %s"/>
-        <text name="eq_fig_eight" text="Acht vanaf %s"/>
+        <text name="eq_fig_eight" text="Halve acht %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Middenlijn bij %s, bij X afwenden naar %s"/>
+        <text name="eq_fig_centreFromX" text="Bij %s afwenden naar X, middenlijn tot %s"/>
+        <text name="eq_fig_halfPassCentre" text="Appuyement van %s naar de middenlijn, door tot %s"/>
+        <text name="eq_fig_legYieldCentre" text="Middenlijn bij %s, wijken voor de kuit naar %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage op de diagonaal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
         <text name="eq_fig_legYield" text="Wijken voor de kuit vanaf %s en terug"/>
         <text name="eq_fig_halfPass" text="Appuyement vanaf %s en terug"/>
         <text name="eq_fig_shoulderIn" text="Schouder binnenwaarts %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Wijken langs de baan %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (kroep binnenwaarts) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (kroep buitenwaarts) %s-%s"/>
         <text name="eq_lat_legYield" text="Wijken: naar %s, stelling %s"/>
         <text name="eq_lat_halfPass" text="Appuyement: naar %s, stelling %s"/>
-        <text name="eq_lat_shoulderIn" text="Schouder binnenwaarts: stelling %s"/>
-        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s"/>
+        <text name="eq_lat_shoulderIn" text="Schouder binnenwaarts: naar %s, stelling %s"/>
+        <text name="eq_lat_legYieldRail" text="Wijken langs de baan: naar %s, stelling %s"/>
+        <text name="eq_lat_travers" text="Travers: naar %s, stelling %s"/>
+        <text name="eq_lat_renvers" text="Renvers: naar %s, stelling %s"/>
         <text name="eq_lat_left" text="links"/>
         <text name="eq_lat_right" text="rechts"/>
         <text name="eq_lat_keys" text="Rechtermuisknop vast: sturen met de muis, A/D zijwaarts, Shift houdt de richting en de muis stelt het hoofd."/>

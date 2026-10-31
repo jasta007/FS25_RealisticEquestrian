@@ -125,15 +125,26 @@
         <text name="eq_fig_serpentine" text="Serpentina de %d laços, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="Laço de %d m %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Mudança de mão pelo círculo em %s"/>
-        <text name="eq_fig_eight" text="Oito a partir de %s"/>
+        <text name="eq_fig_eight" text="Meio oito %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Linha central em %s, em X virar para %s"/>
+        <text name="eq_fig_centreFromX" text="Em %s virar para X, linha central até %s"/>
+        <text name="eq_fig_halfPassCentre" text="Apoiar de %s até a linha central, até %s"/>
+        <text name="eq_fig_legYieldCentre" text="Linha central em %s, cessão à perna até %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage na diagonal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
         <text name="eq_fig_legYield" text="Cessão à perna a partir de %s e volta"/>
         <text name="eq_fig_halfPass" text="Apoiar a partir de %s e volta"/>
         <text name="eq_fig_shoulderIn" text="Espádua a dentro %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Cessão à perna pela pista %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (garupa a dentro) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (garupa a fora) %s-%s"/>
         <text name="eq_lat_legYield" text="Cessão à perna: para a %s, flexão à %s"/>
         <text name="eq_lat_halfPass" text="Apoiar: para a %s, flexão à %s"/>
-        <text name="eq_lat_shoulderIn" text="Espádua a dentro: flexão à %s"/>
-        <text name="eq_lat_legYieldRail" text="Cessão pela pista: para a %s"/>
+        <text name="eq_lat_shoulderIn" text="Espádua a dentro: para a %s, flexão à %s"/>
+        <text name="eq_lat_legYieldRail" text="Cessão pela pista: para a %s, flexão à %s"/>
+        <text name="eq_lat_travers" text="Travers: para a %s, flexão à %s"/>
+        <text name="eq_lat_renvers" text="Renvers: para a %s, flexão à %s"/>
         <text name="eq_lat_left" text="esquerda"/>
         <text name="eq_lat_right" text="direita"/>
         <text name="eq_lat_keys" text="Segure o botão direito: conduzir com o mouse, A/D deslocar de lado, Shift mantém o rumo e o mouse flexiona a cabeça."/>

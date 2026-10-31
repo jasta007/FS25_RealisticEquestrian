@@ -200,8 +200,10 @@ function EqDressageHooks.courseFor(vehicle, spec)
     local bend = EqLateral ~= nil and EqLateral.vehicle == vehicle and EqLateral.bend or 0
     -- On the spot (Ctrl) for a piaffe or pirouette.
     local spot = (spec.eqCollect or 0) >= 0.8
+    -- Collected going forward (Ctrl + W) for a passage.
+    local passage = spot and spec.eqPassage == true
     return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ,
-        bend = bend, spot = spot }
+        bend = bend, spot = spot, passage = passage }
 end
 
 
@@ -321,7 +323,8 @@ function EqDressageHooks.drawPath(vehicle)
         local along = EqDressageHooks.colourAlong(run, back, EqDressagePath.colourFor(EqDressageHooks.shownDev))
         colour = function(s)
             local c = along(s)
-            if c == "white" and EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2) ~= nil then return "cyan" end
+            if c == "white" and (EqDressageHooks.sectionAt(run, s + EqCourseGlow.SEGMENT / 2) ~= nil
+                or EqDressagePath.passageAt(run.test, s + EqCourseGlow.SEGMENT / 2) ~= nil) then return "cyan" end
             return c
         end
     else

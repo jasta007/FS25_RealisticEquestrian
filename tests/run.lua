@@ -3974,7 +3974,7 @@ end)()
             for i = 3, #test.pts do
                 local a, b, c = test.pts[i - 2], test.pts[i - 1], test.pts[i]
                 local move = test.moves[b.m]
-                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn")
+                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn" or move.key == "renvers" or move.key == "travers" or move.key == "halfPassCentre" or move.key == "legYieldCentre")
                 local ux, uy, vx, vy = b.x - a.x, b.y - a.y, c.x - b.x, c.y - b.y
                 local lu, lv = math.sqrt(ux * ux + uy * uy), math.sqrt(vx * vx + vy * vy)
                 if not lateral and lu > 0.2 and lv > 0.2 then
@@ -3998,7 +3998,7 @@ end)()
             for i = 3, #test.pts do
                 local a, b, c = test.pts[i - 2], test.pts[i - 1], test.pts[i]
                 local move = test.moves[b.m]
-                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn")
+                local lateral = move ~= nil and (move.key == "legYield" or move.key == "halfPass" or move.key == "legYieldRail" or move.key == "shoulderIn" or move.key == "renvers" or move.key == "travers" or move.key == "halfPassCentre" or move.key == "legYieldCentre")
                 local ux, uy, vx, vy = b.x - a.x, b.y - a.y, c.x - b.x, c.y - b.y
                 local lu, lv = math.sqrt(ux * ux + uy * uy), math.sqrt(vx * vx + vy * vy)
                 if not lateral and lu > 0.2 and lv > 0.2 then
@@ -4028,7 +4028,7 @@ end)()
         check(name .. ": the line's dashes follow the gait asked, starting afresh at each change", firstChange ~= nil
             and EqDressagePath.gaitAt(lastTest, firstChange.s) == firstChange.gait
             and EqDressagePath.gaitAt(lastTest, firstChange.s - 0.01) ~= firstChange.gait
-            and #EqDressagePath.breaks(lastTest) == #lastTest.events + 2 * #(lastTest.sections or {})
+            and #EqDressagePath.breaks(lastTest) == #lastTest.events + 2 * #(lastTest.sections or {}) + 2 * #(lastTest.passages or {})
             and EqDressagePath.DASH.walk < EqDressagePath.DASH.canter)
         -- Lateral work: one body size at every gait, spaced by gait (James 2026-10-31).
         local withLateral, sec = nil, nil
@@ -4071,7 +4071,7 @@ end)()
             end
         end
         run, event = ride(test, frame, 1, 0)
-        check(name .. ": wandering 1 m either side scores much less", event == "test" and run.percent < 70 and run.percent > 20,
+        check(name .. ": wandering 1 m either side scores much less", event == "test" and run.percent < 50 and run.percent > 0,
             string.format("%s %s%%", event, tostring(run.percent)))
         run, event = ride(test, frame, 0, 6)
         check(name .. ": late changes and halts cost marks", event == "test" and run.percent < 100 and run.percent > 50,
@@ -4320,6 +4320,38 @@ end)()
     EqDressagePath.step(backed, "reverse", hx, hz, 50)
     check("backing up at a halt counts as the halt, then as moving during it", held and backed.hold == nil and backed.ev > early.ev - 0
         and backed.acc[haltEvent.m].pen >= EqDressagePath.HALT_MOVED)
+    -- Passage (James, 2026-10-31): along a long side and across the diagonal, a trot collected
+    -- with Ctrl + W; not collected in it costs marks.
+    local passKeys, passTest = {}, nil
+    for _, figure in ipairs(EqDressagePath.library(frame)) do
+        if figure.passage ~= nil then passKeys[figure.key] = figure.gait end
+    end
+    check("passages along the long side and on the diagonal, at a trot only", passKeys.passageRail == "trot" and passKeys.passageDiagonal == "trot")
+    for seed = 1, 80 do
+        local t = EqDressagePath.build(frame, 10, seeded("passage " .. seed))
+        if #t.passages > 0 then passTest = t break end
+    end
+    local function passRun(collected)
+        local p = passTest.passages[1]
+        local r = EqDressagePath.newRun(passTest, 50)
+        local k = 1
+        while passTest.pts[k].s < p.s0 + EqDressagePath.PASSAGE_GRACE + 0.5 do k = k + 1 end
+        r.started, r.i, r.s, r.gait = true, k, passTest.pts[k].s, "trot"
+        r.lastX, r.lastY = passTest.pts[k].x, passTest.pts[k].y
+        for _ = 1, 30 do
+            local a, b = passTest.pts[r.i], passTest.pts[math.min(#passTest.pts, r.i + 1)]
+            local wx, wz = EqDressagePath.toWorld(frame, b.x, b.y)
+            local ax, az = EqDressagePath.toWorld(frame, a.x, a.y)
+            local d = math.max(0.001, math.sqrt((wx - ax) ^ 2 + (wz - az) ^ 2))
+            EqDressagePath.step(r, "trot", wx, wz, 100, { dirX = (wx - ax) / d, dirZ = (wz - az) / d, bend = 0, spot = collected, passage = collected })
+        end
+        return r.acc[p.m]
+    end
+    check("tests ask for passages, and not collecting in one costs marks", passTest ~= nil and passRun(false).passMs > 0 and passRun(true).passMs == 0
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7)
+    check("figures that only follow the line mark harder: 0.15 m off on average is a 7.5",
+        EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 7.5
+        and EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0 }) == 9)
     -- Way off the line for a stretch costs more than the horse's form (James, 2026-10-31).
     local base = { devSum = 0, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0 }
     local far = { devSum = 0.5 * 20, len = 20, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 8 }
@@ -4348,7 +4380,7 @@ end)()
         if figure.sections ~= nil then lateral[figure.key .. (figure.sections[1].bend == 1 and "R" or figure.sections[1].bend == -1 and "L" or "")] = true end
     end
     check("leg yields, half passes and shoulder-ins are in the library, bent both ways", lateral.legYieldL and lateral.legYieldR
-        and lateral.halfPassL and lateral.halfPassR and lateral.shoulderInL and lateral.shoulderInR and lateral.legYieldRail)
+        and lateral.halfPassL and lateral.halfPassR and lateral.shoulderInL and lateral.shoulderInR and lateral.legYieldRailL and lateral.renversR and lateral.traversL)
     local found = nil
     for seed = 1, 60 do
         local t = EqDressagePath.build(frame, 10, seeded("lateral " .. seed))

@@ -71,7 +71,9 @@ EqDressagePath.GAIT_WEIGHTS = { walk = 2, trot = 5, canter = 3 }
 -- Short figures come more often than long ones (James 2026-10-30: long figures felt like one
 -- big line, nothing new for a while).
 EqDressagePath.FIGURE_WEIGHTS = { circle = 1.5, longDiagonal = 1.5, shortDiagonal = 1.5, halfVolte = 2, across = 1.5, acrossChange = 1.5,
-    centre = 1.5, serpentine = 0.8, shallowLoop = 1.2, throughCircle = 1.2, eight = 0.8 }
+    centreToX = 1, centreFromX = 1, serpentine = 1.2, shallowLoop = 1.2, throughCircle = 1.2, eight = 1.2,
+    -- Four kinds of lateral work along the rail share what one had (James, 2026-10-31).
+    shoulderIn = 0.5, renvers = 0.5, travers = 0.5, legYieldRail = 0.5, passageRail = 0.7 }
 -- Chances in 100: on the track before a figure, a stretch at another gait between two letters
 -- (INTERLUDES: which gait, by the gait the horse is in), else a halt at a letter; a change down
 -- inside a figure (DOWN); a halt at X on a centre line.
@@ -146,6 +148,18 @@ EqDressagePath.FAR_MAX = 4
 -- getting into the arena right is confusing at first (James, 2026-10-31: 1s on the entry).
 EqDressagePath.OPENING_SHARE = 0.5
 EqDressagePath.SECTION_GRACE = 1
+-- Passage (James, 2026-10-31): a slow, collected trot (Ctrl + W at a trot, EqLateral) along a
+-- long side or across a diagonal. After PASSAGE_GRACE metres, each second not in it costs
+-- PASSAGE_PER_S, at most PASSAGE_MAX. Its dashes are the trot's, closer together.
+EqDressagePath.PASSAGE_GRACE = 2
+EqDressagePath.PASSAGE_PER_S = 0.6
+EqDressagePath.PASSAGE_MAX = 4
+EqDressagePath.PASSAGE_STEP = 0.7
+-- Figures that only follow the line are marked harder than lateral work and movements on the
+-- spot (James, 2026-10-31: "pretty hard to not get an 8"): PLAIN_FREE metres off on average are
+-- free, then PLAIN_PER_M a metre (DEV_FREE and DEV_PER_M for the rest).
+EqDressagePath.PLAIN_FREE = 0.02
+EqDressagePath.PLAIN_PER_M = 20
 -- Off the line in a lateral section: this much more is free (James, 2026-10-30: a leg yield he
 -- thought went well scored 2.5, 0.59 m off on average).
 EqDressagePath.LATERAL_FREE = 0.3
@@ -541,12 +555,27 @@ end
 
 --- Change rein on the long diagonal, F-X-H (a free walk, a trot or a canter), or the short one,
 --- F-E (trot or canter).
+local diagonalLine
 FIGURES.diagonals = function(g, frame, gait)
     local first, last = g.sides[1], g.sides[#g.sides]
     if first == nil then return {} end
-    local straight, rc = g.straight[gait], g.rc[gait]
     local list = {}
     local function diagonal(toY, key)
+        local pts, mid = diagonalLine(g, gait, toY)
+        table.insert(list, { key = key, pts = pts, labels = { { g.wt, first }, { -g.wt, toY } }, marks = { mid } })
+    end
+    diagonal(last, "longDiagonal")
+    if gait ~= "walk" then diagonal(0, "shortDiagonal") end
+    return list
+end
+
+
+--- A diagonal's line (pure): on the track from the side letter at -y across to -x at toY.
+--- @return table pts, number mid the point in its middle
+diagonalLine = function(g, gait, toY)
+    local first = g.sides[1]
+    local straight, rc = g.straight[gait], g.rc[gait]
+    do
         -- Room on the track before and after the diagonal for corners of the gait's size.
         local fromY, cornerY = math.max(first, -straight + 1), math.min(toY, straight - 1)
         for _ = 1, 3 do
@@ -563,11 +592,8 @@ FIGURES.diagonals = function(g, frame, gait)
             local d = math.abs(p.x) + math.abs(p.y - midY)
             if d < bestD then mid, bestD = i, d end
         end
-        table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, first }, { -g.wt, toY } }, marks = { mid } })
+        return pen.pts, mid
     end
-    diagonal(last, "longDiagonal")
-    if gait ~= "walk" then diagonal(0, "shortDiagonal") end
-    return list
 end
 
 
@@ -634,42 +660,82 @@ local function centreLine(g, frame, turn, opening, gait)
 end
 
 
---- A centre line: walk or trot, often with a halt at X.
+--- The whole centre line, A to C: only for the test's final centre line now (finalOnly; James
+--- 2026-10-31: pieces this long should be built from shorter ones).
 FIGURES.centre = function(g, frame, gait)
-    if gait == "canter" then return {} end
+    if gait ~= "trot" then return {} end
     local list = {}
     for _, turn in ipairs({ 1, -1 }) do
         local pts, x = centreLine(g, frame, turn, false, gait)
-        table.insert(list, { key = "centre", turn = turn, pts = pts, labels = { { 0, -g.lt }, { 0, g.lt } }, marks = { x }, haltAt = x })
+        table.insert(list, { key = "centre", turn = turn, pts = pts, labels = { { 0, -g.lt }, { 0, g.lt } }, marks = { x }, haltAt = x,
+            finalOnly = true })
     end
     return list
 end
 
 
---- A serpentine of n loops from A to C, each loop touching a long side. Trot only.
-FIGURES.serpentine = function(g, frame, gait)
-    if gait ~= "trot" then return {} end
+--- Half a centre line, from A to X, turning at X to E or B and onto the track either way: walk
+--- or trot, often with a halt at X.
+FIGURES.centreToX = function(g, frame, gait)
+    if gait == "canter" then return {} end
+    local a = math.min(EqDressagePath.CENTRE_TURN, g.wt / 2)
     local list = {}
-    for _, n in ipairs({ 3, 4, 5 }) do
-        local h = 2 * g.lt / n
-        local r = math.min(h / 2, g.wt, 6) - 0.01
-        if r >= g.minR.trot then
-            local points, side = {}, 1
-            table.insert(points, { x = g.wt, y = -g.lt })
-            for k = 1, n - 1 do
-                local y = -g.lt + k * h
-                table.insert(points, { x = g.wt * side, y = y })
-                table.insert(points, { x = -g.wt * side, y = y })
-                side = -side
+    for _, side in ipairs({ 1, -1 }) do
+        for _, along in ipairs({ 1, -1 }) do
+            local pen = newPen(-g.wt, -g.lt + a + 1, 0, -1)
+            rounded(pen, { { x = -g.wt, y = -g.lt }, { x = 0, y = -g.lt }, { x = 0, y = 0 }, { x = side * g.wt, y = 0 },
+                { x = side * g.wt, y = along * (a + 1) } }, a)
+            local x, best = 1, math.huge
+            for i, p in ipairs(pen.pts) do
+                local d = p.x * p.x + p.y * p.y
+                if d < best then x, best = i, d end
             end
-            table.insert(points, { x = g.wt * side, y = g.lt })
-            table.insert(points, { x = 0, y = g.lt })
-            local pen = newPen(0, -g.lt, 1, 0)
-            rounded(pen, points, r)
-            table.insert(list, { key = "serpentine", loops = n, pts = pen.pts, labels = { { 0, -g.lt }, { 0, g.lt } }, marks = {} })
+            -- Halt a little before the turn at X, on the straight.
+            local haltAt = math.max(1, x - math.ceil(a / EqDressagePath.STEP))
+            table.insert(list, { key = "centreToX", pts = pen.pts, labels = { { 0, -g.lt }, { side * g.wt, 0 } }, marks = { haltAt },
+                haltAt = haltAt })
         end
     end
     return list
+end
+
+
+--- The other half: from E or B across to X, up the centre line to C, track left or right. Walk
+--- or trot.
+FIGURES.centreFromX = function(g, frame, gait)
+    if gait == "canter" then return {} end
+    local a = math.min(EqDressagePath.CENTRE_TURN, g.wt / 2)
+    local list = {}
+    for _, along in ipairs({ 1, -1 }) do
+        for _, turn in ipairs({ 1, -1 }) do
+            local pen = newPen(g.wt, -along * (a + 1), 0, along)
+            rounded(pen, { { x = g.wt, y = 0 }, { x = 0, y = 0 }, { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt },
+                { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+            table.insert(list, { key = "centreFromX", pts = pen.pts, labels = { { g.wt, 0 }, { 0, g.lt } }, marks = {} })
+        end
+    end
+    return list
+end
+
+
+--- Half a serpentine, two loops (James 2026-10-31: the whole arena's serpentine was one giant
+--- piece; two halves ridden back to back make it, with room for other things between): from A to
+--- the long side at E or B, or from there on to C. Trot only.
+FIGURES.serpentine = function(g, frame, gait)
+    if gait ~= "trot" then return {} end
+    local h = g.lt / 2
+    local r = math.min(h / 2, g.wt, 6) - 0.01
+    if r < g.minR.trot then return {} end
+    local gap = EqDressagePath.CONNECT_MIN / 2
+    -- From A: round the A end on one side, across at the quarter line, up the other side to E/B.
+    local pen = newPen(0, -g.lt, 1, 0)
+    rounded(pen, { { x = g.wt, y = -g.lt }, { x = g.wt, y = -h }, { x = -g.wt, y = -h }, { x = -g.wt, y = -gap } }, r)
+    local first = { key = "serpentine", loops = 2, pts = pen.pts, labels = { { 0, -g.lt }, { -g.wt, 0 } }, marks = {} }
+    -- From E/B: up that side, across at the quarter line, round the C end.
+    pen = newPen(-g.wt, gap, 0, 1)
+    rounded(pen, { { x = -g.wt, y = h }, { x = g.wt, y = h }, { x = g.wt, y = g.lt }, { x = 0, y = g.lt } }, r)
+    local second = { key = "serpentine", loops = 2, pts = pen.pts, labels = { { -g.wt, 0 }, { 0, g.lt } }, marks = {} }
+    return { first, second }
 end
 
 
@@ -703,7 +769,9 @@ FIGURES.throughCircle = function(g, frame, gait)
 end
 
 
---- A figure of eight: circles at both ends, crossing at X. Trot or canter.
+--- Half a figure of eight, an S (James 2026-10-31: the whole eight was too long for one piece):
+--- from A round the circle at that end, through X, round the circle at the other end to C. Two
+--- back to back (the second mirrored) make the eight. Trot or canter.
 FIGURES.eight = function(g, frame, gait)
     if gait == "walk" then return {} end
     local r = math.min(EqDressagePath.BIG_CIRCLE, g.wt)
@@ -716,13 +784,10 @@ FIGURES.eight = function(g, frame, gait)
     local cross1 = #pen.pts
     lineTo(pen, tx, ty)
     if not arcUntil(pen, r, -1, math.pi / 2, facing(0, 0)) then return {} end
-    tx, ty = -pen.x, -pen.y
-    lineTo(pen, 0, 0)
-    lineTo(pen, tx, ty)
-    if not arcUntil(pen, r, 1, math.pi / 6, heading(1, 0)) then return {} end
-    -- Back at A: square it up on the track.
+    -- At C: on round to the top of that circle, on the track at C, and square it up.
+    if not arcUntil(pen, r, -1, math.pi / 6, heading(1, 0)) then return {} end
     forward(pen, 1)
-    return { { key = "eight", pts = pen.pts, labels = { { 0, -g.lt } }, marks = { cross1 } } }
+    return { { key = "eight", pts = pen.pts, labels = { { 0, -g.lt }, { 0, g.lt } }, marks = { cross1 } } }
 end
 
 
@@ -776,37 +841,134 @@ FIGURES.halfPass = function(g, frame, gait)
 end
 
 
---- Along the rail between two side letters: shoulder-in (straight, head bent in) or leg yield
---- along the rail (the body turned in by the drift's angle, drifting to the rail). Walk or trot.
+--- Along the rail between two side letters, the body turned the drift's angle off the rail
+--- (James, 2026-10-31: real names, a bend in each): shoulder-in (forehand in, bent away from the
+--- way it goes), renvers (forehand in, bent the way it goes), travers (haunches in: head to the
+--- rail, bent the way it goes) and leg yield along the rail (head to the rail, bent away from
+--- the way it goes). Walk or trot.
+local RAIL = { shoulderIn = { side = -1, bend = -1 }, renvers = { side = -1, bend = 1 }, travers = { side = 1, bend = -1 },
+    legYieldRail = { side = 1, bend = 1 } }
 local function alongRail(g, gait, key)
     if gait == "canter" then return {} end
     local straight, list = g.straight[gait], {}
     local angle = math.atan(EqDressagePath.DRIFT)
     for k = 1, #g.sides - 1 do
-        local y0, y1 = g.sides[k], g.sides[k + 1]
-        if y0 >= -straight - 1 and y1 <= straight + 1 and y1 - y0 >= 10 then
+        local y0 = g.sides[k]
+    for k2 = k + 1, math.min(k + 2, #g.sides) do
+        local y1 = g.sides[k2]
+        -- One letter to the next, or on past one more (James 2026-10-31: they hardly came up).
+        if y0 >= -straight - 1 and y1 <= straight + 1 and y1 - y0 >= 10 and y1 - y0 <= 26 then
             local pen = newPen(g.wt, y0, 0, 1)
             lineTo(pen, g.wt, y1)
-            local section = key == "shoulderIn" and { from = 1, to = #pen.pts, hx = 0, hy = 1, bend = -1, drift = 0 }
-                or { from = 1, to = #pen.pts, hx = -math.sin(angle), hy = math.cos(angle), drift = 1 }
+            -- Facing in (side -1) it drifts right to keep on the rail; facing the rail, left.
+            local r = RAIL[key]
+            local section = { from = 1, to = #pen.pts, hx = r.side * math.sin(angle), hy = math.cos(angle), bend = r.bend, drift = -r.side }
             table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y0 }, { g.wt, y1 } }, marks = {}, lateral = true,
                 sections = { section } })
+        end
+    end
+    end
+    return list
+end
+
+
+--- Lateral work on a diagonal (James 2026-10-31: none could go across the arena): a half pass
+--- from a side letter to the centre line, then up it to C and track left or right (trot, or
+--- canter in a 20 m wide arena), and a leg yield off the centre line from A to the track
+--- (walk or trot). The body faces straight up the arena while it drifts.
+local function lateralCentre(g, gait, key)
+    local list = {}
+    local a = math.min(EqDressagePath.CENTRE_TURN, g.wt / 2)
+    local run = g.wt / EqDressagePath.DRIFT
+    if key == "halfPassCentre" then
+        if gait == "walk" or gait == "canter" and g.wt < 8 then return {} end
+        for _, y in ipairs(g.sides) do
+            if y >= -g.straight[gait] - 1 and y + 2 + run + 3 <= g.lt - a then
+                for _, turn in ipairs({ 1, -1 }) do
+                    local pen = newPen(g.wt, y, 0, 1)
+                    forward(pen, 2)
+                    local from = #pen.pts
+                    lineTo(pen, 0, pen.y + run)
+                    local to = #pen.pts
+                    rounded(pen, { { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt }, { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+                    table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y }, { 0, g.lt } }, marks = {}, lateral = true,
+                        sections = { { from = from, to = to, hx = 0, hy = 1, bend = -1, drift = -1, kind = "halfPass" } } })
+                end
+            end
+        end
+    else
+        if gait == "canter" then return {} end
+        for _, y in ipairs(g.sides) do
+            local from = -g.lt + a + 3
+            if y >= from + run and y <= g.straight[gait] - 2 then
+                local pen = newPen(-g.wt, -g.lt + a + 1, 0, -1)
+                rounded(pen, { { x = -g.wt, y = -g.lt }, { x = 0, y = -g.lt }, { x = 0, y = y - run } }, a)
+                local s0 = #pen.pts
+                lineTo(pen, g.wt, y)
+                local s1 = #pen.pts
+                pen.hx, pen.hy = 0, 1
+                forward(pen, 2)
+                table.insert(list, { key = key, pts = pen.pts, labels = { { 0, -g.lt }, { g.wt, y } }, marks = {}, lateral = true,
+                    sections = { { from = s0, to = s1, hx = 0, hy = 1, bend = -1, drift = 1, kind = "legYield" } } })
+            end
         end
     end
     return list
 end
 
 
+FIGURES.halfPassCentre = function(g, frame, gait) return lateralCentre(g, gait, "halfPassCentre") end
+FIGURES.legYieldCentre = function(g, frame, gait) return lateralCentre(g, gait, "legYieldCentre") end
+
+
 FIGURES.shoulderIn = function(g, frame, gait) return alongRail(g, gait, "shoulderIn") end
 FIGURES.legYieldRail = function(g, frame, gait) return alongRail(g, gait, "legYieldRail") end
+FIGURES.renvers = function(g, frame, gait) return alongRail(g, gait, "renvers") end
+FIGURES.travers = function(g, frame, gait) return alongRail(g, gait, "travers") end
+
+
+--- Passage (James, 2026-10-31): a slow, collected trot along a long side, one or two letters on,
+--- or across the long diagonal. Trot only. passage = { from, to } points ridden in it.
+FIGURES.passageRail = function(g, frame, gait)
+    if gait ~= "trot" then return {} end
+    local straight, list = g.straight[gait], {}
+    for k = 1, #g.sides - 1 do
+        for k2 = k + 1, math.min(k + 2, #g.sides) do
+            local y0, y1 = g.sides[k], g.sides[k2]
+            if y0 >= -straight - 1 and y1 <= straight + 1 and y1 - y0 >= 10 and y1 - y0 <= 26 then
+                local pen = newPen(g.wt, y0, 0, 1)
+                lineTo(pen, g.wt, y1)
+                table.insert(list, { key = "passageRail", pts = pen.pts, labels = { { g.wt, y0 }, { g.wt, y1 } }, marks = {},
+                    passage = { from = 1, to = #pen.pts } })
+            end
+        end
+    end
+    return list
+end
+
+
+FIGURES.passageDiagonal = function(g, frame, gait)
+    if gait ~= "trot" or g.sides[1] == nil then return {} end
+    local last = g.sides[#g.sides]
+    local pts = diagonalLine(g, gait, last)
+    -- In passage from off the track to back on it.
+    local from, to = nil, nil
+    for i, p in ipairs(pts) do
+        if from == nil and p.x < g.wt - 0.5 then from = i end
+        if p.x > -g.wt + 0.5 then to = i end
+    end
+    if from == nil or to == nil or to <= from then return {} end
+    return { { key = "passageDiagonal", pts = pts, labels = { { g.wt, g.sides[1] }, { -g.wt, last } }, marks = {},
+        passage = { from = from, to = to } } }
+end
 
 
 -- For the tests.
 EqDressagePath.FIGURES = FIGURES
 
 
-EqDressagePath.FIGURE_ORDER = { "legYield", "halfPass", "shoulderIn", "legYieldRail",
-    "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "serpentine",
+EqDressagePath.FIGURE_ORDER = { "legYield", "halfPass", "shoulderIn", "legYieldRail", "renvers", "travers", "halfPassCentre", "legYieldCentre",
+    "passageRail", "passageDiagonal", "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "centreToX", "centreFromX", "serpentine",
     "shallowLoop", "throughCircle", "eight" }
 
 
@@ -870,7 +1032,7 @@ function EqDressagePath.library(frame)
                             for _, sec in ipairs(figure.sections or {}) do
                                 sections = sections or {}
                                 table.insert(sections, { from = sec.from, to = sec.to, hx = sec.hx * sx, hy = sec.hy * sy,
-                                    bend = sec.bend ~= nil and sec.bend * sx * sy or nil, drift = sec.drift * sx * sy })
+                                    bend = sec.bend ~= nil and sec.bend * sx * sy or nil, drift = sec.drift * sx * sy, kind = sec.kind })
                             end
                             table.insert(list, {
                                 -- Saved in a player's own test (EqDressageTests): the same figure on every load.
@@ -881,7 +1043,7 @@ function EqDressagePath.library(frame)
                                 pts = pts, marks = figure.marks, haltAt = figure.haltAt, sections = sections,
                                 entry = entry, entryRein = reinAt(track, entry, pts[2].x - pts[1].x, pts[2].y - pts[1].y),
                                 exitRein = reinAt(track, exit, pts[n].x - pts[n - 1].x, pts[n].y - pts[n - 1].y),
-                                fromA = pts[1].y < 0,
+                                fromA = pts[1].y < 0, finalOnly = figure.finalOnly, passage = figure.passage,
                             })
                         end
                     end
@@ -1003,7 +1165,12 @@ end
 EqDressagePath.seededRng = seededRng
 
 
-local LATERAL_KEYS = { legYield = true, halfPass = true, shoulderIn = true, legYieldRail = true }
+-- Figures marked on following the line alone (PLAIN_*): not the opening, lateral work or passage.
+local PLAIN_KEYS = { circle = true, longDiagonal = true, shortDiagonal = true, halfVolte = true, across = true, acrossChange = true,
+    centre = true, centreToX = true, centreFromX = true, serpentine = true, shallowLoop = true, throughCircle = true, eight = true,
+    final = true, proceed = true }
+local LATERAL_KEYS = { legYield = true, halfPass = true, shoulderIn = true, legYieldRail = true, renvers = true, travers = true, halfPassCentre = true,
+    legYieldCentre = true }
 
 --- Ease out the sharp bends where pieces of line meet (pure): each point bent more than SMOOTH
 --- moves towards its neighbours, a few times over. Lateral figures keep their corners, and the
@@ -1046,7 +1213,7 @@ end
 function EqDressagePath.build(frame, figures, rng, plan, open)
     local library, byGait, g = EqDressagePath.library(frame)
     if plan ~= nil then rng = seededRng(plan.seed) end
-    local test = { pts = {}, moves = {}, events = {}, sections = {}, frame = frame, g = g }
+    local test = { pts = {}, moves = {}, events = {}, sections = {}, passages = {}, frame = frame, g = g }
     local events = test.events
 
     -- Changes: never closer than CHANGE_GAP to the last one (unless forced), and walks kept short.
@@ -1249,13 +1416,16 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
 
     local function ride(figure, m)
         local move = test.moves[m]
-        connect(figure.pts[1], figure.gait, m, figure.sections ~= nil)
+        connect(figure.pts[1], figure.gait, m, figure.sections ~= nil or figure.passage ~= nil)
         local figStart = #test.pts
         figStart = figStart - append(test, figure.pts, m)
         local function sAt(i) return test.pts[math.min(figStart + i - 1, #test.pts)].s end
         for _, sec in ipairs(figure.sections or {}) do
-            table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = figure.key, hx = sec.hx, hy = sec.hy,
+            table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = sec.kind or figure.key, hx = sec.hx, hy = sec.hy,
                 bend = sec.bend, drift = sec.drift })
+        end
+        if figure.passage ~= nil then
+            table.insert(test.passages, { s0 = sAt(figure.passage.from), s1 = sAt(figure.passage.to), m = m })
         end
         -- A walk down the centre line trots on from X: halt, proceed at a trot.
         local after = figure.gait == "walk" and "trot" or figure.gait
@@ -1298,18 +1468,19 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             -- Lateral work only in the gait the horse is in: a change just before it was missed
             -- under the lateral prompt (James, 2026-10-31). A player's own test changes well
             -- before it instead (connect), so any gait may lead into it there.
-            if figure.sections ~= nil and figure.gait ~= gait and plan == nil then step = false end
+            local collected = figure.sections ~= nil or figure.passage ~= nil
+            if collected and figure.gait ~= gait and plan == nil then step = false end
             -- All walks short in a player's test (James 2026-10-31: a giant walk path was
             -- easy to make): the walk to a walking figure and the figure itself.
             if plan ~= nil and figure.gait == "walk" then
                 figure.length = figure.length or pathLength(figure.pts)
                 if figure.length > EqDressagePath.WALK_MAX then step = false end
             end
-            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step then
+            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
-                local clear = figure.sections == nil or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
-                if figure.sections ~= nil and figure.gait ~= gait then
+                local clear = not collected or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
+                if collected and figure.gait ~= gait then
                     clear = d >= (figure.gait == "walk" and EqDressagePath.CHANGE_LEAD or EqDressagePath.LATERAL_CLEAR) + 2
                 end
                 local walkOk = plan == nil or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
@@ -1502,7 +1673,9 @@ function EqDressagePath.newRun(test, temperament)
     -- Events live on the test, which a new run reuses.
     for _, e in ipairs(test.events) do e.shown, e.stopped, e.wrongMs = nil, nil, nil end
     for m = 1, #test.moves do
-        run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0, opening = test.moves[m].key == "enter" }
+        local key = test.moves[m].key
+        run.acc[m] = { devSum = 0, len = 0, wrongMs = 0, pen = 0, angleMs = 0, bendMs = 0, farLen = 0, passMs = 0, opening = key == "enter",
+            plain = PLAIN_KEYS[key] == true }
     end
     -- Out of the arena counts once the path is inside the rail.
     run.inFrom = 0
@@ -1528,11 +1701,14 @@ end
 --- @return number 0..10 in halves
 function EqDressagePath.markOf(acc)
     local mean = acc.len > 0 and acc.devSum / acc.len or 0
-    local mark = 10 - math.max(0, mean - EqDressagePath.DEV_FREE) * EqDressagePath.DEV_PER_M
+    local free, perM = EqDressagePath.DEV_FREE, EqDressagePath.DEV_PER_M
+    if acc.plain then free, perM = EqDressagePath.PLAIN_FREE, EqDressagePath.PLAIN_PER_M end
+    local mark = 10 - math.max(0, mean - free) * perM
         - math.min(EqDressagePath.WRONG_MAX, acc.wrongMs / 1000 * EqDressagePath.WRONG_PER_S) - acc.pen
         - math.min(EqDressagePath.ANGLE_MAX, (acc.angleMs or 0) / 1000 * EqDressagePath.ANGLE_PER_S)
         - math.min(EqDressagePath.BEND_MAX, (acc.bendMs or 0) / 1000 * EqDressagePath.BEND_PER_S)
         - math.min(EqDressagePath.FAR_MAX, (acc.farLen or 0) * EqDressagePath.FAR_PER_M)
+        - math.min(EqDressagePath.PASSAGE_MAX, (acc.passMs or 0) / 1000 * EqDressagePath.PASSAGE_PER_S)
     if acc.opening then mark = 10 - (10 - mark) * EqDressagePath.OPENING_SHARE end
     return math.max(0, math.min(10, math.floor(mark * 2 + 0.5) / 2))
 end
@@ -1584,9 +1760,9 @@ local function closeTo(run, m)
             run.lastMark, run.lastMove = run.marks[run.cur], run.cur
             -- Why: for the log.
             local move = run.test.moves[run.cur]
-            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m",
+            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s",
                 move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
-                acc.farLen or 0)
+                acc.farLen or 0, (acc.passMs or 0) / 1000)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -1920,6 +2096,15 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         end
     end
 
+    -- Passage: collected (Ctrl + W at a trot) through it.
+    local pass = EqDressagePath.passageAt(test, run.s)
+    run.passageWrong = false
+    if pass ~= nil and look ~= nil and run.s >= pass.s0 + EqDressagePath.PASSAGE_GRACE and not look.passage then
+        local acc = run.acc[math.min(pass.m, #test.moves)]
+        acc.passMs = acc.passMs + dt
+        run.passageWrong = true
+    end
+
     -- At the wrong gait, once settled after the last change or halt.
     local settling = run.proceedMs ~= nil and run.clock - run.proceedMs < 3000
     if not free and not settling and not EqDressagePath.matches(move, run.gait) then
@@ -1979,6 +2164,10 @@ function EqDressagePath.breaks(test)
             table.insert(test.breaks, sec.s0)
             table.insert(test.breaks, sec.s1)
         end
+        for _, p in ipairs(test.passages or {}) do
+            table.insert(test.breaks, p.s0)
+            table.insert(test.breaks, p.s1)
+        end
         table.sort(test.breaks)
     end
     return test.breaks
@@ -1995,8 +2184,31 @@ end
 --- The dashes' spacing from metres s along a test (pure): by gait, wider in lateral work.
 function EqDressagePath.dashStep(test, s)
     local gait = EqDressagePath.gaitAt(test, s + 1e-6)
+    if EqDressagePath.passageAt(test, s + 1e-6) ~= nil then return EqDressagePath.PASSAGE_STEP end
     if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_STEP[gait] end
     return EqDressagePath.DASH_STEP[gait]
+end
+
+
+--- The passage at metres s along a test (pure), or nil.
+function EqDressagePath.passageAt(test, s)
+    for _, p in ipairs(test.passages or {}) do
+        if s >= p.s0 and s < p.s1 then return p end
+    end
+    return nil
+end
+
+
+--- The passage the horse is in, or the next one within warning (pure).
+--- @return table|nil passage { s0, s1, m }, boolean true once in it
+function EqDressagePath.passage(run)
+    for _, p in ipairs(run.test.passages or {}) do
+        if p.s1 >= run.s then
+            if p.s0 - run.s > run.warn then return nil, false end
+            return p, run.s >= p.s0
+        end
+    end
+    return nil, false
 end
 
 

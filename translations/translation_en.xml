@@ -123,15 +123,26 @@
         <text name="eq_fig_serpentine" text="Serpentine, %d loops, %s-%s"/>
         <text name="eq_fig_shallowLoop" text="%d m loop %s-%s-%s"/>
         <text name="eq_fig_throughCircle" text="Change rein through the circle at %s"/>
-        <text name="eq_fig_eight" text="Figure of eight from %s"/>
+        <text name="eq_fig_eight" text="Half figure of eight %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Centre line at %s, at X turn to %s"/>
+        <text name="eq_fig_centreFromX" text="At %s turn to X, centre line to %s"/>
+        <text name="eq_fig_halfPassCentre" text="Half pass %s to the centre line, on to %s"/>
+        <text name="eq_fig_legYieldCentre" text="Centre line at %s, leg yield to %s"/>
+        <text name="eq_fig_passageRail" text="Passage %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Passage on the diagonal %s-%s"/>
+        <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
         <text name="eq_fig_legYield" text="Leg yield from %s and back"/>
         <text name="eq_fig_halfPass" text="Half pass from %s and back"/>
         <text name="eq_fig_shoulderIn" text="Shoulder-in %s-%s"/>
         <text name="eq_fig_legYieldRail" text="Leg yield along the rail %s-%s"/>
+        <text name="eq_fig_travers" text="Travers (haunches in) %s-%s"/>
+        <text name="eq_fig_renvers" text="Renvers (haunches out) %s-%s"/>
         <text name="eq_lat_legYield" text="Leg yield: drift %s, bend %s"/>
         <text name="eq_lat_halfPass" text="Half pass: drift %s, bend %s"/>
-        <text name="eq_lat_shoulderIn" text="Shoulder-in: bend %s"/>
-        <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s"/>
+        <text name="eq_lat_shoulderIn" text="Shoulder-in: drift %s, bend %s"/>
+        <text name="eq_lat_legYieldRail" text="Leg yield along the rail: drift %s, bend %s"/>
+        <text name="eq_lat_travers" text="Travers: drift %s, bend %s"/>
+        <text name="eq_lat_renvers" text="Renvers: drift %s, bend %s"/>
         <text name="eq_lat_left" text="left"/>
         <text name="eq_lat_right" text="right"/>
         <text name="eq_lat_keys" text="Hold right mouse: steer with the mouse, A/D drift sideways, Shift holds the heading and the mouse bends the head."/>

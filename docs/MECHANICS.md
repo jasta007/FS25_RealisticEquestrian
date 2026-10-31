@@ -178,10 +178,12 @@ following the turn frame by frame, slower towards full lock. Every ridden horse 
 lock to the other faster than the base game (3 rad/s² more turn acceleration: James found it
 spongey, a canter serpentine impossible). While the button is
 held the camera eases round to the way the horse's body faces (not the drift) and
-the mouse still looks up and down. Together they make the movements: shoulder-in = bend alone along
-the rail; leg yield across the arena = drift, head bent away; leg yield along the rail = turn the
-body about 27 degrees off the rail, then drift; half pass = drift with the head bent the way it
-goes. Travers/renvers (rail leg yield + bend) are not separate test movements yet.
+the mouse still looks up and down. Together they make the movements (James, 2026-10-31: real
+names, each with a bend): leg yield across the arena = drift, head bent away from it; half pass =
+drift with the head bent the way it goes. Along the rail the body turns about 27 degrees off it
+and drifts to stay on it: forehand in and bent away from the way it goes is a shoulder-in,
+forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
+it goes a travers (haunches in), head to the rail and bent away a leg yield along the rail.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
 the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
 it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
@@ -219,9 +221,14 @@ length changes. Where a gait's track meets another's in a corner the line eases 
 - **Each figure has one gait, and its turns are sized for it** (James, 2026-10-29: a canter asked
   for just before a tight turn could not follow it). Walk: 8 m voltes, half voltes, across the
   arena, centre lines, long diagonal (free walk), shallow loop. Trot: everything, with 10 m and
-  15 m voltes, serpentines of 3 to 5 loops, change of rein through the circle. Canter: only the
+  15 m voltes, half serpentines, change of rein through the circle. Canter: only the
   wide ones, 20 m circles (15 m in the 15 m arena), 15 m voltes, the diagonals, a shallow loop
-  (3 m, 2 m in the small arena) and a figure of eight. Turns are no tighter than 3.5 m radius at a
+  (3 m, 2 m in the small arena) and half a figure of eight.
+- **No giant pieces** (James, 2026-10-31): long patterns come in halves that can follow each other
+  but needn't, so there is room for changes, halts and marks between them. A serpentine is two
+  halves of 2 loops (A to E/B, E/B to C), a figure of eight two half S's (A through X to C), and a
+  centre line between figures either "A to X, turn to E/B" or "E/B to X, up to C" (the full
+  centre line only opens and ends the test). Turns are no tighter than 3.5 m radius at a
   walk, 4 m at a trot and 7 m at a canter (3, 3 and 6 in the 15x30), and the track's corners
   between figures are sized for the gait ridden on them, so a sudden big circle often means a
   canter is coming. Each figure is built for one end and side and mirrored, and they only chain
@@ -248,7 +255,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - Each movement (a figure with the track before it) is marked 0 to 10 in halves: off the line
   (measured to the line, not its points) costs 12 a metre past an average of 0.05 m, so 0.3 m off
   is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
-  60%), the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  60%). Figures that only follow the line (circles, diagonals, serpentines, centre lines...) are
+  stricter, 20 a metre past 0.02 m, so 0.1 m off is an 8.5 and 0.15 m a 7.5 (James, 2026-10-31:
+  "pretty hard to not get an 8"); lateral work, passage and movements on the spot keep the
+  gentler rate. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -257,8 +267,15 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30). Backing up
   counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
-  canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back,
-  shoulder-in and leg yield along the rail (walk or trot) between two side letters. The middle prompt names what is asked
+  canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back; on a
+  diagonal, a half pass from a side letter to the centre line and on up it to C, and a leg yield
+  off the centre line from A to a side letter (James, 2026-10-31: none went across the arena);
+  shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
+  letter gaps (10 to 26 m).
+- **Passage** (James, 2026-10-31): along a long side over one or two letter gaps, or across the
+  long diagonal, at a trot. The prompt says "Passage: Ctrl + W" (red while not collected), the
+  line's dashes come closer together and show cyan ahead; after the first 2 m each second not in
+  passage costs 0.6 (at most 4). No change of gait in the 15 m before it. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
