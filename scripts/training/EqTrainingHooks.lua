@@ -1261,6 +1261,10 @@ local function pathRows(rows, routine)
             local wrong = inside and (run.angleWrong or run.bendWrong)
             local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
             EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
+        elseif run.stallMs >= EqDressagePath.STALL_TELL_MS then
+            -- Standing still with nothing to do: say which gait to go on in ("Trot!").
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)),
+                1 - run.stallMs / EqDressagePath.STALL_MS, color)
         elseif run.proceedMs ~= nil and run.clock - run.proceedMs < 2500 then
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_change"), g_i18n:getText("eq_dressage_gait_" .. run.gait)), nil, color)
         end

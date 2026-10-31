@@ -277,7 +277,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - **Leaving on the entry** (crossing A, then riding off before the first movement is done) cancels
   the test at once: "Dressage cancelled", no errors.
 - **Errors of course** cost 3 on the movement: more than 6 m off the line for 4 s, out of the
-  arena (0.5 m past the rail) for 3 s, or no headway for 10 s. The line picks up again at the
+  arena (0.5 m past the rail) for 3 s. Standing still is not an error: after 3 s the gait asked
+  shows ("Trot!"), it costs as the wrong gait, and 30 s of it cancels the test. The line picks up again at the
   nearest point up to 40 m on. The third error eliminates.
 - The test's score is its marks as a percentage. Each movement marked 6.5 or better raises the
   multiplier one step, below 4 drops it one; an error drops it two. Finishing pays up to a minute
