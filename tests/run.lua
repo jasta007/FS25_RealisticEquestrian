@@ -4894,6 +4894,8 @@ end)()
         and J.aim({ { ax = 1, az = 8, bx = 1.5, bz = 12 } }, 100) == 0)
     local nearest = J.jumpAhead({ { ax = -2, az = 15, bx = 2, bz = 15 }, { ax = -2, az = 6, bx = 2, bz = 6 } })
     check("aim: the nearest jump ahead counts", nearest ~= nil and nearest.az == 6)
+end)()
+
 -- Dressage outfit: which player styles get it, and where its files load from.
 ;
 (function()
