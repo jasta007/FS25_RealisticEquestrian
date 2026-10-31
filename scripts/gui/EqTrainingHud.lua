@@ -251,6 +251,12 @@ EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growM
 -- showed far too briefly); one that comes while another is up waits until that one has shown
 -- for minMs.
 EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+-- A finished dressage test's score (James, 2026-10-31: "very well hidden"): big in the middle of
+-- the screen whatever the view, "Test complete" in gold above it, the percent coloured like a
+-- mark (out of 10), with gold bars that sweep out either side as it lands.
+EqTrainingHud.SCORE = { x = 0.5, y = 0.56, size = 0.075, titleSize = 0.026, growMs = 300, holdMs = 5000, fadeMs = 1000,
+    barWidth = 0.09, barHeight = 0.005, barGap = 0.02, sweepMs = 700 }
+EqTrainingHud.scoreState = nil
 EqTrainingHud.MARK_COLOURS = { { 0, { 0.9, 0.2, 0.2, 1 } }, { 3, { 0.9, 0.2, 0.2, 1 } }, { 5, { 1, 0.55, 0.1, 1 } },
     { 7, { 1, 0.9, 0.2, 1 } }, { 8.5, { 0.35, 0.9, 0.35, 1 } }, { 10, { 0.35, 0.9, 0.35, 1 } } }
 
@@ -362,7 +368,9 @@ function EqTrainingHud.pop(kind, mult)
     elseif kind == "routineError" then
         text, color, big = string.format(g_i18n:getText("eq_pop_routineError"), mult, EqDressagePath.ERRORS), EqTrainingHud.COLOR.grey, 2
     elseif kind == "routineScore" then
-        text, color, big = string.format(g_i18n:getText("eq_pop_routineScore"), string.format("%.1f", mult or 0)), EqTrainingHud.COLOR.white, 4
+        -- Its own place in the middle, never the small line above the panel.
+        EqTrainingHud.scoreState = { percent = mult or 0, at = g_time or 0 }
+        return
     elseif kind == "routineTest" then
         text, color, big = g_i18n:getText("eq_pop_routineTest"), EqTrainingHud.COLOR.white, 4
     elseif kind == "courseFence" then
@@ -492,10 +500,50 @@ local function drawBurst(state)
 end
 
 
+--- The score's text and colour (pure): "72.5%", coloured as a mark of percent / 10.
+--- @param percent number
+--- @return string text, table colour
+function EqTrainingHud.scoreText(percent)
+    return string.format("%.1f%%", percent or 0), EqTrainingHud.markColour((percent or 0) / 10)
+end
+
+
+--- Draw a finished test's score, growing in with a bounce, holding and fading out.
+local function drawScore()
+    local state = EqTrainingHud.scoreState
+    if state == nil then return end
+    local a = EqTrainingHud.SCORE
+    local age = (g_time or 0) - state.at
+    if age > a.growMs + a.holdMs + a.fadeMs then
+        EqTrainingHud.scoreState = nil
+        return
+    end
+    local grow = math.min(1, age / a.growMs)
+    local scale = grow < 1 and grow * 1.3 or 1 + 0.3 * math.max(0, 1 - (age - a.growMs) / 250)
+    local alpha = age < a.growMs + a.holdMs and 1 or 1 - (age - a.growMs - a.holdMs) / a.fadeMs
+    local text, c = EqTrainingHud.scoreText(state.percent)
+    local size = a.size * scale
+    local gold = { EqTrainingHud.GOLD[1], EqTrainingHud.GOLD[2], EqTrainingHud.GOLD[3], alpha }
+    shadowText(g_i18n:getText("eq_pop_testComplete"), a.x, a.y + a.size * 1.05, a.titleSize, gold, RenderText.ALIGN_CENTER, true)
+    shadowText(text, a.x, a.y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    setTextBold(true)
+    local half = getTextWidth(a.size, text) / 2 + a.barGap
+    local sweep = math.min(1, age / a.sweepMs)
+    sweep = 1 - (1 - sweep) * (1 - sweep)
+    for _, row in ipairs({ { 0.2, 0.6 }, { 0.42, 1 }, { 0.64, 0.6 } }) do
+        local w = a.barWidth * row[2] * sweep
+        fill(a.x + half, a.y + a.size * row[1], w, a.barHeight, gold)
+        fill(a.x - half - w, a.y + a.size * row[1], w, a.barHeight, gold)
+    end
+    resetText()
+end
+
+
 --- Draw the current burst and the last mark.
 function EqTrainingHud.drawPops()
     drawSidePop()
     drawAnnounce()
+    drawScore()
     local next = EqTrainingHud.markNext
     if next ~= nil and (g_time or 0) >= next.at then
         EqTrainingHud.markState, EqTrainingHud.markNext = next, nil

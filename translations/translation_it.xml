@@ -160,6 +160,7 @@
         <text name="eq_dressage_mark" text="Ultimo voto: %s"/>
         <text name="eq_pop_routineError" text="Errore di percorso %d/%d"/>
         <text name="eq_pop_routineScore" text="Ripresa completata: %s%%"/>
+        <text name="eq_pop_testComplete" text="Ripresa completata"/>
         <text name="eq_train_routine_none" text="Vai a un rettangolo da dressage per iniziare una ripresa"/>
         <text name="eq_train_routine" text="Ripresa x%d"/>
         <text name="eq_train_combo_none" text="Supera un ostacolo per iniziare una combo"/>

@@ -3514,6 +3514,17 @@ end)()
     g_currentMission = { hud = { getIsVisible = function() error("broken") end } }
     check("a broken getIsVisible counts as shown", not EqTrainingHud.gameHudHidden())
     g_currentMission = oldMission
+    -- A finished test's score has its own big place in the middle, in any view (James 2026-10-31).
+    local oldView = EqTrainingHud.view
+    EqTrainingHud.view, EqTrainingHud.sideState, EqTrainingHud.scoreState = "freestyle", nil, nil
+    EqTrainingHud.pop("routineScore", 72.46)
+    local scoreText, scoreColour = EqTrainingHud.scoreText(72.46)
+    check("test score: shown big in the middle, not on the side line", EqTrainingHud.scoreState ~= nil
+        and EqTrainingHud.scoreState.percent == 72.46 and EqTrainingHud.sideState == nil)
+    local markC = EqTrainingHud.markColour(72.46 / 10)
+    check("test score: one decimal, coloured as a mark out of 10", scoreText == "72.5%"
+        and scoreColour[1] == markC[1] and scoreColour[2] == markC[2] and scoreColour[3] == markC[3], scoreText)
+    EqTrainingHud.view, EqTrainingHud.scoreState = oldView, nil
     setTextBold, getTextWidth = oldBold, oldWidth
 end)()
 
