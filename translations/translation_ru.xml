@@ -91,6 +91,12 @@
         <text name="eq_shop_xcGate_function" text="Ворота для проезда, а не препятствие: достаточно широкие и высокие для любой лошади, с логотипом вашего спонсора."/>
         <text name="eq_shop_xcRope" text="Разметочная верёвка"/>
         <text name="eq_shop_xcRope_function" text="Лёгкая верёвка для разметки маршрута, без столкновений. Выберите простую верёвку или с маленькой табличкой спонсора: таблички дают совсем немного брендинга."/>
+        <text name="eq_shop_plinthDrive" text="Проездной подиум"/>
+        <text name="eq_shop_plinthRamp" text="Выставочная рампа"/>
+        <text name="eq_shop_plinthRampLarge" text="Большая выставочная рампа"/>
+        <text name="eq_shop_plinthProductJump" text="Продуктовый прыжок"/>
+        <text name="eq_shop_plinth_function" text="Поставьте на него технику марки вашего спонсора для дополнительного брендинга."/>
+        <text name="eq_shop_productJump_function" text="Также препятствие для кросса: вверх по одной рампе, над проёмом, вниз по другой."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>

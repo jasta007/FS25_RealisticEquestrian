@@ -748,6 +748,12 @@
         <text name="eq_shop_xcGate_function" text="Une porte à franchir au pas ou au galop, pas un obstacle : assez large et haute pour tout cheval, au logo de votre sponsor."/>
         <text name="eq_shop_xcRope" text="Corde de balisage"/>
         <text name="eq_shop_xcRope_function" text="Une corde légère pour baliser le parcours, sans collision. Choisissez une corde simple ou avec un petit panneau sponsor : les panneaux n'ajoutent qu'un peu de visibilité."/>
+        <text name="eq_shop_plinthDrive" text="Podium traversant"/>
+        <text name="eq_shop_plinthRamp" text="Rampe d'exposition"/>
+        <text name="eq_shop_plinthRampLarge" text="Grande rampe d'exposition"/>
+        <text name="eq_shop_plinthProductJump" text="Obstacle produit"/>
+        <text name="eq_shop_plinth_function" text="Garez-y une machine de la marque de votre sponsor pour plus de visibilité."/>
+        <text name="eq_shop_productJump_function" text="Aussi un obstacle de cross : montez une rampe, sautez la fosse, descendez l'autre."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>

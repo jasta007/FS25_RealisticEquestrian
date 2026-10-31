@@ -1273,7 +1273,8 @@ def drop_walls(names, preview_dir, planks_rgb, peeled_rgb, ends):
             shapes += [("sponsorBoard", backing, "xcStain", True), ("eqSponsor_1", logo, "eqSponsor1", False)]
         write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, {}, col=col)
         write_xml(name, wall["price"], f"A {wall['drop']:.1f} m drop: set the origin on the flat top of a bank, the lip {DROP_LIP:g} m in front of it.",
-                  os.path.join(OUT, name + ".xml"), functions=["eq_shop_signboard_function"] if logo.tris else ())
+                  os.path.join(OUT, name + ".xml"),
+                  functions=["eq_shop_plinth_function"] + (["eq_shop_signboard_function"] if logo.tris else []))
         flipped = Mesh()
         flipped.verts = [(p, n, (uv[0], 1 - uv[1])) for p, n, uv in logo.verts]
         flipped.tris = list(logo.tris)

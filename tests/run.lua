@@ -45,6 +45,7 @@ dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
+dofile("scripts/facilities/EqPlinths.lua")
 dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/facilities/EqSponsorBoards.lua")
 dofile("scripts/core/EqHorseRecord.lua")
@@ -4980,6 +4981,45 @@ end)()
             and rope:find('id="ROPE_SIGN"', 1, true) ~= nil and i3d:find('name="eqSponsor_1"', 1, true) ~= nil
             and i3d:find('name="eqSponsor_1b"', 1, true) ~= nil
             and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcRope.xml", 1, true) ~= nil)
+    end
+
+    -- Sponsor plinths: the sponsor's machines parked on a deck count (James, 2026-10-31).
+    do
+        local drive = EqPlinths.areasFor("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthDrive.xml")
+        check("plinths: known by their xml, drop walls too, other pieces not", drive ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcDropWall08.xml") ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcTable.xml") == nil and EqPlinths.areasFor(nil) == nil)
+        local deck = drive[1]
+        check("plinths: a machine on the deck counts", EqPlinths.inArea(deck, 0.3, 0.8, -2.5))
+        check("plinths: not one on the ground beside it, nor off its end", not EqPlinths.inArea(deck, 0.3, 0.0, -2.5)
+            and not EqPlinths.inArea(deck, 2.5, 0.8, 0) and not EqPlinths.inArea(deck, 0, 0.8, 3.6))
+        local ramp = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthRamp.xml")[1]
+        check("plinths: on a display ramp the surface rises to the front", EqPlinths.inArea(ramp, 0, 1.0, -1.6)
+            and EqPlinths.inArea(ramp, 0, 0.25, 1.6) and not EqPlinths.inArea(ramp, 0, -0.3, -1.6))
+        local jump = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthProductJump.xml")
+        check("plinths: the product jump has three places", #jump == 3)
+        local a, b = { k = 1 }, { k = 2 }
+        local decks = { { area = jump[1], key = a }, { area = jump[2], key = a }, { area = jump[3], key = a } }
+        check("plinths: each machine counts once, each deck once",
+            EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, 3.5 } }, { [a] = { 0, 0, 0 } } }) == 2
+            and EqPlinths.best(decks, { { [a] = { 0, 1.0, 3.6 } }, { [a] = { 0, 1.0, -3.6 } }, { [a] = { 0, 0.1, 0.5 } } }) == 3
+            and EqPlinths.best(decks, { { [b] = { 0, 1.0, 3.6 } } }) == 0)
+        check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump" }) do
+            local path = "placeables/sponsorPlinths/" .. n
+            local i3d = io.open(path .. ".i3d"):read("*a")
+            local numbers, count = {}, 0
+            for k in i3d:gmatch('name="eqSponsor_(%d+)b?"') do
+                if not numbers[k] then numbers[k], count = true, count + 1 end
+            end
+            check("plinths: " .. n .. " in the shop, boards as counted, sponsor colours",
+                modDesc:find(path .. ".xml", 1, true) ~= nil and count == EqSponsors.shopBoards(path .. ".xml")
+                and EqSponsorBoards.isOn({ configFileName = path .. ".xml" }) and EqSponsors.isBleacherXml(path .. ".xml")
+                and EqPlinths.areasFor(path .. ".xml") ~= nil, tostring(count))
+        end
+        check("plinths: the product jump is a fence with flags",
+            io.open("placeables/sponsorPlinths/plinthProductJump.i3d"):read("*a"):find('name="eqFlagsRed"', 1, true) ~= nil)
     end
 
     -- Sponsor colours: the brand's most colourful paint, our list, else none.

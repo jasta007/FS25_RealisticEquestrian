@@ -919,6 +919,14 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
   collision for horses, hidden like the course flags. Each segment is plain rope or rope with a
   small hanging sponsor sign; signs are only a tiny bit of branding (above).
+- **Sponsor plinths** (always visible, Colour choice or the sponsor's colour): the **Drive-Through
+  Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive straight over; one
+  board both sides), the stone **Display Ramp** (5,000) and **Large Display Ramp** (7,500; the
+  machine parked nose up, the board on the high front) and the **Product Jump** (12,000; two banks
+  with a slot between: three places for machines, or a cross country jump over whatever stands in
+  the slot; 2 boards). A machine of your sponsor's brand (owned or leased, not borrowed for a
+  contract) standing on a deck counts as **2 boards**; each deck takes one machine. The drop
+  walls' decks count too, and a drop wall with any machine on its deck never hides.
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's

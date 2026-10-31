@@ -22,7 +22,8 @@ local Log = EqLog
 EqSponsors.SCAN_MS = 2000
 -- Our placeables with sponsor boards: the bleachers and the cross country table's front board.
 EqSponsors.XMLS = { "placeables/bleachers/", "placeables/xcjumps/xctable", "placeables/xcjumps/xccornerplank",
-    "placeables/xcjumps/xcdropwall16", "placeables/showjumps/", "placeables/xcjumps/xcgate", "placeables/xcjumps/xcrope" }
+    "placeables/xcjumps/xcdropwall16", "placeables/showjumps/", "placeables/xcjumps/xcgate", "placeables/xcjumps/xcrope",
+    "placeables/sponsorplinths/" }
 -- The rope fence's hanging signs are a TINY bit of branding, so ropes can't be strung everywhere for
 -- it (James, 2026-10-31): each sign counts a tenth of a board, all ropes together one board at most.
 EqSponsors.ROPE = "placeables/xcjumps/xcrope"
@@ -211,7 +212,10 @@ function EqSponsors.countBoards(farmId)
             end
         end
     end
-    return EqSponsors.total(count, signs)
+    -- and the sponsor's machines parked on the farm's plinths (EqPlinths)
+    local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
+    local machines = EqPlinths ~= nil and contract ~= nil and EqPlinths.count(farmId, contract.brand) or 0
+    return EqSponsors.total(count, signs) + machines
 end
 
 
@@ -297,6 +301,10 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/showjumps/showjumpwall.xml"] = 2,
     ["placeables/xcjumps/xcgatearch.xml"] = 3,
     ["placeables/xcjumps/xcgatesimple.xml"] = 1,
+    ["placeables/sponsorplinths/plinthdrive.xml"] = 1,
+    ["placeables/sponsorplinths/plinthramp.xml"] = 1,
+    ["placeables/sponsorplinths/plinthramplarge.xml"] = 1,
+    ["placeables/sponsorplinths/plinthproductjump.xml"] = 2,
 }
 -- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says
 -- what they would add, after the jump's own lines.
@@ -338,7 +346,9 @@ function EqSponsors.updateShopText()
             if boards > 0 then
                 local base = {}
                 for _, line in ipairs(storeItem.functions or {}) do table.insert(base, line) end
-                table.insert(EqSponsors.shopItems, { item = storeItem, boards = boards, optional = optional, base = base })
+                -- plinths keep their own lines (what to park on them) above the branding line
+                local keep = optional or (EqPlinths ~= nil and EqPlinths.areasFor(storeItem.xmlFilename) ~= nil)
+                table.insert(EqSponsors.shopItems, { item = storeItem, boards = boards, optional = optional, keep = keep, base = base })
             end
         end
     end
@@ -351,7 +361,7 @@ function EqSponsors.updateShopText()
         local text = string.format(g_i18n:getText(entry.optional and "eq_shop_brandingOption" or "eq_shop_branding"), now, with)
         if entry.text ~= text then
             entry.text = text
-            if entry.optional then
+            if entry.keep then
                 local lines = {}
                 for _, line in ipairs(entry.base) do table.insert(lines, line) end
                 table.insert(lines, text)

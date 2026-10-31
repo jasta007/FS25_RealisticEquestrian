@@ -279,7 +279,10 @@ function EqXcHide.update()
     if mode == EqXcHide.mode and not due then return end
     local pieces = EqXcHide.pieces()
     for _, placeable in ipairs(pieces) do
-        EqXcHide.apply(placeable, EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state))
+        local want = EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state)
+        -- a drop wall with a machine parked on its deck stays (EqPlinths): never pull the floor away
+        if want ~= EqXcHide.SHOWN and EqPlinths ~= nil and EqPlinths.holdsMachine(placeable) then want = EqXcHide.SHOWN end
+        EqXcHide.apply(placeable, want)
     end
     if mode ~= EqXcHide.mode and #pieces > 0 then
         Log:info("EqXcHide: %d cross country piece(s) %s", #pieces, mode)

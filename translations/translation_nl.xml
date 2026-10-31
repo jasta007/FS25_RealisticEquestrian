@@ -91,6 +91,12 @@
         <text name="eq_shop_xcGate_function" text="Een poort om door te rijden, geen sprong: breed en hoog genoeg voor elk paard, met het logo van je sponsor."/>
         <text name="eq_shop_xcRope" text="Touwmarkering"/>
         <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw of touw met een klein sponsorbordje: bordjes geven maar een beetje branding."/>
+        <text name="eq_shop_plinthDrive" text="Doorrijpodium"/>
+        <text name="eq_shop_plinthRamp" text="Showhelling"/>
+        <text name="eq_shop_plinthRampLarge" text="Grote showhelling"/>
+        <text name="eq_shop_plinthProductJump" text="Productsprong"/>
+        <text name="eq_shop_plinth_function" text="Parkeer er een machine van het merk van je sponsor op voor extra branding."/>
+        <text name="eq_shop_productJump_function" text="Ook een crosscountrysprong: een helling op, over de sleuf, de andere af."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>

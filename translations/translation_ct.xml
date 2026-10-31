@@ -91,6 +91,12 @@
         <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
         <text name="eq_shop_xcRope" text="繩索標記"/>
         <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_plinthDrive" text="通行展台"/>
+        <text name="eq_shop_plinthRamp" text="展示坡台"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
+        <text name="eq_shop_plinthProductJump" text="產品障礙"/>
+        <text name="eq_shop_plinth_function" text="在上面停放贊助商品牌的機器，可獲得額外品牌曝光。"/>
+        <text name="eq_shop_productJump_function" text="也可作越野障礙：上一側坡道，越過中間空槽，從另一側下來。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>

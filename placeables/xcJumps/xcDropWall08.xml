@@ -6,6 +6,7 @@
         <functions>
             <function>$l10n_eq_shop_xcDrop_function</function>
             <function>$l10n_eq_shop_xcHidden_function</function>
+            <function>$l10n_eq_shop_plinth_function</function>
         </functions>
         <image>placeables/xcJumps/store_xcDropWall08.dds</image>
         <price>1500</price>

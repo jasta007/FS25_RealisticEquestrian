@@ -118,6 +118,10 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/xcJumps/xcGateArch.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcGateSimple.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcRope.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthDrive.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRamp.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRampLarge.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthProductJump.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>
