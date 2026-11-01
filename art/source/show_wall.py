@@ -29,6 +29,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 import show_jumps as sj  # noqa: E402
 from eqdds import save_dxt1  # noqa: E402
+import xc_jumps as xc  # noqa: E402
 from xc_jumps import COLLISION_GROUP, COLLISION_MASK, Mesh, flag, fmt, shape_lines, store_image, textured_box  # noqa: E402
 
 OUT = sj.OUT
@@ -143,6 +144,10 @@ def build():
         cx, cy = (bx0 + bx1) / 2, BLOCK_BOTTOM + DEPTH / 2
         body, cap = Mesh(), Mesh()
         textured_box(body, bx0, bx1, BLOCK_BOTTOM, HEIGHT - CAP, -d, d, BRICK_TILE)
+        # its underside too (James, 2026-11-01: a knocked block showed it had no bottom)
+        body.quad([(bx0, BLOCK_BOTTOM, -d), (bx1, BLOCK_BOTTOM, -d), (bx1, BLOCK_BOTTOM, d), (bx0, BLOCK_BOTTOM, d)],
+                  (0, -1, 0), [(bx0 / BRICK_TILE, -d / BRICK_TILE), (bx1 / BRICK_TILE, -d / BRICK_TILE),
+                               (bx1 / BRICK_TILE, d / BRICK_TILE), (bx0 / BRICK_TILE, d / BRICK_TILE)])
         textured_box(cap, bx0, bx1, HEIGHT - CAP, HEIGHT, -d - 0.012, d + 0.012)
         # the cap's underside where it overhangs
         for z0, z1, n in ((d, d + 0.012, 1), (-d - 0.012, -d, -1)):
@@ -313,7 +318,7 @@ def main(preview_dir=None, sponsor_preview=False):
     statics, logos, blocks, cols, feet = build()
     write_i3d(os.path.join(OUT, NAME + ".i3d"), statics, logos, blocks, cols, feet)
     write_xml(os.path.join(OUT, NAME + ".xml"))
-    sponsor = np.asarray(Image.open("placeables/bleachers/bleacherSponsor_diffuse.dds").convert("RGB"), dtype=float)
+    sponsor = xc.logo_preview()
 
     def flip(mesh):
         out = Mesh()

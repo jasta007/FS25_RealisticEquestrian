@@ -850,8 +850,35 @@ def fmt(values):
     return " ".join(f"{v:.5g}" for v in values)
 
 
+# The part of a brand's logo image a logo face shows (James, 2026-11-01: fill more of the board).
+# The game's brand logos are all 512 x 256 with the logo across the middle (measured on the game's
+# 261 logos: most sit within 0.02-0.98 across and 0.1-0.9 up), so a face of LOGO_ASPECT 2.7 shows
+# this window: 491 x 205 pixels, near enough 2.7 : 1, so logos are no longer stretched 35% wide.
+LOGO_CROP = (0.02, 0.98, 0.10, 0.90)
+
+
+def logo_uv(uv):
+    u0, u1, v0, v1 = LOGO_CROP
+    return (u0 + (u1 - u0) * uv[0], v0 + (v1 - v0) * uv[1])
+
+
+def logo_preview(path="placeables/bleachers/bleacherSponsor_diffuse.dds"):
+    """Our board texture as a shop picture should show it: just the LOGO_CROP window."""
+    img = Image.open(path).convert("RGB")
+    u0, u1, v0, v1 = LOGO_CROP
+    w, h = img.size
+    return np.asarray(img.crop((int(round(u0 * w)), int(round((1 - v1) * h)), int(round(u1 * w)), int(round((1 - v0) * h)))),
+                      dtype=float)
+
+
 def shape_lines(mesh, name, shape_id, uv1=None):
-    """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient."""
+    """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient. Logo faces
+    (shapes whose name has "eqSponsor") show only LOGO_CROP of the logo image."""
+    if "eqSponsor" in name:
+        cropped = Mesh()
+        cropped.verts = [(p, n, logo_uv(uv)) for p, n, uv in mesh.verts]
+        cropped.tris = mesh.tris
+        mesh = cropped
     centre, radius = mesh.bounds()
     lines = [
         f'    <IndexedTriangleSet name="{name}" shapeId="{shape_id}" bvCenter="{fmt(centre)}" bvRadius="{radius:.5g}">',

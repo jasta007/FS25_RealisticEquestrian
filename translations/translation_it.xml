@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="Pedana passante"/>
         <text name="eq_shop_plinthRamp" text="Rampa espositiva"/>
         <text name="eq_shop_plinthRampLarge" text="Rampa espositiva grande"/>
-        <text name="eq_shop_plinthProductJump" text="Salto prodotto"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa salto prodotto"/>
         <text name="eq_shop_plinth_function" text="Parcheggia sopra una macchina della marca del tuo sponsor per più visibilità."/>
-        <text name="eq_shop_productJump_function" text="Anche un salto da cross: su per una rampa, oltre lo spazio, giù dall'altra."/>
+        <text name="eq_shop_productJump_function" text="Mettine due una di fronte all'altra a circa 5 m: conta anche una macchina tra le due, oppure saltale come un ostacolo da cross."/>
         <text name="eq_shop_plinthTurntable" text="Piattaforma girevole"/>
-        <text name="eq_shop_turntable_function" text="Il disco gira lentamente: lasciaci una macchina senza nulla agganciato e girerà con esso. Una macchina del tuo sponsor qui conta di più."/>
+        <text name="eq_shop_turntable_function" text="Il disco gira lentamente: lasciaci una macchina e girerà con esso, con tutto ciò che è agganciato. Una macchina del tuo sponsor qui conta di più."/>
+        <text name="eq_plinth_inPlace" text="Attrezzatura dello sponsor in posizione!"/>
+        <text name="eq_plinth_wrongBrand" text="Non è attrezzatura del tuo sponsor: le macchine rivali esposte ti costano denaro dello sponsor."/>
+        <text name="eq_plinth_noSponsor" text="Nessuno sponsor firmato: la sua attrezzatura esposta qui conterebbe per la tua visibilità."/>
+        <text name="eq_plinth_penalty" text="%d macchina/e rivale/i sulle tue pedane sponsor: %s tolti dal compenso dello sponsor."/>
         <text name="eq_config_corner" text="Angolo"/>
         <text name="eq_config_cornerRight" text="Punta a destra"/>
         <text name="eq_config_cornerLeft" text="Punta a sinistra"/>

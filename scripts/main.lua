@@ -298,6 +298,8 @@ guarded("corner flags hook", function() EqXcCorners.install(guarded) end)
 guarded("sponsor boards hook", function() EqSponsors.install(guarded) end)
 guarded("show jump sponsor boards hook", function() EqSponsorBoards.install(guarded) end)
 guarded("turntable hook", function() EqTurntable.install(guarded) end)
+-- Plinth feedback popups and the rival machine penalty (wraps EqSponsorManager.afterEvent).
+guarded("plinth hook", function() EqPlinths.install(guarded) end)
 guarded("dressage outfit hook", function() EqAttire.install(guarded, modDirectory) end)
 
 

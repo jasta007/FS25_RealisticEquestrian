@@ -919,20 +919,34 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
   collision for horses, hidden like the course flags. Each segment is plain rope or rope with a
   small hanging sponsor sign; signs are only a tiny bit of branding (above).
-- **Sponsor plinths** (always visible, Colour choice or the sponsor's colour): the **Drive-Through
-  Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive straight over; one
-  board both sides), the stone **Display Ramp** (5,000) and **Large Display Ramp** (7,500; the
-  machine parked nose up, the board on the high front) and the **Product Jump** (12,000; two banks
-  2 m up, mostly ramp with a short flat top, with a slot between: three places for machines, or a cross country jump over whatever
-  stands in the slot, high enough that the horse never comes near it; no flags of its own, set
-  course flags to ride it; 2 boards). A machine of your sponsor's brand (owned or leased, not borrowed for a
-  contract) standing on a deck counts as **2 boards**; each deck takes one machine. The drop
-  walls' decks count too, and a drop wall with any machine on its deck never hides.
-- **Turntable** (25,000): a round stone plinth with a ramp at the back; its disc turns once every
-  two minutes. A machine left on the disc with nobody in it and nothing hitched is, after 3
-  seconds, slid to the middle and held on the disc (out of the physics, like a ferry), turning
-  with it. Getting in, hitching something, or selling either gives it its physics back. A sponsor
-  machine there counts **3 boards**. In multiplayer the disc turns but holds nothing (not tried).
+- **Sponsor plinths** (always visible, Colour choice or the sponsor's colour, plain plaster): the
+  **Drive-Through Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive
+  straight over; one board both sides), the **Display Ramp** (5,000) and **Large Display Ramp**
+  (7,500; the machine parked facing either way, the board on the high front) and the **Product
+  Ramp** (6,000; one bank 2 m up, mostly ramp with a short flat top, the board on its steep face;
+  no flags of its own). Set two Product Ramps face to face, 2.5 to 8 m apart, and a machine parked
+  on the ground between them counts as a place of its own: a triple plinth, or a cross country
+  jump over the machine, high enough that the horse never comes near it (set course flags to
+  ride it). A machine of your sponsor's brand (owned or leased, not borrowed for a contract)
+  standing on a place counts as **2 boards**; each place takes one machine. The drop walls' decks
+  count too, and a drop wall with any machine on its deck never hides.
+- **Turntable** (25,000): a round plinth with a ramp flush to the back; its brushed metal disc
+  turns once every two minutes. A machine left on the disc with nobody in it, standing still, is
+  after 3 seconds slid to the middle and held on the disc (out of the physics, like a ferry),
+  turning with it, together with anything hitched to it (a wheel loader's bucket, a truck's
+  trailer). Getting into any of them, hitching or unhitching, or selling gives them their physics
+  back. A sponsor machine there counts **3 boards**. In multiplayer the disc turns but holds
+  nothing (not tried).
+- **Feedback:** stop the machine you drive on one of your places and a popup says "Sponsor
+  equipment in place!", that it isn't your sponsor's brand, or that you have no sponsor. Each
+  machine of another brand on show when a hosted event's sponsor fee is paid costs 10% of that
+  fee (at most 50%).
+- **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
+  the pieces are shared out between your sponsors in turn.
+- **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
+  its own colour behind it on the boards that can change colour (show jump boards, the gates, the
+  plinths), or dark grey if its colour is too light. The older textured boards (bleachers, table,
+  corner, drop wall) stay white.
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's

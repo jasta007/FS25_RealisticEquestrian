@@ -92,7 +92,7 @@ def arch():
 
 
 def simple():
-    white, paint, wood, logos, cols = Mesh(), Mesh(), Mesh(), {}, []
+    white, paint, wood, face, logos, cols = Mesh(), Mesh(), Mesh(), Mesh(), {}, []
     half, post, top = 2.08, 0.15, 3.4             # posts' middles, their size, the top board's foot
     for side in (1, -1):
         x = side * half
@@ -105,7 +105,7 @@ def simple():
         z1 = facing * (bz + 0.04)
         textured_box(paint, -bw / 2, bw / 2, top, top + bh, min(z0, z1), max(z0, z1))
         z2 = facing * (bz + 0.045)
-        textured_box(white, -bw / 2 + 0.04, bw / 2 - 0.04, top + 0.04, top + bh - 0.04, min(z1, z2), max(z1, z2))
+        textured_box(face, -bw / 2 + 0.04, bw / 2 - 0.04, top + 0.04, top + bh - 0.04, min(z1, z2), max(z1, z2))
         lh = bh - 0.12
         logos["eqSponsor_1" + ("" if facing > 0 else "b")] = logo_quad(0.0, top + bh / 2, facing * (bz + 0.047), facing,
                                                                       lh * ASPECT, lh)
@@ -113,7 +113,7 @@ def simple():
     for side in (1, -1):
         x = side * half
         textured_box(white, x - post / 2 - 0.02, x + post / 2 + 0.02, top + 0.6, top + 0.64, -post / 2 - 0.02, post / 2 + 0.02)
-    return {"white": white, "paint": paint, "wood": wood}, logos, cols
+    return {"white": white, "paint": paint, "wood": wood, "face": face}, logos, cols
 
 
 PEELED = "xcPeeled_diffuse.dds"
@@ -122,7 +122,7 @@ PEELED = "xcPeeled_diffuse.dds"
 def write_i3d(name, colour, path, statics, logos, cols):
     files = [sj.SHADER] + list(sj.PAINT_MAPS.values()) + [PEELED, "../bleachers/bleacherSponsor_diffuse.dds"]
     fid = {f: i + 1 for i, f in enumerate(files)}
-    mat = {"white": 1, "paint": 2, "wood": 3, "logo": 4}
+    mat = {"white": 1, "paint": 2, "wood": 3, "logo": 4, "face": 1}
 
     def paint_material(mname, mid, rgb):
         lines = [f'    <Material name="{mname}" materialId="{mid}" customShaderId="{fid[sj.SHADER]}">']
@@ -155,7 +155,7 @@ def write_i3d(name, colour, path, statics, logos, cols):
     def nid():
         node[0] += 1
         return node[0]
-    names = {"white": "frame", "paint": "eqPaint", "wood": "posts"}
+    names = {"white": "frame", "paint": "eqPaint", "wood": "posts", "face": "eqBoardFace"}
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     for key, mesh in statics.items():
         if mesh.tris:
@@ -175,7 +175,7 @@ def write_i3d(name, colour, path, statics, logos, cols):
 
 def main():
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
-    sponsor = np.asarray(Image.open("placeables/bleachers/bleacherSponsor_diffuse.dds").convert("RGB"), dtype=float)
+    sponsor = xc.logo_preview()
     planks = np.asarray(Image.open(os.path.join(OUT, PEELED)).convert("RGB"), dtype=float)
     for gate, builder in zip(GATES, (arch, simple)):
         name = gate["name"]
@@ -199,6 +199,8 @@ def main():
         meshes = [(statics["white"], sj.flat(sj.WHITE)), (statics["paint"], sj.flat(sj.COLOUR[gate["colour"]]))]
         if "wood" in statics:
             meshes.append((statics["wood"], planks))
+        if "face" in statics:
+            meshes.append((statics["face"], sj.flat(sj.WHITE)))
         meshes += [(flip(m), sponsor) for m in logos.values()]
         store_image([m for m in meshes if m[0].tris], os.path.join(OUT, "store_" + name + ".dds"), preview_dir)
         print(name, len(logos), "logo faces,", len(cols), "collision boxes")

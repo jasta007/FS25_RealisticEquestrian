@@ -4997,14 +4997,27 @@ end)()
         local ramp = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthRamp.xml")[1]
         check("plinths: on a display ramp the surface rises to the front", EqPlinths.inArea(ramp, 0, 1.0, -1.6)
             and EqPlinths.inArea(ramp, 0, 0.25, 1.6) and not EqPlinths.inArea(ramp, 0, -0.3, -1.6))
-        local jump = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthProductJump.xml")
-        check("plinths: the product jump has three places", #jump == 3)
-        local a, b = { k = 1 }, { k = 2 }
-        local decks = { { area = jump[1], key = a }, { area = jump[2], key = a }, { area = jump[3], key = a } }
-        check("plinths: each machine counts once, each deck once",
-            EqPlinths.best(decks, { { [a] = { 0, 1.0, 6.85 } }, { [a] = { 0, 1.1, 6.5 } }, { [a] = { 0, 0, 0 } } }) == 4
-            and EqPlinths.best(decks, { { [a] = { 0, 1.6, 4.5 } }, { [a] = { 0, 1.6, -4.5 } }, { [a] = { 0, 0.1, 0.5 } } }) == 6
-            and EqPlinths.best(decks, { { [b] = { 0, 1.0, 6.85 } } }) == 0)
+        local bank = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthProductRamp.xml")
+        check("plinths: a product ramp is one bank, 2 m up at its short top, down its ramp", #bank == 1
+            and EqPlinths.inArea(bank[1], 0, 2.0, 1.5) and EqPlinths.inArea(bank[1], 1.5, 0.3, 8.5)
+            and not EqPlinths.inArea(bank[1], 0, 0.0, 1.5) and not EqPlinths.inArea(bank[1], 0, 2.0, -1))
+        check("plinths: a machine on the ground between two facing product ramps stands in the gap",
+            EqPlinths.between({ 0.5, 0.1, -2.4 }, { -0.5, 0.1, -2.4 })
+            and EqPlinths.between({ 1.8, 0.0, -1.5 }, { -1.8, 0.0, -1.5 }))
+        check("plinths: not beside the gap, up on a bank, nor between ramps too far apart or back to back",
+            not EqPlinths.between({ 3.0, 0.1, -2.4 }, { -3.0, 0.1, -2.4 })
+            and not EqPlinths.between({ 0, 0.1, 2.0 }, { 0, 0.1, -9.0 })
+            and not EqPlinths.between({ 0, 0.1, -6.0 }, { 0, 0.1, -6.0 })
+            and not EqPlinths.between({ 0, 0.1, -0.5 }, { 0, 0.1, -0.5 })
+            and not EqPlinths.between({ 0, 2.0, -2.4 }, { 0, 2.0, -2.4 }))
+        local a, b, c = { k = 1 }, { k = 2 }, { k = 3 }
+        local on = function(place, machine) return place[machine] == true end
+        local paired = EqPlinths.match({ { [a] = true, [b] = true }, { [a] = true }, { [c] = true } }, { a, b, c }, on)
+        check("plinths: each machine counts once, each place once", #paired == 2 and paired[1].machine == a
+            and paired[2].machine == c)
+        check("plinths: other brands on show cost a tenth of the fee each, at most half", EqPlinths.penalty(0) == 0
+            and math.abs(EqPlinths.penalty(2) - 0.2) < 1e-9 and EqPlinths.penalty(9) == 0.5 and EqPlinths.penalty(nil) == 0)
+        check("plinths: no sponsor, nothing counted", EqPlinths.count(1, {}) == 0 and EqPlinths.count(1, nil) == 0)
         check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
         do
             local saved = EqSponsorManager
@@ -5015,7 +5028,7 @@ end)()
                 and many[1] == "CLAAS" and many[2] == "KUHN" and #none == 0)
         end
         local modDesc = io.open("modDesc.xml"):read("*a")
-        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductJump", "plinthTurntable" }) do
+        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductRamp", "plinthTurntable" }) do
             local path = "placeables/sponsorPlinths/" .. n
             local i3d = io.open(path .. ".i3d"):read("*a")
             local numbers, count = {}, 0
@@ -5030,7 +5043,8 @@ end)()
         local disc = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthTurntable.xml")[1]
         check("turntable: a round deck, a machine there worth three boards", EqPlinths.inArea(disc, 2.0, 0.75, -2.0)
             and not EqPlinths.inArea(disc, 2.5, 0.75, -2.5) and not EqPlinths.inArea(disc, 0, 0.0, 0)
-            and EqPlinths.best({ { area = disc, key = a } }, { { [a] = { 0, 0.75, 0 } } }) == 3)
+            and EqPlinths.inArea(disc, 0, 0.75, 3.3) and EqPlinths.value({ area = disc }) == 3
+            and EqPlinths.value({ a = 1, b = 2 }) == EqPlinths.MACHINE)
         check("turntable: known by its xml", EqTurntable.isTurntable("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthTurntable.xml")
             and not EqTurntable.isTurntable("x/placeables/sponsorPlinths/plinthDrive.xml"))
         local quarter = EqTurntable.advance(0, EqTurntable.TURN_MS / 4)
@@ -5039,9 +5053,9 @@ end)()
             and EqTurntable.TURN_MS >= 60000)
         check("turntable: its disc is a node of its own", io.open("placeables/sponsorPlinths/plinthTurntable.i3d"):read("*a")
             :find('<TransformGroup name="' .. EqTurntable.DISC .. '"', 1, true) ~= nil)
-        check("plinths: the product jump has no flags of its own (players set them) and stands 2 m up",
-            io.open("placeables/sponsorPlinths/plinthProductJump.i3d"):read("*a"):find('eqFlags', 1, true) == nil
-            and jump[1].y + jump[1].slope * (3.1 - jump[1].z) > 1.99)
+        check("plinths: the product ramp has no flags of its own (players set them) and its board is on its face",
+            io.open("placeables/sponsorPlinths/plinthProductRamp.i3d"):read("*a"):find('eqFlags', 1, true) == nil
+            and io.open("modDesc.xml"):read("*a"):find("plinthProductJump", 1, true) == nil)
     end
 
     -- Sponsor colours: the brand's most colourful paint, our list, else none.
@@ -5057,6 +5071,19 @@ end)()
         and EqSponsorBoards.readColour({ 0.5, 0.5, 0.5, 1 })[2] == 0.5 and EqSponsorBoards.readColour("x") == nil and EqSponsorBoards.readColour(nil) == nil)
     local lin = EqSponsorBoards.linear({ 255, 128, 0 })
     check("sponsor colours: our list is made linear", math.abs(lin[1] - 1) < 1e-9 and math.abs(lin[2] - 0.2158605) < 1e-6 and lin[3] == 0)
+    do
+        local saved = EqSponsorBoards.brandColour
+        EqSponsorBoards.brandColour = function(brand)
+            if brand == "KRONE" then return { 0.01, 0.15, 0.01 } end
+            if brand == "CHALLENGER" then return { 0.9, 0.5, 0 } end
+            return nil
+        end
+        local white, krone, pale = EqSponsorBoards.faceColour("CLAAS"), EqSponsorBoards.faceColour("KRONE"), EqSponsorBoards.faceColour("CHALLENGER")
+        EqSponsorBoards.brandColour = saved
+        check("sponsor boards: a white logo gets a dark board (its own colour if dark enough), others white",
+            white == EqSponsorBoards.FACE_WHITE and krone[2] == 0.15 and pale == EqSponsorBoards.FACE_DARK
+            and EqSponsorBoards.faceColour(nil) == EqSponsorBoards.FACE_WHITE and EqSponsorBoards.LIGHT_LOGOS.KRONE)
+    end
     EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
     local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
     check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")

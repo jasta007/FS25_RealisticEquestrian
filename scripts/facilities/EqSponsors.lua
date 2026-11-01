@@ -230,7 +230,7 @@ function EqSponsors.countBoards(farmId)
         end
     end
     -- and the sponsors' machines parked on the farm's plinths (EqPlinths)
-    local machines = EqPlinths ~= nil and EqPlinths.count(farmId, EqSponsors.signedBrands(farmId)) or 0
+    local machines = EqPlinths ~= nil and (EqPlinths.count(farmId, EqSponsors.signedBrands(farmId))) or 0
     return EqSponsors.total(count, signs) + machines
 end
 
@@ -281,8 +281,14 @@ function EqSponsors.update()
                     sponsors = sponsors or EqSponsors.order(ownedCounts(farmId), names, farmId)
                 end
                 local shown = 0
-                for number, nodes in pairs(boards) do
-                    local name = #sponsors > 0 and sponsors[(offset + number - 1) % #sponsors + 1] or nil
+                -- one brand per piece (James, 2026-11-01: never two sponsors' logos or colours on
+                -- one object); the farm's pieces take turns down the list
+                local name = #sponsors > 0 and sponsors[offset % #sponsors + 1] or nil
+                if placeable.eqBrand ~= name then
+                    placeable.eqBrand = name
+                    placeable.eqColourKey = nil    -- EqJumpColours paints it again in that brand's colour
+                end
+                for _, nodes in pairs(boards) do
                     local any = false
                     for _, node in ipairs(nodes) do
                         local ok, done = EqLog.try("EqSponsors logo", showLogo, node, name ~= nil and byName[name] or nil)
@@ -297,9 +303,7 @@ function EqSponsors.update()
                 end
                 Log:info("EqSponsors: farm %d's bleacher shows %d sponsor(s)", farmId, shown)
             end
-            local numbers = 0
-            for _ in pairs(boards) do numbers = numbers + 1 end
-            offset = offset + numbers
+            if next(boards) ~= nil then offset = offset + 1 end
         end
     end
 end
@@ -320,7 +324,7 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/sponsorplinths/plinthdrive.xml"] = 1,
     ["placeables/sponsorplinths/plinthramp.xml"] = 1,
     ["placeables/sponsorplinths/plinthramplarge.xml"] = 1,
-    ["placeables/sponsorplinths/plinthproductjump.xml"] = 2,
+    ["placeables/sponsorplinths/plinthproductramp.xml"] = 1,
     ["placeables/sponsorplinths/plinthturntable.xml"] = 1,
 }
 -- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says

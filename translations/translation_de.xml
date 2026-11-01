@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="Durchfahr-Podest"/>
         <text name="eq_shop_plinthRamp" text="Präsentationsrampe"/>
         <text name="eq_shop_plinthRampLarge" text="Große Präsentationsrampe"/>
-        <text name="eq_shop_plinthProductJump" text="Produkt-Sprung"/>
+        <text name="eq_shop_plinthProductRamp" text="Produkt-Sprungrampe"/>
         <text name="eq_shop_plinth_function" text="Stelle eine Maschine der Marke deines Sponsors darauf ab, um zusätzliches Branding zu erhalten."/>
-        <text name="eq_shop_productJump_function" text="Auch ein Geländesprung: eine Rampe hinauf, über die Lücke, die andere hinunter."/>
+        <text name="eq_shop_productJump_function" text="Stelle zwei mit etwa 5 m Abstand gegenüber auf: Eine Maschine dazwischen zählt auch, oder reite sie als Geländesprung."/>
         <text name="eq_shop_plinthTurntable" text="Drehteller"/>
-        <text name="eq_shop_turntable_function" text="Die Scheibe dreht sich langsam: Lass eine Maschine ohne Anbaugerät darauf stehen, dann dreht sie sich mit. Eine Maschine deines Sponsors zählt hier mehr."/>
+        <text name="eq_shop_turntable_function" text="Die Scheibe dreht sich langsam: Lass eine Maschine darauf stehen, dann dreht sie sich mit, samt allem Angehängten. Eine Maschine deines Sponsors zählt hier mehr."/>
+        <text name="eq_plinth_inPlace" text="Sponsorausrüstung in Position!"/>
+        <text name="eq_plinth_wrongBrand" text="Nicht die Ausrüstung deines Sponsors: Fremde Maschinen kosten dich Sponsorgeld."/>
+        <text name="eq_plinth_noSponsor" text="Kein Sponsor unterschrieben: Seine Ausrüstung hier würde zu deinem Branding zählen."/>
+        <text name="eq_plinth_penalty" text="%d fremde Maschine(n) auf deinen Sponsor-Podesten: %s vom Sponsorhonorar abgezogen."/>
         <text name="eq_config_corner" text="Ecke"/>
         <text name="eq_config_cornerRight" text="Spitze rechts"/>
         <text name="eq_config_cornerLeft" text="Spitze links"/>

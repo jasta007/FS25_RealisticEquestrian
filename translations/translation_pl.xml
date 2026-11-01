@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="Podest przejazdowy"/>
         <text name="eq_shop_plinthRamp" text="Rampa wystawowa"/>
         <text name="eq_shop_plinthRampLarge" text="Duża rampa wystawowa"/>
-        <text name="eq_shop_plinthProductJump" text="Skok z produktem"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa skoku z produktem"/>
         <text name="eq_shop_plinth_function" text="Zaparkuj na nim maszynę marki sponsora, aby zyskać dodatkową widoczność."/>
-        <text name="eq_shop_productJump_function" text="To też przeszkoda crossowa: w górę jednej rampy, nad szczeliną, w dół drugiej."/>
+        <text name="eq_shop_productJump_function" text="Ustaw dwie naprzeciw siebie w odległości ok. 5 m: maszyna między nimi też się liczy, albo skacz przez nie jak przez przeszkodę crossową."/>
         <text name="eq_shop_plinthTurntable" text="Obrotowy podest"/>
-        <text name="eq_shop_turntable_function" text="Tarcza obraca się powoli: zostaw na niej maszynę bez niczego podczepionego, a obróci się razem z nią. Maszyna sponsora liczy się tu bardziej."/>
+        <text name="eq_shop_turntable_function" text="Tarcza obraca się powoli: zostaw na niej maszynę, a obróci się razem z nią, z wszystkim, co podczepione. Maszyna sponsora liczy się tu bardziej."/>
+        <text name="eq_plinth_inPlace" text="Sprzęt sponsora na miejscu!"/>
+        <text name="eq_plinth_wrongBrand" text="To nie sprzęt twojego sponsora: wystawione maszyny konkurencji kosztują cię pieniądze od sponsora."/>
+        <text name="eq_plinth_noSponsor" text="Brak podpisanego sponsora: jego sprzęt wystawiony tutaj liczyłby się do twojej widoczności."/>
+        <text name="eq_plinth_penalty" text="%d maszyn(y) konkurencji na twoich podestach sponsora: odjęto %s z wynagrodzenia sponsora."/>
         <text name="eq_config_corner" text="Narożnik"/>
         <text name="eq_config_cornerRight" text="Szpic w prawo"/>
         <text name="eq_config_cornerLeft" text="Szpic w lewo"/>

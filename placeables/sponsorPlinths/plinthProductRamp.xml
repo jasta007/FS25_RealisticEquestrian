@@ -2,13 +2,13 @@
 <!-- Made by art/source/plinths.py: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
     <storeData>
-        <name>$l10n_eq_shop_plinthProductJump</name>
+        <name>$l10n_eq_shop_plinthProductRamp</name>
         <functions>
             <function>$l10n_eq_shop_plinth_function</function>
             <function>$l10n_eq_shop_productJump_function</function>
         </functions>
-        <image>placeables/sponsorPlinths/store_plinthProductJump.dds</image>
-        <price>12000</price>
+        <image>placeables/sponsorPlinths/store_plinthProductRamp.dds</image>
+        <price>6000</price>
         <dailyUpkeep>0</dailyUpkeep>
         <lifetime>1000</lifetime>
         <rotation>0</rotation>
@@ -23,7 +23,7 @@
     </storeData>
 
     <base>
-        <filename>placeables/sponsorPlinths/plinthProductJump.i3d</filename>
+        <filename>placeables/sponsorPlinths/plinthProductRamp.i3d</filename>
         <canBeRenamed>false</canBeRenamed>
     </base>
 

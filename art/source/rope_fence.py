@@ -244,7 +244,7 @@ def main():
     write_xml(os.path.join(OUT, NAME + ".xml"))
     # shop image: three panels, the middle one with its sign
     flags = np.asarray(Image.open(os.path.join(OUT, "xcFlags_diffuse.dds")).convert("RGB"), dtype=float)
-    sponsor = np.asarray(Image.open("placeables/bleachers/bleacherSponsor_diffuse.dds").convert("RGB"), dtype=float)
+    sponsor = xc.logo_preview()
 
     def at(mesh, dz, flip=False):
         out = Mesh()

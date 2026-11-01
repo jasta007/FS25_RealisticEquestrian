@@ -62,7 +62,45 @@ EqSponsorBoards.COLOURS = {
 EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml", "placeables/xcjumps/xcgatearch.xml",
     "placeables/xcjumps/xcgatesimple.xml", "placeables/sponsorplinths/plinthdrive.xml",
     "placeables/sponsorplinths/plinthramp.xml", "placeables/sponsorplinths/plinthramplarge.xml",
-    "placeables/sponsorplinths/plinthproductjump.xml", "placeables/sponsorplinths/plinthturntable.xml" }
+    "placeables/sponsorplinths/plinthproductramp.xml", "placeables/sponsorplinths/plinthturntable.xml" }
+
+
+-- Brands whose logo is white or very pale (James, 2026-11-01: white on a white board vanishes).
+-- Measured on the game's own 261 logos (light share of the opaque pixels 0.5 or more, or a mean
+-- luminance of 0.75 or more); brands from DLCs and mods aren't known and keep the white board.
+EqSponsorBoards.LIGHT_LOGOS = {}
+for _, name in ipairs({
+    "AGRIFAC", "APV", "APE", "CONVEYALL", "DALBO", "ELHO", "SKODA", "FARMTECH", "FENDT", "GEA", "GOLDHOFER",
+    "HUSQVARNA", "INTERNATIONAL", "KOMATSU", "KOTTE", "KRAMPE", "LACOTEC", "LEMKEN", "LODEKING", "MACDON", "MACK",
+    "MERCEDESBENZTRUCKS", "MERIDIAN", "MITAS", "NEWHOLLAND", "PORSCHEDIESEL", "QUICKE", "RANDON", "ROSTSELMASH",
+    "ROTTNE", "SALFORD", "SCHAEFFER", "SENNEBOGEN", "TAJFUN", "TROUTRIVER", "VALTRA", "VOLVO", "VREDESTEIN", "WELGER",
+    "MZURI", "NARDI", "FLEXICOIL", "DAMMANN", "JUNGHEINRICH", "KESLA", "NEXAT", "OLOFSFORS", "HOLMER", "MERLO", "DFM",
+    "HEIZOMAT", "SUMMERSMFG", "BOMECH", "BRANDT", "LIZARD", "UNVERFERTH", "SCHWARZMUELLER", "FARMAX", "GORENC",
+    "ARMATRAC", "RIGITRAC", "BRIELMAIER", "TMCCANCELA", "AGIWESTFIELD", "AGCO", "ARCUSIN", "MICHELIN", "WEBERMT",
+    "FARMET", "PROVITIS", "AGISENTINEL", "HELM", "JMMANUFACTURING", "ABI", "AGIWESTEEL", "WILSON", "DUEVELSDORF",
+    "WARZEE", "ANDERSONGROUP", "REITER", "KRAMER", "AGISTORM", "PALADIN", "RIEDLER", "AGIBATCO", "GIANTS",
+    "ANNABURGER", "STEPA", "TRELLEBORG", "AGINECO", "AGRISPREAD", "MCCULLOCH", "NEUERO", "KAERCHER",
+    "KRONE", "CHALLENGER", "AGRISEM", "RAU", "ZIEGLER",
+}) do EqSponsorBoards.LIGHT_LOGOS[name] = true end
+-- A board face's colours, linear: plain white, and the dark grey behind a light logo whose brand
+-- colour is too pale to show it.
+EqSponsorBoards.FACE_WHITE = { 0.80, 0.80, 0.78 }
+EqSponsorBoards.FACE_DARK = { 0.025, 0.027, 0.032 }
+-- A brand colour darker than this (linear luminance) carries a light logo.
+EqSponsorBoards.DARK_ENOUGH = 0.18
+
+
+--- @param brand string|nil the brand a piece shows
+--- @return table colour of the boards' faces behind its logo: white, or for a light logo the
+--- brand's own colour when it's dark enough, else dark grey
+function EqSponsorBoards.faceColour(brand)
+    if brand == nil or not EqSponsorBoards.LIGHT_LOGOS[string.upper(brand)] then return EqSponsorBoards.FACE_WHITE end
+    local colour = EqSponsorBoards.brandColour(brand)
+    if colour ~= nil and 0.2126 * colour[1] + 0.7152 * colour[2] + 0.0722 * colour[3] < EqSponsorBoards.DARK_ENOUGH then
+        return colour
+    end
+    return EqSponsorBoards.FACE_DARK
+end
 
 
 local function endsWith(filename, list)
@@ -314,8 +352,12 @@ function EqSponsorBoards.colourFor(placeable)
     if not EqSponsorBoards.isJump(placeable and placeable.configFileName) or not EqSponsorBoards.isOn(placeable) then return nil, nil end
     local farmId = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
     if farmId == nil and g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then farmId = g_currentMission:getFarmId() end
-    -- the lead sponsor's colour when there are several
-    local brand = EqSponsors ~= nil and EqSponsors.signedBrands ~= nil and farmId ~= nil and EqSponsors.signedBrands(farmId)[1] or nil
+    -- the brand whose logos the piece shows (EqSponsors: one per piece), else the lead sponsor's
+    local brand = placeable.eqBrand
+    local signed = EqSponsors ~= nil and EqSponsors.signedBrands ~= nil and farmId ~= nil and EqSponsors.signedBrands(farmId) or {}
+    local isSigned = false
+    for _, name in ipairs(signed) do if name == brand then isSigned = true end end
+    if not isSigned then brand = signed[1] end
     local colour = EqSponsorBoards.brandColour(brand)
     return colour, colour ~= nil and brand or nil
 end

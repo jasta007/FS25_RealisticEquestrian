@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="Průjezdný podstavec"/>
         <text name="eq_shop_plinthRamp" text="Výstavní rampa"/>
         <text name="eq_shop_plinthRampLarge" text="Velká výstavní rampa"/>
-        <text name="eq_shop_plinthProductJump" text="Skok s produktem"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa skoku s produktem"/>
         <text name="eq_shop_plinth_function" text="Zaparkuj na něj stroj značky svého sponzora pro další branding."/>
-        <text name="eq_shop_productJump_function" text="Také terénní skok: nahoru po jedné rampě, přes mezeru, dolů po druhé."/>
+        <text name="eq_shop_productJump_function" text="Postav dvě proti sobě asi 5 m od sebe: stroj mezi nimi se počítá také, nebo je skoč jako terénní překážku."/>
         <text name="eq_shop_plinthTurntable" text="Otočná plošina"/>
-        <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj bez připojeného nářadí a bude se otáčet s ním. Stroj tvého sponzora se tu počítá víc."/>
+        <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj a bude se otáčet s ním, i se vším připojeným. Stroj tvého sponzora se tu počítá víc."/>
+        <text name="eq_plinth_inPlace" text="Vybavení sponzora na místě!"/>
+        <text name="eq_plinth_wrongBrand" text="Není to vybavení tvého sponzora: vystavené stroje konkurence tě stojí peníze od sponzora."/>
+        <text name="eq_plinth_noSponsor" text="Žádný sponzor nepodepsán: jeho vybavení vystavené zde by se počítalo do brandingu."/>
+        <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>

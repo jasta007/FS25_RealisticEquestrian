@@ -659,7 +659,7 @@ def write_i3d(jump, path, parts, flags, feet, pole_shapes):
                ("planks", parts.planks, "planks"), ("flags", flags, "flags")]
     statics = [s for s in statics if s[1].tris]
     shapes = [(f"s_{n}", m) for n, m, _ in statics]
-    sponsored = [("eqWingPaint", parts.board_paint, "paint"), ("sponsorBoard", parts.board, "white")]
+    sponsored = [("eqWingPaint", parts.board_paint, "paint"), ("eqBoardFace", parts.board, "white")]
     sponsored = [(n, m, mat) for n, m, mat in sponsored if m.tris] + [(logo, parts.logos[logo], logo) for logo in logos]
     shapes += [(f"on_{n}", m) for n, m, _ in sponsored]
     if parts.unsponsored_wing.tris:

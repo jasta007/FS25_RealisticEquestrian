@@ -100,6 +100,20 @@ def cell_uv(name):
 
 
 def sponsor_board(path):
+    """Our own board, shown until a brand's logo is put on: drawn into the window of the image a
+    logo face shows (xc_jumps.LOGO_CROP), in an image shaped like the game's brand logos."""
+    import xc_jumps
+    full = Image.new("RGB", (512, 256), COLOURS["board"])
+    u0, u1, v0, v1 = xc_jumps.LOGO_CROP
+    box = (int(round(u0 * 512)), int(round((1 - v1) * 256)), int(round(u1 * 512)), int(round((1 - v0) * 256)))
+    window = _board_design().resize((box[2] - box[0], box[3] - box[1]), Image.LANCZOS)
+    full.paste(window, box[:2])
+    save_dxt1(full, path)
+    # the shop pictures map a logo face to the whole texture: give them just the window it shows
+    return np.asarray(window)
+
+
+def _board_design():
     w, h = SPONSOR_SIZE
     img = Image.new("RGB", (w, h), COLOURS["board"])
     draw = ImageDraw.Draw(img)
@@ -115,8 +129,7 @@ def sponsor_board(path):
     small = ImageFont.truetype(FONT, 24)
     draw.text((170, h / 2 - 22), "REALISTIC", font=big, fill=COLOURS["trim"], anchor="lm")
     draw.text((170, h / 2 + 28), "EQUESTRIAN", font=small, fill=(120, 96, 40), anchor="lm")
-    save_dxt1(img, path)
-    return np.asarray(img)
+    return img
 
 
 def box(mesh, x0, x1, y0, y1, z0, z1, cell):

@@ -9,7 +9,9 @@
     of its parts copies a helper node linked under the disc). Getting in, hitching anything to it,
     selling it or the turntable, or leaving the game gives it back its physics where it is.
 
-    Only a machine with nothing hitched is held (one with an implement still counts as on show).
+    A machine is held with everything hitched to it (James, 2026-11-01: a wheel loader, whose
+    bucket is an implement of its own, wouldn't snap): the whole chain comes out of the physics
+    and turns together; hitching or unhitching anything lets go.
     In multiplayer the disc turns but nothing is held: the server's held machine would not reach
     the other players the same way (not tried).
 
@@ -63,16 +65,23 @@ end
 
 
 --- @param vehicle table
---- @return boolean true when nothing is hitched to it and it's hitched to nothing
-local function alone(vehicle)
-    if vehicle.rootVehicle ~= nil and vehicle.rootVehicle ~= vehicle then return false end
-    if vehicle.getChildVehicles ~= nil then
-        local children = vehicle:getChildVehicles()
-        local count = 0
-        for _ in pairs(children or {}) do count = count + 1 end
-        if count > 1 then return false end
+--- @return table the machines hitched together with it, its root first (just itself if alone)
+local function chain(vehicle)
+    local root = vehicle.rootVehicle or vehicle
+    local list = { root }
+    if root.getChildVehicles ~= nil then
+        for _, child in pairs(root:getChildVehicles() or {}) do
+            if child ~= root then table.insert(list, child) end
+        end
     end
-    return true
+    return list
+end
+
+
+--- @param vehicle table
+--- @return boolean true for the head of its chain (the one held for all of them)
+local function isHead(vehicle)
+    return vehicle.rootVehicle == nil or vehicle.rootVehicle == vehicle
 end
 
 
@@ -109,13 +118,19 @@ end
 --- @param entry table
 --- @param vehicle table
 local function hold(entry, vehicle)
-    local components = vehicle.components or {}
-    if #components == 0 or vehicle.removeFromPhysics == nil then return end
+    local machines = chain(vehicle)
+    for _, machine in ipairs(machines) do
+        if machine.removeFromPhysics == nil or #(machine.components or {}) == 0 then return end
+    end
     local fx, _, fz = EqPlinths.footprint(vehicle)
     local cx, _, cz = getWorldTranslation(entry.disc)
     local dx, dz = cx - fx, cz - fz
-    vehicle:removeFromPhysics()
-    local helpers = {}
+    local components = {}
+    for _, machine in ipairs(machines) do
+        machine:removeFromPhysics()
+        for _, component in ipairs(machine.components) do table.insert(components, component) end
+    end
+    local helpers = { machines = machines }
     for _, component in ipairs(components) do
         local node = component.node
         local x, y, z = getWorldTranslation(node)
@@ -141,7 +156,9 @@ local function release(entry, vehicle)
     for _, h in ipairs(helpers) do
         if entityExists == nil or entityExists(h.helper) then delete(h.helper) end
     end
-    if exists(vehicle) and vehicle.addToPhysics ~= nil then vehicle:addToPhysics() end
+    for _, machine in ipairs(helpers.machines or { vehicle }) do
+        if exists(machine) and machine.addToPhysics ~= nil then machine:addToPhysics() end
+    end
 end
 
 
@@ -217,8 +234,13 @@ function EqTurntable.update(dt)
         entry.angle = EqTurntable.advance(entry.angle, dt)
         setRotation(entry.disc, 0, entry.angle, 0)
         if holding then
-            for vehicle in pairs(entry.held) do
-                if not exists(vehicle) or inUse(vehicle) or not alone(vehicle) then release(entry, vehicle) end
+            for vehicle, helpers in pairs(entry.held) do
+                local now_ = chain(vehicle)
+                local changed = #now_ ~= #(helpers.machines or {})
+                for _, machine in ipairs(now_) do
+                    if not exists(machine) or inUse(machine) then changed = true end
+                end
+                if not exists(vehicle) or changed then release(entry, vehicle) end
             end
             follow(entry)
             if now - (entry.checkedAt or 0) >= 250 or now < (entry.checkedAt or 0) then
@@ -226,8 +248,13 @@ function EqTurntable.update(dt)
                 entry.checkedAt = now
                 local waiting = {}
                 for _, vehicle in ipairs(g_currentMission.vehicleSystem.vehicles or {}) do
-                    if entry.held[vehicle] == nil and exists(vehicle) and not inUse(vehicle) and alone(vehicle)
-                        and still(vehicle) and onDisc(entry, vehicle) then
+                    local free = isHead(vehicle) and entry.held[vehicle] == nil and exists(vehicle) and onDisc(entry, vehicle)
+                    if free then
+                        for _, machine in ipairs(chain(vehicle)) do
+                            if inUse(machine) or not still(machine) then free = false end
+                        end
+                    end
+                    if free then
                         local waited = (entry.waiting[vehicle] or 0) + math.max(0, elapsed)
                         if waited >= EqTurntable.HOLD_MS then
                             EqLog.try("EqTurntable hold", hold, entry, vehicle)

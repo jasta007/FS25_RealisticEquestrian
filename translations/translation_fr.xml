@@ -751,11 +751,15 @@
         <text name="eq_shop_plinthDrive" text="Podium traversant"/>
         <text name="eq_shop_plinthRamp" text="Rampe d'exposition"/>
         <text name="eq_shop_plinthRampLarge" text="Grande rampe d'exposition"/>
-        <text name="eq_shop_plinthProductJump" text="Obstacle produit"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampe d'obstacle produit"/>
         <text name="eq_shop_plinth_function" text="Garez-y une machine de la marque de votre sponsor pour plus de visibilité."/>
-        <text name="eq_shop_productJump_function" text="Aussi un obstacle de cross : montez une rampe, sautez la fosse, descendez l'autre."/>
+        <text name="eq_shop_productJump_function" text="Placez-en deux face à face à environ 5 m : une machine entre les deux compte aussi, ou sautez-les comme un obstacle de cross."/>
         <text name="eq_shop_plinthTurntable" text="Plateau tournant"/>
-        <text name="eq_shop_turntable_function" text="Le plateau tourne lentement : laissez-y une machine sans rien d'attelé et elle tourne avec lui. Une machine de votre sponsor y compte davantage."/>
+        <text name="eq_shop_turntable_function" text="Le plateau tourne lentement : laissez-y une machine et elle tourne avec lui, avec tout ce qui est attelé. Une machine de votre sponsor y compte davantage."/>
+        <text name="eq_plinth_inPlace" text="Équipement du sponsor en place !"/>
+        <text name="eq_plinth_wrongBrand" text="Ce n'est pas l'équipement de votre sponsor : les machines concurrentes exposées vous coûtent de l'argent du sponsor."/>
+        <text name="eq_plinth_noSponsor" text="Aucun sponsor signé : son équipement exposé ici compterait pour votre visibilité."/>
+        <text name="eq_plinth_penalty" text="%d machine(s) concurrente(s) sur vos podiums sponsor : %s retirés du cachet du sponsor."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>

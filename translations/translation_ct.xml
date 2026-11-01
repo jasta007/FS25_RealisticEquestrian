@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="通行展台"/>
         <text name="eq_shop_plinthRamp" text="展示坡台"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
-        <text name="eq_shop_plinthProductJump" text="產品障礙"/>
+        <text name="eq_shop_plinthProductRamp" text="產品障礙坡台"/>
         <text name="eq_shop_plinth_function" text="在上面停放贊助商品牌的機器，可獲得額外品牌曝光。"/>
-        <text name="eq_shop_productJump_function" text="也可作越野障礙：上一側坡道，越過中間空槽，從另一側下來。"/>
+        <text name="eq_shop_productJump_function" text="把兩個相對放置，相距約 5 公尺：停在中間的機器也計入，或者把它們當越野障礙來跳。"/>
         <text name="eq_shop_plinthTurntable" text="旋轉展台"/>
-        <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把未掛接任何農具的機器停在上面，它會隨轉盤一起轉動。贊助商的機器在這裡計入更多。"/>
+        <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把機器停在上面，它會連同掛接的農具一起隨轉盤轉動。贊助商的機器在這裡計入更多。"/>
+        <text name="eq_plinth_inPlace" text="贊助商設備已就位！"/>
+        <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備：展示競爭品牌的機器會讓你損失贊助費。"/>
+        <text name="eq_plinth_noSponsor" text="尚未簽約贊助商：在這裡展示其設備將計入你的品牌曝光。"/>
+        <text name="eq_plinth_penalty" text="你的贊助展台上有 %d 台競爭品牌機器：贊助費扣除 %s。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>

@@ -94,11 +94,15 @@
         <text name="eq_shop_plinthDrive" text="Doorrijpodium"/>
         <text name="eq_shop_plinthRamp" text="Showhelling"/>
         <text name="eq_shop_plinthRampLarge" text="Grote showhelling"/>
-        <text name="eq_shop_plinthProductJump" text="Productsprong"/>
+        <text name="eq_shop_plinthProductRamp" text="Productsprong-helling"/>
         <text name="eq_shop_plinth_function" text="Parkeer er een machine van het merk van je sponsor op voor extra branding."/>
-        <text name="eq_shop_productJump_function" text="Ook een crosscountrysprong: een helling op, over de sleuf, de andere af."/>
+        <text name="eq_shop_productJump_function" text="Zet er twee tegenover elkaar op ongeveer 5 m: een machine ertussen telt ook, of spring ze als crosscountrysprong."/>
         <text name="eq_shop_plinthTurntable" text="Draaiplateau"/>
-        <text name="eq_shop_turntable_function" text="De schijf draait langzaam: laat er een machine zonder aangekoppeld werktuig op staan en die draait mee. Een machine van je sponsor telt hier extra."/>
+        <text name="eq_shop_turntable_function" text="De schijf draait langzaam: laat er een machine op staan en die draait mee, met alles wat eraan gekoppeld is. Een machine van je sponsor telt hier extra."/>
+        <text name="eq_plinth_inPlace" text="Sponsoruitrusting op zijn plek!"/>
+        <text name="eq_plinth_wrongBrand" text="Niet de uitrusting van je sponsor: concurrerende machines kosten je sponsorgeld."/>
+        <text name="eq_plinth_noSponsor" text="Geen sponsor getekend: zijn uitrusting hier zou meetellen voor je branding."/>
+        <text name="eq_plinth_penalty" text="%d concurrerende machine(s) op je sponsorpodia: %s van de sponsorvergoeding afgetrokken."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>

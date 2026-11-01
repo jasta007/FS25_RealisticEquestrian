@@ -7,18 +7,20 @@ a plinth's deck counts (EqPlinths); each plinth also carries sponsor boards.
   never has to be backed up anything; a board on each side.
 - plinthRamp / plinthRampLarge: a solid stone display ramp, the machine parked nose up on the
   slope, the board on the high front face; for smaller and bigger machines.
-- plinthProductJump: two stone banks, each mostly ramp up to a short flat top, with a slot between them. Three
-  places for machines (each bank's top and the slot), or a cross country jump: up one ramp, over
-  whatever stands in the slot, down the other. The banks are 2 m up so a horse never comes near
+- plinthProductRamp: one bank of the product jump, mostly ramp up to a short flat top; the player
+  sets two facing each other with a gap between (James, 2026-11-01: two parts). Three
+  places for machines (each bank and the gap, about 4.8 m wide), or a cross country jump: up one
+  ramp, over whatever stands in the gap, down the other. The banks are 2 m up so a horse never comes near
   the machine in the slot (James: we REALLY don't want it knocked); no flags of its own, the
   player sets course flags where they want it ridden.
 - plinthTurntable: a round stone plinth with a ramp at the back and a disc that turns very
   slowly (node "eqTurntableDisc"); a machine left on the disc is held on it and turned with it
   (EqTurntable). The board bends round the front.
 
-Stone sides (a cut-stone texture painted here) with painted copings along the top edges: the
+Plain rendered stone (a texture painted here) with painted copings along the top edges: the
 Colour bought, or the sponsor's colour (shapes named "eqPaint", EqJumpColours). Logos are shapes
-named "eqSponsor_<n>" ("...b" for a board's back face), as everywhere else. Unlike the cross
+named "eqSponsor_<n>" ("...b" for a board's back face), as everywhere else; the boards' faces
+are "eqBoardFace", which EqSponsorBoards paints dark behind a light logo. Unlike the cross
 country pieces, plinths never hide: a machine on show shouldn't float over nothing.
 
 Everything is ridden or driven along z. The geometry is inline: re-save the i3ds in GIANTS Editor
@@ -47,6 +49,8 @@ from xc_jumps import COLLISION_GROUP, COLLISION_MASK, Mesh, fmt, shape_lines, st
 OUT = "placeables/sponsorPlinths"
 STONE = "plinthStone_diffuse.dds"
 STONE_TILE = 2.0        # metres the stone texture covers each way
+METAL = "plinthMetal_diffuse.dds"
+METAL_TILE = 1.6
 LOGO_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
 FLAGS = "../xcJumps/xcFlags_diffuse.dds"
 ASPECT = sj.LOGO_ASPECT
@@ -56,49 +60,54 @@ PLINTHS = [
     {"name": "plinthDrive", "price": 8000, "colour": "navy"},
     {"name": "plinthRamp", "price": 5000, "colour": "green", "size": (3.0, 4.6, 1.2)},
     {"name": "plinthRampLarge", "price": 7500, "colour": "green", "size": (3.8, 6.6, 1.6)},
-    {"name": "plinthProductJump", "price": 12000, "colour": "red"},
+    {"name": "plinthProductRamp", "price": 6000, "colour": "red"},
     {"name": "plinthTurntable", "price": 25000, "colour": "navy"},
 ]
 DRIVE = {"half_x": 1.6, "half_deck": 3.0, "ramp": 3.5, "height": 0.75}
-PRODUCT = {"half_x": 2.0, "slot": 1.6, "top": 1.5, "ramp": 7.5, "height": 2.0}
-TURNTABLE = {"radius": 3.5, "disc": 3.0, "height": 0.7, "ramp": 3.5, "ramp_half": 1.6, "sides": 48}
+PRODUCT = {"half_x": 2.0, "top": 1.5, "ramp": 7.5, "height": 2.0, "gap": 4.8}
+TURNTABLE = {"radius": 4.0, "disc": 3.45, "height": 0.7, "ramp": 3.5, "ramp_half": 1.6, "sides": 64}
 DISC = "eqTurntableDisc"     # the node EqTurntable turns
 
 
 def stone_texture(path, size=512):
-    """Cut stone: courses of blocks 0.25-0.35 m high and 0.4-0.9 m long over STONE_TILE metres,
-    grey with a little warmth, darker joints, a speckle on each block. Tiles both ways."""
+    """A plain rendered finish (James, 2026-11-01: the block pattern stood out too much): warm light
+    grey, soft mottling over the metre, a fine grain. Tiles both ways."""
     rng = np.random.default_rng(11)
-    px = size / STONE_TILE
-    img = np.zeros((size, size, 3))
-    img[:] = (92, 90, 86)
-    y = 0
-    heights = []
-    while y < size:
-        h = int(round(rng.uniform(0.25, 0.35) * px))
-        if size - y - h < 0.22 * px:
-            h = size - y
-        heights.append((y, h))
-        y += h
-    joint = 3
-    for y0, h in heights:
-        x = int(rng.integers(0, int(0.5 * px)))
-        start = x
-        while x < start + size:
-            w = int(round(rng.uniform(0.4, 0.9) * px))
-            if start + size - x - w < 0.3 * px:
-                w = start + size - x
-            tone = rng.uniform(120, 165)
-            colour = np.array([tone + 4, tone + 2, tone - 3]) + rng.normal(0, 4, 3)
-            ys = slice(y0 + joint // 2 + 1, y0 + h - joint // 2)
-            xs = [(xx % size) for xx in range(x + joint // 2 + 1, x + w - joint // 2)]
-            block = colour + rng.normal(0, 7, (ys.stop - ys.start, len(xs), 1))
-            # a softer edge: each block a touch darker toward its rim
-            yy = np.linspace(-1, 1, ys.stop - ys.start)[:, None]
-            xx = np.linspace(-1, 1, len(xs))[None, :]
-            rim = np.clip(np.maximum(abs(yy), abs(xx)) - 0.8, 0, 1) * 40
-            img[ys, xs] = block - rim[..., None]
-            x += w
+
+    def noise(cells, amount):
+        grid = rng.normal(0, 1, (cells, cells))
+        big = np.kron(grid, np.ones((size // cells, size // cells)))
+        # wrap-blur so it tiles and has no blocks
+        for _ in range(3):
+            big = (big + np.roll(big, 1, 0) + np.roll(big, -1, 0) + np.roll(big, 1, 1) + np.roll(big, -1, 1)) / 5
+            big = (big + np.roll(big, size // cells // 2, 0) + np.roll(big, size // cells // 2, 1)) / 3
+        return big / (big.std() + 1e-9) * amount
+    base = np.array([168.0, 163.0, 152.0])
+    shade = noise(8, 6.0) + noise(32, 3.0) + rng.normal(0, 2.5, (size, size))
+    img = base[None, None, :] + shade[..., None]
+    rgb = np.clip(img, 0, 255).astype(np.uint8)
+    save_dxt1(Image.fromarray(rgb), path)
+    return rgb
+
+
+def metal_texture(path, size=512):
+    """Tread plate for the turntable's disc: grey steel with raised lozenges in rows that cross,
+    so the turning shows. Covers METAL_TILE metres."""
+    rng = np.random.default_rng(5)
+    img = np.zeros((size, size, 3)) + np.array([118.0, 121.0, 125.0])
+    img += rng.normal(0, 3, (size, size, 1))
+    cell = size // 16
+    yy, xx = np.mgrid[0:cell, 0:cell]
+    for row in range(16):
+        for colm in range(16):
+            # lozenges alternate direction like real tread plate
+            u = (xx - cell / 2) / (cell * 0.42)
+            v = (yy - cell / 2) / (cell * 0.12)
+            if (row + colm) % 2:
+                u, v = (yy - cell / 2) / (cell * 0.42), (xx - cell / 2) / (cell * 0.12)
+            lozenge = (np.abs(u) + np.abs(v)) < 1
+            lit = np.where(lozenge, 22.0 - 10.0 * (u + v), 0.0)
+            img[row * cell:(row + 1) * cell, colm * cell:(colm + 1) * cell] += lit[..., None]
     rgb = np.clip(img, 0, 255).astype(np.uint8)
     save_dxt1(Image.fromarray(rgb), path)
     return rgb
@@ -227,22 +236,19 @@ def ramp(size):
 
 
 def product():
+    """One bank of the product jump: its 2 m face at z = 0 facing -z (towards the gap), a short flat
+    top, then the ramp down to the ground. Two set facing each other make the jump (EqPlinths)."""
     stone, paint, white, col, logos = Mesh(), Mesh(), Mesh(), Mesh(), {}
-    hx, slot, top, r, h = PRODUCT["half_x"], PRODUCT["slot"], PRODUCT["top"], PRODUCT["ramp"], PRODUCT["height"]
-    for sign, number in ((1, 1), (-1, 2)):
-        z0, z1, z2 = sign * slot, sign * (slot + top), sign * (slot + top + r)
-        a, b = sorted((z0, z1))
-        solid(stone, col, [(a, 0.0), (b, 0.0), (b, h), (a, h)], -hx, hx)
-        ra, rb = sorted((z1, z2))
-        solid(stone, col, [(ra, 0.0), (rb, 0.0), (z1, h)], -hx, hx)
-        for side in (1, -1):
-            coping(paint, [(z0, h), (z1, h), (z2, 0.0)] if sign > 0 else [(z2, 0.0), (z1, h), (z0, h)],
-                   side * (hx - COPING[0] / 2 + 0.02))
-            # the board low on the side, from the slot back under the start of the ramp
-            board(white, paint, logos, number, side * hx, sign * (slot + 1.6), 0.12, 3.0, 1.1, side)
-        # the take-off and landing edges over the slot
-        prism(paint, [(-hx, h - 0.04), (hx, h - 0.04), (hx, h + COPING[1]), (-hx, h + COPING[1])],
-                 (0.0, 0.0, z0 - (COPING[0] if sign > 0 else 0) + (0.02 if sign > 0 else -0.02)), (1, 0, 0), (0, 1, 0), (0, 0, 1), COPING[0])
+    hx, top, r, h = PRODUCT["half_x"], PRODUCT["top"], PRODUCT["ramp"], PRODUCT["height"]
+    solid(stone, col, [(0.0, 0.0), (top, 0.0), (top, h), (0.0, h)], -hx, hx)
+    solid(stone, col, [(top, 0.0), (top + r, 0.0), (top, h)], -hx, hx)
+    for side in (1, -1):
+        coping(paint, [(0.0, h), (top, h), (top + r, 0.0)], side * (hx - COPING[0] / 2 + 0.02))
+        # the board low on the side, under the top and the start of the ramp
+        board(white, paint, logos, 1, side * hx, 1.6, 0.12, 3.0, 1.1, side)
+    # the take-off edge over the gap
+    prism(paint, [(-hx, h - 0.04), (hx, h - 0.04), (hx, h + COPING[1]), (-hx, h + COPING[1])],
+          (0.0, 0.0, -0.02), (1, 0, 0), (0, 1, 0), (0, 0, 1), COPING[0])
     return {"stone": stone, "paint": paint, "white": white}, logos, col, {}
 
 
@@ -261,17 +267,17 @@ def turntable():
     t = TURNTABLE
     R, r, h, n = t["radius"], t["disc"], t["height"], t["sides"]
     cylinder(stone, R, 0.0, h, n)
-    cylinder(col, R, 0.0, h + 0.03, n)
+    cylinder(col, R, 0.0, h + 0.02, n)
     # a painted collar round the top edge, showing as a ring round the disc
-    cylinder(paint, R + 0.012, h - 0.12, h + 0.02, n)
-    # the disc that turns, a little proud, in its own node
-    cylinder(disc, r, h - 0.02, h + 0.03, n)
-    # the ramp up at the back (+z)
+    cylinder(paint, R + 0.012, h - 0.12, h + 0.015, n)
+    # the disc that turns, a tread plate flush with the top, in its own node
+    cylinder(disc, r, h - 0.03, h + 0.02, n, tile=METAL_TILE)
+    # the ramp up at the back (+z): level with the top from the disc's edge out over the collar,
+    # then down (James: no rails, flush with the circle)
     hw, length = t["ramp_half"], t["ramp"]
-    z0 = math.sqrt(R * R - hw * hw) - 0.4
-    solid(stone, col, [(z0, 0.0), (R + length, 0.0), (z0, h), ], -hw, hw)
-    for side in (1, -1):
-        coping(paint, [(R - 0.05, h), (R + length, 0.0)], side * (hw - COPING[0] / 2 + 0.02))
+    z0, z1 = r + 0.02, R + 0.05
+    top = h + 0.02
+    solid(stone, col, [(z0, 0.0), (R + length, 0.0), (z1, top), (z0, top)], -hw, hw)
     # a curved board round the front (-z), the logo bent round it in strips
     width, y0, bh = 2.4, 0.08, h - 0.22
     steps = 12
@@ -316,9 +322,9 @@ def turntable():
 
 
 def write_i3d(name, colour, path, statics, logos, col, feet):
-    files = [sj.SHADER] + list(sj.PAINT_MAPS.values()) + [STONE, LOGO_TEXTURE, FLAGS]
+    files = [sj.SHADER] + list(sj.PAINT_MAPS.values()) + [STONE, LOGO_TEXTURE, FLAGS, METAL]
     fid = {f: i + 1 for i, f in enumerate(files)}
-    mat = {"stone": 1, "paint": 2, "white": 3, "logo": 4, "flags": 5}
+    mat = {"stone": 1, "paint": 2, "white": 3, "logo": 4, "flags": 5, "metal": 6}
 
     def paint_material(mname, mid, rgb):
         lines = [f'    <Material name="{mname}" materialId="{mid}" customShaderId="{fid[sj.SHADER]}">']
@@ -340,7 +346,9 @@ def write_i3d(name, colour, path, statics, logos, col, feet):
     lines += [f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0.5 0" alphaBlending="true">',
               f'      <Texture fileId="{fid[LOGO_TEXTURE]}"/>', "    </Material>",
               f'    <Material name="xcFlags" materialId="{mat["flags"]}" specularColor="0.1 0.7 0">',
-              f'      <Texture fileId="{fid[FLAGS]}"/>', "    </Material>", "  </Materials>"]
+              f'      <Texture fileId="{fid[FLAGS]}"/>', "    </Material>",
+              f'    <Material name="plinthMetal" materialId="{mat["metal"]}" specularColor="0.6 0.6 0">',
+              f'      <Texture fileId="{fid[METAL]}"/>', "    </Material>", "  </Materials>"]
     shapes = [(f"s_{k}", m) for k, m in statics.items() if m.tris] + [(f"l_{k}", m) for k, m in logos.items()]
     shapes.append(("col", col))
     ids = {key: i + 1 for i, (key, _) in enumerate(shapes)}
@@ -353,13 +361,13 @@ def write_i3d(name, colour, path, statics, logos, col, feet):
     def nid():
         node[0] += 1
         return node[0]
-    names = {"stone": "stone", "paint": "eqPaint", "white": "boards", "flags": "flags"}
+    names = {"stone": "stone", "paint": "eqPaint", "white": "eqBoardFace", "flags": "flags"}
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     for key, mesh in statics.items():
         if mesh.tris and key == "disc":
             lines.append(f'      <TransformGroup name="{DISC}" nodeId="{nid()}">')
             lines.append(f'        <Shape name="disc" shapeId="{ids["s_" + key]}" clipDistance="{xc.CLIP * 2}" nodeId="{nid()}" '
-                         f'materialIds="{mat["stone"]}" castsShadows="true" receiveShadows="true"/>')
+                         f'materialIds="{mat["metal"]}" castsShadows="true" receiveShadows="true"/>')
             lines.append("      </TransformGroup>")
         elif mesh.tris:
             lines.append(f'      <Shape name="{names[key]}" shapeId="{ids["s_" + key]}" clipDistance="{xc.CLIP * 2}" nodeId="{nid()}" '
@@ -426,10 +434,11 @@ def main(names=()):
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
     os.makedirs(OUT, exist_ok=True)
     stone_rgb = stone_texture(os.path.join(OUT, STONE))
-    sponsor = np.asarray(Image.open("placeables/bleachers/bleacherSponsor_diffuse.dds").convert("RGB"), dtype=float)
+    metal_rgb = metal_texture(os.path.join(OUT, METAL))
+    sponsor = xc.logo_preview()
     flags_rgb = np.asarray(Image.open("placeables/xcJumps/xcFlags_diffuse.dds").convert("RGB"), dtype=float)
     builders = {"plinthDrive": drive, "plinthRamp": lambda: ramp(PLINTHS[1]["size"]),
-                "plinthRampLarge": lambda: ramp(PLINTHS[2]["size"]), "plinthProductJump": product,
+                "plinthRampLarge": lambda: ramp(PLINTHS[2]["size"]), "plinthProductRamp": product,
                 "plinthTurntable": turntable}
     for plinth in PLINTHS:
         name = plinth["name"]
@@ -437,7 +446,7 @@ def main(names=()):
             continue
         statics, logos, col, feet = builders[name]()
         write_i3d(name, plinth["colour"], os.path.join(OUT, name + ".i3d"), statics, logos, col, feet)
-        write_xml(plinth, os.path.join(OUT, name + ".xml"), name == "plinthProductJump")
+        write_xml(plinth, os.path.join(OUT, name + ".xml"), name == "plinthProductRamp")
 
         def flip(mesh):
             out = Mesh()
@@ -449,7 +458,7 @@ def main(names=()):
         if "flags" in statics:
             meshes.append((flip(statics["flags"]), flags_rgb))
         if "disc" in statics:
-            meshes.append((statics["disc"], stone_rgb))
+            meshes.append((statics["disc"], metal_rgb))
         meshes += [(flip(m), sponsor) for m in logos.values()]
         store_image([m for m in meshes if m[0].tris], os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-130)
         print(name, len(logos), "logo faces,", len(col.tris), "collision triangles")
