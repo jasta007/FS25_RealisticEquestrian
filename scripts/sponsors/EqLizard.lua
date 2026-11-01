@@ -308,9 +308,32 @@ function EqLizard.updateShop()
     for _, storeItem in ipairs(g_storeManager:getItems() or {}) do
         if EqLizard.isPlinthXml(storeItem.xmlFilename) then
             local path = string.lower(string.gsub(storeItem.xmlFilename, "\\", "/"))
-            storeItem.showInStore = want ~= nil and string.sub(path, -#want) == want
+            local show = want ~= nil and string.sub(path, -#want) == want
+            storeItem.showInStore = show
+            -- The game gives a placeable its construction brush only when it loads shown in the
+            -- shop (StoreManager.loadItem), so ours, hidden at load, have none and never make the
+            -- Horses tab (James, 2026-11-01): give it one while it is offered, take it away after.
+            if show and storeItem.brush == nil then
+                storeItem.brush = EqLizard.brushFor()
+            elseif not show then
+                storeItem.brush = nil
+            end
         end
     end
+end
+
+
+--- @return table|nil brush the construction brush our plinths would have had: Animals, Horses tab
+function EqLizard.brushFor()
+    if g_storeManager.getConstructionCategoryByName == nil then return nil end
+    local category = g_storeManager:getConstructionCategoryByName("animals")
+    if category == nil then return nil end
+    local tab = g_storeManager:getConstructionTabByName("horses", category.name)
+    if tab == nil then
+        Log:warning("EqLizard: no Horses tab in the construction menu for the Lizard plinth")
+        return nil
+    end
+    return { type = "placeable", parameters = {}, category = category, tab = tab }
 end
 
 
