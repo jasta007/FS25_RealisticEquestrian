@@ -856,6 +856,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     EqDressageHooks.pathRun = sheet.routine.active and sheet.routine.kind == "path" and sheet.routine.path or nil
     EqDressageHooks.pathAt = g_time or 0
 
+    -- Lateral work, passage and work on the spot ridden anywhere, outside a test (James,
+    -- 2026-11-01: practising off the cuff should train a reasonable amount).
+    if not sheet.routine.active then
+        local okKey, key = EqLog.try("EqTrainingHooks lateralNow", EqTrainingHooks.lateralNow, vehicle, spec)
+        EqTraining.freeLateral(sheet, okKey and key or nil, worn, dt)
+    else
+        sheet.freeLateralMs = 0
+    end
+
     local share = EqTraining.workStep(sheet, dt)
     if (share < 0.5) ~= (spec.eqCruising == true) then
         spec.eqCruising = share < 0.5
@@ -1527,7 +1536,8 @@ end
 
 --- The movement the horse is doing now ("Piaffe", "Travers (haunches in)") and its colour
 --- (green when a test asks for it now, red when it asks for something else), else nil.
-local function nowDoing(vehicle, spec)
+--- The movement the horse is doing now, as an EqLateral.movementName key ("piaffe", "travers"), else nil.
+function EqTrainingHooks.lateralNow(vehicle, spec)
     if EqLateral == nil or EqLateral.vehicle ~= vehicle or EqLateral.movementName == nil then return nil end
     local gait = EqLateral.gaitName(spec)
     if gait == nil then return nil end
@@ -1547,6 +1557,12 @@ local function nowDoing(vehicle, spec)
     end
     local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
         turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+    return key
+end
+
+
+local function nowDoing(vehicle, spec)
+    local key = EqTrainingHooks.lateralNow(vehicle, spec)
     if key == nil then return nil end
     -- What a test asks for now, if anything.
     local color = COLOR.white

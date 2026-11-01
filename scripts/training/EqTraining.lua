@@ -110,6 +110,12 @@ EqTraining.TEMPERAMENT_RATE = 0.0022
 -- and 67% of the bar; it should not take one and a half tests to fill it).
 EqTraining.TEST_TEMPERAMENT_FACTOR = 2
 EqTraining.TEST_BAR_SHARE = 1.5
+-- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test (EqLateral) train
+-- temperament like a routine at x(1 + FREE_LATERAL_STEPS), once held FREE_LATERAL_HOLD_MS; just
+-- collecting (Ctrl at a walk on the spot, not turning) doesn't count. A test still trains far
+-- more (James, 2026-11-01: practising off the cuff should train a reasonable amount).
+EqTraining.FREE_LATERAL_STEPS = 3
+EqTraining.FREE_LATERAL_HOLD_MS = 1000
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -425,6 +431,24 @@ function EqTraining.routineTrain(sheet, worn, dt)
         local factor = routine.kind == "path" and EqTraining.TEST_TEMPERAMENT_FACTOR or 1
         sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * factor * (routine.mult - 1) * dt / 1000
     end
+end
+
+
+--- Temperament from lateral work ridden outside a test.
+--- @param sheet table
+--- @param key string|nil EqLateral.movementName key of what the horse does now
+--- @param worn boolean
+--- @param dt number milliseconds
+--- @return boolean training true while it trains
+function EqTraining.freeLateral(sheet, key, worn, dt)
+    if key == nil or key == "collected" then
+        sheet.freeLateralMs = 0
+        return false
+    end
+    sheet.freeLateralMs = (sheet.freeLateralMs or 0) + dt
+    if worn or sheet.freeLateralMs < EqTraining.FREE_LATERAL_HOLD_MS then return false end
+    sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * EqTraining.FREE_LATERAL_STEPS * dt / 1000
+    return true
 end
 
 

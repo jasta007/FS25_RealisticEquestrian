@@ -324,6 +324,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - A test of figures is harder work than the marker routine: temperament builds twice as fast
   (its payoff at the end too), and the riding bar fills at 1.5 times the usual rate from the first
   movement, so one full test on the big arena fills a green horse's bar.
+- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test train temperament
+  too, once held for a second, like a routine at x4 (about a third of what a full test gives for
+  the same time). Just collecting on the spot at a walk doesn't count.
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).

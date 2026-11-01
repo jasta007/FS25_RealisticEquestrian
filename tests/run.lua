@@ -865,6 +865,16 @@ do
         check("a dressage test trains temperament TEST_TEMPERAMENT_FACTOR times as fast as the markers",
             math.abs(tested.focused.temperament - markers.focused.temperament * EqTraining.TEST_TEMPERAMENT_FACTOR) < 1e-12
             and markers.focused.temperament > 0)
+        -- Lateral work anywhere trains temperament once held a moment; collecting alone doesn't.
+        local free = EqTraining.newSheet()
+        local early = EqTraining.freeLateral(free, "halfPass", false, 500)
+        local later = EqTraining.freeLateral(free, "halfPass", false, 1000)
+        local gained = free.focused.temperament
+        EqTraining.freeLateral(free, "collected", false, 2000)
+        local worn = EqTraining.newSheet()
+        EqTraining.freeLateral(worn, "piaffe", true, 5000)
+        check("free lateral work trains temperament after a moment held", not early and later and gained > 0
+            and free.focused.temperament == gained and free.freeLateralMs == 0 and worn.focused.temperament == 0)
         local sheet = EqTraining.newSheet()
         EqTraining.addRiding(sheet, "canter", 1000, 0.25)
         check("easy riding counts less towards the player's share", sheet.ms.canter == 250)
