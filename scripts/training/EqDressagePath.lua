@@ -2201,12 +2201,6 @@ end
 --- A dash's length at metres s along a test (pure): by gait, one body size in lateral work.
 function EqDressagePath.dashLength(test, s)
     if EqDressagePath.sectionAtS(test, s + 1e-6) ~= nil then return EqDressagePath.LATERAL_DASH end
-    -- A passage: trot and walk dashes in turn (James, 2026-11-01).
-    local pass = EqDressagePath.passageAt(test, s + 1e-6)
-    if pass ~= nil then
-        local trot = math.floor((s - pass.s0) / EqDressagePath.PASSAGE_STEP + 0.5) % 2 == 0
-        return trot and EqDressagePath.DASH.trot or EqDressagePath.DASH.walk
-    end
     return EqDressagePath.DASH[EqDressagePath.gaitAt(test, s + 1e-6)]
 end
 
