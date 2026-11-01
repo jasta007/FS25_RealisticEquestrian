@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Durchreitetor"/>
         <text name="eq_shop_xcGate_function" text="Ein Tor zum Durchreiten, kein Sprung: breit und hoch genug für jedes Pferd, mit dem Logo Ihres Sponsors."/>
         <text name="eq_shop_xcRope" text="Seilmarkierung"/>
-        <text name="eq_shop_xcRope_function" text="Ein leichtes Seil zum Markieren der Strecke, ohne Kollision. Wähle einfaches Seil oder Seil mit kleinem Sponsorschild: Schilder bringen nur wenig Branding."/>
+        <text name="eq_shop_xcRope_function" text="Ein leichtes Seil zum Markieren der Strecke, ohne Kollision. Wähle einfaches Seil, Seil mit kleinem Sponsorschild (Schilder bringen nur wenig Branding) oder Seil mit Zuschauerbereich auf einer Seite, wo bei deinen Turnieren Zuschauer stehen."/>
         <text name="eq_shop_plinthDrive" text="Durchfahr-Podest"/>
         <text name="eq_shop_plinthRamp" text="Präsentationsrampe"/>
         <text name="eq_shop_plinthRampLarge" text="Große Präsentationsrampe"/>
@@ -1009,6 +1009,11 @@
         <text name="rl_messageTitle_eqHosting" text="Ausrichten"/>
         <text name="eq_settings_hostInterval" text="Monate zwischen eigenen Turnieren"/>
         <text name="eq_settings_hostInterval_tooltip" text="Wie viele Monate nach dem Monat deines letzten eigenen Turniers du ein weiteres ausrichten kannst."/>
+        <text name="eq_settings_crowdDensity" text="Zuschauerdichte"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Wie viele Zuschauer zu deinen eigenen Turnieren kommen, auf deine Tribünen und in die Zuschauerbereiche am Seil (08:00-19:00). Nie neben einem Dressurviereck."/>
+        <text name="eq_settings_crowd_low" text="Wenig"/>
+        <text name="eq_settings_crowd_medium" text="Mittel"/>
+        <text name="eq_settings_crowd_high" text="Viel"/>
         <text name="eq_host_warning" text="Deinem Turnier %s fehlt: %s. Kümmere dich heute darum, sonst wird es morgen abgesagt."/>
         <text name="eq_host_cancelled" text="Dein Turnier %s wurde abgesagt, es fehlte weiter: %s. Dein Ruf als Ausrichter leidet."/>
         <text name="eq_host_done" text="Dein Turnier %s ist vorbei: %d Gastpferde kamen. Einnahmen %s (%s Startgelder, %s Eintritt), Beliebtheit %d."/>

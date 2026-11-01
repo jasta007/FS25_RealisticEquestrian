@@ -88,7 +88,7 @@
         <text name="eq_shop_xcGateSimple" text="Ride-Through Gate"/>
         <text name="eq_shop_xcGate_function" text="A gate to ride through, not a jump: wide and tall enough for any horse, with your sponsor's logo."/>
         <text name="eq_shop_xcRope" text="Rope Marker"/>
-        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope or rope with a small hanging sponsor sign: signs add only a little branding."/>
+        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope, rope with a small hanging sponsor sign (signs add only a little branding) or rope with a spectator box on one side, where spectators stand at your events."/>
         <text name="eq_shop_plinthDrive" text="Drive-Through Plinth"/>
         <text name="eq_shop_plinthRamp" text="Display Ramp"/>
         <text name="eq_shop_plinthRampLarge" text="Large Display Ramp"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Hosting"/>
         <text name="eq_settings_hostInterval" text="Months between hosted events"/>
         <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
+        <text name="eq_settings_crowdDensity" text="Crowd density"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="How many spectators come to your hosted events, on your bleachers and at rope spectator boxes (08:00-19:00). Never beside a dressage arena."/>
+        <text name="eq_settings_crowd_low" text="Low"/>
+        <text name="eq_settings_crowd_medium" text="Medium"/>
+        <text name="eq_settings_crowd_high" text="High"/>
         <text name="eq_host_warning" text="Your %s is short of: %s. Sort it out today or the event is cancelled tomorrow."/>
         <text name="eq_host_cancelled" text="Your %s was cancelled, still short of: %s. Your hosting reputation suffers."/>
         <text name="eq_host_done" text="Your %s is over: %d visiting horses came. Takings %s (%s entries, %s gate), popularity %d."/>

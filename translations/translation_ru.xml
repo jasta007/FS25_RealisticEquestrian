@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Проездные ворота"/>
         <text name="eq_shop_xcGate_function" text="Ворота для проезда, а не препятствие: достаточно широкие и высокие для любой лошади, с логотипом вашего спонсора."/>
         <text name="eq_shop_xcRope" text="Разметочная верёвка"/>
-        <text name="eq_shop_xcRope_function" text="Лёгкая верёвка для разметки маршрута, без столкновений. Выберите простую верёвку или с маленькой табличкой спонсора: таблички дают совсем немного брендинга."/>
+        <text name="eq_shop_xcRope_function" text="Лёгкая верёвка для разметки маршрута, без столкновений. Выберите простую верёвку, верёвку с маленькой табличкой спонсора (таблички дают совсем немного брендинга) или верёвку со зрительской зоной с одной стороны, где на ваших соревнованиях стоят зрители."/>
         <text name="eq_shop_plinthDrive" text="Проездной подиум"/>
         <text name="eq_shop_plinthRamp" text="Выставочная рампа"/>
         <text name="eq_shop_plinthRampLarge" text="Большая выставочная рампа"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Проведение"/>
         <text name="eq_settings_hostInterval" text="Месяцев между своими соревнованиями"/>
         <text name="eq_settings_hostInterval_tooltip" text="Сколько месяцев после месяца вашего последнего соревнования должно пройти до следующего."/>
+        <text name="eq_settings_crowdDensity" text="Плотность зрителей"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Сколько зрителей приходит на ваши соревнования: на трибуны и в зрительские зоны у верёвки (08:00-19:00). Никогда рядом с манежем для выездки."/>
+        <text name="eq_settings_crowd_low" text="Мало"/>
+        <text name="eq_settings_crowd_medium" text="Средне"/>
+        <text name="eq_settings_crowd_high" text="Много"/>
         <text name="eq_host_warning" text="Для соревнования «%s» не хватает: %s. Исправьте сегодня, иначе завтра оно будет отменено."/>
         <text name="eq_host_cancelled" text="Соревнование «%s» отменено, по-прежнему не хватало: %s. Ваша репутация организатора страдает."/>
         <text name="eq_host_done" text="Соревнование «%s» завершено: приехало гостевых лошадей: %d. Доход %s (%s взносы, %s билеты), популярность %d."/>

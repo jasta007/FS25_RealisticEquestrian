@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Doorrijpoort"/>
         <text name="eq_shop_xcGate_function" text="Een poort om door te rijden, geen sprong: breed en hoog genoeg voor elk paard, met het logo van je sponsor."/>
         <text name="eq_shop_xcRope" text="Touwmarkering"/>
-        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw of touw met een klein sponsorbordje: bordjes geven maar een beetje branding."/>
+        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw, touw met een klein sponsorbordje (bordjes geven maar een beetje branding) of touw met een publiekvak aan één kant, waar toeschouwers bij je wedstrijden staan."/>
         <text name="eq_shop_plinthDrive" text="Doorrijpodium"/>
         <text name="eq_shop_plinthRamp" text="Showhelling"/>
         <text name="eq_shop_plinthRampLarge" text="Grote showhelling"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organiseren"/>
         <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
         <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
+        <text name="eq_settings_crowdDensity" text="Publieksdrukte"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Hoeveel toeschouwers naar je eigen wedstrijden komen, op je tribunes en in de publiekvakken langs het touw (08:00-19:00). Nooit naast een dressuurrijbaan."/>
+        <text name="eq_settings_crowd_low" text="Laag"/>
+        <text name="eq_settings_crowd_medium" text="Gemiddeld"/>
+        <text name="eq_settings_crowd_high" text="Hoog"/>
         <text name="eq_host_warning" text="Je %s komt tekort: %s. Los het vandaag op, anders wordt de wedstrijd morgen geannuleerd."/>
         <text name="eq_host_cancelled" text="Je %s is geannuleerd, nog steeds tekort: %s. Je reputatie als organisator lijdt eronder."/>
         <text name="eq_host_done" text="Je %s is voorbij: er kwamen %d gastpaarden. Opbrengst %s (%s inschrijvingen, %s entree), populariteit %d."/>

@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
         <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
         <text name="eq_shop_xcRope" text="Vymezovací lano"/>
-        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano nebo lano s malou cedulkou sponzora: cedulky přidají jen trochu brandingu."/>
+        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano, lano s malou cedulkou sponzora (cedulky přidají jen trochu brandingu) nebo lano s diváckým prostorem na jedné straně, kde při tvých závodech stojí diváci."/>
         <text name="eq_shop_plinthDrive" text="Průjezdný podstavec"/>
         <text name="eq_shop_plinthRamp" text="Výstavní rampa"/>
         <text name="eq_shop_plinthRampLarge" text="Velká výstavní rampa"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Pořádání"/>
         <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
         <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
+        <text name="eq_settings_crowdDensity" text="Počet diváků"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Kolik diváků přijde na tvé závody, na tribuny a do diváckých prostorů u lana (08:00-19:00). Nikdy vedle drezurního obdélníku."/>
+        <text name="eq_settings_crowd_low" text="Málo"/>
+        <text name="eq_settings_crowd_medium" text="Středně"/>
+        <text name="eq_settings_crowd_high" text="Hodně"/>
         <text name="eq_host_warning" text="Tvému závodu %s chybí: %s. Vyřeš to dnes, jinak bude zítra zrušen."/>
         <text name="eq_host_cancelled" text="Tvůj závod %s byl zrušen, stále chybělo: %s. Tvoje pověst pořadatele utrpí."/>
         <text name="eq_host_done" text="Tvůj závod %s skončil: přijelo %d hostujících koní. Tržby %s (%s startovné, %s vstupné), oblíbenost %d."/>

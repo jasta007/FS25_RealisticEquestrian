@@ -894,6 +894,18 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   made too small during the month doesn't cancel the event: it runs in the background without
   your rides. Only the visitors' stables and feed can stop it.
 
+- **Spectators:** while your event runs, from 08:00 to 19:00, people come to watch: seated on
+  your bleachers and standing in the yellow spectator boxes of the Rope Marker's third segment
+  (the box is painted on one side of the rope and shows only in construction mode, so draw the
+  rope with the box away from the track). The **Crowd density** setting gives up to 4 seated and
+  3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
+  picked afresh each day. Bleachers and boxes within 15 m beyond a dressage arena's half length
+  of its centre stay empty: too close for the horses. They are the game's own characters with
+  a few outfits; FS25 has no sit animation, so a seated spectator is posed like a tractor
+  driver, with IK on the feet and hands. They are only seen, each player's own, hidden beyond
+  150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
+  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose and `info` counts places.
+
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
 (testing) counts hours of a weather at your running event.

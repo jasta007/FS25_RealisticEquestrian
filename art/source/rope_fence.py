@@ -1,8 +1,10 @@
 """
 Builds the marker rope in placeables/xcJumps/ (James, 2026-10-31): a spline fence like the cross
 country flags, a white rope on thin stakes to mark out the way, with nothing a horse can bump
-into. Two segment kinds (N/M in the fence brush): plain rope, and rope with a small sign hanging
-in the middle of each panel showing the sponsor's logo.
+into. Three segment kinds (N/M in the fence brush): plain rope, rope with a small sign hanging
+in the middle of each panel showing the sponsor's logo, and rope with a yellow spectator box
+painted on the ground on its +x side (James, 2026-11-01): spectators at your hosted events stand
+in the boxes (EqSpectators), so they are never on the track. The box shows only in construction.
 
 Each sign's faces are shapes "eqSponsor_1" and "eqSponsor_1b", cloned per panel by the game;
 EqSponsors puts the logo on all of them but counts them for very little (ROPE_SIGN in
@@ -40,6 +42,12 @@ STAKE = (0.035, 1.0)    # width, height
 SIGN = (0.50, 0.22)     # the hanging sign's width and height
 ASPECT = 2.7
 SPONSOR_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
+# The spectator box: x from the rope (the +x side), inset from the panel's ends, line width.
+# EqSpectators.ROPE_BOX must match.
+CROWD_BOX = (0.6, 1.8)
+CROWD_INSET = 0.12
+CROWD_LINE = 0.08
+CROWD_Y = 0.03
 
 
 def rope_y(z):
@@ -95,6 +103,22 @@ def sign():
     return board, logos
 
 
+def crowd_box():
+    """The yellow outline on the ground beside the rope where spectators stand."""
+    mesh = Mesh()
+    x0, x1 = CROWD_BOX
+    z0, z1 = CROWD_INSET, PANEL - CROWD_INSET
+    w, y, uv = CROWD_LINE, CROWD_Y, flag_uv(3)
+
+    def strip(a0, a1, b0, b1):
+        mesh.quad([(a0, y, b0), (a0, y, b1), (a1, y, b1), (a1, y, b0)], (0, 1, 0), [uv] * 4)
+    strip(x0, x0 + w, z0, z1)
+    strip(x1 - w, x1, z0, z1)
+    strip(x0, x1, z0, z0 + w)
+    strip(x0, x1, z1 - w, z1)
+    return mesh
+
+
 def stake():
     mesh = Mesh()
     s = STAKE[0] / 2
@@ -113,7 +137,7 @@ def slope(p):
     return (p[2] / PANEL, 0.0)
 
 
-def write_i3d(path, stake_mesh, plain, signed, board, logos):
+def write_i3d(path, stake_mesh, plain, signed, board, logos, crowd_rope, crowd):
     lines = ['<?xml version="1.0" encoding="iso-8859-1"?>', "",
              f'<i3D name="{NAME}" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
              'xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">',
@@ -133,6 +157,7 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos):
               ("ropeSign", signed, slope), ("sign", board, slope)]
     shapes += [(k, m, slope) for k, m in logos.items()]
     shapes += [("signCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None)]
+    shapes += [("ropeCrowd", crowd_rope, slope), ("crowd", crowd, slope), ("crowdCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None)]
     ids = {}
     for i, (key, mesh, uv1) in enumerate(shapes):
         ids[key] = i + 1
@@ -170,6 +195,11 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos):
         lines.append(vis("        ", key, key, 3, shadows=False))
     lines.append(col("        ", "signCol"))
     lines.append("      </TransformGroup>")
+    lines.append(f'      <TransformGroup name="eqRopeCrowd" nodeId="{nid()}">')
+    lines.append(vis("        ", "rope", "ropeCrowd", 2, shadows=False))
+    lines.append(vis("        ", "eqCrowdBox", "crowd", 2, shadows=False))
+    lines.append(col("        ", "crowdCol"))
+    lines.append("      </TransformGroup>")
     lines.append("    </TransformGroup>")
     lines += ["  </Scene>", "</i3D>"]
     with open(path, "w", encoding="iso-8859-1", newline="\n") as f:
@@ -187,7 +217,7 @@ def write_xml(path):
         </segment>"""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/rope_fence.py: change that and run it again rather than editing this. -->
-<!-- Segments (N/M): plain rope, rope with a sponsor sign. -->
+<!-- Segments (N/M): plain rope, rope with a sponsor sign, rope with a spectator box on its +x side. -->
 <placeable type="newFence">
     <storeData>
         <name>$l10n_eq_shop_{NAME}</name>
@@ -227,6 +257,7 @@ def write_xml(path):
     <fence>
 {segment("ROPE", 0)}
 {segment("ROPE_SIGN", 1)}
+{segment("ROPE_CROWD", 2)}
     </fence>
 </placeable>
 """
@@ -236,11 +267,12 @@ def write_xml(path):
 
 def main():
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
-    stake_mesh, plain, signed = stake(), Mesh(), Mesh()
+    stake_mesh, plain, signed, crowd_rope = stake(), Mesh(), Mesh(), Mesh()
     rope(plain)
     rope(signed)
+    rope(crowd_rope)
     board, logos = sign()
-    write_i3d(os.path.join(OUT, NAME + ".i3d"), stake_mesh, plain, signed, board, logos)
+    write_i3d(os.path.join(OUT, NAME + ".i3d"), stake_mesh, plain, signed, board, logos, crowd_rope, crowd_box())
     write_xml(os.path.join(OUT, NAME + ".xml"))
     # shop image: three panels, the middle one with its sign
     flags = np.asarray(Image.open(os.path.join(OUT, "xcFlags_diffuse.dds")).convert("RGB"), dtype=float)
@@ -259,7 +291,7 @@ def main():
             meshes += [(at(board, dz), flags)] + [(at(m, dz, flip=True), sponsor) for m in logos.values()]
     meshes.append((at(stake_mesh, 1.5 * PANEL), flags))
     store_image(meshes, os.path.join(OUT, "store_" + NAME + ".dds"), preview_dir, yaw=-60, pitch=18)
-    print(NAME, "rope and sign panels")
+    print(NAME, "rope, sign and spectator panels")
 
 
 if __name__ == "__main__":

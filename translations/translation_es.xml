@@ -763,7 +763,7 @@
         <text name="eq_shop_xcGateSimple" text="Puerta de paso"/>
         <text name="eq_shop_xcGate_function" text="Una puerta para pasar a caballo, no un salto: lo bastante ancha y alta para cualquier caballo, con el logo de tu patrocinador."/>
         <text name="eq_shop_xcRope" text="Cuerda de marcaje"/>
-        <text name="eq_shop_xcRope_function" text="Una cuerda ligera para marcar el recorrido, sin colisión. Elige cuerda sola o con un pequeño cartel del patrocinador: los carteles aportan solo un poco de marca."/>
+        <text name="eq_shop_xcRope_function" text="Una cuerda ligera para marcar el recorrido, sin colisión. Elige cuerda sola, con un pequeño cartel del patrocinador (los carteles aportan solo un poco de marca) o con una zona de público a un lado, donde se colocan los espectadores en tus concursos."/>
         <text name="eq_shop_plinthDrive" text="Plataforma de paso"/>
         <text name="eq_shop_plinthRamp" text="Rampa de exhibición"/>
         <text name="eq_shop_plinthRampLarge" text="Rampa de exhibición grande"/>
@@ -1009,6 +1009,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organización"/>
         <text name="eq_settings_hostInterval" text="Meses entre concursos propios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Cuántos meses tras el mes de tu último concurso organizado hasta poder organizar otro."/>
+        <text name="eq_settings_crowdDensity" text="Afluencia de público"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Cuántos espectadores vienen a tus concursos, en tus gradas y en las zonas de público junto a la cuerda (08:00-19:00). Nunca junto a una pista de doma."/>
+        <text name="eq_settings_crowd_low" text="Baja"/>
+        <text name="eq_settings_crowd_medium" text="Media"/>
+        <text name="eq_settings_crowd_high" text="Alta"/>
         <text name="eq_host_warning" text="A tu %s le falta: %s. Soluciónalo hoy o el concurso se cancelará mañana."/>
         <text name="eq_host_cancelled" text="Tu %s se canceló, seguía faltando: %s. Tu reputación como organizador se resiente."/>
         <text name="eq_host_done" text="Tu %s ha terminado: vinieron %d caballos visitantes. Ingresos %s (%s de inscripciones, %s de taquilla), popularidad %d."/>

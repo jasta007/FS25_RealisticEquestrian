@@ -44,6 +44,7 @@ dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/hosting/EqSpectators.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
 dofile("scripts/facilities/EqPlinths.lua")
 dofile("scripts/facilities/EqTurntable.lua")
@@ -5892,6 +5893,56 @@ end)()
         and EqAttire.pickColour({}, 1) == nil)
     check("attire: no toe line, no foot axes", EqAttire.footAxes(0, 0, 0, 1, 0, 0, 25) == nil
         and EqAttire.footAxes(1, 0, 0, 1, 0, 0, 25) == nil)
+end)()
+
+-- Spectators at hosted events (EqSpectators): pure planning only.
+;(function()
+    check("spectators: density defaults to medium", EqSpectators.density(nil) == "medium"
+        and EqSpectators.density({ crowdDensity = "bogus" }) == "medium" and EqSpectators.density({ crowdDensity = "off" }) == "off")
+    check("spectators: off brings nobody", EqSpectators.COUNTS.off.seated == 0 and EqSpectators.COUNTS.off.standing == 0)
+    check("spectators: medium seats five to ten (James)", EqSpectators.COUNTS.medium.seated >= 5 and EqSpectators.COUNTS.medium.seated <= 10)
+    check("spectators: more for each step up", EqSpectators.COUNTS.low.seated < EqSpectators.COUNTS.medium.seated
+        and EqSpectators.COUNTS.medium.seated < EqSpectators.COUNTS.high.seated)
+    local rows, length = EqSpectators.bleacherSize("C:/mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers5x10.xml")
+    check("spectators: bleacher size from its xml", rows == 5 and length == 10)
+    check("spectators: other placeables aren't bleachers", EqSpectators.bleacherSize("placeables/xcJumps/xcTable.xml") == nil
+        and EqSpectators.bleacherSize(nil) == nil and EqSpectators.bleacherSize("otherMod/bleachers5x10.xml") == nil)
+    local seats = EqSpectators.seatsOf(3, 6)
+    local perRow = #seats / 3
+    check("spectators: seats on every row of a 3x6", #seats > 0 and perRow == math.floor(perRow) and perRow >= 7)
+    local back = seats[#seats]
+    check("spectators: back row's bench on its tread", back.row == 2
+        and math.abs(back.y - (0.3 + 2 * 0.42 + 0.42)) < 1e-9 and math.abs(back.floorY - (0.3 + 2 * 0.42)) < 1e-9)
+    local inside = true
+    for _, seat in ipairs(seats) do
+        if math.abs(seat.x) > 3 - EqSpectators.SEAT_END + 1e-9 then inside = false end
+    end
+    check("spectators: seats stay off the bleacher's ends", inside)
+    local arena = { { x = 0, z = 0, halfLength = 30 } }
+    check("spectators: none next to a dressage arena", EqSpectators.nearArena(40, 0, arena) and not EqSpectators.nearArena(60, 0, arena)
+        and not EqSpectators.nearArena(0, 0, {}))
+    local list = {}
+    for i = 1, 20 do list[i] = i end
+    local a = EqSpectators.pick(list, 5, EqRandom.new(42))
+    local b = EqSpectators.pick(list, 5, EqRandom.new(42))
+    local same, unique, seen = true, true, {}
+    for i = 1, 5 do
+        if a[i] ~= b[i] then same = false end
+        if seen[a[i]] then unique = false end
+        seen[a[i]] = true
+    end
+    check("spectators: the same seed picks the same places, each once", #a == 5 and same and unique)
+    check("spectators: never more than the places there are", #EqSpectators.pick({ 1, 2 }, 5, EqRandom.new(1)) == 2)
+    check("spectators: there from 08:00 to 19:00", EqSpectators.inHours(8) and EqSpectators.inHours(18.9)
+        and not EqSpectators.inHours(7.9) and not EqSpectators.inHours(19))
+    check("spectators: rope box matches the rope's art", EqSpectators.ROPE_BOX[1] == 0.6 and EqSpectators.ROPE_BOX[2] == 1.8)
+    local row = EqSettings.BY_ID.crowdDensity
+    check("spectators: Crowd density setting Off/Low/Medium/High", row ~= nil and #row.values == 4 and row.values[1] == "off"
+        and row.default == "medium" and EqSettings.stateOf(row, "high") == 4)
+    local rope = io.open("placeables/xcJumps/xcRope.xml"):read("*a")
+    local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
+    check("spectators: the rope has a spectator segment with its box", rope:find('id="ROPE_CROWD"', 1, true) ~= nil
+        and i3d:find('name="' .. EqSpectators.BOX_NODE .. '"', 1, true) ~= nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

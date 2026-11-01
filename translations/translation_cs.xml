@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通行门"/>
         <text name="eq_shop_xcGate_function" text="用于骑行通过的门，不是障碍：足够宽、足够高，任何马都能轻松通过，带有赞助商标志。"/>
         <text name="eq_shop_xcRope" text="绳索标记"/>
-        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索或挂小型赞助商牌子的绳索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索、挂小型赞助商牌子的绳索（牌子只增加少量品牌曝光），或一侧带观众区的绳索（主办比赛时观众站在那里）。"/>
         <text name="eq_shop_plinthDrive" text="通行展台"/>
         <text name="eq_shop_plinthRamp" text="展示坡台"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="主办"/>
         <text name="eq_settings_hostInterval" text="主办比赛间隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="从你上次主办比赛的月份起，需要多少个月才能再次主办。"/>
+        <text name="eq_settings_crowdDensity" text="观众密度"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="有多少观众来看你主办的比赛：坐在看台上，站在绳子旁的观众区（08:00-19:00）。不会出现在盛装舞步场地旁。"/>
+        <text name="eq_settings_crowd_low" text="少"/>
+        <text name="eq_settings_crowd_medium" text="中"/>
+        <text name="eq_settings_crowd_high" text="多"/>
         <text name="eq_host_warning" text="你的%s缺少：%s。今天解决，否则明天比赛将被取消。"/>
         <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主办声誉受损。"/>
         <text name="eq_host_done" text="你的%s已结束：来了%d匹来访马。收入 %s（报名费 %s，门票 %s），人气 %d。"/>

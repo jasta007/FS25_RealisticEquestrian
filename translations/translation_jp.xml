@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通過ゲート"/>
         <text name="eq_shop_xcGate_function" text="跳ぶ障害ではなく通り抜けるゲート：どの馬でも楽に通れる幅と高さで、スポンサーのロゴ入り。"/>
         <text name="eq_shop_xcRope" text="ロープマーカー"/>
-        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみか、小さなスポンサー看板付きを選べます。看板のブランド効果はごくわずかです。"/>
+        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみ、小さなスポンサー看板付き（看板のブランド効果はごくわずか）、または片側に観客エリア付き（主催大会で観客が立つ場所）を選べます。"/>
         <text name="eq_shop_plinthDrive" text="通り抜け展示台"/>
         <text name="eq_shop_plinthRamp" text="展示用スロープ"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示用スロープ"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="主催"/>
         <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
+        <text name="eq_settings_crowdDensity" text="観客の多さ"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="主催大会に来る観客の数。スタンドとロープ脇の観客エリアに現れます（08:00-19:00）。馬場馬術アリーナの近くには来ません。"/>
+        <text name="eq_settings_crowd_low" text="少ない"/>
+        <text name="eq_settings_crowd_medium" text="普通"/>
+        <text name="eq_settings_crowd_high" text="多い"/>
         <text name="eq_host_warning" text="あなたの%sに不足があります：%s。今日中に対応しないと明日中止になります。"/>
         <text name="eq_host_cancelled" text="あなたの%sは中止になりました（不足：%s）。主催者としての評判が下がります。"/>
         <text name="eq_host_done" text="あなたの%sが終わりました：来場馬 %d 頭。収入 %s（エントリー料 %s、入場料 %s）、人気 %d。"/>

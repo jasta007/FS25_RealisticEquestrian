@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Brama przejazdowa"/>
         <text name="eq_shop_xcGate_function" text="Brama do przejazdu, nie przeszkoda: dość szeroka i wysoka dla każdego konia, z logo sponsora."/>
         <text name="eq_shop_xcRope" text="Lina wyznaczająca"/>
-        <text name="eq_shop_xcRope_function" text="Lekka lina do wyznaczania trasy, bez kolizji. Wybierz zwykłą linę lub linę z małą tabliczką sponsora: tabliczki dają tylko trochę widoczności marki."/>
+        <text name="eq_shop_xcRope_function" text="Lekka lina do wyznaczania trasy, bez kolizji. Wybierz zwykłą linę, linę z małą tabliczką sponsora (tabliczki dają tylko trochę widoczności marki) lub linę ze strefą dla widzów po jednej stronie, gdzie na twoich zawodach stoją widzowie."/>
         <text name="eq_shop_plinthDrive" text="Podest przejazdowy"/>
         <text name="eq_shop_plinthRamp" text="Rampa wystawowa"/>
         <text name="eq_shop_plinthRampLarge" text="Duża rampa wystawowa"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organizacja"/>
         <text name="eq_settings_hostInterval" text="Miesiące między własnymi zawodami"/>
         <text name="eq_settings_hostInterval_tooltip" text="Ile miesięcy po miesiącu ostatnich własnych zawodów musi minąć, zanim zorganizujesz kolejne."/>
+        <text name="eq_settings_crowdDensity" text="Liczba widzów"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Ilu widzów przychodzi na twoje zawody: na trybuny i do stref dla widzów przy linie (08:00-19:00). Nigdy obok czworoboku do ujeżdżenia."/>
+        <text name="eq_settings_crowd_low" text="Mało"/>
+        <text name="eq_settings_crowd_medium" text="Średnio"/>
+        <text name="eq_settings_crowd_high" text="Dużo"/>
         <text name="eq_host_warning" text="Twoim zawodom %s brakuje: %s. Napraw to dziś, inaczej jutro zostaną odwołane."/>
         <text name="eq_host_cancelled" text="Twoje zawody %s zostały odwołane, nadal brakowało: %s. Cierpi twoja reputacja organizatora."/>
         <text name="eq_host_done" text="Twoje zawody %s się zakończyły: przyjechało %d koni gości. Wpływy %s (%s wpisowe, %s bilety), popularność %d."/>
