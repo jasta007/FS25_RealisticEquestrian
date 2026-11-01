@@ -956,7 +956,11 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   plinths included, or return it early. It doesn't count toward their machines or the competitor
   clause. The sponsor takes it back when the month ends, or at once if the event is cancelled.
   If the dealer's yard is full, delivery is tried again each day.
-- Discounts and the shop's block on rival machines come in the next update.
+- **Discounts** start 3 months after signing, on the sponsor's own machines: the buying discount
+  in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
+  System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
+  With two contracts for one brand the better one counts.
+- The shop's block on rival machines comes in a later update.
 - **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
   liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
   fan panels a board in place of the fan, picket wings an oval on the front, and the liverpool's
