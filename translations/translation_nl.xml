@@ -113,7 +113,7 @@
         <text name="eq_lizard_accept" text="Accepteren"/>
         <text name="eq_lizard_decline" text="Weigeren"/>
         <text name="eq_lizard_offerNote" text="%s wil je %s gratis sponsoren."/>
-        <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Paarden) en bouw hem met %s, stammen en planken."/>
+        <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Bouwbaar) en bouw hem met %s, stammen en planken."/>
         <text name="eq_lizard_stepAside" text="%s doet een stap opzij: %s sponsort nu je evenement."/>
         <text name="eq_lizard_paid" text="%s heeft %s betaald voor het sponsoren van je evenement."/>
         <text name="eq_lizard_unpaid_plinth" text="%s betaalt niets: de Lizard-sokkel was niet af. Geen kwaad bloed."/>

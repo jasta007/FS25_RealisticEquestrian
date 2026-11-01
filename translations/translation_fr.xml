@@ -770,7 +770,7 @@
         <text name="eq_lizard_accept" text="Accepter"/>
         <text name="eq_lizard_decline" text="Refuser"/>
         <text name="eq_lizard_offerNote" text="%s veut sponsoriser gratuitement votre %s."/>
-        <text name="eq_lizard_accepted" text="Accord avec %s accepté ! Achetez le socle Lizard en boutique (Chevaux) et construisez-le avec %s, des grumes et des planches."/>
+        <text name="eq_lizard_accepted" text="Accord avec %s accepté ! Achetez le socle Lizard en boutique (Constructibles) et construisez-le avec %s, des grumes et des planches."/>
         <text name="eq_lizard_stepAside" text="%s se retire : %s sponsorise désormais votre événement."/>
         <text name="eq_lizard_paid" text="%s a payé %s pour le sponsoring de votre événement."/>
         <text name="eq_lizard_unpaid_plinth" text="%s ne paie rien : le socle Lizard n&#x27;était pas terminé. Sans rancune."/>

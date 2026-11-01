@@ -113,7 +113,7 @@
         <text name="eq_lizard_accept" text="Přijmout"/>
         <text name="eq_lizard_decline" text="Odmítnout"/>
         <text name="eq_lizard_offerNote" text="%s chce zdarma sponzorovat vaši akci %s."/>
-        <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Koně) a postavte ho z %s, klád a prken."/>
+        <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Stavitelné) a postavte ho z %s, klád a prken."/>
         <text name="eq_lizard_stepAside" text="%s ustupuje: vaši akci teď sponzoruje %s."/>
         <text name="eq_lizard_paid" text="%s zaplatil %s za sponzorování vaší akce."/>
         <text name="eq_lizard_unpaid_plinth" text="%s nezaplatí nic: podstavec Lizard nebyl hotový. Bez zášti."/>

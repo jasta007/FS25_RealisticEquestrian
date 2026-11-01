@@ -770,7 +770,7 @@
         <text name="eq_lizard_accept" text="Aceptar"/>
         <text name="eq_lizard_decline" text="Rechazar"/>
         <text name="eq_lizard_offerNote" text="%s quiere patrocinar gratis tu %s."/>
-        <text name="eq_lizard_accepted" text="¡Acuerdo con %s aceptado! Compra el pedestal Lizard en la tienda (Caballos) y constrúyelo con %s, troncos y tablones."/>
+        <text name="eq_lizard_accepted" text="¡Acuerdo con %s aceptado! Compra el pedestal Lizard en la tienda (Construibles) y constrúyelo con %s, troncos y tablones."/>
         <text name="eq_lizard_stepAside" text="%s se retira: ahora %s patrocina tu evento."/>
         <text name="eq_lizard_paid" text="%s ha pagado %s por patrocinar tu evento."/>
         <text name="eq_lizard_unpaid_plinth" text="%s no paga nada: el pedestal Lizard no estaba terminado. Sin rencores."/>

@@ -113,7 +113,7 @@
         <text name="eq_lizard_accept" text="接受"/>
         <text name="eq_lizard_decline" text="拒絕"/>
         <text name="eq_lizard_offerNote" text="%s 想免費贊助你的%s。"/>
-        <text name="eq_lizard_accepted" text="已接受與 %s 的合作！在商店（馬匹）購買Lizard展台，並用%s、原木和木板建造它。"/>
+        <text name="eq_lizard_accepted" text="已接受與 %s 的合作！在商店（可建造建築）購買Lizard展台，並用%s、原木和木板建造它。"/>
         <text name="eq_lizard_stepAside" text="%s 退出了：現在由 %s 贊助你的賽事。"/>
         <text name="eq_lizard_paid" text="%s 為贊助你的賽事支付了 %s。"/>
         <text name="eq_lizard_unpaid_plinth" text="%s 不付費：Lizard展台沒有完工。別介意。"/>

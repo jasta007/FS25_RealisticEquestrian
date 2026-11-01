@@ -113,7 +113,7 @@
         <text name="eq_lizard_accept" text="Akceptuj"/>
         <text name="eq_lizard_decline" text="Odrzuć"/>
         <text name="eq_lizard_offerNote" text="%s chce bezpłatnie sponsorować twoje wydarzenie %s."/>
-        <text name="eq_lizard_accepted" text="Umowa z %s przyjęta! Kup podest Lizard w sklepie (Konie) i zbuduj go z %s, kłód i desek."/>
+        <text name="eq_lizard_accepted" text="Umowa z %s przyjęta! Kup podest Lizard w sklepie (Do budowy) i zbuduj go z %s, kłód i desek."/>
         <text name="eq_lizard_stepAside" text="%s się wycofuje: teraz twoje wydarzenie sponsoruje %s."/>
         <text name="eq_lizard_paid" text="%s zapłacił %s za sponsorowanie twojego wydarzenia."/>
         <text name="eq_lizard_unpaid_plinth" text="%s nie płaci nic: podest Lizard nie był gotowy. Bez urazy."/>

@@ -113,7 +113,7 @@
         <text name="eq_lizard_accept" text="受ける"/>
         <text name="eq_lizard_decline" text="断る"/>
         <text name="eq_lizard_offerNote" text="%sがあなたの%sを無料でスポンサーしたいそうです。"/>
-        <text name="eq_lizard_accepted" text="%sとの契約成立！ショップ（馬）でLizard展示台を購入し、%s・丸太・板材で建設しましょう。"/>
+        <text name="eq_lizard_accepted" text="%sとの契約成立！ショップ（建設可能）でLizard展示台を購入し、%s・丸太・板材で建設しましょう。"/>
         <text name="eq_lizard_stepAside" text="%sは身を引きました：今は%sがあなたのイベントのスポンサーです。"/>
         <text name="eq_lizard_paid" text="%sがイベントのスポンサー料として%sを支払いました。"/>
         <text name="eq_lizard_unpaid_plinth" text="%sの支払いはありません：Lizard展示台が完成していませんでした。気にしないでとのことです。"/>
