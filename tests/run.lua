@@ -5398,6 +5398,14 @@ end)()
             and not EqPlinths.inArea(disc, 2.5, 0.75, -2.5) and not EqPlinths.inArea(disc, 0, 0.0, 0)
             and EqPlinths.inArea(disc, 0, 0.75, 3.3) and EqPlinths.value({ area = disc }) == 3
             and EqPlinths.value({ a = 1, b = 2 }) == EqPlinths.MACHINE)
+        do
+            local saved = AttacherJoints
+            AttacherJoints = { jointTypeNameToInt = { implement = 1, trailer = 2, trailerLow = 3, semitrailer = 4, wheelLoader = 5 } }
+            check("turntable: trailer hitches are told from a loader's bucket or a tool", EqTurntable.isTrailerJoint(4)
+                and EqTurntable.isTrailerJoint(3) and EqTurntable.isTrailerJoint(2) and not EqTurntable.isTrailerJoint(5)
+                and not EqTurntable.isTrailerJoint(1) and not EqTurntable.isTrailerJoint(nil))
+            AttacherJoints = saved
+        end
         check("turntable: known by its xml", EqTurntable.isTurntable("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthTurntable.xml")
             and not EqTurntable.isTurntable("x/placeables/sponsorPlinths/plinthDrive.xml"))
         local quarter = EqTurntable.advance(0, EqTurntable.TURN_MS / 4)
