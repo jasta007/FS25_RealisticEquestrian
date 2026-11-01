@@ -168,6 +168,18 @@
         <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
         <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="原地踏步"/>
+        <text name="eq_now_pirouette" text="定后肢旋转"/>
+        <text name="eq_now_collected" text="收缩"/>
+        <text name="eq_now_collectedCanter" text="收缩跑步"/>
+        <text name="eq_now_passage" text="Pasáž"/>
+        <text name="eq_now_legYield" text="腿部让步"/>
+        <text name="eq_now_halfPass" text="斜横步"/>
+        <text name="eq_now_shoulderIn" text="肩向内"/>
+        <text name="eq_now_renvers" text="腰向外"/>
+        <text name="eq_now_travers" text="腰向内"/>
+        <text name="eq_now_legYieldRail" text="沿墙腿部让步"/>
         <text name="eq_fig_legYield" text="从%s开始腿部让步并返回"/>
         <text name="eq_fig_halfPass" text="从%s开始斜横步并返回"/>
         <text name="eq_fig_shoulderIn" text="肩向内 %s-%s"/>

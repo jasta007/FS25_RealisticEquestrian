@@ -345,13 +345,29 @@ function EqDressageHooks.drawPath(vehicle)
     local style = { breaks = EqDressagePath.breaks(run.test), shape = EqDressageHooks.bodyAlong(run),
         length = function(s) return EqDressagePath.dashLength(run.test, s) end,
         step = function(s) return EqDressagePath.dashStep(run.test, s) end,
-        pointed = function(s) return EqDressagePath.gaitAt(run.test, s + 1e-6) == "canter" end }
+        -- A passage: chevrons and plain dashes in turn (James, 2026-11-01: it needed its own look).
+        pointed = function(s)
+            local pass = EqDressagePath.passageAt(run.test, s + 1e-6)
+            if pass ~= nil then return math.floor((s - pass.s0) / EqDressagePath.PASSAGE_STEP + 0.5) % 2 == 0 end
+            return EqDressagePath.gaitAt(run.test, s + 1e-6) == "canter"
+        end }
     if not EqCourseGlow.path(line, colour, pts[back].s, nil, nil, nil, style) then return end
     if not run.started then
         local p = pts[1]
         EqCourseGlow.pole(p.wx, pointY(frame, p), p.wz, EqDressageHooks.POLE_HEIGHT)
         if run.countMs ~= nil then EqDressageHooks.drawEntrance(run) end
         return
+    end
+    -- A gold pole where a passage ends, while it is ridden.
+    local pass, inPass = EqDressagePath.passage(run)
+    if pass ~= nil and inPass then
+        for k = run.i, #pts do
+            if pts[k].s >= pass.s1 or k == #pts then
+                local y = pointY(frame, pts[k])
+                EqCourseGlow.pole(pts[k].wx, y, pts[k].wz, EqDressageHooks.POLE_HEIGHT)
+                break
+            end
+        end
     end
     local event = EqDressagePath.upcoming(run)
     if event ~= nil then

@@ -338,9 +338,11 @@ end
 
 
 -- Symbols on a dressage line (James, 2026-10-30: halts and movements on the spot gave no idea
--- what was coming): a bar across the line for a halt, two for a piaffe, and for a pirouette a
--- ring round the point with an arrowhead the way to turn.
-EqCourseGlow.SYMBOL = { bar = 1.4, piaffeBar = 1.0, piaffeGap = 0.35, ring = 1.1, ringPieces = 12, arrow = 0.45 }
+-- what was coming): a bar across the line for a halt, and for a pirouette a ring round the point
+-- with an arrowhead the way to turn. A piaffe creeps forward a little, so it is a short stretch
+-- from its point of trot and walk dashes in turn (James, 2026-11-01): piaffeDashes metres long,
+-- piaffeGap apart.
+EqCourseGlow.SYMBOL = { bar = 1.4, piaffeDashes = { 0.45, 0.2, 0.45, 0.2 }, piaffeGap = 0.2, ring = 1.1, ringPieces = 12, arrow = 0.45 }
 
 
 --- The strips for a symbol at a point on the line (pure): { ax, ay, az, bx, by, bz } each.
@@ -361,8 +363,12 @@ function EqCourseGlow.symbol(kind, x, y, z, dirX, dirZ, turn)
     end
     if kind == "halt" then return { across(x, z, S.bar) } end
     if kind == "piaffe" then
-        return { across(x - dirX * S.piaffeGap / 2, z - dirZ * S.piaffeGap / 2, S.piaffeBar),
-            across(x + dirX * S.piaffeGap / 2, z + dirZ * S.piaffeGap / 2, S.piaffeBar) }
+        local list, d = {}, 0
+        for _, length in ipairs(S.piaffeDashes) do
+            table.insert(list, { x + dirX * d, y, z + dirZ * d, x + dirX * (d + length), y, z + dirZ * (d + length) })
+            d = d + length + S.piaffeGap
+        end
+        return list
     end
     if kind ~= "pirouette" then return {} end
     turn = turn or 1

@@ -3792,6 +3792,17 @@ end)()
         and EqLateral.bend > 0 and EqLateral.steer == steered and passes == false)
     Input, EqLateral.vehicle, EqLateral.steer, EqLateral.bend = saved, nil, 0, 0
     -- Mouse steering: nothing in the dead zone, full turn at the end; the head eased to it.
+    -- The movement named under the panel (James, 2026-11-01).
+    local function nowName(t) return EqLateral.movementName(t) end
+    check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
+        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "pirouette"
+        and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
+        and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
+        and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
+        and nowName({ gait = "TROT", side = 1, bend = 0.8, rail = "in" }) == "renvers"
+        and nowName({ gait = "TROT", side = -1, bend = -0.8, rail = "out" }) == "travers"
+        and nowName({ gait = "TROT", side = -1, bend = 0, rail = "out" }) == "legYieldRail"
+        and nowName({ gait = "TROT", side = 0, bend = 0.8 }) == nil)
     check("mouse steering has a dead zone in the middle", EqLateral.deadZone(EqLateral.DEAD_ZONE * 0.9) == 0
         and EqLateral.deadZone(1) == 1 and EqLateral.deadZone(-1) == -1 and EqLateral.deadZone(0.8) > 0.7
         and EqLateral.curve(0.5) < 0.5 and EqLateral.curve(-1) == -1 and EqLateral.curve(1) == 1
@@ -3868,7 +3879,9 @@ end)()
     local right = EqCourseGlow.symbol("pirouette", 0, 0, 0, 0, 1, -1)
     check("a halt is a bar across the line", #halt == 1 and math.abs(halt[1][3] - halt[1][6]) < 1e-9
         and math.abs(math.abs(halt[1][4] - halt[1][1]) - EqCourseGlow.SYMBOL.bar) < 1e-9)
-    check("a piaffe is two bars across", #piaffe == 2 and piaffe[1][3] < 0 and piaffe[2][3] > 0)
+    -- A piaffe creeps forward: a short stretch of trot and walk dashes in turn along the line (James, 2026-11-01).
+    check("a piaffe is trot and walk dashes in turn along the line", #piaffe == 4 and piaffe[1][1] == 0 and piaffe[1][4] == 0
+        and piaffe[1][6] - piaffe[1][3] > piaffe[2][6] - piaffe[2][3] and piaffe[2][3] > piaffe[1][6])
     local ring = EqCourseGlow.SYMBOL.ringPieces - 1
     -- Turning left (the heading growing) goes round towards +x first; right towards -x.
     check("a pirouette is a ring round the point, starting off the way to turn", #left == ring + 2 and #right == ring + 2
@@ -4417,8 +4430,16 @@ end)()
         end
         return r.acc[p.m]
     end
+    check("a passage knows its letters, and says trot on just past its end", passTest ~= nil and passTest.passages[1].from ~= nil
+        and passTest.passages[1].to ~= nil and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 + 1 }) ~= nil
+        and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 - 1 }) == nil)
     check("tests ask for passages, and not collecting in one costs marks", passTest ~= nil and passRun(false).passMs > 0 and passRun(true).passMs == 0
-        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7)
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7
+        -- Trotted through, little time out of it but most of its line (James's hosted test, 2026-11-01).
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 2700, passSpan = 10, passOut = 9 }) <= 5)
+    check("plain figures: strict near the line, gentler further off", EqDressagePath.markOf({ devSum = 1, len = 10, wrongMs = 0, pen = 0, plain = true }) == 8.5
+        and EqDressagePath.markOf({ devSum = 3.3, len = 10, wrongMs = 0, pen = 0, plain = true }) == 6
+        and EqDressagePath.markOf({ devSum = 5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 5)
     check("figures that only follow the line mark harder: 0.15 m off on average is a 7.5",
         EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 7.5
         and EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0 }) == 9)

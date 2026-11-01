@@ -168,6 +168,18 @@
         <text name="eq_fig_passageRail" text="正步 %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="對角線正步 %s-%s"/>
         <text name="eq_dressage_passage" text="正步：Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="正步 %s-%s：Ctrl + W"/>
+        <text name="eq_now_piaffe" text="原地踏步"/>
+        <text name="eq_now_pirouette" text="定後肢旋轉"/>
+        <text name="eq_now_collected" text="收縮"/>
+        <text name="eq_now_collectedCanter" text="收縮跑步"/>
+        <text name="eq_now_passage" text="正步"/>
+        <text name="eq_now_legYield" text="腿部讓步"/>
+        <text name="eq_now_halfPass" text="斜橫步"/>
+        <text name="eq_now_shoulderIn" text="肩向內"/>
+        <text name="eq_now_renvers" text="腰向外"/>
+        <text name="eq_now_travers" text="腰向內"/>
+        <text name="eq_now_legYieldRail" text="沿牆腿部讓步"/>
         <text name="eq_fig_legYield" text="從%s開始腿部讓步並返回"/>
         <text name="eq_fig_halfPass" text="從%s開始斜橫步並返回"/>
         <text name="eq_fig_shoulderIn" text="肩向內 %s-%s"/>

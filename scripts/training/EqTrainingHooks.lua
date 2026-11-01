@@ -1477,6 +1477,66 @@ local function hostedTestNote(routine)
 end
 
 
+-- The movement shown under the panel: on a long side within RAIL_NEAR metres of the track's
+-- line, the body turned RAIL_ANGLE (sine) or more off the rail makes it a rail movement.
+EqTrainingHooks.RAIL_NEAR = 2.5
+EqTrainingHooks.RAIL_ANGLE = 0.2
+-- A test's lateral kinds by the name shown (EqLateral.movementName).
+local KIND_NOW = { legYield = "legYield", halfPass = "halfPass", shoulderIn = "shoulderIn", renvers = "renvers", travers = "travers",
+    legYieldRail = "legYieldRail" }
+
+
+--- The arena frame round the horse (cached per set of markers), for rail movements.
+local function arenaFrame(spec, x, z)
+    if spec.eqCourse == nil then return nil end
+    if spec.eqNowMarkers ~= spec.eqCourse then
+        spec.eqNowMarkers, spec.eqNowFrame = spec.eqCourse, nil
+        local marker = EqDressage.arenaX({ x = x, z = z, markers = spec.eqCourse })
+        if marker ~= nil then spec.eqNowFrame = EqDressagePath.frameFor(spec.eqCourse, marker) end
+    end
+    return spec.eqNowFrame
+end
+
+
+--- The movement the horse is doing now ("Piaffe", "Travers (haunches in)") and its colour
+--- (green when a test asks for it now, red when it asks for something else), else nil.
+local function nowDoing(vehicle, spec)
+    if EqLateral == nil or EqLateral.vehicle ~= vehicle or EqLateral.movementName == nil then return nil end
+    local gait = EqLateral.gaitName(spec)
+    if gait == nil then return nil end
+    local spot = (spec.eqCollect or 0) >= 0.8
+    local side = spec.eqLateralSide or 0
+    local rail = nil
+    local x, _, z = getWorldTranslation(vehicle.rootNode)
+    local frame = side ~= 0 and arenaFrame(spec, x, z) or nil
+    if frame ~= nil then
+        local lx, ly = EqDressagePath.toLocal(frame, x, z)
+        local dirX, _, dirZ = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
+        local hx = dirX * frame.vx + dirZ * frame.vz
+        if math.abs(lx) >= frame.halfW - EqTrainingHooks.RAIL_NEAR and math.abs(lx) <= frame.halfW + 1 and math.abs(ly) < frame.halfL then
+            local out = hx * (lx > 0 and 1 or -1)
+            if out <= -EqTrainingHooks.RAIL_ANGLE then rail = "in" elseif out >= EqTrainingHooks.RAIL_ANGLE then rail = "out" end
+        end
+    end
+    local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
+        turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+    if key == nil then return nil end
+    -- What a test asks for now, if anything.
+    local color = COLOR.white
+    local run = EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
+    if run ~= nil then
+        local asked = nil
+        local sec, inside = EqDressagePath.section(run)
+        if sec ~= nil and inside then asked = KIND_NOW[sec.kind] end
+        local pass, inPass = EqDressagePath.passage(run)
+        if pass ~= nil and inPass then asked = "passage" end
+        if run.spot ~= nil then asked = run.spot.event.style end
+        if asked ~= nil then color = asked == key and COLOR.green or COLOR.red end
+    end
+    return g_i18n:getText("eq_now_" .. key), color
+end
+
+
 --- A test of figures (EqDressagePath): the movement and score by the panel, and only what to do
 --- now in the middle (changes, halts, getting back on the line or into the arena).
 --- @param rows table panel rows to add to
@@ -1554,9 +1614,20 @@ local function pathRows(rows, routine)
             local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
             EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
         elseif pass ~= nil then
-            -- "Passage: Ctrl + W", red while not collected in it.
-            local share = not inPass and math.max(0, math.min(1, (pass.s0 - run.s) / run.warn)) or nil
-            EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_passage"), share, run.passageWrong and (COLOR.red or color) or color)
+            -- "Passage H-B: Ctrl + W" (James, 2026-11-01: where it starts and stops was unclear): the
+            -- bar counts down to its start, then empties as it goes to the gold pole at its end; red
+            -- while not collected in it.
+            local share
+            if not inPass then
+                share = math.max(0, math.min(1, (pass.s0 - run.s) / run.warn))
+            else
+                share = math.max(0, math.min(1, (pass.s1 - run.s) / math.max(0.1, pass.s1 - pass.s0)))
+            end
+            local text = string.format(g_i18n:getText("eq_dressage_passageAt"), pass.from or "?", pass.to or "?")
+            EqTrainingHud.drawPrompt(text, share, run.passageWrong and (COLOR.red or color) or color)
+        elseif EqDressagePath.passageJustDone(run) ~= nil then
+            -- Past its end: on at a working trot ("Trot!").
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_trot")), nil, color)
         elseif run.stallMs >= EqDressagePath.STALL_TELL_MS then
             -- Standing still with nothing to do: say which gait to go on in ("Trot!").
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)),
@@ -1891,6 +1962,10 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         titleRight = g_i18n:getText("eq_train_view_" .. view)
     end
     EqTrainingHud.drawPanel(title, rows, STAT_COLOR[view], titleRight)
+    if not hudHidden then
+        local ok, text, color = EqLog.try("EqTrainingHooks nowDoing", nowDoing, vehicle, spec)
+        if ok and text ~= nil then EqTrainingHud.drawNowDoing(text, color) end
+    end
 
     -- "Training in: Outdoor arena", then one line per bonus, in the base game's help panel.
     local inside = {}
