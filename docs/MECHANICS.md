@@ -987,16 +987,16 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   standing on a place counts as **2 boards**; each place takes one machine. The drop walls' decks
   count too, and a drop wall with any machine on its deck never hides.
 - **Turntable** (25,000): a round plinth with a ramp flush to the back; its brushed metal disc
-  turns once every two minutes. A machine left on the disc with nobody in it, standing still, is
+  turns once every two minutes while it holds a machine, and stands still when empty. A machine left on the disc with nobody in it, standing still, is
   after 3 seconds slid to the middle and held on the disc (out of the physics, like a ferry),
   turning with it, together with anything hitched to it (a wheel loader's bucket, a truck's
   trailer). Getting into any of them, hitching or unhitching, or selling gives them their physics
-  back. A sponsor machine there counts **3 boards**. In multiplayer the disc turns but holds
-  nothing (not tried).
+  back. A sponsor machine there counts **3 boards**. In multiplayer it holds nothing, so it
+  doesn't turn (not tried).
 - **Feedback:** stop the machine you drive on one of your places and a popup says "Sponsor
   equipment in place!", that it isn't your sponsor's brand, or that you have no sponsor. Each
   machine of another brand on show when a hosted event's sponsor fee is paid costs 10% of that
-  fee (at most 50%).
+  fee (at most 50%). When a plinth is sold or removed, machines near it are woken so they drop.
 - **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
   the pieces are shared out between your sponsors in turn.
 - **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
