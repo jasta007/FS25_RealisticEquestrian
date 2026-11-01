@@ -579,6 +579,18 @@ function EqTrainingHud.drawPops()
 end
 
 
+--- "GET ON YOUR HORSE" in the middle, with the seconds left, while the rider is off in a round
+--- or test that counts in your own event (EqCourseHooks, EqTrainingHooks set getOn).
+function EqTrainingHud.drawGetOn()
+    local state = EqTrainingHud.getOn
+    if state == nil then return end
+    local left = state.ms - ((g_time or 0) - state.at)
+    if left <= 0 then return end
+    EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_sj_getOn"), math.ceil(left / 1000)), left / state.ms,
+        EqTrainingHud.COLOR.red)
+end
+
+
 --- Draw a routine request in the middle of the screen with the time left to start it.
 --- @param value string
 --- @param share number 0..1 of the time left

@@ -190,8 +190,13 @@ function EqHostView.reportRows(farmId)
             string.format(g_i18n:getText("eq_host_report_field"), report.field),
         }
         table.insert(rows, { title = true, text = table.concat(parts, "  |  ") })
-        local podium = EqStory.podiumLine(report.podium or {})
-        if podium ~= nil then table.insert(rows, { text = podium }) end
+        local phaseLines = EqHostView.phaseLines(report)
+        if phaseLines ~= nil then
+            for _, line in ipairs(phaseLines) do table.insert(rows, { text = line }) end
+        else
+            local podium = EqStory.podiumLine(report.podium or {})
+            if podium ~= nil then table.insert(rows, { text = podium }) end
+        end
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_turnout"), report.competitors, report.visitors,
             report.popularity) })
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_money"), money(report.total), money(report.entries),
@@ -202,10 +207,50 @@ function EqHostView.reportRows(farmId)
         for _, horse in ipairs(report.mine or {}) do
             local how = horse.status ~= nil and g_i18n:getText("eq_ui_result_" .. horse.status)
                 or string.format(g_i18n:getText("eq_ui_result_placeOrd"), EqStory.ordinal(horse.place), report.field)
-            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_mine"), horse.name, how) })
+            if horse.status == nil and horse.phases ~= nil and horse.penalties ~= nil then
+                local parts = {}
+                for _, phase in ipairs(horse.phases) do
+                    table.insert(parts, string.format(g_i18n:getText("eq_host_report_phasePlace"), g_i18n:getText("eq_discipline_" .. phase.name),
+                        EqStory.ordinal(phase.place), EqStory.penalties(phase.penalties, phase.name == "dressage")))
+                end
+                table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_minePhased"), horse.name, how,
+                    EqStory.bold(EqStory.penalties(horse.penalties, true)), table.concat(parts, ", ")) })
+            else
+                table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_mine"), horse.name, how) })
+            end
         end
     end
     return rows
+end
+
+
+--- An event scored in penalties (a 3 Day Event, or one with ridden rounds): the overall top
+--- three with their totals, then each phase's top three with their scores. Pure but for texts.
+--- @param report table from EqHostManager.report
+--- @return table|nil lines, nil for a report without phases (older saves, no penalties)
+function EqHostView.phaseLines(report)
+    if report.phases == nil or #report.phases == 0 or report.totals == nil or #report.totals == 0 then return nil end
+    local function entries(list, decimal)
+        local parts = {}
+        for place, entry in ipairs(list) do
+            table.insert(parts, string.format(g_i18n:getText("eq_host_report_entry"), EqStory.ordinal(place), EqStory.bold(entry.name),
+                EqStory.penalties(entry.penalties, decimal)))
+        end
+        return table.concat(parts, ", ")
+    end
+    local overall = {}
+    for i, name in ipairs(report.podium or {}) do
+        if report.totals[i] ~= nil then table.insert(overall, { name = name, penalties = report.totals[i] }) end
+    end
+    local lines = { string.format(g_i18n:getText("eq_host_report_overall"), entries(overall, true)) }
+    -- A one-phase event's phase is the overall result: no need to say it twice.
+    if #report.phases > 1 then
+        for _, phase in ipairs(report.phases) do
+            table.insert(lines, string.format(g_i18n:getText("eq_host_report_phaseTop"), g_i18n:getText("eq_discipline_" .. phase.name),
+                entries(phase.top or {}, phase.name == "dressage")))
+        end
+    end
+    return lines
 end
 
 

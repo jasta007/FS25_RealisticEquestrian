@@ -49,6 +49,8 @@ EqShowJumping.RUNOUT_MARGIN = 2.5
 -- A crash this close to the next fence's line (between its flags) is a refusal; running into
 -- anything else, like the arena wall, is not.
 EqShowJumping.REFUSAL_RADIUS = 3
+-- After a refusal, how far the horse must back off the fence before it can refuse there again.
+EqShowJumping.REFUSAL_REARM = 2.5
 -- Time allowed: the course at 350 m a minute (a usual show jumping speed), at least MIN_TIME s.
 EqShowJumping.TIME_SPEED = 350 / 60
 -- A cross country course is ridden faster: 520 m a minute, a usual novice eventing speed.
@@ -220,7 +222,7 @@ end
 
 local function restart(round)
     round.state, round.clock, round.next, round.faults, round.refusals = "approach", 0, 1, 0, 0
-    round.fenceRefusals, round.represent, round.railed = {}, nil, {}
+    round.fenceRefusals, round.represent, round.railed, round.refusedAt = {}, nil, {}, nil
     round.pending, round.count, round.result, round.why = nil, nil, nil, nil
 end
 
@@ -430,13 +432,22 @@ function EqShowJumping.step(round, input)
         end
     end
 
-    -- Running into the next fence is a refusal.
-    if input.crashed and round.pending == nil and nextJump ~= nil then
-        if EqShowJumping.distanceToLine(nextJump.ax ~= nil and nextJump or { ax = nextJump.x, az = nextJump.z,
-            bx = nextJump.x, bz = nextJump.z }, input.x, input.z) <= EqShowJumping.REFUSAL_RADIUS then
-            if refuse(round) then return eliminate(round, "refusals") end
-            event = "refusal"
-        end
+    -- Running into the next fence is a refusal. Another one there counts only once the horse
+    -- has backed off REFUSAL_REARM metres (James, 2026-11-01: a refusal, W at once, a second
+    -- refusal, 80 penalties).
+    local fenceDistance = nil
+    if nextJump ~= nil then
+        fenceDistance = EqShowJumping.distanceToLine(nextJump.ax ~= nil and nextJump or { ax = nextJump.x, az = nextJump.z,
+            bx = nextJump.x, bz = nextJump.z }, input.x, input.z)
+    end
+    if round.refusedAt ~= nil and (round.refusedAt ~= round.next or fenceDistance == nil or fenceDistance >= EqShowJumping.REFUSAL_REARM) then
+        round.refusedAt = nil
+    end
+    if input.crashed and round.pending == nil and nextJump ~= nil and round.refusedAt == nil
+        and fenceDistance <= EqShowJumping.REFUSAL_RADIUS then
+        if refuse(round) then return eliminate(round, "refusals") end
+        round.refusedAt = round.next
+        event = "refusal"
     end
 
     if round.clock / 1000 > round.allowed * EqShowJumping.TIME_LIMIT_FACTOR then return eliminate(round, "timeLimit") end

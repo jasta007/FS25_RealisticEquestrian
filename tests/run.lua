@@ -1696,7 +1696,13 @@ end)()
     ride(38)
     local crash = { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }
     check("a cross country refusal is 20", EqShowJumping.step(round, crash) == "refusal" and round.faults == 20 and round.represent)
+    check("no second refusal until the horse backs off the fence", EqShowJumping.step(round, crash) == nil and round.faults == 20
+        and EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 37.8, dt = 100 }) == nil and EqShowJumping.step(round, crash) == nil
+        and round.faults == 20)
+    local backOff = { px = 0, pz = 38, x = 0, z = 37, dt = 100 }
+    EqShowJumping.step(round, backOff)
     check("a second at the same fence is 40 more, not out", EqShowJumping.step(round, crash) == "refusal" and round.faults == 60)
+    EqShowJumping.step(round, backOff)
     check("a third at the same fence eliminates", EqShowJumping.step(round, crash) == "eliminated")
     round = EqShowJumping.newRound(course)
     z = 25.25
@@ -1783,6 +1789,24 @@ end)()
     check("eventing is only ended by a fall, never a refusal",
         EqPerformance.storyKey(config.disciplineByName.eventing, { phases = { { checks = { { check = { stat = "temperament", weight = 1, difficulty = 0 }, passed = false } } } } },
             true, config) == "eq_story_eventing_eliminated")
+    -- In your own event a ridden phase's line comes from the ride, not the simulated checks.
+    local passedAll = { { check = { stat = "agility", weight = 1, difficulty = 0 }, passed = true } }
+    local function ridRun(d, sj, xc)
+        return { checks = passedAll, phases = { { name = "dressage", checks = passedAll, sheet = { penalties = d, ridden = true } },
+            { name = "showJumping", checks = passedAll, sheet = { penalties = sj, ridden = true } },
+            { name = "crossCountry", checks = passedAll, sheet = { penalties = xc } } } }
+    end
+    local eventing = config.disciplineByName.eventing
+    check("ridden story: clear over fences but a poor dressage says so",
+        EqPerformance.storyKey(eventing, ridRun(34, 0, 0), false, config, 5, { dressage = 5 }) == "eq_story_eventing_clearFences"
+        and EqPerformance.storyKey(eventing, ridRun(22, 0, 0), false, config, 1, { dressage = 1 }) == "eq_story_eventing_clean")
+    check("ridden story: faults over fences are never clear", EqPerformance.storyKey(eventing, ridRun(22, 4, 0), false, config, 2, { dressage = 1 })
+        == "eq_story_eventing_fenceFaults")
+    local oneSj = { checks = passedAll, phases = { { name = "showJumping", checks = passedAll, sheet = { penalties = 8, ridden = true } } } }
+    check("ridden story: a one-phase round with rails isn't a clear round",
+        EqPerformance.storyKey(sj, oneSj, false, config, 3, { showJumping = 3 }) == "eq_story_ridden_faults"
+        and EqPerformance.storyKey(eventing, { checks = passedAll, phases = { { name = "dressage", checks = passedAll, sheet = { penalties = 30 } } } },
+            false, config) == "eq_story_eventing_clean")
     local race = config.disciplineByName.raceShort
     local function raceRun(passes)
         local checks = {}
@@ -1923,6 +1947,10 @@ end)()
                     and fr:find('name="' .. key .. '"', 1, true) ~= nil and es:find('name="' .. key .. '"', 1, true) ~= nil)
             end
         end
+    end
+    for _, key in ipairs({ "eq_story_ridden_test", "eq_story_ridden_faults", "eq_story_eventing_fenceFaults", "eq_story_eventing_clearFences" }) do
+        check("ridden story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil and de:find('name="' .. key .. '"', 1, true) ~= nil
+            and fr:find('name="' .. key .. '"', 1, true) ~= nil and es:find('name="' .. key .. '"', 1, true) ~= nil)
     end
     for i = 1, 300 do
         local d = config.disciplines[(i % #config.disciplines) + 1]
@@ -4807,6 +4835,43 @@ end)()
     check("3 day event: each ridden phase keeps the rider's penalties", byName.dressage.penalties == 26 and byName.dressage.ridden
         and byName.showJumping.penalties == 0 and byName.showJumping.ridden and byName.crossCountry.penalties == 24
         and byName.crossCountry.refusals == 1 and three.run.penalties == 50, string.format("%.1f total", three.run.penalties))
+    -- The report of your own 3 Day Event: overall and each phase's top three, your horse's
+    -- place in each phase (James, 2026-11-01).
+    do
+        local ev = { discipline = "eventing", tier = "novice", prize = 1000, hosted = { ridden = { me = all3 } } }
+        local field = EqCompetition.run(ev, config, { { key = "me", rating = 45, condition = 1, stats = stats } }, EqRandom.new("3de report"), 8)
+        local hadManager, hadView = EqCompetitionManager, EqHostView
+        dofile("scripts/competition/EqCompetitionManager.lua")
+        dofile("scripts/gui/EqHostView.lua")
+        EqCompetitionManager.config, EqCompetitionManager.rivalSeed = config, 1234
+        local byKey = { me = { entry = { name = "Massive Tango" } } }
+        local rng = EqRandom.new("podium")
+        local podium = EqCompetitionManager.podiumNames(field, byKey, "eventing", rng)
+        local phased = EqCompetitionManager.phaseReport(field, byKey, "eventing", podium, rng)
+        local okPhases, seenMine, distinct = #phased.phases == 3 and #phased.totals == 3, false, true
+        for _, phase in ipairs(phased.phases) do
+            okPhases = okPhases and #phase.top == 3 and phase.top[1].penalties <= phase.top[2].penalties
+            local names = {}
+            for _, entry in ipairs(phase.top) do
+                if entry.name == "Massive Tango" then seenMine = true end
+                distinct = distinct and not names[entry.name]
+                names[entry.name] = true
+            end
+        end
+        check("3 day report: top three in each phase, named, best first", okPhases and distinct and phased.totals[1] <= phased.totals[3]
+            and (seenMine or field[1].key ~= "me"))
+        local report = { day = 3, field = 8, podium = podium, totals = phased.totals, phases = phased.phases,
+            mine = { { name = "Massive Tango", place = 5, penalties = 50, phases = { { name = "dressage", place = 5, penalties = 26 } } } } }
+        local store = memoryXML()
+        EqHostManager.saveReport(store, "r", report)
+        local back = EqHostManager.loadReport(store, "r")
+        check("3 day report: survives a save", #back.phases == 3 and back.phases[2].top[1].name == phased.phases[2].top[1].name
+            and back.totals[1] == phased.totals[1] and back.mine[1].penalties == 50 and back.mine[1].phases[1].place == 5)
+        local lines = EqHostView.phaseLines(back)
+        check("3 day report: an overall line and one per phase", lines ~= nil and #lines == 4)
+        check("3 day report: older reports without phases keep the podium line", EqHostView.phaseLines({ podium = podium }) == nil)
+        EqCompetitionManager, EqHostView = hadManager, hadView
+    end
     local _, simulated = threeDay({}, "3de none ")
     local _, good = threeDay({ dressage = EqHosting.testSheet(70, false) }, "3de d70 ")
     local _, poor = threeDay({ dressage = EqHosting.testSheet(55, false) }, "3de d55 ")

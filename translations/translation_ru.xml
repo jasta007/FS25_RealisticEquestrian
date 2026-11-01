@@ -434,6 +434,8 @@
         <text name="eq_sj_out_wrongCourse" text="Дисквалификация: ошибка маршрута (препятствие %d взято не по порядку)"/>
         <text name="eq_sj_out_refusals" text="Дисквалификация: вторая закидка"/>
         <text name="eq_sj_out_timeLimit" text="Дисквалификация: превышена норма времени"/>
+        <text name="eq_sj_getOn" text="САДИТЕСЬ НА ЛОШАДЬ! %d"/>
+        <text name="eq_sj_out_dismounted" text="Снят: всадник не сел обратно в зачётном заезде"/>
         <text name="eq_sj_clear" text="Чистый проезд за %s!"/>
         <text name="eq_sj_faults" text="Штрафных очков: %s, время %s"/>
         <text name="eq_sj_clearPop" text="Чистый проезд!"/>
@@ -783,6 +785,10 @@
         <text name="eq_story_eventing_clean" text="Чисто во всех видах."/>
         <text name="eq_story_eventing_struggled" text="Тяжело далась все три вида."/>
         <text name="eq_story_eventing_eliminated" text="Выбыла после падения на кроссе."/>
+        <text name="eq_story_ridden_test" text="Проехал свою езду."/>
+        <text name="eq_story_ridden_faults" text="Были ошибки на маршруте."/>
+        <text name="eq_story_eventing_fenceFaults" text="Набрал штрафные очки на препятствиях."/>
+        <text name="eq_story_eventing_clearFences" text="Чисто на препятствиях, но выездка подвела."/>
         <text name="eq_ui_tab_upcoming" text="Ближайшие соревнования"/>
         <text name="eq_ui_tab_results" text="Результаты"/>
         <text name="eq_ui_col_starts" text="Старты"/>
@@ -877,6 +883,11 @@
         <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
         <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
         <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Общий зачёт: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Ваша лошадь %s: %s, штрафных очков: %s (%s)."/>
         <text name="eq_host_results_row" text="Ваши турниры"/>
         <text name="eq_host_results_running" text="Идёт сейчас"/>
         <text name="eq_host_results_winner" text="Победитель: %s"/>

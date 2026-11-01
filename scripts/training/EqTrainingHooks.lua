@@ -687,9 +687,29 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             end
         end
         spec.eqLaunch = nil
+        -- A dressage test that counts in your own event: "GET ON YOUR HORSE" for a few seconds,
+        -- back on carries on, else it is eliminated and can't be ridden again (James, 2026-11-01).
+        local routine = sheet.routine
+        if routine ~= nil and routine.active and routine.kind == "path" and routine.competing and routine.path ~= nil and routine.path.started then
+            local now = g_time or 0
+            if routine.offAt == nil or now < routine.offAt then
+                routine.offAt = now
+                EqTrainingHud.getOn = { at = now, ms = EqCourseHooks.OFF_GRACE_MS }
+                Log:info("Dressage test: rider off in a test that counts, %d s to get back on", EqCourseHooks.OFF_GRACE_MS / 1000)
+            end
+            if now - routine.offAt < EqCourseHooks.OFF_GRACE_MS then return end
+            routine.offAt, EqTrainingHud.getOn = nil, nil
+            Log:info("Dressage test: rider stayed off, the test is eliminated")
+            if EqHostManager ~= nil then EqLog.try("EqTrainingHooks hosted test", EqHostManager.onTestDone, vehicle, nil, true) end
+        end
         local ended = EqTraining.breakRoutine(sheet)
         if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
         return
+    end
+    -- Back on in time during a counted test (above): it carries on.
+    if sheet.routine ~= nil and sheet.routine.offAt ~= nil then
+        Log:info("Dressage test: back on after %.1f s, the test carries on", ((g_time or 0) - sheet.routine.offAt) / 1000)
+        sheet.routine.offAt, EqTrainingHud.getOn = nil, nil
     end
     -- Editing a dressage test: the horse stands while the rider picks the figures.
     if EqDressageEditor.holds(vehicle) and spec.inputValues ~= nil and Rideable.GAITTYPES ~= nil then
@@ -2055,6 +2075,14 @@ function EqTrainingHooks.installRideable(guarded)
     end
     -- Dressage markers lose their collision as they are found; the tag comes down once nobody
     -- rides to it.
+    -- "GET ON YOUR HORSE" is drawn by the mission: the rider is off, so no horse draws it.
+    local missionClass = FSBaseMission ~= nil and FSBaseMission.draw ~= nil and FSBaseMission or BaseMission
+    if missionClass ~= nil and missionClass.draw ~= nil then
+        missionClass.draw = Utils.appendedFunction(missionClass.draw, function()
+            if not EqMain.isActive or EqTrainingHud.gameHudHidden() then return end
+            guarded("get on your horse", EqTrainingHud.drawGetOn)
+        end)
+    end
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
         if not EqMain.isActive then return end
         guarded("dressage markers", EqDressageHooks.update)

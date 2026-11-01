@@ -434,6 +434,8 @@
         <text name="eq_sj_out_wrongCourse" text="失格：経路違反（障害%dを順番外に飛越）"/>
         <text name="eq_sj_out_refusals" text="失格：2回目の拒止"/>
         <text name="eq_sj_out_timeLimit" text="失格：制限時間超過"/>
+        <text name="eq_sj_getOn" text="馬に乗って！ %d"/>
+        <text name="eq_sj_out_dismounted" text="失格：カウントされる走行中に騎手が馬に乗り直さなかった"/>
         <text name="eq_sj_clear" text="%sでクリアラウンド！"/>
         <text name="eq_sj_faults" text="減点%s、タイム%s"/>
         <text name="eq_sj_clearPop" text="クリアラウンド！"/>
@@ -783,6 +785,10 @@
         <text name="eq_story_eventing_clean" text="すべての種目でクリア。"/>
         <text name="eq_story_eventing_struggled" text="3種目すべてに苦戦しました。"/>
         <text name="eq_story_eventing_eliminated" text="クロスカントリーで落馬し失格になりました。"/>
+        <text name="eq_story_ridden_test" text="課目を走行した。"/>
+        <text name="eq_story_ridden_faults" text="コースで減点があった。"/>
+        <text name="eq_story_eventing_fenceFaults" text="障害で減点を受けた。"/>
+        <text name="eq_story_eventing_clearFences" text="障害は減点なしだったが、馬場馬術が足を引っ張った。"/>
         <text name="eq_ui_tab_upcoming" text="今後の大会"/>
         <text name="eq_ui_tab_results" text="結果"/>
         <text name="eq_ui_col_starts" text="出走"/>
@@ -877,6 +883,11 @@
         <text name="eq_host_report_feed" text="来訪馬は飼料を%dL食べました。"/>
         <text name="eq_host_report_money" text="収入%s（エントリー料%s、入場料%s）、開催費%s：利益%s"/>
         <text name="eq_host_report_mine" text="あなたの馬 %s：%s"/>
+        <text name="eq_host_report_entry" text="%s %s（%s）"/>
+        <text name="eq_host_report_overall" text="総合：%s。"/>
+        <text name="eq_host_report_phaseTop" text="%s：%s。"/>
+        <text name="eq_host_report_phasePlace" text="%s %s（%s）"/>
+        <text name="eq_host_report_minePhased" text="あなたの馬 %s：%s、減点 %s（%s）。"/>
         <text name="eq_host_results_row" text="あなたの大会"/>
         <text name="eq_host_results_running" text="開催中"/>
         <text name="eq_host_results_winner" text="優勝：%s"/>

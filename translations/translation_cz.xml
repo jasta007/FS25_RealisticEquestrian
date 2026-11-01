@@ -434,6 +434,8 @@
         <text name="eq_sj_out_wrongCourse" text="Vyloučen: chyba v trase (překážka %d skočena mimo pořadí)"/>
         <text name="eq_sj_out_refusals" text="Vyloučen: druhé odmítnutí"/>
         <text name="eq_sj_out_timeLimit" text="Vyloučen: překročen časový limit"/>
+        <text name="eq_sj_getOn" text="NASEDNI NA KONĚ! %d"/>
+        <text name="eq_sj_out_dismounted" text="Vyloučen: jezdec v započítávaném kole znovu nenasedl"/>
         <text name="eq_sj_clear" text="Čistá jízda za %s!"/>
         <text name="eq_sj_faults" text="Trestné body: %s, čas %s"/>
         <text name="eq_sj_clearPop" text="Čistá jízda!"/>
@@ -783,6 +785,10 @@
         <text name="eq_story_eventing_clean" text="Čistě ve všech zkouškách."/>
         <text name="eq_story_eventing_struggled" text="Trápil se ve všech třech zkouškách."/>
         <text name="eq_story_eventing_eliminated" text="Vypadl po pádu v terénu."/>
+        <text name="eq_story_ridden_test" text="Odjel svou úlohu."/>
+        <text name="eq_story_ridden_faults" text="Měl chyby na trati."/>
+        <text name="eq_story_eventing_fenceFaults" text="Nasbíral trestné body na překážkách."/>
+        <text name="eq_story_eventing_clearFences" text="Čistě přes překážky, ale drezura ho zdržela."/>
         <text name="eq_ui_tab_upcoming" text="Nadcházející závody"/>
         <text name="eq_ui_tab_results" text="Výsledky"/>
         <text name="eq_ui_col_starts" text="Starty"/>
@@ -877,6 +883,11 @@
         <text name="eq_host_report_feed" text="Hostující koně snědli %d l tvého krmiva."/>
         <text name="eq_host_report_money" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s: zisk %s."/>
         <text name="eq_host_report_mine" text="Tvůj kůň %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Celkově: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Tvůj kůň %s: %s s %s trestnými body (%s)."/>
         <text name="eq_host_results_row" text="Tvoje závody"/>
         <text name="eq_host_results_running" text="Probíhá"/>
         <text name="eq_host_results_winner" text="Vyhrál %s"/>

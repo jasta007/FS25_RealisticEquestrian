@@ -433,6 +433,8 @@
         <text name="eq_sj_out_wrongCourse" text="Eliminated: wrong course (fence %d jumped out of order)"/>
         <text name="eq_sj_out_refusals" text="Eliminated: second refusal"/>
         <text name="eq_sj_out_timeLimit" text="Eliminated: over the time limit"/>
+        <text name="eq_sj_getOn" text="GET ON YOUR HORSE! %d"/>
+        <text name="eq_sj_out_dismounted" text="Eliminated: the rider stayed off the horse in a round that counts"/>
         <text name="eq_sj_clear" text="Clear round in %s!"/>
         <text name="eq_sj_faults" text="%s faults in %s"/>
         <text name="eq_sj_clearPop" text="Clear round!"/>
@@ -794,6 +796,10 @@
         <text name="eq_story_eventing_clean" text="Clear in every phase."/>
         <text name="eq_story_eventing_struggled" text="Found all three phases a struggle."/>
         <text name="eq_story_eventing_eliminated" text="Went out after a fall on the cross country."/>
+        <text name="eq_story_ridden_test" text="Rode its test."/>
+        <text name="eq_story_ridden_faults" text="Had faults on the course."/>
+        <text name="eq_story_eventing_fenceFaults" text="Picked up penalties over fences."/>
+        <text name="eq_story_eventing_clearFences" text="Clear over fences, but the dressage held it back."/>
         <text name="eq_ui_tab_upcoming" text="Upcoming events"/>
         <text name="eq_ui_tab_results" text="Results"/>
         <text name="eq_ui_col_starts" text="Starts"/>
@@ -877,6 +883,11 @@
         <text name="eq_host_report_feed" text="Visiting horses ate %d l of your feed."/>
         <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
         <text name="eq_host_report_mine" text="Your horse %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Overall: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Your horse %s: %s on %s penalties (%s)."/>
         <text name="eq_host_results_row" text="Your events"/>
         <text name="eq_host_results_running" text="On now"/>
         <text name="eq_host_results_winner" text="Won by %s"/>

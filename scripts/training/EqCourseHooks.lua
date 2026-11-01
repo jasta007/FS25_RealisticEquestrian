@@ -54,6 +54,12 @@ EqCourseHooks.NEAR_RADIUS = 40
 EqCourseHooks.START_NEAR = 60
 -- A round under way ends if the horse gets this far from its course's route.
 EqCourseHooks.LEAVE_RADIUS = 100
+-- A round that counts in your own event isn't abandoned the moment the rider gets off (James,
+-- 2026-11-01): "GET ON YOUR HORSE" for this long, back on carries on, else eliminated. Practice
+-- rounds still just stop.
+EqCourseHooks.OFF_GRACE_MS = 5000
+
+local counted, retire
 EqCourseHooks.NEAR_CHECK_MS = 1000
 -- Only the part of a line within this many metres of the horse is drawn.
 EqCourseHooks.DRAW_RADIUS = 80
@@ -1150,6 +1156,35 @@ function EqCourseHooks.roundRows(rows)
 end
 
 
+--- @param round table|nil
+--- @return boolean true for a round under way that counts in your own event
+counted = function(round)
+    return round ~= nil and round.hosted and round.hosted.status == "counts"
+        and (round.sj.state == "running" or round.sj.state == "go") or false
+end
+
+
+--- A round stops before its end: the rider left the course, changed horse or got off. A
+--- practice round is just abandoned; one that counts in your own event is eliminated there, so
+--- it can't be ridden again (James, 2026-11-01).
+--- @param round table
+retire = function(round)
+    EqCourseHooks.round = nil
+    EqTrainingHud.getOn = nil
+    local sj = round.sj
+    if sj.state ~= "running" and sj.state ~= "go" then return end
+    if counted(round) then
+        sj.state, sj.restMs = "done", EqShowJumping.REST_MS
+        sj.result = { eliminated = "dismounted", seconds = (sj.clock or 0) / 1000, xc = sj.xc }
+        Log:info("Show jumping: counted round on '%s' left unfinished: eliminated", round.course.name)
+        notify(text("eq_sj_out_dismounted"))
+        if EqHostManager ~= nil then EqLog.try("EqCourseHooks hosted round", EqHostManager.onRoundDone, round.vehicle, round.course, sj) end
+        return
+    end
+    notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired"))
+end
+
+
 --- Out of edit mode, each frame for the ridden horse: the round on the nearby course.
 --- @param vehicle table
 function EqCourseHooks.roundDraw(vehicle)
@@ -1175,13 +1210,19 @@ function EqCourseHooks.roundDraw(vehicle)
         end
     end
     if leave then
-        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
-        EqCourseHooks.round = nil
+        retire(round)
         return
     end
     if round == nil then return end
 
     local dt = round.at ~= nil and math.max(0, math.min(200, now - round.at)) or 0
+    if round.offAt ~= nil then
+        -- Back on in time: the round carries on, and the clock ran while the rider was off.
+        Log:info("Show jumping: back on after %.1f s, round carries on", (now - round.offAt) / 1000)
+        dt = math.max(0, math.min(EqCourseHooks.OFF_GRACE_MS + EqCourseHooks.STALE_MS, now - (round.at or now)))
+        round.offAt = nil
+        EqTrainingHud.getOn = nil
+    end
     local last = round.last or { x, z }
     round.at, round.last, round.seenAt = now, { x, z }, now
     local sj = round.sj
@@ -1262,8 +1303,18 @@ function EqCourseHooks.update()
     EqCourseGlow.update()
     local round = EqCourseHooks.round
     if round ~= nil and (now - round.seenAt > EqCourseHooks.STALE_MS or now < round.seenAt) then
-        if round.sj.state == "running" or round.sj.state == "go" then notify(text(round.course.kind == EqCourse.CROSS_COUNTRY and "eq_xc_retired" or "eq_sj_retired")) end
-        EqCourseHooks.round = nil
+        if counted(round) then
+            -- Off the horse in a round that counts: a few seconds to get back on.
+            if round.offAt == nil then
+                round.offAt = math.min(round.seenAt, now)
+                EqTrainingHud.getOn = { at = round.offAt, ms = EqCourseHooks.OFF_GRACE_MS }
+                Log:info("Show jumping: rider off in a counted round, %d s to get back on", EqCourseHooks.OFF_GRACE_MS / 1000)
+            elseif now - round.offAt >= EqCourseHooks.OFF_GRACE_MS or now < round.offAt then
+                retire(round)
+            end
+        else
+            retire(round)
+        end
     end
     local editing = EqCourseHooks.editing
     if editing == nil then return end
