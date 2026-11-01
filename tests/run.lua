@@ -5191,6 +5191,10 @@ end)()
     EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
     local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
     check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")
+    check("sponsor colours: Lizard is Lizard green, boards and faces, whatever the game's paint (James)",
+        EqSponsorBoards.brandColour("LIZARD") ~= nil and select(2, EqSponsorBoards.brandColour("LIZARD")) == "own"
+        and EqSponsorBoards.faceColour("LIZARD")[2] > EqSponsorBoards.faceColour("LIZARD")[1]
+        and EqSponsorBoards.faceColour("LIZARD")[2] > 0.3)
     check("sponsor colours: none for an unknown brand", EqSponsorBoards.brandColour("NOBRANDATALL") == nil and EqSponsorBoards.brandColour(nil) == nil)
     EqSponsorBoards.paints, EqSponsorBoards.cache = nil, nil
     check("sponsor colours: plain jumps keep the shop colour",

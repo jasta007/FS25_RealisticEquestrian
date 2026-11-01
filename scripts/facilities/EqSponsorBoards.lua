@@ -64,6 +64,11 @@ EqSponsorBoards.ALWAYS = { "placeables/showjumps/showjumpwall.xml", "placeables/
     "placeables/sponsorplinths/plinthramp.xml", "placeables/sponsorplinths/plinthramplarge.xml",
     "placeables/sponsorplinths/plinthproductramp.xml", "placeables/sponsorplinths/plinthturntable.xml" }
 
+-- Brands whose colour is ours whatever the game's paints say, faces included (James, 2026-11-01:
+-- the game's Lizard paint is red; Lizard is green, as on its logo).
+EqSponsorBoards.OWN_COLOURS = {
+    LIZARD = { 132, 189, 41 },
+}
 
 -- Brands whose logo is white or very pale (James, 2026-11-01: white on a white board vanishes).
 -- Measured on the game's own 261 logos (light share of the opaque pixels 0.5 or more, or a mean
@@ -94,6 +99,9 @@ EqSponsorBoards.DARK_ENOUGH = 0.18
 --- @return table colour of the boards' faces behind its logo: white, or for a light logo the
 --- brand's own colour when it's dark enough, else dark grey
 function EqSponsorBoards.faceColour(brand)
+    if brand ~= nil and EqSponsorBoards.OWN_COLOURS[string.upper(brand)] ~= nil then
+        return EqSponsorBoards.linear(EqSponsorBoards.OWN_COLOURS[string.upper(brand)])
+    end
     if brand == nil or not EqSponsorBoards.LIGHT_LOGOS[string.upper(brand)] then return EqSponsorBoards.FACE_WHITE end
     local colour = EqSponsorBoards.brandColour(brand)
     if colour ~= nil and 0.2126 * colour[1] + 0.7152 * colour[2] + 0.0722 * colour[3] < EqSponsorBoards.DARK_ENOUGH then
@@ -332,6 +340,12 @@ function EqSponsorBoards.brandColour(brand)
     local cached = EqSponsorBoards.cache[brand]
     if cached ~= nil then return cached.colour, cached.source end
     local colour, source = nil, nil
+    local own = EqSponsorBoards.OWN_COLOURS[string.upper(brand)]
+    if own ~= nil then
+        colour, source = EqSponsorBoards.linear(own), "own"
+        EqSponsorBoards.cache[brand] = { colour = colour, source = source }
+        return colour, source
+    end
     local ok, paints = EqLog.try("EqSponsorBoards paints", EqSponsorBoards.gamePaints)
     if ok and type(paints) == "table" then
         local found, name = EqSponsorBoards.pickPaint(brand, paints)

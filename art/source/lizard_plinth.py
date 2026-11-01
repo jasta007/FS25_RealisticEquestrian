@@ -3,7 +3,8 @@ Builds the Lizard plinth in placeables/sponsorPlinths/ (James, 2026-11-01): the 
 Lizard, the game's own brand, asks for when it offers a free one-off sponsorship of a hosted event
 (EqLizard). It looks cheap and slapped together: a mound of whatever bulk material Lizard asked
 for, logs laid across the top as a deck to park a machine on, a lizard cut out of planks standing
-at the back (traced by James, LIZARD_OUTLINE) and the Lizard logotype on a board at the front.
+at the back (traced by James, LIZARD_OUTLINE; smooth-sided, painted Lizard green) and the Lizard
+logotype on a green board at the front.
 
 It is a constructible, like the game's rental houses: bought for next to nothing, then built
 from what the farm delivers to its triggers in front of it:
@@ -261,39 +262,93 @@ def merge(spans):
     return out
 
 
+def triangulate(poly):
+    """Ear clipping: triangles (index triples) filling a simple polygon."""
+    def area(pts):
+        return sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1] for i in range(len(pts))) / 2
+    idx = list(range(len(poly)))
+    if area(poly) < 0:
+        idx.reverse()
+
+    def inside(p, a, b, c):
+        def side(p1, p2, p3):
+            return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
+        d1, d2, d3 = side(p, a, b), side(p, b, c), side(p, c, a)
+        return not ((d1 < 0 or d2 < 0 or d3 < 0) and (d1 > 0 or d2 > 0 or d3 > 0))
+    tris = []
+    guard = 0
+    while len(idx) > 3 and guard < 10000:
+        guard += 1
+        for k in range(len(idx)):
+            i0, i1, i2 = idx[k - 1], idx[k], idx[(k + 1) % len(idx)]
+            a, b, c = poly[i0], poly[i1], poly[i2]
+            if (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) <= 1e-12:
+                continue
+            if any(inside(poly[j], a, b, c) for j in idx if j not in (i0, i1, i2)):
+                continue
+            tris.append((i0, i1, i2))
+            idx.pop(k)
+            break
+        else:
+            raise ValueError("lizard outline does not triangulate")
+    tris.append(tuple(idx))
+    return tris
+
+
 def lizard(base_y):
-    """The lizard: rows of planks nailed across two battens, each plank as long as the outline is
-    wide there (a few samples over its height), a little uneven, as if cut by eye."""
+    """The lizard: one smooth-sided cut-out (James, 2026-11-01: not stepped), boards running across
+    it as if nailed up from planks, painted Lizard green (the lizardGreen material)."""
     mesh = Mesh()
     poly = outline_metres()
+    t, z = LIZARD["thick"], LIZARD["z"]
+    board_h = LIZARD["plank"] + LIZARD["gap"]
+
+    def uv(x, y):
+        return (x / 1.5, y / (8 * board_h))
+    front, back = z - t / 2, z + t / 2
+    tris = triangulate(poly)
+    for zz, n in ((front, (0.0, 0.0, -1.0)), (back, (0.0, 0.0, 1.0))):
+        ids = [mesh.vertex((x, base_y + y, zz), n, uv(x, y)) for x, y in poly]
+        for i0, i1, i2 in tris:
+            mesh.tri(ids[i0], ids[i1], ids[i2])
+    # the cut edges
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+        dx, dy = x1 - x0, y1 - y0
+        length = math.hypot(dx, dy)
+        if length < 1e-6:
+            continue
+        n = (dy / length, -dx / length, 0.0)
+        cx = sum(p[0] for p in poly) / len(poly)
+        cy = sum(p[1] for p in poly) / len(poly)
+        # point the normal away from the inside: test a point just off the edge's middle
+        mx, my = (x0 + x1) / 2 + n[0] * 0.01, (y0 + y1) / 2 + n[1] * 0.01
+        if point_in(poly, mx, my):
+            n = (-n[0], -n[1], 0.0)
+        mesh.quad([(x0, base_y + y0, front), (x1, base_y + y1, front), (x1, base_y + y1, back), (x0, base_y + y0, back)], n,
+                  [(0, 0.06), (length / 1.5, 0.06), (length / 1.5, 0.065), (0, 0.065)])
+    return mesh
+
+
+def point_in(poly, x, y):
+    inside = False
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+        if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):
+            inside = not inside
+    return inside
+
+
+def battens(base_y):
+    """Two bare battens behind the lizard, down into the mound, and a prop behind each."""
+    mesh = Mesh()
     rng = random.Random(3)
     t, z = LIZARD["thick"], LIZARD["z"]
-    step = LIZARD["plank"] + LIZARD["gap"]
-    rows = int(LIZARD["height"] / step) + 1
-    for row in range(rows):
-        y0 = row * step
-        y1 = y0 + LIZARD["plank"]
-        samples = [y0 + (y1 - y0) * f for f in (0.1, 0.35, 0.65, 0.9)]
-        spans = merge([s for y in samples for s in spans_at(poly, y)])
-        for a, b in spans:
-            if b - a < 0.03:
-                continue
-            a -= rng.uniform(0.0, 0.03)
-            b += rng.uniform(0.0, 0.03)
-            tilt = rng.uniform(-0.025, 0.025)
-            along = xc.norm((1.0, tilt, 0.0))
-            up = xc.norm((-tilt, 1.0, 0.0))
-            zz = z + rng.uniform(-0.006, 0.006)
-            oriented_box(mesh, ((a + b) / 2, base_y + (y0 + y1) / 2, zz), (along, up, (0.0, 0.0, -1.0)),
-                         ((b - a) / 2, LIZARD["plank"] / 2, t / 2), rng.randrange(8))
-    # two battens behind, down into the mound, and a prop behind each
     for bx in (-0.32, 0.28):
         top = base_y + 1.55
         bottom = base_y - 0.45
-        oriented_box(mesh, (bx, (top + bottom) / 2, z + t + 0.02), ((0.0, 1.0, 0.0), (1.0, 0.0, 0.0), (0.0, 0.0, 1.0)),
+        oriented_box(mesh, (bx, (top + bottom) / 2, z + t / 2 + 0.02), ((0.0, 1.0, 0.0), (1.0, 0.0, 0.0), (0.0, 0.0, 1.0)),
                      ((top - bottom) / 2, 0.045, 0.02), rng.randrange(8))
         foot = (bx, base_y - 0.35, z + 1.1)
-        head = (bx, base_y + 1.1, z + t + 0.05)
+        head = (bx, base_y + 1.1, z + t / 2 + 0.05)
         along = xc.norm(xc.sub(head, foot))
         mid = tuple((foot[i] + head[i]) / 2 for i in range(3))
         length = math.dist(foot, head)
@@ -305,7 +360,7 @@ def lizard(base_y):
 
 def board():
     """The logo board at the front on two stakes, leaning back a little: a plank frame round a
-    black face with the logo on it ("eqSponsor_1", always Lizard's: EqSponsors)."""
+    Lizard green face (James) with the logo on it ("eqSponsor_1", always Lizard's: EqSponsors)."""
     planks, face, logos = Mesh(), Mesh(), {}
     rng = random.Random(9)
     w, h, y0, z = BOARD["width"], BOARD["height"], BOARD["y0"], BOARD["z"]
@@ -319,7 +374,7 @@ def board():
     # stakes into the ground
     for sx in (-w / 2 + 0.25, w / 2 - 0.25):
         oriented_box(planks, p(sx, h / 2 - 0.25, 0.06), (up, (1.0, 0.0, 0.0), out), (h / 2 + 0.45, 0.05, 0.03), rng.randrange(8))
-    # the black face
+    # the green face
     face.quad([p(-w / 2, 0, 0), p(w / 2, 0, 0), p(w / 2, h, 0), p(-w / 2, h, 0)], back, [(0, 0), (1, 0), (1, 1), (0, 1)])
     face.quad([p(w / 2, 0, 0.02), p(-w / 2, 0, 0.02), p(-w / 2, h, 0.02), p(w / 2, h, 0.02)], out, [(0, 0), (1, 0), (1, 1), (0, 1)])
     # a frame of planks round it
@@ -373,7 +428,8 @@ def write_i3d(variant, path, parts):
     plane = variant["fillPlane"]
     files = [f"$data/fillPlanes/{plane}_diffuse.png", f"$data/fillPlanes/{plane}_normal.png",
              "../xcJumps/xcBarkA_diffuse.dds", "../xcJumps/xcBarkA_normal.dds", "../xcJumps/xcLogEnd_diffuse.dds",
-             "../xcJumps/xcPlanks_diffuse.dds", "../xcJumps/xcPlanks_normal.dds", "../bleachers/bleacherSponsor_diffuse.dds"]
+             "../xcJumps/xcPlanks_diffuse.dds", "../xcJumps/xcPlanks_normal.dds", "../bleachers/bleacherSponsor_diffuse.dds",
+             "lizardGreenPlanks_diffuse.dds"]
     fid = {f: i + 1 for i, f in enumerate(files)}
     lines = ['<?xml version="1.0" encoding="iso-8859-1"?>', "",
              f'<i3D name="{variant["name"]}" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
@@ -389,10 +445,12 @@ def write_i3d(variant, path, parts):
               f'      <Texture fileId="{fid[files[4]]}"/>', "    </Material>",
               '    <Material name="lizardPlanks" materialId="4" specularColor="0.15 0.6 0">',
               f'      <Texture fileId="{fid[files[5]]}"/>', f'      <Normalmap fileId="{fid[files[6]]}"/>', "    </Material>",
-              '    <Material name="lizardBoardFace" materialId="5" diffuseColor="0.03 0.03 0.03 1" specularColor="0.2 0.4 0"/>',
+              '    <Material name="lizardBoardFace" materialId="5" diffuseColor="0.2307 0.5089 0.0222 1" specularColor="0.2 0.4 0"/>',
               '    <Material name="eqSponsor" materialId="6" specularColor="0.2 0.5 0" alphaBlending="true">',
               f'      <Texture fileId="{fid[files[7]]}"/>', "    </Material>",
               '    <Material name="trigger" materialId="7" diffuseColor="0.5 0.5 0.5 1"/>',
+              '    <Material name="lizardGreen" materialId="8" specularColor="0.2 0.5 0">',
+              f'      <Texture fileId="{fid[files[8]]}"/>', f'      <Normalmap fileId="{fid[files[6]]}"/>', "    </Material>",
               "  </Materials>"]
     shapes = []
     for key, mesh in parts.items():
@@ -425,7 +483,7 @@ def write_i3d(variant, path, parts):
         ("mound", ["mound", "moundCol"]),
         ("logs", ["bark", "logEnds"]),
         # the lizard's group stands at its feet, so it tips over backwards there when it collapses
-        ("lizard", ["lizard", "lizardCol"]),
+        ("lizard", ["lizard", "battens", "lizardCol"]),
         ("sign", ["boardPlanks", "boardFace", "eqSponsor_1"]),
         ("sellingStation", ["unloadTrigger", "palletTrigger", "woodTrigger", "woodActivationTrigger"]
          + (["baleTrigger"] if variant["bale"] else [])),
@@ -583,8 +641,8 @@ def write_xml(variant, path, mappings):
 
 def logotype(path=None):
     """The shop picture's stand-in for Lizard's logo (the real one is read in game): white
-    letters on black."""
-    img = Image.new("RGB", (512, 160), (8, 8, 8))
+    letters on Lizard green."""
+    img = Image.new("RGB", (512, 160), LIZARD_GREEN)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(xc.FONT, 120)
     box = draw.textbbox((0, 0), "LIZARD", font=font)
@@ -613,7 +671,8 @@ def build(variant):
                      "attrs": f'static="true" collisionFilterGroup="{COLLISION_GROUP}" collisionFilterMask="{COLLISION_MASK}" density="0.01" nonRenderable="true"'},
         "bark": {"mesh": barks, "material": 2, "name": "logBark"},
         "logEnds": {"mesh": ends, "material": 3},
-        "lizard": {"mesh": lizard(base_y), "material": 4, "name": "planks"},
+        "lizard": {"mesh": lizard(base_y), "material": 8, "name": "planks"},
+        "battens": {"mesh": battens(base_y), "material": 4},
         "boardPlanks": {"mesh": planks, "material": 4},
         "boardFace": {"mesh": face, "material": 5},
         "eqSponsor_1": {"mesh": logos["eqSponsor_1"], "material": 6, "attrs": 'castsShadows="false" receiveShadows="true"'},
@@ -641,6 +700,8 @@ def main():
     planks_rgb = np.asarray(Image.open("placeables/xcJumps/xcPlanks_diffuse.dds").convert("RGB"), dtype=float)
     bark_rgb = np.asarray(Image.open("placeables/xcJumps/xcBarkA_diffuse.dds").convert("RGB"), dtype=float)
     ends_rgb = np.asarray(Image.open("placeables/xcJumps/xcLogEnd_diffuse.dds").convert("RGB"), dtype=float)
+    green_rgb = green_planks(planks_rgb)
+    xc.save_dxt1(green_rgb, os.path.join(OUT, "lizardGreenPlanks_diffuse.dds"))
     for variant in VARIANTS:
         parts = build(variant)
         mappings = write_i3d(variant, os.path.join(OUT, variant["name"] + ".i3d"), parts)
@@ -652,12 +713,28 @@ def main():
             out.tris = list(mesh.tris)
             return out
         meshes = [(parts["mound"]["mesh"], noise_texture(variant["preview"], 4)), (parts["bark"]["mesh"], bark_rgb),
-                  (parts["logEnds"]["mesh"], ends_rgb), (parts["lizard"]["mesh"], planks_rgb),
-                  (parts["boardPlanks"]["mesh"], planks_rgb), (parts["boardFace"]["mesh"], xc_flat((8, 8, 8))),
+                  (parts["logEnds"]["mesh"], ends_rgb), (parts["lizard"]["mesh"], green_rgb), (parts["battens"]["mesh"], planks_rgb),
+                  (parts["boardPlanks"]["mesh"], planks_rgb), (parts["boardFace"]["mesh"], xc_flat(LIZARD_GREEN)),
                   (flip(parts["eqSponsor_1"]["mesh"]), logotype())]
         store_image([m for m in meshes if m[0].tris], os.path.join(OUT, "store_" + variant["name"] + ".dds"), preview_dir, yaw=-145)
         print(variant["name"], len(parts["mound"]["mesh"].tris), "mound triangles,",
-              len(parts["lizard"]["mesh"].tris) // 12, "planks")
+              len(parts["lizard"]["mesh"].tris), "lizard triangles")
+
+
+# Lizard green (James, 2026-11-01), sRGB, as on the brand's logo
+LIZARD_GREEN = (132, 189, 41)
+
+
+def green_planks(planks_rgb):
+    """The plank texture painted Lizard green: the wood's light and dark (grain, gaps between
+    boards) kept under one cheap coat, a little wood showing where it's thin."""
+    lum = planks_rgb.mean(axis=2, keepdims=True) / 255.0
+    shade = 0.55 + 0.75 * (lum - lum.mean())
+    shade = np.clip(1.15 * shade / 0.55, 0.3, 1.4)
+    paint = np.array(LIZARD_GREEN, dtype=float)[None, None, :] * shade
+    rng = np.random.default_rng(12)
+    worn = (rng.random(lum.shape) < 0.04).astype(float) * 0.5
+    return np.clip(paint * (1 - worn) + planks_rgb * worn, 0, 255)
 
 
 def xc_flat(rgb):

@@ -120,7 +120,8 @@
         <i3dMapping id="logEnds" node="0>2|1"/>
         <i3dMapping id="lizard" node="0>3"/>
         <i3dMapping id="planks" node="0>3|0"/>
-        <i3dMapping id="lizardCollision" node="0>3|1"/>
+        <i3dMapping id="battens" node="0>3|1"/>
+        <i3dMapping id="lizardCollision" node="0>3|2"/>
         <i3dMapping id="sign" node="0>4"/>
         <i3dMapping id="boardPlanks" node="0>4|0"/>
         <i3dMapping id="boardFace" node="0>4|1"/>
