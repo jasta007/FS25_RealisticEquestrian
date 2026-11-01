@@ -895,7 +895,8 @@
         <text name="eq_host_report_turnout" text="Opkomst: %d van %d gastpaarden kwamen (populariteit %d)."/>
         <text name="eq_host_report_feedSoFar" text="Gastpaarden hebben tot nu toe %d l van je voer gegeten (%d l per dag)."/>
         <text name="eq_host_report_feed" text="Gastpaarden aten %d l van je voer."/>
-        <text name="eq_host_report_money" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s: winst %s."/>
+        <text name="eq_host_report_takings" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s."/>
+        <text name="eq_host_report_total" text="Eindpopulariteit %d. Winst %s."/>
         <text name="eq_host_report_mine" text="Je paard %s: %s."/>
         <text name="eq_host_results_row" text="Je evenementen"/>
         <text name="eq_host_results_running" text="Nu bezig"/>
