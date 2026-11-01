@@ -934,8 +934,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Turntable** (25,000): a round plinth with a ramp flush to the back; its brushed metal disc
   turns once every two minutes while it holds a machine, and stands still when empty. A machine left on the disc with nobody in it, standing still, is
   after 3 seconds slid to the middle and held on the disc (out of the physics, like a ferry),
-  turning with it, together with anything hitched to it (a wheel loader's bucket, a truck's
-  trailer). Getting into any of them, hitching or unhitching, or selling gives them their physics
+  turning with it, together with anything mounted on it (a wheel loader's bucket, a front
+  tool). A machine towing a trailer isn't held, so a long trailer never swings round; unhitch it. Getting into any of them, hitching or unhitching, or selling gives them their physics
   back. A sponsor machine there counts **3 boards**. In multiplayer it holds nothing, so it
   doesn't turn (not tried).
 - **Feedback:** stop the machine you drive on one of your places and a popup says "Sponsor

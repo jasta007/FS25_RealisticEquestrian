@@ -11,7 +11,9 @@
 
     A machine is held with everything hitched to it (James, 2026-11-01: a wheel loader, whose
     bucket is an implement of its own, wouldn't snap): the whole chain comes out of the physics
-    and turns together; hitching or unhitching anything lets go.
+    and turns together; hitching or unhitching anything lets go. A machine towing a trailer
+    (a trailer hitch: trailer, low loader, semitrailer) isn't held at all, so the disc doesn't swing
+    a long trailer round; unhitch it to show the truck.
     The disc stands still with nothing held on it. In multiplayer nothing is held (so it doesn't
     turn): the server's held machine would not reach the other players the same way (not tried).
 
@@ -75,6 +77,36 @@ local function chain(vehicle)
         end
     end
     return list
+end
+
+
+--- @param jointType number|nil an attacher joint's type
+--- @return boolean true for a trailer's hitch (trailer, trailerLow, semitrailer and the like)
+function EqTurntable.isTrailerJoint(jointType)
+    local names = AttacherJoints ~= nil and AttacherJoints.jointTypeNameToInt or nil
+    if jointType == nil or names == nil then return false end
+    for name, value in pairs(names) do
+        if value == jointType then return string.find(string.lower(name), "trailer", 1, true) ~= nil end
+    end
+    return false
+end
+
+
+--- @param machines table a chain (chain())
+--- @return boolean true when anything in it is towed on a trailer hitch: those aren't held (James,
+--- 2026-11-01: a long semitrailer swinging round with the disc looked wrong); a loader's bucket or a
+--- mounted tool still is
+local function towsTrailer(machines)
+    for _, machine in ipairs(machines) do
+        if machine.getAttachedImplements ~= nil then
+            local joints = machine.getAttacherJoints ~= nil and machine:getAttacherJoints() or nil
+            for _, implement in pairs(machine:getAttachedImplements() or {}) do
+                local joint = joints ~= nil and implement.jointDescIndex ~= nil and joints[implement.jointDescIndex] or nil
+                if joint ~= nil and EqTurntable.isTrailerJoint(joint.jointType) then return true end
+            end
+        end
+    end
+    return false
 end
 
 
@@ -253,9 +285,12 @@ function EqTurntable.update(dt)
                 for _, vehicle in ipairs(g_currentMission.vehicleSystem.vehicles or {}) do
                     local free = isHead(vehicle) and entry.held[vehicle] == nil and exists(vehicle) and onDisc(entry, vehicle)
                     if free then
-                        for _, machine in ipairs(chain(vehicle)) do
+                        local machines = chain(vehicle)
+                        for _, machine in ipairs(machines) do
                             if inUse(machine) or not still(machine) then free = false end
                         end
+                        local ok, tows = EqLog.try("EqTurntable trailer", towsTrailer, machines)
+                        if free and ok and tows then free = false end
                     end
                     if free then
                         local waited = (entry.waiting[vehicle] or 0) + math.max(0, elapsed)
