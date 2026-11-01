@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
         <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
         <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJumpWall" text="Препятствие: спонсорская стенка"/>
+        <text name="eq_shop_showJumpWall_function" text="Эффектная стенка с логотипом вашего спонсора. Верхние блоки падают, если лошадь их задевает, и возвращаются после маршрута."/>
         <text name="eq_shop_showJumpCrossrail" text="Препятствие: крестовина"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Препятствие: восходящий оксер"/>
         <text name="eq_shop_showJumpTripleBar" text="Препятствие: тройная жердь"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Ролл-топ (половина)"/>
         <text name="eq_shop_xcTable" text="Стол"/>
         <text name="eq_shop_xcBigLog" text="Большое бревно"/>
+        <text name="eq_shop_xcGateArch" text="Арка старта/финиша"/>
+        <text name="eq_shop_xcGateSimple" text="Проездные ворота"/>
+        <text name="eq_shop_xcGate_function" text="Ворота для проезда, а не препятствие: достаточно широкие и высокие для любой лошади, с логотипом вашего спонсора."/>
+        <text name="eq_shop_xcRope" text="Разметочная верёвка"/>
+        <text name="eq_shop_xcRope_function" text="Лёгкая верёвка для разметки маршрута, без столкновений. Выберите простую верёвку или с маленькой табличкой спонсора: таблички дают совсем немного брендинга."/>
+        <text name="eq_shop_plinthDrive" text="Проездной подиум"/>
+        <text name="eq_shop_plinthRamp" text="Выставочная рампа"/>
+        <text name="eq_shop_plinthRampLarge" text="Большая выставочная рампа"/>
+        <text name="eq_shop_plinthProductRamp" text="Рампа продуктового прыжка"/>
+        <text name="eq_shop_plinth_function" text="Поставьте на него технику марки вашего спонсора для дополнительного брендинга."/>
+        <text name="eq_shop_productJump_function" text="Поставьте две напротив друг друга примерно в 5 м: техника между ними тоже засчитывается, или прыгайте их как препятствие кросса."/>
+        <text name="eq_shop_plinthTurntable" text="Поворотный подиум"/>
+        <text name="eq_shop_turntable_function" text="Диск медленно вращается: оставьте на нём технику, и она будет вращаться вместе с ним со всем прицепленным. Техника спонсора здесь засчитывается больше."/>
+        <text name="eq_plinth_inPlace" text="Техника спонсора на месте!"/>
+        <text name="eq_plinth_wrongBrand" text="Это не техника вашего спонсора! Выставленные машины конкурентов уменьшат ваш доход от спонсорства!"/>
+        <text name="eq_plinth_noSponsor" text="Спонсор не подписан: его техника, выставленная здесь, засчитывалась бы в ваш брендинг."/>
+        <text name="eq_plinth_penalty" text="%d машин(ы) конкурентов на ваших спонсорских подиумах: из гонорара спонсора вычтено %s."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Вероятная выплата"/>
         <text name="eq_sponsor_likelyLine" text="%s на уровне %s"/>
         <text name="eq_shop_branding" text="Ваш брендинг: сейчас %s, с этим %s. Больше брендинга — больше платит спонсор."/>
+        <text name="eq_shop_brandingOption" text="Со спонсорскими щитами, ваш брендинг: сейчас %s, с этим %s."/>
+        <text name="eq_config_sponsorBoards" text="Спонсорские щиты"/>
+        <text name="eq_shop_sponsorBoards_function" text="Спонсорские щиты (по желанию, за доплату): щиты на стойках показывают логотип вашего спонсора, а жерди окрашиваются в его цвет."/>
         <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
         <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
         <text name="eq_sponsor_discount_buy" text="Покупка %s"/>

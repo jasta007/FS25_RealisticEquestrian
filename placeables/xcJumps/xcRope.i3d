@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="xcRope.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="3" filename="$data/shaders/placeableShader.xml"/>
+    <File fileId="6" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
+    <File fileId="1" filename="xcFlags_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="eqSponsor" materialId="7" specularColor="0.2 1 0" alphaBlending="true" customShaderId="3" customShaderVariation="vertexOffset">
+      <Texture fileId="6"/>
+    </Material>
+    <Material name="xcFlags" materialId="5" specularColor="0.101961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="xcRope" materialId="6" specularColor="0.101961 1 0" customShaderId="3" customShaderVariation="vertexOffset">
+      <Texture fileId="1"/>
+    </Material>
+  </Materials>
+
+
+  <PerInstanceMaterialParameters>
+  </PerInstanceMaterialParameters>
+
+
+  <Shapes externalShapesFile="xcRope.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="gates" nodeId="18"/>
+    <TransformGroup name="poles" nodeId="19">
+      <TransformGroup name="eqRopeStake" nodeId="20">
+        <Shape name="stake" shapeId="1" clipDistance="300" nodeId="21" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="col" shapeId="2" static="true" collisionFilterGroup="0x3e" collisionFilterMask="0xfffffbff" density="0.01" nodeId="22" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+    </TransformGroup>
+    <TransformGroup name="panels" nodeId="23">
+      <TransformGroup name="eqRope" nodeId="24">
+        <Shape name="rope" shapeId="3" clipDistance="300" nodeId="25" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="col" shapeId="4" static="true" collisionFilterGroup="0x3e" collisionFilterMask="0xfffffbff" density="0.01" nodeId="26" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+      <TransformGroup name="eqRopeSign" nodeId="27">
+        <Shape name="rope" shapeId="3" clipDistance="300" nodeId="28" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="sign" shapeId="5" clipDistance="300" nodeId="29" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_1" shapeId="6" clipDistance="300" nodeId="30" castsShadows="false" receiveShadows="true" materialIds="7"/>
+        <Shape name="eqSponsor_1b" shapeId="7" clipDistance="300" nodeId="31" castsShadows="false" receiveShadows="true" materialIds="7"/>
+        <Shape name="col" shapeId="4" static="true" collisionFilterGroup="0x3e" collisionFilterMask="0xfffffbff" density="0.01" nodeId="32" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

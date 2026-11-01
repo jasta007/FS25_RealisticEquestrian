@@ -45,7 +45,10 @@ dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
+dofile("scripts/facilities/EqPlinths.lua")
+dofile("scripts/facilities/EqTurntable.lua")
 dofile("scripts/facilities/EqSponsors.lua")
+dofile("scripts/facilities/EqSponsorBoards.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -4480,6 +4483,16 @@ end)()
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
 -- do block: the main chunk is at Lua's 200 locals.
 ;(function()
+    -- Every knock, hit and land sound ships, mono so the game places it in 3D.
+    for _, list in ipairs({ EqPoles.SOUNDS, EqPoles.BLOCK_HIT, EqPoles.BLOCK_LAND }) do
+        for _, file in ipairs(list) do
+            local f = io.open(file, "rb")
+            local head = f ~= nil and f:read(80) or ""
+            if f ~= nil then f:close() end
+            local at = head:find("\1vorbis", 1, true)
+            check("pole sounds: " .. file .. " ships, mono", at ~= nil and head:byte(at + 11) == 1)
+        end
+    end
     local function level(lead, push, restA)
         return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
     end
@@ -4887,6 +4900,220 @@ end)()
         and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcTable.xml")
         and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcBigLog.xml")
         and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
+    check("sponsors: the plank corner, big drop wall and show jumps carry boards",
+        EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcCornerPlank.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall16.xml")
+        and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall12.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("sponsor boards: a board's back and pieces are the same board", string.match("eqSponsor_2b", EqSponsors.NODE) == "2"
+        and string.match("eqSponsor_12", EqSponsors.NODE) == "12" and string.match("eqSponsor_2c", EqSponsors.NODE) == nil
+        and string.match("eqSponsor_1f3", EqSponsors.NODE) == "1" and string.match("eqSponsor_2f12", EqSponsors.NODE) == "2")
+    -- The wall (James, 2026-10-31): two boards (front, back) cut along its five falling blocks.
+    do
+        local text = io.open("placeables/showJumps/showJumpWall.i3d"):read("*a")
+        local numbers, pieces = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)f?%d*"') do numbers[n] = true; pieces = pieces + 1 end
+        local blocks = 0
+        for _ in text:gmatch('name="eqBlock"') do blocks = blocks + 1 end
+        check("sponsor wall: two boards in pieces, five blocks", numbers["1"] and numbers["2"] and pieces == 12 and blocks == 5,
+            pieces .. " pieces " .. blocks .. " blocks")
+        check("sponsor wall: always has its boards", EqSponsorBoards.isOn({ configFileName = "x/placeables/showJumps/showJumpWall.xml" }))
+        check("sponsor gates: always have their boards, in the shop, no flags (not fences)",
+            EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateArch.xml" })
+            and EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateSimple.xml" })
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcGateSimple.xml", 1, true) ~= nil
+            and io.open("placeables/xcJumps/xcGateArch.i3d"):read("*a"):find("eqFlags", 1, true) == nil
+            and EqSponsors.isBleacherXml("C:/m/FS25_RealisticEquestrian/placeables/xcJumps/xcGateArch.xml"))
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        check("sponsor wall: in the shop", modDesc:find("placeables/showJumps/showJumpWall.xml", 1, true) ~= nil)
+        local fall = { a = { 0.35, 1.0, 0 }, b = { -0.35, 1.0, 0 }, restA = 0.2, restB = 0.2, push = 1, block = true }
+        local p0 = EqPoles.blockPose(fall, 0.1)
+        check("a knocked block slides off the wall before it drops", p0.y == 1.0 and p0.z > 0 and p0.rx > 0)
+        local p1 = EqPoles.fallPose(fall, 5)
+        check("and lies a quarter turn over on the ground", p1.still and math.abs(p1.y - 0.2) < 1e-9
+            and math.abs(p1.rx - math.pi / 2) < 1e-9 and p1.z > 0.6)
+        local back = EqPoles.blockPose({ a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = -1, block = true }, 5)
+        check("pushed from behind it goes the other way", back.z < -0.6 and back.rx < 0)
+        local slow = { a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = 1, block = true,
+            speedScale = 0.7, tipScale = 1.3, delay = 0.15, turn = 0.3 }
+        local early, late = EqPoles.blockPose(slow, 0.1), EqPoles.blockPose(slow, 5)
+        check("blocks vary: one starts late, slides slower and lands turned and nearer", early.z == 0 and late.still
+            and late.z < p1.z and math.abs(late.ry - p1.ry - 0.3) < 1e-9 and not EqPoles.blockPose(slow, 0.6).still)
+        local row = { { state = EqPoles.UP, home = { -1.4, 1.0, 0 } }, { state = EqPoles.UP, home = { 0, 1.0, 0 } }, { state = EqPoles.UP, home = { 1.4, 1.0, 0 } } }
+        check("running into the wall knocks the block in the horse's way", EqPoles.crashPole(row, 0.3, 1.2) == row[3]
+            and EqPoles.crashPole(row, 0.3, -0.1) == row[2])
+        check("a leg under a block's top knocks it, over it doesn't",
+            EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.15, nil, 0.2, 0.2)
+            and not EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.25, nil, 0.2, 0.2))
+    end
+
+    -- Every board-carrying piece's i3d has the boards the shop line counts (front faces by number).
+    local function boardNumbers(path)
+        local f = io.open(path)
+        if f == nil then return -1 end
+        local text = f:read("*a")
+        f:close()
+        local numbers, count = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)b?"') do
+            if not numbers[n] then numbers[n], count = true, count + 1 end
+        end
+        return count, text
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
+        local files = { ["placeables/xcjumps/xctable.xml"] = "placeables/xcJumps/xcTable.i3d",
+            ["placeables/xcjumps/xccornerplank.xml"] = "placeables/xcJumps/xcCornerPlank.i3d",
+            ["placeables/xcjumps/xcdropwall16.xml"] = "placeables/xcJumps/xcDropWall16.i3d",
+            ["placeables/xcjumps/xcgatearch.xml"] = "placeables/xcJumps/xcGateArch.i3d",
+            ["placeables/xcjumps/xcgatesimple.xml"] = "placeables/xcJumps/xcGateSimple.i3d" }
+        local file = files[suffix] or ""
+        if file:find("xcJumps") then
+            local count = boardNumbers(file)
+            check("sponsor boards: " .. file .. " has " .. boards, count == boards, tostring(count))
+        end
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_OPTION_BOARDS) do
+        local name = suffix:match("showjumps/(%w+)%.xml$")
+        local real
+        for _, n in ipairs({ "showJumpUpright", "showJumpOxer", "showJumpTripleBar", "showJumpHogsback", "showJumpFan3", "showJumpLiverpool" }) do
+            if n:lower() == name then real = n end
+        end
+        local count, text = boardNumbers("placeables/showJumps/" .. tostring(real) .. ".i3d")
+        check("sponsor boards: " .. tostring(real) .. " has " .. boards .. " boards, hidden until bought",
+            count == boards and text:find('name="eqSponsorOn" visibility="false"', 1, true) ~= nil, tostring(count))
+        local xml = io.open("placeables/showJumps/" .. tostring(real) .. ".xml"):read("*a")
+        check("sponsor boards: " .. tostring(real) .. " offers the choice", xml:find("<eqSponsorBoardsConfiguration", 1, true) ~= nil)
+        check("sponsor boards: " .. tostring(real) .. " is a jump with the choice",
+            EqSponsorBoards.isJump("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\" .. real .. ".xml"))
+    end
+    for _, n in ipairs({ "showJumpCrossrail", "showJumpCavaletti", "showJumpAscendingOxer", "showJumpFan2" }) do
+        local xml = io.open("placeables/showJumps/" .. n .. ".xml"):read("*a")
+        check("sponsor boards: " .. n .. " stays plain", xml:find("eqSponsorBoards", 1, true) == nil
+            and not EqSponsorBoards.isJump("placeables/showJumps/" .. n .. ".xml"))
+    end
+    check("sponsor boards: bought only with Yes", EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 2 } })
+        and not EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 1 } }) and not EqSponsorBoards.isOn({}) and not EqSponsorBoards.isOn(nil))
+
+    -- Rope marker: signs are a tiny bit of branding, capped (James, 2026-10-31).
+    check("rope marker: known, its signs count a tenth each", EqSponsors.isRope("C:\\m\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcRope.xml")
+        and EqSponsors.isBleacherXml("x/placeables/xcJumps/xcRope.xml") and not EqSponsors.isRope("x/placeables/xcJumps/xcTable.xml")
+        and math.abs(EqSponsors.total(2, 3) - 2.3) < 1e-9)
+    check("rope marker: all ropes together give one board at most", EqSponsors.total(0, 40) == 1 and EqSponsors.total(3, 11) == 4)
+    do
+        local rope = io.open("placeables/xcJumps/xcRope.xml"):read("*a")
+        local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
+        check("rope marker: a fence with plain and signed rope, in the shop", rope:find('type="newFence"', 1, true) ~= nil
+            and rope:find('id="ROPE_SIGN"', 1, true) ~= nil and i3d:find('name="eqSponsor_1"', 1, true) ~= nil
+            and i3d:find('name="eqSponsor_1b"', 1, true) ~= nil
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcRope.xml", 1, true) ~= nil)
+    end
+
+    -- Sponsor plinths: the sponsor's machines parked on a deck count (James, 2026-10-31).
+    do
+        local drive = EqPlinths.areasFor("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthDrive.xml")
+        check("plinths: known by their xml, drop walls too, other pieces not", drive ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcDropWall08.xml") ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcTable.xml") == nil and EqPlinths.areasFor(nil) == nil)
+        local deck = drive[1]
+        check("plinths: a machine on the deck counts", EqPlinths.inArea(deck, 0.3, 0.8, -2.5))
+        check("plinths: not one on the ground beside it, nor off its end", not EqPlinths.inArea(deck, 0.3, 0.0, -2.5)
+            and not EqPlinths.inArea(deck, 2.5, 0.8, 0) and not EqPlinths.inArea(deck, 0, 0.8, 3.6))
+        local ramp = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthRamp.xml")[1]
+        check("plinths: on a display ramp the surface rises to the front", EqPlinths.inArea(ramp, 0, 1.0, -1.6)
+            and EqPlinths.inArea(ramp, 0, 0.25, 1.6) and not EqPlinths.inArea(ramp, 0, -0.3, -1.6))
+        local bank = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthProductRamp.xml")
+        check("plinths: a product ramp is one bank, 2 m up at its short top, down its ramp", #bank == 1
+            and EqPlinths.inArea(bank[1], 0, 2.0, 1.5) and EqPlinths.inArea(bank[1], 1.5, 0.3, 8.5)
+            and not EqPlinths.inArea(bank[1], 0, 0.0, 1.5) and not EqPlinths.inArea(bank[1], 0, 2.0, -1))
+        check("plinths: a machine on the ground between two facing product ramps stands in the gap",
+            EqPlinths.between({ 0.5, 0.1, -2.4 }, { -0.5, 0.1, -2.4 })
+            and EqPlinths.between({ 1.8, 0.0, -1.5 }, { -1.8, 0.0, -1.5 }))
+        check("plinths: not beside the gap, up on a bank, nor between ramps too far apart or back to back",
+            not EqPlinths.between({ 3.0, 0.1, -2.4 }, { -3.0, 0.1, -2.4 })
+            and not EqPlinths.between({ 0, 0.1, 2.0 }, { 0, 0.1, -9.0 })
+            and not EqPlinths.between({ 0, 0.1, -6.0 }, { 0, 0.1, -6.0 })
+            and not EqPlinths.between({ 0, 0.1, -0.5 }, { 0, 0.1, -0.5 })
+            and not EqPlinths.between({ 0, 2.0, -2.4 }, { 0, 2.0, -2.4 }))
+        local a, b, c = { k = 1 }, { k = 2 }, { k = 3 }
+        local on = function(place, machine) return place[machine] == true end
+        local paired = EqPlinths.match({ { [a] = true, [b] = true }, { [a] = true }, { [c] = true } }, { a, b, c }, on)
+        check("plinths: each machine counts once, each place once", #paired == 2 and paired[1].machine == a
+            and paired[2].machine == c)
+        check("plinths: other brands on show cost a tenth of the fee each, at most half", EqPlinths.penalty(0) == 0
+            and math.abs(EqPlinths.penalty(2) - 0.2) < 1e-9 and EqPlinths.penalty(9) == 0.5 and EqPlinths.penalty(nil) == 0)
+        check("plinths: no sponsor, nothing counted", EqPlinths.count(1, {}) == 0 and EqPlinths.count(1, nil) == 0)
+        check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
+        do
+            local saved = EqSponsorManager
+            EqSponsorManager = { contracts = { [1] = { brand = "FENDT" }, [2] = { { brand = "CLAAS" }, { brand = "KUHN" } } } }
+            local one, many, none = EqSponsors.signedBrands(1), EqSponsors.signedBrands(2), EqSponsors.signedBrands(3)
+            EqSponsorManager = saved
+            check("plinths: one sponsor or several (PR #137), every sponsor's machines count", one[1] == "FENDT" and #one == 1
+                and many[1] == "CLAAS" and many[2] == "KUHN" and #none == 0)
+        end
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductRamp", "plinthTurntable" }) do
+            local path = "placeables/sponsorPlinths/" .. n
+            local i3d = io.open(path .. ".i3d"):read("*a")
+            local numbers, count = {}, 0
+            for k in i3d:gmatch('name="eqSponsor_(%d+)b?"') do
+                if not numbers[k] then numbers[k], count = true, count + 1 end
+            end
+            check("plinths: " .. n .. " in the shop, boards as counted, sponsor colours",
+                modDesc:find(path .. ".xml", 1, true) ~= nil and count == EqSponsors.shopBoards(path .. ".xml")
+                and EqSponsorBoards.isOn({ configFileName = path .. ".xml" }) and EqSponsors.isBleacherXml(path .. ".xml")
+                and EqPlinths.areasFor(path .. ".xml") ~= nil, tostring(count))
+        end
+        local disc = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthTurntable.xml")[1]
+        check("turntable: a round deck, a machine there worth three boards", EqPlinths.inArea(disc, 2.0, 0.75, -2.0)
+            and not EqPlinths.inArea(disc, 2.5, 0.75, -2.5) and not EqPlinths.inArea(disc, 0, 0.0, 0)
+            and EqPlinths.inArea(disc, 0, 0.75, 3.3) and EqPlinths.value({ area = disc }) == 3
+            and EqPlinths.value({ a = 1, b = 2 }) == EqPlinths.MACHINE)
+        check("turntable: known by its xml", EqTurntable.isTurntable("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthTurntable.xml")
+            and not EqTurntable.isTurntable("x/placeables/sponsorPlinths/plinthDrive.xml"))
+        local quarter = EqTurntable.advance(0, EqTurntable.TURN_MS / 4)
+        check("turntable: one slow turn every two minutes", math.abs(quarter - math.pi / 2) < 1e-9
+            and math.abs(EqTurntable.advance(6.2, EqTurntable.TURN_MS / 4) - (6.2 + math.pi / 2 - 2 * math.pi)) < 1e-9
+            and EqTurntable.TURN_MS >= 60000)
+        check("turntable: its disc is a node of its own", io.open("placeables/sponsorPlinths/plinthTurntable.i3d"):read("*a")
+            :find('<TransformGroup name="' .. EqTurntable.DISC .. '"', 1, true) ~= nil)
+        check("plinths: the product ramp has no flags of its own (players set them) and its board is on its face",
+            io.open("placeables/sponsorPlinths/plinthProductRamp.i3d"):read("*a"):find('eqFlags', 1, true) == nil
+            and io.open("modDesc.xml"):read("*a"):find("plinthProductJump", 1, true) == nil)
+    end
+
+    -- Sponsor colours: the brand's most colourful paint, our list, else none.
+    local paints = { fendtNatureGreen = { 0.05, 0.20, 0.03 }, fendtGrey = { 0.2, 0.2, 0.2 }, ["FENDT_BLACK"] = { 0.01, 0.01, 0.01 },
+        claasSeedGreen = { 0.45, 0.55, 0.02 }, deutzFahrGreen = { 0.15, 0.45, 0.05 } }
+    local c, from = EqSponsorBoards.pickPaint("FENDT", paints)
+    check("sponsor colours: a brand's own coloured paint", c == paints.fendtNatureGreen and from == "fendtNatureGreen")
+    check("sponsor colours: names match without case or punctuation", EqSponsorBoards.pickPaint("DEUTZFAHR", paints) == paints.deutzFahrGreen)
+    check("sponsor colours: no grey or black, no other brand's", EqSponsorBoards.pickPaint("FENDT", { fendtGrey = { 0.2, 0.2, 0.2 } }) == nil
+        and EqSponsorBoards.pickPaint("KUHN", paints) == nil and EqSponsorBoards.pickPaint("", paints) == nil)
+    check("sponsor colours: read from the shapes the game keeps them in",
+        EqSponsorBoards.readColour("0.1 0.2 0.3")[3] == 0.3 and EqSponsorBoards.readColour({ r = 1, g = 0, b = 0 })[1] == 1
+        and EqSponsorBoards.readColour({ 0.5, 0.5, 0.5, 1 })[2] == 0.5 and EqSponsorBoards.readColour("x") == nil and EqSponsorBoards.readColour(nil) == nil)
+    local lin = EqSponsorBoards.linear({ 255, 128, 0 })
+    check("sponsor colours: our list is made linear", math.abs(lin[1] - 1) < 1e-9 and math.abs(lin[2] - 0.2158605) < 1e-6 and lin[3] == 0)
+    do
+        local saved = EqSponsorBoards.brandColour
+        EqSponsorBoards.brandColour = function(brand)
+            if brand == "KRONE" then return { 0.01, 0.15, 0.01 } end
+            if brand == "CHALLENGER" then return { 0.9, 0.5, 0 } end
+            return nil
+        end
+        local white, krone, pale = EqSponsorBoards.faceColour("CLAAS"), EqSponsorBoards.faceColour("KRONE"), EqSponsorBoards.faceColour("CHALLENGER")
+        EqSponsorBoards.brandColour = saved
+        check("sponsor boards: a white logo gets a dark board (its own colour if dark enough), others white",
+            white == EqSponsorBoards.FACE_WHITE and krone[2] == 0.15 and pale == EqSponsorBoards.FACE_DARK
+            and EqSponsorBoards.faceColour(nil) == EqSponsorBoards.FACE_WHITE and EqSponsorBoards.LIGHT_LOGOS.KRONE)
+    end
+    EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
+    local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
+    check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")
+    check("sponsor colours: none for an unknown brand", EqSponsorBoards.brandColour("NOBRANDATALL") == nil and EqSponsorBoards.brandColour(nil) == nil)
+    EqSponsorBoards.paints, EqSponsorBoards.cache = nil, nil
+    check("sponsor colours: plain jumps keep the shop colour",
+        EqSponsorBoards.colourFor({ configFileName = "x/placeables/showJumps/showJumpOxer.xml", configurations = { eqSponsorBoards = 1 } }) == nil)
     check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
 
     EqHostManager.reset()

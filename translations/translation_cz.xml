@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
         <text name="eq_shop_showJumpUpright" text="Překážka: kolmý skok"/>
         <text name="eq_shop_showJumpOxer" text="Překážka: oxer"/>
+        <text name="eq_shop_showJumpWall" text="Překážka: sponzorská zeď"/>
+        <text name="eq_shop_showJumpWall_function" text="Okázalá zeď s logem tvého sponzora. Horní bloky spadnou, když do nich kůň narazí, a po parkuru se vrátí na místo."/>
         <text name="eq_shop_showJumpCrossrail" text="Překážka: křížek"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Překážka: stoupající oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Překážka: triplebarre"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (polovina)"/>
         <text name="eq_shop_xcTable" text="Stůl"/>
         <text name="eq_shop_xcBigLog" text="Velká kláda"/>
+        <text name="eq_shop_xcGateArch" text="Startovní/cílový oblouk"/>
+        <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
+        <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
+        <text name="eq_shop_xcRope" text="Vymezovací lano"/>
+        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano nebo lano s malou cedulkou sponzora: cedulky přidají jen trochu brandingu."/>
+        <text name="eq_shop_plinthDrive" text="Průjezdný podstavec"/>
+        <text name="eq_shop_plinthRamp" text="Výstavní rampa"/>
+        <text name="eq_shop_plinthRampLarge" text="Velká výstavní rampa"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa skoku s produktem"/>
+        <text name="eq_shop_plinth_function" text="Zaparkuj na něj stroj značky svého sponzora pro další branding."/>
+        <text name="eq_shop_productJump_function" text="Postav dvě proti sobě asi 5 m od sebe: stroj mezi nimi se počítá také, nebo je skoč jako terénní překážku."/>
+        <text name="eq_shop_plinthTurntable" text="Otočná plošina"/>
+        <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj a bude se otáčet s ním, i se vším připojeným. Stroj tvého sponzora se tu počítá víc."/>
+        <text name="eq_plinth_inPlace" text="Vybavení sponzora na místě!"/>
+        <text name="eq_plinth_wrongBrand" text="To není vybavení tvého sponzora! Vystavené stroje konkurence sníží tvé příjmy ze sponzoringu!"/>
+        <text name="eq_plinth_noSponsor" text="Žádný sponzor nepodepsán: jeho vybavení vystavené zde by se počítalo do brandingu."/>
+        <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Pravděpodobná platba"/>
         <text name="eq_sponsor_likelyLine" text="%s u %s"/>
         <text name="eq_shop_branding" text="Tvoje propagace: teď %s, s tímto %s. Více propagace zvýší, kolik sponzor platí."/>
+        <text name="eq_shop_brandingOption" text="Se sponzorskými tabulemi, tvoje propagace: teď %s, s tímto %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponzorské tabule"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponzorské tabule (volitelné, za příplatek): tabule na křídlech ukazují logo tvého sponzora a bariéry dostanou jeho barvu."/>
         <text name="eq_sponsor_discount_repaint" text="Lakování %s"/>
         <text name="eq_sponsor_discount_repair" text="Oprava %s"/>
         <text name="eq_sponsor_discount_buy" text="Nákup %s"/>

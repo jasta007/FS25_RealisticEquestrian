@@ -46,6 +46,8 @@
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
         <text name="eq_shop_showJumpUpright" text="Show Jump: Upright"/>
         <text name="eq_shop_showJumpOxer" text="Show Jump: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Show Jump: Sponsor Wall"/>
+        <text name="eq_shop_showJumpWall_function" text="A showpiece wall in your sponsor's logo. The top blocks fall when your horse hits them and go back up after the round."/>
         <text name="eq_shop_showJumpCrossrail" text="Show Jump: Crossrail"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Show Jump: Ascending Oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Show Jump: Triple Bar"/>
@@ -82,6 +84,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll Top (half)"/>
         <text name="eq_shop_xcTable" text="Table"/>
         <text name="eq_shop_xcBigLog" text="Big Log"/>
+        <text name="eq_shop_xcGateArch" text="Start/Finish Arch"/>
+        <text name="eq_shop_xcGateSimple" text="Ride-Through Gate"/>
+        <text name="eq_shop_xcGate_function" text="A gate to ride through, not a jump: wide and tall enough for any horse, with your sponsor's logo."/>
+        <text name="eq_shop_xcRope" text="Rope Marker"/>
+        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope or rope with a small hanging sponsor sign: signs add only a little branding."/>
+        <text name="eq_shop_plinthDrive" text="Drive-Through Plinth"/>
+        <text name="eq_shop_plinthRamp" text="Display Ramp"/>
+        <text name="eq_shop_plinthRampLarge" text="Large Display Ramp"/>
+        <text name="eq_shop_plinthProductRamp" text="Product Jump Ramp"/>
+        <text name="eq_shop_plinth_function" text="Park a machine of your sponsor's brand on it for extra branding."/>
+        <text name="eq_shop_productJump_function" text="Set two facing each other about 5 m apart: a machine between them counts too, or ride them as a cross country jump."/>
+        <text name="eq_shop_plinthTurntable" text="Turntable"/>
+        <text name="eq_shop_turntable_function" text="The disc turns slowly: leave a machine on it and it turns with the disc, with anything hitched to it. A sponsor's machine on it counts extra."/>
+        <text name="eq_plinth_inPlace" text="Sponsor equipment in place!"/>
+        <text name="eq_plinth_wrongBrand" text="Not your sponsor's equipment! Rival machines on show will reduce your sponsorship earnings!"/>
+        <text name="eq_plinth_noSponsor" text="No sponsor signed: their equipment on show here would count towards your branding."/>
+        <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
         <text name="eq_config_corner" text="Corner"/>
         <text name="eq_config_cornerRight" text="Point right"/>
         <text name="eq_config_cornerLeft" text="Point left"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Likely pay"/>
         <text name="eq_sponsor_likelyLine" text="%s at %s"/>
         <text name="eq_shop_branding" text="Your branding: %s now, %s with this. More branding raises what your sponsor pays."/>
+        <text name="eq_shop_brandingOption" text="With sponsor boards, your branding: %s now, %s with this."/>
+        <text name="eq_config_sponsorBoards" text="Sponsor boards"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsor boards (optional, extra cost): signs on the wings show your sponsor's logo and the poles take its colour."/>
         <text name="eq_sponsor_discount_repaint" text="Repaint %s"/>
         <text name="eq_sponsor_discount_repair" text="Repair %s"/>
         <text name="eq_sponsor_discount_buy" text="Buying %s"/>

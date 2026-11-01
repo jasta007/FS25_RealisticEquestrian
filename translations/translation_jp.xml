@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
         <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
         <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJumpWall" text="障害: スポンサーウォール"/>
+        <text name="eq_shop_showJumpWall_function" text="スポンサーのロゴ入りの見せ場の壁。馬が当たると上のブロックが落ち、走行後に元に戻ります。"/>
         <text name="eq_shop_showJumpCrossrail" text="障害: クロスバー"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障害: 上昇オクサー"/>
         <text name="eq_shop_showJumpTripleBar" text="障害: トリプルバー"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="ロールトップ（半円）"/>
         <text name="eq_shop_xcTable" text="テーブル"/>
         <text name="eq_shop_xcBigLog" text="大丸太"/>
+        <text name="eq_shop_xcGateArch" text="スタート/ゴールアーチ"/>
+        <text name="eq_shop_xcGateSimple" text="通過ゲート"/>
+        <text name="eq_shop_xcGate_function" text="跳ぶ障害ではなく通り抜けるゲート：どの馬でも楽に通れる幅と高さで、スポンサーのロゴ入り。"/>
+        <text name="eq_shop_xcRope" text="ロープマーカー"/>
+        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみか、小さなスポンサー看板付きを選べます。看板のブランド効果はごくわずかです。"/>
+        <text name="eq_shop_plinthDrive" text="通り抜け展示台"/>
+        <text name="eq_shop_plinthRamp" text="展示用スロープ"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示用スロープ"/>
+        <text name="eq_shop_plinthProductRamp" text="プロダクトジャンプ用スロープ"/>
+        <text name="eq_shop_plinth_function" text="スポンサーのブランドの機械を載せると、ブランド効果が上がります。"/>
+        <text name="eq_shop_productJump_function" text="2台を約5m離して向かい合わせに置きます。間に置いた機械もカウントされ、クロスカントリー障害としても跳べます。"/>
+        <text name="eq_shop_plinthTurntable" text="ターンテーブル"/>
+        <text name="eq_shop_turntable_function" text="ディスクはゆっくり回ります。機械を載せたままにすると、連結した作業機ごと一緒に回ります。スポンサーの機械はここでより多くカウントされます。"/>
+        <text name="eq_plinth_inPlace" text="スポンサー機材の配置完了！"/>
+        <text name="eq_plinth_wrongBrand" text="スポンサーの機材ではありません！ライバルの機械を展示するとスポンサー収入が減ります！"/>
+        <text name="eq_plinth_noSponsor" text="スポンサー未契約：ここに展示した機材はブランド効果にカウントされます。"/>
+        <text name="eq_plinth_penalty" text="スポンサー展示台に他社の機械が %d 台：スポンサー料から %s 差し引かれました。"/>
         <text name="eq_config_corner" text="コーナー"/>
         <text name="eq_config_cornerRight" text="先端が右"/>
         <text name="eq_config_cornerLeft" text="先端が左"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="見込み支払い"/>
         <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
         <text name="eq_shop_branding" text="ブランド露出：現在%s、これを加えると%s。露出が多いほどスポンサーの支払いが増えます。"/>
+        <text name="eq_shop_brandingOption" text="スポンサーボード付きのブランド露出：現在%s、これを加えると%s。"/>
+        <text name="eq_config_sponsorBoards" text="スポンサーボード"/>
+        <text name="eq_shop_sponsorBoards_function" text="スポンサーボード（オプション、追加料金）：ウイングの看板にスポンサーのロゴが表示され、バーがスポンサーの色になります。"/>
         <text name="eq_sponsor_discount_repaint" text="塗装 %s"/>
         <text name="eq_sponsor_discount_repair" text="修理 %s"/>
         <text name="eq_sponsor_discount_buy" text="購入 %s"/>

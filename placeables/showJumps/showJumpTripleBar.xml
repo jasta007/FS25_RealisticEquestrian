@@ -5,6 +5,8 @@
         <name>$l10n_eq_shop_showJumpTripleBar</name>
         <functions>
             <function>$l10n_eq_shop_showJump_function</function>
+            <function>$l10n_eq_shop_showJumpHidden_function</function>
+            <function>$l10n_eq_shop_sponsorBoards_function</function>
         </functions>
         <image>placeables/showJumps/store_showJumpTripleBar.dds</image>
         <price>900</price>
@@ -80,5 +82,14 @@
             <eqWingColourConfiguration name="$l10n_eq_colour_black" price="0"/>
         </eqWingColourConfigurations>
     </eqWingColour>
+
+    <!-- Sponsor boards: No (the first, default) or Yes, dearer: boards on the wings showing your
+         sponsor, counted towards your branding (EqSponsors shows the eqSponsorOn parts). -->
+    <eqSponsorBoards>
+        <eqSponsorBoardsConfigurations>
+            <eqSponsorBoardsConfiguration name="$l10n_ui_no" price="0"/>
+            <eqSponsorBoardsConfiguration name="$l10n_ui_yes" price="350"/>
+        </eqSponsorBoardsConfigurations>
+    </eqSponsorBoards>
 
 </placeable>

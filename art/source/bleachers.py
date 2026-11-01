@@ -100,6 +100,20 @@ def cell_uv(name):
 
 
 def sponsor_board(path):
+    """Our own board, shown until a brand's logo is put on: drawn into the window of the image a
+    logo face shows (xc_jumps.LOGO_CROP), in an image shaped like the game's brand logos."""
+    import xc_jumps
+    full = Image.new("RGB", (512, 256), COLOURS["board"])
+    u0, u1, v0, v1 = xc_jumps.LOGO_CROP
+    box = (int(round(max(0, u0) * 512)), int(round((1 - v1) * 256)), int(round(min(1, u1) * 512)), int(round((1 - v0) * 256)))
+    window = _board_design().resize((box[2] - box[0], box[3] - box[1]), Image.LANCZOS)
+    full.paste(window, box[:2])
+    save_dxt1(full, path)
+    # the shop pictures map a logo face to the whole texture: give them just the window it shows
+    return np.asarray(window)
+
+
+def _board_design():
     w, h = SPONSOR_SIZE
     img = Image.new("RGB", (w, h), COLOURS["board"])
     draw = ImageDraw.Draw(img)
@@ -115,8 +129,7 @@ def sponsor_board(path):
     small = ImageFont.truetype(FONT, 24)
     draw.text((170, h / 2 - 22), "REALISTIC", font=big, fill=COLOURS["trim"], anchor="lm")
     draw.text((170, h / 2 + 28), "EQUESTRIAN", font=small, fill=(120, 96, 40), anchor="lm")
-    save_dxt1(img, path)
-    return np.asarray(img)
+    return img
 
 
 def box(mesh, x0, x1, y0, y1, z0, z1, cell):
@@ -146,6 +159,9 @@ def build(size):
 
     # sponsor boards in front, their faces at z = -BOARD_GAP
     logos = []
+    # each board's face, a plain painted quad behind its logo: EqJumpColours paints it dark
+    # behind a pale logo (James, 2026-11-01: white Volvo on the white boards)
+    face = Mesh()
     count = size["boards"]
     width = length / count
     zf, zb = -BOARD_GAP, -BOARD_GAP + BOARD_THICK
@@ -157,6 +173,9 @@ def build(size):
         for px in (x0 + 0.1, x1 - 0.1):
             box(frame, px - 0.03, px + 0.03, 0, BOARD_BOTTOM, zf + 0.01, zb - 0.01, "rail")
         box(col, x0, x1, 0, BOARD_TOP, zf, zb, "board")
+        zface = zf - 0.002
+        face.quad([(x1, BOARD_BOTTOM, zface), (x0, BOARD_BOTTOM, zface), (x0, BOARD_TOP, zface), (x1, BOARD_TOP, zface)],
+                  (0, 0, -1), [(0, 0), (1, 0), (1, 1), (0, 1)])
         # the logo: one quad just in front of the board's face, the whole texture on it
         logo = Mesh()
         lx0, lx1 = x0 + LOGO_INSET, x1 - LOGO_INSET
@@ -167,10 +186,17 @@ def build(size):
         logo.quad([(lx1, ly0, z), (lx0, ly0, z), (lx0, ly1, z), (lx1, ly1, z)], (0, 0, -1),
                   [(0, 0), (1, 0), (1, 1), (0, 1)])
         logos.append(logo)
-    return frame, logos, col
+    return frame, logos, col, face
 
 
-def write_i3d(size, path, frame, logos, col):
+SHADER = "$data/shaders/vehicleShader.xml"
+PAINT_MAPS = {"detailDiffuse": "$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png",
+              "detailNormal": "$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png",
+              "detailSpecular": "$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"}
+FACE_WHITE = (0.80, 0.80, 0.78)   # EqSponsorBoards.FACE_WHITE
+
+
+def write_i3d(size, path, frame, logos, col, face):
     name = size["name"]
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
@@ -183,6 +209,8 @@ def write_i3d(size, path, frame, logos, col):
         "  <Files>",
         '    <File fileId="1" filename="bleachers_diffuse.dds"/>',
         '    <File fileId="2" filename="bleacherSponsor_diffuse.dds"/>',
+        f'    <File fileId="3" filename="{SHADER}"/>',
+    ] + [f'    <File fileId="{4 + i}" filename="{f}"/>' for i, f in enumerate(PAINT_MAPS.values())] + [
         "  </Files>",
         "  <Materials>",
         '    <Material name="bleachers" materialId="1" specularColor="0.3 0.6 0">',
@@ -196,20 +224,29 @@ def write_i3d(size, path, frame, logos, col):
             '      <Texture fileId="2"/>',
             "    </Material>",
         ]
+    face_id = len(logos) + 2
+    lines.append(f'    <Material name="eqBoardFace" materialId="{face_id}" customShaderId="3">')
+    lines += [f'      <Custommap name="{k}" fileId="{4 + i}"/>' for i, k in enumerate(PAINT_MAPS)]
+    lines += [f'      <CustomParameter name="colorScale" value="{fmt(FACE_WHITE)}"/>',
+              '      <CustomParameter name="smoothnessScale" value="0.4"/>',
+              '      <CustomParameter name="metalnessScale" value="0"/>', "    </Material>"]
     lines.append("  </Materials>")
     lines.append("  <Shapes>")
     lines += shape_lines(frame, f"{name}_frame", 1)
     for i, logo in enumerate(logos):
         lines += shape_lines(logo, f"{name}_sponsor{i + 1}", i + 2)
-    col_id = len(logos) + 2
+    lines += shape_lines(face, f"{name}_face", face_id)
+    col_id = len(logos) + 3
     lines += shape_lines(col, f"{name}_collision", col_id)
     lines.append("  </Shapes>")
     lines.append("  <Scene>")
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     lines.append(f'      <Shape name="frame" shapeId="1" clipDistance="{CLIP}" nodeId="2" materialIds="1" '
                  'castsShadows="true" receiveShadows="true"/>')
-    lines.append('      <TransformGroup name="eqSponsors" nodeId="3">')
-    node = 4
+    lines.append(f'      <Shape name="eqBoardFace" shapeId="{face_id}" clipDistance="{CLIP}" nodeId="3" materialIds="{face_id}" '
+                 'castsShadows="false" receiveShadows="true"/>')
+    lines.append('      <TransformGroup name="eqSponsors" nodeId="4">')
+    node = 5
     for i in range(len(logos)):
         lines.append(f'        <Shape name="eqSponsor_{i + 1}" shapeId="{i + 2}" clipDistance="{CLIP}" nodeId="{node}" '
                      f'materialIds="{i + 2}" castsShadows="false" receiveShadows="true"/>')
@@ -274,11 +311,12 @@ def main():
     sponsor_rgb = sponsor_board(os.path.join(OUT, "bleacherSponsor_diffuse.dds"))
     for size in SIZES:
         name = size["name"]
-        frame, logos, col = build(size)
-        write_i3d(size, os.path.join(OUT, name + ".i3d"), frame, logos, col)
+        frame, logos, col, face = build(size)
+        write_i3d(size, os.path.join(OUT, name + ".i3d"), frame, logos, col, face)
         write_xml(size, os.path.join(OUT, name + ".xml"))
         # our preview renderer reads v from the top of the image, GIANTS from the bottom
-        store_image([(frame, atlas_rgb[::-1])] + [(logo, sponsor_rgb[::-1]) for logo in logos],
+        plain = np.full((4, 4, 3), COLOURS["board"], dtype=float)
+        store_image([(frame, atlas_rgb[::-1]), (face, plain)] + [(logo, sponsor_rgb[::-1]) for logo in logos],
                     os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
         print(name, len(frame.tris) + sum(len(m.tris) for m in logos), "triangles,", len(logos), "sponsor boards")
 

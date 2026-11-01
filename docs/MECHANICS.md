@@ -888,7 +888,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   don't count), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
-  cross country table 1) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
+  cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
+  Sponsor boards 2, the liverpool 3, the sponsor wall 2, the arch 3, the ride-through gate 1, each rope sign a tenth, all
+  ropes together 1 at most) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
   game shows only the word. The shop line on those items shows your branding now and with one
   more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
 - **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
@@ -900,9 +902,56 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   away. A met year puts the fee back to full.
 - **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
 - Discounts and the shop's block on rival machines come in the next update.
+- **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
+  liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
+  fan panels a board in place of the fan, picket wings an oval on the front, and the liverpool's
+  water the logo too. With a signed sponsor their poles and trim take the sponsor's colour: the
+  game's own paint for that brand when it has one, else a short list in the mod, else the colour
+  you bought. The crossrail and cavaletti are training jumps and stay plain.
+- **Sponsor wall** (2,500): a 1.20 m showpiece "brick" wall between brick pillars, the sponsor's
+  logo across its whole face front and back (2 boards). The bottom is solid; the five top blocks
+  fall like poles when hit (a rail), tipping off the wall and tumbling, and go back up after the
+  round, with a knock as one is hit and a thud as it lands; each falls a little differently. The logo is cut along the blocks, so a
+  knocked block takes its piece with it.
+- **Sponsor gates** (cross country pieces, not jumps, no flags): the **Start/Finish Arch** (4,500,
+  6 m wide, 3.6 m clear, a logo in the middle of the crossbar and up both towers, 3 boards) and the
+  **Ride-Through Gate** (1,200, 4 m wide, 3.4 m clear, one board) to show the way round a course.
+  Their banners or board take the Colour bought, or the sponsor's colour.
+- **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
+  collision for horses, hidden like the course flags. Each segment is plain rope or rope with a
+  small hanging sponsor sign; signs are only a tiny bit of branding (above).
+- **Sponsor plinths** (always visible, Colour choice or the sponsor's colour, plain plaster): the
+  **Drive-Through Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive
+  straight over; one board both sides), the **Display Ramp** (5,000) and **Large Display Ramp**
+  (7,500; the machine parked facing either way, the board on the high front) and the **Product
+  Ramp** (6,000; one bank 2 m up, mostly ramp with a short flat top, the board on its steep face;
+  no flags of its own). Set two Product Ramps face to face, 2.5 to 8 m apart, and a machine parked
+  on the ground between them counts as a place of its own: a triple plinth, or a cross country
+  jump over the machine, high enough that the horse never comes near it (set course flags to
+  ride it). A machine of your sponsor's brand (owned or leased, not borrowed for a contract)
+  standing on a place counts as **2 boards**; each place takes one machine. The drop walls' decks
+  count too, and a drop wall with any machine on its deck never hides.
+- **Turntable** (25,000): a round plinth with a ramp flush to the back; its brushed metal disc
+  turns once every two minutes. A machine left on the disc with nobody in it, standing still, is
+  after 3 seconds slid to the middle and held on the disc (out of the physics, like a ferry),
+  turning with it, together with anything hitched to it (a wheel loader's bucket, a truck's
+  trailer). Getting into any of them, hitching or unhitching, or selling gives them their physics
+  back. A sponsor machine there counts **3 boards**. In multiplayer the disc turns but holds
+  nothing (not tried).
+- **Feedback:** stop the machine you drive on one of your places and a popup says "Sponsor
+  equipment in place!", that it isn't your sponsor's brand, or that you have no sponsor. Each
+  machine of another brand on show when a hosted event's sponsor fee is paid costs 10% of that
+  fee (at most 50%).
+- **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
+  the pieces are shared out between your sponsors in turn.
+- **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
+  its own colour behind it on the boards that can change colour (bleachers, show jump boards, the
+  gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,
+  corner, drop wall) stay white.
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
-`eqSponsorNew` (testing) makes a fresh set of offers now.
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
+jump colour and where it came from.
 
 ## Buying horses
 

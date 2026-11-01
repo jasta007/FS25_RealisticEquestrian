@@ -115,6 +115,14 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/xcJumps/xcRollTopHalf.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcTable.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcBigLog.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateArch.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateSimple.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcRope.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthDrive.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRamp.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRampLarge.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthProductRamp.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthTurntable.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>
@@ -125,6 +133,7 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/showJumps/showJumpFan3.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpLiverpool.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCavaletti.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpWall.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers3x6.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers5x10.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers8x16.xml"/>

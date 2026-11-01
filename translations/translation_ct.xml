@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障礙: 垂直障礙"/>
         <text name="eq_shop_showJumpOxer" text="障礙: 雙橫木"/>
+        <text name="eq_shop_showJumpWall" text="障礙: 贊助商磚牆"/>
+        <text name="eq_shop_showJumpWall_function" text="印有贊助商標誌的展示磚牆。馬碰到時頂部磚塊會掉落，比賽結束後復原。"/>
         <text name="eq_shop_showJumpCrossrail" text="障礙: 交叉桿"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障礙: 上升雙橫木"/>
         <text name="eq_shop_showJumpTripleBar" text="障礙: 三橫木"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="圓頂障礙（半圓）"/>
         <text name="eq_shop_xcTable" text="桌形障礙"/>
         <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_shop_xcGateArch" text="起點/終點拱門"/>
+        <text name="eq_shop_xcGateSimple" text="通行門"/>
+        <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
+        <text name="eq_shop_xcRope" text="繩索標記"/>
+        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_plinthDrive" text="通行展台"/>
+        <text name="eq_shop_plinthRamp" text="展示坡台"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
+        <text name="eq_shop_plinthProductRamp" text="產品障礙坡台"/>
+        <text name="eq_shop_plinth_function" text="在上面停放贊助商品牌的機器，可獲得額外品牌曝光。"/>
+        <text name="eq_shop_productJump_function" text="把兩個相對放置，相距約 5 公尺：停在中間的機器也計入，或者把它們當越野障礙來跳。"/>
+        <text name="eq_shop_plinthTurntable" text="旋轉展台"/>
+        <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把機器停在上面，它會連同掛接的農具一起隨轉盤轉動。贊助商的機器在這裡計入更多。"/>
+        <text name="eq_plinth_inPlace" text="贊助商設備已就位！"/>
+        <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備！展示競爭品牌的機器會減少你的贊助收入！"/>
+        <text name="eq_plinth_noSponsor" text="尚未簽約贊助商：在這裡展示其設備將計入你的品牌曝光。"/>
+        <text name="eq_plinth_penalty" text="你的贊助展台上有 %d 台競爭品牌機器：贊助費扣除 %s。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="預計收入"/>
         <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
         <text name="eq_shop_branding" text="你的品牌曝光：目前%s，加上此項為%s。曝光越多，贊助商付得越多。"/>
+        <text name="eq_shop_brandingOption" text="帶贊助商廣告牌時你的品牌曝光：目前%s，加上此項為%s。"/>
+        <text name="eq_config_sponsorBoards" text="贊助商廣告牌"/>
+        <text name="eq_shop_sponsorBoards_function" text="贊助商廣告牌（可選，需額外費用）：翼板上的廣告牌顯示贊助商標誌，橫桿變為贊助商的顏色。"/>
         <text name="eq_sponsor_discount_repaint" text="噴漆 %s"/>
         <text name="eq_sponsor_discount_repair" text="維修 %s"/>
         <text name="eq_sponsor_discount_buy" text="購買 %s"/>

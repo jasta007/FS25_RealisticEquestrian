@@ -705,6 +705,8 @@
         <text name="eq_shop_xcLogPile" text="Tas de rondins"/>
         <text name="eq_shop_showJumpUpright" text="Obstacle : Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstacle : Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Obstacle : Mur sponsor"/>
+        <text name="eq_shop_showJumpWall_function" text="Un mur de prestige au logo de votre sponsor. Les blocs du haut tombent quand votre cheval les touche et sont remis après le parcours."/>
         <text name="eq_shop_showJumpCrossrail" text="Obstacle : Croisillon"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Obstacle : Oxer montant"/>
         <text name="eq_shop_showJumpTripleBar" text="Obstacle : Triple barre"/>
@@ -741,6 +743,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (demi)"/>
         <text name="eq_shop_xcTable" text="Table"/>
         <text name="eq_shop_xcBigLog" text="Gros tronc"/>
+        <text name="eq_shop_xcGateArch" text="Arche départ/arrivée"/>
+        <text name="eq_shop_xcGateSimple" text="Porte de passage"/>
+        <text name="eq_shop_xcGate_function" text="Une porte à franchir au pas ou au galop, pas un obstacle : assez large et haute pour tout cheval, au logo de votre sponsor."/>
+        <text name="eq_shop_xcRope" text="Corde de balisage"/>
+        <text name="eq_shop_xcRope_function" text="Une corde légère pour baliser le parcours, sans collision. Choisissez une corde simple ou avec un petit panneau sponsor : les panneaux n'ajoutent qu'un peu de visibilité."/>
+        <text name="eq_shop_plinthDrive" text="Podium traversant"/>
+        <text name="eq_shop_plinthRamp" text="Rampe d'exposition"/>
+        <text name="eq_shop_plinthRampLarge" text="Grande rampe d'exposition"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampe d'obstacle produit"/>
+        <text name="eq_shop_plinth_function" text="Garez-y une machine de la marque de votre sponsor pour plus de visibilité."/>
+        <text name="eq_shop_productJump_function" text="Placez-en deux face à face à environ 5 m : une machine entre les deux compte aussi, ou sautez-les comme un obstacle de cross."/>
+        <text name="eq_shop_plinthTurntable" text="Plateau tournant"/>
+        <text name="eq_shop_turntable_function" text="Le plateau tourne lentement : laissez-y une machine et elle tourne avec lui, avec tout ce qui est attelé. Une machine de votre sponsor y compte davantage."/>
+        <text name="eq_plinth_inPlace" text="Équipement du sponsor en place !"/>
+        <text name="eq_plinth_wrongBrand" text="Ce n'est pas l'équipement de votre sponsor ! Les machines concurrentes exposées réduiront vos revenus de sponsoring !"/>
+        <text name="eq_plinth_noSponsor" text="Aucun sponsor signé : son équipement exposé ici compterait pour votre visibilité."/>
+        <text name="eq_plinth_penalty" text="%d machine(s) concurrente(s) sur vos podiums sponsor : %s retirés du cachet du sponsor."/>
         <text name="eq_config_corner" text="Coin"/>
         <text name="eq_config_cornerRight" text="Pointe à droite"/>
         <text name="eq_config_cornerLeft" text="Pointe à gauche"/>
@@ -1045,6 +1064,9 @@
         <text name="eq_sponsor_label_likely" text="Gain probable"/>
         <text name="eq_sponsor_likelyLine" text="%s en %s"/>
         <text name="eq_shop_branding" text="Votre visibilité : %s maintenant, %s avec ceci. Plus de visibilité augmente ce que paie votre sponsor."/>
+        <text name="eq_shop_brandingOption" text="Avec panneaux sponsor, votre visibilité : %s maintenant, %s avec ceci."/>
+        <text name="eq_config_sponsorBoards" text="Panneaux sponsor"/>
+        <text name="eq_shop_sponsorBoards_function" text="Panneaux sponsor (en option, payant) : des panneaux sur les chandeliers affichent le logo de votre sponsor et les barres prennent sa couleur."/>
         <text name="eq_sponsor_discount_repaint" text="Peinture %s"/>
         <text name="eq_sponsor_discount_repair" text="Réparation %s"/>
         <text name="eq_sponsor_discount_buy" text="Achat %s"/>

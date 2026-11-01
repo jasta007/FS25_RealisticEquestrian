@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障碍: 垂直障碍"/>
         <text name="eq_shop_showJumpOxer" text="障碍: 双横木"/>
+        <text name="eq_shop_showJumpWall" text="障碍: 赞助商砖墙"/>
+        <text name="eq_shop_showJumpWall_function" text="印有赞助商标志的展示砖墙。马碰到时顶部砖块会掉落，比赛结束后复原。"/>
         <text name="eq_shop_showJumpCrossrail" text="障碍: 交叉杆"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障碍: 上升双横木"/>
         <text name="eq_shop_showJumpTripleBar" text="障碍: 三横木"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="圆顶障碍（半圆）"/>
         <text name="eq_shop_xcTable" text="桌形障碍"/>
         <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_shop_xcGateArch" text="起点/终点拱门"/>
+        <text name="eq_shop_xcGateSimple" text="通行门"/>
+        <text name="eq_shop_xcGate_function" text="用于骑行通过的门，不是障碍：足够宽、足够高，任何马都能轻松通过，带有赞助商标志。"/>
+        <text name="eq_shop_xcRope" text="绳索标记"/>
+        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索或挂小型赞助商牌子的绳索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_plinthDrive" text="通行展台"/>
+        <text name="eq_shop_plinthRamp" text="展示坡台"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
+        <text name="eq_shop_plinthProductRamp" text="产品障碍坡台"/>
+        <text name="eq_shop_plinth_function" text="在上面停放赞助商品牌的机器，可获得额外品牌曝光。"/>
+        <text name="eq_shop_productJump_function" text="把两个相对放置，相距约 5 米：停在中间的机器也计入，或者把它们当越野障碍来跳。"/>
+        <text name="eq_shop_plinthTurntable" text="旋转展台"/>
+        <text name="eq_shop_turntable_function" text="转盘缓慢旋转：把机器停在上面，它会连同挂接的农具一起随转盘转动。赞助商的机器在这里计入更多。"/>
+        <text name="eq_plinth_inPlace" text="赞助商设备已就位！"/>
+        <text name="eq_plinth_wrongBrand" text="这不是你赞助商的设备！展示竞争品牌的机器会减少你的赞助收入！"/>
+        <text name="eq_plinth_noSponsor" text="尚未签约赞助商：在这里展示其设备将计入你的品牌曝光。"/>
+        <text name="eq_plinth_penalty" text="你的赞助展台上有 %d 台竞争品牌机器：赞助费扣除 %s。"/>
         <text name="eq_config_corner" text="角障碍"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="预计收入"/>
         <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
         <text name="eq_shop_branding" text="你的品牌曝光：当前%s，加上此项为%s。曝光越多，赞助商付得越多。"/>
+        <text name="eq_shop_brandingOption" text="带赞助商广告牌时你的品牌曝光：当前%s，加上此项为%s。"/>
+        <text name="eq_config_sponsorBoards" text="赞助商广告牌"/>
+        <text name="eq_shop_sponsorBoards_function" text="赞助商广告牌（可选，需额外费用）：翼板上的广告牌显示赞助商标志，横杆变为赞助商的颜色。"/>
         <text name="eq_sponsor_discount_repaint" text="喷漆 %s"/>
         <text name="eq_sponsor_discount_repair" text="维修 %s"/>
         <text name="eq_sponsor_discount_buy" text="购买 %s"/>

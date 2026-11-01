@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Pilha de troncos"/>
         <text name="eq_shop_showJumpUpright" text="Obstáculo: Vertical"/>
         <text name="eq_shop_showJumpOxer" text="Obstáculo: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Obstáculo: Muro do patrocinador"/>
+        <text name="eq_shop_showJumpWall_function" text="Um muro de destaque com o logo do seu patrocinador. Os blocos de cima caem se o cavalo encostar e voltam ao lugar depois do percurso."/>
         <text name="eq_shop_showJumpCrossrail" text="Obstáculo: Cruzado"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Obstáculo: Oxer ascendente"/>
         <text name="eq_shop_showJumpTripleBar" text="Obstáculo: Triplo"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (meio)"/>
         <text name="eq_shop_xcTable" text="Mesa"/>
         <text name="eq_shop_xcBigLog" text="Tronco grande"/>
+        <text name="eq_shop_xcGateArch" text="Arco de largada/chegada"/>
+        <text name="eq_shop_xcGateSimple" text="Portão de passagem"/>
+        <text name="eq_shop_xcGate_function" text="Um portão para atravessar, não um salto: largo e alto o bastante para qualquer cavalo, com o logo do seu patrocinador."/>
+        <text name="eq_shop_xcRope" text="Corda de marcação"/>
+        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples ou com uma pequena placa do patrocinador: as placas somam só um pouco de marca."/>
+        <text name="eq_shop_plinthDrive" text="Plataforma de passagem"/>
+        <text name="eq_shop_plinthRamp" text="Rampa de exposição"/>
+        <text name="eq_shop_plinthRampLarge" text="Rampa de exposição grande"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa de salto de produto"/>
+        <text name="eq_shop_plinth_function" text="Estacione uma máquina da marca do seu patrocinador nela para ganhar mais marca."/>
+        <text name="eq_shop_productJump_function" text="Coloque duas frente a frente a uns 5 m: uma máquina entre elas também conta, ou salte-as como obstáculo de cross."/>
+        <text name="eq_shop_plinthTurntable" text="Plataforma giratória"/>
+        <text name="eq_shop_turntable_function" text="O disco gira devagar: deixe uma máquina sobre ele e ela gira junto, com tudo o que estiver engatado. Uma máquina do seu patrocinador conta mais aqui."/>
+        <text name="eq_plinth_inPlace" text="Equipamento do patrocinador no lugar!"/>
+        <text name="eq_plinth_wrongBrand" text="Não é equipamento do seu patrocinador! Máquinas rivais em exposição vão reduzir seus ganhos de patrocínio!"/>
+        <text name="eq_plinth_noSponsor" text="Nenhum patrocinador assinado: o equipamento dele exposto aqui contaria para a sua marca."/>
+        <text name="eq_plinth_penalty" text="%d máquina(s) rival(is) nas suas plataformas de patrocínio: %s descontados da cota do patrocinador."/>
         <text name="eq_config_corner" text="Canto"/>
         <text name="eq_config_cornerRight" text="Ponta à direita"/>
         <text name="eq_config_cornerLeft" text="Ponta à esquerda"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Pagamento provável"/>
         <text name="eq_sponsor_likelyLine" text="%s em %s"/>
         <text name="eq_shop_branding" text="Sua visibilidade: %s agora, %s com isto. Mais visibilidade aumenta o que seu patrocinador paga."/>
+        <text name="eq_shop_brandingOption" text="Com placas de patrocinador, sua visibilidade: %s agora, %s com isto."/>
+        <text name="eq_config_sponsorBoards" text="Placas de patrocinador"/>
+        <text name="eq_shop_sponsorBoards_function" text="Placas de patrocinador (opcional, custo extra): placas nas asas mostram o logo do seu patrocinador e as varas ficam com a cor dele."/>
         <text name="eq_sponsor_discount_repaint" text="Pintura %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparo %s"/>
         <text name="eq_sponsor_discount_buy" text="Compra %s"/>

@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Stos bali"/>
         <text name="eq_shop_showJumpUpright" text="Przeszkoda: stacjonata"/>
         <text name="eq_shop_showJumpOxer" text="Przeszkoda: okser"/>
+        <text name="eq_shop_showJumpWall" text="Przeszkoda: mur sponsora"/>
+        <text name="eq_shop_showJumpWall_function" text="Efektowny mur z logo sponsora. Górne bloki spadają, gdy koń je trąci, i wracają na miejsce po przejeździe."/>
         <text name="eq_shop_showJumpCrossrail" text="Przeszkoda: krzyżak"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Przeszkoda: okser wznoszący"/>
         <text name="eq_shop_showJumpTripleBar" text="Przeszkoda: triplebarre"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (pół)"/>
         <text name="eq_shop_xcTable" text="Stół"/>
         <text name="eq_shop_xcBigLog" text="Duża kłoda"/>
+        <text name="eq_shop_xcGateArch" text="Brama startu/mety"/>
+        <text name="eq_shop_xcGateSimple" text="Brama przejazdowa"/>
+        <text name="eq_shop_xcGate_function" text="Brama do przejazdu, nie przeszkoda: dość szeroka i wysoka dla każdego konia, z logo sponsora."/>
+        <text name="eq_shop_xcRope" text="Lina wyznaczająca"/>
+        <text name="eq_shop_xcRope_function" text="Lekka lina do wyznaczania trasy, bez kolizji. Wybierz zwykłą linę lub linę z małą tabliczką sponsora: tabliczki dają tylko trochę widoczności marki."/>
+        <text name="eq_shop_plinthDrive" text="Podest przejazdowy"/>
+        <text name="eq_shop_plinthRamp" text="Rampa wystawowa"/>
+        <text name="eq_shop_plinthRampLarge" text="Duża rampa wystawowa"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa skoku z produktem"/>
+        <text name="eq_shop_plinth_function" text="Zaparkuj na nim maszynę marki sponsora, aby zyskać dodatkową widoczność."/>
+        <text name="eq_shop_productJump_function" text="Ustaw dwie naprzeciw siebie w odległości ok. 5 m: maszyna między nimi też się liczy, albo skacz przez nie jak przez przeszkodę crossową."/>
+        <text name="eq_shop_plinthTurntable" text="Obrotowy podest"/>
+        <text name="eq_shop_turntable_function" text="Tarcza obraca się powoli: zostaw na niej maszynę, a obróci się razem z nią, z wszystkim, co podczepione. Maszyna sponsora liczy się tu bardziej."/>
+        <text name="eq_plinth_inPlace" text="Sprzęt sponsora na miejscu!"/>
+        <text name="eq_plinth_wrongBrand" text="To nie sprzęt twojego sponsora! Wystawione maszyny konkurencji obniżą twoje dochody ze sponsoringu!"/>
+        <text name="eq_plinth_noSponsor" text="Brak podpisanego sponsora: jego sprzęt wystawiony tutaj liczyłby się do twojej widoczności."/>
+        <text name="eq_plinth_penalty" text="%d maszyn(y) konkurencji na twoich podestach sponsora: odjęto %s z wynagrodzenia sponsora."/>
         <text name="eq_config_corner" text="Narożnik"/>
         <text name="eq_config_cornerRight" text="Szpic w prawo"/>
         <text name="eq_config_cornerLeft" text="Szpic w lewo"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Prawdopodobna wypłata"/>
         <text name="eq_sponsor_likelyLine" text="%s przy %s"/>
         <text name="eq_shop_branding" text="Twoja ekspozycja marki: teraz %s, z tym %s. Większa ekspozycja podnosi wypłatę sponsora."/>
+        <text name="eq_shop_brandingOption" text="Z tablicami sponsora, twoja ekspozycja marki: teraz %s, z tym %s."/>
+        <text name="eq_config_sponsorBoards" text="Tablice sponsora"/>
+        <text name="eq_shop_sponsorBoards_function" text="Tablice sponsora (opcjonalnie, za dopłatą): tablice na skrzydłach pokazują logo sponsora, a drągi przyjmują jego kolor."/>
         <text name="eq_sponsor_discount_repaint" text="Lakierowanie %s"/>
         <text name="eq_sponsor_discount_repair" text="Naprawa %s"/>
         <text name="eq_sponsor_discount_buy" text="Zakup %s"/>

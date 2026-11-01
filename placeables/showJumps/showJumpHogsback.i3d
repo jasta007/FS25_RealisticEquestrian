@@ -10,11 +10,15 @@
     <File fileId="4" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
     <File fileId="3" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
     <File fileId="2" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="11" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
     <File fileId="9" filename="../xcJumps/xcFlags_diffuse.dds"/>
   </Files>
 
 
   <Materials>
+    <Material name="eqSponsor1" materialId="12" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="11"/>
+    </Material>
     <Material name="sjFlags" materialId="9" specularColor="0.101961 1 0">
       <Texture fileId="9"/>
     </Material>
@@ -49,44 +53,54 @@
   </Shapes>
 
   <Scene>
-    <TransformGroup name="showJumpHogsback" nodeId="30">
-      <Shape name="frame" shapeId="1" clipDistance="300" nodeId="31" castsShadows="true" receiveShadows="true" materialIds="5"/>
-      <Shape name="eqPaint" shapeId="2" clipDistance="300" nodeId="32" castsShadows="true" receiveShadows="true" materialIds="6"/>
-      <Shape name="eqWingPaint" shapeId="3" clipDistance="300" nodeId="33" castsShadows="true" receiveShadows="true" materialIds="5"/>
-      <Shape name="cups" shapeId="4" clipDistance="300" nodeId="34" castsShadows="true" receiveShadows="true" materialIds="7"/>
-      <Shape name="flags" shapeId="5" clipDistance="300" nodeId="35" castsShadows="true" receiveShadows="true" materialIds="9"/>
-      <TransformGroup name="eqFlagsRed" translation="2.82 0 0" nodeId="36"/>
-      <TransformGroup name="eqFlagsWhite" translation="-2.82 0 0" nodeId="37"/>
-      <TransformGroup name="collision" nodeId="38">
-        <Shape name="col" shapeId="6" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="39" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="7" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="40" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="8" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="41" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="9" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="42" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="10" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="43" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="11" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="44" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="12" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="45" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <Shape name="col" shapeId="13" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="46" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+    <TransformGroup name="showJumpHogsback" nodeId="37">
+      <Shape name="frame" shapeId="1" clipDistance="300" nodeId="38" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqPaint" shapeId="2" clipDistance="300" nodeId="39" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <Shape name="eqWingPaint" shapeId="3" clipDistance="300" nodeId="40" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="cups" shapeId="4" clipDistance="300" nodeId="41" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      <Shape name="flags" shapeId="5" clipDistance="300" nodeId="42" castsShadows="true" receiveShadows="true" materialIds="9"/>
+      <TransformGroup name="eqSponsorOn" visibility="false" nodeId="43">
+        <Shape name="eqBoardFace" shapeId="6" clipDistance="300" nodeId="44" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1" shapeId="7" clipDistance="300" nodeId="45" castsShadows="false" receiveShadows="true" materialIds="12"/>
+        <Shape name="eqSponsor_1b" shapeId="8" clipDistance="300" nodeId="46" castsShadows="false" receiveShadows="true" materialIds="12"/>
+        <Shape name="eqSponsor_2" shapeId="9" clipDistance="300" nodeId="47" castsShadows="false" receiveShadows="true" materialIds="12"/>
+        <Shape name="eqSponsor_2b" shapeId="10" clipDistance="300" nodeId="48" castsShadows="false" receiveShadows="true" materialIds="12"/>
       </TransformGroup>
-      <TransformGroup name="eqPole1" translation="0 0.7 0.8" nodeId="47">
-        <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="48" castsShadows="true" receiveShadows="true" materialIds="6"/>
-        <Shape name="white" shapeId="15" clipDistance="300" nodeId="49" castsShadows="true" receiveShadows="true" materialIds="5"/>
-        <Shape name="ends" shapeId="16" clipDistance="300" nodeId="50" castsShadows="false" receiveShadows="true" materialIds="5"/>
-        <Shape name="poleCol" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="51" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="52"/>
+      <TransformGroup name="eqSponsorOff" nodeId="49">
+        <Shape name="eqWingPaint" shapeId="11" clipDistance="300" nodeId="50" castsShadows="true" receiveShadows="true" materialIds="5"/>
       </TransformGroup>
-      <TransformGroup name="eqPole2" translation="0 0.8 -0.8" nodeId="53">
-        <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="54" castsShadows="true" receiveShadows="true" materialIds="6"/>
-        <Shape name="white" shapeId="15" clipDistance="300" nodeId="55" castsShadows="true" receiveShadows="true" materialIds="5"/>
-        <Shape name="ends" shapeId="16" clipDistance="300" nodeId="56" castsShadows="false" receiveShadows="true" materialIds="5"/>
-        <Shape name="poleCol" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="57" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="58"/>
+      <TransformGroup name="eqFlagsRed" translation="2.82 0 0" nodeId="51"/>
+      <TransformGroup name="eqFlagsWhite" translation="-2.82 0 0" nodeId="52"/>
+      <TransformGroup name="collision" nodeId="53">
+        <Shape name="col" shapeId="12" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="54" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="13" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="55" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="14" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="56" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="57" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="16" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="58" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="59" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="18" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="60" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="19" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="61" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
-      <TransformGroup name="eqPole3" translation="0 1.05 -0" nodeId="59">
-        <Shape name="eqPaint" shapeId="14" clipDistance="300" nodeId="60" castsShadows="true" receiveShadows="true" materialIds="6"/>
-        <Shape name="white" shapeId="15" clipDistance="300" nodeId="61" castsShadows="true" receiveShadows="true" materialIds="5"/>
-        <Shape name="ends" shapeId="16" clipDistance="300" nodeId="62" castsShadows="false" receiveShadows="true" materialIds="5"/>
-        <Shape name="poleCol" shapeId="17" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="63" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
-        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="64"/>
+      <TransformGroup name="eqPole1" translation="0 0.7 0.8" nodeId="62">
+        <Shape name="eqPaint" shapeId="20" clipDistance="300" nodeId="63" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="21" clipDistance="300" nodeId="64" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="22" clipDistance="300" nodeId="65" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="23" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="66" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="67"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole2" translation="0 0.8 -0.8" nodeId="68">
+        <Shape name="eqPaint" shapeId="20" clipDistance="300" nodeId="69" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="21" clipDistance="300" nodeId="70" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="22" clipDistance="300" nodeId="71" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="23" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="72" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="73"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole3" translation="0 1.05 -0" nodeId="74">
+        <Shape name="eqPaint" shapeId="20" clipDistance="300" nodeId="75" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="white" shapeId="21" clipDistance="300" nodeId="76" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="ends" shapeId="22" clipDistance="300" nodeId="77" castsShadows="false" receiveShadows="true" materialIds="5"/>
+        <Shape name="poleCol" shapeId="23" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="78" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="1.68 0 0" nodeId="79"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>

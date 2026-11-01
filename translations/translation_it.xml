@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Catasta di tronchi"/>
         <text name="eq_shop_showJumpUpright" text="Ostacolo: Verticale"/>
         <text name="eq_shop_showJumpOxer" text="Ostacolo: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Ostacolo: Muro sponsor"/>
+        <text name="eq_shop_showJumpWall_function" text="Un muro scenografico con il logo del tuo sponsor. I blocchi in alto cadono quando il cavallo li tocca e tornano su dopo il percorso."/>
         <text name="eq_shop_showJumpCrossrail" text="Ostacolo: Croce"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Ostacolo: Oxer ascendente"/>
         <text name="eq_shop_showJumpTripleBar" text="Ostacolo: Triplice"/>
@@ -84,6 +86,23 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (mezzo)"/>
         <text name="eq_shop_xcTable" text="Tavolo"/>
         <text name="eq_shop_xcBigLog" text="Tronco grande"/>
+        <text name="eq_shop_xcGateArch" text="Arco partenza/arrivo"/>
+        <text name="eq_shop_xcGateSimple" text="Porta di passaggio"/>
+        <text name="eq_shop_xcGate_function" text="Una porta da attraversare, non un salto: larga e alta abbastanza per ogni cavallo, con il logo del tuo sponsor."/>
+        <text name="eq_shop_xcRope" text="Corda segnapercorso"/>
+        <text name="eq_shop_xcRope_function" text="Una corda leggera per segnare il percorso, senza collisione. Scegli corda semplice o con un piccolo cartello dello sponsor: i cartelli aggiungono solo un po' di visibilità."/>
+        <text name="eq_shop_plinthDrive" text="Pedana passante"/>
+        <text name="eq_shop_plinthRamp" text="Rampa espositiva"/>
+        <text name="eq_shop_plinthRampLarge" text="Rampa espositiva grande"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa salto prodotto"/>
+        <text name="eq_shop_plinth_function" text="Parcheggia sopra una macchina della marca del tuo sponsor per più visibilità."/>
+        <text name="eq_shop_productJump_function" text="Mettine due una di fronte all'altra a circa 5 m: conta anche una macchina tra le due, oppure saltale come un ostacolo da cross."/>
+        <text name="eq_shop_plinthTurntable" text="Piattaforma girevole"/>
+        <text name="eq_shop_turntable_function" text="Il disco gira lentamente: lasciaci una macchina e girerà con esso, con tutto ciò che è agganciato. Una macchina del tuo sponsor qui conta di più."/>
+        <text name="eq_plinth_inPlace" text="Attrezzatura dello sponsor in posizione!"/>
+        <text name="eq_plinth_wrongBrand" text="Non è attrezzatura del tuo sponsor! Le macchine rivali in mostra ridurranno i tuoi guadagni da sponsorizzazione!"/>
+        <text name="eq_plinth_noSponsor" text="Nessuno sponsor firmato: la sua attrezzatura esposta qui conterebbe per la tua visibilità."/>
+        <text name="eq_plinth_penalty" text="%d macchina/e rivale/i sulle tue pedane sponsor: %s tolti dal compenso dello sponsor."/>
         <text name="eq_config_corner" text="Angolo"/>
         <text name="eq_config_cornerRight" text="Punta a destra"/>
         <text name="eq_config_cornerLeft" text="Punta a sinistra"/>
@@ -1043,6 +1062,9 @@
         <text name="eq_sponsor_label_likely" text="Compenso probabile"/>
         <text name="eq_sponsor_likelyLine" text="%s a %s"/>
         <text name="eq_shop_branding" text="La tua visibilità: %s ora, %s con questo. Più visibilità aumenta quanto paga il tuo sponsor."/>
+        <text name="eq_shop_brandingOption" text="Con cartelli sponsor, la tua visibilità: %s ora, %s con questo."/>
+        <text name="eq_config_sponsorBoards" text="Cartelli sponsor"/>
+        <text name="eq_shop_sponsorBoards_function" text="Cartelli sponsor (opzionali, a pagamento): cartelli sulle ali mostrano il logo del tuo sponsor e le barriere prendono il suo colore."/>
         <text name="eq_sponsor_discount_repaint" text="Verniciatura %s"/>
         <text name="eq_sponsor_discount_repair" text="Riparazione %s"/>
         <text name="eq_sponsor_discount_buy" text="Acquisto %s"/>
