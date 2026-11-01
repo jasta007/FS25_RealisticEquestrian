@@ -5139,6 +5139,16 @@ end)()
             EqLizard.deals[4] = nil
             return yes and not no
         end)())
+        check("lizard: each plinth's mound is its own material (for the game's heap look)", (function()
+            local saved = EqLizard.config
+            EqLizard.config = lz
+            local ok = EqLizard.moundFillType("C:\\mods\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\lizardPlinthStone.xml") == "STONE"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthWoodChips.xml") == "WOODCHIPS"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthStraw.xml") == "STRAW"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/plinthTurntable.xml") == nil
+            EqLizard.config = saved
+            return ok
+        end)())
         check("lizard: eqLizard makes an open hosted event Lizard's, even over a yearly sponsor", (function()
             local savedManager = EqCompetitionManager
             EqCompetitionManager = EqCompetitionManager or { eventTitle = function() return "the event" end }

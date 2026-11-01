@@ -965,8 +965,8 @@ lapses when the event opens.
 - **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
   constructible, like the game's rental houses: a few stakes until you deliver its materials to
   the triggers in front of it. One bulk load Lizard picks at random, **1,000 l stone**, **1,000 l
-  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (in the game's
-  own texture for it); **2,000 l of logs** (about five tree logs, at the wood trigger) go on top as
+  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (with the game's
+  own heap material, as a real heap of it looks); **2,000 l of logs** (about five tree logs, at the wood trigger) go on top as
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
 - **Results:** if the plinth is finished and the branding is there, Lizard pays 2,000 (Novice),

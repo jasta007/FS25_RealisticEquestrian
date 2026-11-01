@@ -398,6 +398,51 @@ local function findNode(node, name)
 end
 
 
+--- The fill type a Lizard plinth's mound is made of, from its xml ("lizardPlinthStone.xml" -> STONE).
+--- @param filename string|nil
+--- @return string|nil
+function EqLizard.moundFillType(filename)
+    if not EqLizard.isPlinthXml(filename) then return nil end
+    local path = string.lower(string.gsub(filename, "\\", "/"))
+    for _, material in ipairs(EqLizard.config ~= nil and EqLizard.config.materials or {}) do
+        local xml = string.lower(string.gsub(material.xml or "", "\\", "/"))
+        if xml ~= "" and string.sub(path, -#xml) == xml then return material.fillType end
+    end
+    return nil
+end
+
+
+--- Give a plinth's mound the game's own heap material (the fill plane shader with its texture arrays:
+--- world projected, height map depth, the fill type's own smoothness), as a real heap of that
+--- material looks. The i3d's plain stone/chips/straw texture stays if the game has no such material.
+--- @param placeable table
+function EqLizard.dressMound(placeable)
+    placeable.eqMoundDressed = true
+    local fillTypeName = EqLizard.moundFillType(placeable.configFileName)
+    local node = placeable.rootNode ~= nil and findNode(placeable.rootNode, "moundSurface") or nil
+    if fillTypeName == nil or node == nil or g_materialManager == nil or g_fillTypeManager == nil then return end
+    local material = g_materialManager.getBaseMaterialByName ~= nil and g_materialManager:getBaseMaterialByName("fillPlane") or nil
+    local fillTypeIndex = g_fillTypeManager:getFillTypeIndexByName(fillTypeName)
+    local arrayIndex = fillTypeIndex ~= nil and g_fillTypeManager.getTextureArrayIndexByFillTypeIndex ~= nil
+        and g_fillTypeManager:getTextureArrayIndexByFillTypeIndex(fillTypeIndex) or nil
+    if material == nil or arrayIndex == nil or g_terrainNode == nil or g_fillTypeManager.assignFillTypeTextureArraysFromTerrain == nil then return end
+    setMaterial(node, material, 0)
+    g_fillTypeManager:assignFillTypeTextureArraysFromTerrain(node, g_terrainNode, true, true, true)
+    setShaderParameter(node, "fillTypeId", arrayIndex - 1, 0, 0, 0, false)
+end
+
+
+--- Dress any Lizard plinth that isn't yet (new ones, and ones loaded with the savegame).
+function EqLizard.dressMounds()
+    local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
+    for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
+        if not placeable.eqMoundDressed and placeable.rootNode ~= nil and EqLizard.isPlinthXml(placeable.configFileName) then
+            EqLog.try("EqLizard mound", EqLizard.dressMound, placeable)
+        end
+    end
+end
+
+
 --- Start the farm's Lizard plinths collapsing: the lizard tips over, the lot sinks, then it's gone.
 --- @param farmId number
 function EqLizard.collapse(farmId)
@@ -576,6 +621,7 @@ function EqLizard.update()
         EqLizard.shopSet = true
         EqLizard.updateShop()
     end
+    EqLizard.dressMounds()
     local farmId = g_currentMission:getFarmId()
     local deal = EqLizard.deals[farmId]
     if deal == nil or deal.state ~= "offered" or EqLizard.asked[farmId] == deal.month then return end
