@@ -62,6 +62,10 @@ EqPlinths.AREAS = {
     -- the ground; the machine stands mostly on the slope
     ["placeables/sponsorplinths/plinthproductramp.xml"] = { { x = 0, y = 2.0 - 3.5 * 2.0 / 7.5, z = 5.0, hx = 2.0, hz = 4.0, slope = -2.0 / 7.5 } },
     ["placeables/sponsorplinths/plinthturntable.xml"] = { { x = 0, y = 0.73, z = 0, r = 3.35, slope = 0, value = 3 } },
+    -- the Lizard plinth's log deck (art/source/lizard_plinth.py DECK, DECK_TOP)
+    ["placeables/sponsorplinths/lizardplinthstone.xml"] = { { x = 0, y = 1.15, z = 0, hx = 2.05, hz = 1.85, slope = 0 } },
+    ["placeables/sponsorplinths/lizardplinthwoodchips.xml"] = { { x = 0, y = 1.15, z = 0, hx = 2.05, hz = 1.85, slope = 0 } },
+    ["placeables/sponsorplinths/lizardplinthstraw.xml"] = { { x = 0, y = 1.15, z = 0, hx = 2.05, hz = 1.85, slope = 0 } },
     ["placeables/xcjumps/xcdropwall08.xml"] = drop(2.4),
     ["placeables/xcjumps/xcdropwall12.xml"] = drop(3.0),
     ["placeables/xcjumps/xcdropwall16.xml"] = drop(4.0),

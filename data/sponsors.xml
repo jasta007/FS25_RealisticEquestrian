@@ -72,6 +72,15 @@
         fee             multiplies the size's fee
         repair, repaint, purchase   discounts on the sponsor's machines
 
+    lizard              Lizard's free one-off sponsorship (EqLizard): the chance an unsponsored
+                        hosted event gets an offer (rolled the month before), the popularity it
+                        brings, eventingFactor times the fee for a 3 Day Event; per rating the fee
+                        paid when the results come in and the branding
+                        level asked for (1 Low, 2 Medium, 3 High); the bulk materials the Lizard
+                        plinth may ask for (one is picked, by weight) with that plinth's shop item,
+                        and the parts every plinth needs. The amounts must match
+                        art/source/lizard_plinth.py, which writes them into the plinths.
+
     Part of Realistic Equestrian by Jasta007.
 -->
 <sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5">
@@ -142,4 +151,15 @@
         <term name="repaint"              relaxed="0.35" strict="0.65"/>
         <term name="purchase"             relaxed="0.05" strict="0.2"/>
     </strictness>
+
+    <lizard chance="0.25" popularity="5" eventingFactor="1.5">
+        <rating name="novice"       fee="6000"  branding="1"/>
+        <rating name="intermediate" fee="18000" branding="2"/>
+        <rating name="championship" fee="45000" branding="3"/>
+        <material fillType="STONE"     amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
+        <material fillType="WOODCHIPS" amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
+        <material fillType="STRAW"     amount="10000" weight="1" xml="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
+        <part fillType="WOOD"   amount="10000"/>
+        <part fillType="BOARDS" amount="1000"/>
+    </lizard>
 </sponsors>

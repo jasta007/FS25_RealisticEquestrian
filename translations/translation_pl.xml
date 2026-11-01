@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="To nie sprzęt twojego sponsora! Wystawione maszyny konkurencji obniżą twoje dochody ze sponsoringu!"/>
         <text name="eq_plinth_noSponsor" text="Brak podpisanego sponsora: jego sprzęt wystawiony tutaj liczyłby się do twojej widoczności."/>
         <text name="eq_plinth_penalty" text="%d maszyn(y) konkurencji na twoich podestach sponsora: odjęto %s z wynagrodzenia sponsora."/>
+        <text name="eq_shop_lizardPlinth" text="Podest Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Specjalny podest Lizard na wydarzenie, które sponsoruje. Zbuduj go, dostarczając materiały do wyzwalaczy z przodu; maszyna Lizard na pokładzie z bali liczy się podwójnie. Po wydarzeniu się zawala."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Wymaga 1000 l kamieni, 10000 l drewna i 1000 l desek."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Wymaga 1000 l zrębków, 10000 l drewna i 1000 l desek."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Wymaga 10 000 l słomy, 10000 l drewna i 1000 l desek."/>
+        <text name="eq_lizard_title" text="Oferta sponsorska %s"/>
+        <text name="eq_lizard_offer" text="%s chce sponsorować twoje wydarzenie %s (%s) i pożyczy ci jeden ze swoich pojazdów na miesiąc wydarzenia. Wymaga brandingu %s do końca wydarzenia oraz zbudowania podestu Lizard na twoim obiekcie: %s. Jeśli wszystko będzie gotowe, gdy przyjdą wyniki, zapłaci %s. Jeśli nie, nie zapłaci nic i nie ma żadnej kary. Podest zawali się po wydarzeniu."/>
+        <text name="eq_lizard_accept" text="Akceptuj"/>
+        <text name="eq_lizard_decline" text="Odrzuć"/>
+        <text name="eq_lizard_offerNote" text="%s chce sponsorować twoje wydarzenie %s."/>
+        <text name="eq_lizard_accepted" text="Umowa z %s przyjęta! Kup podest Lizard w sklepie (Do budowy) i zbuduj go z %s, kłód i desek."/>
+        <text name="eq_lizard_stepAside" text="%s się wycofuje: teraz twoje wydarzenie sponsoruje %s."/>
+        <text name="eq_lizard_paid" text="%s zapłacił %s za sponsorowanie twojego wydarzenia."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s nie płaci nic: podest Lizard nie był gotowy. Bez urazy."/>
+        <text name="eq_lizard_unpaid_branding" text="%s nie płaci nic: za mało brandingu. Bez urazy."/>
+        <text name="eq_lizard_unpaid_rating" text="%s nie płaci nic za to wydarzenie."/>
         <text name="eq_config_corner" text="Narożnik"/>
         <text name="eq_config_cornerRight" text="Szpic w prawo"/>
         <text name="eq_config_cornerLeft" text="Szpic w lewo"/>

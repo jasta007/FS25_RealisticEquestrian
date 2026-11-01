@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="スポンサーの機材ではありません！ライバルの機械を展示するとスポンサー収入が減ります！"/>
         <text name="eq_plinth_noSponsor" text="スポンサー未契約：ここに展示した機材はブランド効果にカウントされます。"/>
         <text name="eq_plinth_penalty" text="スポンサー展示台に他社の機械が %d 台：スポンサー料から %s 差し引かれました。"/>
+        <text name="eq_shop_lizardPlinth" text="Lizard展示台"/>
+        <text name="eq_shop_lizardPlinth_function" text="Lizardがスポンサーとなるイベントのための特別な展示台。正面のトリガーに資材を納品して建設します。丸太デッキに置いたLizardの機械は追加でカウントされます。イベント後に崩れます。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
+        <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
+        <text name="eq_lizard_accept" text="受ける"/>
+        <text name="eq_lizard_decline" text="断る"/>
+        <text name="eq_lizard_offerNote" text="%sがあなたの%sをスポンサーしたいそうです。"/>
+        <text name="eq_lizard_accepted" text="%sとの契約成立！ショップ（建設可能）でLizard展示台を購入し、%s・丸太・板材で建設しましょう。"/>
+        <text name="eq_lizard_stepAside" text="%sは身を引きました：今は%sがあなたのイベントのスポンサーです。"/>
+        <text name="eq_lizard_paid" text="%sがイベントのスポンサー料として%sを支払いました。"/>
+        <text name="eq_lizard_unpaid_plinth" text="%sの支払いはありません：Lizard展示台が完成していませんでした。気にしないでとのことです。"/>
+        <text name="eq_lizard_unpaid_branding" text="%sの支払いはありません：ブランディングが足りませんでした。気にしないでとのことです。"/>
+        <text name="eq_lizard_unpaid_rating" text="%sはこのイベントには支払いません。"/>
         <text name="eq_config_corner" text="コーナー"/>
         <text name="eq_config_cornerRight" text="先端が右"/>
         <text name="eq_config_cornerLeft" text="先端が左"/>

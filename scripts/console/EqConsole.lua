@@ -952,6 +952,22 @@ function EqConsole:consoleSponsorLoan(brand)
 end
 
 
+--- eqLizard [on|off]: Lizard's offer chance 100% this session (James, 2026-11-01: test the whole
+--- flow, nothing signed for you). eqLizard now [stone|woodchips|straw] [accept] forces it at once.
+function EqConsole:consoleLizard(mode, material, accept)
+    if g_currentMission == nil then return "No mission loaded" end
+    mode = mode ~= nil and string.lower(mode) or nil
+    if mode == nil or mode == "on" or mode == "off" then
+        local on = nil -- toggle
+        if mode == "on" then on = true elseif mode == "off" then on = false end
+        return EqLizard.setTestAlways(on)
+    end
+    if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [stone|woodchips|straw] [accept]" end
+    if material == "accept" then material, accept = accept, "accept" end
+    return EqLizard.force(g_currentMission:getFarmId(), material, accept == "accept")
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -983,6 +999,7 @@ function EqConsole.register()
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
+    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
@@ -999,7 +1016,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

@@ -49,6 +49,7 @@ dofile("scripts/facilities/EqPlinths.lua")
 dofile("scripts/facilities/EqTurntable.lua")
 dofile("scripts/facilities/EqSponsors.lua")
 dofile("scripts/facilities/EqSponsorBoards.lua")
+dofile("scripts/sponsors/EqLizard.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -5197,6 +5198,122 @@ end)()
         check("plinths: the product ramp has no flags of its own (players set them) and its board is on its face",
             io.open("placeables/sponsorPlinths/plinthProductRamp.i3d"):read("*a"):find('eqFlags', 1, true) == nil
             and io.open("modDesc.xml"):read("*a"):find("plinthProductJump", 1, true) == nil)
+
+        -- Lizard's free one-off sponsorship (James, 2026-11-01): 25%, a constructible plinth, no penalty.
+        local lz = EqLizard.read(TestXML.load("data/sponsors.xml"))
+        check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
+            and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
+            and EqLizard.material(lz, "STONE").amount == 1000 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
+        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
+            and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
+        check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType
+            and EqLizard.roll(lz, 0, 0.5).fillType == lz.materials[2].fillType and EqLizard.roll(lz, 0, 0.999).fillType == lz.materials[3].fillType)
+        local fee = lz.ratings.intermediate.fee
+        check("lizard: pays when the plinth is built and the branding is there, else nothing (no penalty)",
+            EqLizard.payFor(lz, "intermediate", true, 2) == fee and EqLizard.payFor(lz, "intermediate", true, 3) == fee
+            and select(2, EqLizard.payFor(lz, "intermediate", false, 3)) == "plinth"
+            and select(2, EqLizard.payFor(lz, "intermediate", true, 1)) == "branding"
+            and EqLizard.payFor(lz, "intermediate", true, 1) == 0 and EqLizard.payFor(lz, "nope", true, 3) == 0)
+        check("lizard: 6,000 / 18,000 / 45,000, and 1.5 times for a 3 Day Event (James)",
+            EqLizard.feeFor(lz, "novice") == 6000 and EqLizard.feeFor(lz, "intermediate", "dressage") == 18000
+            and EqLizard.feeFor(lz, "championship") == 45000 and EqLizard.feeFor(lz, "novice", "eventing") == 9000
+            and EqLizard.payFor(lz, "championship", true, 3, "eventing") == 67500)
+        check("lizard: smaller fees than the yearly sponsors, more branding at higher ratings",
+            lz.ratings.novice.fee < lz.ratings.intermediate.fee and lz.ratings.intermediate.fee < lz.ratings.championship.fee
+            and lz.ratings.championship.fee < 120000 and lz.ratings.novice.branding == 1 and lz.ratings.championship.branding == 3)
+        for _, material in ipairs(lz.materials) do
+            local path = material.xml
+            local xml = io.open(path):read("*a")
+            local i3d = io.open((path:gsub("%.xml$", ".i3d"))):read("*a")
+            local function amount(fillType)
+                return tonumber(xml:match('<input fillType="' .. fillType .. '" amount="(%d+)"'))
+            end
+            check("lizard: " .. path .. " in the shop (hidden until a deal), a constructible with the deal's amounts",
+                modDesc:find(path, 1, true) ~= nil and xml:find('type="constructible"', 1, true) ~= nil
+                and xml:find("<showInStore>false</showInStore>", 1, true) ~= nil
+                and amount(material.fillType) == material.amount and amount("WOOD") == lz.parts[1].amount
+                and amount("BOARDS") == lz.parts[2].amount)
+            check("lizard: " .. path .. " is a plinth with one Lizard board and a log deck", EqLizard.isPlinthXml(path)
+                and EqSponsors.isBleacherXml(path) and EqSponsors.shopBoards(path) == 1 and EqPlinths.areasFor(path) ~= nil
+                and select(2, i3d:gsub('name="eqSponsor_%d+"', "")) == 1)
+            local ids, unique = {}, true
+            for id in xml:gmatch('<i3dMapping id="([^"]+)"') do
+                if ids[id] then unique = false end
+                ids[id] = true
+            end
+            local named = true
+            for node in xml:gmatch('node="([%a][%w]*)"') do
+                if not ids[node] then named = false end
+            end
+            check("lizard: " .. path .. " names every node it uses, once", unique and named and ids.lizard and ids.sellingStation)
+        end
+        local deck = EqPlinths.areasFor("x/placeables/sponsorPlinths/lizardPlinthStraw.xml")[1]
+        check("lizard: a machine on the log deck counts, not one on the ground", EqPlinths.inArea(deck, 1.0, 1.15, 0.5)
+            and not EqPlinths.inArea(deck, 1.0, 0.0, 0.5) and not EqPlinths.inArea(deck, 3.5, 0.6, 0))
+        check("lizard: no deal, no Lizard brand among the farm's sponsors", not EqLizard.active(1))
+        do
+            local saved = EqSponsorManager
+            EqSponsorManager = { contracts = { [1] = { brand = "FENDT" } } }
+            EqLizard.deals[1] = { month = 3, state = "accepted" }
+            EqLizard.deals[2] = { month = 3, state = "offered" }
+            local one, two = EqSponsors.signedBrands(1), EqSponsors.signedBrands(2)
+            EqLizard.deals[1], EqLizard.deals[2] = nil, nil
+            EqSponsorManager = saved
+            check("lizard: an accepted deal adds Lizard's machines to the plinths, after the yearly sponsors",
+                one[1] == "FENDT" and one[2] == "LIZARD" and #one == 2 and #two == 0)
+        end
+        check("lizard: everything delivered but not yet built counts as built (James)", (function()
+            local levels = { [1] = 0, [2] = 2000, [3] = 1000 }
+            local storage = { getFillLevel = function(_, f) return levels[f] end }
+            local machine = { { inputs = { { fillType = { index = 1 }, remainingAmount = 0 } } },
+                { inputs = { { fillType = { index = 2 }, remainingAmount = 2000 } } },
+                { inputs = { { fillType = { index = 3 }, remainingAmount = 1000 } } }, {}, {} }
+            local spec = { storage = storage, stateMachine = machine, stateIndex = 2, stateNameToIndex = { FINALIZE = 4, DONE = 5 } }
+            local all = EqLizard.isBuilt({ spec_constructible = spec })
+            levels[3] = 600
+            local short = EqLizard.isBuilt({ spec_constructible = spec })
+            spec.stateIndex = 4
+            local done = EqLizard.isBuilt({ spec_constructible = spec })
+            return all and not short and done
+        end)())
+        check("lizard: its event is known by the deal's event id", (function()
+            EqLizard.deals[4] = { month = 1, state = "accepted", eventId = 9 }
+            local yes = EqLizard.isLizardEvent({ id = 9, hosted = { farmId = 4 } })
+            local no = EqLizard.isLizardEvent({ id = 8, hosted = { farmId = 4 } }) or EqLizard.isLizardEvent({ id = 9 })
+            EqLizard.deals[4] = nil
+            return yes and not no
+        end)())
+        check("lizard: each plinth's mound is its own material (for the game's heap look)", (function()
+            local saved = EqLizard.config
+            EqLizard.config = lz
+            local ok = EqLizard.moundFillType("C:\\mods\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\lizardPlinthStone.xml") == "STONE"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthWoodChips.xml") == "WOODCHIPS"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthStraw.xml") == "STRAW"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/plinthTurntable.xml") == nil
+            EqLizard.config = saved
+            return ok
+        end)())
+        check("lizard: eqLizard makes an open hosted event Lizard's, even over a yearly sponsor", (function()
+            local savedManager = EqCompetitionManager
+            EqCompetitionManager = EqCompetitionManager or { eventTitle = function() return "the event" end }
+            local savedConfig, savedEvents, savedMonth = EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month
+            local savedBookings = EqHostManager.bookings
+            EqLizard.config = lz
+            EqHostManager.bookings = {}
+            EqCompetitionManager.events = {}
+            local none = EqLizard.force(6, nil, false)
+            local bad = EqLizard.force(6, "gold", false)
+            local event = { id = 41, discipline = "dressage", hosted = { farmId = 6, rating = "novice", sponsor = "Someone" } }
+            EqCompetitionManager.events = { event }
+            EqCompetitionManager.month = 5
+            local ok = pcall(EqLizard.force, 6, "straw", false)
+            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == "STRAW"
+            EqLizard.deals[6] = nil
+            EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month = savedConfig, savedEvents, savedMonth
+            EqHostManager.bookings = savedBookings
+            EqCompetitionManager = savedManager
+            return result and string.find(none, "Book", 1, true) ~= nil and string.find(bad, "stone", 1, true) ~= nil
+        end)())
     end
 
     -- Sponsor colours: the brand's most colourful paint, our list, else none.
@@ -5228,6 +5345,10 @@ end)()
     EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
     local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
     check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")
+    check("sponsor colours: Lizard is Lizard green, boards and faces, whatever the game's paint (James)",
+        EqSponsorBoards.brandColour("LIZARD") ~= nil and select(2, EqSponsorBoards.brandColour("LIZARD")) == "own"
+        and EqSponsorBoards.faceColour("LIZARD")[2] > EqSponsorBoards.faceColour("LIZARD")[1]
+        and EqSponsorBoards.faceColour("LIZARD")[2] > 0.3)
     check("sponsor colours: none for an unknown brand", EqSponsorBoards.brandColour("NOBRANDATALL") == nil and EqSponsorBoards.brandColour(nil) == nil)
     EqSponsorBoards.paints, EqSponsorBoards.cache = nil, nil
     check("sponsor colours: plain jumps keep the shop colour",

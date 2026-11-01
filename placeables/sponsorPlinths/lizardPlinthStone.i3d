@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="lizardPlinthStone.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="4" filename="$data/fillPlanes/stone_diffuse.png"/>
+    <File fileId="5" filename="$data/fillPlanes/stone_normal.png"/>
+    <File fileId="14" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
+    <File fileId="11" filename="lizardGreenPlanks_diffuse.dds"/>
+    <File fileId="8" filename="../xcJumps/xcBarkA_diffuse.dds"/>
+    <File fileId="9" filename="../xcJumps/xcBarkA_normal.dds"/>
+    <File fileId="10" filename="../xcJumps/xcLogEnd_diffuse.dds"/>
+    <File fileId="1" filename="../xcJumps/xcPlanks_diffuse.dds"/>
+    <File fileId="2" filename="../xcJumps/xcPlanks_normal.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="eqSponsor" materialId="10" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="14"/>
+    </Material>
+    <Material name="lizardBark" materialId="6" specularColor="0.101961 1 0">
+      <Texture fileId="8"/>
+      <Normalmap fileId="9"/>
+    </Material>
+    <Material name="lizardBoardFace" materialId="9" diffuseColor="0.231373 0.509804 0.0235294 1" specularColor="0.2 1 0">
+    </Material>
+    <Material name="lizardGreen" materialId="12" specularColor="0.2 1 0">
+      <Texture fileId="11"/>
+      <Normalmap fileId="2"/>
+    </Material>
+    <Material name="lizardLogEnd" materialId="7" specularColor="0.101961 1 0">
+      <Texture fileId="10"/>
+    </Material>
+    <Material name="lizardMound" materialId="5" specularColor="0.101961 1 0">
+      <Texture fileId="4"/>
+      <Normalmap fileId="5"/>
+    </Material>
+    <Material name="lizardPlanks" materialId="8" specularColor="0.14902 1 0">
+      <Texture fileId="1"/>
+      <Normalmap fileId="2"/>
+    </Material>
+    <Material name="trigger" materialId="11" diffuseColor="0.501961 0.501961 0.501961 1">
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="lizardPlinthStone.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="lizardPlinthStone" nodeId="31">
+      <TransformGroup name="site" nodeId="32">
+        <Shape name="stakes" shapeId="1" clipDistance="600" nodeId="33" castsShadows="true" receiveShadows="true" materialIds="8"/>
+      </TransformGroup>
+      <TransformGroup name="mound" nodeId="34">
+        <Shape name="moundSurface" shapeId="2" clipDistance="600" nodeId="35" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="collision" shapeId="3" static="true" collisionFilterGroup="0x1037" collisionFilterMask="0xfffffbff" density="0.01" clipDistance="600" nodeId="36" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+      </TransformGroup>
+      <TransformGroup name="logs" nodeId="37">
+        <Shape name="logBark" shapeId="4" clipDistance="600" nodeId="38" castsShadows="true" receiveShadows="true" materialIds="6"/>
+        <Shape name="logEnds" shapeId="5" clipDistance="600" nodeId="39" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      </TransformGroup>
+      <TransformGroup name="lizard" translation="0 0.75 2.35" nodeId="40">
+        <Shape name="planks" translation="-0 -0.75 -2.35" shapeId="6" clipDistance="600" nodeId="41" castsShadows="true" receiveShadows="true" materialIds="12"/>
+        <Shape name="battens" translation="-0 -0.75 -2.35" shapeId="7" clipDistance="600" nodeId="42" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="lizardCollision" translation="-0 -0.75 -2.35" shapeId="8" static="true" collisionFilterGroup="0x1037" collisionFilterMask="0xfffffbff" density="0.01" clipDistance="600" nodeId="43" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+      </TransformGroup>
+      <TransformGroup name="sign" nodeId="44">
+        <Shape name="boardPlanks" shapeId="9" clipDistance="600" nodeId="45" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="boardFace" shapeId="10" clipDistance="600" nodeId="46" castsShadows="true" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_1" shapeId="11" clipDistance="600" nodeId="47" castsShadows="false" receiveShadows="true" materialIds="10"/>
+      </TransformGroup>
+      <TransformGroup name="sellingStation" nodeId="48">
+        <Shape name="unloadTrigger" shapeId="12" kinematic="true" trigger="true" collisionFilterGroup="0x40000000" collisionFilterMask="0x20000000" clipDistance="600" nodeId="49" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+        <Shape name="palletTrigger" shapeId="13" kinematic="true" compound="true" trigger="true" collisionFilterGroup="0x20000000" collisionFilterMask="0x10000" clipDistance="600" nodeId="50" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+        <Shape name="woodTrigger" shapeId="14" kinematic="true" compound="true" trigger="true" collisionFilterGroup="0x20000000" collisionFilterMask="0x800" clipDistance="600" nodeId="51" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+        <Shape name="woodActivationTrigger" shapeId="15" kinematic="true" compound="true" trigger="true" collisionFilterGroup="0x20000000" collisionFilterMask="0x100000" clipDistance="600" nodeId="52" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+        <TransformGroup name="unloadTriggerAINode" translation="0 0 -6.2" nodeId="53"/>
+        <TransformGroup name="unloadTriggerMarker" translation="0 0 -6.2" nodeId="54"/>
+        <TransformGroup name="woodActivationTriggerMarker" translation="3.8 0 -6.2" nodeId="55"/>
+      </TransformGroup>
+      <Shape name="infoTrigger" shapeId="16" static="true" trigger="true" collisionFilterGroup="0x20000000" collisionFilterMask="0x100000" clipDistance="600" nodeId="56" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="11"/>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

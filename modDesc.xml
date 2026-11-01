@@ -123,6 +123,9 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/sponsorPlinths/plinthRampLarge.xml"/>
         <storeItem xmlFilename="placeables/sponsorPlinths/plinthProductRamp.xml"/>
         <storeItem xmlFilename="placeables/sponsorPlinths/plinthTurntable.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>
