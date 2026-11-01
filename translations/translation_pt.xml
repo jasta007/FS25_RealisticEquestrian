@@ -853,7 +853,7 @@
         <text name="eq_host_part_weather" text="tempo"/>
         <text name="eq_host_buzz_high" text="Toda a gente fala disso"/>
         <text name="eq_host_buzz_low" text="Calmo"/>
-        <text name="eq_host_aheadBonus" text="+%d popularidade"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d por reserva antecipada)"/>
         <text name="eq_host_advert_none" text="Sem publicidade"/>
         <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
         <text name="eq_host_advert_local" text="Local"/>

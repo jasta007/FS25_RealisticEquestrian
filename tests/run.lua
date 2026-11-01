@@ -4615,8 +4615,8 @@ end)()
     -- More variables (James, 2026-11-01): stars by skill word, booking ahead, advertising, shops, buzz, weather.
     check("hosting: star points by skill word", EqHosting.starPoints(host, 79) == 0 and EqHosting.starPoints(host, 80) == 3
         and EqHosting.starPoints(host, 92) == 6 and EqHosting.starPoints(host, 99) == 10 and EqHosting.starPoints(host, nil) == 0)
-    check("hosting: booking ahead +1 a month beyond the first, at most 5", EqHosting.aheadPoints(host, 1) == 0
-        and EqHosting.aheadPoints(host, 3) == 2 and EqHosting.aheadPoints(host, 6) == 5 and EqHosting.aheadPoints(host, 12) == 5)
+    check("hosting: booking ahead +2 a month beyond the first, at most 10", EqHosting.aheadPoints(host, 1) == 0
+        and EqHosting.aheadPoints(host, 3) == 4 and EqHosting.aheadPoints(host, 6) == 10 and EqHosting.aheadPoints(host, 12) == 10)
     check("hosting: advertising costs by rating", EqHosting.advertCost(host, "local", "novice") == 250
         and EqHosting.advertCost(host, "national", "championship") == 15000 and EqHosting.advertCost(host, nil, "novice") == 0)
     check("hosting: shop points", EqHosting.shopPoints(host, { sources = 1, goods = 0 }) == 2
@@ -4625,10 +4625,10 @@ end)()
     local plain = EqHosting.popularity(host, "showJumping", novice, {})
     local extras, extraParts = EqHosting.popularity(host, "showJumping", novice, { monthsAhead = 6, advert = "national",
         shops = { sources = 1, goods = 1 }, buzz = -2, starRating = 95 })
-    check("hosting: ahead, advert, shops, buzz and star add up", extras == plain + 5 + 8 + 3 - 2 + 6, tostring(extras))
+    check("hosting: ahead, advert, shops, buzz and star add up", extras == plain + 10 + 8 + 3 - 2 + 6, tostring(extras))
     local ids = {}
     for _, part in ipairs(extraParts) do ids[part.id] = part.points end
-    check("hosting: new parts listed", ids.ahead == 5 and ids.advert == 8 and ids.shops == 3 and ids.buzz == -2 and ids.star == 6)
+    check("hosting: new parts listed", ids.ahead == 10 and ids.advert == 8 and ids.shops == 3 and ids.buzz == -2 and ids.star == 6)
     for _ = 1, 50 do
         local roll = EqHosting.rollBuzz(host)
         if roll < -5 or roll > 5 then check("hosting: buzz in -5..5", false, tostring(roll)) end

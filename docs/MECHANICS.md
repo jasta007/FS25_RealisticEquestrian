@@ -813,8 +813,8 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
   same few again, half for a mix of jump types, full at five), up to 15 for extra bleachers or an
   indoor arena, up to 10 for horse facilities, up to 6 for shops (2 for owning a farm shop or a
   production making goods visitors buy, such as a bakery or dairy, placed or bought on the map,
-  and 1 for each such good with 50 l or more in stock), your hosting reputation, +1 for each
-  month you book ahead beyond the first (up to +5, shown in the month picker), advertising
+  and 1 for each such good with 50 l or more in stock), your hosting reputation, a bonus for each
+  month you book ahead beyond the first (+2 a month, up to +10, shown on the Popularity line), advertising
   (Local +4 or National +8, paid when booking: $250/$1,500/$6,000 or $750/$4,000/$15,000 by
   rating, not refunded), and a buzz of -5 to +5 rolled when you book ("Quiet" or "Buzzing" in
   the breakdown). It sets the turnout (half the visiting places at 0, all at 100) and so the takings:

@@ -853,7 +853,7 @@
         <text name="eq_host_part_weather" text="天候"/>
         <text name="eq_host_buzz_high" text="大評判"/>
         <text name="eq_host_buzz_low" text="静か"/>
-        <text name="eq_host_aheadBonus" text="人気 +%d"/>
+        <text name="eq_host_popularityAhead" text="%d (早期予約 +%d)"/>
         <text name="eq_host_advert_none" text="広告なし"/>
         <text name="eq_host_advert_option" text="%s、%s (+%d)"/>
         <text name="eq_host_advert_local" text="地域"/>

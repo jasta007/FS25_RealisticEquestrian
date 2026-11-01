@@ -77,7 +77,7 @@
 
     <popularity base="30" course="15" courseFullAt="0.25" seating="15" seatingEach="5" indoor="5"
                 facilities="10" facilitiesEach="5" reputationMin="-25" reputationMax="20" success="8" cancel="-15"
-                quality="5" varietyFull="5" aheadEach="1" aheadMax="5" buzz="5"/>
+                quality="5" varietyFull="5" aheadEach="2" aheadMax="10" buzz="5"/>
 
     <stars>
         <star from="80" points="3"/>    <!-- Contender -->
