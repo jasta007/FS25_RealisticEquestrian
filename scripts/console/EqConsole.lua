@@ -849,10 +849,19 @@ end
 
 
 --- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
-function EqConsole:consoleSponsors()
+function EqConsole:consoleSponsors(mode, amount)
     if g_currentMission == nil then return "No mission loaded" end
     if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
     local farmId = g_currentMission:getFarmId()
+    if mode == "age" then
+        -- Testing: treat the farm's contracts as signed n months earlier (the game's time skips
+        -- don't always send a month change, so the mod's month count can lag the calendar).
+        local months = tonumber(amount) or 3
+        for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+            contract.signedMonth = (contract.signedMonth or 0) - months
+        end
+        return string.format("Contracts now count as signed %d month(s) earlier (now month %d)", months, EqCompetitionManager.month or 0)
+    end
     local lines = {}
     local shop = EqSponsorManager.readShop()
     if shop ~= nil then
@@ -952,7 +961,7 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
-    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
+    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts as signed n months earlier (testing)", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)

@@ -915,8 +915,12 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - The shop's block on rival machines comes in a later update.
 
 Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
-category names (easy ones starred), this year's offers and your contracts;
-`eqSponsorNew` (testing) makes a fresh set of offers now.
+category names (easy ones starred), this year's offers and your contracts (with when their
+discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
+earlier, 3 by default; `eqSponsorNew` (testing) makes a fresh set of offers now.
+
+The mod counts a month each time the game sends a month change. Some time skips (developer
+tools) move the calendar without one, so those months don't count.
 
 ## Buying horses
 
