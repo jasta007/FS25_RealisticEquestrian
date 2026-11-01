@@ -354,6 +354,10 @@ local function onMissionLoaded(mission)
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
             guarded("monthly events", EqCompetitionManager.onPeriodChanged)
         end, EqCompetitionManager)
+        -- The weather at your own events, counted once an hour while one runs.
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+            guarded("hosted event weather", EqHostManager.onHourChanged)
+        end, EqHostManager)
     end)
 
     -- Pastures may have drawn their horses before the saved entries loaded.

@@ -16,12 +16,13 @@ end
 
 --- @param farmId number
 --- @param venue table from EqHostVenue.read
+--- @param choice table|nil what the booking pickers say: { monthsAhead, advert }
 --- @return table rows { type, rating, title, ready, ok, popularity, score, parts, setup, takings, maxTakings, result }
-function EqHostView.optionRows(farmId, venue)
+function EqHostView.optionRows(farmId, venue, choice)
     local config = EqHostVenue.config
     local rows = {}
     if config == nil then return rows end
-    local context = EqHostView.context(farmId, venue)
+    local context = EqHostView.context(farmId, venue, choice)
     for _, typeName in ipairs(EqHosting.TYPES) do
         for _, rating in ipairs(config.ratings) do
             local result = EqHosting.check(config, typeName, rating.name, venue)
@@ -42,6 +43,7 @@ function EqHostView.optionRows(farmId, venue)
                     or string.format(g_i18n:getText("eq_host_missing"), missing),
                 popularity = tostring(score),
                 setup = money(result.setupFee),
+                advertCost = EqHosting.advertCost(config, context.advert, rating.name),
                 maxTakings = most.total,
                 takingsText = money(most.total),
             })
@@ -51,13 +53,16 @@ function EqHostView.optionRows(farmId, venue)
 end
 
 
---- What popularity needs beyond the venue: facilities and the farm's reputation. Your horses
---- and the season are only known in the event's month.
+--- What popularity needs beyond the venue: facilities, shops, the farm's reputation and what
+--- the booking pickers say. Your horses, the buzz and the weather are only known later.
 --- @param farmId number
 --- @param venue table
+--- @param choice table|nil { monthsAhead, advert }
 --- @return table context for EqHosting.popularity
-function EqHostView.context(farmId, venue)
-    return { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[farmId] or 0 }
+function EqHostView.context(farmId, venue, choice)
+    choice = choice or {}
+    return { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[farmId] or 0, shops = venue.shops,
+        monthsAhead = choice.monthsAhead, advert = choice.advert }
 end
 
 
@@ -95,26 +100,48 @@ function EqHostView.partsText(parts)
     local texts = {}
     for _, part in ipairs(parts or {}) do
         local points = part.id == "base" and tostring(part.points) or string.format("%+d", part.points)
+        if part.id == "buzz" then
+            points = string.format("%s %s", g_i18n:getText(part.points > 0 and "eq_host_buzz_high" or "eq_host_buzz_low"), points)
+        end
         table.insert(texts, string.format("%s %s", g_i18n:getText("eq_host_part_" .. part.id), points))
     end
     return table.concat(texts, ", ")
 end
 
 
---- The month picker's texts: "March (in 2 months)".
+--- The month picker's texts: "March (in 2 months)", and "+3 popularity" for booking ahead.
 --- @param months table months as EqCompetitionManager.month counts them
 --- @return table texts
 function EqHostView.monthOptions(months)
     local texts = {}
     local now = EqCompetitionManager.month or 0
+    local config = EqHostVenue.config
     for _, month in ipairs(months) do
         local ahead = month - now
         local key = ahead == 1 and "eq_host_monthOption1" or "eq_host_monthOption"
         local text, named = EqHostManager.monthText(month)
         -- Without a month's name the text already says "in N months": don't say it twice.
-        table.insert(texts, named and string.format(g_i18n:getText(key), text, ahead) or text)
+        text = named and string.format(g_i18n:getText(key), text, ahead) or text
+        local bonus = config ~= nil and EqHosting.aheadPoints(config, ahead) or 0
+        if bonus > 0 then text = text .. " " .. string.format(g_i18n:getText("eq_host_aheadBonus"), bonus) end
+        table.insert(texts, text)
     end
     return texts
+end
+
+
+--- The advertising picker's texts for a rating: "None", "Local, $250 (+4)".
+--- @param ratingName string|nil
+--- @return table texts, table names (nil for none)
+function EqHostView.advertOptions(ratingName)
+    local texts, names = { g_i18n:getText("eq_host_advert_none") }, { false }
+    local config = EqHostVenue.config
+    for _, level in ipairs(config ~= nil and config.adverts or {}) do
+        table.insert(texts, string.format(g_i18n:getText("eq_host_advert_option"), g_i18n:getText("eq_host_advert_" .. level.name),
+            money(level.cost[ratingName or ""] or 0), level.points))
+        table.insert(names, level.name)
+    end
+    return texts, names
 end
 
 
@@ -153,7 +180,11 @@ function EqHostView.panelLines(farmId, row, month)
 
     if row ~= nil then
         local takings = row.takings
-        table.insert(lines, { label = g_i18n:getText("eq_host_label_setup"), value = row.setup })
+        local setup = row.setup
+        if (row.advertCost or 0) > 0 then
+            setup = string.format(g_i18n:getText("eq_host_setupWithAdvert"), row.setup, money(row.advertCost))
+        end
+        table.insert(lines, { label = g_i18n:getText("eq_host_label_setup"), value = setup })
         table.insert(lines, { label = g_i18n:getText("eq_host_label_popularity"), value = row.popularity })
         table.insert(lines, { label = g_i18n:getText("eq_host_label_visitors"),
             value = string.format(g_i18n:getText("eq_host_visitors"), takings.competitors, takings.visitors) })
@@ -179,6 +210,11 @@ function EqHostView.reportRows(farmId)
         local days = EqHostManager.daysLeft()
         table.insert(rows, { title = true, text = string.format(g_i18n:getText("eq_host_report_running"), manager.eventTitle(open)) })
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_runningLine"), days or 0) })
+        local config = EqHostVenue.config
+        local lost = config ~= nil and EqHosting.weatherLoss(config, open.hosted.weather) or 0
+        if lost > 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_weatherSoFar"), lost) })
+        end
         if (open.hosted.feedEaten or 0) > 0 then
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feedSoFar"), math.floor(open.hosted.feedEaten),
                 math.floor(open.hosted.feedDaily or 0)) })
@@ -195,8 +231,22 @@ function EqHostView.reportRows(farmId)
         if podium ~= nil then table.insert(rows, { text = podium }) end
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_turnout"), report.competitors, report.visitors,
             report.popularity) })
+        if report.star ~= nil and report.star ~= "" then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_star"), report.star) })
+        end
+        if report.twister then
+            table.insert(rows, { text = g_i18n:getText("eq_host_report_twister") })
+        elseif (report.weatherPoints or 0) < 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_weather"), report.wetHours or 0, report.weatherPoints) })
+        end
+        if (report.goods or 0) > 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_goods"), report.goodsLitres or 0, money(report.goods)) })
+        end
+        if (report.advertCost or 0) > 0 then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_advert"), money(report.advertCost)) })
+        end
         table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_money"), money(report.total), money(report.entries),
-            money(report.gate), money(report.setupFee), money(report.total - report.setupFee)) })
+            money(report.gate), money(report.setupFee), money(report.total - report.setupFee - (report.advertCost or 0))) })
         if (report.feed or 0) > 0 then
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feed"), math.floor(report.feed)) })
         end

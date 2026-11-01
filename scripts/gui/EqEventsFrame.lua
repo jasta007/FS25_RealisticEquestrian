@@ -69,6 +69,8 @@ function EqEventsFrame.new()
     self.selectedSponsorIndex = nil
     self.selectedHostIndex = nil
     self.hostMonthIndex = 1
+    self.hostAdvertIndex = 1      -- 1 = no advertising
+    self.hostSellIndex = 1        -- 1 = sell souvenirs and refreshments, 2 = don't
     self.selectedEventId = nil
     self.selectedHorseIndex = nil
     self.hasCustomMenuButtons = true
@@ -371,6 +373,8 @@ function EqEventsFrame:refresh()
     if not isHost then
         show(self.hostPanel, false)
         show(self.hostMonthBox, false)
+        show(self.hostAdvertBox, false)
+        show(self.hostSellBox, false)
     end
 
     self.eventsList:reloadData()
@@ -481,7 +485,7 @@ end
 --- The Host tab: every event type and rating, the selected one's checks and the booking panel.
 function EqEventsFrame:refreshHost()
     local selected = self.selectedHostIndex ~= nil and self.hostRows[self.selectedHostIndex] or nil
-    self.hostRows = self.isReady and EqHostView.optionRows(farmId(), EqHostVenue.read(farmId())) or {}
+    self.hostRows = self.isReady and EqHostView.optionRows(farmId(), EqHostVenue.read(farmId()), self:hostChoice()) or {}
     self.hostList:reloadData()
     local selectIndex = #self.hostRows > 0 and 1 or nil
     for i, row in ipairs(self.hostRows) do
@@ -525,6 +529,19 @@ end
 --- @return table|nil row the selected sponsor row
 function EqEventsFrame:selectedSponsorRow()
     return self.selectedSponsorIndex ~= nil and self.sponsorRows[self.selectedSponsorIndex] or nil
+end
+
+
+--- What the booking pickers say, for the expected popularity.
+--- @return table choice { monthsAhead, advert }
+function EqEventsFrame:hostChoice()
+    local months = self:hostMonths()
+    local month = months[self.hostMonthIndex] or months[1]
+    local row = self.selectedHostIndex ~= nil and self.hostRows ~= nil and self.hostRows[self.selectedHostIndex] or nil
+    local _, names = EqHostView.advertOptions(row ~= nil and row.rating or nil)
+    local advert = names[self.hostAdvertIndex] or nil
+    return { monthsAhead = month ~= nil and month - (EqCompetitionManager.month or 0) or nil, advert = advert or nil,
+        sell = self.hostSellIndex ~= 2 }
 end
 
 
@@ -732,6 +749,38 @@ function EqEventsFrame:updateHostPanel()
         -- overflows (James's log 2026-10-29, month names falling back to "now").
         self.hostMonthOption:setState(self.hostMonthIndex, false)
     end
+    -- Advertising and souvenirs, chosen when booking (James, 2026-11-01).
+    if self.hostAdvertBox ~= nil then self.hostAdvertBox:setVisible(picking) end
+    if picking and self.hostAdvertOption ~= nil then
+        local texts = EqHostView.advertOptions(row ~= nil and row.rating or nil)
+        if self.hostAdvertIndex > #texts then self.hostAdvertIndex = 1 end
+        self.hostAdvertOption:setTexts(texts)
+        self.hostAdvertOption:setState(self.hostAdvertIndex, false)
+    end
+    if self.hostSellBox ~= nil then self.hostSellBox:setVisible(picking) end
+    if picking and self.hostSellOption ~= nil then
+        local shops = EqHostVenue.config ~= nil and EqHostVenue.config.shops or nil
+        local markup = math.floor(((shops ~= nil and shops.markup or 1.25) - 1) * 100 + 0.5)
+        self.hostSellOption:setTexts({ string.format(g_i18n:getText("eq_host_sell_yes"), markup), g_i18n:getText("eq_host_sell_no") })
+        self.hostSellOption:setState(self.hostSellIndex, false)
+    end
+end
+
+
+--- The advertising picker on the Host tab: popularity changes, so the rows are worked out again.
+--- @param state number
+function EqEventsFrame:onClickHostAdvert(state)
+    self.hostAdvertIndex = state or 1
+    self:refreshHost()
+    self:updateButtons()
+end
+
+
+--- The souvenirs and refreshments picker on the Host tab.
+--- @param state number
+function EqEventsFrame:onClickHostSell(state)
+    self.hostSellIndex = state or 1
+    self:updateHostPanel()
 end
 
 
@@ -820,7 +869,8 @@ end
 --- @param state number the picked month's index
 function EqEventsFrame:onClickHostMonth(state)
     self.hostMonthIndex = state or 1
-    self:updateHostPanel()
+    -- Booking further ahead adds popularity: work the rows out again.
+    self:refreshHost()
     self:updateButtons()
 end
 
@@ -1104,7 +1154,8 @@ function EqEventsFrame:onClickBook()
     local months = self:hostMonths()
     local month = months[self.hostMonthIndex] or months[1]
     if row == nil or month == nil then return end
-    local _, text = EqHostManager.book(farmId(), row.type, row.rating, month)
+    local choice = self:hostChoice()
+    local _, text = EqHostManager.book(farmId(), row.type, row.rating, month, { advert = choice.advert, sell = choice.sell })
     self.message = text
     self:refresh()
 end

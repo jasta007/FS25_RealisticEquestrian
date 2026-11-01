@@ -34,8 +34,34 @@
                         indoor arena (indoor)
         facilities      for horse facilities on the farm (facilitiesEach per kind)
         reputationMin/Max   the range of your hosting reputation; success and cancel move it
-        star            a Champion or Legendary horse of yours in the field
-        winter          cross country (and 3 Day Events) in winter
+        quality         most points for a well built jumping course (EqHosting.courseQuality:
+                        different obstacles, not the same few jumped again, and a mix of jump
+                        types, full at varietyFull types); kept small on purpose
+        aheadEach       points for each month booked ahead beyond the first, at most aheadMax
+        buzz            a random roll from -buzz to +buzz when you book: how much people talk
+                        about it
+
+    star                one of your entries in the field, the best rated: points from its
+                        rating for the event (from = the skill word's floor)
+
+    weather             counted once an in-game hour, hourFrom to hourTo, while your event runs
+        scale           popularity lost if every counted hour had weight 1 weather (rain), times
+                        the share of the event outdoors; at most max
+        gate            the gate loses this share of its takings for the same; never below gateMin
+        type            a WeatherType name and its weight (hail worst, then snow, then rain);
+                        flat is a one-off loss the first hour it is seen (tornado)
+        An indoor arena or riding centre keeps a show jumping course or dressage arena dry;
+        cross country counts the share of its jumps that are outdoors.
+
+    advertising         an optional spend when you book; points, and its cost per rating
+
+    shops               visitors like a farm with things to buy
+        source          points for owning a shop or a production making goods visitors buy
+        good            and for each such good in stock (at least minStock litres), to max
+        markup          souvenirs and refreshments sell at the best sell price times this
+        sell            litres a rating's visitors buy at popularity 100 (half at 0)
+        good name       fill types visitors buy (unknown names are skipped, so map goods can
+                        be listed freely); shop keyword a Lua pattern on the placeable's xml
 
     seating             what counts as a bleacher: <match> by xml filename, <keyword> a Lua
                         pattern tried against the lowercased xml filename (as in facilities.xml)
@@ -51,7 +77,49 @@
 
     <popularity base="30" course="15" courseFullAt="0.25" seating="15" seatingEach="5" indoor="5"
                 facilities="10" facilitiesEach="5" reputationMin="-25" reputationMax="20" success="8" cancel="-15"
-                star="10" winter="-10"/>
+                quality="5" varietyFull="5" aheadEach="1" aheadMax="5" buzz="5"/>
+
+    <stars>
+        <star from="80" points="3"/>    <!-- Contender -->
+        <star from="90" points="6"/>    <!-- Champion -->
+        <star from="98" points="10"/>   <!-- Legendary -->
+    </stars>
+
+    <weather hourFrom="8" hourTo="20" scale="40" max="25" gate="0.6" gateMin="0.4">
+        <type name="RAIN"    weight="1"/>
+        <type name="THUNDER" weight="1.5"/>
+        <type name="SNOW"    weight="2"/>
+        <type name="HAIL"    weight="4"/>
+        <type name="TWISTER" weight="4" flat="15"/>
+    </weather>
+
+    <advertising>
+        <level name="local"    points="4" novice="250" intermediate="1500" championship="6000"/>
+        <level name="national" points="8" novice="750" intermediate="4000" championship="15000"/>
+    </advertising>
+
+    <shops source="2" good="1" max="6" minStock="50" markup="1.25" novice="100" intermediate="250" championship="500">
+        <!-- Base game -->
+        <good name="BREAD"/> <good name="CAKE"/> <good name="BUTTER"/> <good name="CHEESE"/> <good name="CHOCOLATE"/>
+        <good name="CEREAL"/> <good name="GRAPEJUICE"/> <good name="RAISINS"/> <good name="NOODLESOUP"/> <good name="RICEROLLS"/>
+        <good name="CLOTHES"/> <good name="MILK_BOTTLED"/> <good name="GOATMILK_BOTTLED"/> <good name="BUFFALOMILK_BOTTLED"/>
+        <good name="GOATCHEESE"/> <good name="BUFFALOMOZZARELLA"/> <good name="SUGAR"/> <good name="OLIVE_OIL"/>
+        <good name="CANNED_PEAS"/> <good name="JARRED_GREENBEAN"/> <good name="PRESERVEDCARROTS"/> <good name="PRESERVEDPARSNIP"/>
+        <good name="PRESERVEDBEETROOT"/> <good name="POTATOCHIPS"/> <good name="SOUPCANS"/> <good name="HONEY"/> <good name="EGG"/>
+        <!-- Geistal and other maps -->
+        <good name="APPLEJUICE_GT"/> <good name="APPLEJUICE"/> <good name="MUSTARDJAR"/> <good name="FERMENTEDNAPACABBAGE"/>
+        <good name="RICE_BAGS"/> <good name="RICE_BOXES"/> <good name="SPINACH_BAGS"/> <good name="APPLE_GT"/> <good name="APPLE"/>
+        <good name="WINE"/> <good name="BEER"/> <good name="JAM"/> <good name="ICECREAM"/> <good name="YOGURT"/>
+        <shop keyword="farmshop"/>
+        <shop keyword="farm_shop"/>
+        <shop keyword="farmersmarket"/>
+        <shop keyword="farmers_market"/>
+        <shop keyword="hofladen"/>
+        <shop keyword="marketstall"/>
+        <shop keyword="foodstand"/>
+        <shop keyword="foodtruck"/>
+        <shop keyword="roadsidestand"/>
+    </shops>
 
     <seating>
         <match xml="placeables/bleachers/bleachers"/>

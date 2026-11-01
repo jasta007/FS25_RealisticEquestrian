@@ -880,6 +880,33 @@
         <text name="eq_host_part_reputation" text="reputatie"/>
         <text name="eq_host_part_star" text="sterpaard"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_quality" text="parcoursbouw"/>
+        <text name="eq_host_part_shops" text="winkels"/>
+        <text name="eq_host_part_ahead" text="vroeg geboekt"/>
+        <text name="eq_host_part_advert" text="reclame"/>
+        <text name="eq_host_part_buzz" text="rumoer"/>
+        <text name="eq_host_part_weather" text="weer"/>
+        <text name="eq_host_buzz_high" text="Iedereen praat erover"/>
+        <text name="eq_host_buzz_low" text="Rustig"/>
+        <text name="eq_host_aheadBonus" text="+%d populariteit"/>
+        <text name="eq_host_advert_none" text="Geen reclame"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Lokaal"/>
+        <text name="eq_host_advert_national" text="Landelijk"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s reclame"/>
+        <text name="eq_host_label_advert" text="Reclame"/>
+        <text name="eq_host_label_sell" text="Souvenirs en versnaperingen"/>
+        <text name="eq_host_sell_yes" text="Verkopen indien aanwezig (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Niet verkopen"/>
+        <text name="eq_host_book_advert" text="Reclame betaald: %s."/>
+        <text name="eq_host_twister" text="Een tornado raasde door %s! Toeschouwers renden weg om te schuilen."/>
+        <text name="eq_host_done_goods" text="Souvenirs en versnaperingen verkocht: %s."/>
+        <text name="eq_host_star" text="Mensen keken er echt naar uit om %s te zien starten."/>
+        <text name="eq_host_report_twister" text="Tijdens het evenement trok een tornado voorbij en het publiek vluchtte."/>
+        <text name="eq_host_report_weather" text="Slecht weer: %d uur ervan hield mensen weg (populariteit %d)."/>
+        <text name="eq_host_report_goods" text="Souvenirs en versnaperingen: %d l verkocht voor %s."/>
+        <text name="eq_host_report_advert" text="Reclame: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Slecht weer heeft tot nu toe %d populariteit gekost."/>
         <text name="eq_host_label_yours" text="Jouw wedstrijd"/>
         <text name="eq_host_label_month" text="Boeken voor"/>
         <text name="eq_host_label_next" text="Volgende vrije maand"/>

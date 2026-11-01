@@ -880,6 +880,33 @@
         <text name="eq_host_part_reputation" text="reputation"/>
         <text name="eq_host_part_star" text="star horse"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_quality" text="course build"/>
+        <text name="eq_host_part_shops" text="shops"/>
+        <text name="eq_host_part_ahead" text="booked ahead"/>
+        <text name="eq_host_part_advert" text="advertising"/>
+        <text name="eq_host_part_buzz" text="buzz"/>
+        <text name="eq_host_part_weather" text="weather"/>
+        <text name="eq_host_buzz_high" text="Buzzing"/>
+        <text name="eq_host_buzz_low" text="Quiet"/>
+        <text name="eq_host_aheadBonus" text="+%d popularity"/>
+        <text name="eq_host_advert_none" text="No advertising"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Local"/>
+        <text name="eq_host_advert_national" text="National"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s advertising"/>
+        <text name="eq_host_label_advert" text="Advertising"/>
+        <text name="eq_host_label_sell" text="Souvenirs &amp; refreshments"/>
+        <text name="eq_host_sell_yes" text="Sell if available (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Don't sell"/>
+        <text name="eq_host_book_advert" text="Advertising paid: %s."/>
+        <text name="eq_host_twister" text="A tornado tore through %s! Spectators ran for cover."/>
+        <text name="eq_host_done_goods" text="Souvenirs and refreshments sold: %s."/>
+        <text name="eq_host_star" text="People were really excited to see %s compete."/>
+        <text name="eq_host_report_twister" text="A tornado hit while it ran, and the crowd scattered."/>
+        <text name="eq_host_report_weather" text="Bad weather: %d hours of it kept people away (popularity %d)."/>
+        <text name="eq_host_report_goods" text="Souvenirs and refreshments: %d l sold for %s."/>
+        <text name="eq_host_report_advert" text="Advertising: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Bad weather has cost %d popularity so far."/>
         <text name="eq_host_label_yours" text="Your event"/>
         <text name="eq_host_label_month" text="Book for"/>
         <text name="eq_host_label_next" text="Next free month"/>

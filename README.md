@@ -123,7 +123,8 @@ uses its genetics, health and fitness.
 - **Host your own event:** the **Host** tab books a Dressage, Show Jumping, Cross Country or 3 Day
   Event at your farm (Novice, Intermediate or Championship) if your courses, arenas, stables and
   feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
-  their rounds yourself if you like.
+  their rounds yourself if you like. Bad weather, a star horse, booking ahead, advertising and
+  farm shops all change the crowd, and visitors can buy your souvenirs and refreshments.
 - **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
   deals to hard bargains. Sign up to three on the **Sponsors** tab (big ones are exclusive) for a fee per event and extra popularity. Some lend you one of their machines, free, for your event month.
 - **Lizard:** now and then Lizard offers to sponsor an unsponsored event, if you build its

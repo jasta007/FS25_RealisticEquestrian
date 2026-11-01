@@ -9,6 +9,8 @@
     - Bleachers are placeables data/hosting.xml names, owned by the farm.
     - Indoors means inside an indoor arena or riding centre (EqFacilityHooks).
     - Feed is every horse feed fill type, in the farm's horse troughs and its silos.
+    - Shops are farm shops (by name) and productions making goods visitors buy; goods are those
+      in the farm's productions and silos (data/hosting.xml <shops>).
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -113,9 +115,55 @@ function EqHostVenue.courses(farmId, seats)
         local mx, mz = middleOf(#course.jumps > 0 and course.jumps or course.points)
         table.insert(list, { name = course.name, kind = course.kind or EqCourse.SHOW_JUMPING, jumps = #course.jumps,
             length = course.length or EqCourse.pathLength(course.points), seating = seating,
-            indoor = mx ~= nil and isIndoor(farmId, mx, mz) or false })
+            indoor = mx ~= nil and isIndoor(farmId, mx, mz) or false, quality = EqHostVenue.quality(course), source = course })
     end
     return list
+end
+
+
+--- How well built a recorded course is (EqHosting.courseQuality): its jumps matched to the
+--- jumps on the map for their type. Kept on the course until it changes, so the Host tab and
+--- the daily checks don't search the map again.
+--- @param course table EqCourse course
+--- @return number quality 0..1
+function EqHostVenue.quality(course)
+    local key = string.format("%d %.1f", #course.jumps, course.length or 0)
+    if course.eqQualityKey == key then return course.eqQuality end
+    local onMap = {}
+    if EqCourseHooks ~= nil and EqCourseHooks.listJumps ~= nil then
+        local ok, list = EqLog.try("EqHostVenue.quality listJumps", EqCourseHooks.listJumps, course.kind)
+        if ok and type(list) == "table" then onMap = list end
+    end
+    local jumps = {}
+    for _, jump in ipairs(course.jumps) do
+        local kind
+        for _, other in ipairs(onMap) do
+            if math.abs(other.x - jump.x) < 1.5 and math.abs(other.z - jump.z) < 1.5 then
+                kind = other.type
+                break
+            end
+        end
+        table.insert(jumps, { x = jump.x, z = jump.z, type = kind })
+    end
+    course.eqQuality = EqHosting.courseQuality(EqHostVenue.config, jumps)
+    course.eqQualityKey = key
+    return course.eqQuality
+end
+
+
+--- The share of a cross country course's jumps that are outdoors. Asked once, when a hosted
+--- event opens (James, 2026-11-01: keep it light).
+--- @param farmId number
+--- @param pick table|nil a course from EqHostVenue.courses
+--- @return number|nil share 0..1, nil without jumps
+function EqHostVenue.outdoorShareOf(farmId, pick)
+    local course = pick ~= nil and pick.source or nil
+    if course == nil or #course.jumps == 0 then return nil end
+    local outside = 0
+    for _, jump in ipairs(course.jumps) do
+        if not isIndoor(farmId, jump.x, jump.z) then outside = outside + 1 end
+    end
+    return outside / #course.jumps
 end
 
 
@@ -307,6 +355,136 @@ function EqHostVenue.facilityKinds(farmId)
 end
 
 
+-- GOODS VISITORS BUY (James, 2026-11-01): a shop or a production making goods visitors buy draws
+-- a crowd, and more goods in stock more so; at the event visitors can buy a few hundred litres.
+
+--- @return table fillTypeIndex -> name for the goods data/hosting.xml lists that this game knows
+function EqHostVenue.goodsTypes()
+    local types = {}
+    local config = EqHostVenue.config
+    if config == nil or config.shops == nil or g_fillTypeManager == nil then return types end
+    for _, name in ipairs(config.shops.goods) do
+        local index = g_fillTypeManager:getFillTypeIndexByName(name)
+        if index ~= nil then types[index] = name end
+    end
+    return types
+end
+
+
+--- @param placeable table
+--- @return boolean true for a farm shop and the like (data/hosting.xml shop keywords)
+local function isShop(placeable)
+    local file = string.lower(tostring(placeable.configFileName or ""))
+    for _, keyword in ipairs(EqHostVenue.config.shops.keywords) do
+        if string.find(file, keyword) then return true end
+    end
+    return false
+end
+
+
+--- @param farmId number
+--- @return table list of the farm's production points
+local function productionsOf(farmId)
+    local manager = g_currentMission ~= nil and g_currentMission.productionChainManager or nil
+    if manager == nil or manager.getProductionPointsForFarmId == nil then return {} end
+    local ok, list = EqLog.try("EqHostVenue productions", manager.getProductionPointsForFarmId, manager, farmId)
+    return ok and type(list) == "table" and list or {}
+end
+
+
+--- The goods the farm can sell to visitors: what its productions and silos hold.
+--- @param farmId number
+--- @return table shops { sources, goods (kinds with at least minStock), stock = list of { index, name, litres } }
+function EqHostVenue.goods(farmId)
+    local shops = { sources = 0, goods = 0, stock = {} }
+    local config = EqHostVenue.config
+    if config == nil or config.shops == nil then return shops end
+    local types = EqHostVenue.goodsTypes()
+    if next(types) == nil then return shops end
+    local litres, seen = {}, {}
+    local function count(storage)
+        if storage == nil or seen[storage] or storage.getFillLevel == nil then return end
+        seen[storage] = true
+        for index in pairs(types) do
+            local ok, level = EqLog.try("EqHostVenue.goods getFillLevel", storage.getFillLevel, storage, index)
+            if ok and type(level) == "number" and level > 0 then litres[index] = (litres[index] or 0) + level end
+        end
+    end
+    for _, production in ipairs(productionsOf(farmId)) do
+        local makesGoods = false
+        for index in pairs(production.outputFillTypeIds or {}) do
+            if types[index] ~= nil then makesGoods = true end
+        end
+        if makesGoods then shops.sources = shops.sources + 1 end
+        count(production.storage)
+    end
+    for _, placeable in ipairs(placeables()) do
+        if ownerOf(placeable) == farmId then
+            if isShop(placeable) then shops.sources = shops.sources + 1 end
+            for _, storage in ipairs(storagesOf(placeable)) do count(storage) end
+        end
+    end
+    for index, amount in pairs(litres) do
+        table.insert(shops.stock, { index = index, name = types[index], litres = amount })
+        if amount >= config.shops.minStock then shops.goods = shops.goods + 1 end
+    end
+    table.sort(shops.stock, function(a, b) return a.name < b.name end)
+    return shops
+end
+
+
+--- The best price a selling point pays for a fill type, per litre.
+--- @param index number fill type index
+--- @return number price
+function EqHostVenue.bestPrice(index)
+    local best = 0
+    local system = g_currentMission ~= nil and g_currentMission.storageSystem or nil
+    if system ~= nil and system.getUnloadingStations ~= nil then
+        for _, station in pairs(system:getUnloadingStations() or {}) do
+            local accepts = station.acceptedFillTypes ~= nil and station.acceptedFillTypes[index]
+                or station.supportedFillTypes ~= nil and station.supportedFillTypes[index]
+            if station.isSellingPoint and accepts and station.getEffectiveFillTypePrice ~= nil then
+                local ok, price = EqLog.try("EqHostVenue.bestPrice", station.getEffectiveFillTypePrice, station, index)
+                if ok and type(price) == "number" and price > best then best = price end
+            end
+        end
+    end
+    if best <= 0 and g_fillTypeManager ~= nil then
+        local fillType = g_fillTypeManager:getFillTypeByIndex(index)
+        best = fillType ~= nil and fillType.pricePerLiter or 0
+    end
+    return best
+end
+
+
+--- Take goods from the farm: its productions first, then its silos.
+--- @param farmId number
+--- @param index number fill type index
+--- @param litres number
+--- @return number taken
+function EqHostVenue.takeGoods(farmId, index, litres)
+    local left, seen = litres, {}
+    local function take(storage)
+        if left <= 0 or storage == nil or seen[storage] or storage.getFillLevel == nil or storage.setFillLevel == nil then return end
+        seen[storage] = true
+        local ok, level = EqLog.try("EqHostVenue.takeGoods getFillLevel", storage.getFillLevel, storage, index)
+        if ok and type(level) == "number" and level > 0 then
+            local amount = math.min(level, left)
+            if EqLog.try("EqHostVenue.takeGoods setFillLevel", storage.setFillLevel, storage, level - amount, index) then
+                left = left - amount
+            end
+        end
+    end
+    for _, production in ipairs(productionsOf(farmId)) do take(production.storage) end
+    for _, placeable in ipairs(placeables()) do
+        if ownerOf(placeable) == farmId then
+            for _, storage in ipairs(storagesOf(placeable)) do take(storage) end
+        end
+    end
+    return litres - left
+end
+
+
 --- Everything EqHosting.check needs about a farm.
 --- @param farmId number
 --- @return table venue
@@ -322,5 +500,6 @@ function EqHostVenue.read(farmId)
         feedSources = sources,
         feedPerHorse = EqHostVenue.feedPerHorse(),
         facilityKinds = EqHostVenue.facilityKinds(farmId),
+        shops = EqHostVenue.goods(farmId),
     }
 end

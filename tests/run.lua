@@ -4903,9 +4903,94 @@ end)()
     -- 13 jumps against 6 is far over the minimum: full course points; 1 bleacher + indoor over 0 needed.
     check("hosting: popularity adds base, course, seating and facilities", score == 30 + 15 + 15 + 5, tostring(score))
     check("hosting: popularity parts listed", parts[1].id == "base" and #parts == 4)
-    local winter = EqHosting.popularity(host, "crossCountry", novice, { winter = true })
-    local summer = EqHosting.popularity(host, "crossCountry", novice, {})
-    check("hosting: winter costs cross country", winter == summer - 10)
+    -- More variables (James, 2026-11-01): stars by skill word, booking ahead, advertising, shops, buzz, weather.
+    check("hosting: star points by skill word", EqHosting.starPoints(host, 79) == 0 and EqHosting.starPoints(host, 80) == 3
+        and EqHosting.starPoints(host, 92) == 6 and EqHosting.starPoints(host, 99) == 10 and EqHosting.starPoints(host, nil) == 0)
+    check("hosting: booking ahead +1 a month beyond the first, at most 5", EqHosting.aheadPoints(host, 1) == 0
+        and EqHosting.aheadPoints(host, 3) == 2 and EqHosting.aheadPoints(host, 6) == 5 and EqHosting.aheadPoints(host, 12) == 5)
+    check("hosting: advertising costs by rating", EqHosting.advertCost(host, "local", "novice") == 250
+        and EqHosting.advertCost(host, "national", "championship") == 15000 and EqHosting.advertCost(host, nil, "novice") == 0)
+    check("hosting: shop points", EqHosting.shopPoints(host, { sources = 1, goods = 0 }) == 2
+        and EqHosting.shopPoints(host, { sources = 2, goods = 3 }) == 5 and EqHosting.shopPoints(host, { sources = 1, goods = 12 }) == 6
+        and EqHosting.shopPoints(host, nil) == 0)
+    local plain = EqHosting.popularity(host, "showJumping", novice, {})
+    local extras, extraParts = EqHosting.popularity(host, "showJumping", novice, { monthsAhead = 6, advert = "national",
+        shops = { sources = 1, goods = 1 }, buzz = -2, starRating = 95 })
+    check("hosting: ahead, advert, shops, buzz and star add up", extras == plain + 5 + 8 + 3 - 2 + 6, tostring(extras))
+    local ids = {}
+    for _, part in ipairs(extraParts) do ids[part.id] = part.points end
+    check("hosting: new parts listed", ids.ahead == 5 and ids.advert == 8 and ids.shops == 3 and ids.buzz == -2 and ids.star == 6)
+    for _ = 1, 50 do
+        local roll = EqHosting.rollBuzz(host)
+        if roll < -5 or roll > 5 then check("hosting: buzz in -5..5", false, tostring(roll)) end
+    end
+
+    -- Weather, hour by hour: hail worst, then snow, then rain; tornado a one-off; indoors stays dry.
+    local tally = {}
+    for _ = 1, 10 do EqHosting.countWeather(host, tally, "SUN", 1) end
+    check("hosting: sunny hours cost nothing", EqHosting.weatherLoss(host, tally) == 0 and tally.hours == 10)
+    local rain, snow, hail = {}, {}, {}
+    for i = 1, 10 do
+        EqHosting.countWeather(host, rain, i <= 2 and "RAIN" or "SUN", 1)
+        EqHosting.countWeather(host, snow, i <= 2 and "SNOW" or "SUN", 1)
+        EqHosting.countWeather(host, hail, i <= 2 and "HAIL" or "SUN", 1)
+    end
+    local lostRain, lostSnow, lostHail = EqHosting.weatherLoss(host, rain), EqHosting.weatherLoss(host, snow), EqHosting.weatherLoss(host, hail)
+    check("hosting: hail worse than snow worse than rain", lostHail > lostSnow and lostSnow > lostRain and lostRain == 8,
+        string.format("%d %d %d", lostRain, lostSnow, lostHail))
+    local indoors = {}
+    for _ = 1, 10 do EqHosting.countWeather(host, indoors, "HAIL", 0) end
+    check("hosting: indoors the weather costs nothing", EqHosting.weatherLoss(host, indoors) == 0)
+    local twister = {}
+    check("hosting: first tornado hour reported", EqHosting.countWeather(host, twister, "TWISTER", 1) == true)
+    check("hosting: once only", EqHosting.countWeather(host, twister, "TWISTER", 1) == false)
+    for _ = 1, 100 do EqHosting.countWeather(host, twister, "SUN", 1) end
+    check("hosting: a tornado costs 15 on top", EqHosting.weatherLoss(host, twister) == 15 + math.floor(40 * 8 / 102 + 0.5),
+        tostring(EqHosting.weatherLoss(host, twister)))
+    local storm = { hours = 10, bad = 100, flat = 15 }
+    check("hosting: weather loss capped", EqHosting.weatherLoss(host, storm) == 25)
+    local withRain = EqHosting.popularity(host, "showJumping", novice, { weather = rain })
+    check("hosting: weather part", withRain == plain - 8)
+    local dryGate = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2)
+    local wetGate = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2, { hours = 10, bad = 5 })
+    check("hosting: wet hours cut the gate", wetGate.gate == math.floor(dryGate.gate * 0.7 + 0.5) and wetGate.entries == dryGate.entries)
+    local soaked = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2, { hours = 10, bad = 10 })
+    check("hosting: gate never below 40%", soaked.gate == math.floor(dryGate.gate * 0.4 + 0.5))
+
+    -- Outdoors: indoor show jumping and dressage stay dry; cross country counts its jumps outdoors.
+    check("hosting: indoor show jumping is dry", EqHosting.outdoorShare("showJumping", { showJumping = { indoor = true } }) == 0)
+    check("hosting: outdoor dressage is wet", EqHosting.outdoorShare("dressage", { dressage = { indoor = false } }) == 1)
+    check("hosting: 3 Day Event averages its phases", math.abs(EqHosting.outdoorShare("eventing",
+        { dressage = { indoor = true }, showJumping = { indoor = true }, crossCountry = { outdoor = 0.4 } }) - 0.4 / 3) < 1e-9)
+
+    -- Course quality: different obstacles and a mix of jump types, subtle.
+    local same = {}
+    for i = 1, 10 do table.insert(same, { x = (i % 2) * 10, z = 0, type = "oxer" }) end
+    local varied = {}
+    for i = 1, 10 do table.insert(varied, { x = i * 10, z = 0, type = "type" .. (i % 5) }) end
+    check("hosting: jumping the same two jumps is poor", math.abs(EqHosting.courseQuality(host, same) - (0.5 * 0.2 + 0.5 * 0.2)) < 1e-9)
+    check("hosting: ten jumps of five types is full", EqHosting.courseQuality(host, varied) == 1)
+    check("hosting: no jumps no quality", EqHosting.courseQuality(host, {}) == 0)
+    local qualityVenue = { courses = { { name = "SJ", kind = "showJumping", jumps = 7, length = 400, seating = 0, quality = 0.5 } },
+        arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 0 }
+    local qualityResult = EqHosting.check(host, "showJumping", "novice", qualityVenue)
+    check("hosting: quality read from the picked course", qualityResult.quality == 0.5)
+    local _, qParts = EqHosting.popularity(host, "showJumping", qualityResult, {})
+    local qPoints = 0
+    for _, part in ipairs(qParts) do if part.id == "quality" then qPoints = part.points end end
+    check("hosting: quality worth up to 5", qPoints == 3, tostring(qPoints))
+
+    -- Souvenirs and refreshments: a few hundred litres, shared out, at the best price + 25%.
+    local sale = EqHosting.goodsSale(host, "intermediate", 100, { { name = "BREAD", litres = 1000, price = 2 },
+        { name = "CHEESE", litres = 50, price = 4 }, { name = "CAKE", litres = 0, price = 3 } })
+    local soldOf = {}
+    for _, item in ipairs(sale.items) do soldOf[item.name] = item end
+    check("hosting: goods sale shares 250 l", sale.litres == 250 and soldOf.CHEESE.litres == 50 and soldOf.BREAD.litres == 200
+        and soldOf.CAKE == nil, tostring(sale.litres))
+    check("hosting: goods sell at +25%", sale.total == 200 * 2 * 1.25 + 50 * 4 * 1.25, tostring(sale.total))
+    local quiet = EqHosting.goodsSale(host, "novice", 0, { { name = "BREAD", litres = 1000, price = 1 } })
+    check("hosting: half as much at popularity 0", quiet.litres == 50)
+    check("hosting: nothing to sell", EqHosting.goodsSale(host, "novice", 100, {}).total == 0)
     check("hosting: popularity stays in 0..100", EqHosting.popularity(host, "dressage", novice, { reputation = -1000 }) >= 0)
     check("hosting: reputation range", EqHosting.nextReputation(host, 18, true) == 20 and EqHosting.nextReputation(host, -20, false) == -25)
 
