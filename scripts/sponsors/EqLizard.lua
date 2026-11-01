@@ -50,7 +50,7 @@ EqLizard.reset()
 function EqLizard.read(xmlFile)
     local key = "sponsors.lizard"
     local config = { chance = xmlFile:getFloat(key .. "#chance", 0.25), popularity = xmlFile:getInt(key .. "#popularity", 5),
-        ratings = {}, materials = {} }
+        eventingFactor = xmlFile:getFloat(key .. "#eventingFactor", 1.5), ratings = {}, materials = {} }
     local i = 0
     while xmlFile:hasProperty(string.format("%s.rating(%d)", key, i)) do
         local ratingKey = string.format("%s.rating(%d)", key, i)
@@ -117,14 +117,28 @@ end
 --- @param rating string
 --- @param built boolean the farm's Lizard plinth is finished
 --- @param level number the farm's branding level now
+--- @param typeName string|nil the event type: a 3 Day Event pays eventingFactor times the fee
 --- @return number fee
 --- @return string|nil why nothing: "plinth" or "branding"
-function EqLizard.payFor(config, rating, built, level)
+function EqLizard.payFor(config, rating, built, level, typeName)
     local terms = config ~= nil and config.ratings[rating] or nil
     if terms == nil then return 0, "rating" end
     if not built then return 0, "plinth" end
     if (level or 0) < terms.branding then return 0, "branding" end
-    return terms.fee, nil
+    return EqLizard.feeFor(config, rating, typeName), nil
+end
+
+
+--- What Lizard offers for an event (James, 2026-11-01: 3 Day Events pay 1.5 times, like their setup). Pure.
+--- @param config table
+--- @param rating string
+--- @param typeName string|nil
+--- @return number fee
+function EqLizard.feeFor(config, rating, typeName)
+    local terms = config ~= nil and config.ratings[rating] or nil
+    if terms == nil then return 0 end
+    local eventing = typeName ~= nil and typeName == (EqHosting ~= nil and EqHosting.EVENTING or "eventing")
+    return math.floor(terms.fee * (eventing and (config.eventingFactor or 1) or 1) + 0.5)
 end
 
 
@@ -265,7 +279,7 @@ function EqLizard.offerText(farmId, deal)
     local terms = config.ratings[deal.rating] or { fee = 0, branding = 1 }
     return string.format(g_i18n:getText("eq_lizard_offer"), EqLizard.title(), EqHostManager.title(deal.type, deal.rating),
         EqHostManager.monthText(deal.month), EqSponsorView.brandingWord(terms.branding), EqLizard.needsText(config, deal),
-        money(terms.fee))
+        money(EqLizard.feeFor(config, deal.rating, deal.type)))
 end
 
 
@@ -613,7 +627,7 @@ function EqLizard.afterEvent(event, report, fee)
     local built = EqLizard.hasBuilt(farmId)
     local boards = EqSponsorManager.boards(farmId)
     local level = EqSponsorship.brandingLevel(EqSponsorManager.config, boards)
-    local paid, why = EqLizard.payFor(EqLizard.config, deal.rating, built, level)
+    local paid, why = EqLizard.payFor(EqLizard.config, deal.rating, built, level, deal.type)
     local title = EqLizard.title()
     if paid > 0 then
         g_currentMission:addMoney(paid, farmId, MoneyType.EQ_SPONSORSHIP or MoneyType.OTHER, true, true)

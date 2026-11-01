@@ -971,8 +971,9 @@ lapses when the event opens.
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
 - **Build time:** each stage takes an in-game hour once its material is in. A plinth with all
   its materials delivered but still building at the results counts as finished.
-- **Results:** if the plinth is finished and the branding is there, Lizard pays 2,000 (Novice),
-  12,000 (Intermediate) or 30,000 (Championship). If not, nothing, and **no penalty**. Either way
+- **Results:** if the plinth is finished and the branding is there, Lizard pays 6,000 (Novice),
+  18,000 (Intermediate) or 45,000 (Championship), half as much again for a 3 Day Event (James:
+  the plinth is the same work at every rating, so Novice must be worth it). If not, nothing, and **no penalty**. Either way
   the plinth then collapses (the lizard tips over, the lot sinks) and is gone.
 - Numbers are in `data/sponsors.xml` (`<lizard>`); the plinths come from
   `art/source/lizard_plinth.py`, which reads the same amounts. Multiplayer: the popup's answer is

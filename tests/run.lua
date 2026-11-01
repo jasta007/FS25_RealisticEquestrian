@@ -5088,6 +5088,10 @@ end)()
             and select(2, EqLizard.payFor(lz, "intermediate", false, 3)) == "plinth"
             and select(2, EqLizard.payFor(lz, "intermediate", true, 1)) == "branding"
             and EqLizard.payFor(lz, "intermediate", true, 1) == 0 and EqLizard.payFor(lz, "nope", true, 3) == 0)
+        check("lizard: 6,000 / 18,000 / 45,000, and 1.5 times for a 3 Day Event (James)",
+            EqLizard.feeFor(lz, "novice") == 6000 and EqLizard.feeFor(lz, "intermediate", "dressage") == 18000
+            and EqLizard.feeFor(lz, "championship") == 45000 and EqLizard.feeFor(lz, "novice", "eventing") == 9000
+            and EqLizard.payFor(lz, "championship", true, 3, "eventing") == 67500)
         check("lizard: smaller fees than the yearly sponsors, more branding at higher ratings",
             lz.ratings.novice.fee < lz.ratings.intermediate.fee and lz.ratings.intermediate.fee < lz.ratings.championship.fee
             and lz.ratings.championship.fee < 120000 and lz.ratings.novice.branding == 1 and lz.ratings.championship.branding == 3)
