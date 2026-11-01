@@ -926,6 +926,8 @@
         <text name="eq_host_note_testSmall" text="Trénink: obdélník je pro %s příliš malý"/>
         <text name="eq_host_ann_testShort" text="Úloha je na tvé závody příliš krátká: jen trénink"/>
         <text name="eq_host_note_testShort" text="Trénink: úloha je pro %s příliš krátká"/>
+        <text name="eq_host_ann_notEntered" text="Nepřihlášen: jen trénink"/>
+        <text name="eq_host_note_notEntered" text="Trénink: tento kůň není přihlášen do %s"/>
         <text name="eq_host_label_now" text="Tento měsíc"/>
         <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
         <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>

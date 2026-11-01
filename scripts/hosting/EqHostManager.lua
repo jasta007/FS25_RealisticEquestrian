@@ -750,9 +750,8 @@ end
 --- phase is on.
 --- @param horseId string|nil the ridden horse
 --- @param markers table the dressage course's markers
---- @return table|nil test { seed, moves, counts, event, status }: event and status (as
---- competitionFor's: "counts", "ridden" or "small") only for a horse entered in the event, for the
---- notice at A
+--- @return table|nil test { seed, moves, counts, event, status }: status for the notice at A,
+--- as competitionFor's ("counts", "ridden" or "small") or "notEntered"
 function EqHostManager.dressageTestFor(horseId, markers)
     local mine = EqHostManager.liveEventFor(horseId)
     local event = mine ~= nil and hasPhase(mine, "dressage") and mine or nil
@@ -764,7 +763,8 @@ function EqHostManager.dressageTestFor(horseId, markers)
     if event == nil then return nil end
     local rating = ratingOf(event)
     if rating == nil then return nil end
-    local counts, status = false, nil
+    -- A horse that isn't entered rides the event's test as practice, and is told so.
+    local counts, status = false, "notEntered"
     if event == mine then
         local ridden = event.hosted.ridden ~= nil and event.hosted.ridden[horseId] or nil
         if ridden ~= nil and ridden.dressage ~= nil then
@@ -777,7 +777,7 @@ function EqHostManager.dressageTestFor(horseId, markers)
         end
     end
     return { seed = string.format("dressage %s %s", tostring(event.id), tostring(event.hosted.rating)), moves = rating.dressageMoves, counts = counts,
-        event = status ~= nil and event or nil, status = status, steps = EqHosting.testSteps(rating) }
+        event = event, status = status, steps = EqHosting.testSteps(rating) }
 end
 
 

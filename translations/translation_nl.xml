@@ -926,6 +926,8 @@
         <text name="eq_host_note_testSmall" text="Oefenen: rijbaan te klein voor %s"/>
         <text name="eq_host_ann_testShort" text="Proef te kort voor je eigen evenement: alleen oefenen"/>
         <text name="eq_host_note_testShort" text="Oefenen: proef te kort voor %s"/>
+        <text name="eq_host_ann_notEntered" text="Niet ingeschreven: alleen oefenen"/>
+        <text name="eq_host_note_notEntered" text="Oefenen: dit paard is niet ingeschreven voor %s"/>
         <text name="eq_host_label_now" text="Deze maand"/>
         <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
         <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>

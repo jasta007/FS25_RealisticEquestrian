@@ -5065,7 +5065,7 @@ end)()
         test = EqHostManager.dressageTestFor("mine", {})
         check("hosted test: ridden already is practice", not test.counts and test.status == "ridden")
         test = EqHostManager.dressageTestFor("other", {})
-        check("hosted test: a horse not entered gets no notice", test ~= nil and test.status == nil and test.event == nil)
+        check("hosted test: a horse not entered is told it's practice", test ~= nil and not test.counts and test.status == "notEntered" and test.event == event)
         EqHostVenue.config, EqHostManager.liveEventFor, EqHosting.arenasFromMarkers, EqCompetitionManager.events =
             savedConfig, savedLive, savedArenas, savedEvents
         EqHostVenue, EqCompetitionManager = hadVenue, hadManager

@@ -1465,12 +1465,14 @@ local function hostedTestNote(routine)
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_ridden"), COLOR.grey)
         elseif hosted.status == "short" then
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_testShort"), COLOR.orange)
+        elseif hosted.status == "notEntered" then
+            EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_notEntered"), COLOR.grey)
         else
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_smallArena"), COLOR.orange)
         end
     end
     local key = hosted.status == "counts" and "eq_host_note_testCounts" or hosted.status == "ridden" and "eq_host_note_ridden"
-        or hosted.status == "short" and "eq_host_note_testShort" or "eq_host_note_testSmall"
+        or hosted.status == "short" and "eq_host_note_testShort" or hosted.status == "notEntered" and "eq_host_note_notEntered" or "eq_host_note_testSmall"
     return string.format(g_i18n:getText(key), title)
 end
 
@@ -1487,6 +1489,7 @@ local function pathRows(rows, routine)
     table.insert(rows, { left = string.format(g_i18n:getText("eq_train_routine"), routine.mult), leftColor = color,
         right = marked and string.format("%.1f%%", EqDressagePath.percent(run)) or nil, rightColor = color })
     if not run.started then
+        local note = hostedTestNote(routine)
         if run.go then
             -- Counted down: in through the gold bar at A and the marking starts.
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_enter"), "A"), nil, color)
@@ -1496,7 +1499,6 @@ local function pathRows(rows, routine)
         else
             -- "Move to A to begin": not an alert, so beside the panel, not in the middle. In your
             -- own event it says whether this test counts, gold like a course's start line.
-            local note = hostedTestNote(routine)
             EqTrainingHud.drawPanelNote(note or string.format(g_i18n:getText("eq_dressage_begin"), "A"),
                 note ~= nil and EqTrainingHud.GOLD or color, true)
         end

@@ -926,6 +926,8 @@
         <text name="eq_host_note_testSmall" text="Treino: pista pequena demais para %s"/>
         <text name="eq_host_ann_testShort" text="Prova demasiado curta para o seu evento: só treino"/>
         <text name="eq_host_note_testShort" text="Treino: prova demasiado curta para %s"/>
+        <text name="eq_host_ann_notEntered" text="Não inscrito: só treino"/>
+        <text name="eq_host_note_notEntered" text="Treino: este cavalo não está inscrito em %s"/>
         <text name="eq_host_label_now" text="Este mês"/>
         <text name="eq_host_next_oneAtATime" text="um evento por vez"/>
         <text name="eq_host_next_interval" text="%d meses entre eventos, veja Configurações"/>

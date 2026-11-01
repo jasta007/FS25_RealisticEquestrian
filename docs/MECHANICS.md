@@ -865,7 +865,7 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   Coming up to the start line on an entered horse, a gold announcement says whether this round
   counts, is practice (phase already ridden) or the course is too short; the finish says what
   was kept and when results come. A dressage arena does the same when its test is offered
-  (arena too small, your own test too short, or dressage already ridden), and the note above
+  (arena too small, your own test too short, dressage already ridden, or the horse isn't entered), and the note above
   the panel replaces "Move to A" until the countdown.
 - **Set it before the month:** once the event runs, a course or dressage test big enough for it
   can't be deleted. Saving one of your own dressage tests shorter than your booked or running

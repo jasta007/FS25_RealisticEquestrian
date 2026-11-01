@@ -926,6 +926,8 @@
         <text name="eq_host_note_testSmall" text="Practice: too small an arena for %s"/>
         <text name="eq_host_ann_testShort" text="Test too short for your hosted event: practice only"/>
         <text name="eq_host_note_testShort" text="Practice: test too short for %s"/>
+        <text name="eq_host_ann_notEntered" text="Not entered: this is just practice"/>
+        <text name="eq_host_note_notEntered" text="Practice: this horse isn't entered in %s"/>
         <text name="eq_host_label_now" text="This month"/>
         <text name="eq_host_next_oneAtATime" text="one event at a time"/>
         <text name="eq_host_next_interval" text="%d months between events, see Settings"/>
