@@ -2000,7 +2000,7 @@ end)()
     check("ordinals", EqStory.ordinal(1) == "1st" and EqStory.ordinal(2) == "2nd" and EqStory.ordinal(3) == "3rd"
         and EqStory.ordinal(4) == "4th" and EqStory.ordinal(11) == "11th" and EqStory.ordinal(12) == "12th"
         and EqStory.ordinal(22) == "22nd")
-    check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: **Applejack**, 2nd: **Torben**, 3rd: **Winter**.")
+    check("podium line", EqStory.podiumLine({ "Bracken", "Torben", "Winter" }) == "Winner: **Bracken**, 2nd: **Torben**, 3rd: **Winter**.")
     local sheetRun = { penalties = 53.6, phases = {
         { name = "dressage", sheet = { penalties = 28, down = 0, refusals = 0, time = 0 } },
         { name = "showJumping", sheet = { penalties = 0, down = 0, refusals = 0, time = 0 } },
@@ -2016,9 +2016,9 @@ end)()
     check("no scoresheet without penalties", EqStory.scoreLines({ phases = {} }, {}) == nil and EqStory.scoreLines(nil, nil) == nil)
     check("gains line skips tiny gains", EqStory.gainsLine({ agility = 0.42, temperament = 0.2, speed = 0.01 })
         == "Gained Agility **+0.4**, Temperament **+0.2**.")
-    local runs = EqStory.runs("Winner: **Applejack**, 2nd: **Torben**.")
+    local runs = EqStory.runs("Winner: **Bracken**, 2nd: **Torben**.")
     check("a line splits into plain and bold runs", #runs == 5 and runs[1].text == "Winner: " and not runs[1].bold
-        and runs[2].text == "Applejack" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
+        and runs[2].text == "Bracken" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
     check("an old line with no marks is one plain run", #EqStory.runs("Clear inside the time.") == 1
         and not EqStory.runs("Clear inside the time.")[1].bold)
     check("plain text drops the marks", EqStory.plain("Gained Agility **+0.4**.") == "Gained Agility +0.4.")
