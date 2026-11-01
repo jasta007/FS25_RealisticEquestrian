@@ -105,9 +105,9 @@
         <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
         <text name="eq_shop_lizardPlinth" text="Podstavec Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Speciální podstavec Lizard pro akci, kterou sponzoruje. Postavíte ho dodáním materiálu do spouštěčů vpředu; stroj Lizard na kládové plošině se počítá navíc. Po akci se zřítí."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 000 l kamenů, 10 000 l dřeva (asi 25 klád) a 1 000 l prken."/>
-        <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva (asi 25 klád) a 1 000 l prken."/>
-        <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva (asi 25 klád) a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 000 l kamenů, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
         <text name="eq_lizard_offer" text="%s by rád zdarma sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
         <text name="eq_lizard_accept" text="Přijmout"/>

@@ -103,9 +103,9 @@
         <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
         <text name="eq_shop_lizardPlinth" text="Lizard Plinth"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizard&#x27;s special plinth for the event it sponsors. Build it by delivering to its triggers at the front; a Lizard machine on its log deck counts extra. It collapses after the event."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,000 l stones, 10,000 l wood (about 25 logs) and 1,000 l planks."/>
-        <text name="eq_shop_lizardPlinth_woodchips" text="Needs 1,000 l wood chips, 10,000 l wood (about 25 logs) and 1,000 l planks."/>
-        <text name="eq_shop_lizardPlinth_straw" text="Needs 10,000 l straw, 10,000 l wood (about 25 logs) and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,000 l stones, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Needs 1,000 l wood chips, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Needs 10,000 l straw, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_lizard_title" text="%s sponsorship offer"/>
         <text name="eq_lizard_offer" text="%s would like to sponsor your %s (%s) free of charge, and will lend you one of its vehicles for the event month. It asks for %s branding by the end of the event, and its Lizard plinth built at your venue: %s. If all that is in place when the results come in, it pays %s. If not, it pays nothing and there is no penalty. The plinth collapses after the event."/>
         <text name="eq_lizard_accept" text="Accept"/>

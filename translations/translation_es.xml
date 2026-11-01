@@ -762,9 +762,9 @@
         <text name="eq_plinth_penalty" text="%d máquina(s) rival(es) en tus plataformas de patrocinio: se descuentan %s de la cuota del patrocinador."/>
         <text name="eq_shop_lizardPlinth" text="Pedestal Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="El pedestal especial de Lizard para el evento que patrocina. Constrúyelo entregando en los activadores de delante; una máquina Lizard sobre su plataforma de troncos cuenta extra. Se derrumba después del evento."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Necesita 1.000 l de piedras, 10.000 l de madera (unos 25 troncos) y 1.000 l de tablones."/>
-        <text name="eq_shop_lizardPlinth_woodchips" text="Necesita 1.000 l de astillas, 10.000 l de madera (unos 25 troncos) y 1.000 l de tablones."/>
-        <text name="eq_shop_lizardPlinth_straw" text="Necesita 10.000 l de paja, 10.000 l de madera (unos 25 troncos) y 1.000 l de tablones."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Necesita 1.000 l de piedras, 10.000 l de madera y 1.000 l de tablones."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Necesita 1.000 l de astillas, 10.000 l de madera y 1.000 l de tablones."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Necesita 10.000 l de paja, 10.000 l de madera y 1.000 l de tablones."/>
         <text name="eq_lizard_title" text="Oferta de patrocinio de %s"/>
         <text name="eq_lizard_offer" text="%s quiere patrocinar gratis tu %s (%s) y te prestará uno de sus vehículos durante el mes del evento. Pide un branding %s antes del final del evento y su pedestal Lizard construido en tu recinto: %s. Si todo está listo cuando lleguen los resultados, paga %s. Si no, no paga nada y no hay penalización. El pedestal se derrumba después del evento."/>
         <text name="eq_lizard_accept" text="Aceptar"/>
