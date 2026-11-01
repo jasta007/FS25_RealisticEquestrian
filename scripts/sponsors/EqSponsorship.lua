@@ -45,6 +45,8 @@ function EqSponsorship.read(xmlFile)
         easyCategories = {},
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
+        loanTop = xmlFile:getFloat("sponsors.loans#top", 0.34),
+        loanBrands = {},
     }
     local i = 0
     while xmlFile:hasProperty(string.format("sponsors.skipCategoryTypes.type(%d)", i)) do
@@ -56,6 +58,12 @@ function EqSponsorship.read(xmlFile)
     while xmlFile:hasProperty(string.format("sponsors.skipBrands.brand(%d)", i)) do
         local name = xmlFile:getString(string.format("sponsors.skipBrands.brand(%d)#name", i))
         if name ~= nil then config.skipBrands[string.upper(name)] = true end
+        i = i + 1
+    end
+    i = 0
+    while xmlFile:hasProperty(string.format("sponsors.loans.always(%d)", i)) do
+        local name = xmlFile:getString(string.format("sponsors.loans.always(%d)#brand", i))
+        if name ~= nil then config.loanBrands[string.upper(name)] = true end
         i = i + 1
     end
     i = 0
@@ -89,6 +97,7 @@ function EqSponsorship.read(xmlFile)
             minItems = xmlFile:getInt(key .. "#minItems", 0),
             machinesMax = xmlFile:getInt(key .. "#machinesMax", 0),
             exclusive = xmlFile:getFloat(key .. "#exclusive", 1),
+            loan = xmlFile:getFloat(key .. "#loan", 0),
         }
         size.minItemsEasy = xmlFile:getInt(key .. "#minItemsEasy", size.minItems)
         table.insert(config.sizes, size)
@@ -340,6 +349,8 @@ function EqSponsorship.makeOffer(config, profile, rng)
         purchase = EqSponsorship.round5(EqSponsorship.term(config, "purchase", strictness, rng)),
     }
     offer.exclusive = EqSponsorship.rollExclusive(size, rng)
+    -- Rolled last, so every other term comes out as it did before loans (James, 2026-11-01).
+    offer.loan = EqSponsorship.rollLoan(size, rng)
     return offer
 end
 
@@ -353,6 +364,55 @@ function EqSponsorship.rollExclusive(size, rng)
     if chance >= 1 then return true end
     if chance <= 0 or rng == nil then return false end
     return rng:next() < chance
+end
+
+
+--- @param size table a sponsor size
+--- @param rng table|nil EqRandom; nil gives no loan unless the size always lends
+--- @return boolean the sponsor lends the farm a machine for each event month it backs (James,
+---     2026-11-01: some sponsors mention it in their offers, not all)
+function EqSponsorship.rollLoan(size, rng)
+    local chance = size ~= nil and size.loan or 0
+    if chance >= 1 then return true end
+    if chance <= 0 or rng == nil then return false end
+    return rng:next() < chance
+end
+
+
+--- The machine a sponsor lends for an event month. Pure.
+--- Something that drives itself when the brand has one, else any of its machines; then one of
+--- the dearest (the top share by price, at least one), so a loan is something worth trying.
+--- @param candidates table list of { price, drivable, ... }
+--- @param roll number 0..1
+--- @param topShare number|nil share of the list by price to pick from (default 0.34)
+--- @return table|nil candidate
+function EqSponsorship.pickLoan(candidates, roll, topShare)
+    local pool = {}
+    for _, candidate in ipairs(candidates or {}) do
+        if candidate.drivable then table.insert(pool, candidate) end
+    end
+    if #pool == 0 then
+        for _, candidate in ipairs(candidates or {}) do table.insert(pool, candidate) end
+    end
+    if #pool == 0 then return nil end
+    table.sort(pool, function(a, b)
+        if (a.price or 0) ~= (b.price or 0) then return (a.price or 0) > (b.price or 0) end
+        return tostring(a.key or a.name or "") < tostring(b.key or b.name or "")
+    end)
+    local count = math.max(1, math.min(#pool, math.ceil(#pool * (topShare or 0.34))))
+    local index = math.min(count, math.floor(math.max(0, roll or 0) * count) + 1)
+    return pool[index]
+end
+
+
+--- @param config table|nil
+--- @param brand string|nil
+--- @param contract table|nil the farm's contract with that brand, nil for a one-off sponsor
+--- @return boolean the brand lends a machine for the event month: its contract says so, or it
+---     is a brand that always does (Lizard's one-off sponsorship)
+function EqSponsorship.lends(config, brand, contract)
+    if contract ~= nil and contract.loan then return true end
+    return config ~= nil and brand ~= nil and config.loanBrands[string.upper(brand)] == true
 end
 
 
@@ -649,7 +709,7 @@ end
 EqSponsorship.NUMBER_FIELDS = { "strictness", "years", "fee", "popularity", "target", "brandingNeed", "categories", "perMachine",
     "machines", "window", "repair", "repaint", "purchase", "signedMonth", "endMonth", "yearEnd", "misses", "feeFactor", "paid" }
 EqSponsorship.STRING_FIELDS = { "brand", "size", "word" }
-EqSponsorship.BOOL_FIELDS = { "top3", "met", "exclusive" }
+EqSponsorship.BOOL_FIELDS = { "top3", "met", "exclusive", "loan" }
 
 
 --- @param xmlFile table

@@ -347,6 +347,8 @@ function EqHostManager.cancelRunning(event, failed)
     local config = EqHostVenue.config
     EqHostManager.reputation[hosted.farmId] = EqHosting.nextReputation(config, EqHostManager.reputation[hosted.farmId] or 0, false)
     Log:info("EqHostManager: farm %d's event %d cancelled (%s)", hosted.farmId, event.id, table.concat(failed, " "))
+    -- Machines the sponsors lent for the month go back now.
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.onEventCancelled", EqSponsorLoans.onEventCancelled, event) end
     tell(hosted.farmId, "EQ_HOST_CANCELLED", string.format(g_i18n:getText("eq_host_cancelled"),
         EqCompetitionManager.eventTitle(event), checkNames(failed)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
 end

@@ -1053,5 +1053,11 @@
         <text name="eq_sponsor_discount_repaint" text="塗装 %s"/>
         <text name="eq_sponsor_discount_repair" text="修理 %s"/>
         <text name="eq_sponsor_discount_buy" text="購入 %s"/>
+        <text name="eq_sponsor_loanLine" text="イベント月に機械を貸してくれます"/>
+        <text name="eq_loan_popupTitle" text="スポンサーからの機械"/>
+        <text name="eq_loan_popup" text="%sが、イベント期間中に試せる新しい%sを届けてくれました。ディーラーで待っています。月末に回収されるまで、何にでも無料で使えます。"/>
+        <text name="eq_loan_delivered" text="%sがイベント月のために%sを貸してくれました。ディーラーにあります。"/>
+        <text name="eq_loan_collected" text="%sが貸していた%sを回収しました。"/>
+        <text name="eq_loan_noRoom" text="%sは%sを届けられませんでした：ディーラーに空きがありません。明日また試みます。"/>
     </texts>
 </l10n>

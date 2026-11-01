@@ -918,6 +918,31 @@ function EqConsole:consoleSponsorNew()
 end
 
 
+--- eqSponsorLoan [brand]: a sponsor lends you one of its machines now, as on the first day of
+--- an event month (your lead sponsor when no brand is given). eqSponsorLoan end takes yours back.
+function EqConsole:consoleSponsorLoan(brand)
+    if g_currentMission == nil then return "No mission loaded" end
+    if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
+    local farmId = g_currentMission:getFarmId()
+    if brand ~= nil and string.lower(brand) == "end" then
+        local list = EqSponsorLoans.loansFor(farmId)
+        EqSponsorLoans.collectFor(farmId)
+        return string.format("%d loan(s) taken back", #list)
+    end
+    if brand == nil then
+        local lead = EqSponsorManager.lead(farmId)
+        if lead == nil then return "Usage: eqSponsorLoan <brand name, such as LIZARD> | end (you have no sponsor)" end
+        brand = lead.brand
+    end
+    local found = EqSponsorManager.brand(string.upper(brand))
+    if found ~= nil and found.name ~= nil then brand = found.name end
+    local loan = EqSponsorLoans.lend(farmId, brand, EqCompetitionManager.month or 0)
+    if loan == nil then return string.format("%s has no machine in the shop to lend", brand) end
+    return string.format("%s is bringing a %s to the dealer (it goes back when the month ends, or with eqSponsorLoan end)",
+        EqSponsorManager.brandTitle(brand), loan.name or "?")
+end
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
@@ -949,6 +974,7 @@ function EqConsole.register()
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
+    addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -963,7 +989,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqSponsorLoan",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

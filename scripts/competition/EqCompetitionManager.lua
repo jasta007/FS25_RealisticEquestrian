@@ -974,6 +974,7 @@ end
 function EqCompetitionManager.onDayChanged()
     EqCompetitionManager.dailyCare(indexHorses())
     if EqHostManager ~= nil then EqHostManager.onDayChanged() end
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.onDayChanged", EqSponsorLoans.onDayChanged) end
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND, EqCompetitionManager.endedMonth())
     end
@@ -996,6 +997,8 @@ function EqCompetitionManager.onPeriodChanged()
     if EqHostManager ~= nil then EqHostManager.onMonthStarted(EqCompetitionManager.month) end
     -- Sponsors: contract years close, and the year's first month brings new offers.
     if EqSponsorManager ~= nil then EqLog.try("EqSponsorManager.onMonthStarted", EqSponsorManager.onMonthStarted, EqCompetitionManager.month) end
+    -- Sponsors' lent machines: last month's go back, the new event month's arrive at the dealer.
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.onMonthStarted", EqSponsorLoans.onMonthStarted, EqCompetitionManager.month) end
 end
 
 

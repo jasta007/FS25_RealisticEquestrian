@@ -908,11 +908,21 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
   away. A met year puts the fee back to full.
 - **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
+- **Loans:** some offers say the sponsor **lends a machine** (big 60%, moderate 40%, small 25% of
+  offers; Lizard's one-off sponsorship always does). On the first day of each event month it
+  backs, each lending sponsor delivers one of its machines to the dealer: one of its dearest third,
+  something that drives itself when it makes any. A popup says what came. It's leased to you for
+  free (its price is 0, so no leasing costs and free repairs), you can use it for anything,
+  plinths included, or return it early. It doesn't count toward their machines or the competitor
+  clause. The sponsor takes it back when the month ends, or at once if the event is cancelled.
+  If the dealer's yard is full, delivery is tried again each day.
 - Discounts and the shop's block on rival machines come in the next update.
 
 Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
 category names (easy ones starred), this year's offers and your contracts;
-`eqSponsorNew` (testing) makes a fresh set of offers now.
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorLoan [brand]` (testing)
+has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
+`eqSponsorLoan end` takes it back.
 
 ## Buying horses
 

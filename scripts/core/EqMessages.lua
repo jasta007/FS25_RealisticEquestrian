@@ -44,6 +44,7 @@ EqMessages.TYPES = {
     EQ_SPONSOR_PAID = { title = "eqSponsor", severity = "SUCCESS" },
     EQ_SPONSOR_WARNING = { title = "eqSponsor", severity = "WARNING" },
     EQ_SPONSOR_ENDED = { title = "eqSponsor", severity = "NOTICE" },
+    EQ_SPONSOR_LOAN = { title = "eqSponsor", severity = "SUCCESS" },
 }
 
 -- The one body template, and the texts RLRM looks up without our mod name.
