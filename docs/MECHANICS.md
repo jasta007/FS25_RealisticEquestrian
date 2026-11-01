@@ -943,7 +943,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   machine of another brand on show when a hosted event's sponsor fee is paid costs 10% of that
   fee (at most 50%). When a plinth is sold or removed, machines near it are woken so they drop.
 - **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
-  the pieces are shared out between your sponsors in turn.
+  the pieces are shared out between your sponsors in turn, a piece keeps its sponsor when another
+  signs, and a plinth shows the sponsor whose machine is parked on it (a product ramp with nothing
+  on it, the one in its gap).
 - **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
   its own colour behind it on the boards that can change colour (bleachers, show jump boards, the
   gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,

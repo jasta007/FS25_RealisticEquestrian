@@ -285,6 +285,24 @@ function EqPlinths.parkedBrand(placeable)
             end
         end
     end
+    -- a product ramp with nothing on it takes the brand of a machine in a gap it makes with
+    -- another (James, 2026-11-01: a McCormick between two ramps, both ramps say McCormick; with a
+    -- machine on each ramp, each shows its own)
+    if string.sub(string.lower(string.gsub(placeable.configFileName, "\\", "/")), -#EqPlinths.RAMP) ~= EqPlinths.RAMP then return nil end
+    local system = g_currentMission.placeableSystem
+    for _, other in ipairs(system ~= nil and system.placeables or {}) do
+        if other ~= placeable and type(other.rootNode) == "number" and other.rootNode ~= 0 and type(other.configFileName) == "string"
+            and string.sub(string.lower(string.gsub(other.configFileName, "\\", "/")), -#EqPlinths.RAMP) == EqPlinths.RAMP then
+            local gap = { a = placeable.rootNode, b = other.rootNode }
+            for _, vehicle in ipairs(vehicles) do
+                local wx, wy, wz = EqPlinths.footprint(vehicle)
+                if wx ~= nil and EqPlinths.stands(gap, wx, wy, wz) then
+                    local brand = EqPlinths.brandOf(vehicle)
+                    if brand ~= nil then return brand end
+                end
+            end
+        end
+    end
     return nil
 end
 
