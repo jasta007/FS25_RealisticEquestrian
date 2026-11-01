@@ -939,7 +939,8 @@
         <text name="eq_host_report_turnout" text="Явка: приехало %d из %d гостевых лошадей (популярность %d)."/>
         <text name="eq_host_report_feedSoFar" text="Гостевые лошади уже съели %d л вашего корма (%d л в день)."/>
         <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
-        <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
+        <text name="eq_host_report_takings" text="Доход %s (взносы %s, билеты %s), организационный взнос %s."/>
+        <text name="eq_host_report_total" text="Итоговая популярность %d. Прибыль %s."/>
         <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
         <text name="eq_host_results_row" text="Ваши турниры"/>
         <text name="eq_host_results_running" text="Идёт сейчас"/>

@@ -939,7 +939,8 @@
         <text name="eq_host_report_turnout" text="Turnout: %d of %d visiting horses came (popularity %d)."/>
         <text name="eq_host_report_feedSoFar" text="Visiting horses have eaten %d l of your feed so far (%d l a day)."/>
         <text name="eq_host_report_feed" text="Visiting horses ate %d l of your feed."/>
-        <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
+        <text name="eq_host_report_takings" text="Takings %s (entries %s, gate %s), setup fee %s."/>
+        <text name="eq_host_report_total" text="Final popularity %d. Profit %s."/>
         <text name="eq_host_report_mine" text="Your horse %s: %s."/>
         <text name="eq_host_results_row" text="Your events"/>
         <text name="eq_host_results_running" text="On now"/>

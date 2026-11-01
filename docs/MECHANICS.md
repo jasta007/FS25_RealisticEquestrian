@@ -852,7 +852,7 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   how many visitors came (the field is them plus your entered horses). Their entry fees, the
   gate and any souvenir sales are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
   if none of your horses entered. **Your events**, at the top of the Results tab, shows each
-  one's winners, turnout, takings against the setup fee, and how your horses did.
+  one's winners, turnout, takings, weather and sales, how your horses did, and last its final popularity and profit (takings and sponsor fees less the setup fee and advertising).
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
   real faults and time: the penalties you are told at the finish are the ones on the

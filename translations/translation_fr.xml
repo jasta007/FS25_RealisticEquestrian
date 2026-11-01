@@ -941,7 +941,8 @@
         <text name="eq_host_report_turnout" text="Participation : %d chevaux invités sur %d sont venus (popularité %d)."/>
         <text name="eq_host_report_feedSoFar" text="Les chevaux invités ont mangé %d l de votre nourriture jusqu'ici (%d l par jour)."/>
         <text name="eq_host_report_feed" text="Les chevaux invités ont mangé %d l de votre nourriture."/>
-        <text name="eq_host_report_money" text="Recettes %s (engagements %s, entrées %s), frais d'organisation %s : bénéfice %s."/>
+        <text name="eq_host_report_takings" text="Recettes %s (engagements %s, entrées %s), frais d'organisation %s."/>
+        <text name="eq_host_report_total" text="Popularité finale %d. Bénéfice %s."/>
         <text name="eq_host_report_mine" text="Votre cheval %s : %s."/>
         <text name="eq_host_results_row" text="Vos épreuves"/>
         <text name="eq_host_results_running" text="En cours"/>

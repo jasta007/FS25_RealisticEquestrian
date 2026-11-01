@@ -245,8 +245,8 @@ function EqHostView.reportRows(farmId)
         if (report.advertCost or 0) > 0 then
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_advert"), money(report.advertCost)) })
         end
-        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_money"), money(report.total), money(report.entries),
-            money(report.gate), money(report.setupFee), money(report.total - report.setupFee - (report.advertCost or 0))) })
+        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_takings"), money(report.total), money(report.entries),
+            money(report.gate), money(report.setupFee)) })
         if (report.feed or 0) > 0 then
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feed"), math.floor(report.feed)) })
         end
@@ -259,6 +259,10 @@ function EqHostView.reportRows(farmId)
                 or string.format(g_i18n:getText("eq_ui_result_placeOrd"), EqStory.ordinal(horse.place), report.field)
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_mine"), horse.name, how) })
         end
+        -- Popularity and profit last, after the sponsors' fees (James, 2026-11-01): profit counts
+        -- the takings and every sponsor's fee, less the setup fee and advertising.
+        local profit = (report.total or 0) + (report.sponsorFee or 0) - (report.setupFee or 0) - (report.advertCost or 0)
+        table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_total"), report.popularity or 0, money(profit)) })
     end
     return rows
 end
