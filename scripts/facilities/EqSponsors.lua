@@ -199,6 +199,23 @@ end
 --- @return table brands the farm's signed sponsors, the lead first (empty for none): one contract
 --- per farm now, a list of them once several sponsors at once (PR #137) are in
 function EqSponsors.signedBrands(farmId)
+    local list = EqSponsors.contractBrands(farmId)
+    -- Lizard's one-off deal (EqLizard) counts its machines on plinths too, while it lasts
+    if EqLizard ~= nil and EqLizard.active(farmId) then
+        local copy = {}
+        for _, brand in ipairs(list) do
+            if brand ~= EqLizard.BRAND then table.insert(copy, brand) end
+        end
+        table.insert(copy, EqLizard.BRAND)
+        return copy
+    end
+    return list
+end
+
+
+--- @param farmId number
+--- @return table brands the farm's yearly sponsors' brands, the lead first
+function EqSponsors.contractBrands(farmId)
     if EqSponsorManager == nil then return {} end
     if EqSponsorManager.sponsorBrands ~= nil then return EqSponsorManager.sponsorBrands(farmId) or {} end
     local contracts = EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
@@ -239,7 +256,10 @@ end
 --- @return string|nil brand the farm's sponsor
 local function sponsorOf(farmId)
     local contract = EqSponsorManager ~= nil and EqSponsorManager.contracts ~= nil and EqSponsorManager.contracts[farmId] or nil
-    return contract ~= nil and contract.brand or nil
+    if contract ~= nil and contract.brand ~= nil then return contract.brand end
+    -- no yearly sponsor: Lizard's one-off deal shows on the boards while it lasts
+    if EqLizard ~= nil and EqLizard.active(farmId) then return EqLizard.BRAND end
+    return nil
 end
 
 
@@ -284,6 +304,10 @@ function EqSponsors.update()
                 -- one brand per piece (James, 2026-11-01: never two sponsors' logos or colours on
                 -- one object); the farm's pieces take turns down the list
                 local name = #sponsors > 0 and sponsors[offset % #sponsors + 1] or nil
+                -- the Lizard plinth always shows Lizard's logo
+                if EqLizard ~= nil and EqLizard.isPlinthXml(placeable.configFileName) and byName[EqLizard.BRAND] ~= nil then
+                    name = EqLizard.BRAND
+                end
                 if placeable.eqBrand ~= name then
                     placeable.eqBrand = name
                     placeable.eqColourKey = nil    -- EqJumpColours paints it again in that brand's colour
@@ -329,6 +353,9 @@ EqSponsors.SHOP_BOARDS = {
     ["placeables/sponsorplinths/plinthramplarge.xml"] = 1,
     ["placeables/sponsorplinths/plinthproductramp.xml"] = 1,
     ["placeables/sponsorplinths/plinthturntable.xml"] = 1,
+    ["placeables/sponsorplinths/lizardplinthstone.xml"] = 1,
+    ["placeables/sponsorplinths/lizardplinthwoodchips.xml"] = 1,
+    ["placeables/sponsorplinths/lizardplinthstraw.xml"] = 1,
 }
 -- Boards that come with a show jump's Sponsor boards choice (EqSponsorBoards): the shop line says
 -- what they would add, after the jump's own lines.

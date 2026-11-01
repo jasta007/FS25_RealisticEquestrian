@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="To není vybavení tvého sponzora! Vystavené stroje konkurence sníží tvé příjmy ze sponzoringu!"/>
         <text name="eq_plinth_noSponsor" text="Žádný sponzor nepodepsán: jeho vybavení vystavené zde by se počítalo do brandingu."/>
         <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
+        <text name="eq_shop_lizardPlinth" text="Podstavec Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Speciální podstavec Lizard pro akci, kterou sponzoruje. Postavíte ho dodáním materiálu do spouštěčů vpředu; stroj Lizard na kládové plošině se počítá navíc. Po akci se zřítí."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 000 l kamenů, 2 000 l dřeva (asi 5 klád) a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 2 000 l dřeva (asi 5 klád) a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 2 000 l dřeva (asi 5 klád) a 1 000 l prken."/>
+        <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
+        <text name="eq_lizard_offer" text="%s by rád zdarma sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
+        <text name="eq_lizard_accept" text="Přijmout"/>
+        <text name="eq_lizard_decline" text="Odmítnout"/>
+        <text name="eq_lizard_offerNote" text="%s chce zdarma sponzorovat vaši akci %s."/>
+        <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Koně) a postavte ho z %s, klád a prken."/>
+        <text name="eq_lizard_stepAside" text="%s ustupuje: vaši akci teď sponzoruje %s."/>
+        <text name="eq_lizard_paid" text="%s zaplatil %s za sponzorování vaší akce."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s nezaplatí nic: podstavec Lizard nebyl hotový. Bez zášti."/>
+        <text name="eq_lizard_unpaid_branding" text="%s nezaplatí nic: branding nestačil. Bez zášti."/>
+        <text name="eq_lizard_unpaid_rating" text="%s za tuto akci nezaplatí nic."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>

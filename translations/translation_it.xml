@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="Non è attrezzatura del tuo sponsor! Le macchine rivali in mostra ridurranno i tuoi guadagni da sponsorizzazione!"/>
         <text name="eq_plinth_noSponsor" text="Nessuno sponsor firmato: la sua attrezzatura esposta qui conterebbe per la tua visibilità."/>
         <text name="eq_plinth_penalty" text="%d macchina/e rivale/i sulle tue pedane sponsor: %s tolti dal compenso dello sponsor."/>
+        <text name="eq_shop_lizardPlinth" text="Piedistallo Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Il piedistallo speciale di Lizard per l&#x27;evento che sponsorizza. Costruiscilo consegnando ai trigger davanti; una macchina Lizard sulla piattaforma di tronchi conta di più. Crolla dopo l&#x27;evento."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Richiede 1.000 l di pietre, 2.000 l di legno (circa 5 tronchi) e 1.000 l di assi."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Richiede 1.000 l di cippato, 2.000 l di legno (circa 5 tronchi) e 1.000 l di assi."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Richiede 10.000 l di paglia, 2.000 l di legno (circa 5 tronchi) e 1.000 l di assi."/>
+        <text name="eq_lizard_title" text="Offerta di sponsorizzazione di %s"/>
+        <text name="eq_lizard_offer" text="%s vorrebbe sponsorizzare gratis il tuo %s (%s) e ti presterà uno dei suoi veicoli per il mese dell&#x27;evento. Chiede un branding %s entro la fine dell&#x27;evento e il suo piedistallo Lizard costruito nella tua sede: %s. Se è tutto pronto all&#x27;arrivo dei risultati, paga %s. Altrimenti non paga nulla e non c&#x27;è alcuna penalità. Il piedistallo crolla dopo l&#x27;evento."/>
+        <text name="eq_lizard_accept" text="Accetta"/>
+        <text name="eq_lizard_decline" text="Rifiuta"/>
+        <text name="eq_lizard_offerNote" text="%s vuole sponsorizzare gratis il tuo %s."/>
+        <text name="eq_lizard_accepted" text="Accordo con %s accettato! Compra il piedistallo Lizard nel negozio (Cavalli) e costruiscilo con %s, tronchi e assi."/>
+        <text name="eq_lizard_stepAside" text="%s si fa da parte: ora %s sponsorizza il tuo evento."/>
+        <text name="eq_lizard_paid" text="%s ha pagato %s per aver sponsorizzato il tuo evento."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s non paga nulla: il piedistallo Lizard non era finito. Senza rancore."/>
+        <text name="eq_lizard_unpaid_branding" text="%s non paga nulla: il tuo branding era insufficiente. Senza rancore."/>
+        <text name="eq_lizard_unpaid_rating" text="%s non paga nulla per questo evento."/>
         <text name="eq_config_corner" text="Angolo"/>
         <text name="eq_config_cornerRight" text="Punta a destra"/>
         <text name="eq_config_cornerLeft" text="Punta a sinistra"/>

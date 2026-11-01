@@ -68,6 +68,7 @@ source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorship.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorManager.lua")
+source(modDirectory .. "scripts/sponsors/EqLizard.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -250,6 +251,7 @@ function EqMain.activate()
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
         guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
         guarded("sponsors setup", function() EqSponsorManager.loadConfig(modDirectory) end)
+        guarded("lizard setup", function() EqLizard.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then
@@ -300,6 +302,8 @@ guarded("show jump sponsor boards hook", function() EqSponsorBoards.install(guar
 guarded("turntable hook", function() EqTurntable.install(guarded) end)
 -- Plinth feedback popups and the rival machine penalty (wraps EqSponsorManager.afterEvent).
 guarded("plinth hook", function() EqPlinths.install(guarded) end)
+-- Lizard's one-off sponsorship (wraps EqSponsorManager after the plinths, so no rival penalty on it).
+guarded("lizard hook", function() EqLizard.install(guarded) end)
 guarded("dressage outfit hook", function() EqAttire.install(guarded, modDirectory) end)
 
 
@@ -378,6 +382,7 @@ local function onMissionDelete()
         EqStaffManager.stop()
         EqHostManager.reset()
         EqSponsorManager.reset()
+        EqLizard.reset()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

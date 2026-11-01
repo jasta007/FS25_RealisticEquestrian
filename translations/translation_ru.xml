@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="Это не техника вашего спонсора! Выставленные машины конкурентов уменьшат ваш доход от спонсорства!"/>
         <text name="eq_plinth_noSponsor" text="Спонсор не подписан: его техника, выставленная здесь, засчитывалась бы в ваш брендинг."/>
         <text name="eq_plinth_penalty" text="%d машин(ы) конкурентов на ваших спонсорских подиумах: из гонорара спонсора вычтено %s."/>
+        <text name="eq_shop_lizardPlinth" text="Постамент Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Особый постамент Lizard для мероприятия, которое она спонсирует. Постройте его, доставляя материалы к триггерам спереди; техника Lizard на настиле из брёвен засчитывается дополнительно. После мероприятия он рушится."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Нужно: 1000 л камней, 2000 л древесины (около 5 брёвен) и 1000 л досок."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Нужно: 1000 л щепы, 2000 л древесины (около 5 брёвен) и 1000 л досок."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Нужно: 10 000 л соломы, 2000 л древесины (около 5 брёвен) и 1000 л досок."/>
+        <text name="eq_lizard_title" text="Спонсорское предложение от %s"/>
+        <text name="eq_lizard_offer" text="%s хочет бесплатно спонсировать ваше мероприятие %s (%s) и одолжит вам одну из своих машин на месяц мероприятия. Требуется брендинг уровня %s к концу мероприятия и постамент Lizard, построенный на вашей площадке: %s. Если всё будет готово к подведению итогов, она заплатит %s. Если нет, она ничего не заплатит, и штрафа не будет. После мероприятия постамент рушится."/>
+        <text name="eq_lizard_accept" text="Принять"/>
+        <text name="eq_lizard_decline" text="Отказаться"/>
+        <text name="eq_lizard_offerNote" text="%s хочет бесплатно спонсировать ваше мероприятие %s."/>
+        <text name="eq_lizard_accepted" text="Сделка с %s принята! Купите постамент Lizard в магазине (Лошади) и постройте его из %s, брёвен и досок."/>
+        <text name="eq_lizard_stepAside" text="%s уступает: теперь ваше мероприятие спонсирует %s."/>
+        <text name="eq_lizard_paid" text="%s заплатила %s за спонсорство вашего мероприятия."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s ничего не платит: постамент Lizard не был достроен. Без обид."/>
+        <text name="eq_lizard_unpaid_branding" text="%s ничего не платит: брендинга не хватило. Без обид."/>
+        <text name="eq_lizard_unpaid_rating" text="%s ничего не платит за это мероприятие."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>

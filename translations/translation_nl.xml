@@ -103,6 +103,22 @@
         <text name="eq_plinth_wrongBrand" text="Niet de uitrusting van je sponsor! Concurrerende machines in beeld verlagen je sponsorinkomsten!"/>
         <text name="eq_plinth_noSponsor" text="Geen sponsor getekend: zijn uitrusting hier zou meetellen voor je branding."/>
         <text name="eq_plinth_penalty" text="%d concurrerende machine(s) op je sponsorpodia: %s van de sponsorvergoeding afgetrokken."/>
+        <text name="eq_shop_lizardPlinth" text="Lizard-sokkel"/>
+        <text name="eq_shop_lizardPlinth_function" text="De speciale sokkel van Lizard voor het evenement dat het sponsort. Bouw hem door aan de triggers aan de voorkant te leveren; een Lizard-machine op het boomstammendek telt extra. Na het evenement stort hij in."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Nodig: 1.000 l stenen, 2.000 l hout (ongeveer 5 stammen) en 1.000 l planken."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 2.000 l hout (ongeveer 5 stammen) en 1.000 l planken."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 2.000 l hout (ongeveer 5 stammen) en 1.000 l planken."/>
+        <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
+        <text name="eq_lizard_offer" text="%s wil je %s (%s) gratis sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
+        <text name="eq_lizard_accept" text="Accepteren"/>
+        <text name="eq_lizard_decline" text="Weigeren"/>
+        <text name="eq_lizard_offerNote" text="%s wil je %s gratis sponsoren."/>
+        <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Paarden) en bouw hem met %s, stammen en planken."/>
+        <text name="eq_lizard_stepAside" text="%s doet een stap opzij: %s sponsort nu je evenement."/>
+        <text name="eq_lizard_paid" text="%s heeft %s betaald voor het sponsoren van je evenement."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s betaalt niets: de Lizard-sokkel was niet af. Geen kwaad bloed."/>
+        <text name="eq_lizard_unpaid_branding" text="%s betaalt niets: je branding schoot tekort. Geen kwaad bloed."/>
+        <text name="eq_lizard_unpaid_rating" text="%s betaalt niets voor dit evenement."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>

@@ -949,6 +949,33 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,
   corner, drop wall) stay white.
 
+#### Lizard's one-off sponsorship
+
+Lizard, the game's own brand, is never a yearly sponsor. Instead (James, 2026-11-01), a hosted
+event no sponsor backs has a **25%** chance of a free one-off offer from Lizard, rolled once the
+month before the event (or when you book it, if that is for next month). A popup says what Lizard
+wants: a branding level by the end of the event (Novice Low, Intermediate Medium, Championship
+High) and its **Lizard Plinth** built at your venue. Accept or decline; an offer nobody answers
+lapses when the event opens.
+
+- **Accepted:** the event carries Lizard's name and +5 popularity, your boards show Lizard while
+  the deal lasts (after any yearly sponsor), Lizard's machines on plinths count, and Lizard lends
+  a vehicle for the event month. A yearly sponsor signed in the meantime takes the event and
+  Lizard steps aside.
+- **The Lizard Plinth** (500, in the shop's Horses tab only while you have an accepted deal) is a
+  constructible, like the game's rental houses: a few stakes until you deliver its materials to
+  the triggers in front of it. One bulk load Lizard picks at random, **1,000 l stone**, **1,000 l
+  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (in the game's
+  own texture for it); **2,000 l of logs** (about five tree logs, at the wood trigger) go on top as
+  a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
+  front. A Lizard machine on the log deck counts 2 boards, and the board 1.
+- **Results:** if the plinth is finished and the branding is there, Lizard pays 2,000 (Novice),
+  12,000 (Intermediate) or 50,000 (Championship). If not, nothing, and **no penalty**. Either way
+  the plinth then collapses (the lizard tips over, the lot sinks) and is gone.
+- Numbers are in `data/sponsors.xml` (`<lizard>`); the plinths come from
+  `art/source/lizard_plinth.py`, which reads the same amounts. Multiplayer: the popup's answer is
+  only taken on the host (not tried).
+
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
 jump colour and where it came from.
