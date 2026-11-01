@@ -1165,5 +1165,7 @@
         <text name="eq_loan_noRoom" text="%s nie mógł dostarczyć %s: brak miejsca u dealera. Spróbuje ponownie jutro."/>
         <text name="eq_loan_enterTitle" text="Prezent od %s"/>
         <text name="eq_loan_enter" text="Ten sprzęt został przekazany przez twojego sponsora do użytku podczas twojego wydarzenia w tym miesiącu. Miłej zabawy!"/>
+        <text name="eq_sponsor_discount_from" text="Od %s"/>
+        <text name="eq_sponsor_discount_after" text="Po %d miesiącach od podpisania"/>
     </texts>
 </l10n>

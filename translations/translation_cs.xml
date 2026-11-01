@@ -1165,5 +1165,7 @@
         <text name="eq_loan_noRoom" text="%s 无法送来 %s：经销商处没有空位。明天会再试。"/>
         <text name="eq_loan_enterTitle" text="来自 %s 的礼物"/>
         <text name="eq_loan_enter" text="这台设备由你的赞助商提供，供你在本月的赛事期间使用。尽情享受吧！"/>
+        <text name="eq_sponsor_discount_from" text="从%s开始"/>
+        <text name="eq_sponsor_discount_after" text="签约 %d 个月后开始"/>
     </texts>
 </l10n>

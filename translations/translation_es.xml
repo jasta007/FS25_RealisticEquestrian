@@ -1167,5 +1167,7 @@
         <text name="eq_loan_noRoom" text="%s no pudo entregar el/la %s: no hay sitio en el concesionario. Lo intentará de nuevo mañana."/>
         <text name="eq_loan_enterTitle" text="Cortesía de %s"/>
         <text name="eq_loan_enter" text="Tu patrocinador ha cedido este equipo para que lo uses durante tu evento de este mes. ¡Disfrútalo!"/>
+        <text name="eq_sponsor_discount_from" text="Desde %s"/>
+        <text name="eq_sponsor_discount_after" text="A los %d meses de firmar"/>
     </texts>
 </l10n>

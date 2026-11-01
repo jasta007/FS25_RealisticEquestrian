@@ -1165,5 +1165,7 @@
         <text name="eq_loan_noRoom" text="%s kon de %s niet leveren: er is geen plek bij de dealer. Morgen volgt een nieuwe poging."/>
         <text name="eq_loan_enterTitle" text="Aangeboden door %s"/>
         <text name="eq_loan_enter" text="Dit materieel is door je sponsor geschonken voor gebruik tijdens je evenement deze maand. Veel plezier!"/>
+        <text name="eq_sponsor_discount_from" text="Vanaf %s"/>
+        <text name="eq_sponsor_discount_after" text="Vanaf %d maanden na tekenen"/>
     </texts>
 </l10n>

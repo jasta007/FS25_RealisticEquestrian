@@ -154,6 +154,15 @@ function EqSponsorView.panelLines(farmId, row)
     add("discounts", string.format(g_i18n:getText("eq_sponsor_discount_repaint"), percent(offer.repaint)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_repair"), percent(offer.repair)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_buy"), percent(offer.purchase)))
+    local waitMonths = EqSponsorManager.config ~= nil and EqSponsorManager.config.discountMonths or 0
+    if row.contract then
+        local from = (offer.signedMonth or 0) + waitMonths
+        if (EqCompetitionManager.month or 0) < from then
+            add(nil, string.format(g_i18n:getText("eq_sponsor_discount_from"), EqHostManager.monthText(from)), false)
+        end
+    elseif waitMonths > 0 then
+        add(nil, string.format(g_i18n:getText("eq_sponsor_discount_after"), waitMonths))
+    end
     -- Some sponsors lend a machine for each event month they back (James, 2026-11-01).
     if offer.loan then add(nil, g_i18n:getText("eq_sponsor_loanLine")) end
 
