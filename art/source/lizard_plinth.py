@@ -620,12 +620,12 @@ def write_xml(variant, path, mappings):
         <sellingStation appearsOnStats="false" supportsExtension="false">
             <unloadTrigger exactFillRootNode="unloadTrigger" aiNode="unloadTriggerAINode" fillTypes="{tip}"/>
             <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="PLANKS{' STONE' if stone else ''}"/>
-            <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" fillTypes="WOOD"/>{bale}
+            <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" autoUnload="true" fillTypes="WOOD"/>{bale}
         </sellingStation>
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="{ft}" capacity="{int(variant["amount"] * 1.2)}"/>
-            <capacity fillType="WOOD" capacity="{int(WOOD * 1.5)}"/>
+            <capacity fillType="WOOD" capacity="{int(WOOD * 10)}"/>
             <capacity fillType="PLANKS" capacity="{int(PLANKS * 1.2)}"/>
         </storage>
     </constructible>

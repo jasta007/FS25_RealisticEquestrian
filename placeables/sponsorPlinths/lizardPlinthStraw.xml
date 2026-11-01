@@ -98,13 +98,13 @@
         <sellingStation appearsOnStats="false" supportsExtension="false">
             <unloadTrigger exactFillRootNode="unloadTrigger" aiNode="unloadTriggerAINode" fillTypes="STRAW"/>
             <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="PLANKS"/>
-            <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" fillTypes="WOOD"/>
+            <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" autoUnload="true" fillTypes="WOOD"/>
             <baleTrigger triggerNode="baleTrigger" fillTypes="STRAW" deleteLitersPerSecond="10000"/>
         </sellingStation>
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="STRAW" capacity="12000"/>
-            <capacity fillType="WOOD" capacity="3000"/>
+            <capacity fillType="WOOD" capacity="20000"/>
             <capacity fillType="PLANKS" capacity="1200"/>
         </storage>
     </constructible>
