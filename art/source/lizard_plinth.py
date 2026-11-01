@@ -12,7 +12,7 @@ from what the farm delivers to its triggers in front of it:
     SETUP       a few stakes; the bulk material: stone (1,000 l, as from stone picking),
                 wood chips (1,000 l) or straw (10,000 l), tipped or (straw) as bales
     BUILDING_1  the mound is there; logs (WOOD, 10,000 l) at the wood trigger
-    BUILDING_2  the logs are on top; planks (PLANKS pallets)
+    BUILDING_2  the logs are on top; planks (BOARDS pallets, the game's short planks: James)
     FINALIZE    the lizard and the logo board go up, the stakes and triggers go
 
 One placeable for each material ("lizardPlinthStone" ...), the mound textured with the game's
@@ -55,7 +55,8 @@ VARIANTS = [
      "preview": (206, 180, 104), "tip": "STRAW", "bale": True},
 ]
 WOOD = 10000        # litres of logs (James: 2,000 at first, then "like 10,000")
-PLANKS = 1000       # litres of planks (James: 1,000 short planks rather than 500 long ones)
+PLANKS = 1000       # litres of short planks, fill type BOARDS (James: short, not long PLANKS; faster to make)
+PLANKS_FILLTYPE = "BOARDS"
 
 
 def read_amounts(path="data/sponsors.xml"):
@@ -73,15 +74,16 @@ def read_amounts(path="data/sponsors.xml"):
     for part in lizard.findall("part"):
         if part.get("fillType") == "WOOD":
             WOOD = int(float(part.get("amount")))
-        elif part.get("fillType") == "PLANKS":
+        elif part.get("fillType") == PLANKS_FILLTYPE:
             PLANKS = int(float(part.get("amount")))
 
-H = 0.9                     # the mound's top
+H = 0.98                    # the mound's top, round the deck logs (they show their upper 0.17 m)
 DECK = {"hx": 2.05, "hz": 1.85}   # the log deck on top, logs along z, machines drive along x
 LOG_D = 0.44
 LOG_LEN = 3.6
-DECK_TOP = H + 0.25         # where a parked machine's wheels are (the deck collision)
-MOUND = {"rx": 5.3, "rz": 3.3}    # the footprint's half sizes (the ramps run along x)
+DECK_TOP = 1.15             # where a parked machine's wheels are (the deck collision)
+MOUND = {"rx": 6.4, "rz": 3.3}    # the footprint's half sizes (the ramps run along x, long and gentle)
+RAMP_LOGS = 4               # logs each side down the ramps, sinking deeper into the mound (James)
 TILE = 2.0                  # metres one fill plane texture covers
 LIZARD = {"z": 2.35, "height": 3.4, "plank": 0.11, "gap": 0.016, "thick": 0.028}
 BOARD = {"z": -3.05, "width": 2.6, "height": 0.8, "y0": 0.35}
@@ -120,22 +122,40 @@ def footprint(a, rng_waves):
     return r * (1 + wobble)
 
 
-def mound_height(u, a, lumps):
-    """Height at share u (0 at the deck's edge, 1 at the foot) along the ray at angle a."""
-    base = H * (1 - u) ** 1.25 * (1 - 0.15 * u * (1 - u))
+def mound_height(u, a, lumps, top=None):
+    """Height at share u (0 at the deck's edge, 1 at the foot) along the ray at angle a: level at
+    the top and the foot, steepest half way (James, 2026-11-01: no lip onto the deck)."""
+    top = H if top is None else top
+    base = top * (0.5 + 0.5 * math.cos(math.pi * u))
     bump = sum(amp * math.sin(k * a + ph) * math.sin(math.pi * u) for k, ph, amp in lumps)
     return max(0.0, base + bump)
+
+
+def mound_shape():
+    """The mound's fixed random waves (footprint) and lumps (surface)."""
+    rng = random.Random(5)
+    waves = [(k, rng.uniform(0, 6.3), rng.uniform(0.01, 0.03)) for k in (3, 5, 7, 11)]
+    lumps = [(k, rng.uniform(0, 6.3), rng.uniform(0.01, 0.025)) for k in (4, 6, 9)]
+    return waves, lumps
+
+
+def ramp_height(x):
+    """The collision's height at x along the ramps (z = 0): the deck top, easing down to the foot."""
+    waves, lumps = mound_shape()
+    a = 0.0 if x >= 0 else math.pi
+    d0 = ray_to_rect(a, DECK["hx"], DECK["hz"])
+    r1 = footprint(a, waves)
+    u = clamp((abs(x) - d0) / (r1 - d0), 0.0, 1.0)
+    return mound_height(u, a, lumps, DECK_TOP)
 
 
 def mound(collision=False):
     """The mound as a polar grid from the middle: flat (the deck) out to the deck's edge, then down
     to a foot sunk a little into the ground. The collision raises the deck to the logs' top."""
-    rng = random.Random(5)
-    waves = [(k, rng.uniform(0, 6.3), rng.uniform(0.01, 0.03)) for k in (3, 5, 7, 11)]
-    lumps = [(k, rng.uniform(0, 6.3), rng.uniform(0.02, 0.05)) for k in (4, 6, 9)]
+    waves, lumps = mound_shape()
     sides = 72
     inner = [0.0, 0.35, 0.7, 1.0]           # shares of the deck's reach
-    outer = [i / 10 for i in range(1, 11)]   # shares of the slope
+    outer = [i / 16 for i in range(1, 17)]   # shares of the slope
     mesh = Mesh()
     grid = []
     for k in range(sides + 1):
@@ -148,7 +168,8 @@ def mound(collision=False):
             row.append((math.cos(a) * d0 * t, y, math.sin(a) * d0 * t))
         for u in outer:
             r = d0 + (r1 - d0) * u
-            row.append((math.cos(a) * r, mound_height(u, a, lumps), math.sin(a) * r))
+            # the collision rides on the ramp logs' tops: the deck's height easing down
+            row.append((math.cos(a) * r, mound_height(u, a, lumps, DECK_TOP if collision else H), math.sin(a) * r))
         # the foot, under the ground so the mound never floats on a slope
         row.append((math.cos(a) * r1 * 1.04, -0.2, math.sin(a) * r1 * 1.04))
         grid.append(row)
@@ -182,20 +203,30 @@ def mound(collision=False):
 # The logs, planks and boards
 
 def logs():
-    """The deck: logs along z, side by side along x, half sunk into the mound."""
+    """The deck: logs along z, side by side along x, their tops at the deck's height, the mound
+    up round them; then RAMP_LOGS more each side down the ramps, tops on the collision's slope, so
+    they sink deeper into the mound the further out they lie (James: no lip onto the deck)."""
     barks, ends = Mesh(), Mesh()
     rng = random.Random(17)
     count = int(round(2 * DECK["hx"] / LOG_D))
+    placed = []
     for i in range(count):
         x = -DECK["hx"] + LOG_D / 2 + i * (2 * DECK["hx"] - LOG_D) / (count - 1)
+        placed.append((x, None))
+    for side in (-1, 1):
+        for k in range(RAMP_LOGS):
+            placed.append((side * (DECK["hx"] + LOG_D * (0.55 + 1.02 * k)), side))
+    for x, side in placed:
         r = LOG_D / 2 * rng.uniform(0.92, 1.04)
         thin = r * (1 - rng.uniform(0.1, 0.25))
         r0, r1 = (r, thin) if rng.random() < 0.5 else (thin, r)
-        z0 = -LOG_LEN / 2 + rng.uniform(-0.2, 0.2)
-        z1 = LOG_LEN / 2 + rng.uniform(-0.2, 0.2)
+        length = LOG_LEN if side is None else LOG_LEN * rng.uniform(0.8, 0.95)
+        z0 = -length / 2 + rng.uniform(-0.2, 0.2)
+        z1 = length / 2 + rng.uniform(-0.2, 0.2)
+        top = DECK_TOP if side is None else ramp_height(x) + 0.01
         bark, end = Mesh(), Mesh()
         # built along x by xc.build_log, then turned a quarter round y: (x, y, z) -> (z, y, -x)
-        xc.build_log((H + r * 0.35, x, -z1, -z0, r0, r1, rng.randrange(1 << 30)), bark, end)
+        xc.build_log((top - r, x, -z1, -z0, r0, r1, rng.randrange(1 << 30)), bark, end)
         for src, dst in ((bark, barks), (end, ends)):
             base = len(dst.verts)
             for p, n, uv in src.verts:
@@ -591,7 +622,7 @@ def write_xml(variant, path, mappings):
 
                 <state name="BUILDING_2" class="ConstructibleStateBuilding">
                     <toggleMesh node="logs" active="true" updatePhysics="false"/>
-                    <input fillType="PLANKS" amount="{PLANKS}" usagePerHour="1000"/>
+                    <input fillType="{PLANKS_FILLTYPE}" amount="{PLANKS}" usagePerHour="{PLANKS}"/>
                     <sounds>
                         <active template="constructibleActive"/>
                     </sounds>
@@ -619,14 +650,14 @@ def write_xml(variant, path, mappings):
 
         <sellingStation appearsOnStats="false" supportsExtension="false">
             <unloadTrigger exactFillRootNode="unloadTrigger" aiNode="unloadTriggerAINode" fillTypes="{tip}"/>
-            <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="PLANKS{' STONE' if stone else ''}"/>
+            <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="{PLANKS_FILLTYPE}{' STONE' if stone else ''}"/>
             <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" autoUnload="true" fillTypes="WOOD"/>{bale}
         </sellingStation>
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="{ft}" capacity="{int(variant["amount"] * 1.2)}"/>
             <capacity fillType="WOOD" capacity="{int(WOOD * 3)}"/>
-            <capacity fillType="PLANKS" capacity="{int(PLANKS * 1.2)}"/>
+            <capacity fillType="{PLANKS_FILLTYPE}" capacity="{int(PLANKS * 4)}"/>
         </storage>
     </constructible>
 

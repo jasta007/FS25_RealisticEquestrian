@@ -69,7 +69,7 @@
 
                 <state name="BUILDING_2" class="ConstructibleStateBuilding">
                     <toggleMesh node="logs" active="true" updatePhysics="false"/>
-                    <input fillType="PLANKS" amount="1000" usagePerHour="1000"/>
+                    <input fillType="BOARDS" amount="1000" usagePerHour="1000"/>
                     <sounds>
                         <active template="constructibleActive"/>
                     </sounds>
@@ -97,7 +97,7 @@
 
         <sellingStation appearsOnStats="false" supportsExtension="false">
             <unloadTrigger exactFillRootNode="unloadTrigger" aiNode="unloadTriggerAINode" fillTypes="STRAW"/>
-            <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="PLANKS"/>
+            <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="BOARDS"/>
             <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" autoUnload="true" fillTypes="WOOD"/>
             <baleTrigger triggerNode="baleTrigger" fillTypes="STRAW" deleteLitersPerSecond="10000"/>
         </sellingStation>
@@ -105,7 +105,7 @@
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="STRAW" capacity="12000"/>
             <capacity fillType="WOOD" capacity="30000"/>
-            <capacity fillType="PLANKS" capacity="1200"/>
+            <capacity fillType="BOARDS" capacity="4000"/>
         </storage>
     </constructible>
 

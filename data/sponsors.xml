@@ -121,6 +121,6 @@
         <material fillType="WOODCHIPS" amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
         <material fillType="STRAW"     amount="10000" weight="1" xml="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
         <part fillType="WOOD"   amount="10000"/>
-        <part fillType="PLANKS" amount="1000"/>
+        <part fillType="BOARDS" amount="1000"/>
     </lizard>
 </sponsors>

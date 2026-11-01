@@ -5102,7 +5102,7 @@ end)()
                 modDesc:find(path, 1, true) ~= nil and xml:find('type="constructible"', 1, true) ~= nil
                 and xml:find("<showInStore>false</showInStore>", 1, true) ~= nil
                 and amount(material.fillType) == material.amount and amount("WOOD") == lz.parts[1].amount
-                and amount("PLANKS") == lz.parts[2].amount)
+                and amount("BOARDS") == lz.parts[2].amount)
             check("lizard: " .. path .. " is a plinth with one Lizard board and a log deck", EqLizard.isPlinthXml(path)
                 and EqSponsors.isBleacherXml(path) and EqSponsors.shopBoards(path) == 1 and EqPlinths.areasFor(path) ~= nil
                 and select(2, i3d:gsub('name="eqSponsor_%d+"', "")) == 1)
