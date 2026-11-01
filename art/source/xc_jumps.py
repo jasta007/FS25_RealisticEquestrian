@@ -852,9 +852,12 @@ def fmt(values):
 
 # The part of a brand's logo image a logo face shows (James, 2026-11-01: fill more of the board).
 # The game's brand logos are all 512 x 256 with the logo across the middle (measured on the game's
-# 261 logos: most sit within 0.02-0.98 across and 0.1-0.9 up), so a face of LOGO_ASPECT 2.7 shows
-# this window: 491 x 205 pixels, near enough 2.7 : 1, so logos are no longer stretched 35% wide.
-LOGO_CROP = (0.02, 0.98, 0.10, 0.90)
+# 261 logos: most sit within 0.02-0.98 across and 0.1-0.9 up). A face of LOGO_ASPECT 2.7 shows
+# 0.1-0.9 up and a little more than the whole width (LOGO_PAD each side, James: Volvo's O touched
+# the right edge), so logos are not stretched; the face is cut back to where the image is
+# (clip_logo), leaving the padding as bare board.
+LOGO_PAD = 0.04
+LOGO_CROP = (-LOGO_PAD, 1 + LOGO_PAD, 0.10, 0.90)
 
 
 def logo_uv(uv):
@@ -862,13 +865,47 @@ def logo_uv(uv):
     return (u0 + (u1 - u0) * uv[0], v0 + (v1 - v0) * uv[1])
 
 
+def _lerp(a, b, t):
+    return tuple(x + (y - x) * t for x, y in zip(a, b))
+
+
+def clip_logo(mesh):
+    """The logo faces' triangles cut to 0 <= u <= 1 (logo_uv runs a little past both edges)."""
+    out = Mesh()
+    for tri in mesh.tris:
+        poly = [mesh.verts[i] for i in tri]
+        for edge, keep in ((0.0, lambda u: u >= 0.0), (1.0, lambda u: u <= 1.0)):
+            clipped = []
+            for k, cur in enumerate(poly):
+                prev = poly[k - 1]
+                cin, pin = keep(cur[2][0]), keep(prev[2][0])
+                if cin != pin:
+                    t = (edge - prev[2][0]) / (cur[2][0] - prev[2][0])
+                    n = _lerp(prev[1], cur[1], t)
+                    length = sum(c * c for c in n) ** 0.5 or 1.0
+                    clipped.append((_lerp(prev[0], cur[0], t), tuple(c / length for c in n), (edge, prev[2][1] + (cur[2][1] - prev[2][1]) * t)))
+                if cin:
+                    clipped.append(cur)
+            poly = clipped
+            if not poly:
+                break
+        if len(poly) < 3:
+            continue
+        ids = [out.vertex(*v) for v in poly]
+        for k in range(1, len(ids) - 1):
+            out.tris.append((ids[0], ids[k], ids[k + 1]))
+    return out
+
+
 def logo_preview(path="placeables/bleachers/bleacherSponsor_diffuse.dds"):
-    """Our board texture as a shop picture should show it: just the LOGO_CROP window."""
+    """Our board texture as a shop picture should show it: the LOGO_CROP window, padding as board."""
     img = Image.open(path).convert("RGB")
     u0, u1, v0, v1 = LOGO_CROP
     w, h = img.size
-    return np.asarray(img.crop((int(round(u0 * w)), int(round((1 - v1) * h)), int(round(u1 * w)), int(round((1 - v0) * h)))),
-                      dtype=float)
+    pad = int(round(LOGO_PAD * w))
+    framed = Image.new("RGB", (w + 2 * pad, h), img.getpixel((1, 1)))
+    framed.paste(img, (pad, 0))
+    return np.asarray(framed.crop((0, int(round((1 - v1) * h)), w + 2 * pad, int(round((1 - v0) * h)))), dtype=float)
 
 
 def shape_lines(mesh, name, shape_id, uv1=None):
@@ -878,7 +915,7 @@ def shape_lines(mesh, name, shape_id, uv1=None):
         cropped = Mesh()
         cropped.verts = [(p, n, logo_uv(uv)) for p, n, uv in mesh.verts]
         cropped.tris = mesh.tris
-        mesh = cropped
+        mesh = clip_logo(cropped)
     centre, radius = mesh.bounds()
     lines = [
         f'    <IndexedTriangleSet name="{name}" shapeId="{shape_id}" bvCenter="{fmt(centre)}" bvRadius="{radius:.5g}">',

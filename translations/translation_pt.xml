@@ -100,7 +100,7 @@
         <text name="eq_shop_plinthTurntable" text="Plataforma giratória"/>
         <text name="eq_shop_turntable_function" text="O disco gira devagar: deixe uma máquina sobre ele e ela gira com ele, com tudo o que estiver engatado. Uma máquina do seu patrocinador conta mais aqui."/>
         <text name="eq_plinth_inPlace" text="Equipamento do patrocinador no lugar!"/>
-        <text name="eq_plinth_wrongBrand" text="Não é equipamento do seu patrocinador: máquinas rivais expostas custam dinheiro do patrocínio."/>
+        <text name="eq_plinth_wrongBrand" text="Não é equipamento do seu patrocinador! Máquinas rivais em exposição vão reduzir os seus ganhos de patrocínio!"/>
         <text name="eq_plinth_noSponsor" text="Nenhum patrocinador assinado: o equipamento dele exposto aqui contaria para a sua marca."/>
         <text name="eq_plinth_penalty" text="%d máquina(s) rival(is) nas suas plataformas de patrocínio: %s descontados da quota do patrocinador."/>
         <text name="eq_config_corner" text="Canto"/>

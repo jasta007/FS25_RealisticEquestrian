@@ -139,13 +139,20 @@ function EqJumpColours.apply(placeable)
             end
         end
     end
-    -- board faces behind the logos: dark behind a light logo (EqSponsorBoards.faceColour)
-    if EqSponsorBoards ~= nil and EqSponsorBoards.faceColour ~= nil then
-        local face = EqSponsorBoards.faceColour(placeable.eqBrand)
-        for _, node in ipairs(shapesNamed(placeable.rootNode, EqJumpColours.FACE)) do
-            if getHasShaderParameter == nil or getHasShaderParameter(node, EqJumpColours.PARAMETER) then
-                setShaderParameter(node, EqJumpColours.PARAMETER, face[1], face[2], face[3], 0, false)
-            end
+    EqJumpColours.paintFaces(placeable)
+end
+
+
+--- Paint the board faces behind a piece's logos: dark behind a light logo
+--- (EqSponsorBoards.faceColour). Any sponsor piece, bleachers too (EqSponsors calls it).
+--- @param placeable table
+function EqJumpColours.paintFaces(placeable)
+    if placeable == nil or placeable.rootNode == nil or setShaderParameter == nil then return end
+    if EqSponsorBoards == nil or EqSponsorBoards.faceColour == nil then return end
+    local face = EqSponsorBoards.faceColour(placeable.eqBrand)
+    for _, node in ipairs(shapesNamed(placeable.rootNode, EqJumpColours.FACE)) do
+        if getHasShaderParameter == nil or getHasShaderParameter(node, EqJumpColours.PARAMETER) then
+            setShaderParameter(node, EqJumpColours.PARAMETER, face[1], face[2], face[3], 0, false)
         end
     end
 end

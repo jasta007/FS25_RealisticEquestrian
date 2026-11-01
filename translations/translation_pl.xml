@@ -100,7 +100,7 @@
         <text name="eq_shop_plinthTurntable" text="Obrotowy podest"/>
         <text name="eq_shop_turntable_function" text="Tarcza obraca się powoli: zostaw na niej maszynę, a obróci się razem z nią, z wszystkim, co podczepione. Maszyna sponsora liczy się tu bardziej."/>
         <text name="eq_plinth_inPlace" text="Sprzęt sponsora na miejscu!"/>
-        <text name="eq_plinth_wrongBrand" text="To nie sprzęt twojego sponsora: wystawione maszyny konkurencji kosztują cię pieniądze od sponsora."/>
+        <text name="eq_plinth_wrongBrand" text="To nie sprzęt twojego sponsora! Wystawione maszyny konkurencji obniżą twoje dochody ze sponsoringu!"/>
         <text name="eq_plinth_noSponsor" text="Brak podpisanego sponsora: jego sprzęt wystawiony tutaj liczyłby się do twojej widoczności."/>
         <text name="eq_plinth_penalty" text="%d maszyn(y) konkurencji na twoich podestach sponsora: odjęto %s z wynagrodzenia sponsora."/>
         <text name="eq_config_corner" text="Narożnik"/>

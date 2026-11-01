@@ -100,7 +100,7 @@
         <text name="eq_shop_plinthTurntable" text="Drehteller"/>
         <text name="eq_shop_turntable_function" text="Die Scheibe dreht sich langsam: Lass eine Maschine darauf stehen, dann dreht sie sich mit, samt allem Angehängten. Eine Maschine deines Sponsors zählt hier mehr."/>
         <text name="eq_plinth_inPlace" text="Sponsorausrüstung in Position!"/>
-        <text name="eq_plinth_wrongBrand" text="Nicht die Ausrüstung deines Sponsors: Fremde Maschinen kosten dich Sponsorgeld."/>
+        <text name="eq_plinth_wrongBrand" text="Nicht die Ausrüstung deines Sponsors! Ausgestellte Konkurrenzmaschinen schmälern deine Sponsoreinnahmen!"/>
         <text name="eq_plinth_noSponsor" text="Kein Sponsor unterschrieben: Seine Ausrüstung hier würde zu deinem Branding zählen."/>
         <text name="eq_plinth_penalty" text="%d fremde Maschine(n) auf deinen Sponsor-Podesten: %s vom Sponsorhonorar abgezogen."/>
         <text name="eq_config_corner" text="Ecke"/>

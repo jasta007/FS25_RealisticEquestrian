@@ -3,7 +3,7 @@ Builds the two sponsor gates in placeables/xcJumps/ (James, 2026-10-31): not jum
 through, wide and tall enough that getting a horse through is never hard.
 
 - xcGateArch: a showy start/finish arch, banner towers either side of a 6 m opening under a
-  banner crossbar 3.6 m up, the sponsor's logo three times across the crossbar (both faces) and
+  banner crossbar 3.6 m up, the sponsor's logo in the middle of the crossbar (both faces) and
   up each tower; weighted white feet.
 - xcGateSimple: a "ride through here" gate for finding the way round a course: two peeled timber
   posts 4 m apart, a white board across the top at 3.4 m with the logo on both faces.
@@ -74,7 +74,8 @@ def arch():
         cols.append((x0 - 0.15, x1 + 0.15, 0.0, th, -0.6, 0.6))
         lw = 2.6
         for facing, suffix in ((1, ""), (-1, "b")):
-            logos[f"eqSponsor_{number}{suffix}"] = logo_quad((x0 + x1) / 2, 0.45 + 0.3 + lw / 2, facing * (td / 2 + 0.002), facing,
+            # raised a little (James, 2026-11-01)
+            logos[f"eqSponsor_{number}{suffix}"] = logo_quad((x0 + x1) / 2, 1.0 + lw / 2, facing * (td / 2 + 0.002), facing,
                                                             lw, lw / ASPECT, turned=True)
     span = clear + tw
     textured_box(paint, -span, span, bar0, bar1, -bd / 2, bd / 2)
@@ -83,11 +84,9 @@ def arch():
     cols.append((-span, span, bar0, bar1, -bd / 2, bd / 2))
     lh = 0.68
     lw = lh * ASPECT
-    # three across, clear of the towers (which stand proud of the crossbar)
-    for k, cx in enumerate((-2.0, 0.0, 2.0)):
-        for facing, suffix in ((1, ""), (-1, "b")):
-            name = f"eqSponsor_1{suffix}" + (f"f{k + 1}" if k else "")
-            logos[name] = logo_quad(cx, (bar0 + bar1) / 2, facing * (bd / 2 + 0.002), facing, lw, lh)
+    # one in the middle of the crossbar (James, 2026-11-01: not three in a row)
+    for facing, suffix in ((1, ""), (-1, "b")):
+        logos[f"eqSponsor_1{suffix}"] = logo_quad(0.0, (bar0 + bar1) / 2, facing * (bd / 2 + 0.002), facing, lw, lh)
     return {"white": white, "paint": paint}, logos, cols
 
 

@@ -100,7 +100,7 @@
         <text name="eq_shop_plinthTurntable" text="旋轉展台"/>
         <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把機器停在上面，它會連同掛接的農具一起隨轉盤轉動。贊助商的機器在這裡計入更多。"/>
         <text name="eq_plinth_inPlace" text="贊助商設備已就位！"/>
-        <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備：展示競爭品牌的機器會讓你損失贊助費。"/>
+        <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備！展示競爭品牌的機器會減少你的贊助收入！"/>
         <text name="eq_plinth_noSponsor" text="尚未簽約贊助商：在這裡展示其設備將計入你的品牌曝光。"/>
         <text name="eq_plinth_penalty" text="你的贊助展台上有 %d 台競爭品牌機器：贊助費扣除 %s。"/>
         <text name="eq_config_corner" text="角障礙"/>

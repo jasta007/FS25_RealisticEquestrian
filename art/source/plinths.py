@@ -52,7 +52,7 @@ COLLISION_GROUP = "0x1037"
 
 OUT = "placeables/sponsorPlinths"
 STONE = "plinthStone_diffuse.dds"
-STONE_TILE = 2.0        # metres the stone texture covers each way
+STONE_TILE = 5.0        # metres the stone texture covers each way
 METAL = "plinthMetal_diffuse.dds"
 METAL_TILE = 1.6
 LOGO_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
@@ -73,21 +73,21 @@ TURNTABLE = {"radius": 4.0, "disc": 3.45, "height": 0.7, "ramp": 3.5, "ramp_half
 DISC = "eqTurntableDisc"     # the node EqTurntable turns
 
 
-def stone_texture(path, size=512):
-    """A plain rendered finish (James, 2026-11-01: the block pattern stood out too much): warm light
-    grey, soft mottling over the metre, a fine grain. Tiles both ways."""
+def stone_texture(path, size=1024):
+    """A plain rendered finish (James, 2026-11-01: blocks stood out, then the mottling repeated too
+    plainly): warm light grey, very soft clouding with no edges (noise smoothed in frequency, so it
+    tiles), a fine grain. Covers STONE_TILE metres each way."""
     rng = np.random.default_rng(11)
+    f = np.fft.fftfreq(size)
+    radius = np.sqrt(f[:, None] ** 2 + f[None, :] ** 2)
 
-    def noise(cells, amount):
-        grid = rng.normal(0, 1, (cells, cells))
-        big = np.kron(grid, np.ones((size // cells, size // cells)))
-        # wrap-blur so it tiles and has no blocks
-        for _ in range(3):
-            big = (big + np.roll(big, 1, 0) + np.roll(big, -1, 0) + np.roll(big, 1, 1) + np.roll(big, -1, 1)) / 5
-            big = (big + np.roll(big, size // cells // 2, 0) + np.roll(big, size // cells // 2, 1)) / 3
-        return big / (big.std() + 1e-9) * amount
-    base = np.array([168.0, 163.0, 152.0])
-    shade = noise(8, 6.0) + noise(32, 3.0) + rng.normal(0, 2.5, (size, size))
+    def noise(scale, amount):
+        # scale: the clouds' size as a share of the tile
+        spectrum = np.fft.fft2(rng.normal(0, 1, (size, size))) * np.exp(-(radius * scale * size / 4) ** 2)
+        field = np.real(np.fft.ifft2(spectrum))
+        return field / (field.std() + 1e-9) * amount
+    base = np.array([170.0, 166.0, 156.0])
+    shade = noise(0.25, 3.0) + noise(0.06, 1.6) + rng.normal(0, 1.8, (size, size))
     img = base[None, None, :] + shade[..., None]
     rgb = np.clip(img, 0, 255).astype(np.uint8)
     save_dxt1(Image.fromarray(rgb), path)
@@ -248,8 +248,9 @@ def product():
     solid(stone, col, [(top, 0.0), (top + r, 0.0), (top, h)], -hx, hx)
     for side in (1, -1):
         coping(paint, [(0.0, h), (top, h), (top + r, 0.0)], side * (hx - COPING[0] / 2 + 0.02))
-        # the board low on the side, under the top and the start of the ramp
-        board(white, paint, logos, 1, side * hx, 1.6, 0.12, 3.0, 1.1, side)
+        # the board on the side, under the top and the start of the ramp, set up and back along it
+        # (James, 2026-11-01) as far as the slope above lets it
+        board(white, paint, logos, 1, side * hx, 2.0, 0.28, 3.0, 1.05, side)
     # the take-off edge over the gap
     prism(paint, [(-hx, h - 0.04), (hx, h - 0.04), (hx, h + COPING[1]), (-hx, h + COPING[1])],
           (0.0, 0.0, -0.02), (1, 0, 0), (0, 1, 0), (0, 0, 1), COPING[0])
@@ -280,7 +281,8 @@ def turntable():
     # then down (James: no rails, flush with the circle)
     hw, length = t["ramp_half"], t["ramp"]
     z0, z1 = r + 0.02, R + 0.05
-    top = h + 0.02
+    # just under the collar's top, so its square corners don't show over the round edge (James)
+    top = h + 0.008
     solid(stone, col, [(z0, 0.0), (R + length, 0.0), (z1, top), (z0, top)], -hw, hw)
     # a curved board round the front (-z), the logo bent round it in strips
     width, y0, bh = 2.4, 0.08, h - 0.22

@@ -34,6 +34,11 @@ EqPoles.END = "eqEnd"
 EqPoles.BLOCK = "eqBlock"
 EqPoles.BLOCK_SPEED = 1.6    -- m/s it slides off the wall, tipping over the edge
 EqPoles.BLOCK_TIP = 0.25     -- seconds before it clears the wall under it and drops
+-- Each knocked block varies (James, 2026-11-01: they all fell and landed in unison): its speed and
+-- tipping time scaled within BLOCK_VARY, a start up to BLOCK_DELAY s late, turned up to BLOCK_TURN.
+EqPoles.BLOCK_VARY = { 0.7, 1.3 }
+EqPoles.BLOCK_DELAY = 0.15
+EqPoles.BLOCK_TURN = 0.35
 -- From art/source/show_jumps.py: POLE_LENGTH and POLE_R.
 EqPoles.LENGTH = 3.5
 EqPoles.RADIUS = 0.05
@@ -141,21 +146,22 @@ end
 --- @param t number seconds
 --- @return table pose as fallPose's, plus rx = its tumble about x (radians)
 function EqPoles.blockPose(fall, t)
-    t = math.max(t, 0)
+    t = math.max(t - (fall.delay or 0), 0)
     local a, b = fall.a, fall.b
     local y0 = (a[2] + b[2]) / 2
     local rest = math.min(y0, (fall.restA + fall.restB) / 2)
-    local tip = EqPoles.BLOCK_TIP
+    local tip = EqPoles.BLOCK_TIP * (fall.tipScale or 1)
+    local speed = EqPoles.BLOCK_SPEED * (fall.speedScale or 1)
     local drop = math.sqrt(2 * (y0 - rest) / EqPoles.GRAVITY)
     local stopAt = tip + drop
     local tm = math.min(t, stopAt)
     local y = y0
     if tm > tip then y = math.max(rest, y0 - 0.5 * EqPoles.GRAVITY * (tm - tip) ^ 2) end
-    local dz = fall.push * EqPoles.BLOCK_SPEED * tm
+    local dz = fall.push * speed * tm
     local share = stopAt > 0 and tm / stopAt or 1
     return {
         x = (a[1] + b[1]) / 2, y = y, z = (a[3] + b[3]) / 2 + dz,
-        ry = math.atan2(-(a[3] - b[3]), a[1] - b[1]), rz = 0, rx = fall.push * share * math.pi / 2,
+        ry = math.atan2(-(a[3] - b[3]), a[1] - b[1]) + (fall.turn or 0) * share, rz = 0, rx = fall.push * share * math.pi / 2,
         still = t >= stopAt,
     }
 end
@@ -342,13 +348,20 @@ function EqPoles.knock(pole, dirX, dirZ, hitX, noRail)
     local ax, ay, az = localToLocal(pole.node, root, half, 0, 0)
     local bx, by, bz = localToLocal(pole.node, root, -half, 0, 0)
     local slide = push * EqPoles.PUSH * EqPoles.PUSH / (2 * EqPoles.PUSH_DRAG)
-    if pole.block then slide = push * EqPoles.BLOCK_SPEED * (EqPoles.BLOCK_TIP + 0.4) end
+    local vary = nil
+    if pole.block then
+        local lo, hi = EqPoles.BLOCK_VARY[1], EqPoles.BLOCK_VARY[2]
+        vary = { speedScale = lo + math.random() * (hi - lo), tipScale = lo + math.random() * (hi - lo),
+            delay = math.random() * EqPoles.BLOCK_DELAY, turn = (math.random() * 2 - 1) * EqPoles.BLOCK_TURN }
+        slide = push * EqPoles.BLOCK_SPEED * vary.speedScale * (EqPoles.BLOCK_TIP * vary.tipScale + 0.4)
+    end
     local radius = pole.radius or EqPoles.RADIUS
     pole.fall = {
         a = { ax, ay, az }, b = { bx, by, bz }, lead = lead, push = push, block = pole.block,
         restA = groundIn(root, ax, az + slide) + radius,
         restB = groundIn(root, bx, bz + slide) + radius,
     }
+    for k, v in pairs(vary or {}) do pole.fall[k] = v end
     for _, col in ipairs(pole.cols) do
         if exists(col.node) then EqLog.try("EqPoles.knock setRigidBodyType", setRigidBodyType, col.node, noneType()) end
     end

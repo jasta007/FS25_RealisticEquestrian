@@ -288,6 +288,9 @@ function EqSponsors.update()
                     placeable.eqBrand = name
                     placeable.eqColourKey = nil    -- EqJumpColours paints it again in that brand's colour
                 end
+                if EqJumpColours ~= nil and EqJumpColours.paintFaces ~= nil then
+                    EqLog.try("EqSponsors board faces", EqJumpColours.paintFaces, placeable)
+                end
                 for _, nodes in pairs(boards) do
                     local any = false
                     for _, node in ipairs(nodes) do

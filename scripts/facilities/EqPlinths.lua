@@ -45,6 +45,9 @@ EqPlinths.RIVAL_PENALTY = 0.10
 EqPlinths.RIVAL_MAX = 0.50
 EqPlinths.CHECK_MS = 500
 EqPlinths.STILL_KMH = 1.0
+-- The wrong-brand popup in plain red (James, 2026-11-01). The game's notification types are
+-- colours (RGBA tables); if not, its critical type is used.
+EqPlinths.RED = { 0.95, 0.08, 0.06, 1 }
 
 local function drop(depth)
     return { { x = 0, y = 0.05, z = -1 + depth / 2, hx = 2.0, hz = depth / 2, slope = 0 } }
@@ -316,6 +319,7 @@ function EqPlinths.update()
         text, level = g_i18n:getText("eq_plinth_inPlace"), FSBaseMission.INGAME_NOTIFICATION_OK
     else
         text, level = g_i18n:getText("eq_plinth_wrongBrand"), FSBaseMission.INGAME_NOTIFICATION_CRITICAL
+        if type(level) == "table" then level = EqPlinths.RED end
     end
     g_currentMission:addIngameNotification(level, text)
 end

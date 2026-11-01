@@ -911,10 +911,10 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Sponsor wall** (2,500): a 1.20 m showpiece "brick" wall between brick pillars, the sponsor's
   logo across its whole face front and back (2 boards). The bottom is solid; the five top blocks
   fall like poles when hit (a rail), tipping off the wall and tumbling, and go back up after the
-  round, with a knock as one is hit and a thud as it lands. The logo is cut along the blocks, so a
+  round, with a knock as one is hit and a thud as it lands; each falls a little differently. The logo is cut along the blocks, so a
   knocked block takes its piece with it.
 - **Sponsor gates** (cross country pieces, not jumps, no flags): the **Start/Finish Arch** (4,500,
-  6 m wide, 3.6 m clear, logos across the crossbar and up both towers, 3 boards) and the
+  6 m wide, 3.6 m clear, a logo in the middle of the crossbar and up both towers, 3 boards) and the
   **Ride-Through Gate** (1,200, 4 m wide, 3.4 m clear, one board) to show the way round a course.
   Their banners or board take the Colour bought, or the sponsor's colour.
 - **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
@@ -945,8 +945,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
   the pieces are shared out between your sponsors in turn.
 - **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
-  its own colour behind it on the boards that can change colour (show jump boards, the gates, the
-  plinths), or dark grey if its colour is too light. The older textured boards (bleachers, table,
+  its own colour behind it on the boards that can change colour (bleachers, show jump boards, the
+  gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,
   corner, drop wall) stay white.
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;

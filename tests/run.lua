@@ -4926,6 +4926,11 @@ end)()
             and math.abs(p1.rx - math.pi / 2) < 1e-9 and p1.z > 0.6)
         local back = EqPoles.blockPose({ a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = -1, block = true }, 5)
         check("pushed from behind it goes the other way", back.z < -0.6 and back.rx < 0)
+        local slow = { a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = 1, block = true,
+            speedScale = 0.7, tipScale = 1.3, delay = 0.15, turn = 0.3 }
+        local early, late = EqPoles.blockPose(slow, 0.1), EqPoles.blockPose(slow, 5)
+        check("blocks vary: one starts late, slides slower and lands turned and nearer", early.z == 0 and late.still
+            and late.z < p1.z and math.abs(late.ry - p1.ry - 0.3) < 1e-9 and not EqPoles.blockPose(slow, 0.6).still)
         local row = { { state = EqPoles.UP, home = { -1.4, 1.0, 0 } }, { state = EqPoles.UP, home = { 0, 1.0, 0 } }, { state = EqPoles.UP, home = { 1.4, 1.0, 0 } } }
         check("running into the wall knocks the block in the horse's way", EqPoles.crashPole(row, 0.3, 1.2) == row[3]
             and EqPoles.crashPole(row, 0.3, -0.1) == row[2])

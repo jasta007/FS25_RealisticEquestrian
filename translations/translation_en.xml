@@ -98,7 +98,7 @@
         <text name="eq_shop_plinthTurntable" text="Turntable"/>
         <text name="eq_shop_turntable_function" text="The disc turns slowly: leave a machine on it and it turns with the disc, with anything hitched to it. A sponsor's machine on it counts extra."/>
         <text name="eq_plinth_inPlace" text="Sponsor equipment in place!"/>
-        <text name="eq_plinth_wrongBrand" text="Not your sponsor's equipment: rival machines on show cost you sponsor money."/>
+        <text name="eq_plinth_wrongBrand" text="Not your sponsor's equipment! Rival machines on show will reduce your sponsorship earnings!"/>
         <text name="eq_plinth_noSponsor" text="No sponsor signed: their equipment on show here would count towards your branding."/>
         <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
         <text name="eq_config_corner" text="Corner"/>
