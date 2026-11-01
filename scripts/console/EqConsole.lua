@@ -918,7 +918,9 @@ function EqConsole:consoleLizard(mode, material, accept)
     if g_currentMission == nil then return "No mission loaded" end
     mode = mode ~= nil and string.lower(mode) or nil
     if mode == nil or mode == "on" or mode == "off" then
-        return EqLizard.setTestAlways(mode == nil and nil or mode == "on")
+        local on = nil -- toggle
+        if mode == "on" then on = true elseif mode == "off" then on = false end
+        return EqLizard.setTestAlways(on)
     end
     if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [stone|woodchips|straw] [accept]" end
     if material == "accept" then material, accept = accept, "accept" end
