@@ -47,7 +47,16 @@
                         (minItems: a brand short of it drops to a smaller size, and one short of
                         every size is never a sponsor; minItemsEasy for a brand with an easy
                         category, minItems when left out), and the chance an offer is exclusive
-                        (exclusive: 1 always, 0 never)
+                        (exclusive: 1 always, 0 never), and the chance an offer lends a
+                        machine for each event month it backs (loan: 1 always, 0 never)
+
+    loans               sponsors that lend (James, 2026-11-01): on the first day of an event
+                        month they back, each delivers one of its machines to the dealer, leased
+                        to the farm for free (no leasing costs, free repairs: its price is 0) and
+                        taken back when the month ends. The farm can use it for anything, plinths
+                        included. top = the share of the brand's machines, dearest first, it
+                        picks from (self-driven ones when it has any); always = brands that lend
+                        whenever they sponsor, like Lizard's one-off sponsorship
 
     strictness          each offer rolls a strictness from 0 (Relaxed) to 1 (Hard bargain); every
                         term and reward runs from its "relaxed" value to its "strict" one, then
@@ -79,6 +88,10 @@
         <brand name="LIZARD"/>
     </skipBrands>
 
+    <loans top="0.34">
+        <always brand="LIZARD"/>
+    </loans>
+
     <easyCategories>
         <category name="tractorsS"/>
         <category name="tractorsM"/>
@@ -100,9 +113,9 @@
     </priceBands>
 
     <sizes>
-        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5" exclusive="1"/>
-        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3" exclusive="0.5"/>
-        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  minItemsEasy="1" machinesMax="1" exclusive="0"/>
+        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5" exclusive="1" loan="0.6"/>
+        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3" exclusive="0.5" loan="0.4"/>
+        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  minItemsEasy="1" machinesMax="1" exclusive="0" loan="0.25"/>
     </sizes>
 
     <!-- Branding (James, 2026-10-31): sponsor boards on the farm's placeables, anywhere, make a

@@ -216,7 +216,9 @@ end
 
 --- @param vehicle table
 --- @return boolean true for a machine borrowed for a contract (they don't count, James 2026-10-29)
+---     or lent by a sponsor for an event month (EqSponsorLoans)
 local function isBorrowed(vehicle)
+    if EqSponsorLoans ~= nil and EqSponsorLoans.isLoan(vehicle) then return true end
     local state = vehicle.propertyState
     if vehicle.getPropertyState ~= nil then state = vehicle:getPropertyState() end
     if VehiclePropertyState ~= nil and VehiclePropertyState.MISSION ~= nil and state == VehiclePropertyState.MISSION then return true end

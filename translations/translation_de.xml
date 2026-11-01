@@ -1080,5 +1080,13 @@
         <text name="eq_sponsor_discount_repaint" text="Lackierung %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparatur %s"/>
         <text name="eq_sponsor_discount_buy" text="Kauf %s"/>
+        <text name="eq_sponsor_loanLine" text="Leiht dir für deinen Event-Monat eine Maschine"/>
+        <text name="eq_loan_popupTitle" text="Eine Maschine von deinem Sponsor"/>
+        <text name="eq_loan_popup" text="%s hat dir eine neue %s geliefert, die du während deines Events testen kannst. Sie wartet beim Händler auf dich. Nutze sie kostenlos für alles, was du willst, bis der Monat endet und sie abgeholt wird."/>
+        <text name="eq_loan_delivered" text="%s leiht dir für deinen Event-Monat die %s. Sie steht beim Händler."/>
+        <text name="eq_loan_collected" text="%s hat die geliehene %s wieder abgeholt."/>
+        <text name="eq_loan_noRoom" text="%s konnte die %s nicht liefern: Beim Händler ist kein Platz. Morgen wird es erneut versucht."/>
+        <text name="eq_loan_enterTitle" text="Ein Geschenk von %s"/>
+        <text name="eq_loan_enter" text="Dieses Gerät wurde dir von deinem Sponsor für dein Event in diesem Monat zur Verfügung gestellt. Viel Spaß!"/>
     </texts>
 </l10n>

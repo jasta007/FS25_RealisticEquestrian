@@ -1078,5 +1078,13 @@
         <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
         <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
         <text name="eq_sponsor_discount_buy" text="Покупка %s"/>
+        <text name="eq_sponsor_loanLine" text="Даёт технику на месяц вашего мероприятия"/>
+        <text name="eq_loan_popupTitle" text="Техника от вашего спонсора"/>
+        <text name="eq_loan_popup" text="%s доставил новую технику %s, чтобы вы опробовали её на время вашего мероприятия. Она ждёт вас у дилера. Пользуйтесь бесплатно как угодно до конца месяца, потом её заберут."/>
+        <text name="eq_loan_delivered" text="%s одолжил вам %s на месяц мероприятия. Техника у дилера."/>
+        <text name="eq_loan_collected" text="%s забрал одолженную технику %s."/>
+        <text name="eq_loan_noRoom" text="%s не смог доставить %s: у дилера нет места. Попробует снова завтра."/>
+        <text name="eq_loan_enterTitle" text="Подарок от %s"/>
+        <text name="eq_loan_enter" text="Эту технику предоставил ваш спонсор для использования во время вашего мероприятия в этом месяце. Наслаждайтесь!"/>
     </texts>
 </l10n>

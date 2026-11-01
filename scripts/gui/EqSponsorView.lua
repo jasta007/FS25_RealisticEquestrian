@@ -154,6 +154,8 @@ function EqSponsorView.panelLines(farmId, row)
     add("discounts", string.format(g_i18n:getText("eq_sponsor_discount_repaint"), percent(offer.repaint)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_repair"), percent(offer.repair)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_buy"), percent(offer.purchase)))
+    -- Some sponsors lend a machine for each event month they back (James, 2026-11-01).
+    if offer.loan then add(nil, g_i18n:getText("eq_sponsor_loanLine")) end
 
     if row.contract then
         add("ends", EqHostManager.monthText(offer.endMonth or 0))

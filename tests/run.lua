@@ -4637,6 +4637,50 @@ end)()
     end
     check("sponsors: offers are sane, each brand once", sane)
 
+    -- Loans (James, 2026-11-01): some sponsors lend a machine for each event month, Lizard always.
+    check("sponsor loans: chance by size, Lizard always lends", sp.sizeByName.big.loan == 0.6 and sp.sizeByName.moderate.loan == 0.4
+        and sp.sizeByName.small.loan == 0.25 and sp.loanBrands.LIZARD and math.abs(sp.loanTop - 0.34) < 1e-9)
+    check("sponsor loans: roll", EqSponsorship.rollLoan({ loan = 1 }, nil) and not EqSponsorship.rollLoan({ loan = 0 }, EqRandom.new(1))
+        and not EqSponsorship.rollLoan({ loan = 0.5 }, nil))
+    check("sponsor loans: every offer says yes or no", (function()
+        for _, o in ipairs(offers) do if type(o.loan) ~= "boolean" then return false end end
+        return true
+    end)())
+    check("sponsor loans: some offers lend, not all", (function()
+        local yes, no = 0, 0
+        for seed = 1, 40 do
+            for _, o in ipairs(EqSponsorship.makeOffers(sp, ranked, "loans " .. seed)) do
+                if o.loan then yes = yes + 1 else no = no + 1 end
+            end
+        end
+        return yes > 0 and no > 0
+    end)())
+    check("sponsor loans: who lends", EqSponsorship.lends(sp, "A", { loan = true }) and not EqSponsorship.lends(sp, "A", { loan = false })
+        and not EqSponsorship.lends(sp, "A", nil) and EqSponsorship.lends(sp, "LIZARD", nil) and EqSponsorship.lends(sp, "Lizard", nil))
+    local fleet = { { key = "cheapTractor", price = 30000, drivable = true }, { key = "plough", price = 900000, drivable = false },
+        { key = "bigTractor", price = 400000, drivable = true }, { key = "midTractor", price = 120000, drivable = true },
+        { key = "loader", price = 90000, drivable = true }, { key = "pickup", price = 50000, drivable = true },
+        { key = "truck", price = 200000, drivable = true } }
+    check("sponsor loans: one of the dearest that drives itself", EqSponsorship.pickLoan(fleet, 0, 0.34).key == "bigTractor"
+        and EqSponsorship.pickLoan(fleet, 0.99, 0.34).key == "midTractor" and EqSponsorship.pickLoan(fleet, 0.5, 0.34).key == "truck")
+    check("sponsor loans: never anything outside the top share", (function()
+        for i = 0, 100 do
+            local key = EqSponsorship.pickLoan(fleet, i / 100, 0.34).key
+            if key ~= "bigTractor" and key ~= "truck" and key ~= "midTractor" then return false end
+        end
+        return true
+    end)())
+    check("sponsor loans: implements when the brand makes nothing that drives",
+        EqSponsorship.pickLoan({ { key = "x", price = 5, drivable = false }, { key = "y", price = 9, drivable = false } }, 0, 0.34).key == "y")
+    check("sponsor loans: nothing to lend", EqSponsorship.pickLoan({}, 0.5) == nil and EqSponsorship.pickLoan(nil, 0.5) == nil)
+    check("sponsor loans: a small brand still lends its dearest", EqSponsorship.pickLoan({ { key = "only", price = 1, drivable = true } }, 0.9).key == "only")
+    check("sponsor loans: kept in the save", (function()
+        local xml = memoryXML()
+        EqSponsorship.saveOffer(xml, "o", { brand = "A", size = "big", loan = true })
+        EqSponsorship.saveOffer(xml, "p", { brand = "B", size = "small", loan = false })
+        return EqSponsorship.loadOffer(xml, "o").loan == true and EqSponsorship.loadOffer(xml, "p").loan == false
+    end)())
+
     -- Strictness: hard bargains ask more and give more.
     local relaxedFee, strictFee = EqSponsorship.term(sp, "fee", 0), EqSponsorship.term(sp, "fee", 1)
     check("sponsors: strict deals pay more (80% to 130%)", math.abs(relaxedFee - 0.8) < 1e-9 and math.abs(strictFee - 1.3) < 1e-9)
