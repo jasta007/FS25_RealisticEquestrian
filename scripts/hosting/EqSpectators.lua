@@ -64,9 +64,12 @@ EqSpectators.pose = {
     handForward = 0.30, handApart = 0.17, handLift = 0.12,
 }
 
--- Hidden beyond this distance from the camera; the seated pose is kept up to IK_DISTANCE.
+-- Hidden beyond this distance from the camera. Seated people are posed live (idle clip plus IK)
+-- only within IK_DISTANCE (James, 2026-11-01: they're stationary, so be heavy handed); further
+-- out their clip stops and they hold the last pose, solved for POSE_FRAMES frames once seated.
 EqSpectators.VISIBLE_DISTANCE = 150
-EqSpectators.IK_DISTANCE = 60
+EqSpectators.IK_DISTANCE = 25
+EqSpectators.POSE_FRAMES = 5
 -- How often the map is checked for bleachers, rope boxes and whether an event runs.
 EqSpectators.SCAN_MS = 5000
 
@@ -531,11 +534,20 @@ function EqSpectators.update()
             if visible ~= person.visible then
                 person.visible = visible
                 model:setVisibility(visible)
-                if person.charset ~= nil then
-                    if visible then enableAnimTrack(person.charset, 0) else disableAnimTrack(person.charset, 0) end
-                end
             end
-            if person.seated and (visible or not person.settled) and distance <= EqSpectators.IK_DISTANCE then
+            -- seated: live within IK_DISTANCE, and for the first few frames once settled so the
+            -- held pose is a seated one; standing: the clip plays while seen
+            local live = visible
+            if person.seated then
+                if person.settled then person.posed = (person.posed or 0) + 1 end
+                live = (visible and distance <= EqSpectators.IK_DISTANCE) or not person.settled
+                    or person.posed <= EqSpectators.POSE_FRAMES
+            end
+            if person.charset ~= nil and live ~= person.animating then
+                person.animating = live
+                if live then enableAnimTrack(person.charset, 0) else disableAnimTrack(person.charset, 0) end
+            end
+            if person.seated and live then
                 local chains = model:getIKChains()
                 for id in pairs(person.targets) do IKUtil.setIKChainDirty(chains, id) end
                 IKUtil.updateIKChains(chains, true)
@@ -551,6 +563,7 @@ function EqSpectators.repose()
         if person.seated and person.model ~= nil and person.model.rootNode ~= nil then
             placeTargets(person)
             if person.settled then settle(person) end
+            person.posed = 0     -- solve the new pose again, near or far
         end
     end
 end

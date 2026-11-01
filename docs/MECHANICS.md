@@ -901,8 +901,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
   picked afresh each day, wherever the bleachers and boxes are. They are the game's own characters with
   a few outfits; FS25 has no sit animation, so a seated spectator is posed like a tractor
-  driver, with IK on the feet and hands. They are only seen, each player's own, hidden beyond
-  150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
+  driver, with IK on the feet and hands, kept live within 25 m and held still further out. They
+  are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
   `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose and `info` counts places.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
