@@ -3779,6 +3779,17 @@ end)()
         and EqLateral.bend > 0 and EqLateral.steer == steered and passes == false)
     Input, EqLateral.vehicle, EqLateral.steer, EqLateral.bend = saved, nil, 0, 0
     -- Mouse steering: nothing in the dead zone, full turn at the end; the head eased to it.
+    -- The movement named under the panel (James, 2026-11-01).
+    local function nowName(t) return EqLateral.movementName(t) end
+    check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
+        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "pirouette"
+        and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
+        and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
+        and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
+        and nowName({ gait = "TROT", side = 1, bend = 0.8, rail = "in" }) == "renvers"
+        and nowName({ gait = "TROT", side = -1, bend = -0.8, rail = "out" }) == "travers"
+        and nowName({ gait = "TROT", side = -1, bend = 0, rail = "out" }) == "legYieldRail"
+        and nowName({ gait = "TROT", side = 0, bend = 0.8 }) == nil)
     check("mouse steering has a dead zone in the middle", EqLateral.deadZone(EqLateral.DEAD_ZONE * 0.9) == 0
         and EqLateral.deadZone(1) == 1 and EqLateral.deadZone(-1) == -1 and EqLateral.deadZone(0.8) > 0.7
         and EqLateral.curve(0.5) < 0.5 and EqLateral.curve(-1) == -1 and EqLateral.curve(1) == 1

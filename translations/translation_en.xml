@@ -131,6 +131,17 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage on the diagonal %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_collected" text="Collected"/>
+        <text name="eq_now_collectedCanter" text="Collected canter"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Leg yield"/>
+        <text name="eq_now_halfPass" text="Half pass"/>
+        <text name="eq_now_shoulderIn" text="Shoulder-in"/>
+        <text name="eq_now_renvers" text="Renvers (haunches out)"/>
+        <text name="eq_now_travers" text="Travers (haunches in)"/>
+        <text name="eq_now_legYieldRail" text="Leg yield along the rail"/>
         <text name="eq_fig_legYield" text="Leg yield from %s and back"/>
         <text name="eq_fig_halfPass" text="Half pass from %s and back"/>
         <text name="eq_fig_shoulderIn" text="Shoulder-in %s-%s"/>

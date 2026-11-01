@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Pasaż %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasaż po przekątnej %s-%s"/>
         <text name="eq_dressage_passage" text="Pasaż: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaff"/>
+        <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_collected" text="Zebrany"/>
+        <text name="eq_now_collectedCanter" text="Zebrany galop"/>
+        <text name="eq_now_passage" text="Pasaż"/>
+        <text name="eq_now_legYield" text="Ustępowanie"/>
+        <text name="eq_now_halfPass" text="Ciąg"/>
+        <text name="eq_now_shoulderIn" text="Łopatka do wewnątrz"/>
+        <text name="eq_now_renvers" text="Renwers (zad na zewnątrz)"/>
+        <text name="eq_now_travers" text="Trawers (zad do wewnątrz)"/>
+        <text name="eq_now_legYieldRail" text="Ustępowanie od łydki wzdłuż ściany"/>
         <text name="eq_fig_legYield" text="Ustępowanie od łydki od %s i z powrotem"/>
         <text name="eq_fig_halfPass" text="Ciąg od %s i z powrotem"/>
         <text name="eq_fig_shoulderIn" text="Łopatka do wewnątrz %s-%s"/>

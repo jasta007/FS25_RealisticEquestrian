@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage op de diagonaal %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_collected" text="Verzameld"/>
+        <text name="eq_now_collectedCanter" text="Verzamelde galop"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Wijken"/>
+        <text name="eq_now_halfPass" text="Appuyement"/>
+        <text name="eq_now_shoulderIn" text="Schouder binnenwaarts"/>
+        <text name="eq_now_renvers" text="Renvers (kroep buitenwaarts)"/>
+        <text name="eq_now_travers" text="Travers (kroep binnenwaarts)"/>
+        <text name="eq_now_legYieldRail" text="Wijken langs de baan"/>
         <text name="eq_fig_legYield" text="Wijken voor de kuit vanaf %s en terug"/>
         <text name="eq_fig_halfPass" text="Appuyement vanaf %s en terug"/>
         <text name="eq_fig_shoulderIn" text="Schouder binnenwaarts %s-%s"/>

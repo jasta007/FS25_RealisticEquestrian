@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
         <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piafa"/>
+        <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_collected" text="Shromážděný"/>
+        <text name="eq_now_collectedCanter" text="Shromážděný cval"/>
+        <text name="eq_now_passage" text="Pasáž"/>
+        <text name="eq_now_legYield" text="Ustupování na holeň"/>
+        <text name="eq_now_halfPass" text="Překrok"/>
+        <text name="eq_now_shoulderIn" text="Plec dovnitř"/>
+        <text name="eq_now_renvers" text="Renvers (záď ven)"/>
+        <text name="eq_now_travers" text="Travers (záď dovnitř)"/>
+        <text name="eq_now_legYieldRail" text="Ustupování na holeň podél stěny"/>
         <text name="eq_fig_legYield" text="Ustupování na holeň od %s a zpět"/>
         <text name="eq_fig_halfPass" text="Překrok od %s a zpět"/>
         <text name="eq_fig_shoulderIn" text="Plec dovnitř %s-%s"/>

@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Пассаж %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Пассаж по диагонали %s-%s"/>
         <text name="eq_dressage_passage" text="Пассаж: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Пиаффе"/>
+        <text name="eq_now_pirouette" text="Пируэт"/>
+        <text name="eq_now_collected" text="Собранность"/>
+        <text name="eq_now_collectedCanter" text="Собранный галоп"/>
+        <text name="eq_now_passage" text="Пассаж"/>
+        <text name="eq_now_legYield" text="Уступка шенкелю"/>
+        <text name="eq_now_halfPass" text="Принимание"/>
+        <text name="eq_now_shoulderIn" text="Плечо внутрь"/>
+        <text name="eq_now_renvers" text="Ренверс (круп наружу)"/>
+        <text name="eq_now_travers" text="Траверс (круп внутрь)"/>
+        <text name="eq_now_legYieldRail" text="Уступка шенкелю вдоль стенки"/>
         <text name="eq_fig_legYield" text="Уступка шенкелю от %s и обратно"/>
         <text name="eq_fig_halfPass" text="Принимание от %s и обратно"/>
         <text name="eq_fig_shoulderIn" text="Плечо внутрь %s-%s"/>

@@ -683,11 +683,31 @@ function EqTrainingHud.drawPanelNote(value, color, above)
         y = p.top + n.gap + (#lines - 1) * n.lineHeight + size * 0.25
     else
         y = (EqTrainingHud.panelBottom or p.top - 0.12) - n.gap - size
+        -- Under the movement's name when it shows (drawNowDoing).
+        local now = EqTrainingHud.NOW_DOING
+        if EqTrainingHud.nowDoingAt ~= nil and (g_time or 0) - EqTrainingHud.nowDoingAt < 200 then y = y - now.size - n.gap end
     end
     for i, line in ipairs(lines) do
         shadowText(line, x, y - (i - 1) * n.lineHeight, size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_LEFT, above)
     end
     resetText()
+end
+
+
+-- The movement the horse is doing now ("Travers (haunches in)", "Piaffe"), big and bold right
+-- under the panel (James, 2026-11-01: "I forget which is which so often"): white, or green when
+-- it is what a dressage test asks for now and red when it asks for something else.
+EqTrainingHud.NOW_DOING = { size = 0.021 }
+
+
+--- @param value string
+--- @param color table|nil white when nil
+function EqTrainingHud.drawNowDoing(value, color)
+    local p, n, now = EqTrainingHud.PANEL, EqTrainingHud.PANEL_NOTE, EqTrainingHud.NOW_DOING
+    local y = (EqTrainingHud.panelBottom or p.top - 0.12) - n.gap - now.size
+    shadowText(value, p.right, y, now.size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_RIGHT, true)
+    resetText()
+    EqTrainingHud.nowDoingAt = g_time or 0
 end
 
 

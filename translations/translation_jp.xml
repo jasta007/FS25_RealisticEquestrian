@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="パッサージュ %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="斜線上のパッサージュ %s-%s"/>
         <text name="eq_dressage_passage" text="パッサージュ: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="ピアッフェ"/>
+        <text name="eq_now_pirouette" text="ピルエット"/>
+        <text name="eq_now_collected" text="収縮"/>
+        <text name="eq_now_collectedCanter" text="収縮駈歩"/>
+        <text name="eq_now_passage" text="パッサージュ"/>
+        <text name="eq_now_legYield" text="斜横歩"/>
+        <text name="eq_now_halfPass" text="ハーフパス"/>
+        <text name="eq_now_shoulderIn" text="ショルダーイン"/>
+        <text name="eq_now_renvers" text="レンフェルス（腰を外へ）"/>
+        <text name="eq_now_travers" text="トラヴェルス（腰を内へ）"/>
+        <text name="eq_now_legYieldRail" text="壁沿いの斜横歩"/>
         <text name="eq_fig_legYield" text="%sから斜横歩で戻る"/>
         <text name="eq_fig_halfPass" text="%sからハーフパスで戻る"/>
         <text name="eq_fig_shoulderIn" text="ショルダーイン %s-%s"/>

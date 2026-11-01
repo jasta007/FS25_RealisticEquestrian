@@ -256,6 +256,42 @@ function EqLateral.curve(steer)
 end
 
 
+-- The movement shown under the panel (EqLateral.movementName): a bend counts from NOW_BEND.
+EqLateral.NOW_BEND = 0.3
+
+
+--- What the horse is doing now, by name (pure): eq_now_<key>, or nil when it is just ridden.
+--- On a long side of our arenas the body turned in (rail "in") or its head to the rail ("out")
+--- makes the rail movements (James, 2026-10-31): forehand in and bent the way it goes a renvers,
+--- bent away a shoulder-in; head to the rail and bent the way it goes a travers; else a leg
+--- yield along the rail. Off the rail: bent the way it goes a half pass, else a leg yield.
+--- @param s table { gait = "WALK"|"TROT"|"CANTER"|nil, spot, passage, turning, side = -1|0|1 drift (right positive),
+--- bend = -1..1 (right positive), rail = nil|"in"|"out" }
+--- @return string|nil key
+function EqLateral.movementName(s)
+    if s.passage then
+        if s.gait == "TROT" then return "passage" end
+        return s.gait == "CANTER" and "collectedCanter" or nil
+    end
+    if s.spot then
+        if s.gait == "TROT" then return "piaffe" end
+        return s.turning and "pirouette" or "collected"
+    end
+    local side = s.side or 0
+    if side == 0 then return nil end
+    local b = s.bend or 0
+    local bend = math.abs(b) >= EqLateral.NOW_BEND and (b > 0 and 1 or -1) or 0
+    local toward = bend == side
+    if s.rail == "in" then
+        if toward then return "renvers" end
+        return bend ~= 0 and "shoulderIn" or "legYieldRail"
+    elseif s.rail == "out" then
+        return toward and "travers" or "legYieldRail"
+    end
+    return toward and "halfPass" or "legYield"
+end
+
+
 --- The turn speed after a frame's extra easing towards what is asked (pure).
 --- @param maxTurn number|nil full lock's turn speed; with it only coming off a hard turn is faster
 --- @param galloping boolean|nil

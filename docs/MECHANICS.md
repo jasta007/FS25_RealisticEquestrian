@@ -188,6 +188,11 @@ drift with the head bent the way it goes. Along the rail the body turns about 27
 and drifts to stay on it: forehand in and bent away from the way it goes is a shoulder-in,
 forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
 it goes a travers (haunches in), head to the rail with no bend a leg yield along the rail.
+Under the panel the movement the horse is doing now shows in big letters (James, 2026-11-01:
+"I forget which is which"): Piaffe, Pirouette, Passage, Collected, Leg yield, Half pass, and on a
+long side of our arenas (within 2.5 m of the track, body turned off the rail) Shoulder-in,
+Renvers, Travers or Leg yield along the rail. White, or in a test green when it is what is asked
+right now and red when something else is.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
 the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
 it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.

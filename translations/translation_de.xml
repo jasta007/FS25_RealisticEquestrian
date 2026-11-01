@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage auf der Diagonale %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Strg + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_collected" text="Versammelt"/>
+        <text name="eq_now_collectedCanter" text="Versammelter Galopp"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Schenkelweichen"/>
+        <text name="eq_now_halfPass" text="Traversale"/>
+        <text name="eq_now_shoulderIn" text="Schulterherein"/>
+        <text name="eq_now_renvers" text="Renvers (Kruppeheraus)"/>
+        <text name="eq_now_travers" text="Travers (Kruppeherein)"/>
+        <text name="eq_now_legYieldRail" text="Schenkelweichen an der Bande"/>
         <text name="eq_fig_legYield" text="Schenkelweichen ab %s und zurück"/>
         <text name="eq_fig_halfPass" text="Traversale ab %s und zurück"/>
         <text name="eq_fig_shoulderIn" text="Schulterherein %s-%s"/>

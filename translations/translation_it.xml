@@ -133,6 +133,17 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage sulla diagonale %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Piroetta"/>
+        <text name="eq_now_collected" text="Riunito"/>
+        <text name="eq_now_collectedCanter" text="Galoppo riunito"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Cessione alla gamba"/>
+        <text name="eq_now_halfPass" text="Appoggiata"/>
+        <text name="eq_now_shoulderIn" text="Spalla in dentro"/>
+        <text name="eq_now_renvers" text="Renvers (groppa in fuori)"/>
+        <text name="eq_now_travers" text="Travers (groppa in dentro)"/>
+        <text name="eq_now_legYieldRail" text="Cessione alla gamba lungo la pista"/>
         <text name="eq_fig_legYield" text="Cessione alla gamba da %s e ritorno"/>
         <text name="eq_fig_halfPass" text="Appoggiata da %s e ritorno"/>
         <text name="eq_fig_shoulderIn" text="Spalla in dentro %s-%s"/>
