@@ -494,6 +494,7 @@
         <text name="eq_course_resumed" text="Recording from the nearest point"/>
         <text name="eq_course_finished" text="Finished editing: placed Realistic Equestrian obstacles have their collision back"/>
         <text name="eq_course_deleted" text="%s deleted"/>
+        <text name="eq_course_locked" text="You can&#x27;t delete %s during %s: set your courses before the event month"/>
         <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
@@ -888,14 +889,16 @@
         <text name="eq_host_ann_resultsSoon" text="%s: results at the end of the month"/>
         <text name="eq_host_ann_round" text="Competition round: this one counts!"/>
         <text name="eq_host_ann_ridden" text="Already ridden: this is just practice"/>
-        <text name="eq_host_ann_small" text="This course is too small for your event: just practice"/>
+        <text name="eq_host_ann_small" text="Course too short for your hosted event: practice only"/>
         <text name="eq_host_note_counts" text="Competition round for %s: ride to the start line"/>
         <text name="eq_host_note_ridden" text="Practice: this phase of %s is already ridden"/>
-        <text name="eq_host_note_small" text="Practice: too small a course for %s"/>
+        <text name="eq_host_note_small" text="Practice: course too short for %s"/>
         <text name="eq_host_ann_test" text="Competition test: this one counts!"/>
         <text name="eq_host_ann_smallArena" text="This arena is too small for your event: just practice"/>
         <text name="eq_host_note_testCounts" text="Competition test for %s: ride to A"/>
         <text name="eq_host_note_testSmall" text="Practice: too small an arena for %s"/>
+        <text name="eq_host_ann_testShort" text="Test too short for your hosted event: practice only"/>
+        <text name="eq_host_note_testShort" text="Practice: test too short for %s"/>
         <text name="eq_host_label_now" text="This month"/>
         <text name="eq_host_next_oneAtATime" text="one event at a time"/>
         <text name="eq_host_next_interval" text="%d months between events, see Settings"/>
@@ -956,7 +959,7 @@
         <text name="eq_host_ride_counted" text="%s counted for %s: %s penalties."/>
         <text name="eq_host_ride_out" text="%s counted for %s: eliminated."/>
         <text name="eq_host_ride_already" text="This horse's %s for %s is already ridden; this one is practice."/>
-        <text name="eq_host_ride_small" text="This course is too small for %s, so the round is practice."/>
+        <text name="eq_host_ride_small" text="This course is too short for %s, so the round is practice only."/>
         <text name="eq_shop_bleachers3x6" text="Bleachers 3 rows, 6 m"/>
         <text name="eq_shop_bleachers5x10" text="Bleachers 5 rows, 10 m"/>
         <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="On the spot"/>
         <text name="eq_dt_noOptions" text="Nothing fits here: undo or save"/>
         <text name="eq_dt_saved" text="Dressage test saved: %d movements"/>
+        <text name="eq_dt_savedShort" text="Test saved, but not long enough for %s: it needs %d steps and has %d, so rides here are practice only"/>
+        <text name="eq_dt_locked" text="You can&#x27;t delete this test during %s: set your test before the event month"/>
         <text name="eq_dt_deleted" text="Dressage test deleted: this arena rides random tests again"/>
         <text name="eq_dt_cancelled" text="Dressage test not saved"/>
         <text name="eq_fig_halt" text="Halt at %s"/>

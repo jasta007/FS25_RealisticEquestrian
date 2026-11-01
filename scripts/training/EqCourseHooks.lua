@@ -609,6 +609,14 @@ function EqCourseHooks.onDeleteAction(vehicle)
         EqDressageEditor.onDelete(vehicle)
         return
     end
+    -- Not during your event, if the course is big enough for it: set it before the month (James, 2026-11-01).
+    if EqHostManager ~= nil then
+        local ok, event = EqLog.try("EqCourseHooks courseLocked", EqHostManager.courseLocked, course)
+        if ok and event ~= nil then
+            notify(string.format(text("eq_course_locked"), course.name, EqCompetitionManager.eventTitle(event)))
+            return
+        end
+    end
     local question = string.format(text("eq_course_deleteAsk"), course.name, #course.jumps, course.length or 0)
     local function confirmed(yes)
         if not yes or EqCourse.list[index] ~= course then return end

@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="Registrazione dal punto più vicino"/>
         <text name="eq_course_finished" text="Modifica terminata: gli ostacoli piazzati di Realistic Equestrian hanno di nuovo le collisioni"/>
         <text name="eq_course_deleted" text="%s eliminato"/>
+        <text name="eq_course_locked" text="Non puoi eliminare %s durante %s: prepara i percorsi prima del mese dell&#x27;evento"/>
         <text name="eq_course_deleteAsk" text="Eliminare %s con %d ostacoli su %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Elimina percorso"/>
         <text name="eq_course_deleteAction" text="Elimina %s"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="Questo rettangolo è troppo piccolo per il tuo evento: solo allenamento"/>
         <text name="eq_host_note_testCounts" text="Ripresa di gara per %s: vai ad A"/>
         <text name="eq_host_note_testSmall" text="Allenamento: rettangolo troppo piccolo per %s"/>
+        <text name="eq_host_ann_testShort" text="Ripresa troppo corta per il tuo evento: solo allenamento"/>
+        <text name="eq_host_note_testShort" text="Allenamento: ripresa troppo corta per %s"/>
         <text name="eq_host_label_now" text="Questo mese"/>
         <text name="eq_host_next_oneAtATime" text="un evento alla volta"/>
         <text name="eq_host_next_interval" text="%d mesi tra un evento e l'altro, vedi Impostazioni"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="Sul posto"/>
         <text name="eq_dt_noOptions" text="Qui non sta niente: annulla o salva"/>
         <text name="eq_dt_saved" text="Ripresa di dressage salvata: %d movimenti"/>
+        <text name="eq_dt_savedShort" text="Ripresa salvata, ma non abbastanza lunga per %s: servono %d passi e ne ha %d, qui è solo allenamento"/>
+        <text name="eq_dt_locked" text="Non puoi eliminare questa ripresa durante %s: prepara la ripresa prima del mese dell&#x27;evento"/>
         <text name="eq_dt_deleted" text="Ripresa di dressage eliminata: questo rettangolo torna a riprese casuali"/>
         <text name="eq_dt_cancelled" text="Ripresa di dressage non salvata"/>
         <text name="eq_fig_halt" text="Alt in %s"/>

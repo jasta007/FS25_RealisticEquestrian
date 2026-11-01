@@ -821,8 +821,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   Your horses enter with one **Enter** button: no fee, no transport, and they stay at home. It
   counts toward Entries per month, and results come at the end of the month with the other
   monthly events.
-- **The event month:** your farm is checked when the event opens and every day after. If
-  anything is short (including that day's feed for the visitors) you get a warning; still short
+- **The event month:** your stables and feed are checked when the event opens and every day
+  after (courses and arenas no longer are, see below). If either is short (including that day's feed for the visitors) you get a warning; still short
   the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
   a month's horse ration divided by the days in a month, taken from your silos first, then your
   horse troughs. The Results tab shows how much they have eaten.
@@ -834,20 +834,23 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   one's winners, turnout, takings against the setup fee, and how your horses did.
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
-  real faults and time. In an arena big enough, the dressage test is the event's fixed test of
-  8, 10 or 13 figures by rating and scores 100 less its percentage in penalties (a 72% test is
-  28); a third error of course eliminates. Each horse
-  gets one go at each phase, and later rounds are practice. Phases you don't ride are
-  simulated. A one-phase event with a ridden round is scored in penalties like eventing.
-  A show jumping or cross country round is not put straight against the simulated rivals: it is
-  graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
-  course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
-  of your own horse it gets, from its best to its worst. The horse's stats still decide most;
-  your riding decides its day. A ridden dressage test counts its real score. Coming up to the start line on an entered
-  horse, a gold announcement says whether this round counts, is practice (phase already
-  ridden) or the course is too small; the finish says what was kept and when results come.
-  A dressage arena does the same when its test is offered (arena too small for the rating, or
-  dressage already ridden), and the note above the panel replaces "Move to A" until the countdown.
+  real faults and time: the penalties you are told at the finish are the ones on the
+  scoresheet. In an arena big enough, the dressage test is the event's fixed test of 8, 10 or
+  13 figures by rating (or your own test for that arena, if it has at least as many steps).
+  Its penalties are on the simulated field's scale: 75% scores 22 (the simulated best), each
+  percent either side 0.8, so 80% is 18, 70% 26 and 60% 34; a third error of course eliminates.
+  Each horse gets one go at each phase, and later rounds are practice. Phases you don't ride
+  are simulated. A one-phase event with a ridden round is scored in penalties like eventing.
+  Coming up to the start line on an entered horse, a gold announcement says whether this round
+  counts, is practice (phase already ridden) or the course is too short; the finish says what
+  was kept and when results come. A dressage arena does the same when its test is offered
+  (arena too small, your own test too short, or dressage already ridden), and the note above
+  the panel replaces "Move to A" until the countdown.
+- **Set it before the month:** once the event runs, a course or dressage test big enough for it
+  can't be deleted. Saving one of your own dressage tests shorter than your booked or running
+  event needs still saves it, with a warning, and rides there are practice. A course or arena
+  made too small during the month doesn't cancel the event: it runs in the background without
+  your rides. Only the visitors' stables and feed can stop it.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again.

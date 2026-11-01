@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="Запись с ближайшей точки"/>
         <text name="eq_course_finished" text="Редактирование завершено: поставленным препятствиям Realistic Equestrian возвращены столкновения"/>
         <text name="eq_course_deleted" text="«%s» удалён"/>
+        <text name="eq_course_locked" text="Нельзя удалить %s во время %s: подготовьте маршруты до месяца турнира"/>
         <text name="eq_course_deleteAsk" text="Удалить «%s» (препятствий: %d, %.0f м)?"/>
         <text name="eq_course_deleteTitle" text="Удалить маршрут"/>
         <text name="eq_course_deleteAction" text="Удалить «%s»"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="Этот манеж слишком мал для вашего турнира: просто тренировка"/>
         <text name="eq_host_note_testCounts" text="Зачётный тест на %s: подъезжайте к A"/>
         <text name="eq_host_note_testSmall" text="Тренировка: манеж слишком мал для %s"/>
+        <text name="eq_host_ann_testShort" text="Езда слишком короткая для вашего турнира: просто тренировка"/>
+        <text name="eq_host_note_testShort" text="Тренировка: езда слишком короткая для %s"/>
         <text name="eq_host_label_now" text="Этот месяц"/>
         <text name="eq_host_next_oneAtATime" text="один турнир за раз"/>
         <text name="eq_host_next_interval" text="%d мес. между турнирами, см. Настройки"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="На месте"/>
         <text name="eq_dt_noOptions" text="Здесь ничего не подходит: отмените или сохраните"/>
         <text name="eq_dt_saved" text="Езда по выездке сохранена: элементов %d"/>
+        <text name="eq_dt_savedShort" text="Езда сохранена, но слишком короткая для %s: нужно шагов: %d, в ней %d, поэтому здесь это только тренировка"/>
+        <text name="eq_dt_locked" text="Нельзя удалить эту езду во время %s: подготовьте езду до месяца турнира"/>
         <text name="eq_dt_deleted" text="Езда по выездке удалена: на этом плацу снова случайные езды"/>
         <text name="eq_dt_cancelled" text="Езда по выездке не сохранена"/>
         <text name="eq_fig_halt" text="Остановка у %s"/>

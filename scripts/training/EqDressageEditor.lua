@@ -218,7 +218,21 @@ function EqDressageEditor.finish(save, left)
     if plan ~= nil then
         EqDressageTests.set(active.frame, plan)
         notify(string.format(text("eq_dt_saved"), #test.moves))
+        -- Saved all the same, but too short to count in your hosted event (James, 2026-11-01).
+        if EqHostManager ~= nil then
+            local okShort, title, need = EqLog.try("EqDressageEditor testTooShort", EqHostManager.testTooShort, #plan.steps)
+            if okShort and title ~= nil then notify(string.format(text("eq_dt_savedShort"), title, need, #plan.steps)) end
+        end
     elseif ed.saved and not left then
+        -- Every step undone deletes the test: not one your running event needs.
+        local ok, event = false, nil
+        if EqHostManager ~= nil then
+            ok, event = EqLog.try("EqDressageEditor testLocked", EqHostManager.testLocked, active.frame, EqDressageTests.planFor(active.frame))
+        end
+        if ok and event ~= nil then
+            notify(string.format(text("eq_dt_locked"), EqCompetitionManager.eventTitle(event)))
+            return
+        end
         EqDressageTests.set(active.frame, nil)
         notify(text("eq_dt_deleted"))
     end
@@ -246,6 +260,14 @@ function EqDressageEditor.onDelete(vehicle)
     local frame = EqDressageEditor.startFrame(vehicle)
     local plan = frame ~= nil and EqDressageTests.planFor(frame) or nil
     if plan == nil then return end
+    -- Not during your event, if this test is good for it: set it before the month (James, 2026-11-01).
+    if EqHostManager ~= nil then
+        local ok, event = EqLog.try("EqDressageEditor testLocked", EqHostManager.testLocked, frame, plan)
+        if ok and event ~= nil then
+            notify(string.format(text("eq_dt_locked"), EqCompetitionManager.eventTitle(event)))
+            return
+        end
+    end
     local question = string.format(text("eq_dt_deleteAsk"), #plan.steps)
     local function confirmed(yes)
         if not yes or EqDressageTests.planFor(frame) ~= plan then return end

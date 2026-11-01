@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="Nahrávání od nejbližšího bodu"/>
         <text name="eq_course_finished" text="Úpravy dokončeny: postavené překážky z Realistic Equestrian mají opět kolize"/>
         <text name="eq_course_deleted" text="%s smazáno"/>
+        <text name="eq_course_locked" text="%s nelze smazat během %s: nastav parkury před měsícem závodů"/>
         <text name="eq_course_deleteAsk" text="Smazat %s (překážek %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Smazat trasu"/>
         <text name="eq_course_deleteAction" text="Smazat %s"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="Tento obdélník je na tvé závody příliš malý: jen trénink"/>
         <text name="eq_host_note_testCounts" text="Soutěžní úloha pro %s: jeď k A"/>
         <text name="eq_host_note_testSmall" text="Trénink: obdélník je pro %s příliš malý"/>
+        <text name="eq_host_ann_testShort" text="Úloha je na tvé závody příliš krátká: jen trénink"/>
+        <text name="eq_host_note_testShort" text="Trénink: úloha je pro %s příliš krátká"/>
         <text name="eq_host_label_now" text="Tento měsíc"/>
         <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
         <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="Na místě"/>
         <text name="eq_dt_noOptions" text="Sem nic nepasuje: vraťte krok nebo uložte"/>
         <text name="eq_dt_saved" text="Drezurní úloha uložena: %d prvků"/>
+        <text name="eq_dt_savedShort" text="Úloha uložena, ale pro %s není dost dlouhá: potřebuje %d kroků a má %d, takže tady je to jen trénink"/>
+        <text name="eq_dt_locked" text="Tuto úlohu nelze smazat během %s: nastav úlohu před měsícem závodů"/>
         <text name="eq_dt_deleted" text="Drezurní úloha smazána: tato jízdárna jezdí opět náhodné úlohy"/>
         <text name="eq_dt_cancelled" text="Drezurní úloha neuložena"/>
         <text name="eq_fig_halt" text="Zastavení v %s"/>

@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="Opnemen vanaf het dichtstbijzijnde punt"/>
         <text name="eq_course_finished" text="Bewerken klaar: geplaatste obstakels van Realistic Equestrian hebben hun botsing terug"/>
         <text name="eq_course_deleted" text="%s verwijderd"/>
+        <text name="eq_course_locked" text="Je kunt %s niet verwijderen tijdens %s: stel je parcoursen in vóór de maand van het evenement"/>
         <text name="eq_course_deleteAsk" text="%s met %d hindernissen over %.0f m verwijderen?"/>
         <text name="eq_course_deleteTitle" text="Parcours verwijderen"/>
         <text name="eq_course_deleteAction" text="%s verwijderen"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="Deze rijbaan is te klein voor je evenement: alleen oefenen"/>
         <text name="eq_host_note_testCounts" text="Wedstrijdproef voor %s: rijd naar A"/>
         <text name="eq_host_note_testSmall" text="Oefenen: rijbaan te klein voor %s"/>
+        <text name="eq_host_ann_testShort" text="Proef te kort voor je eigen evenement: alleen oefenen"/>
+        <text name="eq_host_note_testShort" text="Oefenen: proef te kort voor %s"/>
         <text name="eq_host_label_now" text="Deze maand"/>
         <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
         <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="Ter plaatse"/>
         <text name="eq_dt_noOptions" text="Hier past niets: ongedaan maken of opslaan"/>
         <text name="eq_dt_saved" text="Dressuurproef opgeslagen: %d onderdelen"/>
+        <text name="eq_dt_savedShort" text="Proef opgeslagen, maar niet lang genoeg voor %s: er zijn %d stappen nodig en hij heeft er %d, hier is het alleen oefenen"/>
+        <text name="eq_dt_locked" text="Je kunt deze proef niet verwijderen tijdens %s: stel je proef in vóór de maand van het evenement"/>
         <text name="eq_dt_deleted" text="Dressuurproef verwijderd: deze bak rijdt weer willekeurige proeven"/>
         <text name="eq_dt_cancelled" text="Dressuurproef niet opgeslagen"/>
         <text name="eq_fig_halt" text="Halthouden bij %s"/>

@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="最寄りの地点から記録中"/>
         <text name="eq_course_finished" text="編集完了：配置したRealistic Equestrianの障害物に当たり判定が戻りました"/>
         <text name="eq_course_deleted" text="%sを削除しました"/>
+        <text name="eq_course_locked" text="%sは%sの期間中は削除できません：大会の月より前にコースを決めてください"/>
         <text name="eq_course_deleteAsk" text="%s（障害%d個、%.0f m）を削除しますか？"/>
         <text name="eq_course_deleteTitle" text="コースを削除"/>
         <text name="eq_course_deleteAction" text="%sを削除"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="このアリーナはあなたの大会には小さすぎます：練習のみ"/>
         <text name="eq_host_note_testCounts" text="%sの競技テスト：Aへ"/>
         <text name="eq_host_note_testSmall" text="練習：%sにはアリーナが小さすぎます"/>
+        <text name="eq_host_ann_testShort" text="この課目はあなたの大会には短すぎます：練習のみ"/>
+        <text name="eq_host_note_testShort" text="練習：%sには課目が短すぎます"/>
         <text name="eq_host_label_now" text="今月"/>
         <text name="eq_host_next_oneAtATime" text="大会は一度に一つ"/>
         <text name="eq_host_next_interval" text="大会の間隔は%dか月、設定を参照"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="その場"/>
         <text name="eq_dt_noOptions" text="ここに合うものがありません：取り消すか保存してください"/>
         <text name="eq_dt_saved" text="馬場馬術の経路を保存しました：%d運動"/>
+        <text name="eq_dt_savedShort" text="課目を保存しましたが、%sには短すぎます：%dステップ必要で、%dステップしかないため、ここでは練習のみです"/>
+        <text name="eq_dt_locked" text="%sの期間中はこの課目を削除できません：大会の月より前に課目を決めてください"/>
         <text name="eq_dt_deleted" text="馬場馬術の経路を削除しました：このアリーナは再びランダムな経路になります"/>
         <text name="eq_dt_cancelled" text="馬場馬術の経路は保存されませんでした"/>
         <text name="eq_fig_halt" text="%sで停止"/>

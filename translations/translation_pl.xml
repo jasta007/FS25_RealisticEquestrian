@@ -495,6 +495,7 @@
         <text name="eq_course_resumed" text="Nagrywanie od najbliższego punktu"/>
         <text name="eq_course_finished" text="Edycja zakończona: postawione przeszkody z Realistic Equestrian znów mają kolizję"/>
         <text name="eq_course_deleted" text="Usunięto %s"/>
+        <text name="eq_course_locked" text="Nie możesz usunąć %s w trakcie %s: ustaw trasy przed miesiącem zawodów"/>
         <text name="eq_course_deleteAsk" text="Usunąć %s (przeszkód: %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Usuń trasę"/>
         <text name="eq_course_deleteAction" text="Usuń %s"/>
@@ -896,6 +897,8 @@
         <text name="eq_host_ann_smallArena" text="Ten czworobok jest za mały na twoje zawody: tylko trening"/>
         <text name="eq_host_note_testCounts" text="Program konkursowy w %s: podjedź do A"/>
         <text name="eq_host_note_testSmall" text="Trening: czworobok za mały na %s"/>
+        <text name="eq_host_ann_testShort" text="Program za krótki na twoje zawody: tylko trening"/>
+        <text name="eq_host_note_testShort" text="Trening: program za krótki na %s"/>
         <text name="eq_host_label_now" text="Ten miesiąc"/>
         <text name="eq_host_next_oneAtATime" text="jedne zawody naraz"/>
         <text name="eq_host_next_interval" text="%d mies. między zawodami, zobacz Ustawienia"/>
@@ -984,6 +987,8 @@
         <text name="eq_dt_spot" text="W miejscu"/>
         <text name="eq_dt_noOptions" text="Nic tu nie pasuje: cofnij lub zapisz"/>
         <text name="eq_dt_saved" text="Program ujeżdżenia zapisany: %d ruchów"/>
+        <text name="eq_dt_savedShort" text="Program zapisany, ale za krótki na %s: potrzeba %d kroków, a ma %d, więc tutaj to tylko trening"/>
+        <text name="eq_dt_locked" text="Nie możesz usunąć tego programu w trakcie %s: ustaw program przed miesiącem zawodów"/>
         <text name="eq_dt_deleted" text="Program ujeżdżenia usunięty: ten czworobok znów ma losowe programy"/>
         <text name="eq_dt_cancelled" text="Program ujeżdżenia nie został zapisany"/>
         <text name="eq_fig_halt" text="Zatrzymanie w %s"/>
