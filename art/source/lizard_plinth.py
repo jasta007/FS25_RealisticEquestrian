@@ -482,8 +482,8 @@ def write_xml(variant, path, mappings):
         <category>animalpens</category>
         <brush>
             <type>placeable</type>
-            <category>animals</category>
-            <tab>horses</tab>
+            <category>buildings</category>
+            <tab>constructibles</tab>
         </brush>
     </storeData>
 

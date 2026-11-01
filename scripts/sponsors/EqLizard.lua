@@ -311,8 +311,8 @@ function EqLizard.updateShop()
             local show = want ~= nil and string.sub(path, -#want) == want
             storeItem.showInStore = show
             -- The game gives a placeable its construction brush only when it loads shown in the
-            -- shop (StoreManager.loadItem), so ours, hidden at load, have none and never make the
-            -- Horses tab (James, 2026-11-01): give it one while it is offered, take it away after.
+            -- shop (StoreManager.loadItem), so ours, hidden at load, have none and never show in the
+            -- construction menu (James, 2026-11-01): give it one while it is offered, take it away after.
             if show and storeItem.brush == nil then
                 storeItem.brush = EqLizard.brushFor()
             elseif not show then
@@ -323,14 +323,19 @@ function EqLizard.updateShop()
 end
 
 
---- @return table|nil brush the construction brush our plinths would have had: Animals, Horses tab
+--- @return table|nil brush the construction brush our plinths would have had: Buildings,
+---     Constructibles tab, like the game's rental houses (James, 2026-11-01)
 function EqLizard.brushFor()
     if g_storeManager.getConstructionCategoryByName == nil then return nil end
-    local category = g_storeManager:getConstructionCategoryByName("animals")
-    if category == nil then return nil end
-    local tab = g_storeManager:getConstructionTabByName("horses", category.name)
+    local category = g_storeManager:getConstructionCategoryByName("buildings")
+    local tab = category ~= nil and g_storeManager:getConstructionTabByName("constructibles", category.name) or nil
     if tab == nil then
-        Log:warning("EqLizard: no Horses tab in the construction menu for the Lizard plinth")
+        -- a map without that tab: the Horses tab, with our other horse pieces
+        category = g_storeManager:getConstructionCategoryByName("animals")
+        tab = category ~= nil and g_storeManager:getConstructionTabByName("horses", category.name) or nil
+    end
+    if tab == nil then
+        Log:warning("EqLizard: no Constructibles or Horses tab in the construction menu for the Lizard plinth")
         return nil
     end
     return { type = "placeable", parameters = {}, category = category, tab = tab }

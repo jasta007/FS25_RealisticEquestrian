@@ -962,7 +962,7 @@ lapses when the event opens.
   the deal lasts (after any yearly sponsor), Lizard's machines on plinths count, and Lizard lends
   a vehicle for the event month. A yearly sponsor signed in the meantime takes the event and
   Lizard steps aside.
-- **The Lizard Plinth** (500, in the shop's Horses tab only while you have an accepted deal) is a
+- **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
   constructible, like the game's rental houses: a few stakes until you deliver its materials to
   the triggers in front of it. One bulk load Lizard picks at random, **1,000 l stone**, **1,000 l
   wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (in the game's
