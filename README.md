@@ -126,7 +126,7 @@ uses its genetics, health and fitness.
   their rounds yourself if you like. Bad weather, a star horse, booking ahead, advertising and
   farm shops all change the crowd, and visitors can buy your souvenirs and refreshments.
 - **Spectators:** during your event, people sit on your bleachers and stand in the Rope Marker's
-  spectator boxes (never beside a dressage arena). How many is the **Crowd density** setting.
+  spectator boxes. How many is the **Crowd density** setting.
 - **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
   deals to hard bargains. Sign up to three on the **Sponsors** tab (big ones are exclusive) for a fee per event and extra popularity. Some lend you one of their machines, free, for your event month.
 - **Lizard:** now and then Lizard offers to sponsor an unsponsored event, if you build its

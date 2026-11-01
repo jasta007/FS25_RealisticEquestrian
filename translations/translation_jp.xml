@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
         <text name="eq_settings_crowdDensity" text="観客の多さ"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="主催大会に来る観客の数。スタンドとロープ脇の観客エリアに現れます（08:00-19:00）。馬場馬術アリーナの近くには来ません。"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="主催大会に来る観客の数。スタンドとロープ脇の観客エリアに現れます（08:00-19:00）。"/>
         <text name="eq_settings_crowd_low" text="少ない"/>
         <text name="eq_settings_crowd_medium" text="普通"/>
         <text name="eq_settings_crowd_high" text="多い"/>

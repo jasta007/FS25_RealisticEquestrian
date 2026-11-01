@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Месяцев между своими соревнованиями"/>
         <text name="eq_settings_hostInterval_tooltip" text="Сколько месяцев после месяца вашего последнего соревнования должно пройти до следующего."/>
         <text name="eq_settings_crowdDensity" text="Плотность зрителей"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Сколько зрителей приходит на ваши соревнования: на трибуны и в зрительские зоны у верёвки (08:00-19:00). Никогда рядом с манежем для выездки."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Сколько зрителей приходит на ваши соревнования: на трибуны и в зрительские зоны у верёвки (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Мало"/>
         <text name="eq_settings_crowd_medium" text="Средне"/>
         <text name="eq_settings_crowd_high" text="Много"/>

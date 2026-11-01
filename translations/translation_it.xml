@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Mesi tra le tue gare"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quanti mesi dopo il mese della tua ultima gara organizzata prima di poterne organizzare un'altra."/>
         <text name="eq_settings_crowdDensity" text="Affluenza di pubblico"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Quanti spettatori vengono alle tue gare, sulle tue tribune e nelle zone pubblico lungo la corda (08:00-19:00). Mai accanto a un rettangolo di dressage."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Quanti spettatori vengono alle tue gare, sulle tue tribune e nelle zone pubblico lungo la corda (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Bassa"/>
         <text name="eq_settings_crowd_medium" text="Media"/>
         <text name="eq_settings_crowd_high" text="Alta"/>

@@ -11,9 +11,10 @@
     People standing in a rope's spectator box play the game's standing idle clips.
 
     When: while one of your hosted events runs (its month), from 08:00 to 19:00. How many: the
-    Crowd density setting (Off / Low / Medium / High). Bleachers near a dressage arena stay empty:
-    too close for the horses (James). The console command eqSpectators shows them at any time,
-    for testing, and tunes the seated pose.
+    Crowd density setting (Off / Low / Medium / High). Bleachers and rope boxes beside a dressage
+    arena fill too (James): nobody is ever put on an arena's own boundary, only in seats and boxes
+    the player placed. The console command eqSpectators shows them at any time, for testing, and
+    tunes the seated pose.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -55,9 +56,6 @@ EqSpectators.ROPE_PANEL = 2.5
 EqSpectators.ROPE_INSET = 0.12
 EqSpectators.PER_BOX = 2
 EqSpectators.BOX_NODE = "eqCrowdBox"
-
--- Bleachers and boxes this close to a dressage arena's centre, beyond its half length, stay empty.
-EqSpectators.ARENA_CLEAR = 15
 
 -- Seated pose (tuned with eqSpectators pose): the hips this high above the bench and this far back
 -- from its front edge, the feet this far forward of the bench and apart, the hands on the knees.
@@ -134,19 +132,6 @@ function EqSpectators.seatsOf(rows, length)
 end
 
 
---- @param x number
---- @param z number
---- @param arenas table list of { x, z, halfLength }
---- @return boolean true when a point is too close to a dressage arena for a crowd
-function EqSpectators.nearArena(x, z, arenas)
-    for _, arena in ipairs(arenas or {}) do
-        local reach = (arena.halfLength or 0) + EqSpectators.ARENA_CLEAR
-        if (x - arena.x) ^ 2 + (z - arena.z) ^ 2 <= reach * reach then return true end
-    end
-    return false
-end
-
-
 --- Pick up to count items, in a shuffled order that depends only on the seed.
 --- @param list table
 --- @param count number
@@ -200,15 +185,6 @@ local function terrainY(x, z)
 end
 
 
-local function arenas()
-    if EqDressageHooks == nil or EqHosting == nil then return {} end
-    local ok, list = EqLog.try("EqSpectators arenas", function()
-        return EqHosting.arenasFromMarkers(EqDressageHooks.scan())
-    end)
-    return ok and list or {}
-end
-
-
 --- Nodes named name under a node (a rope with many panels has many).
 local function findNamed(root, name, out)
     local stack, seen = { root }, 0
@@ -221,24 +197,20 @@ local function findNamed(root, name, out)
 end
 
 
---- The farm's seats and rope spectator places, away from dressage arenas.
+--- The farm's seats and rope spectator places.
 --- @param farm number
 --- @return table seats, table stands, table boxes (every box node, for showing them in construction)
 function EqSpectators.places(farm)
     local seats, stands, boxes = {}, {}, {}
-    local nearby = arenas()
     for _, placeable in ipairs(placeables()) do
         local root = placeable.rootNode
         if type(root) == "number" and root ~= 0 and (entityExists == nil or entityExists(root)) then
             local rows, length = EqSpectators.bleacherSize(placeable.configFileName)
             local mine = ownerOf(placeable) == farm
             if rows ~= nil and mine then
-                local x, _, z = getWorldTranslation(root)
-                if not EqSpectators.nearArena(x, z, nearby) then
-                    for _, seat in ipairs(EqSpectators.seatsOf(rows, length)) do
-                        seat.parent = root
-                        table.insert(seats, seat)
-                    end
+                for _, seat in ipairs(EqSpectators.seatsOf(rows, length)) do
+                    seat.parent = root
+                    table.insert(seats, seat)
                 end
             elseif EqSponsors ~= nil and EqSponsors.isRope(placeable.configFileName) then
                 local found = {}
@@ -246,10 +218,7 @@ function EqSpectators.places(farm)
                 for _, node in ipairs(found) do
                     table.insert(boxes, node)
                     if mine then
-                        local x, _, z = localToWorld(node, (EqSpectators.ROPE_BOX[1] + EqSpectators.ROPE_BOX[2]) / 2, 0, EqSpectators.ROPE_PANEL / 2)
-                        if not EqSpectators.nearArena(x, z, nearby) then
-                            for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot }) end
-                        end
+                        for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot }) end
                     end
                 end
             end

@@ -1010,7 +1010,7 @@
         <text name="eq_settings_hostInterval" text="Monate zwischen eigenen Turnieren"/>
         <text name="eq_settings_hostInterval_tooltip" text="Wie viele Monate nach dem Monat deines letzten eigenen Turniers du ein weiteres ausrichten kannst."/>
         <text name="eq_settings_crowdDensity" text="Zuschauerdichte"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Wie viele Zuschauer zu deinen eigenen Turnieren kommen, auf deine Tribünen und in die Zuschauerbereiche am Seil (08:00-19:00). Nie neben einem Dressurviereck."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Wie viele Zuschauer zu deinen eigenen Turnieren kommen, auf deine Tribünen und in die Zuschauerbereiche am Seil (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Wenig"/>
         <text name="eq_settings_crowd_medium" text="Mittel"/>
         <text name="eq_settings_crowd_high" text="Viel"/>

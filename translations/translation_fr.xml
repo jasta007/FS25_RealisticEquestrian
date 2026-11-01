@@ -1010,7 +1010,7 @@
         <text name="eq_settings_hostInterval" text="Mois entre vos concours"/>
         <text name="eq_settings_hostInterval_tooltip" text="Nombre de mois après le mois de votre dernier concours organisé avant d'en organiser un autre."/>
         <text name="eq_settings_crowdDensity" text="Affluence du public"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Combien de spectateurs viennent à vos concours, sur vos tribunes et dans les zones spectateurs le long de la corde (08:00-19:00). Jamais à côté d'une carrière de dressage."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Combien de spectateurs viennent à vos concours, sur vos tribunes et dans les zones spectateurs le long de la corde (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Faible"/>
         <text name="eq_settings_crowd_medium" text="Moyenne"/>
         <text name="eq_settings_crowd_high" text="Forte"/>

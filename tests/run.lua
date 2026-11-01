@@ -5918,9 +5918,6 @@ end)()
         if math.abs(seat.x) > 3 - EqSpectators.SEAT_END + 1e-9 then inside = false end
     end
     check("spectators: seats stay off the bleacher's ends", inside)
-    local arena = { { x = 0, z = 0, halfLength = 30 } }
-    check("spectators: none next to a dressage arena", EqSpectators.nearArena(40, 0, arena) and not EqSpectators.nearArena(60, 0, arena)
-        and not EqSpectators.nearArena(0, 0, {}))
     local list = {}
     for i = 1, 20 do list[i] = i end
     local a = EqSpectators.pick(list, 5, EqRandom.new(42))

@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Months between hosted events"/>
         <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
         <text name="eq_settings_crowdDensity" text="Crowd density"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="How many spectators come to your hosted events, on your bleachers and at rope spectator boxes (08:00-19:00). Never beside a dressage arena."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="How many spectators come to your hosted events, on your bleachers and at rope spectator boxes (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Low"/>
         <text name="eq_settings_crowd_medium" text="Medium"/>
         <text name="eq_settings_crowd_high" text="High"/>

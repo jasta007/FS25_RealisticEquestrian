@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
         <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
         <text name="eq_settings_crowdDensity" text="Počet diváků"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Kolik diváků přijde na tvé závody, na tribuny a do diváckých prostorů u lana (08:00-19:00). Nikdy vedle drezurního obdélníku."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Kolik diváků přijde na tvé závody, na tribuny a do diváckých prostorů u lana (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Málo"/>
         <text name="eq_settings_crowd_medium" text="Středně"/>
         <text name="eq_settings_crowd_high" text="Hodně"/>

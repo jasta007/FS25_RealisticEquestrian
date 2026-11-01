@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
         <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
         <text name="eq_settings_crowdDensity" text="Publieksdrukte"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Hoeveel toeschouwers naar je eigen wedstrijden komen, op je tribunes en in de publiekvakken langs het touw (08:00-19:00). Nooit naast een dressuurrijbaan."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Hoeveel toeschouwers naar je eigen wedstrijden komen, op je tribunes en in de publiekvakken langs het touw (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Laag"/>
         <text name="eq_settings_crowd_medium" text="Gemiddeld"/>
         <text name="eq_settings_crowd_high" text="Hoog"/>

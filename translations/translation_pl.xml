@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Miesiące między własnymi zawodami"/>
         <text name="eq_settings_hostInterval_tooltip" text="Ile miesięcy po miesiącu ostatnich własnych zawodów musi minąć, zanim zorganizujesz kolejne."/>
         <text name="eq_settings_crowdDensity" text="Liczba widzów"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Ilu widzów przychodzi na twoje zawody: na trybuny i do stref dla widzów przy linie (08:00-19:00). Nigdy obok czworoboku do ujeżdżenia."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Ilu widzów przychodzi na twoje zawody: na trybuny i do stref dla widzów przy linie (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Mało"/>
         <text name="eq_settings_crowd_medium" text="Średnio"/>
         <text name="eq_settings_crowd_high" text="Dużo"/>

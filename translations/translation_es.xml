@@ -1010,7 +1010,7 @@
         <text name="eq_settings_hostInterval" text="Meses entre concursos propios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Cuántos meses tras el mes de tu último concurso organizado hasta poder organizar otro."/>
         <text name="eq_settings_crowdDensity" text="Afluencia de público"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Cuántos espectadores vienen a tus concursos, en tus gradas y en las zonas de público junto a la cuerda (08:00-19:00). Nunca junto a una pista de doma."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Cuántos espectadores vienen a tus concursos, en tus gradas y en las zonas de público junto a la cuerda (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Baja"/>
         <text name="eq_settings_crowd_medium" text="Media"/>
         <text name="eq_settings_crowd_high" text="Alta"/>

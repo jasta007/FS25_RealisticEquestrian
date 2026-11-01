@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="主辦比賽間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="從你上次主辦比賽的月份起，需要多少個月才能再次主辦。"/>
         <text name="eq_settings_crowdDensity" text="觀眾密度"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="有多少觀眾來看你主辦的比賽：坐在看台上，站在繩子旁的觀眾區（08:00-19:00）。不會出現在盛裝舞步場地旁。"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="有多少觀眾來看你主辦的比賽：坐在看台上，站在繩子旁的觀眾區（08:00-19:00）。"/>
         <text name="eq_settings_crowd_low" text="少"/>
         <text name="eq_settings_crowd_medium" text="中"/>
         <text name="eq_settings_crowd_high" text="多"/>

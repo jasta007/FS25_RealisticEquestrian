@@ -1008,7 +1008,7 @@
         <text name="eq_settings_hostInterval" text="Meses entre eventos próprios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quantos meses após o mês do seu último evento organizado até poder organizar outro."/>
         <text name="eq_settings_crowdDensity" text="Densidade de público"/>
-        <text name="eq_settings_crowdDensity_tooltip" text="Quantos espectadores vêm aos seus eventos, nas suas arquibancadas e nas áreas de público junto à corda (08:00-19:00). Nunca ao lado de uma arena de adestramento."/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Quantos espectadores vêm aos seus eventos, nas suas arquibancadas e nas áreas de público junto à corda (08:00-19:00)."/>
         <text name="eq_settings_crowd_low" text="Baixa"/>
         <text name="eq_settings_crowd_medium" text="Média"/>
         <text name="eq_settings_crowd_high" text="Alta"/>
