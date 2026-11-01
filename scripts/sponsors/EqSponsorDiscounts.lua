@@ -114,6 +114,8 @@ function EqSponsorDiscounts.install(guarded)
             return result
         end
     end
+    Log:info("EqSponsorDiscounts: buy price %s, buy data %s", tostring(EconomyManager ~= nil and EconomyManager.getBuyPrice ~= nil),
+        tostring(BuyVehicleData ~= nil and BuyVehicleData.updatePrice ~= nil))
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
         if not EqMain.isActive then return end
         guarded("sponsor discounts", EqSponsorDiscounts.update)

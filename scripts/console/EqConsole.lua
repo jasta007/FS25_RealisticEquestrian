@@ -899,6 +899,11 @@ function EqConsole:consoleSponsors()
             EqSponsorManager.brandTitle(contract.brand), contract.size, contract.exclusive and ", exclusive" or "", contract.endMonth,
             contract.yearEnd, tostring(contract.met), contract.misses or 0, contract.feeFactor or 1, contract.paid or 0,
             EqSponsorManager.cancelCost(farmId, contract.brand)))
+        local from = (contract.signedMonth or 0) + (EqSponsorManager.config.discountMonths or 0)
+        table.insert(lines, string.format("  discounts repaint/repair/buy %d/%d/%d%%: %s (from month %d, now month %d)",
+            math.floor((contract.repaint or 0) * 100 + 0.5), math.floor((contract.repair or 0) * 100 + 0.5),
+            math.floor((contract.purchase or 0) * 100 + 0.5),
+            (EqCompetitionManager.month or 0) >= from and "on" or "not yet", from, EqCompetitionManager.month or 0))
     end
     if #contracts == 0 then table.insert(lines, "No sponsor contract") end
     table.insert(lines, string.format("Sponsor boards: %d", EqSponsorManager.boards(farmId)))
