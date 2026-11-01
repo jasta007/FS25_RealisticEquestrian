@@ -357,7 +357,34 @@ function EqLizard.isBuilt(placeable)
     local names = spec.stateNameToIndex or {}
     local finish = names.FINALIZE or names.DONE
     if index == nil or finish == nil then return false end
-    return index >= finish
+    if index >= finish then return true end
+    -- James (2026-11-01): everything delivered but still being built counts as built
+    local ok, ready = pcall(EqLizard.materialsReady, spec, index, finish)
+    return ok and ready == true
+end
+
+
+--- Is everything still to be built already in the plinth's storage? Building states use their
+--- inputs' remainingAmount from the storage (FS25 ConstructibleStateBuilding).
+--- @param spec table spec_constructible
+--- @param index number the state now
+--- @param finish number the first finished state
+--- @return boolean
+function EqLizard.materialsReady(spec, index, finish)
+    if spec.storage == nil or spec.stateMachine == nil then return false end
+    local need = {}
+    for i = math.max(index, 1), finish - 1 do
+        local state = spec.stateMachine[i]
+        for _, input in ipairs(state ~= nil and state.inputs or {}) do
+            local fillType = type(input.fillType) == "table" and input.fillType.index or input.fillType or input.fillTypeIndex
+            local amount = input.remainingAmount or input.amount or 0
+            if fillType ~= nil and amount > 0 then need[fillType] = (need[fillType] or 0) + amount end
+        end
+    end
+    for fillType, amount in pairs(need) do
+        if (spec.storage:getFillLevel(fillType) or 0) < amount - 1 then return false end
+    end
+    return true
 end
 
 

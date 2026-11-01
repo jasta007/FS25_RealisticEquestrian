@@ -969,6 +969,8 @@ lapses when the event opens.
   own heap material, as a real heap of it looks); **2,000 l of logs** (about five tree logs, at the wood trigger) go on top as
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
+- **Build time:** each stage takes an in-game hour once its material is in. A plinth with all
+  its materials delivered but still building at the results counts as finished.
 - **Results:** if the plinth is finished and the branding is there, Lizard pays 2,000 (Novice),
   12,000 (Intermediate) or 30,000 (Championship). If not, nothing, and **no penalty**. Either way
   the plinth then collapses (the lizard tips over, the lot sinks) and is gone.

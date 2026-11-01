@@ -5132,6 +5132,20 @@ end)()
             check("lizard: an accepted deal adds Lizard's machines to the plinths, after the yearly sponsors",
                 one[1] == "FENDT" and one[2] == "LIZARD" and #one == 2 and #two == 0)
         end
+        check("lizard: everything delivered but not yet built counts as built (James)", (function()
+            local levels = { [1] = 0, [2] = 2000, [3] = 1000 }
+            local storage = { getFillLevel = function(_, f) return levels[f] end }
+            local machine = { { inputs = { { fillType = { index = 1 }, remainingAmount = 0 } } },
+                { inputs = { { fillType = { index = 2 }, remainingAmount = 2000 } } },
+                { inputs = { { fillType = { index = 3 }, remainingAmount = 1000 } } }, {}, {} }
+            local spec = { storage = storage, stateMachine = machine, stateIndex = 2, stateNameToIndex = { FINALIZE = 4, DONE = 5 } }
+            local all = EqLizard.isBuilt({ spec_constructible = spec })
+            levels[3] = 600
+            local short = EqLizard.isBuilt({ spec_constructible = spec })
+            spec.stateIndex = 4
+            local done = EqLizard.isBuilt({ spec_constructible = spec })
+            return all and not short and done
+        end)())
         check("lizard: its event is known by the deal's event id", (function()
             EqLizard.deals[4] = { month = 1, state = "accepted", eventId = 9 }
             local yes = EqLizard.isLizardEvent({ id = 9, hosted = { farmId = 4 } })
