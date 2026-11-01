@@ -92,8 +92,8 @@ function EqHosting.read(xmlFile)
         cancel = xmlFile:getFloat(p .. "#cancel", -15),
         quality = xmlFile:getFloat(p .. "#quality", 5),
         varietyFull = xmlFile:getFloat(p .. "#varietyFull", 5),
-        aheadEach = xmlFile:getFloat(p .. "#aheadEach", 1),
-        aheadMax = xmlFile:getFloat(p .. "#aheadMax", 5),
+        aheadEach = xmlFile:getFloat(p .. "#aheadEach", 2),
+        aheadMax = xmlFile:getFloat(p .. "#aheadMax", 10),
         buzz = xmlFile:getInt(p .. "#buzz", 5),
     }
 

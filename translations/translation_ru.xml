@@ -901,7 +901,7 @@
         <text name="eq_host_part_weather" text="погода"/>
         <text name="eq_host_buzz_high" text="Все об этом говорят"/>
         <text name="eq_host_buzz_low" text="Тихо"/>
-        <text name="eq_host_aheadBonus" text="+%d популярности"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d за раннее бронирование)"/>
         <text name="eq_host_advert_none" text="Без рекламы"/>
         <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
         <text name="eq_host_advert_local" text="Местная"/>

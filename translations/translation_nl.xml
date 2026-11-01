@@ -901,7 +901,7 @@
         <text name="eq_host_part_weather" text="weer"/>
         <text name="eq_host_buzz_high" text="Iedereen praat erover"/>
         <text name="eq_host_buzz_low" text="Rustig"/>
-        <text name="eq_host_aheadBonus" text="+%d populariteit"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d voor vroeg boeken)"/>
         <text name="eq_host_advert_none" text="Geen reclame"/>
         <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
         <text name="eq_host_advert_local" text="Lokaal"/>

@@ -901,7 +901,7 @@
         <text name="eq_host_part_weather" text="天气"/>
         <text name="eq_host_buzz_high" text="热议中"/>
         <text name="eq_host_buzz_low" text="冷清"/>
-        <text name="eq_host_aheadBonus" text="人气 +%d"/>
+        <text name="eq_host_popularityAhead" text="%d (提前预订 +%d)"/>
         <text name="eq_host_advert_none" text="不做广告"/>
         <text name="eq_host_advert_option" text="%s，%s (+%d)"/>
         <text name="eq_host_advert_local" text="本地"/>

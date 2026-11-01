@@ -115,15 +115,12 @@ end
 function EqHostView.monthOptions(months)
     local texts = {}
     local now = EqCompetitionManager.month or 0
-    local config = EqHostVenue.config
     for _, month in ipairs(months) do
         local ahead = month - now
         local key = ahead == 1 and "eq_host_monthOption1" or "eq_host_monthOption"
         local text, named = EqHostManager.monthText(month)
         -- Without a month's name the text already says "in N months": don't say it twice.
         text = named and string.format(g_i18n:getText(key), text, ahead) or text
-        local bonus = config ~= nil and EqHosting.aheadPoints(config, ahead) or 0
-        if bonus > 0 then text = text .. " " .. string.format(g_i18n:getText("eq_host_aheadBonus"), bonus) end
         table.insert(texts, text)
     end
     return texts
@@ -185,7 +182,12 @@ function EqHostView.panelLines(farmId, row, month)
             setup = string.format(g_i18n:getText("eq_host_setupWithAdvert"), row.setup, money(row.advertCost))
         end
         table.insert(lines, { label = g_i18n:getText("eq_host_label_setup"), value = setup })
-        table.insert(lines, { label = g_i18n:getText("eq_host_label_popularity"), value = row.popularity })
+        -- The booking-ahead bonus goes on the popularity line, not in the month picker (James).
+        local config = EqHostVenue.config
+        local bonus = (config ~= nil and month ~= nil) and EqHosting.aheadPoints(config, month - (now or 0)) or 0
+        local popularity = bonus > 0 and string.format(g_i18n:getText("eq_host_popularityAhead"), row.popularity, bonus)
+            or row.popularity
+        table.insert(lines, { label = g_i18n:getText("eq_host_label_popularity"), value = popularity })
         table.insert(lines, { label = g_i18n:getText("eq_host_label_visitors"),
             value = string.format(g_i18n:getText("eq_host_visitors"), takings.competitors, takings.visitors) })
         table.insert(lines, { label = g_i18n:getText("eq_host_label_takings"),

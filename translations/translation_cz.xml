@@ -901,7 +901,7 @@
         <text name="eq_host_part_weather" text="počasí"/>
         <text name="eq_host_buzz_high" text="Všichni o tom mluví"/>
         <text name="eq_host_buzz_low" text="Klid"/>
-        <text name="eq_host_aheadBonus" text="+%d oblíbenosti"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d za včasnou rezervaci)"/>
         <text name="eq_host_advert_none" text="Bez reklamy"/>
         <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
         <text name="eq_host_advert_local" text="Místní"/>
