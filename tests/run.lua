@@ -5514,7 +5514,7 @@ end)()
         local lz = EqLizard.read(TestXML.load("data/sponsors.xml"))
         check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
             and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
-            and EqLizard.material(lz, "STONE").amount == 1000 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
+            and EqLizard.material(lz, "STONE").amount == 1200 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
         check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
             and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
         check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType

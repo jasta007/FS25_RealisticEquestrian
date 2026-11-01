@@ -47,7 +47,7 @@ PRICE = 500
 # The materials Lizard may ask for (James, 2026-11-01: "sometimes straw, sometimes stones,
 # sometimes wood chips"; straw 10,000 l, the others 1,000 l). fillPlane: the game's texture.
 VARIANTS = [
-    {"name": "lizardPlinthStone", "fillType": "STONE", "amount": 1000, "rate": 1000, "fillPlane": "stone",
+    {"name": "lizardPlinthStone", "fillType": "STONE", "amount": 1200, "rate": 1200, "fillPlane": "stone",
      "preview": (128, 124, 116), "tip": "STONE", "bale": False},
     {"name": "lizardPlinthWoodChips", "fillType": "WOODCHIPS", "amount": 1000, "rate": 1000, "fillPlane": "woodChips",
      "preview": (150, 112, 70), "tip": "WOODCHIPS", "bale": False},

@@ -103,7 +103,7 @@
         <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
         <text name="eq_shop_lizardPlinth" text="Lizard Plinth"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizard&#x27;s special plinth for the event it sponsors. Build it by delivering to its triggers at the front; a Lizard machine on its log deck counts extra. It collapses after the event."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,000 l stones, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,200 l stones, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Needs 1,000 l wood chips, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_shop_lizardPlinth_straw" text="Needs 10,000 l straw, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_lizard_title" text="%s sponsorship offer"/>

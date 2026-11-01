@@ -105,7 +105,7 @@
         <text name="eq_plinth_penalty" text="%d машин(ы) конкурентов на ваших спонсорских подиумах: из гонорара спонсора вычтено %s."/>
         <text name="eq_shop_lizardPlinth" text="Постамент Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Особый постамент Lizard для мероприятия, которое она спонсирует. Постройте его, доставляя материалы к триггерам спереди; техника Lizard на настиле из брёвен засчитывается дополнительно. После мероприятия он рушится."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Нужно: 1000 л камней, 10000 л древесины и 1000 л досок."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Нужно: 1200 л камней, 10000 л древесины и 1000 л досок."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Нужно: 1000 л щепы, 10000 л древесины и 1000 л досок."/>
         <text name="eq_shop_lizardPlinth_straw" text="Нужно: 10 000 л соломы, 10000 л древесины и 1000 л досок."/>
         <text name="eq_lizard_title" text="Спонсорское предложение от %s"/>

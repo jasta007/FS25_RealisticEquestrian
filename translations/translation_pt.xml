@@ -105,7 +105,7 @@
         <text name="eq_plinth_penalty" text="%d máquina(s) rival(is) nas suas plataformas de patrocínio: %s descontados da quota do patrocinador."/>
         <text name="eq_shop_lizardPlinth" text="Pedestal Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="O pedestal especial da Lizard para o evento que patrocina. Constrói-o entregando materiais nos acionadores à frente; uma máquina Lizard no estrado de toros conta a dobrar. Desaba depois do evento."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Precisa de 1000 l de pedras, 10000 l de madeira e 1000 l de tábuas."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Precisa de 1200 l de pedras, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Precisa de 1000 l de estilha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_shop_lizardPlinth_straw" text="Precisa de 10 000 l de palha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_lizard_title" text="Oferta de patrocínio da %s"/>

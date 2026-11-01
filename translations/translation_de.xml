@@ -105,7 +105,7 @@
         <text name="eq_plinth_penalty" text="%d fremde Maschine(n) auf deinen Sponsor-Podesten: %s vom Sponsorhonorar abgezogen."/>
         <text name="eq_shop_lizardPlinth" text="Lizard-Podest"/>
         <text name="eq_shop_lizardPlinth_function" text="Das besondere Podest von Lizard für die Veranstaltung, die Lizard sponsert. Baue es, indem du an die Trigger vorne lieferst; eine Lizard-Maschine auf dem Stammdeck zählt extra. Nach der Veranstaltung bricht es zusammen."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Benötigt 1.000 l Steine, 10.000 l Holz und 1.000 l Bretter."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Benötigt 1.200 l Steine, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Benötigt 1.000 l Hackschnitzel, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_straw" text="Benötigt 10.000 l Stroh, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_lizard_title" text="Sponsorenangebot von %s"/>

@@ -105,7 +105,7 @@
         <text name="eq_plinth_penalty" text="%d macchina/e rivale/i sulle tue pedane sponsor: %s tolti dal compenso dello sponsor."/>
         <text name="eq_shop_lizardPlinth" text="Piedistallo Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Il piedistallo speciale di Lizard per l&#x27;evento che sponsorizza. Costruiscilo consegnando ai trigger davanti; una macchina Lizard sulla piattaforma di tronchi conta di più. Crolla dopo l&#x27;evento."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Richiede 1.000 l di pietre, 10.000 l di legno e 1.000 l di assi."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Richiede 1.200 l di pietre, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Richiede 1.000 l di cippato, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_shop_lizardPlinth_straw" text="Richiede 10.000 l di paglia, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_lizard_title" text="Offerta di sponsorizzazione di %s"/>

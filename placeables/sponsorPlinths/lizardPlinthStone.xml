@@ -53,7 +53,7 @@
                     <toggleMesh node="lizard" active="false" updatePhysics="true"/>
                     <toggleMesh node="sign"   active="false" updatePhysics="false"/>
                     <toggleHotspot index="1" isVisible="true"/>
-                    <input fillType="STONE" amount="1000" usagePerHour="1000"/>
+                    <input fillType="STONE" amount="1200" usagePerHour="1200"/>
                     <sounds>
                         <active template="constructibleActive"/>
                     </sounds>
@@ -102,7 +102,7 @@
         </sellingStation>
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
-            <capacity fillType="STONE" capacity="1200"/>
+            <capacity fillType="STONE" capacity="1440"/>
             <capacity fillType="WOOD" capacity="30000"/>
             <capacity fillType="BOARDS" capacity="4000"/>
         </storage>

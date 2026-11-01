@@ -105,7 +105,7 @@
         <text name="eq_plinth_penalty" text="%d maszyn(y) konkurencji na twoich podestach sponsora: odjęto %s z wynagrodzenia sponsora."/>
         <text name="eq_shop_lizardPlinth" text="Podest Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Specjalny podest Lizard na wydarzenie, które sponsoruje. Zbuduj go, dostarczając materiały do wyzwalaczy z przodu; maszyna Lizard na pokładzie z bali liczy się podwójnie. Po wydarzeniu się zawala."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Wymaga 1000 l kamieni, 10000 l drewna i 1000 l desek."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Wymaga 1200 l kamieni, 10000 l drewna i 1000 l desek."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Wymaga 1000 l zrębków, 10000 l drewna i 1000 l desek."/>
         <text name="eq_shop_lizardPlinth_straw" text="Wymaga 10 000 l słomy, 10000 l drewna i 1000 l desek."/>
         <text name="eq_lizard_title" text="Oferta sponsorska %s"/>

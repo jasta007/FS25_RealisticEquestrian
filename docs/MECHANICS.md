@@ -1035,7 +1035,7 @@ lapses when the event opens.
   Lizard steps aside.
 - **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
   constructible, like the game's rental houses: a few stakes until you deliver its materials to
-  the triggers in front of it. One bulk load Lizard picks at random, **1,000 l stone**, **1,000 l
+  the triggers in front of it. One bulk load Lizard picks at random, **1,200 l stone**, **1,000 l
   wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (with the game's
   own heap material, as a real heap of it looks); **10,000 l of logs** (dropped at the wood trigger) go on top as
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
