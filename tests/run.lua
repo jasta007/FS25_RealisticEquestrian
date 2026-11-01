@@ -852,6 +852,19 @@ do
         for _ = 1, 1200 do share = EqTraining.workStep(jumps, 100) end
         check("jumps lift the riding cost, then it fades", after > 0.3 and share < 0.26,
             string.format("after %.3f, later %.3f", after, share))
+        -- A test of figures costs more of the bar from the start and trains temperament faster.
+        local tested = EqTraining.newSheet()
+        tested.routine.active, tested.routine.kind, tested.routine.mult = true, "path", 3
+        check("a dressage test costs TEST_BAR_SHARE of the bar however low the work",
+            EqTraining.barShare(tested, EqTraining.CRUISE_BAR_SHARE) == EqTraining.TEST_BAR_SHARE
+            and EqTraining.barShare(easy, EqTraining.CRUISE_BAR_SHARE) == EqTraining.CRUISE_BAR_SHARE)
+        local markers = EqTraining.newSheet()
+        markers.routine.active, markers.routine.kind, markers.routine.mult = true, "markers", 3
+        EqTraining.routineTrain(tested, false, 1000)
+        EqTraining.routineTrain(markers, false, 1000)
+        check("a dressage test trains temperament TEST_TEMPERAMENT_FACTOR times as fast as the markers",
+            math.abs(tested.focused.temperament - markers.focused.temperament * EqTraining.TEST_TEMPERAMENT_FACTOR) < 1e-12
+            and markers.focused.temperament > 0)
         local sheet = EqTraining.newSheet()
         EqTraining.addRiding(sheet, "canter", 1000, 0.25)
         check("easy riding counts less towards the player's share", sheet.ms.canter == 250)

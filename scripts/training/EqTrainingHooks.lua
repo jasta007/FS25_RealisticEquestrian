@@ -865,7 +865,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     sheet.barFactor = EqTraining.ridingBarFactor(stamina)
     EqTraining.addRiding(sheet, gait, dt, share)
-    adjustRiding(spec, gait, sheet.barFactor / share, dt)
+    adjustRiding(spec, gait, sheet.barFactor / EqTraining.barShare(sheet, share), dt)
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt * share) end
 end
 
@@ -1622,7 +1622,10 @@ local function pathRows(rows, routine)
             -- The keys beside the panel while lateral work is asked for or coming up.
             EqTrainingHud.drawPanelNote(g_i18n:getText("eq_lat_keys"), COLOR.grey or color, true)
         end
-        if event ~= nil and event.kind == "change" then
+        if (run.wrongNowMs or 0) >= EqDressagePath.WRONG_TELL_MS and (event == nil or event.kind ~= "change") then
+            -- At the wrong gait (and no change coming that would fix it): the gait asked, in red.
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)), nil, COLOR.red or color)
+        elseif event ~= nil and event.kind == "change" then
             -- "Gait change" and an arrow up or down while it comes, then "Trot!" once it is due
             -- (James, 2026-10-31: the gait's name straight away made him press it early).
             local share = math.max(0, math.min(1, dist / run.warn))

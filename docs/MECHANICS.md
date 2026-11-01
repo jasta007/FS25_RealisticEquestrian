@@ -269,7 +269,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
   further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
   circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
-  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -321,6 +321,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   multiplier one step, below 4 drops it one; an error drops it two. Finishing pays up to a minute
   of x8 temperament training at once, all of it at 70% and over, a fifth of it at 40% or under,
   and the next test can start 20 s later (5 s after an elimination).
+- A test of figures is harder work than the marker routine: temperament builds twice as fast
+  (its payoff at the end too), and the riding bar fills at 1.5 times the usual rate from the first
+  movement, so one full test on the big arena fills a green horse's bar.
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).

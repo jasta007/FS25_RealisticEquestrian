@@ -199,6 +199,9 @@ EqDressagePath.DEV_PER_M = 12
 -- At the wrong gait: this much a second, at most WRONG_MAX a movement.
 EqDressagePath.WRONG_PER_S = 0.5
 EqDressagePath.WRONG_MAX = 5
+-- At the wrong gait this long in a row, the asked gait shows in red (James, 2026-11-01: a half
+-- volte walked when it wanted a trot scored 0 and "looked fine to me": nothing on screen said so).
+EqDressagePath.WRONG_TELL_MS = 800
 -- A change out of its window: this much a metre beyond it, at most CHANGE_MAX (also a missed one).
 EqDressagePath.CHANGE_PER_M = 0.8
 EqDressagePath.CHANGE_MAX = 3
@@ -1682,7 +1685,7 @@ function EqDressagePath.newRun(test, temperament)
     local t = (temperament or 50) / 100
     local run = { test = test, frame = test.frame, i = 1, s = 0, ev = 1, gait = EqDressagePath.PROCEED, started = false,
         look = lerp(EqDressagePath.LOOK, t), warn = lerp(EqDressagePath.WARN, t), tolerance = lerp(EqDressagePath.TOLERANCE, t),
-        cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, dev = 0, clock = 0,
+        cur = 1, marks = {}, acc = {}, devAt = {}, errors = 0, lostMs = 0, outMs = 0, stallMs = 0, wrongNowMs = 0, dev = 0, clock = 0,
         temper = t, sec = 1 }
     -- Events live on the test, which a new run reuses.
     for _, e in ipairs(test.events) do e.shown, e.stopped, e.wrongMs = nil, nil, nil end
@@ -2132,9 +2135,13 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
 
     -- At the wrong gait, once settled after the last change or halt.
     local settling = run.proceedMs ~= nil and run.clock - run.proceedMs < 3000
+    -- run.wrongNowMs: how long it has been at the wrong gait in a row, for the HUD's red prompt.
     if not free and not settling and not EqDressagePath.matches(move, run.gait) then
         local acc = run.acc[math.min(m, #test.moves)]
         acc.wrongMs = acc.wrongMs + dt
+        run.wrongNowMs = (run.wrongNowMs or 0) + dt
+    else
+        run.wrongNowMs = 0
     end
 
     -- Errors of course.
