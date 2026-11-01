@@ -58,7 +58,7 @@
       </TransformGroup>
       <Shape name="eqSponsor_1" shapeId="5" clipDistance="600" nodeId="24" castsShadows="false" receiveShadows="true" materialIds="8"/>
       <TransformGroup name="collision" nodeId="25">
-        <Shape name="col" shapeId="6" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="26" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="6" static="true" collisionFilterGroup="0x1037" collisionFilterMask="0xfffffbff" density="0.01" nodeId="26" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>

@@ -44,7 +44,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 import show_jumps as sj  # noqa: E402
 import xc_jumps as xc  # noqa: E402
 from eqdds import save_dxt1  # noqa: E402
-from xc_jumps import COLLISION_GROUP, COLLISION_MASK, Mesh, fmt, shape_lines, store_image  # noqa: E402
+from xc_jumps import COLLISION_MASK, Mesh, fmt, shape_lines, store_image  # noqa: E402
+# Our jumps' collision group (xc_jumps.COLLISION_GROUP, 0x1034) plus the ground bits 0x1 and 0x2 a
+# vanilla drive-on floor has (bunker silo 0x17): without them hooves go silent on a plinth (a trial,
+# James 2026-11-01; the game's step sound code can't be read).
+COLLISION_GROUP = "0x1037"
 
 OUT = "placeables/sponsorPlinths"
 STONE = "plinthStone_diffuse.dds"

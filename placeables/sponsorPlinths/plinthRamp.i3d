@@ -51,7 +51,7 @@
       <Shape name="eqBoardFace" shapeId="3" clipDistance="600" nodeId="20" castsShadows="true" receiveShadows="true" materialIds="7"/>
       <Shape name="eqSponsor_1" shapeId="4" clipDistance="600" nodeId="21" castsShadows="false" receiveShadows="true" materialIds="8"/>
       <TransformGroup name="collision" nodeId="22">
-        <Shape name="col" shapeId="5" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="23" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="5" static="true" collisionFilterGroup="0x1037" collisionFilterMask="0xfffffbff" density="0.01" nodeId="23" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>
