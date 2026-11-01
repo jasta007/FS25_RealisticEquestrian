@@ -5032,6 +5032,11 @@ end)()
             and paired[2].machine == c)
         check("plinths: other brands on show cost a tenth of the fee each, at most half", EqPlinths.penalty(0) == 0
             and math.abs(EqPlinths.penalty(2) - 0.2) < 1e-9 and EqPlinths.penalty(9) == 0.5 and EqPlinths.penalty(nil) == 0)
+        check("sponsor pieces: a parked sponsor's machine picks the brand, else a piece keeps its own, else in turn",
+            EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 0, "MCCORMICK", "CANCELA") == "MCCORMICK"
+            and EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 0, "FENDT", "MCCORMICK") == "MCCORMICK"
+            and EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 1, nil, "CLAAS") == "MCCORMICK"
+            and EqSponsors.pickBrand({}, 0, "FENDT", "FENDT") == nil)
         check("plinths: no sponsor, nothing counted", EqPlinths.count(1, {}) == 0 and EqPlinths.count(1, nil) == 0)
         do
             local savedMission, savedTranslation, savedTime = g_currentMission, getWorldTranslation, g_time

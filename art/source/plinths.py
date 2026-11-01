@@ -285,7 +285,10 @@ def turntable():
     top = h + 0.008
     solid(stone, col, [(z0, 0.0), (R + length, 0.0), (z1, top), (z0, top)], -hw, hw)
     # a curved board round the front (-z), the logo bent round it in strips
-    width, y0, bh = 2.4, 0.08, h - 0.22
+    # the board only as wide as the logo needs, so the logo fills it (James, 2026-11-01: it sat
+    # small in the middle of a long board)
+    y0, bh = 0.08, h - 0.22
+    width = (bh - 0.08) * ASPECT + 0.3
     steps = 12
     span = width / R
     for layer, mesh, out, inset in ((0, paint, 0.04, 0.0), (1, white, 0.046, 0.04)):
@@ -306,7 +309,7 @@ def turntable():
                            for i, rr in enumerate((r0, r1, r1, r0))]
             lo, hi = (y0, y0 + bh) if layer == 0 else (y0 + inset, y0 + bh - inset)
             prism(mesh, pts, (0.0, lo, 0.0), (1, 0, 0), (0, 0, 1), (0, 1, 0), hi - lo)
-    lh = bh - 0.14
+    lh = bh - 0.08
     lw = min(lh * ASPECT, width - 0.2)
     lh = lw / ASPECT
     logo = Mesh()
