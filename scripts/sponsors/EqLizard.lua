@@ -198,12 +198,13 @@ function EqLizard.consider(farmId, booking)
     local config = EqLizard.config
     if config == nil or booking == nil then return end
     local deal = EqLizard.deals[farmId]
-    if deal ~= nil and deal.month == booking.month then return end
+    -- (with eqLizard's 100% switched on, a booking that rolled no offer rolls again)
+    if deal ~= nil and deal.month == booking.month and not (EqLizard.testAlways and deal.state == "none") then return end
     if sponsored(farmId, booking.rating) then
         EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, state = "none" }
         return
     end
-    local material = EqLizard.roll(config, math.random(), math.random())
+    local material = EqLizard.roll(config, EqLizard.testAlways and 0 or math.random(), math.random())
     if material == nil then
         EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, state = "none" }
         Log:info("EqLizard: no Lizard offer for farm %d's %s %s", farmId, booking.rating, booking.type)
@@ -407,7 +408,22 @@ local function collapseStep(entry)
 end
 
 
---- Testing (eqLizard): Lizard sponsors the farm's event for sure, even over a yearly sponsor.
+--- Testing (eqLizard, James 2026-11-01): Lizard's chance of an offer is 100% for this session,
+--- so the whole flow can be tested: the roll, the popup, the plinth and the results. A booking
+--- for next month that already rolled no offer is rolled again now.
+--- @param on boolean|nil nil toggles
+--- @return string what happened
+function EqLizard.setTestAlways(on)
+    if on == nil then on = not EqLizard.testAlways end
+    EqLizard.testAlways = on or nil
+    if not on then return "Lizard's offer chance is back to normal" end
+    if EqCompetitionManager ~= nil and EqHostManager ~= nil then EqLizard.considerAll(EqCompetitionManager.month or 0) end
+    return "Lizard now offers to sponsor every unsponsored hosted event (100%) until you restart or run eqLizard off. "
+        .. "Offers come the month before the event (or when you book for next month); close the console for the popup."
+end
+
+
+--- Testing (eqLizard now): Lizard sponsors the farm's event for sure, even over a yearly sponsor.
 --- A booked event gets the offer popup now (or is accepted straight away with accept);
 --- an event already open on the calendar becomes Lizard's at once.
 --- @param farmId number

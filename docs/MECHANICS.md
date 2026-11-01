@@ -977,7 +977,7 @@ lapses when the event opens.
   only taken on the host (not tried).
 
 Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
-`eqLizard [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month; `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
+`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month; `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
 jump colour and where it came from.
 
 ## Buying horses

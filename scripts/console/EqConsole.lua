@@ -912,8 +912,15 @@ function EqConsole:consoleSponsorNew()
 end
 
 
-function EqConsole:consoleLizard(material, accept)
+--- eqLizard [on|off]: Lizard's offer chance 100% this session (James, 2026-11-01: test the whole
+--- flow, nothing signed for you). eqLizard now [stone|woodchips|straw] [accept] forces it at once.
+function EqConsole:consoleLizard(mode, material, accept)
     if g_currentMission == nil then return "No mission loaded" end
+    mode = mode ~= nil and string.lower(mode) or nil
+    if mode == nil or mode == "on" or mode == "off" then
+        return EqLizard.setTestAlways(mode == nil and nil or mode == "on")
+    end
+    if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [stone|woodchips|straw] [accept]" end
     if material == "accept" then material, accept = accept, "accept" end
     return EqLizard.force(g_currentMission:getFarmId(), material, accept == "accept")
 end
@@ -950,7 +957,7 @@ function EqConsole.register()
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
     addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
-    addConsoleCommand("eqLizard", "Testing: Lizard sponsors your booked or open hosted event for sure: eqLizard [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
+    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
