@@ -407,6 +407,52 @@ local function collapseStep(entry)
 end
 
 
+--- Testing (eqLizard): Lizard sponsors the farm's event for sure, even over a yearly sponsor.
+--- A booked event gets the offer popup now (or is accepted straight away with accept);
+--- an event already open on the calendar becomes Lizard's at once.
+--- @param farmId number
+--- @param materialName string|nil stone, woodchips or straw, random when nil
+--- @param accept boolean skip the popup
+--- @return string what happened
+function EqLizard.force(farmId, materialName, accept)
+    local config = EqLizard.config
+    if config == nil then return "Lizard is not loaded" end
+    local material
+    if materialName ~= nil and materialName ~= "" then
+        material = EqLizard.material(config, string.upper(materialName))
+        if material == nil then return "Material must be stone, woodchips or straw" end
+    else
+        material = EqLizard.roll(config, 0, math.random())
+    end
+    local event = EqHostManager.openEvent(farmId)
+    if event ~= nil then
+        local hosted = event.hosted
+        if EqLizard.isLizardEvent(event) then return "Lizard already sponsors your event" end
+        local month = EqCompetitionManager.month
+        EqLizard.deals[farmId] = { month = month, type = event.discipline, rating = hosted.rating,
+            material = material.fillType, state = "accepted", forced = true }
+        hosted.sponsor = nil
+        EqLizard.onEventOpened(event)
+        EqLizard.updateShop()
+        if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
+        return string.format("Lizard now sponsors %s: build the %s Lizard plinth (shop, Sponsor plinths) before the results",
+            EqCompetitionManager.eventTitle(event), material.fillType)
+    end
+    local booking = EqHostManager.bookings[farmId]
+    if booking == nil then return "Book a hosted event first (Events, Host), then run eqLizard again" end
+    EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, material = material.fillType,
+        state = "offered", forced = true }
+    EqLizard.asked[farmId] = nil
+    if accept then
+        EqLizard.answer(farmId, true)
+        return string.format("Lizard will sponsor your %s (%s plinth)", EqHostManager.title(booking.type, booking.rating), material.fillType)
+    end
+    EqLizard.updateShop()
+    return string.format("Lizard offers to sponsor your %s (%s plinth): close the console for the popup",
+        EqHostManager.title(booking.type, booking.rating), material.fillType)
+end
+
+
 -- HOOKS
 
 --- A hosted event opens: an accepted deal makes it Lizard's; an unanswered offer lapses.
@@ -423,7 +469,7 @@ function EqLizard.onEventOpened(event)
         return
     end
     if deal.state ~= "accepted" then return end
-    if hosted.sponsor ~= nil then
+    if hosted.sponsor ~= nil and not deal.forced then
         -- a yearly sponsor signed since: Lizard steps aside, with no hard feelings
         tell(farmId, "EQ_SPONSOR_ENDED", string.format(g_i18n:getText("eq_lizard_stepAside"), EqLizard.title(), hosted.sponsor))
         EqLizard.deals[farmId] = nil
@@ -575,6 +621,7 @@ function EqLizard.saveToXMLFile(xmlFile, key)
         xmlFile:setString(dealKey .. "#state", deal.state)
         if deal.material ~= nil then xmlFile:setString(dealKey .. "#material", deal.material) end
         if deal.eventId ~= nil then xmlFile:setInt(dealKey .. "#eventId", deal.eventId) end
+        if deal.forced then xmlFile:setBool(dealKey .. "#forced", true) end
     end
 end
 
@@ -593,7 +640,7 @@ function EqLizard.loadFromXMLFile(xmlFile, key)
         if farmId ~= nil and state ~= nil then
             EqLizard.deals[farmId] = { month = xmlFile:getInt(dealKey .. "#month", 0), type = xmlFile:getString(dealKey .. "#type"),
                 rating = xmlFile:getString(dealKey .. "#rating"), state = state, material = xmlFile:getString(dealKey .. "#material"),
-                eventId = xmlFile:getInt(dealKey .. "#eventId") }
+                eventId = xmlFile:getInt(dealKey .. "#eventId"), forced = xmlFile:getBool(dealKey .. "#forced", false) or nil }
         end
         i = i + 1
     end

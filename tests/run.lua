@@ -5139,6 +5139,27 @@ end)()
             EqLizard.deals[4] = nil
             return yes and not no
         end)())
+        check("lizard: eqLizard makes an open hosted event Lizard's, even over a yearly sponsor", (function()
+            local savedManager = EqCompetitionManager
+            EqCompetitionManager = EqCompetitionManager or { eventTitle = function() return "the event" end }
+            local savedConfig, savedEvents, savedMonth = EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month
+            local savedBookings = EqHostManager.bookings
+            EqLizard.config = lz
+            EqHostManager.bookings = {}
+            EqCompetitionManager.events = {}
+            local none = EqLizard.force(6, nil, false)
+            local bad = EqLizard.force(6, "gold", false)
+            local event = { id = 41, discipline = "dressage", hosted = { farmId = 6, rating = "novice", sponsor = "Someone" } }
+            EqCompetitionManager.events = { event }
+            EqCompetitionManager.month = 5
+            local ok = pcall(EqLizard.force, 6, "straw", false)
+            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == "STRAW"
+            EqLizard.deals[6] = nil
+            EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month = savedConfig, savedEvents, savedMonth
+            EqHostManager.bookings = savedBookings
+            EqCompetitionManager = savedManager
+            return result and string.find(none, "Book", 1, true) ~= nil and string.find(bad, "stone", 1, true) ~= nil
+        end)())
     end
 
     -- Sponsor colours: the brand's most colourful paint, our list, else none.
