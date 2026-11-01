@@ -892,6 +892,7 @@
         <text name="eq_host_part_reputation" text="reputazione"/>
         <text name="eq_host_part_star" text="cavallo stella"/>
         <text name="eq_host_part_winter" text="inverno"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_part_quality" text="qualità del percorso"/>
         <text name="eq_host_part_shops" text="negozi"/>
         <text name="eq_host_part_ahead" text="prenotato in anticipo"/>

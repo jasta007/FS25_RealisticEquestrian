@@ -894,6 +894,7 @@
         <text name="eq_host_part_reputation" text="Ruf"/>
         <text name="eq_host_part_star" text="Starpferd"/>
         <text name="eq_host_part_winter" text="Winter"/>
+        <text name="eq_host_part_sponsor" text="Sponsor"/>
         <text name="eq_host_part_quality" text="Parcoursbau"/>
         <text name="eq_host_part_shops" text="Hofläden"/>
         <text name="eq_host_part_ahead" text="früh gebucht"/>
