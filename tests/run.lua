@@ -4669,8 +4669,82 @@ end)()
     owned[2] = { brand = "A", categories = { "plows" }, price = 60000 }
     checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1 })
     check("sponsors: two of theirs, no rivals, one board: can sign", checks.ok)
-    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1, contract = {} })
-    check("sponsors: one sponsor at a time", not checks.ok)
+    offer.exclusive = true
+    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1, contract = { brand = "Z" } })
+    check("sponsors: an exclusive sponsor wants no other", not checks.ok)
+
+    -- Several sponsors (James, 2026-10-31): up to three, big always exclusive, moderate maybe,
+    -- small never, and never two in the same shop category.
+    check("sponsors: up to three at once", sp.maxSponsors == 3)
+    check("sponsors: big always exclusive, small never", EqSponsorship.rollExclusive(sp.sizeByName.big, EqRandom.new(1))
+        and not EqSponsorship.rollExclusive(sp.sizeByName.small, EqRandom.new(1)))
+    check("sponsors: moderate sometimes exclusive", (function()
+        local rng, yes = EqRandom.new("moderate"), 0
+        for _ = 1, 200 do if EqSponsorship.rollExclusive(sp.sizeByName.moderate, rng) then yes = yes + 1 end end
+        return yes > 60 and yes < 140
+    end)())
+    local function offerOf(list, size)
+        for _, o in ipairs(list) do if o.size == size then return o end end
+    end
+    check("sponsors: offers carry exclusivity", offerOf(offers, "big").exclusive == true and offerOf(offers, "small").exclusive == false)
+    local shop2 = {}
+    local function add2(brand, category, price) table.insert(shop2, { brand = brand, categories = { category }, price = price, name = brand .. category }) end
+    add2("ZETOR", "tractorsS", 30000); add2("ZETOR", "tractorsM", 60000)
+    add2("STEYR", "tractorsM", 70000); add2("STEYR", "tractorsL", 150000)
+    add2("KRONE", "balers", 40000); add2("KRONE", "mowers", 20000); add2("KRONE", "tedders", 15000)
+    add2("POTT", "plows", 9000); add2("POTT", "cultivators", 8000); add2("POTT", "plows", 9500)
+    add2("BUCK", "trailers", 9000); add2("BUCK", "trailers", 9100); add2("BUCK", "trailers", 9200)
+    add2("TREE", "forestry", 9000)
+    local p2 = EqSponsorship.profiles(sp, shop2)
+    check("sponsors: tractors are easy kit, plows are not", p2.ZETOR.easy and p2.STEYR.easy and not p2.POTT.easy)
+    local r2 = EqSponsorship.rank(sp, p2)
+    check("sponsors: two tractors are enough for a small sponsor (easy kit)", p2.ZETOR.size == "small" and p2.STEYR.size == "small")
+    check("sponsors: one forestry machine still no sponsor", p2.TREE.size == nil and #r2 == 5)
+    check("sponsors: one car is enough", (function()
+        local p = EqSponsorship.profiles(sp, { { brand = "CAR", categories = { "cars" }, price = 40000 } })
+        EqSponsorship.rank(sp, p)
+        return p.CAR.size == "small"
+    end)())
+    check("sponsors: Zetor and Steyr share medium tractors", table.concat(EqSponsorship.sharedCategories(p2.ZETOR, p2.STEYR), ",") == "tractorsM")
+    local function small(brand) return { brand = brand, size = "small", machines = 1, window = 0.2, brandingNeed = 1, exclusive = false, fee = 4000 } end
+    local mine = { { brand = "ZETOR", categories = { "tractorsS" }, price = 30000 }, { brand = "STEYR", categories = { "tractorsL" }, price = 150000 },
+        { brand = "KRONE", categories = { "balers" }, price = 40000 }, { brand = "POTT", categories = { "plows" }, price = 9000 },
+        { brand = "BUCK", categories = { "trailers" }, price = 9000 } }
+    local zetor = EqSponsorship.contractFrom(small("ZETOR"), 0)
+    local function checksFor(brand, contracts)
+        return EqSponsorship.signChecks(sp, small(brand), { owned = mine, profile = p2[brand], boards = 1, contracts = contracts, profiles = p2 })
+    end
+    local function failed(c, id)
+        for _, check in ipairs(c) do if check.id == id then return not check.ok end end
+    end
+    local c = checksFor("STEYR", { zetor })
+    check("sponsors: no Steyr next to Zetor (same category)", not c.ok and failed(c, "overlap") and not failed(c, "exclusive"))
+    check("sponsors: overlap names the sponsor and category", c[#c].brands[1].brand == "ZETOR" and c[#c].brands[1].categories[1] == "tractorsM")
+    c = checksFor("KRONE", { zetor })
+    check("sponsors: Krone next to Zetor is fine", c.ok)
+    local krone = EqSponsorship.contractFrom(small("KRONE"), 0)
+    check("sponsors: a third non-exclusive sponsor", checksFor("POTT", { zetor, krone }).ok)
+    local pott = EqSponsorship.contractFrom(small("POTT"), 0)
+    c = checksFor("BUCK", { zetor, krone, pott })
+    check("sponsors: never a fourth", not c.ok and failed(c, "slots"))
+    local big = { brand = "STEYR", size = "big", fee = 150000, exclusive = true }
+    c = checksFor("KRONE", { big })
+    check("sponsors: nothing beside an exclusive sponsor", not c.ok and failed(c, "exclusive"))
+    check("sponsors: other sponsors' machines are no rivals", #EqSponsorship.clashes({ brand = "KRONE", window = 1 },
+        { byCategory = { tractorsS = { 30000 } } }, mine, { ZETOR = true }) == 0
+        and #EqSponsorship.clashes({ brand = "KRONE", window = 1 }, { byCategory = { tractorsS = { 30000 } } }, mine) == 1)
+    check("sponsors: the biggest sponsor names the event", EqSponsorship.lead({ zetor, { brand = "M", size = "moderate", fee = 30000 }, krone }).brand == "M"
+        and EqSponsorship.lead({ zetor, EqSponsorship.contractFrom(small("KRONE"), 1) }).brand == "ZETOR" and EqSponsorship.lead({}) == nil)
+    -- Attachments (James, 2026-11-01): a header or trailer counts half toward the machines to own.
+    check("sponsors: attachments count half", sp.attachmentWeight == 0.5
+        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
+        and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
+        { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
+        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
+    local oldBig = EqSponsorship.tidy(sp, { size = "big", strictness = 0.5 })
+    local oldSmall = EqSponsorship.tidy(sp, { size = "small", strictness = 0.5, exclusive = true })
+    check("sponsors: old saves: big exclusive, small not", oldBig.exclusive == true and oldSmall.exclusive == false)
 
     local order = { novice = 1, intermediate = 2, championship = 3 }
     check("sponsors: big pays full at Championship, 25% at Intermediate, none at Novice",

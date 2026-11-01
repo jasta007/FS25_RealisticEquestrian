@@ -10,8 +10,10 @@
     - Each year a farm is offered a few of each size. Every offer rolls a strictness, from
       Relaxed to Hard bargain: stricter sponsors ask more (machines to own, a wider competitor
       clause, a higher popularity target, more sponsor boards) and pay more (fee and discounts).
-    - To sign: own enough of the sponsor's machines, none from a rival that clashes, some sponsor
-      boards, and no other sponsor. Signed, each hosted event at a rating the sponsor backs is
+    - To sign: own enough of the sponsor's machines, none from a rival that clashes, and some
+      sponsor boards. A farm can have up to three sponsors at once (James, 2026-10-31), each with
+      all its rules met: big sponsors are always exclusive (no one else), moderate ones may be,
+      small ones never are, and no two sponsors may make machines in the same shop category. Signed, each hosted event at a rating the sponsor backs is
       named after it, draws more visitors and pays its fee, more with more boards on show.
     - Each contract year the farm must host an event at the sponsor's rating that ends at its
       popularity target (and a top 3 finish for the strictest). A miss cuts next year's fee;
@@ -38,6 +40,9 @@ function EqSponsorship.read(xmlFile)
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
         branding = {},
         machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
+        maxSponsors = xmlFile:getInt("sponsors#maxSponsors", 1),
+        attachmentWeight = xmlFile:getFloat("sponsors#attachmentWeight", 1),
+        easyCategories = {},
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
     }
@@ -51,6 +56,12 @@ function EqSponsorship.read(xmlFile)
     while xmlFile:hasProperty(string.format("sponsors.skipBrands.brand(%d)", i)) do
         local name = xmlFile:getString(string.format("sponsors.skipBrands.brand(%d)#name", i))
         if name ~= nil then config.skipBrands[string.upper(name)] = true end
+        i = i + 1
+    end
+    i = 0
+    while xmlFile:hasProperty(string.format("sponsors.easyCategories.category(%d)", i)) do
+        local name = xmlFile:getString(string.format("sponsors.easyCategories.category(%d)#name", i))
+        if name ~= nil then config.easyCategories[string.upper(name)] = true end
         i = i + 1
     end
     i = 0
@@ -77,7 +88,9 @@ function EqSponsorship.read(xmlFile)
             lowerRating = xmlFile:getString(key .. "#lowerRating"),
             minItems = xmlFile:getInt(key .. "#minItems", 0),
             machinesMax = xmlFile:getInt(key .. "#machinesMax", 0),
+            exclusive = xmlFile:getFloat(key .. "#exclusive", 1),
         }
+        size.minItemsEasy = xmlFile:getInt(key .. "#minItemsEasy", size.minItems)
         table.insert(config.sizes, size)
         config.sizeByName[size.name] = size
         i = i + 1
@@ -153,7 +166,7 @@ function EqSponsorship.profiles(config, items)
         if item.brand ~= nil and not config.skipBrands[string.upper(item.brand)] and #(item.categories or {}) > 0 then
             local profile = profiles[item.brand]
             if profile == nil then
-                profile = { brand = item.brand, categories = 0, bands = 0, items = 0, byCategory = {}, bandSeen = {} }
+                profile = { brand = item.brand, categories = 0, bands = 0, items = 0, byCategory = {}, bandSeen = {}, easy = false }
                 profiles[item.brand] = profile
             end
             profile.items = profile.items + 1
@@ -166,12 +179,23 @@ function EqSponsorship.profiles(config, items)
                 if profile.byCategory[category] == nil then
                     profile.byCategory[category] = {}
                     profile.categories = profile.categories + 1
+                    if (config.easyCategories or {})[string.upper(category)] then profile.easy = true end
                 end
                 table.insert(profile.byCategory[category], item.price or 0)
             end
         end
     end
     return profiles
+end
+
+
+--- @param size table a sponsor size
+--- @param profile table a brand's profile
+--- @return number the fewest shop machines the brand needs for that size: fewer when it makes
+---     something easy to get, such as a tractor or a car (James, 2026-10-31)
+function EqSponsorship.minItemsFor(size, profile)
+    if profile.easy and size.minItemsEasy ~= nil then return math.min(size.minItems, size.minItemsEasy) end
+    return size.minItems
 end
 
 
@@ -182,14 +206,16 @@ end
 --- @return table ranked list of profiles, biggest first, each with .size and .rank
 function EqSponsorship.rank(config, profiles)
     -- A brand with fewer machines than the smallest size asks for is no sponsor at all (James,
-    -- 2026-10-31: one tree cutter nobody buys is not a sponsor).
-    local fewest = nil
-    for _, size in ipairs(config.sizes) do
-        if fewest == nil or size.minItems < fewest then fewest = size.minItems end
-    end
+    -- 2026-10-31: one tree cutter nobody buys is not a sponsor), unless what it makes is easy to
+    -- get, such as a tractor, a car or a telehandler.
     local ranked = {}
     for _, profile in pairs(profiles) do
         profile.size, profile.rank = nil, nil
+        local fewest = nil
+        for _, size in ipairs(config.sizes) do
+            local need = EqSponsorship.minItemsFor(size, profile)
+            if fewest == nil or need < fewest then fewest = need end
+        end
         if profile.items >= (fewest or 0) then table.insert(ranked, profile) end
     end
     table.sort(ranked, function(a, b)
@@ -211,7 +237,7 @@ function EqSponsorship.rank(config, profiles)
         profile.rank = i
         -- Too few machines for its place: down to the biggest size it has enough for.
         local index = sizeIndex
-        while index < #config.sizes and profile.items < config.sizes[index].minItems do index = index + 1 end
+        while index < #config.sizes and profile.items < EqSponsorship.minItemsFor(config.sizes[index], profile) do index = index + 1 end
         profile.size = config.sizes[index] ~= nil and config.sizes[index].name or "small"
     end
     return ranked
@@ -294,7 +320,7 @@ function EqSponsorship.makeOffer(config, profile, rng)
     local top3 = config.terms.top3 ~= nil and config.terms.top3.from ~= nil and strictness >= config.terms.top3.from
     local years = size.yearsMin + math.floor(rng:next() * (size.yearsMax - size.yearsMin + 1))
     local feeBase = size.feeMin + (size.feeMax - size.feeMin) * rng:next()
-    return {
+    local offer = {
         brand = profile.brand,
         size = size.name,
         strictness = strictness,
@@ -313,6 +339,20 @@ function EqSponsorship.makeOffer(config, profile, rng)
         repaint = EqSponsorship.round5(EqSponsorship.term(config, "repaint", strictness, rng)),
         purchase = EqSponsorship.round5(EqSponsorship.term(config, "purchase", strictness, rng)),
     }
+    offer.exclusive = EqSponsorship.rollExclusive(size, rng)
+    return offer
+end
+
+
+--- @param size table a sponsor size
+--- @param rng table|nil EqRandom; nil gives a moderate chance as not exclusive
+--- @return boolean the offer allows no other sponsor (James, 2026-10-31: big always, moderate
+---     maybe, small never)
+function EqSponsorship.rollExclusive(size, rng)
+    local chance = size ~= nil and size.exclusive or 1
+    if chance >= 1 then return true end
+    if chance <= 0 or rng == nil then return false end
+    return rng:next() < chance
 end
 
 
@@ -342,14 +382,16 @@ end
 --- The farm's machines that break the offer's competitor clause: another brand's machine in a
 --- category the sponsor makes, priced within the window of one of the sponsor's machines there.
 --- Pure.
+--- The farm's other sponsors' machines never count (their categories can't overlap anyway).
 --- @param offer table
 --- @param profile table the sponsor's profile (byCategory)
 --- @param owned table list of { brand, categories, price, name }
+--- @param allowed table|nil brand -> true for the farm's other sponsors
 --- @return table clashes list of owned machines
-function EqSponsorship.clashes(offer, profile, owned)
+function EqSponsorship.clashes(offer, profile, owned, allowed)
     local found = {}
     for _, machine in ipairs(owned) do
-        if machine.brand ~= offer.brand then
+        if machine.brand ~= offer.brand and not (allowed ~= nil and allowed[machine.brand]) then
             local clash = false
             for _, category in ipairs(machine.categories or {}) do
                 for _, price in ipairs(profile ~= nil and profile.byCategory[category] or {}) do
@@ -364,22 +406,68 @@ end
 
 
 --- @param brand string
---- @param owned table list of { brand }
---- @return number how many of the farm's machines are the brand's
-function EqSponsorship.ownedOf(brand, owned)
+--- @param owned table list of { brand, attachment (true for an attachment or trailer) }
+--- @param attachmentWeight number|nil what an attachment counts (James, 2026-11-01: half); 1 without
+--- @return number how many of the farm's machines are the brand's, attachments weighted
+function EqSponsorship.ownedOf(brand, owned, attachmentWeight)
     local count = 0
     for _, machine in ipairs(owned) do
-        if machine.brand == brand then count = count + 1 end
+        if machine.brand == brand then count = count + (machine.attachment and (attachmentWeight or 1) or 1) end
     end
     return count
+end
+
+
+--- @param a table|nil a brand's profile (byCategory)
+--- @param b table|nil another's
+--- @return table categories the shop categories both make, sorted
+function EqSponsorship.sharedCategories(a, b)
+    local shared = {}
+    if a == nil or b == nil then return shared end
+    for category in pairs(a.byCategory or {}) do
+        if (b.byCategory or {})[category] ~= nil then table.insert(shared, category) end
+    end
+    table.sort(shared)
+    return shared
+end
+
+
+--- @param contracts table|nil the farm's contracts
+--- @return boolean one of them is exclusive
+function EqSponsorship.hasExclusive(contracts)
+    for _, contract in ipairs(contracts or {}) do
+        if contract.exclusive then return true end
+    end
+    return false
+end
+
+
+local SIZE_ORDER = { big = 1, moderate = 2, small = 3 }
+
+--- The sponsor the farm's events are named after: the biggest, then the best paid, then the
+--- first signed. Pure.
+--- @param contracts table|nil
+--- @return table|nil contract
+function EqSponsorship.lead(contracts)
+    local best = nil
+    for _, contract in ipairs(contracts or {}) do
+        if best == nil then
+            best = contract
+        else
+            local a, b = SIZE_ORDER[contract.size] or 9, SIZE_ORDER[best.size] or 9
+            if a < b or (a == b and (contract.fee or 0) > (best.fee or 0)) then best = contract end
+        end
+    end
+    return best
 end
 
 
 --- What signing needs, each with what the farm has. Pure.
 --- @param config table
 --- @param offer table
---- @param state table { owned, profile, boards, contract (the farm's, or nil) }
---- @return table checks list of { id, ok, have, need }, ok
+--- @param state table { owned, profile, boards, contracts (the farm's, a list), profiles (brand ->
+---     profile, for the other sponsors' categories) }; an older contract = one contract works too
+--- @return table checks list of { id, ok, have, need, brands (for "overlap") }, ok
 --- @return table clashes the machines breaking the competitor clause
 function EqSponsorship.signChecks(config, offer, state)
     local checks, allOk = {}, true
@@ -387,13 +475,29 @@ function EqSponsorship.signChecks(config, offer, state)
         table.insert(checks, { id = id, ok = ok, have = have, need = need })
         if not ok then allOk = false end
     end
-    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {})
+    local contracts = state.contracts or (state.contract ~= nil and { state.contract } or {})
+    local allowed = {}
+    for _, contract in ipairs(contracts) do allowed[contract.brand] = true end
+    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {}, config.attachmentWeight)
     add("machines", mine >= offer.machines, mine, offer.machines)
-    local clashes = EqSponsorship.clashes(offer, state.profile, state.owned or {})
+    local clashes = EqSponsorship.clashes(offer, state.profile, state.owned or {}, allowed)
     add("rivals", #clashes == 0, #clashes, 0)
     local level = EqSponsorship.brandingLevel(config, state.boards or 0)
     add("branding", level >= (offer.brandingNeed or 1), level, offer.brandingNeed or 1)
-    add("exclusive", state.contract == nil, state.contract ~= nil and 1 or 0, 0)
+    -- An exclusive offer wants no other sponsor; an exclusive sponsor allows no new one.
+    local exclusiveOk = #contracts == 0 or (not offer.exclusive and not EqSponsorship.hasExclusive(contracts))
+    add("exclusive", exclusiveOk, #contracts, 0)
+    local max = math.max(1, config.maxSponsors or 1)
+    add("slots", #contracts < max, #contracts, max)
+    -- No two sponsors in the same shop category (James: no Steyr medium tractor next to Zetor's).
+    local overlap = {}
+    for _, contract in ipairs(contracts) do
+        local shared = contract.brand == offer.brand and { offer.brand }
+            or EqSponsorship.sharedCategories(state.profile, state.profiles ~= nil and state.profiles[contract.brand] or nil)
+        if #shared > 0 then table.insert(overlap, { brand = contract.brand, categories = shared }) end
+    end
+    add("overlap", #overlap == 0, #overlap, 0)
+    checks[#checks].brands = overlap
     checks.ok = allOk
     return checks, clashes
 end
@@ -545,7 +649,7 @@ end
 EqSponsorship.NUMBER_FIELDS = { "strictness", "years", "fee", "popularity", "target", "brandingNeed", "categories", "perMachine",
     "machines", "window", "repair", "repaint", "purchase", "signedMonth", "endMonth", "yearEnd", "misses", "feeFactor", "paid" }
 EqSponsorship.STRING_FIELDS = { "brand", "size", "word" }
-EqSponsorship.BOOL_FIELDS = { "top3", "met" }
+EqSponsorship.BOOL_FIELDS = { "top3", "met", "exclusive" }
 
 
 --- @param xmlFile table
@@ -573,6 +677,11 @@ function EqSponsorship.tidy(config, offer)
     if config ~= nil and offer.machines ~= nil then
         offer.machines = math.min(offer.machines, EqSponsorship.machinesMaxFor(config, config.sizeByName[offer.size]))
     end
+    -- Saved before sponsors could share (James, 2026-10-31): big ones are always exclusive,
+    -- small ones never; a moderate one keeps what it was saved with (not exclusive before).
+    local size = config ~= nil and config.sizeByName[offer.size] or nil
+    if size ~= nil and size.exclusive >= 1 then offer.exclusive = true end
+    if size ~= nil and size.exclusive <= 0 then offer.exclusive = false end
     if config ~= nil and offer.brandingNeed == nil then
         offer.brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", offer.strictness or 0))
     end

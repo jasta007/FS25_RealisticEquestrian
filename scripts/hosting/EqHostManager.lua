@@ -646,6 +646,7 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
     if hosted.sponsor ~= nil then xmlFile:setString(key .. "#sponsor", hosted.sponsor) end
     if hosted.sponsorBrand ~= nil then xmlFile:setString(key .. "#sponsorBrand", hosted.sponsorBrand) end
+    if hosted.sponsorBrands ~= nil then xmlFile:setString(key .. "#sponsorBrands", hosted.sponsorBrands) end
     if hosted.sponsorPopularity ~= nil then xmlFile:setInt(key .. "#sponsorPopularity", hosted.sponsorPopularity) end
     local horseIds = {}
     for horseId in pairs(hosted.ridden or {}) do table.insert(horseIds, horseId) end
@@ -682,6 +683,7 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
     hosted.sponsor = xmlFile:getString(key .. "#sponsor")
     hosted.sponsorBrand = xmlFile:getString(key .. "#sponsorBrand")
+    hosted.sponsorBrands = xmlFile:getString(key .. "#sponsorBrands")
     hosted.sponsorPopularity = xmlFile:getInt(key .. "#sponsorPopularity")
     local i = 0
     while true do
@@ -738,7 +740,7 @@ end
 
 local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity" }
 local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed", "sponsorFee" }
-local REPORT_STRINGS = { "discipline", "rating", "venue", "sponsor" }
+local REPORT_STRINGS = { "discipline", "rating", "venue", "sponsor", "sponsors" }
 
 
 --- @param xmlFile table

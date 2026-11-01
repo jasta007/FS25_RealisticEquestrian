@@ -17,6 +17,17 @@
         missesToLeave   missed targets in a row before the sponsor walks away
         machinesMax     the most of its machines any sponsor asks the farm to own (each size
                         has its own, lower or equal)
+        attachmentWeight  how much one attachment or trailer of the sponsor's counts toward the
+                        machines to own (James, 2026-11-01: a cheap header shouldn't count as
+                        a whole machine); anything that drives itself counts 1
+        maxSponsors     the most sponsors a farm can sign at once (James, 2026-10-31: up to
+                        three, each with all its rules met). An exclusive sponsor is always the
+                        only one, and no two sponsors may share a shop category
+
+    easyCategories      shop categories of machines that are easy to get (tractors, cars,
+                        trucks, telehandlers, loaders): a brand with one of them needs only the
+                        size's minItemsEasy machines in the shop instead of minItems (James,
+                        2026-10-31). Names are matched without case; unknown names do nothing
 
     skipCategoryTypes   shop category types (the shop's groups, such as DRIVABLES, TRAILERS or
                         SOIL_PREPARATION) whose items are no machines; every other group counts.
@@ -34,7 +45,9 @@
                         (lowerShare, 0 for none) and the lowest rating that share is paid at
                         (lowerRating), and the fewest shop machines a brand needs for that size
                         (minItems: a brand short of it drops to a smaller size, and one short of
-                        every size is never a sponsor)
+                        every size is never a sponsor; minItemsEasy for a brand with an easy
+                        category, minItems when left out), and the chance an offer is exclusive
+                        (exclusive: 1 always, 0 never)
 
     strictness          each offer rolls a strictness from 0 (Relaxed) to 1 (Hard bargain); every
                         term and reward runs from its "relaxed" value to its "strict" one, then
@@ -52,7 +65,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5">
     <skipCategoryTypes>
         <type name="ANIMALS"/>
         <type name="OBJECTS"/>
@@ -66,6 +79,18 @@
         <brand name="LIZARD"/>
     </skipBrands>
 
+    <easyCategories>
+        <category name="tractorsS"/>
+        <category name="tractorsM"/>
+        <category name="tractorsL"/>
+        <category name="cars"/>
+        <category name="trucks"/>
+        <category name="teleLoaderVehicles"/>
+        <category name="frontLoaderVehicles"/>
+        <category name="frontLoaders"/>
+        <category name="wheelLoaderVehicles"/>
+    </easyCategories>
+
     <priceBands>
         <band max="10000"/>
         <band max="30000"/>
@@ -75,9 +100,9 @@
     </priceBands>
 
     <sizes>
-        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5"/>
-        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3"/>
-        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  machinesMax="1"/>
+        <size name="big"      share="0.15" offers="3" yearsMin="3" yearsMax="3" feeMin="120000" feeMax="180000" popularity="10" target="70" minRating="championship" lowerShare="0.25" lowerRating="intermediate" minItems="15" machinesMax="5" exclusive="1"/>
+        <size name="moderate" share="0.35" offers="4" yearsMin="1" yearsMax="2" feeMin="25000"  feeMax="40000"  popularity="6"  target="55" minRating="intermediate" lowerShare="0"    lowerRating="intermediate" minItems="8"  machinesMax="3" exclusive="0.5"/>
+        <size name="small"    share="0.50" offers="5" yearsMin="1" yearsMax="1" feeMin="3000"   feeMax="6000"   popularity="3"  target="40" minRating="novice"       lowerShare="0"    lowerRating="novice"       minItems="3"  minItemsEasy="1" machinesMax="1" exclusive="0"/>
     </sizes>
 
     <!-- Branding (James, 2026-10-31): sponsor boards on the farm's placeables, anywhere, make a

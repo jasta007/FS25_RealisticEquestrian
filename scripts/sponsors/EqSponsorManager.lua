@@ -9,10 +9,12 @@
     - Offers come at the start of each year (the year's first month), like staff candidates:
       a few sponsors of each size, each with its own demands and rewards. They stay a few months.
       A farm the mod meets for the first time gets this year's offers at once.
-    - A farm signs one offer at a time, from the Events page's Sponsors tab, once it meets its
-      terms. The contract then runs its years: each hosted event at a rating the sponsor backs is
-      named after it, gains its popularity, and pays its fee when the results come in, if the
-      farm still owns enough of its machines and has the branding (sponsor boards) it asks for.
+    - A farm signs offers from the Events page's Sponsors tab once it meets their terms: up to
+      three sponsors at once (James, 2026-10-31) unless one is exclusive, and never two in the
+      same shop category. Each contract then runs its years: each hosted event at a rating a
+      sponsor backs is named after the biggest of them, gains each one's popularity, and each pays
+      its fee when the results come in, if the farm still owns enough of its machines and has
+      the branding (sponsor boards) it asks for.
     - Each contract year ends with its target checked; a miss cuts next year's fee, two in a row
       end the contract. Cancelling early costs a share of a fee for each year left.
 
@@ -30,7 +32,7 @@ EqSponsorManager.config = nil
 
 function EqSponsorManager.reset()
     EqSponsorManager.offers = {}     -- farmId -> { madeMonth, year, list = offers }
-    EqSponsorManager.contracts = {}  -- farmId -> contract (EqSponsorship.contractFrom)
+    EqSponsorManager.contracts = {}  -- farmId -> list of contracts (EqSponsorship.contractFrom), oldest first
     EqSponsorManager.seed = nil      -- the save's own seed, so two saves get different sponsors
     EqSponsorManager.shop = nil      -- the shop read this session: { items, byStoreItem, profiles, ranked }
 end
@@ -163,6 +165,55 @@ function EqSponsorManager.brandTitle(name)
 end
 
 
+--- @param farmId number
+--- @return table contracts the farm's sponsors, oldest first (empty for none)
+function EqSponsorManager.contractsFor(farmId)
+    return EqSponsorManager.contracts[farmId] or {}
+end
+
+
+--- @param farmId number
+--- @return table|nil contract the sponsor the farm's events are named after (EqSponsorship.lead)
+function EqSponsorManager.lead(farmId)
+    return EqSponsorship.lead(EqSponsorManager.contracts[farmId])
+end
+
+
+--- @param farmId number
+--- @param brand string|nil
+--- @return table|nil contract the farm's contract with that brand
+function EqSponsorManager.contractOf(farmId, brand)
+    for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+        if contract.brand == brand then return contract end
+    end
+    return nil
+end
+
+
+--- @param farmId number
+--- @return table brands the farm's sponsors, the lead first
+function EqSponsorManager.sponsorBrands(farmId)
+    local lead = EqSponsorManager.lead(farmId)
+    local list = {}
+    if lead ~= nil then table.insert(list, lead.brand) end
+    for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+        if contract ~= lead then table.insert(list, contract.brand) end
+    end
+    return list
+end
+
+
+--- @param farmId number
+--- @param contract table
+local function dropContract(farmId, contract)
+    local list = EqSponsorManager.contracts[farmId] or {}
+    for i = #list, 1, -1 do
+        if list[i] == contract then table.remove(list, i) end
+    end
+    if #list == 0 then EqSponsorManager.contracts[farmId] = nil end
+end
+
+
 --- @param vehicle table
 --- @return boolean true for a machine borrowed for a contract (they don't count, James 2026-10-29)
 local function isBorrowed(vehicle)
@@ -171,6 +222,15 @@ local function isBorrowed(vehicle)
     if VehiclePropertyState ~= nil and VehiclePropertyState.MISSION ~= nil and state == VehiclePropertyState.MISSION then return true end
     if Vehicle ~= nil and Vehicle.PROPERTY_STATE_MISSION ~= nil and state == Vehicle.PROPERTY_STATE_MISSION then return true end
     return false
+end
+
+
+--- @param vehicle table
+--- @return boolean true for an attachment or trailer: hitched to something, never driven itself
+---     (James, 2026-11-01: they count half toward a sponsor's machines)
+function EqSponsorManager.isAttachment(vehicle)
+    if vehicle.spec_motorized ~= nil or vehicle.spec_enterable ~= nil then return false end
+    return vehicle.spec_attachable ~= nil
 end
 
 
@@ -187,7 +247,8 @@ function EqSponsorManager.ownedMachines(farmId)
             local item = shop.byStoreItem[g_storeManager:getItemByXMLFilename(vehicle.configFileName) or false]
             if item ~= nil then
                 local name = vehicle.getName ~= nil and vehicle:getName() or item.name
-                table.insert(owned, { brand = item.brand, categories = item.categories, price = item.price, name = name or item.name })
+                table.insert(owned, { brand = item.brand, categories = item.categories, price = item.price, name = name or item.name,
+                    attachment = EqSponsorManager.isAttachment(vehicle) })
             end
         end
     end
@@ -214,7 +275,7 @@ function EqSponsorManager.likelyPay(farmId, offer)
     local list = {}
     if config == nil or EqHostVenue == nil or EqHostVenue.config == nil then return list end
     local order = EqSponsorManager.ratingOrder()
-    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId)) >= (offer.machines or 1)
+    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId), config.attachmentWeight) >= (offer.machines or 1)
     local boards = EqSponsorManager.boards(farmId)
     local ratings = EqHostVenue.config.ratings
     for i = #ratings, 1, -1 do
@@ -328,7 +389,8 @@ end
 function EqSponsorManager.checksFor(farmId, offer)
     local shop = EqSponsorManager.readShop()
     local state = { owned = EqSponsorManager.ownedMachines(farmId), profile = shop ~= nil and shop.profiles[offer.brand] or nil,
-        boards = EqSponsorManager.boards(farmId), contract = EqSponsorManager.contracts[farmId] }
+        boards = EqSponsorManager.boards(farmId), contracts = EqSponsorManager.contractsFor(farmId),
+        profiles = shop ~= nil and shop.profiles or {} }
     return EqSponsorship.signChecks(EqSponsorManager.config, offer, state)
 end
 
@@ -350,7 +412,8 @@ function EqSponsorManager.sign(farmId, offer)
     local checks = EqSponsorManager.checksFor(farmId, offer)
     if not checks.ok then return false, g_i18n:getText("eq_sponsor_sign_notReady") end
     local contract = EqSponsorship.contractFrom(offer, EqCompetitionManager.month or 0)
-    EqSponsorManager.contracts[farmId] = contract
+    EqSponsorManager.contracts[farmId] = EqSponsorManager.contracts[farmId] or {}
+    table.insert(EqSponsorManager.contracts[farmId], contract)
     table.remove(open, index)
     if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
     local title = EqSponsorManager.brandTitle(offer.brand)
@@ -362,25 +425,27 @@ end
 
 
 --- @param farmId number
+--- @param brand string|nil the sponsor; nil for the lead one
 --- @return number cost what cancelling the farm's contract costs now
 --- @return number yearsLeft
-function EqSponsorManager.cancelCost(farmId)
-    local contract = EqSponsorManager.contracts[farmId]
+function EqSponsorManager.cancelCost(farmId, brand)
+    local contract = brand ~= nil and EqSponsorManager.contractOf(farmId, brand) or EqSponsorManager.lead(farmId)
     if contract == nil or EqSponsorManager.config == nil then return 0, 0 end
     return EqSponsorship.cancelCost(EqSponsorManager.config, contract, EqCompetitionManager.month or 0)
 end
 
 
---- Cancel the farm's contract early.
+--- Cancel one of the farm's contracts early.
 --- @param farmId number
+--- @param brand string|nil the sponsor; nil for the lead one
 --- @return boolean ok
 --- @return string text
-function EqSponsorManager.cancel(farmId)
-    local contract = EqSponsorManager.contracts[farmId]
+function EqSponsorManager.cancel(farmId, brand)
+    local contract = brand ~= nil and EqSponsorManager.contractOf(farmId, brand) or EqSponsorManager.lead(farmId)
     if contract == nil then return false, g_i18n:getText("eq_sponsor_cancel_none") end
-    local cost = EqSponsorManager.cancelCost(farmId)
+    local cost = EqSponsorManager.cancelCost(farmId, contract.brand)
     if cost > 0 then g_currentMission:addMoney(-cost, farmId, MoneyType.EQ_SPONSORSHIP or MoneyType.OTHER, true, true) end
-    EqSponsorManager.contracts[farmId] = nil
+    dropContract(farmId, contract)
     if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
     Log:info("EqSponsorManager: farm %d cancelled its contract with %s (cost %d)", farmId, contract.brand, cost)
     local text = string.format(g_i18n:getText("eq_sponsor_cancelled"), EqSponsorManager.brandTitle(contract.brand), money(cost))
@@ -391,29 +456,63 @@ end
 
 -- HOSTED EVENTS
 
---- The popularity a farm's sponsor brings to an event at this rating, 0 when it doesn't back it.
+--- @param farmId number
+--- @param ratingName string
+--- @return table contracts the farm's sponsors that back an event at this rating, the lead first
+function EqSponsorManager.backers(farmId, ratingName)
+    local config = EqSponsorManager.config
+    local list = {}
+    if config == nil then return list end
+    local order = EqSponsorManager.ratingOrder()
+    for _, brand in ipairs(EqSponsorManager.sponsorBrands(farmId)) do
+        local contract = EqSponsorManager.contractOf(farmId, brand)
+        if contract ~= nil and EqSponsorship.feeShare(config, contract, ratingName, order) > 0 then table.insert(list, contract) end
+    end
+    return list
+end
+
+
+--- The popularity a farm's sponsors bring to an event at this rating (each that backs it adds
+--- its own), 0 when none does.
 --- @param farmId number
 --- @param ratingName string
 --- @return number points
 function EqSponsorManager.popularityFor(farmId, ratingName)
-    local contract = EqSponsorManager.contracts[farmId]
-    local config = EqSponsorManager.config
-    if contract == nil or config == nil then return 0 end
-    if EqSponsorship.feeShare(config, contract, ratingName, EqSponsorManager.ratingOrder()) <= 0 then return 0 end
-    return contract.popularity or 0
+    local points = 0
+    for _, contract in ipairs(EqSponsorManager.backers(farmId, ratingName)) do points = points + (contract.popularity or 0) end
+    return points
 end
 
 
---- A hosted event has opened: if the farm's sponsor backs its rating, it carries the sponsor's
---- name and popularity.
+--- A hosted event has opened: the farm's sponsors that back its rating add their popularity,
+--- and the biggest of them names it.
 --- @param event table
 function EqSponsorManager.onEventOpened(event)
     local hosted = event.hosted
-    local contract = EqSponsorManager.contracts[hosted.farmId]
-    if contract == nil or EqSponsorManager.popularityFor(hosted.farmId, hosted.rating) <= 0 then return end
-    hosted.sponsor = EqSponsorManager.brandTitle(contract.brand)
-    hosted.sponsorBrand = contract.brand
-    hosted.sponsorPopularity = contract.popularity
+    local backers = EqSponsorManager.backers(hosted.farmId, hosted.rating)
+    if #backers == 0 then return end
+    local lead = EqSponsorship.lead(backers)
+    local brands = { lead.brand }
+    for _, contract in ipairs(backers) do
+        if contract ~= lead then table.insert(brands, contract.brand) end
+    end
+    hosted.sponsor = EqSponsorManager.brandTitle(lead.brand)
+    hosted.sponsorBrand = lead.brand
+    hosted.sponsorBrands = table.concat(brands, ";")
+    hosted.sponsorPopularity = EqSponsorManager.popularityFor(hosted.farmId, hosted.rating)
+end
+
+
+--- @param hosted table
+--- @return table brands the sponsors that backed a hosted event when it opened
+function EqSponsorManager.eventBrands(hosted)
+    local brands = {}
+    if hosted.sponsorBrands ~= nil and hosted.sponsorBrands ~= "" then
+        for brand in string.gmatch(hosted.sponsorBrands, "[^;]+") do table.insert(brands, brand) end
+    elseif hosted.sponsorBrand ~= nil then
+        table.insert(brands, hosted.sponsorBrand)
+    end
+    return brands
 end
 
 
@@ -421,7 +520,9 @@ end
 --- @param contract table
 --- @return boolean the farm still owns enough of the sponsor's machines
 local function machinesOk(farmId, contract)
-    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId)) >= (contract.machines or 1)
+    local config = EqSponsorManager.config
+    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId), config ~= nil and config.attachmentWeight or 1)
+        >= (contract.machines or 1)
 end
 
 
@@ -432,33 +533,42 @@ end
 function EqSponsorManager.afterEvent(event, report)
     local hosted = event.hosted
     local farmId = hosted.farmId
-    local contract = EqSponsorManager.contracts[farmId]
     local config = EqSponsorManager.config
-    if contract == nil or config == nil or hosted.sponsorBrand ~= contract.brand then return 0 end
+    if config == nil then return 0 end
     local order = EqSponsorManager.ratingOrder()
-    local title = EqSponsorManager.brandTitle(contract.brand)
-    local fee, why = EqSponsorship.eventFee(config, contract, hosted.rating, order, EqSponsorManager.boards(farmId),
-        machinesOk(farmId, contract))
-    if fee > 0 then
-        g_currentMission:addMoney(fee, farmId, MoneyType.EQ_SPONSORSHIP or MoneyType.OTHER, true, true)
-        contract.paid = (contract.paid or 0) + fee
-        tell(farmId, "EQ_SPONSOR_PAID", string.format(g_i18n:getText("eq_sponsor_paid"), title, money(fee), EqCompetitionManager.eventTitle(event)))
-    elseif why ~= nil and why ~= "rating" then
-        tell(farmId, "EQ_SPONSOR_WARNING", string.format(g_i18n:getText("eq_sponsor_unpaid_" .. why), title,
-            EqCompetitionManager.eventTitle(event)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
-    end
-    report.sponsor = title
-    report.sponsorFee = fee
-
+    local boards = EqSponsorManager.boards(farmId)
     local best = nil
     for _, horse in ipairs(report.mine or {}) do
         if horse.status == nil and (horse.place or 0) > 0 and (best == nil or horse.place < best) then best = horse.place end
     end
-    if not contract.met and EqSponsorship.meetsTarget(config, contract, hosted.rating, order, hosted.popularity, best) then
-        contract.met = true
-        tell(farmId, "EQ_SPONSOR_PAID", string.format(g_i18n:getText("eq_sponsor_targetMet"), title))
+    local total, titles = 0, {}
+    for _, brand in ipairs(EqSponsorManager.eventBrands(hosted)) do
+        local contract = EqSponsorManager.contractOf(farmId, brand)
+        if contract ~= nil then
+            local title = EqSponsorManager.brandTitle(contract.brand)
+            table.insert(titles, title)
+            local fee, why = EqSponsorship.eventFee(config, contract, hosted.rating, order, boards, machinesOk(farmId, contract))
+            if fee > 0 then
+                g_currentMission:addMoney(fee, farmId, MoneyType.EQ_SPONSORSHIP or MoneyType.OTHER, true, true)
+                contract.paid = (contract.paid or 0) + fee
+                total = total + fee
+                tell(farmId, "EQ_SPONSOR_PAID", string.format(g_i18n:getText("eq_sponsor_paid"), title, money(fee), EqCompetitionManager.eventTitle(event)))
+            elseif why ~= nil and why ~= "rating" then
+                tell(farmId, "EQ_SPONSOR_WARNING", string.format(g_i18n:getText("eq_sponsor_unpaid_" .. why), title,
+                    EqCompetitionManager.eventTitle(event)), FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
+            end
+            if not contract.met and EqSponsorship.meetsTarget(config, contract, hosted.rating, order, hosted.popularity, best) then
+                contract.met = true
+                tell(farmId, "EQ_SPONSOR_PAID", string.format(g_i18n:getText("eq_sponsor_targetMet"), title))
+            end
+        end
     end
-    return fee
+    if #titles == 0 then return 0 end
+    -- The lead names the event; the report's sponsor line lists them all.
+    report.sponsor = hosted.sponsor or titles[1]
+    report.sponsors = table.concat(titles, ", ")
+    report.sponsorFee = total
+    return total
 end
 
 
@@ -472,8 +582,12 @@ function EqSponsorManager.onMonthStarted(month)
     local farmIds = {}
     for farmId in pairs(EqSponsorManager.contracts) do table.insert(farmIds, farmId) end
     table.sort(farmIds)
+    local list = {}
     for _, farmId in ipairs(farmIds) do
-        local contract = EqSponsorManager.contracts[farmId]
+        for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do table.insert(list, { farmId = farmId, contract = contract }) end
+    end
+    for _, entry in ipairs(list) do
+        local farmId, contract = entry.farmId, entry.contract
         local title = EqSponsorManager.brandTitle(contract.brand)
         local ended = false
         if month >= (contract.yearEnd or month + 1) then
@@ -493,7 +607,7 @@ function EqSponsorManager.onMonthStarted(month)
             tell(farmId, "EQ_SPONSOR_ENDED", string.format(g_i18n:getText("eq_sponsor_finished"), title, money(contract.paid)))
         end
         if ended then
-            EqSponsorManager.contracts[farmId] = nil
+            dropContract(farmId, contract)
             Log:info("EqSponsorManager: farm %d's contract with %s has ended", farmId, contract.brand)
             if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
         end
@@ -542,8 +656,9 @@ function EqSponsorManager.saveToXMLFile(xmlFile, key)
                 EqSponsorship.saveOffer(xmlFile, string.format("%s.offers.offer(%d)", farmKey, o - 1), offer)
             end
         end
-        local contract = EqSponsorManager.contracts[farmId]
-        if contract ~= nil then EqSponsorship.saveOffer(xmlFile, farmKey .. ".contract", contract) end
+        for c, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+            EqSponsorship.saveOffer(xmlFile, string.format("%s.contract(%d)", farmKey, c - 1), contract)
+        end
     end
 end
 
@@ -573,9 +688,15 @@ function EqSponsorManager.loadFromXMLFile(xmlFile, key)
                 end
                 EqSponsorManager.offers[farmId] = record
             end
-            if xmlFile:hasProperty(farmKey .. ".contract") then
-                local contract = EqSponsorship.loadOffer(xmlFile, farmKey .. ".contract")
-                EqSponsorManager.contracts[farmId] = contract ~= nil and EqSponsorship.tidy(EqSponsorManager.config, contract) or nil
+            -- contract(0) is also where a save from before several sponsors kept its one contract.
+            local c = 0
+            while xmlFile:hasProperty(string.format("%s.contract(%d)", farmKey, c)) do
+                local contract = EqSponsorship.loadOffer(xmlFile, string.format("%s.contract(%d)", farmKey, c))
+                if contract ~= nil then
+                    EqSponsorManager.contracts[farmId] = EqSponsorManager.contracts[farmId] or {}
+                    table.insert(EqSponsorManager.contracts[farmId], EqSponsorship.tidy(EqSponsorManager.config, contract))
+                end
+                c = c + 1
             end
         end
         i = i + 1

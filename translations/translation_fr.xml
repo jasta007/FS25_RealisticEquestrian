@@ -1042,15 +1042,25 @@
         <text name="eq_sponsor_col_eligibility" text="Éligibilité"/>
         <text name="eq_sponsor_eligible_yes" text="Éligible"/>
         <text name="eq_sponsor_eligible_no" text="Non éligible"/>
-        <text name="eq_sponsor_eligible_taken" text="Déjà un sponsor"/>
+        <text name="eq_sponsor_eligible_taken" text="Déjà exclusif"/>
         <text name="eq_sponsor_eligible_yours" text="Votre sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Exclusif seulement"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors au complet"/>
+        <text name="eq_sponsor_eligible_overlap" text="Même spécialité"/>
+        <text name="eq_sponsor_eligible_rivals" text="Matériel rival"/>
+        <text name="eq_sponsor_eligible_equipment" text="Matériel requis"/>
+        <text name="eq_sponsor_eligible_branding" text="Visibilité requise"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusif"/>
+        <text name="eq_sponsor_exclusive_no" text="Non exclusif"/>
+        <text name="eq_sponsor_overlapLine" text="Conflit avec %s : %s"/>
         <text name="eq_sponsor_label_speciality" text="Spécialité"/>
         <text name="eq_sponsor_feePerEvent" text="%s par concours"/>
         <text name="eq_sponsor_targetPopularity" text="Popularité %d"/>
         <text name="eq_sponsor_targetRating" text="Concours %s ou plus"/>
-        <text name="eq_sponsor_haveOf" text="Vous en avez %d sur %d"/>
+        <text name="eq_sponsor_haveOf" text="Vous en avez %s sur %d"/>
         <text name="eq_sponsor_mustOwn" text="Vous devez posséder %d de leurs équipements avant de postuler."/>
         <text name="eq_sponsor_mustKeep" text="Vous devez garder %d de leurs équipements pour être payé."/>
+        <text name="eq_sponsor_attachHalf" text="Les outils et remorques comptent pour moitié."/>
         <text name="eq_sponsor_noRivals" text="Vous ne pouvez pas posséder de machines dont le prix est à moins de %s de leur produit."/>
         <text name="eq_sponsor_sellFirst" text="Vendez ou rendez ceci avant de postuler :"/>
         <text name="eq_sponsor_sellMore" text="...et %d de plus"/>

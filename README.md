@@ -125,7 +125,7 @@ uses its genetics, health and fitness.
   feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
   their rounds yourself if you like.
 - **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
-  deals to hard bargains. Sign one on the **Sponsors** tab for a fee per event and extra popularity.
+  deals to hard bargains. Sign up to three on the **Sponsors** tab (big ones are exclusive) for a fee per event and extra popularity.
 
 ### Getting there
 - **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or

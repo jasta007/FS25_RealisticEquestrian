@@ -875,26 +875,41 @@ function EqConsole:consoleSponsors()
                     EqSponsorManager.brandTitle(profile.brand), profile.size, profile.categories, profile.bands, profile.items))
             end
         end
+        -- Easy kit (James, 2026-10-31): brands let in with fewer machines, and the shop's category
+        -- names, to check data/sponsors.xml's easyCategories against.
+        local easy, names, seen = {}, {}, {}
+        for _, profile in ipairs(shop.ranked) do
+            if profile.easy then table.insert(easy, EqSponsorManager.brandTitle(profile.brand)) end
+            for category in pairs(profile.byCategory) do
+                if not seen[category] then
+                    seen[category] = true
+                    table.insert(names, (EqSponsorManager.config.easyCategories[string.upper(category)] and "*" or "") .. category)
+                end
+            end
+        end
+        table.sort(names)
+        table.insert(lines, string.format("Brands with easy kit (%d): %s", #easy, table.concat(easy, ", ")))
+        table.insert(lines, "Shop categories (* = easy kit): " .. table.concat(names, " "))
     end
     local record = EqSponsorManager.offersFor(farmId)
     table.insert(lines, string.format("Offers for year %d (made month %d, %s):", record.year or 0, record.madeMonth or 0,
         EqSponsorManager.offersOpen(farmId) and "open" or "gone"))
     for i, offer in ipairs(record.list) do
         local checks = EqSponsorManager.checksFor(farmId, offer)
-        table.insert(lines, string.format("  %d. %s %s %s, %d year(s), fee %d, +%d popularity, target %d%s, own %d, window %d%%, branding %d, discounts %d/%d/%d%% (%s)",
-            i, EqSponsorManager.brandTitle(offer.brand), offer.size, offer.word, offer.years, offer.fee, offer.popularity, offer.target,
+        table.insert(lines, string.format("  %d. %s %s%s %s, %d year(s), fee %d, +%d popularity, target %d%s, own %d, window %d%%, branding %d, discounts %d/%d/%d%% (%s)",
+            i, EqSponsorManager.brandTitle(offer.brand), offer.size, offer.exclusive and " exclusive" or "", offer.word, offer.years, offer.fee, offer.popularity, offer.target,
             offer.top3 and " top 3" or "", offer.machines, math.floor(offer.window * 100 + 0.5), offer.brandingNeed or 0,
             math.floor(offer.repaint * 100 + 0.5), math.floor(offer.repair * 100 + 0.5), math.floor(offer.purchase * 100 + 0.5),
             checks.ok and "can sign" or "can't sign"))
     end
-    local contract = EqSponsorManager.contracts[farmId]
-    if contract ~= nil then
-        table.insert(lines, string.format("Contract: %s until month %d, year ends month %d, met %s, misses %d, fee x%.2f, paid %d, cancel %d",
-            EqSponsorManager.brandTitle(contract.brand), contract.endMonth, contract.yearEnd, tostring(contract.met), contract.misses or 0,
-            contract.feeFactor or 1, contract.paid or 0, EqSponsorManager.cancelCost(farmId)))
-    else
-        table.insert(lines, "No sponsor contract")
+    local contracts = EqSponsorManager.contractsFor(farmId)
+    for _, contract in ipairs(contracts) do
+        table.insert(lines, string.format("Contract: %s (%s%s) until month %d, year ends month %d, met %s, misses %d, fee x%.2f, paid %d, cancel %d",
+            EqSponsorManager.brandTitle(contract.brand), contract.size, contract.exclusive and ", exclusive" or "", contract.endMonth,
+            contract.yearEnd, tostring(contract.met), contract.misses or 0, contract.feeFactor or 1, contract.paid or 0,
+            EqSponsorManager.cancelCost(farmId, contract.brand)))
     end
+    if #contracts == 0 then table.insert(lines, "No sponsor contract") end
     table.insert(lines, string.format("Sponsor boards: %g", EqSponsorManager.boards(farmId)))
     return table.concat(lines, "\n")
 end

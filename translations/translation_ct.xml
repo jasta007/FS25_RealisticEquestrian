@@ -1040,15 +1040,25 @@
         <text name="eq_sponsor_col_eligibility" text="資格"/>
         <text name="eq_sponsor_eligible_yes" text="符合條件"/>
         <text name="eq_sponsor_eligible_no" text="不符合條件"/>
-        <text name="eq_sponsor_eligible_taken" text="已有贊助商"/>
+        <text name="eq_sponsor_eligible_taken" text="已有獨家"/>
         <text name="eq_sponsor_eligible_yours" text="你的贊助商"/>
+        <text name="eq_sponsor_eligible_exclusive" text="僅限獨家"/>
+        <text name="eq_sponsor_eligible_full" text="贊助商已滿"/>
+        <text name="eq_sponsor_eligible_overlap" text="專長相同"/>
+        <text name="eq_sponsor_eligible_rivals" text="擁有競品"/>
+        <text name="eq_sponsor_eligible_equipment" text="設備不足"/>
+        <text name="eq_sponsor_eligible_branding" text="品牌展示不足"/>
+        <text name="eq_sponsor_exclusive_yes" text="獨家"/>
+        <text name="eq_sponsor_exclusive_no" text="非獨家"/>
+        <text name="eq_sponsor_overlapLine" text="與%s衝突：%s"/>
         <text name="eq_sponsor_label_speciality" text="專長"/>
         <text name="eq_sponsor_feePerEvent" text="每場賽事%s"/>
         <text name="eq_sponsor_targetPopularity" text="人氣%d"/>
         <text name="eq_sponsor_targetRating" text="%s或更高級別的賽事"/>
-        <text name="eq_sponsor_haveOf" text="你擁有%d／需要%d"/>
+        <text name="eq_sponsor_haveOf" text="你擁有%s／需要%d"/>
         <text name="eq_sponsor_mustOwn" text="申請前你必須擁有其%d台設備。"/>
         <text name="eq_sponsor_mustKeep" text="你必須保留其%d台設備才能獲得付款。"/>
+        <text name="eq_sponsor_attachHalf" text="農具和拖車按半台計算。"/>
         <text name="eq_sponsor_noRivals" text="你不能擁有價格在其產品%s以內的機械。"/>
         <text name="eq_sponsor_sellFirst" text="申請前請出售或歸還以下機械："/>
         <text name="eq_sponsor_sellMore" text="……還有%d台"/>

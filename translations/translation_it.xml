@@ -1040,15 +1040,25 @@
         <text name="eq_sponsor_col_eligibility" text="Idoneità"/>
         <text name="eq_sponsor_eligible_yes" text="Idoneo"/>
         <text name="eq_sponsor_eligible_no" text="Non idoneo"/>
-        <text name="eq_sponsor_eligible_taken" text="Hai già uno sponsor"/>
+        <text name="eq_sponsor_eligible_taken" text="Già esclusivo"/>
         <text name="eq_sponsor_eligible_yours" text="Il tuo sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Solo esclusivo"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsor al completo"/>
+        <text name="eq_sponsor_eligible_overlap" text="Stessa specialità"/>
+        <text name="eq_sponsor_eligible_rivals" text="Mezzi rivali"/>
+        <text name="eq_sponsor_eligible_equipment" text="Servono mezzi"/>
+        <text name="eq_sponsor_eligible_branding" text="Serve visibilità"/>
+        <text name="eq_sponsor_exclusive_yes" text="Esclusivo"/>
+        <text name="eq_sponsor_exclusive_no" text="Non esclusivo"/>
+        <text name="eq_sponsor_overlapLine" text="In conflitto con %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Specialità"/>
         <text name="eq_sponsor_feePerEvent" text="%s per gara"/>
         <text name="eq_sponsor_targetPopularity" text="Popolarità %d"/>
         <text name="eq_sponsor_targetRating" text="Gara %s o superiore"/>
-        <text name="eq_sponsor_haveOf" text="Ne hai %d su %d"/>
+        <text name="eq_sponsor_haveOf" text="Ne hai %s su %d"/>
         <text name="eq_sponsor_mustOwn" text="Devi possedere %d loro attrezzature prima di candidarti."/>
         <text name="eq_sponsor_mustKeep" text="Devi tenere %d loro attrezzature per essere pagato."/>
+        <text name="eq_sponsor_attachHalf" text="Attrezzi e rimorchi contano la metà."/>
         <text name="eq_sponsor_noRivals" text="Non puoi possedere macchine entro il %s del prezzo del loro prodotto."/>
         <text name="eq_sponsor_sellFirst" text="Vendi o restituisci prima di candidarti:"/>
         <text name="eq_sponsor_sellMore" text="...e altri %d"/>

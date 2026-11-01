@@ -852,16 +852,24 @@ Console: `eqHostCheck [type] [rating]` prints what your farm has against each re
 
 ### Sponsors
 
-The Events tab's fourth tab, **Sponsors**, shows your sponsor and this year's offers (the rules
+The Events tab's fourth tab, **Sponsors**, shows your sponsors and this year's offers (the rules
 are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 
 - **Who:** every sponsor is a brand from your own shop, mods included; no brand is named in the
   mod. Brands are sized by how many shop categories they make machines in, then how many price
   bands those span, then how many machines: the top 15% are **big**, the next 35% **moderate**,
   the rest **small**. A brand needs at least 3 machines to sponsor at all, 8 to be moderate and
-  15 to be big; short of that it drops a size. The game's own Lizard brand is left out.
+  15 to be big; short of that it drops a size. A brand that makes easy-to-get kit (a small,
+  medium or large tractor, a car, a truck, a telehandler or a loader; `easyCategories`) can be a
+  small sponsor with just 1 machine. The game's own Lizard brand is left out.
 - **When:** offers come at the start of each year (and at once in a save that has none yet): up
-  to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year). One sponsor at a time.
+  to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year).
+- **Several sponsors:** up to 3 at once, each with all its own rules met. **Big** sponsors are
+  always **exclusive** (no one else while they sponsor you, and you can only sign them with no
+  other sponsor), **moderate** ones are exclusive half the time, **small** ones never. No two
+  sponsors may make machines in the same shop category (Zetor and Steyr both make medium
+  tractors, so not both); the panel names the clash. Your sponsors' machines never count as rivals
+  for each other. A brand you already have isn't offered again until its contract ends.
 - **The deal:** each offer rolls a strictness from relaxed to hard bargain (not shown by name;
   the terms tell it). Stricter deals ask more and pay more:
 
@@ -881,11 +889,11 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
 - The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
-  most machines in), contract, **Eligibility** and what it pays you; the panel adds its terms and
+  most machines in), contract, **Eligibility** (or why not: Already exclusive, Exclusive only, Sponsors full, Same speciality, Own rival kit, Need equipment, Need branding) and what it pays you; the panel adds its terms and
   the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
-  don't count), no rival machine inside the price window (sell it or return the lease first; the
+  don't count; an attachment or trailer, anything that can't drive itself, counts as half), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
   cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
@@ -893,8 +901,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   ropes together 1 at most) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
   game shows only the word. The shop line on those items shows your branding now and with one
   more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
-- **Hosted events** at a rating the sponsor backs are named after it ("<Brand> Show Jumping
-  Classic"), gain its popularity, and pay its fee when the results come in: half at Low branding,
+- **Hosted events** at a rating a sponsor backs are named after the biggest of them ("<Brand> Show
+  Jumping Classic", then the best paid), gain every backing sponsor's popularity, and each pays
+  its own fee when the results come in: half at Low branding,
   75% at Medium, the full fee at High. No fee below the offer's required branding or if you no
   longer own enough of their machines.
 - **The yearly target:** each contract year, host at least one event the sponsor backs at the
@@ -949,7 +958,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,
   corner, drop wall) stay white.
 
-Console: `eqSponsors` lists the shop's brands by size, this year's offers and your contract;
+Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
+category names (easy ones starred), this year's offers and your contracts;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
 jump colour and where it came from.
 

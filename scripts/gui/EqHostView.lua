@@ -201,7 +201,8 @@ function EqHostView.reportRows(farmId)
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feed"), math.floor(report.feed)) })
         end
         if report.sponsor ~= nil and report.sponsor ~= "" then
-            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_sponsor"), report.sponsor, money(report.sponsorFee)) })
+            local names = report.sponsors ~= nil and report.sponsors ~= "" and report.sponsors or report.sponsor
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_sponsor"), names, money(report.sponsorFee)) })
         end
         for _, horse in ipairs(report.mine or {}) do
             local how = horse.status ~= nil and g_i18n:getText("eq_ui_result_" .. horse.status)

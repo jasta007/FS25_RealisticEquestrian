@@ -1040,15 +1040,25 @@
         <text name="eq_sponsor_col_eligibility" text="Elegibilidade"/>
         <text name="eq_sponsor_eligible_yes" text="Elegível"/>
         <text name="eq_sponsor_eligible_no" text="Não elegível"/>
-        <text name="eq_sponsor_eligible_taken" text="Já tem patrocinador"/>
+        <text name="eq_sponsor_eligible_taken" text="Já exclusivo"/>
         <text name="eq_sponsor_eligible_yours" text="Seu patrocinador"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Só exclusivo"/>
+        <text name="eq_sponsor_eligible_full" text="Patrocinadores completos"/>
+        <text name="eq_sponsor_eligible_overlap" text="Mesma especialidade"/>
+        <text name="eq_sponsor_eligible_rivals" text="Equipamento rival"/>
+        <text name="eq_sponsor_eligible_equipment" text="Falta equipamento"/>
+        <text name="eq_sponsor_eligible_branding" text="Falta publicidade"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusivo"/>
+        <text name="eq_sponsor_exclusive_no" text="Não exclusivo"/>
+        <text name="eq_sponsor_overlapLine" text="Conflita com %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Especialidade"/>
         <text name="eq_sponsor_feePerEvent" text="%s por evento"/>
         <text name="eq_sponsor_targetPopularity" text="Popularidade %d"/>
         <text name="eq_sponsor_targetRating" text="Evento %s ou acima"/>
-        <text name="eq_sponsor_haveOf" text="Você tem %d de %d"/>
+        <text name="eq_sponsor_haveOf" text="Você tem %s de %d"/>
         <text name="eq_sponsor_mustOwn" text="Você precisa ter %d equipamentos deles antes de se candidatar."/>
         <text name="eq_sponsor_mustKeep" text="Você precisa manter %d equipamentos deles para receber."/>
+        <text name="eq_sponsor_attachHalf" text="Implementos e reboques contam como metade."/>
         <text name="eq_sponsor_noRivals" text="Você não pode ter máquinas a menos de %s do preço do produto deles."/>
         <text name="eq_sponsor_sellFirst" text="Venda ou devolva o seguinte antes de se candidatar:"/>
         <text name="eq_sponsor_sellMore" text="...e mais %d"/>

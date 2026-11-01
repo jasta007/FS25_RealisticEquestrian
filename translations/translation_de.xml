@@ -1042,15 +1042,25 @@
         <text name="eq_sponsor_col_eligibility" text="Berechtigung"/>
         <text name="eq_sponsor_eligible_yes" text="Berechtigt"/>
         <text name="eq_sponsor_eligible_no" text="Nicht berechtigt"/>
-        <text name="eq_sponsor_eligible_taken" text="Bereits ein Sponsor"/>
+        <text name="eq_sponsor_eligible_taken" text="Bereits exklusiv"/>
         <text name="eq_sponsor_eligible_yours" text="Ihr Sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Nur exklusiv"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsoren voll"/>
+        <text name="eq_sponsor_eligible_overlap" text="Gleiches Fachgebiet"/>
+        <text name="eq_sponsor_eligible_rivals" text="Konkurrenzgeräte"/>
+        <text name="eq_sponsor_eligible_equipment" text="Geräte fehlen"/>
+        <text name="eq_sponsor_eligible_branding" text="Branding fehlt"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exklusiv"/>
+        <text name="eq_sponsor_exclusive_no" text="Nicht exklusiv"/>
+        <text name="eq_sponsor_overlapLine" text="Überschneidung mit %s: %s"/>
         <text name="eq_sponsor_label_speciality" text="Spezialgebiet"/>
         <text name="eq_sponsor_feePerEvent" text="%s je Turnier"/>
         <text name="eq_sponsor_targetPopularity" text="Beliebtheit %d"/>
         <text name="eq_sponsor_targetRating" text="Turnier ab %s"/>
-        <text name="eq_sponsor_haveOf" text="Sie haben %d von %d"/>
+        <text name="eq_sponsor_haveOf" text="Sie haben %s von %d"/>
         <text name="eq_sponsor_mustOwn" text="Sie müssen %d Geräte dieses Herstellers besitzen, bevor Sie sich bewerben."/>
         <text name="eq_sponsor_mustKeep" text="Sie müssen %d Geräte dieses Herstellers behalten, um bezahlt zu werden."/>
+        <text name="eq_sponsor_attachHalf" text="Anbaugeräte und Anhänger zählen halb."/>
         <text name="eq_sponsor_noRivals" text="Sie dürfen keine Maschinen besitzen, die im Preis innerhalb von %s ihres Produkts liegen."/>
         <text name="eq_sponsor_sellFirst" text="Vor der Bewerbung verkaufen oder zurückgeben:"/>
         <text name="eq_sponsor_sellMore" text="...und %d weitere"/>

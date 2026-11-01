@@ -792,7 +792,7 @@ function EqEventsFrame:updateSponsorPanel()
     end
     showLogo(self.sponsorLogo, row.offer.brand)
     setText(self.sponsorName, row.title)
-    setText(self.sponsorSize, row.contract and g_i18n:getText("eq_sponsor_eligible_yours") or "")
+    setText(self.sponsorSize, EqSponsorView.headerText(row))
     -- The notes follow the last row across the full width, after a blank row, wrapped by hand
     -- (James, 2026-10-31: a separate block sat too low and overlapped the buttons).
     local rowCount = #(self.sponsorLabel or {})
@@ -1161,14 +1161,15 @@ end
 
 
 function EqEventsFrame:onClickCancelSponsor()
-    local contract = EqSponsorManager.contracts[farmId()]
+    local row = self:selectedSponsorRow()
+    local contract = row ~= nil and row.contract and EqSponsorManager.contractOf(farmId(), row.brand) or nil
     if contract == nil then return end
-    local cost = EqSponsorManager.cancelCost(farmId())
+    local cost = EqSponsorManager.cancelCost(farmId(), contract.brand)
     local question = string.format(g_i18n:getText("eq_sponsor_cancel_confirm"), EqSponsorManager.brandTitle(contract.brand),
         g_i18n:formatMoney(cost, 0, true, true))
     YesNoDialog.show(function(_, yes)
         if yes then
-            local _, text = EqSponsorManager.cancel(farmId())
+            local _, text = EqSponsorManager.cancel(farmId(), contract.brand)
             self.message = text
             self:refresh()
         end
