@@ -172,7 +172,8 @@ EqDressagePath.LATERAL_FREE = 0.3
 -- Temperament's stickiness (James 2026-10-30): a pull back onto the line, a share of how far off
 -- the horse is each second (0 at temperament 0 up to STICK_PULL at 100; STICK_FREE of it outside
 -- lateral work), and a turn towards the body angle a section asks for, up to STICK_TURN rad/s.
-EqDressagePath.STICK_PULL = 0.8
+-- (James, 2026-11-01: a 100 temperament horse didn't ride much better: 0.8 and 0.3 were raised.)
+EqDressagePath.STICK_PULL = 1.0
 -- A bend sharper than this (radians) where pieces of line join is smoothed out of the line.
 EqDressagePath.KINK = math.rad(50)
 -- Bends sharper than this (radians, between points STEP apart) left where figures meet the track
@@ -185,8 +186,8 @@ EqDressagePath.BLEND = 5
 EqDressagePath.BLEND_PLAN = 12
 -- A player's test changing gait this soon after a halt moves off from the halt in the new gait.
 EqDressagePath.MOVE_OFF = 16
-EqDressagePath.STICK_FREE = 0.3
-EqDressagePath.STICK_TURN = 0.5
+EqDressagePath.STICK_FREE = 0.5
+EqDressagePath.STICK_TURN = 0.7
 -- Further off the line than this (metres) there is no pull: a rider leaving the test was held
 -- back so hard the base game took it for a crash and stopped the horse (James, 2026-10-30).
 EqDressagePath.STICK_RANGE = 2

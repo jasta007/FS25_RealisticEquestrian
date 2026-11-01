@@ -300,8 +300,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
   at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
-  onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
-  lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
+  onto the line (up to 1.0 of its distance off a second at temperament 100, half that outside
+  lateral work; James, 2026-11-01: raised from 0.8 and 0.3) and, in a section, turned towards the
+  asked body angle at up to 0.7 rad/s, so it
   takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
   more than 2 m off the line (riding away from a test must not hold the horse back).
 - **Starting** (James, 2026-10-31): riding within 5 m of the gold pole outside A starts a 3, 2, 1
