@@ -899,7 +899,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   (the box is painted on one side of the rope and shows only in construction mode, so draw the
   rope with the box away from the track). The **Crowd density** setting gives up to 4 seated and
   3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
-  picked afresh each day, wherever the bleachers and boxes are. They are the game's own characters with
+  picked afresh each day, wherever the bleachers and boxes are; selling a bleacher or rope (or
+  deleting a rope segment) takes its people away and a new crowd is picked from what's left. They are the game's own characters with
   a few outfits; FS25 has no sit animation, so a seated spectator is posed like a tractor
   driver, with IK on the feet and hands, kept live within 25 m and held still further out. They
   are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,

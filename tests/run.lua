@@ -5933,6 +5933,26 @@ end)()
     check("spectators: there from 08:00 to 19:00", EqSpectators.inHours(8) and EqSpectators.inHours(18.9)
         and not EqSpectators.inHours(7.9) and not EqSpectators.inHours(19))
     check("spectators: rope box matches the rope's art", EqSpectators.ROPE_BOX[1] == 0.6 and EqSpectators.ROPE_BOX[2] == 1.8)
+    -- a sold bleacher or deleted rope segment takes its people away, the rest stay
+    local alive = { [1] = true, [2] = true, [10] = true, [11] = true, [20] = true }
+    local oldExists, oldDelete = entityExists, delete
+    entityExists = function(node) return alive[node] == true end
+    delete = function(node) alive[node] = nil end
+    EqSpectators.people = {
+        { holder = 1, seat = { parent = 10 } },                -- bleacher still there
+        { holder = 3, seat = { parent = 11 } },                -- holder gone with a sold bleacher
+        { holder = 2, stand = { box = 21, root = 20 } },       -- rope segment deleted
+    }
+    EqSpectators.key = "x"
+    local dropped = EqSpectators.dropGone()
+    check("spectators: people on sold bleachers and deleted rope go, others stay", dropped and #EqSpectators.people == 1
+        and EqSpectators.people[1].holder == 1 and EqSpectators.key == nil and alive[2] == nil)
+    EqSpectators.people = { { holder = 1, seat = { parent = 10 } }, { holder = 2, stand = { box = 21, root = 20 } } }
+    alive[2], alive[21] = true, true
+    EqSpectators.onPlaceableDeleted({ rootNode = 20 })
+    check("spectators: selling a rope takes its standing people first", #EqSpectators.people == 1 and alive[2] == nil)
+    EqSpectators.people = {}
+    entityExists, delete = oldExists, oldDelete
     local row = EqSettings.BY_ID.crowdDensity
     check("spectators: Crowd density setting Off/Low/Medium/High", row ~= nil and #row.values == 4 and row.values[1] == "off"
         and row.default == "medium" and EqSettings.stateOf(row, "high") == 4)

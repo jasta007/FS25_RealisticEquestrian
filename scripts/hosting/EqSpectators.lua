@@ -221,7 +221,7 @@ function EqSpectators.places(farm)
                 for _, node in ipairs(found) do
                     table.insert(boxes, node)
                     if mine then
-                        for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot }) end
+                        for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot, root = root }) end
                     end
                 end
             end
@@ -394,7 +394,7 @@ local function spawn(seat, stand, rng)
     local style = styleFor(rng)
     if style == nil or style.xmlFilename == nil then return nil end
     local holder = createTransformGroup("eqSpectator")
-    local person = { seated = seat ~= nil, seat = seat, holder = holder, targets = {}, rng = rng, frames = 0, style = style }
+    local person = { seated = seat ~= nil, seat = seat, stand = stand, holder = holder, targets = {}, rng = rng, frames = 0, style = style }
     if seat ~= nil then
         link(seat.parent, holder)
         -- on the bench's front edge, turned to face the bleacher's front (-z)
@@ -426,6 +426,64 @@ local function remove(person)
     person.model = nil
     if person.holder ~= nil and (entityExists == nil or entityExists(person.holder)) then delete(person.holder) end
     person.holder = nil
+end
+
+
+local function exists(node)
+    return node ~= nil and (entityExists == nil or entityExists(node))
+end
+
+
+--- @return boolean true when a person's bleacher or rope panel is gone (sold, or a rope segment deleted)
+local function placeGone(person)
+    if not exists(person.holder) then return true end
+    if person.seat ~= nil then return not exists(person.seat.parent) end
+    return person.stand ~= nil and not exists(person.stand.box)
+end
+
+
+--- Take away anyone whose place is gone; the next scan picks a new crowd from what is left.
+--- @return boolean true when someone was taken away
+function EqSpectators.dropGone()
+    local kept, dropped = {}, false
+    for _, person in ipairs(EqSpectators.people) do
+        if placeGone(person) then
+            dropped = true
+            person.deleted = true
+            -- a sold bleacher took the character's nodes with it: only forget it then
+            if exists(person.holder) then pcall(remove, person) end
+            person.model, person.holder = nil, nil
+        else
+            table.insert(kept, person)
+        end
+    end
+    if dropped then
+        EqSpectators.people = kept
+        EqSpectators.key, EqSpectators.scannedAt = nil, nil
+    end
+    return dropped
+end
+
+
+--- A placeable is about to be sold or deleted: take its spectators off first, while their nodes
+--- still exist (a seated person's are under the bleacher's).
+--- @param placeable table
+function EqSpectators.onPlaceableDeleted(placeable)
+    local root = placeable ~= nil and placeable.rootNode or nil
+    if root == nil or #EqSpectators.people == 0 then return end
+    local kept, dropped = {}, false
+    for _, person in ipairs(EqSpectators.people) do
+        if (person.seat ~= nil and person.seat.parent == root) or (person.stand ~= nil and person.stand.root == root) then
+            dropped = true
+            EqLog.try("EqSpectators remove", remove, person)
+        else
+            table.insert(kept, person)
+        end
+    end
+    if dropped then
+        EqSpectators.people = kept
+        EqSpectators.key, EqSpectators.scannedAt = nil, nil
+    end
 end
 
 
@@ -518,6 +576,7 @@ function EqSpectators.update()
     end
 
     if #EqSpectators.people == 0 then return end
+    EqSpectators.dropGone()
     local camera = g_cameraManager ~= nil and g_cameraManager:getActiveCamera() or nil
     if camera == nil or camera == 0 then return end
     local cx, cy, cz = getWorldTranslation(camera)
@@ -630,4 +689,11 @@ function EqSpectators.install(guarded)
     FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, function()
         guarded("spectators cleanup", EqSpectators.reset)
     end)
+    -- a sold bleacher or rope takes its spectators with it, cleanly
+    if Placeable ~= nil and Placeable.delete ~= nil then
+        Placeable.delete = Utils.prependedFunction(Placeable.delete, function(placeable)
+            if not EqMain.isActive then return end
+            EqLog.try("EqSpectators placeable deleted", EqSpectators.onPlaceableDeleted, placeable)
+        end)
+    end
 end
