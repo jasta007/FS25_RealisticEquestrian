@@ -65,6 +65,7 @@ source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorship.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorManager.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorDiscounts.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -247,6 +248,7 @@ function EqMain.activate()
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
         guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
         guarded("sponsors setup", function() EqSponsorManager.loadConfig(modDirectory) end)
+        guarded("sponsor discounts hooks", function() EqSponsorDiscounts.install(guarded) end)
     end
 
     if EqMain.isActive then

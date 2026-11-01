@@ -23,6 +23,8 @@
         maxSponsors     the most sponsors a farm can sign at once (James, 2026-10-31: up to
                         three, each with all its rules met). An exclusive sponsor is always the
                         only one, and no two sponsors may share a shop category
+        discountMonths  months after signing before a sponsor's repair, repaint and buying
+                        discounts start (James, 2026-11-01: 3)
 
     easyCategories      shop categories of machines that are easy to get (tractors, cars,
                         trucks, telehandlers, loaders): a brand with one of them needs only the
@@ -65,7 +67,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5" discountMonths="3">
     <skipCategoryTypes>
         <type name="ANIMALS"/>
         <type name="OBJECTS"/>

@@ -18,7 +18,7 @@
     - Each contract year ends with its target checked; a miss cuts next year's fee, two in a row
       end the contract. Cancelling early costs a share of a fee for each year left.
 
-    Discounts on the sponsor's machines and the shop's block on rival machines come next.
+    Discounts on the sponsor's machines are in EqSponsorDiscounts; the shop's block on rival machines comes next.
 
     Part of Realistic Equestrian by Jasta007.
 ]]

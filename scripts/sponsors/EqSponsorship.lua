@@ -42,6 +42,7 @@ function EqSponsorship.read(xmlFile)
         machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
         maxSponsors = xmlFile:getInt("sponsors#maxSponsors", 1),
         attachmentWeight = xmlFile:getFloat("sponsors#attachmentWeight", 1),
+        discountMonths = xmlFile:getInt("sponsors#discountMonths", 0),
         easyCategories = {},
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
@@ -624,6 +625,26 @@ function EqSponsorship.cancelCost(config, contract, now)
     local monthsLeft = math.max(0, (contract.endMonth or now) - now)
     local yearsLeft = math.ceil(monthsLeft / 12)
     return roundTo(contract.fee * config.cancelShare * yearsLeft, 100), yearsLeft
+end
+
+
+--- A farm's discount on one brand's machines. Pure. A contract gives its discounts from
+--- waitMonths after signing (James, 2026-11-01: 3 months); the best of the brand's contracts counts.
+--- @param contracts table the farm's contracts
+--- @param brand string brand name
+--- @param kind string "purchase", "repair" or "repaint"
+--- @param month number the current month
+--- @param waitMonths number|nil
+--- @return number share off (0 to 1)
+function EqSponsorship.discount(contracts, brand, kind, month, waitMonths)
+    local best = 0
+    for _, contract in ipairs(contracts or {}) do
+        local signed = contract.signedMonth or month
+        if contract.brand == brand and month - signed >= (waitMonths or 0) then
+            best = math.max(best, math.min(1, contract[kind] or 0))
+        end
+    end
+    return best
 end
 
 

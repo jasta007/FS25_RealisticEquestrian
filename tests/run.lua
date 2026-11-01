@@ -4718,6 +4718,16 @@ end)()
     check("sponsors: attachments count half", sp.attachmentWeight == 0.5
         and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
         and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    check("sponsors: discounts start 3 months after signing, on the sponsor's brand only", (function()
+        local c = { { brand = "M", signedMonth = 10, repair = 0.15, repaint = 0.35, purchase = 0.05 } }
+        return EqSponsorship.discount(c, "M", "purchase", 12, sp.discountMonths) == 0
+            and sp.discountMonths == 3
+            and EqSponsorship.discount(c, "M", "purchase", 13, sp.discountMonths) == 0.05
+            and EqSponsorship.discount(c, "M", "repaint", 20, 3) == 0.35
+            and EqSponsorship.discount(c, "Z", "repair", 20, 3) == 0
+            and EqSponsorship.discount({}, "M", "repair", 20, 3) == 0
+            and EqSponsorship.discount({ c[1], { brand = "M", signedMonth = 0, repair = 0.3 } }, "M", "repair", 20, 3) == 0.3
+    end)())
     check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
         { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
         { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)

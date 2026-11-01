@@ -908,7 +908,11 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
   away. A met year puts the fee back to full.
 - **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
-- Discounts and the shop's block on rival machines come in the next update.
+- **Discounts** start 3 months after signing, on the sponsor's own machines: the buying discount
+  in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
+  System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
+  With two contracts for one brand the better one counts.
+- The shop's block on rival machines comes in a later update.
 
 Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
 category names (easy ones starred), this year's offers and your contracts;
