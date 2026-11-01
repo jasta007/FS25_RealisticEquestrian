@@ -962,5 +962,89 @@
         <text name="eq_dt_modeLateral" text="Zijgangen tonen"/>
         <text name="eq_dt_lateral" text="Zijgang"/>
         <text name="eq_shop_signboard_function" text="Verhoogt de sponsorinkomsten van je evenementen."/>
+        <text name="eq_ui_tab_sponsors" text="Sponsors"/>
+        <text name="eq_money_sponsorship" text="Sponsoring"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponsors"/>
+        <text name="eq_host_report_sponsor" text="Sponsor: %s, betaald %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
+        <text name="eq_sponsor_col_contract" text="Contract"/>
+        <text name="eq_sponsor_col_fee" text="Betaalt jou"/>
+        <text name="eq_sponsor_size_big" text="Groot"/>
+        <text name="eq_sponsor_size_moderate" text="Middel"/>
+        <text name="eq_sponsor_size_small" text="Klein"/>
+        <text name="eq_sponsor_word_relaxed" text="Soepel"/>
+        <text name="eq_sponsor_word_fair" text="Eerlijk"/>
+        <text name="eq_sponsor_word_demanding" text="Veeleisend"/>
+        <text name="eq_sponsor_word_hardBargain" text="Harde onderhandelaar"/>
+        <text name="eq_sponsor_year1" text="%d jaar"/>
+        <text name="eq_sponsor_years" text="%d jaar"/>
+        <text name="eq_sponsor_backs_all" text="Elke wedstrijd"/>
+        <text name="eq_sponsor_backs_from" text="%s en hoger"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s bij %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", met een top 3 plaats"/>
+        <text name="eq_sponsor_label_fee" text="Betaalt jou"/>
+        <text name="eq_sponsor_label_popularity" text="Populariteit"/>
+        <text name="eq_sponsor_label_target" text="Jaardoel"/>
+        <text name="eq_sponsor_label_machines" text="Hun machines"/>
+        <text name="eq_sponsor_label_discounts" text="Kortingen"/>
+        <text name="eq_sponsor_label_ends" text="Eindigt"/>
+        <text name="eq_sponsor_label_thisYear" text="Dit jaar"/>
+        <text name="eq_sponsor_label_missed" text="Gemiste doelen"/>
+        <text name="eq_sponsor_label_paid" text="Tot nu toe betaald"/>
+        <text name="eq_sponsor_label_cancel" text="Opzegkosten"/>
+        <text name="eq_sponsor_label_years" text="Contract"/>
+        <text name="eq_sponsor_yearMet" text="Doel gehaald"/>
+        <text name="eq_sponsor_yearOpen" text="Doel open tot %s"/>
+        <text name="eq_sponsor_missedLine" text="%d op rij, bedrag op %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Aanbiedingen blijven open tot %s. Eén sponsor tegelijk: heb hun materieel, geen concurrerende machines rond hun prijzen en genoeg zichtbaarheid."/>
+        <text name="eq_sponsor_summaryClosed" text="De aanbiedingen van dit jaar zijn weg. Nieuwe sponsors komen begin volgend jaar."/>
+        <text name="eq_sponsor_noConfig" text="Sponsors konden niet worden geladen."/>
+        <text name="eq_sponsor_noOffers" text="Nu geen sponsoraanbiedingen. Nieuwe komen aan het begin van elk jaar."/>
+        <text name="eq_sponsor_sign_gone" text="Die aanbieding is weg."/>
+        <text name="eq_sponsor_sign_notReady" text="Je voldoet nog niet aan de voorwaarden van deze sponsor."/>
+        <text name="eq_sponsor_signed" text="%s is nu je sponsor, voor %d jaar."/>
+        <text name="eq_sponsor_cancel_none" text="Je hebt geen sponsor."/>
+        <text name="eq_sponsor_cancelled" text="Je contract met %s is opgezegd. Opzeggen kostte %s."/>
+        <text name="eq_sponsor_paid" text="%s betaalde %s voor %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s betaalde niets voor %s: je zichtbaarheid is te laag."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s betaalde niets voor %s: je hebt te weinig van hun machines."/>
+        <text name="eq_sponsor_targetMet" text="%s: het doel van dit jaar is gehaald."/>
+        <text name="eq_sponsor_leaves" text="%s is vertrokken na gemiste doelen."/>
+        <text name="eq_sponsor_missed" text="%s: het doel van dit jaar is gemist. Het bedrag volgend jaar zakt naar %d%%."/>
+        <text name="eq_sponsor_finished" text="Je contract met %s is afgelopen. Het bracht in totaal %s op."/>
+        <text name="eq_sponsor_newOffers" text="Nieuw jaar: %d sponsors willen je wedstrijden steunen. Zie Wedstrijden, Sponsors."/>
+        <text name="eq_sponsor_button_sign" text="Tekenen"/>
+        <text name="eq_sponsor_button_cancel" text="Contract opzeggen"/>
+        <text name="eq_sponsor_sign_confirm" text="Tekenen met %s voor %d jaar? Vroeg opzeggen kost geld."/>
+        <text name="eq_sponsor_cancel_confirm" text="Je contract met %s opzeggen? Dat kost %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Geschiktheid"/>
+        <text name="eq_sponsor_eligible_yes" text="Geschikt"/>
+        <text name="eq_sponsor_eligible_no" text="Niet geschikt"/>
+        <text name="eq_sponsor_eligible_taken" text="Al een sponsor"/>
+        <text name="eq_sponsor_eligible_yours" text="Je sponsor"/>
+        <text name="eq_sponsor_label_speciality" text="Specialiteit"/>
+        <text name="eq_sponsor_feePerEvent" text="%s per wedstrijd"/>
+        <text name="eq_sponsor_targetPopularity" text="Populariteit %d"/>
+        <text name="eq_sponsor_targetRating" text="Wedstrijd %s of hoger"/>
+        <text name="eq_sponsor_haveOf" text="Je hebt er %d van %d"/>
+        <text name="eq_sponsor_mustOwn" text="Je moet %d stuks van hun materieel bezitten voordat je je aanmeldt."/>
+        <text name="eq_sponsor_mustKeep" text="Je moet %d stuks van hun materieel houden om betaald te worden."/>
+        <text name="eq_sponsor_noRivals" text="Je mag geen machines bezitten binnen %s van de prijs van hun product."/>
+        <text name="eq_sponsor_sellFirst" text="Verkoop of lever het volgende in voordat je je aanmeldt:"/>
+        <text name="eq_sponsor_sellMore" text="...en nog %d"/>
+        <text name="eq_sponsor_button_shop" text="Toon in winkel"/>
+        <text name="eq_sponsor_label_branding" text="Zichtbaarheid"/>
+        <text name="eq_sponsor_brandingLine" text="%s (vereist: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Geen"/>
+        <text name="eq_sponsor_branding_low" text="Laag"/>
+        <text name="eq_sponsor_branding_medium" text="Middel"/>
+        <text name="eq_sponsor_branding_high" text="Hoog"/>
+        <text name="eq_sponsor_label_likely" text="Waarschijnlijke uitbetaling"/>
+        <text name="eq_sponsor_likelyLine" text="%s bij %s"/>
+        <text name="eq_shop_branding" text="Je zichtbaarheid: nu %s, hiermee %s. Meer zichtbaarheid verhoogt wat je sponsor betaalt."/>
+        <text name="eq_sponsor_discount_repaint" text="Spuiten %s"/>
+        <text name="eq_sponsor_discount_repair" text="Reparatie %s"/>
+        <text name="eq_sponsor_discount_buy" text="Kopen %s"/>
     </texts>
 </l10n>

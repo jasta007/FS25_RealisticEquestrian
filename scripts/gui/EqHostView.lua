@@ -25,6 +25,7 @@ function EqHostView.optionRows(farmId, venue)
     for _, typeName in ipairs(EqHosting.TYPES) do
         for _, rating in ipairs(config.ratings) do
             local result = EqHosting.check(config, typeName, rating.name, venue)
+            context.sponsor = EqSponsorManager ~= nil and EqSponsorManager.popularityFor(farmId, rating.name) or 0
             local score, parts = EqHosting.popularity(config, typeName, result, context)
             local takings = EqHosting.takings(config, typeName, rating, score, result.seatingTotal)
             -- popularity can still change before the event, so the list shows the most it could take
@@ -186,7 +187,7 @@ function EqHostView.reportRows(farmId)
     for _, report in ipairs(EqHostManager.history[farmId] or {}) do
         local parts = {
             string.format(g_i18n:getText("eq_ui_day"), report.day),
-            string.format("%s (%s)", manager.eventName(report.discipline, report.rating, report.venue, true), manager.tierTitle(report.rating)),
+            string.format("%s (%s)", manager.eventName(report.discipline, report.rating, report.venue, true, report.sponsor), manager.tierTitle(report.rating)),
             string.format(g_i18n:getText("eq_host_report_field"), report.field),
         }
         table.insert(rows, { title = true, text = table.concat(parts, "  |  ") })
@@ -198,6 +199,9 @@ function EqHostView.reportRows(farmId)
             money(report.gate), money(report.setupFee), money(report.total - report.setupFee)) })
         if (report.feed or 0) > 0 then
             table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_feed"), math.floor(report.feed)) })
+        end
+        if report.sponsor ~= nil and report.sponsor ~= "" then
+            table.insert(rows, { text = string.format(g_i18n:getText("eq_host_report_sponsor"), report.sponsor, money(report.sponsorFee)) })
         end
         for _, horse in ipairs(report.mine or {}) do
             local how = horse.status ~= nil and g_i18n:getText("eq_ui_result_" .. horse.status)

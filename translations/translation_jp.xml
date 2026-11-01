@@ -962,5 +962,89 @@
         <text name="eq_dt_modeLateral" text="側方運動を表示"/>
         <text name="eq_dt_lateral" text="側方運動"/>
         <text name="eq_shop_signboard_function" text="主催するイベントのスポンサー収入が増えます。"/>
+        <text name="eq_ui_tab_sponsors" text="スポンサー"/>
+        <text name="eq_money_sponsorship" text="スポンサー契約"/>
+        <text name="rl_messageTitle_eqSponsor" text="スポンサー"/>
+        <text name="eq_host_report_sponsor" text="スポンサー：%s、支払い %s"/>
+        <text name="eq_sponsor_eventName" text="%s %sクラシック"/>
+        <text name="eq_sponsor_col_sponsor" text="スポンサー"/>
+        <text name="eq_sponsor_col_contract" text="契約"/>
+        <text name="eq_sponsor_col_fee" text="受取額"/>
+        <text name="eq_sponsor_size_big" text="大"/>
+        <text name="eq_sponsor_size_moderate" text="中"/>
+        <text name="eq_sponsor_size_small" text="小"/>
+        <text name="eq_sponsor_word_relaxed" text="寛大"/>
+        <text name="eq_sponsor_word_fair" text="公正"/>
+        <text name="eq_sponsor_word_demanding" text="厳しい"/>
+        <text name="eq_sponsor_word_hardBargain" text="手強い交渉相手"/>
+        <text name="eq_sponsor_year1" text="%d年"/>
+        <text name="eq_sponsor_years" text="%d年"/>
+        <text name="eq_sponsor_backs_all" text="すべての大会"/>
+        <text name="eq_sponsor_backs_from" text="%s以上"/>
+        <text name="eq_sponsor_backs_lower" text="%s（%sで%s）"/>
+        <text name="eq_sponsor_targetTop3" text="、3位以内の成績で"/>
+        <text name="eq_sponsor_label_fee" text="受取額"/>
+        <text name="eq_sponsor_label_popularity" text="人気度"/>
+        <text name="eq_sponsor_label_target" text="年間目標"/>
+        <text name="eq_sponsor_label_machines" text="相手の機械"/>
+        <text name="eq_sponsor_label_discounts" text="割引"/>
+        <text name="eq_sponsor_label_ends" text="終了"/>
+        <text name="eq_sponsor_label_thisYear" text="今年"/>
+        <text name="eq_sponsor_label_missed" text="未達成の目標"/>
+        <text name="eq_sponsor_label_paid" text="これまでの支払い"/>
+        <text name="eq_sponsor_label_cancel" text="解約費用"/>
+        <text name="eq_sponsor_label_years" text="契約"/>
+        <text name="eq_sponsor_yearMet" text="目標達成"/>
+        <text name="eq_sponsor_yearOpen" text="目標は%sまで"/>
+        <text name="eq_sponsor_missedLine" text="%d回連続、金額は%s"/>
+        <text name="eq_sponsor_summaryOpen" text="オファーは%sまで有効です。スポンサーは一度に1社：その機材を所有し、価格の近い競合の機械を持たず、十分なブランド露出が必要です。"/>
+        <text name="eq_sponsor_summaryClosed" text="今年のオファーは終了しました。新しいスポンサーは来年の初めに来ます。"/>
+        <text name="eq_sponsor_noConfig" text="スポンサーを読み込めませんでした。"/>
+        <text name="eq_sponsor_noOffers" text="現在スポンサーのオファーはありません。毎年初めに新しいオファーが来ます。"/>
+        <text name="eq_sponsor_sign_gone" text="そのオファーはもうありません。"/>
+        <text name="eq_sponsor_sign_notReady" text="このスポンサーの条件をまだ満たしていません。"/>
+        <text name="eq_sponsor_signed" text="%sがあなたのスポンサーになりました（%d年）。"/>
+        <text name="eq_sponsor_cancel_none" text="スポンサーがいません。"/>
+        <text name="eq_sponsor_cancelled" text="%sとの契約を解約しました。解約費用は%sでした。"/>
+        <text name="eq_sponsor_paid" text="%sが%sを支払いました（%s）。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%sは%sに何も支払いませんでした：ブランド露出が不足しています。"/>
+        <text name="eq_sponsor_unpaid_machines" text="%sは何も支払いませんでした（%s）：相手の機械が足りません。"/>
+        <text name="eq_sponsor_targetMet" text="%s：今年の目標を達成しました。"/>
+        <text name="eq_sponsor_leaves" text="%sは目標未達成のため去りました。"/>
+        <text name="eq_sponsor_missed" text="%s：今年の目標は未達成です。来年の金額は%d%%に下がります。"/>
+        <text name="eq_sponsor_finished" text="%sとの契約が終了しました。合計%sを支払いました。"/>
+        <text name="eq_sponsor_newOffers" text="新年：%d社のスポンサーがあなたの大会を支援したがっています。大会のスポンサーをご覧ください。"/>
+        <text name="eq_sponsor_button_sign" text="署名"/>
+        <text name="eq_sponsor_button_cancel" text="契約を解約"/>
+        <text name="eq_sponsor_sign_confirm" text="%sと%d年の契約に署名しますか？途中解約には費用がかかります。"/>
+        <text name="eq_sponsor_cancel_confirm" text="%sとの契約を解約しますか？費用は%sです。"/>
+        <text name="eq_sponsor_col_eligibility" text="資格"/>
+        <text name="eq_sponsor_eligible_yes" text="資格あり"/>
+        <text name="eq_sponsor_eligible_no" text="資格なし"/>
+        <text name="eq_sponsor_eligible_taken" text="スポンサー契約中"/>
+        <text name="eq_sponsor_eligible_yours" text="あなたのスポンサー"/>
+        <text name="eq_sponsor_label_speciality" text="得意分野"/>
+        <text name="eq_sponsor_feePerEvent" text="大会ごと%s"/>
+        <text name="eq_sponsor_targetPopularity" text="人気度%d"/>
+        <text name="eq_sponsor_targetRating" text="%s以上の大会"/>
+        <text name="eq_sponsor_haveOf" text="所有%d／必要%d"/>
+        <text name="eq_sponsor_mustOwn" text="申し込む前に相手の機材を%d台所有する必要があります。"/>
+        <text name="eq_sponsor_mustKeep" text="支払いを受けるには相手の機材を%d台保持する必要があります。"/>
+        <text name="eq_sponsor_noRivals" text="相手の製品の価格の%s以内の機械は所有できません。"/>
+        <text name="eq_sponsor_sellFirst" text="申し込む前に次を売却または返却してください："/>
+        <text name="eq_sponsor_sellMore" text="…ほか%d台"/>
+        <text name="eq_sponsor_button_shop" text="ショップで表示"/>
+        <text name="eq_sponsor_label_branding" text="ブランド露出"/>
+        <text name="eq_sponsor_brandingLine" text="%s（必要：%s）"/>
+        <text name="eq_sponsor_branding_none" text="なし"/>
+        <text name="eq_sponsor_branding_low" text="低"/>
+        <text name="eq_sponsor_branding_medium" text="中"/>
+        <text name="eq_sponsor_branding_high" text="高"/>
+        <text name="eq_sponsor_label_likely" text="見込み支払い"/>
+        <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
+        <text name="eq_shop_branding" text="ブランド露出：現在%s、これを加えると%s。露出が多いほどスポンサーの支払いが増えます。"/>
+        <text name="eq_sponsor_discount_repaint" text="塗装 %s"/>
+        <text name="eq_sponsor_discount_repair" text="修理 %s"/>
+        <text name="eq_sponsor_discount_buy" text="購入 %s"/>
     </texts>
 </l10n>

@@ -309,8 +309,12 @@ end
 --- @param tier string
 --- @param venue string|nil the event's venue; nil (a save from before venues) uses the first one
 --- @param hosted boolean|nil true for an event a farm hosts: "Show Jumping at <farm>"
+--- @param sponsor string|nil the hosted event's sponsor: "<Brand> Show Jumping Classic"
 --- @return string name
-function EqCompetitionManager.eventName(discipline, tier, venue, hosted)
+function EqCompetitionManager.eventName(discipline, tier, venue, hosted, sponsor)
+    if hosted and sponsor ~= nil and sponsor ~= "" then
+        return string.format(g_i18n:getText("eq_sponsor_eventName"), sponsor, g_i18n:getText("eq_host_type_" .. discipline))
+    end
     if hosted then
         return string.format(g_i18n:getText("eq_host_eventName"), g_i18n:getText("eq_host_type_" .. discipline),
             venue or "")
@@ -343,7 +347,8 @@ end
 --- @param event table
 --- @return string title such as "1.20m Jumping (Intermediate)", without the event number players never need
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil),
+    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil,
+        event.hosted ~= nil and event.hosted.sponsor or nil),
         EqCompetitionManager.tierTitle(event.tier))
 end
 
@@ -989,6 +994,8 @@ function EqCompetitionManager.onPeriodChanged()
     EqCompetitionManager.monthChangedDay = g_currentMission.environment.currentMonotonicDay or 0
     -- Hosted events booked for the new month open now (after the month's draw, so they are extra).
     if EqHostManager ~= nil then EqHostManager.onMonthStarted(EqCompetitionManager.month) end
+    -- Sponsors: contract years close, and the year's first month brings new offers.
+    if EqSponsorManager ~= nil then EqLog.try("EqSponsorManager.onMonthStarted", EqSponsorManager.onMonthStarted, EqCompetitionManager.month) end
 end
 
 

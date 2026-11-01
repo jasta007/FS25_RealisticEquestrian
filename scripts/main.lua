@@ -63,6 +63,8 @@ source(modDirectory .. "scripts/attire/EqAttire.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorship.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorManager.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -83,6 +85,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqHostView.lua")
+source(modDirectory .. "scripts/gui/EqSponsorView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
@@ -108,6 +111,7 @@ EqMain.MONEY_STATS = {
     { name = "eqTransport", title = "eq_money_transport" },
     { name = "eqStaffWages", title = "eq_money_staffWages" },
     { name = "eqHosting", title = "eq_money_hosting" },
+    { name = "eqSponsorship", title = "eq_money_sponsorship" },
 }
 for _, stat in ipairs(EqMain.MONEY_STATS) do
     if FinanceStats.statNameToIndex[stat.name] == nil then
@@ -232,6 +236,8 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_HOSTING = MoneyType.register("eqHosting", "eq_money_hosting")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_SPONSORSHIP = MoneyType.register("eqSponsorship", "eq_money_sponsorship")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
             EqInjury.loadConfig(modDirectory)
         end)
@@ -240,6 +246,7 @@ function EqMain.activate()
         end
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
         guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
+        guarded("sponsors setup", function() EqSponsorManager.loadConfig(modDirectory) end)
     end
 
     if EqMain.isActive then
@@ -363,6 +370,7 @@ local function onMissionDelete()
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
         EqHostManager.reset()
+        EqSponsorManager.reset()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

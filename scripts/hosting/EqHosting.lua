@@ -375,7 +375,7 @@ end
 --- @param config table
 --- @param typeName string
 --- @param result table from EqHosting.check
---- @param context table|nil { facilityKinds, reputation, star (a Champion or Legendary entrant), winter }
+--- @param context table|nil { facilityKinds, reputation, star (a Champion or Legendary entrant), winter, sponsor (points) }
 --- @return number score 0..100
 --- @return table parts list of { id, points }, in the Host page's order
 function EqHosting.popularity(config, typeName, result, context)
@@ -392,6 +392,8 @@ function EqHosting.popularity(config, typeName, result, context)
     add("facilities", math.min(p.facilities, (context.facilityKinds or 0) * p.facilitiesEach))
     add("reputation", math.min(p.reputationMax, math.max(p.reputationMin, context.reputation or 0)))
     if context.star then add("star", p.star) end
+    -- The farm's sponsor, when it backs the event's rating (EqSponsorManager).
+    if (context.sponsor or 0) > 0 then add("sponsor", context.sponsor) end
     if context.winter and EqHosting.hasPart(typeName, "crossCountry") then add("winter", p.winter) end
 
     local score = 0

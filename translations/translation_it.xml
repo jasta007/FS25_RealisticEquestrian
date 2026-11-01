@@ -962,5 +962,89 @@
         <text name="eq_dt_modeLateral" text="Mostra lavoro laterale"/>
         <text name="eq_dt_lateral" text="Laterale"/>
         <text name="eq_shop_signboard_function" text="Aumenta gli incassi dagli sponsor dei tuoi eventi."/>
+        <text name="eq_ui_tab_sponsors" text="Sponsor"/>
+        <text name="eq_money_sponsorship" text="Sponsorizzazioni"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponsor"/>
+        <text name="eq_host_report_sponsor" text="Sponsor: %s, pagato %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
+        <text name="eq_sponsor_col_contract" text="Contratto"/>
+        <text name="eq_sponsor_col_fee" text="Ti paga"/>
+        <text name="eq_sponsor_size_big" text="Grande"/>
+        <text name="eq_sponsor_size_moderate" text="Medio"/>
+        <text name="eq_sponsor_size_small" text="Piccolo"/>
+        <text name="eq_sponsor_word_relaxed" text="Morbide"/>
+        <text name="eq_sponsor_word_fair" text="Eque"/>
+        <text name="eq_sponsor_word_demanding" text="Esigenti"/>
+        <text name="eq_sponsor_word_hardBargain" text="Osso duro"/>
+        <text name="eq_sponsor_year1" text="%d anno"/>
+        <text name="eq_sponsor_years" text="%d anni"/>
+        <text name="eq_sponsor_backs_all" text="Tutte le gare"/>
+        <text name="eq_sponsor_backs_from" text="%s e superiori"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s a %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", con un piazzamento tra i primi 3"/>
+        <text name="eq_sponsor_label_fee" text="Ti paga"/>
+        <text name="eq_sponsor_label_popularity" text="Popolarità"/>
+        <text name="eq_sponsor_label_target" text="Obiettivo annuale"/>
+        <text name="eq_sponsor_label_machines" text="Le loro macchine"/>
+        <text name="eq_sponsor_label_discounts" text="Sconti"/>
+        <text name="eq_sponsor_label_ends" text="Scade"/>
+        <text name="eq_sponsor_label_thisYear" text="Quest'anno"/>
+        <text name="eq_sponsor_label_missed" text="Obiettivi mancati"/>
+        <text name="eq_sponsor_label_paid" text="Pagato finora"/>
+        <text name="eq_sponsor_label_cancel" text="Costo di disdetta"/>
+        <text name="eq_sponsor_label_years" text="Contratto"/>
+        <text name="eq_sponsor_yearMet" text="Obiettivo raggiunto"/>
+        <text name="eq_sponsor_yearOpen" text="Obiettivo aperto fino a %s"/>
+        <text name="eq_sponsor_missedLine" text="%d di fila, compenso al %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Le offerte restano aperte fino a %s. Uno sponsor alla volta: possiedi le sue attrezzature, nessuna macchina rivale vicina ai suoi prezzi e abbastanza visibilità."/>
+        <text name="eq_sponsor_summaryClosed" text="Le offerte di quest'anno sono finite. Nuovi sponsor arrivano all'inizio del prossimo anno."/>
+        <text name="eq_sponsor_noConfig" text="Impossibile caricare gli sponsor."/>
+        <text name="eq_sponsor_noOffers" text="Nessuna offerta di sponsor ora. Ne arrivano di nuove all'inizio di ogni anno."/>
+        <text name="eq_sponsor_sign_gone" text="Quell'offerta non c'è più."/>
+        <text name="eq_sponsor_sign_notReady" text="Non soddisfi ancora le condizioni di questo sponsor."/>
+        <text name="eq_sponsor_signed" text="%s ora è il tuo sponsor, per %d anno/i."/>
+        <text name="eq_sponsor_cancel_none" text="Non hai uno sponsor."/>
+        <text name="eq_sponsor_cancelled" text="Il tuo contratto con %s è disdetto. La disdetta è costata %s."/>
+        <text name="eq_sponsor_paid" text="%s ha pagato %s per %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s non ha pagato nulla per %s: la tua visibilità è troppo bassa."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s non ha pagato nulla per %s: non possiedi abbastanza delle sue macchine."/>
+        <text name="eq_sponsor_targetMet" text="%s: l'obiettivo di quest'anno è raggiunto."/>
+        <text name="eq_sponsor_leaves" text="%s se n'è andato dopo obiettivi mancati."/>
+        <text name="eq_sponsor_missed" text="%s: l'obiettivo di quest'anno è mancato. Il compenso del prossimo anno scende al %d%%."/>
+        <text name="eq_sponsor_finished" text="Il tuo contratto con %s è terminato. Ha pagato %s in tutto."/>
+        <text name="eq_sponsor_newOffers" text="Anno nuovo: %d sponsor vogliono sostenere le tue gare. Vedi Gare, Sponsor."/>
+        <text name="eq_sponsor_button_sign" text="Firma"/>
+        <text name="eq_sponsor_button_cancel" text="Disdici contratto"/>
+        <text name="eq_sponsor_sign_confirm" text="Firmare con %s per %d anno/i? Disdire prima costa una penale."/>
+        <text name="eq_sponsor_cancel_confirm" text="Disdire il contratto con %s? Costa %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Idoneità"/>
+        <text name="eq_sponsor_eligible_yes" text="Idoneo"/>
+        <text name="eq_sponsor_eligible_no" text="Non idoneo"/>
+        <text name="eq_sponsor_eligible_taken" text="Hai già uno sponsor"/>
+        <text name="eq_sponsor_eligible_yours" text="Il tuo sponsor"/>
+        <text name="eq_sponsor_label_speciality" text="Specialità"/>
+        <text name="eq_sponsor_feePerEvent" text="%s per gara"/>
+        <text name="eq_sponsor_targetPopularity" text="Popolarità %d"/>
+        <text name="eq_sponsor_targetRating" text="Gara %s o superiore"/>
+        <text name="eq_sponsor_haveOf" text="Ne hai %d su %d"/>
+        <text name="eq_sponsor_mustOwn" text="Devi possedere %d loro attrezzature prima di candidarti."/>
+        <text name="eq_sponsor_mustKeep" text="Devi tenere %d loro attrezzature per essere pagato."/>
+        <text name="eq_sponsor_noRivals" text="Non puoi possedere macchine entro il %s del prezzo del loro prodotto."/>
+        <text name="eq_sponsor_sellFirst" text="Vendi o restituisci prima di candidarti:"/>
+        <text name="eq_sponsor_sellMore" text="...e altri %d"/>
+        <text name="eq_sponsor_button_shop" text="Mostra nel negozio"/>
+        <text name="eq_sponsor_label_branding" text="Visibilità"/>
+        <text name="eq_sponsor_brandingLine" text="%s (richiesta: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Nessuna"/>
+        <text name="eq_sponsor_branding_low" text="Bassa"/>
+        <text name="eq_sponsor_branding_medium" text="Media"/>
+        <text name="eq_sponsor_branding_high" text="Alta"/>
+        <text name="eq_sponsor_label_likely" text="Compenso probabile"/>
+        <text name="eq_sponsor_likelyLine" text="%s a %s"/>
+        <text name="eq_shop_branding" text="La tua visibilità: %s ora, %s con questo. Più visibilità aumenta quanto paga il tuo sponsor."/>
+        <text name="eq_sponsor_discount_repaint" text="Verniciatura %s"/>
+        <text name="eq_sponsor_discount_repair" text="Riparazione %s"/>
+        <text name="eq_sponsor_discount_buy" text="Acquisto %s"/>
     </texts>
 </l10n>
