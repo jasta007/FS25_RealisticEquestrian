@@ -5033,6 +5033,25 @@ end)()
         check("plinths: other brands on show cost a tenth of the fee each, at most half", EqPlinths.penalty(0) == 0
             and math.abs(EqPlinths.penalty(2) - 0.2) < 1e-9 and EqPlinths.penalty(9) == 0.5 and EqPlinths.penalty(nil) == 0)
         check("plinths: no sponsor, nothing counted", EqPlinths.count(1, {}) == 0 and EqPlinths.count(1, nil) == 0)
+        do
+            local savedMission, savedTranslation, savedTime = g_currentMission, getWorldTranslation, g_time
+            local woken = {}
+            local near, far = { rootNode = 11, components = { { node = 11 } } }, { rootNode = 12, components = { { node = 12 } } }
+            near.raiseActive = function(v) woken[v] = (woken[v] or 0) + 1 end
+            far.raiseActive = near.raiseActive
+            g_currentMission = { vehicleSystem = { vehicles = { near, far } } }
+            local spots = { [10] = { 0, 0, 0 }, [11] = { 3, 1, 4 }, [12] = { 40, 0, 0 } }
+            getWorldTranslation = function(node) return unpack(spots[node]) end
+            g_time = 1000
+            EqPlinths.waking = {}
+            EqPlinths.wakeNear({ rootNode = 10 })
+            EqPlinths.wakeUpdate()
+            g_time = 1000 + EqPlinths.WAKE_MS + 1
+            EqPlinths.wakeUpdate()
+            g_currentMission, getWorldTranslation, g_time = savedMission, savedTranslation, savedTime
+            check("plinths: a plinth going wakes the machines near it for a while, not far ones", woken[near] == 1
+                and woken[far] == nil and next(EqPlinths.waking) == nil)
+        end
         check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
         do
             local saved = EqSponsorManager

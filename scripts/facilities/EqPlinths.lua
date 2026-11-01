@@ -48,6 +48,11 @@ EqPlinths.STILL_KMH = 1.0
 -- The wrong-brand popup in plain red (James, 2026-11-01). The game's notification types are
 -- colours (RGBA tables); if not, its critical type is used.
 EqPlinths.RED = { 0.95, 0.08, 0.06, 1 }
+-- When a plinth goes (sold, or a Lizard plinth collapsing), machines near it are woken for WAKE_MS
+-- so they fall instead of floating on where it stood (James, 2026-11-01: a Volvo truck floated).
+EqPlinths.WAKE_RANGE = 15
+EqPlinths.WAKE_MS = 2000
+EqPlinths.waking = {}
 
 local function drop(depth)
     return { { x = 0, y = 0.05, z = -1 + depth / 2, hx = 2.0, hz = depth / 2, slope = 0 } }
@@ -280,6 +285,55 @@ function EqPlinths.holdsMachine(placeable)
 end
 
 
+--- @param vehicle table
+local function wake(vehicle)
+    if vehicle.isDeleted or vehicle.isDeleting then return end
+    for _, component in ipairs(vehicle.components or {}) do
+        local node = component.node
+        if type(node) == "number" and node ~= 0 and (entityExists == nil or entityExists(node)) then
+            if I3DUtil ~= nil and I3DUtil.wakeUpObject ~= nil then
+                I3DUtil.wakeUpObject(node)
+            elseif getLinearVelocity ~= nil and setLinearVelocity ~= nil then
+                -- setting a body's velocity wakes it
+                local vx, vy, vz = getLinearVelocity(node)
+                setLinearVelocity(node, vx or 0, vy or 0, vz or 0)
+            end
+        end
+    end
+    if vehicle.raiseActive ~= nil then vehicle:raiseActive() end
+end
+
+
+--- A plinth is going: wake the machines near it over the next WAKE_MS.
+--- @param placeable table
+function EqPlinths.wakeNear(placeable)
+    if g_currentMission == nil or g_currentMission.vehicleSystem == nil then return end
+    if type(placeable.rootNode) ~= "number" or placeable.rootNode == 0 then return end
+    local px, _, pz = getWorldTranslation(placeable.rootNode)
+    local untilAt = (g_time or 0) + EqPlinths.WAKE_MS
+    for _, vehicle in ipairs(g_currentMission.vehicleSystem.vehicles or {}) do
+        if type(vehicle.rootNode) == "number" and vehicle.rootNode ~= 0 then
+            local vx, _, vz = getWorldTranslation(vehicle.rootNode)
+            if (vx - px) ^ 2 + (vz - pz) ^ 2 <= EqPlinths.WAKE_RANGE ^ 2 then EqPlinths.waking[vehicle] = untilAt end
+        end
+    end
+end
+
+
+--- Each frame: keep waking machines whose plinth went.
+function EqPlinths.wakeUpdate()
+    if next(EqPlinths.waking) == nil then return end
+    local now = g_time or 0
+    for vehicle, untilAt in pairs(EqPlinths.waking) do
+        if now > untilAt or vehicle.isDeleted then
+            EqPlinths.waking[vehicle] = nil
+        else
+            wake(vehicle)
+        end
+    end
+end
+
+
 --- @return table|nil the machine the player is driving
 local function driven()
     for _, vehicle in ipairs(g_currentMission.vehicleSystem ~= nil and g_currentMission.vehicleSystem.vehicles or {}) do
@@ -355,7 +409,16 @@ function EqPlinths.install(guarded)
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
         if not EqMain.isActive then return end
         guarded("plinth feedback", EqPlinths.update)
+        guarded("plinth wake", EqPlinths.wakeUpdate)
     end)
+    if Placeable ~= nil and Placeable.delete ~= nil then
+        Placeable.delete = Utils.prependedFunction(Placeable.delete, function(placeable)
+            if EqMain.isActive and EqPlinths.areasFor(placeable.configFileName) ~= nil then
+                EqLog.try("EqPlinths wake", EqPlinths.wakeNear, placeable)
+            end
+        end)
+    end
+    FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, function() EqPlinths.waking = {} end)
     if EqSponsorManager ~= nil and EqSponsorManager.afterEvent ~= nil then
         local paid = EqSponsorManager.afterEvent
         EqSponsorManager.afterEvent = function(event, report)

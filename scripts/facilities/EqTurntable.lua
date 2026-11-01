@@ -12,8 +12,8 @@
     A machine is held with everything hitched to it (James, 2026-11-01: a wheel loader, whose
     bucket is an implement of its own, wouldn't snap): the whole chain comes out of the physics
     and turns together; hitching or unhitching anything lets go.
-    In multiplayer the disc turns but nothing is held: the server's held machine would not reach
-    the other players the same way (not tried).
+    The disc stands still with nothing held on it. In multiplayer nothing is held (so it doesn't
+    turn): the server's held machine would not reach the other players the same way (not tried).
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -231,8 +231,11 @@ function EqTurntable.update(dt)
     if next(EqTurntable.tables) == nil then return end
     local holding = not isMultiplayer() and g_currentMission ~= nil and g_currentMission.vehicleSystem ~= nil
     for _, entry in pairs(EqTurntable.tables) do
-        entry.angle = EqTurntable.advance(entry.angle, dt)
-        setRotation(entry.disc, 0, entry.angle, 0)
+        -- the disc only turns with a machine on it (James, 2026-11-01: an empty one spinning looks odd)
+        if next(entry.held) ~= nil then
+            entry.angle = EqTurntable.advance(entry.angle, dt)
+            setRotation(entry.disc, 0, entry.angle, 0)
+        end
         if holding then
             for vehicle, helpers in pairs(entry.held) do
                 local now_ = chain(vehicle)
