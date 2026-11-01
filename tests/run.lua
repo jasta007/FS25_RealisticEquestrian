@@ -4273,6 +4273,16 @@ end)()
         local otherMarkers = shopMarkers(arena, 140, -12, 0.7)
         local otherFrame = EqDressagePath.frameFor(otherMarkers, xOf(otherMarkers))
         check(name .. ": a test belongs to its own arena", EqDressageTests.planFor(ownFrame) == plan and EqDressageTests.planFor(otherFrame) == nil)
+        -- In your hosted event your own test counts only when it is as long as the event's.
+        local function started(steps)
+            local routine = {}
+            EqDressage.start(routine, { x = ownFrame.cx, z = ownFrame.cz, markers = ownMarkers,
+                test = { seed = "h", moves = 15, counts = true, status = "counts", event = {}, steps = steps } }, function(n) return 1 end)
+            return routine
+        end
+        local longEnough, tooShort = started(#plan.steps), started(#plan.steps + 1)
+        check(name .. ": own test counts in a hosted event only when long enough", longEnough.kind == "path" and longEnough.competing == true
+            and longEnough.hosted.status == "counts" and tooShort.competing == nil and tooShort.hosted.status == "short")
         local store = memoryXML()
         EqDressageTests.saveToXMLFile(store, "t")
         EqDressageTests.loadFromXMLFile(store, "t")
@@ -4658,7 +4668,10 @@ end)()
     local failed = EqHostManager.failedChecks(short, true)
     local hasFeed = false
     for _, id in ipairs(failed) do if id == "feed" then hasFeed = true end end
-    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "arena" and not hasFeed)
+    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "stables" and not hasFeed)
+    local onlyFarm = true
+    for _, id in ipairs(failed) do onlyFarm = onlyFarm and (id == "stables" or id == "feed") end
+    check("host month: a running event is never stopped by its courses or arena", onlyFarm, table.concat(failed, " "))
     local all = EqHostManager.failedChecks(short, false)
     check("host month: the opening check counts the feed", all[#all] == "feed")
 
@@ -4692,6 +4705,47 @@ end)()
         EqHostVenue, EqCompetitionManager = hadVenue, hadManager
     end
 
+    -- Courses and tests are set before the event month (James, 2026-11-01): during it one big
+    -- enough can't be deleted, and a test of your own made too short is practice only.
+    do
+        local hadVenue, hadManager, hadMission = EqHostVenue, EqCompetitionManager, g_currentMission
+        EqHostVenue = EqHostVenue or {}
+        EqCompetitionManager = EqCompetitionManager or {}
+        local savedConfig, savedEvents, savedBookings = EqHostVenue.config, EqCompetitionManager.events, EqHostManager.bookings
+        local savedTitle = EqCompetitionManager.eventTitle
+        EqHostVenue.config = host
+        g_currentMission = { getFarmId = function() return 1 end }
+        EqCompetitionManager.eventTitle = function() return "Novice 3 Day Event" end
+        local event = { id = 40, discipline = "eventing", hosted = { farmId = 1, rating = "novice" }, entries = {} }
+        EqCompetitionManager.events = { [40] = event }
+        EqHostManager.bookings = {}
+        local sjCourse = { kind = "showJumping", jumps = { 1, 2, 3, 4, 5, 6 }, length = 400 }
+        local smallSj = { kind = "showJumping", jumps = { 1, 2, 3, 4, 5 }, length = 300 }
+        local xcCourse = { kind = "crossCountry", jumps = {}, length = 1200 }
+        for i = 1, 20 do xcCourse.jumps[i] = i end
+        check("lock: a course big enough for the running event can't be deleted", EqHostManager.courseLocked(sjCourse) == event
+            and EqHostManager.courseLocked(xcCourse) == event and EqHostManager.courseLocked(smallSj) == nil)
+        local need = EqHosting.testSteps(host.ratingByName.novice)
+        local frame = { halfL = 15, halfW = 7.5 }
+        local longPlan, shortPlan = { steps = {} }, { steps = {} }
+        for i = 1, need do longPlan.steps[i] = {} end
+        for i = 1, need - 1 do shortPlan.steps[i] = {} end
+        check("lock: a long enough test can't be deleted, a short one can", need == 8 and EqHostManager.testLocked(frame, longPlan) == event
+            and EqHostManager.testLocked(frame, shortPlan) == nil and EqHostManager.testLocked({ halfL = 10 }, longPlan) == nil)
+        local title, needed = EqHostManager.testTooShort(need - 1)
+        check("lock: saving a short test warns, a long one doesn't", title == "Novice 3 Day Event" and needed == need
+            and EqHostManager.testTooShort(need) == nil)
+        EqCompetitionManager.events = {}
+        check("lock: nothing is locked without a running event", EqHostManager.courseLocked(sjCourse) == nil
+            and EqHostManager.testLocked(frame, longPlan) == nil and EqHostManager.testTooShort(1) == nil)
+        EqHostManager.bookings = { [1] = { type = "dressage", rating = "intermediate", month = 20 } }
+        local bookedTitle, bookedNeed = EqHostManager.testTooShort(need)
+        check("lock: a booked event warns about a short test too", bookedTitle ~= nil and bookedNeed == 10)
+        EqHostVenue.config, EqCompetitionManager.events, EqHostManager.bookings = savedConfig, savedEvents, savedBookings
+        EqCompetitionManager.eventTitle = savedTitle
+        EqHostVenue, EqCompetitionManager, g_currentMission = hadVenue, hadManager, hadMission
+    end
+
     -- Ridden rounds in your own event.
     local novice = host.ratingByName.novice
     check("ridden: a course with enough jumps qualifies", EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 6 })
@@ -4704,7 +4758,9 @@ end)()
     sheet = EqHosting.roundSheet({ faults = 20, timeFaults = 1.2, total = 21.2, xc = true }, 1)
     check("ridden: cross country sheet", sheet.penalties == 21.2 and sheet.down == 0 and sheet.refusals == 1)
     check("ridden: eliminated round", EqHosting.roundSheet({ eliminated = "refusals" }, 2).eliminated == true)
-    check("ridden: dressage penalties are 100 less the test's percentage", EqHosting.testSheet(72.5, false).penalties == 27.5
+    check("ridden: dressage penalties on the simulated scale", EqHosting.testSheet(75, false).penalties == 22
+        and EqHosting.testSheet(70, false).penalties == 26 and EqHosting.testSheet(60, false).penalties == 34
+        and EqHosting.testSheet(80, false).penalties == 18 and EqHosting.testSheet(100, false).penalties == 2
         and EqHosting.testSheet(60, true).eliminated and EqHosting.testSheet(nil, false).eliminated)
     local rode = { h = { dressage = { penalties = 22 }, showJumping = { penalties = 0 } } }
     check("ridden: some phases leave it to the simulation", EqHosting.riddenFate(rode, "h", "eventing") == nil
@@ -4730,32 +4786,32 @@ end)()
     check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
         and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
 
-    -- Graded rounds: the ride picks where in its own range the horse lands.
-    check("ride grade: clear inside the time is perfect", EqHosting.rideGrade("showJumping", 0, 40, 41) == 1)
-    local slow = EqHosting.rideGrade("showJumping", 0, 67.3, 41)
-    check("ride grade: very slow costs most of the time part", slow > 0.41 and slow < 0.44, string.format("%.3f", slow))
-    check("ride grade: rails cost more than a little time", EqHosting.rideGrade("showJumping", 8, 40, 41)
-        < EqHosting.rideGrade("showJumping", 0, 45, 41))
-    check("ride grade: a cross country refusal is about one rail's worth less",
-        EqHosting.rideGrade("crossCountry", 20, 100, 120) > EqHosting.rideGrade("showJumping", 12, 40, 41))
-    local graded = EqHosting.roundSheet({ seconds = 50, faults = 4, timeFaults = 9, total = 13 }, 0, 41)
-    check("ride grade: kept on the sheet", graded.grade ~= nil and graded.grade < 1 and graded.penalties == 13)
-    local function meanPlace(grade, rating)
-        local sum = 0
+    -- A three-day event: every ridden phase is on the scoresheet with the penalties the rider
+    -- was told (James, 2026-11-01: a clear round showed 4 faults at the results).
+    local function threeDay(ridden, label)
+        local sum, mine = 0, nil
         for i = 1, 200 do
-            local ev = { discipline = "showJumping", tier = "novice", prize = 1000,
-                hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0, grade = grade } } } } }
-            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = rating, condition = 1, stats = stats } },
-                EqRandom.new("graded " .. i), 8)) do
-                if r.key == "me" then sum = sum + r.place end
+            local ev = { discipline = "eventing", tier = "novice", prize = 1000, hosted = { ridden = { me = ridden } } }
+            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = 45, condition = 1, stats = stats } }, EqRandom.new(label .. i), 8)) do
+                if r.key == "me" then mine, sum = r, sum + r.place end
             end
         end
-        return sum / 200
+        return mine, sum / 200
     end
-    local good, bad = meanPlace(1, 45), meanPlace(0.1, 45)
-    check("ride grade: a good ride places better than a poor one", good + 1 < bad, string.format("%.2f vs %.2f", good, bad))
-    local weakClear = meanPlace(1, 10)
-    check("ride grade: a weak horse ridden clear still doesn't win every time", weakClear > 1.5, string.format("%.2f", weakClear))
+    local clearSj = EqHosting.roundSheet({ seconds = 40, faults = 0, timeFaults = 0, total = 0 }, 0)
+    local xcRound = EqHosting.roundSheet({ xc = true, seconds = 130, faults = 20, timeFaults = 4, total = 24 }, 1)
+    local all3 = { dressage = EqHosting.testSheet(70, false), showJumping = clearSj, crossCountry = xcRound }
+    local three = threeDay(all3, "3de all ")
+    local byName = {}
+    for _, phase in ipairs(three.run.phases) do byName[phase.name] = phase.sheet end
+    check("3 day event: each ridden phase keeps the rider's penalties", byName.dressage.penalties == 26 and byName.dressage.ridden
+        and byName.showJumping.penalties == 0 and byName.showJumping.ridden and byName.crossCountry.penalties == 24
+        and byName.crossCountry.refusals == 1 and three.run.penalties == 50, string.format("%.1f total", three.run.penalties))
+    local _, simulated = threeDay({}, "3de none ")
+    local _, good = threeDay({ dressage = EqHosting.testSheet(70, false) }, "3de d70 ")
+    local _, poor = threeDay({ dressage = EqHosting.testSheet(55, false) }, "3de d55 ")
+    check("3 day event: a 70% test keeps a good horse near the front", good < simulated + 0.6 and good < poor,
+        string.format("%.2f ridden vs %.2f simulated, %.2f at 55%%", good, simulated, poor))
 
     -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
     local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }

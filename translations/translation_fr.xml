@@ -800,6 +800,7 @@
         <text name="eq_course_resumed" text="Enregistrement depuis le point le plus proche"/>
         <text name="eq_course_finished" text="Édition terminée : les obstacles posés de Realistic Equestrian retrouvent leur collision"/>
         <text name="eq_course_deleted" text="%s supprimé"/>
+        <text name="eq_course_locked" text="Impossible de supprimer %s pendant %s : préparez vos parcours avant le mois de l&#x27;épreuve"/>
         <text name="eq_course_deleteAsk" text="Supprimer %s avec %d obstacles sur %.0f m ?"/>
         <text name="eq_course_deleteTitle" text="Supprimer le parcours"/>
         <text name="eq_course_deleteAction" text="Supprimer %s"/>
@@ -863,6 +864,8 @@
         <text name="eq_host_ann_smallArena" text="Cette carrière est trop petite pour votre épreuve : simple entraînement"/>
         <text name="eq_host_note_testCounts" text="Reprise de compétition pour %s : allez à A"/>
         <text name="eq_host_note_testSmall" text="Entraînement : carrière trop petite pour %s"/>
+        <text name="eq_host_ann_testShort" text="Reprise trop courte pour votre épreuve : simple entraînement"/>
+        <text name="eq_host_note_testShort" text="Entraînement : reprise trop courte pour %s"/>
         <text name="eq_host_label_now" text="Ce mois-ci"/>
         <text name="eq_host_next_oneAtATime" text="une épreuve à la fois"/>
         <text name="eq_host_next_interval" text="%d mois entre deux épreuves, voir Paramètres"/>
@@ -951,6 +954,8 @@
         <text name="eq_dt_spot" text="Sur place"/>
         <text name="eq_dt_noOptions" text="Rien ne convient ici : annulez ou enregistrez"/>
         <text name="eq_dt_saved" text="Reprise de dressage enregistrée : %d mouvements"/>
+        <text name="eq_dt_savedShort" text="Reprise enregistrée, mais trop courte pour %s : il faut %d étapes et elle en a %d, ici ce n&#x27;est que de l&#x27;entraînement"/>
+        <text name="eq_dt_locked" text="Impossible de supprimer cette reprise pendant %s : préparez votre reprise avant le mois de l&#x27;épreuve"/>
         <text name="eq_dt_deleted" text="Reprise de dressage supprimée : cette carrière reprend des reprises au hasard"/>
         <text name="eq_dt_cancelled" text="Reprise de dressage non enregistrée"/>
         <text name="eq_fig_halt" text="Arrêt en %s"/>

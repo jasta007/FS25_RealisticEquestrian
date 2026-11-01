@@ -460,6 +460,7 @@
         <text name="eq_course_resumed" text="Gravando a partir do ponto mais próximo"/>
         <text name="eq_course_finished" text="Edição concluída: os obstáculos colocados do Realistic Equestrian voltam a ter colisão"/>
         <text name="eq_course_deleted" text="%s apagado"/>
+        <text name="eq_course_locked" text="Você não pode apagar %s durante %s: prepare seus percursos antes do mês do evento"/>
         <text name="eq_course_deleteAsk" text="Apagar %s com %d obstáculos em %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Apagar percurso"/>
         <text name="eq_course_deleteAction" text="Apagar %s"/>
@@ -861,6 +862,8 @@
         <text name="eq_host_ann_smallArena" text="Esta pista é pequena demais para o seu evento: só treino"/>
         <text name="eq_host_note_testCounts" text="Prova de competição para %s: vá até A"/>
         <text name="eq_host_note_testSmall" text="Treino: pista pequena demais para %s"/>
+        <text name="eq_host_ann_testShort" text="Prova curta demais para o seu evento: só treino"/>
+        <text name="eq_host_note_testShort" text="Treino: prova curta demais para %s"/>
         <text name="eq_host_label_now" text="Este mês"/>
         <text name="eq_host_next_oneAtATime" text="um evento por vez"/>
         <text name="eq_host_next_interval" text="%d meses entre eventos, veja Configurações"/>
@@ -949,6 +952,8 @@
         <text name="eq_dt_spot" text="No lugar"/>
         <text name="eq_dt_noOptions" text="Nada cabe aqui: desfaça ou salve"/>
         <text name="eq_dt_saved" text="Prova de adestramento salva: %d movimentos"/>
+        <text name="eq_dt_savedShort" text="Prova salva, mas não é longa o suficiente para %s: precisa de %d passos e tem %d, então aqui é só treino"/>
+        <text name="eq_dt_locked" text="Você não pode apagar esta prova durante %s: prepare sua prova antes do mês do evento"/>
         <text name="eq_dt_deleted" text="Prova de adestramento apagada: esta pista volta a provas aleatórias"/>
         <text name="eq_dt_cancelled" text="Prova de adestramento não salva"/>
         <text name="eq_fig_halt" text="Parada em %s"/>

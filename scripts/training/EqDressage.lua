@@ -487,6 +487,11 @@ function EqDressage.start(routine, course, rng)
         routine.competing = fixed ~= nil and fixed.counts or nil
         -- For the notice at A (EqTrainingHooks.pathRows): your own event, and whether it counts.
         routine.hosted = fixed ~= nil and fixed.status ~= nil and { event = fixed.event, status = fixed.status } or nil
+        -- Your own test, shorter than the event's: practice only (James, 2026-11-01).
+        if plan ~= nil and routine.competing and fixed.steps ~= nil and #plan.steps < fixed.steps then
+            routine.competing = nil
+            if routine.hosted ~= nil then routine.hosted.status = "short" end
+        end
         routine.task, routine.request, routine.preview, routine.bonus = { kind = "path" }, nil, nil, nil
         return
     end

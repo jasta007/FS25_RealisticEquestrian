@@ -460,6 +460,7 @@
         <text name="eq_course_resumed" text="从最近的点开始录制"/>
         <text name="eq_course_finished" text="编辑完成：Realistic Equestrian放置的障碍物恢复碰撞"/>
         <text name="eq_course_deleted" text="已删除%s"/>
+        <text name="eq_course_locked" text="不能删除%s：%s期间不可删除，请在赛事月份之前设好路线"/>
         <text name="eq_course_deleteAsk" text="删除%s（%d个障碍，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="删除路线"/>
         <text name="eq_course_deleteAction" text="删除%s"/>
@@ -861,6 +862,8 @@
         <text name="eq_host_ann_smallArena" text="这个场地对你的赛事来说太小：只是练习"/>
         <text name="eq_host_note_testCounts" text="%s的比赛测试：骑到A"/>
         <text name="eq_host_note_testSmall" text="练习：场地对%s来说太小"/>
+        <text name="eq_host_ann_testShort" text="这套测试对你的赛事来说太短：只是练习"/>
+        <text name="eq_host_note_testShort" text="练习：测试对%s来说太短"/>
         <text name="eq_host_label_now" text="本月"/>
         <text name="eq_host_next_oneAtATime" text="一次只能举办一场赛事"/>
         <text name="eq_host_next_interval" text="赛事之间间隔%d个月，见设置"/>
@@ -949,6 +952,8 @@
         <text name="eq_dt_spot" text="原地"/>
         <text name="eq_dt_noOptions" text="这里没有合适的：撤销或保存"/>
         <text name="eq_dt_saved" text="盛装舞步路线已保存：%d个动作"/>
+        <text name="eq_dt_savedShort" text="测试已保存，但对%s来说不够长：需要%d步，现在只有%d步，所以在这里只是练习"/>
+        <text name="eq_dt_locked" text="%s期间不能删除这套测试：请在赛事月份之前设好测试"/>
         <text name="eq_dt_deleted" text="盛装舞步路线已删除：此场地重新使用随机路线"/>
         <text name="eq_dt_cancelled" text="盛装舞步路线未保存"/>
         <text name="eq_fig_halt" text="在%s立定"/>

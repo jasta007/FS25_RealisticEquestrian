@@ -435,7 +435,7 @@ end
 -- RIDDEN ROUNDS
 -- While your event runs, a round you ride on a course that qualifies for it, or the dressage
 -- test in an arena that does, is that horse's phase: its real penalties are placed against the
--- simulated field, once per horse and phase. Dressage penalties are 100 less the test's
+-- simulated field, once per horse and phase. Dressage penalties come from the test's
 -- percentage (testSheet); the test's third error of course eliminates.
 
 -- Show jumping faults per rail down or refusal (EqShowJumping counts them together).
@@ -464,70 +464,47 @@ function EqHosting.phasesOf(typeName)
 end
 
 
--- A ridden jumping round is not put straight against the simulated rivals (a human picks up
--- far more time faults, and the rivals ride no real course). It grades the ride instead, 0..1,
--- and the grade picks where in its own good-to-bad range the horse's simulated phase lands
--- (James, 2026-10-29: "your ride sets the luck", with some randomness around it).
--- Time is judged against the time allowed, which comes from the course's length.
-EqHosting.GRADE_TIME_SLOPE = 1.5     -- each 10% over the time allowed takes 0.15 off the time part
-EqHosting.GRADE_TIME_SHARE = 0.6     -- how much of the grade the time part can take away
-EqHosting.GRADE_FAULTS = { showJumping = 10, crossCountry = 25 }  -- jump faults that take the grade to 1/e
-EqHosting.GRADE_SD = 0.1             -- randomness around the ride
-EqHosting.GRADE_DRAWS = 9            -- simulated rounds the grade picks from
-
---- A ridden show jumping or cross country round as a phase sheet.
+--- A ridden show jumping or cross country round as a phase sheet: its real penalties, the same
+--- ones the rider is told when it ends, go on the scoresheet (James, 2026-11-01: a clear round
+--- must not turn into 4 faults at the results).
 --- @param result table EqShowJumping round.result
 --- @param refusals number refusals and run-outs in the round
---- @param allowed number|nil the round's time allowed in seconds
---- @return table sheet { penalties, down, refusals, time, eliminated, grade }
-function EqHosting.roundSheet(result, refusals, allowed)
+--- @return table sheet { penalties, down, refusals, time, eliminated }
+function EqHosting.roundSheet(result, refusals)
     if result.eliminated ~= nil then return { penalties = 0, down = 0, refusals = refusals or 0, time = 0, eliminated = true } end
     local time = math.floor((result.timeFaults or 0) * 10 + 0.5) / 10
     local down = 0
     if not result.xc then down = math.max(0, math.floor(((result.faults or 0) - (refusals or 0) * EqHosting.SJ_FAULT) / EqHosting.SJ_FAULT + 0.5)) end
-    local sheet = { penalties = math.floor((result.total or 0) * 10 + 0.5) / 10, down = down, refusals = refusals or 0, time = time }
-    sheet.grade = EqHosting.rideGrade(result.xc and "crossCountry" or "showJumping", result.faults or 0, result.seconds, allowed)
-    return sheet
+    return { penalties = math.floor((result.total or 0) * 10 + 0.5) / 10, down = down, refusals = refusals or 0, time = time }
 end
 
 
---- How good a ridden round was, 0 (dreadful) to 1 (clear inside the time). Pure.
---- @param phase string "showJumping" or "crossCountry"
---- @param faults number jump faults (rails, refusals, run-outs), no time
---- @param seconds number|nil the round's time
---- @param allowed number|nil the time allowed
---- @return number grade
-function EqHosting.rideGrade(phase, faults, seconds, allowed)
-    local timePart = 1
-    if seconds ~= nil and allowed ~= nil and allowed > 0 and seconds > allowed then
-        timePart = math.max(0, 1 - (seconds / allowed - 1) * EqHosting.GRADE_TIME_SLOPE)
-    end
-    local faultPart = math.exp(-(faults or 0) / (EqHosting.GRADE_FAULTS[phase] or 10))
-    return faultPart * (1 - EqHosting.GRADE_TIME_SHARE * (1 - timePart))
+-- A ridden test's penalties on the simulated field's scale (EqPerformance.PHASE_SCORING: the
+-- best simulated test is 22, the middle of a field about 30). 100 less the percentage was too
+-- harsh (James, 2026-11-01): a 70% test sat mid-field. Now a test of DRESSAGE_PAR % scores the
+-- simulated best, and each percent either side is DRESSAGE_SCALE penalties: 80% is 18, 70% 26,
+-- 60% 34.
+EqHosting.DRESSAGE_BEST = 22
+EqHosting.DRESSAGE_PAR = 75
+EqHosting.DRESSAGE_SCALE = 0.8
+
+--- Steps a player's own test needs for a hosted rating: as many as the event's own test has
+--- figures (EqDressagePath.figuresFor, 8/10/13), so both ride the same number of movements.
+--- @param rating table from data/hosting.xml
+--- @return number steps
+function EqHosting.testSteps(rating)
+    return EqDressagePath.figuresFor(rating.dressageMoves)
 end
 
 
---- Which of the horse's simulated rounds a ride earns: the grade, give or take a little luck,
---- picks from the best (grade 1) to the worst (grade 0) of GRADE_DRAWS. Pure but for rng.
---- @param grade number 0..1
---- @param draws table simulated phases { score, checks }
---- @param rng table EqRandom
---- @return table draw
-function EqHosting.pickDraw(grade, draws, rng)
-    table.sort(draws, function(a, b) return a.score > b.score end)
-    local g = math.max(0, math.min(1, grade + rng:normal(0, EqHosting.GRADE_SD)))
-    return draws[1 + math.floor((1 - g) * (#draws - 1) + 0.5)]
-end
-
-
---- A ridden dressage test as a phase sheet: penalties are 100 less the test's percentage, as in
---- eventing (EqPerformance's dressage winner, 22, is a 78% test).
+--- A ridden dressage test as a phase sheet, its penalties on the simulated scale (DRESSAGE_*).
 --- @param percent number|nil
 --- @param lost boolean eliminated
 --- @return table sheet
 function EqHosting.testSheet(percent, lost)
     if lost or percent == nil then return { penalties = 0, down = 0, refusals = 0, time = 0, eliminated = true } end
-    return { penalties = math.floor((100 - percent) * 10 + 0.5) / 10, down = 0, refusals = 0, time = 0 }
+    local penalties = EqHosting.DRESSAGE_BEST + (EqHosting.DRESSAGE_PAR - percent) * EqHosting.DRESSAGE_SCALE
+    return { penalties = math.max(0, math.floor(penalties * 10 + 0.5) / 10), down = 0, refusals = 0, time = 0 }
 end
 
 
@@ -561,10 +538,7 @@ function EqHosting.applyRidden(runners, ridden)
             local total = 0
             for _, phase in ipairs(runner.run.phases) do
                 local sheet = mine[phase.name]
-                -- A graded round was already played into the simulation (EqCompetition.run).
-                if sheet ~= nil and sheet.grade ~= nil then
-                    phase.sheet.ridden = true
-                elseif sheet ~= nil and not sheet.eliminated then
+                if sheet ~= nil and not sheet.eliminated then
                     phase.sheet = { penalties = sheet.penalties, down = sheet.down or 0, refusals = sheet.refusals or 0,
                         time = sheet.time or 0, ridden = true }
                 end

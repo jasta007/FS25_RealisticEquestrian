@@ -262,14 +262,22 @@ function EqHostManager.dailyFeed(feedPerHorse, horses, daysPerPeriod)
 end
 
 
+-- Once an event runs, its courses, arena and bleachers no longer decide whether it goes ahead
+-- (James, 2026-11-01): a course made too short just means your rides there are practice, and the
+-- event runs in the background without them. Only the visitors' stables and feed can stop it.
+EqHostManager.VENUE_CHECKS = { arena = true, dressageSeating = true, showJumps = true, showJumpingSeating = true,
+    xcLength = true, xcJumps = true }
+
 --- The checks a running event fails. Pure.
 --- @param result table from EqHosting.check
 --- @param skipFeed boolean leave out the month's feed (it is checked a day at a time)
---- @return table ids of the failed checks
+--- @return table ids of the failed checks: stables and feed, never the courses (VENUE_CHECKS)
 function EqHostManager.failedChecks(result, skipFeed)
     local failed = {}
     for _, check in ipairs(result.checks or {}) do
-        if not check.ok and not (skipFeed and check.id == "feed") then table.insert(failed, check.id) end
+        if not check.ok and not (skipFeed and check.id == "feed") and not EqHostManager.VENUE_CHECKS[check.id] then
+            table.insert(failed, check.id)
+        end
     end
     return failed
 end
@@ -580,7 +588,7 @@ function EqHostManager.onRoundDone(vehicle, course, sj)
             EqCompetitionManager.eventTitle(event)))
         return
     end
-    keepRidden(event, horseId, phase, EqHosting.roundSheet(sj.result, sj.refusals, sj.allowed))
+    keepRidden(event, horseId, phase, EqHosting.roundSheet(sj.result, sj.refusals))
 end
 
 
@@ -618,7 +626,87 @@ function EqHostManager.dressageTestFor(horseId, markers)
         end
     end
     return { seed = string.format("dressage %s %s", tostring(event.id), tostring(event.hosted.rating)), moves = rating.dressageMoves, counts = counts,
-        event = status ~= nil and event or nil, status = status }
+        event = status ~= nil and event or nil, status = status, steps = EqHosting.testSteps(rating) }
+end
+
+
+-- SETTING COURSES AND TESTS
+-- Courses and tests are set before the event month: during it you can't delete one that is big
+-- enough for the event, and one made too short is practice only (James, 2026-11-01).
+
+--- @return number|nil farmId the local player's farm
+local function playerFarm()
+    local mission = g_currentMission
+    return mission ~= nil and mission.getFarmId ~= nil and mission:getFarmId() or nil
+end
+
+
+--- @param farmId number|nil
+--- @param phase string
+--- @return table|nil event the farm's hosted event running now with this phase
+function EqHostManager.runningFor(farmId, phase)
+    if farmId == nil then return nil end
+    local found = nil
+    for _, event in pairs(EqCompetitionManager.events) do
+        if event.hosted ~= nil and event.hosted.farmId == farmId and hasPhase(event, phase) and (found == nil or event.id < found.id) then
+            found = event
+        end
+    end
+    return found
+end
+
+
+--- @param course table EqCourse course
+--- @return table|nil event the running event of yours this course is big enough for: it can't be
+---     deleted until the event is over
+function EqHostManager.courseLocked(course)
+    if course == nil or EqHostVenue.config == nil then return nil end
+    local phase = course.kind or EqCourse.SHOW_JUMPING
+    local event = EqHostManager.runningFor(playerFarm(), phase)
+    local rating = event ~= nil and ratingOf(event) or nil
+    if rating == nil then return nil end
+    local shape = { kind = phase, jumps = #(course.jumps or {}), length = course.length or EqCourse.pathLength(course.points or {}) }
+    return EqHosting.courseQualifies(rating, phase, shape) and event or nil
+end
+
+
+--- @param frame table EqDressagePath.frameFor, the arena
+--- @param plan table|nil the arena's own test
+--- @return table|nil event the running event of yours this test (in this arena) is good for: it
+---     can't be deleted until the event is over
+function EqHostManager.testLocked(frame, plan)
+    if frame == nil or plan == nil or EqHostVenue.config == nil then return nil end
+    local event = EqHostManager.runningFor(playerFarm(), "dressage")
+    local rating = event ~= nil and ratingOf(event) or nil
+    if rating == nil then return nil end
+    if #plan.steps < EqHosting.testSteps(rating) then return nil end
+    if EqHosting.arenaLength((frame.halfL or 0) * 2) < rating.dressageArena then return nil end
+    return event
+end
+
+
+--- Is a test too short for your hosted event, running or booked? For the editor's save.
+--- @param steps number the test's steps
+--- @return string|nil title the event's, when the test is too short for it
+--- @return number|nil need the steps it needs
+function EqHostManager.testTooShort(steps)
+    local config = EqHostVenue.config
+    if config == nil then return nil end
+    local farmId = playerFarm()
+    local event = EqHostManager.runningFor(farmId, "dressage")
+    local rating, title = nil, nil
+    if event ~= nil then
+        rating, title = ratingOf(event), EqCompetitionManager.eventTitle(event)
+    else
+        local booking = farmId ~= nil and EqHostManager.bookings[farmId] or nil
+        if booking ~= nil and EqHosting.hasPart(booking.type, "dressage") then
+            rating, title = config.ratingByName[booking.rating], EqHostManager.title(booking.type, booking.rating)
+        end
+    end
+    if rating == nil then return nil end
+    local need = EqHosting.testSteps(rating)
+    if steps < need then return title, need end
+    return nil
 end
 
 
@@ -660,7 +748,6 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
             xmlFile:setInt(rideKey .. "#refusals", sheet.refusals or 0)
             xmlFile:setFloat(rideKey .. "#time", sheet.time or 0)
             if sheet.eliminated then xmlFile:setBool(rideKey .. "#eliminated", true) end
-            if sheet.grade ~= nil then xmlFile:setFloat(rideKey .. "#grade", sheet.grade) end
             i = i + 1
         end
     end
@@ -689,8 +776,7 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
             hosted.ridden[horseId] = hosted.ridden[horseId] or {}
             hosted.ridden[horseId][phase] = { penalties = xmlFile:getFloat(rideKey .. "#penalties", 0),
                 down = xmlFile:getInt(rideKey .. "#down", 0), refusals = xmlFile:getInt(rideKey .. "#refusals", 0),
-                time = xmlFile:getFloat(rideKey .. "#time", 0), eliminated = xmlFile:getBool(rideKey .. "#eliminated", false) or nil,
-                grade = xmlFile:getFloat(rideKey .. "#grade") }
+                time = xmlFile:getFloat(rideKey .. "#time", 0), eliminated = xmlFile:getBool(rideKey .. "#eliminated", false) or nil }
         end
         i = i + 1
     end

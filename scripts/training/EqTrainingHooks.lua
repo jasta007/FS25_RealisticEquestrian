@@ -1463,12 +1463,14 @@ local function hostedTestNote(routine)
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_test"))
         elseif hosted.status == "ridden" then
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_ridden"), COLOR.grey)
+        elseif hosted.status == "short" then
+            EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_testShort"), COLOR.orange)
         else
             EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_smallArena"), COLOR.orange)
         end
     end
     local key = hosted.status == "counts" and "eq_host_note_testCounts" or hosted.status == "ridden" and "eq_host_note_ridden"
-        or "eq_host_note_testSmall"
+        or hosted.status == "short" and "eq_host_note_testShort" or "eq_host_note_testSmall"
     return string.format(g_i18n:getText(key), title)
 end
 
