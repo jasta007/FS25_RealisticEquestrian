@@ -11,7 +11,7 @@ from what the farm delivers to its triggers in front of it:
 
     SETUP       a few stakes; the bulk material: stone (1,000 l, as from stone picking),
                 wood chips (1,000 l) or straw (10,000 l), tipped or (straw) as bales
-    BUILDING_1  the mound is there; logs (WOOD, about five tree logs) at the wood trigger
+    BUILDING_1  the mound is there; logs (WOOD, 10,000 l) at the wood trigger
     BUILDING_2  the logs are on top; planks (PLANKS pallets)
     FINALIZE    the lizard and the logo board go up, the stakes and triggers go
 
@@ -54,7 +54,7 @@ VARIANTS = [
     {"name": "lizardPlinthStraw", "fillType": "STRAW", "amount": 10000, "rate": 10000, "fillPlane": "straw",
      "preview": (206, 180, 104), "tip": "STRAW", "bale": True},
 ]
-WOOD = 2000         # litres of logs, about five tree logs (James: "5 tree logs worth")
+WOOD = 10000        # litres of logs (James: 2,000 at first, then "like 10,000")
 PLANKS = 1000       # litres of planks (James: 1,000 short planks rather than 500 long ones)
 
 
@@ -583,7 +583,7 @@ def write_xml(variant, path, mappings):
 
                 <state name="BUILDING_1" class="ConstructibleStateBuilding">
                     <toggleMesh node="mound" active="true" updatePhysics="true"/>
-                    <input fillType="WOOD" amount="{WOOD}" usagePerHour="2000"/>
+                    <input fillType="WOOD" amount="{WOOD}" usagePerHour="{WOOD}"/>
                     <sounds>
                         <active template="constructibleActive"/>
                     </sounds>
@@ -625,7 +625,7 @@ def write_xml(variant, path, mappings):
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="{ft}" capacity="{int(variant["amount"] * 1.2)}"/>
-            <capacity fillType="WOOD" capacity="{int(WOOD * 10)}"/>
+            <capacity fillType="WOOD" capacity="{int(WOOD * 3)}"/>
             <capacity fillType="PLANKS" capacity="{int(PLANKS * 1.2)}"/>
         </storage>
     </constructible>

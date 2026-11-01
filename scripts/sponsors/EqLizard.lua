@@ -241,7 +241,7 @@ end
 
 --- @param config table
 --- @param deal table
---- @return string what the plinth is built from, such as "1,000 l Planks, 2,000 l Wood, 1,000 l Stones"
+--- @return string what the plinth is built from, such as "1,000 l Stones, 10,000 l Wood, 1,000 l Planks"
 function EqLizard.needsText(config, deal)
     local parts = {}
     local function add(fillType, amount)

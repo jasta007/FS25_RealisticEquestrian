@@ -105,9 +105,9 @@
         <text name="eq_plinth_penalty" text="你的赞助展台上有 %d 台竞争品牌机器：赞助费扣除 %s。"/>
         <text name="eq_shop_lizardPlinth" text="Lizard展台"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizard为其赞助的赛事准备的特别展台。向前方的触发区交付材料即可建造；停在原木平台上的Lizard机械额外计分。赛事结束后它会倒塌。"/>
-        <text name="eq_shop_lizardPlinth_stone" text="需要 1,000 升石头、2,000 升木材（约 5 根原木）和 1,000 升木板。"/>
-        <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、2,000 升木材（约 5 根原木）和 1,000 升木板。"/>
-        <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、2,000 升木材（约 5 根原木）和 1,000 升木板。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="需要 1,000 升石头、10,000 升木材（约 25 根原木）和 1,000 升木板。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、10,000 升木材（约 25 根原木）和 1,000 升木板。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、10,000 升木材（约 25 根原木）和 1,000 升木板。"/>
         <text name="eq_lizard_title" text="%s 的赞助邀约"/>
         <text name="eq_lizard_offer" text="%s 希望免费赞助你的%s（%s），并在赛事月借给你一辆它的车辆。要求在赛事结束前达到%s品牌度，并在你的场地建好Lizard展台：%s。如果公布成绩时一切就绪，它将支付 %s。否则不付费，也没有任何处罚。赛事结束后展台会倒塌。"/>
         <text name="eq_lizard_accept" text="接受"/>

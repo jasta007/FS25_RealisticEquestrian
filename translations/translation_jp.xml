@@ -105,9 +105,9 @@
         <text name="eq_plinth_penalty" text="スポンサー展示台に他社の機械が %d 台：スポンサー料から %s 差し引かれました。"/>
         <text name="eq_shop_lizardPlinth" text="Lizard展示台"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizardがスポンサーとなるイベントのための特別な展示台。正面のトリガーに資材を納品して建設します。丸太デッキに置いたLizardの機械は追加でカウントされます。イベント後に崩れます。"/>
-        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,000 L、木材 2,000 L（丸太約5本）、板材 1,000 L。"/>
-        <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 2,000 L（丸太約5本）、板材 1,000 L。"/>
-        <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 2,000 L（丸太約5本）、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,000 L、木材 10,000 L（丸太約25本）、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L（丸太約25本）、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L（丸太約25本）、板材 1,000 L。"/>
         <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
         <text name="eq_lizard_offer" text="%sがあなたの%s（%s）を無料でスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
         <text name="eq_lizard_accept" text="受ける"/>

@@ -61,7 +61,7 @@
 
                 <state name="BUILDING_1" class="ConstructibleStateBuilding">
                     <toggleMesh node="mound" active="true" updatePhysics="true"/>
-                    <input fillType="WOOD" amount="2000" usagePerHour="2000"/>
+                    <input fillType="WOOD" amount="10000" usagePerHour="10000"/>
                     <sounds>
                         <active template="constructibleActive"/>
                     </sounds>
@@ -103,7 +103,7 @@
 
         <storage isExtension="false" fillLevelSyncThreshold="50">
             <capacity fillType="WOODCHIPS" capacity="1200"/>
-            <capacity fillType="WOOD" capacity="20000"/>
+            <capacity fillType="WOOD" capacity="30000"/>
             <capacity fillType="PLANKS" capacity="1200"/>
         </storage>
     </constructible>
