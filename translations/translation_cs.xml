@@ -844,6 +844,33 @@
         <text name="eq_host_part_reputation" text="声誉"/>
         <text name="eq_host_part_star" text="明星马"/>
         <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_part_quality" text="场地质量"/>
+        <text name="eq_host_part_shops" text="商店"/>
+        <text name="eq_host_part_ahead" text="提前预订"/>
+        <text name="eq_host_part_advert" text="广告"/>
+        <text name="eq_host_part_buzz" text="话题度"/>
+        <text name="eq_host_part_weather" text="天气"/>
+        <text name="eq_host_buzz_high" text="热议中"/>
+        <text name="eq_host_buzz_low" text="冷清"/>
+        <text name="eq_host_aheadBonus" text="人气 +%d"/>
+        <text name="eq_host_advert_none" text="不做广告"/>
+        <text name="eq_host_advert_option" text="%s，%s (+%d)"/>
+        <text name="eq_host_advert_local" text="本地"/>
+        <text name="eq_host_advert_national" text="全国"/>
+        <text name="eq_host_setupWithAdvert" text="%s + 广告 %s"/>
+        <text name="eq_host_label_advert" text="广告"/>
+        <text name="eq_host_label_sell" text="纪念品和茶点"/>
+        <text name="eq_host_sell_yes" text="有货就卖 (+%d%%)"/>
+        <text name="eq_host_sell_no" text="不卖"/>
+        <text name="eq_host_book_advert" text="已支付广告费：%s。"/>
+        <text name="eq_host_twister" text="龙卷风席卷了%s！观众纷纷躲避。"/>
+        <text name="eq_host_done_goods" text="纪念品和茶点售出：%s。"/>
+        <text name="eq_host_star" text="观众非常期待看到%s出场。"/>
+        <text name="eq_host_report_twister" text="比赛期间来了龙卷风，观众四散。"/>
+        <text name="eq_host_report_weather" text="坏天气：%d小时的坏天气让观众却步（人气 %d）。"/>
+        <text name="eq_host_report_goods" text="纪念品和茶点：售出 %d 升，收入 %s。"/>
+        <text name="eq_host_report_advert" text="广告：%s。"/>
+        <text name="eq_host_report_weatherSoFar" text="坏天气至今已让人气下降 %d。"/>
         <text name="eq_host_label_yours" text="你的比赛"/>
         <text name="eq_host_label_month" text="预订月份"/>
         <text name="eq_host_label_next" text="下一个可用月份"/>

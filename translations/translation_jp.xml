@@ -844,6 +844,33 @@
         <text name="eq_host_part_reputation" text="評判"/>
         <text name="eq_host_part_star" text="スター馬"/>
         <text name="eq_host_part_winter" text="冬"/>
+        <text name="eq_host_part_quality" text="コースの出来"/>
+        <text name="eq_host_part_shops" text="ショップ"/>
+        <text name="eq_host_part_ahead" text="早期予約"/>
+        <text name="eq_host_part_advert" text="広告"/>
+        <text name="eq_host_part_buzz" text="話題性"/>
+        <text name="eq_host_part_weather" text="天候"/>
+        <text name="eq_host_buzz_high" text="大評判"/>
+        <text name="eq_host_buzz_low" text="静か"/>
+        <text name="eq_host_aheadBonus" text="人気 +%d"/>
+        <text name="eq_host_advert_none" text="広告なし"/>
+        <text name="eq_host_advert_option" text="%s、%s (+%d)"/>
+        <text name="eq_host_advert_local" text="地域"/>
+        <text name="eq_host_advert_national" text="全国"/>
+        <text name="eq_host_setupWithAdvert" text="%s + 広告 %s"/>
+        <text name="eq_host_label_advert" text="広告"/>
+        <text name="eq_host_label_sell" text="お土産と軽食"/>
+        <text name="eq_host_sell_yes" text="在庫があれば販売 (+%d%%)"/>
+        <text name="eq_host_sell_no" text="販売しない"/>
+        <text name="eq_host_book_advert" text="広告費を支払いました：%s。"/>
+        <text name="eq_host_twister" text="竜巻が%sを襲いました！観客は避難しました。"/>
+        <text name="eq_host_done_goods" text="お土産と軽食の売上：%s。"/>
+        <text name="eq_host_star" text="%sの出場を観客はとても楽しみにしていました。"/>
+        <text name="eq_host_report_twister" text="開催中に竜巻が来て、観客が散ってしまいました。"/>
+        <text name="eq_host_report_weather" text="悪天候：%d時間分の悪天候で客足が遠のきました（人気 %d）。"/>
+        <text name="eq_host_report_goods" text="お土産と軽食：%d L を %s で販売。"/>
+        <text name="eq_host_report_advert" text="広告：%s。"/>
+        <text name="eq_host_report_weatherSoFar" text="これまでの悪天候で人気が %d 下がりました。"/>
         <text name="eq_host_label_yours" text="あなたの大会"/>
         <text name="eq_host_label_month" text="予約月"/>
         <text name="eq_host_label_next" text="次に空いている月"/>

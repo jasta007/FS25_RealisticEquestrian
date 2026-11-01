@@ -123,7 +123,8 @@ uses its genetics, health and fitness.
 - **Host your own event:** the **Host** tab books a Dressage, Show Jumping, Cross Country or 3 Day
   Event at your farm (Novice, Intermediate or Championship) if your courses, arenas, stables and
   feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
-  their rounds yourself if you like.
+  their rounds yourself if you like. Bad weather, a star horse, booking ahead, advertising and
+  farm shops all change the crowd, and visitors can buy your souvenirs and refreshments.
 
 ### Getting there
 - **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or

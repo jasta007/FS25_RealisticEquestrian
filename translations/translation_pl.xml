@@ -844,6 +844,33 @@
         <text name="eq_host_part_reputation" text="reputacja"/>
         <text name="eq_host_part_star" text="koń gwiazda"/>
         <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_part_quality" text="jakość parkuru"/>
+        <text name="eq_host_part_shops" text="sklepy"/>
+        <text name="eq_host_part_ahead" text="rezerwacja z wyprzedzeniem"/>
+        <text name="eq_host_part_advert" text="reklama"/>
+        <text name="eq_host_part_buzz" text="rozgłos"/>
+        <text name="eq_host_part_weather" text="pogoda"/>
+        <text name="eq_host_buzz_high" text="Wszyscy o tym mówią"/>
+        <text name="eq_host_buzz_low" text="Cisza"/>
+        <text name="eq_host_aheadBonus" text="+%d popularności"/>
+        <text name="eq_host_advert_none" text="Bez reklamy"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Lokalna"/>
+        <text name="eq_host_advert_national" text="Krajowa"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s reklama"/>
+        <text name="eq_host_label_advert" text="Reklama"/>
+        <text name="eq_host_label_sell" text="Pamiątki i przekąski"/>
+        <text name="eq_host_sell_yes" text="Sprzedawaj, jeśli są (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Nie sprzedawaj"/>
+        <text name="eq_host_book_advert" text="Zapłacono za reklamę: %s."/>
+        <text name="eq_host_twister" text="Tornado przeszło przez %s! Widzowie uciekli w poszukiwaniu schronienia."/>
+        <text name="eq_host_done_goods" text="Sprzedano pamiątki i przekąski: %s."/>
+        <text name="eq_host_star" text="Ludzie naprawdę nie mogli się doczekać startu %s."/>
+        <text name="eq_host_report_twister" text="W trakcie zawodów przeszło tornado i publiczność się rozproszyła."/>
+        <text name="eq_host_report_weather" text="Zła pogoda: %d godzin odstraszyło ludzi (popularność %d)."/>
+        <text name="eq_host_report_goods" text="Pamiątki i przekąski: sprzedano %d l za %s."/>
+        <text name="eq_host_report_advert" text="Reklama: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Zła pogoda kosztowała dotąd %d popularności."/>
         <text name="eq_host_label_yours" text="Twoje zawody"/>
         <text name="eq_host_label_month" text="Rezerwuj na"/>
         <text name="eq_host_label_next" text="Najbliższy wolny miesiąc"/>

@@ -813,6 +813,12 @@ function EqConsole:consoleHostCheck(typeName, ratingName)
         venue.freePlaces, venue.facilityKinds))
     for _, source in ipairs(venue.feedSources) do print(string.format("  feed: %s %.0f l", source.name, source.litres)) end
     print(string.format("  horse feed %.0f l; a visiting horse eats %.0f l a month", venue.feed, venue.feedPerHorse))
+    local shops = venue.shops or { stock = {} }
+    print(string.format("  %d shop(s) or production(s) making goods visitors buy, %d good(s) in stock", shops.sources or 0, shops.goods or 0))
+    for _, item in ipairs(shops.stock or {}) do
+        print(string.format("  goods: %s %.0f l, best price %.2f/l", item.name, item.litres, EqHostVenue.bestPrice(item.index)))
+    end
+    for _, course in ipairs(venue.courses) do print(string.format("  course %s build quality %.2f", course.name, course.quality or 0)) end
 
     local types = typeName ~= nil and { typeName } or EqHosting.TYPES
     local bookable = {}
@@ -820,7 +826,7 @@ function EqConsole:consoleHostCheck(typeName, ratingName)
         for _, rating in ipairs(config.ratings) do
             if ratingName == nil or ratingName == rating.name then
                 local result = EqHosting.check(config, name, rating.name, venue)
-                local score = EqHosting.popularity(config, name, result, { facilityKinds = venue.facilityKinds })
+                local score = EqHosting.popularity(config, name, result, EqHostView.context(farmId, venue))
                 local takings = EqHosting.takings(config, name, rating, score, result.seatingTotal)
                 local missing = {}
                 for _, check in ipairs(result.checks) do
@@ -845,6 +851,27 @@ function EqConsole:consoleHostWait()
     local note = EqHostManager.bookings[farmId] ~= nil and " Your booked event still stands; cancel it to book a different one." or ""
     if EqHostManager.openEvent(farmId) ~= nil then note = note .. " Your event this month still runs until month end." end
     return (had and "Hosting wait cleared: you can book any month now." or "No hosting wait to clear.") .. note
+end
+
+
+--- eqHostWeather <type> [hours]: testing, counts hours of a weather at your running event.
+--- @param typeName string|nil a WeatherType name: RAIN, SNOW, HAIL, TWISTER, SUN
+--- @param hours string|nil
+function EqConsole:consoleHostWeather(typeName, hours)
+    if g_currentMission == nil then return "No mission loaded" end
+    local event = EqHostManager.openEvent(g_currentMission:getFarmId())
+    if event == nil then return "No event of yours is running this month" end
+    if typeName == nil then return "Usage: eqHostWeather <RAIN|THUNDER|SNOW|HAIL|TWISTER|SUN> [hours]" end
+    local config = EqHostVenue.config
+    local hosted = event.hosted
+    hosted.weather = hosted.weather or {}
+    for _ = 1, math.max(1, tonumber(hours) or 1) do
+        EqHosting.countWeather(config, hosted.weather, string.upper(typeName), hosted.outdoor or 1)
+    end
+    local lost, share = EqHosting.weatherLoss(config, hosted.weather)
+    return string.format("%s: %d hour(s) counted, %.1f weighted bad, outdoors %.2f: popularity -%d, gate -%d%%",
+        EqCompetitionManager.eventTitle(event), hosted.weather.hours or 0, hosted.weather.bad or 0, hosted.outdoor or 1, lost,
+        math.floor(math.min(1 - config.weather.gateMin, config.weather.gate * share) * 100 + 0.5))
 end
 
 
@@ -877,6 +904,7 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
+    addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -891,7 +919,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

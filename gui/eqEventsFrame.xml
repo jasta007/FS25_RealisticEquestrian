@@ -283,43 +283,55 @@
                              onClick="onClickHostMonth"/>
         </GuiElement>
 
+        <!-- Advertising and souvenirs, chosen when booking (James, 2026-11-01) -->
+        <GuiElement profile="rlMenu_container" id="hostAdvertBox" position="1070px -509px" size="490px 44px" visible="false">
+            <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 44px" text="$l10n_eq_host_label_advert" textLayoutMode="scrolling"/>
+            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostAdvertOption" position="0px 0px" size="290px 44px"
+                             onClick="onClickHostAdvert"/>
+        </GuiElement>
+        <GuiElement profile="rlMenu_container" id="hostSellBox" position="1070px -555px" size="490px 44px" visible="false">
+            <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 44px" text="$l10n_eq_host_label_sell" textLayoutMode="scrolling"/>
+            <MultiTextOption profile="fs25_settingsMultiTextOption" id="hostSellOption" position="0px 0px" size="290px 44px"
+                             onClick="onClickHostSell"/>
+        </GuiElement>
+
         <!-- Your booking and the selected event's numbers: label left, value at 200px -->
-        <GuiElement profile="rlMenu_container" id="hostPanel" position="1070px -517px" size="490px 340px" visible="false">
-            <GuiElement profile="rlMenu_container" position="0px -0px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[1]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[1]" textLayoutMode="scrolling"/>
+        <GuiElement profile="rlMenu_container" id="hostPanel" position="1070px -605px" size="490px 262px" visible="false">
+            <GuiElement profile="rlMenu_container" position="0px -0px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[1]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[1]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -34px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[2]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[2]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -29px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[2]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[2]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -68px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[3]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[3]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -58px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[3]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[3]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -102px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[4]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[4]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -87px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[4]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[4]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -136px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[5]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[5]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -116px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[5]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[5]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -170px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[6]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[6]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -145px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[6]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[6]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -204px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[7]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[7]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -174px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[7]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[7]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -238px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[8]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[8]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -203px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[8]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[8]" textLayoutMode="scrolling"/>
             </GuiElement>
-            <GuiElement profile="rlMenu_container" position="0px -272px" size="490px 30px">
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 30px" id="hostLabel[9]" textLayoutMode="scrolling"/>
-                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 30px" id="hostValue[9]" textLayoutMode="scrolling"/>
+            <GuiElement profile="rlMenu_container" position="0px -232px" size="490px 28px">
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="0px 0px" size="195px 28px" id="hostLabel[9]" textLayoutMode="scrolling"/>
+                <Text profile="rlMenu_tableRowCellLeftAligned" position="200px 0px" size="290px 28px" id="hostValue[9]" textLayoutMode="scrolling"/>
             </GuiElement>
         </GuiElement>
 

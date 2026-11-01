@@ -90,9 +90,73 @@ function EqHosting.read(xmlFile)
         reputationMax = xmlFile:getFloat(p .. "#reputationMax", 20),
         success = xmlFile:getFloat(p .. "#success", 8),
         cancel = xmlFile:getFloat(p .. "#cancel", -15),
-        star = xmlFile:getFloat(p .. "#star", 10),
-        winter = xmlFile:getFloat(p .. "#winter", -10),
+        quality = xmlFile:getFloat(p .. "#quality", 5),
+        varietyFull = xmlFile:getFloat(p .. "#varietyFull", 5),
+        aheadEach = xmlFile:getFloat(p .. "#aheadEach", 1),
+        aheadMax = xmlFile:getFloat(p .. "#aheadMax", 5),
+        buzz = xmlFile:getInt(p .. "#buzz", 5),
     }
+
+    -- Star entries (James, 2026-11-01): points by the best entry's rating for the event.
+    config.stars = {}
+    i = 0
+    while xmlFile:hasProperty(string.format("hosting.stars.star(%d)", i)) do
+        local key = string.format("hosting.stars.star(%d)", i)
+        table.insert(config.stars, { from = xmlFile:getFloat(key .. "#from", 90), points = xmlFile:getFloat(key .. "#points", 0) })
+        i = i + 1
+    end
+    table.sort(config.stars, function(a, b) return a.from > b.from end)
+
+    -- Weather (James, 2026-11-01): counted hourly in the event month, hail worst, then snow, then rain.
+    local w = "hosting.weather"
+    config.weather = {
+        hourFrom = xmlFile:getInt(w .. "#hourFrom", 8), hourTo = xmlFile:getInt(w .. "#hourTo", 20),
+        scale = xmlFile:getFloat(w .. "#scale", 40), max = xmlFile:getFloat(w .. "#max", 25),
+        gate = xmlFile:getFloat(w .. "#gate", 0.6), gateMin = xmlFile:getFloat(w .. "#gateMin", 0.4),
+        types = {},
+    }
+    i = 0
+    while xmlFile:hasProperty(string.format("%s.type(%d)", w, i)) do
+        local key = string.format("%s.type(%d)", w, i)
+        local name = xmlFile:getString(key .. "#name")
+        if name ~= nil then
+            config.weather.types[string.upper(name)] = { weight = xmlFile:getFloat(key .. "#weight", 1),
+                flat = xmlFile:getFloat(key .. "#flat", 0) }
+        end
+        i = i + 1
+    end
+
+    -- Advertising: an optional spend at booking.
+    config.adverts = {}
+    i = 0
+    while xmlFile:hasProperty(string.format("hosting.advertising.level(%d)", i)) do
+        local key = string.format("hosting.advertising.level(%d)", i)
+        local level = { name = xmlFile:getString(key .. "#name", "local"), points = xmlFile:getFloat(key .. "#points", 0), cost = {} }
+        for _, rating in ipairs(config.ratings) do level.cost[rating.name] = xmlFile:getFloat(key .. "#" .. rating.name, 0) end
+        table.insert(config.adverts, level)
+        i = i + 1
+    end
+
+    -- Shops and goods visitors buy (James, 2026-11-01).
+    local s = "hosting.shops"
+    config.shops = {
+        source = xmlFile:getFloat(s .. "#source", 2), good = xmlFile:getFloat(s .. "#good", 1), max = xmlFile:getFloat(s .. "#max", 6),
+        minStock = xmlFile:getFloat(s .. "#minStock", 50), markup = xmlFile:getFloat(s .. "#markup", 1.25),
+        sell = {}, goods = {}, keywords = {},
+    }
+    for _, rating in ipairs(config.ratings) do config.shops.sell[rating.name] = xmlFile:getFloat(s .. "#" .. rating.name, 0) end
+    i = 0
+    while xmlFile:hasProperty(string.format("%s.good(%d)", s, i)) do
+        local name = xmlFile:getString(string.format("%s.good(%d)#name", s, i))
+        if name ~= nil then table.insert(config.shops.goods, string.upper(name)) end
+        i = i + 1
+    end
+    i = 0
+    while xmlFile:hasProperty(string.format("%s.shop(%d)", s, i)) do
+        local keyword = xmlFile:getString(string.format("%s.shop(%d)#keyword", s, i))
+        if keyword ~= nil then table.insert(config.shops.keywords, string.lower(keyword)) end
+        i = i + 1
+    end
 
     for _, element in ipairs({ "match", "keyword" }) do
         local j = 0
@@ -289,6 +353,27 @@ function EqHosting.hasPart(typeName, part)
 end
 
 
+--- The share of an event out in the weather, 0..1: an indoor arena keeps show jumping and
+--- dressage dry; cross country counts the share of its jumps outdoors (outdoor, measured once
+--- when the event opens), else its middle. Phases count alike. Pure.
+--- @param typeName string
+--- @param picks table from EqHosting.check
+--- @return number share
+function EqHosting.outdoorShare(typeName, picks)
+    local total, count = 0, 0
+    for _, phase in ipairs(EqHosting.phasesOf(typeName)) do
+        local pick = picks ~= nil and picks[phase] or nil
+        local share = 1
+        if pick ~= nil then
+            if phase == "crossCountry" and pick.outdoor ~= nil then share = pick.outdoor
+            elseif pick.indoor then share = 0 end
+        end
+        total, count = total + share, count + 1
+    end
+    return count > 0 and total / count or 1
+end
+
+
 --- How many visiting horses an event brings: the field less the places kept for your own.
 --- @param config table
 --- @param rating table
@@ -361,6 +446,15 @@ function EqHosting.check(config, typeName, ratingName, venue)
     local extraSum = 0
     for _, extra in ipairs(result.extras) do extraSum = extraSum + extra end
     result.extra = #result.extras > 0 and extraSum / #result.extras or 0
+    -- How well built its jumping courses are (EqHosting.courseQuality, measured by EqHostVenue).
+    local qualities = {}
+    for _, phase in ipairs({ "showJumping", "crossCountry" }) do
+        local pick = result.picks[phase]
+        if pick ~= nil then table.insert(qualities, pick.quality or 0) end
+    end
+    local qualitySum = 0
+    for _, q in ipairs(qualities) do qualitySum = qualitySum + q end
+    result.quality = #qualities > 0 and qualitySum / #qualities or 0
 
     result.visitors = EqHosting.visitors(config, rating)
     add("stables", venue.freePlaces or 0, result.visitors)
@@ -371,11 +465,181 @@ function EqHosting.check(config, typeName, ratingName, venue)
 end
 
 
+--- Points for the best of your entries in the field, by its rating for the event. Pure.
+--- @param config table
+--- @param rating number|nil the entry's rating for the event
+--- @return number points
+function EqHosting.starPoints(config, rating)
+    if rating == nil then return 0 end
+    for _, star in ipairs(config.stars or {}) do
+        if rating >= star.from then return star.points end
+    end
+    return 0
+end
+
+
+--- Points for booking ahead: aheadEach a month beyond the first, at most aheadMax. Pure.
+--- @param config table
+--- @param monthsAhead number|nil months between booking and the event
+--- @return number points
+function EqHosting.aheadPoints(config, monthsAhead)
+    local p = config.popularity
+    return math.min(p.aheadMax, math.max(0, ((monthsAhead or 1) - 1) * p.aheadEach))
+end
+
+
+--- @param config table
+--- @param name string|nil an advertising level's name
+--- @return table|nil level { name, points, cost }
+function EqHosting.advert(config, name)
+    for _, level in ipairs(config.adverts or {}) do
+        if level.name == name then return level end
+    end
+    return nil
+end
+
+
+--- @param config table
+--- @param name string|nil advertising level
+--- @param ratingName string
+--- @return number cost
+function EqHosting.advertCost(config, name, ratingName)
+    local level = EqHosting.advert(config, name)
+    return level ~= nil and (level.cost[ratingName] or 0) or 0
+end
+
+
+--- How well built the jumps of a course are, 0..1. Half for jumping different obstacles rather
+--- than the same few again, half for a mix of jump types (full at varietyFull). Pure.
+--- @param config table
+--- @param jumps table list of { x, z, type|nil }
+--- @return number quality
+function EqHosting.courseQuality(config, jumps)
+    if jumps == nil or #jumps == 0 then return 0 end
+    local spots, types, nSpots, nTypes = {}, {}, 0, 0
+    for _, jump in ipairs(jumps) do
+        local spot = string.format("%d:%d", math.floor((jump.x or 0) + 0.5), math.floor((jump.z or 0) + 0.5))
+        if not spots[spot] then spots[spot], nSpots = true, nSpots + 1 end
+        if jump.type ~= nil and not types[jump.type] then types[jump.type], nTypes = true, nTypes + 1 end
+    end
+    local full = math.max(1, config.popularity.varietyFull or 5)
+    return 0.5 * nSpots / #jumps + 0.5 * math.min(1, nTypes / full)
+end
+
+
+--- The weather's hold on an event so far. Pure.
+--- @param config table
+--- @param tally table|nil { hours (counted), bad (summed weights x outdoor share), flat (one-off losses) }
+--- @return number points popularity lost
+--- @return number share 0..1 of the counted hours lost to bad weather (weight 1 = one hour)
+function EqHosting.weatherLoss(config, tally)
+    local w = config.weather
+    if w == nil or tally == nil or (tally.hours or 0) <= 0 then return 0, 0 end
+    local share = math.min(1, (tally.bad or 0) / tally.hours)
+    local points = math.min(w.max, w.scale * share + (tally.flat or 0))
+    return math.floor(points + 0.5), share
+end
+
+
+--- Count one hour of weather into a tally. Pure.
+--- @param config table
+--- @param tally table changed
+--- @param typeName string|nil the WeatherType's name, such as "RAIN"
+--- @param outdoor number 0..1 share of the event outdoors
+--- @return boolean first true the first time a one-off (flat) weather is seen
+function EqHosting.countWeather(config, tally, typeName, outdoor)
+    tally.hours = (tally.hours or 0) + 1
+    local kind = typeName ~= nil and config.weather.types[string.upper(typeName)] or nil
+    if kind == nil or (outdoor or 0) <= 0 then return false end
+    tally.bad = (tally.bad or 0) + kind.weight * outdoor
+    if kind.flat > 0 then
+        tally.seen = tally.seen or {}
+        if not tally.seen[typeName] then
+            tally.seen[typeName] = true
+            tally.flat = (tally.flat or 0) + kind.flat * outdoor
+            return true
+        end
+    end
+    return false
+end
+
+
+--- Points for shops and goods visitors buy. Pure.
+--- @param config table
+--- @param shops table|nil { sources (shops or productions making goods), goods (kinds in stock) }
+--- @return number points
+function EqHosting.shopPoints(config, shops)
+    local c = config.shops
+    if c == nil or shops == nil or (shops.sources or 0) <= 0 and (shops.goods or 0) <= 0 then return 0 end
+    return math.min(c.max, ((shops.sources or 0) > 0 and c.source or 0) + (shops.goods or 0) * c.good)
+end
+
+
+--- What souvenirs and refreshments visitors buy: a few hundred litres at most, shared out over
+--- the goods in stock, at the best sell price plus the markup. Pure.
+--- @param config table
+--- @param ratingName string
+--- @param popularity number 0..100
+--- @param stock table list of { name, litres, price (per litre, best sell price) }
+--- @return table sale { litres, total, items = list of { name, litres, money } }
+function EqHosting.goodsSale(config, ratingName, popularity, stock)
+    local c = config.shops
+    local sale = { litres = 0, total = 0, items = {} }
+    if c == nil or stock == nil then return sale end
+    local share = math.min(1, math.max(0, (popularity or 0) / 100))
+    local budget = (c.sell[ratingName] or 0) * (0.5 + 0.5 * share)
+    local left = {}
+    for _, item in ipairs(stock) do
+        if (item.litres or 0) >= 1 and (item.price or 0) > 0 then table.insert(left, { name = item.name, litres = item.litres, price = item.price, sold = 0 }) end
+    end
+    -- Even shares; what a good can't fill goes round again to the others.
+    while budget >= 1 and #left > 0 do
+        local each = budget / #left
+        local still = {}
+        for _, item in ipairs(left) do
+            local take = math.min(each, item.litres - item.sold)
+            item.sold = item.sold + take
+            budget = budget - take
+            if item.litres - item.sold >= 1 then table.insert(still, item) end
+            if item.done == nil then
+                item.done = true
+                table.insert(sale.items, item)
+            end
+        end
+        left = still
+    end
+    for i = #sale.items, 1, -1 do
+        local item = sale.items[i]
+        item.litres = math.floor(item.sold)
+        item.money = math.floor(item.litres * item.price * c.markup + 0.5)
+        item.sold, item.done, item.price = nil, nil, nil
+        if item.litres <= 0 then
+            table.remove(sale.items, i)
+        else
+            sale.litres = sale.litres + item.litres
+            sale.total = sale.total + item.money
+        end
+    end
+    return sale
+end
+
+
+--- @param config table
+--- @param rng function|nil like math.random
+--- @return number buzz a random roll, -buzz..+buzz
+function EqHosting.rollBuzz(config, rng)
+    local b = config.popularity.buzz or 0
+    if b <= 0 then return 0 end
+    return (rng or math.random)(-b, b)
+end
+
+
 --- How popular the event is, out of 100, and where the points come from.
 --- @param config table
 --- @param typeName string
 --- @param result table from EqHosting.check
---- @param context table|nil { facilityKinds, reputation, star (a Champion or Legendary entrant), winter }
+--- @param context table|nil { facilityKinds, reputation, starRating (your best entry's rating for the event),
+---     monthsAhead, advert (level name), shops = { sources, goods }, buzz, weather (tally), sponsor }
 --- @return number score 0..100
 --- @return table parts list of { id, points }, in the Host page's order
 function EqHosting.popularity(config, typeName, result, context)
@@ -383,16 +647,25 @@ function EqHosting.popularity(config, typeName, result, context)
     local p = config.popularity
     local parts = {}
     local function add(id, points)
+        points = math.floor(points + 0.5)
         if points ~= 0 then table.insert(parts, { id = id, points = points }) end
     end
     add("base", p.base)
     local courseShare = p.courseFullAt > 0 and math.min(1, math.max(0, (result.extra or 0) / p.courseFullAt)) or 0
-    add("course", math.floor(p.course * courseShare + 0.5))
+    add("course", p.course * courseShare)
+    add("quality", p.quality * math.min(1, math.max(0, result.quality or 0)))
     add("seating", math.min(p.seating, (result.seatingExtra or 0) * p.seatingEach + (result.indoor and p.indoor or 0)))
     add("facilities", math.min(p.facilities, (context.facilityKinds or 0) * p.facilitiesEach))
+    add("shops", EqHosting.shopPoints(config, context.shops))
     add("reputation", math.min(p.reputationMax, math.max(p.reputationMin, context.reputation or 0)))
-    if context.star then add("star", p.star) end
-    if context.winter and EqHosting.hasPart(typeName, "crossCountry") then add("winter", p.winter) end
+    add("ahead", EqHosting.aheadPoints(config, context.monthsAhead))
+    local advert = EqHosting.advert(config, context.advert)
+    if advert ~= nil then add("advert", advert.points) end
+    -- The farm's sponsors, when they back the event's rating (EqSponsorManager, 0.8 PRs).
+    add("sponsor", context.sponsor or 0)
+    add("star", EqHosting.starPoints(config, context.starRating))
+    add("buzz", context.buzz or 0)
+    add("weather", -EqHosting.weatherLoss(config, context.weather))
 
     local score = 0
     for _, part in ipairs(parts) do score = score + part.points end
@@ -418,15 +691,19 @@ end
 --- @param rating table
 --- @param popularity number 0..100
 --- @param seating number bleachers (and indoor arenas) at the event
+--- @param weather table|nil the event's weather tally: bad weather keeps spectators away
 --- @return table { visitors, competitors, entryFee, entries, gate, total }
-function EqHosting.takings(config, typeName, rating, popularity, seating)
+function EqHosting.takings(config, typeName, rating, popularity, seating, weather)
     local share = math.min(1, math.max(0, popularity / 100))
     local visitors = EqHosting.visitors(config, rating)
     local turnout = config.turnoutMin + (1 - config.turnoutMin) * share
     local competitors = math.floor(visitors * turnout + 0.5)
     local entryFee = rating.entryFee * (typeName == EqHosting.EVENTING and config.eventingFeeFactor or 1)
     local entries = competitors * entryFee
-    local gate = math.floor((seating or 0) * rating.gate * share + 0.5)
+    local _, wet = EqHosting.weatherLoss(config, weather)
+    local w = config.weather
+    local dry = w ~= nil and math.max(w.gateMin, 1 - w.gate * wet) or 1
+    local gate = math.floor((seating or 0) * rating.gate * share * dry + 0.5)
     return { visitors = visitors, competitors = competitors, entryFee = entryFee, entries = entries, gate = gate,
         total = entries + gate }
 end

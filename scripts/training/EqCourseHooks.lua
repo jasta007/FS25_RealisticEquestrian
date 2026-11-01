@@ -207,7 +207,9 @@ local function addJump(list, node, placeable)
     local ends = jumpEnds(node, placeable)
     local ax, _, az = localToWorld(node, ends[1], 0, ends[2])
     local bx, _, bz = localToWorld(node, ends[3], 0, ends[4])
-    table.insert(list, { node = node, x = x, z = z, ry = ry, ax = ax, az = az, bx = bx, bz = bz })
+    -- What kind of jump it is, for a hosted course's variety (EqHosting.courseQuality).
+    local kind = placeable ~= nil and placeable.configFileName or (getName ~= nil and getName(node)) or nil
+    table.insert(list, { node = node, x = x, z = z, ry = ry, ax = ax, az = az, bx = bx, bz = bz, type = kind })
 end
 
 
@@ -251,7 +253,7 @@ local function addFlagFences(list)
                 -- The red flag on the right, as on a show jump: a is red.
                 table.insert(list, { x = (red.x + white.x) / 2, z = (red.z + white.z) / 2,
                     ry = math.atan2(white.x - red.x, white.z - red.z), ax = red.x, az = red.z, bx = white.x, bz = white.z,
-                    poleHeight = fence.poleHeight })
+                    poleHeight = fence.poleHeight, type = fence.type or "flagFence" })
             end
         end
     end

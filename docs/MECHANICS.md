@@ -809,8 +809,15 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
 - Two places are yours; every other place is a visiting horse, which needs a **free stable place**
   in your horse pens and a month of **horse feed** (troughs and silos both count).
 - **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to
-  15 for extra bleachers or an indoor arena, up to 10 for horse facilities, and your hosting
-  reputation. It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
+  5 for how well a jumping course is built (half for jumping different obstacles rather than the
+  same few again, half for a mix of jump types, full at five), up to 15 for extra bleachers or an
+  indoor arena, up to 10 for horse facilities, up to 6 for shops (2 for owning a farm shop or a
+  production making goods visitors buy, such as a bakery or dairy, placed or bought on the map,
+  and 1 for each such good with 50 l or more in stock), your hosting reputation, +1 for each
+  month you book ahead beyond the first (up to +5, shown in the month picker), advertising
+  (Local +4 or National +8, paid when booking: $250/$1,500/$6,000 or $750/$4,000/$15,000 by
+  rating, not refunded), and a buzz of -5 to +5 rolled when you book ("Quiet" or "Buzzing" in
+  the breakdown). It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
   each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
   shows the most an event could take (at popularity 100); its details show the expected takings
   at today's popularity, which can still change before the event.
@@ -826,10 +833,24 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
   the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
   a month's horse ration divided by the days in a month, taken from your silos first, then your
   horse troughs. The Results tab shows how much they have eaten.
-- **Results:** at the end of the month popularity is worked out again, plus 10 if one of your
-  entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
-  how many visitors came (the field is them plus your entered horses). Their entry fees and the
-  gate are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
+- **Weather:** while the event runs, the weather is checked once an in-game hour from 8:00 to
+  20:00. Each hour of rain counts 1, thunder 1.5, snow 2 and hail 4; popularity loses 40 times
+  the share of bad hours (an all-rain month -40), at most 25, and the gate loses 0.6 times that
+  share (never below 40% of it). A tornado costs 15 more, once, with a warning. A show jumping
+  course or dressage arena inside an indoor arena or riding centre stays dry; cross country
+  counts the share of its jumps outdoors, measured when the event opens; a 3 Day Event averages
+  its phases. The Results tab shows what bad weather has cost so far. There is no season rule:
+  bad seasons bring bad weather.
+- **Souvenirs and refreshments:** when booking you choose to sell them if available (on by
+  default). At the end of the month visitors buy goods from your productions and silos: 100 l
+  (Novice), 250 l (Intermediate) or 500 l (Championship) at popularity 100, half at 0, shared out
+  over the goods you have, at the best sell price plus 25%. The goods are listed in
+  `data/hosting.xml` (base game and Geistal goods; other maps' names can be added).
+- **Results:** at the end of the month popularity is worked out again, plus your best entry's
+  draw: +3 for a Contender (80+ for the event), +6 for a Champion (90+), +10 for a Legendary
+  horse (98+), and the results say people were excited to see it compete. That sets
+  how many visitors came (the field is them plus your entered horses). Their entry fees, the
+  gate and any souvenir sales are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
   if none of your horses entered. **Your events**, at the top of the Results tab, shows each
   one's winners, turnout, takings against the setup fee, and how your horses did.
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
@@ -848,7 +869,8 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
   ridden) or the course is too small; the finish says what was kept and when results come.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
-`eqHostWait` (testing) ends the wait before you can host again.
+`eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
+(testing) counts hours of a weather at your running event.
 
 ## Buying horses
 

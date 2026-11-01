@@ -14,8 +14,11 @@
       (the visitors' feed for the day included), it gets a warning; still short a day later, the
       event is cancelled, which costs reputation. Each day the visitors' feed is taken from the
       farm's silos, then its troughs.
-    - At the end of the month popularity is worked out again (a Champion of yours entered draws
-      a crowd), which sets the turnout and the field; the visitors' entry fees and the gate are
+    - Each hour while it runs the weather is counted (EqHosting.countWeather): rain, snow, hail
+      and tornadoes keep people away, unless the course or arena is indoors.
+    - At the end of the month popularity is worked out again (a good horse of yours entered draws
+      a crowd), which sets the turnout and the field; visitors buy souvenirs and refreshments
+      from the farm's stock if the booking said so; the entry fees, the gate and the sales are
       paid, and the farm's reputation goes up.
     - Ridden rounds: while the event runs, a round ridden on one of your horses entered in it,
       on a course that qualifies, or the dressage test in an arena that does (the test then has
@@ -36,8 +39,8 @@ EqHostManager.REFUND_MONTHS = 2
 EqHostManager.REFUND_SHARE = 0.5
 -- Reports of a farm's past hosted events kept for the Results tab.
 EqHostManager.HISTORY_KEPT = 12
--- An entered horse rated this high for the event (Champion and up) makes it a star event.
-EqHostManager.STAR_RATING = 90
+-- Sell souvenirs and refreshments unless the booking says not to (James, 2026-11-01: a toggle).
+EqHostManager.SELL_DEFAULT = true
 
 local Log = EqLog
 
@@ -144,8 +147,9 @@ end
 --- @param ratingName string
 --- @param month number
 --- @param result table|nil from EqHosting.check, read from the farm when nil
+--- @param extra number|nil paid on top of the setup fee (advertising)
 --- @return string|nil reason an eq_host_book_* text key
-function EqHostManager.bookProblem(farmId, typeName, ratingName, month, result)
+function EqHostManager.bookProblem(farmId, typeName, ratingName, month, result, extra)
     local config = EqHostVenue.config
     if config == nil or EqCompetitionManager.config == nil then return "eq_host_book_noConfig" end
     -- A running event doesn't block the next booking: the wait between events does (eqHostWait clears it).
@@ -158,7 +162,7 @@ function EqHostManager.bookProblem(farmId, typeName, ratingName, month, result)
     result = result or EqHosting.check(config, typeName, ratingName, EqHostVenue.read(farmId))
     if not result.ok then return "eq_host_book_requirements" end
     local farm = g_farmManager:getFarmById(farmId)
-    if farm ~= nil and farm:getBalance() < result.setupFee then return "eq_host_book_money" end
+    if farm ~= nil and farm:getBalance() < result.setupFee + (extra or 0) then return "eq_host_book_money" end
     return nil
 end
 
@@ -168,26 +172,39 @@ end
 --- @param typeName string
 --- @param ratingName string
 --- @param month number
+--- @param options table|nil { advert (level name or nil), sell (souvenirs and refreshments) }
 --- @return boolean ok
 --- @return string text for the player
-function EqHostManager.book(farmId, typeName, ratingName, month)
+function EqHostManager.book(farmId, typeName, ratingName, month, options)
+    options = options or {}
     local config = EqHostVenue.config
     local result = config ~= nil and EqHosting.check(config, typeName, ratingName, EqHostVenue.read(farmId)) or nil
-    local problem = EqHostManager.bookProblem(farmId, typeName, ratingName, month, result)
+    local advert = config ~= nil and EqHosting.advert(config, options.advert) or nil
+    local advertCost = advert ~= nil and EqHosting.advertCost(config, advert.name, ratingName) or 0
+    local problem = EqHostManager.bookProblem(farmId, typeName, ratingName, month, result, advertCost)
     if problem ~= nil then
         if problem == "eq_host_book_money" then
-            return false, string.format(g_i18n:getText(problem), g_i18n:formatMoney(result.setupFee, 0, true, true))
+            return false, string.format(g_i18n:getText(problem), g_i18n:formatMoney(result.setupFee + advertCost, 0, true, true))
         end
         return false, g_i18n:getText(problem)
     end
 
-    g_currentMission:addMoney(-result.setupFee, farmId, MoneyType.EQ_HOSTING or MoneyType.OTHER, true, true)
+    g_currentMission:addMoney(-(result.setupFee + advertCost), farmId, MoneyType.EQ_HOSTING or MoneyType.OTHER, true, true)
+    local sell = options.sell
+    if sell == nil then sell = EqHostManager.SELL_DEFAULT end
     EqHostManager.bookings[farmId] = { type = typeName, rating = ratingName, month = month, setupFee = result.setupFee,
-        previousLast = EqHostManager.lastMonth[farmId] }
+        previousLast = EqHostManager.lastMonth[farmId], monthsAhead = month - EqCompetitionManager.month,
+        advert = advert ~= nil and advert.name or nil, advertCost = advertCost, sell = sell and true or false,
+        buzz = EqHosting.rollBuzz(config) }
     EqHostManager.lastMonth[farmId] = month
-    Log:info("EqHostManager: farm %d booked %s %s for month %d (%d)", farmId, typeName, ratingName, month, result.setupFee)
-    return true, string.format(g_i18n:getText("eq_host_book_done"), EqHostManager.title(typeName, ratingName),
+    Log:info("EqHostManager: farm %d booked %s %s for month %d (%d, advert %s %d, buzz %d)", farmId, typeName, ratingName, month,
+        result.setupFee, tostring(EqHostManager.bookings[farmId].advert), advertCost, EqHostManager.bookings[farmId].buzz)
+    local text = string.format(g_i18n:getText("eq_host_book_done"), EqHostManager.title(typeName, ratingName),
         EqHostManager.monthText(month), g_i18n:formatMoney(result.setupFee, 0, true, true))
+    if advertCost > 0 then
+        text = text .. " " .. string.format(g_i18n:getText("eq_host_book_advert"), g_i18n:formatMoney(advertCost, 0, true, true))
+    end
+    return true, text
 end
 
 
@@ -243,10 +260,23 @@ function EqHostManager.onMonthStarted(month)
         local event = EqCompetitionManager.openHosted(farmId, booking.type, booking.rating, EqHostManager.venueName(farmId))
         if event ~= nil then
             event.hosted.setupFee = booking.setupFee
+            EqHostManager.copyBooking(booking, event.hosted)
             tell(farmId, "EQ_HOST_OPENED", string.format(g_i18n:getText("eq_host_opened"), EqCompetitionManager.eventTitle(event)))
             if EqHostVenue.config ~= nil then EqHostManager.startMonth(event) end
         end
     end
+end
+
+
+--- What a booking chose that the event keeps. Pure.
+--- @param booking table
+--- @param hosted table changed
+function EqHostManager.copyBooking(booking, hosted)
+    hosted.monthsAhead = booking.monthsAhead
+    hosted.advert = booking.advert
+    hosted.advertCost = booking.advertCost
+    hosted.sell = booking.sell
+    hosted.buzz = booking.buzz
 end
 
 
@@ -282,29 +312,35 @@ local function today()
 end
 
 
---- @return boolean true in winter
-local function isWinter()
-    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
-    return environment ~= nil and Season ~= nil and environment.currentSeason == Season.WINTER
+--- The popularity context of a running event. Pure apart from the reputation.
+--- @param hosted table
+--- @param venue table from EqHostVenue.read
+--- @param starRating number|nil your best entry's rating for the event
+--- @return table context for EqHosting.popularity
+function EqHostManager.contextFor(hosted, venue, starRating)
+    return { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[hosted.farmId] or 0,
+        starRating = starRating, monthsAhead = hosted.monthsAhead, advert = hosted.advert, shops = venue.shops,
+        buzz = hosted.buzz, weather = hosted.weather, sponsor = hosted.sponsorPopularity }
 end
 
 
 --- Popularity and turnout for a hosted event, from the farm as it is now.
 --- @param event table
---- @param star boolean|nil
+--- @param starRating number|nil
 --- @return table result from EqHosting.check
 --- @return number popularity
 --- @return table takings from EqHosting.takings
-local function assess(event, star)
+--- @return table venue
+--- @return table parts from EqHosting.popularity
+local function assess(event, starRating)
     local config = EqHostVenue.config
     local hosted = event.hosted
     local venue = EqHostVenue.read(hosted.farmId)
     local result = EqHosting.check(config, event.discipline, hosted.rating, venue)
-    local context = { facilityKinds = venue.facilityKinds, reputation = EqHostManager.reputation[hosted.farmId] or 0,
-        star = star, winter = isWinter() }
-    local score = EqHosting.popularity(config, event.discipline, result, context)
-    local takings = EqHosting.takings(config, event.discipline, config.ratingByName[hosted.rating], score, result.seatingTotal)
-    return result, score, takings, venue
+    local score, parts = EqHosting.popularity(config, event.discipline, result, EqHostManager.contextFor(hosted, venue, starRating))
+    local takings = EqHosting.takings(config, event.discipline, config.ratingByName[hosted.rating], score, result.seatingTotal,
+        hosted.weather)
+    return result, score, takings, venue, parts
 end
 
 
@@ -321,8 +357,12 @@ end
 --- @param event table
 function EqHostManager.startMonth(event)
     local hosted = event.hosted
-    local result, score, takings, venue = assess(event, false)
+    local result, score, takings, venue = assess(event, nil)
     hosted.openedDay = today()
+    -- How much of it is out in the weather, measured once (James, 2026-11-01: keep it light).
+    local picks = result.picks or {}
+    if picks.crossCountry ~= nil then picks.crossCountry.outdoor = EqHostVenue.outdoorShareOf(hosted.farmId, picks.crossCountry) end
+    hosted.outdoor = EqHosting.outdoorShare(event.discipline, picks)
     hosted.popularity = score
     hosted.competitors = takings.competitors
     hosted.feedPerHorse = venue.feedPerHorse
@@ -384,24 +424,123 @@ end
 
 
 --- @param event table
---- @return boolean star one of the farm's entries is rated Champion or better for it
-local function hasStar(event)
+--- @return number|nil rating the best of the farm's entries' ratings for it
+--- @return string|nil name that horse's name
+local function bestEntry(event)
+    local best, name
     for _, entry in ipairs(event.entries) do
         local record = EqRegistry.getById(entry.horseId)
-        if record ~= nil and EqCompetitionManager.ratingFor(record, event) >= EqHostManager.STAR_RATING then return true end
+        local rating = record ~= nil and EqCompetitionManager.ratingFor(record, event) or nil
+        if rating ~= nil and (best == nil or rating > best) then best, name = rating, entry.name end
     end
-    return false
+    return best, name
 end
 
 
---- The month is over: the final popularity sets the turnout, which sets the field.
+--- @param parts table from EqHosting.popularity
+--- @param id string
+--- @return number points
+local function partPoints(parts, id)
+    for _, part in ipairs(parts or {}) do
+        if part.id == id then return part.points end
+    end
+    return 0
+end
+
+
+--- Sell souvenirs and refreshments from the farm's stock (James, 2026-11-01).
+--- @param event table
+--- @param venue table from EqHostVenue.read
+--- @return table sale from EqHosting.goodsSale, the goods taken
+local function sellGoods(event, venue)
+    local hosted = event.hosted
+    local stock = {}
+    for _, item in ipairs(venue.shops ~= nil and venue.shops.stock or {}) do
+        table.insert(stock, { name = item.name, index = item.index, litres = item.litres, price = EqHostVenue.bestPrice(item.index) })
+    end
+    local sale = EqHosting.goodsSale(EqHostVenue.config, hosted.rating, hosted.popularity or 0, stock)
+    local indexOf = {}
+    for _, item in ipairs(stock) do indexOf[item.name] = item.index end
+    sale.total = 0
+    for _, item in ipairs(sale.items) do
+        local taken = EqHostVenue.takeGoods(hosted.farmId, indexOf[item.name], item.litres)
+        if taken < item.litres then
+            item.money = math.floor(item.money * taken / math.max(1, item.litres) + 0.5)
+            item.litres = math.floor(taken)
+        end
+        sale.total = sale.total + item.money
+    end
+    Log:info("EqHostManager: event %s sold %d goods for %d", tostring(event.id), #sale.items, sale.total)
+    return sale
+end
+
+
+--- The month is over: the final popularity sets the turnout, which sets the field; visitors
+--- buy souvenirs and refreshments.
 --- @param event table
 function EqHostManager.beforeResolve(event)
     if EqHostVenue.config == nil then return end
-    local _, score, takings = assess(event, hasStar(event))
-    event.hosted.popularity = score
-    event.hosted.takings = takings
+    local hosted = event.hosted
+    local starRating, starName = bestEntry(event)
+    local _, score, takings, venue, parts = assess(event, starRating)
+    hosted.popularity = score
+    hosted.parts = parts
+    -- People came to see your star (James, 2026-11-01: say so in the results).
+    hosted.star = partPoints(parts, "star") > 0 and starName or nil
+    hosted.weatherPoints = partPoints(parts, "weather")
+    takings.goods = 0
+    if hosted.sell then
+        local ok, sale = EqLog.try("EqHostManager sellGoods", sellGoods, event, venue)
+        if ok and sale ~= nil then
+            takings.goods = sale.total
+            takings.goodsLitres = sale.litres
+        end
+    end
+    takings.total = takings.total + takings.goods
+    hosted.takings = takings
     event.field = takings.competitors + math.min(#event.entries, EqHostVenue.config.ownPlaces)
+end
+
+
+--- @return string|nil name the WeatherType now, such as "RAIN"
+local function weatherNow()
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    local weather = environment ~= nil and environment.weather or nil
+    if weather == nil or weather.getCurrentWeatherType == nil or WeatherType == nil then return nil end
+    local ok, current = EqLog.try("EqHostManager weather", weather.getCurrentWeatherType, weather)
+    if not ok or current == nil then return nil end
+    for name, value in pairs(WeatherType) do
+        if value == current and type(name) == "string" then return name end
+    end
+    return nil
+end
+
+
+--- A new hour: count the weather at every running hosted event (James, 2026-11-01: once an
+--- hour, and only while one runs).
+function EqHostManager.onHourChanged()
+    local config = EqHostVenue.config
+    if config == nil or config.weather == nil then return end
+    local events = {}
+    for _, event in pairs(EqCompetitionManager.events) do
+        if event.hosted ~= nil then table.insert(events, event) end
+    end
+    if #events == 0 then return end
+    local environment = g_currentMission.environment
+    local hour = environment ~= nil and environment.currentHour or 12
+    if hour < config.weather.hourFrom or hour >= config.weather.hourTo then return end
+    local name = weatherNow()
+    table.sort(events, function(a, b) return a.id < b.id end)
+    for _, event in ipairs(events) do
+        local hosted = event.hosted
+        hosted.weather = hosted.weather or {}
+        local first = EqHosting.countWeather(config, hosted.weather, name, hosted.outdoor or 1)
+        if first then
+            Log:info("EqHostManager: %s hit event %s", tostring(name), tostring(event.id))
+            tell(hosted.farmId, "EQ_HOST_WEATHER", string.format(g_i18n:getText("eq_host_twister"), EqCompetitionManager.eventTitle(event)),
+                FSBaseMission.INGAME_NOTIFICATION_CRITICAL)
+        end
+    end
 end
 
 
@@ -420,7 +559,10 @@ function EqHostManager.report(event, day)
     return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue,
         field = result.field or 0, competitors = takings.competitors or 0, visitors = takings.visitors or 0,
         popularity = hosted.popularity or 0, entries = takings.entries or 0, gate = takings.gate or 0,
-        total = takings.total or 0, setupFee = hosted.setupFee or 0, feed = hosted.feedEaten or 0, podium = result.podium or {}, mine = mine }
+        total = takings.total or 0, setupFee = hosted.setupFee or 0, feed = hosted.feedEaten or 0, podium = result.podium or {}, mine = mine,
+        goods = takings.goods or 0, goodsLitres = takings.goodsLitres or 0, advertCost = hosted.advertCost or 0, star = hosted.star,
+        wetHours = math.floor((hosted.weather ~= nil and hosted.weather.bad or 0) + 0.5), weatherPoints = hosted.weatherPoints or 0,
+        twister = hosted.weather ~= nil and (hosted.weather.flat or 0) > 0 or nil }
 end
 
 
@@ -449,8 +591,11 @@ function EqHostManager.afterResolve(event)
     EqHostManager.reputation[hosted.farmId] = EqHosting.nextReputation(EqHostVenue.config,
         EqHostManager.reputation[hosted.farmId] or 0, true)
     local money = function(amount) return g_i18n:formatMoney(amount, 0, true, true) end
-    tell(hosted.farmId, "EQ_HOST_DONE", string.format(g_i18n:getText("eq_host_done"), EqCompetitionManager.eventTitle(event),
-        takings.competitors, money(takings.total), money(takings.entries), money(takings.gate), hosted.popularity))
+    local text = string.format(g_i18n:getText("eq_host_done"), EqCompetitionManager.eventTitle(event),
+        takings.competitors, money(takings.total), money(takings.entries), money(takings.gate), hosted.popularity)
+    if (takings.goods or 0) > 0 then text = text .. " " .. string.format(g_i18n:getText("eq_host_done_goods"), money(takings.goods)) end
+    if hosted.star ~= nil then text = text .. " " .. string.format(g_i18n:getText("eq_host_star"), hosted.star) end
+    tell(hosted.farmId, "EQ_HOST_DONE", text)
 end
 
 
@@ -640,6 +785,22 @@ function EqHostManager.saveEventState(xmlFile, key, hosted)
     if hosted.feedEaten ~= nil then xmlFile:setFloat(key .. "#feedEaten", hosted.feedEaten) end
     if hosted.feedDaily ~= nil then xmlFile:setFloat(key .. "#feedDaily", hosted.feedDaily) end
     if hosted.warned then xmlFile:setBool(key .. "#warned", true) end
+    if hosted.monthsAhead ~= nil then xmlFile:setInt(key .. "#monthsAhead", hosted.monthsAhead) end
+    if hosted.advert ~= nil then xmlFile:setString(key .. "#advert", hosted.advert) end
+    if hosted.advertCost ~= nil then xmlFile:setFloat(key .. "#advertCost", hosted.advertCost) end
+    if hosted.sell ~= nil then xmlFile:setBool(key .. "#sell", hosted.sell) end
+    if hosted.buzz ~= nil then xmlFile:setInt(key .. "#buzz", hosted.buzz) end
+    if hosted.outdoor ~= nil then xmlFile:setFloat(key .. "#outdoor", hosted.outdoor) end
+    local weather = hosted.weather
+    if weather ~= nil then
+        xmlFile:setInt(key .. ".weather#hours", weather.hours or 0)
+        xmlFile:setFloat(key .. ".weather#bad", weather.bad or 0)
+        xmlFile:setFloat(key .. ".weather#flat", weather.flat or 0)
+        local seen = {}
+        for name in pairs(weather.seen or {}) do table.insert(seen, name) end
+        table.sort(seen)
+        if #seen > 0 then xmlFile:setString(key .. ".weather#seen", table.concat(seen, " ")) end
+    end
     local horseIds = {}
     for horseId in pairs(hosted.ridden or {}) do table.insert(horseIds, horseId) end
     table.sort(horseIds)
@@ -673,6 +834,21 @@ function EqHostManager.loadEventState(xmlFile, key, hosted)
     hosted.feedEaten = xmlFile:getFloat(key .. "#feedEaten")
     hosted.feedDaily = xmlFile:getFloat(key .. "#feedDaily")
     hosted.warned = xmlFile:getBool(key .. "#warned", false) or nil
+    hosted.monthsAhead = xmlFile:getInt(key .. "#monthsAhead")
+    hosted.advert = xmlFile:getString(key .. "#advert")
+    hosted.advertCost = xmlFile:getFloat(key .. "#advertCost")
+    hosted.sell = xmlFile:getBool(key .. "#sell")
+    hosted.buzz = xmlFile:getInt(key .. "#buzz")
+    hosted.outdoor = xmlFile:getFloat(key .. "#outdoor")
+    if xmlFile:hasProperty(key .. ".weather") then
+        hosted.weather = { hours = xmlFile:getInt(key .. ".weather#hours", 0), bad = xmlFile:getFloat(key .. ".weather#bad", 0),
+            flat = xmlFile:getFloat(key .. ".weather#flat", 0) }
+        local seen = xmlFile:getString(key .. ".weather#seen")
+        if seen ~= nil then
+            hosted.weather.seen = {}
+            for name in string.gmatch(seen, "%S+") do hosted.weather.seen[name] = true end
+        end
+    end
     local i = 0
     while true do
         local rideKey = string.format("%s.ridden(%d)", key, i)
@@ -718,6 +894,11 @@ function EqHostManager.saveToXMLFile(xmlFile, key)
             xmlFile:setInt(farmKey .. ".booking#month", booking.month)
             xmlFile:setFloat(farmKey .. ".booking#setupFee", booking.setupFee or 0)
             if booking.previousLast ~= nil then xmlFile:setInt(farmKey .. ".booking#previousLast", booking.previousLast) end
+            if booking.monthsAhead ~= nil then xmlFile:setInt(farmKey .. ".booking#monthsAhead", booking.monthsAhead) end
+            if booking.advert ~= nil then xmlFile:setString(farmKey .. ".booking#advert", booking.advert) end
+            if booking.advertCost ~= nil then xmlFile:setFloat(farmKey .. ".booking#advertCost", booking.advertCost) end
+            if booking.sell ~= nil then xmlFile:setBool(farmKey .. ".booking#sell", booking.sell) end
+            if booking.buzz ~= nil then xmlFile:setInt(farmKey .. ".booking#buzz", booking.buzz) end
         end
         for r, report in ipairs(EqHostManager.history[farmId] or {}) do
             EqHostManager.saveReport(xmlFile, string.format("%s.report(%d)", farmKey, r - 1), report)
@@ -726,8 +907,8 @@ function EqHostManager.saveToXMLFile(xmlFile, key)
 end
 
 
-local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity" }
-local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed" }
+local REPORT_INTS = { "day", "field", "competitors", "visitors", "popularity", "goodsLitres", "wetHours", "weatherPoints" }
+local REPORT_FLOATS = { "entries", "gate", "total", "setupFee", "feed", "goods", "advertCost" }
 local REPORT_STRINGS = { "discipline", "rating", "venue" }
 
 
@@ -745,6 +926,8 @@ function EqHostManager.saveReport(xmlFile, key, report)
         xmlFile:setInt(horseKey .. "#place", horse.place or 0)
         if horse.status ~= nil then xmlFile:setString(horseKey .. "#status", horse.status) end
     end
+    if report.star ~= nil then xmlFile:setString(key .. "#star", report.star) end
+    if report.twister then xmlFile:setBool(key .. "#twister", true) end
 end
 
 
@@ -753,6 +936,8 @@ end
 --- @return table report
 function EqHostManager.loadReport(xmlFile, key)
     local report = { podium = {}, mine = {} }
+    report.star = xmlFile:getString(key .. "#star")
+    report.twister = xmlFile:getBool(key .. "#twister", false) or nil
     for _, name in ipairs(REPORT_INTS) do report[name] = xmlFile:getInt(key .. "#" .. name, 0) end
     for _, name in ipairs(REPORT_FLOATS) do report[name] = xmlFile:getFloat(key .. "#" .. name, 0) end
     for _, name in ipairs(REPORT_STRINGS) do report[name] = xmlFile:getString(key .. "#" .. name, "") end
@@ -792,6 +977,11 @@ function EqHostManager.loadFromXMLFile(xmlFile, key)
                     month = xmlFile:getInt(farmKey .. ".booking#month", 0),
                     setupFee = xmlFile:getFloat(farmKey .. ".booking#setupFee", 0),
                     previousLast = xmlFile:getInt(farmKey .. ".booking#previousLast"),
+                    monthsAhead = xmlFile:getInt(farmKey .. ".booking#monthsAhead"),
+                    advert = xmlFile:getString(farmKey .. ".booking#advert"),
+                    advertCost = xmlFile:getFloat(farmKey .. ".booking#advertCost"),
+                    sell = xmlFile:getBool(farmKey .. ".booking#sell"),
+                    buzz = xmlFile:getInt(farmKey .. ".booking#buzz"),
                 }
                 if EqHosting.isType(booking.type) then EqHostManager.bookings[farmId] = booking end
             end

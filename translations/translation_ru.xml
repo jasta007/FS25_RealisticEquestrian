@@ -844,6 +844,33 @@
         <text name="eq_host_part_reputation" text="репутация"/>
         <text name="eq_host_part_star" text="звёздная лошадь"/>
         <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_part_quality" text="качество маршрута"/>
+        <text name="eq_host_part_shops" text="магазины"/>
+        <text name="eq_host_part_ahead" text="заранее"/>
+        <text name="eq_host_part_advert" text="реклама"/>
+        <text name="eq_host_part_buzz" text="ажиотаж"/>
+        <text name="eq_host_part_weather" text="погода"/>
+        <text name="eq_host_buzz_high" text="Все об этом говорят"/>
+        <text name="eq_host_buzz_low" text="Тихо"/>
+        <text name="eq_host_aheadBonus" text="+%d популярности"/>
+        <text name="eq_host_advert_none" text="Без рекламы"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Местная"/>
+        <text name="eq_host_advert_national" text="Национальная"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s реклама"/>
+        <text name="eq_host_label_advert" text="Реклама"/>
+        <text name="eq_host_label_sell" text="Сувениры и закуски"/>
+        <text name="eq_host_sell_yes" text="Продавать, если есть (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Не продавать"/>
+        <text name="eq_host_book_advert" text="Реклама оплачена: %s."/>
+        <text name="eq_host_twister" text="Торнадо пронёсся через %s! Зрители бросились в укрытие."/>
+        <text name="eq_host_done_goods" text="Сувениры и закуски проданы: %s."/>
+        <text name="eq_host_star" text="Публика очень хотела увидеть выступление %s."/>
+        <text name="eq_host_report_twister" text="Во время соревнований прошёл торнадо, и зрители разбежались."/>
+        <text name="eq_host_report_weather" text="Плохая погода: %d ч. отпугнули людей (популярность %d)."/>
+        <text name="eq_host_report_goods" text="Сувениры и закуски: продано %d л за %s."/>
+        <text name="eq_host_report_advert" text="Реклама: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Плохая погода уже стоила %d популярности."/>
         <text name="eq_host_label_yours" text="Ваше соревнование"/>
         <text name="eq_host_label_month" text="Забронировать на"/>
         <text name="eq_host_label_next" text="Ближайший свободный месяц"/>

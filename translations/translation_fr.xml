@@ -846,6 +846,33 @@
         <text name="eq_host_part_reputation" text="réputation"/>
         <text name="eq_host_part_star" text="cheval vedette"/>
         <text name="eq_host_part_winter" text="hiver"/>
+        <text name="eq_host_part_quality" text="qualité du parcours"/>
+        <text name="eq_host_part_shops" text="boutiques"/>
+        <text name="eq_host_part_ahead" text="réservé tôt"/>
+        <text name="eq_host_part_advert" text="publicité"/>
+        <text name="eq_host_part_buzz" text="bouche-à-oreille"/>
+        <text name="eq_host_part_weather" text="météo"/>
+        <text name="eq_host_buzz_high" text="Tout le monde en parle"/>
+        <text name="eq_host_buzz_low" text="Calme"/>
+        <text name="eq_host_aheadBonus" text="+%d popularité"/>
+        <text name="eq_host_advert_none" text="Pas de publicité"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Locale"/>
+        <text name="eq_host_advert_national" text="Nationale"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s de publicité"/>
+        <text name="eq_host_label_advert" text="Publicité"/>
+        <text name="eq_host_label_sell" text="Souvenirs et rafraîchissements"/>
+        <text name="eq_host_sell_yes" text="Vendre si disponible (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Ne pas vendre"/>
+        <text name="eq_host_book_advert" text="Publicité payée : %s."/>
+        <text name="eq_host_twister" text="Une tornade a balayé %s ! Les spectateurs ont couru se mettre à l'abri."/>
+        <text name="eq_host_done_goods" text="Souvenirs et rafraîchissements vendus : %s."/>
+        <text name="eq_host_star" text="Le public avait vraiment hâte de voir %s concourir."/>
+        <text name="eq_host_report_twister" text="Une tornade est passée pendant l'épreuve et le public s'est dispersé."/>
+        <text name="eq_host_report_weather" text="Mauvais temps : %d heures ont tenu le public à l'écart (popularité %d)."/>
+        <text name="eq_host_report_goods" text="Souvenirs et rafraîchissements : %d l vendus pour %s."/>
+        <text name="eq_host_report_advert" text="Publicité : %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Le mauvais temps a coûté %d de popularité jusqu'ici."/>
         <text name="eq_host_label_yours" text="Votre concours"/>
         <text name="eq_host_label_month" text="Réserver pour"/>
         <text name="eq_host_label_next" text="Prochain mois libre"/>
