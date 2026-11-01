@@ -1058,5 +1058,7 @@
         <text name="eq_sponsor_discount_repaint" text="Lackierung %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparatur %s"/>
         <text name="eq_sponsor_discount_buy" text="Kauf %s"/>
+        <text name="eq_sponsor_discount_from" text="Ab %s"/>
+        <text name="eq_sponsor_discount_after" text="Ab %d Monaten nach Unterzeichnung"/>
     </texts>
 </l10n>

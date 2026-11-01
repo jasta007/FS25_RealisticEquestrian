@@ -1056,5 +1056,7 @@
         <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
         <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
         <text name="eq_sponsor_discount_buy" text="Покупка %s"/>
+        <text name="eq_sponsor_discount_from" text="С %s"/>
+        <text name="eq_sponsor_discount_after" text="Через %d мес. после подписания"/>
     </texts>
 </l10n>

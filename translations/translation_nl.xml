@@ -1056,5 +1056,7 @@
         <text name="eq_sponsor_discount_repaint" text="Spuiten %s"/>
         <text name="eq_sponsor_discount_repair" text="Reparatie %s"/>
         <text name="eq_sponsor_discount_buy" text="Kopen %s"/>
+        <text name="eq_sponsor_discount_from" text="Vanaf %s"/>
+        <text name="eq_sponsor_discount_after" text="Vanaf %d maanden na tekenen"/>
     </texts>
 </l10n>

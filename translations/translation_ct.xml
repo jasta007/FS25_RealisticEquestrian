@@ -1056,5 +1056,7 @@
         <text name="eq_sponsor_discount_repaint" text="噴漆 %s"/>
         <text name="eq_sponsor_discount_repair" text="維修 %s"/>
         <text name="eq_sponsor_discount_buy" text="購買 %s"/>
+        <text name="eq_sponsor_discount_from" text="從%s開始"/>
+        <text name="eq_sponsor_discount_after" text="簽約 %d 個月後開始"/>
     </texts>
 </l10n>
