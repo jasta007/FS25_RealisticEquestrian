@@ -468,7 +468,7 @@ end
 --- @param rng function
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone = "markers", nil, nil
-    routine.faults, routine.heading, routine.path, routine.competing = 0, nil, nil, nil
+    routine.faults, routine.heading, routine.path, routine.competing, routine.hosted = 0, nil, nil, nil, nil
     local x = EqDressage.nearArena(course) and EqDressage.arenaX(course) or nil
     local frame = x ~= nil and EqDressagePath.frameFor(course.markers, x) or nil
     if frame ~= nil then
@@ -485,6 +485,8 @@ function EqDressage.start(routine, course, rng)
         end
         routine.kind, routine.path = "path", EqDressagePath.newRun(test, course.temperament)
         routine.competing = fixed ~= nil and fixed.counts or nil
+        -- For the notice at A (EqTrainingHooks.pathRows): your own event, and whether it counts.
+        routine.hosted = fixed ~= nil and fixed.status ~= nil and { event = fixed.event, status = fixed.status } or nil
         routine.task, routine.request, routine.preview, routine.bonus = { kind = "path" }, nil, nil, nil
         return
     end

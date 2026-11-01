@@ -268,7 +268,7 @@ function EqTraining.breakRoutine(sheet)
     routine.shown = nil
     routine.steerMs, routine.driftMs = 0, 0
     routine.kind, routine.task, routine.preview, routine.bonus, routine.pending, routine.from = nil, nil, nil, nil, nil, nil
-    routine.path, routine.competing = nil, nil
+    routine.path, routine.competing, routine.hosted = nil, nil, nil
     return was
 end
 

@@ -4943,6 +4943,36 @@ end)()
     local all = EqHostManager.failedChecks(short, false)
     check("host month: the opening check counts the feed", all[#all] == "feed")
 
+    -- The dressage test at A says whether it counts for a horse entered in your event.
+    do
+        local hadVenue = EqHostVenue
+        EqHostVenue = EqHostVenue or {}
+        local hadManager = EqCompetitionManager
+        EqCompetitionManager = EqCompetitionManager or {}
+        local savedConfig, savedLive, savedArenas, savedEvents = EqHostVenue.config, EqHostManager.liveEventFor,
+            EqHosting.arenasFromMarkers, EqCompetitionManager.events
+        local event = { id = 35, discipline = "dressage", hosted = { rating = "intermediate" } }
+        local arenaLength = 40
+        EqHostVenue.config = host
+        EqCompetitionManager.events = { event }
+        EqHostManager.liveEventFor = function(id) return id == "mine" and event or nil end
+        EqHosting.arenasFromMarkers = function() return { { length = arenaLength } } end
+        local test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: counts in a big enough arena", test.counts and test.status == "counts" and test.event == event)
+        arenaLength = 30
+        test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: too small an arena is practice", not test.counts and test.status == "small")
+        arenaLength = 40
+        event.hosted.ridden = { mine = { dressage = {} } }
+        test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: ridden already is practice", not test.counts and test.status == "ridden")
+        test = EqHostManager.dressageTestFor("other", {})
+        check("hosted test: a horse not entered gets no notice", test ~= nil and test.status == nil and test.event == nil)
+        EqHostVenue.config, EqHostManager.liveEventFor, EqHosting.arenasFromMarkers, EqCompetitionManager.events =
+            savedConfig, savedLive, savedArenas, savedEvents
+        EqHostVenue, EqCompetitionManager = hadVenue, hadManager
+    end
+
     -- Ridden rounds in your own event.
     local novice = host.ratingByName.novice
     check("ridden: a course with enough jumps qualifies", EqHosting.courseQualifies(novice, "showJumping", { kind = "showJumping", jumps = 6 })

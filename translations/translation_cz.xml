@@ -892,6 +892,10 @@
         <text name="eq_host_note_counts" text="Soutěžní kolo pro %s: jeď ke startovní čáře"/>
         <text name="eq_host_note_ridden" text="Trénink: tato disciplína %s je už odjetá"/>
         <text name="eq_host_note_small" text="Trénink: trať je pro %s příliš malá"/>
+        <text name="eq_host_ann_test" text="Soutěžní úloha: tahle se počítá!"/>
+        <text name="eq_host_ann_smallArena" text="Tento obdélník je na tvé závody příliš malý: jen trénink"/>
+        <text name="eq_host_note_testCounts" text="Soutěžní úloha pro %s: jeď k A"/>
+        <text name="eq_host_note_testSmall" text="Trénink: obdélník je pro %s příliš malý"/>
         <text name="eq_host_label_now" text="Tento měsíc"/>
         <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
         <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>

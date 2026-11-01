@@ -892,6 +892,10 @@
         <text name="eq_host_note_counts" text="Rodada de competição para %s: vá até a linha de largada"/>
         <text name="eq_host_note_ridden" text="Treino: esta prova de %s já foi montada"/>
         <text name="eq_host_note_small" text="Treino: percurso pequeno demais para %s"/>
+        <text name="eq_host_ann_test" text="Prova de competição: esta conta!"/>
+        <text name="eq_host_ann_smallArena" text="Esta pista é pequena demais para o seu evento: só treino"/>
+        <text name="eq_host_note_testCounts" text="Prova de competição para %s: vá até A"/>
+        <text name="eq_host_note_testSmall" text="Treino: pista pequena demais para %s"/>
         <text name="eq_host_label_now" text="Este mês"/>
         <text name="eq_host_next_oneAtATime" text="um evento por vez"/>
         <text name="eq_host_next_interval" text="%d meses entre eventos, veja Configurações"/>
