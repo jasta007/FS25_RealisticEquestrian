@@ -861,6 +861,8 @@
         <text name="eq_host_ann_smallArena" text="这个场地对你的赛事来说太小：只是练习"/>
         <text name="eq_host_note_testCounts" text="%s的比赛测试：骑到A"/>
         <text name="eq_host_note_testSmall" text="练习：场地对%s来说太小"/>
+        <text name="eq_host_ann_notEntered" text="未报名：只是练习"/>
+        <text name="eq_host_note_notEntered" text="练习：这匹马未报名参加%s"/>
         <text name="eq_host_label_now" text="本月"/>
         <text name="eq_host_next_oneAtATime" text="一次只能举办一场赛事"/>
         <text name="eq_host_next_interval" text="赛事之间间隔%d个月，见设置"/>

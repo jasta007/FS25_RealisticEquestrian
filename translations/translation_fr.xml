@@ -863,6 +863,8 @@
         <text name="eq_host_ann_smallArena" text="Cette carrière est trop petite pour votre épreuve : simple entraînement"/>
         <text name="eq_host_note_testCounts" text="Reprise de compétition pour %s : allez à A"/>
         <text name="eq_host_note_testSmall" text="Entraînement : carrière trop petite pour %s"/>
+        <text name="eq_host_ann_notEntered" text="Non engagé : simple entraînement"/>
+        <text name="eq_host_note_notEntered" text="Entraînement : ce cheval n'est pas engagé dans %s"/>
         <text name="eq_host_label_now" text="Ce mois-ci"/>
         <text name="eq_host_next_oneAtATime" text="une épreuve à la fois"/>
         <text name="eq_host_next_interval" text="%d mois entre deux épreuves, voir Paramètres"/>

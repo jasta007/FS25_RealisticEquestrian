@@ -847,7 +847,7 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
   horse, a gold announcement says whether this round counts, is practice (phase already
   ridden) or the course is too small; the finish says what was kept and when results come.
   A dressage arena does the same when its test is offered (arena too small for the rating, or
-  dressage already ridden), and the note above the panel replaces "Move to A" until the countdown.
+  dressage already ridden, or the horse isn't entered), and the note above the panel replaces "Move to A" until the countdown.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again.

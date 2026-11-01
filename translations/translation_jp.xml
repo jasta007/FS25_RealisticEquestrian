@@ -861,6 +861,8 @@
         <text name="eq_host_ann_smallArena" text="このアリーナはあなたの大会には小さすぎます：練習のみ"/>
         <text name="eq_host_note_testCounts" text="%sの競技テスト：Aへ"/>
         <text name="eq_host_note_testSmall" text="練習：%sにはアリーナが小さすぎます"/>
+        <text name="eq_host_ann_notEntered" text="未エントリー：練習のみ"/>
+        <text name="eq_host_note_notEntered" text="練習：この馬は%sにエントリーしていません"/>
         <text name="eq_host_label_now" text="今月"/>
         <text name="eq_host_next_oneAtATime" text="大会は一度に一つ"/>
         <text name="eq_host_next_interval" text="大会の間隔は%dか月、設定を参照"/>

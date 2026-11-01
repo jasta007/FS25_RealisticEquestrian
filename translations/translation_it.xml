@@ -861,6 +861,8 @@
         <text name="eq_host_ann_smallArena" text="Questo rettangolo è troppo piccolo per il tuo evento: solo allenamento"/>
         <text name="eq_host_note_testCounts" text="Ripresa di gara per %s: vai ad A"/>
         <text name="eq_host_note_testSmall" text="Allenamento: rettangolo troppo piccolo per %s"/>
+        <text name="eq_host_ann_notEntered" text="Non iscritto: solo allenamento"/>
+        <text name="eq_host_note_notEntered" text="Allenamento: questo cavallo non è iscritto a %s"/>
         <text name="eq_host_label_now" text="Questo mese"/>
         <text name="eq_host_next_oneAtATime" text="un evento alla volta"/>
         <text name="eq_host_next_interval" text="%d mesi tra un evento e l'altro, vedi Impostazioni"/>

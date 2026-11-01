@@ -861,6 +861,8 @@
         <text name="eq_host_ann_smallArena" text="Ten czworobok jest za mały na twoje zawody: tylko trening"/>
         <text name="eq_host_note_testCounts" text="Program konkursowy w %s: podjedź do A"/>
         <text name="eq_host_note_testSmall" text="Trening: czworobok za mały na %s"/>
+        <text name="eq_host_ann_notEntered" text="Niezgłoszony: tylko trening"/>
+        <text name="eq_host_note_notEntered" text="Trening: ten koń nie jest zgłoszony do %s"/>
         <text name="eq_host_label_now" text="Ten miesiąc"/>
         <text name="eq_host_next_oneAtATime" text="jedne zawody naraz"/>
         <text name="eq_host_next_interval" text="%d mies. między zawodami, zobacz Ustawienia"/>

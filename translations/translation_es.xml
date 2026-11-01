@@ -863,6 +863,8 @@
         <text name="eq_host_ann_smallArena" text="Esta pista es demasiado pequeña para tu evento: solo práctica"/>
         <text name="eq_host_note_testCounts" text="Prueba de competición para %s: ve a A"/>
         <text name="eq_host_note_testSmall" text="Práctica: pista demasiado pequeña para %s"/>
+        <text name="eq_host_ann_notEntered" text="No inscrito: solo práctica"/>
+        <text name="eq_host_note_notEntered" text="Práctica: este caballo no está inscrito en %s"/>
         <text name="eq_host_label_now" text="Este mes"/>
         <text name="eq_host_next_oneAtATime" text="un evento cada vez"/>
         <text name="eq_host_next_interval" text="%d meses entre eventos, ver Ajustes"/>
