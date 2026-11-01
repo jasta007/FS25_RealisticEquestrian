@@ -90,10 +90,9 @@ end
 
 
 --- @param record table
---- @return table stat -> change over the last EqHorseRecord.GAIN_DAYS days
+--- @return table stat -> change this in-game month
 local function recentGains(record)
-    local env = g_currentMission ~= nil and g_currentMission.environment or nil
-    return record:getRecentGains(env ~= nil and env.currentMonotonicDay or 0)
+    return record:getRecentGains(EqCompetitionManager.month or 0)
 end
 
 

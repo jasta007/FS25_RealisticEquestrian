@@ -2053,7 +2053,8 @@ function EqTrainingHooks.onHorseDay(animal)
         tostring(animal.fitness), tostring(animal.health), tostring(animal.dirt), tostring(animal.riding)))
     local today = g_currentMission.environment.currentMonotonicDay or 0
     EqStatLog.add(record.id, today, "daily training", deltas, notes, record.trained)
-    record:addGains(today, deltas)
+    -- The day that just ended: after a month change it still belongs to the month before.
+    record:addGains(EqCompetitionManager.endedMonth(), deltas)
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",
         record.id, tostring(animal.riding), tostring(animal.dirt), record.idleDays,
