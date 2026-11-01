@@ -4475,6 +4475,16 @@ end)()
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
 -- do block: the main chunk is at Lua's 200 locals.
 ;(function()
+    -- Every knock, hit and land sound ships, mono so the game places it in 3D.
+    for _, list in ipairs({ EqPoles.SOUNDS, EqPoles.BLOCK_HIT, EqPoles.BLOCK_LAND }) do
+        for _, file in ipairs(list) do
+            local f = io.open(file, "rb")
+            local head = f ~= nil and f:read(80) or ""
+            if f ~= nil then f:close() end
+            local at = head:find("\1vorbis", 1, true)
+            check("pole sounds: " .. file .. " ships, mono", at ~= nil and head:byte(at + 11) == 1)
+        end
+    end
     local function level(lead, push, restA)
         return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
     end

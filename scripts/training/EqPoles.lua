@@ -74,7 +74,12 @@ EqPoles.SCAN_MS = 1000
 
 -- The clonk as a pole comes off its cups (James's recordings, 2026-10-29): one of these, picked at
 -- random, at a random pitch in PITCH so no two knocks sound the same. Heard up to SOUND_RANGE metres.
-EqPoles.SOUNDS = { "sounds/poleKnock1.ogg", "sounds/poleKnock2.ogg" }
+EqPoles.SOUNDS = { "sounds/poleKnock1.ogg", "sounds/poleKnock2.ogg", "sounds/poleKnock3.ogg", "sounds/poleKnock4.ogg",
+    "sounds/poleKnock5.ogg" }
+-- The sponsor wall's blocks (James's recordings, 2026-11-01): a hit as one is knocked, a thud as it
+-- lands (a pole's knock has its landing in it already).
+EqPoles.BLOCK_HIT = { "sounds/blockHit1.ogg", "sounds/blockHit2.ogg", "sounds/blockHit3.ogg" }
+EqPoles.BLOCK_LAND = { "sounds/blockLand1.ogg", "sounds/blockLand2.ogg", "sounds/blockLand3.ogg" }
 EqPoles.PITCH = { 0.88, 1.12 }
 EqPoles.SOUND_RANGE = 60
 EqPoles.SOUND_INNER = 8
@@ -287,21 +292,24 @@ local function groundIn(root, x, z)
 end
 
 
---- The knock sound, played where the pole is: a 3D audio source on the pole, made the first time
---- it is knocked and used again after.
+--- A sound played where the pole is: a 3D audio source on the pole, made the first time it is
+--- needed and used again after.
 --- @param pole table
-local function playKnock(pole)
+--- @param files table|nil the sounds to pick one of (the pole's knock, else a block's hit)
+local function playKnock(pole, files)
     if createAudioSource == nil or getAudioSourceSample == nil or playSample == nil or EqPoles.modDirectory == nil then return end
-    local index = math.random(#EqPoles.SOUNDS)
+    files = files or (pole.block and EqPoles.BLOCK_HIT or EqPoles.SOUNDS)
+    local index = math.random(#files)
+    local file = files[index]
     pole.sounds = pole.sounds or {}
-    local source = pole.sounds[index]
+    local source = pole.sounds[file]
     if source == nil then
-        source = createAudioSource("eqPoleKnock" .. index, EqPoles.modDirectory .. EqPoles.SOUNDS[index], EqPoles.SOUND_RANGE,
+        source = createAudioSource("eqPoleSound" .. index, EqPoles.modDirectory .. file, EqPoles.SOUND_RANGE,
             EqPoles.SOUND_INNER, EqPoles.SOUND_VOLUME, 1)
         if source == nil or source == 0 then return end
         link(pole.node, source)
         if setAudioSourceAutoPlay ~= nil then setAudioSourceAutoPlay(source, false) end
-        pole.sounds[index] = source
+        pole.sounds[file] = source
     end
     local sample = getAudioSourceSample(source)
     if setSampleGroup ~= nil and AudioGroup ~= nil and AudioGroup.ENVIRONMENT ~= nil then setSampleGroup(sample, AudioGroup.ENVIRONMENT) end
@@ -717,7 +725,10 @@ function EqPoles.update()
                 local pose = EqPoles.fallPose(pole.fall, pole.t)
                 setTranslation(pole.node, pose.x, pose.y, pose.z)
                 setRotation(pole.node, pose.rx or 0, pose.ry, pose.rz)
-                if pose.still then pole.state, pole.downAt = EqPoles.DOWN, now end
+                if pose.still then
+                    pole.state, pole.downAt = EqPoles.DOWN, now
+                    if pole.block then EqLog.try("EqPoles land sound", playKnock, pole, EqPoles.BLOCK_LAND) end
+                end
             elseif pole.state == EqPoles.DOWN then
                 if busy == nil then busy = roundBusy() end
                 if near == nil then near = riderNear(jump.root, now) end

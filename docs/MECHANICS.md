@@ -911,7 +911,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Sponsor wall** (2,500): a 1.20 m showpiece "brick" wall between brick pillars, the sponsor's
   logo across its whole face front and back (2 boards). The bottom is solid; the five top blocks
   fall like poles when hit (a rail), tipping off the wall and tumbling, and go back up after the
-  round. The logo is cut along the blocks, so a knocked block takes its piece with it.
+  round, with a knock as one is hit and a thud as it lands. The logo is cut along the blocks, so a
+  knocked block takes its piece with it.
 - **Sponsor gates** (cross country pieces, not jumps, no flags): the **Start/Finish Arch** (4,500,
   6 m wide, 3.6 m clear, logos across the crossbar and up both towers, 3 boards) and the
   **Ride-Through Gate** (1,200, 4 m wide, 3.4 m clear, one board) to show the way round a course.
