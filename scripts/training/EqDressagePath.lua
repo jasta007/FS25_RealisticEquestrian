@@ -1436,7 +1436,9 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
                 bend = sec.bend, drift = sec.drift })
         end
         if figure.passage ~= nil then
-            table.insert(test.passages, { s0 = sAt(figure.passage.from), s1 = sAt(figure.passage.to), m = m })
+            local labels = move.labels or {}
+            table.insert(test.passages, { s0 = sAt(figure.passage.from), s1 = sAt(figure.passage.to), m = m,
+                from = labels[1], to = labels[#labels] })
         end
         -- A walk down the centre line trots on from X: halt, proceed at a trot.
         local after = figure.gait == "walk" and "trot" or figure.gait
@@ -2216,6 +2218,16 @@ end
 function EqDressagePath.passageAt(test, s)
     for _, p in ipairs(test.passages or {}) do
         if s >= p.s0 and s < p.s1 then return p end
+    end
+    return nil
+end
+
+
+--- The passage just ridden, while the horse is within PASSAGE_AFTER metres past its end (pure).
+EqDressagePath.PASSAGE_AFTER = 4
+function EqDressagePath.passageJustDone(run)
+    for _, p in ipairs(run.test.passages or {}) do
+        if run.s >= p.s1 and run.s < p.s1 + EqDressagePath.PASSAGE_AFTER then return p end
     end
     return nil
 end

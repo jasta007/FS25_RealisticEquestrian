@@ -286,8 +286,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
   letter gaps (10 to 26 m).
 - **Passage** (James, 2026-10-31): along a long side over one or two letter gaps, or across the
-  long diagonal, at a trot. The prompt says "Passage: Ctrl + W" (red while not collected), the
-  line's dashes come closer together and show cyan ahead; after the first 2 m it loses the larger of
+  long diagonal, at a trot. The prompt says "Passage H-B: Ctrl + W" (red while not collected); its
+  bar counts down to the start, then empties towards a gold pole at the end, and just past it
+  "Trot!" (James, 2026-11-01: where it starts and stops was unclear). The line's dashes come
+  closer together, chevrons and plain dashes in turn, and show cyan ahead; after the first 2 m it loses the larger of
   0.6 a second not in passage and 6 times the share of its line ridden out of it (at most 6:
   trotted through, it was only a few seconds). No change of gait in the 15 m before it. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the

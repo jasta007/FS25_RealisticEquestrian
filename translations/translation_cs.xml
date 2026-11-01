@@ -133,6 +133,7 @@
         <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
         <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="原地踏步"/>
         <text name="eq_now_pirouette" text="定后肢旋转"/>
         <text name="eq_now_collected" text="收缩"/>

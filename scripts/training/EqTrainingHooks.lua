@@ -1583,9 +1583,20 @@ local function pathRows(rows, routine)
             local share = not inside and math.max(0, math.min(1, (sec.s0 - run.s) / run.warn)) or nil
             EqTrainingHud.drawPrompt(sectionText(sec), share, wrong and (COLOR.red or color) or color)
         elseif pass ~= nil then
-            -- "Passage: Ctrl + W", red while not collected in it.
-            local share = not inPass and math.max(0, math.min(1, (pass.s0 - run.s) / run.warn)) or nil
-            EqTrainingHud.drawPrompt(g_i18n:getText("eq_dressage_passage"), share, run.passageWrong and (COLOR.red or color) or color)
+            -- "Passage H-B: Ctrl + W" (James, 2026-11-01: where it starts and stops was unclear): the
+            -- bar counts down to its start, then empties as it goes to the gold pole at its end; red
+            -- while not collected in it.
+            local share
+            if not inPass then
+                share = math.max(0, math.min(1, (pass.s0 - run.s) / run.warn))
+            else
+                share = math.max(0, math.min(1, (pass.s1 - run.s) / math.max(0.1, pass.s1 - pass.s0)))
+            end
+            local text = string.format(g_i18n:getText("eq_dressage_passageAt"), pass.from or "?", pass.to or "?")
+            EqTrainingHud.drawPrompt(text, share, run.passageWrong and (COLOR.red or color) or color)
+        elseif EqDressagePath.passageJustDone(run) ~= nil then
+            -- Past its end: on at a working trot ("Trot!").
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_trot")), nil, color)
         elseif run.stallMs >= EqDressagePath.STALL_TELL_MS then
             -- Standing still with nothing to do: say which gait to go on in ("Trot!").
             EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)),

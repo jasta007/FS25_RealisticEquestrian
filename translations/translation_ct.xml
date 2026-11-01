@@ -133,6 +133,7 @@
         <text name="eq_fig_passageRail" text="正步 %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="對角線正步 %s-%s"/>
         <text name="eq_dressage_passage" text="正步：Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="正步 %s-%s：Ctrl + W"/>
         <text name="eq_now_piaffe" text="原地踏步"/>
         <text name="eq_now_pirouette" text="定後肢旋轉"/>
         <text name="eq_now_collected" text="收縮"/>

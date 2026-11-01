@@ -133,6 +133,7 @@
         <text name="eq_fig_passageRail" text="パッサージュ %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="斜線上のパッサージュ %s-%s"/>
         <text name="eq_dressage_passage" text="パッサージュ: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="パッサージュ %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="ピアッフェ"/>
         <text name="eq_now_pirouette" text="ピルエット"/>
         <text name="eq_now_collected" text="収縮"/>

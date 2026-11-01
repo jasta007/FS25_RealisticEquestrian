@@ -4405,6 +4405,9 @@ end)()
         end
         return r.acc[p.m]
     end
+    check("a passage knows its letters, and says trot on just past its end", passTest ~= nil and passTest.passages[1].from ~= nil
+        and passTest.passages[1].to ~= nil and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 + 1 }) ~= nil
+        and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 - 1 }) == nil)
     check("tests ask for passages, and not collecting in one costs marks", passTest ~= nil and passRun(false).passMs > 0 and passRun(true).passMs == 0
         and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7
         -- Trotted through, little time out of it but most of its line (James's hosted test, 2026-11-01).

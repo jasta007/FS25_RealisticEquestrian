@@ -133,6 +133,7 @@
         <text name="eq_fig_passageRail" text="Pasaż %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasaż po przekątnej %s-%s"/>
         <text name="eq_dressage_passage" text="Pasaż: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Pasaż %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaff"/>
         <text name="eq_now_pirouette" text="Piruet"/>
         <text name="eq_now_collected" text="Zebrany"/>

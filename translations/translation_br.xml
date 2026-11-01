@@ -133,6 +133,7 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage na diagonal %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirueta"/>
         <text name="eq_now_collected" text="Reunido"/>
