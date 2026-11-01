@@ -3866,7 +3866,9 @@ end)()
     local right = EqCourseGlow.symbol("pirouette", 0, 0, 0, 0, 1, -1)
     check("a halt is a bar across the line", #halt == 1 and math.abs(halt[1][3] - halt[1][6]) < 1e-9
         and math.abs(math.abs(halt[1][4] - halt[1][1]) - EqCourseGlow.SYMBOL.bar) < 1e-9)
-    check("a piaffe is two bars across", #piaffe == 2 and piaffe[1][3] < 0 and piaffe[2][3] > 0)
+    -- A piaffe creeps forward: a short stretch of trot and walk dashes in turn along the line (James, 2026-11-01).
+    check("a piaffe is trot and walk dashes in turn along the line", #piaffe == 4 and piaffe[1][1] == 0 and piaffe[1][4] == 0
+        and piaffe[1][6] - piaffe[1][3] > piaffe[2][6] - piaffe[2][3] and piaffe[2][3] > piaffe[1][6])
     local ring = EqCourseGlow.SYMBOL.ringPieces - 1
     -- Turning left (the heading growing) goes round towards +x first; right towards -x.
     check("a pirouette is a ring round the point, starting off the way to turn", #left == ring + 2 and #right == ring + 2

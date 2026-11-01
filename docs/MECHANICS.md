@@ -209,7 +209,7 @@ Started near the gold pole (marked like a halt); letting go early (off the spot 
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
-two for a piaffe, a ring with an arrowhead the way to turn for a pirouette.
+for a piaffe a short stretch of trot and walk dashes in turn (it creeps forward a little), a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
