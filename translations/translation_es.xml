@@ -1023,11 +1023,14 @@
         <text name="eq_sponsor_col_eligibility" text="Elegibilidad"/>
         <text name="eq_sponsor_eligible_yes" text="Elegible"/>
         <text name="eq_sponsor_eligible_no" text="No elegible"/>
-        <text name="eq_sponsor_eligible_taken" text="Ya tienes patrocinador"/>
+        <text name="eq_sponsor_eligible_taken" text="Ya exclusivo"/>
         <text name="eq_sponsor_eligible_yours" text="Tu patrocinador"/>
         <text name="eq_sponsor_eligible_exclusive" text="Solo exclusivo"/>
         <text name="eq_sponsor_eligible_full" text="Patrocinadores completos"/>
         <text name="eq_sponsor_eligible_overlap" text="Misma especialidad"/>
+        <text name="eq_sponsor_eligible_rivals" text="Equipo rival"/>
+        <text name="eq_sponsor_eligible_equipment" text="Falta equipo"/>
+        <text name="eq_sponsor_eligible_branding" text="Falta publicidad"/>
         <text name="eq_sponsor_exclusive_yes" text="Exclusivo"/>
         <text name="eq_sponsor_exclusive_no" text="No exclusivo"/>
         <text name="eq_sponsor_overlapLine" text="Choca con %s: %s"/>

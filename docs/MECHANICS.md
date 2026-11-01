@@ -889,7 +889,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
 - The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
-  most machines in), contract, **Eligibility** and what it pays you; the panel adds its terms and
+  most machines in), contract, **Eligibility** (or why not: Already exclusive, Exclusive only, Sponsors full, Same speciality, Own rival kit, Need equipment, Need branding) and what it pays you; the panel adds its terms and
   the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract

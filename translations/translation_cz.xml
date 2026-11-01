@@ -1021,11 +1021,14 @@
         <text name="eq_sponsor_col_eligibility" text="Způsobilost"/>
         <text name="eq_sponsor_eligible_yes" text="Způsobilý"/>
         <text name="eq_sponsor_eligible_no" text="Nezpůsobilý"/>
-        <text name="eq_sponsor_eligible_taken" text="Už máš sponzora"/>
+        <text name="eq_sponsor_eligible_taken" text="Už exkluzivní"/>
         <text name="eq_sponsor_eligible_yours" text="Tvůj sponzor"/>
         <text name="eq_sponsor_eligible_exclusive" text="Jen exkluzivně"/>
         <text name="eq_sponsor_eligible_full" text="Sponzoři plní"/>
         <text name="eq_sponsor_eligible_overlap" text="Stejná specializace"/>
+        <text name="eq_sponsor_eligible_rivals" text="Konkurenční stroje"/>
+        <text name="eq_sponsor_eligible_equipment" text="Chybí vybavení"/>
+        <text name="eq_sponsor_eligible_branding" text="Chybí branding"/>
         <text name="eq_sponsor_exclusive_yes" text="Exkluzivní"/>
         <text name="eq_sponsor_exclusive_no" text="Neexkluzivní"/>
         <text name="eq_sponsor_overlapLine" text="Střet s %s: %s"/>

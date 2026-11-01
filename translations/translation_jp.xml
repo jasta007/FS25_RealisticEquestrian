@@ -1021,11 +1021,14 @@
         <text name="eq_sponsor_col_eligibility" text="資格"/>
         <text name="eq_sponsor_eligible_yes" text="資格あり"/>
         <text name="eq_sponsor_eligible_no" text="資格なし"/>
-        <text name="eq_sponsor_eligible_taken" text="スポンサー契約中"/>
+        <text name="eq_sponsor_eligible_taken" text="独占契約中"/>
         <text name="eq_sponsor_eligible_yours" text="あなたのスポンサー"/>
         <text name="eq_sponsor_eligible_exclusive" text="独占契約のみ"/>
         <text name="eq_sponsor_eligible_full" text="スポンサー枠満杯"/>
         <text name="eq_sponsor_eligible_overlap" text="同じ専門分野"/>
+        <text name="eq_sponsor_eligible_rivals" text="競合機材あり"/>
+        <text name="eq_sponsor_eligible_equipment" text="機材不足"/>
+        <text name="eq_sponsor_eligible_branding" text="ブランディング不足"/>
         <text name="eq_sponsor_exclusive_yes" text="独占契約"/>
         <text name="eq_sponsor_exclusive_no" text="非独占契約"/>
         <text name="eq_sponsor_overlapLine" text="%sと競合: %s"/>

@@ -1021,11 +1021,14 @@
         <text name="eq_sponsor_col_eligibility" text="资格"/>
         <text name="eq_sponsor_eligible_yes" text="符合条件"/>
         <text name="eq_sponsor_eligible_no" text="不符合条件"/>
-        <text name="eq_sponsor_eligible_taken" text="已有赞助商"/>
+        <text name="eq_sponsor_eligible_taken" text="已有独家"/>
         <text name="eq_sponsor_eligible_yours" text="你的赞助商"/>
         <text name="eq_sponsor_eligible_exclusive" text="仅限独家"/>
         <text name="eq_sponsor_eligible_full" text="赞助商已满"/>
         <text name="eq_sponsor_eligible_overlap" text="专长相同"/>
+        <text name="eq_sponsor_eligible_rivals" text="拥有竞品"/>
+        <text name="eq_sponsor_eligible_equipment" text="设备不足"/>
+        <text name="eq_sponsor_eligible_branding" text="品牌展示不足"/>
         <text name="eq_sponsor_exclusive_yes" text="独家"/>
         <text name="eq_sponsor_exclusive_no" text="非独家"/>
         <text name="eq_sponsor_overlapLine" text="与%s冲突：%s"/>

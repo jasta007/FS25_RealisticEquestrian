@@ -53,6 +53,13 @@ function EqSponsorView.rows(farmId)
                 eligibility = g_i18n:getText("eq_sponsor_eligible_full")
             elseif byId.overlap ~= nil and not byId.overlap.ok then
                 eligibility = g_i18n:getText("eq_sponsor_eligible_overlap")
+            -- then the first thing the farm could fix (James, 2026-11-01: say why, not just "Not eligible")
+            elseif byId.rivals ~= nil and not byId.rivals.ok then
+                eligibility = g_i18n:getText("eq_sponsor_eligible_rivals")
+            elseif byId.machines ~= nil and not byId.machines.ok then
+                eligibility = g_i18n:getText("eq_sponsor_eligible_equipment")
+            elseif byId.branding ~= nil and not byId.branding.ok then
+                eligibility = g_i18n:getText("eq_sponsor_eligible_branding")
             else
                 eligibility = g_i18n:getText(checks.ok and "eq_sponsor_eligible_yes" or "eq_sponsor_eligible_no")
             end

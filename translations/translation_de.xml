@@ -1023,11 +1023,14 @@
         <text name="eq_sponsor_col_eligibility" text="Berechtigung"/>
         <text name="eq_sponsor_eligible_yes" text="Berechtigt"/>
         <text name="eq_sponsor_eligible_no" text="Nicht berechtigt"/>
-        <text name="eq_sponsor_eligible_taken" text="Bereits ein Sponsor"/>
+        <text name="eq_sponsor_eligible_taken" text="Bereits exklusiv"/>
         <text name="eq_sponsor_eligible_yours" text="Ihr Sponsor"/>
         <text name="eq_sponsor_eligible_exclusive" text="Nur exklusiv"/>
         <text name="eq_sponsor_eligible_full" text="Sponsoren voll"/>
         <text name="eq_sponsor_eligible_overlap" text="Gleiches Fachgebiet"/>
+        <text name="eq_sponsor_eligible_rivals" text="Konkurrenzgeräte"/>
+        <text name="eq_sponsor_eligible_equipment" text="Geräte fehlen"/>
+        <text name="eq_sponsor_eligible_branding" text="Branding fehlt"/>
         <text name="eq_sponsor_exclusive_yes" text="Exklusiv"/>
         <text name="eq_sponsor_exclusive_no" text="Nicht exklusiv"/>
         <text name="eq_sponsor_overlapLine" text="Überschneidung mit %s: %s"/>

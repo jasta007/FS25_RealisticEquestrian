@@ -1021,11 +1021,14 @@
         <text name="eq_sponsor_col_eligibility" text="Geschiktheid"/>
         <text name="eq_sponsor_eligible_yes" text="Geschikt"/>
         <text name="eq_sponsor_eligible_no" text="Niet geschikt"/>
-        <text name="eq_sponsor_eligible_taken" text="Al een sponsor"/>
+        <text name="eq_sponsor_eligible_taken" text="Al exclusief"/>
         <text name="eq_sponsor_eligible_yours" text="Je sponsor"/>
         <text name="eq_sponsor_eligible_exclusive" text="Alleen exclusief"/>
         <text name="eq_sponsor_eligible_full" text="Sponsors vol"/>
         <text name="eq_sponsor_eligible_overlap" text="Zelfde specialiteit"/>
+        <text name="eq_sponsor_eligible_rivals" text="Concurrent materieel"/>
+        <text name="eq_sponsor_eligible_equipment" text="Materieel nodig"/>
+        <text name="eq_sponsor_eligible_branding" text="Branding nodig"/>
         <text name="eq_sponsor_exclusive_yes" text="Exclusief"/>
         <text name="eq_sponsor_exclusive_no" text="Niet exclusief"/>
         <text name="eq_sponsor_overlapLine" text="Botst met %s: %s"/>
