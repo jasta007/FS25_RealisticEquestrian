@@ -857,6 +857,10 @@
         <text name="eq_host_note_counts" text="%s的比賽輪次：騎到起跑線"/>
         <text name="eq_host_note_ridden" text="練習：%s的這個專案已騎過"/>
         <text name="eq_host_note_small" text="練習：路線對%s來說太小"/>
+        <text name="eq_host_ann_test" text="比賽測驗：這次計入成績！"/>
+        <text name="eq_host_ann_smallArena" text="這個場地對你的賽事來說太小：只是練習"/>
+        <text name="eq_host_note_testCounts" text="%s的比賽測驗：騎到A"/>
+        <text name="eq_host_note_testSmall" text="練習：場地對%s來說太小"/>
         <text name="eq_host_label_now" text="本月"/>
         <text name="eq_host_next_oneAtATime" text="一次只能舉辦一場賽事"/>
         <text name="eq_host_next_interval" text="賽事之間間隔%d個月，見設定"/>

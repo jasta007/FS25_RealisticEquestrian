@@ -1449,6 +1449,30 @@ local function sectionText(sec)
 end
 
 
+--- A test in the month of your own event, for a horse entered in it: announce once whether it
+--- counts (as a course's start line does, EqCourseHooks.hostedNote) and give the note at A.
+--- @param routine table
+--- @return string|nil note
+local function hostedTestNote(routine)
+    local hosted = routine.hosted
+    if hosted == nil or hosted.event == nil then return nil end
+    local title = EqCompetitionManager.eventTitle(hosted.event)
+    if not hosted.announced then
+        hosted.announced = true
+        if hosted.status == "counts" then
+            EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_test"))
+        elseif hosted.status == "ridden" then
+            EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_ridden"), COLOR.grey)
+        else
+            EqTrainingHud.announce(title, g_i18n:getText("eq_host_ann_smallArena"), COLOR.orange)
+        end
+    end
+    local key = hosted.status == "counts" and "eq_host_note_testCounts" or hosted.status == "ridden" and "eq_host_note_ridden"
+        or "eq_host_note_testSmall"
+    return string.format(g_i18n:getText(key), title)
+end
+
+
 --- A test of figures (EqDressagePath): the movement and score by the panel, and only what to do
 --- now in the middle (changes, halts, getting back on the line or into the arena).
 --- @param rows table panel rows to add to
@@ -1468,8 +1492,11 @@ local function pathRows(rows, routine)
             local left = math.max(1, math.ceil((EqDressagePath.COUNT_MS - run.countMs) / 1000))
             EqTrainingHud.drawPrompt(tostring(left), 1 - run.countMs / EqDressagePath.COUNT_MS, color)
         else
-            -- "Move to A to begin": not an alert, so beside the panel, not in the middle.
-            EqTrainingHud.drawPanelNote(string.format(g_i18n:getText("eq_dressage_begin"), "A"), color, true)
+            -- "Move to A to begin": not an alert, so beside the panel, not in the middle. In your
+            -- own event it says whether this test counts, gold like a course's start line.
+            local note = hostedTestNote(routine)
+            EqTrainingHud.drawPanelNote(note or string.format(g_i18n:getText("eq_dressage_begin"), "A"),
+                note ~= nil and EqTrainingHud.GOLD or color, true)
         end
         return
     end

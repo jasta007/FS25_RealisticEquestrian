@@ -857,6 +857,10 @@
         <text name="eq_host_note_counts" text="Przejazd konkursowy w %s: podjedź do linii startu"/>
         <text name="eq_host_note_ridden" text="Trening: ta konkurencja %s jest już przejechana"/>
         <text name="eq_host_note_small" text="Trening: parkur za mały na %s"/>
+        <text name="eq_host_ann_test" text="Program konkursowy: ten się liczy!"/>
+        <text name="eq_host_ann_smallArena" text="Ten czworobok jest za mały na twoje zawody: tylko trening"/>
+        <text name="eq_host_note_testCounts" text="Program konkursowy w %s: podjedź do A"/>
+        <text name="eq_host_note_testSmall" text="Trening: czworobok za mały na %s"/>
         <text name="eq_host_label_now" text="Ten miesiąc"/>
         <text name="eq_host_next_oneAtATime" text="jedne zawody naraz"/>
         <text name="eq_host_next_interval" text="%d mies. między zawodami, zobacz Ustawienia"/>

@@ -857,6 +857,10 @@
         <text name="eq_host_note_counts" text="Wedstrijdronde voor %s: rijd naar de startlijn"/>
         <text name="eq_host_note_ridden" text="Oefenen: dit onderdeel van %s is al gereden"/>
         <text name="eq_host_note_small" text="Oefenen: parcours te klein voor %s"/>
+        <text name="eq_host_ann_test" text="Wedstrijdproef: deze telt!"/>
+        <text name="eq_host_ann_smallArena" text="Deze rijbaan is te klein voor je evenement: alleen oefenen"/>
+        <text name="eq_host_note_testCounts" text="Wedstrijdproef voor %s: rijd naar A"/>
+        <text name="eq_host_note_testSmall" text="Oefenen: rijbaan te klein voor %s"/>
         <text name="eq_host_label_now" text="Deze maand"/>
         <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
         <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>
