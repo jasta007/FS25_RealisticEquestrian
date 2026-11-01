@@ -109,10 +109,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
-        <text name="eq_lizard_offer" text="%s wil je %s (%s) gratis sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
+        <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
         <text name="eq_lizard_accept" text="Accepteren"/>
         <text name="eq_lizard_decline" text="Weigeren"/>
-        <text name="eq_lizard_offerNote" text="%s wil je %s gratis sponsoren."/>
+        <text name="eq_lizard_offerNote" text="%s wil je %s sponsoren."/>
         <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Bouwbaar) en bouw hem met %s, stammen en planken."/>
         <text name="eq_lizard_stepAside" text="%s doet een stap opzij: %s sponsort nu je evenement."/>
         <text name="eq_lizard_paid" text="%s heeft %s betaald voor het sponsoren van je evenement."/>

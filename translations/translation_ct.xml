@@ -109,10 +109,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 公升木屑、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 公升稻草、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_lizard_title" text="%s 的贊助邀約"/>
-        <text name="eq_lizard_offer" text="%s 希望免費贊助你的%s（%s），並在賽事月借給你一輛它的車輛。要求在賽事結束前達到%s品牌度，並在你的場地建好Lizard展台：%s。如果公布成績時一切就緒，它將支付 %s。否則不付費，也沒有任何處罰。賽事結束後展台會倒塌。"/>
+        <text name="eq_lizard_offer" text="%s 希望贊助你的%s（%s），並在賽事月借給你一輛它的車輛。要求在賽事結束前達到%s品牌度，並在你的場地建好Lizard展台：%s。如果公布成績時一切就緒，它將支付 %s。否則不付費，也沒有任何處罰。賽事結束後展台會倒塌。"/>
         <text name="eq_lizard_accept" text="接受"/>
         <text name="eq_lizard_decline" text="拒絕"/>
-        <text name="eq_lizard_offerNote" text="%s 想免費贊助你的%s。"/>
+        <text name="eq_lizard_offerNote" text="%s 想贊助你的%s。"/>
         <text name="eq_lizard_accepted" text="已接受與 %s 的合作！在商店（可建造建築）購買Lizard展台，並用%s、原木和木板建造它。"/>
         <text name="eq_lizard_stepAside" text="%s 退出了：現在由 %s 贊助你的賽事。"/>
         <text name="eq_lizard_paid" text="%s 為贊助你的賽事支付了 %s。"/>

@@ -766,10 +766,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nécessite 1 000 l de plaquettes, 10 000 l de bois et 1 000 l de planches."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nécessite 10 000 l de paille, 10 000 l de bois et 1 000 l de planches."/>
         <text name="eq_lizard_title" text="Offre de sponsoring de %s"/>
-        <text name="eq_lizard_offer" text="%s aimerait sponsoriser gratuitement votre %s (%s) et vous prêtera un de ses véhicules pendant le mois de l&#x27;événement. Il demande un branding %s d&#x27;ici la fin de l&#x27;événement et son socle Lizard construit sur votre site : %s. Si tout est en place à l&#x27;arrivée des résultats, il paie %s. Sinon, il ne paie rien et il n&#x27;y a aucune pénalité. Le socle s&#x27;effondre après l&#x27;événement."/>
+        <text name="eq_lizard_offer" text="%s aimerait sponsoriser votre %s (%s) et vous prêtera un de ses véhicules pendant le mois de l&#x27;événement. Il demande un branding %s d&#x27;ici la fin de l&#x27;événement et son socle Lizard construit sur votre site : %s. Si tout est en place à l&#x27;arrivée des résultats, il paie %s. Sinon, il ne paie rien et il n&#x27;y a aucune pénalité. Le socle s&#x27;effondre après l&#x27;événement."/>
         <text name="eq_lizard_accept" text="Accepter"/>
         <text name="eq_lizard_decline" text="Refuser"/>
-        <text name="eq_lizard_offerNote" text="%s veut sponsoriser gratuitement votre %s."/>
+        <text name="eq_lizard_offerNote" text="%s veut sponsoriser votre %s."/>
         <text name="eq_lizard_accepted" text="Accord avec %s accepté ! Achetez le socle Lizard en boutique (Constructibles) et construisez-le avec %s, des grumes et des planches."/>
         <text name="eq_lizard_stepAside" text="%s se retire : %s sponsorise désormais votre événement."/>
         <text name="eq_lizard_paid" text="%s a payé %s pour le sponsoring de votre événement."/>

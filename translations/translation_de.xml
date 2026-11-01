@@ -109,10 +109,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Benötigt 1.000 l Hackschnitzel, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_straw" text="Benötigt 10.000 l Stroh, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_lizard_title" text="Sponsorenangebot von %s"/>
-        <text name="eq_lizard_offer" text="%s möchte deine Veranstaltung %s (%s) kostenlos sponsern und leiht dir für den Veranstaltungsmonat eines seiner Fahrzeuge. Verlangt werden %s Branding bis zum Ende der Veranstaltung und das Lizard-Podest an deinem Veranstaltungsort: %s. Ist bei den Ergebnissen alles vorhanden, zahlt Lizard %s. Wenn nicht, gibt es nichts, aber auch keine Strafe. Das Podest bricht nach der Veranstaltung zusammen."/>
+        <text name="eq_lizard_offer" text="%s möchte deine Veranstaltung %s (%s) sponsern und leiht dir für den Veranstaltungsmonat eines seiner Fahrzeuge. Verlangt werden %s Branding bis zum Ende der Veranstaltung und das Lizard-Podest an deinem Veranstaltungsort: %s. Ist bei den Ergebnissen alles vorhanden, zahlt Lizard %s. Wenn nicht, gibt es nichts, aber auch keine Strafe. Das Podest bricht nach der Veranstaltung zusammen."/>
         <text name="eq_lizard_accept" text="Annehmen"/>
         <text name="eq_lizard_decline" text="Ablehnen"/>
-        <text name="eq_lizard_offerNote" text="%s möchte deine Veranstaltung %s kostenlos sponsern."/>
+        <text name="eq_lizard_offerNote" text="%s möchte deine Veranstaltung %s sponsern."/>
         <text name="eq_lizard_accepted" text="Deal mit %s angenommen! Kaufe das Lizard-Podest im Shop (Baubare Objekte) und baue es mit %s, Stämmen und Brettern."/>
         <text name="eq_lizard_stepAside" text="%s tritt zurück: %s sponsert jetzt deine Veranstaltung."/>
         <text name="eq_lizard_paid" text="%s hat %s für das Sponsoring deiner Veranstaltung gezahlt."/>

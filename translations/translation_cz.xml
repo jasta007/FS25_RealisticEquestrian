@@ -109,10 +109,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
-        <text name="eq_lizard_offer" text="%s by rád zdarma sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
+        <text name="eq_lizard_offer" text="%s by rád sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
         <text name="eq_lizard_accept" text="Přijmout"/>
         <text name="eq_lizard_decline" text="Odmítnout"/>
-        <text name="eq_lizard_offerNote" text="%s chce zdarma sponzorovat vaši akci %s."/>
+        <text name="eq_lizard_offerNote" text="%s chce sponzorovat vaši akci %s."/>
         <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Stavitelné) a postavte ho z %s, klád a prken."/>
         <text name="eq_lizard_stepAside" text="%s ustupuje: vaši akci teď sponzoruje %s."/>
         <text name="eq_lizard_paid" text="%s zaplatil %s za sponzorování vaší akce."/>

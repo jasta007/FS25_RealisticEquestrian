@@ -126,7 +126,7 @@ uses its genetics, health and fitness.
   their rounds yourself if you like.
 - **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
   deals to hard bargains. Sign one on the **Sponsors** tab for a fee per event and extra popularity.
-- **Lizard:** now and then Lizard offers to sponsor an unsponsored event for free, if you build its
+- **Lizard:** now and then Lizard offers to sponsor an unsponsored event, if you build its
   slapped-together Lizard Plinth from planks, logs and a load of stone, wood chips or straw.
 
 ### Getting there

@@ -109,10 +109,10 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Precisa de 1000 l de estilha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_shop_lizardPlinth_straw" text="Precisa de 10 000 l de palha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_lizard_title" text="Oferta de patrocínio da %s"/>
-        <text name="eq_lizard_offer" text="A %s gostaria de patrocinar gratuitamente o teu %s (%s) e empresta-te um dos seus veículos durante o mês do evento. Pede branding %s até ao fim do evento e o seu pedestal Lizard construído no teu recinto: %s. Se estiver tudo pronto quando chegarem os resultados, paga %s. Se não, não paga nada e não há penalização. O pedestal desaba depois do evento."/>
+        <text name="eq_lizard_offer" text="A %s gostaria de patrocinar o teu %s (%s) e empresta-te um dos seus veículos durante o mês do evento. Pede branding %s até ao fim do evento e o seu pedestal Lizard construído no teu recinto: %s. Se estiver tudo pronto quando chegarem os resultados, paga %s. Se não, não paga nada e não há penalização. O pedestal desaba depois do evento."/>
         <text name="eq_lizard_accept" text="Aceitar"/>
         <text name="eq_lizard_decline" text="Recusar"/>
-        <text name="eq_lizard_offerNote" text="A %s quer patrocinar gratuitamente o teu %s."/>
+        <text name="eq_lizard_offerNote" text="A %s quer patrocinar o teu %s."/>
         <text name="eq_lizard_accepted" text="Acordo com a %s aceite! Compra o pedestal Lizard na loja (Construções) e constrói-o com %s, toros e tábuas."/>
         <text name="eq_lizard_stepAside" text="A %s afasta-se: agora é a %s que patrocina o teu evento."/>
         <text name="eq_lizard_paid" text="A %s pagou %s pelo patrocínio do teu evento."/>
