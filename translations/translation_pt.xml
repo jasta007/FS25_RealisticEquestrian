@@ -481,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Eliminado: percurso errado (obstáculo %d saltado fora de ordem)"/>
         <text name="eq_sj_out_refusals" text="Eliminado: segunda recusa"/>
         <text name="eq_sj_out_timeLimit" text="Eliminado: acima do tempo limite"/>
+        <text name="eq_sj_getOn" text="MONTE O CAVALO! %d"/>
+        <text name="eq_sj_out_dismounted" text="Eliminado: o cavaleiro não voltou a montar num percurso que conta"/>
         <text name="eq_sj_clear" text="Percurso limpo em %s!"/>
         <text name="eq_sj_faults" text="%s faltas em %s"/>
         <text name="eq_sj_clearPop" text="Percurso limpo!"/>
@@ -830,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Limpo em todas as fases."/>
         <text name="eq_story_eventing_struggled" text="Sofreu nas três fases."/>
         <text name="eq_story_eventing_eliminated" text="Saiu após uma queda no cross country."/>
+        <text name="eq_story_ridden_test" text="Fez a sua prova."/>
+        <text name="eq_story_ridden_faults" text="Teve faltas no percurso."/>
+        <text name="eq_story_eventing_fenceFaults" text="Somou penalizações nos obstáculos."/>
+        <text name="eq_story_eventing_clearFences" text="Limpo nos obstáculos, mas o ensino o travou."/>
         <text name="eq_ui_tab_upcoming" text="Próximas competições"/>
         <text name="eq_ui_tab_results" text="Resultados"/>
         <text name="eq_ui_col_starts" text="Largadas"/>
@@ -955,6 +961,11 @@
         <text name="eq_host_report_takings" text="Receita %s (inscrições %s, bilheteria %s), taxa de organização %s."/>
         <text name="eq_host_report_total" text="Popularidade final %d. Lucro %s."/>
         <text name="eq_host_report_mine" text="Seu cavalo %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Geral: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="O seu cavalo %s: %s com %s penalizações (%s)."/>
         <text name="eq_host_results_row" text="Seus eventos"/>
         <text name="eq_host_results_running" text="Acontecendo"/>
         <text name="eq_host_results_winner" text="Vencido por %s"/>

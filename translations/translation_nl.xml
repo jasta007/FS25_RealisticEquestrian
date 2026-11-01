@@ -481,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Uitgesloten: verkeerd parcours (hindernis %d buiten volgorde gesprongen)"/>
         <text name="eq_sj_out_refusals" text="Uitgesloten: tweede weigering"/>
         <text name="eq_sj_out_timeLimit" text="Uitgesloten: over de maximale tijd"/>
+        <text name="eq_sj_getOn" text="STAP WEER OP JE PAARD! %d"/>
+        <text name="eq_sj_out_dismounted" text="Uitgesloten: de ruiter stapte niet weer op in een ronde die telt"/>
         <text name="eq_sj_clear" text="Foutloos in %s!"/>
         <text name="eq_sj_faults" text="%s strafpunten in %s"/>
         <text name="eq_sj_clearPop" text="Foutloze ronde!"/>
@@ -830,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Foutloos in elk onderdeel."/>
         <text name="eq_story_eventing_struggled" text="Had het zwaar in alle drie de onderdelen."/>
         <text name="eq_story_eventing_eliminated" text="Lag eruit na een val op de cross."/>
+        <text name="eq_story_ridden_test" text="Reed zijn proef."/>
+        <text name="eq_story_ridden_faults" text="Had fouten op het parcours."/>
+        <text name="eq_story_eventing_fenceFaults" text="Liep strafpunten op over de hindernissen."/>
+        <text name="eq_story_eventing_clearFences" text="Foutloos over de hindernissen, maar de dressuur hield hem tegen."/>
         <text name="eq_ui_tab_upcoming" text="Komende wedstrijden"/>
         <text name="eq_ui_tab_results" text="Uitslagen"/>
         <text name="eq_ui_col_starts" text="Starts"/>
@@ -955,6 +961,11 @@
         <text name="eq_host_report_takings" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s."/>
         <text name="eq_host_report_total" text="Eindpopulariteit %d. Winst %s."/>
         <text name="eq_host_report_mine" text="Je paard %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Totaal: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Je paard %s: %s met %s strafpunten (%s)."/>
         <text name="eq_host_results_row" text="Je evenementen"/>
         <text name="eq_host_results_running" text="Nu bezig"/>
         <text name="eq_host_results_winner" text="Gewonnen door %s"/>

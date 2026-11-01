@@ -481,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="淘汰：路線錯誤（第%d道障礙跳躍順序錯誤）"/>
         <text name="eq_sj_out_refusals" text="淘汰：第二次拒跳"/>
         <text name="eq_sj_out_timeLimit" text="淘汰：超出時限"/>
+        <text name="eq_sj_getOn" text="快上馬！%d"/>
+        <text name="eq_sj_out_dismounted" text="淘汰：騎手在計分的回合中沒有重新上馬"/>
         <text name="eq_sj_clear" text="%s零罰分完賽！"/>
         <text name="eq_sj_faults" text="罰%s分，用時%s"/>
         <text name="eq_sj_clearPop" text="零罰分！"/>
@@ -830,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="每個階段都零罰分。"/>
         <text name="eq_story_eventing_struggled" text="三個階段都很吃力。"/>
         <text name="eq_story_eventing_eliminated" text="越野中摔倒後被淘汰。"/>
+        <text name="eq_story_ridden_test" text="完成了牠的測驗。"/>
+        <text name="eq_story_ridden_faults" text="在路線上有失誤。"/>
+        <text name="eq_story_eventing_fenceFaults" text="在障礙上被罰了分。"/>
+        <text name="eq_story_eventing_clearFences" text="障礙零罰分，但盛裝舞步拖了後腿。"/>
         <text name="eq_ui_tab_upcoming" text="即將舉行的賽事"/>
         <text name="eq_ui_tab_results" text="結果"/>
         <text name="eq_ui_col_starts" text="出賽"/>
@@ -955,6 +961,11 @@
         <text name="eq_host_report_takings" text="收入%s（報名費%s，門票%s），舉辦費%s。"/>
         <text name="eq_host_report_total" text="最終人氣 %d。利潤 %s。"/>
         <text name="eq_host_report_mine" text="你的馬%s：%s。"/>
+        <text name="eq_host_report_entry" text="%s %s（%s）"/>
+        <text name="eq_host_report_overall" text="總成績：%s。"/>
+        <text name="eq_host_report_phaseTop" text="%s：%s。"/>
+        <text name="eq_host_report_phasePlace" text="%s %s（%s）"/>
+        <text name="eq_host_report_minePhased" text="你的馬 %s：%s，罰分 %s（%s）。"/>
         <text name="eq_host_results_row" text="你的賽事"/>
         <text name="eq_host_results_running" text="進行中"/>
         <text name="eq_host_results_winner" text="冠軍：%s"/>

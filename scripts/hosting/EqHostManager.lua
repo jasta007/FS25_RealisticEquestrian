@@ -566,7 +566,8 @@ function EqHostManager.report(event, day)
     local result = hosted.report or {}
     local mine = {}
     for _, placing in ipairs(result.placings or {}) do
-        table.insert(mine, { name = placing.name, place = placing.place or 0, status = placing.status })
+        table.insert(mine, { name = placing.name, place = placing.place or 0, status = placing.status,
+            penalties = placing.penalties, phases = placing.phases })
     end
     return { day = day, discipline = event.discipline, rating = hosted.rating, venue = event.venue, sponsor = hosted.sponsor,
         field = result.field or 0, competitors = takings.competitors or 0, visitors = takings.visitors or 0,
@@ -574,7 +575,8 @@ function EqHostManager.report(event, day)
         total = takings.total or 0, setupFee = hosted.setupFee or 0, feed = hosted.feedEaten or 0, podium = result.podium or {}, mine = mine,
         goods = takings.goods or 0, goodsLitres = takings.goodsLitres or 0, advertCost = hosted.advertCost or 0, star = hosted.star,
         wetHours = math.floor((hosted.weather ~= nil and hosted.weather.bad or 0) + 0.5), weatherPoints = hosted.weatherPoints or 0,
-        twister = hosted.weather ~= nil and (hosted.weather.flat or 0) > 0 or nil }
+        twister = hosted.weather ~= nil and (hosted.weather.flat or 0) > 0 or nil,
+        totals = result.totals or {}, phases = result.phases or {} }
 end
 
 
@@ -1027,12 +1029,32 @@ function EqHostManager.saveReport(xmlFile, key, report)
     for _, name in ipairs(REPORT_STRINGS) do
         if report[name] ~= nil then xmlFile:setString(key .. "#" .. name, report[name]) end
     end
-    for i, name in ipairs(report.podium or {}) do xmlFile:setString(string.format("%s.podium(%d)#name", key, i - 1), name) end
+    for i, name in ipairs(report.podium or {}) do
+        local podiumKey = string.format("%s.podium(%d)", key, i - 1)
+        xmlFile:setString(podiumKey .. "#name", name)
+        if report.totals ~= nil and report.totals[i] ~= nil then xmlFile:setFloat(podiumKey .. "#penalties", report.totals[i]) end
+    end
+    for i, phase in ipairs(report.phases or {}) do
+        local phaseKey = string.format("%s.phase(%d)", key, i - 1)
+        xmlFile:setString(phaseKey .. "#name", phase.name)
+        for j, entry in ipairs(phase.top or {}) do
+            local topKey = string.format("%s.top(%d)", phaseKey, j - 1)
+            xmlFile:setString(topKey .. "#name", entry.name or "?")
+            xmlFile:setFloat(topKey .. "#penalties", entry.penalties or 0)
+        end
+    end
     for i, horse in ipairs(report.mine or {}) do
         local horseKey = string.format("%s.horse(%d)", key, i - 1)
         xmlFile:setString(horseKey .. "#name", horse.name or "")
         xmlFile:setInt(horseKey .. "#place", horse.place or 0)
         if horse.status ~= nil then xmlFile:setString(horseKey .. "#status", horse.status) end
+        if horse.penalties ~= nil then xmlFile:setFloat(horseKey .. "#penalties", horse.penalties) end
+        for j, phase in ipairs(horse.phases or {}) do
+            local phaseKey = string.format("%s.phase(%d)", horseKey, j - 1)
+            xmlFile:setString(phaseKey .. "#name", phase.name)
+            xmlFile:setInt(phaseKey .. "#place", phase.place or 0)
+            xmlFile:setFloat(phaseKey .. "#penalties", phase.penalties or 0)
+        end
     end
     if report.star ~= nil then xmlFile:setString(key .. "#star", report.star) end
     if report.twister then xmlFile:setBool(key .. "#twister", true) end
@@ -1043,7 +1065,7 @@ end
 --- @param key string
 --- @return table report
 function EqHostManager.loadReport(xmlFile, key)
-    local report = { podium = {}, mine = {} }
+    local report = { podium = {}, mine = {}, totals = {}, phases = {} }
     report.star = xmlFile:getString(key .. "#star")
     report.twister = xmlFile:getBool(key .. "#twister", false) or nil
     for _, name in ipairs(REPORT_INTS) do report[name] = xmlFile:getInt(key .. "#" .. name, 0) end
@@ -1051,14 +1073,39 @@ function EqHostManager.loadReport(xmlFile, key)
     for _, name in ipairs(REPORT_STRINGS) do report[name] = xmlFile:getString(key .. "#" .. name) end
     local i = 0
     while xmlFile:hasProperty(string.format("%s.podium(%d)", key, i)) do
-        table.insert(report.podium, xmlFile:getString(string.format("%s.podium(%d)#name", key, i), "?"))
+        local podiumKey = string.format("%s.podium(%d)", key, i)
+        table.insert(report.podium, xmlFile:getString(podiumKey .. "#name", "?"))
+        local total = xmlFile:getFloat(podiumKey .. "#penalties")
+        if total ~= nil then report.totals[i + 1] = total end
+        i = i + 1
+    end
+    i = 0
+    while xmlFile:hasProperty(string.format("%s.phase(%d)", key, i)) do
+        local phaseKey = string.format("%s.phase(%d)", key, i)
+        local phase = { name = xmlFile:getString(phaseKey .. "#name", ""), top = {} }
+        local j = 0
+        while xmlFile:hasProperty(string.format("%s.top(%d)", phaseKey, j)) do
+            local topKey = string.format("%s.top(%d)", phaseKey, j)
+            table.insert(phase.top, { name = xmlFile:getString(topKey .. "#name", "?"), penalties = xmlFile:getFloat(topKey .. "#penalties", 0) })
+            j = j + 1
+        end
+        table.insert(report.phases, phase)
         i = i + 1
     end
     i = 0
     while xmlFile:hasProperty(string.format("%s.horse(%d)", key, i)) do
         local horseKey = string.format("%s.horse(%d)", key, i)
-        table.insert(report.mine, { name = xmlFile:getString(horseKey .. "#name", ""), place = xmlFile:getInt(horseKey .. "#place", 0),
-            status = xmlFile:getString(horseKey .. "#status") })
+        local horse = { name = xmlFile:getString(horseKey .. "#name", ""), place = xmlFile:getInt(horseKey .. "#place", 0),
+            status = xmlFile:getString(horseKey .. "#status"), penalties = xmlFile:getFloat(horseKey .. "#penalties") }
+        local j = 0
+        while xmlFile:hasProperty(string.format("%s.phase(%d)", horseKey, j)) do
+            local phaseKey = string.format("%s.phase(%d)", horseKey, j)
+            horse.phases = horse.phases or {}
+            table.insert(horse.phases, { name = xmlFile:getString(phaseKey .. "#name", ""), place = xmlFile:getInt(phaseKey .. "#place", 0),
+                penalties = xmlFile:getFloat(phaseKey .. "#penalties", 0) })
+            j = j + 1
+        end
+        table.insert(report.mine, horse)
         i = i + 1
     end
     return report

@@ -481,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Eliminacja: błąd trasy (przeszkoda %d skoczona poza kolejnością)"/>
         <text name="eq_sj_out_refusals" text="Eliminacja: druga odmowa"/>
         <text name="eq_sj_out_timeLimit" text="Eliminacja: przekroczony czas maksymalny"/>
+        <text name="eq_sj_getOn" text="WSIADAJ NA KONIA! %d"/>
+        <text name="eq_sj_out_dismounted" text="Wyeliminowany: jeździec nie wsiadł z powrotem w liczącym się przejeździe"/>
         <text name="eq_sj_clear" text="Czysty przejazd w %s!"/>
         <text name="eq_sj_faults" text="Punkty karne: %s, czas %s"/>
         <text name="eq_sj_clearPop" text="Czysty przejazd!"/>
@@ -830,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Czysto we wszystkich próbach."/>
         <text name="eq_story_eventing_struggled" text="Zmagał się we wszystkich trzech próbach."/>
         <text name="eq_story_eventing_eliminated" text="Odpadł po upadku w crossie."/>
+        <text name="eq_story_ridden_test" text="Przejechał swój program."/>
+        <text name="eq_story_ridden_faults" text="Miał błędy na trasie."/>
+        <text name="eq_story_eventing_fenceFaults" text="Zebrał punkty karne na przeszkodach."/>
+        <text name="eq_story_eventing_clearFences" text="Czysto na przeszkodach, ale ujeżdżenie go zatrzymało."/>
         <text name="eq_ui_tab_upcoming" text="Nadchodzące zawody"/>
         <text name="eq_ui_tab_results" text="Wyniki"/>
         <text name="eq_ui_col_starts" text="Starty"/>
@@ -955,6 +961,11 @@
         <text name="eq_host_report_takings" text="Wpływy %s (wpisowe %s, bilety %s), opłata organizacyjna %s."/>
         <text name="eq_host_report_total" text="Popularność końcowa %d. Zysk %s."/>
         <text name="eq_host_report_mine" text="Twój koń %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Ogółem: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Twój koń %s: %s z %s pkt karnymi (%s)."/>
         <text name="eq_host_results_row" text="Twoje zawody"/>
         <text name="eq_host_results_running" text="Trwa"/>
         <text name="eq_host_results_winner" text="Wygrał %s"/>

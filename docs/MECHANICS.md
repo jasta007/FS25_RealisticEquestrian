@@ -879,6 +879,15 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   was kept and when results come. A dressage arena does the same when its test is offered
   (arena too small, your own test too short, dressage already ridden, or the horse isn't entered), and the note above
   the panel replaces "Move to A" until the countdown.
+- **Getting off:** in a round or test that counts, getting off shows "GET ON YOUR HORSE" for
+  5 seconds; back on in time carries on (the clock kept running), otherwise the phase is
+  eliminated and can't be ridden again. Riding away from the course or onto another horse
+  eliminates it too. Practice rounds just stop. After a refusal the horse must back off 2.5 m
+  from the fence before it can refuse there again.
+- **The report:** a 3 Day Event's report on the Results tab gives the overall top three with
+  their totals, each phase's top three with their scores, and each of your horses' place and
+  score in every phase. A phase you rode gets its story line from your ride, so a horse clear
+  over fences but down the order after its dressage says so instead of "Clear in every phase".
 - **Set it before the month:** once the event runs, a course or dressage test big enough for it
   can't be deleted. Saving one of your own dressage tests shorter than your booked or running
   event needs still saves it, with a warning, and rides there are practice. A course or arena
