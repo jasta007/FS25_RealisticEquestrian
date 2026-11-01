@@ -6,6 +6,7 @@
         <functions>
             <function>$l10n_eq_shop_xcJump_function</function>
             <function>$l10n_eq_shop_xcHidden_function</function>
+            <function>$l10n_eq_shop_signboard_function</function>
         </functions>
         <image>placeables/xcJumps/store_xcCornerPlank.dds</image>
         <price>1400</price>

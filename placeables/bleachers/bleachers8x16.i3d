@@ -6,17 +6,29 @@
   </Asset>
 
   <Files>
-    <File fileId="3" filename="bleacherSponsor_diffuse.dds"/>
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml"/>
+    <File fileId="6" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
+    <File fileId="5" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
+    <File fileId="4" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="11" filename="bleacherSponsor_diffuse.dds"/>
     <File fileId="1" filename="bleachers_diffuse.dds"/>
   </Files>
 
 
   <Materials>
-    <Material name="bleachers" materialId="121" specularColor="0.301961 1 0">
+    <Material name="bleachers" materialId="5" specularColor="0.301961 1 0">
       <Texture fileId="1"/>
     </Material>
-    <Material name="eqSponsor1" materialId="122" specularColor="0.2 1 0" alphaBlending="true">
-      <Texture fileId="3"/>
+    <Material name="eqBoardFace" materialId="7" customShaderId="3">
+      <Custommap name="detailSpecular" fileId="4"/>
+      <Custommap name="detailNormal" fileId="5"/>
+      <Custommap name="detailDiffuse" fileId="6"/>
+      <CustomParameter name="colorScale" value="0.8 0.8 0.78"/>
+      <CustomParameter name="smoothnessScale" value="0.4"/>
+      <CustomParameter name="metalnessScale" value="0"/>
+    </Material>
+    <Material name="eqSponsor1" materialId="6" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="11"/>
     </Material>
   </Materials>
 
@@ -25,20 +37,21 @@
   </Shapes>
 
   <Scene>
-    <TransformGroup name="bleachers8x16" nodeId="134">
-      <Shape name="frame" shapeId="1" clipDistance="400" nodeId="135" castsShadows="true" receiveShadows="true" materialIds="121"/>
-      <TransformGroup name="eqSponsors" nodeId="136">
-        <Shape name="eqSponsor_1" shapeId="2" clipDistance="400" nodeId="137" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_2" shapeId="3" clipDistance="400" nodeId="138" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_3" shapeId="4" clipDistance="400" nodeId="139" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_4" shapeId="5" clipDistance="400" nodeId="140" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_5" shapeId="6" clipDistance="400" nodeId="141" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_6" shapeId="7" clipDistance="400" nodeId="142" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_7" shapeId="8" clipDistance="400" nodeId="143" castsShadows="false" receiveShadows="true" materialIds="122"/>
-        <Shape name="eqSponsor_8" shapeId="9" clipDistance="400" nodeId="144" castsShadows="false" receiveShadows="true" materialIds="122"/>
+    <TransformGroup name="bleachers8x16" nodeId="20">
+      <Shape name="frame" shapeId="1" clipDistance="400" nodeId="21" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqBoardFace" shapeId="2" clipDistance="400" nodeId="22" castsShadows="false" receiveShadows="true" materialIds="7"/>
+      <TransformGroup name="eqSponsors" nodeId="23">
+        <Shape name="eqSponsor_1" shapeId="3" clipDistance="400" nodeId="24" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_2" shapeId="4" clipDistance="400" nodeId="25" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_3" shapeId="5" clipDistance="400" nodeId="26" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_4" shapeId="6" clipDistance="400" nodeId="27" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_5" shapeId="7" clipDistance="400" nodeId="28" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_6" shapeId="8" clipDistance="400" nodeId="29" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_7" shapeId="9" clipDistance="400" nodeId="30" castsShadows="false" receiveShadows="true" materialIds="6"/>
+        <Shape name="eqSponsor_8" shapeId="10" clipDistance="400" nodeId="31" castsShadows="false" receiveShadows="true" materialIds="6"/>
       </TransformGroup>
-      <TransformGroup name="collision" nodeId="145">
-        <Shape name="col" shapeId="10" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="146" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="121"/>
+      <TransformGroup name="collision" nodeId="32">
+        <Shape name="col" shapeId="11" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="33" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>

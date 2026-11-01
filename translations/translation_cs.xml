@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障碍: 垂直障碍"/>
         <text name="eq_shop_showJumpOxer" text="障碍: 双横木"/>
+        <text name="eq_shop_showJumpWall" text="障碍: 赞助商砖墙"/>
+        <text name="eq_shop_showJumpWall_function" text="印有赞助商标志的展示砖墙。马碰到时顶部砖块会掉落，比赛结束后复原。"/>
         <text name="eq_shop_showJumpCrossrail" text="障碍: 交叉杆"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障碍: 上升双横木"/>
         <text name="eq_shop_showJumpTripleBar" text="障碍: 三横木"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="圆顶障碍（半圆）"/>
         <text name="eq_shop_xcTable" text="桌形障碍"/>
         <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_shop_xcGateArch" text="起点/终点拱门"/>
+        <text name="eq_shop_xcGateSimple" text="通行门"/>
+        <text name="eq_shop_xcGate_function" text="用于骑行通过的门，不是障碍：足够宽、足够高，任何马都能轻松通过，带有赞助商标志。"/>
+        <text name="eq_shop_xcRope" text="绳索标记"/>
+        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索或挂小型赞助商牌子的绳索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_plinthDrive" text="通行展台"/>
+        <text name="eq_shop_plinthRamp" text="展示坡台"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
+        <text name="eq_shop_plinthProductRamp" text="产品障碍坡台"/>
+        <text name="eq_shop_plinth_function" text="在上面停放赞助商品牌的机器，可获得额外品牌曝光。"/>
+        <text name="eq_shop_productJump_function" text="把两个相对放置，相距约 5 米：停在中间的机器也计入，或者把它们当越野障碍来跳。"/>
+        <text name="eq_shop_plinthTurntable" text="旋转展台"/>
+        <text name="eq_shop_turntable_function" text="转盘缓慢旋转：把机器停在上面，它会连同挂接的农具一起随转盘转动。赞助商的机器在这里计入更多。"/>
+        <text name="eq_plinth_inPlace" text="赞助商设备已就位！"/>
+        <text name="eq_plinth_wrongBrand" text="这不是你赞助商的设备！展示竞争品牌的机器会减少你的赞助收入！"/>
+        <text name="eq_plinth_noSponsor" text="尚未签约赞助商：在这里展示其设备将计入你的品牌曝光。"/>
+        <text name="eq_plinth_penalty" text="你的赞助展台上有 %d 台竞争品牌机器：赞助费扣除 %s。"/>
+        <text name="eq_shop_lizardPlinth" text="Lizard展台"/>
+        <text name="eq_shop_lizardPlinth_function" text="Lizard为其赞助的赛事准备的特别展台。向前方的触发区交付材料即可建造；停在原木平台上的Lizard机械额外计分。赛事结束后它会倒塌。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="需要 1,000 升石头、10,000 升木材和 1,000 升木板。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、10,000 升木材和 1,000 升木板。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、10,000 升木材和 1,000 升木板。"/>
+        <text name="eq_lizard_title" text="%s 的赞助邀约"/>
+        <text name="eq_lizard_offer" text="%s 希望赞助你的%s（%s），并在赛事月借给你一辆它的车辆。要求在赛事结束前达到%s品牌度，并在你的场地建好Lizard展台：%s。如果公布成绩时一切就绪，它将支付 %s。否则不付费，也没有任何处罚。赛事结束后展台会倒塌。"/>
+        <text name="eq_lizard_accept" text="接受"/>
+        <text name="eq_lizard_decline" text="拒绝"/>
+        <text name="eq_lizard_offerNote" text="%s 想赞助你的%s。"/>
+        <text name="eq_lizard_accepted" text="已接受与 %s 的合作！在商店（可建造建筑）购买Lizard展台，并用%s、原木和木板建造它。"/>
+        <text name="eq_lizard_stepAside" text="%s 退出了：现在由 %s 赞助你的赛事。"/>
+        <text name="eq_lizard_paid" text="%s 为赞助你的赛事支付了 %s。"/>
+        <text name="eq_lizard_unpaid_plinth" text="%s 不付费：Lizard展台没有完工。别介意。"/>
+        <text name="eq_lizard_unpaid_branding" text="%s 不付费：你的品牌度不够。别介意。"/>
+        <text name="eq_lizard_unpaid_rating" text="%s 不为这场赛事付费。"/>
         <text name="eq_config_corner" text="角障碍"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
         <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="原地踏步"/>
+        <text name="eq_now_pirouette" text="定后肢旋转"/>
+        <text name="eq_now_collected" text="收缩"/>
+        <text name="eq_now_collectedCanter" text="收缩跑步"/>
+        <text name="eq_now_passage" text="Pasáž"/>
+        <text name="eq_now_legYield" text="腿部让步"/>
+        <text name="eq_now_halfPass" text="斜横步"/>
+        <text name="eq_now_shoulderIn" text="肩向内"/>
+        <text name="eq_now_renvers" text="腰向外"/>
+        <text name="eq_now_travers" text="腰向内"/>
+        <text name="eq_now_legYieldRail" text="沿墙腿部让步"/>
         <text name="eq_fig_legYield" text="从%s开始腿部让步并返回"/>
         <text name="eq_fig_halfPass" text="从%s开始斜横步并返回"/>
         <text name="eq_fig_shoulderIn" text="肩向内 %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="淘汰：路线错误（第%d道障碍跳跃顺序错误）"/>
         <text name="eq_sj_out_refusals" text="淘汰：第二次拒跳"/>
         <text name="eq_sj_out_timeLimit" text="淘汰：超出时限"/>
+        <text name="eq_sj_getOn" text="快上马！%d"/>
+        <text name="eq_sj_out_dismounted" text="淘汰：骑手在计分的回合中没有重新上马"/>
         <text name="eq_sj_clear" text="%s零罚分完赛！"/>
         <text name="eq_sj_faults" text="罚%s分，用时%s"/>
         <text name="eq_sj_clearPop" text="零罚分！"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="从最近的点开始录制"/>
         <text name="eq_course_finished" text="编辑完成：Realistic Equestrian放置的障碍物恢复碰撞"/>
         <text name="eq_course_deleted" text="已删除%s"/>
+        <text name="eq_course_locked" text="不能删除%s：%s期间不可删除，请在赛事月份之前设好路线"/>
         <text name="eq_course_deleteAsk" text="删除%s（%d个障碍，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="删除路线"/>
         <text name="eq_course_deleteAction" text="删除%s"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="每个阶段都零罚分。"/>
         <text name="eq_story_eventing_struggled" text="三个阶段都很吃力。"/>
         <text name="eq_story_eventing_eliminated" text="越野中摔倒后被淘汰。"/>
+        <text name="eq_story_ridden_test" text="完成了它的测试。"/>
+        <text name="eq_story_ridden_faults" text="在路线上有失误。"/>
+        <text name="eq_story_eventing_fenceFaults" text="在障碍上被罚了分。"/>
+        <text name="eq_story_eventing_clearFences" text="障碍零罚分，但盛装舞步拖了后腿。"/>
         <text name="eq_ui_tab_upcoming" text="即将举行的赛事"/>
         <text name="eq_ui_tab_results" text="结果"/>
         <text name="eq_ui_col_starts" text="出赛"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="声誉"/>
         <text name="eq_host_part_star" text="明星马"/>
         <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_part_sponsor" text="赞助商"/>
+        <text name="eq_host_part_quality" text="场地质量"/>
+        <text name="eq_host_part_shops" text="商店"/>
+        <text name="eq_host_part_ahead" text="提前预订"/>
+        <text name="eq_host_part_advert" text="广告"/>
+        <text name="eq_host_part_buzz" text="话题度"/>
+        <text name="eq_host_part_weather" text="天气"/>
+        <text name="eq_host_buzz_high" text="热议中"/>
+        <text name="eq_host_buzz_low" text="冷清"/>
+        <text name="eq_host_popularityAhead" text="%d (提前预订 +%d)"/>
+        <text name="eq_host_advert_none" text="不做广告"/>
+        <text name="eq_host_advert_option" text="%s，%s (+%d)"/>
+        <text name="eq_host_advert_local" text="本地"/>
+        <text name="eq_host_advert_national" text="全国"/>
+        <text name="eq_host_setupWithAdvert" text="%s + 广告 %s"/>
+        <text name="eq_host_label_advert" text="广告"/>
+        <text name="eq_host_label_sell" text="纪念品和茶点"/>
+        <text name="eq_host_sell_yes" text="有货就卖 (+%d%%)"/>
+        <text name="eq_host_sell_no" text="不卖"/>
+        <text name="eq_host_book_advert" text="已支付广告费：%s。"/>
+        <text name="eq_host_twister" text="龙卷风席卷了%s！观众纷纷躲避。"/>
+        <text name="eq_host_done_goods" text="纪念品和茶点售出：%s。"/>
+        <text name="eq_host_star" text="观众非常期待看到%s出场。"/>
+        <text name="eq_host_report_twister" text="比赛期间来了龙卷风，观众四散。"/>
+        <text name="eq_host_report_weather" text="坏天气：%d小时的坏天气让观众却步（人气 %d）。"/>
+        <text name="eq_host_report_goods" text="纪念品和茶点：售出 %d 升，收入 %s。"/>
+        <text name="eq_host_report_advert" text="广告：%s。"/>
+        <text name="eq_host_report_weatherSoFar" text="坏天气至今已让人气下降 %d。"/>
         <text name="eq_host_label_yours" text="你的比赛"/>
         <text name="eq_host_label_month" text="预订月份"/>
         <text name="eq_host_label_next" text="下一个可用月份"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="%s的比赛轮次：骑到起跑线"/>
         <text name="eq_host_note_ridden" text="练习：%s的这个项目已骑过"/>
         <text name="eq_host_note_small" text="练习：路线对%s来说太小"/>
+        <text name="eq_host_ann_test" text="比赛测试：这次计入成绩！"/>
+        <text name="eq_host_ann_smallArena" text="这个场地对你的赛事来说太小：只是练习"/>
+        <text name="eq_host_note_testCounts" text="%s的比赛测试：骑到A"/>
+        <text name="eq_host_note_testSmall" text="练习：场地对%s来说太小"/>
+        <text name="eq_host_ann_testShort" text="这套测试对你的赛事来说太短：只是练习"/>
+        <text name="eq_host_note_testShort" text="练习：测试对%s来说太短"/>
+        <text name="eq_host_ann_notEntered" text="未报名：只是练习"/>
+        <text name="eq_host_note_notEntered" text="练习：这匹马未报名参加%s"/>
         <text name="eq_host_label_now" text="本月"/>
         <text name="eq_host_next_oneAtATime" text="一次只能举办一场赛事"/>
         <text name="eq_host_next_interval" text="赛事之间间隔%d个月，见设置"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="到场：%d/%d匹来访马到场（人气%d）。"/>
         <text name="eq_host_report_feedSoFar" text="来访马至今已吃掉你%d升饲料（每天%d升）。"/>
         <text name="eq_host_report_feed" text="来访马吃掉了你%d升饲料。"/>
-        <text name="eq_host_report_money" text="收入%s（报名费%s，门票%s），举办费%s：利润%s。"/>
+        <text name="eq_host_report_takings" text="收入%s（报名费%s，门票%s），举办费%s。"/>
+        <text name="eq_host_report_total" text="最终人气 %d。利润 %s。"/>
         <text name="eq_host_report_mine" text="你的马%s：%s。"/>
+        <text name="eq_host_report_entry" text="%s %s（%s）"/>
+        <text name="eq_host_report_overall" text="总成绩：%s。"/>
+        <text name="eq_host_report_phaseTop" text="%s：%s。"/>
+        <text name="eq_host_report_phasePlace" text="%s %s（%s）"/>
+        <text name="eq_host_report_minePhased" text="你的马 %s：%s，罚分 %s（%s）。"/>
         <text name="eq_host_results_row" text="你的赛事"/>
         <text name="eq_host_results_running" text="进行中"/>
         <text name="eq_host_results_winner" text="冠军：%s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="原地"/>
         <text name="eq_dt_noOptions" text="这里没有合适的：撤销或保存"/>
         <text name="eq_dt_saved" text="盛装舞步路线已保存：%d个动作"/>
+        <text name="eq_dt_savedShort" text="测试已保存，但对%s来说不够长：需要%d步，现在只有%d步，所以在这里只是练习"/>
+        <text name="eq_dt_locked" text="%s期间不能删除这套测试：请在赛事月份之前设好测试"/>
         <text name="eq_dt_deleted" text="盛装舞步路线已删除：此场地重新使用随机路线"/>
         <text name="eq_dt_cancelled" text="盛装舞步路线未保存"/>
         <text name="eq_fig_halt" text="在%s立定"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="显示侧向运动"/>
         <text name="eq_dt_lateral" text="侧向"/>
         <text name="eq_shop_signboard_function" text="增加你举办赛事的赞助收入。"/>
+        <text name="eq_ui_tab_sponsors" text="赞助商"/>
+        <text name="eq_money_sponsorship" text="赞助"/>
+        <text name="rl_messageTitle_eqSponsor" text="赞助商"/>
+        <text name="eq_host_report_sponsor" text="赞助商：%s，支付 %s。"/>
+        <text name="eq_sponsor_eventName" text="%s %s经典赛"/>
+        <text name="eq_sponsor_col_sponsor" text="赞助商"/>
+        <text name="eq_sponsor_col_contract" text="合同"/>
+        <text name="eq_sponsor_col_fee" text="付给你"/>
+        <text name="eq_sponsor_size_big" text="大型"/>
+        <text name="eq_sponsor_size_moderate" text="中型"/>
+        <text name="eq_sponsor_size_small" text="小型"/>
+        <text name="eq_sponsor_word_relaxed" text="宽松"/>
+        <text name="eq_sponsor_word_fair" text="公平"/>
+        <text name="eq_sponsor_word_demanding" text="严格"/>
+        <text name="eq_sponsor_word_hardBargain" text="难缠的谈判者"/>
+        <text name="eq_sponsor_year1" text="%d年"/>
+        <text name="eq_sponsor_years" text="%d年"/>
+        <text name="eq_sponsor_backs_all" text="所有赛事"/>
+        <text name="eq_sponsor_backs_from" text="%s及以上"/>
+        <text name="eq_sponsor_backs_lower" text="%s（%s，%s级别）"/>
+        <text name="eq_sponsor_targetTop3" text="，并进入前三名"/>
+        <text name="eq_sponsor_label_fee" text="付给你"/>
+        <text name="eq_sponsor_label_popularity" text="人气"/>
+        <text name="eq_sponsor_label_target" text="年度目标"/>
+        <text name="eq_sponsor_label_machines" text="其机械"/>
+        <text name="eq_sponsor_label_discounts" text="折扣"/>
+        <text name="eq_sponsor_label_ends" text="结束"/>
+        <text name="eq_sponsor_label_thisYear" text="今年"/>
+        <text name="eq_sponsor_label_missed" text="未达成目标"/>
+        <text name="eq_sponsor_label_paid" text="已支付"/>
+        <text name="eq_sponsor_label_cancel" text="解约费用"/>
+        <text name="eq_sponsor_label_years" text="合同"/>
+        <text name="eq_sponsor_yearMet" text="目标已达成"/>
+        <text name="eq_sponsor_yearOpen" text="目标截止%s"/>
+        <text name="eq_sponsor_missedLine" text="连续%d次，金额为%s"/>
+        <text name="eq_sponsor_summaryOpen" text="报价有效至%s。一次只能有一个赞助商：拥有其设备，不持有价格接近的竞争品牌机械，并有足够的品牌曝光。"/>
+        <text name="eq_sponsor_summaryClosed" text="今年的报价已结束。新的赞助商将在明年年初到来。"/>
+        <text name="eq_sponsor_noConfig" text="无法加载赞助商。"/>
+        <text name="eq_sponsor_noOffers" text="目前没有赞助商报价。每年年初会有新的报价。"/>
+        <text name="eq_sponsor_sign_gone" text="该报价已不存在。"/>
+        <text name="eq_sponsor_sign_notReady" text="你尚未满足该赞助商的条件。"/>
+        <text name="eq_sponsor_signed" text="%s现在是你的赞助商，为期%d年。"/>
+        <text name="eq_sponsor_cancel_none" text="你没有赞助商。"/>
+        <text name="eq_sponsor_cancelled" text="你与%s的合同已解除。解约花费了%s。"/>
+        <text name="eq_sponsor_paid" text="%s支付了%s（%s）。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%s没有为%s支付任何费用：你的品牌曝光太低。"/>
+        <text name="eq_sponsor_unpaid_machines" text="%s未支付任何费用（%s）：你拥有的其机械不够。"/>
+        <text name="eq_sponsor_targetMet" text="%s：今年的目标已达成。"/>
+        <text name="eq_sponsor_leaves" text="%s因未达成目标而离开。"/>
+        <text name="eq_sponsor_missed" text="%s：今年的目标未达成。明年的金额降至%d%%。"/>
+        <text name="eq_sponsor_finished" text="你与%s的合同已结束。共支付%s。"/>
+        <text name="eq_sponsor_newOffers" text="新的一年：%d个赞助商想支持你的赛事。请查看赛事 &gt; 赞助商。"/>
+        <text name="eq_sponsor_button_sign" text="签约"/>
+        <text name="eq_sponsor_button_cancel" text="解除合同"/>
+        <text name="eq_sponsor_sign_confirm" text="与%s签约%d年？提前解约需支付费用。"/>
+        <text name="eq_sponsor_cancel_confirm" text="解除与%s的合同？费用为%s。"/>
+        <text name="eq_sponsor_col_eligibility" text="资格"/>
+        <text name="eq_sponsor_eligible_yes" text="符合条件"/>
+        <text name="eq_sponsor_eligible_no" text="不符合条件"/>
+        <text name="eq_sponsor_eligible_taken" text="已有独家"/>
+        <text name="eq_sponsor_eligible_yours" text="你的赞助商"/>
+        <text name="eq_sponsor_eligible_exclusive" text="仅限独家"/>
+        <text name="eq_sponsor_eligible_full" text="赞助商已满"/>
+        <text name="eq_sponsor_eligible_overlap" text="专长相同"/>
+        <text name="eq_sponsor_eligible_rivals" text="拥有竞品"/>
+        <text name="eq_sponsor_eligible_equipment" text="设备不足"/>
+        <text name="eq_sponsor_eligible_branding" text="品牌展示不足"/>
+        <text name="eq_sponsor_exclusive_yes" text="独家"/>
+        <text name="eq_sponsor_exclusive_no" text="非独家"/>
+        <text name="eq_sponsor_overlapLine" text="与%s冲突：%s"/>
+        <text name="eq_sponsor_label_speciality" text="专长"/>
+        <text name="eq_sponsor_feePerEvent" text="每场赛事%s"/>
+        <text name="eq_sponsor_targetPopularity" text="人气%d"/>
+        <text name="eq_sponsor_targetRating" text="%s或更高级别的赛事"/>
+        <text name="eq_sponsor_haveOf" text="你拥有%s／需要%d"/>
+        <text name="eq_sponsor_mustOwn" text="申请前你必须拥有其%d台设备。"/>
+        <text name="eq_sponsor_mustKeep" text="你必须保留其%d台设备才能获得付款。"/>
+        <text name="eq_sponsor_attachHalf" text="农具和拖车按半台计算。"/>
+        <text name="eq_sponsor_noRivals" text="你不能拥有价格在其产品%s以内的机械。"/>
+        <text name="eq_sponsor_sellFirst" text="申请前请出售或归还以下机械："/>
+        <text name="eq_sponsor_sellMore" text="……还有%d台"/>
+        <text name="eq_sponsor_button_shop" text="在商店中查看"/>
+        <text name="eq_sponsor_label_branding" text="品牌曝光"/>
+        <text name="eq_sponsor_brandingLine" text="%s（要求：%s）"/>
+        <text name="eq_sponsor_branding_none" text="无"/>
+        <text name="eq_sponsor_branding_low" text="低"/>
+        <text name="eq_sponsor_branding_medium" text="中"/>
+        <text name="eq_sponsor_branding_high" text="高"/>
+        <text name="eq_sponsor_label_likely" text="预计收入"/>
+        <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
+        <text name="eq_shop_branding" text="你的品牌曝光：当前%s，加上此项为%s。曝光越多，赞助商付得越多。"/>
+        <text name="eq_shop_brandingOption" text="带赞助商广告牌时你的品牌曝光：当前%s，加上此项为%s。"/>
+        <text name="eq_config_sponsorBoards" text="赞助商广告牌"/>
+        <text name="eq_shop_sponsorBoards_function" text="赞助商广告牌（可选，需额外费用）：翼板上的广告牌显示赞助商标志，横杆变为赞助商的颜色。"/>
+        <text name="eq_sponsor_discount_repaint" text="喷漆 %s"/>
+        <text name="eq_sponsor_discount_repair" text="维修 %s"/>
+        <text name="eq_sponsor_discount_buy" text="购买 %s"/>
+        <text name="eq_sponsor_loanLine" text="在你的赛事月份借给你一台机器"/>
+        <text name="eq_loan_popupTitle" text="来自赞助商的机器"/>
+        <text name="eq_loan_popup" text="%s 送来了一台全新的 %s，供你在赛事期间试用。它正在经销商处等你。在月底被收回之前，你可以免费随意使用。"/>
+        <text name="eq_loan_delivered" text="%s 在你的赛事月份借给你 %s。它在经销商处。"/>
+        <text name="eq_loan_collected" text="%s 已收回借给你的 %s。"/>
+        <text name="eq_loan_noRoom" text="%s 无法送来 %s：经销商处没有空位。明天会再试。"/>
+        <text name="eq_loan_enterTitle" text="来自 %s 的礼物"/>
+        <text name="eq_loan_enter" text="这台设备由你的赞助商提供，供你在本月的赛事期间使用。尽情享受吧！"/>
+        <text name="eq_sponsor_discount_from" text="从%s开始"/>
+        <text name="eq_sponsor_discount_after" text="签约 %d 个月后开始"/>
     </texts>
 </l10n>

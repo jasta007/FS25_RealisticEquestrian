@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="115">
     <author>Jasta007</author>
-    <version>0.7.0.0</version>
+    <version>0.8.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -15,15 +15,15 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 0.7.0.0:
-- Dressage tests are figures drawn on the ground, each marked out of 10, with a big final score
-- Lateral work, piaffe, passage and pirouettes; right mouse drag steers
-- Build your own dressage test for each shop arena (Ctrl+L)
-- Jumps feel less floaty; jump from a trot (or Ctrl + Space) for a collected jump
-- Sprint is now the left mouse button; W and S only change gait
-- Dressage outfit in the wardrobe: top hat, breeches, gloves, jacket and tall boots
-- Our HUD hides when the game HUD is hidden, for filming
-- New shop images, rebalanced hosting setup fees, signboards raise sponsor takings
+Changelog 0.8.0.0:
+- Sponsors for your hosted events: yearly offers with demands and rewards, up to three at once, on a new Sponsors tab
+- Sponsor discounts on buying, leasing, repairs and repaints, from 3 months after signing
+- Sponsors lend you a machine for the event month; Lizard's one-off sponsorship and Lizard plinth
+- Sponsor boards on jumps, a sponsor wall, start/finish arch, gates, rope markers, display plinths and a turntable
+- Hosted events: weather, star horses, booking ahead, advertising, farm shop goods and souvenirs, buzz
+- Hosted 3 day events use your real ridden penalties, with a results table
+- Fairer dressage marks, the current movement named under the panel
+- Legendary staff have one main skill at 90-100
 
 Made by Jasta007.]]>
         </en>
@@ -36,15 +36,15 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Änderungen 0.7.0.0:
-- Dressurprüfungen sind Figuren, die auf den Boden gezeichnet und jeweils mit 0 bis 10 benotet werden, mit großer Endnote
-- Seitengänge, Piaffe, Passage und Pirouetten; Ziehen mit der rechten Maustaste lenkt
-- Eigene Dressurprüfung für jedes Viereck aus dem Shop bauen (Strg+L)
-- Sprünge wirken weniger schwebend; aus dem Trab (oder Strg + Leertaste) gibt es einen versammelten Sprung
-- Sprint liegt jetzt auf der linken Maustaste; W und S wechseln nur die Gangart
-- Dressur-Outfit in der Garderobe: Zylinder, Reithose, Handschuhe, Jackett und hohe Stiefel
-- Unser HUD verschwindet mit dem Spiel-HUD, zum Filmen
-- Neue Shop-Bilder, neu abgestimmte Ausrichtungsgebühren, Werbetafeln erhöhen die Sponsoreneinnahmen
+Änderungen 0.8.0.0:
+- Sponsoren für Ihre eigenen Turniere: jährliche Angebote mit Bedingungen und Vorteilen, bis zu drei gleichzeitig, im neuen Reiter Sponsoren
+- Sponsorenrabatte auf Kauf, Leasing, Reparaturen und Lackierungen, ab 3 Monaten nach Vertragsabschluss
+- Sponsoren leihen Ihnen im Turniermonat eine Maschine; Lizards einmaliges Sponsoring und der Lizard-Sockel
+- Sponsorentafeln an Hindernissen, eine Sponsorenmauer, Start-/Zielbogen, Tore, Seilmarkierungen, Ausstellungssockel und eine Drehscheibe
+- Eigene Turniere: Wetter, Starpferde, frühe Buchung, Werbung, Hofladenwaren und Souvenirs, Gesprächsstoff
+- Eigene Vielseitigkeitsprüfungen nutzen Ihre echten gerittenen Strafpunkte, mit Ergebnistabelle
+- Gerechtere Dressurnoten, die aktuelle Lektion steht unter dem Panel
+- Legendäre Pfleger haben eine Hauptfähigkeit bei 90-100
 
 Von Jasta007.]]>
         </de>
@@ -57,15 +57,15 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changements 0.7.0.0 :
-- Les reprises de dressage sont des figures tracées au sol, chacune notée sur 10, avec un grand score final
-- Travail latéral, piaffer, passage et pirouettes ; glisser avec le clic droit pour diriger
-- Créez votre propre reprise pour chaque carrière de la boutique (Ctrl+L)
-- Des sauts moins flottants ; sauter depuis le trot (ou Ctrl + Espace) pour un saut rassemblé
-- Le sprint passe sur le clic gauche ; W et S changent seulement d'allure
-- Tenue de dressage dans la garde-robe : haut-de-forme, culotte, gants, veste et bottes hautes
-- Notre HUD se cache avec celui du jeu, pour filmer
-- Nouvelles images en boutique, frais d'organisation rééquilibrés, panneaux qui augmentent les recettes des sponsors
+Changements 0.8.0.0 :
+- Des sponsors pour vos concours : offres annuelles avec exigences et avantages, jusqu'à trois à la fois, dans un nouvel onglet Sponsors
+- Remises des sponsors sur l'achat, la location, les réparations et la peinture, 3 mois après la signature
+- Les sponsors vous prêtent une machine pour le mois du concours ; le parrainage ponctuel de Lizard et son socle
+- Panneaux de sponsors sur les obstacles, mur du sponsor, arche de départ/arrivée, portes, cordes de balisage, socles d'exposition et plateau tournant
+- Vos concours : météo, chevaux vedettes, réservation anticipée, publicité, produits de magasin à la ferme et souvenirs, effervescence
+- Vos concours complets utilisent vos vraies pénalités, avec un tableau des résultats
+- Notes de dressage plus justes, le mouvement en cours affiché sous le panneau
+- Le personnel légendaire a une seule compétence principale à 90-100
 
 Par Jasta007.]]>
         </fr>
@@ -78,15 +78,15 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Cambios 0.7.0.0:
-- Las pruebas de doma son figuras dibujadas en el suelo, cada una puntuada sobre 10, con una gran nota final
-- Trabajo lateral, piaffe, passage y piruetas; arrastrar con el botón derecho para dirigir
-- Crea tu propia prueba de doma para cada pista de la tienda (Ctrl+L)
-- Saltos menos flotantes; salta desde el trote (o Ctrl + Espacio) para un salto reunido
-- El sprint pasa al botón izquierdo del ratón; W y S solo cambian el aire
-- Traje de doma en el vestuario: sombrero de copa, pantalones, guantes, chaqueta y botas altas
-- Nuestro HUD se oculta con el del juego, para grabar
-- Nuevas imágenes en la tienda, tarifas de organización reequilibradas, carteles que suben los ingresos de patrocinio
+Cambios 0.8.0.0:
+- Patrocinadores para tus eventos: ofertas anuales con exigencias y ventajas, hasta tres a la vez, en una nueva pestaña Patrocinadores
+- Descuentos de patrocinio en compra, leasing, reparaciones y pintura, desde 3 meses después de firmar
+- Los patrocinadores te prestan una máquina el mes del evento; el patrocinio puntual de Lizard y su pedestal
+- Carteles de patrocinio en los obstáculos, muro del patrocinador, arco de salida/meta, puertas, cuerdas de balizamiento, pedestales de exhibición y una plataforma giratoria
+- Tus eventos: clima, caballos estrella, reserva anticipada, publicidad, productos de tienda de granja y recuerdos, expectación
+- Tus concursos completos usan tus penalizaciones reales, con tabla de resultados
+- Notas de doma más justas, el movimiento actual bajo el panel
+- El personal legendario tiene una sola habilidad principal en 90-100
 
 Por Jasta007.]]>
         </es>
@@ -115,6 +115,17 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/xcJumps/xcRollTopHalf.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcTable.xml"/>
         <storeItem xmlFilename="placeables/xcJumps/xcBigLog.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateArch.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcGateSimple.xml"/>
+        <storeItem xmlFilename="placeables/xcJumps/xcRope.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthDrive.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRamp.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthRampLarge.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthProductRamp.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/plinthTurntable.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
+        <storeItem xmlFilename="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpUpright.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpOxer.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCrossrail.xml"/>
@@ -125,6 +136,7 @@ Por Jasta007.]]>
         <storeItem xmlFilename="placeables/showJumps/showJumpFan3.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpLiverpool.xml"/>
         <storeItem xmlFilename="placeables/showJumps/showJumpCavaletti.xml"/>
+        <storeItem xmlFilename="placeables/showJumps/showJumpWall.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers3x6.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers5x10.xml"/>
         <storeItem xmlFilename="placeables/bleachers/bleachers8x16.xml"/>

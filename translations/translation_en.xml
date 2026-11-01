@@ -46,6 +46,8 @@
         <text name="eq_shop_xcLogPile" text="Log Pile"/>
         <text name="eq_shop_showJumpUpright" text="Show Jump: Upright"/>
         <text name="eq_shop_showJumpOxer" text="Show Jump: Oxer"/>
+        <text name="eq_shop_showJumpWall" text="Show Jump: Sponsor Wall"/>
+        <text name="eq_shop_showJumpWall_function" text="A showpiece wall in your sponsor's logo. The top blocks fall when your horse hits them and go back up after the round."/>
         <text name="eq_shop_showJumpCrossrail" text="Show Jump: Crossrail"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Show Jump: Ascending Oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Show Jump: Triple Bar"/>
@@ -82,6 +84,39 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll Top (half)"/>
         <text name="eq_shop_xcTable" text="Table"/>
         <text name="eq_shop_xcBigLog" text="Big Log"/>
+        <text name="eq_shop_xcGateArch" text="Start/Finish Arch"/>
+        <text name="eq_shop_xcGateSimple" text="Ride-Through Gate"/>
+        <text name="eq_shop_xcGate_function" text="A gate to ride through, not a jump: wide and tall enough for any horse, with your sponsor's logo."/>
+        <text name="eq_shop_xcRope" text="Rope Marker"/>
+        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope or rope with a small hanging sponsor sign: signs add only a little branding."/>
+        <text name="eq_shop_plinthDrive" text="Drive-Through Plinth"/>
+        <text name="eq_shop_plinthRamp" text="Display Ramp"/>
+        <text name="eq_shop_plinthRampLarge" text="Large Display Ramp"/>
+        <text name="eq_shop_plinthProductRamp" text="Product Jump Ramp"/>
+        <text name="eq_shop_plinth_function" text="Park a machine of your sponsor's brand on it for extra branding."/>
+        <text name="eq_shop_productJump_function" text="Set two facing each other about 5 m apart: a machine between them counts too, or ride them as a cross country jump."/>
+        <text name="eq_shop_plinthTurntable" text="Turntable"/>
+        <text name="eq_shop_turntable_function" text="The disc turns slowly: leave a machine on it and it turns with the disc, with anything hitched to it. A sponsor's machine on it counts extra."/>
+        <text name="eq_plinth_inPlace" text="Sponsor equipment in place!"/>
+        <text name="eq_plinth_wrongBrand" text="Not your sponsor's equipment! Rival machines on show will reduce your sponsorship earnings!"/>
+        <text name="eq_plinth_noSponsor" text="No sponsor signed: their equipment on show here would count towards your branding."/>
+        <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
+        <text name="eq_shop_lizardPlinth" text="Lizard Plinth"/>
+        <text name="eq_shop_lizardPlinth_function" text="Lizard&#x27;s special plinth for the event it sponsors. Build it by delivering to its triggers at the front; a Lizard machine on its log deck counts extra. It collapses after the event."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,000 l stones, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Needs 1,000 l wood chips, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Needs 10,000 l straw, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_lizard_title" text="%s sponsorship offer"/>
+        <text name="eq_lizard_offer" text="%s have offered to sponsor your %s (%s), and will lend you one of their vehicles for the event month. They ask for %s branding by the end of the event, and their Lizard plinth built at your venue: %s. If all that is in place when the results come in, they pay %s. If not, they pay nothing and there is no penalty. The plinth collapses after the event."/>
+        <text name="eq_lizard_accept" text="Accept"/>
+        <text name="eq_lizard_decline" text="Decline"/>
+        <text name="eq_lizard_offerNote" text="%s have offered to sponsor your %s."/>
+        <text name="eq_lizard_accepted" text="%s deal accepted! Buy the Lizard Plinth in construction (Buildings, Constructibles) and build it with %s, logs and planks."/>
+        <text name="eq_lizard_stepAside" text="%s steps aside: %s sponsors your event now."/>
+        <text name="eq_lizard_paid" text="%s paid %s for sponsoring your event."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s pays nothing: the Lizard plinth wasn&#x27;t finished. No hard feelings."/>
+        <text name="eq_lizard_unpaid_branding" text="%s pays nothing: your branding fell short. No hard feelings."/>
+        <text name="eq_lizard_unpaid_rating" text="%s pays nothing for this event."/>
         <text name="eq_config_corner" text="Corner"/>
         <text name="eq_config_cornerRight" text="Point right"/>
         <text name="eq_config_cornerLeft" text="Point left"/>
@@ -131,6 +166,18 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage on the diagonal %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_collected" text="Collected"/>
+        <text name="eq_now_collectedCanter" text="Collected canter"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Leg yield"/>
+        <text name="eq_now_halfPass" text="Half pass"/>
+        <text name="eq_now_shoulderIn" text="Shoulder-in"/>
+        <text name="eq_now_renvers" text="Renvers (haunches out)"/>
+        <text name="eq_now_travers" text="Travers (haunches in)"/>
+        <text name="eq_now_legYieldRail" text="Leg yield along the rail"/>
         <text name="eq_fig_legYield" text="Leg yield from %s and back"/>
         <text name="eq_fig_halfPass" text="Half pass from %s and back"/>
         <text name="eq_fig_shoulderIn" text="Shoulder-in %s-%s"/>
@@ -433,6 +480,8 @@
         <text name="eq_sj_out_wrongCourse" text="Eliminated: wrong course (fence %d jumped out of order)"/>
         <text name="eq_sj_out_refusals" text="Eliminated: second refusal"/>
         <text name="eq_sj_out_timeLimit" text="Eliminated: over the time limit"/>
+        <text name="eq_sj_getOn" text="GET ON YOUR HORSE! %d"/>
+        <text name="eq_sj_out_dismounted" text="Eliminated: the rider stayed off the horse in a round that counts"/>
         <text name="eq_sj_clear" text="Clear round in %s!"/>
         <text name="eq_sj_faults" text="%s faults in %s"/>
         <text name="eq_sj_clearPop" text="Clear round!"/>
@@ -459,6 +508,7 @@
         <text name="eq_course_resumed" text="Recording from the nearest point"/>
         <text name="eq_course_finished" text="Finished editing: placed Realistic Equestrian obstacles have their collision back"/>
         <text name="eq_course_deleted" text="%s deleted"/>
+        <text name="eq_course_locked" text="You can&#x27;t delete %s during %s: set your courses before the event month"/>
         <text name="eq_course_deleteAsk" text="Delete %s with %d fences over %.0f m?"/>
         <text name="eq_course_deleteTitle" text="Delete course"/>
         <text name="eq_course_deleteAction" text="Delete %s"/>
@@ -793,6 +843,10 @@
         <text name="eq_story_eventing_clean" text="Clear in every phase."/>
         <text name="eq_story_eventing_struggled" text="Found all three phases a struggle."/>
         <text name="eq_story_eventing_eliminated" text="Went out after a fall on the cross country."/>
+        <text name="eq_story_ridden_test" text="Rode its test."/>
+        <text name="eq_story_ridden_faults" text="Had faults on the course."/>
+        <text name="eq_story_eventing_fenceFaults" text="Picked up penalties over fences."/>
+        <text name="eq_story_eventing_clearFences" text="Clear over fences, but the dressage held it back."/>
         <text name="eq_ui_tab_upcoming" text="Upcoming events"/>
         <text name="eq_ui_tab_results" text="Results"/>
         <text name="eq_ui_col_starts" text="Starts"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="reputation"/>
         <text name="eq_host_part_star" text="star horse"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
+        <text name="eq_host_part_quality" text="course build"/>
+        <text name="eq_host_part_shops" text="shops"/>
+        <text name="eq_host_part_ahead" text="booked ahead"/>
+        <text name="eq_host_part_advert" text="advertising"/>
+        <text name="eq_host_part_buzz" text="buzz"/>
+        <text name="eq_host_part_weather" text="weather"/>
+        <text name="eq_host_buzz_high" text="Buzzing"/>
+        <text name="eq_host_buzz_low" text="Quiet"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d for advance booking)"/>
+        <text name="eq_host_advert_none" text="No advertising"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Local"/>
+        <text name="eq_host_advert_national" text="National"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s advertising"/>
+        <text name="eq_host_label_advert" text="Advertising"/>
+        <text name="eq_host_label_sell" text="Souvenirs &amp; refreshments"/>
+        <text name="eq_host_sell_yes" text="Sell if available (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Don't sell"/>
+        <text name="eq_host_book_advert" text="Advertising paid: %s."/>
+        <text name="eq_host_twister" text="A tornado tore through %s! Spectators ran for cover."/>
+        <text name="eq_host_done_goods" text="Souvenirs and refreshments sold: %s."/>
+        <text name="eq_host_star" text="People were really excited to see %s compete."/>
+        <text name="eq_host_report_twister" text="A tornado hit while it ran, and the crowd scattered."/>
+        <text name="eq_host_report_weather" text="Bad weather: %d hours of it kept people away (popularity %d)."/>
+        <text name="eq_host_report_goods" text="Souvenirs and refreshments: %d l sold for %s."/>
+        <text name="eq_host_report_advert" text="Advertising: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Bad weather has cost %d popularity so far."/>
         <text name="eq_host_label_yours" text="Your event"/>
         <text name="eq_host_label_month" text="Book for"/>
         <text name="eq_host_label_next" text="Next free month"/>
@@ -853,10 +935,18 @@
         <text name="eq_host_ann_resultsSoon" text="%s: results at the end of the month"/>
         <text name="eq_host_ann_round" text="Competition round: this one counts!"/>
         <text name="eq_host_ann_ridden" text="Already ridden: this is just practice"/>
-        <text name="eq_host_ann_small" text="This course is too small for your event: just practice"/>
+        <text name="eq_host_ann_small" text="Course too short for your hosted event: practice only"/>
         <text name="eq_host_note_counts" text="Competition round for %s: ride to the start line"/>
         <text name="eq_host_note_ridden" text="Practice: this phase of %s is already ridden"/>
-        <text name="eq_host_note_small" text="Practice: too small a course for %s"/>
+        <text name="eq_host_note_small" text="Practice: course too short for %s"/>
+        <text name="eq_host_ann_test" text="Competition test: this one counts!"/>
+        <text name="eq_host_ann_smallArena" text="This arena is too small for your event: just practice"/>
+        <text name="eq_host_note_testCounts" text="Competition test for %s: ride to A"/>
+        <text name="eq_host_note_testSmall" text="Practice: too small an arena for %s"/>
+        <text name="eq_host_ann_testShort" text="Test too short for your hosted event: practice only"/>
+        <text name="eq_host_note_testShort" text="Practice: test too short for %s"/>
+        <text name="eq_host_ann_notEntered" text="Not entered: this is just practice"/>
+        <text name="eq_host_note_notEntered" text="Practice: this horse isn't entered in %s"/>
         <text name="eq_host_label_now" text="This month"/>
         <text name="eq_host_next_oneAtATime" text="one event at a time"/>
         <text name="eq_host_next_interval" text="%d months between events, see Settings"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="Turnout: %d of %d visiting horses came (popularity %d)."/>
         <text name="eq_host_report_feedSoFar" text="Visiting horses have eaten %d l of your feed so far (%d l a day)."/>
         <text name="eq_host_report_feed" text="Visiting horses ate %d l of your feed."/>
-        <text name="eq_host_report_money" text="Takings %s (entries %s, gate %s), setup fee %s: profit %s."/>
+        <text name="eq_host_report_takings" text="Takings %s (entries %s, gate %s), setup fee %s."/>
+        <text name="eq_host_report_total" text="Final popularity %d. Profit %s."/>
         <text name="eq_host_report_mine" text="Your horse %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Overall: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Your horse %s: %s on %s penalties (%s)."/>
         <text name="eq_host_results_row" text="Your events"/>
         <text name="eq_host_results_running" text="On now"/>
         <text name="eq_host_results_winner" text="Won by %s"/>
@@ -917,7 +1013,7 @@
         <text name="eq_host_ride_counted" text="%s counted for %s: %s penalties."/>
         <text name="eq_host_ride_out" text="%s counted for %s: eliminated."/>
         <text name="eq_host_ride_already" text="This horse's %s for %s is already ridden; this one is practice."/>
-        <text name="eq_host_ride_small" text="This course is too small for %s, so the round is practice."/>
+        <text name="eq_host_ride_small" text="This course is too short for %s, so the round is practice only."/>
         <text name="eq_shop_bleachers3x6" text="Bleachers 3 rows, 6 m"/>
         <text name="eq_shop_bleachers5x10" text="Bleachers 5 rows, 10 m"/>
         <text name="eq_shop_bleachers8x16" text="Bleachers 8 rows, 16 m"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="On the spot"/>
         <text name="eq_dt_noOptions" text="Nothing fits here: undo or save"/>
         <text name="eq_dt_saved" text="Dressage test saved: %d movements"/>
+        <text name="eq_dt_savedShort" text="Test saved, but not long enough for %s: it needs %d steps and has %d, so rides here are practice only"/>
+        <text name="eq_dt_locked" text="You can&#x27;t delete this test during %s: set your test before the event month"/>
         <text name="eq_dt_deleted" text="Dressage test deleted: this arena rides random tests again"/>
         <text name="eq_dt_cancelled" text="Dressage test not saved"/>
         <text name="eq_fig_halt" text="Halt at %s"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="Show lateral work"/>
         <text name="eq_dt_lateral" text="Lateral"/>
         <text name="eq_shop_signboard_function" text="Increases the sponsor takings for your events."/>
+        <text name="eq_ui_tab_sponsors" text="Sponsors"/>
+        <text name="eq_money_sponsorship" text="Sponsorship"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponsors"/>
+        <text name="eq_host_report_sponsor" text="Sponsor: %s, paid %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
+        <text name="eq_sponsor_col_contract" text="Contract"/>
+        <text name="eq_sponsor_col_fee" text="Pays you"/>
+        <text name="eq_sponsor_size_big" text="Big"/>
+        <text name="eq_sponsor_size_moderate" text="Moderate"/>
+        <text name="eq_sponsor_size_small" text="Small"/>
+        <text name="eq_sponsor_word_relaxed" text="Relaxed"/>
+        <text name="eq_sponsor_word_fair" text="Fair"/>
+        <text name="eq_sponsor_word_demanding" text="Demanding"/>
+        <text name="eq_sponsor_word_hardBargain" text="Hard bargain"/>
+        <text name="eq_sponsor_year1" text="%d year"/>
+        <text name="eq_sponsor_years" text="%d years"/>
+        <text name="eq_sponsor_backs_all" text="Every event"/>
+        <text name="eq_sponsor_backs_from" text="%s and up"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s at %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", with a top 3 finish"/>
+        <text name="eq_sponsor_label_fee" text="Pays you"/>
+        <text name="eq_sponsor_label_popularity" text="Popularity"/>
+        <text name="eq_sponsor_label_target" text="Yearly target"/>
+        <text name="eq_sponsor_label_machines" text="Their equipment"/>
+        <text name="eq_sponsor_label_discounts" text="Discounts"/>
+        <text name="eq_sponsor_label_ends" text="Ends"/>
+        <text name="eq_sponsor_label_thisYear" text="This year"/>
+        <text name="eq_sponsor_label_missed" text="Missed targets"/>
+        <text name="eq_sponsor_label_paid" text="Paid so far"/>
+        <text name="eq_sponsor_label_cancel" text="Cancel cost"/>
+        <text name="eq_sponsor_label_years" text="Contract"/>
+        <text name="eq_sponsor_yearMet" text="Target met"/>
+        <text name="eq_sponsor_yearOpen" text="Target open until %s"/>
+        <text name="eq_sponsor_missedLine" text="%d in a row, fee at %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Offers stay open until %s. One sponsor at a time: own its equipment, no rival machines near its prices, and enough branding."/>
+        <text name="eq_sponsor_summaryClosed" text="This year's offers have gone. New sponsors come at the start of next year."/>
+        <text name="eq_sponsor_noConfig" text="Sponsors could not be loaded."/>
+        <text name="eq_sponsor_noOffers" text="No sponsor offers right now. New ones come at the start of each year."/>
+        <text name="eq_sponsor_sign_gone" text="That offer has gone."/>
+        <text name="eq_sponsor_sign_notReady" text="You don't meet this sponsor's terms yet."/>
+        <text name="eq_sponsor_signed" text="%s is now your sponsor, for %d year(s)."/>
+        <text name="eq_sponsor_cancel_none" text="You have no sponsor."/>
+        <text name="eq_sponsor_cancelled" text="Your contract with %s is cancelled. Cancelling cost %s."/>
+        <text name="eq_sponsor_paid" text="%s paid %s for %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s paid nothing for %s: your branding is too low."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s paid nothing for %s: you don't own enough of their machines."/>
+        <text name="eq_sponsor_targetMet" text="%s: this year's target is met."/>
+        <text name="eq_sponsor_leaves" text="%s has walked away after missed targets."/>
+        <text name="eq_sponsor_missed" text="%s: this year's target was missed. Next year's fee is cut to %d%%."/>
+        <text name="eq_sponsor_finished" text="Your contract with %s has finished. It paid %s in all."/>
+        <text name="eq_sponsor_newOffers" text="A new year: %d sponsors want to back your events. See Events, Sponsors."/>
+        <text name="eq_sponsor_button_sign" text="Sign"/>
+        <text name="eq_sponsor_button_cancel" text="Cancel contract"/>
+        <text name="eq_sponsor_sign_confirm" text="Sign with %s for %d year(s)? Cancelling early costs a fee."/>
+        <text name="eq_sponsor_cancel_confirm" text="Cancel your contract with %s? It costs %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Eligibility"/>
+        <text name="eq_sponsor_eligible_yes" text="Eligible"/>
+        <text name="eq_sponsor_eligible_no" text="Not eligible"/>
+        <text name="eq_sponsor_eligible_taken" text="Already exclusive"/>
+        <text name="eq_sponsor_eligible_yours" text="Your sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Exclusive only"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors full"/>
+        <text name="eq_sponsor_eligible_overlap" text="Same speciality"/>
+        <text name="eq_sponsor_eligible_rivals" text="Own rival kit"/>
+        <text name="eq_sponsor_eligible_equipment" text="Need equipment"/>
+        <text name="eq_sponsor_eligible_branding" text="Need branding"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusive"/>
+        <text name="eq_sponsor_exclusive_no" text="Non-exclusive"/>
+        <text name="eq_sponsor_overlapLine" text="Clashes with %s: %s"/>
+        <text name="eq_sponsor_label_speciality" text="Speciality"/>
+        <text name="eq_sponsor_feePerEvent" text="%s per event"/>
+        <text name="eq_sponsor_targetPopularity" text="Popularity %d"/>
+        <text name="eq_sponsor_targetRating" text="%s or better event"/>
+        <text name="eq_sponsor_haveOf" text="You have %s of %d"/>
+        <text name="eq_sponsor_mustOwn" text="You must own %d pieces of their equipment before applying."/>
+        <text name="eq_sponsor_mustKeep" text="You must keep %d pieces of their equipment to be paid."/>
+        <text name="eq_sponsor_attachHalf" text="Attachments and trailers count as half."/>
+        <text name="eq_sponsor_noRivals" text="You cannot own machinery within %s of the cost of their product."/>
+        <text name="eq_sponsor_sellFirst" text="Sell or return the following before applying:"/>
+        <text name="eq_sponsor_sellMore" text="...and %d more"/>
+        <text name="eq_sponsor_button_shop" text="Show in shop"/>
+        <text name="eq_sponsor_label_branding" text="Branding"/>
+        <text name="eq_sponsor_brandingLine" text="%s (required: %s)"/>
+        <text name="eq_sponsor_branding_none" text="None"/>
+        <text name="eq_sponsor_branding_low" text="Low"/>
+        <text name="eq_sponsor_branding_medium" text="Medium"/>
+        <text name="eq_sponsor_branding_high" text="High"/>
+        <text name="eq_sponsor_label_likely" text="Likely pay"/>
+        <text name="eq_sponsor_likelyLine" text="%s at %s"/>
+        <text name="eq_shop_branding" text="Your branding: %s now, %s with this. More branding raises what your sponsor pays."/>
+        <text name="eq_shop_brandingOption" text="With sponsor boards, your branding: %s now, %s with this."/>
+        <text name="eq_config_sponsorBoards" text="Sponsor boards"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsor boards (optional, extra cost): signs on the wings show your sponsor's logo and the poles take its colour."/>
+        <text name="eq_sponsor_discount_repaint" text="Repaint %s"/>
+        <text name="eq_sponsor_discount_repair" text="Repair %s"/>
+        <text name="eq_sponsor_discount_buy" text="Buying %s"/>
+        <text name="eq_sponsor_loanLine" text="Lends a machine for your event month"/>
+        <text name="eq_loan_popupTitle" text="A machine from your sponsor"/>
+        <text name="eq_loan_popup" text="%s has delivered a new %s for you to trial for the duration of your event. It's waiting for you at the dealer. Use it for anything you like, free of charge, until the month ends, when they collect it."/>
+        <text name="eq_loan_delivered" text="%s has lent you the %s for your event month. It's at the dealer."/>
+        <text name="eq_loan_collected" text="%s has collected the %s it lent you."/>
+        <text name="eq_loan_noRoom" text="%s couldn't deliver the %s: there's no room at the dealer. They'll try again tomorrow."/>
+        <text name="eq_loan_enterTitle" text="A gift from %s"/>
+        <text name="eq_loan_enter" text="This piece of equipment has been donated by your sponsor for use during your event this month. Enjoy!"/>
+        <text name="eq_sponsor_discount_from" text="Begins in %s"/>
+        <text name="eq_sponsor_discount_after" text="Begin %d months after signing"/>
     </texts>
 </l10n>

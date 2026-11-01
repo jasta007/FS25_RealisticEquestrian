@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="原木堆"/>
         <text name="eq_shop_showJumpUpright" text="障礙: 垂直障礙"/>
         <text name="eq_shop_showJumpOxer" text="障礙: 雙橫木"/>
+        <text name="eq_shop_showJumpWall" text="障礙: 贊助商磚牆"/>
+        <text name="eq_shop_showJumpWall_function" text="印有贊助商標誌的展示磚牆。馬碰到時頂部磚塊會掉落，比賽結束後復原。"/>
         <text name="eq_shop_showJumpCrossrail" text="障礙: 交叉桿"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障礙: 上升雙橫木"/>
         <text name="eq_shop_showJumpTripleBar" text="障礙: 三橫木"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="圓頂障礙（半圓）"/>
         <text name="eq_shop_xcTable" text="桌形障礙"/>
         <text name="eq_shop_xcBigLog" text="大原木"/>
+        <text name="eq_shop_xcGateArch" text="起點/終點拱門"/>
+        <text name="eq_shop_xcGateSimple" text="通行門"/>
+        <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
+        <text name="eq_shop_xcRope" text="繩索標記"/>
+        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_plinthDrive" text="通行展台"/>
+        <text name="eq_shop_plinthRamp" text="展示坡台"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
+        <text name="eq_shop_plinthProductRamp" text="產品障礙坡台"/>
+        <text name="eq_shop_plinth_function" text="在上面停放贊助商品牌的機器，可獲得額外品牌曝光。"/>
+        <text name="eq_shop_productJump_function" text="把兩個相對放置，相距約 5 公尺：停在中間的機器也計入，或者把它們當越野障礙來跳。"/>
+        <text name="eq_shop_plinthTurntable" text="旋轉展台"/>
+        <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把機器停在上面，它會連同掛接的農具一起隨轉盤轉動。贊助商的機器在這裡計入更多。"/>
+        <text name="eq_plinth_inPlace" text="贊助商設備已就位！"/>
+        <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備！展示競爭品牌的機器會減少你的贊助收入！"/>
+        <text name="eq_plinth_noSponsor" text="尚未簽約贊助商：在這裡展示其設備將計入你的品牌曝光。"/>
+        <text name="eq_plinth_penalty" text="你的贊助展台上有 %d 台競爭品牌機器：贊助費扣除 %s。"/>
+        <text name="eq_shop_lizardPlinth" text="Lizard展台"/>
+        <text name="eq_shop_lizardPlinth_function" text="Lizard為其贊助的賽事準備的特別展台。向前方的觸發區交付材料即可建造；停在原木平台上的Lizard機械額外計分。賽事結束後它會倒塌。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="需要 1,000 公升石頭、10,000 公升木材和 1,000 公升木板。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 公升木屑、10,000 公升木材和 1,000 公升木板。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 公升稻草、10,000 公升木材和 1,000 公升木板。"/>
+        <text name="eq_lizard_title" text="%s 的贊助邀約"/>
+        <text name="eq_lizard_offer" text="%s 希望贊助你的%s（%s），並在賽事月借給你一輛它的車輛。要求在賽事結束前達到%s品牌度，並在你的場地建好Lizard展台：%s。如果公布成績時一切就緒，它將支付 %s。否則不付費，也沒有任何處罰。賽事結束後展台會倒塌。"/>
+        <text name="eq_lizard_accept" text="接受"/>
+        <text name="eq_lizard_decline" text="拒絕"/>
+        <text name="eq_lizard_offerNote" text="%s 想贊助你的%s。"/>
+        <text name="eq_lizard_accepted" text="已接受與 %s 的合作！在商店（可建造建築）購買Lizard展台，並用%s、原木和木板建造它。"/>
+        <text name="eq_lizard_stepAside" text="%s 退出了：現在由 %s 贊助你的賽事。"/>
+        <text name="eq_lizard_paid" text="%s 為贊助你的賽事支付了 %s。"/>
+        <text name="eq_lizard_unpaid_plinth" text="%s 不付費：Lizard展台沒有完工。別介意。"/>
+        <text name="eq_lizard_unpaid_branding" text="%s 不付費：你的品牌度不夠。別介意。"/>
+        <text name="eq_lizard_unpaid_rating" text="%s 不為這場賽事付費。"/>
         <text name="eq_config_corner" text="角障礙"/>
         <text name="eq_config_cornerRight" text="尖端在右"/>
         <text name="eq_config_cornerLeft" text="尖端在左"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="正步 %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="對角線正步 %s-%s"/>
         <text name="eq_dressage_passage" text="正步：Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="正步 %s-%s：Ctrl + W"/>
+        <text name="eq_now_piaffe" text="原地踏步"/>
+        <text name="eq_now_pirouette" text="定後肢旋轉"/>
+        <text name="eq_now_collected" text="收縮"/>
+        <text name="eq_now_collectedCanter" text="收縮跑步"/>
+        <text name="eq_now_passage" text="正步"/>
+        <text name="eq_now_legYield" text="腿部讓步"/>
+        <text name="eq_now_halfPass" text="斜橫步"/>
+        <text name="eq_now_shoulderIn" text="肩向內"/>
+        <text name="eq_now_renvers" text="腰向外"/>
+        <text name="eq_now_travers" text="腰向內"/>
+        <text name="eq_now_legYieldRail" text="沿牆腿部讓步"/>
         <text name="eq_fig_legYield" text="從%s開始腿部讓步並返回"/>
         <text name="eq_fig_halfPass" text="從%s開始斜橫步並返回"/>
         <text name="eq_fig_shoulderIn" text="肩向內 %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="淘汰：路線錯誤（第%d道障礙跳躍順序錯誤）"/>
         <text name="eq_sj_out_refusals" text="淘汰：第二次拒跳"/>
         <text name="eq_sj_out_timeLimit" text="淘汰：超出時限"/>
+        <text name="eq_sj_getOn" text="快上馬！%d"/>
+        <text name="eq_sj_out_dismounted" text="淘汰：騎手在計分的回合中沒有重新上馬"/>
         <text name="eq_sj_clear" text="%s零罰分完賽！"/>
         <text name="eq_sj_faults" text="罰%s分，用時%s"/>
         <text name="eq_sj_clearPop" text="零罰分！"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="從最近的點開始錄製"/>
         <text name="eq_course_finished" text="編輯完成：Realistic Equestrian放置的障礙物恢復碰撞"/>
         <text name="eq_course_deleted" text="已刪除%s"/>
+        <text name="eq_course_locked" text="不能刪除%s：%s期間不可刪除，請在賽事月份之前設好路線"/>
         <text name="eq_course_deleteAsk" text="刪除%s（%d個障礙，%.0f米）？"/>
         <text name="eq_course_deleteTitle" text="刪除路線"/>
         <text name="eq_course_deleteAction" text="刪除%s"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="每個階段都零罰分。"/>
         <text name="eq_story_eventing_struggled" text="三個階段都很吃力。"/>
         <text name="eq_story_eventing_eliminated" text="越野中摔倒後被淘汰。"/>
+        <text name="eq_story_ridden_test" text="完成了牠的測驗。"/>
+        <text name="eq_story_ridden_faults" text="在路線上有失誤。"/>
+        <text name="eq_story_eventing_fenceFaults" text="在障礙上被罰了分。"/>
+        <text name="eq_story_eventing_clearFences" text="障礙零罰分，但盛裝舞步拖了後腿。"/>
         <text name="eq_ui_tab_upcoming" text="即將舉行的賽事"/>
         <text name="eq_ui_tab_results" text="結果"/>
         <text name="eq_ui_col_starts" text="出賽"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="聲譽"/>
         <text name="eq_host_part_star" text="明星馬"/>
         <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_part_sponsor" text="贊助商"/>
+        <text name="eq_host_part_quality" text="場地品質"/>
+        <text name="eq_host_part_shops" text="商店"/>
+        <text name="eq_host_part_ahead" text="提前預訂"/>
+        <text name="eq_host_part_advert" text="廣告"/>
+        <text name="eq_host_part_buzz" text="話題度"/>
+        <text name="eq_host_part_weather" text="天氣"/>
+        <text name="eq_host_buzz_high" text="熱議中"/>
+        <text name="eq_host_buzz_low" text="冷清"/>
+        <text name="eq_host_popularityAhead" text="%d (提前預訂 +%d)"/>
+        <text name="eq_host_advert_none" text="不做廣告"/>
+        <text name="eq_host_advert_option" text="%s，%s (+%d)"/>
+        <text name="eq_host_advert_local" text="本地"/>
+        <text name="eq_host_advert_national" text="全國"/>
+        <text name="eq_host_setupWithAdvert" text="%s + 廣告 %s"/>
+        <text name="eq_host_label_advert" text="廣告"/>
+        <text name="eq_host_label_sell" text="紀念品和茶點"/>
+        <text name="eq_host_sell_yes" text="有貨就賣 (+%d%%)"/>
+        <text name="eq_host_sell_no" text="不賣"/>
+        <text name="eq_host_book_advert" text="已支付廣告費：%s。"/>
+        <text name="eq_host_twister" text="龍捲風席捲了%s！觀眾紛紛躲避。"/>
+        <text name="eq_host_done_goods" text="紀念品和茶點售出：%s。"/>
+        <text name="eq_host_star" text="觀眾非常期待看到%s出場。"/>
+        <text name="eq_host_report_twister" text="比賽期間來了龍捲風，觀眾四散。"/>
+        <text name="eq_host_report_weather" text="壞天氣：%d小時的壞天氣讓觀眾卻步（人氣 %d）。"/>
+        <text name="eq_host_report_goods" text="紀念品和茶點：售出 %d 公升，收入 %s。"/>
+        <text name="eq_host_report_advert" text="廣告：%s。"/>
+        <text name="eq_host_report_weatherSoFar" text="壞天氣至今已讓人氣下降 %d。"/>
         <text name="eq_host_label_yours" text="你的比賽"/>
         <text name="eq_host_label_month" text="預訂月份"/>
         <text name="eq_host_label_next" text="下一個可用月份"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="%s的比賽輪次：騎到起跑線"/>
         <text name="eq_host_note_ridden" text="練習：%s的這個專案已騎過"/>
         <text name="eq_host_note_small" text="練習：路線對%s來說太小"/>
+        <text name="eq_host_ann_test" text="比賽測驗：這次計入成績！"/>
+        <text name="eq_host_ann_smallArena" text="這個場地對你的賽事來說太小：只是練習"/>
+        <text name="eq_host_note_testCounts" text="%s的比賽測驗：騎到A"/>
+        <text name="eq_host_note_testSmall" text="練習：場地對%s來說太小"/>
+        <text name="eq_host_ann_testShort" text="這套測驗對你的賽事來說太短：只是練習"/>
+        <text name="eq_host_note_testShort" text="練習：測驗對%s來說太短"/>
+        <text name="eq_host_ann_notEntered" text="未報名：只是練習"/>
+        <text name="eq_host_note_notEntered" text="練習：這匹馬未報名參加%s"/>
         <text name="eq_host_label_now" text="本月"/>
         <text name="eq_host_next_oneAtATime" text="一次只能舉辦一場賽事"/>
         <text name="eq_host_next_interval" text="賽事之間間隔%d個月，見設定"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="到場：%d/%d匹來訪馬到場（人氣%d）。"/>
         <text name="eq_host_report_feedSoFar" text="來訪馬至今已吃掉你%d公升飼料（每天%d公升）。"/>
         <text name="eq_host_report_feed" text="來訪馬吃掉了你%d公升飼料。"/>
-        <text name="eq_host_report_money" text="收入%s（報名費%s，門票%s），舉辦費%s：利潤%s。"/>
+        <text name="eq_host_report_takings" text="收入%s（報名費%s，門票%s），舉辦費%s。"/>
+        <text name="eq_host_report_total" text="最終人氣 %d。利潤 %s。"/>
         <text name="eq_host_report_mine" text="你的馬%s：%s。"/>
+        <text name="eq_host_report_entry" text="%s %s（%s）"/>
+        <text name="eq_host_report_overall" text="總成績：%s。"/>
+        <text name="eq_host_report_phaseTop" text="%s：%s。"/>
+        <text name="eq_host_report_phasePlace" text="%s %s（%s）"/>
+        <text name="eq_host_report_minePhased" text="你的馬 %s：%s，罰分 %s（%s）。"/>
         <text name="eq_host_results_row" text="你的賽事"/>
         <text name="eq_host_results_running" text="進行中"/>
         <text name="eq_host_results_winner" text="冠軍：%s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="原地"/>
         <text name="eq_dt_noOptions" text="這裡沒有合適的：撤銷或儲存"/>
         <text name="eq_dt_saved" text="盛裝舞步路線已儲存：%d個動作"/>
+        <text name="eq_dt_savedShort" text="測驗已儲存，但對%s來說不夠長：需要%d步，現在只有%d步，所以在這裡只是練習"/>
+        <text name="eq_dt_locked" text="%s期間不能刪除這套測驗：請在賽事月份之前設好測驗"/>
         <text name="eq_dt_deleted" text="盛裝舞步路線已刪除：此場地重新使用隨機路線"/>
         <text name="eq_dt_cancelled" text="盛裝舞步路線未儲存"/>
         <text name="eq_fig_halt" text="在%s立定"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="顯示側向運動"/>
         <text name="eq_dt_lateral" text="側向"/>
         <text name="eq_shop_signboard_function" text="增加你舉辦賽事的贊助收入。"/>
+        <text name="eq_ui_tab_sponsors" text="贊助商"/>
+        <text name="eq_money_sponsorship" text="贊助"/>
+        <text name="rl_messageTitle_eqSponsor" text="贊助商"/>
+        <text name="eq_host_report_sponsor" text="贊助商：%s，支付 %s。"/>
+        <text name="eq_sponsor_eventName" text="%s %s經典賽"/>
+        <text name="eq_sponsor_col_sponsor" text="贊助商"/>
+        <text name="eq_sponsor_col_contract" text="合約"/>
+        <text name="eq_sponsor_col_fee" text="付給你"/>
+        <text name="eq_sponsor_size_big" text="大型"/>
+        <text name="eq_sponsor_size_moderate" text="中型"/>
+        <text name="eq_sponsor_size_small" text="小型"/>
+        <text name="eq_sponsor_word_relaxed" text="寬鬆"/>
+        <text name="eq_sponsor_word_fair" text="公平"/>
+        <text name="eq_sponsor_word_demanding" text="嚴格"/>
+        <text name="eq_sponsor_word_hardBargain" text="難纏的談判者"/>
+        <text name="eq_sponsor_year1" text="%d年"/>
+        <text name="eq_sponsor_years" text="%d年"/>
+        <text name="eq_sponsor_backs_all" text="所有賽事"/>
+        <text name="eq_sponsor_backs_from" text="%s及以上"/>
+        <text name="eq_sponsor_backs_lower" text="%s（%s，%s級別）"/>
+        <text name="eq_sponsor_targetTop3" text="，並進入前三名"/>
+        <text name="eq_sponsor_label_fee" text="付給你"/>
+        <text name="eq_sponsor_label_popularity" text="人氣"/>
+        <text name="eq_sponsor_label_target" text="年度目標"/>
+        <text name="eq_sponsor_label_machines" text="其機械"/>
+        <text name="eq_sponsor_label_discounts" text="折扣"/>
+        <text name="eq_sponsor_label_ends" text="結束"/>
+        <text name="eq_sponsor_label_thisYear" text="今年"/>
+        <text name="eq_sponsor_label_missed" text="未達成目標"/>
+        <text name="eq_sponsor_label_paid" text="已支付"/>
+        <text name="eq_sponsor_label_cancel" text="解約費用"/>
+        <text name="eq_sponsor_label_years" text="合約"/>
+        <text name="eq_sponsor_yearMet" text="目標已達成"/>
+        <text name="eq_sponsor_yearOpen" text="目標截止%s"/>
+        <text name="eq_sponsor_missedLine" text="連續%d次，金額為%s"/>
+        <text name="eq_sponsor_summaryOpen" text="報價有效至%s。一次只能有一個贊助商：擁有其設備，不持有價格接近的競爭品牌機械，並有足夠的品牌曝光。"/>
+        <text name="eq_sponsor_summaryClosed" text="今年的報價已結束。新的贊助商將在明年年初到來。"/>
+        <text name="eq_sponsor_noConfig" text="無法加載贊助商。"/>
+        <text name="eq_sponsor_noOffers" text="目前沒有贊助商報價。每年年初會有新的報價。"/>
+        <text name="eq_sponsor_sign_gone" text="該報價已不存在。"/>
+        <text name="eq_sponsor_sign_notReady" text="你尚未滿足該贊助商的條件。"/>
+        <text name="eq_sponsor_signed" text="%s現在是你的贊助商，為期%d年。"/>
+        <text name="eq_sponsor_cancel_none" text="你沒有贊助商。"/>
+        <text name="eq_sponsor_cancelled" text="你與%s的合約已解除。解約花費了%s。"/>
+        <text name="eq_sponsor_paid" text="%s支付了%s（%s）。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%s沒有為%s支付任何費用：你的品牌曝光太低。"/>
+        <text name="eq_sponsor_unpaid_machines" text="%s未支付任何費用（%s）：你擁有的其機械不够。"/>
+        <text name="eq_sponsor_targetMet" text="%s：今年的目標已達成。"/>
+        <text name="eq_sponsor_leaves" text="%s因未達成目標而離開。"/>
+        <text name="eq_sponsor_missed" text="%s：今年的目標未達成。明年的金額降至%d%%。"/>
+        <text name="eq_sponsor_finished" text="你與%s的合約已結束。共支付%s。"/>
+        <text name="eq_sponsor_newOffers" text="新的一年：%d個贊助商想支持你的賽事。請查看賽事 &gt; 贊助商。"/>
+        <text name="eq_sponsor_button_sign" text="簽約"/>
+        <text name="eq_sponsor_button_cancel" text="解除合約"/>
+        <text name="eq_sponsor_sign_confirm" text="與%s簽約%d年？提前解約需支付費用。"/>
+        <text name="eq_sponsor_cancel_confirm" text="解除與%s的合約？費用為%s。"/>
+        <text name="eq_sponsor_col_eligibility" text="資格"/>
+        <text name="eq_sponsor_eligible_yes" text="符合條件"/>
+        <text name="eq_sponsor_eligible_no" text="不符合條件"/>
+        <text name="eq_sponsor_eligible_taken" text="已有獨家"/>
+        <text name="eq_sponsor_eligible_yours" text="你的贊助商"/>
+        <text name="eq_sponsor_eligible_exclusive" text="僅限獨家"/>
+        <text name="eq_sponsor_eligible_full" text="贊助商已滿"/>
+        <text name="eq_sponsor_eligible_overlap" text="專長相同"/>
+        <text name="eq_sponsor_eligible_rivals" text="擁有競品"/>
+        <text name="eq_sponsor_eligible_equipment" text="設備不足"/>
+        <text name="eq_sponsor_eligible_branding" text="品牌展示不足"/>
+        <text name="eq_sponsor_exclusive_yes" text="獨家"/>
+        <text name="eq_sponsor_exclusive_no" text="非獨家"/>
+        <text name="eq_sponsor_overlapLine" text="與%s衝突：%s"/>
+        <text name="eq_sponsor_label_speciality" text="專長"/>
+        <text name="eq_sponsor_feePerEvent" text="每場賽事%s"/>
+        <text name="eq_sponsor_targetPopularity" text="人氣%d"/>
+        <text name="eq_sponsor_targetRating" text="%s或更高級別的賽事"/>
+        <text name="eq_sponsor_haveOf" text="你擁有%s／需要%d"/>
+        <text name="eq_sponsor_mustOwn" text="申請前你必須擁有其%d台設備。"/>
+        <text name="eq_sponsor_mustKeep" text="你必須保留其%d台設備才能獲得付款。"/>
+        <text name="eq_sponsor_attachHalf" text="農具和拖車按半台計算。"/>
+        <text name="eq_sponsor_noRivals" text="你不能擁有價格在其產品%s以內的機械。"/>
+        <text name="eq_sponsor_sellFirst" text="申請前請出售或歸還以下機械："/>
+        <text name="eq_sponsor_sellMore" text="……還有%d台"/>
+        <text name="eq_sponsor_button_shop" text="在商店中查看"/>
+        <text name="eq_sponsor_label_branding" text="品牌曝光"/>
+        <text name="eq_sponsor_brandingLine" text="%s（要求：%s）"/>
+        <text name="eq_sponsor_branding_none" text="無"/>
+        <text name="eq_sponsor_branding_low" text="低"/>
+        <text name="eq_sponsor_branding_medium" text="中"/>
+        <text name="eq_sponsor_branding_high" text="高"/>
+        <text name="eq_sponsor_label_likely" text="預計收入"/>
+        <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
+        <text name="eq_shop_branding" text="你的品牌曝光：目前%s，加上此項為%s。曝光越多，贊助商付得越多。"/>
+        <text name="eq_shop_brandingOption" text="帶贊助商廣告牌時你的品牌曝光：目前%s，加上此項為%s。"/>
+        <text name="eq_config_sponsorBoards" text="贊助商廣告牌"/>
+        <text name="eq_shop_sponsorBoards_function" text="贊助商廣告牌（可選，需額外費用）：翼板上的廣告牌顯示贊助商標誌，橫桿變為贊助商的顏色。"/>
+        <text name="eq_sponsor_discount_repaint" text="噴漆 %s"/>
+        <text name="eq_sponsor_discount_repair" text="維修 %s"/>
+        <text name="eq_sponsor_discount_buy" text="購買 %s"/>
+        <text name="eq_sponsor_loanLine" text="在你的賽事月份借給你一台機器"/>
+        <text name="eq_loan_popupTitle" text="來自贊助商的機器"/>
+        <text name="eq_loan_popup" text="%s 送來了一台全新的 %s，供你在賽事期間試用。它正在經銷商處等你。在月底被收回之前，你可以免費隨意使用。"/>
+        <text name="eq_loan_delivered" text="%s 在你的賽事月份借給你 %s。它在經銷商處。"/>
+        <text name="eq_loan_collected" text="%s 已收回借給你的 %s。"/>
+        <text name="eq_loan_noRoom" text="%s 無法送來 %s：經銷商處沒有空位。明天會再試。"/>
+        <text name="eq_loan_enterTitle" text="來自 %s 的禮物"/>
+        <text name="eq_loan_enter" text="這台設備由你的贊助商提供，供你在本月的賽事期間使用。盡情享受吧！"/>
+        <text name="eq_sponsor_discount_from" text="從%s開始"/>
+        <text name="eq_sponsor_discount_after" text="簽約 %d 個月後開始"/>
     </texts>
 </l10n>

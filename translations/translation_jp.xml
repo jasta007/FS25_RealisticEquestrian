@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="丸太積み"/>
         <text name="eq_shop_showJumpUpright" text="障害: 垂直"/>
         <text name="eq_shop_showJumpOxer" text="障害: オクサー"/>
+        <text name="eq_shop_showJumpWall" text="障害: スポンサーウォール"/>
+        <text name="eq_shop_showJumpWall_function" text="スポンサーのロゴ入りの見せ場の壁。馬が当たると上のブロックが落ち、走行後に元に戻ります。"/>
         <text name="eq_shop_showJumpCrossrail" text="障害: クロスバー"/>
         <text name="eq_shop_showJumpAscendingOxer" text="障害: 上昇オクサー"/>
         <text name="eq_shop_showJumpTripleBar" text="障害: トリプルバー"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="ロールトップ（半円）"/>
         <text name="eq_shop_xcTable" text="テーブル"/>
         <text name="eq_shop_xcBigLog" text="大丸太"/>
+        <text name="eq_shop_xcGateArch" text="スタート/ゴールアーチ"/>
+        <text name="eq_shop_xcGateSimple" text="通過ゲート"/>
+        <text name="eq_shop_xcGate_function" text="跳ぶ障害ではなく通り抜けるゲート：どの馬でも楽に通れる幅と高さで、スポンサーのロゴ入り。"/>
+        <text name="eq_shop_xcRope" text="ロープマーカー"/>
+        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみか、小さなスポンサー看板付きを選べます。看板のブランド効果はごくわずかです。"/>
+        <text name="eq_shop_plinthDrive" text="通り抜け展示台"/>
+        <text name="eq_shop_plinthRamp" text="展示用スロープ"/>
+        <text name="eq_shop_plinthRampLarge" text="大型展示用スロープ"/>
+        <text name="eq_shop_plinthProductRamp" text="プロダクトジャンプ用スロープ"/>
+        <text name="eq_shop_plinth_function" text="スポンサーのブランドの機械を載せると、ブランド効果が上がります。"/>
+        <text name="eq_shop_productJump_function" text="2台を約5m離して向かい合わせに置きます。間に置いた機械もカウントされ、クロスカントリー障害としても跳べます。"/>
+        <text name="eq_shop_plinthTurntable" text="ターンテーブル"/>
+        <text name="eq_shop_turntable_function" text="ディスクはゆっくり回ります。機械を載せたままにすると、連結した作業機ごと一緒に回ります。スポンサーの機械はここでより多くカウントされます。"/>
+        <text name="eq_plinth_inPlace" text="スポンサー機材の配置完了！"/>
+        <text name="eq_plinth_wrongBrand" text="スポンサーの機材ではありません！ライバルの機械を展示するとスポンサー収入が減ります！"/>
+        <text name="eq_plinth_noSponsor" text="スポンサー未契約：ここに展示した機材はブランド効果にカウントされます。"/>
+        <text name="eq_plinth_penalty" text="スポンサー展示台に他社の機械が %d 台：スポンサー料から %s 差し引かれました。"/>
+        <text name="eq_shop_lizardPlinth" text="Lizard展示台"/>
+        <text name="eq_shop_lizardPlinth_function" text="Lizardがスポンサーとなるイベントのための特別な展示台。正面のトリガーに資材を納品して建設します。丸太デッキに置いたLizardの機械は追加でカウントされます。イベント後に崩れます。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
+        <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
+        <text name="eq_lizard_accept" text="受ける"/>
+        <text name="eq_lizard_decline" text="断る"/>
+        <text name="eq_lizard_offerNote" text="%sがあなたの%sをスポンサーしたいそうです。"/>
+        <text name="eq_lizard_accepted" text="%sとの契約成立！ショップ（建設可能）でLizard展示台を購入し、%s・丸太・板材で建設しましょう。"/>
+        <text name="eq_lizard_stepAside" text="%sは身を引きました：今は%sがあなたのイベントのスポンサーです。"/>
+        <text name="eq_lizard_paid" text="%sがイベントのスポンサー料として%sを支払いました。"/>
+        <text name="eq_lizard_unpaid_plinth" text="%sの支払いはありません：Lizard展示台が完成していませんでした。気にしないでとのことです。"/>
+        <text name="eq_lizard_unpaid_branding" text="%sの支払いはありません：ブランディングが足りませんでした。気にしないでとのことです。"/>
+        <text name="eq_lizard_unpaid_rating" text="%sはこのイベントには支払いません。"/>
         <text name="eq_config_corner" text="コーナー"/>
         <text name="eq_config_cornerRight" text="先端が右"/>
         <text name="eq_config_cornerLeft" text="先端が左"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="パッサージュ %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="斜線上のパッサージュ %s-%s"/>
         <text name="eq_dressage_passage" text="パッサージュ: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="パッサージュ %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="ピアッフェ"/>
+        <text name="eq_now_pirouette" text="ピルエット"/>
+        <text name="eq_now_collected" text="収縮"/>
+        <text name="eq_now_collectedCanter" text="収縮駈歩"/>
+        <text name="eq_now_passage" text="パッサージュ"/>
+        <text name="eq_now_legYield" text="斜横歩"/>
+        <text name="eq_now_halfPass" text="ハーフパス"/>
+        <text name="eq_now_shoulderIn" text="ショルダーイン"/>
+        <text name="eq_now_renvers" text="レンフェルス（腰を外へ）"/>
+        <text name="eq_now_travers" text="トラヴェルス（腰を内へ）"/>
+        <text name="eq_now_legYieldRail" text="壁沿いの斜横歩"/>
         <text name="eq_fig_legYield" text="%sから斜横歩で戻る"/>
         <text name="eq_fig_halfPass" text="%sからハーフパスで戻る"/>
         <text name="eq_fig_shoulderIn" text="ショルダーイン %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="失格：経路違反（障害%dを順番外に飛越）"/>
         <text name="eq_sj_out_refusals" text="失格：2回目の拒止"/>
         <text name="eq_sj_out_timeLimit" text="失格：制限時間超過"/>
+        <text name="eq_sj_getOn" text="馬に乗って！ %d"/>
+        <text name="eq_sj_out_dismounted" text="失格：カウントされる走行中に騎手が馬に乗り直さなかった"/>
         <text name="eq_sj_clear" text="%sでクリアラウンド！"/>
         <text name="eq_sj_faults" text="減点%s、タイム%s"/>
         <text name="eq_sj_clearPop" text="クリアラウンド！"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="最寄りの地点から記録中"/>
         <text name="eq_course_finished" text="編集完了：配置したRealistic Equestrianの障害物に当たり判定が戻りました"/>
         <text name="eq_course_deleted" text="%sを削除しました"/>
+        <text name="eq_course_locked" text="%sは%sの期間中は削除できません：大会の月より前にコースを決めてください"/>
         <text name="eq_course_deleteAsk" text="%s（障害%d個、%.0f m）を削除しますか？"/>
         <text name="eq_course_deleteTitle" text="コースを削除"/>
         <text name="eq_course_deleteAction" text="%sを削除"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="すべての種目でクリア。"/>
         <text name="eq_story_eventing_struggled" text="3種目すべてに苦戦しました。"/>
         <text name="eq_story_eventing_eliminated" text="クロスカントリーで落馬し失格になりました。"/>
+        <text name="eq_story_ridden_test" text="課目を走行した。"/>
+        <text name="eq_story_ridden_faults" text="コースで減点があった。"/>
+        <text name="eq_story_eventing_fenceFaults" text="障害で減点を受けた。"/>
+        <text name="eq_story_eventing_clearFences" text="障害は減点なしだったが、馬場馬術が足を引っ張った。"/>
         <text name="eq_ui_tab_upcoming" text="今後の大会"/>
         <text name="eq_ui_tab_results" text="結果"/>
         <text name="eq_ui_col_starts" text="出走"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="評判"/>
         <text name="eq_host_part_star" text="スター馬"/>
         <text name="eq_host_part_winter" text="冬"/>
+        <text name="eq_host_part_sponsor" text="スポンサー"/>
+        <text name="eq_host_part_quality" text="コースの出来"/>
+        <text name="eq_host_part_shops" text="ショップ"/>
+        <text name="eq_host_part_ahead" text="早期予約"/>
+        <text name="eq_host_part_advert" text="広告"/>
+        <text name="eq_host_part_buzz" text="話題性"/>
+        <text name="eq_host_part_weather" text="天候"/>
+        <text name="eq_host_buzz_high" text="大評判"/>
+        <text name="eq_host_buzz_low" text="静か"/>
+        <text name="eq_host_popularityAhead" text="%d (早期予約 +%d)"/>
+        <text name="eq_host_advert_none" text="広告なし"/>
+        <text name="eq_host_advert_option" text="%s、%s (+%d)"/>
+        <text name="eq_host_advert_local" text="地域"/>
+        <text name="eq_host_advert_national" text="全国"/>
+        <text name="eq_host_setupWithAdvert" text="%s + 広告 %s"/>
+        <text name="eq_host_label_advert" text="広告"/>
+        <text name="eq_host_label_sell" text="お土産と軽食"/>
+        <text name="eq_host_sell_yes" text="在庫があれば販売 (+%d%%)"/>
+        <text name="eq_host_sell_no" text="販売しない"/>
+        <text name="eq_host_book_advert" text="広告費を支払いました：%s。"/>
+        <text name="eq_host_twister" text="竜巻が%sを襲いました！観客は避難しました。"/>
+        <text name="eq_host_done_goods" text="お土産と軽食の売上：%s。"/>
+        <text name="eq_host_star" text="%sの出場を観客はとても楽しみにしていました。"/>
+        <text name="eq_host_report_twister" text="開催中に竜巻が来て、観客が散ってしまいました。"/>
+        <text name="eq_host_report_weather" text="悪天候：%d時間分の悪天候で客足が遠のきました（人気 %d）。"/>
+        <text name="eq_host_report_goods" text="お土産と軽食：%d L を %s で販売。"/>
+        <text name="eq_host_report_advert" text="広告：%s。"/>
+        <text name="eq_host_report_weatherSoFar" text="これまでの悪天候で人気が %d 下がりました。"/>
         <text name="eq_host_label_yours" text="あなたの大会"/>
         <text name="eq_host_label_month" text="予約月"/>
         <text name="eq_host_label_next" text="次に空いている月"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="%sの競技ラウンド：スタートラインへ"/>
         <text name="eq_host_note_ridden" text="練習：%sのこの種目は走行済み"/>
         <text name="eq_host_note_small" text="練習：%sにはコースが小さすぎます"/>
+        <text name="eq_host_ann_test" text="競技テスト：これは本番です！"/>
+        <text name="eq_host_ann_smallArena" text="このアリーナはあなたの大会には小さすぎます：練習のみ"/>
+        <text name="eq_host_note_testCounts" text="%sの競技テスト：Aへ"/>
+        <text name="eq_host_note_testSmall" text="練習：%sにはアリーナが小さすぎます"/>
+        <text name="eq_host_ann_testShort" text="この課目はあなたの大会には短すぎます：練習のみ"/>
+        <text name="eq_host_note_testShort" text="練習：%sには課目が短すぎます"/>
+        <text name="eq_host_ann_notEntered" text="未エントリー：練習のみ"/>
+        <text name="eq_host_note_notEntered" text="練習：この馬は%sにエントリーしていません"/>
         <text name="eq_host_label_now" text="今月"/>
         <text name="eq_host_next_oneAtATime" text="大会は一度に一つ"/>
         <text name="eq_host_next_interval" text="大会の間隔は%dか月、設定を参照"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="来場：%d頭が来場（招待枠%d頭、人気%d）"/>
         <text name="eq_host_report_feedSoFar" text="来訪馬はこれまでに飼料を%dL食べました（1日%dL）。"/>
         <text name="eq_host_report_feed" text="来訪馬は飼料を%dL食べました。"/>
-        <text name="eq_host_report_money" text="収入%s（エントリー料%s、入場料%s）、開催費%s：利益%s"/>
+        <text name="eq_host_report_takings" text="収入%s（エントリー料%s、入場料%s）、開催費%s"/>
+        <text name="eq_host_report_total" text="最終的な人気 %d。利益 %s。"/>
         <text name="eq_host_report_mine" text="あなたの馬 %s：%s"/>
+        <text name="eq_host_report_entry" text="%s %s（%s）"/>
+        <text name="eq_host_report_overall" text="総合：%s。"/>
+        <text name="eq_host_report_phaseTop" text="%s：%s。"/>
+        <text name="eq_host_report_phasePlace" text="%s %s（%s）"/>
+        <text name="eq_host_report_minePhased" text="あなたの馬 %s：%s、減点 %s（%s）。"/>
         <text name="eq_host_results_row" text="あなたの大会"/>
         <text name="eq_host_results_running" text="開催中"/>
         <text name="eq_host_results_winner" text="優勝：%s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="その場"/>
         <text name="eq_dt_noOptions" text="ここに合うものがありません：取り消すか保存してください"/>
         <text name="eq_dt_saved" text="馬場馬術の経路を保存しました：%d運動"/>
+        <text name="eq_dt_savedShort" text="課目を保存しましたが、%sには短すぎます：%dステップ必要で、%dステップしかないため、ここでは練習のみです"/>
+        <text name="eq_dt_locked" text="%sの期間中はこの課目を削除できません：大会の月より前に課目を決めてください"/>
         <text name="eq_dt_deleted" text="馬場馬術の経路を削除しました：このアリーナは再びランダムな経路になります"/>
         <text name="eq_dt_cancelled" text="馬場馬術の経路は保存されませんでした"/>
         <text name="eq_fig_halt" text="%sで停止"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="側方運動を表示"/>
         <text name="eq_dt_lateral" text="側方運動"/>
         <text name="eq_shop_signboard_function" text="主催するイベントのスポンサー収入が増えます。"/>
+        <text name="eq_ui_tab_sponsors" text="スポンサー"/>
+        <text name="eq_money_sponsorship" text="スポンサー契約"/>
+        <text name="rl_messageTitle_eqSponsor" text="スポンサー"/>
+        <text name="eq_host_report_sponsor" text="スポンサー：%s、支払い %s"/>
+        <text name="eq_sponsor_eventName" text="%s %sクラシック"/>
+        <text name="eq_sponsor_col_sponsor" text="スポンサー"/>
+        <text name="eq_sponsor_col_contract" text="契約"/>
+        <text name="eq_sponsor_col_fee" text="受取額"/>
+        <text name="eq_sponsor_size_big" text="大"/>
+        <text name="eq_sponsor_size_moderate" text="中"/>
+        <text name="eq_sponsor_size_small" text="小"/>
+        <text name="eq_sponsor_word_relaxed" text="寛大"/>
+        <text name="eq_sponsor_word_fair" text="公正"/>
+        <text name="eq_sponsor_word_demanding" text="厳しい"/>
+        <text name="eq_sponsor_word_hardBargain" text="手強い交渉相手"/>
+        <text name="eq_sponsor_year1" text="%d年"/>
+        <text name="eq_sponsor_years" text="%d年"/>
+        <text name="eq_sponsor_backs_all" text="すべての大会"/>
+        <text name="eq_sponsor_backs_from" text="%s以上"/>
+        <text name="eq_sponsor_backs_lower" text="%s（%sで%s）"/>
+        <text name="eq_sponsor_targetTop3" text="、3位以内の成績で"/>
+        <text name="eq_sponsor_label_fee" text="受取額"/>
+        <text name="eq_sponsor_label_popularity" text="人気度"/>
+        <text name="eq_sponsor_label_target" text="年間目標"/>
+        <text name="eq_sponsor_label_machines" text="相手の機械"/>
+        <text name="eq_sponsor_label_discounts" text="割引"/>
+        <text name="eq_sponsor_label_ends" text="終了"/>
+        <text name="eq_sponsor_label_thisYear" text="今年"/>
+        <text name="eq_sponsor_label_missed" text="未達成の目標"/>
+        <text name="eq_sponsor_label_paid" text="これまでの支払い"/>
+        <text name="eq_sponsor_label_cancel" text="解約費用"/>
+        <text name="eq_sponsor_label_years" text="契約"/>
+        <text name="eq_sponsor_yearMet" text="目標達成"/>
+        <text name="eq_sponsor_yearOpen" text="目標は%sまで"/>
+        <text name="eq_sponsor_missedLine" text="%d回連続、金額は%s"/>
+        <text name="eq_sponsor_summaryOpen" text="オファーは%sまで有効です。スポンサーは一度に1社：その機材を所有し、価格の近い競合の機械を持たず、十分なブランド露出が必要です。"/>
+        <text name="eq_sponsor_summaryClosed" text="今年のオファーは終了しました。新しいスポンサーは来年の初めに来ます。"/>
+        <text name="eq_sponsor_noConfig" text="スポンサーを読み込めませんでした。"/>
+        <text name="eq_sponsor_noOffers" text="現在スポンサーのオファーはありません。毎年初めに新しいオファーが来ます。"/>
+        <text name="eq_sponsor_sign_gone" text="そのオファーはもうありません。"/>
+        <text name="eq_sponsor_sign_notReady" text="このスポンサーの条件をまだ満たしていません。"/>
+        <text name="eq_sponsor_signed" text="%sがあなたのスポンサーになりました（%d年）。"/>
+        <text name="eq_sponsor_cancel_none" text="スポンサーがいません。"/>
+        <text name="eq_sponsor_cancelled" text="%sとの契約を解約しました。解約費用は%sでした。"/>
+        <text name="eq_sponsor_paid" text="%sが%sを支払いました（%s）。"/>
+        <text name="eq_sponsor_unpaid_boards" text="%sは%sに何も支払いませんでした：ブランド露出が不足しています。"/>
+        <text name="eq_sponsor_unpaid_machines" text="%sは何も支払いませんでした（%s）：相手の機械が足りません。"/>
+        <text name="eq_sponsor_targetMet" text="%s：今年の目標を達成しました。"/>
+        <text name="eq_sponsor_leaves" text="%sは目標未達成のため去りました。"/>
+        <text name="eq_sponsor_missed" text="%s：今年の目標は未達成です。来年の金額は%d%%に下がります。"/>
+        <text name="eq_sponsor_finished" text="%sとの契約が終了しました。合計%sを支払いました。"/>
+        <text name="eq_sponsor_newOffers" text="新年：%d社のスポンサーがあなたの大会を支援したがっています。大会のスポンサーをご覧ください。"/>
+        <text name="eq_sponsor_button_sign" text="署名"/>
+        <text name="eq_sponsor_button_cancel" text="契約を解約"/>
+        <text name="eq_sponsor_sign_confirm" text="%sと%d年の契約に署名しますか？途中解約には費用がかかります。"/>
+        <text name="eq_sponsor_cancel_confirm" text="%sとの契約を解約しますか？費用は%sです。"/>
+        <text name="eq_sponsor_col_eligibility" text="資格"/>
+        <text name="eq_sponsor_eligible_yes" text="資格あり"/>
+        <text name="eq_sponsor_eligible_no" text="資格なし"/>
+        <text name="eq_sponsor_eligible_taken" text="独占契約中"/>
+        <text name="eq_sponsor_eligible_yours" text="あなたのスポンサー"/>
+        <text name="eq_sponsor_eligible_exclusive" text="独占契約のみ"/>
+        <text name="eq_sponsor_eligible_full" text="スポンサー枠満杯"/>
+        <text name="eq_sponsor_eligible_overlap" text="同じ専門分野"/>
+        <text name="eq_sponsor_eligible_rivals" text="競合機材あり"/>
+        <text name="eq_sponsor_eligible_equipment" text="機材不足"/>
+        <text name="eq_sponsor_eligible_branding" text="ブランディング不足"/>
+        <text name="eq_sponsor_exclusive_yes" text="独占契約"/>
+        <text name="eq_sponsor_exclusive_no" text="非独占契約"/>
+        <text name="eq_sponsor_overlapLine" text="%sと競合: %s"/>
+        <text name="eq_sponsor_label_speciality" text="得意分野"/>
+        <text name="eq_sponsor_feePerEvent" text="大会ごと%s"/>
+        <text name="eq_sponsor_targetPopularity" text="人気度%d"/>
+        <text name="eq_sponsor_targetRating" text="%s以上の大会"/>
+        <text name="eq_sponsor_haveOf" text="所有%s／必要%d"/>
+        <text name="eq_sponsor_mustOwn" text="申し込む前に相手の機材を%d台所有する必要があります。"/>
+        <text name="eq_sponsor_mustKeep" text="支払いを受けるには相手の機材を%d台保持する必要があります。"/>
+        <text name="eq_sponsor_attachHalf" text="作業機とトレーラーは0.5台として数えます。"/>
+        <text name="eq_sponsor_noRivals" text="相手の製品の価格の%s以内の機械は所有できません。"/>
+        <text name="eq_sponsor_sellFirst" text="申し込む前に次を売却または返却してください："/>
+        <text name="eq_sponsor_sellMore" text="…ほか%d台"/>
+        <text name="eq_sponsor_button_shop" text="ショップで表示"/>
+        <text name="eq_sponsor_label_branding" text="ブランド露出"/>
+        <text name="eq_sponsor_brandingLine" text="%s（必要：%s）"/>
+        <text name="eq_sponsor_branding_none" text="なし"/>
+        <text name="eq_sponsor_branding_low" text="低"/>
+        <text name="eq_sponsor_branding_medium" text="中"/>
+        <text name="eq_sponsor_branding_high" text="高"/>
+        <text name="eq_sponsor_label_likely" text="見込み支払い"/>
+        <text name="eq_sponsor_likelyLine" text="%s（%s）"/>
+        <text name="eq_shop_branding" text="ブランド露出：現在%s、これを加えると%s。露出が多いほどスポンサーの支払いが増えます。"/>
+        <text name="eq_shop_brandingOption" text="スポンサーボード付きのブランド露出：現在%s、これを加えると%s。"/>
+        <text name="eq_config_sponsorBoards" text="スポンサーボード"/>
+        <text name="eq_shop_sponsorBoards_function" text="スポンサーボード（オプション、追加料金）：ウイングの看板にスポンサーのロゴが表示され、バーがスポンサーの色になります。"/>
+        <text name="eq_sponsor_discount_repaint" text="塗装 %s"/>
+        <text name="eq_sponsor_discount_repair" text="修理 %s"/>
+        <text name="eq_sponsor_discount_buy" text="購入 %s"/>
+        <text name="eq_sponsor_loanLine" text="イベント月に機械を貸してくれます"/>
+        <text name="eq_loan_popupTitle" text="スポンサーからの機械"/>
+        <text name="eq_loan_popup" text="%sが、イベント期間中に試せる新しい%sを届けてくれました。ディーラーで待っています。月末に回収されるまで、何にでも無料で使えます。"/>
+        <text name="eq_loan_delivered" text="%sがイベント月のために%sを貸してくれました。ディーラーにあります。"/>
+        <text name="eq_loan_collected" text="%sが貸していた%sを回収しました。"/>
+        <text name="eq_loan_noRoom" text="%sは%sを届けられませんでした：ディーラーに空きがありません。明日また試みます。"/>
+        <text name="eq_loan_enterTitle" text="%sからの贈り物"/>
+        <text name="eq_loan_enter" text="この機材は、今月のイベント期間中に使えるようスポンサーから提供されたものです。お楽しみください！"/>
+        <text name="eq_sponsor_discount_from" text="%sから"/>
+        <text name="eq_sponsor_discount_after" text="契約から%dか月後に開始"/>
     </texts>
 </l10n>

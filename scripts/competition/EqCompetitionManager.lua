@@ -309,8 +309,12 @@ end
 --- @param tier string
 --- @param venue string|nil the event's venue; nil (a save from before venues) uses the first one
 --- @param hosted boolean|nil true for an event a farm hosts: "Show Jumping at <farm>"
+--- @param sponsor string|nil the hosted event's sponsor: "<Brand> Show Jumping Classic"
 --- @return string name
-function EqCompetitionManager.eventName(discipline, tier, venue, hosted)
+function EqCompetitionManager.eventName(discipline, tier, venue, hosted, sponsor)
+    if hosted and sponsor ~= nil and sponsor ~= "" then
+        return string.format(g_i18n:getText("eq_sponsor_eventName"), sponsor, g_i18n:getText("eq_host_type_" .. discipline))
+    end
     if hosted then
         return string.format(g_i18n:getText("eq_host_eventName"), g_i18n:getText("eq_host_type_" .. discipline),
             venue or "")
@@ -343,7 +347,8 @@ end
 --- @param event table
 --- @return string title such as "1.20m Jumping (Intermediate)", without the event number players never need
 function EqCompetitionManager.eventTitle(event)
-    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil),
+    return string.format("%s (%s)", EqCompetitionManager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil,
+        event.hosted ~= nil and event.hosted.sponsor or nil),
         EqCompetitionManager.tierTitle(event.tier))
 end
 
@@ -598,6 +603,54 @@ function EqCompetitionManager.podiumNames(results, byKey, discipline, rng)
 end
 
 
+--- A scored-in-penalties event's top three in each phase and overall, named. Rivals on the
+--- podium keep their names; others get theirs from the same draw.
+--- @param results table EqCompetition.run's runners, in place order
+--- @param byKey table your horses by key
+--- @param discipline string
+--- @param podiumNames table from podiumNames
+--- @param rng table the rng podiumNames used, carried on
+--- @return table { totals = list of penalties for the podium, phases = list of { name, top = list of { name, penalties } } }
+function EqCompetitionManager.phaseReport(results, byKey, discipline, podiumNames, rng)
+    local report = { totals = {}, phases = {} }
+    local first = results[1]
+    if first == nil or first.phasePlaces == nil or first.run.phases == nil then return report end
+    local names, used, rivals = {}, {}, EqCompetitionManager.getRivals()
+    for i, name in ipairs(podiumNames) do
+        local runner = results[i]
+        if runner ~= nil then
+            names[runner] = name
+            used[name] = true
+            table.insert(report.totals, runner.run.penalties or 0)
+        end
+    end
+    local function nameOf(runner)
+        if names[runner] == nil then
+            local mine = runner.key ~= nil and byKey[runner.key] or nil
+            names[runner] = mine ~= nil and mine.entry.name or EqRivals.pick(rivals, discipline, runner.rating or 0, used, rng) or "?"
+        end
+        return names[runner]
+    end
+    for i, phase in ipairs(first.run.phases) do
+        local order = {}
+        for _, runner in ipairs(results) do
+            local place = runner.phasePlaces ~= nil and runner.phasePlaces[phase.name] or nil
+            if place ~= nil and place <= #EqCompetition.PRIZE_SHARES then order[place] = runner end
+        end
+        local top = {}
+        for place = 1, #EqCompetition.PRIZE_SHARES do
+            local runner = order[place]
+            if runner ~= nil then
+                local sheet = runner.run.phases[i] ~= nil and runner.run.phases[i].sheet or nil
+                table.insert(top, { name = nameOf(runner), penalties = sheet ~= nil and sheet.penalties or 0 })
+            end
+        end
+        table.insert(report.phases, { name = phase.name, top = top })
+    end
+    return report
+end
+
+
 --- Keep a result on the horse's record, for the Events tab's Results page.
 --- @param record table
 --- @param summary table the event's summary
@@ -702,10 +755,14 @@ function EqCompetitionManager.resolve(event, horses, month)
         results = EqCompetition.run(event, config, finishers, EqRandom.new("result " .. event.id), (event.field or tier.field) - #eliminated)
     end
     summary.field = #results + #eliminated
-    local podiumNames = EqCompetitionManager.podiumNames(results, byKey, event.discipline, EqRandom.new("podium " .. event.id))
+    local podiumRng = EqRandom.new("podium " .. event.id)
+    local podiumNames = EqCompetitionManager.podiumNames(results, byKey, event.discipline, podiumRng)
     local podium = EqStory.podiumLine(podiumNames)
     if event.hosted ~= nil then
         event.hosted.report = { podium = podiumNames, field = summary.field, placings = summary.placings }
+        -- Your own event's report: each phase's top three and the overall totals (James, 2026-11-01).
+        local phased = EqCompetitionManager.phaseReport(results, byKey, event.discipline, podiumNames, podiumRng)
+        event.hosted.report.totals, event.hosted.report.phases = phased.totals, phased.phases
     end
 
     -- Each starter's story, finished once its injuries are known.
@@ -739,9 +796,17 @@ function EqCompetitionManager.resolve(event, horses, month)
             end
 
             local placing = { horseId = runner.key, name = entry.name, farmId = entry.farmId, place = runner.place, prize = runner.prize }
+            -- Each phase's place and score, for your own event's report.
+            if runner.phasePlaces ~= nil and runner.run.phases ~= nil then
+                placing.penalties, placing.phases = runner.run.penalties, {}
+                for _, phase in ipairs(runner.run.phases) do
+                    table.insert(placing.phases, { name = phase.name, place = runner.phasePlaces[phase.name] or 0,
+                        penalties = phase.sheet ~= nil and phase.sheet.penalties or 0 })
+                end
+            end
             table.insert(summary.placings, placing)
 
-            local performance = g_i18n:getText(EqPerformance.storyKey(discipline, runner.run, false, config, runner.place))
+            local performance = g_i18n:getText(EqPerformance.storyKey(discipline, runner.run, false, config, runner.place, runner.phasePlaces))
             local text
             if runner.prize > 0 then
                 text = string.format(g_i18n:getText("eq_result_placed"), entry.name, runner.place, summary.field,
@@ -969,6 +1034,7 @@ end
 function EqCompetitionManager.onDayChanged()
     EqCompetitionManager.dailyCare(indexHorses())
     if EqHostManager ~= nil then EqHostManager.onDayChanged() end
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.onDayChanged", EqSponsorLoans.onDayChanged) end
     if EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY then
         EqCompetitionManager.turnOver(EqCompetition.KIND_ROUND, EqCompetitionManager.endedMonth())
     end
@@ -989,6 +1055,10 @@ function EqCompetitionManager.onPeriodChanged()
     EqCompetitionManager.monthChangedDay = g_currentMission.environment.currentMonotonicDay or 0
     -- Hosted events booked for the new month open now (after the month's draw, so they are extra).
     if EqHostManager ~= nil then EqHostManager.onMonthStarted(EqCompetitionManager.month) end
+    -- Sponsors: contract years close, and the year's first month brings new offers.
+    if EqSponsorManager ~= nil then EqLog.try("EqSponsorManager.onMonthStarted", EqSponsorManager.onMonthStarted, EqCompetitionManager.month) end
+    -- Sponsors' lent machines: last month's go back, the new event month's arrive at the dealer.
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.onMonthStarted", EqSponsorLoans.onMonthStarted, EqCompetitionManager.month) end
 end
 
 

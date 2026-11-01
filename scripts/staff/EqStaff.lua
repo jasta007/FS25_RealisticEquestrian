@@ -53,11 +53,13 @@ EqStaff.MIX_PASSIVE = 0.3
 EqStaff.UNIQUE = { vet = true, broker = true }
 
 -- Grades, most common first: how often each turns up, the main skills' range and the wage factor.
+-- With star set, only one main skill (picked at random) rolls star..high; the others roll
+-- low..star - 1, so even a Legendary is world class at one thing, not everything.
 EqStaff.GRADES = {
     { name = "junior", chance = 0.60, low = 25, high = 45, wage = 1 },
     { name = "experienced", chance = 0.28, low = 40, high = 65, wage = 1.8 },
     { name = "senior", chance = 0.10, low = 60, high = 80, wage = 3 },
-    { name = "legendary", chance = 0.02, low = 80, high = 100, wage = 5 },
+    { name = "legendary", chance = 0.02, low = 80, high = 100, wage = 5, star = 90 },
 }
 
 -- Skills outside a member's job: OFF_SKILL of their grade's middle level, or TALENT_SKILL for a
@@ -252,10 +254,20 @@ function EqStaff.roll(rng, id, hour, job)
     local middle = (grade.low + grade.high) / 2
     local main = mainSet(job)
 
+    local mainList = EqStaff.JOBS[job].main
+    local star = grade.star and mainList[math.min(#mainList, math.floor(rng:next() * #mainList) + 1)]
+
     local skills, talents = {}, 0
     for _, skill in ipairs(EqStaff.SKILLS) do
         local value
-        if main[skill] then
+        if main[skill] and grade.star ~= nil then
+            if skill == star then
+                value = rng:uniform(grade.star, grade.high)
+            else
+                -- Rounded below, so keep it under star - 0.5 to stay below the star band.
+                value = rng:uniform(grade.low, grade.star - 0.51)
+            end
+        elseif main[skill] then
             value = rng:uniform(grade.low, grade.high)
         elseif rng:next() < EqStaff.TALENT_CHANCE then
             value = middle * rng:uniform(EqStaff.TALENT_SKILL[1], EqStaff.TALENT_SKILL[2])

@@ -813,6 +813,12 @@ function EqConsole:consoleHostCheck(typeName, ratingName)
         venue.freePlaces, venue.facilityKinds))
     for _, source in ipairs(venue.feedSources) do print(string.format("  feed: %s %.0f l", source.name, source.litres)) end
     print(string.format("  horse feed %.0f l; a visiting horse eats %.0f l a month", venue.feed, venue.feedPerHorse))
+    local shops = venue.shops or { stock = {} }
+    print(string.format("  %d shop(s) or production(s) making goods visitors buy, %d good(s) in stock", shops.sources or 0, shops.goods or 0))
+    for _, item in ipairs(shops.stock or {}) do
+        print(string.format("  goods: %s %.0f l, best price %.2f/l", item.name, item.litres, EqHostVenue.bestPrice(item.index)))
+    end
+    for _, course in ipairs(venue.courses) do print(string.format("  course %s build quality %.2f", course.name, course.quality or 0)) end
 
     local types = typeName ~= nil and { typeName } or EqHosting.TYPES
     local bookable = {}
@@ -820,7 +826,7 @@ function EqConsole:consoleHostCheck(typeName, ratingName)
         for _, rating in ipairs(config.ratings) do
             if ratingName == nil or ratingName == rating.name then
                 local result = EqHosting.check(config, name, rating.name, venue)
-                local score = EqHosting.popularity(config, name, result, { facilityKinds = venue.facilityKinds })
+                local score = EqHosting.popularity(config, name, result, EqHostView.context(farmId, venue))
                 local takings = EqHosting.takings(config, name, rating, score, result.seatingTotal)
                 local missing = {}
                 for _, check in ipairs(result.checks) do
@@ -845,6 +851,161 @@ function EqConsole:consoleHostWait()
     local note = EqHostManager.bookings[farmId] ~= nil and " Your booked event still stands; cancel it to book a different one." or ""
     if EqHostManager.openEvent(farmId) ~= nil then note = note .. " Your event this month still runs until month end." end
     return (had and "Hosting wait cleared: you can book any month now." or "No hosting wait to clear.") .. note
+end
+
+
+--- eqSponsorColours: each brand's colour for show jumps with sponsor boards, and where it came from.
+function EqConsole:consoleSponsorColours()
+    if g_currentMission == nil then return "No mission loaded" end
+    local lines = EqSponsorBoards.report()
+    for _, line in ipairs(lines) do print(line) end
+    return lines[#lines]
+end
+
+
+--- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
+function EqConsole:consoleSponsors(mode, amount)
+    if g_currentMission == nil then return "No mission loaded" end
+    if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
+    local farmId = g_currentMission:getFarmId()
+    if mode == "age" then
+        -- Testing: treat the farm's contracts as signed n months earlier (the game's time skips
+        -- don't always send a month change, so the mod's month count can lag the calendar).
+        local months = tonumber(amount) or 3
+        for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+            contract.signedMonth = (contract.signedMonth or 0) - months
+        end
+        return string.format("Contracts now count as signed %d month(s) earlier (now month %d)", months, EqCompetitionManager.month or 0)
+    end
+    local lines = {}
+    local shop = EqSponsorManager.readShop()
+    if shop ~= nil then
+        local counts = {}
+        for _, profile in ipairs(shop.ranked) do counts[profile.size] = (counts[profile.size] or 0) + 1 end
+        table.insert(lines, string.format("Shop: %d machines, %d brands (big %d, moderate %d, small %d)", #shop.items, #shop.ranked,
+            counts.big or 0, counts.moderate or 0, counts.small or 0))
+        for i, profile in ipairs(shop.ranked) do
+            if i <= 15 then
+                table.insert(lines, string.format("  %2d. %s (%s): %d categories, %d price bands, %d machines", i,
+                    EqSponsorManager.brandTitle(profile.brand), profile.size, profile.categories, profile.bands, profile.items))
+            end
+        end
+        -- Easy kit (James, 2026-10-31): brands let in with fewer machines, and the shop's category
+        -- names, to check data/sponsors.xml's easyCategories against.
+        local easy, names, seen = {}, {}, {}
+        for _, profile in ipairs(shop.ranked) do
+            if profile.easy then table.insert(easy, EqSponsorManager.brandTitle(profile.brand)) end
+            for category in pairs(profile.byCategory) do
+                if not seen[category] then
+                    seen[category] = true
+                    table.insert(names, (EqSponsorManager.config.easyCategories[string.upper(category)] and "*" or "") .. category)
+                end
+            end
+        end
+        table.sort(names)
+        table.insert(lines, string.format("Brands with easy kit (%d): %s", #easy, table.concat(easy, ", ")))
+        table.insert(lines, "Shop categories (* = easy kit): " .. table.concat(names, " "))
+    end
+    local record = EqSponsorManager.offersFor(farmId)
+    table.insert(lines, string.format("Offers for year %d (made month %d, %s):", record.year or 0, record.madeMonth or 0,
+        EqSponsorManager.offersOpen(farmId) and "open" or "gone"))
+    for i, offer in ipairs(record.list) do
+        local checks = EqSponsorManager.checksFor(farmId, offer)
+        table.insert(lines, string.format("  %d. %s %s%s %s, %d year(s), fee %d, +%d popularity, target %d%s, own %d, window %d%%, branding %d, discounts %d/%d/%d%% (%s)",
+            i, EqSponsorManager.brandTitle(offer.brand), offer.size, offer.exclusive and " exclusive" or "", offer.word, offer.years, offer.fee, offer.popularity, offer.target,
+            offer.top3 and " top 3" or "", offer.machines, math.floor(offer.window * 100 + 0.5), offer.brandingNeed or 0,
+            math.floor(offer.repaint * 100 + 0.5), math.floor(offer.repair * 100 + 0.5), math.floor(offer.purchase * 100 + 0.5),
+            checks.ok and "can sign" or "can't sign"))
+    end
+    local contracts = EqSponsorManager.contractsFor(farmId)
+    for _, contract in ipairs(contracts) do
+        table.insert(lines, string.format("Contract: %s (%s%s) until month %d, year ends month %d, met %s, misses %d, fee x%.2f, paid %d, cancel %d",
+            EqSponsorManager.brandTitle(contract.brand), contract.size, contract.exclusive and ", exclusive" or "", contract.endMonth,
+            contract.yearEnd, tostring(contract.met), contract.misses or 0, contract.feeFactor or 1, contract.paid or 0,
+            EqSponsorManager.cancelCost(farmId, contract.brand)))
+        local from = (contract.signedMonth or 0) + (EqSponsorManager.config.discountMonths or 0)
+        table.insert(lines, string.format("  discounts repaint/repair/buy %d/%d/%d%%: %s (from month %d, now month %d)",
+            math.floor((contract.repaint or 0) * 100 + 0.5), math.floor((contract.repair or 0) * 100 + 0.5),
+            math.floor((contract.purchase or 0) * 100 + 0.5),
+            (EqCompetitionManager.month or 0) >= from and "on" or "not yet", from, EqCompetitionManager.month or 0))
+    end
+    if #contracts == 0 then table.insert(lines, "No sponsor contract") end
+    table.insert(lines, string.format("Sponsor boards: %g", EqSponsorManager.boards(farmId)))
+    return table.concat(lines, "\n")
+end
+
+
+--- eqSponsorNew: a fresh set of offers now, as if the year had just started.
+function EqConsole:consoleSponsorNew()
+    if g_currentMission == nil then return "No mission loaded" end
+    if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
+    local farmId = g_currentMission:getFarmId()
+    EqSponsorManager.seed = nil
+    local record = EqSponsorManager.makeOffers(farmId)
+    return string.format("%d new sponsor offers, open for %d months. See Events, Sponsors or eqSponsors.", #record.list,
+        EqSponsorManager.config.offerMonths)
+end
+
+
+--- eqSponsorLoan [brand]: a sponsor lends you one of its machines now, as on the first day of
+--- an event month (your lead sponsor when no brand is given). eqSponsorLoan end takes yours back.
+function EqConsole:consoleSponsorLoan(brand)
+    if g_currentMission == nil then return "No mission loaded" end
+    if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
+    local farmId = g_currentMission:getFarmId()
+    if brand ~= nil and string.lower(brand) == "end" then
+        local list = EqSponsorLoans.loansFor(farmId)
+        EqSponsorLoans.collectFor(farmId)
+        return string.format("%d loan(s) taken back", #list)
+    end
+    if brand == nil then
+        local lead = EqSponsorManager.lead(farmId)
+        if lead == nil then return "Usage: eqSponsorLoan <brand name, such as LIZARD> | end (you have no sponsor)" end
+        brand = lead.brand
+    end
+    local found = EqSponsorManager.brand(string.upper(brand))
+    if found ~= nil and found.name ~= nil then brand = found.name end
+    local loan = EqSponsorLoans.lend(farmId, brand, EqCompetitionManager.month or 0)
+    if loan == nil then return string.format("%s has no machine in the shop to lend", brand) end
+    return string.format("%s is bringing a %s to the dealer (it goes back when the month ends, or with eqSponsorLoan end)",
+        EqSponsorManager.brandTitle(brand), loan.name or "?")
+end
+
+
+--- eqLizard [on|off]: Lizard's offer chance 100% this session (James, 2026-11-01: test the whole
+--- flow, nothing signed for you). eqLizard now [stone|woodchips|straw] [accept] forces it at once.
+function EqConsole:consoleLizard(mode, material, accept)
+    if g_currentMission == nil then return "No mission loaded" end
+    mode = mode ~= nil and string.lower(mode) or nil
+    if mode == nil or mode == "on" or mode == "off" then
+        local on = nil -- toggle
+        if mode == "on" then on = true elseif mode == "off" then on = false end
+        return EqLizard.setTestAlways(on)
+    end
+    if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [stone|woodchips|straw] [accept]" end
+    if material == "accept" then material, accept = accept, "accept" end
+    return EqLizard.force(g_currentMission:getFarmId(), material, accept == "accept")
+end
+
+
+--- eqHostWeather <type> [hours]: testing, counts hours of a weather at your running event.
+--- @param typeName string|nil a WeatherType name: RAIN, SNOW, HAIL, TWISTER, SUN
+--- @param hours string|nil
+function EqConsole:consoleHostWeather(typeName, hours)
+    if g_currentMission == nil then return "No mission loaded" end
+    local event = EqHostManager.openEvent(g_currentMission:getFarmId())
+    if event == nil then return "No event of yours is running this month" end
+    if typeName == nil then return "Usage: eqHostWeather <RAIN|THUNDER|SNOW|HAIL|TWISTER|SUN> [hours]" end
+    local config = EqHostVenue.config
+    local hosted = event.hosted
+    hosted.weather = hosted.weather or {}
+    for _ = 1, math.max(1, tonumber(hours) or 1) do
+        EqHosting.countWeather(config, hosted.weather, string.upper(typeName), hosted.outdoor or 1)
+    end
+    local lost, share = EqHosting.weatherLoss(config, hosted.weather)
+    return string.format("%s: %d hour(s) counted, %.1f weighted bad, outdoors %.2f: popularity -%d, gate -%d%%",
+        EqCompetitionManager.eventTitle(event), hosted.weather.hours or 0, hosted.weather.bad or 0, hosted.outdoor or 1, lost,
+        math.floor(math.min(1 - config.weather.gateMin, config.weather.gate * share) * 100 + 0.5))
 end
 
 
@@ -877,6 +1038,12 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
+    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts as signed n months earlier (testing)", "consoleSponsors", EqConsole)
+    addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
+    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
+    addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
+    addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
+    addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
@@ -891,7 +1058,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

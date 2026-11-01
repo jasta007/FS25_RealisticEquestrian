@@ -58,11 +58,19 @@ source(modDirectory .. "scripts/facilities/EqPlaceAnywhere.lua")
 source(modDirectory .. "scripts/facilities/EqXcHide.lua")
 source(modDirectory .. "scripts/facilities/EqJumpColours.lua")
 source(modDirectory .. "scripts/facilities/EqXcCorners.lua")
+source(modDirectory .. "scripts/facilities/EqPlinths.lua")
+source(modDirectory .. "scripts/facilities/EqTurntable.lua")
 source(modDirectory .. "scripts/facilities/EqSponsors.lua")
+source(modDirectory .. "scripts/facilities/EqSponsorBoards.lua")
 source(modDirectory .. "scripts/attire/EqAttire.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorship.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorManager.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorLoans.lua")
+source(modDirectory .. "scripts/sponsors/EqLizard.lua")
+source(modDirectory .. "scripts/sponsors/EqSponsorDiscounts.lua")
 source(modDirectory .. "scripts/training/EqFeed.lua")
 source(modDirectory .. "scripts/training/EqFeedHooks.lua")
 source(modDirectory .. "scripts/competition/EqEventConfig.lua")
@@ -83,6 +91,7 @@ source(modDirectory .. "scripts/gui/EqListBadge.lua")
 source(modDirectory .. "scripts/gui/EqRoleMenu.lua")
 source(modDirectory .. "scripts/gui/EqEventsView.lua")
 source(modDirectory .. "scripts/gui/EqHostView.lua")
+source(modDirectory .. "scripts/gui/EqSponsorView.lua")
 source(modDirectory .. "scripts/gui/EqEventsFrame.lua")
 source(modDirectory .. "scripts/gui/EqStaffFrame.lua")
 source(modDirectory .. "scripts/gui/EqMenuPaging.lua")
@@ -108,6 +117,7 @@ EqMain.MONEY_STATS = {
     { name = "eqTransport", title = "eq_money_transport" },
     { name = "eqStaffWages", title = "eq_money_staffWages" },
     { name = "eqHosting", title = "eq_money_hosting" },
+    { name = "eqSponsorship", title = "eq_money_sponsorship" },
 }
 for _, stat in ipairs(EqMain.MONEY_STATS) do
     if FinanceStats.statNameToIndex[stat.name] == nil then
@@ -232,6 +242,8 @@ function EqMain.activate()
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             MoneyType.EQ_HOSTING = MoneyType.register("eqHosting", "eq_money_hosting")
             MoneyType.LAST_ID = MoneyType.LAST_ID + 1
+            MoneyType.EQ_SPONSORSHIP = MoneyType.register("eqSponsorship", "eq_money_sponsorship")
+            MoneyType.LAST_ID = MoneyType.LAST_ID + 1
             EqCompetitionManager.loadConfig(modDirectory)
             EqInjury.loadConfig(modDirectory)
         end)
@@ -240,6 +252,9 @@ function EqMain.activate()
         end
         guarded("facilities setup", function() EqFacilityHooks.loadConfig(modDirectory) end)
         guarded("hosting setup", function() EqHostVenue.loadConfig(modDirectory) end)
+        guarded("sponsors setup", function() EqSponsorManager.loadConfig(modDirectory) end)
+        guarded("lizard setup", function() EqLizard.loadConfig(modDirectory) end)
+        guarded("sponsor discounts hooks", function() EqSponsorDiscounts.install(guarded) end)
     end
 
     if EqMain.isActive then
@@ -286,6 +301,12 @@ guarded("cross country pieces hook", function() EqXcHide.install(guarded) end)
 guarded("show jump colours hook", function() EqJumpColours.install(guarded) end)
 guarded("corner flags hook", function() EqXcCorners.install(guarded) end)
 guarded("sponsor boards hook", function() EqSponsors.install(guarded) end)
+guarded("show jump sponsor boards hook", function() EqSponsorBoards.install(guarded) end)
+guarded("turntable hook", function() EqTurntable.install(guarded) end)
+-- Plinth feedback popups and the rival machine penalty (wraps EqSponsorManager.afterEvent).
+guarded("plinth hook", function() EqPlinths.install(guarded) end)
+-- Lizard's one-off sponsorship (wraps EqSponsorManager after the plinths, so no rival penalty on it).
+guarded("lizard hook", function() EqLizard.install(guarded) end)
 guarded("dressage outfit hook", function() EqAttire.install(guarded, modDirectory) end)
 
 
@@ -335,6 +356,10 @@ local function onMissionLoaded(mission)
         g_messageCenter:subscribe(MessageType.PERIOD_CHANGED, function()
             guarded("monthly events", EqCompetitionManager.onPeriodChanged)
         end, EqCompetitionManager)
+        -- The weather at your own events, counted once an hour while one runs.
+        g_messageCenter:subscribe(MessageType.HOUR_CHANGED, function()
+            guarded("hosted event weather", EqHostManager.onHourChanged)
+        end, EqHostManager)
     end)
 
     -- Pastures may have drawn their horses before the saved entries loaded.
@@ -363,6 +388,8 @@ local function onMissionDelete()
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
         EqHostManager.reset()
+        EqSponsorManager.reset()
+        EqLizard.reset()
         EqFeedHooks.unregister()
         EqRegistry.reset()
         EqTrainingHooks.reset()

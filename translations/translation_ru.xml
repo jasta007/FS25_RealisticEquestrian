@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Штабель брёвен"/>
         <text name="eq_shop_showJumpUpright" text="Препятствие: вертикаль"/>
         <text name="eq_shop_showJumpOxer" text="Препятствие: оксер"/>
+        <text name="eq_shop_showJumpWall" text="Препятствие: спонсорская стенка"/>
+        <text name="eq_shop_showJumpWall_function" text="Эффектная стенка с логотипом вашего спонсора. Верхние блоки падают, если лошадь их задевает, и возвращаются после маршрута."/>
         <text name="eq_shop_showJumpCrossrail" text="Препятствие: крестовина"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Препятствие: восходящий оксер"/>
         <text name="eq_shop_showJumpTripleBar" text="Препятствие: тройная жердь"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="Ролл-топ (половина)"/>
         <text name="eq_shop_xcTable" text="Стол"/>
         <text name="eq_shop_xcBigLog" text="Большое бревно"/>
+        <text name="eq_shop_xcGateArch" text="Арка старта/финиша"/>
+        <text name="eq_shop_xcGateSimple" text="Проездные ворота"/>
+        <text name="eq_shop_xcGate_function" text="Ворота для проезда, а не препятствие: достаточно широкие и высокие для любой лошади, с логотипом вашего спонсора."/>
+        <text name="eq_shop_xcRope" text="Разметочная верёвка"/>
+        <text name="eq_shop_xcRope_function" text="Лёгкая верёвка для разметки маршрута, без столкновений. Выберите простую верёвку или с маленькой табличкой спонсора: таблички дают совсем немного брендинга."/>
+        <text name="eq_shop_plinthDrive" text="Проездной подиум"/>
+        <text name="eq_shop_plinthRamp" text="Выставочная рампа"/>
+        <text name="eq_shop_plinthRampLarge" text="Большая выставочная рампа"/>
+        <text name="eq_shop_plinthProductRamp" text="Рампа продуктового прыжка"/>
+        <text name="eq_shop_plinth_function" text="Поставьте на него технику марки вашего спонсора для дополнительного брендинга."/>
+        <text name="eq_shop_productJump_function" text="Поставьте две напротив друг друга примерно в 5 м: техника между ними тоже засчитывается, или прыгайте их как препятствие кросса."/>
+        <text name="eq_shop_plinthTurntable" text="Поворотный подиум"/>
+        <text name="eq_shop_turntable_function" text="Диск медленно вращается: оставьте на нём технику, и она будет вращаться вместе с ним со всем прицепленным. Техника спонсора здесь засчитывается больше."/>
+        <text name="eq_plinth_inPlace" text="Техника спонсора на месте!"/>
+        <text name="eq_plinth_wrongBrand" text="Это не техника вашего спонсора! Выставленные машины конкурентов уменьшат ваш доход от спонсорства!"/>
+        <text name="eq_plinth_noSponsor" text="Спонсор не подписан: его техника, выставленная здесь, засчитывалась бы в ваш брендинг."/>
+        <text name="eq_plinth_penalty" text="%d машин(ы) конкурентов на ваших спонсорских подиумах: из гонорара спонсора вычтено %s."/>
+        <text name="eq_shop_lizardPlinth" text="Постамент Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Особый постамент Lizard для мероприятия, которое она спонсирует. Постройте его, доставляя материалы к триггерам спереди; техника Lizard на настиле из брёвен засчитывается дополнительно. После мероприятия он рушится."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Нужно: 1000 л камней, 10000 л древесины и 1000 л досок."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Нужно: 1000 л щепы, 10000 л древесины и 1000 л досок."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Нужно: 10 000 л соломы, 10000 л древесины и 1000 л досок."/>
+        <text name="eq_lizard_title" text="Спонсорское предложение от %s"/>
+        <text name="eq_lizard_offer" text="%s хочет спонсировать ваше мероприятие %s (%s) и одолжит вам одну из своих машин на месяц мероприятия. Требуется брендинг уровня %s к концу мероприятия и постамент Lizard, построенный на вашей площадке: %s. Если всё будет готово к подведению итогов, она заплатит %s. Если нет, она ничего не заплатит, и штрафа не будет. После мероприятия постамент рушится."/>
+        <text name="eq_lizard_accept" text="Принять"/>
+        <text name="eq_lizard_decline" text="Отказаться"/>
+        <text name="eq_lizard_offerNote" text="%s хочет спонсировать ваше мероприятие %s."/>
+        <text name="eq_lizard_accepted" text="Сделка с %s принята! Купите постамент Lizard в магазине (Постройки) и постройте его из %s, брёвен и досок."/>
+        <text name="eq_lizard_stepAside" text="%s уступает: теперь ваше мероприятие спонсирует %s."/>
+        <text name="eq_lizard_paid" text="%s заплатила %s за спонсорство вашего мероприятия."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s ничего не платит: постамент Lizard не был достроен. Без обид."/>
+        <text name="eq_lizard_unpaid_branding" text="%s ничего не платит: брендинга не хватило. Без обид."/>
+        <text name="eq_lizard_unpaid_rating" text="%s ничего не платит за это мероприятие."/>
         <text name="eq_config_corner" text="Угол"/>
         <text name="eq_config_cornerRight" text="Острие справа"/>
         <text name="eq_config_cornerLeft" text="Острие слева"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="Пассаж %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Пассаж по диагонали %s-%s"/>
         <text name="eq_dressage_passage" text="Пассаж: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Пассаж %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Пиаффе"/>
+        <text name="eq_now_pirouette" text="Пируэт"/>
+        <text name="eq_now_collected" text="Собранность"/>
+        <text name="eq_now_collectedCanter" text="Собранный галоп"/>
+        <text name="eq_now_passage" text="Пассаж"/>
+        <text name="eq_now_legYield" text="Уступка шенкелю"/>
+        <text name="eq_now_halfPass" text="Принимание"/>
+        <text name="eq_now_shoulderIn" text="Плечо внутрь"/>
+        <text name="eq_now_renvers" text="Ренверс (круп наружу)"/>
+        <text name="eq_now_travers" text="Траверс (круп внутрь)"/>
+        <text name="eq_now_legYieldRail" text="Уступка шенкелю вдоль стенки"/>
         <text name="eq_fig_legYield" text="Уступка шенкелю от %s и обратно"/>
         <text name="eq_fig_halfPass" text="Принимание от %s и обратно"/>
         <text name="eq_fig_shoulderIn" text="Плечо внутрь %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Дисквалификация: ошибка маршрута (препятствие %d взято не по порядку)"/>
         <text name="eq_sj_out_refusals" text="Дисквалификация: вторая закидка"/>
         <text name="eq_sj_out_timeLimit" text="Дисквалификация: превышена норма времени"/>
+        <text name="eq_sj_getOn" text="САДИТЕСЬ НА ЛОШАДЬ! %d"/>
+        <text name="eq_sj_out_dismounted" text="Снят: всадник не сел обратно в зачётном заезде"/>
         <text name="eq_sj_clear" text="Чистый проезд за %s!"/>
         <text name="eq_sj_faults" text="Штрафных очков: %s, время %s"/>
         <text name="eq_sj_clearPop" text="Чистый проезд!"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="Запись с ближайшей точки"/>
         <text name="eq_course_finished" text="Редактирование завершено: поставленным препятствиям Realistic Equestrian возвращены столкновения"/>
         <text name="eq_course_deleted" text="«%s» удалён"/>
+        <text name="eq_course_locked" text="Нельзя удалить %s во время %s: подготовьте маршруты до месяца турнира"/>
         <text name="eq_course_deleteAsk" text="Удалить «%s» (препятствий: %d, %.0f м)?"/>
         <text name="eq_course_deleteTitle" text="Удалить маршрут"/>
         <text name="eq_course_deleteAction" text="Удалить «%s»"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Чисто во всех видах."/>
         <text name="eq_story_eventing_struggled" text="Тяжело далась все три вида."/>
         <text name="eq_story_eventing_eliminated" text="Выбыла после падения на кроссе."/>
+        <text name="eq_story_ridden_test" text="Проехал свою езду."/>
+        <text name="eq_story_ridden_faults" text="Были ошибки на маршруте."/>
+        <text name="eq_story_eventing_fenceFaults" text="Набрал штрафные очки на препятствиях."/>
+        <text name="eq_story_eventing_clearFences" text="Чисто на препятствиях, но выездка подвела."/>
         <text name="eq_ui_tab_upcoming" text="Ближайшие соревнования"/>
         <text name="eq_ui_tab_results" text="Результаты"/>
         <text name="eq_ui_col_starts" text="Старты"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="репутация"/>
         <text name="eq_host_part_star" text="звёздная лошадь"/>
         <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_part_sponsor" text="спонсор"/>
+        <text name="eq_host_part_quality" text="качество маршрута"/>
+        <text name="eq_host_part_shops" text="магазины"/>
+        <text name="eq_host_part_ahead" text="заранее"/>
+        <text name="eq_host_part_advert" text="реклама"/>
+        <text name="eq_host_part_buzz" text="ажиотаж"/>
+        <text name="eq_host_part_weather" text="погода"/>
+        <text name="eq_host_buzz_high" text="Все об этом говорят"/>
+        <text name="eq_host_buzz_low" text="Тихо"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d за раннее бронирование)"/>
+        <text name="eq_host_advert_none" text="Без рекламы"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Местная"/>
+        <text name="eq_host_advert_national" text="Национальная"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s реклама"/>
+        <text name="eq_host_label_advert" text="Реклама"/>
+        <text name="eq_host_label_sell" text="Сувениры и закуски"/>
+        <text name="eq_host_sell_yes" text="Продавать, если есть (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Не продавать"/>
+        <text name="eq_host_book_advert" text="Реклама оплачена: %s."/>
+        <text name="eq_host_twister" text="Торнадо пронёсся через %s! Зрители бросились в укрытие."/>
+        <text name="eq_host_done_goods" text="Сувениры и закуски проданы: %s."/>
+        <text name="eq_host_star" text="Публика очень хотела увидеть выступление %s."/>
+        <text name="eq_host_report_twister" text="Во время соревнований прошёл торнадо, и зрители разбежались."/>
+        <text name="eq_host_report_weather" text="Плохая погода: %d ч. отпугнули людей (популярность %d)."/>
+        <text name="eq_host_report_goods" text="Сувениры и закуски: продано %d л за %s."/>
+        <text name="eq_host_report_advert" text="Реклама: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Плохая погода уже стоила %d популярности."/>
         <text name="eq_host_label_yours" text="Ваше соревнование"/>
         <text name="eq_host_label_month" text="Забронировать на"/>
         <text name="eq_host_label_next" text="Ближайший свободный месяц"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="Зачётный заезд на %s: подъезжайте к линии старта"/>
         <text name="eq_host_note_ridden" text="Тренировка: этот этап %s уже пройден"/>
         <text name="eq_host_note_small" text="Тренировка: маршрут слишком мал для %s"/>
+        <text name="eq_host_ann_test" text="Зачётный тест: этот засчитывается!"/>
+        <text name="eq_host_ann_smallArena" text="Этот манеж слишком мал для вашего турнира: просто тренировка"/>
+        <text name="eq_host_note_testCounts" text="Зачётный тест на %s: подъезжайте к A"/>
+        <text name="eq_host_note_testSmall" text="Тренировка: манеж слишком мал для %s"/>
+        <text name="eq_host_ann_testShort" text="Езда слишком короткая для вашего турнира: просто тренировка"/>
+        <text name="eq_host_note_testShort" text="Тренировка: езда слишком короткая для %s"/>
+        <text name="eq_host_ann_notEntered" text="Не заявлена: просто тренировка"/>
+        <text name="eq_host_note_notEntered" text="Тренировка: эта лошадь не заявлена на %s"/>
         <text name="eq_host_label_now" text="Этот месяц"/>
         <text name="eq_host_next_oneAtATime" text="один турнир за раз"/>
         <text name="eq_host_next_interval" text="%d мес. между турнирами, см. Настройки"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="Явка: приехало %d из %d гостевых лошадей (популярность %d)."/>
         <text name="eq_host_report_feedSoFar" text="Гостевые лошади уже съели %d л вашего корма (%d л в день)."/>
         <text name="eq_host_report_feed" text="Гостевые лошади съели %d л вашего корма."/>
-        <text name="eq_host_report_money" text="Доход %s (взносы %s, билеты %s), организационный взнос %s: прибыль %s."/>
+        <text name="eq_host_report_takings" text="Доход %s (взносы %s, билеты %s), организационный взнос %s."/>
+        <text name="eq_host_report_total" text="Итоговая популярность %d. Прибыль %s."/>
         <text name="eq_host_report_mine" text="Ваша лошадь %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Общий зачёт: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Ваша лошадь %s: %s, штрафных очков: %s (%s)."/>
         <text name="eq_host_results_row" text="Ваши турниры"/>
         <text name="eq_host_results_running" text="Идёт сейчас"/>
         <text name="eq_host_results_winner" text="Победитель: %s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="На месте"/>
         <text name="eq_dt_noOptions" text="Здесь ничего не подходит: отмените или сохраните"/>
         <text name="eq_dt_saved" text="Езда по выездке сохранена: элементов %d"/>
+        <text name="eq_dt_savedShort" text="Езда сохранена, но слишком короткая для %s: нужно шагов: %d, в ней %d, поэтому здесь это только тренировка"/>
+        <text name="eq_dt_locked" text="Нельзя удалить эту езду во время %s: подготовьте езду до месяца турнира"/>
         <text name="eq_dt_deleted" text="Езда по выездке удалена: на этом плацу снова случайные езды"/>
         <text name="eq_dt_cancelled" text="Езда по выездке не сохранена"/>
         <text name="eq_fig_halt" text="Остановка у %s"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="Показать боковые движения"/>
         <text name="eq_dt_lateral" text="Боковое"/>
         <text name="eq_shop_signboard_function" text="Увеличивает спонсорские доходы ваших соревнований."/>
+        <text name="eq_ui_tab_sponsors" text="Спонсоры"/>
+        <text name="eq_money_sponsorship" text="Спонсорство"/>
+        <text name="rl_messageTitle_eqSponsor" text="Спонсоры"/>
+        <text name="eq_host_report_sponsor" text="Спонсор: %s, выплачено %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Спонсор"/>
+        <text name="eq_sponsor_col_contract" text="Контракт"/>
+        <text name="eq_sponsor_col_fee" text="Платит вам"/>
+        <text name="eq_sponsor_size_big" text="Крупный"/>
+        <text name="eq_sponsor_size_moderate" text="Средний"/>
+        <text name="eq_sponsor_size_small" text="Малый"/>
+        <text name="eq_sponsor_word_relaxed" text="Мягкие"/>
+        <text name="eq_sponsor_word_fair" text="Честные"/>
+        <text name="eq_sponsor_word_demanding" text="Строгие"/>
+        <text name="eq_sponsor_word_hardBargain" text="Жёсткий торг"/>
+        <text name="eq_sponsor_year1" text="%d год"/>
+        <text name="eq_sponsor_years" text="%d г."/>
+        <text name="eq_sponsor_backs_all" text="Все соревнования"/>
+        <text name="eq_sponsor_backs_from" text="%s и выше"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s на уровне %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", с местом в тройке"/>
+        <text name="eq_sponsor_label_fee" text="Платит вам"/>
+        <text name="eq_sponsor_label_popularity" text="Популярность"/>
+        <text name="eq_sponsor_label_target" text="Годовая цель"/>
+        <text name="eq_sponsor_label_machines" text="Их техника"/>
+        <text name="eq_sponsor_label_discounts" text="Скидки"/>
+        <text name="eq_sponsor_label_ends" text="Окончание"/>
+        <text name="eq_sponsor_label_thisYear" text="В этом году"/>
+        <text name="eq_sponsor_label_missed" text="Пропущенные цели"/>
+        <text name="eq_sponsor_label_paid" text="Выплачено"/>
+        <text name="eq_sponsor_label_cancel" text="Цена расторжения"/>
+        <text name="eq_sponsor_label_years" text="Контракт"/>
+        <text name="eq_sponsor_yearMet" text="Цель выполнена"/>
+        <text name="eq_sponsor_yearOpen" text="Цель открыта до %s"/>
+        <text name="eq_sponsor_missedLine" text="%d подряд, выплата %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Предложения действуют до %s. Один спонсор за раз: его техника, никакой техники конкурентов близко к его ценам и достаточный брендинг."/>
+        <text name="eq_sponsor_summaryClosed" text="Предложения этого года закончились. Новые спонсоры придут в начале следующего года."/>
+        <text name="eq_sponsor_noConfig" text="Не удалось загрузить спонсоров."/>
+        <text name="eq_sponsor_noOffers" text="Сейчас нет предложений спонсоров. Новые приходят в начале каждого года."/>
+        <text name="eq_sponsor_sign_gone" text="Это предложение больше недоступно."/>
+        <text name="eq_sponsor_sign_notReady" text="Вы пока не выполняете условия этого спонсора."/>
+        <text name="eq_sponsor_signed" text="%s теперь ваш спонсор, лет: %d."/>
+        <text name="eq_sponsor_cancel_none" text="У вас нет спонсора."/>
+        <text name="eq_sponsor_cancelled" text="Ваш контракт с %s расторгнут. Расторжение стоило %s."/>
+        <text name="eq_sponsor_paid" text="%s выплатил %s за %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s ничего не выплатил за %s: слишком низкий брендинг."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s ничего не выплатил за %s: у вас мало его техники."/>
+        <text name="eq_sponsor_targetMet" text="%s: цель этого года выполнена."/>
+        <text name="eq_sponsor_leaves" text="%s ушёл после пропущенных целей."/>
+        <text name="eq_sponsor_missed" text="%s: цель этого года не выполнена. Выплата в следующем году снижена до %d%%."/>
+        <text name="eq_sponsor_finished" text="Ваш контракт с %s завершён. Всего выплачено %s."/>
+        <text name="eq_sponsor_newOffers" text="Новый год: спонсоров, готовых поддержать ваши соревнования: %d. См. Соревнования, Спонсоры."/>
+        <text name="eq_sponsor_button_sign" text="Подписать"/>
+        <text name="eq_sponsor_button_cancel" text="Расторгнуть контракт"/>
+        <text name="eq_sponsor_sign_confirm" text="Подписать с %s, лет: %d? Досрочное расторжение стоит денег."/>
+        <text name="eq_sponsor_cancel_confirm" text="Расторгнуть контракт с %s? Это стоит %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Допуск"/>
+        <text name="eq_sponsor_eligible_yes" text="Подходит"/>
+        <text name="eq_sponsor_eligible_no" text="Не подходит"/>
+        <text name="eq_sponsor_eligible_taken" text="Уже эксклюзив"/>
+        <text name="eq_sponsor_eligible_yours" text="Ваш спонсор"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Только эксклюзивно"/>
+        <text name="eq_sponsor_eligible_full" text="Спонсоров достаточно"/>
+        <text name="eq_sponsor_eligible_overlap" text="Та же специализация"/>
+        <text name="eq_sponsor_eligible_rivals" text="Техника конкурентов"/>
+        <text name="eq_sponsor_eligible_equipment" text="Нужна техника"/>
+        <text name="eq_sponsor_eligible_branding" text="Нужен брендинг"/>
+        <text name="eq_sponsor_exclusive_yes" text="Эксклюзивный"/>
+        <text name="eq_sponsor_exclusive_no" text="Неэксклюзивный"/>
+        <text name="eq_sponsor_overlapLine" text="Пересекается с %s: %s"/>
+        <text name="eq_sponsor_label_speciality" text="Специализация"/>
+        <text name="eq_sponsor_feePerEvent" text="%s за соревнование"/>
+        <text name="eq_sponsor_targetPopularity" text="Популярность %d"/>
+        <text name="eq_sponsor_targetRating" text="Соревнование уровня %s или выше"/>
+        <text name="eq_sponsor_haveOf" text="У вас %s из %d"/>
+        <text name="eq_sponsor_mustOwn" text="Перед подачей заявки нужно владеть их техникой: %d шт."/>
+        <text name="eq_sponsor_mustKeep" text="Чтобы получать выплаты, сохраните их технику: %d шт."/>
+        <text name="eq_sponsor_attachHalf" text="Навесное оборудование и прицепы считаются за половину."/>
+        <text name="eq_sponsor_noRivals" text="Нельзя владеть техникой, цена которой в пределах %s от их продукта."/>
+        <text name="eq_sponsor_sellFirst" text="Продайте или верните перед подачей заявки:"/>
+        <text name="eq_sponsor_sellMore" text="...и ещё %d"/>
+        <text name="eq_sponsor_button_shop" text="Показать в магазине"/>
+        <text name="eq_sponsor_label_branding" text="Брендинг"/>
+        <text name="eq_sponsor_brandingLine" text="%s (нужно: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Нет"/>
+        <text name="eq_sponsor_branding_low" text="Низкий"/>
+        <text name="eq_sponsor_branding_medium" text="Средний"/>
+        <text name="eq_sponsor_branding_high" text="Высокий"/>
+        <text name="eq_sponsor_label_likely" text="Вероятная выплата"/>
+        <text name="eq_sponsor_likelyLine" text="%s на уровне %s"/>
+        <text name="eq_shop_branding" text="Ваш брендинг: сейчас %s, с этим %s. Больше брендинга — больше платит спонсор."/>
+        <text name="eq_shop_brandingOption" text="Со спонсорскими щитами, ваш брендинг: сейчас %s, с этим %s."/>
+        <text name="eq_config_sponsorBoards" text="Спонсорские щиты"/>
+        <text name="eq_shop_sponsorBoards_function" text="Спонсорские щиты (по желанию, за доплату): щиты на стойках показывают логотип вашего спонсора, а жерди окрашиваются в его цвет."/>
+        <text name="eq_sponsor_discount_repaint" text="Покраска %s"/>
+        <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
+        <text name="eq_sponsor_discount_buy" text="Покупка %s"/>
+        <text name="eq_sponsor_loanLine" text="Даёт технику на месяц вашего мероприятия"/>
+        <text name="eq_loan_popupTitle" text="Техника от вашего спонсора"/>
+        <text name="eq_loan_popup" text="%s доставил новую технику %s, чтобы вы опробовали её на время вашего мероприятия. Она ждёт вас у дилера. Пользуйтесь бесплатно как угодно до конца месяца, потом её заберут."/>
+        <text name="eq_loan_delivered" text="%s одолжил вам %s на месяц мероприятия. Техника у дилера."/>
+        <text name="eq_loan_collected" text="%s забрал одолженную технику %s."/>
+        <text name="eq_loan_noRoom" text="%s не смог доставить %s: у дилера нет места. Попробует снова завтра."/>
+        <text name="eq_loan_enterTitle" text="Подарок от %s"/>
+        <text name="eq_loan_enter" text="Эту технику предоставил ваш спонсор для использования во время вашего мероприятия в этом месяце. Наслаждайтесь!"/>
+        <text name="eq_sponsor_discount_from" text="С %s"/>
+        <text name="eq_sponsor_discount_after" text="Через %d мес. после подписания"/>
     </texts>
 </l10n>

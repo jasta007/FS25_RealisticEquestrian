@@ -149,24 +149,31 @@ EqDressagePath.FAR_MAX = 4
 EqDressagePath.OPENING_SHARE = 0.5
 EqDressagePath.SECTION_GRACE = 1
 -- Passage (James, 2026-10-31): a slow, collected trot (Ctrl + W at a trot, EqLateral) along a
--- long side or across a diagonal. After PASSAGE_GRACE metres, each second not in it costs
--- PASSAGE_PER_S, at most PASSAGE_MAX. Its dashes are the trot's, closer together.
+-- long side or across a diagonal. After PASSAGE_GRACE metres it loses the larger of
+-- PASSAGE_PER_S a second not in it and PASSAGE_MAX times the share of its line ridden out of it,
+-- at most PASSAGE_MAX (James's hosted test, 2026-11-01: trotted through, a second in passage,
+-- it still scored 6: at a trot the seconds out of it were few).
 EqDressagePath.PASSAGE_GRACE = 2
 EqDressagePath.PASSAGE_PER_S = 0.6
-EqDressagePath.PASSAGE_MAX = 4
+EqDressagePath.PASSAGE_MAX = 6
 EqDressagePath.PASSAGE_STEP = 0.7
 -- Figures that only follow the line are marked harder than lateral work and movements on the
 -- spot (James, 2026-10-31: "pretty hard to not get an 8"): PLAIN_FREE metres off on average are
--- free, then PLAIN_PER_M a metre (DEV_FREE and DEV_PER_M for the rest).
+-- free, then PLAIN_PER_M a metre, but never more than PLAIN_K times the square root of the
+-- metres (DEV_FREE and DEV_PER_M a metre for the rest): strict near the line, gentler further
+-- off (James's hosted test, 2026-11-01: a circle 0.33 m off on average was "hammered" to a 3;
+-- now 0.1 m = 8.5, 0.15 m = 7.5, 0.2 m = 7, 0.33 m = 6, 0.5 m = 5).
 EqDressagePath.PLAIN_FREE = 0.02
 EqDressagePath.PLAIN_PER_M = 20
+EqDressagePath.PLAIN_K = 7.5
 -- Off the line in a lateral section: this much more is free (James, 2026-10-30: a leg yield he
 -- thought went well scored 2.5, 0.59 m off on average).
 EqDressagePath.LATERAL_FREE = 0.3
 -- Temperament's stickiness (James 2026-10-30): a pull back onto the line, a share of how far off
 -- the horse is each second (0 at temperament 0 up to STICK_PULL at 100; STICK_FREE of it outside
 -- lateral work), and a turn towards the body angle a section asks for, up to STICK_TURN rad/s.
-EqDressagePath.STICK_PULL = 0.8
+-- (James, 2026-11-01: a 100 temperament horse didn't ride much better: 0.8 and 0.3 were raised.)
+EqDressagePath.STICK_PULL = 1.0
 -- A bend sharper than this (radians) where pieces of line join is smoothed out of the line.
 EqDressagePath.KINK = math.rad(50)
 -- Bends sharper than this (radians, between points STEP apart) left where figures meet the track
@@ -179,8 +186,8 @@ EqDressagePath.BLEND = 5
 EqDressagePath.BLEND_PLAN = 12
 -- A player's test changing gait this soon after a halt moves off from the halt in the new gait.
 EqDressagePath.MOVE_OFF = 16
-EqDressagePath.STICK_FREE = 0.3
-EqDressagePath.STICK_TURN = 0.5
+EqDressagePath.STICK_FREE = 0.5
+EqDressagePath.STICK_TURN = 0.7
 -- Further off the line than this (metres) there is no pull: a rider leaving the test was held
 -- back so hard the base game took it for a crash and stopped the horse (James, 2026-10-30).
 EqDressagePath.STICK_RANGE = 2
@@ -1430,7 +1437,9 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
                 bend = sec.bend, drift = sec.drift })
         end
         if figure.passage ~= nil then
-            table.insert(test.passages, { s0 = sAt(figure.passage.from), s1 = sAt(figure.passage.to), m = m })
+            local labels = move.labels or {}
+            table.insert(test.passages, { s0 = sAt(figure.passage.from), s1 = sAt(figure.passage.to), m = m,
+                from = labels[1], to = labels[#labels] })
         end
         -- A walk down the centre line trots on from X: halt, proceed at a trot.
         local after = figure.gait == "walk" and "trot" or figure.gait
@@ -1706,14 +1715,19 @@ end
 --- @return number 0..10 in halves
 function EqDressagePath.markOf(acc)
     local mean = acc.len > 0 and acc.devSum / acc.len or 0
-    local free, perM = EqDressagePath.DEV_FREE, EqDressagePath.DEV_PER_M
-    if acc.plain then free, perM = EqDressagePath.PLAIN_FREE, EqDressagePath.PLAIN_PER_M end
-    local mark = 10 - math.max(0, mean - free) * perM
+    local line = math.max(0, mean - EqDressagePath.DEV_FREE) * EqDressagePath.DEV_PER_M
+    if acc.plain then
+        local off = math.max(0, mean - EqDressagePath.PLAIN_FREE)
+        line = math.min(off * EqDressagePath.PLAIN_PER_M, math.sqrt(off) * EqDressagePath.PLAIN_K)
+    end
+    local passage = (acc.passMs or 0) / 1000 * EqDressagePath.PASSAGE_PER_S
+    if (acc.passSpan or 0) > 0 then passage = math.max(passage, (acc.passOut or 0) / acc.passSpan * EqDressagePath.PASSAGE_MAX) end
+    local mark = 10 - line
         - math.min(EqDressagePath.WRONG_MAX, acc.wrongMs / 1000 * EqDressagePath.WRONG_PER_S) - acc.pen
         - math.min(EqDressagePath.ANGLE_MAX, (acc.angleMs or 0) / 1000 * EqDressagePath.ANGLE_PER_S)
         - math.min(EqDressagePath.BEND_MAX, (acc.bendMs or 0) / 1000 * EqDressagePath.BEND_PER_S)
         - math.min(EqDressagePath.FAR_MAX, (acc.farLen or 0) * EqDressagePath.FAR_PER_M)
-        - math.min(EqDressagePath.PASSAGE_MAX, (acc.passMs or 0) / 1000 * EqDressagePath.PASSAGE_PER_S)
+        - math.min(EqDressagePath.PASSAGE_MAX, passage)
     if acc.opening then mark = 10 - (10 - mark) * EqDressagePath.OPENING_SHARE end
     return math.max(0, math.min(10, math.floor(mark * 2 + 0.5) / 2))
 end
@@ -1765,9 +1779,9 @@ local function closeTo(run, m)
             run.lastMark, run.lastMove = run.marks[run.cur], run.cur
             -- Why: for the log.
             local move = run.test.moves[run.cur]
-            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s",
+            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it)",
                 move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
-                acc.farLen or 0, (acc.passMs or 0) / 1000)
+                acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -2104,10 +2118,16 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     -- Passage: collected (Ctrl + W at a trot) through it.
     local pass = EqDressagePath.passageAt(test, run.s)
     run.passageWrong = false
-    if pass ~= nil and look ~= nil and run.s >= pass.s0 + EqDressagePath.PASSAGE_GRACE and not look.passage then
+    local ds = math.max(0, run.s - (run.passPrevS or run.s))
+    run.passPrevS = run.s
+    if pass ~= nil and look ~= nil and run.s >= pass.s0 + EqDressagePath.PASSAGE_GRACE then
         local acc = run.acc[math.min(pass.m, #test.moves)]
-        acc.passMs = acc.passMs + dt
-        run.passageWrong = true
+        acc.passSpan = (acc.passSpan or 0) + ds
+        if not look.passage then
+            acc.passMs = acc.passMs + dt
+            acc.passOut = (acc.passOut or 0) + ds
+            run.passageWrong = true
+        end
     end
 
     -- At the wrong gait, once settled after the last change or halt.
@@ -2199,6 +2219,16 @@ end
 function EqDressagePath.passageAt(test, s)
     for _, p in ipairs(test.passages or {}) do
         if s >= p.s0 and s < p.s1 then return p end
+    end
+    return nil
+end
+
+
+--- The passage just ridden, while the horse is within PASSAGE_AFTER metres past its end (pure).
+EqDressagePath.PASSAGE_AFTER = 4
+function EqDressagePath.passageJustDone(run)
+    for _, p in ipairs(run.test.passages or {}) do
+        if run.s >= p.s1 and run.s < p.s1 + EqDressagePath.PASSAGE_AFTER then return p end
     end
     return nil
 end

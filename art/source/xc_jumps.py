@@ -29,6 +29,7 @@ Part of Realistic Equestrian by Jasta007.
 import math
 import os
 import random
+import tempfile
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -73,8 +74,14 @@ GUIDE_SIZE = 0.03
 DROP_WALLS = [
     {"name": "xcDropWall08", "price": 1500, "drop": 0.8},
     {"name": "xcDropWall12", "price": 1800, "drop": 1.2},
-    {"name": "xcDropWall16", "price": 2100, "drop": 1.6},
+    {"name": "xcDropWall16", "price": 2100, "drop": 1.6, "sponsor": True},
 ]
+# The biggest drop wall carries a sponsor board high on its face instead of the two middle posts
+# (James, 2026-10-31: the bottom gets clipped by the ground a lot): width, height, gap under the lip.
+DROP_BOARD = (3.2, 0.9, 0.08)
+LOGO_ASPECT = 2.7       # a logo's width over its height on every board (as on the bleachers)
+LOGO_MARGIN = 0.03
+SPONSOR_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
 DROP_WIDTH = 4.0
 DROP_LIP = 1.0          # the lip is this far in front of the origin
 SKIRT = 0.5             # boards and posts reach this far below the drop
@@ -742,6 +749,30 @@ def drop_depth(wall):
     return max(2.4, 2.5 * wall["drop"])
 
 
+def logo_size(width, height):
+    """The biggest logo of LOGO_ASPECT inside a board of width x height."""
+    width, height = width - 2 * LOGO_MARGIN, height - 2 * LOGO_MARGIN
+    return (width, width / LOGO_ASPECT) if width / height < LOGO_ASPECT else (height * LOGO_ASPECT, height)
+
+
+def drop_board(wall):
+    """The sponsor board on a drop wall's face, if it has one: its stained backing and the logo
+    (a quad of its own, "eqSponsor_1", whose texture EqSponsors swaps for a brand's logo)."""
+    backing, logo = Mesh(), Mesh()
+    if not wall.get("sponsor"):
+        return backing, logo
+    w, h, gap = DROP_BOARD
+    lip = -DROP_LIP
+    y1, y0 = -gap, -gap - h
+    textured_box(backing, -w / 2, w / 2, y0, y1, lip - 0.04, lip)
+    lw, lh = logo_size(w, h)
+    yc, z = (y0 + y1) / 2, lip - 0.042
+    # facing -z: seen from the front +x is on the left, so u runs from +x to -x
+    logo.quad([(lw / 2, yc - lh / 2, z), (-lw / 2, yc - lh / 2, z), (-lw / 2, yc + lh / 2, z), (lw / 2, yc + lh / 2, z)],
+              (0, 0, -1), [(0, 0), (1, 0), (1, 1), (0, 1)])
+    return backing, logo
+
+
 def build_drop_wall(wall):
     """The plank face, deck, posts, lip cap and wings; and one collision mesh (face, deck and wings)."""
     planks, wood, ends, col = Mesh(), Mesh(), Mesh(), Mesh()
@@ -779,6 +810,8 @@ def build_drop_wall(wall):
         x = -half + DROP_WIDTH * i / (count - 1)
         x = min(max(x, -half + s), half - s)
         corner = i in (0, count - 1)
+        if wall.get("sponsor") and not corner:
+            continue    # the sponsor board covers the middle
         textured_box(wood, x - s, x + s, bottom, 0.12 if corner else -0.02, lip - POST_W, lip)
     # the half-round log along the lip, flat side down, overhanging the face a little
     round_rail(wood, ends, (-half + s * 2, DECK_Y, lip + CAP_R * 0.6), (half - s * 2, DECK_Y, lip + CAP_R * 0.6), CAP_R, half=True)
@@ -817,8 +850,72 @@ def fmt(values):
     return " ".join(f"{v:.5g}" for v in values)
 
 
+# The part of a brand's logo image a logo face shows (James, 2026-11-01: fill more of the board).
+# The game's brand logos are all 512 x 256 with the logo across the middle (measured on the game's
+# 261 logos: most sit within 0.02-0.98 across and 0.1-0.9 up). A face of LOGO_ASPECT 2.7 shows
+# 0.1-0.9 up and a little more than the whole width (LOGO_PAD each side, James: Volvo's O touched
+# the right edge), so logos are not stretched; the face is cut back to where the image is
+# (clip_logo), leaving the padding as bare board.
+LOGO_PAD = 0.04
+LOGO_CROP = (-LOGO_PAD, 1 + LOGO_PAD, 0.10, 0.90)
+
+
+def logo_uv(uv):
+    u0, u1, v0, v1 = LOGO_CROP
+    return (u0 + (u1 - u0) * uv[0], v0 + (v1 - v0) * uv[1])
+
+
+def _lerp(a, b, t):
+    return tuple(x + (y - x) * t for x, y in zip(a, b))
+
+
+def clip_logo(mesh):
+    """The logo faces' triangles cut to 0 <= u <= 1 (logo_uv runs a little past both edges)."""
+    out = Mesh()
+    for tri in mesh.tris:
+        poly = [mesh.verts[i] for i in tri]
+        for edge, keep in ((0.0, lambda u: u >= 0.0), (1.0, lambda u: u <= 1.0)):
+            clipped = []
+            for k, cur in enumerate(poly):
+                prev = poly[k - 1]
+                cin, pin = keep(cur[2][0]), keep(prev[2][0])
+                if cin != pin:
+                    t = (edge - prev[2][0]) / (cur[2][0] - prev[2][0])
+                    n = _lerp(prev[1], cur[1], t)
+                    length = sum(c * c for c in n) ** 0.5 or 1.0
+                    clipped.append((_lerp(prev[0], cur[0], t), tuple(c / length for c in n), (edge, prev[2][1] + (cur[2][1] - prev[2][1]) * t)))
+                if cin:
+                    clipped.append(cur)
+            poly = clipped
+            if not poly:
+                break
+        if len(poly) < 3:
+            continue
+        ids = [out.vertex(*v) for v in poly]
+        for k in range(1, len(ids) - 1):
+            out.tris.append((ids[0], ids[k], ids[k + 1]))
+    return out
+
+
+def logo_preview(path="placeables/bleachers/bleacherSponsor_diffuse.dds"):
+    """Our board texture as a shop picture should show it: the LOGO_CROP window, padding as board."""
+    img = Image.open(path).convert("RGB")
+    u0, u1, v0, v1 = LOGO_CROP
+    w, h = img.size
+    pad = int(round(LOGO_PAD * w))
+    framed = Image.new("RGB", (w + 2 * pad, h), img.getpixel((1, 1)))
+    framed.paste(img, (pad, 0))
+    return np.asarray(framed.crop((0, int(round((1 - v1) * h)), w + 2 * pad, int(round((1 - v0) * h)))), dtype=float)
+
+
 def shape_lines(mesh, name, shape_id, uv1=None):
-    """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient."""
+    """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient. Logo faces
+    (shapes whose name has "eqSponsor") show only LOGO_CROP of the logo image."""
+    if "eqSponsor" in name:
+        cropped = Mesh()
+        cropped.verts = [(p, n, logo_uv(uv)) for p, n, uv in mesh.verts]
+        cropped.tris = mesh.tris
+        mesh = clip_logo(cropped)
     centre, radius = mesh.bounds()
     lines = [
         f'    <IndexedTriangleSet name="{name}" shapeId="{shape_id}" bvCenter="{fmt(centre)}" bvRadius="{radius:.5g}">',
@@ -861,6 +958,7 @@ def write_i3d(name, path, shapes, feet, col=None, guide=None):
     if guide is not None:
         shapes = shapes + [("guide", guide[0], guide[1], False)]
     used = [m for m in MATERIALS if m[0] in {shape[2] for shape in shapes}]
+    used += [(m, SPONSOR_TEXTURE, None, False) for m in sorted({shape[2] for shape in shapes}) if m.startswith("eqSponsor")]
     files = sorted({texture for _, texture, _, _ in used} | {n for _, _, n, _ in used if n})
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
@@ -879,7 +977,8 @@ def write_i3d(name, path, shapes, feet, col=None, guide=None):
     material_ids = {}
     for i, (material, texture, normal, emissive) in enumerate(used):
         material_ids[material] = i + 1
-        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0">')
+        blend = ' alphaBlending="true"' if material.startswith("eqSponsor") else ""
+        lines.append(f'    <Material name="{material}" materialId="{i + 1}" specularColor="0.1 0.7 0"{blend}>')
         lines.append(f'      <Texture fileId="{files.index(texture) + 1}"/>')
         if normal:
             lines.append(f'      <Normalmap fileId="{files.index(normal) + 1}"/>')
@@ -1222,6 +1321,32 @@ def store_image(meshes, path, preview_dir, **view):
     img.save(os.path.join(preview_dir, os.path.basename(path).replace(".dds", ".png")))
 
 
+def drop_walls(names, preview_dir, planks_rgb, peeled_rgb, ends):
+    """The drop walls' i3d, xml and shop image (names: only those)."""
+    import bleachers
+    stain_rgb = stain_texture(os.path.join(tempfile.mkdtemp(), "s.dds"), os.path.join(tempfile.mkdtemp(), "n.dds"))
+    sponsor_rgb = bleachers.sponsor_board(os.path.join(tempfile.mkdtemp(), "b.dds"))
+    for wall in DROP_WALLS:
+        name = wall["name"]
+        if names and name not in names:
+            continue
+        planks, wood, ends_mesh, col = build_drop_wall(wall)
+        backing, logo = drop_board(wall)
+        shapes = [("planks", planks, "xcPlanks", True), ("wood", wood, "xcPeeled", True), ("ends", ends_mesh, "xcLogEnd", True)]
+        if logo.tris:
+            shapes += [("sponsorBoard", backing, "xcStain", True), ("eqSponsor_1", logo, "eqSponsor1", False)]
+        write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, {}, col=col)
+        write_xml(name, wall["price"], f"A {wall['drop']:.1f} m drop: set the origin on the flat top of a bank, the lip {DROP_LIP:g} m in front of it.",
+                  os.path.join(OUT, name + ".xml"),
+                  functions=["eq_shop_plinth_function"] + (["eq_shop_signboard_function"] if logo.tris else []))
+        flipped = Mesh()
+        flipped.verts = [(p, n, (uv[0], 1 - uv[1])) for p, n, uv in logo.verts]
+        flipped.tris = list(logo.tris)
+        store_image([(planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends), (backing, stain_rgb), (flipped, sponsor_rgb)],
+                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
+        print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
+
+
 def main():
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
     os.makedirs(OUT, exist_ok=True)
@@ -1245,16 +1370,7 @@ def main():
               sum(len(m.tris) for m in bark_meshes) + len(ends_mesh.tris) + len(posts.tris), "triangles")
     planks_rgb = plank_texture(os.path.join(OUT, "xcPlanks_diffuse.dds"), os.path.join(OUT, "xcPlanks_normal.dds"))
     peeled_rgb = peeled_texture(os.path.join(OUT, "xcPeeled_diffuse.dds"))
-    for wall in DROP_WALLS:
-        name = wall["name"]
-        planks, wood, ends_mesh, col = build_drop_wall(wall)
-        shapes = [("planks", planks, "xcPlanks", True), ("wood", wood, "xcPeeled", True), ("ends", ends_mesh, "xcLogEnd", True)]
-        write_i3d(name, os.path.join(OUT, name + ".i3d"), shapes, {}, col=col)
-        write_xml(name, wall["price"], f"A {wall['drop']:.1f} m drop: set the origin on the flat top of a bank, the lip {DROP_LIP:g} m in front of it.",
-                  os.path.join(OUT, name + ".xml"))
-        store_image([(planks, planks_rgb), (wood, peeled_rgb), (ends_mesh, ends)],
-                    os.path.join(OUT, "store_" + name + ".dds"), preview_dir, yaw=-140)
-        print(name, f"{wall['drop']:.1f} m drop,", len(planks.tris) + len(wood.tris) + len(ends_mesh.tris), "triangles")
+    drop_walls((), preview_dir, planks_rgb, peeled_rgb, ends)
     flag_fence(flags, preview_dir)
 
 
@@ -1275,8 +1391,13 @@ def flag_fence(flags, preview_dir):
 
 if __name__ == "__main__":
     import sys
-    if sys.argv[1:] == ["flags"]:
-        import tempfile
+    if sys.argv[1:2] == ["drops"]:
+        # python3 art/source/xc_jumps.py drops [names]: only the drop walls (textures to a scratch folder)
+        tmp = tempfile.mkdtemp()
+        drop_walls(sys.argv[2:], os.environ.get("XC_PREVIEW_DIR", "art/previews"),
+                   plank_texture(os.path.join(tmp, "p.dds"), os.path.join(tmp, "pn.dds")),
+                   peeled_texture(os.path.join(tmp, "e.dds")), log_end_texture(os.path.join(tmp, "l.dds")))
+    elif sys.argv[1:] == ["flags"]:
         flag_fence(flag_texture(os.path.join(tempfile.mkdtemp(), "xcFlags_diffuse.dds")),
                    os.environ.get("XC_PREVIEW_DIR", "art/previews"))
     else:

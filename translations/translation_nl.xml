@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Boomstammenstapel"/>
         <text name="eq_shop_showJumpUpright" text="Springhindernis: steilsprong"/>
         <text name="eq_shop_showJumpOxer" text="Springhindernis: oxer"/>
+        <text name="eq_shop_showJumpWall" text="Springhindernis: sponsormuur"/>
+        <text name="eq_shop_showJumpWall_function" text="Een pronkmuur met het logo van je sponsor. De bovenste blokken vallen als je paard ze raakt en gaan na de ronde weer terug."/>
         <text name="eq_shop_showJumpCrossrail" text="Springhindernis: kruis"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Springhindernis: oplopende oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Springhindernis: triplebarre"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (half)"/>
         <text name="eq_shop_xcTable" text="Tafel"/>
         <text name="eq_shop_xcBigLog" text="Grote boomstam"/>
+        <text name="eq_shop_xcGateArch" text="Start-/finishboog"/>
+        <text name="eq_shop_xcGateSimple" text="Doorrijpoort"/>
+        <text name="eq_shop_xcGate_function" text="Een poort om door te rijden, geen sprong: breed en hoog genoeg voor elk paard, met het logo van je sponsor."/>
+        <text name="eq_shop_xcRope" text="Touwmarkering"/>
+        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw of touw met een klein sponsorbordje: bordjes geven maar een beetje branding."/>
+        <text name="eq_shop_plinthDrive" text="Doorrijpodium"/>
+        <text name="eq_shop_plinthRamp" text="Showhelling"/>
+        <text name="eq_shop_plinthRampLarge" text="Grote showhelling"/>
+        <text name="eq_shop_plinthProductRamp" text="Productsprong-helling"/>
+        <text name="eq_shop_plinth_function" text="Parkeer er een machine van het merk van je sponsor op voor extra branding."/>
+        <text name="eq_shop_productJump_function" text="Zet er twee tegenover elkaar op ongeveer 5 m: een machine ertussen telt ook, of spring ze als crosscountrysprong."/>
+        <text name="eq_shop_plinthTurntable" text="Draaiplateau"/>
+        <text name="eq_shop_turntable_function" text="De schijf draait langzaam: laat er een machine op staan en die draait mee, met alles wat eraan gekoppeld is. Een machine van je sponsor telt hier extra."/>
+        <text name="eq_plinth_inPlace" text="Sponsoruitrusting op zijn plek!"/>
+        <text name="eq_plinth_wrongBrand" text="Niet de uitrusting van je sponsor! Concurrerende machines in beeld verlagen je sponsorinkomsten!"/>
+        <text name="eq_plinth_noSponsor" text="Geen sponsor getekend: zijn uitrusting hier zou meetellen voor je branding."/>
+        <text name="eq_plinth_penalty" text="%d concurrerende machine(s) op je sponsorpodia: %s van de sponsorvergoeding afgetrokken."/>
+        <text name="eq_shop_lizardPlinth" text="Lizard-sokkel"/>
+        <text name="eq_shop_lizardPlinth_function" text="De speciale sokkel van Lizard voor het evenement dat het sponsort. Bouw hem door aan de triggers aan de voorkant te leveren; een Lizard-machine op het boomstammendek telt extra. Na het evenement stort hij in."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Nodig: 1.000 l stenen, 10.000 l hout en 1.000 l planken."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
+        <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
+        <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
+        <text name="eq_lizard_accept" text="Accepteren"/>
+        <text name="eq_lizard_decline" text="Weigeren"/>
+        <text name="eq_lizard_offerNote" text="%s wil je %s sponsoren."/>
+        <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Bouwbaar) en bouw hem met %s, stammen en planken."/>
+        <text name="eq_lizard_stepAside" text="%s doet een stap opzij: %s sponsort nu je evenement."/>
+        <text name="eq_lizard_paid" text="%s heeft %s betaald voor het sponsoren van je evenement."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s betaalt niets: de Lizard-sokkel was niet af. Geen kwaad bloed."/>
+        <text name="eq_lizard_unpaid_branding" text="%s betaalt niets: je branding schoot tekort. Geen kwaad bloed."/>
+        <text name="eq_lizard_unpaid_rating" text="%s betaalt niets voor dit evenement."/>
         <text name="eq_config_corner" text="Hoek"/>
         <text name="eq_config_cornerRight" text="Punt rechts"/>
         <text name="eq_config_cornerLeft" text="Punt links"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="Passage %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Passage op de diagonaal %s-%s"/>
         <text name="eq_dressage_passage" text="Passage: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piaffe"/>
+        <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_collected" text="Verzameld"/>
+        <text name="eq_now_collectedCanter" text="Verzamelde galop"/>
+        <text name="eq_now_passage" text="Passage"/>
+        <text name="eq_now_legYield" text="Wijken"/>
+        <text name="eq_now_halfPass" text="Appuyement"/>
+        <text name="eq_now_shoulderIn" text="Schouder binnenwaarts"/>
+        <text name="eq_now_renvers" text="Renvers (kroep buitenwaarts)"/>
+        <text name="eq_now_travers" text="Travers (kroep binnenwaarts)"/>
+        <text name="eq_now_legYieldRail" text="Wijken langs de baan"/>
         <text name="eq_fig_legYield" text="Wijken voor de kuit vanaf %s en terug"/>
         <text name="eq_fig_halfPass" text="Appuyement vanaf %s en terug"/>
         <text name="eq_fig_shoulderIn" text="Schouder binnenwaarts %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Uitgesloten: verkeerd parcours (hindernis %d buiten volgorde gesprongen)"/>
         <text name="eq_sj_out_refusals" text="Uitgesloten: tweede weigering"/>
         <text name="eq_sj_out_timeLimit" text="Uitgesloten: over de maximale tijd"/>
+        <text name="eq_sj_getOn" text="STAP WEER OP JE PAARD! %d"/>
+        <text name="eq_sj_out_dismounted" text="Uitgesloten: de ruiter stapte niet weer op in een ronde die telt"/>
         <text name="eq_sj_clear" text="Foutloos in %s!"/>
         <text name="eq_sj_faults" text="%s strafpunten in %s"/>
         <text name="eq_sj_clearPop" text="Foutloze ronde!"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="Opnemen vanaf het dichtstbijzijnde punt"/>
         <text name="eq_course_finished" text="Bewerken klaar: geplaatste obstakels van Realistic Equestrian hebben hun botsing terug"/>
         <text name="eq_course_deleted" text="%s verwijderd"/>
+        <text name="eq_course_locked" text="Je kunt %s niet verwijderen tijdens %s: stel je parcoursen in vóór de maand van het evenement"/>
         <text name="eq_course_deleteAsk" text="%s met %d hindernissen over %.0f m verwijderen?"/>
         <text name="eq_course_deleteTitle" text="Parcours verwijderen"/>
         <text name="eq_course_deleteAction" text="%s verwijderen"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Foutloos in elk onderdeel."/>
         <text name="eq_story_eventing_struggled" text="Had het zwaar in alle drie de onderdelen."/>
         <text name="eq_story_eventing_eliminated" text="Lag eruit na een val op de cross."/>
+        <text name="eq_story_ridden_test" text="Reed zijn proef."/>
+        <text name="eq_story_ridden_faults" text="Had fouten op het parcours."/>
+        <text name="eq_story_eventing_fenceFaults" text="Liep strafpunten op over de hindernissen."/>
+        <text name="eq_story_eventing_clearFences" text="Foutloos over de hindernissen, maar de dressuur hield hem tegen."/>
         <text name="eq_ui_tab_upcoming" text="Komende wedstrijden"/>
         <text name="eq_ui_tab_results" text="Uitslagen"/>
         <text name="eq_ui_col_starts" text="Starts"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="reputatie"/>
         <text name="eq_host_part_star" text="sterpaard"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
+        <text name="eq_host_part_quality" text="parcoursbouw"/>
+        <text name="eq_host_part_shops" text="winkels"/>
+        <text name="eq_host_part_ahead" text="vroeg geboekt"/>
+        <text name="eq_host_part_advert" text="reclame"/>
+        <text name="eq_host_part_buzz" text="rumoer"/>
+        <text name="eq_host_part_weather" text="weer"/>
+        <text name="eq_host_buzz_high" text="Iedereen praat erover"/>
+        <text name="eq_host_buzz_low" text="Rustig"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d voor vroeg boeken)"/>
+        <text name="eq_host_advert_none" text="Geen reclame"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Lokaal"/>
+        <text name="eq_host_advert_national" text="Landelijk"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s reclame"/>
+        <text name="eq_host_label_advert" text="Reclame"/>
+        <text name="eq_host_label_sell" text="Souvenirs en versnaperingen"/>
+        <text name="eq_host_sell_yes" text="Verkopen indien aanwezig (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Niet verkopen"/>
+        <text name="eq_host_book_advert" text="Reclame betaald: %s."/>
+        <text name="eq_host_twister" text="Een tornado raasde door %s! Toeschouwers renden weg om te schuilen."/>
+        <text name="eq_host_done_goods" text="Souvenirs en versnaperingen verkocht: %s."/>
+        <text name="eq_host_star" text="Mensen keken er echt naar uit om %s te zien starten."/>
+        <text name="eq_host_report_twister" text="Tijdens het evenement trok een tornado voorbij en het publiek vluchtte."/>
+        <text name="eq_host_report_weather" text="Slecht weer: %d uur ervan hield mensen weg (populariteit %d)."/>
+        <text name="eq_host_report_goods" text="Souvenirs en versnaperingen: %d l verkocht voor %s."/>
+        <text name="eq_host_report_advert" text="Reclame: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Slecht weer heeft tot nu toe %d populariteit gekost."/>
         <text name="eq_host_label_yours" text="Jouw wedstrijd"/>
         <text name="eq_host_label_month" text="Boeken voor"/>
         <text name="eq_host_label_next" text="Volgende vrije maand"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="Wedstrijdronde voor %s: rijd naar de startlijn"/>
         <text name="eq_host_note_ridden" text="Oefenen: dit onderdeel van %s is al gereden"/>
         <text name="eq_host_note_small" text="Oefenen: parcours te klein voor %s"/>
+        <text name="eq_host_ann_test" text="Wedstrijdproef: deze telt!"/>
+        <text name="eq_host_ann_smallArena" text="Deze rijbaan is te klein voor je evenement: alleen oefenen"/>
+        <text name="eq_host_note_testCounts" text="Wedstrijdproef voor %s: rijd naar A"/>
+        <text name="eq_host_note_testSmall" text="Oefenen: rijbaan te klein voor %s"/>
+        <text name="eq_host_ann_testShort" text="Proef te kort voor je eigen evenement: alleen oefenen"/>
+        <text name="eq_host_note_testShort" text="Oefenen: proef te kort voor %s"/>
+        <text name="eq_host_ann_notEntered" text="Niet ingeschreven: alleen oefenen"/>
+        <text name="eq_host_note_notEntered" text="Oefenen: dit paard is niet ingeschreven voor %s"/>
         <text name="eq_host_label_now" text="Deze maand"/>
         <text name="eq_host_next_oneAtATime" text="één evenement tegelijk"/>
         <text name="eq_host_next_interval" text="%d maanden tussen evenementen, zie Instellingen"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="Opkomst: %d van %d gastpaarden kwamen (populariteit %d)."/>
         <text name="eq_host_report_feedSoFar" text="Gastpaarden hebben tot nu toe %d l van je voer gegeten (%d l per dag)."/>
         <text name="eq_host_report_feed" text="Gastpaarden aten %d l van je voer."/>
-        <text name="eq_host_report_money" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s: winst %s."/>
+        <text name="eq_host_report_takings" text="Opbrengst %s (inschrijfgeld %s, toegang %s), organisatiekosten %s."/>
+        <text name="eq_host_report_total" text="Eindpopulariteit %d. Winst %s."/>
         <text name="eq_host_report_mine" text="Je paard %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Totaal: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Je paard %s: %s met %s strafpunten (%s)."/>
         <text name="eq_host_results_row" text="Je evenementen"/>
         <text name="eq_host_results_running" text="Nu bezig"/>
         <text name="eq_host_results_winner" text="Gewonnen door %s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="Ter plaatse"/>
         <text name="eq_dt_noOptions" text="Hier past niets: ongedaan maken of opslaan"/>
         <text name="eq_dt_saved" text="Dressuurproef opgeslagen: %d onderdelen"/>
+        <text name="eq_dt_savedShort" text="Proef opgeslagen, maar niet lang genoeg voor %s: er zijn %d stappen nodig en hij heeft er %d, hier is het alleen oefenen"/>
+        <text name="eq_dt_locked" text="Je kunt deze proef niet verwijderen tijdens %s: stel je proef in vóór de maand van het evenement"/>
         <text name="eq_dt_deleted" text="Dressuurproef verwijderd: deze bak rijdt weer willekeurige proeven"/>
         <text name="eq_dt_cancelled" text="Dressuurproef niet opgeslagen"/>
         <text name="eq_fig_halt" text="Halthouden bij %s"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="Zijgangen tonen"/>
         <text name="eq_dt_lateral" text="Zijgang"/>
         <text name="eq_shop_signboard_function" text="Verhoogt de sponsorinkomsten van je evenementen."/>
+        <text name="eq_ui_tab_sponsors" text="Sponsors"/>
+        <text name="eq_money_sponsorship" text="Sponsoring"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponsors"/>
+        <text name="eq_host_report_sponsor" text="Sponsor: %s, betaald %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponsor"/>
+        <text name="eq_sponsor_col_contract" text="Contract"/>
+        <text name="eq_sponsor_col_fee" text="Betaalt jou"/>
+        <text name="eq_sponsor_size_big" text="Groot"/>
+        <text name="eq_sponsor_size_moderate" text="Middel"/>
+        <text name="eq_sponsor_size_small" text="Klein"/>
+        <text name="eq_sponsor_word_relaxed" text="Soepel"/>
+        <text name="eq_sponsor_word_fair" text="Eerlijk"/>
+        <text name="eq_sponsor_word_demanding" text="Veeleisend"/>
+        <text name="eq_sponsor_word_hardBargain" text="Harde onderhandelaar"/>
+        <text name="eq_sponsor_year1" text="%d jaar"/>
+        <text name="eq_sponsor_years" text="%d jaar"/>
+        <text name="eq_sponsor_backs_all" text="Elke wedstrijd"/>
+        <text name="eq_sponsor_backs_from" text="%s en hoger"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s bij %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", met een top 3 plaats"/>
+        <text name="eq_sponsor_label_fee" text="Betaalt jou"/>
+        <text name="eq_sponsor_label_popularity" text="Populariteit"/>
+        <text name="eq_sponsor_label_target" text="Jaardoel"/>
+        <text name="eq_sponsor_label_machines" text="Hun machines"/>
+        <text name="eq_sponsor_label_discounts" text="Kortingen"/>
+        <text name="eq_sponsor_label_ends" text="Eindigt"/>
+        <text name="eq_sponsor_label_thisYear" text="Dit jaar"/>
+        <text name="eq_sponsor_label_missed" text="Gemiste doelen"/>
+        <text name="eq_sponsor_label_paid" text="Tot nu toe betaald"/>
+        <text name="eq_sponsor_label_cancel" text="Opzegkosten"/>
+        <text name="eq_sponsor_label_years" text="Contract"/>
+        <text name="eq_sponsor_yearMet" text="Doel gehaald"/>
+        <text name="eq_sponsor_yearOpen" text="Doel open tot %s"/>
+        <text name="eq_sponsor_missedLine" text="%d op rij, bedrag op %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Aanbiedingen blijven open tot %s. Eén sponsor tegelijk: heb hun materieel, geen concurrerende machines rond hun prijzen en genoeg zichtbaarheid."/>
+        <text name="eq_sponsor_summaryClosed" text="De aanbiedingen van dit jaar zijn weg. Nieuwe sponsors komen begin volgend jaar."/>
+        <text name="eq_sponsor_noConfig" text="Sponsors konden niet worden geladen."/>
+        <text name="eq_sponsor_noOffers" text="Nu geen sponsoraanbiedingen. Nieuwe komen aan het begin van elk jaar."/>
+        <text name="eq_sponsor_sign_gone" text="Die aanbieding is weg."/>
+        <text name="eq_sponsor_sign_notReady" text="Je voldoet nog niet aan de voorwaarden van deze sponsor."/>
+        <text name="eq_sponsor_signed" text="%s is nu je sponsor, voor %d jaar."/>
+        <text name="eq_sponsor_cancel_none" text="Je hebt geen sponsor."/>
+        <text name="eq_sponsor_cancelled" text="Je contract met %s is opgezegd. Opzeggen kostte %s."/>
+        <text name="eq_sponsor_paid" text="%s betaalde %s voor %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s betaalde niets voor %s: je zichtbaarheid is te laag."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s betaalde niets voor %s: je hebt te weinig van hun machines."/>
+        <text name="eq_sponsor_targetMet" text="%s: het doel van dit jaar is gehaald."/>
+        <text name="eq_sponsor_leaves" text="%s is vertrokken na gemiste doelen."/>
+        <text name="eq_sponsor_missed" text="%s: het doel van dit jaar is gemist. Het bedrag volgend jaar zakt naar %d%%."/>
+        <text name="eq_sponsor_finished" text="Je contract met %s is afgelopen. Het bracht in totaal %s op."/>
+        <text name="eq_sponsor_newOffers" text="Nieuw jaar: %d sponsors willen je wedstrijden steunen. Zie Wedstrijden, Sponsors."/>
+        <text name="eq_sponsor_button_sign" text="Tekenen"/>
+        <text name="eq_sponsor_button_cancel" text="Contract opzeggen"/>
+        <text name="eq_sponsor_sign_confirm" text="Tekenen met %s voor %d jaar? Vroeg opzeggen kost geld."/>
+        <text name="eq_sponsor_cancel_confirm" text="Je contract met %s opzeggen? Dat kost %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Geschiktheid"/>
+        <text name="eq_sponsor_eligible_yes" text="Geschikt"/>
+        <text name="eq_sponsor_eligible_no" text="Niet geschikt"/>
+        <text name="eq_sponsor_eligible_taken" text="Al exclusief"/>
+        <text name="eq_sponsor_eligible_yours" text="Je sponsor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Alleen exclusief"/>
+        <text name="eq_sponsor_eligible_full" text="Sponsors vol"/>
+        <text name="eq_sponsor_eligible_overlap" text="Zelfde specialiteit"/>
+        <text name="eq_sponsor_eligible_rivals" text="Concurrent materieel"/>
+        <text name="eq_sponsor_eligible_equipment" text="Materieel nodig"/>
+        <text name="eq_sponsor_eligible_branding" text="Branding nodig"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exclusief"/>
+        <text name="eq_sponsor_exclusive_no" text="Niet exclusief"/>
+        <text name="eq_sponsor_overlapLine" text="Botst met %s: %s"/>
+        <text name="eq_sponsor_label_speciality" text="Specialiteit"/>
+        <text name="eq_sponsor_feePerEvent" text="%s per wedstrijd"/>
+        <text name="eq_sponsor_targetPopularity" text="Populariteit %d"/>
+        <text name="eq_sponsor_targetRating" text="Wedstrijd %s of hoger"/>
+        <text name="eq_sponsor_haveOf" text="Je hebt er %s van %d"/>
+        <text name="eq_sponsor_mustOwn" text="Je moet %d stuks van hun materieel bezitten voordat je je aanmeldt."/>
+        <text name="eq_sponsor_mustKeep" text="Je moet %d stuks van hun materieel houden om betaald te worden."/>
+        <text name="eq_sponsor_attachHalf" text="Werktuigen en aanhangers tellen voor de helft."/>
+        <text name="eq_sponsor_noRivals" text="Je mag geen machines bezitten binnen %s van de prijs van hun product."/>
+        <text name="eq_sponsor_sellFirst" text="Verkoop of lever het volgende in voordat je je aanmeldt:"/>
+        <text name="eq_sponsor_sellMore" text="...en nog %d"/>
+        <text name="eq_sponsor_button_shop" text="Toon in winkel"/>
+        <text name="eq_sponsor_label_branding" text="Zichtbaarheid"/>
+        <text name="eq_sponsor_brandingLine" text="%s (vereist: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Geen"/>
+        <text name="eq_sponsor_branding_low" text="Laag"/>
+        <text name="eq_sponsor_branding_medium" text="Middel"/>
+        <text name="eq_sponsor_branding_high" text="Hoog"/>
+        <text name="eq_sponsor_label_likely" text="Waarschijnlijke uitbetaling"/>
+        <text name="eq_sponsor_likelyLine" text="%s bij %s"/>
+        <text name="eq_shop_branding" text="Je zichtbaarheid: nu %s, hiermee %s. Meer zichtbaarheid verhoogt wat je sponsor betaalt."/>
+        <text name="eq_shop_brandingOption" text="Met sponsorborden, je zichtbaarheid: nu %s, hiermee %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponsorborden"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponsorborden (optioneel, meerprijs): borden op de vleugels tonen het logo van je sponsor en de balken krijgen zijn kleur."/>
+        <text name="eq_sponsor_discount_repaint" text="Spuiten %s"/>
+        <text name="eq_sponsor_discount_repair" text="Reparatie %s"/>
+        <text name="eq_sponsor_discount_buy" text="Kopen %s"/>
+        <text name="eq_sponsor_loanLine" text="Leent een machine uit voor je evenementmaand"/>
+        <text name="eq_loan_popupTitle" text="Een machine van je sponsor"/>
+        <text name="eq_loan_popup" text="%s heeft een nieuwe %s geleverd die je tijdens je evenement mag uitproberen. Hij staat voor je klaar bij de dealer. Gebruik hem gratis waarvoor je maar wilt tot het einde van de maand, dan wordt hij opgehaald."/>
+        <text name="eq_loan_delivered" text="%s leent je de %s voor je evenementmaand. Hij staat bij de dealer."/>
+        <text name="eq_loan_collected" text="%s heeft de uitgeleende %s opgehaald."/>
+        <text name="eq_loan_noRoom" text="%s kon de %s niet leveren: er is geen plek bij de dealer. Morgen volgt een nieuwe poging."/>
+        <text name="eq_loan_enterTitle" text="Aangeboden door %s"/>
+        <text name="eq_loan_enter" text="Dit materieel is door je sponsor geschonken voor gebruik tijdens je evenement deze maand. Veel plezier!"/>
+        <text name="eq_sponsor_discount_from" text="Vanaf %s"/>
+        <text name="eq_sponsor_discount_after" text="Vanaf %d maanden na tekenen"/>
     </texts>
 </l10n>

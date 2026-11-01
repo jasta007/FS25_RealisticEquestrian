@@ -276,7 +276,7 @@ EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growM
 -- A mark has its own place, so no other pop can cut it short (James, 2026-10-31: some marks
 -- showed far too briefly); one that comes while another is up waits until that one has shown
 -- for minMs.
-EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, subSize = 0.015, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
 -- A finished dressage test's score (James, 2026-10-31: "very well hidden"): big in the middle of
 -- the screen whatever the view, "Test complete" in gold above it, the percent coloured like a
 -- mark (out of 10), with gold bars that sweep out either side as it lands.
@@ -369,7 +369,8 @@ end
 --- Show a short burst of text in the middle of the screen.
 --- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank, courseFence, showJumping or an EXERTION_POPS key
 --- @param mult number|string|nil the combo multiplier for jump and routine, the speed multiplier for speedBank, the text for showJumping
-function EqTrainingHud.pop(kind, mult)
+--- @param sub string|nil routineMark: the movement's name, small under the mark
+function EqTrainingHud.pop(kind, mult, sub)
     local text, color, big
     if kind == "jump" then
         text = mult > 1 and string.format("x%d!", mult) or g_i18n:getText("eq_pop_clear")
@@ -428,7 +429,7 @@ function EqTrainingHud.pop(kind, mult)
     end
     if kind == "routineMark" then
         local m = EqTrainingHud.MARK
-        local state = { text = text, color = color, big = big, y = m.y, holdMs = m.holdMs, flourish = (mult or 0) >= m.flourish }
+        local state = { text = text, color = color, big = big, y = m.y, holdMs = m.holdMs, flourish = (mult or 0) >= m.flourish, sub = sub }
         local now = g_time or 0
         local shown = EqTrainingHud.markState
         if shown ~= nil and now - shown.at < m.minMs then
@@ -508,6 +509,10 @@ local function drawBurst(state)
     local c = state.color
     local y = state.y or p.y
     shadowText(state.text, p.x, y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    if state.sub ~= nil then
+        -- The movement it marks, small and white under it.
+        shadowText(state.sub, p.x, y - EqTrainingHud.MARK.subSize * 1.4, EqTrainingHud.MARK.subSize, { 1, 1, 1, alpha }, RenderText.ALIGN_CENTER, false)
+    end
     if state.flourish then
         -- Gold bars either side that sweep out as it lands.
         local m = EqTrainingHud.MARK
@@ -576,6 +581,18 @@ function EqTrainingHud.drawPops()
     end
     if EqTrainingHud.popState ~= nil and not drawBurst(EqTrainingHud.popState) then EqTrainingHud.popState = nil end
     if EqTrainingHud.markState ~= nil and not drawBurst(EqTrainingHud.markState) then EqTrainingHud.markState = nil end
+end
+
+
+--- "GET ON YOUR HORSE" in the middle, with the seconds left, while the rider is off in a round
+--- or test that counts in your own event (EqCourseHooks, EqTrainingHooks set getOn).
+function EqTrainingHud.drawGetOn()
+    local state = EqTrainingHud.getOn
+    if state == nil then return end
+    local left = state.ms - ((g_time or 0) - state.at)
+    if left <= 0 then return end
+    EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_sj_getOn"), math.ceil(left / 1000)), left / state.ms,
+        EqTrainingHud.COLOR.red)
 end
 
 
@@ -683,11 +700,31 @@ function EqTrainingHud.drawPanelNote(value, color, above)
         y = p.top + n.gap + (#lines - 1) * n.lineHeight + size * 0.25
     else
         y = (EqTrainingHud.panelBottom or p.top - 0.12) - n.gap - size
+        -- Under the movement's name when it shows (drawNowDoing).
+        local now = EqTrainingHud.NOW_DOING
+        if EqTrainingHud.nowDoingAt ~= nil and (g_time or 0) - EqTrainingHud.nowDoingAt < 200 then y = y - now.size - n.gap end
     end
     for i, line in ipairs(lines) do
         shadowText(line, x, y - (i - 1) * n.lineHeight, size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_LEFT, above)
     end
     resetText()
+end
+
+
+-- The movement the horse is doing now ("Travers (haunches in)", "Piaffe"), big and bold right
+-- under the panel (James, 2026-11-01: "I forget which is which so often"): white, or green when
+-- it is what a dressage test asks for now and red when it asks for something else.
+EqTrainingHud.NOW_DOING = { size = 0.021 }
+
+
+--- @param value string
+--- @param color table|nil white when nil
+function EqTrainingHud.drawNowDoing(value, color)
+    local p, n, now = EqTrainingHud.PANEL, EqTrainingHud.PANEL_NOTE, EqTrainingHud.NOW_DOING
+    local y = (EqTrainingHud.panelBottom or p.top - 0.12) - n.gap - now.size
+    shadowText(value, p.right, y, now.size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_RIGHT, true)
+    resetText()
+    EqTrainingHud.nowDoingAt = g_time or 0
 end
 
 

@@ -18,8 +18,8 @@ import random
 
 import bpy
 
-TEX = r"C:\Users\User\Documents\RealisticEquestrian\xcJumps\textures"
-OUT = r"C:\Users\User\Documents\RealisticEquestrian\xcJumps\obj"
+TEX = os.environ.get("XC_TEX", r"C:\Users\User\Documents\RealisticEquestrian\xcJumps\textures")
+OUT = os.environ.get("XC_OUT", r"C:\Users\User\Documents\RealisticEquestrian\xcJumps\obj")
 SPACING = 6.0           # jumps stand this far apart along X in the scene, for looking at
 
 BOARD = (2.0, 1.6)      # metres one plank texture covers: along the grain (u), across the 8 boards (v)
@@ -29,12 +29,14 @@ CORNER_LENGTH = 4.0     # along X, apex at +X
 CORNER_TIP = 0.2        # half the width of the cut-off apex
 CORNER_TIP_X = CORNER_LENGTH / 2   # centred: the flags stand past both ends and the rider picks
                                    # the line (James: narrow end safe, wide end trouble)
-CORNER_HALF_ANGLE = 30  # degrees each arm turns away from the flag line (a 60 degree corner)
+CORNER_HALF_ANGLE = 30  # degrees each arm turns away from the flag line (a 60 degree corner);
+                        # a jump's "angle" is its own whole angle (James, 2026-10-31: the log
+                        # corner narrower, so it is the easier of the two)
 FLAG_GAP = 0.45         # flags stand this far past the ends
 
 JUMPS = [
     {"name": "xcCornerPlank", "kind": "cornerPlank", "height": 1.10},
-    {"name": "xcCornerLog", "kind": "cornerLog", "height": 1.15},
+    {"name": "xcCornerLog", "kind": "cornerLog", "height": 1.15, "angle": 45},
     {"name": "xcRollTopQuarter", "kind": "rollQuarter", "height": 1.00, "length": 3.4},
     {"name": "xcRollTopHalf", "kind": "rollHalf", "height": 0.95, "length": 3.2},
     {"name": "xcTable", "kind": "table", "height": 1.15, "length": 3.6, "depth": 2.2},
@@ -266,10 +268,11 @@ def profile_prism(part, profile, x0, x1):
 # ---------------------------------------------------------------------------------------------
 # The jumps
 
-def corner_outline():
+def corner_outline(jump):
     """The corner seen from above: apex (cut off) at CORNER_TIP_X, the arms opening towards -X."""
     far = CORNER_TIP_X - CORNER_LENGTH
-    wide = CORNER_TIP + CORNER_LENGTH * math.tan(math.radians(CORNER_HALF_ANGLE))
+    half_angle = jump.get("angle", 2 * CORNER_HALF_ANGLE) / 2
+    wide = CORNER_TIP + CORNER_LENGTH * math.tan(math.radians(half_angle))
     return [(CORNER_TIP_X, -CORNER_TIP), (CORNER_TIP_X, CORNER_TIP), (far, wide), (far, -wide)]
 
 
@@ -277,7 +280,7 @@ def corner_plank(jump):
     """Weathered vertical boards leaning out a little at the foot, under a brown stained deck
     whose deep edge board overhangs all round (James's photo DSCN1649)."""
     h = jump["height"]
-    outline = corner_outline()
+    outline = corner_outline(jump)
     boards, deck = Part("xcPlanks"), Part("xcStain")
     trim = 0.16
     walls(boards, offset(outline, 0.08), outline, -0.05, h - trim)
@@ -285,9 +288,78 @@ def corner_plank(jump):
     walls(deck, lid, lid, h - trim, h, boards=False)
     cap(deck, lid, h)
     cap(deck, lid, h - trim, down=True)
+    parts = {"boards": boards, "deck": deck}
+    # a sponsor board on each arm (James, 2026-10-31), so it faces the rider whichever way the
+    # Corner choice sends them: edge 3 faces the horse (-Y), edge 1 the landing side
+    foot = offset(outline, 0.08)
+    for number, edge in ((1, 3), (2, 1)):
+        parts[f"eqSponsor_{number}"] = sponsor_on_wall(deck, foot, outline, edge, -0.05, h - trim,
+                                                       0.5, 1.95, 0.70, 0.16, f"eqSponsor{number}")
     col = Part(None)
     prism(col, offset(outline, 0.08), 0.0, h)
-    return {"boards": boards, "deck": deck}, col, CORNER_TIP_X + FLAG_GAP
+    return parts, col, CORNER_TIP_X + FLAG_GAP
+
+
+LOGO_ASPECT = 2.7      # a logo's width over its height on every board (as on the bleachers)
+LOGO_MARGIN = 0.03     # the backing shows this much round the logo
+
+
+def logo_size(width, height):
+    """The biggest logo of LOGO_ASPECT inside a board of width x height."""
+    width, height = width - 2 * LOGO_MARGIN, height - 2 * LOGO_MARGIN
+    return (width, width / LOGO_ASPECT) if width / height < LOGO_ASPECT else (height * LOGO_ASPECT, height)
+
+
+def sponsor_on_wall(backing, bottom, top, edge, z0, z1, t, width, height, lift, material):
+    """A sponsor board on one side of a leaning wall: the wall runs from the bottom outline at z0
+    to the top one at z1; the board's middle is t along edge (from corner edge to edge + 1), its
+    foot lift above the ground. The backing (width x height, 3 cm thick, in the backing part)
+    leans with the wall; returns the logo, a Part of its own on top."""
+    n = len(top)
+    i, j = edge, (edge + 1) % n
+
+    def wall(s, z):
+        """The wall's face at s metres along the edge from its middle, height z."""
+        f = (z - z0) / (z1 - z0)
+        a = [bottom[i][k] + (top[i][k] - bottom[i][k]) * f for k in range(2)]
+        b = [bottom[j][k] + (top[j][k] - bottom[j][k]) * f for k in range(2)]
+        length = math.hypot(b[0] - a[0], b[1] - a[1])
+        d = ((b[0] - a[0]) / length, (b[1] - a[1]) / length)
+        m = (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
+        return (m[0] + d[0] * s, m[1] + d[1] * s, z)
+    # out of the wall: away from the outline's middle
+    cx, cy = sum(p[0] for p in top) / n, sum(p[1] for p in top) / n
+    ex, ey = top[j][0] - top[i][0], top[j][1] - top[i][1]
+    out = (ey, -ex) if (ey * (top[i][0] - cx) - ex * (top[i][1] - cy)) > 0 else (-ey, ex)
+    ol = math.hypot(*out)
+    out = (out[0] / ol, out[1] / ol)
+    # the wall leans: push the board out by how far the face has moved at each height
+    def at(s, z, d):
+        p = wall(s, z)
+        return (p[0] + out[0] * d, p[1] + out[1] * d, p[2])
+    za, zb = lift, lift + height
+    hw = width / 2
+    inside = wall(0.0, (za + zb) / 2)
+    inside = (inside[0] - out[0], inside[1] - out[1], inside[2])
+    front = [at(-hw, za, 0.03), at(hw, za, 0.03), at(hw, zb, 0.03), at(-hw, zb, 0.03)]
+    back = [at(-hw, za, 0.0), at(hw, za, 0.0), at(hw, zb, 0.0), at(-hw, zb, 0.0)]
+    flat = lambda p: (p[2] / BOARD[0], (p[0] + p[1]) / BOARD[1])
+    backing.face([(p, flat(p)) for p in front], inside)
+    for k in range(4):
+        q = (k + 1) % 4
+        backing.face([(back[k], flat(back[k])), (back[q], flat(back[q])), (front[q], flat(front[q])), (front[k], flat(front[k]))],
+                     inside)
+    # the logo: u to the right seen from outside, v up
+    lw, lh = logo_size(width, height)
+    zc = (za + zb) / 2
+    logo = Part(material)
+    corners = [(-lw / 2, zc - lh / 2, (0, 0)), (lw / 2, zc - lh / 2, (1, 0)), (lw / 2, zc + lh / 2, (1, 1)), (-lw / 2, zc + lh / 2, (0, 1))]
+    # +s runs from corner i to j; seen from outside, right is (looking in) x up
+    right = (-out[1], out[0])
+    d = (top[j][0] - top[i][0], top[j][1] - top[i][1])
+    sign = 1 if right[0] * d[0] + right[1] * d[1] > 0 else -1
+    logo.face([(at(sign * s, z, 0.032), uv) for s, z, uv in corners], inside)
+    return logo
 
 
 def corner_log(jump):
@@ -295,7 +367,7 @@ def corner_log(jump):
     a round log capping each side and the wide end, a plank deck inside (photo 284751502)."""
     h = jump["height"]
     rng = random.Random(5)
-    outline = corner_outline()
+    outline = corner_outline(jump)
     logs, ends, deck = Part("xcPeeled", smooth=True), Part("xcLogEnd"), Part("xcPlanks")
     logs_b = Part("xcPeeledB", smooth=True)   # every other log or so: greyer, more streaked wood
     r = 0.085
@@ -432,12 +504,14 @@ def table(jump):
     for i, (x, y) in enumerate(outline):
         post(posts, ends, x + (r * 0.4 if x > 0 else -r * 0.4), y + (r * 0.4 if y > 0 else -r * 0.4), -0.05, h + 0.06, r, seed=i)
     # the sponsor board: a stained backing a little proud of the face, the logo panel on it
-    bw, bh, bz = 2.1, 0.81, 0.18
+    # (James, 2026-10-31: make it bigger, there's lots of room) nearly between the posts, up to the deck
+    bw, bh, bz = 3.1, 0.88, 0.12
     board = [(bw / 2, -hy - 0.04), (bw / 2, -hy), (-bw / 2, -hy), (-bw / 2, -hy - 0.04)]
     walls(deck, board, board, bz, bz + bh, boards=False)
     cap(deck, board, bz + bh)
     sponsor = Part("eqSponsor1")
-    lw, lh, ly = 2.0, 0.75, -hy - 0.042
+    lw, lh = logo_size(bw, bh)
+    ly = -hy - 0.042
     lz = bz + (bh - lh) / 2
     sponsor.face([((-lw / 2, ly, lz), (0, 0)), ((lw / 2, ly, lz), (1, 0)), ((lw / 2, ly, lz + lh), (1, 1)), ((-lw / 2, ly, lz + lh), (0, 1))],
                  (0.0, 0.0, lz + lh / 2))

@@ -165,6 +165,8 @@ function EqWelcome.onMissionDraw()
             end
         end
     end
+    -- First time in a machine a sponsor lent: a popup says so (EqSponsorLoans).
+    if EqSponsorLoans ~= nil then EqLog.try("EqSponsorLoans.checkEntered", EqSponsorLoans.checkEntered) end
     EqTrainingHud.drawHelp(false)
 end
 

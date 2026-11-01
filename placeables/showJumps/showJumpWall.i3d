@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<i3D name="showJumpWall.i3d" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="GIANTS Editor 64bit" version="10.0.14"/>
+  </Asset>
+
+  <Files>
+    <File fileId="3" filename="$data/shaders/vehicleShader.xml"/>
+    <File fileId="6" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
+    <File fileId="5" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
+    <File fileId="4" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="13" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
+    <File fileId="1" filename="sjBricks_diffuse.dds"/>
+    <File fileId="11" filename="../xcJumps/xcFlags_diffuse.dds"/>
+  </Files>
+
+
+  <Materials>
+    <Material name="eqSponsor" materialId="9" specularColor="0.2 1 0" alphaBlending="true">
+      <Texture fileId="13"/>
+    </Material>
+    <Material name="sjBricks" materialId="8" specularColor="0.301961 1 0">
+      <Texture fileId="1"/>
+    </Material>
+    <Material name="sjFlags" materialId="7" specularColor="0.101961 1 0">
+      <Texture fileId="11"/>
+    </Material>
+    <Material name="sjWhite" materialId="5" customShaderId="3">
+      <Custommap name="detailSpecular" fileId="4"/>
+      <Custommap name="detailNormal" fileId="5"/>
+      <Custommap name="detailDiffuse" fileId="6"/>
+      <CustomParameter name="colorScale" value="0.8 0.8 0.78"/>
+      <CustomParameter name="smoothnessScale" value="0.55"/>
+      <CustomParameter name="metalnessScale" value="0"/>
+    </Material>
+    <Material name="sjWingPaint" materialId="6" customShaderId="3">
+      <Custommap name="detailSpecular" fileId="4"/>
+      <Custommap name="detailNormal" fileId="5"/>
+      <Custommap name="detailDiffuse" fileId="6"/>
+      <CustomParameter name="colorScale" value="0.005 0.02 0.1"/>
+      <CustomParameter name="smoothnessScale" value="0.55"/>
+      <CustomParameter name="metalnessScale" value="0"/>
+    </Material>
+  </Materials>
+
+
+  <Shapes externalShapesFile="showJumpWall.i3d.shapes">
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="showJumpWall" nodeId="46">
+      <Shape name="bricks" shapeId="1" clipDistance="300" nodeId="47" castsShadows="true" receiveShadows="true" materialIds="8"/>
+      <Shape name="frame" shapeId="2" clipDistance="300" nodeId="48" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqPaint" shapeId="3" clipDistance="300" nodeId="49" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <Shape name="eqWingPaint" shapeId="4" clipDistance="300" nodeId="50" castsShadows="true" receiveShadows="true" materialIds="6"/>
+      <Shape name="flags" shapeId="5" clipDistance="300" nodeId="51" castsShadows="true" receiveShadows="true" materialIds="7"/>
+      <Shape name="eqSponsor_1" shapeId="6" clipDistance="300" nodeId="52" castsShadows="false" receiveShadows="true" materialIds="9"/>
+      <Shape name="eqSponsor_2" shapeId="7" clipDistance="300" nodeId="53" castsShadows="false" receiveShadows="true" materialIds="9"/>
+      <TransformGroup name="eqFlagsRed" translation="2.5 0 0" nodeId="54"/>
+      <TransformGroup name="eqFlagsWhite" translation="-2.5 0 0" nodeId="55"/>
+      <TransformGroup name="collision" nodeId="56">
+        <Shape name="col" shapeId="8" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="57" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="9" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="58" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <Shape name="col" shapeId="10" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="59" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole1" translation="-1.4 1 0" nodeId="60">
+        <Shape name="bricks" shapeId="11" clipDistance="300" nodeId="61" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="frame" shapeId="12" clipDistance="300" nodeId="62" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1f1" shapeId="13" clipDistance="300" nodeId="63" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_2f1" shapeId="14" clipDistance="300" nodeId="64" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="65" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="0.347 0 0" nodeId="66"/>
+        <TransformGroup name="eqBlock" translation="0 0.2 0.2" nodeId="67"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole2" translation="-0.7 1 0" nodeId="68">
+        <Shape name="bricks" shapeId="16" clipDistance="300" nodeId="69" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="frame" shapeId="17" clipDistance="300" nodeId="70" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1f2" shapeId="18" clipDistance="300" nodeId="71" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_2f2" shapeId="19" clipDistance="300" nodeId="72" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="73" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="0.347 0 0" nodeId="74"/>
+        <TransformGroup name="eqBlock" translation="0 0.2 0.2" nodeId="75"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole3" translation="-1.1102e-16 1 0" nodeId="76">
+        <Shape name="bricks" shapeId="20" clipDistance="300" nodeId="77" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="frame" shapeId="21" clipDistance="300" nodeId="78" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1f3" shapeId="22" clipDistance="300" nodeId="79" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_2f3" shapeId="23" clipDistance="300" nodeId="80" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="81" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="0.347 0 0" nodeId="82"/>
+        <TransformGroup name="eqBlock" translation="0 0.2 0.2" nodeId="83"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole4" translation="0.7 1 0" nodeId="84">
+        <Shape name="bricks" shapeId="24" clipDistance="300" nodeId="85" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="frame" shapeId="25" clipDistance="300" nodeId="86" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1f4" shapeId="26" clipDistance="300" nodeId="87" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_2f4" shapeId="27" clipDistance="300" nodeId="88" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="89" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="0.347 0 0" nodeId="90"/>
+        <TransformGroup name="eqBlock" translation="0 0.2 0.2" nodeId="91"/>
+      </TransformGroup>
+      <TransformGroup name="eqPole5" translation="1.4 1 0" nodeId="92">
+        <Shape name="bricks" shapeId="28" clipDistance="300" nodeId="93" castsShadows="true" receiveShadows="true" materialIds="8"/>
+        <Shape name="frame" shapeId="29" clipDistance="300" nodeId="94" castsShadows="true" receiveShadows="true" materialIds="5"/>
+        <Shape name="eqSponsor_1f5" shapeId="30" clipDistance="300" nodeId="95" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="eqSponsor_2f5" shapeId="31" clipDistance="300" nodeId="96" castsShadows="false" receiveShadows="true" materialIds="9"/>
+        <Shape name="col" shapeId="15" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" density="0.01" nodeId="97" castsShadows="false" receiveShadows="false" nonRenderable="true" materialIds="5"/>
+        <TransformGroup name="eqEnd" translation="0.347 0 0" nodeId="98"/>
+        <TransformGroup name="eqBlock" translation="0 0.2 0.2" nodeId="99"/>
+      </TransformGroup>
+    </TransformGroup>
+  </Scene>
+
+</i3D>

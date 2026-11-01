@@ -188,6 +188,11 @@ drift with the head bent the way it goes. Along the rail the body turns about 27
 and drifts to stay on it: forehand in and bent away from the way it goes is a shoulder-in,
 forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
 it goes a travers (haunches in), head to the rail with no bend a leg yield along the rail.
+Under the panel the movement the horse is doing now shows in big letters (James, 2026-11-01:
+"I forget which is which"): Piaffe, Pirouette, Passage, Collected, Leg yield, Half pass, and on a
+long side of our arenas (within 2.5 m of the track, body turned off the rail) Shoulder-in,
+Renvers, Travers or Leg yield along the rail. White, or in a test green when it is what is asked
+right now and red when something else is.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
 the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
 it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
@@ -204,7 +209,7 @@ Started near the gold pole (marked like a halt); letting go early (off the spot 
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
-two for a piaffe, a ring with an arrowhead the way to turn for a pirouette.
+for a piaffe a short stretch of trot and walk dashes in turn (it creeps forward a little), a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 
 **Shop arenas: a test of figures** (James, 2026-10-29). Coming within 12 m of a shop arena (of its
@@ -261,13 +266,16 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
   60%). Figures that only follow the line (circles, diagonals, serpentines, centre lines...) are
   stricter, 20 a metre past 0.02 m, so 0.1 m off is an 8.5 and 0.15 m a 7.5 (James, 2026-10-31:
-  "pretty hard to not get an 8"); lateral work, passage and movements on the spot keep the
-  gentler rate. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
+  further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
+  circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
   down to X) only loses half of all that. Each mark pops up below the horse, red through orange
-  and yellow to green, with gold flourishes at 9 or better. It has its own place, so no other pop
+  and yellow to green, with gold flourishes at 9 or better. The movement's name shows small under it
+  (James, 2026-11-01: he took one mark for the next movement's). It has its own place, so no other pop
   cuts it short, and shows for 1.8 s; a mark that comes sooner waits until the last has shown
   for 1.5 s (James, 2026-10-31).
 - A halt needs a full stop: Ctrl (on the spot) only helps slow down for it (James, 2026-10-30). Backing up
@@ -279,9 +287,12 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
   letter gaps (10 to 26 m).
 - **Passage** (James, 2026-10-31): along a long side over one or two letter gaps, or across the
-  long diagonal, at a trot. The prompt says "Passage: Ctrl + W" (red while not collected), the
-  line's dashes come closer together and show cyan ahead; after the first 2 m each second not in
-  passage costs 0.6 (at most 4). No change of gait in the 15 m before it. The middle prompt names what is asked
+  long diagonal, at a trot. The prompt says "Passage H-B: Ctrl + W" (red while not collected); its
+  bar counts down to the start, then empties towards a gold pole at the end, and just past it
+  "Trot!" (James, 2026-11-01: where it starts and stops was unclear). The line's dashes come
+  closer together, chevrons and plain dashes in turn, and show cyan ahead; after the first 2 m it loses the larger of
+  0.6 a second not in passage and 6 times the share of its line ridden out of it (at most 6:
+  trotted through, it was only a few seconds). No change of gait in the 15 m before it. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
@@ -290,8 +301,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
   at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
-  onto the line (up to 0.8 of its distance off a second at temperament 100, 0.3 of that outside
-  lateral work) and, in a section, turned towards the asked body angle at up to 0.5 rad/s, so it
+  onto the line (up to 1.0 of its distance off a second at temperament 100, half that outside
+  lateral work; James, 2026-11-01: raised from 0.8 and 0.3) and, in a section, turned towards the
+  asked body angle at up to 0.7 rad/s, so it
   takes less effort to hold. None at temperament 0, none during a halt or rein back, and none
   more than 2 m off the line (riding away from a test must not hold the horse back).
 - **Starting** (James, 2026-10-31): riding within 5 m of the gold pole outside A starts a 3, 2, 1
@@ -532,7 +544,7 @@ for now in multiplayer.
   and one broker.
 - **Skills.** Everyone has ten skills from 0 to 100: the four stats, the four event types,
   Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
-  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%). Other skills are
+  candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%; only one main skill, picked at random, reaches 90-100, the rest stay 80-89). Other skills are
   0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
 - **Wages.** Per day, by job (groom 200, trainer 450, vet 600, broker 400) times the grade
   (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
@@ -797,7 +809,7 @@ Jumping, Cross Country or a 3 Day Event, each at **Novice**, **Intermediate** or
 | Championship | 32 | 220,000 | 20x60 | 12 | 3000 m, 40 jumps | 2 |
 
 A Novice event about breaks even, an Intermediate one pays only when it's popular (85 or more), and a
-Championship loses money unless a sponsor pays for it (sponsors are still to come).
+Championship loses money unless a sponsor pays for it (see Sponsors below).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
   **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
@@ -809,8 +821,15 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
 - Two places are yours; every other place is a visiting horse, which needs a **free stable place**
   in your horse pens and a month of **horse feed** (troughs and silos both count).
 - **Popularity** (0-100): 30 to start, up to 15 for a course or arena beyond the minimum, up to
-  15 for extra bleachers or an indoor arena, up to 10 for horse facilities, and your hosting
-  reputation. It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
+  5 for how well a jumping course is built (half for jumping different obstacles rather than the
+  same few again, half for a mix of jump types, full at five), up to 15 for extra bleachers or an
+  indoor arena, up to 10 for horse facilities, up to 6 for shops (2 for owning a farm shop or a
+  production making goods visitors buy, such as a bakery or dairy, placed or bought on the map,
+  and 1 for each such good with 50 l or more in stock), your hosting reputation, a bonus for each
+  month you book ahead beyond the first (+2 a month, up to +10, shown on the Popularity line), advertising
+  (Local +4 or National +8, paid when booking: $250/$1,500/$6,000 or $750/$4,000/$15,000 by
+  rating, not refunded), and a buzz of -5 to +5 rolled when you book ("Quiet" or "Buzzing" in
+  the breakdown). It sets the turnout (half the visiting places at 0, all at 100) and so the takings:
   each visitor's entry fee (double for a 3 Day Event) plus each bleacher's gate. The Host list
   shows the most an event could take (at popularity 100); its details show the expected takings
   at today's popularity, which can still change before the event.
@@ -821,34 +840,228 @@ Championship loses money unless a sponsor pays for it (sponsors are still to com
   Your horses enter with one **Enter** button: no fee, no transport, and they stay at home. It
   counts toward Entries per month, and results come at the end of the month with the other
   monthly events.
-- **The event month:** your farm is checked when the event opens and every day after. If
-  anything is short (including that day's feed for the visitors) you get a warning; still short
+- **The event month:** your stables and feed are checked when the event opens and every day
+  after (courses and arenas no longer are, see below). If either is short (including that day's feed for the visitors) you get a warning; still short
   the next day, the event is cancelled and your reputation drops 15. Each day the visitors eat
   a month's horse ration divided by the days in a month, taken from your silos first, then your
   horse troughs. The Results tab shows how much they have eaten.
-- **Results:** at the end of the month popularity is worked out again, plus 10 if one of your
-  entries is rated 90 or more for the event, and minus 10 for cross country in winter. That sets
-  how many visitors came (the field is them plus your entered horses). Their entry fees and the
-  gate are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
+- **Weather:** while the event runs, the weather is checked once an in-game hour from 8:00 to
+  20:00. Each hour of rain counts 1, thunder 1.5, snow 2 and hail 4; popularity loses 40 times
+  the share of bad hours (an all-rain month -40), at most 25, and the gate loses 0.6 times that
+  share (never below 40% of it). A tornado costs 15 more, once, with a warning. A show jumping
+  course or dressage arena inside an indoor arena or riding centre stays dry; cross country
+  counts the share of its jumps outdoors, measured when the event opens; a 3 Day Event averages
+  its phases. The Results tab shows what bad weather has cost so far. There is no season rule:
+  bad seasons bring bad weather.
+- **Souvenirs and refreshments:** when booking you choose to sell them if available (on by
+  default). At the end of the month visitors buy goods from your productions and silos: 100 l
+  (Novice), 250 l (Intermediate) or 500 l (Championship) at popularity 100, half at 0, shared out
+  over the goods you have, at the best sell price plus 25%. The goods are listed in
+  `data/hosting.xml` (base game and Geistal goods; other maps' names can be added).
+- **Results:** at the end of the month popularity is worked out again, plus your best entry's
+  draw: +3 for a Contender (80+ for the event), +6 for a Champion (90+), +10 for a Legendary
+  horse (98+), and the results say people were excited to see it compete. That sets
+  how many visitors came (the field is them plus your entered horses). Their entry fees, the
+  gate and any souvenir sales are paid to you, and your reputation rises 8 (from -25 up to 20). The event is run even
   if none of your horses entered. **Your events**, at the top of the Results tab, shows each
-  one's winners, turnout, takings against the setup fee, and how your horses did.
+  one's winners, turnout, takings, weather and sales, how your horses did, and last its final popularity and profit (takings and sponsor fees less the setup fee and advertising).
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
-  real faults and time. In an arena big enough, the dressage test is the event's fixed test of
-  8, 10 or 13 figures by rating and scores 100 less its percentage in penalties (a 72% test is
-  28); a third error of course eliminates. Each horse
-  gets one go at each phase, and later rounds are practice. Phases you don't ride are
-  simulated. A one-phase event with a ridden round is scored in penalties like eventing.
-  A show jumping or cross country round is not put straight against the simulated rivals: it is
-  graded 0 to 1 (rails and refusals, and time over the time allowed, which comes from the
-  course's length), and the grade, give or take a little luck, picks which of 9 simulated rounds
-  of your own horse it gets, from its best to its worst. The horse's stats still decide most;
-  your riding decides its day. A ridden dressage test counts its real score. Coming up to the start line on an entered
-  horse, a gold announcement says whether this round counts, is practice (phase already
-  ridden) or the course is too small; the finish says what was kept and when results come.
+  real faults and time: the penalties you are told at the finish are the ones on the
+  scoresheet. In an arena big enough, the dressage test is the event's fixed test of 8, 10 or
+  13 figures by rating (or your own test for that arena, if it has at least as many steps).
+  Its penalties are on the simulated field's scale: 75% scores 22 (the simulated best), each
+  percent either side 0.8, so 80% is 18, 70% 26 and 60% 34; a third error of course eliminates.
+  Each horse gets one go at each phase, and later rounds are practice. Phases you don't ride
+  are simulated. A one-phase event with a ridden round is scored in penalties like eventing.
+  Coming up to the start line on an entered horse, a gold announcement says whether this round
+  counts, is practice (phase already ridden) or the course is too short; the finish says what
+  was kept and when results come. A dressage arena does the same when its test is offered
+  (arena too small, your own test too short, dressage already ridden, or the horse isn't entered), and the note above
+  the panel replaces "Move to A" until the countdown.
+- **Getting off:** in a round or test that counts, getting off shows "GET ON YOUR HORSE" for
+  5 seconds; back on in time carries on (the clock kept running), otherwise the phase is
+  eliminated and can't be ridden again. Riding away from the course or onto another horse
+  eliminates it too. Practice rounds just stop. After a refusal the horse must back off 2.5 m
+  from the fence before it can refuse there again.
+- **The report:** a 3 Day Event's report on the Results tab gives the overall top three with
+  their totals, each phase's top three with their scores, and each of your horses' place and
+  score in every phase. A phase you rode gets its story line from your ride, so a horse clear
+  over fences but down the order after its dressage says so instead of "Clear in every phase".
+- **Set it before the month:** once the event runs, a course or dressage test big enough for it
+  can't be deleted. Saving one of your own dressage tests shorter than your booked or running
+  event needs still saves it, with a warning, and rides there are practice. A course or arena
+  made too small during the month doesn't cancel the event: it runs in the background without
+  your rides. Only the visitors' stables and feed can stop it.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
-`eqHostWait` (testing) ends the wait before you can host again.
+`eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
+(testing) counts hours of a weather at your running event.
+
+### Sponsors
+
+The Events tab's fourth tab, **Sponsors**, shows your sponsors and this year's offers (the rules
+are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
+
+- **Who:** every sponsor is a brand from your own shop, mods included; no brand is named in the
+  mod. Brands are sized by how many shop categories they make machines in, then how many price
+  bands those span, then how many machines: the top 15% are **big**, the next 35% **moderate**,
+  the rest **small**. A brand needs at least 3 machines to sponsor at all, 8 to be moderate and
+  15 to be big; short of that it drops a size. A brand that makes easy-to-get kit (a small,
+  medium or large tractor, a car, a truck, a telehandler or a loader; `easyCategories`) can be a
+  small sponsor with just 1 machine. The game's own Lizard brand is left out.
+- **When:** offers come at the start of each year (and at once in a save that has none yet): up
+  to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year).
+- **Several sponsors:** up to 3 at once, each with all its own rules met. **Big** sponsors are
+  always **exclusive** (no one else while they sponsor you, and you can only sign them with no
+  other sponsor), **moderate** ones are exclusive half the time, **small** ones never. No two
+  sponsors may make machines in the same shop category (Zetor and Steyr both make medium
+  tractors, so not both); the panel names the clash. Your sponsors' machines never count as rivals
+  for each other. A brand you already have isn't offered again until its contract ends.
+- **The deal:** each offer rolls a strictness from relaxed to hard bargain (not shown by name;
+  the terms tell it). Stricter deals ask more and pay more:
+
+| Term | Relaxed | Hard bargain |
+| --- | --- | --- |
+| Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (at most 1 for small, 3 moderate, 5 big) |
+| No rival machine priced within | 20% of one of theirs (same category) | 60% |
+| Yearly popularity target | size target -10 | +10, and a top 3 finish |
+| Branding required | Low | High |
+| Fee | 80% | 130% |
+| Repaint / repair / buying discount | 35% / 15% / 5% | 65% / 35% / 20% |
+
+| Size | Fee per event | Pays at | Popularity | Target | Contract |
+| --- | --- | --- | --- | --- | --- |
+| Big | 120,000-180,000 | Championship, 25% at Intermediate | +10 | 70 | 3 years |
+| Moderate | 25,000-40,000 | Intermediate and Championship | +6 | 55 | 1-2 years |
+| Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
+
+- The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
+  most machines in), contract, **Eligibility** (or why not: Already exclusive, Exclusive only, Sponsors full, Same speciality, Own rival kit, Need equipment, Need branding) and what it pays you; the panel adds its terms and
+  the rival machines to sell. Window and discounts are on 5% steps. **Show in
+  shop** opens the shop on the brand.
+- **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
+  don't count; an attachment or trailer, anything that can't drive itself, counts as half), no rival machine inside the price window (sell it or return the lease first; the
+  panel lists them), and the branding the offer asks for.
+- **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
+  cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
+  Sponsor boards 2, the liverpool 3, the sponsor wall 2, the arch 3, the ride-through gate 1, each rope sign a tenth, all
+  ropes together 1 at most) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the
+  game shows only the word. The shop line on those items shows your branding now and with one
+  more. The panel's **Likely pay** is what one event would pay today at each rating it backs.
+- **Hosted events** at a rating a sponsor backs are named after the biggest of them ("<Brand> Show
+  Jumping Classic", then the best paid), gain every backing sponsor's popularity, and each pays
+  its own fee when the results come in: half at Low branding,
+  75% at Medium, the full fee at High. No fee below the offer's required branding or if you no
+  longer own enough of their machines.
+- **The yearly target:** each contract year, host at least one event the sponsor backs at the
+  target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
+  away. A met year puts the fee back to full.
+- **Cancelling early** costs 15% of one event's fee for each year left (a part year counts whole).
+- **Loans:** some offers say the sponsor **lends a machine** (big 60%, moderate 40%, small 25% of
+  offers; Lizard's one-off sponsorship always does). On the first day of each event month it
+  backs, each lending sponsor delivers one of its machines to the dealer: one of its dearest third,
+  something that drives itself when it makes any. A popup says what came, and another the first time you get in it. It's leased to you for
+  free (its price is 0, so no leasing costs and free repairs), you can use it for anything,
+  plinths included, or return it early. It doesn't count toward their machines or the competitor
+  clause. The sponsor takes it back when the month ends, or at once if the event is cancelled.
+  If the dealer's yard is full, delivery is tried again each day.
+- **Discounts** start 3 months after signing, on the sponsor's own machines: the buying discount
+  in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
+  System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
+  With two contracts for one brand the better one counts.
+- The shop's block on rival machines comes in a later update.
+- **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
+  liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
+  fan panels a board in place of the fan, picket wings an oval on the front, and the liverpool's
+  water the logo too. With a signed sponsor their poles and trim take the sponsor's colour: the
+  game's own paint for that brand when it has one, else a short list in the mod, else the colour
+  you bought. The crossrail and cavaletti are training jumps and stay plain.
+- **Sponsor wall** (2,500): a 1.20 m showpiece "brick" wall between brick pillars, the sponsor's
+  logo across its whole face front and back (2 boards). The bottom is solid; the five top blocks
+  fall like poles when hit (a rail), tipping off the wall and tumbling, and go back up after the
+  round, with a knock as one is hit and a thud as it lands; each falls a little differently. The logo is cut along the blocks, so a
+  knocked block takes its piece with it.
+- **Sponsor gates** (cross country pieces, not jumps, no flags): the **Start/Finish Arch** (4,500,
+  6 m wide, 3.6 m clear, a logo in the middle of the crossbar and up both towers, 3 boards) and the
+  **Ride-Through Gate** (1,200, 4 m wide, 3.4 m clear, one board) to show the way round a course.
+  Their banners or board take the Colour bought, or the sponsor's colour.
+- **Rope Marker** (a fence, 20 a segment): a flimsy rope on thin stakes to mark the route, with no
+  collision for horses, hidden like the course flags. Each segment is plain rope or rope with a
+  small hanging sponsor sign; signs are only a tiny bit of branding (above).
+- **Sponsor plinths** (always visible, Colour choice or the sponsor's colour, plain plaster): the
+  **Drive-Through Plinth** (8,000; a deck 0.75 m up with a ramp at each end so trailers drive
+  straight over; one board both sides), the **Display Ramp** (5,000) and **Large Display Ramp**
+  (7,500; the machine parked facing either way, the board on the high front) and the **Product
+  Ramp** (6,000; one bank 2 m up, mostly ramp with a short flat top, the board on its steep face;
+  no flags of its own). Set two Product Ramps face to face, 2.5 to 8 m apart, and a machine parked
+  on the ground between them counts as a place of its own: a triple plinth, or a cross country
+  jump over the machine, high enough that the horse never comes near it (set course flags to
+  ride it). A machine of your sponsor's brand (owned or leased, not borrowed for a contract)
+  standing on a place counts as **2 boards**; each place takes one machine. The drop walls' decks
+  count too, and a drop wall with any machine on its deck never hides.
+- **Turntable** (25,000): a round plinth with a ramp flush to the back; its brushed metal disc
+  turns once every two minutes while it holds a machine, and stands still when empty. A machine left on the disc with nobody in it, standing still, is
+  after 3 seconds slid to the middle and held on the disc (out of the physics, like a ferry),
+  turning with it, together with anything mounted on it (a wheel loader's bucket, a front
+  tool). A machine towing a trailer isn't held, so a long trailer never swings round; unhitch it. Getting into any of them, hitching or unhitching, or selling gives them their physics
+  back. A sponsor machine there counts **3 boards**. In multiplayer it holds nothing, so it
+  doesn't turn (not tried).
+- **Feedback:** stop the machine you drive on one of your places and a popup says "Sponsor
+  equipment in place!", that it isn't your sponsor's brand, or that you have no sponsor. Each
+  machine of another brand on show when a hosted event's sponsor fee is paid costs 10% of that
+  fee (at most 50%). When a plinth is sold or removed, machines near it are woken so they drop.
+- **Several sponsors:** each piece with boards shows one sponsor's logos and colour, never a mix;
+  the pieces are shared out between your sponsors in turn, a piece keeps its sponsor when another
+  signs, and a plinth shows the sponsor whose machine is parked on it (a product ramp with nothing
+  on it, the one in its gap).
+- **Pale logos:** a brand whose logo is white or very pale (measured on the game's own logos) gets
+  its own colour behind it on the boards that can change colour (bleachers, show jump boards, the
+  gates, the plinths), or dark grey if its colour is too light. The older textured boards (table,
+  corner, drop wall) stay white.
+
+#### Lizard's one-off sponsorship
+
+Lizard, the game's own brand, is never a yearly sponsor. Instead (James, 2026-11-01), a hosted
+event no sponsor backs has a **25%** chance of a free one-off offer from Lizard, rolled once the
+month before the event (or when you book it, if that is for next month). A popup says what Lizard
+wants: a branding level by the end of the event (Novice Low, Intermediate Medium, Championship
+High) and its **Lizard Plinth** built at your venue. Accept or decline; an offer nobody answers
+lapses when the event opens.
+
+- **Accepted:** the event carries Lizard's name and +5 popularity, your boards show Lizard while
+  the deal lasts (after any yearly sponsor), Lizard's machines on plinths count, and Lizard lends
+  a vehicle for the event month. A yearly sponsor signed in the meantime takes the event and
+  Lizard steps aside.
+- **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
+  constructible, like the game's rental houses: a few stakes until you deliver its materials to
+  the triggers in front of it. One bulk load Lizard picks at random, **1,000 l stone**, **1,000 l
+  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (with the game's
+  own heap material, as a real heap of it looks); **10,000 l of logs** (dropped at the wood trigger) go on top as
+  a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
+  front. A Lizard machine on the log deck counts 2 boards, and the board 1.
+- **Build time:** each stage takes an in-game hour once its material is in. A plinth with all
+  its materials delivered but still building at the results counts as finished.
+- **Results:** if the plinth is finished and the branding is there, Lizard pays 6,000 (Novice),
+  18,000 (Intermediate) or 45,000 (Championship), half as much again for a 3 Day Event (James:
+  the plinth is the same work at every rating, so Novice must be worth it). If not, nothing, and **no penalty**. Either way
+  the plinth then collapses (the lizard tips over, the lot sinks) and is gone.
+- Numbers are in `data/sponsors.xml` (`<lizard>`); the plinths come from
+  `art/source/lizard_plinth.py`, which reads the same amounts. Multiplayer: the popup's answer is
+  only taken on the host (not tried).
+
+Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
+category names (easy ones starred), this year's offers and your contracts (with when their
+discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
+earlier, 3 by default;
+`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
+jump colour and where it came from; `eqSponsorLoan [brand]` (testing)
+has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
+`eqSponsorLoan end` takes it back.
+
+The mod counts a month each time the game sends a month change. Some time skips (developer
+tools) move the calendar without one, so those months don't count.
 
 ## Buying horses
 

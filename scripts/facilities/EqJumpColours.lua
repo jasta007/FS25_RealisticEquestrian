@@ -39,6 +39,7 @@ EqJumpColours.LIST = {
 }
 
 -- configuration name -> the shapes it paints, and its title's text
+EqJumpColours.FACE = "eqBoardFace"
 EqJumpColours.CONFIGS = {
     { name = "eqPoleColour", node = "eqPaint", title = "eq_config_poleColour", fallback = "Colour" },
     { name = "eqWingColour", node = "eqWingPaint", title = "eq_config_wingColour", fallback = "Wing colour" },
@@ -110,13 +111,21 @@ end
 --- Paint one of our jumps in the colours bought (once per change).
 --- @param placeable table
 function EqJumpColours.apply(placeable)
-    if placeable == nil or placeable.rootNode == nil or not EqPoles.isOurs(placeable.configFileName) then return end
+    if placeable == nil or placeable.rootNode == nil then return end
+    -- our show jumps, and the sponsor gates (painted the same way)
+    if not EqPoles.isOurs(placeable.configFileName)
+        and not (EqSponsorBoards ~= nil and EqSponsorBoards.isJump(placeable.configFileName)) then return end
     local key = EqJumpColours.key(placeable.configurations)
+    -- a jump with sponsor boards takes its poles' colour from the farm's sponsor (EqSponsorBoards)
+    local sponsorColour, sponsor = nil, nil
+    if EqSponsorBoards ~= nil then sponsorColour, sponsor = EqSponsorBoards.colourFor(placeable) end
+    key = key .. ",sponsor=" .. tostring(sponsor) .. ",brand=" .. tostring(placeable.eqBrand)
     if placeable.eqColourKey == key then return end
     placeable.eqColourKey = key
     if setShaderParameter == nil then return end
     for _, config in ipairs(EqJumpColours.CONFIGS) do
         local colour = EqJumpColours.colour(placeable.configurations ~= nil and placeable.configurations[config.name] or nil)
+        if config.name == "eqPoleColour" and sponsorColour ~= nil then colour = sponsorColour end
         if colour ~= nil then
             for _, node in ipairs(shapesNamed(placeable.rootNode, config.node)) do
                 if getHasShaderParameter == nil or getHasShaderParameter(node, EqJumpColours.PARAMETER) then
@@ -128,6 +137,22 @@ function EqJumpColours.apply(placeable)
                     setShaderParameter(node, EqJumpColours.PARAMETER, colour[1], colour[2], colour[3], w, false)
                 end
             end
+        end
+    end
+    EqJumpColours.paintFaces(placeable)
+end
+
+
+--- Paint the board faces behind a piece's logos: dark behind a light logo
+--- (EqSponsorBoards.faceColour). Any sponsor piece, bleachers too (EqSponsors calls it).
+--- @param placeable table
+function EqJumpColours.paintFaces(placeable)
+    if placeable == nil or placeable.rootNode == nil or setShaderParameter == nil then return end
+    if EqSponsorBoards == nil or EqSponsorBoards.faceColour == nil then return end
+    local face = EqSponsorBoards.faceColour(placeable.eqBrand)
+    for _, node in ipairs(shapesNamed(placeable.rootNode, EqJumpColours.FACE)) do
+        if getHasShaderParameter == nil or getHasShaderParameter(node, EqJumpColours.PARAMETER) then
+            setShaderParameter(node, EqJumpColours.PARAMETER, face[1], face[2], face[3], 0, false)
         end
     end
 end

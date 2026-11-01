@@ -16,12 +16,21 @@ shop's colour options: shapes named "eqPaint" take the pole colour (the coloured
 and trim) and "eqWingPaint" the wing colour. The rest is white paint, dark metal cups, peeled or
 planked wood (the cross country textures) or liverpool water.
 
+Six jumps have a Sponsor boards choice in the shop (James, 2026-10-31), dearer: their wings get
+boards whose faces, shapes named "eqSponsor_<n>" (and "eqSponsor_<n>b" for the same board's back),
+show the farm's sponsor (EqSponsors). Pillars get a small sign on top, fan panels a board in place
+of the fan, picket wings a flattened oval on the front, and the liverpool's water the logo too.
+Those parts sit under a transform group "eqSponsorOn" (hidden in the i3d), and the fan slats they
+replace under "eqSponsorOff"; EqSponsors shows one or the other from the choice bought. The
+crossrail and cavaletti are training jumps and stay plain; the ladder wings have no board yet.
+
 Like the cross country fences the geometry is inline (<IndexedTriangleSet>); the i3ds need a
 GIANTS Editor re-save (art/source/ge-resave.ps1) before their collision works in game. The flags
 come from the cross country fences' texture: "eqFlagsRed" (+x) and "eqFlagsWhite" (-x) at their
 feet are what the course recorder reads as the jump's two ends.
 
-Run from the repository root: python3 art/source/show_jumps.py
+Run from the repository root: python3 art/source/show_jumps.py [names...] (names: only those jumps,
+so the others' GIANTS Editor re-saved i3ds are left alone)
 
 Part of Realistic Equestrian by Jasta007.
 """
@@ -73,6 +82,13 @@ COLOURS = [
     ("black", (0.015, 0.015, 0.015)),
 ]
 COLOUR = dict(COLOURS)
+
+# Sponsor boards (James, 2026-10-31): the shop choice's extra price, the logos' shape (as on the
+# bleachers' boards, whose texture they show until a brand's logo is put on) and margin.
+SPONSOR_PRICE = 350
+SPONSOR_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
+LOGO_ASPECT = 2.7
+LOGO_MARGIN = 0.03
 WHITE = COLOUR["white"]
 METAL = (0.06, 0.06, 0.065)
 WATER = (0.01, 0.10, 0.28)
@@ -124,23 +140,23 @@ CAVALETTI_POLE_Y = 0.42  # the pole's middle
 # written front first at -z, as read on the page; approach() turns them round below, because the
 # horse comes from +z: facing the jump that way the red flag (+x) is on the rider's right.
 JUMPS = [
-    {"name": "showJumpUpright", "price": 450, "colour": "red", "wingColour": "white", "wing": "picket",
+    {"name": "showJumpUpright", "sponsor": True, "price": 450, "colour": "red", "wingColour": "white", "wing": "picket",
      "poles": row(0.0, 0.40, 0.72, 1.00)},
-    {"name": "showJumpOxer", "price": 700, "colour": "blue", "wingColour": "white", "wing": "fanPanel",
+    {"name": "showJumpOxer", "sponsor": True, "price": 700, "colour": "blue", "wingColour": "white", "wing": "fanPanel",
      "poles": row(-0.55, 0.45, 0.95) + row(0.55, 1.00)},
     {"name": "showJumpCrossrail", "price": 300, "colour": "green", "wingColour": "white", "wing": "rustic",
      "poles": crossrail(), "wide": (1, -1)},
     {"name": "showJumpAscendingOxer", "price": 750, "colour": "orange", "wingColour": "white", "wing": "ladder",
      "poles": row(-0.6, 0.45, 0.85) + row(0.6, 0.55, 1.05)},
-    {"name": "showJumpTripleBar", "price": 900, "colour": "yellow", "wingColour": "darkGreen", "wing": "pillar",
+    {"name": "showJumpTripleBar", "sponsor": True, "price": 900, "colour": "yellow", "wingColour": "darkGreen", "wing": "pillar",
      "poles": row(-0.9, 0.55) + row(0.0, 0.85) + row(0.9, 1.10)},
-    {"name": "showJumpHogsback", "price": 900, "colour": "purple", "wingColour": "white", "wing": "fanPanel",
+    {"name": "showJumpHogsback", "sponsor": True, "price": 900, "colour": "purple", "wingColour": "white", "wing": "fanPanel",
      "poles": row(-0.8, 0.75) + row(0.0, 1.10) + row(0.8, 0.85)},
     {"name": "showJumpFan2", "price": 650, "colour": "skyBlue", "wingColour": "white", "wing": "ladder",
      "poles": fan([-0.7, 0.7], [1.00, 1.00]), "fan": True, "wide": (-1,)},
-    {"name": "showJumpFan3", "price": 850, "colour": "pink", "wingColour": "navy", "wing": "pillar",
+    {"name": "showJumpFan3", "sponsor": True, "price": 850, "colour": "pink", "wingColour": "navy", "wing": "pillar",
      "poles": fan([-0.9, 0.0, 0.9], [1.00, 1.00, 1.00]), "fan": True, "wide": (-1,)},
-    {"name": "showJumpLiverpool", "price": 800, "colour": "navy", "wingColour": "white", "wing": "picket",
+    {"name": "showJumpLiverpool", "sponsor": True, "price": 800, "colour": "navy", "wingColour": "white", "wing": "picket",
      "poles": row(0.0, 0.55, 1.00), "liverpool": True},
     {"name": "showJumpCavaletti", "price": 150, "colour": "red", "wingColour": "white", "wing": None,
      "poles": cavaletti(), "cavaletti": True},
@@ -217,12 +233,33 @@ def upright_log(mesh, x, z, y0, y1, r, sides=12):
 
 
 class Parts:
-    """A jump's static meshes by material, its collision boxes."""
+    """A jump's static meshes by material, its collision boxes. With sponsor boards: what only the
+    Sponsor boards choice shows (boards in white, trim in the pole colour, the logos by shape
+    name) and the wing parts it hides."""
 
-    def __init__(self):
+    def __init__(self, sponsor=False):
         self.white, self.paint, self.wing, self.metal, self.water = Mesh(), Mesh(), Mesh(), Mesh(), Mesh()
         self.peeled, self.planks = Mesh(), Mesh()
         self.cols = []
+        self.sponsor = sponsor
+        self.board, self.board_paint, self.unsponsored_wing = Mesh(), Mesh(), Mesh()
+        self.logos = {}     # shape name ("eqSponsor_1", "eqSponsor_1b") -> Mesh
+
+
+def logo_size(width, height):
+    """The biggest logo of LOGO_ASPECT inside a board of width x height."""
+    width, height = width - 2 * LOGO_MARGIN, height - 2 * LOGO_MARGIN
+    return (width, width / LOGO_ASPECT) if width / height < LOGO_ASPECT else (height * LOGO_ASPECT, height)
+
+
+def upright_logo(parts, name, xc, yc, z, facing, lw, lh):
+    """A logo standing in the x-y plane at z, facing +z (facing 1) or -z (-1); its u runs to the
+    right seen from the way it faces."""
+    mesh = Mesh()
+    left, right = xc - facing * lw / 2, xc + facing * lw / 2
+    mesh.quad([(left, yc - lh / 2, z), (right, yc - lh / 2, z), (right, yc + lh / 2, z), (left, yc + lh / 2, z)],
+              (0, 0, facing), [(0, 0), (1, 0), (1, 1), (0, 1)])
+    parts.logos[name] = mesh
 
 
 def merge(target, mesh):
@@ -251,6 +288,8 @@ class Wing:
 
     def __init__(self, parts, x, side, z):
         self.parts, self.x0, self.side, self.z = parts, x + side * STAND_W / 2, side, z
+        # each wing's sponsor board is one board, its back (if it has one) the same number
+        self.board = "eqSponsor_1" if side > 0 else "eqSponsor_2"
 
     def x(self, u):
         return self.x0 + self.side * u
@@ -290,6 +329,24 @@ def wing_picket(w):
         w.flat(p.wing, outline, -0.0125, 0.0125)
     w.foot(width - 0.20, width + 0.06)
     w.collide(0.0, width, 1.54, -0.06, 0.06)
+    if p.sponsor:
+        # a flattened oval board nailed on the front (+z, the way the horse comes), clear of the
+        # stand and the end post and standing proud of both (James, 2026-10-31: the pickets stay
+        # as they are behind it), a rim in the pole colour round a white face, the logo in it
+        uc, yc, a, b = (width - 0.09) / 2, 0.70, 0.33, 0.20
+        front = 0.055   # just in front of the end post's face (0.045) and the stand's (0.05)
+        steps = 40
+        for mesh, grow, z0, z1 in ((p.board_paint, 0.025, front, front + 0.022), (p.board, 0.0, front, front + 0.028)):
+            outline = [(uc + (a + grow) * math.cos(2 * math.pi * k / steps), yc + (b + grow) * math.sin(2 * math.pi * k / steps))
+                       for k in range(steps)]
+            w.flat(mesh, outline, z0, z1)
+        # two cleats behind it, nailed to the pickets
+        for u in (uc - a * 0.55, uc + a * 0.55):
+            w.block(p.board_paint, u - 0.03, u + 0.03, yc - b * 0.7, yc + b * 0.7, 0.0125, front)
+        # the biggest logo inside the ellipse: its corners on the ellipse
+        t = math.atan(a / (LOGO_ASPECT * b))
+        lw, lh = 2 * a * math.cos(t) * 0.92, 2 * b * math.sin(t) * 0.92
+        upright_logo(p, w.board, w.x(uc), yc, w.z + front + 0.0295, 1, lw, lh)
     return width
 
 
@@ -308,9 +365,17 @@ def wing_fan_panel(w):
             w.block(p.paint, u0, u1, y0, y1, z0, z1)
     pivot = (width / 2, 0.88)
     slats = 7
+    # with sponsor boards a board fills the fan's frame instead (James, 2026-10-31), its logo
+    # on both faces
+    fan = p.unsponsored_wing if p.sponsor else p.wing
     for i in range(slats):
         u = 0.13 + i * (width - 0.26) / (slats - 1)
-        w.beam(p.wing, pivot, (u, 1.42), 0.03, -0.012, 0.012)
+        w.beam(fan, pivot, (u, 1.42), 0.03, -0.012, 0.012)
+    if p.sponsor:
+        w.block(p.board, 0.08, width - 0.08, 0.88, 1.42, -0.015, 0.015)
+        lw, lh = logo_size(width - 0.16, 0.54)
+        for facing, name in ((1, w.board), (-1, w.board + "b")):
+            upright_logo(p, name, w.x(width / 2), 1.15, w.z + facing * 0.0165, facing, lw, lh)
     w.block(p.paint, -0.01, width + 0.01, 1.50, 1.55, -0.055, 0.055)
     w.foot(width - 0.18, width + 0.06)
     w.collide(0.0, width, 1.55, -0.06, 0.06)
@@ -351,6 +416,16 @@ def wing_pillar(w):
     w.block(p.paint, 0.0, width, 1.63, 1.69, -0.29, 0.29)
     w.block(p.white, 0.04, width - 0.04, 1.69, 1.72, -0.25, 0.25)
     w.collide(0.0, width, 1.72, -0.29, 0.29)
+    if p.sponsor:
+        # a small sign on top of the column, on two short legs, its logo on both faces
+        y0, y1 = 1.79, 2.03
+        w.block(p.board, 0.03, width - 0.03, y0, y1, -0.02, 0.02)
+        w.block(p.board_paint, 0.02, width - 0.02, y1, y1 + 0.02, -0.025, 0.025)
+        for u in (0.14, width - 0.14):
+            w.block(p.board_paint, u - 0.02, u + 0.02, 1.72, y0, -0.015, 0.015)
+        lw, lh = logo_size(width - 0.06, y1 - y0)
+        for facing, name in ((1, w.board), (-1, w.board + "b")):
+            upright_logo(p, name, w.x(width / 2), (y0 + y1) / 2, w.z + facing * 0.0215, facing, lw, lh)
     return width
 
 
@@ -400,13 +475,22 @@ def liverpool_tray(parts):
     x0, x1, z0, z1 = -1.60, 1.60, -0.20, 1.35
     rim = 0.06
     box(parts.water, x0 + rim, x1 - rim, 0.0, 0.035, z0 + rim, z1 - rim)
+    if parts.sponsor:
+        # the sponsor's logo on the water's floor (James, 2026-10-31), read by the rider coming
+        # from +z: u to their right (+x), v away from them (-z)
+        lw, lh = logo_size(x1 - x0 - 2 * rim - 0.3, z1 - z0 - 2 * rim - 0.1)
+        zc, y = (z0 + z1) / 2, 0.0365
+        logo = Mesh()
+        logo.quad([(-lw / 2, y, zc + lh / 2), (lw / 2, y, zc + lh / 2), (lw / 2, y, zc - lh / 2), (-lw / 2, y, zc - lh / 2)],
+                  (0, 1, 0), [(0, 0), (1, 0), (1, 1), (0, 1)])
+        parts.logos["eqSponsor_3"] = logo
     for bx0, bx1, bz0, bz1 in ((x0, x1, z0, z0 + rim), (x0, x1, z1 - rim, z1), (x0, x0 + rim, z0, z1), (x1 - rim, x1, z0, z1)):
         box(parts.paint, bx0, bx1, 0.0, 0.07, bz0, bz1)
 
 
 def frame(jump):
     """The stands, wings, cups and fillers of a jump, its collision boxes and the flags' feet."""
-    parts, flags = Parts(), Mesh()
+    parts, flags = Parts(jump.get("sponsor", False)), Mesh()
     poles = jump["poles"]
     if jump.get("cavaletti"):
         for side in (1, -1):
@@ -533,6 +617,12 @@ def write_i3d(jump, path, parts, flags, feet, pole_shapes):
         return lines
 
     materials = {"white": 1, "paint": 2, "wing": 3, "metal": 4, "water": 5, "flags": 6, "peeled": 7, "planks": 8}
+    logos = sorted(parts.logos)
+    if logos:
+        files.append(SPONSOR_TEXTURE)
+        fid[SPONSOR_TEXTURE] = len(files)
+    for i, logo in enumerate(logos):
+        materials[logo] = 9 + i
     lines = [
         '<?xml version="1.0" encoding="iso-8859-1"?>',
         "",
@@ -556,8 +646,12 @@ def write_i3d(jump, path, parts, flags, feet, pole_shapes):
               f'      <Texture fileId="{fid["../xcJumps/xcPeeled_diffuse.dds"]}"/>', "    </Material>",
               f'    <Material name="sjPlanks" materialId="{materials["planks"]}" specularColor="0.1 0.6 0">',
               f'      <Texture fileId="{fid["../xcJumps/xcPlanks_diffuse.dds"]}"/>',
-              f'      <Normalmap fileId="{fid["../xcJumps/xcPlanks_normal.dds"]}"/>', "    </Material>",
-              "  </Materials>"]
+              f'      <Normalmap fileId="{fid["../xcJumps/xcPlanks_normal.dds"]}"/>', "    </Material>"]
+    # one material per logo, so each can show its own brand (EqSponsors replaces the texture)
+    for logo in logos:
+        lines += [f'    <Material name="{logo.replace("_", "")}" materialId="{materials[logo]}" specularColor="0.2 0.5 0" alphaBlending="true">',
+                  f'      <Texture fileId="{fid[SPONSOR_TEXTURE]}"/>', "    </Material>"]
+    lines.append("  </Materials>")
 
     # static shapes: (node name, mesh, material)
     statics = [("frame", parts.white, "white"), ("eqPaint", parts.paint, "paint"), ("eqWingPaint", parts.wing, "wing"),
@@ -565,6 +659,11 @@ def write_i3d(jump, path, parts, flags, feet, pole_shapes):
                ("planks", parts.planks, "planks"), ("flags", flags, "flags")]
     statics = [s for s in statics if s[1].tris]
     shapes = [(f"s_{n}", m) for n, m, _ in statics]
+    sponsored = [("eqWingPaint", parts.board_paint, "paint"), ("eqBoardFace", parts.board, "white")]
+    sponsored = [(n, m, mat) for n, m, mat in sponsored if m.tris] + [(logo, parts.logos[logo], logo) for logo in logos]
+    shapes += [(f"on_{n}", m) for n, m, _ in sponsored]
+    if parts.unsponsored_wing.tris:
+        shapes.append(("off_fan", parts.unsponsored_wing))
     shapes += [(f"col{i + 1}", collision_box(*b)) for i, b in enumerate(parts.cols)]
     for length, (paint, white, caps) in pole_shapes.items():
         shapes += [(f"polePaint{length:.3f}", paint), (f"poleWhite{length:.3f}", white), (f"poleEnds{length:.3f}", caps),
@@ -591,6 +690,17 @@ def write_i3d(jump, path, parts, flags, feet, pole_shapes):
     lines.append(f'    <TransformGroup name="{name}" nodeId="1">')
     for n, _, material in statics:
         lines.append(vis_line("      ", n, f"s_{n}", material, shadows=material != "water"))
+    if sponsored:
+        # shown only with the Sponsor boards choice (EqSponsors); the trim takes the pole colour
+        lines.append(f'      <TransformGroup name="eqSponsorOn" visibility="false" nodeId="{next_id()}">')
+        for n, _, material in sponsored:
+            node_name = "eqPaint" if n == "eqWingPaint" else n
+            lines.append(vis_line("        ", node_name, f"on_{n}", material, shadows=not n.startswith("eqSponsor_")))
+        lines.append("      </TransformGroup>")
+    if parts.unsponsored_wing.tris:
+        lines.append(f'      <TransformGroup name="eqSponsorOff" nodeId="{next_id()}">')
+        lines.append(vis_line("        ", "eqWingPaint", "off_fan", "wing"))
+        lines.append("      </TransformGroup>")
     for flag_name in ("eqFlagsRed", "eqFlagsWhite"):
         lines.append(f'      <TransformGroup name="{flag_name}" translation="{fmt(feet[flag_name])}" nodeId="{next_id()}"/>')
     lines.append(f'      <TransformGroup name="collision" nodeId="{next_id()}">')
@@ -630,6 +740,17 @@ def write_xml(jump, path):
     top = max(max(a[1], b[1]) for a, b in poles) + POLE_R
     zs = [p[k][2] for p in poles for k in (0, 1)]
     wing_colour = colour_configurations("eqWingColour", jump["wingColour"]) + "\n\n" if jump["wing"] else ""
+    sponsor = f"""    <!-- Sponsor boards: No (the first, default) or Yes, dearer: boards on the wings showing your
+         sponsor, counted towards your branding (EqSponsors shows the eqSponsorOn parts). -->
+    <eqSponsorBoards>
+        <eqSponsorBoardsConfigurations>
+            <eqSponsorBoardsConfiguration name="$l10n_ui_no" price="0"/>
+            <eqSponsorBoardsConfiguration name="$l10n_ui_yes" price="{SPONSOR_PRICE}"/>
+        </eqSponsorBoardsConfigurations>
+    </eqSponsorBoards>
+
+""" if jump.get("sponsor") else ""
+    functions = "\n            <function>$l10n_eq_shop_sponsorBoards_function</function>" if jump.get("sponsor") else ""
     text = f"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/show_jumps.py: change that and run it again rather than editing this. -->
 <placeable type="simplePlaceable">
@@ -637,7 +758,7 @@ def write_xml(jump, path):
         <name>$l10n_eq_shop_{name}</name>
         <functions>
             <function>$l10n_eq_shop_showJump_function</function>
-            <function>$l10n_eq_shop_showJumpHidden_function</function>
+            <function>$l10n_eq_shop_showJumpHidden_function</function>{functions}
         </functions>
         <image>placeables/showJumps/store_{name}.dds</image>
         <price>{jump["price"]}</price>
@@ -674,7 +795,7 @@ def write_xml(jump, path):
 
 {colour_configurations("eqPoleColour", jump["colour"])}
 
-{wing_colour}</placeable>
+{wing_colour}{sponsor}</placeable>
 """
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
@@ -694,7 +815,7 @@ def flags_texture():
     return img
 
 
-def main():
+def main(names=()):
     from PIL import Image
     preview_dir = os.environ.get("XC_PREVIEW_DIR", "art/previews")
     os.makedirs(OUT, exist_ok=True)
@@ -705,6 +826,8 @@ def main():
         return np.asarray(Image.open(os.path.join("placeables/xcJumps", file)).convert("RGB"), dtype=float)
     peeled, planks = texture("xcPeeled_diffuse.dds"), texture("xcPlanks_diffuse.dds")
     for jump in JUMPS:
+        if names and jump["name"] not in names:
+            continue
         parts, flags, feet = frame(jump)
         pole_shapes = {}
         for a, b in jump["poles"]:
@@ -716,7 +839,18 @@ def main():
         write_xml(jump, os.path.join(OUT, jump["name"] + ".xml"))
         # the shop image: the poles placed where the i3d puts them
         paint_rgb, wing_rgb, white_rgb = flat(COLOUR[jump["colour"]]), flat(COLOUR[jump["wingColour"]]), flat(WHITE)
-        meshes = [(parts.white, white_rgb), (parts.paint, paint_rgb), (parts.wing, wing_rgb), (parts.metal, flat(METAL)),
+        # the shop image shows the jump plain (Sponsor boards is a choice); the env var shows them
+        if os.environ.get("SJ_SPONSOR_PREVIEW"):
+            sponsor_rgb = np.asarray(Image.open(os.path.join("placeables/bleachers", "bleacherSponsor_diffuse.dds")).convert("RGB"), dtype=float)
+            extra = [(parts.board, white_rgb), (parts.board_paint, paint_rgb)]
+            for logo in parts.logos.values():
+                m = Mesh()
+                m.verts = [(p, n, (uv[0], 1 - uv[1])) for p, n, uv in logo.verts]
+                m.tris = list(logo.tris)
+                extra.append((m, sponsor_rgb))
+        else:
+            extra = [(parts.unsponsored_wing, flat(COLOUR[jump["wingColour"]]))]
+        meshes = extra + [(parts.white, white_rgb), (parts.paint, paint_rgb), (parts.wing, wing_rgb), (parts.metal, flat(METAL)),
                   (parts.water, flat(WATER)), (parts.peeled, peeled), (parts.planks, planks), (flags, flags_texture())]
         for a, b in jump["poles"]:
             mid, rot, length = pole_pose(a, b)
@@ -728,4 +862,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(sys.argv[1:])

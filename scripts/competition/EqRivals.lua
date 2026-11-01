@@ -22,7 +22,7 @@ EqRivals.MATCH_RANGE = 6
 
 -- Plain horse names, none a famous real horse. Shown as written (not translated).
 EqRivals.NAMES = {
-    "Applejack", "Torben", "Winter", "Bramble", "Copper Kettle", "Hazelnut", "Midnight Lark", "Saffron",
+    "Bracken", "Torben", "Winter", "Bramble", "Copper Kettle", "Hazelnut", "Midnight Lark", "Saffron",
     "Juniper", "Tamsin", "Barley Twist", "Pepperpot", "Rosebay", "Finch", "Clover Hill", "Morello",
     "Sable", "Thistledown", "Larkspur", "Quill", "Marigold", "Oakley", "Tinderbox", "Wren", "Bonfire",
     "Cobalt", "Delphine", "Ember", "Fennel", "Gossamer", "Harrow", "Indigo Rose", "Jasper", "Kestrel",

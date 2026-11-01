@@ -48,6 +48,8 @@
         <text name="eq_shop_xcLogPile" text="Hromada klád"/>
         <text name="eq_shop_showJumpUpright" text="Překážka: kolmý skok"/>
         <text name="eq_shop_showJumpOxer" text="Překážka: oxer"/>
+        <text name="eq_shop_showJumpWall" text="Překážka: sponzorská zeď"/>
+        <text name="eq_shop_showJumpWall_function" text="Okázalá zeď s logem tvého sponzora. Horní bloky spadnou, když do nich kůň narazí, a po parkuru se vrátí na místo."/>
         <text name="eq_shop_showJumpCrossrail" text="Překážka: křížek"/>
         <text name="eq_shop_showJumpAscendingOxer" text="Překážka: stoupající oxer"/>
         <text name="eq_shop_showJumpTripleBar" text="Překážka: triplebarre"/>
@@ -84,6 +86,39 @@
         <text name="eq_shop_xcRollTopHalf" text="Roll top (polovina)"/>
         <text name="eq_shop_xcTable" text="Stůl"/>
         <text name="eq_shop_xcBigLog" text="Velká kláda"/>
+        <text name="eq_shop_xcGateArch" text="Startovní/cílový oblouk"/>
+        <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
+        <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
+        <text name="eq_shop_xcRope" text="Vymezovací lano"/>
+        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano nebo lano s malou cedulkou sponzora: cedulky přidají jen trochu brandingu."/>
+        <text name="eq_shop_plinthDrive" text="Průjezdný podstavec"/>
+        <text name="eq_shop_plinthRamp" text="Výstavní rampa"/>
+        <text name="eq_shop_plinthRampLarge" text="Velká výstavní rampa"/>
+        <text name="eq_shop_plinthProductRamp" text="Rampa skoku s produktem"/>
+        <text name="eq_shop_plinth_function" text="Zaparkuj na něj stroj značky svého sponzora pro další branding."/>
+        <text name="eq_shop_productJump_function" text="Postav dvě proti sobě asi 5 m od sebe: stroj mezi nimi se počítá také, nebo je skoč jako terénní překážku."/>
+        <text name="eq_shop_plinthTurntable" text="Otočná plošina"/>
+        <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj a bude se otáčet s ním, i se vším připojeným. Stroj tvého sponzora se tu počítá víc."/>
+        <text name="eq_plinth_inPlace" text="Vybavení sponzora na místě!"/>
+        <text name="eq_plinth_wrongBrand" text="To není vybavení tvého sponzora! Vystavené stroje konkurence sníží tvé příjmy ze sponzoringu!"/>
+        <text name="eq_plinth_noSponsor" text="Žádný sponzor nepodepsán: jeho vybavení vystavené zde by se počítalo do brandingu."/>
+        <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
+        <text name="eq_shop_lizardPlinth" text="Podstavec Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Speciální podstavec Lizard pro akci, kterou sponzoruje. Postavíte ho dodáním materiálu do spouštěčů vpředu; stroj Lizard na kládové plošině se počítá navíc. Po akci se zřítí."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 000 l kamenů, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
+        <text name="eq_lizard_offer" text="%s by rád sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
+        <text name="eq_lizard_accept" text="Přijmout"/>
+        <text name="eq_lizard_decline" text="Odmítnout"/>
+        <text name="eq_lizard_offerNote" text="%s chce sponzorovat vaši akci %s."/>
+        <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Stavitelné) a postavte ho z %s, klád a prken."/>
+        <text name="eq_lizard_stepAside" text="%s ustupuje: vaši akci teď sponzoruje %s."/>
+        <text name="eq_lizard_paid" text="%s zaplatil %s za sponzorování vaší akce."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s nezaplatí nic: podstavec Lizard nebyl hotový. Bez zášti."/>
+        <text name="eq_lizard_unpaid_branding" text="%s nezaplatí nic: branding nestačil. Bez zášti."/>
+        <text name="eq_lizard_unpaid_rating" text="%s za tuto akci nezaplatí nic."/>
         <text name="eq_config_corner" text="Roh"/>
         <text name="eq_config_cornerRight" text="Špička vpravo"/>
         <text name="eq_config_cornerLeft" text="Špička vlevo"/>
@@ -133,6 +168,18 @@
         <text name="eq_fig_passageRail" text="Pasáž %s-%s"/>
         <text name="eq_fig_passageDiagonal" text="Pasáž po diagonále %s-%s"/>
         <text name="eq_dressage_passage" text="Pasáž: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Piafa"/>
+        <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_collected" text="Shromážděný"/>
+        <text name="eq_now_collectedCanter" text="Shromážděný cval"/>
+        <text name="eq_now_passage" text="Pasáž"/>
+        <text name="eq_now_legYield" text="Ustupování na holeň"/>
+        <text name="eq_now_halfPass" text="Překrok"/>
+        <text name="eq_now_shoulderIn" text="Plec dovnitř"/>
+        <text name="eq_now_renvers" text="Renvers (záď ven)"/>
+        <text name="eq_now_travers" text="Travers (záď dovnitř)"/>
+        <text name="eq_now_legYieldRail" text="Ustupování na holeň podél stěny"/>
         <text name="eq_fig_legYield" text="Ustupování na holeň od %s a zpět"/>
         <text name="eq_fig_halfPass" text="Překrok od %s a zpět"/>
         <text name="eq_fig_shoulderIn" text="Plec dovnitř %s-%s"/>
@@ -434,6 +481,8 @@
         <text name="eq_sj_out_wrongCourse" text="Vyloučen: chyba v trase (překážka %d skočena mimo pořadí)"/>
         <text name="eq_sj_out_refusals" text="Vyloučen: druhé odmítnutí"/>
         <text name="eq_sj_out_timeLimit" text="Vyloučen: překročen časový limit"/>
+        <text name="eq_sj_getOn" text="NASEDNI NA KONĚ! %d"/>
+        <text name="eq_sj_out_dismounted" text="Vyloučen: jezdec v započítávaném kole znovu nenasedl"/>
         <text name="eq_sj_clear" text="Čistá jízda za %s!"/>
         <text name="eq_sj_faults" text="Trestné body: %s, čas %s"/>
         <text name="eq_sj_clearPop" text="Čistá jízda!"/>
@@ -460,6 +509,7 @@
         <text name="eq_course_resumed" text="Nahrávání od nejbližšího bodu"/>
         <text name="eq_course_finished" text="Úpravy dokončeny: postavené překážky z Realistic Equestrian mají opět kolize"/>
         <text name="eq_course_deleted" text="%s smazáno"/>
+        <text name="eq_course_locked" text="%s nelze smazat během %s: nastav parkury před měsícem závodů"/>
         <text name="eq_course_deleteAsk" text="Smazat %s (překážek %d, %.0f m)?"/>
         <text name="eq_course_deleteTitle" text="Smazat trasu"/>
         <text name="eq_course_deleteAction" text="Smazat %s"/>
@@ -782,6 +832,10 @@
         <text name="eq_story_eventing_clean" text="Čistě ve všech zkouškách."/>
         <text name="eq_story_eventing_struggled" text="Trápil se ve všech třech zkouškách."/>
         <text name="eq_story_eventing_eliminated" text="Vypadl po pádu v terénu."/>
+        <text name="eq_story_ridden_test" text="Odjel svou úlohu."/>
+        <text name="eq_story_ridden_faults" text="Měl chyby na trati."/>
+        <text name="eq_story_eventing_fenceFaults" text="Nasbíral trestné body na překážkách."/>
+        <text name="eq_story_eventing_clearFences" text="Čistě přes překážky, ale drezura ho zdržela."/>
         <text name="eq_ui_tab_upcoming" text="Nadcházející závody"/>
         <text name="eq_ui_tab_results" text="Výsledky"/>
         <text name="eq_ui_col_starts" text="Starty"/>
@@ -844,6 +898,34 @@
         <text name="eq_host_part_reputation" text="pověst"/>
         <text name="eq_host_part_star" text="hvězdný kůň"/>
         <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_part_sponsor" text="sponzor"/>
+        <text name="eq_host_part_quality" text="stavba parkuru"/>
+        <text name="eq_host_part_shops" text="obchody"/>
+        <text name="eq_host_part_ahead" text="rezervováno předem"/>
+        <text name="eq_host_part_advert" text="reklama"/>
+        <text name="eq_host_part_buzz" text="rozruch"/>
+        <text name="eq_host_part_weather" text="počasí"/>
+        <text name="eq_host_buzz_high" text="Všichni o tom mluví"/>
+        <text name="eq_host_buzz_low" text="Klid"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d za včasnou rezervaci)"/>
+        <text name="eq_host_advert_none" text="Bez reklamy"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Místní"/>
+        <text name="eq_host_advert_national" text="Celostátní"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s reklama"/>
+        <text name="eq_host_label_advert" text="Reklama"/>
+        <text name="eq_host_label_sell" text="Suvenýry a občerstvení"/>
+        <text name="eq_host_sell_yes" text="Prodávat, pokud jsou (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Neprodávat"/>
+        <text name="eq_host_book_advert" text="Reklama zaplacena: %s."/>
+        <text name="eq_host_twister" text="Areálem %s se prohnalo tornádo! Diváci utekli do úkrytu."/>
+        <text name="eq_host_done_goods" text="Prodané suvenýry a občerstvení: %s."/>
+        <text name="eq_host_star" text="Lidé se opravdu těšili, až uvidí startovat %s."/>
+        <text name="eq_host_report_twister" text="Během závodu přišlo tornádo a diváci se rozprchli."/>
+        <text name="eq_host_report_weather" text="Špatné počasí: %d hodin odradilo lidi (oblíbenost %d)."/>
+        <text name="eq_host_report_goods" text="Suvenýry a občerstvení: prodáno %d l za %s."/>
+        <text name="eq_host_report_advert" text="Reklama: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Špatné počasí zatím stálo %d oblíbenosti."/>
         <text name="eq_host_label_yours" text="Tvůj závod"/>
         <text name="eq_host_label_month" text="Rezervovat na"/>
         <text name="eq_host_label_next" text="Nejbližší volný měsíc"/>
@@ -857,6 +939,14 @@
         <text name="eq_host_note_counts" text="Soutěžní kolo pro %s: jeď ke startovní čáře"/>
         <text name="eq_host_note_ridden" text="Trénink: tato disciplína %s je už odjetá"/>
         <text name="eq_host_note_small" text="Trénink: trať je pro %s příliš malá"/>
+        <text name="eq_host_ann_test" text="Soutěžní úloha: tahle se počítá!"/>
+        <text name="eq_host_ann_smallArena" text="Tento obdélník je na tvé závody příliš malý: jen trénink"/>
+        <text name="eq_host_note_testCounts" text="Soutěžní úloha pro %s: jeď k A"/>
+        <text name="eq_host_note_testSmall" text="Trénink: obdélník je pro %s příliš malý"/>
+        <text name="eq_host_ann_testShort" text="Úloha je na tvé závody příliš krátká: jen trénink"/>
+        <text name="eq_host_note_testShort" text="Trénink: úloha je pro %s příliš krátká"/>
+        <text name="eq_host_ann_notEntered" text="Nepřihlášen: jen trénink"/>
+        <text name="eq_host_note_notEntered" text="Trénink: tento kůň není přihlášen do %s"/>
         <text name="eq_host_label_now" text="Tento měsíc"/>
         <text name="eq_host_next_oneAtATime" text="jedny závody najednou"/>
         <text name="eq_host_next_interval" text="%d měsíců mezi závody, viz Nastavení"/>
@@ -868,8 +958,14 @@
         <text name="eq_host_report_turnout" text="Účast: přijelo %d z %d hostujících koní (popularita %d)."/>
         <text name="eq_host_report_feedSoFar" text="Hostující koně zatím snědli %d l tvého krmiva (%d l denně)."/>
         <text name="eq_host_report_feed" text="Hostující koně snědli %d l tvého krmiva."/>
-        <text name="eq_host_report_money" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s: zisk %s."/>
+        <text name="eq_host_report_takings" text="Tržby %s (startovné %s, vstupné %s), pořadatelský poplatek %s."/>
+        <text name="eq_host_report_total" text="Konečná oblíbenost %d. Zisk %s."/>
         <text name="eq_host_report_mine" text="Tvůj kůň %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Celkově: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Tvůj kůň %s: %s s %s trestnými body (%s)."/>
         <text name="eq_host_results_row" text="Tvoje závody"/>
         <text name="eq_host_results_running" text="Probíhá"/>
         <text name="eq_host_results_winner" text="Vyhrál %s"/>
@@ -945,6 +1041,8 @@
         <text name="eq_dt_spot" text="Na místě"/>
         <text name="eq_dt_noOptions" text="Sem nic nepasuje: vraťte krok nebo uložte"/>
         <text name="eq_dt_saved" text="Drezurní úloha uložena: %d prvků"/>
+        <text name="eq_dt_savedShort" text="Úloha uložena, ale pro %s není dost dlouhá: potřebuje %d kroků a má %d, takže tady je to jen trénink"/>
+        <text name="eq_dt_locked" text="Tuto úlohu nelze smazat během %s: nastav úlohu před měsícem závodů"/>
         <text name="eq_dt_deleted" text="Drezurní úloha smazána: tato jízdárna jezdí opět náhodné úlohy"/>
         <text name="eq_dt_cancelled" text="Drezurní úloha neuložena"/>
         <text name="eq_fig_halt" text="Zastavení v %s"/>
@@ -962,5 +1060,112 @@
         <text name="eq_dt_modeLateral" text="Ukázat boční chody"/>
         <text name="eq_dt_lateral" text="Boční chod"/>
         <text name="eq_shop_signboard_function" text="Zvyšuje příjmy od sponzorů z tvých akcí."/>
+        <text name="eq_ui_tab_sponsors" text="Sponzoři"/>
+        <text name="eq_money_sponsorship" text="Sponzorství"/>
+        <text name="rl_messageTitle_eqSponsor" text="Sponzoři"/>
+        <text name="eq_host_report_sponsor" text="Sponzor: %s, zaplatil %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Classic"/>
+        <text name="eq_sponsor_col_sponsor" text="Sponzor"/>
+        <text name="eq_sponsor_col_contract" text="Smlouva"/>
+        <text name="eq_sponsor_col_fee" text="Platí tobě"/>
+        <text name="eq_sponsor_size_big" text="Velký"/>
+        <text name="eq_sponsor_size_moderate" text="Střední"/>
+        <text name="eq_sponsor_size_small" text="Malý"/>
+        <text name="eq_sponsor_word_relaxed" text="Mírné"/>
+        <text name="eq_sponsor_word_fair" text="Férové"/>
+        <text name="eq_sponsor_word_demanding" text="Náročné"/>
+        <text name="eq_sponsor_word_hardBargain" text="Tvrdý vyjednavač"/>
+        <text name="eq_sponsor_year1" text="%d rok"/>
+        <text name="eq_sponsor_years" text="%d let"/>
+        <text name="eq_sponsor_backs_all" text="Všechny závody"/>
+        <text name="eq_sponsor_backs_from" text="%s a výš"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s u %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", s umístěním v první trojce"/>
+        <text name="eq_sponsor_label_fee" text="Platí tobě"/>
+        <text name="eq_sponsor_label_popularity" text="Popularita"/>
+        <text name="eq_sponsor_label_target" text="Roční cíl"/>
+        <text name="eq_sponsor_label_machines" text="Jejich stroje"/>
+        <text name="eq_sponsor_label_discounts" text="Slevy"/>
+        <text name="eq_sponsor_label_ends" text="Končí"/>
+        <text name="eq_sponsor_label_thisYear" text="Letos"/>
+        <text name="eq_sponsor_label_missed" text="Zmeškané cíle"/>
+        <text name="eq_sponsor_label_paid" text="Zatím vyplaceno"/>
+        <text name="eq_sponsor_label_cancel" text="Cena výpovědi"/>
+        <text name="eq_sponsor_label_years" text="Smlouva"/>
+        <text name="eq_sponsor_yearMet" text="Cíl splněn"/>
+        <text name="eq_sponsor_yearOpen" text="Cíl otevřen do %s"/>
+        <text name="eq_sponsor_missedLine" text="%d v řadě, částka na %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Nabídky platí do %s. Jeden sponzor naráz: měj jeho vybavení, žádné konkurenční stroje blízko jeho cen a dost propagace."/>
+        <text name="eq_sponsor_summaryClosed" text="Letošní nabídky jsou pryč. Noví sponzoři přijdou na začátku příštího roku."/>
+        <text name="eq_sponsor_noConfig" text="Sponzory se nepodařilo načíst."/>
+        <text name="eq_sponsor_noOffers" text="Teď nejsou žádné nabídky sponzorů. Nové přicházejí na začátku každého roku."/>
+        <text name="eq_sponsor_sign_gone" text="Ta nabídka už není."/>
+        <text name="eq_sponsor_sign_notReady" text="Zatím nesplňuješ podmínky tohoto sponzora."/>
+        <text name="eq_sponsor_signed" text="%s je teď tvůj sponzor, počet let: %d."/>
+        <text name="eq_sponsor_cancel_none" text="Nemáš sponzora."/>
+        <text name="eq_sponsor_cancelled" text="Tvoje smlouva s %s je vypovězena. Výpověď stála %s."/>
+        <text name="eq_sponsor_paid" text="%s zaplatil %s za %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s za %s nic nezaplatil: tvoje propagace je příliš nízká."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s za %s nic nezaplatil: nemáš dost jeho strojů."/>
+        <text name="eq_sponsor_targetMet" text="%s: letošní cíl je splněn."/>
+        <text name="eq_sponsor_leaves" text="%s odešel po zmeškaných cílech."/>
+        <text name="eq_sponsor_missed" text="%s: letošní cíl nebyl splněn. Částka příští rok klesá na %d%%."/>
+        <text name="eq_sponsor_finished" text="Tvoje smlouva s %s skončila. Celkem vyplatila %s."/>
+        <text name="eq_sponsor_newOffers" text="Nový rok: sponzoři, kteří chtějí podpořit tvé závody: %d. Viz Závody, Sponzoři."/>
+        <text name="eq_sponsor_button_sign" text="Podepsat"/>
+        <text name="eq_sponsor_button_cancel" text="Vypovědět smlouvu"/>
+        <text name="eq_sponsor_sign_confirm" text="Podepsat s %s, počet let: %d? Předčasná výpověď stojí poplatek."/>
+        <text name="eq_sponsor_cancel_confirm" text="Vypovědět smlouvu s %s? Stojí to %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Způsobilost"/>
+        <text name="eq_sponsor_eligible_yes" text="Způsobilý"/>
+        <text name="eq_sponsor_eligible_no" text="Nezpůsobilý"/>
+        <text name="eq_sponsor_eligible_taken" text="Už exkluzivní"/>
+        <text name="eq_sponsor_eligible_yours" text="Tvůj sponzor"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Jen exkluzivně"/>
+        <text name="eq_sponsor_eligible_full" text="Sponzoři plní"/>
+        <text name="eq_sponsor_eligible_overlap" text="Stejná specializace"/>
+        <text name="eq_sponsor_eligible_rivals" text="Konkurenční stroje"/>
+        <text name="eq_sponsor_eligible_equipment" text="Chybí vybavení"/>
+        <text name="eq_sponsor_eligible_branding" text="Chybí branding"/>
+        <text name="eq_sponsor_exclusive_yes" text="Exkluzivní"/>
+        <text name="eq_sponsor_exclusive_no" text="Neexkluzivní"/>
+        <text name="eq_sponsor_overlapLine" text="Střet s %s: %s"/>
+        <text name="eq_sponsor_label_speciality" text="Specializace"/>
+        <text name="eq_sponsor_feePerEvent" text="%s za závod"/>
+        <text name="eq_sponsor_targetPopularity" text="Popularita %d"/>
+        <text name="eq_sponsor_targetRating" text="Závod %s nebo vyšší"/>
+        <text name="eq_sponsor_haveOf" text="Máš %s z %d"/>
+        <text name="eq_sponsor_mustOwn" text="Před podáním žádosti musíš vlastnit jejich vybavení: %d ks."/>
+        <text name="eq_sponsor_mustKeep" text="Abys dostával platby, ponech si jejich vybavení: %d ks."/>
+        <text name="eq_sponsor_attachHalf" text="Nářadí a přívěsy se počítají napůl."/>
+        <text name="eq_sponsor_noRivals" text="Nesmíš vlastnit stroje s cenou do %s jejich produktu."/>
+        <text name="eq_sponsor_sellFirst" text="Před podáním žádosti prodej nebo vrať:"/>
+        <text name="eq_sponsor_sellMore" text="...a dalších %d"/>
+        <text name="eq_sponsor_button_shop" text="Zobrazit v obchodě"/>
+        <text name="eq_sponsor_label_branding" text="Propagace značky"/>
+        <text name="eq_sponsor_brandingLine" text="%s (požadováno: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Žádná"/>
+        <text name="eq_sponsor_branding_low" text="Nízká"/>
+        <text name="eq_sponsor_branding_medium" text="Střední"/>
+        <text name="eq_sponsor_branding_high" text="Vysoká"/>
+        <text name="eq_sponsor_label_likely" text="Pravděpodobná platba"/>
+        <text name="eq_sponsor_likelyLine" text="%s u %s"/>
+        <text name="eq_shop_branding" text="Tvoje propagace: teď %s, s tímto %s. Více propagace zvýší, kolik sponzor platí."/>
+        <text name="eq_shop_brandingOption" text="Se sponzorskými tabulemi, tvoje propagace: teď %s, s tímto %s."/>
+        <text name="eq_config_sponsorBoards" text="Sponzorské tabule"/>
+        <text name="eq_shop_sponsorBoards_function" text="Sponzorské tabule (volitelné, za příplatek): tabule na křídlech ukazují logo tvého sponzora a bariéry dostanou jeho barvu."/>
+        <text name="eq_sponsor_discount_repaint" text="Lakování %s"/>
+        <text name="eq_sponsor_discount_repair" text="Oprava %s"/>
+        <text name="eq_sponsor_discount_buy" text="Nákup %s"/>
+        <text name="eq_sponsor_loanLine" text="Půjčí stroj na měsíc tvé akce"/>
+        <text name="eq_loan_popupTitle" text="Stroj od tvého sponzora"/>
+        <text name="eq_loan_popup" text="%s ti dodal nový stroj %s, který můžeš zkoušet po celou dobu své akce. Čeká na tebe u prodejce. Používej ho zdarma na cokoli až do konce měsíce, kdy si ho vyzvednou."/>
+        <text name="eq_loan_delivered" text="%s ti na měsíc akce půjčil stroj %s. Stojí u prodejce."/>
+        <text name="eq_loan_collected" text="%s si vyzvedl zapůjčený stroj %s."/>
+        <text name="eq_loan_noRoom" text="%s nemohl dodat stroj %s: u prodejce není místo. Zítra to zkusí znovu."/>
+        <text name="eq_loan_enterTitle" text="Dárek od %s"/>
+        <text name="eq_loan_enter" text="Tento stroj ti věnoval tvůj sponzor k použití během tvé akce tento měsíc. Užij si to!"/>
+        <text name="eq_sponsor_discount_from" text="Od %s"/>
+        <text name="eq_sponsor_discount_after" text="Po %d měsících od podpisu"/>
     </texts>
 </l10n>

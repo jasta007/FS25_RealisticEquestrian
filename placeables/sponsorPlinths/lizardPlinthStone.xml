@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Made by art/source/lizard_plinth.py: change that and run it again rather than editing this. -->
+<placeable type="constructible">
+    <storeData>
+        <name>$l10n_eq_shop_lizardPlinth</name>
+        <functions>
+            <function>$l10n_eq_shop_lizardPlinth_function</function>
+            <function>$l10n_eq_shop_lizardPlinth_stone</function>
+        </functions>
+        <image>placeables/sponsorPlinths/store_lizardPlinthStone.dds</image>
+        <price>500</price>
+        <dailyUpkeep>0</dailyUpkeep>
+        <lifetime>1000</lifetime>
+        <rotation>0</rotation>
+        <showInStore>false</showInStore>
+        <brand>LIZARD</brand>
+        <species>placeable</species>
+        <category>animalpens</category>
+        <brush>
+            <type>placeable</type>
+            <category>buildings</category>
+            <tab>constructibles</tab>
+        </brush>
+    </storeData>
+
+    <base>
+        <filename>placeables/sponsorPlinths/lizardPlinthStone.i3d</filename>
+        <canBeRenamed>false</canBeRenamed>
+    </base>
+
+    <placement useRandomYRotation="false" useManualYRotation="true">
+        <!-- Driven along x onto the log deck; the front, with the logo and the triggers, faces -z.
+             The deck a machine counts on is in EqPlinths.AREAS. -->
+    </placement>
+
+    <triggerMarkers>
+        <triggerMarker node="unloadTriggerMarker" filename="$data/shared/assets/marker/markerIconPallet.i3d" adjustToGround="true"/>
+        <triggerMarker node="woodActivationTriggerMarker" filename="$data/shared/assets/marker/markerIconExclamationMark.i3d" adjustToGround="true"/>
+    </triggerMarkers>
+
+    <hotspots>
+        <hotspot type="UNLOADING_PALLET" linkNode="unloadTriggerMarker" teleportNode="unloadTriggerMarker"/>
+    </hotspots>
+
+    <infoTrigger triggerNode="infoTrigger"/>
+
+    <constructible>
+        <stateMachine>
+            <states>
+                <state name="SETUP" class="ConstructibleStateBuilding">
+                    <toggleMesh node="mound"  active="false" updatePhysics="true"/>
+                    <toggleMesh node="logs"   active="false" updatePhysics="false"/>
+                    <toggleMesh node="lizard" active="false" updatePhysics="true"/>
+                    <toggleMesh node="sign"   active="false" updatePhysics="false"/>
+                    <toggleHotspot index="1" isVisible="true"/>
+                    <input fillType="STONE" amount="1000" usagePerHour="1000"/>
+                    <sounds>
+                        <active template="constructibleActive"/>
+                    </sounds>
+                </state>
+
+                <state name="BUILDING_1" class="ConstructibleStateBuilding">
+                    <toggleMesh node="mound" active="true" updatePhysics="true"/>
+                    <input fillType="WOOD" amount="10000" usagePerHour="10000"/>
+                    <sounds>
+                        <active template="constructibleActive"/>
+                    </sounds>
+                </state>
+
+                <state name="BUILDING_2" class="ConstructibleStateBuilding">
+                    <toggleMesh node="logs" active="true" updatePhysics="false"/>
+                    <input fillType="BOARDS" amount="1000" usagePerHour="1000"/>
+                    <sounds>
+                        <active template="constructibleActive"/>
+                    </sounds>
+                </state>
+
+                <state name="FINALIZE" class="ConstructibleStateFinalize">
+                    <toggleMesh node="lizard"         active="true"  updatePhysics="true"/>
+                    <toggleMesh node="sign"           active="true"  updatePhysics="false"/>
+                    <toggleMesh node="site"           active="false" updatePhysics="false"/>
+                    <toggleMesh node="sellingStation" active="false" updatePhysics="true"/>
+                    <toggleMesh node="infoTrigger"    active="false" updatePhysics="true"/>
+                    <toggleHotspot index="1" isVisible="false"/>
+                </state>
+
+                <state name="DONE" class="ConstructibleState" isPreviewState="true"/>
+            </states>
+
+            <transitions>
+                <transition from="SETUP"      to="BUILDING_1"/>
+                <transition from="BUILDING_1" to="BUILDING_2"/>
+                <transition from="BUILDING_2" to="FINALIZE"/>
+                <transition from="FINALIZE"   to="DONE"/>
+            </transitions>
+        </stateMachine>
+
+        <sellingStation appearsOnStats="false" supportsExtension="false">
+            <unloadTrigger exactFillRootNode="unloadTrigger" aiNode="unloadTriggerAINode" fillTypes="STONE"/>
+            <palletTrigger triggerNode="palletTrigger" aiNode="unloadTriggerAINode" fillTypes="BOARDS STONE"/>
+            <woodTrigger triggerNode="woodTrigger" aiNode="unloadTriggerAINode" activationTriggerNode="woodActivationTrigger" autoUnload="true" fillTypes="WOOD"/>
+        </sellingStation>
+
+        <storage isExtension="false" fillLevelSyncThreshold="50">
+            <capacity fillType="STONE" capacity="1200"/>
+            <capacity fillType="WOOD" capacity="30000"/>
+            <capacity fillType="BOARDS" capacity="4000"/>
+        </storage>
+    </constructible>
+
+    <i3dMappings>
+        <i3dMapping id="site" node="0>0"/>
+        <i3dMapping id="stakes" node="0>0|0"/>
+        <i3dMapping id="mound" node="0>1"/>
+        <i3dMapping id="moundSurface" node="0>1|0"/>
+        <i3dMapping id="collision" node="0>1|1"/>
+        <i3dMapping id="logs" node="0>2"/>
+        <i3dMapping id="logBark" node="0>2|0"/>
+        <i3dMapping id="logEnds" node="0>2|1"/>
+        <i3dMapping id="lizard" node="0>3"/>
+        <i3dMapping id="planks" node="0>3|0"/>
+        <i3dMapping id="battens" node="0>3|1"/>
+        <i3dMapping id="lizardCollision" node="0>3|2"/>
+        <i3dMapping id="sign" node="0>4"/>
+        <i3dMapping id="boardPlanks" node="0>4|0"/>
+        <i3dMapping id="boardFace" node="0>4|1"/>
+        <i3dMapping id="eqSponsor_1" node="0>4|2"/>
+        <i3dMapping id="sellingStation" node="0>5"/>
+        <i3dMapping id="unloadTrigger" node="0>5|0"/>
+        <i3dMapping id="palletTrigger" node="0>5|1"/>
+        <i3dMapping id="woodTrigger" node="0>5|2"/>
+        <i3dMapping id="woodActivationTrigger" node="0>5|3"/>
+        <i3dMapping id="unloadTriggerAINode" node="0>5|4"/>
+        <i3dMapping id="unloadTriggerMarker" node="0>5|5"/>
+        <i3dMapping id="woodActivationTriggerMarker" node="0>5|6"/>
+        <i3dMapping id="infoTrigger" node="0>6"/>
+    </i3dMappings>
+</placeable>

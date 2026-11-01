@@ -260,7 +260,11 @@ end
 --- @param config table EqEventConfig, for eventing's phases
 --- @param place number|nil where the horse finished, for the comeback line
 --- @return string key eq_story_<story>_<issue>
-function EqPerformance.storyKey(discipline, run, eliminated, config, place)
+function EqPerformance.storyKey(discipline, run, eliminated, config, place, phasePlaces)
+    if not eliminated then
+        local ridden = EqPerformance.riddenStoryKey(discipline, run, phasePlaces)
+        if ridden ~= nil then return ridden end
+    end
     if discipline.phases ~= nil and #discipline.phases > 0 then
         return EqPerformance.phasedStoryKey(discipline, run, eliminated, config)
     end
@@ -273,6 +277,44 @@ function EqPerformance.storyKey(discipline, run, eliminated, config, place)
         issue = EqPerformance.issue(run.checks)
     end
     return string.format("eq_story_%s_%s", discipline.story or discipline.name, issue)
+end
+
+
+-- In your own event the line about a phase you rode comes from how you rode it, not from the
+-- simulated checks behind it (James, 2026-11-01: 5th of 6 and "Clear in every phase").
+-- A dressage phase placed worse than this still says the dressage held a clear horse back.
+EqPerformance.RIDDEN_GOOD_PLACE = 3
+
+--- The line for a run with phases you rode in your own event, or nil when none was ridden.
+--- @param discipline table
+--- @param run table with phases { name, sheet = { penalties, ridden } }
+--- @param phasePlaces table|nil phase name -> place
+--- @return string|nil key
+function EqPerformance.riddenStoryKey(discipline, run, phasePlaces)
+    local ridden, fences, jumping, dressage = false, 0, false, false
+    for _, phase in ipairs(run.phases or {}) do
+        local sheet = phase.sheet
+        if sheet ~= nil then
+            if sheet.ridden then ridden = true end
+            if phase.name == "dressage" then
+                dressage = true
+            else
+                jumping = true
+                fences = fences + (sheet.penalties or 0)
+            end
+        end
+    end
+    if not ridden then return nil end
+    local story = discipline.story or discipline.name
+    if not jumping then return "eq_story_ridden_test" end
+    if fences > 0 then
+        return discipline.phases ~= nil and "eq_story_eventing_fenceFaults" or "eq_story_ridden_faults"
+    end
+    local dressagePlace = phasePlaces ~= nil and phasePlaces.dressage or nil
+    if dressage and dressagePlace ~= nil and dressagePlace > EqPerformance.RIDDEN_GOOD_PLACE then
+        return "eq_story_eventing_clearFences"
+    end
+    return string.format("eq_story_%s_clean", story)
 end
 
 

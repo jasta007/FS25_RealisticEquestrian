@@ -44,7 +44,12 @@ dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/sponsors/EqSponsorship.lua")
+dofile("scripts/facilities/EqPlinths.lua")
+dofile("scripts/facilities/EqTurntable.lua")
 dofile("scripts/facilities/EqSponsors.lua")
+dofile("scripts/facilities/EqSponsorBoards.lua")
+dofile("scripts/sponsors/EqLizard.lua")
 dofile("scripts/core/EqHorseRecord.lua")
 dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
@@ -938,6 +943,14 @@ do
             if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
         end
         if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+        if c.grade == 4 then
+            local stars = 0
+            for _, skill in ipairs(EqStaff.JOBS[c.job].main) do
+                if c.skills[skill] >= 90 then stars = stars + 1 end
+                if c.skills[skill] < 80 then check("legendary main skills stay 80 and up", false, skill) end
+            end
+            if stars ~= 1 then check("a legendary has exactly one main skill at 90+", false, c.job .. " " .. stars) end
+        end
     end
     check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
     check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
@@ -1696,7 +1709,13 @@ end)()
     ride(38)
     local crash = { px = 0, pz = 38, x = 0, z = 38, dt = 100, crashed = true }
     check("a cross country refusal is 20", EqShowJumping.step(round, crash) == "refusal" and round.faults == 20 and round.represent)
+    check("no second refusal until the horse backs off the fence", EqShowJumping.step(round, crash) == nil and round.faults == 20
+        and EqShowJumping.step(round, { px = 0, pz = 38, x = 0, z = 37.8, dt = 100 }) == nil and EqShowJumping.step(round, crash) == nil
+        and round.faults == 20)
+    local backOff = { px = 0, pz = 38, x = 0, z = 37, dt = 100 }
+    EqShowJumping.step(round, backOff)
     check("a second at the same fence is 40 more, not out", EqShowJumping.step(round, crash) == "refusal" and round.faults == 60)
+    EqShowJumping.step(round, backOff)
     check("a third at the same fence eliminates", EqShowJumping.step(round, crash) == "eliminated")
     round = EqShowJumping.newRound(course)
     z = 25.25
@@ -1783,6 +1802,24 @@ end)()
     check("eventing is only ended by a fall, never a refusal",
         EqPerformance.storyKey(config.disciplineByName.eventing, { phases = { { checks = { { check = { stat = "temperament", weight = 1, difficulty = 0 }, passed = false } } } } },
             true, config) == "eq_story_eventing_eliminated")
+    -- In your own event a ridden phase's line comes from the ride, not the simulated checks.
+    local passedAll = { { check = { stat = "agility", weight = 1, difficulty = 0 }, passed = true } }
+    local function ridRun(d, sj, xc)
+        return { checks = passedAll, phases = { { name = "dressage", checks = passedAll, sheet = { penalties = d, ridden = true } },
+            { name = "showJumping", checks = passedAll, sheet = { penalties = sj, ridden = true } },
+            { name = "crossCountry", checks = passedAll, sheet = { penalties = xc } } } }
+    end
+    local eventing = config.disciplineByName.eventing
+    check("ridden story: clear over fences but a poor dressage says so",
+        EqPerformance.storyKey(eventing, ridRun(34, 0, 0), false, config, 5, { dressage = 5 }) == "eq_story_eventing_clearFences"
+        and EqPerformance.storyKey(eventing, ridRun(22, 0, 0), false, config, 1, { dressage = 1 }) == "eq_story_eventing_clean")
+    check("ridden story: faults over fences are never clear", EqPerformance.storyKey(eventing, ridRun(22, 4, 0), false, config, 2, { dressage = 1 })
+        == "eq_story_eventing_fenceFaults")
+    local oneSj = { checks = passedAll, phases = { { name = "showJumping", checks = passedAll, sheet = { penalties = 8, ridden = true } } } }
+    check("ridden story: a one-phase round with rails isn't a clear round",
+        EqPerformance.storyKey(sj, oneSj, false, config, 3, { showJumping = 3 }) == "eq_story_ridden_faults"
+        and EqPerformance.storyKey(eventing, { checks = passedAll, phases = { { name = "dressage", checks = passedAll, sheet = { penalties = 30 } } } },
+            false, config) == "eq_story_eventing_clean")
     local race = config.disciplineByName.raceShort
     local function raceRun(passes)
         local checks = {}
@@ -1924,6 +1961,10 @@ end)()
             end
         end
     end
+    for _, key in ipairs({ "eq_story_ridden_test", "eq_story_ridden_faults", "eq_story_eventing_fenceFaults", "eq_story_eventing_clearFences" }) do
+        check("ridden story text " .. key, en:find('name="' .. key .. '"', 1, true) ~= nil and de:find('name="' .. key .. '"', 1, true) ~= nil
+            and fr:find('name="' .. key .. '"', 1, true) ~= nil and es:find('name="' .. key .. '"', 1, true) ~= nil)
+    end
     for i = 1, 300 do
         local d = config.disciplines[(i % #config.disciplines) + 1]
         local r = EqPerformance.run(d, config, config.tierByName.intermediate, { rating = 30 + i % 50, condition = 0.9 },
@@ -1987,7 +2028,7 @@ end)()
     check("ordinals", EqStory.ordinal(1) == "1st" and EqStory.ordinal(2) == "2nd" and EqStory.ordinal(3) == "3rd"
         and EqStory.ordinal(4) == "4th" and EqStory.ordinal(11) == "11th" and EqStory.ordinal(12) == "12th"
         and EqStory.ordinal(22) == "22nd")
-    check("podium line", EqStory.podiumLine({ "Applejack", "Torben", "Winter" }) == "Winner: **Applejack**, 2nd: **Torben**, 3rd: **Winter**.")
+    check("podium line", EqStory.podiumLine({ "Bracken", "Torben", "Winter" }) == "Winner: **Bracken**, 2nd: **Torben**, 3rd: **Winter**.")
     local sheetRun = { penalties = 53.6, phases = {
         { name = "dressage", sheet = { penalties = 28, down = 0, refusals = 0, time = 0 } },
         { name = "showJumping", sheet = { penalties = 0, down = 0, refusals = 0, time = 0 } },
@@ -2003,9 +2044,9 @@ end)()
     check("no scoresheet without penalties", EqStory.scoreLines({ phases = {} }, {}) == nil and EqStory.scoreLines(nil, nil) == nil)
     check("gains line skips tiny gains", EqStory.gainsLine({ agility = 0.42, temperament = 0.2, speed = 0.01 })
         == "Gained Agility **+0.4**, Temperament **+0.2**.")
-    local runs = EqStory.runs("Winner: **Applejack**, 2nd: **Torben**.")
+    local runs = EqStory.runs("Winner: **Bracken**, 2nd: **Torben**.")
     check("a line splits into plain and bold runs", #runs == 5 and runs[1].text == "Winner: " and not runs[1].bold
-        and runs[2].text == "Applejack" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
+        and runs[2].text == "Bracken" and runs[2].bold and runs[5].text == "." and not runs[5].bold)
     check("an old line with no marks is one plain run", #EqStory.runs("Clear inside the time.") == 1
         and not EqStory.runs("Clear inside the time.")[1].bold)
     check("plain text drops the marks", EqStory.plain("Gained Agility **+0.4**.") == "Gained Agility +0.4.")
@@ -3779,6 +3820,17 @@ end)()
         and EqLateral.bend > 0 and EqLateral.steer == steered and passes == false)
     Input, EqLateral.vehicle, EqLateral.steer, EqLateral.bend = saved, nil, 0, 0
     -- Mouse steering: nothing in the dead zone, full turn at the end; the head eased to it.
+    -- The movement named under the panel (James, 2026-11-01).
+    local function nowName(t) return EqLateral.movementName(t) end
+    check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
+        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "pirouette"
+        and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
+        and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
+        and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
+        and nowName({ gait = "TROT", side = 1, bend = 0.8, rail = "in" }) == "renvers"
+        and nowName({ gait = "TROT", side = -1, bend = -0.8, rail = "out" }) == "travers"
+        and nowName({ gait = "TROT", side = -1, bend = 0, rail = "out" }) == "legYieldRail"
+        and nowName({ gait = "TROT", side = 0, bend = 0.8 }) == nil)
     check("mouse steering has a dead zone in the middle", EqLateral.deadZone(EqLateral.DEAD_ZONE * 0.9) == 0
         and EqLateral.deadZone(1) == 1 and EqLateral.deadZone(-1) == -1 and EqLateral.deadZone(0.8) > 0.7
         and EqLateral.curve(0.5) < 0.5 and EqLateral.curve(-1) == -1 and EqLateral.curve(1) == 1
@@ -3855,7 +3907,9 @@ end)()
     local right = EqCourseGlow.symbol("pirouette", 0, 0, 0, 0, 1, -1)
     check("a halt is a bar across the line", #halt == 1 and math.abs(halt[1][3] - halt[1][6]) < 1e-9
         and math.abs(math.abs(halt[1][4] - halt[1][1]) - EqCourseGlow.SYMBOL.bar) < 1e-9)
-    check("a piaffe is two bars across", #piaffe == 2 and piaffe[1][3] < 0 and piaffe[2][3] > 0)
+    -- A piaffe creeps forward: a short stretch of trot and walk dashes in turn along the line (James, 2026-11-01).
+    check("a piaffe is trot and walk dashes in turn along the line", #piaffe == 4 and piaffe[1][1] == 0 and piaffe[1][4] == 0
+        and piaffe[1][6] - piaffe[1][3] > piaffe[2][6] - piaffe[2][3] and piaffe[2][3] > piaffe[1][6])
     local ring = EqCourseGlow.SYMBOL.ringPieces - 1
     -- Turning left (the heading growing) goes round towards +x first; right towards -x.
     check("a pirouette is a ring round the point, starting off the way to turn", #left == ring + 2 and #right == ring + 2
@@ -4273,6 +4327,16 @@ end)()
         local otherMarkers = shopMarkers(arena, 140, -12, 0.7)
         local otherFrame = EqDressagePath.frameFor(otherMarkers, xOf(otherMarkers))
         check(name .. ": a test belongs to its own arena", EqDressageTests.planFor(ownFrame) == plan and EqDressageTests.planFor(otherFrame) == nil)
+        -- In your hosted event your own test counts only when it is as long as the event's.
+        local function started(steps)
+            local routine = {}
+            EqDressage.start(routine, { x = ownFrame.cx, z = ownFrame.cz, markers = ownMarkers,
+                test = { seed = "h", moves = 15, counts = true, status = "counts", event = {}, steps = steps } }, function(n) return 1 end)
+            return routine
+        end
+        local longEnough, tooShort = started(#plan.steps), started(#plan.steps + 1)
+        check(name .. ": own test counts in a hosted event only when long enough", longEnough.kind == "path" and longEnough.competing == true
+            and longEnough.hosted.status == "counts" and tooShort.competing == nil and tooShort.hosted.status == "short")
         local store = memoryXML()
         EqDressageTests.saveToXMLFile(store, "t")
         EqDressageTests.loadFromXMLFile(store, "t")
@@ -4394,8 +4458,16 @@ end)()
         end
         return r.acc[p.m]
     end
+    check("a passage knows its letters, and says trot on just past its end", passTest ~= nil and passTest.passages[1].from ~= nil
+        and passTest.passages[1].to ~= nil and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 + 1 }) ~= nil
+        and EqDressagePath.passageJustDone({ test = passTest, s = passTest.passages[1].s1 - 1 }) == nil)
     check("tests ask for passages, and not collecting in one costs marks", passTest ~= nil and passRun(false).passMs > 0 and passRun(true).passMs == 0
-        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7)
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7
+        -- Trotted through, little time out of it but most of its line (James's hosted test, 2026-11-01).
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 2700, passSpan = 10, passOut = 9 }) <= 5)
+    check("plain figures: strict near the line, gentler further off", EqDressagePath.markOf({ devSum = 1, len = 10, wrongMs = 0, pen = 0, plain = true }) == 8.5
+        and EqDressagePath.markOf({ devSum = 3.3, len = 10, wrongMs = 0, pen = 0, plain = true }) == 6
+        and EqDressagePath.markOf({ devSum = 5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 5)
     check("figures that only follow the line mark harder: 0.15 m off on average is a 7.5",
         EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 7.5
         and EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0 }) == 9)
@@ -4471,6 +4543,16 @@ end)()
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
 -- do block: the main chunk is at Lua's 200 locals.
 ;(function()
+    -- Every knock, hit and land sound ships, mono so the game places it in 3D.
+    for _, list in ipairs({ EqPoles.SOUNDS, EqPoles.BLOCK_HIT, EqPoles.BLOCK_LAND }) do
+        for _, file in ipairs(list) do
+            local f = io.open(file, "rb")
+            local head = f ~= nil and f:read(80) or ""
+            if f ~= nil then f:close() end
+            local at = head:find("\1vorbis", 1, true)
+            check("pole sounds: " .. file .. " ships, mono", at ~= nil and head:byte(at + 11) == 1)
+        end
+    end
     local function level(lead, push, restA)
         return { a = { 1.75, 0.95, 0 }, b = { -1.75, 0.95, 0 }, restA = restA or 0.05, restB = 0.05, lead = lead, push = push }
     end
@@ -4552,6 +4634,274 @@ end)()
         and EqPoles.legThrough(low, { -1.7, 0.25, 0 }, { 1.5, 0.1 }, { 1.5, -0.1 }, 0.45))
 end)()
 
+-- Sponsors for hosted events: data/sponsors.xml, brand sizes, offers, terms, fees and contracts.
+;(function()
+    local sp = EqSponsorship.read(TestXML.load("data/sponsors.xml"))
+    check("sponsors: three sizes, shares add to 1", #sp.sizes == 3
+        and math.abs(sp.sizes[1].share + sp.sizes[2].share + sp.sizes[3].share - 1) < 1e-9)
+    check("sponsors: 12 offers a year (3 big, 4 moderate, 5 small)", sp.sizeByName.big.offers == 3
+        and sp.sizeByName.moderate.offers == 4 and sp.sizeByName.small.offers == 5)
+    check("sponsors: big contracts always 3 years", sp.sizeByName.big.yearsMin == 3 and sp.sizeByName.big.yearsMax == 3)
+    check("sponsors: Lizard and no brand never offered", sp.skipBrands.LIZARD and sp.skipBrands.NONE)
+    check("sponsors: animals, objects, hand tools and misc are no machines", sp.skipCategoryTypes.ANIMALS and sp.skipCategoryTypes.OBJECTS
+        and sp.skipCategoryTypes.HANDTOOLS and sp.skipCategoryTypes.MISC and not sp.skipCategoryTypes.DRIVABLES)
+    check("sponsors: cancel 15%, miss fee 75%, two misses leave", sp.cancelShare == 0.15 and sp.missFactor == 0.75 and sp.missesToLeave == 2)
+    check("sponsors: price bands", EqSponsorship.bandOf(sp, 5000) == 1 and EqSponsorship.bandOf(sp, 50000) == 3
+        and EqSponsorship.bandOf(sp, 5000000) == #sp.bands + 1)
+
+    -- A made-up shop: A everywhere, B in two categories, C one, D and E too few machines.
+    local items = {}
+    local function add(brand, category, price) table.insert(items, { brand = brand, categories = { category }, price = price, name = brand .. category .. price }) end
+    for i, category in ipairs({ "tractorsL", "tractorsM", "harvesters", "plows", "trailers" }) do
+        add("A", category, 20000 * i)
+        add("A", category, 260000)
+        add("A", category, 500000)
+    end
+    add("B", "tractorsM", 260000); add("B", "trailers", 30000)
+    for i = 1, 6 do add("B", "trailers", 30000 + i * 1000) end
+    add("C", "plows", 8000); add("C", "plows", 9000); add("C", "plows", 9500)
+    add("D", "plows", 4000); add("D", "plows", 750000)
+    add("E", "forestry", 750000)
+    add("LIZARD", "tractorsL", 1000); add("LIZARD", "plows", 2000)
+    local profiles = EqSponsorship.profiles(sp, items)
+    check("sponsors: Lizard left out of the shop", profiles.LIZARD == nil)
+    check("sponsors: profile counts categories, bands, machines", profiles.A.categories == 5 and profiles.A.items == 15
+        and profiles.B.categories == 2 and profiles.C.items == 3 and profiles.C.bands == 1)
+    local ranked = EqSponsorship.rank(sp, profiles)
+    check("sponsors: brands with under 3 machines are no sponsors", #ranked == 3 and profiles.D.size == nil and profiles.E.size == nil)
+    check("sponsors: ranked by categories, then bands, then machines", ranked[1].brand == "A" and ranked[2].brand == "B"
+        and ranked[3].brand == "C")
+    check("sponsors: biggest brand is big, smallest small", ranked[1].size == "big" and ranked[3].size == "small")
+    check("sponsors: too few machines for its place drops a size", (function()
+        local few = EqSponsorship.rank(sp, { X = { brand = "X", categories = 9, bands = 3, items = 4, byCategory = {} },
+            Y = { brand = "Y", categories = 1, bands = 1, items = 3, byCategory = {} } })
+        return few[1].brand == "X" and few[1].size == "small"
+    end)())
+
+    local offers = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
+    local again = EqSponsorship.makeOffers(sp, ranked, "sponsors 1 1 1")
+    check("sponsors: never more offers than brands", #offers == 3)
+    local same = #offers == #again
+    for i, offer in ipairs(offers) do
+        same = same and again[i].brand == offer.brand and again[i].fee == offer.fee and again[i].strictness == offer.strictness
+    end
+    check("sponsors: same seed, same offers", same)
+    local seen, sane = {}, true
+    for _, offer in ipairs(offers) do
+        if seen[offer.brand] then sane = false end
+        seen[offer.brand] = true
+        local size = sp.sizeByName[offer.size]
+        if offer.years < size.yearsMin or offer.years > size.yearsMax or offer.fee <= 0 or offer.fee % 500 ~= 0
+            or offer.machines < 1 or offer.machines > sp.machinesMax or offer.window <= 0 or offer.brandingNeed < 1 or offer.brandingNeed > #sp.branding
+            or math.abs(offer.window * 20 - math.floor(offer.window * 20 + 0.5)) > 1e-9 then sane = false end
+    end
+    check("sponsors: offers are sane, each brand once", sane)
+
+    -- Loans (James, 2026-11-01): some sponsors lend a machine for each event month, Lizard always.
+    check("sponsor loans: chance by size, Lizard always lends", sp.sizeByName.big.loan == 0.6 and sp.sizeByName.moderate.loan == 0.4
+        and sp.sizeByName.small.loan == 0.25 and sp.loanBrands.LIZARD and math.abs(sp.loanTop - 0.34) < 1e-9)
+    check("sponsor loans: roll", EqSponsorship.rollLoan({ loan = 1 }, nil) and not EqSponsorship.rollLoan({ loan = 0 }, EqRandom.new(1))
+        and not EqSponsorship.rollLoan({ loan = 0.5 }, nil))
+    check("sponsor loans: every offer says yes or no", (function()
+        for _, o in ipairs(offers) do if type(o.loan) ~= "boolean" then return false end end
+        return true
+    end)())
+    check("sponsor loans: some offers lend, not all", (function()
+        local yes, no = 0, 0
+        for seed = 1, 40 do
+            for _, o in ipairs(EqSponsorship.makeOffers(sp, ranked, "loans " .. seed)) do
+                if o.loan then yes = yes + 1 else no = no + 1 end
+            end
+        end
+        return yes > 0 and no > 0
+    end)())
+    check("sponsor loans: who lends", EqSponsorship.lends(sp, "A", { loan = true }) and not EqSponsorship.lends(sp, "A", { loan = false })
+        and not EqSponsorship.lends(sp, "A", nil) and EqSponsorship.lends(sp, "LIZARD", nil) and EqSponsorship.lends(sp, "Lizard", nil))
+    local fleet = { { key = "cheapTractor", price = 30000, drivable = true }, { key = "plough", price = 900000, drivable = false },
+        { key = "bigTractor", price = 400000, drivable = true }, { key = "midTractor", price = 120000, drivable = true },
+        { key = "loader", price = 90000, drivable = true }, { key = "pickup", price = 50000, drivable = true },
+        { key = "truck", price = 200000, drivable = true } }
+    check("sponsor loans: one of the dearest that drives itself", EqSponsorship.pickLoan(fleet, 0, 0.34).key == "bigTractor"
+        and EqSponsorship.pickLoan(fleet, 0.99, 0.34).key == "midTractor" and EqSponsorship.pickLoan(fleet, 0.5, 0.34).key == "truck")
+    check("sponsor loans: never anything outside the top share", (function()
+        for i = 0, 100 do
+            local key = EqSponsorship.pickLoan(fleet, i / 100, 0.34).key
+            if key ~= "bigTractor" and key ~= "truck" and key ~= "midTractor" then return false end
+        end
+        return true
+    end)())
+    check("sponsor loans: implements when the brand makes nothing that drives",
+        EqSponsorship.pickLoan({ { key = "x", price = 5, drivable = false }, { key = "y", price = 9, drivable = false } }, 0, 0.34).key == "y")
+    check("sponsor loans: nothing to lend", EqSponsorship.pickLoan({}, 0.5) == nil and EqSponsorship.pickLoan(nil, 0.5) == nil)
+    check("sponsor loans: a small brand still lends its dearest", EqSponsorship.pickLoan({ { key = "only", price = 1, drivable = true } }, 0.9).key == "only")
+    check("sponsor loans: kept in the save", (function()
+        local xml = memoryXML()
+        EqSponsorship.saveOffer(xml, "o", { brand = "A", size = "big", loan = true })
+        EqSponsorship.saveOffer(xml, "p", { brand = "B", size = "small", loan = false })
+        return EqSponsorship.loadOffer(xml, "o").loan == true and EqSponsorship.loadOffer(xml, "p").loan == false
+    end)())
+
+    -- Strictness: hard bargains ask more and give more.
+    local relaxedFee, strictFee = EqSponsorship.term(sp, "fee", 0), EqSponsorship.term(sp, "fee", 1)
+    check("sponsors: strict deals pay more (80% to 130%)", math.abs(relaxedFee - 0.8) < 1e-9 and math.abs(strictFee - 1.3) < 1e-9)
+    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "categoriesPerMachine", 1) < EqSponsorship.term(sp, "categoriesPerMachine", 0))
+    check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
+        and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
+    check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
+    check("sponsors: machines to own capped by size: small 1, moderate 3, big 5",
+        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 3
+        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 5)
+    check("sponsors: never more than 5 machines to own (22 categories)", sp.machinesMax == 5
+        and EqSponsorship.machinesNeeded(22, 2, sp.machinesMax) == 5)
+    check("sponsors: shares on 5% steps", EqSponsorship.round5(0.37) == 0.35 and EqSponsorship.round5(0.38) == 0.4
+        and EqSponsorship.round5(0.6) == 0.6)
+    local old = EqSponsorship.tidy(sp, { size = "big", machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07, strictness = 1 })
+    check("sponsors: old saved offers tidied", old.machines == 5 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
+        and old.repaint == 0.5 and old.purchase == 0.05)
+
+    -- Competitor clause: B's 260k tractor sits within 30% of A's 260k tractor.
+    local offer = { brand = "A", size = "big", window = 0.3, machines = 2, fee = 150000, brandingNeed = 1, popularity = 10, target = 70, years = 3 }
+    local owned = { { brand = "A", categories = { "tractorsL" }, price = 20000 }, { brand = "B", categories = { "tractorsM" }, price = 300000, name = "Big B" },
+        { brand = "C", categories = { "balers" }, price = 50000 } }
+    local clashes = EqSponsorship.clashes(offer, profiles.A, owned)
+    check("sponsors: a rival machine near a sponsor price clashes", #clashes == 1 and clashes[1].name == "Big B")
+    owned[2].price = 120000
+    check("sponsors: outside the window, no clash", #EqSponsorship.clashes(offer, profiles.A, owned) == 0)
+    owned[2].price = 300000
+    local checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 0 })
+    check("sponsors: can't sign with a rival, too few machines and no board", not checks.ok)
+    owned[2] = { brand = "A", categories = { "plows" }, price = 60000 }
+    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1 })
+    check("sponsors: two of theirs, no rivals, one board: can sign", checks.ok)
+    offer.exclusive = true
+    checks = EqSponsorship.signChecks(sp, offer, { owned = owned, profile = profiles.A, boards = 1, contract = { brand = "Z" } })
+    check("sponsors: an exclusive sponsor wants no other", not checks.ok)
+
+    -- Several sponsors (James, 2026-10-31): up to three, big always exclusive, moderate maybe,
+    -- small never, and never two in the same shop category.
+    check("sponsors: up to three at once", sp.maxSponsors == 3)
+    check("sponsors: big always exclusive, small never", EqSponsorship.rollExclusive(sp.sizeByName.big, EqRandom.new(1))
+        and not EqSponsorship.rollExclusive(sp.sizeByName.small, EqRandom.new(1)))
+    check("sponsors: moderate sometimes exclusive", (function()
+        local rng, yes = EqRandom.new("moderate"), 0
+        for _ = 1, 200 do if EqSponsorship.rollExclusive(sp.sizeByName.moderate, rng) then yes = yes + 1 end end
+        return yes > 60 and yes < 140
+    end)())
+    local function offerOf(list, size)
+        for _, o in ipairs(list) do if o.size == size then return o end end
+    end
+    check("sponsors: offers carry exclusivity", offerOf(offers, "big").exclusive == true and offerOf(offers, "small").exclusive == false)
+    local shop2 = {}
+    local function add2(brand, category, price) table.insert(shop2, { brand = brand, categories = { category }, price = price, name = brand .. category }) end
+    add2("ZETOR", "tractorsS", 30000); add2("ZETOR", "tractorsM", 60000)
+    add2("STEYR", "tractorsM", 70000); add2("STEYR", "tractorsL", 150000)
+    add2("KRONE", "balers", 40000); add2("KRONE", "mowers", 20000); add2("KRONE", "tedders", 15000)
+    add2("POTT", "plows", 9000); add2("POTT", "cultivators", 8000); add2("POTT", "plows", 9500)
+    add2("BUCK", "trailers", 9000); add2("BUCK", "trailers", 9100); add2("BUCK", "trailers", 9200)
+    add2("TREE", "forestry", 9000)
+    local p2 = EqSponsorship.profiles(sp, shop2)
+    check("sponsors: tractors are easy kit, plows are not", p2.ZETOR.easy and p2.STEYR.easy and not p2.POTT.easy)
+    local r2 = EqSponsorship.rank(sp, p2)
+    check("sponsors: two tractors are enough for a small sponsor (easy kit)", p2.ZETOR.size == "small" and p2.STEYR.size == "small")
+    check("sponsors: one forestry machine still no sponsor", p2.TREE.size == nil and #r2 == 5)
+    check("sponsors: one car is enough", (function()
+        local p = EqSponsorship.profiles(sp, { { brand = "CAR", categories = { "cars" }, price = 40000 } })
+        EqSponsorship.rank(sp, p)
+        return p.CAR.size == "small"
+    end)())
+    check("sponsors: Zetor and Steyr share medium tractors", table.concat(EqSponsorship.sharedCategories(p2.ZETOR, p2.STEYR), ",") == "tractorsM")
+    local function small(brand) return { brand = brand, size = "small", machines = 1, window = 0.2, brandingNeed = 1, exclusive = false, fee = 4000 } end
+    local mine = { { brand = "ZETOR", categories = { "tractorsS" }, price = 30000 }, { brand = "STEYR", categories = { "tractorsL" }, price = 150000 },
+        { brand = "KRONE", categories = { "balers" }, price = 40000 }, { brand = "POTT", categories = { "plows" }, price = 9000 },
+        { brand = "BUCK", categories = { "trailers" }, price = 9000 } }
+    local zetor = EqSponsorship.contractFrom(small("ZETOR"), 0)
+    local function checksFor(brand, contracts)
+        return EqSponsorship.signChecks(sp, small(brand), { owned = mine, profile = p2[brand], boards = 1, contracts = contracts, profiles = p2 })
+    end
+    local function failed(c, id)
+        for _, check in ipairs(c) do if check.id == id then return not check.ok end end
+    end
+    local c = checksFor("STEYR", { zetor })
+    check("sponsors: no Steyr next to Zetor (same category)", not c.ok and failed(c, "overlap") and not failed(c, "exclusive"))
+    check("sponsors: overlap names the sponsor and category", c[#c].brands[1].brand == "ZETOR" and c[#c].brands[1].categories[1] == "tractorsM")
+    c = checksFor("KRONE", { zetor })
+    check("sponsors: Krone next to Zetor is fine", c.ok)
+    local krone = EqSponsorship.contractFrom(small("KRONE"), 0)
+    check("sponsors: a third non-exclusive sponsor", checksFor("POTT", { zetor, krone }).ok)
+    local pott = EqSponsorship.contractFrom(small("POTT"), 0)
+    c = checksFor("BUCK", { zetor, krone, pott })
+    check("sponsors: never a fourth", not c.ok and failed(c, "slots"))
+    local big = { brand = "STEYR", size = "big", fee = 150000, exclusive = true }
+    c = checksFor("KRONE", { big })
+    check("sponsors: nothing beside an exclusive sponsor", not c.ok and failed(c, "exclusive"))
+    check("sponsors: other sponsors' machines are no rivals", #EqSponsorship.clashes({ brand = "KRONE", window = 1 },
+        { byCategory = { tractorsS = { 30000 } } }, mine, { ZETOR = true }) == 0
+        and #EqSponsorship.clashes({ brand = "KRONE", window = 1 }, { byCategory = { tractorsS = { 30000 } } }, mine) == 1)
+    check("sponsors: the biggest sponsor names the event", EqSponsorship.lead({ zetor, { brand = "M", size = "moderate", fee = 30000 }, krone }).brand == "M"
+        and EqSponsorship.lead({ zetor, EqSponsorship.contractFrom(small("KRONE"), 1) }).brand == "ZETOR" and EqSponsorship.lead({}) == nil)
+    -- Attachments (James, 2026-11-01): a header or trailer counts half toward the machines to own.
+    check("sponsors: attachments count half", sp.attachmentWeight == 0.5
+        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
+        and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    check("sponsors: discounts start 3 months after signing, on the sponsor's brand only", (function()
+        local c = { { brand = "M", signedMonth = 10, repair = 0.15, repaint = 0.35, purchase = 0.05 } }
+        return EqSponsorship.discount(c, "M", "purchase", 12, sp.discountMonths) == 0
+            and sp.discountMonths == 3
+            and EqSponsorship.discount(c, "M", "purchase", 13, sp.discountMonths) == 0.05
+            and EqSponsorship.discount(c, "M", "repaint", 20, 3) == 0.35
+            and EqSponsorship.discount(c, "Z", "repair", 20, 3) == 0
+            and EqSponsorship.discount({}, "M", "repair", 20, 3) == 0
+            and EqSponsorship.discount({ c[1], { brand = "M", signedMonth = 0, repair = 0.3 } }, "M", "repair", 20, 3) == 0.3
+    end)())
+    check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
+        { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
+        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
+    local oldBig = EqSponsorship.tidy(sp, { size = "big", strictness = 0.5 })
+    local oldSmall = EqSponsorship.tidy(sp, { size = "small", strictness = 0.5, exclusive = true })
+    check("sponsors: old saves: big exclusive, small not", oldBig.exclusive == true and oldSmall.exclusive == false)
+
+    local order = { novice = 1, intermediate = 2, championship = 3 }
+    check("sponsors: big pays full at Championship, 25% at Intermediate, none at Novice",
+        EqSponsorship.feeShare(sp, offer, "championship", order) == 1 and EqSponsorship.feeShare(sp, offer, "intermediate", order) == 0.25
+        and EqSponsorship.feeShare(sp, offer, "novice", order) == 0)
+    check("sponsors: moderate from Intermediate, small everything",
+        EqSponsorship.feeShare(sp, { size = "moderate" }, "novice", order) == 0 and EqSponsorship.feeShare(sp, { size = "moderate" }, "intermediate", order) == 1
+        and EqSponsorship.feeShare(sp, { size = "small" }, "novice", order) == 1)
+    check("sponsors: branding levels Low 1, Medium 5, High 10 boards", #sp.branding == 3 and EqSponsorship.brandingLevel(sp, 0) == 0
+        and EqSponsorship.brandingLevel(sp, 4) == 1 and EqSponsorship.brandingLevel(sp, 5) == 2 and EqSponsorship.brandingLevel(sp, 12) == 3)
+    check("sponsors: branding pays half at Low, full at High", EqSponsorship.brandingFactor(sp, offer, 0) == 0
+        and EqSponsorship.brandingFactor(sp, offer, 2) == 0.5 and EqSponsorship.brandingFactor(sp, offer, 6) == 0.75
+        and EqSponsorship.brandingFactor(sp, offer, 10) == 1)
+    check("sponsors: below the required branding pays nothing", EqSponsorship.brandingFactor(sp, { brandingNeed = 2 }, 4) == 0
+        and EqSponsorship.brandingFactor(sp, { brandingNeed = 2 }, 5) == 0.75)
+    check("sponsors: strict offers need more branding", EqSponsorship.brandingNeed(sp, EqSponsorship.term(sp, "branding", 0)) == 1
+        and EqSponsorship.brandingNeed(sp, EqSponsorship.term(sp, "branding", 1)) == 3)
+    local contract = EqSponsorship.contractFrom(offer, 24)
+    check("sponsors: contract runs its years", contract.endMonth == 60 and contract.yearEnd == 36 and contract.feeFactor == 1 and offer.endMonth == nil)
+    check("sponsors: event fee", EqSponsorship.eventFee(sp, contract, "championship", order, 10, true) == 150000
+        and EqSponsorship.eventFee(sp, contract, "intermediate", order, 10, true) == 37500
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 5, true) == 112500)
+    check("sponsors: no fee reasons", select(2, EqSponsorship.eventFee(sp, contract, "novice", order, 10, true)) == "rating"
+        and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 10, false)) == "machines"
+        and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 0, true)) == "boards")
+    check("sponsors: yearly target", EqSponsorship.meetsTarget(sp, contract, "intermediate", order, 70, nil)
+        and not EqSponsorship.meetsTarget(sp, contract, "intermediate", order, 69, nil)
+        and not EqSponsorship.meetsTarget(sp, contract, "novice", order, 90, nil))
+    contract.top3 = true
+    check("sponsors: strict targets need a top 3", not EqSponsorship.meetsTarget(sp, contract, "championship", order, 80, 4)
+        and EqSponsorship.meetsTarget(sp, contract, "championship", order, 80, 3))
+    contract.met = false
+    check("sponsors: a miss cuts next year's fee", EqSponsorship.closeYear(sp, contract) == false and contract.feeFactor == 0.75
+        and contract.misses == 1)
+    check("sponsors: missed fee", EqSponsorship.eventFee(sp, contract, "championship", order, 10, true) == 112500)
+    check("sponsors: two misses and it leaves", EqSponsorship.closeYear(sp, contract) == true)
+    contract.misses, contract.met = 1, true
+    check("sponsors: a met year resets", EqSponsorship.closeYear(sp, contract) == false and contract.misses == 0 and contract.feeFactor == 1)
+    local cost, yearsLeft = EqSponsorship.cancelCost(sp, { fee = 150000, endMonth = 42 }, 24)
+    check("sponsors: cancel 18 months early costs 2 years at 15%", cost == 45000 and yearsLeft == 2)
+    check("sponsors: cancelling at the end costs nothing", EqSponsorship.cancelCost(sp, { fee = 150000, endMonth = 24 }, 24) == 0)
+end)()
+
 -- Hosting your own event: data/hosting.xml, the requirement checks, popularity and takings.
 ;(function()
     local host = EqHosting.read(TestXML.load("data/hosting.xml"))
@@ -4612,11 +4962,108 @@ end)()
     -- 13 jumps against 6 is far over the minimum: full course points; 1 bleacher + indoor over 0 needed.
     check("hosting: popularity adds base, course, seating and facilities", score == 30 + 15 + 15 + 5, tostring(score))
     check("hosting: popularity parts listed", parts[1].id == "base" and #parts == 4)
-    local winter = EqHosting.popularity(host, "crossCountry", novice, { winter = true })
-    local summer = EqHosting.popularity(host, "crossCountry", novice, {})
-    check("hosting: winter costs cross country", winter == summer - 10)
+    -- More variables (James, 2026-11-01): stars by skill word, booking ahead, advertising, shops, buzz, weather.
+    check("hosting: star points by skill word", EqHosting.starPoints(host, 79) == 0 and EqHosting.starPoints(host, 80) == 3
+        and EqHosting.starPoints(host, 92) == 6 and EqHosting.starPoints(host, 99) == 10 and EqHosting.starPoints(host, nil) == 0)
+    check("hosting: booking ahead +2 a month beyond the first, at most 10", EqHosting.aheadPoints(host, 1) == 0
+        and EqHosting.aheadPoints(host, 3) == 4 and EqHosting.aheadPoints(host, 6) == 10 and EqHosting.aheadPoints(host, 12) == 10)
+    check("hosting: advertising costs by rating", EqHosting.advertCost(host, "local", "novice") == 250
+        and EqHosting.advertCost(host, "national", "championship") == 15000 and EqHosting.advertCost(host, nil, "novice") == 0)
+    check("hosting: shop points", EqHosting.shopPoints(host, { sources = 1, goods = 0 }) == 2
+        and EqHosting.shopPoints(host, { sources = 2, goods = 3 }) == 5 and EqHosting.shopPoints(host, { sources = 1, goods = 12 }) == 6
+        and EqHosting.shopPoints(host, nil) == 0)
+    local plain = EqHosting.popularity(host, "showJumping", novice, {})
+    local extras, extraParts = EqHosting.popularity(host, "showJumping", novice, { monthsAhead = 6, advert = "national",
+        shops = { sources = 1, goods = 1 }, buzz = -2, starRating = 95 })
+    check("hosting: ahead, advert, shops, buzz and star add up", extras == plain + 10 + 8 + 3 - 2 + 6, tostring(extras))
+    local ids = {}
+    for _, part in ipairs(extraParts) do ids[part.id] = part.points end
+    check("hosting: new parts listed", ids.ahead == 10 and ids.advert == 8 and ids.shops == 3 and ids.buzz == -2 and ids.star == 6)
+    for _ = 1, 50 do
+        local roll = EqHosting.rollBuzz(host)
+        if roll < -5 or roll > 5 then check("hosting: buzz in -5..5", false, tostring(roll)) end
+    end
+
+    -- Weather, hour by hour: hail worst, then snow, then rain; tornado a one-off; indoors stays dry.
+    local tally = {}
+    for _ = 1, 10 do EqHosting.countWeather(host, tally, "SUN", 1) end
+    check("hosting: sunny hours cost nothing", EqHosting.weatherLoss(host, tally) == 0 and tally.hours == 10)
+    local rain, snow, hail = {}, {}, {}
+    for i = 1, 10 do
+        EqHosting.countWeather(host, rain, i <= 2 and "RAIN" or "SUN", 1)
+        EqHosting.countWeather(host, snow, i <= 2 and "SNOW" or "SUN", 1)
+        EqHosting.countWeather(host, hail, i <= 2 and "HAIL" or "SUN", 1)
+    end
+    local lostRain, lostSnow, lostHail = EqHosting.weatherLoss(host, rain), EqHosting.weatherLoss(host, snow), EqHosting.weatherLoss(host, hail)
+    check("hosting: hail worse than snow worse than rain", lostHail > lostSnow and lostSnow > lostRain and lostRain == 8,
+        string.format("%d %d %d", lostRain, lostSnow, lostHail))
+    local indoors = {}
+    for _ = 1, 10 do EqHosting.countWeather(host, indoors, "HAIL", 0) end
+    check("hosting: indoors the weather costs nothing", EqHosting.weatherLoss(host, indoors) == 0)
+    local twister = {}
+    check("hosting: first tornado hour reported", EqHosting.countWeather(host, twister, "TWISTER", 1) == true)
+    check("hosting: once only", EqHosting.countWeather(host, twister, "TWISTER", 1) == false)
+    for _ = 1, 100 do EqHosting.countWeather(host, twister, "SUN", 1) end
+    check("hosting: a tornado costs 15 on top", EqHosting.weatherLoss(host, twister) == 15 + math.floor(40 * 8 / 102 + 0.5),
+        tostring(EqHosting.weatherLoss(host, twister)))
+    local storm = { hours = 10, bad = 100, flat = 15 }
+    check("hosting: weather loss capped", EqHosting.weatherLoss(host, storm) == 25)
+    local withRain = EqHosting.popularity(host, "showJumping", novice, { weather = rain })
+    check("hosting: weather part", withRain == plain - 8)
+    local dryGate = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2)
+    local wetGate = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2, { hours = 10, bad = 5 })
+    check("hosting: wet hours cut the gate", wetGate.gate == math.floor(dryGate.gate * 0.7 + 0.5) and wetGate.entries == dryGate.entries)
+    local soaked = EqHosting.takings(host, "showJumping", host.ratingByName.championship, 100, 2, { hours = 10, bad = 10 })
+    check("hosting: gate never below 40%", soaked.gate == math.floor(dryGate.gate * 0.4 + 0.5))
+
+    -- Outdoors: indoor show jumping and dressage stay dry; cross country counts its jumps outdoors.
+    check("hosting: indoor show jumping is dry", EqHosting.outdoorShare("showJumping", { showJumping = { indoor = true } }) == 0)
+    check("hosting: outdoor dressage is wet", EqHosting.outdoorShare("dressage", { dressage = { indoor = false } }) == 1)
+    check("hosting: 3 Day Event averages its phases", math.abs(EqHosting.outdoorShare("eventing",
+        { dressage = { indoor = true }, showJumping = { indoor = true }, crossCountry = { outdoor = 0.4 } }) - 0.4 / 3) < 1e-9)
+
+    -- Course quality: different obstacles and a mix of jump types, subtle.
+    local same = {}
+    for i = 1, 10 do table.insert(same, { x = (i % 2) * 10, z = 0, type = "oxer" }) end
+    local varied = {}
+    for i = 1, 10 do table.insert(varied, { x = i * 10, z = 0, type = "type" .. (i % 5) }) end
+    check("hosting: jumping the same two jumps is poor", math.abs(EqHosting.courseQuality(host, same) - (0.5 * 0.2 + 0.5 * 0.2)) < 1e-9)
+    check("hosting: ten jumps of five types is full", EqHosting.courseQuality(host, varied) == 1)
+    check("hosting: no jumps no quality", EqHosting.courseQuality(host, {}) == 0)
+    local qualityVenue = { courses = { { name = "SJ", kind = "showJumping", jumps = 7, length = 400, seating = 0, quality = 0.5 } },
+        arenas = {}, freePlaces = 0, feed = 0, feedPerHorse = 0 }
+    local qualityResult = EqHosting.check(host, "showJumping", "novice", qualityVenue)
+    check("hosting: quality read from the picked course", qualityResult.quality == 0.5)
+    local _, qParts = EqHosting.popularity(host, "showJumping", qualityResult, {})
+    local qPoints = 0
+    for _, part in ipairs(qParts) do if part.id == "quality" then qPoints = part.points end end
+    check("hosting: quality worth up to 5", qPoints == 3, tostring(qPoints))
+
+    -- Souvenirs and refreshments: a few hundred litres, shared out, at the best price + 25%.
+    local sale = EqHosting.goodsSale(host, "intermediate", 100, { { name = "BREAD", litres = 1000, price = 2 },
+        { name = "CHEESE", litres = 50, price = 4 }, { name = "CAKE", litres = 0, price = 3 } })
+    local soldOf = {}
+    for _, item in ipairs(sale.items) do soldOf[item.name] = item end
+    check("hosting: goods sale shares 250 l", sale.litres == 250 and soldOf.CHEESE.litres == 50 and soldOf.BREAD.litres == 200
+        and soldOf.CAKE == nil, tostring(sale.litres))
+    check("hosting: goods sell at +25%", sale.total == 200 * 2 * 1.25 + 50 * 4 * 1.25, tostring(sale.total))
+    local quiet = EqHosting.goodsSale(host, "novice", 0, { { name = "BREAD", litres = 1000, price = 1 } })
+    check("hosting: half as much at popularity 0", quiet.litres == 50)
+    check("hosting: nothing to sell", EqHosting.goodsSale(host, "novice", 100, {}).total == 0)
     check("hosting: popularity stays in 0..100", EqHosting.popularity(host, "dressage", novice, { reputation = -1000 }) >= 0)
     check("hosting: reputation range", EqHosting.nextReputation(host, 18, true) == 20 and EqHosting.nextReputation(host, -20, false) == -25)
+    -- every popularity part the Host page names has an English text (other languages: the parity check)
+    do
+        local source = io.open("scripts/hosting/EqHosting.lua"):read("*a")
+        local body = source:match("function EqHosting%.popularity%(.-\nend\n")
+        local en = io.open("translations/translation_en.xml"):read("*a")
+        local ids = 0
+        for id in (body or ""):gmatch('add%("([%w_]+)"') do
+            ids = ids + 1
+            check("hosting: eq_host_part_" .. id .. " has a text", en:find('name="eq_host_part_' .. id .. '"', 1, true) ~= nil)
+        end
+        check("hosting: popularity parts found", ids >= 10, ids)
+    end
 
     local champ = host.ratingByName.championship
     local low = EqHosting.takings(host, "showJumping", champ, 50, 2)
@@ -4658,9 +5105,83 @@ end)()
     local failed = EqHostManager.failedChecks(short, true)
     local hasFeed = false
     for _, id in ipairs(failed) do if id == "feed" then hasFeed = true end end
-    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "arena" and not hasFeed)
+    check("host month: daily checks leave the month's feed out", #failed > 0 and failed[1] == "stables" and not hasFeed)
+    local onlyFarm = true
+    for _, id in ipairs(failed) do onlyFarm = onlyFarm and (id == "stables" or id == "feed") end
+    check("host month: a running event is never stopped by its courses or arena", onlyFarm, table.concat(failed, " "))
     local all = EqHostManager.failedChecks(short, false)
     check("host month: the opening check counts the feed", all[#all] == "feed")
+
+    -- The dressage test at A says whether it counts for a horse entered in your event.
+    do
+        local hadVenue = EqHostVenue
+        EqHostVenue = EqHostVenue or {}
+        local hadManager = EqCompetitionManager
+        EqCompetitionManager = EqCompetitionManager or {}
+        local savedConfig, savedLive, savedArenas, savedEvents = EqHostVenue.config, EqHostManager.liveEventFor,
+            EqHosting.arenasFromMarkers, EqCompetitionManager.events
+        local event = { id = 35, discipline = "dressage", hosted = { rating = "intermediate" } }
+        local arenaLength = 40
+        EqHostVenue.config = host
+        EqCompetitionManager.events = { event }
+        EqHostManager.liveEventFor = function(id) return id == "mine" and event or nil end
+        EqHosting.arenasFromMarkers = function() return { { length = arenaLength } } end
+        local test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: counts in a big enough arena", test.counts and test.status == "counts" and test.event == event)
+        arenaLength = 30
+        test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: too small an arena is practice", not test.counts and test.status == "small")
+        arenaLength = 40
+        event.hosted.ridden = { mine = { dressage = {} } }
+        test = EqHostManager.dressageTestFor("mine", {})
+        check("hosted test: ridden already is practice", not test.counts and test.status == "ridden")
+        test = EqHostManager.dressageTestFor("other", {})
+        check("hosted test: a horse not entered is told it's practice", test ~= nil and not test.counts and test.status == "notEntered" and test.event == event)
+        EqHostVenue.config, EqHostManager.liveEventFor, EqHosting.arenasFromMarkers, EqCompetitionManager.events =
+            savedConfig, savedLive, savedArenas, savedEvents
+        EqHostVenue, EqCompetitionManager = hadVenue, hadManager
+    end
+
+    -- Courses and tests are set before the event month (James, 2026-11-01): during it one big
+    -- enough can't be deleted, and a test of your own made too short is practice only.
+    do
+        local hadVenue, hadManager, hadMission = EqHostVenue, EqCompetitionManager, g_currentMission
+        EqHostVenue = EqHostVenue or {}
+        EqCompetitionManager = EqCompetitionManager or {}
+        local savedConfig, savedEvents, savedBookings = EqHostVenue.config, EqCompetitionManager.events, EqHostManager.bookings
+        local savedTitle = EqCompetitionManager.eventTitle
+        EqHostVenue.config = host
+        g_currentMission = { getFarmId = function() return 1 end }
+        EqCompetitionManager.eventTitle = function() return "Novice 3 Day Event" end
+        local event = { id = 40, discipline = "eventing", hosted = { farmId = 1, rating = "novice" }, entries = {} }
+        EqCompetitionManager.events = { [40] = event }
+        EqHostManager.bookings = {}
+        local sjCourse = { kind = "showJumping", jumps = { 1, 2, 3, 4, 5, 6 }, length = 400 }
+        local smallSj = { kind = "showJumping", jumps = { 1, 2, 3, 4, 5 }, length = 300 }
+        local xcCourse = { kind = "crossCountry", jumps = {}, length = 1200 }
+        for i = 1, 20 do xcCourse.jumps[i] = i end
+        check("lock: a course big enough for the running event can't be deleted", EqHostManager.courseLocked(sjCourse) == event
+            and EqHostManager.courseLocked(xcCourse) == event and EqHostManager.courseLocked(smallSj) == nil)
+        local need = EqHosting.testSteps(host.ratingByName.novice)
+        local frame = { halfL = 15, halfW = 7.5 }
+        local longPlan, shortPlan = { steps = {} }, { steps = {} }
+        for i = 1, need do longPlan.steps[i] = {} end
+        for i = 1, need - 1 do shortPlan.steps[i] = {} end
+        check("lock: a long enough test can't be deleted, a short one can", need == 8 and EqHostManager.testLocked(frame, longPlan) == event
+            and EqHostManager.testLocked(frame, shortPlan) == nil and EqHostManager.testLocked({ halfL = 10 }, longPlan) == nil)
+        local title, needed = EqHostManager.testTooShort(need - 1)
+        check("lock: saving a short test warns, a long one doesn't", title == "Novice 3 Day Event" and needed == need
+            and EqHostManager.testTooShort(need) == nil)
+        EqCompetitionManager.events = {}
+        check("lock: nothing is locked without a running event", EqHostManager.courseLocked(sjCourse) == nil
+            and EqHostManager.testLocked(frame, longPlan) == nil and EqHostManager.testTooShort(1) == nil)
+        EqHostManager.bookings = { [1] = { type = "dressage", rating = "intermediate", month = 20 } }
+        local bookedTitle, bookedNeed = EqHostManager.testTooShort(need)
+        check("lock: a booked event warns about a short test too", bookedTitle ~= nil and bookedNeed == 10)
+        EqHostVenue.config, EqCompetitionManager.events, EqHostManager.bookings = savedConfig, savedEvents, savedBookings
+        EqCompetitionManager.eventTitle = savedTitle
+        EqHostVenue, EqCompetitionManager, g_currentMission = hadVenue, hadManager, hadMission
+    end
 
     -- Ridden rounds in your own event.
     local novice = host.ratingByName.novice
@@ -4674,7 +5195,9 @@ end)()
     sheet = EqHosting.roundSheet({ faults = 20, timeFaults = 1.2, total = 21.2, xc = true }, 1)
     check("ridden: cross country sheet", sheet.penalties == 21.2 and sheet.down == 0 and sheet.refusals == 1)
     check("ridden: eliminated round", EqHosting.roundSheet({ eliminated = "refusals" }, 2).eliminated == true)
-    check("ridden: dressage penalties are 100 less the test's percentage", EqHosting.testSheet(72.5, false).penalties == 27.5
+    check("ridden: dressage penalties on the simulated scale", EqHosting.testSheet(75, false).penalties == 22
+        and EqHosting.testSheet(70, false).penalties == 26 and EqHosting.testSheet(60, false).penalties == 34
+        and EqHosting.testSheet(80, false).penalties == 18 and EqHosting.testSheet(100, false).penalties == 2
         and EqHosting.testSheet(60, true).eliminated and EqHosting.testSheet(nil, false).eliminated)
     local rode = { h = { dressage = { penalties = 22 }, showJumping = { penalties = 0 } } }
     check("ridden: some phases leave it to the simulation", EqHosting.riddenFate(rode, "h", "eventing") == nil
@@ -4700,32 +5223,69 @@ end)()
     check("ridden: clear round placed by its real penalties", better > 0 and worse == 0 and mineSj.run.phases[1].sheet.ridden
         and mineSj.phasePlaces ~= nil, string.format("%d ahead, %d behind", better, worse))
 
-    -- Graded rounds: the ride picks where in its own range the horse lands.
-    check("ride grade: clear inside the time is perfect", EqHosting.rideGrade("showJumping", 0, 40, 41) == 1)
-    local slow = EqHosting.rideGrade("showJumping", 0, 67.3, 41)
-    check("ride grade: very slow costs most of the time part", slow > 0.41 and slow < 0.44, string.format("%.3f", slow))
-    check("ride grade: rails cost more than a little time", EqHosting.rideGrade("showJumping", 8, 40, 41)
-        < EqHosting.rideGrade("showJumping", 0, 45, 41))
-    check("ride grade: a cross country refusal is about one rail's worth less",
-        EqHosting.rideGrade("crossCountry", 20, 100, 120) > EqHosting.rideGrade("showJumping", 12, 40, 41))
-    local graded = EqHosting.roundSheet({ seconds = 50, faults = 4, timeFaults = 9, total = 13 }, 0, 41)
-    check("ride grade: kept on the sheet", graded.grade ~= nil and graded.grade < 1 and graded.penalties == 13)
-    local function meanPlace(grade, rating)
-        local sum = 0
+    -- A three-day event: every ridden phase is on the scoresheet with the penalties the rider
+    -- was told (James, 2026-11-01: a clear round showed 4 faults at the results).
+    local function threeDay(ridden, label)
+        local sum, mine = 0, nil
         for i = 1, 200 do
-            local ev = { discipline = "showJumping", tier = "novice", prize = 1000,
-                hosted = { ridden = { me = { showJumping = { penalties = 0, down = 0, refusals = 0, time = 0, grade = grade } } } } }
-            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = rating, condition = 1, stats = stats } },
-                EqRandom.new("graded " .. i), 8)) do
-                if r.key == "me" then sum = sum + r.place end
+            local ev = { discipline = "eventing", tier = "novice", prize = 1000, hosted = { ridden = { me = ridden } } }
+            for _, r in ipairs(EqCompetition.run(ev, config, { { key = "me", rating = 45, condition = 1, stats = stats } }, EqRandom.new(label .. i), 8)) do
+                if r.key == "me" then mine, sum = r, sum + r.place end
             end
         end
-        return sum / 200
+        return mine, sum / 200
     end
-    local good, bad = meanPlace(1, 45), meanPlace(0.1, 45)
-    check("ride grade: a good ride places better than a poor one", good + 1 < bad, string.format("%.2f vs %.2f", good, bad))
-    local weakClear = meanPlace(1, 10)
-    check("ride grade: a weak horse ridden clear still doesn't win every time", weakClear > 1.5, string.format("%.2f", weakClear))
+    local clearSj = EqHosting.roundSheet({ seconds = 40, faults = 0, timeFaults = 0, total = 0 }, 0)
+    local xcRound = EqHosting.roundSheet({ xc = true, seconds = 130, faults = 20, timeFaults = 4, total = 24 }, 1)
+    local all3 = { dressage = EqHosting.testSheet(70, false), showJumping = clearSj, crossCountry = xcRound }
+    local three = threeDay(all3, "3de all ")
+    local byName = {}
+    for _, phase in ipairs(three.run.phases) do byName[phase.name] = phase.sheet end
+    check("3 day event: each ridden phase keeps the rider's penalties", byName.dressage.penalties == 26 and byName.dressage.ridden
+        and byName.showJumping.penalties == 0 and byName.showJumping.ridden and byName.crossCountry.penalties == 24
+        and byName.crossCountry.refusals == 1 and three.run.penalties == 50, string.format("%.1f total", three.run.penalties))
+    -- The report of your own 3 Day Event: overall and each phase's top three, your horse's
+    -- place in each phase (James, 2026-11-01).
+    do
+        local ev = { discipline = "eventing", tier = "novice", prize = 1000, hosted = { ridden = { me = all3 } } }
+        local field = EqCompetition.run(ev, config, { { key = "me", rating = 45, condition = 1, stats = stats } }, EqRandom.new("3de report"), 8)
+        local hadManager, hadView = EqCompetitionManager, EqHostView
+        dofile("scripts/competition/EqCompetitionManager.lua")
+        dofile("scripts/gui/EqHostView.lua")
+        EqCompetitionManager.config, EqCompetitionManager.rivalSeed = config, 1234
+        local byKey = { me = { entry = { name = "Massive Tango" } } }
+        local rng = EqRandom.new("podium")
+        local podium = EqCompetitionManager.podiumNames(field, byKey, "eventing", rng)
+        local phased = EqCompetitionManager.phaseReport(field, byKey, "eventing", podium, rng)
+        local okPhases, seenMine, distinct = #phased.phases == 3 and #phased.totals == 3, false, true
+        for _, phase in ipairs(phased.phases) do
+            okPhases = okPhases and #phase.top == 3 and phase.top[1].penalties <= phase.top[2].penalties
+            local names = {}
+            for _, entry in ipairs(phase.top) do
+                if entry.name == "Massive Tango" then seenMine = true end
+                distinct = distinct and not names[entry.name]
+                names[entry.name] = true
+            end
+        end
+        check("3 day report: top three in each phase, named, best first", okPhases and distinct and phased.totals[1] <= phased.totals[3]
+            and (seenMine or field[1].key ~= "me"))
+        local report = { day = 3, field = 8, podium = podium, totals = phased.totals, phases = phased.phases,
+            mine = { { name = "Massive Tango", place = 5, penalties = 50, phases = { { name = "dressage", place = 5, penalties = 26 } } } } }
+        local store = memoryXML()
+        EqHostManager.saveReport(store, "r", report)
+        local back = EqHostManager.loadReport(store, "r")
+        check("3 day report: survives a save", #back.phases == 3 and back.phases[2].top[1].name == phased.phases[2].top[1].name
+            and back.totals[1] == phased.totals[1] and back.mine[1].penalties == 50 and back.mine[1].phases[1].place == 5)
+        local lines = EqHostView.phaseLines(back)
+        check("3 day report: an overall line and one per phase", lines ~= nil and #lines == 4)
+        check("3 day report: older reports without phases keep the podium line", EqHostView.phaseLines({ podium = podium }) == nil)
+        EqCompetitionManager, EqHostView = hadManager, hadView
+    end
+    local _, simulated = threeDay({}, "3de none ")
+    local _, good = threeDay({ dressage = EqHosting.testSheet(70, false) }, "3de d70 ")
+    local _, poor = threeDay({ dressage = EqHosting.testSheet(55, false) }, "3de d55 ")
+    check("3 day event: a 70% test keeps a good horse near the front", good < simulated + 0.6 and good < poor,
+        string.format("%.2f ridden vs %.2f simulated, %.2f at 55%%", good, simulated, poor))
 
     -- Sponsor boards: the farm's own brands first, most owned first, then the rest in a fixed order.
     local names = { "ALPHA", "BRAVO", "CHARLIE", "DELTA", "NONE", "ECHO" }
@@ -4738,6 +5298,372 @@ end)()
         and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcTable.xml")
         and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcBigLog.xml")
         and not EqSponsors.isBleacherXml("data/placeables/fences/fence01.xml"))
+    check("sponsors: the plank corner, big drop wall and show jumps carry boards",
+        EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcCornerPlank.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall16.xml")
+        and not EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcDropWall12.xml")
+        and EqSponsors.isBleacherXml("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\showJumpOxer.xml"))
+    check("sponsor boards: a board's back and pieces are the same board", string.match("eqSponsor_2b", EqSponsors.NODE) == "2"
+        and string.match("eqSponsor_12", EqSponsors.NODE) == "12" and string.match("eqSponsor_2c", EqSponsors.NODE) == nil
+        and string.match("eqSponsor_1f3", EqSponsors.NODE) == "1" and string.match("eqSponsor_2f12", EqSponsors.NODE) == "2")
+    -- The wall (James, 2026-10-31): two boards (front, back) cut along its five falling blocks.
+    do
+        local text = io.open("placeables/showJumps/showJumpWall.i3d"):read("*a")
+        local numbers, pieces = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)f?%d*"') do numbers[n] = true; pieces = pieces + 1 end
+        local blocks = 0
+        for _ in text:gmatch('name="eqBlock"') do blocks = blocks + 1 end
+        check("sponsor wall: two boards in pieces, five blocks", numbers["1"] and numbers["2"] and pieces == 12 and blocks == 5,
+            pieces .. " pieces " .. blocks .. " blocks")
+        check("sponsor wall: always has its boards", EqSponsorBoards.isOn({ configFileName = "x/placeables/showJumps/showJumpWall.xml" }))
+        check("sponsor gates: always have their boards, in the shop, no flags (not fences)",
+            EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateArch.xml" })
+            and EqSponsorBoards.isOn({ configFileName = "x/placeables/xcJumps/xcGateSimple.xml" })
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcGateSimple.xml", 1, true) ~= nil
+            and io.open("placeables/xcJumps/xcGateArch.i3d"):read("*a"):find("eqFlags", 1, true) == nil
+            and EqSponsors.isBleacherXml("C:/m/FS25_RealisticEquestrian/placeables/xcJumps/xcGateArch.xml"))
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        check("sponsor wall: in the shop", modDesc:find("placeables/showJumps/showJumpWall.xml", 1, true) ~= nil)
+        local fall = { a = { 0.35, 1.0, 0 }, b = { -0.35, 1.0, 0 }, restA = 0.2, restB = 0.2, push = 1, block = true }
+        local p0 = EqPoles.blockPose(fall, 0.1)
+        check("a knocked block slides off the wall before it drops", p0.y == 1.0 and p0.z > 0 and p0.rx > 0)
+        local p1 = EqPoles.fallPose(fall, 5)
+        check("and lies a quarter turn over on the ground", p1.still and math.abs(p1.y - 0.2) < 1e-9
+            and math.abs(p1.rx - math.pi / 2) < 1e-9 and p1.z > 0.6)
+        local back = EqPoles.blockPose({ a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = -1, block = true }, 5)
+        check("pushed from behind it goes the other way", back.z < -0.6 and back.rx < 0)
+        local slow = { a = fall.a, b = fall.b, restA = 0.2, restB = 0.2, push = 1, block = true,
+            speedScale = 0.7, tipScale = 1.3, delay = 0.15, turn = 0.3 }
+        local early, late = EqPoles.blockPose(slow, 0.1), EqPoles.blockPose(slow, 5)
+        check("blocks vary: one starts late, slides slower and lands turned and nearer", early.z == 0 and late.still
+            and late.z < p1.z and math.abs(late.ry - p1.ry - 0.3) < 1e-9 and not EqPoles.blockPose(slow, 0.6).still)
+        local row = { { state = EqPoles.UP, home = { -1.4, 1.0, 0 } }, { state = EqPoles.UP, home = { 0, 1.0, 0 } }, { state = EqPoles.UP, home = { 1.4, 1.0, 0 } } }
+        check("running into the wall knocks the block in the horse's way", EqPoles.crashPole(row, 0.3, 1.2) == row[3]
+            and EqPoles.crashPole(row, 0.3, -0.1) == row[2])
+        check("a leg under a block's top knocks it, over it doesn't",
+            EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.15, nil, 0.2, 0.2)
+            and not EqPoles.legThrough({ 0.35, 1.0, 0 }, { -0.35, 1.0, 0 }, { 0, 0.1 }, { 0, -0.1 }, 1.25, nil, 0.2, 0.2))
+    end
+
+    -- Every board-carrying piece's i3d has the boards the shop line counts (front faces by number).
+    local function boardNumbers(path)
+        local f = io.open(path)
+        if f == nil then return -1 end
+        local text = f:read("*a")
+        f:close()
+        local numbers, count = {}, 0
+        for n in text:gmatch('name="eqSponsor_(%d+)b?"') do
+            if not numbers[n] then numbers[n], count = true, count + 1 end
+        end
+        return count, text
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_BOARDS) do
+        local files = { ["placeables/xcjumps/xctable.xml"] = "placeables/xcJumps/xcTable.i3d",
+            ["placeables/xcjumps/xccornerplank.xml"] = "placeables/xcJumps/xcCornerPlank.i3d",
+            ["placeables/xcjumps/xcdropwall16.xml"] = "placeables/xcJumps/xcDropWall16.i3d",
+            ["placeables/xcjumps/xcgatearch.xml"] = "placeables/xcJumps/xcGateArch.i3d",
+            ["placeables/xcjumps/xcgatesimple.xml"] = "placeables/xcJumps/xcGateSimple.i3d" }
+        local file = files[suffix] or ""
+        if file:find("xcJumps") then
+            local count = boardNumbers(file)
+            check("sponsor boards: " .. file .. " has " .. boards, count == boards, tostring(count))
+        end
+    end
+    for suffix, boards in pairs(EqSponsors.SHOP_OPTION_BOARDS) do
+        local name = suffix:match("showjumps/(%w+)%.xml$")
+        local real
+        for _, n in ipairs({ "showJumpUpright", "showJumpOxer", "showJumpTripleBar", "showJumpHogsback", "showJumpFan3", "showJumpLiverpool" }) do
+            if n:lower() == name then real = n end
+        end
+        local count, text = boardNumbers("placeables/showJumps/" .. tostring(real) .. ".i3d")
+        check("sponsor boards: " .. tostring(real) .. " has " .. boards .. " boards, hidden until bought",
+            count == boards and text:find('name="eqSponsorOn" visibility="false"', 1, true) ~= nil, tostring(count))
+        local xml = io.open("placeables/showJumps/" .. tostring(real) .. ".xml"):read("*a")
+        check("sponsor boards: " .. tostring(real) .. " offers the choice", xml:find("<eqSponsorBoardsConfiguration", 1, true) ~= nil)
+        check("sponsor boards: " .. tostring(real) .. " is a jump with the choice",
+            EqSponsorBoards.isJump("C:\\Mods\\FS25_RealisticEquestrian\\placeables\\showJumps\\" .. real .. ".xml"))
+    end
+    for _, n in ipairs({ "showJumpCrossrail", "showJumpCavaletti", "showJumpAscendingOxer", "showJumpFan2" }) do
+        local xml = io.open("placeables/showJumps/" .. n .. ".xml"):read("*a")
+        check("sponsor boards: " .. n .. " stays plain", xml:find("eqSponsorBoards", 1, true) == nil
+            and not EqSponsorBoards.isJump("placeables/showJumps/" .. n .. ".xml"))
+    end
+    check("sponsor boards: bought only with Yes", EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 2 } })
+        and not EqSponsorBoards.isOn({ configurations = { eqSponsorBoards = 1 } }) and not EqSponsorBoards.isOn({}) and not EqSponsorBoards.isOn(nil))
+
+    -- Rope marker: signs are a tiny bit of branding, capped (James, 2026-10-31).
+    check("rope marker: known, its signs count a tenth each", EqSponsors.isRope("C:\\m\\FS25_RealisticEquestrian\\placeables\\xcJumps\\xcRope.xml")
+        and EqSponsors.isBleacherXml("x/placeables/xcJumps/xcRope.xml") and not EqSponsors.isRope("x/placeables/xcJumps/xcTable.xml")
+        and math.abs(EqSponsors.total(2, 3) - 2.3) < 1e-9)
+    check("rope marker: all ropes together give one board at most", EqSponsors.total(0, 40) == 1 and EqSponsors.total(3, 11) == 4)
+    do
+        local rope = io.open("placeables/xcJumps/xcRope.xml"):read("*a")
+        local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
+        check("rope marker: a fence with plain and signed rope, in the shop", rope:find('type="newFence"', 1, true) ~= nil
+            and rope:find('id="ROPE_SIGN"', 1, true) ~= nil and i3d:find('name="eqSponsor_1"', 1, true) ~= nil
+            and i3d:find('name="eqSponsor_1b"', 1, true) ~= nil
+            and io.open("modDesc.xml"):read("*a"):find("placeables/xcJumps/xcRope.xml", 1, true) ~= nil)
+    end
+
+    -- Sponsor plinths: the sponsor's machines parked on a deck count (James, 2026-10-31).
+    do
+        local drive = EqPlinths.areasFor("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthDrive.xml")
+        check("plinths: known by their xml, drop walls too, other pieces not", drive ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcDropWall08.xml") ~= nil
+            and EqPlinths.areasFor("x/placeables/xcJumps/xcTable.xml") == nil and EqPlinths.areasFor(nil) == nil)
+        local deck = drive[1]
+        check("plinths: a machine on the deck counts", EqPlinths.inArea(deck, 0.3, 0.8, -2.5))
+        check("plinths: not one on the ground beside it, nor off its end", not EqPlinths.inArea(deck, 0.3, 0.0, -2.5)
+            and not EqPlinths.inArea(deck, 2.5, 0.8, 0) and not EqPlinths.inArea(deck, 0, 0.8, 3.6))
+        local ramp = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthRamp.xml")[1]
+        check("plinths: on a display ramp the surface rises to the front", EqPlinths.inArea(ramp, 0, 1.0, -1.6)
+            and EqPlinths.inArea(ramp, 0, 0.25, 1.6) and not EqPlinths.inArea(ramp, 0, -0.3, -1.6))
+        local bank = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthProductRamp.xml")
+        check("plinths: a product ramp is one bank, 2 m up at its short top, down its ramp", #bank == 1
+            and EqPlinths.inArea(bank[1], 0, 2.0, 1.5) and EqPlinths.inArea(bank[1], 1.5, 0.3, 8.5)
+            and not EqPlinths.inArea(bank[1], 0, 0.0, 1.5) and not EqPlinths.inArea(bank[1], 0, 2.0, -1))
+        check("plinths: a machine on the ground between two facing product ramps stands in the gap",
+            EqPlinths.between({ 0.5, 0.1, -2.4 }, { -0.5, 0.1, -2.4 })
+            and EqPlinths.between({ 1.8, 0.0, -1.5 }, { -1.8, 0.0, -1.5 }))
+        check("plinths: not beside the gap, up on a bank, nor between ramps too far apart or back to back",
+            not EqPlinths.between({ 3.0, 0.1, -2.4 }, { -3.0, 0.1, -2.4 })
+            and not EqPlinths.between({ 0, 0.1, 2.0 }, { 0, 0.1, -9.0 })
+            and not EqPlinths.between({ 0, 0.1, -6.0 }, { 0, 0.1, -6.0 })
+            and not EqPlinths.between({ 0, 0.1, -0.5 }, { 0, 0.1, -0.5 })
+            and not EqPlinths.between({ 0, 2.0, -2.4 }, { 0, 2.0, -2.4 }))
+        local a, b, c = { k = 1 }, { k = 2 }, { k = 3 }
+        local on = function(place, machine) return place[machine] == true end
+        local paired = EqPlinths.match({ { [a] = true, [b] = true }, { [a] = true }, { [c] = true } }, { a, b, c }, on)
+        check("plinths: each machine counts once, each place once", #paired == 2 and paired[1].machine == a
+            and paired[2].machine == c)
+        check("plinths: other brands on show cost a tenth of the fee each, at most half", EqPlinths.penalty(0) == 0
+            and math.abs(EqPlinths.penalty(2) - 0.2) < 1e-9 and EqPlinths.penalty(9) == 0.5 and EqPlinths.penalty(nil) == 0)
+        check("sponsor pieces: a parked sponsor's machine picks the brand, else a piece keeps its own, else in turn",
+            EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 0, "MCCORMICK", "CANCELA") == "MCCORMICK"
+            and EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 0, "FENDT", "MCCORMICK") == "MCCORMICK"
+            and EqSponsors.pickBrand({ "CANCELA", "MCCORMICK" }, 1, nil, "CLAAS") == "MCCORMICK"
+            and EqSponsors.pickBrand({}, 0, "FENDT", "FENDT") == nil)
+        check("plinths: no sponsor, nothing counted", EqPlinths.count(1, {}) == 0 and EqPlinths.count(1, nil) == 0)
+        do
+            local savedMission, savedTranslation, savedTime = g_currentMission, getWorldTranslation, g_time
+            local woken = {}
+            local near, far = { rootNode = 11, components = { { node = 11 } } }, { rootNode = 12, components = { { node = 12 } } }
+            near.raiseActive = function(v) woken[v] = (woken[v] or 0) + 1 end
+            far.raiseActive = near.raiseActive
+            g_currentMission = { vehicleSystem = { vehicles = { near, far } } }
+            local spots = { [10] = { 0, 0, 0 }, [11] = { 3, 1, 4 }, [12] = { 40, 0, 0 } }
+            getWorldTranslation = function(node) return unpack(spots[node]) end
+            g_time = 1000
+            EqPlinths.waking = {}
+            EqPlinths.wakeNear({ rootNode = 10 })
+            EqPlinths.wakeUpdate()
+            g_time = 1000 + EqPlinths.WAKE_MS + 1
+            EqPlinths.wakeUpdate()
+            g_currentMission, getWorldTranslation, g_time = savedMission, savedTranslation, savedTime
+            check("plinths: a plinth going wakes the machines near it for a while, not far ones", woken[near] == 1
+                and woken[far] == nil and next(EqPlinths.waking) == nil)
+        end
+        check("plinths: a parked sponsor machine is worth two boards", EqPlinths.MACHINE == 2)
+        do
+            local saved = EqSponsorManager
+            EqSponsorManager = { contracts = { [1] = { brand = "FENDT" }, [2] = { { brand = "CLAAS" }, { brand = "KUHN" } } } }
+            local one, many, none = EqSponsors.signedBrands(1), EqSponsors.signedBrands(2), EqSponsors.signedBrands(3)
+            EqSponsorManager = saved
+            check("plinths: one sponsor or several (PR #137), every sponsor's machines count", one[1] == "FENDT" and #one == 1
+                and many[1] == "CLAAS" and many[2] == "KUHN" and #none == 0)
+        end
+        local modDesc = io.open("modDesc.xml"):read("*a")
+        for _, n in ipairs({ "plinthDrive", "plinthRamp", "plinthRampLarge", "plinthProductRamp", "plinthTurntable" }) do
+            local path = "placeables/sponsorPlinths/" .. n
+            local i3d = io.open(path .. ".i3d"):read("*a")
+            local numbers, count = {}, 0
+            for k in i3d:gmatch('name="eqSponsor_(%d+)b?"') do
+                if not numbers[k] then numbers[k], count = true, count + 1 end
+            end
+            check("plinths: " .. n .. " in the shop, boards as counted, sponsor colours",
+                modDesc:find(path .. ".xml", 1, true) ~= nil and count == EqSponsors.shopBoards(path .. ".xml")
+                and EqSponsorBoards.isOn({ configFileName = path .. ".xml" }) and EqSponsors.isBleacherXml(path .. ".xml")
+                and EqPlinths.areasFor(path .. ".xml") ~= nil, tostring(count))
+        end
+        local disc = EqPlinths.areasFor("x/placeables/sponsorPlinths/plinthTurntable.xml")[1]
+        check("turntable: a round deck, a machine there worth three boards", EqPlinths.inArea(disc, 2.0, 0.75, -2.0)
+            and not EqPlinths.inArea(disc, 2.5, 0.75, -2.5) and not EqPlinths.inArea(disc, 0, 0.0, 0)
+            and EqPlinths.inArea(disc, 0, 0.75, 3.3) and EqPlinths.value({ area = disc }) == 3
+            and EqPlinths.value({ a = 1, b = 2 }) == EqPlinths.MACHINE)
+        do
+            local saved = AttacherJoints
+            AttacherJoints = { jointTypeNameToInt = { implement = 1, trailer = 2, trailerLow = 3, semitrailer = 4, wheelLoader = 5 } }
+            check("turntable: trailer hitches are told from a loader's bucket or a tool", EqTurntable.isTrailerJoint(4)
+                and EqTurntable.isTrailerJoint(3) and EqTurntable.isTrailerJoint(2) and not EqTurntable.isTrailerJoint(5)
+                and not EqTurntable.isTrailerJoint(1) and not EqTurntable.isTrailerJoint(nil))
+            AttacherJoints = saved
+        end
+        check("turntable: known by its xml", EqTurntable.isTurntable("C:\\m\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\plinthTurntable.xml")
+            and not EqTurntable.isTurntable("x/placeables/sponsorPlinths/plinthDrive.xml"))
+        local quarter = EqTurntable.advance(0, EqTurntable.TURN_MS / 4)
+        check("turntable: one slow turn every two minutes", math.abs(quarter - math.pi / 2) < 1e-9
+            and math.abs(EqTurntable.advance(6.2, EqTurntable.TURN_MS / 4) - (6.2 + math.pi / 2 - 2 * math.pi)) < 1e-9
+            and EqTurntable.TURN_MS >= 60000)
+        check("turntable: its disc is a node of its own", io.open("placeables/sponsorPlinths/plinthTurntable.i3d"):read("*a")
+            :find('<TransformGroup name="' .. EqTurntable.DISC .. '"', 1, true) ~= nil)
+        check("plinths: the product ramp has no flags of its own (players set them) and its board is on its face",
+            io.open("placeables/sponsorPlinths/plinthProductRamp.i3d"):read("*a"):find('eqFlags', 1, true) == nil
+            and io.open("modDesc.xml"):read("*a"):find("plinthProductJump", 1, true) == nil)
+
+        -- Lizard's free one-off sponsorship (James, 2026-11-01): 25%, a constructible plinth, no penalty.
+        local lz = EqLizard.read(TestXML.load("data/sponsors.xml"))
+        check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
+            and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
+            and EqLizard.material(lz, "STONE").amount == 1000 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
+        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
+            and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
+        check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType
+            and EqLizard.roll(lz, 0, 0.5).fillType == lz.materials[2].fillType and EqLizard.roll(lz, 0, 0.999).fillType == lz.materials[3].fillType)
+        local fee = lz.ratings.intermediate.fee
+        check("lizard: pays when the plinth is built and the branding is there, else nothing (no penalty)",
+            EqLizard.payFor(lz, "intermediate", true, 2) == fee and EqLizard.payFor(lz, "intermediate", true, 3) == fee
+            and select(2, EqLizard.payFor(lz, "intermediate", false, 3)) == "plinth"
+            and select(2, EqLizard.payFor(lz, "intermediate", true, 1)) == "branding"
+            and EqLizard.payFor(lz, "intermediate", true, 1) == 0 and EqLizard.payFor(lz, "nope", true, 3) == 0)
+        check("lizard: 6,000 / 18,000 / 45,000, and 1.5 times for a 3 Day Event (James)",
+            EqLizard.feeFor(lz, "novice") == 6000 and EqLizard.feeFor(lz, "intermediate", "dressage") == 18000
+            and EqLizard.feeFor(lz, "championship") == 45000 and EqLizard.feeFor(lz, "novice", "eventing") == 9000
+            and EqLizard.payFor(lz, "championship", true, 3, "eventing") == 67500)
+        check("lizard: smaller fees than the yearly sponsors, more branding at higher ratings",
+            lz.ratings.novice.fee < lz.ratings.intermediate.fee and lz.ratings.intermediate.fee < lz.ratings.championship.fee
+            and lz.ratings.championship.fee < 120000 and lz.ratings.novice.branding == 1 and lz.ratings.championship.branding == 3)
+        for _, material in ipairs(lz.materials) do
+            local path = material.xml
+            local xml = io.open(path):read("*a")
+            local i3d = io.open((path:gsub("%.xml$", ".i3d"))):read("*a")
+            local function amount(fillType)
+                return tonumber(xml:match('<input fillType="' .. fillType .. '" amount="(%d+)"'))
+            end
+            check("lizard: " .. path .. " in the shop (hidden until a deal), a constructible with the deal's amounts",
+                modDesc:find(path, 1, true) ~= nil and xml:find('type="constructible"', 1, true) ~= nil
+                and xml:find("<showInStore>false</showInStore>", 1, true) ~= nil
+                and amount(material.fillType) == material.amount and amount("WOOD") == lz.parts[1].amount
+                and amount("BOARDS") == lz.parts[2].amount)
+            check("lizard: " .. path .. " is a plinth with one Lizard board and a log deck", EqLizard.isPlinthXml(path)
+                and EqSponsors.isBleacherXml(path) and EqSponsors.shopBoards(path) == 1 and EqPlinths.areasFor(path) ~= nil
+                and select(2, i3d:gsub('name="eqSponsor_%d+"', "")) == 1)
+            local ids, unique = {}, true
+            for id in xml:gmatch('<i3dMapping id="([^"]+)"') do
+                if ids[id] then unique = false end
+                ids[id] = true
+            end
+            local named = true
+            for node in xml:gmatch('node="([%a][%w]*)"') do
+                if not ids[node] then named = false end
+            end
+            check("lizard: " .. path .. " names every node it uses, once", unique and named and ids.lizard and ids.sellingStation)
+        end
+        local deck = EqPlinths.areasFor("x/placeables/sponsorPlinths/lizardPlinthStraw.xml")[1]
+        check("lizard: a machine on the log deck counts, not one on the ground", EqPlinths.inArea(deck, 1.0, 1.15, 0.5)
+            and not EqPlinths.inArea(deck, 1.0, 0.0, 0.5) and not EqPlinths.inArea(deck, 3.5, 0.6, 0))
+        check("lizard: no deal, no Lizard brand among the farm's sponsors", not EqLizard.active(1))
+        do
+            local saved = EqSponsorManager
+            EqSponsorManager = { contracts = { [1] = { brand = "FENDT" } } }
+            EqLizard.deals[1] = { month = 3, state = "accepted" }
+            EqLizard.deals[2] = { month = 3, state = "offered" }
+            local one, two = EqSponsors.signedBrands(1), EqSponsors.signedBrands(2)
+            EqLizard.deals[1], EqLizard.deals[2] = nil, nil
+            EqSponsorManager = saved
+            check("lizard: an accepted deal adds Lizard's machines to the plinths, after the yearly sponsors",
+                one[1] == "FENDT" and one[2] == "LIZARD" and #one == 2 and #two == 0)
+        end
+        check("lizard: everything delivered but not yet built counts as built (James)", (function()
+            local levels = { [1] = 0, [2] = 2000, [3] = 1000 }
+            local storage = { getFillLevel = function(_, f) return levels[f] end }
+            local machine = { { inputs = { { fillType = { index = 1 }, remainingAmount = 0 } } },
+                { inputs = { { fillType = { index = 2 }, remainingAmount = 2000 } } },
+                { inputs = { { fillType = { index = 3 }, remainingAmount = 1000 } } }, {}, {} }
+            local spec = { storage = storage, stateMachine = machine, stateIndex = 2, stateNameToIndex = { FINALIZE = 4, DONE = 5 } }
+            local all = EqLizard.isBuilt({ spec_constructible = spec })
+            levels[3] = 600
+            local short = EqLizard.isBuilt({ spec_constructible = spec })
+            spec.stateIndex = 4
+            local done = EqLizard.isBuilt({ spec_constructible = spec })
+            return all and not short and done
+        end)())
+        check("lizard: its event is known by the deal's event id", (function()
+            EqLizard.deals[4] = { month = 1, state = "accepted", eventId = 9 }
+            local yes = EqLizard.isLizardEvent({ id = 9, hosted = { farmId = 4 } })
+            local no = EqLizard.isLizardEvent({ id = 8, hosted = { farmId = 4 } }) or EqLizard.isLizardEvent({ id = 9 })
+            EqLizard.deals[4] = nil
+            return yes and not no
+        end)())
+        check("lizard: each plinth's mound is its own material (for the game's heap look)", (function()
+            local saved = EqLizard.config
+            EqLizard.config = lz
+            local ok = EqLizard.moundFillType("C:\\mods\\FS25_RealisticEquestrian\\placeables\\sponsorPlinths\\lizardPlinthStone.xml") == "STONE"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthWoodChips.xml") == "WOODCHIPS"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/lizardPlinthStraw.xml") == "STRAW"
+                and EqLizard.moundFillType("/x/placeables/sponsorPlinths/plinthTurntable.xml") == nil
+            EqLizard.config = saved
+            return ok
+        end)())
+        check("lizard: eqLizard makes an open hosted event Lizard's, even over a yearly sponsor", (function()
+            local savedManager = EqCompetitionManager
+            EqCompetitionManager = EqCompetitionManager or { eventTitle = function() return "the event" end }
+            local savedConfig, savedEvents, savedMonth = EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month
+            local savedBookings = EqHostManager.bookings
+            EqLizard.config = lz
+            EqHostManager.bookings = {}
+            EqCompetitionManager.events = {}
+            local none = EqLizard.force(6, nil, false)
+            local bad = EqLizard.force(6, "gold", false)
+            local event = { id = 41, discipline = "dressage", hosted = { farmId = 6, rating = "novice", sponsor = "Someone" } }
+            EqCompetitionManager.events = { event }
+            EqCompetitionManager.month = 5
+            local ok = pcall(EqLizard.force, 6, "straw", false)
+            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == "STRAW"
+            EqLizard.deals[6] = nil
+            EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month = savedConfig, savedEvents, savedMonth
+            EqHostManager.bookings = savedBookings
+            EqCompetitionManager = savedManager
+            return result and string.find(none, "Book", 1, true) ~= nil and string.find(bad, "stone", 1, true) ~= nil
+        end)())
+    end
+
+    -- Sponsor colours: the brand's most colourful paint, our list, else none.
+    local paints = { fendtNatureGreen = { 0.05, 0.20, 0.03 }, fendtGrey = { 0.2, 0.2, 0.2 }, ["FENDT_BLACK"] = { 0.01, 0.01, 0.01 },
+        claasSeedGreen = { 0.45, 0.55, 0.02 }, deutzFahrGreen = { 0.15, 0.45, 0.05 } }
+    local c, from = EqSponsorBoards.pickPaint("FENDT", paints)
+    check("sponsor colours: a brand's own coloured paint", c == paints.fendtNatureGreen and from == "fendtNatureGreen")
+    check("sponsor colours: names match without case or punctuation", EqSponsorBoards.pickPaint("DEUTZFAHR", paints) == paints.deutzFahrGreen)
+    check("sponsor colours: no grey or black, no other brand's", EqSponsorBoards.pickPaint("FENDT", { fendtGrey = { 0.2, 0.2, 0.2 } }) == nil
+        and EqSponsorBoards.pickPaint("KUHN", paints) == nil and EqSponsorBoards.pickPaint("", paints) == nil)
+    check("sponsor colours: read from the shapes the game keeps them in",
+        EqSponsorBoards.readColour("0.1 0.2 0.3")[3] == 0.3 and EqSponsorBoards.readColour({ r = 1, g = 0, b = 0 })[1] == 1
+        and EqSponsorBoards.readColour({ 0.5, 0.5, 0.5, 1 })[2] == 0.5 and EqSponsorBoards.readColour("x") == nil and EqSponsorBoards.readColour(nil) == nil)
+    local lin = EqSponsorBoards.linear({ 255, 128, 0 })
+    check("sponsor colours: our list is made linear", math.abs(lin[1] - 1) < 1e-9 and math.abs(lin[2] - 0.2158605) < 1e-6 and lin[3] == 0)
+    do
+        local saved = EqSponsorBoards.brandColour
+        EqSponsorBoards.brandColour = function(brand)
+            if brand == "KRONE" then return { 0.01, 0.15, 0.01 } end
+            if brand == "CHALLENGER" then return { 0.9, 0.5, 0 } end
+            return nil
+        end
+        local white, krone, pale = EqSponsorBoards.faceColour("CLAAS"), EqSponsorBoards.faceColour("KRONE"), EqSponsorBoards.faceColour("CHALLENGER")
+        EqSponsorBoards.brandColour = saved
+        check("sponsor boards: a white logo gets a dark board (its own colour if dark enough), others white",
+            white == EqSponsorBoards.FACE_WHITE and krone[2] == 0.15 and pale == EqSponsorBoards.FACE_DARK
+            and EqSponsorBoards.faceColour(nil) == EqSponsorBoards.FACE_WHITE and EqSponsorBoards.LIGHT_LOGOS.KRONE)
+    end
+    EqSponsorBoards.paints, EqSponsorBoards.paintSource, EqSponsorBoards.cache = {}, nil, nil
+    local fc, fsrc = EqSponsorBoards.brandColour("FENDT")
+    check("sponsor colours: our list when the game has none", fc ~= nil and fsrc == "list")
+    check("sponsor colours: Lizard is Lizard green, boards and faces, whatever the game's paint (James)",
+        EqSponsorBoards.brandColour("LIZARD") ~= nil and select(2, EqSponsorBoards.brandColour("LIZARD")) == "own"
+        and EqSponsorBoards.faceColour("LIZARD")[2] > EqSponsorBoards.faceColour("LIZARD")[1]
+        and EqSponsorBoards.faceColour("LIZARD")[2] > 0.3)
+    check("sponsor colours: none for an unknown brand", EqSponsorBoards.brandColour("NOBRANDATALL") == nil and EqSponsorBoards.brandColour(nil) == nil)
+    EqSponsorBoards.paints, EqSponsorBoards.cache = nil, nil
+    check("sponsor colours: plain jumps keep the shop colour",
+        EqSponsorBoards.colourFor({ configFileName = "x/placeables/showJumps/showJumpOxer.xml", configurations = { eqSponsorBoards = 1 } }) == nil)
     check("hosting: our bleachers count as seating", EqHosting.isSeatingXml(host, "mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers8x16.xml"))
 
     EqHostManager.reset()
