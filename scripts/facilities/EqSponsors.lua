@@ -262,6 +262,24 @@ local function sponsorsOf(farmId)
 end
 
 
+--- The one brand a piece shows (James, 2026-11-01): a sponsor whose machine is parked on it, else
+--- the brand it shows already while that's still on the list (a new sponsor doesn't take over the
+--- pieces), else the list in turn by the piece's place among the farm's.
+--- @param sponsors table brands, in order
+--- @param offset number the piece's place among the farm's pieces with boards
+--- @param parked string|nil brand of a machine parked on it (plinths)
+--- @param current string|nil brand it shows now
+--- @return string|nil
+function EqSponsors.pickBrand(sponsors, offset, parked, current)
+    if #sponsors == 0 then return nil end
+    local listed = {}
+    for _, name in ipairs(sponsors) do listed[name] = true end
+    if parked ~= nil and listed[parked] then return parked end
+    if current ~= nil and listed[current] then return current end
+    return sponsors[offset % #sponsors + 1]
+end
+
+
 --- Set the boards of every bleacher not done yet.
 function EqSponsors.update()
     if EqSponsors.failed then return end
@@ -290,6 +308,12 @@ function EqSponsors.update()
                 for _, nodes in pairs(boards) do faces = faces + #nodes end
                 if placeable.eqRopeFaces ~= faces then placeable.eqSponsored, placeable.eqRopeFaces = nil, faces end
             end
+            if EqPlinths ~= nil and EqPlinths.areasFor(placeable.configFileName) ~= nil then
+                -- a plinth shows the brand parked on it: look again when that changes
+                local ok, parked = EqLog.try("EqSponsors parked brand", EqPlinths.parkedBrand, placeable)
+                parked = ok and parked or nil
+                if parked ~= placeable.eqParked then placeable.eqParked, placeable.eqSponsored = parked, nil end
+            end
             if not placeable.eqSponsored and next(boards) ~= nil then
                 placeable.eqSponsored = true
                 if byName == nil then byName, names = brands() end
@@ -306,7 +330,7 @@ function EqSponsors.update()
                 local shown = 0
                 -- one brand per piece (James, 2026-11-01: never two sponsors' logos or colours on
                 -- one object); the farm's pieces take turns down the list
-                local name = #sponsors > 0 and sponsors[offset % #sponsors + 1] or nil
+                local name = EqSponsors.pickBrand(sponsors, offset, placeable.eqParked, placeable.eqBrand)
                 -- the Lizard plinth always shows Lizard's logo
                 if EqLizard ~= nil and EqLizard.isPlinthXml(placeable.configFileName) and byName[EqLizard.BRAND] ~= nil then
                     name = EqLizard.BRAND

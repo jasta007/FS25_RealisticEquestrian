@@ -149,7 +149,7 @@ end
 
 --- @param vehicle table
 --- @return string|nil its brand's name
-local function brandOf(vehicle)
+function EqPlinths.brandOf(vehicle)
     if vehicle.configFileName == nil or g_storeManager == nil or g_brandManager == nil then return nil end
     local item = g_storeManager:getItemByXMLFilename(vehicle.configFileName)
     local brand = item ~= nil and item.brandIndex ~= nil and g_brandManager:getBrandByIndex(item.brandIndex) or nil
@@ -252,7 +252,7 @@ function EqPlinths.count(farmId, brands)
     if next(signed) == nil or g_currentMission == nil then return 0, 0 end
     local boards, rivals = 0, 0
     for _, pair in ipairs(EqPlinths.onShow(farmId)) do
-        if signed[brandOf(pair.machine.vehicle) or ""] then
+        if signed[EqPlinths.brandOf(pair.machine.vehicle) or ""] then
             boards = boards + EqPlinths.value(pair.place)
         else
             rivals = rivals + 1
@@ -266,6 +266,48 @@ end
 --- @return number share of the sponsor fee lost for rival machines on show
 function EqPlinths.penalty(rivals)
     return math.min(EqPlinths.RIVAL_MAX, EqPlinths.RIVAL_PENALTY * (rivals or 0))
+end
+
+
+--- @param placeable table
+--- @return string|nil the brand of a machine standing on one of its decks (the first found), so
+--- the plinth can show that sponsor (James, 2026-11-01: a McCormick on the turntable, which went
+--- over to a newly signed sponsor's colours)
+function EqPlinths.parkedBrand(placeable)
+    local areas = EqPlinths.areasFor(placeable ~= nil and placeable.configFileName or nil)
+    if areas == nil or type(placeable.rootNode) ~= "number" or placeable.rootNode == 0 or g_currentMission == nil then return nil end
+    local vehicles = g_currentMission.vehicleSystem ~= nil and g_currentMission.vehicleSystem.vehicles or {}
+    for _, vehicle in ipairs(vehicles) do
+        local wx, wy, wz = EqPlinths.footprint(vehicle)
+        if wx ~= nil then
+            local x, y, z = worldToLocal(placeable.rootNode, wx, wy, wz)
+            for _, area in ipairs(areas) do
+                if EqPlinths.inArea(area, x, y, z) then
+                    local brand = EqPlinths.brandOf(vehicle)
+                    if brand ~= nil then return brand end
+                end
+            end
+        end
+    end
+    -- a product ramp with nothing on it takes the brand of a machine in a gap it makes with
+    -- another (James, 2026-11-01: a McCormick between two ramps, both ramps say McCormick; with a
+    -- machine on each ramp, each shows its own)
+    if string.sub(string.lower(string.gsub(placeable.configFileName, "\\", "/")), -#EqPlinths.RAMP) ~= EqPlinths.RAMP then return nil end
+    local system = g_currentMission.placeableSystem
+    for _, other in ipairs(system ~= nil and system.placeables or {}) do
+        if other ~= placeable and type(other.rootNode) == "number" and other.rootNode ~= 0 and type(other.configFileName) == "string"
+            and string.sub(string.lower(string.gsub(other.configFileName, "\\", "/")), -#EqPlinths.RAMP) == EqPlinths.RAMP then
+            local gap = { a = placeable.rootNode, b = other.rootNode }
+            for _, vehicle in ipairs(vehicles) do
+                local wx, wy, wz = EqPlinths.footprint(vehicle)
+                if wx ~= nil and EqPlinths.stands(gap, wx, wy, wz) then
+                    local brand = EqPlinths.brandOf(vehicle)
+                    if brand ~= nil then return brand end
+                end
+            end
+        end
+    end
+    return nil
 end
 
 
@@ -373,7 +415,7 @@ function EqPlinths.update()
     local text, level
     if next(signed) == nil then
         text, level = g_i18n:getText("eq_plinth_noSponsor"), FSBaseMission.INGAME_NOTIFICATION_INFO
-    elseif signed[brandOf(vehicle) or ""] then
+    elseif signed[EqPlinths.brandOf(vehicle) or ""] then
         text, level = g_i18n:getText("eq_plinth_inPlace"), FSBaseMission.INGAME_NOTIFICATION_OK
     else
         text, level = g_i18n:getText("eq_plinth_wrongBrand"), FSBaseMission.INGAME_NOTIFICATION_CRITICAL
