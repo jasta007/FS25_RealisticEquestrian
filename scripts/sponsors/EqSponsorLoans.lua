@@ -281,6 +281,30 @@ function EqSponsorLoans.deliverFor(event, month)
 end
 
 
+--- The first time the player gets into a lent machine, a help popup says it's on loan (James,
+--- 2026-11-01). Called from the mission draw; once per loan, kept in the save.
+function EqSponsorLoans.checkEntered()
+    if g_localPlayer == nil or g_localPlayer.getCurrentVehicle == nil then return end
+    local vehicle = g_localPlayer:getCurrentVehicle()
+    if vehicle == EqSponsorLoans.lastVehicle then return end
+    EqSponsorLoans.lastVehicle = vehicle
+    if type(vehicle) ~= "table" then return end
+    -- A hitched implement can't be sat in, so the machine you sit in is the root's whole chain.
+    local loan = EqSponsorLoans.loanOf(vehicle)
+    if loan == nil and vehicle.getRootVehicle ~= nil then loan = EqSponsorLoans.loanOf(vehicle:getRootVehicle()) end
+    if loan == nil or loan.greeted then return end
+    loan.greeted = true
+    local page = { title = string.format(g_i18n:getText("eq_loan_enterTitle"), EqSponsorManager.brandTitle(loan.brand)),
+        text = g_i18n:getText("eq_loan_enter") }
+    if EqTrainingHud.isHelpShowing() and EqTrainingHud.place == nil then
+        table.insert(EqTrainingHud.pages, page)
+    else
+        EqTrainingHud.showHelp({ page }, nil, nil)
+    end
+    Log:info("EqSponsorLoans: first time in %s's %s", loan.brand, loan.name or "?")
+end
+
+
 -- TAKING THEM BACK
 
 --- The sponsor takes its machine back.
@@ -394,6 +418,7 @@ function EqSponsorLoans.saveToXMLFile(xmlFile, key)
         if loan.item ~= nil then xmlFile:setString(loanKey .. "#item", loan.item) end
         if loan.name ~= nil then xmlFile:setString(loanKey .. "#name", loan.name) end
         if loan.toldNoRoom then xmlFile:setBool(loanKey .. "#toldNoRoom", true) end
+        if loan.greeted then xmlFile:setBool(loanKey .. "#greeted", true) end
         for v, id in ipairs(loan.ids or {}) do
             xmlFile:setString(string.format("%s.vehicle(%d)#uniqueId", loanKey, v - 1), id)
         end
@@ -414,7 +439,7 @@ function EqSponsorLoans.loadFromXMLFile(xmlFile, key)
         local loan = { farmId = xmlFile:getInt(loanKey .. "#farmId"), brand = xmlFile:getString(loanKey .. "#brand"),
             month = xmlFile:getInt(loanKey .. "#month", 0), state = xmlFile:getString(loanKey .. "#state", EqSponsorLoans.STATE_LENT),
             item = xmlFile:getString(loanKey .. "#item"), name = xmlFile:getString(loanKey .. "#name"),
-            toldNoRoom = xmlFile:getBool(loanKey .. "#toldNoRoom", false), ids = {} }
+            toldNoRoom = xmlFile:getBool(loanKey .. "#toldNoRoom", false), greeted = xmlFile:getBool(loanKey .. "#greeted", false), ids = {} }
         local v = 0
         while true do
             local id = xmlFile:getString(string.format("%s.vehicle(%d)#uniqueId", loanKey, v))

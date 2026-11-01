@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%s has lent you the %s for your event month. It's at the dealer."/>
         <text name="eq_loan_collected" text="%s has collected the %s it lent you."/>
         <text name="eq_loan_noRoom" text="%s couldn't deliver the %s: there's no room at the dealer. They'll try again tomorrow."/>
+        <text name="eq_loan_enterTitle" text="A gift from %s"/>
+        <text name="eq_loan_enter" text="This piece of equipment has been donated by your sponsor for use during your event this month. Enjoy!"/>
     </texts>
 </l10n>

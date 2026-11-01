@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%s ti na měsíc akce půjčil stroj %s. Stojí u prodejce."/>
         <text name="eq_loan_collected" text="%s si vyzvedl zapůjčený stroj %s."/>
         <text name="eq_loan_noRoom" text="%s nemohl dodat stroj %s: u prodejce není místo. Zítra to zkusí znovu."/>
+        <text name="eq_loan_enterTitle" text="Dárek od %s"/>
+        <text name="eq_loan_enter" text="Tento stroj ti věnoval tvůj sponzor k použití během tvé akce tento měsíc. Užij si to!"/>
     </texts>
 </l10n>

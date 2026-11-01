@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%s 在你的賽事月份借給你 %s。它在經銷商處。"/>
         <text name="eq_loan_collected" text="%s 已收回借給你的 %s。"/>
         <text name="eq_loan_noRoom" text="%s 無法送來 %s：經銷商處沒有空位。明天會再試。"/>
+        <text name="eq_loan_enterTitle" text="來自 %s 的禮物"/>
+        <text name="eq_loan_enter" text="這台設備由你的贊助商提供，供你在本月的賽事期間使用。盡情享受吧！"/>
     </texts>
 </l10n>

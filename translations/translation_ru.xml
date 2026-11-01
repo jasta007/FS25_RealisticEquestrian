@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%s одолжил вам %s на месяц мероприятия. Техника у дилера."/>
         <text name="eq_loan_collected" text="%s забрал одолженную технику %s."/>
         <text name="eq_loan_noRoom" text="%s не смог доставить %s: у дилера нет места. Попробует снова завтра."/>
+        <text name="eq_loan_enterTitle" text="Подарок от %s"/>
+        <text name="eq_loan_enter" text="Эту технику предоставил ваш спонсор для использования во время вашего мероприятия в этом месяце. Наслаждайтесь!"/>
     </texts>
 </l10n>

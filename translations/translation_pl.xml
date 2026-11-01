@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%s wypożycza ci %s na miesiąc wydarzenia. Stoi u dealera."/>
         <text name="eq_loan_collected" text="%s odebrał wypożyczony %s."/>
         <text name="eq_loan_noRoom" text="%s nie mógł dostarczyć %s: brak miejsca u dealera. Spróbuje ponownie jutro."/>
+        <text name="eq_loan_enterTitle" text="Prezent od %s"/>
+        <text name="eq_loan_enter" text="Ten sprzęt został przekazany przez twojego sponsora do użytku podczas twojego wydarzenia w tym miesiącu. Miłej zabawy!"/>
     </texts>
 </l10n>

@@ -1059,5 +1059,7 @@
         <text name="eq_loan_delivered" text="%sがイベント月のために%sを貸してくれました。ディーラーにあります。"/>
         <text name="eq_loan_collected" text="%sが貸していた%sを回収しました。"/>
         <text name="eq_loan_noRoom" text="%sは%sを届けられませんでした：ディーラーに空きがありません。明日また試みます。"/>
+        <text name="eq_loan_enterTitle" text="%sからの贈り物"/>
+        <text name="eq_loan_enter" text="この機材は、今月のイベント期間中に使えるようスポンサーから提供されたものです。お楽しみください！"/>
     </texts>
 </l10n>

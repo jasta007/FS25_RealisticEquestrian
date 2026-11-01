@@ -911,7 +911,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Loans:** some offers say the sponsor **lends a machine** (big 60%, moderate 40%, small 25% of
   offers; Lizard's one-off sponsorship always does). On the first day of each event month it
   backs, each lending sponsor delivers one of its machines to the dealer: one of its dearest third,
-  something that drives itself when it makes any. A popup says what came. It's leased to you for
+  something that drives itself when it makes any. A popup says what came, and another the first time you get in it. It's leased to you for
   free (its price is 0, so no leasing costs and free repairs), you can use it for anything,
   plinths included, or return it early. It doesn't count toward their machines or the competitor
   clause. The sponsor takes it back when the month ends, or at once if the event is cancelled.
