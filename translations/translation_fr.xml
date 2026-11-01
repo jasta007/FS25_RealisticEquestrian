@@ -846,6 +846,7 @@
         <text name="eq_host_part_reputation" text="réputation"/>
         <text name="eq_host_part_star" text="cheval vedette"/>
         <text name="eq_host_part_winter" text="hiver"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_label_yours" text="Votre concours"/>
         <text name="eq_host_label_month" text="Réserver pour"/>
         <text name="eq_host_label_next" text="Prochain mois libre"/>

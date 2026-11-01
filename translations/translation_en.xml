@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="reputation"/>
         <text name="eq_host_part_star" text="star horse"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_label_yours" text="Your event"/>
         <text name="eq_host_label_month" text="Book for"/>
         <text name="eq_host_label_next" text="Next free month"/>

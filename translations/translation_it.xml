@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="reputazione"/>
         <text name="eq_host_part_star" text="cavallo stella"/>
         <text name="eq_host_part_winter" text="inverno"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_label_yours" text="La tua gara"/>
         <text name="eq_host_label_month" text="Prenota per"/>
         <text name="eq_host_label_next" text="Prossimo mese libero"/>

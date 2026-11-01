@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="声誉"/>
         <text name="eq_host_part_star" text="明星马"/>
         <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_part_sponsor" text="赞助商"/>
         <text name="eq_host_label_yours" text="你的比赛"/>
         <text name="eq_host_label_month" text="预订月份"/>
         <text name="eq_host_label_next" text="下一个可用月份"/>

@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="репутация"/>
         <text name="eq_host_part_star" text="звёздная лошадь"/>
         <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_part_sponsor" text="спонсор"/>
         <text name="eq_host_label_yours" text="Ваше соревнование"/>
         <text name="eq_host_label_month" text="Забронировать на"/>
         <text name="eq_host_label_next" text="Ближайший свободный месяц"/>
