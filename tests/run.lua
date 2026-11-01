@@ -4395,7 +4395,12 @@ end)()
         return r.acc[p.m]
     end
     check("tests ask for passages, and not collecting in one costs marks", passTest ~= nil and passRun(false).passMs > 0 and passRun(true).passMs == 0
-        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7)
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 5000 }) == 7
+        -- Trotted through, little time out of it but most of its line (James's hosted test, 2026-11-01).
+        and EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 0, pen = 0, passMs = 2700, passSpan = 10, passOut = 9 }) <= 5)
+    check("plain figures: strict near the line, gentler further off", EqDressagePath.markOf({ devSum = 1, len = 10, wrongMs = 0, pen = 0, plain = true }) == 8.5
+        and EqDressagePath.markOf({ devSum = 3.3, len = 10, wrongMs = 0, pen = 0, plain = true }) == 6
+        and EqDressagePath.markOf({ devSum = 5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 5)
     check("figures that only follow the line mark harder: 0.15 m off on average is a 7.5",
         EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0, plain = true }) == 7.5
         and EqDressagePath.markOf({ devSum = 1.5, len = 10, wrongMs = 0, pen = 0 }) == 9)

@@ -261,8 +261,10 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   is a 7 and 0.4 m a 6 (James, 2026-10-30: 0.3 to 0.4 m scored 8s and 9s for a ride worth about
   60%). Figures that only follow the line (circles, diagonals, serpentines, centre lines...) are
   stricter, 20 a metre past 0.02 m, so 0.1 m off is an 8.5 and 0.15 m a 7.5 (James, 2026-10-31:
-  "pretty hard to not get an 8"); lateral work, passage and movements on the spot keep the
-  gentler rate. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
+  further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
+  circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -280,8 +282,9 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   letter gaps (10 to 26 m).
 - **Passage** (James, 2026-10-31): along a long side over one or two letter gaps, or across the
   long diagonal, at a trot. The prompt says "Passage: Ctrl + W" (red while not collected), the
-  line's dashes come closer together and show cyan ahead; after the first 2 m each second not in
-  passage costs 0.6 (at most 4). No change of gait in the 15 m before it. The middle prompt names what is asked
+  line's dashes come closer together and show cyan ahead; after the first 2 m it loses the larger of
+  0.6 a second not in passage and 6 times the share of its line ridden out of it (at most 6:
+  trotted through, it was only a few seconds). No change of gait in the 15 m before it. The middle prompt names what is asked
   ("Half pass: drift left, bend left") and turns red while it is off; the keys show above the
   panel. The line shows each section's pieces as the horse's body (James, 2026-10-30: the words
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
