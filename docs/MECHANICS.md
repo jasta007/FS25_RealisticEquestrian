@@ -970,7 +970,7 @@ lapses when the event opens.
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
 - **Results:** if the plinth is finished and the branding is there, Lizard pays 2,000 (Novice),
-  12,000 (Intermediate) or 50,000 (Championship). If not, nothing, and **no penalty**. Either way
+  12,000 (Intermediate) or 30,000 (Championship). If not, nothing, and **no penalty**. Either way
   the plinth then collapses (the lizard tips over, the lot sinks) and is gone.
 - Numbers are in `data/sponsors.xml` (`<lizard>`); the plinths come from
   `art/source/lizard_plinth.py`, which reads the same amounts. Multiplayer: the popup's answer is

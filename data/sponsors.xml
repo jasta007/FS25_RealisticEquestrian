@@ -116,7 +116,7 @@
     <lizard chance="0.25" popularity="5">
         <rating name="novice"       fee="2000"  branding="1"/>
         <rating name="intermediate" fee="12000" branding="2"/>
-        <rating name="championship" fee="50000" branding="3"/>
+        <rating name="championship" fee="30000" branding="3"/>
         <material fillType="STONE"     amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
         <material fillType="WOODCHIPS" amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
         <material fillType="STRAW"     amount="10000" weight="1" xml="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
