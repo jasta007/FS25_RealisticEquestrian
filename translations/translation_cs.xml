@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="声誉"/>
         <text name="eq_host_part_star" text="明星马"/>
         <text name="eq_host_part_winter" text="冬季"/>
+        <text name="eq_host_part_sponsor" text="赞助商"/>
         <text name="eq_host_part_quality" text="场地质量"/>
         <text name="eq_host_part_shops" text="商店"/>
         <text name="eq_host_part_ahead" text="提前预订"/>

@@ -4702,6 +4702,18 @@ end)()
     check("hosting: nothing to sell", EqHosting.goodsSale(host, "novice", 100, {}).total == 0)
     check("hosting: popularity stays in 0..100", EqHosting.popularity(host, "dressage", novice, { reputation = -1000 }) >= 0)
     check("hosting: reputation range", EqHosting.nextReputation(host, 18, true) == 20 and EqHosting.nextReputation(host, -20, false) == -25)
+    -- every popularity part the Host page names has an English text (other languages: the parity check)
+    do
+        local source = io.open("scripts/hosting/EqHosting.lua"):read("*a")
+        local body = source:match("function EqHosting%.popularity%(.-\nend\n")
+        local en = io.open("translations/translation_en.xml"):read("*a")
+        local ids = 0
+        for id in (body or ""):gmatch('add%("([%w_]+)"') do
+            ids = ids + 1
+            check("hosting: eq_host_part_" .. id .. " has a text", en:find('name="eq_host_part_' .. id .. '"', 1, true) ~= nil)
+        end
+        check("hosting: popularity parts found", ids >= 10, ids)
+    end
 
     local champ = host.ratingByName.championship
     local low = EqHosting.takings(host, "showJumping", champ, 50, 2)

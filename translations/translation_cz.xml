@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="pověst"/>
         <text name="eq_host_part_star" text="hvězdný kůň"/>
         <text name="eq_host_part_winter" text="zima"/>
+        <text name="eq_host_part_sponsor" text="sponzor"/>
         <text name="eq_host_part_quality" text="stavba parkuru"/>
         <text name="eq_host_part_shops" text="obchody"/>
         <text name="eq_host_part_ahead" text="rezervováno předem"/>

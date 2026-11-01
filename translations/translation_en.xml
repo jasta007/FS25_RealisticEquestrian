@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="reputation"/>
         <text name="eq_host_part_star" text="star horse"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_part_quality" text="course build"/>
         <text name="eq_host_part_shops" text="shops"/>
         <text name="eq_host_part_ahead" text="booked ahead"/>

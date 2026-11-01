@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="評判"/>
         <text name="eq_host_part_star" text="スター馬"/>
         <text name="eq_host_part_winter" text="冬"/>
+        <text name="eq_host_part_sponsor" text="スポンサー"/>
         <text name="eq_host_part_quality" text="コースの出来"/>
         <text name="eq_host_part_shops" text="ショップ"/>
         <text name="eq_host_part_ahead" text="早期予約"/>

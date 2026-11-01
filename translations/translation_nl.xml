@@ -844,6 +844,7 @@
         <text name="eq_host_part_reputation" text="reputatie"/>
         <text name="eq_host_part_star" text="sterpaard"/>
         <text name="eq_host_part_winter" text="winter"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_part_quality" text="parcoursbouw"/>
         <text name="eq_host_part_shops" text="winkels"/>
         <text name="eq_host_part_ahead" text="vroeg geboekt"/>

@@ -846,6 +846,7 @@
         <text name="eq_host_part_reputation" text="réputation"/>
         <text name="eq_host_part_star" text="cheval vedette"/>
         <text name="eq_host_part_winter" text="hiver"/>
+        <text name="eq_host_part_sponsor" text="sponsor"/>
         <text name="eq_host_part_quality" text="qualité du parcours"/>
         <text name="eq_host_part_shops" text="boutiques"/>
         <text name="eq_host_part_ahead" text="réservé tôt"/>
