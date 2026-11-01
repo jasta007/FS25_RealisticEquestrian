@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="每場賽事%s"/>
         <text name="eq_sponsor_targetPopularity" text="人氣%d"/>
         <text name="eq_sponsor_targetRating" text="%s或更高級別的賽事"/>
-        <text name="eq_sponsor_haveOf" text="你擁有%d／需要%d"/>
+        <text name="eq_sponsor_haveOf" text="你擁有%s／需要%d"/>
         <text name="eq_sponsor_mustOwn" text="申請前你必須擁有其%d台設備。"/>
         <text name="eq_sponsor_mustKeep" text="你必須保留其%d台設備才能獲得付款。"/>
+        <text name="eq_sponsor_attachHalf" text="農具和拖車按半台計算。"/>
         <text name="eq_sponsor_noRivals" text="你不能擁有價格在其產品%s以內的機械。"/>
         <text name="eq_sponsor_sellFirst" text="申請前請出售或歸還以下機械："/>
         <text name="eq_sponsor_sellMore" text="……還有%d台"/>

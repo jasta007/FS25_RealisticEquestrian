@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s per event"/>
         <text name="eq_sponsor_targetPopularity" text="Popularity %d"/>
         <text name="eq_sponsor_targetRating" text="%s or better event"/>
-        <text name="eq_sponsor_haveOf" text="You have %d of %d"/>
+        <text name="eq_sponsor_haveOf" text="You have %s of %d"/>
         <text name="eq_sponsor_mustOwn" text="You must own %d pieces of their equipment before applying."/>
         <text name="eq_sponsor_mustKeep" text="You must keep %d pieces of their equipment to be paid."/>
+        <text name="eq_sponsor_attachHalf" text="Attachments and trailers count as half."/>
         <text name="eq_sponsor_noRivals" text="You cannot own machinery within %s of the cost of their product."/>
         <text name="eq_sponsor_sellFirst" text="Sell or return the following before applying:"/>
         <text name="eq_sponsor_sellMore" text="...and %d more"/>

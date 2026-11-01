@@ -17,6 +17,9 @@
         missesToLeave   missed targets in a row before the sponsor walks away
         machinesMax     the most of its machines any sponsor asks the farm to own (each size
                         has its own, lower or equal)
+        attachmentWeight  how much one attachment or trailer of the sponsor's counts toward the
+                        machines to own (James, 2026-11-01: a cheap header shouldn't count as
+                        a whole machine); anything that drives itself counts 1
         maxSponsors     the most sponsors a farm can sign at once (James, 2026-10-31: up to
                         three, each with all its rules met). An exclusive sponsor is always the
                         only one, and no two sponsors may share a shop category
@@ -62,7 +65,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5">
     <skipCategoryTypes>
         <type name="ANIMALS"/>
         <type name="OBJECTS"/>

@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s za závod"/>
         <text name="eq_sponsor_targetPopularity" text="Popularita %d"/>
         <text name="eq_sponsor_targetRating" text="Závod %s nebo vyšší"/>
-        <text name="eq_sponsor_haveOf" text="Máš %d z %d"/>
+        <text name="eq_sponsor_haveOf" text="Máš %s z %d"/>
         <text name="eq_sponsor_mustOwn" text="Před podáním žádosti musíš vlastnit jejich vybavení: %d ks."/>
         <text name="eq_sponsor_mustKeep" text="Abys dostával platby, ponech si jejich vybavení: %d ks."/>
+        <text name="eq_sponsor_attachHalf" text="Nářadí a přívěsy se počítají napůl."/>
         <text name="eq_sponsor_noRivals" text="Nesmíš vlastnit stroje s cenou do %s jejich produktu."/>
         <text name="eq_sponsor_sellFirst" text="Před podáním žádosti prodej nebo vrať:"/>
         <text name="eq_sponsor_sellMore" text="...a dalších %d"/>

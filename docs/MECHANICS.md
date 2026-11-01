@@ -893,7 +893,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
-  don't count), no rival machine inside the price window (sell it or return the lease first; the
+  don't count; an attachment or trailer, anything that can't drive itself, counts as half), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
   cross country table 1) make **Low** (1 or more), **Medium** (5) or **High** (10) branding; the

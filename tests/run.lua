@@ -4714,6 +4714,13 @@ end)()
         and #EqSponsorship.clashes({ brand = "KRONE", window = 1 }, { byCategory = { tractorsS = { 30000 } } }, mine) == 1)
     check("sponsors: the biggest sponsor names the event", EqSponsorship.lead({ zetor, { brand = "M", size = "moderate", fee = 30000 }, krone }).brand == "M"
         and EqSponsorship.lead({ zetor, EqSponsorship.contractFrom(small("KRONE"), 1) }).brand == "ZETOR" and EqSponsorship.lead({}) == nil)
+    -- Attachments (James, 2026-11-01): a header or trailer counts half toward the machines to own.
+    check("sponsors: attachments count half", sp.attachmentWeight == 0.5
+        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
+        and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
+        { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
+        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
     local oldBig = EqSponsorship.tidy(sp, { size = "big", strictness = 0.5 })
     local oldSmall = EqSponsorship.tidy(sp, { size = "small", strictness = 0.5, exclusive = true })
     check("sponsors: old saves: big exclusive, small not", oldBig.exclusive == true and oldSmall.exclusive == false)

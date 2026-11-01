@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s por evento"/>
         <text name="eq_sponsor_targetPopularity" text="Popularidade %d"/>
         <text name="eq_sponsor_targetRating" text="Evento %s ou acima"/>
-        <text name="eq_sponsor_haveOf" text="Você tem %d de %d"/>
+        <text name="eq_sponsor_haveOf" text="Você tem %s de %d"/>
         <text name="eq_sponsor_mustOwn" text="Você precisa ter %d equipamentos deles antes de se candidatar."/>
         <text name="eq_sponsor_mustKeep" text="Você precisa manter %d equipamentos deles para receber."/>
+        <text name="eq_sponsor_attachHalf" text="Implementos e reboques contam como metade."/>
         <text name="eq_sponsor_noRivals" text="Você não pode ter máquinas a menos de %s do preço do produto deles."/>
         <text name="eq_sponsor_sellFirst" text="Venda ou devolva o seguinte antes de se candidatar:"/>
         <text name="eq_sponsor_sellMore" text="...e mais %d"/>

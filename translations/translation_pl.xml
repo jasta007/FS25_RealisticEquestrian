@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s za zawody"/>
         <text name="eq_sponsor_targetPopularity" text="Popularność %d"/>
         <text name="eq_sponsor_targetRating" text="Zawody %s lub wyżej"/>
-        <text name="eq_sponsor_haveOf" text="Masz %d z %d"/>
+        <text name="eq_sponsor_haveOf" text="Masz %s z %d"/>
         <text name="eq_sponsor_mustOwn" text="Przed złożeniem wniosku musisz mieć ich sprzęt: %d szt."/>
         <text name="eq_sponsor_mustKeep" text="Aby dostawać wypłaty, zachowaj ich sprzęt: %d szt."/>
+        <text name="eq_sponsor_attachHalf" text="Maszyny doczepiane i przyczepy liczą się za pół."/>
         <text name="eq_sponsor_noRivals" text="Nie możesz mieć maszyn w cenie w granicach %s ich produktu."/>
         <text name="eq_sponsor_sellFirst" text="Przed złożeniem wniosku sprzedaj lub zwróć:"/>
         <text name="eq_sponsor_sellMore" text="...i jeszcze %d"/>

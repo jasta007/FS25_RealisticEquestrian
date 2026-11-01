@@ -1035,9 +1035,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s je Turnier"/>
         <text name="eq_sponsor_targetPopularity" text="Beliebtheit %d"/>
         <text name="eq_sponsor_targetRating" text="Turnier ab %s"/>
-        <text name="eq_sponsor_haveOf" text="Sie haben %d von %d"/>
+        <text name="eq_sponsor_haveOf" text="Sie haben %s von %d"/>
         <text name="eq_sponsor_mustOwn" text="Sie müssen %d Geräte dieses Herstellers besitzen, bevor Sie sich bewerben."/>
         <text name="eq_sponsor_mustKeep" text="Sie müssen %d Geräte dieses Herstellers behalten, um bezahlt zu werden."/>
+        <text name="eq_sponsor_attachHalf" text="Anbaugeräte und Anhänger zählen halb."/>
         <text name="eq_sponsor_noRivals" text="Sie dürfen keine Maschinen besitzen, die im Preis innerhalb von %s ihres Produkts liegen."/>
         <text name="eq_sponsor_sellFirst" text="Vor der Bewerbung verkaufen oder zurückgeben:"/>
         <text name="eq_sponsor_sellMore" text="...und %d weitere"/>

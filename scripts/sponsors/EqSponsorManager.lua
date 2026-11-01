@@ -225,6 +225,15 @@ local function isBorrowed(vehicle)
 end
 
 
+--- @param vehicle table
+--- @return boolean true for an attachment or trailer: hitched to something, never driven itself
+---     (James, 2026-11-01: they count half toward a sponsor's machines)
+function EqSponsorManager.isAttachment(vehicle)
+    if vehicle.spec_motorized ~= nil or vehicle.spec_enterable ~= nil then return false end
+    return vehicle.spec_attachable ~= nil
+end
+
+
 --- The farm's machines, owned or leased.
 --- @param farmId number
 --- @return table list of { brand, categories, price, name }
@@ -238,7 +247,8 @@ function EqSponsorManager.ownedMachines(farmId)
             local item = shop.byStoreItem[g_storeManager:getItemByXMLFilename(vehicle.configFileName) or false]
             if item ~= nil then
                 local name = vehicle.getName ~= nil and vehicle:getName() or item.name
-                table.insert(owned, { brand = item.brand, categories = item.categories, price = item.price, name = name or item.name })
+                table.insert(owned, { brand = item.brand, categories = item.categories, price = item.price, name = name or item.name,
+                    attachment = EqSponsorManager.isAttachment(vehicle) })
             end
         end
     end
@@ -265,7 +275,7 @@ function EqSponsorManager.likelyPay(farmId, offer)
     local list = {}
     if config == nil or EqHostVenue == nil or EqHostVenue.config == nil then return list end
     local order = EqSponsorManager.ratingOrder()
-    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId)) >= (offer.machines or 1)
+    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId), config.attachmentWeight) >= (offer.machines or 1)
     local boards = EqSponsorManager.boards(farmId)
     local ratings = EqHostVenue.config.ratings
     for i = #ratings, 1, -1 do
@@ -510,7 +520,9 @@ end
 --- @param contract table
 --- @return boolean the farm still owns enough of the sponsor's machines
 local function machinesOk(farmId, contract)
-    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId)) >= (contract.machines or 1)
+    local config = EqSponsorManager.config
+    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId), config ~= nil and config.attachmentWeight or 1)
+        >= (contract.machines or 1)
 end
 
 

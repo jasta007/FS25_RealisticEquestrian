@@ -41,6 +41,7 @@ function EqSponsorship.read(xmlFile)
         branding = {},
         machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
         maxSponsors = xmlFile:getInt("sponsors#maxSponsors", 1),
+        attachmentWeight = xmlFile:getFloat("sponsors#attachmentWeight", 1),
         easyCategories = {},
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
         words = {}, terms = {}, wobble = xmlFile:getFloat("sponsors.strictness#wobble", 0.1),
@@ -405,12 +406,13 @@ end
 
 
 --- @param brand string
---- @param owned table list of { brand }
---- @return number how many of the farm's machines are the brand's
-function EqSponsorship.ownedOf(brand, owned)
+--- @param owned table list of { brand, attachment (true for an attachment or trailer) }
+--- @param attachmentWeight number|nil what an attachment counts (James, 2026-11-01: half); 1 without
+--- @return number how many of the farm's machines are the brand's, attachments weighted
+function EqSponsorship.ownedOf(brand, owned, attachmentWeight)
     local count = 0
     for _, machine in ipairs(owned) do
-        if machine.brand == brand then count = count + 1 end
+        if machine.brand == brand then count = count + (machine.attachment and (attachmentWeight or 1) or 1) end
     end
     return count
 end
@@ -476,7 +478,7 @@ function EqSponsorship.signChecks(config, offer, state)
     local contracts = state.contracts or (state.contract ~= nil and { state.contract } or {})
     local allowed = {}
     for _, contract in ipairs(contracts) do allowed[contract.brand] = true end
-    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {})
+    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {}, config.attachmentWeight)
     add("machines", mine >= offer.machines, mine, offer.machines)
     local clashes = EqSponsorship.clashes(offer, state.profile, state.owned or {}, allowed)
     add("rivals", #clashes == 0, #clashes, 0)

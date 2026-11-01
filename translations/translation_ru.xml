@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s за соревнование"/>
         <text name="eq_sponsor_targetPopularity" text="Популярность %d"/>
         <text name="eq_sponsor_targetRating" text="Соревнование уровня %s или выше"/>
-        <text name="eq_sponsor_haveOf" text="У вас %d из %d"/>
+        <text name="eq_sponsor_haveOf" text="У вас %s из %d"/>
         <text name="eq_sponsor_mustOwn" text="Перед подачей заявки нужно владеть их техникой: %d шт."/>
         <text name="eq_sponsor_mustKeep" text="Чтобы получать выплаты, сохраните их технику: %d шт."/>
+        <text name="eq_sponsor_attachHalf" text="Навесное оборудование и прицепы считаются за половину."/>
         <text name="eq_sponsor_noRivals" text="Нельзя владеть техникой, цена которой в пределах %s от их продукта."/>
         <text name="eq_sponsor_sellFirst" text="Продайте или верните перед подачей заявки:"/>
         <text name="eq_sponsor_sellMore" text="...и ещё %d"/>

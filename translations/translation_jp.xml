@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="大会ごと%s"/>
         <text name="eq_sponsor_targetPopularity" text="人気度%d"/>
         <text name="eq_sponsor_targetRating" text="%s以上の大会"/>
-        <text name="eq_sponsor_haveOf" text="所有%d／必要%d"/>
+        <text name="eq_sponsor_haveOf" text="所有%s／必要%d"/>
         <text name="eq_sponsor_mustOwn" text="申し込む前に相手の機材を%d台所有する必要があります。"/>
         <text name="eq_sponsor_mustKeep" text="支払いを受けるには相手の機材を%d台保持する必要があります。"/>
+        <text name="eq_sponsor_attachHalf" text="作業機とトレーラーは0.5台として数えます。"/>
         <text name="eq_sponsor_noRivals" text="相手の製品の価格の%s以内の機械は所有できません。"/>
         <text name="eq_sponsor_sellFirst" text="申し込む前に次を売却または返却してください："/>
         <text name="eq_sponsor_sellMore" text="…ほか%d台"/>

@@ -1033,9 +1033,10 @@
         <text name="eq_sponsor_feePerEvent" text="%s per wedstrijd"/>
         <text name="eq_sponsor_targetPopularity" text="Populariteit %d"/>
         <text name="eq_sponsor_targetRating" text="Wedstrijd %s of hoger"/>
-        <text name="eq_sponsor_haveOf" text="Je hebt er %d van %d"/>
+        <text name="eq_sponsor_haveOf" text="Je hebt er %s van %d"/>
         <text name="eq_sponsor_mustOwn" text="Je moet %d stuks van hun materieel bezitten voordat je je aanmeldt."/>
         <text name="eq_sponsor_mustKeep" text="Je moet %d stuks van hun materieel houden om betaald te worden."/>
+        <text name="eq_sponsor_attachHalf" text="Werktuigen en aanhangers tellen voor de helft."/>
         <text name="eq_sponsor_noRivals" text="Je mag geen machines bezitten binnen %s van de prijs van hun product."/>
         <text name="eq_sponsor_sellFirst" text="Verkoop of lever het volgende in voordat je je aanmeldt:"/>
         <text name="eq_sponsor_sellMore" text="...en nog %d"/>

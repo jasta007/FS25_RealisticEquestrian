@@ -138,7 +138,7 @@ function EqSponsorView.panelLines(farmId, row)
     add("branding", string.format(g_i18n:getText("eq_sponsor_brandingLine"), EqSponsorView.brandingWord(branding.have),
         EqSponsorView.brandingWord(branding.need)), branding.ok)
     local machines = byId.machines
-    add("machines", string.format(g_i18n:getText("eq_sponsor_haveOf"), machines.have, machines.need), machines.ok)
+    add("machines", string.format(g_i18n:getText("eq_sponsor_haveOf"), EqSponsorView.count(machines.have), machines.need), machines.ok)
     local likely = EqSponsorManager.likelyPay(farmId, offer)
     for i, entry in ipairs(likely) do
         add(i == 1 and "likely" or nil, string.format(g_i18n:getText("eq_sponsor_likelyLine"), money(entry.fee), ratingTitle(entry.rating)),
@@ -177,6 +177,15 @@ function EqSponsorView.headerText(row)
 end
 
 
+--- @param value number a machine count, maybe with a half from an attachment
+--- @return string "2" or "1.5"
+function EqSponsorView.count(value)
+    value = value or 0
+    if math.abs(value - math.floor(value + 0.5)) < 1e-6 then return string.format("%d", math.floor(value + 0.5)) end
+    return string.format("%.1f", value)
+end
+
+
 --- @param level number 0 for none, then the branding level's index
 --- @return string the level's word: None, Low, Medium, High
 function EqSponsorView.brandingWord(level)
@@ -206,7 +215,10 @@ function EqSponsorView.noteLines(row, clashes, maxLines)
     local lines = {}
     if row == nil then return lines end
     local offer = row.offer
-    table.insert(lines, string.format(g_i18n:getText(row.contract and "eq_sponsor_mustKeep" or "eq_sponsor_mustOwn"), offer.machines or 1))
+    local own = string.format(g_i18n:getText(row.contract and "eq_sponsor_mustKeep" or "eq_sponsor_mustOwn"), offer.machines or 1)
+    -- (the contract's panel has fewer note lines to spare)
+    if not row.contract then own = own .. " " .. g_i18n:getText("eq_sponsor_attachHalf") end
+    table.insert(lines, own)
     table.insert(lines, string.format(g_i18n:getText("eq_sponsor_noRivals"), percent(offer.window)))
     if #clashes > 0 then
         table.insert(lines, g_i18n:getText("eq_sponsor_sellFirst"))
