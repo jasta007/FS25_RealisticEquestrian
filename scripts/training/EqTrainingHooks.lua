@@ -1123,7 +1123,7 @@ function EqTrainingHooks.startLaunch(spec)
         Log:info("Jump: %s, base lift %.2f m/s, launch %.2f m/s after a %d ms push-off at %.2f m/s, speed %.1f%s (%s)",
             collected and "collected" or "normal", spec.currentSpeedY, spec.eqLaunch.speedY, spec.eqLaunch.pushMs,
             spec.eqLaunch.lift, math.abs(spec.currentSpeed or 0),
-            collected and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
+            spec.eqLaunch.targetSpeed ~= nil and string.format(" -> %.1f m/s", spec.eqLaunch.targetSpeed) or "", animationSeen(spec))
         Log:info("Jump: take-off angle about %.0f degrees", EqJump.angle(spec.eqLaunch.speedY,
             spec.eqLaunch.targetSpeed or EqJump.carrySpeed({ launched = true, collected = spec.eqLaunch.collected,
                 trot = spec.eqLaunch.trot, gait = spec.eqLaunch.gait, startSpeed = math.abs(spec.currentSpeed or 0) }, 0, nil) or 0))
