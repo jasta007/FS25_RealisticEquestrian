@@ -85,7 +85,8 @@ DECK_TOP = 1.15             # where a parked machine's wheels are (the deck coll
 MOUND = {"rx": 6.4, "rz": 3.3}    # the footprint's half sizes (the ramps run along x, long and gentle)
 RAMP_LOGS = 4               # logs each side down the ramps, sinking deeper into the mound (James)
 TILE = 2.0                  # metres one fill plane texture covers
-LIZARD = {"z": 2.35, "height": 3.4, "plank": 0.11, "gap": 0.016, "thick": 0.028}
+LIZARD = {"z": 2.35, "height": 5.6,   # James: bigger, a pickup on the deck hid most of the 3.4 m one
+           "plank": 0.11, "gap": 0.016, "thick": 0.028}
 BOARD = {"z": -3.05, "width": 2.6, "height": 0.8, "y0": 0.35}
 TRIGGERS = {"z": -6.2, "hx": 2.6, "hz": 2.4}
 
@@ -373,13 +374,14 @@ def battens(base_y):
     mesh = Mesh()
     rng = random.Random(3)
     t, z = LIZARD["thick"], LIZARD["z"]
-    for bx in (-0.32, 0.28):
-        top = base_y + 1.55
+    k = LIZARD["height"] / 3.4      # the battens grow with the lizard
+    for bx in (-0.32 * k, 0.28 * k):
+        top = base_y + 1.55 * k
         bottom = base_y - 0.45
         oriented_box(mesh, (bx, (top + bottom) / 2, z + t / 2 + 0.02), ((0.0, 1.0, 0.0), (1.0, 0.0, 0.0), (0.0, 0.0, 1.0)),
                      ((top - bottom) / 2, 0.045, 0.02), rng.randrange(8))
-        foot = (bx, base_y - 0.35, z + 1.1)
-        head = (bx, base_y + 1.1, z + t / 2 + 0.05)
+        foot = (bx, -0.1, z + 1.1 * k)     # into the ground behind the mound
+        head = (bx, base_y + 1.1 * k, z + t / 2 + 0.05)
         along = xc.norm(xc.sub(head, foot))
         mid = tuple((foot[i] + head[i]) / 2 for i in range(3))
         length = math.dist(foot, head)
@@ -707,7 +709,7 @@ def build(variant):
         "boardPlanks": {"mesh": planks, "material": 4},
         "boardFace": {"mesh": face, "material": 5},
         "eqSponsor_1": {"mesh": logos["eqSponsor_1"], "material": 6, "attrs": 'castsShadows="false" receiveShadows="true"'},
-        "lizardCol": {"mesh": box_mesh(0.0, base_y + 0.9, LIZARD["z"] + 0.04, 0.75, 0.95, 0.08), "material": 7, "name": "lizardCollision",
+        "lizardCol": {"mesh": box_mesh(0.0, base_y + 0.9 * LIZARD["height"] / 3.4, LIZARD["z"] + 0.04, 0.75 * LIZARD["height"] / 3.4, 0.95 * LIZARD["height"] / 3.4, 0.08), "material": 7, "name": "lizardCollision",
                       "attrs": f'static="true" collisionFilterGroup="{COLLISION_GROUP}" collisionFilterMask="{COLLISION_MASK}" density="0.01" nonRenderable="true"'},
         "unloadTrigger": {"mesh": box_mesh(0.0, 0.0, tz, thx, 0.15, thz), "material": 7,
                           "attrs": 'kinematic="true" trigger="true" collisionFilterGroup="0x40000000" collisionFilterMask="0x20000000" castsShadows="false" receiveShadows="false" nonRenderable="true"'},
