@@ -803,7 +803,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         end
         if path ~= nil then
             -- A test of figures: each movement's mark, errors of course, the score at the end.
-            if event == "done" then EqTrainingHud.pop("routineMark", path.lastMark)
+            -- The mark with the movement's name under it (James, 2026-11-01: he took the mark
+            -- before a passage for the passage's own).
+            if event == "done" then
+                local move = path.test.moves[path.lastMove or 0]
+                local ok, name = false, nil
+                if move ~= nil and EqTrainingHooks.figureText ~= nil then ok, name = EqLog.try("EqTrainingHooks mark name", EqTrainingHooks.figureText, move) end
+                EqTrainingHud.pop("routineMark", path.lastMark, ok and name or nil)
             elseif event == "fault" then EqTrainingHud.pop("routineError", path.errors)
             elseif event == "test" then EqTrainingHud.pop("routineScore", path.percent)
             elseif event == "lost" then EqTrainingHud.pop("routineLost") end
@@ -1413,6 +1419,7 @@ local function figureText(move)
     end
     return string.format(g_i18n:getText(key), unpack(args))
 end
+EqTrainingHooks.figureText = figureText
 EqTrainingHooks.figureText = figureText
 
 

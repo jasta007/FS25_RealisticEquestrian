@@ -276,7 +276,7 @@ EqTrainingHud.POP = { x = 0.5, y = 0.7, size = 0.024, sizePerMult = 0.004, growM
 -- A mark has its own place, so no other pop can cut it short (James, 2026-10-31: some marks
 -- showed far too briefly); one that comes while another is up waits until that one has shown
 -- for minMs.
-EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
+EqTrainingHud.MARK = { y = 0.3, holdMs = 1800, minMs = 1500, subSize = 0.015, flourish = 9, barWidth = 0.035, barHeight = 0.004, barGap = 0.012 }
 -- A finished dressage test's score (James, 2026-10-31: "very well hidden"): big in the middle of
 -- the screen whatever the view, "Test complete" in gold above it, the percent coloured like a
 -- mark (out of 10), with gold bars that sweep out either side as it lands.
@@ -369,7 +369,8 @@ end
 --- Show a short burst of text in the middle of the screen.
 --- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank, courseFence, showJumping or an EXERTION_POPS key
 --- @param mult number|string|nil the combo multiplier for jump and routine, the speed multiplier for speedBank, the text for showJumping
-function EqTrainingHud.pop(kind, mult)
+--- @param sub string|nil routineMark: the movement's name, small under the mark
+function EqTrainingHud.pop(kind, mult, sub)
     local text, color, big
     if kind == "jump" then
         text = mult > 1 and string.format("x%d!", mult) or g_i18n:getText("eq_pop_clear")
@@ -428,7 +429,7 @@ function EqTrainingHud.pop(kind, mult)
     end
     if kind == "routineMark" then
         local m = EqTrainingHud.MARK
-        local state = { text = text, color = color, big = big, y = m.y, holdMs = m.holdMs, flourish = (mult or 0) >= m.flourish }
+        local state = { text = text, color = color, big = big, y = m.y, holdMs = m.holdMs, flourish = (mult or 0) >= m.flourish, sub = sub }
         local now = g_time or 0
         local shown = EqTrainingHud.markState
         if shown ~= nil and now - shown.at < m.minMs then
@@ -508,6 +509,10 @@ local function drawBurst(state)
     local c = state.color
     local y = state.y or p.y
     shadowText(state.text, p.x, y, size, { c[1], c[2], c[3], alpha }, RenderText.ALIGN_CENTER, true)
+    if state.sub ~= nil then
+        -- The movement it marks, small and white under it.
+        shadowText(state.sub, p.x, y - EqTrainingHud.MARK.subSize * 1.4, EqTrainingHud.MARK.subSize, { 1, 1, 1, alpha }, RenderText.ALIGN_CENTER, false)
+    end
     if state.flourish then
         -- Gold bars either side that sweep out as it lands.
         local m = EqTrainingHud.MARK
