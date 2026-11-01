@@ -864,10 +864,19 @@ end
 
 
 --- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
-function EqConsole:consoleSponsors()
+function EqConsole:consoleSponsors(mode, amount)
     if g_currentMission == nil then return "No mission loaded" end
     if EqSponsorManager.config == nil then return "Sponsors are not loaded" end
     local farmId = g_currentMission:getFarmId()
+    if mode == "age" then
+        -- Testing: treat the farm's contracts as signed n months earlier (the game's time skips
+        -- don't always send a month change, so the mod's month count can lag the calendar).
+        local months = tonumber(amount) or 3
+        for _, contract in ipairs(EqSponsorManager.contractsFor(farmId)) do
+            contract.signedMonth = (contract.signedMonth or 0) - months
+        end
+        return string.format("Contracts now count as signed %d month(s) earlier (now month %d)", months, EqCompetitionManager.month or 0)
+    end
     local lines = {}
     local shop = EqSponsorManager.readShop()
     if shop ~= nil then
@@ -914,6 +923,11 @@ function EqConsole:consoleSponsors()
             EqSponsorManager.brandTitle(contract.brand), contract.size, contract.exclusive and ", exclusive" or "", contract.endMonth,
             contract.yearEnd, tostring(contract.met), contract.misses or 0, contract.feeFactor or 1, contract.paid or 0,
             EqSponsorManager.cancelCost(farmId, contract.brand)))
+        local from = (contract.signedMonth or 0) + (EqSponsorManager.config.discountMonths or 0)
+        table.insert(lines, string.format("  discounts repaint/repair/buy %d/%d/%d%%: %s (from month %d, now month %d)",
+            math.floor((contract.repaint or 0) * 100 + 0.5), math.floor((contract.repair or 0) * 100 + 0.5),
+            math.floor((contract.purchase or 0) * 100 + 0.5),
+            (EqCompetitionManager.month or 0) >= from and "on" or "not yet", from, EqCompetitionManager.month or 0))
     end
     if #contracts == 0 then table.insert(lines, "No sponsor contract") end
     table.insert(lines, string.format("Sponsor boards: %g", EqSponsorManager.boards(farmId)))
@@ -1024,7 +1038,7 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
-    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contract", "consoleSponsors", EqConsole)
+    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts as signed n months earlier (testing)", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
     addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)

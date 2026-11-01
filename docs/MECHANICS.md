@@ -1051,12 +1051,17 @@ lapses when the event opens.
   only taken on the host (not tried).
 
 Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit, the shop's
-category names (easy ones starred), this year's offers and your contracts;
+category names (easy ones starred), this year's offers and your contracts (with when their
+discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
+earlier, 3 by default;
 `eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
 jump colour and where it came from; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
 `eqSponsorLoan end` takes it back.
+
+The mod counts a month each time the game sends a month change. Some time skips (developer
+tools) move the calendar without one, so those months don't count.
 
 ## Buying horses
 
