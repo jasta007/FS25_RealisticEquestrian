@@ -65,11 +65,13 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- knees, fingers curled): the wrists further back, mid-thigh. Third (arms good, fingers still
 -- curled round the driver clip's steering wheel; the standing clip sank them into the bench):
 -- the finger joints are put back to the character's rest pose every posed frame (relaxFingers), the hands aimed flat (aimHands),
--- and nobody wears gloves.
+-- and nobody wears gloves. Fourth (James 2026-11-02 22:43: no arm IK left them A-posed): arm IK
+-- on, the hands resting on the bench beside the hips, and the hands left alone (no finger reset or
+-- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.02, handApart = 0.18, handLift = 0.13,
-    handPitch = 15, handYaw = 10, handRoll = 0, arms = 0, fingers = 1, wrists = 1,
+    handForward = -0.16, handApart = 0.27, handLift = 0.04,
+    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -101,7 +103,9 @@ EqSpectators.FEMALE_SHARE = 0.45
 -- only within IK_DISTANCE (James, 2026-11-01: they're stationary, so be heavy handed); further
 -- out their clip stops and they hold the last pose, solved for POSE_FRAMES frames once seated.
 EqSpectators.VISIBLE_DISTANCE = 150
-EqSpectators.IK_DISTANCE = 0     -- James 2026-11-02: hands jerked at 20-30 m; pose once and hold
+-- James 2026-11-02: hands jerked when the pose went live at 20-30 m, and holding it everywhere
+-- A-posed them: live all the way out to where they're hidden, so there's no switch to see.
+EqSpectators.IK_DISTANCE = 150
 EqSpectators.POSE_FRAMES = 5
 -- How often the map is checked for bleachers, rope boxes and whether an event runs.
 EqSpectators.SCAN_MS = 5000
@@ -259,6 +263,8 @@ function EqSpectators.places(farm)
                 EqSpectators.lastScan.firstRope = EqSpectators.lastScan.firstRope or root
                 EqSpectators.lastScan.owners[tostring(ownerOf(placeable))] = true
                 local ours = EqSponsors.ownerOf(placeable) == farm
+                EqSpectators.lastScan.boxes = (EqSpectators.lastScan.boxes or 0) + #found
+                EqSpectators.lastScan.mine = (EqSpectators.lastScan.mine or 0) + (ours and 1 or 0)
                 for _, node in ipairs(found) do
                     table.insert(boxes, node)
                     if ours then
@@ -789,7 +795,18 @@ local function onModelLoaded(_, state, person)
                 local node = createTransformGroup("eqSpectator_" .. id)
                 link(person.holder, node)
                 person.targets[id] = node
-                IKUtil.setTarget(chains, id, { targetNode = node })
+                -- arms: let the hand keep the clip's angle on the wrist if the IK has such a switch
+                IKUtil.setTarget(chains, id, { targetNode = node, alignToTarget = EqSpectators.ARM_CHAINS[id] == nil })
+                if EqSpectators.ARM_CHAINS[id] ~= nil and type(chains[id]) == "table" then
+                    if chains[id].alignToTarget ~= nil then chains[id].alignToTarget = false end
+                    if not EqSpectators.loggedChain then
+                        EqSpectators.loggedChain = true
+                        local keys = {}
+                        for k, v in pairs(chains[id]) do table.insert(keys, tostring(k) .. "=" .. (type(v) == "table" and "{}" or tostring(v))) end
+                        table.sort(keys)
+                        Log:info("EqSpectators: %s IK chain: %s", id, table.concat(keys, " "))
+                    end
+                end
                 if IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
             end
         end
@@ -930,8 +947,8 @@ function EqSpectators.spawnAll(farm, counts, seed, seats, stands)
         local person = spawn(nil, stand, EqRandom.new(math.floor(rng:next() * 2147483000) + 1), used)
         if person ~= nil then table.insert(EqSpectators.people, person) end
     end
-    Log:info("EqSpectators: %d people (%d seats and %d rope places on farm %s; %d Rope Marker(s) seen)", #EqSpectators.people, #seats, #stands,
-        tostring(farm), EqSpectators.lastScan.ropes)
+    Log:info("EqSpectators: %d people (%d seats and %d rope places on farm %s; %d Rope Marker(s) seen, %d of them yours, %d spectator boxes)",
+        #EqSpectators.people, #seats, #stands, tostring(farm), EqSpectators.lastScan.ropes, EqSpectators.lastScan.mine or 0, EqSpectators.lastScan.boxes or 0)
 end
 
 
