@@ -39,7 +39,7 @@ ROPE_Y = 0.85           # the rope's height at the stakes
 SAG = 0.07
 ROPE_R = 0.011
 STAKE = (0.035, 1.0)    # width, height
-SIGN = (0.50, 0.22)     # the hanging sign's width and height
+SIGN = (1.00, 0.42)     # the hanging sign's width and height (James 2026-11-02: twice the first)
 ASPECT = 2.7
 SPONSOR_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
 # The spectator box: x from the rope (the +x side), inset from the panel's ends, line width.

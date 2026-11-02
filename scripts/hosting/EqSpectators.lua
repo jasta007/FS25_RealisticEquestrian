@@ -231,16 +231,18 @@ function EqSpectators.places(farm)
                     table.insert(seats, seat)
                 end
             elseif EqSponsors ~= nil and EqSponsors.isRope(placeable.configFileName) then
-                -- any farm's rope (James's first try found none with a farm check: a fence's
-                -- owner isn't always the farm that drew it)
+                -- a fence is owned by farm 0: EqSponsors.ownerOf counts it as the player's farm
                 local found = {}
                 findNamed(root, EqSpectators.BOX_NODE, found)
                 EqSpectators.lastScan.ropes = EqSpectators.lastScan.ropes + 1
                 EqSpectators.lastScan.firstRope = EqSpectators.lastScan.firstRope or root
                 EqSpectators.lastScan.owners[tostring(ownerOf(placeable))] = true
+                local ours = EqSponsors.ownerOf(placeable) == farm
                 for _, node in ipairs(found) do
                     table.insert(boxes, node)
-                    for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot, root = root }) end
+                    if ours then
+                        for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot, root = root }) end
+                    end
                 end
             end
         end
