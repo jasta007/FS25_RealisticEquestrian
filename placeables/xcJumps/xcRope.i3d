@@ -13,7 +13,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor" materialId="7" specularColor="0.2 1 0" alphaBlending="true" customShaderId="3" customShaderVariation="vertexOffset">
+    <Material name="eqSponsor" materialId="7" specularColor="0.2 0 0" alphaBlending="true" customShaderId="3" customShaderVariation="vertexOffset">
       <Texture fileId="6"/>
     </Material>
     <Material name="xcFlags" materialId="5" specularColor="0.101961 1 0">

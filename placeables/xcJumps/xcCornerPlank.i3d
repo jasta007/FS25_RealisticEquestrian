@@ -16,7 +16,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor1" materialId="8" specularColor="0.101961 1 0" alphaBlending="true">
+    <Material name="eqSponsor1" materialId="8" specularColor="0.2 0 0" alphaBlending="true">
       <Texture fileId="6"/>
     </Material>
     <Material name="xcFlags" materialId="7" specularColor="0.101961 1 0">

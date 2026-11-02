@@ -352,7 +352,7 @@ def write_i3d(name, colour, path, statics, logos, col, feet):
               f'      <Texture fileId="{fid[STONE]}"/>', "    </Material>"]
     lines += paint_material("plinthPaint", mat["paint"], sj.COLOUR[colour])
     lines += paint_material("plinthWhite", mat["white"], sj.WHITE)
-    lines += [f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0.5 0" alphaBlending="true">',
+    lines += [f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0 0" alphaBlending="true">',
               f'      <Texture fileId="{fid[LOGO_TEXTURE]}"/>', "    </Material>",
               f'    <Material name="xcFlags" materialId="{mat["flags"]}" specularColor="0.1 0.7 0">',
               f'      <Texture fileId="{fid[FLAGS]}"/>', "    </Material>",

@@ -27,7 +27,7 @@
       <CustomParameter name="smoothnessScale" value="0.4"/>
       <CustomParameter name="metalnessScale" value="0"/>
     </Material>
-    <Material name="eqSponsor1" materialId="6" specularColor="0.2 1 0" alphaBlending="true">
+    <Material name="eqSponsor1" materialId="6" specularColor="0.2 0 0" alphaBlending="true">
       <Texture fileId="11"/>
     </Material>
   </Materials>
