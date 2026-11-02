@@ -16,7 +16,7 @@
     <Material name="xcRope" materialId="2" specularColor="0.1 0.7 0" customShaderId="2" customShaderVariation="vertexOffset">
       <Texture fileId="1"/>
     </Material>
-    <Material name="eqSponsor" materialId="3" specularColor="0.2 0.5 0" alphaBlending="true" customShaderId="2" customShaderVariation="vertexOffset">
+    <Material name="eqSponsor" materialId="3" specularColor="0.2 0 0" alphaBlending="true" customShaderId="2" customShaderVariation="vertexOffset_Decal">
       <Texture fileId="3"/>
     </Material>
   </Materials>
@@ -731,46 +731,38 @@
         <Subset firstVertex="0" numVertices="64" firstIndex="0" numIndices="96"/>
       </Subsets>
     </IndexedTriangleSet>
-    <IndexedTriangleSet name="xcRope_eqSponsor_1" shapeId="7" bvCenter="0.0065 0.52 1.25" bvRadius="0.47868">
-      <Vertices count="8" normal="true" uv0="true" uv1="true">
-        <v p="0.0065 0.68461 0.80556" n="1 0 0" t0="1 0.87037" t1="0.32222 0"/>
-        <v p="0.0065 0.35539 1.6944" n="1 0 0" t0="0 0.12963" t1="0.67778 0"/>
-        <v p="0.0065 0.34222 1.6944" n="1 0 0" t0="0 0.1" t1="0.67778 0"/>
-        <v p="0.0065 0.34222 0.80556" n="1 0 0" t0="1 0.1" t1="0.32222 0"/>
-        <v p="0.0065 0.35539 1.6944" n="1 0 0" t0="0 0.12963" t1="0.67778 0"/>
-        <v p="0.0065 0.68461 0.80556" n="1 0 0" t0="1 0.87037" t1="0.32222 0"/>
-        <v p="0.0065 0.69778 0.80556" n="1 0 0" t0="1 0.9" t1="0.32222 0"/>
-        <v p="0.0065 0.69778 1.6944" n="1 0 0" t0="0 0.9" t1="0.67778 0"/>
+    <IndexedTriangleSet name="xcRope_eqSponsor_1" shapeId="7" bvCenter="0.0065 0.52 1.25" bvRadius="0.42485">
+      <Vertices count="6" normal="true" uv0="true" uv1="true">
+        <v p="0.0065 0.33 1.63" n="1 0 0" t0="0 0" t1="0.652 0"/>
+        <v p="0.0065 0.33 0.87" n="1 0 0" t0="1 0" t1="0.348 0"/>
+        <v p="0.0065 0.71 0.87" n="1 0 0" t0="1 1" t1="0.348 0"/>
+        <v p="0.0065 0.33 1.63" n="1 0 0" t0="0 0" t1="0.652 0"/>
+        <v p="0.0065 0.71 0.87" n="1 0 0" t0="1 1" t1="0.348 0"/>
+        <v p="0.0065 0.71 1.63" n="1 0 0" t0="0 1" t1="0.652 0"/>
       </Vertices>
-      <Triangles count="4">
+      <Triangles count="2">
         <t vi="0 1 2"/>
-        <t vi="0 2 3"/>
-        <t vi="4 5 6"/>
-        <t vi="4 6 7"/>
+        <t vi="3 4 5"/>
       </Triangles>
       <Subsets count="1">
-        <Subset firstVertex="0" numVertices="8" firstIndex="0" numIndices="12"/>
+        <Subset firstVertex="0" numVertices="6" firstIndex="0" numIndices="6"/>
       </Subsets>
     </IndexedTriangleSet>
-    <IndexedTriangleSet name="xcRope_eqSponsor_1b" shapeId="8" bvCenter="-0.0065 0.52 1.25" bvRadius="0.47868">
-      <Vertices count="8" normal="true" uv0="true" uv1="true">
-        <v p="-0.0065 0.68461 1.6944" n="-1 0 0" t0="1 0.87037" t1="0.67778 0"/>
-        <v p="-0.0065 0.35539 0.80556" n="-1 0 0" t0="0 0.12963" t1="0.32222 0"/>
-        <v p="-0.0065 0.34222 0.80556" n="-1 0 0" t0="0 0.1" t1="0.32222 0"/>
-        <v p="-0.0065 0.34222 1.6944" n="-1 0 0" t0="1 0.1" t1="0.67778 0"/>
-        <v p="-0.0065 0.35539 0.80556" n="-1 0 0" t0="0 0.12963" t1="0.32222 0"/>
-        <v p="-0.0065 0.68461 1.6944" n="-1 0 0" t0="1 0.87037" t1="0.67778 0"/>
-        <v p="-0.0065 0.69778 1.6944" n="-1 0 0" t0="1 0.9" t1="0.67778 0"/>
-        <v p="-0.0065 0.69778 0.80556" n="-1 0 0" t0="0 0.9" t1="0.32222 0"/>
+    <IndexedTriangleSet name="xcRope_eqSponsor_1b" shapeId="8" bvCenter="-0.0065 0.52 1.25" bvRadius="0.42485">
+      <Vertices count="6" normal="true" uv0="true" uv1="true">
+        <v p="-0.0065 0.33 0.87" n="-1 0 0" t0="0 0" t1="0.348 0"/>
+        <v p="-0.0065 0.33 1.63" n="-1 0 0" t0="1 0" t1="0.652 0"/>
+        <v p="-0.0065 0.71 1.63" n="-1 0 0" t0="1 1" t1="0.652 0"/>
+        <v p="-0.0065 0.33 0.87" n="-1 0 0" t0="0 0" t1="0.348 0"/>
+        <v p="-0.0065 0.71 1.63" n="-1 0 0" t0="1 1" t1="0.652 0"/>
+        <v p="-0.0065 0.71 0.87" n="-1 0 0" t0="0 1" t1="0.348 0"/>
       </Vertices>
-      <Triangles count="4">
+      <Triangles count="2">
         <t vi="0 1 2"/>
-        <t vi="0 2 3"/>
-        <t vi="4 5 6"/>
-        <t vi="4 6 7"/>
+        <t vi="3 4 5"/>
       </Triangles>
       <Subsets count="1">
-        <Subset firstVertex="0" numVertices="8" firstIndex="0" numIndices="12"/>
+        <Subset firstVertex="0" numVertices="6" firstIndex="0" numIndices="6"/>
       </Subsets>
     </IndexedTriangleSet>
     <IndexedTriangleSet name="xcRope_signCol" shapeId="9" bvCenter="0 0 1.25" bvRadius="0.051962">

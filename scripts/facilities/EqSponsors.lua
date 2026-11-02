@@ -179,14 +179,36 @@ end
 --- player's.
 --- @param placeable table
 --- @return number|nil farmId
+--- The local player's farm, or nil until it's known (James's log 2026-11-02: the mission's
+--- getFarmId gave nil at the first scan, so the rope kept the made-up brand list).
+function EqSponsors.localFarm()
+    local spectator = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 15
+    local function ok(id) return type(id) == "number" and id ~= 0 and id ~= spectator end
+    local mission = g_currentMission
+    if mission ~= nil and mission.getFarmId ~= nil then
+        local id = mission:getFarmId()
+        if ok(id) then return id end
+    end
+    local player = g_localPlayer
+    if player ~= nil then
+        local id = player.getFarmId ~= nil and player:getFarmId() or player.farmId
+        if ok(id) then return id end
+    end
+    if mission ~= nil and mission.missionDynamicInfo ~= nil and mission.missionDynamicInfo.isMultiplayer == false then
+        local id = FarmManager ~= nil and FarmManager.SINGLEPLAYER_FARM_ID or 1
+        if ok(id) then return id end
+    end
+    return nil
+end
+
+
 function EqSponsors.ownerOf(placeable)
     local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
     if EqSponsors.isRope(placeable.configFileName) then
         local spectator = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 15
         if owner == nil or owner == 0 or owner == spectator then
-            local mission = g_currentMission
-            local mine = mission ~= nil and mission.getFarmId ~= nil and mission:getFarmId() or nil
-            if not EqSponsors.loggedRopeOwner then
+            local mine = EqSponsors.localFarm()
+            if not EqSponsors.loggedRopeOwner and mine ~= nil then
                 EqSponsors.loggedRopeOwner = true
                 Log:info("EqSponsors: Rope Marker owner farm %s, counted as farm %s", tostring(owner), tostring(mine))
             end
@@ -263,6 +285,8 @@ function EqSponsors.countBoards(farmId)
         local owner = EqSponsors.ownerOf(placeable)
         if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
             local boards = boardsOf(placeable)
+            -- a rope's farm is known only once the player is: sign it again when it changes
+            if placeable.eqSponsorFarm ~= farmId then placeable.eqSponsored, placeable.eqSponsorFarm = nil, farmId end
             if EqSponsors.isRope(placeable.configFileName) then
                 signs = signs + frontFaces(boards)
             else

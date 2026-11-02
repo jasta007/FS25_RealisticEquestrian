@@ -40,7 +40,9 @@ SAG = 0.07
 ROPE_R = 0.011
 STAKE = (0.035, 1.0)    # width, height
 SIGN = (1.00, 0.42)     # the hanging sign's width and height (James 2026-11-02: twice the first)
-ASPECT = 2.7
+ASPECT = 2.0     # the whole brand image (512 x 256), not the boards' 0.1-0.9 crop: James 2026-11-02,
+                 # tall logos (Antonio Carraro's shield) were cut off at the top
+LOGO_FULL = (0.0, 1.0, 0.0, 1.0)
 SPONSOR_TEXTURE = "../bleachers/bleacherSponsor_diffuse.dds"
 # The spectator box: x from the rope (the +x side), inset from the panel's ends, line width.
 # EqSpectators.ROPE_BOX must match.
@@ -91,6 +93,7 @@ def sign():
     board.verts = [(p, n, flag_uv(1)) for p, n, _ in board.verts]
     lw = w - 0.04
     lh = min(h - 0.04, lw / ASPECT)
+    lw = lh * ASPECT       # not stretched: the board is wider than the logo image
     yc = top - h / 2
     for facing, name in ((1, "eqSponsor_1"), (-1, "eqSponsor_1b")):
         x = facing * 0.0065
@@ -149,8 +152,8 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos, crowd_rope, crowd):
              # leans with the slope, like the base game's fence panels
              '    <Material name="xcRope" materialId="2" specularColor="0.1 0.7 0" customShaderId="2" customShaderVariation="vertexOffset">',
              '      <Texture fileId="1"/>', "    </Material>",
-             '    <Material name="eqSponsor" materialId="3" specularColor="0.2 0.5 0" alphaBlending="true" customShaderId="2" '
-             'customShaderVariation="vertexOffset">', '      <Texture fileId="3"/>', "    </Material>",
+             '    <Material name="eqSponsor" materialId="3" specularColor="0.2 0 0" alphaBlending="true" customShaderId="2" '
+             'customShaderVariation="vertexOffset_Decal">', '      <Texture fileId="3"/>', "    </Material>",
              "  </Materials>", "  <Shapes>"]
     shapes = [("stake", stake_mesh, None), ("stakeCol", ground_box(-0.03, 0.03), None),
               ("rope", plain, slope), ("ropeCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None),
@@ -161,7 +164,7 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos, crowd_rope, crowd):
     ids = {}
     for i, (key, mesh, uv1) in enumerate(shapes):
         ids[key] = i + 1
-        lines += shape_lines(mesh, f"{NAME}_{key}", i + 1, uv1=uv1)
+        lines += shape_lines(mesh, f"{NAME}_{key}", i + 1, uv1=uv1, crop=LOGO_FULL if "eqSponsor" in key else None)
     lines += ["  </Shapes>", "  <Scene>"]
     node = [0]
 

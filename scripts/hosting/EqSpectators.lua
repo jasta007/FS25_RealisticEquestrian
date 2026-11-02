@@ -69,7 +69,7 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
     handForward = -0.02, handApart = 0.18, handLift = 0.13,
-    handPitch = 15, handYaw = 10, handRoll = 0, arms = 1, fingers = 1, wrists = 1,
+    handPitch = 15, handYaw = 10, handRoll = 0, arms = 0, fingers = 1, wrists = 1,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -101,7 +101,7 @@ EqSpectators.FEMALE_SHARE = 0.45
 -- only within IK_DISTANCE (James, 2026-11-01: they're stationary, so be heavy handed); further
 -- out their clip stops and they hold the last pose, solved for POSE_FRAMES frames once seated.
 EqSpectators.VISIBLE_DISTANCE = 150
-EqSpectators.IK_DISTANCE = 25
+EqSpectators.IK_DISTANCE = 0     -- James 2026-11-02: hands jerked at 20-30 m; pose once and hold
 EqSpectators.POSE_FRAMES = 5
 -- How often the map is checked for bleachers, rope boxes and whether an event runs.
 EqSpectators.SCAN_MS = 5000
@@ -198,6 +198,7 @@ end
 -- In game
 
 local function farmId()
+    if EqSponsors ~= nil and EqSponsors.localFarm ~= nil then return EqSponsors.localFarm() end
     local mission = g_currentMission
     return mission ~= nil and mission.getFarmId ~= nil and mission:getFarmId() or nil
 end
