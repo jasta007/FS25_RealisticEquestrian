@@ -35,7 +35,7 @@ function EqHorseRecord.new(id)
     self.career = { starts = 0, wins = 0, places = 0, earnings = 0, eliminations = 0, injuries = 0 }
     self.lastSeenDay = 0
     self.idleDays = 0
-    self.gains = {}              -- recent stat changes, { day, stat -> change } per day, oldest first
+    self.gains = {}              -- recent stat changes, { month, stat -> change } per month, oldest first
     self.monthStarts = 0         -- round events started this month
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
@@ -87,35 +87,41 @@ function EqHorseRecord:isSettling()
 end
 
 
---- Days of stat changes kept for the "(+2.8)" shown after each skill.
-EqHorseRecord.GAIN_DAYS = 7
+--- Stat changes for the "(+2.8)" shown after each skill: summed per in-game month (the months
+--- EqCompetitionManager counts), since days are too odd a unit in this game (James, 2026-11-01).
+--- The month before is kept too, for the day that ends it and is counted after the change.
 
 
---- Add stat changes made on a day (daily training, an event's training boost) to the recent
---- gains, dropping days older than GAIN_DAYS.
---- @param day number monotonic day
+--- Add stat changes made in a month (daily training, an event's training boost) to that month's
+--- gains, dropping months before the one before it.
+--- @param month number months played (EqCompetitionManager.month)
 --- @param deltas table|nil stat -> change
-function EqHorseRecord:addGains(day, deltas)
+function EqHorseRecord:addGains(month, deltas)
     if deltas == nil then return end
-    local last = self.gains[#self.gains]
-    if last == nil or last.day ~= day then
-        last = { day = day }
-        table.insert(self.gains, last)
+    local entry = nil
+    for _, e in ipairs(self.gains) do
+        if e.month == month then entry = e end
+    end
+    if entry == nil then
+        entry = { month = month }
+        table.insert(self.gains, entry)
+        table.sort(self.gains, function(a, b) return a.month < b.month end)
     end
     for _, stat in ipairs(EqConstants.STAT_KEYS) do
-        last[stat] = (last[stat] or 0) + (deltas[stat] or 0)
+        entry[stat] = (entry[stat] or 0) + (deltas[stat] or 0)
     end
-    while #self.gains > 0 and self.gains[1].day <= day - EqHorseRecord.GAIN_DAYS do table.remove(self.gains, 1) end
+    local newest = self.gains[#self.gains].month
+    while #self.gains > 0 and self.gains[1].month < newest - 1 do table.remove(self.gains, 1) end
 end
 
 
---- @param today number monotonic day
---- @return table stat -> net change over the last GAIN_DAYS days, today included
-function EqHorseRecord:getRecentGains(today)
+--- @param month number months played (EqCompetitionManager.month)
+--- @return table stat -> net change in that month
+function EqHorseRecord:getRecentGains(month)
     local total = {}
     for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = 0 end
     for _, entry in ipairs(self.gains) do
-        if entry.day > today - EqHorseRecord.GAIN_DAYS then
+        if entry.month == month then
             for _, stat in ipairs(EqConstants.STAT_KEYS) do total[stat] = total[stat] + (entry[stat] or 0) end
         end
     end
@@ -180,8 +186,8 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
         for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(key .. ".start#" .. stat, self.start[stat]) end
     end
     for i, entry in ipairs(self.gains) do
-        local entryKey = string.format("%s.gains.day(%d)", key, i - 1)
-        xmlFile:setInt(entryKey .. "#day", entry.day)
+        local entryKey = string.format("%s.gains.month(%d)", key, i - 1)
+        xmlFile:setInt(entryKey .. "#month", entry.month)
         for _, stat in ipairs(EqConstants.STAT_KEYS) do xmlFile:setFloat(entryKey .. "#" .. stat, entry[stat] or 0) end
     end
 
@@ -268,13 +274,14 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
         self.start = { day = xmlFile:getInt(key .. ".start#day", 0) }
         for _, stat in ipairs(EqConstants.STAT_KEYS) do self.start[stat] = xmlFile:getFloat(key .. ".start#" .. stat, 0) end
     end
-    local day = 0
-    while xmlFile:hasProperty(string.format("%s.gains.day(%d)", key, day)) do
-        local entryKey = string.format("%s.gains.day(%d)", key, day)
-        local entry = { day = xmlFile:getInt(entryKey .. "#day", 0) }
+    -- Saves from before 2026-11-01 kept gains per day (gains.day): those are left behind.
+    local n = 0
+    while xmlFile:hasProperty(string.format("%s.gains.month(%d)", key, n)) do
+        local entryKey = string.format("%s.gains.month(%d)", key, n)
+        local entry = { month = xmlFile:getInt(entryKey .. "#month", 0) }
         for _, stat in ipairs(EqConstants.STAT_KEYS) do entry[stat] = xmlFile:getFloat(entryKey .. "#" .. stat, 0) end
         table.insert(self.gains, entry)
-        day = day + 1
+        n = n + 1
     end
 
     self.career.starts = xmlFile:getInt(key .. ".career#starts", 0)
