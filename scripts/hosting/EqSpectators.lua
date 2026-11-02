@@ -70,12 +70,13 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.07, handApart = 0.30, handLift = 0.07,
+    handForward = -0.25, handApart = 0.30, handLift = 0.20,
     -- the other hand position: in the lap (James 2026-11-02), half the crowd
     lapForward = 0.10, lapApart = 0.20, lapLift = 0.19, lapShare = 0.5,
+    lapPitch = 0, lapYaw = 90, lapRoll = 0,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
     handJitter = 0.035,
-    handPitch = 0, handYaw = 90, handRoll = 0, elbow = 0, arms = 1, fingers = 0, wrists = 0,
+    handPitch = 80, handYaw = 45, handRoll = 0, elbow = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -656,7 +657,12 @@ local function placeTargets(person)
     for id, side in pairs(EqSpectators.ARM_CHAINS) do
         local node = person.targets[id]
         if node ~= nil then
-            setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
+            -- each hand its own turn: a lap hand (all lap people, and one hand of some others) uses lapPitch/Yaw/Roll
+            if person.lap or person.oneLap == id then
+                setRotation(node, math.rad(p.lapPitch), math.rad(p.lapYaw * side), math.rad(p.lapRoll * side))
+            else
+                setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
+            end
             if chains ~= nil then
                 local on = EqSpectators.armsOn()
                 if on and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
