@@ -70,12 +70,16 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.16, handApart = 0.27, handLift = 0.04,
+    handForward = -0.14, handApart = 0.34, handLift = 0.04,
     handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
 EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
+-- Each seated person's feet: one of these shares of footForward, picked at random (James
+-- 2026-11-02: everyone with their feet stuck out that far looked weird), and a little wider or
+-- narrower apart.
+EqSpectators.FEET = { 1.0, 0.72, 0.5 }
 
 --- @param name string|nil a hand joint's name
 --- @return string|nil the arm IK chain on that side: "leftArm" or "rightArm"
@@ -582,8 +586,8 @@ local function placeTargets(person)
     local p = EqSpectators.pose
     local drop = person.seat.y - person.seat.floorY
     local spots = {
-        leftFoot = { p.footApart, -drop, p.footForward },
-        rightFoot = { -p.footApart, -drop, p.footForward },
+        leftFoot = { p.footApart + (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
+        rightFoot = { -p.footApart - (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
         leftArm = { p.handApart, p.handLift, p.handForward },
         rightArm = { -p.handApart, p.handLift, p.handForward },
     }
@@ -834,6 +838,10 @@ local function spawn(seat, stand, rng, used)
     if style == nil or style.xmlFilename == nil then return nil end
     local holder = createTransformGroup("eqSpectator")
     local person = { seated = seat ~= nil, seat = seat, stand = stand, holder = holder, targets = {}, rng = rng, frames = 0, style = style }
+    if seat ~= nil then
+        person.feet = EqSpectators.FEET[math.min(#EqSpectators.FEET, math.floor(rng:next() * #EqSpectators.FEET) + 1)]
+        person.feetApart = rng:uniform(-0.03, 0.05)
+    end
     if seat ~= nil then
         link(seat.parent, holder)
         -- on the bench's front edge, turned to face the bleacher's front (-z)
