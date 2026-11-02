@@ -754,6 +754,22 @@ prizes, and sometimes none in a discipline.
   $300 quarantine yard. Europe to South America, and Asia and Oceania to anywhere, is a
   **long-haul** trip: 8x plus $2,500, or $500 Manual. The dearer the trip, the rarer it is: about
   60% of named events are in your home region, 30% overseas and 10% long-haul.
+- The Events tab shows your home region over the table (and whether it came from the map or the
+  settings), and a **Region** column for each event: your own region in the normal colour, an
+  overseas venue in amber, a long-haul one in orange. If the map puts you in the wrong region,
+  pick yours with the **Home region** setting (From map is the default; `eqSettings homeRegion
+  europe`).
+- **International quarantine:** a horse that went to an event abroad (it started, or was
+  scratched there) doesn't come straight home. It spends **1 round** in quarantine after an
+  overseas trip and **2 rounds** after a long-haul one (`quarantineRounds` in
+  `data/events.xml`), so it misses that many rounds of entries. Rounds follow the Show events
+  setting: days on daily rounds, months on monthly ones. In quarantine it stays out of the
+  pasture like a horse at an event, can't be ridden or entered, and still eats and ages in
+  RLRM's books; RLRM's lists mark it "In quarantine". You get a message when it is home. The
+  horse panel says how long the quarantine will be before you enter it. The quarantine fees
+  above pay for the stay. Your own hosted events never need quarantine. The **International
+  quarantine** setting (`eqSettings quarantine off`) turns the stay off; turning it off sends
+  every horse in quarantine home at the next round.
 - A horse can only be in one round event and one monthly event at a time.
 - A horse entered in an event **leaves your pasture** until its result is in: the next round
   for round events, the next month for monthly ones. It still eats, ages and trains with staff in

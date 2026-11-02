@@ -37,6 +37,7 @@ function EqHorseRecord.new(id)
     self.idleDays = 0
     self.gains = {}              -- recent stat changes, { month, stat -> change } per month, oldest first
     self.monthStarts = 0         -- round events started this month
+    self.quarantine = nil        -- rounds left in quarantine after an event abroad (EqQuarantine)
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
     self.ownedMonths = nil       -- months on the farm, counted for a horse bought from the dealer
@@ -162,6 +163,7 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
     xmlFile:setInt(key .. "#idleDays", self.idleDays)
     xmlFile:setInt(key .. "#monthStarts", self.monthStarts)
+    if self.quarantine ~= nil then xmlFile:setInt(key .. "#quarantine", self.quarantine) end
     if self.ownedMonths ~= nil then xmlFile:setInt(key .. "#ownedMonths", self.ownedMonths) end
     if self.advertised ~= nil then
         xmlFile:setBool(key .. ".advertised#revealed", self.revealed)
@@ -245,6 +247,8 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
     self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
     self.monthStarts = xmlFile:getInt(key .. "#monthStarts", 0)
+    local quarantine = xmlFile:getInt(key .. "#quarantine")
+    self.quarantine = quarantine ~= nil and quarantine > 0 and quarantine or nil
     self.ownedMonths = xmlFile:getInt(key .. "#ownedMonths")
     if xmlFile:hasProperty(key .. ".advertised") then
         self.advertised = {}

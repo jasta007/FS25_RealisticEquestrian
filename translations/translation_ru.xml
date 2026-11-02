@@ -1178,5 +1178,25 @@
         <text name="eq_loan_enter" text="Эту технику предоставил ваш спонсор для использования во время вашего мероприятия в этом месяце. Наслаждайтесь!"/>
         <text name="eq_sponsor_discount_from" text="С %s"/>
         <text name="eq_sponsor_discount_after" text="Через %d мес. после подписания"/>
+        <text name="eq_settings_homeRegion" text="Домашний регион"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Где находится ваша ферма; от этого зависит, какие соревнования за рубежом. «По карте» берёт его из карты (или страны карты RLRM); выберите регион, если он неверный."/>
+        <text name="eq_settings_homeRegion_auto" text="По карте"/>
+        <text name="eq_region_northAmerica" text="Северная Америка"/>
+        <text name="eq_region_southAmerica" text="Южная Америка"/>
+        <text name="eq_region_europe" text="Европа"/>
+        <text name="eq_region_asiaOceania" text="Азия и Океания"/>
+        <text name="eq_settings_quarantine" text="Международный карантин"/>
+        <text name="eq_settings_quarantine_tooltip" text="Проводит ли лошадь после соревнований в другом регионе несколько раундов на карантине, прежде чем вернуться домой. Плата за карантин взимается в любом случае."/>
+        <text name="eq_ui_col_region" text="Регион"/>
+        <text name="eq_ui_region_home" text="Ваш регион: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="по карте, можно изменить в настройках"/>
+        <text name="eq_ui_region_chosen" text="выбран в настройках"/>
+        <text name="eq_ui_region_quarantine" text="После соревнований за рубежом лошадь уходит на карантин: %d раунд(а) после поездки за океан (жёлтый), %d после дальнего пути (оранжевый)."/>
+        <text name="eq_ui_region_noQuarantine" text="Международный карантин выключен."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, затем %d раунд(а) на карантине"/>
+        <text name="eq_ui_status_quarantine" text="На карантине"/>
+        <text name="eq_status_quarantine" text="На карантине, %d раунд(а)"/>
+        <text name="eq_enter_quarantine" text="Эта лошадь на карантине после соревнований за рубежом. Она сможет выступать, когда вернётся домой."/>
+        <text name="eq_quarantine_home" text="%s вернулась с карантина."/>
     </texts>
 </l10n>

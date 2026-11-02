@@ -39,6 +39,7 @@ dofile("scripts/competition/EqRisk.lua")
 dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
+dofile("scripts/competition/EqQuarantine.lua")
 dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/attire/EqAttire.lua")
@@ -6079,6 +6080,60 @@ end)()
     local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
     check("spectators: the rope has a spectator segment with its box", rope:find('id="ROPE_CROWD"', 1, true) ~= nil
         and i3d:find('name="' .. EqSpectators.BOX_NODE .. '"', 1, true) ~= nil)
+end)()
+
+-- International quarantine (James, 2026-11-02): rounds away after an event abroad, a home
+-- region setting for a map in the wrong region.
+;
+(function()
+    check("quarantine: none at home, 1 round overseas, 2 long-haul",
+        EqQuarantine.roundsFor(config, "local") == 0 and EqQuarantine.roundsFor(config, "near") == 1
+        and EqQuarantine.roundsFor(config, "far") == 2 and EqQuarantine.roundsFor(config, nil) == 0)
+    check("quarantine: the setting turns it off", EqQuarantine.roundsFor(config, "far", { quarantine = false }) == 0
+        and EqQuarantine.roundsFor(config, "far", { quarantine = true }) == 2)
+
+    local record = EqHorseRecord.new("DE 1 77")
+    check("quarantine: a new horse is home", not EqQuarantine.isIn(record) and EqQuarantine.roundsLeft(record) == 0
+        and not EqQuarantine.tick(record))
+    check("quarantine: nothing starts for 0 rounds", not EqQuarantine.start(record, 0) and not EqQuarantine.isIn(record))
+    EqQuarantine.start(record, 2)
+    EqQuarantine.start(record, 1)
+    check("quarantine: a longer stay is kept", EqQuarantine.roundsLeft(record) == 2)
+    local x = memoryXML()
+    record:saveToXMLFile(x, "h")
+    check("quarantine: survives a save", EqQuarantine.roundsLeft(EqHorseRecord.loadFromXMLFile(x, "h")) == 2)
+    check("quarantine: one round passes, still away", not EqQuarantine.tick(record) and EqQuarantine.isIn(record))
+    check("quarantine: the last round sends it home", EqQuarantine.tick(record) and not EqQuarantine.isIn(record)
+        and record.quarantine == nil)
+    local y = memoryXML()
+    record:saveToXMLFile(y, "h")
+    check("quarantine: a horse at home saves none", EqHorseRecord.loadFromXMLFile(y, "h").quarantine == nil)
+
+    check("home region setting offers From map and the four regions", #EqSettings.BY_ID.homeRegion.values == 5
+        and EqSettings.BY_ID.homeRegion.default == "auto" and EqSettings.isHomeRegion("europe")
+        and not EqSettings.isHomeRegion("mars"))
+    for _, region in ipairs(config.regions) do
+        check("home region setting has " .. region.name, EqSettings.isHomeRegion(region.name))
+    end
+
+    -- The manager: a chosen region wins over the map; quarantine follows the distance.
+    local hadManager, hadMission = EqCompetitionManager, g_currentMission
+    dofile("scripts/competition/EqCompetitionManager.lua")
+    EqCompetitionManager.config = config
+    g_currentMission = { missionInfo = { mapTitle = "Riverbend Springs", mapId = "MapUS" } }
+    local mapHome = EqCompetitionManager.homeRegion()
+    EqCompetitionManager.settings.homeRegion = "europe"
+    local chosen = EqCompetitionManager.homeRegion()
+    local abroad = EqCompetitionManager.quarantineRounds({ region = "asiaOceania" })
+    local hosted = EqCompetitionManager.quarantineRounds({ region = "asiaOceania", hosted = {} })
+    local here = EqCompetitionManager.quarantineRounds({ region = "europe" })
+    EqCompetitionManager.settings.homeRegion = "mars"
+    local unknown = EqCompetitionManager.homeRegion()
+    check("home region: the map's when From map", mapHome == EqCompetitionManager.mapHomeRegion())
+    check("home region: the setting wins", chosen == "europe" and EqCompetitionManager.chosenHomeRegion() == nil)
+    check("home region: an unknown choice falls back to the map", unknown == mapHome)
+    check("quarantine: 2 rounds from Europe to Asia, none at home or at your own event", abroad == 2 and here == 0 and hosted == 0)
+    EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

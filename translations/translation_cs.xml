@@ -1178,5 +1178,25 @@
         <text name="eq_loan_enter" text="这台设备由你的赞助商提供，供你在本月的赛事期间使用。尽情享受吧！"/>
         <text name="eq_sponsor_discount_from" text="从%s开始"/>
         <text name="eq_sponsor_discount_after" text="签约 %d 个月后开始"/>
+        <text name="eq_settings_homeRegion" text="所在地区"/>
+        <text name="eq_settings_homeRegion_tooltip" text="你的农场所在地区，决定哪些赛事在国外。“按地图”从地图（或 RLRM 的地图国家）读取；若不正确请选择地区。"/>
+        <text name="eq_settings_homeRegion_auto" text="按地图"/>
+        <text name="eq_region_northAmerica" text="北美洲"/>
+        <text name="eq_region_southAmerica" text="南美洲"/>
+        <text name="eq_region_europe" text="欧洲"/>
+        <text name="eq_region_asiaOceania" text="亚洲和大洋洲"/>
+        <text name="eq_settings_quarantine" text="国际检疫"/>
+        <text name="eq_settings_quarantine_tooltip" text="从其他地区赛事回来的马在回家前是否需要检疫若干轮。检疫费用照常收取。"/>
+        <text name="eq_ui_col_region" text="地区"/>
+        <text name="eq_ui_region_home" text="你的地区：%s（%s）。"/>
+        <text name="eq_ui_region_fromMap" text="按地图，可在设置中更改"/>
+        <text name="eq_ui_region_chosen" text="在设置中选择"/>
+        <text name="eq_ui_region_quarantine" text="在国外参赛后马匹需要检疫：海外行程后 %d 轮（黄色），长途行程后 %d 轮（橙色）。"/>
+        <text name="eq_ui_region_noQuarantine" text="国际检疫已关闭。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s，之后检疫 %d 轮"/>
+        <text name="eq_ui_status_quarantine" text="检疫中"/>
+        <text name="eq_status_quarantine" text="检疫中，%d 轮"/>
+        <text name="eq_enter_quarantine" text="这匹马在国外参赛后正在检疫。回家后即可参赛。"/>
+        <text name="eq_quarantine_home" text="%s已结束检疫回家。"/>
     </texts>
 </l10n>

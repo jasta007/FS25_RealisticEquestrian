@@ -135,6 +135,9 @@ uses its genetics, health and fitness.
 ### Getting there
 - **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or
   long-haul cost more, with quarantine.
+- **International quarantine:** back from an event abroad, a horse spends 1 round (overseas) or
+  2 rounds (long-haul) in quarantine before it is home. The Events tab shows your home region and
+  each event's region; set your region in Settings if the map gets it wrong.
 - **Manual Transport:** save the transport fee and drive the horse to the animal dealer yourself.
   Horses waiting to go are marked **Awaiting delivery** in RLRM's lists. Drive the trailer into
   the dealer's loading area and open the dealer as usual: you're asked whether to deliver the

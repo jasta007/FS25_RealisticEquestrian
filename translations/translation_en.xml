@@ -1178,5 +1178,25 @@
         <text name="eq_loan_enter" text="This piece of equipment has been donated by your sponsor for use during your event this month. Enjoy!"/>
         <text name="eq_sponsor_discount_from" text="Begins in %s"/>
         <text name="eq_sponsor_discount_after" text="Begin %d months after signing"/>
+        <text name="eq_settings_homeRegion" text="Home region"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Where your farm is, which decides which events are abroad. From map reads it from the map (or RLRM's map country); pick a region if that is wrong."/>
+        <text name="eq_settings_homeRegion_auto" text="From map"/>
+        <text name="eq_region_northAmerica" text="North America"/>
+        <text name="eq_region_southAmerica" text="South America"/>
+        <text name="eq_region_europe" text="Europe"/>
+        <text name="eq_region_asiaOceania" text="Asia and Oceania"/>
+        <text name="eq_settings_quarantine" text="International quarantine"/>
+        <text name="eq_settings_quarantine_tooltip" text="Whether a horse back from an event in another region spends rounds in quarantine before it is home. The quarantine fees are paid either way."/>
+        <text name="eq_ui_col_region" text="Region"/>
+        <text name="eq_ui_region_home" text="Your region: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="from the map, change it in Settings"/>
+        <text name="eq_ui_region_chosen" text="set in Settings"/>
+        <text name="eq_ui_region_quarantine" text="After an event abroad a horse is in quarantine: %d round(s) after an overseas trip (amber), %d after a long-haul one (orange)."/>
+        <text name="eq_ui_region_noQuarantine" text="International quarantine is off."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, then %d round(s) in quarantine"/>
+        <text name="eq_ui_status_quarantine" text="In quarantine"/>
+        <text name="eq_status_quarantine" text="In quarantine, %d round(s)"/>
+        <text name="eq_enter_quarantine" text="That horse is in quarantine after an event abroad. It can compete once it is home."/>
+        <text name="eq_quarantine_home" text="%s is home from quarantine."/>
     </texts>
 </l10n>
