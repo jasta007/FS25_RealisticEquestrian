@@ -580,6 +580,52 @@ end
 
 
 --- Seated: targets for the feet and hands, in the seat's frame (+z the way the person faces).
+--- Hand poses (James 2026-11-02: resetting the finger joints did nothing, the clip wins): the arm
+--- IK chain's own poses, as vehicles use them. EqSpectators.handPose is the one to use
+--- (eqSpectators handpose <name>); with none, the first with open/flat/relax in its name.
+EqSpectators.HAND_POSE_WORDS = { "relax", "open", "flat", "rest", "idle", "wide" }
+
+--- @return string|nil the pose id to use on this chain
+function EqSpectators.handPoseFor(chain)
+    local poses = type(chain) == "table" and type(chain.poses) == "table" and chain.poses or nil
+    if poses == nil then return nil end
+    if EqSpectators.handPose ~= nil then
+        return poses[EqSpectators.handPose] ~= nil and EqSpectators.handPose or nil
+    end
+    for _, word in ipairs(EqSpectators.HAND_POSE_WORDS) do
+        local names = {}
+        for name in pairs(poses) do table.insert(names, tostring(name)) end
+        table.sort(names)
+        for _, name in ipairs(names) do
+            if string.find(string.lower(name), word, 1, true) ~= nil then return name end
+        end
+    end
+    return nil
+end
+
+
+--- Put the chosen pose on the chain (logs the chain's poses once).
+function EqSpectators.applyHandPose(chains, id)
+    local chain = chains[id]
+    if type(chain) ~= "table" then return end
+    if not EqSpectators.loggedPoses then
+        EqSpectators.loggedPoses = true
+        local names = {}
+        for name, pose in pairs(type(chain.poses) == "table" and chain.poses or {}) do
+            local fields = {}
+            if type(pose) == "table" then for k in pairs(pose) do table.insert(fields, tostring(k)) end end
+            table.insert(names, tostring(name) .. "(" .. table.concat(fields, ",") .. ")")
+        end
+        local fns = {}
+        for k, v in pairs(IKUtil) do if type(v) == "function" and string.find(string.lower(k), "pose", 1, true) then table.insert(fns, k) end end
+        Log:info("EqSpectators: %s hand poses: %s; IKUtil pose functions: %s; using %s", id,
+            #names > 0 and table.concat(names, " ") or "none", #fns > 0 and table.concat(fns, ", ") or "none", tostring(EqSpectators.handPoseFor(chain)))
+    end
+    local pose = EqSpectators.handPoseFor(chain)
+    if pose ~= nil and IKUtil.setIKChainPose ~= nil then IKUtil.setIKChainPose(chains, id, pose) end
+end
+
+
 --- @return boolean true when the hands are placed by IK (not with arms 0 or the standing clip)
 function EqSpectators.armsOn()
     return EqSpectators.pose.arms ~= 0
@@ -808,8 +854,11 @@ local function onModelLoaded(_, state, person)
                 local node = createTransformGroup("eqSpectator_" .. id)
                 link(person.holder, node)
                 person.targets[id] = node
-                -- arms: let the hand keep the clip's angle on the wrist if the IK has such a switch
-                IKUtil.setTarget(chains, id, { targetNode = node, alignToTarget = EqSpectators.ARM_CHAINS[id] == nil })
+                -- arms: let the hand keep the clip's angle on the wrist if the IK has such a switch, and
+                -- take one of the chain's own hand poses (the ones vehicles use on wheels and levers)
+                local arm = EqSpectators.ARM_CHAINS[id] ~= nil
+                IKUtil.setTarget(chains, id, { targetNode = node, alignToTarget = not arm, poseId = arm and EqSpectators.handPoseFor(chains[id]) or nil })
+                if arm then EqLog.try("EqSpectators hand pose", EqSpectators.applyHandPose, chains, id) end
                 if EqSpectators.ARM_CHAINS[id] ~= nil and type(chains[id]) == "table" then
                     if chains[id].alignToTarget ~= nil then chains[id].alignToTarget = false end
                     if not EqSpectators.loggedChain then
@@ -1130,6 +1179,24 @@ function EqSpectators.console(command, a, b)
         EqSpectators.forced, EqSpectators.forcedCounts = nil, nil
         EqSpectators.key, EqSpectators.scannedAt = nil, nil
         return "Spectators come to your hosted events (08:00-19:00) as the Crowd density setting says"
+    elseif command == "handpose" then
+        EqSpectators.handPose = a
+        local used = nil
+        for _, person in ipairs(EqSpectators.people) do
+            local chains = person.seated and person.model ~= nil and person.model.rootNode ~= nil and person.model:getIKChains() or nil
+            if chains ~= nil then
+                for id in pairs(EqSpectators.ARM_CHAINS) do
+                    if chains[id] ~= nil and person.targets[id] ~= nil then
+                        used = EqSpectators.handPoseFor(chains[id]) or used
+                        IKUtil.setTarget(chains, id, { targetNode = person.targets[id], alignToTarget = false, poseId = EqSpectators.handPoseFor(chains[id]) })
+                        EqLog.try("EqSpectators hand pose", EqSpectators.applyHandPose, chains, id)
+                        IKUtil.setIKChainDirty(chains, id)
+                    end
+                end
+                person.posed = 0
+            end
+        end
+        return string.format("Hand pose: %s (eqSpectators handpose <name>; the names are in log.txt, 'hand poses')", tostring(used or a or "none"))
     elseif command == "pose" then
         local value = tonumber(b)
         if a ~= nil and EqSpectators.pose[a] ~= nil and value ~= nil then
@@ -1163,7 +1230,7 @@ function EqSpectators.console(command, a, b)
     end
     print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
         scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
-    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | info]",
+    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
 end
