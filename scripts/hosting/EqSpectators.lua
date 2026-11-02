@@ -97,6 +97,7 @@ EqSpectators.key = nil
 EqSpectators.scannedAt = nil
 EqSpectators.boxesShown = nil
 EqSpectators.loggedSetup = false
+EqSpectators.lastScan = { ropes = 0, owners = {} }
 EqSpectators.failed = false     -- an error each frame would fill the log: stop after the first
 
 
@@ -216,6 +217,7 @@ end
 --- @return table seats, table stands, table boxes (every box node, for showing them in construction)
 function EqSpectators.places(farm)
     local seats, stands, boxes = {}, {}, {}
+    EqSpectators.lastScan = { ropes = 0, owners = {} }
     for _, placeable in ipairs(placeables()) do
         local root = placeable.rootNode
         if type(root) == "number" and root ~= 0 and (entityExists == nil or entityExists(root)) then
@@ -227,13 +229,16 @@ function EqSpectators.places(farm)
                     table.insert(seats, seat)
                 end
             elseif EqSponsors ~= nil and EqSponsors.isRope(placeable.configFileName) then
+                -- any farm's rope (James's first try found none with a farm check: a fence's
+                -- owner isn't always the farm that drew it)
                 local found = {}
                 findNamed(root, EqSpectators.BOX_NODE, found)
+                EqSpectators.lastScan.ropes = EqSpectators.lastScan.ropes + 1
+                EqSpectators.lastScan.firstRope = EqSpectators.lastScan.firstRope or root
+                EqSpectators.lastScan.owners[tostring(ownerOf(placeable))] = true
                 for _, node in ipairs(found) do
                     table.insert(boxes, node)
-                    if mine then
-                        for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot, root = root }) end
-                    end
+                    for slot = 1, EqSpectators.PER_BOX do table.insert(stands, { box = node, slot = slot, root = root }) end
                 end
             end
         end
@@ -585,7 +590,8 @@ function EqSpectators.spawnAll(farm, counts, seed, seats, stands)
         local person = spawn(nil, stand, EqRandom.new(math.floor(rng:next() * 2147483000) + 1))
         if person ~= nil then table.insert(EqSpectators.people, person) end
     end
-    Log:info("EqSpectators: %d people (%d seats and %d rope places on farm %s)", #EqSpectators.people, #seats, #stands, tostring(farm))
+    Log:info("EqSpectators: %d people (%d seats and %d rope places on farm %s; %d Rope Marker(s) seen)", #EqSpectators.people, #seats, #stands,
+        tostring(farm), EqSpectators.lastScan.ropes)
 end
 
 
@@ -753,6 +759,23 @@ function EqSpectators.console(command, a, b)
     if farm ~= nil then seats, stands = EqSpectators.places(farm) end
     local ready = 0
     for _, person in ipairs(EqSpectators.people) do if person.ready then ready = ready + 1 end end
+    local scan = EqSpectators.lastScan or { ropes = 0, owners = {} }
+    local owners = {}
+    for owner in pairs(scan.owners) do table.insert(owners, owner) end
+    if scan.firstRope ~= nil and (entityExists == nil or entityExists(scan.firstRope)) then
+        -- the first rope's node names, to see where the game puts the fence panels
+        local names, stack = {}, { { scan.firstRope, 0 } }
+        while #stack > 0 and #names < 60 do
+            local entry = table.remove(stack, 1)
+            table.insert(names, string.rep(">", entry[2]) .. tostring(getName(entry[1])))
+            if entry[2] < 5 then
+                for i = 0, math.min(getNumOfChildren(entry[1]), 6) - 1 do table.insert(stack, { getChildAt(entry[1], i), entry[2] + 1 }) end
+            end
+        end
+        print("EqSpectators: first Rope Marker's nodes: " .. table.concat(names, " "))
+    end
+    print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
+        scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
     return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
