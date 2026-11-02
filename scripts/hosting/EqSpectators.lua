@@ -70,9 +70,11 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.14, handApart = 0.34, handLift = 0.12,
+    handForward = -0.07, handApart = 0.43, handLift = 0.12,
     -- the other hand position: in the lap (James 2026-11-02), half the crowd
-    lapForward = 0.06, lapApart = 0.09, lapLift = 0.17, lapShare = 0.5,
+    lapForward = 0.10, lapApart = 0.17, lapLift = 0.15, lapShare = 0.5,
+    -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
+    handJitter = 0.035,
     handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
@@ -595,7 +597,12 @@ local function placeTargets(person)
     }
     for id, at in pairs(spots) do
         local node = person.targets[id]
-        if node ~= nil then setTranslation(node, at[1], at[2], at[3]) end
+        local j = person.jitter ~= nil and person.jitter[id] or nil
+        if node ~= nil and j ~= nil then
+            setTranslation(node, at[1] + j[1] * p.handJitter, at[2] + j[2] * p.handJitter * 0.5, at[3] + j[3] * p.handJitter)
+        elseif node ~= nil then
+            setTranslation(node, at[1], at[2], at[3])
+        end
     end
     local chains = person.model ~= nil and person.model:getIKChains() or nil
     for id, side in pairs(EqSpectators.ARM_CHAINS) do
@@ -844,6 +851,10 @@ local function spawn(seat, stand, rng, used)
         person.feet = EqSpectators.FEET[math.min(#EqSpectators.FEET, math.floor(rng:next() * #EqSpectators.FEET) + 1)]
         person.feetApart = rng:uniform(-0.03, 0.05)
         person.lap = rng:next() < EqSpectators.pose.lapShare
+        person.jitter = {}
+        for _, id in ipairs({ "leftArm", "rightArm" }) do
+            person.jitter[id] = { rng:uniform(-1, 1), rng:uniform(-1, 1), rng:uniform(-1, 1) }
+        end
     end
     if seat ~= nil then
         link(seat.parent, holder)
