@@ -16,7 +16,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor1" materialId="13" specularColor="0.2 1 0" alphaBlending="true">
+    <Material name="eqSponsor1" materialId="13" specularColor="0.2 0 0" alphaBlending="true" customShaderId="1">
       <Texture fileId="11"/>
     </Material>
     <Material name="sjFlags" materialId="10" specularColor="0.101961 1 0">

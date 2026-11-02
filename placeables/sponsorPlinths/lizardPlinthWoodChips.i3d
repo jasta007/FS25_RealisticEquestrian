@@ -6,6 +6,7 @@
   </Asset>
 
   <Files>
+    <File fileId="15" filename="$data/shaders/vehicleShader.xml"/>
     <File fileId="4" filename="$data/fillPlanes/woodChips_diffuse.png"/>
     <File fileId="5" filename="$data/fillPlanes/woodChips_normal.png"/>
     <File fileId="14" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
@@ -19,7 +20,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor" materialId="10" specularColor="0.2 1 0" alphaBlending="true">
+    <Material name="eqSponsor" materialId="10" specularColor="0.2 0 0" alphaBlending="true" customShaderId="15">
       <Texture fileId="14"/>
     </Material>
     <Material name="lizardBark" materialId="6" specularColor="0.101961 1 0">
