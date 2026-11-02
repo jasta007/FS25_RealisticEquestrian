@@ -13,12 +13,18 @@
     <File fileId="2" filename="xcPlanks_normal.dds"/>
     <File fileId="4" filename="xcStain_diffuse.dds"/>
     <File fileId="5" filename="xcStain_normal.dds"/>
+    <File fileId="9" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="10" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
+    <File fileId="11" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
   </Files>
 
 
   <Materials>
     <Material name="eqSponsor1" materialId="8" specularColor="0.2 0 0" alphaBlending="true" customShaderId="8">
       <Texture fileId="6"/>
+      <Custommap name="detailSpecular" fileId="9"/>
+      <Custommap name="detailNormal" fileId="10"/>
+      <Custommap name="detailDiffuse" fileId="11"/>
     </Material>
     <Material name="xcFlags" materialId="7" specularColor="0.101961 1 0">
       <Texture fileId="7"/>
