@@ -1169,5 +1169,25 @@
         <text name="eq_loan_enter" text="Cet équipement vous est offert par votre sponsor pour votre événement ce mois-ci. Profitez-en !"/>
         <text name="eq_sponsor_discount_from" text="À partir de %s"/>
         <text name="eq_sponsor_discount_after" text="%d mois après la signature"/>
+        <text name="eq_settings_homeRegion" text="Région d'origine"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Où se trouve votre ferme, ce qui décide quels concours sont à l'étranger. Depuis la carte la lit dans la carte (ou le pays de carte de RLRM) ; choisissez une région si c'est faux."/>
+        <text name="eq_settings_homeRegion_auto" text="Depuis la carte"/>
+        <text name="eq_region_northAmerica" text="Amérique du Nord"/>
+        <text name="eq_region_southAmerica" text="Amérique du Sud"/>
+        <text name="eq_region_europe" text="Europe"/>
+        <text name="eq_region_asiaOceania" text="Asie et Océanie"/>
+        <text name="eq_settings_quarantine" text="Quarantaine internationale"/>
+        <text name="eq_settings_quarantine_tooltip" text="Si un cheval revenant d'un concours dans une autre région passe des tours en quarantaine avant de rentrer. Les frais de quarantaine sont payés dans tous les cas."/>
+        <text name="eq_ui_col_region" text="Région"/>
+        <text name="eq_ui_region_home" text="Votre région : %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="depuis la carte, modifiable dans les Paramètres"/>
+        <text name="eq_ui_region_chosen" text="choisie dans les Paramètres"/>
+        <text name="eq_ui_region_quarantine" text="Après un concours à l'étranger, un cheval est en quarantaine : %d tour(s) après un trajet outre-mer (jaune), %d après un long trajet (orange)."/>
+        <text name="eq_ui_region_noQuarantine" text="La quarantaine internationale est désactivée."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, puis %d tour(s) en quarantaine"/>
+        <text name="eq_ui_status_quarantine" text="En quarantaine"/>
+        <text name="eq_status_quarantine" text="En quarantaine, %d tour(s)"/>
+        <text name="eq_enter_quarantine" text="Ce cheval est en quarantaine après un concours à l'étranger. Il pourra concourir une fois rentré."/>
+        <text name="eq_quarantine_home" text="%s est rentré de quarantaine."/>
     </texts>
 </l10n>

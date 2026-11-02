@@ -69,7 +69,8 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
-        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6 }
+        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6,
+        homeRegion = "auto", quarantine = true }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -694,6 +695,8 @@ function EqCompetitionManager.resolve(event, horses, month)
             notify(entry.farmId, text, "EQ_NOT_DELIVERED", horse.animal, entry.horseId)
             keepResult(record, summary, placing, { text })
         else
+            -- It went: back from abroad it goes into quarantine, whether it started or not.
+            EqCompetitionManager.startQuarantine(record, event)
             -- A mare entered early in her pregnancy can pass the limit before the event runs.
             local reason = EqRisk.scratchReason(record, horse.animal.health, riskRng)
             if reason == nil and EqCompetitionManager.isTooFarInFoal(horse.animal) then reason = "inFoal" end
@@ -927,10 +930,11 @@ end
 --- @param record table
 --- @param kind string the event's kind
 --- @param animal table|nil RLRM Animal, for the in-foal check
---- @return string|nil reason "retired", "injured", "sick", "unwell", "settling", "inFoal", "foaled" or "rested", nil when it can go
+--- @return string|nil reason "retired", "injured", "quarantine", "sick", "unwell", "settling", "inFoal", "foaled" or "rested", nil when it can go
 function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
+    if EqQuarantine.isIn(record) then return "quarantine" end
     if EqInjury.isSick(animal) then return "sick" end
     if animal ~= nil and (animal.health or 100) <= EqRisk.ENTRY_HEALTH_MIN then return "unwell" end
     if record:isSettling() then return "settling" end
@@ -997,6 +1001,52 @@ function EqCompetitionManager.enteredAnimals(kind, horses)
 end
 
 
+--- @param event table
+--- @return number rounds of quarantine after this event, 0 at home or with the setting off
+function EqCompetitionManager.quarantineRounds(event)
+    if event == nil or event.hosted ~= nil then return 0 end
+    return EqQuarantine.roundsFor(EqCompetitionManager.config, EqCompetitionManager.eventDistance(event),
+        EqCompetitionManager.settings)
+end
+
+
+--- A horse that went to this event goes into quarantine if it was abroad.
+--- @param record table
+--- @param event table
+function EqCompetitionManager.startQuarantine(record, event)
+    EqQuarantine.start(record, EqCompetitionManager.quarantineRounds(event))
+end
+
+
+--- One round passes for every horse in quarantine; those whose stay ends come home (and are
+--- told so). With the setting off, every stay ends now.
+--- @param horses table from indexHorses
+--- @return table animals the RLRM Animals now home, to redraw
+function EqCompetitionManager.tickQuarantine(horses)
+    local ids = {}
+    for id, record in pairs(EqRegistry.records or {}) do
+        if EqQuarantine.isIn(record) then table.insert(ids, id) end
+    end
+    table.sort(ids)
+
+    local home = {}
+    local releaseAll = EqCompetitionManager.settings.quarantine == false
+    for _, id in ipairs(ids) do
+        local record = EqRegistry.records[id]
+        if releaseAll then record.quarantine = 1 end
+        if EqQuarantine.tick(record) then
+            local horse = horses[id]
+            if horse ~= nil then
+                table.insert(home, horse.animal)
+                local name = horse.animal.getName ~= nil and horse.animal:getName() or id
+                notify(horse.farmId, string.format(g_i18n:getText("eq_quarantine_home"), name), "EQ_QUARANTINE_DONE", horse.animal, id)
+            end
+        end
+    end
+    return home
+end
+
+
 --- Redraw the pastures of horses leaving for, or back from, events. Does nothing when the
 --- away-horses hook is off (it needs RLRM's visual update).
 --- @param animals table RLRM Animals
@@ -1011,6 +1061,10 @@ end
 function EqCompetitionManager.turnOver(kind, month)
     local horses = indexHorses()
     local returning = EqCompetitionManager.enteredAnimals(kind, horses)
+    -- A round has passed for horses in quarantine (before this round's results put others in).
+    if kind == EqCompetition.KIND_ROUND then
+        for _, animal in ipairs(EqCompetitionManager.tickQuarantine(horses)) do table.insert(returning, animal) end
+    end
     local ids = {}
     for id, event in pairs(EqCompetitionManager.events) do
         if event.kind == kind then table.insert(ids, id) end
@@ -1142,6 +1196,28 @@ end
 --- the same map, so the schedule draws the same events everywhere.
 --- @return string|nil region nil before the config is loaded
 function EqCompetitionManager.homeRegion()
+    local chosen = EqCompetitionManager.chosenHomeRegion()
+    if chosen ~= nil then return chosen end
+    return EqCompetitionManager.mapHomeRegion()
+end
+
+
+--- The home region picked in the settings, nil for "From map" or a region events.xml lacks.
+--- @return string|nil region
+function EqCompetitionManager.chosenHomeRegion()
+    local config = EqCompetitionManager.config
+    local chosen = EqCompetitionManager.settings.homeRegion
+    if chosen == nil or chosen == "auto" or config == nil then return nil end
+    for _, region in ipairs(config.regions or {}) do
+        if region.name == chosen then return chosen end
+    end
+    return nil
+end
+
+
+--- The home region the map says, whatever the setting.
+--- @return string|nil region
+function EqCompetitionManager.mapHomeRegion()
     local config = EqCompetitionManager.config
     if config == nil or config.home == nil then return nil end
     local home = config.home
@@ -1388,6 +1464,8 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
     xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
     xmlFile:setInt(key .. ".settings#hostInterval", EqCompetitionManager.settings.hostInterval)
+    xmlFile:setString(key .. ".settings#homeRegion", EqCompetitionManager.settings.homeRegion)
+    xmlFile:setBool(key .. ".settings#quarantine", EqCompetitionManager.settings.quarantine)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
@@ -1476,6 +1554,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
     settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
     settings.hostInterval = xmlFile:getInt(key .. ".settings#hostInterval", settings.hostInterval)
+    settings.homeRegion = xmlFile:getString(key .. ".settings#homeRegion", settings.homeRegion)
+    settings.quarantine = xmlFile:getBool(key .. ".settings#quarantine", settings.quarantine)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")

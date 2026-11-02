@@ -1167,5 +1167,25 @@
         <text name="eq_loan_enter" text="Este equipamento foi cedido pelo seu patrocinador para usar durante o seu evento este mês. Aproveite!"/>
         <text name="eq_sponsor_discount_from" text="A partir de %s"/>
         <text name="eq_sponsor_discount_after" text="Após %d meses da assinatura"/>
+        <text name="eq_settings_homeRegion" text="Região de origem"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Onde fica a sua quinta, o que decide que eventos são no estrangeiro. Do mapa lê do mapa (ou do país do mapa do RLRM); escolha uma região se estiver errada."/>
+        <text name="eq_settings_homeRegion_auto" text="Do mapa"/>
+        <text name="eq_region_northAmerica" text="América do Norte"/>
+        <text name="eq_region_southAmerica" text="América do Sul"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Ásia e Oceânia"/>
+        <text name="eq_settings_quarantine" text="Quarentena internacional"/>
+        <text name="eq_settings_quarantine_tooltip" text="Se um cavalo que regressa de um evento noutra região passa rondas em quarentena antes de voltar a casa. As taxas de quarentena são pagas de qualquer forma."/>
+        <text name="eq_ui_col_region" text="Região"/>
+        <text name="eq_ui_region_home" text="A sua região: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="do mapa, altere nas Definições"/>
+        <text name="eq_ui_region_chosen" text="escolhida nas Definições"/>
+        <text name="eq_ui_region_quarantine" text="Depois de um evento no estrangeiro o cavalo fica em quarentena: %d ronda(s) após uma viagem ao exterior (amarelo), %d após uma de longa distância (laranja)."/>
+        <text name="eq_ui_region_noQuarantine" text="A quarentena internacional está desligada."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, depois %d ronda(s) em quarentena"/>
+        <text name="eq_ui_status_quarantine" text="Em quarentena"/>
+        <text name="eq_status_quarantine" text="Em quarentena, %d ronda(s)"/>
+        <text name="eq_enter_quarantine" text="Esse cavalo está em quarentena após um evento no estrangeiro. Poderá competir quando estiver em casa."/>
+        <text name="eq_quarantine_home" text="%s regressou da quarentena."/>
     </texts>
 </l10n>

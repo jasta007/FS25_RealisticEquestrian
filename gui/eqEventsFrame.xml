@@ -50,30 +50,37 @@
         <MultiTextOption profile="fs25_subCategorySelectorTabbed" id="subCategoryPaging"
                          position="0px -10px" onClick="onSubCategoryChanged"/>
 
+        <!-- Your home region and what a trip abroad means, over the events table -->
+        <GuiElement profile="rlMenu_container" id="regionBox" position="20px -72px" size="1000px 40px">
+            <Text profile="rlMenu_tableRowCellLeftAligned" position="10px 0px" size="990px 40px" id="regionText" textLayoutMode="scrolling"/>
+        </GuiElement>
+
         <!-- Events table -->
         <GuiElement profile="rlMenu_container" id="eventsHeader" position="20px -120px" size="1000px 40px">
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="215px 40px" text="$l10n_eq_ui_col_event"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="235px 0px" size="125px 40px" text="$l10n_eq_ui_col_type"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="370px 0px" size="110px 40px" text="$l10n_eq_ui_col_level"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="485px 0px" size="100px 40px" text="$l10n_eq_ui_col_going"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="590px 0px" size="80px 40px"  text="$l10n_eq_ui_col_risk"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="670px 0px" size="80px 40px"  text="$l10n_eq_ui_col_fee"/>
-            <Text profile="rlMenu_tableHeaderRightAligned" position="755px 0px" size="95px 40px"  text="$l10n_eq_ui_col_prize"/>
-            <Text profile="rlMenu_tableHeaderLeftAligned"  position="860px 0px" size="140px 40px" text="$l10n_eq_ui_col_yours"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="10px 0px"  size="190px 40px" text="$l10n_eq_ui_col_event"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="205px 0px" size="105px 40px" text="$l10n_eq_ui_col_region" textLayoutMode="scrolling"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="315px 0px" size="110px 40px" text="$l10n_eq_ui_col_type"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="430px 0px" size="95px 40px"  text="$l10n_eq_ui_col_level"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="530px 0px" size="85px 40px"  text="$l10n_eq_ui_col_going" textLayoutMode="scrolling"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="620px 0px" size="70px 40px"  text="$l10n_eq_ui_col_risk"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="690px 0px" size="75px 40px"  text="$l10n_eq_ui_col_fee" textLayoutMode="scrolling"/>
+            <Text profile="rlMenu_tableHeaderRightAligned" position="770px 0px" size="85px 40px"  text="$l10n_eq_ui_col_prize" textLayoutMode="scrolling"/>
+            <Text profile="rlMenu_tableHeaderLeftAligned"  position="865px 0px" size="135px 40px" text="$l10n_eq_ui_col_yours"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px 2px"/>
         </GuiElement>
 
         <GuiElement profile="rlMenu_container" id="eventsBox" position="20px -165px" size="1020px 700px">
             <SmoothList profile="rlMenu_tableList" id="eventsList" position="0px 0px" size="1000px 700px">
                 <ListItem profile="rlMenu_tableListItem" name="eventRowTemplate" size="1000px 48px">
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="215px 48px" name="title" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="235px 0px" size="125px 48px" name="type" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="370px 0px" size="110px 48px" name="level" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="485px 0px" size="100px 48px" name="going"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="590px 0px" size="80px 48px"  name="risk" textLayoutMode="scrolling"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="670px 0px" size="80px 48px"  name="fee"/>
-                    <Text profile="rlMenu_tableRowCellRightAligned" position="755px 0px" size="95px 48px"  name="prize"/>
-                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="860px 0px" size="140px 48px" name="yours" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="10px 0px"  size="190px 48px" name="title" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="205px 0px" size="105px 48px" name="region" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="315px 0px" size="110px 48px" name="type" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="430px 0px" size="95px 48px"  name="level" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="530px 0px" size="85px 48px"  name="going"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="620px 0px" size="70px 48px"  name="risk" textLayoutMode="scrolling"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="690px 0px" size="75px 48px"  name="fee"/>
+                    <Text profile="rlMenu_tableRowCellRightAligned" position="770px 0px" size="85px 48px"  name="prize"/>
+                    <Text profile="rlMenu_tableRowCellLeftAligned"  position="865px 0px" size="135px 48px" name="yours" textLayoutMode="scrolling"/>
                 </ListItem>
             </SmoothList>
             <ThreePartBitmap profile="fs25_listSliderBox" position="-5px 0px" size="12px 700px" with="anchorTopRight">

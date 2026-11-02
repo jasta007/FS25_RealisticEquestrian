@@ -1167,5 +1167,25 @@
         <text name="eq_loan_enter" text="この機材は、今月のイベント期間中に使えるようスポンサーから提供されたものです。お楽しみください！"/>
         <text name="eq_sponsor_discount_from" text="%sから"/>
         <text name="eq_sponsor_discount_after" text="契約から%dか月後に開始"/>
+        <text name="eq_settings_homeRegion" text="ホーム地域"/>
+        <text name="eq_settings_homeRegion_tooltip" text="牧場のある地域で、どの大会が海外かを決めます。「マップから」はマップ（またはRLRMのマップの国）から読み取ります。違う場合は地域を選んでください。"/>
+        <text name="eq_settings_homeRegion_auto" text="マップから"/>
+        <text name="eq_region_northAmerica" text="北アメリカ"/>
+        <text name="eq_region_southAmerica" text="南アメリカ"/>
+        <text name="eq_region_europe" text="ヨーロッパ"/>
+        <text name="eq_region_asiaOceania" text="アジア・オセアニア"/>
+        <text name="eq_settings_quarantine" text="国際検疫"/>
+        <text name="eq_settings_quarantine_tooltip" text="別の地域の大会から戻った馬が、帰宅前に何ラウンドか検疫を受けるかどうか。検疫費用はどちらでも支払われます。"/>
+        <text name="eq_ui_col_region" text="地域"/>
+        <text name="eq_ui_region_home" text="あなたの地域: %s（%s）。"/>
+        <text name="eq_ui_region_fromMap" text="マップから。設定で変更できます"/>
+        <text name="eq_ui_region_chosen" text="設定で選択"/>
+        <text name="eq_ui_region_quarantine" text="海外の大会の後、馬は検疫に入ります: 海外遠征の後は%dラウンド（黄）、長距離遠征の後は%dラウンド（橙）。"/>
+        <text name="eq_ui_region_noQuarantine" text="国際検疫はオフです。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s、その後%dラウンド検疫"/>
+        <text name="eq_ui_status_quarantine" text="検疫中"/>
+        <text name="eq_status_quarantine" text="検疫中、%dラウンド"/>
+        <text name="eq_enter_quarantine" text="この馬は海外の大会の後で検疫中です。帰宅すれば出場できます。"/>
+        <text name="eq_quarantine_home" text="%sが検疫から戻りました。"/>
     </texts>
 </l10n>

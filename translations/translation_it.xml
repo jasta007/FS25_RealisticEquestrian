@@ -1167,5 +1167,25 @@
         <text name="eq_loan_enter" text="Questa attrezzatura ti è stata donata dal tuo sponsor per il tuo evento di questo mese. Divertiti!"/>
         <text name="eq_sponsor_discount_from" text="Da %s"/>
         <text name="eq_sponsor_discount_after" text="Dopo %d mesi dalla firma"/>
+        <text name="eq_settings_homeRegion" text="Regione di casa"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Dove si trova la tua fattoria, che decide quali eventi sono all'estero. Dalla mappa la legge dalla mappa (o dal paese della mappa di RLRM); scegli una regione se è sbagliata."/>
+        <text name="eq_settings_homeRegion_auto" text="Dalla mappa"/>
+        <text name="eq_region_northAmerica" text="Nord America"/>
+        <text name="eq_region_southAmerica" text="Sud America"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Asia e Oceania"/>
+        <text name="eq_settings_quarantine" text="Quarantena internazionale"/>
+        <text name="eq_settings_quarantine_tooltip" text="Se un cavallo di ritorno da un evento in un'altra regione passa dei turni in quarantena prima di tornare a casa. Le spese di quarantena si pagano comunque."/>
+        <text name="eq_ui_col_region" text="Regione"/>
+        <text name="eq_ui_region_home" text="La tua regione: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="dalla mappa, modificabile nelle Impostazioni"/>
+        <text name="eq_ui_region_chosen" text="scelta nelle Impostazioni"/>
+        <text name="eq_ui_region_quarantine" text="Dopo un evento all'estero il cavallo va in quarantena: %d turno/i dopo un viaggio oltremare (giallo), %d dopo uno a lunga distanza (arancione)."/>
+        <text name="eq_ui_region_noQuarantine" text="La quarantena internazionale è disattivata."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, poi %d turno/i in quarantena"/>
+        <text name="eq_ui_status_quarantine" text="In quarantena"/>
+        <text name="eq_status_quarantine" text="In quarantena, %d turno/i"/>
+        <text name="eq_enter_quarantine" text="Quel cavallo è in quarantena dopo un evento all'estero. Potrà gareggiare una volta a casa."/>
+        <text name="eq_quarantine_home" text="%s è tornato dalla quarantena."/>
     </texts>
 </l10n>

@@ -40,6 +40,9 @@ function EqConsole:consoleListHorses()
             elseif record:isSettling() then
                 status = "  SETTLING IN"
             end
+            if EqQuarantine.isIn(record) then
+                status = status .. string.format("  IN QUARANTINE (%d round(s))", EqQuarantine.roundsLeft(record))
+            end
             if record.ownedMonths ~= nil then
                 status = status .. string.format("  from the dealer, %d month(s) here, %s", record.ownedMonths,
                     record.revealed and "potential known" or "potential still the dealer's view")
@@ -456,6 +459,7 @@ end
 
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
 ---     [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x] [entryFeeScale x] [prizeScale x]
+---     [homeRegion auto|<region>] [quarantine on|off]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -477,17 +481,22 @@ function EqConsole:consoleSettings(name, value)
         settings.trainingRate = tonumber(value)
     elseif (name == "entryFeeScale" or name == "prizeScale") and tonumber(value) ~= nil and tonumber(value) > 0 then
         settings[name] = tonumber(value)
+    elseif name == "homeRegion" and EqSettings.isHomeRegion(value) then
+        settings.homeRegion = value
+    elseif name == "quarantine" and (value == "on" or value == "off") then
+        settings.quarantine = value == "on"
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
         settings.eventsMin, math.max(settings.eventsMin, settings.eventsMax),
         tostring(EqSettings.trainingRate(settings)), tostring(EqSettings.multiplier(settings, "entryFeeScale")),
-        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()))
+        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()),
+        tostring(settings.homeRegion), tostring(EqCompetitionManager.mapHomeRegion()), onOff(settings.quarantine ~= false))
 end
 
 

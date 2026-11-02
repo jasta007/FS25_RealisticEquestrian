@@ -1167,5 +1167,25 @@
         <text name="eq_loan_enter" text="Tento stroj ti věnoval tvůj sponzor k použití během tvé akce tento měsíc. Užij si to!"/>
         <text name="eq_sponsor_discount_from" text="Od %s"/>
         <text name="eq_sponsor_discount_after" text="Po %d měsících od podpisu"/>
+        <text name="eq_settings_homeRegion" text="Domovský region"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Kde leží vaše farma; podle toho se určuje, které závody jsou v zahraničí. Z mapy jej čte z mapy (nebo ze země mapy v RLRM); pokud je špatně, vyberte region."/>
+        <text name="eq_settings_homeRegion_auto" text="Z mapy"/>
+        <text name="eq_region_northAmerica" text="Severní Amerika"/>
+        <text name="eq_region_southAmerica" text="Jižní Amerika"/>
+        <text name="eq_region_europe" text="Evropa"/>
+        <text name="eq_region_asiaOceania" text="Asie a Oceánie"/>
+        <text name="eq_settings_quarantine" text="Mezinárodní karanténa"/>
+        <text name="eq_settings_quarantine_tooltip" text="Zda kůň po závodech v jiném regionu stráví kola v karanténě, než se vrátí domů. Poplatky za karanténu se platí v každém případě."/>
+        <text name="eq_ui_col_region" text="Region"/>
+        <text name="eq_ui_region_home" text="Váš region: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="z mapy, změňte v Nastavení"/>
+        <text name="eq_ui_region_chosen" text="zvolen v Nastavení"/>
+        <text name="eq_ui_region_quarantine" text="Po závodech v zahraničí jde kůň do karantény: %d kol(o) po cestě za oceán (žlutě), %d po dálkové cestě (oranžově)."/>
+        <text name="eq_ui_region_noQuarantine" text="Mezinárodní karanténa je vypnutá."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, poté %d kol(o) v karanténě"/>
+        <text name="eq_ui_status_quarantine" text="V karanténě"/>
+        <text name="eq_status_quarantine" text="V karanténě, %d kol(o)"/>
+        <text name="eq_enter_quarantine" text="Tento kůň je v karanténě po závodech v zahraničí. Závodit může, až bude doma."/>
+        <text name="eq_quarantine_home" text="Kůň %s se vrátil z karantény."/>
     </texts>
 </l10n>
