@@ -66,6 +66,7 @@ source(modDirectory .. "scripts/attire/EqAttire.lua")
 source(modDirectory .. "scripts/hosting/EqHosting.lua")
 source(modDirectory .. "scripts/hosting/EqHostVenue.lua")
 source(modDirectory .. "scripts/hosting/EqHostManager.lua")
+source(modDirectory .. "scripts/hosting/EqSpectators.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorship.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorManager.lua")
 source(modDirectory .. "scripts/sponsors/EqSponsorLoans.lua")
@@ -308,6 +309,8 @@ guarded("plinth hook", function() EqPlinths.install(guarded) end)
 -- Lizard's one-off sponsorship (wraps EqSponsorManager after the plinths, so no rival penalty on it).
 guarded("lizard hook", function() EqLizard.install(guarded) end)
 guarded("dressage outfit hook", function() EqAttire.install(guarded, modDirectory) end)
+-- People on the bleachers and at the rope spectator boxes during your hosted events.
+guarded("spectators hook", function() EqSpectators.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()

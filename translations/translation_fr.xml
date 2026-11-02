@@ -763,7 +763,7 @@
         <text name="eq_shop_xcGateSimple" text="Porte de passage"/>
         <text name="eq_shop_xcGate_function" text="Une porte à franchir au pas ou au galop, pas un obstacle : assez large et haute pour tout cheval, au logo de votre sponsor."/>
         <text name="eq_shop_xcRope" text="Corde de balisage"/>
-        <text name="eq_shop_xcRope_function" text="Une corde légère pour baliser le parcours, sans collision. Choisissez une corde simple ou avec un petit panneau sponsor : les panneaux n'ajoutent qu'un peu de visibilité."/>
+        <text name="eq_shop_xcRope_function" text="Une corde légère pour baliser le parcours, sans collision. Choisissez une corde simple, avec un petit panneau sponsor (les panneaux n'ajoutent qu'un peu de visibilité) ou avec une zone spectateurs d'un côté, où le public se tient pendant vos concours."/>
         <text name="eq_shop_plinthDrive" text="Podium traversant"/>
         <text name="eq_shop_plinthRamp" text="Rampe d'exposition"/>
         <text name="eq_shop_plinthRampLarge" text="Grande rampe d'exposition"/>
@@ -1009,6 +1009,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organisation"/>
         <text name="eq_settings_hostInterval" text="Mois entre vos concours"/>
         <text name="eq_settings_hostInterval_tooltip" text="Nombre de mois après le mois de votre dernier concours organisé avant d'en organiser un autre."/>
+        <text name="eq_settings_crowdDensity" text="Affluence du public"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Combien de spectateurs viennent à vos concours, sur vos tribunes et dans les zones spectateurs le long de la corde (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Faible"/>
+        <text name="eq_settings_crowd_medium" text="Moyenne"/>
+        <text name="eq_settings_crowd_high" text="Forte"/>
         <text name="eq_host_warning" text="Il manque à votre %s : %s. Réglez-le aujourd'hui ou le concours sera annulé demain."/>
         <text name="eq_host_cancelled" text="Votre %s a été annulé, il manquait toujours : %s. Votre réputation d'organisateur en souffre."/>
         <text name="eq_host_done" text="Votre %s est terminé : %d chevaux invités sont venus. Recettes %s (%s d'engagements, %s d'entrées), popularité %d."/>

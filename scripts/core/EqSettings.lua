@@ -71,6 +71,10 @@ EqSettings.ROWS = {
         for i, months in ipairs(EqSettings.HOST_INTERVALS) do texts[i] = { text = tostring(months) } end
         return texts
     end)(), default = 6 },
+    -- Spectators at your hosted events (EqSpectators): how many come.
+    { id = "crowdDensity", values = { "off", "low", "medium", "high" },
+        texts = { { key = "eq_settings_off" }, { key = "eq_settings_crowd_low" }, { key = "eq_settings_crowd_medium" },
+            { key = "eq_settings_crowd_high" } }, default = "medium" },
 }
 
 EqSettings.BY_ID = {}

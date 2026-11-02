@@ -278,8 +278,11 @@ function EqXcHide.update()
     local due = EqXcHide.scannedAt == nil or now - EqXcHide.scannedAt >= EqXcHide.SCAN_MS or now < EqXcHide.scannedAt
     if mode == EqXcHide.mode and not due then return end
     local pieces = EqXcHide.pieces()
+    -- Rope Markers are the crowd's barrier at your hosted events: seen (ridden through) then
+    local ropes = EqSpectators ~= nil and EqSponsors ~= nil and not state.multiplayer and EqSpectators.ropesShown()
     for _, placeable in ipairs(pieces) do
         local want = EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state)
+        if ropes and want == EqXcHide.HIDDEN and EqSponsors.isRope(placeable.configFileName) then want = EqXcHide.GHOST end
         -- a drop wall with a machine parked on its deck stays (EqPlinths): never pull the floor away
         if want ~= EqXcHide.SHOWN and EqPlinths ~= nil and EqPlinths.holdsMachine(placeable) then want = EqXcHide.SHOWN end
         EqXcHide.apply(placeable, want)
