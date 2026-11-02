@@ -62,12 +62,14 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- Hands (James 2026-11-02: first try bent the arms like rubber): resting on the thighs, the hand
 -- targets turned by handPitch/handYaw/handRoll degrees (yaw and roll mirrored for the left hand);
 -- arms = 0 leaves the arms to the idle clip. Second try (James 2026-11-02, hands still odd: on the
--- knees, fingers curled): the wrists further back, mid-thigh. seatClip = 1 sits them with the
--- standing idle instead of the driver's one (relaxed hands, arms hanging by the sides).
+-- knees, fingers curled): the wrists further back, mid-thigh. Third (arms good, fingers still
+-- curled round the driver clip's steering wheel; the standing clip sank them into the bench):
+-- the finger joints are put back to the character's rest pose every posed frame (relaxFingers),
+-- and nobody wears gloves.
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
     handForward = -0.02, handApart = 0.18, handLift = 0.13,
-    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, seatClip = 0,
+    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 1,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -426,6 +428,8 @@ local function setLook(style, female, rng, used)
             beard.selectedItemIndex = fits[math.floor(rng:next() * #fits) + 1]
         end
     end
+    -- bare hands (James 2026-11-02: the gloved ones looked the oddest)
+    if type(configs.gloves) == "table" then configs.gloves.selectedItemIndex = 0 end
     -- hair colour (beard matches), when the style keeps a colour per slot
     if type(hair) == "table" and type(hair.selectedColorIndex) == "number" then
         local colors = hair.colors or (hair.items ~= nil and hair.items[hair.selectedItemIndex or 1] ~= nil and hair.items[hair.selectedItemIndex or 1].colors) or nil
@@ -517,7 +521,7 @@ end
 local function startIdle(person)
     local skeleton = person.model.skeleton
     if skeleton == nil or g_animCache == nil or AnimationCache == nil then return end
-    local driver = person.seated and EqSpectators.pose.seatClip == 0
+    local driver = person.seated
     local cacheId = driver and (AnimationCache.VEHICLE_CHARACTER or AnimationCache.CHARACTER) or AnimationCache.CHARACTER
     local animNode = g_animCache:getNode(cacheId)
     if animNode == nil or animNode == 0 then return end
@@ -554,7 +558,7 @@ end
 --- Seated: targets for the feet and hands, in the seat's frame (+z the way the person faces).
 --- @return boolean true when the hands are placed by IK (not with arms 0 or the standing clip)
 function EqSpectators.armsOn()
-    return EqSpectators.pose.arms ~= 0 and EqSpectators.pose.seatClip == 0
+    return EqSpectators.pose.arms ~= 0
 end
 
 
@@ -632,6 +636,50 @@ local function ground(person)
 end
 
 
+--- @param name string|nil a skeleton joint's name
+--- @return boolean true for a finger or thumb joint (LeftHandIndex1, RightHandThumb2, ...)
+function EqSpectators.isFinger(name)
+    local lower = string.lower(tostring(name or ""))
+    if string.find(lower, "finger", 1, true) ~= nil then return true end
+    if string.find(lower, "hand", 1, true) == nil then return false end
+    for _, word in ipairs({ "thumb", "index", "middle", "ring", "pinky", "little" }) do
+        if string.find(lower, word, 1, true) ~= nil then return true end
+    end
+    return false
+end
+
+
+--- The finger joints and their rest rotations, taken before any clip plays (open hands).
+local function findFingers(person)
+    local root = person.model.skeleton or person.model.rootNode
+    person.fingers = {}
+    local stack = { root }
+    while #stack > 0 do
+        local node = table.remove(stack)
+        if EqSpectators.isFinger(getName(node)) then
+            local rx, ry, rz = getRotation(node)
+            table.insert(person.fingers, { node = node, rx = rx, ry = ry, rz = rz })
+        end
+        for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+    end
+    if not EqSpectators.loggedFingers then
+        EqSpectators.loggedFingers = true
+        local names = {}
+        for i, finger in ipairs(person.fingers) do if i <= 12 then table.insert(names, getName(finger.node)) end end
+        Log:info("EqSpectators: %d finger joints (%s)", #person.fingers, table.concat(names, ", "))
+    end
+end
+
+
+--- Seated: open the hands the driver clip curls round a steering wheel.
+local function relaxFingers(person)
+    if EqSpectators.pose.fingers == 0 or person.fingers == nil then return end
+    for _, finger in ipairs(person.fingers) do
+        setRotation(finger.node, finger.rx, finger.ry, finger.rz)
+    end
+end
+
+
 local function onModelLoaded(_, state, person)
     local model = person.model
     if person.deleted or model == nil then
@@ -644,6 +692,7 @@ local function onModelLoaded(_, state, person)
         return
     end
     link(person.holder, model.rootNode)
+    if person.seated then EqLog.try("EqSpectators fingers", findFingers, person) end
     EqLog.try("EqSpectators idle", startIdle, person)
     if person.seated then
         local chains = model:getIKChains()
@@ -912,6 +961,7 @@ function EqSpectators.update()
                     if EqSpectators.armsOn() or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
                 end
                 IKUtil.updateIKChains(chains, true)
+                relaxFingers(person)
             end
         end
     end
@@ -954,13 +1004,11 @@ function EqSpectators.console(command, a, b)
         if a ~= nil and EqSpectators.pose[a] ~= nil and value ~= nil then
             EqSpectators.pose[a] = value
             EqSpectators.repose()
-            -- the idle clip is chosen as a person loads: seat everyone again
-            if a == "seatClip" then EqSpectators.key, EqSpectators.scannedAt = nil, nil end
         end
         local parts = {}
         for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
         table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; seatClip 1 = sit with the standing idle)"
+        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; fingers 0 = the clip's curled fingers)"
     end
     local farm = farmId()
     local seats, stands = {}, {}

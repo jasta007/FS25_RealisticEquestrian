@@ -5955,6 +5955,9 @@ end)()
     entityExists, delete = oldExists, oldDelete
     check("spectators: the animal dealer and fisherman faces are named characters (once per crowd)", EqSpectators.namedCharacter("headNPCQG01") == "npc"
         and EqSpectators.namedCharacter("bodyFisherman01") == "fisherman" and EqSpectators.namedCharacter("head03") == nil)
+    check("spectators: finger joints found by name", EqSpectators.isFinger("LeftHandIndex1") and EqSpectators.isFinger("RightHandThumb3")
+        and EqSpectators.isFinger("rightFinger02") and not EqSpectators.isFinger("LeftHand") and not EqSpectators.isFinger("LeftForeArm")
+        and not EqSpectators.isFinger("Spine2"))
     check("spectators: beards are made per face", EqSpectators.beardFits("goatee01_head02", "head02")
         and not EqSpectators.beardFits("goatee01_head02", "head01") and not EqSpectators.beardFits("stubble_head01", nil))
     check("spectators: women in the crowd from the female player", EqSpectators.FEMALE_SHARE > 0 and EqSpectators.FEMALE_SHARE < 1
