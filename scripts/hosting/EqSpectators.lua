@@ -79,6 +79,8 @@ EqSpectators.pose = {
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
+EqSpectators.POSE_DEFAULTS = {}
+for name, value in pairs(EqSpectators.pose) do EqSpectators.POSE_DEFAULTS[name] = value end
 EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
 -- Each seated person's feet: one of these shares of footForward, picked at random (James
 -- 2026-11-02: everyone with their feet stuck out that far looked weird), and a little wider or
@@ -824,6 +826,28 @@ local function aimHands(person)
 end
 
 
+--- Seated: every IK solve starts the arms from the same joint turns (James 2026-11-02: "the IK
+--- can just go mental after a while", each solve building on the last). The hand, forearm, upper
+--- arm and shoulder turns are taken before the first solve and put back before each one.
+local function armStart(person)
+    if person.wrists == nil then return end
+    if person.armRest == nil then
+        person.armRest = {}
+        for _, wrist in pairs(person.wrists) do
+            local node = wrist.node
+            for _ = 1, 4 do
+                if node == nil or node == 0 then break end
+                local rx, ry, rz = getRotation(node)
+                table.insert(person.armRest, { node = node, rx = rx, ry = ry, rz = rz })
+                node = getParent(node)
+            end
+        end
+        return
+    end
+    for _, joint in ipairs(person.armRest) do setRotation(joint.node, joint.rx, joint.ry, joint.rz) end
+end
+
+
 --- Seated: open the hands the driver clip curls round a steering wheel.
 local function relaxFingers(person)
     if EqSpectators.pose.fingers == 0 or person.fingers == nil then return end
@@ -1139,6 +1163,7 @@ function EqSpectators.update()
                 for id in pairs(person.targets) do
                     if EqSpectators.armsOn() or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
                 end
+                EqLog.try("EqSpectators arm start", armStart, person)
                 IKUtil.updateIKChains(chains, true)
                 relaxFingers(person)
             end
@@ -1179,6 +1204,12 @@ function EqSpectators.console(command, a, b)
         EqSpectators.forced, EqSpectators.forcedCounts = nil, nil
         EqSpectators.key, EqSpectators.scannedAt = nil, nil
         return "Spectators come to your hosted events (08:00-19:00) as the Crowd density setting says"
+    elseif command == "reset" then
+        -- the pose back to its defaults and everyone seated afresh
+        for name, value in pairs(EqSpectators.POSE_DEFAULTS) do EqSpectators.pose[name] = value end
+        EqSpectators.handPose = nil
+        EqSpectators.key, EqSpectators.scannedAt = nil, nil
+        return "Spectators: pose back to its defaults, everyone seated afresh"
     elseif command == "handpose" then
         EqSpectators.handPose = a
         local used = nil
@@ -1230,7 +1261,7 @@ function EqSpectators.console(command, a, b)
     end
     print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
         scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
-    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | info]",
+    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | reset | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
 end
