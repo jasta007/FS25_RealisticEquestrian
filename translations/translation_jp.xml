@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian は Realistic Livestock（Ritter 版）を見つけられないため、無効になっています。Realistic Livestock の最新版をインストールしてください。"/>
+        <text name="eq_rlrm_incompatible" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian には古すぎるため、Realistic Equestrian は無効になっています。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
+        <text name="eq_rlrm_old" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian が必要とするバージョン（%s 以降）より古いため、一部の機能が動作しない場合があります。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
         <text name="eq_lizard_accept" text="受ける"/>
         <text name="eq_lizard_decline" text="断る"/>

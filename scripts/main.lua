@@ -43,6 +43,7 @@ source(modDirectory .. "scripts/training/EqCourseHooks.lua")
 source(modDirectory .. "scripts/training/EqDressageEditor.lua")
 source(modDirectory .. "scripts/training/EqPoles.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
+source(modDirectory .. "scripts/gui/EqRLRMWarning.lua")
 source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqLateral.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
@@ -311,6 +312,9 @@ guarded("lizard hook", function() EqLizard.install(guarded) end)
 guarded("dressage outfit hook", function() EqAttire.install(guarded, modDirectory) end)
 -- People on the bleachers and at the rope spectator boxes during your hosted events.
 guarded("spectators hook", function() EqSpectators.install(guarded) end)
+
+-- Tells the player when RLRM is too old; it has to run when the mod is switched off too.
+guarded("RLRM version popup hook", function() EqRLRMWarning.install(guarded) end)
 
 
 TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function()
