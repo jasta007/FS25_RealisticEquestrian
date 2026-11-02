@@ -17,6 +17,8 @@
 
 EqSponsorDiscounts = {}
 
+local Log = EqLog
+
 EqSponsorDiscounts.SCAN_MS = 3000
 EqSponsorDiscounts.WRAPS = {
     getRepairPrice = "repair",
