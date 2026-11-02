@@ -391,7 +391,19 @@ local function setLook(style, female, rng, used)
         local body = findItem(configs.onepiece, "body" .. string.sub(faceName, 5))
         if body ~= nil then configs.onepiece.selectedItemIndex = body end
     elseif #faces > 0 then
-        local i = faces[math.floor(rng:next() * #faces) + 1]
+        -- the least used face of this crowd, so no face repeats until every one is out (James
+        -- 2026-11-02: the game's characters like the grandpa share these faces)
+        local key = female and "female" or "male"
+        used.faces = used.faces or {}
+        used.faces[key] = used.faces[key] or {}
+        local counts = used.faces[key]
+        local least, fewest = {}, math.huge
+        for _, i in ipairs(faces) do
+            local n = counts[i] or 0
+            if n < fewest then least, fewest = { i }, n elseif n == fewest then table.insert(least, i) end
+        end
+        local i = least[math.floor(rng:next() * #least) + 1]
+        counts[i] = (counts[i] or 0) + 1
         face.selectedItemIndex, faceName = i, itemName(face.items[i])
     end
     local hair = configs.hairStyle
