@@ -140,7 +140,7 @@ def write_i3d(name, colour, path, statics, logos, cols):
     lines += paint_material("gatePaint", mat["paint"], sj.COLOUR[colour])
     lines += [f'    <Material name="xcPeeled" materialId="{mat["wood"]}" specularColor="0.1 0.7 0">',
               f'      <Texture fileId="{fid[PEELED]}"/>', "    </Material>",
-              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0.5 0" alphaBlending="true">',
+              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0 0" alphaBlending="true">',
               f'      <Texture fileId="{fid["../bleachers/bleacherSponsor_diffuse.dds"]}"/>', "    </Material>", "  </Materials>"]
     shapes = [(f"s_{k}", m) for k, m in statics.items() if m.tris] + [(f"l_{k}", m) for k, m in logos.items()]
     shapes += [(f"col{i + 1}", sj.collision_box(*box)) for i, box in enumerate(cols)]

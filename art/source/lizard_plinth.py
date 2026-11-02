@@ -479,7 +479,7 @@ def write_i3d(variant, path, parts):
               '    <Material name="lizardPlanks" materialId="4" specularColor="0.15 0.6 0">',
               f'      <Texture fileId="{fid[files[5]]}"/>', f'      <Normalmap fileId="{fid[files[6]]}"/>', "    </Material>",
               '    <Material name="lizardBoardFace" materialId="5" diffuseColor="0.2307 0.5089 0.0222 1" specularColor="0.2 0.4 0"/>',
-              '    <Material name="eqSponsor" materialId="6" specularColor="0.2 0.5 0" alphaBlending="true">',
+              '    <Material name="eqSponsor" materialId="6" specularColor="0.2 0 0" alphaBlending="true">',
               f'      <Texture fileId="{fid[files[7]]}"/>', "    </Material>",
               '    <Material name="trigger" materialId="7" diffuseColor="0.5 0.5 0.5 1"/>',
               '    <Material name="lizardGreen" materialId="8" specularColor="0.2 0.5 0">',

@@ -6,6 +6,7 @@
   </Asset>
 
   <Files>
+    <File fileId="10" filename="$data/shaders/vehicleShader.xml"/>
     <File fileId="8" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
     <File fileId="9" filename="xcFlags_diffuse.dds"/>
     <File fileId="7" filename="xcLogEnd_diffuse.dds"/>
@@ -14,12 +15,18 @@
     <File fileId="2" filename="xcPlanks_normal.dds"/>
     <File fileId="4" filename="xcStain_diffuse.dds"/>
     <File fileId="5" filename="xcStain_normal.dds"/>
+    <File fileId="11" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_specular.png"/>
+    <File fileId="12" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_normal.png"/>
+    <File fileId="13" filename="$data/shared/detailLibrary/calibrated/calibratedPaint_diffuse.png"/>
   </Files>
 
 
   <Materials>
-    <Material name="eqSponsor1" materialId="10" specularColor="0.101961 1 0" alphaBlending="true">
+    <Material name="eqSponsor1" materialId="10" specularColor="0.2 0 0" alphaBlending="true" customShaderId="10">
       <Texture fileId="8"/>
+      <Custommap name="detailSpecular" fileId="11"/>
+      <Custommap name="detailNormal" fileId="12"/>
+      <Custommap name="detailDiffuse" fileId="13"/>
     </Material>
     <Material name="xcFlags" materialId="9" specularColor="0.101961 1 0">
       <Texture fileId="9"/>

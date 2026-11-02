@@ -200,7 +200,7 @@ def write_i3d(path, statics, logos, blocks, cols, feet):
               f'      <Texture fileId="{fid[FLAGS_TEXTURE]}"/>', "    </Material>",
               f'    <Material name="sjBricks" materialId="{mat["bricks"]}" specularColor="0.3 0.5 0">',
               f'      <Texture fileId="{fid[BRICKS_TEXTURE]}"/>', "    </Material>",
-              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0.5 0" alphaBlending="true">',
+              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0 0" alphaBlending="true">',
               f'      <Texture fileId="{fid[sj.SPONSOR_TEXTURE]}"/>', "    </Material>", "  </Materials>"]
     shapes = []    # (id key, mesh)
     for key, mesh in statics.items():
