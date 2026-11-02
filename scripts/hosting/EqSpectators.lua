@@ -70,7 +70,9 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.14, handApart = 0.34, handLift = 0.04,
+    handForward = -0.14, handApart = 0.34, handLift = 0.12,
+    -- the other hand position: in the lap (James 2026-11-02), half the crowd
+    lapForward = 0.06, lapApart = 0.09, lapLift = 0.17, lapShare = 0.5,
     handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
@@ -588,8 +590,8 @@ local function placeTargets(person)
     local spots = {
         leftFoot = { p.footApart + (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
         rightFoot = { -p.footApart - (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
-        leftArm = { p.handApart, p.handLift, p.handForward },
-        rightArm = { -p.handApart, p.handLift, p.handForward },
+        leftArm = person.lap and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
+        rightArm = person.lap and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
     }
     for id, at in pairs(spots) do
         local node = person.targets[id]
@@ -841,6 +843,7 @@ local function spawn(seat, stand, rng, used)
     if seat ~= nil then
         person.feet = EqSpectators.FEET[math.min(#EqSpectators.FEET, math.floor(rng:next() * #EqSpectators.FEET) + 1)]
         person.feetApart = rng:uniform(-0.03, 0.05)
+        person.lap = rng:next() < EqSpectators.pose.lapShare
     end
     if seat ~= nil then
         link(seat.parent, holder)
