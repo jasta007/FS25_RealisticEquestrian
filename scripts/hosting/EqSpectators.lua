@@ -66,6 +66,8 @@ EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
     handForward = 0.12, handApart = 0.19, handLift = 0.16,
     handPitch = 0, handYaw = 0, handRoll = 0, arms = 1,
+    -- standing: the ankle joints this high above the ground
+    ankle = 0.09,
 }
 EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
 
@@ -432,6 +434,29 @@ local function settle(person)
 end
 
 
+--- Standing: lift the character until its feet are on the ground (James 2026-11-02: the first
+--- ones stood waist deep; the character's root is near its hips, not its feet).
+local function ground(person)
+    local model = person.model
+    local left, right = model.thirdPersonLeftFootNode, model.thirdPersonRightFootNode
+    if left == nil and right == nil then return true end
+    setTranslation(model.rootNode, 0, 0, 0)
+    local low = math.huge
+    for _, foot in ipairs({ left, right }) do
+        if foot ~= nil then
+            local _, y = worldToLocal(person.holder, getWorldTranslation(foot))
+            low = math.min(low, y)
+        end
+    end
+    setTranslation(model.rootNode, 0, EqSpectators.pose.ankle - low, 0)
+    if not EqSpectators.loggedFeet then
+        EqSpectators.loggedFeet = true
+        Log:info("EqSpectators: standing feet %.2f m from the character's root, lifted to the ground", low)
+    end
+    return true
+end
+
+
 local function onModelLoaded(_, state, person)
     local model = person.model
     if person.deleted or model == nil then
@@ -681,8 +706,10 @@ function EqSpectators.update()
         if person.ready and model ~= nil and model.rootNode ~= nil then
             person.frames = person.frames + 1
             -- the idle pose is in place after a frame or two: then the hips can be measured
-            if person.seated and not person.settled and person.frames >= 3 then person.settled = settle(person) end
-            local shown = person.settled or not person.seated
+            if not person.settled and person.frames >= 3 then
+                if person.seated then person.settled = settle(person) else person.settled = ground(person) end
+            end
+            local shown = person.settled
             local x, y, z = getWorldTranslation(person.holder)
             local distance = math.sqrt((x - cx) ^ 2 + (y - cy) ^ 2 + (z - cz) ^ 2)
             local visible = shown and distance <= EqSpectators.VISIBLE_DISTANCE
@@ -721,6 +748,8 @@ function EqSpectators.repose()
             placeTargets(person)
             if person.settled then settle(person) end
             person.posed = 0     -- solve the new pose again, near or far
+        elseif not person.seated and person.settled and person.model ~= nil and person.model.rootNode ~= nil then
+            ground(person)
         end
     end
 end
