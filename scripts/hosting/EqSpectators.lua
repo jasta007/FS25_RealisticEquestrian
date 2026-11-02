@@ -75,7 +75,7 @@ EqSpectators.pose = {
     lapForward = 0.10, lapApart = 0.20, lapLift = 0.19, lapShare = 0.5,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
     handJitter = 0.035,
-    handPitch = 0, handYaw = 90, handRoll = 0, arms = 1, fingers = 0, wrists = 0,
+    handPitch = 0, handYaw = 90, handRoll = 0, elbow = 0, arms = 1, fingers = 0, wrists = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -833,8 +833,11 @@ local function armStart(person)
     if person.wrists == nil then return end
     if person.armRest == nil then
         person.armRest = {}
-        for _, wrist in pairs(person.wrists) do
+        for id, wrist in pairs(person.wrists) do
             local node = wrist.node
+            local forearm = getParent(node)
+            wrist.upperArm = forearm ~= nil and forearm ~= 0 and getParent(forearm) or nil
+            wrist.side = EqSpectators.ARM_CHAINS[id] or 1
             for _ = 1, 4 do
                 if node == nil or node == 0 then break end
                 local rx, ry, rz = getRotation(node)
@@ -845,6 +848,16 @@ local function armStart(person)
         return
     end
     for _, joint in ipairs(person.armRest) do setRotation(joint.node, joint.rx, joint.ry, joint.rz) end
+    -- elbow: twist the upper arm about its length before the solve, so the IK bends the elbow
+    -- another way (degrees, mirrored for the right arm; try either sign)
+    local twist = EqSpectators.pose.elbow or 0
+    if twist ~= 0 and rotateAboutLocalAxis ~= nil then
+        for _, wrist in pairs(person.wrists) do
+            if wrist.upperArm ~= nil and wrist.upperArm ~= 0 then
+                rotateAboutLocalAxis(wrist.upperArm, math.rad(twist) * wrist.side, 0, 1, 0)
+            end
+        end
+    end
 end
 
 
