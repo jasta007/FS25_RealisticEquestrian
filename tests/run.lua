@@ -5953,6 +5953,12 @@ end)()
     check("spectators: selling a rope takes its standing people first", #EqSpectators.people == 1 and alive[2] == nil)
     EqSpectators.people = {}
     entityExists, delete = oldExists, oldDelete
+    check("spectators: the animal dealer and fisherman faces are named characters (once per crowd)", EqSpectators.namedCharacter("headNPCQG01") == "npc"
+        and EqSpectators.namedCharacter("bodyFisherman01") == "fisherman" and EqSpectators.namedCharacter("head03") == nil)
+    check("spectators: beards are made per face", EqSpectators.beardFits("goatee01_head02", "head02")
+        and not EqSpectators.beardFits("goatee01_head02", "head01") and not EqSpectators.beardFits("stubble_head01", nil))
+    check("spectators: women in the crowd from the female player", EqSpectators.FEMALE_SHARE > 0 and EqSpectators.FEMALE_SHARE < 1
+        and string.find(EqSpectators.FEMALE_XML, "playerF", 1, true) ~= nil)
     check("spectators: no bike helmets, masks or chainsaw kit (James)", EqSpectators.unwearable("motocrossHelmet01")
         and EqSpectators.unwearable("FaceMask") and EqSpectators.unwearable("forestryPreset") and EqSpectators.unwearable("chainsawJacket")
         and not EqSpectators.unwearable("cowboyHat") and not EqSpectators.unwearable("rancher") and not EqSpectators.unwearable(nil))

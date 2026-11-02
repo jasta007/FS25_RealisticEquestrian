@@ -61,11 +61,13 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- from its front edge, the feet this far forward of the bench and apart, the hands on the knees.
 -- Hands (James 2026-11-02: first try bent the arms like rubber): resting on the thighs, the hand
 -- targets turned by handPitch/handYaw/handRoll degrees (yaw and roll mirrored for the left hand);
--- arms = 0 leaves the arms to the idle clip.
+-- arms = 0 leaves the arms to the idle clip. Second try (James 2026-11-02, hands still odd: on the
+-- knees, fingers curled): the wrists further back, mid-thigh. seatClip = 1 sits them with the
+-- standing idle instead of the driver's one (relaxed hands, arms hanging by the sides).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = 0.12, handApart = 0.19, handLift = 0.16,
-    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1,
+    handForward = -0.02, handApart = 0.18, handLift = 0.13,
+    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, seatClip = 0,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -76,6 +78,13 @@ EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
 EqSpectators.NO_WEAR = { "helmet", "visor", "mask", "veil", "bee", "motocross", "motor", "bike", "goggle",
     "earmuff", "ear protect", "hearing", "protect", "chainsaw", "forest", "safety", "hivis", "hi-vis",
     "highvis", "reflect", "riding", "welding", "respirator" }
+-- Faces and clothes of the game's named characters (headNPCQG01 / bodyNPCQG01 the animal dealer,
+-- headFisherman01): one spectator each at most, and only by chance.
+EqSpectators.NAMED = { "npc", "fisherman" }
+EqSpectators.NAMED_CHANCE = 0.08
+-- Women in the crowd (the female player character, same slots as the male one)
+EqSpectators.FEMALE_XML = "dataS/character/playerF/playerF.xml"
+EqSpectators.FEMALE_SHARE = 0.45
 
 -- Hidden beyond this distance from the camera. Seated people are posed live (idle clip plus IK)
 -- only within IK_DISTANCE (James, 2026-11-01: they're stationary, so be heavy handed); further
@@ -306,15 +315,157 @@ local function logOutfits(base)
 end
 
 
-local function styleFor(rng)
-    if PlayerStyle == nil then return nil end
-    local base = nil
-    if PlayerStyle.defaultStyle ~= nil then
-        local ok, style = pcall(PlayerStyle.defaultStyle)
-        if ok then base = style end
+--- @param name string|nil a face or body item's name
+--- @return string|nil the named FS25 character it belongs to (animal dealer, fisherman), or nil
+function EqSpectators.namedCharacter(name)
+    local lower = string.lower(tostring(name or ""))
+    for _, word in ipairs(EqSpectators.NAMED) do
+        if string.find(lower, word, 1, true) ~= nil then return word end
     end
+    return nil
+end
+
+
+--- @return boolean true when a beard item is made for this face (beards are per head: goatee01_head02)
+function EqSpectators.beardFits(beard, face)
+    beard, face = tostring(beard or ""), tostring(face or "")
+    return face ~= "" and string.sub(beard, -(#face + 1)) == "_" .. face
+end
+
+
+local function findItem(config, name)
+    for i, item in ipairs(type(config) == "table" and type(config.items) == "table" and config.items or {}) do
+        if itemName(item) == name then return i end
+    end
+    return nil
+end
+
+
+--- The male or female base style, loaded once (nil when the game won't load it).
+local function baseStyle(female)
+    local key = female and "female" or "male"
+    EqSpectators.bases = EqSpectators.bases or {}
+    if EqSpectators.bases[key] ~= nil then return EqSpectators.bases[key] or nil end
+    local style = nil
+    if not female then
+        if PlayerStyle.defaultStyle ~= nil then
+            local ok, result = pcall(PlayerStyle.defaultStyle)
+            if ok then style = result end
+        end
+    else
+        for _, method in ipairs({ "loadConfigurationXML", "loadConfigurationXMLFile", "loadFromXMLFile", "loadXML" }) do
+            local candidate = PlayerStyle.new()
+            if type(candidate[method]) == "function" then
+                local ok = pcall(candidate[method], candidate, EqSpectators.FEMALE_XML)
+                if ok and type(candidate.configs) == "table" and next(candidate.configs) ~= nil then
+                    candidate.xmlFilename = candidate.xmlFilename or EqSpectators.FEMALE_XML
+                    style = candidate
+                    break
+                end
+            end
+        end
+        Log:info("EqSpectators: female characters %s", style ~= nil and "loaded" or "not available, men only")
+    end
+    EqSpectators.bases[key] = style or false
+    return style
+end
+
+
+--- A random face, hair (and colour) and beard; named characters' faces at most once per crowd.
+local function setLook(style, female, rng, used)
+    local configs = type(style.configs) == "table" and style.configs or {}
+    local face = configs.face
+    local faces, named = {}, {}
+    for i, item in ipairs(type(face) == "table" and type(face.items) == "table" and face.items or {}) do
+        local who = EqSpectators.namedCharacter(itemName(item))
+        if who == nil then table.insert(faces, i)
+        elseif not used[who] then table.insert(named, i) end
+    end
+    local faceName = nil
+    if #named > 0 and rng:next() < EqSpectators.NAMED_CHANCE then
+        local i = named[math.floor(rng:next() * #named) + 1]
+        local who = EqSpectators.namedCharacter(itemName(face.items[i]))
+        used[who] = true
+        face.selectedItemIndex, faceName = i, itemName(face.items[i])
+        -- and their own clothes, when the style has them
+        local body = findItem(configs.onepiece, "body" .. string.sub(faceName, 5))
+        if body ~= nil then configs.onepiece.selectedItemIndex = body end
+    elseif #faces > 0 then
+        local i = faces[math.floor(rng:next() * #faces) + 1]
+        face.selectedItemIndex, faceName = i, itemName(face.items[i])
+    end
+    local hair = configs.hairStyle
+    if type(hair) == "table" and type(hair.items) == "table" then
+        local hairs = {}
+        for i, item in ipairs(hair.items) do
+            if not string.find(string.lower(itemName(item)), "gear", 1, true) then table.insert(hairs, i) end
+        end
+        if #hairs > 0 then hair.selectedItemIndex = hairs[math.floor(rng:next() * #hairs) + 1] end
+    end
+    local beard = configs.beard
+    if type(beard) == "table" and type(beard.items) == "table" then
+        local fits = {}
+        for i, item in ipairs(beard.items) do
+            if EqSpectators.beardFits(itemName(item), faceName) then table.insert(fits, i) end
+        end
+        if female or #fits == 0 or rng:next() < 0.4 then
+            beard.selectedItemIndex = 0
+        else
+            beard.selectedItemIndex = fits[math.floor(rng:next() * #fits) + 1]
+        end
+    end
+    -- hair colour (beard matches), when the style keeps a colour per slot
+    if type(hair) == "table" and type(hair.selectedColorIndex) == "number" then
+        local colors = hair.colors or (hair.items ~= nil and hair.items[hair.selectedItemIndex or 1] ~= nil and hair.items[hair.selectedItemIndex or 1].colors) or nil
+        local n = type(colors) == "table" and #colors or 0
+        if n > 1 then
+            hair.selectedColorIndex = math.floor(rng:next() * n) + 1
+            if type(beard) == "table" and type(beard.selectedColorIndex) == "number" then beard.selectedColorIndex = hair.selectedColorIndex end
+        end
+    end
+end
+
+
+--- No named character's clothes on anyone else (a preset could pick them).
+local function dropNamedBodies(style, used)
+    for _, config in pairs(type(style.configs) == "table" and style.configs or {}) do
+        local items = type(config) == "table" and config.items or nil
+        local selected = type(config) == "table" and config.selectedItemIndex or nil
+        if type(items) == "table" and selected ~= nil and items[selected] ~= nil and EqSpectators.namedCharacter(itemName(items[selected])) ~= nil
+            and not used[EqSpectators.namedCharacter(itemName(items[selected]))] then
+            config.selectedItemIndex = 1
+        end
+    end
+end
+
+
+--- The first style's slots, one line per slot with what's selected and the colour fields, once.
+local function logSlots(style, female)
+    local key = female and "loggedFemale" or "loggedMale"
+    if EqSpectators[key] then return end
+    EqSpectators[key] = true
+    local parts = {}
+    for slot, config in pairs(type(style.configs) == "table" and style.configs or {}) do
+        if type(config) == "table" then
+            local fields = {}
+            for k, v in pairs(config) do if type(v) ~= "table" then table.insert(fields, tostring(k) .. "=" .. tostring(v)) end end
+            table.insert(parts, tostring(slot) .. "(" .. table.concat(fields, " ") .. ")")
+        end
+    end
+    Log:info("EqSpectators: %s slots: %s", female and "female" or "male", table.concat(parts, "; "))
+end
+
+
+--- A random person: man or woman, a face, hair and beard of their own, and one of the style's
+--- outfit presets (James 2026-11-02: they were all the same man in different clothes).
+local function styleFor(rng, used)
+    if PlayerStyle == nil then return nil end
+    used = used or {}
+    local female = rng:next() < EqSpectators.FEMALE_SHARE and baseStyle(true) ~= nil
+    local base = baseStyle(female)
+    if base == nil and female then female, base = false, baseStyle(false) end
     if base == nil then return nil end
-    EqLog.try("EqSpectators outfit names", logOutfits, base)
+    if not female then EqLog.try("EqSpectators outfit names", logOutfits, base) end
     local presets = {}
     if type(base.presets) == "table" then
         for _, preset in pairs(base.presets) do
@@ -323,19 +474,21 @@ local function styleFor(rng)
             end
         end
     end
-    local style = base
-    if #presets > 0 then
-        local preset = presets[math.min(#presets, math.floor(rng:next() * #presets) + 1)]
-        local ok, copy = pcall(function()
-            local copy = PlayerStyle.new()
-            if copy.copyFrom ~= nil then copy:copyFrom(base) elseif copy.copyConfigurationFrom ~= nil then copy:copyConfigurationFrom(base) end
-            preset:applyToStyle(copy)
-            return copy
-        end)
-        if ok and copy ~= nil then style = copy end
-    end
-    if style ~= base then EqLog.try("EqSpectators outfit", sanitize, style) end
-    return style
+    local ok, copy = pcall(function()
+        local copy = PlayerStyle.new()
+        if copy.copyFrom ~= nil then copy:copyFrom(base) elseif copy.copyConfigurationFrom ~= nil then copy:copyConfigurationFrom(base) else return nil end
+        copy.xmlFilename = copy.xmlFilename or base.xmlFilename
+        if #presets > 0 then
+            presets[math.min(#presets, math.floor(rng:next() * #presets) + 1)]:applyToStyle(copy)
+        end
+        return copy
+    end)
+    if not ok or copy == nil then return base end
+    EqLog.try("EqSpectators outfit", sanitize, copy)
+    EqLog.try("EqSpectators look", setLook, copy, female, rng, used)
+    EqLog.try("EqSpectators named clothes", dropNamedBodies, copy, used)
+    EqLog.try("EqSpectators slots", logSlots, copy, female)
+    return copy
 end
 
 
@@ -352,7 +505,8 @@ end
 local function startIdle(person)
     local skeleton = person.model.skeleton
     if skeleton == nil or g_animCache == nil or AnimationCache == nil then return end
-    local cacheId = person.seated and (AnimationCache.VEHICLE_CHARACTER or AnimationCache.CHARACTER) or AnimationCache.CHARACTER
+    local driver = person.seated and EqSpectators.pose.seatClip == 0
+    local cacheId = driver and (AnimationCache.VEHICLE_CHARACTER or AnimationCache.CHARACTER) or AnimationCache.CHARACTER
     local animNode = g_animCache:getNode(cacheId)
     if animNode == nil or animNode == 0 then return end
     cloneAnimCharacterSet(getChildAt(animNode, 0), skeleton)
@@ -365,8 +519,8 @@ local function startIdle(person)
         for i = 0, math.min(getAnimNumOfClips(charset), 60) - 1 do table.insert(names, getAnimClipName(charset, i)) end
         Log:info("EqSpectators: %s clips: %s", person.seated and "seated" or "standing", table.concat(names, ", "))
     end
-    local names = person.seated and { EqSpectators.SEAT_CLIP } or {}
-    if not person.seated then
+    local names = driver and { EqSpectators.SEAT_CLIP } or {}
+    if not driver then
         -- start the list at a random clip, so the crowd doesn't all idle the same way
         local n = #EqSpectators.STAND_CLIPS
         local first = math.floor(person.rng:next() * n)
@@ -386,6 +540,12 @@ end
 
 
 --- Seated: targets for the feet and hands, in the seat's frame (+z the way the person faces).
+--- @return boolean true when the hands are placed by IK (not with arms 0 or the standing clip)
+function EqSpectators.armsOn()
+    return EqSpectators.pose.arms ~= 0 and EqSpectators.pose.seatClip == 0
+end
+
+
 local function placeTargets(person)
     local p = EqSpectators.pose
     local drop = person.seat.y - person.seat.floorY
@@ -405,8 +565,9 @@ local function placeTargets(person)
         if node ~= nil then
             setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
             if chains ~= nil then
-                if p.arms ~= 0 and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
-                if p.arms == 0 and IKUtil.setIKChainInactive ~= nil then pcall(IKUtil.setIKChainInactive, chains, id) end
+                local on = EqSpectators.armsOn()
+                if on and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
+                if not on and IKUtil.setIKChainInactive ~= nil then pcall(IKUtil.setIKChainInactive, chains, id) end
             end
         end
     end
@@ -500,9 +661,9 @@ end
 
 
 --- Make one person: seat = { parent, x, y, frontZ, floorY } or stand = { box, slot }.
-local function spawn(seat, stand, rng)
+local function spawn(seat, stand, rng, used)
     if HumanModel == nil or PlayerStyle == nil then return nil end
-    local style = styleFor(rng)
+    local style = styleFor(rng, used)
     if style == nil or style.xmlFilename == nil then return nil end
     local holder = createTransformGroup("eqSpectator")
     local person = { seated = seat ~= nil, seat = seat, stand = stand, holder = holder, targets = {}, rng = rng, frames = 0, style = style }
@@ -609,12 +770,14 @@ end
 function EqSpectators.spawnAll(farm, counts, seed, seats, stands)
     EqSpectators.clear()
     local rng = EqRandom.new(seed)
+    -- named FS25 characters (animal dealer, fisherman) at most once in the crowd (James 2026-11-02)
+    local used = {}
     for _, seat in ipairs(EqSpectators.pick(seats, counts.seated, rng)) do
-        local person = spawn(seat, nil, EqRandom.new(math.floor(rng:next() * 2147483000) + 1))
+        local person = spawn(seat, nil, EqRandom.new(math.floor(rng:next() * 2147483000) + 1), used)
         if person ~= nil then table.insert(EqSpectators.people, person) end
     end
     for _, stand in ipairs(EqSpectators.pick(stands, counts.standing, rng)) do
-        local person = spawn(nil, stand, EqRandom.new(math.floor(rng:next() * 2147483000) + 1))
+        local person = spawn(nil, stand, EqRandom.new(math.floor(rng:next() * 2147483000) + 1), used)
         if person ~= nil then table.insert(EqSpectators.people, person) end
     end
     Log:info("EqSpectators: %d people (%d seats and %d rope places on farm %s; %d Rope Marker(s) seen)", #EqSpectators.people, #seats, #stands,
@@ -734,7 +897,7 @@ function EqSpectators.update()
             if person.seated and live then
                 local chains = model:getIKChains()
                 for id in pairs(person.targets) do
-                    if EqSpectators.pose.arms ~= 0 or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
+                    if EqSpectators.armsOn() or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
                 end
                 IKUtil.updateIKChains(chains, true)
             end
@@ -779,11 +942,13 @@ function EqSpectators.console(command, a, b)
         if a ~= nil and EqSpectators.pose[a] ~= nil and value ~= nil then
             EqSpectators.pose[a] = value
             EqSpectators.repose()
+            -- the idle clip is chosen as a person loads: seat everyone again
+            if a == "seatClip" then EqSpectators.key, EqSpectators.scannedAt = nil, nil end
         end
         local parts = {}
         for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
         table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK)"
+        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; seatClip 1 = sit with the standing idle)"
     end
     local farm = farmId()
     local seats, stands = {}, {}
