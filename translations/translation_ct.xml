@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="點選繼續（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="訓練幫助"/>
         <text name="input_EQ_SPRINT" text="衝刺"/>
+        <text name="input_EQ_LATERAL" text="側向動作（按住）"/>
+        <text name="input_EQ_COLLECT" text="收縮（按住）"/>
+        <text name="input_EQ_REIN" text="韁繩：滑鼠轉向（按住）"/>
         <text name="eq_train_worn" text="騎乘條已滿：今天無法再訓練"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢復"/>

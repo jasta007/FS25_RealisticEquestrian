@@ -147,6 +147,9 @@ Por Jasta007.]]>
         <action name="EQ_TRAINING_VIEW"/>
         <action name="EQ_TRAINING_HELP"/>
         <action name="EQ_SPRINT"/>
+        <action name="EQ_LATERAL"/>
+        <action name="EQ_COLLECT"/>
+        <action name="EQ_REIN"/>
         <action name="EQ_HORSE_ROLE"/>
         <action name="EQ_COURSE_RECORD"/>
         <action name="EQ_COURSE_RECORD_XC"/>
@@ -169,12 +172,28 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_VIEW">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_y" index="1"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_4" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_HELP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_h" index="1"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_6 BUTTON_4" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_SPRINT">
             <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" index="3"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_3" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_LATERAL">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift" index="2"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_6" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COLLECT">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl" index="2"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_REIN">
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_HORSE_ROLE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>

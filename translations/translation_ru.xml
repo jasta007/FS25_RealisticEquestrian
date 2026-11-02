@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="Нажмите, чтобы продолжить (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Помощь по тренировке"/>
         <text name="input_EQ_SPRINT" text="Спринт"/>
+        <text name="input_EQ_LATERAL" text="Боковые движения (удерживать)"/>
+        <text name="input_EQ_COLLECT" text="Сбор (удерживать)"/>
+        <text name="input_EQ_REIN" text="Повод: управление мышью (удерживать)"/>
         <text name="eq_train_worn" text="Шкала езды заполнена: на сегодня тренировка окончена"/>
         <text name="eq_ex_push" text="Разгон"/>
         <text name="eq_ex_recover" text="Отдых"/>

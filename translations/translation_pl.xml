@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="Kliknij, aby kontynuować (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Pomoc treningowa"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Chody boczne (przytrzymaj)"/>
+        <text name="input_EQ_COLLECT" text="Zebranie (przytrzymaj)"/>
+        <text name="input_EQ_REIN" text="Wodze: sterowanie myszą (przytrzymaj)"/>
         <text name="eq_train_worn" text="Pasek jazdy pełny: na dziś koniec treningu"/>
         <text name="eq_ex_push" text="Naciskanie"/>
         <text name="eq_ex_recover" text="Odpoczynek"/>

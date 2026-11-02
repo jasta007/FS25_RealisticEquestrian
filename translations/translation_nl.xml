@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="Klik om verder te gaan (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshulp"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Zijgangen (vasthouden)"/>
+        <text name="input_EQ_COLLECT" text="Verzamelen (vasthouden)"/>
+        <text name="input_EQ_REIN" text="Teugel: muissturing (vasthouden)"/>
         <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
         <text name="eq_ex_push" text="Doorzetten"/>
         <text name="eq_ex_recover" text="Herstellen"/>

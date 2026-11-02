@@ -810,7 +810,14 @@ local function updateHelp()
     local clicked = down and not EqTrainingHud.mouseWasDown and (EqTrainingHud.place ~= nil or not guiOpen)
     EqTrainingHud.mouseWasDown = down
 
-    if not clicked then return end
+    if clicked then EqTrainingHud.nextPage() end
+end
+
+
+--- Turn the help popup to its next page, closing it after the last (a click, or the sprint
+--- button on a gamepad).
+function EqTrainingHud.nextPage()
+    if EqTrainingHud.pages == nil then return end
     EqTrainingHud.pageIndex = EqTrainingHud.pageIndex + 1
     if EqTrainingHud.pageIndex > #EqTrainingHud.pages then
         local seenKey = EqTrainingHud.seenKey
