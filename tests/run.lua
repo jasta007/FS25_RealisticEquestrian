@@ -5953,6 +5953,9 @@ end)()
     check("spectators: selling a rope takes its standing people first", #EqSpectators.people == 1 and alive[2] == nil)
     EqSpectators.people = {}
     entityExists, delete = oldExists, oldDelete
+    check("spectators: no bike helmets, masks or chainsaw kit (James)", EqSpectators.unwearable("motocrossHelmet01")
+        and EqSpectators.unwearable("FaceMask") and EqSpectators.unwearable("forestryPreset") and EqSpectators.unwearable("chainsawJacket")
+        and not EqSpectators.unwearable("cowboyHat") and not EqSpectators.unwearable("rancher") and not EqSpectators.unwearable(nil))
     local row = EqSettings.BY_ID.crowdDensity
     check("spectators: Crowd density setting Off/Low/Medium/High", row ~= nil and #row.values == 4 and row.values[1] == "off"
         and row.default == "medium" and EqSettings.stateOf(row, "high") == 4)

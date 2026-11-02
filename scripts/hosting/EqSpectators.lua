@@ -59,10 +59,21 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 
 -- Seated pose (tuned with eqSpectators pose): the hips this high above the bench and this far back
 -- from its front edge, the feet this far forward of the bench and apart, the hands on the knees.
+-- Hands (James 2026-11-02: first try bent the arms like rubber): resting on the thighs, the hand
+-- targets turned by handPitch/handYaw/handRoll degrees (yaw and roll mirrored for the left hand);
+-- arms = 0 leaves the arms to the idle clip.
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = 0.30, handApart = 0.17, handLift = 0.12,
+    handForward = 0.12, handApart = 0.19, handLift = 0.16,
+    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1,
 }
+EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
+
+-- Outfits: presets and items whose names have any of these words are never worn by spectators
+-- (James 2026-11-02: no bike helmets, face masks or chainsaw kit in the stands).
+EqSpectators.NO_WEAR = { "helmet", "visor", "mask", "veil", "bee", "motocross", "motor", "bike", "goggle",
+    "earmuff", "ear protect", "hearing", "protect", "chainsaw", "forest", "safety", "hivis", "hi-vis",
+    "highvis", "reflect", "riding", "welding", "respirator" }
 
 -- Hidden beyond this distance from the camera. Seated people are posed live (idle clip plus IK)
 -- only within IK_DISTANCE (James, 2026-11-01: they're stationary, so be heavy handed); further
@@ -232,6 +243,60 @@ end
 
 
 -- A random look for each person: the default outfit with one of the style's presets on it.
+--- @param name string|nil an outfit preset's or item's name
+--- @return boolean true when spectators shouldn't wear it
+function EqSpectators.unwearable(name)
+    local lower = string.lower(tostring(name or ""))
+    for _, word in ipairs(EqSpectators.NO_WEAR) do
+        if string.find(lower, word, 1, true) ~= nil then return true end
+    end
+    return false
+end
+
+
+local function itemName(item)
+    if type(item) ~= "table" then return tostring(item) end
+    return tostring(item.name or item.id or item.filename or "")
+end
+
+
+--- Take off anything a spectator shouldn't wear: that slot goes back to its first (plain) item,
+--- or the first wearable one.
+local function sanitize(style)
+    if type(style.configs) ~= "table" then return end
+    for _, config in pairs(style.configs) do
+        local items = type(config) == "table" and config.items or nil
+        local selected = type(config) == "table" and config.selectedItemIndex or nil
+        if type(items) == "table" and selected ~= nil and items[selected] ~= nil and EqSpectators.unwearable(itemName(items[selected])) then
+            local replace = 1
+            for i = 1, #items do
+                if not EqSpectators.unwearable(itemName(items[i])) then replace = i break end
+            end
+            config.selectedItemIndex = replace
+        end
+    end
+end
+
+
+--- The outfit names in the log once, so unwanted ones can be added to NO_WEAR.
+local function logOutfits(base)
+    if EqSpectators.loggedOutfits then return end
+    EqSpectators.loggedOutfits = true
+    local presets = {}
+    for _, preset in pairs(type(base.presets) == "table" and base.presets or {}) do
+        table.insert(presets, itemName(preset) .. (EqSpectators.unwearable(itemName(preset)) and " (not worn)" or ""))
+    end
+    Log:info("EqSpectators: outfit presets: %s", table.concat(presets, ", "))
+    for slot, config in pairs(type(base.configs) == "table" and base.configs or {}) do
+        local names = {}
+        for i, item in ipairs(type(config) == "table" and type(config.items) == "table" and config.items or {}) do
+            if i <= 40 then table.insert(names, itemName(item)) end
+        end
+        Log:info("EqSpectators: outfit slot %s: %s", tostring(slot), table.concat(names, ", "))
+    end
+end
+
+
 local function styleFor(rng)
     if PlayerStyle == nil then return nil end
     local base = nil
@@ -240,25 +305,28 @@ local function styleFor(rng)
         if ok then base = style end
     end
     if base == nil then return nil end
+    EqLog.try("EqSpectators outfit names", logOutfits, base)
     local presets = {}
     if type(base.presets) == "table" then
         for _, preset in pairs(base.presets) do
-            local name = string.lower(tostring(preset.name or ""))
-            -- not helmets, bee suits or riding kit (people would look like riders)
-            if preset.applyToStyle ~= nil and not name:find("helmet") and not name:find("bee") and not name:find("riding") then
+            if preset.applyToStyle ~= nil and not EqSpectators.unwearable(itemName(preset)) then
                 table.insert(presets, preset)
             end
         end
     end
-    if #presets == 0 then return base end
-    local preset = presets[math.min(#presets, math.floor(rng:next() * #presets) + 1)]
-    local ok, style = pcall(function()
-        local copy = PlayerStyle.new()
-        if copy.copyFrom ~= nil then copy:copyFrom(base) elseif copy.copyConfigurationFrom ~= nil then copy:copyConfigurationFrom(base) end
-        preset:applyToStyle(copy)
-        return copy
-    end)
-    return ok and style or base
+    local style = base
+    if #presets > 0 then
+        local preset = presets[math.min(#presets, math.floor(rng:next() * #presets) + 1)]
+        local ok, copy = pcall(function()
+            local copy = PlayerStyle.new()
+            if copy.copyFrom ~= nil then copy:copyFrom(base) elseif copy.copyConfigurationFrom ~= nil then copy:copyConfigurationFrom(base) end
+            preset:applyToStyle(copy)
+            return copy
+        end)
+        if ok and copy ~= nil then style = copy end
+    end
+    if style ~= base then EqLog.try("EqSpectators outfit", sanitize, style) end
+    return style
 end
 
 
@@ -321,6 +389,17 @@ local function placeTargets(person)
     for id, at in pairs(spots) do
         local node = person.targets[id]
         if node ~= nil then setTranslation(node, at[1], at[2], at[3]) end
+    end
+    local chains = person.model ~= nil and person.model:getIKChains() or nil
+    for id, side in pairs(EqSpectators.ARM_CHAINS) do
+        local node = person.targets[id]
+        if node ~= nil then
+            setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
+            if chains ~= nil then
+                if p.arms ~= 0 and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
+                if p.arms == 0 and IKUtil.setIKChainInactive ~= nil then pcall(IKUtil.setIKChainInactive, chains, id) end
+            end
+        end
     end
 end
 
@@ -608,7 +687,9 @@ function EqSpectators.update()
             end
             if person.seated and live then
                 local chains = model:getIKChains()
-                for id in pairs(person.targets) do IKUtil.setIKChainDirty(chains, id) end
+                for id in pairs(person.targets) do
+                    if EqSpectators.pose.arms ~= 0 or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
+                end
                 IKUtil.updateIKChains(chains, true)
             end
         end
@@ -654,7 +735,7 @@ function EqSpectators.console(command, a, b)
         local parts = {}
         for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
         table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <metres>)"
+        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK)"
     end
     local farm = farmId()
     local seats, stands = {}, {}
