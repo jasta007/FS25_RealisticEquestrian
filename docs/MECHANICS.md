@@ -425,8 +425,8 @@ works in single player for now.
 Out of edit mode, the course whose start line is nearest (within 60 m) is the one you can ride.
 Within 30 m the start line glows gold and you
 are asked to "Move to the start line to begin Show Jumping" beside the panel; nothing else of the
-course shows yet. The start line stands on the route 12 m before fence 1 and the finish line 12 m
-after the last fence, so no objects are needed and a course can be dressed however you like. Within
+course shows yet. The start line stands where you began recording (Ctrl+J or Ctrl+E) and the finish line where you
+saved, each kept at least 3 m clear of fence 1 and the last fence, so no objects are needed and a course can be dressed however you like. Within
 4 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
 clock starts as you do. From the countdown on the round has the screen to itself: no other

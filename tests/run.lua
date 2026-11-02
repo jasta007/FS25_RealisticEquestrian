@@ -1550,8 +1550,8 @@ end)()
 ;(function()
     local function line(x0, kind)
         local points = {}
-        for z = 0, 120, 2 do points[#points + 1] = { x = x0, y = 0, z = z } end
-        local function fence(z) return { x = x0, z = z, pointIndex = z / 2 + 1, ax = x0 - 2, az = z, bx = x0 + 2, bz = z } end
+        for z = 28, 120, 2 do points[#points + 1] = { x = x0, y = 0, z = z } end
+        local function fence(z) return { x = x0, z = z, pointIndex = (z - 28) / 2 + 1, ax = x0 - 2, az = z, bx = x0 + 2, bz = z } end
         return { name = kind, points = points, jumps = { fence(40), fence(70) }, length = 120, kind = kind }
     end
     local saved = EqCourse.list
@@ -1571,14 +1571,34 @@ end)()
 -- A timed show jumping round over a course (EqShowJumping).
 ;(function()
     local points = {}
-    for z = 0, 120, 2 do points[#points + 1] = { x = 0, y = 0, z = z } end
+    -- Recorded from z = 28 (where the rider pressed the key) to z = 82 (where it was saved).
+    for z = 28, 82, 2 do points[#points + 1] = { x = 0, y = 0, z = z } end
     local function fence(z)
-        return { x = 0, z = z, ry = 0, side = -1, pointIndex = z / 2 + 1, ax = -2, az = z, bx = 2, bz = z }
+        return { x = 0, z = z, ry = 0, side = -1, pointIndex = (z - 28) / 2 + 1, ax = -2, az = z, bx = 2, bz = z }
     end
     local course = { name = "Course 1", points = points, jumps = { fence(40), fence(70) }, length = 120 }
     local round = EqShowJumping.newRound(course)
-    check("a path start line stands before fence 1", math.abs(round.start.z - 28) < 1e-6 and round.start.ax < round.start.bx)
-    check("a path finish line stands after the last fence", math.abs(round.finish.z - 82) < 1e-6)
+    check("the start line stands where recording began", math.abs(round.start.z - 28) < 1e-6 and round.start.ax < round.start.bx)
+    check("the finish line stands where the course was saved", math.abs(round.finish.z - 82) < 1e-6)
+    -- James, 2026-11-02: a start 12 m before fence 1 sat 5 m ahead of where he started.
+    local far = { points = {}, jumps = {} }
+    for k = 0, 50 do far.points[#far.points + 1] = { x = 0, y = 0, z = k } end
+    far.jumps = { fence(40), fence(45) }
+    far.jumps[1].pointIndex, far.jumps[2].pointIndex = 41, 46
+    local farStart, farFrom = EqShowJumping.startFromPath(far)
+    local farFinish = EqShowJumping.finishFromPath(far)
+    check("a start recorded 40 m out stays 40 m out", math.abs(farStart.z) < 1e-6 and farFrom == 1)
+    check("a finish saved 5 m past the last fence stays there", math.abs(farFinish.z - 50) < 1e-6)
+    local close = { points = {}, jumps = {} }
+    for k = 0, 20 do close.points[#close.points + 1] = { x = 0, y = 0, z = k } end
+    close.jumps = { fence(1), fence(19) }
+    close.jumps[1].pointIndex, close.jumps[2].pointIndex = 2, 20
+    local closeStart, _, before = EqShowJumping.startFromPath(close)
+    local closeFinish, _, after = EqShowJumping.finishFromPath(close)
+    check("a start recorded on top of fence 1 stands LINE_GAP before it",
+        math.abs(closeStart.z - (1 - EqShowJumping.LINE_GAP)) < 1e-6 and math.abs(before - 2) < 1e-6 and closeStart.ax < closeStart.bx)
+    check("a finish saved on the last fence stands LINE_GAP after it",
+        math.abs(closeFinish.z - (19 + EqShowJumping.LINE_GAP)) < 1e-6 and math.abs(after - 2) < 1e-6)
     check("the time allowed is at least the minimum", round.allowed >= EqShowJumping.MIN_TIME)
 
     -- Ride along x = 0 from one z to another, a frame each half metre; returns the events seen.
