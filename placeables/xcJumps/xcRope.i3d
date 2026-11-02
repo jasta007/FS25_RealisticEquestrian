@@ -6,6 +6,7 @@
   </Asset>
 
   <Files>
+    <File fileId="7" filename="$data/shaders/vehicleShader.xml"/>
     <File fileId="3" filename="$data/shaders/placeableShader.xml"/>
     <File fileId="6" filename="../bleachers/bleacherSponsor_diffuse.dds"/>
     <File fileId="1" filename="xcFlags_diffuse.dds"/>
@@ -13,7 +14,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor" materialId="7" specularColor="0.2 0 0" alphaBlending="true" customShaderId="3" customShaderVariation="vertexOffset">
+    <Material name="eqSponsor" materialId="7" specularColor="0.2 0 0" alphaBlending="true" customShaderId="3" customShaderVariation="vertexOffset_Decal">
       <Texture fileId="6"/>
     </Material>
     <Material name="xcFlags" materialId="5" specularColor="0.101961 1 0">

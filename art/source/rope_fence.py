@@ -123,10 +123,10 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos):
              f'    <File fileId="3" filename="{SPONSOR_TEXTURE}"/>', "  </Files>", "  <Materials>",
              '    <Material name="xcFlags" materialId="1" specularColor="0.1 0.7 0">', '      <Texture fileId="1"/>', "    </Material>",
              # leans with the slope, like the base game's fence panels
-             '    <Material name="xcRope" materialId="2" specularColor="0.1 0.7 0" customShaderId="2" customShaderVariation="vertexOffset">',
+             '    <Material name="xcRope" materialId="2" specularColor="0.1 0.7 0" customShaderId="2" customShaderVariation="vertexOffset_Decal">',
              '      <Texture fileId="1"/>', "    </Material>",
              '    <Material name="eqSponsor" materialId="3" specularColor="0.2 0 0" alphaBlending="true" customShaderId="2" '
-             'customShaderVariation="vertexOffset">', '      <Texture fileId="3"/>', "    </Material>",
+             'customShaderVariation="vertexOffset_Decal">', '      <Texture fileId="3"/>', "    </Material>",
              "  </Materials>", "  <Shapes>"]
     shapes = [("stake", stake_mesh, None), ("stakeCol", ground_box(-0.03, 0.03), None),
               ("rope", plain, slope), ("ropeCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None),

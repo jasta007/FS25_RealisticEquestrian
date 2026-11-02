@@ -16,7 +16,7 @@
 
 
   <Materials>
-    <Material name="eqSponsor" materialId="7" specularColor="0.2 0 0" alphaBlending="true">
+    <Material name="eqSponsor" materialId="7" specularColor="0.2 0 0" alphaBlending="true" customShaderId="1">
       <Texture fileId="11"/>
     </Material>
     <Material name="gateWhite" materialId="5" customShaderId="1">
