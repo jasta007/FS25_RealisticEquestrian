@@ -611,6 +611,17 @@ local function dayNow()
 end
 
 
+--- Rope Markers stay in sight (no collision) while your hosted event runs, all day, and while
+--- the console shows the crowd: they're the spectators' barrier (James, 2026-11-02). EqXcHide asks.
+--- @return boolean
+function EqSpectators.ropesShown()
+    if EqSpectators.forced == true then return true end
+    if EqSpectators.forced == false then return false end
+    local farm = farmId()
+    return farm ~= nil and hostedRunning(farm)
+end
+
+
 --- The counts wanted now: from the console, or the setting during a hosted event's hours.
 local function wanted(farm)
     local density = EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil)

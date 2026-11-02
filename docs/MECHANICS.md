@@ -897,7 +897,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
 - **Spectators:** while your event runs, from 08:00 to 19:00, people come to watch: seated on
   your bleachers and standing in the yellow spectator boxes of the Rope Marker's third segment
   (the box is painted on one side of the rope and shows only in construction mode, so draw the
-  rope with the box away from the track). The **Crowd density** setting gives up to 4 seated and
+  rope with the box away from the track). While your event runs, all day, Rope Markers stay in
+  sight (still no collision) as the crowd's barrier, instead of hiding like the course flags. The **Crowd density** setting gives up to 4 seated and
   3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
   picked afresh each day, wherever the bleachers and boxes are; selling a bleacher or rope (or
   deleting a rope segment) takes its people away and a new crowd is picked from what's left. They are the game's own characters with
