@@ -285,6 +285,48 @@ local expected = (EqStats.regress(1.4) + EqStats.regress(1.6)) / 2
 check("seeded foals centre on the regressed mid-parent", math.abs(agilitySum / 2000 - expected) < 0.02,
     string.format("mean %.3f expected %.3f", agilitySum / 2000, expected))
 
+-- RLRM version check behind the startup popup. In a function: the main chunk is near Lua's local limit.
+local function rlrmVersionTests()
+    check("older RLRM is older", EqRLRM.isOlder("1.4.1.0", "1.4.2.0"))
+    check("same RLRM is not older", not EqRLRM.isOlder("1.4.2.0", "1.4.2.0"))
+    check("dev build of the minimum counts as it", not EqRLRM.isOlder("1.4.2.0-dev.4", "1.4.2.0"))
+    check("newer RLRM is not older", not EqRLRM.isOlder("1.10.0.0", "1.4.2.0"))
+    check("short version compares", EqRLRM.isOlder("1.4", "1.4.2.0") and not EqRLRM.isOlder("1.5", "1.4.2.0"))
+    check("unreadable version is not older", not EqRLRM.isOlder("unknown", "1.4.2.0"))
+
+    local savedRLRM, savedGlobal, savedManager, savedI18n = EqRLRM, _G[EqRLRM.MOD_NAME], g_modManager, g_i18n
+    -- EqRLRM.lua was loaded before EqLog above; a fresh copy gets the (silenced) logger.
+    dofile("scripts/core/EqRLRM.lua")
+    local function initWith(env, version)
+        _G[EqRLRM.MOD_NAME] = env
+        g_modManager = { getModByName = function() return { version = version } end }
+        EqRLRM.problem = nil
+        return EqRLRM.init()
+    end
+    local full = {}
+    local function add(path) full[path[1]] = full[path[1]] or {}; full[path[1]][path[2]] = function() end end
+    for _, path in ipairs(EqRLRM.REQUIRED) do add(path) end
+    for _, paths in pairs(EqRLRM.OPTIONAL) do for _, path in ipairs(paths) do add(path) end end
+    check("missing RLRM is reported", not initWith(nil, nil) and EqRLRM.problem == "missing")
+    check("current RLRM has no problem", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
+    check("old RLRM still runs with a popup", initWith(full, "1.4.1.0") and EqRLRM.problem == "old")
+    local partial = {}
+    for k, v in pairs(full) do partial[k] = v end
+    partial.RLMenu = nil
+    check("missing optional function asks for an update", initWith(partial, "1.4.2.0") and EqRLRM.problem == "old")
+    check("missing required function switches off", not initWith({ Animal = {} }, "1.4.2.0") and EqRLRM.problem == "incompatible")
+
+    dofile("scripts/gui/EqRLRMWarning.lua")
+    g_i18n = { getText = function(_, key) return key .. " %s %s" end }
+    EqRLRM.problem, EqRLRM.version = "old", "1.4.1.0"
+    check("old RLRM popup names both versions", EqRLRMWarning.getText() == "eq_rlrm_old 1.4.1.0 " .. EqRLRM.MIN_VERSION)
+    EqRLRM.problem = nil
+    check("no popup without a problem", EqRLRMWarning.getText() == nil)
+
+    EqRLRM, _G[EqRLRM.MOD_NAME], g_modManager, g_i18n = savedRLRM, savedGlobal, savedManager, savedI18n
+end
+rlrmVersionTests()
+
 -- TRAINING
 
 local function horse(focus, level)

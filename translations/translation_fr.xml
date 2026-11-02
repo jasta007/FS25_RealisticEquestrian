@@ -782,6 +782,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nécessite 1 000 l de plaquettes, 10 000 l de bois et 1 000 l de planches."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nécessite 10 000 l de paille, 10 000 l de bois et 1 000 l de planches."/>
         <text name="eq_lizard_title" text="Offre de sponsoring de %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian ne trouve pas Realistic Livestock (version Ritter) et reste donc désactivé. Veuillez installer la dernière version de Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Votre version %s de Realistic Livestock est trop ancienne pour Realistic Equestrian, qui reste donc désactivé. Veuillez installer la dernière version de Realistic Livestock (version Ritter)."/>
+        <text name="eq_rlrm_old" text="Votre version %s de Realistic Livestock est plus ancienne que celle requise par Realistic Equestrian (%s ou plus récente) : certaines fonctions risquent de ne pas marcher. Veuillez installer la dernière version de Realistic Livestock (version Ritter)."/>
         <text name="eq_lizard_offer" text="%s aimerait sponsoriser votre %s (%s) et vous prêtera un de ses véhicules pendant le mois de l&#x27;événement. Il demande un branding %s d&#x27;ici la fin de l&#x27;événement et son socle Lizard construit sur votre site : %s. Si tout est en place à l&#x27;arrivée des résultats, il paie %s. Sinon, il ne paie rien et il n&#x27;y a aucune pénalité. Le socle s&#x27;effondre après l&#x27;événement."/>
         <text name="eq_lizard_accept" text="Accepter"/>
         <text name="eq_lizard_decline" text="Refuser"/>

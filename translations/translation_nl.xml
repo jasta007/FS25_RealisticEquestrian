@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian kan Realistic Livestock (Ritter-versie) niet vinden en staat daarom uit. Installeer de nieuwste versie van Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Je Realistic Livestock-versie %s is te oud voor Realistic Equestrian, daarom staat Realistic Equestrian uit. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
+        <text name="eq_rlrm_old" text="Je Realistic Livestock-versie %s is ouder dan Realistic Equestrian nodig heeft (%s of nieuwer), daarom werken sommige functies misschien niet. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
         <text name="eq_lizard_accept" text="Accepteren"/>
         <text name="eq_lizard_decline" text="Weigeren"/>
