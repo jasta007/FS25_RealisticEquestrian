@@ -592,8 +592,8 @@ local function placeTargets(person)
     local spots = {
         leftFoot = { p.footApart + (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
         rightFoot = { -p.footApart - (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
-        leftArm = person.lap and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
-        rightArm = person.lap and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
+        leftArm = (person.lap or person.oneLap == "leftArm") and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
+        rightArm = (person.lap or person.oneLap == "rightArm") and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
     }
     for id, at in pairs(spots) do
         local node = person.targets[id]
@@ -851,6 +851,8 @@ local function spawn(seat, stand, rng, used)
         person.feet = EqSpectators.FEET[math.min(#EqSpectators.FEET, math.floor(rng:next() * #EqSpectators.FEET) + 1)]
         person.feetApart = rng:uniform(-0.03, 0.05)
         person.lap = rng:next() < EqSpectators.pose.lapShare
+        -- some of the others rest one hand on the bench and the other on a thigh
+        if not person.lap and rng:next() < 0.35 then person.oneLap = rng:next() < 0.5 and "leftArm" or "rightArm" end
         person.jitter = {}
         for _, id in ipairs({ "leftArm", "rightArm" }) do
             person.jitter[id] = { rng:uniform(-1, 1), rng:uniform(-1, 1), rng:uniform(-1, 1) }
