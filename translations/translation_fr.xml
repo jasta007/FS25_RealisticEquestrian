@@ -170,6 +170,9 @@
         <text name="eq_help_next" text="Cliquez pour continuer (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Aide à l'entraînement"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Travail latéral (maintenir)"/>
+        <text name="input_EQ_COLLECT" text="Rassembler (maintenir)"/>
+        <text name="input_EQ_REIN" text="Rênes : direction à la souris (maintenir)"/>
         <text name="eq_train_worn" text="Barre d'équitation pleine : plus d'entraînement aujourd'hui"/>
         <text name="eq_ex_push" text="Effort"/>
         <text name="eq_ex_recover" text="Récupération"/>

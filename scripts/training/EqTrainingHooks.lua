@@ -1037,7 +1037,13 @@ function EqTrainingHooks.onSprintAction(vehicle, source)
     local last = EqTrainingHooks.sprintAt
     EqTrainingHooks.sprintAt = now
     if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
-    if EqTrainingHud.isHelpShowing() then return end
+    if EqTrainingHud.isHelpShowing() then
+        -- A gamepad's sprint button turns the page (a left click already does, by itself).
+        local mouse = Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_LEFT ~= nil
+            and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) == true
+        if source == "sprint action" and not mouse then EqTrainingHud.nextPage() end
+        return
+    end
     local spec = vehicle.spec_rideable
     local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
@@ -1109,11 +1115,9 @@ local function pollGaitKeys(vehicle)
 end
 
 
---- @return boolean either Ctrl key held
+--- @return boolean collect (Ctrl / L1 by default, EqRidingInput) held
 local function ctrlDown()
-    if Input == nil or Input.isKeyPressed == nil then return false end
-    return (Input.KEY_lctrl ~= nil and Input.isKeyPressed(Input.KEY_lctrl) == true)
-        or (Input.KEY_rctrl ~= nil and Input.isKeyPressed(Input.KEY_rctrl) == true)
+    return EqRidingInput.collect()
 end
 
 
@@ -1345,6 +1349,8 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
     -- Show jumping course keys (EqCourseHooks), and the dressage test editor's (EqDressageEditor).
     EqCourseHooks.registerActions(vehicle, spec)
     EqDressageEditor.registerActions(vehicle, spec)
+    -- The held riding modifiers: lateral, collect and rein (EqRidingInput).
+    EqRidingInput.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)

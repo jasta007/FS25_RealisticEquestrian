@@ -256,6 +256,9 @@
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshilfe"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Seitengänge (halten)"/>
+        <text name="input_EQ_COLLECT" text="Versammeln (halten)"/>
+        <text name="input_EQ_REIN" text="Zügel: Maussteuerung (halten)"/>
         <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
         <text name="eq_ex_push" text="Antreiben"/>
         <text name="eq_ex_recover" text="Erholen"/>

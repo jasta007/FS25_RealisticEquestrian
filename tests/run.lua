@@ -21,6 +21,7 @@ dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
 dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
+dofile("scripts/training/EqRidingInput.lua")
 dofile("scripts/training/EqLateral.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
@@ -3796,6 +3797,20 @@ end)()
         return legs.routine.kind == "markers" and legs.routine.path == nil
     end)())
 end)()
+
+-- Riding modifiers as actions (EqRidingInput): held while reported lately; stick picks a side.
+do
+    check("a riding modifier counts as held only while reported within HOLD_MS",
+        EqRidingInput.isFresh(1000, 1050) and not EqRidingInput.isFresh(1000, 1000 + EqRidingInput.HOLD_MS + 1)
+        and not EqRidingInput.isFresh(nil, 1000))
+    check("the stick past half way or A/D picks the side", (function()
+        local a, b = EqRidingInput.sides(0.8, false, false)
+        local c, d = EqRidingInput.sides(-0.6, false, false)
+        local e, f = EqRidingInput.sides(0.3, false, false)
+        local g, h = EqRidingInput.sides(0, true, false)
+        return not a and b and c and not d and not e and not f and g and not h
+    end)())
+end
 
 -- Lateral work (EqLateral): Shift + A/D drifts sideways, facing forwards.
 ;(function()
