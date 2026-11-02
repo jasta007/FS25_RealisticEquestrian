@@ -57,8 +57,10 @@ EqShowJumping.TIME_SPEED = 350 / 60
 EqShowJumping.TIME_SPEED_XC = 520 / 60
 EqShowJumping.MIN_TIME = 20
 EqShowJumping.TIME_LIMIT_FACTOR = 2
--- A line made from the course's path stands this far before fence 1 and after the last fence.
-EqShowJumping.LINE_OFFSET = 12
+-- The start line stands where recording began and the finish line where it was saved (James,
+-- 2026-11-02: a start 12 m before fence 1 put it 5 m ahead of where he started), but never
+-- closer than LINE_GAP metres to fence 1 or the last fence.
+EqShowJumping.LINE_GAP = 3
 EqShowJumping.LINE_WIDTH = 8
 -- The result shows this long before the next round can start.
 EqShowJumping.REST_MS = 8000
@@ -92,7 +94,7 @@ local function pathBetween(points, from, to)
 end
 
 
---- The point LINE_OFFSET metres along the path from an index, going back (-1) or on (1), with
+--- The point distance metres along the path from an index, going back (-1) or on (1), with
 --- the path's direction there.
 --- @return number x, number z, number tx, number tz (unit direction of travel), number index
 local function alongPath(points, index, way, distance)
@@ -131,32 +133,47 @@ local function lineAt(x, z, tx, tz)
 end
 
 
---- The start line made from the path: LINE_OFFSET before fence 1.
---- @param course table
---- @return table line, number the path index it stands at
-function EqShowJumping.startFromPath(course)
-    local first = course.jumps[1]
-    local x, z, tx, tz, index = alongPath(course.points, first.pointIndex or 1, -1, EqShowJumping.LINE_OFFSET)
-    return lineAt(x, z, tx, tz), index
+--- A line at one end of the path: at the end point (index 1 or #points), unless that is closer
+--- than LINE_GAP to the fence at fenceIndex, when it stands LINE_GAP from the fence, out past
+--- the end along the path's direction there.
+--- @param way number -1 for the start (fence 1 lies on from point 1), 1 for the finish
+--- @return table line, number the path index it stands at, number metres it stands past the end
+local function lineAtEnd(points, fenceIndex, way)
+    local endIndex = way < 0 and 1 or #points
+    local x, z = points[endIndex].x, points[endIndex].z
+    -- The direction of travel at the end: the path's first (or last) couple of metres.
+    local _, _, tx, tz = alongPath(points, endIndex, -way, 2)
+    local gap = way < 0 and pathBetween(points, endIndex, fenceIndex) or pathBetween(points, fenceIndex, endIndex)
+    local extra = math.max(0, EqShowJumping.LINE_GAP - gap)
+    x, z = x + tx * extra * way, z + tz * extra * way
+    return lineAt(x, z, tx, tz), endIndex, extra
 end
 
 
---- The finish line made from the path: LINE_OFFSET after the last fence.
+--- The start line: where recording began, at least LINE_GAP before fence 1.
 --- @param course table
---- @return table line, number the path index it stands at
+--- @return table line, number the path index it stands at, number metres it stands before point 1
+function EqShowJumping.startFromPath(course)
+    local first = course.jumps[1]
+    return lineAtEnd(course.points, first.pointIndex or 1, -1)
+end
+
+
+--- The finish line: where the course was saved, at least LINE_GAP after the last fence.
+--- @param course table
+--- @return table line, number the path index it stands at, number metres it stands past the end
 function EqShowJumping.finishFromPath(course)
     local last = course.jumps[#course.jumps]
-    local x, z, tx, tz, index = alongPath(course.points, last.pointIndex or #course.points, 1, EqShowJumping.LINE_OFFSET)
-    return lineAt(x, z, tx, tz), index
+    return lineAtEnd(course.points, last.pointIndex or #course.points, 1)
 end
 
 
 --- @param course table
 --- @return number seconds allowed: the path from the start line to the finish line at TIME_SPEED
 function EqShowJumping.timeAllowed(course)
-    local _, from = EqShowJumping.startFromPath(course)
-    local _, to = EqShowJumping.finishFromPath(course)
-    local metres = pathBetween(course.points, from, to) + 2 * EqShowJumping.LINE_OFFSET
+    local _, from, before = EqShowJumping.startFromPath(course)
+    local _, to, after = EqShowJumping.finishFromPath(course)
+    local metres = pathBetween(course.points, from, to) + before + after
     local speed = course.kind == EqCourse.CROSS_COUNTRY and EqShowJumping.TIME_SPEED_XC or EqShowJumping.TIME_SPEED
     return math.max(EqShowJumping.MIN_TIME, math.ceil(metres / speed))
 end
