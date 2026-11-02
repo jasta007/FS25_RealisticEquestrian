@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="クリックで続ける（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="トレーニングヘルプ"/>
         <text name="input_EQ_SPRINT" text="スプリント"/>
+        <text name="input_EQ_LATERAL" text="側方運動（長押し）"/>
+        <text name="input_EQ_COLLECT" text="収縮（長押し）"/>
+        <text name="input_EQ_REIN" text="手綱：マウス操舵（長押し）"/>
         <text name="eq_train_worn" text="騎乗バー満タン：今日のトレーニングは終了"/>
         <text name="eq_ex_push" text="プッシュ"/>
         <text name="eq_ex_recover" text="回復"/>

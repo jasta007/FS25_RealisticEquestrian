@@ -259,6 +259,9 @@
         <text name="eq_help_next" text="Clique para continuar (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Ajuda de treino"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Trabalho lateral (segurar)"/>
+        <text name="input_EQ_COLLECT" text="Reunir (segurar)"/>
+        <text name="input_EQ_REIN" text="Rédeas: direção com mouse (segurar)"/>
         <text name="eq_train_worn" text="Barra de montaria cheia: sem mais treino hoje"/>
         <text name="eq_ex_push" text="Forçando"/>
         <text name="eq_ex_recover" text="Recuperando"/>
