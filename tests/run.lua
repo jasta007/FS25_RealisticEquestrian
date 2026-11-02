@@ -5958,6 +5958,8 @@ end)()
     check("spectators: finger joints found by name", EqSpectators.isFinger("LeftHandIndex1") and EqSpectators.isFinger("RightHandThumb3")
         and EqSpectators.isFinger("rightFinger02") and not EqSpectators.isFinger("LeftHand") and not EqSpectators.isFinger("LeftForeArm")
         and not EqSpectators.isFinger("Spine2"))
+    check("spectators: hand joints by side", EqSpectators.handSide("RightHand") == "rightArm" and EqSpectators.handSide("LeftHand") == "leftArm"
+        and EqSpectators.handSide("r_hand") == "rightArm" and EqSpectators.handSide("Spine") == nil)
     check("spectators: beards are made per face", EqSpectators.beardFits("goatee01_head02", "head02")
         and not EqSpectators.beardFits("goatee01_head02", "head01") and not EqSpectators.beardFits("stubble_head01", nil))
     check("spectators: women in the crowd from the female player", EqSpectators.FEMALE_SHARE > 0 and EqSpectators.FEMALE_SHARE < 1

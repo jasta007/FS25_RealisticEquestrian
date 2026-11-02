@@ -64,19 +64,25 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- arms = 0 leaves the arms to the idle clip. Second try (James 2026-11-02, hands still odd: on the
 -- knees, fingers curled): the wrists further back, mid-thigh. Third (arms good, fingers still
 -- curled round the driver clip's steering wheel; the standing clip sank them into the bench):
--- the finger joints are put back to the character's rest pose every posed frame (relaxFingers),
+-- the finger joints are put back to the character's rest pose every posed frame (relaxFingers), the hands aimed flat (aimHands),
 -- and nobody wears gloves.
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
     handForward = -0.02, handApart = 0.18, handLift = 0.13,
-    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 1, wrists = 1,
+    handPitch = 15, handYaw = 10, handRoll = 0, arms = 1, fingers = 1, wrists = 1,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
 EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
--- the hand joints (lower case) and their arm's IK chain
-EqSpectators.WRISTS = { lefthand = "leftArm", righthand = "rightArm", l_hand = "leftArm", r_hand = "rightArm",
-    hand_l = "leftArm", hand_r = "rightArm" }
+
+--- @param name string|nil a hand joint's name
+--- @return string|nil the arm IK chain on that side: "leftArm" or "rightArm"
+function EqSpectators.handSide(name)
+    local lower = string.lower(tostring(name or ""))
+    if string.find(lower, "left", 1, true) ~= nil or string.find(lower, "^l_") ~= nil or string.find(lower, "_l$") ~= nil then return "leftArm" end
+    if string.find(lower, "right", 1, true) ~= nil or string.find(lower, "^r_") ~= nil or string.find(lower, "_r$") ~= nil then return "rightArm" end
+    return nil
+end
 
 -- Outfits: presets and items whose names have any of these words are never worn by spectators
 -- (James 2026-11-02: no bike helmets, face masks or chainsaw kit in the stands).
@@ -659,14 +665,28 @@ local function findFingers(person)
     local stack = { root }
     while #stack > 0 do
         local node = table.remove(stack)
-        local name = string.lower(tostring(getName(node)))
-        if EqSpectators.isFinger(name) then
+        if EqSpectators.isFinger(getName(node)) then
             local rx, ry, rz = getRotation(node)
             table.insert(person.fingers, { node = node, rx = rx, ry = ry, rz = rz })
-        elseif EqSpectators.WRISTS[name] ~= nil then
-            local rx, ry, rz = getRotation(node)
-            person.wrists = person.wrists or {}
-            person.wrists[EqSpectators.WRISTS[name]] = { node = node, rx = rx, ry = ry, rz = rz }
+            -- the hand joint is the one the fingers grow from (James 2026-11-02: the right hand
+            -- jerked; a name match can find a tool attach node called rightHand under the hand)
+            local hand = getParent(node)
+            local side = EqSpectators.handSide(getName(hand))
+            if hand ~= nil and hand ~= 0 and not EqSpectators.isFinger(getName(hand)) and side ~= nil then
+                person.wrists = person.wrists or {}
+                if person.wrists[side] == nil then
+                    local hx, hy, hz = getRotation(hand)
+                    person.wrists[side] = { node = hand, rx = hx, ry = hy, rz = hz }
+                end
+                -- the first joints of the thumb and middle finger show which way the hand faces
+                local wrist = person.wrists[side]
+                local lower = string.lower(tostring(getName(node)))
+                if wrist.node == hand then
+                    if string.find(lower, "thumb", 1, true) ~= nil then wrist.thumb = wrist.thumb or node
+                    elseif string.find(lower, "middle", 1, true) ~= nil then wrist.middle = node
+                    elseif wrist.middle == nil then wrist.fallback = wrist.fallback or node end
+                end
+            end
         end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
@@ -675,38 +695,66 @@ local function findFingers(person)
         local names = {}
         for i, finger in ipairs(person.fingers) do if i <= 12 then table.insert(names, getName(finger.node)) end end
         local wrists = {}
-        for id, wrist in pairs(person.wrists or {}) do table.insert(wrists, id .. "=" .. tostring(getName(wrist.node))) end
+        for id, wrist in pairs(person.wrists or {}) do
+            table.insert(wrists, string.format("%s=%s on %s", id, tostring(getName(wrist.node)), tostring(getName(getParent(wrist.node)))))
+        end
         Log:info("EqSpectators: %d finger joints (%s); wrists: %s", #person.fingers, table.concat(names, ", "),
             #wrists > 0 and table.concat(wrists, ", ") or "none found")
     end
 end
 
 
---- Seated: a straight wrist (James 2026-11-02: "it's the wrist joint that is the problem"). The
---- hand target gets the hand's rest turn relative to its forearm, as the forearm lies now, so the
---- IK doesn't twist the wrist to the target's own angle; handPitch/Yaw/Roll tilt it from there.
-local function alignWrists(person)
-    if EqSpectators.pose.wrists == 0 or person.wrists == nil then return end
+--- Seated: hands flat on the thighs (James 2026-11-02: "it's the wrist joint that is the problem";
+--- a target turned to match the forearm worked on the left hand but sent the right one to the hip
+--- and made it jerk). The arm IK turns each hand to its target, so the target is turned so that the
+--- hand's fingers point forward (handPitch degrees down, handYaw in), its back up and its thumb
+--- inward, worked out from where the thumb and middle finger joints sit on the hand: the same
+--- for a left or a right hand, and fixed in the seat's frame (no feedback from the arm).
+local function aimHands(person)
+    if EqSpectators.pose.wrists == 0 or person.wrists == nil then return false end
     local p = EqSpectators.pose
+    local aimed = false
     for id, wrist in pairs(person.wrists) do
         local target = person.targets[id]
-        local forearm = getParent(wrist.node)
-        if target ~= nil and forearm ~= nil and forearm ~= 0 then
-            if wrist.ref == nil then
-                wrist.ref = createTransformGroup("eqSpectatorWrist")
-                link(forearm, wrist.ref)
-                setTranslation(wrist.ref, 0, 0, 0)
+        local finger = wrist.middle or wrist.fallback
+        if target ~= nil and finger ~= nil and wrist.thumb ~= nil then
+            local fx, fy, fz = getTranslation(finger)
+            local tx, ty, tz = getTranslation(wrist.thumb)
+            -- back of the hand: thumb x fingers on a left hand, fingers x thumb on a right one
+            local ux, uy, uz
+            if id == "leftArm" then
+                ux, uy, uz = ty * fz - tz * fy, tz * fx - tx * fz, tx * fy - ty * fx
+            else
+                ux, uy, uz = fy * tz - fz * ty, fz * tx - fx * tz, fx * ty - fy * tx
             end
-            local side = EqSpectators.ARM_CHAINS[id] or 1
-            setRotation(wrist.ref, wrist.rx, wrist.ry, wrist.rz)
-            if rotateAboutLocalAxis ~= nil then
-                if p.handPitch ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handPitch), 1, 0, 0) end
-                if p.handYaw ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handYaw * side), 0, 1, 0) end
-                if p.handRoll ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handRoll * side), 0, 0, 1) end
-            end
-            setWorldRotation(target, getWorldRotation(wrist.ref))
+            local side = EqSpectators.ARM_CHAINS[id] or 1        -- +1 left (+x), -1 right
+            local pitch, yaw = math.rad(p.handPitch), math.rad(p.handYaw)
+            local dx, dy, dz = -side * math.sin(yaw) * math.cos(pitch), -math.sin(pitch), math.cos(yaw) * math.cos(pitch)
+            local roll = math.rad(p.handRoll) * side
+            local upx, upy = math.sin(roll), math.cos(roll)
+            -- A: a node turned so its z is the finger line and its y the back of the hand, as in
+            -- the hand's own frame; the target = (wanted frame in the seat) x A^-1
+            local a = createTransformGroup("eqSpectatorHandA")
+            link(getRootNode(), a)
+            setTranslation(a, 0, 0, 0)
+            setDirection(a, fx, fy, fz, ux, uy, uz)
+            local inverse = createTransformGroup("eqSpectatorHandInv")
+            link(a, inverse)
+            setWorldRotation(inverse, 0, 0, 0)
+            local ix, iy, iz = getRotation(inverse)
+            local want = createTransformGroup("eqSpectatorHandWant")
+            link(person.holder, want)
+            setDirection(want, dx, dy, dz, upx, upy, 0)
+            local hand = createTransformGroup("eqSpectatorHand")
+            link(want, hand)
+            setRotation(hand, ix, iy, iz)
+            setWorldRotation(target, getWorldRotation(hand))
+            delete(a)
+            delete(want)
+            aimed = true
         end
     end
+    return aimed
 end
 
 
@@ -745,6 +793,7 @@ local function onModelLoaded(_, state, person)
             end
         end
         placeTargets(person)
+        EqLog.try("EqSpectators hands", aimHands, person)
     end
     model:setVisibility(false)
     local style = person.style
@@ -999,7 +1048,6 @@ function EqSpectators.update()
                 for id in pairs(person.targets) do
                     if EqSpectators.armsOn() or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
                 end
-                alignWrists(person)
                 IKUtil.updateIKChains(chains, true)
                 relaxFingers(person)
             end
@@ -1013,6 +1061,7 @@ function EqSpectators.repose()
     for _, person in ipairs(EqSpectators.people) do
         if person.seated and person.model ~= nil and person.model.rootNode ~= nil then
             placeTargets(person)
+            EqLog.try("EqSpectators hands", aimHands, person)
             if person.settled then settle(person) end
             person.posed = 0     -- solve the new pose again, near or far
         elseif not person.seated and person.settled and person.model ~= nil and person.model.rootNode ~= nil then
