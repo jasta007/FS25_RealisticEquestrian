@@ -907,8 +907,10 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   sight (still no collision) as the crowd's barrier, instead of hiding like the course flags. The **Crowd density** setting gives up to 4 seated and
   3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
   picked afresh each day, wherever the bleachers and boxes are; selling a bleacher or rope (or
-  deleting a rope segment) takes its people away and a new crowd is picked from what's left. They are the game's own characters with
-  a few outfits; FS25 has no sit animation, so a seated spectator is posed like a tractor
+  deleting a rope segment) takes its people away and a new crowd is picked from what's left. They are the game's own characters, men
+  and women (about 45%), each with their own face, hair, beard and one of the game's outfit presets
+  (no helmets, masks or chainsaw kit); a named character's face (the animal dealer, the fisherman)
+  turns up at most once per crowd; FS25 has no sit animation, so a seated spectator is posed like a tractor
   driver, with IK on the feet and hands, kept live within 25 m and held still further out. They
   are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
   `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose and `info` counts places.
