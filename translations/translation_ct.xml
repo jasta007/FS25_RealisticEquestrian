@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通行門"/>
         <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
         <text name="eq_shop_xcRope" text="繩索標記"/>
-        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索、掛小型贊助商牌子的繩索（牌子只增加少量品牌曝光），或一側帶觀眾區的繩索（主辦比賽時觀眾站在那裡）。"/>
         <text name="eq_shop_plinthDrive" text="通行展台"/>
         <text name="eq_shop_plinthRamp" text="展示坡台"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="主辦"/>
         <text name="eq_settings_hostInterval" text="主辦比賽間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="從你上次主辦比賽的月份起，需要多少個月才能再次主辦。"/>
+        <text name="eq_settings_crowdDensity" text="觀眾密度"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="有多少觀眾來看你主辦的比賽：坐在看台上，站在繩子旁的觀眾區（08:00-19:00）。"/>
+        <text name="eq_settings_crowd_low" text="少"/>
+        <text name="eq_settings_crowd_medium" text="中"/>
+        <text name="eq_settings_crowd_high" text="多"/>
         <text name="eq_host_warning" text="你的%s缺少：%s。今天解決，否則明天比賽將被取消。"/>
         <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主辦聲譽受損。"/>
         <text name="eq_host_done" text="你的%s已結束：來了%d匹來訪馬。收入 %s（報名費 %s，門票 %s），人氣 %d。"/>

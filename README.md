@@ -125,6 +125,8 @@ uses its genetics, health and fitness.
   feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
   their rounds yourself if you like. Bad weather, a star horse, booking ahead, advertising and
   farm shops all change the crowd, and visitors can buy your souvenirs and refreshments.
+- **Spectators:** during your event, people sit on your bleachers and stand in the Rope Marker's
+  spectator boxes. How many is the **Crowd density** setting.
 - **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
   deals to hard bargains. Sign up to three on the **Sponsors** tab (big ones are exclusive) for a fee per event and extra popularity. Some lend you one of their machines, free, for your event month.
 - **Lizard:** now and then Lizard offers to sponsor an unsponsored event, if you build its
@@ -179,6 +181,7 @@ Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** ta
 - **Races and steeplechases**: on or off.
 - **Event injuries** and **Career-ending injuries**: on or off.
 - **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
+- **Crowd density**: how many spectators come to your hosted events: Off, Low, Medium (default) or High.
 
 In multiplayer only the host can change them for now.
 

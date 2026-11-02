@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Made by art/source/rope_fence.py: change that and run it again rather than editing this. -->
-<!-- Segments (N/M): plain rope, rope with a sponsor sign. -->
+<!-- Segments (N/M): plain rope, rope with a sponsor sign, rope with a spectator box on its +x side. -->
 <placeable type="newFence">
     <storeData>
         <name>$l10n_eq_shop_xcRope</name>
@@ -52,6 +52,14 @@
             </poles>
             <panels maxScale="1.4">
                 <panel node="2>1" length="2.5"/>
+            </panels>
+        </segment>
+        <segment id="ROPE_CROWD" class="FenceSegment" maxVerticalAngle="45">
+            <poles>
+                <pole node="1>0" radius="0.0175"/>
+            </poles>
+            <panels maxScale="1.4">
+                <panel node="2>2" length="2.5"/>
             </panels>
         </segment>
     </fence>

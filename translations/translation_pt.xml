@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Portão de passagem"/>
         <text name="eq_shop_xcGate_function" text="Um portão para atravessar, não um salto: largo e alto o suficiente para qualquer cavalo, com o logótipo do seu patrocinador."/>
         <text name="eq_shop_xcRope" text="Corda de marcação"/>
-        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples ou com uma pequena placa do patrocinador: as placas somam apenas um pouco de marca."/>
+        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples, com uma pequena placa do patrocinador (as placas somam apenas um pouco de marca) ou com uma zona de público de um lado, onde os espectadores ficam nos seus eventos."/>
         <text name="eq_shop_plinthDrive" text="Plataforma de passagem"/>
         <text name="eq_shop_plinthRamp" text="Rampa de exposição"/>
         <text name="eq_shop_plinthRampLarge" text="Rampa de exposição grande"/>
@@ -1007,6 +1007,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organização"/>
         <text name="eq_settings_hostInterval" text="Meses entre eventos próprios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quantos meses após o mês do seu último evento organizado até poder organizar outro."/>
+        <text name="eq_settings_crowdDensity" text="Densidade de público"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Quantos espectadores vêm aos seus eventos, nas suas bancadas e nas zonas de público junto à corda (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Baixa"/>
+        <text name="eq_settings_crowd_medium" text="Média"/>
+        <text name="eq_settings_crowd_high" text="Alta"/>
         <text name="eq_host_warning" text="Falta ao seu %s: %s. Resolva hoje ou o evento será cancelado amanhã."/>
         <text name="eq_host_cancelled" text="Seu %s foi cancelado, ainda faltava: %s. Sua reputação como organizador é prejudicada."/>
         <text name="eq_host_done" text="Seu %s terminou: vieram %d cavalos visitantes. Receita %s (%s de inscrições, %s de bilheteria), popularidade %d."/>

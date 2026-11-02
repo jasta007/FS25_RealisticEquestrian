@@ -361,6 +361,12 @@ function EqConsole:consoleProbe()
 end
 
 
+--- eqSpectators: show, hide or tune the crowd at hosted events.
+function EqConsole:consoleSpectators(command, a, b)
+    return EqSpectators.console(command, a, b)
+end
+
+
 --- eqXcFences: the cross country fences the flags on the map make.
 function EqConsole:consoleXcFences()
     return EqXcFlags.describe()
@@ -477,8 +483,10 @@ function EqConsole:consoleSettings(name, value)
         settings.trainingRate = tonumber(value)
     elseif (name == "entryFeeScale" or name == "prizeScale") and tonumber(value) ~= nil and tonumber(value) > 0 then
         settings[name] = tonumber(value)
+    elseif name == "crowdDensity" and EqSpectators.COUNTS[value] ~= nil then
+        settings.crowdDensity = value
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [crowdDensity off|low|medium|high]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
@@ -1014,6 +1022,7 @@ function EqConsole.register()
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
+    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
@@ -1057,7 +1066,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
         "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)

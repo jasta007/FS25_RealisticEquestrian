@@ -69,7 +69,7 @@ function EqCompetitionManager.reset()
     EqCompetitionManager.settings = { cadence = EqCompetitionManager.CADENCE_DAY, racing = true,
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
-        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6 }
+        eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6, crowdDensity = "medium" }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -1388,6 +1388,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setFloat(key .. ".settings#entryFeeScale", EqCompetitionManager.settings.entryFeeScale)
     xmlFile:setFloat(key .. ".settings#prizeScale", EqCompetitionManager.settings.prizeScale)
     xmlFile:setInt(key .. ".settings#hostInterval", EqCompetitionManager.settings.hostInterval)
+    xmlFile:setString(key .. ".settings#crowdDensity", EqCompetitionManager.settings.crowdDensity or "medium")
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
@@ -1476,6 +1477,7 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.entryFeeScale = xmlFile:getFloat(key .. ".settings#entryFeeScale", settings.entryFeeScale)
     settings.prizeScale = xmlFile:getFloat(key .. ".settings#prizeScale", settings.prizeScale)
     settings.hostInterval = xmlFile:getInt(key .. ".settings#hostInterval", settings.hostInterval)
+    settings.crowdDensity = xmlFile:getString(key .. ".settings#crowdDensity", settings.crowdDensity)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
