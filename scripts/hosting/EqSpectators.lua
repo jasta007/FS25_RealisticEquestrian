@@ -70,7 +70,7 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.20, handApart = 0.25, handLift = 0.10,
+    handForward = -0.20, handApart = 0.25, handLift = 0.15,
     -- the other hand position: in the lap (James 2026-11-02), half the crowd
     lapForward = 0.10, lapApart = 0.20, lapLift = 0.19, lapShare = 0.5,
     lapPitch = 0, lapYaw = 90, lapRoll = 0, lapElbow = 0,
