@@ -12,6 +12,9 @@
 EqRLRM = {}
 
 EqRLRM.MOD_NAME = "FS25_RealisticLivestockRM"
+-- The oldest RLRM release this mod is tested with. An older one gets a startup popup.
+-- Pre-release builds of the same number ("1.4.2.0-dev.4") count as that release.
+EqRLRM.MIN_VERSION = "1.4.2.0"
 
 local Log = EqLog
 
@@ -56,6 +59,31 @@ EqRLRM.env = nil
 EqRLRM.version = nil
 EqRLRM.isAvailable = false
 EqRLRM.features = {}
+-- Why RLRM needs updating, for the startup popup: nil, "missing", "incompatible" (switched off)
+-- or "old" (older than MIN_VERSION, or a feature is off; the mod still runs).
+EqRLRM.problem = nil
+
+
+--- @param version string|nil Such as "1.4.2.0" or "1.4.2.0-dev.4"
+--- @return table numbers The leading dotted numbers, { 1, 4, 2, 0 }
+local function versionNumbers(version)
+    local numbers = {}
+    local base = string.match(tostring(version or ""), "^[%d%.]+") or ""
+    for part in string.gmatch(base, "%d+") do table.insert(numbers, tonumber(part)) end
+    return numbers
+end
+
+
+--- @return boolean older true when version is older than minimum; false for an unreadable version
+function EqRLRM.isOlder(version, minimum)
+    local have, need = versionNumbers(version), versionNumbers(minimum)
+    if #have == 0 then return false end
+    for i = 1, math.max(#have, #need) do
+        local a, b = have[i] or 0, need[i] or 0
+        if a ~= b then return a < b end
+    end
+    return false
+end
 
 
 --- @param path table { tableName, functionName }
@@ -73,6 +101,7 @@ function EqRLRM.init()
 
     if type(env) ~= "table" then
         Log:error("Realistic Livestock (%s) is not loaded. Realistic Equestrian stays disabled.", EqRLRM.MOD_NAME)
+        EqRLRM.problem = "missing"
         return false
     end
 
@@ -89,6 +118,7 @@ function EqRLRM.init()
     if #missing > 0 then
         Log:error("Realistic Livestock %s is missing %s. Realistic Equestrian stays disabled; it needs a newer or older RLRM build.",
             EqRLRM.version, table.concat(missing, ", "))
+        EqRLRM.problem = "incompatible"
         return false
     end
 
@@ -100,7 +130,14 @@ function EqRLRM.init()
         EqRLRM.features[feature] = ok
         if not ok then
             Log:warning("Realistic Livestock %s lacks what '%s' needs; that feature is off.", EqRLRM.version, feature)
+            EqRLRM.problem = "old"
         end
+    end
+
+    if EqRLRM.isOlder(EqRLRM.version, EqRLRM.MIN_VERSION) then
+        Log:warning("Realistic Livestock %s is older than %s, the oldest version Realistic Equestrian is tested with.",
+            EqRLRM.version, EqRLRM.MIN_VERSION)
+        EqRLRM.problem = "old"
     end
 
     EqRLRM.isAvailable = true

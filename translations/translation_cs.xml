@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_lizard_title" text="%s 的赞助邀约"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian 找不到 Realistic Livestock（Ritter 版），因此已停用。请安装最新版本的 Realistic Livestock。"/>
+        <text name="eq_rlrm_incompatible" text="你的 Realistic Livestock 版本 %s 对 Realistic Equestrian 来说太旧，因此 Realistic Equestrian 已停用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
+        <text name="eq_rlrm_old" text="你的 Realistic Livestock 版本 %s 低于 Realistic Equestrian 所需的版本（%s 或更新），部分功能可能无法使用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_lizard_offer" text="%s 希望赞助你的%s（%s），并在赛事月借给你一辆它的车辆。要求在赛事结束前达到%s品牌度，并在你的场地建好Lizard展台：%s。如果公布成绩时一切就绪，它将支付 %s。否则不付费，也没有任何处罚。赛事结束后展台会倒塌。"/>
         <text name="eq_lizard_accept" text="接受"/>
         <text name="eq_lizard_decline" text="拒绝"/>

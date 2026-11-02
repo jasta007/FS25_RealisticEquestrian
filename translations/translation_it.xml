@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Richiede 1.000 l di cippato, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_shop_lizardPlinth_straw" text="Richiede 10.000 l di paglia, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_lizard_title" text="Offerta di sponsorizzazione di %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian non trova Realistic Livestock (versione di Ritter), quindi è disattivato. Installa l'ultima versione di Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="La tua versione %s di Realistic Livestock è troppo vecchia per Realistic Equestrian, quindi Realistic Equestrian è disattivato. Scarica l'ultima versione di Realistic Livestock (versione di Ritter)."/>
+        <text name="eq_rlrm_old" text="La tua versione %s di Realistic Livestock è più vecchia di quella richiesta da Realistic Equestrian (%s o successiva), quindi alcune funzioni potrebbero non funzionare. Scarica l'ultima versione di Realistic Livestock (versione di Ritter)."/>
         <text name="eq_lizard_offer" text="%s vorrebbe sponsorizzare il tuo %s (%s) e ti presterà uno dei suoi veicoli per il mese dell&#x27;evento. Chiede un branding %s entro la fine dell&#x27;evento e il suo piedistallo Lizard costruito nella tua sede: %s. Se è tutto pronto all&#x27;arrivo dei risultati, paga %s. Altrimenti non paga nulla e non c&#x27;è alcuna penalità. Il piedistallo crolla dopo l&#x27;evento."/>
         <text name="eq_lizard_accept" text="Accetta"/>
         <text name="eq_lizard_decline" text="Rifiuta"/>
