@@ -69,11 +69,14 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
     handForward = -0.02, handApart = 0.18, handLift = 0.13,
-    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 1,
+    handPitch = 0, handYaw = 0, handRoll = 0, arms = 1, fingers = 1, wrists = 1,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
 EqSpectators.ARM_CHAINS = { leftArm = 1, rightArm = -1 }
+-- the hand joints (lower case) and their arm's IK chain
+EqSpectators.WRISTS = { lefthand = "leftArm", righthand = "rightArm", l_hand = "leftArm", r_hand = "rightArm",
+    hand_l = "leftArm", hand_r = "rightArm" }
 
 -- Outfits: presets and items whose names have any of these words are never worn by spectators
 -- (James 2026-11-02: no bike helmets, face masks or chainsaw kit in the stands).
@@ -656,9 +659,14 @@ local function findFingers(person)
     local stack = { root }
     while #stack > 0 do
         local node = table.remove(stack)
-        if EqSpectators.isFinger(getName(node)) then
+        local name = string.lower(tostring(getName(node)))
+        if EqSpectators.isFinger(name) then
             local rx, ry, rz = getRotation(node)
             table.insert(person.fingers, { node = node, rx = rx, ry = ry, rz = rz })
+        elseif EqSpectators.WRISTS[name] ~= nil then
+            local rx, ry, rz = getRotation(node)
+            person.wrists = person.wrists or {}
+            person.wrists[EqSpectators.WRISTS[name]] = { node = node, rx = rx, ry = ry, rz = rz }
         end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
@@ -666,7 +674,38 @@ local function findFingers(person)
         EqSpectators.loggedFingers = true
         local names = {}
         for i, finger in ipairs(person.fingers) do if i <= 12 then table.insert(names, getName(finger.node)) end end
-        Log:info("EqSpectators: %d finger joints (%s)", #person.fingers, table.concat(names, ", "))
+        local wrists = {}
+        for id, wrist in pairs(person.wrists or {}) do table.insert(wrists, id .. "=" .. tostring(getName(wrist.node))) end
+        Log:info("EqSpectators: %d finger joints (%s); wrists: %s", #person.fingers, table.concat(names, ", "),
+            #wrists > 0 and table.concat(wrists, ", ") or "none found")
+    end
+end
+
+
+--- Seated: a straight wrist (James 2026-11-02: "it's the wrist joint that is the problem"). The
+--- hand target gets the hand's rest turn relative to its forearm, as the forearm lies now, so the
+--- IK doesn't twist the wrist to the target's own angle; handPitch/Yaw/Roll tilt it from there.
+local function alignWrists(person)
+    if EqSpectators.pose.wrists == 0 or person.wrists == nil then return end
+    local p = EqSpectators.pose
+    for id, wrist in pairs(person.wrists) do
+        local target = person.targets[id]
+        local forearm = getParent(wrist.node)
+        if target ~= nil and forearm ~= nil and forearm ~= 0 then
+            if wrist.ref == nil then
+                wrist.ref = createTransformGroup("eqSpectatorWrist")
+                link(forearm, wrist.ref)
+                setTranslation(wrist.ref, 0, 0, 0)
+            end
+            local side = EqSpectators.ARM_CHAINS[id] or 1
+            setRotation(wrist.ref, wrist.rx, wrist.ry, wrist.rz)
+            if rotateAboutLocalAxis ~= nil then
+                if p.handPitch ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handPitch), 1, 0, 0) end
+                if p.handYaw ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handYaw * side), 0, 1, 0) end
+                if p.handRoll ~= 0 then rotateAboutLocalAxis(wrist.ref, math.rad(p.handRoll * side), 0, 0, 1) end
+            end
+            setWorldRotation(target, getWorldRotation(wrist.ref))
+        end
     end
 end
 
@@ -960,6 +999,7 @@ function EqSpectators.update()
                 for id in pairs(person.targets) do
                     if EqSpectators.armsOn() or EqSpectators.ARM_CHAINS[id] == nil then IKUtil.setIKChainDirty(chains, id) end
                 end
+                alignWrists(person)
                 IKUtil.updateIKChains(chains, true)
                 relaxFingers(person)
             end
@@ -1008,7 +1048,7 @@ function EqSpectators.console(command, a, b)
         local parts = {}
         for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
         table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; fingers 0 = the clip's curled fingers)"
+        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; fingers 0 = the clip's curled fingers; wrists 0 = hand angles from the seat, not the forearm)"
     end
     local farm = farmId()
     local seats, stands = {}, {}
