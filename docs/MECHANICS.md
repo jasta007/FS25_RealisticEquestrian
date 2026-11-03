@@ -905,9 +905,11 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   and women (about 45%), each with their own face, hair, beard and one of the game's outfit presets
   (no helmets, masks or chainsaw kit); a named character's face (the animal dealer, the fisherman)
   turns up at most once per crowd; FS25 has no sit animation, so a seated spectator is posed like a tractor
-  driver, with IK on the feet and hands, kept live within 25 m and held still further out. They
+  driver, with IK on the feet and the mod's own two-joint solve on the arms (hands by the hips or
+  resting on the thighs). Now and then someone moves a hand between lap and side, or turns their
+  head to look about, each on their own timing. They
   are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
-  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose and `info` counts places.
+  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose, `explore sides|lap` drifts it until `snapshot` keeps it, and `info` counts places.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
