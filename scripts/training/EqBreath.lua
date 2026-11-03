@@ -3,13 +3,14 @@
     The horse's breath shows while the stamina band waits at the bottom of the bar (James,
     2026-11-03): a hit in the top band and it starts blowing, a hit in the bottom band and it
     stops, so the rider can watch the horse instead of the bar. A miss leaves it as the band's
-    side says (EqTraining.staminaStep moves the band to the other end).
+    side says (EqTraining.staminaStep moves the band to the other end). Fatigued or Blown, it
+    blows hard: bigger puffs, a little quicker, blown out faster.
 
-    The puffs are the base game's slow horse step dust (HORSE_STEP_SLOW), cloned onto each ridden
-    horse the way FS25 mods clone particle systems, placed just in front of the head bone every
-    frame and pulsed on and off for breaths. Emitted in world space, so at a gallop they stream
-    away behind the head. Everything is wrapped so a missing node or a changed game file only
-    logs a line.
+    The puffs are the base game's slow horse step dust (HORSE_STEP_SLOW), cloned twice (one per
+    nostril) onto the ridden horse, under the nostrils and aimed down, forwards and a little out
+    to each side so they show from the saddle too. They live in the horse's space, so they travel
+    with it instead of streaming off behind at a gallop. Everything is wrapped so a missing node
+    or a changed game file only logs a line.
 ]]
 
 EqBreath = {}
@@ -19,23 +20,32 @@ local Log = EqLog
 EqBreath.FILE = "$data/effects/horse/horseStepParticleSystem.i3d"
 -- The slow step emitter (the second Dynamic in the file).
 EqBreath.NODE = "1"
--- Bones to look for, in order: something at the muzzle first, else the head. The first found
--- carries the breath, OFFSET metres along the horse's heading and up from it.
+-- Bones to look for in the horse's own skeleton, in order, with where the nostrils are from them:
+-- FORWARD metres along the horse's heading and UP metres up. The base horse's head is head_m;
+-- James placed the breath under its nostrils at 0.48 / -0.5 (2026-11-04).
 EqBreath.BONES = {
-    { names = { "muzzle", "nose", "mouth", "jaw", "lowerjaw", "jaw_jnt", "lip", "lips" }, forward = 0.1, up = 0 },
-    { names = { "head", "head_jnt", "headbone", "skull" }, forward = 0.55, up = -0.35 },
-    { names = { "neck2", "neck" }, forward = 1.2, up = -0.2 },
+    { names = { "head_m", "head", "head_jnt", "headbone", "skull" }, forward = 0.48, up = -0.5 },
+    { names = { "neck4_m", "neck2_m", "neck_m", "neck2", "neck" }, forward = 1.1, up = -0.5 },
 }
--- Set by the bone found, and by eqBreath forward/up.
+-- Set by eqBreath forward/up: overrides the bone's offsets.
 EqBreath.FORWARD = nil
 EqBreath.UP = nil
--- A breath: emitting on, then off, by how hard the horse is blowing: "band" while the stamina
--- band waits at the bottom, "hard" while Fatigued or Blown (James, 2026-11-03: it would be weird
--- not to), heavier and quicker.
+-- The nostrils sit this far either side of the middle, and each blows along this direction in
+-- the horse's space (x out to its side, y up, z forward): down, forwards and a little out.
+EqBreath.NOSTRIL_GAP = 0.05
+EqBreath.BLOW = { 0.45, -0.55, 0.75 }
+-- How the puffs come out, by how hard the horse is blowing: on for onMs, off for offMs, each puff
+-- living lifespan ms, count times the dust's particles, size times its sprite size (the holder is
+-- scaled) and speed times its speed. "band" while the stamina band waits at the bottom, "hard"
+-- while Fatigued or Blown (James, 2026-11-04: noticeably bigger, only slightly quicker, blown out
+-- harder).
 EqBreath.STYLE = {
-    band = { onMs = 380, offMs = 420, lifespan = 900, count = 1 },
-    hard = { onMs = 320, offMs = 220, lifespan = 1300, count = 2.5 },
+    band = { onMs = 380, offMs = 440, lifespan = 1000, count = 1, size = 1.5, speed = 1.5 },
+    hard = { onMs = 340, offMs = 360, lifespan = 1100, count = 1.6, size = 2.3, speed = 3.5 },
 }
+-- eqBreath size/speed: extra multipliers for tuning in game.
+EqBreath.SIZE = 1
+EqBreath.SPEED = 1
 -- eqBreath console override: nil follows the gallop, false forces it off, a STYLE key forces it.
 EqBreath.force = nil
 
@@ -53,24 +63,24 @@ local function findBone(root)
         if found[name] == nil then found[name] = node end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
-    -- Once, the head's bone names, for placing the breath by hand.
-    local named = {}
-    for name in pairs(found) do
-        for _, part in ipairs({ "head", "jaw", "nose", "mouth", "muzzle", "lip", "neck", "ear" }) do
-            if string.find(name, part, 1, true) then table.insert(named, name) break end
-        end
-    end
-    table.sort(named)
-    Log:info("Breath: head bones %s", #named > 0 and table.concat(named, ", ") or "none")
     for _, group in ipairs(EqBreath.BONES) do
         for _, wanted in ipairs(group.names) do
             if found[wanted] ~= nil then return found[wanted], wanted, group end
         end
     end
-    for name, node in pairs(found) do
-        if string.find(name, "head", 1, true) then return node, name, EqBreath.BONES[2] end
+    -- Not the base horse: log its head bones once, for placing the breath by hand.
+    local named = {}
+    for name in pairs(found) do
+        for _, part in ipairs({ "head", "jaw", "nose", "mouth", "muzzle", "lip", "neck" }) do
+            if string.find(name, part, 1, true) then table.insert(named, name) break end
+        end
     end
-    return nil, nil, EqBreath.BONES[2]
+    table.sort(named)
+    Log:info("Breath: no known head bone; head bones %s", #named > 0 and table.concat(named, ", ") or "none")
+    for name, node in pairs(found) do
+        if string.find(name, "head", 1, true) then return node, name, EqBreath.BONES[1] end
+    end
+    return nil, nil, nil
 end
 
 
@@ -97,25 +107,13 @@ function EqBreath.ensureReference()
 end
 
 
-local function attach(vehicle)
-    local ref = EqBreath.ensureReference()
-    if ref == nil or vehicle.rootNode == nil or vehicle.rootNode == 0 then return nil end
-    -- Only the horse's own skeleton: the rider (a character with a "head" of its own) rides under
-    -- the same root (James, 2026-11-03: the first breath came out of the rider's face).
-    local spec = vehicle.spec_rideable
-    local skeleton = spec ~= nil and spec.animationNode or nil
-    if skeleton == nil or skeleton == 0 or not entityExists(skeleton) then skeleton = spec ~= nil and spec.meshNode or nil end
-    local bone, boneName, group = nil, nil, EqBreath.BONES[2]
-    if skeleton ~= nil and skeleton ~= 0 and entityExists(skeleton) then
-        bone, boneName, group = findBone(skeleton)
-    end
+--- One nostril: a holder on the horse's root with its own copy of the dust, aimed out to side.
+local function nostril(vehicle, ref, side)
     local holder = createTransformGroup("eqBreath")
     link(vehicle.rootNode, holder)
     local psClone = clone(ref.node, true, false, true)
     link(holder, psClone)
-    -- The emitter shape sits on the holder with the particle system. The puffs live in the
-    -- holder's space (James, 2026-11-03: in world space they streamed off behind at a gallop and
-    -- stopped reading as breath), so they travel with the horse's muzzle.
+    -- The emitter shape sits on the holder with the particle system, both in the holder's space.
     local emitter = nil
     if getNumOfChildren(psClone) > 0 then
         emitter = getChildAt(psClone, 0)
@@ -126,37 +124,80 @@ local function attach(vehicle)
     ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, false, false)
     if emitter ~= nil then ParticleUtil.setEmitterShape(ps, emitter) end
     ParticleUtil.setEmittingState(ps, false)
-    local entry = { holder = holder, ps = ps, bone = bone, emitter = emitter, emitting = false, clock = 0, logged = false,
-        forward = bone ~= nil and group.forward or 0, up = bone ~= nil and group.up or 0 }
-    Log:info("Breath: attached to %s, emitter %s, particle system under %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)",
-        emitter ~= nil and getName(emitter) or "none", ps.shape ~= nil and getName(getParent(ps.shape)) or "nothing")
+    -- The dust blows along the holder's -z (it went straight back at the rider unturned, James
+    -- 2026-11-04), so the holder's z points the opposite way to where this nostril should blow.
+    local b = EqBreath.BLOW
+    setDirection(holder, -b[1] * side, -b[2], -b[3], 0, 1, 0)
+    local baseSpeed = ParticleUtil.getParticleSystemSpeed ~= nil and ParticleUtil.getParticleSystemSpeed(ps) or nil
+    return { holder = holder, ps = ps, side = side, baseSpeed = baseSpeed }
+end
+
+
+local function attach(vehicle)
+    local ref = EqBreath.ensureReference()
+    if ref == nil or vehicle.rootNode == nil or vehicle.rootNode == 0 then return nil end
+    -- Only the horse's own skeleton: the rider (a character with a "head" of its own) rides under
+    -- the same root (James, 2026-11-03: the first breath came out of the rider's face).
+    local spec = vehicle.spec_rideable
+    local skeleton = spec ~= nil and spec.animationNode or nil
+    if skeleton == nil or skeleton == 0 or not entityExists(skeleton) then skeleton = spec ~= nil and spec.meshNode or nil end
+    local bone, boneName, group = nil, nil, nil
+    if skeleton ~= nil and skeleton ~= 0 and entityExists(skeleton) then
+        bone, boneName, group = findBone(skeleton)
+    end
+    local entry = { bone = bone, emitting = false, clock = 0, logged = false,
+        forward = group ~= nil and group.forward or 0, up = group ~= nil and group.up or 0,
+        nostrils = { nostril(vehicle, ref, -1), nostril(vehicle, ref, 1) } }
+    Log:info("Breath: attached to %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)")
     return entry
+end
+
+
+local function alive(entry)
+    for _, n in ipairs(entry.nostrils) do
+        if not entityExists(n.holder) then return false end
+    end
+    return true
 end
 
 
 local function place(vehicle, entry)
     local root = vehicle.rootNode
-    local fx, fy, fz = localDirectionToWorld(root, 0, 0, 1)
     local x, y, z
     if entry.bone ~= nil and entityExists(entry.bone) then
-        x, y, z = getWorldTranslation(entry.bone)
+        x, y, z = worldToLocal(root, getWorldTranslation(entry.bone))
     else
         -- No head bone: roughly where a standing horse's muzzle is.
-        x, y, z = localToWorld(root, 0, 1.4, 1.3)
+        x, y, z = 0, 1.4, 1.3
     end
     local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
-    x, y, z = x + fx * forward, y + fy * forward + up, z + fz * forward
-    local lx, ly, lz = worldToLocal(root, x, y, z)
-    setTranslation(entry.holder, lx, ly, lz)
+    for _, n in ipairs(entry.nostrils) do
+        setTranslation(n.holder, x + n.side * EqBreath.NOSTRIL_GAP, y + up, z + forward)
+    end
 end
 
 
 local function setEmitting(entry, on)
     if entry.emitting == on then return end
     entry.emitting = on
-    -- The step dust stops after a few particles (maxEmit), so each breath starts the count again.
-    if on and ParticleUtil.resetNumOfEmittedParticles ~= nil then ParticleUtil.resetNumOfEmittedParticles(entry.ps) end
-    ParticleUtil.setEmittingState(entry.ps, on)
+    for _, n in ipairs(entry.nostrils) do
+        -- The step dust stops after a few particles (maxEmit), so each breath starts the count again.
+        if on and ParticleUtil.resetNumOfEmittedParticles ~= nil then ParticleUtil.resetNumOfEmittedParticles(n.ps) end
+        ParticleUtil.setEmittingState(n.ps, on)
+    end
+end
+
+
+local function setLook(entry, look)
+    for _, n in ipairs(entry.nostrils) do
+        ParticleUtil.setParticleLifespan(n.ps, look.lifespan)
+        ParticleUtil.setEmitCountScale(n.ps, look.count)
+        local size = look.size * EqBreath.SIZE
+        setScale(n.holder, size, size, size)
+        if n.baseSpeed ~= nil and ParticleUtil.setParticleSystemSpeed ~= nil then
+            ParticleUtil.setParticleSystemSpeed(n.ps, n.baseSpeed * look.speed * EqBreath.SPEED)
+        end
+    end
 end
 
 
@@ -168,7 +209,7 @@ function EqBreath.update(vehicle, style, dt)
     if EqBreath.force ~= nil then style = EqBreath.force or nil end
     local look = style ~= nil and EqBreath.STYLE[style] or nil
     local entry = EqBreath.byVehicle[vehicle]
-    if entry ~= nil and not entityExists(entry.holder) then
+    if entry ~= nil and not alive(entry) then
         EqBreath.byVehicle[vehicle], entry = nil, nil
     end
     if entry == nil then
@@ -188,16 +229,16 @@ function EqBreath.update(vehicle, style, dt)
         setEmitting(entry, false)
         return
     end
-    if entry.style ~= style then
-        entry.style = style
-        ParticleUtil.setParticleLifespan(entry.ps, look.lifespan)
-        ParticleUtil.setEmitCountScale(entry.ps, look.count)
+    local lookKey = style .. "/" .. EqBreath.SIZE .. "/" .. EqBreath.SPEED
+    if entry.lookKey ~= lookKey then
+        entry.lookKey = lookKey
+        setLook(entry, look)
     end
     place(vehicle, entry)
     if not entry.logged then
         -- Once, where it is: for checking a breath that doesn't show.
         entry.logged = true
-        local hx, hy, hz = getWorldTranslation(entry.holder)
+        local hx, hy, hz = getWorldTranslation(entry.nostrils[1].holder)
         local rx, ry, rz = getWorldTranslation(vehicle.rootNode)
         Log:info("Breath: %s at %.1f %.1f %.1f (horse at %.1f %.1f %.1f)", style, hx, hy, hz, rx, ry, rz)
     end
@@ -211,17 +252,19 @@ end
 --- @param vehicle table
 function EqBreath.stop(vehicle)
     local entry = EqBreath.byVehicle[vehicle]
-    if entry ~= nil and entityExists(entry.holder) then setEmitting(entry, false) end
+    if entry ~= nil and alive(entry) then setEmitting(entry, false) end
 end
 
 
 --- Remove everything (mission end).
 function EqBreath.reset()
     for _, entry in pairs(EqBreath.byVehicle) do
-        if entityExists(entry.holder) then
-            ParticleUtil.setEmittingState(entry.ps, false)
-            ParticleUtil.deleteParticleSystem(entry.ps)
-            delete(entry.holder)
+        for _, n in ipairs(entry.nostrils) do
+            if entityExists(n.holder) then
+                ParticleUtil.setEmittingState(n.ps, false)
+                ParticleUtil.deleteParticleSystem(n.ps)
+                delete(n.holder)
+            end
         end
     end
     EqBreath.byVehicle = {}
