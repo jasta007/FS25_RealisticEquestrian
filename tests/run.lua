@@ -1011,22 +1011,40 @@ do
             if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
         end
         if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+        local scale = EqStaff.scaleOf(c.job)
+        if c.job == "groom" then
+            for _, skill in ipairs(EqStaff.SKILLS) do
+                if c.skills[skill] > 60 then check("a groom's skills stay at 60 or below", false, skill .. " " .. c.skills[skill]) end
+            end
+        end
         if c.grade == 4 then
             local stars = 0
             for _, skill in ipairs(EqStaff.JOBS[c.job].main) do
-                if c.skills[skill] >= 90 then stars = stars + 1 end
-                if c.skills[skill] < 80 then check("legendary main skills stay 80 and up", false, skill) end
+                if c.skills[skill] >= 90 * scale then stars = stars + 1 end
+                if c.skills[skill] < 80 * scale - 0.5 then check("legendary main skills stay 80 and up", false, skill) end
             end
             if stars ~= 1 then check("a legendary has exactly one main skill at 90+", false, c.job .. " " .. stars) end
         end
     end
     check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
     check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
-    local legend = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    local legend = { stamina = 54, speed = 54, agility = 54, temperament = 54 }
+    local junior = { stamina = 21, speed = 21, agility = 21, temperament = 21 }
     check("a legendary groom costs far more than a junior", EqStaff.wageFor("groom", 4, legend, 0, 0)
-        > 4 * EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0))
+        > 4 * EqStaff.wageFor("groom", 1, junior, 0, 0))
+    check("a groom's wage reads skills at the groom's scale", EqStaff.wageFor("groom", 1, junior, 0, 0) == 200,
+        tostring(EqStaff.wageFor("groom", 1, junior, 0, 0)))
+    local oldGroom = { job = "groom", skills = { stamina = 50, speed = 40, veterinary = 10 } }
+    EqStaff.rescale(oldGroom, 1)
+    check("an old save's groom is scaled down once", oldGroom.skills.stamina == 30 and oldGroom.skills.speed == 24
+        and oldGroom.skills.veterinary == 6)
+    EqStaff.rescale(oldGroom, EqStaff.scaleOf("groom"))
+    check("a groom saved at today's scale stays", oldGroom.skills.stamina == 30)
+    local oldTrainer = { job = "racing", skills = { speed = 50 } }
+    EqStaff.rescale(oldTrainer, 1)
+    check("trainers keep their skills", oldTrainer.skills.speed == 50)
     check("names have a last initial", string.match(candidates[1].name, "^%a+ %u%.$") ~= nil, candidates[1].name)
-    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0)
+    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, junior, 0, 0)
         <= 200)
 
     -- The mix on offer: 2-3 grooms, 2-3 trainers of different events, at most one vet and broker.
