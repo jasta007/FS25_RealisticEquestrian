@@ -6138,23 +6138,44 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
--- SPONSOR YEAR: offers come in January (FS25 period 11; period 1 is March), and the offers' year
--- is the calendar year, so January's offers aren't the same draw as March's in a new save.
+-- SPONSOR YEAR: offers come in January, whichever period that is (FS25 period 1 is March on a
+-- northern map, September on a southern one), and the offers' year is the calendar year.
 ;(function()
-    local hadManager, hadMission, hadLog = EqSponsorManager, g_currentMission, Log
+    local hadManager, hadMission, hadLog, hadGlobal = EqSponsorManager, g_currentMission, Log, EqI18N.globalI18N
     Log = Log or { info = function() end }
     dofile("scripts/sponsors/EqSponsorManager.lua")
     local M = EqSponsorManager
-    local starts, years = {}, {}
-    for period = 1, 12 do
-        g_currentMission = { environment = { currentPeriod = period, currentYear = 3 } }
-        if M.isYearStart(period) then table.insert(starts, period) end
-        years[period] = M.year()
+    local NAMES = { "January", "February", "March", "April", "May", "June", "July", "August",
+        "September", "October", "November", "December" }
+    local function gameI18N(shift)
+        return { getText = function(_, key) return key == "ui_month1" and "January" or key end,
+            hasText = function(_, key) return key == "ui_month1" end,
+            formatPeriod = function(_, period) return NAMES[(period + 1 + shift) % 12 + 1] end }
     end
-    check("sponsor year: new offers only in January (period 11)", #starts == 1 and starts[1] == 11)
-    check("sponsor year: March to December keep the game's year", years[1] == 3 and years[7] == 3 and years[10] == 3)
+    local function run(environment, i18n)
+        EqI18N.globalI18N = function() return i18n end
+        M.reset()
+        local starts, years = {}, {}
+        for period = 1, 12 do
+            environment.currentPeriod, environment.currentYear = period, 3
+            g_currentMission = { environment = environment }
+            if M.isYearStart(period) then table.insert(starts, period) end
+            years[period] = M.year()
+        end
+        return starts, years
+    end
+    local starts, years = run({}, gameI18N(0))
+    check("sponsor year: northern map, offers only in January (period 11)", #starts == 1 and starts[1] == 11)
+    check("sponsor year: March to December keep the game's year", years[1] == 3 and years[10] == 3)
     check("sponsor year: January and February are the next calendar year", years[11] == 4 and years[12] == 4)
-    EqSponsorManager, g_currentMission, Log = hadManager, hadMission, hadLog
+    starts, years = run({}, gameI18N(6))
+    check("sponsor year: southern map (period 1 = September), offers in period 5", #starts == 1 and starts[1] == 5)
+    check("sponsor year: southern calendar year turns in January", years[4] == 3 and years[5] == 4 and years[12] == 4)
+    starts = run({ daylight = { latitude = -15 } }, {})
+    check("sponsor year: no month names, a southern latitude gives period 5", #starts == 1 and starts[1] == 5)
+    starts = run({}, {})
+    check("sponsor year: nothing known, period 11", #starts == 1 and starts[1] == 11)
+    EqSponsorManager, g_currentMission, Log, EqI18N.globalI18N = hadManager, hadMission, hadLog, hadGlobal
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
