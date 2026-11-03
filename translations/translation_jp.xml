@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通過ゲート"/>
         <text name="eq_shop_xcGate_function" text="跳ぶ障害ではなく通り抜けるゲート：どの馬でも楽に通れる幅と高さで、スポンサーのロゴ入り。"/>
         <text name="eq_shop_xcRope" text="ロープマーカー"/>
-        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみか、小さなスポンサー看板付きを選べます。看板のブランド効果はごくわずかです。"/>
+        <text name="eq_shop_xcRope_function" text="ルートを示す軽いロープで、衝突判定なし。ロープのみ、小さなスポンサー看板付き（看板のブランド効果はごくわずか）、または片側に観客エリア付き（主催大会で観客が立つ場所）を選べます。"/>
         <text name="eq_shop_plinthDrive" text="通り抜け展示台"/>
         <text name="eq_shop_plinthRamp" text="展示用スロープ"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示用スロープ"/>
@@ -105,10 +105,13 @@
         <text name="eq_plinth_penalty" text="スポンサー展示台に他社の機械が %d 台：スポンサー料から %s 差し引かれました。"/>
         <text name="eq_shop_lizardPlinth" text="Lizard展示台"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizardがスポンサーとなるイベントのための特別な展示台。正面のトリガーに資材を納品して建設します。丸太デッキに置いたLizardの機械は追加でカウントされます。イベント後に崩れます。"/>
-        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,000 L、木材 10,000 L、板材 1,000 L。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="必要資材：石 1,200 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian は Realistic Livestock（Ritter 版）を見つけられないため、無効になっています。Realistic Livestock の最新版をインストールしてください。"/>
+        <text name="eq_rlrm_incompatible" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian には古すぎるため、Realistic Equestrian は無効になっています。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
+        <text name="eq_rlrm_old" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian が必要とするバージョン（%s 以降）より古いため、一部の機能が動作しない場合があります。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
         <text name="eq_lizard_accept" text="受ける"/>
         <text name="eq_lizard_decline" text="断る"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="クリックで続ける（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="トレーニングヘルプ"/>
         <text name="input_EQ_SPRINT" text="スプリント"/>
+        <text name="input_EQ_LATERAL" text="側方運動（長押し）"/>
+        <text name="input_EQ_COLLECT" text="収縮（長押し）"/>
+        <text name="input_EQ_REIN" text="手綱：マウス操舵（長押し）"/>
         <text name="eq_train_worn" text="騎乗バー満タン：今日のトレーニングは終了"/>
         <text name="eq_ex_push" text="プッシュ"/>
         <text name="eq_ex_recover" text="回復"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="主催"/>
         <text name="eq_settings_hostInterval" text="主催大会の間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="前回主催した大会の月から、次の大会を主催できるまでの月数。"/>
+        <text name="eq_settings_crowdDensity" text="観客の多さ"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="主催大会に来る観客の数。スタンドとロープ脇の観客エリアに現れます（08:00-19:00）。"/>
+        <text name="eq_settings_crowd_low" text="少ない"/>
+        <text name="eq_settings_crowd_medium" text="普通"/>
+        <text name="eq_settings_crowd_high" text="多い"/>
         <text name="eq_host_warning" text="あなたの%sに不足があります：%s。今日中に対応しないと明日中止になります。"/>
         <text name="eq_host_cancelled" text="あなたの%sは中止になりました（不足：%s）。主催者としての評判が下がります。"/>
         <text name="eq_host_done" text="あなたの%sが終わりました：来場馬 %d 頭。収入 %s（エントリー料 %s、入場料 %s）、人気 %d。"/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="この機材は、今月のイベント期間中に使えるようスポンサーから提供されたものです。お楽しみください！"/>
         <text name="eq_sponsor_discount_from" text="%sから"/>
         <text name="eq_sponsor_discount_after" text="契約から%dか月後に開始"/>
+        <text name="eq_settings_homeRegion" text="ホーム地域"/>
+        <text name="eq_settings_homeRegion_tooltip" text="牧場のある地域で、どの大会が海外かを決めます。「マップから」はマップ（またはRLRMのマップの国）から読み取ります。違う場合は地域を選んでください。"/>
+        <text name="eq_settings_homeRegion_auto" text="マップから"/>
+        <text name="eq_region_northAmerica" text="北アメリカ"/>
+        <text name="eq_region_southAmerica" text="南アメリカ"/>
+        <text name="eq_region_europe" text="ヨーロッパ"/>
+        <text name="eq_region_asiaOceania" text="アジア・オセアニア"/>
+        <text name="eq_settings_quarantine" text="国際検疫"/>
+        <text name="eq_settings_quarantine_tooltip" text="別の地域の大会から戻った馬が、帰宅前に何ラウンドか検疫を受けるかどうか。検疫費用はどちらでも支払われます。"/>
+        <text name="eq_ui_col_region" text="地域"/>
+        <text name="eq_ui_region_home" text="あなたの地域: %s（%s）。"/>
+        <text name="eq_ui_region_fromMap" text="マップから。設定で変更できます"/>
+        <text name="eq_ui_region_chosen" text="設定で選択"/>
+        <text name="eq_ui_region_quarantine" text="海外の大会の後、馬は検疫に入ります: 海外遠征の後は%dラウンド（黄）、長距離遠征の後は%dラウンド（橙）。"/>
+        <text name="eq_ui_region_noQuarantine" text="国際検疫はオフです。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s、その後%dラウンド検疫"/>
+        <text name="eq_ui_status_quarantine" text="検疫中"/>
+        <text name="eq_status_quarantine" text="検疫中、%dラウンド"/>
+        <text name="eq_enter_quarantine" text="この馬は海外の大会の後で検疫中です。帰宅すれば出場できます。"/>
+        <text name="eq_quarantine_home" text="%sが検疫から戻りました。"/>
     </texts>
 </l10n>

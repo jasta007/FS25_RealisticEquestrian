@@ -21,6 +21,7 @@ dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
 dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
+dofile("scripts/training/EqRidingInput.lua")
 dofile("scripts/training/EqLateral.lua")
 dofile("scripts/training/EqDressage.lua")
 dofile("scripts/training/EqCourse.lua")
@@ -38,12 +39,14 @@ dofile("scripts/competition/EqRisk.lua")
 dofile("scripts/core/EqLog.lua")
 for _, level in ipairs({ "debug", "info", "warning", "error" }) do EqLog[level] = function() end end
 dofile("scripts/competition/EqInjury.lua")
+dofile("scripts/competition/EqQuarantine.lua")
 dofile("scripts/training/EqPoles.lua")
 dofile("scripts/facilities/EqJumpColours.lua")
 dofile("scripts/attire/EqAttire.lua")
 dofile("scripts/facilities/EqFacility.lua")
 dofile("scripts/hosting/EqHosting.lua")
 dofile("scripts/hosting/EqHostManager.lua")
+dofile("scripts/hosting/EqSpectators.lua")
 dofile("scripts/sponsors/EqSponsorship.lua")
 dofile("scripts/facilities/EqPlinths.lua")
 dofile("scripts/facilities/EqTurntable.lua")
@@ -284,6 +287,48 @@ for i = 1, 2000 do agilitySum = agilitySum + foalGenes("UK 1 " .. (1000 + i)).ag
 local expected = (EqStats.regress(1.4) + EqStats.regress(1.6)) / 2
 check("seeded foals centre on the regressed mid-parent", math.abs(agilitySum / 2000 - expected) < 0.02,
     string.format("mean %.3f expected %.3f", agilitySum / 2000, expected))
+
+-- RLRM version check behind the startup popup. In a function: the main chunk is near Lua's local limit.
+local function rlrmVersionTests()
+    check("older RLRM is older", EqRLRM.isOlder("1.4.1.0", "1.4.2.0"))
+    check("same RLRM is not older", not EqRLRM.isOlder("1.4.2.0", "1.4.2.0"))
+    check("dev build of the minimum counts as it", not EqRLRM.isOlder("1.4.2.0-dev.4", "1.4.2.0"))
+    check("newer RLRM is not older", not EqRLRM.isOlder("1.10.0.0", "1.4.2.0"))
+    check("short version compares", EqRLRM.isOlder("1.4", "1.4.2.0") and not EqRLRM.isOlder("1.5", "1.4.2.0"))
+    check("unreadable version is not older", not EqRLRM.isOlder("unknown", "1.4.2.0"))
+
+    local savedRLRM, savedGlobal, savedManager, savedI18n = EqRLRM, _G[EqRLRM.MOD_NAME], g_modManager, g_i18n
+    -- EqRLRM.lua was loaded before EqLog above; a fresh copy gets the (silenced) logger.
+    dofile("scripts/core/EqRLRM.lua")
+    local function initWith(env, version)
+        _G[EqRLRM.MOD_NAME] = env
+        g_modManager = { getModByName = function() return { version = version } end }
+        EqRLRM.problem = nil
+        return EqRLRM.init()
+    end
+    local full = {}
+    local function add(path) full[path[1]] = full[path[1]] or {}; full[path[1]][path[2]] = function() end end
+    for _, path in ipairs(EqRLRM.REQUIRED) do add(path) end
+    for _, paths in pairs(EqRLRM.OPTIONAL) do for _, path in ipairs(paths) do add(path) end end
+    check("missing RLRM is reported", not initWith(nil, nil) and EqRLRM.problem == "missing")
+    check("current RLRM has no problem", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
+    check("old RLRM still runs with a popup", initWith(full, "1.4.1.0") and EqRLRM.problem == "old")
+    local partial = {}
+    for k, v in pairs(full) do partial[k] = v end
+    partial.RLMenu = nil
+    check("missing optional function asks for an update", initWith(partial, "1.4.2.0") and EqRLRM.problem == "old")
+    check("missing required function switches off", not initWith({ Animal = {} }, "1.4.2.0") and EqRLRM.problem == "incompatible")
+
+    dofile("scripts/gui/EqRLRMWarning.lua")
+    g_i18n = { getText = function(_, key) return key .. " %s %s" end }
+    EqRLRM.problem, EqRLRM.version = "old", "1.4.1.0"
+    check("old RLRM popup names both versions", EqRLRMWarning.getText() == "eq_rlrm_old 1.4.1.0 " .. EqRLRM.MIN_VERSION)
+    EqRLRM.problem = nil
+    check("no popup without a problem", EqRLRMWarning.getText() == nil)
+
+    EqRLRM, _G[EqRLRM.MOD_NAME], g_modManager, g_i18n = savedRLRM, savedGlobal, savedManager, savedI18n
+end
+rlrmVersionTests()
 
 -- TRAINING
 
@@ -852,6 +897,29 @@ do
         for _ = 1, 1200 do share = EqTraining.workStep(jumps, 100) end
         check("jumps lift the riding cost, then it fades", after > 0.3 and share < 0.26,
             string.format("after %.3f, later %.3f", after, share))
+        -- A test of figures costs more of the bar from the start and trains temperament faster.
+        local tested = EqTraining.newSheet()
+        tested.routine.active, tested.routine.kind, tested.routine.mult = true, "path", 3
+        check("a dressage test costs TEST_BAR_SHARE of the bar however low the work",
+            EqTraining.barShare(tested, EqTraining.CRUISE_BAR_SHARE) == EqTraining.TEST_BAR_SHARE
+            and EqTraining.barShare(easy, EqTraining.CRUISE_BAR_SHARE) == EqTraining.CRUISE_BAR_SHARE)
+        local markers = EqTraining.newSheet()
+        markers.routine.active, markers.routine.kind, markers.routine.mult = true, "markers", 3
+        EqTraining.routineTrain(tested, false, 1000)
+        EqTraining.routineTrain(markers, false, 1000)
+        check("a dressage test trains temperament TEST_TEMPERAMENT_FACTOR times as fast as the markers",
+            math.abs(tested.focused.temperament - markers.focused.temperament * EqTraining.TEST_TEMPERAMENT_FACTOR) < 1e-12
+            and markers.focused.temperament > 0)
+        -- Lateral work anywhere trains temperament once held a moment; collecting alone doesn't.
+        local free = EqTraining.newSheet()
+        local early = EqTraining.freeLateral(free, "halfPass", false, 500)
+        local later = EqTraining.freeLateral(free, "halfPass", false, 1000)
+        local gained = free.focused.temperament
+        EqTraining.freeLateral(free, "collected", false, 2000)
+        local worn = EqTraining.newSheet()
+        EqTraining.freeLateral(worn, "piaffe", true, 5000)
+        check("free lateral work trains temperament after a moment held", not early and later and gained > 0
+            and free.focused.temperament == gained and free.freeLateralMs == 0 and worn.focused.temperament == 0)
         local sheet = EqTraining.newSheet()
         EqTraining.addRiding(sheet, "canter", 1000, 0.25)
         check("easy riding counts less towards the player's share", sheet.ms.canter == 250)
@@ -1527,8 +1595,8 @@ end)()
 ;(function()
     local function line(x0, kind)
         local points = {}
-        for z = 0, 120, 2 do points[#points + 1] = { x = x0, y = 0, z = z } end
-        local function fence(z) return { x = x0, z = z, pointIndex = z / 2 + 1, ax = x0 - 2, az = z, bx = x0 + 2, bz = z } end
+        for z = 28, 120, 2 do points[#points + 1] = { x = x0, y = 0, z = z } end
+        local function fence(z) return { x = x0, z = z, pointIndex = (z - 28) / 2 + 1, ax = x0 - 2, az = z, bx = x0 + 2, bz = z } end
         return { name = kind, points = points, jumps = { fence(40), fence(70) }, length = 120, kind = kind }
     end
     local saved = EqCourse.list
@@ -1548,14 +1616,34 @@ end)()
 -- A timed show jumping round over a course (EqShowJumping).
 ;(function()
     local points = {}
-    for z = 0, 120, 2 do points[#points + 1] = { x = 0, y = 0, z = z } end
+    -- Recorded from z = 28 (where the rider pressed the key) to z = 82 (where it was saved).
+    for z = 28, 82, 2 do points[#points + 1] = { x = 0, y = 0, z = z } end
     local function fence(z)
-        return { x = 0, z = z, ry = 0, side = -1, pointIndex = z / 2 + 1, ax = -2, az = z, bx = 2, bz = z }
+        return { x = 0, z = z, ry = 0, side = -1, pointIndex = (z - 28) / 2 + 1, ax = -2, az = z, bx = 2, bz = z }
     end
     local course = { name = "Course 1", points = points, jumps = { fence(40), fence(70) }, length = 120 }
     local round = EqShowJumping.newRound(course)
-    check("a path start line stands before fence 1", math.abs(round.start.z - 28) < 1e-6 and round.start.ax < round.start.bx)
-    check("a path finish line stands after the last fence", math.abs(round.finish.z - 82) < 1e-6)
+    check("the start line stands where recording began", math.abs(round.start.z - 28) < 1e-6 and round.start.ax < round.start.bx)
+    check("the finish line stands where the course was saved", math.abs(round.finish.z - 82) < 1e-6)
+    -- James, 2026-11-02: a start 12 m before fence 1 sat 5 m ahead of where he started.
+    local far = { points = {}, jumps = {} }
+    for k = 0, 50 do far.points[#far.points + 1] = { x = 0, y = 0, z = k } end
+    far.jumps = { fence(40), fence(45) }
+    far.jumps[1].pointIndex, far.jumps[2].pointIndex = 41, 46
+    local farStart, farFrom = EqShowJumping.startFromPath(far)
+    local farFinish = EqShowJumping.finishFromPath(far)
+    check("a start recorded 40 m out stays 40 m out", math.abs(farStart.z) < 1e-6 and farFrom == 1)
+    check("a finish saved 5 m past the last fence stays there", math.abs(farFinish.z - 50) < 1e-6)
+    local close = { points = {}, jumps = {} }
+    for k = 0, 20 do close.points[#close.points + 1] = { x = 0, y = 0, z = k } end
+    close.jumps = { fence(1), fence(19) }
+    close.jumps[1].pointIndex, close.jumps[2].pointIndex = 2, 20
+    local closeStart, _, before = EqShowJumping.startFromPath(close)
+    local closeFinish, _, after = EqShowJumping.finishFromPath(close)
+    check("a start recorded on top of fence 1 stands LINE_GAP before it",
+        math.abs(closeStart.z - (1 - EqShowJumping.LINE_GAP)) < 1e-6 and math.abs(before - 2) < 1e-6 and closeStart.ax < closeStart.bx)
+    check("a finish saved on the last fence stands LINE_GAP after it",
+        math.abs(closeFinish.z - (19 + EqShowJumping.LINE_GAP)) < 1e-6 and math.abs(after - 2) < 1e-6)
     check("the time allowed is at least the minimum", round.allowed >= EqShowJumping.MIN_TIME)
 
     -- Ride along x = 0 from one z to another, a frame each half metre; returns the events seen.
@@ -3297,24 +3385,29 @@ end)()
     check("training rate scales event boosts", math.abs(boostedWith(3) - 3 * boostedWith(nil)) < 1e-9)
 end)()
 
--- Recent stat gains: summed per day, kept seven days, saved with the horse.
+-- Recent stat gains: summed per in-game month, this month and the one before kept, saved with the horse.
 ;(function()
     local horse = EqHorseRecord.new("DE 1 9")
-    horse:addGains(10, { stamina = 0.5, speed = 0.1 })
-    horse:addGains(10, { stamina = 0.25 })
-    horse:addGains(14, { stamina = 1, agility = -0.3 })
-    check("same-day gains share an entry", #horse.gains == 2)
-    local gains = horse:getRecentGains(14)
-    check("recent gains sum the week", math.abs(gains.stamina - 1.75) < 1e-9 and math.abs(gains.agility + 0.3) < 1e-9)
-    check("gains older than a week drop out of the sum", math.abs(horse:getRecentGains(17).stamina - 1) < 1e-9)
-    horse:addGains(17, { stamina = 0.1 })
-    check("old gain days are dropped", #horse.gains == 2 and horse.gains[1].day == 14)
-    horse:addGains(18, nil)
+    horse:addGains(3, { stamina = 0.5, speed = 0.1 })
+    horse:addGains(3, { stamina = 0.25 })
+    horse:addGains(4, { stamina = 1, agility = -0.3 })
+    check("same-month gains share an entry", #horse.gains == 2)
+    local gains = horse:getRecentGains(3)
+    check("a month's gains are summed", math.abs(gains.stamina - 0.75) < 1e-9 and math.abs(gains.speed - 0.1) < 1e-9)
+    check("only the asked month counts", math.abs(horse:getRecentGains(4).stamina - 1) < 1e-9
+        and math.abs(horse:getRecentGains(4).agility + 0.3) < 1e-9)
+    check("a month with nothing shows nothing", horse:getRecentGains(5).stamina == 0)
+    horse:addGains(3, { stamina = 0.25 })
+    check("a late day of the month before still adds to it", #horse.gains == 2 and math.abs(horse:getRecentGains(3).stamina - 1) < 1e-9)
+    horse:addGains(5, { stamina = 0.1 })
+    check("older months are dropped", #horse.gains == 2 and horse.gains[1].month == 4)
+    horse:addGains(6, nil)
     check("no deltas adds nothing", #horse.gains == 2)
     local x = memoryXML()
     horse:saveToXMLFile(x, "h")
     local back = EqHorseRecord.loadFromXMLFile(x, "h")
-    check("gains survive a save", #back.gains == 2 and math.abs(back:getRecentGains(17).stamina - 1.1) < 1e-9)
+    check("gains survive a save", #back.gains == 2 and math.abs(back:getRecentGains(4).stamina - 1) < 1e-9
+        and math.abs(back:getRecentGains(5).stamina - 0.1) < 1e-9)
     check("an old save loads with no gains", #EqHorseRecord.loadFromXMLFile((function()
         local y = memoryXML(); EqHorseRecord.new("DE 1 10"):saveToXMLFile(y, "h"); return y end)(), "h").gains == 0)
 
@@ -3773,6 +3866,20 @@ end)()
         return legs.routine.kind == "markers" and legs.routine.path == nil
     end)())
 end)()
+
+-- Riding modifiers as actions (EqRidingInput): held while reported lately; stick picks a side.
+do
+    check("a riding modifier counts as held only while reported within HOLD_MS",
+        EqRidingInput.isFresh(1000, 1050) and not EqRidingInput.isFresh(1000, 1000 + EqRidingInput.HOLD_MS + 1)
+        and not EqRidingInput.isFresh(nil, 1000))
+    check("the stick past half way or A/D picks the side", (function()
+        local a, b = EqRidingInput.sides(0.8, false, false)
+        local c, d = EqRidingInput.sides(-0.6, false, false)
+        local e, f = EqRidingInput.sides(0.3, false, false)
+        local g, h = EqRidingInput.sides(0, true, false)
+        return not a and b and c and not d and not e and not f and g and not h
+    end)())
+end
 
 -- Lateral work (EqLateral): Shift + A/D drifts sideways, facing forwards.
 ;(function()
@@ -5514,7 +5621,7 @@ end)()
         local lz = EqLizard.read(TestXML.load("data/sponsors.xml"))
         check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
             and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
-            and EqLizard.material(lz, "STONE").amount == 1000 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
+            and EqLizard.material(lz, "STONE").amount == 1200 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
         check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
             and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
         check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType
@@ -5892,6 +5999,143 @@ end)()
         and EqAttire.pickColour({}, 1) == nil)
     check("attire: no toe line, no foot axes", EqAttire.footAxes(0, 0, 0, 1, 0, 0, 25) == nil
         and EqAttire.footAxes(1, 0, 0, 1, 0, 0, 25) == nil)
+end)()
+
+-- Spectators at hosted events (EqSpectators): pure planning only.
+;(function()
+    check("spectators: density defaults to medium", EqSpectators.density(nil) == "medium"
+        and EqSpectators.density({ crowdDensity = "bogus" }) == "medium" and EqSpectators.density({ crowdDensity = "off" }) == "off")
+    check("spectators: off brings nobody", EqSpectators.COUNTS.off.seated == 0 and EqSpectators.COUNTS.off.standing == 0)
+    check("spectators: medium seats five to ten (James)", EqSpectators.COUNTS.medium.seated >= 5 and EqSpectators.COUNTS.medium.seated <= 10)
+    check("spectators: more for each step up", EqSpectators.COUNTS.low.seated < EqSpectators.COUNTS.medium.seated
+        and EqSpectators.COUNTS.medium.seated < EqSpectators.COUNTS.high.seated)
+    local rows, length = EqSpectators.bleacherSize("C:/mods/FS25_RealisticEquestrian/placeables/bleachers/bleachers5x10.xml")
+    check("spectators: bleacher size from its xml", rows == 5 and length == 10)
+    check("spectators: other placeables aren't bleachers", EqSpectators.bleacherSize("placeables/xcJumps/xcTable.xml") == nil
+        and EqSpectators.bleacherSize(nil) == nil and EqSpectators.bleacherSize("otherMod/bleachers5x10.xml") == nil)
+    local seats = EqSpectators.seatsOf(3, 6)
+    local perRow = #seats / 3
+    check("spectators: seats on every row of a 3x6", #seats > 0 and perRow == math.floor(perRow) and perRow >= 7)
+    local back = seats[#seats]
+    check("spectators: back row's bench on its tread", back.row == 2
+        and math.abs(back.y - (0.3 + 2 * 0.42 + 0.42)) < 1e-9 and math.abs(back.floorY - (0.3 + 2 * 0.42)) < 1e-9)
+    local inside = true
+    for _, seat in ipairs(seats) do
+        if math.abs(seat.x) > 3 - EqSpectators.SEAT_END + 1e-9 then inside = false end
+    end
+    check("spectators: seats stay off the bleacher's ends", inside)
+    local list = {}
+    for i = 1, 20 do list[i] = i end
+    local a = EqSpectators.pick(list, 5, EqRandom.new(42))
+    local b = EqSpectators.pick(list, 5, EqRandom.new(42))
+    local same, unique, seen = true, true, {}
+    for i = 1, 5 do
+        if a[i] ~= b[i] then same = false end
+        if seen[a[i]] then unique = false end
+        seen[a[i]] = true
+    end
+    check("spectators: the same seed picks the same places, each once", #a == 5 and same and unique)
+    check("spectators: never more than the places there are", #EqSpectators.pick({ 1, 2 }, 5, EqRandom.new(1)) == 2)
+    check("spectators: there from 08:00 to 19:00", EqSpectators.inHours(8) and EqSpectators.inHours(18.9)
+        and not EqSpectators.inHours(7.9) and not EqSpectators.inHours(19))
+    check("spectators: rope box matches the rope's art", EqSpectators.ROPE_BOX[1] == 0.6 and EqSpectators.ROPE_BOX[2] == 1.8)
+    -- a sold bleacher or deleted rope segment takes its people away, the rest stay
+    local alive = { [1] = true, [2] = true, [10] = true, [11] = true, [20] = true }
+    local oldExists, oldDelete = entityExists, delete
+    entityExists = function(node) return alive[node] == true end
+    delete = function(node) alive[node] = nil end
+    EqSpectators.people = {
+        { holder = 1, seat = { parent = 10 } },                -- bleacher still there
+        { holder = 3, seat = { parent = 11 } },                -- holder gone with a sold bleacher
+        { holder = 2, stand = { box = 21, root = 20 } },       -- rope segment deleted
+    }
+    EqSpectators.key = "x"
+    local dropped = EqSpectators.dropGone()
+    check("spectators: people on sold bleachers and deleted rope go, others stay", dropped and #EqSpectators.people == 1
+        and EqSpectators.people[1].holder == 1 and EqSpectators.key == nil and alive[2] == nil)
+    EqSpectators.people = { { holder = 1, seat = { parent = 10 } }, { holder = 2, stand = { box = 21, root = 20 } } }
+    alive[2], alive[21] = true, true
+    EqSpectators.onPlaceableDeleted({ rootNode = 20 })
+    check("spectators: selling a rope takes its standing people first", #EqSpectators.people == 1 and alive[2] == nil)
+    EqSpectators.people = {}
+    entityExists, delete = oldExists, oldDelete
+    check("spectators: the animal dealer and fisherman faces are named characters (once per crowd)", EqSpectators.namedCharacter("headNPCQG01") == "npc"
+        and EqSpectators.namedCharacter("bodyFisherman01") == "fisherman" and EqSpectators.namedCharacter("head03") == nil)
+    check("spectators: finger joints found by name", EqSpectators.isFinger("LeftHandIndex1") and EqSpectators.isFinger("RightHandThumb3")
+        and EqSpectators.isFinger("rightFinger02") and not EqSpectators.isFinger("LeftHand") and not EqSpectators.isFinger("LeftForeArm")
+        and not EqSpectators.isFinger("Spine2"))
+    check("spectators: hand joints by side", EqSpectators.handSide("RightHand") == "rightArm" and EqSpectators.handSide("LeftHand") == "leftArm"
+        and EqSpectators.handSide("r_hand") == "rightArm" and EqSpectators.handSide("Spine") == nil)
+    check("spectators: three foot positions, all forward", #EqSpectators.FEET == 3 and EqSpectators.FEET[1] == 1
+        and EqSpectators.FEET[3] > 0 and EqSpectators.FEET[3] < EqSpectators.FEET[2])
+    check("spectators: beards are made per face", EqSpectators.beardFits("goatee01_head02", "head02")
+        and not EqSpectators.beardFits("goatee01_head02", "head01") and not EqSpectators.beardFits("stubble_head01", nil))
+    check("spectators: women in the crowd from the female player", EqSpectators.FEMALE_SHARE > 0 and EqSpectators.FEMALE_SHARE < 1
+        and string.find(EqSpectators.FEMALE_XML, "playerF", 1, true) ~= nil)
+    check("spectators: no bike helmets, masks or chainsaw kit (James)", EqSpectators.unwearable("motocrossHelmet01")
+        and EqSpectators.unwearable("FaceMask") and EqSpectators.unwearable("forestryPreset") and EqSpectators.unwearable("chainsawJacket")
+        and not EqSpectators.unwearable("cowboyHat") and not EqSpectators.unwearable("rancher") and not EqSpectators.unwearable(nil))
+    local row = EqSettings.BY_ID.crowdDensity
+    check("spectators: Crowd density setting Off/Low/Medium/High", row ~= nil and #row.values == 4 and row.values[1] == "off"
+        and row.default == "medium" and EqSettings.stateOf(row, "high") == 4)
+    local rope = io.open("placeables/xcJumps/xcRope.xml"):read("*a")
+    local i3d = io.open("placeables/xcJumps/xcRope.i3d"):read("*a")
+    check("spectators: the rope has a spectator segment with its box", rope:find('id="ROPE_CROWD"', 1, true) ~= nil
+        and i3d:find('name="' .. EqSpectators.BOX_NODE .. '"', 1, true) ~= nil)
+end)()
+
+-- International quarantine (James, 2026-11-02): rounds away after an event abroad, a home
+-- region setting for a map in the wrong region.
+;
+(function()
+    check("quarantine: none at home, 1 round overseas, 2 long-haul",
+        EqQuarantine.roundsFor(config, "local") == 0 and EqQuarantine.roundsFor(config, "near") == 1
+        and EqQuarantine.roundsFor(config, "far") == 2 and EqQuarantine.roundsFor(config, nil) == 0)
+    check("quarantine: the setting turns it off", EqQuarantine.roundsFor(config, "far", { quarantine = false }) == 0
+        and EqQuarantine.roundsFor(config, "far", { quarantine = true }) == 2)
+
+    local record = EqHorseRecord.new("DE 1 77")
+    check("quarantine: a new horse is home", not EqQuarantine.isIn(record) and EqQuarantine.roundsLeft(record) == 0
+        and not EqQuarantine.tick(record))
+    check("quarantine: nothing starts for 0 rounds", not EqQuarantine.start(record, 0) and not EqQuarantine.isIn(record))
+    EqQuarantine.start(record, 2)
+    EqQuarantine.start(record, 1)
+    check("quarantine: a longer stay is kept", EqQuarantine.roundsLeft(record) == 2)
+    local x = memoryXML()
+    record:saveToXMLFile(x, "h")
+    check("quarantine: survives a save", EqQuarantine.roundsLeft(EqHorseRecord.loadFromXMLFile(x, "h")) == 2)
+    check("quarantine: one round passes, still away", not EqQuarantine.tick(record) and EqQuarantine.isIn(record))
+    check("quarantine: the last round sends it home", EqQuarantine.tick(record) and not EqQuarantine.isIn(record)
+        and record.quarantine == nil)
+    local y = memoryXML()
+    record:saveToXMLFile(y, "h")
+    check("quarantine: a horse at home saves none", EqHorseRecord.loadFromXMLFile(y, "h").quarantine == nil)
+
+    check("home region setting offers From map and the four regions", #EqSettings.BY_ID.homeRegion.values == 5
+        and EqSettings.BY_ID.homeRegion.default == "auto" and EqSettings.isHomeRegion("europe")
+        and not EqSettings.isHomeRegion("mars"))
+    for _, region in ipairs(config.regions) do
+        check("home region setting has " .. region.name, EqSettings.isHomeRegion(region.name))
+    end
+
+    -- The manager: a chosen region wins over the map; quarantine follows the distance.
+    local hadManager, hadMission = EqCompetitionManager, g_currentMission
+    dofile("scripts/competition/EqCompetitionManager.lua")
+    EqCompetitionManager.config = config
+    g_currentMission = { missionInfo = { mapTitle = "Riverbend Springs", mapId = "MapUS" } }
+    local mapHome = EqCompetitionManager.homeRegion()
+    EqCompetitionManager.settings.homeRegion = "europe"
+    local chosen = EqCompetitionManager.homeRegion()
+    local abroad = EqCompetitionManager.quarantineRounds({ region = "asiaOceania" })
+    local hosted = EqCompetitionManager.quarantineRounds({ region = "asiaOceania", hosted = {} })
+    local here = EqCompetitionManager.quarantineRounds({ region = "europe" })
+    EqCompetitionManager.settings.homeRegion = "mars"
+    local unknown = EqCompetitionManager.homeRegion()
+    check("home region: the map's when From map", mapHome == EqCompetitionManager.mapHomeRegion())
+    check("home region: the setting wins", chosen == "europe" and EqCompetitionManager.chosenHomeRegion() == nil)
+    check("home region: an unknown choice falls back to the map", unknown == mapHome)
+    check("quarantine: 2 rounds from Europe to Asia, none at home or at your own event", abroad == 2 and here == 0 and hosted == 0)
+    EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

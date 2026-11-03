@@ -34,6 +34,7 @@ EqMessages.TYPES = {
     EQ_REVEAL_FAIR = { title = "eqDealer", severity = "INFO" },
     EQ_REVEAL_WORSE = { title = "eqDealer", severity = "NOTICE" },
     EQ_DELIVERED = { title = "eqTransport", severity = "INFO" },
+    EQ_QUARANTINE_DONE = { title = "eqTransport", severity = "SUCCESS" },
     EQ_HOST_OPENED = { title = "eqHosting", severity = "INFO" },
     EQ_HOST_WARNING = { title = "eqHosting", severity = "WARNING" },
     EQ_HOST_CANCELLED = { title = "eqHosting", severity = "WARNING" },

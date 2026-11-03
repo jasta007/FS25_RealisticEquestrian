@@ -40,6 +40,9 @@ function EqConsole:consoleListHorses()
             elseif record:isSettling() then
                 status = "  SETTLING IN"
             end
+            if EqQuarantine.isIn(record) then
+                status = status .. string.format("  IN QUARANTINE (%d round(s))", EqQuarantine.roundsLeft(record))
+            end
             if record.ownedMonths ~= nil then
                 status = status .. string.format("  from the dealer, %d month(s) here, %s", record.ownedMonths,
                     record.revealed and "potential known" or "potential still the dealer's view")
@@ -361,6 +364,12 @@ function EqConsole:consoleProbe()
 end
 
 
+--- eqSpectators: show, hide or tune the crowd at hosted events.
+function EqConsole:consoleSpectators(command, a, b)
+    return EqSpectators.console(command, a, b)
+end
+
+
 --- eqXcFences: the cross country fences the flags on the map make.
 function EqConsole:consoleXcFences()
     return EqXcFlags.describe()
@@ -456,6 +465,7 @@ end
 
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
 ---     [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x] [entryFeeScale x] [prizeScale x]
+---     [homeRegion auto|<region>] [quarantine on|off]
 function EqConsole:consoleSettings(name, value)
     local ok, message = competitionsReady()
     if not ok then return message end
@@ -477,17 +487,24 @@ function EqConsole:consoleSettings(name, value)
         settings.trainingRate = tonumber(value)
     elseif (name == "entryFeeScale" or name == "prizeScale") and tonumber(value) ~= nil and tonumber(value) > 0 then
         settings[name] = tonumber(value)
+    elseif name == "crowdDensity" and EqSpectators.COUNTS[value] ~= nil then
+        settings.crowdDensity = value
+    elseif name == "homeRegion" and EqSettings.isHomeRegion(value) then
+        settings.homeRegion = value
+    elseif name == "quarantine" and (value == "on" or value == "off") then
+        settings.quarantine = value == "on"
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off] [crowdDensity off|low|medium|high]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
         settings.eventsMin, math.max(settings.eventsMin, settings.eventsMax),
         tostring(EqSettings.trainingRate(settings)), tostring(EqSettings.multiplier(settings, "entryFeeScale")),
-        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()))
+        tostring(EqSettings.multiplier(settings, "prizeScale")), tostring(EqCompetitionManager.homeRegion()),
+        tostring(settings.homeRegion), tostring(EqCompetitionManager.mapHomeRegion()), onOff(settings.quarantine ~= false))
 end
 
 
@@ -1014,6 +1031,7 @@ function EqConsole.register()
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
+    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
@@ -1057,7 +1075,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
         "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)

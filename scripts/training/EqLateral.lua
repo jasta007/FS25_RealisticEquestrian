@@ -68,6 +68,8 @@ EqLateral.head = 0
 -- 2026-10-30: bending took the mouse away from the camera, so he lost sight of where he went):
 -- the share of the gap closed each SNAP_MS. Up and down stays on the mouse.
 EqLateral.SNAP_MS = 250
+-- The right stick's look input to the bend while lateral is held on a gamepad (full stick, full bend).
+EqLateral.PAD_BEND_SCALE = 1
 -- The bend's share of the animation's left-right weight.
 EqLateral.BEND_TILT = 0.8
 -- The local rider's bend, and the horse it is on.
@@ -314,16 +316,23 @@ function EqLateral.towards(value, target, dt, ms)
 end
 
 
---- @return boolean the right mouse button is held
+-- The held modifiers are input actions (EqRidingInput), rebindable and on the gamepad.
+
+--- @return boolean the rein (right mouse button by default) is held
 local function rightHeld()
-    return Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_RIGHT ~= nil
-        and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_RIGHT) == true
+    return EqRidingInput.rein()
 end
 
 
---- @return boolean Shift is held
+--- @return boolean lateral (Shift / R1 by default) is held
 local function shiftHeld()
-    return key("KEY_lshift") or key("KEY_rshift")
+    return EqRidingInput.lateral()
+end
+
+
+--- @return boolean collect (Ctrl / L1 by default) is held
+local function ctrlHeld()
+    return EqRidingInput.collect()
 end
 
 
@@ -331,9 +340,16 @@ end
 --- @return boolean true when the input was used for the bend
 function EqLateral.onLook(inputValue, isMouse, horizontal)
     local vehicle = EqLateral.vehicle
-    if not isMouse or vehicle == nil or not rightHeld() then return false end
+    if vehicle == nil or not horizontal then return false end
     if vehicle.getIsEntered ~= nil and not vehicle:getIsEntered() then return false end
-    if not horizontal then return false end
+    -- Gamepad: with lateral held the right stick is the head bend, its position the bend.
+    if not isMouse then
+        if not shiftHeld() then return false end
+        EqLateral.bend = math.max(-1, math.min(1, (inputValue or 0) * EqLateral.PAD_BEND_SCALE))
+        EqLateral.padBendAt = g_time or 0
+        return true
+    end
+    if not rightHeld() then return false end
     local turn = inputValue * 0.001 * 16.666
     if shiftHeld() then
         EqLateral.bend = math.max(-1, math.min(1, EqLateral.bend + turn * EqLateral.BEND_SCALE))
@@ -363,7 +379,8 @@ end
 
 --- While the right button is held, the rider's camera eases round to the way the body faces.
 local function snapCamera(vehicle, dt)
-    if vehicle ~= EqLateral.vehicle or not rightHeld() then return end
+    local padBending = shiftHeld() and EqLateral.padBendAt ~= nil and (g_time or 0) - EqLateral.padBendAt < 200
+    if vehicle ~= EqLateral.vehicle or not (rightHeld() or padBending) then return end
     local enterable = vehicle.spec_enterable
     local camera = enterable ~= nil and enterable.activeCamera or nil
     local spec = vehicle.spec_rideable
@@ -405,18 +422,22 @@ local function before(vehicle, dt)
     if entered then
         EqLateral.vehicle = vehicle
         local held, shift = rightHeld(), shiftHeld()
-        EqLateral.bend = EqLateral.relax(EqLateral.bend, held and shift, dt)
+        local padBending = shift and EqLateral.padBendAt ~= nil and (g_time or 0) - EqLateral.padBendAt < 200
+        EqLateral.bend = EqLateral.relax(EqLateral.bend, (held and shift) or padBending, dt)
         EqLateral.steer = EqLateral.relax(EqLateral.steer, held, dt)
-        spot = (key("KEY_lctrl") or key("KEY_rctrl")) and gaitOk(spec)
+        spot = ctrlHeld() and gaitOk(spec)
+        if not spot then EqLateral.passageLatch = nil end
+        local left, right = EqRidingInput.steerSides()
         -- Mouse steering (James, 2026-10-30): A and D strafe without Shift, and Shift holds the
         -- heading (no turn) while the mouse bends the head. On the keyboard Shift + A/D strafes.
         if not spot then
-            side = EqLateral.side(shift or held, key("KEY_a"), key("KEY_d"), gaitOk(spec))
+            side = EqLateral.side(shift or held, left, right, gaitOk(spec))
         end
         EqLateral.steering = held and not shift and not spot
         if held and not spot then
             spec.inputValues.axisSteer = shift and 0 or EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
-        elseif side ~= 0 then
+        elseif side ~= 0 or (shift and gaitOk(spec)) then
+            -- A stick short of a side doesn't turn the horse while lateral is held either.
             spec.inputValues.axisSteer = 0
         end
     end
@@ -426,13 +447,17 @@ local function before(vehicle, dt)
     local gait = EqLateral.gaitName(spec)
     local creep = EqLateral.SPOT_CREEP[gait or ""] or 0
     local passage = nil
-    if spot and key("KEY_w") then passage = EqLateral.passageShare(gait, EqLateral.tops(spec)) end
+    -- Ctrl + W held on the keyboard; gait up while collected latches it on a gamepad.
+    if spot and (key("KEY_w") or EqLateral.passageLatch) then passage = EqLateral.passageShare(gait, EqLateral.tops(spec)) end
     spec.eqCreep = EqLateral.towards(spec.eqCreep or creep, passage or creep, dt, EqLateral.COLLECT_MS)
     if (passage ~= nil) ~= (spec.eqPassage == true) then
         spec.eqPassage = passage ~= nil
         Log:info("Lateral work: %s", passage ~= nil and (gait == "TROT" and "passage" or "collected canter") or "collected")
     end
-    if spot then spec.inputValues.axisSteer = EqLateral.spotSteer(key("KEY_a"), key("KEY_d"), (EqLateral.gaitName(spec))) end
+    if spot then
+        local left, right = EqRidingInput.steerSides()
+        spec.inputValues.axisSteer = EqLateral.spotSteer(left, right, (EqLateral.gaitName(spec)))
+    end
     -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
     -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster, only
     -- coming off a hard turn and less at a gallop.
@@ -573,17 +598,37 @@ function EqLateral.install()
             return unpack(result, 2)
         end)
     end
-    -- W doesn't raise the gait while Ctrl is held: Ctrl + W is a passage or collected canter.
+    -- W doesn't raise the gait while collect is held: Ctrl + W is a passage or collected canter.
+    -- Gait up from anything but a held W (a gamepad trigger) latches the passage on until gait
+    -- down or collect is let go; gait down while latched only ends the passage.
     if type(Rideable.actionEventAccelerate) == "function" then
         Rideable.actionEventAccelerate = Utils.overwrittenFunction(Rideable.actionEventAccelerate, function(self, superFunc, ...)
-            if EqMain.isActive and not EqLateral.failed and (key("KEY_lctrl") or key("KEY_rctrl"))
+            if EqMain.isActive and not EqLateral.failed and ctrlHeld()
                 and self.getIsEntered ~= nil and self:getIsEntered() then
+                if not key("KEY_w") then EqLateral.passageLatch = true end
                 return
             end
             return superFunc(self, ...)
         end)
     end
-    -- The mouse look goes to the head bend while the right button is held on a horse.
+    if type(Rideable.actionEventBrake) == "function" then
+        Rideable.actionEventBrake = Utils.overwrittenFunction(Rideable.actionEventBrake, function(self, superFunc, ...)
+            if EqMain.isActive and not EqLateral.failed and EqLateral.passageLatch and ctrlHeld()
+                and self.getIsEntered ~= nil and self:getIsEntered() then
+                EqLateral.passageLatch = nil
+                return
+            end
+            return superFunc(self, ...)
+        end)
+    end
+    -- The raw steering (stick or keys), for the drift and pirouettes while the steer is zeroed.
+    if type(Rideable.actionEventSteer) == "function" then
+        Rideable.actionEventSteer = Utils.prependedFunction(Rideable.actionEventSteer, function(self, actionName, inputValue)
+            if self.getIsEntered ~= nil and self:getIsEntered() then EqRidingInput.onSteer(inputValue) end
+        end)
+    end
+    -- The mouse look goes to the head bend or steering while the rein is held on a horse, and
+    -- the gamepad's right stick to the bend while lateral is held.
     if VehicleCamera ~= nil then
         for name, horizontal in pairs({ actionEventLookLeftRight = true, actionEventLookUpDown = false }) do
             if type(VehicleCamera[name]) == "function" then
@@ -597,5 +642,5 @@ function EqLateral.install()
             end
         end
     end
-    Log:info("Lateral work: Shift + A/D at a walk, trot or canter; right mouse drag bends the head; Ctrl on the spot")
+    Log:info("Lateral work: lateral + steer drifts at a walk, trot or canter; rein + mouse steers or bends; collect on the spot")
 end

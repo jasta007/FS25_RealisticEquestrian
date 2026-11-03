@@ -856,6 +856,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     EqDressageHooks.pathRun = sheet.routine.active and sheet.routine.kind == "path" and sheet.routine.path or nil
     EqDressageHooks.pathAt = g_time or 0
 
+    -- Lateral work, passage and work on the spot ridden anywhere, outside a test (James,
+    -- 2026-11-01: practising off the cuff should train a reasonable amount).
+    if not sheet.routine.active then
+        local okKey, key = EqLog.try("EqTrainingHooks lateralNow", EqTrainingHooks.lateralNow, vehicle, spec)
+        EqTraining.freeLateral(sheet, okKey and key or nil, worn, dt)
+    else
+        sheet.freeLateralMs = 0
+    end
+
     local share = EqTraining.workStep(sheet, dt)
     if (share < 0.5) ~= (spec.eqCruising == true) then
         spec.eqCruising = share < 0.5
@@ -865,7 +874,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     sheet.barFactor = EqTraining.ridingBarFactor(stamina)
     EqTraining.addRiding(sheet, gait, dt, share)
-    adjustRiding(spec, gait, sheet.barFactor / share, dt)
+    adjustRiding(spec, gait, sheet.barFactor / EqTraining.barShare(sheet, share), dt)
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt * share) end
 end
 
@@ -1028,7 +1037,13 @@ function EqTrainingHooks.onSprintAction(vehicle, source)
     local last = EqTrainingHooks.sprintAt
     EqTrainingHooks.sprintAt = now
     if last ~= nil and now - last < EqTrainingHooks.KEY_REPEAT_MS then return end
-    if EqTrainingHud.isHelpShowing() then return end
+    if EqTrainingHud.isHelpShowing() then
+        -- A gamepad's sprint button turns the page (a left click already does, by itself).
+        local mouse = Input ~= nil and Input.isMouseButtonPressed ~= nil and Input.MOUSE_BUTTON_LEFT ~= nil
+            and Input.isMouseButtonPressed(Input.MOUSE_BUTTON_LEFT) == true
+        if source == "sprint action" and not mouse then EqTrainingHud.nextPage() end
+        return
+    end
     local spec = vehicle.spec_rideable
     local id = spec ~= nil and getRiddenId(spec) or nil
     local sheet = id ~= nil and EqTrainingHooks.getSheet(id) or nil
@@ -1100,11 +1115,9 @@ local function pollGaitKeys(vehicle)
 end
 
 
---- @return boolean either Ctrl key held
+--- @return boolean collect (Ctrl / L1 by default, EqRidingInput) held
 local function ctrlDown()
-    if Input == nil or Input.isKeyPressed == nil then return false end
-    return (Input.KEY_lctrl ~= nil and Input.isKeyPressed(Input.KEY_lctrl) == true)
-        or (Input.KEY_rctrl ~= nil and Input.isKeyPressed(Input.KEY_rctrl) == true)
+    return EqRidingInput.collect()
 end
 
 
@@ -1336,6 +1349,8 @@ function EqTrainingHooks.onRegisterActionEvents(vehicle, isActiveForInputIgnoreS
     -- Show jumping course keys (EqCourseHooks), and the dressage test editor's (EqDressageEditor).
     EqCourseHooks.registerActions(vehicle, spec)
     EqDressageEditor.registerActions(vehicle, spec)
+    -- The held riding modifiers: lateral, collect and rein (EqRidingInput).
+    EqRidingInput.registerActions(vehicle, spec)
     if InputAction.EQ_TRAINING_HELP ~= nil then
         local _, helpId = vehicle:addActionEvent(spec.actionEvents, InputAction.EQ_TRAINING_HELP, vehicle,
             function() EqTrainingHooks.onHelpAction(vehicle) end, false, true, false, true, nil)
@@ -1527,7 +1542,8 @@ end
 
 --- The movement the horse is doing now ("Piaffe", "Travers (haunches in)") and its colour
 --- (green when a test asks for it now, red when it asks for something else), else nil.
-local function nowDoing(vehicle, spec)
+--- The movement the horse is doing now, as an EqLateral.movementName key ("piaffe", "travers"), else nil.
+function EqTrainingHooks.lateralNow(vehicle, spec)
     if EqLateral == nil or EqLateral.vehicle ~= vehicle or EqLateral.movementName == nil then return nil end
     local gait = EqLateral.gaitName(spec)
     if gait == nil then return nil end
@@ -1547,6 +1563,12 @@ local function nowDoing(vehicle, spec)
     end
     local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
         turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+    return key
+end
+
+
+local function nowDoing(vehicle, spec)
+    local key = EqTrainingHooks.lateralNow(vehicle, spec)
     if key == nil then return nil end
     -- What a test asks for now, if anything.
     local color = COLOR.white
@@ -1622,7 +1644,10 @@ local function pathRows(rows, routine)
             -- The keys beside the panel while lateral work is asked for or coming up.
             EqTrainingHud.drawPanelNote(g_i18n:getText("eq_lat_keys"), COLOR.grey or color, true)
         end
-        if event ~= nil and event.kind == "change" then
+        if (run.wrongNowMs or 0) >= EqDressagePath.WRONG_TELL_MS and (event == nil or event.kind ~= "change") then
+            -- At the wrong gait (and no change coming that would fix it): the gait asked, in red.
+            EqTrainingHud.drawPrompt(string.format(g_i18n:getText("eq_dressage_now"), g_i18n:getText("eq_dressage_gait_" .. run.gait)), nil, COLOR.red or color)
+        elseif event ~= nil and event.kind == "change" then
             -- "Gait change" and an arrow up or down while it comes, then "Trot!" once it is due
             -- (James, 2026-10-31: the gait's name straight away made him press it early).
             local share = math.max(0, math.min(1, dist / run.warn))
@@ -2053,7 +2078,8 @@ function EqTrainingHooks.onHorseDay(animal)
         tostring(animal.fitness), tostring(animal.health), tostring(animal.dirt), tostring(animal.riding)))
     local today = g_currentMission.environment.currentMonotonicDay or 0
     EqStatLog.add(record.id, today, "daily training", deltas, notes, record.trained)
-    record:addGains(today, deltas)
+    -- The day that just ended: after a month change it still belongs to the month before.
+    record:addGains(EqCompetitionManager.endedMonth(), deltas)
 
     Log:debug("EqTraining: %s riding=%s dirt=%s idle=%d -> sta %+.2f spd %+.2f agi %+.2f tem %+.2f",
         record.id, tostring(animal.riding), tostring(animal.dirt), record.idleDays,

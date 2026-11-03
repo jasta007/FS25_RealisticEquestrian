@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Doorrijpoort"/>
         <text name="eq_shop_xcGate_function" text="Een poort om door te rijden, geen sprong: breed en hoog genoeg voor elk paard, met het logo van je sponsor."/>
         <text name="eq_shop_xcRope" text="Touwmarkering"/>
-        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw of touw met een klein sponsorbordje: bordjes geven maar een beetje branding."/>
+        <text name="eq_shop_xcRope_function" text="Een licht touw om de route te markeren, zonder botsing. Kies gewoon touw, touw met een klein sponsorbordje (bordjes geven maar een beetje branding) of touw met een publiekvak aan één kant, waar toeschouwers bij je wedstrijden staan."/>
         <text name="eq_shop_plinthDrive" text="Doorrijpodium"/>
         <text name="eq_shop_plinthRamp" text="Showhelling"/>
         <text name="eq_shop_plinthRampLarge" text="Grote showhelling"/>
@@ -105,10 +105,13 @@
         <text name="eq_plinth_penalty" text="%d concurrerende machine(s) op je sponsorpodia: %s van de sponsorvergoeding afgetrokken."/>
         <text name="eq_shop_lizardPlinth" text="Lizard-sokkel"/>
         <text name="eq_shop_lizardPlinth_function" text="De speciale sokkel van Lizard voor het evenement dat het sponsort. Bouw hem door aan de triggers aan de voorkant te leveren; een Lizard-machine op het boomstammendek telt extra. Na het evenement stort hij in."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Nodig: 1.000 l stenen, 10.000 l hout en 1.000 l planken."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Nodig: 1.200 l stenen, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian kan Realistic Livestock (Ritter-versie) niet vinden en staat daarom uit. Installeer de nieuwste versie van Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Je Realistic Livestock-versie %s is te oud voor Realistic Equestrian, daarom staat Realistic Equestrian uit. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
+        <text name="eq_rlrm_old" text="Je Realistic Livestock-versie %s is ouder dan Realistic Equestrian nodig heeft (%s of nieuwer), daarom werken sommige functies misschien niet. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
         <text name="eq_lizard_accept" text="Accepteren"/>
         <text name="eq_lizard_decline" text="Weigeren"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="Klik om verder te gaan (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshulp"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Zijgangen (vasthouden)"/>
+        <text name="input_EQ_COLLECT" text="Verzamelen (vasthouden)"/>
+        <text name="input_EQ_REIN" text="Teugel: muissturing (vasthouden)"/>
         <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
         <text name="eq_ex_push" text="Doorzetten"/>
         <text name="eq_ex_recover" text="Herstellen"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organiseren"/>
         <text name="eq_settings_hostInterval" text="Maanden tussen eigen wedstrijden"/>
         <text name="eq_settings_hostInterval_tooltip" text="Hoeveel maanden na de maand van je laatste eigen wedstrijd voordat je er weer een kunt organiseren."/>
+        <text name="eq_settings_crowdDensity" text="Publieksdrukte"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Hoeveel toeschouwers naar je eigen wedstrijden komen, op je tribunes en in de publiekvakken langs het touw (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Laag"/>
+        <text name="eq_settings_crowd_medium" text="Gemiddeld"/>
+        <text name="eq_settings_crowd_high" text="Hoog"/>
         <text name="eq_host_warning" text="Je %s komt tekort: %s. Los het vandaag op, anders wordt de wedstrijd morgen geannuleerd."/>
         <text name="eq_host_cancelled" text="Je %s is geannuleerd, nog steeds tekort: %s. Je reputatie als organisator lijdt eronder."/>
         <text name="eq_host_done" text="Je %s is voorbij: er kwamen %d gastpaarden. Opbrengst %s (%s inschrijvingen, %s entree), populariteit %d."/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="Dit materieel is door je sponsor geschonken voor gebruik tijdens je evenement deze maand. Veel plezier!"/>
         <text name="eq_sponsor_discount_from" text="Vanaf %s"/>
         <text name="eq_sponsor_discount_after" text="Vanaf %d maanden na tekenen"/>
+        <text name="eq_settings_homeRegion" text="Thuisregio"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Waar je boerderij ligt; dat bepaalt welke wedstrijden in het buitenland zijn. Van de kaart leest het uit de kaart (of het kaartland van RLRM); kies een regio als dat niet klopt."/>
+        <text name="eq_settings_homeRegion_auto" text="Van de kaart"/>
+        <text name="eq_region_northAmerica" text="Noord-Amerika"/>
+        <text name="eq_region_southAmerica" text="Zuid-Amerika"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Azië en Oceanië"/>
+        <text name="eq_settings_quarantine" text="Internationale quarantaine"/>
+        <text name="eq_settings_quarantine_tooltip" text="Of een paard dat terugkomt van een wedstrijd in een andere regio rondes in quarantaine doorbrengt voordat het thuis is. De quarantainekosten worden hoe dan ook betaald."/>
+        <text name="eq_ui_col_region" text="Regio"/>
+        <text name="eq_ui_region_home" text="Jouw regio: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="van de kaart, wijzig het in Instellingen"/>
+        <text name="eq_ui_region_chosen" text="gekozen in Instellingen"/>
+        <text name="eq_ui_region_quarantine" text="Na een wedstrijd in het buitenland gaat een paard in quarantaine: %d ronde(s) na een overzeese reis (geel), %d na een lange reis (oranje)."/>
+        <text name="eq_ui_region_noQuarantine" text="Internationale quarantaine staat uit."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, daarna %d ronde(s) in quarantaine"/>
+        <text name="eq_ui_status_quarantine" text="In quarantaine"/>
+        <text name="eq_status_quarantine" text="In quarantaine, %d ronde(s)"/>
+        <text name="eq_enter_quarantine" text="Dat paard is in quarantaine na een wedstrijd in het buitenland. Het kan meedoen zodra het thuis is."/>
+        <text name="eq_quarantine_home" text="%s is terug uit quarantaine."/>
     </texts>
 </l10n>

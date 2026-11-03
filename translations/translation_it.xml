@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Porta di passaggio"/>
         <text name="eq_shop_xcGate_function" text="Una porta da attraversare, non un salto: larga e alta abbastanza per ogni cavallo, con il logo del tuo sponsor."/>
         <text name="eq_shop_xcRope" text="Corda segnapercorso"/>
-        <text name="eq_shop_xcRope_function" text="Una corda leggera per segnare il percorso, senza collisione. Scegli corda semplice o con un piccolo cartello dello sponsor: i cartelli aggiungono solo un po' di visibilità."/>
+        <text name="eq_shop_xcRope_function" text="Una corda leggera per segnare il percorso, senza collisione. Scegli corda semplice, con un piccolo cartello dello sponsor (i cartelli aggiungono solo un po' di visibilità) o con una zona pubblico su un lato, dove stanno gli spettatori durante le tue gare."/>
         <text name="eq_shop_plinthDrive" text="Pedana passante"/>
         <text name="eq_shop_plinthRamp" text="Rampa espositiva"/>
         <text name="eq_shop_plinthRampLarge" text="Rampa espositiva grande"/>
@@ -105,10 +105,13 @@
         <text name="eq_plinth_penalty" text="%d macchina/e rivale/i sulle tue pedane sponsor: %s tolti dal compenso dello sponsor."/>
         <text name="eq_shop_lizardPlinth" text="Piedistallo Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Il piedistallo speciale di Lizard per l&#x27;evento che sponsorizza. Costruiscilo consegnando ai trigger davanti; una macchina Lizard sulla piattaforma di tronchi conta di più. Crolla dopo l&#x27;evento."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Richiede 1.000 l di pietre, 10.000 l di legno e 1.000 l di assi."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Richiede 1.200 l di pietre, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Richiede 1.000 l di cippato, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_shop_lizardPlinth_straw" text="Richiede 10.000 l di paglia, 10.000 l di legno e 1.000 l di assi."/>
         <text name="eq_lizard_title" text="Offerta di sponsorizzazione di %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian non trova Realistic Livestock (versione di Ritter), quindi è disattivato. Installa l'ultima versione di Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="La tua versione %s di Realistic Livestock è troppo vecchia per Realistic Equestrian, quindi Realistic Equestrian è disattivato. Scarica l'ultima versione di Realistic Livestock (versione di Ritter)."/>
+        <text name="eq_rlrm_old" text="La tua versione %s di Realistic Livestock è più vecchia di quella richiesta da Realistic Equestrian (%s o successiva), quindi alcune funzioni potrebbero non funzionare. Scarica l'ultima versione di Realistic Livestock (versione di Ritter)."/>
         <text name="eq_lizard_offer" text="%s vorrebbe sponsorizzare il tuo %s (%s) e ti presterà uno dei suoi veicoli per il mese dell&#x27;evento. Chiede un branding %s entro la fine dell&#x27;evento e il suo piedistallo Lizard costruito nella tua sede: %s. Se è tutto pronto all&#x27;arrivo dei risultati, paga %s. Altrimenti non paga nulla e non c&#x27;è alcuna penalità. Il piedistallo crolla dopo l&#x27;evento."/>
         <text name="eq_lizard_accept" text="Accetta"/>
         <text name="eq_lizard_decline" text="Rifiuta"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="Clicca per continuare (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Aiuto allenamento"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Lavoro laterale (tieni premuto)"/>
+        <text name="input_EQ_COLLECT" text="Riunire (tieni premuto)"/>
+        <text name="input_EQ_REIN" text="Redini: guida col mouse (tieni premuto)"/>
         <text name="eq_train_worn" text="Barra cavalcata piena: niente più allenamento oggi"/>
         <text name="eq_ex_push" text="Spinta"/>
         <text name="eq_ex_recover" text="Recupero"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organizzazione"/>
         <text name="eq_settings_hostInterval" text="Mesi tra le tue gare"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quanti mesi dopo il mese della tua ultima gara organizzata prima di poterne organizzare un'altra."/>
+        <text name="eq_settings_crowdDensity" text="Affluenza di pubblico"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Quanti spettatori vengono alle tue gare, sulle tue tribune e nelle zone pubblico lungo la corda (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Bassa"/>
+        <text name="eq_settings_crowd_medium" text="Media"/>
+        <text name="eq_settings_crowd_high" text="Alta"/>
         <text name="eq_host_warning" text="Alla tua %s manca: %s. Rimedia oggi o la gara sarà annullata domani."/>
         <text name="eq_host_cancelled" text="La tua %s è stata annullata, mancava ancora: %s. La tua reputazione di organizzatore ne risente."/>
         <text name="eq_host_done" text="La tua %s è finita: sono venuti %d cavalli ospiti. Incassi %s (%s iscrizioni, %s biglietti), popolarità %d."/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="Questa attrezzatura ti è stata donata dal tuo sponsor per il tuo evento di questo mese. Divertiti!"/>
         <text name="eq_sponsor_discount_from" text="Da %s"/>
         <text name="eq_sponsor_discount_after" text="Dopo %d mesi dalla firma"/>
+        <text name="eq_settings_homeRegion" text="Regione di casa"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Dove si trova la tua fattoria, che decide quali eventi sono all'estero. Dalla mappa la legge dalla mappa (o dal paese della mappa di RLRM); scegli una regione se è sbagliata."/>
+        <text name="eq_settings_homeRegion_auto" text="Dalla mappa"/>
+        <text name="eq_region_northAmerica" text="Nord America"/>
+        <text name="eq_region_southAmerica" text="Sud America"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Asia e Oceania"/>
+        <text name="eq_settings_quarantine" text="Quarantena internazionale"/>
+        <text name="eq_settings_quarantine_tooltip" text="Se un cavallo di ritorno da un evento in un'altra regione passa dei turni in quarantena prima di tornare a casa. Le spese di quarantena si pagano comunque."/>
+        <text name="eq_ui_col_region" text="Regione"/>
+        <text name="eq_ui_region_home" text="La tua regione: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="dalla mappa, modificabile nelle Impostazioni"/>
+        <text name="eq_ui_region_chosen" text="scelta nelle Impostazioni"/>
+        <text name="eq_ui_region_quarantine" text="Dopo un evento all'estero il cavallo va in quarantena: %d turno/i dopo un viaggio oltremare (giallo), %d dopo uno a lunga distanza (arancione)."/>
+        <text name="eq_ui_region_noQuarantine" text="La quarantena internazionale è disattivata."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, poi %d turno/i in quarantena"/>
+        <text name="eq_ui_status_quarantine" text="In quarantena"/>
+        <text name="eq_status_quarantine" text="In quarantena, %d turno/i"/>
+        <text name="eq_enter_quarantine" text="Quel cavallo è in quarantena dopo un evento all'estero. Potrà gareggiare una volta a casa."/>
+        <text name="eq_quarantine_home" text="%s è tornato dalla quarantena."/>
     </texts>
 </l10n>

@@ -88,7 +88,7 @@
         <text name="eq_shop_xcGateSimple" text="Ride-Through Gate"/>
         <text name="eq_shop_xcGate_function" text="A gate to ride through, not a jump: wide and tall enough for any horse, with your sponsor's logo."/>
         <text name="eq_shop_xcRope" text="Rope Marker"/>
-        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope or rope with a small hanging sponsor sign: signs add only a little branding."/>
+        <text name="eq_shop_xcRope_function" text="A flimsy rope to mark the route, with no collision. Choose plain rope, rope with a small hanging sponsor sign (signs add only a little branding) or rope with a spectator box on one side, where spectators stand at your events."/>
         <text name="eq_shop_plinthDrive" text="Drive-Through Plinth"/>
         <text name="eq_shop_plinthRamp" text="Display Ramp"/>
         <text name="eq_shop_plinthRampLarge" text="Large Display Ramp"/>
@@ -103,10 +103,13 @@
         <text name="eq_plinth_penalty" text="%d rival machine(s) on your sponsor plinths: %s taken off the sponsor fee."/>
         <text name="eq_shop_lizardPlinth" text="Lizard Plinth"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizard&#x27;s special plinth for the event it sponsors. Build it by delivering to its triggers at the front; a Lizard machine on its log deck counts extra. It collapses after the event."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,000 l stones, 10,000 l wood and 1,000 l planks."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Needs 1,200 l stones, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Needs 1,000 l wood chips, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_shop_lizardPlinth_straw" text="Needs 10,000 l straw, 10,000 l wood and 1,000 l planks."/>
         <text name="eq_lizard_title" text="%s sponsorship offer"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian can't find Realistic Livestock (Ritter version), so it is switched off. Please install the latest version of Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Your Realistic Livestock version %s is too old for Realistic Equestrian, so Realistic Equestrian is switched off. Please get the latest version of Realistic Livestock (Ritter version)."/>
+        <text name="eq_rlrm_old" text="Your Realistic Livestock version %s is older than Realistic Equestrian needs (%s or newer), so some features may not work. Please get the latest version of Realistic Livestock (Ritter version)."/>
         <text name="eq_lizard_offer" text="%s have offered to sponsor your %s (%s), and will lend you one of their vehicles for the event month. They ask for %s branding by the end of the event, and their Lizard plinth built at your venue: %s. If all that is in place when the results come in, they pay %s. If not, they pay nothing and there is no penalty. The plinth collapses after the event."/>
         <text name="eq_lizard_accept" text="Accept"/>
         <text name="eq_lizard_decline" text="Decline"/>
@@ -254,6 +257,9 @@
         <text name="eq_help_next" text="Click to continue (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Training help"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Lateral work (hold)"/>
+        <text name="input_EQ_COLLECT" text="Collect (hold)"/>
+        <text name="input_EQ_REIN" text="Rein: mouse steering (hold)"/>
         <text name="eq_train_worn" text="Riding bar full: no more training today"/>
         <text name="eq_ex_push" text="Pushing"/>
         <text name="eq_ex_recover" text="Recovering"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="Hosting"/>
         <text name="eq_settings_hostInterval" text="Months between hosted events"/>
         <text name="eq_settings_hostInterval_tooltip" text="How many months after the month of your last hosted event before you can host another."/>
+        <text name="eq_settings_crowdDensity" text="Crowd density"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="How many spectators come to your hosted events, on your bleachers and at rope spectator boxes (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Low"/>
+        <text name="eq_settings_crowd_medium" text="Medium"/>
+        <text name="eq_settings_crowd_high" text="High"/>
         <text name="eq_host_warning" text="Your %s is short of: %s. Sort it out today or the event is cancelled tomorrow."/>
         <text name="eq_host_cancelled" text="Your %s was cancelled, still short of: %s. Your hosting reputation suffers."/>
         <text name="eq_host_done" text="Your %s is over: %d visiting horses came. Takings %s (%s entries, %s gate), popularity %d."/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="This piece of equipment has been donated by your sponsor for use during your event this month. Enjoy!"/>
         <text name="eq_sponsor_discount_from" text="Begins in %s"/>
         <text name="eq_sponsor_discount_after" text="Begin %d months after signing"/>
+        <text name="eq_settings_homeRegion" text="Home region"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Where your farm is, which decides which events are abroad. From map reads it from the map (or RLRM's map country); pick a region if that is wrong."/>
+        <text name="eq_settings_homeRegion_auto" text="From map"/>
+        <text name="eq_region_northAmerica" text="North America"/>
+        <text name="eq_region_southAmerica" text="South America"/>
+        <text name="eq_region_europe" text="Europe"/>
+        <text name="eq_region_asiaOceania" text="Asia and Oceania"/>
+        <text name="eq_settings_quarantine" text="International quarantine"/>
+        <text name="eq_settings_quarantine_tooltip" text="Whether a horse back from an event in another region spends rounds in quarantine before it is home. The quarantine fees are paid either way."/>
+        <text name="eq_ui_col_region" text="Region"/>
+        <text name="eq_ui_region_home" text="Your region: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="from the map, change it in Settings"/>
+        <text name="eq_ui_region_chosen" text="set in Settings"/>
+        <text name="eq_ui_region_quarantine" text="After an event abroad a horse is in quarantine: %d round(s) after an overseas trip (amber), %d after a long-haul one (orange)."/>
+        <text name="eq_ui_region_noQuarantine" text="International quarantine is off."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, then %d round(s) in quarantine"/>
+        <text name="eq_ui_status_quarantine" text="In quarantine"/>
+        <text name="eq_status_quarantine" text="In quarantine, %d round(s)"/>
+        <text name="eq_enter_quarantine" text="That horse is in quarantine after an event abroad. It can compete once it is home."/>
+        <text name="eq_quarantine_home" text="%s is home from quarantine."/>
     </texts>
 </l10n>

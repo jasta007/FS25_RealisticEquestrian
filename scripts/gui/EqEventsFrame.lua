@@ -47,6 +47,13 @@ EqEventsFrame.TRAINING_COLORS = {
     low = "rl_ui_genetics_low",
     none = "rl_ui_genetics_extremelyLow",
 }
+-- Region column: home in the default colour, a trip abroad (quarantine after) in amber, a
+-- long-haul one in orange.
+EqEventsFrame.DISTANCE_COLORS = {
+    near = "rl_ui_genetics_average",
+    far = "rl_ui_genetics_low",
+}
+
 EqEventsFrame.RISK_COLORS = {
     low = "rl_ui_genetics_veryHigh",
     minor = "rl_ui_genetics_average",
@@ -356,6 +363,8 @@ function EqEventsFrame:refresh()
     self.eventRows = ok and EqEventsView.eventRows(farmId()) or {}
 
     show(self.eventsHeader, isEvents)
+    show(self.regionBox, isEvents and ok)
+    if isEvents and ok and self.regionText ~= nil then self.regionText:setText(EqEventsView.regionLine()) end
     show(self.eventsBox, isEvents)
     show(self.horsesHeader, isEvents)
     show(self.resultsHeader, isResults)
@@ -885,7 +894,10 @@ function EqEventsFrame:updateHorsePanel()
 
     setText(self.panelName, row.name)
     setText(self.panelAge, string.format(g_i18n:getText("eq_ui_ageLong"), row.animal.age or 0))
-    setText(self.panelStatus, row.status)
+    -- A horse that can go abroad hears what follows: its quarantine before it is home again.
+    local selected = EqCompetitionManager.events[self.selectedEventId]
+    local rounds = row.canEnter and EqCompetitionManager.quarantineRounds(selected) or 0
+    setText(self.panelStatus, rounds > 0 and string.format(g_i18n:getText("eq_ui_status_quarantineAfter"), row.status, rounds) or row.status)
     for i, stat in ipairs(EqConstants.STAT_KEYS) do
         local label, value = self.panelStatLabel[i], self.panelStatValue[i]
         keepDefaultColor(label)
@@ -1050,6 +1062,9 @@ function EqEventsFrame:populateCellForItemInSection(list, _section, index, cell)
         setCell(cell, "type", row.type)
         setCell(cell, "level", row.level)
         setCell(cell, "going", row.going)
+        local region = cell:getAttribute("region")
+        keepDefaultColor(region)
+        setText(region, row.region, wordColor(EqEventsFrame.DISTANCE_COLORS, row.distance))
         local risk = cell:getAttribute("risk")
         keepDefaultColor(risk)
         setText(risk, row.risk, wordColor(EqEventsFrame.RISK_COLORS, row.riskBand))

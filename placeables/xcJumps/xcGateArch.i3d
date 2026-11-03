@@ -15,8 +15,11 @@
 
 
   <Materials>
-    <Material name="eqSponsor" materialId="8" specularColor="0.2 1 0" alphaBlending="true">
+    <Material name="eqSponsor" materialId="8" specularColor="0.2 0 0" alphaBlending="true" customShaderId="1">
       <Texture fileId="9"/>
+      <Custommap name="detailSpecular" fileId="2"/>
+      <Custommap name="detailNormal" fileId="3"/>
+      <Custommap name="detailDiffuse" fileId="4"/>
     </Material>
     <Material name="gatePaint" materialId="6" customShaderId="1">
       <Custommap name="detailSpecular" fileId="2"/>

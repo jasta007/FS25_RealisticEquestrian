@@ -103,6 +103,19 @@ EqTraining.COMBO_KNOCK_GAP_MS = 3000
 -- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
 EqTraining.ROUTINE_MAX = 8
 EqTraining.TEMPERAMENT_RATE = 0.0022
+-- A test of figures on one of our arenas (EqDressagePath) is harder work than the marker
+-- routine: temperament builds TEST_TEMPERAMENT_FACTOR times as fast (its payoff at the end too),
+-- and the riding bar fills at TEST_BAR_SHARE of the usual rate from the first movement, however
+-- low the multiplier (James, 2026-11-01: a full 20x60 test on a green horse gave 10 temperament
+-- and 67% of the bar; it should not take one and a half tests to fill it).
+EqTraining.TEST_TEMPERAMENT_FACTOR = 2
+EqTraining.TEST_BAR_SHARE = 1.5
+-- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test (EqLateral) train
+-- temperament like a routine at x(1 + FREE_LATERAL_STEPS), once held FREE_LATERAL_HOLD_MS; just
+-- collecting (Ctrl at a walk on the spot, not turning) doesn't count. A test still trains far
+-- more (James, 2026-11-01: practising off the cuff should train a reasonable amount).
+EqTraining.FREE_LATERAL_STEPS = 3
+EqTraining.FREE_LATERAL_HOLD_MS = 1000
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -295,6 +308,7 @@ function EqTraining.routineStep(sheet, move, steer, dt, worn, rng, course)
             -- An arena test ridden to the end: a big payoff at once, by its score, then a rest.
             if not worn then
                 local share = routine.path ~= nil and EqDressagePath.payoffShare(routine.path.percent) or 1
+                if routine.path ~= nil then share = share * EqTraining.TEST_TEMPERAMENT_FACTOR end
                 sheet.focused.temperament = sheet.focused.temperament
                     + EqTraining.TEMPERAMENT_RATE * (EqTraining.ROUTINE_MAX - 1) * EqDressage.TEST_BONUS_SECONDS * share
             end
@@ -414,8 +428,27 @@ end
 function EqTraining.routineTrain(sheet, worn, dt)
     local routine = sheet.routine
     if not worn and routine.mult > 1 then
-        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * (routine.mult - 1) * dt / 1000
+        local factor = routine.kind == "path" and EqTraining.TEST_TEMPERAMENT_FACTOR or 1
+        sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * factor * (routine.mult - 1) * dt / 1000
     end
+end
+
+
+--- Temperament from lateral work ridden outside a test.
+--- @param sheet table
+--- @param key string|nil EqLateral.movementName key of what the horse does now
+--- @param worn boolean
+--- @param dt number milliseconds
+--- @return boolean training true while it trains
+function EqTraining.freeLateral(sheet, key, worn, dt)
+    if key == nil or key == "collected" then
+        sheet.freeLateralMs = 0
+        return false
+    end
+    sheet.freeLateralMs = (sheet.freeLateralMs or 0) + dt
+    if worn or sheet.freeLateralMs < EqTraining.FREE_LATERAL_HOLD_MS then return false end
+    sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * EqTraining.FREE_LATERAL_STEPS * dt / 1000
+    return true
 end
 
 
@@ -474,6 +507,18 @@ function EqTraining.workStep(sheet, dt)
     local work = EqStats.clamp(sheet.workRate / EqTraining.WORK_FULL_RATE, 0, 1)
     sheet.workShare = EqTraining.CRUISE_BAR_SHARE + (1 - EqTraining.CRUISE_BAR_SHARE) * work
     return sheet.workShare
+end
+
+
+--- How much of the riding bar's usual rate this frame's riding costs: workStep's share, or
+--- TEST_BAR_SHARE while a test of figures is under way.
+--- @param sheet table
+--- @param share number from workStep
+--- @return number bar share
+function EqTraining.barShare(sheet, share)
+    local routine = sheet.routine
+    if routine ~= nil and routine.active and routine.kind == "path" then return EqTraining.TEST_BAR_SHARE end
+    return share
 end
 
 

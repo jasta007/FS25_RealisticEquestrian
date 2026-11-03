@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通行門"/>
         <text name="eq_shop_xcGate_function" text="用於騎行通過的門，不是障礙：足夠寬、足夠高，任何馬都能輕鬆通過，帶有贊助商標誌。"/>
         <text name="eq_shop_xcRope" text="繩索標記"/>
-        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索或掛小型贊助商牌子的繩索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_xcRope_function" text="標示路線的輕繩，沒有碰撞。可選單純繩索、掛小型贊助商牌子的繩索（牌子只增加少量品牌曝光），或一側帶觀眾區的繩索（主辦比賽時觀眾站在那裡）。"/>
         <text name="eq_shop_plinthDrive" text="通行展台"/>
         <text name="eq_shop_plinthRamp" text="展示坡台"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
@@ -105,10 +105,13 @@
         <text name="eq_plinth_penalty" text="你的贊助展台上有 %d 台競爭品牌機器：贊助費扣除 %s。"/>
         <text name="eq_shop_lizardPlinth" text="Lizard展台"/>
         <text name="eq_shop_lizardPlinth_function" text="Lizard為其贊助的賽事準備的特別展台。向前方的觸發區交付材料即可建造；停在原木平台上的Lizard機械額外計分。賽事結束後它會倒塌。"/>
-        <text name="eq_shop_lizardPlinth_stone" text="需要 1,000 公升石頭、10,000 公升木材和 1,000 公升木板。"/>
+        <text name="eq_shop_lizardPlinth_stone" text="需要 1,200 公升石頭、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 公升木屑、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 公升稻草、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_lizard_title" text="%s 的贊助邀約"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian 找不到 Realistic Livestock（Ritter 版），因此已停用。請安裝最新版本的 Realistic Livestock。"/>
+        <text name="eq_rlrm_incompatible" text="你的 Realistic Livestock 版本 %s 對 Realistic Equestrian 來說太舊，因此 Realistic Equestrian 已停用。請取得最新版本的 Realistic Livestock（Ritter 版）。"/>
+        <text name="eq_rlrm_old" text="你的 Realistic Livestock 版本 %s 低於 Realistic Equestrian 所需的版本（%s 或更新），部分功能可能無法使用。請取得最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_lizard_offer" text="%s 希望贊助你的%s（%s），並在賽事月借給你一輛它的車輛。要求在賽事結束前達到%s品牌度，並在你的場地建好Lizard展台：%s。如果公布成績時一切就緒，它將支付 %s。否則不付費，也沒有任何處罰。賽事結束後展台會倒塌。"/>
         <text name="eq_lizard_accept" text="接受"/>
         <text name="eq_lizard_decline" text="拒絕"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="點選繼續（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="訓練幫助"/>
         <text name="input_EQ_SPRINT" text="衝刺"/>
+        <text name="input_EQ_LATERAL" text="側向動作（按住）"/>
+        <text name="input_EQ_COLLECT" text="收縮（按住）"/>
+        <text name="input_EQ_REIN" text="韁繩：滑鼠轉向（按住）"/>
         <text name="eq_train_worn" text="騎乘條已滿：今天無法再訓練"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢復"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="主辦"/>
         <text name="eq_settings_hostInterval" text="主辦比賽間隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="從你上次主辦比賽的月份起，需要多少個月才能再次主辦。"/>
+        <text name="eq_settings_crowdDensity" text="觀眾密度"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="有多少觀眾來看你主辦的比賽：坐在看台上，站在繩子旁的觀眾區（08:00-19:00）。"/>
+        <text name="eq_settings_crowd_low" text="少"/>
+        <text name="eq_settings_crowd_medium" text="中"/>
+        <text name="eq_settings_crowd_high" text="多"/>
         <text name="eq_host_warning" text="你的%s缺少：%s。今天解決，否則明天比賽將被取消。"/>
         <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主辦聲譽受損。"/>
         <text name="eq_host_done" text="你的%s已結束：來了%d匹來訪馬。收入 %s（報名費 %s，門票 %s），人氣 %d。"/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="這台設備由你的贊助商提供，供你在本月的賽事期間使用。盡情享受吧！"/>
         <text name="eq_sponsor_discount_from" text="從%s開始"/>
         <text name="eq_sponsor_discount_after" text="簽約 %d 個月後開始"/>
+        <text name="eq_settings_homeRegion" text="所在地區"/>
+        <text name="eq_settings_homeRegion_tooltip" text="你的農場所在地區，決定哪些賽事在國外。「依地圖」從地圖（或 RLRM 的地圖國家）讀取；若不正確請選擇地區。"/>
+        <text name="eq_settings_homeRegion_auto" text="依地圖"/>
+        <text name="eq_region_northAmerica" text="北美洲"/>
+        <text name="eq_region_southAmerica" text="南美洲"/>
+        <text name="eq_region_europe" text="歐洲"/>
+        <text name="eq_region_asiaOceania" text="亞洲和大洋洲"/>
+        <text name="eq_settings_quarantine" text="國際檢疫"/>
+        <text name="eq_settings_quarantine_tooltip" text="從其他地區賽事回來的馬在回家前是否需要檢疫若干輪。檢疫費用照常收取。"/>
+        <text name="eq_ui_col_region" text="地區"/>
+        <text name="eq_ui_region_home" text="你的地區：%s（%s）。"/>
+        <text name="eq_ui_region_fromMap" text="依地圖，可在設定中更改"/>
+        <text name="eq_ui_region_chosen" text="在設定中選擇"/>
+        <text name="eq_ui_region_quarantine" text="在國外參賽後馬匹需要檢疫：海外行程後 %d 輪（黃色），長途行程後 %d 輪（橙色）。"/>
+        <text name="eq_ui_region_noQuarantine" text="國際檢疫已關閉。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s，之後檢疫 %d 輪"/>
+        <text name="eq_ui_status_quarantine" text="檢疫中"/>
+        <text name="eq_status_quarantine" text="檢疫中，%d 輪"/>
+        <text name="eq_enter_quarantine" text="這匹馬在國外參賽後正在檢疫。回家後即可參賽。"/>
+        <text name="eq_quarantine_home" text="%s已結束檢疫回家。"/>
     </texts>
 </l10n>

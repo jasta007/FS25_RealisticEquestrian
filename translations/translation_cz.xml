@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Průjezdová brána"/>
         <text name="eq_shop_xcGate_function" text="Brána k projetí, ne skok: dost široká a vysoká pro každého koně, s logem tvého sponzora."/>
         <text name="eq_shop_xcRope" text="Vymezovací lano"/>
-        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano nebo lano s malou cedulkou sponzora: cedulky přidají jen trochu brandingu."/>
+        <text name="eq_shop_xcRope_function" text="Lehké lano k vyznačení trasy, bez kolize. Vyber obyčejné lano, lano s malou cedulkou sponzora (cedulky přidají jen trochu brandingu) nebo lano s diváckým prostorem na jedné straně, kde při tvých závodech stojí diváci."/>
         <text name="eq_shop_plinthDrive" text="Průjezdný podstavec"/>
         <text name="eq_shop_plinthRamp" text="Výstavní rampa"/>
         <text name="eq_shop_plinthRampLarge" text="Velká výstavní rampa"/>
@@ -105,10 +105,13 @@
         <text name="eq_plinth_penalty" text="%d stroj(e) konkurence na tvých sponzorských podstavcích: z odměny sponzora strženo %s."/>
         <text name="eq_shop_lizardPlinth" text="Podstavec Lizard"/>
         <text name="eq_shop_lizardPlinth_function" text="Speciální podstavec Lizard pro akci, kterou sponzoruje. Postavíte ho dodáním materiálu do spouštěčů vpředu; stroj Lizard na kládové plošině se počítá navíc. Po akci se zřítí."/>
-        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 000 l kamenů, 10 000 l dřeva a 1 000 l prken."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Potřebuje 1 200 l kamenů, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian nemůže najít Realistic Livestock (verze od Rittera), a proto je vypnutý. Nainstaluj nejnovější verzi Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Tvoje verze %s Realistic Livestock je pro Realistic Equestrian příliš stará, a proto je Realistic Equestrian vypnutý. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
+        <text name="eq_rlrm_old" text="Tvoje verze %s Realistic Livestock je starší, než Realistic Equestrian potřebuje (%s nebo novější), takže některé funkce nemusí fungovat. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
         <text name="eq_lizard_offer" text="%s by rád sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
         <text name="eq_lizard_accept" text="Přijmout"/>
         <text name="eq_lizard_decline" text="Odmítnout"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="Klikněte pro pokračování (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Nápověda k tréninku"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Boční chody (držet)"/>
+        <text name="input_EQ_COLLECT" text="Shromáždění (držet)"/>
+        <text name="input_EQ_REIN" text="Otěže: řízení myší (držet)"/>
         <text name="eq_train_worn" text="Ukazatel ježdění plný: dnes už žádný trénink"/>
         <text name="eq_ex_push" text="Tlačení"/>
         <text name="eq_ex_recover" text="Zotavení"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="Pořádání"/>
         <text name="eq_settings_hostInterval" text="Měsíce mezi vlastními závody"/>
         <text name="eq_settings_hostInterval_tooltip" text="Kolik měsíců po měsíci tvého posledního pořádaného závodu musí uplynout, než můžeš pořádat další."/>
+        <text name="eq_settings_crowdDensity" text="Počet diváků"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Kolik diváků přijde na tvé závody, na tribuny a do diváckých prostorů u lana (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Málo"/>
+        <text name="eq_settings_crowd_medium" text="Středně"/>
+        <text name="eq_settings_crowd_high" text="Hodně"/>
         <text name="eq_host_warning" text="Tvému závodu %s chybí: %s. Vyřeš to dnes, jinak bude zítra zrušen."/>
         <text name="eq_host_cancelled" text="Tvůj závod %s byl zrušen, stále chybělo: %s. Tvoje pověst pořadatele utrpí."/>
         <text name="eq_host_done" text="Tvůj závod %s skončil: přijelo %d hostujících koní. Tržby %s (%s startovné, %s vstupné), oblíbenost %d."/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="Tento stroj ti věnoval tvůj sponzor k použití během tvé akce tento měsíc. Užij si to!"/>
         <text name="eq_sponsor_discount_from" text="Od %s"/>
         <text name="eq_sponsor_discount_after" text="Po %d měsících od podpisu"/>
+        <text name="eq_settings_homeRegion" text="Domovský region"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Kde leží vaše farma; podle toho se určuje, které závody jsou v zahraničí. Z mapy jej čte z mapy (nebo ze země mapy v RLRM); pokud je špatně, vyberte region."/>
+        <text name="eq_settings_homeRegion_auto" text="Z mapy"/>
+        <text name="eq_region_northAmerica" text="Severní Amerika"/>
+        <text name="eq_region_southAmerica" text="Jižní Amerika"/>
+        <text name="eq_region_europe" text="Evropa"/>
+        <text name="eq_region_asiaOceania" text="Asie a Oceánie"/>
+        <text name="eq_settings_quarantine" text="Mezinárodní karanténa"/>
+        <text name="eq_settings_quarantine_tooltip" text="Zda kůň po závodech v jiném regionu stráví kola v karanténě, než se vrátí domů. Poplatky za karanténu se platí v každém případě."/>
+        <text name="eq_ui_col_region" text="Region"/>
+        <text name="eq_ui_region_home" text="Váš region: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="z mapy, změňte v Nastavení"/>
+        <text name="eq_ui_region_chosen" text="zvolen v Nastavení"/>
+        <text name="eq_ui_region_quarantine" text="Po závodech v zahraničí jde kůň do karantény: %d kol(o) po cestě za oceán (žlutě), %d po dálkové cestě (oranžově)."/>
+        <text name="eq_ui_region_noQuarantine" text="Mezinárodní karanténa je vypnutá."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, poté %d kol(o) v karanténě"/>
+        <text name="eq_ui_status_quarantine" text="V karanténě"/>
+        <text name="eq_status_quarantine" text="V karanténě, %d kol(o)"/>
+        <text name="eq_enter_quarantine" text="Tento kůň je v karanténě po závodech v zahraničí. Závodit může, až bude doma."/>
+        <text name="eq_quarantine_home" text="Kůň %s se vrátil z karantény."/>
     </texts>
 </l10n>
