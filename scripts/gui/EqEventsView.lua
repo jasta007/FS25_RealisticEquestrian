@@ -63,22 +63,13 @@ function EqEventsView.eventRegion(event)
 end
 
 
---- The line over the events table: your home region, where it comes from, and what a trip
---- abroad means.
+--- The line over the events table: just your home region. What a trip abroad means is in the
+--- selected event's details under the table.
 --- @return string text
 function EqEventsView.regionLine()
-    local manager = EqCompetitionManager
-    local home = manager.homeRegion()
+    local home = EqCompetitionManager.homeRegion()
     if home == nil then return "" end
-    local source = g_i18n:getText(manager.chosenHomeRegion() ~= nil and "eq_ui_region_chosen" or "eq_ui_region_fromMap")
-    local text = string.format(g_i18n:getText("eq_ui_region_home"), EqEventsView.regionName(home), source)
-    local config = manager.config
-    local near = EqQuarantine.roundsFor(config, "near", manager.settings)
-    local far = EqQuarantine.roundsFor(config, "far", manager.settings)
-    if near > 0 or far > 0 then
-        return text .. " " .. string.format(g_i18n:getText("eq_ui_region_quarantine"), near, far)
-    end
-    return text .. " " .. g_i18n:getText("eq_ui_region_noQuarantine")
+    return string.format(g_i18n:getText("eq_ui_region_home"), EqEventsView.regionName(home))
 end
 
 
@@ -172,7 +163,7 @@ function EqEventsView.horseRows(event, farmId)
             elseif unavailable == "injured" then
                 status = string.format(g_i18n:getText("eq_status_injured"), EqInjury.monthsLeft(record, animal) or 1)
             elseif unavailable == "quarantine" then
-                status = string.format(g_i18n:getText("eq_status_quarantine"), EqQuarantine.roundsLeft(record))
+                status = string.format(g_i18n:getText("eq_status_quarantine"), EqQuarantine.timeText(EqQuarantine.roundsLeft(record)))
             elseif unavailable ~= nil then
                 status = g_i18n:getText("eq_status_" .. unavailable)
             else

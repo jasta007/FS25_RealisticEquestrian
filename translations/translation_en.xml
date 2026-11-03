@@ -1188,14 +1188,15 @@
         <text name="eq_settings_quarantine" text="International quarantine"/>
         <text name="eq_settings_quarantine_tooltip" text="Whether a horse back from an event in another region spends rounds in quarantine before it is home. The quarantine fees are paid either way."/>
         <text name="eq_ui_col_region" text="Region"/>
-        <text name="eq_ui_region_home" text="Your region: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="from the map, change it in Settings"/>
-        <text name="eq_ui_region_chosen" text="set in Settings"/>
-        <text name="eq_ui_region_quarantine" text="After an event abroad a horse is in quarantine: %d round(s) after an overseas trip (amber), %d after a long-haul one (orange)."/>
-        <text name="eq_ui_region_noQuarantine" text="International quarantine is off."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, then %d round(s) in quarantine"/>
+        <text name="eq_ui_region_home" text="Your region: %s."/>
+        <text name="eq_ui_summary_quarantine" text="Abroad: %s in quarantine afterwards."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, then %s in quarantine"/>
         <text name="eq_ui_status_quarantine" text="In quarantine"/>
-        <text name="eq_status_quarantine" text="In quarantine, %d round(s)"/>
+        <text name="eq_status_quarantine" text="In quarantine, %s"/>
+        <text name="eq_ui_time_day" text="%d day"/>
+        <text name="eq_ui_time_days" text="%d days"/>
+        <text name="eq_ui_time_month" text="%d month"/>
+        <text name="eq_ui_time_months" text="%d months"/>
         <text name="eq_enter_quarantine" text="That horse is in quarantine after an event abroad. It can compete once it is home."/>
         <text name="eq_quarantine_home" text="%s is home from quarantine."/>
     </texts>
