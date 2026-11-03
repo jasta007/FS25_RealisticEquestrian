@@ -38,11 +38,17 @@ EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 
 -- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
 -- STAMINA_MULT_MAX, built by turning the bar round inside a target band (James, 2026-11-03):
--- - The band sits in the top third of the gallop (somewhere random) when a gallop starts. Switch
+-- - The band sits near the top of the gallop (somewhere random) when a gallop starts. Switch
 --   from Pushing (or a Sprint) to Recovering with the bar inside it: the multiplier rises by
---   PACE_STEP and the band jumps to a random place in the bottom third. Switch from Recovering to
+--   PACE_STEP and the band jumps to a random place near the bottom. Switch from Recovering to
 --   Pushing inside that: the multiplier rises again and the band jumps back up, and so on.
 -- - The band is PACE_WIDTH[1] points of exertion wide at x1, narrowing to PACE_WIDTH[2] at x5.
+--   Where it may sit (PACE_HIGH, PACE_LOW, each { range at x1, range at x5 }) climbs with the
+--   multiplier, so a good run keeps the horse high on the bar.
+-- - A hit makes the way to the next band easier (ex.recoverShare, ex.pushShare): after a hit at
+--   the top Recovering falls PACE_RECOVER_BONUS times as fast, after a hit at the bottom Pushing
+--   climbs at PACE_PUSH_EASE of its rate, each { just after x1, at x5 }. So hits help you stay
+--   in Push. A miss takes the help away.
 -- - Going past the band (Pushing above a top band, Recovering below a bottom one) or switching
 --   before reaching it drops the multiplier to x1 and puts a full-width band on the other side.
 -- - A canter or slower loses PACE_SLOW_DROP a second. Fatigued (or a Sprint that ends past the
@@ -50,11 +56,11 @@ EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
 EqTraining.PACE_STEP = 0.5
-EqTraining.PACE_WIDTH = { 22, 7 }
--- Where a band may sit, in points of exertion: the top third (its top kept PACE_TOP_GAP under the
--- Fatigued line) and the bottom third.
-EqTraining.PACE_HIGH = { 100 * 2 / 3, 97 }
-EqTraining.PACE_LOW = { 0, 100 / 3 }
+EqTraining.PACE_WIDTH = { 15, 6 }
+EqTraining.PACE_HIGH = { { 100 * 2 / 3, 97 }, { 78, 97 } }
+EqTraining.PACE_LOW = { { 12, 100 / 3 }, { 38, 58 } }
+EqTraining.PACE_RECOVER_BONUS = { 1.8, 2.5 }
+EqTraining.PACE_PUSH_EASE = { 0.9, 0.7 }
 EqTraining.PACE_SLOW_DROP = 0.6
 -- Random numbers 0..1 for the band's place (tests replace it).
 EqTraining.paceRandom = math.random
@@ -392,9 +398,27 @@ end
 --- The band's width for a multiplier, in points of exertion.
 --- @param mult number
 --- @return number
+local function multShare(mult)
+    return (math.min(math.max(mult, 1), EqTraining.STAMINA_MULT_MAX) - 1) / (EqTraining.STAMINA_MULT_MAX - 1)
+end
+
+local function lerp(a, b, t)
+    return a + (b - a) * t
+end
+
 function EqTraining.paceWidth(mult)
-    local t = (math.min(math.max(mult, 1), EqTraining.STAMINA_MULT_MAX) - 1) / (EqTraining.STAMINA_MULT_MAX - 1)
-    return EqTraining.PACE_WIDTH[1] + (EqTraining.PACE_WIDTH[2] - EqTraining.PACE_WIDTH[1]) * t
+    return lerp(EqTraining.PACE_WIDTH[1], EqTraining.PACE_WIDTH[2], multShare(mult))
+end
+
+
+--- Where a band may sit on one side for a multiplier, in points of exertion.
+--- @param side string "high" or "low"
+--- @param mult number
+--- @return number from, number to
+function EqTraining.paceRange(side, mult)
+    local ranges = side == "high" and EqTraining.PACE_HIGH or EqTraining.PACE_LOW
+    local t = multShare(mult)
+    return lerp(ranges[1][1], ranges[2][1], t), lerp(ranges[1][2], ranges[2][2], t)
 end
 
 
@@ -403,8 +427,8 @@ end
 --- @param side string "high" or "low"
 function EqTraining.placeBand(st, side)
     local width = EqTraining.paceWidth(st.mult)
-    local range = side == "high" and EqTraining.PACE_HIGH or EqTraining.PACE_LOW
-    local from = range[1] + (range[2] - range[1] - width) * EqTraining.paceRandom()
+    local low, high = EqTraining.paceRange(side, st.mult)
+    local from = low + (high - low - width) * EqTraining.paceRandom()
     st.side, st.from, st.to = side, from, from + width
 end
 
@@ -419,7 +443,7 @@ end
 
 -- Missed: x1, and a full-width band on the other side.
 local function missBand(st)
-    st.mult = 1
+    st.mult, st.hit = 1, false
     EqTraining.placeBand(st, st.side == "high" and "low" or "high")
 end
 
@@ -437,10 +461,10 @@ function EqTraining.staminaStep(sheet, dt, worn)
     local dir = (ex.mode == "push" or ex.mode == "sprint") and "up" or ex.mode == "recover" and "down" or nil
     local judged = nil
     if ex.lock ~= nil then
-        st.mult, st.dir, st.from, st.to, st.side = 1, nil, nil, nil, nil
+        st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     elseif dir == nil then
         st.mult = st.mult - EqTraining.PACE_SLOW_DROP * seconds
-        st.dir, st.from, st.to, st.side = nil, nil, nil, nil
+        st.dir, st.from, st.to, st.side, st.hit = nil, nil, nil, nil, false
     else
         if st.side == nil then EqTraining.placeBand(st, "high") end
         local v = ex.value
@@ -451,6 +475,7 @@ function EqTraining.staminaStep(sheet, dt, worn)
             if away and EqTraining.inBand(sheet) then
                 st.mult = math.min(st.mult + EqTraining.PACE_STEP, EqTraining.STAMINA_MULT_MAX)
                 EqTraining.placeBand(st, st.side == "high" and "low" or "high")
+                st.hit = true
                 judged = "hit"
             elseif away then
                 missBand(st)
@@ -464,6 +489,12 @@ function EqTraining.staminaStep(sheet, dt, worn)
         st.dir = dir
     end
     st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)
+    -- A hit eases the way to the next band, more at a higher multiplier: Recovering falls faster
+    -- after a hit at the top, Pushing climbs more slowly after a hit at the bottom.
+    local t = multShare(st.mult)
+    local eased = dir ~= nil and ex.lock == nil and st.hit
+    ex.recoverShare = eased and st.side == "low" and lerp(EqTraining.PACE_RECOVER_BONUS[1], EqTraining.PACE_RECOVER_BONUS[2], t) or 1
+    ex.pushShare = eased and st.side == "high" and lerp(EqTraining.PACE_PUSH_EASE[1], EqTraining.PACE_PUSH_EASE[2], t) or 1
     sheet.quality.stamina = galloping and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
     if not worn and galloping then
         sheet.focused.stamina = sheet.focused.stamina + EqTraining.STAMINA_RATE * st.mult * seconds
@@ -511,6 +542,7 @@ function EqTraining.rest(sheet, ms, stamina)
     if ms <= 0 then return end
     EqExertion.rest(sheet.exertion, ms, stamina)
     sheet.stamina.mult = 1
+    sheet.exertion.pushShare, sheet.exertion.recoverShare = 1, 1
     sheet.sprint.ms = 0
     for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0

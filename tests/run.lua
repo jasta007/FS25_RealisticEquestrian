@@ -883,16 +883,34 @@ do
     local st = band.stamina
     local wide = st.to - st.from
     check("a gallop starts with a full-width band in the top third",
-        st.side == "high" and st.from >= T.PACE_HIGH[1] and math.abs(wide - T.PACE_WIDTH[1]) < 1e-6)
+        st.side == "high" and st.from >= T.PACE_HIGH[1][1] and math.abs(wide - T.PACE_WIDTH[1]) < 1e-6)
     band.exertion.value = st.from + 1
     band.exertion.mode = "recover"
     local hit = T.staminaStep(band, 50, false)
     check("turning round inside the band raises the multiplier and moves the band to the bottom third, narrower",
-        hit == "hit" and st.mult == 1 + T.PACE_STEP and st.side == "low" and st.to <= T.PACE_LOW[2] and st.to - st.from < wide)
+        hit == "hit" and st.mult == 1 + T.PACE_STEP and st.side == "low" and st.to <= T.PACE_LOW[2][2] and st.to - st.from < wide)
     band.exertion.value = st.from - 1
     local past = T.staminaStep(band, 50, false)
     check("recovering past the bottom band drops to x1 and puts a full band in the top third",
         past == "miss" and st.mult == 1 and st.side == "high" and math.abs(st.to - st.from - T.PACE_WIDTH[1]) < 1e-6)
+    local eased = T.newSheet()
+    eased.exertion.mode, eased.exertion.value = "push", 50
+    T.staminaStep(eased, 50, false)
+    local plainPush = E.rate(eased.exertion, "gallop", 50)
+    local est = eased.stamina
+    eased.exertion.value, eased.exertion.mode = (est.from + est.to) / 2, "recover"
+    check("no help before a hit", eased.exertion.pushShare == 1)
+    T.staminaStep(eased, 50, false)
+    local plainRecover = -E.rate({ mode = "recover", value = 50 }, "gallop", 50)
+    local fastRecover = -E.rate({ mode = "recover", value = 50, recoverShare = eased.exertion.recoverShare }, "gallop", 50)
+    eased.exertion.value, eased.exertion.mode = (est.from + est.to) / 2, "push"
+    T.staminaStep(eased, 50, false)
+    local slowPush = E.rate({ mode = "push", value = 50, pushShare = eased.exertion.pushShare }, "gallop", 50)
+    check("a hit at the top speeds Recovering, a hit at the bottom slows Pushing",
+        fastRecover > plainRecover * 1.7 and slowPush < plainPush * 0.95 and est.mult == 1 + 2 * T.PACE_STEP,
+        string.format("%.2f vs %.2f, %.2f vs %.2f", fastRecover, plainRecover, slowPush, plainPush))
+    local lowHigh = T.paceRange("low", 5)
+    check("the bands sit higher at a higher multiplier", lowHigh > T.PACE_LOW[1][2] and T.paceRange("high", 5) > T.PACE_HIGH[1][1])
     T.paceRandom = realRandom
     local blownSheet = T.newSheet()
     blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4

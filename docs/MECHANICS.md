@@ -129,10 +129,14 @@ shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst wh
 Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
 A blue band on the gallop part of the bar shows where to turn the bar round:
 
-- When a gallop starts the band sits somewhere in the top third. Switch from Pushing (or a Sprint)
+- When a gallop starts the band sits somewhere near the top. Switch from Pushing (or a Sprint)
   to Recovering with the bar inside it and the multiplier rises by 0.5, and the band jumps to
-  somewhere in the bottom third. Switch back to Pushing inside that one for another 0.5, and so on.
-- The band is 22 points of exertion wide at x1 and narrows to 7 at x5.
+  somewhere near the bottom. Switch back to Pushing inside that one for another 0.5, and so on.
+- The band is 15 points of exertion wide at x1 and narrows to 6 at x5. Both ends climb with the
+  multiplier: the top band from 67-97% at x1 to 78-97% at x5, the bottom one from 12-33% to 38-58%.
+- A hit helps you to the next band: after a hit at the top, Recovering falls 1.8 to 2.5 times as
+  fast (more at a higher multiplier); after a hit at the bottom, Pushing climbs at 90% down to 70%
+  of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
 - Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
   full-width band at the other end.
 - A canter or slower drops the multiplier quickly. Fatigued (or Blown, a Sprint that ends past
