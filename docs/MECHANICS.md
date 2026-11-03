@@ -97,7 +97,7 @@ The gallop has three paces, and exertion only builds at a gallop:
   the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
   empty; Stamina slows it).
 - **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
-  top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
+  top third of the gallop section, slowly through the middle third,
   quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
 - **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
   speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
@@ -127,16 +127,16 @@ x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past th
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
 Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
-It follows a blue pace band on the gallop part of the bar, 15 points of exertion wide:
+A blue band on the gallop part of the bar shows where to turn the bar round:
 
-- The band starts at 35-50% of the gallop at x1 and climbs with the multiplier to 80-95% at x5,
-  so the better you ride, the closer to the Fatigued line you have to hold the bar.
-- With the bar inside the band (Pushing or Recovering) the multiplier climbs, about x1 to x5 in
-  half a minute. Above the band it holds: no gain, just the risk of Fatigued.
-- Below the band it drops quickly and the band slides down with it, so catching it again keeps
-  most of the multiplier. A canter or slower drops it quickly too; a Sprint holds it.
-- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1 and stops stamina training
-  until the bar is empty.
+- When a gallop starts the band sits somewhere in the top third. Switch from Pushing (or a Sprint)
+  to Recovering with the bar inside it and the multiplier rises by 0.5, and the band jumps to
+  somewhere in the bottom third. Switch back to Pushing inside that one for another 0.5, and so on.
+- The band is 22 points of exertion wide at x1 and narrows to 7 at x5.
+- Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
+  full-width band at the other end.
+- A canter or slower drops the multiplier quickly. Fatigued (or Blown, a Sprint that ends past
+  the line) drops it to x1 and stops stamina training until the bar is empty.
 
 ### Agility
 

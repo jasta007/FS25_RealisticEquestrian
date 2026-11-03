@@ -37,24 +37,27 @@ EqTraining.SPRINT_MULT_MAX = 10
 EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 
 -- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
--- STAMINA_MULT_MAX. The multiplier follows a pace band on the bar, nothing hidden (James,
--- 2026-11-03: the old hidden breath made it drop to x1 while the bar was high):
--- - The band is PACE_WIDTH points of exertion wide. Its bottom edge sits at PACE_LOW[1] at x1 and
---   climbs to PACE_LOW[2] at x5, so the better the multiplier, the closer to the line it asks you
---   to hold the bar, where Pushing climbs fastest.
--- - Galloping (Pushing or Recovering) inside the band raises the multiplier by PACE_GAIN a second.
--- - Above the band (still under the line) it holds: no gain, only the risk of Fatigued.
--- - Below the band it falls by PACE_DROP a second, and the band slides down with it, so a rider
---   who catches it again keeps most of the multiplier. A canter or slower loses PACE_SLOW_DROP.
--- - A Sprint holds it. Fatigued (or a Sprint that ends past the line) drops it to x1 and stops
---   stamina training until exertion is empty again.
+-- STAMINA_MULT_MAX, built by turning the bar round inside a target band (James, 2026-11-03):
+-- - The band sits in the top third of the gallop (somewhere random) when a gallop starts. Switch
+--   from Pushing (or a Sprint) to Recovering with the bar inside it: the multiplier rises by
+--   PACE_STEP and the band jumps to a random place in the bottom third. Switch from Recovering to
+--   Pushing inside that: the multiplier rises again and the band jumps back up, and so on.
+-- - The band is PACE_WIDTH[1] points of exertion wide at x1, narrowing to PACE_WIDTH[2] at x5.
+-- - Going past the band (Pushing above a top band, Recovering below a bottom one) or switching
+--   before reaching it drops the multiplier to x1 and puts a full-width band on the other side.
+-- - A canter or slower loses PACE_SLOW_DROP a second. Fatigued (or a Sprint that ends past the
+--   line) drops it to x1 and stops stamina training until exertion is empty again.
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
-EqTraining.PACE_LOW = { 35, 80 }
-EqTraining.PACE_WIDTH = 15
-EqTraining.PACE_GAIN = 0.12
-EqTraining.PACE_DROP = 0.5
+EqTraining.PACE_STEP = 0.5
+EqTraining.PACE_WIDTH = { 22, 7 }
+-- Where a band may sit, in points of exertion: the top third (its top kept PACE_TOP_GAP under the
+-- Fatigued line) and the bottom third.
+EqTraining.PACE_HIGH = { 100 * 2 / 3, 97 }
+EqTraining.PACE_LOW = { 0, 100 / 3 }
 EqTraining.PACE_SLOW_DROP = 0.6
+-- Random numbers 0..1 for the band's place (tests replace it).
+EqTraining.paceRandom = math.random
 
 -- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
@@ -386,25 +389,38 @@ function EqTraining.speedStep(sheet, dt, worn)
 end
 
 
---- The stamina pace band for a multiplier, in points of exertion.
---- @param mult number stamina multiplier, 1..STAMINA_MULT_MAX
---- @return number from, number to
-function EqTraining.paceBand(mult)
+--- The band's width for a multiplier, in points of exertion.
+--- @param mult number
+--- @return number
+function EqTraining.paceWidth(mult)
     local t = (math.min(math.max(mult, 1), EqTraining.STAMINA_MULT_MAX) - 1) / (EqTraining.STAMINA_MULT_MAX - 1)
-    local from = EqTraining.PACE_LOW[1] + (EqTraining.PACE_LOW[2] - EqTraining.PACE_LOW[1]) * t
-    return from, from + EqTraining.PACE_WIDTH
+    return EqTraining.PACE_WIDTH[1] + (EqTraining.PACE_WIDTH[2] - EqTraining.PACE_WIDTH[1]) * t
 end
 
 
---- Where the bar is against the pace band: "below", "in" or "above".
+--- Put the stamina band somewhere random on one side, sized for the multiplier.
+--- @param st table sheet.stamina
+--- @param side string "high" or "low"
+function EqTraining.placeBand(st, side)
+    local width = EqTraining.paceWidth(st.mult)
+    local range = side == "high" and EqTraining.PACE_HIGH or EqTraining.PACE_LOW
+    local from = range[1] + (range[2] - range[1] - width) * EqTraining.paceRandom()
+    st.side, st.from, st.to = side, from, from + width
+end
+
+
 --- @param sheet table
---- @return string
-function EqTraining.pacePlace(sheet)
-    local from, to = EqTraining.paceBand(sheet.stamina.mult)
-    local v = sheet.exertion.value
-    if v < from then return "below" end
-    if v <= to then return "in" end
-    return "above"
+--- @return boolean true while the bar is inside the stamina band
+function EqTraining.inBand(sheet)
+    local st, v = sheet.stamina, sheet.exertion.value
+    return st.from ~= nil and v >= st.from and v <= st.to
+end
+
+
+-- Missed: x1, and a full-width band on the other side.
+local function missBand(st)
+    st.mult = 1
+    EqTraining.placeBand(st, st.side == "high" and "low" or "high")
 end
 
 
@@ -412,29 +428,47 @@ end
 --- @param sheet table
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
+--- @return string|nil "hit" or "miss" when the band was judged this frame
 function EqTraining.staminaStep(sheet, dt, worn)
     local ex, st = sheet.exertion, sheet.stamina
     local seconds = dt / 1000
     local galloping = ex.mode == "push" or ex.mode == "recover"
+    -- Rising (Pushing or Sprinting) or falling (Recovering), nil off the gallop.
+    local dir = (ex.mode == "push" or ex.mode == "sprint") and "up" or ex.mode == "recover" and "down" or nil
+    local judged = nil
     if ex.lock ~= nil then
-        st.mult = 1
-    elseif ex.mode == "sprint" then
-        -- A Sprint holds the multiplier.
-    elseif galloping then
-        local place = EqTraining.pacePlace(sheet)
-        if place == "in" then
-            st.mult = st.mult + EqTraining.PACE_GAIN * seconds
-        elseif place == "below" then
-            st.mult = st.mult - EqTraining.PACE_DROP * seconds
-        end
-    else
+        st.mult, st.dir, st.from, st.to, st.side = 1, nil, nil, nil, nil
+    elseif dir == nil then
         st.mult = st.mult - EqTraining.PACE_SLOW_DROP * seconds
+        st.dir, st.from, st.to, st.side = nil, nil, nil, nil
+    else
+        if st.side == nil then EqTraining.placeBand(st, "high") end
+        local v = ex.value
+        if st.dir ~= nil and dir ~= st.dir then
+            -- Turned round away from the band's side (down from a top band, up from a bottom one):
+            -- inside the band is a hit, short of it a miss. Turning towards the band is free.
+            local away = (st.side == "high" and dir == "down") or (st.side == "low" and dir == "up")
+            if away and EqTraining.inBand(sheet) then
+                st.mult = math.min(st.mult + EqTraining.PACE_STEP, EqTraining.STAMINA_MULT_MAX)
+                EqTraining.placeBand(st, st.side == "high" and "low" or "high")
+                judged = "hit"
+            elseif away then
+                missBand(st)
+                judged = "miss"
+            end
+        elseif (st.side == "high" and dir == "up" and v > st.to) or (st.side == "low" and dir == "down" and v < st.from) then
+            -- Went straight past it.
+            missBand(st)
+            judged = "miss"
+        end
+        st.dir = dir
     end
     st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)
     sheet.quality.stamina = galloping and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
     if not worn and galloping then
         sheet.focused.stamina = sheet.focused.stamina + EqTraining.STAMINA_RATE * st.mult * seconds
     end
+    return judged
 end
 
 
