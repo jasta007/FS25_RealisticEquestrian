@@ -301,7 +301,7 @@
         <text name="eq_train_view_speed" text="速度"/>
         <text name="eq_train_view_condensed" text="精簡"/>
         <text name="eq_help_stamina_title" text="訓練：耐力"/>
-        <text name="eq_help_stamina_1" text="襲步中加力和恢復時會按耐力連擊訓練耐力，最高x5。消耗條上的藍色色帶顯示在哪裡掉頭。開始襲步時它在上方：加力進入色帶，然後恢復。消耗條在色帶內時，螢幕邊緣會有風線掠過。"/>
+        <text name="eq_help_stamina_1" text="襲步中加力和恢復時會按耐力連擊訓練耐力，最高x5。消耗條上的藍色色帶顯示在哪裡掉頭。開始襲步時它在上方：加力進入色帶，然後恢復。留意馬的呼吸：在上方命中後開始噴氣，在下方命中後停止，疲勞時會大口喘氣。"/>
         <text name="eq_help_stamina_2" text="每次在色帶內掉頭，連擊提高0.5，色帶會跳到消耗條另一端，略高也更窄。每次命中也會讓下一段更輕鬆：消耗條下降更快，上升更慢。掉頭太早、衝過色帶或離開襲步，連擊就會中斷。疲勞或力竭也會停止耐力訓練，直到消耗條清空。"/>
         <text name="eq_help_speed_title" text="訓練：速度"/>
         <text name="eq_help_speed_1" text="速度在衝刺時訓練：襲步時連續點擊滑鼠左鍵。衝刺的每一秒都算數，結束時會乘以你把消耗條推到的高度：到線的一半時x2，緊貼線下最高x10。"/>

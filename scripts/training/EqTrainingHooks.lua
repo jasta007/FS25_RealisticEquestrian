@@ -687,6 +687,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             end
         end
         spec.eqLaunch = nil
+        EqLog.try("EqBreath stop", EqBreath.stop, vehicle)
         -- A dressage test that counts in your own event: "GET ON YOUR HORSE" for a few seconds,
         -- back on carries on, else it is eliminated and can't be ridden again (James, 2026-11-01).
         local routine = sheet.routine
@@ -769,7 +770,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
     end
     local staminaJudged = EqTraining.staminaStep(sheet, dt, worn)
-    if staminaJudged == "hit" then spec.eqStreakFlashAt = g_time end
+    -- The horse's breath shows while the band waits at the bottom, and hard while Fatigued.
+    local breath = ex.lock ~= nil and "hard" or (ex.mode ~= nil and sheet.stamina.side == "low") and "band" or nil
+    EqLog.try("EqBreath", EqBreath.update, vehicle, breath, dt)
     if staminaJudged ~= nil then
         EqTrainingHud.pop("stamina_" .. staminaJudged, sheet.stamina.mult)
         local st = sheet.stamina
@@ -2020,9 +2023,6 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
     end
     EqTrainingHud.drawPops()
-    -- Speed lines while the stamina band is ridden (not in the Speed view).
-    EqTrainingHud.drawStreaks(view ~= "speed" and ex.mode ~= nil and ex.lock == nil and EqTraining.inBand(sheet),
-        view ~= "speed" and spec.eqStreakFlashAt or nil)
 
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 

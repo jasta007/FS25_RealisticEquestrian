@@ -301,7 +301,7 @@
         <text name="eq_train_view_speed" text="Rychlost"/>
         <text name="eq_train_view_condensed" text="Kompaktní"/>
         <text name="eq_help_stamina_title" text="Trénink: Vytrvalost"/>
-        <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s combem Vytrvalosti, až x5. Modré pásmo na ukazateli ukazuje, kde otočit. Na začátku trysku je nahoře: Tlačte až do něj, pak se Zotavte. Dokud je ukazatel v pásmu, okraji obrazovky probíhají pruhy."/>
+        <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s combem Vytrvalosti, až x5. Modré pásmo na ukazateli ukazuje, kde otočit. Na začátku trysku je nahoře: Tlačte až do něj, pak se Zotavte. Sledujte dech koně: po zásahu nahoře začne funět, po zásahu dole přestane a když je Unavený, funí silně."/>
         <text name="eq_help_stamina_2" text="Každé otočení v pásmu zvýší combo o 0,5 a pásmo přeskočí na druhý konec ukazatele, o něco výš a užší. Každý zásah také usnadní další úsek: ukazatel klesá rychleji a stoupá pomaleji. Otočte příliš brzy, přejeďte pásmo nebo zpomalte z trysku a combo je ztraceno. Unavený nebo Vyčerpaný také zastaví trénink Vytrvalosti, dokud není ukazatel prázdný."/>
         <text name="eq_help_speed_title" text="Trénink: Rychlost"/>
         <text name="eq_help_speed_1" text="Rychlost se trénuje při Sprintu: v trysku neustále klikejte levým tlačítkem myši. Počítá se každá sekunda Sprintu a na konci se vynásobí tím, jak vysoko jste ukazatel dostali: x2 v polovině cesty k čáře, až x10 těsně před ní."/>

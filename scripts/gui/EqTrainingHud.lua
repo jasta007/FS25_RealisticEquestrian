@@ -90,67 +90,6 @@ local function fill(x, y, width, height, color)
 end
 
 
--- Speed lines: faint streaks that slide out towards the screen's sides while the stamina band is
--- being ridden well (James, 2026-11-03: a subtle "in the wind" cue, like sailing games, so the
--- rider needn't watch the bar). STREAK_COUNT streaks in the outer STREAK_REACH of each side, at
--- STREAK_ALPHA, fading in and out over STREAK_EASE_MS; a hit flashes them to STREAK_FLASH_ALPHA for
--- STREAK_FLASH_MS.
-EqTrainingHud.STREAK_COUNT = 16
-EqTrainingHud.STREAK_REACH = 0.3
-EqTrainingHud.STREAK_ALPHA = 0.1
-EqTrainingHud.STREAK_FLASH_ALPHA = 0.28
-EqTrainingHud.STREAK_FLASH_MS = 450
-EqTrainingHud.STREAK_EASE_MS = 350
-EqTrainingHud.STREAK_COLOR = { 0.85, 0.93, 1 }
-
-
-local function newStreak(streak, scatter)
-    streak.side = math.random() < 0.5 and -1 or 1
-    streak.y = 0.12 + math.random() * 0.76
-    streak.p = scatter and math.random() or 0
-    streak.speed = 1.1 + math.random() * 0.9
-    streak.length = 0.04 + math.random() * 0.08
-    streak.height = 0.0012 + math.random() * 0.0012
-    return streak
-end
-
-
---- Draw the speed lines.
---- @param on boolean true while the bar is in the stamina band
---- @param flashAt number|nil g_time of the last band hit
-function EqTrainingHud.drawStreaks(on, flashAt)
-    local now = g_time or 0
-    local state = EqTrainingHud.streakState
-    if state == nil then
-        state = { level = 0, at = now, streaks = {} }
-        for i = 1, EqTrainingHud.STREAK_COUNT do state.streaks[i] = newStreak({}, true) end
-        EqTrainingHud.streakState = state
-    end
-    local dt = math.min(math.max(now - state.at, 0), 100)
-    state.at = now
-    local step = dt / EqTrainingHud.STREAK_EASE_MS
-    state.level = on and math.min(state.level + step, 1) or math.max(state.level - step, 0)
-    local flash = 0
-    if flashAt ~= nil and now - flashAt < EqTrainingHud.STREAK_FLASH_MS then
-        flash = 1 - (now - flashAt) / EqTrainingHud.STREAK_FLASH_MS
-    end
-    local alpha = math.max(EqTrainingHud.STREAK_ALPHA * state.level, EqTrainingHud.STREAK_FLASH_ALPHA * flash)
-    if alpha <= 0.001 then return end
-    local c = EqTrainingHud.STREAK_COLOR
-    local reach = EqTrainingHud.STREAK_REACH
-    for _, streak in ipairs(state.streaks) do
-        streak.p = streak.p + streak.speed * dt / 1000
-        if streak.p >= 1 then newStreak(streak, false) end
-        -- From the inner edge of its side out to the screen's edge, brightest half way.
-        local fade = math.sin(math.pi * streak.p)
-        local inner = streak.side < 0 and reach or 1 - reach
-        local x = inner + streak.side * reach * streak.p
-        if streak.side < 0 then x = x - streak.length end
-        fill(x, streak.y, streak.length, streak.height, { c[1], c[2], c[3], alpha * fade })
-    end
-end
-
-
 --- @param text string
 --- @param x number
 --- @param y number
@@ -1035,7 +974,6 @@ function EqTrainingHud.reset()
     EqTrainingHud.closeHelp()
     EqTrainingHud.popState = nil
     EqTrainingHud.announceState = nil
-    EqTrainingHud.streakState = nil
     if EqTrainingHud.overlay ~= nil then
         EqTrainingHud.overlay:delete()
         EqTrainingHud.overlay = nil

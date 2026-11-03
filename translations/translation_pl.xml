@@ -301,7 +301,7 @@
         <text name="eq_train_view_speed" text="Szybkość"/>
         <text name="eq_train_view_condensed" text="Kompaktowy"/>
         <text name="eq_help_stamina_title" text="Trening: Wytrzymałość"/>
-        <text name="eq_help_stamina_1" text="Wytrzymałość trenuje się podczas Naciskania i Odpoczynku w cwale, z combo Wytrzymałości, do x5. Niebieski pas na pasku pokazuje, gdzie zawrócić. Na początku cwału jest u góry: Naciskaj aż do niego, potem Odpoczywaj. Dopóki pasek jest w pasie, po brzegach ekranu przelatują smugi."/>
+        <text name="eq_help_stamina_1" text="Wytrzymałość trenuje się podczas Naciskania i Odpoczynku w cwale, z combo Wytrzymałości, do x5. Niebieski pas na pasku pokazuje, gdzie zawrócić. Na początku cwału jest u góry: Naciskaj aż do niego, potem Odpoczywaj. Obserwuj oddech konia: po trafieniu u góry zaczyna parskać, po trafieniu na dole przestaje, a gdy jest Zmęczony, parska mocno."/>
         <text name="eq_help_stamina_2" text="Każde zawrócenie w pasie podnosi combo o 0,5, a pas przeskakuje na drugi koniec paska, trochę wyżej i węższy. Każde trafienie ułatwia też następny odcinek: pasek opada szybciej i rośnie wolniej. Zawróć za wcześnie, przejedź pas lub zwolnij z cwału, a combo przepada. Zmęczony lub Wykończony też zatrzymuje trening Wytrzymałości, dopóki pasek nie będzie pusty."/>
         <text name="eq_help_speed_title" text="Trening: Szybkość"/>
         <text name="eq_help_speed_1" text="Szybkość trenuje się podczas Sprintu: klikaj lewym przyciskiem myszy bez przerwy w cwale. Liczy się każda sekunda Sprintu, a na końcu jest mnożona przez to, jak wysoko podniósł się pasek: x2 w połowie drogi do linii, do x10 tuż przed nią."/>

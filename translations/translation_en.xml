@@ -299,7 +299,7 @@
         <text name="eq_train_view_speed" text="Speed"/>
         <text name="eq_train_view_condensed" text="Condensed"/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina combo, up to x5. A blue band on the bar shows where to turn round. When you start galloping it sits near the top: Push up into it, then Recover. The edges of the screen stream past while the bar is in the band."/>
+        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina combo, up to x5. A blue band on the bar shows where to turn round. When you start galloping it sits near the top: Push up into it, then Recover. Watch your horse's breath: it starts blowing after a hit at the top and stops after a hit at the bottom, and blows hard while Fatigued."/>
         <text name="eq_help_stamina_2" text="Each turn inside the band raises the combo by 0.5, and the band jumps to the other end of the bar, a little higher and thinner. Each hit also makes the next leg easier: the bar falls faster on the way down and climbs more slowly on the way up. Turn too early, go past the band or slow out of the gallop and the combo is lost. Fatigued or Blown also stops Stamina training until the bar is empty."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap the left mouse button continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
