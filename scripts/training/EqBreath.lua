@@ -14,6 +14,8 @@
 
 EqBreath = {}
 
+local Log = EqLog
+
 EqBreath.FILE = "$data/effects/horse/horseStepParticleSystem.i3d"
 -- The slow step emitter (the second Dynamic in the file).
 EqBreath.NODE = "1"

@@ -367,6 +367,8 @@ end
 --- eqBreath: test the horse's breath: on | hard | off | auto | forward <m> | up <m>.
 function EqConsole:consoleBreath(command, value)
     command = string.lower(command or "")
+    -- Any command tries again after a failure (the log says why it failed).
+    EqBreath.failed = false
     if command == "on" then EqBreath.force = "band"
     elseif command == "hard" then EqBreath.force = "hard"
     elseif command == "off" then EqBreath.force = false
