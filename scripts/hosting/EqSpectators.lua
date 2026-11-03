@@ -649,15 +649,31 @@ function EqSpectators.lapHand(person, id)
 end
 
 
+local function mixed(a, b, m) return a + (b - a) * m end
+
+
+--- How far this hand is from by-the-side (0) to in-the-lap (1); hands move between the two now and then.
+function EqSpectators.lapMix(person, id)
+    if EqSpectators.forceHands ~= nil then return EqSpectators.lapHand(person, id) and 1 or 0 end
+    person.mix = person.mix or {}
+    if person.mix[id] == nil then person.mix[id] = { at = EqSpectators.lapHand(person, id) and 1 or 0 } end
+    local mix = person.mix[id]
+    local t = mix.at
+    return t * t * (3 - 2 * t)      -- eased
+end
+
+
 local function placeTargets(person)
     local p = EqSpectators.pose
     local drop = person.seat.y - person.seat.floorY
     local spots = {
         leftFoot = { p.footApart + (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
         rightFoot = { -p.footApart - (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
-        leftArm = EqSpectators.lapHand(person, "leftArm") and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
-        rightArm = EqSpectators.lapHand(person, "rightArm") and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
     }
+    for id, side in pairs(EqSpectators.ARM_CHAINS) do
+        local m = EqSpectators.lapMix(person, id)
+        spots[id] = { side * mixed(p.handApart, p.lapApart, m), mixed(p.handLift, p.lapLift, m), mixed(p.handForward, p.lapForward, m) }
+    end
     for id, at in pairs(spots) do
         local node = person.targets[id]
         local j = person.jitter ~= nil and person.jitter[id] or nil
@@ -672,11 +688,8 @@ local function placeTargets(person)
         local node = person.targets[id]
         if node ~= nil then
             -- each hand its own turn: a lap hand (all lap people, and one hand of some others) uses lapPitch/Yaw/Roll
-            if EqSpectators.lapHand(person, id) then
-                setRotation(node, math.rad(p.lapPitch), math.rad(p.lapYaw * side), math.rad(p.lapRoll * side))
-            else
-                setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
-            end
+            local m = EqSpectators.lapMix(person, id)
+            setRotation(node, math.rad(mixed(p.handPitch, p.lapPitch, m)), math.rad(mixed(p.handYaw, p.lapYaw, m) * side), math.rad(mixed(p.handRoll, p.lapRoll, m) * side))
             if chains ~= nil then
                 local on = EqSpectators.armsOn()
                 if on and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
@@ -927,7 +940,7 @@ local function solveArms(person)
         local upper = forearm ~= nil and forearm ~= 0 and getParent(forearm) or nil
         if target ~= nil and upper ~= nil and upper ~= 0 then
             local side = EqSpectators.ARM_CHAINS[id] or 1
-            local lap = EqSpectators.lapHand(person, id)
+            local m = EqSpectators.lapMix(person, id)
             local s, e, w, t = wpos(upper), wpos(forearm), wpos(hand), wpos(target)
             local a, b = len(sub(e, s)), len(sub(w, e))
             local v = sub(t, s)
@@ -937,7 +950,7 @@ local function solveArms(person)
                 d = math.max(math.abs(a - b) + 0.002, math.min(a + b - 0.002, d))
                 local x = (a * a - b * b + d * d) / (2 * d)
                 local h = math.sqrt(math.max(0, a * a - x * x))
-                local ox, oy, oz = (lap and p.lapElbowOut or p.elbowOut), (lap and p.lapElbowDown or p.elbowDown), (lap and p.lapElbowBack or p.elbowBack)
+                local ox, oy, oz = mixed(p.elbowOut, p.lapElbowOut, m), mixed(p.elbowDown, p.lapElbowDown, m), mixed(p.elbowBack, p.lapElbowBack, m)
                 local px, py, pz = localDirectionToWorld(person.holder, side * ox, -oy, -oz)
                 local pole = { px, py, pz }
                 pole = sub(pole, scale(u, dot(pole, u)))
@@ -952,6 +965,96 @@ local function solveArms(person)
                     aim(forearm, wpos(hand), add(s, scale(u, d)))
                 end
             end
+        end
+    end
+end
+
+
+--- Now and then a seated person moves a hand (or both) between lap and side, and looks about.
+EqSpectators.FIDGET = {
+    swapMs = { 15000, 50000 },  -- between hand moves
+    moveMs = 600,               -- one hand move, lap to side or back
+    lookMs = { 3000, 11000 },   -- between looks
+    holdMs = { 1000, 3500 },    -- looking away this long
+    lookYaw = { 15, 55 },       -- degrees either way
+    lookEase = 180,             -- ms: how quickly the head follows
+}
+
+local function between(range) return range[1] + math.random() * (range[2] - range[1]) end
+
+local function findBone(root, wanted)
+    local stack = { root }
+    while #stack > 0 do
+        local node = table.remove(stack)
+        if string.lower(getName(node) or "") == wanted then return node end
+        for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+    end
+    return nil
+end
+
+
+local function fidget(person, now, dt)
+    local f = EqSpectators.FIDGET
+    -- hands: lap <-> side
+    if EqSpectators.forceHands == nil and EqSpectators.pose.arms == 2 then
+        person.nextSwap = person.nextSwap or (now + between(f.swapMs))
+        local moving = false
+        if now >= person.nextSwap then
+            person.nextSwap = now + between(f.swapMs)
+            local ids = math.random() < 0.5 and { "leftArm", "rightArm" } or { math.random() < 0.5 and "leftArm" or "rightArm" }
+            for _, id in ipairs(ids) do
+                EqSpectators.lapMix(person, id)
+                person.mix[id].goal = (person.mix[id].goal or person.mix[id].at) >= 0.5 and 0 or 1
+            end
+        end
+        for _, mix in pairs(person.mix or {}) do
+            if mix.goal ~= nil and mix.at ~= mix.goal then
+                local step = dt / f.moveMs
+                mix.at = mix.goal > mix.at and math.min(mix.goal, mix.at + step) or math.max(mix.goal, mix.at - step)
+                moving = true
+            end
+        end
+        if moving then placeTargets(person) end
+    end
+
+    -- head: turn to a random side now and then, hold, look back (only while the clip is off)
+    if person.animating ~= false then return end
+    if person.head == nil then
+        local root = person.model.rootNode
+        person.head = findBone(root, "head") or 0
+        person.neck = findBone(root, "neck") or 0
+        if person.head ~= 0 then person.headRest = { getRotation(person.head) } end
+        if person.neck ~= 0 then person.neckRest = { getRotation(person.neck) } end
+        if not EqSpectators.headLogged then
+            EqSpectators.headLogged = true
+            Log:info("EqSpectators: head bone %s, neck bone %s", person.head ~= 0 and getName(person.head) or "none", person.neck ~= 0 and getName(person.neck) or "none")
+        end
+    end
+    if person.head == 0 or rotateAboutLocalAxis == nil then return end
+    person.nextLook = person.nextLook or (now + between(f.lookMs))
+    if now >= person.nextLook then
+        if (person.lookGoal or 0) == 0 then
+            local yaw = between(f.lookYaw) * (math.random() < 0.5 and -1 or 1)
+            person.lookGoal, person.pitchGoal = math.rad(yaw), math.rad(math.random() * 14 - 6)
+            person.nextLook = now + between(f.holdMs)
+        else
+            person.lookGoal, person.pitchGoal = 0, 0
+            person.nextLook = now + between(f.lookMs)
+        end
+    end
+    local k = 1 - math.exp(-dt / f.lookEase)
+    person.lookYaw = (person.lookYaw or 0) + ((person.lookGoal or 0) - (person.lookYaw or 0)) * k
+    person.lookPitch = (person.lookPitch or 0) + ((person.pitchGoal or 0) - (person.lookPitch or 0)) * k
+    local ux, uy, uz = localDirectionToWorld(person.holder, 0, 1, 0)
+    local sx, sy, sz = localDirectionToWorld(person.holder, 1, 0, 0)
+    for _, part in ipairs({ { person.neck, person.neckRest, 0.4 }, { person.head, person.headRest, 0.6 } }) do
+        local node, rest, share = part[1], part[2], part[3]
+        if node ~= 0 and rest ~= nil then
+            setRotation(node, rest[1], rest[2], rest[3])
+            local ax, ay, az = worldDirectionToLocal(node, ux, uy, uz)
+            rotateAboutLocalAxis(node, person.lookYaw * share, ax, ay, az)
+            local bx, by, bz = worldDirectionToLocal(node, sx, sy, sz)
+            rotateAboutLocalAxis(node, person.lookPitch * share, bx, by, bz)
         end
     end
 end
@@ -1238,6 +1341,8 @@ end
 --- Each frame: spawn or clear the crowd, hide far people, keep seated ones posed.
 function EqSpectators.update()
     local now = g_time or 0
+    local dt = math.max(0, math.min(100, now - (EqSpectators.lastNow or now)))
+    EqSpectators.lastNow = now
     local farm = farmId()
     if farm == nil then return end
     if EqSpectators.scannedAt == nil or now - EqSpectators.scannedAt >= EqSpectators.SCAN_MS or now < EqSpectators.scannedAt then
@@ -1311,6 +1416,7 @@ function EqSpectators.update()
                 end
                 EqLog.try("EqSpectators arm start", armStart, person)
                 IKUtil.updateIKChains(chains, true)
+                EqLog.try("EqSpectators fidget", fidget, person, now, dt)
                 EqLog.try("EqSpectators arms", solveArms, person)
                 relaxFingers(person)
             end
