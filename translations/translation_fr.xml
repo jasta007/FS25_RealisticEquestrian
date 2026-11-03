@@ -1190,15 +1190,23 @@
         <text name="eq_settings_quarantine" text="Quarantaine internationale"/>
         <text name="eq_settings_quarantine_tooltip" text="Si un cheval revenant d'un concours dans une autre région passe des tours en quarantaine avant de rentrer. Les frais de quarantaine sont payés dans tous les cas."/>
         <text name="eq_ui_col_region" text="Région"/>
-        <text name="eq_ui_region_home" text="Votre région : %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="depuis la carte, modifiable dans les Paramètres"/>
-        <text name="eq_ui_region_chosen" text="choisie dans les Paramètres"/>
-        <text name="eq_ui_region_quarantine" text="Après un concours à l'étranger, un cheval est en quarantaine : %d tour(s) après un trajet outre-mer (jaune), %d après un long trajet (orange)."/>
-        <text name="eq_ui_region_noQuarantine" text="La quarantaine internationale est désactivée."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, puis %d tour(s) en quarantaine"/>
+        <text name="eq_ui_region_home" text="Votre région : %s."/>
+        <text name="eq_ui_summary_quarantine" text="À l&apos;étranger : %s de quarantaine ensuite."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, puis %s en quarantaine"/>
         <text name="eq_ui_status_quarantine" text="En quarantaine"/>
-        <text name="eq_status_quarantine" text="En quarantaine, %d tour(s)"/>
+        <text name="eq_status_quarantine" text="En quarantaine, %s"/>
+        <text name="eq_ui_time_day" text="%d jour"/>
+        <text name="eq_ui_time_days" text="%d jours"/>
+        <text name="eq_ui_time_month" text="%d mois"/>
+        <text name="eq_ui_time_months" text="%d mois"/>
         <text name="eq_enter_quarantine" text="Ce cheval est en quarantaine après un concours à l'étranger. Il pourra concourir une fois rentré."/>
         <text name="eq_quarantine_home" text="%s est rentré de quarantaine."/>
+        <text name="eq_ride_blocked_horse" text="Ce cheval"/>
+        <text name="eq_ride_blocked_quarantine" text="%s est en quarantaine et ne peut pas être monté avant son retour."/>
+        <text name="eq_ride_blocked_away" text="%s est parti en compétition et ne peut pas être monté."/>
+        <text name="eq_ride_blocked_injured" text="%s est blessé et ne peut pas être monté avant sa guérison."/>
+        <text name="eq_loose_sentHome_quarantine" text="%s est en quarantaine, il a donc été ramené à %s."/>
+        <text name="eq_loose_sentHome_away" text="%s est parti en compétition, il a donc été ramené à %s."/>
+        <text name="eq_loose_sentHome_injured" text="%s est blessé, il a donc été ramené à %s pour se reposer."/>
     </texts>
 </l10n>

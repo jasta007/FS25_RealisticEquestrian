@@ -9,6 +9,11 @@
     own version: before RLRM's runs, we take away horses out of the list it draws and remove any
     visual they already have, the same steps RLRM's own stale-visual pass takes. When the horse
     is back, the next update draws it again. No RLRM file changes.
+
+    A horse left out in the world (a rideable nobody is sitting on) has no pen visual to hide,
+    so one that is away, in quarantine or injured is taken back to its pen (EqLooseHorses),
+    staff or not; one being ridden goes when its rider gets off. Such a horse can't be ridden
+    from its pen either: the ride prompt gives way to a line saying why.
 ]]
 
 EqAway = {}
@@ -41,6 +46,76 @@ function EqAway.isAway(animal, ids)
     if animal == nil or animal.isHorse == nil or not animal:isHorse() then return false end
     local id = EqRegistry.getId(animal)
     return id ~= nil and (ids or EqAway.awayIds())[id] == true
+end
+
+
+--- Why a horse can't be ridden now: away at an event, in quarantine, or injured.
+--- @param animal table RLRM Animal
+--- @param ids table|nil from awayIds, built when nil
+--- @return string|nil reason "quarantine", "away" or "injured", nil when it can be ridden
+function EqAway.rideBlock(animal, ids)
+    if animal == nil or animal.isHorse == nil or not animal:isHorse() then return nil end
+    local id = EqRegistry.getId(animal)
+    if id == nil then return nil end
+    local record = EqRegistry.getById(id)
+    if record ~= nil and EqQuarantine.isIn(record) then return "quarantine" end
+    if (ids or EqAway.awayIds())[id] == true then return "away" end
+    if record ~= nil and record.injury ~= nil then return "injured" end
+    return nil
+end
+
+
+--- @param animal table RLRM Animal
+--- @param reason string from rideBlock
+--- @return string text the line telling the player why the horse can't be ridden
+function EqAway.rideBlockText(animal, reason)
+    local name = animal.getName ~= nil and animal:getName() or ""
+    if name == "" then name = g_i18n:getText("eq_ride_blocked_horse") end
+    return string.format(g_i18n:getText("eq_ride_blocked_" .. reason), name)
+end
+
+
+--- Stop a ride from the pen for a horse that can't be ridden. The ride key's prompt goes and
+--- a line says why; startRiding refuses too, for any other way in (the menu, other mods).
+--- @param guarded function main.lua's error guard
+function EqAway.installRideBlock(guarded)
+    if PlayerInputComponent ~= nil and PlayerInputComponent.update ~= nil then
+        PlayerInputComponent.update = Utils.appendedFunction(PlayerInputComponent.update, function(self)
+            if self.rideableCluster == nil then return end
+            guarded("ride block prompt", function()
+                local animal = self.rideableCluster
+                local reason = EqAway.rideBlock(animal)
+                if reason == nil then return end
+                self.rideablePlaceable = nil
+                self.rideableCluster = nil
+                if self.enterActionId ~= nil then g_inputBinding:setActionEventActive(self.enterActionId, false) end
+                g_currentMission:addExtraPrintText(EqAway.rideBlockText(animal, reason))
+            end)
+        end)
+    end
+
+    if PlaceableHusbandryAnimals ~= nil and PlaceableHusbandryAnimals.startRiding ~= nil then
+        PlaceableHusbandryAnimals.startRiding = Utils.overwrittenFunction(PlaceableHusbandryAnimals.startRiding,
+            function(self, superFunc, clusterId, ...)
+                local text
+                guarded("ride block", function()
+                    local spec = self.spec_husbandryAnimals
+                    local system = spec ~= nil and spec.clusterSystem or nil
+                    local animal = system ~= nil and system.getClusterById ~= nil and system:getClusterById(clusterId) or nil
+                    local reason = EqAway.rideBlock(animal)
+                    if reason ~= nil then text = EqAway.rideBlockText(animal, reason) end
+                end)
+                if text ~= nil then
+                    Log:info("EqAway: ride refused: %s", text)
+                    if g_currentMission.addIngameNotification ~= nil then
+                        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_CRITICAL, text)
+                    end
+                    return
+                end
+                return superFunc(self, clusterId, ...)
+            end)
+    end
+    Log:debug("EqAway: ride block on PlayerInputComponent:update and PlaceableHusbandryAnimals:startRiding")
 end
 
 

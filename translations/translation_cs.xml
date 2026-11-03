@@ -1188,15 +1188,23 @@
         <text name="eq_settings_quarantine" text="国际检疫"/>
         <text name="eq_settings_quarantine_tooltip" text="从其他地区赛事回来的马在回家前是否需要检疫若干轮。检疫费用照常收取。"/>
         <text name="eq_ui_col_region" text="地区"/>
-        <text name="eq_ui_region_home" text="你的地区：%s（%s）。"/>
-        <text name="eq_ui_region_fromMap" text="按地图，可在设置中更改"/>
-        <text name="eq_ui_region_chosen" text="在设置中选择"/>
-        <text name="eq_ui_region_quarantine" text="在国外参赛后马匹需要检疫：海外行程后 %d 轮（黄色），长途行程后 %d 轮（橙色）。"/>
-        <text name="eq_ui_region_noQuarantine" text="国际检疫已关闭。"/>
-        <text name="eq_ui_status_quarantineAfter" text="%s，之后检疫 %d 轮"/>
+        <text name="eq_ui_region_home" text="你的地区：%s。"/>
+        <text name="eq_ui_summary_quarantine" text="国外赛事：赛后检疫 %s。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s，之后检疫 %s"/>
         <text name="eq_ui_status_quarantine" text="检疫中"/>
-        <text name="eq_status_quarantine" text="检疫中，%d 轮"/>
+        <text name="eq_status_quarantine" text="检疫中，%s"/>
+        <text name="eq_ui_time_day" text="%d 天"/>
+        <text name="eq_ui_time_days" text="%d 天"/>
+        <text name="eq_ui_time_month" text="%d 个月"/>
+        <text name="eq_ui_time_months" text="%d 个月"/>
         <text name="eq_enter_quarantine" text="这匹马在国外参赛后正在检疫。回家后即可参赛。"/>
         <text name="eq_quarantine_home" text="%s已结束检疫回家。"/>
+        <text name="eq_ride_blocked_horse" text="这匹马"/>
+        <text name="eq_ride_blocked_quarantine" text="%s正在隔离，回家前不能骑乘。"/>
+        <text name="eq_ride_blocked_away" text="%s外出参赛，不能骑乘。"/>
+        <text name="eq_ride_blocked_injured" text="%s受伤了，痊愈前不能骑乘。"/>
+        <text name="eq_loose_sentHome_quarantine" text="%s正在隔离，已被带回%s。"/>
+        <text name="eq_loose_sentHome_away" text="%s外出参赛，已被带回%s。"/>
+        <text name="eq_loose_sentHome_injured" text="%s受伤了，已被带回%s休息。"/>
     </texts>
 </l10n>

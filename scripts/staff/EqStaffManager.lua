@@ -385,6 +385,7 @@ local function saveMember(xmlFile, key, member)
     for _, skill in ipairs(EqStaff.SKILLS) do
         xmlFile:setInt(key .. ".skills#" .. skill, member.skills[skill] or 0)
     end
+    xmlFile:setFloat(key .. ".skills#scale", EqStaff.scaleOf(member.job))
     if member.enabled == false then xmlFile:setBool(key .. "#enabled", false) end
     if member.nextEnabled ~= nil then xmlFile:setBool(key .. "#nextEnabled", member.nextEnabled) end
     local works = EqStaff.normalizeWorks(member.worksOn)
@@ -451,6 +452,8 @@ local function loadMember(xmlFile, key)
     for _, skill in ipairs(EqStaff.SKILLS) do
         member.skills[skill] = xmlFile:getInt(key .. ".skills#" .. skill, 0)
     end
+    -- Skills rolled at another scale (grooms before 2026-11-03 rolled at full): bring them to today's.
+    EqStaff.rescale(member, xmlFile:getFloat(key .. ".skills#scale", 1))
     -- Saves from before daily wages held a monthly one: work out the daily wage again.
     if member.wage == nil then
         member.wage = EqStaff.wageFor(job, member.grade, member.skills, member.talents, 0)

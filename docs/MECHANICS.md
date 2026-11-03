@@ -512,6 +512,11 @@ distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jum
   overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens or have
   a groom: when they do their round, they fetch your loose horses back to their own pen (or the
   nearest staffed pen with room) and look after them with the rest.
+- **Horses that can't be ridden go home.** A horse in quarantine, away at an event or injured
+  can't be ridden: the ride prompt in the pen is replaced by a line saying why, and the menu's
+  Ride horse button is greyed out. If one is left out in the world, it is taken straight back to
+  its own pen (or the nearest horse pen with room), staff or not; if you are riding it, it goes
+  when you get off.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
 - **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),
@@ -552,6 +557,9 @@ for now in multiplayer.
   Veterinary and Broker. A job's main skills depend on the grade: Junior 25-45 (60% of
   candidates), Experienced 40-65 (28%), Senior 60-80 (10%), Legendary 80-100 (2%; only one main skill, picked at random, reaches 90-100, the rest stay 80-89). Other skills are
   0-40% of the grade's middle level, and each has a 15% chance to be a talent at 50-90%.
+  A groom's skills, all ten, roll at 60% of these numbers (Junior 15-27, Experienced 24-39,
+  Senior 36-48, Legendary 48-60), since a groom covers all four stats where a trainer covers two.
+  Grooms hired before this change have their skills scaled down to match when the save loads.
 - **Wages.** Per day, by job (groom 200, trainer 450, vet 600, broker 400) times the grade
   (x1, x1.8, x3, x5), their skills, 4% per talent and up to 15% luck either way. Paid daily, as
   Horse Staff Wages in Finances, so a junior groom just for the cleaning is cheap. No hiring fee; let staff go at any time.
@@ -573,7 +581,9 @@ for now in multiplayer.
 - **Training.** Per day, a trainer gives 0.5 x skill/100 effort in its two stats, and anyone gives
   0.35 x skill/100 in the other stats (so a groom trains everything, and a talented trainer
   helps a little elsewhere). Each person trains a stat up to 60% + 35% x skill/100 of its
-  ceiling (Junior about 72%, Legendary about 92%).
+  ceiling (a Junior trainer about 72%, a Legendary one about 92%). With their lower skills, an
+  Experienced groom trains each stat at under half the rate of an Experienced trainer in its two
+  stats (about 0.11 against 0.26 effort), up to about 71% of the ceiling.
 - **Diminishing returns.** On one stat the best person's gain counts in full, the second at 40%
   and any more at 10% each, helpers included. A second groom on the same horse adds little.
 - **Cleaning.** In the last hour of the day each groom cleans up to 8 horses, the ones they work on
@@ -949,7 +959,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   15 to be big; short of that it drops a size. A brand that makes easy-to-get kit (a small,
   medium or large tractor, a car, a truck, a telehandler or a loader; `easyCategories`) can be a
   small sponsor with just 1 machine. The game's own Lizard brand is left out.
-- **When:** offers come at the start of each year (and at once in a save that has none yet): up
+- **When:** offers come at the start of each year, in January on any map (northern or southern; the log says which period that is) (and at once in a save that has none yet): up
   to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year).
 - **Several sponsors:** up to 3 at once, each with all its own rules met. **Big** sponsors are
   always **exclusive** (no one else while they sponsor you, and you can only sign them with no

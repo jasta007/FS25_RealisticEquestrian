@@ -1011,22 +1011,40 @@ do
             if c.skills[skill] < 0 or c.skills[skill] > 100 then check("skills stay 0-100", false, skill) end
         end
         if c.wage <= 0 then check("wages are positive", false, tostring(c.wage)) end
+        local scale = EqStaff.scaleOf(c.job)
+        if c.job == "groom" then
+            for _, skill in ipairs(EqStaff.SKILLS) do
+                if c.skills[skill] > 60 then check("a groom's skills stay at 60 or below", false, skill .. " " .. c.skills[skill]) end
+            end
+        end
         if c.grade == 4 then
             local stars = 0
             for _, skill in ipairs(EqStaff.JOBS[c.job].main) do
-                if c.skills[skill] >= 90 then stars = stars + 1 end
-                if c.skills[skill] < 80 then check("legendary main skills stay 80 and up", false, skill) end
+                if c.skills[skill] >= 90 * scale then stars = stars + 1 end
+                if c.skills[skill] < 80 * scale - 0.5 then check("legendary main skills stay 80 and up", false, skill) end
             end
             if stars ~= 1 then check("a legendary has exactly one main skill at 90+", false, c.job .. " " .. stars) end
         end
     end
     check("juniors are the most common grade", grades[1] > 1000 and grades[1] > grades[2] and grades[2] > grades[3])
     check("every job turns up", jobs.groom ~= nil and jobs.vet ~= nil and jobs.broker ~= nil and jobs.racing ~= nil)
-    local legend = { stamina = 90, speed = 90, agility = 90, temperament = 90 }
+    local legend = { stamina = 54, speed = 54, agility = 54, temperament = 54 }
+    local junior = { stamina = 21, speed = 21, agility = 21, temperament = 21 }
     check("a legendary groom costs far more than a junior", EqStaff.wageFor("groom", 4, legend, 0, 0)
-        > 4 * EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0))
+        > 4 * EqStaff.wageFor("groom", 1, junior, 0, 0))
+    check("a groom's wage reads skills at the groom's scale", EqStaff.wageFor("groom", 1, junior, 0, 0) == 200,
+        tostring(EqStaff.wageFor("groom", 1, junior, 0, 0)))
+    local oldGroom = { job = "groom", skills = { stamina = 50, speed = 40, veterinary = 10 } }
+    EqStaff.rescale(oldGroom, 1)
+    check("an old save's groom is scaled down once", oldGroom.skills.stamina == 30 and oldGroom.skills.speed == 24
+        and oldGroom.skills.veterinary == 6)
+    EqStaff.rescale(oldGroom, EqStaff.scaleOf("groom"))
+    check("a groom saved at today's scale stays", oldGroom.skills.stamina == 30)
+    local oldTrainer = { job = "racing", skills = { speed = 50 } }
+    EqStaff.rescale(oldTrainer, 1)
+    check("trainers keep their skills", oldTrainer.skills.speed == 50)
     check("names have a last initial", string.match(candidates[1].name, "^%a+ %u%.$") ~= nil, candidates[1].name)
-    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, { stamina = 35, speed = 35, agility = 35, temperament = 35 }, 0, 0)
+    check("a junior groom is cheap", EqStaff.wageFor("groom", 1, junior, 0, 0)
         <= 200)
 
     -- The mix on offer: 2-3 grooms, 2-3 trainers of different events, at most one vet and broker.
@@ -3541,7 +3559,7 @@ end)()
     InputAction = InputAction or {}
     local savedAway = EqAway
     local away = false
-    EqAway = { isAway = function() return away end }
+    EqAway = { rideBlock = function() return away and "away" or nil end }
     local horse = { getRidableFilename = function() return "horse.xml" end }
     local cow = { getRidableFilename = function() return nil end }
     check("horse is rideable", EqRideButton.isRideable(horse))
@@ -3570,6 +3588,31 @@ end)()
     EqRideButton.updateButtons(empty)
     check("no ride button without a selection", #empty.menuButtonInfo == 1)
     EqAway = savedAway
+end)()
+
+-- Horses that can't be ridden: in quarantine, away at an event, or injured
+;(function()
+    local saved = { EqAway = EqAway, EqRegistry = EqRegistry, EqCompetitionManager = EqCompetitionManager }
+    dofile("scripts/competition/EqAway.lua")
+    local records = {
+        q = { quarantine = 2 },
+        hurt = { injury = { name = "tendon" } },
+        fine = {},
+        both = { quarantine = 1, injury = { name = "sole" } },
+    }
+    EqRegistry = { records = records, getId = function(animal) return animal.eqId end,
+        getById = function(id) return records[id] end }
+    EqCompetitionManager = { events = { e1 = { entries = { { horseId = "fine" } } } },
+        isDelivered = function() return true end }
+    local function horse(id) return { eqId = id, isHorse = function() return true end } end
+    check("quarantined horse can't be ridden", EqAway.rideBlock(horse("q")) == "quarantine")
+    check("injured horse can't be ridden", EqAway.rideBlock(horse("hurt")) == "injured")
+    check("horse at an event can't be ridden", EqAway.rideBlock(horse("fine")) == "away")
+    check("quarantine named before injury", EqAway.rideBlock(horse("both")) == "quarantine")
+    EqCompetitionManager.events = {}
+    check("healthy horse at home can be ridden", EqAway.rideBlock(horse("fine")) == nil)
+    check("a cow is never blocked", EqAway.rideBlock({ isHorse = function() return false end }) == nil and EqAway.rideBlock(nil) == nil)
+    EqAway, EqRegistry, EqCompetitionManager = saved.EqAway, saved.EqRegistry, saved.EqCompetitionManager
 end)()
 
 -- Starved map horses get a fresh start; real horses are never touched
@@ -6093,6 +6136,10 @@ end)()
         and EqQuarantine.roundsFor(config, "far") == 2 and EqQuarantine.roundsFor(config, nil) == 0)
     check("quarantine: the setting turns it off", EqQuarantine.roundsFor(config, "far", { quarantine = false }) == 0
         and EqQuarantine.roundsFor(config, "far", { quarantine = true }) == 2)
+    check("quarantine: shown in days or months by the cadence, never rounds",
+        EqQuarantine.timeKey(1, "day") == "eq_ui_time_day" and EqQuarantine.timeKey(2, "day") == "eq_ui_time_days"
+        and EqQuarantine.timeKey(1, "month") == "eq_ui_time_month" and EqQuarantine.timeKey(3, "month") == "eq_ui_time_months"
+        and EqQuarantine.timeKey(2, nil) == "eq_ui_time_days")
 
     local record = EqHorseRecord.new("DE 1 77")
     check("quarantine: a new horse is home", not EqQuarantine.isIn(record) and EqQuarantine.roundsLeft(record) == 0
@@ -6136,6 +6183,63 @@ end)()
     check("home region: an unknown choice falls back to the map", unknown == mapHome)
     check("quarantine: 2 rounds from Europe to Asia, none at home or at your own event", abroad == 2 and here == 0 and hosted == 0)
     EqCompetitionManager, g_currentMission = hadManager, hadMission
+end)()
+
+-- SPONSOR YEAR: offers come in January, whichever period that is (FS25 period 1 is March on a
+-- northern map, September on a southern one), and the offers' year is the calendar year.
+;(function()
+    local hadManager, hadMission, hadLog, hadGlobal = EqSponsorManager, g_currentMission, Log, EqI18N.globalI18N
+    Log = Log or { info = function() end }
+    dofile("scripts/sponsors/EqSponsorManager.lua")
+    local M = EqSponsorManager
+    local NAMES = { "January", "February", "March", "April", "May", "June", "July", "August",
+        "September", "October", "November", "December" }
+    local function gameI18N(shift)
+        return { getText = function(_, key) return key == "ui_month1" and "January" or key end,
+            hasText = function(_, key) return key == "ui_month1" end,
+            formatPeriod = function(_, period) return NAMES[(period + 1 + shift) % 12 + 1] end }
+    end
+    local function run(environment, i18n)
+        EqI18N.globalI18N = function() return i18n end
+        M.reset()
+        local starts, years = {}, {}
+        for period = 1, 12 do
+            environment.currentPeriod, environment.currentYear = period, 3
+            g_currentMission = { environment = environment }
+            if M.isYearStart(period) then table.insert(starts, period) end
+            years[period] = M.year()
+        end
+        return starts, years
+    end
+    local starts, years = run({}, gameI18N(0))
+    check("sponsor year: northern map, offers only in January (period 11)", #starts == 1 and starts[1] == 11)
+    check("sponsor year: March to December keep the game's year", years[1] == 3 and years[10] == 3)
+    check("sponsor year: January and February are the next calendar year", years[11] == 4 and years[12] == 4)
+    starts, years = run({}, gameI18N(6))
+    check("sponsor year: southern map (period 1 = September), offers in period 5", #starts == 1 and starts[1] == 5)
+    check("sponsor year: southern calendar year turns in January", years[4] == 3 and years[5] == 4 and years[12] == 4)
+    starts = run({ daylight = { latitude = -15 } }, {})
+    check("sponsor year: no month names, a southern latitude gives period 5", #starts == 1 and starts[1] == 5)
+    starts = run({}, {})
+    check("sponsor year: nothing known, period 11", #starts == 1 and starts[1] == 11)
+    EqSponsorManager, g_currentMission, Log, EqI18N.globalI18N = hadManager, hadMission, hadLog, hadGlobal
+end)()
+
+-- BODY PITCH off a ledge (EqJump.pitch).
+;(function()
+    local J, deg = EqJump, math.rad
+    local first = J.pitch(nil, deg(-70), true, nil, 16)
+    check("pitch: ground tilt held to PITCH_MAX", math.abs(first + deg(J.PITCH_MAX)) < 1e-9)
+    local one = J.pitch(0, deg(-70), true, nil, 100)
+    check("pitch: turns at most PITCH_RATE", math.abs(one + deg(J.PITCH_RATE) * 0.1) < 1e-9)
+    check("pitch: an ordinary slope passes", math.abs(J.pitch(deg(10), deg(10), true, nil, 16) - deg(10)) < 1e-9)
+    local p = 0
+    for _ = 1, 200 do p = J.pitch(p, 0, false, math.huge, 16) end
+    check("pitch: off a ledge eases to LEDGE_PITCH nose down", math.abs(p + deg(J.LEDGE_PITCH)) < 1e-9)
+    local steep = J.pitch(deg(-25), deg(-25), false, 5, 100)
+    check("pitch: steeper than the ledge tilt comes back up", steep > deg(-25))
+    check("pitch: a normal jump keeps its tilt", math.abs(J.pitch(deg(-8), deg(-8), false, 1, 16) + deg(8)) < 1e-9)
+    check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

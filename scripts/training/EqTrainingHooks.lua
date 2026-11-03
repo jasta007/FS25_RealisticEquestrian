@@ -2087,6 +2087,34 @@ function EqTrainingHooks.onHorseDay(animal)
 end
 
 
+--- Hold the body's tilt to EqJump.pitch, keeping its heading.
+--- @param self table the horse
+--- @param spec table spec_rideable
+--- @param dt number ms
+function EqTrainingHooks.limitPitch(self, spec, dt)
+    local dx, dy, dz = localDirectionToWorld(self.rootNode, 0, 0, 1)
+    local flat = math.sqrt(dx * dx + dz * dz)
+    if flat < 1e-4 then
+        local angle = spec.currentTurnAngle or 0
+        dx, dz, flat = math.sin(angle), math.cos(angle), 1
+    end
+    local target = math.atan2(dy, flat)
+    local distance
+    if spec.isOnGround == false then
+        local ground = spec.groundRaycastResult
+        distance = ground ~= nil and type(ground.distance) == "number" and ground.distance or nil
+        -- Nothing hit within the ray's reach: further down than that.
+        local reach = Rideable.GROUND_RAYCAST_MAXDISTANCE
+        if distance ~= nil and type(reach) == "number" and distance >= reach - 0.01 then distance = math.huge end
+    end
+    local pitch = EqJump.pitch(spec.eqPitch, target, spec.isOnGround ~= false, distance, dt or 0)
+    spec.eqPitch = pitch
+    if math.abs(pitch - target) < 1e-4 then return end
+    local c = math.cos(pitch) / flat
+    setDirection(self.rootNode, dx * c, math.sin(pitch), dz * c, 0, 1, 0)
+end
+
+
 --- Patch the base Rideable functions. Call at source time.
 --- @param guarded function main.lua's error guard
 function EqTrainingHooks.installRideable(guarded)
@@ -2109,6 +2137,18 @@ function EqTrainingHooks.installRideable(guarded)
                 if distance ~= nil and distance > (launch.highest or 0) then launch.highest = distance end
             end)
         end)
+    end
+
+    -- The body's tilt (EqJump.pitch): the base game sets it here from the ground under the hooves,
+    -- and off a ledge pitched the horse nearly vertical. Only the look changes, on every machine.
+    if Rideable.onUpdateInterpolation ~= nil then
+        Rideable.onUpdateInterpolation = Utils.appendedFunction(Rideable.onUpdateInterpolation, function(self, dt)
+            local spec = self.spec_rideable
+            if not EqMain.isActive or spec == nil or self.rootNode == nil then return end
+            guarded("body pitch", function() EqTrainingHooks.limitPitch(self, spec, dt) end)
+        end)
+    else
+        Log:warning("EqTrainingHooks: Rideable.onUpdateInterpolation missing; body pitch not limited")
     end
 
     -- Jumps from a trot too (a collected jump, EqJump): the base game allows them from a canter.
