@@ -12,6 +12,9 @@
     the last hour of the day). The horses are fetched on the next frame, after the round, so the
     pen's animal list is never changed while the worker walks it. A horse goes into its pen the
     way the base game's trailer load takes a loose horse: added first, then the rideable removed.
+    A loose horse that can't be ridden (away at an event, in quarantine, or injured: EqAway)
+    goes back straight away, staff or not: to its own pen, else the farm's nearest horse pen
+    with room. One being ridden goes when its rider gets off.
     Server and single player only.
 ]]
 
@@ -27,6 +30,10 @@ EqLooseHorses.busy = false
 
 -- The worker's own checks also run when menus ask; only those this late count as a round.
 EqLooseHorses.ROUND_FROM_HOUR = 23
+
+-- How often loose horses that can't be ridden are looked for, in ms.
+EqLooseHorses.SEND_HOME_INTERVAL = 1000
+EqLooseHorses.sendHomeTimer = 0
 
 local Log = EqLog
 
@@ -228,8 +235,84 @@ function EqLooseHorses.fetch()
 end
 
 
---- The mission's updateable hook: fetch once a round has been noticed.
-function EqLooseHorses:update(_)
+--- The farm's horse pens with room for one more of this subtype, as choosePen entries.
+--- @param farmId number
+--- @param subTypeIndex number
+--- @return table pens list of { placeable, farmId, hasRoom, x, z }
+--- @return table entryOf placeable -> entry
+local function farmPens(farmId, subTypeIndex)
+    local pens, entryOf = {}, {}
+    local query = EqRLRM.get("RLAnimalQuery")
+    if query == nil or query.listHusbandriesForFarm == nil then return pens, entryOf end
+    for _, placeable in ipairs(query.listHusbandriesForFarm(farmId) or {}) do
+        local takes = placeable.getSupportsAnimalSubType == nil or placeable:getSupportsAnimalSubType(subTypeIndex)
+        if placeable.spec_husbandryAnimals ~= nil and takes and hasRoom(placeable, subTypeIndex) then
+            local x, z = placeablePosition(placeable)
+            local pen = { placeable = placeable, farmId = farmId, hasRoom = true, x = x, z = z }
+            table.insert(pens, pen)
+            entryOf[placeable] = pen
+        end
+    end
+    return pens, entryOf
+end
+
+
+--- Take loose horses that can't be ridden (EqAway.rideBlock) back to a pen, staff or not.
+function EqLooseHorses.sendBlockedHome()
+    local loose = EqLooseHorses.findLoose()
+    if #loose == 0 then return end
+    local ids = EqAway.awayIds()
+
+    EqLooseHorses.busy = true
+    for _, horse in ipairs(loose) do
+        local reason = EqAway.rideBlock(horse.animal, ids)
+        if reason ~= nil then
+            local id = EqRegistry.getId(horse.animal)
+            local pens, entryOf = farmPens(horse.farmId, horse.animal.subTypeIndex)
+            local home = id ~= nil and EqLooseHorses.homes[id] or nil
+            local x, z = nil, nil
+            if horse.vehicle.rootNode ~= nil then
+                local ok, hx, _, hz = EqLog.try("EqLooseHorses.sendBlockedHome getWorldTranslation", getWorldTranslation, horse.vehicle.rootNode)
+                if ok then x, z = hx, hz end
+            end
+            local pen = EqLooseHorses.choosePen(home ~= nil and entryOf[home] or nil, pens, horse.farmId, x, z)
+            local name = horse.animal.getName ~= nil and horse.animal:getName() or ""
+            if pen == nil then
+                -- Say so once per horse, not every second.
+                EqLooseHorses.noRoom = EqLooseHorses.noRoom or {}
+                if id ~= nil and not EqLooseHorses.noRoom[id] then
+                    EqLooseHorses.noRoom[id] = true
+                    Log:warning("EqLooseHorses: no horse pen with room for %s (%s); left out in the world", name, reason)
+                end
+            elseif EqLooseHorses.bringHome(horse, pen.placeable, {}) then
+                if id ~= nil then
+                    EqLooseHorses.homes[id] = nil
+                    if EqLooseHorses.noRoom ~= nil then EqLooseHorses.noRoom[id] = nil end
+                end
+                -- Away and quarantined horses leave the pen's visuals too.
+                EqAway.refresh(horse.animal)
+                local penName = pen.placeable.getName ~= nil and pen.placeable:getName() or ""
+                Log:info("EqLooseHorses: %s (%s, %s) taken back to %s", name, tostring(horse.animal.uniqueId), reason, penName)
+                if g_currentMission:getFarmId() == horse.farmId then
+                    if name == "" then name = g_i18n:getText("eq_ride_blocked_horse") end
+                    notify(string.format(g_i18n:getText("eq_loose_sentHome_" .. reason), name, penName))
+                end
+            end
+        end
+    end
+    EqLooseHorses.busy = false
+end
+
+
+--- The mission's updateable hook: take back loose horses that can't be ridden every second,
+--- and fetch the rest once a round has been noticed.
+function EqLooseHorses:update(dt)
+    EqLooseHorses.sendHomeTimer = EqLooseHorses.sendHomeTimer + (dt or 0)
+    if EqLooseHorses.sendHomeTimer >= EqLooseHorses.SEND_HOME_INTERVAL then
+        EqLooseHorses.sendHomeTimer = 0
+        EqLooseHorses.guarded("loose horses home", EqLooseHorses.sendBlockedHome)
+        EqLooseHorses.busy = false
+    end
     if next(EqLooseHorses.staffed) == nil then return end
     EqLooseHorses.guarded("loose horses", EqLooseHorses.fetch)
     -- A failed fetch must not leave the round hooks switched off.

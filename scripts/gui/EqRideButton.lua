@@ -45,8 +45,8 @@ function EqRideButton.updateButtons(frame)
         text = g_i18n:getText("eq_ui_button_rideHorse"),
         callback = function() EqRideButton.guarded("ride horse", function() EqRideButton.ride(frame) end) end,
     }
-    -- A horse away at an event has no body in the pen to ride.
-    EqRideButton.addTo(frame.menuButtonInfo, frame.eqRideButtonInfo, EqAway.isAway(animal))
+    -- A horse away at an event has no body in the pen to ride, and an injured one must rest.
+    EqRideButton.addTo(frame.menuButtonInfo, frame.eqRideButtonInfo, EqAway.rideBlock(animal) ~= nil)
     frame:setMenuButtonInfoDirty()
 end
 
@@ -82,7 +82,11 @@ function EqRideButton.ride(frame)
     local placeable = frame.selectedHusbandry
     local player = g_localPlayer
     if not EqRideButton.isRideable(animal) or placeable == nil or placeable.startRiding == nil or player == nil then return end
-    if EqAway.isAway(animal) then return end
+    local blocked = EqAway.rideBlock(animal)
+    if blocked ~= nil then
+        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_CRITICAL, EqAway.rideBlockText(animal, blocked))
+        return
+    end
 
     local mission = g_currentMission
     if placeable.getAnimalCanBeRidden ~= nil and not placeable:getAnimalCanBeRidden(animal.id) then

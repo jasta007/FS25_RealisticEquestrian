@@ -512,6 +512,11 @@ distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jum
   overnight, unless you pay Animal Workers (Riding or Grooming) on one of your horse pens or have
   a groom: when they do their round, they fetch your loose horses back to their own pen (or the
   nearest staffed pen with room) and look after them with the rest.
+- **Horses that can't be ridden go home.** A horse in quarantine, away at an event or injured
+  can't be ridden: the ride prompt in the pen is replaced by a line saying why, and the menu's
+  Ride horse button is greyed out. If one is left out in the world, it is taken straight back to
+  its own pen (or the nearest horse pen with room), staff or not; if you are riding it, it goes
+  when you get off.
 - A groomed horse (dirt 10% or less at the day's end) gets a little temperament.
 - **Metabolism** (RLRM's gene) already sets how much a horse eats. It now also sets how fast riding
   builds fitness: a fast-metabolism horse costs more to feed but gets fit sooner (up to 45% faster),

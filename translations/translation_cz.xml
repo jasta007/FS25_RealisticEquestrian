@@ -1199,5 +1199,12 @@
         <text name="eq_ui_time_months" text="%d měs."/>
         <text name="eq_enter_quarantine" text="Tento kůň je v karanténě po závodech v zahraničí. Závodit může, až bude doma."/>
         <text name="eq_quarantine_home" text="Kůň %s se vrátil z karantény."/>
+        <text name="eq_ride_blocked_horse" text="Tento kůň"/>
+        <text name="eq_ride_blocked_quarantine" text="Kůň %s je v karanténě a nelze na něm jezdit, dokud nebude doma."/>
+        <text name="eq_ride_blocked_away" text="Kůň %s je na závodech a nelze na něm jezdit."/>
+        <text name="eq_ride_blocked_injured" text="Kůň %s je zraněný a nelze na něm jezdit, dokud se neuzdraví."/>
+        <text name="eq_loose_sentHome_quarantine" text="Kůň %s je v karanténě, a tak byl odveden zpět: %s."/>
+        <text name="eq_loose_sentHome_away" text="Kůň %s je na závodech, a tak byl odveden zpět: %s."/>
+        <text name="eq_loose_sentHome_injured" text="Kůň %s je zraněný, a tak byl odveden zpět k odpočinku: %s."/>
     </texts>
 </l10n>

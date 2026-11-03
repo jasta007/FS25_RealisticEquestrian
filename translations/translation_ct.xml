@@ -1199,5 +1199,12 @@
         <text name="eq_ui_time_months" text="%d 個月"/>
         <text name="eq_enter_quarantine" text="這匹馬在國外參賽後正在檢疫。回家後即可參賽。"/>
         <text name="eq_quarantine_home" text="%s已結束檢疫回家。"/>
+        <text name="eq_ride_blocked_horse" text="這匹馬"/>
+        <text name="eq_ride_blocked_quarantine" text="%s正在隔離，回家前不能騎乘。"/>
+        <text name="eq_ride_blocked_away" text="%s外出參賽，不能騎乘。"/>
+        <text name="eq_ride_blocked_injured" text="%s受傷了，痊癒前不能騎乘。"/>
+        <text name="eq_loose_sentHome_quarantine" text="%s正在隔離，已被帶回%s。"/>
+        <text name="eq_loose_sentHome_away" text="%s外出參賽，已被帶回%s。"/>
+        <text name="eq_loose_sentHome_injured" text="%s受傷了，已被帶回%s休息。"/>
     </texts>
 </l10n>

@@ -1199,5 +1199,12 @@
         <text name="eq_ui_time_months" text="%d mies."/>
         <text name="eq_enter_quarantine" text="Ten koń jest na kwarantannie po zawodach za granicą. Wystartuje, gdy wróci do domu."/>
         <text name="eq_quarantine_home" text="%s wrócił z kwarantanny."/>
+        <text name="eq_ride_blocked_horse" text="Ten koń"/>
+        <text name="eq_ride_blocked_quarantine" text="Koń %s jest na kwarantannie i nie można na nim jeździć, dopóki nie wróci do domu."/>
+        <text name="eq_ride_blocked_away" text="Koń %s jest na zawodach i nie można na nim jeździć."/>
+        <text name="eq_ride_blocked_injured" text="Koń %s jest kontuzjowany i nie można na nim jeździć, dopóki się nie wyleczy."/>
+        <text name="eq_loose_sentHome_quarantine" text="Koń %s jest na kwarantannie, więc wrócił do: %s."/>
+        <text name="eq_loose_sentHome_away" text="Koń %s jest na zawodach, więc wrócił do: %s."/>
+        <text name="eq_loose_sentHome_injured" text="Koń %s jest kontuzjowany, więc wrócił do: %s, aby odpocząć."/>
     </texts>
 </l10n>

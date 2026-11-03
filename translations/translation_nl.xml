@@ -1199,5 +1199,12 @@
         <text name="eq_ui_time_months" text="%d maanden"/>
         <text name="eq_enter_quarantine" text="Dat paard is in quarantaine na een wedstrijd in het buitenland. Het kan meedoen zodra het thuis is."/>
         <text name="eq_quarantine_home" text="%s is terug uit quarantaine."/>
+        <text name="eq_ride_blocked_horse" text="Dit paard"/>
+        <text name="eq_ride_blocked_quarantine" text="%s is in quarantaine en kan pas worden bereden als het thuis is."/>
+        <text name="eq_ride_blocked_away" text="%s is weg naar een wedstrijd en kan niet worden bereden."/>
+        <text name="eq_ride_blocked_injured" text="%s is geblesseerd en kan pas worden bereden als het genezen is."/>
+        <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
+        <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
+        <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>
     </texts>
 </l10n>

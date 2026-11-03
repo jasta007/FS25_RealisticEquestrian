@@ -1199,5 +1199,12 @@
         <text name="eq_ui_time_months" text="%d mesi"/>
         <text name="eq_enter_quarantine" text="Quel cavallo è in quarantena dopo un evento all'estero. Potrà gareggiare una volta a casa."/>
         <text name="eq_quarantine_home" text="%s è tornato dalla quarantena."/>
+        <text name="eq_ride_blocked_horse" text="Questo cavallo"/>
+        <text name="eq_ride_blocked_quarantine" text="%s è in quarantena e non può essere montato finché non torna a casa."/>
+        <text name="eq_ride_blocked_away" text="%s è via per una gara e non può essere montato."/>
+        <text name="eq_ride_blocked_injured" text="%s è infortunato e non può essere montato finché non guarisce."/>
+        <text name="eq_loose_sentHome_quarantine" text="%s è in quarantena, quindi è stato riportato a %s."/>
+        <text name="eq_loose_sentHome_away" text="%s è via per una gara, quindi è stato riportato a %s."/>
+        <text name="eq_loose_sentHome_injured" text="%s è infortunato, quindi è stato riportato a %s per riposare."/>
     </texts>
 </l10n>
