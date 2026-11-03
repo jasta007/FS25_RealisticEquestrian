@@ -92,6 +92,20 @@ EqJump.AIM_FROM = 50
 EqJump.AIM_GAIN = 2
 EqJump.AIM_RATE = 0.35
 
+-- Body pitch (James, 2026-11-03: galloping off a high ledge the horse pitched nearly vertical,
+-- nose down). The base game tilts the body along a line from the ground under the back hooves to
+-- the ground under the front ones; on the last step at a ledge the front one is the bottom of the
+-- drop, and in the air it keeps that tilt. So the tilt is held to PITCH_MAX degrees either way on
+-- the ground and turns at most PITCH_RATE degrees a second. In the air it is held to AIR_PITCH_MAX,
+-- and more than LEDGE_M above the ground (a drop, not a jump) it eases towards LEDGE_PITCH
+-- degrees nose down at LEDGE_RATE degrees a second.
+EqJump.PITCH_MAX = 25
+EqJump.PITCH_RATE = 90
+EqJump.AIR_PITCH_MAX = 25
+EqJump.LEDGE_M = 2.5
+EqJump.LEDGE_PITCH = 15
+EqJump.LEDGE_RATE = 30
+
 -- What the eqJump console command may change: its short name, the field, and limits.
 EqJump.TUNABLE = {
     { name = "rise", key = "RISE_SHARE", min = 1, max = 5 },
@@ -123,6 +137,12 @@ EqJump.TUNABLE = {
     { name = "aimfrom", key = "AIM_FROM", min = 0, max = 100 },
     { name = "aimrate", key = "AIM_RATE", min = 0, max = 2 },
     { name = "aimgain", key = "AIM_GAIN", min = 0, max = 10 },
+    { name = "pitch", key = "PITCH_MAX", min = 0, max = 80 },
+    { name = "pitchrate", key = "PITCH_RATE", min = 5, max = 2000 },
+    { name = "airpitch", key = "AIR_PITCH_MAX", min = 0, max = 80 },
+    { name = "ledge", key = "LEDGE_M", min = 0.5, max = 20 },
+    { name = "ledgepitch", key = "LEDGE_PITCH", min = 0, max = 80 },
+    { name = "ledgerate", key = "LEDGE_RATE", min = 0, max = 500 },
 }
 
 
@@ -367,6 +387,33 @@ function EqJump.step(launch, now, dt, gravity)
     launch.launched, launch.launchedAt = true, now
     local left = launch.speedY * launch.speedY - 2 * math.abs(gravity) * launch.rise
     return math.sqrt(math.max(0, left)) - gravity * dt / 1000, cap
+end
+
+
+--- The body's tilt for this frame (pure), in radians, nose up positive.
+--- @param previous number|nil last frame's tilt, nil on the first frame
+--- @param target number the tilt the base game just set
+--- @param onGround boolean
+--- @param groundDistance number|nil metres down to the ground while in the air
+--- @param dt number ms
+--- @return number radians
+function EqJump.pitch(previous, target, onGround, groundDistance, dt)
+    local function clamp(v, limit) return math.max(-limit, math.min(limit, v)) end
+    local goal, rate
+    if onGround then
+        goal, rate = clamp(target, math.rad(EqJump.PITCH_MAX)), EqJump.PITCH_RATE
+    else
+        local limit = math.rad(EqJump.AIR_PITCH_MAX)
+        goal, rate = clamp(target, limit), EqJump.PITCH_RATE
+        if groundDistance ~= nil and groundDistance > EqJump.LEDGE_M then
+            goal, rate = clamp(-math.rad(EqJump.LEDGE_PITCH), limit), EqJump.LEDGE_RATE
+            -- Already steeper than the ledge tilt: come back up at the quicker rate.
+            if previous ~= nil and previous < goal then rate = EqJump.PITCH_RATE end
+        end
+    end
+    if previous == nil then return goal end
+    local step = math.rad(rate) * math.max(0, dt) / 1000
+    return previous + math.max(-step, math.min(step, goal - previous))
 end
 
 

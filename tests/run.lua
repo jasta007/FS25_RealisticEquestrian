@@ -6138,5 +6138,22 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
+-- BODY PITCH off a ledge (EqJump.pitch).
+;(function()
+    local J, deg = EqJump, math.rad
+    local first = J.pitch(nil, deg(-70), true, nil, 16)
+    check("pitch: ground tilt held to PITCH_MAX", math.abs(first + deg(J.PITCH_MAX)) < 1e-9)
+    local one = J.pitch(0, deg(-70), true, nil, 100)
+    check("pitch: turns at most PITCH_RATE", math.abs(one + deg(J.PITCH_RATE) * 0.1) < 1e-9)
+    check("pitch: an ordinary slope passes", math.abs(J.pitch(deg(10), deg(10), true, nil, 16) - deg(10)) < 1e-9)
+    local p = 0
+    for _ = 1, 200 do p = J.pitch(p, 0, false, math.huge, 16) end
+    check("pitch: off a ledge eases to LEDGE_PITCH nose down", math.abs(p + deg(J.LEDGE_PITCH)) < 1e-9)
+    local steep = J.pitch(deg(-25), deg(-25), false, 5, 100)
+    check("pitch: steeper than the ledge tilt comes back up", steep > deg(-25))
+    check("pitch: a normal jump keeps its tilt", math.abs(J.pitch(deg(-8), deg(-8), false, 1, 16) + deg(8)) < 1e-9)
+    check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
