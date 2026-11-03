@@ -76,7 +76,13 @@ EqSpectators.pose = {
     lapPitch = 0, lapYaw = 90, lapRoll = 0, lapElbow = 0,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
     handJitter = 0.035,
-    handPitch = 0, handYaw = 90, handRoll = 0, elbow = 30, arms = 1, fingers = 0, wrists = 0,
+    handPitch = 0, handYaw = 90, handRoll = 0, elbow = 30, fingers = 0, wrists = 0,
+    -- arms = 2 (James 2026-11-03: the game's IK snapped the hands about and wrapped arms round heads):
+    -- our own two-joint solve puts the wrist on the hand spot with the elbow pointing along
+    -- elbowOut (sideways, out), elbowDown and elbowBack, in the seat's frame; the same numbers
+    -- always give the same pose. arms = 1 is the game's IK, 0 none.
+    arms = 2, elbowOut = 0.35, elbowDown = 0.3, elbowBack = 1.0,
+    lapElbowOut = 0.8, lapElbowDown = 0.4, lapElbowBack = 0.6,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -631,7 +637,15 @@ end
 
 --- @return boolean true when the hands are placed by IK (not with arms 0 or the standing clip)
 function EqSpectators.armsOn()
-    return EqSpectators.pose.arms ~= 0
+    return EqSpectators.pose.arms == 1
+end
+
+
+--- @return boolean true when this person's hand rests in the lap (eqSpectators explore can force a group)
+function EqSpectators.lapHand(person, id)
+    if EqSpectators.forceHands == "lap" then return true end
+    if EqSpectators.forceHands == "sides" then return false end
+    return person.lap or person.oneLap == id
 end
 
 
@@ -641,8 +655,8 @@ local function placeTargets(person)
     local spots = {
         leftFoot = { p.footApart + (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
         rightFoot = { -p.footApart - (person.feetApart or 0), -drop, p.footForward * (person.feet or 1) },
-        leftArm = (person.lap or person.oneLap == "leftArm") and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
-        rightArm = (person.lap or person.oneLap == "rightArm") and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
+        leftArm = EqSpectators.lapHand(person, "leftArm") and { p.lapApart, p.lapLift, p.lapForward } or { p.handApart, p.handLift, p.handForward },
+        rightArm = EqSpectators.lapHand(person, "rightArm") and { -p.lapApart, p.lapLift, p.lapForward } or { -p.handApart, p.handLift, p.handForward },
     }
     for id, at in pairs(spots) do
         local node = person.targets[id]
@@ -658,7 +672,7 @@ local function placeTargets(person)
         local node = person.targets[id]
         if node ~= nil then
             -- each hand its own turn: a lap hand (all lap people, and one hand of some others) uses lapPitch/Yaw/Roll
-            if person.lap or person.oneLap == id then
+            if EqSpectators.lapHand(person, id) then
                 setRotation(node, math.rad(p.lapPitch), math.rad(p.lapYaw * side), math.rad(p.lapRoll * side))
             else
                 setRotation(node, math.rad(p.handPitch), math.rad(p.handYaw * side), math.rad(p.handRoll * side))
@@ -856,15 +870,122 @@ local function armStart(person)
     for _, joint in ipairs(person.armRest) do setRotation(joint.node, joint.rx, joint.ry, joint.rz) end
     -- elbow: twist the upper arm about its length before the solve, so the IK bends the elbow
     -- another way (degrees, mirrored for the right arm; try either sign)
-    if rotateAboutLocalAxis ~= nil then
+    if rotateAboutLocalAxis ~= nil and EqSpectators.pose.arms == 1 then
         for id, wrist in pairs(person.wrists) do
-            local lap = person.lap or person.oneLap == id
+            local lap = EqSpectators.lapHand(person, id)
             local twist = (lap and EqSpectators.pose.lapElbow or EqSpectators.pose.elbow) or 0
             if twist ~= 0 and wrist.upperArm ~= nil and wrist.upperArm ~= 0 then
                 rotateAboutLocalAxis(wrist.upperArm, math.rad(twist) * wrist.side, 0, 1, 0)
             end
         end
     end
+end
+
+
+local function sub(a, b) return { a[1] - b[1], a[2] - b[2], a[3] - b[3] } end
+local function dot(a, b) return a[1] * b[1] + a[2] * b[2] + a[3] * b[3] end
+local function cross(a, b) return { a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2] - a[2] * b[1] } end
+local function len(a) return math.sqrt(dot(a, a)) end
+local function scale(a, k) return { a[1] * k, a[2] * k, a[3] * k } end
+local function add(a, b) return { a[1] + b[1], a[2] + b[2], a[3] + b[3] } end
+local function wpos(node) local x, y, z = getWorldTranslation(node) return { x, y, z } end
+
+
+--- Turn a joint (the least turn) so that a point now at `from` (on a child) moves to `to`.
+local function aim(joint, from, to)
+    local origin = wpos(joint)
+    local d0, d1 = sub(from, origin), sub(to, origin)
+    if len(d0) < 1e-5 or len(d1) < 1e-5 then return end
+    local axis = cross(d0, d1)
+    if len(axis) < 1e-7 then return end
+    -- frame A looks along d0, frame B along d1, both "up" on the turn axis: B * A^-1 is the turn
+    local frame = EqSpectators.aimFrame
+    if frame == nil or (entityExists ~= nil and not entityExists(frame)) then
+        frame = createTransformGroup("eqSpectatorAim")
+        link(getRootNode(), frame)
+        EqSpectators.aimFrame = frame
+        EqSpectators.aimChild = createTransformGroup("eqSpectatorAimChild")
+        link(frame, EqSpectators.aimChild)
+    end
+    local child = EqSpectators.aimChild
+    setDirection(frame, d0[1], d0[2], d0[3], axis[1], axis[2], axis[3])
+    setWorldRotation(child, getWorldRotation(joint))
+    setDirection(frame, d1[1], d1[2], d1[3], axis[1], axis[2], axis[3])
+    setWorldRotation(joint, getWorldRotation(child))
+end
+
+
+--- arms = 2: each arm's shoulder and elbow turned so the wrist lands on its hand spot, the elbow
+--- bending towards the elbow direction. The hand keeps its own turn on the forearm.
+local function solveArms(person)
+    if EqSpectators.pose.arms ~= 2 or person.wrists == nil then return end
+    local p = EqSpectators.pose
+    for id, wrist in pairs(person.wrists) do
+        local target = person.targets[id]
+        local hand = wrist.node
+        local forearm = getParent(hand)
+        local upper = forearm ~= nil and forearm ~= 0 and getParent(forearm) or nil
+        if target ~= nil and upper ~= nil and upper ~= 0 then
+            local side = EqSpectators.ARM_CHAINS[id] or 1
+            local lap = EqSpectators.lapHand(person, id)
+            local s, e, w, t = wpos(upper), wpos(forearm), wpos(hand), wpos(target)
+            local a, b = len(sub(e, s)), len(sub(w, e))
+            local v = sub(t, s)
+            local d = len(v)
+            if a > 1e-4 and b > 1e-4 and d > 1e-4 then
+                local u = scale(v, 1 / d)
+                d = math.max(math.abs(a - b) + 0.002, math.min(a + b - 0.002, d))
+                local x = (a * a - b * b + d * d) / (2 * d)
+                local h = math.sqrt(math.max(0, a * a - x * x))
+                local ox, oy, oz = (lap and p.lapElbowOut or p.elbowOut), (lap and p.lapElbowDown or p.elbowDown), (lap and p.lapElbowBack or p.elbowBack)
+                local px, py, pz = localDirectionToWorld(person.holder, side * ox, -oy, -oz)
+                local pole = { px, py, pz }
+                pole = sub(pole, scale(u, dot(pole, u)))
+                if len(pole) < 1e-5 then
+                    local bx, by, bz = localDirectionToWorld(person.holder, 0, 0, -1)
+                    pole = sub({ bx, by, bz }, scale(u, bx * u[1] + by * u[2] + bz * u[3]))
+                end
+                if len(pole) > 1e-5 then
+                    pole = scale(pole, 1 / len(pole))
+                    local elbow = add(add(s, scale(u, x)), scale(pole, h))
+                    aim(upper, e, elbow)
+                    aim(forearm, wpos(hand), add(s, scale(u, d)))
+                end
+            end
+        end
+    end
+end
+
+
+--- eqSpectators explore sides|lap: that group's hand values drift slowly (each on its own slow
+--- wave, everyone in the group the same, no jitter); eqSpectators snapshot keeps them.
+EqSpectators.EXPLORE = {
+    sides = { handApart = 0.05, handForward = 0.06, handLift = 0.05, elbowOut = 0.4, elbowDown = 0.4, elbowBack = 0.4 },
+    lap = { lapApart = 0.04, lapForward = 0.06, lapLift = 0.04, lapElbowOut = 0.4, lapElbowDown = 0.4, lapElbowBack = 0.4 },
+}
+
+function EqSpectators.exploreStep(now)
+    local ex = EqSpectators.exploring
+    if ex == nil then return end
+    local t = (now - ex.start) / 1000
+    local i = 0
+    for name, amp in pairs(EqSpectators.EXPLORE[ex.group]) do
+        i = i + 1
+        local period = 9 + 4 * i      -- 13, 17, 21 ... seconds: the waves don't line up
+        EqSpectators.pose[name] = ex.base[name] + amp * math.sin(2 * math.pi * t / period + i * 1.7)
+    end
+    for _, person in ipairs(EqSpectators.people) do
+        if person.seated and person.model ~= nil and person.model.rootNode ~= nil and next(person.targets) ~= nil then placeTargets(person) end
+    end
+end
+
+
+--- The seated pose's values as one line (for the log and the console).
+function EqSpectators.poseLine()
+    local parts = {}
+    for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.3f", name, v)) end
+    table.sort(parts)
+    return table.concat(parts, " ")
 end
 
 
@@ -1150,6 +1271,7 @@ function EqSpectators.update()
     local camera = g_cameraManager ~= nil and g_cameraManager:getActiveCamera() or nil
     if camera == nil or camera == 0 then return end
     local cx, cy, cz = getWorldTranslation(camera)
+    EqLog.try("EqSpectators explore", EqSpectators.exploreStep, now)
     for _, person in ipairs(EqSpectators.people) do
         local model = person.model
         if person.ready and model ~= nil and model.rootNode ~= nil then
@@ -1174,9 +1296,13 @@ function EqSpectators.update()
                 live = (visible and distance <= EqSpectators.IK_DISTANCE) or not person.settled
                     or person.posed <= EqSpectators.POSE_FRAMES
             end
-            if person.charset ~= nil and live ~= person.animating then
-                person.animating = live
-                if live then enableAnimTrack(person.charset, 0) else disableAnimTrack(person.charset, 0) end
+            -- our own arm solve: the clip stops once they're seated (it would turn the arms back each
+            -- frame); the legs' IK and our arms are still solved while seen
+            local animate = live
+            if person.seated and EqSpectators.pose.arms == 2 and person.settled and person.posed > EqSpectators.POSE_FRAMES then animate = false end
+            if person.charset ~= nil and animate ~= person.animating then
+                person.animating = animate
+                if animate then enableAnimTrack(person.charset, 0) else disableAnimTrack(person.charset, 0) end
             end
             if person.seated and live then
                 local chains = model:getIKChains()
@@ -1185,6 +1311,7 @@ function EqSpectators.update()
                 end
                 EqLog.try("EqSpectators arm start", armStart, person)
                 IKUtil.updateIKChains(chains, true)
+                EqLog.try("EqSpectators arms", solveArms, person)
                 relaxFingers(person)
             end
         end
@@ -1224,6 +1351,36 @@ function EqSpectators.console(command, a, b)
         EqSpectators.forced, EqSpectators.forcedCounts = nil, nil
         EqSpectators.key, EqSpectators.scannedAt = nil, nil
         return "Spectators come to your hosted events (08:00-19:00) as the Crowd density setting says"
+    elseif command == "explore" then
+        local group = string.lower(tostring(a or ""))
+        if group == "stop" then
+            local ex = EqSpectators.exploring
+            if ex ~= nil then for name, v in pairs(ex.base) do EqSpectators.pose[name] = v end end
+            EqSpectators.exploring, EqSpectators.forceHands = nil, nil
+            EqSpectators.repose()
+            return "Spectators: exploring stopped, values back to where they were"
+        end
+        if group == "side" then group = "sides" end
+        if EqSpectators.EXPLORE[group] == nil then return "Usage: eqSpectators explore sides|lap|stop, then eqSpectators snapshot" end
+        local base = {}
+        for name, v in pairs(EqSpectators.pose) do base[name] = v end
+        EqSpectators.exploring = { group = group, base = base, start = g_time or 0, jitter = EqSpectators.pose.handJitter }
+        EqSpectators.pose.handJitter = 0
+        EqSpectators.forceHands = group
+        EqSpectators.repose()
+        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
+    elseif command == "snapshot" or command == "snap" then
+        local ex = EqSpectators.exploring
+        if ex == nil then return "Not exploring: eqSpectators explore sides|lap first" end
+        EqSpectators.exploring, EqSpectators.forceHands = nil, nil
+        EqSpectators.pose.handJitter = ex.jitter
+        local keys = {}
+        for name in pairs(EqSpectators.EXPLORE[ex.group]) do table.insert(keys, string.format("%s=%.3f", name, EqSpectators.pose[name])) end
+        table.sort(keys)
+        Log:info("EqSpectators: SNAPSHOT %s: %s", ex.group, table.concat(keys, " "))
+        Log:info("EqSpectators: Seated pose: %s", EqSpectators.poseLine())
+        EqSpectators.repose()
+        return "Snapshot " .. ex.group .. " kept (in log.txt): " .. table.concat(keys, " ")
     elseif command == "reset" then
         -- the pose back to its defaults and everyone seated afresh
         for name, value in pairs(EqSpectators.POSE_DEFAULTS) do EqSpectators.pose[name] = value end
@@ -1281,7 +1438,7 @@ function EqSpectators.console(command, a, b)
     end
     print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
         scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
-    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | reset | info]",
+    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
 end
