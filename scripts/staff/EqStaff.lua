@@ -28,7 +28,7 @@ EqStaff.SKILLS = { "stamina", "speed", "agility", "temperament", "dressage", "sh
 -- Each job's main skills, the stats it trains at TRAINER_SHARE (every other stat at
 -- GROOM_SHARE, by the member's skill in it), and the event type it gives a bonus for.
 EqStaff.JOBS = {
-    groom = { main = { "stamina", "speed", "agility", "temperament" }, trains = {} },
+    groom = { main = { "stamina", "speed", "agility", "temperament" }, trains = {}, scale = 0.6 },
     dressage = { main = { "dressage", "temperament", "agility" }, trains = { temperament = true, agility = true },
         event = "dressage" },
     showJumping = { main = { "showJumping", "agility", "temperament" }, trains = { agility = true, temperament = true },
@@ -39,6 +39,9 @@ EqStaff.JOBS = {
     vet = { main = { "veterinary" }, trains = {} },
     broker = { main = { "broker" }, trains = {} },
 }
+-- A job with scale rolls every skill at that share of its grade's range (James, 2026-11-03): a
+-- groom covers all four stats, so even a Legendary groom tops out at 60 and a trainer of the same
+-- grade trains its own stats about twice as fast.
 EqStaff.JOB_ORDER = { "groom", "dressage", "showJumping", "crossCountry", "racing", "vet", "broker" }
 -- How often each job turns up among candidates (EqStaff.roll without a job).
 EqStaff.JOB_CHANCE = { groom = 0.35, dressage = 0.12, showJumping = 0.12, crossCountry = 0.12, racing = 0.12,
@@ -234,10 +237,29 @@ function EqStaff.wageFor(job, gradeIndex, skills, talents, luck)
     local main, sum = EqStaff.JOBS[job].main, 0
     for _, skill in ipairs(main) do sum = sum + (skills[skill] or 0) end
     local middle = (grade.low + grade.high) / 2
-    local skillFactor = 1 + (sum / #main - middle) / 100
+    local skillFactor = 1 + (sum / #main / EqStaff.scaleOf(job) - middle) / 100
     local wage = EqStaff.BASE_WAGE[job] * grade.wage * skillFactor * (1 + EqStaff.TALENT_WAGE * talents)
         * (1 + EqStaff.WAGE_LUCK * luck)
     return math.floor(wage / 5 + 0.5) * 5
+end
+
+
+--- @param job string
+--- @return number the share of its grade's range the job's skills roll at (JOBS[job].scale)
+function EqStaff.scaleOf(job)
+    return (EqStaff.JOBS[job] ~= nil and EqStaff.JOBS[job].scale) or 1
+end
+
+
+--- Bring skills rolled at an older scale to the job's scale today.
+--- @param member table
+--- @param from number the scale the skills were rolled at
+function EqStaff.rescale(member, from)
+    local to = EqStaff.scaleOf(member.job)
+    if from == nil or from <= 0 or math.abs(from - to) < 0.001 then return end
+    for skill, value in pairs(member.skills) do
+        member.skills[skill] = math.floor(math.max(0, math.min(100, value * to / from)) + 0.5)
+    end
 end
 
 
@@ -264,8 +286,8 @@ function EqStaff.roll(rng, id, hour, job)
             if skill == star then
                 value = rng:uniform(grade.star, grade.high)
             else
-                -- Rounded below, so keep it under star - 0.5 to stay below the star band.
-                value = rng:uniform(grade.low, grade.star - 0.51)
+                -- Scaled and rounded below, so keep it half a point under the scaled star band.
+                value = rng:uniform(grade.low, grade.star - 0.51 / EqStaff.scaleOf(job))
             end
         elseif main[skill] then
             value = rng:uniform(grade.low, grade.high)
@@ -275,7 +297,7 @@ function EqStaff.roll(rng, id, hour, job)
         else
             value = middle * rng:uniform(EqStaff.OFF_SKILL[1], EqStaff.OFF_SKILL[2])
         end
-        skills[skill] = math.floor(math.max(0, math.min(100, value)) + 0.5)
+        skills[skill] = math.floor(math.max(0, math.min(100, value * EqStaff.scaleOf(job))) + 0.5)
     end
 
     local name, gender = EqStaffNames.roll(rng)
