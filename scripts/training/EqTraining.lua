@@ -59,7 +59,7 @@ EqTraining.PACE_STEP = 0.5
 EqTraining.PACE_WIDTH = { 15, 6 }
 EqTraining.PACE_HIGH = { { 100 * 2 / 3, 97 }, { 78, 97 } }
 EqTraining.PACE_LOW = { { 12, 100 / 3 }, { 38, 58 } }
-EqTraining.PACE_RECOVER_BONUS = { 1.8, 2.5 }
+EqTraining.PACE_RECOVER_BONUS = { 1.3, 1.8 }
 EqTraining.PACE_PUSH_EASE = { 0.9, 0.7 }
 EqTraining.PACE_SLOW_DROP = 0.6
 -- Random numbers 0..1 for the band's place (tests replace it).

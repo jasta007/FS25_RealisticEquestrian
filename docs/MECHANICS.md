@@ -96,9 +96,8 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
   the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
   empty; Stamina slows it).
-- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
-  top third of the gallop section, slowly through the middle third,
-  quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls, slowly at first
+  and faster the closer it gets to empty, the mirror of Pushing. The horse keeps galloping at an empty bar; W pushes on again.
 - **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
   speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
@@ -134,7 +133,7 @@ A blue band on the gallop part of the bar shows where to turn the bar round:
   somewhere near the bottom. Switch back to Pushing inside that one for another 0.5, and so on.
 - The band is 15 points of exertion wide at x1 and narrows to 6 at x5. Both ends climb with the
   multiplier: the top band from 67-97% at x1 to 78-97% at x5, the bottom one from 12-33% to 38-58%.
-- A hit helps you to the next band: after a hit at the top, Recovering falls 1.8 to 2.5 times as
+- A hit helps you to the next band: after a hit at the top, Recovering falls 1.3 to 1.8 times as
   fast (more at a higher multiplier); after a hit at the bottom, Pushing climbs at 90% down to 70%
   of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
 - Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a

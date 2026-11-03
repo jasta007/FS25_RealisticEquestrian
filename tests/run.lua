@@ -610,10 +610,9 @@ do
     recoverHigh.mode, recoverHigh.value, recoverLow.mode, recoverLow.value = "recover", 90, "recover", 10
     local recoverZone = E.new()
     recoverZone.mode, recoverZone.value = "recover", 50
-    check("Recovering is fast in the top and bottom thirds and slow in the middle zone",
-        E.band(90) == "high" and E.band(50) == "zone" and E.band(10) == "low"
-        and -E.rate(recoverHigh, "gallop") > -E.rate(recoverZone, "gallop") * 2
-        and -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop") * 2)
+    check("Recovering speeds up as the bar heads for empty",
+        -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop")
+        and -E.rate(recoverZone, "gallop") > -E.rate(recoverHigh, "gallop"))
     local d = E.new()
     ride(d, "gallop", 6000)
     E.press(d, "back")
@@ -907,7 +906,7 @@ do
     T.staminaStep(eased, 50, false)
     local slowPush = E.rate({ mode = "push", value = 50, pushShare = eased.exertion.pushShare }, "gallop", 50)
     check("a hit at the top speeds Recovering, a hit at the bottom slows Pushing",
-        fastRecover > plainRecover * 1.7 and slowPush < plainPush * 0.95 and est.mult == 1 + 2 * T.PACE_STEP,
+        fastRecover > plainRecover * 1.25 and slowPush < plainPush * 0.95 and est.mult == 1 + 2 * T.PACE_STEP,
         string.format("%.2f vs %.2f, %.2f vs %.2f", fastRecover, plainRecover, slowPush, plainPush))
     local lowHigh = T.paceRange("low", 5)
     check("the bands sit higher at a higher multiplier", lowHigh > T.PACE_LOW[1][2] and T.paceRange("high", 5) > T.PACE_HIGH[1][1])

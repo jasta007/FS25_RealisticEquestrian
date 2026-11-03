@@ -40,10 +40,12 @@ EqExertion.EXERTION_MAX = 130
 -- it took too long and didn't feel like it sped up).
 EqExertion.PUSH_RISE = 4
 EqExertion.PUSH_CLIMB = 3
--- Recovering: exertion falls this much per second in each third of the gallop (EqExertion.band):
--- fast from the top third, slowly through the middle "zone", fast again in the bottom third
--- (James, 2026-10-27: the stamina multiplier follows the same pattern, see EqTraining).
-EqExertion.RECOVER_DROP = { high = 5, zone = 1.8, low = 5 }
+-- Recovering mirrors Pushing: RECOVER_FALL per second at the line, climbing with the square of
+-- how far it has come down to RECOVER_CLIMB times more at empty, so the bar speeds up as it heads
+-- for either end (James, 2026-11-03: replaces the old slow middle third; the stamina band's hits
+-- set the pace of the next leg, see EqTraining).
+EqExertion.RECOVER_FALL = 3
+EqExertion.RECOVER_CLIMB = 2
 -- Sprinting: SPRINT_RISE per second at the start, SPRINT_RAMP more for every second it lasts, up
 -- to SPRINT_RISE_MAX; the same on both sides of the line. (James, 2026-10-27: start slowly and get
 -- faster pretty rapidly, especially when the taps are slow, so stopping just short of the line
@@ -210,7 +212,9 @@ function EqExertion.rate(ex, gait, stamina, speed)
         return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * share * share)
             * byStat(EqExertion.PUSH_STAMINA, stamina) * (ex.pushShare or 1)
     elseif ex.mode == "recover" then
-        return -EqExertion.RECOVER_DROP[EqExertion.band(v)] * byStat(EqExertion.RECOVER_STAMINA, stamina)
+        local down = 1 - math.min(v, EqExertion.LINE) / EqExertion.LINE
+        return -EqExertion.RECOVER_FALL * (1 + EqExertion.RECOVER_CLIMB * down * down)
+            * byStat(EqExertion.RECOVER_STAMINA, stamina)
             * (ex.recoverShare or 1)
     elseif ex.mode == "sprint" then
         -- Tapping pace, 1 for quick taps (and the quick taps that started the Sprint) to 0 for slow.
