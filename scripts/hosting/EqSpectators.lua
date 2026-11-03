@@ -70,9 +70,9 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.20, handApart = 0.25, handLift = 0.15,
+    handForward = -0.185, handApart = 0.253, handLift = 0.15,
     -- the other hand position: in the lap (James 2026-11-02), half the crowd
-    lapForward = 0.10, lapApart = 0.20, lapLift = 0.19, lapShare = 0.5,
+    lapForward = 0.15, lapApart = 0.24, lapLift = 0.216, lapShare = 0.5,
     lapPitch = 0, lapYaw = 90, lapRoll = 0, lapElbow = 0,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
     handJitter = 0.035,
@@ -81,8 +81,8 @@ EqSpectators.pose = {
     -- our own two-joint solve puts the wrist on the hand spot with the elbow pointing along
     -- elbowOut (sideways, out), elbowDown and elbowBack, in the seat's frame; the same numbers
     -- always give the same pose. arms = 1 is the game's IK, 0 none.
-    arms = 2, elbowOut = 0.35, elbowDown = 0.3, elbowBack = 1.0,
-    lapElbowOut = 0.8, lapElbowDown = 0.4, lapElbowBack = 0.6,
+    arms = 2, elbowOut = 0.2, elbowDown = 0.67, elbowBack = 0.6,
+    lapElbowOut = 1.2, lapElbowDown = 0.68, lapElbowBack = 0.5,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
