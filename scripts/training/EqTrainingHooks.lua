@@ -634,7 +634,7 @@ local function tuneRiding(spec, gait, record, sheet)
         end
         -- Forward gaits only: backing up stays at the base game's pace. The gallop's pace
         -- (Recovering, Pushing, Sprinting) sets its share of the gallop's speed.
-        local pace = EqExertion.speedShare(sheet.exertion)
+        local pace = EqExertion.speedShare(sheet.exertion, trained.speed)
         local gallop = Rideable.GAITTYPES ~= nil and Rideable.GAITTYPES.GALLOP or nil
         for key, value in pairs(spec.eqBaseTopSpeeds) do
             if type(value) == "number" then
@@ -729,7 +729,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local airborne = spec.isOnGround == false
     EqTrainingHooks.stepJump(vehicle, spec, dt)
     if spec.eqBaseTurnSpeed ~= nil and airborne ~= spec.eqAirborne then
-        local handling = EqTraining.handling(record ~= nil and record.trained.speed or nil, record ~= nil and record.trained.agility or nil)
+        local trained = record ~= nil and record.trained or {}
+        local handling = EqTraining.handling(trained.speed, trained.agility, trained.temperament)
         spec.maxTurnSpeed = spec.eqBaseTurnSpeed * handling.turn * (airborne and EqTrainingHooks.AIR_TURN_SHARE or 1)
     end
     -- After a drop, does the horse leave the ground again (a bounce that replays the landing)?
@@ -754,7 +755,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local pace = paceGait(spec, gait, now)
     local ex = sheet.exertion
     local wasGalloping = EqExertion.isGalloping(ex)
-    local event = EqExertion.step(ex, pace, dt, stamina, record ~= nil and record.trained.speed or nil)
+    local event = EqExertion.step(ex, pace, dt, stamina)
     if event ~= nil then EqTrainingHooks.onExertionEvent(event, ex) end
     if not wasGalloping and EqExertion.isGalloping(ex) then Log:info("Exertion: galloping, pushing (exertion %.0f%%)", ex.value) end
     -- Stamina and speed train from how well the gallop is ridden.

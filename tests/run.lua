@@ -645,6 +645,12 @@ do
     check("three quick sprint taps Sprint", tap(sp, 3, 150) == "sprint" and sp.mode == "sprint")
     check("Sprint is the fastest pace, Recovering the slowest", E.speedShare(sp) > 1
         and E.GALLOP_SHARE.recover < E.GALLOP_SHARE.push and E.GALLOP_SHARE.push < E.speedShare(sp))
+    check("a faster horse Sprints faster", E.speedShare(sp, 100) > E.speedShare(sp, 50) and E.speedShare(sp, 50) > E.speedShare(sp, 0)
+        and near(E.speedShare(sp, 0), E.SPRINT_PACE[1]) and near(E.speedShare(sp, 100), E.SPRINT_PACE[2]))
+    check("Speed doesn't change Pushing's or Recovering's share", E.speedShare({ mode = "push" }, 100) == E.GALLOP_SHARE.push
+        and E.speedShare({ mode = "recover" }, 0) == E.GALLOP_SHARE.recover)
+    local fitSprint, unfitSprint = { mode = "sprint", value = 40, sprintMs = 2000 }, { mode = "sprint", value = 40, sprintMs = 2000 }
+    check("a fitter horse's Sprint tires it more slowly", E.rate(fitSprint, "gallop", 100) < E.rate(unfitSprint, "gallop", 0) * 0.7)
     events = ride(sp, "gallop", 1000)
     check("a Sprint ends when the tapping stops, into Recovering", events[1] == "sprintOver" and sp.mode == "recover")
     check("no new Sprint until the bar is empty", not E.canSprint(sp) and tap(sp, 3, 150) ~= "sprint" and sp.mode == "recover")
@@ -696,10 +702,10 @@ do
     end
     check("quick taps slow the Sprint's rise", sprintRise(150, 1000) < sprintRise(400, 1000) * 0.7)
     check("but only for so long", near(sprintRise(150, 11000), sprintRise(400, 11000), 1e-9))
-    check("a faster horse tires more slowly when Sprinting", (function()
+    check("Speed doesn't change how fast a Sprint tires the horse", (function()
         local a, b = E.new(), E.new()
         a.mode, b.mode = "sprint", "sprint"
-        return E.rate(a, "gallop", 50, 90) < E.rate(b, "gallop", 50, 10)
+        return E.rate(a, "gallop", 50, 90) == E.rate(b, "gallop", 50, 10)
     end)())
 
     local last = E.new()

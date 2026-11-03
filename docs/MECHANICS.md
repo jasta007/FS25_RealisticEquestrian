@@ -99,8 +99,8 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
   top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
   quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
-- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
-  speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
+- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 120% of the gallop's
+  speed at Speed 0, up to 150% at Speed 100. Exertion rises slowly at first and ever faster (Stamina slows it, so a fit horse Sprints for longer), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
   (Pushing is fine).
@@ -479,8 +479,8 @@ never during a round: rails stay down to the finish. Single player for now.
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
 agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
-turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
-better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.4 times
+better again (on the ground and in the air), changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
 press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
 bar, and takes effect the moment the horse lands. A gallop jump from the bottom third of the bar

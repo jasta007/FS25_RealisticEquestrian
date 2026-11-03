@@ -541,8 +541,8 @@ EqTraining.HANDLING = {
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
     turn = { 1, 1.65 },      -- turn rate, by agility
-    -- ...and a little more from a calm, attentive horse (James, 2026-10-27).
-    turnTemperament = { 1, 1.2 },
+    -- ...and more from a calm, attentive horse (James, 2026-10-27; raised from 1.2 on 2026-11-03).
+    turnTemperament = { 1, 1.4 },
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },
