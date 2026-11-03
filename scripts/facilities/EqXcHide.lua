@@ -328,30 +328,43 @@ local function roundState()
 end
 
 
+--- @param vehicle table|nil
+--- @return table|nil the horse's CCTDrivable spec (the game names it spec_cctdrivable)
+local function cctSpec(vehicle)
+    if vehicle == nil then return nil end
+    local spec = vehicle.spec_cctdrivable or vehicle.spec_cctDrivable
+    if spec == nil or type(spec.movementCollisionGroup) ~= "number" then return nil end
+    return spec
+end
+
+
 --- Give the horse in a round the rider bit in its movement collision group, so it hits the
 --- pieces, and take it back from a horse no longer in one. CCTDrivable passes
 --- spec.movementCollisionGroup to moveCCT each frame on the server.
 --- @param vehicle table|nil the horse in the round, nil for none
+--- @return boolean true when the horse (if any) has the bit, false when it couldn't be given
 function EqXcHide.setRider(vehicle)
     local rider = EqXcHide.riderValue()
-    if vehicle == EqXcHide.riderVehicle or rider == nil then return end
-    local old = EqXcHide.riderVehicle
-    local oldSpec = old ~= nil and old.spec_cctDrivable or nil
+    if rider == nil then return vehicle == nil end
+    if vehicle == EqXcHide.riderVehicle then return true end
+    local oldSpec = cctSpec(EqXcHide.riderVehicle)
     if oldSpec ~= nil and EqXcHide.riderGroup ~= nil then oldSpec.movementCollisionGroup = EqXcHide.riderGroup end
     EqXcHide.riderVehicle, EqXcHide.riderGroup = nil, nil
-    local spec = vehicle ~= nil and vehicle.spec_cctDrivable or nil
-    if spec == nil or type(spec.movementCollisionGroup) ~= "number" then
-        if vehicle ~= nil and not EqXcHide.loggedRider then
+    if vehicle == nil then return true end
+    local spec = cctSpec(vehicle)
+    if spec == nil then
+        if not EqXcHide.loggedRider then
             EqXcHide.loggedRider = true
-            Log:warning("EqXcHide: the horse has no CCT movement group, pieces in a round won't stop it")
+            Log:warning("EqXcHide: the horse has no CCT movement group, pieces in a round stay solid for everyone")
         end
-        return
+        return false
     end
     EqXcHide.riderVehicle, EqXcHide.riderGroup = vehicle, spec.movementCollisionGroup
     if not EqXcHide.hasBit(spec.movementCollisionGroup, EqXcHide.riderBit) then
         spec.movementCollisionGroup = spec.movementCollisionGroup + rider
     end
     Log:info("EqXcHide: horse in the round collides with the pieces (group 0x%x)", spec.movementCollisionGroup)
+    return true
 end
 
 
@@ -392,7 +405,8 @@ function EqXcHide.update()
     }
     local mode = EqXcHide.wantMode(state)
     EqXcHide.setTrafficOff(not isMultiplayer() and EqXcHide.wantsTrafficOff(kind, sjState))
-    EqXcHide.setRider(mode == EqXcHide.RIDER and vehicle or nil)
+    -- A horse that can't take the rider bit would go through the pieces: solid for everyone then.
+    if not EqXcHide.setRider(mode == EqXcHide.RIDER and vehicle or nil) and mode == EqXcHide.RIDER then mode = EqXcHide.SHOWN end
 
     local now = g_time or 0
     local due = EqXcHide.scannedAt == nil or now - EqXcHide.scannedAt >= EqXcHide.SCAN_MS or now < EqXcHide.scannedAt

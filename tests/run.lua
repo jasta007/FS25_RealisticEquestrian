@@ -2684,15 +2684,19 @@ do
     do
         local saved = { CollisionFlag, EqXcHide.riderBit }
         CollisionFlag, EqXcHide.riderBit = { ANIMAL = 2 ^ 20 }, nil
-        local horse = { spec_cctDrivable = { movementCollisionGroup = 2 ^ 20 } }
+        local horse = { spec_cctdrivable = { movementCollisionGroup = 2 ^ 20 } }
+        local given = EqXcHide.setRider(horse)
+        local inRound = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
         EqXcHide.setRider(horse)
-        local inRound = horse.spec_cctDrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
-        EqXcHide.setRider(horse)
-        local once = horse.spec_cctDrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
+        local once = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
         EqXcHide.setRider(nil)
         check("only the horse in a round gets the rider bit, and gives it back after",
-            inRound and once and horse.spec_cctDrivable.movementCollisionGroup == 2 ^ 20 and EqXcHide.riderVehicle == nil)
-        EqXcHide.setRider({})
+            given and inRound and once and horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 and EqXcHide.riderVehicle == nil)
+        local saidOld = EqXcHide.loggedRider
+        EqXcHide.loggedRider = true
+        check("a horse without a CCT group can't take the bit, so the pieces stay solid for everyone",
+            EqXcHide.setRider({}) == false and EqXcHide.setRider(nil) == true)
+        EqXcHide.loggedRider = saidOld
         CollisionFlag, EqXcHide.riderBit = saved[1], saved[2]
     end
     local xc = EqCourse.CROSS_COUNTRY
