@@ -41,9 +41,51 @@ function EqEventsView.compareEvents(a, b)
 end
 
 
+--- @param region string|nil a venue region of data/events.xml
+--- @return string name "Europe", or "" when unknown
+function EqEventsView.regionName(region)
+    if region == nil then return "" end
+    local key = "eq_region_" .. region
+    if g_i18n:hasText(key) then return g_i18n:getText(key) end
+    return region
+end
+
+
+--- Where an event is held: its venue's region, or home for one without (your own events, the
+--- unnamed ones).
+--- @param event table
+--- @return string|nil region
+--- @return string distance "local", "near" or "far"
+function EqEventsView.eventRegion(event)
+    local manager = EqCompetitionManager
+    if event.hosted ~= nil or event.region == nil then return manager.homeRegion(), "local" end
+    return event.region, manager.eventDistance(event)
+end
+
+
+--- The line over the events table: your home region, where it comes from, and what a trip
+--- abroad means.
+--- @return string text
+function EqEventsView.regionLine()
+    local manager = EqCompetitionManager
+    local home = manager.homeRegion()
+    if home == nil then return "" end
+    local source = g_i18n:getText(manager.chosenHomeRegion() ~= nil and "eq_ui_region_chosen" or "eq_ui_region_fromMap")
+    local text = string.format(g_i18n:getText("eq_ui_region_home"), EqEventsView.regionName(home), source)
+    local config = manager.config
+    local near = EqQuarantine.roundsFor(config, "near", manager.settings)
+    local far = EqQuarantine.roundsFor(config, "far", manager.settings)
+    if near > 0 or far > 0 then
+        return text .. " " .. string.format(g_i18n:getText("eq_ui_region_quarantine"), near, far)
+    end
+    return text .. " " .. g_i18n:getText("eq_ui_region_noQuarantine")
+end
+
+
 --- Open events, grouped by type then level (see compareEvents).
 --- @param farmId number
---- @return table rows { event, title, type, level, going, risk, riskBand, when, fee, prize, yours }
+--- @return table rows { event, title, type, level, going, region, distance ("local", "near" or "far"),
+---     quarantine (rounds after the event), risk, riskBand, when, fee, prize, yours }
 function EqEventsView.eventRows(farmId)
     local manager = EqCompetitionManager
     local horses = EqRLRM.listHorsesForFarm(farmId)
@@ -76,12 +118,16 @@ function EqEventsView.eventRows(farmId)
         end
 
         local riskBand = manager.eventRisk(event)
+        local region, distance = EqEventsView.eventRegion(event)
         table.insert(rows, {
             event = event,
             title = manager.eventName(event.discipline, event.tier, event.venue, event.hosted ~= nil),
             type = g_i18n:getText("eq_type_" .. event.discipline),
             level = manager.tierTitle(event.tier),
             going = manager.conditionsText(event.going),
+            region = EqEventsView.regionName(region),
+            distance = distance,
+            quarantine = manager.quarantineRounds(event),
             risk = manager.riskText(riskBand),
             riskBand = riskBand,
             when = g_i18n:getText(event.kind == EqCompetition.KIND_MONTH and "eq_ui_when_nextMonth" or cadence),
@@ -125,6 +171,8 @@ function EqEventsView.horseRows(event, farmId)
                 end
             elseif unavailable == "injured" then
                 status = string.format(g_i18n:getText("eq_status_injured"), EqInjury.monthsLeft(record, animal) or 1)
+            elseif unavailable == "quarantine" then
+                status = string.format(g_i18n:getText("eq_status_quarantine"), EqQuarantine.roundsLeft(record))
             elseif unavailable ~= nil then
                 status = g_i18n:getText("eq_status_" .. unavailable)
             else

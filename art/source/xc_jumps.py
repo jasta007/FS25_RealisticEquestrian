@@ -860,8 +860,8 @@ LOGO_PAD = 0.04
 LOGO_CROP = (-LOGO_PAD, 1 + LOGO_PAD, 0.10, 0.90)
 
 
-def logo_uv(uv):
-    u0, u1, v0, v1 = LOGO_CROP
+def logo_uv(uv, crop=None):
+    u0, u1, v0, v1 = crop or LOGO_CROP
     return (u0 + (u1 - u0) * uv[0], v0 + (v1 - v0) * uv[1])
 
 
@@ -908,12 +908,12 @@ def logo_preview(path="placeables/bleachers/bleacherSponsor_diffuse.dds"):
     return np.asarray(framed.crop((0, int(round((1 - v1) * h)), w + 2 * pad, int(round((1 - v0) * h)))), dtype=float)
 
 
-def shape_lines(mesh, name, shape_id, uv1=None):
+def shape_lines(mesh, name, shape_id, uv1=None, crop=None):
     """uv1(p): an optional second UV set, e.g. the vertexOffset shader's slope gradient. Logo faces
-    (shapes whose name has "eqSponsor") show only LOGO_CROP of the logo image."""
+    (shapes whose name has "eqSponsor") show only LOGO_CROP of the logo image (or crop)."""
     if "eqSponsor" in name:
         cropped = Mesh()
-        cropped.verts = [(p, n, logo_uv(uv)) for p, n, uv in mesh.verts]
+        cropped.verts = [(p, n, logo_uv(uv, crop)) for p, n, uv in mesh.verts]
         cropped.tris = mesh.tris
         mesh = clip_logo(cropped)
     centre, radius = mesh.bounds()

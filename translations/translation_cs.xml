@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="通行门"/>
         <text name="eq_shop_xcGate_function" text="用于骑行通过的门，不是障碍：足够宽、足够高，任何马都能轻松通过，带有赞助商标志。"/>
         <text name="eq_shop_xcRope" text="绳索标记"/>
-        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索或挂小型赞助商牌子的绳索：牌子只增加少量品牌曝光。"/>
+        <text name="eq_shop_xcRope_function" text="标示路线的轻绳，没有碰撞。可选单纯绳索、挂小型赞助商牌子的绳索（牌子只增加少量品牌曝光），或一侧带观众区的绳索（主办比赛时观众站在那里）。"/>
         <text name="eq_shop_plinthDrive" text="通行展台"/>
         <text name="eq_shop_plinthRamp" text="展示坡台"/>
         <text name="eq_shop_plinthRampLarge" text="大型展示坡台"/>
@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_lizard_title" text="%s 的赞助邀约"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian 找不到 Realistic Livestock（Ritter 版），因此已停用。请安装最新版本的 Realistic Livestock。"/>
+        <text name="eq_rlrm_incompatible" text="你的 Realistic Livestock 版本 %s 对 Realistic Equestrian 来说太旧，因此 Realistic Equestrian 已停用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
+        <text name="eq_rlrm_old" text="你的 Realistic Livestock 版本 %s 低于 Realistic Equestrian 所需的版本（%s 或更新），部分功能可能无法使用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_lizard_offer" text="%s 希望赞助你的%s（%s），并在赛事月借给你一辆它的车辆。要求在赛事结束前达到%s品牌度，并在你的场地建好Lizard展台：%s。如果公布成绩时一切就绪，它将支付 %s。否则不付费，也没有任何处罚。赛事结束后展台会倒塌。"/>
         <text name="eq_lizard_accept" text="接受"/>
         <text name="eq_lizard_decline" text="拒绝"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="点击继续（%d/%d）"/>
         <text name="input_EQ_TRAINING_HELP" text="训练帮助"/>
         <text name="input_EQ_SPRINT" text="冲刺"/>
+        <text name="input_EQ_LATERAL" text="侧向动作（按住）"/>
+        <text name="input_EQ_COLLECT" text="收缩（按住）"/>
+        <text name="input_EQ_REIN" text="缰绳：鼠标转向（按住）"/>
         <text name="eq_train_worn" text="骑乘条已满：今天无法再训练"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢复"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="主办"/>
         <text name="eq_settings_hostInterval" text="主办比赛间隔（月）"/>
         <text name="eq_settings_hostInterval_tooltip" text="从你上次主办比赛的月份起，需要多少个月才能再次主办。"/>
+        <text name="eq_settings_crowdDensity" text="观众密度"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="有多少观众来看你主办的比赛：坐在看台上，站在绳子旁的观众区（08:00-19:00）。"/>
+        <text name="eq_settings_crowd_low" text="少"/>
+        <text name="eq_settings_crowd_medium" text="中"/>
+        <text name="eq_settings_crowd_high" text="多"/>
         <text name="eq_host_warning" text="你的%s缺少：%s。今天解决，否则明天比赛将被取消。"/>
         <text name="eq_host_cancelled" text="你的%s已取消，仍缺少：%s。你的主办声誉受损。"/>
         <text name="eq_host_done" text="你的%s已结束：来了%d匹来访马。收入 %s（报名费 %s，门票 %s），人气 %d。"/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="这台设备由你的赞助商提供，供你在本月的赛事期间使用。尽情享受吧！"/>
         <text name="eq_sponsor_discount_from" text="从%s开始"/>
         <text name="eq_sponsor_discount_after" text="签约 %d 个月后开始"/>
+        <text name="eq_settings_homeRegion" text="所在地区"/>
+        <text name="eq_settings_homeRegion_tooltip" text="你的农场所在地区，决定哪些赛事在国外。“按地图”从地图（或 RLRM 的地图国家）读取；若不正确请选择地区。"/>
+        <text name="eq_settings_homeRegion_auto" text="按地图"/>
+        <text name="eq_region_northAmerica" text="北美洲"/>
+        <text name="eq_region_southAmerica" text="南美洲"/>
+        <text name="eq_region_europe" text="欧洲"/>
+        <text name="eq_region_asiaOceania" text="亚洲和大洋洲"/>
+        <text name="eq_settings_quarantine" text="国际检疫"/>
+        <text name="eq_settings_quarantine_tooltip" text="从其他地区赛事回来的马在回家前是否需要检疫若干轮。检疫费用照常收取。"/>
+        <text name="eq_ui_col_region" text="地区"/>
+        <text name="eq_ui_region_home" text="你的地区：%s（%s）。"/>
+        <text name="eq_ui_region_fromMap" text="按地图，可在设置中更改"/>
+        <text name="eq_ui_region_chosen" text="在设置中选择"/>
+        <text name="eq_ui_region_quarantine" text="在国外参赛后马匹需要检疫：海外行程后 %d 轮（黄色），长途行程后 %d 轮（橙色）。"/>
+        <text name="eq_ui_region_noQuarantine" text="国际检疫已关闭。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s，之后检疫 %d 轮"/>
+        <text name="eq_ui_status_quarantine" text="检疫中"/>
+        <text name="eq_status_quarantine" text="检疫中，%d 轮"/>
+        <text name="eq_enter_quarantine" text="这匹马在国外参赛后正在检疫。回家后即可参赛。"/>
+        <text name="eq_quarantine_home" text="%s已结束检疫回家。"/>
     </texts>
 </l10n>

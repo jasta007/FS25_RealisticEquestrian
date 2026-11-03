@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Portão de passagem"/>
         <text name="eq_shop_xcGate_function" text="Um portão para atravessar, não um salto: largo e alto o bastante para qualquer cavalo, com o logo do seu patrocinador."/>
         <text name="eq_shop_xcRope" text="Corda de marcação"/>
-        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples ou com uma pequena placa do patrocinador: as placas somam só um pouco de marca."/>
+        <text name="eq_shop_xcRope_function" text="Uma corda leve para marcar o percurso, sem colisão. Escolha corda simples, com uma pequena placa do patrocinador (as placas somam só um pouco de marca) ou com uma área de público de um lado, onde os espectadores ficam nos seus eventos."/>
         <text name="eq_shop_plinthDrive" text="Plataforma de passagem"/>
         <text name="eq_shop_plinthRamp" text="Rampa de exposição"/>
         <text name="eq_shop_plinthRampLarge" text="Rampa de exposição grande"/>
@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Precisa de 1.000 l de cavacos, 10.000 l de madeira e 1.000 l de tábuas."/>
         <text name="eq_shop_lizardPlinth_straw" text="Precisa de 10.000 l de palha, 10.000 l de madeira e 1.000 l de tábuas."/>
         <text name="eq_lizard_title" text="Oferta de patrocínio da %s"/>
+        <text name="eq_rlrm_missing" text="O Realistic Equestrian não encontra o Realistic Livestock (versão do Ritter), por isso está desligado. Instale a versão mais recente do Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Sua versão %s do Realistic Livestock é antiga demais para o Realistic Equestrian, por isso o Realistic Equestrian está desligado. Baixe a versão mais recente do Realistic Livestock (versão do Ritter)."/>
+        <text name="eq_rlrm_old" text="Sua versão %s do Realistic Livestock é mais antiga do que o Realistic Equestrian precisa (%s ou mais recente), então alguns recursos podem não funcionar. Baixe a versão mais recente do Realistic Livestock (versão do Ritter)."/>
         <text name="eq_lizard_offer" text="A %s gostaria de patrocinar o seu %s (%s) e vai emprestar um de seus veículos durante o mês do evento. Ela pede branding %s até o fim do evento e o pedestal Lizard construído no seu local: %s. Se tudo estiver pronto quando os resultados saírem, ela paga %s. Se não, não paga nada e não há penalidade. O pedestal desaba depois do evento."/>
         <text name="eq_lizard_accept" text="Aceitar"/>
         <text name="eq_lizard_decline" text="Recusar"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="Clique para continuar (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Ajuda de treino"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Trabalho lateral (segurar)"/>
+        <text name="input_EQ_COLLECT" text="Reunir (segurar)"/>
+        <text name="input_EQ_REIN" text="Rédeas: direção com mouse (segurar)"/>
         <text name="eq_train_worn" text="Barra de montaria cheia: sem mais treino hoje"/>
         <text name="eq_ex_push" text="Forçando"/>
         <text name="eq_ex_recover" text="Recuperando"/>
@@ -1007,6 +1013,11 @@
         <text name="rl_messageTitle_eqHosting" text="Organização"/>
         <text name="eq_settings_hostInterval" text="Meses entre eventos próprios"/>
         <text name="eq_settings_hostInterval_tooltip" text="Quantos meses após o mês do seu último evento organizado até poder organizar outro."/>
+        <text name="eq_settings_crowdDensity" text="Densidade de público"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Quantos espectadores vêm aos seus eventos, nas suas arquibancadas e nas áreas de público junto à corda (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Baixa"/>
+        <text name="eq_settings_crowd_medium" text="Média"/>
+        <text name="eq_settings_crowd_high" text="Alta"/>
         <text name="eq_host_warning" text="Falta ao seu %s: %s. Resolva hoje ou o evento será cancelado amanhã."/>
         <text name="eq_host_cancelled" text="Seu %s foi cancelado, ainda faltava: %s. Sua reputação como organizador é prejudicada."/>
         <text name="eq_host_done" text="Seu %s terminou: vieram %d cavalos visitantes. Receita %s (%s de inscrições, %s de bilheteria), popularidade %d."/>
@@ -1167,5 +1178,25 @@
         <text name="eq_loan_enter" text="Este equipamento foi cedido pelo seu patrocinador para você usar durante o seu evento este mês. Aproveite!"/>
         <text name="eq_sponsor_discount_from" text="A partir de %s"/>
         <text name="eq_sponsor_discount_after" text="Após %d meses da assinatura"/>
+        <text name="eq_settings_homeRegion" text="Região de origem"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Onde fica sua fazenda, o que decide quais eventos são no exterior. Do mapa lê do mapa (ou do país do mapa do RLRM); escolha uma região se estiver errada."/>
+        <text name="eq_settings_homeRegion_auto" text="Do mapa"/>
+        <text name="eq_region_northAmerica" text="América do Norte"/>
+        <text name="eq_region_southAmerica" text="América do Sul"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Ásia e Oceania"/>
+        <text name="eq_settings_quarantine" text="Quarentena internacional"/>
+        <text name="eq_settings_quarantine_tooltip" text="Se um cavalo que volta de um evento em outra região passa rodadas em quarentena antes de voltar para casa. As taxas de quarentena são pagas de qualquer forma."/>
+        <text name="eq_ui_col_region" text="Região"/>
+        <text name="eq_ui_region_home" text="Sua região: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="do mapa, altere nas Configurações"/>
+        <text name="eq_ui_region_chosen" text="escolhida nas Configurações"/>
+        <text name="eq_ui_region_quarantine" text="Depois de um evento no exterior o cavalo fica em quarentena: %d rodada(s) após uma viagem ao exterior (amarelo), %d após uma de longa distância (laranja)."/>
+        <text name="eq_ui_region_noQuarantine" text="A quarentena internacional está desligada."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, depois %d rodada(s) em quarentena"/>
+        <text name="eq_ui_status_quarantine" text="Em quarentena"/>
+        <text name="eq_status_quarantine" text="Em quarentena, %d rodada(s)"/>
+        <text name="eq_enter_quarantine" text="Esse cavalo está em quarentena após um evento no exterior. Poderá competir quando estiver em casa."/>
+        <text name="eq_quarantine_home" text="%s voltou da quarentena."/>
     </texts>
 </l10n>

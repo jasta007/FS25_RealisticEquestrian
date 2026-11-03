@@ -425,8 +425,8 @@ works in single player for now.
 Out of edit mode, the course whose start line is nearest (within 60 m) is the one you can ride.
 Within 30 m the start line glows gold and you
 are asked to "Move to the start line to begin Show Jumping" beside the panel; nothing else of the
-course shows yet. The start line stands on the route 12 m before fence 1 and the finish line 12 m
-after the last fence, so no objects are needed and a course can be dressed however you like. Within
+course shows yet. The start line stands where you began recording (Ctrl+J or Ctrl+E) and the finish line where you
+saved, each kept at least 3 m clear of fence 1 and the last fence, so no objects are needed and a course can be dressed however you like. Within
 4 m behind the start line a 3, 2, 1
 countdown runs; crossing it early starts over. After Go! you have 45 seconds to cross it, and the
 clock starts as you do. From the countdown on the round has the screen to itself: no other
@@ -754,6 +754,22 @@ prizes, and sometimes none in a discipline.
   $300 quarantine yard. Europe to South America, and Asia and Oceania to anywhere, is a
   **long-haul** trip: 8x plus $2,500, or $500 Manual. The dearer the trip, the rarer it is: about
   60% of named events are in your home region, 30% overseas and 10% long-haul.
+- The Events tab shows your home region over the table (and whether it came from the map or the
+  settings), and a **Region** column for each event: your own region in the normal colour, an
+  overseas venue in amber, a long-haul one in orange. If the map puts you in the wrong region,
+  pick yours with the **Home region** setting (From map is the default; `eqSettings homeRegion
+  europe`).
+- **International quarantine:** a horse that went to an event abroad (it started, or was
+  scratched there) doesn't come straight home. It spends **1 round** in quarantine after an
+  overseas trip and **2 rounds** after a long-haul one (`quarantineRounds` in
+  `data/events.xml`), so it misses that many rounds of entries. Rounds follow the Show events
+  setting: days on daily rounds, months on monthly ones. In quarantine it stays out of the
+  pasture like a horse at an event, can't be ridden or entered, and still eats and ages in
+  RLRM's books; RLRM's lists mark it "In quarantine". You get a message when it is home. The
+  horse panel says how long the quarantine will be before you enter it. The quarantine fees
+  above pay for the stay. Your own hosted events never need quarantine. The **International
+  quarantine** setting (`eqSettings quarantine off`) turns the stay off; turning it off sends
+  every horse in quarantine home at the next round.
 - A horse can only be in one round event and one monthly event at a time.
 - A horse entered in an event **leaves your pasture** until its result is in: the next round
   for round events, the next month for monthly ones. It still eats, ages and trains with staff in
@@ -899,6 +915,23 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   event needs still saves it, with a warning, and rides there are practice. A course or arena
   made too small during the month doesn't cancel the event: it runs in the background without
   your rides. Only the visitors' stables and feed can stop it.
+
+- **Spectators:** while your event runs, from 08:00 to 19:00, people come to watch: seated on
+  your bleachers and standing in the yellow spectator boxes of the Rope Marker's third segment
+  (the box is painted on one side of the rope and shows only in construction mode, so draw the
+  rope with the box away from the track). While your event runs, all day, Rope Markers stay in
+  sight (still no collision) as the crowd's barrier, instead of hiding like the course flags. The **Crowd density** setting gives up to 4 seated and
+  3 standing (Low), 8 and 6 (Medium, the default) or 16 and 12 (High), at most 2 per rope panel,
+  picked afresh each day, wherever the bleachers and boxes are; selling a bleacher or rope (or
+  deleting a rope segment) takes its people away and a new crowd is picked from what's left. They are the game's own characters, men
+  and women (about 45%), each with their own face, hair, beard and one of the game's outfit presets
+  (no helmets, masks or chainsaw kit); a named character's face (the animal dealer, the fisherman)
+  turns up at most once per crowd; FS25 has no sit animation, so a seated spectator is posed like a tractor
+  driver, with IK on the feet and the mod's own two-joint solve on the arms (hands by the hips or
+  resting on the thighs). Now and then someone moves a hand between lap and side, or turns their
+  head to look about, each on their own timing. They
+  are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
+  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose, `explore sides|lap` drifts it until `snapshot` keeps it, and `info` counts places.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`

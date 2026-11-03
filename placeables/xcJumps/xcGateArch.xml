@@ -32,12 +32,14 @@
         <!-- A gate to ride through, not a jump: ridden along z. -->
     </placement>
 
-    <!-- Disappearing: Yes (the first, default) hides the piece outside construction, course editing
-         and rounds (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". -->
+    <!-- Disappearing: Yes hides the piece outside construction, course editing and rounds
+         (EqXcHide). Stored as eqAlwaysVisible, so 2 (No) is still "always visible". The arch
+         defaults to No: it stands by start lines and popped up in front of the horse at the
+         countdown, and it marks a start line from a distance (James, 2026-11-02). -->
     <eqAlwaysVisible>
         <eqAlwaysVisibleConfigurations>
             <eqAlwaysVisibleConfiguration name="$l10n_ui_yes" price="0"/>
-            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0"/>
+            <eqAlwaysVisibleConfiguration name="$l10n_ui_no" price="0" isDefault="true"/>
         </eqAlwaysVisibleConfigurations>
     </eqAlwaysVisible>
 

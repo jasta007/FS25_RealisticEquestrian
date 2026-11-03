@@ -173,6 +173,52 @@ function EqSponsors.isRope(filename)
 end
 
 
+--- The farm a sponsor piece belongs to. A Rope Marker is a fence, and the game doesn't give a
+--- fence the farm that drew it (James 2026-11-02: the rope's sign showed a brand that wasn't
+--- his sponsor, and spectators found no rope "of his"): a rope with no real farm is the local
+--- player's.
+--- @param placeable table
+--- @return number|nil farmId
+--- The local player's farm, or nil until it's known (James's log 2026-11-02: the mission's
+--- getFarmId gave nil at the first scan, so the rope kept the made-up brand list).
+function EqSponsors.localFarm()
+    local spectator = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 15
+    local function ok(id) return type(id) == "number" and id ~= 0 and id ~= spectator end
+    local mission = g_currentMission
+    if mission ~= nil and mission.getFarmId ~= nil then
+        local id = mission:getFarmId()
+        if ok(id) then return id end
+    end
+    local player = g_localPlayer
+    if player ~= nil then
+        local id = player.getFarmId ~= nil and player:getFarmId() or player.farmId
+        if ok(id) then return id end
+    end
+    if mission ~= nil and mission.missionDynamicInfo ~= nil and mission.missionDynamicInfo.isMultiplayer == false then
+        local id = FarmManager ~= nil and FarmManager.SINGLEPLAYER_FARM_ID or 1
+        if ok(id) then return id end
+    end
+    return nil
+end
+
+
+function EqSponsors.ownerOf(placeable)
+    local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
+    if EqSponsors.isRope(placeable.configFileName) then
+        local spectator = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 15
+        if owner == nil or owner == 0 or owner == spectator then
+            local mine = EqSponsors.localFarm()
+            if not EqSponsors.loggedRopeOwner and mine ~= nil then
+                EqSponsors.loggedRopeOwner = true
+                Log:info("EqSponsors: Rope Marker owner farm %s, counted as farm %s", tostring(owner), tostring(mine))
+            end
+            if mine ~= nil and mine ~= 0 and mine ~= spectator then return mine end
+        end
+    end
+    return owner
+end
+
+
 --- @param boards table board number -> face nodes
 --- @return number signs the front faces (a rope's signs all share one number)
 local function frontFaces(boards)
@@ -236,9 +282,11 @@ function EqSponsors.countBoards(farmId)
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     local count, signs = 0, 0
     for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
-        local owner = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or nil
+        local owner = EqSponsors.ownerOf(placeable)
         if owner == farmId and EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
             local boards = boardsOf(placeable)
+            -- a rope's farm is known only once the player is: sign it again when it changes
+            if placeable.eqSponsorFarm ~= farmId then placeable.eqSponsored, placeable.eqSponsorFarm = nil, farmId end
             if EqSponsors.isRope(placeable.configFileName) then
                 signs = signs + frontFaces(boards)
             else
@@ -291,7 +339,7 @@ function EqSponsors.update()
     local byFarm = {}
     for _, placeable in ipairs(system ~= nil and system.placeables or {}) do
         if EqSponsors.isBleacherXml(placeable.configFileName) and type(placeable.rootNode) == "number" and placeable.rootNode ~= 0 then
-            local farmId = placeable.getOwnerFarmId ~= nil and placeable:getOwnerFarmId() or 0
+            local farmId = EqSponsors.ownerOf(placeable) or 0
             byFarm[farmId] = byFarm[farmId] or {}
             table.insert(byFarm[farmId], placeable)
         end

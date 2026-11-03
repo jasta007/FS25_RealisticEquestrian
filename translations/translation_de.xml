@@ -90,7 +90,7 @@
         <text name="eq_shop_xcGateSimple" text="Durchreitetor"/>
         <text name="eq_shop_xcGate_function" text="Ein Tor zum Durchreiten, kein Sprung: breit und hoch genug für jedes Pferd, mit dem Logo Ihres Sponsors."/>
         <text name="eq_shop_xcRope" text="Seilmarkierung"/>
-        <text name="eq_shop_xcRope_function" text="Ein leichtes Seil zum Markieren der Strecke, ohne Kollision. Wähle einfaches Seil oder Seil mit kleinem Sponsorschild: Schilder bringen nur wenig Branding."/>
+        <text name="eq_shop_xcRope_function" text="Ein leichtes Seil zum Markieren der Strecke, ohne Kollision. Wähle einfaches Seil, Seil mit kleinem Sponsorschild (Schilder bringen nur wenig Branding) oder Seil mit Zuschauerbereich auf einer Seite, wo bei deinen Turnieren Zuschauer stehen."/>
         <text name="eq_shop_plinthDrive" text="Durchfahr-Podest"/>
         <text name="eq_shop_plinthRamp" text="Präsentationsrampe"/>
         <text name="eq_shop_plinthRampLarge" text="Große Präsentationsrampe"/>
@@ -109,6 +109,9 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Benötigt 1.000 l Hackschnitzel, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_straw" text="Benötigt 10.000 l Stroh, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_lizard_title" text="Sponsorenangebot von %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian findet Realistic Livestock (Ritter-Version) nicht und ist deshalb ausgeschaltet. Bitte installiere die neueste Version von Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Deine Realistic-Livestock-Version %s ist zu alt für Realistic Equestrian, deshalb ist Realistic Equestrian ausgeschaltet. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
+        <text name="eq_rlrm_old" text="Deine Realistic-Livestock-Version %s ist älter als Realistic Equestrian braucht (%s oder neuer), deshalb funktionieren manche Funktionen vielleicht nicht. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
         <text name="eq_lizard_offer" text="%s möchte deine Veranstaltung %s (%s) sponsern und leiht dir für den Veranstaltungsmonat eines seiner Fahrzeuge. Verlangt werden %s Branding bis zum Ende der Veranstaltung und das Lizard-Podest an deinem Veranstaltungsort: %s. Ist bei den Ergebnissen alles vorhanden, zahlt Lizard %s. Wenn nicht, gibt es nichts, aber auch keine Strafe. Das Podest bricht nach der Veranstaltung zusammen."/>
         <text name="eq_lizard_accept" text="Annehmen"/>
         <text name="eq_lizard_decline" text="Ablehnen"/>
@@ -256,6 +259,9 @@
         <text name="eq_help_next" text="Klicken zum Weiterlesen (%d/%d)"/>
         <text name="input_EQ_TRAINING_HELP" text="Trainingshilfe"/>
         <text name="input_EQ_SPRINT" text="Sprint"/>
+        <text name="input_EQ_LATERAL" text="Seitengänge (halten)"/>
+        <text name="input_EQ_COLLECT" text="Versammeln (halten)"/>
+        <text name="input_EQ_REIN" text="Zügel: Maussteuerung (halten)"/>
         <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
         <text name="eq_ex_push" text="Antreiben"/>
         <text name="eq_ex_recover" text="Erholen"/>
@@ -1009,6 +1015,11 @@
         <text name="rl_messageTitle_eqHosting" text="Ausrichten"/>
         <text name="eq_settings_hostInterval" text="Monate zwischen eigenen Turnieren"/>
         <text name="eq_settings_hostInterval_tooltip" text="Wie viele Monate nach dem Monat deines letzten eigenen Turniers du ein weiteres ausrichten kannst."/>
+        <text name="eq_settings_crowdDensity" text="Zuschauerdichte"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Wie viele Zuschauer zu deinen eigenen Turnieren kommen, auf deine Tribünen und in die Zuschauerbereiche am Seil (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Wenig"/>
+        <text name="eq_settings_crowd_medium" text="Mittel"/>
+        <text name="eq_settings_crowd_high" text="Viel"/>
         <text name="eq_host_warning" text="Deinem Turnier %s fehlt: %s. Kümmere dich heute darum, sonst wird es morgen abgesagt."/>
         <text name="eq_host_cancelled" text="Dein Turnier %s wurde abgesagt, es fehlte weiter: %s. Dein Ruf als Ausrichter leidet."/>
         <text name="eq_host_done" text="Dein Turnier %s ist vorbei: %d Gastpferde kamen. Einnahmen %s (%s Startgelder, %s Eintritt), Beliebtheit %d."/>
@@ -1169,5 +1180,25 @@
         <text name="eq_loan_enter" text="Dieses Gerät wurde dir von deinem Sponsor für dein Event in diesem Monat zur Verfügung gestellt. Viel Spaß!"/>
         <text name="eq_sponsor_discount_from" text="Ab %s"/>
         <text name="eq_sponsor_discount_after" text="Ab %d Monaten nach Unterzeichnung"/>
+        <text name="eq_settings_homeRegion" text="Heimatregion"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Wo Ihr Hof liegt; davon hängt ab, welche Turniere im Ausland sind. Von der Karte liest sie aus der Karte (oder RLRMs Kartenland); wählen Sie eine Region, falls das nicht stimmt."/>
+        <text name="eq_settings_homeRegion_auto" text="Von der Karte"/>
+        <text name="eq_region_northAmerica" text="Nordamerika"/>
+        <text name="eq_region_southAmerica" text="Südamerika"/>
+        <text name="eq_region_europe" text="Europa"/>
+        <text name="eq_region_asiaOceania" text="Asien und Ozeanien"/>
+        <text name="eq_settings_quarantine" text="Internationale Quarantäne"/>
+        <text name="eq_settings_quarantine_tooltip" text="Ob ein Pferd nach einem Turnier in einer anderen Region Runden in Quarantäne verbringt, bevor es heimkommt. Die Quarantänegebühren fallen in jedem Fall an."/>
+        <text name="eq_ui_col_region" text="Region"/>
+        <text name="eq_ui_region_home" text="Ihre Region: %s (%s)."/>
+        <text name="eq_ui_region_fromMap" text="von der Karte, in den Einstellungen änderbar"/>
+        <text name="eq_ui_region_chosen" text="in den Einstellungen gewählt"/>
+        <text name="eq_ui_region_quarantine" text="Nach einem Turnier im Ausland kommt ein Pferd in Quarantäne: %d Runde(n) nach Übersee (gelb), %d nach einer Fernreise (orange)."/>
+        <text name="eq_ui_region_noQuarantine" text="Internationale Quarantäne ist aus."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, danach %d Runde(n) in Quarantäne"/>
+        <text name="eq_ui_status_quarantine" text="In Quarantäne"/>
+        <text name="eq_status_quarantine" text="In Quarantäne, %d Runde(n)"/>
+        <text name="eq_enter_quarantine" text="Dieses Pferd ist nach einem Turnier im Ausland in Quarantäne. Es kann starten, sobald es zu Hause ist."/>
+        <text name="eq_quarantine_home" text="%s ist aus der Quarantäne zurück."/>
     </texts>
 </l10n>

@@ -220,7 +220,7 @@ def write_i3d(size, path, frame, logos, col, face):
     # One material per board, so each can show its own logo (EqSponsors replaces the texture).
     for i in range(len(logos)):
         lines += [
-            f'    <Material name="eqSponsor{i + 1}" materialId="{i + 2}" specularColor="0.2 0.5 0" alphaBlending="true">',
+            f'    <Material name="eqSponsor{i + 1}" materialId="{i + 2}" specularColor="0.2 0 0" alphaBlending="true">',
             '      <Texture fileId="2"/>',
             "    </Material>",
         ]

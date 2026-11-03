@@ -90,10 +90,9 @@ end
 
 
 --- @param record table
---- @return table stat -> change over the last EqHorseRecord.GAIN_DAYS days
+--- @return table stat -> change this in-game month
 local function recentGains(record)
-    local env = g_currentMission ~= nil and g_currentMission.environment or nil
-    return record:getRecentGains(env ~= nil and env.currentMonotonicDay or 0)
+    return record:getRecentGains(EqCompetitionManager.month or 0)
 end
 
 
@@ -245,9 +244,10 @@ end
 
 --- @param record table
 --- @param animal table|nil RLRM Animal
---- @return string|nil text "Injured, 3 month(s)", "Retired" or "Settling in", nil for a horse in work
+--- @return string|nil text "Injured, 3 month(s)", "In quarantine, 1 round(s)", "Retired" or "Settling in", nil for a horse in work
 local function statusText(record, animal)
     if record.injury ~= nil then return string.format(g_i18n:getText("eq_status_injured"), EqInjury.monthsLeft(record, animal) or 1) end
+    if EqQuarantine.isIn(record) then return string.format(g_i18n:getText("eq_status_quarantine"), EqQuarantine.roundsLeft(record)) end
     if record.retired then return g_i18n:getText("eq_status_retired") end
     if record:isSettling() then return g_i18n:getText("eq_status_settling") end
     return nil

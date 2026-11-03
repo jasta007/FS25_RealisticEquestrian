@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="115">
     <author>Jasta007</author>
-    <version>0.8.0.0</version>
+    <version>0.8.1.0</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -15,15 +15,15 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 0.8.0.0:
-- Sponsors for your hosted events: yearly offers with demands and rewards, up to three at once, on a new Sponsors tab
-- Sponsor discounts on buying, leasing, repairs and repaints, from 3 months after signing
-- Sponsors lend you a machine for the event month; Lizard's one-off sponsorship and Lizard plinth
-- Sponsor boards on jumps, a sponsor wall, start/finish arch, gates, rope markers, display plinths and a turntable
-- Hosted events: weather, star horses, booking ahead, advertising, farm shop goods and souvenirs, buzz
-- Hosted 3 day events use your real ridden penalties, with a results table
-- Fairer dressage marks, the current movement named under the panel
-- Legendary staff have one main skill at 90-100
+Changelog 0.8.1.0:
+- Spectators at your hosted events: seated on bleachers and standing at Rope Marker spectator boxes, with a Crowd density setting
+- International quarantine after events abroad, a Home region setting and a Region column on the Events tab
+- Gamepad riding: Lateral, Collect and Rein are rebindable controls
+- Courses start where you begin recording and finish where you save
+- Skill gains show for this month instead of the last 7 days
+- A popup when Realistic Livestock is too old
+- Start/Finish Arch is always visible by default; sponsor logos no longer sit in a lighter box
+- Fixed sponsor discounts not starting
 
 Made by Jasta007.]]>
         </en>
@@ -36,15 +36,15 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Änderungen 0.8.0.0:
-- Sponsoren für Ihre eigenen Turniere: jährliche Angebote mit Bedingungen und Vorteilen, bis zu drei gleichzeitig, im neuen Reiter Sponsoren
-- Sponsorenrabatte auf Kauf, Leasing, Reparaturen und Lackierungen, ab 3 Monaten nach Vertragsabschluss
-- Sponsoren leihen Ihnen im Turniermonat eine Maschine; Lizards einmaliges Sponsoring und der Lizard-Sockel
-- Sponsorentafeln an Hindernissen, eine Sponsorenmauer, Start-/Zielbogen, Tore, Seilmarkierungen, Ausstellungssockel und eine Drehscheibe
-- Eigene Turniere: Wetter, Starpferde, frühe Buchung, Werbung, Hofladenwaren und Souvenirs, Gesprächsstoff
-- Eigene Vielseitigkeitsprüfungen nutzen Ihre echten gerittenen Strafpunkte, mit Ergebnistabelle
-- Gerechtere Dressurnoten, die aktuelle Lektion steht unter dem Panel
-- Legendäre Pfleger haben eine Hauptfähigkeit bei 90-100
+Änderungen 0.8.1.0:
+- Zuschauer bei Ihren eigenen Turnieren: sitzend auf Tribünen und stehend in den Zuschauerbereichen der Seilmarkierungen, mit Einstellung Zuschauerdichte
+- Internationale Quarantäne nach Turnieren im Ausland, Einstellung Heimatregion und eine Spalte Region im Reiter Turniere
+- Reiten mit Gamepad: Seitengänge, Versammeln und Zügel sind frei belegbar
+- Parcours beginnen dort, wo Sie die Aufnahme starten, und enden dort, wo Sie speichern
+- Wertzuwächse zeigen diesen Monat statt der letzten 7 Tage
+- Ein Hinweis, wenn Realistic Livestock zu alt ist
+- Der Start-/Zielbogen ist standardmäßig immer sichtbar; Sponsorenlogos ohne helleren Kasten
+- Sponsorenrabatte starten jetzt richtig
 
 Von Jasta007.]]>
         </de>
@@ -57,15 +57,15 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changements 0.8.0.0 :
-- Des sponsors pour vos concours : offres annuelles avec exigences et avantages, jusqu'à trois à la fois, dans un nouvel onglet Sponsors
-- Remises des sponsors sur l'achat, la location, les réparations et la peinture, 3 mois après la signature
-- Les sponsors vous prêtent une machine pour le mois du concours ; le parrainage ponctuel de Lizard et son socle
-- Panneaux de sponsors sur les obstacles, mur du sponsor, arche de départ/arrivée, portes, cordes de balisage, socles d'exposition et plateau tournant
-- Vos concours : météo, chevaux vedettes, réservation anticipée, publicité, produits de magasin à la ferme et souvenirs, effervescence
-- Vos concours complets utilisent vos vraies pénalités, avec un tableau des résultats
-- Notes de dressage plus justes, le mouvement en cours affiché sous le panneau
-- Le personnel légendaire a une seule compétence principale à 90-100
+Changements 0.8.1.0 :
+- Des spectateurs à vos concours : assis dans les tribunes et debout dans les zones spectateurs des cordes de balisage, avec un réglage Affluence du public
+- Quarantaine internationale après les concours à l'étranger, un réglage Région d'origine et une colonne Région dans l'onglet Concours
+- Monte à la manette : Travail latéral, Rassembler et Rênes sont des commandes réassignables
+- Les parcours commencent là où vous lancez l'enregistrement et finissent là où vous l'enregistrez
+- Les progrès affichent ce mois-ci au lieu des 7 derniers jours
+- Un message quand Realistic Livestock est trop ancien
+- L'arche de départ/arrivée est toujours visible par défaut ; les logos des sponsors n'ont plus de cadre clair
+- Les remises des sponsors démarrent correctement
 
 Par Jasta007.]]>
         </fr>
@@ -78,15 +78,15 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Cambios 0.8.0.0:
-- Patrocinadores para tus eventos: ofertas anuales con exigencias y ventajas, hasta tres a la vez, en una nueva pestaña Patrocinadores
-- Descuentos de patrocinio en compra, leasing, reparaciones y pintura, desde 3 meses después de firmar
-- Los patrocinadores te prestan una máquina el mes del evento; el patrocinio puntual de Lizard y su pedestal
-- Carteles de patrocinio en los obstáculos, muro del patrocinador, arco de salida/meta, puertas, cuerdas de balizamiento, pedestales de exhibición y una plataforma giratoria
-- Tus eventos: clima, caballos estrella, reserva anticipada, publicidad, productos de tienda de granja y recuerdos, expectación
-- Tus concursos completos usan tus penalizaciones reales, con tabla de resultados
-- Notas de doma más justas, el movimiento actual bajo el panel
-- El personal legendario tiene una sola habilidad principal en 90-100
+Cambios 0.8.1.0:
+- Espectadores en tus eventos: sentados en las gradas y de pie en las zonas de público de las cuerdas de balizamiento, con un ajuste de Afluencia de público
+- Cuarentena internacional tras eventos en el extranjero, un ajuste de Región de origen y una columna Región en la pestaña Eventos
+- Monta con mando: Trabajo lateral, Reunir y Riendas se pueden reasignar
+- Los recorridos empiezan donde inicias la grabación y terminan donde guardas
+- Las mejoras muestran este mes en lugar de los últimos 7 días
+- Un aviso cuando Realistic Livestock es demasiado antiguo
+- El arco de salida/meta es siempre visible por defecto; los logos de patrocinio ya no llevan un recuadro claro
+- Los descuentos de patrocinio ya se activan bien
 
 Por Jasta007.]]>
         </es>
@@ -147,6 +147,9 @@ Por Jasta007.]]>
         <action name="EQ_TRAINING_VIEW"/>
         <action name="EQ_TRAINING_HELP"/>
         <action name="EQ_SPRINT"/>
+        <action name="EQ_LATERAL"/>
+        <action name="EQ_COLLECT"/>
+        <action name="EQ_REIN"/>
         <action name="EQ_HORSE_ROLE"/>
         <action name="EQ_COURSE_RECORD"/>
         <action name="EQ_COURSE_RECORD_XC"/>
@@ -169,12 +172,28 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_VIEW">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_y" index="1"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_4" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_TRAINING_HELP">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_h" index="1"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_6 BUTTON_4" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_SPRINT">
             <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" index="3"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_3" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_LATERAL">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lshift" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift" index="2"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_6" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_COLLECT">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl" index="1"/>
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl" index="2"/>
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_REIN">
+            <binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_HORSE_ROLE">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
