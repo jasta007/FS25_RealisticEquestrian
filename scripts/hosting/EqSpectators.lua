@@ -1236,8 +1236,29 @@ end
 
 
 --- Each frame: spawn or clear the crowd, hide far people, keep seated ones posed.
+--- F16 (read straight from the keyboard, not in the controls menu): eqSpectators snapshot while exploring.
+function EqSpectators.snapshotKey()
+    if Input == nil or Input.isKeyPressed == nil then return end
+    local key = Input.KEY_f16
+    if key == nil then
+        if not EqSpectators.snapKeyMissing then
+            EqSpectators.snapKeyMissing = true
+            Log:info("EqSpectators: no F16 key in this game; use eqSpectators snapshot")
+        end
+        return
+    end
+    local down = Input.isKeyPressed(key) == true
+    if down and not EqSpectators.snapKeyDown and EqSpectators.exploring ~= nil then
+        local text = EqSpectators.console("snapshot")
+        if text ~= nil then print(text) end
+    end
+    EqSpectators.snapKeyDown = down
+end
+
+
 function EqSpectators.update()
     local now = g_time or 0
+    EqLog.try("EqSpectators snapshot key", EqSpectators.snapshotKey)
     local farm = farmId()
     if farm == nil then return end
     if EqSpectators.scannedAt == nil or now - EqSpectators.scannedAt >= EqSpectators.SCAN_MS or now < EqSpectators.scannedAt then
@@ -1368,7 +1389,7 @@ function EqSpectators.console(command, a, b)
         EqSpectators.pose.handJitter = 0
         EqSpectators.forceHands = group
         EqSpectators.repose()
-        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
+        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot (or F16) keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
     elseif command == "snapshot" or command == "snap" then
         local ex = EqSpectators.exploring
         if ex == nil then return "Not exploring: eqSpectators explore sides|lap first" end
