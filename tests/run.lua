@@ -5031,6 +5031,10 @@ end)()
     check("sponsors: event fee", EqSponsorship.eventFee(sp, contract, "championship", order, 10, true) == 150000
         and EqSponsorship.eventFee(sp, contract, "intermediate", order, 10, true) == 37500
         and EqSponsorship.eventFee(sp, contract, "championship", order, 5, true) == 112500)
+    check("sponsors: a 3 Day Event pays 1.5 times", sp.eventingFactor == 1.5
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 10, true, "eventing") == 225000
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 10, true, "showJumping") == 150000
+        and EqSponsorship.eventFee(sp, contract, "intermediate", order, 5, true, "eventing") == 42200)
     check("sponsors: no fee reasons", select(2, EqSponsorship.eventFee(sp, contract, "novice", order, 10, true)) == "rating"
         and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 10, false)) == "machines"
         and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 0, true)) == "boards")

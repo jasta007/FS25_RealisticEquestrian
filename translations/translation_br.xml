@@ -1169,6 +1169,7 @@
         <text name="eq_sponsor_discount_repair" text="Reparo %s"/>
         <text name="eq_sponsor_discount_buy" text="Compra %s"/>
         <text name="eq_sponsor_loanLine" text="Empresta uma máquina para o seu mês de evento"/>
+        <text name="eq_sponsor_eventingLine" text="%s a mais por um CCE"/>
         <text name="eq_loan_popupTitle" text="Uma máquina do seu patrocinador"/>
         <text name="eq_loan_popup" text="%s entregou um(a) novo(a) %s para você testar durante o seu evento. Está te esperando na concessionária. Use de graça para o que quiser até o fim do mês, quando será recolhido."/>
         <text name="eq_loan_delivered" text="%s emprestou o/a %s para o seu mês de evento. Está na concessionária."/>

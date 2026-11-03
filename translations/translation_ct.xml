@@ -1169,6 +1169,7 @@
         <text name="eq_sponsor_discount_repair" text="維修 %s"/>
         <text name="eq_sponsor_discount_buy" text="購買 %s"/>
         <text name="eq_sponsor_loanLine" text="在你的賽事月份借給你一台機器"/>
+        <text name="eq_sponsor_eventingLine" text="三項賽多付 %s"/>
         <text name="eq_loan_popupTitle" text="來自贊助商的機器"/>
         <text name="eq_loan_popup" text="%s 送來了一台全新的 %s，供你在賽事期間試用。它正在經銷商處等你。在月底被收回之前，你可以免費隨意使用。"/>
         <text name="eq_loan_delivered" text="%s 在你的賽事月份借給你 %s。它在經銷商處。"/>

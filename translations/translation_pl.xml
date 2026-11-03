@@ -1169,6 +1169,7 @@
         <text name="eq_sponsor_discount_repair" text="Naprawa %s"/>
         <text name="eq_sponsor_discount_buy" text="Zakup %s"/>
         <text name="eq_sponsor_loanLine" text="Wypożycza maszynę na miesiąc twojego wydarzenia"/>
+        <text name="eq_sponsor_eventingLine" text="%s więcej za WKKW"/>
         <text name="eq_loan_popupTitle" text="Maszyna od twojego sponsora"/>
         <text name="eq_loan_popup" text="%s dostarczył nowy %s do wypróbowania na czas twojego wydarzenia. Czeka na ciebie u dealera. Używaj go bezpłatnie do czego chcesz, aż do końca miesiąca, kiedy zostanie odebrany."/>
         <text name="eq_loan_delivered" text="%s wypożycza ci %s na miesiąc wydarzenia. Stoi u dealera."/>

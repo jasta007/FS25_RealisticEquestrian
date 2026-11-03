@@ -613,7 +613,8 @@ function EqSponsorManager.afterEvent(event, report)
         if contract ~= nil then
             local title = EqSponsorManager.brandTitle(contract.brand)
             table.insert(titles, title)
-            local fee, why = EqSponsorship.eventFee(config, contract, hosted.rating, order, boards, machinesOk(farmId, contract))
+            local fee, why = EqSponsorship.eventFee(config, contract, hosted.rating, order, boards, machinesOk(farmId, contract),
+                event.discipline)
             if fee > 0 then
                 g_currentMission:addMoney(fee, farmId, MoneyType.EQ_SPONSORSHIP or MoneyType.OTHER, true, true)
                 contract.paid = (contract.paid or 0) + fee
