@@ -1188,14 +1188,15 @@
         <text name="eq_settings_quarantine" text="Международный карантин"/>
         <text name="eq_settings_quarantine_tooltip" text="Проводит ли лошадь после соревнований в другом регионе несколько раундов на карантине, прежде чем вернуться домой. Плата за карантин взимается в любом случае."/>
         <text name="eq_ui_col_region" text="Регион"/>
-        <text name="eq_ui_region_home" text="Ваш регион: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="по карте, можно изменить в настройках"/>
-        <text name="eq_ui_region_chosen" text="выбран в настройках"/>
-        <text name="eq_ui_region_quarantine" text="После соревнований за рубежом лошадь уходит на карантин: %d раунд(а) после поездки за океан (жёлтый), %d после дальнего пути (оранжевый)."/>
-        <text name="eq_ui_region_noQuarantine" text="Международный карантин выключен."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, затем %d раунд(а) на карантине"/>
+        <text name="eq_ui_region_home" text="Ваш регион: %s."/>
+        <text name="eq_ui_summary_quarantine" text="За рубежом: после — %s карантина."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, затем %s на карантине"/>
         <text name="eq_ui_status_quarantine" text="На карантине"/>
-        <text name="eq_status_quarantine" text="На карантине, %d раунд(а)"/>
+        <text name="eq_status_quarantine" text="На карантине, %s"/>
+        <text name="eq_ui_time_day" text="%d день"/>
+        <text name="eq_ui_time_days" text="%d дн."/>
+        <text name="eq_ui_time_month" text="%d месяц"/>
+        <text name="eq_ui_time_months" text="%d мес."/>
         <text name="eq_enter_quarantine" text="Эта лошадь на карантине после соревнований за рубежом. Она сможет выступать, когда вернётся домой."/>
         <text name="eq_quarantine_home" text="%s вернулась с карантина."/>
     </texts>

@@ -1188,14 +1188,15 @@
         <text name="eq_settings_quarantine" text="Mezinárodní karanténa"/>
         <text name="eq_settings_quarantine_tooltip" text="Zda kůň po závodech v jiném regionu stráví kola v karanténě, než se vrátí domů. Poplatky za karanténu se platí v každém případě."/>
         <text name="eq_ui_col_region" text="Region"/>
-        <text name="eq_ui_region_home" text="Váš region: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="z mapy, změňte v Nastavení"/>
-        <text name="eq_ui_region_chosen" text="zvolen v Nastavení"/>
-        <text name="eq_ui_region_quarantine" text="Po závodech v zahraničí jde kůň do karantény: %d kol(o) po cestě za oceán (žlutě), %d po dálkové cestě (oranžově)."/>
-        <text name="eq_ui_region_noQuarantine" text="Mezinárodní karanténa je vypnutá."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, poté %d kol(o) v karanténě"/>
+        <text name="eq_ui_region_home" text="Váš region: %s."/>
+        <text name="eq_ui_summary_quarantine" text="V zahraničí: poté %s v karanténě."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, poté %s v karanténě"/>
         <text name="eq_ui_status_quarantine" text="V karanténě"/>
-        <text name="eq_status_quarantine" text="V karanténě, %d kol(o)"/>
+        <text name="eq_status_quarantine" text="V karanténě, %s"/>
+        <text name="eq_ui_time_day" text="%d den"/>
+        <text name="eq_ui_time_days" text="%d dní"/>
+        <text name="eq_ui_time_month" text="%d měsíc"/>
+        <text name="eq_ui_time_months" text="%d měs."/>
         <text name="eq_enter_quarantine" text="Tento kůň je v karanténě po závodech v zahraničí. Závodit může, až bude doma."/>
         <text name="eq_quarantine_home" text="Kůň %s se vrátil z karantény."/>
     </texts>

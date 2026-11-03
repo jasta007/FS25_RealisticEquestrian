@@ -6093,6 +6093,10 @@ end)()
         and EqQuarantine.roundsFor(config, "far") == 2 and EqQuarantine.roundsFor(config, nil) == 0)
     check("quarantine: the setting turns it off", EqQuarantine.roundsFor(config, "far", { quarantine = false }) == 0
         and EqQuarantine.roundsFor(config, "far", { quarantine = true }) == 2)
+    check("quarantine: shown in days or months by the cadence, never rounds",
+        EqQuarantine.timeKey(1, "day") == "eq_ui_time_day" and EqQuarantine.timeKey(2, "day") == "eq_ui_time_days"
+        and EqQuarantine.timeKey(1, "month") == "eq_ui_time_month" and EqQuarantine.timeKey(3, "month") == "eq_ui_time_months"
+        and EqQuarantine.timeKey(2, nil) == "eq_ui_time_days")
 
     local record = EqHorseRecord.new("DE 1 77")
     check("quarantine: a new horse is home", not EqQuarantine.isIn(record) and EqQuarantine.roundsLeft(record) == 0

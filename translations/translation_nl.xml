@@ -1188,14 +1188,15 @@
         <text name="eq_settings_quarantine" text="Internationale quarantaine"/>
         <text name="eq_settings_quarantine_tooltip" text="Of een paard dat terugkomt van een wedstrijd in een andere regio rondes in quarantaine doorbrengt voordat het thuis is. De quarantainekosten worden hoe dan ook betaald."/>
         <text name="eq_ui_col_region" text="Regio"/>
-        <text name="eq_ui_region_home" text="Jouw regio: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="van de kaart, wijzig het in Instellingen"/>
-        <text name="eq_ui_region_chosen" text="gekozen in Instellingen"/>
-        <text name="eq_ui_region_quarantine" text="Na een wedstrijd in het buitenland gaat een paard in quarantaine: %d ronde(s) na een overzeese reis (geel), %d na een lange reis (oranje)."/>
-        <text name="eq_ui_region_noQuarantine" text="Internationale quarantaine staat uit."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, daarna %d ronde(s) in quarantaine"/>
+        <text name="eq_ui_region_home" text="Jouw regio: %s."/>
+        <text name="eq_ui_summary_quarantine" text="Buitenland: daarna %s quarantaine."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, daarna %s in quarantaine"/>
         <text name="eq_ui_status_quarantine" text="In quarantaine"/>
-        <text name="eq_status_quarantine" text="In quarantaine, %d ronde(s)"/>
+        <text name="eq_status_quarantine" text="In quarantaine, %s"/>
+        <text name="eq_ui_time_day" text="%d dag"/>
+        <text name="eq_ui_time_days" text="%d dagen"/>
+        <text name="eq_ui_time_month" text="%d maand"/>
+        <text name="eq_ui_time_months" text="%d maanden"/>
         <text name="eq_enter_quarantine" text="Dat paard is in quarantaine na een wedstrijd in het buitenland. Het kan meedoen zodra het thuis is."/>
         <text name="eq_quarantine_home" text="%s is terug uit quarantaine."/>
     </texts>

@@ -1190,14 +1190,15 @@
         <text name="eq_settings_quarantine" text="Cuarentena internacional"/>
         <text name="eq_settings_quarantine_tooltip" text="Si un caballo que vuelve de un evento en otra región pasa rondas en cuarentena antes de volver a casa. Las tarifas de cuarentena se pagan igualmente."/>
         <text name="eq_ui_col_region" text="Región"/>
-        <text name="eq_ui_region_home" text="Tu región: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="del mapa, cámbiala en Ajustes"/>
-        <text name="eq_ui_region_chosen" text="elegida en Ajustes"/>
-        <text name="eq_ui_region_quarantine" text="Tras un evento en el extranjero el caballo queda en cuarentena: %d ronda(s) tras un viaje a ultramar (ámbar), %d tras uno de larga distancia (naranja)."/>
-        <text name="eq_ui_region_noQuarantine" text="La cuarentena internacional está desactivada."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, luego %d ronda(s) en cuarentena"/>
+        <text name="eq_ui_region_home" text="Tu región: %s."/>
+        <text name="eq_ui_summary_quarantine" text="En el extranjero: %s de cuarentena después."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, luego %s en cuarentena"/>
         <text name="eq_ui_status_quarantine" text="En cuarentena"/>
-        <text name="eq_status_quarantine" text="En cuarentena, %d ronda(s)"/>
+        <text name="eq_status_quarantine" text="En cuarentena, %s"/>
+        <text name="eq_ui_time_day" text="%d día"/>
+        <text name="eq_ui_time_days" text="%d días"/>
+        <text name="eq_ui_time_month" text="%d mes"/>
+        <text name="eq_ui_time_months" text="%d meses"/>
         <text name="eq_enter_quarantine" text="Ese caballo está en cuarentena tras un evento en el extranjero. Podrá competir cuando esté en casa."/>
         <text name="eq_quarantine_home" text="%s ha vuelto de la cuarentena."/>
     </texts>

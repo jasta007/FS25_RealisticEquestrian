@@ -1190,14 +1190,15 @@
         <text name="eq_settings_quarantine" text="Internationale Quarantäne"/>
         <text name="eq_settings_quarantine_tooltip" text="Ob ein Pferd nach einem Turnier in einer anderen Region Runden in Quarantäne verbringt, bevor es heimkommt. Die Quarantänegebühren fallen in jedem Fall an."/>
         <text name="eq_ui_col_region" text="Region"/>
-        <text name="eq_ui_region_home" text="Ihre Region: %s (%s)."/>
-        <text name="eq_ui_region_fromMap" text="von der Karte, in den Einstellungen änderbar"/>
-        <text name="eq_ui_region_chosen" text="in den Einstellungen gewählt"/>
-        <text name="eq_ui_region_quarantine" text="Nach einem Turnier im Ausland kommt ein Pferd in Quarantäne: %d Runde(n) nach Übersee (gelb), %d nach einer Fernreise (orange)."/>
-        <text name="eq_ui_region_noQuarantine" text="Internationale Quarantäne ist aus."/>
-        <text name="eq_ui_status_quarantineAfter" text="%s, danach %d Runde(n) in Quarantäne"/>
+        <text name="eq_ui_region_home" text="Ihre Region: %s."/>
+        <text name="eq_ui_summary_quarantine" text="Im Ausland: danach %s Quarantäne."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, danach %s in Quarantäne"/>
         <text name="eq_ui_status_quarantine" text="In Quarantäne"/>
-        <text name="eq_status_quarantine" text="In Quarantäne, %d Runde(n)"/>
+        <text name="eq_status_quarantine" text="In Quarantäne, %s"/>
+        <text name="eq_ui_time_day" text="%d Tag"/>
+        <text name="eq_ui_time_days" text="%d Tage"/>
+        <text name="eq_ui_time_month" text="%d Monat"/>
+        <text name="eq_ui_time_months" text="%d Monate"/>
         <text name="eq_enter_quarantine" text="Dieses Pferd ist nach einem Turnier im Ausland in Quarantäne. Es kann starten, sobald es zu Hause ist."/>
         <text name="eq_quarantine_home" text="%s ist aus der Quarantäne zurück."/>
     </texts>

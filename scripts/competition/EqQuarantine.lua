@@ -10,7 +10,7 @@
     entry pays abroad (Auto Transport's quarantine, Manual's quarantine yard) is the cost of
     that stay. The "International quarantine" setting turns the stay off (the fees remain).
 
-    Pure: no game or RLRM calls, so it runs headless. The record field is
+    Pure apart from timeText (no game or RLRM calls), so it runs headless. The record field is
     record.quarantine = rounds left (nil when home).
 ]]
 
@@ -63,4 +63,26 @@ function EqQuarantine.tick(record)
     if record.quarantine > 0 then return false end
     record.quarantine = nil
     return true
+end
+
+
+--- The translation key for a stay of this many rounds, in days or months by the "Show events"
+--- cadence (a round is a day or a month), so the player never sees the word "round".
+--- @param rounds number
+--- @param cadence string|nil "day" or "month" (nil reads as "day", the default)
+--- @return string key eq_ui_time_day(s) or eq_ui_time_month(s)
+function EqQuarantine.timeKey(rounds, cadence)
+    local unit = cadence == "month" and "month" or "day"
+    return "eq_ui_time_" .. unit .. (rounds == 1 and "" or "s")
+end
+
+
+--- A stay of this many rounds as text, e.g. "1 day" or "2 months". The only part that reads
+--- the game (g_i18n and the cadence setting), and only when called.
+--- @param rounds number
+--- @return string text
+function EqQuarantine.timeText(rounds)
+    local settings = EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil
+    local key = EqQuarantine.timeKey(rounds, settings ~= nil and settings.cadence or nil)
+    return string.format(g_i18n:getText(key), rounds)
 end

@@ -1188,14 +1188,15 @@
         <text name="eq_settings_quarantine" text="國際檢疫"/>
         <text name="eq_settings_quarantine_tooltip" text="從其他地區賽事回來的馬在回家前是否需要檢疫若干輪。檢疫費用照常收取。"/>
         <text name="eq_ui_col_region" text="地區"/>
-        <text name="eq_ui_region_home" text="你的地區：%s（%s）。"/>
-        <text name="eq_ui_region_fromMap" text="依地圖，可在設定中更改"/>
-        <text name="eq_ui_region_chosen" text="在設定中選擇"/>
-        <text name="eq_ui_region_quarantine" text="在國外參賽後馬匹需要檢疫：海外行程後 %d 輪（黃色），長途行程後 %d 輪（橙色）。"/>
-        <text name="eq_ui_region_noQuarantine" text="國際檢疫已關閉。"/>
-        <text name="eq_ui_status_quarantineAfter" text="%s，之後檢疫 %d 輪"/>
+        <text name="eq_ui_region_home" text="你的地區：%s。"/>
+        <text name="eq_ui_summary_quarantine" text="國外賽事：賽後檢疫 %s。"/>
+        <text name="eq_ui_status_quarantineAfter" text="%s，之後檢疫 %s"/>
         <text name="eq_ui_status_quarantine" text="檢疫中"/>
-        <text name="eq_status_quarantine" text="檢疫中，%d 輪"/>
+        <text name="eq_status_quarantine" text="檢疫中，%s"/>
+        <text name="eq_ui_time_day" text="%d 天"/>
+        <text name="eq_ui_time_days" text="%d 天"/>
+        <text name="eq_ui_time_month" text="%d 個月"/>
+        <text name="eq_ui_time_months" text="%d 個月"/>
         <text name="eq_enter_quarantine" text="這匹馬在國外參賽後正在檢疫。回家後即可參賽。"/>
         <text name="eq_quarantine_home" text="%s已結束檢疫回家。"/>
     </texts>

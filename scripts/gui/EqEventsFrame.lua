@@ -621,6 +621,10 @@ function EqEventsFrame:updateSummary()
                 text = text .. " " .. string.format(g_i18n:getText("eq_ui_entriesLeft"), left,
                     EqCompetitionManager.settings.entriesPerMonth)
             end
+            local rounds = EqCompetitionManager.quarantineRounds(event)
+            if rounds ~= nil and rounds > 0 then
+                text = text .. " " .. string.format(g_i18n:getText("eq_ui_summary_quarantine"), EqQuarantine.timeText(rounds))
+            end
         end
     end
     self.summaryText:setText(text)
@@ -897,7 +901,7 @@ function EqEventsFrame:updateHorsePanel()
     -- A horse that can go abroad hears what follows: its quarantine before it is home again.
     local selected = EqCompetitionManager.events[self.selectedEventId]
     local rounds = row.canEnter and EqCompetitionManager.quarantineRounds(selected) or 0
-    setText(self.panelStatus, rounds > 0 and string.format(g_i18n:getText("eq_ui_status_quarantineAfter"), row.status, rounds) or row.status)
+    setText(self.panelStatus, rounds > 0 and string.format(g_i18n:getText("eq_ui_status_quarantineAfter"), row.status, EqQuarantine.timeText(rounds)) or row.status)
     for i, stat in ipairs(EqConstants.STAT_KEYS) do
         local label, value = self.panelStatLabel[i], self.panelStatValue[i]
         keepDefaultColor(label)
