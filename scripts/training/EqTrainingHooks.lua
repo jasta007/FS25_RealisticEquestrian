@@ -769,6 +769,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
     end
     local staminaJudged = EqTraining.staminaStep(sheet, dt, worn)
+    if staminaJudged == "hit" then spec.eqStreakFlashAt = g_time end
     if staminaJudged ~= nil then
         local st = sheet.stamina
         Log:info("Stamina: band %s at %.0f%%, now x%.1f, next band %s %.0f-%.0f%%", staminaJudged, ex.value, st.mult,
@@ -2010,6 +2011,9 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
     end
     EqTrainingHud.drawPops()
+    -- Speed lines while the stamina band is ridden (not in the Speed view).
+    EqTrainingHud.drawStreaks(view ~= "speed" and ex.mode ~= nil and ex.lock == nil and EqTraining.inBand(sheet),
+        view ~= "speed" and spec.eqStreakFlashAt or nil)
 
     if isTired(spec.cluster) then table.insert(rows, { left = g_i18n:getText("eq_train_worn"), leftColor = COLOR.red }) end
 
