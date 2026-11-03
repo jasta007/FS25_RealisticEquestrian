@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="Eventingpaard"/>
         <text name="eq_specialty_racehorse" text="Renpaard"/>
         <text name="eq_specialty_allRounder" text="Allrounder"/>
-        <text name="eq_enter_settling" text="Dat paard moet na de verhuizing nog wennen. Het mag vanaf volgende maand meedoen."/>
         <text name="eq_enter_rested" text="Dat paard heeft deze maand al %d starts gehad en heeft rust nodig. Volgende maand mag het weer."/>
         <text name="eq_reveal_better" text="Je kent %s nu beter, en het paard lijkt nog beter dan de handelaar liet blijken."/>
         <text name="eq_reveal_worse" text="Je kent %s nu beter, en je hebt het gevoel dat je misschien misleid bent."/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="Dag %d"/>
         <text name="eq_ui_status_ok" text="Kan meedoen"/>
         <text name="eq_ui_status_lowHealth" text="Lage gezondheid: %d%% afmelding"/>
+        <text name="eq_ui_status_settling" text="Wennen: kleinere kans"/>
+        <text name="eq_ui_status_tired" text="Geen rustdag: kleinere kans"/>
+        <text name="eq_ui_status_settlingTired" text="Wennen, geen rust: kleinere kans"/>
         <text name="eq_ui_status_eventFull" text="Al twee van je paarden ingeschreven"/>
         <text name="eq_ui_status_tooYoung" text="Te jong"/>
         <text name="eq_ui_status_tooOld" text="Te oud"/>

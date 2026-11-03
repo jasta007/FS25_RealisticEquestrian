@@ -538,7 +538,6 @@
         <text name="eq_specialty_eventer" text="Vielseitigkeitspferd"/>
         <text name="eq_specialty_racehorse" text="Rennpferd"/>
         <text name="eq_specialty_allRounder" text="Allrounder"/>
-        <text name="eq_enter_settling" text="Dieses Pferd gewöhnt sich nach dem Umzug noch ein. Es kann ab nächsten Monat starten."/>
         <text name="eq_enter_rested" text="Dieses Pferd hatte diesen Monat schon %d Starts und braucht eine Pause. Nächsten Monat kann es wieder starten."/>
         <text name="eq_reveal_better" text="Sie haben %s besser kennengelernt, und das Pferd wirkt sogar noch besser, als der Händler behauptet hat."/>
         <text name="eq_reveal_worse" text="Sie haben %s besser kennengelernt und haben das Gefühl, dass Sie getäuscht wurden."/>
@@ -603,6 +602,9 @@
         <text name="eq_ui_day" text="Tag %d"/>
         <text name="eq_ui_status_ok" text="Startberechtigt"/>
         <text name="eq_ui_status_lowHealth" text="Geringe Gesundheit: %d%% Streichung"/>
+        <text name="eq_ui_status_settling" text="Eingewöhnung: geringere Chancen"/>
+        <text name="eq_ui_status_tired" text="Kein Ruhetag: geringere Chancen"/>
+        <text name="eq_ui_status_settlingTired" text="Eingewöhnung, kein Ruhetag: geringere Chancen"/>
         <text name="eq_ui_status_eventFull" text="Schon zwei Ihrer Pferde gemeldet"/>
         <text name="eq_ui_status_tooYoung" text="Zu jung"/>
         <text name="eq_ui_status_tooOld" text="Zu alt"/>

@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="三项赛马"/>
         <text name="eq_specialty_racehorse" text="赛马"/>
         <text name="eq_specialty_allRounder" text="全能型"/>
-        <text name="eq_enter_settling" text="这匹马搬家后还在适应。下个月起可以参赛。"/>
         <text name="eq_enter_rested" text="这匹马本月已出赛%d次，需要休息。下个月可以再次参赛。"/>
         <text name="eq_reveal_better" text="你对%s更了解了，它看起来比商人说的还要好。"/>
         <text name="eq_reveal_worse" text="你对%s更了解了，感觉自己可能被误导了。"/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="第%d天"/>
         <text name="eq_ui_status_ok" text="可报名"/>
         <text name="eq_ui_status_lowHealth" text="健康低：%d%%退赛"/>
+        <text name="eq_ui_status_settling" text="适应期：机会降低"/>
+        <text name="eq_ui_status_tired" text="未休息一天：机会降低"/>
+        <text name="eq_ui_status_settlingTired" text="适应期且未休息：机会降低"/>
         <text name="eq_ui_status_eventFull" text="已有两匹马报名"/>
         <text name="eq_ui_status_tooYoung" text="太年轻"/>
         <text name="eq_ui_status_tooOld" text="太老"/>

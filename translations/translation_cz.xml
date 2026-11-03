@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="Kůň na všestrannost"/>
         <text name="eq_specialty_racehorse" text="Dostihový kůň"/>
         <text name="eq_specialty_allRounder" text="Všeuměl"/>
-        <text name="eq_enter_settling" text="Tento kůň se po přesunu ještě zabydluje. Závodit může od příštího měsíce."/>
         <text name="eq_enter_rested" text="Tento kůň měl tento měsíc už %d startů a potřebuje odpočinek. Znovu může závodit příští měsíc."/>
         <text name="eq_reveal_better" text="Lépe jste poznali koně %s a vypadá ještě lépe, než obchodník naznačoval."/>
         <text name="eq_reveal_worse" text="Lépe jste poznali koně %s a máte pocit, že jste mohli být oklamáni."/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="Den %d"/>
         <text name="eq_ui_status_ok" text="Může startovat"/>
         <text name="eq_ui_status_lowHealth" text="Slabé zdraví: %d%% odhlášení"/>
+        <text name="eq_ui_status_settling" text="Aklimatizace: nižší šance"/>
+        <text name="eq_ui_status_tired" text="Bez dne odpočinku: nižší šance"/>
+        <text name="eq_ui_status_settlingTired" text="Aklimatizace, bez odpočinku: nižší šance"/>
         <text name="eq_ui_status_eventFull" text="Už přihlášeni dva vaši koně"/>
         <text name="eq_ui_status_tooYoung" text="Příliš mladý"/>
         <text name="eq_ui_status_tooOld" text="Příliš starý"/>

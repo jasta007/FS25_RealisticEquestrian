@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="総合馬術馬"/>
         <text name="eq_specialty_racehorse" text="競走馬"/>
         <text name="eq_specialty_allRounder" text="万能型"/>
-        <text name="eq_enter_settling" text="その馬は移動後まだ環境に慣れていません。来月から出場できます。"/>
         <text name="eq_enter_rested" text="その馬は今月すでに%d回出走しており、休養が必要です。来月また出場できます。"/>
         <text name="eq_reveal_better" text="%sのことがよくわかってきました。ディーラーが言っていたよりもさらに良さそうです。"/>
         <text name="eq_reveal_worse" text="%sのことがよくわかってきました。どうやらだまされたような気がします。"/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="%d日目"/>
         <text name="eq_ui_status_ok" text="出場可能"/>
         <text name="eq_ui_status_lowHealth" text="健康不良：取消%d%%"/>
+        <text name="eq_ui_status_settling" text="慣らし中：勝算が下がる"/>
+        <text name="eq_ui_status_tired" text="休養日なし：勝算が下がる"/>
+        <text name="eq_ui_status_settlingTired" text="慣らし中・休養なし：勝算が下がる"/>
         <text name="eq_ui_status_eventFull" text="すでに2頭エントリー済み"/>
         <text name="eq_ui_status_tooYoung" text="若すぎる"/>
         <text name="eq_ui_status_tooOld" text="年を取りすぎ"/>

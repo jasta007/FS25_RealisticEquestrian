@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="Koń WKKW"/>
         <text name="eq_specialty_racehorse" text="Koń wyścigowy"/>
         <text name="eq_specialty_allRounder" text="Wszechstronny"/>
-        <text name="eq_enter_settling" text="Ten koń wciąż aklimatyzuje się po przeprowadzce. Może startować od przyszłego miesiąca."/>
         <text name="eq_enter_rested" text="Ten koń miał w tym miesiącu już %d startów i potrzebuje odpoczynku. Znów może startować w przyszłym miesiącu."/>
         <text name="eq_reveal_better" text="Lepiej poznałeś konia %s i wygląda jeszcze lepiej, niż sugerował handlarz."/>
         <text name="eq_reveal_worse" text="Lepiej poznałeś konia %s i masz wrażenie, że mogłeś zostać wprowadzony w błąd."/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="Dzień %d"/>
         <text name="eq_ui_status_ok" text="Może startować"/>
         <text name="eq_ui_status_lowHealth" text="Słabe zdrowie: %d%% wycofania"/>
+        <text name="eq_ui_status_settling" text="Aklimatyzacja: mniejsze szanse"/>
+        <text name="eq_ui_status_tired" text="Bez dnia odpoczynku: mniejsze szanse"/>
+        <text name="eq_ui_status_settlingTired" text="Aklimatyzacja, bez odpoczynku: mniejsze szanse"/>
         <text name="eq_ui_status_eventFull" text="Już zgłoszone dwa twoje konie"/>
         <text name="eq_ui_status_tooYoung" text="Za młody"/>
         <text name="eq_ui_status_tooOld" text="Za stary"/>

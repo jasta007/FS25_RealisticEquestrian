@@ -383,7 +383,6 @@
         <text name="eq_specialty_eventer" text="Caballo de completo"/>
         <text name="eq_specialty_racehorse" text="Caballo de carreras"/>
         <text name="eq_specialty_allRounder" text="Polivalente"/>
-        <text name="eq_enter_settling" text="Ese caballo aún se está adaptando tras el traslado. Podrá competir a partir del mes que viene."/>
         <text name="eq_enter_rested" text="Ese caballo ya ha salido %d veces este mes y necesita descansar. Podrá volver a correr el mes que viene."/>
         <text name="eq_reveal_better" text="Ya conoces mejor a %s, y parece aún mejor de lo que dio a entender el comerciante."/>
         <text name="eq_reveal_worse" text="Ya conoces mejor a %s, y tienes la sensación de que te engañaron."/>
@@ -448,6 +447,9 @@
         <text name="eq_ui_day" text="Día %d"/>
         <text name="eq_ui_status_ok" text="Puede inscribirse"/>
         <text name="eq_ui_status_lowHealth" text="Salud baja: %d%% de retirada"/>
+        <text name="eq_ui_status_settling" text="Adaptándose: menos opciones"/>
+        <text name="eq_ui_status_tired" text="Sin día de descanso: menos opciones"/>
+        <text name="eq_ui_status_settlingTired" text="Adaptándose, sin descanso: menos opciones"/>
         <text name="eq_ui_status_eventFull" text="Ya hay dos de tus caballos inscritos"/>
         <text name="eq_ui_status_tooYoung" text="Demasiado joven"/>
         <text name="eq_ui_status_tooOld" text="Demasiado mayor"/>
