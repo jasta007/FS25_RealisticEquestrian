@@ -972,9 +972,9 @@ end
 
 --- Now and then a seated person moves a hand (or both) between lap and side, and looks about.
 EqSpectators.FIDGET = {
-    swapMs = { 15000, 50000 },  -- between hand moves
+    swapMs = { 30000, 60000 },  -- between hand moves
     moveMs = 600,               -- one hand move, lap to side or back
-    lookMs = { 3000, 11000 },   -- between looks
+    lookMs = { 10000, 20000 },   -- between looks
     holdMs = { 1000, 3500 },    -- looking away this long
     lookYaw = { 15, 55 },       -- degrees either way
     lookEase = 180,             -- ms: how quickly the head follows
@@ -1001,7 +1001,7 @@ local function fidget(person, now, dt)
         local moving = false
         if now >= person.nextSwap then
             person.nextSwap = now + between(f.swapMs)
-            local ids = math.random() < 0.5 and { "leftArm", "rightArm" } or { math.random() < 0.5 and "leftArm" or "rightArm" }
+            local ids = { math.random() < 0.5 and "leftArm" or "rightArm" }   -- one hand at a time (James)
             for _, id in ipairs(ids) do
                 EqSpectators.lapMix(person, id)
                 person.mix[id].goal = (person.mix[id].goal or person.mix[id].at) >= 0.5 and 0 or 1
