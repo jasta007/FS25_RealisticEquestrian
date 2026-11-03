@@ -1187,6 +1187,8 @@
         <text name="eq_region_asiaOceania" text="Asie a Oceánie"/>
         <text name="eq_settings_quarantine" text="Mezinárodní karanténa"/>
         <text name="eq_settings_quarantine_tooltip" text="Zda kůň po závodech v jiném regionu stráví kola v karanténě, než se vrátí domů. Poplatky za karanténu se platí v každém případě."/>
+        <text name="eq_settings_settlingIn" text="Nové koně mají před závody období aklimatizace"/>
+        <text name="eq_settings_settlingIn_tooltip" text="Když je zapnuto, kůň koupený od obchodníka si první měsíc na farmě zvyká a do té doby ho nelze přihlásit na závody."/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Váš region: %s."/>
         <text name="eq_ui_summary_quarantine" text="V zahraničí: poté %s v karanténě."/>

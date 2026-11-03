@@ -1187,6 +1187,8 @@
         <text name="eq_region_asiaOceania" text="Azië en Oceanië"/>
         <text name="eq_settings_quarantine" text="Internationale quarantaine"/>
         <text name="eq_settings_quarantine_tooltip" text="Of een paard dat terugkomt van een wedstrijd in een andere regio rondes in quarantaine doorbrengt voordat het thuis is. De quarantainekosten worden hoe dan ook betaald."/>
+        <text name="eq_settings_settlingIn" text="Nieuwe paarden hebben een gewenningsperiode voor ze meedoen"/>
+        <text name="eq_settings_settlingIn_tooltip" text="Als dit aan staat, moet een paard van de handelaar de eerste maand op de boerderij wennen en kan het tot dan niet worden ingeschreven voor evenementen."/>
         <text name="eq_ui_col_region" text="Regio"/>
         <text name="eq_ui_region_home" text="Jouw regio: %s."/>
         <text name="eq_ui_summary_quarantine" text="Buitenland: daarna %s quarantaine."/>

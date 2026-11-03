@@ -1187,6 +1187,8 @@
         <text name="eq_region_asiaOceania" text="亞洲和大洋洲"/>
         <text name="eq_settings_quarantine" text="國際檢疫"/>
         <text name="eq_settings_quarantine_tooltip" text="從其他地區賽事回來的馬在回家前是否需要檢疫若干輪。檢疫費用照常收取。"/>
+        <text name="eq_settings_settlingIn" text="新馬參賽前需要適應期"/>
+        <text name="eq_settings_settlingIn_tooltip" text="開啟後，從馬販處買來的馬在農場的第一個月需要適應，在此之前不能報名參加賽事。"/>
         <text name="eq_ui_col_region" text="地區"/>
         <text name="eq_ui_region_home" text="你的地區：%s。"/>
         <text name="eq_ui_summary_quarantine" text="國外賽事：賽後檢疫 %s。"/>

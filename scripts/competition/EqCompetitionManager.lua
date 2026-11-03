@@ -16,7 +16,8 @@
     Players enter from the Events tab or with eqEnter and pay the fee and the horse's transport at
     once. A farm makes at most entriesPerMonth entries a month (a setting, 3 by default). A horse starts at
     most MAX_ROUND_STARTS round events a month, so a good horse is not a daily money tap, and a
-    horse bought from the dealer settles in for a month before it can compete. Results, prize
+    horse bought from the dealer settles in for a month before it can compete when the settlingIn
+    setting is on (off by default). Results, prize
     money and the career record follow when the event resolves. EqRisk decides scratches,
     eliminations and injuries first; injured horses rest for some months, and their vet bills
     are charged at the start of each month until they recover. Horses from every farm can be
@@ -70,7 +71,7 @@ function EqCompetitionManager.reset()
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
         eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6,
-        homeRegion = "auto", quarantine = true, crowdDensity = "medium" }
+        homeRegion = "auto", quarantine = true, crowdDensity = "medium", settlingIn = false }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -1467,6 +1468,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. ".settings#crowdDensity", EqCompetitionManager.settings.crowdDensity or "medium")
     xmlFile:setString(key .. ".settings#homeRegion", EqCompetitionManager.settings.homeRegion)
     xmlFile:setBool(key .. ".settings#quarantine", EqCompetitionManager.settings.quarantine)
+    xmlFile:setBool(key .. ".settings#settlingIn", EqCompetitionManager.settings.settlingIn == true)
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
@@ -1558,6 +1560,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.crowdDensity = xmlFile:getString(key .. ".settings#crowdDensity", settings.crowdDensity)
     settings.homeRegion = xmlFile:getString(key .. ".settings#homeRegion", settings.homeRegion)
     settings.quarantine = xmlFile:getBool(key .. ".settings#quarantine", settings.quarantine)
+    -- Saves from before the setting have no attribute and load with it off, like a new game.
+    settings.settlingIn = xmlFile:getBool(key .. ".settings#settlingIn", settings.settlingIn)
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")

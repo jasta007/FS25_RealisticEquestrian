@@ -1189,6 +1189,8 @@
         <text name="eq_region_asiaOceania" text="Asie et Océanie"/>
         <text name="eq_settings_quarantine" text="Quarantaine internationale"/>
         <text name="eq_settings_quarantine_tooltip" text="Si un cheval revenant d'un concours dans une autre région passe des tours en quarantaine avant de rentrer. Les frais de quarantaine sont payés dans tous les cas."/>
+        <text name="eq_settings_settlingIn" text="Les nouveaux chevaux ont une période d'adaptation avant de concourir"/>
+        <text name="eq_settings_settlingIn_tooltip" text="Si activé, un cheval acheté chez le marchand s'adapte pendant son premier mois à la ferme et ne peut pas être engagé en concours avant."/>
         <text name="eq_ui_col_region" text="Région"/>
         <text name="eq_ui_region_home" text="Votre région : %s."/>
         <text name="eq_ui_summary_quarantine" text="À l&apos;étranger : %s de quarantaine ensuite."/>

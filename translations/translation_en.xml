@@ -1187,6 +1187,8 @@
         <text name="eq_region_asiaOceania" text="Asia and Oceania"/>
         <text name="eq_settings_quarantine" text="International quarantine"/>
         <text name="eq_settings_quarantine_tooltip" text="Whether a horse back from an event in another region spends rounds in quarantine before it is home. The quarantine fees are paid either way."/>
+        <text name="eq_settings_settlingIn" text="New horses have a settling in period before competing"/>
+        <text name="eq_settings_settlingIn_tooltip" text="When on, a horse bought from the dealer settles in for its first month on the farm and can't be entered in events until then."/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Your region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Abroad: %s in quarantine afterwards."/>

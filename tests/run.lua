@@ -6185,6 +6185,42 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
+-- SETTLING IN: a bought horse sits out its first month only while the setting is on, which it
+-- isn't by default, nor in a save from before the setting.
+;(function()
+    local row = EqSettings.BY_ID.settlingIn
+    check("settling in: a setting row, off by default", row ~= nil and row.default == false
+        and #row.values == 2 and EqSettings.stateOf(row, nil) == 1)
+    local bought = EqHorseRecord.new("DE 1 77")
+    bought.ownedMonths = 0
+    check("settling in: off, a horse just bought can compete", not bought:isSettling({ settlingIn = false })
+        and not bought:isSettling({}))
+    check("settling in: on, it settles for its first month", bought:isSettling({ settlingIn = true }))
+    bought.ownedMonths = EqConstants.SETTLE_MONTHS
+    check("settling in: on, settled after a month", not bought:isSettling({ settlingIn = true }))
+    check("settling in: a bred horse never settles", not EqHorseRecord.new("DE 1 78"):isSettling({ settlingIn = true }))
+
+    local hadManager, hadMission = EqCompetitionManager, g_currentMission
+    dofile("scripts/competition/EqCompetitionManager.lua")
+    EqCompetitionManager.loadFromXMLFile(nil, "eq")
+    local fresh = EqCompetitionManager.settings.settlingIn
+    bought.ownedMonths = 0
+    local freshReason = EqCompetitionManager.unavailableReason(bought, EqCompetition.KIND_ROUND, nil)
+    local old = memoryXML()
+    old:setBool("eq.settings#quarantine", true)
+    EqCompetitionManager.loadFromXMLFile(old, "eq")
+    local fromOld = EqCompetitionManager.settings.settlingIn
+    local on = memoryXML()
+    on:setBool("eq.settings#settlingIn", true)
+    EqCompetitionManager.loadFromXMLFile(on, "eq")
+    local fromOn = EqCompetitionManager.settings.settlingIn
+    local onReason = EqCompetitionManager.unavailableReason(bought, EqCompetition.KIND_ROUND, nil)
+    check("settling in: off in a new game", fresh == false and freshReason == nil)
+    check("settling in: off in a save from before the setting", fromOld == false)
+    check("settling in: on survives a save and blocks entries", fromOn == true and onReason == "settling")
+    EqCompetitionManager, g_currentMission = hadManager, hadMission
+end)()
+
 -- SPONSOR YEAR: offers come in January, whichever period that is (FS25 period 1 is March on a
 -- northern map, September on a southern one), and the offers' year is the calendar year.
 ;(function()
