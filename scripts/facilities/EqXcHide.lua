@@ -214,6 +214,18 @@ function EqXcHide.heldBodies(root)
 end
 
 
+--- A drop wall with a machine parked on its deck (EqPlinths, horses count) stays while it is
+--- shown: never pull the floor away. It only HOLDS a piece that is already there (or just loaded,
+--- shown as built); a hidden piece never comes back for one, or riding over a hidden drop wall
+--- made its deck pop up under the horse (James's video, 2026-11-03).
+--- @param placeable table
+--- @return boolean true when the piece must stay shown
+function EqXcHide.keepsForMachine(placeable)
+    if placeable.eqXcMode ~= nil and placeable.eqXcMode ~= EqXcHide.SHOWN then return false end
+    return EqPlinths ~= nil and EqPlinths.holdsMachine ~= nil and EqPlinths.holdsMachine(placeable) == true
+end
+
+
 --- @return boolean true in a multiplayer game
 local function isMultiplayer()
     local mission = g_currentMission
@@ -283,8 +295,7 @@ function EqXcHide.update()
     for _, placeable in ipairs(pieces) do
         local want = EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state)
         if ropes and want == EqXcHide.HIDDEN and EqSponsors.isRope(placeable.configFileName) then want = EqXcHide.GHOST end
-        -- a drop wall with a machine parked on its deck stays (EqPlinths): never pull the floor away
-        if want ~= EqXcHide.SHOWN and EqPlinths ~= nil and EqPlinths.holdsMachine(placeable) then want = EqXcHide.SHOWN end
+        if want ~= EqXcHide.SHOWN and EqXcHide.keepsForMachine(placeable) then want = EqXcHide.SHOWN end
         EqXcHide.apply(placeable, want)
     end
     if mode ~= EqXcHide.mode and #pieces > 0 then
