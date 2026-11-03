@@ -127,19 +127,16 @@ x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past th
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
 Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
-Behind it the horse has a hidden breath:
+It follows a blue pace band on the gallop part of the bar, 15 points of exertion wide:
 
-- Pushing raises the multiplier, faster the higher the bar is (with its square), and every point of
-  exertion pushed uses a hundredth of the breath. With less breath the multiplier rises more slowly
-  (down to a tenth of the rate) and falls faster (up to twice as fast), but never stops either way.
-- Recovering costs multiplier: quickly in the top third, slowly in the middle zone, quickly again
-  in the bottom third. Breath comes back in the middle and bottom thirds, not the top. A canter or
-  slower costs multiplier quickly too; a Sprint holds it.
-- So the way to x5 is to push close to the line, recover down into the zone and let the horse
-  breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
-  out of breath and earns little; letting the bar fall too far throws the multiplier away.
-- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1, empties the breath and stops
-  stamina training until the bar is empty.
+- The band starts at 35-50% of the gallop at x1 and climbs with the multiplier to 80-95% at x5,
+  so the better you ride, the closer to the Fatigued line you have to hold the bar.
+- With the bar inside the band (Pushing or Recovering) the multiplier climbs, about x1 to x5 in
+  half a minute. Above the band it holds: no gain, just the risk of Fatigued.
+- Below the band it drops quickly and the band slides down with it, so catching it again keeps
+  most of the multiplier. A canter or slower drops it quickly too; a Sprint holds it.
+- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1 and stops stamina training
+  until the bar is empty.
 
 ### Agility
 

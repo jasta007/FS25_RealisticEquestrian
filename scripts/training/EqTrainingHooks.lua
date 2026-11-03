@@ -1774,6 +1774,15 @@ local function exertionRows(spec, sheet, view, stamina)
     local third = (BAR.line - BAR.canter) / 3
     local bar = { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
         ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker }
+    -- The stamina pace band on the gallop while galloping (not in the Speed view): hold the bar in it
+    -- to raise the multiplier (EqTraining.paceBand). Brighter while the bar is in it.
+    if view ~= "speed" and ex.mode ~= nil and ex.lock == nil then
+        local from, to = EqTraining.paceBand(sheet.stamina.mult)
+        local gallop = BAR.line - BAR.canter
+        local inBand = EqTraining.pacePlace(sheet) == "in"
+        bar.band = { BAR.canter + gallop * from / EqExertion.LINE, BAR.canter + gallop * to / EqExertion.LINE,
+            STAT_COLOR.stamina, inBand }
+    end
     if view == "condensed" then return { bar } end
     local rows = { words, bar }
     if EqTrainingHooks.GALLOP_VIEWS[view] then

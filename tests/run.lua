@@ -843,38 +843,49 @@ do
     check("dropping out of a Sprint to a canter ends and banks it",
         E.step(dropped.exertion, "canter", 50) == "sprintOver" and T.speedStep(dropped, 50, false) ~= nil and dropped.focused.speed > 0)
 
-    -- Stamina: push near the top, recover into the zone and wait there, push again.
-    local skilled = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 92 then return "back" end
-        if ex.mode == "recover" and ex.value <= 45 then return "forward" end
+    -- Stamina: hold the bar in the pace band, which climbs as the multiplier does.
+    local function holdAt(low, high)
+        return function(ex)
+            if ex.mode == "push" and ex.value >= high then return "back" end
+            if ex.mode == "recover" and ex.value <= low then return "forward" end
+        end
+    end
+    local skilled = gallop(function(ex, sheet)
+        local from, to = T.paceBand(sheet.stamina.mult)
+        local high = math.min(to - 2, 92)
+        if ex.mode == "push" and ex.value >= high then return "back" end
+        if ex.mode == "recover" and ex.value <= high - 4 then return "forward" end
     end, 150000)
-    local jiggler = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 95 then return "back" end
-        if ex.mode == "recover" and ex.value <= 85 then return "forward" end
-    end, 150000)
-    local lazy = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 92 then return "back" end
-        if ex.mode == "recover" and ex.value <= 3 then return "forward" end
-    end, 150000)
+    local middle = gallop(holdAt(48, 52), 150000)
+    local lazy = gallop(holdAt(3, 92), 150000)
     local flatOut = gallop(function() return nil end, 150000)
-    check("riding in the zone builds the stamina multiplier towards x5 without Fatigued",
-        not skilled.blown and skilled.stamina.mult > 2.5 and skilled.averageMult > 3,
+    check("following the pace band up builds the stamina multiplier to x5 without Fatigued",
+        not skilled.blown and skilled.stamina.mult > 4.9 and skilled.averageMult > 3.5,
         string.format("x%.1f now, x%.2f average", skilled.stamina.mult, skilled.averageMult))
-    check("bouncing between Push and Recover near the top earns little multiplier",
-        jiggler.averageMult < skilled.averageMult * 0.6, string.format("x%.2f average", jiggler.averageMult))
-    check("recovering too far loses the multiplier", lazy.averageMult < skilled.averageMult * 0.75,
+    check("holding the bar in the middle earns a lower multiplier than holding it high",
+        middle.stamina.mult < 2.5 and middle.averageMult < skilled.averageMult * 0.65,
+        string.format("x%.1f now, x%.2f average", middle.stamina.mult, middle.averageMult))
+    check("recovering too far loses the multiplier", lazy.averageMult < skilled.averageMult * 0.6,
         string.format("x%.2f average", lazy.averageMult))
     check("Fatigued drops the multiplier to x1 and stops stamina training",
         flatOut.blown and flatOut.focused.stamina < skilled.focused.stamina * 0.6)
     check("good stamina riding fills most of a day's effort in a riding bar of gallop",
         skilled.focused.stamina > 1.2, string.format("%.2f in 150 s", skilled.focused.stamina))
+    local above = T.newSheet()
+    above.exertion.mode, above.exertion.value, above.stamina.mult = "recover", 90, 2
+    T.staminaStep(above, 1000, false)
+    local below = T.newSheet()
+    below.exertion.mode, below.exertion.value, below.stamina.mult = "recover", 20, 3
+    T.staminaStep(below, 1000, false)
+    check("above the pace band the multiplier holds, below it the multiplier falls",
+        above.stamina.mult == 2 and math.abs(below.stamina.mult - (3 - T.PACE_DROP)) < 1e-6)
     local blownSheet = T.newSheet()
     blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4
     T.staminaStep(blownSheet, 1000, false)
     check("while Fatigued there is no multiplier and no stamina training",
         blownSheet.stamina.mult == 1 and blownSheet.focused.stamina == 0)
-    print(string.format("info: stamina over 150 s: zone x%.2f avg (%.2f effort), jiggle x%.2f, over-recover x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
-        skilled.averageMult, skilled.focused.stamina, jiggler.averageMult, lazy.averageMult, flatOut.focused.stamina,
+    print(string.format("info: stamina over 150 s: pace band x%.2f avg (%.2f effort), middle x%.2f, over-recover x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
+        skilled.averageMult, skilled.focused.stamina, middle.averageMult, lazy.averageMult, flatOut.focused.stamina,
         high.banked[1] or 0, high.focused.speed))
     do
         -- Riding that earns nothing costs a quarter of the bar; steady focused work the full rate.
