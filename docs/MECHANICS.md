@@ -949,7 +949,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   15 to be big; short of that it drops a size. A brand that makes easy-to-get kit (a small,
   medium or large tractor, a car, a truck, a telehandler or a loader; `easyCategories`) can be a
   small sponsor with just 1 machine. The game's own Lizard brand is left out.
-- **When:** offers come at the start of each year (and at once in a save that has none yet): up
+- **When:** offers come at the start of each year, in January (and at once in a save that has none yet): up
   to 3 big, 4 moderate and 5 small, open for 6 months (long enough to book an event in the second half of the year).
 - **Several sponsors:** up to 3 at once, each with all its own rules met. **Big** sponsors are
   always **exclusive** (no one else while they sponsor you, and you can only sign them with no

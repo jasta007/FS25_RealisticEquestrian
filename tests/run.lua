@@ -6138,5 +6138,24 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
+-- SPONSOR YEAR: offers come in January (FS25 period 11; period 1 is March), and the offers' year
+-- is the calendar year, so January's offers aren't the same draw as March's in a new save.
+;(function()
+    local hadManager, hadMission, hadLog = EqSponsorManager, g_currentMission, Log
+    Log = Log or { info = function() end }
+    dofile("scripts/sponsors/EqSponsorManager.lua")
+    local M = EqSponsorManager
+    local starts, years = {}, {}
+    for period = 1, 12 do
+        g_currentMission = { environment = { currentPeriod = period, currentYear = 3 } }
+        if M.isYearStart(period) then table.insert(starts, period) end
+        years[period] = M.year()
+    end
+    check("sponsor year: new offers only in January (period 11)", #starts == 1 and starts[1] == 11)
+    check("sponsor year: March to December keep the game's year", years[1] == 3 and years[7] == 3 and years[10] == 3)
+    check("sponsor year: January and February are the next calendar year", years[11] == 4 and years[12] == 4)
+    EqSponsorManager, g_currentMission, Log = hadManager, hadMission, hadLog
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

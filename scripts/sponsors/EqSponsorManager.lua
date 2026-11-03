@@ -6,7 +6,7 @@
     - The shop is read once a session: every machine (store items of the vehicle and tool
       category types, shown in the shop, priced) by brand, so brands are sized from the player's
       own shop, mods and all. Lizard and the game's "no brand" are left out (data/sponsors.xml).
-    - Offers come at the start of each year (the year's first month), like staff candidates:
+    - Offers come at the start of each year (January, period 11), like staff candidates:
       a few sponsors of each size, each with its own demands and rewards. They stay a few months.
       A farm the mod meets for the first time gets this year's offers at once.
     - A farm signs offers from the Events page's Sponsors tab once it meets their terms: up to
@@ -290,10 +290,26 @@ function EqSponsorManager.likelyPay(farmId, offer)
 end
 
 
---- @return number year the game's year
+-- FS25's periods start in March (period 1 = March, 11 = January, 12 = February), and the game's
+-- year turns over at period 1. Sponsors keep the calendar year, so offers come in January
+-- (James, 2026-11-03: they came in September... March was period 1 all along).
+EqSponsorManager.JANUARY_PERIOD = 11
+
+
+--- @param period number|nil the game's period (1 = March)
+--- @return boolean january the period is January, the sponsor year's first month
+function EqSponsorManager.isYearStart(period)
+    return period == EqSponsorManager.JANUARY_PERIOD
+end
+
+
+--- @return number year the calendar year: the game's year, one on in January and February
 function EqSponsorManager.year()
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
-    if environment ~= nil and environment.currentYear ~= nil then return environment.currentYear end
+    if environment ~= nil and environment.currentYear ~= nil then
+        local period = environment.currentPeriod or 1
+        return environment.currentYear + ((period >= EqSponsorManager.JANUARY_PERIOD) and 1 or 0)
+    end
     return math.floor((EqCompetitionManager.month or 0) / 12)
 end
 
@@ -615,9 +631,9 @@ function EqSponsorManager.onMonthStarted(month)
         end
     end
 
-    -- The year's first month: new offers for every farm.
+    -- January, the year's first month: new offers for every farm.
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
-    if environment ~= nil and environment.currentPeriod == 1 then
+    if environment ~= nil and EqSponsorManager.isYearStart(environment.currentPeriod) then
         for _, farm in pairs(g_farmManager:getFarms()) do
             local farmId = farm.farmId
             if farmId ~= nil and farmId ~= FarmManager.SPECTATOR_FARM_ID then
