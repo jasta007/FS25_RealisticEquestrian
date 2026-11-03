@@ -90,12 +90,21 @@ local function attach(vehicle)
     link(vehicle.rootNode, holder)
     local psClone = clone(ref.node, true, false, true)
     link(holder, psClone)
+    -- The emitter shape moves to the holder first: a world space particle system goes to the
+    -- scene root when loaded, and would take its emitter (and so the puffs) with it.
+    local emitter = nil
+    if getNumOfChildren(psClone) > 0 then
+        emitter = getChildAt(psClone, 0)
+        link(holder, emitter)
+        setTranslation(emitter, 0, 0, 0)
+    end
     local ps = {}
     ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, true, false)
-    if getNumOfChildren(psClone) > 0 then ParticleUtil.setEmitterShape(ps, getChildAt(psClone, 0)) end
+    if emitter ~= nil then ParticleUtil.setEmitterShape(ps, emitter) end
     ParticleUtil.setEmittingState(ps, false)
-    local entry = { holder = holder, ps = ps, bone = bone, emitting = false, clock = 0 }
-    Log:info("Breath: attached to %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)")
+    local entry = { holder = holder, ps = ps, bone = bone, emitter = emitter, emitting = false, clock = 0, logged = false }
+    Log:info("Breath: attached to %s, emitter %s, particle system under %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)",
+        emitter ~= nil and getName(emitter) or "none", ps.shape ~= nil and getName(getParent(ps.shape)) or "nothing")
     return entry
 end
 
@@ -118,6 +127,8 @@ end
 local function setEmitting(entry, on)
     if entry.emitting == on then return end
     entry.emitting = on
+    -- The step dust stops after a few particles (maxEmit), so each breath starts the count again.
+    if on and ParticleUtil.resetNumOfEmittedParticles ~= nil then ParticleUtil.resetNumOfEmittedParticles(entry.ps) end
     ParticleUtil.setEmittingState(entry.ps, on)
 end
 
@@ -156,6 +167,13 @@ function EqBreath.update(vehicle, style, dt)
         ParticleUtil.setEmitCountScale(entry.ps, look.count)
     end
     place(vehicle, entry)
+    if not entry.logged then
+        -- Once, where it is: for checking a breath that doesn't show.
+        entry.logged = true
+        local hx, hy, hz = getWorldTranslation(entry.holder)
+        local rx, ry, rz = getWorldTranslation(vehicle.rootNode)
+        Log:info("Breath: %s at %.1f %.1f %.1f (horse at %.1f %.1f %.1f)", style, hx, hy, hz, rx, ry, rz)
+    end
     -- Breaths: on, then off, round again.
     entry.clock = (entry.clock + dt) % (look.onMs + look.offMs)
     setEmitting(entry, entry.clock < look.onMs)
