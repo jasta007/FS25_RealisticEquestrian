@@ -378,8 +378,9 @@ function EqConsole:consoleBreath(command, value)
     else
         return "Usage: eqBreath on | hard | off | auto | forward <m> | up <m>"
     end
-    return string.format("Breath: %s, forward %.2f m, up %.2f m%s", tostring(EqBreath.force == nil and "auto" or EqBreath.force),
-        EqBreath.FORWARD, EqBreath.UP, EqBreath.failed and " (failed to load, see log)" or "")
+    local function metres(v) return v ~= nil and string.format("%.2f m", v) or "by bone" end
+    return string.format("Breath: %s, forward %s, up %s%s", tostring(EqBreath.force == nil and "auto" or EqBreath.force),
+        metres(EqBreath.FORWARD), metres(EqBreath.UP), EqBreath.failed and " (failed to load, see log)" or "")
 end
 
 

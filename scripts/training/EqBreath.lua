@@ -19,11 +19,16 @@ local Log = EqLog
 EqBreath.FILE = "$data/effects/horse/horseStepParticleSystem.i3d"
 -- The slow step emitter (the second Dynamic in the file).
 EqBreath.NODE = "1"
--- Bones to look for, in order; the first found carries the breath.
-EqBreath.BONES = { "head", "head_jnt", "headbone", "skull", "neck2", "neck" }
--- Metres in front of the head bone along the horse's heading, and up.
-EqBreath.FORWARD = 0.45
-EqBreath.UP = -0.1
+-- Bones to look for, in order: something at the muzzle first, else the head. The first found
+-- carries the breath, OFFSET metres along the horse's heading and up from it.
+EqBreath.BONES = {
+    { names = { "muzzle", "nose", "mouth", "jaw", "lowerjaw", "jaw_jnt", "lip", "lips" }, forward = 0.1, up = 0 },
+    { names = { "head", "head_jnt", "headbone", "skull" }, forward = 0.55, up = -0.35 },
+    { names = { "neck2", "neck" }, forward = 1.2, up = -0.2 },
+}
+-- Set by the bone found, and by eqBreath forward/up.
+EqBreath.FORWARD = nil
+EqBreath.UP = nil
 -- A breath: emitting on, then off, by how hard the horse is blowing: "band" while the stamina
 -- band waits at the bottom, "hard" while Fatigued or Blown (James, 2026-11-03: it would be weird
 -- not to), heavier and quicker.
@@ -48,14 +53,24 @@ local function findBone(root)
         if found[name] == nil then found[name] = node end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
-    for _, wanted in ipairs(EqBreath.BONES) do
-        if found[wanted] ~= nil then return found[wanted], wanted end
+    -- Once, the head's bone names, for placing the breath by hand.
+    local named = {}
+    for name in pairs(found) do
+        for _, part in ipairs({ "head", "jaw", "nose", "mouth", "muzzle", "lip", "neck", "ear" }) do
+            if string.find(name, part, 1, true) then table.insert(named, name) break end
+        end
     end
-    -- Anything with "head" in its name, else nothing.
+    table.sort(named)
+    Log:info("Breath: head bones %s", #named > 0 and table.concat(named, ", ") or "none")
+    for _, group in ipairs(EqBreath.BONES) do
+        for _, wanted in ipairs(group.names) do
+            if found[wanted] ~= nil then return found[wanted], wanted, group end
+        end
+    end
     for name, node in pairs(found) do
-        if string.find(name, "head", 1, true) then return node, name end
+        if string.find(name, "head", 1, true) then return node, name, EqBreath.BONES[2] end
     end
-    return nil, nil
+    return nil, nil, EqBreath.BONES[2]
 end
 
 
@@ -85,13 +100,22 @@ end
 local function attach(vehicle)
     local ref = EqBreath.ensureReference()
     if ref == nil or vehicle.rootNode == nil or vehicle.rootNode == 0 then return nil end
-    local bone, boneName = findBone(vehicle.rootNode)
+    -- Only the horse's own skeleton: the rider (a character with a "head" of its own) rides under
+    -- the same root (James, 2026-11-03: the first breath came out of the rider's face).
+    local spec = vehicle.spec_rideable
+    local skeleton = spec ~= nil and spec.animationNode or nil
+    if skeleton == nil or skeleton == 0 or not entityExists(skeleton) then skeleton = spec ~= nil and spec.meshNode or nil end
+    local bone, boneName, group = nil, nil, EqBreath.BONES[2]
+    if skeleton ~= nil and skeleton ~= 0 and entityExists(skeleton) then
+        bone, boneName, group = findBone(skeleton)
+    end
     local holder = createTransformGroup("eqBreath")
     link(vehicle.rootNode, holder)
     local psClone = clone(ref.node, true, false, true)
     link(holder, psClone)
-    -- The emitter shape moves to the holder first: a world space particle system goes to the
-    -- scene root when loaded, and would take its emitter (and so the puffs) with it.
+    -- The emitter shape sits on the holder with the particle system. The puffs live in the
+    -- holder's space (James, 2026-11-03: in world space they streamed off behind at a gallop and
+    -- stopped reading as breath), so they travel with the horse's muzzle.
     local emitter = nil
     if getNumOfChildren(psClone) > 0 then
         emitter = getChildAt(psClone, 0)
@@ -99,10 +123,11 @@ local function attach(vehicle)
         setTranslation(emitter, 0, 0, 0)
     end
     local ps = {}
-    ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, true, false)
+    ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, false, false)
     if emitter ~= nil then ParticleUtil.setEmitterShape(ps, emitter) end
     ParticleUtil.setEmittingState(ps, false)
-    local entry = { holder = holder, ps = ps, bone = bone, emitter = emitter, emitting = false, clock = 0, logged = false }
+    local entry = { holder = holder, ps = ps, bone = bone, emitter = emitter, emitting = false, clock = 0, logged = false,
+        forward = bone ~= nil and group.forward or 0, up = bone ~= nil and group.up or 0 }
     Log:info("Breath: attached to %s, emitter %s, particle system under %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)",
         emitter ~= nil and getName(emitter) or "none", ps.shape ~= nil and getName(getParent(ps.shape)) or "nothing")
     return entry
@@ -116,9 +141,11 @@ local function place(vehicle, entry)
     if entry.bone ~= nil and entityExists(entry.bone) then
         x, y, z = getWorldTranslation(entry.bone)
     else
-        x, y, z = localToWorld(root, 0, 1.6, 1.1)
+        -- No head bone: roughly where a standing horse's muzzle is.
+        x, y, z = localToWorld(root, 0, 1.4, 1.3)
     end
-    x, y, z = x + fx * EqBreath.FORWARD, y + fy * EqBreath.FORWARD + EqBreath.UP, z + fz * EqBreath.FORWARD
+    local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
+    x, y, z = x + fx * forward, y + fy * forward + up, z + fz * forward
     local lx, ly, lz = worldToLocal(root, x, y, z)
     setTranslation(entry.holder, lx, ly, lz)
 end

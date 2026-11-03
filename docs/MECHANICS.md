@@ -140,8 +140,8 @@ A blue band on the gallop part of the bar shows where to turn the bar round:
   full-width band at the other end.
 - The horse's breath shows the band too: it starts blowing after a hit at the top (the band now
   waits at the bottom) and stops after a hit at the bottom, and blows hard, in quicker, bigger
-  puffs, while Fatigued or Blown. It uses the base game's horse step dust, placed in front of the
-  head; `eqBreath on | hard | off | auto | forward <m> | up <m>` tests and positions it. News shows beside the panel: "Stamina combo x2.5!", "Too early", "Overshot" or "Stamina
+  puffs, while Fatigued or Blown. It uses the base game's horse step dust at the muzzle (found from the horse's own head bone),
+  moving with the horse; `eqBreath on | hard | off | auto | forward <m> | up <m>` tests and positions it. News shows beside the panel: "Stamina combo x2.5!", "Too early", "Overshot" or "Stamina
   combo lost". The Stamina view also says what to do next ("Push into the band, then Recover").
 - Dropping to a canter or slower loses the multiplier at once, though it still brings the bar
   down fastest. Fatigued (or Blown, a Sprint that ends past
