@@ -1187,8 +1187,6 @@
         <text name="eq_region_asiaOceania" text="Azja i Oceania"/>
         <text name="eq_settings_quarantine" text="Kwarantanna międzynarodowa"/>
         <text name="eq_settings_quarantine_tooltip" text="Czy koń wracający z zawodów w innym regionie spędza rundy w kwarantannie, zanim wróci do domu. Opłaty za kwarantannę są pobierane w każdym przypadku."/>
-        <text name="eq_settings_settlingIn" text="Nowe konie mają okres aklimatyzacji przed startami"/>
-        <text name="eq_settings_settlingIn_tooltip" text="Gdy włączone, koń kupiony u handlarza aklimatyzuje się przez pierwszy miesiąc w gospodarstwie i do tego czasu nie można go zgłosić na zawody."/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Twój region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Za granicą: potem %s kwarantanny."/>

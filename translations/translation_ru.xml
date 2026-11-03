@@ -1187,8 +1187,6 @@
         <text name="eq_region_asiaOceania" text="Азия и Океания"/>
         <text name="eq_settings_quarantine" text="Международный карантин"/>
         <text name="eq_settings_quarantine_tooltip" text="Проводит ли лошадь после соревнований в другом регионе несколько раундов на карантине, прежде чем вернуться домой. Плата за карантин взимается в любом случае."/>
-        <text name="eq_settings_settlingIn" text="Новым лошадям нужен период адаптации перед стартами"/>
-        <text name="eq_settings_settlingIn_tooltip" text="Если включено, лошадь, купленная у торговца, первый месяц привыкает к ферме и до этого не может участвовать в соревнованиях."/>
         <text name="eq_ui_col_region" text="Регион"/>
         <text name="eq_ui_region_home" text="Ваш регион: %s."/>
         <text name="eq_ui_summary_quarantine" text="За рубежом: после — %s карантина."/>

@@ -1189,8 +1189,6 @@
         <text name="eq_region_asiaOceania" text="Asien und Ozeanien"/>
         <text name="eq_settings_quarantine" text="Internationale Quarantäne"/>
         <text name="eq_settings_quarantine_tooltip" text="Ob ein Pferd nach einem Turnier in einer anderen Region Runden in Quarantäne verbringt, bevor es heimkommt. Die Quarantänegebühren fallen in jedem Fall an."/>
-        <text name="eq_settings_settlingIn" text="Neue Pferde brauchen eine Eingewöhnungszeit vor dem Turnierstart"/>
-        <text name="eq_settings_settlingIn_tooltip" text="Wenn aktiv, gewöhnt sich ein beim Händler gekauftes Pferd im ersten Monat auf dem Hof ein und kann bis dahin nicht für Turniere gemeldet werden."/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Ihre Region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Im Ausland: danach %s Quarantäne."/>

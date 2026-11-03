@@ -78,9 +78,6 @@ EqSettings.ROWS = {
         return texts
     end)(), default = "auto" },
     { id = "quarantine", values = { false, true }, texts = onOffTexts(), default = true },
-    -- A horse bought from the dealer sits out its first month (EqHorseRecord:isSettling). Off by
-    -- default: new players kept finding they couldn't enter the horse they just bought.
-    { id = "settlingIn", values = { false, true }, texts = onOffTexts(), default = false },
     { id = "hostInterval", values = EqSettings.HOST_INTERVALS, texts = (function()
         local texts = {}
         for i, months in ipairs(EqSettings.HOST_INTERVALS) do texts[i] = { text = tostring(months) } end

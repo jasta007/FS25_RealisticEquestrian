@@ -1187,8 +1187,6 @@
         <text name="eq_region_asiaOceania" text="Asia e Oceania"/>
         <text name="eq_settings_quarantine" text="Quarantena internazionale"/>
         <text name="eq_settings_quarantine_tooltip" text="Se un cavallo di ritorno da un evento in un'altra regione passa dei turni in quarantena prima di tornare a casa. Le spese di quarantena si pagano comunque."/>
-        <text name="eq_settings_settlingIn" text="I cavalli nuovi hanno un periodo di ambientamento prima di gareggiare"/>
-        <text name="eq_settings_settlingIn_tooltip" text="Se attivo, un cavallo comprato dal commerciante si ambienta durante il primo mese in fattoria e fino ad allora non può essere iscritto agli eventi."/>
         <text name="eq_ui_col_region" text="Regione"/>
         <text name="eq_ui_region_home" text="La tua regione: %s."/>
         <text name="eq_ui_summary_quarantine" text="All&apos;estero: %s di quarantena dopo."/>

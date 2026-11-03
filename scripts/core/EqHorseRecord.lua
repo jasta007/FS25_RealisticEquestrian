@@ -82,12 +82,8 @@ function EqHorseRecord:addResult(result)
 end
 
 
---- @param settings table|nil EqCompetitionManager.settings; read from the manager when nil
---- @return boolean true for a horse bought from the dealer that is still settling in, only while
---- the settlingIn setting is on (off by default)
-function EqHorseRecord:isSettling(settings)
-    if settings == nil and EqCompetitionManager ~= nil then settings = EqCompetitionManager.settings end
-    if settings == nil or not settings.settlingIn then return false end
+--- @return boolean true for a horse bought from the dealer that is still settling in
+function EqHorseRecord:isSettling()
     return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
 end
 
