@@ -221,6 +221,10 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
+        guarded("ride block hooks", function() EqAway.installRideBlock(guarded) end)
+    end
+
+    if EqMain.isActive then
         guarded("welcome popups hooks", function() EqWelcome.install(guarded) end)
         guarded("message log", EqMessages.install)
         guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)

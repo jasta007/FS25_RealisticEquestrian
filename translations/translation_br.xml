@@ -1198,5 +1198,12 @@
         <text name="eq_status_quarantine" text="Em quarentena, %d rodada(s)"/>
         <text name="eq_enter_quarantine" text="Esse cavalo está em quarentena após um evento no exterior. Poderá competir quando estiver em casa."/>
         <text name="eq_quarantine_home" text="%s voltou da quarentena."/>
+        <text name="eq_ride_blocked_horse" text="Este cavalo"/>
+        <text name="eq_ride_blocked_quarantine" text="%s está em quarentena e não pode ser montado até voltar para casa."/>
+        <text name="eq_ride_blocked_away" text="%s está fora em uma competição e não pode ser montado."/>
+        <text name="eq_ride_blocked_injured" text="%s está machucado e não pode ser montado até se recuperar."/>
+        <text name="eq_loose_sentHome_quarantine" text="%s está em quarentena, então foi levado de volta para %s."/>
+        <text name="eq_loose_sentHome_away" text="%s está fora em uma competição, então foi levado de volta para %s."/>
+        <text name="eq_loose_sentHome_injured" text="%s está machucado, então foi levado de volta para %s para descansar."/>
     </texts>
 </l10n>

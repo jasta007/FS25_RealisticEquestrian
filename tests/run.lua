@@ -3541,7 +3541,7 @@ end)()
     InputAction = InputAction or {}
     local savedAway = EqAway
     local away = false
-    EqAway = { isAway = function() return away end }
+    EqAway = { rideBlock = function() return away and "away" or nil end }
     local horse = { getRidableFilename = function() return "horse.xml" end }
     local cow = { getRidableFilename = function() return nil end }
     check("horse is rideable", EqRideButton.isRideable(horse))
@@ -3570,6 +3570,31 @@ end)()
     EqRideButton.updateButtons(empty)
     check("no ride button without a selection", #empty.menuButtonInfo == 1)
     EqAway = savedAway
+end)()
+
+-- Horses that can't be ridden: in quarantine, away at an event, or injured
+;(function()
+    local saved = { EqAway = EqAway, EqRegistry = EqRegistry, EqCompetitionManager = EqCompetitionManager }
+    dofile("scripts/competition/EqAway.lua")
+    local records = {
+        q = { quarantine = 2 },
+        hurt = { injury = { name = "tendon" } },
+        fine = {},
+        both = { quarantine = 1, injury = { name = "sole" } },
+    }
+    EqRegistry = { records = records, getId = function(animal) return animal.eqId end,
+        getById = function(id) return records[id] end }
+    EqCompetitionManager = { events = { e1 = { entries = { { horseId = "fine" } } } },
+        isDelivered = function() return true end }
+    local function horse(id) return { eqId = id, isHorse = function() return true end } end
+    check("quarantined horse can't be ridden", EqAway.rideBlock(horse("q")) == "quarantine")
+    check("injured horse can't be ridden", EqAway.rideBlock(horse("hurt")) == "injured")
+    check("horse at an event can't be ridden", EqAway.rideBlock(horse("fine")) == "away")
+    check("quarantine named before injury", EqAway.rideBlock(horse("both")) == "quarantine")
+    EqCompetitionManager.events = {}
+    check("healthy horse at home can be ridden", EqAway.rideBlock(horse("fine")) == nil)
+    check("a cow is never blocked", EqAway.rideBlock({ isHorse = function() return false end }) == nil and EqAway.rideBlock(nil) == nil)
+    EqAway, EqRegistry, EqCompetitionManager = saved.EqAway, saved.EqRegistry, saved.EqCompetitionManager
 end)()
 
 -- Starved map horses get a fresh start; real horses are never touched

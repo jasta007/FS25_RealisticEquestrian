@@ -1198,5 +1198,12 @@
         <text name="eq_status_quarantine" text="検疫中、%dラウンド"/>
         <text name="eq_enter_quarantine" text="この馬は海外の大会の後で検疫中です。帰宅すれば出場できます。"/>
         <text name="eq_quarantine_home" text="%sが検疫から戻りました。"/>
+        <text name="eq_ride_blocked_horse" text="この馬"/>
+        <text name="eq_ride_blocked_quarantine" text="%sは検疫中のため、帰宅するまで騎乗できません。"/>
+        <text name="eq_ride_blocked_away" text="%sは大会に出ているため騎乗できません。"/>
+        <text name="eq_ride_blocked_injured" text="%sは怪我をしているため、治るまで騎乗できません。"/>
+        <text name="eq_loose_sentHome_quarantine" text="%sは検疫中のため、%sに戻されました。"/>
+        <text name="eq_loose_sentHome_away" text="%sは大会に出ているため、%sに戻されました。"/>
+        <text name="eq_loose_sentHome_injured" text="%sは怪我をしているため、休養のため%sに戻されました。"/>
     </texts>
 </l10n>
