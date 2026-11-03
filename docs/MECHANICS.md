@@ -480,7 +480,9 @@ never during a round: rails stay down to the finish. Single player for now.
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
 agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
 turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.4 times
-better again (on the ground and in the air), changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+better again (on the ground and in the air), changes pace a little quicker and stands less long after a knock. Agility and temperament also give
+better brakes: dropping a gait, the horse slows up to 1.4 times as quickly by agility and 1.3 times
+again by temperament. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
 press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
 bar, and takes effect the moment the horse lands. A gallop jump from the bottom third of the bar

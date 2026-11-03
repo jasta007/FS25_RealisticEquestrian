@@ -604,6 +604,10 @@ local function tuneRiding(spec, gait, record, sheet)
         spec.eqBaseAcceleration = spec.eqBaseAcceleration or spec.maxAcceleration
         spec.maxAcceleration = spec.eqBaseAcceleration * EqTrainingHooks.ACCELERATION_SHARE * handling.acceleration
     end
+    if type(spec.maxDeceleration) == "number" then
+        spec.eqBaseDeceleration = spec.eqBaseDeceleration or spec.maxDeceleration
+        spec.maxDeceleration = spec.eqBaseDeceleration * handling.brake
+    end
     spec.eqCrashHaltMs = EqTrainingHooks.CRASH_HALT_MS * handling.crashHalt
 
     if type(spec.maxTurnSpeed) == "number" then
@@ -647,9 +651,10 @@ local function tuneRiding(spec, gait, record, sheet)
     if spec.eqHandlingFor ~= shown then
         spec.eqHandlingFor = shown
         Log:info("Handling: speed %.0f (top speeds x%.2f), agility %.0f (jump x%.2f, turn rate x%.2f), "
-            .. "temperament %.0f (acceleration x%.2f, crash stop %d ms)",
+            .. "temperament %.0f (acceleration x%.2f, crash stop %d ms), brakes x%.2f (maxDeceleration %s)",
             trained.speed or 50, handling.speed, trained.agility or 50, handling.jump, handling.turn,
-            trained.temperament or 50, handling.acceleration, math.floor(spec.eqCrashHaltMs))
+            trained.temperament or 50, handling.acceleration, math.floor(spec.eqCrashHaltMs), handling.brake,
+            tostring(spec.maxDeceleration))
     end
 end
 

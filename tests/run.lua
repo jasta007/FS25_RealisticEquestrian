@@ -460,6 +460,10 @@ do
         local function near(a, b) return math.abs(a - b) < 0.01 end
         check("speed 10 runs about 10% slower, speed 100 20% faster", near(slow.speed, 0.9) and near(fast.speed, 1.2))
         check("agility raises jump height and turn rate", slow.jump < 1 and fast.jump > 1 and slow.turn < mid.turn and fast.turn > mid.turn and slow.turn >= 1)
+        check("agility and temperament give better brakes, never worse than the base game",
+            slow.brake == 1 and fast.brake > mid.brake and mid.brake > 1
+            and EqTraining.handling(nil, 100, 0).brake > EqTraining.handling(nil, 0, 0).brake
+            and EqTraining.handling(nil, 0, 100).brake > EqTraining.handling(nil, 0, 0).brake)
         check("temperament quickens gait changes and shortens crash stops",
             slow.acceleration < fast.acceleration and slow.crashHalt > fast.crashHalt)
         check("an unknown horse rides like the base game", near(mid.speed, 1.035) and near(mid.acceleration, 1) and near(mid.crashHalt, 1))
