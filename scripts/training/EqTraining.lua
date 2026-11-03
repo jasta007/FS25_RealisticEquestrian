@@ -14,7 +14,8 @@
     then the bigger of the player's gain and the staff's counts in full and the smaller at
     MIXED_SHARE, so riding a horse that has a groom and a trainer is best.
 
-    Agility and temperament are focused work (jump combos and routines); just riding the gaits
+    Agility and temperament are focused work (jump combos, the temperament combo and dressage
+    tests); just riding the gaits
     trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed come only from
     riding the gallop well (EqExertion's Pushing, Recovering and Sprinting): a live stamina
     multiplier and a speed multiplier banked when a Sprint ends (James, 2026-10-27).
@@ -99,7 +100,7 @@ EqTraining.COMBO_KNOCK_GAP_MS = 3000
 -- orders whenever the horse walked for a moment, is gone (James, 2026-10-29: "nasty"; the arena
 -- is opt in). Each command done raises the multiplier, up to ROUTINE_MAX, and temperament builds
 -- at TEMPERAMENT_RATE per second for each step above x1. Walking and backing up still train a
--- little temperament anywhere (GAIT_GAINS).
+-- little temperament anywhere (GAIT_WEIGHTS).
 -- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
 EqTraining.ROUTINE_MAX = 8
 EqTraining.TEMPERAMENT_RATE = 0.0022
@@ -110,12 +111,9 @@ EqTraining.TEMPERAMENT_RATE = 0.0022
 -- and 67% of the bar; it should not take one and a half tests to fill it).
 EqTraining.TEST_TEMPERAMENT_FACTOR = 2
 EqTraining.TEST_BAR_SHARE = 1.5
--- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test (EqLateral) train
--- temperament like a routine at x(1 + FREE_LATERAL_STEPS), once held FREE_LATERAL_HOLD_MS; just
--- collecting (Ctrl at a walk on the spot, not turning) doesn't count. A test still trains far
--- more (James, 2026-11-01: practising off the cuff should train a reasonable amount).
-EqTraining.FREE_LATERAL_STEPS = 3
-EqTraining.FREE_LATERAL_HOLD_MS = 1000
+-- Away from an arena, the temperament combo (EqTemperament) trains it: new gaits, halts, big
+-- turns and lateral work strung together (James, 2026-11-03). It replaced free lateral work,
+-- which trained quietly with nothing on screen to say so.
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -174,6 +172,7 @@ function EqTraining.newSheet()
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         stamina = { mult = 1, breath = 1 }, sprint = { ms = 0 },
         combo = { count = 0, timer = 0, best = 0 },
+        temper = EqTemperament.new(),
         routine = { active = false, mult = 0, clock = 0, current = nil, request = nil, deadline = 0 } }
 end
 
@@ -434,24 +433,6 @@ function EqTraining.routineTrain(sheet, worn, dt)
 end
 
 
---- Temperament from lateral work ridden outside a test.
---- @param sheet table
---- @param key string|nil EqLateral.movementName key of what the horse does now
---- @param worn boolean
---- @param dt number milliseconds
---- @return boolean training true while it trains
-function EqTraining.freeLateral(sheet, key, worn, dt)
-    if key == nil or key == "collected" then
-        sheet.freeLateralMs = 0
-        return false
-    end
-    sheet.freeLateralMs = (sheet.freeLateralMs or 0) + dt
-    if worn or sheet.freeLateralMs < EqTraining.FREE_LATERAL_HOLD_MS then return false end
-    sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * EqTraining.FREE_LATERAL_STEPS * dt / 1000
-    return true
-end
-
-
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
@@ -463,6 +444,7 @@ function EqTraining.rest(sheet, ms, stamina)
     sheet.sprint.ms = 0
     for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0
+    if sheet.temper ~= nil then EqTemperament.reset(sheet.temper) end
     sheet.workRate = 0
     EqTraining.breakRoutine(sheet)
 end

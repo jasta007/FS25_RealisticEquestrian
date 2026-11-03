@@ -655,6 +655,97 @@ end
 
 
 --- Appended to Rideable:updateRiding (server, every frame while ridden).
+--- The horse's heading (radians) from its root node, or nil.
+local function headingOf(vehicle)
+    if vehicle.rootNode == nil or localDirectionToWorld == nil then return nil end
+    local dirX, _, dirZ = localDirectionToWorld(vehicle.rootNode, 0, 0, 1)
+    if dirX == nil or (dirX == 0 and dirZ == 0) then return nil end
+    return math.atan2(dirX, dirZ)
+end
+
+
+--- A temperament combo move's name: "Trot", "Piaffe", "Big turn left (Canter)".
+--- @param key string EqTemperament move key
+--- @return string
+function EqTrainingHooks.temperMoveName(key)
+    local textKey, gaitKey = EqTemperament.nameKeys(key)
+    local text = g_i18n:getText(textKey)
+    if gaitKey ~= nil then text = string.format(text, g_i18n:getText(gaitKey)) end
+    return text
+end
+
+
+-- How long "Done recently: Trot" shows on the panel after a repeated move.
+EqTrainingHooks.STALE_SHOW_MS = 2500
+
+--- The temperament combo's rows (like the jump combo's): the multiplier and its bar in
+--- Freestyle and Temperament; in Temperament also the moves done recently (which won't count
+--- again yet), or how to start one and where a dressage test is.
+--- @param rows table
+--- @param state table EqTemperament state
+--- @param view string
+function EqTrainingHooks.temperRows(rows, state, view)
+    local color = EqTrainingHud.STAT_COLOR.temperament
+    local focused = view == "temperament"
+    if state ~= nil and state.count > 0 and (view == "freestyle" or focused) then
+        table.insert(rows, { left = string.format(g_i18n:getText("eq_train_temperCombo"), EqTemperament.mult(state)), leftColor = color,
+            right = focused and string.format("%d s", math.ceil(state.timer)) or nil })
+        table.insert(rows, { bar = state.timer / EqTemperament.COMBO_SECONDS, color = color })
+        if focused then
+            if state.stale ~= nil and (g_time or 0) - (state.staleAt or 0) < EqTrainingHooks.STALE_SHOW_MS then
+                table.insert(rows, { left = string.format(g_i18n:getText("eq_train_temperStale"), EqTrainingHooks.temperMoveName(state.stale)),
+                    leftColor = EqTrainingHud.COLOR.grey })
+            end
+            -- The last moves, newest first: none of them counts again yet. One per line, as the
+            -- panel doesn't wrap.
+            for i, key in ipairs(state.recent) do
+                table.insert(rows, { left = EqTrainingHooks.temperMoveName(key), leftColor = EqTrainingHud.COLOR.grey,
+                    right = i == 1 and g_i18n:getText("eq_train_temperRecent") or nil, rightColor = EqTrainingHud.COLOR.grey })
+            end
+        end
+    elseif focused then
+        table.insert(rows, { left = g_i18n:getText("eq_train_temperNone"), leftColor = EqTrainingHud.COLOR.grey })
+        table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = EqTrainingHud.COLOR.grey })
+    end
+end
+
+
+--- One frame of the temperament combo (EqTemperament): what the horse does now in, its pops out.
+--- A dressage test (or the test editor) owns temperament while it runs, so the combo stops.
+--- @param pace string the gait, held through a jump (paceGait)
+--- @param crashed boolean true the frame the horse ran into something
+function EqTrainingHooks.temperamentStep(vehicle, spec, sheet, pace, worn, crashed, dt, now)
+    local state = sheet.temper
+    if sheet.routine.active or EqDressageEditor.isEditing() then
+        EqTemperament.reset(state)
+        spec.eqHeading = nil
+        return
+    end
+    local heading = headingOf(vehicle)
+    local turned = 0
+    if heading ~= nil and spec.eqHeading ~= nil then
+        turned = heading - spec.eqHeading
+        if turned > math.pi then turned = turned - 2 * math.pi elseif turned < -math.pi then turned = turned + 2 * math.pi end
+    end
+    spec.eqHeading = heading
+    local okKey, lateral = EqLog.try("EqTrainingHooks lateralNow", EqTrainingHooks.lateralNow, vehicle, spec)
+    local event, key = EqTemperament.step(state, { gait = pace, lateral = okKey and lateral or nil, steer = steerInput(spec),
+        turned = turned, crashed = crashed, jumping = spec.eqJump ~= nil, now = now }, dt)
+    if event == "move" then
+        local mult = EqTemperament.mult(state)
+        local okName, name = EqLog.try("EqTrainingHooks temperMoveName", EqTrainingHooks.temperMoveName, key)
+        EqTrainingHud.pop("temper", mult, okName and name or nil)
+        Log:info("Temperament combo: %s, x%d", key, mult)
+    elseif event == "stale" then
+        Log:info("Temperament combo: %s done recently, no change (x%d)", key, EqTemperament.mult(state))
+    elseif event == "lost" then
+        EqTrainingHud.pop("temperLost")
+        Log:info("Temperament combo lost (%s)", crashed and "crash" or pace == "gallop" and "gallop" or "bar ran out")
+    end
+    EqTemperament.train(state, sheet, worn, dt)
+end
+
+
 function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local spec = vehicle.spec_rideable
     if spec == nil then return end
@@ -703,6 +794,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             if EqHostManager ~= nil then EqLog.try("EqTrainingHooks hosted test", EqHostManager.onTestDone, vehicle, nil, true) end
         end
         local ended = EqTraining.breakRoutine(sheet)
+        if EqTemperament.reset(sheet.temper) then ended = true end
+        spec.eqHeading = nil
         if EqTraining.loseCombo(sheet) or ended then Log:info("Rider left the horse: routine and jump combo ended") end
         return
     end
@@ -781,7 +874,8 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     -- The base game stops a horse that runs into something and counts its haltTimer down; we
     -- cut that stop short. A crash costs jump combo time and breaks a routine.
     local halted = (spec.haltTimer or 0) > 0
-    if halted and not spec.eqHalted then
+    local crashedNow = halted and not spec.eqHalted
+    if crashedNow then
         local was = spec.haltTimer
         spec.haltTimer = math.min(spec.haltTimer, spec.eqCrashHaltMs or EqTrainingHooks.CRASH_HALT_MS)
         -- A jump still in the air or settling when the horse crashes did not clear.
@@ -856,14 +950,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     EqDressageHooks.pathRun = sheet.routine.active and sheet.routine.kind == "path" and sheet.routine.path or nil
     EqDressageHooks.pathAt = g_time or 0
 
-    -- Lateral work, passage and work on the spot ridden anywhere, outside a test (James,
-    -- 2026-11-01: practising off the cuff should train a reasonable amount).
-    if not sheet.routine.active then
-        local okKey, key = EqLog.try("EqTrainingHooks lateralNow", EqTrainingHooks.lateralNow, vehicle, spec)
-        EqTraining.freeLateral(sheet, okKey and key or nil, worn, dt)
-    else
-        sheet.freeLateralMs = 0
-    end
+    -- The temperament combo, anywhere outside a dressage test (EqTemperament, James 2026-11-03):
+    -- new gaits, halts, big turns and lateral work strung together; galloping or a crash loses it.
+    EqTrainingHooks.temperamentStep(vehicle, spec, sheet, pace, worn, crashedNow, dt, now)
 
     local share = EqTraining.workStep(sheet, dt)
     if (share < 0.5) ~= (spec.eqCruising == true) then
@@ -1993,9 +2082,8 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
         else
             dressageRows(condensed and {} or rows, routine, vehicle)
         end
-    elseif view == "temperament" then
-        -- No routine without markers: say where one starts.
-        table.insert(rows, { left = g_i18n:getText("eq_train_routine_none"), leftColor = COLOR.grey })
+    else
+        EqTrainingHooks.temperRows(rows, sheet.temper, view)
     end
     EqTrainingHud.drawPops()
 

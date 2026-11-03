@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Zobrazení tréninku: %s"/>
         <text name="eq_train_view_freestyle" text="Volný"/>
-        <text name="eq_help_temperament_2" text="Tři chyby v úloze (ztracená čára, opuštění obdélníku nebo stání na místě) úlohu ukončí; dokončete ji pro bonus k temperamentu, který roste s vaším hodnocením. Klidnější kůň vidí čáru dál dopředu a dostane dřív varování před změnami. Písmena z Riding Hall dávají starší úlohu s úseky mezi písmeny. Mimo obdélník krok a couvání stále trochu trénují temperament a pomáhají i pamlsky jako mrkev."/>
-        <text name="eq_help_temperament_1" text="Trénink temperamentu učí koně ovladatelnosti a potřebuje drezurní obdélník: kupte ho v obchodě nebo rozmístěte drezurní písmena. V obdélníku z obchodu dojeďte k A a začne úloha z obrazců: kruhy, diagonály, hadovky a další, nakreslené zlatou čarou na zemi. Držte se čáry a měňte chod nebo zastavte tam, kde je řečeno; každý cvik je hodnocen do 10."/>
+        <text name="eq_help_temperament_2" text="Nejvíce temperamentu dá úloha na drezurním obdélníku: kupte si ho v obchodě a jeďte k A. Začne úloha z figur, nakreslená zlatou čarou na zemi: držte se čáry a měňte chod nebo zastavte, kde je řečeno; každý cvik se hodnotí do 10. Tři chyby v trase úlohu ukončí; dokončete ji pro bonus, který roste se skóre. Klidnější kůň vidí víc čáry dopředu. Značky Riding Hall dávají starší rutinu úseků mezi písmeny. Pamlsky jako mrkev také pomáhají."/>
+        <text name="eq_help_temperament_1" text="Temperament je o ovládání. Kdekoli jezdíte, řaďte za sebe nové pohyby a budujte combo: změňte chod (ne do trysku), stůjte, udělejte velký obrat (půlkruh na jednu stranu) nebo jezděte boční a shromážděné cviky. Každý nový pohyb zvýší combo až na x5 a doplní jeho lištu. Opakovat některý z posledních 3 pohybů smíte, ale nic nepřidá. Trysk, náraz do něčeho nebo prázdná lišta combo ukončí; skoky se nepočítají."/>
         <text name="eq_help_temperament_title" text="Trénink: Temperament"/>
         <text name="eq_help_agility_2" text="Násobič ztratíte, když včas nepřekonáte novou překážku nebo příliš zpomalíte. Skok bez překážky trochu trénuje, ale násobič nezvyšuje."/>
         <text name="eq_help_agility_1" text="Obratnost je hlavně o skákání překážek, i když střídání chodů trochu pomůže. Překonávejte překážky a budujte násobič tréninku Obratnosti, který vyprchá po deseti sekundách, nebo dřív, když do překážky narazíte."/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="Úloha x%d"/>
         <text name="eq_train_combo_none" text="Překonejte překážku a začněte combo"/>
         <text name="eq_train_combo" text="Skokové combo x%d"/>
+        <text name="eq_train_temperCombo" text="Combo temperamentu x%d"/>
+        <text name="eq_train_temperNone" text="Změňte chod, zastavte nebo zatočte a začněte combo"/>
+        <text name="eq_train_temperStale" text="Nedávno: %s"/>
+        <text name="eq_train_temperRecent" text="Nedávné"/>
+        <text name="eq_temper_halt" text="Stání"/>
+        <text name="eq_temper_gait_walk" text="Krok"/>
+        <text name="eq_temper_gait_trot" text="Klus"/>
+        <text name="eq_temper_gait_canter" text="Cval"/>
+        <text name="eq_temper_gait_reverse" text="Couvání"/>
+        <text name="eq_temper_turn_left" text="Velký obrat vlevo (%s)"/>
+        <text name="eq_temper_turn_right" text="Velký obrat vpravo (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Obratnost"/>
-        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skákáním přes překážky a budováním ukazatele komba, temperament jízdou úlohy v drezurním obdélníku. Vytrvalost a rychlost se trénují dobrým cvalem: stiskněte ve cvalu H a zjistěte jak."/>
+        <text name="eq_help_freestyle_2" text="Obratnost trénujete skoky přes překážky a budováním počítadla combo, temperament řazením nových pohybů (změny chodu, zastavení, velké obraty, boční cviky) nebo jízdou drezurní úlohy. Vytrvalost a rychlost trénujete dobrým cvalem: stiskněte H ve cvalu a zjistíte jak."/>
         <text name="eq_help_freestyle_3" text="Nechcete jezdit? Najměte si ošetřovatele a trenéry na kartě Personál a budou vaše koně trénovat každý den. Zaměstnanci hry a Herdsman z RLRM je jen udržují v kondici."/>
         <text name="eq_form_title" text="Vrcholná forma"/>
         <text name="eq_help_freestyle_4" text="Projeďte se před závodem! Každá vlastnost, kterou natrénujete v její minihře, dostane koně do Vrcholné formy na závody tohoto měsíce, až +8 za vlastnost. Nesčítá se přes víc dní: počítá se nejlepší trénink měsíce."/>

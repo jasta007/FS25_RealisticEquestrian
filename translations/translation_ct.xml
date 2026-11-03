@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="訓練檢視：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="三次路線錯誤（偏離線條、離開場地或原地不動）會結束測驗；騎完全程可獲得隨得分增長的氣質加成。更沉穩的馬能看到更遠的線條，並更早得到變換提示。Riding Hall 字母使用舊的字母間路段動作。在場地之外，慢步和後退仍能訓練一點氣質，紅蘿蔔等零食也有幫助。"/>
-        <text name="eq_help_temperament_1" text="氣質訓練教你的馬服從控制，需要一個盛裝舞步場地：在商店購買，或擺放盛裝舞步字母。在商店的場地中騎到A，圖形測驗就會開始：圓圈、對角線、蛇形線等，以金色線條畫在地面上。沿線騎行，並在指定位置變換步法或立定；每個動作滿分10分。"/>
+        <text name="eq_help_temperament_2" text="想獲得最多氣質訓練，就在盛裝舞步場地裡騎一套測驗：在商店購買場地並騎到A點。圖形測驗開始，地面上會畫出金色路線：沿線騎行，並在指示的位置變換步法或停下；每個動作滿分10分。三次路線錯誤會結束測驗；完成測驗可獲得隨得分增長的加成。越冷靜的馬能看到越遠的路線。Riding Hall標記提供字母之間路段的舊版練習。胡蘿蔔等零食也有幫助。"/>
+        <text name="eq_help_temperament_1" text="氣質訓練的核心是控制。無論在哪裡騎乘，都可以把新的動作串起來形成連擊：變換步法（不要襲步）、靜立、大轉彎（向一側轉半圈），或做橫向和收縮動作。每個新動作都會讓連擊提升（最高x5）並補滿連擊條。重複最近3個動作中的任意一個沒關係，但不會加分。襲步、撞上東西或連擊條耗盡都會中斷連擊；跳躍不計入。"/>
         <text name="eq_help_temperament_title" text="訓練：性情"/>
         <text name="eq_help_agility_2" text="如果你沒能及時跳過新的障礙物或速度掉得太多，就會失去倍率。沒有障礙物的跳躍也有一點訓練效果，但不會提高倍率。"/>
         <text name="eq_help_agility_1" text="敏捷主要靠跨越障礙訓練，不過在各種步法之間切換也能獲得少許提升。跳過障礙物來積累敏捷訓練倍率，倍率會在十秒後消退，撞到障礙物則會更早消退。"/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="動作 x%d"/>
         <text name="eq_train_combo_none" text="跳過障礙開始連擊"/>
         <text name="eq_train_combo" text="跳躍連擊 x%d"/>
+        <text name="eq_train_temperCombo" text="氣質連擊 x%d"/>
+        <text name="eq_train_temperNone" text="變換步法、停下或轉彎開始連擊"/>
+        <text name="eq_train_temperStale" text="剛做過：%s"/>
+        <text name="eq_train_temperRecent" text="最近"/>
+        <text name="eq_temper_halt" text="靜立"/>
+        <text name="eq_temper_gait_walk" text="慢步"/>
+        <text name="eq_temper_gait_trot" text="快步"/>
+        <text name="eq_temper_gait_canter" text="跑步"/>
+        <text name="eq_temper_gait_reverse" text="後退"/>
+        <text name="eq_temper_turn_left" text="向左大轉彎（%s）"/>
+        <text name="eq_temper_turn_right" text="向右大轉彎（%s）"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷透過跳越障礙累積連擊條來訓練，氣質透過在盛裝舞步場地完成一套動作來訓練。耐力和速度透過良好的襲步來訓練：襲步時按 H 了解方法。"/>
+        <text name="eq_help_freestyle_2" text="敏捷透過跳過障礙累積連擊來訓練，氣質透過串聯新動作（變換步法、停下、大轉彎、橫向動作）或騎盛裝舞步測驗來訓練。耐力和速度透過騎好襲步來訓練：襲步時按H了解方法。"/>
         <text name="eq_help_freestyle_3" text="不想自己騎？在員工標籤頁僱用馬伕和教練，每天替你訓練馬匹。遊戲自帶的動物員工和RLRM的Herdsman只能讓它們維持狀態。"/>
         <text name="eq_form_title" text="巔峰狀態"/>
         <text name="eq_help_freestyle_4" text="賽前騎一騎！你用小遊戲訓練的每項屬性，都會讓馬在本月的比賽中進入巔峰狀態，每項最多+8。多天的訓練不會疊加：只計算本月最好的一次訓練。"/>

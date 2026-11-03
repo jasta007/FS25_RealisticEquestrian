@@ -346,6 +346,7 @@ EqTrainingHud.POP_STAT = {
     jump = "agility", knock = "agility", jumpLost = "agility",
     routine = "temperament", routineStart = "temperament", routineLost = "temperament", routineTest = "temperament", routineFault = "temperament",
     routineMark = "temperament", routineError = "temperament", routineScore = "temperament",
+    temper = "temperament", temperLost = "temperament",
 }
 -- The gallop's news (EqExertion) belongs to no stat: it always shows in the middle, in status
 -- colours (white good, red bad, grey idle).
@@ -369,7 +370,7 @@ end
 --- Show a short burst of text in the middle of the screen.
 --- @param kind string jump, jumpLost, knock, routine, routineLost, routineStart, speedBank, courseFence, showJumping or an EXERTION_POPS key
 --- @param mult number|string|nil the combo multiplier for jump and routine, the speed multiplier for speedBank, the text for showJumping
---- @param sub string|nil routineMark: the movement's name, small under the mark
+--- @param sub string|nil routineMark: the movement's name, small under the mark; temper: the move's name
 function EqTrainingHud.pop(kind, mult, sub)
     local text, color, big
     if kind == "jump" then
@@ -377,6 +378,10 @@ function EqTrainingHud.pop(kind, mult, sub)
         color, big = EqTrainingHud.multColor(mult), mult
     elseif kind == "routine" then
         text, color, big = string.format("x%d!", mult), EqTrainingHud.multColor(mult), mult
+    elseif kind == "temper" then
+        -- The temperament combo (EqTemperament): the first move by name, then the multiplier.
+        text = (mult <= 1 and sub ~= nil) and sub or string.format("x%d!", mult)
+        color, big = EqTrainingHud.multColor(mult), mult
     elseif kind == "speedBank" then
         -- A Sprint banked for speed training: "Speed x7.3!", beside the panel (the middle is for
         -- alerts such as SPRINT! and Caution, James).

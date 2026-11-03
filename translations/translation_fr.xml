@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vue d'entraînement : %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Trois erreurs de parcours (ligne perdue, sortie de la carrière ou arrêt sur place) terminent la reprise ; finissez-la pour un bonus de tempérament qui grandit avec votre note. Un cheval plus calme voit la ligne plus loin et est prévenu plus tôt des changements. Les lettres de Riding Hall donnent l'ancienne routine de trajets entre les lettres. Hors d'une carrière, le pas et le reculer entraînent toujours un peu le tempérament, et les friandises comme les carottes aident aussi."/>
-        <text name="eq_help_temperament_1" text="L'entraînement du tempérament apprend le contrôle à votre cheval, et il lui faut une carrière de dressage : achetez-en une dans la boutique ou placez des lettres de dressage. Dans une carrière de la boutique, allez en A et une reprise de figures commence : cercles, diagonales, serpentines et plus, tracés en ligne dorée au sol. Restez sur la ligne et changez d'allure ou arrêtez-vous là où c'est demandé ; chaque mouvement est noté sur 10."/>
+        <text name="eq_help_temperament_2" text="Pour le plus de tempérament, montez une reprise dans une carrière de dressage : achetez-en une en boutique et allez à A. Une reprise de figures commence, tracée en ligne dorée au sol : restez dessus et changez d&apos;allure ou arrêtez-vous quand c&apos;est demandé ; chaque mouvement est noté sur 10. Trois erreurs de parcours mettent fin à la reprise ; terminez-la pour un bonus qui grandit avec votre note. Un cheval plus calme voit plus loin sur la ligne. Les lettres Riding Hall donnent l&apos;ancienne routine de trajets entre lettres. Les friandises comme les carottes aident aussi."/>
+        <text name="eq_help_temperament_1" text="Le tempérament, c&apos;est le contrôle. Partout où vous montez, enchaînez de nouveaux mouvements pour construire un combo : changez d&apos;allure (sauf vers le grand galop), restez immobile, faites un grand virage (un demi-cercle d&apos;un côté) ou travaillez sur deux pistes et en rassembler. Chaque nouveau mouvement fait monter le combo jusqu&apos;à x5 et remplit sa barre. Répéter l&apos;un de vos 3 derniers mouvements est permis mais ne rapporte rien. Le grand galop, un choc ou une barre vide font perdre le combo ; les sauts ne comptent pas."/>
         <text name="eq_help_temperament_title" text="Entraînement : Tempérament"/>
         <text name="eq_help_agility_2" text="Vous perdez le multiplicateur si vous ne franchissez pas un nouvel obstacle à temps ou perdez trop de vitesse. Sauter sans obstacle entraîne un peu, mais n'augmente pas le multiplicateur."/>
         <text name="eq_help_agility_1" text="L'Agilité, c'est surtout franchir des sauts, même si passer d'une allure à l'autre aide un peu. Franchissez des obstacles pour monter un multiplicateur d'Agilité, qui retombe après dix secondes, ou plus tôt si vous touchez un obstacle."/>
@@ -126,9 +126,20 @@
         <text name="eq_train_routine" text="Reprise x%d"/>
         <text name="eq_train_combo_none" text="Franchissez un saut pour lancer un combo"/>
         <text name="eq_train_combo" text="Combo de sauts x%d"/>
+        <text name="eq_train_temperCombo" text="Combo de tempérament x%d"/>
+        <text name="eq_train_temperNone" text="Changez d&apos;allure, arrêtez-vous ou tournez pour un combo"/>
+        <text name="eq_train_temperStale" text="Déjà fait : %s"/>
+        <text name="eq_train_temperRecent" text="Récents"/>
+        <text name="eq_temper_halt" text="Arrêt"/>
+        <text name="eq_temper_gait_walk" text="Pas"/>
+        <text name="eq_temper_gait_trot" text="Trot"/>
+        <text name="eq_temper_gait_canter" text="Galop"/>
+        <text name="eq_temper_gait_reverse" text="Reculer"/>
+        <text name="eq_temper_turn_left" text="Grand virage à gauche (%s)"/>
+        <text name="eq_temper_turn_right" text="Grand virage à droite (%s)"/>
         <text name="eq_train_view_temperament" text="Tempérament"/>
         <text name="eq_train_view_agility" text="Agilité"/>
-        <text name="eq_help_freestyle_2" text="L&apos;agilité s&apos;entraîne en sautant des obstacles pour remplir une jauge de combo, et le tempérament en montant une reprise dans une carrière de dressage. L&apos;endurance et la vitesse s&apos;entraînent en galopant bien : appuyez sur H au galop pour savoir comment."/>
+        <text name="eq_help_freestyle_2" text="L&apos;agilité s&apos;entraîne en sautant des obstacles pour remplir un compteur de combo, et le tempérament en enchaînant de nouveaux mouvements (changements d&apos;allure, arrêts, grands virages, deux pistes) ou en montant une reprise de dressage. L&apos;endurance et la vitesse s&apos;entraînent en galopant bien : appuyez sur H au galop pour savoir comment."/>
         <text name="eq_help_freestyle_3" text="Vous préférez ne pas monter ? Embauchez des palefreniers et des entraîneurs dans l&apos;onglet Personnel pour entraîner vos chevaux chaque jour. Les ouvriers animaliers et l&apos;Éleveur de RLRM ne font que les garder actifs."/>
         <text name="eq_form_title" text="Pic de forme"/>
         <text name="eq_help_freestyle_4" text="Montez avant une compétition ! Chaque compétence entraînée avec son mini-jeu met votre cheval en Pic de forme pour les épreuves du mois, jusqu'à +8 par compétence. Cela ne s'additionne pas sur plusieurs jours : votre meilleure séance du mois compte."/>

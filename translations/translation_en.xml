@@ -15,8 +15,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="Three errors of course (losing the line, leaving the arena or standing still) end the test; finish it for a Temperament boost that grows with your score. A calmer horse sees more of the line ahead and gets more warning of changes. Riding Hall markers give the older routine of legs between letters. Away from an arena, walking and backing up still train a little Temperament, and treats like carrots help too."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. In a shop arena, ride to A and a test of figures starts: circles, diagonals, serpentines and more, drawn as a gold line on the ground. Stay on the line and change gait or halt where you are told; each movement is marked out of 10."/>
+        <text name="eq_help_temperament_2" text="For the most Temperament, ride a test in a dressage arena: buy one from the shop and ride to A. A test of figures starts, drawn as a gold line on the ground: stay on it and change gait or halt where you are told; each movement is marked out of 10. Three errors of course end the test; finish it for a boost that grows with your score. A calmer horse sees more of the line ahead. Riding Hall markers give the older routine of legs between letters. Treats like carrots help too."/>
+        <text name="eq_help_temperament_1" text="Temperament is all about control. Anywhere you ride, string new moves together to build a combo: change gait (not to a gallop), stand still, make a big turn (half a circle one way), or ride lateral and collected work. Each new move raises the combo, up to x5, and refills its bar. Repeating one of your last 3 moves is fine but adds nothing. Galloping, running into something or letting the bar run out loses the combo; jumps don&apos;t count."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
         <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
         <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
@@ -213,9 +213,20 @@
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
         <text name="eq_train_combo" text="Jump combo x%d"/>
+        <text name="eq_train_temperCombo" text="Temperament combo x%d"/>
+        <text name="eq_train_temperNone" text="Change gait, halt or turn to start a combo"/>
+        <text name="eq_train_temperStale" text="Done recently: %s"/>
+        <text name="eq_train_temperRecent" text="Recent"/>
+        <text name="eq_temper_halt" text="Standing still"/>
+        <text name="eq_temper_gait_walk" text="Walk"/>
+        <text name="eq_temper_gait_trot" text="Trot"/>
+        <text name="eq_temper_gait_canter" text="Canter"/>
+        <text name="eq_temper_gait_reverse" text="Backing up"/>
+        <text name="eq_temper_turn_left" text="Big turn left (%s)"/>
+        <text name="eq_temper_turn_right" text="Big turn right (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament by riding a test in a dressage arena. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament by stringing new moves together (gait changes, halts, big turns, lateral work) or by riding a dressage test. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
         <text name="eq_help_freestyle_3" text="Rather not ride? Hire grooms and trainers on the Staff tab to train your horses each day. The game&apos;s animal staff and RLRM&apos;s Herdsman only keep them ticking over."/>
         <text name="eq_form_title" text="Peak form"/>
         <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
