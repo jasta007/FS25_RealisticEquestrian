@@ -891,7 +891,7 @@ do
     band.exertion.value = st.from - 1
     local past = T.staminaStep(band, 50, false)
     check("recovering past the bottom band drops to x1 and puts a full band in the top third",
-        past == "miss" and st.mult == 1 and st.side == "high" and math.abs(st.to - st.from - T.PACE_WIDTH[1]) < 1e-6)
+        past == "past" and st.mult == 1 and st.side == "high" and math.abs(st.to - st.from - T.PACE_WIDTH[1]) < 1e-6)
     local eased = T.newSheet()
     eased.exertion.mode, eased.exertion.value = "push", 50
     T.staminaStep(eased, 50, false)
@@ -912,8 +912,13 @@ do
     check("the bands sit higher at a higher multiplier", lowHigh > T.PACE_LOW[1][2] and T.paceRange("high", 5) > T.PACE_HIGH[1][1])
     local cantered = T.newSheet()
     cantered.stamina.mult = 4
-    T.staminaStep(cantered, 50, false)
-    check("dropping to a canter loses the stamina multiplier at once", cantered.stamina.mult == 1)
+    local canterNews = T.staminaStep(cantered, 50, false)
+    check("dropping to a canter loses the stamina multiplier at once", cantered.stamina.mult == 1 and canterNews == "lost")
+    local earlySheet = T.newSheet()
+    earlySheet.exertion.mode, earlySheet.exertion.value = "push", 30
+    T.staminaStep(earlySheet, 50, false)
+    earlySheet.exertion.mode = "recover"
+    check("turning round before the band is too early", T.staminaStep(earlySheet, 50, false) == "early" and earlySheet.stamina.side == "low")
     T.paceRandom = realRandom
     local blownSheet = T.newSheet()
     blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4

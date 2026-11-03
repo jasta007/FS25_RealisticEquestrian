@@ -452,7 +452,8 @@ end
 --- @param sheet table
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
---- @return string|nil "hit" or "miss" when the band was judged this frame
+--- @return string|nil "hit", "early" (turned before the band), "past" (went past it) or "lost"
+---     (dropped out of the gallop with a combo) when something happened this frame
 function EqTraining.staminaStep(sheet, dt, worn)
     local ex, st = sheet.exertion, sheet.stamina
     local seconds = dt / 1000
@@ -464,6 +465,7 @@ function EqTraining.staminaStep(sheet, dt, worn)
         st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     elseif dir == nil then
         -- Out of the gallop: the bonus is gone (a canter still rests the horse fastest).
+        if st.mult > 1 then judged = "lost" end
         st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     else
         if st.side == nil then EqTraining.placeBand(st, "high") end
@@ -479,12 +481,12 @@ function EqTraining.staminaStep(sheet, dt, worn)
                 judged = "hit"
             elseif away then
                 missBand(st)
-                judged = "miss"
+                judged = "early"
             end
         elseif (st.side == "high" and dir == "up" and v > st.to) or (st.side == "low" and dir == "down" and v < st.from) then
             -- Went straight past it.
             missBand(st)
-            judged = "miss"
+            judged = "past"
         end
         st.dir = dir
     end

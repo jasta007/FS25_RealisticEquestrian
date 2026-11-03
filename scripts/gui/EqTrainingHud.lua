@@ -455,6 +455,14 @@ function EqTrainingHud.pop(kind, mult, sub)
         -- alerts such as SPRINT! and Caution, James).
         text = string.format(g_i18n:getText("eq_pop_speedBank"), mult)
         color, big = EqTrainingHud.STAT_COLOR.speed, math.min(5, 1 + math.floor(mult / 2.5))
+    elseif kind:sub(1, 8) == "stamina_" then
+        -- The stamina band's news (EqTraining.staminaStep), beside the panel like the Speed bank so
+        -- the middle stays clear: "Stamina combo x2.5!" or why the combo was lost.
+        local key = { stamina_hit = "eq_pop_staminaUp", stamina_early = "eq_pop_staminaEarly",
+            stamina_past = "eq_pop_staminaPast", stamina_lost = "eq_pop_staminaLost" }
+        text = string.format(g_i18n:getText(key[kind] or "eq_pop_staminaLost"), mult or 1)
+        EqTrainingHud.sideState = { text = text, color = EqTrainingHud.STAT_COLOR.stamina, at = g_time or 0 }
+        return
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
     elseif EqTrainingHud.EXERTION_POPS[kind] ~= nil then

@@ -771,6 +771,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local staminaJudged = EqTraining.staminaStep(sheet, dt, worn)
     if staminaJudged == "hit" then spec.eqStreakFlashAt = g_time end
     if staminaJudged ~= nil then
+        EqTrainingHud.pop("stamina_" .. staminaJudged, sheet.stamina.mult)
         local st = sheet.stamina
         Log:info("Stamina: band %s at %.0f%%, now x%.1f, next band %s %.0f-%.0f%%", staminaJudged, ex.value, st.mult,
             st.side or "-", st.from or 0, st.to or 0)
@@ -1813,6 +1814,12 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
             or string.format(g_i18n:getText("eq_train_staminaMult"), st.mult)
         row.leftColor = ex.lock ~= nil and COLOR.red or training and STAT_COLOR.stamina or COLOR.grey
     end
+    -- The Stamina view says where the band wants the bar next.
+    local nextRow = nil
+    if view == "stamina" and ex.lock == nil and ex.mode ~= nil and ex.mode ~= "sprint" and st.side ~= nil then
+        nextRow = { left = g_i18n:getText(st.side == "high" and "eq_train_staminaNextHigh" or "eq_train_staminaNextLow"),
+            leftColor = COLOR.grey }
+    end
     -- Once a Sprint is paid out (the riding bar filled), its multiplier is no longer shown.
     if ex.mode == "sprint" and not sheet.sprint.cashed then
         local over = ex.value >= EqExertion.LINE
@@ -1831,8 +1838,10 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
         row.left = last ~= nil and string.format(g_i18n:getText("eq_train_lastSprint"), last) or g_i18n:getText("eq_train_sprintToTrain")
         row.leftColor = last ~= nil and STAT_COLOR.speed or COLOR.grey
     end
-    if row.left == nil and row.right == nil then return {} end
-    return { row }
+    local rows = {}
+    if row.left ~= nil or row.right ~= nil then table.insert(rows, row) end
+    if nextRow ~= nil then table.insert(rows, nextRow) end
+    return rows
 end
 
 

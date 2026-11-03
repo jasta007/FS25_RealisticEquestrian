@@ -282,7 +282,7 @@
         <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
         <text name="eq_help_gallop_2" text="If the bar reaches the red Fatigued section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
         <text name="eq_help_gallop_3" text="Tap the left mouse button continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
-        <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends past the line. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. A blue band shows where to turn the bar round: switch to Recover inside a band near the top, or to Push inside a band near the bottom, and the multiplier rises while the band jumps to the other end and gets thinner. Switching early or going past it drops you back to x1. Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends past the line. Pushing and Recovering train Stamina at the Stamina combo, up to x5: turn the bar round inside the blue band to raise it (see the Stamina view's help). Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
         <text name="eq_ex_hint_sprint" text="Continually left click to sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
         <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
@@ -299,13 +299,19 @@
         <text name="eq_train_view_speed" text="Speed"/>
         <text name="eq_train_view_condensed" text="Condensed"/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina multiplier, up to x5. A blue band on the bar shows where to turn round. When you start galloping it sits near the top: Push up into it, then Recover."/>
-        <text name="eq_help_stamina_2" text="Each turn inside the band raises the multiplier, and the band jumps to the other end of the bar and gets thinner. Each hit also makes the bar easier: it falls faster on the way down to the next band and climbs more slowly on the way up, and the bands sit higher as the multiplier grows. Switch before you reach it, or go past it, and the multiplier drops to x1. Dropping to a canter loses it too. Fatigued or Blown also drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina combo, up to x5. A blue band on the bar shows where to turn round. When you start galloping it sits near the top: Push up into it, then Recover. The edges of the screen stream past while the bar is in the band."/>
+        <text name="eq_help_stamina_2" text="Each turn inside the band raises the combo by 0.5, and the band jumps to the other end of the bar, a little higher and thinner. Each hit also makes the next leg easier: the bar falls faster on the way down and climbs more slowly on the way up. Turn too early, go past the band or slow out of the gallop and the combo is lost. Fatigued or Blown also stops Stamina training until the bar is empty."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
         <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap the left mouse button continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
         <text name="eq_help_speed_2" text="A Sprint that ends past the line is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
         <text name="eq_train_speedMult" text="Speed x%.1f"/>
-        <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
+        <text name="eq_train_staminaMult" text="Stamina combo x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Stamina combo x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Too early: Stamina combo lost"/>
+        <text name="eq_pop_staminaPast" text="Overshot: Stamina combo lost"/>
+        <text name="eq_pop_staminaLost" text="Stamina combo lost"/>
+        <text name="eq_train_staminaNextHigh" text="Push into the band, then Recover"/>
+        <text name="eq_train_staminaNextLow" text="Recover into the band, then Push"/>
         <text name="eq_train_staminaStopped" text="no training"/>
         <text name="eq_ex_fatigued" text="Fatigued"/>
         <text name="eq_pop_speedBank" text="Speed x%.1f!"/>

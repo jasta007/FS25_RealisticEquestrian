@@ -284,7 +284,7 @@
         <text name="eq_help_gallop_1" text="Il cavallo galoppa a tre ritmi. Premi W dal galoppo per iniziare la Spinta: veloce, ma la barra dello Sforzo si riempie, e tanto più in fretta quanto più è alta. Premi S per il Recupero: un galoppo più lento che abbassa lo sforzo mentre continui a galoppare, in fretta nel terzo superiore e in quello inferiore della barra, lentamente nel mezzo. Premi di nuovo W per spingere ancora. Un cavallo più in forma si stanca più lentamente e recupera più in fretta."/>
         <text name="eq_help_gallop_2" text="Se la barra raggiunge la zona rossa Affaticato durante la Spinta, il cavallo scende al galoppo e non può galoppare pieno di nuovo finché la barra non si svuota. Per rallentare al galoppo tu stesso, premi S una volta durante il Recupero con la barra vuota, o premi S due volte in qualsiasi momento."/>
         <text name="eq_help_gallop_3" text="Premi il tasto sinistro del mouse di continuo durante il galoppo pieno per lo Sprint: molto più veloce, e la barra si riempie piano all'inizio, poi sempre più in fretta, quindi fermati prima della linea. Finito lo Sprint si passa al Recupero, e non c'è un nuovo Sprint finché la barra non si svuota. Solo uno Sprint può superare la linea Affaticato, per un ultimo sforzo verso il traguardo, ma uno Sprint che finisce lì lascia il cavallo Sfinito, e recupera molto lentamente finché non torna sotto la linea."/>
-        <text name="eq_help_gallop_4" text="Allenamento: lo Sprint allena la Velocità, e più alto porta la barra prima di finire, più vale: x2 a metà strada dalla linea, fino a x10 appena prima, ma solo x1 se finisce oltre la linea. Spinta e Recupero allenano la Resistenza con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, più in fretta vicino alla cima. Recuperare nel terzo centrale della barra fa riprendere fiato al cavallo e conserva gran parte del moltiplicatore, mentre i terzi superiore e inferiore lo perdono in fretta, e un cavallo che non riprende mai fiato migliora molto più lentamente. Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_help_gallop_4" text="Allenamento: uno Sprint allena la Velocità, e più alza la barra prima di finire, più vale: x2 a metà strada dalla linea, fino a x10 appena prima, ma solo x1 se finisce oltre la linea. Spinta e Recupero allenano la Resistenza con la combo Resistenza, fino a x5: inverti la barra dentro la fascia blu per alzarla (vedi l'aiuto della vista Resistenza). Affaticato o Sfinito la riporta a x1 e ferma l'allenamento della Resistenza finché la barra non è vuota."/>
         <text name="eq_ex_hint_sprint" text="Clic sinistro di continuo per lo sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: prima recupera fino a vuoto"/>
         <text name="eq_ex_hint_locked" text="Galoppo finché la barra non è vuota"/>
@@ -301,13 +301,19 @@
         <text name="eq_train_view_speed" text="Velocità"/>
         <text name="eq_train_view_condensed" text="Compatta"/>
         <text name="eq_help_stamina_title" text="Allenamento: Resistenza"/>
-        <text name="eq_help_stamina_1" text="La Resistenza si allena durante Spinta e Recupero al galoppo pieno, con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, e più ti avvicini alla linea, più sale in fretta. Il Recupero lo abbassa: in fretta nel terzo superiore della barra, lentamente in quello centrale, di nuovo in fretta in quello inferiore."/>
-        <text name="eq_help_stamina_2" text="Quindi spingi fin vicino alla linea, rallenta fino al centro della barra e lascia che il cavallo riprenda fiato lì per un po', poi spingi di nuovo. Alternare Spinta e Recupero vicino alla cima stanca il cavallo senza alzare il moltiplicatore, e Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_help_stamina_1" text="La Resistenza si allena durante Spinta e Recupero al galoppo pieno, con la combo Resistenza, fino a x5. Una fascia blu sulla barra mostra dove invertire. All'inizio del galoppo pieno sta in alto: sali fino a lì con la Spinta, poi Recupera. Finché la barra è nella fascia, delle scie scorrono ai bordi dello schermo."/>
+        <text name="eq_help_stamina_2" text="Ogni inversione dentro la fascia alza la combo di 0,5, e la fascia salta all'altro capo della barra, un po' più in alto e più sottile. Ogni centro rende anche più facile il tratto successivo: la barra scende più in fretta e sale più piano. Inverti troppo presto, supera la fascia o esci dal galoppo pieno e la combo è persa. Affaticato o Sfinito ferma anche l'allenamento della Resistenza finché la barra non è vuota."/>
         <text name="eq_help_speed_title" text="Allenamento: Velocità"/>
         <text name="eq_help_speed_1" text="La Velocità si allena durante lo Sprint: premi il tasto sinistro del mouse di continuo al galoppo pieno. Ogni secondo di Sprint conta, e alla fine viene moltiplicato per quanto in alto hai portato la barra: x2 a metà strada dalla linea, fino a x10 appena prima."/>
         <text name="eq_help_speed_2" text="Uno Sprint che finisce oltre la linea vale solo x1, quindi smetti di premere (o premi S) prima della linea. Dopo uno Sprint il cavallo deve recuperare fino a barra vuota prima di sprintare ancora."/>
         <text name="eq_train_speedMult" text="Velocità x%.1f"/>
-        <text name="eq_train_staminaMult" text="Resistenza x%.1f"/>
+        <text name="eq_train_staminaMult" text="Combo Resistenza x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Combo Resistenza x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Troppo presto: combo Resistenza persa"/>
+        <text name="eq_pop_staminaPast" text="Troppo oltre: combo Resistenza persa"/>
+        <text name="eq_pop_staminaLost" text="Combo Resistenza persa"/>
+        <text name="eq_train_staminaNextHigh" text="Spinta fino alla fascia, poi Recupero"/>
+        <text name="eq_train_staminaNextLow" text="Recupero fino alla fascia, poi Spinta"/>
         <text name="eq_train_staminaStopped" text="nessun allenamento"/>
         <text name="eq_ex_fatigued" text="Affaticato"/>
         <text name="eq_pop_speedBank" text="Velocità x%.1f!"/>

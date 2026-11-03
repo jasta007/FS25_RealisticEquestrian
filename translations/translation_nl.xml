@@ -284,7 +284,7 @@
         <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo's. Druk vanuit galop op W om te beginnen met Doorzetten: snel, maar de Inspanningsbalk loopt vol, en sneller naarmate hij hoger staat. Druk op S om te Herstellen: een langzamere galop die de inspanning laat zakken terwijl je doorgaloppeert, snel in het bovenste en onderste derde van de balk, langzaam in het midden. Druk weer op W om door te zetten. Een fitter paard wordt langzamer moe en herstelt sneller."/>
         <text name="eq_help_gallop_2" text="Als de balk tijdens Doorzetten het rode deel Vermoeid bereikt, valt je paard terug in galop en kan het niet opnieuw gestrekt galopperen tot de balk leeg is. Om zelf terug te gaan naar galop druk je één keer op S tijdens Herstellen met een lege balk, of tik je op elk moment twee keer op S."/>
         <text name="eq_help_gallop_3" text="Klik onafgebroken met de linkermuisknop tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
-        <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voor hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 vlak ervoor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, sneller bij de top. Herstellen in het middelste derde van de balk laat je paard op adem komen en houdt het grootste deel van de vermenigvuldiger, terwijl het bovenste en onderste derde hem snel verliezen, en een paard dat nooit op adem komt, gaat veel langzamer vooruit. Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
+        <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voordat hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 er net voor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie met de conditiecombo, tot x5: keer de balk om binnen de blauwe band om hem te verhogen (zie de hulp van de Conditieweergave). Vermoeid of Uitgeput zet hem op x1 en stopt de Conditietraining tot de balk leeg is."/>
         <text name="eq_ex_hint_sprint" text="Klik onafgebroken met links om te sprinten"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: eerst herstellen tot leeg"/>
         <text name="eq_ex_hint_locked" text="Galop tot de balk leeg is"/>
@@ -301,13 +301,19 @@
         <text name="eq_train_view_speed" text="Snelheid"/>
         <text name="eq_train_view_condensed" text="Compact"/>
         <text name="eq_help_stamina_title" text="Training: Conditie"/>
-        <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, tegen de Conditievermenigvuldiger, tot x5. Doorzetten verhoogt die, en hoe dichter bij de lijn, hoe sneller hij stijgt. Herstellen verlaagt hem: snel in het bovenste derde van de balk, langzaam in het middelste derde en weer snel in het onderste derde."/>
-        <text name="eq_help_stamina_2" text="Zet dus door tot dicht bij de lijn, neem gas terug tot het midden van de balk en laat je paard daar even op adem komen, en zet dan weer door. Heen en weer schakelen tussen Doorzetten en Herstellen bij de top maakt je paard moe zonder de vermenigvuldiger te verhogen, en Vermoeid of Uitgeput zet hem terug op x1 en stopt de training van Conditie tot de balk leeg is."/>
+        <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, met de conditiecombo, tot x5. Een blauwe band op de balk laat zien waar je omkeert. Bij het begin van de gestrekte galop zit hij bovenaan: zet door tot erin en Herstel dan. Zolang de balk in de band is, schieten strepen langs de randen van het scherm."/>
+        <text name="eq_help_stamina_2" text="Elke omkeer in de band verhoogt de combo met 0,5, en de band springt naar het andere eind van de balk, iets hoger en smaller. Elke treffer maakt ook het volgende stuk makkelijker: de balk zakt sneller en stijgt langzamer. Keer je te vroeg om, ga je voorbij de band of verlaat je de gestrekte galop, dan ben je de combo kwijt. Vermoeid of Uitgeput stopt ook de Conditietraining tot de balk leeg is."/>
         <text name="eq_help_speed_title" text="Training: Snelheid"/>
         <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: klik onafgebroken met de linkermuisknop tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
         <text name="eq_help_speed_2" text="Een Sprint die voorbij de lijn eindigt is maar x1 waard, dus stop met tikken (of druk op S) voor de lijn. Na een Sprint moet je paard herstellen tot een lege balk voor het weer kan sprinten."/>
         <text name="eq_train_speedMult" text="Snelheid x%.1f"/>
-        <text name="eq_train_staminaMult" text="Conditie x%.1f"/>
+        <text name="eq_train_staminaMult" text="Conditiecombo x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Conditiecombo x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Te vroeg: conditiecombo kwijt"/>
+        <text name="eq_pop_staminaPast" text="Te ver: conditiecombo kwijt"/>
+        <text name="eq_pop_staminaLost" text="Conditiecombo kwijt"/>
+        <text name="eq_train_staminaNextHigh" text="Doorzetten tot in de band, dan Herstellen"/>
+        <text name="eq_train_staminaNextLow" text="Herstellen tot in de band, dan Doorzetten"/>
         <text name="eq_train_staminaStopped" text="geen training"/>
         <text name="eq_ex_fatigued" text="Vermoeid"/>
         <text name="eq_pop_speedBank" text="Snelheid x%.1f!"/>

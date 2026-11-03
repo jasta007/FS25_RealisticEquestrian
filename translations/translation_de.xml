@@ -284,7 +284,7 @@
         <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Drücken Sie im Galopp W, um mit dem Antreiben zu beginnen: schnell, aber der Anstrengungsbalken füllt sich, und zwar umso schneller, je höher er steht. Drücken Sie S zum Erholen: ein langsamerer Renngalopp, in dem die Anstrengung wieder sinkt, ohne dass Sie den Renngalopp verlassen, schnell im oberen und unteren Drittel des Balkens, langsam im mittleren. Mit W treiben Sie wieder an. Ein fitteres Pferd ermüdet langsamer und erholt sich schneller."/>
         <text name="eq_help_gallop_2" text="Erreicht der Balken beim Antreiben den roten Bereich Erschöpft, fällt Ihr Pferd in den Galopp zurück und kann erst wieder in den Renngalopp, wenn der Balken leer ist. Um selbst in den Galopp zu wechseln, drücken Sie beim Erholen mit leerem Balken einmal S oder jederzeit zweimal schnell S."/>
         <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp ständig die linke Maustaste, um zu sprinten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd ausgepumpt und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
-        <text name="eq_help_gallop_4" text="Training: Ein Sprint trainiert Schnelligkeit, und je höher er den Balken treibt, bevor er endet, desto mehr ist er wert: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor, aber nur x1, wenn er hinter der Linie endet. Antreiben und Erholen trainieren Ausdauer mit dem Ausdauer-Multiplikator, bis zu x5. Ein blauer Bereich zeigt, wo Sie umkehren: Wechseln Sie in einem Bereich oben zum Erholen oder in einem Bereich unten zum Antreiben, dann steigt der Multiplikator und der Bereich springt ans andere Ende und wird schmaler. Zu frühes Wechseln oder Darüberhinausgehen setzt ihn auf x1. Erschöpft oder Ausgepumpt setzt ihn auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_help_gallop_4" text="Training: Ein Sprint trainiert Schnelligkeit, und je höher er den Balken treibt, bevor er endet, desto mehr ist er wert: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor, aber nur x1, wenn er hinter der Linie endet. Antreiben und Erholen trainieren Ausdauer mit der Ausdauer-Combo, bis zu x5: Kehren Sie den Balken im blauen Bereich um, um sie zu erhöhen (siehe Hilfe der Ausdauer-Ansicht). Erschöpft oder Ausgepumpt setzt sie auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
         <text name="eq_ex_hint_sprint" text="Für den Sprint ständig links klicken"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: erst ganz erholen"/>
         <text name="eq_ex_hint_locked" text="Galopp, bis der Balken leer ist"/>
@@ -294,7 +294,13 @@
         <text name="eq_ex_careful" text="Vorsicht"/>
         <text name="eq_ex_overExerted" text="Erschöpft!"/>
         <text name="eq_train_speedMult" text="Schnelligkeit x%.1f"/>
-        <text name="eq_train_staminaMult" text="Ausdauer x%.1f"/>
+        <text name="eq_train_staminaMult" text="Ausdauer-Combo x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Ausdauer-Combo x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Zu früh: Ausdauer-Combo verloren"/>
+        <text name="eq_pop_staminaPast" text="Zu weit: Ausdauer-Combo verloren"/>
+        <text name="eq_pop_staminaLost" text="Ausdauer-Combo verloren"/>
+        <text name="eq_train_staminaNextHigh" text="Bis in den Bereich antreiben, dann erholen"/>
+        <text name="eq_train_staminaNextLow" text="Bis in den Bereich erholen, dann antreiben"/>
         <text name="eq_train_staminaStopped" text="kein Training"/>
         <text name="eq_ex_fatigued" text="Erschöpft"/>
         <text name="eq_pop_speedBank" text="Schnelligkeit x%.1f!"/>
@@ -306,8 +312,8 @@
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
         <text name="eq_train_view_condensed" text="Kompakt"/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_stamina_1" text="Ausdauer trainiert, während Sie im Renngalopp antreiben und erholen, mit dem Ausdauer-Multiplikator, bis zu x5. Ein blauer Bereich auf dem Balken zeigt, wo Sie umkehren. Zu Beginn des Renngalopps liegt er oben: Treiben Sie bis hinein an, dann erholen Sie sich."/>
-        <text name="eq_help_stamina_2" text="Jedes Umkehren im Bereich erhöht den Multiplikator, und der Bereich springt ans andere Ende des Balkens und wird schmaler. Jeder Treffer macht es auch leichter: Der Balken fällt schneller zum nächsten Bereich und steigt langsamer, und die Bereiche liegen mit wachsendem Multiplikator höher. Wechseln Sie, bevor Sie ihn erreichen, oder gehen Sie darüber hinaus, fällt der Multiplikator auf x1. Ein Wechsel in den Galopp lässt ihn ebenfalls fallen. Erschöpft oder Ausgepumpt setzt ihn ebenfalls auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_help_stamina_1" text="Ausdauer trainiert, während Sie im Renngalopp antreiben und erholen, mit der Ausdauer-Combo, bis zu x5. Ein blauer Bereich auf dem Balken zeigt, wo Sie umkehren. Zu Beginn des Renngalopps liegt er oben: Treiben Sie bis hinein an, dann erholen Sie sich. Solange der Balken im Bereich ist, ziehen Streifen an den Bildschirmrändern vorbei."/>
+        <text name="eq_help_stamina_2" text="Jedes Umkehren im Bereich erhöht die Combo um 0,5, und der Bereich springt ans andere Ende des Balkens, etwas höher und schmaler. Jeder Treffer macht auch den nächsten Abschnitt leichter: Der Balken fällt schneller und steigt langsamer. Kehren Sie zu früh um, gehen Sie über den Bereich hinaus oder verlassen Sie den Renngalopp, ist die Combo verloren. Erschöpft oder Ausgepumpt stoppt außerdem das Ausdauertraining, bis der Balken leer ist."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
         <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig die linke Maustaste. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
         <text name="eq_help_speed_2" text="Ein Sprint, der hinter der Linie endet, zählt nur x1, also hören Sie vor der Linie auf zu tippen (oder drücken Sie S). Nach einem Sprint muss sich Ihr Pferd bis zum leeren Balken erholen, bevor es wieder sprinten kann."/>

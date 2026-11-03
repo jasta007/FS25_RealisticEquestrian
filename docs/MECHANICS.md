@@ -125,7 +125,7 @@ multiplied when it ends by how high it took the bar: x2 half way to the line, ri
 x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
-Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
+Stamina comes from Pushing and Recovering, at a live Stamina combo from x1 to x5 shown under the bar.
 A blue band on the gallop part of the bar shows where to turn the bar round:
 
 - When a gallop starts the band sits somewhere near the top. Switch from Pushing (or a Sprint)
@@ -138,6 +138,9 @@ A blue band on the gallop part of the bar shows where to turn the bar round:
   of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
 - Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
   full-width band at the other end.
+- While the bar is in the band, faint speed lines stream out to the sides of the screen and flash
+  on a hit. News shows beside the panel: "Stamina combo x2.5!", "Too early", "Overshot" or "Stamina
+  combo lost". The Stamina view also says what to do next ("Push into the band, then Recover").
 - Dropping to a canter or slower loses the multiplier at once, though it still brings the bar
   down fastest. Fatigued (or Blown, a Sprint that ends past
   the line) drops it to x1 and stops stamina training until the bar is empty.
