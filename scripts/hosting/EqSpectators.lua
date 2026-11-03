@@ -70,9 +70,9 @@ EqSpectators.BOX_NODE = "eqCrowdBox"
 -- aiming: fingers 1 / wrists 1 bring them back).
 EqSpectators.pose = {
     hipLift = 0.10, hipBack = 0.18, footForward = 0.45, footApart = 0.13,
-    handForward = -0.20, handApart = 0.25, handLift = 0.15,
+    handForward = -0.185, handApart = 0.253, handLift = 0.15,
     -- the other hand position: in the lap (James 2026-11-02), half the crowd
-    lapForward = 0.10, lapApart = 0.20, lapLift = 0.19, lapShare = 0.5,
+    lapForward = 0.15, lapApart = 0.24, lapLift = 0.216, lapShare = 0.5,
     lapPitch = 0, lapYaw = 90, lapRoll = 0, lapElbow = 0,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
     handJitter = 0.035,
@@ -81,8 +81,8 @@ EqSpectators.pose = {
     -- our own two-joint solve puts the wrist on the hand spot with the elbow pointing along
     -- elbowOut (sideways, out), elbowDown and elbowBack, in the seat's frame; the same numbers
     -- always give the same pose. arms = 1 is the game's IK, 0 none.
-    arms = 2, elbowOut = 0.35, elbowDown = 0.3, elbowBack = 1.0,
-    lapElbowOut = 0.8, lapElbowDown = 0.4, lapElbowBack = 0.6,
+    arms = 2, elbowOut = 0.2, elbowDown = 0.67, elbowBack = 0.6,
+    lapElbowOut = 1.2, lapElbowDown = 0.68, lapElbowBack = 0.5,
     -- standing: the ankle joints this high above the ground
     ankle = 0.09,
 }
@@ -1236,29 +1236,8 @@ end
 
 
 --- Each frame: spawn or clear the crowd, hide far people, keep seated ones posed.
---- F16 (read straight from the keyboard, not in the controls menu): eqSpectators snapshot while exploring.
-function EqSpectators.snapshotKey()
-    if Input == nil or Input.isKeyPressed == nil then return end
-    local key = Input.KEY_f16
-    if key == nil then
-        if not EqSpectators.snapKeyMissing then
-            EqSpectators.snapKeyMissing = true
-            Log:info("EqSpectators: no F16 key in this game; use eqSpectators snapshot")
-        end
-        return
-    end
-    local down = Input.isKeyPressed(key) == true
-    if down and not EqSpectators.snapKeyDown and EqSpectators.exploring ~= nil then
-        local text = EqSpectators.console("snapshot")
-        if text ~= nil then print(text) end
-    end
-    EqSpectators.snapKeyDown = down
-end
-
-
 function EqSpectators.update()
     local now = g_time or 0
-    EqLog.try("EqSpectators snapshot key", EqSpectators.snapshotKey)
     local farm = farmId()
     if farm == nil then return end
     if EqSpectators.scannedAt == nil or now - EqSpectators.scannedAt >= EqSpectators.SCAN_MS or now < EqSpectators.scannedAt then
@@ -1389,7 +1368,7 @@ function EqSpectators.console(command, a, b)
         EqSpectators.pose.handJitter = 0
         EqSpectators.forceHands = group
         EqSpectators.repose()
-        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot (or F16) keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
+        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
     elseif command == "snapshot" or command == "snap" then
         local ex = EqSpectators.exploring
         if ex == nil then return "Not exploring: eqSpectators explore sides|lap first" end
