@@ -51,7 +51,8 @@ EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 --   in Push. A miss takes the help away.
 -- - Going past the band (Pushing above a top band, Recovering below a bottom one) or switching
 --   before reaching it drops the multiplier to x1 and puts a full-width band on the other side.
--- - A canter or slower loses PACE_SLOW_DROP a second. Fatigued (or a Sprint that ends past the
+-- - Dropping to a canter or slower loses the multiplier at once (it still rests the horse
+--   fastest, which suits Speed training). Fatigued (or a Sprint that ends past the
 --   line) drops it to x1 and stops stamina training until exertion is empty again.
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
@@ -61,7 +62,6 @@ EqTraining.PACE_HIGH = { { 100 * 2 / 3, 97 }, { 78, 97 } }
 EqTraining.PACE_LOW = { { 12, 100 / 3 }, { 38, 58 } }
 EqTraining.PACE_RECOVER_BONUS = { 1.3, 1.8 }
 EqTraining.PACE_PUSH_EASE = { 0.9, 0.7 }
-EqTraining.PACE_SLOW_DROP = 0.6
 -- Random numbers 0..1 for the band's place (tests replace it).
 EqTraining.paceRandom = math.random
 
@@ -463,8 +463,8 @@ function EqTraining.staminaStep(sheet, dt, worn)
     if ex.lock ~= nil then
         st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     elseif dir == nil then
-        st.mult = st.mult - EqTraining.PACE_SLOW_DROP * seconds
-        st.dir, st.from, st.to, st.side, st.hit = nil, nil, nil, nil, false
+        -- Out of the gallop: the bonus is gone (a canter still rests the horse fastest).
+        st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     else
         if st.side == nil then EqTraining.placeBand(st, "high") end
         local v = ex.value

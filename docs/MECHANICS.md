@@ -138,7 +138,8 @@ A blue band on the gallop part of the bar shows where to turn the bar round:
   of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
 - Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
   full-width band at the other end.
-- A canter or slower drops the multiplier quickly. Fatigued (or Blown, a Sprint that ends past
+- Dropping to a canter or slower loses the multiplier at once, though it still brings the bar
+  down fastest. Fatigued (or Blown, a Sprint that ends past
   the line) drops it to x1 and stops stamina training until the bar is empty.
 
 ### Agility
