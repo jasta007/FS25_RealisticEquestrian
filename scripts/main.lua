@@ -291,6 +291,12 @@ end
 -- Rideable's functions are copied into vehicle types when types are validated, so they are
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
+-- Dev-only filming autopilot (eqAutoRide): dev/ is never packed into a release, so this only
+-- loads from a test build that carries it. Before EqLateral so its steering wins.
+if fileExists ~= nil and fileExists(modDirectory .. "dev/EqAutoRide.lua") then
+    source(modDirectory .. "dev/EqAutoRide.lua")
+    guarded("dev autopilot", EqAutoRide.install)
+end
 EqLateral.install()
 -- Loading triggers are created as the map loads, so the probe starts listening now.
 guarded("probe hook", EqProbe.install)
