@@ -6,7 +6,7 @@
     - The shop is read once a session: every machine (store items of the vehicle and tool
       category types, shown in the shop, priced) by brand, so brands are sized from the player's
       own shop, mods and all. Lizard and the game's "no brand" are left out (data/sponsors.xml).
-    - Offers come at the start of each year (the year's first month), like staff candidates:
+    - Offers come at the start of each year (January: period 11, or 5 on a southern map), like staff candidates:
       a few sponsors of each size, each with its own demands and rewards. They stay a few months.
       A farm the mod meets for the first time gets this year's offers at once.
     - A farm signs offers from the Events page's Sponsors tab once it meets their terms: up to
@@ -31,6 +31,7 @@ EqSponsorManager.config = nil
 
 
 function EqSponsorManager.reset()
+    EqSponsorManager.januaryCache = nil   -- the map's January period, found once a game
     EqSponsorManager.offers = {}     -- farmId -> { madeMonth, year, list = offers }
     EqSponsorManager.contracts = {}  -- farmId -> list of contracts (EqSponsorship.contractFrom), oldest first
     EqSponsorManager.seed = nil      -- the save's own seed, so two saves get different sponsors
@@ -290,10 +291,73 @@ function EqSponsorManager.likelyPay(farmId, offer)
 end
 
 
---- @return number year the game's year
+-- FS25's periods start at the year's turn: on a northern map period 1 is March (January = 11),
+-- on a southern map such as Beans and Alpacas it is September (January = 5): James got
+-- "New sponsors" in September there (2026-11-03). Sponsors keep the calendar year, so offers
+-- come in January, found from the game's own month names.
+EqSponsorManager.JANUARY_PERIOD = 11          -- northern maps, when nothing better is known
+EqSponsorManager.SOUTHERN_JANUARY_PERIOD = 5
+
+
+--- @return number|nil latitude the map's latitude, where the game keeps it
+local function mapLatitude(environment)
+    for _, holder in ipairs({ environment.daylight or false, environment }) do
+        if type(holder) == "table" then
+            local value = rawget(holder, "latitude")
+            if type(value) == "number" then return value end
+        end
+    end
+    return nil
+end
+
+
+--- @return number period the game's period that is January on this map
+function EqSponsorManager.januaryPeriod()
+    if EqSponsorManager.januaryCache ~= nil then return EqSponsorManager.januaryCache end
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    if environment == nil then return EqSponsorManager.JANUARY_PERIOD end
+    local found, how = nil, nil
+    -- The game's own month names: the period it calls January.
+    local i18n = EqI18N ~= nil and EqI18N.globalI18N() or g_i18n
+    if i18n ~= nil and i18n.formatPeriod ~= nil and i18n.getText ~= nil
+        and (i18n.hasText == nil or i18n:hasText("ui_month1")) then
+        local okName, january = pcall(i18n.getText, i18n, "ui_month1")
+        if okName and type(january) == "string" and january ~= "" then
+            for period = 1, 12 do
+                local ok, text = pcall(i18n.formatPeriod, i18n, period, false)
+                if ok and text == january then found, how = period, "month names" break end
+            end
+        end
+    end
+    -- Else the map's hemisphere.
+    if found == nil then
+        local latitude = mapLatitude(environment)
+        if latitude ~= nil then
+            found = latitude < 0 and EqSponsorManager.SOUTHERN_JANUARY_PERIOD or EqSponsorManager.JANUARY_PERIOD
+            how = string.format("latitude %.1f", latitude)
+        end
+    end
+    if found == nil then found, how = EqSponsorManager.JANUARY_PERIOD, "default" end
+    EqSponsorManager.januaryCache = found
+    Log:info("EqSponsorManager: January is period %d on this map (%s); new sponsor offers come then", found, how)
+    return found
+end
+
+
+--- @param period number|nil the game's period
+--- @return boolean january the period is January, the sponsor year's first month
+function EqSponsorManager.isYearStart(period)
+    return period ~= nil and period == EqSponsorManager.januaryPeriod()
+end
+
+
+--- @return number year the calendar year: the game's year, one on in January and February
 function EqSponsorManager.year()
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
-    if environment ~= nil and environment.currentYear ~= nil then return environment.currentYear end
+    if environment ~= nil and environment.currentYear ~= nil then
+        local period = environment.currentPeriod or 1
+        return environment.currentYear + ((period >= EqSponsorManager.januaryPeriod()) and 1 or 0)
+    end
     return math.floor((EqCompetitionManager.month or 0) / 12)
 end
 
@@ -615,9 +679,9 @@ function EqSponsorManager.onMonthStarted(month)
         end
     end
 
-    -- The year's first month: new offers for every farm.
+    -- January, the year's first month: new offers for every farm.
     local environment = g_currentMission ~= nil and g_currentMission.environment or nil
-    if environment ~= nil and environment.currentPeriod == 1 then
+    if environment ~= nil and EqSponsorManager.isYearStart(environment.currentPeriod) then
         for _, farm in pairs(g_farmManager:getFarms()) do
             local farmId = farm.farmId
             if farmId ~= nil and farmId ~= FarmManager.SPECTATOR_FARM_ID then
