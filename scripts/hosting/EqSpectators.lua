@@ -75,7 +75,7 @@ EqSpectators.pose = {
     lapForward = 0.10, lapApart = 0.26, lapLift = 0.20, lapShare = 0.5,
     lapPitch = 0, lapYaw = 90, lapRoll = 0, lapElbow = 0,
     -- each hand of each person moved up to this much (m), so the two sides aren't mirror images
-    handJitter = 0.035,
+    handJitter = 0.02,
     handPitch = 0, handYaw = 90, handRoll = 0, elbow = 30, fingers = 0, wrists = 0,
     -- arms = 2 (James 2026-11-03: the game's IK snapped the hands about and wrapped arms round heads):
     -- our own two-joint solve puts the wrist on the hand spot with the elbow pointing along
