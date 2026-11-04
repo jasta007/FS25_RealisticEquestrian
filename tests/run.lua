@@ -6632,5 +6632,18 @@ end)()
         and EqSpectators.EXPLORE == nil and EqSpectators.exploreStep == nil and EqSpectators.repose == nil)
 end)()
 
+-- Zzz status icon on the animal cards (EqListBadge): a tired horse gets it at the right end.
+;(function()
+    EqLog = EqLog or { info = function() end, debug = function() end }
+    dofile("scripts/gui/EqListBadge.lua")
+    check("listbadge: full riding bar is tired", EqListBadge.isTired({ riding = 100 }) and not EqListBadge.isTired({ riding = 99.9 })
+        and not EqListBadge.isTired({}))
+    local icons = EqListBadge.addStatusIcons({ { slice = "rlStatus.baby" } }, { eqTired = true })
+    check("listbadge: Zzz goes after RLRM's icons", #icons == 2 and icons[2].slice == "eqMenu.zzz")
+    check("listbadge: no Zzz for a rested horse", #EqListBadge.addStatusIcons({}, { eqTired = false }) == 0)
+    local atlas = io.open("gui/eqMenuIcons.xml"):read("*a")
+    check("listbadge: atlas has the zzz slice", atlas:find('id="zzz"', 1, true) ~= nil)
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
