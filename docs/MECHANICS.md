@@ -96,9 +96,8 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
   the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
   empty; Stamina slows it).
-- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
-  top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
-  quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls, slowly at first
+  and faster the closer it gets to empty, the mirror of Pushing. The horse keeps galloping at an empty bar; W pushes on again.
 - **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 120% of the gallop's
   speed at Speed 0, up to 150% at Speed 100. Exertion rises slowly at first and ever faster (Stamina slows it, so a fit horse Sprints for longer), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
@@ -126,20 +125,29 @@ multiplied when it ends by how high it took the bar: x2 half way to the line, ri
 x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
-Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
-Behind it the horse has a hidden breath:
+Stamina comes from Pushing and Recovering, at a live Stamina combo from x1 to x5 shown under the bar.
+A blue band on the gallop part of the bar shows where to turn the bar round:
 
-- Pushing raises the multiplier, faster the higher the bar is (with its square), and every point of
-  exertion pushed uses a hundredth of the breath. With less breath the multiplier rises more slowly
-  (down to a tenth of the rate) and falls faster (up to twice as fast), but never stops either way.
-- Recovering costs multiplier: quickly in the top third, slowly in the middle zone, quickly again
-  in the bottom third. Breath comes back in the middle and bottom thirds, not the top. A canter or
-  slower costs multiplier quickly too; a Sprint holds it.
-- So the way to x5 is to push close to the line, recover down into the zone and let the horse
-  breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
-  out of breath and earns little; letting the bar fall too far throws the multiplier away.
-- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1, empties the breath and stops
-  stamina training until the bar is empty.
+- When a gallop starts the band sits somewhere near the top. Switch from Pushing (or a Sprint)
+  to Recovering with the bar inside it and the multiplier rises by 0.5, and the band jumps to
+  somewhere near the bottom. Switch back to Pushing inside that one for another 0.5, and so on.
+- The band is 15 points of exertion wide at x1 and narrows to 6 at x5. Both ends climb with the
+  multiplier: the top band from 67-97% at x1 to 78-97% at x5, the bottom one from 12-33% to 38-58%.
+- A hit helps you to the next band: after a hit at the top, Recovering falls 1.3 to 1.8 times as
+  fast (more at a higher multiplier); after a hit at the bottom, Pushing climbs at 90% down to 70%
+  of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
+- Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
+  full-width band at the other end.
+- The horse's breath shows the band too: it starts blowing after a hit at the top (the band now
+  waits at the bottom) and stops after a hit at the bottom, and blows hard, in quicker, bigger
+  puffs, while Fatigued or Blown. It uses the base game's horse step dust, one tight stream per nostril
+  under the muzzle, blowing down, forwards and a little out to each side. It is anchored on the upper
+  lip bone and turns with the head, so it follows the nose when the horse bends its neck;
+  `eqBreath on | hard | off | auto | forward <m> | up <m> | size <x> | speed <x>` tests and tunes it. News shows beside the panel: "Stamina combo x2.5!", "Too early", "Overshot" or "Stamina
+  combo lost". The Stamina view also says what to do next ("Push into the band, then Recover").
+- Dropping to a canter or slower loses the multiplier at once, though it still brings the bar
+  down fastest. Fatigued (or Blown, a Sprint that ends past
+  the line) drops it to x1 and stops stamina training until the bar is empty.
 
 ### Agility
 

@@ -159,7 +159,8 @@ end
 ---     (at, a share of the row's width, starts a piece in its own column; tight keeps the next piece
 ---     one space after it, as a name and its number), { bar = 0..1, color } meter rows, and
 ---     { sections = { { from, to, color }, ... }, lines = { share, ... }, ticks = { share, ... },
----     marker = share } rows: the exertion bar, coloured sections with dark lines, short ticks and a marker
+---     marker = share, band = { from, to, color, lit } } rows: the exertion bar, coloured sections with dark
+---     lines, short ticks, a marker and a band
 --- @param titleColor table|nil white when nil (a focused view's title is in its stat's colour)
 --- @param titleRight string|nil grey text at the right of the title line
 --- With no title the panel is just its rows (the Condensed view).
@@ -215,6 +216,17 @@ function EqTrainingHud.drawPanel(title, rows, titleColor, titleRight)
             local width = right - left
             for _, section in ipairs(row.sections) do
                 fill(left + width * section[1], barY, width * (section[2] - section[1]), h, section[3])
+            end
+            -- A band { from, to, color, lit }: a tinted box with solid edges along the top and
+            -- bottom (the stamina pace band), filled more strongly while lit.
+            local band = row.band
+            if band ~= nil then
+                local bx, bw = left + width * band[1], width * (band[2] - band[1])
+                local c = band[3]
+                fill(bx, barY, bw, h, { c[1], c[2], c[3], band[4] and 0.6 or 0.3 })
+                local edge = h * 0.2
+                fill(bx, barY - edge, bw, edge, { c[1], c[2], c[3], 1 })
+                fill(bx, barY + h, bw, edge, { c[1], c[2], c[3], 1 })
             end
             for _, line in ipairs(row.lines or {}) do
                 fill(left + width * line - p.markWidth / 2, barY, p.markWidth, h, EqTrainingHud.COLOR.barLine)
@@ -387,6 +399,14 @@ function EqTrainingHud.pop(kind, mult, sub)
         -- alerts such as SPRINT! and Caution, James).
         text = string.format(g_i18n:getText("eq_pop_speedBank"), mult)
         color, big = EqTrainingHud.STAT_COLOR.speed, math.min(5, 1 + math.floor(mult / 2.5))
+    elseif kind:sub(1, 8) == "stamina_" then
+        -- The stamina band's news (EqTraining.staminaStep), beside the panel like the Speed bank so
+        -- the middle stays clear: "Stamina combo x2.5!" or why the combo was lost.
+        local key = { stamina_hit = "eq_pop_staminaUp", stamina_early = "eq_pop_staminaEarly",
+            stamina_past = "eq_pop_staminaPast", stamina_lost = "eq_pop_staminaLost" }
+        text = string.format(g_i18n:getText(key[kind] or "eq_pop_staminaLost"), mult or 1)
+        EqTrainingHud.sideState = { text = text, color = EqTrainingHud.STAT_COLOR.stamina, at = g_time or 0 }
+        return
     elseif kind == "knock" then
         text, color, big = string.format(g_i18n:getText("eq_pop_knock"), EqTraining.COMBO_KNOCK_SECONDS), EqTrainingHud.COLOR.orange, 1
     elseif EqTrainingHud.EXERTION_POPS[kind] ~= nil then

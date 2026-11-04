@@ -364,6 +364,28 @@ function EqConsole:consoleProbe()
 end
 
 
+--- eqBreath: test the horse's breath: on | hard | off | auto | forward <m> | up <m> | size <x> | speed <x>.
+function EqConsole:consoleBreath(command, value)
+    command = string.lower(command or "")
+    -- Any command tries again after a failure (the log says why it failed).
+    EqBreath.failed = false
+    if command == "on" then EqBreath.force = "band"
+    elseif command == "hard" then EqBreath.force = "hard"
+    elseif command == "off" then EqBreath.force = false
+    elseif command == "auto" then EqBreath.force = nil
+    elseif command == "forward" and tonumber(value) ~= nil then EqBreath.FORWARD = tonumber(value)
+    elseif command == "up" and tonumber(value) ~= nil then EqBreath.UP = tonumber(value)
+    elseif command == "size" and tonumber(value) ~= nil then EqBreath.SIZE = tonumber(value)
+    elseif command == "speed" and tonumber(value) ~= nil then EqBreath.SPEED = tonumber(value)
+    else
+        return "Usage: eqBreath on | hard | off | auto | forward <m> | up <m> | size <x> | speed <x>"
+    end
+    local function metres(v) return v ~= nil and string.format("%.2f m", v) or "by bone" end
+    return string.format("Breath: %s, forward %s, up %s, size x%.2f, speed x%.2f%s", tostring(EqBreath.force == nil and "auto" or EqBreath.force),
+        metres(EqBreath.FORWARD), metres(EqBreath.UP), EqBreath.SIZE, EqBreath.SPEED, EqBreath.failed and " (failed to load, see log)" or "")
+end
+
+
 --- eqSpectators: show, hide or tune the crowd at hosted events.
 function EqConsole:consoleSpectators(command, a, b)
     return EqSpectators.console(command, a, b)
@@ -1030,6 +1052,7 @@ function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
+    addConsoleCommand("eqBreath", "Testing: the horse's breath: eqBreath on | hard | off | auto | forward <m> | up <m> | size <x> | speed <x>", "consoleBreath", EqConsole)
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
     addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
@@ -1075,7 +1098,7 @@ function EqConsole.unregister()
     removeConsoleCommand("eqDealer")
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
+    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqBreath", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
         "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)

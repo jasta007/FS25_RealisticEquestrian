@@ -295,7 +295,7 @@
         <text name="eq_help_gallop_1" text="Kůň jde tryskem ve třech tempech. Stiskněte W ze cvalu a začněte Tlačit: rychle, ale ukazatel Námahy se plní, a tím rychleji, čím je výš. Stiskněte S pro Zotavení: pomalejší trysk, který snižuje námahu, zatímco jedete dál, rychle v horní a dolní třetině ukazatele, pomalu uprostřed. Znovu stiskněte W a tlačte dál. Kůň v lepší kondici se unaví pomaleji a zotaví rychleji."/>
         <text name="eq_help_gallop_2" text="Když ukazatel při Tlačení dosáhne červené části Unavený, kůň přejde do cvalu a nemůže znovu do trysku, dokud se ukazatel nevyprázdní. Chcete-li sami zpomalit do cvalu, stiskněte S jednou při Zotavení s prázdným ukazatelem, nebo kdykoli dvakrát ťukněte na S."/>
         <text name="eq_help_gallop_3" text="Během trysku neustále klikejte levým tlačítkem myši a Sprintujte: mnohem rychleji, ukazatel se nejdřív plní pomalu, pak čím dál rychleji, takže přestaňte před čárou. Po Sprintu přejdete do Zotavení a nový Sprint není, dokud se ukazatel nevyprázdní. Jen Sprint může překročit čáru Unavený, pro poslední zátah do cíle, ale Sprint, který tam skončí, nechá koně Vyčerpaného a ten se velmi pomalu zotavuje, dokud není zpět pod čárou."/>
-        <text name="eq_help_gallop_4" text="Trénink: Sprint trénuje Rychlost, a čím výš dostane ukazatel, než skončí, tím víc má hodnotu: x2 v polovině cesty k čáře, až x10 těsně před ní, ale jen x1, když skončí za čarou. Tlačení a Zotavení trénují Vytrvalost s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, rychleji u vrcholu. Zotavení ve střední třetině ukazatele nechá koně vydechnout a zachová většinu násobiče, zatímco horní a dolní třetina ho rychle ztrácejí, a kůň, který nikdy nevydechne, se zlepšuje mnohem pomaleji. Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
+        <text name="eq_help_gallop_4" text="Trénink: Sprint trénuje Rychlost, a čím výš zvedne ukazatel, než skončí, tím víc má hodnotu: x2 v polovině cesty k čáře, až x10 těsně před ní, ale jen x1, pokud skončí za čarou. Tlačení a Zotavení trénují Vytrvalost s combem Vytrvalosti, až x5: otočte ukazatel uvnitř modrého pásma, abyste ho zvýšili (viz nápověda pohledu Vytrvalost). Unavený nebo Vyčerpaný ho vrátí na x1 a zastaví trénink Vytrvalosti, dokud není ukazatel prázdný."/>
         <text name="eq_ex_hint_sprint" text="Neustále klikejte levým pro sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: nejdřív se zotavte do prázdna"/>
         <text name="eq_ex_hint_locked" text="Cval, dokud se ukazatel nevyprázdní"/>
@@ -312,13 +312,19 @@
         <text name="eq_train_view_speed" text="Rychlost"/>
         <text name="eq_train_view_condensed" text="Kompaktní"/>
         <text name="eq_help_stamina_title" text="Trénink: Vytrvalost"/>
-        <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, a čím blíž k čáře, tím rychleji roste. Zotavení ho snižuje: rychle v horní třetině ukazatele, pomalu ve střední a znovu rychle v dolní."/>
-        <text name="eq_help_stamina_2" text="Tlačte tedy blízko k čáře, uberte do středu ukazatele a nechte tam koně chvíli vydechnout, pak znovu tlačte. Přeskakování mezi Tlačením a Zotavením u vrcholu koně unavuje bez zvýšení násobiče, a Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
+        <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s combem Vytrvalosti, až x5. Modré pásmo na ukazateli ukazuje, kde otočit. Na začátku trysku je nahoře: Tlačte až do něj, pak se Zotavte. Sledujte dech koně: po zásahu nahoře začne funět, po zásahu dole přestane a když je Unavený, funí silně."/>
+        <text name="eq_help_stamina_2" text="Každé otočení v pásmu zvýší combo o 0,5 a pásmo přeskočí na druhý konec ukazatele, o něco výš a užší. Každý zásah také usnadní další úsek: ukazatel klesá rychleji a stoupá pomaleji. Otočte příliš brzy, přejeďte pásmo nebo zpomalte z trysku a combo je ztraceno. Unavený nebo Vyčerpaný také zastaví trénink Vytrvalosti, dokud není ukazatel prázdný."/>
         <text name="eq_help_speed_title" text="Trénink: Rychlost"/>
         <text name="eq_help_speed_1" text="Rychlost se trénuje při Sprintu: v trysku neustále klikejte levým tlačítkem myši. Počítá se každá sekunda Sprintu a na konci se vynásobí tím, jak vysoko jste ukazatel dostali: x2 v polovině cesty k čáře, až x10 těsně před ní."/>
         <text name="eq_help_speed_2" text="Sprint, který skončí za čarou, má hodnotu jen x1, takže přestaňte ťukat (nebo stiskněte S) před čarou. Po Sprintu se kůň musí zotavit do prázdného ukazatele, než může znovu sprintovat."/>
         <text name="eq_train_speedMult" text="Rychlost x%.1f"/>
-        <text name="eq_train_staminaMult" text="Vytrvalost x%.1f"/>
+        <text name="eq_train_staminaMult" text="Combo Vytrvalosti x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Combo Vytrvalosti x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Příliš brzy: combo Vytrvalosti ztraceno"/>
+        <text name="eq_pop_staminaPast" text="Příliš daleko: combo Vytrvalosti ztraceno"/>
+        <text name="eq_pop_staminaLost" text="Combo Vytrvalosti ztraceno"/>
+        <text name="eq_train_staminaNextHigh" text="Tlačit do pásma, pak Zotavení"/>
+        <text name="eq_train_staminaNextLow" text="Zotavit do pásma, pak Tlačit"/>
         <text name="eq_train_staminaStopped" text="žádný trénink"/>
         <text name="eq_ex_fatigued" text="Unavený"/>
         <text name="eq_pop_speedBank" text="Rychlost x%.1f!"/>

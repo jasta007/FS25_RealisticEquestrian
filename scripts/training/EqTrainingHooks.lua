@@ -783,6 +783,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             end
         end
         spec.eqLaunch = nil
+        EqLog.try("EqBreath stop", EqBreath.stop, vehicle)
         -- A dressage test that counts in your own event: "GET ON YOUR HORSE" for a few seconds,
         -- back on carries on, else it is eliminated and can't be ridden again (James, 2026-11-01).
         local routine = sheet.routine
@@ -867,7 +868,16 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             last.over and ", Fatigued" or "", speedGain)
         if not last.over then EqTrainingHud.pop("speedBank", speedMult) end
     end
-    EqTraining.staminaStep(sheet, dt, worn)
+    local staminaJudged = EqTraining.staminaStep(sheet, dt, worn)
+    -- The horse's breath shows while the band waits at the bottom, and hard while Fatigued.
+    local breath = ex.lock ~= nil and "hard" or (ex.mode ~= nil and sheet.stamina.side == "low") and "band" or nil
+    EqLog.try("EqBreath", EqBreath.update, vehicle, breath, dt)
+    if staminaJudged ~= nil then
+        EqTrainingHud.pop("stamina_" .. staminaJudged, sheet.stamina.mult)
+        local st = sheet.stamina
+        Log:info("Stamina: band %s at %.0f%%, now x%.1f, next band %s %.0f-%.0f%%", staminaJudged, ex.value, st.mult,
+            st.side or "-", st.from or 0, st.to or 0)
+    end
     -- Blown or exhausted: down to a canter now, not next frame.
     EqTrainingHooks.keepGait(spec, ex)
     spec.eqLastGait = gait
@@ -1866,9 +1876,16 @@ local function exertionRows(spec, sheet, view, stamina)
     spec.eqMarker = spec.eqMarker == nil and target or spec.eqMarker + (target - spec.eqMarker) * step
     spec.eqMarkerAt = now
 
-    local third = (BAR.line - BAR.canter) / 3
     local bar = { sections = sections, lines = { BAR.reverse, BAR.halt, BAR.walk, BAR.trot, BAR.canter, BAR.line, BAR.finish },
-        ticks = { BAR.canter + third, BAR.canter + third * 2 }, marker = spec.eqMarker }
+        marker = spec.eqMarker }
+    -- The stamina band on the gallop while galloping (not in the Speed view): turn the bar round
+    -- inside it to raise the multiplier (EqTraining.staminaStep). Brighter while the bar is in it.
+    local st = sheet.stamina
+    if view ~= "speed" and ex.mode ~= nil and ex.lock == nil and st.from ~= nil then
+        local gallop = BAR.line - BAR.canter
+        bar.band = { BAR.canter + gallop * st.from / EqExertion.LINE, BAR.canter + gallop * st.to / EqExertion.LINE,
+            STAT_COLOR.stamina, EqTraining.inBand(sheet) }
+    end
     if view == "condensed" then return { bar } end
     local rows = { words, bar }
     if EqTrainingHooks.GALLOP_VIEWS[view] then
@@ -1895,6 +1912,12 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
             or string.format(g_i18n:getText("eq_train_staminaMult"), st.mult)
         row.leftColor = ex.lock ~= nil and COLOR.red or training and STAT_COLOR.stamina or COLOR.grey
     end
+    -- The Stamina view says where the band wants the bar next.
+    local nextRow = nil
+    if view == "stamina" and ex.lock == nil and ex.mode ~= nil and ex.mode ~= "sprint" and st.side ~= nil then
+        nextRow = { left = g_i18n:getText(st.side == "high" and "eq_train_staminaNextHigh" or "eq_train_staminaNextLow"),
+            leftColor = COLOR.grey }
+    end
     -- Once a Sprint is paid out (the riding bar filled), its multiplier is no longer shown.
     if ex.mode == "sprint" and not sheet.sprint.cashed then
         local over = ex.value >= EqExertion.LINE
@@ -1913,8 +1936,10 @@ function EqTrainingHooks.gallopTrainingRows(sheet, view)
         row.left = last ~= nil and string.format(g_i18n:getText("eq_train_lastSprint"), last) or g_i18n:getText("eq_train_sprintToTrain")
         row.leftColor = last ~= nil and STAT_COLOR.speed or COLOR.grey
     end
-    if row.left == nil and row.right == nil then return {} end
-    return { row }
+    local rows = {}
+    if row.left ~= nil or row.right ~= nil then table.insert(rows, row) end
+    if nextRow ~= nil then table.insert(rows, nextRow) end
+    return rows
 end
 
 
