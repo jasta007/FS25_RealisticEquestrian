@@ -281,7 +281,7 @@ function EqBreath.update(vehicle, style, dt)
     end
     if entry == nil then
         if look == nil or EqBreath.failed then return end
-        local ok, made = pcall(attach, vehicle)
+        local ok, made = EqLog.try("EqBreath attach", attach, vehicle)
         if not ok then
             EqBreath.failed = true
             Log:info("Breath: could not attach (%s), breath is off for this session", tostring(made))

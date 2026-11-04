@@ -144,9 +144,9 @@ local function setColours(node, colour)
     if node == nil or node == 0 or not entityExists(node) then return end
     if getHasClassId(node, ClassIds.SHAPE) and getHasShaderParameter(node, EqAttire.PRIMARY) then
         local p, q = colour.primary, colour.secondary
-        pcall(setShaderParameter, node, EqAttire.PRIMARY, p[1], p[2], p[3], p[4], false)
+        EqLog.try("EqAttire colour", setShaderParameter, node, EqAttire.PRIMARY, p[1], p[2], p[3], p[4], false)
         if getHasShaderParameter(node, EqAttire.SECONDARY) then
-            pcall(setShaderParameter, node, EqAttire.SECONDARY, q[1], q[2], q[3], q[4], false)
+            EqLog.try("EqAttire colour", setShaderParameter, node, EqAttire.SECONDARY, q[1], q[2], q[3], q[4], false)
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do setColours(getChildAt(node, i), colour) end
@@ -250,10 +250,10 @@ local function swapMaps(node, swap)
     if node == nil or node == 0 or not entityExists(node) then return end
     if getHasClassId(node, ClassIds.SHAPE) then
         for index = 0, EqAttire.MAX_MATERIALS - 1 do
-            local ok, material = pcall(getMaterial, node, index)
+            local ok, material = EqLog.try("EqAttire getMaterial", getMaterial, node, index)
             if not ok or material == nil or material == 0 then break end
             local made = swappedMaterial(material, swap)
-            if made ~= nil and made ~= material then pcall(setMaterial, node, made, index) end
+            if made ~= nil and made ~= material then EqLog.try("EqAttire setMaterial", setMaterial, node, made, index) end
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do swapMaps(getChildAt(node, i), swap) end

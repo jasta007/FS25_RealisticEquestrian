@@ -67,7 +67,7 @@ end
 function EqHelpKeys.usingGamepad()
     local binding = g_inputBinding
     if binding == nil or binding.getInputHelpMode == nil or GS_INPUT_HELP_MODE_GAMEPAD == nil then return false end
-    local ok, mode = pcall(binding.getInputHelpMode, binding)
+    local ok, mode = EqLog.try("EqHelpKeys help mode", binding.getInputHelpMode, binding)
     return ok and mode == GS_INPUT_HELP_MODE_GAMEPAD
 end
 
@@ -78,7 +78,7 @@ end
 function EqHelpKeys.liveKeyboard(action)
     local display = g_inputDisplayManager
     if display == nil or display.getKeyboardInputActionKey == nil then return nil end
-    local ok, key = pcall(display.getKeyboardInputActionKey, display, action)
+    local ok, key = EqLog.try("EqHelpKeys keyboard key", display.getKeyboardInputActionKey, display, action)
     if ok and type(key) == "string" and key ~= "" then return key end
     return nil
 end

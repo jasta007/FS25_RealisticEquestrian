@@ -61,7 +61,7 @@ end
 function EqFlagLabels.letter(colour, getText)
     local key = EqFlagLabels.KEYS[colour]
     if key ~= nil and getText ~= nil then
-        local ok, text = pcall(getText, key)
+        local ok, text = EqLog.try("EqFlagLabels letter", getText, key)
         if ok and type(text) == "string" and text ~= "" and not text:find("Missing", 1, true) then return text end
     end
     return EqFlagLabels.FALLBACK[colour] or "?"
@@ -250,7 +250,7 @@ function EqFlagLabels.menuRects()
         count = count + 1
         local visible = element.visible ~= false
         if visible and element.getIsVisible ~= nil then
-            local ok, shown = pcall(element.getIsVisible, element)
+            local ok, shown = EqLog.try("EqFlagLabels cover visibility", element.getIsVisible, element)
             visible = not ok or shown ~= false
         end
         if visible then
