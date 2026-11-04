@@ -53,7 +53,7 @@
 -->
 <events>
     <disciplines>
-        <discipline name="showJumping"   stamina="1" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01" related="eventing" story="jumping">
+        <discipline name="showJumping"   stamina="0" speed="1" agility="3" temperament="2" weakestShare="0"   outdoor="false" racing="false" elimination="0.06" injury="0.01" related="eventing" story="jumping">
             <check stat="agility" difficulty="0.15" weight="1"/>
             <check stat="speed" difficulty="0" weight="1"/>
             <check stat="agility" difficulty="0.45" weight="1.5"/>
@@ -68,7 +68,7 @@
             <check stat="agility" difficulty="0.6" weight="1.5"/>
             <check stat="agility" difficulty="0.9" weight="2" tag="hardest"/>
         </discipline>
-        <discipline name="crossCountry"  stamina="2" speed="1" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025" related="eventing steeplechase" story="crossCountry">
+        <discipline name="crossCountry"  stamina="2" speed="2" agility="1" temperament="1" weakestShare="0.5" outdoor="true"  racing="false" elimination="0.1" injury="0.025" related="eventing steeplechase" story="crossCountry">
             <check stat="stamina" difficulty="0.1" weight="1"/>
             <check stat="agility" difficulty="0.3" weight="1"/>
             <check stat="temperament" difficulty="0.4" weight="3"/>
