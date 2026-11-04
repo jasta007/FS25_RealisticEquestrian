@@ -106,6 +106,7 @@ source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/gui/EqWelcome.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
+source(modDirectory .. "scripts/console/EqHeadProbe.lua")
 
 local Log = EqLog
 
@@ -294,6 +295,7 @@ EqTrainingHooks.installRideable(guarded)
 EqLateral.install()
 -- Loading triggers are created as the map loads, so the probe starts listening now.
 guarded("probe hook", EqProbe.install)
+guarded("head probe hook", EqHeadProbe.install)
 
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.

@@ -364,6 +364,12 @@ function EqConsole:consoleProbe()
 end
 
 
+--- eqHeadProbe: testing, how the ridden horse's head can be posed (EqHeadProbe).
+function EqConsole:consoleHeadProbe(...)
+    return EqHeadProbe.console({ ... })
+end
+
+
 --- eqSpectators: show, hide or tune the crowd at hosted events.
 function EqConsole:consoleSpectators(command, a, b)
     return EqSpectators.console(command, a, b)
@@ -1031,6 +1037,7 @@ function EqConsole.register()
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
+    addConsoleCommand("eqHeadProbe", "Testing: the ridden horse's head: eqHeadProbe [bones | clips | watch [s] | tilt <bone> <deg> [x|y|z] [update|draw|both] | mute <clip> | hold <clip> <time 0-1> <weight 0-1> | off]", "consoleHeadProbe", EqConsole)
     addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
