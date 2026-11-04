@@ -20,8 +20,6 @@
 
     Take-off angles at agility 50 (James, 2026-10-30: gallop 30-40 degrees for distance, canter
     45-60, collected 65-80): gallop about 38, canter about 56, collected about 70.
-
-    The numbers can be changed in game with the eqJump console command, until the game restarts.
 ]]
 
 EqJump = {}
@@ -105,45 +103,6 @@ EqJump.AIR_PITCH_MAX = 25
 EqJump.LEDGE_M = 2.5
 EqJump.LEDGE_PITCH = 15
 EqJump.LEDGE_RATE = 30
-
--- What the eqJump console command may change: its short name, the field, and limits.
-EqJump.TUNABLE = {
-    { name = "rise", key = "RISE_SHARE", min = 1, max = 5 },
-    { name = "fall", key = "FALL_SHARE", min = 1, max = 6 },
-    { name = "fallmax", key = "FALL_MAX", min = 2, max = 30 },
-    { name = "blend", key = "BLEND_SPEED", min = 0.1, max = 10 },
-    { name = "close", key = "CLOSE_MODE", min = 0, max = 3 },
-    { name = "closefall", key = "CLOSE_FALL_SPEED", min = 0, max = 10 },
-    { name = "closedrop", key = "CLOSE_DROP_M", min = 0, max = 10 },
-    { name = "closelead", key = "CLOSE_LEAD_S", min = 0, max = 2 },
-    { name = "carry", key = "AIR_CARRY", min = 0.5, max = 2.5 },
-    { name = "gcarry", key = "GALLOP_CARRY", min = 0.5, max = 2.5 },
-    { name = "tcarry", key = "TROT_CARRY", min = 0.5, max = 3 },
-    { name = "theight", key = "TROT_HEIGHT_SHARE", min = 0.3, max = 2 },
-    { name = "height", key = "HEIGHT_SHARE", min = 0.4, max = 1.5 },
-    { name = "push", key = "PUSH_MS", min = 0, max = 600 },
-    { name = "gpush", key = "GALLOP_PUSH_MS", min = 0, max = 600 },
-    { name = "tpush", key = "TROT_PUSH_MS", min = 0, max = 600 },
-    { name = "lift", key = "PUSH_SPEED", min = 0, max = 3 },
-    { name = "clift", key = "COLLECT_LIFT", min = 0, max = 3 },
-    { name = "window", key = "COLLECT_WINDOW_MS", min = 0, max = 2000 },
-    { name = "cpush", key = "COLLECT_PUSH_MS", min = 0, max = 800 },
-    { name = "cspeed", key = "COLLECT_SPEED_SHARE", min = 0.1, max = 1 },
-    { name = "ctrot", key = "COLLECT_TROT_SHARE", min = 0.2, max = 3 },
-    { name = "cheight", key = "COLLECT_HEIGHT_SHARE", min = 0.4, max = 2 },
-    { name = "aimcentre", key = "AIM_CENTRE", min = 0, max = 1 },
-    { name = "aimwide", key = "AIM_WIDE", min = 1, max = 4 },
-    { name = "aimreach", key = "AIM_REACH", min = 4, max = 40 },
-    { name = "aimfrom", key = "AIM_FROM", min = 0, max = 100 },
-    { name = "aimrate", key = "AIM_RATE", min = 0, max = 2 },
-    { name = "aimgain", key = "AIM_GAIN", min = 0, max = 10 },
-    { name = "pitch", key = "PITCH_MAX", min = 0, max = 80 },
-    { name = "pitchrate", key = "PITCH_RATE", min = 5, max = 2000 },
-    { name = "airpitch", key = "AIR_PITCH_MAX", min = 0, max = 80 },
-    { name = "ledge", key = "LEDGE_M", min = 0.5, max = 20 },
-    { name = "ledgepitch", key = "LEDGE_PITCH", min = 0, max = 80 },
-    { name = "ledgerate", key = "LEDGE_RATE", min = 0, max = 500 },
-}
 
 
 --- How hard temperament aims (pure): 0 below AIM_FROM, 1 at 100.
@@ -431,29 +390,3 @@ function EqJump.airDistance(grounded, distance, reach)
     return distance
 end
 
-
---- Change a tunable from the console (pure).
---- @param name string a TUNABLE name
---- @param value number
---- @return boolean ok, string message
-function EqJump.set(name, value)
-    for _, entry in ipairs(EqJump.TUNABLE) do
-        if entry.name == name then
-            if type(value) ~= "number" then return false, "needs a number" end
-            local was = EqJump[entry.key]
-            EqJump[entry.key] = math.max(entry.min, math.min(entry.max, value))
-            return true, string.format("%s %s -> %s", name, tostring(was), tostring(EqJump[entry.key]))
-        end
-    end
-    return false, "unknown setting " .. tostring(name)
-end
-
-
---- @return string every tunable and its value
-function EqJump.describe()
-    local parts = {}
-    for _, entry in ipairs(EqJump.TUNABLE) do
-        table.insert(parts, string.format("%s %s", entry.name, tostring(EqJump[entry.key])))
-    end
-    return table.concat(parts, ", ")
-end

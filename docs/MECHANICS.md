@@ -527,7 +527,7 @@ horse carries 1.45 times its take-off speed through the air from a canter (1.8 f
 at a gallop or once you ask for a slower gait) so it still covers ground. A **collected jump**: jump from a trot (the base game only jumps from a canter),
 or hold Ctrl (or let go of it less than half a second before) and press jump. From a canter or gallop the horse gathers itself on the ground over 0.26 s (0.08 s from a trot),
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
-distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test. The `eqJump` console command shows and changes these numbers until the game restarts.
+distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test.
 
 ### Staff, age and metabolism
 
@@ -857,7 +857,7 @@ selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. 
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with experience),
-favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
+favourite event and career,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ### Hosting your own event
@@ -975,7 +975,7 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   resting on the thighs). Now and then someone moves a hand between lap and side, or turns their
   head to look about, each on their own timing. They
   are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
-  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose, `explore sides|lap` drifts it until `snapshot` keeps it, and `info` counts places.
+  `auto` goes back to normal, and `info` counts places.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
@@ -1141,8 +1141,7 @@ category names (easy ones starred), this year's offers and your contracts (with 
 discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
 earlier, 3 by default;
 `eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
-`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
-jump colour and where it came from; `eqSponsorLoan [brand]` (testing)
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
 `eqSponsorLoan end` takes it back. `eqShopProbe` (testing, with the shop open on a category)
 writes the shop's layout to log.txt.
@@ -1251,9 +1250,8 @@ boots are our own models; the rest are base-game meshes:
 - **Top hat** in black silk, tall or short (the short one is the same hat with the crown's sides
   squashed, 12 cm instead of 16 cm, like a dressage hat that's a safety helmet too). It hangs off the head's attach point and is set along the head
   joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
-  the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
-  (defaults 0.085 m up and 0.003 m forward of the head joint, tilted back 15 degrees, size 0.98, James's fit for both bodies; female and male
-  heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
+  the head is turned when the character is dressed. It sits 0.085 m up and 0.003 m forward of the
+  head joint, tilted back 15 degrees, size 0.98 (James's fit for both bodies).
 
 - **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
   in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
@@ -1264,15 +1262,13 @@ boots are our own models; the rest are base-game meshes:
   widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.45x front to back
   (growing backwards from the shin, most of it low on the calf) at its top, all
   1.18x on top, leans back 6.7 degrees from the ankle and 2 degrees outwards (James's fit,
-  2026-10-31).
-  `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` tunes them, not saved; all but width apply
-  at the next dressing. The i3d keeps an empty first child, as the game
+  2026-10-31). The i3d keeps an empty first child, as the game
   expects one after taking a geo item out of its file.
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
   saddle, as it does with the game's own clothes.
 - **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
-  (rows 1 to about 1.55 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
+  (rows 1 to about 1.55 of columns G, H, A, B on an 8 x 8 UV test grid, ending lower at the seam, just under the jacket hem), so the poke-
   through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
 - **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
   in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
@@ -1282,10 +1278,6 @@ boots are our own models; the rest are base-game meshes:
   character is dressed, and its colours (colorScaleR/G) are set again from its own list and the
   picked colour.
 - **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
-
-`eqUvGrid [slot|off]` puts a labelled 8 x 8 grid (art/source/uv_grid.py) on the worn item of
-that slot as its texture, lit white, from the next dressing: screenshots show which squares land
-where, for painting our own masks on base-game clothes we can't open (the breeches' upper seat).
 
 The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
 keep the game's icon).

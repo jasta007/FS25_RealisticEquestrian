@@ -6096,12 +6096,6 @@ end)()
     check("fall cap: airtime counts the held fall", J.airtime(1.6) > math.sqrt(2 * 1.6 / (9.81 * J.RISE_SHARE))
         + math.sqrt(2 * 1.6 / (9.81 * J.FALL_SHARE)))
 
-    -- Console tuning.
-    local was = J.FALL_SHARE
-    local ok = J.set("fall", 99)
-    check("jump tuning: clamped to its limits", ok and J.FALL_SHARE == 6)
-    check("jump tuning: unknown and missing values refused", not J.set("wobble", 1) and not J.set("fall", nil))
-    J.FALL_SHARE = was
     -- Temperament's aim: a 4 m jump 10 m ahead, square on; +x is the horse's left.
     local function jumpAt(centreX) return { { ax = centreX - 2, az = 10, bx = centreX + 2, bz = 10 } } end
     check("aim: none below AIM_FROM, full at 100", J.aimStrength(J.AIM_FROM - 5) == 0 and J.aimStrength(100) == 1
@@ -6579,6 +6573,37 @@ end)()
         EqSponsorDiscounts.shopShare(sponsorItem, nil) == 0.2 and EqSponsorDiscounts.shopShare(sponsorItem, { price = 600 }) == 0)
     EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
         g_brandManager, EqSponsorManager, EqCompetitionManager, Utils, Log = unpack(had, 1, 11)
+end)()
+
+-- CONSOLE: every command registered is also unregistered, and the dev tools are gone (1.0 trim).
+;(function()
+    local function source(path)
+        local f = assert(io.open(path, "r")); local text = f:read("*a"); f:close(); return text
+    end
+    local console = source("scripts/console/EqConsole.lua")
+    local listed = {}
+    local list = console:match("EqConsole%.COMMANDS = (%b{})")
+    for name in (list or ""):gmatch('"(eq%w+)"') do listed[name] = true end
+    local registered, missing = 0, {}
+    for name in console:gmatch('addConsoleCommand%("(eq%w+)"') do
+        registered = registered + 1
+        if not listed[name] then table.insert(missing, name) end
+    end
+    local count = 0
+    for _ in pairs(listed) do count = count + 1 end
+    check("console: every registered command is unregistered (" .. table.concat(missing, ", ") .. ")",
+        registered > 0 and #missing == 0 and count == registered)
+    local removed = { "eqProbe", "eqJump", "eqDeliver", "eqExperience", "eqSponsorColours", "eqBootFit", "eqHatFit", "eqUvGrid" }
+    local found = {}
+    for _, path in ipairs({ "scripts/console/EqConsole.lua", "scripts/attire/EqAttire.lua", "scripts/training/EqFeedHooks.lua" }) do
+        local text = source(path)
+        for _, name in ipairs(removed) do
+            if text:find('addConsoleCommand("' .. name .. '"', 1, true) then table.insert(found, name) end
+        end
+    end
+    check("console: dev tuning commands stay out of 1.0 (" .. table.concat(found, ", ") .. ")", #found == 0)
+    check("console: eqSpectators only shows, hides and counts", EqSpectators.console("pose", "x", "1") ~= nil
+        and EqSpectators.EXPLORE == nil and EqSpectators.exploreStep == nil and EqSpectators.repose == nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
