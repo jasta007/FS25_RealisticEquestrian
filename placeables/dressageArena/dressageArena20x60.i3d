@@ -22,7 +22,7 @@
 
   <Scene>
     <TransformGroup name="dressageArena20x60" nodeId="55">
-      <Shape name="arena" shapeId="1" clipDistance="250" nodeId="56" castsShadows="true" receiveShadows="true" materialIds="52"/>
+      <Shape name="arena" shapeId="1" clipDistance="250" nodeId="56" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" castsShadows="true" receiveShadows="true" materialIds="52"/>
       <TransformGroup name="eqMarkers" nodeId="57">
         <TransformGroup name="eqMarker_A" translation="0 0.42 30.6" nodeId="58"/>
         <TransformGroup name="eqMarker_C" translation="0 0.42 -30.6" nodeId="59"/>
