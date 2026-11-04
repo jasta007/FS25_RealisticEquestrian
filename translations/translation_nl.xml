@@ -1169,6 +1169,7 @@
         <text name="eq_sponsor_discount_repair" text="Reparatie %s"/>
         <text name="eq_sponsor_discount_buy" text="Kopen %s"/>
         <text name="eq_sponsor_loanLine" text="Leent een machine uit voor je evenementmaand"/>
+        <text name="eq_sponsor_eventingLine" text="%s meer voor een eventing"/>
         <text name="eq_loan_popupTitle" text="Een machine van je sponsor"/>
         <text name="eq_loan_popup" text="%s heeft een nieuwe %s geleverd die je tijdens je evenement mag uitproberen. Hij staat voor je klaar bij de dealer. Gebruik hem gratis waarvoor je maar wilt tot het einde van de maand, dan wordt hij opgehaald."/>
         <text name="eq_loan_delivered" text="%s leent je de %s voor je evenementmaand. Hij staat bij de dealer."/>

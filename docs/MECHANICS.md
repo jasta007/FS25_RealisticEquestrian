@@ -1001,7 +1001,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Hosted events** at a rating a sponsor backs are named after the biggest of them ("<Brand> Show
   Jumping Classic", then the best paid), gain every backing sponsor's popularity, and each pays
   its own fee when the results come in: half at Low branding,
-  75% at Medium, the full fee at High. No fee below the offer's required branding or if you no
+  75% at Medium, the full fee at High. A 3 Day Event pays 1.5 times the fee (three phases carry
+  their name). No fee below the offer's required branding or if you no
   longer own enough of their machines.
 - **The yearly target:** each contract year, host at least one event the sponsor backs at the
   target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks

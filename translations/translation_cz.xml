@@ -1169,6 +1169,7 @@
         <text name="eq_sponsor_discount_repair" text="Oprava %s"/>
         <text name="eq_sponsor_discount_buy" text="Nákup %s"/>
         <text name="eq_sponsor_loanLine" text="Půjčí stroj na měsíc tvé akce"/>
+        <text name="eq_sponsor_eventingLine" text="Za všestrannost o %s více"/>
         <text name="eq_loan_popupTitle" text="Stroj od tvého sponzora"/>
         <text name="eq_loan_popup" text="%s ti dodal nový stroj %s, který můžeš zkoušet po celou dobu své akce. Čeká na tebe u prodejce. Používej ho zdarma na cokoli až do konce měsíce, kdy si ho vyzvednou."/>
         <text name="eq_loan_delivered" text="%s ti na měsíc akce půjčil stroj %s. Stojí u prodejce."/>
