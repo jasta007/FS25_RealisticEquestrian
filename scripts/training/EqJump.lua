@@ -417,6 +417,21 @@ function EqJump.pitch(previous, target, onGround, groundDistance, dt)
 end
 
 
+--- How far down the ground is, for EqJump.pitch, while the horse is in the air (pure).
+--- A horse just mounted starts out "in the air" for a few frames with no ground found under it
+--- (James, 2026-11-04: it then stood nose down until it moved), so there is no ledge until it has
+--- stood on the ground once.
+--- @param grounded boolean it has been on the ground since it was mounted
+--- @param distance number|nil the base game's ray down from the horse
+--- @param reach number|nil that ray's length
+--- @return number|nil metres, math.huge when the ray found nothing
+function EqJump.airDistance(grounded, distance, reach)
+    if not grounded or type(distance) ~= "number" then return nil end
+    if type(reach) == "number" and distance >= reach - 0.01 then return math.huge end
+    return distance
+end
+
+
 --- Change a tunable from the console (pure).
 --- @param name string a TUNABLE name
 --- @param value number
