@@ -6572,9 +6572,9 @@ end)()
     local function element(name, children) return { name = name, elements = children or {}, visible = false,
         setVisible = function(self, v) self.visible = v end } end
     local function cellWith()
-        local text = element("text")
+        local text = element("priceTagText")
         text.setText = function(self, t) self.text = t end
-        local box = element("discountBox", { text })
+        local box = element("priceTag", { text })
         return element("cell", { element("title"), box }), box, text
     end
     local frame = { displayItems = { sponsorItem, rivalItem } }

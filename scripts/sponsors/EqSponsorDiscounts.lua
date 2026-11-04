@@ -199,9 +199,10 @@ function EqSponsorDiscounts.probeShop()
 end
 
 
---- Names the game might give the green "-35%" badge on a used machine's shop tile. Not in the
---- public Lua reference: the first descendant whose name holds one of these is used.
-EqSponsorDiscounts.BADGE_NAMES = { "percent", "discount", "reduction", "sale", "badge" }
+--- The green "-35%" badge on a used machine's shop tile is the tile's "priceTag" (a
+--- ThreePartBitmap holding the Text "priceTagText"), seen with eqShopProbe on James's game
+--- 2026-11-04. The first descendant with one of these names (lower case) is used.
+EqSponsorDiscounts.BADGE_NAMES = { "pricetag" }
 
 
 --- @param cell table a shop list tile
@@ -214,7 +215,7 @@ function EqSponsorDiscounts.findBadge(cell)
         local element = table.remove(stack)
         local name = type(element.name) == "string" and string.lower(element.name) or ""
         for _, part in ipairs(EqSponsorDiscounts.BADGE_NAMES) do
-            if element ~= cell and string.find(name, part, 1, true) ~= nil then found = element break end
+            if element ~= cell and name == part then found = element break end
         end
         for _, child in ipairs(element.elements or {}) do table.insert(stack, child) end
     end
