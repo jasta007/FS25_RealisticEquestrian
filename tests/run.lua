@@ -2785,7 +2785,7 @@ do
         local onDeck = true
         EqPlinths = { holdsMachine = function() return onDeck end }
         check("a machine on its deck keeps a shown drop wall, never brings a hidden one back",
-            EqXcHide.keepsForMachine({ eqXcMode = S }) and EqXcHide.keepsForMachine({})
+            EqXcHide.keepsForMachine({ eqXcMode = S }) and EqXcHide.keepsForMachine({ eqXcMode = EqXcHide.RIDER }) and EqXcHide.keepsForMachine({})
             and not EqXcHide.keepsForMachine({ eqXcMode = H }) and not EqXcHide.keepsForMachine({ eqXcMode = G }))
         onDeck = false
         check("nothing on the deck: the drop wall hides as usual", not EqXcHide.keepsForMachine({ eqXcMode = S }))
