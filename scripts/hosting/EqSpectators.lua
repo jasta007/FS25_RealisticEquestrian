@@ -384,14 +384,14 @@ local function baseStyle(female)
     local style = nil
     if not female then
         if PlayerStyle.defaultStyle ~= nil then
-            local ok, result = pcall(PlayerStyle.defaultStyle)
+            local ok, result = EqLog.try("EqSpectators default style", PlayerStyle.defaultStyle)
             if ok then style = result end
         end
     else
         for _, method in ipairs({ "loadConfigurationXML", "loadConfigurationXMLFile", "loadFromXMLFile", "loadXML" }) do
             local candidate = PlayerStyle.new()
             if type(candidate[method]) == "function" then
-                local ok = pcall(candidate[method], candidate, EqSpectators.FEMALE_XML)
+                local ok = EqLog.try("EqSpectators female style", candidate[method], candidate, EqSpectators.FEMALE_XML)
                 if ok and type(candidate.configs) == "table" and next(candidate.configs) ~= nil then
                     candidate.xmlFilename = candidate.xmlFilename or EqSpectators.FEMALE_XML
                     style = candidate
@@ -523,7 +523,7 @@ local function styleFor(rng, used)
             end
         end
     end
-    local ok, copy = pcall(function()
+    local ok, copy = EqLog.try("EqSpectators style copy", function()
         local copy = PlayerStyle.new()
         if copy.copyFrom ~= nil then copy:copyFrom(base) elseif copy.copyConfigurationFrom ~= nil then copy:copyConfigurationFrom(base) else return nil end
         copy.xmlFilename = copy.xmlFilename or base.xmlFilename
@@ -581,7 +581,7 @@ local function startIdle(person)
     assignAnimTrackClip(charset, 0, clip)
     setAnimTrackLoopState(charset, 0, true)
     if getAnimClipDuration ~= nil and setAnimTrackTime ~= nil then
-        pcall(setAnimTrackTime, charset, 0, person.rng:next() * (getAnimClipDuration(charset, clip) or 0), true)
+        EqLog.try("EqSpectators clip time", setAnimTrackTime, charset, 0, person.rng:next() * (getAnimClipDuration(charset, clip) or 0), true)
     end
     enableAnimTrack(charset, 0)
     person.charset, person.clip = charset, name
@@ -692,8 +692,8 @@ local function placeTargets(person)
             setRotation(node, math.rad(mixed(p.handPitch, p.lapPitch, m)), math.rad(mixed(p.handYaw, p.lapYaw, m) * side), math.rad(mixed(p.handRoll, p.lapRoll, m) * side))
             if chains ~= nil then
                 local on = EqSpectators.armsOn()
-                if on and IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
-                if not on and IKUtil.setIKChainInactive ~= nil then pcall(IKUtil.setIKChainInactive, chains, id) end
+                if on and IKUtil.setIKChainActive ~= nil then EqLog.try("EqSpectators arm IK on", IKUtil.setIKChainActive, chains, id) end
+                if not on and IKUtil.setIKChainInactive ~= nil then EqLog.try("EqSpectators arm IK off", IKUtil.setIKChainInactive, chains, id) end
             end
         end
     end
@@ -1108,7 +1108,7 @@ local function onModelLoaded(_, state, person)
         return
     end
     if HumanModelLoadingState == nil or state ~= HumanModelLoadingState.OK or model.rootNode == nil then
-        Log:warning("EqSpectators: a spectator's character didn't load (%s)", tostring(state))
+        Log:warning("EqSpectators: a spectator's character didn't load: %s", tostring(state))
         person.failed = true
         return
     end
@@ -1137,7 +1137,7 @@ local function onModelLoaded(_, state, person)
                         Log:info("EqSpectators: %s IK chain: %s", id, table.concat(keys, " "))
                     end
                 end
-                if IKUtil.setIKChainActive ~= nil then pcall(IKUtil.setIKChainActive, chains, id) end
+                if IKUtil.setIKChainActive ~= nil then EqLog.try("EqSpectators arm IK on", IKUtil.setIKChainActive, chains, id) end
             end
         end
         placeTargets(person)
@@ -1231,7 +1231,7 @@ function EqSpectators.dropGone()
             dropped = true
             person.deleted = true
             -- a sold bleacher took the character's nodes with it: only forget it then
-            if exists(person.holder) then pcall(remove, person) end
+            if exists(person.holder) then EqLog.try("EqSpectators remove", remove, person) end
             person.model, person.holder = nil, nil
         else
             table.insert(kept, person)

@@ -437,7 +437,7 @@ local function guardHotspot(hotspot)
         for name, fn in pairs(class) do
             if type(fn) == "function" and name ~= "new" and rawget(hotspot, name) == nil then
                 hotspot[name] = function(self, ...)
-                    local result = { pcall(fn, self, ...) }
+                    local result = { EqLog.try("EqDressageHooks map tag", fn, self, ...) }
                     if result[1] then return unpack(result, 2, table.maxn(result)) end
                     if not EqDressageHooks.tagFailed then
                         EqDressageHooks.tagFailed = true

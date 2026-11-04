@@ -510,7 +510,7 @@ function EqEventsFrame:refreshSponsors()
     local selected = self.selectedSponsorIndex ~= nil and self.sponsorRows[self.selectedSponsorIndex] or nil
     self.sponsorRows = {}
     if self.isReady then
-        local ok, rows = pcall(EqSponsorView.rows, farmId())
+        local ok, rows = EqLog.try("EqEventsFrame sponsor rows", EqSponsorView.rows, farmId())
         if ok then
             self.sponsorRows = rows
         else
@@ -808,7 +808,7 @@ local function showLogo(bitmap, brandName)
         bitmap:setVisible(false)
         return
     end
-    local ok = pcall(function()
+    local ok = EqLog.try("EqEventsFrame sponsor logo", function()
         if bitmap.eqLogo ~= image then
             bitmap:setImageFilename(image)
             bitmap.eqLogo = image
@@ -847,7 +847,7 @@ function EqEventsFrame:updateSponsorPanel()
     local show = self.mode == EqEventsFrame.MODE_SPONSORS and self.isReady and row ~= nil
     self.sponsorPanel:setVisible(show)
     if not show then return end
-    local ok, lines, clashes = pcall(EqSponsorView.panelLines, farmId(), row)
+    local ok, lines, clashes = EqLog.try("EqEventsFrame sponsor panel", EqSponsorView.panelLines, farmId(), row)
     if not ok then
         Log:warning("EqEventsFrame: sponsor panel failed: %s", tostring(lines))
         lines, clashes = {}, {}
@@ -1225,7 +1225,7 @@ function EqEventsFrame:onClickSponsorShop()
         Log:info("EqEventsFrame: shop opened, but it has no brand page to open for %s", tostring(row.brand))
         return
     end
-    local ok, err = pcall(shop.onClickBrand, shop, brand.index, nil, brand.title, brand.title)
+    local ok, err = EqLog.try("EqEventsFrame shop brand page", shop.onClickBrand, shop, brand.index, nil, brand.title, brand.title)
     if not ok then Log:warning("EqEventsFrame: shop brand page for %s failed: %s", tostring(row.brand), tostring(err)) end
 end
 

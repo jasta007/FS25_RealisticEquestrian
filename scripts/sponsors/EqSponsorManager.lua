@@ -321,10 +321,10 @@ function EqSponsorManager.januaryPeriod()
     local i18n = EqI18N ~= nil and EqI18N.globalI18N() or g_i18n
     if i18n ~= nil and i18n.formatPeriod ~= nil and i18n.getText ~= nil
         and (i18n.hasText == nil or i18n:hasText("ui_month1")) then
-        local okName, january = pcall(i18n.getText, i18n, "ui_month1")
+        local okName, january = EqLog.try("EqSponsorManager month name", i18n.getText, i18n, "ui_month1")
         if okName and type(january) == "string" and january ~= "" then
             for period = 1, 12 do
-                local ok, text = pcall(i18n.formatPeriod, i18n, period, false)
+                local ok, text = EqLog.try("EqSponsorManager month period", i18n.formatPeriod, i18n, period, false)
                 if ok and text == january then found, how = period, "month names" break end
             end
         end

@@ -70,7 +70,7 @@ local function wrapVehicle(vehicle)
             vehicle[name] = function(self, ...)
                 local price, a, b, c = original(self, ...)
                 local farmId = self.getOwnerFarmId ~= nil and self:getOwnerFarmId() or nil
-                local ok, share = pcall(EqSponsorDiscounts.shareFor, farmId, storeItem, kind)
+                local ok, share = EqLog.try("EqSponsorDiscounts vehicle share", EqSponsorDiscounts.shareFor, farmId, storeItem, kind)
                 return cut(price, ok and share or 0), a, b, c
             end
         end
@@ -100,7 +100,7 @@ function EqSponsorDiscounts.install(guarded)
             if not EqMain.isActive then return price, a, b, c end
             local farmId = EqSponsorDiscounts.buyingFarm
             if farmId == nil and g_currentMission ~= nil then farmId = g_currentMission:getFarmId() end
-            local ok, share = pcall(EqSponsorDiscounts.shareFor, farmId, storeItem, "purchase")
+            local ok, share = EqLog.try("EqSponsorDiscounts purchase share", EqSponsorDiscounts.shareFor, farmId, storeItem, "purchase")
             return cut(price, ok and share or 0), a, b, c
         end
     end
@@ -110,9 +110,7 @@ function EqSponsorDiscounts.install(guarded)
             local farmId = self.ownerFarmId
             if AccessHandler ~= nil and farmId == AccessHandler.EVERYONE then farmId = nil end
             EqSponsorDiscounts.buyingFarm = farmId
-            local ok, result = pcall(original, self, ...)
-            EqSponsorDiscounts.buyingFarm = nil
-            if not ok then error(result) end
+            local result = EqLog.finally(function() EqSponsorDiscounts.buyingFarm = nil end, original, self, ...)
             return result
         end
     end

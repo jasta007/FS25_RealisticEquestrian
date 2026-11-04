@@ -59,7 +59,7 @@ function EqTrainingHud.gameHudHidden()
     local hud = g_currentMission ~= nil and g_currentMission.hud or nil
     if type(hud) ~= "table" then return false end
     if hud.getIsVisible ~= nil then
-        local ok, visible = pcall(hud.getIsVisible, hud)
+        local ok, visible = EqLog.try("EqTrainingHud game HUD visibility", hud.getIsVisible, hud)
         if ok and visible ~= nil then return visible == false end
     end
     return hud.isVisible == false
