@@ -6,6 +6,11 @@
     side says (EqTraining.staminaStep moves the band to the other end). Fatigued or Blown, it
     blows hard: bigger puffs, a little quicker, blown out faster.
 
+    The nostrils follow the head (James, 2026-11-04: they lagged the nose when it bent): where
+    they sit and which way they blow are worked out once in the head bone's own space, then
+    carried round with it every frame. The upper lip bone (lipmidup_m) anchors them when there is
+    one, since it sits right under the nostrils.
+
     The puffs are the base game's slow horse step dust (HORSE_STEP_SLOW), cloned twice (one per
     nostril) onto the ridden horse, under the nostrils and aimed down, forwards and a little out
     to each side so they show from the saddle too. They live in the horse's space, so they travel
@@ -27,21 +32,28 @@ EqBreath.BONES = {
     { names = { "head_m", "head", "head_jnt", "headbone", "skull" }, forward = 0.48, up = -0.5 },
     { names = { "neck4_m", "neck2_m", "neck_m", "neck2", "neck" }, forward = 1.1, up = -0.5 },
 }
+-- The upper lip, just under the nostrils: the breath is anchored to it when the horse has one.
+EqBreath.LIP_BONES = { "lipmidup_m", "lipmid_up", "lip_up", "upperlip" }
 -- Set by eqBreath forward/up: overrides the bone's offsets.
 EqBreath.FORWARD = nil
 EqBreath.UP = nil
 -- The nostrils sit this far either side of the middle, and each blows along this direction in
 -- the horse's space (x out to its side, y up, z forward): down, forwards and a little out.
 EqBreath.NOSTRIL_GAP = 0.05
-EqBreath.BLOW = { 0.45, -0.55, 0.75 }
+EqBreath.BLOW = { 0.3, -0.6, 0.75 }
+-- A tight cone per nostril (James, 2026-11-04: it looked shotgunned): the dust's emitter shape is
+-- shrunk to this and its speed randomness cut to this share.
+EqBreath.EMITTER_SCALE = 0.15
+EqBreath.SPEED_RANDOM = 0.15
 -- How the puffs come out, by how hard the horse is blowing: on for onMs, off for offMs, each puff
 -- living lifespan ms, count times the dust's particles, size times its sprite size (the holder is
 -- scaled) and speed times its speed. "band" while the stamina band waits at the bottom, "hard"
 -- while Fatigued or Blown (James, 2026-11-04: noticeably bigger, only slightly quicker, blown out
--- harder).
+-- harder). Then a quarter smaller, slower breathing for both and hard blown half as fast
+-- (James, 2026-11-04 02:00).
 EqBreath.STYLE = {
-    band = { onMs = 380, offMs = 440, lifespan = 1000, count = 1, size = 1.5, speed = 1.5 },
-    hard = { onMs = 340, offMs = 360, lifespan = 1100, count = 1.6, size = 2.3, speed = 3.5 },
+    band = { onMs = 450, offMs = 750, lifespan = 1000, count = 1, size = 1.125, speed = 1.5 },
+    hard = { onMs = 420, offMs = 560, lifespan = 1100, count = 1.6, size = 1.725, speed = 1.75 },
 }
 -- eqBreath size/speed: extra multipliers for tuning in game.
 EqBreath.SIZE = 1
@@ -63,9 +75,13 @@ local function findBone(root)
         if found[name] == nil then found[name] = node end
         for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
     end
+    local lip = nil
+    for _, wanted in ipairs(EqBreath.LIP_BONES) do
+        if found[wanted] ~= nil then lip = found[wanted] break end
+    end
     for _, group in ipairs(EqBreath.BONES) do
         for _, wanted in ipairs(group.names) do
-            if found[wanted] ~= nil then return found[wanted], wanted, group end
+            if found[wanted] ~= nil then return found[wanted], wanted, group, lip end
         end
     end
     -- Not the base horse: log its head bones once, for placing the breath by hand.
@@ -78,9 +94,9 @@ local function findBone(root)
     table.sort(named)
     Log:info("Breath: no known head bone; head bones %s", #named > 0 and table.concat(named, ", ") or "none")
     for name, node in pairs(found) do
-        if string.find(name, "head", 1, true) then return node, name, EqBreath.BONES[1] end
+        if string.find(name, "head", 1, true) then return node, name, EqBreath.BONES[1], lip end
     end
-    return nil, nil, nil
+    return nil, nil, nil, nil
 end
 
 
@@ -119,15 +135,17 @@ local function nostril(vehicle, ref, side)
         emitter = getChildAt(psClone, 0)
         link(holder, emitter)
         setTranslation(emitter, 0, 0, 0)
+        local e = EqBreath.EMITTER_SCALE
+        setScale(emitter, e, e, e)
     end
     local ps = {}
     ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, false, false)
     if emitter ~= nil then ParticleUtil.setEmitterShape(ps, emitter) end
     ParticleUtil.setEmittingState(ps, false)
-    -- The dust blows along the holder's -z (it went straight back at the rider unturned, James
-    -- 2026-11-04), so the holder's z points the opposite way to where this nostril should blow.
-    local b = EqBreath.BLOW
-    setDirection(holder, -b[1] * side, -b[2], -b[3], 0, 1, 0)
+    if ParticleUtil.getParticleSystemSpeedRandom ~= nil and ParticleUtil.setParticleSystemSpeedRandom ~= nil then
+        local random = ParticleUtil.getParticleSystemSpeedRandom(ps)
+        if random ~= nil then ParticleUtil.setParticleSystemSpeedRandom(ps, random * EqBreath.SPEED_RANDOM) end
+    end
     local baseSpeed = ParticleUtil.getParticleSystemSpeed ~= nil and ParticleUtil.getParticleSystemSpeed(ps) or nil
     return { holder = holder, ps = ps, side = side, baseSpeed = baseSpeed }
 end
@@ -141,14 +159,15 @@ local function attach(vehicle)
     local spec = vehicle.spec_rideable
     local skeleton = spec ~= nil and spec.animationNode or nil
     if skeleton == nil or skeleton == 0 or not entityExists(skeleton) then skeleton = spec ~= nil and spec.meshNode or nil end
-    local bone, boneName, group = nil, nil, nil
+    local bone, boneName, group, lip = nil, nil, nil, nil
     if skeleton ~= nil and skeleton ~= 0 and entityExists(skeleton) then
-        bone, boneName, group = findBone(skeleton)
+        bone, boneName, group, lip = findBone(skeleton)
     end
-    local entry = { bone = bone, emitting = false, clock = 0, logged = false,
+    local entry = { bone = bone, lip = lip, emitting = false, clock = 0, logged = false,
         forward = group ~= nil and group.forward or 0, up = group ~= nil and group.up or 0,
         nostrils = { nostril(vehicle, ref, -1), nostril(vehicle, ref, 1) } }
-    Log:info("Breath: attached to %s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)")
+    Log:info("Breath: attached to %s%s", bone ~= nil and ("bone " .. tostring(boneName)) or "the horse's root (no head bone found)",
+        lip ~= nil and ", anchored on the upper lip" or "")
     return entry
 end
 
@@ -161,18 +180,57 @@ local function alive(entry)
 end
 
 
+local function aim(holder, dx, dy, dz)
+    -- The dust blows along the holder's -z (it went straight back at the rider unturned, James
+    -- 2026-11-04), so the holder's z points the opposite way to where the nostril should blow.
+    setDirection(holder, -dx, -dy, -dz, 0, 1, 0)
+end
+
+
+--- Where each nostril sits and blows, in the head bone's space: worked out from the offsets in
+--- the horse's space with the head as it is now, so it follows the head from then on.
+local function calibrate(vehicle, entry)
+    local root, head = vehicle.rootNode, entry.bone
+    local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
+    local hx, hy, hz = worldToLocal(root, getWorldTranslation(head))
+    local b = EqBreath.BLOW
+    for _, n in ipairs(entry.nostrils) do
+        local wx, wy, wz = localToWorld(root, hx + n.side * EqBreath.NOSTRIL_GAP, hy + up, hz + forward)
+        local px, py, pz = worldToLocal(head, wx, wy, wz)
+        if entry.lip ~= nil and entityExists(entry.lip) then
+            -- Kept relative to the upper lip, so it stays under the nostrils if the lip moves.
+            local lx, ly, lz = worldToLocal(head, getWorldTranslation(entry.lip))
+            px, py, pz = px - lx, py - ly, pz - lz
+        end
+        n.offset = { px, py, pz }
+        local dx, dy, dz = localDirectionToWorld(root, b[1] * n.side, b[2], b[3])
+        n.blow = { worldDirectionToLocal(head, dx, dy, dz) }
+    end
+    entry.calibrated = forward .. "/" .. up
+end
+
+
 local function place(vehicle, entry)
     local root = vehicle.rootNode
-    local x, y, z
-    if entry.bone ~= nil and entityExists(entry.bone) then
-        x, y, z = worldToLocal(root, getWorldTranslation(entry.bone))
-    else
-        -- No head bone: roughly where a standing horse's muzzle is.
-        x, y, z = 0, 1.4, 1.3
-    end
     local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
+    local b = EqBreath.BLOW
+    if entry.bone == nil or not entityExists(entry.bone) then
+        -- No head bone: roughly where a standing horse's muzzle is, blowing the plain way.
+        for _, n in ipairs(entry.nostrils) do
+            setTranslation(n.holder, n.side * EqBreath.NOSTRIL_GAP, 1.4 + up, 1.3 + forward)
+            aim(n.holder, b[1] * n.side, b[2], b[3])
+        end
+        return
+    end
+    local head = entry.bone
+    if entry.calibrated ~= forward .. "/" .. up then calibrate(vehicle, entry) end
+    local lx, ly, lz = 0, 0, 0
+    if entry.lip ~= nil and entityExists(entry.lip) then lx, ly, lz = worldToLocal(head, getWorldTranslation(entry.lip)) end
     for _, n in ipairs(entry.nostrils) do
-        setTranslation(n.holder, x + n.side * EqBreath.NOSTRIL_GAP, y + up, z + forward)
+        local o = n.offset
+        local x, y, z = worldToLocal(root, localToWorld(head, lx + o[1], ly + o[2], lz + o[3]))
+        setTranslation(n.holder, x, y, z)
+        aim(n.holder, worldDirectionToLocal(root, localDirectionToWorld(head, n.blow[1], n.blow[2], n.blow[3])))
     end
 end
 
