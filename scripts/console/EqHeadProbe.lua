@@ -5,12 +5,15 @@
     showed a clip can win over a joint set by hand, so this finds out what works before any of it
     is built. eqHeadProbe, while riding:
       bones                     writes the ridden horse's bone tree (names, local rotations) to log.txt
-      clips                     writes its animation clips and what each track plays now
-      watch [seconds]           logs the tracks every half second (stand still to catch the idles)
-      tilt <bone> <deg> [x|y|z] [update|draw|both]   adds a turn to a bone every frame
+      clips                     writes its animation clips (names and lengths) to log.txt
+      tracks <n>                writes what animation tracks 0..n-1 play now (asking for a track the
+                                horse doesn't have crashed the game, 2026-11-04, so start small)
+      watch [seconds]           logs those tracks every half second (stand still to catch the idles)
+      tilt <bone> <deg> [x|y|z] [update|draw|both]   adds a turn to a bone every frame (axis z by
+                                default: the rig's bones run along x and bend about z)
       tilt <bone> <deg> ... + <bone2> <deg2> ...     several bones at once (e.g. neck and head)
-      mute <clip>               holds every track playing that clip (name part or number) at weight 0
-      hold <clip> <time 0-1> <weight 0-1>            freezes that clip at a point and blends it in
+      mute <clip>               holds every known track playing that clip (name part or number) at weight 0
+      hold <clip> <time 0-1> <weight 0-1> <track>    freezes that clip at a point on that track, blended in
       off                       stops tilt, mute and hold
     Bones and clips are matched by a part of their name, any case, first match; a number is an index.
     Dev only: not wired into anything else.
@@ -24,7 +27,7 @@ EqHeadProbe.hold = nil       -- { clip, time, weight, track }
 EqHeadProbe.watchUntil = nil
 EqHeadProbe.watchNext = 0
 EqHeadProbe.readback = 0     -- frames left to log the bone before and after the animation
-EqHeadProbe.MAX_TRACKS = 16
+EqHeadProbe.trackCount = 0  -- tracks known to exist (eqHeadProbe tracks n); none read before that
 
 local Log = EqLog
 
@@ -112,7 +115,7 @@ end
 
 local function tracks(charset)
     local lines = {}
-    for t = 0, EqHeadProbe.MAX_TRACKS - 1 do
+    for t = 0, EqHeadProbe.trackCount - 1 do
         local text = trackText(charset, t)
         if text == nil then break end
         table.insert(lines, text)
@@ -137,13 +140,28 @@ end
 
 function EqHeadProbe.dumpClips(spec)
     local charset = spec.charsetId
-    local names = {}
-    for i = 0, clipCount(charset) - 1 do
+    -- One line at a time, so a crash leaves the last good one in log.txt.
+    local count = clipCount(charset)
+    Log:info("eqHeadProbe charset %s: %d clips", tostring(charset), count)
+    for i = 0, count - 1 do
+        local name = clipName(charset, i)
         local ok, length = pcall(getAnimClipDuration, charset, i)
-        table.insert(names, string.format("%d %s (%.0f ms)", i, clipName(charset, i), ok and length or -1))
+        Log:info("eqHeadProbe clip %d %s (%.0f ms)", i, name, ok and tonumber(length) or -1)
     end
-    Log:info("eqHeadProbe clips (%d):\n%s\ntracks now:\n%s", #names, table.concat(names, "\n"), table.concat(tracks(charset), "\n"))
-    return say("%d clips and the tracks written to log.txt", #names)
+    return say("%d clips written to log.txt", count)
+end
+
+
+function EqHeadProbe.dumpTracks(spec, count)
+    local charset = spec.charsetId
+    for t = 0, count - 1 do
+        Log:info("eqHeadProbe reading track %d", t)
+        local text = trackText(charset, t)
+        Log:info("eqHeadProbe %s", text or ("track " .. t .. ": none"))
+        if text == nil then return say("tracks 0-%d read, %d isn't there", t - 1, t) end
+        EqHeadProbe.trackCount = math.max(EqHeadProbe.trackCount, t + 1)
+    end
+    return say("tracks 0-%d written to log.txt", count - 1)
 end
 
 
@@ -177,7 +195,7 @@ end
 local function applyTracks(spec)
     local charset = spec.charsetId
     if EqHeadProbe.mute ~= nil then
-        for t = 0, EqHeadProbe.MAX_TRACKS - 1 do
+        for t = 0, EqHeadProbe.trackCount - 1 do
             local ok, clip = pcall(getAnimTrackAssignedClip, charset, t)
             if not ok then break end
             if clip == EqHeadProbe.mute then pcall(setAnimTrackBlendWeight, charset, t, 0) end
@@ -260,19 +278,6 @@ local function stopHold(spec)
 end
 
 
---- A track no clip plays on, for hold: the first unassigned one after the used ones.
-local function freeTrack(charset)
-    local last = -1
-    for t = 0, EqHeadProbe.MAX_TRACKS - 1 do
-        local ok, clip = pcall(getAnimTrackAssignedClip, charset, t)
-        if not ok then break end
-        last = t
-        if type(clip) ~= "number" or clip < 0 then return t end
-    end
-    return last >= 0 and last + 1 or nil
-end
-
-
 --- @param args string[] the words after eqHeadProbe
 function EqHeadProbe.console(args)
     local vehicle = EqHeadProbe.horse()
@@ -291,7 +296,13 @@ function EqHeadProbe.console(args)
     if spec == nil or spec.animationNode == nil then return say("ride a horse first") end
     if command == "bones" then return EqHeadProbe.dumpBones(spec) end
     if command == "clips" then return EqHeadProbe.dumpClips(spec) end
+    if command == "tracks" then
+        local count = math.floor(tonumber(args[2]) or 0)
+        if count < 1 or count > 32 then return say("tracks <n>, 1-32: try 1, then more") end
+        return EqHeadProbe.dumpTracks(spec, count)
+    end
     if command == "watch" then
+        if EqHeadProbe.trackCount == 0 then return say("run eqHeadProbe tracks <n> first") end
         local seconds = tonumber(args[2]) or 20
         EqHeadProbe.watchUntil, EqHeadProbe.watchNext = (g_time or 0) + seconds * 1000, 0
         return say("logging the tracks for %d s", seconds)
@@ -312,7 +323,7 @@ function EqHeadProbe.console(args)
                 local axisWord = string.lower(args[i + 2] or "")
                 local axis = ({ x = 1, y = 2, z = 3 })[axisWord]
                 i = i + (axis ~= nil and 3 or 2)
-                table.insert(tilts, { node = node, name = getName(node), rad = math.rad(degrees), axis = axis or 1 })
+                table.insert(tilts, { node = node, name = getName(node), rad = math.rad(degrees), axis = axis or 3 })
             end
         end
         if #tilts == 0 then return say("tilt <bone> <degrees> [x|y|z] [update|draw|both]") end
@@ -324,17 +335,18 @@ function EqHeadProbe.console(args)
     if command == "mute" then
         local clip = args[2] ~= nil and findClip(spec.charsetId, args[2]) or nil
         if clip == nil then return say("mute <clip name part or number> (eqHeadProbe clips lists them)") end
+        if EqHeadProbe.trackCount == 0 then return say("run eqHeadProbe tracks <n> first") end
         EqHeadProbe.mute = clip
         return say("muting clip %d (%s)", clip, clipName(spec.charsetId, clip))
     end
     if command == "hold" then
         local clip = args[2] ~= nil and findClip(spec.charsetId, args[2]) or nil
-        if clip == nil then return say("hold <clip> <time 0-1> <weight 0-1>") end
+        if clip == nil then return say("hold <clip> <time 0-1> <weight 0-1> <track>") end
         local share = math.max(0, math.min(1, tonumber(args[3]) or 0.5))
         local weight = math.max(0, math.min(1, tonumber(args[4]) or 0.5))
         stopHold(spec)
-        local track = freeTrack(spec.charsetId)
-        if track == nil then return say("no free animation track") end
+        local track = tonumber(args[5])
+        if track == nil then return say("hold <clip> <time 0-1> <weight 0-1> <track>: pick a track eqHeadProbe tracks showed") end
         local okDuration, length = pcall(getAnimClipDuration, spec.charsetId, clip)
         local ok, err = pcall(assignAnimTrackClip, spec.charsetId, track, clip)
         if not ok then return say("couldn't put the clip on track %d: %s", track, tostring(err)) end
@@ -344,5 +356,5 @@ function EqHeadProbe.console(args)
         return say("holding clip %d (%s) at %.0f ms, weight %.2f, on track %d", clip, clipName(spec.charsetId, clip),
             EqHeadProbe.hold.time, weight, track)
     end
-    return say("eqHeadProbe bones | clips | watch [s] | tilt <bone> <deg> [x|y|z] [update|draw|both] | mute <clip> | hold <clip> <time 0-1> <weight 0-1> | off")
+    return say("eqHeadProbe bones | clips | tracks <n> | watch [s] | tilt <bone> <deg> [x|y|z] [update|draw|both] | mute <clip> | hold <clip> <time 0-1> <weight 0-1> | off")
 end
