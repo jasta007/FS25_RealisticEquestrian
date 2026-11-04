@@ -32,6 +32,13 @@ EqDressage.MARKER_XML = { "fs25_ridinghall/objekt.xml" }
 -- Our own arenas (placeables/dressageArena): every letter is a node named eqMarker_<letter>.
 EqDressage.ARENA_XML = "placeables/dressagearena/dressagearena"
 EqDressage.ARENA_NODE = "^eqMarker_(%u)$"
+-- Riding Hall 2k26's hall (ReitHalle) has a ring of letter boards inside: decals named
+-- normalLetter_<letter>, A on the entrance gate, F K B E M H C round the sides, no centre line
+-- letters (James, 2026-11-04). It rides like one of our arenas.
+EqDressage.HALL_XML = { "fs25_ridinghall/reithalle.xml" }
+EqDressage.HALL_NODE = "^normalLetter_(%u)$"
+-- The centre line letters worked out for a hall: each sits between these two side letters.
+EqDressage.CENTRE_PAIRS = { { "D", "K", "F" }, { "X", "E", "B" }, { "G", "H", "M" } }
 EqDressage.SEARCH_RADIUS = 100
 EqDressage.LINK_RADIUS = 60
 EqDressage.MAX_MARKERS = 40
@@ -129,6 +136,52 @@ function EqDressage.isArenaXml(filename)
     if type(filename) ~= "string" then return false end
     local lower = filename:lower():gsub("\\", "/")
     return lower:find(EqDressage.ARENA_XML, 1, true) ~= nil and lower:sub(-4) == ".xml"
+end
+
+
+--- @param filename string|nil a placeable's xml filename
+--- @return boolean true for a riding hall with its own lettered arena
+function EqDressage.isHallXml(filename)
+    if type(filename) ~= "string" then return false end
+    local lower = filename:lower():gsub("\\", "/")
+    for _, suffix in ipairs(EqDressage.HALL_XML) do
+        if lower:sub(-#suffix) == suffix then return true end
+    end
+    return false
+end
+
+
+--- @param name string|nil a node's name in a riding hall
+--- @return string|nil the letter when the node is one of its letter boards
+function EqDressage.hallLetter(name)
+    if type(name) ~= "string" then return nil end
+    return name:match(EqDressage.HALL_NODE)
+end
+
+
+--- A hall's letters with D, X and G added on its centre line, each level with the middle of
+--- its pair of side letters (CENTRE_PAIRS). Letters already there are kept as they are.
+--- @param letters table list of { letter, x, z }
+--- @return table|nil letters with the centre line added, nil without both A and C
+function EqDressage.withCentreLine(letters)
+    local by = {}
+    for _, l in ipairs(letters) do by[l.letter] = by[l.letter] or l end
+    local a, c = by.A, by.C
+    if a == nil or c == nil then return nil end
+    local length = distance(a.x, a.z, c.x, c.z)
+    if length < 1 then return nil end
+    local ux, uz = (c.x - a.x) / length, (c.z - a.z) / length
+    local out = {}
+    for _, l in ipairs(letters) do table.insert(out, l) end
+    for _, pair in ipairs(EqDressage.CENTRE_PAIRS) do
+        local one, other = by[pair[2]], by[pair[3]]
+        if by[pair[1]] == nil and one ~= nil and other ~= nil then
+            local mx, mz = (one.x + other.x) / 2, (one.z + other.z) / 2
+            local along = math.max(0, math.min(length, (mx - a.x) * ux + (mz - a.z) * uz))
+            table.insert(out, { letter = pair[1], x = a.x + ux * along, z = a.z + uz * along })
+        end
+    end
+    return out
 end
 
 
