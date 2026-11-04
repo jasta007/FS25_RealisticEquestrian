@@ -541,12 +541,16 @@ EqTraining.HANDLING = {
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
     turn = { 1, 1.65 },      -- turn rate, by agility
-    -- ...and a little more from a calm, attentive horse (James, 2026-10-27).
-    turnTemperament = { 1, 1.2 },
+    -- ...and more from a calm, attentive horse (James, 2026-10-27; raised from 1.2 on 2026-11-03).
+    turnTemperament = { 1, 1.4 },
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },
     crashHalt = { 1.3, 0.7 },
+    -- Brakes: how quickly the horse slows when you drop a gait (the base game's maxDeceleration,
+    -- 10 m/s2), by agility and again by temperament (James, 2026-11-03), so up to 1.82x at 100/100.
+    brake = { 1, 1.4 },
+    brakeTemperament = { 1, 1.3 },
 }
 
 --- @param limits table { at 0, at 100 }
@@ -562,8 +566,8 @@ end
 --- @param speed number|nil trained speed
 --- @param agility number|nil trained agility
 --- @param temperament number|nil trained temperament
---- @return table { speed, jump, turn, acceleration, crashHalt } multipliers on the base game's top
----   speeds, jump height, turn rate and acceleration, and on our crash halt
+--- @return table { speed, jump, turn, acceleration, brake, crashHalt } multipliers on the base game's
+---   top speeds, jump height, turn rate, acceleration and deceleration, and on our crash halt
 function EqTraining.handling(speed, agility, temperament)
     local limits = EqTraining.HANDLING
     return {
@@ -571,6 +575,7 @@ function EqTraining.handling(speed, agility, temperament)
         jump = handlingShare(limits.jump, agility),
         turn = handlingShare(limits.turn, agility) * handlingShare(limits.turnTemperament, temperament),
         acceleration = handlingShare(limits.acceleration, temperament),
+        brake = handlingShare(limits.brake, agility) * handlingShare(limits.brakeTemperament, temperament),
         crashHalt = handlingShare(limits.crashHalt, temperament),
     }
 end

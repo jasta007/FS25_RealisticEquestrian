@@ -66,7 +66,8 @@ uses its genetics, health and fitness.
 - The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
-- **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
+- **Stats change how a horse rides:** speed sets top speed and how hard a Sprint kicks on, stamina how long
+  the horse can Push and Sprint, agility jump height, turning and braking, and temperament adds sharper turning and braking.
   Gait keys pressed in the air take effect as the horse lands. Jumping from a trot (or Ctrl +
   Space at a canter or gallop) is a short, steep collected jump.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
