@@ -6186,7 +6186,7 @@ end)()
 end)()
 
 -- SETTLING IN AND REST DAYS: a horse can always enter, but in its first month from the dealer, or
--- with no day off since its last start in the same month, it competes at 75% (both: 56%).
+-- with no day off since its last start in the same month, it competes at 90% (both: 81%).
 ;(function()
     local hadManager, hadMission = EqCompetitionManager, g_currentMission
     dofile("scripts/competition/EqCompetitionManager.lua")
@@ -6202,7 +6202,7 @@ end)()
     check("settling in: no longer keeps a horse out of events",
         EqCompetitionManager.unavailableReason(bought, EqCompetition.KIND_ROUND, nil) == nil)
     local factor, settling, tired = EqCompetitionManager.freshness(bought, round)
-    check("settling in: first month at 75%", math.abs(factor - 0.75) < 1e-9 and settling and not tired)
+    check("settling in: first month at 90%", math.abs(factor - 0.9) < 1e-9 and settling and not tired)
     bought.ownedMonths = EqConstants.SETTLE_MONTHS
     check("settling in: full strength after a month", EqCompetitionManager.freshness(bought, round) == 1)
     check("settling in: a bred horse is never settling", EqCompetitionManager.freshness(EqHorseRecord.new("DE 1 78"), round) == 1)
@@ -6211,7 +6211,7 @@ end)()
     -- Ran at today's day change (day 10) in month 4; the Events tab looks at tonight's run (day 11).
     horse.lastEvent = { day = 10, month = 4 }
     local f1, _, t1 = EqCompetitionManager.freshness(horse, round)
-    check("rest day: the next day in the same month is at 75%", math.abs(f1 - 0.75) < 1e-9 and t1)
+    check("rest day: the next day in the same month is at 90%", math.abs(f1 - 0.9) < 1e-9 and t1)
     check("rest day: resolving the same night again is tired", EqCompetitionManager.isTired(horse, 10, 4))
     check("rest day: a day off in between is full strength", not EqCompetitionManager.isTired(horse, 12, 4))
     check("rest day: the next day in a new month is fine", not EqCompetitionManager.isTired(horse, 11, 5))
@@ -6224,7 +6224,7 @@ end)()
     bought.lastEvent = { day = 10, month = 4 }
     environment.currentDayInPeriod = 2
     local both, s2, t2 = EqCompetitionManager.freshness(bought, round)
-    check("settling in and no rest multiply", math.abs(both - 0.5625) < 1e-9 and s2 and t2)
+    check("settling in and no rest multiply", math.abs(both - 0.81) < 1e-9 and s2 and t2)
 
     local x = memoryXML()
     horse:saveToXMLFile(x, "h")

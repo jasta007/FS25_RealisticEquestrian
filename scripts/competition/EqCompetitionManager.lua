@@ -455,8 +455,8 @@ end
 
 -- A horse settling in (its first month from the dealer) or with no day of rest since its last
 -- start this month competes this much below its best. Both together multiply.
-EqCompetitionManager.SETTLING_FACTOR = 0.75
-EqCompetitionManager.TIRED_FACTOR = 0.75
+EqCompetitionManager.SETTLING_FACTOR = 0.9
+EqCompetitionManager.TIRED_FACTOR = 0.9
 
 
 --- The day and month an event runs on: the day it resolves (an event resolves at a day change)
