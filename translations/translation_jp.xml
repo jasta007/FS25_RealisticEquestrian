@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="気性"/>
         <text name="eq_train_viewAction" text="トレーニング表示：%s"/>
         <text name="eq_train_view_freestyle" text="フリー"/>
-        <text name="eq_help_temperament_2" text="経路違反が3回（線を外れる、アリーナを出る、立ち止まる）で演技は終了します。最後まで乗ると、得点に応じた気性ボーナスが得られます。落ち着いた馬ほど線を先まで見られ、変化の予告も早くなります。Riding Hallのマーカーでは、文字の間を進む従来の演技になります。アリーナの外でも常歩と後退で気性は少し鍛えられ、ニンジンなどのおやつも役立ちます。"/>
-        <text name="eq_help_temperament_1" text="気性トレーニングは馬に制御を教えるもので、馬場馬術のアリーナが必要です。ショップで購入するか、馬場馬術のマーカーを置いてください。ショップのアリーナではAへ向かうと図形の演技が始まります。輪乗り、斜線、蛇乗りなどが地面に金色の線で描かれます。線に沿って進み、指示された場所で歩法を変えたり停止したりしましょう。各運動は10点満点で採点されます。"/>
+        <text name="eq_help_temperament_2" text="気性は馬場馬術アリーナでの演技で最もよく鍛えられます。Aへ向かうと演技が始まり、アリーナのそばで[[EQ_DRESSAGE_TEST]]を押すと自作できます。うまくこなした運動ごとにコンボが上がり、3回のミス（線を外れる、アリーナを出る、立ち止まる）で演技は終わります。アリーナ以外でも、側方運動（[[EQ_LATERAL]]）やピアッフェなどの収縮した歩法（[[EQ_COLLECT]]）を保つと少し鍛えられます。"/>
+        <text name="eq_help_temperament_1" text="気性が高いと馬は速く曲がり、早く歩法を変え、障害物に当たった後の停止が短くなります。最も重要なのは馬場馬術で、気性の高い馬は線により正確に沿い、障害にもまっすぐ向かいます。気性の低い馬は大会で出場取消や減点になりやすくなります。ニンジンなどのおやつで気性のトレーニングが速くなります。"/>
         <text name="eq_help_temperament_title" text="トレーニング：気性"/>
-        <text name="eq_help_agility_2" text="時間内に新しい障害物を越えられなかったり、速度を落としすぎたりすると倍率を失います。障害物なしのジャンプも少しは鍛えられますが、倍率は上がりません。"/>
-        <text name="eq_help_agility_1" text="敏捷性は主に障害を跳ぶことで鍛えられますが、歩様を切り替えることでも少し上がります。障害物を越えて敏捷性のトレーニング倍率を上げましょう。倍率は10秒後、または障害物に当たるとそれより早く下がります。"/>
+        <text name="eq_help_agility_2" text="障害物を越えるたびにコンボがx2からx5まで上がり、跳ぶごとに鍛えられる量が増えます。次の障害物まで10秒です。障害物に当たると時間が減り、停止するとすぐにコンボが終わります。障害飛越アリーナや自作コースではより速く鍛えられます。騎乗中に[[EQ_COURSE_RECORD]]でコースを作れます。"/>
+        <text name="eq_help_agility_1" text="敏捷性が高いと馬はより高く跳び、より小さく曲がれます。障害飛越と馬場馬術で最も重要です。障害物に触れたり止まったりせず、続けて跳ぶことで鍛えられます。どんな障害物でも数えられますが、本格的な馬術障害の方がよく鍛えられます。大麦を与えると敏捷性のトレーニングが速くなります。"/>
         <text name="eq_help_agility_title" text="トレーニング：敏捷性"/>
         <text name="eq_pop_routineStart" text="演技開始"/>
         <text name="eq_pop_routineFault" text="ミス %d/%d"/>
@@ -217,14 +217,11 @@
         <text name="eq_train_combo" text="ジャンプコンボ x%d"/>
         <text name="eq_train_view_temperament" text="気性"/>
         <text name="eq_train_view_agility" text="敏捷性"/>
-        <text name="eq_help_freestyle_2" text="敏捷性は障害物を飛んでコンボメーターを溜めて鍛え、気性は馬場馬術アリーナで演技をして鍛えます。持久力とスピードは上手な襲歩で鍛えます。襲歩中にHを押すと方法がわかります。"/>
-        <text name="eq_help_freestyle_3" text="自分で乗りたくない？スタッフタブで厩務員やトレーナーを雇えば、毎日馬を鍛えてくれます。ゲームの動物スタッフやRLRMのHerdsmanは現状維持しかしません。"/>
+        <text name="eq_help_freestyle_2" text="敏捷性は障害物を続けて跳ぶことで、気性は馬場馬術の図形や運動で鍛えられます。スタミナとスピードは長く襲歩を続けたりスプリントしたりすることで鍛えられます。[[EQ_TRAINING_VIEW]]を押すと各ミニゲームの詳細が見られるので、効率よく鍛えましょう。"/>
+        <text name="eq_help_freestyle_3" text="鍛えるために毎日馬に乗る必要はありません。トレーナーや厩務員を雇えば、毎日重点的または全般的なトレーニングをしてくれますし、馬は大会でも経験を積みます。最も効果的なのは、自作の障害飛越やクロスカントリーのコース（[[EQ_COURSE_RECORD]]または[[EQ_COURSE_RECORD_XC]]で作成）や、馬場馬術アリーナでの演技の練習です。"/>
         <text name="eq_form_title" text="絶好調"/>
-        <text name="eq_help_freestyle_4" text="大会の前に乗りましょう！ミニゲームで鍛えた能力ごとに、今月の大会で馬が絶好調になり、能力ごとに最大+8されます。数日分は合算されず、その月の最高のセッションが採用されます。"/>
-        <text name="eq_help_form_title" text="絶好調"/>
-        <text name="eq_help_form_1" text="自分で乗ることはトレーニング以上の意味があります。今月の大会で馬を絶好調にします。ミニゲームで鍛えた能力は、今月のすべての大会で最大+8され、ここと馬のスキル欄に絶好調として表示されます。良いセッションほどボーナスが大きくなり、歩様で乗るだけでは付きません。"/>
-        <text name="eq_help_form_2" text="絶好調は月の中で日ごとに合算されず、各能力は最高のセッションを保持します。当日には馬を素質以上に引き上げることもあり、今月の大会が終わると消えます。日々のトレーニングはスタッフに任せ、自分の騎乗は大事な大会のために取っておきましょう。"/>
-        <text name="eq_help_freestyle_1" text="騎乗で馬の能力が鍛えられ、能力ごとにミニゲームがあります。すべての能力を同時に鍛えられますが、スピードと気性のように相性の悪いものもあります。Yを押すと集中したい能力の詳しい表示に切り替わり、フリーのままなら全体の表示になります。騎乗バーは馬のその日の体力です。満タンになると翌日までそれ以上上達しません。"/>
+        <text name="eq_help_freestyle_4" text="自分で鍛えると、その月の大会で馬が一時的に絶好調になります。通常のトレーニングより大きく、潜在能力を超えることさえありますが、月末に消え、日ごとに積み重なりません。数えられるのは最も良かったセッションだけです。"/>
+        <text name="eq_help_freestyle_1" text="馬には4つの能力があり、騎乗、大会への出場、スタッフによって鍛えられます。すべて同時に鍛えられますが、[[EQ_TRAINING_VIEW]]でトレーニング表示を切り替えると、それぞれの詳しい情報が見られます。馬が1日に鍛えられる量には限りがあり、本日のトレーニングの割合で表示されます。"/>
         <text name="eq_help_freestyle_title" text="トレーニング：フリー"/>
         <text name="eq_welcome_ride_title" text="トレーニング"/>
         <text name="eq_welcome_welcome_1_title" text="Realistic Equestrianへようこそ"/>
@@ -262,7 +259,7 @@
         <text name="input_EQ_LATERAL" text="側方運動（長押し）"/>
         <text name="input_EQ_COLLECT" text="収縮（長押し）"/>
         <text name="input_EQ_REIN" text="手綱：マウス操舵（長押し）"/>
-        <text name="eq_train_worn" text="騎乗バー満タン：今日のトレーニングは終了"/>
+        <text name="eq_train_worn" text="本日のトレーニングが満杯：今日はこれ以上鍛えられません"/>
         <text name="eq_ex_push" text="プッシュ"/>
         <text name="eq_ex_recover" text="回復"/>
         <text name="eq_ex_sprint" text="スプリント"/>
@@ -281,10 +278,7 @@
         <text name="eq_pop_ex_spent" text="息切れ！"/>
         <text name="eq_pop_ex_fresh" text="襲歩可能"/>
         <text name="eq_help_gallop_title" text="襲歩"/>
-        <text name="eq_help_gallop_1" text="馬は3段階のペースで襲歩します。駈歩からWを押すとプッシュ開始：速いですが負荷バーが溜まり、高いほど速く溜まります。Sを押すと回復：襲歩を続けたまま負荷を下げる遅めの襲歩で、バーの上と下の3分の1では速く、中央ではゆっくり下がります。もう一度Wでプッシュを再開します。体力のある馬ほど疲れにくく、回復も早いです。"/>
-        <text name="eq_help_gallop_2" text="プッシュ中にバーが赤い疲労ゾーンに達すると、馬は駈歩に落ち、バーが空になるまで再び襲歩できません。自分で駈歩に落とすには、バーが空の回復中にSを1回押すか、いつでもSを2回押します。"/>
-        <text name="eq_help_gallop_3" text="襲歩中に左クリックを連打するとスプリント：ずっと速く、バーは最初ゆっくり、やがてどんどん速く溜まるので、ラインの手前で止めましょう。スプリントが終わると回復になり、バーが空になるまで次のスプリントはできません。疲労ラインを越えられるのはスプリントだけで、ゴールへの最後のひと押しに使えますが、そこで終わったスプリントは馬を息切れ状態にし、ラインより下に戻るまでとてもゆっくりしか回復しません。"/>
-        <text name="eq_help_gallop_4" text="トレーニング：スプリントはスピードを鍛え、終わるまでにバーを高く上げるほど価値が上がります。ラインまでの半分でx2、ライン直前で最大x10ですが、ラインを越えて終わるとx1だけです。プッシュと回復はスタミナ倍率（最大x5）でスタミナを鍛えます。プッシュで倍率が上がり、上に近いほど速く上がります。バーの中央3分の1で回復すると馬が息を整え、倍率の大半を保てますが、上と下の3分の1では早く失われ、息を整えない馬はずっと伸びが遅くなります。疲労や息切れになると倍率はx1に戻り、バーが空になるまでスタミナのトレーニングが止まります。"/>
+        <text name="eq_help_gallop_1" text="馬は3段階のペースで襲歩します。プッシュ（W）は中間で負荷を上げ、回復（S）は最も遅く負荷を下げます。スプリント（[[EQ_SPRINT]]）は最も速く、負荷が急に上がります。通常の限界を超えられますが、その後の回復に長くかかります。"/>
         <text name="eq_ex_hint_sprint" text="左クリック連打でスプリント"/>
         <text name="eq_ex_hint_sprintRest" text="スプリント：先にバーを空まで回復"/>
         <text name="eq_ex_hint_locked" text="バーが空になるまで駈歩"/>
@@ -301,11 +295,11 @@
         <text name="eq_train_view_speed" text="スピード"/>
         <text name="eq_train_view_condensed" text="簡易"/>
         <text name="eq_help_stamina_title" text="トレーニング：スタミナ"/>
-        <text name="eq_help_stamina_1" text="スタミナは襲歩でプッシュと回復をしている間、スタミナ倍率（最大x5）で鍛えられます。プッシュで倍率が上がり、ラインに近いほど速く上がります。回復で倍率は下がります。バーの上3分の1では速く、中央ではゆっくり、下3分の1では再び速く下がります。"/>
-        <text name="eq_help_stamina_2" text="つまり、ラインの近くまでプッシュし、バーの中央まで緩めてしばらく息を整えさせ、またプッシュします。上の方でプッシュと回復を繰り返すと、倍率は上がらず馬が疲れるだけです。疲労や息切れになると倍率はx1に戻り、バーが空になるまでスタミナのトレーニングが止まります。"/>
+        <text name="eq_help_stamina_1" text="スタミナが高いと襲歩やスプリントでより長くプッシュでき、その後の回復も速くなります。クロスカントリー、長距離レース、障害競走で最も重要です。スタミナの高い馬はけがをしにくく、柔らかい、重い、または暑い馬場でも強くなります。オーツ麦と大麦を与えるとスタミナのトレーニングが速くなります。"/>
+        <text name="eq_help_stamina_2" text="スタミナのトレーニングは、できるだけ長く襲歩を続けることが鍵です。負荷バーが青い帯にあるときにプッシュから回復へ切り替え、下でまた戻します。切り替えどきになると馬は息が荒くなります。タイミングが合えばトレーニングコンボが上がり、回復が速く、疲れにくくなります。襲歩をやめるとコンボはリセットされます。"/>
         <text name="eq_help_speed_title" text="トレーニング：スピード"/>
-        <text name="eq_help_speed_1" text="スピードはスプリント中に鍛えられます。襲歩中に左クリックを連打しましょう。スプリントの1秒1秒が加算され、終了時にバーの高さで倍率がかかります。ラインまでの半分でx2、ライン直前で最大x10です。"/>
-        <text name="eq_help_speed_2" text="ラインを越えて終わったスプリントはx1にしかならないので、ラインの手前で連打をやめる（またはSを押す）ようにしましょう。スプリントの後は、バーが空になるまで回復しないと次のスプリントはできません。"/>
+        <text name="eq_help_speed_1" text="スピードは全歩法での最高速度を上げ、競馬とクロスカントリーで最も重要です。速い馬は硬い馬場で最も力を発揮します。トウモロコシを与えるとスピードのトレーニングが速くなります。"/>
+        <text name="eq_help_speed_2" text="襲歩中に[[EQ_SPRINT]]を素早く連打するとスプリントします。スプリント終了時の負荷バーが高いほど倍率が大きくなるので、思い切ってラインに近づきましょう。ラインを越えると倍率はx1に戻ります。スプリントの後は常歩か停止で休むと早く回復します。"/>
         <text name="eq_train_speedMult" text="スピード x%.1f"/>
         <text name="eq_train_staminaMult" text="スタミナ x%.1f"/>
         <text name="eq_train_staminaStopped" text="トレーニングなし"/>
@@ -529,7 +523,7 @@
         <text name="eq_course_editing" text="%sを編集中：障害%d個、%.0f m"/>
         <text name="eq_course_editStarted" text="%sを編集中：完了するまで、配置したRealistic Equestrianの障害物は当たり判定がありません。その他の障害物は固いままです"/>
         <text name="input_EQ_COURSE_DELETE" text="近くのコースを削除"/>
-        <text name="eq_ui_riding" text="騎乗"/>
+        <text name="eq_ui_riding" text="本日のトレーニング"/>
         <text name="eq_ui_ridingFull" text="満タン、今日のトレーニングは終了"/>
         <text name="eq_ui_ridingFullValue" text="%s - 満タン"/>
         <text name="eq_specialty_none" text="まだなし"/>
@@ -1206,5 +1200,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%sは検疫中のため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_away" text="%sは大会に出ているため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_injured" text="%sは怪我をしているため、休養のため%sに戻されました。"/>
+        <text name="eq_help_freestyle_5" text="馬には追加の歩法と動作キーがあります。[[EQ_REIN]]を押し続けるとマウスで細かく操作でき、[[EQ_LATERAL]]で側方運動、[[EQ_COLLECT]]で馬を収縮させます。"/>
+        <text name="eq_help_lateral_title" text="側方運動"/>
+        <text name="eq_help_lateral_1" text="側方運動は馬場馬術でも特に難しく、いくつかの操作を組み合わせます。[[EQ_LATERAL]]を押しながらAかDで横へ動くと脚への譲歩になり、さらに[[EQ_REIN]]を押し続けると馬の首と肩を曲げてトラバース、レンバース、ハーフパスになります。演技中は線上のアイコンが馬の姿勢を示します。"/>
+        <text name="eq_help_collect_title" text="収縮"/>
+        <text name="eq_help_collect_1" text="収縮は主に馬場馬術で、歩法をいつもの速さなしで行うために使います。速歩中に[[EQ_COLLECT]]を押し続けるとピアッフェ（その場での速歩）、さらにWでパッサージュ（ゆっくり弾む速歩）になります。常歩か駈歩で収縮してAかDで回るとピルエットです。"/>
+        <text name="eq_help_rein_title" text="マウス操作"/>
+        <text name="eq_help_rein_1" text="[[EQ_REIN]]を押し続けるとカメラが馬の後ろに回り、マウスで細かく操作できます。馬場馬術では欠かせず、障害飛越でも役立ちます。[[EQ_LATERAL]]も押していると、マウスで馬の頭を曲げて側方運動ができます。"/>
+        <text name="eq_help_courseEdit_title" text="コースの編集"/>
+        <text name="eq_help_courseEdit_1" text="障害物を順番に通り抜けてコースを描きます。速さは自由です。描いている間、このMODの障害物には当たり判定がありません。間違えたら最後の正しい地点まで戻り、線がそこに吸い付いたら[[EQ_COURSE_REWIND]]でそこから描き直せます。もう一度[[EQ_COURSE_RECORD]]（クロスカントリーは[[EQ_COURSE_RECORD_XC]]）で保存します。"/>
+        <text name="eq_help_dressageEdit_title" text="馬場馬術演技の編集"/>
+        <text name="eq_help_dressageEdit_1" text="図形、運動、歩法から自分の演技を作れます。[[EQ_DT_PREV]]と[[EQ_DT_NEXT]]で図形を、[[EQ_DT_GAIT]]で歩法を切り替え、[[EQ_DT_MODE]]で側方運動やその場の運動に切り替えます。[[EQ_DT_ACCEPT]]で手順を確定して次へ、[[EQ_DT_UNDO]]で戻り、[[EQ_DT_RANDOM]]でランダムな手順を選びます。[[EQ_DRESSAGE_TEST]]で演技を保存します。"/>
     </texts>
 </l10n>

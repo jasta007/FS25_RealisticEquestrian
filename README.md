@@ -63,7 +63,7 @@ uses its genetics, health and fitness.
     **Ctrl+L** in a shop arena builds your own test figure by figure (N/M, G, R, F, Enter, Backspace).
 - **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
   again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
-- The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
+- The Daily Training bar (the base game's riding bar) is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
 - **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
@@ -237,7 +237,7 @@ Welcome popups walk you through the basics the first time you meet a horse and o
    you'll see its **Skill potential** and current **Skills**.
 3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
    for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel
-   says "Riding bar full".
+   says "Daily Training full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.

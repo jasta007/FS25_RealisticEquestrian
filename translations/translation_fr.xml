@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vue d'entraînement : %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Trois erreurs de parcours (ligne perdue, sortie de la carrière ou arrêt sur place) terminent la reprise ; finissez-la pour un bonus de tempérament qui grandit avec votre note. Un cheval plus calme voit la ligne plus loin et est prévenu plus tôt des changements. Les lettres de Riding Hall donnent l'ancienne routine de trajets entre les lettres. Hors d'une carrière, le pas et le reculer entraînent toujours un peu le tempérament, et les friandises comme les carottes aident aussi."/>
-        <text name="eq_help_temperament_1" text="L'entraînement du tempérament apprend le contrôle à votre cheval, et il lui faut une carrière de dressage : achetez-en une dans la boutique ou placez des lettres de dressage. Dans une carrière de la boutique, allez en A et une reprise de figures commence : cercles, diagonales, serpentines et plus, tracés en ligne dorée au sol. Restez sur la ligne et changez d'allure ou arrêtez-vous là où c'est demandé ; chaque mouvement est noté sur 10."/>
+        <text name="eq_help_temperament_2" text="Le Tempérament s&apos;entraîne au mieux avec des reprises dans une carrière de dressage : rendez-vous en A pour en commencer une, ou appuyez sur [[EQ_DRESSAGE_TEST]] près de la carrière pour créer la vôtre. Chaque mouvement bien exécuté augmente le combo, et trois erreurs (perdre la ligne, sortir de la carrière ou rester immobile) mettent fin à la reprise. Ailleurs, tenir un mouvement latéral ([[EQ_LATERAL]]) ou une allure rassemblée ([[EQ_COLLECT]]) comme le piaffer entraîne encore un peu."/>
+        <text name="eq_help_temperament_1" text="Le Tempérament fait tourner votre cheval plus vite, changer d&apos;allure plus tôt et rester moins longtemps arrêté après avoir heurté un obstacle. Il compte surtout en dressage : un cheval au Tempérament élevé suit mieux la ligne de dressage et s&apos;aligne mieux sur les sauts, tandis qu&apos;un cheval au Tempérament faible risque davantage d&apos;être retiré ou de commettre des fautes. Les carottes et autres friandises accélèrent son entraînement."/>
         <text name="eq_help_temperament_title" text="Entraînement : Tempérament"/>
-        <text name="eq_help_agility_2" text="Vous perdez le multiplicateur si vous ne franchissez pas un nouvel obstacle à temps ou perdez trop de vitesse. Sauter sans obstacle entraîne un peu, mais n'augmente pas le multiplicateur."/>
-        <text name="eq_help_agility_1" text="L'Agilité, c'est surtout franchir des sauts, même si passer d'une allure à l'autre aide un peu. Franchissez des obstacles pour monter un multiplicateur d'Agilité, qui retombe après dix secondes, ou plus tôt si vous touchez un obstacle."/>
+        <text name="eq_help_agility_2" text="Chaque obstacle franchi augmente le combo, de x2 jusqu&apos;à x5, et chaque saut entraîne davantage. Vous avez 10 secondes pour franchir le suivant : toucher un obstacle coûte du temps, et s&apos;arrêter met vite fin au combo. L&apos;Agilité s&apos;entraîne plus vite dans une carrière d&apos;obstacles et sur vos propres parcours : appuyez sur [[EQ_COURSE_RECORD]] en selle pour en créer un."/>
+        <text name="eq_help_agility_1" text="L&apos;Agilité fait sauter votre cheval plus haut et tourner plus court, et compte surtout en saut d&apos;obstacles et en dressage. Entraînez-la en sautant des obstacles à la suite sans toucher de barre ni vous arrêter. Tout obstacle compte, mais les vrais obstacles équestres entraînent davantage. L&apos;orge dans la ration accélère l&apos;entraînement de l&apos;Agilité."/>
         <text name="eq_help_agility_title" text="Entraînement : Agilité"/>
         <text name="eq_pop_routineStart" text="Reprise commencée"/>
         <text name="eq_pop_routineFault" text="Faute %d/%d"/>
@@ -128,14 +128,11 @@
         <text name="eq_train_combo" text="Combo de sauts x%d"/>
         <text name="eq_train_view_temperament" text="Tempérament"/>
         <text name="eq_train_view_agility" text="Agilité"/>
-        <text name="eq_help_freestyle_2" text="L&apos;agilité s&apos;entraîne en sautant des obstacles pour remplir une jauge de combo, et le tempérament en montant une reprise dans une carrière de dressage. L&apos;endurance et la vitesse s&apos;entraînent en galopant bien : appuyez sur H au galop pour savoir comment."/>
-        <text name="eq_help_freestyle_3" text="Vous préférez ne pas monter ? Embauchez des palefreniers et des entraîneurs dans l&apos;onglet Personnel pour entraîner vos chevaux chaque jour. Les ouvriers animaliers et l&apos;Éleveur de RLRM ne font que les garder actifs."/>
+        <text name="eq_help_freestyle_2" text="L&apos;Agilité s&apos;entraîne en sautant des obstacles à la suite, et le Tempérament en montant des figures et mouvements de dressage. L&apos;Endurance et la Vitesse s&apos;entraînent en galopant longtemps et en sprintant. Appuyez sur [[EQ_TRAINING_VIEW]] pour en savoir plus sur chaque mini-jeu et vous entraîner au mieux."/>
+        <text name="eq_help_freestyle_3" text="Inutile de monter vos chevaux tous les jours pour les entraîner. Engagez des entraîneurs et des palefreniers pour leur donner chaque jour un entraînement ciblé ou général, et vos chevaux gagnent aussi de l&apos;expérience en épreuve. Le meilleur entraînement reste vos propres parcours de saut d&apos;obstacles ou de cross (appuyez sur [[EQ_COURSE_RECORD]] ou [[EQ_COURSE_RECORD_XC]] pour en créer un) ou une reprise de dressage dans une carrière de dressage."/>
         <text name="eq_form_title" text="Pic de forme"/>
-        <text name="eq_help_freestyle_4" text="Montez avant une compétition ! Chaque compétence entraînée avec son mini-jeu met votre cheval en Pic de forme pour les épreuves du mois, jusqu'à +8 par compétence. Cela ne s'additionne pas sur plusieurs jours : votre meilleure séance du mois compte."/>
-        <text name="eq_help_form_title" text="Pic de forme"/>
-        <text name="eq_help_form_1" text="Monter vous-même fait plus qu'entraîner : cela met votre cheval en Pic de forme pour les épreuves du mois. Chaque compétence travaillée dans son mini-jeu gagne jusqu'à +8 dans chaque épreuve ce mois-ci, affiché ici comme Pic de forme et dans le cadre Compétences du cheval. Les meilleures séances donnent un plus gros bonus ; se contenter des allures n'en donne aucun."/>
-        <text name="eq_help_form_2" text="Le Pic de forme ne s'additionne pas sur les jours du mois : chaque compétence garde votre meilleure séance. Il peut même porter un cheval au-delà de son potentiel le jour J, puis disparaît une fois les épreuves du mois courues. Les ouvriers assurent l'entraînement quotidien, gardez donc vos séances pour les épreuves qui comptent."/>
-        <text name="eq_help_freestyle_1" text="Monter entraîne les compétences de votre cheval, et chacune a son propre mini-jeu. Toutes peuvent s'entraîner en même temps, mais certaines se combinent mal, comme la Vitesse et le Tempérament. Appuyez sur Y pour passer à une vue mieux adaptée à la compétence que vous voulez travailler, ou restez en vue Libre pour un aperçu général. La barre d'équitation reste l'énergie du cheval pour la journée : une fois pleine, il ne peut plus progresser avant le lendemain."/>
+        <text name="eq_help_freestyle_4" text="Votre propre entraînement donne aussi à vos chevaux un Pic de forme temporaire pour toutes les épreuves du mois. Il dépasse les gains d&apos;entraînement normaux et peut même porter un cheval au-delà de son potentiel, mais il disparaît à la fin du mois et ne s&apos;additionne pas d&apos;un jour à l&apos;autre : seule votre meilleure séance compte."/>
+        <text name="eq_help_freestyle_1" text="Chaque cheval a quatre caractéristiques, entraînées en le montant, en l&apos;inscrivant à des épreuves et par votre personnel. Toutes s&apos;entraînent en même temps, mais appuyez sur [[EQ_TRAINING_VIEW]] pour changer de vue d&apos;entraînement et en savoir plus sur chacune. Un cheval ne peut s&apos;entraîner que dans une certaine limite chaque jour, indiquée par le pourcentage d&apos;Entraînement du jour."/>
         <text name="eq_help_freestyle_title" text="Entraînement : Libre"/>
         <text name="eq_welcome_ride_title" text="Entraînement"/>
         <text name="eq_welcome_welcome_1_title" text="Bienvenue dans Realistic Equestrian"/>
@@ -155,7 +152,7 @@
         <text name="eq_welcome_info_feed_title" text="Alimentation"/>
         <text name="eq_welcome_info_feed" text="Le foin est la base de la ration. L'avoine donne un petit bonus d'Endurance et de Tempérament, l'orge un bonus moyen d'Endurance et d'Agilité, et le maïs un gros bonus de Vitesse. Les carottes (et les pommes, si disponibles) donnent un gros bonus de Tempérament."/>
         <text name="eq_welcome_events_disciplines_title" text="Épreuves"/>
-        <text name="eq_welcome_events_disciplines" text="Le dressage favorise le Tempérament et l'Agilité, le saut d'obstacles l'Agilité, les courses la Vitesse et l'Endurance, et le cross et le concours complet les chevaux polyvalents."/>
+        <text name="eq_welcome_events_disciplines" text="Le dressage favorise le Tempérament et l&apos;Agilité, le saut d&apos;obstacles l&apos;Agilité, les courses la Vitesse et l&apos;Endurance, et le cross et le concours complet les chevaux polyvalents."/>
         <text name="eq_welcome_events_transport_title" text="Se rendre sur place"/>
         <text name="eq_welcome_events_transport" text="Le transport auto emmène votre cheval à l'épreuve moyennant des frais. Cela peut coûter bien plus que le transport automatique habituel, car le cheval peut aller beaucoup plus loin et vous voulez le récupérer ! Amener vous-même vos chevaux au marchand d'animaux (transport manuel) peut faire économiser beaucoup d'argent."/>
         <text name="eq_welcome_events_risks_title" text="Blessures et forfaits"/>
@@ -173,7 +170,7 @@
         <text name="input_EQ_LATERAL" text="Travail latéral (maintenir)"/>
         <text name="input_EQ_COLLECT" text="Rassembler (maintenir)"/>
         <text name="input_EQ_REIN" text="Rênes : direction à la souris (maintenir)"/>
-        <text name="eq_train_worn" text="Barre d'équitation pleine : plus d'entraînement aujourd'hui"/>
+        <text name="eq_train_worn" text="Entraînement du jour complet : plus d&apos;entraînement aujourd&apos;hui"/>
         <text name="eq_ex_push" text="Effort"/>
         <text name="eq_ex_recover" text="Récupération"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -192,10 +189,7 @@
         <text name="eq_pop_ex_spent" text="Essoufflé !"/>
         <text name="eq_pop_ex_fresh" text="Prêt à galoper"/>
         <text name="eq_help_gallop_title" text="Le grand galop"/>
-        <text name="eq_help_gallop_1" text="Votre cheval a trois vitesses de grand galop. Appuyez sur W depuis le galop pour passer en Effort : rapide, mais la barre d'effort se remplit, et d'autant plus vite qu'elle est haute. Appuyez sur S pour Récupérer : un grand galop plus lent qui fait redescendre l'effort sans cesser de galoper, vite dans le tiers haut et le tiers bas de la barre, lentement au milieu. Appuyez de nouveau sur W pour relancer. Un cheval plus en forme se fatigue moins vite et récupère plus vite."/>
-        <text name="eq_help_gallop_2" text="Si la barre atteint la zone rouge Fatigué pendant l'Effort, votre cheval repasse au galop et ne peut plus partir au grand galop avant que la barre soit vide. Pour repasser vous-même au galop, appuyez une fois sur S en Récupération avec la barre vide, ou tapez deux fois sur S à tout moment."/>
-        <text name="eq_help_gallop_3" text="Cliquez sans arrêt (clic gauche) au grand galop pour Sprinter : bien plus rapide, et la barre se remplit lentement au début, puis de plus en plus vite, alors arrêtez-vous avant la ligne. La fin d'un Sprint repasse en Récupération, et pas de nouveau Sprint avant que la barre soit vide. Seul un Sprint peut dépasser la ligne Fatigué, pour un dernier effort jusqu'à l'arrivée, mais un Sprint qui finit au-delà laisse votre cheval Essoufflé, et il récupère très lentement jusqu'à repasser sous la ligne."/>
-        <text name="eq_help_gallop_4" text="Entraînement : un Sprint entraîne la Vitesse, et plus il fait monter la barre avant de finir, plus il rapporte : x2 à mi-chemin de la ligne, jusqu'à x10 juste avant, mais seulement x1 s'il finit au-delà. L'Effort et la Récupération entraînent l'Endurance au multiplicateur d'Endurance, jusqu'à x5. L'Effort l'augmente, plus vite près du haut. Récupérer dans le tiers central de la barre permet au cheval de reprendre son souffle en gardant l'essentiel du multiplicateur, alors que les tiers haut et bas le font vite chuter, et un cheval qui ne reprend jamais son souffle progresse bien plus lentement. Fatigué ou Essoufflé le ramène à x1 et arrête l'entraînement d'Endurance jusqu'à ce que la barre soit vide."/>
+        <text name="eq_help_gallop_1" text="Votre cheval a trois vitesses de grand galop. L&apos;Effort (W) est l&apos;allure du milieu et fait monter l&apos;effort ; la Récupération (S) est la plus lente et le fait baisser. Le sprint ([[EQ_SPRINT]]) est le plus rapide et fait vite monter l&apos;effort. Il peut pousser votre cheval au-delà de sa limite normale, mais il lui faut ensuite longtemps pour récupérer."/>
         <text name="eq_ex_hint_sprint" text="Cliquez sans arrêt (clic gauche) pour sprinter"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint : récupérez d'abord jusqu'à vide"/>
         <text name="eq_ex_hint_locked" text="Galop jusqu'à barre vide"/>
@@ -212,11 +206,11 @@
         <text name="eq_train_view_speed" text="Vitesse"/>
         <text name="eq_train_view_condensed" text="Compacte"/>
         <text name="eq_help_stamina_title" text="Entraînement : Endurance"/>
-        <text name="eq_help_stamina_1" text="L'Endurance s'entraîne en Effort et en Récupération au grand galop, au multiplicateur d'Endurance, jusqu'à x5. L'Effort l'augmente, et plus vous approchez de la ligne, plus il monte vite. La Récupération le fait baisser : vite dans le tiers haut de la barre, lentement dans le tiers central, de nouveau vite dans le tiers bas."/>
-        <text name="eq_help_stamina_2" text="Poussez donc près de la ligne, relâchez jusqu'au milieu de la barre et laissez votre cheval y reprendre son souffle un moment, puis poussez à nouveau. Alterner Effort et Récupération près du haut fatigue le cheval sans faire monter le multiplicateur, et Fatigué ou Essoufflé le ramène à x1 et arrête l'entraînement d'Endurance jusqu'à ce que la barre soit vide."/>
+        <text name="eq_help_stamina_1" text="L&apos;Endurance permet à votre cheval de pousser plus longtemps au grand galop ou en sprint, et de récupérer plus vite ensuite. Elle compte surtout en cross, dans les longues courses et les steeple-chases. Les chevaux endurants se blessent moins et s&apos;en sortent mieux sur terrain souple, lourd ou par forte chaleur. L&apos;avoine et l&apos;orge dans la ration accélèrent l&apos;entraînement de l&apos;Endurance."/>
+        <text name="eq_help_stamina_2" text="Entraîner l&apos;Endurance, c&apos;est garder votre cheval au grand galop le plus longtemps possible. Passez de l&apos;Effort à la Récupération quand la barre d&apos;effort est dans la bande bleue, puis revenez en bas. Votre cheval se met à souffler fort quand il est temps de changer. Avec le bon timing, vous montez un combo d&apos;entraînement, récupérez plus vite et vous fatiguez moins vite. Quitter le grand galop remet le combo à zéro."/>
         <text name="eq_help_speed_title" text="Entraînement : Vitesse"/>
-        <text name="eq_help_speed_1" text="La Vitesse s'entraîne en Sprint : cliquez sans arrêt (clic gauche) au grand galop. Chaque seconde de Sprint compte, et à la fin elle est multipliée selon la hauteur atteinte par la barre : x2 à mi-chemin de la ligne, jusqu'à x10 juste avant."/>
-        <text name="eq_help_speed_2" text="Un Sprint qui finit au-delà de la ligne ne vaut que x1, alors arrêtez de taper (ou appuyez sur S) avant la ligne. Après un Sprint, votre cheval doit récupérer jusqu'à barre vide avant de pouvoir sprinter à nouveau."/>
+        <text name="eq_help_speed_1" text="La Vitesse augmente la vitesse maximale de votre cheval à chaque allure, et compte surtout en course et en cross. Les chevaux rapides brillent sur terrain ferme. Le maïs dans la ration accélère l&apos;entraînement de la Vitesse."/>
+        <text name="eq_help_speed_2" text="Sprintez en appuyant rapidement sur [[EQ_SPRINT]] au grand galop. Plus la barre d&apos;effort est haute à la fin du sprint, plus le multiplicateur est grand : approchez la ligne autant que vous l&apos;osez, car au-delà le multiplicateur retombe à x1. Reposez-vous au pas ou à l&apos;arrêt après chaque sprint pour récupérer vite."/>
         <text name="eq_train_speedMult" text="Vitesse x%.1f"/>
         <text name="eq_train_staminaMult" text="Endurance x%.1f"/>
         <text name="eq_train_staminaStopped" text="pas d'entraînement"/>
@@ -375,7 +369,7 @@
         <text name="eq_role_retired" text="Retraité"/>
         <text name="eq_ui_button_role" text="Rôle : %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Changer le rôle du cheval"/>
-        <text name="eq_ui_riding" text="Équitation"/>
+        <text name="eq_ui_riding" text="Entraînement du jour"/>
         <text name="eq_ui_ridingFull" text="Pleine, plus d'entraînement aujourd'hui"/>
         <text name="eq_ui_ridingFullValue" text="%s - pleine"/>
         <text name="eq_specialty_none" text="Aucune pour l'instant"/>
@@ -1208,5 +1202,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s est en quarantaine, il a donc été ramené à %s."/>
         <text name="eq_loose_sentHome_away" text="%s est parti en compétition, il a donc été ramené à %s."/>
         <text name="eq_loose_sentHome_injured" text="%s est blessé, il a donc été ramené à %s pour se reposer."/>
+        <text name="eq_help_freestyle_5" text="Vos chevaux ont des allures et des touches de mouvement en plus. Maintenez [[EQ_REIN]] pour diriger précisément à la souris, [[EQ_LATERAL]] pour les mouvements latéraux et [[EQ_COLLECT]] pour rassembler votre cheval."/>
+        <text name="eq_help_lateral_title" text="Mouvements latéraux"/>
+        <text name="eq_help_lateral_1" text="Les mouvements latéraux sont parmi les plus difficiles du dressage et combinent plusieurs commandes. Maintenez [[EQ_LATERAL]] et appuyez sur A ou D pour vous décaler en cession à la jambe, et maintenez aussi [[EQ_REIN]] pour plier l&apos;encolure et les épaules en travers, renvers ou appuyer. Pendant une reprise, les icônes sur le tracé montrent comment placer votre cheval."/>
+        <text name="eq_help_collect_title" text="Rassembler"/>
+        <text name="eq_help_collect_1" text="Le rassembler sert surtout en dressage, pour monter une allure sans sa vitesse habituelle. Maintenez [[EQ_COLLECT]] au trot pour un piaffer, un trot sur place, et appuyez aussi sur W pour un passage, un trot lent et cadencé. Rassemblez au pas ou au galop et tournez avec A ou D pour une pirouette."/>
+        <text name="eq_help_rein_title" text="Direction à la souris"/>
+        <text name="eq_help_rein_1" text="En maintenant [[EQ_REIN]], la caméra passe derrière votre cheval et vous dirigez finement à la souris, ce qui est essentiel en dressage et parfois en saut d&apos;obstacles. Si vous maintenez aussi [[EQ_LATERAL]], la souris plie la tête de votre cheval pour les mouvements latéraux."/>
+        <text name="eq_help_courseEdit_title" text="Édition de parcours"/>
+        <text name="eq_help_courseEdit_1" text="Tracez le parcours en passant les obstacles dans l&apos;ordre, à n&apos;importe quelle allure. Les obstacles de ce mod n&apos;ont pas de collision pendant le tracé. En cas d&apos;erreur, revenez au dernier bon point jusqu&apos;à ce qu&apos;une ligne s&apos;y accroche, puis appuyez sur [[EQ_COURSE_REWIND]] pour reprendre le tracé à partir de là. Appuyez de nouveau sur [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pour le cross) pour enregistrer."/>
+        <text name="eq_help_dressageEdit_title" text="Édition de reprise"/>
+        <text name="eq_help_dressageEdit_1" text="Créez votre propre reprise de dressage à partir de figures, mouvements et allures. [[EQ_DT_PREV]] et [[EQ_DT_NEXT]] changent la figure, [[EQ_DT_GAIT]] l&apos;allure et [[EQ_DT_MODE]] passe aux mouvements latéraux ou sur place. [[EQ_DT_ACCEPT]] garde une étape et passe à la suivante, [[EQ_DT_UNDO]] revient en arrière, [[EQ_DT_RANDOM]] propose une étape au hasard. Appuyez sur [[EQ_DRESSAGE_TEST]] pour enregistrer la reprise."/>
     </texts>
 </l10n>

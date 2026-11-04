@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Zobrazení tréninku: %s"/>
         <text name="eq_train_view_freestyle" text="Volný"/>
-        <text name="eq_help_temperament_2" text="Tři chyby v úloze (ztracená čára, opuštění obdélníku nebo stání na místě) úlohu ukončí; dokončete ji pro bonus k temperamentu, který roste s vaším hodnocením. Klidnější kůň vidí čáru dál dopředu a dostane dřív varování před změnami. Písmena z Riding Hall dávají starší úlohu s úseky mezi písmeny. Mimo obdélník krok a couvání stále trochu trénují temperament a pomáhají i pamlsky jako mrkev."/>
-        <text name="eq_help_temperament_1" text="Trénink temperamentu učí koně ovladatelnosti a potřebuje drezurní obdélník: kupte ho v obchodě nebo rozmístěte drezurní písmena. V obdélníku z obchodu dojeďte k A a začne úloha z obrazců: kruhy, diagonály, hadovky a další, nakreslené zlatou čarou na zemi. Držte se čáry a měňte chod nebo zastavte tam, kde je řečeno; každý cvik je hodnocen do 10."/>
+        <text name="eq_help_temperament_2" text="Temperament se nejlépe trénuje drezurními úlohami na drezurním obdélníku: dojeďte k A a úloha začne, nebo u obdélníku stiskněte [[EQ_DRESSAGE_TEST]] a sestavte si vlastní. Každý dobře provedený cvik zvyšuje kombo a tři chyby (ztráta linie, opuštění obdélníku nebo stání) úlohu ukončí. Mimo obdélník ještě trochu trénuje držení bočního pohybu ([[EQ_LATERAL]]) nebo shromážděného chodu ([[EQ_COLLECT]]), třeba piafy."/>
+        <text name="eq_help_temperament_1" text="Temperament umožňuje koni rychleji zatáčet, dřív měnit chod a kratší dobu stát po nárazu do překážky. Nejvíc se uplatní v drezuře: kůň s vysokým Temperamentem přesněji sleduje drezurní linii a lépe se srovná na skoky, kdežto kůň s nízkým bývá častěji odhlášen nebo sbírá chyby. Mrkev a jiné pamlsky zrychlují trénink Temperamentu."/>
         <text name="eq_help_temperament_title" text="Trénink: Temperament"/>
-        <text name="eq_help_agility_2" text="Násobič ztratíte, když včas nepřekonáte novou překážku nebo příliš zpomalíte. Skok bez překážky trochu trénuje, ale násobič nezvyšuje."/>
-        <text name="eq_help_agility_1" text="Obratnost je hlavně o skákání překážek, i když střídání chodů trochu pomůže. Překonávejte překážky a budujte násobič tréninku Obratnosti, který vyprchá po deseti sekundách, nebo dřív, když do překážky narazíte."/>
+        <text name="eq_help_agility_2" text="Každá zdolaná překážka zvyšuje kombo z x2 až na x5, takže každý skok trénuje víc. Na další překážku máte 10 sekund: náraz do překážky ubere čas a zastavení kombo brzy ukončí. Obratnost se trénuje rychleji na parkurovém kolbišti a na vlastních tratích: stiskem [[EQ_COURSE_RECORD]] v sedle trať vytvoříte."/>
+        <text name="eq_help_agility_1" text="Obratnost umožňuje koni skákat výš a zatáčet ostřeji a nejvíc se uplatní v parkuru a drezuře. Trénujte ji skoky přes překážky rychle za sebou, bez shazování a zastavování. Počítá se každá překážka, ale skutečné jezdecké překážky trénují víc. Ječmen v krmení zrychluje trénink Obratnosti."/>
         <text name="eq_help_agility_title" text="Trénink: Obratnost"/>
         <text name="eq_pop_routineStart" text="Úloha zahájena"/>
         <text name="eq_pop_routineFault" text="Chyba %d/%d"/>
@@ -217,14 +217,11 @@
         <text name="eq_train_combo" text="Skokové combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Obratnost"/>
-        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skákáním přes překážky a budováním ukazatele komba, temperament jízdou úlohy v drezurním obdélníku. Vytrvalost a rychlost se trénují dobrým cvalem: stiskněte ve cvalu H a zjistěte jak."/>
-        <text name="eq_help_freestyle_3" text="Nechcete jezdit? Najměte si ošetřovatele a trenéry na kartě Personál a budou vaše koně trénovat každý den. Zaměstnanci hry a Herdsman z RLRM je jen udržují v kondici."/>
+        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skoky přes překážky rychle za sebou, Temperament ježděním drezurních figur a cviků. Vytrvalost a Rychlost se trénují dlouhým tryskem a sprinty. Stiskněte [[EQ_TRAINING_VIEW]] a zjistěte víc o každé minihře, abyste trénovali co nejúčinněji."/>
+        <text name="eq_help_freestyle_3" text="Koně nemusíte jezdit každý den, abyste je trénovali. Najměte trenéry a ošetřovatele, kteří koním každý den dají cílený nebo obecný trénink, a koně navíc sbírají zkušenosti na závodech. Nejlépe se trénuje na vlastních parkurových nebo terénních tratích (vytvoříte je stiskem [[EQ_COURSE_RECORD]] nebo [[EQ_COURSE_RECORD_XC]]) nebo nacvičováním drezurní úlohy na drezurním obdélníku."/>
         <text name="eq_form_title" text="Vrcholná forma"/>
-        <text name="eq_help_freestyle_4" text="Projeďte se před závodem! Každá vlastnost, kterou natrénujete v její minihře, dostane koně do Vrcholné formy na závody tohoto měsíce, až +8 za vlastnost. Nesčítá se přes víc dní: počítá se nejlepší trénink měsíce."/>
-        <text name="eq_help_form_title" text="Vrcholná forma"/>
-        <text name="eq_help_form_1" text="Vaše vlastní ježdění koně nejen trénuje, ale dostane ho i do Vrcholné formy na závody tohoto měsíce. Každá vlastnost procvičená v její minihře získá až +8 na všech závodech tohoto měsíce, zobrazeno zde jako Vrcholná forma a v okně Dovedností koně. Lepší trénink dá větší bonus; samotná jízda chody nedá žádný."/>
-        <text name="eq_help_form_2" text="Vrcholná forma se nesčítá přes dny měsíce: každá vlastnost si drží váš nejlepší trénink. V den závodu může koně dostat i nad jeho potenciál a po závodech tohoto měsíce vyprchá. Personál zajišťuje denní trénink, takže si své ježdění nechte na závody, na kterých záleží."/>
-        <text name="eq_help_freestyle_1" text="Ježdění trénuje vlastnosti koně a každá vlastnost má svou minihru. Všechny vlastnosti lze trénovat zároveň, ale některé se špatně kombinují, třeba Rychlost a Temperament. Stiskněte Y pro přepnutí na zobrazení s lepší zpětnou vazbou k vlastnosti, na kterou se chcete zaměřit, nebo zůstaňte ve Volném režimu pro obecnou zpětnou vazbu. Ukazatel ježdění je stále denní energie koně: jakmile je plný, kůň už do dalšího dne nepostupuje."/>
+        <text name="eq_help_freestyle_4" text="Váš vlastní trénink také dává koním dočasnou Vrcholnou formu na všechny závody toho měsíce. Je větší než běžné přírůstky a může koně dokonce vynést nad jeho potenciál, ale na konci měsíce zmizí a nesčítá se den po dni: počítá se jen váš nejlepší trénink."/>
+        <text name="eq_help_freestyle_1" text="Každý kůň má čtyři vlastnosti, které se trénují ježděním, účastí v závodech a vaším personálem. Všechny se trénují zároveň, ale stiskem [[EQ_TRAINING_VIEW]] přepnete pohled tréninku a uvidíte víc o každé z nich. Kůň může každý den trénovat jen omezeně, což ukazuje procento Denního tréninku."/>
         <text name="eq_help_freestyle_title" text="Trénink: Volný"/>
         <text name="eq_welcome_ride_title" text="Trénink"/>
         <text name="eq_welcome_welcome_1_title" text="Vítejte v Realistic Equestrian"/>
@@ -262,7 +259,7 @@
         <text name="input_EQ_LATERAL" text="Boční chody (držet)"/>
         <text name="input_EQ_COLLECT" text="Shromáždění (držet)"/>
         <text name="input_EQ_REIN" text="Otěže: řízení myší (držet)"/>
-        <text name="eq_train_worn" text="Ukazatel ježdění plný: dnes už žádný trénink"/>
+        <text name="eq_train_worn" text="Denní trénink plný: dnes už žádný trénink"/>
         <text name="eq_ex_push" text="Tlačení"/>
         <text name="eq_ex_recover" text="Zotavení"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -281,10 +278,7 @@
         <text name="eq_pop_ex_spent" text="Vyčerpaný!"/>
         <text name="eq_pop_ex_fresh" text="Připraven na trysk"/>
         <text name="eq_help_gallop_title" text="Trysk"/>
-        <text name="eq_help_gallop_1" text="Kůň jde tryskem ve třech tempech. Stiskněte W ze cvalu a začněte Tlačit: rychle, ale ukazatel Námahy se plní, a tím rychleji, čím je výš. Stiskněte S pro Zotavení: pomalejší trysk, který snižuje námahu, zatímco jedete dál, rychle v horní a dolní třetině ukazatele, pomalu uprostřed. Znovu stiskněte W a tlačte dál. Kůň v lepší kondici se unaví pomaleji a zotaví rychleji."/>
-        <text name="eq_help_gallop_2" text="Když ukazatel při Tlačení dosáhne červené části Unavený, kůň přejde do cvalu a nemůže znovu do trysku, dokud se ukazatel nevyprázdní. Chcete-li sami zpomalit do cvalu, stiskněte S jednou při Zotavení s prázdným ukazatelem, nebo kdykoli dvakrát ťukněte na S."/>
-        <text name="eq_help_gallop_3" text="Během trysku neustále klikejte levým tlačítkem myši a Sprintujte: mnohem rychleji, ukazatel se nejdřív plní pomalu, pak čím dál rychleji, takže přestaňte před čárou. Po Sprintu přejdete do Zotavení a nový Sprint není, dokud se ukazatel nevyprázdní. Jen Sprint může překročit čáru Unavený, pro poslední zátah do cíle, ale Sprint, který tam skončí, nechá koně Vyčerpaného a ten se velmi pomalu zotavuje, dokud není zpět pod čárou."/>
-        <text name="eq_help_gallop_4" text="Trénink: Sprint trénuje Rychlost, a čím výš dostane ukazatel, než skončí, tím víc má hodnotu: x2 v polovině cesty k čáře, až x10 těsně před ní, ale jen x1, když skončí za čarou. Tlačení a Zotavení trénují Vytrvalost s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, rychleji u vrcholu. Zotavení ve střední třetině ukazatele nechá koně vydechnout a zachová většinu násobiče, zatímco horní a dolní třetina ho rychle ztrácejí, a kůň, který nikdy nevydechne, se zlepšuje mnohem pomaleji. Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
+        <text name="eq_help_gallop_1" text="Kůň jde tryskem ve třech tempech. Tlačení (W) je prostřední a zvyšuje námahu; Zotavení (S) je nejpomalejší a snižuje ji. Sprint ([[EQ_SPRINT]]) je nejrychlejší a rychle zvyšuje námahu. Může koně dostat za jeho běžnou hranici, ale pak se dlouho zotavuje."/>
         <text name="eq_ex_hint_sprint" text="Neustále klikejte levým pro sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: nejdřív se zotavte do prázdna"/>
         <text name="eq_ex_hint_locked" text="Cval, dokud se ukazatel nevyprázdní"/>
@@ -301,11 +295,11 @@
         <text name="eq_train_view_speed" text="Rychlost"/>
         <text name="eq_train_view_condensed" text="Kompaktní"/>
         <text name="eq_help_stamina_title" text="Trénink: Vytrvalost"/>
-        <text name="eq_help_stamina_1" text="Vytrvalost se trénuje při Tlačení a Zotavení v trysku, s násobičem Vytrvalosti, až x5. Tlačení ho zvyšuje, a čím blíž k čáře, tím rychleji roste. Zotavení ho snižuje: rychle v horní třetině ukazatele, pomalu ve střední a znovu rychle v dolní."/>
-        <text name="eq_help_stamina_2" text="Tlačte tedy blízko k čáře, uberte do středu ukazatele a nechte tam koně chvíli vydechnout, pak znovu tlačte. Přeskakování mezi Tlačením a Zotavením u vrcholu koně unavuje bez zvýšení násobiče, a Unavený nebo Vyčerpaný ho srazí na x1 a zastaví trénink Vytrvalosti, dokud se ukazatel nevyprázdní."/>
+        <text name="eq_help_stamina_1" text="Vytrvalost umožňuje koni déle tlačit v trysku nebo sprintu a potom se rychleji zotavit. Nejvíc se uplatní v terénu, na dlouhých dostizích a v steeplechase. Vytrvalí koně se méně zraní a lépe zvládají měkkou, těžkou nebo horkou půdu. Oves a ječmen v krmení zrychlují trénink Vytrvalosti."/>
+        <text name="eq_help_stamina_2" text="Trénink Vytrvalosti je o tom udržet koně v trysku co nejdéle. Přepněte z Tlačení na Zotavení, když je ukazatel námahy v modrém pásu, a dole zase zpět. Když je čas přepnout, kůň začne těžce dýchat. Trefte správnou chvíli a budujte kombo, rychleji se zotavujte a pomaleji se unavujte. Vypadnutí z trysku kombo vynuluje."/>
         <text name="eq_help_speed_title" text="Trénink: Rychlost"/>
-        <text name="eq_help_speed_1" text="Rychlost se trénuje při Sprintu: v trysku neustále klikejte levým tlačítkem myši. Počítá se každá sekunda Sprintu a na konci se vynásobí tím, jak vysoko jste ukazatel dostali: x2 v polovině cesty k čáře, až x10 těsně před ní."/>
-        <text name="eq_help_speed_2" text="Sprint, který skončí za čarou, má hodnotu jen x1, takže přestaňte ťukat (nebo stiskněte S) před čarou. Po Sprintu se kůň musí zotavit do prázdného ukazatele, než může znovu sprintovat."/>
+        <text name="eq_help_speed_1" text="Rychlost zvyšuje nejvyšší rychlost koně v každém chodu a nejvíc se uplatní v dostizích a terénu. Rychlí koně se nejlépe uplatní na tvrdé půdě. Kukuřice v krmení zrychluje trénink Rychlosti."/>
+        <text name="eq_help_speed_2" text="Sprintujte rychlým mačkáním [[EQ_SPRINT]] v trysku. Čím výš je ukazatel námahy, když sprint skončí, tím větší násobič, takže se přibližte k čáře, jak nejvíc si troufnete: když ji přejedete, násobič klesne na x1. Po každém sprintu odpočívejte v kroku nebo na místě, abyste se rychle zotavili."/>
         <text name="eq_train_speedMult" text="Rychlost x%.1f"/>
         <text name="eq_train_staminaMult" text="Vytrvalost x%.1f"/>
         <text name="eq_train_staminaStopped" text="žádný trénink"/>
@@ -529,7 +523,7 @@
         <text name="eq_course_editing" text="Úprava %s: překážek %d, %.0f m"/>
         <text name="eq_course_editStarted" text="Úprava %s: postavené překážky z Realistic Equestrian nemají kolize, dokud neskončíte; ostatní překážky zůstávají pevné"/>
         <text name="input_EQ_COURSE_DELETE" text="Smazat blízkou trasu"/>
-        <text name="eq_ui_riding" text="Ježdění"/>
+        <text name="eq_ui_riding" text="Denní trénink"/>
         <text name="eq_ui_ridingFull" text="Plno, dnes už žádný trénink"/>
         <text name="eq_ui_ridingFullValue" text="%s - plno"/>
         <text name="eq_specialty_none" text="Zatím žádná"/>
@@ -1206,5 +1200,16 @@
         <text name="eq_loose_sentHome_quarantine" text="Kůň %s je v karanténě, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_away" text="Kůň %s je na závodech, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_injured" text="Kůň %s je zraněný, a tak byl odveden zpět k odpočinku: %s."/>
+        <text name="eq_help_freestyle_5" text="Vaši koně mají další chody a klávesy pohybu. Držte [[EQ_REIN]] pro přesné řízení myší, [[EQ_LATERAL]] pro boční pohyby a [[EQ_COLLECT]] pro shromáždění koně."/>
+        <text name="eq_help_lateral_title" text="Boční pohyby"/>
+        <text name="eq_help_lateral_1" text="Boční pohyby patří k nejtěžším částem drezury a kombinují několik ovládání. Držte [[EQ_LATERAL]] a mačkejte A nebo D pro posun stranou v ustupování na holeň, a když držíte i [[EQ_REIN]], ohnete krk a plece koně do travers, renvers nebo převodu. V úloze ukazují ikony na trase, jak koně postavit."/>
+        <text name="eq_help_collect_title" text="Shromáždění"/>
+        <text name="eq_help_collect_1" text="Shromáždění se používá hlavně v drezuře, k jízdě chodem bez jeho obvyklé rychlosti. Držte [[EQ_COLLECT]] v klusu pro piafu, klus na místě, a stiskněte i W pro pasáž, pomalý pérovaný klus. Shromážděte koně v kroku nebo cvalu a otáčejte A nebo D pro piruetu."/>
+        <text name="eq_help_rein_title" text="Řízení myší"/>
+        <text name="eq_help_rein_1" text="Držením [[EQ_REIN]] se kamera přesune za koně a můžete jemně řídit myší, což je zásadní v drezuře a občas v parkuru. Když držíte i [[EQ_LATERAL]], myš ohýbá hlavu koně pro boční pohyby."/>
+        <text name="eq_help_courseEdit_title" text="Úprava trati"/>
+        <text name="eq_help_courseEdit_1" text="Vyznačte trať průjezdem překážkami po pořadí, v jakémkoli tempu. Překážky z tohoto modu při vyznačování nemají kolize. Když uděláte chybu, vraťte se k poslednímu dobrému bodu, až se k němu přichytí čára, a stiskem [[EQ_COURSE_REWIND]] pokračujte odtud. Znovu stiskněte [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pro terén) a trať se uloží."/>
+        <text name="eq_help_dressageEdit_title" text="Úprava drezurní úlohy"/>
+        <text name="eq_help_dressageEdit_1" text="Sestavte si vlastní drezurní úlohu z figur, cviků a chodů. [[EQ_DT_PREV]] a [[EQ_DT_NEXT]] mění figuru, [[EQ_DT_GAIT]] chod a [[EQ_DT_MODE]] přepíná na boční pohyby nebo cviky na místě. [[EQ_DT_ACCEPT]] krok ponechá a pokračuje, [[EQ_DT_UNDO]] se vrátí a [[EQ_DT_RANDOM]] vybere náhodný krok. Stiskem [[EQ_DRESSAGE_TEST]] úlohu uložíte."/>
     </texts>
 </l10n>

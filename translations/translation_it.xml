@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista allenamento: %s"/>
         <text name="eq_train_view_freestyle" text="Libero"/>
-        <text name="eq_help_temperament_2" text="Tre errori di percorso (linea persa, uscita dal rettangolo o fermo sul posto) terminano la ripresa; completala per un bonus di temperamento che cresce col punteggio. Un cavallo più calmo vede più linea davanti e riceve più preavviso dei cambi. Le lettere di Riding Hall danno la vecchia routine di tratti tra le lettere. Fuori da un rettangolo, il passo e il rinculo allenano ancora un po' il temperamento, e anche i premietti come le carote aiutano."/>
-        <text name="eq_help_temperament_1" text="L'allenamento del temperamento insegna il controllo al tuo cavallo e richiede un rettangolo da dressage: comprane uno nel negozio o disponi le lettere. In un rettangolo del negozio, vai in A e inizia una ripresa di figure: circoli, diagonali, serpentine e altro, disegnate come una linea dorata a terra. Resta sulla linea e cambia andatura o fermati dove richiesto; ogni movimento ha un voto fino a 10."/>
+        <text name="eq_help_temperament_2" text="Il Temperamento si allena meglio con le riprese in un rettangolo da dressage: vai alla A per iniziarne una, o premi [[EQ_DRESSAGE_TEST]] vicino al rettangolo per crearne una tua. Ogni movimento eseguito bene alza la combo, e tre errori (perdere la linea, uscire dal rettangolo o restare fermi) chiudono la ripresa. Altrove, mantenere un movimento laterale ([[EQ_LATERAL]]) o un&apos;andatura riunita ([[EQ_COLLECT]]) come il piaffe allena ancora un po&apos;."/>
+        <text name="eq_help_temperament_1" text="Il Temperamento fa girare il cavallo più in fretta, cambiare andatura prima e restare fermo meno a lungo dopo aver urtato un ostacolo. Conta soprattutto nel dressage: un cavallo con molto Temperamento segue meglio la linea e si allinea meglio ai salti, mentre uno con poco rischia di più di essere ritirato o di commettere errori. Carote e altri premi accelerano il suo allenamento."/>
         <text name="eq_help_temperament_title" text="Allenamento: Temperamento"/>
-        <text name="eq_help_agility_2" text="Perdi il moltiplicatore se non superi un nuovo ostacolo in tempo o perdi troppa velocità. Saltare senza ostacolo allena un po', ma non aumenta il moltiplicatore."/>
-        <text name="eq_help_agility_1" text="L'Agilità si allena soprattutto superando ostacoli, anche se alternare le andature aiuta un po'. Supera ostacoli per costruire un moltiplicatore di allenamento dell'Agilità, che svanisce dopo dieci secondi, o prima se urti un ostacolo."/>
+        <text name="eq_help_agility_2" text="Ogni ostacolo superato alza la combo, da x2 fino a x5, così ogni salto allena di più. Hai 10 secondi per superare il successivo: urtarne uno toglie tempo e fermarsi chiude presto la combo. L&apos;Agilità si allena più in fretta in un campo ostacoli e sui tuoi percorsi: premi [[EQ_COURSE_RECORD]] in sella per crearne uno."/>
+        <text name="eq_help_agility_1" text="L&apos;Agilità fa saltare il cavallo più in alto e girare più stretto, e conta soprattutto nel salto ostacoli e nel dressage. Allenala saltando ostacoli uno dopo l&apos;altro senza toccarli né fermarti. Ogni ostacolo conta, ma i veri ostacoli equestri allenano di più. Dare orzo ai cavalli accelera l&apos;allenamento dell&apos;Agilità."/>
         <text name="eq_help_agility_title" text="Allenamento: Agilità"/>
         <text name="eq_pop_routineStart" text="Ripresa iniziata"/>
         <text name="eq_pop_routineFault" text="Errore %d/%d"/>
@@ -217,14 +217,11 @@
         <text name="eq_train_combo" text="Combo salti x%d"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilità"/>
-        <text name="eq_help_freestyle_2" text="L&apos;agilità si allena saltando ostacoli per riempire un indicatore di combo, il temperamento con una ripresa in un rettangolo da dressage. Resistenza e velocità si allenano galoppando bene: premi H al galoppo per scoprire come."/>
-        <text name="eq_help_freestyle_3" text="Preferisci non cavalcare? Assumi stallieri e istruttori nella scheda Personale per allenare i cavalli ogni giorno. Gli addetti agli animali del gioco e l'Herdsman di RLRM li mantengono solo in esercizio."/>
+        <text name="eq_help_freestyle_2" text="L&apos;Agilità si allena saltando ostacoli uno dopo l&apos;altro, il Temperamento eseguendo figure e movimenti di dressage. Resistenza e Velocità si allenano galoppando a lungo e scattando. Premi [[EQ_TRAINING_VIEW]] per saperne di più su ogni minigioco e allenarti al meglio."/>
+        <text name="eq_help_freestyle_3" text="Non serve cavalcare i tuoi cavalli ogni giorno per allenarli. Assumi allenatori e stallieri per dar loro ogni giorno un allenamento mirato o generale, e i tuoi cavalli fanno esperienza anche negli eventi. Il miglior allenamento resta sui tuoi percorsi di salto ostacoli o di cross (premi [[EQ_COURSE_RECORD]] o [[EQ_COURSE_RECORD_XC]] per crearne uno) o provando una ripresa di dressage in un rettangolo da dressage."/>
         <text name="eq_form_title" text="Forma ottimale"/>
-        <text name="eq_help_freestyle_4" text="Cavalca prima di una gara! Ogni caratteristica che alleni con il suo minigioco mette il cavallo in Forma ottimale per le gare di questo mese, fino a +8 per caratteristica. Non si somma su più giorni: conta la tua migliore sessione del mese."/>
-        <text name="eq_help_form_title" text="Forma ottimale"/>
-        <text name="eq_help_form_1" text="Cavalcare di persona non serve solo ad allenare: mette il cavallo in Forma ottimale per le gare di questo mese. Ogni caratteristica lavorata nel suo minigioco riceve fino a +8 in ogni gara del mese, mostrato qui come Forma ottimale e nel riquadro Abilità del cavallo. Sessioni migliori danno un bonus più alto; cavalcare semplicemente nelle andature non ne dà."/>
-        <text name="eq_help_form_2" text="La Forma ottimale non si somma nei giorni del mese: ogni caratteristica conserva la tua migliore sessione. Può persino portare il cavallo oltre il suo potenziale nel giorno della gara, poi svanisce dopo le gare del mese. Il personale porta avanti l'allenamento quotidiano, quindi tieni le tue cavalcate per le gare che contano."/>
-        <text name="eq_help_freestyle_1" text="Cavalcare allena le caratteristiche del cavallo, e ogni caratteristica ha il suo minigioco. Tutte possono essere allenate insieme, ma alcune non si combinano bene, come Velocità e Temperamento. Premi Y per passare a una vista con indicazioni migliori sulla caratteristica su cui vuoi concentrarti, o resta in Libero per indicazioni generali. La barra cavalcata resta l'energia giornaliera del cavallo: quando è piena, quel cavallo non fa altri progressi fino al giorno dopo."/>
+        <text name="eq_help_freestyle_4" text="Il tuo allenamento dà anche ai cavalli un bonus temporaneo di Forma ottimale in tutti gli eventi del mese. È più grande dei normali progressi e può perfino portare un cavallo oltre il suo potenziale, ma si perde a fine mese e non si somma giorno per giorno: conta solo la tua sessione migliore."/>
+        <text name="eq_help_freestyle_1" text="Ogni cavallo ha quattro caratteristiche, che si allenano cavalcando, partecipando agli eventi e con il tuo personale. Si allenano tutte insieme, ma premi [[EQ_TRAINING_VIEW]] per cambiare vista di allenamento e saperne di più su ciascuna. Un cavallo può allenarsi solo fino a un certo punto ogni giorno, come mostra la percentuale di Allenamento giornaliero."/>
         <text name="eq_help_freestyle_title" text="Allenamento: Libero"/>
         <text name="eq_welcome_ride_title" text="Allenamento"/>
         <text name="eq_welcome_welcome_1_title" text="Benvenuto in Realistic Equestrian"/>
@@ -244,7 +241,7 @@
         <text name="eq_welcome_info_feed_title" text="Alimentazione"/>
         <text name="eq_welcome_info_feed" text="Il fieno è la dieta base. L'avena dà un piccolo bonus a Resistenza e Temperamento, l'orzo un bonus moderato a Resistenza e Agilità, e il mais un grande bonus alla Velocità. Le carote (e le mele, se disponibili) danno un grande bonus al Temperamento."/>
         <text name="eq_welcome_events_disciplines_title" text="Gare"/>
-        <text name="eq_welcome_events_disciplines" text="Il Dressage premia Temperamento e Agilità, il Salto ostacoli l'Agilità, le corse Velocità e Resistenza, e Cross e Concorso completo i cavalli completi."/>
+        <text name="eq_welcome_events_disciplines" text="Il dressage premia Temperamento e Agilità, il salto ostacoli l&apos;Agilità, le corse Velocità e Resistenza, e cross e concorso completo i cavalli completi."/>
         <text name="eq_welcome_events_transport_title" text="Come arrivarci"/>
         <text name="eq_welcome_events_transport" text="Il Trasporto automatico porta il cavallo alla gara a pagamento. Può costare molto più del normale trasporto automatico, perché il cavallo può andare molto più lontano e tu vuoi riaverlo! Portare tu stesso i cavalli dal commerciante di animali (Trasporto manuale) può far risparmiare parecchio."/>
         <text name="eq_welcome_events_risks_title" text="Infortuni e ritiri"/>
@@ -262,7 +259,7 @@
         <text name="input_EQ_LATERAL" text="Lavoro laterale (tieni premuto)"/>
         <text name="input_EQ_COLLECT" text="Riunire (tieni premuto)"/>
         <text name="input_EQ_REIN" text="Redini: guida col mouse (tieni premuto)"/>
-        <text name="eq_train_worn" text="Barra cavalcata piena: niente più allenamento oggi"/>
+        <text name="eq_train_worn" text="Allenamento giornaliero completo: niente più allenamento oggi"/>
         <text name="eq_ex_push" text="Spinta"/>
         <text name="eq_ex_recover" text="Recupero"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -281,10 +278,7 @@
         <text name="eq_pop_ex_spent" text="Sfinito!"/>
         <text name="eq_pop_ex_fresh" text="Pronto a galoppare"/>
         <text name="eq_help_gallop_title" text="Galoppo pieno"/>
-        <text name="eq_help_gallop_1" text="Il cavallo galoppa a tre ritmi. Premi W dal galoppo per iniziare la Spinta: veloce, ma la barra dello Sforzo si riempie, e tanto più in fretta quanto più è alta. Premi S per il Recupero: un galoppo più lento che abbassa lo sforzo mentre continui a galoppare, in fretta nel terzo superiore e in quello inferiore della barra, lentamente nel mezzo. Premi di nuovo W per spingere ancora. Un cavallo più in forma si stanca più lentamente e recupera più in fretta."/>
-        <text name="eq_help_gallop_2" text="Se la barra raggiunge la zona rossa Affaticato durante la Spinta, il cavallo scende al galoppo e non può galoppare pieno di nuovo finché la barra non si svuota. Per rallentare al galoppo tu stesso, premi S una volta durante il Recupero con la barra vuota, o premi S due volte in qualsiasi momento."/>
-        <text name="eq_help_gallop_3" text="Premi il tasto sinistro del mouse di continuo durante il galoppo pieno per lo Sprint: molto più veloce, e la barra si riempie piano all'inizio, poi sempre più in fretta, quindi fermati prima della linea. Finito lo Sprint si passa al Recupero, e non c'è un nuovo Sprint finché la barra non si svuota. Solo uno Sprint può superare la linea Affaticato, per un ultimo sforzo verso il traguardo, ma uno Sprint che finisce lì lascia il cavallo Sfinito, e recupera molto lentamente finché non torna sotto la linea."/>
-        <text name="eq_help_gallop_4" text="Allenamento: lo Sprint allena la Velocità, e più alto porta la barra prima di finire, più vale: x2 a metà strada dalla linea, fino a x10 appena prima, ma solo x1 se finisce oltre la linea. Spinta e Recupero allenano la Resistenza con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, più in fretta vicino alla cima. Recuperare nel terzo centrale della barra fa riprendere fiato al cavallo e conserva gran parte del moltiplicatore, mentre i terzi superiore e inferiore lo perdono in fretta, e un cavallo che non riprende mai fiato migliora molto più lentamente. Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_help_gallop_1" text="Il cavallo galoppa a tre ritmi. La Spinta (W) è quello intermedio e alza lo sforzo; il Recupero (S) è il più lento e lo abbassa. Lo scatto ([[EQ_SPRINT]]) è il più veloce e alza lo sforzo rapidamente. Può portare il cavallo oltre il suo limite normale, ma poi il recupero è lungo."/>
         <text name="eq_ex_hint_sprint" text="Clic sinistro di continuo per lo sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: prima recupera fino a vuoto"/>
         <text name="eq_ex_hint_locked" text="Galoppo finché la barra non è vuota"/>
@@ -301,11 +295,11 @@
         <text name="eq_train_view_speed" text="Velocità"/>
         <text name="eq_train_view_condensed" text="Compatta"/>
         <text name="eq_help_stamina_title" text="Allenamento: Resistenza"/>
-        <text name="eq_help_stamina_1" text="La Resistenza si allena durante Spinta e Recupero al galoppo pieno, con il moltiplicatore di Resistenza, fino a x5. La Spinta lo alza, e più ti avvicini alla linea, più sale in fretta. Il Recupero lo abbassa: in fretta nel terzo superiore della barra, lentamente in quello centrale, di nuovo in fretta in quello inferiore."/>
-        <text name="eq_help_stamina_2" text="Quindi spingi fin vicino alla linea, rallenta fino al centro della barra e lascia che il cavallo riprenda fiato lì per un po', poi spingi di nuovo. Alternare Spinta e Recupero vicino alla cima stanca il cavallo senza alzare il moltiplicatore, e Affaticato o Sfinito lo riporta a x1 e ferma l'allenamento della Resistenza finché la barra non si svuota."/>
+        <text name="eq_help_stamina_1" text="La Resistenza permette al cavallo di spingere più a lungo al galoppo o nello scatto, e di recuperare prima dopo. Conta soprattutto nel cross, nelle corse lunghe e nelle siepi. I cavalli molto resistenti si infortunano meno e rendono meglio su terreno morbido, pesante o con il caldo. Dare avena e orzo ai cavalli accelera l&apos;allenamento della Resistenza."/>
+        <text name="eq_help_stamina_2" text="Allenare la Resistenza significa tenere il cavallo al galoppo il più a lungo possibile. Passa dalla Spinta al Recupero quando la barra dello sforzo è nella fascia blu, e torna indietro in basso. Il cavallo inizia a respirare affannosamente quando è ora di cambiare. Con il giusto tempismo sali di combo, recuperi prima e ti stanchi più piano. Uscire dal galoppo azzera la combo."/>
         <text name="eq_help_speed_title" text="Allenamento: Velocità"/>
-        <text name="eq_help_speed_1" text="La Velocità si allena durante lo Sprint: premi il tasto sinistro del mouse di continuo al galoppo pieno. Ogni secondo di Sprint conta, e alla fine viene moltiplicato per quanto in alto hai portato la barra: x2 a metà strada dalla linea, fino a x10 appena prima."/>
-        <text name="eq_help_speed_2" text="Uno Sprint che finisce oltre la linea vale solo x1, quindi smetti di premere (o premi S) prima della linea. Dopo uno Sprint il cavallo deve recuperare fino a barra vuota prima di sprintare ancora."/>
+        <text name="eq_help_speed_1" text="La Velocità alza la velocità massima del cavallo in ogni andatura, e conta soprattutto nelle corse e nel cross. I cavalli veloci rendono meglio su terreno duro. Dare mais ai cavalli accelera l&apos;allenamento della Velocità."/>
+        <text name="eq_help_speed_2" text="Scatta premendo rapidamente [[EQ_SPRINT]] al galoppo. Più alta è la barra dello sforzo quando lo scatto finisce, più grande è il moltiplicatore, quindi spingiti vicino alla linea quanto osi: se la superi, il moltiplicatore torna a x1. Riposa al passo o da fermo dopo ogni scatto per recuperare in fretta."/>
         <text name="eq_train_speedMult" text="Velocità x%.1f"/>
         <text name="eq_train_staminaMult" text="Resistenza x%.1f"/>
         <text name="eq_train_staminaStopped" text="nessun allenamento"/>
@@ -529,7 +523,7 @@
         <text name="eq_course_editing" text="Modifica di %s: %d ostacoli, %.0f m"/>
         <text name="eq_course_editStarted" text="Modifica di %s: gli ostacoli piazzati di Realistic Equestrian non hanno collisioni finché non termini; gli altri restano solidi"/>
         <text name="input_EQ_COURSE_DELETE" text="Elimina percorso vicino"/>
-        <text name="eq_ui_riding" text="Cavalcata"/>
+        <text name="eq_ui_riding" text="Allenamento giornaliero"/>
         <text name="eq_ui_ridingFull" text="Piena, niente più allenamento oggi"/>
         <text name="eq_ui_ridingFullValue" text="%s - piena"/>
         <text name="eq_specialty_none" text="Nessuna per ora"/>
@@ -1206,5 +1200,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s è in quarantena, quindi è stato riportato a %s."/>
         <text name="eq_loose_sentHome_away" text="%s è via per una gara, quindi è stato riportato a %s."/>
         <text name="eq_loose_sentHome_injured" text="%s è infortunato, quindi è stato riportato a %s per riposare."/>
+        <text name="eq_help_freestyle_5" text="I tuoi cavalli hanno andature e tasti di movimento in più. Tieni premuto [[EQ_REIN]] per guidare con precisione con il mouse, [[EQ_LATERAL]] per i movimenti laterali e [[EQ_COLLECT]] per riunire il cavallo."/>
+        <text name="eq_help_lateral_title" text="Movimenti laterali"/>
+        <text name="eq_help_lateral_1" text="I movimenti laterali sono tra le parti più difficili del dressage e combinano più comandi. Tieni premuto [[EQ_LATERAL]] e premi A o D per spostarti di lato in una cessione alla gamba, e tieni anche [[EQ_REIN]] per flettere collo e spalle in un travers, renvers o appoggiata. In una ripresa, le icone sul percorso mostrano come posizionare il cavallo."/>
+        <text name="eq_help_collect_title" text="Riunire"/>
+        <text name="eq_help_collect_1" text="Riunire serve soprattutto nel dressage, per eseguire un&apos;andatura senza la sua solita velocità. Tieni premuto [[EQ_COLLECT]] al trotto per un piaffe, un trotto sul posto, e premi anche W per un passage, un trotto lento e cadenzato. Riunisci al passo o al galoppo e gira con A o D per una piroetta."/>
+        <text name="eq_help_rein_title" text="Guida con il mouse"/>
+        <text name="eq_help_rein_1" text="Tenendo premuto [[EQ_REIN]] la telecamera passa dietro al cavallo e puoi guidare con precisione con il mouse, fondamentale nel dressage e a volte nel salto ostacoli. Se tieni premuto anche [[EQ_LATERAL]], il mouse flette la testa del cavallo per i movimenti laterali."/>
+        <text name="eq_help_courseEdit_title" text="Modifica percorso"/>
+        <text name="eq_help_courseEdit_1" text="Traccia il percorso passando gli ostacoli in ordine, a qualsiasi andatura. Gli ostacoli di questa mod non hanno collisioni mentre tracci. Se sbagli, torna all&apos;ultimo punto buono finché una linea non vi si aggancia e premi [[EQ_COURSE_REWIND]] per ritracciare da lì. Premi di nuovo [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] per il cross) per salvare."/>
+        <text name="eq_help_dressageEdit_title" text="Modifica ripresa"/>
+        <text name="eq_help_dressageEdit_1" text="Crea la tua ripresa di dressage con figure, movimenti e andature. [[EQ_DT_PREV]] e [[EQ_DT_NEXT]] cambiano la figura, [[EQ_DT_GAIT]] l&apos;andatura e [[EQ_DT_MODE]] passa ai movimenti laterali o sul posto. [[EQ_DT_ACCEPT]] tiene un passo e prosegue, [[EQ_DT_UNDO]] torna indietro e [[EQ_DT_RANDOM]] sceglie un passo a caso. Premi [[EQ_DRESSAGE_TEST]] per salvare la ripresa."/>
     </texts>
 </l10n>

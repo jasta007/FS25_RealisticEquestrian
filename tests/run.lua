@@ -6242,5 +6242,29 @@ end)()
     check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
 end)()
 
+-- Help key names (EqHelpKeys): tokens fill from the lookup, unknown ones show bare, and every
+-- token in any language names an action modDesc.xml binds, with a default key to fall back on.
+;(function()
+    dofile("scripts/gui/EqHelpKeys.lua")
+    local filled = EqHelpKeys.fill("Press [[EQ_TRAINING_VIEW]] or [[NOPE]].", function(a) return a == "EQ_TRAINING_VIEW" and "Y" or nil end)
+    check("help keys: a token becomes its key, an unknown one its bare name", filled == "Press Y or NOPE.", filled)
+    local modDesc = io.open("modDesc.xml"):read("*a")
+    local tokens = 0
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
+        local text = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
+        for action in text:gmatch("%[%[([%w_]+)%]%]") do
+            tokens = tokens + 1
+            check("help keys: " .. lang .. " " .. action .. " is bound and has a default",
+                modDesc:find('actionBinding action="' .. action .. '"', 1, true) ~= nil and EqHelpKeys.KEYBOARD[action] ~= nil)
+        end
+        local en = io.open("translations/translation_en.xml"):read("*a")
+        for _, view in ipairs({ "lateral", "collect", "rein", "courseEdit", "dressageEdit" }) do
+            check("help keys: popup " .. view .. " has its texts in " .. lang,
+                text:find('name="eq_help_' .. view .. '_title"', 1, true) ~= nil and text:find('name="eq_help_' .. view .. '_1"', 1, true) ~= nil)
+        end
+    end
+    check("help keys: the texts use tokens", tokens > 100, tostring(tokens))
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

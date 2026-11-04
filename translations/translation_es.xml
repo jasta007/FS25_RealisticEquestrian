@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista de entrenamiento: %s"/>
         <text name="eq_train_view_freestyle" text="Libre"/>
-        <text name="eq_help_temperament_2" text="Tres errores de recorrido (perder la línea, salir de la pista o quedarse parado) terminan la prueba; termínala para un impulso de temperamento que crece con tu nota. Un caballo más tranquilo ve más línea por delante y recibe más aviso de los cambios. Las letras de Riding Hall dan la rutina antigua de tramos entre letras. Fuera de una pista, el paso y el paso atrás siguen entrenando algo de temperamento, y las golosinas como las zanahorias también ayudan."/>
-        <text name="eq_help_temperament_1" text="El entrenamiento de temperamento enseña control a tu caballo y necesita una pista de doma: compra una en la tienda o coloca letras de doma. En una pista de la tienda, ve hasta A y empieza una prueba de figuras: círculos, diagonales, serpentinas y más, dibujadas como una línea dorada en el suelo. Sigue la línea y cambia de aire o haz parada donde se indique; cada movimiento se puntúa sobre 10."/>
+        <text name="eq_help_temperament_2" text="El Temperamento se entrena mejor con reprises en una pista de doma: ve a la A para empezar una, o pulsa [[EQ_DRESSAGE_TEST]] junto a la pista para crear la tuya. Cada movimiento bien hecho sube el combo, y tres errores (perder la línea, salir de la pista o quedarte quieto) terminan la reprise. Fuera de la pista, mantener un movimiento lateral ([[EQ_LATERAL]]) o un aire reunido ([[EQ_COLLECT]]) como el piaffe aún entrena un poco."/>
+        <text name="eq_help_temperament_1" text="El Temperamento hace que tu caballo gire más rápido, cambie de aire antes y se quede menos tiempo parado tras chocar con un obstáculo. Es clave en doma: un caballo con mucho Temperamento sigue mejor la línea de doma y se alinea mejor con los saltos, y uno con poco es más propenso a ser retirado o cometer faltas. Las zanahorias y otras golosinas aceleran su entrenamiento."/>
         <text name="eq_help_temperament_title" text="Entrenamiento: Temperamento"/>
-        <text name="eq_help_agility_2" text="Pierdes el multiplicador si no superas un nuevo obstáculo a tiempo o pierdes demasiada velocidad. Saltar sin obstáculo entrena algo, pero no sube el multiplicador."/>
-        <text name="eq_help_agility_1" text="La Agilidad se basa en superar saltos, aunque cambiar de aire también ayuda un poco. Supera obstáculos para crear un multiplicador de Agilidad, que se desvanece a los diez segundos, o antes si golpeas un obstáculo."/>
+        <text name="eq_help_agility_2" text="Cada obstáculo superado sube el combo, de x2 hasta x5, así que cada salto entrena más. Tienes 10 segundos para superar el siguiente: golpear uno te quita tiempo y pararte termina pronto el combo. La Agilidad se entrena más rápido en una pista de salto y en tus propios recorridos: pulsa [[EQ_COURSE_RECORD]] mientras montas para crear uno."/>
+        <text name="eq_help_agility_1" text="La Agilidad hace que tu caballo salte más alto y gire más cerrado, y es clave en salto y doma. Entrénala saltando obstáculos seguidos sin derribarlos ni detenerte. Cualquier obstáculo vale, pero los obstáculos ecuestres de verdad entrenan más. Dar cebada a tus caballos acelera el entrenamiento de Agilidad."/>
         <text name="eq_help_agility_title" text="Entrenamiento: Agilidad"/>
         <text name="eq_pop_routineStart" text="Rutina iniciada"/>
         <text name="eq_pop_routineFault" text="Falta %d/%d"/>
@@ -128,14 +128,11 @@
         <text name="eq_train_combo" text="Combo de saltos x%d"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilidad"/>
-        <text name="eq_help_freestyle_2" text="La agilidad se entrena saltando obstáculos para llenar un medidor de combo, y el temperamento haciendo una prueba en una pista de doma. La resistencia y la velocidad se entrenan galopando bien: pulsa H al galope para saber cómo."/>
-        <text name="eq_help_freestyle_3" text="¿Prefieres no montar? Contrata mozos y entrenadores en la pestaña Personal para entrenar tus caballos cada día. Los trabajadores de animales y el Pastor de RLRM solo los mantienen activos."/>
+        <text name="eq_help_freestyle_2" text="La Agilidad se entrena saltando obstáculos seguidos, y el Temperamento montando figuras y movimientos de doma. La Resistencia y la Velocidad se entrenan galopando durante mucho rato y esprintando. Pulsa [[EQ_TRAINING_VIEW]] para ver más sobre cada minijuego y entrenar lo mejor posible."/>
+        <text name="eq_help_freestyle_3" text="No hace falta montar tus caballos cada día para entrenarlos. Contrata entrenadores y mozos para darles cada día un entrenamiento específico o general, y tus caballos también ganan experiencia en los eventos. Lo mejor es entrenar en tus propios recorridos de salto o de cross (pulsa [[EQ_COURSE_RECORD]] o [[EQ_COURSE_RECORD_XC]] para crear uno) o practicar una reprise de doma en una pista de doma."/>
         <text name="eq_form_title" text="Mejor forma"/>
-        <text name="eq_help_freestyle_4" text="¡Monta antes de una competición! Cada habilidad que entrenas con su minijuego pone a tu caballo en Mejor forma para las pruebas de este mes, hasta +8 por habilidad. No se acumula en varios días: cuenta tu mejor sesión del mes."/>
-        <text name="eq_help_form_title" text="Mejor forma"/>
-        <text name="eq_help_form_1" text="Montar tú mismo hace más que entrenar: pone a tu caballo en Mejor forma para las pruebas de este mes. Cada habilidad trabajada en su minijuego gana hasta +8 en cada prueba de este mes, lo que se muestra aquí como Mejor forma y en el cuadro Habilidades del caballo. Las mejores sesiones dan más bonificación; solo recorrer los aires no da ninguna."/>
-        <text name="eq_help_form_2" text="La Mejor forma no se acumula a lo largo del mes: cada habilidad guarda tu mejor sesión. Puede incluso llevar a un caballo por encima de su potencial ese día, y desaparece cuando se han corrido las pruebas del mes. Tus trabajadores mantienen el entrenamiento diario, así que guarda tus sesiones para las pruebas importantes."/>
-        <text name="eq_help_freestyle_1" text="Montar entrena las habilidades de tu caballo, y cada habilidad tiene su propio minijuego. Todas se pueden entrenar a la vez, pero algunas no combinan bien, como la Velocidad y el Temperamento. Pulsa Y para cambiar a una vista con mejor información de la habilidad que quieres trabajar, o quédate en Libre para una vista general. La barra de monta sigue siendo la energía del caballo para el día: cuando se llena, ese caballo no puede progresar más hasta el día siguiente."/>
+        <text name="eq_help_freestyle_4" text="Tu propio entrenamiento también da a tus caballos un impulso temporal de Mejor forma en los eventos de ese mes. Es mayor que el progreso normal y puede incluso llevar a un caballo más allá de su potencial, pero se pierde al final del mes y no se acumula día a día: solo cuenta tu mejor sesión."/>
+        <text name="eq_help_freestyle_1" text="Cada caballo tiene cuatro estadísticas, que se entrenan montando, participando en eventos y con tu personal. Todas se entrenan a la vez, pero pulsa [[EQ_TRAINING_VIEW]] para cambiar de vista de entrenamiento y ver más sobre cada una. Un caballo solo puede entrenar cierto tanto al día, como indica el porcentaje de Entrenamiento diario."/>
         <text name="eq_help_freestyle_title" text="Entrenamiento: Libre"/>
         <text name="eq_welcome_ride_title" text="Entrenamiento"/>
         <text name="eq_welcome_welcome_1_title" text="Bienvenido a Realistic Equestrian"/>
@@ -173,7 +170,7 @@
         <text name="input_EQ_LATERAL" text="Trabajo lateral (mantener)"/>
         <text name="input_EQ_COLLECT" text="Reunir (mantener)"/>
         <text name="input_EQ_REIN" text="Riendas: dirección con ratón (mantener)"/>
-        <text name="eq_train_worn" text="Barra de monta llena: no hay más entrenamiento hoy"/>
+        <text name="eq_train_worn" text="Entrenamiento diario completo: no más entrenamiento hoy"/>
         <text name="eq_ex_push" text="Esfuerzo"/>
         <text name="eq_ex_recover" text="Recuperando"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -192,10 +189,7 @@
         <text name="eq_pop_ex_spent" text="¡Agotado!"/>
         <text name="eq_pop_ex_fresh" text="Listo para galopar"/>
         <text name="eq_help_gallop_title" text="Galope tendido"/>
-        <text name="eq_help_gallop_1" text="Tu caballo tiene tres ritmos de galope tendido. Pulsa W desde el galope para pasar a Esfuerzo: rápido, pero la barra de esfuerzo se llena, y más deprisa cuanto más alta está. Pulsa S para Recuperar: un galope más lento que baja el esfuerzo sin dejar de galopar, rápido en el tercio superior y el tercio inferior de la barra, lento en el centro. Pulsa W otra vez para volver a apretar. Un caballo en mejor forma se cansa más despacio y se recupera antes."/>
-        <text name="eq_help_gallop_2" text="Si la barra llega a la zona roja Fatigado mientras estás en Esfuerzo, tu caballo baja a galope y no puede volver al galope tendido hasta que la barra se vacíe. Para bajar tú a galope, pulsa S una vez mientras Recuperas con la barra vacía, o pulsa S dos veces seguidas en cualquier momento."/>
-        <text name="eq_help_gallop_3" text="Pulsa el botón izquierdo del ratón sin parar al galope tendido para hacer un Sprint: mucho más rápido, y la barra se llena despacio al principio y luego cada vez más deprisa, así que para antes de la línea. Al terminar un Sprint pasas a Recuperar, y no hay nuevo Sprint hasta que la barra se vacíe. Solo un Sprint puede pasar la línea de Fatigado, para un último esfuerzo hasta la meta, pero un Sprint que termina ahí deja a tu caballo Agotado, y se recupera muy despacio hasta volver bajo la línea."/>
-        <text name="eq_help_gallop_4" text="Entrenamiento: un Sprint entrena la Velocidad, y cuanto más suba la barra antes de terminar, más vale: x2 a mitad de camino a la línea, hasta x10 justo antes, pero solo x1 si termina pasada la línea. Esfuerzo y Recuperar entrenan la Resistencia con el multiplicador de Resistencia, hasta x5. El Esfuerzo lo sube, más deprisa cerca de arriba. Recuperar en el tercio central de la barra deja que tu caballo recupere el aliento y conserva casi todo el multiplicador, mientras que los tercios superior e inferior lo hacen caer rápido, y un caballo que nunca recupera el aliento progresa mucho más despacio. Fatigado o Agotado lo baja a x1 y detiene el entrenamiento de Resistencia hasta que la barra se vacíe."/>
+        <text name="eq_help_gallop_1" text="Tu caballo tiene tres ritmos de galope tendido. Esfuerzo (W) es el intermedio y sube el esfuerzo; Recuperar (S) es el más lento y lo baja. El sprint ([[EQ_SPRINT]]) es el más rápido y sube el esfuerzo deprisa. Puede llevar a tu caballo más allá de su límite normal, pero luego tarda mucho en recuperarse."/>
         <text name="eq_ex_hint_sprint" text="Haz clic izquierdo sin parar para hacer un sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: primero recupera hasta vaciar"/>
         <text name="eq_ex_hint_locked" text="Galope hasta vaciar la barra"/>
@@ -212,11 +206,11 @@
         <text name="eq_train_view_speed" text="Velocidad"/>
         <text name="eq_train_view_condensed" text="Compacta"/>
         <text name="eq_help_stamina_title" text="Entrenamiento: Resistencia"/>
-        <text name="eq_help_stamina_1" text="La Resistencia se entrena en Esfuerzo y Recuperar al galope tendido, con el multiplicador de Resistencia, hasta x5. El Esfuerzo lo sube, y cuanto más te acerques a la línea, más rápido sube. Recuperar lo baja: rápido en el tercio superior de la barra, despacio en el tercio central y otra vez rápido en el tercio inferior."/>
-        <text name="eq_help_stamina_2" text="Así que aprieta hasta cerca de la línea, afloja hasta el centro de la barra y deja que tu caballo recupere el aliento ahí un rato, y luego vuelve a apretar. Alternar Esfuerzo y Recuperar cerca de arriba cansa al caballo sin subir el multiplicador, y Fatigado o Agotado lo baja a x1 y detiene el entrenamiento de Resistencia hasta que la barra se vacíe."/>
+        <text name="eq_help_stamina_1" text="La Resistencia permite a tu caballo empujar más tiempo al galope tendido o esprintando, y recuperarse antes después. Es clave en cross, carreras largas y steeplechase. Los caballos con mucha Resistencia se lesionan menos y rinden mejor en terreno blando, pesado o con calor. Dar avena y cebada a tus caballos acelera el entrenamiento de Resistencia."/>
+        <text name="eq_help_stamina_2" text="Entrenar la Resistencia consiste en mantener a tu caballo al galope tendido el mayor tiempo posible. Cambia de Esfuerzo a Recuperar cuando la barra de esfuerzo esté en la franja azul, y vuelve abajo. Tu caballo empieza a respirar con fuerza cuando toca cambiar. Si aciertas el momento, subes un combo de entrenamiento, te recuperas antes y te cansas más despacio. Salir del galope tendido reinicia el combo."/>
         <text name="eq_help_speed_title" text="Entrenamiento: Velocidad"/>
-        <text name="eq_help_speed_1" text="La Velocidad se entrena con Sprints: pulsa el botón izquierdo del ratón sin parar al galope tendido. Cada segundo de Sprint cuenta, y al terminar se multiplica según lo alto que hayas llevado la barra: x2 a mitad de camino a la línea, hasta x10 justo antes."/>
-        <text name="eq_help_speed_2" text="Un Sprint que termina pasada la línea solo vale x1, así que deja de pulsar (o pulsa S) antes de la línea. Tras un Sprint, tu caballo tiene que recuperar hasta vaciar la barra antes de volver a hacer un Sprint."/>
+        <text name="eq_help_speed_1" text="La Velocidad sube la velocidad máxima de tu caballo en todos los aires, y es clave en carreras y cross. Los caballos rápidos rinden mejor en terreno firme. Dar maíz a tus caballos acelera el entrenamiento de Velocidad."/>
+        <text name="eq_help_speed_2" text="Esprinta pulsando rápido [[EQ_SPRINT]] al galope tendido. Cuanto más alta esté la barra de esfuerzo al acabar el sprint, mayor es el multiplicador, así que acércate a la línea todo lo que te atrevas: si la pasas, el multiplicador vuelve a x1. Descansa al paso o parado tras cada sprint para recuperarte rápido."/>
         <text name="eq_train_speedMult" text="Velocidad x%.1f"/>
         <text name="eq_train_staminaMult" text="Resistencia x%.1f"/>
         <text name="eq_train_staminaStopped" text="sin entrenamiento"/>
@@ -375,7 +369,7 @@
         <text name="eq_role_retired" text="Retirado"/>
         <text name="eq_ui_button_role" text="Función: %s"/>
         <text name="input_EQ_HORSE_ROLE" text="Cambiar función del caballo"/>
-        <text name="eq_ui_riding" text="Monta"/>
+        <text name="eq_ui_riding" text="Entrenamiento diario"/>
         <text name="eq_ui_ridingFull" text="Llena, no hay más entrenamiento hoy"/>
         <text name="eq_ui_ridingFullValue" text="%s - llena"/>
         <text name="eq_specialty_none" text="Ninguna aún"/>
@@ -1208,5 +1202,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s está en cuarentena, así que se llevó de vuelta a %s."/>
         <text name="eq_loose_sentHome_away" text="%s está en una competición, así que se llevó de vuelta a %s."/>
         <text name="eq_loose_sentHome_injured" text="%s está lesionado, así que se llevó de vuelta a %s para descansar."/>
+        <text name="eq_help_freestyle_5" text="Tus caballos tienen aires y teclas de movimiento extra. Mantén [[EQ_REIN]] para dirigir con precisión con el ratón, [[EQ_LATERAL]] para movimientos laterales y [[EQ_COLLECT]] para reunir a tu caballo."/>
+        <text name="eq_help_lateral_title" text="Movimientos laterales"/>
+        <text name="eq_help_lateral_1" text="Los movimientos laterales están entre lo más difícil de la doma y combinan varios controles. Mantén [[EQ_LATERAL]] y pulsa A o D para desplazarte de lado en una cesión a la pierna, y mantén también [[EQ_REIN]] para doblar el cuello y los hombros en un travers, renvers o apoyo. En una reprise, los iconos del recorrido muestran cómo colocar a tu caballo."/>
+        <text name="eq_help_collect_title" text="Reunir"/>
+        <text name="eq_help_collect_1" text="Reunir se usa sobre todo en doma, para montar un aire sin su velocidad habitual. Mantén [[EQ_COLLECT]] al trote para un piaffe, un trote en el sitio, y pulsa también W para un passage, un trote lento y cadencioso. Reúne al paso o al galope y gira con A o D para una pirueta."/>
+        <text name="eq_help_rein_title" text="Dirección con ratón"/>
+        <text name="eq_help_rein_1" text="Mantener [[EQ_REIN]] coloca la cámara detrás de tu caballo y te deja dirigir con precisión con el ratón, algo vital en doma y a veces en salto. Si mantienes también [[EQ_LATERAL]], el ratón dobla la cabeza de tu caballo para los movimientos laterales."/>
+        <text name="eq_help_courseEdit_title" text="Edición de recorridos"/>
+        <text name="eq_help_courseEdit_1" text="Traza el recorrido pasando por los obstáculos en orden, a cualquier velocidad. Los obstáculos de este mod no tienen colisión mientras trazas. Si te equivocas, vuelve al último punto bueno hasta que una línea se enganche a él y pulsa [[EQ_COURSE_REWIND]] para trazar de nuevo desde ahí. Pulsa otra vez [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] en cross) para guardar."/>
+        <text name="eq_help_dressageEdit_title" text="Edición de reprises"/>
+        <text name="eq_help_dressageEdit_1" text="Crea tu propia reprise de doma con figuras, movimientos y aires. [[EQ_DT_PREV]] y [[EQ_DT_NEXT]] cambian la figura, [[EQ_DT_GAIT]] el aire y [[EQ_DT_MODE]] pasa a movimientos laterales o en el sitio. [[EQ_DT_ACCEPT]] guarda un paso y sigue, [[EQ_DT_UNDO]] vuelve atrás y [[EQ_DT_RANDOM]] elige un paso al azar. Pulsa [[EQ_DRESSAGE_TEST]] para guardar la reprise."/>
     </texts>
 </l10n>

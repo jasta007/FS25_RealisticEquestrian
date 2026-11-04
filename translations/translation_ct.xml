@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="訓練檢視：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="三次路線錯誤（偏離線條、離開場地或原地不動）會結束測驗；騎完全程可獲得隨得分增長的氣質加成。更沉穩的馬能看到更遠的線條，並更早得到變換提示。Riding Hall 字母使用舊的字母間路段動作。在場地之外，慢步和後退仍能訓練一點氣質，紅蘿蔔等零食也有幫助。"/>
-        <text name="eq_help_temperament_1" text="氣質訓練教你的馬服從控制，需要一個盛裝舞步場地：在商店購買，或擺放盛裝舞步字母。在商店的場地中騎到A，圖形測驗就會開始：圓圈、對角線、蛇形線等，以金色線條畫在地面上。沿線騎行，並在指定位置變換步法或立定；每個動作滿分10分。"/>
+        <text name="eq_help_temperament_2" text="性情最好透過在盛裝舞步場地進行舞步測試來訓練：騎到A開始測試，或在場地旁按[[EQ_DRESSAGE_TEST]]編寫你自己的測試。每個完成得好的動作都會提高連擊，三次失誤（偏離路線、離開場地或停住不動）會結束測試。在場地外，保持橫向動作（[[EQ_LATERAL]]）或收縮步法（[[EQ_COLLECT]]），例如原地踏步，也能訓練一點。"/>
+        <text name="eq_help_temperament_1" text="性情讓馬轉向更快、更早變換步法，撞到障礙物後停頓更短。它在盛裝舞步中最重要：性情高的馬更貼合舞步路線，也能更好地對準障礙，而性情低的馬更容易被取消參賽或在賽事中失誤。胡蘿蔔和其他零食可以加快性情訓練。"/>
         <text name="eq_help_temperament_title" text="訓練：性情"/>
-        <text name="eq_help_agility_2" text="如果你沒能及時跳過新的障礙物或速度掉得太多，就會失去倍率。沒有障礙物的跳躍也有一點訓練效果，但不會提高倍率。"/>
-        <text name="eq_help_agility_1" text="敏捷主要靠跨越障礙訓練，不過在各種步法之間切換也能獲得少許提升。跳過障礙物來積累敏捷訓練倍率，倍率會在十秒後消退，撞到障礙物則會更早消退。"/>
+        <text name="eq_help_agility_2" text="每越過一個障礙物，連擊就會提高，從x2到x5，每次跳躍的訓練效果也更大。你有10秒越過下一個障礙物：撞到障礙會扣除時間，停下則很快結束連擊。在場地障礙場地和你自己的路線上訓練敏捷更快：騎乘時按[[EQ_COURSE_RECORD]]建立路線。"/>
+        <text name="eq_help_agility_1" text="敏捷讓馬跳得更高、轉得更急，在場地障礙和盛裝舞步中最重要。透過連續跳越障礙物來訓練，不要碰到障礙或停下。任何障礙物都算，但正規的馬術障礙訓練效果更好。給馬喂大麥可以加快敏捷訓練。"/>
         <text name="eq_help_agility_title" text="訓練：敏捷"/>
         <text name="eq_pop_routineStart" text="動作開始"/>
         <text name="eq_pop_routineFault" text="失誤 %d/%d"/>
@@ -217,14 +217,11 @@
         <text name="eq_train_combo" text="跳躍連擊 x%d"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷透過跳越障礙累積連擊條來訓練，氣質透過在盛裝舞步場地完成一套動作來訓練。耐力和速度透過良好的襲步來訓練：襲步時按 H 了解方法。"/>
-        <text name="eq_help_freestyle_3" text="不想自己騎？在員工標籤頁僱用馬伕和教練，每天替你訓練馬匹。遊戲自帶的動物員工和RLRM的Herdsman只能讓它們維持狀態。"/>
+        <text name="eq_help_freestyle_2" text="敏捷透過連續跳越障礙物來訓練，性情透過盛裝舞步圖形和動作來訓練。耐力和速度透過長時間襲步和衝刺來訓練。按[[EQ_TRAINING_VIEW]]檢視每個小遊戲的更多資訊，以便最有效地訓練。"/>
+        <text name="eq_help_freestyle_3" text="你不需要每天騎馬來訓練它們。僱用教練和馬伕，每天為你的馬提供針對性或全面的訓練，馬匹也會在賽事中積累經驗。最好的訓練永遠是在你自己的場地障礙或越野路線上（按[[EQ_COURSE_RECORD]]或[[EQ_COURSE_RECORD_XC]]建立），或在盛裝舞步場地練習舞步測試。"/>
         <text name="eq_form_title" text="巔峰狀態"/>
-        <text name="eq_help_freestyle_4" text="賽前騎一騎！你用小遊戲訓練的每項屬性，都會讓馬在本月的比賽中進入巔峰狀態，每項最多+8。多天的訓練不會疊加：只計算本月最好的一次訓練。"/>
-        <text name="eq_help_form_title" text="巔峰狀態"/>
-        <text name="eq_help_form_1" text="親自騎乘不只是訓練：它還能讓馬在本月的比賽中進入巔峰狀態。你在小遊戲中練過的每項屬性，在本月每場比賽中最多+8，並在此處和馬的技能欄中顯示為巔峰狀態。訓練越好加成越大；只是騎著走各種步法則沒有加成。"/>
-        <text name="eq_help_form_2" text="巔峰狀態不會在一個月內逐日疊加：每項屬性只保留你最好的一次訓練。比賽當天它甚至能讓馬超出自身潛力，本月比賽結束後便會消失。日常訓練交給員工，把你自己的騎乘留給重要的比賽。"/>
-        <text name="eq_help_freestyle_1" text="騎乘能訓練馬的屬性，每項屬性都有自己的小遊戲。所有屬性都可以同時訓練，但有些不太搭配，比如速度和性情。按Y切換到針對你想專注的屬性、反饋更詳細的檢視，或留在自由檢視獲得綜合反饋。騎乘條仍然是馬當天的精力：一旦滿了，這匹馬在第二天之前都無法再進步。"/>
+        <text name="eq_help_freestyle_4" text="你親自訓練還會讓馬在當月所有賽事中獲得臨時的巔峰狀態加成。它比普通訓練增益更大，甚至能讓馬超出其潛力，但會在月底消失，且不會按天疊加：只計算你最好的一次訓練。"/>
+        <text name="eq_help_freestyle_1" text="每匹馬有四項屬性，可以透過騎乘、參加賽事和你的員工來訓練。所有屬性同時訓練，但按[[EQ_TRAINING_VIEW]]切換訓練檢視可以檢視每項的更多資訊。馬每天只能訓練有限的量，由每日訓練百分比顯示。"/>
         <text name="eq_help_freestyle_title" text="訓練：自由"/>
         <text name="eq_welcome_ride_title" text="訓練"/>
         <text name="eq_welcome_welcome_1_title" text="歡迎來到Realistic Equestrian"/>
@@ -262,7 +259,7 @@
         <text name="input_EQ_LATERAL" text="側向動作（按住）"/>
         <text name="input_EQ_COLLECT" text="收縮（按住）"/>
         <text name="input_EQ_REIN" text="韁繩：滑鼠轉向（按住）"/>
-        <text name="eq_train_worn" text="騎乘條已滿：今天無法再訓練"/>
+        <text name="eq_train_worn" text="每日訓練已滿：今天不能再訓練了"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢復"/>
         <text name="eq_ex_sprint" text="衝刺"/>
@@ -281,10 +278,7 @@
         <text name="eq_pop_ex_spent" text="力竭！"/>
         <text name="eq_pop_ex_fresh" text="可以襲步"/>
         <text name="eq_help_gallop_title" text="襲步"/>
-        <text name="eq_help_gallop_1" text="你的馬有三種襲步節奏。在跑步中按W開始加力：速度快，但體力消耗條會上漲，而且越高漲得越快。按S恢復：較慢的襲步，在繼續襲步的同時降低消耗，在消耗條的上三分之一和下三分之一降得快，中間降得慢。再按W繼續加力。狀態越好的馬疲勞得越慢，恢復得越快。"/>
-        <text name="eq_help_gallop_2" text="如果加力時消耗條到達紅色的疲勞區，馬會降為跑步，在消耗條清空前無法再襲步。想自己降為跑步，可在消耗條為空時於恢復中按一次S，或隨時連按兩次S。"/>
-        <text name="eq_help_gallop_3" text="襲步時連續點擊滑鼠左鍵進行衝刺：速度快得多，消耗條起初漲得慢，然後越來越快，所以要線上前停下。衝刺結束後轉為恢復，消耗條清空前不能再次衝刺。只有衝刺能越過疲勞線，用於衝向終點的最後發力，但在那裡結束的衝刺會讓馬力竭，回到線下之前恢復得非常慢。"/>
-        <text name="eq_help_gallop_4" text="訓練：衝刺訓練速度，結束前把消耗條推得越高，價值越大：到線的一半時x2，緊貼線下最高x10，但越線後結束只有x1。加力和恢復按耐力倍率訓練耐力，最高x5。加力會提高倍率，越接近頂部提高越快。在消耗條中間三分之一恢復能讓馬喘口氣，並保留大部分倍率，而上下三分之一會讓倍率迅速流失，一直不喘氣的馬進步會慢得多。疲勞或力竭會把倍率降回x1，並在消耗條清空前停止耐力訓練。"/>
+        <text name="eq_help_gallop_1" text="你的馬有三種襲步節奏。加力（W）是中間節奏，會提高消耗；恢復（S）最慢，會降低消耗。衝刺（[[EQ_SPRINT]]）最快，消耗上升很快。它能讓馬超出正常極限，但之後需要很長時間恢復。"/>
         <text name="eq_ex_hint_sprint" text="連續點擊左鍵衝刺"/>
         <text name="eq_ex_hint_sprintRest" text="衝刺：先恢復到清空"/>
         <text name="eq_ex_hint_locked" text="跑步直到消耗條清空"/>
@@ -301,11 +295,11 @@
         <text name="eq_train_view_speed" text="速度"/>
         <text name="eq_train_view_condensed" text="精簡"/>
         <text name="eq_help_stamina_title" text="訓練：耐力"/>
-        <text name="eq_help_stamina_1" text="襲步中加力和恢復時會按耐力倍率訓練耐力，最高x5。加力會提高倍率，越接近線漲得越快。恢復會降低倍率：在消耗條上三分之一降得快，中間三分之一降得慢，下三分之一又降得快。"/>
-        <text name="eq_help_stamina_2" text="所以要加力到接近線，再放緩到消耗條中間，讓馬在那裡喘一會兒氣，然後再次加力。在頂部附近反覆切換加力和恢復只會讓馬疲勞而不提高倍率，疲勞或力竭會把倍率降回x1，並在消耗條清空前停止耐力訓練。"/>
+        <text name="eq_help_stamina_1" text="耐力讓馬在襲步或衝刺時能加力更久，之後恢復更快。它在越野、長距離賽馬和障礙賽馬中最重要。耐力高的馬更不容易受傷，在鬆軟、泥濘或炎熱的場地表現更好。給馬喂燕麥和大麥可以加快耐力訓練。"/>
+        <text name="eq_help_stamina_2" text="訓練耐力的關鍵是讓馬儘可能長時間保持襲步。當消耗條處於藍色區間時從加力切換到恢復，到底部再切換回來。到了該切換的時候，馬會開始大口喘氣。把握好時機可以積累訓練連擊、恢復更快、疲勞更慢，從而加力更久。脫離襲步會重置連擊。"/>
         <text name="eq_help_speed_title" text="訓練：速度"/>
-        <text name="eq_help_speed_1" text="速度在衝刺時訓練：襲步時連續點擊滑鼠左鍵。衝刺的每一秒都算數，結束時會乘以你把消耗條推到的高度：到線的一半時x2，緊貼線下最高x10。"/>
-        <text name="eq_help_speed_2" text="越線後結束的衝刺只值x1，所以要線上前停止連按（或按S）。衝刺後，馬必須恢復到消耗條清空才能再次衝刺。"/>
+        <text name="eq_help_speed_1" text="速度提高馬在所有步法下的最高速度，在賽馬和越野中最重要。速度快的馬在堅硬場地表現最好。給馬喂玉米可以加快速度訓練。"/>
+        <text name="eq_help_speed_2" text="襲步時快速連按[[EQ_SPRINT]]進行衝刺。衝刺結束時消耗條越高，倍率越大，所以儘量靠近那條線：一旦越過，倍率會重置為x1。每次衝刺後慢步或立定休息，可以快速恢復。"/>
         <text name="eq_train_speedMult" text="速度 x%.1f"/>
         <text name="eq_train_staminaMult" text="耐力 x%.1f"/>
         <text name="eq_train_staminaStopped" text="無訓練"/>
@@ -529,7 +523,7 @@
         <text name="eq_course_editing" text="正在編輯%s：%d個障礙，%.0f米"/>
         <text name="eq_course_editStarted" text="正在編輯%s：完成前，Realistic Equestrian放置的障礙物沒有碰撞；其他障礙物仍是實體"/>
         <text name="input_EQ_COURSE_DELETE" text="刪除附近的路線"/>
-        <text name="eq_ui_riding" text="騎乘"/>
+        <text name="eq_ui_riding" text="每日訓練"/>
         <text name="eq_ui_ridingFull" text="已滿，今天無法再訓練"/>
         <text name="eq_ui_ridingFullValue" text="%s - 已滿"/>
         <text name="eq_specialty_none" text="暫無"/>
@@ -1206,5 +1200,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔離，已被帶回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出參賽，已被帶回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受傷了，已被帶回%s休息。"/>
+        <text name="eq_help_freestyle_5" text="你的馬有額外的步法和動作按鍵。按住[[EQ_REIN]]用滑鼠精確轉向，按住[[EQ_LATERAL]]做橫向動作，按住[[EQ_COLLECT]]讓馬收縮。"/>
+        <text name="eq_help_lateral_title" text="橫向動作"/>
+        <text name="eq_help_lateral_1" text="橫向動作是盛裝舞步中最難的部分之一，需要組合多種操作。按住[[EQ_LATERAL]]並按A或D向側面移動，即為腿部讓步；同時按住[[EQ_REIN]]可以彎曲馬的頸部和肩部，做出腰向內、腰向外或斜橫步。在舞步測試中，路線上的圖示會顯示如何擺放馬的姿勢。"/>
+        <text name="eq_help_collect_title" text="收縮"/>
+        <text name="eq_help_collect_1" text="收縮主要用於盛裝舞步，讓馬以某種步法前進卻不帶平常的速度。快步時按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（緩慢有彈性的快步）。在慢步或跑步時收縮並用A或D轉向，即為定後肢旋轉。"/>
+        <text name="eq_help_rein_title" text="滑鼠轉向"/>
+        <text name="eq_help_rein_1" text="按住[[EQ_REIN]]會把鏡頭轉到馬的身後，讓你用滑鼠精細轉向，這在盛裝舞步中至關重要，在場地障礙中有時也有用。同時按住[[EQ_LATERAL]]時，滑鼠會彎曲馬的頭部來做橫向動作。"/>
+        <text name="eq_help_courseEdit_title" text="編輯路線"/>
+        <text name="eq_help_courseEdit_1" text="按順序騎過各個障礙來描繪路線，速度不限。描繪時，本模組的障礙物沒有碰撞。如果出錯，騎回最後一個正確的點，直到有一條線吸附過去，然後按[[EQ_COURSE_REWIND]]從那裡重新描繪。再次按[[EQ_COURSE_RECORD]]（越野為[[EQ_COURSE_RECORD_XC]]）儲存。"/>
+        <text name="eq_help_dressageEdit_title" text="編輯舞步測試"/>
+        <text name="eq_help_dressageEdit_1" text="用圖形、動作和步法編寫你自己的舞步測試。[[EQ_DT_PREV]]和[[EQ_DT_NEXT]]切換圖形，[[EQ_DT_GAIT]]切換步法，[[EQ_DT_MODE]]切換到橫向動作或原地動作。[[EQ_DT_ACCEPT]]保留當前步驟並繼續，[[EQ_DT_UNDO]]返回上一步，[[EQ_DT_RANDOM]]隨機選一步。按[[EQ_DRESSAGE_TEST]]儲存測試。"/>
     </texts>
 </l10n>

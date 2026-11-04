@@ -57,7 +57,10 @@ Every horse trains once a day, at RLRM's daily horse tick.
   wordless Sprint bar). Every view shows the Exertion bar, and every view trains everything. Help pops
   up at the bottom of the screen the first time you open each view (and the first time you
   gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
-  move on.
+  move on. One-off popups explain lateral work, collecting and mouse steering the first time each
+  key is held while riding, and course and dressage test editing the first time each editor opens.
+  Keys in help texts are written as `[[EQ_ACTION]]` and show the player's own binding (the game's
+  key name, our default key, or the default gamepad button in gamepad mode; `Help keys:` log lines).
 - Welcome popups show the first time you come within 35 m of a horse pen or ride a horse, open
   RLRM's menu with horses on the farm, open its Information tab, open the Events tab, open the Equestrian Staff tab, and open the
   Diseases dialog for a horse. A popup stays until you click through its last page; closed early
@@ -65,7 +68,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   every seen flag on your machine, so each popup shows once more.
 - Jumping doesn't interrupt the gallop: the pace from before take-off counts until shortly after
   landing, so you can jump an obstacle in the way.
-- **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
+- **The riding bar is the horse's energy for the day**, shown as **Daily Training** (the base game's "Riding" and "Daily riding" labels are renamed). Once it is full the horse is tired, the
   line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
   so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
   stamina 100). Riding that trains little (walking or cantering over to a facility) costs only a
@@ -85,7 +88,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   stats the course's checks roll against and to the horse's rating on the day, and may lift a
   stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
 - It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
-  month's events have run. A popup explains it the first time a horse gets it.
+  month's events have run. Freestyle help page 4 explains it (its own popup was dropped, James 2026-11-04).
 - Permanent training is unchanged: your riding still trains faster than staff and is the only
   way to take a stat to its ceiling.
 
