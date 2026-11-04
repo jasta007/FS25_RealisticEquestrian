@@ -53,10 +53,10 @@ EqBreath.SPEED_RANDOM = 0.15
 -- scaled) and speed times its speed. "band" while the stamina band waits at the bottom, "hard"
 -- while Fatigued or Blown (James, 2026-11-04: noticeably bigger, only slightly quicker, blown out
 -- harder). Then a quarter smaller, slower breathing for both and hard blown half as fast
--- (James, 2026-11-04 02:00).
+-- (James, 2026-11-04 02:00); hard then a bit faster, 10% bigger and more often (02:12).
 EqBreath.STYLE = {
     band = { onMs = 450, offMs = 750, lifespan = 1000, count = 1, size = 1.125, speed = 1.5 },
-    hard = { onMs = 420, offMs = 560, lifespan = 1100, count = 1.6, size = 1.725, speed = 1.75 },
+    hard = { onMs = 380, offMs = 470, lifespan = 1100, count = 1.6, size = 1.9, speed = 2.2 },
 }
 -- eqBreath size/speed: extra multipliers for tuning in game.
 EqBreath.SIZE = 1
