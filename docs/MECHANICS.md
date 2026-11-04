@@ -1053,8 +1053,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
   in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
   System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
   With two contracts for one brand the better one counts. Used machines (the shop's sale items)
-  get no sponsor discount, as their price is already cut. The shop's buy screen shows a
-  **Sponsor discount** row with the sponsor's logo when the discount applies.
+  get no sponsor discount, as their price is already cut. When the discount applies, the shop's
+  tiles show it in the same green badge as a used machine's (-20%), and the buy screen shows a
+  **Sponsor discount** row with the sponsor's logo.
 - The shop's block on rival machines comes in a later update.
 - **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
   liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
