@@ -99,6 +99,7 @@
         <text name="eq_shop_productJump_function" text="Mettine due una di fronte all'altra a circa 5 m: conta anche una macchina tra le due, oppure saltale come un ostacolo da cross."/>
         <text name="eq_shop_plinthTurntable" text="Piattaforma girevole"/>
         <text name="eq_shop_turntable_function" text="Il disco gira lentamente: lasciaci una macchina e girerà con esso, con tutto ciò che è agganciato. Una macchina del tuo sponsor qui conta di più."/>
+        <text name="eq_shop_sponsorDiscount" text="Sconto sponsor: %d%%"/>
         <text name="eq_plinth_inPlace" text="Attrezzatura dello sponsor in posizione!"/>
         <text name="eq_plinth_wrongBrand" text="Non è attrezzatura del tuo sponsor! Le macchine rivali in mostra ridurranno i tuoi guadagni da sponsorizzazione!"/>
         <text name="eq_plinth_noSponsor" text="Nessuno sponsor firmato: la sua attrezzatura esposta qui conterebbe per la tua visibilità."/>

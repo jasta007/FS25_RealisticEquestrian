@@ -6550,5 +6550,36 @@ end)()
     check("help keys: the texts use tokens", tokens > 100, tostring(tokens))
 end)()
 
+-- SHOP DISCOUNT: used machines (sale items) get no sponsor purchase discount; new ones do.
+;(function()
+    local had = { EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
+        g_brandManager, EqSponsorManager, EqCompetitionManager, Utils, Log }
+    Log = Log or { info = function() end }
+    Utils = Utils or {}
+    Utils.appendedFunction = Utils.appendedFunction or function(a, b) return function(...) a(...) b(...) end end
+    Utils.prependedFunction = Utils.prependedFunction or function(a, b) return function(...) b(...) a(...) end end
+    EconomyManager = { getBuyPrice = function(_, storeItem, configurations, saleItem)
+        return saleItem ~= nil and saleItem.price or storeItem.price end }
+    BuyVehicleData, ShopConfigScreen = nil, nil
+    FSBaseMission = { update = function() end, delete = function() end }
+    EqMain = { isActive = true }
+    g_currentMission = { getFarmId = function() return 1 end }
+    g_brandManager = { getBrandByIndex = function(_, index) return { name = index == 1 and "SPONSOR" or "RIVAL" } end }
+    EqSponsorManager = { config = { discountMonths = 3 },
+        contractsFor = function() return { { brand = "SPONSOR", purchase = 0.2, signedMonth = 0 } } end }
+    EqCompetitionManager = { month = 5 }
+    dofile("scripts/sponsors/EqSponsorDiscounts.lua")
+    EqSponsorDiscounts.install(function(_, fn) return fn() end)
+    local sponsorItem, rivalItem = { brandIndex = 1, price = 1000 }, { brandIndex = 2, price = 1000 }
+    local economy = EconomyManager
+    check("shop discount: a new sponsor machine is 20% off", economy.getBuyPrice(economy, sponsorItem) == 800)
+    check("shop discount: a rival machine is full price", economy.getBuyPrice(economy, rivalItem) == 1000)
+    check("shop discount: a used sponsor machine keeps its sale price", economy.getBuyPrice(economy, sponsorItem, nil, { price = 600 }) == 600)
+    check("shop discount: the buy screen share is 20% new, 0 used",
+        EqSponsorDiscounts.shopShare(sponsorItem, nil) == 0.2 and EqSponsorDiscounts.shopShare(sponsorItem, { price = 600 }) == 0)
+    EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
+        g_brandManager, EqSponsorManager, EqCompetitionManager, Utils, Log = unpack(had, 1, 11)
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

@@ -1053,7 +1053,9 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Discounts** start 3 months after signing, on the sponsor's own machines: the buying discount
   in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
   System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
-  With two contracts for one brand the better one counts.
+  With two contracts for one brand the better one counts. Used machines (the shop's sale items)
+  get no sponsor discount, as their price is already cut. The shop's buy screen shows a
+  **Sponsor discount** row with the sponsor's logo when the discount applies.
 - The shop's block on rival machines comes in a later update.
 - **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
   liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
@@ -1142,7 +1144,8 @@ earlier, 3 by default;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
 jump colour and where it came from; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
-`eqSponsorLoan end` takes it back.
+`eqSponsorLoan end` takes it back. `eqShopProbe` (testing, with the shop open on a category)
+writes the shop's layout to log.txt.
 
 The mod counts a month each time the game sends a month change. Some time skips (developer
 tools) move the calendar without one, so those months don't count.
