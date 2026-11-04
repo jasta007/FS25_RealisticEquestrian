@@ -17,7 +17,7 @@
         <text name="eq_stat_short_temperament" text="気性"/>
         <text name="eq_train_viewAction" text="トレーニング表示：%s"/>
         <text name="eq_train_view_freestyle" text="フリー"/>
-        <text name="eq_help_temperament_2" text="気性は馬場馬術アリーナでの演技で最もよく鍛えられます。Aへ向かうと演技が始まり、アリーナのそばで[[EQ_DRESSAGE_TEST]]を押すと自作できます。うまくこなした運動ごとにコンボが上がり、3回のミス（線を外れる、アリーナを出る、立ち止まる）で演技は終わります。アリーナ以外でも、側方運動（[[EQ_LATERAL]]）やピアッフェなどの収縮した歩法（[[EQ_COLLECT]]）を保つと少し鍛えられます。"/>
+        <text name="eq_help_temperament_2" text="気性は馬場馬術アリーナでの演技で最もよく鍛えられますが、歩法、回転、側方運動などを切り替えればどこでも鍛えられます。[[EQ_LATERAL]]で側方運動、[[EQ_COLLECT]]で馬を収縮させてピアッフェやパッサージュができます。新しい動きごとにコンボがx5まで上がります。次の動きまでの時間は限られ、障害物に当たるか襲歩に移るとコンボは終わります。"/>
         <text name="eq_help_temperament_1" text="気性が高いと馬は速く曲がり、早く歩法を変え、障害物に当たった後の停止が短くなります。最も重要なのは馬場馬術で、気性の高い馬は線により正確に沿い、障害にもまっすぐ向かいます。気性の低い馬は大会で出場取消や減点になりやすくなります。ニンジンなどのおやつで気性のトレーニングが速くなります。"/>
         <text name="eq_help_temperament_title" text="トレーニング：気性"/>
         <text name="eq_help_agility_2" text="障害物を越えるたびにコンボがx2からx5まで上がり、跳ぶごとに鍛えられる量が増えます。次の障害物まで10秒です。障害物に当たると時間が減り、停止するとすぐにコンボが終わります。障害飛越アリーナや自作コースではより速く鍛えられます。騎乗中に[[EQ_COURSE_RECORD]]でコースを作れます。"/>
@@ -217,7 +217,7 @@
         <text name="eq_train_combo" text="ジャンプコンボ x%d"/>
         <text name="eq_train_view_temperament" text="気性"/>
         <text name="eq_train_view_agility" text="敏捷性"/>
-        <text name="eq_help_freestyle_2" text="敏捷性は障害物を続けて跳ぶことで、気性は馬場馬術の図形や運動で鍛えられます。スタミナとスピードは長く襲歩を続けたりスプリントしたりすることで鍛えられます。[[EQ_TRAINING_VIEW]]を押すと各ミニゲームの詳細が見られるので、効率よく鍛えましょう。"/>
+        <text name="eq_help_freestyle_2" text="敏捷性は障害物を続けて跳ぶことで、気性は歩法や運動を切り替えることで鍛えられます。スタミナとスピードは長く襲歩を続けたりスプリントしたりすることで鍛えられます。[[EQ_TRAINING_VIEW]]を押すと各ミニゲームの詳細が見られるので、効率よく鍛えましょう。"/>
         <text name="eq_help_freestyle_3" text="鍛えるために毎日馬に乗る必要はありません。トレーナーや厩務員を雇えば、毎日重点的または全般的なトレーニングをしてくれますし、馬は大会でも経験を積みます。最も効果的なのは、自作の障害飛越やクロスカントリーのコース（[[EQ_COURSE_RECORD]]または[[EQ_COURSE_RECORD_XC]]で作成）や、馬場馬術アリーナでの演技の練習です。"/>
         <text name="eq_form_title" text="絶好調"/>
         <text name="eq_help_freestyle_4" text="自分で鍛えると、その月の大会で馬が一時的に絶好調になります。通常のトレーニングより大きく、潜在能力を超えることさえありますが、月末に消え、日ごとに積み重なりません。数えられるのは最も良かったセッションだけです。"/>

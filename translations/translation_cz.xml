@@ -17,7 +17,7 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Zobrazení tréninku: %s"/>
         <text name="eq_train_view_freestyle" text="Volný"/>
-        <text name="eq_help_temperament_2" text="Temperament se nejlépe trénuje drezurními úlohami na drezurním obdélníku: dojeďte k A a úloha začne, nebo u obdélníku stiskněte [[EQ_DRESSAGE_TEST]] a sestavte si vlastní. Každý dobře provedený cvik zvyšuje kombo a tři chyby (ztráta linie, opuštění obdélníku nebo stání) úlohu ukončí. Mimo obdélník ještě trochu trénuje držení bočního pohybu ([[EQ_LATERAL]]) nebo shromážděného chodu ([[EQ_COLLECT]]), třeba piafy."/>
+        <text name="eq_help_temperament_2" text="Temperament se nejlépe trénuje drezurními úlohami na drezurním obdélníku, ale trénovat ho můžete kdekoli střídáním chodů, obratů, bočních pohybů a dalších cviků. Držte [[EQ_LATERAL]] pro boční pohyby a [[EQ_COLLECT]] pro shromáždění koně do piafy nebo pasáže. Každý nový cvik zvyšuje kombo až na x5. Na další máte málo času a náraz do překážky nebo přechod do trysku kombo ukončí."/>
         <text name="eq_help_temperament_1" text="Temperament umožňuje koni rychleji zatáčet, dřív měnit chod a kratší dobu stát po nárazu do překážky. Nejvíc se uplatní v drezuře: kůň s vysokým Temperamentem přesněji sleduje drezurní linii a lépe se srovná na skoky, kdežto kůň s nízkým bývá častěji odhlášen nebo sbírá chyby. Mrkev a jiné pamlsky zrychlují trénink Temperamentu."/>
         <text name="eq_help_temperament_title" text="Trénink: Temperament"/>
         <text name="eq_help_agility_2" text="Každá zdolaná překážka zvyšuje kombo z x2 až na x5, takže každý skok trénuje víc. Na další překážku máte 10 sekund: náraz do překážky ubere čas a zastavení kombo brzy ukončí. Obratnost se trénuje rychleji na parkurovém kolbišti a na vlastních tratích: stiskem [[EQ_COURSE_RECORD]] v sedle trať vytvoříte."/>
@@ -217,7 +217,7 @@
         <text name="eq_train_combo" text="Skokové combo x%d"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Obratnost"/>
-        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skoky přes překážky rychle za sebou, Temperament ježděním drezurních figur a cviků. Vytrvalost a Rychlost se trénují dlouhým tryskem a sprinty. Stiskněte [[EQ_TRAINING_VIEW]] a zjistěte víc o každé minihře, abyste trénovali co nejúčinněji."/>
+        <text name="eq_help_freestyle_2" text="Obratnost se trénuje skoky přes překážky rychle za sebou, Temperament střídáním chodů a pohybů. Vytrvalost a Rychlost se trénují dlouhým tryskem a sprinty. Stiskněte [[EQ_TRAINING_VIEW]] a zjistěte víc o každé minihře, abyste trénovali co nejúčinněji."/>
         <text name="eq_help_freestyle_3" text="Koně nemusíte jezdit každý den, abyste je trénovali. Najměte trenéry a ošetřovatele, kteří koním každý den dají cílený nebo obecný trénink, a koně navíc sbírají zkušenosti na závodech. Nejlépe se trénuje na vlastních parkurových nebo terénních tratích (vytvoříte je stiskem [[EQ_COURSE_RECORD]] nebo [[EQ_COURSE_RECORD_XC]]) nebo nacvičováním drezurní úlohy na drezurním obdélníku."/>
         <text name="eq_form_title" text="Vrcholná forma"/>
         <text name="eq_help_freestyle_4" text="Váš vlastní trénink také dává koním dočasnou Vrcholnou formu na všechny závody toho měsíce. Je větší než běžné přírůstky a může koně dokonce vynést nad jeho potenciál, ale na konci měsíce zmizí a nesčítá se den po dni: počítá se jen váš nejlepší trénink."/>

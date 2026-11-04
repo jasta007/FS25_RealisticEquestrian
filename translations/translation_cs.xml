@@ -17,7 +17,7 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="训练视图：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="性情最好通过在盛装舞步场地进行舞步测试来训练：骑到A开始测试，或在场地旁按[[EQ_DRESSAGE_TEST]]编写你自己的测试。每个完成得好的动作都会提高连击，三次失误（偏离路线、离开场地或停住不动）会结束测试。在场地外，保持横向动作（[[EQ_LATERAL]]）或收缩步法（[[EQ_COLLECT]]），例如原地踏步，也能训练一点。"/>
+        <text name="eq_help_temperament_2" text="性情最好通过在盛装舞步场地进行舞步测试来训练，但你也可以在任何地方通过切换步法、转弯、横向动作和其他动作来训练。按住[[EQ_LATERAL]]做横向动作，按住[[EQ_COLLECT]]让马收缩做原地踏步或正步。每个新动作都会提高连击，最高x5。找到下一个动作的时间有限，撞到障碍物或进入袭步都会结束连击。"/>
         <text name="eq_help_temperament_1" text="性情让马转向更快、更早变换步法，撞到障碍物后停顿更短。它在盛装舞步中最重要：性情高的马更贴合舞步路线，也能更好地对准障碍，而性情低的马更容易被取消参赛或在赛事中失误。胡萝卜和其他零食可以加快性情训练。"/>
         <text name="eq_help_temperament_title" text="训练：性情"/>
         <text name="eq_help_agility_2" text="每越过一个障碍物，连击就会提高，从x2到x5，每次跳跃的训练效果也更大。你有10秒越过下一个障碍物：撞到障碍会扣除时间，停下则很快结束连击。在场地障碍场地和你自己的路线上训练敏捷更快：骑乘时按[[EQ_COURSE_RECORD]]创建路线。"/>
@@ -217,7 +217,7 @@
         <text name="eq_train_combo" text="跳跃连击 x%d"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷通过连续跳越障碍物来训练，性情通过盛装舞步图形和动作来训练。耐力和速度通过长时间袭步和冲刺来训练。按[[EQ_TRAINING_VIEW]]查看每个小游戏的更多信息，以便最有效地训练。"/>
+        <text name="eq_help_freestyle_2" text="敏捷通过连续跳越障碍物来训练，性情通过切换步法和动作来训练。耐力和速度通过长时间袭步和冲刺来训练。按[[EQ_TRAINING_VIEW]]查看每个小游戏的更多信息，以便最有效地训练。"/>
         <text name="eq_help_freestyle_3" text="你不需要每天骑马来训练它们。雇用教练和马夫，每天为你的马提供针对性或全面的训练，马匹也会在赛事中积累经验。最好的训练永远是在你自己的场地障碍或越野路线上（按[[EQ_COURSE_RECORD]]或[[EQ_COURSE_RECORD_XC]]创建），或在盛装舞步场地练习舞步测试。"/>
         <text name="eq_form_title" text="巅峰状态"/>
         <text name="eq_help_freestyle_4" text="你亲自训练还会让马在当月所有赛事中获得临时的巅峰状态加成。它比普通训练增益更大，甚至能让马超出其潜力，但会在月底消失，且不会按天叠加：只计算你最好的一次训练。"/>
