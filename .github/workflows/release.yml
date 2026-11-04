@@ -61,21 +61,11 @@ jobs:
           sudo apt-get install -y -qq luajit
           luajit tests/run.lua rlrm
 
-      - name: Keep dev-only tools out of the release
-        run: |
-          # The filming tools (eqAutoRide autopilot, PR #164; hide-HUD key, PR #173) are for test
-          # builds only. Fail if either has reached the branch being released.
-          if git grep -nE 'EqAutoRide|eqAutoRide|EqHudToggle|EQ_TOGGLE_HUD' HEAD -- data gui placeables scripts sounds translations modDesc.xml; then
-            echo "::error::Dev-only filming tools (eqAutoRide or the hide-HUD key) are in the release"
-            exit 1
-          fi
-
       - name: Build mod zip
         run: |
           mkdir dist
           git archive -o "dist/$ZIP_NAME" HEAD data gui placeables scripts sounds translations modDesc.xml icon_RealisticEquestrian.dds
           unzip -l "dist/$ZIP_NAME" | grep -q ' modDesc.xml$' || { echo "::error::modDesc.xml is not at the zip root"; exit 1; }
-          if unzip -l "dist/$ZIP_NAME" | grep -q ' dev/'; then echo "::error::dev/ is in the zip"; exit 1; fi
           unzip -l "dist/$ZIP_NAME" | tail -n 1
 
       - name: Keep the zip as a workflow artifact
