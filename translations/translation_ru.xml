@@ -1218,6 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="Лошадь %s на карантине, на ней нельзя ездить, пока она не вернётся домой."/>
         <text name="eq_ride_blocked_away" text="Лошадь %s на соревнованиях, на ней нельзя ездить."/>
         <text name="eq_ride_blocked_injured" text="Лошадь %s травмирована, на ней нельзя ездить до выздоровления."/>
+        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с 2 лет."/>
         <text name="eq_loose_sentHome_quarantine" text="Лошадь %s на карантине, её вернули: %s."/>
         <text name="eq_loose_sentHome_away" text="Лошадь %s на соревнованиях, её вернули: %s."/>
         <text name="eq_loose_sentHome_injured" text="Лошадь %s травмирована, её вернули на отдых: %s."/>

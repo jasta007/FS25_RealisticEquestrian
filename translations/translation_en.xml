@@ -1218,6 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantine and can't be ridden until it's home."/>
         <text name="eq_ride_blocked_away" text="%s is away at an event and can't be ridden."/>
         <text name="eq_ride_blocked_injured" text="%s is injured and can't be ridden until it has healed."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is too young to be ridden. Horses can be ridden from 2 years old."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantine, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_away" text="%s is away at an event, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is injured, so it was taken back to %s to rest."/>

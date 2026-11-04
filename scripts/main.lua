@@ -52,6 +52,7 @@ source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqLateral.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
+source(modDirectory .. "scripts/training/EqFoals.lua")
 source(modDirectory .. "scripts/staff/EqStaffNames.lua")
 source(modDirectory .. "scripts/staff/EqStaff.lua")
 source(modDirectory .. "scripts/staff/EqStaffManager.lua")
@@ -232,6 +233,10 @@ function EqMain.activate()
         guarded("ride block hooks", function() EqAway.installRideBlock(guarded) end)
     end
 
+    if EqMain.isActive and EqRLRM.features.awayVisuals then
+        guarded("foal size hook", function() EqFoals.install(guarded) end)
+    end
+
     if EqMain.isActive then
         guarded("welcome popups hooks", function() EqWelcome.install(guarded) end)
         guarded("message log", EqMessages.install)
@@ -348,6 +353,7 @@ local function onMissionLoaded(mission)
     guarded("loose horses start", function()
         if mission:getIsServer() then EqLooseHorses.start(mission) end
     end)
+    guarded("foal size start", function() EqFoals.start(guarded) end)
     guarded("registry load", function()
         if mission:getIsServer() then
             EqRegistry.loadFromDirectory(mission.missionInfo.savegameDirectory)
@@ -407,6 +413,7 @@ local function onMissionDelete()
         EqConsole.unregister()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
+        EqFoals.stop()
         EqStaffManager.stop()
         EqHostManager.reset()
         EqSponsorManager.reset()

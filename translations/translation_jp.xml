@@ -1218,6 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="%sは検疫中のため、帰宅するまで騎乗できません。"/>
         <text name="eq_ride_blocked_away" text="%sは大会に出ているため騎乗できません。"/>
         <text name="eq_ride_blocked_injured" text="%sは怪我をしているため、治るまで騎乗できません。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%sはまだ若すぎて騎乗できません。馬に乗れるのは2歳からです。"/>
         <text name="eq_loose_sentHome_quarantine" text="%sは検疫中のため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_away" text="%sは大会に出ているため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_injured" text="%sは怪我をしているため、休養のため%sに戻されました。"/>

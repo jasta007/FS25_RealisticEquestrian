@@ -60,6 +60,11 @@ EqConstants.STAFF_CAP = 0.95
 
 -- Age gates in months.
 EqConstants.AGE_GROUNDWORK = 24
+-- No riding before this age (EqFoals); the youngest event tier also starts here.
+EqConstants.AGE_MIN_RIDE = 24
+-- Horses younger than this are drawn at FOAL_SCALE of full size in their pen (EqFoals).
+EqConstants.FOAL_VISUAL_AGE = 6
+EqConstants.FOAL_SCALE = 0.6
 EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192

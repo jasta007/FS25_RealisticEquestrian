@@ -43,6 +43,12 @@ above its potential. Starting above 80 is rare: about one horse in 125. Dealer h
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
+**Foals.** The game has no foal model for horses, so a horse under 6 months is drawn at 60% of
+full size in its pen (`EqConstants.FOAL_SCALE`) and switches to full size at 6 months, as calves
+and lambs do in the base game. A horse can't be ridden until it is 2 years old (24 months, the
+same age the youngest event tier opens): the ride prompt gives way to a line saying so, and the
+Ride horse button is greyed out.
+
 ## Training
 
 Every horse trains once a day, at RLRM's daily horse tick.

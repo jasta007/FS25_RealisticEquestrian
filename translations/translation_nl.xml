@@ -1218,6 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantaine en kan pas worden bereden als het thuis is."/>
         <text name="eq_ride_blocked_away" text="%s is weg naar een wedstrijd en kan niet worden bereden."/>
         <text name="eq_ride_blocked_injured" text="%s is geblesseerd en kan pas worden bereden als het genezen is."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf 2 jaar worden bereden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>
