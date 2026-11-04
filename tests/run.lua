@@ -474,6 +474,9 @@ do
     end
     check("a fit horse's riding bar fills more slowly", EqTraining.ridingBarFactor(40) == 1
         and math.abs(EqTraining.ridingBarFactor(100) - 1.4) < 1e-9)
+    check("a young horse's riding bar fills twice as fast", EqTraining.ridingBarFactor(40, 12) == 0.5
+        and EqTraining.ridingBarFactor(40, 23) == 0.5 and EqTraining.ridingBarFactor(40, 24) == 1
+        and math.abs(EqTraining.ridingBarFactor(100, 18) - 0.7) < 1e-9)
     do
         local timer, total = 0, 0
         for _ = 1, 1000 do
@@ -3701,12 +3704,12 @@ end)()
     EqCompetitionManager.events = {}
     check("healthy horse at home can be ridden", EqAway.rideBlock(horse("fine")) == nil)
     check("a cow is never blocked", EqAway.rideBlock({ isHorse = function() return false end }) == nil and EqAway.rideBlock(nil) == nil)
-    local foal = { eqId = "fine", age = 23, isHorse = function() return true end }
-    check("horse under 2 can't be ridden", EqAway.rideBlock(foal) == "tooYoung")
+    local foal = { eqId = "fine", age = 11, isHorse = function() return true end }
+    check("horse under 1 can't be ridden", EqAway.rideBlock(foal) == "tooYoung")
     foal.eqId = "q"
     check("too young named first", EqAway.rideBlock(foal) == "tooYoung")
-    foal.eqId, foal.age = "fine", 24
-    check("horse of 2 can be ridden", EqAway.rideBlock(foal) == nil)
+    foal.eqId, foal.age = "fine", 12
+    check("yearling can be ridden", EqAway.rideBlock(foal) == nil)
     EqAway, EqRegistry, EqCompetitionManager = saved.EqAway, saved.EqRegistry, saved.EqCompetitionManager
 end)()
 
@@ -6639,15 +6642,15 @@ end)()
         and EqSpectators.EXPLORE == nil and EqSpectators.exploreStep == nil and EqSpectators.repose == nil)
 end)()
 
--- Foals: small in the pen under 6 months, no riding under 2 years
+-- Foals: small in the pen under 6 months, no riding under 1 year
 ;(function()
     check("newborn foal drawn small", EqFoals.scaleFor(0) == EqConstants.FOAL_SCALE)
     check("5 month foal still small", EqFoals.scaleFor(5) == EqConstants.FOAL_SCALE)
     check("full size at 6 months", EqFoals.scaleFor(6) == 1 and EqFoals.scaleFor(120) == 1)
     check("unknown age full size", EqFoals.scaleFor(nil) == 1 and EqFoals.scaleFor(-1) == 1)
     local function horse(age) return { age = age, isHorse = function() return true end } end
-    check("23 months too young to ride", EqFoals.isTooYoungToRide(horse(23)))
-    check("24 months can be ridden", not EqFoals.isTooYoungToRide(horse(24)))
+    check("11 months too young to ride", EqFoals.isTooYoungToRide(horse(11)))
+    check("12 months can be ridden", not EqFoals.isTooYoungToRide(horse(12)))
     check("age from getAge", EqFoals.isTooYoungToRide({ isHorse = function() return true end, getAge = function() return 3 end }))
     check("a calf is not a foal", not EqFoals.isTooYoungToRide({ age = 1, isHorse = function() return false end })
         and not EqFoals.isTooYoungToRide(nil))

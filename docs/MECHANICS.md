@@ -45,9 +45,9 @@ new starting stats the next time they are seen. `eqHorses` shows each horse as `
 
 **Foals.** The game has no foal model for horses, so a horse under 6 months is drawn at 60% of
 full size in its pen (`EqConstants.FOAL_SCALE`) and switches to full size at 6 months, as calves
-and lambs do in the base game. A horse can't be ridden until it is 2 years old (24 months, the
-same age the youngest event tier opens): the ride prompt gives way to a line saying so, and the
-Ride horse button is greyed out.
+and lambs do in the base game. A horse can't be ridden until it is 1 year old: the ride prompt gives way to a line saying so,
+and the Ride horse button is greyed out. From 1 to 2 years its riding bar fills twice as fast, so
+a young horse only does light work; events open at 2 (training shows).
 
 ## Training
 

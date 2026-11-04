@@ -1218,7 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s está em quarentena e não pode ser montado até voltar para casa."/>
         <text name="eq_ride_blocked_away" text="%s está fora numa competição e não pode ser montado."/>
         <text name="eq_ride_blocked_injured" text="%s está lesionado e não pode ser montado até recuperar."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s é demasiado jovem para ser montado. Os cavalos podem ser montados a partir dos 2 anos."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s é demasiado jovem para ser montado. Os cavalos podem ser montados a partir de 1 ano."/>
         <text name="eq_loose_sentHome_quarantine" text="%s está em quarentena, por isso foi levado de volta para %s."/>
         <text name="eq_loose_sentHome_away" text="%s está fora numa competição, por isso foi levado de volta para %s."/>
         <text name="eq_loose_sentHome_injured" text="%s está lesionado, por isso foi levado de volta para %s para descansar."/>

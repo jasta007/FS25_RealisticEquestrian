@@ -6,7 +6,8 @@
       has no foal model for horses, so we scale the adult one's root node; the node sits at the
       hooves, so the foal stays on the ground. At FOAL_VISUAL_AGE it switches to full size in
       one go, as the base game does when a calf or lamb grows up.
-    - A horse under AGE_MIN_RIDE months can't be ridden (EqAway.rideBlock gives "tooYoung").
+    - A horse under AGE_MIN_RIDE months can't be ridden (EqAway.rideBlock gives "tooYoung"); up
+      to AGE_GROUNDWORK its riding bar fills YOUNG_BAR_SPEED times as fast (ridingBarFactor).
 
     The scale goes on after every AnimalClusterHusbandry:updateVisuals (RLRM's), when a visual
     is drawn, and on each new day for every pen, as horses grow up between redraws. Visuals are

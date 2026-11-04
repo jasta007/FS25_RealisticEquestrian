@@ -1218,7 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s正在隔离，回家前不能骑乘。"/>
         <text name="eq_ride_blocked_away" text="%s外出参赛，不能骑乘。"/>
         <text name="eq_ride_blocked_injured" text="%s受伤了，痊愈前不能骑乘。"/>
-        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满2岁后才能骑乘。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满1岁后才能骑乘。"/>
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔离，已被带回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出参赛，已被带回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受伤了，已被带回%s休息。"/>
