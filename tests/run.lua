@@ -3870,6 +3870,27 @@ end)()
         and not EqDressage.isArenaXml("FS25_RidingHall/objekt.xml") and not EqDressage.isArenaXml(nil))
     check("arena marker nodes give their letter", EqDressage.arenaLetter("eqMarker_X") == "X"
         and EqDressage.arenaLetter("eqMarkers") == nil and EqDressage.arenaLetter("arena") == nil)
+    check("Riding Hall 2k26's hall is a lettered arena", EqDressage.isHallXml("C:\\mods\\FS25_RidingHall\\ReitHalle.xml")
+        and not EqDressage.isHallXml("FS25_RidingHall/objekt.xml") and not EqDressage.isHallXml(nil)
+        and EqDressage.hallLetter("normalLetter_F") == "F" and EqDressage.hallLetter("normalLettersDecal") == nil)
+    -- The hall's boards as measured from its model (2026-11-04), turned and moved on the map.
+    local HALL = { A = { -6.91, 0.22 }, F = { -0.41, 11.49 }, K = { -0.41, -11.32 }, B = { 10.9, 11.49 }, E = { 10.9, -11.33 },
+        M = { 21.19, 11.49 }, H = { 21.19, -11.32 }, C = { 27.11, 0 } }
+    local hall, ca, sa = {}, math.cos(0.7), math.sin(0.7)
+    for letter, at in pairs(HALL) do
+        table.insert(hall, { letter = letter, x = 500 + at[1] * ca - at[2] * sa, z = -200 + at[1] * sa + at[2] * ca })
+    end
+    local lettered = EqDressage.withCentreLine(hall)
+    local centre = {}
+    for _, l in ipairs(lettered or {}) do centre[l.letter] = l end
+    local function across(l)
+        local a, c = centre.A, centre.C
+        local len = math.sqrt((c.x - a.x) ^ 2 + (c.z - a.z) ^ 2)
+        return math.abs((l.x - a.x) * (c.z - a.z) - (l.z - a.z) * (c.x - a.x)) / len
+    end
+    check("a hall gets D, X and G on its centre line", lettered ~= nil and #lettered == 11 and centre.D ~= nil and centre.X ~= nil
+        and centre.G ~= nil and across(centre.D) < 1e-6 and across(centre.X) < 1e-6 and across(centre.G) < 1e-6)
+    check("a hall without its C has no arena", EqDressage.withCentreLine({ { letter = "A", x = 0, z = 0 }, { letter = "E", x = 5, z = 5 } }) == nil)
 
     -- A rider who does what is asked, ridden frame by frame.
     local SPEED = { walk = 1.7, trot = 3.5, canter = 5.5 }
@@ -4268,6 +4289,25 @@ end)()
             if event == "test" or event == "lost" then return run, event end
         end
         return run, "timeout"
+    end
+
+    do
+        local HALL = { A = { -6.91, 0.22 }, F = { -0.41, 11.49 }, K = { -0.41, -11.32 }, B = { 10.9, 11.49 }, E = { 10.9, -11.33 },
+            M = { 21.19, 11.49 }, H = { 21.19, -11.32 }, C = { 27.11, 0 } }
+        local list = {}
+        for letter, at in pairs(HALL) do table.insert(list, { letter = letter, x = 40 + at[1], z = 90 + at[2] }) end
+        local markers = {}
+        for _, l in ipairs(EqDressage.withCentreLine(list)) do
+            table.insert(markers, { letter = l.letter, x = l.x, z = l.z, arena = true, arenaId = 77 })
+        end
+        local frame = EqDressagePath.frameFor(markers, xOf(markers))
+        check("the riding hall's ring is an arena frame about 22 x 33 m", frame ~= nil and frame.halfW > 10 and frame.halfW < 12
+            and frame.halfL > 16 and frame.halfL < 17.5)
+        local rolls = EqRandom.new(5)
+        local built = frame ~= nil and EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end) or nil
+        check("a test can be built in the riding hall", built ~= nil and built.pts ~= nil and #built.pts > 10)
+        local venue = EqHosting.arenasFromMarkers(markers)
+        check("the riding hall counts as a 30 m arena for hosting", #venue == 1 and venue[1].length == 30)
     end
 
     for n, arena in ipairs(SHOP) do
@@ -6159,6 +6199,29 @@ end)()
         if math.abs(seat.x) > 3 - EqSpectators.SEAT_END + 1e-9 then inside = false end
     end
     check("spectators: seats stay off the bleacher's ends", inside)
+    local stable = EqSpectators.builtInFor("C:\\mods\\FS25_RidingStable\\XML\\horseBarnBig.xml")
+    check("spectators: the Riding Stable has a built-in stand", stable ~= nil
+        and EqSpectators.builtInFor("FS25_horsePack/xml/ridingHall.xml") == nil and EqSpectators.builtInFor(nil) == nil)
+    local stableSeats = EqSpectators.builtInSeats(stable)
+    local inAisle, facing, dropOk = false, true, true
+    for _, seat in ipairs(stableSeats) do
+        for _, aisle in ipairs({ { -9.48, -8.81 }, { -3.32, -2.65 }, { 2.85, 3.51 }, { 9.01, 9.67 } }) do
+            if seat.frontZ > aisle[1] - 0.2 and seat.frontZ < aisle[2] + 0.2 then inAisle = true end
+        end
+        if seat.yaw ~= math.pi / 2 then facing = false end
+        if math.abs(seat.y - seat.floorY - 0.49) > 1e-9 then dropOk = false end
+    end
+    check("spectators: the stable's 8 rows seat a crowd, none in its aisles", #stableSeats == 8 * 37 and not inAisle)
+    check("spectators: the stable's seats face its arena (+x), feet on the step below", facing and dropOk)
+    local top = stableSeats[#stableSeats]
+    check("spectators: the stable's back row is highest and furthest back", top.row == 7 and math.abs(top.y - (0.89 + 7 * 0.4)) < 1e-9
+        and math.abs(top.x - (-18.81 - 7)) < 1e-9)
+    local spots = EqSpectators.builtInStands(stable)
+    local behind = true
+    for _, spot in ipairs(spots) do
+        if math.abs(spot.z) < 16.4 or math.abs(spot.z) > 17.8 then behind = false end
+    end
+    check("spectators: standing room behind the stable's blue boards", #spots >= 50 and behind)
     local list = {}
     for i = 1, 20 do list[i] = i end
     local a = EqSpectators.pick(list, 5, EqRandom.new(42))

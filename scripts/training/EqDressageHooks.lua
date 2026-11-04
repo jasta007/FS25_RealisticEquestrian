@@ -7,7 +7,9 @@
     letter is the configuration picked when placing one ("solarPanels" in its xml, A to Z).
     Our own arenas (EqDressage.ARENA_XML) carry every letter as a node named eqMarker_<letter>.
     Their rail and letters have collision only so the construction screen can pick them to move or
-    sell: it is off everywhere else, so horses ride over the rail (James, 2026-11-04).
+    sell: it is off everywhere else, so horses ride over the rail (James, 2026-11-04). Riding Hall
+    2k26's hall (EqDressage.HALL_XML) has its own ring of letter boards, which rides like one of
+    our arenas.
     The boards come with collision, which a horse runs into in the middle of an arena, so we take
     their collision off while a horse is ridden and put it back after (James, 2026-10-27), so
     they can still be picked up and sold in construction mode.
@@ -156,6 +158,53 @@ function EqDressageHooks.addArena(placeable, list)
 end
 
 
+--- Add the letters of a riding hall with its own arena (EqDressage.isHallXml): its letter boards,
+--- read once in the hall's own frame (A hangs on a gate that swings open, so it is read while
+--- the hall is new and the gate shut), then D, X and G worked out on the centre line.
+--- @param placeable table
+--- @param list table
+function EqDressageHooks.addHall(placeable, list)
+    local root = placeable.rootNode
+    if placeable.eqHallLetters == nil then
+        local letters, seen = {}, {}
+        local stack = { root }
+        while #stack > 0 do
+            local node = table.remove(stack)
+            local letter = EqDressage.hallLetter(getName(node))
+            if letter ~= nil and not seen[letter] then
+                seen[letter] = true
+                local x, y, z = getWorldTranslation(node)
+                local lx, _, lz = worldToLocal(root, x, y, z)
+                table.insert(letters, { letter = letter, lx = lx, lz = lz })
+            end
+            for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+        end
+        -- the side boards come in a part loaded after the hall: keep looking until A and C are there
+        if seen.A and seen.C and #letters >= 4 then
+            placeable.eqHallLetters = letters
+            Log:info("Riding hall arena: %d letter boards (%s)", #letters, placeable.configFileName or "?")
+        else
+            return
+        end
+    end
+    local world = {}
+    for _, l in ipairs(placeable.eqHallLetters) do
+        local x, _, z = localToWorld(root, l.lx, 0, l.lz)
+        table.insert(world, { letter = l.letter, x = x, z = z })
+    end
+    local letters = EqDressage.withCentreLine(world)
+    if letters == nil then return end
+    for _, l in ipairs(letters) do
+        table.insert(list, { letter = l.letter, x = l.x, z = l.z, arena = true, arenaId = root })
+        local key = string.format("%.1f:%.1f", l.x, l.z)
+        if not EqDressageHooks.logged[key] then
+            EqDressageHooks.logged[key] = true
+            Log:info("Riding hall arena marker %s at %.1f, %.1f", l.letter, l.x, l.z)
+        end
+    end
+end
+
+
 --- @return table every dressage marker on the map: { letter, x, z }
 function EqDressageHooks.scan()
     local list, placeables, arenas = {}, {}, {}
@@ -168,6 +217,9 @@ function EqDressageHooks.scan()
             if EqDressageHooks.arenaCollision ~= nil then EqDressageHooks.applyArenaCollision(placeable) end
             local ok, err = EqLog.try("EqDressageHooks.scan addArena", EqDressageHooks.addArena, placeable, list)
             if not ok then Log:warning("Dressage arena: %s", tostring(err)) end
+        elseif EqDressage.isHallXml(placeable.configFileName) and placeable.rootNode ~= nil then
+            local ok, err = EqLog.try("EqDressageHooks.scan addHall", EqDressageHooks.addHall, placeable, list)
+            if not ok then Log:warning("Riding hall arena: %s", tostring(err)) end
         elseif EqDressage.isMarkerXml(placeable.configFileName) and placeable.rootNode ~= nil then
             local index = placeable.configurations ~= nil and placeable.configurations.solarPanels or nil
             local okName, name = EqLog.try("EqDressageHooks.scan configName", configName, placeable, "solarPanels", index)

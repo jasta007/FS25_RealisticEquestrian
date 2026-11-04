@@ -385,6 +385,9 @@ start). Placeables standing over the arena, such as a riding hall, are hidden wh
 - A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it
   loses the test) and replaces the random tests there, in training and in your own events held
   there. Riding Hall boards have no editor. Single player only, like courses.
+- **Riding Hall 2k26's hall** has its own ring of letter boards (A on the entrance gate, F K B E M
+  H C round it, about 22 x 33 m). It rides like one of our arenas: random tests, Ctrl+L tests and
+  your own events (it counts as a 30 m arena). D, X and G are worked out on its centre line.
 
 **Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
 and walks are only asked for to markers within 12 m:
@@ -873,7 +876,8 @@ A Novice event about breaks even, an Intermediate one pays only when it's popula
 Championship loses money unless a sponsor pays for it (see Sponsors below).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
-  **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
+  **Arenas** are our dressage arenas, Riding Hall letter boards and Riding Hall 2k26's hall.
+  The Riding Stable mod's building counts as a bleacher (its stand). **Bleachers** count within
   60 m of a course or arena; an indoor arena counts as one. A 3 Day Event needs all three, with
   seating at both the arena and the show jumping course, and costs 1.5x to set up.
 - **Bleachers:** the shop's Horses tab has our own, 3 rows x 6 m, 5 x 10 m and 8 x 16 m (any
@@ -956,7 +960,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   your rides. Only the visitors' stables and feed can stop it.
 
 - **Spectators:** while your event runs, from 08:00 to 19:00, people come to watch: seated on
-  your bleachers and standing in the yellow spectator boxes of the Rope Marker's third segment
+  your bleachers (and the Riding Stable mod's own stand, with standing room in the aisles behind
+  its blue boards) and standing in the yellow spectator boxes of the Rope Marker's third segment
   (the box is painted on one side of the rope and shows only in construction mode, so draw the
   rope with the box away from the track). While your event runs, all day, Rope Markers stay in
   sight (still no collision) as the crowd's barrier, instead of hiding like the course flags. The **Crowd density** setting gives up to 4 seated and

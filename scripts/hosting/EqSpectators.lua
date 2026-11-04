@@ -45,6 +45,24 @@ EqSpectators.BASE = 0.3
 EqSpectators.BENCH_HEIGHT = 0.42
 EqSpectators.BENCH_FROM = 0.42
 EqSpectators.BENCH_TO = 0.74
+-- Stands built into other mods' buildings, measured from their models (James 2026-11-04: the
+-- Riding Stable's indoor school has bleachers). In the placeable's own frame: the front row's
+-- bench front edge at frontX, each row rowDepth further back (-x for people facing +x) and
+-- rowRise higher, bench tops benchY above the ground and drop above the step the feet are on;
+-- sections are the stretches of bench between the aisles (z from, to).
+EqSpectators.BUILT_IN = {
+    {
+        xml = "fs25_ridingstable/xml/horsebarnbig.xml",
+        rows = 8, frontX = -18.81, rowDepth = 1.0, benchY = 0.89, rowRise = 0.4, drop = 0.49, yaw = math.pi / 2,
+        sections = { { -15.22, -9.53 }, { -8.76, -3.37 }, { -2.59, 2.80 }, { 3.57, 8.96 }, { 9.73, 15.42 } },
+        -- standing room in the aisles behind the blue boards along both long sides (James
+        -- 2026-11-04): the boards stand at z = +-16, the floor ends at +-18
+        floorY = 0.03,
+        standing = { { from = -13, to = 24, z = 17.1, yaw = math.pi }, { from = -10, to = 24, z = -17.1, yaw = 0 } },
+    },
+}
+-- Standing spots along a built-in stand's aisles are this far apart.
+EqSpectators.STAND_SPACING = 1.2
 -- Room each seated person takes along a row, and the gap kept at each end.
 EqSpectators.SEAT_WIDTH = 0.65
 EqSpectators.SEAT_END = 0.45
@@ -190,6 +208,56 @@ function EqSpectators.seatsOf(rows, length)
 end
 
 
+--- @param filename string|nil a placeable's xml
+--- @return table|nil the BUILT_IN stand it has
+function EqSpectators.builtInFor(filename)
+    if type(filename) ~= "string" then return nil end
+    local path = string.lower(string.gsub(filename, "\\", "/"))
+    for _, stand in ipairs(EqSpectators.BUILT_IN) do
+        if string.sub(path, -#stand.xml) == stand.xml then return stand end
+    end
+    return nil
+end
+
+
+--- Every seat on a built-in stand, in its placeable's frame: like seatsOf, plus yaw, the way
+--- the person faces (the holder is turned by it instead of to -z).
+--- @param stand table from BUILT_IN
+--- @return table seats
+function EqSpectators.builtInSeats(stand)
+    local seats = {}
+    for r = 0, stand.rows - 1 do
+        local y = stand.benchY + r * stand.rowRise
+        local x = stand.frontX - r * stand.rowDepth
+        for _, section in ipairs(stand.sections) do
+            local usable = (section[2] - section[1]) - 2 * EqSpectators.SEAT_END
+            local count = math.max(1, math.floor(usable / EqSpectators.SEAT_WIDTH) + 1)
+            for i = 0, count - 1 do
+                local z = count == 1 and (section[1] + section[2]) / 2 or (section[1] + EqSpectators.SEAT_END + usable * i / (count - 1))
+                table.insert(seats, { row = r, x = x, y = y, floorY = y - stand.drop, frontZ = z, z = z, yaw = stand.yaw })
+            end
+        end
+    end
+    return seats
+end
+
+
+--- Every standing spot of a built-in stand, in its placeable's frame.
+--- @param stand table from BUILT_IN
+--- @return table spots list of { x, y, z, yaw }
+function EqSpectators.builtInStands(stand)
+    local spots = {}
+    for _, line in ipairs(stand.standing or {}) do
+        local count = math.max(1, math.floor((line.to - line.from) / EqSpectators.STAND_SPACING) + 1)
+        for i = 0, count - 1 do
+            local x = count == 1 and (line.from + line.to) / 2 or (line.from + (line.to - line.from) * i / (count - 1))
+            table.insert(spots, { x = x, y = stand.floorY or 0, z = line.z, yaw = line.yaw })
+        end
+    end
+    return spots
+end
+
+
 --- Pick up to count items, in a shuffled order that depends only on the seed.
 --- @param list table
 --- @param count number
@@ -267,10 +335,19 @@ function EqSpectators.places(farm)
         if type(root) == "number" and root ~= 0 and (entityExists == nil or entityExists(root)) then
             local rows, length = EqSpectators.bleacherSize(placeable.configFileName)
             local mine = ownerOf(placeable) == farm
+            local builtIn = rows == nil and EqSpectators.builtInFor(placeable.configFileName) or nil
             if rows ~= nil and mine then
                 for _, seat in ipairs(EqSpectators.seatsOf(rows, length)) do
                     seat.parent = root
                     table.insert(seats, seat)
+                end
+            elseif builtIn ~= nil and mine then
+                for _, seat in ipairs(EqSpectators.builtInSeats(builtIn)) do
+                    seat.parent = root
+                    table.insert(seats, seat)
+                end
+                for _, spot in ipairs(EqSpectators.builtInStands(builtIn)) do
+                    table.insert(stands, { box = root, root = root, spot = spot })
                 end
             elseif EqSponsors ~= nil and EqSponsors.isRope(placeable.configFileName) then
                 -- a fence is owned by farm 0: EqSponsors.ownerOf counts it as the player's farm
@@ -1177,9 +1254,18 @@ local function spawn(seat, stand, rng, used)
     end
     if seat ~= nil then
         link(seat.parent, holder)
-        -- on the bench's front edge, turned to face the bleacher's front (-z)
+        -- on the bench's front edge, turned to face the bleacher's front (-z), or a built-in
+        -- stand's own way (yaw)
         setTranslation(holder, seat.x, seat.y, seat.frontZ)
-        setRotation(holder, 0, math.pi, 0)
+        setRotation(holder, 0, seat.yaw or math.pi, 0)
+    elseif stand.spot ~= nil then
+        -- a built-in stand's standing room: on its floor, a little apart along the aisle
+        local spot = stand.spot
+        local x, y, z = localToWorld(stand.root, spot.x + rng:uniform(-0.3, 0.3), spot.y, spot.z + rng:uniform(-0.25, 0.25))
+        local dx, _, dz = localDirectionToWorld(stand.root, math.sin(spot.yaw), 0, math.cos(spot.yaw))
+        link(getRootNode(), holder)
+        setWorldTranslation(holder, x, y, z)
+        setWorldRotation(holder, 0, math.atan2(dx, dz) + rng:uniform(-0.4, 0.4), 0)
     else
         local box = EqSpectators.ROPE_BOX
         local half = (EqSpectators.ROPE_PANEL - 2 * EqSpectators.ROPE_INSET) / 2
