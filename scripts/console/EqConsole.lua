@@ -880,6 +880,15 @@ function EqConsole:consoleSponsorColours()
 end
 
 
+--- eqShopProbe: open the shop on a category, then run it: writes the shop's list and details
+--- layout to log.txt (for drawing the sponsor discount on the shop tiles).
+function EqConsole:consoleShopProbe()
+    if g_currentMission == nil then return "No mission loaded" end
+    local count = EqSponsorDiscounts.probeShop()
+    return string.format("Wrote %d shop layout lines to log.txt", count)
+end
+
+
 --- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
 function EqConsole:consoleSponsors(mode, amount)
     if g_currentMission == nil then return "No mission loaded" end
@@ -1060,6 +1069,7 @@ function EqConsole.register()
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
     addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
+    addConsoleCommand("eqShopProbe", "Testing: with the shop open on a category, writes the shop's layout to log.txt", "consoleShopProbe", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)

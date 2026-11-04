@@ -775,6 +775,7 @@
         <text name="eq_shop_productJump_function" text="Placez-en deux face à face à environ 5 m : une machine entre les deux compte aussi, ou sautez-les comme un obstacle de cross."/>
         <text name="eq_shop_plinthTurntable" text="Plateau tournant"/>
         <text name="eq_shop_turntable_function" text="Le plateau tourne lentement : laissez-y une machine et elle tourne avec lui, avec tout ce qui est attelé. Une machine de votre sponsor y compte davantage."/>
+        <text name="eq_shop_sponsorDiscount" text="Remise du sponsor : %d%%"/>
         <text name="eq_plinth_inPlace" text="Équipement du sponsor en place !"/>
         <text name="eq_plinth_wrongBrand" text="Ce n'est pas l'équipement de votre sponsor ! Les machines concurrentes exposées réduiront vos revenus de sponsoring !"/>
         <text name="eq_plinth_noSponsor" text="Aucun sponsor signé : son équipement exposé ici compterait pour votre visibilité."/>

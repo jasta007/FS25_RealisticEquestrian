@@ -99,6 +99,7 @@
         <text name="eq_shop_productJump_function" text="Postav dvě proti sobě asi 5 m od sebe: stroj mezi nimi se počítá také, nebo je skoč jako terénní překážku."/>
         <text name="eq_shop_plinthTurntable" text="Otočná plošina"/>
         <text name="eq_shop_turntable_function" text="Kotouč se pomalu otáčí: nech na něm stroj a bude se otáčet s ním, i se vším připojeným. Stroj tvého sponzora se tu počítá víc."/>
+        <text name="eq_shop_sponsorDiscount" text="Sleva od sponzora: %d%%"/>
         <text name="eq_plinth_inPlace" text="Vybavení sponzora na místě!"/>
         <text name="eq_plinth_wrongBrand" text="To není vybavení tvého sponzora! Vystavené stroje konkurence sníží tvé příjmy ze sponzoringu!"/>
         <text name="eq_plinth_noSponsor" text="Žádný sponzor nepodepsán: jeho vybavení vystavené zde by se počítalo do brandingu."/>

@@ -99,6 +99,7 @@
         <text name="eq_shop_productJump_function" text="2台を約5m離して向かい合わせに置きます。間に置いた機械もカウントされ、クロスカントリー障害としても跳べます。"/>
         <text name="eq_shop_plinthTurntable" text="ターンテーブル"/>
         <text name="eq_shop_turntable_function" text="ディスクはゆっくり回ります。機械を載せたままにすると、連結した作業機ごと一緒に回ります。スポンサーの機械はここでより多くカウントされます。"/>
+        <text name="eq_shop_sponsorDiscount" text="スポンサー割引: %d%%"/>
         <text name="eq_plinth_inPlace" text="スポンサー機材の配置完了！"/>
         <text name="eq_plinth_wrongBrand" text="スポンサーの機材ではありません！ライバルの機械を展示するとスポンサー収入が減ります！"/>
         <text name="eq_plinth_noSponsor" text="スポンサー未契約：ここに展示した機材はブランド効果にカウントされます。"/>

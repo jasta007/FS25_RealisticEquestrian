@@ -99,6 +99,7 @@
         <text name="eq_shop_productJump_function" text="把兩個相對放置，相距約 5 公尺：停在中間的機器也計入，或者把它們當越野障礙來跳。"/>
         <text name="eq_shop_plinthTurntable" text="旋轉展台"/>
         <text name="eq_shop_turntable_function" text="轉盤緩慢旋轉：把機器停在上面，它會連同掛接的農具一起隨轉盤轉動。贊助商的機器在這裡計入更多。"/>
+        <text name="eq_shop_sponsorDiscount" text="贊助商折扣：%d%%"/>
         <text name="eq_plinth_inPlace" text="贊助商設備已就位！"/>
         <text name="eq_plinth_wrongBrand" text="這不是你贊助商的設備！展示競爭品牌的機器會減少你的贊助收入！"/>
         <text name="eq_plinth_noSponsor" text="尚未簽約贊助商：在這裡展示其設備將計入你的品牌曝光。"/>

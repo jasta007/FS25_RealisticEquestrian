@@ -775,6 +775,7 @@
         <text name="eq_shop_productJump_function" text="Coloca dos enfrentadas a unos 5 m: una máquina entre ellas también cuenta, o sáltalas como un obstáculo de cross."/>
         <text name="eq_shop_plinthTurntable" text="Plataforma giratoria"/>
         <text name="eq_shop_turntable_function" text="El disco gira despacio: deja una máquina encima y girará con él, con todo lo enganchado. Una máquina de tu patrocinador cuenta más aquí."/>
+        <text name="eq_shop_sponsorDiscount" text="Descuento del patrocinador: %d%%"/>
         <text name="eq_plinth_inPlace" text="¡Equipo del patrocinador en su sitio!"/>
         <text name="eq_plinth_wrongBrand" text="¡No es equipo de tu patrocinador! ¡Las máquinas rivales expuestas reducirán tus ingresos de patrocinio!"/>
         <text name="eq_plinth_noSponsor" text="Sin patrocinador firmado: su equipo expuesto aquí contaría para tu marca."/>
