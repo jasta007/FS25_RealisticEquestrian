@@ -8,7 +8,7 @@
     until the event is over and RLRM keeps looking after them.
 
     The dealer trigger is the base game's AnimalLoadingTrigger with isDealer set; the trailer in
-    it is its loadingVehicle (eqProbe, in game). Server and single player only for now.
+    it is its loadingVehicle (EqProbe remembers the triggers). Server and single player only for now.
 ]]
 
 EqDelivery = {}

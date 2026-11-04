@@ -12,7 +12,6 @@
     signed sponsor's colour. The colour is the game's own for that brand when it has one (the
     paint it gives the brand's machines, read at run time, so brands added later by DLC or mods
     work too), else one from COLOURS below, else the pole colour bought in the shop.
-    eqSponsorColours lists where each brand's colour comes from.
 
     Part of Realistic Equestrian by Jasta007.
 ]]
@@ -374,34 +373,6 @@ function EqSponsorBoards.colourFor(placeable)
     if not isSigned then brand = signed[1] end
     local colour = EqSponsorBoards.brandColour(brand)
     return colour, colour ~= nil and brand or nil
-end
-
-
---- eqSponsorColours: each brand of the shop and its jump colour, with where it came from.
-function EqSponsorBoards.report()
-    local lines = {}
-    local _, source = EqSponsorBoards.gamePaints()
-    table.insert(lines, "Game paints: " .. tostring(source or "not found"))
-    local names = {}
-    local manager = g_brandManager
-    for _, brand in pairs(manager ~= nil and (manager.indexToBrand or manager.nameToBrand) or {}) do
-        if type(brand) == "table" and type(brand.name) == "string" then names[brand.name] = true end
-    end
-    local sorted = {}
-    for name in pairs(names) do table.insert(sorted, name) end
-    table.sort(sorted)
-    local missing = 0
-    for _, name in ipairs(sorted) do
-        local colour, from = EqSponsorBoards.brandColour(name)
-        if colour ~= nil then
-            table.insert(lines, string.format("%-20s %.3f %.3f %.3f  %s", name, colour[1], colour[2], colour[3], from))
-        else
-            missing = missing + 1
-            table.insert(lines, string.format("%-20s none (shop colour)", name))
-        end
-    end
-    table.insert(lines, string.format("%d brands, %d with no colour", #sorted, missing))
-    return lines
 end
 
 

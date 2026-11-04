@@ -277,7 +277,6 @@ function EqSpectators.places(farm)
                 local found = {}
                 findNamed(root, EqSpectators.BOX_NODE, found)
                 EqSpectators.lastScan.ropes = EqSpectators.lastScan.ropes + 1
-                EqSpectators.lastScan.firstRope = EqSpectators.lastScan.firstRope or root
                 EqSpectators.lastScan.owners[tostring(ownerOf(placeable))] = true
                 local ours = EqSponsors.ownerOf(placeable) == farm
                 EqSpectators.lastScan.boxes = (EqSpectators.lastScan.boxes or 0) + #found
@@ -590,17 +589,13 @@ end
 
 --- Seated: targets for the feet and hands, in the seat's frame (+z the way the person faces).
 --- Hand poses (James 2026-11-02: resetting the finger joints did nothing, the clip wins): the arm
---- IK chain's own poses, as vehicles use them. EqSpectators.handPose is the one to use
---- (eqSpectators handpose <name>); with none, the first with open/flat/relax in its name.
+--- IK chain's own poses, as vehicles use them: the first with relax/open/flat in its name.
 EqSpectators.HAND_POSE_WORDS = { "relax", "open", "flat", "rest", "idle", "wide" }
 
 --- @return string|nil the pose id to use on this chain
 function EqSpectators.handPoseFor(chain)
     local poses = type(chain) == "table" and type(chain.poses) == "table" and chain.poses or nil
     if poses == nil then return nil end
-    if EqSpectators.handPose ~= nil then
-        return poses[EqSpectators.handPose] ~= nil and EqSpectators.handPose or nil
-    end
     for _, word in ipairs(EqSpectators.HAND_POSE_WORDS) do
         local names = {}
         for name in pairs(poses) do table.insert(names, tostring(name)) end
@@ -641,10 +636,8 @@ function EqSpectators.armsOn()
 end
 
 
---- @return boolean true when this person's hand rests in the lap (eqSpectators explore can force a group)
+--- @return boolean true when this person's hand rests in the lap
 function EqSpectators.lapHand(person, id)
-    if EqSpectators.forceHands == "lap" then return true end
-    if EqSpectators.forceHands == "sides" then return false end
     return person.lap or person.oneLap == id
 end
 
@@ -654,7 +647,6 @@ local function mixed(a, b, m) return a + (b - a) * m end
 
 --- How far this hand is from by-the-side (0) to in-the-lap (1); hands move between the two now and then.
 function EqSpectators.lapMix(person, id)
-    if EqSpectators.forceHands ~= nil then return EqSpectators.lapHand(person, id) and 1 or 0 end
     person.mix = person.mix or {}
     if person.mix[id] == nil then person.mix[id] = { at = EqSpectators.lapHand(person, id) and 1 or 0 } end
     local mix = person.mix[id]
@@ -996,7 +988,7 @@ end
 local function fidget(person, now, dt)
     local f = EqSpectators.FIDGET
     -- hands: lap <-> side
-    if EqSpectators.forceHands == nil and EqSpectators.pose.arms == 2 then
+    if EqSpectators.pose.arms == 2 then
         person.nextSwap = person.nextSwap or (now + between(f.swapMs))
         local moving = false
         if now >= person.nextSwap then
@@ -1057,38 +1049,6 @@ local function fidget(person, now, dt)
             rotateAboutLocalAxis(node, person.lookPitch * share, bx, by, bz)
         end
     end
-end
-
-
---- eqSpectators explore sides|lap: that group's hand values drift slowly (each on its own slow
---- wave, everyone in the group the same, no jitter); eqSpectators snapshot keeps them.
-EqSpectators.EXPLORE = {
-    sides = { handApart = 0.05, handForward = 0.06, handLift = 0.05, elbowOut = 0.4, elbowDown = 0.4, elbowBack = 0.4 },
-    lap = { lapApart = 0.04, lapForward = 0.06, lapLift = 0.04, lapElbowOut = 0.4, lapElbowDown = 0.4, lapElbowBack = 0.4 },
-}
-
-function EqSpectators.exploreStep(now)
-    local ex = EqSpectators.exploring
-    if ex == nil then return end
-    local t = (now - ex.start) / 1000
-    local i = 0
-    for name, amp in pairs(EqSpectators.EXPLORE[ex.group]) do
-        i = i + 1
-        local period = 9 + 4 * i      -- 13, 17, 21 ... seconds: the waves don't line up
-        EqSpectators.pose[name] = ex.base[name] + amp * math.sin(2 * math.pi * t / period + i * 1.7)
-    end
-    for _, person in ipairs(EqSpectators.people) do
-        if person.seated and person.model ~= nil and person.model.rootNode ~= nil and next(person.targets) ~= nil then placeTargets(person) end
-    end
-end
-
-
---- The seated pose's values as one line (for the log and the console).
-function EqSpectators.poseLine()
-    local parts = {}
-    for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.3f", name, v)) end
-    table.sort(parts)
-    return table.concat(parts, " ")
 end
 
 
@@ -1376,7 +1336,6 @@ function EqSpectators.update()
     local camera = g_cameraManager ~= nil and g_cameraManager:getActiveCamera() or nil
     if camera == nil or camera == 0 then return end
     local cx, cy, cz = getWorldTranslation(camera)
-    EqLog.try("EqSpectators explore", EqSpectators.exploreStep, now)
     for _, person in ipairs(EqSpectators.people) do
         local model = person.model
         if person.ready and model ~= nil and model.rootNode ~= nil then
@@ -1425,22 +1384,7 @@ function EqSpectators.update()
 end
 
 
---- Seated people take a changed pose (eqSpectators pose).
-function EqSpectators.repose()
-    for _, person in ipairs(EqSpectators.people) do
-        if person.seated and person.model ~= nil and person.model.rootNode ~= nil then
-            placeTargets(person)
-            EqLog.try("EqSpectators hands", aimHands, person)
-            if person.settled then settle(person) end
-            person.posed = 0     -- solve the new pose again, near or far
-        elseif not person.seated and person.settled and person.model ~= nil and person.model.rootNode ~= nil then
-            ground(person)
-        end
-    end
-end
-
-
---- eqSpectators [on [seated standing] | off | auto | pose <name> <value> | info]
+--- eqSpectators [on [seated standing] | off | auto | info]
 function EqSpectators.console(command, a, b)
     command = string.lower(tostring(command or "info"))
     if command == "on" then
@@ -1457,70 +1401,6 @@ function EqSpectators.console(command, a, b)
         EqSpectators.forced, EqSpectators.forcedCounts = nil, nil
         EqSpectators.key, EqSpectators.scannedAt = nil, nil
         return "Spectators come to your hosted events (08:00-19:00) as the Crowd density setting says"
-    elseif command == "explore" then
-        local group = string.lower(tostring(a or ""))
-        if group == "stop" then
-            local ex = EqSpectators.exploring
-            if ex ~= nil then for name, v in pairs(ex.base) do EqSpectators.pose[name] = v end end
-            EqSpectators.exploring, EqSpectators.forceHands = nil, nil
-            EqSpectators.repose()
-            return "Spectators: exploring stopped, values back to where they were"
-        end
-        if group == "side" then group = "sides" end
-        if EqSpectators.EXPLORE[group] == nil then return "Usage: eqSpectators explore sides|lap|stop, then eqSpectators snapshot" end
-        local base = {}
-        for name, v in pairs(EqSpectators.pose) do base[name] = v end
-        EqSpectators.exploring = { group = group, base = base, start = g_time or 0, jitter = EqSpectators.pose.handJitter }
-        EqSpectators.pose.handJitter = 0
-        EqSpectators.forceHands = group
-        EqSpectators.repose()
-        return string.format("Spectators: everyone's hands %s, drifting slowly; eqSpectators snapshot keeps a pose you like", group == "lap" and "in the lap" or "by their sides")
-    elseif command == "snapshot" or command == "snap" then
-        local ex = EqSpectators.exploring
-        if ex == nil then return "Not exploring: eqSpectators explore sides|lap first" end
-        EqSpectators.exploring, EqSpectators.forceHands = nil, nil
-        EqSpectators.pose.handJitter = ex.jitter
-        local keys = {}
-        for name in pairs(EqSpectators.EXPLORE[ex.group]) do table.insert(keys, string.format("%s=%.3f", name, EqSpectators.pose[name])) end
-        table.sort(keys)
-        Log:info("EqSpectators: SNAPSHOT %s: %s", ex.group, table.concat(keys, " "))
-        Log:info("EqSpectators: Seated pose: %s", EqSpectators.poseLine())
-        EqSpectators.repose()
-        return "Snapshot " .. ex.group .. " kept (in log.txt): " .. table.concat(keys, " ")
-    elseif command == "reset" then
-        -- the pose back to its defaults and everyone seated afresh
-        for name, value in pairs(EqSpectators.POSE_DEFAULTS) do EqSpectators.pose[name] = value end
-        EqSpectators.handPose = nil
-        EqSpectators.key, EqSpectators.scannedAt = nil, nil
-        return "Spectators: pose back to its defaults, everyone seated afresh"
-    elseif command == "handpose" then
-        EqSpectators.handPose = a
-        local used = nil
-        for _, person in ipairs(EqSpectators.people) do
-            local chains = person.seated and person.model ~= nil and person.model.rootNode ~= nil and person.model:getIKChains() or nil
-            if chains ~= nil then
-                for id in pairs(EqSpectators.ARM_CHAINS) do
-                    if chains[id] ~= nil and person.targets[id] ~= nil then
-                        used = EqSpectators.handPoseFor(chains[id]) or used
-                        IKUtil.setTarget(chains, id, { targetNode = person.targets[id], alignToTarget = false, poseId = EqSpectators.handPoseFor(chains[id]) })
-                        EqLog.try("EqSpectators hand pose", EqSpectators.applyHandPose, chains, id)
-                        IKUtil.setIKChainDirty(chains, id)
-                    end
-                end
-                person.posed = 0
-            end
-        end
-        return string.format("Hand pose: %s (eqSpectators handpose <name>; the names are in log.txt, 'hand poses')", tostring(used or a or "none"))
-    elseif command == "pose" then
-        local value = tonumber(b)
-        if a ~= nil and EqSpectators.pose[a] ~= nil and value ~= nil then
-            EqSpectators.pose[a] = value
-            EqSpectators.repose()
-        end
-        local parts = {}
-        for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
-        table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; fingers 0 = the clip's curled fingers; wrists 0 = hand angles from the seat, not the forearm)"
     end
     local farm = farmId()
     local seats, stands = {}, {}
@@ -1530,21 +1410,9 @@ function EqSpectators.console(command, a, b)
     local scan = EqSpectators.lastScan or { ropes = 0, owners = {} }
     local owners = {}
     for owner in pairs(scan.owners) do table.insert(owners, owner) end
-    if scan.firstRope ~= nil and (entityExists == nil or entityExists(scan.firstRope)) then
-        -- the first rope's node names, to see where the game puts the fence panels
-        local names, stack = {}, { { scan.firstRope, 0 } }
-        while #stack > 0 and #names < 60 do
-            local entry = table.remove(stack, 1)
-            table.insert(names, string.rep(">", entry[2]) .. tostring(getName(entry[1])))
-            if entry[2] < 5 then
-                for i = 0, math.min(getNumOfChildren(entry[1]), 6) - 1 do table.insert(stack, { getChildAt(entry[1], i), entry[2] + 1 }) end
-            end
-        end
-        print("EqSpectators: first Rope Marker's nodes: " .. table.concat(names, " "))
-    end
     print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
         scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
-    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]",
+    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
 end

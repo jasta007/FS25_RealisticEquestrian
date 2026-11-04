@@ -42,10 +42,8 @@ git archive -o FS25_RealisticEquestrian.zip HEAD data gui placeables scripts tra
    there and stays switched off.
 
 Testing-only console commands: `eqHorses` (exact ceilings), `eqDealer` (the dealer's horses with
-their real potential), `eqRedraw` (a new set of round events), `eqDeliver <horse>` (deliver a
-Manual Transport horse without driving to the dealer), `eqExperience <horse> <discipline> <0-100>`,
-`eqFacilities near` (map nodes and placeables around you, for adding buildings to
-`data/facilities.xml`) and `eqProbe` (writes the dealer's loading triggers to the log).
+their real potential), `eqRedraw` (a new set of round events) and `eqFacilities near` (map nodes and placeables around
+you, for adding buildings to `data/facilities.xml`).
 
 ## Headless tests
 
