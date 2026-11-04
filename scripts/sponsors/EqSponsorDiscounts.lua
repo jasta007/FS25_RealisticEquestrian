@@ -139,7 +139,7 @@ function EqSponsorDiscounts.probeShop()
     local lines = {}
     local function add(fmt, ...) lines[#lines + 1] = string.format(fmt, ...) end
     local function tree(element, depth)
-        if element == nil or depth > 7 or #lines > 400 then return end
+        if element == nil or depth > 12 or #lines > 1500 then return end
         local text = type(element.text) == "string" and element.text or ""
         add("%s%s name=%s id=%s profile=%s visible=%s text=%q", string.rep("  ", depth),
             tostring(element.typeName or "?"), tostring(element.name), tostring(element.id),
@@ -150,7 +150,7 @@ function EqSponsorDiscounts.probeShop()
         if type(class) ~= "table" then add("%s: missing", label) return end
         local names = {}
         for key, value in pairs(class) do
-            if type(value) == "function" then names[#names + 1] = key end
+            if type(value) == "function" then names[#names + 1] = tostring(key) end
         end
         table.sort(names)
         add("%s functions: %s", label, table.concat(names, ", "))
@@ -159,7 +159,7 @@ function EqSponsorDiscounts.probeShop()
     functions(ShopMenu, "ShopMenu")
     if ShopConfigScreen ~= nil and type(ShopConfigScreen.GUI_PROFILE) == "table" then
         local keys = {}
-        for key, value in pairs(ShopConfigScreen.GUI_PROFILE) do keys[#keys + 1] = key .. "=" .. tostring(value) end
+        for key, value in pairs(ShopConfigScreen.GUI_PROFILE) do keys[#keys + 1] = tostring(key) .. "=" .. tostring(value) end
         table.sort(keys)
         add("ShopConfigScreen.GUI_PROFILE: %s", table.concat(keys, ", "))
     end
@@ -173,7 +173,7 @@ function EqSponsorDiscounts.probeShop()
             add("Items frame: menu.%s", tostring(key))
             local fields = {}
             for field, v in pairs(value) do
-                if type(v) ~= "function" then fields[#fields + 1] = field .. ":" .. type(v) end
+                if type(v) ~= "function" then fields[#fields + 1] = tostring(field) .. ":" .. type(v) end
             end
             table.sort(fields)
             add("  fields: %s", table.concat(fields, ", "))
@@ -181,6 +181,16 @@ function EqSponsorDiscounts.probeShop()
             for name in pairs(value.detailsTemplates) do templates[#templates + 1] = tostring(name) end
             table.sort(templates)
             add("  details templates: %s", table.concat(templates, ", "))
+            -- the shape of any list the frame holds (its display items are one of them)
+            for field, v in pairs(value) do
+                if type(v) == "table" and type(v[1]) == "table" and v[1].elements == nil then
+                    local keys = {}
+                    for k, kv in pairs(v[1]) do keys[#keys + 1] = tostring(k) .. ":" .. type(kv) end
+                    table.sort(keys)
+                    add("  %s[1] (%d): %s", tostring(field), #v, table.concat(keys, ", "))
+                end
+            end
+            add("  badge element found: %s", tostring(EqSponsorDiscounts.badgeName))
             tree(value, 1)
         end
     end
@@ -189,8 +199,90 @@ function EqSponsorDiscounts.probeShop()
 end
 
 
+--- The green "-35%" badge on a used machine's shop tile is the tile's "priceTag" (a
+--- ThreePartBitmap holding the Text "priceTagText"), seen with eqShopProbe on James's game
+--- 2026-11-04. The first descendant with one of these names (lower case) is used.
+EqSponsorDiscounts.BADGE_NAMES = { "pricetag" }
+
+
+--- @param cell table a shop list tile
+--- @return table|nil the tile's discount badge text element
+function EqSponsorDiscounts.findBadge(cell)
+    if cell.eqBadge ~= nil then return cell.eqBadge or nil end
+    local found = false
+    local stack = { cell }
+    while #stack > 0 and not found do
+        local element = table.remove(stack)
+        local name = type(element.name) == "string" and string.lower(element.name) or ""
+        for _, part in ipairs(EqSponsorDiscounts.BADGE_NAMES) do
+            if element ~= cell and name == part then found = element break end
+        end
+        for _, child in ipairs(element.elements or {}) do table.insert(stack, child) end
+    end
+    cell.eqBadge = found
+    if found and EqSponsorDiscounts.badgeName == nil then
+        EqSponsorDiscounts.badgeName = found.name
+        Log:info("EqSponsorDiscounts: shop tile badge is '%s'", tostring(found.name))
+    end
+    return found or nil
+end
+
+
+--- Before the game fills a reused shop tile: take off a badge we put on it.
+--- @param cell table
+function EqSponsorDiscounts.resetTile(cell)
+    if not cell.eqSponsorBadge then return end
+    cell.eqSponsorBadge = false
+    local badge = EqSponsorDiscounts.findBadge(cell)
+    if badge ~= nil then badge:setVisible(false) end
+end
+
+
+--- After the game fills a shop tile: a new sponsor machine gets the same "-20%" badge a used
+--- machine has. Only when the game left the badge hidden, so a used machine keeps its own.
+--- @param frame table ShopItemsFrame
+--- @param index number
+--- @param cell table
+function EqSponsorDiscounts.decorateTile(frame, index, cell)
+    local badge = EqSponsorDiscounts.findBadge(cell)
+    if badge == nil then return end
+    -- the label inside the badge's box, if the badge is a box
+    local label = badge.setText ~= nil and badge or nil
+    if label == nil then
+        for _, child in ipairs(badge.elements or {}) do
+            if child.setText ~= nil then label = child break end
+        end
+    end
+    if label == nil then return end
+    if badge.visible then return end
+    local items = frame.displayItems
+    local item = type(items) == "table" and items[index] or nil
+    local storeItem = item ~= nil and (item.storeItem or item) or nil
+    if storeItem == nil or storeItem.brandIndex == nil or (item.saleItem ~= nil) then return end
+    local share = EqSponsorDiscounts.shopShare(storeItem, nil)
+    if share <= 0 then return end
+    label:setText(string.format("-%d%%", math.floor(share * 100 + 0.5)))
+    badge:setVisible(true)
+    cell.eqSponsorBadge = true
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqSponsorDiscounts.install(guarded)
+    if ShopItemsFrame ~= nil and ShopItemsFrame.populateCellForItemInSection ~= nil then
+        ShopItemsFrame.populateCellForItemInSection = Utils.prependedFunction(ShopItemsFrame.populateCellForItemInSection,
+            function(frame, list, section, index, cell)
+                if cell == nil then return end
+                guarded("sponsor discount shop tile reset", function() EqSponsorDiscounts.resetTile(cell) end)
+            end)
+        ShopItemsFrame.populateCellForItemInSection = Utils.appendedFunction(ShopItemsFrame.populateCellForItemInSection,
+            function(frame, list, section, index, cell)
+                if not EqMain.isActive or cell == nil then return end
+                guarded("sponsor discount shop tile", function()
+                    EqSponsorDiscounts.decorateTile(frame, index, cell)
+                end)
+            end)
+    end
     if EconomyManager ~= nil and EconomyManager.getBuyPrice ~= nil then
         local original = EconomyManager.getBuyPrice
         EconomyManager.getBuyPrice = function(self, storeItem, configurations, saleItem, ...)
@@ -224,6 +316,7 @@ function EqSponsorDiscounts.install(guarded)
                 end)
             end)
     end
+    Log:info("EqSponsorDiscounts: shop tiles %s", tostring(ShopItemsFrame ~= nil and ShopItemsFrame.populateCellForItemInSection ~= nil))
     Log:info("EqSponsorDiscounts: buy price %s, buy data %s", tostring(EconomyManager ~= nil and EconomyManager.getBuyPrice ~= nil),
         tostring(BuyVehicleData ~= nil and BuyVehicleData.updatePrice ~= nil))
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()
