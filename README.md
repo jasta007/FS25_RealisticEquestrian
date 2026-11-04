@@ -2,193 +2,26 @@
   <img src="art/icon_512.png" alt="Realistic Equestrian" width="256">
 </p>
 
-# Realistic Equestrian for Farming Simulator 25
+**Give your horses a career.** Every horse gets four competition stats that you build up by riding, feeding and breeding. Then enter them in shows, races and championships for prize money, from local novice classes to a Grand Prix on the other side of the world.
 
-**Give your horses a career.** Every horse gets four competition stats that you build up by
-riding, feeding and breeding. Then enter them in shows, races and championships for prize money,
-from local novice classes to a Grand Prix on the other side of the world.
+**You're the breeder, owner and trainer as well as the jockey.** You breed, buy, train and feed champion horses at home, then send them off to compete while you get on with the farm. The results and prize money come back to you - or host your own events and ride in them.
 
-**You're the breeder, owner and trainer, not the jockey.** You don't ride in the events yourself.
-Your job is to breed, buy, train and feed champion horses at home, then send them off to compete.
-The events run while you get on with the farm, and the results and prize money come back to you.
+An add-on for Realistic Livestock - Ritter version (required), using its genetics, health and fitness.
 
-Realistic Equestrian is an add-on for
-[Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM) and
-uses its genetics, health and fitness.
+Version 1.0, beta release. Back up your savegame first. Multiplayer is limited for now.
 
-> **Version 0.1: early release.** Back up your savegame before trying it. Multiplayer is not
-> fully supported yet (see [Known issues](#known-issues)).
+**Features**
+**Four stats per horse:** Stamina, Speed, Agility and Temperament, each with an inherited potential and a unique method of training. No horse can max all four.
+Competitions tab in RLRM's menu (Shift+O): show jumping, dressage, cross country, eventing, flat racing and steeplechase, across five levels and venues in four regions. Going and weather matter and you get a report on how each of your horses performed.
+**Host your own events:** Build your own Showjumping and Dressage arenas and Cross Country courses and host different sizes of events with entry fees, spectator fees. You can even try and win the prize money yourself from the saddle.
+**Event Sponsorship:** Events are expensive but you can get detailed sponsorship contracts from most FS manufacturers. Meet their terms and gain some great perks.
+**Horse buildings:** riding halls, arenas, jump courses and round pens speed up training. Supports popular building mods and map scenery.
+**Over 15 Dynamic Equestrian Obstacles:** Poles that are knocked down, eventing obstacles that don't clutter up your farm outside of events. Colors can be customized.
+Training by riding: each stat is trained via its own minigame. Also works with the game's new Animal Workers: their daily ride (and RLRM's herdsman) keeps horses ticking over when you've got other things to do.
+**Breeding that matters:** foals inherit potential from both parents, so champions take generations.
+Feed boosts: oats, barley and corn boost different stats, and carrots and apples help temperament.
+Risk and injuries: falls, refusals and rare injuries with real vet bills and rest.
 
-## Contents
-
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Getting started](#getting-started)
-- [Compatibility](#compatibility)
-- [Known issues](#known-issues)
-- [Reporting a bug](#reporting-a-bug)
-- [Planned features](#planned-features)
-- [Console commands](#console-commands)
-- [A note on AI](#a-note-on-ai)
-- [Credits and licence](#credits-and-licence)
-
-## Features
-
-### Four stats per horse
-- **Stamina, Speed, Agility and Temperament**, each with an inherited **potential** (how good the
-  horse could become) and a trained **skill** (how good it is now).
-- Potential is genetic and shown in RLRM's style (Average, High, Very high...). Skill runs from
-  Untrained through Novice, Amateur, Competitor and Champion up to Legendary.
-- No horse is perfect: the best can max one or two stats, never all four.
-- Stats show in RLRM's menu (Shift+O) and in a Skills box when you look at a horse.
-
-### Breeding that matters
-- Foals inherit their stats' potential from both parents through RLRM's own breeding maths.
-- Two great parents give a strong foal, not a guaranteed better one, so champions take
-  generations.
-- Horses already on your farm get believable starting stats for their age.
-
-### Training
-- **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
-  a view per stat and Condensed (just the bar), and **H** for help.
-  - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap the left mouse button
-    to Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
-    Recovering train Stamina at a multiplier up to x5.
-  - **Agility:** clear jumps one after another to build a combo, up to x5.
-  - **Temperament:** ride up to a dressage arena and ride its test: figures drawn as a line on
-    the ground (green to red by how close you are), each marked out of 10 for staying on the line
-    and timing changes, halts and rein backs. Right mouse drag steers (A/D then strafe, Shift holds the heading and bends the head), **Shift + A/D** drifts sideways on the keyboard, for leg yields, half passes, shoulder-in, travers and renvers; **Ctrl** (+ A/D) for piaffes and pirouettes, Ctrl + W for a passage. The
-    shop has dressage arenas (15x30, 20x40, 20x60 m); Riding Hall 2k26 markers work too.
-    **Ctrl+L** in a shop arena builds your own test figure by figure (N/M, G, R, F, Enter, Backspace).
-- **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
-  again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
-- The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
-- **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
-  to +8 per stat in that month's events; staff keep up the daily training.
-- **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
-  Gait keys pressed in the air take effect as the horse lands. Jumping from a trot (or Ctrl +
-  Space at a canter or gallop) is a short, steep collected jump.
-- **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
-  it is in the pen.
-- **Staff (new):** hire grooms, event trainers, a vet and a broker on the **Equestrian Staff** tab
-  of RLRM's menu, and set who they work on. Trainers also coach for events, the vet cuts injuries
-  and fees, the broker gets better prices. The game's Animal Workers and RLRM's herdsman only keep
-  horses ticking over. Idle horses lose condition.
-- **Roles:** give a horse a role (Dressage, Racing, Breeding...) with **G** in RLRM's Info tab. The
-  list groups horses by role, the role shows while you look at or ride the horse, and staff can
-  work on a role.
-- Full rules are in [How Realistic Equestrian works](docs/MECHANICS.md#training).
-
-### Feed
-- What's in the trough speeds up training: oats, barley and corn boost different stats, and
-  carrots and apples boost temperament. Boosts from different feeds add up.
-- The pen's food list shows a row each for Oats, Barley, Corn, Hay and Treats, with the stats
-  each boosts.
-- Works with crops from other mods and maps: apples from
-  [Orchards And Greenhouses](https://www.farming-simulator.com/mod.php?mod_id=346995&title=fs2025)
-  and the [Geistal](https://www.farming-simulator.com/mod.php?mod_id=337082&title=fs2025) map,
-  plus winter barley, winter wheat, alfalfa and clover. Feeds your map doesn't have are simply skipped.
-- Sorghum is off the menu: it's toxic to horses.
-
-### Horse buildings
-- Owning a riding hall, outdoor arena, jump course or round pen speeds up training, and riding
-  inside one speeds your riding up much more.
-- They also give a small edge on the day in matching events (a jump course helps show jumping).
-- Cross country flags mark any obstacle as a cross country fence; the shop also sells log piles,
-  drop walls, corners (point left or right), roll tops, a table and a big log. They stay hidden outside construction, course editing and rounds (set
-  **Disappearing** in the shop: on by default for cross country pieces, off for show jumps), and road traffic stops during a cross country round.
-- Ten show jumps of our own (upright, oxers, crossrail, triple bar, hogsback, fans, liverpool, cavaletti) in
-  colours you pick in the shop drop a pole when your horse hits it, and put it back after the round or once you ride away.
-- Supports the Equestrian Pack, Riding Hall 2k26 and Riding Stable mods, and map
-  scenery such as Elmcreek's show jumping course and the round roofed barn on Elmcreek and
-  Frontier. Matching buildings say what they improve in the shop.
-
-### Competitions
-- A **Competitions tab** in RLRM's menu (Shift+O) lists the open events with their fee, prize
-  money, level, going and injury risk, and rates each of your horses: Favourite, Contender,
-  Outsider or Long shot.
-- **Six disciplines:** show jumping, dressage, cross country, eventing, flat racing and the
-  occasional steeplechase, each favouring different stats.
-- **Eventing scoresheets:** each phase's place and penalties, then the total; lowest wins.
-- **Five levels**, from Training and Novice classes every day (or month) to Advanced and Championship events
-  each month at named venues across four regions. Young horse classes for two-year-olds teach
-  rather than pay.
-- **Conditions matter:** firm going favours speed, soft and heavy favour stamina, and hot weather
-  tests stamina and temperament.
-- **Event experience:** horses get better at the disciplines they compete in, and show a
-  **Favourite event** such as "Show Jumping & Dressage", "3 Day Eventer" or "All Rounder".
-- Every outing teaches a little, and limits on entries a month keep a good horse from being an
-  endless money tap.
-- **Host your own event:** the **Host** tab books a Dressage, Show Jumping, Cross Country or 3 Day
-  Event at your farm (Novice, Intermediate or Championship) if your courses, arenas, stables and
-  feed are up to it. It runs for its month; enter up to two of your own horses, free, and ride
-  their rounds yourself if you like. Bad weather, a star horse, booking ahead, advertising and
-  farm shops all change the crowd, and visitors can buy your souvenirs and refreshments.
-- **Spectators:** during your event, people sit on your bleachers and stand in the Rope Marker's
-  spectator boxes. How many is the **Crowd density** setting.
-- **Sponsors:** each year brands from your shop offer to sponsor your hosted events, from relaxed
-  deals to hard bargains. Sign up to three on the **Sponsors** tab (big ones are exclusive) for a fee per event and extra popularity. Some lend you one of their machines, free, for your event month.
-- **Lizard:** now and then Lizard offers to sponsor an unsponsored event, if you build its
-  slapped-together Lizard Plinth from planks, logs and a load of stone, wood chips or straw.
-
-### Getting there
-- **Auto Transport:** pay for a horse truck and the horse leaves straight away. Venues overseas or
-  long-haul cost more, with quarantine.
-- **International quarantine:** back from an event abroad, a horse spends 1 round (overseas) or
-  2 rounds (long-haul) in quarantine before it is home. The Events tab shows your home region and
-  each event's region; set your region in Settings if the map gets it wrong.
-- **Manual Transport:** save the transport fee and drive the horse to the animal dealer yourself.
-  Horses waiting to go are marked **Awaiting delivery** in RLRM's lists. Drive the trailer into
-  the dealer's loading area and open the dealer as usual: you're asked whether to deliver the
-  waiting horses or open the dealer. **Left Shift + E** delivers too (rebindable in Controls).
-- A horse away at an event leaves your pasture until its result comes in. RLRM still feeds and
-  ages it.
-
-### Risk, injuries and retirement
-- Horses can be scratched, refuse, fall or be pulled up. Cross country and steeplechase are the
-  riskiest, dressage the safest.
-- Injuries are rare. The Events tab shows the risk for each event and for your chosen horse.
-- An injury shows on the horse's **Diseases** page in Realistic Livestock, like any condition.
-  Start treatment there to heal it sooner (the vet bills it as medicine), leave it untreated to
-  heal for free but slowly, or cull. Each injury has its own trade-off: a bruised sole is a
-  one-day $400 fix or a month of rest; a chip fracture is two months of surgery at $12,000 a
-  month or a year off. Injuries never spread, and an injured horse can't be sold until it heals.
-- **Retire** on that page (or `eqRetire`) cuts an injured horse's treatment fee by 60%.
-  Retirement is permanent.
-- Events also bring a small chance of picking up one of Realistic Livestock's horse diseases
-  (colic), more after a long trip. A sick horse can't be entered until it is better.
-- With Realistic Livestock's diseases switched off, injuries are simply months of box rest.
-- Keep horses well fed: under 50 health a horse may be scratched on the day (10% for every 5
-  points under 50), at 25 or under it can't be entered, and poor health raises the injury risk.
-  The Events tab shows the scratch chance.
-- Pregnant mares stop competing, and you decide when a horse retires. Forced retirement after a
-  serious injury is optional.
-
-### Buying and selling
-- The dealer sells horses of every quality, from ordinary hacks to the occasional championship
-  prospect, priced on what they can do now and what they could become.
-- **The dealer's word may be wrong.** Potential is shown as the dealer's view. After three months
-  on your farm you find out whether you got a bargain or were misled.
-- A good horse is an investment: expect a year or more of work before it pays its way.
-
-### Dressage outfit
-- The wardrobe has a dressage outfit: a tall or short top hat, breeches and riding gloves in one solid colour,
-  a plain dark jacket with a white shirt, and tall or short black boots.
-
-### Settings
-Realistic Livestock's Settings page (Shift+O, Settings) has an **Equestrian** tab next to General and Filters, saved with each savegame:
-- **Training rate**: 0.25x to 3x the normal stat gain from riding, staff and events.
-- **Show events**: round events every day or every month.
-- **Fewest / Most events shown**: how many events are on the calendar at once (3 to 8 by default, Advanced and Championship included). Each round draws a new number in that range, at least half of them events your horses could enter and always one Training Event, and multiplayer adds more for each farm with horses.
-- **Races and steeplechases**: on or off.
-- **Event injuries** and **Career-ending injuries**: on or off.
-- **Entries per month**: how many event entries each farm can make (3 by default, or no limit).
-- **Crowd density**: how many spectators come to your hosted events: Off, Low, Medium (default) or High.
-
-In multiplayer only the host can change them for now.
-
-For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.md).
 
 ## Requirements
 
@@ -203,6 +36,10 @@ For every rule and number, see [How Realistic Equestrian works](docs/MECHANICS.m
 - [Riding Hall 2k26](https://www.farming-simulator.com/mod.php?mod_id=355999&title=fs2025)
   (`FS25_RidingHall`): a riding hall and show jumps you can buy and place anywhere. Clearing
   them trains more agility than jumping fences or bales.
+
+- [Showroom Displays] https://jasta007.itch.io/showroom-displays
+Adds more sponsorship decoration options that work with Realistic Equestrian
+  
 
 **Recommended, not required**
 
@@ -264,18 +101,10 @@ Welcome popups walk you through the basics the first time you meet a horse and o
 
 ## Known issues
 
-> [!WARNING]
-> **RealisticLivestockRM​ is in a pretty fluid state right now dealing with the changes from Animal Staff.**
-> Will probably need the latest Dev version and things might change quickly.
-
 - **Multiplayer is limited.** Competitions, entries and delivery work in single player and for
   the host of a multiplayer game. Other players see a note on the Competitions tab instead.
   Full multiplayer support is planned.
-- **Stats aren't on the game's own Animals screen.** It has room for only five rows and RLRM's
-  horse rows take three. Use RLRM's menu (Shift+O) or look at the horse instead.
-- **A horse away at an event isn't in your pasture**, so you can't see or ride it until its result
-  is in. A horse delivered by Manual Transport needs a free place in one of your pastures.
-- **Early release.** Most features have had little time in game yet. Bug reports with your
+- **Beta release.** Bug reports with your
   `log.txt` are very welcome (see below).
 
 ## Reporting a bug
@@ -309,10 +138,6 @@ Turn on the developer console to use these (open it with the tilde key). None ar
 | `eqRatings [horse]` | Ratings in each discipline, experience, favourite event and career |
 | `eqRetire <horse> [undo]` | Retires a horse from competition, or brings it back |
 | `eqCourses [delete <number>]` | Lists your show jumping courses, or deletes one |
-| `eqMeatQuality show\|hide` | Shows or hides RLRM's Meat Quality for horses |
-| `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` | Fits the tall riding boots: shaft width (1.18), metres above the ankle (0.03), foot angle (14), shaft lean back (6.7), shaft back (-0.012), tops leaning out (2) |
-| `eqHatFit [female\|male] [up] [forward] [side] [tilt] [scale]` | Moves the dressage top hat on the head (metres, degrees back, size) |
-| `eqUvGrid [bottom\|top\|gloves\|footwear\|headgear\|off]` | Shows a labelled test grid as a worn item's texture (re-pick it in the wardrobe), to map where its texture lands |
 
 Testing commands, for checking the mod works rather than for play:
 
