@@ -6569,6 +6569,32 @@ end)()
     check("shop discount: a new sponsor machine is 20% off", economy.getBuyPrice(economy, sponsorItem) == 800)
     check("shop discount: a rival machine is full price", economy.getBuyPrice(economy, rivalItem) == 1000)
     check("shop discount: a used sponsor machine keeps its sale price", economy.getBuyPrice(economy, sponsorItem, nil, { price = 600 }) == 600)
+    local function element(name, children) return { name = name, elements = children or {}, visible = false,
+        setVisible = function(self, v) self.visible = v end } end
+    local function cellWith()
+        local text = element("text")
+        text.setText = function(self, t) self.text = t end
+        local box = element("discountBox", { text })
+        return element("cell", { element("title"), box }), box, text
+    end
+    local frame = { displayItems = { sponsorItem, rivalItem } }
+    local cell, box, text = cellWith()
+    EqSponsorDiscounts.decorateTile(frame, 1, cell)
+    check("shop tile: a sponsor machine gets a -20% badge", box.visible and text.text == "-20%")
+    frame.displayItems[1] = rivalItem
+    EqSponsorDiscounts.resetTile(cell)
+    EqSponsorDiscounts.decorateTile(frame, 1, cell)
+    check("shop tile: the reused tile loses it for a rival machine", not box.visible)
+    frame.displayItems[1] = sponsorItem
+    EqSponsorDiscounts.decorateTile(frame, 1, cell)
+    EqSponsorDiscounts.resetTile(cell)
+    box.visible, text.text = true, "-35%"   -- the game fills the reused tile with a used machine
+    EqSponsorDiscounts.decorateTile(frame, 1, cell)
+    check("shop tile: a reused tile shows a used machine's own badge", box.visible and text.text == "-35%")
+    local used, usedBox, usedText = cellWith()
+    usedBox.visible, usedText.text = true, "-35%"
+    EqSponsorDiscounts.decorateTile({ displayItems = { sponsorItem } }, 1, used)
+    check("shop tile: a used machine keeps the game's own badge", usedBox.visible and usedText.text == "-35%")
     check("shop discount: the buy screen share is 20% new, 0 used",
         EqSponsorDiscounts.shopShare(sponsorItem, nil) == 0.2 and EqSponsorDiscounts.shopShare(sponsorItem, { price = 600 }) == 0)
     EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
