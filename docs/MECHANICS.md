@@ -1132,7 +1132,13 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   months on your farm you find out. Usually you just "have a firmer idea of their potential";
   after a big overstatement you "might have been misled"; now and then the horse is better than
   the dealer let on. Its price moves to match.
-- **Settling in:** a bought horse can't compete in its first month.
+- **Settling in:** a bought horse can compete straight away, but in its first month on the farm it
+  performs 10% below its best (its condition on the day is scaled by 0.9). The Events tab says
+  "Settling in: reduced chances", and the chance word already counts it.
+- **Rest days:** a horse that started an event earlier in the same month needs a day off before it
+  is back to its best. Competing again the next day (or the same day) in the same month costs 10%
+  the same way ("No rest day: reduced chances"). The next day is fine when the month has changed,
+  so at one day per month this never applies. Settling in and no rest day together multiply (0.81).
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
   most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is
   very expensive. Potential (the two best potentials, doubling every 7.5 points) is most of a

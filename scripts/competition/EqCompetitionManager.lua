@@ -16,7 +16,8 @@
     Players enter from the Events tab or with eqEnter and pay the fee and the horse's transport at
     once. A farm makes at most entriesPerMonth entries a month (a setting, 3 by default). A horse starts at
     most MAX_ROUND_STARTS round events a month, so a good horse is not a daily money tap, and a
-    horse bought from the dealer settles in for a month before it can compete. Results, prize
+    horse that is settling in (its first month after coming from the dealer) or has had no day of
+    rest since its last start this month competes below its best (EqCompetitionManager.freshness). Results, prize
     money and the career record follow when the event resolves. EqRisk decides scratches,
     eliminations and injuries first; injured horses rest for some months, and their vet bills
     are charged at the start of each month until they recover. Horses from every farm can be
@@ -444,10 +445,67 @@ function EqCompetitionManager.entrantFor(record, animal, event, farmId, month)
         key = record.id,
         rating = rating,
         condition = EqCompetition.condition(animal.fitness, animal.health)
-            * EqFacilityHooks.conditionFactor(farmId, event.discipline),
+            * EqFacilityHooks.conditionFactor(farmId, event.discipline)
+            * EqCompetitionManager.freshness(record, event, month),
         stats = stats,
         phaseRatings = phaseRatings,
     }
+end
+
+
+-- A horse settling in (its first month from the dealer) or with no day of rest since its last
+-- start this month competes this much below its best. Both together multiply.
+EqCompetitionManager.SETTLING_FACTOR = 0.9
+EqCompetitionManager.TIRED_FACTOR = 0.9
+
+
+--- The day and month an event runs on: the day it resolves (an event resolves at a day change)
+--- and the month its results belong to (EqCompetitionManager.endedMonth, so the run at the day
+--- that ends a month still counts in that month).
+--- @param event table
+--- @param month number|nil the month resolving now; nil looks ahead from the Events tab
+--- @return number day monotonic day
+--- @return number month
+function EqCompetitionManager.runDayOf(event, month)
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    local today = environment ~= nil and environment.currentMonotonicDay or 0
+    if month ~= nil then return today, month end
+    local daily = event.kind == EqCompetition.KIND_ROUND
+        and EqCompetitionManager.settings.cadence == EqCompetitionManager.CADENCE_DAY
+    local daysLeft = 0
+    if not daily and environment ~= nil and environment.daysPerPeriod ~= nil and environment.currentDayInPeriod ~= nil then
+        daysLeft = math.max(0, environment.daysPerPeriod - environment.currentDayInPeriod)
+    end
+    return today + 1 + daysLeft, EqCompetitionManager.month
+end
+
+
+--- @param record table
+--- @param day number monotonic day the event runs
+--- @param month number the month it counts in
+--- @return boolean true when the horse started an event in that month without a day off since
+function EqCompetitionManager.isTired(record, day, month)
+    local last = record.lastEvent
+    return last ~= nil and last.month == month and day - last.day <= 1
+end
+
+
+--- How far below its best a horse competes: SETTLING_FACTOR while settling in, TIRED_FACTOR
+--- with no rest day since its last start in the same month (the next day is fine once the month
+--- has changed, so at one day a month this never applies).
+--- @param record table
+--- @param event table
+--- @param month number|nil the month resolving now; nil for the Events tab's look ahead
+--- @return number factor on the horse's condition
+--- @return boolean settling
+--- @return boolean tired
+function EqCompetitionManager.freshness(record, event, month)
+    local settling = record:isSettling()
+    local tired = EqCompetitionManager.isTired(record, EqCompetitionManager.runDayOf(event, month))
+    local factor = 1
+    if settling then factor = factor * EqCompetitionManager.SETTLING_FACTOR end
+    if tired then factor = factor * EqCompetitionManager.TIRED_FACTOR end
+    return factor, settling, tired
 end
 
 
@@ -479,7 +537,7 @@ end
 --- @param event table
 --- @return table prospects { chance, success (a SUCCESS_BANDS name), benefit (a BENEFIT_BANDS
 ---     name, nil when the event gives no training), risk (an EqRisk.RISK_BANDS name, nil with
----     injuries off) }
+---     injuries off), settling, tired (both lower the chance, see freshness) }
 function EqCompetitionManager.prospects(record, animal, event)
     local config = EqCompetitionManager.config
     local discipline = config.disciplineByName[event.discipline]
@@ -505,7 +563,9 @@ function EqCompetitionManager.prospects(record, animal, event)
             record.trained.stamina or 0, elimination, EqCompetitionManager.travelInjury(event), animal.health)
             * EqCompetitionManager.vetFactor(EqFacilityHooks.farmOfAnimal(animal)))
     end
-    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk }
+    local _, settling, tired = EqCompetitionManager.freshness(record, event)
+    return { chance = chance, success = EqCompetition.successBand(chance), benefit = benefit, risk = risk,
+        settling = settling, tired = tired }
 end
 
 
@@ -732,6 +792,8 @@ function EqCompetitionManager.resolve(event, horses, month)
                 byKey[entry.horseId] = { entry = entry, record = record, animal = horse.animal }
                 EqExperience.addStart(record, discipline)
                 if event.kind == EqCompetition.KIND_ROUND then record.monthStarts = (record.monthStarts or 0) + 1 end
+                local runDay, runMonth = EqCompetitionManager.runDayOf(event, month)
+                record.lastEvent = { day = runDay, month = runMonth }
             end
         end
     end
@@ -930,14 +992,13 @@ end
 --- @param record table
 --- @param kind string the event's kind
 --- @param animal table|nil RLRM Animal, for the in-foal check
---- @return string|nil reason "retired", "injured", "quarantine", "sick", "unwell", "settling", "inFoal", "foaled" or "rested", nil when it can go
+--- @return string|nil reason "retired", "injured", "quarantine", "sick", "unwell", "inFoal", "foaled" or "rested", nil when it can go
 function EqCompetitionManager.unavailableReason(record, kind, animal)
     if record.retired then return "retired" end
     if record.injury ~= nil then return "injured" end
     if EqQuarantine.isIn(record) then return "quarantine" end
     if EqInjury.isSick(animal) then return "sick" end
     if animal ~= nil and (animal.health or 100) <= EqRisk.ENTRY_HEALTH_MIN then return "unwell" end
-    if record:isSettling() then return "settling" end
     if EqCompetitionManager.isTooFarInFoal(animal) then return "inFoal" end
     if EqCompetitionManager.isRecoveringFromFoaling(animal) then return "foaled" end
     if kind == EqCompetition.KIND_ROUND and (record.monthStarts or 0) >= EqConstants.MAX_ROUND_STARTS then

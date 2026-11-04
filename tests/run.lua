@@ -6224,6 +6224,58 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
+-- SETTLING IN AND REST DAYS: a horse can always enter, but in its first month from the dealer, or
+-- with no day off since its last start in the same month, it competes at 90% (both: 81%).
+;(function()
+    local hadManager, hadMission = EqCompetitionManager, g_currentMission
+    dofile("scripts/competition/EqCompetitionManager.lua")
+    EqCompetitionManager.config = config
+    local environment = { currentMonotonicDay = 10, daysPerPeriod = 5, currentDayInPeriod = 2 }
+    g_currentMission = { environment = environment }
+    EqCompetitionManager.month = 4
+    local round = { kind = EqCompetition.KIND_ROUND }
+    local monthly = { kind = EqCompetition.KIND_MONTH }
+
+    local bought = EqHorseRecord.new("DE 1 77")
+    bought.ownedMonths = 0
+    check("settling in: no longer keeps a horse out of events",
+        EqCompetitionManager.unavailableReason(bought, EqCompetition.KIND_ROUND, nil) == nil)
+    local factor, settling, tired = EqCompetitionManager.freshness(bought, round)
+    check("settling in: first month at 90%", math.abs(factor - 0.9) < 1e-9 and settling and not tired)
+    bought.ownedMonths = EqConstants.SETTLE_MONTHS
+    check("settling in: full strength after a month", EqCompetitionManager.freshness(bought, round) == 1)
+    check("settling in: a bred horse is never settling", EqCompetitionManager.freshness(EqHorseRecord.new("DE 1 78"), round) == 1)
+
+    local horse = EqHorseRecord.new("DE 1 79")
+    -- Ran at today's day change (day 10) in month 4; the Events tab looks at tonight's run (day 11).
+    horse.lastEvent = { day = 10, month = 4 }
+    local f1, _, t1 = EqCompetitionManager.freshness(horse, round)
+    check("rest day: the next day in the same month is at 90%", math.abs(f1 - 0.9) < 1e-9 and t1)
+    check("rest day: resolving the same night again is tired", EqCompetitionManager.isTired(horse, 10, 4))
+    check("rest day: a day off in between is full strength", not EqCompetitionManager.isTired(horse, 12, 4))
+    check("rest day: the next day in a new month is fine", not EqCompetitionManager.isTired(horse, 11, 5))
+    -- A month event runs at the month's end (3 days on), by then rested.
+    check("rest day: a month event at the month's end is rested", EqCompetitionManager.freshness(horse, monthly) == 1)
+    environment.currentDayInPeriod = 5
+    check("rest day: but not when the month ends tonight", EqCompetitionManager.freshness(horse, monthly) < 1)
+
+    bought.ownedMonths = 0
+    bought.lastEvent = { day = 10, month = 4 }
+    environment.currentDayInPeriod = 2
+    local both, s2, t2 = EqCompetitionManager.freshness(bought, round)
+    check("settling in and no rest multiply", math.abs(both - 0.81) < 1e-9 and s2 and t2)
+
+    local x = memoryXML()
+    horse:saveToXMLFile(x, "h")
+    local loaded = EqHorseRecord.loadFromXMLFile(x, "h")
+    check("rest day: the last event survives a save", loaded.lastEvent ~= nil and loaded.lastEvent.day == 10
+        and loaded.lastEvent.month == 4)
+    local y = memoryXML()
+    EqHorseRecord.new("DE 1 80"):saveToXMLFile(y, "h")
+    check("rest day: an old save has no last event and is rested", EqHorseRecord.loadFromXMLFile(y, "h").lastEvent == nil)
+    EqCompetitionManager, g_currentMission = hadManager, hadMission
+end)()
+
 -- SPONSOR YEAR: offers come in January, whichever period that is (FS25 period 1 is March on a
 -- northern map, September on a southern one), and the offers' year is the calendar year.
 ;(function()

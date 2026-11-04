@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="Троеборец"/>
         <text name="eq_specialty_racehorse" text="Скаковая лошадь"/>
         <text name="eq_specialty_allRounder" text="Универсал"/>
-        <text name="eq_enter_settling" text="Эта лошадь ещё привыкает после переезда. Выступать можно со следующего месяца."/>
         <text name="eq_enter_rested" text="У этой лошади в этом месяце уже стартов: %d, и ей нужен отдых. Снова выступать можно в следующем месяце."/>
         <text name="eq_reveal_better" text="Вы лучше узнали лошадь %s, и она выглядит даже лучше, чем говорил торговец."/>
         <text name="eq_reveal_worse" text="Вы лучше узнали лошадь %s, и у вас есть ощущение, что вас обманули."/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="День %d"/>
         <text name="eq_ui_status_ok" text="Можно записать"/>
         <text name="eq_ui_status_lowHealth" text="Слабое здоровье: %d%% снятия"/>
+        <text name="eq_ui_status_settling" text="Адаптация: шансы ниже"/>
+        <text name="eq_ui_status_tired" text="Без дня отдыха: шансы ниже"/>
+        <text name="eq_ui_status_settlingTired" text="Адаптация, без отдыха: шансы ниже"/>
         <text name="eq_ui_status_eventFull" text="Уже записаны две ваши лошади"/>
         <text name="eq_ui_status_tooYoung" text="Слишком молода"/>
         <text name="eq_ui_status_tooOld" text="Слишком стара"/>

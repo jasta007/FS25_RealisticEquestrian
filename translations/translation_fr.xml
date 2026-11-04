@@ -383,7 +383,6 @@
         <text name="eq_specialty_eventer" text="Complétiste"/>
         <text name="eq_specialty_racehorse" text="Cheval de course"/>
         <text name="eq_specialty_allRounder" text="Polyvalent"/>
-        <text name="eq_enter_settling" text="Ce cheval s'acclimate encore après son déménagement. Il pourra concourir dès le mois prochain."/>
         <text name="eq_enter_rested" text="Ce cheval a déjà couru %d fois ce mois-ci et a besoin de repos. Il pourra courir à nouveau le mois prochain."/>
         <text name="eq_reveal_better" text="Vous connaissez mieux %s maintenant, et ce cheval semble encore meilleur que ce que le marchand laissait entendre."/>
         <text name="eq_reveal_worse" text="Vous connaissez mieux %s maintenant, et vous avez l'impression d'avoir été trompé."/>
@@ -448,6 +447,9 @@
         <text name="eq_ui_day" text="Jour %d"/>
         <text name="eq_ui_status_ok" text="Peut participer"/>
         <text name="eq_ui_status_lowHealth" text="Santé basse : %d%% de forfait"/>
+        <text name="eq_ui_status_settling" text="En adaptation : chances réduites"/>
+        <text name="eq_ui_status_tired" text="Pas de jour de repos : chances réduites"/>
+        <text name="eq_ui_status_settlingTired" text="Adaptation, sans repos : chances réduites"/>
         <text name="eq_ui_status_eventFull" text="Déjà deux de vos chevaux engagés"/>
         <text name="eq_ui_status_tooYoung" text="Trop jeune"/>
         <text name="eq_ui_status_tooOld" text="Trop âgé"/>

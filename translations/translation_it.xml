@@ -537,7 +537,6 @@
         <text name="eq_specialty_eventer" text="Cavallo da completo"/>
         <text name="eq_specialty_racehorse" text="Cavallo da corsa"/>
         <text name="eq_specialty_allRounder" text="Tuttofare"/>
-        <text name="eq_enter_settling" text="Quel cavallo si sta ancora ambientando dopo il trasferimento. Può gareggiare dal mese prossimo."/>
         <text name="eq_enter_rested" text="Quel cavallo ha già fatto %d partenze questo mese e ha bisogno di riposo. Può correre di nuovo il mese prossimo."/>
         <text name="eq_reveal_better" text="Hai conosciuto meglio %s, e sembra ancora migliore di quanto lasciasse intendere il commerciante."/>
         <text name="eq_reveal_worse" text="Hai conosciuto meglio %s, e hai la sensazione di essere stato ingannato."/>
@@ -602,6 +601,9 @@
         <text name="eq_ui_day" text="Giorno %d"/>
         <text name="eq_ui_status_ok" text="Può iscriversi"/>
         <text name="eq_ui_status_lowHealth" text="Salute bassa: %d%% ritiro"/>
+        <text name="eq_ui_status_settling" text="In ambientamento: meno possibilità"/>
+        <text name="eq_ui_status_tired" text="Nessun giorno di riposo: meno possibilità"/>
+        <text name="eq_ui_status_settlingTired" text="Ambientamento, niente riposo: meno possibilità"/>
         <text name="eq_ui_status_eventFull" text="Due tuoi cavalli già iscritti"/>
         <text name="eq_ui_status_tooYoung" text="Troppo giovane"/>
         <text name="eq_ui_status_tooOld" text="Troppo vecchio"/>
