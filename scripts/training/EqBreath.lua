@@ -43,9 +43,13 @@ EqBreath.NOSTRIL_GAP = 0.05
 EqBreath.BLOW = { 0.3, -0.6, 0.75 }
 -- On the lip bone it blows along the nose instead (head bone to lip, already pointing down and
 -- forwards): this much out to the side, this much extra down, along the nose.
-EqBreath.NOSE_BLOW = { 0.3, -0.25, 1 }
+EqBreath.NOSE_BLOW = { 0.6, -0.25, 1 }
+-- On the lip bone it sits this far up (James, 2026-11-04: up 0.1 looked right); eqBreath up
+-- replaces it.
+EqBreath.LIP_UP = 0.1
 -- A tight cone per nostril (James, 2026-11-04: it looked shotgunned): the dust's emitter shape is
 -- shrunk to this and its speed randomness cut to this share.
+-- Each STYLE can widen it with its own spread (emitter and randomness times spread).
 EqBreath.EMITTER_SCALE = 0.15
 EqBreath.SPEED_RANDOM = 0.15
 -- How the puffs come out, by how hard the horse is blowing: on for onMs, off for offMs, each puff
@@ -53,10 +57,11 @@ EqBreath.SPEED_RANDOM = 0.15
 -- scaled) and speed times its speed. "band" while the stamina band waits at the bottom, "hard"
 -- while Fatigued or Blown (James, 2026-11-04: noticeably bigger, only slightly quicker, blown out
 -- harder). Then a quarter smaller, slower breathing for both and hard blown half as fast
--- (James, 2026-11-04 02:00); hard then a bit faster, 10% bigger and more often (02:12).
+-- (James, 2026-11-04 02:00); hard then a bit faster, 10% bigger and more often (02:12), then not
+-- as far but a little wider (02:20).
 EqBreath.STYLE = {
     band = { onMs = 450, offMs = 750, lifespan = 1000, count = 1, size = 1.125, speed = 1.5 },
-    hard = { onMs = 380, offMs = 470, lifespan = 1100, count = 1.6, size = 1.9, speed = 2.2 },
+    hard = { onMs = 380, offMs = 470, lifespan = 1100, count = 1.6, size = 1.9, speed = 1.8, spread = 1.6 },
 }
 -- eqBreath size/speed: extra multipliers for tuning in game.
 EqBreath.SIZE = 1
@@ -138,19 +143,17 @@ local function nostril(vehicle, ref, side)
         emitter = getChildAt(psClone, 0)
         link(holder, emitter)
         setTranslation(emitter, 0, 0, 0)
-        local e = EqBreath.EMITTER_SCALE
-        setScale(emitter, e, e, e)
     end
     local ps = {}
     ParticleUtil.loadParticleSystemFromNode(psClone, ps, false, false, false)
     if emitter ~= nil then ParticleUtil.setEmitterShape(ps, emitter) end
     ParticleUtil.setEmittingState(ps, false)
+    local baseRandom = nil
     if ParticleUtil.getParticleSystemSpeedRandom ~= nil and ParticleUtil.setParticleSystemSpeedRandom ~= nil then
-        local random = ParticleUtil.getParticleSystemSpeedRandom(ps)
-        if random ~= nil then ParticleUtil.setParticleSystemSpeedRandom(ps, random * EqBreath.SPEED_RANDOM) end
+        baseRandom = ParticleUtil.getParticleSystemSpeedRandom(ps)
     end
     local baseSpeed = ParticleUtil.getParticleSystemSpeed ~= nil and ParticleUtil.getParticleSystemSpeed(ps) or nil
-    return { holder = holder, ps = ps, side = side, baseSpeed = baseSpeed }
+    return { holder = holder, ps = ps, side = side, emitter = emitter, baseSpeed = baseSpeed, baseRandom = baseRandom }
 end
 
 
@@ -211,7 +214,7 @@ local function place(vehicle, entry)
         local x, y, z = worldToLocal(root, getWorldTranslation(lip))
         local hx, hy, hz = worldToLocal(root, getWorldTranslation(head))
         local nx, ny, nz = normalize(x - hx, y - hy, z - hz)
-        x, y, z = x + (EqBreath.FORWARD or 0) * nx, y + (EqBreath.UP or 0), z + (EqBreath.FORWARD or 0) * nz
+        x, y, z = x + (EqBreath.FORWARD or 0) * nx, y + (EqBreath.UP or EqBreath.LIP_UP), z + (EqBreath.FORWARD or 0) * nz
         for _, n in ipairs(entry.nostrils) do
             setTranslation(n.holder, x + n.side * EqBreath.NOSTRIL_GAP, y, z)
             aim(n.holder, normalize(nx * nb[3] + nb[1] * n.side, ny * nb[3] + nb[2], nz * nb[3]))
@@ -250,6 +253,14 @@ local function setLook(entry, look)
         ParticleUtil.setEmitCountScale(n.ps, look.count)
         local size = look.size * EqBreath.SIZE
         setScale(n.holder, size, size, size)
+        local spread = look.spread or 1
+        if n.emitter ~= nil then
+            local e = EqBreath.EMITTER_SCALE * spread
+            setScale(n.emitter, e, e, e)
+        end
+        if n.baseRandom ~= nil then
+            ParticleUtil.setParticleSystemSpeedRandom(n.ps, n.baseRandom * EqBreath.SPEED_RANDOM * spread)
+        end
         if n.baseSpeed ~= nil and ParticleUtil.setParticleSystemSpeed ~= nil then
             ParticleUtil.setParticleSystemSpeed(n.ps, n.baseSpeed * look.speed * EqBreath.SPEED)
         end
