@@ -1782,7 +1782,8 @@ local function closeTo(run, m)
             run.lastMark, run.lastMove = run.marks[run.cur], run.cur
             -- Why: for the log.
             local move = run.test.moves[run.cur]
-            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it)",
+            run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, " ..
+                "bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it)",
                 move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
                 acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0)
             event = "done"

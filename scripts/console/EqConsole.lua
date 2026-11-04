@@ -280,7 +280,8 @@ function EqConsole:consoleEvents()
     end
 
     local left = EqCompetitionManager.entriesLeft(g_currentMission:getFarmId())
-    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> [auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> " ..
+        "[auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
         #list, EqCompetitionManager.settings.cadence,
         left ~= nil and string.format("You have %d of %d entries left this month.", left, EqCompetitionManager.settings.entriesPerMonth) or "No monthly entry limit.")
 end
@@ -494,11 +495,14 @@ function EqConsole:consoleSettings(name, value)
     elseif name == "quarantine" and (value == "on" or value == "off") then
         settings.quarantine = value == "on"
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off] [crowdDensity off|low|medium|high]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] " ..
+            "[eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion " ..
+            "auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off] [crowdDensity off|low|medium|high]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  " ..
+        "trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
         settings.eventsMin, math.max(settings.eventsMin, settings.eventsMax),
@@ -1031,13 +1035,15 @@ function EqConsole.register()
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
     addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
-    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
+    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> " ..
+        "<metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
     addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] " ..
+        "[entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo] (undo is debug only, retiring is permanent in game)", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
@@ -1056,9 +1062,11 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
-    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts as signed n months earlier (testing)", "consoleSponsors", EqConsole)
+    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts " ..
+        "as signed n months earlier (testing)", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
-    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
+    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now " ..
+        "[stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
@@ -1076,7 +1084,8 @@ function EqConsole.unregister()
     removeConsoleCommand("eqTraining")
     removeConsoleCommand("eqFocus")
     for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
+        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait",
+        "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
         "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
         removeConsoleCommand(name)
     end

@@ -1520,7 +1520,8 @@ function EqSpectators.console(command, a, b)
         local parts = {}
         for name, v in pairs(EqSpectators.pose) do table.insert(parts, string.format("%s=%.2f", name, v)) end
         table.sort(parts)
-        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; fingers 0 = the clip's curled fingers; wrists 0 = hand angles from the seat, not the forearm)"
+        return "Seated pose: " .. table.concat(parts, "  ") .. "  (eqSpectators pose <name> <value>: metres; hand angles in degrees; arms 0 = no hand IK; " ..
+            "fingers 0 = the clip's curled fingers; wrists 0 = hand angles from the seat, not the forearm)"
     end
     local farm = farmId()
     local seats, stands = {}, {}
@@ -1544,7 +1545,8 @@ function EqSpectators.console(command, a, b)
     end
     print(string.format("EqSpectators: %d Rope Marker(s) on the map (owner farms %s, you are farm %s), %d spectator box(es)",
         scan.ropes, table.concat(owners, ","), tostring(farm), math.floor(#stands / EqSpectators.PER_BOX)))
-    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]",
+    return string.format("Crowd density %s; %d people (%d loaded); %d free seats on your bleachers, %d rope places; mode %s. Usage: eqSpectators [on [seated " ..
+        "standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]",
         EqSpectators.density(EqCompetitionManager ~= nil and EqCompetitionManager.settings or nil), #EqSpectators.people, ready,
         #seats, #stands, EqSpectators.forced == nil and "auto" or (EqSpectators.forced and "on" or "off"))
 end
