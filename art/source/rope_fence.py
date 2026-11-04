@@ -17,6 +17,8 @@ through everywhere else, rounds included. The rope and signs
 lean with the slope like the base game's fence panels (placeable shader, vertexOffset).
 
 Run from the repository root: python3 art/source/rope_fence.py
+The committed xcRope.i3d was then re-saved in GIANTS Editor (binary .i3d.shapes; inline collision
+got no physics mesh, so the rope couldn't be picked): after running this, re-save it again.
 
 Part of Realistic Equestrian by Jasta007.
 """
