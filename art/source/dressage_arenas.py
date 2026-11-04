@@ -3,8 +3,9 @@ Builds the dressage arena placeables in placeables/dressageArena/: one .xml and 
 letter texture shared by all of them and a shop image for each.
 
 The .i3d files keep their geometry inline (<IndexedTriangleSet>), so no GIANTS tools are needed.
-Each arena is one shape (the white rail, the letter boxes and the centre line plates) with no
-collision, and an empty transform group per letter, named "eqMarker_<letter>", which the dressage
+Each arena is one shape (the white rail, the letter boxes and the centre line plates) with static
+collision, which EqDressageHooks turns off outside the construction screen (it is only there so the
+arena can be picked to move or sell), and an empty transform group per letter, named "eqMarker_<letter>", which the dressage
 routine reads (EqDressageHooks).
 
 Layout, looking down with A nearest: K E H (and V S on 20x60) up the left side, F B M (P R) up the
@@ -193,7 +194,7 @@ def write_i3d(arena, path):
     lines.append("  </Shapes>")
     lines.append("  <Scene>")
     lines.append(f'    <TransformGroup name="{arena["name"]}" nodeId="1">')
-    lines.append(f'      <Shape name="arena" shapeId="1" clipDistance="250" nodeId="2" materialIds="1" castsShadows="true" receiveShadows="true"/>')
+    lines.append(f'      <Shape name="arena" shapeId="1" clipDistance="250" nodeId="2" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" materialIds="1" castsShadows="true" receiveShadows="true"/>')
     lines.append('      <TransformGroup name="eqMarkers" nodeId="3">')
     node = 4
     for letter, x, z, kind in layout(arena):
