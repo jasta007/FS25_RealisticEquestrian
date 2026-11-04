@@ -7,9 +7,9 @@
     blows hard: bigger puffs, a little quicker, blown out faster.
 
     The nostrils follow the head (James, 2026-11-04: they lagged the nose when it bent): where
-    they sit and which way they blow are worked out once in the head bone's own space, then
-    carried round with it every frame. The upper lip bone (lipmidup_m) anchors them when there is
-    one, since it sits right under the nostrils.
+    they sit on the upper lip bone (lipmidup_m, right under the nostrils) every frame and blow
+    along the nose, from the head bone to the lip, tipped down. Without a lip bone they fall back
+    to an offset from the head bone in the horse's space.
 
     The puffs are the base game's slow horse step dust (HORSE_STEP_SLOW), cloned twice (one per
     nostril) onto the ridden horse, under the nostrils and aimed down, forwards and a little out
@@ -41,6 +41,9 @@ EqBreath.UP = nil
 -- the horse's space (x out to its side, y up, z forward): down, forwards and a little out.
 EqBreath.NOSTRIL_GAP = 0.05
 EqBreath.BLOW = { 0.3, -0.6, 0.75 }
+-- On the lip bone it blows along the nose instead (head bone to lip, already pointing down and
+-- forwards): this much out to the side, this much extra down, along the nose.
+EqBreath.NOSE_BLOW = { 0.3, -0.25, 1 }
 -- A tight cone per nostril (James, 2026-11-04: it looked shotgunned): the dust's emitter shape is
 -- shrunk to this and its speed randomness cut to this share.
 EqBreath.EMITTER_SCALE = 0.15
@@ -187,50 +190,45 @@ local function aim(holder, dx, dy, dz)
 end
 
 
---- Where each nostril sits and blows, in the head bone's space: worked out from the offsets in
---- the horse's space with the head as it is now, so it follows the head from then on.
-local function calibrate(vehicle, entry)
-    local root, head = vehicle.rootNode, entry.bone
-    local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
-    local hx, hy, hz = worldToLocal(root, getWorldTranslation(head))
-    local b = EqBreath.BLOW
-    for _, n in ipairs(entry.nostrils) do
-        local wx, wy, wz = localToWorld(root, hx + n.side * EqBreath.NOSTRIL_GAP, hy + up, hz + forward)
-        local px, py, pz = worldToLocal(head, wx, wy, wz)
-        if entry.lip ~= nil and entityExists(entry.lip) then
-            -- Kept relative to the upper lip, so it stays under the nostrils if the lip moves.
-            local lx, ly, lz = worldToLocal(head, getWorldTranslation(entry.lip))
-            px, py, pz = px - lx, py - ly, pz - lz
-        end
-        n.offset = { px, py, pz }
-        local dx, dy, dz = localDirectionToWorld(root, b[1] * n.side, b[2], b[3])
-        n.blow = { worldDirectionToLocal(head, dx, dy, dz) }
-    end
-    entry.calibrated = forward .. "/" .. up
+local function normalize(x, y, z)
+    local l = math.sqrt(x * x + y * y + z * z)
+    if l < 1e-6 then return 0, 0, 1 end
+    return x / l, y / l, z / l
 end
 
 
 local function place(vehicle, entry)
     local root = vehicle.rootNode
-    local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
     local b = EqBreath.BLOW
-    if entry.bone == nil or not entityExists(entry.bone) then
-        -- No head bone: roughly where a standing horse's muzzle is, blowing the plain way.
+    local nb = EqBreath.NOSE_BLOW
+    local head, lip = entry.bone, entry.lip
+    if head ~= nil and not entityExists(head) then head = nil end
+    if lip ~= nil and not entityExists(lip) then lip = nil end
+    if lip ~= nil and head ~= nil then
+        -- Straight on the upper lip every frame, blowing along the nose (head bone to lip) tipped
+        -- down, so both follow the head without any setting up (James, 2026-11-04: placing it once
+        -- left it off centre). eqBreath forward/up nudge it from the lip in the horse's space.
+        local x, y, z = worldToLocal(root, getWorldTranslation(lip))
+        local hx, hy, hz = worldToLocal(root, getWorldTranslation(head))
+        local nx, ny, nz = normalize(x - hx, y - hy, z - hz)
+        x, y, z = x + (EqBreath.FORWARD or 0) * nx, y + (EqBreath.UP or 0), z + (EqBreath.FORWARD or 0) * nz
         for _, n in ipairs(entry.nostrils) do
-            setTranslation(n.holder, n.side * EqBreath.NOSTRIL_GAP, 1.4 + up, 1.3 + forward)
-            aim(n.holder, b[1] * n.side, b[2], b[3])
+            setTranslation(n.holder, x + n.side * EqBreath.NOSTRIL_GAP, y, z)
+            aim(n.holder, normalize(nx * nb[3] + nb[1] * n.side, ny * nb[3] + nb[2], nz * nb[3]))
         end
         return
     end
-    local head = entry.bone
-    if entry.calibrated ~= forward .. "/" .. up then calibrate(vehicle, entry) end
-    local lx, ly, lz = 0, 0, 0
-    if entry.lip ~= nil and entityExists(entry.lip) then lx, ly, lz = worldToLocal(head, getWorldTranslation(entry.lip)) end
+    local x, y, z
+    if head ~= nil then
+        x, y, z = worldToLocal(root, getWorldTranslation(head))
+    else
+        -- No head bone: roughly where a standing horse's muzzle is.
+        x, y, z = 0, 1.4, 1.3
+    end
+    local forward, up = EqBreath.FORWARD or entry.forward, EqBreath.UP or entry.up
     for _, n in ipairs(entry.nostrils) do
-        local o = n.offset
-        local x, y, z = worldToLocal(root, localToWorld(head, lx + o[1], ly + o[2], lz + o[3]))
-        setTranslation(n.holder, x, y, z)
-        aim(n.holder, worldDirectionToLocal(root, localDirectionToWorld(head, n.blow[1], n.blow[2], n.blow[3])))
+        setTranslation(n.holder, x + n.side * EqBreath.NOSTRIL_GAP, y + up, z + forward)
+        aim(n.holder, b[1] * n.side, b[2], b[3])
     end
 end
 
