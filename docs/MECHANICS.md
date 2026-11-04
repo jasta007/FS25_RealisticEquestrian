@@ -699,8 +699,10 @@ Disappearing pieces: the cross country pieces (flags, log piles, drop walls) dis
 collision, while you just ride or drive around, so a course can cross the map without leaving flags
 and logs everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell),
 while a course is edited (seen but ridden through), and in a round from its countdown (right at the
-start line) to the result (with collision, except the flag fence, which is only seen); riding past a
-start line shows nothing. Every piece has a **Disappearing** shop configuration: Yes by default on
+start line) to the result (solid only for the horse in the round, except the flag fence, which is
+only seen); riding past a start line shows nothing. In a round each piece's collision mask is set to
+one free collision bit, and only that horse's movement group gets the bit, so people on foot,
+vehicles and other horses pass through (groundwork for multiplayer). Every piece has a **Disappearing** shop configuration: Yes by default on
 log piles and drop walls, No by default on the shop's show jumps (Yes makes them disappear the same
 way). The flags always disappear. In multiplayer everything always shows. Other mods' show jumps are
 never hidden. A vehicle left on a hidden piece can be thrown when its

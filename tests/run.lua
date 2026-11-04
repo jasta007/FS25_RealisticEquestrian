@@ -2671,11 +2671,34 @@ do
     local S, G, H = EqXcHide.SHOWN, EqXcHide.GHOST, EqXcHide.HIDDEN
     check("cross country pieces hide unless building, editing a course or in a round",
         EqXcHide.wantMode({}) == H and EqXcHide.wantMode({ construction = true }) == S
-        and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == S
+        and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == EqXcHide.RIDER
         and EqXcHide.wantMode({ construction = true, editing = true }) == S and EqXcHide.wantMode({ multiplayer = true }) == S)
     check("pieces show only from a round's countdown to its result, not on the way to the start",
         not EqXcHide.roundShows(nil) and not EqXcHide.roundShows("approach")
         and EqXcHide.roundShows("countdown") and EqXcHide.roundShows("running") and EqXcHide.roundShows("done"))
+    check("the rider bit is the first one no collision flag uses, bit 31 last",
+        EqXcHide.pickRiderBit({ DEFAULT = 1, STATIC_OBJECT = 2 }) == 30
+        and EqXcHide.pickRiderBit({ A = 2 ^ 30, B = 2 ^ 29 + 1 }) == 28
+        and EqXcHide.pickRiderBit({ ALL = 2 ^ 32 - 1 }) == 30
+        and EqXcHide.pickRiderBit(nil) == 30 and EqXcHide.hasBit(0x1034, 4) and not EqXcHide.hasBit(0x1034, 3))
+    do
+        local saved = { CollisionFlag, EqXcHide.riderBit }
+        CollisionFlag, EqXcHide.riderBit = { ANIMAL = 2 ^ 20 }, nil
+        local horse = { spec_cctdrivable = { movementCollisionGroup = 2 ^ 20 } }
+        local given = EqXcHide.setRider(horse)
+        local inRound = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
+        EqXcHide.setRider(horse)
+        local once = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
+        EqXcHide.setRider(nil)
+        check("only the horse in a round gets the rider bit, and gives it back after",
+            given and inRound and once and horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 and EqXcHide.riderVehicle == nil)
+        local saidOld = EqXcHide.loggedRider
+        EqXcHide.loggedRider = true
+        check("a horse without a CCT group can't take the bit, so the pieces stay solid for everyone",
+            EqXcHide.setRider({}) == false and EqXcHide.setRider(nil) == true)
+        EqXcHide.loggedRider = saidOld
+        CollisionFlag, EqXcHide.riderBit = saved[1], saved[2]
+    end
     local xc = EqCourse.CROSS_COUNTRY
     check("traffic is off only while a cross country round runs",
         EqXcHide.wantsTrafficOff(xc, "running") and not EqXcHide.wantsTrafficOff(xc, "countdown") and not EqXcHide.wantsTrafficOff(xc, "go")
@@ -2701,6 +2724,7 @@ do
     local construction, round = { construction = true }, { round = true }
     check("in a round the flag fence is ridden through, other pieces are solid",
         EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
+        and EqXcHide.modeFor(EqXcHide.RIDER, true, round) == G and EqXcHide.modeFor(EqXcHide.RIDER, false, round) == EqXcHide.RIDER
         and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
         and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
     do
