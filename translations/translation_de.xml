@@ -1220,6 +1220,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s ist in Quarantäne und kann erst geritten werden, wenn es zu Hause ist."/>
         <text name="eq_ride_blocked_away" text="%s ist auf einem Turnier und kann nicht geritten werden."/>
         <text name="eq_ride_blocked_injured" text="%s ist verletzt und kann erst nach der Heilung geritten werden."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s ist zu jung zum Reiten. Pferde können ab 1 Jahr geritten werden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s ist in Quarantäne und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_away" text="%s ist auf einem Turnier und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_injured" text="%s ist verletzt und wurde zum Ausruhen zurück in %s gebracht."/>
