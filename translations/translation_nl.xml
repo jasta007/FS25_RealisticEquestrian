@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Trainingsweergave: %s"/>
         <text name="eq_train_view_freestyle" text="Vrij"/>
-        <text name="eq_help_temperament_2" text="Voor het meeste temperament rijd je een proef in een dressuurrijbaan: koop er een in de winkel en rijd naar A. Een proef met figuren begint, als gouden lijn op de grond getekend: blijf op de lijn en wissel van gang of halt waar het gevraagd wordt; elke beweging krijgt een cijfer tot 10. Drie keer verrijden beëindigt de proef; maak haar af voor een boost die groeit met je score. Een rustiger paard ziet meer van de lijn vooruit. Riding Hall-letters geven de oudere routine van stukken tussen letters. Lekkers zoals wortels helpt ook."/>
-        <text name="eq_help_temperament_1" text="Bij temperament draait alles om controle. Overal waar je rijdt, rijg je nieuwe bewegingen aaneen voor een combo: wissel van gang (niet naar de gestrekte galop), sta stil, maak een grote bocht (een halve cirkel één kant op) of rijd zijwaartse en verzamelde oefeningen. Elke nieuwe beweging verhoogt de combo tot x5 en vult de balk weer. Een van je laatste 3 bewegingen herhalen mag, maar levert niets op. Gestrekte galop, ergens tegenaan lopen of een lege balk kost de combo; sprongen tellen niet."/>
+        <text name="eq_help_temperament_2" text="Temperament train je het best met dressuurproeven in een dressuurbak, maar je kunt het overal trainen door te wisselen tussen gangen, wendingen, zijwaartse bewegingen en andere bewegingen. Houd [[EQ_LATERAL]] ingedrukt voor zijwaartse bewegingen en [[EQ_COLLECT]] om je paard te verzamelen voor piaffe of passage. Elke nieuwe beweging verhoogt de combo, tot x5. Je hebt maar even om de volgende te vinden, en een hindernis raken of overgaan in galop beëindigt de combo."/>
+        <text name="eq_help_temperament_1" text="Temperament laat je paard sneller draaien, eerder van gang wisselen en korter stilstaan na het raken van een hindernis. Het telt het meest bij dressuur: een paard met veel Temperament volgt een dressuurlijn nauwkeuriger en lijnt beter uit op sprongen, terwijl een paard met weinig vaker wordt teruggetrokken of fouten maakt. Wortels en andere traktaties versnellen de training van Temperament."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_agility_2" text="Je verliest je vermenigvuldiger als je niet op tijd een nieuw obstakel springt of te veel snelheid verliest. Springen zonder obstakel geeft wat training, maar verhoogt je vermenigvuldiger niet."/>
-        <text name="eq_help_agility_1" text="Wendbaarheid draait om springen, al levert het afwisselen van gangen ook een beetje op. Spring obstakels om een trainingsvermenigvuldiger voor Wendbaarheid op te bouwen, die na tien seconden wegzakt, of eerder als je een obstakel raakt."/>
+        <text name="eq_help_agility_2" text="Elke genomen hindernis verhoogt de combo, van x2 tot x5, dus elke sprong traint meer. Je hebt 10 seconden voor de volgende: een hindernis raken kost tijd en stilstaan beëindigt de combo snel. Wendbaarheid traint sneller in een springbak en op je eigen parcours: druk tijdens het rijden op [[EQ_COURSE_RECORD]] om er een te maken."/>
+        <text name="eq_help_agility_1" text="Wendbaarheid laat je paard hoger springen en krapper draaien, en telt het meest bij springen en dressuur. Train het door snel achter elkaar over hindernissen te springen zonder te raken of te stoppen. Elke hindernis telt, maar echte paardensporthindernissen trainen meer. Gerst voeren versnelt de training van Wendbaarheid."/>
         <text name="eq_help_agility_title" text="Training: Wendbaarheid"/>
         <text name="eq_pop_routineStart" text="Proef gestart"/>
         <text name="eq_pop_routineFault" text="Fout %d/%d"/>
@@ -228,14 +228,11 @@
         <text name="eq_temper_turn_right" text="Grote bocht rechts (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendbaarheid"/>
-        <text name="eq_help_freestyle_2" text="Behendigheid train je door obstakels te springen en een combometer op te bouwen, temperament door nieuwe bewegingen aaneen te rijgen (gangwissels, halts, grote bochten, zijwaartse oefeningen) of een dressuurproef te rijden. Uithoudingsvermogen en snelheid train je door goed te galopperen: druk H tijdens het galopperen om te zien hoe."/>
-        <text name="eq_help_freestyle_3" text="Liever niet rijden? Neem verzorgers en trainers aan op het tabblad Personeel om je paarden elke dag te trainen. Het dierenpersoneel van het spel en de Herdsman van RLRM houden ze alleen in beweging."/>
+        <text name="eq_help_freestyle_2" text="Wendbaarheid train je door snel achter elkaar over hindernissen te springen, Temperament door te wisselen tussen gangen en bewegingen. Conditie en Snelheid train je door lang te galopperen en te sprinten. Druk op [[EQ_TRAINING_VIEW]] voor meer over elke minigame, zodat je zo effectief mogelijk traint."/>
+        <text name="eq_help_freestyle_3" text="Je hoeft je paarden niet elke dag te rijden om ze te trainen. Neem trainers en verzorgers aan die je paarden elke dag gerichte of algemene training geven, en je paarden doen ook ervaring op in wedstrijden. Het beste train je op je eigen spring- of crossparcours (druk op [[EQ_COURSE_RECORD]] of [[EQ_COURSE_RECORD_XC]] om er een te maken) of door een dressuurproef te oefenen in een dressuurbak."/>
         <text name="eq_form_title" text="Topvorm"/>
-        <text name="eq_help_freestyle_4" text="Rijd voor een wedstrijd! Elke eigenschap die je met zijn minigame traint, brengt je paard in Topvorm voor de wedstrijden van deze maand, tot +8 per eigenschap. Het telt niet op over meerdere dagen: je beste sessie van de maand telt."/>
-        <text name="eq_help_form_title" text="Topvorm"/>
-        <text name="eq_help_form_1" text="Zelf rijden doet meer dan trainen: het brengt je paard in Topvorm voor de wedstrijden van deze maand. Elke eigenschap die je in zijn minigame hebt getraind, krijgt tot +8 in elke wedstrijd deze maand, hier en in het Vaardigheden-vak van het paard getoond als Topvorm. Betere sessies geven een grotere bonus; alleen door de gangen rijden geeft er geen."/>
-        <text name="eq_help_form_2" text="Topvorm telt niet op over de dagen van een maand: elke eigenschap houdt je beste sessie. Het kan een paard op de dag zelf zelfs boven zijn potentieel tillen en verdwijnt zodra de wedstrijden van deze maand voorbij zijn. Personeel houdt de dagelijkse training bij, dus bewaar je eigen ritten voor de wedstrijden die ertoe doen."/>
-        <text name="eq_help_freestyle_1" text="Rijden traint de eigenschappen van je paard, en elke eigenschap heeft zijn eigen minigame. Alle eigenschappen kunnen tegelijk getraind worden, maar sommige gaan slecht samen, zoals Snelheid en Temperament. Druk op Y om te wisselen naar een weergave met betere feedback over de eigenschap waarop je je wilt richten, of blijf in Vrij voor algemene feedback. De rijbalk is nog steeds de energie van het paard voor de dag: zodra die vol is, maakt dat paard geen vooruitgang meer tot de volgende dag."/>
+        <text name="eq_help_freestyle_4" text="Je eigen training geeft je paarden ook tijdelijk Topvorm voor alle wedstrijden van die maand. Dat is meer dan gewone trainingswinst en kan een paard zelfs boven zijn potentieel tillen, maar het verdwijnt aan het eind van de maand en telt niet op per dag: alleen je beste sessie telt."/>
+        <text name="eq_help_freestyle_1" text="Elk paard heeft vier eigenschappen, die je traint door te rijden, door wedstrijden en via je personeel. Alle eigenschappen trainen tegelijk, maar druk op [[EQ_TRAINING_VIEW]] om van trainingsweergave te wisselen en meer over elk te zien. Een paard kan per dag maar beperkt trainen, zoals het percentage Dagtraining laat zien."/>
         <text name="eq_help_freestyle_title" text="Training: Vrij"/>
         <text name="eq_welcome_ride_title" text="Training"/>
         <text name="eq_welcome_welcome_1_title" text="Welkom bij Realistic Equestrian"/>
@@ -255,7 +252,7 @@
         <text name="eq_welcome_info_feed_title" text="Voer"/>
         <text name="eq_welcome_info_feed" text="Hooi is het basisvoer. Haver geeft een kleine boost aan Conditie en Temperament, gerst een gemiddelde boost aan Conditie en Wendbaarheid, en maïs een grote boost aan Snelheid. Wortels (en appels, als die er zijn) geven een grote boost aan Temperament."/>
         <text name="eq_welcome_events_disciplines_title" text="Wedstrijden"/>
-        <text name="eq_welcome_events_disciplines" text="Dressuur beloont Temperament en Wendbaarheid, springen Wendbaarheid, races Snelheid en Conditie, en cross en eventing beloont allrounders."/>
+        <text name="eq_welcome_events_disciplines" text="Dressuur beloont Temperament en Wendbaarheid, springen Wendbaarheid, races Snelheid en Conditie, en cross en eventing belonen allrounders."/>
         <text name="eq_welcome_events_transport_title" text="Er komen"/>
         <text name="eq_welcome_events_transport" text="Automatisch transport brengt je paard tegen betaling naar de wedstrijd. Dat kan veel meer kosten dan gewoon automatisch transport, want je paard kan veel verder reizen en je wilt het wel terug! Zelf je paarden naar de dierenhandelaar brengen (Handmatig transport) kan veel geld besparen."/>
         <text name="eq_welcome_events_risks_title" text="Blessures en afmeldingen"/>
@@ -273,7 +270,7 @@
         <text name="input_EQ_LATERAL" text="Zijgangen (vasthouden)"/>
         <text name="input_EQ_COLLECT" text="Verzamelen (vasthouden)"/>
         <text name="input_EQ_REIN" text="Teugel: muissturing (vasthouden)"/>
-        <text name="eq_train_worn" text="Rijbalk vol: vandaag geen training meer"/>
+        <text name="eq_train_worn" text="Dagtraining vol: vandaag geen training meer"/>
         <text name="eq_ex_push" text="Doorzetten"/>
         <text name="eq_ex_recover" text="Herstellen"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -292,10 +289,7 @@
         <text name="eq_pop_ex_spent" text="Uitgeput!"/>
         <text name="eq_pop_ex_fresh" text="Klaar voor gestrekte galop"/>
         <text name="eq_help_gallop_title" text="Gestrekte galop"/>
-        <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo's. Druk vanuit galop op W om te beginnen met Doorzetten: snel, maar de Inspanningsbalk loopt vol, en sneller naarmate hij hoger staat. Druk op S om te Herstellen: een langzamere galop die de inspanning laat zakken terwijl je doorgaloppeert, snel in het bovenste en onderste derde van de balk, langzaam in het midden. Druk weer op W om door te zetten. Een fitter paard wordt langzamer moe en herstelt sneller."/>
-        <text name="eq_help_gallop_2" text="Als de balk tijdens Doorzetten het rode deel Vermoeid bereikt, valt je paard terug in galop en kan het niet opnieuw gestrekt galopperen tot de balk leeg is. Om zelf terug te gaan naar galop druk je één keer op S tijdens Herstellen met een lege balk, of tik je op elk moment twee keer op S."/>
-        <text name="eq_help_gallop_3" text="Klik onafgebroken met de linkermuisknop tijdens de gestrekte galop om te Sprinten: veel sneller, en de balk loopt eerst langzaam vol, dan steeds sneller, dus stop voor de lijn. Na een Sprint ga je over op Herstellen, en er is geen nieuwe Sprint tot de balk leeg is. Alleen een Sprint kan voorbij de lijn Vermoeid, voor een laatste krachtsinspanning naar de finish, maar een Sprint die daar eindigt laat je paard Uitgeput achter, en het herstelt heel langzaam tot het weer onder de lijn is."/>
-        <text name="eq_help_gallop_4" text="Training: een Sprint traint Snelheid, en hoe hoger hij de balk brengt voordat hij eindigt, hoe meer hij waard is: x2 halverwege de lijn, tot x10 er net voor, maar maar x1 als hij voorbij de lijn eindigt. Doorzetten en Herstellen trainen Conditie met de conditiecombo, tot x5: keer de balk om binnen de blauwe band om hem te verhogen (zie de hulp van de Conditieweergave). Vermoeid of Uitgeput zet hem op x1 en stopt de Conditietraining tot de balk leeg is."/>
+        <text name="eq_help_gallop_1" text="Je paard galoppeert in drie tempo&apos;s. Doorzetten (W) is het middelste en verhoogt de inspanning; Herstellen (S) is het langzaamste en verlaagt haar. Sprinten ([[EQ_SPRINT]]) is het snelst en verhoogt de inspanning snel. Het kan je paard over zijn normale grens brengen, maar daarna duurt herstel lang."/>
         <text name="eq_ex_hint_sprint" text="Klik onafgebroken met links om te sprinten"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: eerst herstellen tot leeg"/>
         <text name="eq_ex_hint_locked" text="Galop tot de balk leeg is"/>
@@ -312,11 +306,11 @@
         <text name="eq_train_view_speed" text="Snelheid"/>
         <text name="eq_train_view_condensed" text="Compact"/>
         <text name="eq_help_stamina_title" text="Training: Conditie"/>
-        <text name="eq_help_stamina_1" text="Conditie traint terwijl je Doorzet en Herstelt in gestrekte galop, met de conditiecombo, tot x5. Een blauwe band op de balk laat zien waar je omkeert. Bij het begin van de gestrekte galop zit hij bovenaan: zet door tot erin en Herstel dan. Let op de adem van je paard: na een treffer bovenaan begint hij te blazen, na een treffer onderaan stopt hij, en als hij Vermoeid is blaast hij hard."/>
-        <text name="eq_help_stamina_2" text="Elke omkeer in de band verhoogt de combo met 0,5, en de band springt naar het andere eind van de balk, iets hoger en smaller. Elke treffer maakt ook het volgende stuk makkelijker: de balk zakt sneller en stijgt langzamer. Keer je te vroeg om, ga je voorbij de band of verlaat je de gestrekte galop, dan ben je de combo kwijt. Vermoeid of Uitgeput stopt ook de Conditietraining tot de balk leeg is."/>
+        <text name="eq_help_stamina_1" text="Conditie laat je paard langer doorzetten in galop of sprint, en daarna sneller herstellen. Het telt het meest bij cross, lange races en steeplechases. Paarden met veel Conditie raken minder snel geblesseerd en doen het beter op zachte, zware of hete bodem. Haver en gerst voeren versnelt de training van Conditie."/>
+        <text name="eq_help_stamina_2" text="Conditie trainen draait om je paard zo lang mogelijk in galop te houden. Wissel van Doorzetten naar Herstellen als de inspanningsbalk in de blauwe band staat, en onderaan weer terug. Je paard gaat zwaar ademen als het tijd is om te wisselen. Met de juiste timing bouw je een trainingscombo op, herstel je sneller en word je langzamer moe. Uit de galop vallen zet de combo terug."/>
         <text name="eq_help_speed_title" text="Training: Snelheid"/>
-        <text name="eq_help_speed_1" text="Snelheid traint terwijl je Sprint: klik onafgebroken met de linkermuisknop tijdens de gestrekte galop. Elke seconde van een Sprint telt, en aan het eind wordt die vermenigvuldigd met hoe hoog je de balk bracht: x2 halverwege de lijn, tot x10 vlak ervoor."/>
-        <text name="eq_help_speed_2" text="Een Sprint die voorbij de lijn eindigt is maar x1 waard, dus stop met tikken (of druk op S) voor de lijn. Na een Sprint moet je paard herstellen tot een lege balk voor het weer kan sprinten."/>
+        <text name="eq_help_speed_1" text="Snelheid verhoogt de topsnelheid van je paard in elke gang en telt het meest bij races en cross. Snelle paarden doen het best op harde bodem. Maïs voeren versnelt de training van Snelheid."/>
+        <text name="eq_help_speed_2" text="Sprint door in galop snel op [[EQ_SPRINT]] te drukken. Hoe hoger de inspanningsbalk staat als de sprint eindigt, hoe groter de vermenigvuldiger, dus ga zo dicht naar de lijn als je durft: ga je erover, dan valt hij terug naar x1. Rust na elke sprint in stap of stilstand om snel te herstellen."/>
         <text name="eq_train_speedMult" text="Snelheid x%.1f"/>
         <text name="eq_train_staminaMult" text="Conditiecombo x%.1f"/>
         <text name="eq_pop_staminaUp" text="Conditiecombo x%.1f!"/>
@@ -546,7 +540,7 @@
         <text name="eq_course_editing" text="%s bewerken: %d hindernissen, %.0f m"/>
         <text name="eq_course_editStarted" text="%s bewerken: geplaatste obstakels van Realistic Equestrian hebben geen botsing tot je klaar bent; andere obstakels blijven vast"/>
         <text name="input_EQ_COURSE_DELETE" text="Parcours in de buurt verwijderen"/>
-        <text name="eq_ui_riding" text="Rijden"/>
+        <text name="eq_ui_riding" text="Dagtraining"/>
         <text name="eq_ui_ridingFull" text="Vol, vandaag geen training meer"/>
         <text name="eq_ui_ridingFullValue" text="%s - vol"/>
         <text name="eq_specialty_none" text="Nog geen"/>
@@ -1226,5 +1220,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>
+        <text name="eq_help_freestyle_5" text="Je paarden hebben extra gangen en bewegingstoetsen. Houd [[EQ_REIN]] ingedrukt om precies met de muis te sturen, [[EQ_LATERAL]] voor zijwaartse bewegingen en [[EQ_COLLECT]] om je paard te verzamelen."/>
+        <text name="eq_help_lateral_title" text="Zijwaartse bewegingen"/>
+        <text name="eq_help_lateral_1" text="Zijwaartse bewegingen horen bij het moeilijkste van dressuur en combineren meerdere bedieningen. Houd [[EQ_LATERAL]] ingedrukt en druk op A of D om zijwaarts te wijken in een wijken voor de kuit, en houd ook [[EQ_REIN]] ingedrukt om hals en schouders te buigen in travers, renvers of appuyement. In een proef laten de pictogrammen op de lijn zien hoe je je paard plaatst."/>
+        <text name="eq_help_collect_title" text="Verzamelen"/>
+        <text name="eq_help_collect_1" text="Verzamelen gebruik je vooral bij dressuur, om een gang zonder zijn gewone snelheid te rijden. Houd [[EQ_COLLECT]] ingedrukt in draf voor een piaffe, draf op de plaats, en druk ook op W voor een passage, een langzame, verende draf. Verzamel in stap of galop en draai met A of D voor een pirouette."/>
+        <text name="eq_help_rein_title" text="Muissturing"/>
+        <text name="eq_help_rein_1" text="Met [[EQ_REIN]] ingedrukt zwaait de camera achter je paard en stuur je nauwkeurig met de muis, onmisbaar bij dressuur en soms bij springen. Houd je ook [[EQ_LATERAL]] ingedrukt, dan buigt de muis het hoofd van je paard voor zijwaartse bewegingen."/>
+        <text name="eq_help_courseEdit_title" text="Parcours bewerken"/>
+        <text name="eq_help_courseEdit_1" text="Leg het parcours vast door in volgorde door de hindernissen te rijden, in elk tempo. Hindernissen uit deze mod hebben dan geen botsing. Maak je een fout, rijd dan terug naar het laatste goede punt tot er een lijn aan vastklikt en druk op [[EQ_COURSE_REWIND]] om vanaf daar verder te gaan. Druk opnieuw op [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] voor cross) om op te slaan."/>
+        <text name="eq_help_dressageEdit_title" text="Dressuurproef bewerken"/>
+        <text name="eq_help_dressageEdit_1" text="Bouw je eigen dressuurproef uit figuren, bewegingen en gangen. [[EQ_DT_PREV]] en [[EQ_DT_NEXT]] wisselen de figuur, [[EQ_DT_GAIT]] de gang en [[EQ_DT_MODE]] schakelt naar zijwaartse bewegingen of bewegingen op de plaats. [[EQ_DT_ACCEPT]] houdt een stap en gaat verder, [[EQ_DT_UNDO]] gaat terug en [[EQ_DT_RANDOM]] kiest een willekeurige stap. Druk op [[EQ_DRESSAGE_TEST]] om de proef op te slaan."/>
     </texts>
 </l10n>

@@ -6452,6 +6452,28 @@ end)()
     check("temperament: move names", T.nameKeys("halt") == "eq_temper_halt" and T.nameKeys("lateral:piaffe") == "eq_now_piaffe"
         and a == "eq_temper_turn_left" and b == "eq_dressage_gait_canter" and T.nameKeys("gait:reverse") == "eq_temper_gait_reverse")
     check("temperament: a new sheet has a combo", EqTraining.newSheet().temper ~= nil)
+-- Help key names (EqHelpKeys): tokens fill from the lookup, unknown ones show bare, and every
+-- token in any language names an action modDesc.xml binds, with a default key to fall back on.
+;(function()
+    dofile("scripts/gui/EqHelpKeys.lua")
+    local filled = EqHelpKeys.fill("Press [[EQ_TRAINING_VIEW]] or [[NOPE]].", function(a) return a == "EQ_TRAINING_VIEW" and "Y" or nil end)
+    check("help keys: a token becomes its key, an unknown one its bare name", filled == "Press Y or NOPE.", filled)
+    local modDesc = io.open("modDesc.xml"):read("*a")
+    local tokens = 0
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
+        local text = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
+        for action in text:gmatch("%[%[([%w_]+)%]%]") do
+            tokens = tokens + 1
+            check("help keys: " .. lang .. " " .. action .. " is bound and has a default",
+                modDesc:find('actionBinding action="' .. action .. '"', 1, true) ~= nil and EqHelpKeys.KEYBOARD[action] ~= nil)
+        end
+        local en = io.open("translations/translation_en.xml"):read("*a")
+        for _, view in ipairs({ "lateral", "collect", "rein", "courseEdit", "dressageEdit" }) do
+            check("help keys: popup " .. view .. " has its texts in " .. lang,
+                text:find('name="eq_help_' .. view .. '_title"', 1, true) ~= nil and text:find('name="eq_help_' .. view .. '_1"', 1, true) ~= nil)
+        end
+    end
+    check("help keys: the texts use tokens", tokens > 100, tostring(tokens))
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

@@ -18,10 +18,10 @@
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_temperament_2" text="Am meisten Temperament bringt eine Aufgabe im Dressurviereck: Kauf eines im Shop und reite zu A. Eine Aufgabe aus Hufschlagfiguren beginnt, als goldene Linie auf den Boden gezeichnet: Bleib auf der Linie und wechsle die Gangart oder halte, wo es verlangt wird; jede Lektion wird mit bis zu 10 bewertet. Drei Verreiten beenden die Aufgabe; beende sie für einen Schub, der mit deiner Wertung wächst. Ein ruhigeres Pferd sieht mehr von der Linie voraus. Riding-Hall-Buchstaben geben die ältere Routine von Strecken zwischen Buchstaben. Leckerlis wie Karotten helfen auch."/>
-        <text name="eq_help_temperament_1" text="Beim Temperament geht es um Kontrolle. Überall, wo du reitest, reihst du neue Lektionen aneinander und baust eine Kombo auf: Gangart wechseln (nicht in den Renngalopp), stillstehen, eine große Wendung (ein halber Kreis in eine Richtung) oder Seitengänge und versammelte Arbeit. Jede neue Lektion erhöht die Kombo bis x5 und füllt ihren Balken wieder auf. Eine deiner letzten 3 Lektionen zu wiederholen ist in Ordnung, bringt aber nichts. Renngalopp, ein Zusammenstoß oder ein leerer Balken beenden die Kombo; Sprünge zählen nicht."/>
-        <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern oder zu viel Tempo verlieren. Ein Sprung ohne Hindernis bringt etwas Training, erhöht den Multiplikator aber nicht."/>
-        <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
+        <text name="eq_help_temperament_2" text="Temperament trainiert am besten mit Dressuraufgaben in einem Dressurviereck, aber Sie können es überall trainieren, indem Sie zwischen Gangarten, Wendungen, Seitengängen und anderen Lektionen wechseln. Halten Sie [[EQ_LATERAL]] für Seitengänge und [[EQ_COLLECT]], um Ihr Pferd für Piaffe oder Passage zu versammeln. Jede neue Lektion erhöht die Kombo bis x5. Für die nächste bleibt nur begrenzt Zeit, und Anstoßen oder Angaloppieren in den Renngalopp beendet die Kombo."/>
+        <text name="eq_help_temperament_1" text="Temperament lässt Ihr Pferd schneller wenden, früher die Gangart wechseln und nach einem Anstoßen kürzer stehen. Am wichtigsten ist es in der Dressur: Ein Pferd mit hohem Temperament folgt einer Dressurlinie genauer und richtet sich besser auf Sprünge aus, eines mit niedrigem Temperament wird eher gestrichen oder sammelt Fehler. Karotten und andere Leckerlis beschleunigen das Temperamenttraining."/>
+        <text name="eq_help_agility_2" text="Jedes überwundene Hindernis erhöht die Kombo von x2 bis x5, und jeder Sprung trainiert mehr. Für das nächste Hindernis haben Sie 10 Sekunden: Anstoßen kostet Zeit, und ein Halt beendet die Kombo bald. Wendigkeit trainiert schneller in einem Springplatz und auf eigenen Parcours: Drücken Sie beim Reiten [[EQ_COURSE_RECORD]], um einen zu erstellen."/>
+        <text name="eq_help_agility_1" text="Wendigkeit lässt Ihr Pferd höher springen und enger wenden und ist im Springreiten und in der Dressur am wichtigsten. Trainieren Sie sie, indem Sie Hindernisse schnell hintereinander springen, ohne anzustoßen oder anzuhalten. Jedes Hindernis zählt, aber richtige Reitsport-Hindernisse bringen mehr. Gerste im Futter beschleunigt das Wendigkeitstraining."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
         <text name="eq_pop_routineStart" text="Lektion begonnen"/>
         <text name="eq_pop_routineFault" text="Fehler %d/%d"/>
@@ -228,14 +228,11 @@
         <text name="eq_temper_turn_right" text="Große Wendung rechts (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
-        <text name="eq_help_freestyle_2" text="Beweglichkeit trainierst du, indem du Hindernisse springst und einen Kombo-Zähler aufbaust, Temperament, indem du neue Lektionen aneinanderreihst (Gangartwechsel, Halten, große Wendungen, Seitengänge) oder eine Aufgabe im Dressurviereck reitest. Ausdauer und Tempo trainierst du durch gutes Galoppieren: Drücke im Galopp H, um zu erfahren, wie."/>
-        <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Stellen Sie im Reiter Personal Pferdepfleger und Trainer ein, die Ihre Pferde jeden Tag trainieren. Tierpfleger und der Herdsman von RLRM halten sie nur in Bewegung."/>
+        <text name="eq_help_freestyle_2" text="Wendigkeit trainieren Sie, indem Sie Hindernisse schnell hintereinander springen, Temperament durch Wechsel zwischen Gangarten und Lektionen. Ausdauer und Schnelligkeit trainieren durch langes Galoppieren und Sprinten. Drücken Sie [[EQ_TRAINING_VIEW]], um mehr über jedes Minispiel zu erfahren und so effektiv wie möglich zu trainieren."/>
+        <text name="eq_help_freestyle_3" text="Sie müssen Ihre Pferde nicht jeden Tag reiten, um sie zu trainieren. Stellen Sie Trainer und Pfleger ein, die Ihren Pferden jeden Tag gezieltes oder allgemeines Training geben, und Ihre Pferde sammeln auch auf Turnieren Erfahrung. Am besten trainieren Sie auf eigenen Spring- oder Geländeparcours (mit [[EQ_COURSE_RECORD]] oder [[EQ_COURSE_RECORD_XC]] erstellen) oder mit einer Dressuraufgabe in einem Dressurviereck."/>
         <text name="eq_form_title" text="Topform"/>
-        <text name="eq_help_freestyle_4" text="Reiten Sie vor einem Wettbewerb! Jeder Wert, den Sie mit seinem Minispiel trainieren, bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform, bis zu +8 pro Wert. Mehrere Tage addieren sich nicht: Ihre beste Einheit des Monats zählt."/>
-        <text name="eq_help_form_title" text="Topform"/>
-        <text name="eq_help_form_1" text="Ihr eigenes Reiten trainiert nicht nur: Es bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform. Jeder Wert, den Sie in seinem Minispiel trainiert haben, erhält bei jeder Veranstaltung dieses Monats bis zu +8, angezeigt als Topform hier und in der Fähigkeiten-Box des Pferdes. Bessere Einheiten geben einen größeren Bonus; bloßes Reiten der Gangarten gibt keinen."/>
-        <text name="eq_help_form_2" text="Topform addiert sich nicht über die Tage eines Monats: Jeder Wert behält Ihre beste Einheit. Sie kann ein Pferd am Wettkampftag sogar über sein Potenzial heben und verfliegt, sobald die Veranstaltungen dieses Monats gelaufen sind. Die Pfleger übernehmen das tägliche Training, also heben Sie sich das Reiten für die wichtigen Veranstaltungen auf."/>
-        <text name="eq_help_freestyle_1" text="Reiten trainiert die Werte Ihres Pferdes, und jeder Wert hat sein eigenes Minispiel. Alle Werte lassen sich gleichzeitig trainieren, aber manche passen schlecht zusammen, etwa Schnelligkeit und Temperament. Mit Y wechseln Sie zu einer Ansicht mit genauerer Rückmeldung zu dem Wert, auf den Sie sich konzentrieren möchten, oder bleiben in der Ansicht Frei für allgemeine Rückmeldungen. Der Reitbalken ist weiterhin die Energie des Pferdes für den Tag: Ist er voll, macht das Pferd bis zum nächsten Tag keine Fortschritte mehr."/>
+        <text name="eq_help_freestyle_4" text="Ihr eigenes Training bringt Ihre Pferde außerdem für alle Turniere dieses Monats vorübergehend in Topform. Das ist mehr als normaler Trainingsfortschritt und kann ein Pferd sogar über sein Potenzial heben, verfällt aber am Monatsende und addiert sich nicht über die Tage: Nur Ihre beste Einheit zählt."/>
+        <text name="eq_help_freestyle_1" text="Jedes Pferd hat vier Werte, die Sie durch Reiten, durch Turniere und durch Ihr Personal trainieren können. Alle Werte trainieren gleichzeitig, aber mit [[EQ_TRAINING_VIEW]] wechseln Sie die Trainingsansicht und sehen mehr zu jedem Wert. Ein Pferd kann jeden Tag nur begrenzt trainieren, angezeigt durch den Prozentwert Tagestraining."/>
         <text name="eq_help_freestyle_title" text="Training: Frei"/>
         <text name="eq_welcome_ride_title" text="Training"/>
         <text name="eq_welcome_welcome_1_title" text="Willkommen bei Realistic Equestrian"/>
@@ -273,7 +270,7 @@
         <text name="input_EQ_LATERAL" text="Seitengänge (halten)"/>
         <text name="input_EQ_COLLECT" text="Versammeln (halten)"/>
         <text name="input_EQ_REIN" text="Zügel: Maussteuerung (halten)"/>
-        <text name="eq_train_worn" text="Reitbalken voll: heute kein Training mehr"/>
+        <text name="eq_train_worn" text="Tagestraining voll: heute kein Training mehr"/>
         <text name="eq_ex_push" text="Antreiben"/>
         <text name="eq_ex_recover" text="Erholen"/>
         <text name="eq_ex_sprint" text="SPRINT"/>
@@ -292,10 +289,7 @@
         <text name="eq_pop_ex_spent" text="Ausgepumpt!"/>
         <text name="eq_pop_ex_fresh" text="Bereit zum Renngalopp"/>
         <text name="eq_help_gallop_title" text="Renngalopp"/>
-        <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Drücken Sie im Galopp W, um mit dem Antreiben zu beginnen: schnell, aber der Anstrengungsbalken füllt sich, und zwar umso schneller, je höher er steht. Drücken Sie S zum Erholen: ein langsamerer Renngalopp, in dem die Anstrengung wieder sinkt, ohne dass Sie den Renngalopp verlassen, schnell im oberen und unteren Drittel des Balkens, langsam im mittleren. Mit W treiben Sie wieder an. Ein fitteres Pferd ermüdet langsamer und erholt sich schneller."/>
-        <text name="eq_help_gallop_2" text="Erreicht der Balken beim Antreiben den roten Bereich Erschöpft, fällt Ihr Pferd in den Galopp zurück und kann erst wieder in den Renngalopp, wenn der Balken leer ist. Um selbst in den Galopp zu wechseln, drücken Sie beim Erholen mit leerem Balken einmal S oder jederzeit zweimal schnell S."/>
-        <text name="eq_help_gallop_3" text="Tippen Sie im Renngalopp ständig die linke Maustaste, um zu sprinten: viel schneller, und der Balken füllt sich erst langsam, dann immer schneller, also hören Sie vor der Linie auf. Nach einem Sprint wechselt Ihr Pferd ins Erholen, und einen neuen Sprint gibt es erst, wenn der Balken leer ist. Nur ein Sprint kann über die Linie hinausgehen, für einen letzten Spurt ins Ziel, doch endet der Sprint dort, ist Ihr Pferd ausgepumpt und erholt sich nur sehr langsam, bis es wieder unter der Linie ist."/>
-        <text name="eq_help_gallop_4" text="Training: Ein Sprint trainiert Schnelligkeit, und je höher er den Balken treibt, bevor er endet, desto mehr ist er wert: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor, aber nur x1, wenn er hinter der Linie endet. Antreiben und Erholen trainieren Ausdauer mit der Ausdauer-Combo, bis zu x5: Kehren Sie den Balken im blauen Bereich um, um sie zu erhöhen (siehe Hilfe der Ausdauer-Ansicht). Erschöpft oder Ausgepumpt setzt sie auf x1 und stoppt das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_help_gallop_1" text="Ihr Pferd hat im Renngalopp drei Tempi. Antreiben (W) ist das mittlere und erhöht die Anstrengung, Erholen (S) ist das langsamste und senkt sie. Sprinten ([[EQ_SPRINT]]) ist das schnellste und erhöht die Anstrengung rasch. Es kann Ihr Pferd über seine normale Grenze bringen, danach braucht es aber lange zur Erholung."/>
         <text name="eq_ex_hint_sprint" text="Für den Sprint ständig links klicken"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: erst ganz erholen"/>
         <text name="eq_ex_hint_locked" text="Galopp, bis der Balken leer ist"/>
@@ -323,11 +317,11 @@
         <text name="eq_train_view_speed" text="Schnelligkeit"/>
         <text name="eq_train_view_condensed" text="Kompakt"/>
         <text name="eq_help_stamina_title" text="Training: Ausdauer"/>
-        <text name="eq_help_stamina_1" text="Ausdauer trainiert, während Sie im Renngalopp antreiben und erholen, mit der Ausdauer-Combo, bis zu x5. Ein blauer Bereich auf dem Balken zeigt, wo Sie umkehren. Zu Beginn des Renngalopps liegt er oben: Treiben Sie bis hinein an, dann erholen Sie sich. Achten Sie auf den Atem Ihres Pferdes: Nach einem Treffer oben schnaubt es, nach einem Treffer unten hört es auf, und bei Erschöpfung schnaubt es heftig."/>
-        <text name="eq_help_stamina_2" text="Jedes Umkehren im Bereich erhöht die Combo um 0,5, und der Bereich springt ans andere Ende des Balkens, etwas höher und schmaler. Jeder Treffer macht auch den nächsten Abschnitt leichter: Der Balken fällt schneller und steigt langsamer. Kehren Sie zu früh um, gehen Sie über den Bereich hinaus oder verlassen Sie den Renngalopp, ist die Combo verloren. Erschöpft oder Ausgepumpt stoppt außerdem das Ausdauertraining, bis der Balken leer ist."/>
+        <text name="eq_help_stamina_1" text="Ausdauer lässt Ihr Pferd länger im Renngalopp antreiben oder sprinten und sich danach schneller erholen. Am wichtigsten ist sie im Gelände, bei langen Rennen und Hindernisrennen. Pferde mit hoher Ausdauer verletzen sich seltener und kommen mit weichem, schwerem oder heißem Boden besser zurecht. Hafer und Gerste im Futter beschleunigen das Ausdauertraining."/>
+        <text name="eq_help_stamina_2" text="Beim Ausdauertraining geht es darum, Ihr Pferd so lange wie möglich im Renngalopp zu halten. Wechseln Sie vom Antreiben zum Erholen, wenn der Anstrengungsbalken im blauen Band steht, und unten wieder zurück. Ihr Pferd beginnt schwer zu atmen, wenn es Zeit zum Wechseln ist. Mit gutem Timing bauen Sie eine Trainingskombo auf, erholen sich schneller und ermüden langsamer. Wer aus dem Renngalopp fällt, verliert die Kombo."/>
         <text name="eq_help_speed_title" text="Training: Schnelligkeit"/>
-        <text name="eq_help_speed_1" text="Schnelligkeit trainiert beim Sprinten: Tippen Sie im Renngalopp ständig die linke Maustaste. Jede Sekunde eines Sprints zählt, und am Ende wird sie damit multipliziert, wie hoch Sie den Balken getrieben haben: x2 auf halbem Weg zur Linie, bis zu x10 knapp davor."/>
-        <text name="eq_help_speed_2" text="Ein Sprint, der hinter der Linie endet, zählt nur x1, also hören Sie vor der Linie auf zu tippen (oder drücken Sie S). Nach einem Sprint muss sich Ihr Pferd bis zum leeren Balken erholen, bevor es wieder sprinten kann."/>
+        <text name="eq_help_speed_1" text="Schnelligkeit erhöht die Höchstgeschwindigkeit Ihres Pferdes in jeder Gangart und ist bei Rennen und im Gelände am wichtigsten. Schnelle Pferde laufen am besten auf festem Boden. Mais im Futter beschleunigt das Schnelligkeitstraining."/>
+        <text name="eq_help_speed_2" text="Sprinten Sie, indem Sie im Renngalopp schnell [[EQ_SPRINT]] drücken. Je höher der Anstrengungsbalken steht, wenn der Sprint endet, desto größer der Multiplikator, also gehen Sie so nah an die Linie, wie Sie sich trauen: Darüber fällt der Multiplikator auf x1. Erholen Sie sich nach jedem Sprint im Schritt oder Halt, dann geht es schnell."/>
         <text name="eq_train_quality_fast" text="trainiert schnell"/>
         <text name="eq_train_quality_steady" text="trainiert"/>
         <text name="eq_train_quality_slow" text="trainiert langsam"/>
@@ -547,7 +541,7 @@
         <text name="eq_course_editing" text="%s wird bearbeitet: %d Hindernisse, %.0f m"/>
         <text name="eq_course_editStarted" text="%s wird bearbeitet: platzierte Hindernisse von Realistic Equestrian haben bis zum Abschluss keine Kollision, andere Hindernisse bleiben fest"/>
         <text name="input_EQ_COURSE_DELETE" text="Parcours in der Nähe löschen"/>
-        <text name="eq_ui_riding" text="Reiten"/>
+        <text name="eq_ui_riding" text="Tagestraining"/>
         <text name="eq_ui_ridingFull" text="Voll, heute kein Training mehr"/>
         <text name="eq_ui_ridingFullValue" text="%s - voll"/>
         <text name="eq_specialty_none" text="Noch keine"/>
@@ -1228,5 +1222,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s ist in Quarantäne und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_away" text="%s ist auf einem Turnier und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_injured" text="%s ist verletzt und wurde zum Ausruhen zurück in %s gebracht."/>
+        <text name="eq_help_freestyle_5" text="Ihre Pferde haben zusätzliche Gangarten und Bewegungstasten. Halten Sie [[EQ_REIN]], um präzise mit der Maus zu lenken, [[EQ_LATERAL]] für Seitengänge und [[EQ_COLLECT]], um Ihr Pferd zu versammeln."/>
+        <text name="eq_help_lateral_title" text="Seitengänge"/>
+        <text name="eq_help_lateral_1" text="Seitengänge gehören zum Schwierigsten in der Dressur und kombinieren mehrere Steuerungen. Halten Sie [[EQ_LATERAL]] und drücken Sie A oder D, um im Schenkelweichen seitwärts zu treten, und halten Sie zusätzlich [[EQ_REIN]], um Hals und Schultern in Travers, Renvers oder Traversale zu stellen. In einer Dressuraufgabe zeigen die Symbole auf der Linie, wie Sie Ihr Pferd stellen."/>
+        <text name="eq_help_collect_title" text="Versammeln"/>
+        <text name="eq_help_collect_1" text="Versammeln braucht man vor allem in der Dressur, um eine Gangart ohne ihr übliches Tempo zu reiten. Halten Sie im Trab [[EQ_COLLECT]] für eine Piaffe, einen Trab auf der Stelle, und drücken Sie zusätzlich W für eine Passage, einen langsamen, schwebenden Trab. Versammeln Sie im Schritt oder Galopp und wenden Sie mit A oder D für eine Pirouette."/>
+        <text name="eq_help_rein_title" text="Mauslenkung"/>
+        <text name="eq_help_rein_1" text="Mit gehaltener [[EQ_REIN]] schwenkt die Kamera hinter Ihr Pferd, und Sie lenken fein mit der Maus, unverzichtbar in der Dressur und manchmal im Springreiten. Halten Sie dabei auch [[EQ_LATERAL]], stellt die Maus den Kopf Ihres Pferdes für Seitengänge."/>
+        <text name="eq_help_courseEdit_title" text="Parcours bearbeiten"/>
+        <text name="eq_help_courseEdit_1" text="Zeichnen Sie den Parcours, indem Sie in beliebigem Tempo der Reihe nach durch die Hindernisse reiten. Hindernisse aus diesem Mod haben dabei keine Kollision. Bei einem Fehler reiten Sie zurück zum letzten guten Punkt, bis eine Linie dort einrastet, und drücken [[EQ_COURSE_REWIND]], um von dort neu zu zeichnen. Drücken Sie erneut [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] im Gelände), um zu speichern."/>
+        <text name="eq_help_dressageEdit_title" text="Dressuraufgabe bearbeiten"/>
+        <text name="eq_help_dressageEdit_1" text="Bauen Sie Ihre eigene Dressuraufgabe aus Figuren, Lektionen und Gangarten. Mit [[EQ_DT_PREV]] und [[EQ_DT_NEXT]] wechseln Sie die Figur, mit [[EQ_DT_GAIT]] die Gangart und mit [[EQ_DT_MODE]] zu Seitengängen oder Lektionen auf der Stelle. [[EQ_DT_ACCEPT]] übernimmt einen Schritt, [[EQ_DT_UNDO]] geht zurück, [[EQ_DT_RANDOM]] wählt zufällig. Mit [[EQ_DRESSAGE_TEST]] speichern Sie die Aufgabe."/>
     </texts>
 </l10n>

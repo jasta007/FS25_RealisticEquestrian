@@ -1379,8 +1379,23 @@ end
 -- news in a small line above it (James, 2026-10-27: the panel was too busy). Every view trains
 -- everything. Help popups (H, and the first time a view opens) explain each view in HELP_PAGES pages.
 EqTrainingHooks.VIEWS = { "freestyle", "stamina", "speed", "agility", "temperament", "condensed" }
--- "gallop" pops up the first time the horse gallops, and on H while it gallops.
-EqTrainingHooks.HELP_PAGES = { freestyle = 4, stamina = 2, speed = 2, agility = 2, temperament = 2, gallop = 4, form = 2 }
+-- "gallop" pops up the first time the horse gallops, and on H while it gallops. The rest pop up
+-- once each (James, 2026-11-04): lateral, collect and rein the first time that key is held while
+-- riding, courseEdit the first time a course is recorded or edited, dressageEdit the first time
+-- a dressage test is built or edited.
+EqTrainingHooks.HELP_PAGES = { freestyle = 5, stamina = 2, speed = 2, agility = 2, temperament = 2, gallop = 1,
+    lateral = 1, collect = 1, rein = 1, courseEdit = 1, dressageEdit = 1 }
+-- The stat colour of popups that aren't a stat's own view.
+EqTrainingHooks.HELP_COLOR = { lateral = "temperament", collect = "temperament", rein = "temperament",
+    courseEdit = "agility", dressageEdit = "temperament" }
+-- The one-off popups and what shows each: a riding key held (EqRidingInput) or an editor open.
+EqTrainingHooks.FIRST_TIME_HELP = {
+    { key = "lateral", shown = function() return EqRidingInput ~= nil and EqRidingInput.lateral() end },
+    { key = "collect", shown = function() return EqRidingInput ~= nil and EqRidingInput.collect() end },
+    { key = "rein", shown = function() return EqRidingInput ~= nil and EqRidingInput.rein() end },
+    { key = "courseEdit", shown = function() return EqCourseHooks ~= nil and EqCourseHooks.isEditing() end },
+    { key = "dressageEdit", shown = function() return EqDressageEditor ~= nil and EqDressageEditor.isEditing() end },
+}
 -- Views that show the gallop's training rows and keys under the bar.
 EqTrainingHooks.GALLOP_VIEWS = { freestyle = true, stamina = true, speed = true }
 -- The stats the player's riding trains.
@@ -1407,7 +1422,7 @@ function EqTrainingHooks.showHelp(view)
     local title = g_i18n:getText("eq_help_" .. view .. "_title")
     for i = 1, EqTrainingHooks.HELP_PAGES[view] or 0 do
         table.insert(pages, { title = title, text = g_i18n:getText(string.format("eq_help_%s_%d", view, i)),
-            color = EqTrainingHud.STAT_COLOR[view] or EqTrainingHud.COLOR.white })
+            color = EqTrainingHud.STAT_COLOR[EqTrainingHooks.HELP_COLOR[view] or view] or EqTrainingHud.COLOR.white })
     end
     EqTrainingHud.showHelp(pages, nil, view)
 end
@@ -2022,12 +2037,7 @@ function EqTrainingHooks.horseRows(cluster)
     local form = nil
     if EqCompetitionManager ~= nil and EqCompetitionManager.formFor ~= nil and EqTraining.hasForm ~= nil then
         form = EqCompetitionManager.formFor(record)
-        if not EqTraining.hasForm(form) then
-            form = nil
-        elseif EqTrainingHooks.HELP_PAGES.form ~= nil and not EqTrainingHud.isHelpShowing() and not EqTrainingHud.hasSeen("form") then
-            -- The first peak form explains itself, until its last page is clicked.
-            EqTrainingHooks.showHelp("form")
-        end
+        if not EqTraining.hasForm(form) then form = nil end
     end
     local segments
     for i, stat in ipairs(EqConstants.STAT_KEYS) do
@@ -2059,6 +2069,15 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not hudHidden and EqTrainingHooks.HELP_PAGES[view] ~= nil and not EqTrainingHud.isHelpShowing() and not EqWelcome.onRide()
         and not EqTrainingHud.hasSeen(view) then
         EqTrainingHooks.showHelp(view)
+    end
+    if not hudHidden and not EqTrainingHud.isHelpShowing() and EqWelcome.hasSeen("welcome") then
+        for _, help in ipairs(EqTrainingHooks.FIRST_TIME_HELP) do
+            if not EqTrainingHud.hasSeen(help.key) and help.shown() then
+                EqTrainingHud.markSeen(help.key)
+                EqTrainingHooks.showHelp(help.key)
+                break
+            end
+        end
     end
     EqTrainingHud.drawHelp()
     -- Editing a show jumping course: recording, its line and the course keys (EqCourseHooks).

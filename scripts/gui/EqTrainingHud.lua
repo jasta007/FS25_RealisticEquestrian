@@ -804,6 +804,13 @@ end
 --- @param seenKey string|nil seen flag set once the last page is clicked away
 function EqTrainingHud.showHelp(pages, place, seenKey)
     if pages == nil or #pages == 0 then return end
+    -- Key names ([[EQ_TRAINING_VIEW]]) become the player's own keys (EqHelpKeys).
+    if EqHelpKeys ~= nil then
+        for _, page in ipairs(pages) do
+            page.text = EqHelpKeys.text(page.text)
+            page.title = EqHelpKeys.text(page.title)
+        end
+    end
     EqTrainingHud.pages = pages
     EqTrainingHud.place = place
     EqTrainingHud.seenKey = seenKey
