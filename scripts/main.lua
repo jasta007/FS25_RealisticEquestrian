@@ -89,6 +89,7 @@ source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
 source(modDirectory .. "scripts/dealer/EqDelivery.lua")
+source(modDirectory .. "scripts/gui/EqHudToggle.lua")
 source(modDirectory .. "scripts/gui/EqSkillsHudBox.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
 source(modDirectory .. "scripts/gui/EqListBadge.lua")
@@ -199,6 +200,8 @@ function EqMain.activate()
     if EqMain.isActive and EqRLRM.features.dealerDelivery then
         guarded("dealer delivery hook", function() EqDelivery.install(guarded) end)
     end
+
+    guarded("hide HUD key hook", function() EqHudToggle.install(guarded) end)
 
     if EqMain.isActive and EqRLRM.features.listBadge then
         guarded("list badge hook", function() EqListBadge.install(guarded) end)

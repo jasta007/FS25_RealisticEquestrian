@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s（等待送达）"/>
         <text name="eq_ui_status_awaitingDelivery" text="等待送达"/>
         <text name="input_EQ_DELIVER" text="把马送往赛事"/>
+        <text name="input_EQ_TOGGLE_HUD" text="隐藏或显示界面"/>
         <text name="eq_deliver_prompt" text="把%s送往赛事"/>
         <text name="eq_deliver_promptMany" text="把%d匹马送往各自的赛事"/>
         <text name="eq_deliver_done" text="%s已送达，正前往赛事。"/>

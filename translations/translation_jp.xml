@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s（引き渡し待ち）"/>
         <text name="eq_ui_status_awaitingDelivery" text="引き渡し待ち"/>
         <text name="input_EQ_DELIVER" text="馬を大会へ引き渡す"/>
+        <text name="input_EQ_TOGGLE_HUD" text="HUDの表示/非表示"/>
         <text name="eq_deliver_prompt" text="%sを大会へ引き渡す"/>
         <text name="eq_deliver_promptMany" text="%d頭を大会へ引き渡す"/>
         <text name="eq_deliver_done" text="%sを引き渡しました。大会へ出発します。"/>

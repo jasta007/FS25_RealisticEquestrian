@@ -622,6 +622,7 @@
         <text name="eq_ui_awaiting" text="%s (wartet auf Abgabe)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Wartet auf Abgabe"/>
         <text name="input_EQ_DELIVER" text="Pferd zur Veranstaltung abgeben"/>
+        <text name="input_EQ_TOGGLE_HUD" text="HUD aus- oder einblenden"/>
         <text name="eq_deliver_prompt" text="%s zur Veranstaltung abgeben"/>
         <text name="eq_deliver_promptMany" text="%d Pferde zu ihren Veranstaltungen abgeben"/>
         <text name="eq_deliver_done" text="%s abgegeben. Es reist zur Veranstaltung ab."/>

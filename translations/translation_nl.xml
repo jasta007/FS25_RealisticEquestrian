@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s (wacht op aflevering)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Wacht op aflevering"/>
         <text name="input_EQ_DELIVER" text="Paard afleveren voor wedstrijd"/>
+        <text name="input_EQ_TOGGLE_HUD" text="HUD verbergen of tonen"/>
         <text name="eq_deliver_prompt" text="%s afleveren voor wedstrijd"/>
         <text name="eq_deliver_promptMany" text="%d paarden afleveren voor hun wedstrijden"/>
         <text name="eq_deliver_done" text="%s afgeleverd. Het paard vertrekt naar de wedstrijd."/>
