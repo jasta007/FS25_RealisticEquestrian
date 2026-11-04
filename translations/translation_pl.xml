@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s (czeka na dostarczenie)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Czeka na dostarczenie"/>
         <text name="input_EQ_DELIVER" text="Dostarcz konia na zawody"/>
+        <text name="input_EQ_TOGGLE_HUD" text="Ukryj lub pokaż HUD"/>
         <text name="eq_deliver_prompt" text="Dostarcz konia %s na zawody"/>
         <text name="eq_deliver_promptMany" text="Dostarcz konie na zawody: %d"/>
         <text name="eq_deliver_done" text="Koń %s dostarczony. Wyjeżdża na zawody."/>

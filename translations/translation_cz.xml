@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s (čeká na doručení)"/>
         <text name="eq_ui_status_awaitingDelivery" text="Čeká na doručení"/>
         <text name="input_EQ_DELIVER" text="Doručit koně na závod"/>
+        <text name="input_EQ_TOGGLE_HUD" text="Skrýt nebo zobrazit HUD"/>
         <text name="eq_deliver_prompt" text="Doručit koně %s na závod"/>
         <text name="eq_deliver_promptMany" text="Doručit koně na závody: %d"/>
         <text name="eq_deliver_done" text="Kůň %s doručen. Odjíždí na závod."/>

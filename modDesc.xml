@@ -153,6 +153,7 @@ Por Jasta007.]]>
         <action name="EQ_DT_PREV_LETTER"/>
         <action name="EQ_DT_NEXT_LETTER"/>
         <action name="EQ_DT_GAIT"/>
+        <action name="EQ_TOGGLE_HUD"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -227,6 +228,9 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_DT_GAIT">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_TOGGLE_HUD">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_KP_minus" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>

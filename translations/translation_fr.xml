@@ -467,6 +467,7 @@
         <text name="eq_ui_awaiting" text="%s (en attente de livraison)"/>
         <text name="eq_ui_status_awaitingDelivery" text="En attente de livraison"/>
         <text name="input_EQ_DELIVER" text="Livrer le cheval à l'épreuve"/>
+        <text name="input_EQ_TOGGLE_HUD" text="Masquer ou afficher l'interface"/>
         <text name="eq_deliver_prompt" text="Livrer %s à l'épreuve"/>
         <text name="eq_deliver_promptMany" text="Livrer %d chevaux à leurs épreuves"/>
         <text name="eq_deliver_done" text="%s livré. Il part pour son épreuve."/>

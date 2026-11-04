@@ -621,6 +621,7 @@
         <text name="eq_ui_awaiting" text="%s (in attesa di consegna)"/>
         <text name="eq_ui_status_awaitingDelivery" text="In attesa di consegna"/>
         <text name="input_EQ_DELIVER" text="Consegna cavallo alla gara"/>
+        <text name="input_EQ_TOGGLE_HUD" text="Nascondi o mostra l'interfaccia"/>
         <text name="eq_deliver_prompt" text="Consegna %s alla gara"/>
         <text name="eq_deliver_promptMany" text="Consegna %d cavalli alle loro gare"/>
         <text name="eq_deliver_done" text="%s consegnato. Parte per la sua gara."/>
