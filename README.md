@@ -53,8 +53,8 @@ uses its genetics, health and fitness.
 - **Training is a set of riding minigames.** Press **Y** while riding to switch between Freestyle,
   a view per stat and Condensed (just the bar), and **H** for help.
   - **Gallop (experimental):** Push (W) and Recover (S) to manage the Exertion bar, tap the left mouse button
-    to Sprint. Sprints train Speed (up to x10 the closer you take them to the line), Pushing and
-    Recovering train Stamina at a multiplier up to x5.
+    to Sprint. Sprints train Speed (up to x10 the closer you take them to the line), turning the bar
+    round inside the blue band trains Stamina, a combo up to x5.
   - **Agility:** clear jumps one after another to build a combo, up to x5.
   - **Temperament:** ride up to a dressage arena and ride its test: figures drawn as a line on
     the ground (green to red by how close you are), each marked out of 10 for staying on the line
@@ -63,10 +63,11 @@ uses its genetics, health and fitness.
     **Ctrl+L** in a shop arena builds your own test figure by figure (N/M, G, R, F, Enter, Backspace).
 - **Courses (new):** press **Ctrl+J** while riding and ride through your show jumps in order, Ctrl+J
   again to save (**Ctrl+E** for cross country). Then ride a timed round with faults and a clock.
-- The riding bar is the horse's energy for the day; easy riding that trains little barely uses it.
+- The Daily Training bar (the base game's riding bar) is the horse's energy for the day; easy riding that trains little barely uses it.
 - **Peak form:** ride a horse before its events. Your best minigame session of the month gives up
   to +8 per stat in that month's events; staff keep up the daily training.
-- **Stats change how a horse rides:** speed sets top speed, agility sets jump height and turning.
+- **Stats change how a horse rides:** speed sets top speed and how hard a Sprint kicks on, stamina how long
+  the horse can Push and Sprint, agility jump height, turning and braking, and temperament adds sharper turning and braking.
   Gait keys pressed in the air take effect as the horse lands. Jumping from a trot (or Ctrl +
   Space at a canter or gallop) is a short, steep collected jump.
 - **Ride horse** on the Info tab of RLRM's menu (Shift+O) puts you on the selected horse, wherever
@@ -237,7 +238,7 @@ Welcome popups walk you through the basics the first time you meet a horse and o
    you'll see its **Skill potential** and current **Skills**.
 3. **Ride it.** Pick it on the Info tab and press **Ride horse**, or walk up to it. Press **Y**
    for the Stamina or Speed view and follow the tips. The horse is done for the day when the panel
-   says "Riding bar full".
+   says "Daily Training full".
    Put oats, barley, corn, carrots or apples in the trough to train faster.
 4. **Enter an event.** Open the **Competitions** tab in the same menu, pick an event and a
    horse, then choose Auto or Manual Transport.

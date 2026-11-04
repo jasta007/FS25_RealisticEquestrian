@@ -65,9 +65,12 @@ def arch():
     bar0, bar1, bd = 3.6, 4.4, 0.4               # crossbar from, to, depth
     for side, number in ((1, 2), (-1, 3)):
         x0, x1 = sorted((side * clear, side * (clear + tw)))
-        textured_box(paint, x0, x1, 0.25, th, -td / 2, td / 2)
+        # the banner stops 1 cm under the strips' tops so the two don't share the tower's top
+        textured_box(paint, x0, x1, 0.25, th - 0.01, -td / 2, td / 2)
         # white frame round the banner: corner posts, the weighted foot
-        for px in (x0, x1 - 0.06):
+        # 1 cm proud of the banner on every face: flush, the strips and the banner shared the
+        # tower's sides and flickered (z-fighting, James 2026-11-04)
+        for px in (x0 - 0.01, x1 - 0.05):
             for pz in (-td / 2 - 0.01, td / 2 - 0.05):
                 textured_box(white, px, px + 0.06, 0.0, th, pz, pz + 0.06)
         textured_box(white, x0 - 0.15, x1 + 0.15, 0.0, 0.25, -0.6, 0.6)
@@ -78,7 +81,8 @@ def arch():
             logos[f"eqSponsor_{number}{suffix}"] = logo_quad((x0 + x1) / 2, 1.0 + lw / 2, facing * (td / 2 + 0.002), facing,
                                                             lw, lw / ASPECT, turned=True)
     span = clear + tw
-    textured_box(paint, -span, span, bar0, bar1, -bd / 2, bd / 2)
+    # the crossbar's ends stop inside the towers, not flush with their outer sides
+    textured_box(paint, -(clear + tw / 2), clear + tw / 2, bar0, bar1, -bd / 2, bd / 2)
     for y in (bar0 - 0.05, bar1):
         textured_box(white, -span - 0.02, span + 0.02, y, y + 0.05, -bd / 2 - 0.02, bd / 2 + 0.02)
     cols.append((-span, span, bar0, bar1, -bd / 2, bd / 2))
@@ -140,8 +144,12 @@ def write_i3d(name, colour, path, statics, logos, cols):
     lines += paint_material("gatePaint", mat["paint"], sj.COLOUR[colour])
     lines += [f'    <Material name="xcPeeled" materialId="{mat["wood"]}" specularColor="0.1 0.7 0">',
               f'      <Texture fileId="{fid[PEELED]}"/>', "    </Material>",
-              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0 0" alphaBlending="true">',
-              f'      <Texture fileId="{fid["../bleachers/bleacherSponsor_diffuse.dds"]}"/>', "    </Material>", "  </Materials>"]
+              # logos as decals on the vehicle shader with the paint's detail maps (no '256' placeholder)
+              f'    <Material name="eqSponsor" materialId="{mat["logo"]}" specularColor="0.2 0 0" alphaBlending="true" '
+              f'customShaderId="{fid[sj.SHADER]}">',
+              f'      <Texture fileId="{fid["../bleachers/bleacherSponsor_diffuse.dds"]}"/>']
+    lines += [f'      <Custommap name="{k}" fileId="{fid[v]}"/>' for k, v in sj.PAINT_MAPS.items()]
+    lines += ["    </Material>", "  </Materials>"]
     shapes = [(f"s_{k}", m) for k, m in statics.items() if m.tris] + [(f"l_{k}", m) for k, m in logos.items()]
     shapes += [(f"col{i + 1}", sj.collision_box(*box)) for i, box in enumerate(cols)]
     ids = {key: i + 1 for i, (key, _) in enumerate(shapes)}

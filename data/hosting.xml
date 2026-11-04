@@ -123,6 +123,8 @@
 
     <seating>
         <match xml="placeables/bleachers/bleachers"/>
+        <!-- the Riding Stable mod's indoor school has its own bleachers (EqSpectators.BUILT_IN) -->
+        <match xml="FS25_RidingStable/XML/horseBarnBig.xml"/>
         <keyword pattern="bleacher"/>
         <keyword pattern="grandstand"/>
         <keyword pattern="tribune"/>

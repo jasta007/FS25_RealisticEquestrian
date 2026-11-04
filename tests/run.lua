@@ -16,6 +16,7 @@ dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqJump.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/training/EqTemperament.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
@@ -460,6 +461,10 @@ do
         local function near(a, b) return math.abs(a - b) < 0.01 end
         check("speed 10 runs about 10% slower, speed 100 20% faster", near(slow.speed, 0.9) and near(fast.speed, 1.2))
         check("agility raises jump height and turn rate", slow.jump < 1 and fast.jump > 1 and slow.turn < mid.turn and fast.turn > mid.turn and slow.turn >= 1)
+        check("agility and temperament give better brakes, never worse than the base game",
+            slow.brake == 1 and fast.brake > mid.brake and mid.brake > 1
+            and EqTraining.handling(nil, 100, 0).brake > EqTraining.handling(nil, 0, 0).brake
+            and EqTraining.handling(nil, 0, 100).brake > EqTraining.handling(nil, 0, 0).brake)
         check("temperament quickens gait changes and shortens crash stops",
             slow.acceleration < fast.acceleration and slow.crashHalt > fast.crashHalt)
         check("an unknown horse rides like the base game", near(mid.speed, 1.035) and near(mid.acceleration, 1) and near(mid.crashHalt, 1))
@@ -610,10 +615,9 @@ do
     recoverHigh.mode, recoverHigh.value, recoverLow.mode, recoverLow.value = "recover", 90, "recover", 10
     local recoverZone = E.new()
     recoverZone.mode, recoverZone.value = "recover", 50
-    check("Recovering is fast in the top and bottom thirds and slow in the middle zone",
-        E.band(90) == "high" and E.band(50) == "zone" and E.band(10) == "low"
-        and -E.rate(recoverHigh, "gallop") > -E.rate(recoverZone, "gallop") * 2
-        and -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop") * 2)
+    check("Recovering speeds up as the bar heads for empty",
+        -E.rate(recoverLow, "gallop") > -E.rate(recoverZone, "gallop")
+        and -E.rate(recoverZone, "gallop") > -E.rate(recoverHigh, "gallop"))
     local d = E.new()
     ride(d, "gallop", 6000)
     E.press(d, "back")
@@ -645,6 +649,12 @@ do
     check("three quick sprint taps Sprint", tap(sp, 3, 150) == "sprint" and sp.mode == "sprint")
     check("Sprint is the fastest pace, Recovering the slowest", E.speedShare(sp) > 1
         and E.GALLOP_SHARE.recover < E.GALLOP_SHARE.push and E.GALLOP_SHARE.push < E.speedShare(sp))
+    check("a faster horse Sprints faster", E.speedShare(sp, 100) > E.speedShare(sp, 50) and E.speedShare(sp, 50) > E.speedShare(sp, 0)
+        and near(E.speedShare(sp, 0), E.SPRINT_PACE[1]) and near(E.speedShare(sp, 100), E.SPRINT_PACE[2]))
+    check("Speed doesn't change Pushing's or Recovering's share", E.speedShare({ mode = "push" }, 100) == E.GALLOP_SHARE.push
+        and E.speedShare({ mode = "recover" }, 0) == E.GALLOP_SHARE.recover)
+    local fitSprint, unfitSprint = { mode = "sprint", value = 40, sprintMs = 2000 }, { mode = "sprint", value = 40, sprintMs = 2000 }
+    check("a fitter horse's Sprint tires it more slowly", E.rate(fitSprint, "gallop", 100) < E.rate(unfitSprint, "gallop", 0) * 0.7)
     events = ride(sp, "gallop", 1000)
     check("a Sprint ends when the tapping stops, into Recovering", events[1] == "sprintOver" and sp.mode == "recover")
     check("no new Sprint until the bar is empty", not E.canSprint(sp) and tap(sp, 3, 150) ~= "sprint" and sp.mode == "recover")
@@ -696,10 +706,10 @@ do
     end
     check("quick taps slow the Sprint's rise", sprintRise(150, 1000) < sprintRise(400, 1000) * 0.7)
     check("but only for so long", near(sprintRise(150, 11000), sprintRise(400, 11000), 1e-9))
-    check("a faster horse tires more slowly when Sprinting", (function()
+    check("Speed doesn't change how fast a Sprint tires the horse", (function()
         local a, b = E.new(), E.new()
         a.mode, b.mode = "sprint", "sprint"
-        return E.rate(a, "gallop", 50, 90) < E.rate(b, "gallop", 50, 10)
+        return E.rate(a, "gallop", 50, 90) == E.rate(b, "gallop", 50, 10)
     end)())
 
     local last = E.new()
@@ -843,38 +853,91 @@ do
     check("dropping out of a Sprint to a canter ends and banks it",
         E.step(dropped.exertion, "canter", 50) == "sprintOver" and T.speedStep(dropped, 50, false) ~= nil and dropped.focused.speed > 0)
 
-    -- Stamina: push near the top, recover into the zone and wait there, push again.
-    local skilled = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 92 then return "back" end
-        if ex.mode == "recover" and ex.value <= 45 then return "forward" end
+    -- Stamina: turn the bar round inside the band, which hops between the top and bottom thirds.
+    local realRandom = T.paceRandom
+    T.paceRandom = function() return 0.5 end
+    local function turner(margin)
+        return function(ex, sheet)
+            local st = sheet.stamina
+            if st.from == nil then return nil end
+            local target = (st.from + st.to) / 2 + margin
+            if ex.mode == "push" and st.side == "high" and ex.value >= target then return "back" end
+            if ex.mode == "recover" and st.side == "low" and ex.value <= target then return "forward" end
+        end
+    end
+    local skilled = gallop(turner(0), 150000)
+    local early = gallop(function(ex, sheet)
+        local st = sheet.stamina
+        if ex.mode == "push" and st.side == "high" and ex.value >= st.from - 5 then return "back" end
+        if ex.mode == "recover" and st.side == "low" and ex.value <= st.to + 5 then return "forward" end
     end, 150000)
-    local jiggler = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 95 then return "back" end
-        if ex.mode == "recover" and ex.value <= 85 then return "forward" end
-    end, 150000)
-    local lazy = gallop(function(ex)
-        if ex.mode == "push" and ex.value >= 92 then return "back" end
-        if ex.mode == "recover" and ex.value <= 3 then return "forward" end
+    local middle = gallop(function(ex)
+        if ex.mode == "push" and ex.value >= 52 then return "back" end
+        if ex.mode == "recover" and ex.value <= 48 then return "forward" end
     end, 150000)
     local flatOut = gallop(function() return nil end, 150000)
-    check("riding in the zone builds the stamina multiplier towards x5 without Fatigued",
-        not skilled.blown and skilled.stamina.mult > 2.5 and skilled.averageMult > 3,
+    check("turning round inside the band builds the stamina multiplier to x5 without Fatigued",
+        not skilled.blown and skilled.stamina.mult == T.STAMINA_MULT_MAX and skilled.averageMult > 2.5,
         string.format("x%.1f now, x%.2f average", skilled.stamina.mult, skilled.averageMult))
-    check("bouncing between Push and Recover near the top earns little multiplier",
-        jiggler.averageMult < skilled.averageMult * 0.6, string.format("x%.2f average", jiggler.averageMult))
-    check("recovering too far loses the multiplier", lazy.averageMult < skilled.averageMult * 0.75,
-        string.format("x%.2f average", lazy.averageMult))
+    check("switching before the band keeps the multiplier at x1", early.stamina.mult == 1 and early.averageMult < 1.1,
+        string.format("x%.2f average", early.averageMult))
+    check("jiggling the bar in the middle earns nothing extra", middle.averageMult < 1.1,
+        string.format("x%.2f average", middle.averageMult))
     check("Fatigued drops the multiplier to x1 and stops stamina training",
         flatOut.blown and flatOut.focused.stamina < skilled.focused.stamina * 0.6)
     check("good stamina riding fills most of a day's effort in a riding bar of gallop",
         skilled.focused.stamina > 1.2, string.format("%.2f in 150 s", skilled.focused.stamina))
+    local band = T.newSheet()
+    band.exertion.mode, band.exertion.value = "push", 10
+    T.staminaStep(band, 50, false)
+    local st = band.stamina
+    local wide = st.to - st.from
+    check("a gallop starts with a full-width band in the top third",
+        st.side == "high" and st.from >= T.PACE_HIGH[1][1] and math.abs(wide - T.PACE_WIDTH[1]) < 1e-6)
+    band.exertion.value = st.from + 1
+    band.exertion.mode = "recover"
+    local hit = T.staminaStep(band, 50, false)
+    check("turning round inside the band raises the multiplier and moves the band to the bottom third, narrower",
+        hit == "hit" and st.mult == 1 + T.PACE_STEP and st.side == "low" and st.to <= T.PACE_LOW[2][2] and st.to - st.from < wide)
+    band.exertion.value = st.from - 1
+    local past = T.staminaStep(band, 50, false)
+    check("recovering past the bottom band drops to x1 and puts a full band in the top third",
+        past == "past" and st.mult == 1 and st.side == "high" and math.abs(st.to - st.from - T.PACE_WIDTH[1]) < 1e-6)
+    local eased = T.newSheet()
+    eased.exertion.mode, eased.exertion.value = "push", 50
+    T.staminaStep(eased, 50, false)
+    local plainPush = E.rate(eased.exertion, "gallop", 50)
+    local est = eased.stamina
+    eased.exertion.value, eased.exertion.mode = (est.from + est.to) / 2, "recover"
+    check("no help before a hit", eased.exertion.pushShare == 1)
+    T.staminaStep(eased, 50, false)
+    local plainRecover = -E.rate({ mode = "recover", value = 50 }, "gallop", 50)
+    local fastRecover = -E.rate({ mode = "recover", value = 50, recoverShare = eased.exertion.recoverShare }, "gallop", 50)
+    eased.exertion.value, eased.exertion.mode = (est.from + est.to) / 2, "push"
+    T.staminaStep(eased, 50, false)
+    local slowPush = E.rate({ mode = "push", value = 50, pushShare = eased.exertion.pushShare }, "gallop", 50)
+    check("a hit at the top speeds Recovering, a hit at the bottom slows Pushing",
+        fastRecover > plainRecover * 1.25 and slowPush < plainPush * 0.95 and est.mult == 1 + 2 * T.PACE_STEP,
+        string.format("%.2f vs %.2f, %.2f vs %.2f", fastRecover, plainRecover, slowPush, plainPush))
+    local lowHigh = T.paceRange("low", 5)
+    check("the bands sit higher at a higher multiplier", lowHigh > T.PACE_LOW[1][2] and T.paceRange("high", 5) > T.PACE_HIGH[1][1])
+    local cantered = T.newSheet()
+    cantered.stamina.mult = 4
+    local canterNews = T.staminaStep(cantered, 50, false)
+    check("dropping to a canter loses the stamina multiplier at once", cantered.stamina.mult == 1 and canterNews == "lost")
+    local earlySheet = T.newSheet()
+    earlySheet.exertion.mode, earlySheet.exertion.value = "push", 30
+    T.staminaStep(earlySheet, 50, false)
+    earlySheet.exertion.mode = "recover"
+    check("turning round before the band is too early", T.staminaStep(earlySheet, 50, false) == "early" and earlySheet.stamina.side == "low")
+    T.paceRandom = realRandom
     local blownSheet = T.newSheet()
     blownSheet.exertion.lock, blownSheet.exertion.value, blownSheet.stamina.mult = "blown", 60, 4
     T.staminaStep(blownSheet, 1000, false)
     check("while Fatigued there is no multiplier and no stamina training",
         blownSheet.stamina.mult == 1 and blownSheet.focused.stamina == 0)
-    print(string.format("info: stamina over 150 s: zone x%.2f avg (%.2f effort), jiggle x%.2f, over-recover x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
-        skilled.averageMult, skilled.focused.stamina, jiggler.averageMult, lazy.averageMult, flatOut.focused.stamina,
+    print(string.format("info: stamina over 150 s: band turns x%.2f avg (%.2f effort), middle x%.2f, early x%.2f, flat out %.2f effort; speed Sprint to 95%% x%.1f %.3f",
+        skilled.averageMult, skilled.focused.stamina, middle.averageMult, early.averageMult, flatOut.focused.stamina,
         high.banked[1] or 0, high.focused.speed))
     do
         -- Riding that earns nothing costs a quarter of the bar; steady focused work the full rate.
@@ -910,16 +973,6 @@ do
         check("a dressage test trains temperament TEST_TEMPERAMENT_FACTOR times as fast as the markers",
             math.abs(tested.focused.temperament - markers.focused.temperament * EqTraining.TEST_TEMPERAMENT_FACTOR) < 1e-12
             and markers.focused.temperament > 0)
-        -- Lateral work anywhere trains temperament once held a moment; collecting alone doesn't.
-        local free = EqTraining.newSheet()
-        local early = EqTraining.freeLateral(free, "halfPass", false, 500)
-        local later = EqTraining.freeLateral(free, "halfPass", false, 1000)
-        local gained = free.focused.temperament
-        EqTraining.freeLateral(free, "collected", false, 2000)
-        local worn = EqTraining.newSheet()
-        EqTraining.freeLateral(worn, "piaffe", true, 5000)
-        check("free lateral work trains temperament after a moment held", not early and later and gained > 0
-            and free.focused.temperament == gained and free.freeLateralMs == 0 and worn.focused.temperament == 0)
         local sheet = EqTraining.newSheet()
         EqTraining.addRiding(sheet, "canter", 1000, 0.25)
         check("easy riding counts less towards the player's share", sheet.ms.canter == 250)
@@ -2671,11 +2724,34 @@ do
     local S, G, H = EqXcHide.SHOWN, EqXcHide.GHOST, EqXcHide.HIDDEN
     check("cross country pieces hide unless building, editing a course or in a round",
         EqXcHide.wantMode({}) == H and EqXcHide.wantMode({ construction = true }) == S
-        and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == S
+        and EqXcHide.wantMode({ editing = true }) == G and EqXcHide.wantMode({ round = true }) == EqXcHide.RIDER
         and EqXcHide.wantMode({ construction = true, editing = true }) == S and EqXcHide.wantMode({ multiplayer = true }) == S)
     check("pieces show only from a round's countdown to its result, not on the way to the start",
         not EqXcHide.roundShows(nil) and not EqXcHide.roundShows("approach")
         and EqXcHide.roundShows("countdown") and EqXcHide.roundShows("running") and EqXcHide.roundShows("done"))
+    check("the rider bit is the first one no collision flag uses, bit 31 last",
+        EqXcHide.pickRiderBit({ DEFAULT = 1, STATIC_OBJECT = 2 }) == 30
+        and EqXcHide.pickRiderBit({ A = 2 ^ 30, B = 2 ^ 29 + 1 }) == 28
+        and EqXcHide.pickRiderBit({ ALL = 2 ^ 32 - 1 }) == 30
+        and EqXcHide.pickRiderBit(nil) == 30 and EqXcHide.hasBit(0x1034, 4) and not EqXcHide.hasBit(0x1034, 3))
+    do
+        local saved = { CollisionFlag, EqXcHide.riderBit }
+        CollisionFlag, EqXcHide.riderBit = { ANIMAL = 2 ^ 20 }, nil
+        local horse = { spec_cctdrivable = { movementCollisionGroup = 2 ^ 20 } }
+        local given = EqXcHide.setRider(horse)
+        local inRound = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
+        EqXcHide.setRider(horse)
+        local once = horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 + 2 ^ 30
+        EqXcHide.setRider(nil)
+        check("only the horse in a round gets the rider bit, and gives it back after",
+            given and inRound and once and horse.spec_cctdrivable.movementCollisionGroup == 2 ^ 20 and EqXcHide.riderVehicle == nil)
+        local saidOld = EqXcHide.loggedRider
+        EqXcHide.loggedRider = true
+        check("a horse without a CCT group can't take the bit, so the pieces stay solid for everyone",
+            EqXcHide.setRider({}) == false and EqXcHide.setRider(nil) == true)
+        EqXcHide.loggedRider = saidOld
+        CollisionFlag, EqXcHide.riderBit = saved[1], saved[2]
+    end
     local xc = EqCourse.CROSS_COUNTRY
     check("traffic is off only while a cross country round runs",
         EqXcHide.wantsTrafficOff(xc, "running") and not EqXcHide.wantsTrafficOff(xc, "countdown") and not EqXcHide.wantsTrafficOff(xc, "go")
@@ -2701,8 +2777,20 @@ do
     local construction, round = { construction = true }, { round = true }
     check("in a round the flag fence is ridden through, other pieces are solid",
         EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
+        and EqXcHide.modeFor(EqXcHide.RIDER, true, round) == G and EqXcHide.modeFor(EqXcHide.RIDER, false, round) == EqXcHide.RIDER
         and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
         and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
+    do
+        local saved = EqPlinths
+        local onDeck = true
+        EqPlinths = { holdsMachine = function() return onDeck end }
+        check("a machine on its deck keeps a shown drop wall, never brings a hidden one back",
+            EqXcHide.keepsForMachine({ eqXcMode = S }) and EqXcHide.keepsForMachine({})
+            and not EqXcHide.keepsForMachine({ eqXcMode = H }) and not EqXcHide.keepsForMachine({ eqXcMode = G }))
+        onDeck = false
+        check("nothing on the deck: the drop wall hides as usual", not EqXcHide.keepsForMachine({ eqXcMode = S }))
+        EqPlinths = saved
+    end
     for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16",
         "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
@@ -3782,6 +3870,27 @@ end)()
         and not EqDressage.isArenaXml("FS25_RidingHall/objekt.xml") and not EqDressage.isArenaXml(nil))
     check("arena marker nodes give their letter", EqDressage.arenaLetter("eqMarker_X") == "X"
         and EqDressage.arenaLetter("eqMarkers") == nil and EqDressage.arenaLetter("arena") == nil)
+    check("Riding Hall 2k26's hall is a lettered arena", EqDressage.isHallXml("C:\\mods\\FS25_RidingHall\\ReitHalle.xml")
+        and not EqDressage.isHallXml("FS25_RidingHall/objekt.xml") and not EqDressage.isHallXml(nil)
+        and EqDressage.hallLetter("normalLetter_F") == "F" and EqDressage.hallLetter("normalLettersDecal") == nil)
+    -- The hall's boards as measured from its model (2026-11-04), turned and moved on the map.
+    local HALL = { A = { -6.91, 0.22 }, F = { -0.41, 11.49 }, K = { -0.41, -11.32 }, B = { 10.9, 11.49 }, E = { 10.9, -11.33 },
+        M = { 21.19, 11.49 }, H = { 21.19, -11.32 }, C = { 27.11, 0 } }
+    local hall, ca, sa = {}, math.cos(0.7), math.sin(0.7)
+    for letter, at in pairs(HALL) do
+        table.insert(hall, { letter = letter, x = 500 + at[1] * ca - at[2] * sa, z = -200 + at[1] * sa + at[2] * ca })
+    end
+    local lettered = EqDressage.withCentreLine(hall)
+    local centre = {}
+    for _, l in ipairs(lettered or {}) do centre[l.letter] = l end
+    local function across(l)
+        local a, c = centre.A, centre.C
+        local len = math.sqrt((c.x - a.x) ^ 2 + (c.z - a.z) ^ 2)
+        return math.abs((l.x - a.x) * (c.z - a.z) - (l.z - a.z) * (c.x - a.x)) / len
+    end
+    check("a hall gets D, X and G on its centre line", lettered ~= nil and #lettered == 11 and centre.D ~= nil and centre.X ~= nil
+        and centre.G ~= nil and across(centre.D) < 1e-6 and across(centre.X) < 1e-6 and across(centre.G) < 1e-6)
+    check("a hall without its C has no arena", EqDressage.withCentreLine({ { letter = "A", x = 0, z = 0 }, { letter = "E", x = 5, z = 5 } }) == nil)
 
     -- A rider who does what is asked, ridden frame by frame.
     local SPEED = { walk = 1.7, trot = 3.5, canter = 5.5 }
@@ -4180,6 +4289,25 @@ end)()
             if event == "test" or event == "lost" then return run, event end
         end
         return run, "timeout"
+    end
+
+    do
+        local HALL = { A = { -6.91, 0.22 }, F = { -0.41, 11.49 }, K = { -0.41, -11.32 }, B = { 10.9, 11.49 }, E = { 10.9, -11.33 },
+            M = { 21.19, 11.49 }, H = { 21.19, -11.32 }, C = { 27.11, 0 } }
+        local list = {}
+        for letter, at in pairs(HALL) do table.insert(list, { letter = letter, x = 40 + at[1], z = 90 + at[2] }) end
+        local markers = {}
+        for _, l in ipairs(EqDressage.withCentreLine(list)) do
+            table.insert(markers, { letter = l.letter, x = l.x, z = l.z, arena = true, arenaId = 77 })
+        end
+        local frame = EqDressagePath.frameFor(markers, xOf(markers))
+        check("the riding hall's ring is an arena frame about 22 x 33 m", frame ~= nil and frame.halfW > 10 and frame.halfW < 12
+            and frame.halfL > 16 and frame.halfL < 17.5)
+        local rolls = EqRandom.new(5)
+        local built = frame ~= nil and EqDressagePath.build(frame, EqDressagePath.TRAINING_FIGURES, function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end) or nil
+        check("a test can be built in the riding hall", built ~= nil and built.pts ~= nil and #built.pts > 10)
+        local venue = EqHosting.arenasFromMarkers(markers)
+        check("the riding hall counts as a 30 m arena for hosting", #venue == 1 and venue[1].length == 30)
     end
 
     for n, arena in ipairs(SHOP) do
@@ -5031,6 +5159,10 @@ end)()
     check("sponsors: event fee", EqSponsorship.eventFee(sp, contract, "championship", order, 10, true) == 150000
         and EqSponsorship.eventFee(sp, contract, "intermediate", order, 10, true) == 37500
         and EqSponsorship.eventFee(sp, contract, "championship", order, 5, true) == 112500)
+    check("sponsors: a 3 Day Event pays 1.5 times", sp.eventingFactor == 1.5
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 10, true, "eventing") == 225000
+        and EqSponsorship.eventFee(sp, contract, "championship", order, 10, true, "showJumping") == 150000
+        and EqSponsorship.eventFee(sp, contract, "intermediate", order, 5, true, "eventing") == 42200)
     check("sponsors: no fee reasons", select(2, EqSponsorship.eventFee(sp, contract, "novice", order, 10, true)) == "rating"
         and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 10, false)) == "machines"
         and select(2, EqSponsorship.eventFee(sp, contract, "championship", order, 0, true)) == "boards")
@@ -6061,6 +6193,29 @@ end)()
         if math.abs(seat.x) > 3 - EqSpectators.SEAT_END + 1e-9 then inside = false end
     end
     check("spectators: seats stay off the bleacher's ends", inside)
+    local stable = EqSpectators.builtInFor("C:\\mods\\FS25_RidingStable\\XML\\horseBarnBig.xml")
+    check("spectators: the Riding Stable has a built-in stand", stable ~= nil
+        and EqSpectators.builtInFor("FS25_horsePack/xml/ridingHall.xml") == nil and EqSpectators.builtInFor(nil) == nil)
+    local stableSeats = EqSpectators.builtInSeats(stable)
+    local inAisle, facing, dropOk = false, true, true
+    for _, seat in ipairs(stableSeats) do
+        for _, aisle in ipairs({ { -9.48, -8.81 }, { -3.32, -2.65 }, { 2.85, 3.51 }, { 9.01, 9.67 } }) do
+            if seat.frontZ > aisle[1] - 0.2 and seat.frontZ < aisle[2] + 0.2 then inAisle = true end
+        end
+        if seat.yaw ~= math.pi / 2 then facing = false end
+        if math.abs(seat.y - seat.floorY - 0.49) > 1e-9 then dropOk = false end
+    end
+    check("spectators: the stable's 8 rows seat a crowd, none in its aisles", #stableSeats == 8 * 37 and not inAisle)
+    check("spectators: the stable's seats face its arena (+x), feet on the step below", facing and dropOk)
+    local top = stableSeats[#stableSeats]
+    check("spectators: the stable's back row is highest and furthest back", top.row == 7 and math.abs(top.y - (0.89 + 7 * 0.4)) < 1e-9
+        and math.abs(top.x - (-18.81 - 7)) < 1e-9)
+    local spots = EqSpectators.builtInStands(stable)
+    local behind = true
+    for _, spot in ipairs(spots) do
+        if math.abs(spot.z) < 16.4 or math.abs(spot.z) > 17.8 then behind = false end
+    end
+    check("spectators: standing room behind the stable's blue boards", #spots >= 50 and behind)
     local list = {}
     for i = 1, 20 do list[i] = i end
     local a = EqSpectators.pick(list, 5, EqRandom.new(42))
@@ -6179,6 +6334,58 @@ end)()
     EqCompetitionManager, g_currentMission = hadManager, hadMission
 end)()
 
+-- SETTLING IN AND REST DAYS: a horse can always enter, but in its first month from the dealer, or
+-- with no day off since its last start in the same month, it competes at 90% (both: 81%).
+;(function()
+    local hadManager, hadMission = EqCompetitionManager, g_currentMission
+    dofile("scripts/competition/EqCompetitionManager.lua")
+    EqCompetitionManager.config = config
+    local environment = { currentMonotonicDay = 10, daysPerPeriod = 5, currentDayInPeriod = 2 }
+    g_currentMission = { environment = environment }
+    EqCompetitionManager.month = 4
+    local round = { kind = EqCompetition.KIND_ROUND }
+    local monthly = { kind = EqCompetition.KIND_MONTH }
+
+    local bought = EqHorseRecord.new("DE 1 77")
+    bought.ownedMonths = 0
+    check("settling in: no longer keeps a horse out of events",
+        EqCompetitionManager.unavailableReason(bought, EqCompetition.KIND_ROUND, nil) == nil)
+    local factor, settling, tired = EqCompetitionManager.freshness(bought, round)
+    check("settling in: first month at 90%", math.abs(factor - 0.9) < 1e-9 and settling and not tired)
+    bought.ownedMonths = EqConstants.SETTLE_MONTHS
+    check("settling in: full strength after a month", EqCompetitionManager.freshness(bought, round) == 1)
+    check("settling in: a bred horse is never settling", EqCompetitionManager.freshness(EqHorseRecord.new("DE 1 78"), round) == 1)
+
+    local horse = EqHorseRecord.new("DE 1 79")
+    -- Ran at today's day change (day 10) in month 4; the Events tab looks at tonight's run (day 11).
+    horse.lastEvent = { day = 10, month = 4 }
+    local f1, _, t1 = EqCompetitionManager.freshness(horse, round)
+    check("rest day: the next day in the same month is at 90%", math.abs(f1 - 0.9) < 1e-9 and t1)
+    check("rest day: resolving the same night again is tired", EqCompetitionManager.isTired(horse, 10, 4))
+    check("rest day: a day off in between is full strength", not EqCompetitionManager.isTired(horse, 12, 4))
+    check("rest day: the next day in a new month is fine", not EqCompetitionManager.isTired(horse, 11, 5))
+    -- A month event runs at the month's end (3 days on), by then rested.
+    check("rest day: a month event at the month's end is rested", EqCompetitionManager.freshness(horse, monthly) == 1)
+    environment.currentDayInPeriod = 5
+    check("rest day: but not when the month ends tonight", EqCompetitionManager.freshness(horse, monthly) < 1)
+
+    bought.ownedMonths = 0
+    bought.lastEvent = { day = 10, month = 4 }
+    environment.currentDayInPeriod = 2
+    local both, s2, t2 = EqCompetitionManager.freshness(bought, round)
+    check("settling in and no rest multiply", math.abs(both - 0.81) < 1e-9 and s2 and t2)
+
+    local x = memoryXML()
+    horse:saveToXMLFile(x, "h")
+    local loaded = EqHorseRecord.loadFromXMLFile(x, "h")
+    check("rest day: the last event survives a save", loaded.lastEvent ~= nil and loaded.lastEvent.day == 10
+        and loaded.lastEvent.month == 4)
+    local y = memoryXML()
+    EqHorseRecord.new("DE 1 80"):saveToXMLFile(y, "h")
+    check("rest day: an old save has no last event and is rested", EqHorseRecord.loadFromXMLFile(y, "h").lastEvent == nil)
+    EqCompetitionManager, g_currentMission = hadManager, hadMission
+end)()
+
 -- SPONSOR YEAR: offers come in January, whichever period that is (FS25 period 1 is March on a
 -- northern map, September on a southern one), and the offers' year is the calendar year.
 ;(function()
@@ -6234,6 +6441,138 @@ end)()
     check("pitch: steeper than the ledge tilt comes back up", steep > deg(-25))
     check("pitch: a normal jump keeps its tilt", math.abs(J.pitch(deg(-8), deg(-8), false, 1, 16) + deg(8)) < 1e-9)
     check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
+    check("pitch: just mounted, no ground found is not a ledge", J.airDistance(false, 5, 5) == nil)
+    check("pitch: after standing once, no ground found is a ledge", J.airDistance(true, 5, 5) == math.huge
+        and J.airDistance(true, 1.2, 5) == 1.2 and J.airDistance(true, nil, 5) == nil)
+    local mounted = 0
+    for _ = 1, 30 do mounted = J.pitch(mounted, mounted, false, J.airDistance(false, 5, 5), 16) end
+    check("pitch: first frames of a mounted horse stay level", math.abs(mounted) < 1e-9)
+    local settle = deg(-15)
+    for _ = 1, 30 do settle = J.pitch(settle, 0, true, nil, 16) end
+    check("pitch: a tipped horse standing still settles on the ground's slope", math.abs(settle) < 1e-9)
+end)()
+
+-- TEMPERAMENT COMBO (EqTemperament, James 2026-11-03): new moves build it, repeats don't.
+;(function()
+    local T = EqTemperament
+    local function ride(state, input, ms)
+        local event, key
+        for _ = 1, math.floor(ms / 100) do
+            local e, k = T.step(state, input, 100)
+            if e ~= nil then event, key = e, k end
+        end
+        return event, key
+    end
+    local s = T.new()
+    check("temperament: getting on is no move", ride(s, { gait = "halt" }, 3000) == nil and s.count == 0)
+    local e, k = ride(s, { gait = "walk" }, 1000)
+    check("temperament: a gait change held GAIT_HOLD_MS starts the combo", e == "move" and k == "gait:walk" and T.mult(s) == 1)
+    check("temperament: a short blip is no move", ride(s, { gait = "trot" }, 500) == nil and ride(s, { gait = "walk" }, 500) == nil and s.count == 1)
+    ride(s, { gait = "trot" }, 1000)
+    ride(s, { gait = "canter" }, 1000)
+    check("temperament: each new gait raises it", T.mult(s) == 3)
+    s.timer = 5
+    e = ride(s, { gait = "trot" }, 1000)
+    check("temperament: a gait done recently neither raises it nor refills the bar", e == "stale" and T.mult(s) == 3 and s.timer < 5)
+    e = ride(s, { gait = "trot", lateral = "halfPass" }, 1000)
+    check("temperament: lateral work is a new move", e == "move" and T.mult(s) == 4 and s.timer == T.COMBO_SECONDS)
+    ride(s, { gait = "trot" }, 1000)
+    -- A big turn: a half circle steered one way at one gait.
+    local turned = T.TURN_ANGLE / 20 + 1e-6
+    e, k = ride(s, { gait = "trot", steer = "left", turned = turned }, 2000)
+    check("temperament: a big turn is a move by gait and direction", e == "move" and k == "turn:trot:left" and T.mult(s) == 5)
+    e, k = ride(s, { gait = "trot", steer = "left", turned = turned }, 2000)
+    check("temperament: the same turn again is done recently", e == "stale" and k == "turn:trot:left")
+    check("temperament: a quarter turn is no move", ride(s, { gait = "trot", steer = "right", turned = turned }, 1000) == nil)
+    ride(s, { gait = "trot" }, 1500)
+    check("temperament: letting the steering go starts the turn count again", ride(s, { gait = "trot", steer = "right", turned = turned }, 1000) == nil)
+    ride(s, { gait = "trot" }, 1500)
+    e = ride(s, { gait = "canter", steer = "right", turned = turned }, 1000)
+    e, k = ride(s, { gait = "canter", steer = "right", turned = turned }, 2000)
+    check("temperament: a turn at another gait is its own move", k == "turn:canter:right" and s.count >= 6 and T.mult(s) == T.COMBO_MAX)
+    -- Jumps don't count, and the bar can't run out mid-air.
+    s.timer = 0.05
+    check("temperament: no loss in the air", ride(s, { gait = "canter", jumping = true }, 1000) == nil and s.count > 0)
+    -- Galloping and crashing lose it.
+    check("temperament: galloping loses it", T.step(s, { gait = "gallop" }, 16) == "lost" and s.count == 0 and #s.recent == 0)
+    check("temperament: no new combo straight after", ride(s, { gait = "canter" }, 1000) == nil and s.count == 0)
+    ride(s, { gait = "canter" }, T.LOCK_MS)
+    ride(s, { gait = "halt" }, T.HALT_HOLD_MS)
+    check("temperament: standing still is a move", s.count == 1 and s.last == "halt")
+    check("temperament: a crash loses it", T.step(s, { gait = "halt", crashed = true }, 16) == "lost")
+    s.lock = 0
+    ride(s, { gait = "walk" }, 1000)
+    check("temperament: the bar running out loses it", ride(s, { gait = "walk" }, T.COMBO_SECONDS * 1000 + 200) == "lost" and s.count == 0)
+    -- Training: RATE a second per step, nothing when worn.
+    local sheet = EqTraining.newSheet()
+    local c = T.new()
+    c.count = 3
+    T.train(c, sheet, false, 1000)
+    local worn = EqTraining.newSheet()
+    T.train(c, worn, true, 1000)
+    check("temperament: the combo trains RATE a second per step", math.abs(sheet.focused.temperament - 3 * T.RATE) < 1e-12
+        and worn.focused.temperament == 0 and math.abs(sheet.quality.temperament - 3 / T.COMBO_MAX) < 1e-12)
+    check("temperament: x5 trains less than a dressage test at x8", T.RATE * T.COMBO_MAX
+        < EqTraining.TEMPERAMENT_RATE * EqTraining.TEST_TEMPERAMENT_FACTOR * (EqTraining.ROUTINE_MAX - 1))
+    local a, b = T.nameKeys("turn:canter:left")
+    check("temperament: move names", T.nameKeys("halt") == "eq_temper_halt" and T.nameKeys("lateral:piaffe") == "eq_now_piaffe"
+        and a == "eq_temper_turn_left" and b == "eq_dressage_gait_canter" and T.nameKeys("gait:reverse") == "eq_temper_gait_reverse")
+    check("temperament: a new sheet has a combo", EqTraining.newSheet().temper ~= nil)
+end)()
+
+-- Help key names (EqHelpKeys): tokens fill from the lookup, unknown ones show bare, and every
+-- token in any language names an action modDesc.xml binds, with a default key to fall back on.
+;(function()
+    dofile("scripts/gui/EqHelpKeys.lua")
+    local filled = EqHelpKeys.fill("Press [[EQ_TRAINING_VIEW]] or [[NOPE]].", function(a) return a == "EQ_TRAINING_VIEW" and "Y" or nil end)
+    check("help keys: a token becomes its key, an unknown one its bare name", filled == "Press Y or NOPE.", filled)
+    local modDesc = io.open("modDesc.xml"):read("*a")
+    local tokens = 0
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
+        local text = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
+        for action in text:gmatch("%[%[([%w_]+)%]%]") do
+            tokens = tokens + 1
+            check("help keys: " .. lang .. " " .. action .. " is bound and has a default",
+                modDesc:find('actionBinding action="' .. action .. '"', 1, true) ~= nil and EqHelpKeys.KEYBOARD[action] ~= nil)
+        end
+        local en = io.open("translations/translation_en.xml"):read("*a")
+        for _, view in ipairs({ "lateral", "collect", "rein", "courseEdit", "dressageEdit" }) do
+            check("help keys: popup " .. view .. " has its texts in " .. lang,
+                text:find('name="eq_help_' .. view .. '_title"', 1, true) ~= nil and text:find('name="eq_help_' .. view .. '_1"', 1, true) ~= nil)
+        end
+    end
+    check("help keys: the texts use tokens", tokens > 100, tostring(tokens))
+end)()
+
+-- SHOP DISCOUNT: used machines (sale items) get no sponsor purchase discount; new ones do.
+;(function()
+    local had = { EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
+        g_brandManager, EqSponsorManager, EqCompetitionManager, Utils, Log }
+    Log = Log or { info = function() end }
+    Utils = Utils or {}
+    Utils.appendedFunction = Utils.appendedFunction or function(a, b) return function(...) a(...) b(...) end end
+    Utils.prependedFunction = Utils.prependedFunction or function(a, b) return function(...) b(...) a(...) end end
+    EconomyManager = { getBuyPrice = function(_, storeItem, configurations, saleItem)
+        return saleItem ~= nil and saleItem.price or storeItem.price end }
+    BuyVehicleData, ShopConfigScreen = nil, nil
+    FSBaseMission = { update = function() end, delete = function() end }
+    EqMain = { isActive = true }
+    g_currentMission = { getFarmId = function() return 1 end }
+    g_brandManager = { getBrandByIndex = function(_, index) return { name = index == 1 and "SPONSOR" or "RIVAL" } end }
+    EqSponsorManager = { config = { discountMonths = 3 },
+        contractsFor = function() return { { brand = "SPONSOR", purchase = 0.2, signedMonth = 0 } } end }
+    EqCompetitionManager = { month = 5 }
+    dofile("scripts/sponsors/EqSponsorDiscounts.lua")
+    EqSponsorDiscounts.install(function(_, fn) return fn() end)
+    local sponsorItem, rivalItem = { brandIndex = 1, price = 1000 }, { brandIndex = 2, price = 1000 }
+    local economy = EconomyManager
+    check("shop discount: a new sponsor machine is 20% off", economy.getBuyPrice(economy, sponsorItem) == 800)
+    check("shop discount: a rival machine is full price", economy.getBuyPrice(economy, rivalItem) == 1000)
+    check("shop discount: a used sponsor machine keeps its sale price", economy.getBuyPrice(economy, sponsorItem, nil, { price = 600 }) == 600)
+    check("shop discount: the buy screen share is 20% new, 0 used",
+        EqSponsorDiscounts.shopShare(sponsorItem, nil) == 0.2 and EqSponsorDiscounts.shopShare(sponsorItem, { price = 600 }) == 0)
+    EconomyManager, BuyVehicleData, ShopConfigScreen, FSBaseMission, EqMain, g_currentMission,
+        g_brandManager, EqSponsorManager, EqCompetitionManager, Utils, Log = unpack(had, 1, 11)
 end)()
 
 -- CONSOLE: every command registered is also unregistered, and the dev tools are gone (1.0 trim).
@@ -6254,7 +6593,7 @@ end)()
     for _ in pairs(listed) do count = count + 1 end
     check("console: every registered command is unregistered (" .. table.concat(missing, ", ") .. ")",
         registered > 0 and #missing == 0 and count == registered)
-    local removed = { "eqProbe", "eqJump", "eqDeliver", "eqExperience", "eqSponsorColours", "eqBootFit", "eqHatFit", "eqUvGrid" }
+    local removed = { "eqProbe", "eqBreath", "eqJump", "eqDeliver", "eqExperience", "eqSponsorColours", "eqBootFit", "eqHatFit", "eqUvGrid" }
     local found = {}
     for _, path in ipairs({ "scripts/console/EqConsole.lua", "scripts/attire/EqAttire.lua", "scripts/training/EqFeedHooks.lua" }) do
         local text = source(path)

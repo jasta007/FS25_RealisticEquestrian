@@ -10,11 +10,15 @@ Each sign's faces are shapes "eqSponsor_1" and "eqSponsor_1b", cloned per panel 
 EqSponsors puts the logo on all of them but counts them for very little (ROPE_SIGN in
 EqSponsors, capped for all ropes together) so lines of rope can't buy a farm its branding.
 
-The only collision is a flat box sunk half into the ground under each stake and panel, as the
-flag fence's guide line has, so construction mode can pick the rope to delete. The rope and signs
+Each stake and panel has a thin collision box as tall as the rope, so construction mode can pick
+the rope to move or sell (James, 2026-11-04: the first boxes, 6 cm and sunk in the ground, could
+hardly be hit). EqXcHide keeps that collision on only in construction mode: the rope is ridden
+through everywhere else, rounds included. The rope and signs
 lean with the slope like the base game's fence panels (placeable shader, vertexOffset).
 
 Run from the repository root: python3 art/source/rope_fence.py
+The committed xcRope.i3d was then re-saved in GIANTS Editor (binary .i3d.shapes; inline collision
+got no physics mesh, so the rope couldn't be picked): after running this, re-save it again.
 
 Part of Realistic Equestrian by Jasta007.
 """
@@ -130,9 +134,14 @@ def stake():
     return mesh
 
 
-def ground_box(z0, z1):
+COL_HALF = 0.05         # half the collision boxes' thickness
+COL_TOP = STAKE[1]      # up to the stake tops, above the rope
+
+
+def col_box(z0, z1):
+    """A thin box from the ground up past the rope, for construction mode to pick."""
     mesh = Mesh()
-    mesh.box(-0.03, 0.03, -0.03, 0.03, z0, z1, (0.5, 0.5))
+    mesh.box(-COL_HALF, COL_HALF, -0.1, COL_TOP, z0, z1, (0.5, 0.5))
     return mesh
 
 
@@ -155,12 +164,12 @@ def write_i3d(path, stake_mesh, plain, signed, board, logos, crowd_rope, crowd):
              '    <Material name="eqSponsor" materialId="3" specularColor="0.2 0 0" alphaBlending="true" customShaderId="2" '
              'customShaderVariation="vertexOffset_Decal">', '      <Texture fileId="3"/>', "    </Material>",
              "  </Materials>", "  <Shapes>"]
-    shapes = [("stake", stake_mesh, None), ("stakeCol", ground_box(-0.03, 0.03), None),
-              ("rope", plain, slope), ("ropeCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None),
+    shapes = [("stake", stake_mesh, None), ("stakeCol", col_box(-COL_HALF, COL_HALF), None),
+              ("rope", plain, slope), ("ropeCol", col_box(COL_HALF, PANEL - COL_HALF), None),
               ("ropeSign", signed, slope), ("sign", board, slope)]
     shapes += [(k, m, slope) for k, m in logos.items()]
-    shapes += [("signCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None)]
-    shapes += [("ropeCrowd", crowd_rope, slope), ("crowd", crowd, slope), ("crowdCol", ground_box(PANEL / 2 - 0.03, PANEL / 2 + 0.03), None)]
+    shapes += [("signCol", col_box(COL_HALF, PANEL - COL_HALF), None)]
+    shapes += [("ropeCrowd", crowd_rope, slope), ("crowd", crowd, slope), ("crowdCol", col_box(COL_HALF, PANEL - COL_HALF), None)]
     ids = {}
     for i, (key, mesh, uv1) in enumerate(shapes):
         ids[key] = i + 1

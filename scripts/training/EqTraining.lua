@@ -14,7 +14,8 @@
     then the bigger of the player's gain and the staff's counts in full and the smaller at
     MIXED_SHARE, so riding a horse that has a groom and a trainer is best.
 
-    Agility and temperament are focused work (jump combos and routines); just riding the gaits
+    Agility and temperament are focused work (jump combos, the temperament combo and dressage
+    tests); just riding the gaits
     trains them at UNFOCUSED_SHARE of the gait weights below. Stamina and speed come only from
     riding the gallop well (EqExertion's Pushing, Recovering and Sprinting): a live stamina
     multiplier and a speed multiplier banked when a Sprint ends (James, 2026-10-27).
@@ -37,25 +38,33 @@ EqTraining.SPRINT_MULT_MAX = 10
 EqTraining.SPRINT_MULT_POWER = math.log(9) / math.log(2)
 
 -- STAMINA: Pushing and Recovering earn STAMINA_RATE per second times a live multiplier, x1 to
--- STAMINA_MULT_MAX (James, 2026-10-27). The multiplier isn't tied to the bar:
--- - Pushing raises it, faster the higher exertion is (STAMINA_PUSH_GAIN per second, empty to the
---   line, with the square of exertion). Every point of exertion Pushing adds uses STAMINA_BREATH_USE of the horse's breath,
---   hidden from the rider: with less breath the multiplier rises more slowly (down to STAMINA_LOW_BREATH_GAIN of
---   the rate) and falls faster (up to STAMINA_LOW_BREATH_LOSS times), but never stops either way
---   (James). So bouncing between Push and Recover near the top earns little.
--- - Recovering gets breath back and loses multiplier, by the bar's third (EqExertion.band): fast
---   from the top third, slowly in the middle "zone" (where breath comes back best), fast again in
---   the bottom third. A canter or slower loses it fast.
--- - A Sprint holds both. Fatigued (or a Sprint that ends past the line) drops it to x1 and
---   stops stamina training until exertion is empty again, with no breath left to start on.
+-- STAMINA_MULT_MAX, built by turning the bar round inside a target band (James, 2026-11-03):
+-- - The band sits near the top of the gallop (somewhere random) when a gallop starts. Switch
+--   from Pushing (or a Sprint) to Recovering with the bar inside it: the multiplier rises by
+--   PACE_STEP and the band jumps to a random place near the bottom. Switch from Recovering to
+--   Pushing inside that: the multiplier rises again and the band jumps back up, and so on.
+-- - The band is PACE_WIDTH[1] points of exertion wide at x1, narrowing to PACE_WIDTH[2] at x5.
+--   Where it may sit (PACE_HIGH, PACE_LOW, each { range at x1, range at x5 }) climbs with the
+--   multiplier, so a good run keeps the horse high on the bar.
+-- - A hit makes the way to the next band easier (ex.recoverShare, ex.pushShare): after a hit at
+--   the top Recovering falls PACE_RECOVER_BONUS times as fast, after a hit at the bottom Pushing
+--   climbs at PACE_PUSH_EASE of its rate, each { just after x1, at x5 }. So hits help you stay
+--   in Push. A miss takes the help away.
+-- - Going past the band (Pushing above a top band, Recovering below a bottom one) or switching
+--   before reaching it drops the multiplier to x1 and puts a full-width band on the other side.
+-- - Dropping to a canter or slower loses the multiplier at once (it still rests the horse
+--   fastest, which suits Speed training). Fatigued (or a Sprint that ends past the
+--   line) drops it to x1 and stops stamina training until exertion is empty again.
 EqTraining.STAMINA_RATE = 0.0045
 EqTraining.STAMINA_MULT_MAX = 5
-EqTraining.STAMINA_PUSH_GAIN = { 0.15, 2.0 }
-EqTraining.STAMINA_BREATH_USE = 0.01
-EqTraining.STAMINA_LOW_BREATH_GAIN = 0.1
-EqTraining.STAMINA_LOW_BREATH_LOSS = 2
-EqTraining.STAMINA_LOSS = { high = 0.25, zone = 0.03, low = 0.8, slow = 0.6 }
-EqTraining.STAMINA_BREATH_GAIN = { high = 0, zone = 0.07, low = 0.07, slow = 0.05 }
+EqTraining.PACE_STEP = 0.5
+EqTraining.PACE_WIDTH = { 15, 6 }
+EqTraining.PACE_HIGH = { { 100 * 2 / 3, 97 }, { 78, 97 } }
+EqTraining.PACE_LOW = { { 12, 100 / 3 }, { 38, 58 } }
+EqTraining.PACE_RECOVER_BONUS = { 1.3, 1.8 }
+EqTraining.PACE_PUSH_EASE = { 0.9, 0.7 }
+-- Random numbers 0..1 for the band's place (tests replace it).
+EqTraining.paceRandom = math.random
 
 -- Effort each gait gives per full day of training (TRAINING_FULL_MS in that gait), by stat.
 EqTraining.GAIT_WEIGHTS = {
@@ -99,7 +108,7 @@ EqTraining.COMBO_KNOCK_GAP_MS = 3000
 -- orders whenever the horse walked for a moment, is gone (James, 2026-10-29: "nasty"; the arena
 -- is opt in). Each command done raises the multiplier, up to ROUTINE_MAX, and temperament builds
 -- at TEMPERAMENT_RATE per second for each step above x1. Walking and backing up still train a
--- little temperament anywhere (GAIT_GAINS).
+-- little temperament anywhere (GAIT_WEIGHTS).
 -- James (2026-10-26): it felt too easy and a chore, so it goes to x8, not the jump combo's x5.
 EqTraining.ROUTINE_MAX = 8
 EqTraining.TEMPERAMENT_RATE = 0.0022
@@ -110,12 +119,9 @@ EqTraining.TEMPERAMENT_RATE = 0.0022
 -- and 67% of the bar; it should not take one and a half tests to fill it).
 EqTraining.TEST_TEMPERAMENT_FACTOR = 2
 EqTraining.TEST_BAR_SHARE = 1.5
--- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test (EqLateral) train
--- temperament like a routine at x(1 + FREE_LATERAL_STEPS), once held FREE_LATERAL_HOLD_MS; just
--- collecting (Ctrl at a walk on the spot, not turning) doesn't count. A test still trains far
--- more (James, 2026-11-01: practising off the cuff should train a reasonable amount).
-EqTraining.FREE_LATERAL_STEPS = 3
-EqTraining.FREE_LATERAL_HOLD_MS = 1000
+-- Away from an arena, the temperament combo (EqTemperament) trains it: new gaits, halts, big
+-- turns and lateral work strung together (James, 2026-11-03). It replaced free lateral work,
+-- which trained quietly with nothing on screen to say so.
 
 -- A fit horse's riding bar fills more slowly: up to BAR_FIT_SHARE times longer at stamina 100,
 -- from no change at BAR_FROM_STAMINA and below.
@@ -172,8 +178,9 @@ function EqTraining.newSheet()
         exertion = EqExertion.new(),
         focused = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
         quality = { stamina = 0, speed = 0, agility = 0, temperament = 0 },
-        stamina = { mult = 1, breath = 1 }, sprint = { ms = 0 },
+        stamina = { mult = 1 }, sprint = { ms = 0 },
         combo = { count = 0, timer = 0, best = 0 },
+        temper = EqTemperament.new(),
         routine = { active = false, mult = 0, clock = 0, current = nil, request = nil, deadline = 0 } }
 end
 
@@ -387,37 +394,113 @@ function EqTraining.speedStep(sheet, dt, worn)
 end
 
 
+--- The band's width for a multiplier, in points of exertion.
+--- @param mult number
+--- @return number
+local function multShare(mult)
+    return (math.min(math.max(mult, 1), EqTraining.STAMINA_MULT_MAX) - 1) / (EqTraining.STAMINA_MULT_MAX - 1)
+end
+
+local function lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+function EqTraining.paceWidth(mult)
+    return lerp(EqTraining.PACE_WIDTH[1], EqTraining.PACE_WIDTH[2], multShare(mult))
+end
+
+
+--- Where a band may sit on one side for a multiplier, in points of exertion.
+--- @param side string "high" or "low"
+--- @param mult number
+--- @return number from, number to
+function EqTraining.paceRange(side, mult)
+    local ranges = side == "high" and EqTraining.PACE_HIGH or EqTraining.PACE_LOW
+    local t = multShare(mult)
+    return lerp(ranges[1][1], ranges[2][1], t), lerp(ranges[1][2], ranges[2][2], t)
+end
+
+
+--- Put the stamina band somewhere random on one side, sized for the multiplier.
+--- @param st table sheet.stamina
+--- @param side string "high" or "low"
+function EqTraining.placeBand(st, side)
+    local width = EqTraining.paceWidth(st.mult)
+    local low, high = EqTraining.paceRange(side, st.mult)
+    local from = low + (high - low - width) * EqTraining.paceRandom()
+    st.side, st.from, st.to = side, from, from + width
+end
+
+
+--- @param sheet table
+--- @return boolean true while the bar is inside the stamina band
+function EqTraining.inBand(sheet)
+    local st, v = sheet.stamina, sheet.exertion.value
+    return st.from ~= nil and v >= st.from and v <= st.to
+end
+
+
+-- Missed: x1, and a full-width band on the other side.
+local function missBand(st)
+    st.mult, st.hit = 1, false
+    EqTraining.placeBand(st, st.side == "high" and "low" or "high")
+end
+
+
 --- One frame of the stamina multiplier and stamina training, after EqExertion.step.
 --- @param sheet table
 --- @param dt number milliseconds
 --- @param worn boolean true when the riding bar is full: the multiplier runs, nothing trains
+--- @return string|nil "hit", "early" (turned before the band), "past" (went past it) or "lost"
+---     (dropped out of the gallop with a combo) when something happened this frame
 function EqTraining.staminaStep(sheet, dt, worn)
     local ex, st = sheet.exertion, sheet.stamina
-    local climbed = math.max(0, ex.value - (st.lastValue or ex.value))
-    st.lastValue = ex.value
     local seconds = dt / 1000
+    local galloping = ex.mode == "push" or ex.mode == "recover"
+    -- Rising (Pushing or Sprinting) or falling (Recovering), nil off the gallop.
+    local dir = (ex.mode == "push" or ex.mode == "sprint") and "up" or ex.mode == "recover" and "down" or nil
+    local judged = nil
     if ex.lock ~= nil then
-        st.mult, st.breath = 1, 0
-    elseif ex.mode == "sprint" then
-        -- A Sprint holds the multiplier and the breath.
-    elseif ex.mode == "push" then
-        local share = math.min(ex.value / EqExertion.LINE, 1)
-        local gain = EqTraining.STAMINA_PUSH_GAIN[1] + (EqTraining.STAMINA_PUSH_GAIN[2] - EqTraining.STAMINA_PUSH_GAIN[1]) * share * share
-        local low = EqTraining.STAMINA_LOW_BREATH_GAIN
-        st.mult = st.mult + gain * (low + (1 - low) * st.breath) * seconds
-        st.breath = st.breath - EqTraining.STAMINA_BREATH_USE * climbed
+        st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
+    elseif dir == nil then
+        -- Out of the gallop: the bonus is gone (a canter still rests the horse fastest).
+        if st.mult > 1 then judged = "lost" end
+        st.mult, st.dir, st.from, st.to, st.side, st.hit = 1, nil, nil, nil, nil, false
     else
-        local band = ex.mode == "recover" and EqExertion.band(ex.value) or "slow"
-        local winded = 1 + (EqTraining.STAMINA_LOW_BREATH_LOSS - 1) * (1 - st.breath)
-        st.mult = st.mult - EqTraining.STAMINA_LOSS[band] * winded * seconds
-        st.breath = st.breath + EqTraining.STAMINA_BREATH_GAIN[band] * seconds
+        if st.side == nil then EqTraining.placeBand(st, "high") end
+        local v = ex.value
+        if st.dir ~= nil and dir ~= st.dir then
+            -- Turned round away from the band's side (down from a top band, up from a bottom one):
+            -- inside the band is a hit, short of it a miss. Turning towards the band is free.
+            local away = (st.side == "high" and dir == "down") or (st.side == "low" and dir == "up")
+            if away and EqTraining.inBand(sheet) then
+                st.mult = math.min(st.mult + EqTraining.PACE_STEP, EqTraining.STAMINA_MULT_MAX)
+                EqTraining.placeBand(st, st.side == "high" and "low" or "high")
+                st.hit = true
+                judged = "hit"
+            elseif away then
+                missBand(st)
+                judged = "early"
+            end
+        elseif (st.side == "high" and dir == "up" and v > st.to) or (st.side == "low" and dir == "down" and v < st.from) then
+            -- Went straight past it.
+            missBand(st)
+            judged = "past"
+        end
+        st.dir = dir
     end
     st.mult = math.min(math.max(st.mult, 1), EqTraining.STAMINA_MULT_MAX)
-    st.breath = math.min(math.max(st.breath, 0), 1)
-    sheet.quality.stamina = (ex.mode == "push" or ex.mode == "recover") and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
-    if not worn and (ex.mode == "push" or ex.mode == "recover") then
+    -- A hit eases the way to the next band, more at a higher multiplier: Recovering falls faster
+    -- after a hit at the top, Pushing climbs more slowly after a hit at the bottom.
+    local t = multShare(st.mult)
+    local eased = dir ~= nil and ex.lock == nil and st.hit
+    ex.recoverShare = eased and st.side == "low" and lerp(EqTraining.PACE_RECOVER_BONUS[1], EqTraining.PACE_RECOVER_BONUS[2], t) or 1
+    ex.pushShare = eased and st.side == "high" and lerp(EqTraining.PACE_PUSH_EASE[1], EqTraining.PACE_PUSH_EASE[2], t) or 1
+    sheet.quality.stamina = galloping and (st.mult - 1) / (EqTraining.STAMINA_MULT_MAX - 1) or 0
+    if not worn and galloping then
         sheet.focused.stamina = sheet.focused.stamina + EqTraining.STAMINA_RATE * st.mult * seconds
     end
+    return judged
 end
 
 
@@ -434,24 +517,6 @@ function EqTraining.routineTrain(sheet, worn, dt)
 end
 
 
---- Temperament from lateral work ridden outside a test.
---- @param sheet table
---- @param key string|nil EqLateral.movementName key of what the horse does now
---- @param worn boolean
---- @param dt number milliseconds
---- @return boolean training true while it trains
-function EqTraining.freeLateral(sheet, key, worn, dt)
-    if key == nil or key == "collected" then
-        sheet.freeLateralMs = 0
-        return false
-    end
-    sheet.freeLateralMs = (sheet.freeLateralMs or 0) + dt
-    if worn or sheet.freeLateralMs < EqTraining.FREE_LATERAL_HOLD_MS then return false end
-    sheet.focused.temperament = sheet.focused.temperament + EqTraining.TEMPERAMENT_RATE * EqTraining.FREE_LATERAL_STEPS * dt / 1000
-    return true
-end
-
-
 --- Time out of the saddle rests the horse like standing still.
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
@@ -459,10 +524,12 @@ end
 function EqTraining.rest(sheet, ms, stamina)
     if ms <= 0 then return end
     EqExertion.rest(sheet.exertion, ms, stamina)
-    sheet.stamina.mult, sheet.stamina.breath = 1, 1
+    sheet.stamina.mult = 1
+    sheet.exertion.pushShare, sheet.exertion.recoverShare = 1, 1
     sheet.sprint.ms = 0
     for stat in pairs(sheet.quality) do sheet.quality[stat] = 0 end
     sheet.combo.count, sheet.combo.timer = 0, 0
+    if sheet.temper ~= nil then EqTemperament.reset(sheet.temper) end
     sheet.workRate = 0
     EqTraining.breakRoutine(sheet)
 end
@@ -541,12 +608,16 @@ EqTraining.HANDLING = {
     -- jumps too high and too long at agility 10 and 100.
     jump = { 0.8, 1.05 },
     turn = { 1, 1.65 },      -- turn rate, by agility
-    -- ...and a little more from a calm, attentive horse (James, 2026-10-27).
-    turnTemperament = { 1, 1.2 },
+    -- ...and more from a calm, attentive horse (James, 2026-10-27; raised from 1.2 on 2026-11-03).
+    turnTemperament = { 1, 1.4 },
     -- By temperament, kept subtle: how quickly the horse picks up speed between gaits, and how
     -- long it stands after running into something (a share of EqTrainingHooks.CRASH_HALT_MS).
     acceleration = { 0.85, 1.15 },
     crashHalt = { 1.3, 0.7 },
+    -- Brakes: how quickly the horse slows when you drop a gait (the base game's maxDeceleration,
+    -- 10 m/s2), by agility and again by temperament (James, 2026-11-03), so up to 1.82x at 100/100.
+    brake = { 1, 1.4 },
+    brakeTemperament = { 1, 1.3 },
 }
 
 --- @param limits table { at 0, at 100 }
@@ -562,8 +633,8 @@ end
 --- @param speed number|nil trained speed
 --- @param agility number|nil trained agility
 --- @param temperament number|nil trained temperament
---- @return table { speed, jump, turn, acceleration, crashHalt } multipliers on the base game's top
----   speeds, jump height, turn rate and acceleration, and on our crash halt
+--- @return table { speed, jump, turn, acceleration, brake, crashHalt } multipliers on the base game's
+---   top speeds, jump height, turn rate, acceleration and deceleration, and on our crash halt
 function EqTraining.handling(speed, agility, temperament)
     local limits = EqTraining.HANDLING
     return {
@@ -571,6 +642,7 @@ function EqTraining.handling(speed, agility, temperament)
         jump = handlingShare(limits.jump, agility),
         turn = handlingShare(limits.turn, agility) * handlingShare(limits.turnTemperament, temperament),
         acceleration = handlingShare(limits.acceleration, temperament),
+        brake = handlingShare(limits.brake, agility) * handlingShare(limits.brakeTemperament, temperament),
         crashHalt = handlingShare(limits.crashHalt, temperament),
     }
 end

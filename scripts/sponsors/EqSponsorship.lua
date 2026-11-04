@@ -37,6 +37,7 @@ function EqSponsorship.read(xmlFile)
         offerMonths = xmlFile:getInt("sponsors#offerMonths", 6),
         cancelShare = xmlFile:getFloat("sponsors#cancelShare", 0.15),
         missFactor = xmlFile:getFloat("sponsors#missFactor", 0.75),
+        eventingFactor = xmlFile:getFloat("sponsors#eventingFactor", 1.5),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
         branding = {},
         machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
@@ -626,15 +627,18 @@ end
 --- @param ratingOrder table
 --- @param boards number
 --- @param machinesOk boolean the farm still owns enough of the sponsor's machines
+--- @param typeName string|nil the event type: a 3 Day Event pays eventingFactor times the fee
 --- @return number fee
 --- @return string|nil why nothing: "rating", "boards" or "machines"
-function EqSponsorship.eventFee(config, contract, ratingName, ratingOrder, boards, machinesOk)
+function EqSponsorship.eventFee(config, contract, ratingName, ratingOrder, boards, machinesOk, typeName)
     local share = EqSponsorship.feeShare(config, contract, ratingName, ratingOrder)
     if share <= 0 then return 0, "rating" end
     if not machinesOk then return 0, "machines" end
     local factor = EqSponsorship.brandingFactor(config, contract, boards)
     if factor <= 0 then return 0, "boards" end
-    return roundTo(contract.fee * share * factor * (contract.feeFactor or 1), 100), nil
+    -- Three phases to put their name on: sponsors pay more for a 3 Day Event (James, 2026-11-03).
+    local eventing = typeName == "eventing" and (config.eventingFactor or 1) or 1
+    return roundTo(contract.fee * share * factor * (contract.feeFactor or 1) * eventing, 100), nil
 end
 
 

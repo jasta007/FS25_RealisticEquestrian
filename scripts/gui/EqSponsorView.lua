@@ -151,6 +151,10 @@ function EqSponsorView.panelLines(farmId, row)
         add(i == 1 and "likely" or nil, string.format(g_i18n:getText("eq_sponsor_likelyLine"), money(entry.fee), ratingTitle(entry.rating)),
             entry.fee > 0)
     end
+    local eventing = EqSponsorManager.config ~= nil and EqSponsorManager.config.eventingFactor or 1
+    if #likely > 0 and eventing > 1 then
+        add(nil, string.format(g_i18n:getText("eq_sponsor_eventingLine"), percent(eventing - 1)))
+    end
     add("discounts", string.format(g_i18n:getText("eq_sponsor_discount_repaint"), percent(offer.repaint)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_repair"), percent(offer.repair)))
     add(nil, string.format(g_i18n:getText("eq_sponsor_discount_buy"), percent(offer.purchase)))
