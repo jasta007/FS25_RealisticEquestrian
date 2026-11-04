@@ -4,7 +4,8 @@
     with no collision, while the player just rides or drives around (James, 2026-10-27): a course
     can cross the whole map without leaving flags and logs all over it. They are back:
 
-    - in construction mode, with collision, so they can be picked, moved and sold;
+    - in construction mode, with collision, so they can be picked, moved and sold (the Rope
+      Marker's collision is only there for this: it is ridden through everywhere else);
     - while a course is edited, seen but ridden through (the course editor takes show jumps'
       collision off for the same reason);
     - in a round, from its countdown (the horse right at the start line) to the result, with
@@ -66,14 +67,15 @@ function EqXcHide.wantMode(state)
 end
 
 
---- The mode for one piece: the flag fence is ridden through wherever the others would be solid,
---- except in construction mode (picked to delete) and multiplayer (left alone).
+--- The mode for one piece: the flag fence and the Rope Marker are ridden through wherever the
+--- others would be solid, except in construction mode (picked to move or sell) and multiplayer
+--- (left alone).
 --- @param mode string from wantMode
---- @param flagFence boolean
+--- @param rideThrough boolean the flag fence or the Rope Marker
 --- @param state table as for wantMode
 --- @return string
-function EqXcHide.modeFor(mode, flagFence, state)
-    if flagFence and mode == EqXcHide.SHOWN and not state.construction and not state.multiplayer then return EqXcHide.GHOST end
+function EqXcHide.modeFor(mode, rideThrough, state)
+    if rideThrough and mode == EqXcHide.SHOWN and not state.construction and not state.multiplayer then return EqXcHide.GHOST end
     return mode
 end
 
@@ -281,8 +283,9 @@ function EqXcHide.update()
     -- Rope Markers are the crowd's barrier at your hosted events: seen (ridden through) then
     local ropes = EqSpectators ~= nil and EqSponsors ~= nil and not state.multiplayer and EqSpectators.ropesShown()
     for _, placeable in ipairs(pieces) do
-        local want = EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName), state)
-        if ropes and want == EqXcHide.HIDDEN and EqSponsors.isRope(placeable.configFileName) then want = EqXcHide.GHOST end
+        local rope = EqSponsors ~= nil and EqSponsors.isRope(placeable.configFileName)
+        local want = EqXcHide.modeFor(mode, EqXcFlags.isFlagFence(placeable.configFileName) or rope, state)
+        if ropes and want == EqXcHide.HIDDEN and rope then want = EqXcHide.GHOST end
         -- a drop wall with a machine parked on its deck stays (EqPlinths): never pull the floor away
         if want ~= EqXcHide.SHOWN and EqPlinths ~= nil and EqPlinths.holdsMachine(placeable) then want = EqXcHide.SHOWN end
         EqXcHide.apply(placeable, want)
