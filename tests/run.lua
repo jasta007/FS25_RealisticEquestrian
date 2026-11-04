@@ -6452,6 +6452,8 @@ end)()
     check("temperament: move names", T.nameKeys("halt") == "eq_temper_halt" and T.nameKeys("lateral:piaffe") == "eq_now_piaffe"
         and a == "eq_temper_turn_left" and b == "eq_dressage_gait_canter" and T.nameKeys("gait:reverse") == "eq_temper_gait_reverse")
     check("temperament: a new sheet has a combo", EqTraining.newSheet().temper ~= nil)
+end)()
+
 -- Help key names (EqHelpKeys): tokens fill from the lookup, unknown ones show bare, and every
 -- token in any language names an action modDesc.xml binds, with a default key to fall back on.
 ;(function()
