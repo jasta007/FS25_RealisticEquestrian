@@ -176,6 +176,13 @@ function EqEventsView.horseRows(event, farmId)
                 else
                     status = g_i18n:getText(ok and "eq_ui_status_ok" or ("eq_ui_status_" .. reason))
                 end
+                -- Settling in or no rest day: it can go, but below its best.
+                if ok and not outOfEntries and not eventFull then
+                    local _, settling, tired = manager.freshness(record, event)
+                    if settling and tired then status = g_i18n:getText("eq_ui_status_settlingTired")
+                    elseif settling then status = g_i18n:getText("eq_ui_status_settling")
+                    elseif tired then status = g_i18n:getText("eq_ui_status_tired") end
+                end
                 -- Poor health: it can go, but may be scratched on the day.
                 local unsound = EqRisk.unsoundChance(animal.health)
                 if ok and unsound > 0 and unsound < 1 then

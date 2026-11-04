@@ -17,11 +17,11 @@
         <text name="eq_stat_short_temperament" text="性情"/>
         <text name="eq_train_viewAction" text="训练视图：%s"/>
         <text name="eq_train_view_freestyle" text="自由"/>
-        <text name="eq_help_temperament_2" text="三次路线错误（偏离线条、离开场地或原地不动）会结束测试；骑完全程可获得随得分增长的气质加成。更沉稳的马能看到更远的线条，并更早得到变换提示。Riding Hall 字母使用旧的字母间路段动作。在场地之外，慢步和后退仍能训练一点气质，胡萝卜等零食也有帮助。"/>
-        <text name="eq_help_temperament_1" text="气质训练教你的马服从控制，需要一个盛装舞步场地：在商店购买，或摆放盛装舞步字母。在商店的场地中骑到A，图形测试就会开始：圆圈、对角线、蛇形线等，以金色线条画在地面上。沿线骑行，并在指定位置变换步法或立定；每个动作满分10分。"/>
+        <text name="eq_help_temperament_2" text="性情最好通过在盛装舞步场地进行舞步测试来训练，但你也可以在任何地方通过切换步法、转弯、横向动作和其他动作来训练。按住[[EQ_LATERAL]]做横向动作，按住[[EQ_COLLECT]]让马收缩做原地踏步或正步。每个新动作都会提高连击，最高x5。找到下一个动作的时间有限，撞到障碍物或进入袭步都会结束连击。"/>
+        <text name="eq_help_temperament_1" text="性情让马转向更快、更早变换步法，撞到障碍物后停顿更短。它在盛装舞步中最重要：性情高的马更贴合舞步路线，也能更好地对准障碍，而性情低的马更容易被取消参赛或在赛事中失误。胡萝卜和其他零食可以加快性情训练。"/>
         <text name="eq_help_temperament_title" text="训练：性情"/>
-        <text name="eq_help_agility_2" text="如果你没能及时跳过新的障碍物或速度掉得太多，就会失去倍率。没有障碍物的跳跃也有一点训练效果，但不会提高倍率。"/>
-        <text name="eq_help_agility_1" text="敏捷主要靠跨越障碍训练，不过在各种步法之间切换也能获得少许提升。跳过障碍物来积累敏捷训练倍率，倍率会在十秒后消退，撞到障碍物则会更早消退。"/>
+        <text name="eq_help_agility_2" text="每越过一个障碍物，连击就会提高，从x2到x5，每次跳跃的训练效果也更大。你有10秒越过下一个障碍物：撞到障碍会扣除时间，停下则很快结束连击。在场地障碍场地和你自己的路线上训练敏捷更快：骑乘时按[[EQ_COURSE_RECORD]]创建路线。"/>
+        <text name="eq_help_agility_1" text="敏捷让马跳得更高、转得更急，在场地障碍和盛装舞步中最重要。通过连续跳越障碍物来训练，不要碰到障碍或停下。任何障碍物都算，但正规的马术障碍训练效果更好。给马喂大麦可以加快敏捷训练。"/>
         <text name="eq_help_agility_title" text="训练：敏捷"/>
         <text name="eq_pop_routineStart" text="动作开始"/>
         <text name="eq_pop_routineFault" text="失误 %d/%d"/>
@@ -99,6 +99,7 @@
         <text name="eq_shop_productJump_function" text="把两个相对放置，相距约 5 米：停在中间的机器也计入，或者把它们当越野障碍来跳。"/>
         <text name="eq_shop_plinthTurntable" text="旋转展台"/>
         <text name="eq_shop_turntable_function" text="转盘缓慢旋转：把机器停在上面，它会连同挂接的农具一起随转盘转动。赞助商的机器在这里计入更多。"/>
+        <text name="eq_shop_sponsorDiscount" text="赞助商折扣：%d%%"/>
         <text name="eq_plinth_inPlace" text="赞助商设备已就位！"/>
         <text name="eq_plinth_wrongBrand" text="这不是你赞助商的设备！展示竞争品牌的机器会减少你的赞助收入！"/>
         <text name="eq_plinth_noSponsor" text="尚未签约赞助商：在这里展示其设备将计入你的品牌曝光。"/>
@@ -215,16 +216,24 @@
         <text name="eq_train_routine" text="动作 x%d"/>
         <text name="eq_train_combo_none" text="跳过障碍开始连击"/>
         <text name="eq_train_combo" text="跳跃连击 x%d"/>
+        <text name="eq_train_temperCombo" text="气质连击 x%d"/>
+        <text name="eq_train_temperNone" text="变换步法、停下或转弯开始连击"/>
+        <text name="eq_train_temperStale" text="刚做过：%s"/>
+        <text name="eq_train_temperRecent" text="最近"/>
+        <text name="eq_temper_halt" text="静立"/>
+        <text name="eq_temper_gait_walk" text="慢步"/>
+        <text name="eq_temper_gait_trot" text="快步"/>
+        <text name="eq_temper_gait_canter" text="跑步"/>
+        <text name="eq_temper_gait_reverse" text="后退"/>
+        <text name="eq_temper_turn_left" text="向左大转弯（%s）"/>
+        <text name="eq_temper_turn_right" text="向右大转弯（%s）"/>
         <text name="eq_train_view_temperament" text="性情"/>
         <text name="eq_train_view_agility" text="敏捷"/>
-        <text name="eq_help_freestyle_2" text="敏捷通过跳越障碍积累连击条来训练，气质通过在盛装舞步场地完成一套动作来训练。耐力和速度通过良好的袭步来训练：袭步时按 H 了解方法。"/>
-        <text name="eq_help_freestyle_3" text="不想自己骑？在员工标签页雇用马夫和教练，每天替你训练马匹。游戏自带的动物员工和RLRM的Herdsman只能让它们维持状态。"/>
+        <text name="eq_help_freestyle_2" text="敏捷通过连续跳越障碍物来训练，性情通过切换步法和动作来训练。耐力和速度通过长时间袭步和冲刺来训练。按[[EQ_TRAINING_VIEW]]查看每个小游戏的更多信息，以便最有效地训练。"/>
+        <text name="eq_help_freestyle_3" text="你不需要每天骑马来训练它们。雇用教练和马夫，每天为你的马提供针对性或全面的训练，马匹也会在赛事中积累经验。最好的训练永远是在你自己的场地障碍或越野路线上（按[[EQ_COURSE_RECORD]]或[[EQ_COURSE_RECORD_XC]]创建），或在盛装舞步场地练习舞步测试。"/>
         <text name="eq_form_title" text="巅峰状态"/>
-        <text name="eq_help_freestyle_4" text="赛前骑一骑！你用小游戏训练的每项属性，都会让马在本月的比赛中进入巅峰状态，每项最多+8。多天的训练不会叠加：只计算本月最好的一次训练。"/>
-        <text name="eq_help_form_title" text="巅峰状态"/>
-        <text name="eq_help_form_1" text="亲自骑乘不只是训练：它还能让马在本月的比赛中进入巅峰状态。你在小游戏中练过的每项属性，在本月每场比赛中最多+8，并在此处和马的技能栏中显示为巅峰状态。训练越好加成越大；只是骑着走各种步法则没有加成。"/>
-        <text name="eq_help_form_2" text="巅峰状态不会在一个月内逐日叠加：每项属性只保留你最好的一次训练。比赛当天它甚至能让马超出自身潜力，本月比赛结束后便会消失。日常训练交给员工，把你自己的骑乘留给重要的比赛。"/>
-        <text name="eq_help_freestyle_1" text="骑乘能训练马的属性，每项属性都有自己的小游戏。所有属性都可以同时训练，但有些不太搭配，比如速度和性情。按Y切换到针对你想专注的属性、反馈更详细的视图，或留在自由视图获得综合反馈。骑乘条仍然是马当天的精力：一旦满了，这匹马在第二天之前都无法再进步。"/>
+        <text name="eq_help_freestyle_4" text="你亲自训练还会让马在当月所有赛事中获得临时的巅峰状态加成。它比普通训练增益更大，甚至能让马超出其潜力，但会在月底消失，且不会按天叠加：只计算你最好的一次训练。"/>
+        <text name="eq_help_freestyle_1" text="每匹马有四项属性，可以通过骑乘、参加赛事和你的员工来训练。所有属性同时训练，但按[[EQ_TRAINING_VIEW]]切换训练视图可以查看每项的更多信息。马每天只能训练有限的量，由每日训练百分比显示。"/>
         <text name="eq_help_freestyle_title" text="训练：自由"/>
         <text name="eq_welcome_ride_title" text="训练"/>
         <text name="eq_welcome_welcome_1_title" text="欢迎来到Realistic Equestrian"/>
@@ -262,7 +271,7 @@
         <text name="input_EQ_LATERAL" text="侧向动作（按住）"/>
         <text name="input_EQ_COLLECT" text="收缩（按住）"/>
         <text name="input_EQ_REIN" text="缰绳：鼠标转向（按住）"/>
-        <text name="eq_train_worn" text="骑乘条已满：今天无法再训练"/>
+        <text name="eq_train_worn" text="每日训练已满：今天不能再训练了"/>
         <text name="eq_ex_push" text="加力"/>
         <text name="eq_ex_recover" text="恢复"/>
         <text name="eq_ex_sprint" text="冲刺"/>
@@ -281,10 +290,7 @@
         <text name="eq_pop_ex_spent" text="力竭！"/>
         <text name="eq_pop_ex_fresh" text="可以袭步"/>
         <text name="eq_help_gallop_title" text="袭步"/>
-        <text name="eq_help_gallop_1" text="你的马有三种袭步节奏。在跑步中按W开始加力：速度快，但体力消耗条会上涨，而且越高涨得越快。按S恢复：较慢的袭步，在继续袭步的同时降低消耗，在消耗条的上三分之一和下三分之一降得快，中间降得慢。再按W继续加力。状态越好的马疲劳得越慢，恢复得越快。"/>
-        <text name="eq_help_gallop_2" text="如果加力时消耗条到达红色的疲劳区，马会降为跑步，在消耗条清空前无法再袭步。想自己降为跑步，可在消耗条为空时于恢复中按一次S，或随时连按两次S。"/>
-        <text name="eq_help_gallop_3" text="袭步时连续点击鼠标左键进行冲刺：速度快得多，消耗条起初涨得慢，然后越来越快，所以要在线前停下。冲刺结束后转为恢复，消耗条清空前不能再次冲刺。只有冲刺能越过疲劳线，用于冲向终点的最后发力，但在那里结束的冲刺会让马力竭，回到线下之前恢复得非常慢。"/>
-        <text name="eq_help_gallop_4" text="训练：冲刺训练速度，结束前把消耗条推得越高，价值越大：到线的一半时x2，紧贴线下最高x10，但越线后结束只有x1。加力和恢复按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近顶部提高越快。在消耗条中间三分之一恢复能让马喘口气，并保留大部分倍率，而上下三分之一会让倍率迅速流失，一直不喘气的马进步会慢得多。疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
+        <text name="eq_help_gallop_1" text="你的马有三种袭步节奏。加力（W）是中间节奏，会提高消耗；恢复（S）最慢，会降低消耗。冲刺（[[EQ_SPRINT]]）最快，消耗上升很快。它能让马超出正常极限，但之后需要很长时间恢复。"/>
         <text name="eq_ex_hint_sprint" text="连续点击左键冲刺"/>
         <text name="eq_ex_hint_sprintRest" text="冲刺：先恢复到清空"/>
         <text name="eq_ex_hint_locked" text="跑步直到消耗条清空"/>
@@ -301,13 +307,19 @@
         <text name="eq_train_view_speed" text="速度"/>
         <text name="eq_train_view_condensed" text="精简"/>
         <text name="eq_help_stamina_title" text="训练：耐力"/>
-        <text name="eq_help_stamina_1" text="袭步中加力和恢复时会按耐力倍率训练耐力，最高x5。加力会提高倍率，越接近线涨得越快。恢复会降低倍率：在消耗条上三分之一降得快，中间三分之一降得慢，下三分之一又降得快。"/>
-        <text name="eq_help_stamina_2" text="所以要加力到接近线，再放缓到消耗条中间，让马在那里喘一会儿气，然后再次加力。在顶部附近反复切换加力和恢复只会让马疲劳而不提高倍率，疲劳或力竭会把倍率降回x1，并在消耗条清空前停止耐力训练。"/>
+        <text name="eq_help_stamina_1" text="耐力让马在袭步或冲刺时能加力更久，之后恢复更快。它在越野、长距离赛马和障碍赛马中最重要。耐力高的马更不容易受伤，在松软、泥泞或炎热的场地表现更好。给马喂燕麦和大麦可以加快耐力训练。"/>
+        <text name="eq_help_stamina_2" text="训练耐力的关键是让马尽可能长时间保持袭步。当消耗条处于蓝色区间时从加力切换到恢复，到底部再切换回来。到了该切换的时候，马会开始大口喘气。把握好时机可以积累训练连击、恢复更快、疲劳更慢，从而加力更久。脱离袭步会重置连击。"/>
         <text name="eq_help_speed_title" text="训练：速度"/>
-        <text name="eq_help_speed_1" text="速度在冲刺时训练：袭步时连续点击鼠标左键。冲刺的每一秒都算数，结束时会乘以你把消耗条推到的高度：到线的一半时x2，紧贴线下最高x10。"/>
-        <text name="eq_help_speed_2" text="越线后结束的冲刺只值x1，所以要在线前停止连按（或按S）。冲刺后，马必须恢复到消耗条清空才能再次冲刺。"/>
+        <text name="eq_help_speed_1" text="速度提高马在所有步法下的最高速度，在赛马和越野中最重要。速度快的马在坚硬场地表现最好。给马喂玉米可以加快速度训练。"/>
+        <text name="eq_help_speed_2" text="袭步时快速连按[[EQ_SPRINT]]进行冲刺。冲刺结束时消耗条越高，倍率越大，所以尽量靠近那条线：一旦越过，倍率会重置为x1。每次冲刺后慢步或立定休息，可以快速恢复。"/>
         <text name="eq_train_speedMult" text="速度 x%.1f"/>
-        <text name="eq_train_staminaMult" text="耐力 x%.1f"/>
+        <text name="eq_train_staminaMult" text="耐力连击 x%.1f"/>
+        <text name="eq_pop_staminaUp" text="耐力连击 x%.1f！"/>
+        <text name="eq_pop_staminaEarly" text="太早：耐力连击中断"/>
+        <text name="eq_pop_staminaPast" text="过头：耐力连击中断"/>
+        <text name="eq_pop_staminaLost" text="耐力连击中断"/>
+        <text name="eq_train_staminaNextHigh" text="加力到色带，再恢复"/>
+        <text name="eq_train_staminaNextLow" text="恢复到色带，再加力"/>
         <text name="eq_train_staminaStopped" text="无训练"/>
         <text name="eq_ex_fatigued" text="疲劳"/>
         <text name="eq_pop_speedBank" text="速度 x%.1f！"/>
@@ -529,7 +541,7 @@
         <text name="eq_course_editing" text="正在编辑%s：%d个障碍，%.0f米"/>
         <text name="eq_course_editStarted" text="正在编辑%s：完成前，Realistic Equestrian放置的障碍物没有碰撞；其他障碍物仍是实体"/>
         <text name="input_EQ_COURSE_DELETE" text="删除附近的路线"/>
-        <text name="eq_ui_riding" text="骑乘"/>
+        <text name="eq_ui_riding" text="每日训练"/>
         <text name="eq_ui_ridingFull" text="已满，今天无法再训练"/>
         <text name="eq_ui_ridingFullValue" text="%s - 已满"/>
         <text name="eq_specialty_none" text="暂无"/>
@@ -537,7 +549,6 @@
         <text name="eq_specialty_eventer" text="三项赛马"/>
         <text name="eq_specialty_racehorse" text="赛马"/>
         <text name="eq_specialty_allRounder" text="全能型"/>
-        <text name="eq_enter_settling" text="这匹马搬家后还在适应。下个月起可以参赛。"/>
         <text name="eq_enter_rested" text="这匹马本月已出赛%d次，需要休息。下个月可以再次参赛。"/>
         <text name="eq_reveal_better" text="你对%s更了解了，它看起来比商人说的还要好。"/>
         <text name="eq_reveal_worse" text="你对%s更了解了，感觉自己可能被误导了。"/>
@@ -602,6 +613,9 @@
         <text name="eq_ui_day" text="第%d天"/>
         <text name="eq_ui_status_ok" text="可报名"/>
         <text name="eq_ui_status_lowHealth" text="健康低：%d%%退赛"/>
+        <text name="eq_ui_status_settling" text="适应期：机会降低"/>
+        <text name="eq_ui_status_tired" text="未休息一天：机会降低"/>
+        <text name="eq_ui_status_settlingTired" text="适应期且未休息：机会降低"/>
         <text name="eq_ui_status_eventFull" text="已有两匹马报名"/>
         <text name="eq_ui_status_tooYoung" text="太年轻"/>
         <text name="eq_ui_status_tooOld" text="太老"/>
@@ -1169,6 +1183,7 @@
         <text name="eq_sponsor_discount_repair" text="维修 %s"/>
         <text name="eq_sponsor_discount_buy" text="购买 %s"/>
         <text name="eq_sponsor_loanLine" text="在你的赛事月份借给你一台机器"/>
+        <text name="eq_sponsor_eventingLine" text="三项赛多付 %s"/>
         <text name="eq_loan_popupTitle" text="来自赞助商的机器"/>
         <text name="eq_loan_popup" text="%s 送来了一台全新的 %s，供你在赛事期间试用。它正在经销商处等你。在月底被收回之前，你可以免费随意使用。"/>
         <text name="eq_loan_delivered" text="%s 在你的赛事月份借给你 %s。它在经销商处。"/>
@@ -1206,5 +1221,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔离，已被带回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出参赛，已被带回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受伤了，已被带回%s休息。"/>
+        <text name="eq_help_freestyle_5" text="你的马有额外的步法和动作按键。按住[[EQ_REIN]]用鼠标精确转向，按住[[EQ_LATERAL]]做横向动作，按住[[EQ_COLLECT]]让马收缩。"/>
+        <text name="eq_help_lateral_title" text="横向动作"/>
+        <text name="eq_help_lateral_1" text="横向动作是盛装舞步中最难的部分之一，需要组合多种操作。按住[[EQ_LATERAL]]并按A或D向侧面移动，即为腿部让步；同时按住[[EQ_REIN]]可以弯曲马的颈部和肩部，做出腰向内、腰向外或斜横步。在舞步测试中，路线上的图标会显示如何摆放马的姿势。"/>
+        <text name="eq_help_collect_title" text="收缩"/>
+        <text name="eq_help_collect_1" text="收缩主要用于盛装舞步，让马以某种步法前进却不带平常的速度。快步时按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（缓慢有弹性的快步）。在慢步或跑步时收缩并用A或D转向，即为定后肢旋转。"/>
+        <text name="eq_help_rein_title" text="鼠标转向"/>
+        <text name="eq_help_rein_1" text="按住[[EQ_REIN]]会把镜头转到马的身后，让你用鼠标精细转向，这在盛装舞步中至关重要，在场地障碍中有时也有用。同时按住[[EQ_LATERAL]]时，鼠标会弯曲马的头部来做横向动作。"/>
+        <text name="eq_help_courseEdit_title" text="编辑路线"/>
+        <text name="eq_help_courseEdit_1" text="按顺序骑过各个障碍来描绘路线，速度不限。描绘时，本模组的障碍物没有碰撞。如果出错，骑回最后一个正确的点，直到有一条线吸附过去，然后按[[EQ_COURSE_REWIND]]从那里重新描绘。再次按[[EQ_COURSE_RECORD]]（越野为[[EQ_COURSE_RECORD_XC]]）保存。"/>
+        <text name="eq_help_dressageEdit_title" text="编辑舞步测试"/>
+        <text name="eq_help_dressageEdit_1" text="用图形、动作和步法编写你自己的舞步测试。[[EQ_DT_PREV]]和[[EQ_DT_NEXT]]切换图形，[[EQ_DT_GAIT]]切换步法，[[EQ_DT_MODE]]切换到横向动作或原地动作。[[EQ_DT_ACCEPT]]保留当前步骤并继续，[[EQ_DT_UNDO]]返回上一步，[[EQ_DT_RANDOM]]随机选一步。按[[EQ_DRESSAGE_TEST]]保存测试。"/>
     </texts>
 </l10n>

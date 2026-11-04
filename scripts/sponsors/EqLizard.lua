@@ -365,7 +365,7 @@ function EqLizard.isBuilt(placeable)
     if spec == nil then return true end
     local index = spec.stateIndex
     if placeable.getConstructibleStateIndex ~= nil then
-        local ok, value = pcall(placeable.getConstructibleStateIndex, placeable)
+        local ok, value = EqLog.try("EqLizard construction state", placeable.getConstructibleStateIndex, placeable)
         if ok and value ~= nil then index = value end
     end
     local names = spec.stateNameToIndex or {}
@@ -373,7 +373,7 @@ function EqLizard.isBuilt(placeable)
     if index == nil or finish == nil then return false end
     if index >= finish then return true end
     -- James (2026-11-01): everything delivered but still being built counts as built
-    local ok, ready = pcall(EqLizard.materialsReady, spec, index, finish)
+    local ok, ready = EqLog.try("EqLizard materials ready", EqLizard.materialsReady, spec, index, finish)
     return ok and ready == true
 end
 
@@ -515,7 +515,7 @@ local function collapseStep(entry)
         return false
     end
     if g_currentMission ~= nil and g_currentMission:getIsServer() and placeable.delete ~= nil and not placeable.isDeleted then
-        local ok, err = pcall(placeable.delete, placeable)
+        local ok, err = EqLog.try("EqLizard remove plinth", placeable.delete, placeable)
         if not ok then Log:warning("EqLizard: could not remove a Lizard plinth: %s", tostring(err)) end
     end
     return true

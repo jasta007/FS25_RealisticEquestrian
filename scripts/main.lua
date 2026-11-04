@@ -32,6 +32,8 @@ source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqExertion.lua")
 source(modDirectory .. "scripts/training/EqJump.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqTemperament.lua")
+source(modDirectory .. "scripts/training/EqBreath.lua")
 source(modDirectory .. "scripts/training/EqDressagePath.lua")
 source(modDirectory .. "scripts/training/EqDressage.lua")
 source(modDirectory .. "scripts/training/EqDressageHooks.lua")
@@ -42,6 +44,7 @@ source(modDirectory .. "scripts/training/EqCourseGlow.lua")
 source(modDirectory .. "scripts/training/EqCourseHooks.lua")
 source(modDirectory .. "scripts/training/EqDressageEditor.lua")
 source(modDirectory .. "scripts/training/EqPoles.lua")
+source(modDirectory .. "scripts/gui/EqHelpKeys.lua")
 source(modDirectory .. "scripts/gui/EqTrainingHud.lua")
 source(modDirectory .. "scripts/gui/EqRLRMWarning.lua")
 source(modDirectory .. "scripts/training/EqRidingInput.lua")
@@ -132,8 +135,13 @@ end
 
 --- Share the money titles with lookups that carry no mod name. Run at source time and again
 --- when the money types are registered, in case our texts were not loaded yet the first time.
+-- The base game's names for a horse's riding percentage, shown as our Daily Training instead
+-- (James, 2026-11-04: "Riding" didn't say it is the day's training).
+EqMain.TEXT_OVERRIDES = { infohud_riding = "eq_ui_riding", ui_horseDailyRiding = "eq_ui_riding" }
+
 function EqMain.copyMoneyTexts()
     local keys, aliases = {}, {}
+    for name, key in pairs(EqMain.TEXT_OVERRIDES) do aliases[name] = key end
     for _, stat in ipairs(EqMain.MONEY_STATS) do
         table.insert(keys, stat.title)
         aliases["finance_" .. stat.name] = stat.title
@@ -407,6 +415,7 @@ local function onMissionDelete()
         EqRegistry.reset()
         EqTrainingHooks.reset()
         EqTrainingHud.reset()
+        EqLog.try("EqBreath reset", EqBreath.reset)
         EqWelcome.reset()
         EqStatLog.reset()
         EqFacilityHooks.reset()

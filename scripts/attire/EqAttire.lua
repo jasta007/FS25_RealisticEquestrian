@@ -15,7 +15,7 @@
 
     The top hat is our own model (art/source/top_hat.py). It hangs off the head's attach point,
     whose axes are the rig's, so once dressed its "eqHatFit" group is turned upright and to the
-    front from the character's root and placed by EqAttire.HAT (eqHatFit tunes it in game).
+    front from the character's root and placed by EqAttire.HAT.
 
     The tall boots are our own model too (art/source/riding_boots.py), cut at the ankle. Clothes
     bend with the body through skinning to the game's rig, which we can't ship, so each piece is
@@ -50,16 +50,12 @@ EqAttire.MAX_MATERIALS = 8
 EqAttire.PRIMARY, EqAttire.SECONDARY = "colorScaleR", "colorScaleG"
 
 -- The top hat's place on each body's head, along the character's own axes: metres up, forward
--- and to the right of the head joint, its tilt back in degrees and a size factor. Set with the
--- eqHatFit command.
+-- and to the right of the head joint, its tilt back in degrees and a size factor.
 EqAttire.HAT = {
     female = { up = 0.085, forward = 0.003, side = 0, tilt = 15, scale = 0.98 },
     male = { up = 0.085, forward = 0.003, side = 0, tilt = 15, scale = 0.98 },
 }
 EqAttire.HAT_NODE = "eqHatFit"
--- eqUvGrid's test texture (art/source/uv_grid.py) and the slot it is on, if any.
-EqAttire.UV_GRID = "data/attire/uvGrid_diffuse.dds"
-EqAttire.uvGridSlot = nil
 
 -- The boots' pieces and the bones they go on. A shaft stands from the ankle (the foot bone's
 -- origin) towards the knee (the shin bone's), each foot keeps the shaft's turn at dressing time.
@@ -72,8 +68,7 @@ EqAttire.BOOT_SHAFT = 0.43
 EqAttire.BOOT_KNEE_GAP = 0.04
 EqAttire.BOOT_SCALE_MIN, EqAttire.BOOT_SCALE_MAX = 0.85, 1.15
 -- The shafts' girth on top of that (the model already widens up the calf), and how far the
--- whole boot sits above the ankle bone (the model's ankle is higher than the rig's). eqBootFit
--- tunes both.
+-- whole boot sits above the ankle bone (the model's ankle is higher than the rig's).
 EqAttire.BOOT_WIDTH = 1.18
 EqAttire.BOOT_RAISE = 0.03
 -- How far the foot bone's line to the toe bone points down from the boot's sole, degrees.
@@ -83,8 +78,6 @@ EqAttire.BOOT_LEAN = 6.7
 EqAttire.BOOT_BACK = -0.012
 -- The shaft tops lean outwards, away from each other, seen from the front (degrees).
 EqAttire.BOOT_SPLAY = 2
--- dressed models wearing our boots (weak, models come and go), for eqBootFit
-EqAttire.booted = setmetatable({}, { __mode = "k" })
 
 EqAttire.modDirectory = nil
 EqAttire.schema = nil
@@ -92,8 +85,6 @@ EqAttire.schema = nil
 EqAttire.swapsByItem = {}
 -- original material id .. "|" .. path -> the material made from it
 EqAttire.materials = {}
--- fitted hat node -> its model, to refit after eqHatFit (weak, models come and go)
-EqAttire.hats = setmetatable({}, { __mode = "k" })
 
 
 --- The attire.xml section for a player style's xml file, or nil for styles we leave alone
@@ -153,9 +144,9 @@ local function setColours(node, colour)
     if node == nil or node == 0 or not entityExists(node) then return end
     if getHasClassId(node, ClassIds.SHAPE) and getHasShaderParameter(node, EqAttire.PRIMARY) then
         local p, q = colour.primary, colour.secondary
-        pcall(setShaderParameter, node, EqAttire.PRIMARY, p[1], p[2], p[3], p[4], false)
+        EqLog.try("EqAttire colour", setShaderParameter, node, EqAttire.PRIMARY, p[1], p[2], p[3], p[4], false)
         if getHasShaderParameter(node, EqAttire.SECONDARY) then
-            pcall(setShaderParameter, node, EqAttire.SECONDARY, q[1], q[2], q[3], q[4], false)
+            EqLog.try("EqAttire colour", setShaderParameter, node, EqAttire.SECONDARY, q[1], q[2], q[3], q[4], false)
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do setColours(getChildAt(node, i), colour) end
@@ -259,10 +250,10 @@ local function swapMaps(node, swap)
     if node == nil or node == 0 or not entityExists(node) then return end
     if getHasClassId(node, ClassIds.SHAPE) then
         for index = 0, EqAttire.MAX_MATERIALS - 1 do
-            local ok, material = pcall(getMaterial, node, index)
+            local ok, material = EqLog.try("EqAttire getMaterial", getMaterial, node, index)
             if not ok or material == nil or material == 0 then break end
             local made = swappedMaterial(material, swap)
-            if made ~= nil and made ~= material then pcall(setMaterial, node, made, index) end
+            if made ~= nil and made ~= material then EqLog.try("EqAttire setMaterial", setMaterial, node, made, index) end
         end
     end
     for i = 0, getNumOfChildren(node) - 1 do swapMaps(getChildAt(node, i), swap) end
@@ -377,7 +368,6 @@ function EqAttire.fitHat(model, fit, body)
     -- The character's right is its -x (it faces +z).
     setTranslation(fit, along(-hat.side, hat.up, hat.forward))
     setScale(fit, hat.scale, hat.scale, hat.scale)
-    EqAttire.hats[fit] = { model = model, body = body }
 end
 
 
@@ -468,7 +458,6 @@ function EqAttire.fitBoots(model, item)
     if #nodes > 0 then
         removeBoots(model)
         model.eqBootNodes = nodes
-        EqAttire.booted[model] = true
     end
 end
 
@@ -503,70 +492,7 @@ function EqAttire.dress(model, style)
             local colour = EqAttire.pickColour(swap.colours, index)
             if colour ~= nil then setColours(model[slot.node], colour) end
         end
-        if EqAttire.uvGridSlot == slot.config then
-            -- eqUvGrid: the labelled grid in white light, to see where the texture lands.
-            swapMaps(model[slot.node], { diffuse = EqAttire.resolve(EqAttire.UV_GRID, EqAttire.modDirectory), key = "uvGrid" })
-            setColours(model[slot.node], { primary = { 1, 1, 1, 1 }, secondary = { 1, 1, 1, 1 } })
-        end
     end
-end
-
-
---- eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]: move the top hat on every
---- dressed character (of one body, or both).
-function EqAttire:consoleHatFit(...)
-    local args = { ... }
-    local bodies = { "female", "male" }
-    if args[1] == "female" or args[1] == "male" then bodies = { table.remove(args, 1) } end
-    local lines = {}
-    for _, body in ipairs(bodies) do
-        local hat = EqAttire.HAT[body]
-        hat.up = tonumber(args[1]) or hat.up
-        hat.forward = tonumber(args[2]) or hat.forward
-        hat.side = tonumber(args[3]) or hat.side
-        hat.tilt = tonumber(args[4]) or hat.tilt
-        hat.scale = math.max(0.5, math.min(2, tonumber(args[5]) or hat.scale))
-        table.insert(lines, string.format("Top hat (%s): up %.3f m, forward %.3f m, side %.3f m, tilt %.1f deg, scale %.2f",
-            body, hat.up, hat.forward, hat.side, hat.tilt, hat.scale))
-    end
-    for fit, entry in pairs(EqAttire.hats) do
-        if entityExists(fit) then EqAttire.fitHat(entry.model, fit, entry.body) else EqAttire.hats[fit] = nil end
-    end
-    table.insert(lines, "eqHatFit [female|male] up forward side tilt scale")
-    return table.concat(lines, "\n")
-end
-
-
---- eqBootFit [width] [raise] [toeDrop]: the tall boots' shaft girth, height above the ankle and
---- foot angle; applies the next time a character is dressed (open the wardrobe, or remount).
-function EqAttire:consoleBootFit(width, raise, drop, lean, back, splay)
-    EqAttire.BOOT_WIDTH = math.max(0.8, math.min(2, tonumber(width) or EqAttire.BOOT_WIDTH))
-    EqAttire.BOOT_RAISE = math.max(-0.1, math.min(0.15, tonumber(raise) or EqAttire.BOOT_RAISE))
-    EqAttire.BOOT_TOE_DROP = math.max(-30, math.min(60, tonumber(drop) or EqAttire.BOOT_TOE_DROP))
-    EqAttire.BOOT_LEAN = math.max(-20, math.min(20, tonumber(lean) or EqAttire.BOOT_LEAN))
-    EqAttire.BOOT_BACK = math.max(-0.1, math.min(0.1, tonumber(back) or EqAttire.BOOT_BACK))
-    EqAttire.BOOT_SPLAY = math.max(-15, math.min(15, tonumber(splay) or EqAttire.BOOT_SPLAY))
-    for model in pairs(EqAttire.booted) do
-        for _, node in ipairs(model.eqBootNodes or {}) do
-            if entityExists(node) and string.find(getName(node), "Shaft") ~= nil then
-                local _, scale = getScale(node)
-                setScale(node, scale * EqAttire.BOOT_WIDTH, scale, scale * EqAttire.BOOT_WIDTH)
-            end
-        end
-    end
-    return string.format("Riding boots: width %.2f (now), raise %.3f m, toe drop %.0f deg, lean %.1f deg, back %.3f m, "
-        .. "splay %.1f deg (next dressing)\neqBootFit width raise toeDrop lean back splay", EqAttire.BOOT_WIDTH,
-        EqAttire.BOOT_RAISE, EqAttire.BOOT_TOE_DROP, EqAttire.BOOT_LEAN, EqAttire.BOOT_BACK, EqAttire.BOOT_SPLAY)
-end
-
-
---- eqUvGrid [bottom|top|gloves|footwear|headgear|off]: put a labelled grid on one slot's item as
---- its texture, from the next dressing (re-pick the item in the wardrobe), to map its layout.
-function EqAttire:consoleUvGrid(slot)
-    local slots = { bottom = true, top = true, gloves = true, footwear = true, headgear = true }
-    EqAttire.uvGridSlot = slots[slot] and slot or nil
-    if EqAttire.uvGridSlot == nil then return "UV grid off (re-pick the item to put its texture back)" end
-    return string.format("UV grid on the %s item: open the wardrobe and pick it again", EqAttire.uvGridSlot)
 end
 
 
@@ -588,9 +514,6 @@ function EqAttire.install(guarded, modDirectory)
             guarded("attire textures", function() EqAttire.dress(model, style) end)
         end)
     end
-    addConsoleCommand("eqBootFit", "Fits the tall riding boots: eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]", "consoleBootFit", EqAttire)
-    addConsoleCommand("eqUvGrid", "Shows a labelled test grid on a worn item: eqUvGrid [bottom|top|gloves|footwear|headgear|off]", "consoleUvGrid", EqAttire)
-    addConsoleCommand("eqHatFit", "Moves the dressage top hat: eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]", "consoleHatFit", EqAttire)
     -- The base styles load before mods do; add ours now and again once the map has loaded.
     guarded("attire items", EqAttire.registerAll)
     addModEventListener({ loadMap = function() guarded("attire items", EqAttire.registerAll) end })

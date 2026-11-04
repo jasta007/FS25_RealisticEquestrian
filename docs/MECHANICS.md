@@ -57,7 +57,10 @@ Every horse trains once a day, at RLRM's daily horse tick.
   wordless Sprint bar). Every view shows the Exertion bar, and every view trains everything. Help pops
   up at the bottom of the screen the first time you open each view (and the first time you
   gallop); press **H** to see it again (the gallop's help while galloping), and click anywhere to
-  move on.
+  move on. One-off popups explain lateral work, collecting and mouse steering the first time each
+  key is held while riding, and course and dressage test editing the first time each editor opens.
+  Keys in help texts are written as `[[EQ_ACTION]]` and show the player's own binding (the game's
+  key name, our default key, or the default gamepad button in gamepad mode; `Help keys:` log lines).
 - Welcome popups show the first time you come within 35 m of a horse pen or ride a horse, open
   RLRM's menu with horses on the farm, open its Information tab, open the Events tab, open the Equestrian Staff tab, and open the
   Diseases dialog for a horse. A popup stays until you click through its last page; closed early
@@ -65,7 +68,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   every seen flag on your machine, so each popup shows once more.
 - Jumping doesn't interrupt the gallop: the pace from before take-off counts until shortly after
   landing, so you can jump an obstacle in the way.
-- **The riding bar is the horse's energy for the day.** Once it is full the horse is tired, the
+- **The riding bar is the horse's energy for the day**, shown as **Daily Training** (the base game's "Riding" and "Daily riding" labels are renamed). Once it is full the horse is tired, the
   line reads "Training (tired)", and it trains no more until tomorrow. Galloping tires it fastest,
   so choose what to work on. A fit horse's bar fills more slowly (up to 1.4 times as long at
   stamina 100). Riding that trains little (walking or cantering over to a facility) costs only a
@@ -85,7 +88,7 @@ Every horse trains once a day, at RLRM's daily horse tick.
   stats the course's checks roll against and to the horse's rating on the day, and may lift a
   stat past its ceiling (to at most 100). It never counts toward which events a horse may enter.
 - It shows as **Peak form** in the riding panel and the horse's Skills box, and clears once the
-  month's events have run. A popup explains it the first time a horse gets it.
+  month's events have run. Freestyle help page 4 explains it (its own popup was dropped, James 2026-11-04).
 - Permanent training is unchanged: your riding still trains faster than staff and is the only
   way to take a stat to its ceiling.
 
@@ -96,11 +99,10 @@ The gallop has three paces, and exertion only builds at a gallop:
 - **Pushing** (W from a canter): the full gallop, its top speed set by Speed. Exertion rises, faster
   the higher it is, and plainly faster near the top (an average horse blows about 15 seconds from
   empty; Stamina slows it).
-- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls: quickly in the
-  top third of the gallop section, slowly through the middle third (the "zone", marked with ticks),
-  quickly again in the bottom third. The horse keeps galloping at an empty bar; W pushes on again.
-- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 125% of the gallop's
-  speed. Exertion rises slowly at first and ever faster (Speed slows it), so taking it as high as
+- **Recovering** (S while Pushing): 80% of the gallop's speed, and exertion falls, slowly at first
+  and faster the closer it gets to empty, the mirror of Pushing. The horse keeps galloping at an empty bar; W pushes on again.
+- **Sprinting** (click the left mouse button three times quickly while galloping, and keep clicking; rebindable as Sprint in Controls): 120% of the gallop's
+  speed at Speed 0, up to 150% at Speed 100. Exertion rises slowly at first and ever faster (Stamina slows it, so a fit horse Sprints for longer), so taking it as high as
   you can without crossing the line is the skill. Quick taps ease the rise for a while. The Sprint
   ends when the taps stop, into Recovering, and there is no new Sprint until the bar is empty
   (Pushing is fine).
@@ -126,20 +128,28 @@ multiplied when it ends by how high it took the bar: x2 half way to the line, ri
 x10 just short of it (1 + 9 × share^3.17), but only x1 if it ends at or past the line. The panel
 shows the multiplier and what the Sprint will bank, and a "Speed x7.3!" burst when it does.
 
-Stamina comes from Pushing and Recovering, at a live multiplier from x1 to x5 shown under the bar.
-Behind it the horse has a hidden breath:
+Stamina comes from Pushing and Recovering, at a live Stamina combo from x1 to x5 shown under the bar.
+A blue band on the gallop part of the bar shows where to turn the bar round:
 
-- Pushing raises the multiplier, faster the higher the bar is (with its square), and every point of
-  exertion pushed uses a hundredth of the breath. With less breath the multiplier rises more slowly
-  (down to a tenth of the rate) and falls faster (up to twice as fast), but never stops either way.
-- Recovering costs multiplier: quickly in the top third, slowly in the middle zone, quickly again
-  in the bottom third. Breath comes back in the middle and bottom thirds, not the top. A canter or
-  slower costs multiplier quickly too; a Sprint holds it.
-- So the way to x5 is to push close to the line, recover down into the zone and let the horse
-  breathe there for a while, then push again. Bouncing between Push and Recover near the top runs
-  out of breath and earns little; letting the bar fall too far throws the multiplier away.
-- Fatigued (or Blown, a Sprint that ends past the line) drops it to x1, empties the breath and stops
-  stamina training until the bar is empty.
+- When a gallop starts the band sits somewhere near the top. Switch from Pushing (or a Sprint)
+  to Recovering with the bar inside it and the multiplier rises by 0.5, and the band jumps to
+  somewhere near the bottom. Switch back to Pushing inside that one for another 0.5, and so on.
+- The band is 15 points of exertion wide at x1 and narrows to 6 at x5. Both ends climb with the
+  multiplier: the top band from 67-97% at x1 to 78-97% at x5, the bottom one from 12-33% to 38-58%.
+- A hit helps you to the next band: after a hit at the top, Recovering falls 1.3 to 1.8 times as
+  fast (more at a higher multiplier); after a hit at the bottom, Pushing climbs at 90% down to 70%
+  of its rate. A miss takes the help away. So a good run keeps the horse high on the bar.
+- Switching before you reach the band, or going past it, drops the multiplier to x1 and puts a
+  full-width band at the other end.
+- The horse's breath shows the band too: it starts blowing after a hit at the top (the band now
+  waits at the bottom) and stops after a hit at the bottom, and blows hard, in quicker, bigger
+  puffs, while Fatigued or Blown. It uses the base game's horse step dust, one tight stream per nostril
+  under the muzzle, blowing down, forwards and a little out to each side. It is anchored on the upper
+  lip bone and turns with the head, so it follows the nose when the horse bends its neck. News shows beside the panel: "Stamina combo x2.5!", "Too early", "Overshot" or "Stamina
+  combo lost". The Stamina view also says what to do next ("Push into the band, then Recover").
+- Dropping to a canter or slower loses the multiplier at once, though it still brings the bar
+  down fastest. Fatigued (or Blown, a Sprint that ends past
+  the line) drops it to x1 and stops stamina training until the bar is empty.
 
 ### Agility
 
@@ -153,10 +163,26 @@ a fence.
 
 ### Temperament
 
-Temperament's focused training is a dressage routine, and it needs dressage markers: nothing starts
-from just walking about (the old free routine that gave orders whenever the horse walked for a
-moment is gone, James 2026-10-29). Walking and backing up still train a little temperament
-anywhere. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
+Temperament trains anywhere with the **temperament combo** (James, 2026-11-03), built like the jump
+combo but from variety. Nothing gives orders: you string together moves of your own choosing:
+
+- a gait change that isn't to a gallop (walk, trot, canter, backing up), held for 1 s;
+- standing still, held for 2 s;
+- lateral and collected work (half pass, leg yield, shoulder-in, piaffe, passage, collected walk or
+  canter, pirouette...), held for 1 s;
+- a big turn: half a circle steered one way at one gait (letting go of the steering for 1 s starts
+  the count again). Each gait and direction is its own move.
+
+Each new move raises the combo (up to x5) and refills its 12 s bar. A move that is one of your last
+3 is fine to ride but neither raises the combo nor refills the bar. Galloping, running into
+something (knocked to a stand) or letting the bar run out loses the combo, and no new one starts for
+2.5 s. Jumps neither count nor break it. While a combo runs temperament builds at 0.002 effort a
+second per step (x5 = 0.01 a second, about a third of a dressage test at x8). The Temperament view
+shows the combo, its seconds left and your last moves; Freestyle shows the combo and its bar. A
+dressage test takes over while it runs. Walking and backing up still train a little temperament
+anywhere.
+
+The most temperament comes from a dressage test. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
 chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
 between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
@@ -324,9 +350,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - A test of figures is harder work than the marker routine: temperament builds twice as fast
   (its payoff at the end too), and the riding bar fills at 1.5 times the usual rate from the first
   movement, so one full test on the big arena fills a green horse's bar.
-- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test train temperament
-  too, once held for a second, like a routine at x4 (about a third of what a full test gives for
-  the same time). Just collecting on the spot at a walk doesn't count.
+- Lateral work ridden outside a test counts as moves for the temperament combo (above).
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).
@@ -360,6 +384,9 @@ start). Placeables standing over the arena, such as a riding hall, are hidden wh
 - A saved test belongs to its arena (found by where the arena stands, so moving or rebuilding it
   loses the test) and replaces the random tests there, in training and in your own events held
   there. Riding Hall boards have no editor. Single player only, like courses.
+- **Riding Hall 2k26's hall** has its own ring of letter boards (A on the entrance gate, F K B E M
+  H C round it, about 22 x 33 m). It rides like one of our arenas: random tests, Ctrl+L tests and
+  your own events (it counts as a 30 m arena). D, X and G are worked out on its centre line.
 
 **Riding Hall letter boards: legs between the letters.** Commands get 20% more time than below,
 and walks are only asked for to markers within 12 m:
@@ -479,8 +506,10 @@ never during a round: rails stay down to the finish. Single player for now.
 
 Speed sets a horse's top speed (about 10% slower than the base game at 10, 20% faster at 100);
 agility sets how high it jumps and how quickly and tightly it turns (up to 1.65 times, with the
-turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.2 times
-better again, changes pace a little quicker and stands less long after a knock. Canter jumps go higher than the base game's, so a
+turning circle at every gait shrinking to match); a calm horse (temperament) turns up to 1.4 times
+better again (on the ground and in the air), changes pace a little quicker and stands less long after a knock. Agility and temperament also give
+better brakes: dropping a gait, the horse slows up to 1.4 times as quickly by agility and 1.3 times
+again by temperament. Canter jumps go higher than the base game's, so a
 horse can clear fences without a full gallop. The base game ignores gait keys in the air, so a
 press of W or S while jumping (below a gallop) is kept, lights the gait it will land into on the
 bar, and takes effect the moment the horse lands. A gallop jump from the bottom third of the bar
@@ -497,7 +526,7 @@ horse carries 1.45 times its take-off speed through the air from a canter (1.8 f
 at a gallop or once you ask for a slower gait) so it still covers ground. A **collected jump**: jump from a trot (the base game only jumps from a canter),
 or hold Ctrl (or let go of it less than half a second before) and press jump. From a canter or gallop the horse gathers itself on the ground over 0.26 s (0.08 s from a trot),
 slowing to about a trot, then jumps about as high as a gallop jump over a much shorter
-distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test. The `eqJump` console command shows and changes these numbers until the game restarts.
+distance. A trot jump is lower (0.8 of a gallop jump) but longer than a Ctrl jump. Take-off is about 46 degrees from a gallop, 53 from a canter and 72 with Ctrl. Jumping off something higher than 1.6 m, the landing pose waits until about 0.3 s from the ground, so it doesn't play out mid-air. In a show jumping or cross country round, a steady horse (temperament above 50) aims for the middle of the round's next fence (2 to 18 m away, approached within 60 degrees of square): pointed near the middle it goes where it is pointed, pointed off centre or just past an end it turns toward the middle, up to 20 degrees a second at temperament 100. Steering away lets it go, so you can still ride round a fence; never in a dressage test.
 
 ### Staff, age and metabolism
 
@@ -699,8 +728,10 @@ Disappearing pieces: the cross country pieces (flags, log piles, drop walls) dis
 collision, while you just ride or drive around, so a course can cross the map without leaving flags
 and logs everywhere (`EqXcHide`). They show in construction mode (with collision, to pick and sell),
 while a course is edited (seen but ridden through), and in a round from its countdown (right at the
-start line) to the result (with collision, except the flag fence, which is only seen); riding past a
-start line shows nothing. Every piece has a **Disappearing** shop configuration: Yes by default on
+start line) to the result (solid only for the horse in the round, except the flag fence, which is
+only seen); riding past a start line shows nothing. In a round each piece's collision mask is set to
+one free collision bit, and only that horse's movement group gets the bit, so people on foot,
+vehicles and other horses pass through (groundwork for multiplayer). Every piece has a **Disappearing** shop configuration: Yes by default on
 log piles and drop walls, No by default on the shop's show jumps (Yes makes them disappear the same
 way). The flags always disappear. In multiplayer everything always shows. Other mods' show jumps are
 never hidden. A vehicle left on a hidden piece can be thrown when its
@@ -825,7 +856,7 @@ selected horse's trained stats in RLRM's colours. Pick a horse and press Enter. 
 For now the tab works in single player and for the host; multiplayer clients get a note.
 
 Console: `eqEvents` lists open events, `eqRatings [horse]` shows ratings (with experience),
-favourite event and career, `eqExperience <horse> <discipline> <0-100>` sets experience for testing,
+favourite event and career,
 `eqEnter <event number> <horse> [auto|manual]` enters (the fee is paid at once), `eqResults` shows results.
 
 ### Hosting your own event
@@ -844,7 +875,8 @@ A Novice event about breaks even, an Intermediate one pays only when it's popula
 Championship loses money unless a sponsor pays for it (see Sponsors below).
 
 - **Courses** are the ones you record by riding (Ctrl+J); the best one that qualifies counts.
-  **Arenas** are our dressage arenas and Riding Hall letter boards. **Bleachers** count within
+  **Arenas** are our dressage arenas, Riding Hall letter boards and Riding Hall 2k26's hall.
+  The Riding Stable mod's building counts as a bleacher (its stand). **Bleachers** count within
   60 m of a course or arena; an indoor arena counts as one. A 3 Day Event needs all three, with
   seating at both the arena and the show jumping course, and costs 1.5x to set up.
 - **Bleachers:** the shop's Horses tab has our own, 3 rows x 6 m, 5 x 10 m and 8 x 16 m (any
@@ -927,7 +959,8 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   your rides. Only the visitors' stables and feed can stop it.
 
 - **Spectators:** while your event runs, from 08:00 to 19:00, people come to watch: seated on
-  your bleachers and standing in the yellow spectator boxes of the Rope Marker's third segment
+  your bleachers (and the Riding Stable mod's own stand, with standing room in the aisles behind
+  its blue boards) and standing in the yellow spectator boxes of the Rope Marker's third segment
   (the box is painted on one side of the rope and shows only in construction mode, so draw the
   rope with the box away from the track). While your event runs, all day, Rope Markers stay in
   sight (still no collision) as the crowd's barrier, instead of hiding like the course flags. The **Crowd density** setting gives up to 4 seated and
@@ -941,7 +974,7 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
   resting on the thighs). Now and then someone moves a hand between lap and side, or turns their
   head to look about, each on their own timing. They
   are only seen, each player's own, hidden beyond 150 m. `eqSpectators on [seated standing]` shows them at any time (testing), `off` hides them,
-  `auto` goes back to normal, `pose <name> <metres>` tunes the seated pose, `explore sides|lap` drifts it until `snapshot` keeps it, and `info` counts places.
+  `auto` goes back to normal, and `info` counts places.
 
 Console: `eqHostCheck [type] [rating]` prints what your farm has against each requirement;
 `eqHostWait` (testing) ends the wait before you can host again; `eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]`
@@ -1001,7 +1034,8 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Hosted events** at a rating a sponsor backs are named after the biggest of them ("<Brand> Show
   Jumping Classic", then the best paid), gain every backing sponsor's popularity, and each pays
   its own fee when the results come in: half at Low branding,
-  75% at Medium, the full fee at High. No fee below the offer's required branding or if you no
+  75% at Medium, the full fee at High. A 3 Day Event pays 1.5 times the fee (three phases carry
+  their name). No fee below the offer's required branding or if you no
   longer own enough of their machines.
 - **The yearly target:** each contract year, host at least one event the sponsor backs at the
   target popularity. A miss cuts next year's fee to 75%; two misses in a row and the sponsor walks
@@ -1018,7 +1052,10 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 - **Discounts** start 3 months after signing, on the sponsor's own machines: the buying discount
   in the shop (buying or leasing), the repair discount at the workshop (and on the Advanced Damage
   System mod's inspection, maintenance, repair and overhaul), the repaint discount on repainting.
-  With two contracts for one brand the better one counts.
+  With two contracts for one brand the better one counts. Used machines (the shop's sale items)
+  get no sponsor discount, as their price is already cut. When the discount applies, the shop's
+  tiles show it in the same green badge as a used machine's (-20%), and the buy screen shows a
+  **Sponsor discount** row with the sponsor's logo.
 - The shop's block on rival machines comes in a later update.
 - **Sponsor boards on show jumps:** the upright, oxer, triple bar, hogsback, 3 pole fan and
   liverpool have a **Sponsor boards** choice in the shop (+350). Pillars get a small sign on top,
@@ -1104,10 +1141,10 @@ category names (easy ones starred), this year's offers and your contracts (with 
 discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
 earlier, 3 by default;
 `eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
-`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorColours` lists each brand's
-jump colour and where it came from; `eqSponsorLoan [brand]` (testing)
+`eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
-`eqSponsorLoan end` takes it back.
+`eqSponsorLoan end` takes it back. `eqShopProbe` (testing, with the shop open on a category)
+writes the shop's layout to log.txt.
 
 The mod counts a month each time the game sends a month change. Some time skips (developer
 tools) move the calendar without one, so those months don't count.
@@ -1129,7 +1166,13 @@ championship prospect $25,000-45,000. A good horse is an investment, not a quick
   months on your farm you find out. Usually you just "have a firmer idea of their potential";
   after a big overstatement you "might have been misled"; now and then the horse is better than
   the dealer let on. Its price moves to match.
-- **Settling in:** a bought horse can't compete in its first month.
+- **Settling in:** a bought horse can compete straight away, but in its first month on the farm it
+  performs 10% below its best (its condition on the day is scaled by 0.9). The Events tab says
+  "Settling in: reduced chances", and the chance word already counts it.
+- **Rest days:** a horse that started an event earlier in the same month needs a day off before it
+  is back to its best. Competing again the next day (or the same day) in the same month costs 10%
+  the same way ("No rest day: reduced chances"). The next day is fine when the month has changed,
+  so at one day per month this never applies. Settling in and no rest day together multiply (0.81).
 - **Price:** RLRM's price plus a premium. What the horse can do now (its two best stats) drives
   most of it: the premium doubles every 10 points above 60, so a horse with stats in the 80s is
   very expensive. Potential (the two best potentials, doubling every 7.5 points) is most of a
@@ -1207,9 +1250,8 @@ boots are our own models; the rest are base-game meshes:
 - **Top hat** in black silk, tall or short (the short one is the same hat with the crown's sides
   squashed, 12 cm instead of 16 cm, like a dressage hat that's a safety helmet too). It hangs off the head's attach point and is set along the head
   joint's own axes (the nearest axes to the body's up and forward), so it sits the same however
-  the head is turned when the character is dressed. `eqHatFit [female|male] [up] [forward] [side] [tilt] [scale]` moves it
-  (defaults 0.085 m up and 0.003 m forward of the head joint, tilted back 15 degrees, size 0.98, James's fit for both bodies; female and male
-  heads can differ: `eqHatFit male ...`; side is metres to the character's right); not saved.
+  the head is turned when the character is dressed. It sits 0.085 m up and 0.003 m forward of the
+  head joint, tilted back 15 degrees, size 0.98 (James's fit for both bodies).
 
 - **Tall riding boots** in black, dark brown or red-brown leather (three items; the browns swap
   in their own diffuse, onto the pieces on the bones). Wardrobe clothes bend through skinning to the game's
@@ -1220,15 +1262,13 @@ boots are our own models; the rest are base-game meshes:
   widens up the calf, from as modelled at its bottom to 1.4x side to side and 1.45x front to back
   (growing backwards from the shin, most of it low on the calf) at its top, all
   1.18x on top, leans back 6.7 degrees from the ankle and 2 degrees outwards (James's fit,
-  2026-10-31).
-  `eqBootFit [width] [raise] [toeDrop] [lean] [back] [splay]` tunes them, not saved; all but width apply
-  at the next dressing. The i3d keeps an empty first child, as the game
+  2026-10-31). The i3d keeps an empty first child, as the game
   expects one after taking a geo item out of its file.
 - **Breeches** (the riding trousers) with both colours the same, so the inner panel no longer stays
   white: white, cream, grey, black or navy. The seat pokes through the jacket's tails in the
   saddle, as it does with the game's own clothes.
 - **Full-seat breeches**: the same breeches with our own diffuse, white with a dark upper seat
-  (rows 1 to about 1.55 of columns G, H, A, B on the eqUvGrid map, ending lower at the seam, just under the jacket hem), so the poke-
+  (rows 1 to about 1.55 of columns G, H, A, B on an 8 x 8 UV test grid, ending lower at the seam, just under the jacket hem), so the poke-
   through doesn't show. White, cream or grey; the seat stays dark. Mapped on the female body.
 - **Riding gloves** (the mechanic gloves) in black: a black diffuse and a flat normal map swapped
   in so they read as smooth leather, not knit. The colour is in the texture, as a swapped material
@@ -1238,10 +1278,6 @@ boots are our own models; the rest are base-game meshes:
   character is dressed, and its colours (colorScaleR/G) are set again from its own list and the
   picked colour.
 - **Short boots** (the Chelsea boots) in black leather, by the same texture swap.
-
-`eqUvGrid [slot|off]` puts a labelled 8 x 8 grid (art/source/uv_grid.py) on the worn item of
-that slot as its texture, lit white, from the next dressing: screenshots show which squares land
-where, for painting our own masks on base-game clothes we can't open (the breeches' upper seat).
 
 The items sit at the end of each wardrobe list, with icons in their first colour (the short boots
 keep the game's icon).

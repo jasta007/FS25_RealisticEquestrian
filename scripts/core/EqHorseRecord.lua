@@ -37,6 +37,7 @@ function EqHorseRecord.new(id)
     self.idleDays = 0
     self.gains = {}              -- recent stat changes, { month, stat -> change } per month, oldest first
     self.monthStarts = 0         -- round events started this month
+    self.lastEvent = nil         -- { day, month } of the last event started, for rest days
     self.quarantine = nil        -- rounds left in quarantine after an event abroad (EqQuarantine)
     self.advertised = nil        -- the dealer's view of each ceiling, for a horse bought from the dealer
     self.revealed = true         -- false until a dealer horse's real potential has shown
@@ -82,7 +83,8 @@ function EqHorseRecord:addResult(result)
 end
 
 
---- @return boolean true for a horse bought from the dealer that is still settling in
+--- @return boolean true for a horse bought from the dealer that is still settling in (it can
+--- compete, but below its best: EqCompetitionManager.freshness)
 function EqHorseRecord:isSettling()
     return self.ownedMonths ~= nil and self.ownedMonths < EqConstants.SETTLE_MONTHS
 end
@@ -163,6 +165,10 @@ function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setInt(key .. "#lastSeenDay", self.lastSeenDay)
     xmlFile:setInt(key .. "#idleDays", self.idleDays)
     xmlFile:setInt(key .. "#monthStarts", self.monthStarts)
+    if self.lastEvent ~= nil then
+        xmlFile:setInt(key .. "#lastEventDay", self.lastEvent.day)
+        xmlFile:setInt(key .. "#lastEventMonth", self.lastEvent.month)
+    end
     if self.quarantine ~= nil then xmlFile:setInt(key .. "#quarantine", self.quarantine) end
     if self.ownedMonths ~= nil then xmlFile:setInt(key .. "#ownedMonths", self.ownedMonths) end
     if self.advertised ~= nil then
@@ -247,6 +253,8 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
     self.lastSeenDay = xmlFile:getInt(key .. "#lastSeenDay", 0)
     self.idleDays = xmlFile:getInt(key .. "#idleDays", 0)
     self.monthStarts = xmlFile:getInt(key .. "#monthStarts", 0)
+    local lastDay, lastMonth = xmlFile:getInt(key .. "#lastEventDay"), xmlFile:getInt(key .. "#lastEventMonth")
+    if lastDay ~= nil and lastMonth ~= nil then self.lastEvent = { day = lastDay, month = lastMonth } end
     local quarantine = xmlFile:getInt(key .. "#quarantine")
     self.quarantine = quarantine ~= nil and quarantine > 0 and quarantine or nil
     self.ownedMonths = xmlFile:getInt(key .. "#ownedMonths")

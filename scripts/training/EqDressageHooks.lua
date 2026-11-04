@@ -5,8 +5,11 @@
 
     Markers are Riding Hall 2k26's letter boards (EqDressage.MARKER_XML), $1 decorations. The
     letter is the configuration picked when placing one ("solarPanels" in its xml, A to Z).
-    Our own arenas (EqDressage.ARENA_XML) carry every letter as a node named eqMarker_<letter>,
-    and have no collision to take off.
+    Our own arenas (EqDressage.ARENA_XML) carry every letter as a node named eqMarker_<letter>.
+    Their rail and letters have collision only so the construction screen can pick them to move or
+    sell: it is off everywhere else, so horses ride over the rail (James, 2026-11-04). Riding Hall
+    2k26's hall (EqDressage.HALL_XML) has its own ring of letter boards, which rides like one of
+    our arenas.
     The boards come with collision, which a horse runs into in the middle of an arena, so we take
     their collision off while a horse is ridden and put it back after (James, 2026-10-27), so
     they can still be picked up and sold in construction mode.
@@ -29,6 +32,9 @@ EqDressageHooks.RIDING_GRACE_MS = 1000
 EqDressageHooks.markers = {}
 EqDressageHooks.placeables = {}
 EqDressageHooks.collisionOff = false
+-- Our arenas, and whether their collision is on (only in the construction screen).
+EqDressageHooks.arenas = {}
+EqDressageHooks.arenaCollision = nil
 EqDressageHooks.ridingSeen = nil
 EqDressageHooks.scannedAt = nil
 EqDressageHooks.logged = {}
@@ -40,6 +46,7 @@ function EqDressageHooks.reset()
     EqDressageHooks.clearTag()
     EqDressageHooks.markers, EqDressageHooks.scannedAt, EqDressageHooks.logged = {}, nil, {}
     EqDressageHooks.placeables, EqDressageHooks.collisionOff, EqDressageHooks.ridingSeen = {}, false, nil
+    EqDressageHooks.arenas, EqDressageHooks.arenaCollision = {}, nil
 end
 
 
@@ -107,6 +114,28 @@ function EqDressageHooks.setRiding(riding)
 end
 
 
+--- Our arenas keep their collision only while the construction screen is open, so they can be
+--- picked there and are ridden over everywhere else. Called each frame.
+--- @param construction boolean
+function EqDressageHooks.setArenaCollision(construction)
+    if construction == EqDressageHooks.arenaCollision then return end
+    EqDressageHooks.arenaCollision = construction
+    for _, placeable in ipairs(EqDressageHooks.arenas) do
+        EqDressageHooks.applyArenaCollision(placeable)
+    end
+    Log:info("Dressage arenas: collision %s (%d arenas)", construction and "on for construction" or "off", #EqDressageHooks.arenas)
+end
+
+
+--- Put one arena's collision in the state setArenaCollision last asked for.
+--- @param placeable table
+function EqDressageHooks.applyArenaCollision(placeable)
+    local fn = EqDressageHooks.arenaCollision and EqDressageHooks.restoreCollision or EqDressageHooks.removeCollision
+    local ok, err = EqLog.try("EqDressageHooks.applyArenaCollision", fn, placeable)
+    if not ok then Log:warning("Dressage arena collision: %s", tostring(err)) end
+end
+
+
 --- Add the markers of one of our arenas: its nodes named eqMarker_<letter>.
 --- @param placeable table
 --- @param list table
@@ -129,16 +158,68 @@ function EqDressageHooks.addArena(placeable, list)
 end
 
 
+--- Add the letters of a riding hall with its own arena (EqDressage.isHallXml): its letter boards,
+--- read once in the hall's own frame (A hangs on a gate that swings open, so it is read while
+--- the hall is new and the gate shut), then D, X and G worked out on the centre line.
+--- @param placeable table
+--- @param list table
+function EqDressageHooks.addHall(placeable, list)
+    local root = placeable.rootNode
+    if placeable.eqHallLetters == nil then
+        local letters, seen = {}, {}
+        local stack = { root }
+        while #stack > 0 do
+            local node = table.remove(stack)
+            local letter = EqDressage.hallLetter(getName(node))
+            if letter ~= nil and not seen[letter] then
+                seen[letter] = true
+                local x, y, z = getWorldTranslation(node)
+                local lx, _, lz = worldToLocal(root, x, y, z)
+                table.insert(letters, { letter = letter, lx = lx, lz = lz })
+            end
+            for i = 0, getNumOfChildren(node) - 1 do table.insert(stack, getChildAt(node, i)) end
+        end
+        -- the side boards come in a part loaded after the hall: keep looking until A and C are there
+        if seen.A and seen.C and #letters >= 4 then
+            placeable.eqHallLetters = letters
+            Log:info("Riding hall arena: %d letter boards (%s)", #letters, placeable.configFileName or "?")
+        else
+            return
+        end
+    end
+    local world = {}
+    for _, l in ipairs(placeable.eqHallLetters) do
+        local x, _, z = localToWorld(root, l.lx, 0, l.lz)
+        table.insert(world, { letter = l.letter, x = x, z = z })
+    end
+    local letters = EqDressage.withCentreLine(world)
+    if letters == nil then return end
+    for _, l in ipairs(letters) do
+        table.insert(list, { letter = l.letter, x = l.x, z = l.z, arena = true, arenaId = root })
+        local key = string.format("%.1f:%.1f", l.x, l.z)
+        if not EqDressageHooks.logged[key] then
+            EqDressageHooks.logged[key] = true
+            Log:info("Riding hall arena marker %s at %.1f, %.1f", l.letter, l.x, l.z)
+        end
+    end
+end
+
+
 --- @return table every dressage marker on the map: { letter, x, z }
 function EqDressageHooks.scan()
-    local list, placeables = {}, {}
-    EqDressageHooks.placeables = placeables
+    local list, placeables, arenas = {}, {}, {}
+    EqDressageHooks.placeables, EqDressageHooks.arenas = placeables, arenas
     local system = g_currentMission ~= nil and g_currentMission.placeableSystem or nil
     if system == nil or system.placeables == nil then return list end
     for _, placeable in ipairs(system.placeables) do
         if EqDressage.isArenaXml(placeable.configFileName) and placeable.rootNode ~= nil then
+            table.insert(arenas, placeable)
+            if EqDressageHooks.arenaCollision ~= nil then EqDressageHooks.applyArenaCollision(placeable) end
             local ok, err = EqLog.try("EqDressageHooks.scan addArena", EqDressageHooks.addArena, placeable, list)
             if not ok then Log:warning("Dressage arena: %s", tostring(err)) end
+        elseif EqDressage.isHallXml(placeable.configFileName) and placeable.rootNode ~= nil then
+            local ok, err = EqLog.try("EqDressageHooks.scan addHall", EqDressageHooks.addHall, placeable, list)
+            if not ok then Log:warning("Riding hall arena: %s", tostring(err)) end
         elseif EqDressage.isMarkerXml(placeable.configFileName) and placeable.rootNode ~= nil then
             local index = placeable.configurations ~= nil and placeable.configurations.solarPanels or nil
             local okName, name = EqLog.try("EqDressageHooks.scan configName", configName, placeable, "solarPanels", index)
@@ -437,7 +518,7 @@ local function guardHotspot(hotspot)
         for name, fn in pairs(class) do
             if type(fn) == "function" and name ~= "new" and rawget(hotspot, name) == nil then
                 hotspot[name] = function(self, ...)
-                    local result = { pcall(fn, self, ...) }
+                    local result = { EqLog.try("EqDressageHooks map tag", fn, self, ...) }
                     if result[1] then return unpack(result, 2, table.maxn(result)) end
                     if not EqDressageHooks.tagFailed then
                         EqDressageHooks.tagFailed = true
@@ -515,13 +596,17 @@ function EqDressageHooks.clearTag()
 end
 
 
---- Each frame: list the markers every SCAN_MS (taking newly placed ones' collision off), and
---- take the tag down once the riding overlay stops refreshing it.
+--- Each frame: list the markers every SCAN_MS (taking newly placed ones' collision off), turn
+--- the arenas' collision on or off with the construction screen (listing them again then, so an
+--- arena just placed goes too), and take the tag down once the riding overlay stops refreshing it.
 function EqDressageHooks.update()
     local now = g_time or 0
     EqDressageHooks.setRiding(EqDressageHooks.ridingSeen ~= nil and now >= EqDressageHooks.ridingSeen
         and now - EqDressageHooks.ridingSeen < EqDressageHooks.RIDING_GRACE_MS)
-    if EqDressageHooks.scannedAt == nil or now - EqDressageHooks.scannedAt >= EqDressageHooks.SCAN_MS or now < EqDressageHooks.scannedAt then
+    local construction = EqXcFlags ~= nil and EqXcFlags.inConstruction() or false
+    local changed = construction ~= EqDressageHooks.arenaCollision
+    EqDressageHooks.setArenaCollision(construction)
+    if changed or EqDressageHooks.scannedAt == nil or now - EqDressageHooks.scannedAt >= EqDressageHooks.SCAN_MS or now < EqDressageHooks.scannedAt then
         EqDressageHooks.scannedAt = now
         EqDressageHooks.markers = EqDressageHooks.scan()
     end

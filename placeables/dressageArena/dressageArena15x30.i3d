@@ -11,7 +11,7 @@
 
 
   <Materials>
-    <Material name="dressageLetters" materialId="14" specularColor="0.25098 1 0">
+    <Material name="dressageLetters" materialId="5" specularColor="0.25098 1 0">
       <Texture fileId="1"/>
     </Material>
   </Materials>
@@ -21,20 +21,20 @@
   </Shapes>
 
   <Scene>
-    <TransformGroup name="dressageArena15x30" nodeId="17">
-      <Shape name="arena" shapeId="1" clipDistance="250" nodeId="18" castsShadows="true" receiveShadows="true" materialIds="14"/>
-      <TransformGroup name="eqMarkers" nodeId="19">
-        <TransformGroup name="eqMarker_A" translation="0 0.42 15.6" nodeId="20"/>
-        <TransformGroup name="eqMarker_C" translation="0 0.42 -15.6" nodeId="21"/>
-        <TransformGroup name="eqMarker_K" translation="-8.1 0.42 10.5" nodeId="22"/>
-        <TransformGroup name="eqMarker_E" translation="-8.1 0.42 0" nodeId="23"/>
-        <TransformGroup name="eqMarker_H" translation="-8.1 0.42 -10.5" nodeId="24"/>
-        <TransformGroup name="eqMarker_F" translation="8.1 0.42 10.5" nodeId="25"/>
-        <TransformGroup name="eqMarker_B" translation="8.1 0.42 0" nodeId="26"/>
-        <TransformGroup name="eqMarker_M" translation="8.1 0.42 -10.5" nodeId="27"/>
-        <TransformGroup name="eqMarker_D" translation="0 0.02 10.5" nodeId="28"/>
-        <TransformGroup name="eqMarker_X" translation="0 0.02 0" nodeId="29"/>
-        <TransformGroup name="eqMarker_G" translation="0 0.02 -10.5" nodeId="30"/>
+    <TransformGroup name="dressageArena15x30" nodeId="8">
+      <Shape name="arena" shapeId="1" static="true" collisionFilterGroup="0x1034" collisionFilterMask="0xfffffbff" clipDistance="250" nodeId="9" castsShadows="true" receiveShadows="true" materialIds="5"/>
+      <TransformGroup name="eqMarkers" nodeId="10">
+        <TransformGroup name="eqMarker_A" translation="0 0.42 15.6" nodeId="11"/>
+        <TransformGroup name="eqMarker_C" translation="0 0.42 -15.6" nodeId="12"/>
+        <TransformGroup name="eqMarker_K" translation="-8.1 0.42 10.5" nodeId="13"/>
+        <TransformGroup name="eqMarker_E" translation="-8.1 0.42 0" nodeId="14"/>
+        <TransformGroup name="eqMarker_H" translation="-8.1 0.42 -10.5" nodeId="15"/>
+        <TransformGroup name="eqMarker_F" translation="8.1 0.42 10.5" nodeId="16"/>
+        <TransformGroup name="eqMarker_B" translation="8.1 0.42 0" nodeId="17"/>
+        <TransformGroup name="eqMarker_M" translation="8.1 0.42 -10.5" nodeId="18"/>
+        <TransformGroup name="eqMarker_D" translation="0 0.02 10.5" nodeId="19"/>
+        <TransformGroup name="eqMarker_X" translation="0 0.02 0" nodeId="20"/>
+        <TransformGroup name="eqMarker_G" translation="0 0.02 -10.5" nodeId="21"/>
       </TransformGroup>
     </TransformGroup>
   </Scene>

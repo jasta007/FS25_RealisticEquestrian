@@ -280,7 +280,8 @@ function EqConsole:consoleEvents()
     end
 
     local left = EqCompetitionManager.entriesLeft(g_currentMission:getFarmId())
-    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> [auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
+    return string.format("%d open event(s). Results come at the start of the next %s (monthly events: next month). %s Enter with eqEnter <event number> <horse> " ..
+        "[auto|manual]; Auto Transport is paid on top of the fee, Manual means delivering the horse yourself.",
         #list, EqCompetitionManager.settings.cadence,
         left ~= nil and string.format("You have %d of %d entries left this month.", left, EqCompetitionManager.settings.entriesPerMonth) or "No monthly entry limit.")
 end
@@ -358,13 +359,7 @@ function EqConsole:consoleEnter(eventId, ...)
 end
 
 
---- eqProbe: testing, writes the loading triggers to the log.
-function EqConsole:consoleProbe()
-    return EqProbe.run()
-end
-
-
---- eqSpectators: show, hide or tune the crowd at hosted events.
+--- eqSpectators: show or hide the crowd at hosted events.
 function EqConsole:consoleSpectators(command, a, b)
     return EqSpectators.console(command, a, b)
 end
@@ -373,22 +368,6 @@ end
 --- eqXcFences: the cross country fences the flags on the map make.
 function EqConsole:consoleXcFences()
     return EqXcFlags.describe()
-end
-
-
---- eqDeliver <horse name or id>: testing, delivers without driving to the dealer.
-function EqConsole:consoleDeliver(...)
-    local ok, message = competitionsReady()
-    if not ok then return message end
-
-    local query = table.concat({ ... }, " ")
-    if query == "" then return "Usage: eqDeliver <horse name or id>" end
-    local animal = findOwnHorse(query)
-    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
-
-    local count = EqCompetitionManager.deliver(animal)
-    if count == 0 then return string.format("%s has no Manual Transport entry waiting for delivery", query) end
-    return string.format("%s delivered: it leaves for %d event(s)", query, count)
 end
 
 
@@ -437,32 +416,6 @@ function EqConsole:consoleRetire(...)
 end
 
 
---- eqExperience <horse> <discipline> <0-100>: testing, sets a horse's event experience.
-function EqConsole:consoleExperience(...)
-    local ok, message = competitionsReady()
-    if not ok then return message end
-
-    local args = { ... }
-    local value, name = tonumber(args[#args]), args[#args - 1]
-    local usage = "Usage: eqExperience <horse name or id> <discipline> <0-100>"
-    if value == nil or name == nil or EqCompetitionManager.config.disciplineByName[name] == nil then
-        local names = {}
-        for _, discipline in ipairs(EqCompetitionManager.config.disciplines) do table.insert(names, discipline.name) end
-        return usage .. "\nDisciplines: " .. table.concat(names, " ")
-    end
-    local query = table.concat(args, " ", 1, #args - 2)
-    local animal = findOwnHorse(query)
-    if animal == nil then return string.format("No horse called '%s' on your farm", query) end
-    local record = EqRegistry.getOrCreate(animal)
-    if record == nil then return string.format("No record for '%s'", query) end
-
-    record.experience = record.experience or {}
-    record.experience[name] = { value = EqStats.clamp(value, 0, EqExperience.MAX), idle = 0 }
-    return string.format("'%s': %s experience %.0f, favourite event %s", animal:getName() or record.id, name,
-        record.experience[name].value, EqCompetitionManager.specialtyText(record))
-end
-
-
 --- eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off]
 ---     [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x] [entryFeeScale x] [prizeScale x]
 ---     [homeRegion auto|<region>] [quarantine on|off]
@@ -494,11 +447,14 @@ function EqConsole:consoleSettings(name, value)
     elseif name == "quarantine" and (value == "on" or value == "off") then
         settings.quarantine = value == "on"
     elseif name ~= nil then
-        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] [eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off] [crowdDensity off|low|medium|high]"
+        return "Usage: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth <n, 0 = no limit>] " ..
+            "[eventsMin n] [eventsMax n] [trainingRate <x, 1 = normal>] [entryFeeScale <x>] [prizeScale <x>] [homeRegion " ..
+            "auto|northAmerica|southAmerica|europe|asiaOceania] [quarantine on|off] [crowdDensity off|low|medium|high]"
     end
 
     local onOff = function(flag) return flag and "on" or "off" end
-    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
+    return string.format("cadence=%s (round events run every %s)  racing=%s  injuries=%s  forcedRetirement=%s  entriesPerMonth=%s  events=%d-%d  " ..
+        "trainingRate=%sx  entryFeeScale=%sx  prizeScale=%sx  homeRegion=%s (setting %s, map says %s)  quarantine=%s. Changes apply from the next round.",
         settings.cadence, settings.cadence, onOff(settings.racing), onOff(settings.injuries), onOff(settings.forcedRetirement),
         settings.entriesPerMonth > 0 and tostring(settings.entriesPerMonth) or "no limit",
         settings.eventsMin, math.max(settings.eventsMin, settings.eventsMax),
@@ -685,22 +641,6 @@ function EqConsole:consoleStats(...)
 end
 
 
---- eqJump [setting value ...]: testing, shows or changes EqJump's numbers until the game restarts.
-function EqConsole:consoleJump(...)
-    local args = { ... }
-    local lines = {}
-    for i = 1, #args - 1, 2 do
-        local _, message = EqJump.set(string.lower(args[i]), tonumber(args[i + 1]))
-        table.insert(lines, message)
-    end
-    if #args % 2 == 1 then table.insert(lines, "Settings go in pairs: eqJump fall 3 push 200") end
-    table.insert(lines, "Jump: " .. EqJump.describe())
-    table.insert(lines, string.format("A gallop jump at agility 50 is about %.2f s in the air",
-        EqJump.airtime(2 * EqTraining.handling(nil, 50).jump * EqJump.HEIGHT_SHARE)))
-    return table.concat(lines, "\n")
-end
-
-
 --- eqDirt <horse> <0-100>: testing, sets a horse's dirt (RLRM shows Cleanliness = 100 - dirt).
 function EqConsole:consoleDirt(...)
     if g_currentMission == nil then return "No mission loaded" end
@@ -871,15 +811,6 @@ function EqConsole:consoleHostWait()
 end
 
 
---- eqSponsorColours: each brand's colour for show jumps with sponsor boards, and where it came from.
-function EqConsole:consoleSponsorColours()
-    if g_currentMission == nil then return "No mission loaded" end
-    local lines = EqSponsorBoards.report()
-    for _, line in ipairs(lines) do print(line) end
-    return lines[#lines]
-end
-
-
 --- eqSponsors: the shop's brands by sponsor size, this year's offers and the farm's contract.
 function EqConsole:consoleSponsors(mode, amount)
     if g_currentMission == nil then return "No mission loaded" end
@@ -1026,18 +957,26 @@ function EqConsole:consoleHostWeather(typeName, hours)
 end
 
 
+--- Every command register() adds, so unregister() removes them all (a test checks the two match).
+EqConsole.COMMANDS = {
+    "eqHorses", "eqEvents", "eqEnter", "eqSpectators", "eqRatings", "eqResults", "eqRedraw", "eqSettings",
+    "eqRetire", "eqDealer", "eqTraining", "eqFocus", "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork",
+    "eqStaffRoll", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats",
+    "eqCourses", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqLizard", "eqSponsorLoan",
+    "eqHostWeather", "eqXcFences", "eqMeatQuality",
+}
+
+
 function EqConsole.register()
     addConsoleCommand("eqHorses", "Lists your horses' Realistic Equestrian stats", "consoleListHorses", EqConsole)
     addConsoleCommand("eqEvents", "Lists the events open for entries", "consoleEvents", EqConsole)
     addConsoleCommand("eqEnter", "Enters a horse: eqEnter <event number> <horse name or id> [auto|manual]", "consoleEnter", EqConsole)
-    addConsoleCommand("eqProbe", "Testing: writes the animal loading triggers (dealer) and any trailer in them to log.txt", "consoleProbe", EqConsole)
-    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | pose <name> <metres> | handpose <name> | explore sides|lap|stop | snapshot | reset | info]", "consoleSpectators", EqConsole)
-    addConsoleCommand("eqDeliver", "Testing: delivers a Manual Transport horse as if at the dealer: eqDeliver <horse>", "consoleDeliver", EqConsole)
+    addConsoleCommand("eqSpectators", "Testing: spectators on your bleachers and rope boxes: eqSpectators [on [seated standing] | off | auto | info]", "consoleSpectators", EqConsole)
     addConsoleCommand("eqRatings", "Shows your horses' rating in each discipline and their record", "consoleRatings", EqConsole)
-    addConsoleCommand("eqExperience", "Testing: sets a horse's event experience: eqExperience <horse> <discipline> <0-100>", "consoleExperience", EqConsole)
     addConsoleCommand("eqResults", "Shows your horses' latest results", "consoleResults", EqConsole)
     addConsoleCommand("eqRedraw", "Testing: draws a new set of round events", "consoleRedraw", EqConsole)
-    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] [entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
+    addConsoleCommand("eqSettings", "Shows or changes settings: eqSettings [cadence day|month] [racing on|off] [injuries on|off] [forcedRetirement on|off] " ..
+        "[entriesPerMonth n] [eventsMin n] [eventsMax n] [trainingRate x]", "consoleSettings", EqConsole)
     addConsoleCommand("eqRetire", "Retires a horse from competition: eqRetire <horse> [undo] (undo is debug only, retiring is permanent in game)", "consoleRetire", EqConsole)
     addConsoleCommand("eqDealer", "Testing: lists the dealer's horses with their real potential and price", "consoleDealer", EqConsole)
     addConsoleCommand("eqTraining", "Shows each horse's training focus and today's riding", "consoleTraining", EqConsole)
@@ -1056,28 +995,21 @@ function EqConsole.register()
     addConsoleCommand("eqCourses", "Lists your show jumping courses: eqCourses [delete <number>]", "consoleCourses", EqConsole)
     addConsoleCommand("eqHostCheck", "Testing: what your farm has for hosting an event: eqHostCheck [type] [rating]", "consoleHostCheck", EqConsole)
     addConsoleCommand("eqHostWait", "Testing: ends the wait before you can host another event", "consoleHostWait", EqConsole)
-    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts as signed n months earlier (testing)", "consoleSponsors", EqConsole)
+    addConsoleCommand("eqSponsors", "Shows the shop's brands by sponsor size, this year's offers and your contracts; eqSponsors age [n] counts your contracts " ..
+        "as signed n months earlier (testing)", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
-    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now [stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
-    addConsoleCommand("eqSponsorColours", "Lists each brand's colour for show jumps with sponsor boards and where it comes from", "consoleSponsorColours", EqConsole)
+    addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now " ..
+        "[stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
-    addConsoleCommand("eqJump", "Testing: shows or changes how horses jump until restart: eqJump [setting value ...]", "consoleJump", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
 end
 
 
 function EqConsole.unregister()
-    removeConsoleCommand("eqHorses")
-    removeConsoleCommand("eqExperience")
-    removeConsoleCommand("eqDealer")
-    removeConsoleCommand("eqTraining")
-    removeConsoleCommand("eqFocus")
-    for _, name in ipairs({ "eqEvents", "eqEnter", "eqDeliver", "eqProbe", "eqSpectators", "eqRatings", "eqResults", "eqSettings", "eqRedraw", "eqMeatQuality",
-        "eqRetire", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats", "eqCourses", "eqXcFences", "eqHostCheck", "eqHostWait", "eqHostWeather", "eqSponsors", "eqSponsorNew", "eqSponsorColours", "eqSponsorLoan", "eqLizard",
-        "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork", "eqStaffRoll" }) do
+    for _, name in ipairs(EqConsole.COMMANDS) do
         removeConsoleCommand(name)
     end
 end

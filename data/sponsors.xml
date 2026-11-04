@@ -15,6 +15,7 @@
                         (a part year counts as a whole)
         missFactor      the fee for the next contract year after a missed yearly target
         missesToLeave   missed targets in a row before the sponsor walks away
+        eventingFactor  a hosted 3 Day Event pays this times the fee (Lizard has its own)
         machinesMax     the most of its machines any sponsor asks the farm to own (each size
                         has its own, lower or equal)
         attachmentWeight  how much one attachment or trailer of the sponsor's counts toward the
@@ -85,7 +86,7 @@
 
     Part of Realistic Equestrian by Jasta007.
 -->
-<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" machinesMax="5" maxSponsors="3" attachmentWeight="0.5" discountMonths="3">
+<sponsors offerMonths="6" cancelShare="0.15" missFactor="0.75" missesToLeave="2" eventingFactor="1.5" machinesMax="5" maxSponsors="3" attachmentWeight="0.5" discountMonths="3">
     <skipCategoryTypes>
         <type name="ANIMALS"/>
         <type name="OBJECTS"/>

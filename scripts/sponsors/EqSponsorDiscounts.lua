@@ -8,6 +8,8 @@
       Advanced Damage System mod's services (getServicePrice: inspection, maintenance, repair,
       overhaul), so the discount works with it as well.
     - Repainting one: the repaint discount (getRepaintPrice).
+    - Used machines (the shop's sale items) get no sponsor discount: their price is already cut.
+    - The shop's buy screen shows a "Sponsor discount" row with the sponsor's logo.
 
     Repair and repaint prices are wrapped on each vehicle (both the game and ADS call them on
     the vehicle), checked every few seconds for new vehicles.
@@ -70,7 +72,7 @@ local function wrapVehicle(vehicle)
             vehicle[name] = function(self, ...)
                 local price, a, b, c = original(self, ...)
                 local farmId = self.getOwnerFarmId ~= nil and self:getOwnerFarmId() or nil
-                local ok, share = pcall(EqSponsorDiscounts.shareFor, farmId, storeItem, kind)
+                local ok, share = EqLog.try("EqSponsorDiscounts vehicle share", EqSponsorDiscounts.shareFor, farmId, storeItem, kind)
                 return cut(price, ok and share or 0), a, b, c
             end
         end
@@ -91,16 +93,139 @@ function EqSponsorDiscounts.update()
 end
 
 
+--- The purchase share the player's farm gets on a new (not used) store item.
+--- @param storeItem table|nil
+--- @param saleItem table|nil the used machine on sale, if any
+--- @return number share off, 0 for none
+function EqSponsorDiscounts.shopShare(storeItem, saleItem)
+    if saleItem ~= nil or g_currentMission == nil then return 0 end
+    return EqSponsorDiscounts.shareFor(g_currentMission:getFarmId(), storeItem, "purchase")
+end
+
+
+--- Adds a "Sponsor discount: 20%" row with the sponsor's logo to the shop's buy screen
+--- (ShopConfigScreen.processAttributeData, the same rows as power, capacity and so on).
+--- @param screen table ShopConfigScreen
+--- @param storeItem table|nil
+--- @param saleItem table|nil
+function EqSponsorDiscounts.addShopRow(screen, storeItem, saleItem)
+    local share = EqSponsorDiscounts.shopShare(storeItem, saleItem)
+    if share <= 0 or screen.attributeItem == nil or screen.attributesLayout == nil then return end
+    local row = screen.attributeItem:clone(screen.attributesLayout)
+    local icon = row:getDescendantByName("icon")
+    local text = row:getDescendantByName("text")
+    if icon ~= nil then
+        local brand = g_brandManager ~= nil and g_brandManager:getBrandByIndex(storeItem.brandIndex) or nil
+        if brand ~= nil and brand.image ~= nil and ShopConfigScreen.GUI_PROFILE ~= nil
+            and ShopConfigScreen.GUI_PROFILE.CAPACITY ~= nil then
+            icon:applyProfile(ShopConfigScreen.GUI_PROFILE.CAPACITY)
+            icon:setImageFilename(brand.image)
+            icon:setImageUVs(nil, 0, 0, 0, 1, 1, 0, 1, 1)
+            icon:setVisible(true)
+        else
+            icon:setVisible(false)
+        end
+    end
+    if text ~= nil then
+        text:setText(string.format(g_i18n:getText("eq_shop_sponsorDiscount"), math.floor(share * 100 + 0.5)))
+    end
+    screen.attributesLayout:invalidateLayout()
+end
+
+
+--- The green "-35%" badge on a used machine's shop tile is the tile's "priceTag" (a
+--- ThreePartBitmap holding the Text "priceTagText"), seen with a shop layout probe on James's game
+--- 2026-11-04. The first descendant with one of these names (lower case) is used.
+EqSponsorDiscounts.BADGE_NAMES = { "pricetag" }
+
+
+--- @param cell table a shop list tile
+--- @return table|nil the tile's discount badge text element
+function EqSponsorDiscounts.findBadge(cell)
+    if cell.eqBadge ~= nil then return cell.eqBadge or nil end
+    local found = false
+    local stack = { cell }
+    while #stack > 0 and not found do
+        local element = table.remove(stack)
+        local name = type(element.name) == "string" and string.lower(element.name) or ""
+        for _, part in ipairs(EqSponsorDiscounts.BADGE_NAMES) do
+            if element ~= cell and name == part then found = element break end
+        end
+        for _, child in ipairs(element.elements or {}) do table.insert(stack, child) end
+    end
+    cell.eqBadge = found
+    if found and EqSponsorDiscounts.badgeName == nil then
+        EqSponsorDiscounts.badgeName = found.name
+        Log:info("EqSponsorDiscounts: shop tile badge is '%s'", tostring(found.name))
+    end
+    return found or nil
+end
+
+
+--- Before the game fills a reused shop tile: take off a badge we put on it.
+--- @param cell table
+function EqSponsorDiscounts.resetTile(cell)
+    if not cell.eqSponsorBadge then return end
+    cell.eqSponsorBadge = false
+    local badge = EqSponsorDiscounts.findBadge(cell)
+    if badge ~= nil then badge:setVisible(false) end
+end
+
+
+--- After the game fills a shop tile: a new sponsor machine gets the same "-20%" badge a used
+--- machine has. Only when the game left the badge hidden, so a used machine keeps its own.
+--- @param frame table ShopItemsFrame
+--- @param index number
+--- @param cell table
+function EqSponsorDiscounts.decorateTile(frame, index, cell)
+    local badge = EqSponsorDiscounts.findBadge(cell)
+    if badge == nil then return end
+    -- the label inside the badge's box, if the badge is a box
+    local label = badge.setText ~= nil and badge or nil
+    if label == nil then
+        for _, child in ipairs(badge.elements or {}) do
+            if child.setText ~= nil then label = child break end
+        end
+    end
+    if label == nil then return end
+    if badge.visible then return end
+    local items = frame.displayItems
+    local item = type(items) == "table" and items[index] or nil
+    local storeItem = item ~= nil and (item.storeItem or item) or nil
+    if storeItem == nil or storeItem.brandIndex == nil or (item.saleItem ~= nil) then return end
+    local share = EqSponsorDiscounts.shopShare(storeItem, nil)
+    if share <= 0 then return end
+    label:setText(string.format("-%d%%", math.floor(share * 100 + 0.5)))
+    badge:setVisible(true)
+    cell.eqSponsorBadge = true
+end
+
+
 --- @param guarded function main.lua's error guard
 function EqSponsorDiscounts.install(guarded)
+    if ShopItemsFrame ~= nil and ShopItemsFrame.populateCellForItemInSection ~= nil then
+        ShopItemsFrame.populateCellForItemInSection = Utils.prependedFunction(ShopItemsFrame.populateCellForItemInSection,
+            function(frame, list, section, index, cell)
+                if cell == nil then return end
+                guarded("sponsor discount shop tile reset", function() EqSponsorDiscounts.resetTile(cell) end)
+            end)
+        ShopItemsFrame.populateCellForItemInSection = Utils.appendedFunction(ShopItemsFrame.populateCellForItemInSection,
+            function(frame, list, section, index, cell)
+                if not EqMain.isActive or cell == nil then return end
+                guarded("sponsor discount shop tile", function()
+                    EqSponsorDiscounts.decorateTile(frame, index, cell)
+                end)
+            end)
+    end
     if EconomyManager ~= nil and EconomyManager.getBuyPrice ~= nil then
         local original = EconomyManager.getBuyPrice
-        EconomyManager.getBuyPrice = function(self, storeItem, ...)
-            local price, a, b, c = original(self, storeItem, ...)
-            if not EqMain.isActive then return price, a, b, c end
+        EconomyManager.getBuyPrice = function(self, storeItem, configurations, saleItem, ...)
+            local price, a, b, c = original(self, storeItem, configurations, saleItem, ...)
+            -- used machines already carry their own sale discount: no sponsor discount on top
+            if not EqMain.isActive or saleItem ~= nil then return price, a, b, c end
             local farmId = EqSponsorDiscounts.buyingFarm
             if farmId == nil and g_currentMission ~= nil then farmId = g_currentMission:getFarmId() end
-            local ok, share = pcall(EqSponsorDiscounts.shareFor, farmId, storeItem, "purchase")
+            local ok, share = EqLog.try("EqSponsorDiscounts purchase share", EqSponsorDiscounts.shareFor, farmId, storeItem, "purchase")
             return cut(price, ok and share or 0), a, b, c
         end
     end
@@ -110,12 +235,20 @@ function EqSponsorDiscounts.install(guarded)
             local farmId = self.ownerFarmId
             if AccessHandler ~= nil and farmId == AccessHandler.EVERYONE then farmId = nil end
             EqSponsorDiscounts.buyingFarm = farmId
-            local ok, result = pcall(original, self, ...)
-            EqSponsorDiscounts.buyingFarm = nil
-            if not ok then error(result) end
+            local result = EqLog.finally(function() EqSponsorDiscounts.buyingFarm = nil end, original, self, ...)
             return result
         end
     end
+    if ShopConfigScreen ~= nil and ShopConfigScreen.processAttributeData ~= nil then
+        ShopConfigScreen.processAttributeData = Utils.appendedFunction(ShopConfigScreen.processAttributeData,
+            function(screen, storeItem, vehicle, saleItem)
+                if not EqMain.isActive then return end
+                guarded("sponsor discount shop row", function()
+                    EqSponsorDiscounts.addShopRow(screen, storeItem, saleItem)
+                end)
+            end)
+    end
+    Log:info("EqSponsorDiscounts: shop tiles %s", tostring(ShopItemsFrame ~= nil and ShopItemsFrame.populateCellForItemInSection ~= nil))
     Log:info("EqSponsorDiscounts: buy price %s, buy data %s", tostring(EconomyManager ~= nil and EconomyManager.getBuyPrice ~= nil),
         tostring(BuyVehicleData ~= nil and BuyVehicleData.updatePrice ~= nil))
     FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function()

@@ -15,11 +15,11 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Training view: %s"/>
         <text name="eq_train_view_freestyle" text="Freestyle"/>
-        <text name="eq_help_temperament_2" text="Three errors of course (losing the line, leaving the arena or standing still) end the test; finish it for a Temperament boost that grows with your score. A calmer horse sees more of the line ahead and gets more warning of changes. Riding Hall markers give the older routine of legs between letters. Away from an arena, walking and backing up still train a little Temperament, and treats like carrots help too."/>
-        <text name="eq_help_temperament_1" text="Temperament training is all about teaching your horse control, and it needs a dressage arena: buy one from the shop or set out dressage markers. In a shop arena, ride to A and a test of figures starts: circles, diagonals, serpentines and more, drawn as a gold line on the ground. Stay on the line and change gait or halt where you are told; each movement is marked out of 10."/>
+        <text name="eq_help_temperament_2" text="Temperament trains best by riding dressage tests in a dressage arena, but you can train it anywhere by switching between gaits, turns, lateral movements and other moves. Hold [[EQ_LATERAL]] for lateral movements and [[EQ_COLLECT]] to collect your horse for a piaffe or passage. Each new move raises the combo, up to x5. You have limited time to find the next one, and hitting an obstacle or breaking into a gallop ends the combo."/>
+        <text name="eq_help_temperament_1" text="Temperament makes your horse turn faster, change gait sooner and stand for less time after hitting an obstacle. It matters most in dressage: a horse with high Temperament follows a dressage line more closely and lines up better for jumps, while a horse with low Temperament is more likely to be scratched or pick up faults in an event. Carrots and other treats boost Temperament training."/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_agility_2" text="You lose your multiplier if you don&apos;t clear a new obstacle in time or lose too much speed. Jumping without an obstacle gives some training benefit but doesn&apos;t raise your multiplier."/>
-        <text name="eq_help_agility_1" text="Agility is all about clearing jumps, though you can gain a little from cycling through the gaits. Clear obstacles to build an Agility training multiplier, which fades after ten seconds, or sooner if you hit an obstacle."/>
+        <text name="eq_help_agility_2" text="Each cleared obstacle raises the combo, from x2 up to x5, so every jump trains more. You have 10 seconds to clear the next obstacle: hitting one takes time off, and coming to a halt soon ends the combo. Agility trains faster in a show jumping arena and on your own courses: press [[EQ_COURSE_RECORD]] while riding to make one."/>
+        <text name="eq_help_agility_1" text="Agility makes your horse jump higher and turn tighter, and matters most in show jumping and dressage. Train it by jumping obstacles in quick succession without hitting fences or stopping. Any obstacle counts, but proper equestrian jumps give more training. Feeding your horses barley boosts Agility training."/>
         <text name="eq_help_agility_title" text="Training: Agility"/>
         <text name="eq_pop_routineStart" text="Routine started"/>
         <text name="eq_pop_routineFault" text="Fault %d/%d"/>
@@ -97,6 +97,7 @@
         <text name="eq_shop_productJump_function" text="Set two facing each other about 5 m apart: a machine between them counts too, or ride them as a cross country jump."/>
         <text name="eq_shop_plinthTurntable" text="Turntable"/>
         <text name="eq_shop_turntable_function" text="The disc turns slowly: leave a machine on it and it turns with the disc, with anything hitched to it. A sponsor's machine on it counts extra."/>
+        <text name="eq_shop_sponsorDiscount" text="Sponsor discount: %d%%"/>
         <text name="eq_plinth_inPlace" text="Sponsor equipment in place!"/>
         <text name="eq_plinth_wrongBrand" text="Not your sponsor's equipment! Rival machines on show will reduce your sponsorship earnings!"/>
         <text name="eq_plinth_noSponsor" text="No sponsor signed: their equipment on show here would count towards your branding."/>
@@ -213,16 +214,24 @@
         <text name="eq_train_routine" text="Routine x%d"/>
         <text name="eq_train_combo_none" text="Clear a jump to start a combo"/>
         <text name="eq_train_combo" text="Jump combo x%d"/>
+        <text name="eq_train_temperCombo" text="Temperament combo x%d"/>
+        <text name="eq_train_temperNone" text="Change gait, halt or turn to start a combo"/>
+        <text name="eq_train_temperStale" text="Done recently: %s"/>
+        <text name="eq_train_temperRecent" text="Recent"/>
+        <text name="eq_temper_halt" text="Standing still"/>
+        <text name="eq_temper_gait_walk" text="Walk"/>
+        <text name="eq_temper_gait_trot" text="Trot"/>
+        <text name="eq_temper_gait_canter" text="Canter"/>
+        <text name="eq_temper_gait_reverse" text="Backing up"/>
+        <text name="eq_temper_turn_left" text="Big turn left (%s)"/>
+        <text name="eq_temper_turn_right" text="Big turn right (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Agility"/>
-        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles to build a combo meter, and Temperament by riding a test in a dressage arena. Stamina and Speed train from riding the gallop well: press H while galloping to learn how."/>
-        <text name="eq_help_freestyle_3" text="Rather not ride? Hire grooms and trainers on the Staff tab to train your horses each day. The game&apos;s animal staff and RLRM&apos;s Herdsman only keep them ticking over."/>
+        <text name="eq_help_freestyle_2" text="Agility is trained by jumping obstacles in quick succession, and Temperament by switching between gaits and movements. Stamina and Speed train from galloping for long periods and sprinting. Press [[EQ_TRAINING_VIEW]] to see more about each minigame, so you can train as effectively as possible."/>
+        <text name="eq_help_freestyle_3" text="You don&apos;t need to ride your horses every day to train them. Hire trainers and grooms to give your horses targeted or general training each day, and your horses also gain experience from events. Training is always best on your own show jumping or cross country courses (press [[EQ_COURSE_RECORD]] or [[EQ_COURSE_RECORD_XC]] to create one) or by practising a dressage routine in a dressage arena."/>
         <text name="eq_form_title" text="Peak form"/>
-        <text name="eq_help_freestyle_4" text="Ride before a contest! Every stat you train with its mini game puts your horse in Peak form for this month&apos;s events, up to +8 per stat. It doesn&apos;t add up over several days: your best session of the month counts."/>
-        <text name="eq_help_form_title" text="Peak form"/>
-        <text name="eq_help_form_1" text="Your own riding does more than train: it puts your horse in Peak form for this month&apos;s events. Each stat you worked in its mini game gets up to +8 in every event this month, shown as Peak form here and in the horse&apos;s Skills box. Better sessions give a bigger bonus; just riding the gaits gives none."/>
-        <text name="eq_help_form_2" text="Peak form doesn&apos;t add up over the days of a month: each stat keeps your best session. It can even lift a horse past its potential on the day, then wears off once this month&apos;s events have run. Staff keep up the daily training, so save your riding for the events that matter."/>
-        <text name="eq_help_freestyle_1" text="Riding trains your horse&apos;s stats, and each stat is trained with its own mini game. All stats can be trained at the same time, but some don&apos;t mix well, such as Speed and Temperament. Press Y to switch to a view with better feedback on the stat you want to focus on, or stay in Freestyle for general feedback. The riding bar is still the horse&apos;s energy for the day: once it is full, that horse cannot make any more progress until the next day."/>
+        <text name="eq_help_freestyle_4" text="Your own training also gives your horses a temporary Peak Form boost in any events they ride that month. It is bigger than normal training gains and can even push a horse beyond its potential, but it is lost at the end of the month and doesn&apos;t stack from day to day: only your best session counts."/>
+        <text name="eq_help_freestyle_1" text="Each horse has four stats, which can be trained by riding, by entering events and by your staff. All stats train at the same time, but you can get more information on each by pressing [[EQ_TRAINING_VIEW]] to switch training views. Horses can only train a limited amount each day, shown by the Daily Training percentage."/>
         <text name="eq_help_freestyle_title" text="Training: Freestyle"/>
         <text name="eq_welcome_ride_title" text="Training"/>
         <text name="eq_welcome_welcome_1_title" text="Welcome to Realistic Equestrian"/>
@@ -242,7 +251,7 @@
         <text name="eq_welcome_info_feed_title" text="Feed"/>
         <text name="eq_welcome_info_feed" text="Hay is the basic diet. Oats give a minor boost to Stamina and Temperament, barley a moderate boost to Stamina and Agility, and corn a large boost to Speed. Carrots (and apples, if available) give a large boost to Temperament."/>
         <text name="eq_welcome_events_disciplines_title" text="Events"/>
-        <text name="eq_welcome_events_disciplines" text="Dressage favours Temperament and Agility, Show Jumping Agility, races Speed and Stamina, and Cross Country and Eventing favour all-rounders."/>
+        <text name="eq_welcome_events_disciplines" text="Dressage favours Temperament and Agility, show jumping Agility, races Speed and Stamina, and cross country and eventing favour all-rounders."/>
         <text name="eq_welcome_events_transport_title" text="Getting there"/>
         <text name="eq_welcome_events_transport" text="Auto Transport takes your horse to the event for a fee. This can cost much more than regular automatic transport, as your horse could be going much further and you want to get it back! Taking your horses to the animal dealer yourself (Manual Transport) can save a lot of money."/>
         <text name="eq_welcome_events_risks_title" text="Injuries and scratchings"/>
@@ -260,7 +269,7 @@
         <text name="input_EQ_LATERAL" text="Lateral work (hold)"/>
         <text name="input_EQ_COLLECT" text="Collect (hold)"/>
         <text name="input_EQ_REIN" text="Rein: mouse steering (hold)"/>
-        <text name="eq_train_worn" text="Riding bar full: no more training today"/>
+        <text name="eq_train_worn" text="Daily Training full: no more training today"/>
         <text name="eq_ex_push" text="Pushing"/>
         <text name="eq_ex_recover" text="Recovering"/>
         <text name="eq_ex_sprint" text="SPRINTING"/>
@@ -279,10 +288,7 @@
         <text name="eq_pop_ex_spent" text="Blown!"/>
         <text name="eq_pop_ex_fresh" text="Ready to gallop"/>
         <text name="eq_help_gallop_title" text="Galloping"/>
-        <text name="eq_help_gallop_1" text="Your horse gallops at three paces. Press W from a canter to start Pushing: fast, but the Exertion bar fills, and faster the higher it gets. Press S to Recover: a slower gallop that brings exertion back down while you keep galloping, quickly from the top third of the bar and the bottom third, slowly through the middle. Press W again to push on. A fitter horse tires more slowly and recovers faster."/>
-        <text name="eq_help_gallop_2" text="If the bar reaches the red Fatigued section while you are Pushing, your horse drops to a canter and can&apos;t gallop again until the bar is empty. To slow to a canter yourself, press S once while Recovering with an empty bar, or double tap S at any time."/>
-        <text name="eq_help_gallop_3" text="Tap the left mouse button continually while galloping to Sprint: much faster, and the bar fills slowly at first, then faster and faster, so stop before the line. Ending a Sprint drops to Recovering, and there is no new Sprint until the bar is empty. Only a Sprint can go past the Fatigued line, for one last push to the finish, but a Sprint that ends there leaves your horse Blown and it recovers very slowly until it is back under the line."/>
-        <text name="eq_help_gallop_4" text="Training: a Sprint trains Speed, and the higher it takes the bar before it ends, the more it is worth: x2 half way to the line, up to x10 just short of it, but only x1 if it ends past the line. Pushing and Recovering train Stamina at the Stamina multiplier, up to x5. Pushing raises it, faster near the top. Recovering in the middle third of the bar lets your horse get its breath back and keeps most of the multiplier, while the top and bottom thirds lose it quickly, and a horse that never gets its breath back gains much more slowly. Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_help_gallop_1" text="Your horse gallops at three speeds. Pushing (W) is the middle pace and raises exertion; Recovering (S) is the slowest and lowers it. Sprinting ([[EQ_SPRINT]]) is the fastest and raises exertion quickly. It can take your horse past its normal limit, but it then takes a long time to recover."/>
         <text name="eq_ex_hint_sprint" text="Continually left click to sprint"/>
         <text name="eq_ex_hint_sprintRest" text="Sprint: recover to empty first"/>
         <text name="eq_ex_hint_locked" text="Canter until the bar is empty"/>
@@ -299,13 +305,19 @@
         <text name="eq_train_view_speed" text="Speed"/>
         <text name="eq_train_view_condensed" text="Condensed"/>
         <text name="eq_help_stamina_title" text="Training: Stamina"/>
-        <text name="eq_help_stamina_1" text="Stamina trains while you Push and Recover at a gallop, at the Stamina multiplier, up to x5. Pushing raises it, and the closer you get to the line the faster it climbs. Recovering lowers it: quickly from the top third of the bar, slowly in the middle third, quickly again in the bottom third."/>
-        <text name="eq_help_stamina_2" text="So push close to the line, ease off into the middle of the bar and let your horse get its breath back there for a while, then push again. Bouncing between Push and Recover near the top tires your horse without raising the multiplier, and Fatigued or Blown drops it to x1 and stops Stamina training until the bar is empty."/>
+        <text name="eq_help_stamina_1" text="Stamina lets your horse push longer at a gallop or sprint, and recover faster afterwards. It matters most in cross country, long races and steeplechases. Horses with high Stamina are less prone to injury and do better on soft, heavy or hot going. Feeding your horses oats and barley boosts Stamina training."/>
+        <text name="eq_help_stamina_2" text="Training Stamina is all about keeping your horse in a gallop for as long as possible. Switch from Pushing to Recovering when the exertion bar is in the blue band, and back again at the bottom. Your horse starts breathing heavily when it&apos;s time to switch. Time it right to build a training combo, recover faster and tire more slowly, so you can push for longer. Dropping out of a gallop resets the combo."/>
         <text name="eq_help_speed_title" text="Training: Speed"/>
-        <text name="eq_help_speed_1" text="Speed trains while you Sprint: tap the left mouse button continually while galloping. Every second of a Sprint counts, and when it ends it is multiplied by how high you took the bar: x2 half way to the line, up to x10 just short of it."/>
-        <text name="eq_help_speed_2" text="A Sprint that ends past the line is worth only x1, so stop tapping (or press S) before the line. After a Sprint your horse has to recover to an empty bar before it can Sprint again."/>
+        <text name="eq_help_speed_1" text="Speed raises your horse&apos;s top speed in every gait, and matters most in racing and cross country. Fast horses do best on firm going. Feeding your horses corn boosts Speed training."/>
+        <text name="eq_help_speed_2" text="Sprint by rapidly pressing [[EQ_SPRINT]] while galloping. The higher the exertion bar is when the Sprint ends, the bigger the multiplier, so push as close to the line as you dare: go over it and the multiplier resets to x1. Rest at a walk or halt after each Sprint to recover quickly."/>
         <text name="eq_train_speedMult" text="Speed x%.1f"/>
-        <text name="eq_train_staminaMult" text="Stamina x%.1f"/>
+        <text name="eq_train_staminaMult" text="Stamina combo x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Stamina combo x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Too early: Stamina combo lost"/>
+        <text name="eq_pop_staminaPast" text="Overshot: Stamina combo lost"/>
+        <text name="eq_pop_staminaLost" text="Stamina combo lost"/>
+        <text name="eq_train_staminaNextHigh" text="Push into the band, then Recover"/>
+        <text name="eq_train_staminaNextLow" text="Recover into the band, then Push"/>
         <text name="eq_train_staminaStopped" text="no training"/>
         <text name="eq_ex_fatigued" text="Fatigued"/>
         <text name="eq_pop_speedBank" text="Speed x%.1f!"/>
@@ -528,7 +540,7 @@
         <text name="eq_course_editing" text="Editing %s: %d fences, %.0f m"/>
         <text name="eq_course_editStarted" text="Editing %s: placed obstacles from Realistic Equestrian have no collision until you finish; other obstacles stay solid"/>
         <text name="input_EQ_COURSE_DELETE" text="Delete nearby course"/>
-        <text name="eq_ui_riding" text="Riding"/>
+        <text name="eq_ui_riding" text="Daily Training"/>
         <text name="eq_ui_ridingFull" text="Full, no more training today"/>
         <text name="eq_ui_ridingFullValue" text="%s - full"/>
         <text name="eq_specialty_none" text="None yet"/>
@@ -536,7 +548,6 @@
         <text name="eq_specialty_eventer" text="3 Day Eventer"/>
         <text name="eq_specialty_racehorse" text="Racehorse"/>
         <text name="eq_specialty_allRounder" text="All Rounder"/>
-        <text name="eq_enter_settling" text="That horse is still settling in after the move. It can compete from next month."/>
         <text name="eq_enter_rested" text="That horse has had %d starts this month and needs a rest. It can run again next month."/>
         <text name="eq_reveal_better" text="You've gotten to know %s better, and they look even better than the dealer let on."/>
         <text name="eq_reveal_worse" text="You've gotten to know %s better, and you have a feeling you might have been misled."/>
@@ -601,6 +612,9 @@
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
         <text name="eq_ui_status_lowHealth" text="Low health: %d%% scratch"/>
+        <text name="eq_ui_status_settling" text="Settling in: reduced chances"/>
+        <text name="eq_ui_status_tired" text="No rest day: reduced chances"/>
+        <text name="eq_ui_status_settlingTired" text="Settling in, no rest: reduced chances"/>
         <text name="eq_ui_status_eventFull" text="Two of your horses already entered"/>
         <text name="eq_ui_status_tooYoung" text="Too young"/>
         <text name="eq_ui_status_tooOld" text="Too old"/>
@@ -1169,6 +1183,7 @@
         <text name="eq_sponsor_discount_repair" text="Repair %s"/>
         <text name="eq_sponsor_discount_buy" text="Buying %s"/>
         <text name="eq_sponsor_loanLine" text="Lends a machine for your event month"/>
+        <text name="eq_sponsor_eventingLine" text="%s more for a 3 Day Event"/>
         <text name="eq_loan_popupTitle" text="A machine from your sponsor"/>
         <text name="eq_loan_popup" text="%s has delivered a new %s for you to trial for the duration of your event. It's waiting for you at the dealer. Use it for anything you like, free of charge, until the month ends, when they collect it."/>
         <text name="eq_loan_delivered" text="%s has lent you the %s for your event month. It's at the dealer."/>
@@ -1206,5 +1221,16 @@
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantine, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_away" text="%s is away at an event, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is injured, so it was taken back to %s to rest."/>
+        <text name="eq_help_freestyle_5" text="Your horses have extra gaits and movement keys. Hold [[EQ_REIN]] to steer precisely with the mouse, hold [[EQ_LATERAL]] for lateral movements, and hold [[EQ_COLLECT]] to collect your horse."/>
+        <text name="eq_help_lateral_title" text="Lateral movements"/>
+        <text name="eq_help_lateral_1" text="Lateral movements are some of the hardest parts of dressage, and they combine several controls. Hold [[EQ_LATERAL]] and press A or D to drift sideways in a leg yield, and hold [[EQ_REIN]] as well to bend your horse&apos;s neck and shoulders into a travers, renvers or half pass. In a dressage test, the icons on the path show how to position your horse."/>
+        <text name="eq_help_collect_title" text="Collecting"/>
+        <text name="eq_help_collect_1" text="Collecting is mostly used in dressage, to ride a gait without its usual speed. Hold [[EQ_COLLECT]] while trotting for a piaffe, a trot on the spot, and press W as well for a passage, a slow, bouncing trot. Collect at a walk or canter and turn with A or D for a pirouette."/>
+        <text name="eq_help_rein_title" text="Mouse steering"/>
+        <text name="eq_help_rein_1" text="Holding [[EQ_REIN]] swings your camera behind your horse and lets you steer finely with the mouse, which is vital in dressage and sometimes in show jumping. While you also hold [[EQ_LATERAL]], the mouse bends your horse&apos;s head for lateral movements."/>
+        <text name="eq_help_courseEdit_title" text="Course editing"/>
+        <text name="eq_help_courseEdit_1" text="Trace out the course by riding through the jumps in order, at any speed. Obstacles from this mod have no collision while you trace. If you make a mistake, ride back to the last good point until a line snaps to it, then press [[EQ_COURSE_REWIND]] to trace again from there. Press [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] for cross country) again to save."/>
+        <text name="eq_help_dressageEdit_title" text="Dressage test editing"/>
+        <text name="eq_help_dressageEdit_1" text="Build your own dressage test from figures, movements and gaits. Press [[EQ_DT_PREV]] and [[EQ_DT_NEXT]] to swap figures, [[EQ_DT_GAIT]] to change gait and [[EQ_DT_MODE]] for lateral or on-the-spot movements. Press [[EQ_DT_ACCEPT]] to keep a step and move on, [[EQ_DT_UNDO]] to go back, or [[EQ_DT_RANDOM]] for a random step. Press [[EQ_DRESSAGE_TEST]] to save the test."/>
     </texts>
 </l10n>

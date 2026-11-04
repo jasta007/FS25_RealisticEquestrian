@@ -10,9 +10,9 @@
       stays a gallop until the rider asks for a canter.
     - Sprinting: tap the sprint key (EQ_SPRINT, left mouse button) quickly SPRINT_TAPS times
       while galloping, and keep tapping (James, 2026-10-31: W taps made it impossible to steer
-      and Sprint at once; W and S still change gait). Much faster;
-      exertion rises slowly at first and ever faster, so taking it as high as possible without
-      crossing the line is the skill. Quick taps slow the rise for a while. Ending a Sprint goes to
+      and Sprint at once; W and S still change gait). Much faster, the more so the higher the
+      horse's Speed; exertion rises slowly at first and ever faster, so taking it as high as possible without
+      crossing the line is the skill. Quick taps slow the rise for a while, and Stamina slows it throughout. Ending a Sprint goes to
       Recovering. Only a Sprint may go past the Fatigued line, into a last gasp that ends at
       EXERTION_MAX. After a Sprint the horse can Push but not Sprint again until exertion is empty.
 
@@ -24,7 +24,9 @@
     Slowing from a gallop to a canter takes one press of S while Recovering with exertion empty,
     or else a quick double tap. EqTrainingHooks keeps the base game's gait in line with this.
 
-    Training doesn't steer any of this: it only changes the stats this reads.
+    Training steers this in one way only: a good stamina multiplier sets ex.pushShare and
+    ex.recoverShare (EqTraining.staminaStep), so Pushing climbs more slowly and Recovering falls
+    faster (James, 2026-11-03). Otherwise only the stats this reads change it.
 ]]
 
 EqExertion = {}
@@ -38,10 +40,12 @@ EqExertion.EXERTION_MAX = 130
 -- it took too long and didn't feel like it sped up).
 EqExertion.PUSH_RISE = 4
 EqExertion.PUSH_CLIMB = 3
--- Recovering: exertion falls this much per second in each third of the gallop (EqExertion.band):
--- fast from the top third, slowly through the middle "zone", fast again in the bottom third
--- (James, 2026-10-27: the stamina multiplier follows the same pattern, see EqTraining).
-EqExertion.RECOVER_DROP = { high = 5, zone = 1.8, low = 5 }
+-- Recovering mirrors Pushing: RECOVER_FALL per second at the line, climbing with the square of
+-- how far it has come down to RECOVER_CLIMB times more at empty, so the bar speeds up as it heads
+-- for either end (James, 2026-11-03: replaces the old slow middle third; the stamina band's hits
+-- set the pace of the next leg, see EqTraining).
+EqExertion.RECOVER_FALL = 3
+EqExertion.RECOVER_CLIMB = 2
 -- Sprinting: SPRINT_RISE per second at the start, SPRINT_RAMP more for every second it lasts, up
 -- to SPRINT_RISE_MAX; the same on both sides of the line. (James, 2026-10-27: start slowly and get
 -- faster pretty rapidly, especially when the taps are slow, so stopping just short of the line
@@ -56,15 +60,19 @@ EqExertion.FALL = { canter = 9, trot = 12, reverse = 12, walk = 14, halt = 16 }
 -- the rate (slower gaits still help).
 EqExertion.SPENT_SHARE = 0.2
 
--- Stats change the rates: how fast Pushing tires the horse, by Stamina (stat 0 to 100), how fast
--- it gets its breath back (Recovering, cantering or slower), by Stamina, and how fast a Sprint
--- tires it, by Speed.
+-- Stamina (stat 0 to 100) changes the rates: how fast Pushing and Sprinting tire the horse, and
+-- how fast it gets its breath back (Recovering, cantering or slower). A fit horse Sprints for
+-- longer (James, 2026-11-03).
 EqExertion.PUSH_STAMINA = { 1.3, 0.75 }
 EqExertion.RECOVER_STAMINA = { 0.75, 1.3 }
-EqExertion.SPRINT_SPEED = { 1.3, 0.75 }
+EqExertion.SPRINT_STAMINA = { 1.3, 0.75 }
 
 -- Gallop top speed by pace, on top of the Speed stat's handling (EqTraining.handling).
-EqExertion.GALLOP_SHARE = { recover = 0.8, push = 1, sprint = 1.25 }
+EqExertion.GALLOP_SHARE = { recover = 0.8, push = 1 }
+-- A Sprint's top speed as a share of the gallop's, by Speed (stat 0 to 100): a fast horse kicks
+-- on much harder (James, 2026-11-03: sprinting felt lacklustre at a flat 1.25). With the Speed
+-- handling that is about 1.04x the base game's gallop at speed 0 and 1.8x at 100.
+EqExertion.SPRINT_PACE = { 1.2, 1.5 }
 
 -- Sprint: SPRINT_TAPS taps of the sprint key, each within SPRINT_TAP_GAP_MS of the last, start it. It
 -- ends when no tap comes for SPRINT_KEEP_MS. Taps ease the rise by up to SPRINT_TAP_EASE: fully
@@ -196,9 +204,8 @@ end
 --- @param ex table
 --- @param gait string reverse, halt, walk, trot, canter or gallop
 --- @param stamina number|nil trained stamina
---- @param speed number|nil trained speed
 --- @return number per second
-function EqExertion.rate(ex, gait, stamina, speed)
+function EqExertion.rate(ex, gait, stamina)
     local v = ex.value
     if ex.air and ex.airDrop then
         return -EqExertion.AIR_DROP * byStat(EqExertion.RECOVER_STAMINA, stamina)
@@ -206,9 +213,12 @@ function EqExertion.rate(ex, gait, stamina, speed)
     if ex.mode == "push" then
         local share = math.min(v, EqExertion.LINE) / EqExertion.LINE
         return EqExertion.PUSH_RISE * (1 + EqExertion.PUSH_CLIMB * share * share)
-            * byStat(EqExertion.PUSH_STAMINA, stamina)
+            * byStat(EqExertion.PUSH_STAMINA, stamina) * (ex.pushShare or 1)
     elseif ex.mode == "recover" then
-        return -EqExertion.RECOVER_DROP[EqExertion.band(v)] * byStat(EqExertion.RECOVER_STAMINA, stamina)
+        local down = 1 - math.min(v, EqExertion.LINE) / EqExertion.LINE
+        return -EqExertion.RECOVER_FALL * (1 + EqExertion.RECOVER_CLIMB * down * down)
+            * byStat(EqExertion.RECOVER_STAMINA, stamina)
+            * (ex.recoverShare or 1)
     elseif ex.mode == "sprint" then
         -- Tapping pace, 1 for quick taps (and the quick taps that started the Sprint) to 0 for slow.
         local pace = 1
@@ -221,7 +231,7 @@ function EqExertion.rate(ex, gait, stamina, speed)
         -- Slow tapping also steepens the ramp, up to SPRINT_SLOW_RAMP times.
         local ramp = EqExertion.SPRINT_RAMP * (1 + (EqExertion.SPRINT_SLOW_RAMP - 1) * (1 - pace))
         local rise = math.min(EqExertion.SPRINT_RISE + ramp * ex.sprintMs / 1000, EqExertion.SPRINT_RISE_MAX)
-        return rise * byStat(EqExertion.SPRINT_SPEED, speed) * (1 - ease)
+        return rise * byStat(EqExertion.SPRINT_STAMINA, stamina) * (1 - ease)
     end
     local fall = EqExertion.FALL[gait] or EqExertion.FALL.canter
     local spent = ex.lock == "spent" and v > EqExertion.LINE
@@ -236,7 +246,7 @@ end
 --- @return number seconds
 function EqExertion.pushSecondsLeft(ex, stamina)
     local share = math.min(math.max(ex.value / EqExertion.LINE, 0), 1)
-    local perSecond = EqExertion.PUSH_RISE * byStat(EqExertion.PUSH_STAMINA, stamina) / EqExertion.LINE
+    local perSecond = EqExertion.PUSH_RISE * byStat(EqExertion.PUSH_STAMINA, stamina) * (ex.pushShare or 1) / EqExertion.LINE
     local climb = EqExertion.PUSH_CLIMB
     if climb <= 0 then return (1 - share) / perSecond end
     local root = math.sqrt(climb)
@@ -249,9 +259,8 @@ end
 --- @param gait string the horse's gait this frame (reverse, halt, walk, trot, canter or gallop)
 --- @param dt number milliseconds
 --- @param stamina number|nil trained stamina
---- @param speed number|nil trained speed
 --- @return string|nil event "blown", "spent", "sprintOver" or "fresh" (gallop allowed again)
-function EqExertion.step(ex, gait, dt, stamina, speed)
+function EqExertion.step(ex, gait, dt, stamina)
     if dt <= 0 then return nil end
     ex.clock = ex.clock + dt
     local event = nil
@@ -275,7 +284,7 @@ function EqExertion.step(ex, gait, dt, stamina, speed)
         if ex.clock - ex.tapAt > EqExertion.SPRINT_KEEP_MS then event = endSprint(ex) end
     end
 
-    local value = ex.value + EqExertion.rate(ex, gait, stamina, speed) * dt / 1000
+    local value = ex.value + EqExertion.rate(ex, gait, stamina) * dt / 1000
     ex.value = math.min(math.max(value, 0), EqExertion.EXERTION_MAX)
     if ex.mode == "push" and ex.value >= EqExertion.LINE then
         ex.value = EqExertion.LINE
@@ -376,8 +385,10 @@ end
 
 
 --- @param ex table
+--- @param speed number|nil trained speed (sets a Sprint's share)
 --- @return number share of the gallop's top speed for the pace
-function EqExertion.speedShare(ex)
+function EqExertion.speedShare(ex, speed)
+    if ex.mode == "sprint" then return byStat(EqExertion.SPRINT_PACE, speed) end
     return EqExertion.GALLOP_SHARE[ex.mode] or 1
 end
 
