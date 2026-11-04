@@ -6447,6 +6447,15 @@ end)()
     check("pitch: steeper than the ledge tilt comes back up", steep > deg(-25))
     check("pitch: a normal jump keeps its tilt", math.abs(J.pitch(deg(-8), deg(-8), false, 1, 16) + deg(8)) < 1e-9)
     check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
+    check("pitch: just mounted, no ground found is not a ledge", J.airDistance(false, 5, 5) == nil)
+    check("pitch: after standing once, no ground found is a ledge", J.airDistance(true, 5, 5) == math.huge
+        and J.airDistance(true, 1.2, 5) == 1.2 and J.airDistance(true, nil, 5) == nil)
+    local mounted = 0
+    for _ = 1, 30 do mounted = J.pitch(mounted, mounted, false, J.airDistance(false, 5, 5), 16) end
+    check("pitch: first frames of a mounted horse stay level", math.abs(mounted) < 1e-9)
+    local settle = deg(-15)
+    for _ = 1, 30 do settle = J.pitch(settle, 0, true, nil, 16) end
+    check("pitch: a tipped horse standing still settles on the ground's slope", math.abs(settle) < 1e-9)
 end)()
 
 -- TEMPERAMENT COMBO (EqTemperament, James 2026-11-03): new moves build it, repeats don't.

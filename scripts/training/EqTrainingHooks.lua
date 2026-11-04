@@ -2225,6 +2225,35 @@ function EqTrainingHooks.onHorseDay(animal)
 end
 
 
+--- The ground's slope along the horse, from the ground under its front and back hooves (the base
+--- game's own two rays, which it only casts while the horse moves).
+--- @param self table the horse
+--- @param spec table spec_rideable
+--- @param dx number heading x (flat, unit)
+--- @param dz number heading z
+--- @return number|nil radians, nose up positive; nil when a ray finds no ground
+local function groundSlope(self, spec, dx, dz)
+    local result = spec.groundRaycastResult
+    local front, back = spec.frontCheckDistance, spec.backCheckDistance
+    if raycastAll == nil or result == nil or type(front) ~= "number" or type(back) ~= "number" or front == back then
+        return nil
+    end
+    local offset, reach = Rideable.GROUND_RAYCAST_OFFSET or 1, Rideable.GROUND_RAYCAST_MAXDISTANCE or 5
+    local savedY, savedDistance, savedObject = result.y, result.distance, result.object
+    local x, y, z = getWorldTranslation(self.rootNode)
+    local function groundAt(along)
+        result.distance = nil
+        raycastAll(x + dx * along, y + offset, z + dz * along, 0, -1, 0, reach, "groundRaycastCallback", self,
+            Rideable.GROUND_RAYCAST_COLLISIONMASK)
+        return result.distance ~= nil and result.y or nil
+    end
+    local frontY, backY = groundAt(front), groundAt(back)
+    result.y, result.distance, result.object = savedY, savedDistance, savedObject
+    if frontY == nil or backY == nil then return nil end
+    return math.atan2(frontY - backY, front - back)
+end
+
+
 --- Hold the body's tilt to EqJump.pitch, keeping its heading.
 --- @param self table the horse
 --- @param spec table spec_rideable
@@ -2237,17 +2266,28 @@ function EqTrainingHooks.limitPitch(self, spec, dt)
         dx, dz, flat = math.sin(angle), math.cos(angle), 1
     end
     local target = math.atan2(dy, flat)
-    local distance
-    if spec.isOnGround == false then
-        local ground = spec.groundRaycastResult
-        distance = ground ~= nil and type(ground.distance) == "number" and ground.distance or nil
-        -- Nothing hit within the ray's reach: further down than that.
-        local reach = Rideable.GROUND_RAYCAST_MAXDISTANCE
-        if distance ~= nil and type(reach) == "number" and distance >= reach - 0.01 then distance = math.huge end
+    local onGround = spec.isOnGround ~= false
+    local moving = math.abs(spec.currentSpeed or 0) > 0.001 or math.abs(spec.currentTurnSpeed or 0) > 0.001
+    -- Standing still the base game leaves the tilt as it was: settle it on the ground under the
+    -- hooves, measured once each time the horse comes to a stand.
+    if onGround and not moving then
+        if spec.eqStandSlope == nil then
+            spec.eqStandSlope = groundSlope(self, spec, dx / flat, dz / flat) or false
+        end
+        if spec.eqStandSlope then target = spec.eqStandSlope end
+    else
+        spec.eqStandSlope = nil
     end
-    local pitch = EqJump.pitch(spec.eqPitch, target, spec.isOnGround ~= false, distance, dt or 0)
+    if onGround then spec.eqPitchGrounded = true end
+    local distance
+    if not onGround then
+        local ground = spec.groundRaycastResult
+        distance = EqJump.airDistance(spec.eqPitchGrounded == true, ground ~= nil and ground.distance or nil,
+            Rideable.GROUND_RAYCAST_MAXDISTANCE)
+    end
+    local pitch = EqJump.pitch(spec.eqPitch, target, onGround, distance, dt or 0)
     spec.eqPitch = pitch
-    if math.abs(pitch - target) < 1e-4 then return end
+    if math.abs(pitch - math.atan2(dy, flat)) < 1e-4 then return end
     local c = math.cos(pitch) / flat
     setDirection(self.rootNode, dx * c, math.sin(pitch), dz * c, 0, 1, 0)
 end
