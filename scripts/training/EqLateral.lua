@@ -566,16 +566,14 @@ function EqLateral.install()
         local spec = self.spec_rideable
         spec.eqMoveKeep = nil
         local queued = spec.cctMoveQueue ~= nil and #spec.cctMoveQueue or nil
-        local result = { pcall(superFunc, self, dt) }
-        self.moveCCT = own
-        if not result[1] then error(result[2], 0) end
+        local result = { EqLog.finally(function() self.moveCCT = own end, superFunc, self, dt) }
         -- On the spot, the stuck check expects only the forward move actually made.
         local keep = spec.eqMoveKeep
         local entry = queued ~= nil and spec.cctMoveQueue[queued + 1] or nil
         if keep ~= nil and keep < 1 and entry ~= nil then
             entry.moveX, entry.moveZ = (entry.moveX or 0) * keep, (entry.moveZ or 0) * keep
         end
-        return unpack(result, 2)
+        return unpack(result, 1, table.maxn(result))
     end)
     if type(Rideable.updateAnimation) == "function" then
         Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
@@ -592,10 +590,8 @@ function EqLateral.install()
             local shown = EqLateral.shownSpeed(spec.currentSpeed, lower, collect) / 1000
             self.lastSignedSpeedReal = math.max(real, shown)
             if type(smooth) == "number" then self.lastSignedSpeed = math.max(smooth, shown) end
-            local result = { pcall(superFunc, self, dt) }
-            self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth
-            if not result[1] then error(result[2], 0) end
-            return unpack(result, 2)
+            local result = { EqLog.finally(function() self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth end, superFunc, self, dt) }
+            return unpack(result, 1, table.maxn(result))
         end)
     end
     -- W doesn't raise the gait while collect is held: Ctrl + W is a passage or collected canter.
