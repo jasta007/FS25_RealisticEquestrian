@@ -153,10 +153,26 @@ a fence.
 
 ### Temperament
 
-Temperament's focused training is a dressage routine, and it needs dressage markers: nothing starts
-from just walking about (the old free routine that gave orders whenever the horse walked for a
-moment is gone, James 2026-10-29). Walking and backing up still train a little temperament
-anywhere. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
+Temperament trains anywhere with the **temperament combo** (James, 2026-11-03), built like the jump
+combo but from variety. Nothing gives orders: you string together moves of your own choosing:
+
+- a gait change that isn't to a gallop (walk, trot, canter, backing up), held for 1 s;
+- standing still, held for 2 s;
+- lateral and collected work (half pass, leg yield, shoulder-in, piaffe, passage, collected walk or
+  canter, pirouette...), held for 1 s;
+- a big turn: half a circle steered one way at one gait (letting go of the steering for 1 s starts
+  the count again). Each gait and direction is its own move.
+
+Each new move raises the combo (up to x5) and refills its 12 s bar. A move that is one of your last
+3 is fine to ride but neither raises the combo nor refills the bar. Galloping, running into
+something (knocked to a stand) or letting the bar run out loses the combo, and no new one starts for
+2.5 s. Jumps neither count nor break it. While a combo runs temperament builds at 0.002 effort a
+second per step (x5 = 0.01 a second, about a third of a dressage test at x8). The Temperament view
+shows the combo, its seconds left and your last moves; Freestyle shows the combo and its bar. A
+dressage test takes over while it runs. Walking and backing up still train a little temperament
+anywhere.
+
+The most temperament comes from a dressage test. A routine starts when you ride within 12 m of the markers (at least three within 100 m,
 chained 60 m from each other, not all in a line), at any pace short of a gallop, and rides
 between them. Markers are the shop's dressage arenas (15x30, 20x40 and
 20x60 m, A K E H C M B F round the edge, V S R P on 20x60, D (L) X (I) G flat on the centre line,
@@ -324,9 +340,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - A test of figures is harder work than the marker routine: temperament builds twice as fast
   (its payoff at the end too), and the riding bar fills at 1.5 times the usual rate from the first
   movement, so one full test on the big arena fills a green horse's bar.
-- Lateral work, passage, piaffe and pirouettes ridden anywhere outside a test train temperament
-  too, once held for a second, like a routine at x4 (about a third of what a full test gives for
-  the same time). Just collecting on the spot at a walk doesn't count.
+- Lateral work ridden outside a test counts as moves for the temperament combo (above).
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).

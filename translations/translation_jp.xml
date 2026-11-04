@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="気性"/>
         <text name="eq_train_viewAction" text="トレーニング表示：%s"/>
         <text name="eq_train_view_freestyle" text="フリー"/>
-        <text name="eq_help_temperament_2" text="経路違反が3回（線を外れる、アリーナを出る、立ち止まる）で演技は終了します。最後まで乗ると、得点に応じた気性ボーナスが得られます。落ち着いた馬ほど線を先まで見られ、変化の予告も早くなります。Riding Hallのマーカーでは、文字の間を進む従来の演技になります。アリーナの外でも常歩と後退で気性は少し鍛えられ、ニンジンなどのおやつも役立ちます。"/>
-        <text name="eq_help_temperament_1" text="気性トレーニングは馬に制御を教えるもので、馬場馬術のアリーナが必要です。ショップで購入するか、馬場馬術のマーカーを置いてください。ショップのアリーナではAへ向かうと図形の演技が始まります。輪乗り、斜線、蛇乗りなどが地面に金色の線で描かれます。線に沿って進み、指示された場所で歩法を変えたり停止したりしましょう。各運動は10点満点で採点されます。"/>
+        <text name="eq_help_temperament_2" text="最も気性を鍛えるなら、馬場馬術アリーナで演技を：ショップで購入してAへ向かいます。図形の演技が始まり、地面に金色の線が描かれます。線に沿って、指示された場所で歩様を変えたり停止したりしましょう。各運動は10点満点で採点されます。経路違反3回で演技は終了。最後まで走るとスコアに応じたボーナスがもらえます。落ち着いた馬ほど線の先まで見えます。Riding Hallのマーカーでは文字間を走る旧ルーティンになります。ニンジンなどのおやつも効果があります。"/>
+        <text name="eq_help_temperament_1" text="気性はコントロールがすべて。どこで乗っていても、新しい動きをつなげてコンボを作りましょう：歩様の変更（襲歩以外）、停止、大きな旋回（片側に半円）、横運動や収縮運動。新しい動きごとにコンボがx5まで上がり、バーが回復します。直近3つの動きを繰り返しても構いませんが、何も加算されません。襲歩、何かへの衝突、バー切れでコンボは終了します。ジャンプは数えません。"/>
         <text name="eq_help_temperament_title" text="トレーニング：気性"/>
         <text name="eq_help_agility_2" text="時間内に新しい障害物を越えられなかったり、速度を落としすぎたりすると倍率を失います。障害物なしのジャンプも少しは鍛えられますが、倍率は上がりません。"/>
         <text name="eq_help_agility_1" text="敏捷性は主に障害を跳ぶことで鍛えられますが、歩様を切り替えることでも少し上がります。障害物を越えて敏捷性のトレーニング倍率を上げましょう。倍率は10秒後、または障害物に当たるとそれより早く下がります。"/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="演技 x%d"/>
         <text name="eq_train_combo_none" text="障害を越えてコンボ開始"/>
         <text name="eq_train_combo" text="ジャンプコンボ x%d"/>
+        <text name="eq_train_temperCombo" text="気性コンボ x%d"/>
+        <text name="eq_train_temperNone" text="歩様の変更・停止・旋回でコンボ開始"/>
+        <text name="eq_train_temperStale" text="最近やった動き: %s"/>
+        <text name="eq_train_temperRecent" text="最近"/>
+        <text name="eq_temper_halt" text="停止"/>
+        <text name="eq_temper_gait_walk" text="常歩"/>
+        <text name="eq_temper_gait_trot" text="速歩"/>
+        <text name="eq_temper_gait_canter" text="駈歩"/>
+        <text name="eq_temper_gait_reverse" text="後退"/>
+        <text name="eq_temper_turn_left" text="大きく左旋回 (%s)"/>
+        <text name="eq_temper_turn_right" text="大きく右旋回 (%s)"/>
         <text name="eq_train_view_temperament" text="気性"/>
         <text name="eq_train_view_agility" text="敏捷性"/>
-        <text name="eq_help_freestyle_2" text="敏捷性は障害物を飛んでコンボメーターを溜めて鍛え、気性は馬場馬術アリーナで演技をして鍛えます。持久力とスピードは上手な襲歩で鍛えます。襲歩中にHを押すと方法がわかります。"/>
+        <text name="eq_help_freestyle_2" text="敏捷性は障害を跳んでコンボメーターを貯めて鍛え、気性は新しい動き（歩様の変更、停止、大きな旋回、横運動）をつなげるか馬場馬術の演技で鍛えます。スタミナとスピードは上手な襲歩で鍛えます：襲歩中にHを押すと方法がわかります。"/>
         <text name="eq_help_freestyle_3" text="自分で乗りたくない？スタッフタブで厩務員やトレーナーを雇えば、毎日馬を鍛えてくれます。ゲームの動物スタッフやRLRMのHerdsmanは現状維持しかしません。"/>
         <text name="eq_form_title" text="絶好調"/>
         <text name="eq_help_freestyle_4" text="大会の前に乗りましょう！ミニゲームで鍛えた能力ごとに、今月の大会で馬が絶好調になり、能力ごとに最大+8されます。数日分は合算されず、その月の最高のセッションが採用されます。"/>

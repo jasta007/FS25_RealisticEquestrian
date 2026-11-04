@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Visão de treino: %s"/>
         <text name="eq_train_view_freestyle" text="Livre"/>
-        <text name="eq_help_temperament_2" text="Três erros de percurso (perder a linha, sair da pista ou ficar parado) encerram a prova; termine-a para um bônus de temperamento que cresce com sua nota. Um cavalo mais calmo vê mais da linha à frente e recebe mais aviso das mudanças. As letras do Riding Hall dão a rotina antiga de trechos entre letras. Fora de uma pista, o passo e o recuar ainda treinam um pouco de temperamento, e petiscos como cenouras também ajudam."/>
-        <text name="eq_help_temperament_1" text="O treino de temperamento ensina controle ao seu cavalo e precisa de uma pista de adestramento: compre uma na loja ou coloque letras de adestramento. Numa pista da loja, vá até A e começa uma prova de figuras: círculos, diagonais, serpentinas e mais, desenhadas como uma linha dourada no chão. Fique na linha e mude de andamento ou pare onde for pedido; cada movimento recebe nota até 10."/>
+        <text name="eq_help_temperament_2" text="Para mais temperamento, monte uma prova numa pista de adestramento: compre uma na loja e vá até A. Começa uma prova de figuras, desenhada como uma linha dourada no chão: fique na linha e mude de andamento ou pare onde for pedido; cada movimento recebe nota até 10. Três erros de percurso encerram a prova; termine-a para um bônus que cresce com a sua nota. Um cavalo mais calmo vê mais da linha à frente. Os marcadores do Riding Hall dão a rotina antiga de trechos entre letras. Petiscos como cenouras também ajudam."/>
+        <text name="eq_help_temperament_1" text="Temperamento é controle. Onde você montar, encadeie movimentos novos para formar um combo: mude de andamento (menos para o galope solto), fique parado, faça uma curva grande (meio círculo para um lado) ou trabalho lateral e reunido. Cada movimento novo aumenta o combo até x5 e enche a barra. Repetir um dos seus 3 últimos movimentos pode, mas não soma nada. Galope solto, bater em algo ou deixar a barra esvaziar perde o combo; saltos não contam."/>
         <text name="eq_help_temperament_title" text="Treino: Temperamento"/>
         <text name="eq_help_agility_2" text="Você perde o multiplicador se não saltar um novo obstáculo a tempo ou perder velocidade demais. Saltar sem obstáculo dá algum treino, mas não aumenta o multiplicador."/>
         <text name="eq_help_agility_1" text="Agilidade é saltar obstáculos, embora alternar entre os andamentos também ajude um pouco. Salte obstáculos para formar um multiplicador de treino de Agilidade, que some após dez segundos, ou antes se você bater em um obstáculo."/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="Rotina x%d"/>
         <text name="eq_train_combo_none" text="Salte um obstáculo para iniciar um combo"/>
         <text name="eq_train_combo" text="Combo de saltos x%d"/>
+        <text name="eq_train_temperCombo" text="Combo de temperamento x%d"/>
+        <text name="eq_train_temperNone" text="Mude de andamento, pare ou vire para um combo"/>
+        <text name="eq_train_temperStale" text="Feito há pouco: %s"/>
+        <text name="eq_train_temperRecent" text="Recentes"/>
+        <text name="eq_temper_halt" text="Parado"/>
+        <text name="eq_temper_gait_walk" text="Passo"/>
+        <text name="eq_temper_gait_trot" text="Trote"/>
+        <text name="eq_temper_gait_canter" text="Galope"/>
+        <text name="eq_temper_gait_reverse" text="Recuando"/>
+        <text name="eq_temper_turn_left" text="Curva grande à esquerda (%s)"/>
+        <text name="eq_temper_turn_right" text="Curva grande à direita (%s)"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilidade"/>
-        <text name="eq_help_freestyle_2" text="A agilidade é treinada saltando obstáculos para encher um medidor de combo, e o temperamento fazendo uma rotina numa pista de adestramento. Resistência e velocidade treinam com um bom galope: pressione H galopando para saber como."/>
+        <text name="eq_help_freestyle_2" text="A agilidade é treinada saltando obstáculos para encher um contador de combo, e o temperamento encadeando movimentos novos (mudanças de andamento, paradas, curvas grandes, trabalho lateral) ou montando uma prova de adestramento. Resistência e velocidade treinam galopando bem: pressione H a galope para saber como."/>
         <text name="eq_help_freestyle_3" text="Prefere não montar? Contrate tratadores e treinadores na aba Equipe para treinar seus cavalos todos os dias. Os funcionários de animais do jogo e o Herdsman do RLRM só os mantêm em dia."/>
         <text name="eq_form_title" text="Forma máxima"/>
         <text name="eq_help_freestyle_4" text="Monte antes de uma competição! Cada atributo que você treina com seu minijogo deixa o cavalo em Forma máxima para as competições deste mês, até +8 por atributo. Não se acumula ao longo de vários dias: vale a sua melhor sessão do mês."/>

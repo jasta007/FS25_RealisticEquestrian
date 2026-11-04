@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Vista allenamento: %s"/>
         <text name="eq_train_view_freestyle" text="Libero"/>
-        <text name="eq_help_temperament_2" text="Tre errori di percorso (linea persa, uscita dal rettangolo o fermo sul posto) terminano la ripresa; completala per un bonus di temperamento che cresce col punteggio. Un cavallo più calmo vede più linea davanti e riceve più preavviso dei cambi. Le lettere di Riding Hall danno la vecchia routine di tratti tra le lettere. Fuori da un rettangolo, il passo e il rinculo allenano ancora un po' il temperamento, e anche i premietti come le carote aiutano."/>
-        <text name="eq_help_temperament_1" text="L'allenamento del temperamento insegna il controllo al tuo cavallo e richiede un rettangolo da dressage: comprane uno nel negozio o disponi le lettere. In un rettangolo del negozio, vai in A e inizia una ripresa di figure: circoli, diagonali, serpentine e altro, disegnate come una linea dorata a terra. Resta sulla linea e cambia andatura o fermati dove richiesto; ogni movimento ha un voto fino a 10."/>
+        <text name="eq_help_temperament_2" text="Per più temperamento, monta una ripresa in un rettangolo da dressage: comprane uno nel negozio e vai ad A. Inizia una ripresa di figure, disegnata come una linea dorata a terra: resta sulla linea e cambia andatura o fermati dove richiesto; ogni movimento ha un voto su 10. Tre errori di percorso chiudono la ripresa; finiscila per un bonus che cresce col punteggio. Un cavallo più calmo vede più linea davanti a sé. I segnalatori di Riding Hall danno la vecchia routine di tratti tra lettere. Anche i premi come le carote aiutano."/>
+        <text name="eq_help_temperament_1" text="Il temperamento è controllo. Ovunque tu cavalchi, concatena movimenti nuovi per creare una combo: cambia andatura (non al galoppo allungato), stai fermo, fai una grande curva (mezzo cerchio da un lato) o lavoro laterale e riunito. Ogni movimento nuovo alza la combo fino a x5 e riempie la sua barra. Ripetere uno dei tuoi ultimi 3 movimenti va bene, ma non aggiunge nulla. Il galoppo allungato, un urto o la barra vuota fanno perdere la combo; i salti non contano."/>
         <text name="eq_help_temperament_title" text="Allenamento: Temperamento"/>
         <text name="eq_help_agility_2" text="Perdi il moltiplicatore se non superi un nuovo ostacolo in tempo o perdi troppa velocità. Saltare senza ostacolo allena un po', ma non aumenta il moltiplicatore."/>
         <text name="eq_help_agility_1" text="L'Agilità si allena soprattutto superando ostacoli, anche se alternare le andature aiuta un po'. Supera ostacoli per costruire un moltiplicatore di allenamento dell'Agilità, che svanisce dopo dieci secondi, o prima se urti un ostacolo."/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="Ripresa x%d"/>
         <text name="eq_train_combo_none" text="Supera un ostacolo per iniziare una combo"/>
         <text name="eq_train_combo" text="Combo salti x%d"/>
+        <text name="eq_train_temperCombo" text="Combo temperamento x%d"/>
+        <text name="eq_train_temperNone" text="Cambia andatura, fermati o gira per una combo"/>
+        <text name="eq_train_temperStale" text="Appena fatto: %s"/>
+        <text name="eq_train_temperRecent" text="Recenti"/>
+        <text name="eq_temper_halt" text="Fermo"/>
+        <text name="eq_temper_gait_walk" text="Passo"/>
+        <text name="eq_temper_gait_trot" text="Trotto"/>
+        <text name="eq_temper_gait_canter" text="Galoppo"/>
+        <text name="eq_temper_gait_reverse" text="Indietro"/>
+        <text name="eq_temper_turn_left" text="Grande curva a sinistra (%s)"/>
+        <text name="eq_temper_turn_right" text="Grande curva a destra (%s)"/>
         <text name="eq_train_view_temperament" text="Temperamento"/>
         <text name="eq_train_view_agility" text="Agilità"/>
-        <text name="eq_help_freestyle_2" text="L&apos;agilità si allena saltando ostacoli per riempire un indicatore di combo, il temperamento con una ripresa in un rettangolo da dressage. Resistenza e velocità si allenano galoppando bene: premi H al galoppo per scoprire come."/>
+        <text name="eq_help_freestyle_2" text="L&apos;agilità si allena saltando ostacoli per riempire un contatore combo, e il temperamento concatenando movimenti nuovi (cambi di andatura, fermate, grandi curve, lavoro laterale) o montando una ripresa di dressage. Resistenza e velocità si allenano galoppando bene: premi H al galoppo per sapere come."/>
         <text name="eq_help_freestyle_3" text="Preferisci non cavalcare? Assumi stallieri e istruttori nella scheda Personale per allenare i cavalli ogni giorno. Gli addetti agli animali del gioco e l'Herdsman di RLRM li mantengono solo in esercizio."/>
         <text name="eq_form_title" text="Forma ottimale"/>
         <text name="eq_help_freestyle_4" text="Cavalca prima di una gara! Ogni caratteristica che alleni con il suo minigioco mette il cavallo in Forma ottimale per le gare di questo mese, fino a +8 per caratteristica. Non si somma su più giorni: conta la tua migliore sessione del mese."/>

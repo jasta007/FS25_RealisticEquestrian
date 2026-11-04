@@ -18,8 +18,8 @@
         <text name="eq_train_viewAction" text="Trainingsansicht: %s"/>
         <text name="eq_train_view_freestyle" text="Frei"/>
         <text name="eq_help_temperament_title" text="Training: Temperament"/>
-        <text name="eq_help_temperament_2" text="Dreimal verritten (Linie verloren, Viereck verlassen oder stehen geblieben) beendet die Aufgabe; reitest du sie zu Ende, gibt es einen Temperament-Bonus, der mit deiner Wertung wächst. Ein ruhigeres Pferd sieht mehr von der Linie voraus und wird früher vor Wechseln gewarnt. Riding-Hall-Buchstaben geben die ältere Lektion mit Wegen zwischen den Buchstaben. Außerhalb eines Vierecks trainieren Schritt und Rückwärtsrichten weiterhin etwas Temperament, und Leckerlis wie Karotten helfen ebenfalls."/>
-        <text name="eq_help_temperament_1" text="Beim Temperamenttraining lernt dein Pferd Gehorsam, und dafür brauchst du ein Dressurviereck: Kauf eines im Shop oder stell Dressurbuchstaben auf. In einem Shop-Viereck reitest du zu A, und eine Aufgabe aus Hufschlagfiguren beginnt: Zirkel, Diagonalen, Schlangenlinien und mehr, als goldene Linie auf den Boden gezeichnet. Bleib auf der Linie und wechsle die Gangart oder halte, wo es verlangt wird; jede Lektion wird mit bis zu 10 benotet."/>
+        <text name="eq_help_temperament_2" text="Am meisten Temperament bringt eine Aufgabe im Dressurviereck: Kauf eines im Shop und reite zu A. Eine Aufgabe aus Hufschlagfiguren beginnt, als goldene Linie auf den Boden gezeichnet: Bleib auf der Linie und wechsle die Gangart oder halte, wo es verlangt wird; jede Lektion wird mit bis zu 10 bewertet. Drei Verreiten beenden die Aufgabe; beende sie für einen Schub, der mit deiner Wertung wächst. Ein ruhigeres Pferd sieht mehr von der Linie voraus. Riding-Hall-Buchstaben geben die ältere Routine von Strecken zwischen Buchstaben. Leckerlis wie Karotten helfen auch."/>
+        <text name="eq_help_temperament_1" text="Beim Temperament geht es um Kontrolle. Überall, wo du reitest, reihst du neue Lektionen aneinander und baust eine Kombo auf: Gangart wechseln (nicht in den Renngalopp), stillstehen, eine große Wendung (ein halber Kreis in eine Richtung) oder Seitengänge und versammelte Arbeit. Jede neue Lektion erhöht die Kombo bis x5 und füllt ihren Balken wieder auf. Eine deiner letzten 3 Lektionen zu wiederholen ist in Ordnung, bringt aber nichts. Renngalopp, ein Zusammenstoß oder ein leerer Balken beenden die Kombo; Sprünge zählen nicht."/>
         <text name="eq_help_agility_2" text="Sie verlieren den Multiplikator, wenn Sie das nächste Hindernis nicht rechtzeitig meistern oder zu viel Tempo verlieren. Ein Sprung ohne Hindernis bringt etwas Training, erhöht den Multiplikator aber nicht."/>
         <text name="eq_help_agility_1" text="Bei Wendigkeit dreht sich alles um gemeisterte Sprünge, auch wenn der Wechsel zwischen den Gangarten ein wenig hilft. Meistern Sie Hindernisse, um einen Multiplikator für das Wendigkeitstraining aufzubauen. Er verfällt nach zehn Sekunden, oder schneller, wenn Sie ein Hindernis berühren."/>
         <text name="eq_help_agility_title" text="Training: Wendigkeit"/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="Lektion x%d"/>
         <text name="eq_train_combo_none" text="Für eine Kombo einen Sprung meistern"/>
         <text name="eq_train_combo" text="Sprung-Kombo x%d"/>
+        <text name="eq_train_temperCombo" text="Temperament-Kombo x%d"/>
+        <text name="eq_train_temperNone" text="Gangart wechseln, halten oder wenden für eine Kombo"/>
+        <text name="eq_train_temperStale" text="Gerade erst: %s"/>
+        <text name="eq_train_temperRecent" text="Zuletzt"/>
+        <text name="eq_temper_halt" text="Stillstehen"/>
+        <text name="eq_temper_gait_walk" text="Schritt"/>
+        <text name="eq_temper_gait_trot" text="Trab"/>
+        <text name="eq_temper_gait_canter" text="Galopp"/>
+        <text name="eq_temper_gait_reverse" text="Rückwärtsrichten"/>
+        <text name="eq_temper_turn_left" text="Große Wendung links (%s)"/>
+        <text name="eq_temper_turn_right" text="Große Wendung rechts (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Wendigkeit"/>
-        <text name="eq_help_freestyle_2" text="Beweglichkeit trainierst du, indem du Hindernisse springst und einen Kombo-Zähler aufbaust, Temperament mit einer Aufgabe im Dressurviereck. Ausdauer und Tempo trainierst du durch gutes Galoppieren: Drücke im Galopp H, um zu erfahren, wie."/>
+        <text name="eq_help_freestyle_2" text="Beweglichkeit trainierst du, indem du Hindernisse springst und einen Kombo-Zähler aufbaust, Temperament, indem du neue Lektionen aneinanderreihst (Gangartwechsel, Halten, große Wendungen, Seitengänge) oder eine Aufgabe im Dressurviereck reitest. Ausdauer und Tempo trainierst du durch gutes Galoppieren: Drücke im Galopp H, um zu erfahren, wie."/>
         <text name="eq_help_freestyle_3" text="Keine Lust zu reiten? Stellen Sie im Reiter Personal Pferdepfleger und Trainer ein, die Ihre Pferde jeden Tag trainieren. Tierpfleger und der Herdsman von RLRM halten sie nur in Bewegung."/>
         <text name="eq_form_title" text="Topform"/>
         <text name="eq_help_freestyle_4" text="Reiten Sie vor einem Wettbewerb! Jeder Wert, den Sie mit seinem Minispiel trainieren, bringt Ihr Pferd für die Veranstaltungen dieses Monats in Topform, bis zu +8 pro Wert. Mehrere Tage addieren sich nicht: Ihre beste Einheit des Monats zählt."/>

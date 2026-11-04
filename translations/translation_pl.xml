@@ -17,8 +17,8 @@
         <text name="eq_stat_short_temperament" text="Tem"/>
         <text name="eq_train_viewAction" text="Widok treningu: %s"/>
         <text name="eq_train_view_freestyle" text="Swobodny"/>
-        <text name="eq_help_temperament_2" text="Trzy błędy trasy (zgubiona linia, wyjazd z czworoboku lub stanie w miejscu) kończą program; ukończ go, by dostać premię do temperamentu rosnącą z oceną. Spokojniejszy koń widzi dalej linię i wcześniej dostaje ostrzeżenie o zmianach. Litery Riding Hall dają dawny program przejazdów między literami. Poza czworobokiem stęp i cofanie nadal trochę trenują temperament, a smakołyki jak marchewki też pomagają."/>
-        <text name="eq_help_temperament_1" text="Trening temperamentu uczy konia posłuszeństwa i wymaga czworoboku do ujeżdżenia: kup go w sklepie lub ustaw litery. W czworoboku ze sklepu podjedź do A, a zacznie się program z figur: koła, przekątne, wężyki i więcej, narysowane złotą linią na ziemi. Trzymaj się linii i zmieniaj chód lub zatrzymuj się tam, gdzie każą; każdy ruch jest oceniany w skali do 10."/>
+        <text name="eq_help_temperament_2" text="Najwięcej temperamentu daje program na czworoboku ujeżdżeniowym: kup go w sklepie i podjedź do A. Zaczyna się program figur, narysowany złotą linią na ziemi: trzymaj się linii i zmieniaj chód lub zatrzymuj się tam, gdzie każą; każdy ruch dostaje ocenę do 10. Trzy błędy trasy kończą program; ukończ go, by zdobyć premię rosnącą z wynikiem. Spokojniejszy koń widzi więcej linii przed sobą. Znaczniki Riding Hall dają starszą rutynę odcinków między literami. Smakołyki, takie jak marchewki, też pomagają."/>
+        <text name="eq_help_temperament_1" text="Temperament to kontrola. Gdziekolwiek jeździsz, łącz nowe ruchy w combo: zmień chód (nie na cwał), stań w miejscu, zrób duży skręt (pół koła w jedną stronę) albo ćwicz chody boczne i zebrane. Każdy nowy ruch podnosi combo do x5 i napełnia jego pasek. Powtórzenie jednego z 3 ostatnich ruchów jest w porządku, ale nic nie daje. Cwał, uderzenie w coś lub pusty pasek kończą combo; skoki się nie liczą."/>
         <text name="eq_help_temperament_title" text="Trening: Temperament"/>
         <text name="eq_help_agility_2" text="Tracisz mnożnik, jeśli nie pokonasz nowej przeszkody na czas lub stracisz za dużo prędkości. Skoki bez przeszkody dają trochę treningu, ale nie podnoszą mnożnika."/>
         <text name="eq_help_agility_1" text="Zwinność to przede wszystkim pokonywanie przeszkód, choć zmiana chodów też trochę pomaga. Pokonuj przeszkody, aby budować mnożnik treningu Zwinności, który wygasa po dziesięciu sekundach lub wcześniej, jeśli uderzysz w przeszkodę."/>
@@ -215,9 +215,20 @@
         <text name="eq_train_routine" text="Program x%d"/>
         <text name="eq_train_combo_none" text="Pokonaj przeszkodę, aby rozpocząć combo"/>
         <text name="eq_train_combo" text="Combo skoków x%d"/>
+        <text name="eq_train_temperCombo" text="Combo temperamentu x%d"/>
+        <text name="eq_train_temperNone" text="Zmień chód, zatrzymaj się lub skręć, aby zacząć combo"/>
+        <text name="eq_train_temperStale" text="Niedawno: %s"/>
+        <text name="eq_train_temperRecent" text="Ostatnie"/>
+        <text name="eq_temper_halt" text="Stój"/>
+        <text name="eq_temper_gait_walk" text="Stęp"/>
+        <text name="eq_temper_gait_trot" text="Kłus"/>
+        <text name="eq_temper_gait_canter" text="Galop"/>
+        <text name="eq_temper_gait_reverse" text="Cofanie"/>
+        <text name="eq_temper_turn_left" text="Duży skręt w lewo (%s)"/>
+        <text name="eq_temper_turn_right" text="Duży skręt w prawo (%s)"/>
         <text name="eq_train_view_temperament" text="Temperament"/>
         <text name="eq_train_view_agility" text="Zwinność"/>
-        <text name="eq_help_freestyle_2" text="Zwinność trenuje się, skacząc przez przeszkody i budując licznik kombinacji, a temperament, jadąc program na czworoboku ujeżdżeniowym. Wytrzymałość i szybkość trenuje się dobrym galopem: naciśnij H w galopie, aby dowiedzieć się jak."/>
+        <text name="eq_help_freestyle_2" text="Zwinność trenujesz, skacząc przez przeszkody i budując licznik combo, a temperament, łącząc nowe ruchy (zmiany chodu, zatrzymania, duże skręty, chody boczne) lub jeżdżąc program ujeżdżenia. Wytrzymałość i szybkość trenujesz, dobrze galopując: naciśnij H w galopie, aby dowiedzieć się jak."/>
         <text name="eq_help_freestyle_3" text="Wolisz nie jeździć? Zatrudnij stajennych i trenerów w zakładce Personel, aby codziennie trenowali twoje konie. Pracownicy gry i Herdsman z RLRM tylko utrzymują je w formie."/>
         <text name="eq_form_title" text="Szczytowa forma"/>
         <text name="eq_help_freestyle_4" text="Pojeździj przed zawodami! Każda cecha trenowana w swojej minigrze daje koniowi Szczytową formę na zawody w tym miesiącu, do +8 na cechę. Nie sumuje się przez kilka dni: liczy się najlepsza sesja w miesiącu."/>

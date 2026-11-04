@@ -16,6 +16,7 @@ dofile("scripts/core/EqStats.lua")
 dofile("scripts/training/EqExertion.lua")
 dofile("scripts/training/EqJump.lua")
 dofile("scripts/training/EqTraining.lua")
+dofile("scripts/training/EqTemperament.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
@@ -920,16 +921,6 @@ do
         check("a dressage test trains temperament TEST_TEMPERAMENT_FACTOR times as fast as the markers",
             math.abs(tested.focused.temperament - markers.focused.temperament * EqTraining.TEST_TEMPERAMENT_FACTOR) < 1e-12
             and markers.focused.temperament > 0)
-        -- Lateral work anywhere trains temperament once held a moment; collecting alone doesn't.
-        local free = EqTraining.newSheet()
-        local early = EqTraining.freeLateral(free, "halfPass", false, 500)
-        local later = EqTraining.freeLateral(free, "halfPass", false, 1000)
-        local gained = free.focused.temperament
-        EqTraining.freeLateral(free, "collected", false, 2000)
-        local worn = EqTraining.newSheet()
-        EqTraining.freeLateral(worn, "piaffe", true, 5000)
-        check("free lateral work trains temperament after a moment held", not early and later and gained > 0
-            and free.focused.temperament == gained and free.freeLateralMs == 0 and worn.focused.temperament == 0)
         local sheet = EqTraining.newSheet()
         EqTraining.addRiding(sheet, "canter", 1000, 0.25)
         check("easy riding counts less towards the player's share", sheet.ms.canter == 250)
@@ -6341,6 +6332,74 @@ end)()
     check("pitch: steeper than the ledge tilt comes back up", steep > deg(-25))
     check("pitch: a normal jump keeps its tilt", math.abs(J.pitch(deg(-8), deg(-8), false, 1, 16) + deg(8)) < 1e-9)
     check("pitch: air tilt held to AIR_PITCH_MAX", J.pitch(nil, deg(-60), false, 1, 16) >= -deg(J.AIR_PITCH_MAX) - 1e-9)
+end)()
+
+-- TEMPERAMENT COMBO (EqTemperament, James 2026-11-03): new moves build it, repeats don't.
+;(function()
+    local T = EqTemperament
+    local function ride(state, input, ms)
+        local event, key
+        for _ = 1, math.floor(ms / 100) do
+            local e, k = T.step(state, input, 100)
+            if e ~= nil then event, key = e, k end
+        end
+        return event, key
+    end
+    local s = T.new()
+    check("temperament: getting on is no move", ride(s, { gait = "halt" }, 3000) == nil and s.count == 0)
+    local e, k = ride(s, { gait = "walk" }, 1000)
+    check("temperament: a gait change held GAIT_HOLD_MS starts the combo", e == "move" and k == "gait:walk" and T.mult(s) == 1)
+    check("temperament: a short blip is no move", ride(s, { gait = "trot" }, 500) == nil and ride(s, { gait = "walk" }, 500) == nil and s.count == 1)
+    ride(s, { gait = "trot" }, 1000)
+    ride(s, { gait = "canter" }, 1000)
+    check("temperament: each new gait raises it", T.mult(s) == 3)
+    s.timer = 5
+    e = ride(s, { gait = "trot" }, 1000)
+    check("temperament: a gait done recently neither raises it nor refills the bar", e == "stale" and T.mult(s) == 3 and s.timer < 5)
+    e = ride(s, { gait = "trot", lateral = "halfPass" }, 1000)
+    check("temperament: lateral work is a new move", e == "move" and T.mult(s) == 4 and s.timer == T.COMBO_SECONDS)
+    ride(s, { gait = "trot" }, 1000)
+    -- A big turn: a half circle steered one way at one gait.
+    local turned = T.TURN_ANGLE / 20 + 1e-6
+    e, k = ride(s, { gait = "trot", steer = "left", turned = turned }, 2000)
+    check("temperament: a big turn is a move by gait and direction", e == "move" and k == "turn:trot:left" and T.mult(s) == 5)
+    e, k = ride(s, { gait = "trot", steer = "left", turned = turned }, 2000)
+    check("temperament: the same turn again is done recently", e == "stale" and k == "turn:trot:left")
+    check("temperament: a quarter turn is no move", ride(s, { gait = "trot", steer = "right", turned = turned }, 1000) == nil)
+    ride(s, { gait = "trot" }, 1500)
+    check("temperament: letting the steering go starts the turn count again", ride(s, { gait = "trot", steer = "right", turned = turned }, 1000) == nil)
+    ride(s, { gait = "trot" }, 1500)
+    e = ride(s, { gait = "canter", steer = "right", turned = turned }, 1000)
+    e, k = ride(s, { gait = "canter", steer = "right", turned = turned }, 2000)
+    check("temperament: a turn at another gait is its own move", k == "turn:canter:right" and s.count >= 6 and T.mult(s) == T.COMBO_MAX)
+    -- Jumps don't count, and the bar can't run out mid-air.
+    s.timer = 0.05
+    check("temperament: no loss in the air", ride(s, { gait = "canter", jumping = true }, 1000) == nil and s.count > 0)
+    -- Galloping and crashing lose it.
+    check("temperament: galloping loses it", T.step(s, { gait = "gallop" }, 16) == "lost" and s.count == 0 and #s.recent == 0)
+    check("temperament: no new combo straight after", ride(s, { gait = "canter" }, 1000) == nil and s.count == 0)
+    ride(s, { gait = "canter" }, T.LOCK_MS)
+    ride(s, { gait = "halt" }, T.HALT_HOLD_MS)
+    check("temperament: standing still is a move", s.count == 1 and s.last == "halt")
+    check("temperament: a crash loses it", T.step(s, { gait = "halt", crashed = true }, 16) == "lost")
+    s.lock = 0
+    ride(s, { gait = "walk" }, 1000)
+    check("temperament: the bar running out loses it", ride(s, { gait = "walk" }, T.COMBO_SECONDS * 1000 + 200) == "lost" and s.count == 0)
+    -- Training: RATE a second per step, nothing when worn.
+    local sheet = EqTraining.newSheet()
+    local c = T.new()
+    c.count = 3
+    T.train(c, sheet, false, 1000)
+    local worn = EqTraining.newSheet()
+    T.train(c, worn, true, 1000)
+    check("temperament: the combo trains RATE a second per step", math.abs(sheet.focused.temperament - 3 * T.RATE) < 1e-12
+        and worn.focused.temperament == 0 and math.abs(sheet.quality.temperament - 3 / T.COMBO_MAX) < 1e-12)
+    check("temperament: x5 trains less than a dressage test at x8", T.RATE * T.COMBO_MAX
+        < EqTraining.TEMPERAMENT_RATE * EqTraining.TEST_TEMPERAMENT_FACTOR * (EqTraining.ROUTINE_MAX - 1))
+    local a, b = T.nameKeys("turn:canter:left")
+    check("temperament: move names", T.nameKeys("halt") == "eq_temper_halt" and T.nameKeys("lateral:piaffe") == "eq_now_piaffe"
+        and a == "eq_temper_turn_left" and b == "eq_dressage_gait_canter" and T.nameKeys("gait:reverse") == "eq_temper_gait_reverse")
+    check("temperament: a new sheet has a combo", EqTraining.newSheet().temper ~= nil)
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
