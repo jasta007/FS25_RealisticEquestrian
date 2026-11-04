@@ -2703,6 +2703,17 @@ do
         EqXcHide.modeFor(S, true, round) == G and EqXcHide.modeFor(S, false, round) == S
         and EqXcHide.modeFor(S, true, construction) == S and EqXcHide.modeFor(S, true, { multiplayer = true }) == S
         and EqXcHide.modeFor(H, true, {}) == H and EqXcHide.modeFor(G, true, { editing = true }) == G)
+    do
+        local saved = EqPlinths
+        local onDeck = true
+        EqPlinths = { holdsMachine = function() return onDeck end }
+        check("a machine on its deck keeps a shown drop wall, never brings a hidden one back",
+            EqXcHide.keepsForMachine({ eqXcMode = S }) and EqXcHide.keepsForMachine({})
+            and not EqXcHide.keepsForMachine({ eqXcMode = H }) and not EqXcHide.keepsForMachine({ eqXcMode = G }))
+        onDeck = false
+        check("nothing on the deck: the drop wall hides as usual", not EqXcHide.keepsForMachine({ eqXcMode = S }))
+        EqPlinths = saved
+    end
     for _, name in ipairs({ "xcLogPile", "xcLogPileSmall", "xcDropWall08", "xcDropWall12", "xcDropWall16",
         "xcCornerPlank", "xcCornerLog", "xcRollTopQuarter", "xcRollTopHalf", "xcTable", "xcBigLog" }) do
         local text = io.open("placeables/xcJumps/" .. name .. ".xml"):read("*a")
