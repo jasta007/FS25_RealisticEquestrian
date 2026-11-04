@@ -64,9 +64,6 @@ EqConstants.AGE_GROUNDWORK = 24
 -- YOUNG_BAR_SPEED times as fast (James 2026-11-04: light work only).
 EqConstants.AGE_MIN_RIDE = 12
 EqConstants.YOUNG_BAR_SPEED = 2
--- Horses younger than this are drawn at FOAL_SCALE of full size in their pen (EqFoals).
-EqConstants.FOAL_VISUAL_AGE = 6
-EqConstants.FOAL_SCALE = 0.6
 EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192

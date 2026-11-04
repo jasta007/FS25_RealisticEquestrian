@@ -6642,12 +6642,8 @@ end)()
         and EqSpectators.EXPLORE == nil and EqSpectators.exploreStep == nil and EqSpectators.repose == nil)
 end)()
 
--- Foals: small in the pen under 6 months, no riding under 1 year
+-- Foals: no riding under 1 year
 ;(function()
-    check("newborn foal drawn small", EqFoals.scaleFor(0) == EqConstants.FOAL_SCALE)
-    check("5 month foal still small", EqFoals.scaleFor(5) == EqConstants.FOAL_SCALE)
-    check("full size at 6 months", EqFoals.scaleFor(6) == 1 and EqFoals.scaleFor(120) == 1)
-    check("unknown age full size", EqFoals.scaleFor(nil) == 1 and EqFoals.scaleFor(-1) == 1)
     local function horse(age) return { age = age, isHorse = function() return true end } end
     check("11 months too young to ride", EqFoals.isTooYoungToRide(horse(11)))
     check("12 months can be ridden", not EqFoals.isTooYoungToRide(horse(12)))
@@ -6655,23 +6651,6 @@ end)()
     check("a calf is not a foal", not EqFoals.isTooYoungToRide({ age = 1, isHorse = function() return false end })
         and not EqFoals.isTooYoungToRide(nil))
 
-    local savedRoot, savedScale = getAnimalRootNode, setScale
-    local scales = {}
-    getAnimalRootNode = function(engineId, animalId) return engineId * 100 + animalId end
-    setScale = function(node, x, y, z) scales[node] = { x, y, z } end
-    local calf = { age = 1, isHorse = function() return false end }
-    EqFoals.apply({ husbandryIds = { 7, 8 }, animalIdToCluster = {
-        { [1] = horse(2), [2] = horse(40), [3] = calf },
-        { [5] = horse(5) },
-    } })
-    check("foal in pen scaled", scales[701] ~= nil and scales[701][2] == EqConstants.FOAL_SCALE)
-    check("grown horse set back to full size", scales[702] ~= nil and scales[702][1] == 1)
-    check("calf left alone", scales[703] == nil)
-    check("second engine husbandry used", scales[805] ~= nil and scales[805][3] == EqConstants.FOAL_SCALE)
-    EqFoals.apply({})
-    EqFoals.apply(nil)
-    check("husbandry without RLRM fields left alone", true)
-    getAnimalRootNode, setScale = savedRoot, savedScale
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
