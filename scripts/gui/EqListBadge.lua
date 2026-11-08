@@ -7,6 +7,10 @@
     rows through, and fills the row's descriptor badge, the same corner RLRM uses for its marks.
     The badge sits bottom right by default, where RLRM's status icons (pregnant, sick) also go,
     so it is moved to the card's top right corner, above the checkbox, a little smaller.
+    A horse whose riding bar is full today (no training left) also gets a Zzz icon in RLRM's
+    status icon row (RLAnimalQuery.resolveStatusIcons), at the right end, next to the
+    pregnant/sick icons. The row has six slots; a horse uses at most four of RLRM's (three
+    disease, one fertility; no production icons), so the Zzz never pushes one off.
     No RLRM file changes.
 ]]
 
@@ -20,6 +24,7 @@ local Log = EqLog
 function EqListBadge.apply(row, item)
     local animal = item ~= nil and item.cluster or nil
     if animal == nil or animal.isHorse == nil or not animal:isHorse() then return end
+    row.eqTired = EqListBadge.isTired(animal)
     if not EqCompetitionManager.awaitingDelivery(animal) then
         -- In quarantine abroad: it isn't in the pasture, so say where it is.
         if EqQuarantine.isIn(EqRegistry.getById(EqRegistry.getId(animal) or "")) then
@@ -38,6 +43,31 @@ function EqListBadge.apply(row, item)
     -- Ours beats RLRM's mark text: a delivery has a deadline, a mark does not.
     row.descriptorVisible = true
     row.descriptorText = g_i18n:getText("eq_ui_status_awaitingDelivery")
+end
+
+
+-- The Zzz status icon: our atlas slice (EqEventsFrame.registerIcons) and a soft lavender blue,
+-- in the range of RLRM's own status colours. Selected cards turn it dark, as RLRM does.
+EqListBadge.TIRED_ICON = { slice = "eqMenu.zzz", r = 0.62, g = 0.68, b = 0.95 }
+
+
+--- @param animal table RLRM Animal (a horse)
+--- @return boolean true once its riding bar is full: no more training today (the same test
+--- EqTrainingHooks uses for "worn"); the game empties the bar at the day change
+function EqListBadge.isTired(animal)
+    return (tonumber(animal.riding) or 0) >= 100
+end
+
+
+--- RLRM's icons for a row, with the Zzz added at the right end for a tired horse.
+--- @param icons table from RLAnimalQuery.resolveStatusIcons
+--- @param row table the formatted row
+--- @return table icons
+function EqListBadge.addStatusIcons(icons, row)
+    if type(icons) == "table" and type(row) == "table" and row.eqTired then
+        icons[#icons + 1] = EqListBadge.TIRED_ICON
+    end
+    return icons
 end
 
 
@@ -89,6 +119,15 @@ function EqListBadge.install(guarded)
         return row
     end
     Log:debug("EqListBadge: hooked RLAnimalQuery.formatAnimalRow")
+
+    if type(query.resolveStatusIcons) == "function" then
+        local resolve = query.resolveStatusIcons
+        query.resolveStatusIcons = function(row, ...)
+            local icons = resolve(row, ...)
+            guarded("list tired icon", function() icons = EqListBadge.addStatusIcons(icons, row) end)
+            return icons
+        end
+    end
 
     for _, name in ipairs(EqListBadge.FRAMES) do
         local frame = EqRLRM.get(name)
