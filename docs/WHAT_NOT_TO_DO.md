@@ -7,7 +7,8 @@ Easy mistakes on this project, each learned the hard way. Add to it when a new o
 - **No bare `pcall` or `xpcall`.** GIANTS' TestRunner flags every one as hiding errors. Use
   `EqLog.try(context, fn, ...)` (logs a warning), `EqLog.guard` (logs an error) or
   `EqLog.finally(restore, fn, ...)` (restores, then raises the error again). They live in
-  `scripts/core/EqLog.lua`, the only file allowed a pcall.
+  `scripts/core/EqLog.lua`, which protects calls with a coroutine (`coroutine.resume` catches
+  errors like pcall) so the mod has no pcall at all. Don't add one back, even there.
 - **Don't name a function `load`, `loadstring`, `loadfile` or `dofile`**, even a local one. The
   TestRunner reads the call as dynamic code loading. `EqThing.load` as a table field is fine.
 - **Don't use the `debug` library** (`debug.traceback` and friends). The game may strip it and the
@@ -36,7 +37,7 @@ Easy mistakes on this project, each learned the hard way. Add to it when a new o
 
 ## modDesc
 
-- **descVersion must match the game's** (115 as of TestRunner 0.9.23).
+- **descVersion must match the game's** (116 as of the November 2026 TestRunner; 115 is now rejected).
 - **Don't add title translations that just repeat the English title.** Only translate when the
   title actually changes.
 - **Every description needs a short changelog** for the current version, in each language.

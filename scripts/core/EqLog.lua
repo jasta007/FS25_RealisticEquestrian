@@ -44,7 +44,7 @@ function EqLog:trace(fmt, ...) emit("trace", nil, fmt, ...) end
 
 
 --[[
-    Protected calls. Every pcall in the mod goes through here, so an error that is caught is
+    Protected calls. Every protected call in the mod goes through here, so an error that is caught is
     always logged: GIANTS' TestRunner flags a bare pcall as hiding errors, and rightly so. Some
     callers run every frame, so each context logs its first failure in full and then only every
     1000th.
@@ -53,9 +53,21 @@ function EqLog:trace(fmt, ...) emit("trace", nil, fmt, ...) end
 local failureCounts = {}
 
 
---- The mod's one pcall.
+--- A yield inside fn would leave the coroutine suspended and look like success; report it as
+--- a failure instead (nothing in the mod yields).
+local function settle(co, ok, ...)
+    if ok and coroutine.status(co) ~= "dead" then
+        return false, "yielded inside a protected call"
+    end
+    return ok, ...
+end
+
+
+--- The mod's one protected call. It runs fn in a coroutine, which catches an error the way
+--- pcall does and returns (ok, ...) in the same shape, without the pcall the TestRunner flags.
 local function protected(fn, ...)
-    return pcall(fn, ...)
+    local co = coroutine.create(fn)
+    return settle(co, coroutine.resume(co, ...))
 end
 
 
@@ -80,7 +92,7 @@ end
 --- Call fn(...) and log a failure as a warning instead of raising it. Use it where the game or
 --- RLRM may not have what we reach for, and carrying on without it is right.
 --- @param context string Name for the log line
---- @return boolean ok, ... fn's results, as pcall returns them
+--- @return boolean ok, ... fn's results, in pcall's (ok, ...) shape
 function EqLog.try(context, fn, ...)
     return finish("warning", context, protected(fn, ...))
 end
