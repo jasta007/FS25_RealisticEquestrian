@@ -175,7 +175,7 @@ check("selective breeding never gets three stats to 95+", worstViolation <= 2, "
     end
     local enList, en = texts("translations/translation_en.xml")
     for _, name in ipairs(enList) do check("English text " .. name .. " appears once", en[name] ~= false) end
-    for _, language in ipairs({ "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
+    for _, language in ipairs({ "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct", "uk" }) do
         local _, other = texts("translations/translation_" .. language .. ".xml")
         for _, name in ipairs(enList) do
             check(language .. " has " .. name, type(other[name]) == "string")
@@ -6528,7 +6528,7 @@ end)()
     check("help keys: a token becomes its key, an unknown one its bare name", filled == "Press Y or NOPE.", filled)
     local modDesc = io.open("modDesc.xml"):read("*a")
     local tokens = 0
-    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct" }) do
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct", "uk" }) do
         local text = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
         for action in text:gmatch("%[%[([%w_]+)%]%]") do
             tokens = tokens + 1
