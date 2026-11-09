@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="116">
     <author>Jasta007</author>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -15,9 +15,8 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 1.0.0.1:
-- Zzz icon on horse cards once a horse's riding bar is full for the day
-- Updated for the current FS25 mod format (descVersion 116)
+Changelog 1.0.0.2:
+- Ukrainian translation
 
 Made by Jasta007.]]>
         </en>
@@ -30,9 +29,8 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Changelog 1.0.0.1:
-- Zzz-Symbol auf den Pferdekarten, sobald der Reitbalken eines Pferdes für heute voll ist
-- Auf das aktuelle FS25-Modformat aktualisiert (descVersion 116)
+Changelog 1.0.0.2:
+- Ukrainische Übersetzung
 
 Von Jasta007.]]>
         </de>
@@ -45,9 +43,8 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changelog 1.0.0.1 :
-- Icône Zzz sur les fiches des chevaux quand leur barre de monte est pleine pour la journée
-- Mis à jour pour le format de mod FS25 actuel (descVersion 116)
+Changelog 1.0.0.2 :
+- Traduction ukrainienne
 
 Par Jasta007.]]>
         </fr>
@@ -60,9 +57,8 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Changelog 1.0.0.1:
-- Icono Zzz en las fichas de los caballos cuando su barra de monta está llena por hoy
-- Actualizado al formato de mod actual de FS25 (descVersion 116)
+Changelog 1.0.0.2:
+- Traducción al ucraniano
 
 Por Jasta007.]]>
         </es>

@@ -1,0 +1,1238 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Ukrainian texts. Machine-assisted first draft: please have a native speaker check it. Keys and
+     their %s/%d/%.0f placeholders must stay in the same order as translation_en.xml. -->
+<l10n>
+    <texts>
+        <text name="eq_stat_stamina" text="Витривалість"/>
+        <text name="eq_stat_speed" text="Швидкість"/>
+        <text name="eq_stat_agility" text="Спритність"/>
+        <text name="eq_stat_temperament" text="Темперамент"/>
+        <text name="eq_potential_stamina" text="Потенціал витривалості"/>
+        <text name="eq_potential_speed" text="Потенціал швидкості"/>
+        <text name="eq_potential_agility" text="Потенціал спритності"/>
+        <text name="eq_potential_temperament" text="Потенціал темпераменту"/>
+        <text name="eq_stat_short_stamina" text="Вит"/>
+        <text name="eq_stat_short_speed" text="Шв"/>
+        <text name="eq_stat_short_agility" text="Спр"/>
+        <text name="eq_stat_short_temperament" text="Тем"/>
+        <text name="eq_train_viewAction" text="Вигляд тренування: %s"/>
+        <text name="eq_train_view_freestyle" text="Вільний стиль"/>
+        <text name="eq_help_temperament_2" text="Темперамент найкраще тренується під час виїздки в манежі для виїздки, але тренувати його можна будь-де, чергуючи алюри, повороти, бокові рухи та інші елементи. Утримуйте [[EQ_LATERAL]] для бокових рухів і [[EQ_COLLECT]], щоб зібрати коня для піаффе чи пасажу. Кожен новий елемент підвищує комбо, до x5. На пошук наступного елемента є обмежений час, а зіткнення з перешкодою чи перехід у галоп обриває комбо."/>
+        <text name="eq_help_temperament_1" text="Темперамент дає змогу коню швидше повертати, швидше змінювати алюр і менше стояти після зіткнення з перешкодою. Найбільше він важить у виїздці: кінь із високим Темпераментом точніше йде лінією виїздки та краще заходить на стрибки, а кінь із низьким Темпераментом частіше знімається зі змагань або отримує штрафні очки. Морква та інші ласощі посилюють тренування Темпераменту."/>
+        <text name="eq_help_temperament_title" text="Тренування: Темперамент"/>
+        <text name="eq_help_agility_2" text="Кожна подолана перешкода підвищує комбо, від x2 до x5, тож кожен стрибок тренує більше. На наступну перешкоду є 10 секунд: зіткнення з перешкодою забирає час, а зупинка швидко обриває комбо. Спритність тренується швидше на манежі для конкуру та на ваших власних маршрутах: натисніть [[EQ_COURSE_RECORD]] під час їзди, щоб створити маршрут."/>
+        <text name="eq_help_agility_1" text="Спритність дає змогу коню стрибати вище й повертати крутіше, і найбільше важить у конкурі та виїздці. Тренуйте її, долаючи перешкоди одну за одною, не зачіпаючи огорож і не зупиняючись. Підходить будь-яка перешкода, але справжні кінні перешкоди тренують краще. Ячмінь у кормі посилює тренування Спритності."/>
+        <text name="eq_help_agility_title" text="Тренування: Спритність"/>
+        <text name="eq_pop_routineStart" text="Програму розпочато"/>
+        <text name="eq_pop_routineFault" text="Помилка %d/%d"/>
+        <text name="eq_pop_routineTest" text="Тест завершено!"/>
+        <text name="eq_pop_routineLost" text="Виїздку скасовано"/>
+        <text name="eq_pop_comboLost" text="Комбо втрачено"/>
+        <text name="eq_pop_knock" text="-%d с!"/>
+        <text name="eq_pop_clear" text="Чисто!"/>
+        <text name="eq_move_right" text="Поворот праворуч!"/>
+        <text name="eq_move_left" text="Поворот ліворуч!"/>
+        <text name="eq_move_reverse" text="Назад!"/>
+        <text name="eq_move_halt" text="Стоп!"/>
+        <text name="eq_move_trot" text="Рись!"/>
+        <text name="eq_move_walk" text="Крок!"/>
+        <text name="eq_move_spinLeft" text="Поворот ліворуч на місці!"/>
+        <text name="eq_move_spinRight" text="Поворот праворуч на місці!"/>
+        <text name="eq_shop_dressageArena15x30" text="Манеж для виїздки 15 x 30 м"/>
+        <text name="eq_shop_dressageArena20x40" text="Манеж для виїздки 20 x 40 м"/>
+        <text name="eq_shop_dressageArena20x60" text="Манеж для виїздки 20 x 60 м"/>
+        <text name="eq_shop_dressageArena_function" text="Манеж для виїздки з усіма літерами на місцях. Їздіть у ньому верхи, щоб тренувати темперамент між маркерами."/>
+        <text name="eq_shop_courseFlags" text="Прапорці для кросу"/>
+        <text name="eq_shop_courseFlags_function" text="Позначте будь-яку перешкоду як перешкоду для кросу. Перемикайте сегменти клавішами N/M: поставте білий прапорець на одному кінці перешкоди, проведіть золоту лінію по землі до іншого кінця, потім поставте червоний прапорець. Лінію видно лише в режимі будівництва; стрибати треба через саму перешкоду."/>
+        <text name="eq_shop_xcLogPileSmall" text="Купа колод (мала)"/>
+        <text name="eq_shop_xcLogPile" text="Купа колод"/>
+        <text name="eq_shop_showJumpUpright" text="Конкур: Вертикаль"/>
+        <text name="eq_shop_showJumpOxer" text="Конкур: Оксер"/>
+        <text name="eq_shop_showJumpWall" text="Конкур: Стінка спонсора"/>
+        <text name="eq_shop_showJumpWall_function" text="Показова стінка з логотипом вашого спонсора. Верхні блоки падають, коли кінь їх зачіпає, і повертаються на місце після проїзду."/>
+        <text name="eq_shop_showJumpCrossrail" text="Конкур: Хрест"/>
+        <text name="eq_shop_showJumpAscendingOxer" text="Конкур: Висхідний оксер"/>
+        <text name="eq_shop_showJumpTripleBar" text="Конкур: Тріпл-бар"/>
+        <text name="eq_shop_showJumpHogsback" text="Конкур: Хогсбек"/>
+        <text name="eq_shop_showJumpFan2" text="Конкур: Віяло з 2 жердин"/>
+        <text name="eq_shop_showJumpFan3" text="Конкур: Віяло з 3 жердин"/>
+        <text name="eq_shop_showJumpLiverpool" text="Конкур: Ліверпуль"/>
+        <text name="eq_shop_showJumpCavaletti" text="Конкур: Кавалетті"/>
+        <text name="eq_config_poleColour" text="Колір жердин"/>
+        <text name="eq_config_wingColour" text="Колір стійок"/>
+        <text name="eq_colour_white" text="Білий"/>
+        <text name="eq_colour_cream" text="Кремовий"/>
+        <text name="eq_colour_red" text="Червоний"/>
+        <text name="eq_colour_burgundy" text="Бордовий"/>
+        <text name="eq_colour_orange" text="Помаранчевий"/>
+        <text name="eq_colour_yellow" text="Жовтий"/>
+        <text name="eq_colour_lime" text="Лаймовий"/>
+        <text name="eq_colour_green" text="Зелений"/>
+        <text name="eq_colour_darkGreen" text="Темно-зелений"/>
+        <text name="eq_colour_skyBlue" text="Блакитний"/>
+        <text name="eq_colour_blue" text="Синій"/>
+        <text name="eq_colour_navy" text="Темно-синій"/>
+        <text name="eq_colour_purple" text="Фіолетовий"/>
+        <text name="eq_colour_pink" text="Рожевий"/>
+        <text name="eq_colour_grey" text="Сірий"/>
+        <text name="eq_colour_black" text="Чорний"/>
+        <text name="eq_shop_showJump_function" text="Перешкода для конкуру, жердини якої падають, коли кінь їх зачіпає, і повертаються на місце після проїзду або коли ви від'їжджаєте."/>
+        <text name="eq_shop_xcDropWall08" text="Стінка зі спуском (0,8 м)"/>
+        <text name="eq_shop_xcDropWall12" text="Стінка зі спуском (1,2 м)"/>
+        <text name="eq_shop_xcDropWall16" text="Стінка зі спуском (1,6 м)"/>
+        <text name="eq_shop_xcCornerPlank" text="Кут (дошки)"/>
+        <text name="eq_shop_xcCornerLog" text="Кут (колоди)"/>
+        <text name="eq_shop_xcRollTopQuarter" text="Рол-топ (чверть)"/>
+        <text name="eq_shop_xcRollTopHalf" text="Рол-топ (половина)"/>
+        <text name="eq_shop_xcTable" text="Стіл"/>
+        <text name="eq_shop_xcBigLog" text="Велика колода"/>
+        <text name="eq_shop_xcGateArch" text="Арка старту/фінішу"/>
+        <text name="eq_shop_xcGateSimple" text="Прохідні ворота"/>
+        <text name="eq_shop_xcGate_function" text="Ворота, крізь які проїжджають, а не перестрибують: досить широкі й високі для будь-якого коня, з логотипом вашого спонсора."/>
+        <text name="eq_shop_xcRope" text="Мотузкова розмітка"/>
+        <text name="eq_shop_xcRope_function" text="Легка мотузка для розмітки маршруту, без зіткнень. Оберіть просту мотузку, мотузку з невеликою табличкою спонсора (таблички додають зовсім трохи брендування) або мотузку з ложею для глядачів з одного боку, де стоять глядачі на ваших змаганнях."/>
+        <text name="eq_shop_plinthDrive" text="Проїзний постамент"/>
+        <text name="eq_shop_plinthRamp" text="Демонстраційна рампа"/>
+        <text name="eq_shop_plinthRampLarge" text="Велика демонстраційна рампа"/>
+        <text name="eq_shop_plinthProductRamp" text="Рампа для стрибка техніки"/>
+        <text name="eq_shop_plinth_function" text="Поставте на нього машину бренду вашого спонсора для додаткового брендування."/>
+        <text name="eq_shop_productJump_function" text="Поставте дві рампи одна навпроти одної приблизно за 5 м: машина між ними теж рахується, або стрибайте через них як через перешкоду для кросу."/>
+        <text name="eq_shop_plinthTurntable" text="Поворотний диск"/>
+        <text name="eq_shop_turntable_function" text="Диск повільно обертається: залиште на ньому машину, і вона обертатиметься разом із диском, з усім причепленим. Машина спонсора на ньому рахується більше."/>
+        <text name="eq_shop_sponsorDiscount" text="Знижка спонсора: %d%%"/>
+        <text name="eq_plinth_inPlace" text="Техніка спонсора на місці!"/>
+        <text name="eq_plinth_wrongBrand" text="Це не техніка вашого спонсора! Виставлені машини конкурентів зменшать ваш спонсорський дохід!"/>
+        <text name="eq_plinth_noSponsor" text="Спонсора немає: техніка спонсора, виставлена тут, рахувалася б до вашого брендування."/>
+        <text name="eq_plinth_penalty" text="Машин конкурентів на ваших спонсорських постаментах: %d. Від спонсорської виплати відраховано %s."/>
+        <text name="eq_shop_lizardPlinth" text="Постамент Lizard"/>
+        <text name="eq_shop_lizardPlinth_function" text="Особливий постамент Lizard для змагань, які він спонсорує. Збудуйте його, доставляючи матеріали до тригерів спереду; машина Lizard на його майданчику для колод рахується більше. Після змагань він руйнується."/>
+        <text name="eq_shop_lizardPlinth_stone" text="Потрібно 1200 л каміння, 10 000 л деревини та 1000 л дошок."/>
+        <text name="eq_shop_lizardPlinth_woodchips" text="Потрібно 1000 л тріски, 10 000 л деревини та 1000 л дошок."/>
+        <text name="eq_shop_lizardPlinth_straw" text="Потрібно 10 000 л соломи, 10 000 л деревини та 1000 л дошок."/>
+        <text name="eq_lizard_title" text="Спонсорська пропозиція: %s"/>
+        <text name="eq_rlrm_missing" text="Realistic Equestrian не знаходить Realistic Livestock (версія Ritter), тому вимкнено. Будь ласка, встановіть останню версію Realistic Livestock."/>
+        <text name="eq_rlrm_incompatible" text="Ваша версія Realistic Livestock %s застара для Realistic Equestrian, тому Realistic Equestrian вимкнено. Будь ласка, встановіть останню версію Realistic Livestock (версія Ritter)."/>
+        <text name="eq_rlrm_old" text="Ваша версія Realistic Livestock %s старша, ніж потрібно Realistic Equestrian (%s або новіша), тому деякі функції можуть не працювати. Будь ласка, встановіть останню версію Realistic Livestock (версія Ritter)."/>
+        <text name="eq_lizard_offer" text="%s пропонують спонсорувати ваші змагання «%s» (%s) і позичать вам одну зі своїх машин на місяць змагань. Вони просять брендування на рівні %s до кінця змагань і збудований на вашому майданчику постамент Lizard: %s. Якщо все це буде на місці, коли надійдуть результати, вони заплатять %s. Якщо ні, вони не заплатять нічого, і штрафу немає. Після змагань постамент руйнується."/>
+        <text name="eq_lizard_accept" text="Прийняти"/>
+        <text name="eq_lizard_decline" text="Відхилити"/>
+        <text name="eq_lizard_offerNote" text="%s пропонують спонсорувати ваші змагання «%s»."/>
+        <text name="eq_lizard_accepted" text="Угоду з %s прийнято! Купіть постамент Lizard у будівництві (Будівлі, Споруди) і збудуйте його з матеріалів: %s, колоди та дошки."/>
+        <text name="eq_lizard_stepAside" text="%s поступається: тепер ваші змагання спонсорує %s."/>
+        <text name="eq_lizard_paid" text="%s заплатили %s за спонсорство ваших змагань."/>
+        <text name="eq_lizard_unpaid_plinth" text="%s нічого не платять: постамент Lizard не добудовано. Без образ."/>
+        <text name="eq_lizard_unpaid_branding" text="%s нічого не платять: брендування було недостатнім. Без образ."/>
+        <text name="eq_lizard_unpaid_rating" text="%s нічого не платять за ці змагання."/>
+        <text name="eq_config_corner" text="Кут"/>
+        <text name="eq_config_cornerRight" text="Вістрям праворуч"/>
+        <text name="eq_config_cornerLeft" text="Вістрям ліворуч"/>
+        <text name="eq_shop_xcDrop_function" text="Дощана стінка для спуску на кросі. Насипте вал, поставте її зверху краєм на бровці, і її бічні стінки сховають крутий схил."/>
+        <text name="eq_shop_xcJump_function" text="Перешкода для кросу. Її червоний і білий прапорці показують, де стрибати."/>
+        <text name="eq_shop_xcHidden_function" text="Зникає поза будівництвом, редагуванням маршруту та проїздами, якщо не куплено з параметром «Зникає: Ні»."/>
+        <text name="eq_shop_showJumpHidden_function" text="Якщо куплено з параметром «Зникає: Так», зникає поза будівництвом, редагуванням маршруту та проїздами."/>
+        <text name="eq_shop_xcFlagsHidden_function" text="Приховано поза будівництвом, редагуванням маршруту та проїздами."/>
+        <text name="eq_config_disappearing" text="Зникає"/>
+        <text name="eq_dressage_go" text="%s: %s"/>
+        <text name="eq_dressage_gait_walk" text="Крок"/>
+        <text name="eq_dressage_gait_trot" text="Рись"/>
+        <text name="eq_dressage_gait_canter" text="Галоп"/>
+        <text name="eq_dressage_change" text="Зміна: %s"/>
+        <text name="eq_dressage_gaitChange" text="Зміна алюру"/>
+        <text name="eq_dressage_gaitChangeAt" text="Зміна алюру в %s"/>
+        <text name="eq_dressage_now" text="%s!"/>
+        <text name="eq_dressage_flying" text="Зміна ноги в повітрі: %s"/>
+        <text name="eq_dressage_begin" text="Рушайте до %s, щоб почати програму виїздки"/>
+        <text name="eq_dressage_enter" text="Вперед! В'їзд у %s"/>
+        <text name="eq_dressage_reinBack" text="Осаджування!"/>
+        <text name="eq_dressage_backwards" text="Рух назад"/>
+        <text name="eq_dressage_circle_left" text="Вольт ліворуч"/>
+        <text name="eq_dressage_circle_right" text="Вольт праворуч"/>
+        <text name="eq_dressage_out" text="Поверніться на манеж!"/>
+        <text name="eq_dressage_next" text="Далі: %s"/>
+        <text name="eq_dressage_stand" text="Стояти"/>
+        <text name="eq_dressage_marker" text="Маркер %s"/>
+        <text name="eq_fig_enter" text="В'їзд у %s, зупинка в %s"/>
+        <text name="eq_fig_trackLeft" text="Рухайтеся далі, ліворуч по стіні в %s"/>
+        <text name="eq_fig_trackRight" text="Рухайтеся далі, праворуч по стіні в %s"/>
+        <text name="eq_fig_circle" text="Вольт %d м у %s"/>
+        <text name="eq_fig_longDiagonal" text="Зміна напрямку %s-X-%s"/>
+        <text name="eq_fig_shortDiagonal" text="Зміна напрямку %s-%s"/>
+        <text name="eq_fig_across" text="Через манеж %s-%s"/>
+        <text name="eq_fig_halfVolte" text="Піввольт у %s"/>
+        <text name="eq_fig_centreLeft" text="Середня лінія в %s, ліворуч по стіні в %s"/>
+        <text name="eq_fig_centreRight" text="Середня лінія в %s, праворуч по стіні в %s"/>
+        <text name="eq_fig_serpentine" text="Серпантин, %d петлі, %s-%s"/>
+        <text name="eq_fig_shallowLoop" text="Петля %d м %s-%s-%s"/>
+        <text name="eq_fig_throughCircle" text="Зміна напрямку через коло в %s"/>
+        <text name="eq_fig_eight" text="Половина вісімки %s-X-%s"/>
+        <text name="eq_fig_centreToX" text="Середня лінія в %s, у X поворот до %s"/>
+        <text name="eq_fig_centreFromX" text="У %s поворот до X, середня лінія до %s"/>
+        <text name="eq_fig_halfPassCentre" text="Траверс-аппуае від %s до середньої лінії, далі до %s"/>
+        <text name="eq_fig_legYieldCentre" text="Середня лінія в %s, уступка шенкелю до %s"/>
+        <text name="eq_fig_passageRail" text="Пасаж %s-%s"/>
+        <text name="eq_fig_passageDiagonal" text="Пасаж по діагоналі %s-%s"/>
+        <text name="eq_dressage_passage" text="Пасаж: Ctrl + W"/>
+        <text name="eq_dressage_passageAt" text="Пасаж %s-%s: Ctrl + W"/>
+        <text name="eq_now_piaffe" text="Піаффе"/>
+        <text name="eq_now_pirouette" text="Піруєт"/>
+        <text name="eq_now_collected" text="Збраний"/>
+        <text name="eq_now_collectedCanter" text="Збраний галоп"/>
+        <text name="eq_now_passage" text="Пасаж"/>
+        <text name="eq_now_legYield" text="Уступка шенкелю"/>
+        <text name="eq_now_halfPass" text="Траверс-аппуае"/>
+        <text name="eq_now_shoulderIn" text="Плече всередину"/>
+        <text name="eq_now_renvers" text="Ренверс (крупом назовні)"/>
+        <text name="eq_now_travers" text="Траверс (крупом всередину)"/>
+        <text name="eq_now_legYieldRail" text="Уступка шенкелю вздовж стіни"/>
+        <text name="eq_fig_legYield" text="Уступка шенкелю від %s і назад"/>
+        <text name="eq_fig_halfPass" text="Траверс-аппуае від %s і назад"/>
+        <text name="eq_fig_shoulderIn" text="Плече всередину %s-%s"/>
+        <text name="eq_fig_legYieldRail" text="Уступка шенкелю вздовж стіни %s-%s"/>
+        <text name="eq_fig_travers" text="Траверс (крупом всередину) %s-%s"/>
+        <text name="eq_fig_renvers" text="Ренверс (крупом назовні) %s-%s"/>
+        <text name="eq_lat_legYield" text="Уступка шенкелю: зміщення %s"/>
+        <text name="eq_lat_halfPass" text="Траверс-аппуае: зміщення %s, згин %s"/>
+        <text name="eq_lat_shoulderIn" text="Плече всередину: зміщення %s, згин %s"/>
+        <text name="eq_lat_legYieldRail" text="Уступка шенкелю вздовж стіни: зміщення %s"/>
+        <text name="eq_lat_travers" text="Траверс: зміщення %s, згин %s"/>
+        <text name="eq_lat_renvers" text="Ренверс: зміщення %s, згин %s"/>
+        <text name="eq_lat_left" text="ліворуч"/>
+        <text name="eq_lat_right" text="праворуч"/>
+        <text name="eq_lat_keys" text="Утримуйте праву кнопку миші: кермуйте мишею, A/D зміщують убік, Shift тримає напрямок, а миша згинає голову."/>
+        <text name="eq_fig_final" text="Середня лінія в %s, зупинка в %s"/>
+        <text name="eq_dressage_haltAt" text="Зупинка в %s"/>
+        <text name="eq_dressage_piaffeAt" text="Піаффе (%s) у %s: утримуйте Ctrl"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Піруєт ліворуч (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Піруєт праворуч (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_piaffe" text="Піаффе (%s)! Утримуйте Ctrl"/>
+        <text name="eq_dressage_pirouetteLeft" text="Піруєт ліворуч (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Піруєт праворуч (%s)! Ctrl + D"/>
+        <text name="eq_dressage_line" text="Поверніться на лінію!"/>
+        <text name="eq_dressage_mark" text="Остання оцінка: %s"/>
+        <text name="eq_pop_routineError" text="Помилка маршруту %d/%d"/>
+        <text name="eq_pop_routineScore" text="Тест завершено: %s%%"/>
+        <text name="eq_pop_testComplete" text="Тест завершено"/>
+        <text name="eq_train_routine_none" text="Їдьте на манеж для виїздки, щоб почати тест"/>
+        <text name="eq_train_routine" text="Програма x%d"/>
+        <text name="eq_train_combo_none" text="Подолайте перешкоду, щоб почати комбо"/>
+        <text name="eq_train_combo" text="Комбо стрибків x%d"/>
+        <text name="eq_train_temperCombo" text="Комбо темпераменту x%d"/>
+        <text name="eq_train_temperNone" text="Змініть алюр, зупиніться або поверніть, щоб почати комбо"/>
+        <text name="eq_train_temperStale" text="Нещодавно виконано: %s"/>
+        <text name="eq_train_temperRecent" text="Нещодавно"/>
+        <text name="eq_temper_halt" text="Стоїть на місці"/>
+        <text name="eq_temper_gait_walk" text="Крок"/>
+        <text name="eq_temper_gait_trot" text="Рись"/>
+        <text name="eq_temper_gait_canter" text="Галоп"/>
+        <text name="eq_temper_gait_reverse" text="Рух назад"/>
+        <text name="eq_temper_turn_left" text="Великий поворот ліворуч (%s)"/>
+        <text name="eq_temper_turn_right" text="Великий поворот праворуч (%s)"/>
+        <text name="eq_train_view_temperament" text="Темперамент"/>
+        <text name="eq_train_view_agility" text="Спритність"/>
+        <text name="eq_help_freestyle_2" text="Спритність тренується стрибками через перешкоди одну за одною, а Темперамент - зміною алюрів і рухів. Витривалість і Швидкість тренуються тривалим кар'єром і спринтами. Натисніть [[EQ_TRAINING_VIEW]], щоб дізнатися більше про кожну мінігру й тренуватися якомога ефективніше."/>
+        <text name="eq_help_freestyle_3" text="Не обов'язково їздити на конях щодня, щоб їх тренувати. Найміть тренерів і конюхів, щоб вони щодня давали коням цільові або загальні тренування; коні також набираються досвіду на змаганнях. Найкраще тренуватися на власних маршрутах для конкуру чи кросу (натисніть [[EQ_COURSE_RECORD]] або [[EQ_COURSE_RECORD_XC]], щоб створити маршрут) або відпрацьовуючи програму виїздки в манежі для виїздки."/>
+        <text name="eq_form_title" text="Пікова форма"/>
+        <text name="eq_help_freestyle_4" text="Ваші власні тренування також дають коням тимчасовий бонус Пікової форми на всіх змаганнях цього місяця. Він більший за звичайні прирости від тренувань і може навіть підняти коня понад його потенціал, але згорає наприкінці місяця й не накопичується з дня на день: рахується лише ваше найкраще тренування."/>
+        <text name="eq_help_freestyle_1" text="Кожен кінь має чотири характеристики, які можна тренувати їздою верхи, участю в змаганнях і силами вашого персоналу. Усі характеристики тренуються одночасно, але більше про кожну можна дізнатися, перемикаючи вигляд тренування клавішею [[EQ_TRAINING_VIEW]]. Коні можуть тренуватися лише обмежено щодня, що показує відсоток Щоденного тренування."/>
+        <text name="eq_help_freestyle_title" text="Тренування: Вільний стиль"/>
+        <text name="eq_welcome_ride_title" text="Тренування"/>
+        <text name="eq_welcome_welcome_1_title" text="Ласкаво просимо до Realistic Equestrian"/>
+        <text name="eq_welcome_welcome_1" text="Тепер ваші коні мають навички, які можна тренувати, і змагання, у яких можна брати участь. Усе це є в меню Realistic Livestock, яке можна відкрити клавішею R у меню Тварини або Shift+O будь-де."/>
+        <text name="eq_welcome_menu_1_title" text="Realistic Equestrian"/>
+        <text name="eq_welcome_menu_1" text="Відкрийте вкладку Інформація (свиня з [i]), щоб дізнатися про своїх коней, вкладку Змагання (розетка), щоб записати їх на змагання, і вкладку Кінний персонал (двоє людей), щоб найняти конюхів і тренерів. Власні налаштування Realistic Equestrian є на вкладці Налаштування (шестерня)."/>
+        <text name="eq_welcome_staff_hire_title" text="Кінний персонал"/>
+        <text name="eq_welcome_staff_hire" text="Наймайте персонал на вкладці Найм, щоб він щодня доглядав за кіньми. Конюхи тренують усі чотири характеристики, чистять коней і повертають утікачів додому. Тренери зосереджуються на двох характеристиках і готують коней до змагань. Ветеринар означає менше травм і дешевше лікування, а брокер вибиває кращі ціни в торговця. Зарплата виплачується щодня, а кандидати приходять і йдуть, тож заглядайте пошукати кращих. Кожен використовує всі свої навички, навіть поза основними обов'язками, тож щасливий універсал допомагає в усьому."/>
+        <text name="eq_welcome_staff_works_title" text="З ким вони працюють"/>
+        <text name="eq_welcome_staff_works" text="На вкладці Ваш персонал оберіть стайні, де працює конюх чи тренер, а потім ролі або окремих коней. Персонал найефективніший, коли кожен працює лише з кількома кіньми; іншим кіньми дістається зовсім трохи їхнього часу. Вимкніть тих, хто вам не потрібен, за половину зарплати: зміна набуде чинності о 1:00 наступного дня."/>
+        <text name="eq_welcome_info_skills_title" text="Навички"/>
+        <text name="eq_welcome_info_skills" text="Витривалість дає коню змогу пройти далі, Швидкість робить його швидшим, Спритність допомагає стрибати й повертати, а Темперамент тримає його спокійним і слухняним. Кожну навичку можна тренувати, і ви дізнаєтеся як, коли вперше сядете верхи."/>
+        <text name="eq_welcome_info_potential_title" text="Потенціал"/>
+        <text name="eq_welcome_info_potential" text="Потенціал показує, наскільки кожна навичка може вирости з тренуваннями. Молоді коні вчаться найшвидше, а старші коні можуть втрачати потенціал. Потенціал лише оцінюється, і навіть оцінка може бути хибною, доки кінь не пробуде у вас якийсь час."/>
+        <text name="eq_welcome_info_roles_title" text="Ролі та персонал"/>
+        <text name="eq_welcome_info_roles" text="Ви можете дати коню роль кнопкою Роль, щоб легше стежити за ними. Конюхи й тренери на вкладці Персонал можуть працювати з кожним конем певної ролі або з одним конем."/>
+        <text name="eq_welcome_info_feed_title" text="Корм"/>
+        <text name="eq_welcome_info_feed" text="Сіно - основний раціон. Овес трохи посилює Витривалість і Темперамент, ячмінь помірно посилює Витривалість і Спритність, а кукурудза сильно посилює Швидкість. Морква (і яблука, якщо є) сильно посилює Темперамент."/>
+        <text name="eq_welcome_events_disciplines_title" text="Змагання"/>
+        <text name="eq_welcome_events_disciplines" text="Виїздка цінує Темперамент і Спритність, конкур - Спритність, перегони - Швидкість і Витривалість, а крос і триборство - універсалів."/>
+        <text name="eq_welcome_events_transport_title" text="Як дістатися"/>
+        <text name="eq_welcome_events_transport" text="Автотранспорт доставляє коня на змагання за плату. Це може коштувати набагато більше, ніж звичайне автоматичне перевезення, адже кінь може їхати набагато далі, а вам треба повернути його назад! Якщо самі відвезете коней до торговця тваринами (Ручне перевезення), можна добряче заощадити."/>
+        <text name="eq_welcome_events_risks_title" text="Травми та зняття"/>
+        <text name="eq_welcome_events_risks" text="Кожні змагання мають ризик травм і хвороб, який видно перед записом. Кнопка Хвороби на вкладці Інформація дає змогу лікувати травми. Коня також можуть зняти перед змаганнями через провалену перевірку Темпераменту або погане здоров'я, але частину вступного внеску вам повернуть."/>
+        <text name="eq_settings_helpPopups" text="Довідкові вікна"/>
+        <text name="eq_settings_helpPopups_tooltip" text="Показати знову: кожне вітальне й довідкове вікно тренувань з'явиться ще раз."/>
+        <text name="eq_settings_helpPopups_seen" text="Переглянуто"/>
+        <text name="eq_settings_helpPopups_again" text="Показати знову"/>
+        <text name="eq_welcome_diseases_treatment_title" text="Лікування"/>
+        <text name="eq_welcome_diseases_treatment" text="Більшість травм гояться самі, але це може тривати довго! Лікування пришвидшує одужання, але може дорого коштувати. Травмованого коня можна відправити на пенсію й далі використовувати для розведення, що робить відновлення набагато дешевшим. Деякі важкі травми можуть змусити відправити коня на пенсію; усе це можна змінити в налаштуваннях."/>
+        <text name="eq_help_close" text="Клацніть, щоб закрити"/>
+        <text name="eq_help_next" text="Клацніть, щоб продовжити (%d/%d)"/>
+        <text name="input_EQ_TRAINING_HELP" text="Довідка з тренування"/>
+        <text name="input_EQ_SPRINT" text="Спринт"/>
+        <text name="input_EQ_LATERAL" text="Бокові рухи (утримувати)"/>
+        <text name="input_EQ_COLLECT" text="Збирання (утримувати)"/>
+        <text name="input_EQ_REIN" text="Повід: кермування мишею (утримувати)"/>
+        <text name="eq_train_worn" text="Щоденне тренування заповнене: на сьогодні досить"/>
+        <text name="eq_ex_push" text="Прискорення"/>
+        <text name="eq_ex_recover" text="Відновлення"/>
+        <text name="eq_ex_sprint" text="СПРИНТ"/>
+        <text name="eq_ex_blown" text="Втомлений: лише галоп"/>
+        <text name="eq_ex_spent" text="Видихся: лише галоп"/>
+        <text name="eq_ex_gallop" text="Кар'єр"/>
+        <text name="eq_ex_canter" text="Галоп"/>
+        <text name="eq_ex_trot" text="Рись"/>
+        <text name="eq_ex_walk" text="Крок"/>
+        <text name="eq_ex_halt" text="Стоїть"/>
+        <text name="eq_ex_reverse" text="Рух назад"/>
+        <text name="eq_ex_prompt_tap" text="Клацайте далі!"/>
+        <text name="eq_pop_ex_sprint" text="СПРИНТ!"/>
+        <text name="eq_pop_ex_sprintOver" text="Спринт завершено"/>
+        <text name="eq_pop_ex_blown" text="Втома!"/>
+        <text name="eq_pop_ex_spent" text="Видихся!"/>
+        <text name="eq_pop_ex_fresh" text="Готовий до кар'єру"/>
+        <text name="eq_help_gallop_title" text="Кар'єр"/>
+        <text name="eq_help_gallop_1" text="Ваш кінь іде кар'єром у трьох темпах. Прискорення (W) - середній темп, що підвищує навантаження; Відновлення (S) - найповільніший, що знижує його. Спринт ([[EQ_SPRINT]]) - найшвидший і швидко підвищує навантаження. Він може вивести коня за звичайну межу, але потім кінь довго відновлюється."/>
+        <text name="eq_ex_hint_sprint" text="Клацайте лівою кнопкою безперервно для спринту"/>
+        <text name="eq_ex_hint_sprintRest" text="Спринт: спершу відновіться до нуля"/>
+        <text name="eq_ex_hint_locked" text="Галоп, доки шкала не спорожніє"/>
+        <text name="eq_ex_hint_canterOne" text="S: галоп"/>
+        <text name="eq_ex_hint_canterDouble" text="Двічі S: галоп"/>
+        <text name="eq_ex_tiring" text="Втомлюється..."/>
+        <text name="eq_ex_careful" text="Обережно"/>
+        <text name="eq_ex_overExerted" text="Втома!"/>
+        <text name="eq_train_tiredness" text="Навантаження"/>
+        <text name="eq_train_titlePlain" text="Тренування"/>
+        <text name="eq_train_lastSprint" text="Останній спринт x%.1f"/>
+        <text name="eq_train_sprintToTrain" text="Спринт тренує Швидкість"/>
+        <text name="eq_train_view_stamina" text="Витривалість"/>
+        <text name="eq_train_view_speed" text="Швидкість"/>
+        <text name="eq_train_view_condensed" text="Стисло"/>
+        <text name="eq_help_stamina_title" text="Тренування: Витривалість"/>
+        <text name="eq_help_stamina_1" text="Витривалість дає коню змогу довше йти кар'єром чи спринтом і швидше відновлюватися після цього. Найбільше вона важить у кросі, довгих перегонах і стипль-чезі. Коні з високою Витривалістю менш схильні до травм і краще почуваються на м'якому, важкому чи спекотному ґрунті. Овес і ячмінь у кормі посилюють тренування Витривалості."/>
+        <text name="eq_help_stamina_2" text="Тренування Витривалості - це утримання коня в кар'єрі якомога довше. Перемикайтеся з Прискорення на Відновлення, коли шкала навантаження в синій смузі, і назад, коли вона внизу. Кінь починає важко дихати, коли час перемикатися. Вгадайте момент, щоб набрати комбо тренування, швидше відновлюватися й повільніше втомлюватися, тож зможете прискорюватися довше. Вихід із кар'єру скидає комбо."/>
+        <text name="eq_help_speed_title" text="Тренування: Швидкість"/>
+        <text name="eq_help_speed_1" text="Швидкість підвищує максимальну швидкість коня на кожному алюрі й найбільше важить у перегонах і кросі. Швидкі коні найкраще почуваються на твердому ґрунті. Кукурудза в кормі посилює тренування Швидкості."/>
+        <text name="eq_help_speed_2" text="Спринтуйте, швидко натискаючи [[EQ_SPRINT]] під час кар'єру. Що вище шкала навантаження наприкінці спринту, то більший множник, тож підходьте до лінії так близько, як наважитеся: перетнете її, і множник скинеться до x1. Після кожного спринту відпочиньте кроком або стоячи, щоб швидко відновитися."/>
+        <text name="eq_train_speedMult" text="Швидкість x%.1f"/>
+        <text name="eq_train_staminaMult" text="Комбо витривалості x%.1f"/>
+        <text name="eq_pop_staminaUp" text="Комбо витривалості x%.1f!"/>
+        <text name="eq_pop_staminaEarly" text="Зарано: комбо витривалості втрачено"/>
+        <text name="eq_pop_staminaPast" text="Перебір: комбо витривалості втрачено"/>
+        <text name="eq_pop_staminaLost" text="Комбо витривалості втрачено"/>
+        <text name="eq_train_staminaNextHigh" text="Прискорюйтеся до смуги, потім Відновлення"/>
+        <text name="eq_train_staminaNextLow" text="Відновлюйтеся до смуги, потім Прискорення"/>
+        <text name="eq_train_staminaStopped" text="без тренування"/>
+        <text name="eq_ex_fatigued" text="Втомлений"/>
+        <text name="eq_pop_speedBank" text="Швидкість x%.1f!"/>
+        <text name="eq_train_quality_fast" text="тренується швидко"/>
+        <text name="eq_train_quality_steady" text="тренується"/>
+        <text name="eq_train_quality_slow" text="тренується повільно"/>
+        <text name="eq_train_quality_full" text="на сьогодні досить"/>
+        <text name="input_EQ_TRAINING_VIEW" text="Змінити вигляд тренування"/>
+        <text name="eq_feed_boost" text="Корм"/>
+        <text name="eq_feedGroup_hay" text="Сіно"/>
+        <text name="eq_feedGroup_grain" text="Концентрати"/>
+        <text name="eq_feedGroup_treat" text="Ласощі"/>
+        <text name="eq_feedGroup_otherGrain" text="Інше зерно"/>
+        <text name="eq_feedRow_oats" text="Овес"/>
+        <text name="eq_feedRow_barley" text="Ячмінь"/>
+        <text name="eq_feedRow_corn" text="Кукурудза"/>
+        <text name="eq_feed_noBoost" text="без бонусу"/>
+        <text name="eq_discipline_showJumping" text="Конкур"/>
+        <text name="eq_discipline_dressage" text="Виїздка"/>
+        <text name="eq_discipline_crossCountry" text="Крос"/>
+        <text name="eq_discipline_eventing" text="Триборство"/>
+        <text name="eq_discipline_raceShort" text="Гладкі перегони (спринт)"/>
+        <text name="eq_discipline_raceLong" text="Гладкі перегони (стаєр)"/>
+        <text name="eq_discipline_steeplechase" text="Стипль-чез"/>
+        <text name="eq_type_showJumping" text="Конкур"/>
+        <text name="eq_type_dressage" text="Виїздка"/>
+        <text name="eq_type_crossCountry" text="Крос"/>
+        <text name="eq_type_eventing" text="Триборство"/>
+        <text name="eq_type_raceShort" text="Гладкі перегони"/>
+        <text name="eq_type_raceLong" text="Гладкі перегони"/>
+        <text name="eq_type_steeplechase" text="Стипль-чез"/>
+        <text name="eq_tier_training" text="Молодий кінь"/>
+        <text name="eq_tier_novice" text="Новачок"/>
+        <text name="eq_tier_intermediate" text="Середній рівень"/>
+        <text name="eq_tier_advanced" text="Високий рівень"/>
+        <text name="eq_tier_championship" text="Чемпіонат"/>
+        <text name="eq_going_firm" text="Твердий"/>
+        <text name="eq_going_good" text="Добрий"/>
+        <text name="eq_going_soft" text="М'який"/>
+        <text name="eq_going_heavy" text="Важкий"/>
+        <text name="eq_going_hot" text="Спекотно"/>
+        <text name="eq_going_indoor" text="У манежі"/>
+        <text name="eq_event_showJumping_training" text="Конкур на чистий проїзд"/>
+        <text name="eq_event_showJumping_novice" text="Конкур 1,00 м"/>
+        <text name="eq_event_showJumping_intermediate" text="Конкур 1,20 м"/>
+        <text name="eq_event_showJumping_advanced" text="%s Класика 1,40 м"/>
+        <text name="eq_event_showJumping_championship" text="%s Гран-прі"/>
+        <text name="eq_event_dressage_training" text="Вступний тест з виїздки"/>
+        <text name="eq_event_dressage_novice" text="Попередня виїздка"/>
+        <text name="eq_event_dressage_intermediate" text="Виїздка середнього рівня"/>
+        <text name="eq_event_dressage_advanced" text="%s Малий приз (Прі Сен-Жорж)"/>
+        <text name="eq_event_dressage_championship" text="%s Гран-прі з виїздки"/>
+        <text name="eq_event_crossCountry_training" text="Мисливський крос для молодих коней"/>
+        <text name="eq_event_crossCountry_novice" text="Мисливський крос"/>
+        <text name="eq_event_crossCountry_intermediate" text="Відкритий мисливський крос"/>
+        <text name="eq_event_crossCountry_advanced" text="%s Командний крос"/>
+        <text name="eq_event_crossCountry_championship" text="%s Чемпіонат з командного кросу"/>
+        <text name="eq_event_eventing_training" text="Вступне триборство"/>
+        <text name="eq_event_eventing_novice" text="Одноденне триборство"/>
+        <text name="eq_event_eventing_intermediate" text="Двозіркове триборство"/>
+        <text name="eq_event_eventing_advanced" text="%s Чотиризіркове триборство"/>
+        <text name="eq_event_eventing_championship" text="%s Триденне триборство"/>
+        <text name="eq_event_raceShort_training" text="Пробний кар'єр на іподромі (6 фурл.)"/>
+        <text name="eq_event_raceShort_novice" text="Спринт для дебютантів (6 фурл.)"/>
+        <text name="eq_event_raceShort_intermediate" text="Спринт-гандикап (6 фурл.)"/>
+        <text name="eq_event_raceShort_advanced" text="%s Лістинговий спринт (6 фурл.)"/>
+        <text name="eq_event_raceShort_championship" text="%s Кубок спринту (6 фурл.)"/>
+        <text name="eq_event_raceLong_training" text="Пробний кар'єр на іподромі (1 миля)"/>
+        <text name="eq_event_raceLong_novice" text="Стейкс для дебютантів (1½ милі)"/>
+        <text name="eq_event_raceLong_intermediate" text="Гандикап (1½ милі)"/>
+        <text name="eq_event_raceLong_advanced" text="%s Лістинговий стейкс (1½ милі)"/>
+        <text name="eq_event_raceLong_championship" text="%s Золотий кубок (2 милі)"/>
+        <text name="eq_event_steeplechase_training" text="Навчальний бар'єрний біг"/>
+        <text name="eq_event_steeplechase_novice" text="Бар'єрний біг для новачків"/>
+        <text name="eq_event_steeplechase_intermediate" text="Стипль-чез гандикап"/>
+        <text name="eq_event_steeplechase_advanced" text="%s Груповий стипль-чез"/>
+        <text name="eq_event_steeplechase_championship" text="%s Кубок стипль-чезу"/>
+        <!-- RLRM's Messages tab: the one body template (the whole sentence is its argument) and our titles -->
+        <text name="rl_message_eqText" text="%s"/>
+        <text name="rl_messageTitle_eqCompetition" text="Змагання"/>
+        <text name="rl_messageTitle_eqInjury" text="Травма"/>
+        <text name="rl_messageTitle_eqRetirement" text="Пенсія"/>
+        <text name="rl_messageTitle_eqDealer" text="Торговець"/>
+        <text name="rl_messageTitle_eqTransport" text="Перевезення"/>
+        <text name="eq_money_entryFees" text="Вступні внески на змагання"/>
+        <text name="eq_money_prizeMoney" text="Призові зі змагань"/>
+        <text name="eq_money_vetBills" text="Ветеринарні рахунки"/>
+        <text name="eq_enter_injured" text="Цей кінь травмований: до одужання місяців: %d."/>
+        <text name="eq_enter_sick" text="Цей кінь хворий. Спершу вилікуйте його на сторінці Хвороби."/>
+        <text name="eq_enter_unwell" text="Здоров'я цього коня занизьке для змагань (25 або менше). Добре годуйте його, і він відновиться."/>
+        <text name="eq_enter_lowHealth" text="Його здоров'я %d: шанс %d%%, що в день змагань його знімуть як неспроможного. Нижче 50 кожні 5 пунктів додають 10%%, а при %d або менше він не може змагатися."/>
+        <text name="eq_result_eliminated" text="%s вибув зі змагань %s."/>
+        <text name="eq_result_pulledUp" text="%s зупинили на змаганнях %s."/>
+        <text name="eq_result_scratched" text="%s знято зі змагань %s (%s). Повернуто %s вступного внеску."/>
+        <text name="eq_scratch_injured" text="травма"/>
+        <text name="eq_scratch_sick" text="хвороба"/>
+        <text name="eq_scratch_unsound" text="неспроможний у день змагань"/>
+        <text name="eq_scratch_shoe" text="загубив підкову"/>
+        <text name="eq_scratch_retired" text="на пенсії"/>
+        <text name="eq_scratch_inFoal" text="надто пізній термін жеребності"/>
+        <text name="eq_scratch_fractious_1" text="не захотів заходити в коневоз"/>
+        <text name="eq_scratch_fractious_2" text="був норовливим і не дав сісти верхи"/>
+        <text name="eq_scratch_fractious_3" text="відмовився йти на старт"/>
+        <text name="eq_injury_bruisedSole" text="забій підошви"/>
+        <text name="eq_injury_abscess" text="абсцес копита"/>
+        <text name="eq_injury_overreach" text="засічка"/>
+        <text name="eq_injury_soreBack" text="біль у спині"/>
+        <text name="eq_injury_splints" text="грифельні наростання"/>
+        <text name="eq_injury_tendon" text="розтягнення сухожилка"/>
+        <text name="eq_injury_chipFracture" text="відламковий перелом"/>
+        <text name="eq_injury_suspensory" text="розрив підвішувальної зв'язки"/>
+        <text name="rl_disease_eqInjuryBruisedSole" text="Забій підошви"/>
+        <text name="rl_disease_eqInjuryAbscess" text="Абсцес копита"/>
+        <text name="rl_disease_eqInjuryOverreach" text="Засічка"/>
+        <text name="rl_disease_eqInjurySoreBack" text="Біль у спині"/>
+        <text name="rl_disease_eqInjurySplints" text="Грифельні наростання"/>
+        <text name="rl_disease_eqInjuryTendon" text="Розтягнення сухожилка"/>
+        <text name="rl_disease_eqInjuryChipFracture" text="Відламковий перелом"/>
+        <text name="rl_disease_eqInjurySuspensory" text="Розрив підвішувальної"/>
+        <text name="eq_injury_newTreatable" text="%s травмувався на змаганнях %s: %s. Лікуйте на сторінці Хвороби коня (%s, %s) або дайте загоїтися самостійно за місяців: %d."/>
+        <text name="eq_injury_newRest" text="%s травмувався на змаганнях %s: %s. Місяців відпочинку в деннику: %d."/>
+        <text name="eq_illness_new" text="%s підхопив %s на %s. Дивіться сторінку Хвороби."/>
+        <text name="eq_injury_careerEnding" text="%s отримав травму на змаганнях %s, що завершила кар'єру, і пішов зі спорту."/>
+        <text name="eq_injury_recovered" text="%s одужав і знову може змагатися."/>
+        <text name="eq_retire_done" text="Пішов зі спорту."/>
+        <text name="eq_retire_doneInjured" text="Пішов зі спорту. Травма ще має загоїтися, але лікування тепер коштує на %d%% менше."/>
+        <text name="eq_retire_undone" text="Повернувся до змагань."/>
+        <text name="eq_retire_careerEnded" text="Кар'єра цього коня завершилася травмою; він більше не може змагатися."/>
+        <text name="eq_status_title" text="Змагання"/>
+        <text name="eq_status_injured" text="Травмований, міс.: %d"/>
+        <text name="eq_status_retired" text="На пенсії"/>
+        <text name="eq_status_sick" text="Хворий"/>
+        <text name="eq_status_unwell" text="Слабке здоров'я"/>
+        <text name="eq_status_settling" text="Звикає"/>
+        <text name="eq_status_rested" text="Відпочиває цей місяць"/>
+        <text name="eq_status_inFoal" text="Жереба"/>
+        <text name="eq_status_foaled" text="Відновлюється після вижереблення"/>
+        <text name="eq_potential_unvetted" text="%s?"/>
+        <text name="eq_ui_skillPotential" text="Потенціал навичок"/>
+        <text name="eq_ui_skillPotentialDealer" text="Потенціал (оцінка торговця)"/>
+        <text name="eq_ui_potentialTitle" text="Потенціал"/>
+        <text name="eq_ui_potentialDealer" text="Оцінка торговця, може бути хибною"/>
+        <text name="eq_ui_skills" text="Навички"/>
+        <text name="eq_specialty_title" text="Улюблені змагання"/>
+        <text name="eq_role_title" text="Роль"/>
+        <text name="eq_role_balanced" text="Без ролі"/>
+        <text name="eq_role_dressage" text="Виїздка"/>
+        <text name="eq_role_showJumping" text="Конкур"/>
+        <text name="eq_role_crossCountry" text="Крос"/>
+        <text name="eq_role_eventing" text="Триборство"/>
+        <text name="eq_role_racing" text="Перегони"/>
+        <text name="eq_role_breeding" text="Розведення"/>
+        <text name="eq_role_sale" text="На продаж"/>
+        <text name="eq_role_retired" text="На пенсії"/>
+        <text name="eq_ui_button_role" text="Роль: %s"/>
+        <text name="input_EQ_HORSE_ROLE" text="Змінити роль коня"/>
+        <text name="input_EQ_COURSE_RECORD" text="Записати або змінити маршрут конкуру"/>
+        <text name="eq_course_recordAction" text="Новий маршрут конкуру"/>
+        <text name="eq_course_started" text="Запис %s: проїдьте перешкоди по порядку. Перешкоди Realistic Equestrian не мають зіткнень під час редагування; інші перешкоди лишаються твердими"/>
+        <text name="eq_course_noJumps" text="Запис маршруту, але на мапі ще немає перешкод для конкуру"/>
+        <text name="eq_course_tooFew" text="Маршрут не збережено: проїдьте щонайменше %d перешкод для конкуру або натисніть Ctrl+Backspace, щоб скасувати"/>
+        <text name="eq_course_saved" text="Збережено %s: перешкод %d, %.0f м"/>
+        <text name="eq_course_cancelled" text="Редагування зупинено: ви злізли з коня, перш ніж маршрут мав досить перешкод для збереження"/>
+        <text name="eq_course_leftSaved" text="Маршрут збережено, коли ви злізли з коня: натисніть Ctrl+J поруч, щоб редагувати, потім Ctrl+K, щоб записувати далі від найближчої точки"/>
+        <text name="eq_course_recording" text="Запис %s: перешкод %d, %.0f м"/>
+        <text name="eq_course_collisionNote" text="Перешкоди Realistic Equestrian не мають зіткнень, поки ви прокладаєте маршрут; інші перешкоди лишаються твердими"/>
+        <text name="eq_course_name" text="Маршрут %d"/>
+        <text name="eq_sj_begin" text="Рушайте до стартової лінії, щоб почати конкур"/>
+        <text name="eq_sj_ready" text="Приготуйтеся..."/>
+        <text name="eq_sj_go" text="Вперед!"/>
+        <text name="eq_sj_cross" text="Вперед! Перетніть стартову лінію"/>
+        <text name="eq_sj_early" text="Зарано! Поверніться за стартову лінію"/>
+        <text name="eq_sj_rail" text="Повал! Штрафних очок: %s"/>
+        <text name="eq_sj_runout" text="Обнесення! Штрафних очок: %s"/>
+        <text name="eq_sj_refusal" text="Закидка! Штрафних очок: %s"/>
+        <text name="eq_sj_eliminated" text="Вибув"/>
+        <text name="eq_sj_out_late" text="Вибув: стартову лінію не перетнуто вчасно"/>
+        <text name="eq_sj_out_wrongCourse" text="Вибув: помилка маршруту (перешкоду %d подолано не по порядку)"/>
+        <text name="eq_sj_out_refusals" text="Вибув: друга закидка"/>
+        <text name="eq_sj_out_timeLimit" text="Вибув: перевищено ліміт часу"/>
+        <text name="eq_sj_getOn" text="СІДАЙТЕ НА КОНЯ! %d"/>
+        <text name="eq_sj_out_dismounted" text="Вибув: вершник не сів на коня в заліковому проїзді"/>
+        <text name="eq_sj_clear" text="Чистий проїзд за %s!"/>
+        <text name="eq_sj_faults" text="Штрафних очок: %s за %s"/>
+        <text name="eq_sj_clearPop" text="Чистий проїзд!"/>
+        <text name="eq_sj_faultsPop" text="Штрафних очок: %s"/>
+        <text name="eq_sj_retired" text="Проїзд конкуру перервано"/>
+        <text name="eq_xc_retired" text="Проїзд кросу перервано"/>
+        <text name="eq_sj_startLine" text="Стартова лінія"/>
+        <text name="eq_sj_finishLine" text="Фінішна лінія"/>
+        <text name="eq_sj_fenceRow" text="Перешкода %d з %d"/>
+        <text name="eq_sj_faultsRow" text="Штрафних очок: %s"/>
+        <text name="eq_sj_timeRow" text="Час"/>
+        <text name="input_EQ_COURSE_RECORD_XC" text="Записати маршрут кросу"/>
+        <text name="eq_course_recordXcAction" text="Новий маршрут кросу"/>
+        <text name="eq_course_xcName" text="Крос %d"/>
+        <text name="eq_course_noXcJumps" text="Перешкод для кросу не знайдено: поставте червоний і білий прапорці з обох боків перешкоди або розмістіть купи колод чи стінки зі спуском"/>
+        <text name="eq_sj_beginXc" text="Рушайте до стартової лінії, щоб почати крос"/>
+        <text name="eq_sj_out_refusalsXc" text="Вибув: три закидки на одній перешкоді або чотири на маршруті"/>
+        <text name="eq_sj_represent" text="Поверніться й стрибніть перешкоду %d"/>
+        <text name="eq_pop_courseFence" text="Перешкода %d"/>
+        <text name="eq_flagLeft" text="Л"/>
+        <text name="eq_flagRight" text="П"/>
+        <text name="input_EQ_COURSE_REWIND" text="Повернутися до найближчої точки"/>
+        <text name="eq_course_rewound" text="Маршрут повернуто до найближчої точки: збережено перешкод: %d"/>
+        <text name="eq_course_resumed" text="Запис від найближчої точки"/>
+        <text name="eq_course_finished" text="Редагування завершено: розміщені перешкоди Realistic Equestrian знову мають зіткнення"/>
+        <text name="eq_course_deleted" text="%s видалено"/>
+        <text name="eq_course_locked" text="Не можна видалити %s під час %s: налаштуйте маршрути до місяця змагань"/>
+        <text name="eq_course_deleteAsk" text="Видалити %s (перешкод: %d, %.0f м)?"/>
+        <text name="eq_course_deleteTitle" text="Видалити маршрут"/>
+        <text name="eq_course_deleteAction" text="Видалити %s"/>
+        <text name="eq_course_cancelAction" text="Скасувати новий маршрут"/>
+        <text name="eq_course_discardAction" text="Відкинути зміни в %s"/>
+        <text name="eq_course_newCancelled" text="Скасовано: %s не збережено"/>
+        <text name="eq_course_changesDiscarded" text="Зміни в %s відкинуто: збережений маршрут лишився як був"/>
+        <text name="eq_course_editAction" text="Редагувати %s"/>
+        <text name="eq_course_doneAction" text="Завершити редагування маршруту"/>
+        <text name="eq_course_saveAction" text="Зберегти маршрут і завершити"/>
+        <text name="eq_course_editing" text="Редагування %s: перешкод %d, %.0f м"/>
+        <text name="eq_course_editStarted" text="Редагування %s: розміщені перешкоди Realistic Equestrian не мають зіткнень, доки ви не завершите; інші перешкоди лишаються твердими"/>
+        <text name="input_EQ_COURSE_DELETE" text="Видалити маршрут поблизу"/>
+        <text name="eq_ui_riding" text="Щоденне тренування"/>
+        <text name="eq_ui_ridingFull" text="Заповнено, на сьогодні досить"/>
+        <text name="eq_ui_ridingFullValue" text="%s - заповнено"/>
+        <text name="eq_specialty_none" text="Поки немає"/>
+        <text name="eq_specialty_pair" text="%s і %s"/>
+        <text name="eq_specialty_eventer" text="Триборець"/>
+        <text name="eq_specialty_racehorse" text="Скаковий кінь"/>
+        <text name="eq_specialty_allRounder" text="Універсал"/>
+        <text name="eq_enter_rested" text="Цей кінь уже мав стартів цього місяця: %d, і йому потрібен відпочинок. Він зможе виступити наступного місяця."/>
+        <text name="eq_reveal_better" text="Ви краще пізнали коня %s, і він виглядає навіть кращим, ніж казав торговець."/>
+        <text name="eq_reveal_worse" text="Ви краще пізнали коня %s, і маєте відчуття, що вас могли ввести в оману."/>
+        <text name="eq_reveal_fair" text="Ви краще пізнали коня %s і маєте чіткіше уявлення про його потенціал."/>
+        <text name="eq_ui_title" text="Змагання"/>
+        <text name="eq_ui_col_event" text="Змагання"/>
+        <text name="eq_ui_col_going" text="Умови"/>
+        <text name="eq_ui_col_risk" text="Ризик"/>
+        <text name="eq_ui_injuryRisk" text="Ризик травми"/>
+        <text name="eq_ui_dayCount" text="%d дн."/>
+        <text name="eq_ui_days" text="%d дн."/>
+        <text name="eq_ui_months" text="%d міс."/>
+        <text name="eq_ui_perMonth" text="%s на місяць"/>
+        <text name="eq_ui_retire" text="На пенсію"/>
+        <text name="eq_ui_retireConfirm" text="Відправити %s на пенсію зі змагань? Він більше не зможе брати участь у змаганнях. Це остаточно й не може бути скасовано."/>
+        <text name="eq_ui_retireConfirmInjured" text="Відправити %s на пенсію зі змагань? Лікування травми коштуватиме на %d%% менше, але він більше не зможе брати участь у змаганнях. Це остаточно й не може бути скасовано."/>
+        <text name="eq_ui_dayTreatmentConfirm" text="Лікувати %s від: %s? Це займе %s і коштуватиме %s."/>
+        <text name="eq_risk_low" text="Низький"/>
+        <text name="eq_risk_minor" text="Незначний"/>
+        <text name="eq_risk_moderate" text="Помірний"/>
+        <text name="eq_risk_risky" text="Ризиковий"/>
+        <text name="eq_risk_off" text="Вимк."/>
+        <text name="eq_ui_col_level" text="Рівень"/>
+        <text name="eq_ui_col_type" text="Тип"/>
+        <text name="eq_skill_untrained" text="Ненавчений"/>
+        <text name="eq_skill_novice" text="Новачок"/>
+        <text name="eq_skill_trainee" text="Учень"/>
+        <text name="eq_skill_amateur" text="Аматор"/>
+        <text name="eq_skill_promising" text="Перспективний"/>
+        <text name="eq_skill_competitor" text="Спортсмен"/>
+        <text name="eq_skill_contender" text="Претендент"/>
+        <text name="eq_skill_champion" text="Чемпіон"/>
+        <text name="eq_skill_legend" text="Легендарний"/>
+        <text name="eq_ui_col_when" text="Результати"/>
+        <text name="eq_ui_col_fee" text="Вступний внесок"/>
+        <text name="eq_ui_col_prize" text="Призовий фонд"/>
+        <text name="eq_ui_col_yours" text="Ваші коні"/>
+        <text name="eq_ui_col_day" text="День"/>
+        <text name="eq_ui_col_horse" text="Кінь"/>
+        <text name="eq_ui_col_result" text="Результат"/>
+        <text name="eq_ui_col_status" text="Статус"/>
+        <text name="eq_ui_horseDescription" text="Коні їдять сіно, зерно й ласощі та потребують води. Здорові кобили старші за 22 місяці можуть розмножуватися."/>
+        <text name="eq_ui_col_success" text="Шанси"/>
+        <text name="eq_ui_col_training" text="Тренування"/>
+        <text name="eq_ui_trainingBenefit" text="Користь для тренування"/>
+        <text name="eq_ui_ageLong" text="%d міс."/>
+        <text name="eq_success_favourite" text="Фаворит"/>
+        <text name="eq_success_contender" text="Претендент"/>
+        <text name="eq_success_outsider" text="Аутсайдер"/>
+        <text name="eq_success_longShot" text="Темна конячка"/>
+        <text name="eq_benefit_high" text="Висока"/>
+        <text name="eq_benefit_medium" text="Середня"/>
+        <text name="eq_benefit_low" text="Низька"/>
+        <text name="eq_benefit_none" text="Немає"/>
+        <text name="eq_ui_when_tomorrow" text="Завтра"/>
+        <text name="eq_ui_when_nextMonth" text="Наступного місяця"/>
+        <text name="eq_ui_trainingOnly" text="Лише тренування"/>
+        <text name="eq_ui_entered" text="Записано: %s"/>
+        <text name="eq_ui_canEnter" text="Можуть взяти участь: %d"/>
+        <text name="eq_ui_noneEligible" text="Немає придатних"/>
+        <text name="eq_ui_ageMonths" text="%d міс."/>
+        <text name="eq_ui_day" text="День %d"/>
+        <text name="eq_ui_status_ok" text="Може взяти участь"/>
+        <text name="eq_ui_status_lowHealth" text="Слабке здоров'я: %d%% зняття"/>
+        <text name="eq_ui_status_settling" text="Звикає: менші шанси"/>
+        <text name="eq_ui_status_tired" text="Без дня відпочинку: менші шанси"/>
+        <text name="eq_ui_status_settlingTired" text="Звикає, без відпочинку: менші шанси"/>
+        <text name="eq_ui_status_eventFull" text="Уже записано двох ваших коней"/>
+        <text name="eq_ui_status_tooYoung" text="Замолодий"/>
+        <text name="eq_ui_status_tooOld" text="Застарий"/>
+        <text name="eq_ui_status_ratingLow" text="Рейтинг занизький"/>
+        <text name="eq_ui_status_ratingHigh" text="Надто добрий для цього рівня"/>
+        <text name="eq_ui_status_enteredHere" text="Записано"/>
+        <text name="eq_ui_status_enteredElsewhere" text="На інших змаганнях"/>
+        <text name="eq_ui_result_place" text="%d з %d"/>
+        <text name="eq_ui_result_eliminated" text="Вибув"/>
+        <text name="eq_ui_result_scratched" text="Знято"/>
+        <text name="eq_ui_button_enterAuto" text="Записати, автотранспорт (%s)"/>
+        <text name="eq_ui_button_enterManual" text="Записати, ручне перевезення (%s)"/>
+        <text name="eq_ui_transportLabel" text="Загальна вартість"/>
+        <text name="eq_ui_transportLine" text="Авто %s · Вручну %s"/>
+        <text name="eq_ui_transportLabel_near" text="Вартість, за кордон"/>
+        <text name="eq_ui_transportLabel_far" text="Вартість, далеко"/>
+        <text name="eq_ui_awaiting" text="%s (чекає на доставку)"/>
+        <text name="eq_ui_status_awaitingDelivery" text="Чекає на доставку"/>
+        <text name="input_EQ_DELIVER" text="Доставити коня на змагання"/>
+        <text name="eq_deliver_prompt" text="Доставити %s на змагання"/>
+        <text name="eq_deliver_promptMany" text="Доставити коней на змагання: %d"/>
+        <text name="eq_deliver_done" text="%s доставлено. Він вирушає на змагання."/>
+        <text name="eq_deliver_doneMany" text="Доставлено коней: %d. Вони вирушають на змагання."/>
+        <text name="eq_deliver_noRoom" text="Не можна доставити: вашим коням потрібне вільне місце на одному з пасовищ, щоб повернутися додому."/>
+        <text name="eq_deliver_failed" text="Доставка не вдалася: %s"/>
+        <text name="eq_deliver_title" text="Доставити на змагання"/>
+        <text name="eq_deliver_ask" text="%s чекає, щоб вирушити на змагання. Доставити зараз чи відкрити торговця як зазвичай?"/>
+        <text name="eq_deliver_askMany" text="Коней у цьому причепі, що чекають на змагання: %d. Доставити їх зараз чи відкрити торговця як зазвичай?"/>
+        <text name="eq_deliver_yes" text="Доставити"/>
+        <text name="eq_deliver_no" text="Відкрити торговця"/>
+        <text name="eq_loose_broughtHome" text="Ваш персонал повернув %s до %s."/>
+        <text name="eq_loose_broughtHomeUnnamed" text="Ваш персонал повернув коня-втікача до %s."/>
+        <text name="eq_ui_result_notDelivered" text="Не доставлено"/>
+        <text name="eq_ui_deadline_round" text="до завтрашніх результатів"/>
+        <text name="eq_ui_deadline_month" text="до кінця місяця"/>
+        <text name="eq_ui_button_results" text="Результати"/>
+        <text name="eq_ui_button_manageAnimals" text="Керувати тваринами"/>
+        <text name="eq_ui_button_events" text="Змагання"/>
+        <text name="eq_ui_noEvents" text="Зараз немає відкритих змагань. Нові з'являються кожного раунду."/>
+        <text name="eq_ui_noResults" text="Ваші коні ще не мають результатів."/>
+        <text name="eq_ui_noHorses" text="У вас немає коней."/>
+        <text name="eq_ui_clientNote" text="Змагання проводить хост. Запис з клієнта мережевої гри з'явиться в наступній версії."/>
+        <text name="eq_ui_noConfig" text="Не вдалося завантажити список змагань; дивіться журнал."/>
+        <text name="eq_ui_ages_range" text="вік %d-%d міс."/>
+        <text name="eq_ui_ages_from" text="від %d міс."/>
+        <text name="eq_ui_summary_event" text="%s: %s, рейтинг %.0f-%.0f, учасників: %d. Оберіть коня й натисніть Enter."/>
+        <text name="eq_enter_noEvent" text="На ці змагання запис закрито."/>
+        <text name="eq_enter_retired" text="Цей кінь пішов зі спорту."/>
+        <text name="eq_enter_inFoal" text="Ця кобила на надто пізньому терміні жеребності для змагань. Вона зможе змагатися після вижереблення."/>
+        <text name="eq_enter_foaled" text="Ця кобила ще відновлюється після вижереблення. Вона зможе змагатися через три місяці після пологів."/>
+        <text name="eq_enter_already" text="Цей кінь уже записаний на %s."/>
+        <text name="eq_enter_eventFull" text="На одні змагання можна записати щонайбільше коней: %d."/>
+        <text name="eq_enter_tooYoung" text="Замолодий: ці змагання для коней від %d міс., а вашому %d міс."/>
+        <text name="eq_enter_tooOld" text="Застарий: ці змагання для коней до %d міс., а вашому %d міс."/>
+        <text name="eq_enter_ratingLow" text="Рейтинг %.0f нижчий за діапазон цих змагань %.0f-%.0f."/>
+        <text name="eq_enter_ratingHigh" text="Рейтинг %.0f вищий за діапазон цих змагань %.0f-%.0f: запишіться на вищий рівень."/>
+        <text name="eq_enter_noMoney" text="Недостатньо грошей: запис коштує %s (вступний внесок %s, перевезення %s)."/>
+        <text name="eq_enter_done" text="%s записано на %s (рейтинг %.0f). Автотранспорт: %s."/>
+        <text name="eq_enter_doneManual" text="%s записано на %s (рейтинг %.0f). Ручне перевезення: відвезіть коня до торговця тваринами %s, інакше він не стартує."/>
+        <text name="eq_result_notDelivered" text="%s так і не доставили на %s, тож він не стартував. Вступний внесок втрачено."/>
+        <text name="eq_enter_farmLimit" text="Ви використали всі записи цього місяця (%d). Нові відкриються наступного місяця."/>
+        <text name="eq_ui_farmLimit" text="Цього місяця записів не лишилося"/>
+        <text name="eq_ui_entriesLeft" text="Записів цього місяця лишилося: %d з %d."/>
+        <text name="eq_money_transport" text="Перевезення коней"/>
+        <text name="eq_money_staffWages" text="Зарплата кінного персоналу"/>
+        <text name="eq_staff_title" text="Кінний персонал"/>
+        <text name="eq_staff_tab_hire" text="Найм"/>
+        <text name="eq_staff_tab_staff" text="Ваш персонал"/>
+        <text name="eq_staff_col_name" text="Ім'я"/>
+        <text name="eq_staff_col_job" text="Посада"/>
+        <text name="eq_staff_col_grade" text="Рівень"/>
+        <text name="eq_staff_col_best" text="Найкращі навички"/>
+        <text name="eq_staff_col_worksOn" text="Працює з"/>
+        <text name="eq_staff_col_wage" text="Зарплата / день"/>
+        <text name="eq_staff_job_groom" text="Конюх"/>
+        <text name="eq_staff_job_dressage" text="Тренер з виїздки"/>
+        <text name="eq_staff_job_showJumping" text="Тренер з конкуру"/>
+        <text name="eq_staff_job_crossCountry" text="Тренер з кросу"/>
+        <text name="eq_staff_job_racing" text="Тренер з перегонів"/>
+        <text name="eq_staff_job_vet" text="Ветеринар"/>
+        <text name="eq_staff_job_broker" text="Брокер"/>
+        <text name="eq_staff_grade_junior" text="Молодший"/>
+        <text name="eq_staff_grade_experienced" text="Досвідчений"/>
+        <text name="eq_staff_grade_senior" text="Старший"/>
+        <text name="eq_staff_grade_legendary" text="Легендарний"/>
+        <text name="eq_staff_skill_dressage" text="Виїздка"/>
+        <text name="eq_staff_skill_showJumping" text="Конкур"/>
+        <text name="eq_staff_skill_crossCountry" text="Крос"/>
+        <text name="eq_staff_skill_racing" text="Перегони"/>
+        <text name="eq_staff_skill_veterinary" text="Ветеринарія"/>
+        <text name="eq_staff_skill_broker" text="Брокерство"/>
+        <text name="eq_staff_level_1" text="Слабкий"/>
+        <text name="eq_staff_level_2" text="Посередній"/>
+        <text name="eq_staff_level_3" text="Добрий"/>
+        <text name="eq_staff_level_4" text="Дуже добрий"/>
+        <text name="eq_staff_level_5" text="Відмінний"/>
+        <text name="eq_staff_level_6" text="Легендарний"/>
+        <text name="eq_staff_works_general" text="Усі коні"/>
+        <text name="eq_staff_works_passive" text="Кожен кінь"/>
+        <text name="eq_staff_status" text="Статус"/>
+        <text name="eq_staff_stables" text="Стайні"/>
+        <text name="eq_staff_roles" text="Ролі"/>
+        <text name="eq_staff_horses" text="Коні"/>
+        <text name="eq_staff_covers" text="Охоплено коней"/>
+        <text name="eq_staff_mode_roles" text="За роллю"/>
+        <text name="eq_staff_mode_horses" text="Окремо"/>
+        <text name="eq_staff_allStables" text="Усі стайні"/>
+        <text name="eq_staff_nStables" text="Стаєнь: %d"/>
+        <text name="eq_staff_allRoles" text="Усі ролі"/>
+        <text name="eq_staff_nRoles" text="Ролей: %d"/>
+        <text name="eq_staff_nHorses" text="Коней: %d"/>
+        <text name="eq_staff_noHorses" text="Оберіть коней"/>
+        <text name="eq_staff_works_off" text="Вимкнено"/>
+        <text name="eq_staff_offFromTomorrow" text="%s, вимкнено з завтра"/>
+        <text name="eq_staff_onFromTomorrow" text="%s, повертається до роботи завтра"/>
+        <text name="eq_staff_pick_stables" text="Оберіть стайні"/>
+        <text name="eq_staff_pick_roles" text="Оберіть ролі"/>
+        <text name="eq_staff_pick_horses" text="Оберіть коней"/>
+        <text name="eq_staff_pick_empty" text="Позначте хоча б один пункт."/>
+        <text name="eq_staff_wage" text="Зарплата"/>
+        <text name="eq_staff_perDay" text="%s на день"/>
+        <text name="eq_staff_duties" text="Основні обов'язки"/>
+        <text name="eq_staff_duties_groom" text="Тренує всі чотири характеристики, чистить коней, повертає утікачів додому"/>
+        <text name="eq_staff_duties_trainer" text="Зосереджується на %s і %s, трохи тренує інші характеристики та готує коней до змагань"/>
+        <text name="eq_staff_duties_vet" text="Менше травм, коротше й дешевше лікування для кожного коня"/>
+        <text name="eq_staff_duties_broker" text="Точніше оцінює потенціал коней у торговця. Кращі ціни на купівлю та продаж коней."/>
+        <text name="eq_staff_timeLeft" text="Лишилося часу"/>
+        <text name="eq_staff_hours" text="%d год"/>
+        <text name="eq_staff_button_hire" text="Найняти (%s на день)"/>
+        <text name="eq_staff_button_fire" text="Звільнити"/>
+        <text name="eq_staff_button_decline" text="Відхилити"/>
+        <text name="eq_staff_declined" text="%s більше не повернеться. Протягом кількох годин може з'явитися хтось новий."/>
+        <text name="eq_staff_fire_confirm" text="Звільнити %s? Він більше не повернеться."/>
+        <text name="eq_staff_letGo" text="%s пішов."/>
+        <text name="eq_staff_hired" text="%s починає роботу сьогодні."/>
+        <text name="eq_staff_unique" text="У вас уже є %s. На фермі може бути лише один."/>
+        <text name="eq_staff_noCandidates" text="Зараз ніхто не шукає роботу. Нові люди з'являються щомісяця."/>
+        <text name="eq_staff_noStaff" text="У вас ще немає персоналу. Наймайте на вкладці Найм."/>
+        <text name="eq_staff_summary_hire" text="Нові люди з'являються кожні кілька годин, і їхні пропозиції діють від 12 до 72 годин. На фермі лише один ветеринар і один брокер."/>
+        <text name="eq_staff_summary_staff" text="Зарплата: %s на день. Персонал найефективніший, коли кожен працює лише з кількома кіньми."/>
+        <text name="eq_staff_clientNote" text="Поки що наймати персонал може лише хост."/>
+        <text name="eq_result_placed" text="%s посів %d місце з %d на %s і виграв %s."/>
+        <text name="eq_result_placedNoPrize" text="%s посів %d місце з %d на %s."/>
+        <text name="eq_result_gone" text="%s не зміг виступити на %s: коня більше немає на фермі."/>
+        <text name="eq_and" text="і"/>
+        <text name="eq_facility_improves" text="Покращує тренування: %s (Realistic Equestrian)"/>
+        <text name="eq_facility_inside" text="Тренування в: %s"/>
+        <text name="eq_facility_indoorArena" text="Критий манеж"/>
+        <text name="eq_facility_ridingCentre" text="Кінний центр"/>
+        <text name="eq_facility_outdoorArena" text="Відкритий манеж"/>
+        <text name="eq_facility_roundPen" text="Круглий загін"/>
+        <text name="eq_facility_jumps" text="Маршрут з перешкодами"/>
+        <text name="eq_facility_xcFence" text="Маршрут кросу"/>
+        <text name="eq_settings_title" text="Realistic Equestrian"/>
+        <text name="eq_settings_tab" text="Кінний спорт"/>
+        <text name="eq_settings_credit" text="Realistic Equestrian від %s"/>
+        <text name="eq_settings_off" text="Вимк."/>
+        <text name="eq_settings_on" text="Увімк."/>
+        <text name="eq_settings_noLimit" text="Без обмежень"/>
+        <text name="eq_settings_trainingRate" text="Швидкість тренування"/>
+        <text name="eq_settings_trainingRate_tooltip" text="Як швидко їзда верхи, персонал і змагання підвищують характеристики коня. 1x - звичайна швидкість."/>
+        <text name="eq_settings_cadence" text="Показувати змагання"/>
+        <text name="eq_settings_cadence_tooltip" text="Як часто відбувається раунд змагань. Зміни діють з наступного раунду."/>
+        <text name="eq_settings_cadence_day" text="Щодня"/>
+        <text name="eq_settings_cadence_month" text="Щомісяця"/>
+        <text name="eq_settings_eventsMin" text="Найменше змагань"/>
+        <text name="eq_settings_eventsMin_tooltip" text="Найменша кількість змагань у календарі одночасно, разом із Високим рівнем і Чемпіонатами. Кожен раунд вибирає число між цим і найбільшим значенням. Мережева гра додає більше за кожну ферму з кіньми."/>
+        <text name="eq_settings_eventsMax" text="Найбільше змагань"/>
+        <text name="eq_settings_eventsMax_tooltip" text="Найбільша кількість змагань у календарі одночасно. Зміни діють з наступного раунду."/>
+        <text name="eq_settings_racing" text="Перегони та стипль-чез"/>
+        <text name="eq_settings_racing_tooltip" text="Чи є гладкі перегони та стипль-чез у календарі змагань. Зміни діють з наступного раунду."/>
+        <text name="eq_settings_injuries" text="Травми на змаганнях"/>
+        <text name="eq_settings_injuries_tooltip" text="Чи можуть коні травмуватися на змаганнях."/>
+        <text name="eq_settings_forcedRetirement" text="Травми, що завершують кар'єру"/>
+        <text name="eq_settings_forcedRetirement_tooltip" text="Чи можуть найважчі травми на змаганнях назавжди завершити спортивну кар'єру коня."/>
+        <text name="eq_settings_entriesPerMonth" text="Записів на місяць"/>
+        <text name="eq_settings_entriesPerMonth_tooltip" text="Скільки записів на змагання кожна ферма може зробити за місяць."/>
+        <!-- Event results: how a run went (EqPerformance, EqStory) and the Results tab -->
+        <text name="eq_ord_1" text="%d-й"/>
+        <text name="eq_ord_2" text="%d-й"/>
+        <text name="eq_ord_3" text="%d-й"/>
+        <text name="eq_ord_n" text="%d-й"/>
+        <text name="eq_story_podium" text="Переможець: %s, 2-й: %s, 3-й: %s."/>
+        <text name="eq_story_winner" text="Переможець: %s."/>
+        <text name="eq_story_phaseScore" text="%s: %s, штрафних очок: %s"/>
+        <text name="eq_story_phaseFaults" text="%s: %s, штрафних очок: %s (%s)"/>
+        <text name="eq_story_phaseClear" text="%s: %s, чисто"/>
+        <text name="eq_story_down1" text="1 повал"/>
+        <text name="eq_story_downN" text="Повалів: %d"/>
+        <text name="eq_story_refusal1" text="1 закидка"/>
+        <text name="eq_story_refusalN" text="Закидок: %d"/>
+        <text name="eq_story_time" text="час %s"/>
+        <text name="eq_story_total" text="Разом: штрафних очок %s"/>
+        <text name="eq_story_gains" text="Здобуто: %s."/>
+        <text name="eq_story_injury" text="Повернувся додому з діагнозом: %s."/>
+        <text name="eq_story_careerEnded" text="Отримав травму, що завершила кар'єру."/>
+        <text name="eq_story_jumping_clean" text="Пройшов чисто."/>
+        <text name="eq_story_jumping_struggled" text="Дуже важко впорався зі складністю маршруту."/>
+        <text name="eq_story_jumping_eliminated" text="Вибув після падіння."/>
+        <text name="eq_story_jumping_elimRefusal" text="Вибув після трьох закидок."/>
+        <text name="eq_story_jumping_agility" text="Повалив жердину на складній системі."/>
+        <text name="eq_story_jumping_agilityMany" text="Повалив кілька жердин."/>
+        <text name="eq_story_jumping_hardest" text="Ішов добре, доки не впала жердина на найскладнішій перешкоді."/>
+        <text name="eq_story_jumping_speed" text="Повільно йшов між перешкодами й втратив час."/>
+        <text name="eq_story_jumping_temperament" text="Відмовився від стрибка."/>
+        <text name="eq_story_dressage_clean" text="Відшліфований тест, що вразив суддів."/>
+        <text name="eq_story_dressage_struggled" text="Важко йшов тест від початку до кінця."/>
+        <text name="eq_story_dressage_agility" text="Втратив бали на бокових рухах."/>
+        <text name="eq_story_dressage_agilityMany" text="Втратив бали в кількох елементах."/>
+        <text name="eq_story_dressage_hardest" text="Елегантна програма, але найскладніші елементи далися важко."/>
+        <text name="eq_story_dressage_temperament" text="Був помітно напружений і не міг зосередитися."/>
+        <text name="eq_story_dressage_temperamentMany" text="Напружений і неуважний більшу частину тесту."/>
+        <text name="eq_story_dressage_elimRefusal" text="Відмовився продовжувати й зійшов з тесту."/>
+        <text name="eq_story_crossCountry_clean" text="Чисто й у межах часу."/>
+        <text name="eq_story_crossCountry_struggled" text="Маршрут виявився завеликим, важко було від початку до кінця."/>
+        <text name="eq_story_crossCountry_eliminated" text="Вибув після падіння."/>
+        <text name="eq_story_crossCountry_elimRefusal" text="Вибув після трьох закидок."/>
+        <text name="eq_story_crossCountry_agility" text="Обніс вузьку перешкоду."/>
+        <text name="eq_story_crossCountry_agilityMany" text="Спотикався на деяких приземленнях і збився з ритму."/>
+        <text name="eq_story_crossCountry_hardest" text="Ішов добре, доки не обніс найскладнішу перешкоду."/>
+        <text name="eq_story_crossCountry_temperament" text="Зробив закидку біля води."/>
+        <text name="eq_story_crossCountry_speed" text="Не тримав темп між перешкодами й втратив час."/>
+        <text name="eq_story_crossCountry_stamina" text="Втомився на довгих відрізках і відставав від темпу."/>
+        <text name="eq_story_crossCountry_staminaMany" text="Видихся задовго до фінішу."/>
+        <text name="eq_story_race_clean" text="Провів чудовий забіг від старту до фінішу."/>
+        <text name="eq_story_race_struggled" text="Так і не включився в боротьбу."/>
+        <text name="eq_story_race_eliminated" text="Упав після зіткнення й не зміг продовжити."/>
+        <text name="eq_story_race_elimRefusal" text="Норовився на старті, і його зупинили."/>
+        <text name="eq_story_race_temperament" text="Запізнився на старті."/>
+        <text name="eq_story_race_speed" text="Не витримав початкового темпу."/>
+        <text name="eq_story_race_speedMany" text="Забракло швидкості, щоб триматися з лідерами."/>
+        <text name="eq_story_race_stamina" text="Згас на заключному відрізку."/>
+        <text name="eq_story_race_staminaMany" text="Видихся задовго до фінішу."/>
+        <text name="eq_story_race_finish" text="Добре йшов увесь забіг, але програв фінішний спринт."/>
+        <text name="eq_story_race_comeback" text="Рано відстав, але видав захопливий спринт на фініші."/>
+        <text name="eq_story_steeplechase_clean" text="Добре стрибав і йшов увесь час."/>
+        <text name="eq_story_steeplechase_struggled" text="Важко давалися і перешкоди, і темп."/>
+        <text name="eq_story_steeplechase_eliminated" text="Невдало впав на живоплоті й не зміг продовжити."/>
+        <text name="eq_story_steeplechase_elimRefusal" text="Відмовився від перешкоди, і його зупинили."/>
+        <text name="eq_story_steeplechase_agility" text="Сильно зачепив перешкоду й втратив позицію."/>
+        <text name="eq_story_steeplechase_agilityMany" text="Погано стрибав і втрачав позиції на кількох перешкодах."/>
+        <text name="eq_story_steeplechase_hardest" text="Ішов добре, доки не схибив на найскладнішій перешкоді."/>
+        <text name="eq_story_steeplechase_speed" text="Не витримав початкового темпу."/>
+        <text name="eq_story_steeplechase_temperament" text="Стрибав нерішуче й втрачав позиції."/>
+        <text name="eq_story_steeplechase_stamina" text="Втомився й згас на останніх перешкодах."/>
+        <text name="eq_story_eventing_clean" text="Чисто в кожному етапі."/>
+        <text name="eq_story_eventing_struggled" text="Усі три етапи далися важко."/>
+        <text name="eq_story_eventing_eliminated" text="Вибув після падіння на кросі."/>
+        <text name="eq_story_ridden_test" text="Проїхав свій тест."/>
+        <text name="eq_story_ridden_faults" text="Мав штрафні очки на маршруті."/>
+        <text name="eq_story_eventing_fenceFaults" text="Набрав штрафні очки на перешкодах."/>
+        <text name="eq_story_eventing_clearFences" text="Чисто на перешкодах, але виїздка потягнула вниз."/>
+        <text name="eq_ui_tab_upcoming" text="Найближчі змагання"/>
+        <text name="eq_ui_tab_results" text="Результати"/>
+        <text name="eq_ui_col_starts" text="Старти"/>
+        <text name="eq_ui_col_wins" text="Перемоги"/>
+        <text name="eq_ui_col_lastResult" text="Останній результат"/>
+        <text name="eq_ui_result_placeOrd" text="%s з %d"/>
+        <text name="eq_ui_noHorseResults" text="%s ще не має результатів змагань."/>
+        <text name="eq_ui_summary_results" text="Останні змагання коня: %d. Оберіть коня праворуч."/>
+        <text name="eq_ui_career_starts" text="Старти"/>
+        <text name="eq_ui_career_record" text="Перемоги / призові місця"/>
+        <text name="eq_ui_career_earnings" text="Призові"/>
+        <text name="eq_ui_career_eliminations" text="Вибування"/>
+        <text name="eq_ui_button_viewResults" text="Переглянути результати"/>
+        <text name="eq_ui_button_rideHorse" text="Сісти на коня"/>
+        <text name="eq_ui_rideNotInPen" text="%s зараз не в загоні. Підійдіть до коня там, щоб сісти верхи."/>
+        <text name="eq_settings_entryFeeScale" text="Вступні внески"/>
+        <text name="eq_settings_entryFeeScale_tooltip" text="Масштабує вступний внесок усіх змагань. 1x - звичайно. Змагання, вже наявні в календарі, зберігають свій внесок; зміни діють з наступного раунду."/>
+        <text name="eq_settings_prizeScale" text="Призові"/>
+        <text name="eq_settings_prizeScale_tooltip" text="Масштабує призові всіх змагань. 1x - звичайно. Змагання, вже наявні в календарі, зберігають свої призи; зміни діють з наступного раунду."/>
+        <text name="eq_ui_tab_host" text="Організувати"/>
+        <text name="eq_host_eventName" text="%s у %s"/>
+        <text name="eq_host_type_dressage" text="Виїздка"/>
+        <text name="eq_host_type_showJumping" text="Конкур"/>
+        <text name="eq_host_type_crossCountry" text="Крос"/>
+        <text name="eq_host_type_eventing" text="Триденне триборство"/>
+        <text name="eq_host_rating_novice" text="Новачок"/>
+        <text name="eq_host_rating_intermediate" text="Середній рівень"/>
+        <text name="eq_host_rating_championship" text="Чемпіонат"/>
+        <text name="eq_host_col_event" text="Змагання, які можна провести"/>
+        <text name="eq_host_col_ready" text="Вимоги"/>
+        <text name="eq_host_col_popularity" text="Популярність"/>
+        <text name="eq_host_col_setup" text="Внесок за організацію"/>
+        <text name="eq_host_col_takings" text="Макс. виручка"/>
+        <text name="eq_host_col_check" text="Вимога"/>
+        <text name="eq_host_col_have" text="У вас є"/>
+        <text name="eq_host_col_need" text="Потрібно"/>
+        <text name="eq_host_check_arena" text="Манеж для виїздки"/>
+        <text name="eq_host_check_dressageSeating" text="Трибуни біля манежу"/>
+        <text name="eq_host_check_showJumps" text="Перешкоди для конкуру"/>
+        <text name="eq_host_check_showJumpingSeating" text="Трибуни біля маршруту"/>
+        <text name="eq_host_check_xcLength" text="Довжина кросу"/>
+        <text name="eq_host_check_xcJumps" text="Перешкоди для кросу"/>
+        <text name="eq_host_check_stables" text="Вільні місця в стайні"/>
+        <text name="eq_host_check_feed" text="Корм для коней"/>
+        <text name="eq_host_part_base" text="Основа"/>
+        <text name="eq_host_part_course" text="маршрут"/>
+        <text name="eq_host_part_seating" text="трибуни"/>
+        <text name="eq_host_part_facilities" text="споруди"/>
+        <text name="eq_host_part_reputation" text="репутація"/>
+        <text name="eq_host_part_star" text="зірковий кінь"/>
+        <text name="eq_host_part_winter" text="зима"/>
+        <text name="eq_host_part_sponsor" text="спонсор"/>
+        <text name="eq_host_part_quality" text="якість маршруту"/>
+        <text name="eq_host_part_shops" text="крамниці"/>
+        <text name="eq_host_part_ahead" text="завчасне бронювання"/>
+        <text name="eq_host_part_advert" text="реклама"/>
+        <text name="eq_host_part_buzz" text="ажіотаж"/>
+        <text name="eq_host_part_weather" text="погода"/>
+        <text name="eq_host_buzz_high" text="Ажіотаж"/>
+        <text name="eq_host_buzz_low" text="Тихо"/>
+        <text name="eq_host_popularityAhead" text="%d (+%d за завчасне бронювання)"/>
+        <text name="eq_host_advert_none" text="Без реклами"/>
+        <text name="eq_host_advert_option" text="%s, %s (+%d)"/>
+        <text name="eq_host_advert_local" text="Місцева"/>
+        <text name="eq_host_advert_national" text="Національна"/>
+        <text name="eq_host_setupWithAdvert" text="%s + %s реклама"/>
+        <text name="eq_host_label_advert" text="Реклама"/>
+        <text name="eq_host_label_sell" text="Сувеніри й напої"/>
+        <text name="eq_host_sell_yes" text="Продавати, якщо є (+%d%%)"/>
+        <text name="eq_host_sell_no" text="Не продавати"/>
+        <text name="eq_host_book_advert" text="Рекламу оплачено: %s."/>
+        <text name="eq_host_twister" text="Торнадо пронісся над %s! Глядачі кинулися в укриття."/>
+        <text name="eq_host_done_goods" text="Продано сувенірів і напоїв: %s."/>
+        <text name="eq_host_star" text="Люди були в захваті, побачивши виступ %s."/>
+        <text name="eq_host_report_twister" text="Під час змагань ударив торнадо, і глядачі розбіглися."/>
+        <text name="eq_host_report_weather" text="Негода: %d год поганої погоди відлякали людей (популярність %d)."/>
+        <text name="eq_host_report_goods" text="Сувеніри й напої: продано %d л на %s."/>
+        <text name="eq_host_report_advert" text="Реклама: %s."/>
+        <text name="eq_host_report_weatherSoFar" text="Негода вже коштувала %d популярності."/>
+        <text name="eq_host_label_yours" text="Ваші змагання"/>
+        <text name="eq_host_label_month" text="Забронювати на"/>
+        <text name="eq_host_label_next" text="Наступний вільний місяць"/>
+        <text name="eq_host_ann_out" text="Вибув"/>
+        <text name="eq_host_ann_counted" text="Штрафних очок %s: зараховано!"/>
+        <text name="eq_host_ann_resultsIn" text="%s: результати наприкінці місяця, через %d дн."/>
+        <text name="eq_host_ann_resultsSoon" text="%s: результати наприкінці місяця"/>
+        <text name="eq_host_ann_round" text="Заліковий проїзд: цей рахується!"/>
+        <text name="eq_host_ann_ridden" text="Уже проїхано: це лише тренування"/>
+        <text name="eq_host_ann_small" text="Маршрут закороткий для ваших змагань: лише тренування"/>
+        <text name="eq_host_note_counts" text="Заліковий проїзд для %s: їдьте до стартової лінії"/>
+        <text name="eq_host_note_ridden" text="Тренування: цей етап %s уже проїхано"/>
+        <text name="eq_host_note_small" text="Тренування: маршрут закороткий для %s"/>
+        <text name="eq_host_ann_test" text="Заліковий тест: цей рахується!"/>
+        <text name="eq_host_ann_smallArena" text="Цей манеж замалий для ваших змагань: лише тренування"/>
+        <text name="eq_host_note_testCounts" text="Заліковий тест для %s: їдьте до A"/>
+        <text name="eq_host_note_testSmall" text="Тренування: манеж замалий для %s"/>
+        <text name="eq_host_ann_testShort" text="Тест закороткий для ваших змагань: лише тренування"/>
+        <text name="eq_host_note_testShort" text="Тренування: тест закороткий для %s"/>
+        <text name="eq_host_ann_notEntered" text="Не записано: це лише тренування"/>
+        <text name="eq_host_note_notEntered" text="Тренування: цей кінь не записаний на %s"/>
+        <text name="eq_host_label_now" text="Цей місяць"/>
+        <text name="eq_host_next_oneAtATime" text="одні змагання за раз"/>
+        <text name="eq_host_next_interval" text="%d міс. між змаганнями, див. Налаштування"/>
+        <text name="eq_host_monthOption" text="%s (через %d міс.)"/>
+        <text name="eq_host_monthOption1" text="%s (наступного місяця)"/>
+        <text name="eq_host_report_running" text="Зараз триває: %s"/>
+        <text name="eq_host_report_runningLine" text="Результати наприкінці місяця, через %d дн. Ваші записані коні можуть проїхати свої етапи будь-якого дня до того часу."/>
+        <text name="eq_host_report_field" text="Стартує: %d"/>
+        <text name="eq_host_report_turnout" text="Явка: прибуло %d з %d коней-гостей (популярність %d)."/>
+        <text name="eq_host_report_feedSoFar" text="Коні-гості вже з'їли %d л вашого корму (%d л на день)."/>
+        <text name="eq_host_report_feed" text="Коні-гості з'їли %d л вашого корму."/>
+        <text name="eq_host_report_takings" text="Виручка %s (внески %s, квитки %s), внесок за організацію %s."/>
+        <text name="eq_host_report_total" text="Підсумкова популярність %d. Прибуток %s."/>
+        <text name="eq_host_report_mine" text="Ваш кінь %s: %s."/>
+        <text name="eq_host_report_entry" text="%s %s (%s)"/>
+        <text name="eq_host_report_overall" text="Загалом: %s."/>
+        <text name="eq_host_report_phaseTop" text="%s: %s."/>
+        <text name="eq_host_report_phasePlace" text="%s %s (%s)"/>
+        <text name="eq_host_report_minePhased" text="Ваш кінь %s: %s, штрафних очок %s (%s)."/>
+        <text name="eq_host_results_row" text="Ваші змагання"/>
+        <text name="eq_host_results_running" text="Зараз триває"/>
+        <text name="eq_host_results_winner" text="Переміг %s"/>
+        <text name="eq_host_label_setup" text="Внесок за організацію"/>
+        <text name="eq_host_label_popularity" text="Популярність"/>
+        <text name="eq_host_label_visitors" text="Явка"/>
+        <text name="eq_host_label_takings" text="Очікувана виручка"/>
+        <text name="eq_host_label_reputation" text="Репутація"/>
+        <text name="eq_host_yours_open" text="%s, цього місяця"/>
+        <text name="eq_host_yours_booked" text="%s у %s"/>
+        <text name="eq_host_yours_none" text="Нічого не заброньовано"/>
+        <text name="eq_host_ready" text="Готово"/>
+        <text name="eq_host_missing" text="Бракує: %d"/>
+        <text name="eq_host_none" text="Немає"/>
+        <text name="eq_host_metres" text="%d м"/>
+        <text name="eq_host_litres" text="%d л"/>
+        <text name="eq_host_visitors" text="%d з %d коней-гостей"/>
+        <text name="eq_host_takingsLine" text="%s внески, %s квитки"/>
+        <text name="eq_host_monthsAhead" text="через %d міс."/>
+        <text name="eq_host_monthNow" text="зараз"/>
+        <text name="eq_host_yourFarm" text="Ваша ферма"/>
+        <text name="eq_host_opened" text="Ваші змагання «%s» розпочалися. Записуйте коней на вкладці Змагання; результати наприкінці місяця."/>
+        <text name="eq_host_book_noConfig" text="Організація недоступна: правила організації не завантажилися."/>
+        <text name="eq_host_book_already" text="У вас уже заброньовано змагання."/>
+        <text name="eq_host_book_month" text="Цей місяць не можна забронювати."/>
+        <text name="eq_host_book_requirements" text="Ваша ферма ще не відповідає вимогам цих змагань."/>
+        <text name="eq_host_book_money" text="Вам потрібно %s на внесок за організацію."/>
+        <text name="eq_host_book_done" text="%s заброньовано на %s. Внесок за організацію сплачено: %s."/>
+        <text name="eq_host_cancel_none" text="У вас немає заброньованих змагань."/>
+        <text name="eq_host_cancel_done" text="%s скасовано. Повернення: %s."/>
+        <text name="eq_host_cancel_confirm" text="Скасувати «%s»? Вам повернуть %s внеску за організацію."/>
+        <text name="eq_host_enter_notYours" text="Записатися на ці змагання може лише ферма-організатор."/>
+        <text name="eq_host_enter_done" text="%s записано на %s (рейтинг %.0f). Змагається вдома: без внеску й перевезення."/>
+        <text name="eq_host_button_book" text="Забронювати на %s"/>
+        <text name="eq_host_button_cancel" text="Скасувати бронювання"/>
+        <text name="eq_host_button_enter" text="Записати"/>
+        <text name="eq_host_summary" text="%s. Популярність: %s."/>
+        <text name="eq_money_hosting" text="Організовані змагання"/>
+        <text name="rl_messageTitle_eqHosting" text="Організація"/>
+        <text name="eq_settings_hostInterval" text="Місяців між організованими змаганнями"/>
+        <text name="eq_settings_hostInterval_tooltip" text="Скільки місяців після місяця ваших останніх змагань має минути, перш ніж можна провести наступні."/>
+        <text name="eq_settings_crowdDensity" text="Щільність глядачів"/>
+        <text name="eq_settings_crowdDensity_tooltip" text="Скільки глядачів приходить на ваші змагання, на трибуни й до глядацьких лож біля мотузок (08:00-19:00)."/>
+        <text name="eq_settings_crowd_low" text="Низька"/>
+        <text name="eq_settings_crowd_medium" text="Середня"/>
+        <text name="eq_settings_crowd_high" text="Висока"/>
+        <text name="eq_host_warning" text="Для ваших змагань «%s» бракує: %s. Виправте це сьогодні, інакше завтра змагання скасують."/>
+        <text name="eq_host_cancelled" text="Ваші змагання «%s» скасовано, усе ще бракує: %s. Ваша репутація організатора страждає."/>
+        <text name="eq_host_done" text="Ваші змагання «%s» завершилися: прибуло коней-гостей: %d. Виручка %s (%s внески, %s квитки), популярність %d."/>
+        <text name="eq_host_ride_counted" text="%s зараховано для %s: штрафних очок %s."/>
+        <text name="eq_host_ride_out" text="%s зараховано для %s: вибув."/>
+        <text name="eq_host_ride_already" text="%s цього коня для %s уже проїхано; цей проїзд - тренування."/>
+        <text name="eq_host_ride_small" text="Цей маршрут закороткий для %s, тож проїзд лише тренувальний."/>
+        <text name="eq_shop_bleachers3x6" text="Трибуна 3 ряди, 6 м"/>
+        <text name="eq_shop_bleachers5x10" text="Трибуна 5 рядів, 10 м"/>
+        <text name="eq_shop_bleachers8x16" text="Трибуна 8 рядів, 16 м"/>
+        <text name="eq_shop_bleachers_function" text="Місця для глядачів на ваших змаганнях: рахуються в межах 60 м від маршруту чи манежу для виїздки."/>
+        <text name="eq_shop_bleachersSponsors_function" text="Спонсорські щити спереду показують бренди ваших машин."/>
+        <text name="input_EQ_DRESSAGE_TEST" text="Новий, редагувати або зберегти тест виїздки"/>
+        <text name="input_EQ_DT_PREV" text="Попередній варіант"/>
+        <text name="input_EQ_DT_NEXT" text="Наступний варіант"/>
+        <text name="input_EQ_DT_RANDOM" text="Випадковий варіант"/>
+        <text name="input_EQ_DT_MODE" text="Фігури або рухи на місці"/>
+        <text name="input_EQ_DT_ACCEPT" text="Залишити цей крок"/>
+        <text name="input_EQ_DT_UNDO" text="Скасувати останній крок"/>
+        <text name="eq_dt_newAction" text="Новий тест виїздки"/>
+        <text name="eq_dt_editAction" text="Редагувати тест виїздки"/>
+        <text name="eq_dt_saveAction" text="Зберегти тест виїздки"/>
+        <text name="eq_dt_cancelAction" text="Скасувати тест виїздки"/>
+        <text name="eq_dt_deleteAction" text="Видалити тест виїздки"/>
+        <text name="eq_dt_deleteTitle" text="Видалити тест виїздки"/>
+        <text name="eq_dt_deleteAsk" text="Видалити тест виїздки цього манежу (кроків: %d)? Тут знову будуть випадкові тести."/>
+        <text name="eq_dt_modeSpot" text="Показати рухи на місці"/>
+        <text name="eq_dt_modeFigure" text="Показати фігури"/>
+        <text name="eq_dt_new" text="Новий тест виїздки: крок %d"/>
+        <text name="eq_dt_editing" text="Редагування тесту виїздки: крок %d"/>
+        <text name="eq_dt_figure" text="Фігура"/>
+        <text name="eq_dt_spot" text="На місці"/>
+        <text name="eq_dt_noOptions" text="Тут нічого не підходить: скасуйте або збережіть"/>
+        <text name="eq_dt_saved" text="Тест виїздки збережено: елементів %d"/>
+        <text name="eq_dt_savedShort" text="Тест збережено, але він закороткий для %s: потрібно кроків %d, а є %d, тож проїзди тут лише тренувальні"/>
+        <text name="eq_dt_locked" text="Не можна видалити цей тест під час %s: налаштуйте тест до місяця змагань"/>
+        <text name="eq_dt_deleted" text="Тест виїздки видалено: цей манеж знову має випадкові тести"/>
+        <text name="eq_dt_cancelled" text="Тест виїздки не збережено"/>
+        <text name="eq_fig_halt" text="Зупинка в %s"/>
+        <text name="eq_fig_reinBack" text="Зупинка в %s, осаджування"/>
+        <text name="eq_fig_piaffe" text="Піаффе в %s"/>
+        <text name="eq_fig_pirouette" text="Піруєт у %s"/>
+        <text name="eq_dt_hintNew" text="Ctrl+L: створіть власний тест виїздки для цього манежу"/>
+        <text name="eq_dt_hintEdit" text="Ctrl+L: редагувати тест виїздки цього манежу"/>
+        <text name="input_EQ_DT_PREV_LETTER" text="Попередня літера"/>
+        <text name="input_EQ_DT_NEXT_LETTER" text="Наступна літера"/>
+        <text name="input_EQ_DT_GAIT" text="Алюр фігури"/>
+        <text name="eq_dt_gaitAction" text="Фігури на алюрі: %s"/>
+        <text name="eq_fig_pirouetteLeft" text="Піруєт ліворуч у %s"/>
+        <text name="eq_fig_pirouetteRight" text="Піруєт праворуч у %s"/>
+        <text name="eq_dt_modeLateral" text="Показати бокові рухи"/>
+        <text name="eq_dt_lateral" text="Бокові"/>
+        <text name="eq_shop_signboard_function" text="Збільшує спонсорську виручку ваших змагань."/>
+        <text name="eq_ui_tab_sponsors" text="Спонсори"/>
+        <text name="eq_money_sponsorship" text="Спонсорство"/>
+        <text name="rl_messageTitle_eqSponsor" text="Спонсори"/>
+        <text name="eq_host_report_sponsor" text="Спонсор: %s, заплатив %s."/>
+        <text name="eq_sponsor_eventName" text="%s %s Класик"/>
+        <text name="eq_sponsor_col_sponsor" text="Спонсор"/>
+        <text name="eq_sponsor_col_contract" text="Контракт"/>
+        <text name="eq_sponsor_col_fee" text="Платить вам"/>
+        <text name="eq_sponsor_size_big" text="Великий"/>
+        <text name="eq_sponsor_size_moderate" text="Помірний"/>
+        <text name="eq_sponsor_size_small" text="Малий"/>
+        <text name="eq_sponsor_word_relaxed" text="Поблажливий"/>
+        <text name="eq_sponsor_word_fair" text="Справедливий"/>
+        <text name="eq_sponsor_word_demanding" text="Вимогливий"/>
+        <text name="eq_sponsor_word_hardBargain" text="Жорсткий торг"/>
+        <text name="eq_sponsor_year1" text="%d рік"/>
+        <text name="eq_sponsor_years" text="Років: %d"/>
+        <text name="eq_sponsor_backs_all" text="Усі змагання"/>
+        <text name="eq_sponsor_backs_from" text="%s і вище"/>
+        <text name="eq_sponsor_backs_lower" text="%s (%s у %s)"/>
+        <text name="eq_sponsor_targetTop3" text=", з фінішем у трійці"/>
+        <text name="eq_sponsor_label_fee" text="Платить вам"/>
+        <text name="eq_sponsor_label_popularity" text="Популярність"/>
+        <text name="eq_sponsor_label_target" text="Річна ціль"/>
+        <text name="eq_sponsor_label_machines" text="Їхня техніка"/>
+        <text name="eq_sponsor_label_discounts" text="Знижки"/>
+        <text name="eq_sponsor_label_ends" text="Закінчується"/>
+        <text name="eq_sponsor_label_thisYear" text="Цього року"/>
+        <text name="eq_sponsor_label_missed" text="Пропущені цілі"/>
+        <text name="eq_sponsor_label_paid" text="Виплачено досі"/>
+        <text name="eq_sponsor_label_cancel" text="Вартість розірвання"/>
+        <text name="eq_sponsor_label_years" text="Контракт"/>
+        <text name="eq_sponsor_yearMet" text="Ціль досягнуто"/>
+        <text name="eq_sponsor_yearOpen" text="Ціль відкрита до %s"/>
+        <text name="eq_sponsor_missedLine" text="%d поспіль, виплата %s"/>
+        <text name="eq_sponsor_summaryOpen" text="Пропозиції діють до %s. Один спонсор за раз: майте його техніку, жодних машин конкурентів у його ціновому діапазоні та достатньо брендування."/>
+        <text name="eq_sponsor_summaryClosed" text="Пропозиції цього року вичерпано. Нові спонсори з'являться на початку наступного року."/>
+        <text name="eq_sponsor_noConfig" text="Не вдалося завантажити спонсорів."/>
+        <text name="eq_sponsor_noOffers" text="Зараз немає спонсорських пропозицій. Нові з'являються на початку кожного року."/>
+        <text name="eq_sponsor_sign_gone" text="Ця пропозиція вже недійсна."/>
+        <text name="eq_sponsor_sign_notReady" text="Ви ще не відповідаєте умовам цього спонсора."/>
+        <text name="eq_sponsor_signed" text="%s тепер ваш спонсор, років: %d."/>
+        <text name="eq_sponsor_cancel_none" text="У вас немає спонсора."/>
+        <text name="eq_sponsor_cancelled" text="Ваш контракт із %s розірвано. Розірвання коштувало %s."/>
+        <text name="eq_sponsor_paid" text="%s заплатив %s за %s."/>
+        <text name="eq_sponsor_unpaid_boards" text="%s нічого не заплатив за %s: ваше брендування занизьке."/>
+        <text name="eq_sponsor_unpaid_machines" text="%s нічого не заплатив за %s: у вас недостатньо їхніх машин."/>
+        <text name="eq_sponsor_targetMet" text="%s: ціль цього року досягнуто."/>
+        <text name="eq_sponsor_leaves" text="%s пішов після пропущених цілей."/>
+        <text name="eq_sponsor_missed" text="%s: ціль цього року пропущено. Виплату наступного року знижено до %d%%."/>
+        <text name="eq_sponsor_finished" text="Ваш контракт із %s завершився. Загалом виплачено %s."/>
+        <text name="eq_sponsor_newOffers" text="Новий рік: спонсорів, які хочуть підтримати ваші змагання: %d. Дивіться Змагання, Спонсори."/>
+        <text name="eq_sponsor_button_sign" text="Підписати"/>
+        <text name="eq_sponsor_button_cancel" text="Розірвати контракт"/>
+        <text name="eq_sponsor_sign_confirm" text="Підписати контракт із %s на %d р.? Дострокове розірвання коштує грошей."/>
+        <text name="eq_sponsor_cancel_confirm" text="Розірвати контракт із %s? Це коштує %s."/>
+        <text name="eq_sponsor_col_eligibility" text="Відповідність"/>
+        <text name="eq_sponsor_eligible_yes" text="Відповідає"/>
+        <text name="eq_sponsor_eligible_no" text="Не відповідає"/>
+        <text name="eq_sponsor_eligible_taken" text="Уже ексклюзивний"/>
+        <text name="eq_sponsor_eligible_yours" text="Ваш спонсор"/>
+        <text name="eq_sponsor_eligible_exclusive" text="Лише ексклюзивно"/>
+        <text name="eq_sponsor_eligible_full" text="Спонсорів досить"/>
+        <text name="eq_sponsor_eligible_overlap" text="Та сама спеціалізація"/>
+        <text name="eq_sponsor_eligible_rivals" text="Є техніка конкурентів"/>
+        <text name="eq_sponsor_eligible_equipment" text="Потрібна техніка"/>
+        <text name="eq_sponsor_eligible_branding" text="Потрібне брендування"/>
+        <text name="eq_sponsor_exclusive_yes" text="Ексклюзивний"/>
+        <text name="eq_sponsor_exclusive_no" text="Неексклюзивний"/>
+        <text name="eq_sponsor_overlapLine" text="Конфліктує з %s: %s"/>
+        <text name="eq_sponsor_label_speciality" text="Спеціалізація"/>
+        <text name="eq_sponsor_feePerEvent" text="%s за змагання"/>
+        <text name="eq_sponsor_targetPopularity" text="Популярність %d"/>
+        <text name="eq_sponsor_targetRating" text="Змагання рівня %s або вище"/>
+        <text name="eq_sponsor_haveOf" text="У вас %s з %d"/>
+        <text name="eq_sponsor_mustOwn" text="Перш ніж подаватися, потрібно мати їхньої техніки: %d од."/>
+        <text name="eq_sponsor_mustKeep" text="Щоб отримувати виплати, потрібно тримати їхньої техніки: %d од."/>
+        <text name="eq_sponsor_attachHalf" text="Навісне обладнання й причепи рахуються як половина."/>
+        <text name="eq_sponsor_noRivals" text="Не можна мати техніку в межах %s від вартості їхнього продукту."/>
+        <text name="eq_sponsor_sellFirst" text="Перш ніж подаватися, продайте або поверніть:"/>
+        <text name="eq_sponsor_sellMore" text="...і ще %d"/>
+        <text name="eq_sponsor_button_shop" text="Показати в магазині"/>
+        <text name="eq_sponsor_label_branding" text="Брендування"/>
+        <text name="eq_sponsor_brandingLine" text="%s (потрібно: %s)"/>
+        <text name="eq_sponsor_branding_none" text="Немає"/>
+        <text name="eq_sponsor_branding_low" text="Низьке"/>
+        <text name="eq_sponsor_branding_medium" text="Середнє"/>
+        <text name="eq_sponsor_branding_high" text="Високе"/>
+        <text name="eq_sponsor_label_likely" text="Імовірна виплата"/>
+        <text name="eq_sponsor_likelyLine" text="%s при %s"/>
+        <text name="eq_shop_branding" text="Ваше брендування: зараз %s, з цим %s. Більше брендування підвищує виплати спонсора."/>
+        <text name="eq_shop_brandingOption" text="Зі спонсорськими щитами ваше брендування: зараз %s, з цим %s."/>
+        <text name="eq_config_sponsorBoards" text="Спонсорські щити"/>
+        <text name="eq_shop_sponsorBoards_function" text="Спонсорські щити (необов'язково, за доплату): таблички на стійках показують логотип вашого спонсора, а жердини фарбуються в його колір."/>
+        <text name="eq_sponsor_discount_repaint" text="Перефарбування %s"/>
+        <text name="eq_sponsor_discount_repair" text="Ремонт %s"/>
+        <text name="eq_sponsor_discount_buy" text="Купівля %s"/>
+        <text name="eq_sponsor_loanLine" text="Позичає машину на місяць ваших змагань"/>
+        <text name="eq_sponsor_eventingLine" text="%s більше за триденне триборство"/>
+        <text name="eq_loan_popupTitle" text="Машина від вашого спонсора"/>
+        <text name="eq_loan_popup" text="%s доставив нову машину %s, щоб ви випробували її на час ваших змагань. Вона чекає на вас у дилера. Використовуйте її для чого завгодно безкоштовно до кінця місяця, коли її заберуть."/>
+        <text name="eq_loan_delivered" text="%s позичив вам %s на місяць ваших змагань. Вона в дилера."/>
+        <text name="eq_loan_collected" text="%s забрав %s, яку позичав вам."/>
+        <text name="eq_loan_noRoom" text="%s не зміг доставити %s: у дилера немає місця. Спробують знову завтра."/>
+        <text name="eq_loan_enterTitle" text="Подарунок від %s"/>
+        <text name="eq_loan_enter" text="Цю техніку надав ваш спонсор для використання під час ваших змагань цього місяця. Насолоджуйтеся!"/>
+        <text name="eq_sponsor_discount_from" text="Починається через %s"/>
+        <text name="eq_sponsor_discount_after" text="Починається через %d міс. після підписання"/>
+        <text name="eq_settings_homeRegion" text="Домашній регіон"/>
+        <text name="eq_settings_homeRegion_tooltip" text="Де розташована ваша ферма, що визначає, які змагання відбуваються за кордоном. «З мапи» бере регіон із мапи (або країну мапи з RLRM); оберіть регіон, якщо він неправильний."/>
+        <text name="eq_settings_homeRegion_auto" text="З мапи"/>
+        <text name="eq_region_northAmerica" text="Північна Америка"/>
+        <text name="eq_region_southAmerica" text="Південна Америка"/>
+        <text name="eq_region_europe" text="Європа"/>
+        <text name="eq_region_asiaOceania" text="Азія та Океанія"/>
+        <text name="eq_settings_quarantine" text="Міжнародний карантин"/>
+        <text name="eq_settings_quarantine_tooltip" text="Чи проводить кінь, що повертається зі змагань в іншому регіоні, кілька раундів у карантині, перш ніж опинитися вдома. Карантинні збори сплачуються в будь-якому разі."/>
+        <text name="eq_ui_col_region" text="Регіон"/>
+        <text name="eq_ui_region_home" text="Ваш регіон: %s."/>
+        <text name="eq_ui_summary_quarantine" text="За кордоном: потім карантин %s."/>
+        <text name="eq_ui_status_quarantineAfter" text="%s, потім карантин %s"/>
+        <text name="eq_ui_status_quarantine" text="На карантині"/>
+        <text name="eq_status_quarantine" text="На карантині, %s"/>
+        <text name="eq_ui_time_day" text="%d дн."/>
+        <text name="eq_ui_time_days" text="%d дн."/>
+        <text name="eq_ui_time_month" text="%d міс."/>
+        <text name="eq_ui_time_months" text="%d міс."/>
+        <text name="eq_enter_quarantine" text="Цей кінь на карантині після змагань за кордоном. Він зможе змагатися, коли повернеться додому."/>
+        <text name="eq_quarantine_home" text="%s повернувся додому з карантину."/>
+        <text name="eq_ride_blocked_horse" text="Цей кінь"/>
+        <text name="eq_ride_blocked_quarantine" text="%s на карантині, і на ньому не можна їздити, доки він не повернеться додому."/>
+        <text name="eq_ride_blocked_away" text="%s на змаганнях, і на ньому не можна їздити."/>
+        <text name="eq_ride_blocked_injured" text="%s травмований, і на ньому не можна їздити, доки він не одужає."/>
+        <text name="eq_loose_sentHome_quarantine" text="%s на карантині, тож його повернули до %s."/>
+        <text name="eq_loose_sentHome_away" text="%s на змаганнях, тож його повернули до %s."/>
+        <text name="eq_loose_sentHome_injured" text="%s травмований, тож його повернули до %s відпочивати."/>
+        <text name="eq_help_freestyle_5" text="Ваші коні мають додаткові алюри й клавіші рухів. Утримуйте [[EQ_REIN]], щоб точно кермувати мишею, [[EQ_LATERAL]] для бокових рухів і [[EQ_COLLECT]], щоб зібрати коня."/>
+        <text name="eq_help_lateral_title" text="Бокові рухи"/>
+        <text name="eq_help_lateral_1" text="Бокові рухи - одні з найскладніших частин виїздки, і вони поєднують кілька елементів керування. Утримуйте [[EQ_LATERAL]] і натискайте A або D, щоб зміщуватися вбік в уступці шенкелю, і також утримуйте [[EQ_REIN]], щоб зігнути шию та плечі коня в траверс, ренверс або траверс-аппуае. У тесті виїздки значки на шляху показують, як поставити коня."/>
+        <text name="eq_help_collect_title" text="Збирання"/>
+        <text name="eq_help_collect_1" text="Збирання здебільшого використовують у виїздці, щоб іти алюром без звичайної швидкості. Утримуйте [[EQ_COLLECT]] на рисі для піаффе, рисі на місці, і також натисніть W для пасажу, повільної пружної рисі. Зберіть коня на кроці чи галопі й поверніть A або D для піруету."/>
+        <text name="eq_help_rein_title" text="Кермування мишею"/>
+        <text name="eq_help_rein_1" text="Утримання [[EQ_REIN]] переводить камеру за коня й дає змогу точно кермувати мишею, що життєво важливо у виїздці, а іноді й у конкурі. Якщо також утримувати [[EQ_LATERAL]], миша згинає голову коня для бокових рухів."/>
+        <text name="eq_help_courseEdit_title" text="Редагування маршруту"/>
+        <text name="eq_help_courseEdit_1" text="Прокладіть маршрут, проїжджаючи перешкоди по порядку на будь-якій швидкості. Перешкоди цього мода не мають зіткнень, поки ви прокладаєте маршрут. Якщо помилилися, поверніться до останньої правильної точки, доки лінія не прилипне до неї, потім натисніть [[EQ_COURSE_REWIND]], щоб прокладати знову звідти. Натисніть [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] для кросу) ще раз, щоб зберегти."/>
+        <text name="eq_help_dressageEdit_title" text="Редагування тесту виїздки"/>
+        <text name="eq_help_dressageEdit_1" text="Складіть власний тест виїздки з фігур, рухів і алюрів. Натискайте [[EQ_DT_PREV]] і [[EQ_DT_NEXT]], щоб змінювати фігури, [[EQ_DT_GAIT]], щоб змінити алюр, і [[EQ_DT_MODE]] для бокових рухів чи рухів на місці. Натисніть [[EQ_DT_ACCEPT]], щоб залишити крок і рухатися далі, [[EQ_DT_UNDO]], щоб повернутися, або [[EQ_DT_RANDOM]] для випадкового кроку. Натисніть [[EQ_DRESSAGE_TEST]], щоб зберегти тест."/>
+    </texts>
+</l10n>
