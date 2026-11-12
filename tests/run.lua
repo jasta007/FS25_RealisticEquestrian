@@ -6645,5 +6645,20 @@ end)()
     check("listbadge: atlas has the zzz slice", atlas:find('id="zzz"', 1, true) ~= nil)
 end)()
 
+-- EqLog.guard works without coroutine: FS25 leaves it out of the mod environment, and a nil
+-- coroutine stopped main.lua at its first hook in 1.0.0.1/1.0.0.2 (the mod never switched on).
+;(function()
+    local saved, savedLog = coroutine, EqLog
+    coroutine = nil
+    EqLog = nil
+    dofile("scripts/core/EqLog.lua")
+    EqLog.info, EqLog.warning, EqLog.error, EqLog.debug = function() end, function() end, function() end, function() end
+    local ok, value = EqLog.guard("no coroutine", function() return 7 end)
+    local bad = EqLog.guard("no coroutine error", function() error("boom") end)
+    coroutine = saved
+    EqLog = savedLog
+    check("eqlog: guard runs without coroutine", ok == true and value == 7 and bad == false)
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

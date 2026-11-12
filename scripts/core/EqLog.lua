@@ -66,6 +66,11 @@ end
 --- The mod's one protected call. It runs fn in a coroutine, which catches an error the way
 --- pcall does and returns (ok, ...) in the same shape, without the pcall the TestRunner flags.
 local function protected(fn, ...)
+    -- FS25 1.x leaves coroutine out of the mod environment (2026-11-12: "attempt to index nil with
+    -- 'create'" on the first guarded call stopped main.lua, so nothing after it was hooked).
+    if coroutine == nil then
+        return pcall(fn, ...)
+    end
     local co = coroutine.create(fn)
     return settle(co, coroutine.resume(co, ...))
 end
