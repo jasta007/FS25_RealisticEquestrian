@@ -132,6 +132,13 @@ def main():
     socks = soft(socks.astype(np.float32), 6) * coat
     # blaze: a stripe down the front of the face, from the forehead to the nostrils
     face = on & np.isin(isl, [1]) & (np.abs(x) < 0.028) & (z > 0.62) & (y > 1.05)
+    # keep only the upper (front) surface of the head: at each depth z the centre line runs over
+    # the face and back under the jaw, so drop the texels in the lower half (the chin and throat)
+    bins = np.floor(z / 0.01).astype(np.int64)
+    for b in np.unique(bins[face]):
+        sel = face & (bins == b)
+        ys = y[sel]
+        face[sel] = ys > (ys.min() + ys.max()) / 2
     blaze = soft(face.astype(np.float32), 7) * coat
 
     a1, a2, a3, a4 = albedo(1), albedo(2), albedo(3), albedo(4)
