@@ -131,11 +131,13 @@ def main():
     socks = on & (y > 0.0) & (y < 0.24) & ~np.isin(isl, list(HOOVES | HAIR))
     socks = soft(socks.astype(np.float32), 6) * coat
     # blaze: a stripe down the front of the face, from the forehead to the nostrils
-    # a narrow, slightly wandering stripe (James: thinner and less straight): wider at the
-    # forehead, pinched over the nose bridge, drifting a little off the centre line
+    # blaze after James's reference foal: a broad star between the eyes, a narrow stripe down the
+    # nose bridge, then widening again over the muzzle to the nostrils; slightly off-centre
     t = (y - 1.05) / 0.4                                       # ~0 at the nostrils, ~1 at the forehead
-    half = 0.009 + 0.008 * np.clip(t - 0.55, 0, 1) / 0.45 + 0.002 * np.sin(t * 17.0)
-    drift = 0.004 * np.sin(t * 7.0 + 0.6) + 0.002 * np.sin(t * 23.0)
+    star = 0.024 * np.exp(-((t - 0.82) / 0.12) ** 2)           # forehead star
+    snip = 0.010 * np.exp(-((t - 0.05) / 0.12) ** 2)           # muzzle widening
+    half = 0.008 + star + snip + 0.0015 * np.sin(t * 13.0)
+    drift = 0.003 * np.sin(t * 5.0 + 0.6)
     face = on & np.isin(isl, [1]) & (np.abs(x - drift) < half) & (z > 0.62) & (y > 1.05)
     # keep only the upper (front) surface of the head: at each depth z the centre line runs over
     # the face and back under the jaw, so drop the texels in the lower half (the chin and throat)
