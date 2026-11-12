@@ -16,13 +16,18 @@ EqFoalVisuals.CONFIG = "data/foals/horseAnimals.xml"
 EqFoalVisuals.MODEL = "data/foals/foal.i3d"
 EqFoalVisuals.ADULTS = 8
 EqFoalVisuals.applied = false
+EqFoalVisuals.installed = false
 -- The adult visual of each horse subtype, whose minAge follows the Horse maturing setting (sync).
 EqFoalVisuals.adults = {}
 
 local Log = EqLog
 
 
+--- Call from EqMain.activate, never at source time: RLRM sources after this mod and replaces
+--- AnimalSystem.loadMapData without calling the original, which would drop a hook added earlier.
 function EqFoalVisuals.install(guarded, modDirectory)
+    if EqFoalVisuals.installed then return end
+    EqFoalVisuals.installed = true
     if not fileExists(modDirectory .. EqFoalVisuals.MODEL) then
         Log:info("Foal visuals: no foal model yet, horses keep the base look at every age")
         return
@@ -34,11 +39,13 @@ function EqFoalVisuals.install(guarded, modDirectory)
     AnimalSystem.loadMapData = Utils.appendedFunction(AnimalSystem.loadMapData, function(system)
         guarded("foal visuals", function() EqFoalVisuals.apply(system, modDirectory) end)
     end)
+    Log:info("Foal visuals: hooked the animal system's map load")
 end
 
 
 --- Swap in the foal config and add the foal stage to every horse subtype.
 function EqFoalVisuals.apply(system, modDirectory)
+    if system.eqFoalsApplied then return end
     local horse = system.nameToType ~= nil and system.nameToType.HORSE or nil
     if horse == nil then return end
     local current = tostring(horse.configFilename or "")
@@ -82,6 +89,7 @@ function EqFoalVisuals.apply(system, modDirectory)
         end
     end
     EqFoalVisuals.applied = true
+    system.eqFoalsApplied = true
     Log:info("Foal visuals: horses under %d months show as foals", age)
 end
 

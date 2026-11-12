@@ -177,6 +177,11 @@ function EqMain.activate()
         EqMain.isActive = EqRLRM.init()
     end)
 
+    -- Foals in the pen: the horse config is swapped right after the animal system loads. Hooked
+    -- here, after every mod is sourced, as RLRM replaces AnimalSystem.loadMapData outright.
+    -- Needs nothing from RLRM, so it goes in with or without it.
+    guarded("foal visuals hook", function() EqFoalVisuals.install(guarded, modDirectory) end)
+
     if EqMain.isActive and EqRLRM.features.infoDisplay then
         guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)
     end
@@ -308,8 +313,6 @@ guarded("probe hook", EqProbe.install)
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
--- Foals in the pen: the horse config is swapped right after the animal system loads.
-guarded("foal visuals hook", function() EqFoalVisuals.install(guarded, modDirectory) end)
 -- Cross country flags' guide lines show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
 guarded("flag label hook", function() EqFlagLabels.install(guarded) end)

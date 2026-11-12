@@ -6736,6 +6736,33 @@ end)()
     local s2, horse2 = system("mods/someMap/horse/animals.xml")
     EqFoalVisuals.apply(s2, "mod/")
     check("foals: a map's own horse config is left alone", #s2.subTypes[1].visuals == 1 and horse2.animals[1] == "a1")
+    EqFoalVisuals.apply(s, "mod/")
+    check("foals: applying twice adds no second foal stage", #s.subTypes[2].visuals == 2)
+
+    -- RLRM sources after us and overwrites AnimalSystem.loadMapData without calling the original,
+    -- so the hook goes in at activation, on top of RLRM's version.
+    local savedAS, savedUtils, savedExists = AnimalSystem, Utils, fileExists
+    local rlrmRan = false
+    AnimalSystem = { loadMapData = function() end }
+    Utils = Utils or {}
+    local savedAppended = Utils.appendedFunction
+    Utils.appendedFunction = function(a, b) return function(...) a(...); b(...) end end
+    fileExists = function() return true end
+    AnimalSystem.loadMapData = function() rlrmRan = true end -- RLRM's overwrite, already in place
+    local s3 = system("dataS/character/animals/domesticated/horse/animals.xml")
+    EqFoalVisuals.installed = false
+    EqFoalVisuals.install(function(_, fn) fn() end, "mod/")
+    EqFoalVisuals.install(function(_, fn) fn() end, "mod/")
+    AnimalSystem.loadMapData(s3)
+    check("foals: hook runs after RLRM's loadMapData, once", rlrmRan and #s3.subTypes[1].visuals == 2)
+    AnimalSystem, fileExists = savedAS, savedExists
+    Utils.appendedFunction = savedAppended
+    if savedUtils == nil then Utils = nil end
+    local main = io.open("scripts/main.lua"):read("*a")
+    local activateAt = main:find("function EqMain.activate", 1, true)
+    local installAt = main:find("EqFoalVisuals.install", 1, true)
+    check("foals: hook installed from EqMain.activate, not at source time",
+        activateAt ~= nil and installAt ~= nil and installAt > activateAt and installAt < main:find("Realistic Equestrian by %s active", 1, true))
 end)()
 
 -- Foals: no riding under 1 year
