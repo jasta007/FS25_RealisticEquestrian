@@ -19,7 +19,7 @@ WORK = 2048  # masks and recolours are made at this size, then scaled to TILE
 os.makedirs(OUT, exist_ok=True)
 
 # UV islands, numbered biggest first (see the island map this script saves).
-HAIR = {17, 18, 21, 22, 23, 24, 31, 32, 35, 36}        # tail cards, mane and forelock strips
+HAIR = {6, 17, 18, 21, 22, 23, 24, 31, 32, 35, 36}     # tail tube + cards, mane and forelock strips
 KEEP = {7, 8, 11, 12, 13, 14, 19, 20, 29, 30, 33, 34}  # eyes, mouth, teeth: never recoloured
 HOOVES = {25, 26, 27, 28}
 
