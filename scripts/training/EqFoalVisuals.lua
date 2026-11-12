@@ -15,6 +15,8 @@ EqFoalVisuals = {}
 EqFoalVisuals.CONFIG = "data/foals/horseAnimals.xml"
 EqFoalVisuals.MODEL = "data/foals/foal.i3d"
 EqFoalVisuals.ADULTS = 8
+-- Foal shop/list icons by base coat index (the 8 base visuals' order).
+EqFoalVisuals.ICONS = { "grey", "pinto", "palomino", "chestnut", "bay", "black", "sealBrown", "dun" }
 EqFoalVisuals.applied = false
 EqFoalVisuals.installed = false
 -- The adult visual of each horse subtype, whose minAge follows the Horse maturing setting (sync).
@@ -82,6 +84,13 @@ function EqFoalVisuals.apply(system, modDirectory)
                 foal.minAge = 0
                 foal.visualAnimalIndex = index + EqFoalVisuals.ADULTS
                 foal.visualAnimal = horse.animals[foal.visualAnimalIndex]
+                -- own store table (RLRM's dealer sets canBeBought per visual), with the foal icon
+                if type(first.store) == "table" then
+                    foal.store = {}
+                    for k, v in pairs(first.store) do foal.store[k] = v end
+                    local icon = string.format("%sdata/foals/icons/store_foal_%s.dds", modDirectory, EqFoalVisuals.ICONS[index])
+                    if fileExists(icon) then foal.store.imageFilename = icon end
+                end
                 first.minAge = age
                 table.insert(subType.visuals, 1, foal)
                 table.insert(EqFoalVisuals.adults, first)

@@ -6712,7 +6712,8 @@ end)()
         local s = { subTypes = {}, nameToType = {} }
         local horse = { configFilename = config, animals = { "a1", "a2" }, subTypes = {} }
         for i = 1, 2 do
-            s.subTypes[i] = { visuals = { { minAge = 0, visualAnimalIndex = i, image = "img" .. i } } }
+            s.subTypes[i] = { visuals = { { minAge = 0, visualAnimalIndex = i, image = "img" .. i,
+                store = { imageFilename = "adult" .. i, canBeBought = true } } } }
             horse.subTypes[i] = i
         end
         s.nameToType.HORSE = horse
@@ -6722,6 +6723,8 @@ end)()
         end
         return s, horse
     end
+    local outerExists = fileExists
+    fileExists = function() return true end
     local s, horse = system("dataS/character/animals/domesticated/horse/animals.xml")
     EqFoalVisuals.apply(s, "mod/")
     local v = s.subTypes[2].visuals
@@ -6732,6 +6735,8 @@ end)()
         check("foals: realistic maturing shows the foal until 1 year", v[2].minAge == 12 and s.subTypes[1].visuals[2].minAge == 12)
     end)
     EqFoalVisuals.sync()
+    check("foals: foal has its own store table and icon", v[1].store ~= v[2].store and v[2].store.imageFilename == "adult2"
+        and v[1].store.canBeBought == true and v[1].store.imageFilename == "mod/data/foals/icons/store_foal_pinto.dds")
     check("foals: horse type uses our config", horse.configFilename == "mod/data/foals/horseAnimals.xml")
     local s2, horse2 = system("mods/someMap/horse/animals.xml")
     EqFoalVisuals.apply(s2, "mod/")
@@ -6755,7 +6760,7 @@ end)()
     EqFoalVisuals.install(function(_, fn) fn() end, "mod/")
     AnimalSystem.loadMapData(s3)
     check("foals: hook runs after RLRM's loadMapData, once", rlrmRan and #s3.subTypes[1].visuals == 2)
-    AnimalSystem, fileExists = savedAS, savedExists
+    AnimalSystem, fileExists = savedAS, outerExists
     Utils.appendedFunction = savedAppended
     if savedUtils == nil then Utils = nil end
     local main = io.open("scripts/main.lua"):read("*a")
