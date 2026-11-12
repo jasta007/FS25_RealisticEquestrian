@@ -1204,6 +1204,10 @@
         <text name="eq_region_asiaOceania" text="Asien und Ozeanien"/>
         <text name="eq_settings_quarantine" text="Internationale Quarantäne"/>
         <text name="eq_settings_quarantine_tooltip" text="Ob ein Pferd nach einem Turnier in einer anderen Region Runden in Quarantäne verbringt, bevor es heimkommt. Die Quarantänegebühren fallen in jedem Fall an."/>
+        <text name="eq_settings_maturing" text="Reifung der Pferde"/>
+        <text name="eq_settings_maturing_tooltip" text="Wie schnell Fohlen erwachsen werden. Beschleunigt: Fohlen bis 6 Monate, reitbar ab 6 Monaten, Aufbauprüfungen mit 1 bis 2 Jahren, andere Turniere ab 2 Jahren. Realistisch: Fohlen bis 1 Jahr, reitbar ab 1 Jahr, Aufbauprüfungen mit 2 bis 3 Jahren, andere Turniere ab 3 Jahren."/>
+        <text name="eq_settings_maturing_accelerated" text="Beschleunigt"/>
+        <text name="eq_settings_maturing_realistic" text="Realistisch"/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Ihre Region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Im Ausland: danach %s Quarantäne."/>
@@ -1220,6 +1224,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s ist in Quarantäne und kann erst geritten werden, wenn es zu Hause ist."/>
         <text name="eq_ride_blocked_away" text="%s ist auf einem Turnier und kann nicht geritten werden."/>
         <text name="eq_ride_blocked_injured" text="%s ist verletzt und kann erst nach der Heilung geritten werden."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s ist zu jung zum Reiten. Pferde können ab %d Monaten geritten werden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s ist in Quarantäne und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_away" text="%s ist auf einem Turnier und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_injured" text="%s ist verletzt und wurde zum Ausruhen zurück in %s gebracht."/>

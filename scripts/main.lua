@@ -32,6 +32,7 @@ source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqExertion.lua")
 source(modDirectory .. "scripts/training/EqJump.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqFoalVisuals.lua")
 source(modDirectory .. "scripts/training/EqTemperament.lua")
 source(modDirectory .. "scripts/training/EqBreath.lua")
 source(modDirectory .. "scripts/training/EqDressagePath.lua")
@@ -52,6 +53,7 @@ source(modDirectory .. "scripts/training/EqTrainingHooks.lua")
 source(modDirectory .. "scripts/training/EqLateral.lua")
 source(modDirectory .. "scripts/training/EqMetabolism.lua")
 source(modDirectory .. "scripts/training/EqLooseHorses.lua")
+source(modDirectory .. "scripts/training/EqFoals.lua")
 source(modDirectory .. "scripts/staff/EqStaffNames.lua")
 source(modDirectory .. "scripts/staff/EqStaff.lua")
 source(modDirectory .. "scripts/staff/EqStaffManager.lua")
@@ -174,6 +176,11 @@ function EqMain.activate()
     guarded("activation", function()
         EqMain.isActive = EqRLRM.init()
     end)
+
+    -- Foals in the pen: the horse config is swapped right after the animal system loads. Hooked
+    -- here, after every mod is sourced, as RLRM replaces AnimalSystem.loadMapData outright.
+    -- Needs nothing from RLRM, so it goes in with or without it.
+    guarded("foal visuals hook", function() EqFoalVisuals.install(guarded, modDirectory) end)
 
     if EqMain.isActive and EqRLRM.features.infoDisplay then
         guarded("info display hooks", function() EqInfoDisplay.install(guarded) end)

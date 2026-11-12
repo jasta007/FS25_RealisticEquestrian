@@ -977,7 +977,7 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     end
     if worn or gait == "halt" then return end
 
-    sheet.barFactor = EqTraining.ridingBarFactor(stamina)
+    sheet.barFactor = EqTraining.ridingBarFactor(stamina, spec.cluster ~= nil and spec.cluster.age or nil)
     EqTraining.addRiding(sheet, gait, dt, share)
     adjustRiding(spec, gait, sheet.barFactor / EqTraining.barShare(sheet, share), dt)
     for kind in pairs(EqFacilityHooks.insideKinds(vehicle)) do EqTraining.addInside(sheet, kind, dt * share) end

@@ -78,6 +78,9 @@ EqSettings.ROWS = {
         return texts
     end)(), default = "auto" },
     { id = "quarantine", values = { false, true }, texts = onOffTexts(), default = true },
+    -- Horse maturing (EqFoals): when foals can be ridden and enter events.
+    { id = "maturing", values = { "accelerated", "realistic" },
+        texts = { { key = "eq_settings_maturing_accelerated" }, { key = "eq_settings_maturing_realistic" } }, default = "accelerated" },
     { id = "hostInterval", values = EqSettings.HOST_INTERVALS, texts = (function()
         local texts = {}
         for i, months in ipairs(EqSettings.HOST_INTERVALS) do texts[i] = { text = tostring(months) } end
@@ -123,6 +126,7 @@ function EqSettings.apply(settings, id, state)
     local value = row.values[state]
     if settings[id] == value then return false end
     settings[id] = value
+    if id == "maturing" and EqFoalVisuals ~= nil then EqFoalVisuals.sync() end
     return true
 end
 

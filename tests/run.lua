@@ -63,6 +63,7 @@ dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
 dofile("scripts/training/EqLooseHorses.lua")
+dofile("scripts/training/EqFoals.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
 dofile("scripts/gui/EqRideButton.lua")
 local TestXML = dofile("tests/xml.lua")
@@ -76,6 +77,20 @@ local function check(name, condition, detail)
         failed = failed + 1
         print("FAIL " .. name .. (detail and (": " .. detail) or ""))
     end
+end
+
+-- Runs fn with the Horse maturing setting (EqFoals) set to "accelerated" or "realistic".
+local function withMaturing(mode, fn)
+    local had = EqCompetitionManager
+    if had == nil then EqCompetitionManager = { settings = {} } end
+    local settings = EqCompetitionManager.settings or {}
+    EqCompetitionManager.settings = settings
+    local old = settings.maturing
+    settings.maturing = mode
+    local ok, err = pcall(fn)
+    settings.maturing = old
+    if had == nil then EqCompetitionManager = nil end
+    if not ok then error(err) end
 end
 
 local function genesOf(s, sp, a, t)
@@ -473,6 +488,15 @@ do
     end
     check("a fit horse's riding bar fills more slowly", EqTraining.ridingBarFactor(40) == 1
         and math.abs(EqTraining.ridingBarFactor(100) - 1.4) < 1e-9)
+    withMaturing("realistic", function()
+        check("a young horse's riding bar fills twice as fast", EqTraining.ridingBarFactor(40, 12) == 0.5
+            and EqTraining.ridingBarFactor(40, 23) == 0.5 and EqTraining.ridingBarFactor(40, 24) == 1
+            and math.abs(EqTraining.ridingBarFactor(100, 18) - 0.7) < 1e-9)
+    end)
+    withMaturing("accelerated", function()
+        check("accelerated: light work until 1 year", EqTraining.ridingBarFactor(40, 6) == 0.5
+            and EqTraining.ridingBarFactor(40, 11) == 0.5 and EqTraining.ridingBarFactor(40, 12) == 1)
+    end)
     do
         local timer, total = 0, 0
         for _ = 1, 1000 do
@@ -1419,10 +1443,22 @@ check("condition is 1 for a fit, healthy horse", EqCompetition.condition(100, 10
 check("an unfit horse is held back", EqCompetition.condition(0, 100) == 0.75)
 
 local training, novice = config.tierByName.training, config.tierByName.novice
-check("two-year-olds can enter Training Events", EqCompetition.canEnter(training, 26, 20))
-check("three-year-olds cannot", not EqCompetition.canEnter(training, 40, 20))
-local okYoung, whyYoung = EqCompetition.canEnter(novice, 30, 20)
-check("two-year-olds cannot enter Novice", not okYoung and whyYoung == "tooYoung")
+withMaturing("realistic", function()
+    check("two-year-olds can enter Training Events", EqCompetition.canEnter(training, 26, 20))
+    check("three-year-olds cannot", not EqCompetition.canEnter(training, 40, 20))
+    local okYoung, whyYoung = EqCompetition.canEnter(novice, 30, 20)
+    check("two-year-olds cannot enter Novice", not okYoung and whyYoung == "tooYoung")
+end)
+withMaturing("accelerated", function()
+    local _, whyFoal = EqCompetition.canEnter(training, 11, 20)
+    check("accelerated: training events from 1 year", EqCompetition.canEnter(training, 12, 20) and whyFoal == "tooYoung")
+    local _, whyOld = EqCompetition.canEnter(training, 24, 20)
+    check("accelerated: training events until 2 years", EqCompetition.canEnter(training, 23, 20) and whyOld == "tooOld")
+    local okYoung, whyYoung = EqCompetition.canEnter(novice, 23, 20)
+    check("accelerated: Novice from 2 years", EqCompetition.canEnter(novice, 24, 20) and not okYoung and whyYoung == "tooYoung")
+    local minAge, maxAge = EqFoals.tierAges(training)
+    check("accelerated: training tier shows 12-23 months", minAge == 12 and maxAge == 23)
+end)
 local okHigh, whyHigh = EqCompetition.canEnter(novice, 60, 70)
 check("strong horses cannot farm Novice", not okHigh and whyHigh == "ratingHigh")
 
@@ -3700,6 +3736,20 @@ end)()
     EqCompetitionManager.events = {}
     check("healthy horse at home can be ridden", EqAway.rideBlock(horse("fine")) == nil)
     check("a cow is never blocked", EqAway.rideBlock({ isHorse = function() return false end }) == nil and EqAway.rideBlock(nil) == nil)
+    local foal = { eqId = "fine", age = 11, isHorse = function() return true end }
+    withMaturing("realistic", function()
+        check("horse under 1 can't be ridden", EqAway.rideBlock(foal) == "tooYoung")
+        foal.eqId = "q"
+        check("too young named first", EqAway.rideBlock(foal) == "tooYoung")
+        foal.eqId, foal.age = "fine", 12
+        check("yearling can be ridden", EqAway.rideBlock(foal) == nil)
+    end)
+    withMaturing("accelerated", function()
+        foal.age = 5
+        check("accelerated: under 6 months can't be ridden", EqAway.rideBlock(foal) == "tooYoung")
+        foal.age = 6
+        check("accelerated: ridden from 6 months", EqAway.rideBlock(foal) == nil)
+    end)
     EqAway, EqRegistry, EqCompetitionManager = saved.EqAway, saved.EqRegistry, saved.EqCompetitionManager
 end)()
 
@@ -6645,6 +6695,96 @@ end)()
     check("listbadge: atlas has the zzz slice", atlas:find('id="zzz"', 1, true) ~= nil)
 end)()
 
+-- Foals in the pen (EqFoalVisuals): foal config shape and the 0-6 month foal stage.
+;(function()
+    EqLog = EqLog or { info = function() end, debug = function() end, warning = function() end }
+    string.startsWith = string.startsWith or function(s, p) return s:sub(1, #p) == p end
+    dofile("scripts/training/EqFoalVisuals.lua")
+    local cfg = io.open("data/foals/horseAnimals.xml"):read("*a")
+    local _, animals = cfg:gsub("<animal ", "")
+    check("foals: config has 8 adults and 8 foals", animals == 16)
+    local _, base = cfg:gsub('filename="%$dataS/character/animals/domesticated/horse/horse.i3d"', "")
+    check("foals: adults are the base horse", base == 8)
+    local anim = io.open("data/foals/animation.xml"):read("*a")
+    check("foals: no base clip names left", anim:find("Source\"", 1, true) == nil)
+
+    local function system(config)
+        local s = { subTypes = {}, nameToType = {} }
+        local horse = { configFilename = config, animals = { "a1", "a2" }, subTypes = {} }
+        for i = 1, 2 do
+            s.subTypes[i] = { visuals = { { minAge = 0, visualAnimalIndex = i, image = "img" .. i,
+                store = { imageFilename = "adult" .. i, canBeBought = true } } } }
+            horse.subTypes[i] = i
+        end
+        s.nameToType.HORSE = horse
+        s.loadAnimalConfig = function(_, t)
+            for i = 1, 16 do t.animals[i] = "m" .. i end
+            return true
+        end
+        return s, horse
+    end
+    local outerExists = fileExists
+    fileExists = function() return true end
+    local s, horse = system("dataS/character/animals/domesticated/horse/animals.xml")
+    EqFoalVisuals.apply(s, "mod/")
+    local v = s.subTypes[2].visuals
+    check("foals: foal stage from 0, adult from 6 months by default", #v == 2 and v[1].minAge == 0 and v[1].visualAnimalIndex == 10
+        and v[1].visualAnimal == "m10" and v[1].image == "img2" and v[2].minAge == 6 and v[2].visualAnimal == "m2")
+    withMaturing("realistic", function()
+        EqFoalVisuals.sync()
+        check("foals: realistic maturing shows the foal until 1 year", v[2].minAge == 12 and s.subTypes[1].visuals[2].minAge == 12)
+    end)
+    EqFoalVisuals.sync()
+    check("foals: foal has its own store table and icon", v[1].store ~= v[2].store and v[2].store.imageFilename == "adult2"
+        and v[1].store.canBeBought == true and v[1].store.imageFilename == "mod/data/foals/icons/store_foal_pinto.dds")
+    check("foals: horse type uses our config", horse.configFilename == "mod/data/foals/horseAnimals.xml")
+    local s2, horse2 = system("mods/someMap/horse/animals.xml")
+    EqFoalVisuals.apply(s2, "mod/")
+    check("foals: a map's own horse config is left alone", #s2.subTypes[1].visuals == 1 and horse2.animals[1] == "a1")
+    EqFoalVisuals.apply(s, "mod/")
+    check("foals: applying twice adds no second foal stage", #s.subTypes[2].visuals == 2)
+
+    -- RLRM sources after us and overwrites AnimalSystem.loadMapData without calling the original,
+    -- so the hook goes in at activation, on top of RLRM's version.
+    local savedAS, savedUtils, savedExists = AnimalSystem, Utils, fileExists
+    local rlrmRan = false
+    AnimalSystem = { loadMapData = function() end }
+    Utils = Utils or {}
+    local savedAppended = Utils.appendedFunction
+    Utils.appendedFunction = function(a, b) return function(...) a(...); b(...) end end
+    fileExists = function() return true end
+    AnimalSystem.loadMapData = function() rlrmRan = true end -- RLRM's overwrite, already in place
+    local s3 = system("dataS/character/animals/domesticated/horse/animals.xml")
+    EqFoalVisuals.installed = false
+    EqFoalVisuals.install(function(_, fn) fn() end, "mod/")
+    EqFoalVisuals.install(function(_, fn) fn() end, "mod/")
+    AnimalSystem.loadMapData(s3)
+    check("foals: hook runs after RLRM's loadMapData, once", rlrmRan and #s3.subTypes[1].visuals == 2)
+    AnimalSystem, fileExists = savedAS, outerExists
+    Utils.appendedFunction = savedAppended
+    if savedUtils == nil then Utils = nil end
+    local main = io.open("scripts/main.lua"):read("*a")
+    local activateAt = main:find("function EqMain.activate", 1, true)
+    local installAt = main:find("EqFoalVisuals.install", 1, true)
+    check("foals: hook installed from EqMain.activate, not at source time",
+        activateAt ~= nil and installAt ~= nil and installAt > activateAt and installAt < main:find("Realistic Equestrian by %s active", 1, true))
+end)()
+
+-- Foals: no riding under 1 year
+;(function()
+    local function horse(age) return { age = age, isHorse = function() return true end } end
+    withMaturing("realistic", function()
+        check("11 months too young to ride", EqFoals.isTooYoungToRide(horse(11)))
+        check("12 months can be ridden", not EqFoals.isTooYoungToRide(horse(12)))
+    end)
+    check("accelerated by default: 6 months can be ridden", EqFoals.maturing() == "accelerated"
+        and EqFoals.isTooYoungToRide(horse(5)) and not EqFoals.isTooYoungToRide(horse(6)))
+    check("age from getAge", EqFoals.isTooYoungToRide({ isHorse = function() return true end, getAge = function() return 3 end }))
+    check("a calf is not a foal", not EqFoals.isTooYoungToRide({ age = 1, isHorse = function() return false end })
+        and not EqFoals.isTooYoungToRide(nil))
+
+end)()
+
 -- EqLog.guard works without coroutine: FS25 leaves it out of the mod environment, and a nil
 -- coroutine stopped main.lua at its first hook in 1.0.0.1/1.0.0.2 (the mod never switched on).
 ;(function()
@@ -6662,3 +6802,4 @@ end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
+

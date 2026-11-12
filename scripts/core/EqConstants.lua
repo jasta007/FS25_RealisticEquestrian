@@ -60,6 +60,14 @@ EqConstants.STAFF_CAP = 0.95
 
 -- Age gates in months.
 EqConstants.AGE_GROUNDWORK = 24
+-- Realistic maturing (EqFoals): foal model and no riding before AGE_MIN_RIDE; until AGE_GROUNDWORK
+-- a young horse's riding bar fills YOUNG_BAR_SPEED times as fast (light work only). Accelerated
+-- maturing (the default) rides from AGE_MIN_RIDE_FAST and takes EVENT_AGE_SHIFT_FAST months off
+-- AGE_GROUNDWORK and the event ages in data/events.xml.
+EqConstants.AGE_MIN_RIDE = 12
+EqConstants.AGE_MIN_RIDE_FAST = 6
+EqConstants.EVENT_AGE_SHIFT_FAST = 12
+EqConstants.YOUNG_BAR_SPEED = 2
 EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192

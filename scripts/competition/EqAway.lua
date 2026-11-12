@@ -49,12 +49,13 @@ function EqAway.isAway(animal, ids)
 end
 
 
---- Why a horse can't be ridden now: away at an event, in quarantine, or injured.
+--- Why a horse can't be ridden now: too young, away at an event, in quarantine, or injured.
 --- @param animal table RLRM Animal
 --- @param ids table|nil from awayIds, built when nil
---- @return string|nil reason "quarantine", "away" or "injured", nil when it can be ridden
+--- @return string|nil reason "tooYoung", "quarantine", "away" or "injured", nil when it can be ridden
 function EqAway.rideBlock(animal, ids)
     if animal == nil or animal.isHorse == nil or not animal:isHorse() then return nil end
+    if EqFoals ~= nil and EqFoals.isTooYoungToRide(animal) then return "tooYoung" end
     local id = EqRegistry.getId(animal)
     if id == nil then return nil end
     local record = EqRegistry.getById(id)
@@ -71,7 +72,7 @@ end
 function EqAway.rideBlockText(animal, reason)
     local name = animal.getName ~= nil and animal:getName() or ""
     if name == "" then name = g_i18n:getText("eq_ride_blocked_horse") end
-    return string.format(g_i18n:getText("eq_ride_blocked_" .. reason), name)
+    return string.format(g_i18n:getText("eq_ride_blocked_" .. reason), name, EqFoals.rideAge())
 end
 
 
