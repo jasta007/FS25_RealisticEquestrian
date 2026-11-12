@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<!-- Copy of the base horse animation.xml with foal clip names; the Maya export must name its clips these. -->
+<!-- Copy of the base horse animation.xml with foal clip names; the Maya export must name its clips these.
+     Source takes in HorseFoal_anim_IP.fbx (Arm_Horse|...):
+       foalWalkLeft Walk_L_IP, foalWalkRight Walk_R_IP, foalCanterLeft Run_L_IP, foalCanterRight Run_R_IP,
+       foalIdle Idle_1, foalIdleTail Idle_2, foalScratch Idle_3, foalEat Eat_loop, foalDrink Drink_loop,
+       foalStandToEat EatDrink_start, foalEatToStand EatDrink_end, foalLieDown Lie_sleep_start,
+       foalSleep Lie_sleep_loop, foalStandUp Lie_sleep_end, foalTurnLeft45 Turn_L_IP, foalTurnRight45 Turn_R_IP -->
 <animation>
     <states>
         <state id="walk">
@@ -24,7 +29,7 @@
             <animation id="eat" clip="foalEat" distance="0"/>
         </state>
         <state id="drink">
-            <animation id="drink" clip="foalEat" distance="0"/>
+            <animation id="drink" clip="foalDrink" distance="0"/>
         </state>
         <state id="graze">
             <animation id="graze" clip="foalEat" distance="0"/>
