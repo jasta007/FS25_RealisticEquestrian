@@ -612,8 +612,9 @@ function EqEventsFrame:updateSummary()
         local event = EqCompetitionManager.events[self.selectedEventId]
         local tier = event ~= nil and EqCompetitionManager.config.tierByName[event.tier] or nil
         if tier ~= nil then
-            local ages = tier.maxAge > 0 and string.format(g_i18n:getText("eq_ui_ages_range"), tier.minAge, tier.maxAge)
-                or string.format(g_i18n:getText("eq_ui_ages_from"), tier.minAge)
+            local minAge, maxAge = EqFoals.tierAges(tier)
+            local ages = maxAge > 0 and string.format(g_i18n:getText("eq_ui_ages_range"), minAge, maxAge)
+                or string.format(g_i18n:getText("eq_ui_ages_from"), minAge)
             text = string.format(g_i18n:getText("eq_ui_summary_event"), EqCompetitionManager.eventTitle(event), ages,
                 tier.minRating, tier.maxRating, tier.field)
             local left = EqCompetitionManager.entriesLeft(farmId())

@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Azië en Oceanië"/>
         <text name="eq_settings_quarantine" text="Internationale quarantaine"/>
         <text name="eq_settings_quarantine_tooltip" text="Of een paard dat terugkomt van een wedstrijd in een andere regio rondes in quarantaine doorbrengt voordat het thuis is. De quarantainekosten worden hoe dan ook betaald."/>
+        <text name="eq_settings_maturing" text="Volwassen worden"/>
+        <text name="eq_settings_maturing_tooltip" text="Hoe snel veulens opgroeien. Versneld: veulen tot 6 maanden, bereden vanaf 6 maanden, trainingswedstrijden van 1 tot 2 jaar, andere wedstrijden vanaf 2 jaar. Realistisch: veulen tot 1 jaar, bereden vanaf 1 jaar, trainingswedstrijden van 2 tot 3 jaar, andere wedstrijden vanaf 3 jaar."/>
+        <text name="eq_settings_maturing_accelerated" text="Versneld"/>
+        <text name="eq_settings_maturing_realistic" text="Realistisch"/>
         <text name="eq_ui_col_region" text="Regio"/>
         <text name="eq_ui_region_home" text="Jouw regio: %s."/>
         <text name="eq_ui_summary_quarantine" text="Buitenland: daarna %s quarantaine."/>
@@ -1218,6 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantaine en kan pas worden bereden als het thuis is."/>
         <text name="eq_ride_blocked_away" text="%s is weg naar een wedstrijd en kan niet worden bereden."/>
         <text name="eq_ride_blocked_injured" text="%s is geblesseerd en kan pas worden bereden als het genezen is."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf %d maanden worden bereden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>

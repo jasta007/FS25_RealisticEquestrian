@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="116">
     <author>Jasta007</author>
-    <version>1.0.0.3</version>
+    <version>1.1.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -15,8 +15,10 @@ Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 1.0.0.3:
-- Fixed: the mod did not switch on in 1.0.0.1 and 1.0.0.2 (no stats, events or settings)
+Changelog 1.1.0.0:
+- New: foals. Young horses show as a foal model in the pen, in all 8 coats, with their own shop icons
+- New: Horse maturing setting. Accelerated (default): foal until 6 months, ridden from 6 months, training events at 1-2 years, other events from 2 years. Realistic: foal until 1 year, ridden from 1 year, training events at 2-3 years, other events from 3 years
+- Horses too young to ride can't be mounted
 
 Made by Jasta007.]]>
         </en>
@@ -29,8 +31,10 @@ Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Changelog 1.0.0.3:
-- Behoben: Die Mod startete in 1.0.0.1 und 1.0.0.2 nicht (keine Werte, Turniere oder Einstellungen)
+Changelog 1.1.0.0:
+- Neu: Fohlen. Junge Pferde erscheinen auf der Weide als Fohlenmodell, in allen 8 Fellfarben und mit eigenen Shop-Symbolen
+- Neu: Einstellung Reifung der Pferde. Beschleunigt (Standard): Fohlen bis 6 Monate, reitbar ab 6 Monaten, Nachwuchsturniere mit 1-2 Jahren, andere Turniere ab 2 Jahren. Realistisch: Fohlen bis 1 Jahr, reitbar ab 1 Jahr, Nachwuchsturniere mit 2-3 Jahren, andere Turniere ab 3 Jahren
+- Pferde, die zu jung zum Reiten sind, können nicht bestiegen werden
 
 Von Jasta007.]]>
         </de>
@@ -43,8 +47,10 @@ Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changelog 1.0.0.3 :
-- Corrigé : le mod ne se lançait pas en 1.0.0.1 et 1.0.0.2 (ni compétences, ni concours, ni paramètres)
+Changelog 1.1.0.0 :
+- Nouveau : les poulains. Les jeunes chevaux apparaissent au pré sous forme de poulain, dans les 8 robes, avec leurs propres icônes de boutique
+- Nouveau : paramètre Maturité des chevaux. Accélérée (par défaut) : poulain jusqu'à 6 mois, monté dès 6 mois, concours jeunes chevaux à 1-2 ans, autres concours dès 2 ans. Réaliste : poulain jusqu'à 1 an, monté dès 1 an, concours jeunes chevaux à 2-3 ans, autres concours dès 3 ans
+- Impossible de monter un cheval trop jeune
 
 Par Jasta007.]]>
         </fr>
@@ -57,8 +63,10 @@ Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Changelog 1.0.0.3:
-- Corregido: el mod no se activaba en 1.0.0.1 y 1.0.0.2 (sin habilidades, pruebas ni ajustes)
+Changelog 1.1.0.0:
+- Nuevo: potros. Los caballos jóvenes aparecen en el prado como potro, en los 8 pelajes y con sus propios iconos de tienda
+- Nuevo: ajuste Maduración de los caballos. Acelerada (por defecto): potro hasta los 6 meses, se monta desde los 6 meses, pruebas de iniciación con 1-2 años, demás pruebas desde los 2 años. Realista: potro hasta 1 año, se monta desde 1 año, pruebas de iniciación con 2-3 años, demás pruebas desde los 3 años
+- Los caballos demasiado jóvenes para montar no se pueden montar
 
 Por Jasta007.]]>
         </es>

@@ -1204,6 +1204,10 @@
         <text name="eq_region_asiaOceania" text="Asie et Océanie"/>
         <text name="eq_settings_quarantine" text="Quarantaine internationale"/>
         <text name="eq_settings_quarantine_tooltip" text="Si un cheval revenant d'un concours dans une autre région passe des tours en quarantaine avant de rentrer. Les frais de quarantaine sont payés dans tous les cas."/>
+        <text name="eq_settings_maturing" text="Maturité des chevaux"/>
+        <text name="eq_settings_maturing_tooltip" text="La vitesse à laquelle les poulains grandissent. Accélérée : poulain jusqu'à 6 mois, monté dès 6 mois, épreuves d'entraînement de 1 à 2 ans, autres épreuves dès 2 ans. Réaliste : poulain jusqu'à 1 an, monté dès 1 an, épreuves d'entraînement de 2 à 3 ans, autres épreuves dès 3 ans."/>
+        <text name="eq_settings_maturing_accelerated" text="Accélérée"/>
+        <text name="eq_settings_maturing_realistic" text="Réaliste"/>
         <text name="eq_ui_col_region" text="Région"/>
         <text name="eq_ui_region_home" text="Votre région : %s."/>
         <text name="eq_ui_summary_quarantine" text="À l&apos;étranger : %s de quarantaine ensuite."/>
@@ -1220,6 +1224,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s est en quarantaine et ne peut pas être monté avant son retour."/>
         <text name="eq_ride_blocked_away" text="%s est parti en compétition et ne peut pas être monté."/>
         <text name="eq_ride_blocked_injured" text="%s est blessé et ne peut pas être monté avant sa guérison."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s est trop jeune pour être monté. Les chevaux peuvent être montés à partir de %d mois."/>
         <text name="eq_loose_sentHome_quarantine" text="%s est en quarantaine, il a donc été ramené à %s."/>
         <text name="eq_loose_sentHome_away" text="%s est parti en compétition, il a donc été ramené à %s."/>
         <text name="eq_loose_sentHome_injured" text="%s est blessé, il a donc été ramené à %s pour se reposer."/>

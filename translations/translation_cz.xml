@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Asie a Oceánie"/>
         <text name="eq_settings_quarantine" text="Mezinárodní karanténa"/>
         <text name="eq_settings_quarantine_tooltip" text="Zda kůň po závodech v jiném regionu stráví kola v karanténě, než se vrátí domů. Poplatky za karanténu se platí v každém případě."/>
+        <text name="eq_settings_maturing" text="Dospívání koní"/>
+        <text name="eq_settings_maturing_tooltip" text="Jak rychle hříbata dospívají. Zrychlené: hříbě do 6 měsíců, ježdění od 6 měsíců, tréninkové závody v 1 až 2 letech, ostatní závody od 2 let. Realistické: hříbě do 1 roku, ježdění od 1 roku, tréninkové závody ve 2 až 3 letech, ostatní závody od 3 let."/>
+        <text name="eq_settings_maturing_accelerated" text="Zrychlené"/>
+        <text name="eq_settings_maturing_realistic" text="Realistické"/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Váš region: %s."/>
         <text name="eq_ui_summary_quarantine" text="V zahraničí: poté %s v karanténě."/>
@@ -1218,6 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="Kůň %s je v karanténě a nelze na něm jezdit, dokud nebude doma."/>
         <text name="eq_ride_blocked_away" text="Kůň %s je na závodech a nelze na něm jezdit."/>
         <text name="eq_ride_blocked_injured" text="Kůň %s je zraněný a nelze na něm jezdit, dokud se neuzdraví."/>
+        <text name="eq_ride_blocked_tooYoung" text="Kůň %s je příliš mladý na ježdění. Na koních se dá jezdit od %d měsíců."/>
         <text name="eq_loose_sentHome_quarantine" text="Kůň %s je v karanténě, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_away" text="Kůň %s je na závodech, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_injured" text="Kůň %s je zraněný, a tak byl odveden zpět k odpočinku: %s."/>

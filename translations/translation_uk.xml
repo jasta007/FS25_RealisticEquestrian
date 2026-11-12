@@ -1204,6 +1204,10 @@
         <text name="eq_region_asiaOceania" text="Азія та Океанія"/>
         <text name="eq_settings_quarantine" text="Міжнародний карантин"/>
         <text name="eq_settings_quarantine_tooltip" text="Чи проводить кінь, що повертається зі змагань в іншому регіоні, кілька раундів у карантині, перш ніж опинитися вдома. Карантинні збори сплачуються в будь-якому разі."/>
+        <text name="eq_settings_maturing" text="Дорослішання коней"/>
+        <text name="eq_settings_maturing_tooltip" text="Як швидко ростуть лошата. Прискорене: лоша до 6 місяців, їзда з 6 місяців, тренувальні старти в 1-2 роки, інші змагання з 2 років. Реалістичне: лоша до 1 року, їзда з 1 року, тренувальні старти у 2-3 роки, інші змагання з 3 років."/>
+        <text name="eq_settings_maturing_accelerated" text="Прискорене"/>
+        <text name="eq_settings_maturing_realistic" text="Реалістичне"/>
         <text name="eq_ui_col_region" text="Регіон"/>
         <text name="eq_ui_region_home" text="Ваш регіон: %s."/>
         <text name="eq_ui_summary_quarantine" text="За кордоном: потім карантин %s."/>
@@ -1217,6 +1221,7 @@
         <text name="eq_enter_quarantine" text="Цей кінь на карантині після змагань за кордоном. Він зможе змагатися, коли повернеться додому."/>
         <text name="eq_quarantine_home" text="%s повернувся додому з карантину."/>
         <text name="eq_ride_blocked_horse" text="Цей кінь"/>
+        <text name="eq_ride_blocked_tooYoung" text="Кінь %s занадто молодий для їзди. Їздити верхи можна на конях від %d місяців."/>
         <text name="eq_ride_blocked_quarantine" text="%s на карантині, і на ньому не можна їздити, доки він не повернеться додому."/>
         <text name="eq_ride_blocked_away" text="%s на змаганнях, і на ньому не можна їздити."/>
         <text name="eq_ride_blocked_injured" text="%s травмований, і на ньому не можна їздити, доки він не одужає."/>
