@@ -134,11 +134,12 @@ def main():
     # blaze after James's reference foal: a broad star between the eyes, a narrow stripe down the
     # nose bridge, then widening again over the muzzle to the nostrils; slightly off-centre
     t = (y - 1.05) / 0.4                                       # ~0 at the nostrils, ~1 at the forehead
-    star = 0.024 * np.exp(-((t - 0.82) / 0.12) ** 2)           # forehead star
-    snip = 0.010 * np.exp(-((t - 0.05) / 0.12) ** 2)           # muzzle widening
-    half = 0.008 + star + snip + 0.0015 * np.sin(t * 13.0)
+    # head landmarks (OBJ, metres): eyes y 1.29-1.32, nostrils y 1.14-1.17, forehead front ends at z 0.62 (y 1.43)
+    star = 0.032 * np.exp(-((t - 0.70) / 0.09) ** 2)           # forehead star, centred just above the eyes (y ~1.33)
+    snip = 0.010 * np.exp(-((t - 0.26) / 0.07) ** 2)           # muzzle widening between the nostrils (y ~1.155)
+    half = 0.007 + star + snip + 0.0015 * np.sin(t * 13.0)
     drift = 0.003 * np.sin(t * 5.0 + 0.6)
-    face = on & np.isin(isl, [1]) & (np.abs(x - drift) < half) & (z > 0.62) & (y > 1.05)
+    face = on & np.isin(isl, [1]) & (np.abs(x - drift) < half) & (z > 0.62) & (y > 1.05) & (t < 0.88)
     # keep only the upper (front) surface of the head: at each depth z the centre line runs over
     # the face and back under the jaw, so drop the texels in the lower half (the chin and throat)
     bins = np.floor(z / 0.01).astype(np.int64)
@@ -159,7 +160,11 @@ def main():
     bay = recolour(a4, body, (0.78, 0.66, 0.54))
     bay = recolour(bay, hair * coat, (0.35, 0.3, 0.27))           # bay: darker mane and tail
     seal = recolour(a4, coat, (0.42, 0.33, 0.27), 1.1)
-    seal = blend(seal, a3, np.maximum(blaze, socks))
+    # albedo 3's muzzle is dark skin, so lighten the blaze source below y 1.21 for a white snip
+    lift = (np.clip((1.21 - y) / 0.03, 0, 1) * (y > 1.0))[..., None]     # head only, not the socks
+    whiteSrc = a3.copy()
+    whiteSrc[..., :3] = a3[..., :3] * (1 - lift) + (1 - (1 - a3[..., :3]) * 0.3) * np.array((0.97, 0.9, 0.86), np.float32) * lift
+    seal = blend(seal, whiteSrc, np.maximum(blaze, socks))
     chestnut = recolour(a4, coat, (0.92, 0.6, 0.4))
     palomino = recolour(a4, body, (1.02, 0.88, 0.62))
     pale = recolour(a3, np.ones_like(hair), (1.0, 0.97, 0.9))
