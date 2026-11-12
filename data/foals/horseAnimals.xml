@@ -79,8 +79,7 @@
         <!-- 9 foal grey -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="0" tileVIndex="0" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -89,8 +88,7 @@
         <!-- 10 foal pinto -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="1" tileVIndex="0" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -99,8 +97,7 @@
         <!-- 11 foal palomino -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="2" tileVIndex="0" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -109,8 +106,7 @@
         <!-- 12 foal chestnut -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="3" tileVIndex="0" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -119,8 +115,7 @@
         <!-- 13 foal bay -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="0" tileVIndex="1" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -129,8 +124,7 @@
         <!-- 14 foal black -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="1" tileVIndex="1" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -139,8 +133,7 @@
         <!-- 15 foal seal brown -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="2" tileVIndex="1" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
@@ -149,8 +142,7 @@
         <!-- 16 foal dun -->
         <animal radius="1.0" handleThreats="false" threatAwarenessRadius="5" slowingDistance="0.3" allowMilkingPlace="false" headOffset="0.8" canEat="true" canDrink="true" canSleep="true" canEatDuringNight="true" canBeCleaned="true" interessDistance="10.0">
             <statesTimers idleMin="6666" idleMax="13332" sleepMin="120000" sleepMax="180000" restMin="5000" restMax="10000" grazeMin="50000" grazeMax="100000" chewMin="3333" chewMax="6666" eatMin="60000" eatMax="90000" wanderMin="20000" wanderMax="50000"/>
-            <!-- TODO after the Maya export: node indices -->
-            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1|0">
+            <assets filename="foal.i3d" filenamePosed="data/foals/foal_posed.i3d" animation="foal.i3d" skeletonIndex="0>0" meshIndex="0>1" proxyIndex="0>2" shaderIndex="0>1">
                 <texture multi="true" tileUIndex="3" tileVIndex="1" numTilesU="4" numTilesV="2" mirrorV="false"/>
             </assets>
             <locomotion filename="locomotion.xml"/>
