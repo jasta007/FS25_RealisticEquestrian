@@ -62,6 +62,10 @@ EqConstants.STAFF_CAP = 0.95
 
 -- Age gates in months.
 EqConstants.AGE_GROUNDWORK = 24
+-- No riding before this age (EqFoals). Until AGE_GROUNDWORK a young horse's riding bar fills
+-- YOUNG_BAR_SPEED times as fast (James 2026-11-04: light work only).
+EqConstants.AGE_MIN_RIDE = 12
+EqConstants.YOUNG_BAR_SPEED = 2
 EqConstants.AGE_MIN_COMPETE = 36
 EqConstants.AGE_PEAK_END = 144
 EqConstants.AGE_DECLINE = 192

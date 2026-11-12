@@ -43,6 +43,10 @@ above its potential. Starting above 80 is rare: about one horse in 125. Dealer h
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
+**Foals.** A horse can't be ridden until it is 1 year old: the ride prompt gives way to a line saying so,
+and the Ride horse button is greyed out. From 1 to 2 years its riding bar fills twice as fast, so
+a young horse only does light work; events open at 2 (training shows).
+
 ## Training
 
 Every horse trains once a day, at RLRM's daily horse tick.

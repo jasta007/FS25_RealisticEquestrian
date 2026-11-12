@@ -1218,6 +1218,7 @@
         <text name="eq_ride_blocked_quarantine" text="Koń %s jest na kwarantannie i nie można na nim jeździć, dopóki nie wróci do domu."/>
         <text name="eq_ride_blocked_away" text="Koń %s jest na zawodach i nie można na nim jeździć."/>
         <text name="eq_ride_blocked_injured" text="Koń %s jest kontuzjowany i nie można na nim jeździć, dopóki się nie wyleczy."/>
+        <text name="eq_ride_blocked_tooYoung" text="Koń %s jest za młody, aby na nim jeździć. Na koniach można jeździć od 1. roku życia."/>
         <text name="eq_loose_sentHome_quarantine" text="Koń %s jest na kwarantannie, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_away" text="Koń %s jest na zawodach, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_injured" text="Koń %s jest kontuzjowany, więc wrócił do: %s, aby odpocząć."/>

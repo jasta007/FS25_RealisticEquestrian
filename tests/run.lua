@@ -63,6 +63,7 @@ dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
 dofile("scripts/training/EqLooseHorses.lua")
+dofile("scripts/training/EqFoals.lua")
 dofile("scripts/gui/EqAnimalsPageButton.lua")
 dofile("scripts/gui/EqRideButton.lua")
 local TestXML = dofile("tests/xml.lua")
@@ -473,6 +474,9 @@ do
     end
     check("a fit horse's riding bar fills more slowly", EqTraining.ridingBarFactor(40) == 1
         and math.abs(EqTraining.ridingBarFactor(100) - 1.4) < 1e-9)
+    check("a young horse's riding bar fills twice as fast", EqTraining.ridingBarFactor(40, 12) == 0.5
+        and EqTraining.ridingBarFactor(40, 23) == 0.5 and EqTraining.ridingBarFactor(40, 24) == 1
+        and math.abs(EqTraining.ridingBarFactor(100, 18) - 0.7) < 1e-9)
     do
         local timer, total = 0, 0
         for _ = 1, 1000 do
@@ -3700,6 +3704,12 @@ end)()
     EqCompetitionManager.events = {}
     check("healthy horse at home can be ridden", EqAway.rideBlock(horse("fine")) == nil)
     check("a cow is never blocked", EqAway.rideBlock({ isHorse = function() return false end }) == nil and EqAway.rideBlock(nil) == nil)
+    local foal = { eqId = "fine", age = 11, isHorse = function() return true end }
+    check("horse under 1 can't be ridden", EqAway.rideBlock(foal) == "tooYoung")
+    foal.eqId = "q"
+    check("too young named first", EqAway.rideBlock(foal) == "tooYoung")
+    foal.eqId, foal.age = "fine", 12
+    check("yearling can be ridden", EqAway.rideBlock(foal) == nil)
     EqAway, EqRegistry, EqCompetitionManager = saved.EqAway, saved.EqRegistry, saved.EqCompetitionManager
 end)()
 
@@ -6683,5 +6693,17 @@ end)()
     check("foals: a map's own horse config is left alone", #s2.subTypes[1].visuals == 1 and horse2.animals[1] == "a1")
 end)()
 
+-- Foals: no riding under 1 year
+;(function()
+    local function horse(age) return { age = age, isHorse = function() return true end } end
+    check("11 months too young to ride", EqFoals.isTooYoungToRide(horse(11)))
+    check("12 months can be ridden", not EqFoals.isTooYoungToRide(horse(12)))
+    check("age from getAge", EqFoals.isTooYoungToRide({ isHorse = function() return true end, getAge = function() return 3 end }))
+    check("a calf is not a foal", not EqFoals.isTooYoungToRide({ age = 1, isHorse = function() return false end })
+        and not EqFoals.isTooYoungToRide(nil))
+
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)
+
