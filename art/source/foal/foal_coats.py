@@ -146,7 +146,8 @@ def main():
     for b in np.unique(bins[face]):
         sel = face & (bins == b)
         ys = y[sel]
-        face[sel] = ys > (ys.min() + ys.max()) / 2
+        if ys.max() - ys.min() > 0.03:  # only bins that hold both the face and the underside; a thin bin is face only
+            face[sel] = ys > (ys.min() + ys.max()) / 2
     blaze = soft(face.astype(np.float32), 3) * coat
 
     a1, a2, a3, a4 = albedo(1), albedo(2), albedo(3), albedo(4)
