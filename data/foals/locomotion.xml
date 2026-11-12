@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!-- Foal pen movement: a little slower than the base horse's (walk 1.5, run 3). -->
+<locomotion>
+    <general suddenStopTime="400"/>
+    <speed walk="1.2" run="2.6" walkRunThreshold="2.0" minimum="0.8"/>
+    <wander circleDistance="3" circleRadius="2" jitter="3"/>
+    <avoidance wallCircleRadius="1.5" wallCircleDistance="1.5" detectionDistance="3" maxAnimalForce="3" maxWallForce="5"/>
+    <animation filename="animation.xml"/>
+</locomotion>

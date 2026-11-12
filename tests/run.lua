@@ -6645,5 +6645,43 @@ end)()
     check("listbadge: atlas has the zzz slice", atlas:find('id="zzz"', 1, true) ~= nil)
 end)()
 
+-- Foals in the pen (EqFoalVisuals): foal config shape and the 0-6 month foal stage.
+;(function()
+    EqLog = EqLog or { info = function() end, debug = function() end, warning = function() end }
+    string.startsWith = string.startsWith or function(s, p) return s:sub(1, #p) == p end
+    dofile("scripts/training/EqFoalVisuals.lua")
+    local cfg = io.open("data/foals/horseAnimals.xml"):read("*a")
+    local _, animals = cfg:gsub("<animal ", "")
+    check("foals: config has 8 adults and 8 foals", animals == 16)
+    local _, base = cfg:gsub('filename="%$dataS/character/animals/domesticated/horse/horse.i3d"', "")
+    check("foals: adults are the base horse", base == 8)
+    local anim = io.open("data/foals/animation.xml"):read("*a")
+    check("foals: no base clip names left", anim:find("Source\"", 1, true) == nil)
+
+    local function system(config)
+        local s = { subTypes = {}, nameToType = {} }
+        local horse = { configFilename = config, animals = { "a1", "a2" }, subTypes = {} }
+        for i = 1, 2 do
+            s.subTypes[i] = { visuals = { { minAge = 0, visualAnimalIndex = i, image = "img" .. i } } }
+            horse.subTypes[i] = i
+        end
+        s.nameToType.HORSE = horse
+        s.loadAnimalConfig = function(_, t)
+            for i = 1, 16 do t.animals[i] = "m" .. i end
+            return true
+        end
+        return s, horse
+    end
+    local s, horse = system("dataS/character/animals/domesticated/horse/animals.xml")
+    EqFoalVisuals.apply(s, "mod/")
+    local v = s.subTypes[2].visuals
+    check("foals: foal stage from 0, adult from FOAL_VISUAL_AGE", #v == 2 and v[1].minAge == 0 and v[1].visualAnimalIndex == 10
+        and v[1].visualAnimal == "m10" and v[1].image == "img2" and v[2].minAge == EqConstants.FOAL_VISUAL_AGE and v[2].visualAnimal == "m2")
+    check("foals: horse type uses our config", horse.configFilename == "mod/data/foals/horseAnimals.xml")
+    local s2, horse2 = system("mods/someMap/horse/animals.xml")
+    EqFoalVisuals.apply(s2, "mod/")
+    check("foals: a map's own horse config is left alone", #s2.subTypes[1].visuals == 1 and horse2.animals[1] == "a1")
+end)()
+
 print(string.format("%d passed, %d failed", passed, failed))
 os.exit(failed == 0 and 0 or 1)

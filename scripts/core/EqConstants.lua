@@ -45,6 +45,8 @@ EqConstants.BUDGET_PER_GENE = 40
 -- talent for every ceiling point above or below START_CEILING_PIVOT.
 EqConstants.START_FOAL_MEAN = 15
 EqConstants.START_FOAL_SD = 4
+-- Horses younger than this (months) show the foal model in the pen (EqFoalVisuals).
+EqConstants.FOAL_VISUAL_AGE = 6
 EqConstants.START_MEAN = 50
 EqConstants.START_SD = 13
 EqConstants.START_ADULT_MONTHS = 48

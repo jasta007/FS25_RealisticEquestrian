@@ -32,6 +32,7 @@ source(modDirectory .. "scripts/core/EqFreshStart.lua")
 source(modDirectory .. "scripts/training/EqExertion.lua")
 source(modDirectory .. "scripts/training/EqJump.lua")
 source(modDirectory .. "scripts/training/EqTraining.lua")
+source(modDirectory .. "scripts/training/EqFoalVisuals.lua")
 source(modDirectory .. "scripts/training/EqTemperament.lua")
 source(modDirectory .. "scripts/training/EqBreath.lua")
 source(modDirectory .. "scripts/training/EqDressagePath.lua")
@@ -306,6 +307,8 @@ guarded("probe hook", EqProbe.install)
 -- The horse feed list has to be in place before the map's placeables (and their troughs) load,
 -- and needs nothing from RLRM, so it is hooked now too.
 guarded("horse feed hook", function() EqFeedHooks.install(guarded, modDirectory) end)
+-- Foals in the pen: the horse config is swapped right after the animal system loads.
+guarded("foal visuals hook", function() EqFoalVisuals.install(guarded, modDirectory) end)
 -- Cross country flags' guide lines show only in construction mode (and while a course is edited).
 guarded("course flag hook", function() EqXcFlags.install(guarded) end)
 guarded("flag label hook", function() EqFlagLabels.install(guarded) end)

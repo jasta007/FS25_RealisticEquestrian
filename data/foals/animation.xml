@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!-- Copy of the base horse animation.xml with foal clip names; the Maya export must name its clips these. -->
+<animation>
+    <states>
+        <state id="walk">
+            <animation id="walk1" clipLeft="foalWalkLeft" clipRight="foalWalkRight" distance="1.3" speed="1" rotation="35">
+                <trigger type="sound" name="walk" t="0.04"/>
+                <trigger type="sound" name="walk" t="0.25"/>
+                <trigger type="sound" name="walk" t="0.47"/>
+                <trigger type="sound" name="walk" t="0.75"/>
+            </animation>
+        </state>
+        <state id="run">
+            <animation id="run" clipLeft="foalCanterLeft" clipRight="foalCanterRight" distance="2.1" speed="3" rotation="35"/>
+        </state>
+        <state id="idle">
+            <animation id="idle1" clip="foalIdleTail" distance="0"/>
+            <animation id="idle2" clip="foalIdle" distance="0"/>
+        </state>
+        <state id="idleTransition">
+            <animation id="idleTransition" clip="foalIdleTail" distance="0"/>
+        </state>
+        <state id="eat">
+            <animation id="eat" clip="foalEat" distance="0"/>
+        </state>
+        <state id="drink">
+            <animation id="drink" clip="foalEat" distance="0"/>
+        </state>
+        <state id="graze">
+            <animation id="graze" clip="foalEat" distance="0"/>
+        </state>
+        <state id="sleep">
+            <animation id="sleep" clip="foalSleep" distance="0"/>
+        </state>
+        <state id="rest">
+            <animation id="idle1" clip="foalIdleTail" distance="0"/>
+        </state>
+        <state id="chew">
+            <animation id="chew" clip="foalScratch" distance="0"/>
+        </state>
+        <state id="turnLeft">
+            <animation id="turnLeft1" clip="foalTurnLeft45" rotation="45"/>
+            <animation id="turnLeft2" clip="foalTurnLeft45" rotation="90" speed="2.0"/>
+            <animation id="turnLeft3" clip="foalTurnLeft45" rotation="135" speed="3.0"/>
+            <animation id="turnLeft4" clip="foalTurnLeft45" rotation="190" speed="4.0"/>
+        </state>
+        <state id="turnRight">
+            <animation id="turnRight1" clip="foalTurnRight45" rotation="45"/>
+            <animation id="turnRight2" clip="foalTurnRight45" rotation="90" speed="2.0"/>
+            <animation id="turnRight3" clip="foalTurnRight45" rotation="135" speed="3.0"/>
+            <animation id="turnRight4" clip="foalTurnRight45" rotation="190" speed="4.0"/>
+        </state>
+    </states>
+    <transitions defaultBlendTime="1250">
+        <transition animationIdFrom="idleTransition" animationIdTo="eat" clip="foalStandToEat" targetTime="0"/>
+        <transition animationIdFrom="eat" animationIdTo="idleTransition" clip="foalEatToStand" targetTime="0"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="graze" clip="foalStandToEat" targetTime="0"/>
+        <transition animationIdFrom="idle1" animationIdTo="graze" clip="foalStandToEat" targetTime="0"/>
+        <transition animationIdFrom="idle2" animationIdTo="graze" clip="foalStandToEat" targetTime="0"/>
+        <transition animationIdFrom="graze" animationIdTo="idle1" clip="foalEatToStand" targetTime="0"/>
+        <transition animationIdFrom="graze" animationIdTo="idle2" clip="foalEatToStand" targetTime="0"/>
+        <transition animationIdFrom="graze" animationIdTo="idleTransition" clip="foalEatToStand" targetTime="0"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="sleep" clip="foalLieDown" targetTime="0"/>
+        <transition animationIdFrom="sleep" animationIdTo="idleTransition" clip="foalStandUp" targetTime="0"/>
+        <transition animationIdFrom="turnLeft1" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnLeft2" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnLeft3" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnLeft4" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnRight1" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnRight2" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnRight3" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="turnRight4" animationIdTo="idleTransition" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnLeft1" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnLeft2" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnLeft3" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnLeft4" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnRight1" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnRight2" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnRight3" blendTime="1000" targetTime="1000"/>
+        <transition animationIdFrom="idleTransition" animationIdTo="turnRight4" blendTime="1000" targetTime="1000"/>
+    </transitions>
+</animation>
