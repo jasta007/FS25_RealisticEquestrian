@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="亞洲和大洋洲"/>
         <text name="eq_settings_quarantine" text="國際檢疫"/>
         <text name="eq_settings_quarantine_tooltip" text="從其他地區賽事回來的馬在回家前是否需要檢疫若干輪。檢疫費用照常收取。"/>
+        <text name="eq_settings_maturing" text="馬匹成長"/>
+        <text name="eq_settings_maturing_tooltip" text="小馬成長的速度。加速：6個月前為小馬，6個月起可騎乘，1至2歲參加訓練賽，2歲起參加其他賽事。寫實：1歲前為小馬，1歲起可騎乘，2至3歲參加訓練賽，3歲起參加其他賽事。"/>
+        <text name="eq_settings_maturing_accelerated" text="加速"/>
+        <text name="eq_settings_maturing_realistic" text="寫實"/>
         <text name="eq_ui_col_region" text="地區"/>
         <text name="eq_ui_region_home" text="你的地區：%s。"/>
         <text name="eq_ui_summary_quarantine" text="國外賽事：賽後檢疫 %s。"/>
@@ -1218,7 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s正在隔離，回家前不能騎乘。"/>
         <text name="eq_ride_blocked_away" text="%s外出參賽，不能騎乘。"/>
         <text name="eq_ride_blocked_injured" text="%s受傷了，痊癒前不能騎乘。"/>
-        <text name="eq_ride_blocked_tooYoung" text="%s還太小，不能騎乘。馬滿1歲後才能騎乘。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%s還太小，不能騎乘。馬滿%d個月後才能騎乘。"/>
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔離，已被帶回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出參賽，已被帶回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受傷了，已被帶回%s休息。"/>

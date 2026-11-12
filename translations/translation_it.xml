@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Asia e Oceania"/>
         <text name="eq_settings_quarantine" text="Quarantena internazionale"/>
         <text name="eq_settings_quarantine_tooltip" text="Se un cavallo di ritorno da un evento in un'altra regione passa dei turni in quarantena prima di tornare a casa. Le spese di quarantena si pagano comunque."/>
+        <text name="eq_settings_maturing" text="Maturazione dei cavalli"/>
+        <text name="eq_settings_maturing_tooltip" text="Quanto in fretta crescono i puledri. Accelerata: puledro fino a 6 mesi, montato da 6 mesi, gare di allenamento da 1 a 2 anni, altre gare da 2 anni. Realistica: puledro fino a 1 anno, montato da 1 anno, gare di allenamento da 2 a 3 anni, altre gare da 3 anni."/>
+        <text name="eq_settings_maturing_accelerated" text="Accelerata"/>
+        <text name="eq_settings_maturing_realistic" text="Realistica"/>
         <text name="eq_ui_col_region" text="Regione"/>
         <text name="eq_ui_region_home" text="La tua regione: %s."/>
         <text name="eq_ui_summary_quarantine" text="All&apos;estero: %s di quarantena dopo."/>
@@ -1218,7 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s è in quarantena e non può essere montato finché non torna a casa."/>
         <text name="eq_ride_blocked_away" text="%s è via per una gara e non può essere montato."/>
         <text name="eq_ride_blocked_injured" text="%s è infortunato e non può essere montato finché non guarisce."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s è troppo giovane per essere montato. I cavalli si possono montare da 1 anno."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s è troppo giovane per essere montato. I cavalli si possono montare da %d mesi."/>
         <text name="eq_loose_sentHome_quarantine" text="%s è in quarantena, quindi è stato riportato a %s."/>
         <text name="eq_loose_sentHome_away" text="%s è via per una gara, quindi è stato riportato a %s."/>
         <text name="eq_loose_sentHome_injured" text="%s è infortunato, quindi è stato riportato a %s per riposare."/>

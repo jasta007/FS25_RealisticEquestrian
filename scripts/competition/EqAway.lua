@@ -72,7 +72,7 @@ end
 function EqAway.rideBlockText(animal, reason)
     local name = animal.getName ~= nil and animal:getName() or ""
     if name == "" then name = g_i18n:getText("eq_ride_blocked_horse") end
-    return string.format(g_i18n:getText("eq_ride_blocked_" .. reason), name)
+    return string.format(g_i18n:getText("eq_ride_blocked_" .. reason), name, EqFoals.rideAge())
 end
 
 

@@ -1,6 +1,6 @@
 --[[
     EqFoalVisuals.lua
-    Horses under FOAL_VISUAL_AGE months show as foals in the pen. The base game gives every horse
+    Horses too young to ride (EqFoals.rideAge: 6 months accelerated, 12 realistic) show as foals in the pen. The base game gives every horse
     coat one visual from birth, all on $dataS horse.i3d; this swaps the HORSE type's husbandry
     config for data/foals/horseAnimals.xml (the 8 base adults unchanged, then 8 foals in the same
     coat order) and gives each horse subtype a foal visual from 0 months, its adult one after.
@@ -16,6 +16,8 @@ EqFoalVisuals.CONFIG = "data/foals/horseAnimals.xml"
 EqFoalVisuals.MODEL = "data/foals/foal.i3d"
 EqFoalVisuals.ADULTS = 8
 EqFoalVisuals.applied = false
+-- The adult visual of each horse subtype, whose minAge follows the Horse maturing setting (sync).
+EqFoalVisuals.adults = {}
 
 local Log = EqLog
 
@@ -56,7 +58,8 @@ function EqFoalVisuals.apply(system, modDirectory)
     end
     horse.configFilename = config
 
-    local age = EqConstants.FOAL_VISUAL_AGE
+    local age = EqFoals.rideAge()
+    EqFoalVisuals.adults = {}
     for _, subTypeIndex in ipairs(horse.subTypes) do
         local subType = system.subTypes[subTypeIndex]
         if subType ~= nil and subType.visuals ~= nil then
@@ -74,9 +77,18 @@ function EqFoalVisuals.apply(system, modDirectory)
                 foal.visualAnimal = horse.animals[foal.visualAnimalIndex]
                 first.minAge = age
                 table.insert(subType.visuals, 1, foal)
+                table.insert(EqFoalVisuals.adults, first)
             end
         end
     end
     EqFoalVisuals.applied = true
     Log:info("Foal visuals: horses under %d months show as foals", age)
+end
+
+
+--- Move the foal-to-adult switch to the Horse maturing setting's age. Pens pick it up when
+--- RLRM next refreshes their visuals (a horse's age changes monthly).
+function EqFoalVisuals.sync()
+    local age = EqFoals.rideAge()
+    for _, visual in ipairs(EqFoalVisuals.adults) do visual.minAge = age end
 end

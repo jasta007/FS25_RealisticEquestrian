@@ -79,8 +79,10 @@ end
 --- @return boolean ok
 --- @return string|nil reason "tooYoung", "tooOld", "ratingLow" or "ratingHigh"
 function EqCompetition.canEnter(tier, ageMonths, rating)
-    if ageMonths < tier.minAge then return false, "tooYoung" end
-    if tier.maxAge > 0 and ageMonths > tier.maxAge then return false, "tooOld" end
+    local minAge, maxAge = tier.minAge, tier.maxAge
+    if EqFoals ~= nil then minAge, maxAge = EqFoals.tierAges(tier) end
+    if ageMonths < minAge then return false, "tooYoung" end
+    if maxAge > 0 and ageMonths > maxAge then return false, "tooOld" end
     if rating < tier.minRating then return false, "ratingLow" end
     if rating > tier.maxRating then return false, "ratingHigh" end
     return true

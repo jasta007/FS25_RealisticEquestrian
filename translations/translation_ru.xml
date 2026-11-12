@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Азия и Океания"/>
         <text name="eq_settings_quarantine" text="Международный карантин"/>
         <text name="eq_settings_quarantine_tooltip" text="Проводит ли лошадь после соревнований в другом регионе несколько раундов на карантине, прежде чем вернуться домой. Плата за карантин взимается в любом случае."/>
+        <text name="eq_settings_maturing" text="Взросление лошадей"/>
+        <text name="eq_settings_maturing_tooltip" text="Как быстро растут жеребята. Ускоренное: жеребёнок до 6 месяцев, езда с 6 месяцев, тренировочные старты в 1-2 года, остальные соревнования с 2 лет. Реалистичное: жеребёнок до 1 года, езда с 1 года, тренировочные старты в 2-3 года, остальные соревнования с 3 лет."/>
+        <text name="eq_settings_maturing_accelerated" text="Ускоренное"/>
+        <text name="eq_settings_maturing_realistic" text="Реалистичное"/>
         <text name="eq_ui_col_region" text="Регион"/>
         <text name="eq_ui_region_home" text="Ваш регион: %s."/>
         <text name="eq_ui_summary_quarantine" text="За рубежом: после — %s карантина."/>
@@ -1218,7 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="Лошадь %s на карантине, на ней нельзя ездить, пока она не вернётся домой."/>
         <text name="eq_ride_blocked_away" text="Лошадь %s на соревнованиях, на ней нельзя ездить."/>
         <text name="eq_ride_blocked_injured" text="Лошадь %s травмирована, на ней нельзя ездить до выздоровления."/>
-        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с 1 года."/>
+        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с %d месяцев."/>
         <text name="eq_loose_sentHome_quarantine" text="Лошадь %s на карантине, её вернули: %s."/>
         <text name="eq_loose_sentHome_away" text="Лошадь %s на соревнованиях, её вернули: %s."/>
         <text name="eq_loose_sentHome_injured" text="Лошадь %s травмирована, её вернули на отдых: %s."/>

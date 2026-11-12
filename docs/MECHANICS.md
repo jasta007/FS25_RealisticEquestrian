@@ -43,9 +43,17 @@ above its potential. Starting above 80 is rare: about one horse in 125. Dealer h
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
-**Foals.** A horse can't be ridden until it is 1 year old: the ride prompt gives way to a line saying so,
-and the Ride horse button is greyed out. From 1 to 2 years its riding bar fills twice as fast, so
-a young horse only does light work; events open at 2 (training shows).
+**Foals.** The Horse maturing setting decides how fast foals grow up:
+
+| | Foal model | Ridden from | Training events | Other events |
+|---|---|---|---|---|
+| Accelerated (default) | until 6 months | 6 months | 1-2 years | 2 years |
+| Realistic | until 1 year | 1 year | 2-3 years | 3 years |
+
+Before a horse can be ridden, the ride prompt gives way to a line saying so and the Ride horse
+button is greyed out. Until training events open, its riding bar fills twice as fast, so a young
+horse only does light work. The foal model shows once it is in the mod (`data/foals/foal.i3d`);
+on a map with its own horse models, horses keep the map's look.
 
 ## Training
 
@@ -760,8 +768,9 @@ prizes, and sometimes none in a discipline.
 - **Round events** (Training, Novice, Intermediate) open every round and give results at the start
   of the next. A round is a day or a month: `eqSettings cadence day|month`.
 - **Monthly events** (Advanced, Championship) open each month and give results the next month.
-- **Young horse** classes are for two-year-olds only: a fee, no prize money, a training boost, and
-  you still see where the horse placed. Every other event is open from three years.
+- **Young horse** classes are for two-year-olds only (one-year-olds with Accelerated maturing): a fee,
+  no prize money, a training boost, and you still see where the horse placed. Every other event is
+  open from three years (two with Accelerated maturing).
 - Every other event teaches a little too, less the higher the level (half a young horse class at
   Novice, down to a fifth at Championship), and less again for horses past their peak (12 years).
 - Events carry real-world names: show jumping by fence height (1.00m up to Grand Prix), dressage

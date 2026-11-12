@@ -590,14 +590,14 @@ end
 
 
 --- How many times longer than the base game a horse's riding bar takes to fill.
---- A horse under AGE_GROUNDWORK months fills it YOUNG_BAR_SPEED times as fast.
+--- A horse too young for training events (EqFoals.groundworkAge) fills it YOUNG_BAR_SPEED times as fast.
 --- @param stamina number|nil trained stamina
 --- @param ageMonths number|nil
 --- @return number factor 1 or more for a grown horse, under 1 for a young one
 function EqTraining.ridingBarFactor(stamina, ageMonths)
     local above = EqStats.clamp(((stamina or 0) - EqTraining.BAR_FROM_STAMINA) / (100 - EqTraining.BAR_FROM_STAMINA), 0, 1)
     local factor = 1 + (EqTraining.BAR_FIT_SHARE - 1) * above
-    if ageMonths ~= nil and ageMonths >= 0 and ageMonths < EqConstants.AGE_GROUNDWORK then
+    if ageMonths ~= nil and ageMonths >= 0 and ageMonths < (EqFoals ~= nil and EqFoals.groundworkAge() or EqConstants.AGE_GROUNDWORK) then
         factor = factor / EqConstants.YOUNG_BAR_SPEED
     end
     return factor

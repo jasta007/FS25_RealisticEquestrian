@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Azja i Oceania"/>
         <text name="eq_settings_quarantine" text="Kwarantanna międzynarodowa"/>
         <text name="eq_settings_quarantine_tooltip" text="Czy koń wracający z zawodów w innym regionie spędza rundy w kwarantannie, zanim wróci do domu. Opłaty za kwarantannę są pobierane w każdym przypadku."/>
+        <text name="eq_settings_maturing" text="Dojrzewanie koni"/>
+        <text name="eq_settings_maturing_tooltip" text="Jak szybko dorastają źrebięta. Przyspieszone: źrebię do 6 miesięcy, jazda od 6 miesięcy, zawody treningowe w wieku 1-2 lat, inne zawody od 2 lat. Realistyczne: źrebię do 1 roku, jazda od 1 roku, zawody treningowe w wieku 2-3 lat, inne zawody od 3 lat."/>
+        <text name="eq_settings_maturing_accelerated" text="Przyspieszone"/>
+        <text name="eq_settings_maturing_realistic" text="Realistyczne"/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Twój region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Za granicą: potem %s kwarantanny."/>
@@ -1218,7 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="Koń %s jest na kwarantannie i nie można na nim jeździć, dopóki nie wróci do domu."/>
         <text name="eq_ride_blocked_away" text="Koń %s jest na zawodach i nie można na nim jeździć."/>
         <text name="eq_ride_blocked_injured" text="Koń %s jest kontuzjowany i nie można na nim jeździć, dopóki się nie wyleczy."/>
-        <text name="eq_ride_blocked_tooYoung" text="Koń %s jest za młody, aby na nim jeździć. Na koniach można jeździć od 1. roku życia."/>
+        <text name="eq_ride_blocked_tooYoung" text="Koń %s jest za młody, aby na nim jeździć. Na koniach można jeździć od %d. miesiąca życia."/>
         <text name="eq_loose_sentHome_quarantine" text="Koń %s jest na kwarantannie, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_away" text="Koń %s jest na zawodach, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_injured" text="Koń %s jest kontuzjowany, więc wrócił do: %s, aby odpocząć."/>

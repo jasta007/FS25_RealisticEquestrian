@@ -1202,6 +1202,10 @@
         <text name="eq_region_asiaOceania" text="Asia and Oceania"/>
         <text name="eq_settings_quarantine" text="International quarantine"/>
         <text name="eq_settings_quarantine_tooltip" text="Whether a horse back from an event in another region spends rounds in quarantine before it is home. The quarantine fees are paid either way."/>
+        <text name="eq_settings_maturing" text="Horse maturing"/>
+        <text name="eq_settings_maturing_tooltip" text="How fast foals grow up. Accelerated: foal until 6 months, ridden from 6 months, training events at 1 to 2 years, other events from 2 years. Realistic: foal until 1 year, ridden from 1 year, training events at 2 to 3 years, other events from 3 years."/>
+        <text name="eq_settings_maturing_accelerated" text="Accelerated"/>
+        <text name="eq_settings_maturing_realistic" text="Realistic"/>
         <text name="eq_ui_col_region" text="Region"/>
         <text name="eq_ui_region_home" text="Your region: %s."/>
         <text name="eq_ui_summary_quarantine" text="Abroad: %s in quarantine afterwards."/>
@@ -1218,7 +1222,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantine and can't be ridden until it's home."/>
         <text name="eq_ride_blocked_away" text="%s is away at an event and can't be ridden."/>
         <text name="eq_ride_blocked_injured" text="%s is injured and can't be ridden until it has healed."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s is too young to be ridden. Horses can be ridden from 1 year old."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is too young to be ridden. Horses can be ridden from %d months old."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantine, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_away" text="%s is away at an event, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is injured, so it was taken back to %s to rest."/>

@@ -71,7 +71,7 @@ function EqCompetitionManager.reset()
         injuries = true, forcedRetirement = false, entriesPerMonth = EqCompetitionManager.DEFAULT_ENTRIES_PER_MONTH,
         trainingRate = 1, eventsMin = EqCompetitionManager.DEFAULT_EVENTS_MIN,
         eventsMax = EqCompetitionManager.DEFAULT_EVENTS_MAX, entryFeeScale = 1, prizeScale = 1, hostInterval = 6,
-        homeRegion = "auto", quarantine = true, crowdDensity = "medium" }
+        homeRegion = "auto", quarantine = true, crowdDensity = "medium", maturing = "accelerated" }
     EqCompetitionManager.farmEntries = {}   -- farmId -> entries made this month
     EqCompetitionManager.rivalSeed = nil     -- the save's named rivals are drawn from this (EqRivals)
     EqCompetitionManager.rivals = nil
@@ -1454,8 +1454,9 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
     local ok, reason = EqCompetition.canEnter(tier, animal.age or 0, rating)
     if not ok then
         local text = g_i18n:getText("eq_enter_" .. reason)
-        if reason == "tooYoung" then return false, string.format(text, tier.minAge, animal.age or 0) end
-        if reason == "tooOld" then return false, string.format(text, tier.maxAge, animal.age or 0) end
+        local minAge, maxAge = EqFoals.tierAges(tier)
+        if reason == "tooYoung" then return false, string.format(text, minAge, animal.age or 0) end
+        if reason == "tooOld" then return false, string.format(text, maxAge, animal.age or 0) end
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
@@ -1528,6 +1529,7 @@ function EqCompetitionManager.saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. ".settings#crowdDensity", EqCompetitionManager.settings.crowdDensity or "medium")
     xmlFile:setString(key .. ".settings#homeRegion", EqCompetitionManager.settings.homeRegion)
     xmlFile:setBool(key .. ".settings#quarantine", EqCompetitionManager.settings.quarantine)
+    xmlFile:setString(key .. ".settings#maturing", EqCompetitionManager.settings.maturing or "accelerated")
     xmlFile:setInt(key .. "#nextEventId", EqCompetitionManager.nextEventId)
     xmlFile:setInt(key .. "#month", EqCompetitionManager.month)
     if EqCompetitionManager.rivalSeed ~= nil then xmlFile:setInt(key .. "#rivalSeed", EqCompetitionManager.rivalSeed) end
@@ -1619,6 +1621,8 @@ function EqCompetitionManager.loadFromXMLFile(xmlFile, key)
     settings.crowdDensity = xmlFile:getString(key .. ".settings#crowdDensity", settings.crowdDensity)
     settings.homeRegion = xmlFile:getString(key .. ".settings#homeRegion", settings.homeRegion)
     settings.quarantine = xmlFile:getBool(key .. ".settings#quarantine", settings.quarantine)
+    settings.maturing = xmlFile:getString(key .. ".settings#maturing", settings.maturing)
+    if EqFoalVisuals ~= nil then EqFoalVisuals.sync() end
     EqCompetitionManager.nextEventId = xmlFile:getInt(key .. "#nextEventId", 1)
     EqCompetitionManager.month = xmlFile:getInt(key .. "#month", 0)
     EqCompetitionManager.rivalSeed = xmlFile:getInt(key .. "#rivalSeed")
