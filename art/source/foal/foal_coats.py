@@ -131,7 +131,12 @@ def main():
     socks = on & (y > 0.0) & (y < 0.24) & ~np.isin(isl, list(HOOVES | HAIR))
     socks = soft(socks.astype(np.float32), 6) * coat
     # blaze: a stripe down the front of the face, from the forehead to the nostrils
-    face = on & np.isin(isl, [1]) & (np.abs(x) < 0.028) & (z > 0.62) & (y > 1.05)
+    # a narrow, slightly wandering stripe (James: thinner and less straight): wider at the
+    # forehead, pinched over the nose bridge, drifting a little off the centre line
+    t = (y - 1.05) / 0.4                                       # ~0 at the nostrils, ~1 at the forehead
+    half = 0.009 + 0.008 * np.clip(t - 0.55, 0, 1) / 0.45 + 0.002 * np.sin(t * 17.0)
+    drift = 0.004 * np.sin(t * 7.0 + 0.6) + 0.002 * np.sin(t * 23.0)
+    face = on & np.isin(isl, [1]) & (np.abs(x - drift) < half) & (z > 0.62) & (y > 1.05)
     # keep only the upper (front) surface of the head: at each depth z the centre line runs over
     # the face and back under the jaw, so drop the texels in the lower half (the chin and throat)
     bins = np.floor(z / 0.01).astype(np.int64)
@@ -139,7 +144,7 @@ def main():
         sel = face & (bins == b)
         ys = y[sel]
         face[sel] = ys > (ys.min() + ys.max()) / 2
-    blaze = soft(face.astype(np.float32), 7) * coat
+    blaze = soft(face.astype(np.float32), 3) * coat
 
     a1, a2, a3, a4 = albedo(1), albedo(2), albedo(3), albedo(4)
     body = coat * (1 - hair)
