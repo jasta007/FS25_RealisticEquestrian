@@ -157,7 +157,13 @@ def main():
     for i, (name, img) in enumerate(coats):
         tile = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8), 'RGBA').resize((TILE, TILE), Image.LANCZOS)
         tile.save(os.path.join(OUT, 'coat_%d_%s.png' % (i + 1, name)))
-        atlas.paste(tile, ((i % 4) * TILE, (i // 4) * TILE))
+        # the engine counts tileVIndex from the bottom of the image, so coat row 0 goes at the bottom
+        atlas.paste(tile, ((i % 4) * TILE, (1 - i // 4) * TILE))
+    # tileAndMirrorShader alpha-tests the diffuse alpha at the RAW mesh UVs (glossmapTexCoords,
+    # before the atlas transform), while colour is read inside the coat's tile. So the alpha
+    # channel holds the one hair-card mask stretched over the whole atlas.
+    mask = Image.fromarray(np.asarray(atlas)[:TILE, :TILE, 3]).resize((TILE * 4, TILE * 2), Image.LANCZOS)
+    atlas.putalpha(mask)
     atlas.save(os.path.join(OUT, 'foal_diffuse_atlas.png'))
     rng = np.random.RandomState(1)
     colours = rng.randint(40, 255, (64, 3)).astype(np.uint8)
