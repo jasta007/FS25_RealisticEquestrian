@@ -863,11 +863,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil
     if sheet.clock ~= nil and now - sheet.clock > 1000 then
+        -- A pause or a menu while in the saddle: the horse rests, a dressage test waits.
         local routine = sheet.routine
         if routine ~= nil and routine.active then
-            logLost(routine, routine.kind == "path" and routine.path or nil, string.format("no riding update for %.1f s", (now - sheet.clock) / 1000))
+            Log:info("Dressage %s: %.1f s without a riding update (paused?), it carries on",
+                routine.kind == "path" and "test" or "routine", (now - sheet.clock) / 1000)
         end
-        EqTraining.rest(sheet, now - sheet.clock, stamina)
+        EqTraining.rest(sheet, now - sheet.clock, stamina, true)
     end
     sheet.clock = now
 

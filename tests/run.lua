@@ -4876,6 +4876,12 @@ end)()
         check("the pull onto the line is sideways only, never along it", math.abs(lx2 * ux + ly2 * uy) < 1e-6 and math.abs(lx2) + math.abs(ly2) > 1e-4)
         local m = run.cur
         local pen = run.acc[m].pen
+        local paused = EqTraining.newSheet()
+        paused.routine.active, paused.routine.kind, paused.routine.path = true, "path", run
+        EqTraining.rest(paused, 30000, 50, true)
+        local kept = paused.routine.active and paused.routine.path == run
+        EqTraining.rest(paused, 30000, 50)
+        check("a pause in the saddle keeps a test going; resting off the horse ends it", kept and not paused.routine.active)
         check("a crash in a test costs marks on the movement and the test goes on", EqDressagePath.crash(run) == 1
             and math.abs(run.acc[m].pen - pen - EqDressagePath.CRASH_PEN) < 1e-9 and run.errors == 0 and not run.eliminated)
     end
