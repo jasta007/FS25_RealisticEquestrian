@@ -1262,7 +1262,8 @@ end
 --- Load our frame and register it as the last page of RLRM's menu.
 --- @param menu table the RLMenu instance, inside its setupMenuPages
 function EqEventsFrame.addToMenu(menu)
-    EqEventsFrame.registerIcons()
+    -- Our own menu (EqMenu) registers them before its first tab loads.
+    if not menu.eqIconsRegistered then EqEventsFrame.registerIcons() end
     local frame = EqEventsFrame.new()
     g_gui:loadGui(modDirectory .. "gui/eqEventsFrame.xml", EqEventsFrame.NAME, frame, true)
 

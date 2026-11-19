@@ -28,9 +28,11 @@ function EqRegistry.reset()
 end
 
 
---- @param animal table An RLRM Animal
---- @return string|nil id RLRM's identifier, or nil when the animal cannot give one yet
+--- @param animal table An RLRM Animal (a base horse cluster without RLRM)
+--- @return string|nil id RLRM's identifier (our own without RLRM), or nil when the animal cannot
+---     give one yet
 function EqRegistry.getId(animal)
+    if animal ~= nil and EqBase.installed then return EqBase.idOf(animal) end
     if animal == nil or animal.getIdentifiers == nil or animal.birthday == nil then return nil end
 
     local ok, id = EqLog.try("EqRegistry.getId getIdentifiers", animal.getIdentifiers, animal)
@@ -100,6 +102,8 @@ function EqRegistry.getOrCreate(animal)
     if isNew then record:markStart(currentDay()) end
 
     record.lastSeenDay = currentDay()
+    -- Without RLRM, the name finds the record again for a horse that lost its id (EqBase).
+    if EqBase.installed and animal.getName ~= nil then record.name = animal:getName() end
     return record
 end
 
@@ -224,6 +228,20 @@ function EqRegistry.getParentGenes(parentId)
 end
 
 
+-- Without RLRM: the same mid-parent plus normal spread as RLRM's BreedingMath, with its spread.
+EqRegistry.PLAIN_SD = 0.15
+
+
+--- @param rng table EqRandom generator
+--- @return function breedOffspring(p1, p2, opts) drawing from rng
+function EqRegistry.plainBreeder(rng)
+    return function(parent1, parent2, opts)
+        local child = 0.5 * (parent1 + parent2) + (opts.sd or EqRegistry.PLAIN_SD) * rng:normal(0, 1)
+        return math.max(opts.min_val or 0.25, math.min(opts.max_val or 1.75, child))
+    end
+end
+
+
 --- Build a record by breeding the parents' genes through RLRM's BreedingMath, seeded by the
 --- foal's identifier so the result is the same on every machine.
 --- @param id string
@@ -235,10 +253,15 @@ function EqRegistry.breedRecord(id, ageMonths, motherId, fatherId)
     local rng = EqRandom.new(id)
     local record = EqHorseRecord.new(id)
     local breedingMath = EqRLRM.get("BreedingMath")
-    local breed = EqRLRM.makeSeededBreeder(breedingMath, rng)
+    local breed, sd
+    if breedingMath ~= nil then
+        breed, sd = EqRLRM.makeSeededBreeder(breedingMath, rng), breedingMath.SD_CONST
+    else
+        breed, sd = EqRegistry.plainBreeder(rng), EqRegistry.PLAIN_SD
+    end
 
     record.genes, record.budgetGene = EqStats.breedGenes(EqRegistry.getParentGenes(motherId),
-        EqRegistry.getParentGenes(fatherId), breed, breedingMath.SD_CONST)
+        EqRegistry.getParentGenes(fatherId), breed, sd)
     for _, stat in ipairs(EqConstants.STAT_KEYS) do record.genes[stat] = EqStats.clampGene(record.genes[stat]) end
     record.budgetGene = EqStats.clampGene(record.budgetGene)
 
@@ -288,6 +311,7 @@ function EqRegistry.saveToDirectory(directory)
     EqSponsorManager.saveToXMLFile(xmlFile, "rlEquestrian.sponsors")
     if EqSponsorLoans ~= nil then EqSponsorLoans.saveToXMLFile(xmlFile, "rlEquestrian.sponsorLoans") end
     EqLizard.saveToXMLFile(xmlFile, "rlEquestrian.lizard")
+    EqMessages.saveToXMLFile(xmlFile, "rlEquestrian.messages")
 
     xmlFile:save()
     xmlFile:delete()
@@ -307,6 +331,7 @@ function EqRegistry.loadFromDirectory(directory)
         EqSponsorManager.loadFromXMLFile(nil, "rlEquestrian.sponsors")
         if EqSponsorLoans ~= nil then EqSponsorLoans.loadFromXMLFile(nil, "rlEquestrian.sponsorLoans") end
         EqLizard.loadFromXMLFile(nil, "rlEquestrian.lizard")
+        EqMessages.loadFromXMLFile(nil, "rlEquestrian.messages")
         return
     end
 
@@ -321,6 +346,7 @@ function EqRegistry.loadFromDirectory(directory)
         EqSponsorManager.loadFromXMLFile(nil, "rlEquestrian.sponsors")
         if EqSponsorLoans ~= nil then EqSponsorLoans.loadFromXMLFile(nil, "rlEquestrian.sponsorLoans") end
         EqLizard.loadFromXMLFile(nil, "rlEquestrian.lizard")
+        EqMessages.loadFromXMLFile(nil, "rlEquestrian.messages")
         return
     end
 
@@ -350,6 +376,7 @@ function EqRegistry.loadFromDirectory(directory)
     EqSponsorManager.loadFromXMLFile(xmlFile, "rlEquestrian.sponsors")
     if EqSponsorLoans ~= nil then EqSponsorLoans.loadFromXMLFile(xmlFile, "rlEquestrian.sponsorLoans") end
     EqLizard.loadFromXMLFile(xmlFile, "rlEquestrian.lizard")
+    EqMessages.loadFromXMLFile(xmlFile, "rlEquestrian.messages")
     if #EqCourse.list > 0 then Log:info("EqRegistry: loaded %d show jumping course(s)", #EqCourse.list) end
 
     xmlFile:delete()

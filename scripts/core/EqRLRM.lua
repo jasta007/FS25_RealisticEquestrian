@@ -98,9 +98,14 @@ end
 --- @return boolean ok false when RLRM is missing or a required function is gone
 function EqRLRM.init()
     local env = _G[EqRLRM.MOD_NAME]
+    EqRLRM.env, EqRLRM.isAvailable = nil, false
 
-    if type(env) ~= "table" then
-        Log:error("Realistic Livestock (%s) is not loaded. Realistic Equestrian stays disabled.", EqRLRM.MOD_NAME)
+    -- An RLRM that is in the mods folder but not active on this savegame can still leave its
+    -- environment table behind (from an earlier savegame this session), so ask the game which
+    -- mods this savegame loaded.
+    local active = g_modIsLoaded == nil or g_modIsLoaded[EqRLRM.MOD_NAME] ~= nil
+    if type(env) ~= "table" or not active then
+        Log:info("Realistic Livestock (%s) is not loaded; Realistic Equestrian runs on the base game's horses.", EqRLRM.MOD_NAME)
         EqRLRM.problem = "missing"
         return false
     end
@@ -183,21 +188,56 @@ end
 --- @param gene number
 --- @return string text
 function EqRLRM.geneBandText(gene)
-    local key = EqRLRM.get("RLGenetics").perTrait(gene)
-    return g_i18n:getText(key, EqRLRM.MOD_NAME)
+    local genetics = EqRLRM.get("RLGenetics")
+    if genetics == nil then return string.format("%.2f", gene or 0) end
+    return g_i18n:getText(genetics.perTrait(gene), EqRLRM.MOD_NAME)
+end
+
+
+--- Without RLRM, the mod runs on the base game's horses (EqBase).
+--- @return boolean
+function EqRLRM.isMissing()
+    return not EqRLRM.isAvailable and EqRLRM.problem == "missing"
+end
+
+
+--- Every husbandry a farm owns: RLRM's query with RLRM, the husbandry system without.
+--- @param farmId number
+--- @return table placeables
+function EqRLRM.listHusbandriesForFarm(farmId)
+    local query = EqRLRM.get("RLAnimalQuery")
+    if query ~= nil and query.listHusbandriesForFarm ~= nil then return query.listHusbandriesForFarm(farmId) end
+    return EqBase.listHusbandriesForFarm(farmId)
+end
+
+
+--- A husbandry's lasting key, as RLRM's Herdsman keys it (the placeable's unique id).
+--- @param placeable table|nil
+--- @return string|nil
+function EqRLRM.husbandryKey(placeable)
+    local keys = EqRLRM.get("RLHusbandryTargetKey")
+    if keys ~= nil and keys.keyFor ~= nil then return keys.keyFor(placeable) end
+    return EqBase.husbandryKey(placeable)
 end
 
 
 --- Every horse on a farm's husbandries, using RLRM's own query helpers, and any being ridden.
 --- @param farmId number
---- @return table animals RLRM Animal objects
+--- @return table animals RLRM Animal objects (base horse clusters without RLRM)
 function EqRLRM.listHorsesForFarm(farmId)
     local horses = {}
-    local query = EqRLRM.get("RLAnimalQuery")
 
-    for _, husbandry in ipairs(query.listHusbandriesForFarm(farmId)) do
+    for _, husbandry in ipairs(EqRLRM.listHusbandriesForFarm(farmId)) do
         local spec = husbandry.spec_husbandryAnimals
-        if spec ~= nil and spec.getClusters ~= nil then
+        if EqBase.installed then
+            -- Base clusters don't say where they live, so each is told here (EqBase.farmOf).
+            for _, animal in pairs(EqBase.clustersOf(husbandry)) do
+                if animal.isHorse ~= nil and animal:isHorse() then
+                    EqBase.place(animal, farmId, husbandry)
+                    table.insert(horses, animal)
+                end
+            end
+        elseif spec ~= nil and spec.getClusters ~= nil then
             for _, animal in pairs(spec:getClusters() or {}) do
                 if animal.isHorse ~= nil and animal:isHorse() then table.insert(horses, animal) end
             end
@@ -214,6 +254,7 @@ function EqRLRM.listHorsesForFarm(farmId)
                 if horse == animal then listed = true end
             end
             if not listed then table.insert(horses, animal) end
+            if EqBase.installed then EqBase.place(animal, farmId, nil) end
         end
     end
 
@@ -233,7 +274,10 @@ function EqRLRM.listHorsesInTrailers(farmId)
         if vehicle.spec_livestockTrailer ~= nil and vehicle.getClusters ~= nil
             and vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() == farmId then
             for _, animal in pairs(vehicle:getClusters() or {}) do
-                if animal.isHorse ~= nil and animal:isHorse() then table.insert(horses, animal) end
+                if animal.isHorse ~= nil and animal:isHorse() then
+                    if EqBase.installed then EqBase.place(animal, farmId, nil) end
+                    table.insert(horses, animal)
+                end
             end
         end
     end

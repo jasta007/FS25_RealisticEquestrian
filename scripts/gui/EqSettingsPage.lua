@@ -226,6 +226,22 @@ local function buildRLRMTab(frame)
 end
 
 
+--- Without RLRM: the rows on the Settings tab of our own menu (EqSettingsFrame), once.
+--- @param layout table the frame's ScrollingLayout
+--- @param guarded function|nil main.lua's error guard
+function EqSettingsPage.buildInto(layout, guarded)
+    if layout == nil or EqSettingsPage.layout == layout then return end
+    if guarded ~= nil then EqSettingsPage.guarded = guarded end
+    EqSettingsPage.layout = layout
+    addRows(layout)
+    for _, option in pairs(EqSettingsPage.controls) do
+        FocusManager:loadElementFromCustomValues(option, nil, {}, false, false)
+    end
+    layout:invalidateLayout()
+    Log:info("EqSettingsPage: %d settings on the Equestrian menu's Settings tab", #EqSettings.ROWS + 1)
+end
+
+
 --- Show the current settings, and lock the rows where they cannot be changed.
 function EqSettingsPage.refresh()
     local settings = EqCompetitionManager.settings

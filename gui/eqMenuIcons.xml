@@ -8,5 +8,7 @@
 		<slice id="events" uvs="0px 0px 512px 512px"/>
 		<slice id="staff" uvs="512px 0px 512px 512px"/>
 		<slice id="zzz" uvs="0px 512px 512px 512px"/>
+		<slice id="horses" uvs="512px 512px 256px 256px"/>
+		<slice id="messages" uvs="768px 512px 256px 256px"/>
 	</slices>
 </texture>

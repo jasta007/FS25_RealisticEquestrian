@@ -79,7 +79,22 @@ end
 --- @param frame table RLMenuInfoFrame
 function EqRideButton.ride(frame)
     local animal = frame.getSelectedAnimal ~= nil and frame:getSelectedAnimal() or nil
-    local placeable = frame.selectedHusbandry
+    EqRideButton.rideAnimal(animal, frame.selectedHusbandry)
+end
+
+
+--- @param animal table
+--- @return any key the pen's id for the horse: RLRM's "farmId uniqueId", the base cluster's id
+function EqRideButton.keyOf(animal)
+    if animal.uniqueId ~= nil and animal.farmId ~= nil then return animal.farmId .. " " .. animal.uniqueId end
+    return animal.id
+end
+
+
+--- Close the menu and put the player on a horse in a pen.
+--- @param animal table|nil
+--- @param placeable table|nil its pen
+function EqRideButton.rideAnimal(animal, placeable)
     local player = g_localPlayer
     if not EqRideButton.isRideable(animal) or placeable == nil or placeable.startRiding == nil or player == nil then return end
     local blocked = EqAway.rideBlock(animal)
@@ -94,7 +109,8 @@ function EqRideButton.ride(frame)
         return
     end
 
-    local key = animal.farmId .. " " .. animal.uniqueId
+    local key = EqRideButton.keyOf(animal)
+    if key == nil then return end
     local spec = placeable.spec_husbandryAnimals
     local herd = spec ~= nil and spec.clusterHusbandry or nil
     local hasSpot = herd ~= nil and herd:getAnimalPosition(key) ~= nil

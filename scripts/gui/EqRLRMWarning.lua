@@ -10,9 +10,9 @@ EqRLRMWarning = {}
 
 EqRLRMWarning.shown = false
 
--- Popup text per EqRLRM.problem.
+-- Popup text per EqRLRM.problem. Without RLRM at all the mod runs on the base game's horses,
+-- so there is nothing to warn about.
 EqRLRMWarning.TEXTS = {
-    missing = "eq_rlrm_missing",
     incompatible = "eq_rlrm_incompatible",
     old = "eq_rlrm_old",
 }

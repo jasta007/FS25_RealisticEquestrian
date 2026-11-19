@@ -799,7 +799,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Necesita 1.000 l de astillas, 10.000 l de madera y 1.000 l de tablones."/>
         <text name="eq_shop_lizardPlinth_straw" text="Necesita 10.000 l de paja, 10.000 l de madera y 1.000 l de tablones."/>
         <text name="eq_lizard_title" text="Oferta de patrocinio de %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian no encuentra Realistic Livestock (versión de Ritter), así que está desactivado. Instala la última versión de Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Tu versión %s de Realistic Livestock es demasiado antigua para Realistic Equestrian, así que Realistic Equestrian está desactivado. Consigue la última versión de Realistic Livestock (versión de Ritter)."/>
         <text name="eq_rlrm_old" text="Tu versión %s de Realistic Livestock es más antigua de la que necesita Realistic Equestrian (%s o posterior), así que algunas funciones pueden no funcionar. Consigue la última versión de Realistic Livestock (versión de Ritter)."/>
         <text name="eq_lizard_offer" text="%s quiere patrocinar tu %s (%s) y te prestará uno de sus vehículos durante el mes del evento. Pide un branding %s antes del final del evento y su pedestal Lizard construido en tu recinto: %s. Si todo está listo cuando lleguen los resultados, paga %s. Si no, no paga nada y no hay penalización. El pedestal se derrumba después del evento."/>
@@ -1239,5 +1238,40 @@
         <text name="eq_help_courseEdit_1" text="Traza el recorrido pasando por los obstáculos en orden, a cualquier velocidad. Los obstáculos de este mod no tienen colisión mientras trazas. Si te equivocas, vuelve al último punto bueno hasta que una línea se enganche a él y pulsa [[EQ_COURSE_REWIND]] para trazar de nuevo desde ahí. Pulsa otra vez [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] en cross) para guardar."/>
         <text name="eq_help_dressageEdit_title" text="Edición de reprises"/>
         <text name="eq_help_dressageEdit_1" text="Crea tu propia reprise de doma con figuras, movimientos y aires. [[EQ_DT_PREV]] y [[EQ_DT_NEXT]] cambian la figura, [[EQ_DT_GAIT]] el aire y [[EQ_DT_MODE]] pasa a movimientos laterales o en el sitio. [[EQ_DT_ACCEPT]] guarda un paso y sigue, [[EQ_DT_UNDO]] vuelve atrás y [[EQ_DT_RANDOM]] elige un paso al azar. Pulsa [[EQ_DRESSAGE_TEST]] para guardar la reprise."/>
+        <text name="eq_band_extremelyLow" text="Extremadamente bajo"/>
+        <text name="eq_band_veryLow" text="Muy bajo"/>
+        <text name="eq_band_low" text="Bajo"/>
+        <text name="eq_band_average" text="Medio"/>
+        <text name="eq_band_high" text="Alto"/>
+        <text name="eq_band_veryHigh" text="Muy alto"/>
+        <text name="eq_band_extremelyHigh" text="Extremadamente alto"/>
+        <text name="input_EQ_MENU" text="Menú ecuestre"/>
+        <text name="eq_menu_button" text="Ecuestre"/>
+        <text name="eq_menu_pickHint" text="Elija una línea para marcarla o desmarcarla. Vuelva a abrir la lista para cambiar otra."/>
+        <text name="eq_horses_title" text="Caballos"/>
+        <text name="eq_horses_col_name" text="Nombre"/>
+        <text name="eq_horses_col_age" text="Edad"/>
+        <text name="eq_horses_col_status" text="Estado"/>
+        <text name="eq_horses_inTrailer" text="En un remolque"/>
+        <text name="eq_horses_foal" text="Demasiado joven para montar"/>
+        <text name="eq_horses_ready" text="Listo"/>
+        <text name="eq_horses_none" text="Todavía no hay caballos en esta granja. Compre uno en el tratante de animales."/>
+        <text name="eq_horses_stable" text="Establo"/>
+        <text name="eq_horses_fitness" text="Forma física"/>
+        <text name="eq_horses_health" text="Salud"/>
+        <text name="eq_horses_career" text="Trayectoria"/>
+        <text name="eq_horses_careerValue" text="%d salidas, %d victorias, %s"/>
+        <text name="eq_horses_summary" text="%d caballos. Con los botones de abajo, monte, asigne un rol o retire al caballo elegido."/>
+        <text name="eq_horses_summaryOne" text="%d caballo. Con los botones de abajo, móntelo, asígnele un rol o retírelo."/>
+        <text name="eq_messages_title" text="Mensajes"/>
+        <text name="eq_messages_col_date" text="Fecha"/>
+        <text name="eq_messages_col_type" text="Tipo"/>
+        <text name="eq_messages_col_message" text="Mensaje"/>
+        <text name="eq_messages_button_clear" text="Borrar"/>
+        <text name="eq_messages_clearConfirm" text="¿Borrar todos los mensajes de esta granja?"/>
+        <text name="eq_messages_none" text="Todavía no hay mensajes."/>
+        <text name="eq_messages_summary" text="Resultados, lesiones, transporte, eventos propios y patrocinadores. Cada uno aparece también como notificación."/>
+        <text name="eq_messages_date" text="Día %d, %s, año %d"/>
+        <text name="eq_messages_day" text="Día %d"/>
     </texts>
 </l10n>

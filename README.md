@@ -6,7 +6,7 @@
 
 **You're the breeder, owner and trainer as well as the jockey.** You breed, buy, train and feed champion horses at home, then send them off to compete while you get on with the farm. The results and prize money come back to you - or host your own events and ride in them.
 
-An add-on for Realistic Livestock - Ritter version (required), using its genetics, health and fitness.
+Plays best with Realistic Livestock - Ritter version, using its genetics, health and fitness. It also runs on its own with the game's own horses and its own Equestrian menu.
 
 Version 1.0, beta release. Back up your savegame first. Multiplayer is limited for now.
 
@@ -28,8 +28,20 @@ Risk and injuries: falls, refusals and rare injuries with real vet bills and res
 **Required**
 
 - Farming Simulator 25
+
+**Recommended**
+
 - [Realistic Livestock - Ritter version](https://github.com/rittermod/FS25_RealisticLivestockRM)
-  (`FS25_RealisticLivestockRM`). Without it the mod stays switched off.
+  (`FS25_RealisticLivestockRM`). With it, our tabs sit in RLRM's menu (Shift+O) and foals inherit
+  potential through its genetics.
+
+**Without Realistic Livestock**
+
+The mod runs on the game's own horses. Open the **Equestrian menu** with **Right Shift + O**, or
+with the Equestrian button on a horse stable's Animals page. It has five tabs: Horses (stats, role,
+ride, retire), Events, Staff, Messages and Settings. Stats, training, roles, events, staff, injuries
+and sponsors all work the same. Breeding is left to the base game, so new horses get plain potentials
+instead of inherited ones.
 
 **Strongly recommended**
 
@@ -56,7 +68,7 @@ These add horse buildings that speed up training. The mod works fine without the
 2. Copy the zip **as it is, without unzipping it**, into your mods folder:
    - Windows: `Documents\My Games\FarmingSimulator2025\mods`
    - macOS: `~/Library/Application Support/FarmingSimulator2025/mods`
-3. Make sure `FS25_RealisticLivestockRM.zip` is in the same folder.
+3. If you use Realistic Livestock, make sure `FS25_RealisticLivestockRM.zip` is in the same folder.
 4. If you tried an earlier build, delete any old `FS25_RealisticEquestrian` folder or extra copies
    of the zip, so the game loads only one.
 5. Start the game and enable both mods on your savegame. It works on new and existing saves:

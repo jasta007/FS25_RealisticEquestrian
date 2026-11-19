@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian kan Realistic Livestock (Ritter-versie) niet vinden en staat daarom uit. Installeer de nieuwste versie van Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Je Realistic Livestock-versie %s is te oud voor Realistic Equestrian, daarom staat Realistic Equestrian uit. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_rlrm_old" text="Je Realistic Livestock-versie %s is ouder dan Realistic Equestrian nodig heeft (%s of nieuwer), daarom werken sommige functies misschien niet. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
@@ -1237,5 +1236,40 @@
         <text name="eq_help_courseEdit_1" text="Leg het parcours vast door in volgorde door de hindernissen te rijden, in elk tempo. Hindernissen uit deze mod hebben dan geen botsing. Maak je een fout, rijd dan terug naar het laatste goede punt tot er een lijn aan vastklikt en druk op [[EQ_COURSE_REWIND]] om vanaf daar verder te gaan. Druk opnieuw op [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] voor cross) om op te slaan."/>
         <text name="eq_help_dressageEdit_title" text="Dressuurproef bewerken"/>
         <text name="eq_help_dressageEdit_1" text="Bouw je eigen dressuurproef uit figuren, bewegingen en gangen. [[EQ_DT_PREV]] en [[EQ_DT_NEXT]] wisselen de figuur, [[EQ_DT_GAIT]] de gang en [[EQ_DT_MODE]] schakelt naar zijwaartse bewegingen of bewegingen op de plaats. [[EQ_DT_ACCEPT]] houdt een stap en gaat verder, [[EQ_DT_UNDO]] gaat terug en [[EQ_DT_RANDOM]] kiest een willekeurige stap. Druk op [[EQ_DRESSAGE_TEST]] om de proef op te slaan."/>
+        <text name="eq_band_extremelyLow" text="Extreem laag"/>
+        <text name="eq_band_veryLow" text="Erg laag"/>
+        <text name="eq_band_low" text="Laag"/>
+        <text name="eq_band_average" text="Gemiddeld"/>
+        <text name="eq_band_high" text="Hoog"/>
+        <text name="eq_band_veryHigh" text="Erg hoog"/>
+        <text name="eq_band_extremelyHigh" text="Extreem hoog"/>
+        <text name="input_EQ_MENU" text="Paardensportmenu"/>
+        <text name="eq_menu_button" text="Paardensport"/>
+        <text name="eq_menu_pickHint" text="Kies een regel om hem aan of uit te vinken. Open de lijst opnieuw om een andere te wijzigen."/>
+        <text name="eq_horses_title" text="Paarden"/>
+        <text name="eq_horses_col_name" text="Naam"/>
+        <text name="eq_horses_col_age" text="Leeftijd"/>
+        <text name="eq_horses_col_status" text="Status"/>
+        <text name="eq_horses_inTrailer" text="In een trailer"/>
+        <text name="eq_horses_foal" text="Te jong om te rijden"/>
+        <text name="eq_horses_ready" text="Klaar"/>
+        <text name="eq_horses_none" text="Nog geen paarden op deze boerderij. Koop er een bij de dierenhandelaar."/>
+        <text name="eq_horses_stable" text="Stal"/>
+        <text name="eq_horses_fitness" text="Conditie"/>
+        <text name="eq_horses_health" text="Gezondheid"/>
+        <text name="eq_horses_career" text="Carrière"/>
+        <text name="eq_horses_careerValue" text="%d starts, %d overwinningen, %s"/>
+        <text name="eq_horses_summary" text="%d paarden. Met de knoppen hieronder rijd je, geef je een rol of laat je het gekozen paard met pensioen gaan."/>
+        <text name="eq_horses_summaryOne" text="%d paard. Met de knoppen hieronder rijd je, geef je een rol of laat je het met pensioen gaan."/>
+        <text name="eq_messages_title" text="Berichten"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Soort"/>
+        <text name="eq_messages_col_message" text="Bericht"/>
+        <text name="eq_messages_button_clear" text="Wissen"/>
+        <text name="eq_messages_clearConfirm" text="Alle berichten van deze boerderij verwijderen?"/>
+        <text name="eq_messages_none" text="Nog geen berichten."/>
+        <text name="eq_messages_summary" text="Uitslagen, blessures, vervoer, eigen wedstrijden en sponsors. Elk bericht verschijnt ook als melding."/>
+        <text name="eq_messages_date" text="Dag %d, %s, jaar %d"/>
+        <text name="eq_messages_day" text="Dag %d"/>
     </texts>
 </l10n>
