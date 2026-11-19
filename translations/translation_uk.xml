@@ -118,6 +118,9 @@
         <text name="eq_lizard_decline" text="Відхилити"/>
         <text name="eq_lizard_offerNote" text="%s пропонують спонсорувати ваші змагання «%s»."/>
         <text name="eq_lizard_accepted" text="Угоду з %s прийнято! Купіть постамент Lizard у будівництві (Будівлі, Споруди) і збудуйте його з матеріалів: %s, колоди та дошки."/>
+        <text name="eq_lizard_or" text="%s або %s"/>
+        <text name="eq_lizard_and" text="%s і %s"/>
+        <text name="eq_lizard_needs" text="%s (на вибір), а також %s"/>
         <text name="eq_lizard_stepAside" text="%s поступається: тепер ваші змагання спонсорує %s."/>
         <text name="eq_lizard_paid" text="%s заплатили %s за спонсорство ваших змагань."/>
         <text name="eq_lizard_unpaid_plinth" text="%s нічого не платять: постамент Lizard не добудовано. Без образ."/>
