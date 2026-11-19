@@ -144,7 +144,10 @@ function EqSponsorManager.readShop()
     Log:info("EqSponsorManager: %d machines from %d brands in the shop (%d store items, %d without a brand; %s)",
         #items, #ranked, #all, noBrand, whyText(why))
     -- An empty shop is read again next time: the store may not be loaded yet.
-    if #ranked > 0 then EqSponsorManager.shop = shop end
+    if #ranked > 0 then
+        EqSponsorManager.shop = shop
+        EqSponsorManager.rescaleMachines()
+    end
     return shop
 end
 
@@ -228,15 +231,6 @@ local function isBorrowed(vehicle)
 end
 
 
---- @param vehicle table
---- @return boolean true for an attachment or trailer: hitched to something, never driven itself
----     (James, 2026-11-01: they count half toward a sponsor's machines)
-function EqSponsorManager.isAttachment(vehicle)
-    if vehicle.spec_motorized ~= nil or vehicle.spec_enterable ~= nil then return false end
-    return vehicle.spec_attachable ~= nil
-end
-
-
 --- The farm's machines, owned or leased.
 --- @param farmId number
 --- @return table list of { brand, categories, price, name }
@@ -251,7 +245,7 @@ function EqSponsorManager.ownedMachines(farmId)
             if item ~= nil then
                 local name = vehicle.getName ~= nil and vehicle:getName() or item.name
                 table.insert(owned, { brand = item.brand, categories = item.categories, price = item.price, name = name or item.name,
-                    attachment = EqSponsorManager.isAttachment(vehicle) })
+                    cheap = EqSponsorship.isCheap(EqSponsorManager.config, shop.profiles[item.brand], item.price) })
             end
         end
     end
@@ -278,7 +272,7 @@ function EqSponsorManager.likelyPay(farmId, offer)
     local list = {}
     if config == nil or EqHostVenue == nil or EqHostVenue.config == nil then return list end
     local order = EqSponsorManager.ratingOrder()
-    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId), config.attachmentWeight) >= (offer.machines or 1)
+    local machinesOk = EqSponsorship.ownedOf(offer.brand, EqSponsorManager.ownedMachines(farmId), config.cheapWeight) >= (offer.machines or 1)
     local boards = EqSponsorManager.boards(farmId)
     local ratings = EqHostVenue.config.ratings
     for i = #ratings, 1, -1 do
@@ -587,7 +581,7 @@ end
 --- @return boolean the farm still owns enough of the sponsor's machines
 local function machinesOk(farmId, contract)
     local config = EqSponsorManager.config
-    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId), config ~= nil and config.attachmentWeight or 1)
+    return EqSponsorship.ownedOf(contract.brand, EqSponsorManager.ownedMachines(farmId), config ~= nil and config.cheapWeight or 1)
         >= (contract.machines or 1)
 end
 
@@ -732,6 +726,26 @@ end
 
 --- @param xmlFile table|nil nil for a new game
 --- @param key string
+--- Offers and contracts saved before the price rule (James, 2026-11-19) ask for what the price
+--- rule would, or less. Needs the shop for the brands' prices.
+function EqSponsorManager.rescaleMachines()
+    local config, shop = EqSponsorManager.config, EqSponsorManager.shop
+    if config == nil or shop == nil then return end
+    local changed = 0
+    for _, record in pairs(EqSponsorManager.offers) do
+        for _, offer in ipairs(record.list or {}) do
+            if EqSponsorship.rescaleMachines(config, offer, shop.profiles[offer.brand]) then changed = changed + 1 end
+        end
+    end
+    for _, list in pairs(EqSponsorManager.contracts) do
+        for _, contract in ipairs(list) do
+            if EqSponsorship.rescaleMachines(config, contract, shop.profiles[contract.brand]) then changed = changed + 1 end
+        end
+    end
+    if changed > 0 then Log:info("EqSponsorManager: %d older offers and contracts now ask for machines by price", changed) end
+end
+
+
 function EqSponsorManager.loadFromXMLFile(xmlFile, key)
     local shop = EqSponsorManager.shop
     EqSponsorManager.reset()
@@ -768,4 +782,5 @@ function EqSponsorManager.loadFromXMLFile(xmlFile, key)
         end
         i = i + 1
     end
+    EqSponsorManager.rescaleMachines()
 end

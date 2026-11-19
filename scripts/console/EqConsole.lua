@@ -839,8 +839,9 @@ function EqConsole:consoleSponsors(mode, amount)
             counts.big or 0, counts.moderate or 0, counts.small or 0))
         for i, profile in ipairs(shop.ranked) do
             if i <= 15 then
-                table.insert(lines, string.format("  %2d. %s (%s): %d categories, %d price bands, %d machines", i,
-                    EqSponsorManager.brandTitle(profile.brand), profile.size, profile.categories, profile.bands, profile.items))
+                table.insert(lines, string.format("  %2d. %s (%s): %d categories, %d price bands, %d machines, median price %d", i,
+                    EqSponsorManager.brandTitle(profile.brand), profile.size, profile.categories, profile.bands, profile.items,
+                    math.floor((profile.median or 0) + 0.5)))
             end
         end
         -- Easy kit (James, 2026-10-31): brands let in with fewer machines, and the shop's category

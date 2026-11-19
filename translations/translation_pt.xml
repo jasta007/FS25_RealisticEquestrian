@@ -1162,7 +1162,7 @@
         <text name="eq_sponsor_haveOf" text="Tem %s de %d"/>
         <text name="eq_sponsor_mustOwn" text="Tem de ter %d equipamentos deles antes de se candidatar."/>
         <text name="eq_sponsor_mustKeep" text="Tem de manter %d equipamentos deles para receber."/>
-        <text name="eq_sponsor_attachHalf" text="Alfaias e reboques contam metade."/>
+        <text name="eq_sponsor_cheapHalf" text="Artigos muito baratos contam metade."/>
         <text name="eq_sponsor_noRivals" text="Não pode ter máquinas a menos de %s do preço do produto deles."/>
         <text name="eq_sponsor_sellFirst" text="Venda ou devolva o seguinte antes de se candidatar:"/>
         <text name="eq_sponsor_sellMore" text="...e mais %d"/>

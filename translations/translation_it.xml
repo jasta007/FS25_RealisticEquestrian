@@ -1162,7 +1162,7 @@
         <text name="eq_sponsor_haveOf" text="Ne hai %s su %d"/>
         <text name="eq_sponsor_mustOwn" text="Devi possedere %d loro attrezzature prima di candidarti."/>
         <text name="eq_sponsor_mustKeep" text="Devi tenere %d loro attrezzature per essere pagato."/>
-        <text name="eq_sponsor_attachHalf" text="Attrezzi e rimorchi contano la metà."/>
+        <text name="eq_sponsor_cheapHalf" text="Gli articoli molto economici contano la metà."/>
         <text name="eq_sponsor_noRivals" text="Non puoi possedere macchine entro il %s del prezzo del loro prodotto."/>
         <text name="eq_sponsor_sellFirst" text="Vendi o restituisci prima di candidarti:"/>
         <text name="eq_sponsor_sellMore" text="...e altri %d"/>

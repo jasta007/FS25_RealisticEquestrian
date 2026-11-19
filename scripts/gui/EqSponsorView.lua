@@ -239,7 +239,7 @@ function EqSponsorView.noteLines(row, clashes, maxLines)
     local offer = row.offer
     local own = string.format(g_i18n:getText(row.contract and "eq_sponsor_mustKeep" or "eq_sponsor_mustOwn"), offer.machines or 1)
     -- (the contract's panel has fewer note lines to spare)
-    if not row.contract then own = own .. " " .. g_i18n:getText("eq_sponsor_attachHalf") end
+    if not row.contract then own = own .. " " .. g_i18n:getText("eq_sponsor_cheapHalf") end
     table.insert(lines, own)
     table.insert(lines, string.format(g_i18n:getText("eq_sponsor_noRivals"), percent(offer.window)))
     if #clashes > 0 then
