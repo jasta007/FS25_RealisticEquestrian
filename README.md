@@ -37,7 +37,7 @@ Risk and injuries: falls, refusals and rare injuries with real vet bills and res
 
 **Without Realistic Livestock**
 
-The mod runs on the game's own horses. Open the **Equestrian menu** with **Right Shift + E**, or
+The mod runs on the game's own horses. Open the **Equestrian menu** with **Right Shift + O**, or
 with the Equestrian button on a horse stable's Animals page. It has five tabs: Horses (stats, role,
 ride, retire), Events, Staff, Messages and Settings. Stats, training, roles, events, staff, injuries
 and sponsors all work the same. Breeding is left to the base game, so new horses get plain potentials

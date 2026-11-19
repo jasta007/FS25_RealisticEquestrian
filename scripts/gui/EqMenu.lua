@@ -8,7 +8,7 @@
     (EqMessagesFrame) and Settings (EqSettingsFrame). Events and Staff are the same frames RLRM's
     menu shows; they add themselves with the same addToMenu they use there.
 
-    Opened with the EQ_MENU key (Right Shift + E by default) or the Equestrian button on a horse
+    Opened with the EQ_MENU key (Right Shift + O by default) or the Equestrian button on a horse
     stable's Esc > Animals page (EqAnimalsPageButton), which brings you back there on Back.
 ]]
 
