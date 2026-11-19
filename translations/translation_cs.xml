@@ -118,6 +118,9 @@
         <text name="eq_lizard_decline" text="拒绝"/>
         <text name="eq_lizard_offerNote" text="%s 想赞助你的%s。"/>
         <text name="eq_lizard_accepted" text="已接受与 %s 的合作！在商店（可建造建筑）购买Lizard展台，并用%s、原木和木板建造它。"/>
+        <text name="eq_lizard_or" text="%s或%s"/>
+        <text name="eq_lizard_and" text="%s和%s"/>
+        <text name="eq_lizard_needs" text="%s（任选其一），另加%s"/>
         <text name="eq_lizard_stepAside" text="%s 退出了：现在由 %s 赞助你的赛事。"/>
         <text name="eq_lizard_paid" text="%s 为赞助你的赛事支付了 %s。"/>
         <text name="eq_lizard_unpaid_plinth" text="%s 不付费：Lizard展台没有完工。别介意。"/>

@@ -1134,8 +1134,9 @@ lapses when the event opens.
   Lizard steps aside.
 - **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
   constructible, like the game's rental houses: a few stakes until you deliver its materials to
-  the triggers in front of it. One bulk load Lizard picks at random, **1,200 l stone**, **1,000 l
-  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (with the game's
+  the triggers in front of it. There is one plinth per bulk material and all three are offered,
+  so you build whichever suits your farm (James, 2026-11-19): **1,200 l stone**, **1,000 l
+  wood chips** or **10,000 l straw** (tipped, or straw as bales) makes the mound (with the game's
   own heap material, as a real heap of it looks); **10,000 l of logs** (dropped at the wood trigger) go on top as
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
@@ -1153,7 +1154,7 @@ Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit,
 category names (easy ones starred), this year's offers and your contracts (with when their
 discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
 earlier, 3 by default;
-`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
+`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
 `eqSponsorLoan end` takes it back. `eqShopProbe` (testing, with the shop open on a category)
