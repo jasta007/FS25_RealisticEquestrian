@@ -328,6 +328,12 @@ local function rlrmVersionTests()
     for _, path in ipairs(EqRLRM.REQUIRED) do add(path) end
     for _, paths in pairs(EqRLRM.OPTIONAL) do for _, path in ipairs(paths) do add(path) end end
     check("missing RLRM is reported", not initWith(nil, nil) and EqRLRM.problem == "missing")
+    g_modIsLoaded = {}
+    check("RLRM left over but not active on this save counts as missing",
+        not initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == "missing" and EqRLRM.isMissing())
+    g_modIsLoaded = { [EqRLRM.MOD_NAME] = true }
+    check("RLRM active on this save is used", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
+    g_modIsLoaded = nil
     check("current RLRM has no problem", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
     check("old RLRM still runs with a popup", initWith(full, "1.4.1.0") and EqRLRM.problem == "old")
     local partial = {}

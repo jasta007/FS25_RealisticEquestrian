@@ -98,8 +98,13 @@ end
 --- @return boolean ok false when RLRM is missing or a required function is gone
 function EqRLRM.init()
     local env = _G[EqRLRM.MOD_NAME]
+    EqRLRM.env, EqRLRM.isAvailable = nil, false
 
-    if type(env) ~= "table" then
+    -- An RLRM that is in the mods folder but not active on this savegame can still leave its
+    -- environment table behind (from an earlier savegame this session), so ask the game which
+    -- mods this savegame loaded.
+    local active = g_modIsLoaded == nil or g_modIsLoaded[EqRLRM.MOD_NAME] ~= nil
+    if type(env) ~= "table" or not active then
         Log:info("Realistic Livestock (%s) is not loaded; Realistic Equestrian runs on the base game's horses.", EqRLRM.MOD_NAME)
         EqRLRM.problem = "missing"
         return false
