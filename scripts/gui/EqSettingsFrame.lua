@@ -32,6 +32,7 @@ function EqSettingsFrame:onFrameOpen()
     guarded("settings tab", function()
         EqSettingsPage.buildInto(self.settingsLayout, EqMenu.guarded)
         EqSettingsPage.refresh()
+        EqSettingsFrame.tintRows(self.settingsLayout)
     end)
     local first = EqSettingsPage.controls ~= nil and EqSettingsPage.controls[EqSettings.ROWS[1].id] or nil
     if first ~= nil then FocusManager:setFocus(first) end
@@ -39,6 +40,29 @@ end
 
 
 --- @param menu table our menu (EqMenu)
+--- The base row container draws a plain white bitmap until it is tinted; the base settings page
+--- (and RLRM's) tint the rows in alternating shades, so do the same. Section headers restart it.
+--- @param layout table
+function EqSettingsFrame.tintRows(layout)
+    if layout == nil or layout.elements == nil then return end
+    local colors = InGameMenuSettingsFrame ~= nil and InGameMenuSettingsFrame.COLOR_ALTERNATING or nil
+    local alternate = true
+    for _, row in ipairs(layout.elements) do
+        if row.setImageColor ~= nil and row.visible ~= false and row.elements ~= nil and #row.elements > 0 then
+            if colors ~= nil and colors[alternate] ~= nil then
+                row:setImageColor(nil, unpack(colors[alternate]))
+            else
+                row:setImageColor(nil, 0, 0, 0, alternate and 0.25 or 0)
+            end
+            alternate = not alternate
+        else
+            alternate = true
+        end
+    end
+    layout:invalidateLayout()
+end
+
+
 function EqSettingsFrame.addToMenu(menu)
     local frame = EqSettingsFrame.new()
     g_gui:loadGui(modDirectory .. "gui/eqSettingsFrame.xml", EqSettingsFrame.NAME, frame, true)
