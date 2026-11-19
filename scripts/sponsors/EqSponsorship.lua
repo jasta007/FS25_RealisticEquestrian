@@ -40,9 +40,10 @@ function EqSponsorship.read(xmlFile)
         eventingFactor = xmlFile:getFloat("sponsors#eventingFactor", 1.5),
         missesToLeave = xmlFile:getInt("sponsors#missesToLeave", 2),
         branding = {},
-        machinesMax = xmlFile:getInt("sponsors#machinesMax", 5),
+        machinesMax = xmlFile:getInt("sponsors#machinesMax", 3),
         maxSponsors = xmlFile:getInt("sponsors#maxSponsors", 1),
-        attachmentWeight = xmlFile:getFloat("sponsors#attachmentWeight", 1),
+        cheapShare = xmlFile:getFloat("sponsors#cheapShare", 0),
+        cheapWeight = xmlFile:getFloat("sponsors#cheapWeight", 1),
         discountMonths = xmlFile:getInt("sponsors#discountMonths", 0),
         easyCategories = {},
         skipCategoryTypes = {}, skipBrands = {}, bands = {}, sizes = {}, sizeByName = {},
@@ -98,6 +99,7 @@ function EqSponsorship.read(xmlFile)
             lowerRating = xmlFile:getString(key .. "#lowerRating"),
             minItems = xmlFile:getInt(key .. "#minItems", 0),
             machinesMax = xmlFile:getInt(key .. "#machinesMax", 0),
+            budget = xmlFile:getFloat(key .. "#budget", 0),
             exclusive = xmlFile:getFloat(key .. "#exclusive", 1),
             loan = xmlFile:getFloat(key .. "#loan", 0),
         }
@@ -170,17 +172,18 @@ end
 --- @param config table
 --- @param items table list of { brand, categories = list of names, price, name }, the shop's machines
 --- @return table profiles brand -> { brand, categories (count), bands (count), items (count),
----     byCategory = category -> list of prices }
+---     median (the middle price of its machines), byCategory = category -> list of prices }
 function EqSponsorship.profiles(config, items)
     local profiles = {}
     for _, item in ipairs(items) do
         if item.brand ~= nil and not config.skipBrands[string.upper(item.brand)] and #(item.categories or {}) > 0 then
             local profile = profiles[item.brand]
             if profile == nil then
-                profile = { brand = item.brand, categories = 0, bands = 0, items = 0, byCategory = {}, bandSeen = {}, easy = false }
+                profile = { brand = item.brand, categories = 0, bands = 0, items = 0, byCategory = {}, bandSeen = {}, easy = false, prices = {} }
                 profiles[item.brand] = profile
             end
             profile.items = profile.items + 1
+            table.insert(profile.prices, item.price or 0)
             local band = EqSponsorship.bandOf(config, item.price or 0)
             if not profile.bandSeen[band] then
                 profile.bandSeen[band] = true
@@ -196,7 +199,20 @@ function EqSponsorship.profiles(config, items)
             end
         end
     end
+    for _, profile in pairs(profiles) do profile.median = EqSponsorship.median(profile.prices) end
     return profiles
+end
+
+
+--- @param prices table list of numbers
+--- @return number the middle one (the mean of the two middle ones for an even count), 0 for none
+function EqSponsorship.median(prices)
+    local sorted = {}
+    for _, price in ipairs(prices or {}) do table.insert(sorted, price) end
+    if #sorted == 0 then return 0 end
+    table.sort(sorted)
+    local middle = (#sorted + 1) / 2
+    return (sorted[math.floor(middle)] + sorted[math.ceil(middle)]) / 2
 end
 
 
@@ -282,14 +298,41 @@ function EqSponsorship.term(config, name, strictness, rng)
 end
 
 
---- @param categories number how many categories the sponsor makes
---- @param perMachine number categories per machine to own
---- @param max number|nil the most a sponsor asks for (James 2026-10-31: about 5)
+--- How many of its machines a sponsor asks the farm to own (James, 2026-11-19): about what its
+--- budget buys at the brand's typical price, so a maker of dear tractors asks for fewer than a
+--- maker of cheap implements. Never none, never more than max.
+--- @param budget number what the sponsor expects the farm to have spent on its machines
+--- @param median number the brand's middle shop price
+--- @param max number|nil the most a sponsor of this size asks for
 --- @return number machines of the sponsor's to own
-function EqSponsorship.machinesNeeded(categories, perMachine, max)
-    local needed = math.max(1, math.ceil((categories or 1) / math.max(1, perMachine or 3)))
+function EqSponsorship.machinesNeeded(budget, median, max)
+    local needed = 1
+    if (median or 0) > 0 then needed = math.max(1, math.floor((budget or 0) / median + 0.5)) end
     if max ~= nil and max > 0 then needed = math.min(needed, max) end
     return needed
+end
+
+
+--- @param config table
+--- @param size table|nil a sponsor size
+--- @param profile table|nil the brand's profile (its median price)
+--- @param strictness number 0..1
+--- @param rng table|nil EqRandom for the wobble
+--- @return number machines of the sponsor's to own at that strictness
+function EqSponsorship.machinesFor(config, size, profile, strictness, rng)
+    local budget = (size ~= nil and size.budget or 0) * EqSponsorship.term(config, "budget", strictness, rng)
+    return EqSponsorship.machinesNeeded(budget, profile ~= nil and profile.median or 0, EqSponsorship.machinesMaxFor(config, size))
+end
+
+
+--- @param config table
+--- @param profile table|nil the brand's profile
+--- @param price number|nil one machine's shop price
+--- @return boolean the machine is very cheap for its brand (James, 2026-11-19: a weight or a pallet
+---     fork shouldn't count as a whole machine), so it counts cheapWeight toward the machines to own
+function EqSponsorship.isCheap(config, profile, price)
+    if config == nil or profile == nil or (config.cheapShare or 0) <= 0 then return false end
+    return (price or 0) < config.cheapShare * (profile.median or 0)
 end
 
 
@@ -327,7 +370,9 @@ end
 function EqSponsorship.makeOffer(config, profile, rng)
     local size = config.sizeByName[profile.size] or config.sizes[#config.sizes]
     local strictness = rng:next()
-    local perMachine = math.max(1, math.floor(EqSponsorship.term(config, "categoriesPerMachine", strictness, rng) + 0.5))
+    -- (the budget term takes the wobble roll the old categories-per-machine term took, so every
+    -- other term comes out as before)
+    local machines = EqSponsorship.machinesFor(config, size, profile, strictness, rng)
     local top3 = config.terms.top3 ~= nil and config.terms.top3.from ~= nil and strictness >= config.terms.top3.from
     local years = size.yearsMin + math.floor(rng:next() * (size.yearsMax - size.yearsMin + 1))
     local feeBase = size.feeMin + (size.feeMax - size.feeMin) * rng:next()
@@ -343,8 +388,8 @@ function EqSponsorship.makeOffer(config, profile, rng)
         top3 = top3,
         brandingNeed = EqSponsorship.brandingNeed(config, EqSponsorship.term(config, "branding", strictness, rng)),
         categories = profile.categories,
-        perMachine = perMachine,
-        machines = EqSponsorship.machinesNeeded(profile.categories, perMachine, EqSponsorship.machinesMaxFor(config, size)),
+        machines = machines,
+        machineRule = EqSponsorship.MACHINE_RULE,
         window = EqSponsorship.round5(EqSponsorship.term(config, "window", strictness, rng)),
         repair = EqSponsorship.round5(EqSponsorship.term(config, "repair", strictness, rng)),
         repaint = EqSponsorship.round5(EqSponsorship.term(config, "repaint", strictness, rng)),
@@ -468,13 +513,13 @@ end
 
 
 --- @param brand string
---- @param owned table list of { brand, attachment (true for an attachment or trailer) }
---- @param attachmentWeight number|nil what an attachment counts (James, 2026-11-01: half); 1 without
---- @return number how many of the farm's machines are the brand's, attachments weighted
-function EqSponsorship.ownedOf(brand, owned, attachmentWeight)
+--- @param owned table list of { brand, cheap (true for a very cheap machine for its brand) }
+--- @param cheapWeight number|nil what a very cheap machine counts (James, 2026-11-19: half); 1 without
+--- @return number how many of the farm's machines are the brand's, very cheap ones weighted
+function EqSponsorship.ownedOf(brand, owned, cheapWeight)
     local count = 0
     for _, machine in ipairs(owned) do
-        if machine.brand == brand then count = count + (machine.attachment and (attachmentWeight or 1) or 1) end
+        if machine.brand == brand then count = count + (machine.cheap and (cheapWeight or 1) or 1) end
     end
     return count
 end
@@ -540,7 +585,7 @@ function EqSponsorship.signChecks(config, offer, state)
     local contracts = state.contracts or (state.contract ~= nil and { state.contract } or {})
     local allowed = {}
     for _, contract in ipairs(contracts) do allowed[contract.brand] = true end
-    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {}, config.attachmentWeight)
+    local mine = EqSponsorship.ownedOf(offer.brand, state.owned or {}, config.cheapWeight)
     add("machines", mine >= offer.machines, mine, offer.machines)
     local clashes = EqSponsorship.clashes(offer, state.profile, state.owned or {}, allowed)
     add("rivals", #clashes == 0, #clashes, 0)
@@ -730,9 +775,30 @@ function EqSponsorship.contractFrom(offer, month)
 end
 
 
+-- The rule an offer's machines to own were set by: 2 = by price (James, 2026-11-19); older offers
+-- were by shop categories and are worked out again once the shop is read.
+EqSponsorship.MACHINE_RULE = 2
+
+
+--- Bring an offer or contract made by the old categories rule to the price rule. Never asks for
+--- more than it did. Pure: changes the offer.
+--- @param config table
+--- @param offer table
+--- @param profile table|nil the brand's profile; nil leaves the offer as it is
+--- @return boolean changed
+function EqSponsorship.rescaleMachines(config, offer, profile)
+    if config == nil or profile == nil or (offer.machineRule or 0) >= EqSponsorship.MACHINE_RULE then return false end
+    local size = config.sizeByName[offer.size]
+    local machines = EqSponsorship.machinesFor(config, size, profile, offer.strictness or 0)
+    offer.machines = math.min(offer.machines or machines, machines)
+    offer.machineRule = EqSponsorship.MACHINE_RULE
+    return true
+end
+
+
 -- Offer and contract fields kept in the save.
 EqSponsorship.NUMBER_FIELDS = { "strictness", "years", "fee", "popularity", "target", "brandingNeed", "categories", "perMachine",
-    "machines", "window", "repair", "repaint", "purchase", "signedMonth", "endMonth", "yearEnd", "misses", "feeFactor", "paid" }
+    "machines", "machineRule", "window", "repair", "repaint", "purchase", "signedMonth", "endMonth", "yearEnd", "misses", "feeFactor", "paid" }
 EqSponsorship.STRING_FIELDS = { "brand", "size", "word" }
 EqSponsorship.BOOL_FIELDS = { "top3", "met", "exclusive", "loan" }
 

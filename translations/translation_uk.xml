@@ -1164,7 +1164,7 @@
         <text name="eq_sponsor_haveOf" text="У вас %s з %d"/>
         <text name="eq_sponsor_mustOwn" text="Перш ніж подаватися, потрібно мати їхньої техніки: %d од."/>
         <text name="eq_sponsor_mustKeep" text="Щоб отримувати виплати, потрібно тримати їхньої техніки: %d од."/>
-        <text name="eq_sponsor_attachHalf" text="Навісне обладнання й причепи рахуються як половина."/>
+        <text name="eq_sponsor_cheapHalf" text="Дуже дешева техніка рахується як половина."/>
         <text name="eq_sponsor_noRivals" text="Не можна мати техніку в межах %s від вартості їхнього продукту."/>
         <text name="eq_sponsor_sellFirst" text="Перш ніж подаватися, продайте або поверніть:"/>
         <text name="eq_sponsor_sellMore" text="...і ще %d"/>

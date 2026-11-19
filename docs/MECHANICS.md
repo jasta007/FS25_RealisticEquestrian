@@ -1018,7 +1018,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 
 | Term | Relaxed | Hard bargain |
 | --- | --- | --- |
-| Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (at most 1 for small, 3 moderate, 5 big) |
+| Their machines to own | what 75% of the size's budget buys at the brand's median price | 125% (always at least 1; at most 1 for small, 2 moderate, 3 big) |
 | No rival machine priced within | 20% of one of theirs (same category) | 60% |
 | Yearly popularity target | size target -10 | +10, and a top 3 finish |
 | Branding required | Low | High |
@@ -1031,12 +1031,18 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Moderate | 25,000-40,000 | Intermediate and Championship | +6 | 55 | 1-2 years |
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
+- **Machines to own** (James, 2026-11-19): each size has a budget (big 250,000, moderate
+  150,000, small 60,000) and the sponsor asks for about what it buys at the brand's median shop
+  price. A maker of dear tractors asks for fewer than a maker of cheap implements: on the base
+  shop Fendt asks for 1-2, John Deere 1-2, Claas 2-3, Horsch 2, every small sponsor 1. Offers
+  and contracts from older saves are worked out again by this rule, never asking for more.
+
 - The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
   most machines in), contract, **Eligibility** (or why not: Already exclusive, Exclusive only, Sponsors full, Same speciality, Own rival kit, Need equipment, Need branding) and what it pays you; the panel adds its terms and
   the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
-  don't count; an attachment or trailer, anything that can't drive itself, counts as half), no rival machine inside the price window (sell it or return the lease first; the
+  don't count; a very cheap one, under a quarter of the brand's median shop price, counts as half), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
   cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
