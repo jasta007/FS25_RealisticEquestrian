@@ -172,7 +172,7 @@ end
 --- The EQ_MENU key on foot, in a vehicle or on a horse.
 function EqMenu.onMenuKey()
     if not EqMain.isActive then return end
-    EqMenu.open()
+    if not EqMenu.open() then Log:info("EqMenu: menu key pressed, but another screen is open") end
 end
 
 
@@ -180,7 +180,16 @@ local function registerKey()
     if InputAction == nil or InputAction[EqMenu.ACTION_NAME] == nil then return end
     local ok, eventId = g_inputBinding:registerActionEvent(InputAction[EqMenu.ACTION_NAME], EqMenu, EqMenu.onMenuKey,
         false, true, false, true, nil, true)
-    if ok and eventId ~= nil then g_inputBinding:setActionEventTextVisibility(eventId, false) end
+    if ok and eventId ~= nil then
+        g_inputBinding:setActionEventTextVisibility(eventId, false)
+        if not EqMenu.keyLogged then
+            EqMenu.keyLogged = true
+            Log:info("EqMenu: menu key registered")
+        end
+    elseif not EqMenu.keyFailLogged then
+        EqMenu.keyFailLogged = true
+        Log:warning("EqMenu: menu key not registered (event %s)", tostring(eventId))
+    end
 end
 
 
