@@ -75,10 +75,13 @@ def arch():
                 textured_box(white, px, px + 0.06, 0.0, th, pz, pz + 0.06)
         textured_box(white, x0 - 0.15, x1 + 0.15, 0.0, 0.25, -0.6, 0.6)
         cols.append((x0 - 0.15, x1 + 0.15, 0.0, th, -0.6, 0.6))
-        lw = 2.6
+        # the logo reads up the tower, so its height runs across the banner: as tall as the banner
+        # between the white strips (0.80 m) less a margin (James 2026-11-19: 2.6 m long, it was
+        # 0.96 m across and ran under the strips and off the side)
+        lw = 0.72 * ASPECT
         for facing, suffix in ((1, ""), (-1, "b")):
             # raised a little (James, 2026-11-01)
-            logos[f"eqSponsor_{number}{suffix}"] = logo_quad((x0 + x1) / 2, 1.0 + lw / 2, facing * (td / 2 + 0.002), facing,
+            logos[f"eqSponsor_{number}{suffix}"] = logo_quad((x0 + x1) / 2, 2.3, facing * (td / 2 + 0.002), facing,
                                                             lw, lw / ASPECT, turned=True)
     span = clear + tw
     # the crossbar's ends stop inside the towers, not flush with their outer sides
