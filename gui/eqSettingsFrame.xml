@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    eqSettingsFrame.xml
+    The Settings tab of our own menu (EqMenu), for games without Realistic Livestock. The rows are
+    the same ones Realistic Livestock's Settings page gets as its Equestrian tab, added from Lua
+    (EqSettingsPage.buildInto). Base game profiles only.
+
+    Part of Realistic Equestrian by Jasta007.
+-->
+<GUI name="EqSettingsFrame">
+    <GuiElement profile="fs25_menuContainer">
+
+        <GuiElement profile="fs25_menuHeaderPanel">
+            <Bitmap profile="fs25_menuHeaderIconBg">
+                <Bitmap profile="fs25_menuHeaderIcon" imageSliceId="gui.icon_options_generalSettings"/>
+            </Bitmap>
+            <Text profile="fs25_menuHeaderTitle" text="$l10n_eq_settings_title"/>
+        </GuiElement>
+
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="settingsPage">
+            <ScrollingLayout profile="fs25_settingsLayout" id="settingsLayout">
+            </ScrollingLayout>
+        </GuiElement>
+
+    </GuiElement>
+
+    <ThreePartBitmap profile="fs25_sliderDockedBg" id="settingsSliderBox">
+        <ThreePartBitmap profile="fs25_sliderDockedBox">
+            <Slider profile="fs25_sliderDocked" id="settingsSlider" dataElementId="settingsLayout"/>
+        </ThreePartBitmap>
+    </ThreePartBitmap>
+</GUI>

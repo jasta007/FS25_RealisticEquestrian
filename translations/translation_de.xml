@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Benötigt 1.000 l Hackschnitzel, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_straw" text="Benötigt 10.000 l Stroh, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_lizard_title" text="Sponsorenangebot von %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian findet Realistic Livestock (Ritter-Version) nicht und ist deshalb ausgeschaltet. Bitte installiere die neueste Version von Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Deine Realistic-Livestock-Version %s ist zu alt für Realistic Equestrian, deshalb ist Realistic Equestrian ausgeschaltet. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
         <text name="eq_rlrm_old" text="Deine Realistic-Livestock-Version %s ist älter als Realistic Equestrian braucht (%s oder neuer), deshalb funktionieren manche Funktionen vielleicht nicht. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
         <text name="eq_lizard_offer" text="%s möchte deine Veranstaltung %s (%s) sponsern und leiht dir für den Veranstaltungsmonat eines seiner Fahrzeuge. Verlangt werden %s Branding bis zum Ende der Veranstaltung und das Lizard-Podest an deinem Veranstaltungsort: %s. Ist bei den Ergebnissen alles vorhanden, zahlt Lizard %s. Wenn nicht, gibt es nichts, aber auch keine Strafe. Das Podest bricht nach der Veranstaltung zusammen."/>
@@ -1239,5 +1238,40 @@
         <text name="eq_help_courseEdit_1" text="Zeichnen Sie den Parcours, indem Sie in beliebigem Tempo der Reihe nach durch die Hindernisse reiten. Hindernisse aus diesem Mod haben dabei keine Kollision. Bei einem Fehler reiten Sie zurück zum letzten guten Punkt, bis eine Linie dort einrastet, und drücken [[EQ_COURSE_REWIND]], um von dort neu zu zeichnen. Drücken Sie erneut [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] im Gelände), um zu speichern."/>
         <text name="eq_help_dressageEdit_title" text="Dressuraufgabe bearbeiten"/>
         <text name="eq_help_dressageEdit_1" text="Bauen Sie Ihre eigene Dressuraufgabe aus Figuren, Lektionen und Gangarten. Mit [[EQ_DT_PREV]] und [[EQ_DT_NEXT]] wechseln Sie die Figur, mit [[EQ_DT_GAIT]] die Gangart und mit [[EQ_DT_MODE]] zu Seitengängen oder Lektionen auf der Stelle. [[EQ_DT_ACCEPT]] übernimmt einen Schritt, [[EQ_DT_UNDO]] geht zurück, [[EQ_DT_RANDOM]] wählt zufällig. Mit [[EQ_DRESSAGE_TEST]] speichern Sie die Aufgabe."/>
+        <text name="eq_band_extremelyLow" text="Extrem niedrig"/>
+        <text name="eq_band_veryLow" text="Sehr niedrig"/>
+        <text name="eq_band_low" text="Niedrig"/>
+        <text name="eq_band_average" text="Durchschnitt"/>
+        <text name="eq_band_high" text="Hoch"/>
+        <text name="eq_band_veryHigh" text="Sehr hoch"/>
+        <text name="eq_band_extremelyHigh" text="Extrem hoch"/>
+        <text name="input_EQ_MENU" text="Reitsport-Menü"/>
+        <text name="eq_menu_button" text="Reitsport"/>
+        <text name="eq_menu_pickHint" text="Wählen Sie eine Zeile, um sie an- oder abzuhaken. Öffnen Sie die Liste erneut, um eine weitere zu ändern."/>
+        <text name="eq_horses_title" text="Pferde"/>
+        <text name="eq_horses_col_name" text="Name"/>
+        <text name="eq_horses_col_age" text="Alter"/>
+        <text name="eq_horses_col_status" text="Status"/>
+        <text name="eq_horses_inTrailer" text="Im Anhänger"/>
+        <text name="eq_horses_foal" text="Zu jung zum Reiten"/>
+        <text name="eq_horses_ready" text="Bereit"/>
+        <text name="eq_horses_none" text="Noch keine Pferde auf diesem Hof. Kaufen Sie eines beim Tierhändler."/>
+        <text name="eq_horses_stable" text="Stall"/>
+        <text name="eq_horses_fitness" text="Fitness"/>
+        <text name="eq_horses_health" text="Gesundheit"/>
+        <text name="eq_horses_career" text="Karriere"/>
+        <text name="eq_horses_careerValue" text="%d Starts, %d Siege, %s"/>
+        <text name="eq_horses_summary" text="%d Pferde. Mit den Tasten unten reiten Sie das gewählte Pferd, geben ihm eine Rolle oder setzen es zur Ruhe."/>
+        <text name="eq_horses_summaryOne" text="%d Pferd. Mit den Tasten unten reiten Sie es, geben ihm eine Rolle oder setzen es zur Ruhe."/>
+        <text name="eq_messages_title" text="Nachrichten"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Art"/>
+        <text name="eq_messages_col_message" text="Nachricht"/>
+        <text name="eq_messages_button_clear" text="Leeren"/>
+        <text name="eq_messages_clearConfirm" text="Alle Nachrichten dieses Hofs löschen?"/>
+        <text name="eq_messages_none" text="Noch keine Nachrichten."/>
+        <text name="eq_messages_summary" text="Ergebnisse, Verletzungen, Transport, eigene Turniere und Sponsoren. Jede Nachricht erscheint auch als Benachrichtigung."/>
+        <text name="eq_messages_date" text="Tag %d, %s, Jahr %d"/>
+        <text name="eq_messages_day" text="Tag %d"/>
     </texts>
 </l10n>

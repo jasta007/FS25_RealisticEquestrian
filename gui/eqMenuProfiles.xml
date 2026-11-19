@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+    eqMenuProfiles.xml
+    The table profiles our Events, Staff, Horses, Messages and Settings tabs use, under the names
+    Realistic Livestock gives them (rlMenu_*), so the same frame files work in either menu. Loaded
+    only without Realistic Livestock, for our own menu (EqMenu); with it, its own profiles are used.
+    Built on the base game's fs25 profiles.
+
+    Part of Realistic Equestrian by Jasta007.
+-->
+<GUIProfiles>
+    <Profile name="rlMenu_tableList" extends="emptyPanel" with="anchorTopLeft pivotTopLeft">
+        <imageColor value="$preset_fs25_colorGreyDark_50"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableListItem" extends="baseReference" with="anchorTopStretchingX alternating">
+        <height value="48px"/>
+        <imageColor value="$preset_fs25_colorGrey"/>
+        <imageSelectedColor value="$preset_fs25_colorMainHighlight"/>
+        <alternateBackgroundColor value="$preset_fs25_colorGreyDark_50"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableHeaderLeftAligned" extends="baseReference">
+        <imageColor value="0 0 0 0"/>
+        <textFocusedColor value="$preset_fs25_colorMainHighlight"/>
+        <textHighlightedColor value="$preset_fs25_colorMainHighlight"/>
+        <textSize value="16px"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textColor value="$preset_colorWhite_50"/>
+        <textAlignment value="left"/>
+        <textDisabledColor value="$preset_colorDisabled"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableHeaderRightAligned" extends="rlMenu_tableHeaderLeftAligned">
+        <textAlignment value="right"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableRowCellLeftAligned" extends="baseReference" with="anchorStretchingYLeft">
+        <textBold value="false"/>
+        <textSize value="15px"/>
+        <textAlignment value="left"/>
+        <textColor value="$preset_fs25_colorMainLight"/>
+        <textSelectedColor value="$preset_fs25_colorMainDark"/>
+        <textDisabledColor value="$preset_colorDisabled"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableRowCellRightAligned" extends="rlMenu_tableRowCellLeftAligned">
+        <textAlignment value="right"/>
+    </Profile>
+
+    <Profile name="rlMenu_tableSummary" extends="emptyPanel" with="anchorStretchingYLeft pivotTopLeft">
+    </Profile>
+
+    <Profile name="rlMenu_container" extends="baseReference" with="anchorTopLeft">
+    </Profile>
+
+    <Profile name="rl_settingsButton" extends="emptyPanel" with="anchorMiddleRight">
+        <size value="280px 32px"/>
+        <position value="-10px 0px"/>
+        <focusOnHighlight value="true"/>
+        <textResizeWidth value="200px"/>
+        <textSize value="16px"/>
+        <iconColor value="$preset_colorTransparent"/>
+        <iconFocusedColor value="$preset_colorTransparent"/>
+        <iconTextOffset value="0px -1px"/>
+        <iconHighlightedColor value="$preset_colorTransparent"/>
+        <textBold value="true"/>
+        <textUpperCase value="true"/>
+        <textAlignment value="center"/>
+        <textColor value="$preset_fs25_colorMainLight"/>
+        <textFocusedColor value="$preset_fs25_colorMainDark"/>
+        <textDisabledColor value="$preset_colorDisabled"/>
+    </Profile>
+</GUIProfiles>

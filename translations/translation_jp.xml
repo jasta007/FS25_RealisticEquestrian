@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian は Realistic Livestock（Ritter 版）を見つけられないため、無効になっています。Realistic Livestock の最新版をインストールしてください。"/>
         <text name="eq_rlrm_incompatible" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian には古すぎるため、Realistic Equestrian は無効になっています。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_rlrm_old" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian が必要とするバージョン（%s 以降）より古いため、一部の機能が動作しない場合があります。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
@@ -1237,5 +1236,40 @@
         <text name="eq_help_courseEdit_1" text="障害物を順番に通り抜けてコースを描きます。速さは自由です。描いている間、このMODの障害物には当たり判定がありません。間違えたら最後の正しい地点まで戻り、線がそこに吸い付いたら[[EQ_COURSE_REWIND]]でそこから描き直せます。もう一度[[EQ_COURSE_RECORD]]（クロスカントリーは[[EQ_COURSE_RECORD_XC]]）で保存します。"/>
         <text name="eq_help_dressageEdit_title" text="馬場馬術演技の編集"/>
         <text name="eq_help_dressageEdit_1" text="図形、運動、歩法から自分の演技を作れます。[[EQ_DT_PREV]]と[[EQ_DT_NEXT]]で図形を、[[EQ_DT_GAIT]]で歩法を切り替え、[[EQ_DT_MODE]]で側方運動やその場の運動に切り替えます。[[EQ_DT_ACCEPT]]で手順を確定して次へ、[[EQ_DT_UNDO]]で戻り、[[EQ_DT_RANDOM]]でランダムな手順を選びます。[[EQ_DRESSAGE_TEST]]で演技を保存します。"/>
+        <text name="eq_band_extremelyLow" text="極めて低い"/>
+        <text name="eq_band_veryLow" text="とても低い"/>
+        <text name="eq_band_low" text="低い"/>
+        <text name="eq_band_average" text="平均"/>
+        <text name="eq_band_high" text="高い"/>
+        <text name="eq_band_veryHigh" text="とても高い"/>
+        <text name="eq_band_extremelyHigh" text="極めて高い"/>
+        <text name="input_EQ_MENU" text="乗馬メニュー"/>
+        <text name="eq_menu_button" text="乗馬"/>
+        <text name="eq_menu_pickHint" text="行を選ぶとチェックが切り替わります。ほかを変えるにはもう一度リストを開いてください。"/>
+        <text name="eq_horses_title" text="馬"/>
+        <text name="eq_horses_col_name" text="名前"/>
+        <text name="eq_horses_col_age" text="年齢"/>
+        <text name="eq_horses_col_status" text="状態"/>
+        <text name="eq_horses_inTrailer" text="トレーラー内"/>
+        <text name="eq_horses_foal" text="まだ乗れない年齢"/>
+        <text name="eq_horses_ready" text="準備完了"/>
+        <text name="eq_horses_none" text="この農場にはまだ馬がいません。家畜商で購入してください。"/>
+        <text name="eq_horses_stable" text="厩舎"/>
+        <text name="eq_horses_fitness" text="体力"/>
+        <text name="eq_horses_health" text="健康"/>
+        <text name="eq_horses_career" text="戦績"/>
+        <text name="eq_horses_careerValue" text="出走 %d、勝利 %d、%s"/>
+        <text name="eq_horses_summary" text="馬 %d 頭。下のボタンで選んだ馬に乗る、役割を決める、引退させることができます。"/>
+        <text name="eq_horses_summaryOne" text="馬 %d 頭。下のボタンで乗る、役割を決める、引退させることができます。"/>
+        <text name="eq_messages_title" text="メッセージ"/>
+        <text name="eq_messages_col_date" text="日付"/>
+        <text name="eq_messages_col_type" text="種類"/>
+        <text name="eq_messages_col_message" text="内容"/>
+        <text name="eq_messages_button_clear" text="消去"/>
+        <text name="eq_messages_clearConfirm" text="この農場のメッセージをすべて削除しますか？"/>
+        <text name="eq_messages_none" text="まだメッセージはありません。"/>
+        <text name="eq_messages_summary" text="結果、けが、輸送、主催イベント、スポンサーの知らせ。それぞれ通知としても表示されます。"/>
+        <text name="eq_messages_date" text="%d日目、%s、%d年目"/>
+        <text name="eq_messages_day" text="%d日目"/>
     </texts>
 </l10n>

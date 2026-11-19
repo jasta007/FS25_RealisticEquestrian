@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Wymaga 1000 l zrębków, 10000 l drewna i 1000 l desek."/>
         <text name="eq_shop_lizardPlinth_straw" text="Wymaga 10 000 l słomy, 10000 l drewna i 1000 l desek."/>
         <text name="eq_lizard_title" text="Oferta sponsorska %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian nie może znaleźć Realistic Livestock (wersja Rittera), więc jest wyłączony. Zainstaluj najnowszą wersję Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Twoja wersja %s Realistic Livestock jest za stara dla Realistic Equestrian, więc Realistic Equestrian jest wyłączony. Pobierz najnowszą wersję Realistic Livestock (wersja Rittera)."/>
         <text name="eq_rlrm_old" text="Twoja wersja %s Realistic Livestock jest starsza niż wymaga Realistic Equestrian (%s lub nowsza), więc niektóre funkcje mogą nie działać. Pobierz najnowszą wersję Realistic Livestock (wersja Rittera)."/>
         <text name="eq_lizard_offer" text="%s chce sponsorować twoje wydarzenie %s (%s) i pożyczy ci jeden ze swoich pojazdów na miesiąc wydarzenia. Wymaga brandingu %s do końca wydarzenia oraz zbudowania podestu Lizard na twoim obiekcie: %s. Jeśli wszystko będzie gotowe, gdy przyjdą wyniki, zapłaci %s. Jeśli nie, nie zapłaci nic i nie ma żadnej kary. Podest zawali się po wydarzeniu."/>
@@ -1237,5 +1236,40 @@
         <text name="eq_help_courseEdit_1" text="Wyznacz parkur, przejeżdżając przez przeszkody po kolei w dowolnym tempie. Przeszkody z tego moda nie mają kolizji podczas wyznaczania. Jeśli się pomylisz, wróć do ostatniego dobrego punktu, aż linia się do niego przyczepi, i naciśnij [[EQ_COURSE_REWIND]], aby wyznaczać od tego miejsca. Naciśnij ponownie [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] dla crossu), aby zapisać."/>
         <text name="eq_help_dressageEdit_title" text="Edycja programu"/>
         <text name="eq_help_dressageEdit_1" text="Ułóż własny program ujeżdżenia z figur, ruchów i chodów. [[EQ_DT_PREV]] i [[EQ_DT_NEXT]] zmieniają figurę, [[EQ_DT_GAIT]] chód, a [[EQ_DT_MODE]] przełącza na ruchy boczne lub w miejscu. [[EQ_DT_ACCEPT]] zatwierdza krok i przechodzi dalej, [[EQ_DT_UNDO]] cofa, a [[EQ_DT_RANDOM]] losuje krok. Naciśnij [[EQ_DRESSAGE_TEST]], aby zapisać program."/>
+        <text name="eq_band_extremelyLow" text="Niezwykle niski"/>
+        <text name="eq_band_veryLow" text="Bardzo niski"/>
+        <text name="eq_band_low" text="Niski"/>
+        <text name="eq_band_average" text="Średni"/>
+        <text name="eq_band_high" text="Wysoki"/>
+        <text name="eq_band_veryHigh" text="Bardzo wysoki"/>
+        <text name="eq_band_extremelyHigh" text="Niezwykle wysoki"/>
+        <text name="input_EQ_MENU" text="Menu jeździeckie"/>
+        <text name="eq_menu_button" text="Jeździectwo"/>
+        <text name="eq_menu_pickHint" text="Wybierz wiersz, aby go zaznaczyć lub odznaczyć. Otwórz listę ponownie, aby zmienić kolejny."/>
+        <text name="eq_horses_title" text="Konie"/>
+        <text name="eq_horses_col_name" text="Imię"/>
+        <text name="eq_horses_col_age" text="Wiek"/>
+        <text name="eq_horses_col_status" text="Status"/>
+        <text name="eq_horses_inTrailer" text="W przyczepie"/>
+        <text name="eq_horses_foal" text="Za młody do jazdy"/>
+        <text name="eq_horses_ready" text="Gotowy"/>
+        <text name="eq_horses_none" text="Na tym gospodarstwie nie ma jeszcze koni. Kup konia u handlarza zwierząt."/>
+        <text name="eq_horses_stable" text="Stajnia"/>
+        <text name="eq_horses_fitness" text="Kondycja"/>
+        <text name="eq_horses_health" text="Zdrowie"/>
+        <text name="eq_horses_career" text="Kariera"/>
+        <text name="eq_horses_careerValue" text="Starty: %d, wygrane: %d, %s"/>
+        <text name="eq_horses_summary" text="Koni: %d. Przyciskami poniżej dosiądź, nadaj rolę lub wyślij wybranego konia na emeryturę."/>
+        <text name="eq_horses_summaryOne" text="Koni: %d. Przyciskami poniżej dosiądź go, nadaj rolę lub wyślij na emeryturę."/>
+        <text name="eq_messages_title" text="Wiadomości"/>
+        <text name="eq_messages_col_date" text="Data"/>
+        <text name="eq_messages_col_type" text="Typ"/>
+        <text name="eq_messages_col_message" text="Wiadomość"/>
+        <text name="eq_messages_button_clear" text="Wyczyść"/>
+        <text name="eq_messages_clearConfirm" text="Usunąć wszystkie wiadomości tego gospodarstwa?"/>
+        <text name="eq_messages_none" text="Brak wiadomości."/>
+        <text name="eq_messages_summary" text="Wyniki, kontuzje, transport, własne zawody i sponsorzy. Każda pojawia się też jako powiadomienie."/>
+        <text name="eq_messages_date" text="Dzień %d, %s, rok %d"/>
+        <text name="eq_messages_day" text="Dzień %d"/>
     </texts>
 </l10n>

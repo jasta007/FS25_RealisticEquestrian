@@ -222,6 +222,7 @@ end
 function EqFacilityHooks.farmOfAnimal(animal)
     local system = animal ~= nil and animal.clusterSystem or nil
     local owner = system ~= nil and system.owner or nil
+    if (owner == nil or owner.getOwnerFarmId == nil) and EqBase.installed then return EqBase.farmOf(animal) end
     if owner == nil or owner.getOwnerFarmId == nil then return nil end
     return owner:getOwnerFarmId()
 end
