@@ -4863,6 +4863,21 @@ end)()
         local fx, fz = EqDressagePath.toWorld(frame, p.x + EqDressagePath.STICK_RANGE + 3, p.y)
         local gx, gz = EqDressagePath.assist(run, fx, fz, true, 1000)
         check("a horse ridden away from the line is not held back", math.abs(gx) + math.abs(gz) < 1e-9)
+        local rx, rz = EqDressagePath.assist(run, wx, wz, true, 1000, true)
+        check("a horse backing up gets no pull (the stuck check took it for a crash)", math.abs(rx) + math.abs(rz) < 1e-9)
+        -- Behind the start of the piece: no pull along the line, only sideways onto it.
+        local a, b = found.pts[math.max(1, run.i - 1)], found.pts[math.min(#found.pts, run.i + 1)]
+        local ux, uy = b.x - a.x, b.y - a.y
+        local ul = math.sqrt(ux * ux + uy * uy)
+        ux, uy = ux / ul, uy / ul
+        local bx, bz = EqDressagePath.toWorld(frame, a.x - ux * 1 + uy * 0.5, a.y - uy * 1 - ux * 0.5)
+        local px, pz = EqDressagePath.assist(run, bx, bz, true, 1000)
+        local lx2, ly2 = px * frame.vx + pz * frame.vz, px * frame.ux + pz * frame.uz
+        check("the pull onto the line is sideways only, never along it", math.abs(lx2 * ux + ly2 * uy) < 1e-6 and math.abs(lx2) + math.abs(ly2) > 1e-4)
+        local m = run.cur
+        local pen = run.acc[m].pen
+        check("a crash in a test costs marks on the movement and the test goes on", EqDressagePath.crash(run) == 1
+            and math.abs(run.acc[m].pen - pen - EqDressagePath.CRASH_PEN) < 1e-9 and run.errors == 0 and not run.eliminated)
     end
 
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))

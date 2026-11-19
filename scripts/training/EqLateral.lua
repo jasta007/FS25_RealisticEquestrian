@@ -476,7 +476,10 @@ local function before(vehicle, dt)
     spec.eqPullX, spec.eqPullZ = 0, 0
     local assist = EqDressageHooks ~= nil and EqDressageHooks.assist or nil
     if entered and inTest and not spot and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
-        local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt)
+        local types = Rideable ~= nil and Rideable.GAITTYPES or nil
+        local reversing = (spec.currentSpeed or 0) < 0
+            or types ~= nil and types.BACKWARDS ~= nil and spec.inputValues.currentGait == types.BACKWARDS
+        local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt, reversing)
         spec.eqPullX, spec.eqPullZ = pullX, pullZ
         if wantX ~= nil and rate > 0 and type(spec.currentTurnAngle) == "number" then
             spec.currentTurnAngle = EqLateral.turnToward(spec.currentTurnAngle, math.atan2(wantX, wantZ), rate, dt)
@@ -567,11 +570,15 @@ function EqLateral.install()
         spec.eqMoveKeep = nil
         local queued = spec.cctMoveQueue ~= nil and #spec.cctMoveQueue or nil
         local result = { EqLog.finally(function() self.moveCCT = own end, superFunc, self, dt) }
-        -- On the spot, the stuck check expects only the forward move actually made.
+        -- On the spot, the stuck check expects only the forward move actually made, and in a
+        -- dressage test the pull onto the line too: a move it didn't expect reads as a crash.
         local keep = spec.eqMoveKeep
         local entry = queued ~= nil and spec.cctMoveQueue[queued + 1] or nil
-        if keep ~= nil and keep < 1 and entry ~= nil then
-            entry.moveX, entry.moveZ = (entry.moveX or 0) * keep, (entry.moveZ or 0) * keep
+        if keep ~= nil and entry ~= nil then
+            local pullX, pullZ = spec.eqPullX or 0, spec.eqPullZ or 0
+            if keep < 1 or pullX ~= 0 or pullZ ~= 0 then
+                entry.moveX, entry.moveZ = (entry.moveX or 0) * keep + pullX, (entry.moveZ or 0) * keep + pullZ
+            end
         end
         return unpack(result, 1, table.maxn(result))
     end)

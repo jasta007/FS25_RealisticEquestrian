@@ -249,6 +249,9 @@ EqDressagePath.OUT_MS = 3000
 EqDressagePath.STALL_TELL_MS = 3000
 EqDressagePath.STALL_MS = 30000
 EqDressagePath.ERROR_PEN = 3
+-- Running into something during a test costs CRASH_PEN marks on the movement; the test carries
+-- on (James, 2026-11-19: "Crashes shouldn't just flat end the test").
+EqDressagePath.CRASH_PEN = 2
 EqDressagePath.ERRORS = 3
 EqDressagePath.SNAP_AHEAD = 40
 -- The training multiplier after a movement: up at MULT_UP or better, down below MULT_DOWN.
@@ -1783,9 +1786,9 @@ local function closeTo(run, m)
             -- Why: for the log.
             local move = run.test.moves[run.cur]
             run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, " ..
-                "bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it)",
+                "bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it), crashes %d",
                 move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
-                acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0)
+                acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0, acc.crashes or 0)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -1826,20 +1829,32 @@ local function addPen(run, m, amount)
 end
 
 
+--- The horse ran into something: marks off the movement under way, and the test goes on.
+--- @param run table
+--- @return number crashes on this movement so far
+function EqDressagePath.crash(run)
+    if not run.started then return 0 end
+    addPen(run, run.cur, EqDressagePath.CRASH_PEN)
+    local acc = run.acc[math.max(1, math.min(run.cur, #run.test.moves))]
+    acc.crashes = (acc.crashes or 0) + 1
+    return acc.crashes
+end
+
+
 --- An error of course: a penalty, and the line picks up at the nearest point ahead.
 --- @return string "fault" or "lost"
 local function errorOfCourse(run, x, y)
     -- Still on the entry: the rider crossed A and rode off, so the test is cancelled, not
     -- faulted three times (James, 2026-10-30).
     if run.cur == 1 then
-        run.cancelled = true
+        run.cancelled, run.lostWhy = true, "rode off the entry"
         return "lost"
     end
     run.errors = run.errors + 1
     addPen(run, run.cur, EqDressagePath.ERROR_PEN)
     run.lostMs, run.outMs, run.stallMs = 0, 0, 0
     if run.errors >= EqDressagePath.ERRORS then
-        run.eliminated = true
+        run.eliminated, run.lostWhy = true, "three errors of course"
         return "lost"
     end
     local pts = run.test.pts
@@ -2152,7 +2167,7 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     run.outMs = out and run.outMs + dt or 0
     run.stallMs = run.stallMs + dt
     if run.stallMs >= EqDressagePath.STALL_MS then
-        run.cancelled = true
+        run.cancelled, run.lostWhy = true, "stood still too long"
         return "lost"
     end
     if run.lostMs >= EqDressagePath.LOST_MS or run.outMs >= EqDressagePath.OUT_MS then
@@ -2300,11 +2315,16 @@ end
 --- @param run table
 --- @param wx number the horse's position
 --- @param wz number
+--- The pull is only ever sideways onto the line, never along it, and there is none while the
+--- horse backs up (James, 2026-11-19: a test ended right after a rein back). A pull against the
+--- way the horse goes cut its move short, and the base game's stuck check took that for running
+--- into something: a crash, and the test was lost.
 --- @param lateral boolean drifting sideways now
 --- @param dt number ms
+--- @param reversing boolean|nil the horse is backing up
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate rad/s
-function EqDressagePath.assist(run, wx, wz, lateral, dt)
-    if not run.started or run.hold ~= nil or run.back ~= nil or run.spot ~= nil then return 0, 0, nil, nil, 0 end
+function EqDressagePath.assist(run, wx, wz, lateral, dt, reversing)
+    if reversing or not run.started or run.hold ~= nil or run.back ~= nil or run.spot ~= nil then return 0, 0, nil, nil, 0 end
     local pts, frame = run.test.pts, run.frame
     local x, y = EqDressagePath.toLocal(frame, wx, wz)
     local i = run.i
@@ -2323,6 +2343,11 @@ function EqDressagePath.assist(run, wx, wz, lateral, dt)
     local share = EqDressagePath.STICK_PULL * run.temper * ((lateral or sec ~= nil) and 1 or EqDressagePath.STICK_FREE)
     local k = math.min(1, share * dt / 1000)
     local ox, oy = (px - x) * k, (py - y) * k
+    -- Past either end of the piece the nearest point lies along the line: keep only the sideways part.
+    if len2 > 1e-9 then
+        local along = (ox * dx + oy * dy) / len2
+        ox, oy = ox - dx * along, oy - dy * along
+    end
     local pullX, pullZ = ox * frame.vx + oy * frame.ux, ox * frame.vz + oy * frame.uz
     if sec == nil then return pullX, pullZ, nil, nil, 0 end
     local wantX, wantZ = sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz

@@ -377,11 +377,11 @@ end
 --- Temperament's stickiness for EqLateral: the pull back onto the test's line and the body angle
 --- a lateral section asks for, while a test is on (EqDressagePath.assist).
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate
-function EqDressageHooks.assist(vehicle, lateral, dt)
+function EqDressageHooks.assist(vehicle, lateral, dt, reversing)
     local run = EqDressageHooks.testOn()
     if run == nil then return 0, 0, nil, nil, 0 end
     local x, _, z = getWorldTranslation(vehicle.rootNode)
-    return EqDressagePath.assist(run, x, z, lateral, dt)
+    return EqDressagePath.assist(run, x, z, lateral, dt, reversing)
 end
 
 
