@@ -440,7 +440,8 @@ up again later in the course, but not twice in a row within 4 seconds.
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
 white flag (the fence runs between them), the shop's cross country pieces (log piles, corners, start/finish
-arches and the rest) and every show jump, which needs no flags. Drop walls are not fences of their own:
+arches and the rest) and every show jump, which needs no flags. Both kinds of course use the same
+fences, so a log pile can be in a show jumping course too. Drop walls are not fences of their own:
 ride over them freely, or flag one to make it a fence. Their flags' height guides show
 while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
 collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time

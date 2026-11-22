@@ -295,15 +295,14 @@ local function listXcFences()
 end
 
 
---- @param kind string|nil EqCourse.CROSS_COUNTRY for cross country fences, else show jumps
---- @return table every show jump (or cross country fence) on the map: { node, x, z, ry, ax, az, bx, bz }
+--- @param kind string|nil EqCourse kind; both kinds use the same fences
+--- @return table every show jump and cross country fence on the map: { node, x, z, ry, ax, az, bx, bz }
 function EqCourseHooks.listJumps(kind)
-    if kind == EqCourse.CROSS_COUNTRY then return listXcFences() end
-    local list = {}
-    addShowJumps(list)
-    -- Flagged fences count in show jumping too (James, 2026-10-27: "it's a cool system").
-    addFlagFences(list)
-    return list
+    -- Every fence counts in both kinds of course (James, 2026-11-23: show jump fences "should
+    -- totally be allowed as xcountry fences (and vice versa)"). Flagged fences joined show
+    -- jumping on 2026-10-27 ("it's a cool system"). The kinds differ in the rules and in cross
+    -- country pieces disappearing by default, not in which fences they use.
+    return listXcFences()
 end
 
 
