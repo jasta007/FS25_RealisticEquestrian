@@ -1,34 +1,43 @@
 --[[
     EqFlyProbe.lua
-    Testing aid for a flying change (James, 2026-11-23). The ridden horse has a canter left and a
-    canter right clip, which the base game blends by the turn (the leftRightWeight animation
-    parameter). If they are the two leads, a flying change is a quick swap from one to the other
-    at the moment of suspension. This holds the blend on one side while riding straight, and R
-    swaps it, so James can watch the front legs and tune the timing. eqFlyProbe, while riding:
-      left | right          holds the canter on that side's clip (any gait; watch it at a canter)
-      off                   lets the turn drive the blend again
-      weight <0-1>          how far to the side the hold goes (default 1)
-      blend <ms>            how long R's swap takes (default 150)
-      delay <ms>            how long after R the swap starts (default 0)
-      auto [seconds|off]    swaps sides by itself every few seconds (default 3), hands free
-      slow <0.1-1>          plays the leg animation slower (1 = normal) so the legs are easy to see
-      demo                  left + auto 3 + slow 0.4 in one go: type it, close the console, canter
+    Testing aid for a flying change (James, 2026-11-23). The base horse's canter left/right clips
+    turned out to be turn variants on one lead (only the head moved), so this tries two other
+    ways, picked with `mode`:
+      blip    James's "ping pong": for a moment the animation is told the horse is going at a
+              trot while it keeps its canter speed, so the legs show a beat of trot, like a skip.
+      mirror  the horse's skeleton is flipped left to right, which turns a left-lead canter into
+              a right-lead one. Each change flips it. May render inside-out or swap markings.
+    Nothing about the horse's movement changes. eqFlyProbe, while riding (R works once on):
+      demo [blip|mirror]    on, a change every 3 s: type it, close the console, canter straight
+      on | off              R makes a change; off puts everything back
+      mode blip|mirror      which kind of change R makes (default blip)
+      mirror                flips the horse now, to look at it standing still (again to flip back)
+      blip <ms>             how long the legs show trot (default 350)
+      speed <0-1.5>         the speed the legs are shown at, as a share of the trot's top (default 1)
+      delay <ms>            how long after R the change starts (default 0)
+      auto [seconds|off]    a change by itself every few seconds (default 3), hands free
+      slow <0.1-1>          plays the leg animation slower (1 = normal)
       watch [seconds]       logs animation tracks 0-3 (clip, weight, time) every 250 ms
       clips                 writes the horse's animation clips (names and lengths) to log.txt
-    R (keyboard): swaps the held side, logging where the canter clip was in its stride.
+    Each change logs where the canter clip was in its stride, for the timing.
     Dev only: not wired into anything else, keep out of release builds.
 ]]
 
 EqFlyProbe = {}
-EqFlyProbe.side = nil       -- -1 left, 1 right, nil off
-EqFlyProbe.weight = 1
-EqFlyProbe.blendMs = 150
+EqFlyProbe.on = false
+EqFlyProbe.mode = "blip"
+EqFlyProbe.blipMs = 350
+EqFlyProbe.speedShare = 1
 EqFlyProbe.delayMs = 0
-EqFlyProbe.swap = nil       -- { from, to, at } the swap under way
+EqFlyProbe.blip = nil       -- { from, to } ms: the legs show trot in between
+EqFlyProbe.flipAt = nil     -- ms: the mirror flips then
+EqFlyProbe.mirrored = false
+EqFlyProbe.mirrorNode = nil -- the node scaled, to put back
+EqFlyProbe.count = 0
 EqFlyProbe.rDown = false
-EqFlyProbe.autoMs = nil     -- swap by itself this often
+EqFlyProbe.autoMs = nil
 EqFlyProbe.nextAuto = 0
-EqFlyProbe.slow = 1         -- animation speed scale on tracks 0-3
+EqFlyProbe.slow = 1
 EqFlyProbe.slowSet = false
 EqFlyProbe.watchUntil = nil
 EqFlyProbe.watchNext = 0
@@ -84,23 +93,6 @@ local function tracks(charset)
 end
 
 
---- The held blend value now (pure): the side times the weight, or part way through a swap.
---- @param now number ms
---- @return number|nil
-function EqFlyProbe.valueAt(now)
-    if EqFlyProbe.side == nil then return nil end
-    local swap = EqFlyProbe.swap
-    if swap == nil then return EqFlyProbe.side * EqFlyProbe.weight end
-    if now < swap.at then return swap.from end
-    local t = EqFlyProbe.blendMs > 0 and math.min(1, (now - swap.at) / EqFlyProbe.blendMs) or 1
-    if t >= 1 then
-        EqFlyProbe.swap = nil
-        return swap.to
-    end
-    return swap.from + (swap.to - swap.from) * t
-end
-
-
 local function gaitName(spec)
     if Rideable == nil or Rideable.GAITTYPES == nil or spec.inputValues == nil then return "?" end
     for name, value in pairs(Rideable.GAITTYPES) do
@@ -110,25 +102,52 @@ local function gaitName(spec)
 end
 
 
---- R (or auto): swap to the other side.
-local function onR(vehicle)
-    if EqFlyProbe.side == nil then return end
+--- Whether the legs show trot at this time (pure).
+--- @param now number ms
+function EqFlyProbe.inBlip(now)
+    local blip = EqFlyProbe.blip
+    if blip == nil then return false end
+    if now >= blip.to then
+        EqFlyProbe.blip = nil
+        return false
+    end
+    return now >= blip.from
+end
+
+
+--- The horse flipped left to right, or put back. Its skeleton's root is scaled -1 across.
+local function setMirror(spec, mirrored)
+    local node = spec.animationNode
+    if node == nil or not entityExists(node) then return end
+    if mirrored then
+        EqFlyProbe.mirrorNode = node
+        setScale(node, -1, 1, 1)
+    elseif EqFlyProbe.mirrorNode ~= nil and entityExists(EqFlyProbe.mirrorNode) then
+        setScale(EqFlyProbe.mirrorNode, 1, 1, 1)
+        EqFlyProbe.mirrorNode = nil
+    end
+    EqFlyProbe.mirrored = mirrored
+end
+
+
+--- R (or auto): a change.
+local function change(vehicle)
     local spec = vehicle.spec_rideable
     local now = g_time or 0
-    local from = EqFlyProbe.valueAt(now) or 0
-    EqFlyProbe.side = -EqFlyProbe.side
-    EqFlyProbe.swap = { from = from, to = EqFlyProbe.side * EqFlyProbe.weight, at = now + EqFlyProbe.delayMs }
-    local where = spec.charsetId ~= nil and table.concat(tracks(spec.charsetId), "\n") or ""
-    Log:info("eqFlyProbe R at %s %.1f km/h: now %s (blend %d ms, delay %d ms)\n%s", gaitName(spec),
-        (vehicle.lastSignedSpeedReal or 0) * 3600, EqFlyProbe.side < 0 and "left" or "right", EqFlyProbe.blendMs, EqFlyProbe.delayMs, where)
-    if g_currentMission ~= nil and g_currentMission.showBlinkingWarning ~= nil then
-        pcall(g_currentMission.showBlinkingWarning, g_currentMission, EqFlyProbe.side < 0 and "Change: left" or "Change: right", 800)
+    if EqFlyProbe.mode == "mirror" then
+        EqFlyProbe.flipAt = now + EqFlyProbe.delayMs
+    else
+        EqFlyProbe.blip = { from = now + EqFlyProbe.delayMs, to = now + EqFlyProbe.delayMs + EqFlyProbe.blipMs }
     end
+    EqFlyProbe.count = EqFlyProbe.count + 1
+    local where = spec.charsetId ~= nil and table.concat(tracks(spec.charsetId), "\n") or ""
+    Log:info("eqFlyProbe change %d (%s) at %s %.1f km/h (blip %d ms at %.2f of trot, delay %d ms)\n%s", EqFlyProbe.count, EqFlyProbe.mode,
+        gaitName(spec), (vehicle.lastSignedSpeedReal or 0) * 3600, EqFlyProbe.blipMs, EqFlyProbe.speedShare, EqFlyProbe.delayMs, where)
 end
 
 
 function EqFlyProbe.active()
-    return EqFlyProbe.side ~= nil or EqFlyProbe.watchUntil ~= nil or EqFlyProbe.slow ~= 1 or EqFlyProbe.slowSet
+    return EqFlyProbe.on or EqFlyProbe.watchUntil ~= nil or EqFlyProbe.slow ~= 1 or EqFlyProbe.slowSet or EqFlyProbe.mirrored
 end
 
 
@@ -145,17 +164,23 @@ local function applySlow(spec)
 end
 
 
---- The side held now, big in the middle of the screen, so it can be read while watching the legs.
+--- What the probe is doing, big in the middle of the screen.
 function EqFlyProbe.draw(vehicle)
-    if EqFlyProbe.side == nil or vehicle ~= EqFlyProbe.horse() then return end
-    local text = EqFlyProbe.side < 0 and "LEFT clip" or "RIGHT clip"
-    if EqFlyProbe.swap ~= nil then text = text .. " (swapping)" end
+    if not EqFlyProbe.on or vehicle ~= EqFlyProbe.horse() then return end
+    local text
+    if EqFlyProbe.inBlip(g_time or 0) then
+        text = string.format("CHANGE %d", EqFlyProbe.count)
+    elseif EqFlyProbe.mode == "mirror" then
+        text = string.format("Flying change test (mirror): R  - now %s", EqFlyProbe.mirrored and "MIRRORED" or "normal")
+    else
+        text = string.format("Flying change test (blip): R  (blip %d ms, speed %.2f, delay %d ms)", EqFlyProbe.blipMs, EqFlyProbe.speedShare, EqFlyProbe.delayMs)
+    end
     if EqFlyProbe.autoMs ~= nil then text = text .. string.format("  - auto every %.1f s", EqFlyProbe.autoMs / 1000) end
     if EqFlyProbe.slow ~= 1 then text = text .. string.format("  - slow x%.2f", EqFlyProbe.slow) end
     setTextAlignment(RenderText.ALIGN_CENTER)
     setTextBold(true)
     setTextColor(1, 0.85, 0.2, 1)
-    renderText(0.5, 0.82, 0.03, text)
+    renderText(0.5, 0.82, 0.025, text)
     setTextBold(false)
     setTextColor(1, 1, 1, 1)
     setTextAlignment(RenderText.ALIGN_LEFT)
@@ -170,33 +195,49 @@ function EqFlyProbe.install()
     Rideable.updateAnimation = Utils.overwrittenFunction(Rideable.updateAnimation, function(self, superFunc, dt)
         if not EqFlyProbe.active() or self ~= EqFlyProbe.horse() then return superFunc(self, dt) end
         local spec = self.spec_rideable
-        -- R, on the way down.
-        local down = Input ~= nil and Input.KEY_r ~= nil and Input.isKeyPressed ~= nil and Input.isKeyPressed(Input.KEY_r) == true
-        if down and not EqFlyProbe.rDown then EqLog.try("EqFlyProbe R", onR, self) end
         local now = g_time or 0
-        if EqFlyProbe.autoMs ~= nil and EqFlyProbe.side ~= nil and now >= EqFlyProbe.nextAuto then
-            EqFlyProbe.nextAuto = now + EqFlyProbe.autoMs
-            EqLog.try("EqFlyProbe auto", onR, self)
+        if EqFlyProbe.on then
+            local down = Input ~= nil and Input.KEY_r ~= nil and Input.isKeyPressed ~= nil and Input.isKeyPressed(Input.KEY_r) == true
+            if down and not EqFlyProbe.rDown then EqLog.try("EqFlyProbe R", change, self) end
+            EqFlyProbe.rDown = down
+            if EqFlyProbe.autoMs ~= nil and now >= EqFlyProbe.nextAuto then
+                EqFlyProbe.nextAuto = now + EqFlyProbe.autoMs
+                EqLog.try("EqFlyProbe auto", change, self)
+            end
+            if EqFlyProbe.flipAt ~= nil and now >= EqFlyProbe.flipAt then
+                EqFlyProbe.flipAt = nil
+                EqLog.try("EqFlyProbe flip", setMirror, spec, not EqFlyProbe.mirrored)
+            end
         end
-        EqFlyProbe.rDown = down
-        -- The base game eases its blend from where it was left towards the turn's by at most
-        -- dt/500: start it from the held value, and put its own back after.
-        local value = EqFlyProbe.valueAt(g_time or 0)
-        local own = spec.smoothedLeftRightWeight
-        if value ~= nil then spec.smoothedLeftRightWeight = value end
-        local result = { EqLog.finally(function() if value ~= nil then spec.smoothedLeftRightWeight = own end end, superFunc, self, dt) }
+        -- In a blip the animation sees the trot's speed; the horse keeps its own.
+        local real, smooth = self.lastSignedSpeedReal, self.lastSignedSpeed
+        local shown = nil
+        if EqFlyProbe.on and EqFlyProbe.inBlip(now) and type(real) == "number" and spec.topSpeeds ~= nil
+            and Rideable.GAITTYPES ~= nil and type(spec.topSpeeds[Rideable.GAITTYPES.TROT]) == "number" then
+            shown = spec.topSpeeds[Rideable.GAITTYPES.TROT] * EqFlyProbe.speedShare / 1000
+            if real < 0 then shown = -shown end
+            self.lastSignedSpeedReal = shown
+            if type(smooth) == "number" then self.lastSignedSpeed = shown end
+        end
+        local result = { EqLog.finally(function()
+            if shown ~= nil then self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth end
+        end, superFunc, self, dt) }
         EqLog.try("EqFlyProbe slow", applySlow, spec)
-        if EqFlyProbe.watchUntil ~= nil and (g_time or 0) >= EqFlyProbe.watchNext and spec.charsetId ~= nil then
-            EqFlyProbe.watchNext = (g_time or 0) + 250
-            Log:info("eqFlyProbe watch %s %.1f km/h blend %.2f:\n%s", gaitName(spec), (self.lastSignedSpeedReal or 0) * 3600,
-                value or own or 0, table.concat(tracks(spec.charsetId), "\n"))
-            if (g_time or 0) >= EqFlyProbe.watchUntil then EqFlyProbe.watchUntil = nil end
+        -- Kept flipped every frame, in case anything sets the node's scale back.
+        if EqFlyProbe.mirrored and EqFlyProbe.mirrorNode ~= nil and entityExists(EqFlyProbe.mirrorNode) then
+            setScale(EqFlyProbe.mirrorNode, -1, 1, 1)
+        end
+        if EqFlyProbe.watchUntil ~= nil and now >= EqFlyProbe.watchNext and spec.charsetId ~= nil then
+            EqFlyProbe.watchNext = now + 250
+            Log:info("eqFlyProbe watch %s %.1f km/h%s:\n%s", gaitName(spec), (real or 0) * 3600, shown ~= nil and " (blip)" or "",
+                table.concat(tracks(spec.charsetId), "\n"))
+            if now >= EqFlyProbe.watchUntil then EqFlyProbe.watchUntil = nil end
         end
         return unpack(result, 1, table.maxn(result))
     end)
     if type(Rideable.onDraw) == "function" then
         Rideable.onDraw = Utils.appendedFunction(Rideable.onDraw, function(self)
-            if EqFlyProbe.side ~= nil then EqLog.try("EqFlyProbe draw", EqFlyProbe.draw, self) end
+            if EqFlyProbe.on then EqLog.try("EqFlyProbe draw", EqFlyProbe.draw, self) end
         end)
     end
 end
@@ -205,50 +246,64 @@ end
 --- @param args string[] the words after eqFlyProbe
 function EqFlyProbe.console(args)
     local command = string.lower(args[1] or "")
+    local word = string.lower(args[2] or "")
     local number = tonumber(args[2])
+    local vehicle = EqFlyProbe.horse()
+    local spec = vehicle ~= nil and vehicle.spec_rideable or nil
     if command == "off" then
-        EqFlyProbe.side, EqFlyProbe.swap, EqFlyProbe.watchUntil, EqFlyProbe.autoMs = nil, nil, nil, nil
+        EqFlyProbe.on, EqFlyProbe.blip, EqFlyProbe.flipAt, EqFlyProbe.watchUntil, EqFlyProbe.autoMs = false, nil, nil, nil, nil
         EqFlyProbe.slow = 1
+        if EqFlyProbe.mirrored then
+            if spec ~= nil then setMirror(spec, false) else EqFlyProbe.mirrored = false end
+        end
         return say("off")
     end
+    if command == "on" then
+        EqFlyProbe.on = true
+        return say("on (%s): R makes a change", EqFlyProbe.mode)
+    end
+    if command == "mode" then
+        if word ~= "blip" and word ~= "mirror" then return say("mode blip|mirror") end
+        EqFlyProbe.mode = word
+        return say("mode %s", word)
+    end
+    if command == "demo" then
+        if word == "blip" or word == "mirror" then EqFlyProbe.mode = word end
+        EqFlyProbe.on, EqFlyProbe.autoMs = true, 3000
+        EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
+        return say("%s change every 3 s (R too): close the console and canter straight", EqFlyProbe.mode)
+    end
+    if command == "mirror" then
+        if spec == nil then return say("ride a horse first") end
+        setMirror(spec, not EqFlyProbe.mirrored)
+        return say(EqFlyProbe.mirrored and "mirrored" or "normal")
+    end
     if command == "auto" then
-        if string.lower(args[2] or "") == "off" then
+        if word == "off" then
             EqFlyProbe.autoMs = nil
             return say("auto off")
         end
+        EqFlyProbe.on = true
         EqFlyProbe.autoMs = math.max(500, math.floor((number or 3) * 1000))
         EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
-        EqFlyProbe.side = EqFlyProbe.side or -1
-        return say("swapping every %.1f s", EqFlyProbe.autoMs / 1000)
+        return say("a change every %.1f s", EqFlyProbe.autoMs / 1000)
     end
-    if command == "slow" and number ~= nil then
-        EqFlyProbe.slow = math.max(0.1, math.min(1, number))
-        return say("animation speed x%.2f", EqFlyProbe.slow)
+    if command == "blip" and number ~= nil then
+        EqFlyProbe.blipMs = math.max(0, math.floor(number))
+        return say("blip %d ms", EqFlyProbe.blipMs)
     end
-    if command == "demo" then
-        EqFlyProbe.side, EqFlyProbe.swap, EqFlyProbe.slow = -1, nil, 0.4
-        EqFlyProbe.autoMs = 3000
-        EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
-        return say("left clip, swapping every 3 s, animation x0.4: close the console and canter straight")
-    end
-    if command == "left" or command == "right" then
-        EqFlyProbe.side, EqFlyProbe.swap = command == "left" and -1 or 1, nil
-        return say("holding the %s clip at weight %.2f; R swaps (blend %d ms, delay %d ms)", command, EqFlyProbe.weight, EqFlyProbe.blendMs, EqFlyProbe.delayMs)
-    end
-    if command == "weight" and number ~= nil then
-        EqFlyProbe.weight = math.max(0, math.min(1, number))
-        return say("weight %.2f", EqFlyProbe.weight)
-    end
-    if command == "blend" and number ~= nil then
-        EqFlyProbe.blendMs = math.max(0, math.floor(number))
-        return say("blend %d ms", EqFlyProbe.blendMs)
+    if command == "speed" and number ~= nil then
+        EqFlyProbe.speedShare = math.max(0, math.min(1.5, number))
+        return say("speed %.2f of the trot's top", EqFlyProbe.speedShare)
     end
     if command == "delay" and number ~= nil then
         EqFlyProbe.delayMs = math.max(0, math.floor(number))
         return say("delay %d ms", EqFlyProbe.delayMs)
     end
-    local vehicle = EqFlyProbe.horse()
-    local spec = vehicle ~= nil and vehicle.spec_rideable or nil
+    if command == "slow" and number ~= nil then
+        EqFlyProbe.slow = math.max(0.1, math.min(1, number))
+        return say("animation speed x%.2f", EqFlyProbe.slow)
+    end
     if command == "watch" then
         if spec == nil then return say("ride a horse first") end
         local seconds = number or 10
@@ -265,5 +320,5 @@ function EqFlyProbe.console(args)
         end
         return say("%d clips written to log.txt", count)
     end
-    return say("eqFlyProbe demo | left | right | off | auto [s|off] | slow <0.1-1> | weight <0-1> | blend <ms> | delay <ms> | watch [s] | clips  (R swaps while holding)")
+    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror | blip <ms> | speed <0-1.5> | delay <ms> | auto [s|off] | slow <0.1-1> | watch [s] | clips")
 end
