@@ -16,6 +16,9 @@
       blip <ms>             how long the legs show trot (default 350)
       speed <0-1.5>         the speed the legs are shown at, as a share of the trot's top (default 1)
       delay <ms>            how long after R the change starts (default 0)
+      phase <0-1>|off       the blip waits for this point in the canter stride (default 0; off = at once)
+      trotphase <0-1>|off   the trot clip is set to this point as the blip starts (default off)
+      outphase <0-1>|off    the canter clip is set to this point as it picks up again (default off)
       auto [seconds|off]    a change by itself every few seconds (default 3), hands free
       slow <0.1-1>          plays the leg animation slower (1 = normal)
       watch [seconds]       logs animation tracks 0-3 (clip, weight, time) every 250 ms
@@ -31,6 +34,14 @@ EqFlyProbe.blipMs = 350
 EqFlyProbe.speedShare = 1
 EqFlyProbe.delayMs = 0
 EqFlyProbe.blip = nil       -- { from, to } ms: the legs show trot in between
+-- Locked to the stride (James 2026-11-23: "looked weird but we can try it better timed"). A canter
+-- stride is 533 ms, trot 767 ms (log). Shares of a clip's length, nil = left alone.
+EqFlyProbe.phase = 0        -- the blip starts when the canter clip reaches this share
+EqFlyProbe.trotPhase = nil  -- the trot clip starts the blip here
+EqFlyProbe.outPhase = nil   -- the canter clip picks up here after it
+EqFlyProbe.pending = nil    -- { since, last }: a change waiting for its point in the stride
+EqFlyProbe.WAIT_MS = 1500   -- no canter seen this long: the blip goes anyway
+EqFlyProbe.wasBlip = false
 EqFlyProbe.flipAt = nil     -- ms: the mirror flips then
 EqFlyProbe.mirrored = false
 EqFlyProbe.mirrorNode = nil -- the node scaled, to put back
@@ -139,6 +150,38 @@ local function setMirror(vehicle, mirrored)
 end
 
 
+--- The tracks playing a clip whose name has `part`, with weight: { track, length, time }.
+local function clipTracks(charset, part)
+    local list = {}
+    for t = 0, EqFlyProbe.TRACKS - 1 do
+        local ok, clip = pcall(getAnimTrackAssignedClip, charset, t)
+        if ok and type(clip) == "number" and clip >= 0 and string.find(string.lower(clipName(charset, clip)), part, 1, true) ~= nil then
+            local _, length = pcall(getAnimClipDuration, charset, clip)
+            local _, time = pcall(getAnimTrackTime, charset, t)
+            local _, weight = pcall(getAnimTrackBlendWeight, charset, t)
+            table.insert(list, { track = t, length = tonumber(length) or 0, time = tonumber(time) or 0, weight = tonumber(weight) or 0 })
+        end
+    end
+    return list
+end
+
+
+--- Every track playing `part` set to `share` of its clip.
+local function setShare(charset, part, share)
+    for _, entry in ipairs(clipTracks(charset, part)) do
+        if entry.length > 0 then pcall(setAnimTrackTime, charset, entry.track, share * entry.length, true) end
+    end
+end
+
+
+--- Whether the canter has just passed `phase` (pure): from last to now, shares 0..1, wrapping.
+function EqFlyProbe.crossed(last, now, phase)
+    if last == nil or now == nil then return false end
+    if now >= last then return last < phase and phase <= now end
+    return phase > last or phase <= now
+end
+
+
 --- R (or auto): a change.
 local function change(vehicle)
     local spec = vehicle.spec_rideable
@@ -146,7 +189,11 @@ local function change(vehicle)
     if EqFlyProbe.mode == "mirror" then
         EqFlyProbe.flipAt = now + EqFlyProbe.delayMs
     else
-        EqFlyProbe.blip = { from = now + EqFlyProbe.delayMs, to = now + EqFlyProbe.delayMs + EqFlyProbe.blipMs }
+        if EqFlyProbe.phase ~= nil then
+            EqFlyProbe.pending = { since = now }
+        else
+            EqFlyProbe.blip = { from = now + EqFlyProbe.delayMs, to = now + EqFlyProbe.delayMs + EqFlyProbe.blipMs }
+        end
     end
     EqFlyProbe.count = EqFlyProbe.count + 1
     local where = spec.charsetId ~= nil and table.concat(tracks(spec.charsetId), "\n") or ""
@@ -182,7 +229,9 @@ function EqFlyProbe.draw(vehicle)
     elseif EqFlyProbe.mode == "mirror" then
         text = string.format("Flying change test (mirror): R  - now %s", EqFlyProbe.mirrored and "MIRRORED" or "normal")
     else
-        text = string.format("Flying change test (blip): R  (blip %d ms, speed %.2f, delay %d ms)", EqFlyProbe.blipMs, EqFlyProbe.speedShare, EqFlyProbe.delayMs)
+        local function share(v) return v ~= nil and string.format("%.2f", v) or "-" end
+        text = string.format("Flying change test (blip): R  (blip %d ms, speed %.2f, phase %s, trot %s, out %s)", EqFlyProbe.blipMs,
+            EqFlyProbe.speedShare, share(EqFlyProbe.phase), share(EqFlyProbe.trotPhase), share(EqFlyProbe.outPhase))
     end
     if EqFlyProbe.autoMs ~= nil then text = text .. string.format("  - auto every %.1f s", EqFlyProbe.autoMs / 1000) end
     if EqFlyProbe.slow ~= 1 then text = text .. string.format("  - slow x%.2f", EqFlyProbe.slow) end
@@ -218,6 +267,22 @@ function EqFlyProbe.install()
                 EqLog.try("EqFlyProbe flip", setMirror, self, not EqFlyProbe.mirrored)
             end
         end
+        -- A change waiting for its point in the canter's stride.
+        local pending = EqFlyProbe.pending
+        if pending ~= nil and spec.charsetId ~= nil and now >= pending.since + EqFlyProbe.delayMs then
+            local canter = clipTracks(spec.charsetId, "canter")
+            local share = nil
+            for _, entry in ipairs(canter) do
+                if entry.weight > 0.01 and entry.length > 0 then share = (entry.time % entry.length) / entry.length break end
+            end
+            if EqFlyProbe.crossed(pending.last, share, EqFlyProbe.phase) or now > pending.since + EqFlyProbe.delayMs + EqFlyProbe.WAIT_MS then
+                EqFlyProbe.pending = nil
+                EqFlyProbe.blip = { from = now, to = now + EqFlyProbe.blipMs }
+                Log:info("eqFlyProbe blip starts at canter %s", share ~= nil and string.format("%.2f", share) or "(none, waited too long)")
+            else
+                pending.last = share
+            end
+        end
         -- In a blip the animation sees the trot's speed; the horse keeps its own.
         local real, smooth = self.lastSignedSpeedReal, self.lastSignedSpeed
         local shown = nil
@@ -232,6 +297,17 @@ function EqFlyProbe.install()
             if shown ~= nil then self.lastSignedSpeedReal, self.lastSignedSpeed = real, smooth end
         end, superFunc, self, dt) }
         EqLog.try("EqFlyProbe slow", applySlow, spec)
+        -- Line the clips up as the blip starts and ends (after the base game's update, which is
+        -- what the engine draws).
+        local inBlip = shown ~= nil
+        if spec.charsetId ~= nil then
+            if inBlip and not EqFlyProbe.wasBlip and EqFlyProbe.trotPhase ~= nil then
+                EqLog.try("EqFlyProbe trot phase", setShare, spec.charsetId, "trot", EqFlyProbe.trotPhase)
+            elseif not inBlip and EqFlyProbe.wasBlip and EqFlyProbe.outPhase ~= nil then
+                EqLog.try("EqFlyProbe out phase", setShare, spec.charsetId, "canter", EqFlyProbe.outPhase)
+            end
+        end
+        EqFlyProbe.wasBlip = inBlip
         -- Kept flipped every frame, in case anything sets the node's scale back.
         if EqFlyProbe.mirrored and EqFlyProbe.mirrorNode ~= nil and entityExists(EqFlyProbe.mirrorNode) then
             setScale(EqFlyProbe.mirrorNode, -1, 1, 1)
@@ -305,6 +381,12 @@ function EqFlyProbe.console(args)
         EqFlyProbe.blipMs = math.max(0, math.floor(number))
         return say("blip %d ms", EqFlyProbe.blipMs)
     end
+    if command == "phase" or command == "trotphase" or command == "outphase" then
+        local value = (word == "off" or word == "") and nil or (number ~= nil and math.max(0, math.min(1, number)) or nil)
+        if word ~= "off" and word ~= "" and value == nil then return say("%s <0-1>|off", command) end
+        if command == "phase" then EqFlyProbe.phase = value elseif command == "trotphase" then EqFlyProbe.trotPhase = value else EqFlyProbe.outPhase = value end
+        return say("%s %s", command, value ~= nil and string.format("%.2f", value) or "off")
+    end
     if command == "speed" and number ~= nil then
         EqFlyProbe.speedShare = math.max(0, math.min(1.5, number))
         return say("speed %.2f of the trot's top", EqFlyProbe.speedShare)
@@ -333,5 +415,5 @@ function EqFlyProbe.console(args)
         end
         return say("%d clips written to log.txt", count)
     end
-    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror [0-4] | blip <ms> | speed <0-1.5> | delay <ms> | auto [s|off] | slow <0.1-1> | watch [s] | clips")
+    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror [0-4] | blip <ms> | speed <0-1.5> | delay <ms> | phase/trotphase/outphase <0-1>|off | auto [s|off] | slow <0.1-1> | watch [s] | clips")
 end
