@@ -10,7 +10,9 @@
     Nothing about the horse's movement changes. eqFlyProbe, while riding (R works once on):
       demo [blip|mirror]    on, a change every 3 s: type it, close the console, canter straight
       on | off              R makes a change; off puts everything back
-      mode blip|mirror      which kind of change R makes (default blip)
+      mode blip|mirror|reverse  which kind of change R makes (default blip); reverse plays the canter
+                            backwards through the blip (James 2026-11-23: a reversed video looked like it might work)
+      reverse <0.1-3>       how fast it plays backwards (default 1)
       mirror [0-4]          flips the horse now, to look at it standing still (again to flip back); the
                             number picks the node: 0 the skeleton, 1 its parent (default), 2 above that
       blip <ms>             how long the legs show trot (default 350)
@@ -42,6 +44,7 @@ EqFlyProbe.outPhase = nil   -- the canter clip picks up here after it
 EqFlyProbe.pending = nil    -- { since, last }: a change waiting for its point in the stride
 EqFlyProbe.WAIT_MS = 1500   -- no canter seen this long: the blip goes anyway
 EqFlyProbe.wasBlip = false
+EqFlyProbe.reverseScale = 1 -- reverse mode: the canter plays backwards at this speed through the blip
 EqFlyProbe.flipAt = nil     -- ms: the mirror flips then
 EqFlyProbe.mirrored = false
 EqFlyProbe.mirrorNode = nil -- the node scaled, to put back
@@ -226,6 +229,10 @@ function EqFlyProbe.draw(vehicle)
     local text
     if EqFlyProbe.inBlip(g_time or 0) then
         text = string.format("CHANGE %d", EqFlyProbe.count)
+    elseif EqFlyProbe.mode == "reverse" then
+        local function share(v) return v ~= nil and string.format("%.2f", v) or "-" end
+        text = string.format("Flying change test (reverse): R  (blip %d ms, reverse x%.2f, phase %s)", EqFlyProbe.blipMs,
+            EqFlyProbe.reverseScale, share(EqFlyProbe.phase))
     elseif EqFlyProbe.mode == "mirror" then
         text = string.format("Flying change test (mirror): R  - now %s", EqFlyProbe.mirrored and "MIRRORED" or "normal")
     else
@@ -286,7 +293,8 @@ function EqFlyProbe.install()
         -- In a blip the animation sees the trot's speed; the horse keeps its own.
         local real, smooth = self.lastSignedSpeedReal, self.lastSignedSpeed
         local shown = nil
-        if EqFlyProbe.on and EqFlyProbe.inBlip(now) and type(real) == "number" and spec.topSpeeds ~= nil
+        local blipping = EqFlyProbe.on and EqFlyProbe.inBlip(now)
+        if blipping and EqFlyProbe.mode == "blip" and type(real) == "number" and spec.topSpeeds ~= nil
             and Rideable.GAITTYPES ~= nil and type(spec.topSpeeds[Rideable.GAITTYPES.TROT]) == "number" then
             shown = spec.topSpeeds[Rideable.GAITTYPES.TROT] * EqFlyProbe.speedShare / 1000
             if real < 0 then shown = -shown end
@@ -299,8 +307,16 @@ function EqFlyProbe.install()
         EqLog.try("EqFlyProbe slow", applySlow, spec)
         -- Line the clips up as the blip starts and ends (after the base game's update, which is
         -- what the engine draws).
-        local inBlip = shown ~= nil
-        if spec.charsetId ~= nil then
+        local inBlip = blipping
+        if spec.charsetId ~= nil and EqFlyProbe.mode == "reverse" then
+            -- Backwards through the blip, forwards again after (the slow setting, or normal).
+            if inBlip then
+                for t = 0, EqFlyProbe.TRACKS - 1 do pcall(setAnimTrackSpeedScale, spec.charsetId, t, -EqFlyProbe.reverseScale * EqFlyProbe.slow) end
+            elseif EqFlyProbe.wasBlip then
+                for t = 0, EqFlyProbe.TRACKS - 1 do pcall(setAnimTrackSpeedScale, spec.charsetId, t, EqFlyProbe.slow) end
+            end
+        end
+        if spec.charsetId ~= nil and EqFlyProbe.mode == "blip" then
             if inBlip and not EqFlyProbe.wasBlip and EqFlyProbe.trotPhase ~= nil then
                 EqLog.try("EqFlyProbe trot phase", setShare, spec.charsetId, "trot", EqFlyProbe.trotPhase)
             elseif not inBlip and EqFlyProbe.wasBlip and EqFlyProbe.outPhase ~= nil then
@@ -348,12 +364,12 @@ function EqFlyProbe.console(args)
         return say("on (%s): R makes a change", EqFlyProbe.mode)
     end
     if command == "mode" then
-        if word ~= "blip" and word ~= "mirror" then return say("mode blip|mirror") end
+        if word ~= "blip" and word ~= "mirror" and word ~= "reverse" then return say("mode blip|mirror|reverse") end
         EqFlyProbe.mode = word
         return say("mode %s", word)
     end
     if command == "demo" then
-        if word == "blip" or word == "mirror" then EqFlyProbe.mode = word end
+        if word == "blip" or word == "mirror" or word == "reverse" then EqFlyProbe.mode = word end
         EqFlyProbe.on, EqFlyProbe.autoMs = true, 3000
         EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
         return say("%s change every 3 s (R too): close the console and canter straight", EqFlyProbe.mode)
@@ -387,6 +403,10 @@ function EqFlyProbe.console(args)
         if command == "phase" then EqFlyProbe.phase = value elseif command == "trotphase" then EqFlyProbe.trotPhase = value else EqFlyProbe.outPhase = value end
         return say("%s %s", command, value ~= nil and string.format("%.2f", value) or "off")
     end
+    if command == "reverse" and number ~= nil then
+        EqFlyProbe.reverseScale = math.max(0.1, math.min(3, number))
+        return say("reverse at x%.2f", EqFlyProbe.reverseScale)
+    end
     if command == "speed" and number ~= nil then
         EqFlyProbe.speedShare = math.max(0, math.min(1.5, number))
         return say("speed %.2f of the trot's top", EqFlyProbe.speedShare)
@@ -415,5 +435,5 @@ function EqFlyProbe.console(args)
         end
         return say("%d clips written to log.txt", count)
     end
-    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror [0-4] | blip <ms> | speed <0-1.5> | delay <ms> | phase/trotphase/outphase <0-1>|off | auto [s|off] | slow <0.1-1> | watch [s] | clips")
+    return say("eqFlyProbe demo [blip|mirror|reverse] | on | off | mode blip|mirror|reverse | reverse <x> | mirror [0-4] | blip <ms> | speed <0-1.5> | delay <ms> | phase/trotphase/outphase <0-1>|off | auto [s|off] | slow <0.1-1> | watch [s] | clips")
 end
