@@ -11,7 +11,8 @@
       demo [blip|mirror]    on, a change every 3 s: type it, close the console, canter straight
       on | off              R makes a change; off puts everything back
       mode blip|mirror      which kind of change R makes (default blip)
-      mirror                flips the horse now, to look at it standing still (again to flip back)
+      mirror [0-4]          flips the horse now, to look at it standing still (again to flip back); the
+                            number picks the node: 0 the skeleton, 1 its parent (default), 2 above that
       blip <ms>             how long the legs show trot (default 350)
       speed <0-1.5>         the speed the legs are shown at, as a share of the trot's top (default 1)
       delay <ms>            how long after R the change starts (default 0)
@@ -33,6 +34,7 @@ EqFlyProbe.blip = nil       -- { from, to } ms: the legs show trot in between
 EqFlyProbe.flipAt = nil     -- ms: the mirror flips then
 EqFlyProbe.mirrored = false
 EqFlyProbe.mirrorNode = nil -- the node scaled, to put back
+EqFlyProbe.mirrorUp = 1     -- which node: 0 the skeleton's root (no effect, James 2026-11-23), 1 its parent, 2 the one above
 EqFlyProbe.count = 0
 EqFlyProbe.rDown = false
 EqFlyProbe.autoMs = nil
@@ -116,10 +118,17 @@ end
 
 
 --- The horse flipped left to right, or put back. Its skeleton's root is scaled -1 across.
-local function setMirror(spec, mirrored)
+local function setMirror(vehicle, mirrored)
+    local spec = vehicle.spec_rideable
     local node = spec.animationNode
     if node == nil or not entityExists(node) then return end
+    for _ = 1, EqFlyProbe.mirrorUp do
+        local parent = getParent(node)
+        if parent == nil or parent == 0 or parent == vehicle.rootNode then break end
+        node = parent
+    end
     if mirrored then
+        Log:info("eqFlyProbe mirror: scaling '%s' (%d up from the skeleton)", getName(node), EqFlyProbe.mirrorUp)
         EqFlyProbe.mirrorNode = node
         setScale(node, -1, 1, 1)
     elseif EqFlyProbe.mirrorNode ~= nil and entityExists(EqFlyProbe.mirrorNode) then
@@ -206,7 +215,7 @@ function EqFlyProbe.install()
             end
             if EqFlyProbe.flipAt ~= nil and now >= EqFlyProbe.flipAt then
                 EqFlyProbe.flipAt = nil
-                EqLog.try("EqFlyProbe flip", setMirror, spec, not EqFlyProbe.mirrored)
+                EqLog.try("EqFlyProbe flip", setMirror, self, not EqFlyProbe.mirrored)
             end
         end
         -- In a blip the animation sees the trot's speed; the horse keeps its own.
@@ -254,7 +263,7 @@ function EqFlyProbe.console(args)
         EqFlyProbe.on, EqFlyProbe.blip, EqFlyProbe.flipAt, EqFlyProbe.watchUntil, EqFlyProbe.autoMs = false, nil, nil, nil, nil
         EqFlyProbe.slow = 1
         if EqFlyProbe.mirrored then
-            if spec ~= nil then setMirror(spec, false) else EqFlyProbe.mirrored = false end
+            if vehicle ~= nil then setMirror(vehicle, false) else EqFlyProbe.mirrored = false end
         end
         return say("off")
     end
@@ -275,7 +284,11 @@ function EqFlyProbe.console(args)
     end
     if command == "mirror" then
         if spec == nil then return say("ride a horse first") end
-        setMirror(spec, not EqFlyProbe.mirrored)
+        if number ~= nil then
+            if EqFlyProbe.mirrored then setMirror(vehicle, false) end
+            EqFlyProbe.mirrorUp = math.max(0, math.min(4, math.floor(number)))
+        end
+        setMirror(vehicle, not EqFlyProbe.mirrored)
         return say(EqFlyProbe.mirrored and "mirrored" or "normal")
     end
     if command == "auto" then
@@ -320,5 +333,5 @@ function EqFlyProbe.console(args)
         end
         return say("%d clips written to log.txt", count)
     end
-    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror | blip <ms> | speed <0-1.5> | delay <ms> | auto [s|off] | slow <0.1-1> | watch [s] | clips")
+    return say("eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror [0-4] | blip <ms> | speed <0-1.5> | delay <ms> | auto [s|off] | slow <0.1-1> | watch [s] | clips")
 end
