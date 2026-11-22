@@ -42,6 +42,7 @@ EqRLRM.OPTIONAL = {
     animalsPageButton = { { "RLMenu", "openFromBridge" } },
     menuGenetics = { { "RLDetailPaneHelper", "updateAnimalDisplay" }, { "RLAnimalInfoService", "getAnimalDisplay" } },
     horsePricing = { { "AnimalHorse", "getHorseSellPrice" } },
+    dealerStock = { { "AnimalSystem", "createNewSaleAnimal" }, { "AnimalSystemStateEvent", "new" } },
     awayVisuals = { { "RealisticLivestock_AnimalClusterHusbandry", "updateVisuals" } },
     metabolismFitness = { { "AnimalHorse", "changeFitness" } },
     listBadge = { { "RLAnimalQuery", "formatAnimalRow" } },

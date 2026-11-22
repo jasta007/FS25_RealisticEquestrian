@@ -93,6 +93,7 @@ source(modDirectory .. "scripts/competition/EqQuarantine.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
+source(modDirectory .. "scripts/dealer/EqDealerStock.lua")
 source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqSkillsHudBox.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
@@ -209,6 +210,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.dealerStock then
+        guarded("dealer horse stock hook", function() EqDealerStock.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.dealerDelivery then
@@ -365,6 +370,10 @@ local function onMissionLoaded(mission)
         if mission:getIsServer() then EqStaffManager.start(guarded) end
     end)
 
+    guarded("dealer horse stock start", function()
+        if mission:getIsServer() and EqRLRM.features.dealerStock then EqDealerStock.start(guarded) end
+    end)
+
     -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
     -- RLRM's daily low-health death roll.
     guarded("map horses fresh start", function()
@@ -415,6 +424,7 @@ local function onMissionDelete()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
+        EqDealerStock.stop()
         EqHostManager.reset()
         EqSponsorManager.reset()
         EqLizard.reset()
