@@ -593,7 +593,6 @@
         <text name="eq_ui_col_success" text="Success"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Training benefit"/>
-        <text name="eq_ui_ageLong" text="%d months"/>
         <text name="eq_success_favourite" text="Favourite"/>
         <text name="eq_success_contender" text="Contender"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -609,6 +608,13 @@
         <text name="eq_ui_canEnter" text="%d can enter"/>
         <text name="eq_ui_noneEligible" text="None eligible"/>
         <text name="eq_ui_ageMonths" text="%dm"/>
+        <text name="eq_age_year" text="%d year"/>
+        <text name="eq_age_years" text="%d years"/>
+        <text name="eq_age_yearsFew" text="%d years"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%dy %dm"/>
+        <text name="eq_age_shortYears" text="%dy"/>
+        <text name="eq_ui_ages_rangeYears" text="ages %d to %d years"/>
         <text name="eq_ui_day" text="Day %d"/>
         <text name="eq_ui_status_ok" text="Can enter"/>
         <text name="eq_ui_status_lowHealth" text="Low health: %d%% scratch"/>
@@ -658,8 +664,8 @@
         <text name="eq_ui_noHorses" text="You have no horses."/>
         <text name="eq_ui_clientNote" text="Competitions are run by the host. Entering from a multiplayer client comes in a later version."/>
         <text name="eq_ui_noConfig" text="The event list could not be loaded; see the log."/>
-        <text name="eq_ui_ages_range" text="ages %d-%d months"/>
-        <text name="eq_ui_ages_from" text="from %d months"/>
+        <text name="eq_ui_ages_range" text="ages %s to %s"/>
+        <text name="eq_ui_ages_from" text="from %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, field of %d. Select a horse and press Enter."/>
         <text name="eq_enter_noEvent" text="That event is not open for entries."/>
         <text name="eq_enter_retired" text="That horse has retired from competition."/>
@@ -667,8 +673,8 @@
         <text name="eq_enter_foaled" text="That mare is still recovering from foaling. She can compete three months after the birth."/>
         <text name="eq_enter_already" text="That horse is already entered in %s."/>
         <text name="eq_enter_eventFull" text="You can enter at most %d horses in one event."/>
-        <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %d months and over, and yours is %d months."/>
-        <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %d months, and yours is %d months."/>
+        <text name="eq_enter_tooYoung" text="Too young: this event is for horses of %s and over, and yours is %s."/>
+        <text name="eq_enter_tooOld" text="Too old: this event is for horses up to %s, and yours is %s."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f is below this event's %.0f-%.0f range."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f is above this event's %.0f-%.0f range: enter a higher tier."/>
         <text name="eq_enter_noMoney" text="Not enough money: entering costs %s (entry fee %s, transport %s)."/>
@@ -1222,7 +1228,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantine and can't be ridden until it's home."/>
         <text name="eq_ride_blocked_away" text="%s is away at an event and can't be ridden."/>
         <text name="eq_ride_blocked_injured" text="%s is injured and can't be ridden until it has healed."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s is too young to be ridden. Horses can be ridden from %d months old."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is too young to be ridden. Horses can be ridden from %s old."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantine, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_away" text="%s is away at an event, so it was taken back to %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is injured, so it was taken back to %s to rest."/>

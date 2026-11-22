@@ -594,7 +594,6 @@
         <text name="eq_ui_col_success" text="Kans"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Trainingsvoordeel"/>
-        <text name="eq_ui_ageLong" text="%d maanden"/>
         <text name="eq_success_favourite" text="Favoriet"/>
         <text name="eq_success_contender" text="Kanshebber"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -610,6 +609,13 @@
         <text name="eq_ui_canEnter" text="%d kunnen meedoen"/>
         <text name="eq_ui_noneEligible" text="Niemand toegelaten"/>
         <text name="eq_ui_ageMonths" text="%d mnd"/>
+        <text name="eq_age_year" text="%d jaar"/>
+        <text name="eq_age_years" text="%d jaar"/>
+        <text name="eq_age_yearsFew" text="%d jaar"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d jr %d mnd"/>
+        <text name="eq_age_shortYears" text="%d jr"/>
+        <text name="eq_ui_ages_rangeYears" text="leeftijd %d tot %d jaar"/>
         <text name="eq_ui_day" text="Dag %d"/>
         <text name="eq_ui_status_ok" text="Kan meedoen"/>
         <text name="eq_ui_status_lowHealth" text="Lage gezondheid: %d%% afmelding"/>
@@ -659,8 +665,8 @@
         <text name="eq_ui_noHorses" text="Je hebt geen paarden."/>
         <text name="eq_ui_clientNote" text="Wedstrijden worden door de host gerund. Inschrijven vanaf een multiplayer-client komt in een latere versie."/>
         <text name="eq_ui_noConfig" text="De wedstrijdlijst kon niet worden geladen; zie de log."/>
-        <text name="eq_ui_ages_range" text="leeftijd %d-%d maanden"/>
-        <text name="eq_ui_ages_from" text="vanaf %d maanden"/>
+        <text name="eq_ui_ages_range" text="leeftijd %s tot %s"/>
+        <text name="eq_ui_ages_from" text="vanaf %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, veld van %d. Kies een paard en druk op Enter."/>
         <text name="eq_enter_noEvent" text="Die wedstrijd staat niet open voor inschrijvingen."/>
         <text name="eq_enter_retired" text="Dat paard is gestopt met wedstrijden."/>
@@ -668,8 +674,8 @@
         <text name="eq_enter_foaled" text="Die merrie herstelt nog van het veulenen. Ze mag drie maanden na de geboorte weer meedoen."/>
         <text name="eq_enter_already" text="Dat paard is al ingeschreven voor %s."/>
         <text name="eq_enter_eventFull" text="Je kunt maximaal %d paarden inschrijven voor één wedstrijd."/>
-        <text name="eq_enter_tooYoung" text="Te jong: deze wedstrijd is voor paarden van %d maanden en ouder, en het jouwe is %d maanden."/>
-        <text name="eq_enter_tooOld" text="Te oud: deze wedstrijd is voor paarden tot %d maanden, en het jouwe is %d maanden."/>
+        <text name="eq_enter_tooYoung" text="Te jong: deze wedstrijd is voor paarden van %s en ouder, en het jouwe is %s."/>
+        <text name="eq_enter_tooOld" text="Te oud: deze wedstrijd is voor paarden tot %s, en het jouwe is %s."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f ligt onder het bereik %.0f-%.0f van deze wedstrijd."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f ligt boven het bereik %.0f-%.0f van deze wedstrijd: schrijf in op een hoger niveau."/>
         <text name="eq_enter_noMoney" text="Niet genoeg geld: inschrijven kost %s (inschrijfgeld %s, transport %s)."/>
@@ -1222,7 +1228,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantaine en kan pas worden bereden als het thuis is."/>
         <text name="eq_ride_blocked_away" text="%s is weg naar een wedstrijd en kan niet worden bereden."/>
         <text name="eq_ride_blocked_injured" text="%s is geblesseerd en kan pas worden bereden als het genezen is."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf %d maanden worden bereden."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf %s worden bereden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>

@@ -198,7 +198,7 @@ function EqEventsView.horseRows(event, farmId)
                 animal = animal,
                 record = record,
                 name = horseName(animal, record),
-                age = string.format(g_i18n:getText("eq_ui_ageMonths"), age),
+                age = EqAge.short(age),
                 ratingValue = rating,
                 success = relevant and g_i18n:getText("eq_success_" .. prospects.success) or "",
                 successBand = relevant and prospects.success or nil,

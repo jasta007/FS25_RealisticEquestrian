@@ -595,7 +595,6 @@
         <text name="eq_ui_col_success" text="Шанси"/>
         <text name="eq_ui_col_training" text="Тренування"/>
         <text name="eq_ui_trainingBenefit" text="Користь для тренування"/>
-        <text name="eq_ui_ageLong" text="%d міс."/>
         <text name="eq_success_favourite" text="Фаворит"/>
         <text name="eq_success_contender" text="Претендент"/>
         <text name="eq_success_outsider" text="Аутсайдер"/>
@@ -611,6 +610,13 @@
         <text name="eq_ui_canEnter" text="Можуть взяти участь: %d"/>
         <text name="eq_ui_noneEligible" text="Немає придатних"/>
         <text name="eq_ui_ageMonths" text="%d міс."/>
+        <text name="eq_age_year" text="%d рік"/>
+        <text name="eq_age_years" text="%d років"/>
+        <text name="eq_age_yearsFew" text="%d роки"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d р. %d міс."/>
+        <text name="eq_age_shortYears" text="%d р."/>
+        <text name="eq_ui_ages_rangeYears" text="вік %d-%d років"/>
         <text name="eq_ui_day" text="День %d"/>
         <text name="eq_ui_status_ok" text="Може взяти участь"/>
         <text name="eq_ui_status_lowHealth" text="Слабке здоров'я: %d%% зняття"/>
@@ -660,8 +666,8 @@
         <text name="eq_ui_noHorses" text="У вас немає коней."/>
         <text name="eq_ui_clientNote" text="Змагання проводить хост. Запис з клієнта мережевої гри з'явиться в наступній версії."/>
         <text name="eq_ui_noConfig" text="Не вдалося завантажити список змагань; дивіться журнал."/>
-        <text name="eq_ui_ages_range" text="вік %d-%d міс."/>
-        <text name="eq_ui_ages_from" text="від %d міс."/>
+        <text name="eq_ui_ages_range" text="вік від %s до %s"/>
+        <text name="eq_ui_ages_from" text="від %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, рейтинг %.0f-%.0f, учасників: %d. Оберіть коня й натисніть Enter."/>
         <text name="eq_enter_noEvent" text="На ці змагання запис закрито."/>
         <text name="eq_enter_retired" text="Цей кінь пішов зі спорту."/>
@@ -669,8 +675,8 @@
         <text name="eq_enter_foaled" text="Ця кобила ще відновлюється після вижереблення. Вона зможе змагатися через три місяці після пологів."/>
         <text name="eq_enter_already" text="Цей кінь уже записаний на %s."/>
         <text name="eq_enter_eventFull" text="На одні змагання можна записати щонайбільше коней: %d."/>
-        <text name="eq_enter_tooYoung" text="Замолодий: ці змагання для коней від %d міс., а вашому %d міс."/>
-        <text name="eq_enter_tooOld" text="Застарий: ці змагання для коней до %d міс., а вашому %d міс."/>
+        <text name="eq_enter_tooYoung" text="Замолодий: ці змагання для коней від %s, а вашому %s."/>
+        <text name="eq_enter_tooOld" text="Застарий: ці змагання для коней до %s, а вашому %s."/>
         <text name="eq_enter_ratingLow" text="Рейтинг %.0f нижчий за діапазон цих змагань %.0f-%.0f."/>
         <text name="eq_enter_ratingHigh" text="Рейтинг %.0f вищий за діапазон цих змагань %.0f-%.0f: запишіться на вищий рівень."/>
         <text name="eq_enter_noMoney" text="Недостатньо грошей: запис коштує %s (вступний внесок %s, перевезення %s)."/>
@@ -1221,7 +1227,7 @@
         <text name="eq_enter_quarantine" text="Цей кінь на карантині після змагань за кордоном. Він зможе змагатися, коли повернеться додому."/>
         <text name="eq_quarantine_home" text="%s повернувся додому з карантину."/>
         <text name="eq_ride_blocked_horse" text="Цей кінь"/>
-        <text name="eq_ride_blocked_tooYoung" text="Кінь %s занадто молодий для їзди. Їздити верхи можна на конях від %d місяців."/>
+        <text name="eq_ride_blocked_tooYoung" text="Кінь %s занадто молодий для їзди. Їздити верхи можна на конях з віку %s."/>
         <text name="eq_ride_blocked_quarantine" text="%s на карантині, і на ньому не можна їздити, доки він не повернеться додому."/>
         <text name="eq_ride_blocked_away" text="%s на змаганнях, і на ньому не можна їздити."/>
         <text name="eq_ride_blocked_injured" text="%s травмований, і на ньому не можна їздити, доки він не одужає."/>

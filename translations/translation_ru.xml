@@ -594,7 +594,6 @@
         <text name="eq_ui_col_success" text="Шансы"/>
         <text name="eq_ui_col_training" text="Тренировка"/>
         <text name="eq_ui_trainingBenefit" text="Польза для тренировки"/>
-        <text name="eq_ui_ageLong" text="%d мес."/>
         <text name="eq_success_favourite" text="Фаворит"/>
         <text name="eq_success_contender" text="Претендент"/>
         <text name="eq_success_outsider" text="Аутсайдер"/>
@@ -610,6 +609,13 @@
         <text name="eq_ui_canEnter" text="Могут участвовать: %d"/>
         <text name="eq_ui_noneEligible" text="Нет подходящих"/>
         <text name="eq_ui_ageMonths" text="%d мес."/>
+        <text name="eq_age_year" text="%d год"/>
+        <text name="eq_age_years" text="%d лет"/>
+        <text name="eq_age_yearsFew" text="%d года"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d г. %d мес."/>
+        <text name="eq_age_shortYears" text="%d г."/>
+        <text name="eq_ui_ages_rangeYears" text="возраст %d-%d лет"/>
         <text name="eq_ui_day" text="День %d"/>
         <text name="eq_ui_status_ok" text="Можно записать"/>
         <text name="eq_ui_status_lowHealth" text="Слабое здоровье: %d%% снятия"/>
@@ -659,8 +665,8 @@
         <text name="eq_ui_noHorses" text="У вас нет лошадей."/>
         <text name="eq_ui_clientNote" text="Соревнования проводит хост. Запись с клиента в сетевой игре появится в следующей версии."/>
         <text name="eq_ui_noConfig" text="Не удалось загрузить список соревнований; см. журнал."/>
-        <text name="eq_ui_ages_range" text="возраст %d-%d мес."/>
-        <text name="eq_ui_ages_from" text="от %d мес."/>
+        <text name="eq_ui_ages_range" text="возраст от %s до %s"/>
+        <text name="eq_ui_ages_from" text="от %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, рейтинг %.0f-%.0f, участников: %d. Выберите лошадь и нажмите Enter."/>
         <text name="eq_enter_noEvent" text="Запись на это соревнование закрыта."/>
         <text name="eq_enter_retired" text="Эта лошадь завершила спортивную карьеру."/>
@@ -668,8 +674,8 @@
         <text name="eq_enter_foaled" text="Эта кобыла ещё восстанавливается после выжеребки. Она сможет выступать через три месяца после родов."/>
         <text name="eq_enter_already" text="Эта лошадь уже записана: %s."/>
         <text name="eq_enter_eventFull" text="На одно соревнование можно записать не более %d лошадей."/>
-        <text name="eq_enter_tooYoung" text="Слишком молода: соревнование для лошадей от %d мес., а вашей %d мес."/>
-        <text name="eq_enter_tooOld" text="Слишком стара: соревнование для лошадей до %d мес., а вашей %d мес."/>
+        <text name="eq_enter_tooYoung" text="Слишком молода: соревнование для лошадей от %s, а вашей %s."/>
+        <text name="eq_enter_tooOld" text="Слишком стара: соревнование для лошадей до %s, а вашей %s."/>
         <text name="eq_enter_ratingLow" text="Рейтинг %.0f ниже диапазона %.0f-%.0f этого соревнования."/>
         <text name="eq_enter_ratingHigh" text="Рейтинг %.0f выше диапазона %.0f-%.0f этого соревнования: выберите уровень выше."/>
         <text name="eq_enter_noMoney" text="Недостаточно денег: запись стоит %s (взнос %s, перевозка %s)."/>
@@ -1222,7 +1228,7 @@
         <text name="eq_ride_blocked_quarantine" text="Лошадь %s на карантине, на ней нельзя ездить, пока она не вернётся домой."/>
         <text name="eq_ride_blocked_away" text="Лошадь %s на соревнованиях, на ней нельзя ездить."/>
         <text name="eq_ride_blocked_injured" text="Лошадь %s травмирована, на ней нельзя ездить до выздоровления."/>
-        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с %d месяцев."/>
+        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с возраста %s."/>
         <text name="eq_loose_sentHome_quarantine" text="Лошадь %s на карантине, её вернули: %s."/>
         <text name="eq_loose_sentHome_away" text="Лошадь %s на соревнованиях, её вернули: %s."/>
         <text name="eq_loose_sentHome_injured" text="Лошадь %s травмирована, её вернули на отдых: %s."/>

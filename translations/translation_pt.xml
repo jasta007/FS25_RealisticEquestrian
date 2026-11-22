@@ -594,7 +594,6 @@
         <text name="eq_ui_col_success" text="Chance"/>
         <text name="eq_ui_col_training" text="Treino"/>
         <text name="eq_ui_trainingBenefit" text="Benefício de treino"/>
-        <text name="eq_ui_ageLong" text="%d meses"/>
         <text name="eq_success_favourite" text="Favorito"/>
         <text name="eq_success_contender" text="Candidato"/>
         <text name="eq_success_outsider" text="Azarão"/>
@@ -610,6 +609,13 @@
         <text name="eq_ui_canEnter" text="%d podem se inscrever"/>
         <text name="eq_ui_noneEligible" text="Nenhum elegível"/>
         <text name="eq_ui_ageMonths" text="%d m"/>
+        <text name="eq_age_year" text="%d ano"/>
+        <text name="eq_age_years" text="%d anos"/>
+        <text name="eq_age_yearsFew" text="%d anos"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d a %d m"/>
+        <text name="eq_age_shortYears" text="%d a"/>
+        <text name="eq_ui_ages_rangeYears" text="idades de %d a %d anos"/>
         <text name="eq_ui_day" text="Dia %d"/>
         <text name="eq_ui_status_ok" text="Pode se inscrever"/>
         <text name="eq_ui_status_lowHealth" text="Saúde baixa: %d%% de retirada"/>
@@ -659,8 +665,8 @@
         <text name="eq_ui_noHorses" text="Você não tem cavalos."/>
         <text name="eq_ui_clientNote" text="As competições são geridas pelo anfitrião. A inscrição a partir de um cliente multijogador virá em uma versão futura."/>
         <text name="eq_ui_noConfig" text="A lista de competições não pôde ser carregada; veja o log."/>
-        <text name="eq_ui_ages_range" text="idades de %d a %d meses"/>
-        <text name="eq_ui_ages_from" text="a partir de %d meses"/>
+        <text name="eq_ui_ages_range" text="idades de %s a %s"/>
+        <text name="eq_ui_ages_from" text="a partir de %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, nota %.0f-%.0f, %d participantes. Selecione um cavalo e pressione Enter."/>
         <text name="eq_enter_noEvent" text="Essa competição não está aberta para inscrições."/>
         <text name="eq_enter_retired" text="Esse cavalo se aposentou das competições."/>
@@ -668,8 +674,8 @@
         <text name="eq_enter_foaled" text="Essa égua ainda está se recuperando do parto. Ela pode competir três meses após o nascimento."/>
         <text name="eq_enter_already" text="Esse cavalo já está inscrito em %s."/>
         <text name="eq_enter_eventFull" text="Você pode inscrever no máximo %d cavalos em uma competição."/>
-        <text name="eq_enter_tooYoung" text="Jovem demais: esta competição é para cavalos de %d meses ou mais, e o seu tem %d meses."/>
-        <text name="eq_enter_tooOld" text="Velho demais: esta competição é para cavalos de até %d meses, e o seu tem %d meses."/>
+        <text name="eq_enter_tooYoung" text="Jovem demais: esta competição é para cavalos de %s ou mais, e o seu tem %s."/>
+        <text name="eq_enter_tooOld" text="Velho demais: esta competição é para cavalos de até %s, e o seu tem %s."/>
         <text name="eq_enter_ratingLow" text="A nota %.0f está abaixo da faixa %.0f-%.0f desta competição."/>
         <text name="eq_enter_ratingHigh" text="A nota %.0f está acima da faixa %.0f-%.0f desta competição: inscreva-se em um nível mais alto."/>
         <text name="eq_enter_noMoney" text="Dinheiro insuficiente: a inscrição custa %s (taxa %s, transporte %s)."/>
@@ -1222,7 +1228,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s está em quarentena e não pode ser montado até voltar para casa."/>
         <text name="eq_ride_blocked_away" text="%s está fora numa competição e não pode ser montado."/>
         <text name="eq_ride_blocked_injured" text="%s está lesionado e não pode ser montado até recuperar."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s é demasiado jovem para ser montado. Os cavalos podem ser montados a partir dos %d meses."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s é demasiado jovem para ser montado. Os cavalos podem ser montados a partir de %s."/>
         <text name="eq_loose_sentHome_quarantine" text="%s está em quarentena, por isso foi levado de volta para %s."/>
         <text name="eq_loose_sentHome_away" text="%s está fora numa competição, por isso foi levado de volta para %s."/>
         <text name="eq_loose_sentHome_injured" text="%s está lesionado, por isso foi levado de volta para %s para descansar."/>

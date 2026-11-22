@@ -594,7 +594,6 @@
         <text name="eq_ui_col_success" text="Šance"/>
         <text name="eq_ui_col_training" text="Trénink"/>
         <text name="eq_ui_trainingBenefit" text="Přínos tréninku"/>
-        <text name="eq_ui_ageLong" text="%d měsíců"/>
         <text name="eq_success_favourite" text="Favorit"/>
         <text name="eq_success_contender" text="Vyzyvatel"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -610,6 +609,13 @@
         <text name="eq_ui_canEnter" text="Mohou startovat: %d"/>
         <text name="eq_ui_noneEligible" text="Nikdo způsobilý"/>
         <text name="eq_ui_ageMonths" text="%d m"/>
+        <text name="eq_age_year" text="%d rok"/>
+        <text name="eq_age_years" text="%d let"/>
+        <text name="eq_age_yearsFew" text="%d roky"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d r. %d m"/>
+        <text name="eq_age_shortYears" text="%d r."/>
+        <text name="eq_ui_ages_rangeYears" text="věk %d až %d let"/>
         <text name="eq_ui_day" text="Den %d"/>
         <text name="eq_ui_status_ok" text="Může startovat"/>
         <text name="eq_ui_status_lowHealth" text="Slabé zdraví: %d%% odhlášení"/>
@@ -659,8 +665,8 @@
         <text name="eq_ui_noHorses" text="Nemáte žádné koně."/>
         <text name="eq_ui_clientNote" text="Závody řídí hostitel. Přihlašování z klienta v multiplayeru přijde v pozdější verzi."/>
         <text name="eq_ui_noConfig" text="Seznam závodů se nepodařilo načíst; viz log."/>
-        <text name="eq_ui_ages_range" text="věk %d-%d měsíců"/>
-        <text name="eq_ui_ages_from" text="od %d měsíců"/>
+        <text name="eq_ui_ages_range" text="věk %s až %s"/>
+        <text name="eq_ui_ages_from" text="od %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, hodnocení %.0f-%.0f, startujících: %d. Vyberte koně a stiskněte Enter."/>
         <text name="eq_enter_noEvent" text="Tento závod nepřijímá přihlášky."/>
         <text name="eq_enter_retired" text="Tento kůň ukončil sportovní kariéru."/>
@@ -668,8 +674,8 @@
         <text name="eq_enter_foaled" text="Tato klisna se ještě zotavuje z ohřebení. Závodit může tři měsíce po porodu."/>
         <text name="eq_enter_already" text="Tento kůň je už přihlášen: %s."/>
         <text name="eq_enter_eventFull" text="Na jeden závod můžete přihlásit nejvýše %d koní."/>
-        <text name="eq_enter_tooYoung" text="Příliš mladý: tento závod je pro koně od %d měsíců a váš má %d měsíců."/>
-        <text name="eq_enter_tooOld" text="Příliš starý: tento závod je pro koně do %d měsíců a váš má %d měsíců."/>
+        <text name="eq_enter_tooYoung" text="Příliš mladý: tento závod je pro koně od %s a váš má %s."/>
+        <text name="eq_enter_tooOld" text="Příliš starý: tento závod je pro koně do %s a váš má %s."/>
         <text name="eq_enter_ratingLow" text="Hodnocení %.0f je pod rozsahem %.0f-%.0f tohoto závodu."/>
         <text name="eq_enter_ratingHigh" text="Hodnocení %.0f je nad rozsahem %.0f-%.0f tohoto závodu: přihlaste se na vyšší úroveň."/>
         <text name="eq_enter_noMoney" text="Nedostatek peněz: přihláška stojí %s (startovné %s, přeprava %s)."/>
@@ -1222,7 +1228,7 @@
         <text name="eq_ride_blocked_quarantine" text="Kůň %s je v karanténě a nelze na něm jezdit, dokud nebude doma."/>
         <text name="eq_ride_blocked_away" text="Kůň %s je na závodech a nelze na něm jezdit."/>
         <text name="eq_ride_blocked_injured" text="Kůň %s je zraněný a nelze na něm jezdit, dokud se neuzdraví."/>
-        <text name="eq_ride_blocked_tooYoung" text="Kůň %s je příliš mladý na ježdění. Na koních se dá jezdit od %d měsíců."/>
+        <text name="eq_ride_blocked_tooYoung" text="Kůň %s je příliš mladý na ježdění. Na koních se dá jezdit od %s."/>
         <text name="eq_loose_sentHome_quarantine" text="Kůň %s je v karanténě, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_away" text="Kůň %s je na závodech, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_injured" text="Kůň %s je zraněný, a tak byl odveden zpět k odpočinku: %s."/>

@@ -1455,8 +1455,8 @@ function EqCompetitionManager.enter(eventId, animal, farmId, transport)
     if not ok then
         local text = g_i18n:getText("eq_enter_" .. reason)
         local minAge, maxAge = EqFoals.tierAges(tier)
-        if reason == "tooYoung" then return false, string.format(text, minAge, animal.age or 0) end
-        if reason == "tooOld" then return false, string.format(text, maxAge, animal.age or 0) end
+        if reason == "tooYoung" then return false, string.format(text, EqAge.long(minAge), EqAge.long(animal.age or 0)) end
+        if reason == "tooOld" then return false, string.format(text, EqAge.long(maxAge), EqAge.long(animal.age or 0)) end
         return false, string.format(text, rating, tier.minRating, tier.maxRating)
     end
 
