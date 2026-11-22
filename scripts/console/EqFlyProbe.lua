@@ -10,6 +10,9 @@
       weight <0-1>          how far to the side the hold goes (default 1)
       blend <ms>            how long R's swap takes (default 150)
       delay <ms>            how long after R the swap starts (default 0)
+      auto [seconds|off]    swaps sides by itself every few seconds (default 3), hands free
+      slow <0.1-1>          plays the leg animation slower (1 = normal) so the legs are easy to see
+      demo                  left + auto 3 + slow 0.4 in one go: type it, close the console, canter
       watch [seconds]       logs animation tracks 0-3 (clip, weight, time) every 250 ms
       clips                 writes the horse's animation clips (names and lengths) to log.txt
     R (keyboard): swaps the held side, logging where the canter clip was in its stride.
@@ -23,6 +26,10 @@ EqFlyProbe.blendMs = 150
 EqFlyProbe.delayMs = 0
 EqFlyProbe.swap = nil       -- { from, to, at } the swap under way
 EqFlyProbe.rDown = false
+EqFlyProbe.autoMs = nil     -- swap by itself this often
+EqFlyProbe.nextAuto = 0
+EqFlyProbe.slow = 1         -- animation speed scale on tracks 0-3
+EqFlyProbe.slowSet = false
 EqFlyProbe.watchUntil = nil
 EqFlyProbe.watchNext = 0
 EqFlyProbe.TRACKS = 4       -- tracks 0-3 exist on the horse (eqHeadProbe, 2026-11-04); more crashed the game
@@ -103,7 +110,7 @@ local function gaitName(spec)
 end
 
 
---- R: swap to the other side.
+--- R (or auto): swap to the other side.
 local function onR(vehicle)
     if EqFlyProbe.side == nil then return end
     local spec = vehicle.spec_rideable
@@ -121,7 +128,37 @@ end
 
 
 function EqFlyProbe.active()
-    return EqFlyProbe.side ~= nil or EqFlyProbe.watchUntil ~= nil
+    return EqFlyProbe.side ~= nil or EqFlyProbe.watchUntil ~= nil or EqFlyProbe.slow ~= 1 or EqFlyProbe.slowSet
+end
+
+
+--- Tracks 0-3 at the slow speed, or back to normal once (slowSet).
+local function applySlow(spec)
+    if spec.charsetId == nil then return end
+    if EqFlyProbe.slow ~= 1 then
+        for t = 0, EqFlyProbe.TRACKS - 1 do pcall(setAnimTrackSpeedScale, spec.charsetId, t, EqFlyProbe.slow) end
+        EqFlyProbe.slowSet = true
+    elseif EqFlyProbe.slowSet then
+        for t = 0, EqFlyProbe.TRACKS - 1 do pcall(setAnimTrackSpeedScale, spec.charsetId, t, 1) end
+        EqFlyProbe.slowSet = false
+    end
+end
+
+
+--- The side held now, big in the middle of the screen, so it can be read while watching the legs.
+function EqFlyProbe.draw(vehicle)
+    if EqFlyProbe.side == nil or vehicle ~= EqFlyProbe.horse() then return end
+    local text = EqFlyProbe.side < 0 and "LEFT clip" or "RIGHT clip"
+    if EqFlyProbe.swap ~= nil then text = text .. " (swapping)" end
+    if EqFlyProbe.autoMs ~= nil then text = text .. string.format("  - auto every %.1f s", EqFlyProbe.autoMs / 1000) end
+    if EqFlyProbe.slow ~= 1 then text = text .. string.format("  - slow x%.2f", EqFlyProbe.slow) end
+    setTextAlignment(RenderText.ALIGN_CENTER)
+    setTextBold(true)
+    setTextColor(1, 0.85, 0.2, 1)
+    renderText(0.5, 0.82, 0.03, text)
+    setTextBold(false)
+    setTextColor(1, 1, 1, 1)
+    setTextAlignment(RenderText.ALIGN_LEFT)
 end
 
 
@@ -136,6 +173,11 @@ function EqFlyProbe.install()
         -- R, on the way down.
         local down = Input ~= nil and Input.KEY_r ~= nil and Input.isKeyPressed ~= nil and Input.isKeyPressed(Input.KEY_r) == true
         if down and not EqFlyProbe.rDown then EqLog.try("EqFlyProbe R", onR, self) end
+        local now = g_time or 0
+        if EqFlyProbe.autoMs ~= nil and EqFlyProbe.side ~= nil and now >= EqFlyProbe.nextAuto then
+            EqFlyProbe.nextAuto = now + EqFlyProbe.autoMs
+            EqLog.try("EqFlyProbe auto", onR, self)
+        end
         EqFlyProbe.rDown = down
         -- The base game eases its blend from where it was left towards the turn's by at most
         -- dt/500: start it from the held value, and put its own back after.
@@ -143,6 +185,7 @@ function EqFlyProbe.install()
         local own = spec.smoothedLeftRightWeight
         if value ~= nil then spec.smoothedLeftRightWeight = value end
         local result = { EqLog.finally(function() if value ~= nil then spec.smoothedLeftRightWeight = own end end, superFunc, self, dt) }
+        EqLog.try("EqFlyProbe slow", applySlow, spec)
         if EqFlyProbe.watchUntil ~= nil and (g_time or 0) >= EqFlyProbe.watchNext and spec.charsetId ~= nil then
             EqFlyProbe.watchNext = (g_time or 0) + 250
             Log:info("eqFlyProbe watch %s %.1f km/h blend %.2f:\n%s", gaitName(spec), (self.lastSignedSpeedReal or 0) * 3600,
@@ -151,6 +194,11 @@ function EqFlyProbe.install()
         end
         return unpack(result, 1, table.maxn(result))
     end)
+    if type(Rideable.onDraw) == "function" then
+        Rideable.onDraw = Utils.appendedFunction(Rideable.onDraw, function(self)
+            if EqFlyProbe.side ~= nil then EqLog.try("EqFlyProbe draw", EqFlyProbe.draw, self) end
+        end)
+    end
 end
 
 
@@ -159,8 +207,29 @@ function EqFlyProbe.console(args)
     local command = string.lower(args[1] or "")
     local number = tonumber(args[2])
     if command == "off" then
-        EqFlyProbe.side, EqFlyProbe.swap, EqFlyProbe.watchUntil = nil, nil, nil
+        EqFlyProbe.side, EqFlyProbe.swap, EqFlyProbe.watchUntil, EqFlyProbe.autoMs = nil, nil, nil, nil
+        EqFlyProbe.slow = 1
         return say("off")
+    end
+    if command == "auto" then
+        if string.lower(args[2] or "") == "off" then
+            EqFlyProbe.autoMs = nil
+            return say("auto off")
+        end
+        EqFlyProbe.autoMs = math.max(500, math.floor((number or 3) * 1000))
+        EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
+        EqFlyProbe.side = EqFlyProbe.side or -1
+        return say("swapping every %.1f s", EqFlyProbe.autoMs / 1000)
+    end
+    if command == "slow" and number ~= nil then
+        EqFlyProbe.slow = math.max(0.1, math.min(1, number))
+        return say("animation speed x%.2f", EqFlyProbe.slow)
+    end
+    if command == "demo" then
+        EqFlyProbe.side, EqFlyProbe.swap, EqFlyProbe.slow = -1, nil, 0.4
+        EqFlyProbe.autoMs = 3000
+        EqFlyProbe.nextAuto = (g_time or 0) + EqFlyProbe.autoMs
+        return say("left clip, swapping every 3 s, animation x0.4: close the console and canter straight")
     end
     if command == "left" or command == "right" then
         EqFlyProbe.side, EqFlyProbe.swap = command == "left" and -1 or 1, nil
@@ -196,5 +265,5 @@ function EqFlyProbe.console(args)
         end
         return say("%d clips written to log.txt", count)
     end
-    return say("eqFlyProbe left | right | off | weight <0-1> | blend <ms> | delay <ms> | watch [s] | clips  (R swaps while holding)")
+    return say("eqFlyProbe demo | left | right | off | auto [s|off] | slow <0.1-1> | weight <0-1> | blend <ms> | delay <ms> | watch [s] | clips  (R swaps while holding)")
 end
