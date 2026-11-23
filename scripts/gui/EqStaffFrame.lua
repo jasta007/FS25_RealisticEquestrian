@@ -384,7 +384,7 @@ function EqStaffFrame:updateControls(member)
     self.statusButton:setText(g_i18n:getText(EqStaffManager.willBeEnabled(member)
         and "setting_disasterDestructionState_enabled" or "setting_disasterDestructionState_disabled"))
     self.modeButton:setText(g_i18n:getText(works.mode == EqStaff.WORKS_HORSE and "eq_staff_mode_horses" or "eq_staff_mode_roles"))
-    local canPick = trains and EqRLRM.features.staffPicker
+    local canPick = trains and (EqRLRM.features.staffPicker or (EqMain.withoutRLRM and OptionDialog ~= nil))
     for _, element in ipairs({ self.stablesButton, self.modeButton, self.pickButton }) do element:setDisabled(not trains) end
     self.stablesButton:setDisabled(not canPick)
     self.pickButton:setDisabled(not canPick)
@@ -452,7 +452,10 @@ end
 --- @param onDone function(keys) called with the checked keys, not on Back
 function EqStaffFrame:openPicker(title, candidates, current, onDone)
     local picker = EqRLRM.get("RLHerdsmanHusbandryPickerDialog")
-    if picker == nil then return end
+    if picker == nil then
+        EqStaffFrame.openOptionPicker(title, candidates, current, onDone)
+        return
+    end
     local function restore(dialog)
         if dialog == nil then return end
         dialog.showHint = nil
@@ -635,6 +638,37 @@ function EqStaffFrame:onClickFire()
             self:refresh()
         end
     end, self, string.format(g_i18n:getText("eq_staff_fire_confirm"), row.member.name), g_i18n:getText("eq_staff_button_fire"))
+end
+
+
+--- Without RLRM's checklist: the game's option list, one tick box per line. Picking a line
+--- ticks or unticks it and keeps the choice; open the list again to change another.
+--- @param title string
+--- @param candidates table list of { uniqueId, name }
+--- @param current table list of checked keys
+--- @param onDone function(keys)
+function EqStaffFrame.openOptionPicker(title, candidates, current, onDone)
+    if OptionDialog == nil or OptionDialog.show == nil then return end
+    local checked = {}
+    for _, key in ipairs(current or {}) do checked[key] = true end
+    local options = {}
+    for _, candidate in ipairs(candidates) do
+        table.insert(options, string.format("%s  %s", checked[candidate.uniqueId] and "[x]" or "[  ]", candidate.name))
+    end
+    if #options == 0 then
+        InfoDialog.show(g_i18n:getText("eq_staff_pick_empty"))
+        return
+    end
+    OptionDialog.show(function(index)
+        if type(index) ~= "number" or candidates[index] == nil then return end
+        local key = candidates[index].uniqueId
+        checked[key] = not checked[key] or nil
+        local keys = {}
+        for _, candidate in ipairs(candidates) do
+            if checked[candidate.uniqueId] then table.insert(keys, candidate.uniqueId) end
+        end
+        onDone(keys)
+    end, title, g_i18n:getText("eq_menu_pickHint"), options)
 end
 
 

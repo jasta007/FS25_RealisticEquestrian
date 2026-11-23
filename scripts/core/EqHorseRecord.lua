@@ -46,6 +46,7 @@ function EqHorseRecord.new(id)
     self.form = nil              -- peak form from the player's riding: { month, stat -> points }, see EqTraining.formFor
     self.results = {}            -- latest events first: { day, discipline, tier, venue, place, field, prize, status, lines }
     self.start = nil             -- { day, stat -> level } when the horse joined the farm, for eqChanges
+    self.name = nil              -- without RLRM: the horse's name when last seen, to find a horse that lost its id (EqBase)
     return self
 end
 
@@ -152,6 +153,7 @@ end
 function EqHorseRecord:saveToXMLFile(xmlFile, key)
     xmlFile:setString(key .. "#id", self.id)
     xmlFile:setString(key .. "#origin", self.origin)
+    if self.name ~= nil then xmlFile:setString(key .. "#name", self.name) end
     if self.redrawStart then xmlFile:setBool(key .. "#redrawStart", true) end
     xmlFile:setString(key .. "#focus", self.focus)
     xmlFile:setBool(key .. "#retired", self.retired)
@@ -234,6 +236,7 @@ function EqHorseRecord.loadFromXMLFile(xmlFile, key)
 
     local self = EqHorseRecord.new(id)
     self.origin = xmlFile:getString(key .. "#origin", EqHorseRecord.ORIGIN_ROLLED)
+    self.name = xmlFile:getString(key .. "#name")
     self.redrawStart = xmlFile:getBool(key .. "#redrawStart", false) or nil
     self.focus = xmlFile:getString(key .. "#focus", EqHorseRecord.FOCUS_BALANCED)
     self.retired = xmlFile:getBool(key .. "#retired", false)

@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 公升木屑、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 公升稻草、10,000 公升木材和 1,000 公升木板。"/>
         <text name="eq_lizard_title" text="%s 的贊助邀約"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian 找不到 Realistic Livestock（Ritter 版），因此已停用。請安裝最新版本的 Realistic Livestock。"/>
         <text name="eq_rlrm_incompatible" text="你的 Realistic Livestock 版本 %s 對 Realistic Equestrian 來說太舊，因此 Realistic Equestrian 已停用。請取得最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_rlrm_old" text="你的 Realistic Livestock 版本 %s 低於 Realistic Equestrian 所需的版本（%s 或更新），部分功能可能無法使用。請取得最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_lizard_offer" text="%s 希望贊助你的%s（%s），並在賽事月借給你一輛它的車輛。要求在賽事結束前達到%s品牌度，並在你的場地建好Lizard展台：%s。如果公布成績時一切就緒，它將支付 %s。否則不付費，也沒有任何處罰。賽事結束後展台會倒塌。"/>
@@ -1240,5 +1239,40 @@
         <text name="eq_help_courseEdit_1" text="按順序騎過各個障礙來描繪路線，速度不限。描繪時，本模組的障礙物沒有碰撞。如果出錯，騎回最後一個正確的點，直到有一條線吸附過去，然後按[[EQ_COURSE_REWIND]]從那裡重新描繪。再次按[[EQ_COURSE_RECORD]]（越野為[[EQ_COURSE_RECORD_XC]]）儲存。"/>
         <text name="eq_help_dressageEdit_title" text="編輯舞步測試"/>
         <text name="eq_help_dressageEdit_1" text="用圖形、動作和步法編寫你自己的舞步測試。[[EQ_DT_PREV]]和[[EQ_DT_NEXT]]切換圖形，[[EQ_DT_GAIT]]切換步法，[[EQ_DT_MODE]]切換到橫向動作或原地動作。[[EQ_DT_ACCEPT]]保留當前步驟並繼續，[[EQ_DT_UNDO]]返回上一步，[[EQ_DT_RANDOM]]隨機選一步。按[[EQ_DRESSAGE_TEST]]儲存測試。"/>
+        <text name="eq_band_extremelyLow" text="極低"/>
+        <text name="eq_band_veryLow" text="很低"/>
+        <text name="eq_band_low" text="低"/>
+        <text name="eq_band_average" text="中等"/>
+        <text name="eq_band_high" text="高"/>
+        <text name="eq_band_veryHigh" text="很高"/>
+        <text name="eq_band_extremelyHigh" text="極高"/>
+        <text name="input_EQ_MENU" text="馬術選單"/>
+        <text name="eq_menu_button" text="馬術"/>
+        <text name="eq_menu_pickHint" text="選擇一行即可勾選或取消勾選。要變更其他項目，請再次開啟清單。"/>
+        <text name="eq_horses_title" text="馬匹"/>
+        <text name="eq_horses_col_name" text="名字"/>
+        <text name="eq_horses_col_age" text="年齡"/>
+        <text name="eq_horses_col_status" text="狀態"/>
+        <text name="eq_horses_inTrailer" text="在拖車裡"/>
+        <text name="eq_horses_foal" text="太小，不能騎"/>
+        <text name="eq_horses_ready" text="就緒"/>
+        <text name="eq_horses_none" text="這座農場還沒有馬。請到動物商人那裡購買。"/>
+        <text name="eq_horses_stable" text="馬廄"/>
+        <text name="eq_horses_fitness" text="體能"/>
+        <text name="eq_horses_health" text="健康"/>
+        <text name="eq_horses_career" text="生涯"/>
+        <text name="eq_horses_careerValue" text="出賽 %d 次，獲勝 %d 次，%s"/>
+        <text name="eq_horses_summary" text="共 %d 匹馬。用下方按鈕騎乘所選的馬、設定角色或讓牠退役。"/>
+        <text name="eq_horses_summaryOne" text="共 %d 匹馬。用下方按鈕騎乘、設定角色或讓牠退役。"/>
+        <text name="eq_messages_title" text="訊息"/>
+        <text name="eq_messages_col_date" text="日期"/>
+        <text name="eq_messages_col_type" text="類型"/>
+        <text name="eq_messages_col_message" text="內容"/>
+        <text name="eq_messages_button_clear" text="清除"/>
+        <text name="eq_messages_clearConfirm" text="刪除這座農場的所有訊息？"/>
+        <text name="eq_messages_none" text="尚無訊息。"/>
+        <text name="eq_messages_summary" text="成績、傷病、運輸、主辦賽事和贊助訊息。每則也會以通知顯示。"/>
+        <text name="eq_messages_date" text="第 %d 天，%s，第 %d 年"/>
+        <text name="eq_messages_day" text="第 %d 天"/>
     </texts>
 </l10n>

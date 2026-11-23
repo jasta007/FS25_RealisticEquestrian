@@ -64,13 +64,29 @@ local function getSelectorText(selector)
 end
 
 
---- The player's farm's pens, through RLRM's own lookup.
+--- The player's farm's pens, through RLRM's own lookup (the husbandry system's without RLRM).
 --- @return table pens
 function EqAnimalsPageButton.listFarmPens()
     local query = EqRLRM.get("RLAnimalQuery")
     local mission = g_currentMission
-    if query == nil or mission == nil or mission.getFarmId == nil then return {} end
+    if mission == nil or mission.getFarmId == nil then return {} end
+    if query == nil then
+        return EqMain ~= nil and EqMain.withoutRLRM and EqBase.listHusbandriesForFarm(mission:getFarmId()) or {}
+    end
     return query.listHusbandriesForFarm(mission:getFarmId()) or {}
+end
+
+
+--- @param husbandry table|nil
+--- @return boolean true for a pen that keeps horses
+function EqAnimalsPageButton.isHorsePen(husbandry)
+    if not isAnimalPen(husbandry) then return false end
+    local horseType = AnimalType ~= nil and AnimalType.HORSE or nil
+    if horseType ~= nil and husbandry.getAnimalTypeIndex ~= nil and husbandry:getAnimalTypeIndex() == horseType then return true end
+    for _, animal in pairs(EqBase.clustersOf(husbandry)) do
+        if animal.isHorse ~= nil and animal:isHorse() then return true end
+    end
+    return false
 end
 
 
@@ -175,8 +191,9 @@ end
 --- @param listPens function|nil passed to findHusbandry
 --- @param slots integer|nil how many buttons the bar can show; nil when unknown
 --- @param pageActions table|nil set of the page buttons' input actions, dropped first when full
+--- @param ownMenu boolean|nil true without RLRM: the button opens our menu, on horse pens only
 --- @return boolean changed true when the list was changed
-function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens, slots, pageActions)
+function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, listPens, slots, pageActions, ownMenu)
     if type(buttons) ~= "table" then return false end
 
     local index = findButton(buttons, action)
@@ -190,10 +207,15 @@ function EqAnimalsPageButton.ensureButton(frame, buttons, action, openMenu, list
                 tostring(getSelectorText(frame.subCategorySelector)), tostring(frame.selectedHusbandry)), frame)
             return false
         end
+        if ownMenu and not EqAnimalsPageButton.isHorsePen(husbandry) then return false end
         table.insert(buttons, {
             inputAction = action,
-            text = g_i18n:getText("eq_ui_button_manageAnimals"),
+            text = g_i18n:getText(ownMenu and "eq_menu_button" or "eq_ui_button_manageAnimals"),
             callback = function()
+                if ownMenu then
+                    openMenu(husbandry)
+                    return
+                end
                 -- Page 4 is RLRM's Manage tab, and fromInGameMenu makes Back return here, as
                 -- RLRM's own button does.
                 openMenu(4, EqRLRM.get("RLMenu").MODE_FULL, { husbandry = husbandry, fromInGameMenu = true })
@@ -250,14 +272,17 @@ end
 --- hooks run after RLRM's.
 --- @param guarded function main.lua's error guard
 function EqAnimalsPageButton.install(guarded)
-    local action = InputAction ~= nil and InputAction.RL_OPEN_ANIMAL_SCREEN or nil
+    -- Without RLRM the button is ours: it opens our own menu (EqMenu) with our own key.
+    local ownMenu = EqMain.withoutRLRM == true
+    local action = InputAction ~= nil and (ownMenu and InputAction.EQ_MENU or InputAction.RL_OPEN_ANIMAL_SCREEN) or nil
     if InGameMenuAnimalsFrame == nil or InGameMenuAnimalsFrame.updateMenuButtons == nil
         or InGameMenu == nil or InGameMenu.assignMenuButtonInfo == nil or action == nil then
-        Log:warning("EqAnimalsPageButton: Animals page or RLRM's R action not found; horse pens keep no Manage Animals button")
+        Log:warning("EqAnimalsPageButton: Animals page or the menu's action not found; horse pens keep no menu button")
         return
     end
 
-    local openMenu = EqRLRM.get("RLMenu").openFromBridge
+    local openMenu = ownMenu and function(husbandry) EqMenu.open({ husbandry = husbandry, fromInGameMenu = true }) end
+        or EqRLRM.get("RLMenu").openFromBridge
     local pageActions = {}
     if InputAction.MENU_PAGE_PREV ~= nil then pageActions[InputAction.MENU_PAGE_PREV] = true end
     if InputAction.MENU_PAGE_NEXT ~= nil then pageActions[InputAction.MENU_PAGE_NEXT] = true end
@@ -265,7 +290,7 @@ function EqAnimalsPageButton.install(guarded)
     InGameMenuAnimalsFrame.updateMenuButtons = Utils.appendedFunction(InGameMenuAnimalsFrame.updateMenuButtons,
         function(frame)
             guarded("animals page button", function()
-                EqAnimalsPageButton.ensureButton(frame, frame.menuButtonInfo, action, openMenu)
+                EqAnimalsPageButton.ensureButton(frame, frame.menuButtonInfo, action, openMenu, nil, nil, nil, ownMenu)
             end)
         end)
 
@@ -276,7 +301,7 @@ function EqAnimalsPageButton.install(guarded)
             guarded("animals page button", function()
                 if showsAnimalsPage(menu) then
                     local slots = type(menu.menuButton) == "table" and #menu.menuButton or nil
-                    EqAnimalsPageButton.ensureButton(menu.currentPage, buttons, action, openMenu, nil, slots, pageActions)
+                    EqAnimalsPageButton.ensureButton(menu.currentPage, buttons, action, openMenu, nil, slots, pageActions, ownMenu)
                 end
             end)
             return superFunc(menu, buttons, ...)

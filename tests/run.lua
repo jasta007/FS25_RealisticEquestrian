@@ -29,6 +29,7 @@ dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
+dofile("scripts/core/EqBase.lua")
 dofile("scripts/core/EqI18N.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqPerformance.lua")
@@ -328,6 +329,12 @@ local function rlrmVersionTests()
     for _, path in ipairs(EqRLRM.REQUIRED) do add(path) end
     for _, paths in pairs(EqRLRM.OPTIONAL) do for _, path in ipairs(paths) do add(path) end end
     check("missing RLRM is reported", not initWith(nil, nil) and EqRLRM.problem == "missing")
+    g_modIsLoaded = {}
+    check("RLRM left over but not active on this save counts as missing",
+        not initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == "missing" and EqRLRM.isMissing())
+    g_modIsLoaded = { [EqRLRM.MOD_NAME] = true }
+    check("RLRM active on this save is used", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
+    g_modIsLoaded = nil
     check("current RLRM has no problem", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
     check("old RLRM still runs with a popup", initWith(full, "1.4.1.0") and EqRLRM.problem == "old")
     local partial = {}
@@ -6957,6 +6964,71 @@ end)()
 
     AnimalType, g_currentMission = savedType, savedMission
     EqDealerStock.cache = nil
+-- Without Realistic Livestock: our own horse ids, our own message log and plain breeding.
+;(function()
+    EqBase.known, EqBase.highest = {}, 0
+    check("base: id numbers parse", EqBase.idNumber("EQ-12") == 12 and EqBase.idNumber("GB 1 42") == nil
+        and EqBase.idNumber(nil) == nil)
+    local records = { ["EQ-3"] = { name = "Star" }, ["EQ-7"] = { name = "Bramble" }, ["GB 1 4"] = { name = "Old" } }
+    local id = EqBase.newId(records)
+    check("base: a new id follows the highest saved one", id == "EQ-8")
+    check("base: new ids never repeat", EqBase.newId(records) == "EQ-9")
+    EqBase.remember("EQ-40")
+    check("base: a remembered id raises the counter", EqBase.newId(records) == "EQ-41")
+    check("base: a lost id is matched by name", EqBase.matchByName("Star", records, {}) == "EQ-3")
+    check("base: a name carried by another horse is not matched", EqBase.matchByName("Star", records, { ["EQ-3"] = true }) == nil)
+    records["EQ-20"] = { name = "Star" }
+    check("base: two horses with one name are not guessed", EqBase.matchByName("Star", records, {}) == nil)
+    check("base: no name, no match", EqBase.matchByName(nil, records, {}) == nil)
+    EqBase.known, EqBase.highest = {}, 0
+
+    local savedMission, savedFSBase = g_currentMission, FSBaseMission
+    local shown = {}
+    FSBaseMission = { INGAME_NOTIFICATION_OK = "ok", INGAME_NOTIFICATION_INFO = "info", INGAME_NOTIFICATION_CRITICAL = "critical" }
+    g_currentMission = { getIsServer = function() return true end, getFarmId = function() return 1 end,
+        environment = { currentMonotonicDay = 5, currentPeriod = 2, currentDayInPeriod = 1, currentYear = 1 },
+        addIngameNotification = function(_, kind, text) table.insert(shown, { kind = kind, text = text }) end }
+    local wasOwn, wasInstalled, wasLines = EqMessages.ownLog, EqMessages.isInstalled, EqMessages.lines
+    EqMessages.installOwn()
+    EqMessages.post(1, "EQ_PLACED", "Star won.", nil, "EQ-3")
+    EqMessages.post(2, "EQ_INJURED", "Other farm's horse.", nil)
+    EqMessages.post(1, "NOT_OURS", "x", nil)
+    local mine = EqMessages.linesFor(1)
+    check("base: our own log keeps a farm's lines", #mine == 1 and mine[1].text == "Star won." and mine[1].horseId == "EQ-3"
+        and mine[1].day == 5 and mine[1].year == 1)
+    check("base: only the local farm gets a notification", #shown == 1 and shown[1].kind == "ok")
+    EqMessages.post(1, "EQ_INJURED", "Star was hurt.", nil)
+    check("base: newest line first", EqMessages.linesFor(1)[1].text == "Star was hurt." and shown[2].kind == "critical")
+
+    local store = {}
+    local xml = {
+        setInt = function(_, k, v) store[k] = v end, setString = function(_, k, v) store[k] = v end,
+        hasProperty = function(_, k) for key in pairs(store) do if key:sub(1, #k) == k then return true end end return false end,
+        getString = function(_, k, d) local v = store[k]; if v == nil then return d end return v end,
+        getInt = function(_, k, d) local v = store[k]; if v == nil then return d end return v end,
+    }
+    EqMessages.saveToXMLFile(xml, "m")
+    EqMessages.loadFromXMLFile(xml, "m")
+    local loaded = EqMessages.linesFor(1)
+    check("base: the log saves and loads", #EqMessages.lines == 3 and #loaded == 2 and loaded[2].horseId == "EQ-3"
+        and loaded[1].period == 2)
+    for i = 1, EqMessages.MAX_LINES + 5 do EqMessages.addOwn(1, "EQ_FINISHED", "line " .. i) end
+    check("base: the log keeps its newest lines", #EqMessages.lines == EqMessages.MAX_LINES
+        and EqMessages.lines[#EqMessages.lines].text == "line " .. (EqMessages.MAX_LINES + 5))
+    EqMessages.ownLog, EqMessages.isInstalled, EqMessages.lines = wasOwn, wasInstalled, wasLines
+    g_currentMission, FSBaseMission = savedMission, savedFSBase
+
+    local breed = EqRegistry.plainBreeder(EqRandom.new("foal"))
+    local inRange, total, n = true, 0, 400
+    for _ = 1, n do
+        local child = breed(1.2, 1.4, { min_val = 0.25, max_val = 1.75 })
+        if child < 0.25 or child > 1.75 then inRange = false end
+        total = total + child
+    end
+    check("base: plain breeding stays in range", inRange)
+    check("base: plain breeding centres on the parents", math.abs(total / n - 1.3) < 0.05)
+    check("base: plain breeding is the same on every machine",
+        EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}) == EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}))
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

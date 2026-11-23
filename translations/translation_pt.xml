@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Precisa de 1000 l de estilha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_shop_lizardPlinth_straw" text="Precisa de 10 000 l de palha, 10000 l de madeira e 1000 l de tábuas."/>
         <text name="eq_lizard_title" text="Oferta de patrocínio da %s"/>
-        <text name="eq_rlrm_missing" text="O Realistic Equestrian não encontra o Realistic Livestock (versão do Ritter), por isso está desligado. Instala a versão mais recente do Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="A tua versão %s do Realistic Livestock é demasiado antiga para o Realistic Equestrian, por isso o Realistic Equestrian está desligado. Obtém a versão mais recente do Realistic Livestock (versão do Ritter)."/>
         <text name="eq_rlrm_old" text="A tua versão %s do Realistic Livestock é mais antiga do que o Realistic Equestrian precisa (%s ou mais recente), por isso algumas funções podem não funcionar. Obtém a versão mais recente do Realistic Livestock (versão do Ritter)."/>
         <text name="eq_lizard_offer" text="A %s gostaria de patrocinar o teu %s (%s) e empresta-te um dos seus veículos durante o mês do evento. Pede branding %s até ao fim do evento e o seu pedestal Lizard construído no teu recinto: %s. Se estiver tudo pronto quando chegarem os resultados, paga %s. Se não, não paga nada e não há penalização. O pedestal desaba depois do evento."/>
@@ -1240,5 +1239,40 @@
         <text name="eq_help_courseEdit_1" text="Trace o percurso passando pelos obstáculos em ordem, em qualquer velocidade. Os obstáculos deste mod ficam sem colisão enquanto você traça. Se errar, volte ao último ponto bom até uma linha se prender a ele e pressione [[EQ_COURSE_REWIND]] para traçar de novo dali. Pressione [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] no cross country) de novo para salvar."/>
         <text name="eq_help_dressageEdit_title" text="Edição de reprise"/>
         <text name="eq_help_dressageEdit_1" text="Monte sua própria reprise de adestramento com figuras, movimentos e andamentos. [[EQ_DT_PREV]] e [[EQ_DT_NEXT]] trocam a figura, [[EQ_DT_GAIT]] o andamento e [[EQ_DT_MODE]] passa para movimentos laterais ou no lugar. [[EQ_DT_ACCEPT]] mantém um passo e segue, [[EQ_DT_UNDO]] volta e [[EQ_DT_RANDOM]] sorteia um passo. Pressione [[EQ_DRESSAGE_TEST]] para salvar a reprise."/>
+        <text name="eq_band_extremelyLow" text="Extremamente baixo"/>
+        <text name="eq_band_veryLow" text="Muito baixo"/>
+        <text name="eq_band_low" text="Baixo"/>
+        <text name="eq_band_average" text="Média"/>
+        <text name="eq_band_high" text="Alto"/>
+        <text name="eq_band_veryHigh" text="Muito alto"/>
+        <text name="eq_band_extremelyHigh" text="Extremamente alto"/>
+        <text name="input_EQ_MENU" text="Menu equestre"/>
+        <text name="eq_menu_button" text="Equestre"/>
+        <text name="eq_menu_pickHint" text="Escolha uma linha para a marcar ou desmarcar. Abra a lista de novo para mudar outra."/>
+        <text name="eq_horses_title" text="Cavalos"/>
+        <text name="eq_horses_col_name" text="Nome"/>
+        <text name="eq_horses_col_age" text="Idade"/>
+        <text name="eq_horses_col_status" text="Estado"/>
+        <text name="eq_horses_inTrailer" text="Num reboque"/>
+        <text name="eq_horses_foal" text="Demasiado novo para montar"/>
+        <text name="eq_horses_ready" text="Pronto"/>
+        <text name="eq_horses_none" text="Ainda não há cavalos nesta quinta. Compre um no comerciante de animais."/>
+        <text name="eq_horses_stable" text="Estábulo"/>
+        <text name="eq_horses_fitness" text="Condição física"/>
+        <text name="eq_horses_health" text="Saúde"/>
+        <text name="eq_horses_career" text="Carreira"/>
+        <text name="eq_horses_careerValue" text="%d partidas, %d vitórias, %s"/>
+        <text name="eq_horses_summary" text="%d cavalos. Com os botões abaixo, monte, atribua uma função ou reforme o cavalo escolhido."/>
+        <text name="eq_horses_summaryOne" text="%d cavalo. Com os botões abaixo, monte, atribua uma função ou reforme-o."/>
+        <text name="eq_messages_title" text="Mensagens"/>
+        <text name="eq_messages_col_date" text="Data"/>
+        <text name="eq_messages_col_type" text="Tipo"/>
+        <text name="eq_messages_col_message" text="Mensagem"/>
+        <text name="eq_messages_button_clear" text="Limpar"/>
+        <text name="eq_messages_clearConfirm" text="Apagar todas as mensagens desta quinta?"/>
+        <text name="eq_messages_none" text="Ainda não há mensagens."/>
+        <text name="eq_messages_summary" text="Resultados, lesões, transporte, eventos próprios e patrocinadores. Cada um também aparece como notificação."/>
+        <text name="eq_messages_date" text="Dia %d, %s, ano %d"/>
+        <text name="eq_messages_day" text="Dia %d"/>
     </texts>
 </l10n>

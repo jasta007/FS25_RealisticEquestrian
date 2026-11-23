@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian nemůže najít Realistic Livestock (verze od Rittera), a proto je vypnutý. Nainstaluj nejnovější verzi Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Tvoje verze %s Realistic Livestock je pro Realistic Equestrian příliš stará, a proto je Realistic Equestrian vypnutý. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
         <text name="eq_rlrm_old" text="Tvoje verze %s Realistic Livestock je starší, než Realistic Equestrian potřebuje (%s nebo novější), takže některé funkce nemusí fungovat. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
         <text name="eq_lizard_offer" text="%s by rád sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
@@ -1240,5 +1239,40 @@
         <text name="eq_help_courseEdit_1" text="Vyznačte trať průjezdem překážkami po pořadí, v jakémkoli tempu. Překážky z tohoto modu při vyznačování nemají kolize. Když uděláte chybu, vraťte se k poslednímu dobrému bodu, až se k němu přichytí čára, a stiskem [[EQ_COURSE_REWIND]] pokračujte odtud. Znovu stiskněte [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pro terén) a trať se uloží."/>
         <text name="eq_help_dressageEdit_title" text="Úprava drezurní úlohy"/>
         <text name="eq_help_dressageEdit_1" text="Sestavte si vlastní drezurní úlohu z figur, cviků a chodů. [[EQ_DT_PREV]] a [[EQ_DT_NEXT]] mění figuru, [[EQ_DT_GAIT]] chod a [[EQ_DT_MODE]] přepíná na boční pohyby nebo cviky na místě. [[EQ_DT_ACCEPT]] krok ponechá a pokračuje, [[EQ_DT_UNDO]] se vrátí a [[EQ_DT_RANDOM]] vybere náhodný krok. Stiskem [[EQ_DRESSAGE_TEST]] úlohu uložíte."/>
+        <text name="eq_band_extremelyLow" text="Extrémně nízká"/>
+        <text name="eq_band_veryLow" text="Velmi nízká"/>
+        <text name="eq_band_low" text="Nízká"/>
+        <text name="eq_band_average" text="Průměrná"/>
+        <text name="eq_band_high" text="Vysoká"/>
+        <text name="eq_band_veryHigh" text="Velmi vysoká"/>
+        <text name="eq_band_extremelyHigh" text="Extrémně vysoká"/>
+        <text name="input_EQ_MENU" text="Jezdecké menu"/>
+        <text name="eq_menu_button" text="Jezdectví"/>
+        <text name="eq_menu_pickHint" text="Vyberte řádek pro zaškrtnutí nebo odškrtnutí. Pro změnu dalšího otevřete seznam znovu."/>
+        <text name="eq_horses_title" text="Koně"/>
+        <text name="eq_horses_col_name" text="Jméno"/>
+        <text name="eq_horses_col_age" text="Věk"/>
+        <text name="eq_horses_col_status" text="Stav"/>
+        <text name="eq_horses_inTrailer" text="V přívěsu"/>
+        <text name="eq_horses_foal" text="Příliš mladý na ježdění"/>
+        <text name="eq_horses_ready" text="Připraven"/>
+        <text name="eq_horses_none" text="Na této farmě zatím nejsou žádní koně. Kupte si koně u obchodníka se zvířaty."/>
+        <text name="eq_horses_stable" text="Stáj"/>
+        <text name="eq_horses_fitness" text="Kondice"/>
+        <text name="eq_horses_health" text="Zdraví"/>
+        <text name="eq_horses_career" text="Kariéra"/>
+        <text name="eq_horses_careerValue" text="%d startů, %d vítězství, %s"/>
+        <text name="eq_horses_summary" text="Koní: %d. Tlačítky níže vybraného koně osedláte, dáte mu roli nebo ho pošlete do důchodu."/>
+        <text name="eq_horses_summaryOne" text="Koní: %d. Tlačítky níže ho osedláte, dáte mu roli nebo ho pošlete do důchodu."/>
+        <text name="eq_messages_title" text="Zprávy"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Typ"/>
+        <text name="eq_messages_col_message" text="Zpráva"/>
+        <text name="eq_messages_button_clear" text="Vymazat"/>
+        <text name="eq_messages_clearConfirm" text="Smazat všechny zprávy této farmy?"/>
+        <text name="eq_messages_none" text="Zatím žádné zprávy."/>
+        <text name="eq_messages_summary" text="Výsledky, zranění, doprava, vlastní závody a sponzoři. Každá se zobrazí i jako oznámení."/>
+        <text name="eq_messages_date" text="Den %d, %s, rok %d"/>
+        <text name="eq_messages_day" text="Den %d"/>
     </texts>
 </l10n>

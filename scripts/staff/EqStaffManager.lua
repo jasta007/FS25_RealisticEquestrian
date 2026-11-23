@@ -162,9 +162,9 @@ end
 function EqStaffManager.stableOf(animal)
     local system = animal ~= nil and animal.clusterSystem or nil
     local owner = system ~= nil and system.owner or nil
+    if owner == nil and EqBase.installed then owner = EqBase.husbandryOf(animal) end
     if owner == nil or owner.spec_husbandryAnimals == nil then return nil end
-    local keys = EqRLRM.get("RLHusbandryTargetKey")
-    return keys ~= nil and keys.keyFor(owner) or nil
+    return EqRLRM.husbandryKey(owner)
 end
 
 
@@ -195,20 +195,22 @@ EqStaffManager.farmHorses = farmHorses
 --- @return table list of { uniqueId, name }
 function EqStaffManager.stablesOf(farmId)
     local out, seen = {}, {}
-    local query = EqRLRM.get("RLAnimalQuery")
-    local keys = EqRLRM.get("RLHusbandryTargetKey")
-    if query == nil or keys == nil then return out end
-    for i, placeable in ipairs(query.listHusbandriesForFarm(farmId)) do
+    local query = EqRLRM.get("RLAnimalQuery") or {}
+    for i, placeable in ipairs(EqRLRM.listHusbandriesForFarm(farmId)) do
         local holdsHorses = false
         local spec = placeable.spec_husbandryAnimals
-        if spec ~= nil and spec.getClusters ~= nil then
+        if EqBase.installed then
+            for _, animal in pairs(EqBase.clustersOf(placeable)) do
+                if animal.isHorse ~= nil and animal:isHorse() then holdsHorses = true end
+            end
+        elseif spec ~= nil and spec.getClusters ~= nil then
             for _, animal in pairs(spec:getClusters() or {}) do
                 if animal.isHorse ~= nil and animal:isHorse() then holdsHorses = true end
             end
         end
         local typeIndex = placeable.getAnimalTypeIndex ~= nil and placeable:getAnimalTypeIndex() or nil
         local horseType = AnimalType ~= nil and AnimalType.HORSE or nil
-        local key = keys.keyFor(placeable)
+        local key = EqRLRM.husbandryKey(placeable)
         if key ~= nil and not seen[key] and (holdsHorses or (horseType ~= nil and typeIndex == horseType)) then
             seen[key] = true
             local name = query.formatHusbandryLabel ~= nil and query.formatHusbandryLabel(placeable, i)
