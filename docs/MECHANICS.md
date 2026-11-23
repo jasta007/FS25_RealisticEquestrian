@@ -393,7 +393,8 @@ Elementary. Not in your own event's month: its test is fixed.
 Voltes come in a level's test from Medium, sized by the level (James, 2026-11-23): canter 10 m at
 Medium, 9 m at Advanced, 8 m at Prix St Georges, 7 m at Intermediate and 6 m at Grand Prix (ridden
 with Ctrl + A/D, whose circle is 6 to 10 m by temperament: "if you can't ride that... that's
-tough"); trot the same sizes, ridden as a plain turn; walk 8 m. Novice and Elementary have none (their
+tough"); trot (a plain turn) 10 m at Elementary, 9 m at Medium, 8 m at Advanced, 7 m at Prix St Georges, 6 m at
+Intermediate and none at Grand Prix; walk 8 m from Medium. Novice has none, Elementary trot only (their
 set tests ride 15 m and 20 m circles at E and B instead). A player's own
 tests keep the usual 8, 10 and 15 m voltes.
 

@@ -28,7 +28,8 @@ EqDressageLevels.TYPES = { "own", "random", "set" }
 EqDressageLevels.DEFAULT = "elementary"
 
 -- Each level: its voltes' size across by gait (James, 2026-11-23: a 6 m canter volte at Grand
--- Prix, wider for the easier levels, none before Medium), the arenas it is ridden in (first, second, third), figures in a random test, what
+-- Prix, wider for the easier levels; trot 10 m from Elementary to 6 m at Intermediate, none at
+-- Grand Prix (removes)), the arenas it is ridden in (first, second, third), figures in a random test, what
 -- it adds to the random pool ("name/gait", EqDressagePath.FIGURE_ORDER) and to the movements on
 -- the spot, and how it weighs lateral work and plain figures.
 EqDressageLevels.LEVELS = {
@@ -41,37 +42,38 @@ EqDressageLevels.LEVELS = {
         spots = {},
     },
     elementary = {
+        voltes = { trot = 10 },
         arenas = { true, true, true }, figures = 7, reinBack = true,
-        adds = { "shoulderIn/walk", "shoulderIn/trot", "travers/walk", "travers/trot", "legYieldRail/walk", "legYieldRail/trot",
+        adds = { "volte/trot", "shoulderIn/walk", "shoulderIn/trot", "travers/walk", "travers/trot", "legYieldRail/walk", "legYieldRail/trot",
             "legYield/walk", "legYieldCentre/walk", "halfVolte/walk", "across/walk", "centreToX/walk", "centreFromX/walk",
             "shallowLoop/walk", "eight/trot", "eight/canter", "shallowLoop/canter" },
         spots = { "walkPirouette" },
     },
     medium = {
-        voltes = { walk = 8, trot = 10, canter = 10 },
+        voltes = { walk = 8, trot = 9, canter = 10 },
         arenas = { false, true, true }, figures = 8, reinBack = true,
-        adds = { "volte/walk", "volte/trot", "volte/canter", "halfPass/trot", "halfPass/canter", "halfPassCentre/trot", "renvers/walk", "renvers/trot" },
+        adds = { "volte/walk", "volte/canter", "halfPass/trot", "halfPass/canter", "halfPassCentre/trot", "renvers/walk", "renvers/trot" },
         spots = {},
     },
     advanced = {
-        voltes = { walk = 8, trot = 9, canter = 9 },
+        voltes = { walk = 8, trot = 8, canter = 9 },
         arenas = { false, true, true }, figures = 9, reinBack = true,
         adds = { "halfPassCentre/canter" },
         spots = { "canterPirouette" },
     },
     prixStGeorges = {
-        voltes = { walk = 8, trot = 8, canter = 8 },
+        voltes = { walk = 8, trot = 7, canter = 8 },
         arenas = { false, false, true }, figures = 10, reinBack = true, lateralWeight = 2, plainWeight = 0.6, spotTrack = 20,
         adds = {}, spots = {},
     },
     intermediate = {
-        voltes = { walk = 8, trot = 7, canter = 7 },
+        voltes = { walk = 8, trot = 6, canter = 7 },
         arenas = { false, false, true }, figures = 11, reinBack = true, lateralWeight = 2, plainWeight = 0.6, spotTrack = 20,
         adds = { "passageRail/trot" },
         spots = { "piaffe" },
     },
     grandPrix = {
-        voltes = { walk = 8, trot = 6, canter = 6 },
+        voltes = { walk = 8, canter = 6 }, removes = { "volte/trot" },
         arenas = { false, false, true }, figures = 12, reinBack = true, lateralWeight = 2, plainWeight = 0.5, spotTrack = 25,
         adds = { "passageDiagonal/trot" },
         spots = {},
@@ -216,6 +218,7 @@ function EqDressageLevels.forBuild(name, frame)
     for _, n in ipairs(EqDressageLevels.ORDER) do
         local level = EqDressageLevels.LEVELS[n]
         for _, entry in ipairs(level.adds) do pool[entry] = true end
+        for _, entry in ipairs(level.removes or {}) do pool[entry] = nil end
         for _, spot in ipairs(level.spots) do spots[spot] = true end
         if n == name then break end
     end
