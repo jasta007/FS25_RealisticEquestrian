@@ -59,6 +59,7 @@ dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
+dofile("scripts/dealer/EqDealerStock.lua")
 dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
@@ -6856,6 +6857,106 @@ end)()
     coroutine = saved
     EqLog = savedLog
     check("eqlog: guard runs without coroutine", ok == true and value == 7 and bad == false)
+end)()
+
+
+-- DEALER HORSE STOCK (EqDealerStock, James 2026-11-23): 0 to 3 of each colour and gender a
+-- month, at least 12 in all, and a full kind is hidden from RLRM's pick.
+;(function()
+    local kinds = {}
+    for _, colour in ipairs({ "GRAY", "PINTO", "PALOMINO", "CHESTNUT", "BAY", "BLACK", "SEAL_BROWN", "DUN" }) do
+        table.insert(kinds, "HORSE_" .. colour)
+        table.insert(kinds, "STALLION_" .. colour)
+    end
+
+    local inRange, minOk, sumAll, empties, months = true, true, 0, 0, 400
+    for m = 1, months do
+        local shelves = EqDealerStock.rollShelves(kinds, "2026:" .. m)
+        local total = 0
+        for _, name in ipairs(kinds) do
+            local n = shelves[name]
+            if n == nil or n < 0 or n > 3 or n ~= math.floor(n) then inRange = false end
+            total = total + (n or 0)
+            if n == 0 then empties = empties + 1 end
+        end
+        if total < 12 then minOk = false end
+        sumAll = sumAll + total
+    end
+    check("dealer shelves are 0 to 3 each", inRange)
+    check("dealer shelves add up to at least 12", minOk)
+    local mean = sumAll / months
+    check("dealer stock averages about 24 horses", mean > 21 and mean < 27, tostring(mean))
+    check("some kinds are sold out", empties > months, tostring(empties))
+
+    local a, b = EqDealerStock.rollShelves(kinds, "5:3"), EqDealerStock.rollShelves(kinds, "5:3")
+    local reversed = {}
+    for i = #kinds, 1, -1 do table.insert(reversed, kinds[i]) end
+    local c = EqDealerStock.rollShelves(reversed, "5:3")
+    local same = true
+    for _, name in ipairs(kinds) do
+        if a[name] ~= b[name] or a[name] ~= c[name] then same = false end
+    end
+    check("dealer shelves are the same for the same month, whatever the order", same)
+
+    local zeroes = EqDealerStock.rollShelves({ "A", "B", "C", "D", "E" }, "x", 3, 12)
+    local zTotal = 0
+    for _, n in pairs(zeroes) do zTotal = zTotal + n end
+    check("dealer minimum tops up when the rolls fall short", zTotal == 12, tostring(zTotal))
+    local tiny = EqDealerStock.rollShelves({ "A", "B" }, "x", 3, 12)
+    check("dealer minimum stops at every shelf full", tiny.A == 3 and tiny.B == 3)
+
+    local kindOf = function(animal) return animal.kind end
+    local listing = function(kind) return { kind = kind, sale = { day = 1 } } end
+    local shelf = { listing("A"), listing("B"), listing("A"), { kind = "A" }, listing("A"), listing("C") }
+    local excess = EqDealerStock.excess(shelf, { A = 1, B = 0 }, kindOf)
+    check("dealer trim drops the newest over the shelf and leaves unknown kinds",
+        #excess == 3 and excess[1] == 2 and excess[2] == 3 and excess[3] == 5, table.concat(excess, ","))
+    local counts = EqDealerStock.countKinds(shelf, kindOf)
+    check("dealer counts only listings", counts.A == 3 and counts.B == 1 and counts.C == 1)
+
+    -- createHorse with a stand-in animal system: full kinds are hidden for the call only.
+    local savedType, savedMission = AnimalType, g_currentMission
+    AnimalType = { HORSE = 7 }
+    g_currentMission = { environment = { currentYear = 3, currentPeriod = 2 } }
+    local subTypes = {}
+    local function addSub(index, name)
+        subTypes[index] = { name = name, visuals = { { store = { canBeBought = true } }, { store = { canBeBought = false } } } }
+    end
+    addSub(1, "A"); addSub(2, "B"); addSub(3, "C")
+    local system = {
+        animals = { [7] = {} },
+        getTypeByIndex = function(_, i) return i == 7 and { subTypes = { 1, 2, 3 } } or nil end,
+        getSubTypeByIndex = function(_, i) return subTypes[i] end,
+    }
+    EqDealerStock.cache = { key = "3:2", shelves = { A = 1, B = 0, C = 2 } }
+    local seen = {}
+    local original = function(self, typeIndex)
+        local open = {}
+        for i = 1, 3 do
+            if subTypes[i].visuals[1].store.canBeBought then table.insert(open, i) end
+        end
+        seen = open
+        return { subTypeIndex = open[1], sale = { day = 1 } }
+    end
+    local horse = EqDealerStock.createHorse(original, system, 7)
+    check("dealer hides a sold-out kind", #seen == 2 and seen[1] == 1 and seen[2] == 3 and horse.subTypeIndex == 1)
+    table.insert(system.animals[7], horse)
+    horse = EqDealerStock.createHorse(original, system, 7)
+    check("dealer hides a kind once its shelf is full", #seen == 1 and seen[1] == 3 and horse.subTypeIndex == 3)
+    check("dealer puts the hidden kinds back", subTypes[1].visuals[1].store.canBeBought and subTypes[2].visuals[1].store.canBeBought
+        and not subTypes[1].visuals[2].store.canBeBought)
+    table.insert(system.animals[7], horse)
+    table.insert(system.animals[7], { subTypeIndex = 3, sale = { day = 1 } })
+    local called = false
+    local none = EqDealerStock.createHorse(function() called = true end, system, 7)
+    check("dealer adds nothing when every shelf is full", none == nil and not called
+        and subTypes[1].visuals[1].store.canBeBought and subTypes[2].visuals[1].store.canBeBought)
+    local failed = pcall(EqDealerStock.createHorse, function() error("boom") end,
+        { animals = { [7] = {} }, getTypeByIndex = system.getTypeByIndex, getSubTypeByIndex = system.getSubTypeByIndex }, 7)
+    check("dealer puts the hidden kinds back after an error", not failed and subTypes[2].visuals[1].store.canBeBought)
+
+    AnimalType, g_currentMission = savedType, savedMission
+    EqDealerStock.cache = nil
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

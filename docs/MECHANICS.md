@@ -43,6 +43,11 @@ above its potential. Starting above 80 is rare: about one horse in 125. Dealer h
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
+**Dealer stock.** With Realistic Livestock, the animal dealer keeps 0 to 3 horses of each colour
+and gender, rolled again each in-game month and topped up so there are always at least 12 in all
+(about 24 on average). A sold-out colour comes back in a later month. Horses over this month's
+numbers leave the dealer within the hour. Other animals keep RLRM's own stock.
+
 **Foals.** The Horse maturing setting decides how fast foals grow up:
 
 | | Foal model | Ridden from | Training events | Other events |
