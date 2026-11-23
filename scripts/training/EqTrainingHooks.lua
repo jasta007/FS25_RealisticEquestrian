@@ -2070,6 +2070,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
     if spec == nil then return end
+    EqTrainingHud.newFrame()
     pollGaitKeys(vehicle)
     pollSprintButton(vehicle)
 
