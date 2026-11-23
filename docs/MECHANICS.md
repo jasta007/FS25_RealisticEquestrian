@@ -368,7 +368,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   counts for an entered horse in an arena big enough for the rating (see Hosting).
 
 **Test types and levels** (James, 2026-11-22/23; `EqDressageLevels`). While a test waits at A,
-**Ctrl+N** cycles the test type (your own test, random, set test; own only when the arena has one)
+**Ctrl+N** cycles the test type (your own test, random, standardized test; own only when the arena has one)
 and **Ctrl+M** the level, skipping levels the arena can't hold. The choice shows under "Move to A"
 and is saved per arena; the first time it is your own test if there is one, else random at
 Elementary. Not in your own event's month: its test is fixed.
@@ -384,7 +384,7 @@ Elementary. Not in your own event's month: its test is fixed.
 | Grand Prix | no | no | yes | 12 | passage on the diagonal; piaffe more often |
 
 - A random test picks only from its level's figures and every level's below it.
-- A set test is one fixed test per level and arena, adapted from real test sheets to the figures we
+- A standardized test (set test in the code) is one fixed test per level and arena, adapted from real test sheets to the figures we
   have (no flying changes or extended paces, no names of the real tests). It is built from the
   arena's figures at start and never saved; in a ring it doesn't fit (another mod's) it rides a
   random test at that level instead.

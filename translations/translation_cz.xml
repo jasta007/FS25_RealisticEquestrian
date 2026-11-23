@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="Úroveň: %s"/>
         <text name="eq_dt_type_own" text="Vlastní"/>
         <text name="eq_dt_type_random" text="Náhodná"/>
-        <text name="eq_dt_type_set" text="Pevná úloha"/>
+        <text name="eq_dt_type_set" text="Standardní úloha"/>
         <text name="eq_dlevel_novice" text="Začátečník"/>
         <text name="eq_dlevel_elementary" text="Základní"/>
         <text name="eq_dlevel_medium" text="Střední"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
         <text name="eq_dt_choiceOwn" text="Vaše vlastní úloha (Ctrl+N: typ)"/>
         <text name="eq_dt_choiceRandom" text="Náhodná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
-        <text name="eq_dt_choiceSet" text="Pevná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
-        <text name="eq_dt_choiceFallback" text="Do této jízdárny se nevejde žádná pevná úloha: náhodná úloha, %s"/>
+        <text name="eq_dt_choiceSet" text="Standardní úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceFallback" text="Do této jízdárny se nevejde žádná standardní úloha: náhodná úloha, %s"/>
         <text name="eq_dt_choiceEvent" text="Úloha závodů: náhodná, %s"/>
         <text name="eq_fig_canterSide" text="Cval %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="Cval %s-X-%s"/>

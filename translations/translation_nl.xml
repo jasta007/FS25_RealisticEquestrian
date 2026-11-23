@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="Niveau: %s"/>
         <text name="eq_dt_type_own" text="Eigen"/>
         <text name="eq_dt_type_random" text="Willekeurig"/>
-        <text name="eq_dt_type_set" text="Vaste proef"/>
+        <text name="eq_dt_type_set" text="Standaardproef"/>
         <text name="eq_dlevel_novice" text="Beginner"/>
         <text name="eq_dlevel_elementary" text="Basis"/>
         <text name="eq_dlevel_medium" text="Midden"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
         <text name="eq_dt_choiceOwn" text="Je eigen proef (Ctrl+N: soort)"/>
         <text name="eq_dt_choiceRandom" text="Willekeurige proef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
-        <text name="eq_dt_choiceSet" text="Vaste proef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
-        <text name="eq_dt_choiceFallback" text="Geen vaste proef past in deze bak: willekeurige proef, %s"/>
+        <text name="eq_dt_choiceSet" text="Standaardproef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
+        <text name="eq_dt_choiceFallback" text="Geen standaardproef past in deze bak: willekeurige proef, %s"/>
         <text name="eq_dt_choiceEvent" text="Wedstrijdproef: willekeurig, %s"/>
         <text name="eq_fig_canterSide" text="Galop %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>

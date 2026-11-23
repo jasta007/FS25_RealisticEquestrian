@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="等級：%s"/>
         <text name="eq_dt_type_own" text="自己的"/>
         <text name="eq_dt_type_random" text="隨機"/>
-        <text name="eq_dt_type_set" text="固定路線"/>
+        <text name="eq_dt_type_set" text="標準路線"/>
         <text name="eq_dlevel_novice" text="新手"/>
         <text name="eq_dlevel_elementary" text="初級"/>
         <text name="eq_dlevel_medium" text="中級"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="大獎賽"/>
         <text name="eq_dt_choiceOwn" text="你自己的路線（Ctrl+N：類型）"/>
         <text name="eq_dt_choiceRandom" text="隨機路線，%s（Ctrl+N：類型，Ctrl+M：等級）"/>
-        <text name="eq_dt_choiceSet" text="固定路線，%s（Ctrl+N：類型，Ctrl+M：等級）"/>
-        <text name="eq_dt_choiceFallback" text="沒有固定路線適合此場地：隨機路線，%s"/>
+        <text name="eq_dt_choiceSet" text="標準路線，%s（Ctrl+N：類型，Ctrl+M：等級）"/>
+        <text name="eq_dt_choiceFallback" text="沒有標準路線適合此場地：隨機路線，%s"/>
         <text name="eq_dt_choiceEvent" text="賽事路線：隨機，%s"/>
         <text name="eq_fig_canterSide" text="跑步 %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="跑步 %s-X-%s"/>

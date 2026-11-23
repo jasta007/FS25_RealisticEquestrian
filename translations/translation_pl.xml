@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="Poziom: %s"/>
         <text name="eq_dt_type_own" text="Własny"/>
         <text name="eq_dt_type_random" text="Losowy"/>
-        <text name="eq_dt_type_set" text="Stały program"/>
+        <text name="eq_dt_type_set" text="Program standardowy"/>
         <text name="eq_dlevel_novice" text="Początkujący"/>
         <text name="eq_dlevel_elementary" text="Podstawowy"/>
         <text name="eq_dlevel_medium" text="Średni"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
         <text name="eq_dt_choiceOwn" text="Twój własny program (Ctrl+N: rodzaj)"/>
         <text name="eq_dt_choiceRandom" text="Losowy program, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
-        <text name="eq_dt_choiceSet" text="Stały program, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
-        <text name="eq_dt_choiceFallback" text="Żaden stały program nie mieści się w tym czworoboku: losowy program, %s"/>
+        <text name="eq_dt_choiceSet" text="Program standardowy, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
+        <text name="eq_dt_choiceFallback" text="Żaden program standardowy nie mieści się w tym czworoboku: losowy program, %s"/>
         <text name="eq_dt_choiceEvent" text="Program zawodów: losowy, %s"/>
         <text name="eq_fig_canterSide" text="Galop %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>

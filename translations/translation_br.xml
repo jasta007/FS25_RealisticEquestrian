@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="Nível: %s"/>
         <text name="eq_dt_type_own" text="A sua"/>
         <text name="eq_dt_type_random" text="Aleatória"/>
-        <text name="eq_dt_type_set" text="Prova fixa"/>
+        <text name="eq_dt_type_set" text="Prova padrão"/>
         <text name="eq_dlevel_novice" text="Iniciante"/>
         <text name="eq_dlevel_elementary" text="Elementar"/>
         <text name="eq_dlevel_medium" text="Médio"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
         <text name="eq_dt_choiceOwn" text="Sua própria prova (Ctrl+N: tipo)"/>
         <text name="eq_dt_choiceRandom" text="Prova aleatória, %s (Ctrl+N: tipo, Ctrl+M: nível)"/>
-        <text name="eq_dt_choiceSet" text="Prova fixa, %s (Ctrl+N: tipo, Ctrl+M: nível)"/>
-        <text name="eq_dt_choiceFallback" text="Nenhuma prova fixa cabe nesta pista: prova aleatória, %s"/>
+        <text name="eq_dt_choiceSet" text="Prova padrão, %s (Ctrl+N: tipo, Ctrl+M: nível)"/>
+        <text name="eq_dt_choiceFallback" text="Nenhuma prova padrão cabe nesta pista: prova aleatória, %s"/>
         <text name="eq_dt_choiceEvent" text="Prova do evento: aleatória, %s"/>
         <text name="eq_fig_canterSide" text="Galope %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="Galope %s-X-%s"/>

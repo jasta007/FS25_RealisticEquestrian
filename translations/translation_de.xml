@@ -1245,7 +1245,7 @@
         <text name="eq_dt_levelAction" text="Klasse: %s"/>
         <text name="eq_dt_type_own" text="Eigene"/>
         <text name="eq_dt_type_random" text="Zufällig"/>
-        <text name="eq_dt_type_set" text="Feste Aufgabe"/>
+        <text name="eq_dt_type_set" text="Standardaufgabe"/>
         <text name="eq_dlevel_novice" text="Einsteiger"/>
         <text name="eq_dlevel_elementary" text="Grundstufe"/>
         <text name="eq_dlevel_medium" text="Mittelstufe"/>
@@ -1255,8 +1255,8 @@
         <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
         <text name="eq_dt_choiceOwn" text="Ihre eigene Aufgabe (Strg+N: Art)"/>
         <text name="eq_dt_choiceRandom" text="Zufällige Aufgabe, %s (Strg+N: Art, Strg+M: Klasse)"/>
-        <text name="eq_dt_choiceSet" text="Feste Aufgabe, %s (Strg+N: Art, Strg+M: Klasse)"/>
-        <text name="eq_dt_choiceFallback" text="Keine feste Aufgabe passt in dieses Viereck: zufällige Aufgabe, %s"/>
+        <text name="eq_dt_choiceSet" text="Standardaufgabe, %s (Strg+N: Art, Strg+M: Klasse)"/>
+        <text name="eq_dt_choiceFallback" text="Keine Standardaufgabe passt in dieses Viereck: zufällige Aufgabe, %s"/>
         <text name="eq_dt_choiceEvent" text="Turnieraufgabe: zufällig, %s"/>
         <text name="eq_fig_canterSide" text="Galopp %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="Galopp %s-X-%s"/>

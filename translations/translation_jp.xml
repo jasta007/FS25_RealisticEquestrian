@@ -1243,7 +1243,7 @@
         <text name="eq_dt_levelAction" text="レベル：%s"/>
         <text name="eq_dt_type_own" text="自作"/>
         <text name="eq_dt_type_random" text="ランダム"/>
-        <text name="eq_dt_type_set" text="規定経路"/>
+        <text name="eq_dt_type_set" text="標準経路"/>
         <text name="eq_dlevel_novice" text="ノービス"/>
         <text name="eq_dlevel_elementary" text="エレメンタリー"/>
         <text name="eq_dlevel_medium" text="ミディアム"/>
@@ -1253,8 +1253,8 @@
         <text name="eq_dlevel_grandPrix" text="グランプリ"/>
         <text name="eq_dt_choiceOwn" text="自作の経路（Ctrl+N：種類）"/>
         <text name="eq_dt_choiceRandom" text="ランダム経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
-        <text name="eq_dt_choiceSet" text="規定経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
-        <text name="eq_dt_choiceFallback" text="このアリーナに合う規定経路はありません：ランダム経路、%s"/>
+        <text name="eq_dt_choiceSet" text="標準経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceFallback" text="このアリーナに合う標準経路はありません：ランダム経路、%s"/>
         <text name="eq_dt_choiceEvent" text="競技会の経路：ランダム、%s"/>
         <text name="eq_fig_canterSide" text="駈歩 %s-%s"/>
         <text name="eq_fig_canterDiagonal" text="駈歩 %s-X-%s"/>
