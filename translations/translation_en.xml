@@ -115,7 +115,10 @@
         <text name="eq_lizard_accept" text="Accept"/>
         <text name="eq_lizard_decline" text="Decline"/>
         <text name="eq_lizard_offerNote" text="%s have offered to sponsor your %s."/>
-        <text name="eq_lizard_accepted" text="%s deal accepted! Buy the Lizard Plinth in construction (Buildings, Constructibles) and build it with %s, logs and planks."/>
+        <text name="eq_lizard_accepted" text="%s deal accepted! Build a Lizard Plinth from %s (each has its own plinth in Buildings, Constructibles), plus logs and planks."/>
+        <text name="eq_lizard_or" text="%s or %s"/>
+        <text name="eq_lizard_and" text="%s and %s"/>
+        <text name="eq_lizard_needs" text="%s (your choice), plus %s"/>
         <text name="eq_lizard_stepAside" text="%s steps aside: %s sponsors your event now."/>
         <text name="eq_lizard_paid" text="%s paid %s for sponsoring your event."/>
         <text name="eq_lizard_unpaid_plinth" text="%s pays nothing: the Lizard plinth wasn&#x27;t finished. No hard feelings."/>

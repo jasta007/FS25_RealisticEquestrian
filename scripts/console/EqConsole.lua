@@ -927,8 +927,8 @@ end
 
 
 --- eqLizard [on|off]: Lizard's offer chance 100% this session (James, 2026-11-01: test the whole
---- flow, nothing signed for you). eqLizard now [stone|woodchips|straw] [accept] forces it at once.
-function EqConsole:consoleLizard(mode, material, accept)
+--- flow, nothing signed for you). eqLizard now [accept] forces it at once.
+function EqConsole:consoleLizard(mode, accept)
     if g_currentMission == nil then return "No mission loaded" end
     mode = mode ~= nil and string.lower(mode) or nil
     if mode == nil or mode == "on" or mode == "off" then
@@ -936,9 +936,8 @@ function EqConsole:consoleLizard(mode, material, accept)
         if mode == "on" then on = true elseif mode == "off" then on = false end
         return EqLizard.setTestAlways(on)
     end
-    if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [stone|woodchips|straw] [accept]" end
-    if material == "accept" then material, accept = accept, "accept" end
-    return EqLizard.force(g_currentMission:getFarmId(), material, accept == "accept")
+    if mode ~= "now" then return "Usage: eqLizard [on|off] | eqLizard now [accept]" end
+    return EqLizard.force(g_currentMission:getFarmId(), accept == "accept")
 end
 
 
@@ -1005,7 +1004,7 @@ function EqConsole.register()
         "as signed n months earlier (testing)", "consoleSponsors", EqConsole)
     addConsoleCommand("eqSponsorNew", "Testing: a fresh set of sponsor offers now", "consoleSponsorNew", EqConsole)
     addConsoleCommand("eqLizard", "Testing: Lizard's offer chance 100% this session (toggle): eqLizard [on|off]; force it now: eqLizard now " ..
-        "[stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
+        "[accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)

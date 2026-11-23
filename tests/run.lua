@@ -5897,10 +5897,19 @@ end)()
         check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
             and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
             and EqLizard.material(lz, "STONE").amount == 1200 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
-        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
-            and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
-        check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType
-            and EqLizard.roll(lz, 0, 0.5).fillType == lz.materials[2].fillType and EqLizard.roll(lz, 0, 0.999).fillType == lz.materials[3].fillType)
+        check("lizard: the offer lists all three bulk materials to choose from", (function()
+            local saved = g_i18n
+            local texts = { eq_lizard_or = "%s or %s", eq_lizard_and = "%s and %s", eq_lizard_needs = "%s (your choice), plus %s" }
+            g_i18n = { getText = function(_, key) return texts[key] or key end,
+                formatVolume = function(_, amount) return string.format("%d l", amount) end }
+            local needs = EqLizard.needsText(lz)
+            local choices = EqLizard.choicesText(lz, false)
+            g_i18n = saved
+            return needs == "1200 l STONE, 1000 l WOODCHIPS or 10000 l STRAW (your choice), plus 10000 l WOOD and 1000 l BOARDS"
+                and choices == "STONE, WOODCHIPS or STRAW", needs
+        end)())
+        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2) == true
+            and EqLizard.roll(lz, 0.25) == false and EqLizard.roll(lz, 0.9) == false and EqLizard.roll(nil, 0) == false)
         local fee = lz.ratings.intermediate.fee
         check("lizard: pays when the plinth is built and the branding is there, else nothing (no penalty)",
             EqLizard.payFor(lz, "intermediate", true, 2) == fee and EqLizard.payFor(lz, "intermediate", true, 3) == fee
@@ -5994,18 +6003,17 @@ end)()
             EqLizard.config = lz
             EqHostManager.bookings = {}
             EqCompetitionManager.events = {}
-            local none = EqLizard.force(6, nil, false)
-            local bad = EqLizard.force(6, "gold", false)
+            local none = EqLizard.force(6, false)
             local event = { id = 41, discipline = "dressage", hosted = { farmId = 6, rating = "novice", sponsor = "Someone" } }
             EqCompetitionManager.events = { event }
             EqCompetitionManager.month = 5
-            local ok = pcall(EqLizard.force, 6, "straw", false)
-            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == "STRAW"
+            local ok = pcall(EqLizard.force, 6, false)
+            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == nil
             EqLizard.deals[6] = nil
             EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month = savedConfig, savedEvents, savedMonth
             EqHostManager.bookings = savedBookings
             EqCompetitionManager = savedManager
-            return result and string.find(none, "Book", 1, true) ~= nil and string.find(bad, "stone", 1, true) ~= nil
+            return result and string.find(none, "Book", 1, true) ~= nil
         end)())
     end
 

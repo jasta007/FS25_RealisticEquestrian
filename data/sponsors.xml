@@ -84,8 +84,8 @@
                         hosted event gets an offer (rolled the month before), the popularity it
                         brings, eventingFactor times the fee for a 3 Day Event; per rating the fee
                         paid when the results come in and the branding
-                        level asked for (1 Low, 2 Medium, 3 High); the bulk materials the Lizard
-                        plinth may ask for (one is picked, by weight) with that plinth's shop item,
+                        level asked for (1 Low, 2 Medium, 3 High); the bulk materials a Lizard
+                        plinth can be built from (one plinth each; the player picks) with its shop item,
                         and the parts every plinth needs. The amounts must match
                         art/source/lizard_plinth.py, which writes them into the plinths.
 
@@ -164,9 +164,9 @@
         <rating name="novice"       fee="6000"  branding="1"/>
         <rating name="intermediate" fee="18000" branding="2"/>
         <rating name="championship" fee="45000" branding="3"/>
-        <material fillType="STONE"     amount="1200"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
-        <material fillType="WOODCHIPS" amount="1000"  weight="1" xml="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
-        <material fillType="STRAW"     amount="10000" weight="1" xml="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
+        <material fillType="STONE"     amount="1200"  xml="placeables/sponsorPlinths/lizardPlinthStone.xml"/>
+        <material fillType="WOODCHIPS" amount="1000"  xml="placeables/sponsorPlinths/lizardPlinthWoodChips.xml"/>
+        <material fillType="STRAW"     amount="10000" xml="placeables/sponsorPlinths/lizardPlinthStraw.xml"/>
         <part fillType="WOOD"   amount="10000"/>
         <part fillType="BOARDS" amount="1000"/>
     </lizard>
